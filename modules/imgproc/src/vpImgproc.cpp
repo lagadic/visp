@@ -242,7 +242,7 @@ void vp::equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned ch
   value channel (in HSV space), otherwise the histogram equalization is
   performed independently on the RGB channels.
 */
-void vp::equalizeHistogram(vpImage<vpRGBa> &I, const bool useHSV)
+void vp::equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
 {
   if (I.getWidth() * I.getHeight() == 0) {
     return;
@@ -317,7 +317,7 @@ void vp::equalizeHistogram(vpImage<vpRGBa> &I, const bool useHSV)
   value channel (in HSV space), otherwise the histogram equalization is
   performed independently on the RGB channels.
 */
-void vp::equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const bool useHSV)
+void vp::equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, bool useHSV)
 {
   I2 = I1;
   vp::equalizeHistogram(I2, useHSV);

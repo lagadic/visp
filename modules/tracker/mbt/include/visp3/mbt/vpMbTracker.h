@@ -398,7 +398,7 @@ public:
   }
 
   virtual std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
-  getPolygonFaces(const bool orderPolygons = true, const bool useVisibility = true, const bool clipPolygon = false);
+  getPolygonFaces(const bool orderPolygons = true, bool useVisibility = true, const bool clipPolygon = false);
 
   /*!
     Get the current pose between the object and the camera.
@@ -530,7 +530,7 @@ public:
   */
   virtual inline void setLambda(double gain) { m_lambda = gain; }
 
-  virtual void setLod(const bool useLod, const std::string &name = "");
+  virtual void setLod(bool useLod, const std::string &name = "");
 
   /*!
     Set the maximum iteration of the virtual visual servoing stage.
@@ -755,15 +755,15 @@ public:
 protected:
   /** @name Protected Member Functions Inherited from vpMbTracker */
   void addPolygon(const std::vector<vpPoint> &corners, const int idFace = -1, const std::string &polygonName = "",
-                  const bool useLod = false, const double minPolygonAreaThreshold = 2500.0,
+                  bool useLod = false, const double minPolygonAreaThreshold = 2500.0,
                   const double minLineLengthThreshold = 50.0);
   void addPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius, const int idFace = -1,
-                  const std::string &polygonName = "", const bool useLod = false,
+                  const std::string &polygonName = "", bool useLod = false,
                   const double minPolygonAreaThreshold = 2500.0);
   void addPolygon(const vpPoint &p1, const vpPoint &p2, const int idFace = -1, const std::string &polygonName = "",
-                  const bool useLod = false, const double minLineLengthThreshold = 50);
+                  bool useLod = false, const double minLineLengthThreshold = 50);
   void addPolygon(const std::vector<std::vector<vpPoint> > &listFaces, const int idFace = -1,
-                  const std::string &polygonName = "", const bool useLod = false,
+                  const std::string &polygonName = "", bool useLod = false,
                   const double minLineLengthThreshold = 50);
 
   void addProjectionErrorCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace = -1,
@@ -772,15 +772,15 @@ protected:
   void addProjectionErrorLine(vpPoint &p1, vpPoint &p2, int polygon = -1, std::string name = "");
 
   void addProjectionErrorPolygon(const std::vector<vpPoint> &corners, const int idFace = -1, const std::string &polygonName = "",
-                                 const bool useLod = false, const double minPolygonAreaThreshold = 2500.0,
+                                 bool useLod = false, const double minPolygonAreaThreshold = 2500.0,
                                  const double minLineLengthThreshold = 50.0);
   void addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius, const int idFace = -1,
-                                 const std::string &polygonName = "", const bool useLod = false,
+                                 const std::string &polygonName = "", bool useLod = false,
                                  const double minPolygonAreaThreshold = 2500.0);
   void addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, const int idFace = -1, const std::string &polygonName = "",
-                                 const bool useLod = false, const double minLineLengthThreshold = 50);
+                                 bool useLod = false, const double minLineLengthThreshold = 50);
   void addProjectionErrorPolygon(const std::vector<std::vector<vpPoint> > &listFaces, const int idFace = -1,
-                                 const std::string &polygonName = "", const bool useLod = false,
+                                 const std::string &polygonName = "", bool useLod = false,
                                  const double minLineLengthThreshold = 50);
 
   void createCylinderBBox(const vpPoint &p1, const vpPoint &p2, const double &radius,

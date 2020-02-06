@@ -193,7 +193,7 @@ public:
 
   static double getMean(const std::vector<double> &v);
   static double getMedian(const std::vector<double> &v);
-  static double getStdev(const std::vector<double> &v, const bool useBesselCorrection = false);
+  static double getStdev(const std::vector<double> &v, bool useBesselCorrection = false);
 
   static int modulo(const int a, const int n);
 

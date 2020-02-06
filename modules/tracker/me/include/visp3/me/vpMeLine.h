@@ -236,7 +236,7 @@ public:
 
     \param useIntensityForRho : new value of the flag.
   */
-  inline void computeRhoSignFromIntensity(const bool useIntensityForRho) { _useIntensityForRho = useIntensityForRho; }
+  inline void computeRhoSignFromIntensity(bool useIntensityForRho) { _useIntensityForRho = useIntensityForRho; }
 
   // Static Functions
 public:

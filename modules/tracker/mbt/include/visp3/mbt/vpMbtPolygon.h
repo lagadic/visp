@@ -125,7 +125,7 @@ public:
 
   // Due to a doxygen warning include the sample code in the doc, we remove
   // the inline and put the doc in the *.cpp file
-  void setLod(const bool use_lod);
+  void setLod(bool use_lod);
   /*!
     Set the threshold for the minimum line length to be considered as visible
     in the LOD (level of detail) case. This threshold is only used when

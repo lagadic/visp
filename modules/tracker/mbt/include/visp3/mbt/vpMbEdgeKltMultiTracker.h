@@ -323,8 +323,8 @@ public:
   void setNbRayCastingAttemptsForVisibility(const unsigned int &attempts);
 #endif
 
-  virtual void setLod(const bool useLod, const std::string &name = "");
-  virtual void setLod(const bool useLod, const std::string &cameraName, const std::string &name);
+  virtual void setLod(bool useLod, const std::string &name = "");
+  virtual void setLod(bool useLod, const std::string &cameraName, const std::string &name);
 
   virtual void setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name = "");
   virtual void setMinLineLengthThresh(const double minLineLengthThresh, const std::string &cameraName,

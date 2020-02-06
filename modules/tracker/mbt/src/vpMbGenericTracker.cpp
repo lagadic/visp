@@ -1637,7 +1637,7 @@ vpMbtPolygon *vpMbGenericTracker::getPolygon(const std::string &cameraName, cons
   only for the reference camera.
 */
 std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
-vpMbGenericTracker::getPolygonFaces(const bool orderPolygons, const bool useVisibility, const bool clipPolygon)
+vpMbGenericTracker::getPolygonFaces(const bool orderPolygons, bool useVisibility, const bool clipPolygon)
 {
   std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > > polygonFaces;
 
@@ -1671,7 +1671,7 @@ vpMbGenericTracker::getPolygonFaces(const bool orderPolygons, const bool useVisi
 */
 void vpMbGenericTracker::getPolygonFaces(std::map<std::string, std::vector<vpPolygon> > &mapOfPolygons,
                                          std::map<std::string, std::vector<std::vector<vpPoint> > > &mapOfPoints,
-                                         const bool orderPolygons, const bool useVisibility, const bool clipPolygon)
+                                         const bool orderPolygons, bool useVisibility, const bool clipPolygon)
 {
   mapOfPolygons.clear();
   mapOfPoints.clear();
@@ -4184,7 +4184,7 @@ void vpMbGenericTracker::setKltThresholdAcceptation(const double th)
 
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setLod(const bool useLod, const std::string &name)
+void vpMbGenericTracker::setLod(bool useLod, const std::string &name)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {

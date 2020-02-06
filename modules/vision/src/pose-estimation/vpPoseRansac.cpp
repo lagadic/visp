@@ -661,7 +661,7 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                        const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                        unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
                        const int &maxNbTrials,
-                       const bool useParallelRansac, unsigned int nthreads,
+                       bool useParallelRansac, unsigned int nthreads,
                        bool (*func)(const vpHomogeneousMatrix &))
 {
   vpPose pose;

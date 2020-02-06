@@ -98,7 +98,7 @@ public:
 
   virtual void setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY);
 
-  //  virtual void setDepthNormalUseRobust(const bool use);
+  //  virtual void setDepthNormalUseRobust(bool use);
 
   virtual void setOgreVisibilityTest(const bool &v);
 

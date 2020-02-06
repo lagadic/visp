@@ -464,7 +464,7 @@ bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r,
 */
 bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
                           const vpMatrix &C, const vpColVector &d,
-                          vpColVector &x, const bool use_equality,
+                          vpColVector &x, bool use_equality,
                           const double &tol)
 {
   unsigned int n = checkDimensions(Q, r, nullptr, nullptr, &C, &d, "solveQPi");

@@ -205,10 +205,10 @@ public:
   virtual vpMbtPolygon *getPolygon(const std::string &cameraName, const unsigned int index);
 
   virtual std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
-  getPolygonFaces(const bool orderPolygons = true, const bool useVisibility = true, const bool clipPolygon = false);
+  getPolygonFaces(const bool orderPolygons = true, bool useVisibility = true, const bool clipPolygon = false);
   virtual void getPolygonFaces(std::map<std::string, std::vector<vpPolygon> > &mapOfPolygons,
                                std::map<std::string, std::vector<std::vector<vpPoint> > > &mapOfPoints,
-                               const bool orderPolygons = true, const bool useVisibility = true,
+                               const bool orderPolygons = true, bool useVisibility = true,
                                const bool clipPolygon = false);
 
   using vpMbTracker::getPose;
@@ -373,7 +373,7 @@ public:
 
 #endif
 
-  virtual void setLod(const bool useLod, const std::string &name = "");
+  virtual void setLod(bool useLod, const std::string &name = "");
 
   virtual void setMask(const vpImage<bool> &mask);
 

@@ -780,7 +780,7 @@ void vpMbDepthNormalTracker::setDepthNormalSamplingStep(const unsigned int stepX
   m_depthNormalSamplingStepY = stepY;
 }
 
-// void vpMbDepthNormalTracker::setDepthNormalUseRobust(const bool use) {
+// void vpMbDepthNormalTracker::setDepthNormalUseRobust(bool use) {
 //  m_depthNormalUseRobust = use;
 //}
 

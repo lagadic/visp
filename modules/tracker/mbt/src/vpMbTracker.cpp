@@ -1230,7 +1230,7 @@ void vpMbTracker::savePose(const std::string &filename) const
 }
 
 void vpMbTracker::addPolygon(const std::vector<vpPoint> &corners, const int idFace, const std::string &polygonName,
-                             const bool useLod, const double minPolygonAreaThreshold,
+                             bool useLod, const double minPolygonAreaThreshold,
                              const double minLineLengthThreshold)
 {
   std::vector<vpPoint> corners_without_duplicates;
@@ -1286,7 +1286,7 @@ void vpMbTracker::addPolygon(const std::vector<vpPoint> &corners, const int idFa
 }
 
 void vpMbTracker::addPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-                             const int idFace, const std::string &polygonName, const bool useLod,
+                             const int idFace, const std::string &polygonName, bool useLod,
                              const double minPolygonAreaThreshold)
 {
   vpMbtPolygon polygon;
@@ -1367,7 +1367,7 @@ void vpMbTracker::addPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint
 }
 
 void vpMbTracker::addPolygon(const vpPoint &p1, const vpPoint &p2, const int idFace, const std::string &polygonName,
-                             const bool useLod, const double minLineLengthThreshold)
+                             bool useLod, const double minLineLengthThreshold)
 {
   // A polygon as a single line that corresponds to the revolution axis of the
   // cylinder
@@ -1405,7 +1405,7 @@ void vpMbTracker::addPolygon(const vpPoint &p1, const vpPoint &p2, const int idF
 }
 
 void vpMbTracker::addPolygon(const std::vector<std::vector<vpPoint> > &listFaces, const int idFace,
-                             const std::string &polygonName, const bool useLod, const double minLineLengthThreshold)
+                             const std::string &polygonName, bool useLod, const double minLineLengthThreshold)
 {
   int id = idFace;
   for (unsigned int i = 0; i < listFaces.size(); i++) {
@@ -2599,7 +2599,7 @@ vpPoint vpMbTracker::getGravityCenter(const std::vector<vpPoint> &pts) const
   A pair object containing the list of vpPolygon and the list of face corners.
  */
 std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
-vpMbTracker::getPolygonFaces(const bool orderPolygons, const bool useVisibility, const bool clipPolygon)
+vpMbTracker::getPolygonFaces(const bool orderPolygons, bool useVisibility, const bool clipPolygon)
 {
   // Temporary variable to permit to order polygons by distance
   std::vector<vpPolygon> polygonsTmp;
@@ -2737,7 +2737,7 @@ void vpMbTracker::setFarClippingDistance(const double &dist)
 
   \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
  */
-void vpMbTracker::setLod(const bool useLod, const std::string &name)
+void vpMbTracker::setLod(bool useLod, const std::string &name)
 {
   for (unsigned int i = 0; i < faces.size(); i++) {
     if (name.empty() || faces[i]->name == name) {
@@ -3154,7 +3154,7 @@ bool vpMbTracker::samePoint(const vpPoint &P1, const vpPoint &P2) const
 }
 
 void vpMbTracker::addProjectionErrorPolygon(const std::vector<vpPoint> &corners, const int idFace, const std::string &polygonName,
-                                            const bool useLod, const double minPolygonAreaThreshold,
+                                            bool useLod, const double minPolygonAreaThreshold,
                                             const double minLineLengthThreshold)
 {
   std::vector<vpPoint> corners_without_duplicates;
@@ -3196,7 +3196,7 @@ void vpMbTracker::addProjectionErrorPolygon(const std::vector<vpPoint> &corners,
 }
 
 void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-                                            const int idFace, const std::string &polygonName, const bool useLod,
+                                            const int idFace, const std::string &polygonName, bool useLod,
                                             const double minPolygonAreaThreshold)
 {
   vpMbtPolygon polygon;
@@ -3271,7 +3271,7 @@ void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2
 }
 
 void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, const int idFace, const std::string &polygonName,
-                                            const bool useLod, const double minLineLengthThreshold)
+                                            bool useLod, const double minLineLengthThreshold)
 {
   // A polygon as a single line that corresponds to the revolution axis of the
   // cylinder
@@ -3303,7 +3303,7 @@ void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2
 }
 
 void vpMbTracker::addProjectionErrorPolygon(const std::vector<std::vector<vpPoint> > &listFaces, const int idFace,
-                                            const std::string &polygonName, const bool useLod, const double minLineLengthThreshold)
+                                            const std::string &polygonName, bool useLod, const double minLineLengthThreshold)
 {
   int id = idFace;
   for (unsigned int i = 0; i < listFaces.size(); i++) {

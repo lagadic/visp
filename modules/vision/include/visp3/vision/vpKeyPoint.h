@@ -1101,7 +1101,7 @@ public:
     \param useAffine : True to use multiple affine transformations, false
     otherwise
   */
-  inline void setUseAffineDetection(const bool useAffine) { m_useAffineDetection = useAffine; }
+  inline void setUseAffineDetection(bool useAffine) { m_useAffineDetection = useAffine; }
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   /*!
@@ -1110,7 +1110,7 @@ public:
 
     \param useCrossCheck : True to use cross check, false otherwise
   */
-  inline void setUseBruteForceCrossCheck(const bool useCrossCheck)
+  inline void setUseBruteForceCrossCheck(bool useCrossCheck)
   {
     // Only available with BruteForce and with k=1 (i.e not used with a
     // ratioDistanceThreshold method)
@@ -1130,7 +1130,7 @@ public:
     \param useMatchTrainToQuery : True to match the train keypoints to the
     query keypoints
    */
-  inline void setUseMatchTrainToQuery(const bool useMatchTrainToQuery)
+  inline void setUseMatchTrainToQuery(bool useMatchTrainToQuery)
   {
     m_useMatchTrainToQuery = useMatchTrainToQuery;
   }
@@ -1142,7 +1142,7 @@ public:
     \param usePercentage : True to a percentage ratio of inliers, otherwise
     use a specified number of inliers
   */
-  inline void setUseRansacConsensusPercentage(const bool usePercentage) { m_useConsensusPercentage = usePercentage; }
+  inline void setUseRansacConsensusPercentage(bool usePercentage) { m_useConsensusPercentage = usePercentage; }
 
   /*!
     Set the flag to choose between the OpenCV or ViSP Ransac pose estimation

@@ -2289,7 +2289,7 @@ void vpMbKltMultiTracker::setKltOpencv(const std::map<std::string, vpKltOpencv> 
 
   \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
  */
-void vpMbKltMultiTracker::setLod(const bool useLod, const std::string &name)
+void vpMbKltMultiTracker::setLod(bool useLod, const std::string &name)
 {
   for (std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
        it != m_mapOfKltTrackers.end(); ++it) {
@@ -2309,7 +2309,7 @@ void vpMbKltMultiTracker::setLod(const bool useLod, const std::string &name)
 
   \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
  */
-void vpMbKltMultiTracker::setLod(const bool useLod, const std::string &cameraName, const std::string &name)
+void vpMbKltMultiTracker::setLod(bool useLod, const std::string &cameraName, const std::string &name)
 {
   std::map<std::string, vpMbKltTracker *>::const_iterator it_klt = m_mapOfKltTrackers.find(cameraName);
 

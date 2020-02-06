@@ -1134,7 +1134,7 @@ double vpColVector::median(const vpColVector &v)
 /*!
   Compute the standard deviation value of all the elements of the vector.
 */
-double vpColVector::stdev(const vpColVector &v, const bool useBesselCorrection)
+double vpColVector::stdev(const vpColVector &v, bool useBesselCorrection)
 {
   if (v.data == NULL || v.size() == 0) {
     throw(vpException(vpException::dimensionError, "Cannot compute column vector stdev: vector empty"));

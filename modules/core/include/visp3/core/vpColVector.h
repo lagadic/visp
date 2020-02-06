@@ -363,7 +363,7 @@ public:
   static vpColVector stack(const vpColVector &A, const vpColVector &B);
   static void stack(const vpColVector &A, const vpColVector &B, vpColVector &C);
 
-  static double stdev(const vpColVector &v, const bool useBesselCorrection = false);
+  static double stdev(const vpColVector &v, bool useBesselCorrection = false);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!

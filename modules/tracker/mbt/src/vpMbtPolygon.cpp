@@ -274,4 +274,4 @@ int main()
 
   \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
  */
-void vpMbtPolygon::setLod(const bool use_lod) { this->useLod = use_lod; }
+void vpMbtPolygon::setLod(bool use_lod) { this->useLod = use_lod; }

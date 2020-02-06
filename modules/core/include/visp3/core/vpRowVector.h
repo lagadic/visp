@@ -307,7 +307,7 @@ public:
   static double median(const vpRowVector &v);
   static vpRowVector stack(const vpRowVector &A, const vpRowVector &B);
   static void stack(const vpRowVector &A, const vpRowVector &B, vpRowVector &C);
-  static double stdev(const vpRowVector &v, const bool useBesselCorrection = false);
+  static double stdev(const vpRowVector &v, bool useBesselCorrection = false);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!

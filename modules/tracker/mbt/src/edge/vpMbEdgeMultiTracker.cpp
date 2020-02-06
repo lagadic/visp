@@ -2389,7 +2389,7 @@ void vpMbEdgeMultiTracker::setNbRayCastingAttemptsForVisibility(const unsigned i
 
   \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
  */
-void vpMbEdgeMultiTracker::setLod(const bool useLod, const std::string &name)
+void vpMbEdgeMultiTracker::setLod(bool useLod, const std::string &name)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {
@@ -2409,7 +2409,7 @@ void vpMbEdgeMultiTracker::setLod(const bool useLod, const std::string &name)
 
   \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
  */
-void vpMbEdgeMultiTracker::setLod(const bool useLod, const std::string &cameraName, const std::string &name)
+void vpMbEdgeMultiTracker::setLod(bool useLod, const std::string &cameraName, const std::string &name)
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(cameraName);
 

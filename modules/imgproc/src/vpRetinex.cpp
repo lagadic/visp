@@ -262,7 +262,7 @@ void MSRCR(vpImage<vpRGBa> &I, const int _scale, const int scaleDiv, const int l
   operation. If -1, the kernel size is calculated from the image size.
 */
 void vp::retinex(vpImage<vpRGBa> &I, const int scale, const int scaleDiv, const int level, const double dynamic,
-                 const int kernelSize)
+                 int kernelSize)
 {
   // Assert scale
   if (scale < 16 || scale > 250) {
@@ -304,7 +304,7 @@ void vp::retinex(vpImage<vpRGBa> &I, const int scale, const int scaleDiv, const 
   operation. If -1, the kernel size is calculated from the image size.
 */
 void vp::retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const int scale, const int scaleDiv, const int level,
-                 const double dynamic, const int kernelSize)
+                 const double dynamic, int kernelSize)
 {
   I2 = I1;
   vp::retinex(I2, scale, scaleDiv, level, dynamic, kernelSize);

@@ -560,7 +560,7 @@ void vpImageTools::integralImage(const vpImage<unsigned char> &I, vpImage<double
 */
 double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
 #if VISP_HAVE_SSE2
-                                           const bool useOptimized)
+                                           bool useOptimized)
 #else
                                            const bool)
 #endif
@@ -753,7 +753,7 @@ void vpImageTools::extract(const vpImage<unsigned char> &Src, vpImage<double> &D
 */
 void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpImage<unsigned char> &I_tpl,
                                     vpImage<double> &I_score, const unsigned int step_u, const unsigned int step_v,
-                                    const bool useOptimized)
+                                    bool useOptimized)
 {
   if (I.getSize() == 0) {
     std::cerr << "Error, input image is empty." << std::endl;

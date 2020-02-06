@@ -249,7 +249,7 @@ double vpMath::getMedian(const std::vector<double> &v)
 
   \return The standard deviation value.
 */
-double vpMath::getStdev(const std::vector<double> &v, const bool useBesselCorrection)
+double vpMath::getStdev(const std::vector<double> &v, bool useBesselCorrection)
 {
   if (v.empty()) {
     throw vpException(vpException::notInitialized, "Empty vector !");

@@ -96,8 +96,8 @@ VISP_EXPORT void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const int
 
 VISP_EXPORT void equalizeHistogram(vpImage<unsigned char> &I);
 VISP_EXPORT void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2);
-VISP_EXPORT void equalizeHistogram(vpImage<vpRGBa> &I, const bool useHSV = false);
-VISP_EXPORT void equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const bool useHSV = false);
+VISP_EXPORT void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV = false);
+VISP_EXPORT void equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, bool useHSV = false);
 
 VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, double gamma);
 VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double gamma);
@@ -105,9 +105,9 @@ VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, double gamma);
 VISP_EXPORT void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double gamma);
 
 VISP_EXPORT void retinex(vpImage<vpRGBa> &I, const int scale = 240, const int scaleDiv = 3,
-                         const int level = RETINEX_UNIFORM, const double dynamic = 1.2, const int kernelSize = -1);
+                         const int level = RETINEX_UNIFORM, const double dynamic = 1.2, int kernelSize = -1);
 VISP_EXPORT void retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const int scale = 240, const int scaleDiv = 3,
-                         const int level = RETINEX_UNIFORM, const double dynamic = 1.2, const int kernelSize = -1);
+                         const int level = RETINEX_UNIFORM, const double dynamic = 1.2, int kernelSize = -1);
 
 VISP_EXPORT void stretchContrast(vpImage<unsigned char> &I);
 VISP_EXPORT void stretchContrast(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2);

@@ -1757,7 +1757,7 @@ void vpMbEdgeKltMultiTracker::setNbRayCastingAttemptsForVisibility(const unsigne
 
   \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
  */
-void vpMbEdgeKltMultiTracker::setLod(const bool useLod, const std::string &name)
+void vpMbEdgeKltMultiTracker::setLod(bool useLod, const std::string &name)
 {
   vpMbEdgeMultiTracker::setLod(useLod, name);
   vpMbKltMultiTracker::setLod(useLod, name);
@@ -1775,7 +1775,7 @@ void vpMbEdgeKltMultiTracker::setLod(const bool useLod, const std::string &name)
 
   \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
  */
-void vpMbEdgeKltMultiTracker::setLod(const bool useLod, const std::string &cameraName, const std::string &name)
+void vpMbEdgeKltMultiTracker::setLod(bool useLod, const std::string &cameraName, const std::string &name)
 {
   vpMbEdgeMultiTracker::setLod(useLod, cameraName, name);
   vpMbKltMultiTracker::setLod(useLod, cameraName, name);

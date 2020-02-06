@@ -87,7 +87,7 @@ public:
 
   template <class Type>
   static inline void binarise(vpImage<Type> &I, Type threshold1, Type threshold2, Type value1, Type value2, Type value3,
-                              const bool useLUT = true);
+                              bool useLUT = true);
   static void changeLUT(vpImage<unsigned char> &I, unsigned char A, unsigned char newA, unsigned char B,
                         unsigned char newB);
 
@@ -139,7 +139,7 @@ public:
   static void integralImage(const vpImage<unsigned char> &I, vpImage<double> &II, vpImage<double> &IIsq);
 
   static double normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
-                                      const bool useOptimized = true);
+                                      bool useOptimized = true);
 
   static void normalize(vpImage<double> &I);
 
@@ -158,7 +158,7 @@ public:
 
   static void templateMatching(const vpImage<unsigned char> &I, const vpImage<unsigned char> &I_tpl,
                                vpImage<double> &I_score, const unsigned int step_u, const unsigned int step_v,
-                               const bool useOptimized = true);
+                               bool useOptimized = true);
 
   template <class Type>
   static void undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &newI,
@@ -450,7 +450,7 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
 */
 template <class Type>
 inline void vpImageTools::binarise(vpImage<Type> &I, Type threshold1, Type threshold2, Type value1, Type value2,
-                                   Type value3, const bool useLUT)
+                                   Type value3, bool useLUT)
 {
   if (useLUT) {
     std::cerr << "LUT not available for this type ! Will use the iteration method." << std::endl;
@@ -482,7 +482,7 @@ inline void vpImageTools::binarise(vpImage<Type> &I, Type threshold1, Type thres
 */
 template <>
 inline void vpImageTools::binarise(vpImage<unsigned char> &I, unsigned char threshold1, unsigned char threshold2,
-                                   unsigned char value1, unsigned char value2, unsigned char value3, const bool useLUT)
+                                   unsigned char value1, unsigned char value2, unsigned char value3, bool useLUT)
 {
   if (useLUT) {
     // Construct the LUT
