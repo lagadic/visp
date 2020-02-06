@@ -376,7 +376,7 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpIm
   vpMath::saturate, otherwise overflow may occur.
 */
 void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                            vpImage<unsigned char> &Ires, const bool saturate)
+                            vpImage<unsigned char> &Ires, bool saturate)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
     throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
@@ -418,7 +418,7 @@ void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsi
   vpMath::saturate, otherwise overflow may occur.
 */
 void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                                 vpImage<unsigned char> &Ires, const bool saturate)
+                                 vpImage<unsigned char> &Ires, bool saturate)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
     throw(vpException(vpException::dimensionError, "The two images do not have the same size"));

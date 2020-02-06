@@ -155,7 +155,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
 }
 
 void regularImageAdd(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, vpImage<unsigned char> &Ires,
-                     const bool saturate)
+                     bool saturate)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
     throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
@@ -175,7 +175,7 @@ void regularImageAdd(const vpImage<unsigned char> &I1, const vpImage<unsigned ch
 }
 
 void regularImageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                          vpImage<unsigned char> &Ires, const bool saturate)
+                          vpImage<unsigned char> &Ires, bool saturate)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
     throw(vpException(vpException::dimensionError, "The two images do not have the same size"));

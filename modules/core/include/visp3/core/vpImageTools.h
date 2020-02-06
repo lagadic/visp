@@ -124,10 +124,10 @@ public:
   static void imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2, vpImage<vpRGBa> &Idiff);
 
   static void imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, vpImage<unsigned char> &Ires,
-                       const bool saturate = false);
+                       bool saturate = false);
 
   static void imageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                            vpImage<unsigned char> &Ires, const bool saturate = false);
+                            vpImage<unsigned char> &Ires, bool saturate = false);
 
   static void initUndistortMap(const vpCameraParameters &cam, unsigned int width, unsigned int height,
                                vpArray2D<int> &mapU, vpArray2D<int> &mapV,

@@ -636,7 +636,7 @@ public:
     Ogre rendering options) when Ogre visibility is enabled. By default, this
     functionality is turned off.
   */
-  inline virtual void setOgreShowConfigDialog(const bool showConfigDialog) { ogreShowConfigDialog = showConfigDialog; }
+  inline virtual void setOgreShowConfigDialog(bool showConfigDialog) { ogreShowConfigDialog = showConfigDialog; }
 
   /*!
     Set the filename used to save the initial pose computed using the

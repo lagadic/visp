@@ -740,7 +740,7 @@ public:
   void reset();
 
   void saveLearningData(const std::string &filename, const bool binaryMode = false,
-                        const bool saveTrainingImages = true);
+                        bool saveTrainingImages = true);
 
   /*!
     Set if the covariance matrix has to be computed in the Virtual Visual
@@ -1151,7 +1151,7 @@ public:
     \param ransacVVS : True to use ViSP function, otherwise use OpenCV
     function
   */
-  inline void setUseRansacVVS(const bool ransacVVS) { m_useRansacVVS = ransacVVS; }
+  inline void setUseRansacVVS(bool ransacVVS) { m_useRansacVVS = ransacVVS; }
 
   /*!
     Set the flag to filter matches where multiple query keypoints are matched
@@ -1159,7 +1159,7 @@ public:
 
     \param singleMatchFilter : True to use the single match filter.
    */
-  inline void setUseSingleMatchFilter(const bool singleMatchFilter) { m_useSingleMatchFilter = singleMatchFilter; }
+  inline void setUseSingleMatchFilter(bool singleMatchFilter) { m_useSingleMatchFilter = singleMatchFilter; }
 
 private:
   //! If true, compute covariance matrix if the user select the pose

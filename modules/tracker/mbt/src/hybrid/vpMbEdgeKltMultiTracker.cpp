@@ -1876,7 +1876,7 @@ void vpMbEdgeKltMultiTracker::setNearClippingDistance(const std::string &cameraN
   Ogre rendering options) when Ogre visibility is enabled. By default, this
   functionality is turned off.
 */
-void vpMbEdgeKltMultiTracker::setOgreShowConfigDialog(const bool showConfigDialog)
+void vpMbEdgeKltMultiTracker::setOgreShowConfigDialog(bool showConfigDialog)
 {
   vpMbEdgeMultiTracker::setOgreShowConfigDialog(showConfigDialog);
   vpMbKltMultiTracker::setOgreShowConfigDialog(showConfigDialog);

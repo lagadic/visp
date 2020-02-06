@@ -251,7 +251,7 @@ public:
     Ogre rendering options) when Ogre visibility is enabled. By default, this
     functionality is turned off.
   */
-  inline void setOgreShowConfigDialog(const bool showConfigDialog) { ogreShowConfigDialog = showConfigDialog; }
+  inline void setOgreShowConfigDialog(bool showConfigDialog) { ogreShowConfigDialog = showConfigDialog; }
 #endif
 
   unsigned int setVisible(unsigned int width, unsigned int height, const vpCameraParameters &cam,

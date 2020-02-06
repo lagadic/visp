@@ -4245,7 +4245,7 @@ void vpKeyPoint::reset()
    \param saveTrainingImages : If true, save also the training
    images on disk
  */
-void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, const bool saveTrainingImages)
+void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, bool saveTrainingImages)
 {
   std::string parent = vpIoTools::getParent(filename);
   if (!parent.empty()) {

@@ -388,7 +388,7 @@ public:
   virtual void setNearClippingDistance(const double &dist1, const double &dist2);
   virtual void setNearClippingDistance(const std::map<std::string, double> &mapOfDists);
 
-  virtual void setOgreShowConfigDialog(const bool showConfigDialog);
+  virtual void setOgreShowConfigDialog(bool showConfigDialog);
   virtual void setOgreVisibilityTest(const bool &v);
 
   virtual void setOptimizationMethod(const vpMbtOptimizationMethod &opt);

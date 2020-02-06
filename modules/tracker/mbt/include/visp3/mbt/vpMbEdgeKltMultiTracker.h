@@ -337,7 +337,7 @@ public:
   virtual void setNearClippingDistance(const double &dist);
   virtual void setNearClippingDistance(const std::string &cameraName, const double &dist);
 
-  virtual void setOgreShowConfigDialog(const bool showConfigDialog);
+  virtual void setOgreShowConfigDialog(bool showConfigDialog);
 
   virtual void setOgreVisibilityTest(const bool &v);
 

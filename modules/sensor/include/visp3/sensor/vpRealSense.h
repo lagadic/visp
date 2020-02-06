@@ -434,7 +434,7 @@ public:
     }
   };
 
-  void setEnableStream(const rs::stream &stream, const bool status);
+  void setEnableStream(const rs::stream &stream, bool status);
 
   //! Set the value used when the pixel value (u, v) in the depth map is
   //! invalid for the point cloud. For instance, the Point Cloud Library (PCL)

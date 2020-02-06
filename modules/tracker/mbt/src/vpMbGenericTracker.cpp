@@ -4446,7 +4446,7 @@ void vpMbGenericTracker::setNearClippingDistance(const std::map<std::string, dou
 
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setOgreShowConfigDialog(const bool showConfigDialog)
+void vpMbGenericTracker::setOgreShowConfigDialog(bool showConfigDialog)
 {
   vpMbTracker::setOgreShowConfigDialog(showConfigDialog);
 

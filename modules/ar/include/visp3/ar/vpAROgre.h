@@ -255,7 +255,7 @@ public:
     \param showConfigDialog : if true, shows the dialog window (used to set
     the display options)
   */
-  inline void setShowConfigDialog(const bool showConfigDialog) { mshowConfigDialog = showConfigDialog; }
+  inline void setShowConfigDialog(bool showConfigDialog) { mshowConfigDialog = showConfigDialog; }
 
   void setVisibility(const std::string &sceneName, bool isVisible);
 
