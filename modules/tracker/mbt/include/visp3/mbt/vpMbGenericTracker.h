@@ -90,7 +90,7 @@ public:
   };
 
   vpMbGenericTracker();
-  vpMbGenericTracker(const unsigned int nbCameras, const int trackerType = EDGE_TRACKER);
+  vpMbGenericTracker(unsigned int nbCameras, const int trackerType = EDGE_TRACKER);
   explicit vpMbGenericTracker(const std::vector<int> &trackerTypes);
   vpMbGenericTracker(const std::vector<std::string> &cameraNames, const std::vector<int> &trackerTypes);
 

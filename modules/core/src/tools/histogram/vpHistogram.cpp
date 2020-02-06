@@ -235,7 +235,7 @@ void vpHistogram::init(unsigned size_)
   \param nbins : Number of bins to compute the histogram.
   \param nbThreads : Number of threads to use for the computation.
 */
-void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int nbins, const unsigned int nbThreads)
+void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins, unsigned int nbThreads)
 {
   if (size != nbins) {
     if (histogram != NULL) {

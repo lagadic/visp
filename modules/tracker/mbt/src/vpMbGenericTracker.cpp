@@ -60,7 +60,7 @@ vpMbGenericTracker::vpMbGenericTracker()
   m_mapOfFeatureFactors[DEPTH_DENSE_TRACKER] = 1.0;
 }
 
-vpMbGenericTracker::vpMbGenericTracker(const unsigned int nbCameras, const int trackerType)
+vpMbGenericTracker::vpMbGenericTracker(unsigned int nbCameras, const int trackerType)
   : m_error(), m_L(), m_mapOfCameraTransformationMatrix(), m_mapOfFeatureFactors(), m_mapOfTrackers(),
     m_percentageGdPt(0.4), m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError()
 {

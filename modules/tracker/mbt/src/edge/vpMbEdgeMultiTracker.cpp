@@ -67,7 +67,7 @@ vpMbEdgeMultiTracker::vpMbEdgeMultiTracker()
 
   \param nbCameras : Number of cameras to use.
 */
-vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(const unsigned int nbCameras)
+vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(unsigned int nbCameras)
   : m_mapOfCameraTransformationMatrix(), m_mapOfEdgeTrackers(), m_mapOfPyramidalImages(),
     m_referenceCameraName("Camera"), m_L_edgeMulti(), m_error_edgeMulti(), m_w_edgeMulti(), m_weightedError_edgeMulti()
 {

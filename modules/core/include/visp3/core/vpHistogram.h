@@ -238,7 +238,7 @@ public:
     }
   };
 
-  void calculate(const vpImage<unsigned char> &I, const unsigned int nbins = 256, const unsigned int nbThreads = 1);
+  void calculate(const vpImage<unsigned char> &I, unsigned int nbins = 256, unsigned int nbThreads = 1);
 
   void display(const vpImage<unsigned char> &I, const vpColor &color = vpColor::white, unsigned int thickness = 2,
                unsigned int maxValue_ = 0);

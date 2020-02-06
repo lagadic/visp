@@ -71,7 +71,7 @@ vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker()
 
   \param nbCameras : Number of cameras to use.
 */
-vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker(const unsigned int nbCameras)
+vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker(unsigned int nbCameras)
   : vpMbEdgeMultiTracker(nbCameras), vpMbKltMultiTracker(nbCameras), m_factorKLT(0.65), m_factorMBT(0.35),
     m_thresholdKLT(2.), m_thresholdMBT(2.), m_mapOfCameraTransformationMatrix(), m_referenceCameraName("Camera"),
     m_nbrow(0), m_L_hybridMulti(), m_error_hybridMulti(), m_w_hybridMulti(), m_weightedError_hybridMulti()

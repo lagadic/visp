@@ -99,7 +99,7 @@ public:
   vpMbEdgeMultiTracker();
   // Constructor with a specified number of cameras, camera names are
   // generated
-  explicit vpMbEdgeMultiTracker(const unsigned int nbCameras);
+  explicit vpMbEdgeMultiTracker(unsigned int nbCameras);
   // Constructor with a specified list of camera names
   explicit vpMbEdgeMultiTracker(const std::vector<std::string> &cameraNames);
 

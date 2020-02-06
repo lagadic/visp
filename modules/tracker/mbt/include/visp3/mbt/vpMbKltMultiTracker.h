@@ -95,7 +95,7 @@ protected:
 
 public:
   vpMbKltMultiTracker();
-  vpMbKltMultiTracker(const unsigned int nbCameras);
+  vpMbKltMultiTracker(unsigned int nbCameras);
   vpMbKltMultiTracker(const std::vector<std::string> &cameraNames);
 
   virtual ~vpMbKltMultiTracker();

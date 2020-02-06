@@ -69,7 +69,7 @@ vpMbKltMultiTracker::vpMbKltMultiTracker()
 
   \param nbCameras : Number of cameras to use.
 */
-vpMbKltMultiTracker::vpMbKltMultiTracker(const unsigned int nbCameras)
+vpMbKltMultiTracker::vpMbKltMultiTracker(unsigned int nbCameras)
   : m_mapOfCameraTransformationMatrix(), m_mapOfKltTrackers(), m_referenceCameraName("Camera"), m_L_kltMulti(),
     m_error_kltMulti(), m_w_kltMulti(), m_weightedError_kltMulti()
 {
