@@ -103,7 +103,7 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face,
   unsigned int max_iter = 10;
   double prev_error = 1e3;
   double error = 1e3 - 1;
-  const unsigned int nPoints = static_cast<unsigned int>(point_cloud_face.size() / 3);
+  unsigned int nPoints = static_cast<unsigned int>(point_cloud_face.size() / 3);
 
   vpColVector weights(nPoints, 1.0);
   vpColVector residues(nPoints);
@@ -288,7 +288,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
       }
   }
 
-  const unsigned int nb_points_3d = static_cast<unsigned int>(points_3d.size() / 3);
+  unsigned int nb_points_3d = static_cast<unsigned int>(points_3d.size() / 3);
 
   if (nb_points_3d > 4) {
       std::vector<vpPoint> p, q;

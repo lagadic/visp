@@ -353,7 +353,7 @@ public:
   static void findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                         const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                         unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
-                        const int &maxNbTrials=10000, const bool useParallelRansac=true, const unsigned int nthreads=0,
+                        const int &maxNbTrials=10000, const bool useParallelRansac=true, unsigned int nthreads=0,
                         bool (*func)(const vpHomogeneousMatrix &) = NULL);
 
   static bool computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,

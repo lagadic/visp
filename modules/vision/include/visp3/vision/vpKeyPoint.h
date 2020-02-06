@@ -1042,7 +1042,7 @@ public:
     \param nthreads : Number of threads, if 0 the number of CPU threads will be determined
     \sa setRansacParallel
   */
-  inline void setRansacParallelNbThreads(const unsigned int nthreads)
+  inline void setRansacParallelNbThreads(unsigned int nthreads)
   {
     m_ransacParallelNbThreads = nthreads;
   }

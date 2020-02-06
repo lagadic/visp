@@ -96,7 +96,7 @@ vpPlanarObjectDetector::~vpPlanarObjectDetector() {}
   \param ip : the list of image point.
   \param nbpt : the number of point.
 */
-void vpPlanarObjectDetector::computeRoi(vpImagePoint *ip, const unsigned int nbpt)
+void vpPlanarObjectDetector::computeRoi(vpImagePoint *ip, unsigned int nbpt)
 {
   if (nbpt < 3) {
     throw vpException(vpException::badValue, "Not enough point to compute the region of interest.");

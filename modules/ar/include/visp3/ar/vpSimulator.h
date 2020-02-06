@@ -140,9 +140,9 @@ protected:
 
 public:
   //! initialize the camera view
-  virtual void initInternalViewer(const unsigned int nlig, const unsigned int ncol);
+  virtual void initInternalViewer(unsigned int nlig, unsigned int ncol);
   //! initialize the external view
-  void initExternalViewer(const unsigned int nlig, const unsigned int ncol);
+  void initExternalViewer(unsigned int nlig, unsigned int ncol);
 
 protected:
   //! thread with the main program

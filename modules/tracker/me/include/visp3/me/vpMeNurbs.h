@@ -166,7 +166,7 @@ public:
 
     \param nb_point : The number of control points used to compute the Nurbs.
   */
-  void setNbControlPoints(const unsigned int nb_point) { this->nbControlPoints = nb_point; }
+  void setNbControlPoints(unsigned int nb_point) { this->nbControlPoints = nb_point; }
 
   /*!
     Enables or disables the canny detection used during the extremities

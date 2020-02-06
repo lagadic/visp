@@ -213,7 +213,7 @@ public:
     a 6-by-6 matrix. \exception vpException::fatalError When this function is
     called.
     */
-  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true)
+  void resize(unsigned int nrows, unsigned int ncols, const bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;

@@ -151,7 +151,7 @@ private:
                                     const bool &verbose = false) const;
 
 public:
-  static const unsigned int njoint; ///< Number of joint.
+  static unsigned int njoint; ///< Number of joint.
 
 protected:
   vpHomogeneousMatrix eMc; //!< End effector to camera transformation

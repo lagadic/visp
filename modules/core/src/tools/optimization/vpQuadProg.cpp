@@ -103,7 +103,7 @@ void vpQuadProg::fromCanonicalCost(const vpMatrix &/*H*/, const vpColVector &/*c
 
 {
 #ifdef VISP_HAVE_GSL
-  const unsigned int n = H.getCols();
+  unsigned int n = H.getCols();
   if(H.getRows() != n || c.getRows() != n)
   {
     throw(vpException(vpMatrixException::dimensionError, "vpQuadProg::fromCanonicalCost: H is not square or not the same dimension as c"));
@@ -255,7 +255,7 @@ bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r,
 bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r,
                            vpColVector &x, const double &tol) const
 {
-  const unsigned int n = Q.getCols();
+  unsigned int n = Q.getCols();
   if(Q.getRows() != r.getRows() ||
      Z.getRows() != n ||
      x1.getRows() != n)
@@ -467,7 +467,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
                           vpColVector &x, const bool use_equality,
                           const double &tol)
 {
-  const unsigned int n = checkDimensions(Q, r, nullptr, nullptr, &C, &d, "solveQPi");
+  unsigned int n = checkDimensions(Q, r, nullptr, nullptr, &C, &d, "solveQPi");
 
   if(use_equality)
   {

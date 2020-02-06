@@ -660,7 +660,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
 
   auto color_format = color_frame.as<rs2::video_frame>().get_profile().format();
   const bool swap_rb = color_format == RS2_FORMAT_BGR8 || color_format == RS2_FORMAT_BGRA8;
-  const unsigned int nb_color_pixel = (color_format == RS2_FORMAT_RGB8 || color_format == RS2_FORMAT_BGR8) ? 3 : 4;
+  unsigned int nb_color_pixel = (color_format == RS2_FORMAT_RGB8 || color_format == RS2_FORMAT_BGR8) ? 3 : 4;
   const unsigned char *p_color_frame = static_cast<const unsigned char *>(color_frame.get_data());
   rs2_extrinsics identity;
   memset(identity.rotation, 0, sizeof(identity.rotation));

@@ -270,7 +270,7 @@ public:
 
 protected:
   virtual void init();
-  void computeRoi(vpImagePoint *ip, const unsigned int nbpt);
+  void computeRoi(vpImagePoint *ip, unsigned int nbpt);
   void initialiseRefCorners(const cv::Rect &_modelROI);
 };
 

@@ -154,7 +154,7 @@ protected:
                                       const std::string fct)
   {
     // check data consistency
-    const unsigned int n = Q.getCols();
+    unsigned int n = Q.getCols();
     const bool Ab = (A != nullptr && b != nullptr && A->getRows());
     const bool Cd = (C != nullptr && d != nullptr && C->getRows());
 

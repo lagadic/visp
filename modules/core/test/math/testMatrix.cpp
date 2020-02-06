@@ -382,7 +382,7 @@ int main(int argc, char *argv[])
       std::cout << "------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix insert() with same colNum " << std::endl;
       std::cout << "------------------------" << std::endl;
-      const unsigned int nb = ctest ? 10 : 100; // 10000;
+      unsigned int nb = ctest ? 10 : 100; // 10000;
       const unsigned int size = ctest ? 10 : 100;
 
       vpMatrix m_big(nb * size, 6);

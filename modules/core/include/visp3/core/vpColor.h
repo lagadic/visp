@@ -190,7 +190,7 @@ public:
   static const vpColor purple;
   static const vpColor none;
 
-  static const unsigned int nbColors;
+  static unsigned int nbColors;
   static const vpColor allColors[];
 
   /*!

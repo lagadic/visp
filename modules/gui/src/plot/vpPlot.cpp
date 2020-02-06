@@ -78,7 +78,7 @@ vpPlot::vpPlot() : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30),
   \param x,y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 */
-vpPlot::vpPlot(unsigned int graph_nbr, const unsigned int height, const unsigned int width, const int x,
+vpPlot::vpPlot(unsigned int graph_nbr, unsigned int height, unsigned int width, const int x,
                const int y, const std::string &title)
   : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30), margej(40), factori(1.f), factorj(1.)
 {
@@ -97,7 +97,7 @@ vpPlot::vpPlot(unsigned int graph_nbr, const unsigned int height, const unsigned
   \param x,y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 */
-void vpPlot::init(unsigned int graph_nbr, const unsigned int height, const unsigned int width, const int x,
+void vpPlot::init(unsigned int graph_nbr, unsigned int height, unsigned int width, const int x,
                   const int y, const std::string &title)
 {
   I.init(height, width, 255);

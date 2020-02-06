@@ -97,7 +97,7 @@
 bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const double &tol)
 {
   unsigned int m = A.getRows();
-  const unsigned int n = A.getCols();
+  unsigned int n = A.getCols();
 
   // degeneracy if A is actually null
   if(A.infinityNorm() < tol)
@@ -264,7 +264,7 @@ or \f$\mathbf{b} = \left[\begin{array}{c}0\\0\\1\end{array}\right]\f$ (not feasi
 bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
 {
   unsigned int m = A.getRows();
-  const unsigned int n = A.getCols();
+  unsigned int n = A.getCols();
 
   // degeneracy if A is actually null
   if(A.infinityNorm() < tol)
@@ -363,7 +363,7 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
                         std::vector<BoundedIndex> l, std::vector<BoundedIndex> u,
                         const double &tol)
 {
-  const unsigned int n = c.getRows();
+  unsigned int n = c.getRows();
   unsigned int m = A.getRows();
   const unsigned int p = C.getRows();
 
@@ -579,7 +579,7 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
 */
 bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVector &x, const double &tol)
 {
-  const unsigned int n = c.getRows();
+  unsigned int n = c.getRows();
   unsigned int m = A.getRows();
 
   // find a feasible point is passed x is not

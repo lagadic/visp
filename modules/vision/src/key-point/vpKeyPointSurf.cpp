@@ -222,7 +222,7 @@ unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
 
   cvExtractSURF(model, 0, &ref_keypoints, &ref_descriptors, storage, params);
 
-  const unsigned int nbPoints = (unsigned int)ref_keypoints->total;
+  unsigned int nbPoints = (unsigned int)ref_keypoints->total;
 
   referenceImagePointsList.resize(nbPoints);
 

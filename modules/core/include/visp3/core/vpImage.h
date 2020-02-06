@@ -328,7 +328,7 @@ public:
   friend std::ostream &operator<<(std::ostream &s, const vpImage<double> &I);
 
   // Perform a look-up table transformation
-  void performLut(const Type (&lut)[256], const unsigned int nbThreads = 1);
+  void performLut(const Type (&lut)[256], unsigned int nbThreads = 1);
 
   // Returns a new image that's a quarter size of the current image
   void quarterSizeImage(vpImage<Type> &res) const;
@@ -1742,7 +1742,7 @@ template <class Type> void vpImage<Type>::performLut(const Type (&)[256], const 
   the computation.
 */
 template <>
-inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], const unsigned int nbThreads)
+inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], unsigned int nbThreads)
 {
   unsigned int size = getWidth() * getHeight();
   unsigned char *ptrStart = (unsigned char *)bitmap;
@@ -1819,7 +1819,7 @@ inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], 
   intensity to his new value. \param nbThreads : Number of threads to use for
   the computation.
 */
-template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], const unsigned int nbThreads)
+template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], unsigned int nbThreads)
 {
   unsigned int size = getWidth() * getHeight();
   unsigned char *ptrStart = (unsigned char *)bitmap;

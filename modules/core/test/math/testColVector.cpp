@@ -441,7 +441,7 @@ int main()
 
   {
     // Test insert with big vector
-    const unsigned int nb = 1000;
+    unsigned int nb = 1000;
     const unsigned int size = 10000;
     std::vector<vpColVector> vec(nb);
 

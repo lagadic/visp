@@ -75,7 +75,7 @@ class VISP_EXPORT vpPtu46
 
 public: /* Constants */
   /** Nombre d'articulations du robot. */
-  static const unsigned int ndof; /*!< Number of dof */
+  static unsigned int ndof; /*!< Number of dof */
 
   /** Geometric model */
   static const float L;

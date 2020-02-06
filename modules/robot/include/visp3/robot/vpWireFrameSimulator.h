@@ -577,7 +577,7 @@ public:
 
       \param nbPt : The desired number of position which are saved.
     */
-  inline void setNbPtTrajectory(const unsigned int nbPt) { nbrPtLimit = nbPt; }
+  inline void setNbPtTrajectory(unsigned int nbPt) { nbrPtLimit = nbPt; }
 
   /*!
       Set the pose between the object and the fixed world frame.

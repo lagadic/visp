@@ -116,7 +116,7 @@ public:
 #ifdef VISP_HAVE_PCL
   virtual void track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
-  virtual void track(const std::vector<vpColVector> &point_cloud, const unsigned int width, const unsigned int height);
+  virtual void track(const std::vector<vpColVector> &point_cloud, unsigned int width, unsigned int height);
 
 protected:
   //! Set of faces describing the object used only for display with scan line.
@@ -148,7 +148,7 @@ protected:
 
   void addFace(vpMbtPolygon &polygon, const bool alreadyClose);
 
-  void computeVisibility(const unsigned int width, const unsigned int height);
+  void computeVisibility(unsigned int width, unsigned int height);
 
   void computeVVS();
   virtual void computeVVSInit();
@@ -169,7 +169,7 @@ protected:
 #ifdef VISP_HAVE_PCL
   void segmentPointCloud(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
-  void segmentPointCloud(const std::vector<vpColVector> &point_cloud, const unsigned int width,
-                         const unsigned int height);
+  void segmentPointCloud(const std::vector<vpColVector> &point_cloud, unsigned int width,
+                         unsigned int height);
 };
 #endif
