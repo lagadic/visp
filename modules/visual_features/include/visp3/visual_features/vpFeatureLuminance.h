@@ -126,7 +126,7 @@ public:
   void print(const unsigned int select = FEATURE_ALL) const;
 
   void setCameraParameters(vpCameraParameters &_cam);
-  void set_Z(const double Z);
+  void set_Z(double Z);
 
 public:
   vpCameraParameters cam;

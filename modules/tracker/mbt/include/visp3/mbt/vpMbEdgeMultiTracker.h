@@ -155,25 +155,25 @@ public:
   virtual vpMbHiddenFaces<vpMbtPolygon> &getFaces(const std::string &cameraName);
   virtual std::map<std::string, vpMbHiddenFaces<vpMbtPolygon> > getFaces() const;
 
-  void getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, const unsigned int level = 0) const;
+  void getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, unsigned int level = 0) const;
   virtual void getLcircle(const std::string &cameraName, std::list<vpMbtDistanceCircle *> &circlesList,
-                          const unsigned int level = 0) const;
+                          unsigned int level = 0) const;
 
-  void getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, const unsigned int level = 0) const;
+  void getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, unsigned int level = 0) const;
   virtual void getLcylinder(const std::string &cameraName, std::list<vpMbtDistanceCylinder *> &cylindersList,
-                            const unsigned int level = 0) const;
+                            unsigned int level = 0) const;
 
-  void getLline(std::list<vpMbtDistanceLine *> &linesList, const unsigned int level = 0) const;
+  void getLline(std::list<vpMbtDistanceLine *> &linesList, unsigned int level = 0) const;
   virtual void getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *> &linesList,
-                        const unsigned int level = 0) const;
+                        unsigned int level = 0) const;
 
   virtual void getMovingEdge(vpMe &p_me) const;
   virtual vpMe getMovingEdge() const;
   virtual void getMovingEdge(const std::string &cameraName, vpMe &p_me) const;
   virtual vpMe getMovingEdge(const std::string &cameraName) const;
 
-  virtual unsigned int getNbPoints(const unsigned int level = 0) const;
-  virtual unsigned int getNbPoints(const std::string &cameraName, const unsigned int level = 0) const;
+  virtual unsigned int getNbPoints(unsigned int level = 0) const;
+  virtual unsigned int getNbPoints(const std::string &cameraName, unsigned int level = 0) const;
 
   virtual unsigned int getNbPolygon() const;
   virtual unsigned int getNbPolygon(const std::string &cameraName) const;
@@ -281,7 +281,7 @@ public:
   virtual void setFarClippingDistance(const double &dist);
   virtual void setFarClippingDistance(const std::string &cameraName, const double &dist);
 
-  virtual void setGoodMovingEdgesRatioThreshold(const double threshold);
+  virtual void setGoodMovingEdgesRatioThreshold(double threshold);
 
 #ifdef VISP_HAVE_OGRE
   /*!
@@ -379,8 +379,8 @@ protected:
 
   virtual void computeProjectionError();
 
-  virtual void computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages, const unsigned int lvl);
-  virtual void computeVVSFirstPhasePoseEstimation(const unsigned int iter, bool &isoJoIdentity_);
+  virtual void computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages, unsigned int lvl);
+  virtual void computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity_);
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
   using vpMbEdgeTracker::computeVVSInteractionMatrixAndResidu;

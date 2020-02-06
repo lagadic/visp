@@ -1452,8 +1452,8 @@ int main()
 
   \sa setPosition()
 */
-void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame, const double pos1, const double pos2,
-                                      const double pos3, const double pos4, const double pos5, const double pos6)
+void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2,
+                                      double pos3, double pos4, double pos5,  double pos6)
 {
   try {
     vpColVector position(6);

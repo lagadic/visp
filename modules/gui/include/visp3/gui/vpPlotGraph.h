@@ -183,7 +183,7 @@ public:
   void initScale(vpImage<unsigned char> &I, double xmin, double xmax, const int nbDivx, double ymin,
                  double ymax, const int nbDivy, const bool gx, const bool gy);
   void initScale(vpImage<unsigned char> &I, double xmin, double xmax, const int nbDivx, double ymin,
-                 double ymax, const int nbDivy, const double zmin, const double zmax, const int nbDivz,
+                 double ymax, const int nbDivy, double zmin, double zmax, const int nbDivz,
                  const bool gx, const bool gy);
 
   void displayGrid(vpImage<unsigned char> &I);
@@ -201,7 +201,7 @@ public:
 
   void plot(vpImage<unsigned char> &I, unsigned int curveNb, double x, double y);
   vpMouseButton::vpMouseButtonType plot(vpImage<unsigned char> &I, unsigned int curveNb, double x,
-                                        double y, const double z);
+                                        double y, double z);
   void replot(vpImage<unsigned char> &I);
   void replot3D(vpImage<unsigned char> &I);
 

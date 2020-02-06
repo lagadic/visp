@@ -751,7 +751,7 @@ void vpMbtFaceDepthNormal::computeVisibilityDisplay()
   }
 }
 
-void vpMbtFaceDepthNormal::computeNormalVisibility(const double nx, const double ny, const double nz,
+void vpMbtFaceDepthNormal::computeNormalVisibility(double nx, double ny, double nz,
                                                    const vpHomogeneousMatrix &cMo, const vpCameraParameters &camera,
                                                    vpColVector &correct_normal, vpPoint &centroid)
 {
@@ -838,7 +838,7 @@ void vpMbtFaceDepthNormal::computeNormalVisibility(const float nx, const float n
 }
 #endif
 
-void vpMbtFaceDepthNormal::computeNormalVisibility(const double nx, const double ny, const double nz,
+void vpMbtFaceDepthNormal::computeNormalVisibility(double nx, double ny, double nz,
                                                    const vpColVector &centroid_point, vpColVector &face_normal)
 {
   face_normal.resize(3, false);

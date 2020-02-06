@@ -170,15 +170,15 @@ public:
   virtual double getKltThresholdAcceptation() const;
 #endif
 
-  virtual void getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, const unsigned int level = 0) const;
+  virtual void getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, unsigned int level = 0) const;
   virtual void getLcircle(const std::string &cameraName, std::list<vpMbtDistanceCircle *> &circlesList,
-                          const unsigned int level = 0) const;
-  virtual void getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, const unsigned int level = 0) const;
+                          unsigned int level = 0) const;
+  virtual void getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, unsigned int level = 0) const;
   virtual void getLcylinder(const std::string &cameraName, std::list<vpMbtDistanceCylinder *> &cylindersList,
-                            const unsigned int level = 0) const;
-  virtual void getLline(std::list<vpMbtDistanceLine *> &linesList, const unsigned int level = 0) const;
+                            unsigned int level = 0) const;
+  virtual void getLline(std::list<vpMbtDistanceLine *> &linesList, unsigned int level = 0) const;
   virtual void getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *> &linesList,
-                        const unsigned int level = 0) const;
+                        unsigned int level = 0) const;
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
@@ -195,14 +195,14 @@ public:
   virtual void getMovingEdge(vpMe &me1, vpMe &me2) const;
   virtual void getMovingEdge(std::map<std::string, vpMe> &mapOfMovingEdges) const;
 
-  virtual unsigned int getNbPoints(const unsigned int level = 0) const;
-  virtual void getNbPoints(std::map<std::string, unsigned int> &mapOfNbPoints, const unsigned int level = 0) const;
+  virtual unsigned int getNbPoints(unsigned int level = 0) const;
+  virtual void getNbPoints(std::map<std::string, unsigned int> &mapOfNbPoints, unsigned int level = 0) const;
 
   virtual unsigned int getNbPolygon() const;
   virtual void getNbPolygon(std::map<std::string, unsigned int> &mapOfNbPolygons) const;
 
-  virtual vpMbtPolygon *getPolygon(const unsigned int index);
-  virtual vpMbtPolygon *getPolygon(const std::string &cameraName, const unsigned int index);
+  virtual vpMbtPolygon *getPolygon(unsigned int index);
+  virtual vpMbtPolygon *getPolygon(const std::string &cameraName, unsigned int index);
 
   virtual std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
   getPolygonFaces(const bool orderPolygons = true, bool useVisibility = true, const bool clipPolygon = false);
@@ -342,7 +342,7 @@ public:
   virtual void setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method);
   virtual void setDepthNormalPclPlaneEstimationMethod(const int method);
   virtual void setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter);
-  virtual void setDepthNormalPclPlaneEstimationRansacThreshold(const double thresold);
+  virtual void setDepthNormalPclPlaneEstimationRansacThreshold(double threshold);
   virtual void setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY);
 
   virtual void setDisplayFeatures(bool displayF);
@@ -353,7 +353,7 @@ public:
 
   virtual void setFeatureFactors(const std::map<vpTrackerType, double> &mapOfFeatureFactors);
 
-  virtual void setGoodMovingEdgesRatioThreshold(const double threshold);
+  virtual void setGoodMovingEdgesRatioThreshold(double threshold);
 
 #ifdef VISP_HAVE_OGRE
   virtual void setGoodNbRayCastingAttemptsRatio(const double &ratio);
@@ -369,7 +369,7 @@ public:
   virtual void setKltOpencv(const vpKltOpencv &t1, const vpKltOpencv &t2);
   virtual void setKltOpencv(const std::map<std::string, vpKltOpencv> &mapOfKlts);
 
-  virtual void setKltThresholdAcceptation(const double th);
+  virtual void setKltThresholdAcceptation(double th);
 
 #endif
 
@@ -409,7 +409,7 @@ public:
   virtual void setProjectionErrorComputation(const bool &flag);
 
   virtual void setProjectionErrorDisplay(const bool display);
-  virtual void setProjectionErrorDisplayArrowLength(const unsigned int length);
+  virtual void setProjectionErrorDisplayArrowLength(unsigned int length);
   virtual void setProjectionErrorDisplayArrowThickness(unsigned int thickness);
 
   virtual void setReferenceCameraName(const std::string &referenceCameraName);
@@ -466,10 +466,10 @@ protected:
   using vpMbTracker::computeVVSWeights;
   virtual void computeVVSWeights();
 
-  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
+  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
                           int idFace = 0, const std::string &name = "");
 
-  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, int idFace = 0,
+  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace = 0,
                             const std::string &name = "");
 
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
@@ -588,10 +588,10 @@ private:
     using vpMbTracker::computeVVSWeights;
     virtual void computeVVSWeights();
 
-    virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
+    virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
                             int idFace = 0, const std::string &name = "");
 
-    virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, int idFace = 0,
+    virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace = 0,
                               const std::string &name = "");
 
     virtual void initFaceFromCorners(vpMbtPolygon &polygon);

@@ -451,26 +451,26 @@ void vpPoint::projection()
 }
 
 //! Set the point X coordinate in the camera frame.
-void vpPoint::set_X(const double X) { cP[0] = X; }
+void vpPoint::set_X(double X) { cP[0] = X; }
 //! Set the point Y coordinate in the camera frame.
-void vpPoint::set_Y(const double Y) { cP[1] = Y; }
+void vpPoint::set_Y(double Y) { cP[1] = Y; }
 //! Set the point Z coordinate in the camera frame.
-void vpPoint::set_Z(const double Z) { cP[2] = Z; }
+void vpPoint::set_Z(double Z) { cP[2] = Z; }
 //! Set the point W coordinate in the camera frame.
-void vpPoint::set_W(const double W) { cP[3] = W; }
+void vpPoint::set_W(double W) { cP[3] = W; }
 
 //! Set the point X coordinate in the object frame.
-void vpPoint::set_oX(const double oX) { oP[0] = oX; }
+void vpPoint::set_oX(double oX) { oP[0] = oX; }
 //! Set the point Y coordinate in the object frame.
-void vpPoint::set_oY(const double oY) { oP[1] = oY; }
+void vpPoint::set_oY(double oY) { oP[1] = oY; }
 //! Set the point Z coordinate in the object frame.
-void vpPoint::set_oZ(const double oZ) { oP[2] = oZ; }
+void vpPoint::set_oZ(double oZ) { oP[2] = oZ; }
 //! Set the point W coordinate in the object frame.
-void vpPoint::set_oW(const double oW) { oP[3] = oW; }
+void vpPoint::set_oW(double oW) { oP[3] = oW; }
 
 //! Set the point x coordinate in the image plane.
 void vpPoint::set_x(double x) { p[0] = x; }
 //! Set the point y coordinate in the image plane.
 void vpPoint::set_y(double y) { p[1] = y; }
 //! Set the point w coordinate in the image plane.
-void vpPoint::set_w(const double w) { p[2] = w; }
+void vpPoint::set_w(double w) { p[2] = w; }

@@ -362,7 +362,7 @@ public:
 
   virtual void setScanLineVisibilityTest(const bool &v);
 
-  virtual void setThresholdAcceptation(const double th);
+  virtual void setThresholdAcceptation(double th);
 
   virtual void testTracking();
 
@@ -379,7 +379,7 @@ protected:
   using vpMbKltMultiTracker::computeVVS;
 
   virtual void computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                          const unsigned int lvl = 0);
+                          unsigned int lvl = 0);
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
   using vpMbEdgeMultiTracker::computeVVSInteractionMatrixAndResidu;

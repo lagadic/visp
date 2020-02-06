@@ -115,13 +115,13 @@ public:
   void computeVisibility();
   void computeVisibilityDisplay();
 
-  void computeNormalVisibility(const double nx, const double ny, const double nz, const vpColVector &centroid_point,
+  void computeNormalVisibility(double nx, double ny, double nz, const vpColVector &centroid_point,
                                vpColVector &face_normal);
 #ifdef VISP_HAVE_PCL
   void computeNormalVisibility(const float nx, const float ny, const float nz, const pcl::PointXYZ &centroid_point,
                                pcl::PointXYZ &face_normal);
 #endif
-  void computeNormalVisibility(const double nx, const double ny, const double nz, const vpHomogeneousMatrix &cMo,
+  void computeNormalVisibility(double nx, double ny, double nz, const vpHomogeneousMatrix &cMo,
                                const vpCameraParameters &camera, vpColVector &correct_normal, vpPoint &centroid);
 
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
@@ -156,7 +156,7 @@ public:
 
   inline void setPclPlaneEstimationRansacMaxIter(const int maxIter) { m_pclPlaneEstimationRansacMaxIter = maxIter; }
 
-  inline void setPclPlaneEstimationRansacThreshold(const double threshold)
+  inline void setPclPlaneEstimationRansacThreshold(double threshold)
   {
     m_pclPlaneEstimationRansacThreshold = threshold;
   }

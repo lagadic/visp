@@ -99,7 +99,7 @@ vpFeatureDepth::vpFeatureDepth() : x(0), y(0), Z(1.) { init(); }
 
   \param LogZoverZstar : \f$ log(\frac{Z}{Z^*}) \f$ value to set.
 */
-void vpFeatureDepth::set_LogZoverZstar(const double LogZoverZstar) { s[0] = LogZoverZstar; }
+void vpFeatureDepth::set_LogZoverZstar(double LogZoverZstar) { s[0] = LogZoverZstar; }
 
 /*!
   Get the value of \f$ log(\frac{Z}{Z^*}) \f$ which represents the logarithm
@@ -155,7 +155,7 @@ double vpFeatureDepth::get_y() const { return y; }
 
   \param Z_ : \f$ Z \f$ value to set.
 */
-void vpFeatureDepth::set_Z(const double Z_)
+void vpFeatureDepth::set_Z(double Z_)
 {
   this->Z = Z_;
   flags[2] = true;
@@ -181,7 +181,7 @@ double vpFeatureDepth::get_Z() const { return Z; }
   \param Z_ : \f$ Z \f$ value to set.
   \param LogZoverZstar : \f$ log(\frac{Z}{Z^*}) \f$ value to set.
 */
-void vpFeatureDepth::set_xyZLogZoverZstar(double x_, double y_, const double Z_, const double LogZoverZstar)
+void vpFeatureDepth::set_xyZLogZoverZstar(double x_, double y_, double Z_, double LogZoverZstar)
 {
   set_x(x_);
   set_y(y_);
@@ -369,7 +369,7 @@ void vpFeatureDepth::print(const unsigned int select) const
   \param Z_ : The \f$ Z \f$ parameter.
   \param LogZoverZstar : The \f$ log(\frac{Z}{Z^*}) \f$ parameter.
 */
-void vpFeatureDepth::buildFrom(double x_, double y_, const double Z_, const double LogZoverZstar)
+void vpFeatureDepth::buildFrom(double x_, double y_, double Z_, double LogZoverZstar)
 {
 
   s[0] = LogZoverZstar;

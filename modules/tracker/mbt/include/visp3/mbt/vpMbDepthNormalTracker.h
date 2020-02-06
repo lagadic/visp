@@ -94,7 +94,7 @@ public:
 
   virtual void setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter);
 
-  virtual void setDepthNormalPclPlaneEstimationRansacThreshold(const double thresold);
+  virtual void setDepthNormalPclPlaneEstimationRansacThreshold(double thresold);
 
   virtual void setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY);
 
@@ -171,10 +171,10 @@ protected:
 
   virtual std::vector<std::vector<double> > getFeaturesForDisplayDepthNormal();
 
-  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
+  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
                           int idFace = 0, const std::string &name = "");
 
-  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, int idFace = 0,
+  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace = 0,
                             const std::string &name = "");
 
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);

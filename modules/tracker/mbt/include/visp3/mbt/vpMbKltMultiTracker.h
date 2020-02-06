@@ -102,7 +102,7 @@ public:
 
   /** @name Inherited functionalities from vpMbKltMultiTracker */
   //@{
-  virtual void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r,
+  virtual void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, double r,
                          const std::string &name = "");
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
@@ -292,7 +292,7 @@ public:
   virtual void setKltOpencv(const vpKltOpencv &t);
   virtual void setKltOpencv(const std::map<std::string, vpKltOpencv> &mapOfOpenCVTrackers);
 
-  virtual void setKltThresholdAcceptation(const double th);
+  virtual void setKltThresholdAcceptation(double th);
 
   virtual void setLod(bool useLod, const std::string &name = "");
   virtual void setLod(bool useLod, const std::string &cameraName, const std::string &name);
@@ -344,7 +344,7 @@ public:
   //@{
   /* vp_deprecated */ virtual std::map<std::string, int> getNbKltPoints() const;
   /* vp_deprecated */ virtual void setMaskBorder(const unsigned int &e);
-  /* vp_deprecated */ virtual void setThresholdAcceptation(const double th);
+  /* vp_deprecated */ virtual void setThresholdAcceptation(double th);
   //@}
 
 protected:

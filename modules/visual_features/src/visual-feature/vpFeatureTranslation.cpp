@@ -161,7 +161,7 @@ void vpFeatureTranslation::setFeatureTranslationType(const vpFeatureTranslationR
   \sa get_Tx()
 
 */
-void vpFeatureTranslation::set_Tx(const double t_x) { s[0] = t_x; }
+void vpFeatureTranslation::set_Tx(double t_x) { s[0] = t_x; }
 /*!
 
   Initialise the \f$t_y \f$ subset value of the 3D
@@ -171,7 +171,7 @@ void vpFeatureTranslation::set_Tx(const double t_x) { s[0] = t_x; }
   \sa get_Ty()
 
 */
-void vpFeatureTranslation::set_Ty(const double t_y) { s[1] = t_y; }
+void vpFeatureTranslation::set_Ty(double t_y) { s[1] = t_y; }
 /*!
 
   Initialise the \f$t_z \f$ subset value of the 3D
@@ -181,7 +181,7 @@ void vpFeatureTranslation::set_Ty(const double t_y) { s[1] = t_y; }
   \sa get_Tz()
 
 */
-void vpFeatureTranslation::set_Tz(const double t_z) { s[2] = t_z; }
+void vpFeatureTranslation::set_Tz(double t_z) { s[2] = t_z; }
 
 /*!
 

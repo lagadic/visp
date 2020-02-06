@@ -59,7 +59,7 @@
 #if defined(VISP_HAVE_DISPLAY)
 
 int laFonctionSansNom(const double delta);
-void getGrid3DPoint(const double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3);
+void getGrid3DPoint(double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3);
 
 vpPlotGraph::vpPlotGraph()
   : xorg(0.), yorg(0.), zoomx(1.), zoomy(1.), xmax(10), ymax(10), xmin(0), ymin(-10), xdelt(1), ydelt(1), gridx(true),
@@ -459,8 +459,8 @@ void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_ma
 }
 
 void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, const int nbDivx,
-                            double y_min, double y_max, const int nbDivy, const double z_min,
-                            const double z_max, const int nbDivz, const bool gx, const bool gy)
+                            double y_min, double y_max, const int nbDivy, double z_min,
+                            double z_max, const int nbDivz, const bool gx, const bool gy)
 {
   this->xmin = x_min;
   this->xmax = x_max;
@@ -837,7 +837,7 @@ void vpPlotGraph::computeGraphParameters3D()
   ptZorg = w_zval - zoomz_3D * zmax;
 }
 
-void getGrid3DPoint(const double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3)
+void getGrid3DPoint(double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3)
 {
   if (pente <= 1) {
     ip1 = iPunit - vpImagePoint(3, 0);
@@ -1043,7 +1043,7 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
 }
 
 vpMouseButton::vpMouseButtonType vpPlotGraph::plot(vpImage<unsigned char> &I, unsigned int curveNb,
-                                                   double x, double y, const double z)
+                                                   double x, double y, double z)
 {
   if (!scaleInitialized) {
     if (x < 0) {

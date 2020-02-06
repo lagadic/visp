@@ -235,7 +235,7 @@ public:
 
     \param first_frame : The first frame index.
   */
-  inline void setFirstFrameIndex(const unsigned int first_frame) { this->firstFrame = first_frame; }
+  inline void setFirstFrameIndex(unsigned int first_frame) { this->firstFrame = first_frame; }
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
   /*!
       Sets the framerate in Hz of the video when encoding.

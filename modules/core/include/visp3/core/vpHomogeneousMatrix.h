@@ -157,8 +157,7 @@ public:
   explicit vpHomogeneousMatrix(const vpPoseVector &p);
   explicit vpHomogeneousMatrix(const std::vector<float> &v);
   explicit vpHomogeneousMatrix(const std::vector<double> &v);
-  vpHomogeneousMatrix(const double tx, const double ty, const double tz, const double tux, const double tuy,
-                      const double tuz);
+  vpHomogeneousMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
   /*!
     Destructor.
   */
@@ -170,8 +169,7 @@ public:
   void buildFrom(const vpPoseVector &p);
   void buildFrom(const std::vector<float> &v);
   void buildFrom(const std::vector<double> &v);
-  void buildFrom(const double tx, const double ty, const double tz, const double tux, const double tuy,
-                 const double tuz);
+  void buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
 
   void convert(std::vector<float> &M);
   void convert(std::vector<double> &M);
@@ -179,7 +177,7 @@ public:
   // Set to identity
   void eye();
 
-  vpColVector getCol(const unsigned int j) const;
+  vpColVector getCol(unsigned int j) const;
   vpRotationMatrix getRotationMatrix() const;
   vpThetaUVector getThetaUVector() const;
   vpTranslationVector getTranslationVector() const;

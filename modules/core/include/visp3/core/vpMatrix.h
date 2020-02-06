@@ -303,7 +303,7 @@ vpMatrix M(R);
   /** @name Matrix insertion */
   //@{
   // Insert matrix A in the current matrix at the given position (r, c).
-  void insert(const vpMatrix &A, const unsigned int r, const unsigned int c);
+  void insert(const vpMatrix &A, unsigned int r, unsigned int c);
   //@}
 
   //-------------------------------------------------
@@ -312,10 +312,10 @@ vpMatrix M(R);
   /** @name Columns, rows, sub-matrices extraction */
   //@{
   vpMatrix extract(unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols) const;
-  vpColVector getCol(const unsigned int j) const;
-  vpColVector getCol(const unsigned int j, const unsigned int i_begin, const unsigned int size) const;
-  vpRowVector getRow(const unsigned int i) const;
-  vpRowVector getRow(const unsigned int i, const unsigned int j_begin, const unsigned int size) const;
+  vpColVector getCol(unsigned int j) const;
+  vpColVector getCol(unsigned int j, unsigned int i_begin, unsigned int size) const;
+  vpRowVector getRow(unsigned int i) const;
+  vpRowVector getRow(unsigned int i, unsigned int j_begin, unsigned int size) const;
   vpColVector getDiag() const;
   void init(const vpMatrix &M, unsigned int r, unsigned int c, unsigned int nrows, unsigned int ncols);
   //@}
@@ -595,10 +595,10 @@ vpMatrix M(R);
   /** @name Matrix insertion with Static Public Member Functions  */
   //@{
   // Insert matrix B in matrix A at the given position (r, c).
-  static vpMatrix insert(const vpMatrix &A, const vpMatrix &B, const unsigned int r, const unsigned int c);
+  static vpMatrix insert(const vpMatrix &A, const vpMatrix &B, unsigned int r, unsigned int c);
   // Insert matrix B in matrix A (not modified) at the given position (r, c),
   // the result is given in matrix C.
-  static void insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C, const unsigned int r, const unsigned int c);
+  static void insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C, unsigned int r, unsigned int c);
 
   //---------------------------------
   // Stacking with Static Public Member Functions
@@ -799,8 +799,8 @@ vpMatrix M(R);
    */
   vp_deprecated void setIdentity(const double &val = 1.0);
 
-  vp_deprecated vpRowVector row(const unsigned int i);
-  vp_deprecated vpColVector column(const unsigned int j);
+  vp_deprecated vpRowVector row(unsigned int i);
+  vp_deprecated vpColVector column(unsigned int j);
 
   //@}
 #endif

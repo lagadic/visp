@@ -1212,7 +1212,7 @@ double vpMbGenericTracker::getKltThresholdAcceptation() const { return m_thresho
   \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
 */
 void vpMbGenericTracker::getLcircle(std::list<vpMbtDistanceCircle *> &circlesList,
-                                    const unsigned int level) const
+                                    unsigned int level) const
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
   if (it != m_mapOfTrackers.end()) {
@@ -1236,7 +1236,7 @@ void vpMbGenericTracker::getLcircle(std::list<vpMbtDistanceCircle *> &circlesLis
   \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
 */
 void vpMbGenericTracker::getLcircle(const std::string &cameraName, std::list<vpMbtDistanceCircle *> &circlesList,
-                                    const unsigned int level) const
+                                    unsigned int level) const
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(cameraName);
   if (it != m_mapOfTrackers.end()) {
@@ -1259,7 +1259,7 @@ void vpMbGenericTracker::getLcircle(const std::string &cameraName, std::list<vpM
   \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
 */
 void vpMbGenericTracker::getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList,
-                                      const unsigned int level) const
+                                      unsigned int level) const
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
   if (it != m_mapOfTrackers.end()) {
@@ -1283,7 +1283,7 @@ void vpMbGenericTracker::getLcylinder(std::list<vpMbtDistanceCylinder *> &cylind
   \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
 */
 void vpMbGenericTracker::getLcylinder(const std::string &cameraName, std::list<vpMbtDistanceCylinder *> &cylindersList,
-                                      const unsigned int level) const
+                                      unsigned int level) const
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(cameraName);
   if (it != m_mapOfTrackers.end()) {
@@ -1306,7 +1306,7 @@ void vpMbGenericTracker::getLcylinder(const std::string &cameraName, std::list<v
   \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
 */
 void vpMbGenericTracker::getLline(std::list<vpMbtDistanceLine *> &linesList,
-                                  const unsigned int level) const
+                                  unsigned int level) const
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
 
@@ -1331,7 +1331,7 @@ void vpMbGenericTracker::getLline(std::list<vpMbtDistanceLine *> &linesList,
   \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
 */
 void vpMbGenericTracker::getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *> &linesList,
-                                  const unsigned int level) const
+                                  unsigned int level) const
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(cameraName);
   if (it != m_mapOfTrackers.end()) {
@@ -1506,7 +1506,7 @@ void vpMbGenericTracker::getMovingEdge(std::map<std::string, vpMe> &mapOfMovingE
   \note Multi-scale moving edge tracking is not possible, scale level=0 must
   be used.
 */
-unsigned int vpMbGenericTracker::getNbPoints(const unsigned int level) const
+unsigned int vpMbGenericTracker::getNbPoints(unsigned int level) const
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
 
@@ -1535,7 +1535,7 @@ unsigned int vpMbGenericTracker::getNbPoints(const unsigned int level) const
   \note Multi-scale moving edge tracking is not possible, scale level=0 must
   be used.
 */
-void vpMbGenericTracker::getNbPoints(std::map<std::string, unsigned int> &mapOfNbPoints, const unsigned int level) const
+void vpMbGenericTracker::getNbPoints(std::map<std::string, unsigned int> &mapOfNbPoints, unsigned int level) const
 {
   mapOfNbPoints.clear();
 
@@ -1588,7 +1588,7 @@ void vpMbGenericTracker::getNbPolygon(std::map<std::string, unsigned int> &mapOf
   \return Pointer to the polygon index for the reference camera or NULL in
   case of problem.
 */
-vpMbtPolygon *vpMbGenericTracker::getPolygon(const unsigned int index)
+vpMbtPolygon *vpMbGenericTracker::getPolygon(unsigned int index)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
   if (it != m_mapOfTrackers.end()) {
@@ -1610,7 +1610,7 @@ vpMbtPolygon *vpMbGenericTracker::getPolygon(const unsigned int index)
   \return Pointer to the polygon index for the specified camera or NULL in
   case of problem.
 */
-vpMbtPolygon *vpMbGenericTracker::getPolygon(const std::string &cameraName, const unsigned int index)
+vpMbtPolygon *vpMbGenericTracker::getPolygon(const std::string &cameraName, unsigned int index)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(cameraName);
   if (it != m_mapOfTrackers.end()) {
@@ -3888,7 +3888,7 @@ void vpMbGenericTracker::setDepthNormalPclPlaneEstimationRansacMaxIter(const int
 
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setDepthNormalPclPlaneEstimationRansacThreshold(const double thresold)
+void vpMbGenericTracker::setDepthNormalPclPlaneEstimationRansacThreshold(double thresold)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
@@ -4044,7 +4044,7 @@ void vpMbGenericTracker::setFeatureFactors(const std::map<vpTrackerType, double>
 
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setGoodMovingEdgesRatioThreshold(const double threshold)
+void vpMbGenericTracker::setGoodMovingEdgesRatioThreshold(double threshold)
 {
   m_percentageGdPt = threshold;
 
@@ -4160,7 +4160,7 @@ void vpMbGenericTracker::setKltOpencv(const std::map<std::string, vpKltOpencv> &
 
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setKltThresholdAcceptation(const double th)
+void vpMbGenericTracker::setKltThresholdAcceptation(double th)
 {
   m_thresholdOutlier = th;
 
@@ -4819,7 +4819,7 @@ void vpMbGenericTracker::setProjectionErrorDisplay(const bool display)
 /*!
   Arrow length used to display gradient and model orientation for projection error computation.
 */
-void vpMbGenericTracker::setProjectionErrorDisplayArrowLength(const unsigned int length)
+void vpMbGenericTracker::setProjectionErrorDisplayArrowLength(unsigned int length)
 {
   vpMbTracker::setProjectionErrorDisplayArrowLength(length);
 
@@ -6137,7 +6137,7 @@ void vpMbGenericTracker::TrackerWrapper::init(const vpImage<unsigned char> &I)
 }
 
 void vpMbGenericTracker::TrackerWrapper::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3,
-                                                    const double radius, int idFace, const std::string &name)
+                                                    double radius, int idFace, const std::string &name)
 {
   if (m_trackerType & EDGE_TRACKER)
     vpMbEdgeTracker::initCircle(p1, p2, p3, radius, idFace, name);
@@ -6148,7 +6148,7 @@ void vpMbGenericTracker::TrackerWrapper::initCircle(const vpPoint &p1, const vpP
 #endif
 }
 
-void vpMbGenericTracker::TrackerWrapper::initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius,
+void vpMbGenericTracker::TrackerWrapper::initCylinder(const vpPoint &p1, const vpPoint &p2, double radius,
                                                       int idFace, const std::string &name)
 {
   if (m_trackerType & EDGE_TRACKER)

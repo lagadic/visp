@@ -978,7 +978,7 @@ public:
 
     \param ratio : Ratio value (]0 ; 1])
   */
-  inline void setMatchingRatioThreshold(const double ratio)
+  inline void setMatchingRatioThreshold(double ratio)
   {
     if (ratio > 0.0 && (ratio < 1.0 || std::fabs(ratio - 1.0) < std::numeric_limits<double>::epsilon())) {
       m_matchingRatioThreshold = ratio;
@@ -993,7 +993,7 @@ public:
 
     \param percentage : Percentage value (]0 ; 100])
   */
-  inline void setRansacConsensusPercentage(const double percentage)
+  inline void setRansacConsensusPercentage(double percentage)
   {
     if (percentage > 0.0 &&
         (percentage < 100.0 || std::fabs(percentage - 100.0) < std::numeric_limits<double>::epsilon())) {
@@ -1054,7 +1054,7 @@ public:
     \param reprojectionError : Maximum reprojection error in pixel (used by
     OpenCV function)
   */
-  inline void setRansacReprojectionError(const double reprojectionError)
+  inline void setRansacReprojectionError(double reprojectionError)
   {
     if (reprojectionError > 0.0) {
       m_ransacReprojectionError = reprojectionError;
@@ -1085,7 +1085,7 @@ public:
 
     \param threshold : Maximum error in meter for ViSP function
   */
-  inline void setRansacThreshold(const double threshold)
+  inline void setRansacThreshold(double threshold)
   {
     if (threshold > 0.0) {
       m_ransacThreshold = threshold;

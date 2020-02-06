@@ -78,7 +78,7 @@ double getRandomValues(double min, double max)
   return (max - min) * ((double)rand() / (double)RAND_MAX) + min;
 }
 
-bool equalMatrix(const vpMatrix &A, const vpMatrix &B, const double tol = std::numeric_limits<double>::epsilon())
+bool equalMatrix(const vpMatrix &A, const vpMatrix &B, double tol = std::numeric_limits<double>::epsilon())
 {
   if (A.getRows() != B.getRows() || A.getCols() != B.getCols()) {
     return false;
@@ -95,7 +95,7 @@ bool equalMatrix(const vpMatrix &A, const vpMatrix &B, const double tol = std::n
   return true;
 }
 
-vpMatrix generateRandomMatrix(const unsigned int rows, const unsigned int cols, double min, double max)
+vpMatrix generateRandomMatrix(unsigned int rows, unsigned int cols, double min, double max)
 {
   vpMatrix M(rows, cols);
 

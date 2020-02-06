@@ -123,7 +123,7 @@ vpMbEdgeKltMultiTracker::vpMbEdgeKltMultiTracker(const std::vector<std::string> 
 vpMbEdgeKltMultiTracker::~vpMbEdgeKltMultiTracker() {}
 
 void vpMbEdgeKltMultiTracker::computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                         const unsigned int lvl)
+                                         unsigned int lvl)
 {
 
   m_nbrow = initMbtTracking(mapOfImages, lvl);
@@ -2084,7 +2084,7 @@ void vpMbEdgeKltMultiTracker::setScanLineVisibilityTest(const bool &v)
 
   \param th : Threshold for the weight below which a point is rejected.
 */
-void vpMbEdgeKltMultiTracker::setThresholdAcceptation(const double th)
+void vpMbEdgeKltMultiTracker::setThresholdAcceptation(double th)
 {
   vpMbKltMultiTracker::setThresholdAcceptation(th);
 }

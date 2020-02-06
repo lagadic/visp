@@ -257,7 +257,7 @@ double vpRobot::getMaxTranslationVelocity(void) const { return this->maxTranslat
 
   \param w_max : Maximum rotational velocity expressed in rad/s.
 */
-void vpRobot::setMaxRotationVelocity(const double w_max)
+void vpRobot::setMaxRotationVelocity(double w_max)
 {
   this->maxRotationVelocity = w_max;
   return;

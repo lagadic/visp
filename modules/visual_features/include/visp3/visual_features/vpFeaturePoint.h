@@ -190,7 +190,7 @@ public:
   //! Destructor.
   virtual ~vpFeaturePoint() {}
 
-  void buildFrom(double x, double y, const double Z);
+  void buildFrom(double x, double y, double Z);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
@@ -218,9 +218,9 @@ public:
 
   void set_y(double y);
 
-  void set_Z(const double Z);
+  void set_Z(double Z);
 
-  void set_xyZ(double x, double y, const double Z);
+  void set_xyZ(double x, double y, double Z);
 
   // feature selection
   static unsigned int selectX();

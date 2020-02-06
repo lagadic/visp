@@ -132,7 +132,7 @@ public:
   explicit vpRotationMatrix(const vpRzyxVector &r);
   explicit vpRotationMatrix(const vpQuaternionVector &q);
   explicit vpRotationMatrix(const vpMatrix &R);
-  vpRotationMatrix(const double tux, const double tuy, const double tuz);
+  vpRotationMatrix(double tux, double tuy, double tuz);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   explicit vpRotationMatrix(const std::initializer_list<double> &list);
@@ -150,11 +150,11 @@ public:
   vpRotationMatrix buildFrom(const vpRxyzVector &v);
   vpRotationMatrix buildFrom(const vpRzyxVector &v);
   vpRotationMatrix buildFrom(const vpQuaternionVector &q);
-  vpRotationMatrix buildFrom(const double tux, const double tuy, const double tuz);
+  vpRotationMatrix buildFrom(double tux, double tuy, double tuz);
 
   void eye();
 
-  vpColVector getCol(const unsigned int j) const;
+  vpColVector getCol(unsigned int j) const;
   vpThetaUVector getThetaUVector();
 
   vpRotationMatrix inverse() const;

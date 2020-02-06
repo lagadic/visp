@@ -276,7 +276,7 @@ void vpFeatureThetaU::setFeatureThetaURotationType(const vpFeatureThetaURotation
   \param tu_x : \f$\theta u_x \f$ subset value to initialize.
   \sa get_TUz()
 */
-void vpFeatureThetaU::set_TUx(const double tu_x)
+void vpFeatureThetaU::set_TUx(double tu_x)
 {
   s[0] = tu_x;
   flags[0] = true;
@@ -289,7 +289,7 @@ void vpFeatureThetaU::set_TUx(const double tu_x)
   \param tu_y : \f$\theta u_y \f$ subset value to initialize.
   \sa get_TUy()
 */
-void vpFeatureThetaU::set_TUy(const double tu_y)
+void vpFeatureThetaU::set_TUy(double tu_y)
 {
   s[1] = tu_y;
   flags[1] = true;
@@ -302,7 +302,7 @@ void vpFeatureThetaU::set_TUy(const double tu_y)
   \param tu_z : \f$\theta u_z \f$ subset value to initialize.
   \sa get_TUz()
 */
-void vpFeatureThetaU::set_TUz(const double tu_z)
+void vpFeatureThetaU::set_TUz(double tu_z)
 {
   s[2] = tu_z;
   flags[2] = true;

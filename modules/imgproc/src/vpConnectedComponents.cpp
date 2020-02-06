@@ -46,8 +46,8 @@
 
 namespace
 {
-void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &listOfNeighbors, const unsigned int i,
-                  const unsigned int j, const vpImageMorphology::vpConnexityType &connexity)
+void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &listOfNeighbors, unsigned int i,
+                  unsigned int j, const vpImageMorphology::vpConnexityType &connexity)
 {
   unsigned char currValue = I[i][j];
 

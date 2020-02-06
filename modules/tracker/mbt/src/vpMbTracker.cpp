@@ -1285,7 +1285,7 @@ void vpMbTracker::addPolygon(const std::vector<vpPoint> &corners, int idFace, co
     faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
-void vpMbTracker::addPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
+void vpMbTracker::addPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
                              int idFace, const std::string &polygonName, bool useLod,
                              double minPolygonAreaThreshold)
 {
@@ -2900,7 +2900,7 @@ void vpMbTracker::computeJTR(const vpMatrix &interaction, const vpColVector &err
   }
 }
 
-void vpMbTracker::computeVVSCheckLevenbergMarquardt(const unsigned int iter, vpColVector &error,
+void vpMbTracker::computeVVSCheckLevenbergMarquardt(unsigned int iter, vpColVector &error,
                                                     const vpColVector &m_error_prev, const vpHomogeneousMatrix &cMoPrev,
                                                     double &mu, bool &reStartFromLastIncrement, vpColVector *const w,
                                                     const vpColVector *const m_w_prev)
@@ -2922,7 +2922,7 @@ void vpMbTracker::computeVVSCheckLevenbergMarquardt(const unsigned int iter, vpC
   }
 }
 
-void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity_, const unsigned int iter, vpMatrix &L,
+void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity_, unsigned int iter, vpMatrix &L,
                                            vpMatrix &LTL, vpColVector &R, const vpColVector &error,
                                            vpColVector &error_prev, vpColVector &LTR, double &mu, vpColVector &v,
                                            const vpColVector *const w, vpColVector *const m_w_prev)
@@ -3195,7 +3195,7 @@ void vpMbTracker::addProjectionErrorPolygon(const std::vector<vpPoint> &corners,
     m_projectionErrorFaces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
-void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
+void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
                                             int idFace, const std::string &polygonName, bool useLod,
                                             double minPolygonAreaThreshold)
 {
@@ -3376,7 +3376,7 @@ void vpMbTracker::addProjectionErrorLine(vpPoint &P1, vpPoint &P2, int polygon, 
   }
 }
 
-void vpMbTracker::addProjectionErrorCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace,
+void vpMbTracker::addProjectionErrorCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, double r, int idFace,
                                            const std::string &name)
 {
   bool already_here = false;
@@ -3406,7 +3406,7 @@ void vpMbTracker::addProjectionErrorCircle(const vpPoint &P1, const vpPoint &P2,
   }
 }
 
-void vpMbTracker::addProjectionErrorCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace,
+void vpMbTracker::addProjectionErrorCylinder(const vpPoint &P1, const vpPoint &P2, double r, int idFace,
                                              const std::string &name)
 {
   bool already_here = false;
@@ -3437,12 +3437,12 @@ void vpMbTracker::addProjectionErrorCylinder(const vpPoint &P1, const vpPoint &P
 }
 
 void vpMbTracker::initProjectionErrorCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3,
-                                            const double radius, int idFace, const std::string &name)
+                                            double radius, int idFace, const std::string &name)
 {
   addProjectionErrorCircle(p1, p2, p3, radius, idFace, name);
 }
 
-void vpMbTracker::initProjectionErrorCylinder(const vpPoint &p1, const vpPoint &p2, const double radius,
+void vpMbTracker::initProjectionErrorCylinder(const vpPoint &p1, const vpPoint &p2, double radius,
                                               int idFace, const std::string &name)
 {
   addProjectionErrorCylinder(p1, p2, radius, idFace, name);

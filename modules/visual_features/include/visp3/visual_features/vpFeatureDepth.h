@@ -180,7 +180,7 @@ public:
     section Set coordinates
   */
 
-  void buildFrom(double x, double y, const double Z, const double LogZoverZstar);
+  void buildFrom(double x, double y, double Z, double LogZoverZstar);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
@@ -205,11 +205,11 @@ public:
 
   void set_y(double y);
 
-  void set_Z(const double Z);
+  void set_Z(double Z);
 
-  void set_LogZoverZstar(const double LogZoverZstar);
+  void set_LogZoverZstar(double LogZoverZstar);
 
-  void set_xyZLogZoverZstar(double x, double y, const double Z, const double logZZs);
+  void set_xyZLogZoverZstar(double x, double y, double Z, double logZZs);
 };
 
 #endif

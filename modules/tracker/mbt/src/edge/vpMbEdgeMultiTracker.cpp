@@ -187,7 +187,7 @@ void vpMbEdgeMultiTracker::computeProjectionError()
 }
 
 void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                      const unsigned int lvl)
+                                      unsigned int lvl)
 {
   computeVVSInit();
   unsigned int nbrow = m_error_edgeMulti.getRows();
@@ -352,7 +352,7 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
   }
 }
 
-void vpMbEdgeMultiTracker::computeVVSFirstPhasePoseEstimation(const unsigned int iter, bool &isoJoIdentity_)
+void vpMbEdgeMultiTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity_)
 {
   unsigned int nerror = m_weightedError_edgeMulti.getRows();
 
@@ -838,7 +838,7 @@ std::map<std::string, vpMbHiddenFaces<vpMbtPolygon> > vpMbEdgeMultiTracker::getF
   \param level : Level corresponding to the list to return.
   \param circlesList : The list of the circles of the model.
 */
-void vpMbEdgeMultiTracker::getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, const unsigned int level) const
+void vpMbEdgeMultiTracker::getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
 
@@ -861,7 +861,7 @@ void vpMbEdgeMultiTracker::getLcircle(std::list<vpMbtDistanceCircle *> &circlesL
   return. \param circlesList : The list of the circles of the model.
 */
 void vpMbEdgeMultiTracker::getLcircle(const std::string &cameraName, std::list<vpMbtDistanceCircle *> &circlesList,
-                                      const unsigned int level) const
+                                      unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(cameraName);
   if (it != m_mapOfEdgeTrackers.end()) {
@@ -882,7 +882,7 @@ void vpMbEdgeMultiTracker::getLcircle(const std::string &cameraName, std::list<v
   \param cylindersList : The list of the cylinders of the model.
 */
 void vpMbEdgeMultiTracker::getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList,
-                                        const unsigned int level) const
+                                        unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
 
@@ -906,7 +906,7 @@ void vpMbEdgeMultiTracker::getLcylinder(std::list<vpMbtDistanceCylinder *> &cyli
 */
 void vpMbEdgeMultiTracker::getLcylinder(const std::string &cameraName,
                                         std::list<vpMbtDistanceCylinder *> &cylindersList,
-                                        const unsigned int level) const
+                                        unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(cameraName);
   if (it != m_mapOfEdgeTrackers.end()) {
@@ -926,7 +926,7 @@ void vpMbEdgeMultiTracker::getLcylinder(const std::string &cameraName,
   \param level : Level corresponding to the list to return.
   \param linesList : The list of the lines of the model.
 */
-void vpMbEdgeMultiTracker::getLline(std::list<vpMbtDistanceLine *> &linesList, const unsigned int level) const
+void vpMbEdgeMultiTracker::getLline(std::list<vpMbtDistanceLine *> &linesList, unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
 
@@ -949,7 +949,7 @@ void vpMbEdgeMultiTracker::getLline(std::list<vpMbtDistanceLine *> &linesList, c
   \param linesList : The list of the lines of the model.
 */
 void vpMbEdgeMultiTracker::getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *> &linesList,
-                                    const unsigned int level) const
+                                    unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(cameraName);
   if (it != m_mapOfEdgeTrackers.end()) {
@@ -1036,7 +1036,7 @@ vpMe vpMbEdgeMultiTracker::getMovingEdge(const std::string &cameraName) const
 
   \return the number of good points for the reference camera.
 */
-unsigned int vpMbEdgeMultiTracker::getNbPoints(const unsigned int level) const
+unsigned int vpMbEdgeMultiTracker::getNbPoints(unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
 
@@ -1064,7 +1064,7 @@ unsigned int vpMbEdgeMultiTracker::getNbPoints(const unsigned int level) const
 
   \return the number of good points for the specified camera name.
 */
-unsigned int vpMbEdgeMultiTracker::getNbPoints(const std::string &cameraName, const unsigned int level) const
+unsigned int vpMbEdgeMultiTracker::getNbPoints(const std::string &cameraName, unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(cameraName);
   if (it != m_mapOfEdgeTrackers.end()) {
@@ -2332,7 +2332,7 @@ void vpMbEdgeMultiTracker::setFarClippingDistance(const std::string &cameraName,
 
    \sa getGoodMovingEdgesRatioThreshold()
  */
-void vpMbEdgeMultiTracker::setGoodMovingEdgesRatioThreshold(const double threshold)
+void vpMbEdgeMultiTracker::setGoodMovingEdgesRatioThreshold(double threshold)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {

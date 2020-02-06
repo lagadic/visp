@@ -1290,8 +1290,8 @@ int main()
 
   \sa setPosition()
 */
-void vpRobotViper650::setPosition(const vpRobot::vpControlFrameType frame, const double pos1, const double pos2,
-                                  const double pos3, const double pos4, const double pos5, const double pos6)
+void vpRobotViper650::setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2,
+                                  double pos3, double pos4, double pos5, double pos6)
 {
   try {
     vpColVector position(6);
@@ -2481,7 +2481,7 @@ void vpRobotViper650::setMaxRotationVelocity(double w_max)
   \param w6_max : Maximum rotation velocity expressed in rad/s on joint 6.
 */
 
-void vpRobotViper650::setMaxRotationVelocityJoint6(const double w6_max)
+void vpRobotViper650::setMaxRotationVelocityJoint6(double w6_max)
 {
   maxRotationVelocity_joint6 = w6_max;
   return;

@@ -121,7 +121,7 @@ public:
 
     \sa setTheta()
   */
-  void setRho(const double rho) { p[0] = rho; };
+  void setRho(double rho) { p[0] = rho; };
 
   /*!
     Sets the \f$ \theta \f$ angle value used to define the line in the
@@ -131,7 +131,7 @@ public:
 
     \sa setRho()
   */
-  void setTheta(const double theta) { p[1] = theta; };
+  void setTheta(double theta) { p[1] = theta; };
 
   /*!
 

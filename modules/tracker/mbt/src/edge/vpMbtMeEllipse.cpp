@@ -102,7 +102,7 @@ vpMbtMeEllipse::~vpMbtMeEllipse() { list.clear(); }
 void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad,
                                             unsigned int &_nbFeatures,
                                             const vpMatrix &SobelX, const vpMatrix &SobelY,
-                                            const bool display, const unsigned int length,
+                                            const bool display, unsigned int length,
                                             unsigned int thickness)
 {
   _sumErrorRad = 0;

@@ -116,7 +116,7 @@ void vpMbtDistanceCylinder::project(const vpHomogeneousMatrix &cMo)
   \param _p2 : The second extremity on the axis.
   \param r : Radius of the cylinder.
 */
-void vpMbtDistanceCylinder::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const double r)
+void vpMbtDistanceCylinder::buildFrom(const vpPoint &_p1, const vpPoint &_p2, double r)
 {
   c = new vpCylinder;
   p1 = new vpPoint;

@@ -124,13 +124,13 @@ public:
       The translation vector is initialized to zero.
     */
   vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0) {};
-  vpTranslationVector(const double tx, const double ty, const double tz);
+  vpTranslationVector(double tx, double ty, double tz);
   vpTranslationVector(const vpTranslationVector &tv);
   explicit vpTranslationVector(const vpHomogeneousMatrix &M);
   explicit vpTranslationVector(const vpPoseVector &p);
   explicit vpTranslationVector(const vpColVector &v);
 
-  vpTranslationVector buildFrom(const double tx, const double ty, const double tz);
+  vpTranslationVector buildFrom(double tx, double ty, double tz);
   vpTranslationVector buildFrom(const vpHomogeneousMatrix &M);
   vpTranslationVector buildFrom(const vpPoseVector &p);
   vpTranslationVector buildFrom(const vpColVector &v);
@@ -183,7 +183,7 @@ public:
     throw(vpException(vpException::fatalError, "Cannot resize a translation vector"));
   };
 
-  void set(const double tx, const double ty, const double tz);
+  void set(double tx, double ty, double tz);
 
   // Skew Symmetric matrix
   vpMatrix skew() const;

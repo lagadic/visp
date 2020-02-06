@@ -117,12 +117,12 @@ VISP_EXPORT void stretchContrast(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
 VISP_EXPORT void stretchContrastHSV(vpImage<vpRGBa> &I);
 VISP_EXPORT void stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2);
 
-VISP_EXPORT void unsharpMask(vpImage<unsigned char> &I, const unsigned int size = 7, const double weight = 0.6);
+VISP_EXPORT void unsharpMask(vpImage<unsigned char> &I, const unsigned int size = 7, double weight = 0.6);
 VISP_EXPORT void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires, const unsigned int size = 7,
-                             const double weight = 0.6);
-VISP_EXPORT void unsharpMask(vpImage<vpRGBa> &I, const unsigned int size = 7, const double weight = 0.6);
+                             double weight = 0.6);
+VISP_EXPORT void unsharpMask(vpImage<vpRGBa> &I, const unsigned int size = 7, double weight = 0.6);
 VISP_EXPORT void unsharpMask(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, const unsigned int size = 7,
-                             const double weight = 0.6);
+                             double weight = 0.6);
 
 VISP_EXPORT void
 connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents,

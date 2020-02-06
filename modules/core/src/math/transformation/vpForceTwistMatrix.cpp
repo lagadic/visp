@@ -242,8 +242,7 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpRotationMatrix &R) : vpArray2D<do
   \param tux,tuy,tuz : \f$\theta {\bf u}\f$ rotation vector expressed in
   radians used to initialize \f$R\f$.
 */
-vpForceTwistMatrix::vpForceTwistMatrix(const double tx, const double ty, const double tz, const double tux,
-                                       const double tuy, const double tuz)
+vpForceTwistMatrix::vpForceTwistMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz)
   : vpArray2D<double>(6, 6)
 {
   vpTranslationVector T(tx, ty, tz);

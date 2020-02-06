@@ -296,7 +296,7 @@ int main()
   \param apertureSobel : Size of the mask for the Sobel operator (odd number).
 */
 void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
-                          const unsigned int gaussianFilterSize, const double thresholdCanny,
+                          const unsigned int gaussianFilterSize, double thresholdCanny,
                           const unsigned int apertureSobel)
 {
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)

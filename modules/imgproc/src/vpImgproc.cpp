@@ -621,7 +621,7 @@ void vp::stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
   \param size : Size (must be odd) of the Gaussian blur kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
  */
-void vp::unsharpMask(vpImage<unsigned char> &I, const unsigned int size, const double weight)
+void vp::unsharpMask(vpImage<unsigned char> &I, const unsigned int size, double weight)
 {
   if (weight < 1.0 && weight >= 0.0) {
     // Gaussian blurred image
@@ -647,7 +647,7 @@ void vp::unsharpMask(vpImage<unsigned char> &I, const unsigned int size, const d
   \param weight : Weight (between [0 - 1[) for the sharpening process.
 */
 void vp::unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const unsigned int size,
-                     const double weight)
+                     double weight)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -663,7 +663,7 @@ void vp::unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I
   \param size : Size (must be odd) of the Gaussian blur kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
  */
-void vp::unsharpMask(vpImage<vpRGBa> &I, const unsigned int size, const double weight)
+void vp::unsharpMask(vpImage<vpRGBa> &I, const unsigned int size, double weight)
 {
   if (weight < 1.0 && weight >= 0.0) {
     // Gaussian blurred image
@@ -698,7 +698,7 @@ void vp::unsharpMask(vpImage<vpRGBa> &I, const unsigned int size, const double w
   \param size : Size (must be odd) of the Gaussian blur kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
 */
-void vp::unsharpMask(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const unsigned int size, const double weight)
+void vp::unsharpMask(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const unsigned int size, double weight)
 {
   // Copy I1 to I2
   I2 = I1;

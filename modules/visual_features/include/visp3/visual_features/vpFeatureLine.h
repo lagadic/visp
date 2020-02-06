@@ -210,8 +210,8 @@ public:
 
   //  void buildFrom(const vpLine &l) ;
   //  void buildFrom(const vpCylinder &c, const int l) ;
-  void buildFrom(const double rho, const double theta);
-  void buildFrom(const double rho, const double theta, const double A, const double B, const double C, const double D);
+  void buildFrom(double rho, double theta);
+  void buildFrom(double rho, double theta, double A, double B, double C, double D);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
@@ -237,8 +237,8 @@ public:
 
   void print(const unsigned int select = FEATURE_ALL) const;
 
-  void setRhoTheta(const double rho, const double theta);
-  void setABCD(const double A, const double B, const double C, const double D);
+  void setRhoTheta(double rho, double theta);
+  void setABCD(double A, double B, double C, double D);
 
 public:
   static unsigned int selectRho();

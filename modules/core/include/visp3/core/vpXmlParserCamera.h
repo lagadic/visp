@@ -185,11 +185,11 @@ public:
   unsigned int getWidth() const;
 
   int parse(vpCameraParameters &cam, const std::string &filename, const std::string &camera_name,
-            const vpCameraParameters::vpCameraParametersProjType &projModel, const unsigned int image_width = 0,
-            const unsigned int image_height = 0);
+            const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int image_width = 0,
+            unsigned int image_height = 0);
 
   int save(const vpCameraParameters &cam, const std::string &filename, const std::string &camera_name,
-           const unsigned int image_width = 0, const unsigned int image_height = 0,
+           unsigned int image_width = 0, unsigned int image_height = 0,
            const std::string &additionalInfo = "");
 
   void setCameraName(const std::string &name);

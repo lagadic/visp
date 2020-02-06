@@ -59,7 +59,7 @@ vpRzyxVector::vpRzyxVector(const vpRzyxVector &rzyx) : vpRotationVector(rzyx) {}
   \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
   \param psi : \f$\psi\f$ angle around the \f$x\f$ axis.
 */
-vpRzyxVector::vpRzyxVector(const double phi, const double theta, const double psi) : vpRotationVector(3)
+vpRzyxVector::vpRzyxVector(double phi, double theta, double psi) : vpRotationVector(3)
 {
   buildFrom(phi, theta, psi);
 }
@@ -146,7 +146,7 @@ vpRzyxVector vpRzyxVector::buildFrom(const vpThetaUVector &tu)
   \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
   \param psi : \f$\psi\f$ angle around the \f$x\f$ axis.
 */
-void vpRzyxVector::buildFrom(const double phi, const double theta, const double psi)
+void vpRzyxVector::buildFrom(double phi, double theta, double psi)
 {
   data[0] = phi;
   data[1] = theta;

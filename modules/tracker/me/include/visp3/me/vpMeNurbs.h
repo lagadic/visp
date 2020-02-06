@@ -182,7 +182,7 @@ public:
     \param th1 : The first threshold;
     \param th2 : The second threshold;
   */
-  void setCannyThreshold(const double th1, const double th2)
+  void setCannyThreshold(double th1, double th2)
   {
     this->cannyTh1 = th1;
     this->cannyTh2 = th2;

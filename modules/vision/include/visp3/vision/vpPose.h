@@ -154,9 +154,9 @@ private:
   class RansacFunctor
   {
   public:
-    RansacFunctor(const vpHomogeneousMatrix &cMo_, const unsigned int ransacNbInlierConsensus_,
-                  const int ransacMaxTrials_, const double ransacThreshold_, const unsigned int initial_seed_,
-                  const bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
+    RansacFunctor(const vpHomogeneousMatrix &cMo_, unsigned int ransacNbInlierConsensus_,
+                  const int ransacMaxTrials_, double ransacThreshold_, unsigned int initial_seed_,
+                  bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
                   bool (*func_)(const vpHomogeneousMatrix &)
               #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
                   , std::atomic<bool> &abort

@@ -1211,7 +1211,7 @@ public:
   {
     m_depthNormalPclPlaneEstimationRansacMaxIter = maxIter;
   }
-  void setDepthNormalPclPlaneEstimationRansacThreshold(const double threshold)
+  void setDepthNormalPclPlaneEstimationRansacThreshold(double threshold)
   {
     m_depthNormalPclPlaneEstimationRansacThreshold = threshold;
   }
@@ -1795,7 +1795,7 @@ void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationRansacMaxIter(const 
 
   \param threshold : New RANSAC threshold
 */
-void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationRansacThreshold(const double threshold)
+void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationRansacThreshold(double threshold)
 {
   m_impl->setDepthNormalPclPlaneEstimationRansacThreshold(threshold);
 }

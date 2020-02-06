@@ -332,30 +332,30 @@ public:
 
 protected:
   virtual void computeVVS(const vpImage<unsigned char> &I, const unsigned int &nbInfos, unsigned int &nbrow,
-                          const unsigned int lvl = 0);
+                          unsigned int lvl = 0);
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
   using vpMbTracker::computeCovarianceMatrixVVS;
   using vpMbTracker::computeVVSPoseEstimation;
 
   virtual void init(const vpImage<unsigned char> &I);
-  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, const double r, int idFace = 0,
+  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, double r, int idFace = 0,
                           const std::string &name = "");
-  virtual void initCylinder(const vpPoint &, const vpPoint &, const double r, int idFace,
+  virtual void initCylinder(const vpPoint &, const vpPoint &, double r, int idFace,
                             const std::string &name = "");
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
-  unsigned int initMbtTracking(const unsigned int level = 0);
+  unsigned int initMbtTracking(unsigned int level = 0);
 
   bool postTracking(const vpImage<unsigned char> &I, vpColVector &w_mbt, vpColVector &w_klt,
-                    const unsigned int lvl = 0);
+                    unsigned int lvl = 0);
   bool postTracking(const vpImage<vpRGBa> &I_color, vpColVector &w_mbt, vpColVector &w_klt,
-                    const unsigned int lvl = 0);
-  void postTrackingMbt(vpColVector &w, const unsigned int level = 0);
+                    unsigned int lvl = 0);
+  void postTrackingMbt(vpColVector &w, unsigned int level = 0);
 
-  unsigned int trackFirstLoop(const vpImage<unsigned char> &I, vpColVector &factor, const unsigned int lvl = 0);
+  unsigned int trackFirstLoop(const vpImage<unsigned char> &I, vpColVector &factor, unsigned int lvl = 0);
   void trackSecondLoop(const vpImage<unsigned char> &I, vpMatrix &L, vpColVector &_error, const vpHomogeneousMatrix &cMo,
-                       const unsigned int lvl = 0);
+                       unsigned int lvl = 0);
 };
 
 #endif

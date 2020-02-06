@@ -50,7 +50,7 @@ void vpSphere::init()
 
 void vpSphere::setWorldCoordinates(const vpColVector &oP_) { this->oP = oP_; }
 
-void vpSphere::setWorldCoordinates(const double X0, const double Y0, const double Z0, const double R)
+void vpSphere::setWorldCoordinates(double X0, double Y0, double Z0, double R)
 {
   oP[0] = X0;
   oP[1] = Y0;
@@ -66,7 +66,7 @@ vpSphere::vpSphere(const vpColVector &oP_)
   setWorldCoordinates(oP_);
 }
 
-vpSphere::vpSphere(const double X0, const double Y0, const double Z0, const double R)
+vpSphere::vpSphere(double X0, double Y0, double Z0, double R)
 {
   init();
   setWorldCoordinates(X0, Y0, Z0, R);

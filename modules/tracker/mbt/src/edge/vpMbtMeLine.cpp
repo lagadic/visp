@@ -350,7 +350,7 @@ void vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
 void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad,
                                          unsigned int &_nbFeatures,
                                          const vpMatrix &SobelX, const vpMatrix &SobelY,
-                                         const bool display, const unsigned int length,
+                                         const bool display, unsigned int length,
                                          unsigned int thickness)
 {
   _sumErrorRad = 0;

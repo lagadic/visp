@@ -250,7 +250,7 @@ void rs_deproject_pixel_to_point(float point[3], const rs_intrinsics &intrin, co
   point[2] = depth;
 }
 
-bool read_data(const unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I, vpImage<uint16_t> &I_depth_raw,
+bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I, vpImage<uint16_t> &I_depth_raw,
                std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width, unsigned int &pointcloud_height)
 {
   char buffer[256];

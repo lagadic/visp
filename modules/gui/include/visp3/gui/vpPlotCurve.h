@@ -80,8 +80,7 @@ public:
   vpPlotCurve();
   virtual ~vpPlotCurve();
   void plotPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, double x, double y);
-  void plotList(const vpImage<unsigned char> &I, double xorg, double yorg, const double zoomx,
-                const double zoomy);
+  void plotList(const vpImage<unsigned char> &I, double xorg, double yorg, double zoomx, double zoomy);
 };
 
 #endif

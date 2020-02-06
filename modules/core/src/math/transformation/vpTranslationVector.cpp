@@ -54,7 +54,7 @@
   in meters.
 
 */
-vpTranslationVector::vpTranslationVector(const double tx, const double ty, const double tz) : vpArray2D<double>(3, 1), m_index(0)
+vpTranslationVector::vpTranslationVector(double tx, double ty, double tz) : vpArray2D<double>(3, 1), m_index(0)
 {
   (*this)[0] = tx;
   (*this)[1] = ty;
@@ -184,7 +184,7 @@ vpTranslationVector vpTranslationVector::buildFrom(const vpColVector &v)
   \return The build translation vector.
   \sa set()
 */
-vpTranslationVector vpTranslationVector::buildFrom(const double tx, const double ty, const double tz)
+vpTranslationVector vpTranslationVector::buildFrom(double tx, double ty, double tz)
 {
   set(tx, ty, tz);
   return *this;
@@ -196,7 +196,7 @@ vpTranslationVector vpTranslationVector::buildFrom(const double tx, const double
   \param tx,ty,tz : Translation respectively along x, y and z axis in meter.
 
 */
-void vpTranslationVector::set(const double tx, const double ty, const double tz)
+void vpTranslationVector::set(double tx, double ty, double tz)
 {
   (*this)[0] = tx;
   (*this)[1] = ty;

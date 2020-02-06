@@ -167,7 +167,7 @@ public:
   void plot(unsigned int graphNum, double x, const vpTranslationVector &v_y);
   void plot(unsigned int graphNum, double x, const vpRotationVector &v_y);
   vpMouseButton::vpMouseButtonType plot(unsigned int graphNum, unsigned int curveNum, double x,
-                                        double y, const double z);
+                                        double y, double z);
   vpMouseButton::vpMouseButtonType plot(unsigned int graphNum, double x, const vpColVector &v_y,
                                         const vpColVector &v_z);
 

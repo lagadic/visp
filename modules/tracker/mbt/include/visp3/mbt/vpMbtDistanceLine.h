@@ -224,14 +224,14 @@ public:
 
     \param i : The index number
   */
-  inline void setIndex(const unsigned int i) { index = i; }
+  inline void setIndex(unsigned int i) { index = i; }
 
   /*!
    Set the mean weight of the line.
 
    \param w_mean : The mean weight of the line.
   */
-  inline void setMeanWeight(const double w_mean) { this->wmean = w_mean; }
+  inline void setMeanWeight(double w_mean) { this->wmean = w_mean; }
 
   void setMovingEdge(vpMe *Me);
 

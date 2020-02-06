@@ -164,7 +164,7 @@ void vpMbEdgeTracker::setMovingEdge(const vpMe &p_me)
   \param _I : The current image.
   \param lvl : The level in the pyramid scale.
  */
-void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, const unsigned int lvl)
+void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, unsigned int lvl)
 {
   double residu_1 = 1e3;
   double r = 1e3 - 1;
@@ -287,8 +287,8 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, const unsigne
   updateMovingEdgeWeights();
 }
 
-void vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char> &_I, const unsigned int iter, double &count,
-                                           const unsigned int lvl)
+void vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char> &_I, unsigned int iter, double &count,
+                                           unsigned int lvl)
 {
   vpMbtDistanceLine *l;
   vpMbtDistanceCylinder *cy;
@@ -553,7 +553,7 @@ void vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char> &_I, con
   }
 }
 
-void vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I, const unsigned int lvl)
+void vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I, unsigned int lvl)
 {
   vpMbtDistanceLine *l;
   vpMbtDistanceCylinder *cy;
@@ -653,7 +653,7 @@ void vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I
   }
 }
 
-void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(const unsigned int iter, bool &isoJoIdentity_)
+void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity_)
 {
   unsigned int nerror = m_weightedError_edge.getRows();
 
@@ -2048,7 +2048,7 @@ void vpMbEdgeTracker::removeLine(const std::string &name)
   is associated to the circle to handle visibility test. \param name : the
   optional name of the circle.
 */
-void vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace,
+void vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, double r, int idFace,
                                 const std::string &name)
 {
   {
@@ -2107,7 +2107,7 @@ void vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPo
   \param idFace : The index of the face.
   \param name : the optional name of the cylinder
 */
-void vpMbEdgeTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace,
+void vpMbEdgeTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, double r, int idFace,
                                   const std::string &name)
 {
   {
@@ -2347,7 +2347,7 @@ unsigned int vpMbEdgeTracker::initMbtTracking(unsigned int &nberrors_lines, unsi
   face associated to the circle to handle visibility test. \param name : The
   optional name of the circle.
 */
-void vpMbEdgeTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
+void vpMbEdgeTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
                                  int idFace, const std::string &name)
 {
   addCircle(p1, p2, p3, radius, (int)idFace, name);
@@ -2363,7 +2363,7 @@ void vpMbEdgeTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpP
   \param idFace : Id of the face that is associated to the cylinder to handle
   visibility test. \param name : The optional name of the cylinder.
 */
-void vpMbEdgeTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, int idFace,
+void vpMbEdgeTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace,
                                    const std::string &name)
 {
   addCylinder(p1, p2, radius, (int)idFace, name);
@@ -2509,7 +2509,7 @@ void vpMbEdgeTracker::reInitModel(const vpImage<unsigned char> &I, const std::st
 
   \return the number of good points.
 */
-unsigned int vpMbEdgeTracker::getNbPoints(const unsigned int level) const
+unsigned int vpMbEdgeTracker::getNbPoints(unsigned int level) const
 {
   if ((level > scales.size()) || !scales[level]) {
     throw vpException(vpException::dimensionError, "Cannot get the number of points for level %d: level is not used",
@@ -2791,7 +2791,7 @@ void vpMbEdgeTracker::cleanPyramid(std::vector<const vpImage<unsigned char> *> &
   \param level : Level corresponding to the list to return.
   \param linesList : The list of the lines of the model.
 */
-void vpMbEdgeTracker::getLline(std::list<vpMbtDistanceLine *> &linesList, const unsigned int level) const
+void vpMbEdgeTracker::getLline(std::list<vpMbtDistanceLine *> &linesList, unsigned int level) const
 {
   if (level > scales.size() || !scales[level]) {
     std::ostringstream oss;
@@ -2813,7 +2813,7 @@ void vpMbEdgeTracker::getLline(std::list<vpMbtDistanceLine *> &linesList, const 
   \param level : Level corresponding to the list to return.
   \param cylindersList : The list of the cylinders of the model.
 */
-void vpMbEdgeTracker::getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, const unsigned int level) const
+void vpMbEdgeTracker::getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, unsigned int level) const
 {
   if (level > scales.size() || !scales[level]) {
     std::ostringstream oss;
@@ -2835,7 +2835,7 @@ void vpMbEdgeTracker::getLcylinder(std::list<vpMbtDistanceCylinder *> &cylinders
   \param level : Level corresponding to the list to return.
   \param circlesList : The list of the circles of the model.
 */
-void vpMbEdgeTracker::getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, const unsigned int level) const
+void vpMbEdgeTracker::getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, unsigned int level) const
 {
   if (level > scales.size() || !scales[level]) {
     std::ostringstream oss;

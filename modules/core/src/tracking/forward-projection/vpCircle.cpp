@@ -72,8 +72,7 @@ void vpCircle::setWorldCoordinates(const vpColVector &oP_) { this->oP = oP_; }
   \param Z0 : Z Coordinate of the center of the sphere.
   \param R : Radius of the sphere.
 */
-void vpCircle::setWorldCoordinates(const double A, const double B, const double C, const double X0, const double Y0,
-                                   const double Z0, const double R)
+void vpCircle::setWorldCoordinates(double A, double B, double C, double X0, double Y0, double Z0, double R)
 {
   oP[0] = A;
   oP[1] = B;
@@ -115,8 +114,7 @@ vpCircle::vpCircle(const vpColVector &oP_)
 
   \sa setWorldCoordinates()
 */
-vpCircle::vpCircle(const double A, const double B, const double C, const double X0, const double Y0, const double Z0,
-                   const double R)
+vpCircle::vpCircle(double A, double B, double C, double X0, double Y0, double Z0, double R)
 {
   init();
   setWorldCoordinates(A, B, C, X0, Y0, Z0, R);

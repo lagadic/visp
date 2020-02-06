@@ -80,8 +80,7 @@ vpPoseVector::vpPoseVector() : vpArray2D<double>(6, 1) {}
   u_z]^\top\f$ respectively around the x, y and z axis (in radians).
 
 */
-vpPoseVector::vpPoseVector(const double tx, const double ty, const double tz, const double tux, const double tuy,
-                           const double tuz)
+vpPoseVector::vpPoseVector(double tx, double ty, double tz, double tux, double tuy, double tuz)
   : vpArray2D<double>(6, 1)
 {
   (*this)[0] = tx;
@@ -152,8 +151,7 @@ vpPoseVector::vpPoseVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(6, 
   u_z]^\top\f$ respectively around the x, y and z axis (in radians).
 
 */
-void vpPoseVector::set(const double tx, const double ty, const double tz, const double tux, const double tuy,
-                       const double tuz)
+void vpPoseVector::set(double tx, double ty, double tz, double tux, double tuy, double tuz)
 {
   (*this)[0] = tx;
   (*this)[1] = ty;
@@ -180,8 +178,7 @@ void vpPoseVector::set(const double tx, const double ty, const double tz, const 
 
   \sa set()
 */
-vpPoseVector vpPoseVector::buildFrom(const double tx, const double ty, const double tz, const double tux,
-                                     const double tuy, const double tuz)
+vpPoseVector vpPoseVector::buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz)
 {
   (*this)[0] = tx;
   (*this)[1] = ty;

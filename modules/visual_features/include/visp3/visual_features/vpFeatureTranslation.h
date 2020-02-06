@@ -335,9 +335,9 @@ public:
   // print the name of the feature
   void print(const unsigned int select = FEATURE_ALL) const;
 
-  void set_Tx(const double t_x);
-  void set_Ty(const double t_y);
-  void set_Tz(const double t_z);
+  void set_Tx(double t_x);
+  void set_Ty(double t_y);
+  void set_Tz(double t_z);
 
   void setFeatureTranslationType(const vpFeatureTranslationRepresentationType r);
 

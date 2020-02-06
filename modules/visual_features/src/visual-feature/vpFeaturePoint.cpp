@@ -94,7 +94,7 @@ vpFeaturePoint::vpFeaturePoint() : Z(1.) { init(); }
 
   \param Z_ : \f$ Z \f$ value to set.
 */
-void vpFeaturePoint::set_Z(const double Z_)
+void vpFeaturePoint::set_Z(double Z_)
 {
   this->Z = Z_;
   flags[2] = true;
@@ -160,7 +160,7 @@ double vpFeaturePoint::get_y() const { return s[1]; }
   \param y_ : \f$ y \f$ value to set.
   \param Z_ : \f$ Z \f$ value to set.
 */
-void vpFeaturePoint::set_xyZ(double x_, double y_, const double Z_)
+void vpFeaturePoint::set_xyZ(double x_, double y_, double Z_)
 {
   set_x(x_);
   set_y(y_);
@@ -392,7 +392,7 @@ void vpFeaturePoint::print(const unsigned int select) const
   \param y_ : The \f$ y \f$ parameter.
   \param Z_ : The \f$ Z \f$ parameter.
 */
-void vpFeaturePoint::buildFrom(double x_, double y_, const double Z_)
+void vpFeaturePoint::buildFrom(double x_, double y_, double Z_)
 {
 
   s[0] = x_;

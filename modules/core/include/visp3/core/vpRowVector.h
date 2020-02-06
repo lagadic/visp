@@ -268,7 +268,7 @@ public:
     of columns.
     \param flagNullify : If true, set the data to zero.
    */
-  inline void resize(const unsigned int i, const bool flagNullify = true)
+  inline void resize(unsigned int i, bool flagNullify = true)
   {
     vpArray2D<double>::resize(1, i, flagNullify);
   }

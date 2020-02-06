@@ -307,7 +307,7 @@ public:
     \param flagNullify : If true, set the data to zero.
     \exception vpException::fatalError When \e ncols is not equal to 1.
    */
-  void resize(const unsigned int i, const bool flagNullify = true) { vpArray2D<double>::resize(i, 1, flagNullify); }
+  void resize(unsigned int i, bool flagNullify = true) { vpArray2D<double>::resize(i, 1, flagNullify); }
   /*!
     Resize the column vector to a \e nrows-dimension vector.
     This function can only be used with \e ncols = 1.
@@ -404,7 +404,7 @@ public:
     stack(A, B, C);
   }
 
-  vp_deprecated void insert(const vpColVector &v, const unsigned int r, const unsigned int c = 0);
+  vp_deprecated void insert(const vpColVector &v, unsigned int r, unsigned int c = 0);
 //@}
 #endif
 };

@@ -288,9 +288,9 @@ public:
 
   void print(const unsigned int select = FEATURE_ALL) const;
 
-  void set_TUx(const double tu_x);
-  void set_TUy(const double tu_y);
-  void set_TUz(const double tu_z);
+  void set_TUx(double tu_x);
+  void set_TUy(double tu_y);
+  void set_TUz(double tu_z);
 
   void setFeatureThetaURotationType(const vpFeatureThetaURotationRepresentationType r);
 

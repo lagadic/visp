@@ -246,9 +246,8 @@ public:
   // generic functions
   vpCameraParameters();
   vpCameraParameters(const vpCameraParameters &c);
-  vpCameraParameters(const double px, const double py, const double u0, const double v0);
-  vpCameraParameters(const double px, const double py, const double u0, const double v0, const double kud,
-                     const double kdu);
+  vpCameraParameters(double px, double py, double u0, double v0);
+  vpCameraParameters(double px, double py, double u0, double v0, double kud, double kdu);
 
   vpCameraParameters &operator=(const vpCameraParameters &c);
   bool operator==(const vpCameraParameters &c) const;
@@ -259,9 +258,8 @@ public:
   void init(const vpCameraParameters &c);
   void initFromCalibrationMatrix(const vpMatrix &_K);
   void initFromFov(const unsigned int &w, const unsigned int &h, const double &hfov, const double &vfov);
-  void initPersProjWithoutDistortion(const double px, const double py, const double u0, const double v0);
-  void initPersProjWithDistortion(const double px, const double py, const double u0, const double v0, const double kud,
-                                  const double kdu);
+  void initPersProjWithoutDistortion(double px, double py, double u0, double v0);
+  void initPersProjWithDistortion(double px, double py, double u0, double v0, double kud, double kdu);
 
   /*!
     Specify if the fov has been computed.

@@ -759,13 +759,13 @@ void vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationRansacMaxIter(const
   }
 }
 
-void vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationRansacThreshold(const double thresold)
+void vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationRansacThreshold(double threshold)
 {
-  m_depthNormalPclPlaneEstimationRansacThreshold = thresold;
+  m_depthNormalPclPlaneEstimationRansacThreshold = threshold;
 
   for (std::vector<vpMbtFaceDepthNormal *>::const_iterator it = m_depthNormalFaces.begin();
        it != m_depthNormalFaces.end(); ++it) {
-    (*it)->setPclPlaneEstimationRansacThreshold(thresold);
+    (*it)->setPclPlaneEstimationRansacThreshold(threshold);
   }
 }
 

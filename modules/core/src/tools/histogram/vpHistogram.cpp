@@ -406,7 +406,7 @@ void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color,
   \sa calculate()
 
 */
-void vpHistogram::smooth(const unsigned int fsize)
+void vpHistogram::smooth(unsigned int fsize)
 {
   if (histogram == NULL) {
     vpERROR_TRACE("Histogram array not initialised\n");

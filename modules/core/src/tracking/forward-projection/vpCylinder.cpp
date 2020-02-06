@@ -78,8 +78,7 @@ void vpCylinder::setWorldCoordinates(const vpColVector &o_P) { this->oP = o_P; }
   \param A,B,C,X0,Y0,Z0,R : Cylinder parameters \f$^{o}{\bf P}\f$.
 
 */
-void vpCylinder::setWorldCoordinates(const double A, const double B, const double C, const double X0, const double Y0,
-                                     const double Z0, const double R)
+void vpCylinder::setWorldCoordinates(double A, double B, double C, double X0, double Y0, double Z0, double R)
 {
   oP[0] = A;
   oP[1] = B;
@@ -132,8 +131,7 @@ vpCylinder::vpCylinder(const vpColVector &o_P)
   \sa setWorldCoordinates(const double,const double,const double,const
   double,const double,const double,const double)
 */
-vpCylinder::vpCylinder(const double A, const double B, const double C, const double X0, const double Y0,
-                       const double Z0, const double R)
+vpCylinder::vpCylinder(double A, double B, double C, double X0, double Y0, double Z0, double R)
 {
   init();
   setWorldCoordinates(A, B, C, X0, Y0, Z0, R);

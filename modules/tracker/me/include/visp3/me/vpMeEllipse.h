@@ -256,7 +256,7 @@ public:
 
     \param threshold : The new value of the threshold.
   */
-  void setThresholdRobust(const double threshold)
+  void setThresholdRobust(double threshold)
   {
     if (threshold < 0) {
       thresholdWeight = 0;

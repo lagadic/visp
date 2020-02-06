@@ -100,7 +100,7 @@ void vpMbtDistanceCircle::project(const vpHomogeneousMatrix &cMo) { circle->proj
   center of the circle we have 3 points defining the plane that contains the
   circle. \param r : Radius of the circle.
 */
-void vpMbtDistanceCircle::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, const double r)
+void vpMbtDistanceCircle::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, double r)
 {
   circle = new vpCircle;
   p1 = new vpPoint;

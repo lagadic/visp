@@ -179,8 +179,7 @@ public:
   vpVelocityTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R);
   // Construction from Translation and rotation (ThetaU parameterization)
   vpVelocityTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau);
-  vpVelocityTwistMatrix(const double tx, const double ty, const double tz, const double tux, const double tuy,
-                        const double tuz);
+  vpVelocityTwistMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
 
   vpVelocityTwistMatrix(const vpRotationMatrix &R);
   vpVelocityTwistMatrix(const vpThetaUVector &thetau);

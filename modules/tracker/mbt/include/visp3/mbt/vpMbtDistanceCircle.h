@@ -126,7 +126,7 @@ public:
   vpMbtDistanceCircle();
   virtual ~vpMbtDistanceCircle();
 
-  void buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, const double r);
+  void buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, double r);
 
   void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo);
 
@@ -220,7 +220,7 @@ public:
 
     \param i : The index number
   */
-  inline void setIndex(const unsigned int i) { index = i; }
+  inline void setIndex(unsigned int i) { index = i; }
 
   /*!
    Set the mean weight of the circle.

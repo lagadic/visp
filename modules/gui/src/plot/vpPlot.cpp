@@ -400,7 +400,7 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpRotationVector &v_y)
   system.
 */
 vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, unsigned int curveNum, double x,
-                                              double y, const double z)
+                                              double y, double z)
 {
   return (graphList + graphNum)->plot(I, curveNum, x, y, z);
 }

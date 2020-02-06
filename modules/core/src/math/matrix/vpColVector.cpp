@@ -1831,7 +1831,7 @@ std::ostream &vpColVector::matlabPrint(std::ostream &os) const
   \param c : Not used.
 
  */
-void vpColVector::insert(const vpColVector &v, const unsigned int r, const unsigned int c)
+void vpColVector::insert(const vpColVector &v, unsigned int r, unsigned int c)
 {
   (void)c;
   insert(r, v);

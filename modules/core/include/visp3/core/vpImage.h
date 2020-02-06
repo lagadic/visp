@@ -258,8 +258,8 @@ public:
   //         Acces to the image
 
   //! operator[] allows operation like I[i] = x.
-  inline Type *operator[](const unsigned int i) { return row[i]; }
-  inline Type *operator[](const int i) { return row[i]; }
+  inline Type *operator[](unsigned int i) { return row[i]; }
+  inline Type *operator[](int i) { return row[i]; }
 
   //! operator[] allows operation like x = I[i]
   inline const Type *operator[](unsigned int i) const { return row[i]; }
@@ -271,13 +271,13 @@ public:
 
     \return Value of the image point (i, j).
   */
-  inline Type operator()(const unsigned int i, const unsigned int j) const { return bitmap[i * width + j]; }
+  inline Type operator()(unsigned int i, unsigned int j) const { return bitmap[i * width + j]; }
 
   /*!
     Set the value \e v of an image point with coordinates (i, j), with i the
     row position and j the column position.
   */
-  inline void operator()(const unsigned int i, const unsigned int j, const Type &v) { bitmap[i * width + j] = v; }
+  inline void operator()(unsigned int i, unsigned int j, const Type &v) { bitmap[i * width + j] = v; }
 
   /*!
     Get the value of an image point.

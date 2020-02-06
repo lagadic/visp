@@ -146,7 +146,7 @@ vpMbKltMultiTracker::~vpMbKltMultiTracker()
   center of the circle we have 3 points defining the plane that contains the
   circle. \param r : Radius of the circle. \param name : Name of the circle.
 */
-void vpMbKltMultiTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r,
+void vpMbKltMultiTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, double r,
                                     const std::string &name)
 {
   for (std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
@@ -2726,7 +2726,7 @@ void vpMbKltMultiTracker::setScanLineVisibilityTest(const bool &v)
 
   \param th : Threshold for the weight below which a point is rejected.
 */
-void vpMbKltMultiTracker::setKltThresholdAcceptation(const double th)
+void vpMbKltMultiTracker::setKltThresholdAcceptation(double th)
 {
   for (std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
        it != m_mapOfKltTrackers.end(); ++it) {
@@ -2859,7 +2859,7 @@ void vpMbKltMultiTracker::setMaskBorder(const unsigned int &e) { setKltMaskBorde
 
   \param th : Threshold for the weight below which a point is rejected.
 */
-void vpMbKltMultiTracker::setThresholdAcceptation(const double th) { setKltThresholdAcceptation(th); }
+void vpMbKltMultiTracker::setThresholdAcceptation(double th) { setKltThresholdAcceptation(th); }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work arround to avoid warning:

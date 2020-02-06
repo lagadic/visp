@@ -866,7 +866,7 @@ int64_t vpImageTools::lerp2(int64_t A, int64_t B, int64_t t, int64_t t_1) {
 double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
                                            const vpImage<double> &II, const vpImage<double> &IIsq,
                                            const vpImage<double> &II_tpl, const vpImage<double> &IIsq_tpl,
-                                           const unsigned int i0, const unsigned int j0)
+                                           unsigned int i0, unsigned int j0)
 {
   double ab = 0.0;
 #if VISP_HAVE_SSE2

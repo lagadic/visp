@@ -112,7 +112,7 @@ vpFeatureLine::vpFeatureLine() : A(0), B(0), C(0), D(0) { init(); }
   \param rho : \f$ \rho \f$ value to set.
   \param theta : \f$ \theta \f$ value to set.
 */
-void vpFeatureLine::setRhoTheta(const double rho, const double theta)
+void vpFeatureLine::setRhoTheta(double rho, double theta)
 {
   s[0] = rho;
   s[1] = theta;
@@ -392,7 +392,7 @@ void vpFeatureLine::print(const unsigned int select) const
   \param theta : The \f$ \theta \f$ parameter.
 
 */
-void vpFeatureLine::buildFrom(const double rho, const double theta)
+void vpFeatureLine::buildFrom(double rho, double theta)
 {
   s[0] = rho;
   s[1] = theta;
@@ -428,8 +428,7 @@ void vpFeatureLine::buildFrom(const double rho, const double theta)
   \param D_ : D parameter of the plan equation.
 
 */
-void vpFeatureLine::buildFrom(const double rho, const double theta, const double A_, const double B_, const double C_,
-                              const double D_)
+void vpFeatureLine::buildFrom(double rho, double theta, double A_, double B_, double C_, double D_)
 {
   s[0] = rho;
   s[1] = theta;
