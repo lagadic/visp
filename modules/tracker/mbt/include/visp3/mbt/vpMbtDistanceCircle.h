@@ -227,7 +227,7 @@ public:
 
    \param _wmean : The mean weight of the circle.
   */
-  inline void setMeanWeight(const double _wmean) { this->wmean = _wmean; }
+  inline void setMeanWeight(double _wmean) { this->wmean = _wmean; }
 
   void setMovingEdge(vpMe *Me);
 
