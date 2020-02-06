@@ -222,7 +222,7 @@ bool isHoleBorderStart(const vpImage<int> &I, unsigned int i, unsigned int j)
   return (I[i][j] >= 1 && (j == I.getWidth() - 1 || I[i][j + 1] == 0));
 }
 
-void getContoursList(const vp::vpContour &root, const int level, vp::vpContour &contour_list)
+void getContoursList(const vp::vpContour &root, int level, vp::vpContour &contour_list)
 {
   if (level > 0) {
     vp::vpContour *contour_node = new vp::vpContour;
