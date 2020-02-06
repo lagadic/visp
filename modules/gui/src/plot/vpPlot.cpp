@@ -209,7 +209,7 @@ void vpPlot::initGraph(unsigned int graphNum, unsigned int curveNbr) { (graphLis
 // vpPlot::initRange (const int graphNum,
 // 		   double xmin, double xmax, double /*xdelt*/,
 // 		   double ymin, double ymax, double /*ydelt*/,
-// 		   const bool gx, const bool gy)
+// 		   bool gx, bool gy)
 // {
 //   (graphList+graphNum)->initScale(I,xmin,xmax,10,ymin,ymax,10,gx,gy);
 // }
