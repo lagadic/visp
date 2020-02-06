@@ -95,7 +95,7 @@ public:
 
   vpFeatureVanishingPoint *duplicate() const;
 
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = (selectX() | selectY()));
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = (selectX() | selectY()));
 
   double get_x() const;
   double get_y() const;
@@ -104,9 +104,9 @@ public:
   double getAlpha() const;
 
   void init();
-  vpMatrix interaction(const unsigned int select = (selectX() | selectY()));
+  vpMatrix interaction(unsigned int select = (selectX() | selectY()));
 
-  void print(const unsigned int select = (selectX() | selectY())) const;
+  void print(unsigned int select = (selectX() | selectY())) const;
 
   void set_x(double x);
   void set_y(double y);

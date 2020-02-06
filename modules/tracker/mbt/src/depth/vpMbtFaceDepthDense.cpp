@@ -140,7 +140,7 @@ void vpMbtFaceDepthDense::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpMb
 #ifdef VISP_HAVE_PCL
 bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
                                                  const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
-                                                 const unsigned int stepX, const unsigned int stepY
+                                                 unsigned int stepX, unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_DENSE
                                                  ,
                                                  vpImage<unsigned char> &debugImage,
@@ -268,7 +268,7 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
 
 bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width,
                                                  unsigned int height, const std::vector<vpColVector> &point_cloud,
-                                                 const unsigned int stepX, const unsigned int stepY
+                                                 unsigned int stepX, unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_DENSE
                                                  ,
                                                  vpImage<unsigned char> &debugImage,

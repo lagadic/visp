@@ -147,7 +147,7 @@ double vpFeatureVanishingPoint::getAlpha() const { return s[4]; }
  * \f$ \alpha \f$ visual feature. You can also use a combination like selectX() | selectY() to
  * select x and y visual features.
  */
-vpMatrix vpFeatureVanishingPoint::interaction(const unsigned int select)
+vpMatrix vpFeatureVanishingPoint::interaction(unsigned int select)
 {
   vpMatrix L;
 
@@ -271,7 +271,7 @@ vpMatrix vpFeatureVanishingPoint::interaction(const unsigned int select)
  * \f$ \alpha \f$ visual feature. You can also use a combination like selectX() | selectY() to
  * select x and y visual features.
  */
-vpColVector vpFeatureVanishingPoint::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeatureVanishingPoint::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -326,7 +326,7 @@ vpColVector vpFeatureVanishingPoint::error(const vpBasicFeature &s_star, const u
  * \f$ \alpha \f$ value. You can also use a combination like selectX() | selectY() to
  * display x and y values.
  */
-void vpFeatureVanishingPoint::print(const unsigned int select) const
+void vpFeatureVanishingPoint::print(unsigned int select) const
 {
   std::cout << "Vanishing point:";
   if (vpFeatureVanishingPoint::selectX() & select)

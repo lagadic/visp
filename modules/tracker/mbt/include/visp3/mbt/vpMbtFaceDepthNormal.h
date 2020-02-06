@@ -92,7 +92,7 @@ public:
 #ifdef VISP_HAVE_PCL
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
                               const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
-                              vpColVector &desired_features, const unsigned int stepX, const unsigned int stepY
+                              vpColVector &desired_features, unsigned int stepX, unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_NORMAL
                               ,
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
@@ -102,7 +102,7 @@ public:
 #endif
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
                               const std::vector<vpColVector> &point_cloud, vpColVector &desired_features,
-                              const unsigned int stepX, const unsigned int stepY
+                              unsigned int stepX, unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_NORMAL
                               ,
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec

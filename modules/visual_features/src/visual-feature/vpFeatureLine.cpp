@@ -195,7 +195,7 @@ void vpFeatureLine::setABCD(const double A_, const double B_, const double C_, c
   vpMatrix L_theta = s.interaction( vpBasicFeature::FEATURE_ALL );
   \endcode
 */
-vpMatrix vpFeatureLine::interaction(const unsigned int select)
+vpMatrix vpFeatureLine::interaction(unsigned int select)
 {
   vpMatrix L;
 
@@ -315,7 +315,7 @@ vpMatrix vpFeatureLine::interaction(const unsigned int select)
   s.error(s_star, vpFeatureLine::selectTheta());
   \endcode
 */
-vpColVector vpFeatureLine::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeatureLine::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -366,7 +366,7 @@ vpColVector vpFeatureLine::error(const vpBasicFeature &s_star, const unsigned in
   \endcode
 */
 
-void vpFeatureLine::print(const unsigned int select) const
+void vpFeatureLine::print(unsigned int select) const
 {
 
   std::cout << "Line:\t  " << A << "X+" << B << "Y+" << C << "Z +" << D << "=0" << std::endl;

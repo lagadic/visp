@@ -111,7 +111,7 @@ unsigned int vpBasicFeature::getDimension(unsigned int select) const
 }
 
 //! Get the feature vector  \f$\bf s\f$.
-vpColVector vpBasicFeature::get_s(const unsigned int select) const
+vpColVector vpBasicFeature::get_s(unsigned int select) const
 {
   vpColVector state(0), stateLine(1);
   // if s is higher than the possible selections (photometry), send back the
@@ -148,7 +148,7 @@ void vpBasicFeature::setFlags()
 
 //! Compute the error between two visual features from a subset of the
 //! possible features.
-vpColVector vpBasicFeature::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpBasicFeature::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0), eLine(1);
   if (dim_s <= 31) {

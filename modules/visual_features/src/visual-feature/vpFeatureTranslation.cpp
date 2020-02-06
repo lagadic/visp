@@ -299,7 +299,7 @@ double vpFeatureTranslation::get_Tz() const { return s[2]; }
   line corresponds to the \f$ t_z \f$ visual feature.
 
 */
-vpMatrix vpFeatureTranslation::interaction(const unsigned int select)
+vpMatrix vpFeatureTranslation::interaction(unsigned int select)
 {
 
   vpMatrix L;
@@ -506,7 +506,7 @@ vpMatrix vpFeatureTranslation::interaction(const unsigned int select)
   \endcode
 
 */
-vpColVector vpFeatureTranslation::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeatureTranslation::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -561,7 +561,7 @@ vpColVector vpFeatureTranslation::error(const vpBasicFeature &s_star, const unsi
   s.print(vpFeatureTranslation::selectTz()); // print only the t_z component
   \endcode
 */
-void vpFeatureTranslation::print(const unsigned int select) const
+void vpFeatureTranslation::print(unsigned int select) const
 {
   std::cout << "Translation 3D:";
   if (vpFeatureTranslation::selectTx() & select) {

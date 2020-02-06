@@ -282,7 +282,7 @@ public:
 
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
 
   // basic construction
   void init();
@@ -295,10 +295,10 @@ public:
   double get_Z() const;
 
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL);
 
   // print the name of the feature
-  void print(const unsigned int select = FEATURE_ALL) const;
+  void print(unsigned int select = FEATURE_ALL) const;
 
   // set the point rho-coordinates
   void set_rho(double rho);
@@ -319,7 +319,7 @@ public:
     @name Deprecated functions
   */
   //! compute the error between a visual features and zero
-  vpColVector error(const unsigned int select = FEATURE_ALL);
+  vpColVector error(unsigned int select = FEATURE_ALL);
 };
 
 #endif

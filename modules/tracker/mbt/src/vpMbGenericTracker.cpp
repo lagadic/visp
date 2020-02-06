@@ -3807,7 +3807,7 @@ void vpMbGenericTracker::setDepthDenseFilteringOccupancyRatio(const double occup
 
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY)
+void vpMbGenericTracker::setDepthDenseSamplingStep(unsigned int stepX, unsigned int stepY)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
@@ -3905,7 +3905,7 @@ void vpMbGenericTracker::setDepthNormalPclPlaneEstimationRansacThreshold(double 
 
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY)
+void vpMbGenericTracker::setDepthNormalSamplingStep(unsigned int stepX, unsigned int stepY)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {

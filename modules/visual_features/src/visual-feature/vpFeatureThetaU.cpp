@@ -405,7 +405,7 @@ double vpFeatureThetaU::get_TUz() const { return s[2]; }
   line corresponds to the \f$ \theta u_z \f$ visual feature.
 
 */
-vpMatrix vpFeatureThetaU::interaction(const unsigned int select)
+vpMatrix vpFeatureThetaU::interaction(unsigned int select)
 {
 
   vpMatrix L;
@@ -564,7 +564,7 @@ vpMatrix vpFeatureThetaU::interaction(const unsigned int select)
   \endcode
 
 */
-vpColVector vpFeatureThetaU::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeatureThetaU::error(const vpBasicFeature &s_star, unsigned int select)
 {
 
   if (fabs(s_star.get_s().sumSquare()) > 1e-6) {
@@ -620,7 +620,7 @@ vpColVector vpFeatureThetaU::error(const vpBasicFeature &s_star, const unsigned 
   s.print(vpFeatureThetaU::selectTUz()); // print only the ThetaU_z component
   \endcode
 */
-void vpFeatureThetaU::print(const unsigned int select) const
+void vpFeatureThetaU::print(unsigned int select) const
 {
   std::cout << "ThetaU:";
   if (vpFeatureThetaU::selectTUx() & select) {

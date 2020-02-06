@@ -185,7 +185,7 @@ previous code to consider as visual feature \f$s = (l, \alpha)\f$.
 
   In that case, L is a 2 by 6 matrix.
 */
-vpMatrix vpFeatureSegment::interaction(const unsigned int select)
+vpMatrix vpFeatureSegment::interaction(unsigned int select)
 {
 
   vpMatrix L;
@@ -360,7 +360,7 @@ vpMatrix vpFeatureSegment::interaction(const unsigned int select)
   visual feature.
 
 */
-vpColVector vpFeatureSegment::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeatureSegment::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -421,7 +421,7 @@ vpColVector vpFeatureSegment::error(const vpBasicFeature &s_star, const unsigned
   vpFeatureSegment: (l = 0.105005; alpha = 92.1305 deg)
   \endcode
 */
-void vpFeatureSegment::print(const unsigned int select) const
+void vpFeatureSegment::print(unsigned int select) const
 {
   std::cout << "vpFeatureSegment: (";
   if (vpFeatureSegment::selectXc() & select) {

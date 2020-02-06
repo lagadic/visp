@@ -219,7 +219,7 @@ public:
                unsigned int thickness = 1) const;
   vpFeatureLine *duplicate() const;
 
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
   // vpColVector error(const int select = FEATURE_ALL)  ;
 
   /*!
@@ -233,9 +233,9 @@ public:
   double getTheta() const { return s[1]; }
 
   void init();
-  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL);
 
-  void print(const unsigned int select = FEATURE_ALL) const;
+  void print(unsigned int select = FEATURE_ALL) const;
 
   void setRhoTheta(double rho, double theta);
   void setABCD(double A, double B, double C, double D);

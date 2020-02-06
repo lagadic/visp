@@ -65,7 +65,7 @@ struct Histogram_Param_t {
 
   Histogram_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_histogram(NULL), m_I(NULL) {}
 
-  Histogram_Param_t(const unsigned int start_index, const unsigned int end_index, const vpImage<unsigned char> *const I)
+  Histogram_Param_t(unsigned int start_index, unsigned int end_index, const vpImage<unsigned char> *const I)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_histogram(NULL), m_I(I)
   {
   }

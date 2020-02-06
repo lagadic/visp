@@ -331,7 +331,7 @@ void vpXmlParser::xmlWriteStringChild(xmlNodePtr node, const char *label, const 
   \param label : label (name of the data) of the node
   \param value : integer to write
 */
-void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label, const int value)
+void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label, int value)
 {
   char str[100];
   sprintf(str, "%d", value);
@@ -347,7 +347,7 @@ void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label, const int
   \param label : label (name of the data) of the node
   \param value : unsigned integer to write
 */
-void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, const unsigned int value)
+void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, unsigned int value)
 {
   char str[100];
   sprintf(str, "%u", value);

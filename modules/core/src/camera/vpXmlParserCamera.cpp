@@ -149,7 +149,7 @@ public:
   int read(const pugi::xml_node &node_, const std::string &cam_name,
            const vpCameraParameters::vpCameraParametersProjType &projModel,
            unsigned int im_width, unsigned int im_height,
-           unsigned int subsampl_width=0, const unsigned int subsampl_height=0)
+           unsigned int subsampl_width=0, unsigned int subsampl_height=0)
   {
     vpXmlCodeType prop;
 
@@ -921,8 +921,8 @@ public:
 
   void setCameraName(const std::string &name) { camera_name = name; }
   void setHeight(unsigned int height) { image_height = height; }
-  void setSubsampling_width(const unsigned int subsampling) { subsampling_width = subsampling; }
-  void setSubsampling_height(const unsigned int subsampling) { subsampling_height = subsampling; }
+  void setSubsampling_width(unsigned int subsampling) { subsampling_width = subsampling; }
+  void setSubsampling_height(unsigned int subsampling) { subsampling_height = subsampling; }
   void setWidth(unsigned int width) { image_width = width; }
 
 private:
@@ -1061,12 +1061,12 @@ void vpXmlParserCamera::setHeight(unsigned int height)
   m_impl->setHeight(height);
 }
 
-void vpXmlParserCamera::setSubsampling_width(const unsigned int subsampling)
+void vpXmlParserCamera::setSubsampling_width(unsigned int subsampling)
 {
   m_impl->setSubsampling_width(subsampling);
 }
 
-void vpXmlParserCamera::setSubsampling_height(const unsigned int subsampling)
+void vpXmlParserCamera::setSubsampling_height(unsigned int subsampling)
 {
   m_impl->setSubsampling_height(subsampling);
 }

@@ -150,8 +150,8 @@ void vpMbtFaceDepthNormal::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpM
 bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width,
                                                   unsigned int height,
                                                   const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
-                                                  vpColVector &desired_features, const unsigned int stepX,
-                                                  const unsigned int stepY
+                                                  vpColVector &desired_features, unsigned int stepX,
+                                                  unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_NORMAL
                                                   ,
                                                   vpImage<unsigned char> &debugImage,
@@ -310,8 +310,8 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
 bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width,
                                                   unsigned int height,
                                                   const std::vector<vpColVector> &point_cloud,
-                                                  vpColVector &desired_features, const unsigned int stepX,
-                                                  const unsigned int stepY
+                                                  vpColVector &desired_features, unsigned int stepX,
+                                                  unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_NORMAL
                                                   ,
                                                   vpImage<unsigned char> &debugImage,

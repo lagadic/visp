@@ -752,7 +752,7 @@ void vpImageTools::extract(const vpImage<unsigned char> &Src, vpImage<double> &D
   \param useOptimized : Use optimized version (SSE, OpenMP, integral images, ...) if true and available.
 */
 void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpImage<unsigned char> &I_tpl,
-                                    vpImage<double> &I_score, const unsigned int step_u, const unsigned int step_v,
+                                    vpImage<double> &I_score, unsigned int step_u, unsigned int step_v,
                                     bool useOptimized)
 {
   if (I.getSize() == 0) {

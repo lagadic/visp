@@ -4522,7 +4522,7 @@ void vpImageConvert::MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba, un
 }
 
 void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, const double *value_, unsigned char *rgb,
-                             const unsigned int size, const unsigned int step)
+                             unsigned int size, unsigned int step)
 {
   for (unsigned int i = 0; i < size; i++) {
     double hue = hue_[i], saturation = saturation_[i], value = value_[i];
@@ -4592,7 +4592,7 @@ void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, cons
 }
 
 void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
-                             const unsigned int size, const unsigned int step)
+                             unsigned int size, unsigned int step)
 {
   for (unsigned int i = 0; i < size; i++) {
     double red, green, blue;
@@ -4662,7 +4662,7 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
   pixels.
 */
 void vpImageConvert::HSVToRGBa(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
-                               const unsigned int size)
+                               unsigned int size)
 {
   vpImageConvert::HSV2RGB(hue, saturation, value, rgba, size, 4);
 }
@@ -4680,7 +4680,7 @@ void vpImageConvert::HSVToRGBa(const double *hue, const double *saturation, cons
   pixels.
 */
 void vpImageConvert::HSVToRGBa(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
-                               unsigned char *rgba, const unsigned int size)
+                               unsigned char *rgba, unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
     double h = hue[i] / 255.0, s = saturation[i] / 255.0, v = value[i] / 255.0;
@@ -4701,7 +4701,7 @@ void vpImageConvert::HSVToRGBa(const unsigned char *hue, const unsigned char *sa
   The total image size or the number of pixels.
 */
 void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *saturation, double *value,
-                               const unsigned int size)
+                               unsigned int size)
 {
   vpImageConvert::RGB2HSV(rgba, hue, saturation, value, size, 4);
 }
@@ -4718,7 +4718,7 @@ void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *s
   \param size : The total image size or the number of pixels.
 */
 void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation,
-                               unsigned char *value, const unsigned int size)
+                               unsigned char *value, unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
     double h, s, v;
@@ -4740,7 +4740,7 @@ void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue, un
   \param size : The total image size or the number of pixels.
 */
 void vpImageConvert::HSVToRGB(const double *hue, const double *saturation, const double *value, unsigned char *rgb,
-                              const unsigned int size)
+                              unsigned int size)
 {
   vpImageConvert::HSV2RGB(hue, saturation, value, rgb, size, 3);
 }
@@ -4755,7 +4755,7 @@ void vpImageConvert::HSVToRGB(const double *hue, const double *saturation, const
   \param size : The total image size or the number of pixels.
 */
 void vpImageConvert::HSVToRGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
-                              unsigned char *rgb, const unsigned int size)
+                              unsigned char *rgb, unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
     double h = hue[i] / 255.0, s = saturation[i] / 255.0, v = value[i] / 255.0;
@@ -4775,7 +4775,7 @@ void vpImageConvert::HSVToRGB(const unsigned char *hue, const unsigned char *sat
   The total image size or the number of pixels.
 */
 void vpImageConvert::RGBToHSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
-                              const unsigned int size)
+                              unsigned int size)
 {
   vpImageConvert::RGB2HSV(rgb, hue, saturation, value, size, 3);
 }
@@ -4791,7 +4791,7 @@ void vpImageConvert::RGBToHSV(const unsigned char *rgb, double *hue, double *sat
   \param size : The total image size or the number of pixels.
 */
 void vpImageConvert::RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation,
-                              unsigned char *value, const unsigned int size)
+                              unsigned char *value, unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
     double h, s, v;

@@ -157,7 +157,7 @@ public:
                      const vpImageInterpolationType &method = INTERPOLATION_NEAREST, unsigned int nThreads=0);
 
   static void templateMatching(const vpImage<unsigned char> &I, const vpImage<unsigned char> &I_tpl,
-                               vpImage<double> &I_score, const unsigned int step_u, const unsigned int step_v,
+                               vpImage<double> &I_score, unsigned int step_u, unsigned int step_v,
                                bool useOptimized = true);
 
   template <class Type>

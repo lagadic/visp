@@ -227,7 +227,7 @@ double vpFeaturePoint3D::get_Z() const { return s[2]; }
   line corresponds to the \f$ Z \f$ visual feature.
 
 */
-vpMatrix vpFeaturePoint3D::interaction(const unsigned int select)
+vpMatrix vpFeaturePoint3D::interaction(unsigned int select)
 {
   vpMatrix L;
 
@@ -355,7 +355,7 @@ vpMatrix vpFeaturePoint3D::interaction(const unsigned int select)
   \endcode
 
 */
-vpColVector vpFeaturePoint3D::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeaturePoint3D::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -493,7 +493,7 @@ void vpFeaturePoint3D::buildFrom(double X, double Y, double Z)
   s.print(vpFeaturePoint3D::selectZ()); // print only the Z component
   \endcode
 */
-void vpFeaturePoint3D::print(const unsigned int select) const
+void vpFeaturePoint3D::print(unsigned int select) const
 {
 
   std::cout << "Point3D:  ";

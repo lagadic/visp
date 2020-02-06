@@ -164,7 +164,7 @@ std::vector<float> createTransfer(const std::vector<int> &hist, const int limit,
   return transfer;
 }
 
-float transferValue(const int v, std::vector<int> &clippedHist)
+float transferValue(int v, std::vector<int> &clippedHist)
 {
   int clippedHistLength = (int)clippedHist.size();
   int hMin = clippedHistLength - 1;
@@ -188,7 +188,7 @@ float transferValue(const int v, std::vector<int> &clippedHist)
   return (cdf - cdfMin) / (float)(cdfMax - cdfMin);
 }
 
-float transferValue(const int v, const std::vector<int> &hist, std::vector<int> &clippedHist, const int limit)
+float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clippedHist, const int limit)
 {
   clipHistogram(hist, clippedHist, limit);
 

@@ -217,7 +217,7 @@ void vpFeatureDepth::set_xyZLogZoverZstar(double x_, double y_, double Z_, doubl
   vpMatrix L_x = s.interaction();
   \endcode
 */
-vpMatrix vpFeatureDepth::interaction(const unsigned int select)
+vpMatrix vpFeatureDepth::interaction(unsigned int select)
 {
   vpMatrix L;
 
@@ -314,7 +314,7 @@ vpMatrix vpFeatureDepth::interaction(const unsigned int select)
   s.error(s_star);
   \endcode
 */
-vpColVector vpFeatureDepth::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeatureDepth::error(const vpBasicFeature &s_star, unsigned int select)
 {
 
   if (fabs(s_star.get_s().sumSquare()) > 1e-6) {
@@ -345,7 +345,7 @@ vpColVector vpFeatureDepth::error(const vpBasicFeature &s_star, const unsigned i
   s.print(); // print all the 2 components of the feature
   \endcode
 */
-void vpFeatureDepth::print(const unsigned int select) const
+void vpFeatureDepth::print(unsigned int select) const
 {
   if (FEATURE_ALL & select) {
     std::cout << "Point:  x=" << get_x();

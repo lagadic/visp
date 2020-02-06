@@ -194,8 +194,8 @@ public:
 
   void setCameraName(const std::string &name);
   void setHeight(unsigned int height);
-  void setSubsampling_width(const unsigned int subsampling);
-  void setSubsampling_height(const unsigned int subsampling);
+  void setSubsampling_width(unsigned int subsampling);
+  void setSubsampling_height(unsigned int subsampling);
   void setWidth(unsigned int width);
 
 private:

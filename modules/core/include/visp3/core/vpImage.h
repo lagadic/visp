@@ -495,7 +495,7 @@ struct ImageLut_Param_t {
 
   ImageLut_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) {}
 
-  ImageLut_Param_t(const unsigned int start_index, const unsigned int end_index, unsigned char *bitmap)
+  ImageLut_Param_t(unsigned int start_index, unsigned int end_index, unsigned char *bitmap)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap)
   {
   }
@@ -563,7 +563,7 @@ struct ImageLutRGBa_Param_t {
 
   ImageLutRGBa_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) {}
 
-  ImageLutRGBa_Param_t(const unsigned int start_index, const unsigned int end_index, unsigned char *bitmap)
+  ImageLutRGBa_Param_t(unsigned int start_index, unsigned int end_index, unsigned char *bitmap)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap)
   {
   }

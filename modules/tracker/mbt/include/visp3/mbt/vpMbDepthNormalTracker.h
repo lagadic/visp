@@ -96,7 +96,7 @@ public:
 
   virtual void setDepthNormalPclPlaneEstimationRansacThreshold(double thresold);
 
-  virtual void setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY);
+  virtual void setDepthNormalSamplingStep(unsigned int stepX, unsigned int stepY);
 
   //  virtual void setDepthNormalUseRobust(bool use);
 

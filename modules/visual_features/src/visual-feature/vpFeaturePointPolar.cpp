@@ -245,7 +245,7 @@ double vpFeaturePointPolar::get_Z() const { return this->Z; }
 
   In that case, L_theta is a 1 by 6 matrix.
 */
-vpMatrix vpFeaturePointPolar::interaction(const unsigned int select)
+vpMatrix vpFeaturePointPolar::interaction(unsigned int select)
 {
   vpMatrix L;
 
@@ -382,7 +382,7 @@ vpMatrix vpFeaturePointPolar::interaction(const unsigned int select)
   vpColVector e = s.error(s_star, vpFeaturePointPolar::selectRho());
   \endcode
 */
-vpColVector vpFeaturePointPolar::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeaturePointPolar::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -439,7 +439,7 @@ vpColVector vpFeaturePointPolar::error(const vpBasicFeature &s_star, const unsig
   s.print(vpFeaturePointPolar::selectRho()); // print only the rho component
   \endcode
 */
-void vpFeaturePointPolar::print(const unsigned int select) const
+void vpFeaturePointPolar::print(unsigned int select) const
 {
 
   std::cout << "Point:  Z=" << get_Z();

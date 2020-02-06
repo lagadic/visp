@@ -336,14 +336,14 @@ public:
   virtual void setDepthDenseFilteringMethod(int method);
   virtual void setDepthDenseFilteringMinDistance(double minDistance);
   virtual void setDepthDenseFilteringOccupancyRatio(const double occupancyRatio);
-  virtual void setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY);
+  virtual void setDepthDenseSamplingStep(unsigned int stepX, unsigned int stepY);
 
   virtual void setDepthNormalFaceCentroidMethod(const vpMbtFaceDepthNormal::vpFaceCentroidType &method);
   virtual void setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method);
   virtual void setDepthNormalPclPlaneEstimationMethod(const int method);
   virtual void setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter);
   virtual void setDepthNormalPclPlaneEstimationRansacThreshold(double threshold);
-  virtual void setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY);
+  virtual void setDepthNormalSamplingStep(unsigned int stepX, unsigned int stepY);
 
   virtual void setDisplayFeatures(bool displayF);
 

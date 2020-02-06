@@ -212,7 +212,7 @@ void vpFeaturePoint::set_xyZ(double x_, double y_, double Z_)
   vpMatrix L_x = s.interaction( vpBasicFeature::FEATURE_ALL );
   \endcode
 */
-vpMatrix vpFeaturePoint::interaction(const unsigned int select)
+vpMatrix vpFeaturePoint::interaction(unsigned int select)
 {
   vpMatrix L;
 
@@ -326,7 +326,7 @@ vpMatrix vpFeaturePoint::interaction(const unsigned int select)
   s.error(s_star, vpFeaturePoint::selectX());
   \endcode
 */
-vpColVector vpFeaturePoint::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeaturePoint::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -369,7 +369,7 @@ vpColVector vpFeaturePoint::error(const vpBasicFeature &s_star, const unsigned i
   s.print(vpFeaturePoint::selectX()); // print only the x component
   \endcode
 */
-void vpFeaturePoint::print(const unsigned int select) const
+void vpFeaturePoint::print(unsigned int select) const
 {
 
   std::cout << "Point:  Z=" << get_Z();
