@@ -510,7 +510,7 @@ public:
 
     \param displayF : set it to true to display the features.
   */
-  virtual void setDisplayFeatures(const bool displayF) { displayFeatures = displayF; }
+  virtual void setDisplayFeatures(bool displayF) { displayFeatures = displayF; }
 
   virtual void setEstimatedDoF(const vpColVector &v);
 

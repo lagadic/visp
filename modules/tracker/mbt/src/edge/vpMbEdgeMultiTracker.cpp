@@ -2278,7 +2278,7 @@ void vpMbEdgeMultiTracker::setCovarianceComputation(const bool &flag)
 
   \param displayF : set it to true to display the features.
 */
-void vpMbEdgeMultiTracker::setDisplayFeatures(const bool displayF)
+void vpMbEdgeMultiTracker::setDisplayFeatures(bool displayF)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {

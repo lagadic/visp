@@ -280,7 +280,7 @@ public:
 
   virtual void setCovarianceComputation(const bool &flag);
 
-  virtual void setDisplayFeatures(const bool displayF);
+  virtual void setDisplayFeatures(bool displayF);
 
   virtual void setFarClippingDistance(const double &dist);
   virtual void setFarClippingDistance(const std::string &cameraName, const double &dist);

@@ -3932,7 +3932,7 @@ void vpMbGenericTracker::setDepthNormalSamplingStep(const unsigned int stepX, co
 
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setDisplayFeatures(const bool displayF)
+void vpMbGenericTracker::setDisplayFeatures(bool displayF)
 {
   vpMbTracker::setDisplayFeatures(displayF);
 

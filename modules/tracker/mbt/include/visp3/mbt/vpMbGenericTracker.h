@@ -345,7 +345,7 @@ public:
   virtual void setDepthNormalPclPlaneEstimationRansacThreshold(const double thresold);
   virtual void setDepthNormalSamplingStep(const unsigned int stepX, const unsigned int stepY);
 
-  virtual void setDisplayFeatures(const bool displayF);
+  virtual void setDisplayFeatures(bool displayF);
 
   virtual void setFarClippingDistance(const double &dist);
   virtual void setFarClippingDistance(const double &dist1, const double &dist2);

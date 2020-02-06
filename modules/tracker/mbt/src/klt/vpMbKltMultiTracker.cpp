@@ -2170,7 +2170,7 @@ void vpMbKltMultiTracker::setCovarianceComputation(const bool &flag)
 
   \param displayF : set it to true to display the features.
 */
-void vpMbKltMultiTracker::setDisplayFeatures(const bool displayF)
+void vpMbKltMultiTracker::setDisplayFeatures(bool displayF)
 {
   for (std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
        it != m_mapOfKltTrackers.end(); ++it) {

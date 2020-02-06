@@ -1685,7 +1685,7 @@ void vpMbEdgeKltMultiTracker::setCovarianceComputation(const bool &flag)
 
   \param displayF : set it to true to display the features.
 */
-void vpMbEdgeKltMultiTracker::setDisplayFeatures(const bool displayF)
+void vpMbEdgeKltMultiTracker::setDisplayFeatures(bool displayF)
 {
   vpMbEdgeMultiTracker::setDisplayFeatures(displayF);
   vpMbKltMultiTracker::setDisplayFeatures(displayF);
