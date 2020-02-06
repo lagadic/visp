@@ -161,7 +161,7 @@ protected:
   vpImage<unsigned char> m_debugImage_depthNormal;
 #endif
 
-  void addFace(vpMbtPolygon &polygon, const bool alreadyClose);
+  void addFace(vpMbtPolygon &polygon, bool alreadyClose);
 
   void computeVisibility(unsigned int width, unsigned int height);
 

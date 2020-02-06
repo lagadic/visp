@@ -82,7 +82,7 @@ vpMbDepthNormalTracker::~vpMbDepthNormalTracker()
   }
 }
 
-void vpMbDepthNormalTracker::addFace(vpMbtPolygon &polygon, const bool alreadyClose)
+void vpMbDepthNormalTracker::addFace(vpMbtPolygon &polygon, bool alreadyClose)
 {
   if (polygon.nbpt < 3) {
     return;

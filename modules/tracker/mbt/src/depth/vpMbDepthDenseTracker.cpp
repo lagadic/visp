@@ -83,7 +83,7 @@ vpMbDepthDenseTracker::~vpMbDepthDenseTracker()
 #endif
 }
 
-void vpMbDepthDenseTracker::addFace(vpMbtPolygon &polygon, const bool alreadyClose)
+void vpMbDepthDenseTracker::addFace(vpMbtPolygon &polygon, bool alreadyClose)
 {
   if (polygon.nbpt < 3) {
     return;

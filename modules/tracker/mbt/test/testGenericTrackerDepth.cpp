@@ -161,7 +161,7 @@ namespace
   }
 
   template <typename Type>
-  bool read_data(const std::string &input_directory, const int cpt, const vpCameraParameters &cam_depth,
+  bool read_data(const std::string &input_directory, int cpt, const vpCameraParameters &cam_depth,
                  vpImage<Type> &I, vpImage<uint16_t> &I_depth,
                  std::vector<vpColVector> &pointcloud, vpHomogeneousMatrix &cMo)
   {

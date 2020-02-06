@@ -307,7 +307,7 @@ public:
     moments by \f$u=\frac{m10}{m00}\f$ and  \f$v=\frac{m01}{m00}\f$.
 
   */
-  void setComputeMoments(const bool activate) { compute_moment = activate; }
+  void setComputeMoments(bool activate) { compute_moment = activate; }
 
   /*!
     Set the type of connexity: 4 or 8.
@@ -331,7 +331,7 @@ public:
 
     \sa setGraphicsThickness()
   */
-  void setGraphics(const bool activate) { graphics = activate; }
+  void setGraphics(bool activate) { graphics = activate; }
   /*!
     Modify the default thickness that is set to 1 of the drawings in overlay
     when setGraphics() is enabled.

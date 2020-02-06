@@ -450,7 +450,7 @@ void vpXmlParser::parse(const std::string &filename)
   \param append : if true and if the file exists, the data will be added to
   the data already in the file
 */
-void vpXmlParser::save(const std::string &filename, const bool append)
+void vpXmlParser::save(const std::string &filename, bool append)
 {
   xmlDocPtr doc;
   xmlNodePtr root_node;

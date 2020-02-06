@@ -473,7 +473,7 @@ void vpPlot::navigate()
 
   \param block : If true, this method waits a click.
 */
-void vpPlot::getPixelValue(const bool block)
+void vpPlot::getPixelValue(bool block)
 {
   vpImagePoint iP;
 

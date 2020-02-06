@@ -539,7 +539,7 @@ public:
 
     \sa save()
   */
-  static bool load(const std::string &filename, vpArray2D<Type> &A, const bool binary = false, char *header = NULL)
+  static bool load(const std::string &filename, vpArray2D<Type> &A, bool binary = false, char *header = NULL)
   {
     std::fstream file;
 
@@ -736,7 +736,7 @@ public:
 
     \sa load()
   */
-  static bool save(const std::string &filename, const vpArray2D<Type> &A, const bool binary = false,
+  static bool save(const std::string &filename, const vpArray2D<Type> &A, bool binary = false,
                    const char *header = "")
   {
     std::fstream file;

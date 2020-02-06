@@ -1687,7 +1687,7 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string &end
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
-                               int &startIdFace, const bool verbose, const bool parent,
+                               int &startIdFace, const bool verbose, bool parent,
                                const vpHomogeneousMatrix &odTo)
 {
   std::ifstream fileId;

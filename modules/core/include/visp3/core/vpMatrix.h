@@ -689,7 +689,7 @@ vpMatrix M(R);
 
     \return Returns true if no problem appends.
   */
-  static inline bool loadMatrix(const std::string &filename, vpArray2D<double> &M, const bool binary = false,
+  static inline bool loadMatrix(const std::string &filename, vpArray2D<double> &M, bool binary = false,
                                 char *header = NULL)
   {
     return vpArray2D<double>::load(filename, M, binary, header);
@@ -724,7 +724,7 @@ vpMatrix M(R);
     Warning : If you save the matrix as in a text file the precision is less
     than if you save it in a binary file.
   */
-  static inline bool saveMatrix(const std::string &filename, const vpArray2D<double> &M, const bool binary = false,
+  static inline bool saveMatrix(const std::string &filename, const vpArray2D<double> &M, bool binary = false,
                                 const char *header = "")
   {
     return vpArray2D<double>::save(filename, M, binary, header);

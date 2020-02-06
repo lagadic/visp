@@ -368,7 +368,7 @@ unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const vp
    set to the input cv::KeyPoint if != -1.
  */
 void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoints,
-                                std::vector<cv::Point3f> &points3f, const bool append, const int class_id)
+                                std::vector<cv::Point3f> &points3f, bool append, int class_id)
 {
   cv::Mat trainDescriptors;
   // Copy the input list of keypoints
@@ -413,7 +413,7 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, std::vector<cv:
    set to the input cv::KeyPoint if != -1.
  */
 void vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &trainKeyPoints,
-                                std::vector<cv::Point3f> &points3f, const bool append, const int class_id)
+                                std::vector<cv::Point3f> &points3f, bool append, int class_id)
 {
   cv::Mat trainDescriptors;
   // Copy the input list of keypoints
@@ -460,7 +460,7 @@ void vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, std::vector<cv::
  */
 void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vector<cv::KeyPoint> &trainKeyPoints,
                                 const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
-                                const bool append, const int class_id)
+                                bool append, int class_id)
 {
   if (!append) {
     m_currentImageId = 0;
@@ -524,7 +524,7 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vect
  */
 void vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const std::vector<cv::KeyPoint> &trainKeyPoints,
                                 const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
-                                const bool append, const int class_id)
+                                bool append, int class_id)
 {
   vpImageConvert::convert(I_color, m_I);
   buildReference(m_I, trainKeyPoints, trainDescriptors, points3f, append, class_id);
@@ -2972,7 +2972,7 @@ void vpKeyPoint::loadConfigFile(const std::string &configFile)
    otherwise it is in XML mode. \param append : If true, concatenate the
    learning data, otherwise reset the variables.
  */
-void vpKeyPoint::loadLearningData(const std::string &filename, const bool binaryMode, const bool append)
+void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, bool append)
 {
   int startClassId = 0;
   int startImageId = 0;

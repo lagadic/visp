@@ -888,7 +888,7 @@ protected:
 
   virtual void loadVRMLModel(const std::string &modelFile);
   virtual void loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
-                            int &startIdFace, const bool verbose = false, const bool parent = true,
+                            int &startIdFace, const bool verbose = false, bool parent = true,
                             const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   void projectionErrorInitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);

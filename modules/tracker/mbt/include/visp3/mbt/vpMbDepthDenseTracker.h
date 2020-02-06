@@ -146,7 +146,7 @@ protected:
   vpImage<unsigned char> m_debugImage_depthDense;
 #endif
 
-  void addFace(vpMbtPolygon &polygon, const bool alreadyClose);
+  void addFace(vpMbtPolygon &polygon, bool alreadyClose);
 
   void computeVisibility(unsigned int width, unsigned int height);
 

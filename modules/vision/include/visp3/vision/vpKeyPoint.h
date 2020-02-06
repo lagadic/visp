@@ -326,10 +326,10 @@ public:
   unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   void buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoint,
-                      std::vector<cv::Point3f> &points3f, const bool append = false, const int class_id = -1);
+                      std::vector<cv::Point3f> &points3f, bool append = false, int class_id = -1);
   void buildReference(const vpImage<unsigned char> &I, const std::vector<cv::KeyPoint> &trainKeyPoint,
                       const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
-                      const bool append = false, const int class_id = -1);
+                      bool append = false, int class_id = -1);
 
   unsigned int buildReference(const vpImage<vpRGBa> &I_color);
   unsigned int buildReference(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, unsigned int height,
@@ -337,10 +337,10 @@ public:
   unsigned int buildReference(const vpImage<vpRGBa> &I_color, const vpRect &rectangle);
 
   void buildReference(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &trainKeyPoint,
-                      std::vector<cv::Point3f> &points3f, const bool append = false, const int class_id = -1);
+                      std::vector<cv::Point3f> &points3f, bool append = false, int class_id = -1);
   void buildReference(const vpImage<vpRGBa> &I, const std::vector<cv::KeyPoint> &trainKeyPoint,
                       const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
-                      const bool append = false, const int class_id = -1);
+                      bool append = false, int class_id = -1);
 
   static void compute3D(const cv::KeyPoint &candidate, const std::vector<vpPoint> &roi, const vpCameraParameters &cam,
                         const vpHomogeneousMatrix &cMo, cv::Point3f &point);
@@ -701,7 +701,7 @@ public:
   void loadConfigFile(const std::string &configFile);
 #endif
 
-  void loadLearningData(const std::string &filename, const bool binaryMode = false, const bool append = false);
+  void loadLearningData(const std::string &filename, bool binaryMode = false, bool append = false);
 
   void match(const cv::Mat &trainDescriptors, const cv::Mat &queryDescriptors, std::vector<cv::DMatch> &matches,
              double &elapsedTime);
@@ -739,7 +739,7 @@ public:
 
   void reset();
 
-  void saveLearningData(const std::string &filename, const bool binaryMode = false,
+  void saveLearningData(const std::string &filename, bool binaryMode = false,
                         bool saveTrainingImages = true);
 
   /*!
@@ -1031,7 +1031,7 @@ public:
 
     \note Needs C++11 or higher.
   */
-  inline void setRansacParallel(const bool parallel)
+  inline void setRansacParallel(bool parallel)
   {
     m_ransacParallel = parallel;
   }

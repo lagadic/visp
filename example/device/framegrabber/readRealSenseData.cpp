@@ -154,8 +154,8 @@ private:
 };
 #endif
 
-bool readData(const int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_color, vpImage<uint16_t> &I_depth_raw,
-              const bool pointcloud_binary_format
+bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_color, vpImage<uint16_t> &I_depth_raw,
+              bool pointcloud_binary_format
 #ifdef USE_PCL_VIEWER
               , pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud
 #endif
