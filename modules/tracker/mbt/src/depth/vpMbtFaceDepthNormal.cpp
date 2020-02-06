@@ -814,7 +814,7 @@ void vpMbtFaceDepthNormal::computeNormalVisibility(double nx, double ny, double 
 }
 
 #ifdef VISP_HAVE_PCL
-void vpMbtFaceDepthNormal::computeNormalVisibility(const float nx, const float ny, const float nz,
+void vpMbtFaceDepthNormal::computeNormalVisibility(float nx, float ny, float nz,
                                                    const pcl::PointXYZ &centroid_point, pcl::PointXYZ &face_normal)
 {
   vpColVector faceNormal(3);

@@ -379,7 +379,7 @@ void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label, const 
   \param label : label (name of the data) of the node
   \param value : float to write
 */
-void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label, const float value)
+void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label, float value)
 {
   char str[100];
   sprintf(str, "%f", value);

@@ -86,7 +86,7 @@
 
 namespace
 {
-int fastRound(const float value) { return (int)(value + 0.5f); }
+int fastRound(float value) { return (int)(value + 0.5f); }
 
 void clipHistogram(const std::vector<int> &hist, std::vector<int> &clippedHist, const int limit)
 {

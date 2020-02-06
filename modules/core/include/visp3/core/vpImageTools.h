@@ -187,7 +187,7 @@ private:
   // Cubic interpolation
   static float cubicHermite(const float A, const float B, const float C, const float D, const float t);
 
-  template <class Type> static Type getPixelClamped(const vpImage<Type> &I, const float u, const float v);
+  template <class Type> static Type getPixelClamped(const vpImage<Type> &I, float u, float v);
 
   static int coordCast(double x);
 
@@ -202,15 +202,15 @@ private:
 
   template <class Type>
   static void resizeBicubic(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i, unsigned int j,
-                            const float u, const float v, const float xFrac, const float yFrac);
+                            float u, float v, float xFrac, float yFrac);
 
   template <class Type>
   static void resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i, unsigned int j,
-                             const float u, const float v, const float xFrac, const float yFrac);
+                             float u, float v, float xFrac, float yFrac);
 
   template <class Type>
   static void resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i, unsigned int j,
-                            const float u, const float v);
+                            float u, float v);
 
   template <class Type>
   static void warpNN(const vpImage<Type> &src, const vpMatrix &T, vpImage<Type> &dst, bool affine, bool centerCorner, bool fixedPoint);
@@ -865,7 +865,7 @@ template <class Type> void vpImageTools::flip(vpImage<Type> &I)
   }
 }
 
-template <class Type> Type vpImageTools::getPixelClamped(const vpImage<Type> &I, const float u, const float v)
+template <class Type> Type vpImageTools::getPixelClamped(const vpImage<Type> &I, float u, float v)
 {
   unsigned int i, j;
   if (u < 0.f)
@@ -889,8 +889,7 @@ template <class Type> Type vpImageTools::getPixelClamped(const vpImage<Type> &I,
 // http://blog.demofox.org/2015/08/15/resizing-images-with-bicubic-interpolation/
 template <class Type>
 void vpImageTools::resizeBicubic(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i,
-                                 unsigned int j, const float u, const float v, const float xFrac,
-                                 const float yFrac)
+                                 unsigned int j, float u, float v, float xFrac, float yFrac)
 {
   // 1st row
   Type p00 = getPixelClamped(I, u - 1, v - 1);
@@ -926,8 +925,7 @@ void vpImageTools::resizeBicubic(const vpImage<Type> &I, vpImage<Type> &Ires, un
 
 template <>
 inline void vpImageTools::resizeBicubic(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, unsigned int i,
-                                        unsigned int j, const float u, const float v, const float xFrac,
-                                        const float yFrac)
+                                        unsigned int j, float u, float v, float xFrac, float yFrac)
 {
   // 1st row
   vpRGBa p00 = getPixelClamped(I, u - 1, v - 1);
@@ -978,8 +976,7 @@ inline void vpImageTools::resizeBicubic(const vpImage<vpRGBa> &I, vpImage<vpRGBa
 
 template <class Type>
 void vpImageTools::resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i,
-                                  unsigned int j, const float u, const float v, const float xFrac,
-                                  const float yFrac)
+                                  unsigned int j, float u, float v, float xFrac, float yFrac)
 {
   unsigned int u0 = static_cast<unsigned int>(u);
   unsigned int v0 = static_cast<unsigned int>(v);
@@ -1002,8 +999,7 @@ void vpImageTools::resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, u
 
 template <>
 inline void vpImageTools::resizeBilinear(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, unsigned int i,
-                                         unsigned int j, const float u, const float v, const float xFrac,
-                                         const float yFrac)
+                                         unsigned int j, float u, float v, float xFrac, float yFrac)
 {
   unsigned int u0 = static_cast<unsigned int>(u);
   unsigned int v0 = static_cast<unsigned int>(v);
@@ -1030,7 +1026,7 @@ inline void vpImageTools::resizeBilinear(const vpImage<vpRGBa> &I, vpImage<vpRGB
 
 template <class Type>
 void vpImageTools::resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i,
-                                 unsigned int j, const float u, const float v)
+                                 unsigned int j, float u, float v)
 {
   Ires[i][j] = getPixelClamped(I, u, v);
 }

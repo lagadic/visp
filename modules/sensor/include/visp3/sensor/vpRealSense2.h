@@ -344,7 +344,7 @@ public:
   //! Set the value used when the pixel value (u, v) in the depth map is
   //! invalid for the point cloud. For instance, the Point Cloud Library (PCL)
   //! uses NAN values for points where the depth is invalid.
-  inline void setInvalidDepthValue(const float value) { m_invalidDepthValue = value; }
+  inline void setInvalidDepthValue(float value) { m_invalidDepthValue = value; }
 
   //! Set the maximum Z value (used to discard bad reconstructed depth for
   //! pointcloud).
