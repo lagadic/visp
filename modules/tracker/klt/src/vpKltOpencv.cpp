@@ -340,7 +340,7 @@ void vpKltOpencv::setMaxFeatures(const int maxCount) { m_maxCount = maxCount; }
   is set to 10. For example, if \e winSize=5 , then a 5*2+1 \f$\times\f$ 5*2+1
   = 11 \f$\times\f$ 11 search window is used.
 */
-void vpKltOpencv::setWindowSize(const int winSize) { m_winSize = winSize; }
+void vpKltOpencv::setWindowSize(int winSize) { m_winSize = winSize; }
 
 /*!
   Set the parameter characterizing the minimal accepted quality of image

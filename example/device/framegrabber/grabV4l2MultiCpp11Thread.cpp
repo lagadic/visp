@@ -341,7 +341,7 @@ void capture(vpV4l2Grabber *const pGrabber, ShareImage &share_image)
   }
 }
 
-void display(unsigned int width, unsigned int height, const int win_x, const int win_y,
+void display(unsigned int width, unsigned int height, int win_x, int win_y,
              const unsigned int deviceId, ShareImage &share_image, FrameQueue &queue, const bool save)
 {
   vpImage<vpRGBa> local_img(height, width);

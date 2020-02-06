@@ -154,7 +154,7 @@ public:
   //! OpenCV C api to do the tracking.
   void setTrackerId(int tid) { (void)tid; }
   void setUseHarris(const int useHarrisDetector);
-  void setWindowSize(const int winSize);
+  void setWindowSize(int winSize);
   void suppressFeature(const int &index);
 
 protected:
