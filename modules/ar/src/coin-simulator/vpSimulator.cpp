@@ -222,7 +222,7 @@ SoSeparator *createFrame(float longueurFleche = LONGUEUR_FLECHE, float proportio
   return frame;
 }
 
-SoSeparator *createCameraObject(const float zoomFactor = 1.0)
+SoSeparator *createCameraObject(float zoomFactor = 1.0)
 {
   vpDEBUG_TRACE(15, "# Entree.");
 
@@ -407,7 +407,7 @@ void vpSimulator::initSceneGraph()
 
   \param zoom: zoom factor of the objects. By default, 1.
 */
-void vpSimulator::setZoomFactor(const float zoom)
+void vpSimulator::setZoomFactor(float zoom)
 {
   zoomFactor = zoom;
   static bool firstTime = true;
@@ -440,7 +440,7 @@ void vpSimulator::setZoomFactor(const float zoom)
   \param zoomFactor : the new zoom use to specify the apparent size of the
   object \param index : the index of the Scale object to modify (see comments)
 */
-void vpSimulator::changeZoomFactor(const float zoomFactor, int index)
+void vpSimulator::changeZoomFactor(float zoomFactor, int index)
 {
   SoScale *taille = (SoScale *)this->scene->getChild(index);
   taille->scaleFactor.setValue(zoomFactor, zoomFactor, zoomFactor);

@@ -161,7 +161,7 @@ uint32_t swap32bits(const uint32_t val)
 
 // Swap a float, the union is necessary because of the representation of a
 // float in memory in IEEE 754.
-float swapFloat(const float f)
+float swapFloat(float f)
 {
   union {
     float f;
@@ -1991,7 +1991,7 @@ void vpIoTools::writeBinaryValueLE(std::ofstream &file, const uint32_t uint_valu
 /*!
    Write a float value in little endian.
  */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, const float float_value)
+void vpIoTools::writeBinaryValueLE(std::ofstream &file, float float_value)
 {
 #ifdef VISP_BIG_ENDIAN
   // Swap bytes order to little endian

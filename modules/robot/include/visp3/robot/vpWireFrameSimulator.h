@@ -478,7 +478,7 @@ public:
 
       \param factor : The ration for the camera size.
     */
-  inline void setCameraSizeFactor(const float factor) { cameraFactor = factor; }
+  inline void setCameraSizeFactor(float factor) { cameraFactor = factor; }
 
   /*!
       Set the color used to display the camera trajectory in the external

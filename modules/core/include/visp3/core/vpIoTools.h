@@ -241,7 +241,7 @@ public:
   static void writeBinaryValueLE(std::ofstream &file, const uint16_t ushort_value);
   static void writeBinaryValueLE(std::ofstream &file, const int32_t int_value);
   static void writeBinaryValueLE(std::ofstream &file, const uint32_t int_value);
-  static void writeBinaryValueLE(std::ofstream &file, const float float_value);
+  static void writeBinaryValueLE(std::ofstream &file, float float_value);
   static void writeBinaryValueLE(std::ofstream &file, const double double_value);
 
   static bool parseBoolean(std::string input);

@@ -244,7 +244,7 @@ public:
 
   void setRotation(const std::string &sceneName, const vpRotationMatrix &wRo);
 
-  void setScale(const std::string &sceneName, const float factorx, const float factory, const float factorz);
+  void setScale(const std::string &sceneName, float factorx, float factory, float factorz);
 
   /*!
     Enable/Disable the appearance of the config dialog on startup.

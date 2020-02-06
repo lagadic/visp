@@ -227,7 +227,7 @@ public:
   //!   Add the representation of a frame
   void addFrame(const vpHomogeneousMatrix &fMo, float zoom = 1);
   //! set the size of the camera/frame
-  void setZoomFactor(const float zoom);
+  void setZoomFactor(float zoom);
 
 protected:
   float zoomFactor;
@@ -262,7 +262,7 @@ public:
   void getInternalImage(vpImage<vpRGBa> &I);
   /* --- Off screen rendering  --- */
 
-  void changeZoomFactor(const float zoom, int index);
+  void changeZoomFactor(float zoom, int index);
 
 public:
   typedef enum { INTERNAL, EXTERNAL } vpSimulatorViewType;

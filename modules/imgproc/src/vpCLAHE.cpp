@@ -226,7 +226,7 @@ float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clipp
   between.
 */
 void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius, int bins,
-               const float slope, bool fast)
+               float slope, bool fast)
 {
   if (blockRadius < 0) {
     std::cerr << "Error: blockRadius < 0!" << std::endl;
@@ -490,7 +490,7 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int
   boxes of the given block size only and interpolates for locations in
   between.
 */
-void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int bins, const float slope,
+void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int bins, float slope,
                bool fast)
 {
   // Split
