@@ -652,7 +652,7 @@ void vpMeEllipse::display(const vpImage<unsigned char> &I, vpColor col)
 */
 void vpMeEllipse::initTracking(const vpImage<unsigned char> &I)
 {
-  unsigned int n = 5;
+  const unsigned int n = 5;
   vpImagePoint iP[n];
 
   for (unsigned int k = 0; k < n; k++) {

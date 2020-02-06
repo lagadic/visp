@@ -207,8 +207,8 @@ template<class Type> void DrawPolygon(vpImage<Type> & canvas, const std::vector<
   }
   else {
     for (size_t i = 1; i < polygon.size(); i++) {
-      DrawLine(canvas, polygon[i-1].get_u(), polygon[i-1].get_v(),
-          polygon[i].get_u(), polygon[i].get_v(), color, width);
+      DrawLine(canvas, static_cast<int>(polygon[i-1].get_u()), static_cast<int>(polygon[i-1].get_v()),
+          static_cast<int>(polygon[i].get_u()), static_cast<int>(polygon[i].get_v()), color, width);
     }
   }
 }
