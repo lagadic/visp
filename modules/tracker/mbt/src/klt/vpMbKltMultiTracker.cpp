@@ -1003,7 +1003,7 @@ void vpMbKltMultiTracker::initClick(const vpImage<unsigned char> &I, const std::
   exist.
 */
 void vpMbKltMultiTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile,
-                                    const bool displayHelp, const vpHomogeneousMatrix &T)
+                                    bool displayHelp, const vpHomogeneousMatrix &T)
 {
   if (m_mapOfKltTrackers.empty()) {
     throw vpException(vpTrackingException::initializationError, "There is no camera !");
@@ -1065,8 +1065,8 @@ void vpMbKltMultiTracker::initClick(const vpImage<unsigned char> &I, const std::
   exist.
 */
 void vpMbKltMultiTracker::initClick(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                                    const std::string &initFile1, const std::string &initFile2, const bool displayHelp,
-                                    const bool firstCameraIsReference)
+                                    const std::string &initFile1, const std::string &initFile2, bool displayHelp,
+                                    bool firstCameraIsReference)
 {
   if (m_mapOfKltTrackers.size() == 2) {
     std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
@@ -1136,7 +1136,7 @@ void vpMbKltMultiTracker::initClick(const vpImage<unsigned char> &I1, const vpIm
 
 */
 void vpMbKltMultiTracker::initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                    const std::string &initFile, const bool displayHelp)
+                                    const std::string &initFile, bool displayHelp)
 {
   std::map<std::string, vpMbKltTracker *>::const_iterator it_klt = m_mapOfKltTrackers.find(m_referenceCameraName);
   if (it_klt != m_mapOfKltTrackers.end()) {
@@ -1213,7 +1213,7 @@ void vpMbKltMultiTracker::initClick(const std::map<std::string, const vpImage<un
   exist.
 */
 void vpMbKltMultiTracker::initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                    const std::map<std::string, std::string> &mapOfInitFiles, const bool displayHelp)
+                                    const std::map<std::string, std::string> &mapOfInitFiles, bool displayHelp)
 {
   std::map<std::string, vpMbKltTracker *>::const_iterator it_klt = m_mapOfKltTrackers.find(m_referenceCameraName);
   std::map<std::string, const vpImage<unsigned char> *>::const_iterator it_img =
@@ -1376,7 +1376,7 @@ void vpMbKltMultiTracker::initFromPose(const vpImage<unsigned char> &I, const vp
 */
 void vpMbKltMultiTracker::initFromPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                        const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                       const bool firstCameraIsReference)
+                                       bool firstCameraIsReference)
 {
   if (m_mapOfKltTrackers.size() == 2) {
     std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
@@ -1583,7 +1583,7 @@ void vpMbKltMultiTracker::loadConfigFile(const std::string &configFile)
   \sa loadConfigFile(const std::string &)
 */
 void vpMbKltMultiTracker::loadConfigFile(const std::string &configFile1, const std::string &configFile2,
-                                         const bool firstCameraIsReference)
+                                         bool firstCameraIsReference)
 {
   if (m_mapOfKltTrackers.size() == 2) {
     std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
@@ -1683,7 +1683,7 @@ int main()
   \param T : optional transformation matrix (currently only for .cao) to transform
   3D points expressed in the original object frame to the desired object frame.
 */
-void vpMbKltMultiTracker::loadModel(const std::string &modelFile, const bool verbose,
+void vpMbKltMultiTracker::loadModel(const std::string &modelFile, bool verbose,
                                     const vpHomogeneousMatrix &T)
 {
   for (std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
@@ -1758,7 +1758,7 @@ void vpMbKltMultiTracker::reinit(/* const vpImage<unsigned char>& I*/)
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbKltMultiTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                      const vpHomogeneousMatrix &cMo, const bool verbose,
+                                      const vpHomogeneousMatrix &cMo, bool verbose,
                                       const vpHomogeneousMatrix &T)
 {
   if (m_mapOfKltTrackers.size() != 1) {
@@ -1799,8 +1799,8 @@ void vpMbKltMultiTracker::reInitModel(const vpImage<unsigned char> &I, const std
 */
 void vpMbKltMultiTracker::reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                       const std::string &cad_name, const vpHomogeneousMatrix &c1Mo,
-                                      const vpHomogeneousMatrix &c2Mo, const bool verbose,
-                                      const bool firstCameraIsReference)
+                                      const vpHomogeneousMatrix &c2Mo, bool verbose,
+                                      bool firstCameraIsReference)
 {
   if (m_mapOfKltTrackers.size() == 2) {
     std::map<std::string, vpMbKltTracker *>::const_iterator it_edge = m_mapOfKltTrackers.begin();
@@ -1841,7 +1841,7 @@ void vpMbKltMultiTracker::reInitModel(const vpImage<unsigned char> &I1, const vp
 void vpMbKltMultiTracker::reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                       const std::string &cad_name,
                                       const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                                      const bool verbose)
+                                      bool verbose)
 {
   std::map<std::string, vpMbKltTracker *>::const_iterator it_klt = m_mapOfKltTrackers.find(m_referenceCameraName);
   std::map<std::string, const vpImage<unsigned char> *>::const_iterator it_img =
@@ -2001,7 +2001,7 @@ void vpMbKltMultiTracker::setCameraParameters(const vpCameraParameters &cam)
   otherwise it is the second one.
 */
 void vpMbKltMultiTracker::setCameraParameters(const vpCameraParameters &camera1, const vpCameraParameters &camera2,
-                                              const bool firstCameraIsReference)
+                                              bool firstCameraIsReference)
 {
   if (m_mapOfKltTrackers.empty()) {
     throw vpException(vpTrackingException::fatalError, "There is no camera !");
@@ -2544,7 +2544,7 @@ void vpMbKltMultiTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomoge
 */
 void vpMbKltMultiTracker::setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                   const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                  const bool firstCameraIsReference)
+                                  bool firstCameraIsReference)
 {
   if (m_mapOfKltTrackers.size() == 2) {
     std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();

@@ -200,18 +200,18 @@ public:
   virtual void initClick(const vpImage<unsigned char> &I, const std::vector<vpPoint> &points3D_list,
                          const std::string &displayFile = "");
 
-  virtual void initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp = false,
+  virtual void initClick(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp = false,
                          const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   virtual void initClick(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                         const std::string &initFile1, const std::string &initFile2, const bool displayHelp = false,
-                         const bool firstCameraIsReference = true);
+                         const std::string &initFile1, const std::string &initFile2, bool displayHelp = false,
+                         bool firstCameraIsReference = true);
 
   virtual void initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                         const std::string &initFile, const bool displayHelp = false);
+                         const std::string &initFile, bool displayHelp = false);
 
   virtual void initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                         const std::map<std::string, std::string> &mapOfInitFiles, const bool displayHelp = false);
+                         const std::map<std::string, std::string> &mapOfInitFiles, bool displayHelp = false);
 #endif
 
   virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, const double, const int,
@@ -224,7 +224,7 @@ public:
 
   virtual void initFromPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                             const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                            const bool firstCameraIsReference = true);
+                            bool firstCameraIsReference = true);
   virtual void initFromPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                             const vpHomogeneousMatrix &cMo);
   virtual void initFromPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
@@ -236,24 +236,24 @@ public:
   virtual void loadConfigFile(const std::string &configFile);
 
   virtual void loadConfigFile(const std::string &configFile1, const std::string &configFile2,
-                              const bool firstCameraIsReference = true);
+                              bool firstCameraIsReference = true);
 
   virtual void loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles);
 
-  virtual void loadModel(const std::string &modelFile, const bool verbose = false,
+  virtual void loadModel(const std::string &modelFile, bool verbose = false,
                          const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo, const bool verbose = false,
+                           const vpHomogeneousMatrix &cMo, bool verbose = false,
                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   virtual void reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                            const std::string &cad_name, const vpHomogeneousMatrix &c1Mo,
-                           const vpHomogeneousMatrix &c2Mo, const bool verbose = false,
-                           const bool firstCameraIsReference = true);
+                           const vpHomogeneousMatrix &c2Mo, bool verbose = false,
+                           bool firstCameraIsReference = true);
   virtual void reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                            const std::string &cad_name,
                            const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                           const bool verbose = false);
+                           bool verbose = false);
 
   virtual void resetTracker();
 
@@ -263,7 +263,7 @@ public:
   virtual void setCameraParameters(const vpCameraParameters &camera);
 
   virtual void setCameraParameters(const vpCameraParameters &camera1, const vpCameraParameters &camera2,
-                                   const bool firstCameraIsReference = true);
+                                   bool firstCameraIsReference = true);
 
   virtual void setCameraParameters(const std::string &cameraName, const vpCameraParameters &camera);
 
@@ -348,7 +348,7 @@ public:
 
   virtual void setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                        const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                       const bool firstCameraIsReference = true);
+                       bool firstCameraIsReference = true);
 
   virtual void setPose(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                        const vpHomogeneousMatrix &cMo);

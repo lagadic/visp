@@ -191,7 +191,7 @@ public:
     3-by-3 matrix.
     \exception vpException::fatalError When this function is called.
     */
-  void resize(unsigned int nrows, unsigned int ncols, const bool flagNullify = true)
+  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;

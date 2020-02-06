@@ -226,7 +226,7 @@ float transferValue(const int v, const std::vector<int> &hist, std::vector<int> 
   between.
 */
 void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const int blockRadius, const int bins,
-               const float slope, const bool fast)
+               const float slope, bool fast)
 {
   if (blockRadius < 0) {
     std::cerr << "Error: blockRadius < 0!" << std::endl;
@@ -491,7 +491,7 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
   between.
 */
 void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const int blockRadius, const int bins, const float slope,
-               const bool fast)
+               bool fast)
 {
   // Split
   vpImage<unsigned char> pR(I1.getHeight(), I1.getWidth());

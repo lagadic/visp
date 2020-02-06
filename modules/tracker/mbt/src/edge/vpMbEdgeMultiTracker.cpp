@@ -1247,7 +1247,7 @@ void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char> &I, const std:
   exist.
 */
 void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile,
-                                     const bool displayHelp, const vpHomogeneousMatrix &T)
+                                     bool displayHelp, const vpHomogeneousMatrix &T)
 {
   if (m_mapOfEdgeTrackers.empty()) {
     throw vpException(vpTrackingException::initializationError, "There is no camera !");
@@ -1303,8 +1303,8 @@ void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char> &I, const std:
   exist.
 */
 void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                                     const std::string &initFile1, const std::string &initFile2, const bool displayHelp,
-                                     const bool firstCameraIsReference)
+                                     const std::string &initFile1, const std::string &initFile2, bool displayHelp,
+                                     bool firstCameraIsReference)
 {
   if (m_mapOfEdgeTrackers.size() == 2) {
     std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
@@ -1366,7 +1366,7 @@ void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char> &I1, const vpI
 
 */
 void vpMbEdgeMultiTracker::initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                     const std::string &initFile, const bool displayHelp)
+                                     const std::string &initFile, bool displayHelp)
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
   if (it_edge != m_mapOfEdgeTrackers.end()) {
@@ -1439,7 +1439,7 @@ void vpMbEdgeMultiTracker::initClick(const std::map<std::string, const vpImage<u
   exist.
 */
 void vpMbEdgeMultiTracker::initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                     const std::map<std::string, std::string> &mapOfInitFiles, const bool displayHelp)
+                                     const std::map<std::string, std::string> &mapOfInitFiles, bool displayHelp)
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
   std::map<std::string, const vpImage<unsigned char> *>::const_iterator it_img =
@@ -1606,7 +1606,7 @@ void vpMbEdgeMultiTracker::initFromPose(const vpImage<unsigned char> &I, const v
 */
 void vpMbEdgeMultiTracker::initFromPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                         const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                        const bool firstCameraIsReference)
+                                        bool firstCameraIsReference)
 {
   // For Edge, initFromPose has the same behavior than setPose
   // So, for convenience we call setPose
@@ -1734,7 +1734,7 @@ void vpMbEdgeMultiTracker::loadConfigFile(const std::string &configFile)
   \sa loadConfigFile(const std::string &)
 */
 void vpMbEdgeMultiTracker::loadConfigFile(const std::string &configFile1, const std::string &configFile2,
-                                          const bool firstCameraIsReference)
+                                          bool firstCameraIsReference)
 {
   if (m_mapOfEdgeTrackers.size() == 2) {
     std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
@@ -1843,7 +1843,7 @@ CAO model files which include other CAO model files.
   \param T : optional transformation matrix (currently only for .cao) to transform
   3D points expressed in the original object frame to the desired object frame.
 */
-void vpMbEdgeMultiTracker::loadModel(const std::string &modelFile, const bool verbose,
+void vpMbEdgeMultiTracker::loadModel(const std::string &modelFile, bool verbose,
                                      const vpHomogeneousMatrix &T)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
@@ -1867,7 +1867,7 @@ void vpMbEdgeMultiTracker::loadModel(const std::string &modelFile, const bool ve
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeMultiTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                       const vpHomogeneousMatrix &cMo, const bool verbose,
+                                       const vpHomogeneousMatrix &cMo, bool verbose,
                                        const vpHomogeneousMatrix &T)
 {
   if (m_mapOfEdgeTrackers.size() != 1) {
@@ -1902,8 +1902,8 @@ void vpMbEdgeMultiTracker::reInitModel(const vpImage<unsigned char> &I, const st
 */
 void vpMbEdgeMultiTracker::reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                        const std::string &cad_name, const vpHomogeneousMatrix &c1Mo,
-                                       const vpHomogeneousMatrix &c2Mo, const bool verbose,
-                                       const bool firstCameraIsReference)
+                                       const vpHomogeneousMatrix &c2Mo, bool verbose,
+                                       bool firstCameraIsReference)
 {
   if (m_mapOfEdgeTrackers.size() == 2) {
     std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.begin();
@@ -1941,7 +1941,7 @@ void vpMbEdgeMultiTracker::reInitModel(const vpImage<unsigned char> &I1, const v
 void vpMbEdgeMultiTracker::reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                        const std::string &cad_name,
                                        const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                                       const bool verbose)
+                                       bool verbose)
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
   std::map<std::string, const vpImage<unsigned char> *>::const_iterator it_img =
@@ -2095,7 +2095,7 @@ void vpMbEdgeMultiTracker::setCameraParameters(const vpCameraParameters &cam)
   otherwise it is the second one.
 */
 void vpMbEdgeMultiTracker::setCameraParameters(const vpCameraParameters &camera1, const vpCameraParameters &camera2,
-                                               const bool firstCameraIsReference)
+                                               bool firstCameraIsReference)
 {
   if (m_mapOfEdgeTrackers.empty()) {
     throw vpException(vpTrackingException::fatalError, "There is no camera !");
@@ -2684,7 +2684,7 @@ void vpMbEdgeMultiTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomog
 */
 void vpMbEdgeMultiTracker::setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                    const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                   const bool firstCameraIsReference)
+                                   bool firstCameraIsReference)
 {
   if (m_mapOfEdgeTrackers.size() == 2) {
     std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();

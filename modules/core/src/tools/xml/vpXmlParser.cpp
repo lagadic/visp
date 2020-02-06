@@ -395,7 +395,7 @@ void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label, float v
   \param label : label (name of the data) of the node
   \param value : boolean to write (true or false)
 */
-void vpXmlParser::xmlWriteBoolChild(xmlNodePtr node, const char *label, const bool value)
+void vpXmlParser::xmlWriteBoolChild(xmlNodePtr node, const char *label, bool value)
 {
   char str[2];
   sprintf(str, "%d", (int)value);

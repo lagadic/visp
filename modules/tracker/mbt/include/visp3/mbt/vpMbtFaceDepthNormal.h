@@ -161,9 +161,9 @@ public:
     m_pclPlaneEstimationRansacThreshold = threshold;
   }
 
-  void setScanLineVisibilityTest(const bool v);
+  void setScanLineVisibilityTest(bool v);
 
-  inline void setTracked(const bool tracked) { m_isTrackedDepthNormalFace = tracked; }
+  inline void setTracked(bool tracked) { m_isTrackedDepthNormalFace = tracked; }
 
 private:
   class PolygonLine

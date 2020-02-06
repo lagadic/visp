@@ -1395,7 +1395,7 @@ void vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoi
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbKltTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                 const vpHomogeneousMatrix &cMo, const bool verbose,
+                                 const vpHomogeneousMatrix &cMo, bool verbose,
                                  const vpHomogeneousMatrix &T)
 {
   m_cMo.eye();

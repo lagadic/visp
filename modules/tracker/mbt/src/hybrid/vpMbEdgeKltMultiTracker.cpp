@@ -885,7 +885,7 @@ void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char> &I, const s
   exist.
 */
 void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile,
-                                        const bool displayHelp, const vpHomogeneousMatrix &T)
+                                        bool displayHelp, const vpHomogeneousMatrix &T)
 {
   // Cannot use directly set pose for KLT as it is different than for the edge
   // case  It moves the KLT points instead of detecting new KLT points
@@ -933,7 +933,7 @@ void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char> &I, const s
 */
 void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                         const std::string &initFile1, const std::string &initFile2,
-                                        const bool displayHelp, const bool firstCameraIsReference)
+                                        bool displayHelp, bool firstCameraIsReference)
 {
   vpMbKltMultiTracker::initClick(I1, I2, initFile1, initFile2, displayHelp, firstCameraIsReference);
 
@@ -981,7 +981,7 @@ void vpMbEdgeKltMultiTracker::initClick(const vpImage<unsigned char> &I1, const 
 
 */
 void vpMbEdgeKltMultiTracker::initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                        const std::string &initFile, const bool displayHelp)
+                                        const std::string &initFile, bool displayHelp)
 {
   vpMbKltMultiTracker::initClick(mapOfImages, initFile, displayHelp);
 
@@ -1024,7 +1024,7 @@ void vpMbEdgeKltMultiTracker::initClick(const std::map<std::string, const vpImag
 */
 void vpMbEdgeKltMultiTracker::initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                         const std::map<std::string, std::string> &mapOfInitFiles,
-                                        const bool displayHelp)
+                                        bool displayHelp)
 {
   vpMbKltMultiTracker::initClick(mapOfImages, mapOfInitFiles, displayHelp);
 
@@ -1158,7 +1158,7 @@ void vpMbEdgeKltMultiTracker::initFromPose(const vpImage<unsigned char> &I, cons
 */
 void vpMbEdgeKltMultiTracker::initFromPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                            const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                           const bool firstCameraIsReference)
+                                           bool firstCameraIsReference)
 {
   vpMbEdgeMultiTracker::initFromPose(I1, I2, c1Mo, c2Mo, firstCameraIsReference);
   vpMbKltMultiTracker::initFromPose(I1, I2, c1Mo, c2Mo, firstCameraIsReference);
@@ -1302,7 +1302,7 @@ void vpMbEdgeKltMultiTracker::loadConfigFile(const std::string &configFile)
   \sa loadConfigFile(const std::string &)
 */
 void vpMbEdgeKltMultiTracker::loadConfigFile(const std::string &configFile1, const std::string &configFile2,
-                                             const bool firstCameraIsReference)
+                                             bool firstCameraIsReference)
 {
   vpMbEdgeMultiTracker::loadConfigFile(configFile1, configFile2, firstCameraIsReference);
   vpMbKltMultiTracker::loadConfigFile(configFile1, configFile2, firstCameraIsReference);
@@ -1351,7 +1351,7 @@ int main()
   \param T : optional transformation matrix (currently only for .cao) to transform
   3D points expressed in the original object frame to the desired object frame.
 */
-void vpMbEdgeKltMultiTracker::loadModel(const std::string &modelFile, const bool verbose,
+void vpMbEdgeKltMultiTracker::loadModel(const std::string &modelFile, bool verbose,
                                         const vpHomogeneousMatrix &T)
 {
   vpMbEdgeMultiTracker::loadModel(modelFile, verbose, T);
@@ -1436,7 +1436,7 @@ void vpMbEdgeKltMultiTracker::reinit(/*const vpImage<unsigned char>& I */)
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeKltMultiTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                          const vpHomogeneousMatrix &cMo, const bool verbose,
+                                          const vpHomogeneousMatrix &cMo, bool verbose,
                                           const vpHomogeneousMatrix &T)
 {
   vpMbEdgeMultiTracker::reInitModel(I, cad_name, cMo, verbose, T);
@@ -1458,8 +1458,8 @@ void vpMbEdgeKltMultiTracker::reInitModel(const vpImage<unsigned char> &I, const
 */
 void vpMbEdgeKltMultiTracker::reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                           const std::string &cad_name, const vpHomogeneousMatrix &c1Mo,
-                                          const vpHomogeneousMatrix &c2Mo, const bool verbose,
-                                          const bool firstCameraIsReference)
+                                          const vpHomogeneousMatrix &c2Mo, bool verbose,
+                                          bool firstCameraIsReference)
 {
   vpMbEdgeMultiTracker::reInitModel(I1, I2, cad_name, c1Mo, c2Mo, verbose, firstCameraIsReference);
   vpMbKltMultiTracker::reInitModel(I1, I2, cad_name, c1Mo, c2Mo, verbose, firstCameraIsReference);
@@ -1478,7 +1478,7 @@ void vpMbEdgeKltMultiTracker::reInitModel(const vpImage<unsigned char> &I1, cons
 void vpMbEdgeKltMultiTracker::reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                           const std::string &cad_name,
                                           const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                                          const bool verbose)
+                                          bool verbose)
 {
   vpMbEdgeMultiTracker::reInitModel(mapOfImages, cad_name, mapOfCameraPoses, verbose);
   vpMbKltMultiTracker::reInitModel(mapOfImages, cad_name, mapOfCameraPoses, verbose);
@@ -1546,7 +1546,7 @@ void vpMbEdgeKltMultiTracker::setCameraParameters(const vpCameraParameters &cam)
   otherwise it is the second one.
 */
 void vpMbEdgeKltMultiTracker::setCameraParameters(const vpCameraParameters &camera1, const vpCameraParameters &camera2,
-                                                  const bool firstCameraIsReference)
+                                                  bool firstCameraIsReference)
 {
   vpMbEdgeMultiTracker::setCameraParameters(camera1, camera2, firstCameraIsReference);
   vpMbKltMultiTracker::setCameraParameters(camera1, camera2, firstCameraIsReference);
@@ -2000,7 +2000,7 @@ void vpMbEdgeKltMultiTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHo
 */
 void vpMbEdgeKltMultiTracker::setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                       const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                      const bool firstCameraIsReference)
+                                      bool firstCameraIsReference)
 {
   vpMbEdgeMultiTracker::setPose(I1, I2, c1Mo, c2Mo, firstCameraIsReference);
   vpMbKltMultiTracker::setPose(I1, I2, c1Mo, c2Mo, firstCameraIsReference);

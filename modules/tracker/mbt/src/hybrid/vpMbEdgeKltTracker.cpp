@@ -1381,7 +1381,7 @@ std::vector<std::vector<double> > vpMbEdgeKltTracker::getModelForDisplay(unsigne
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                     const vpHomogeneousMatrix &cMo, const bool verbose,
+                                     const vpHomogeneousMatrix &cMo, bool verbose,
                                      const vpHomogeneousMatrix &T)
 {
   // Reinit klt

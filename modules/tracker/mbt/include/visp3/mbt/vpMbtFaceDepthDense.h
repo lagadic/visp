@@ -136,7 +136,7 @@ public:
 
   void setCameraParameters(const vpCameraParameters &camera);
 
-  void setScanLineVisibilityTest(const bool v);
+  void setScanLineVisibilityTest(bool v);
 
   inline void setDepthDenseFilteringMaxDistance(double maxDistance)
   {
@@ -159,7 +159,7 @@ public:
     }
   }
 
-  inline void setTracked(const bool tracked) { m_isTrackedDepthDenseFace = tracked; }
+  inline void setTracked(bool tracked) { m_isTrackedDepthDenseFace = tracked; }
 
 private:
   class PolygonLine

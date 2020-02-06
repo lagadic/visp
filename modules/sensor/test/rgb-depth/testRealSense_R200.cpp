@@ -68,7 +68,7 @@ bool cancelled = false, update_pointcloud = false;
 class ViewerWorker
 {
 public:
-  explicit ViewerWorker(const bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) {}
+  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) {}
 
   void run()
   {
@@ -142,7 +142,7 @@ private:
 void test_R200(vpRealSense &rs, const std::map<rs::stream, bool> &enables,
                const std::map<rs::stream, vpRealSense::vpRsStreamParams> &params,
                const std::map<rs::option, double> &options, const std::string &title,
-               const bool depth_color_visualization = false, const rs::stream &color_stream = rs::stream::color,
+               bool depth_color_visualization = false, const rs::stream &color_stream = rs::stream::color,
                const rs::stream &depth_stream = rs::stream::depth,
                const rs::stream &infrared2_stream = rs::stream::infrared2, bool display_pcl = false,
                bool pcl_color = false)

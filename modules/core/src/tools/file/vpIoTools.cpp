@@ -1354,7 +1354,7 @@ ext: .xml
    \endcode
 
  */
-std::string vpIoTools::getFileExtension(const std::string &pathname, const bool checkFile)
+std::string vpIoTools::getFileExtension(const std::string &pathname, bool checkFile)
 {
   if (checkFile && (vpIoTools::checkDirectory(pathname) || !vpIoTools::checkFilename(pathname))) {
     return "";

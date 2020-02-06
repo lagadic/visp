@@ -1637,7 +1637,7 @@ vpMbtPolygon *vpMbGenericTracker::getPolygon(const std::string &cameraName, unsi
   only for the reference camera.
 */
 std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
-vpMbGenericTracker::getPolygonFaces(const bool orderPolygons, bool useVisibility, const bool clipPolygon)
+vpMbGenericTracker::getPolygonFaces(bool orderPolygons, bool useVisibility, bool clipPolygon)
 {
   std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > > polygonFaces;
 
@@ -1671,7 +1671,7 @@ vpMbGenericTracker::getPolygonFaces(const bool orderPolygons, bool useVisibility
 */
 void vpMbGenericTracker::getPolygonFaces(std::map<std::string, std::vector<vpPolygon> > &mapOfPolygons,
                                          std::map<std::string, std::vector<std::vector<vpPoint> > > &mapOfPoints,
-                                         const bool orderPolygons, bool useVisibility, const bool clipPolygon)
+                                         bool orderPolygons, bool useVisibility, bool clipPolygon)
 {
   mapOfPolygons.clear();
   mapOfPoints.clear();
@@ -1807,7 +1807,7 @@ void vpMbGenericTracker::initCircle(const vpPoint & /*p1*/, const vpPoint & /*p2
   \note This function assumes a stereo configuration of the generic tracker.
 */
 void vpMbGenericTracker::initClick(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                                   const std::string &initFile1, const std::string &initFile2, const bool displayHelp,
+                                   const std::string &initFile1, const std::string &initFile2, bool displayHelp,
                                    const vpHomogeneousMatrix &T1, const vpHomogeneousMatrix &T2)
 {
   if (m_mapOfTrackers.size() == 2) {
@@ -1876,7 +1876,7 @@ void vpMbGenericTracker::initClick(const vpImage<unsigned char> &I1, const vpIma
   \note This function assumes a stereo configuration of the generic tracker.
 */
 void vpMbGenericTracker::initClick(const vpImage<vpRGBa> &I_color1, const vpImage<vpRGBa> &I_color2,
-                                   const std::string &initFile1, const std::string &initFile2, const bool displayHelp,
+                                   const std::string &initFile1, const std::string &initFile2, bool displayHelp,
                                    const vpHomogeneousMatrix &T1, const vpHomogeneousMatrix &T2)
 {
   if (m_mapOfTrackers.size() == 2) {
@@ -1945,7 +1945,7 @@ void vpMbGenericTracker::initClick(const vpImage<vpRGBa> &I_color1, const vpImag
   setCameraTransformationMatrix()).
 */
 void vpMbGenericTracker::initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                   const std::map<std::string, std::string> &mapOfInitFiles, const bool displayHelp,
+                                   const std::map<std::string, std::string> &mapOfInitFiles, bool displayHelp,
                                    const std::map<std::string, vpHomogeneousMatrix> &mapOfT)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(m_referenceCameraName);
@@ -2047,7 +2047,7 @@ void vpMbGenericTracker::initClick(const std::map<std::string, const vpImage<uns
   setCameraTransformationMatrix()).
 */
 void vpMbGenericTracker::initClick(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
-                                   const std::map<std::string, std::string> &mapOfInitFiles, const bool displayHelp,
+                                   const std::map<std::string, std::string> &mapOfInitFiles, bool displayHelp,
                                    const std::map<std::string, vpHomogeneousMatrix> &mapOfT)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(m_referenceCameraName);
@@ -2887,7 +2887,7 @@ CAO model files which include other CAO model files.
   \note All the trackers will use the same model in case of stereo / multiple
 cameras configuration.
 */
-void vpMbGenericTracker::loadModel(const std::string &modelFile, const bool verbose, const vpHomogeneousMatrix &T)
+void vpMbGenericTracker::loadModel(const std::string &modelFile, bool verbose, const vpHomogeneousMatrix &T)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
@@ -2930,7 +2930,7 @@ which include other CAO model files.
 
   \note This function assumes a stereo configuration of the generic tracker.
 */
-void vpMbGenericTracker::loadModel(const std::string &modelFile1, const std::string &modelFile2, const bool verbose,
+void vpMbGenericTracker::loadModel(const std::string &modelFile1, const std::string &modelFile2, bool verbose,
                                    const vpHomogeneousMatrix &T1, const vpHomogeneousMatrix &T2)
 {
   if (m_mapOfTrackers.size() != 2) {
@@ -2977,7 +2977,7 @@ CAO model files which include other CAO model files.
 
   \note Each camera must have a model file.
 */
-void vpMbGenericTracker::loadModel(const std::map<std::string, std::string> &mapOfModelFiles, const bool verbose,
+void vpMbGenericTracker::loadModel(const std::map<std::string, std::string> &mapOfModelFiles, bool verbose,
                                    const std::map<std::string, vpHomogeneousMatrix> &mapOfT)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.begin();
@@ -3036,7 +3036,7 @@ void vpMbGenericTracker::preTracking(std::map<std::string, const vpImage<unsigne
   \param T : optional transformation matrix (currently only for .cao).
 */
 void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                     const vpHomogeneousMatrix &cMo, const bool verbose,
+                                     const vpHomogeneousMatrix &cMo, bool verbose,
                                      const vpHomogeneousMatrix &T)
 {
   if (m_mapOfTrackers.size() != 1) {
@@ -3070,7 +3070,7 @@ void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I, const std:
   \param T : optional transformation matrix (currently only for .cao).
 */
 void vpMbGenericTracker::reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name,
-                                     const vpHomogeneousMatrix &cMo, const bool verbose,
+                                     const vpHomogeneousMatrix &cMo, bool verbose,
                                      const vpHomogeneousMatrix &T)
 {
   if (m_mapOfTrackers.size() != 1) {
@@ -3115,7 +3115,7 @@ void vpMbGenericTracker::reInitModel(const vpImage<vpRGBa> &I_color, const std::
 void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                      const std::string &cad_name1, const std::string &cad_name2,
                                      const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                     const bool verbose,
+                                     bool verbose,
                                      const vpHomogeneousMatrix &T1, const vpHomogeneousMatrix &T2)
 {
   if (m_mapOfTrackers.size() == 2) {
@@ -3162,7 +3162,7 @@ void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I1, const vpI
 void vpMbGenericTracker::reInitModel(const vpImage<vpRGBa> &I_color1, const vpImage<vpRGBa> &I_color2,
                                      const std::string &cad_name1, const std::string &cad_name2,
                                      const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                     const bool verbose,
+                                     bool verbose,
                                      const vpHomogeneousMatrix &T1, const vpHomogeneousMatrix &T2)
 {
   if (m_mapOfTrackers.size() == 2) {
@@ -3203,7 +3203,7 @@ void vpMbGenericTracker::reInitModel(const vpImage<vpRGBa> &I_color1, const vpIm
 void vpMbGenericTracker::reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                      const std::map<std::string, std::string> &mapOfModelFiles,
                                      const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                                     const bool verbose,
+                                     bool verbose,
                                      const std::map<std::string, vpHomogeneousMatrix> &mapOfT)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(m_referenceCameraName);
@@ -3277,7 +3277,7 @@ void vpMbGenericTracker::reInitModel(const std::map<std::string, const vpImage<u
 void vpMbGenericTracker::reInitModel(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
                                      const std::map<std::string, std::string> &mapOfModelFiles,
                                      const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                                     const bool verbose,
+                                     bool verbose,
                                      const std::map<std::string, vpHomogeneousMatrix> &mapOfT)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(m_referenceCameraName);
@@ -4805,7 +4805,7 @@ void vpMbGenericTracker::setProjectionErrorComputation(const bool &flag)
 /*!
   Display or not gradient and model orientation when computing the projection error.
 */
-void vpMbGenericTracker::setProjectionErrorDisplay(const bool display)
+void vpMbGenericTracker::setProjectionErrorDisplay(bool display)
 {
   vpMbTracker::setProjectionErrorDisplay(display);
 
@@ -6512,7 +6512,7 @@ void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char
 }
 
 void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
-                                                     const std::string &cad_name, const vpHomogeneousMatrix &cMo, const bool verbose,
+                                                     const std::string &cad_name, const vpHomogeneousMatrix &cMo, bool verbose,
                                                      const vpHomogeneousMatrix &T)
 {
   m_cMo.eye();
@@ -6625,14 +6625,14 @@ void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char
 }
 
 void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                                     const vpHomogeneousMatrix &cMo, const bool verbose,
+                                                     const vpHomogeneousMatrix &cMo, bool verbose,
                                                      const vpHomogeneousMatrix &T)
 {
   reInitModel(&I, NULL, cad_name, cMo, verbose, T);
 }
 
 void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name,
-                                                     const vpHomogeneousMatrix &cMo, const bool verbose,
+                                                     const vpHomogeneousMatrix &cMo, bool verbose,
                                                      const vpHomogeneousMatrix &T)
 {
   reInitModel(NULL, &I_color, cad_name, cMo, verbose, T);

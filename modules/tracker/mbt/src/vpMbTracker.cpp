@@ -189,7 +189,7 @@ vpMbTracker::~vpMbTracker() {
 
 #ifdef VISP_HAVE_MODULE_GUI
 void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
-                            const std::string &initFile, const bool displayHelp, const vpHomogeneousMatrix &T)
+                            const std::string &initFile, bool displayHelp, const vpHomogeneousMatrix &T)
 {
   vpHomogeneousMatrix last_cMo;
   vpPoseVector init_pos;
@@ -545,7 +545,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
   \exception vpException::ioError : The file specified in \e initFile doesn't
   exist.
 */
-void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp,
+void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp,
                             const vpHomogeneousMatrix &T)
 {
   initClick(&I, NULL, initFile, displayHelp, T);
@@ -582,7 +582,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
   \exception vpException::ioError : The file specified in \e initFile doesn't
   exist.
 */
-void vpMbTracker::initClick(const vpImage<vpRGBa> &I_color, const std::string &initFile, const bool displayHelp,
+void vpMbTracker::initClick(const vpImage<vpRGBa> &I_color, const std::string &initFile, bool displayHelp,
                             const vpHomogeneousMatrix &T)
 {
   initClick(NULL, &I_color, initFile, displayHelp, T);
@@ -1463,7 +1463,7 @@ CAO model files which include other CAO model files.
   \param odTo : optional transformation matrix (currently only for .cao) to transform
   3D points expressed in the original object frame to the desired object frame.
 */
-void vpMbTracker::loadModel(const std::string &modelFile, const bool verbose, const vpHomogeneousMatrix &odTo)
+void vpMbTracker::loadModel(const std::string &modelFile, bool verbose, const vpHomogeneousMatrix &odTo)
 {
   std::string::const_iterator it;
 
@@ -1687,7 +1687,7 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string &end
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
-                               int &startIdFace, const bool verbose, bool parent,
+                               int &startIdFace, bool verbose, bool parent,
                                const vpHomogeneousMatrix &odTo)
 {
   std::ifstream fileId;
@@ -2599,7 +2599,7 @@ vpPoint vpMbTracker::getGravityCenter(const std::vector<vpPoint> &pts) const
   A pair object containing the list of vpPolygon and the list of face corners.
  */
 std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
-vpMbTracker::getPolygonFaces(const bool orderPolygons, bool useVisibility, const bool clipPolygon)
+vpMbTracker::getPolygonFaces(bool orderPolygons, bool useVisibility, bool clipPolygon)
 {
   // Temporary variable to permit to order polygons by distance
   std::vector<vpPolygon> polygonsTmp;

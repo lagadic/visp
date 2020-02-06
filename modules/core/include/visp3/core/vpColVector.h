@@ -318,7 +318,7 @@ public:
     \exception vpException::fatalError When \e ncols is not equal to 1.
 
     */
-  void resize(unsigned int nrows, unsigned int ncols, const bool flagNullify)
+  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify)
   {
     if (ncols != 1) {
       throw(vpException(vpException::fatalError,

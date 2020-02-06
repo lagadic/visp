@@ -261,7 +261,7 @@ public:
   virtual void loadConfigFile(const std::string &configFile);
 
   void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
-                   const bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
+                   bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   void resetTracker();
 
   virtual void setCameraParameters(const vpCameraParameters &cam);

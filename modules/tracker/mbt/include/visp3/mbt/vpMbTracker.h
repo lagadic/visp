@@ -398,7 +398,7 @@ public:
   }
 
   virtual std::pair<std::vector<vpPolygon>, std::vector<std::vector<vpPoint> > >
-  getPolygonFaces(const bool orderPolygons = true, bool useVisibility = true, const bool clipPolygon = false);
+  getPolygonFaces(bool orderPolygons = true, bool useVisibility = true, bool clipPolygon = false);
 
   /*!
     Get the current pose between the object and the camera.
@@ -423,9 +423,9 @@ public:
 // Intializer
 
 #ifdef VISP_HAVE_MODULE_GUI
-  virtual void initClick(const vpImage<unsigned char> &I, const std::string &initFile, const bool displayHelp = false,
+  virtual void initClick(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp = false,
                          const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
-  virtual void initClick(const vpImage<vpRGBa> &I_color, const std::string &initFile, const bool displayHelp = false,
+  virtual void initClick(const vpImage<vpRGBa> &I_color, const std::string &initFile, bool displayHelp = false,
                          const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
 
   virtual void initClick(const vpImage<unsigned char> &I, const std::vector<vpPoint> &points3D_list,
@@ -451,7 +451,7 @@ public:
   virtual void initFromPose(const vpImage<unsigned char> &I, const vpPoseVector &cPo);
   virtual void initFromPose(const vpImage<vpRGBa> &I_color, const vpPoseVector &cPo);
 
-  virtual void loadModel(const std::string &modelFile, const bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
+  virtual void loadModel(const std::string &modelFile, bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   /*!
     Set the angle used to test polygons appearance.
@@ -582,7 +582,7 @@ public:
   /*!
     Display or not gradient and model orientation when computing the projection error.
   */
-  virtual void setProjectionErrorDisplay(const bool display) { m_projectionErrorDisplay = display; }
+  virtual void setProjectionErrorDisplay(bool display) { m_projectionErrorDisplay = display; }
 
   /*!
     Arrow length used to display gradient and model orientation for projection error computation.
@@ -836,7 +836,7 @@ protected:
 
 #ifdef VISP_HAVE_MODULE_GUI
   virtual void initClick(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color, const std::string &initFile,
-                         const bool displayHelp = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
+                         bool displayHelp = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
 
   virtual void initClick(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
                          const std::vector<vpPoint> &points3D_list, const std::string &displayFile = "");
@@ -888,7 +888,7 @@ protected:
 
   virtual void loadVRMLModel(const std::string &modelFile);
   virtual void loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
-                            int &startIdFace, const bool verbose = false, bool parent = true,
+                            int &startIdFace, bool verbose = false, bool parent = true,
                             const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   void projectionErrorInitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);

@@ -193,7 +193,7 @@ public:
 
   void initInteractionMatrixError();
 
-  bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack,
+  bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
                       const vpImage<bool> *mask = NULL);
 
   /*!

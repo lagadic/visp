@@ -134,23 +134,23 @@ public:
   static void convert(const vpImage<vpRGBa> &src, IplImage *&dest);
   static void convert(const vpImage<unsigned char> &src, IplImage *&dest);
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-  static void convert(const cv::Mat &src, vpImage<vpRGBa> &dest, const bool flip = false);
-  static void convert(const cv::Mat &src, vpImage<unsigned char> &dest, const bool flip = false);
+  static void convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool flip = false);
+  static void convert(const cv::Mat &src, vpImage<unsigned char> &dest, bool flip = false);
   static void convert(const vpImage<vpRGBa> &src, cv::Mat &dest);
-  static void convert(const vpImage<unsigned char> &src, cv::Mat &dest, const bool copyData = true);
+  static void convert(const vpImage<unsigned char> &src, cv::Mat &dest, bool copyData = true);
 #endif
 #endif
 
 #ifdef VISP_HAVE_YARP
   static void convert(const vpImage<unsigned char> &src, yarp::sig::ImageOf<yarp::sig::PixelMono> *dest,
-                      const bool copyData = true);
+                      bool copyData = true);
   static void convert(const yarp::sig::ImageOf<yarp::sig::PixelMono> *src, vpImage<unsigned char> &dest,
-                      const bool copyData = true);
+                      bool copyData = true);
 
   static void convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp::sig::PixelRgba> *dest,
-                      const bool copyData = true);
+                      bool copyData = true);
   static void convert(const yarp::sig::ImageOf<yarp::sig::PixelRgba> *src, vpImage<vpRGBa> &dest,
-                      const bool copyData = true);
+                      bool copyData = true);
 
   static void convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp::sig::PixelRgb> *dest);
   static void convert(const yarp::sig::ImageOf<yarp::sig::PixelRgb> *src, vpImage<vpRGBa> &dest);

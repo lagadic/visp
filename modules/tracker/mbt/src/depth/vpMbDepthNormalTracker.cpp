@@ -467,7 +467,7 @@ void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile)
 }
 
 void vpMbDepthNormalTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                         const vpHomogeneousMatrix &cMo, const bool verbose)
+                                         const vpHomogeneousMatrix &cMo, bool verbose)
 {
   m_cMo.eye();
 
@@ -485,7 +485,7 @@ void vpMbDepthNormalTracker::reInitModel(const vpImage<unsigned char> &I, const 
 #if defined(VISP_HAVE_PCL)
 void vpMbDepthNormalTracker::reInitModel(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
                                          const std::string &cad_name, const vpHomogeneousMatrix &cMo,
-                                         const bool verbose)
+                                         bool verbose)
 {
   vpImage<unsigned char> I_dummy(point_cloud->height, point_cloud->width);
   reInitModel(I_dummy, cad_name, cMo, verbose);

@@ -784,7 +784,7 @@ void vpMbtFaceDepthDense::setCameraParameters(const vpCameraParameters &camera)
   }
 }
 
-void vpMbtFaceDepthDense::setScanLineVisibilityTest(const bool v)
+void vpMbtFaceDepthDense::setScanLineVisibilityTest(bool v)
 {
   m_useScanLine = v;
 

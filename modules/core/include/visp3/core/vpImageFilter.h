@@ -156,10 +156,10 @@ public:
   }
 
   static void filter(const vpImage<double> &I, vpImage<double> &Iu, vpImage<double> &Iv, const vpMatrix &M,
-                     const bool convolve = false);
+                     bool convolve = false);
 
   static void filter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpMatrix &M,
-                     const bool convolve = false);
+                     bool convolve = false);
 
   static void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH,
                         const vpColVector &kernelV);

@@ -302,8 +302,7 @@ public:
   \param recopy_ : if true, will perform an explicit recopy of the old data
   if needed and if flagNullify is set to false.
   */
-  void resize(unsigned int nrows, unsigned int ncols, const bool flagNullify = true,
-              const bool recopy_ = true)
+  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true, bool recopy_ = true)
   {
     if ((nrows == rowNum) && (ncols == colNum)) {
       if (flagNullify && this->data != NULL) {

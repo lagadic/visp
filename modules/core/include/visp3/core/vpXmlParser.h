@@ -214,7 +214,7 @@ protected:
   std::string xmlReadStringChild(xmlDocPtr doc, xmlNodePtr node);
   unsigned int xmlReadUnsignedIntChild(xmlDocPtr doc, xmlNodePtr node);
 
-  void xmlWriteBoolChild(xmlNodePtr node, const char *label, const bool value);
+  void xmlWriteBoolChild(xmlNodePtr node, const char *label, bool value);
   void xmlWriteCharChild(xmlNodePtr node, const char *label, const char *value);
   void xmlWriteDoubleChild(xmlNodePtr node, const char *label, const double value);
   void xmlWriteFloatChild(xmlNodePtr node, const char *label, float value);

@@ -652,7 +652,7 @@ int main()
 }
   \endcode
 */
-void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, const bool flip)
+void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool flip)
 {
   if (src.type() == CV_8UC4) {
     dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
@@ -801,7 +801,7 @@ int main()
 
   \endcode
 */
-void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, const bool flip)
+void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, bool flip)
 {
   if (src.type() == CV_8UC1) {
     dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
@@ -920,7 +920,7 @@ int main()
 }
   \endcode
 */
-void vpImageConvert::convert(const vpImage<unsigned char> &src, cv::Mat &dest, const bool copyData)
+void vpImageConvert::convert(const vpImage<unsigned char> &src, cv::Mat &dest, bool copyData)
 {
   if (copyData) {
     cv::Mat tmpMap((int)src.getRows(), (int)src.getCols(), CV_8UC1, (void *)src.bitmap);
@@ -969,7 +969,7 @@ int main()
   \endcode
 */
 void vpImageConvert::convert(const vpImage<unsigned char> &src, yarp::sig::ImageOf<yarp::sig::PixelMono> *dest,
-                             const bool copyData)
+                             bool copyData)
 {
   if (copyData) {
     dest->resize(src.getWidth(), src.getHeight());
@@ -1017,7 +1017,7 @@ int main()
   \endcode
 */
 void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelMono> *src, vpImage<unsigned char> &dest,
-                             const bool copyData)
+                             bool copyData)
 {
   dest.resize(src->height(), src->width());
   if (copyData)
@@ -1061,7 +1061,7 @@ int main()
   \endcode
 */
 void vpImageConvert::convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp::sig::PixelRgba> *dest,
-                             const bool copyData)
+                             bool copyData)
 {
   if (copyData) {
     dest->resize(src.getWidth(), src.getHeight());
@@ -1109,7 +1109,7 @@ int main()
   \endcode
 */
 void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelRgba> *src, vpImage<vpRGBa> &dest,
-                             const bool copyData)
+                             bool copyData)
 {
   dest.resize(src->height(), src->width());
   if (copyData)

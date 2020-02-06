@@ -147,7 +147,7 @@ vpMeEllipse::~vpMeEllipse()
   initialized.
 
 */
-void vpMeEllipse::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
+void vpMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 {
   (void)doNotTrack;
   if (!me) {

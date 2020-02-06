@@ -193,7 +193,7 @@ public:
 
   void track(const vpImage<unsigned char> &I);
 
-  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
+  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack=false);
   void reSample(const vpImage<unsigned char> &I);
   void updateDelta();
   void setExtremities();
