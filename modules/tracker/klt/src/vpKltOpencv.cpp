@@ -369,7 +369,7 @@ void vpKltOpencv::setHarrisFreeParameter(double harris_k) { m_harris_k = harris_
   \param useHarrisDetector : If 1 (default value), use the Harris detector. If
   0 use the eigenvalue.
 */
-void vpKltOpencv::setUseHarris(const int useHarrisDetector) { m_useHarrisDetector = useHarrisDetector; }
+void vpKltOpencv::setUseHarris(int useHarrisDetector) { m_useHarrisDetector = useHarrisDetector; }
 
 /*!
   Set the minimal Euclidean distance between detected corners during

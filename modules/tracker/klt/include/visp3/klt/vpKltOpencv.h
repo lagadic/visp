@@ -153,7 +153,7 @@ public:
   //! Does nothing. Just here for compat with previous releases that use
   //! OpenCV C api to do the tracking.
   void setTrackerId(int tid) { (void)tid; }
-  void setUseHarris(const int useHarrisDetector);
+  void setUseHarris(int useHarrisDetector);
   void setWindowSize(int winSize);
   void suppressFeature(const int &index);
 
