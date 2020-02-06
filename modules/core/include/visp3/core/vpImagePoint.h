@@ -143,12 +143,12 @@ public:
     this->j -= ip.j;
     return *this;
   }
-  vpImagePoint &operator/=(const double scale);
+  vpImagePoint &operator/=(double scale);
   /*!
 
     Operator *=.
-*/
-  inline vpImagePoint &operator*=(const double scale)
+  */
+  inline vpImagePoint &operator*=(double scale)
   {
     this->i *= scale;
     this->j *= scale;
@@ -316,8 +316,8 @@ public:
   friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const int offset);
   friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const unsigned int offset);
   friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const double offset);
-  friend VISP_EXPORT vpImagePoint operator*(const vpImagePoint &ip1, const double scale);
-  friend VISP_EXPORT vpImagePoint operator/(const vpImagePoint &ip1, const double scale);
+  friend VISP_EXPORT vpImagePoint operator*(const vpImagePoint &ip1, double scale);
+  friend VISP_EXPORT vpImagePoint operator/(const vpImagePoint &ip1, double scale);
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpImagePoint &ip);
 
 private:

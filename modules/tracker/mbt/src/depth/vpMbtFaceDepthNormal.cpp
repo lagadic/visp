@@ -930,7 +930,7 @@ void vpMbtFaceDepthNormal::display(const vpImage<vpRGBa> &I, const vpHomogeneous
 }
 
 void vpMbtFaceDepthNormal::displayFeature(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                          const vpCameraParameters &cam, const double scale,
+                                          const vpCameraParameters &cam, double scale,
                                           unsigned int thickness)
 {
   if (m_faceActivated && m_isTrackedDepthNormalFace && m_isVisible) {
@@ -986,7 +986,7 @@ void vpMbtFaceDepthNormal::displayFeature(const vpImage<unsigned char> &I, const
 }
 
 void vpMbtFaceDepthNormal::displayFeature(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                          const vpCameraParameters &cam, const double scale,
+                                          const vpCameraParameters &cam, double scale,
                                           unsigned int thickness)
 {
   if (m_faceActivated && m_isTrackedDepthNormalFace && m_isVisible) {
@@ -1492,7 +1492,7 @@ void vpMbtFaceDepthNormal::estimatePlaneEquationSVD(const std::vector<double> &p
 */
 std::vector<std::vector<double> > vpMbtFaceDepthNormal::getFeaturesForDisplay(const vpHomogeneousMatrix &cMo,
                                                                               const vpCameraParameters &cam,
-                                                                              const double scale)
+                                                                              double scale)
 {
   std::vector<std::vector<double> > features;
 

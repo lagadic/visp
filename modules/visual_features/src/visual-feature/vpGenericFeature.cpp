@@ -449,7 +449,7 @@ void vpGenericFeature::get_s(vpColVector &s_vector) const
   is different from the dimension of the visual feature as specified
   in the constructor
 */
-void vpGenericFeature::set_s(const double s0, const double s1, const double s2)
+void vpGenericFeature::set_s(double s0, double s1, double s2)
 {
 
   if (3 != dim_s) {
@@ -502,7 +502,7 @@ void vpGenericFeature::get_s(double &s0, double &s1, double &s2) const
   is different from the dimension of the visual feature as specified
   in the constructor
 */
-void vpGenericFeature::set_s(const double s0, const double s1)
+void vpGenericFeature::set_s(double s0, double s1)
 {
 
   if (2 != dim_s) {
@@ -548,7 +548,7 @@ void vpGenericFeature::get_s(double &s0, double &s1) const
   is different from the dimension of the visual feature as specified
   in the constructor
 */
-void vpGenericFeature::set_s(const double s0)
+void vpGenericFeature::set_s(double s0)
 {
 
   if (1 != dim_s) {

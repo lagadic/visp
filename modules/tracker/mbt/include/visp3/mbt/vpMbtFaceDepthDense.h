@@ -119,9 +119,9 @@ public:
                const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
 
   void displayFeature(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                      const double scale = 0.05, unsigned int thickness = 1);
+                      double scale = 0.05, unsigned int thickness = 1);
   void displayFeature(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                      const double scale = 0.05, unsigned int thickness = 1);
+                      double scale = 0.05, unsigned int thickness = 1);
 
   std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                        const vpHomogeneousMatrix &cMo,
