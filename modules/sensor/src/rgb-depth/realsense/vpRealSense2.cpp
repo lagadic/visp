@@ -436,8 +436,8 @@ rs2_intrinsics vpRealSense2::getIntrinsics(const rs2_stream &stream) const
 void vpRealSense2::getColorFrame(const rs2::frame &frame, vpImage<vpRGBa> &color)
 {
   auto vf = frame.as<rs2::video_frame>();
-  const unsigned int width = (unsigned int)vf.get_width();
-  const unsigned int height = (unsigned int)vf.get_height();
+  unsigned int width = (unsigned int)vf.get_width();
+  unsigned int height = (unsigned int)vf.get_height();
   color.resize(height, width);
 
   if (frame.get_profile().format() == RS2_FORMAT_RGB8) {
@@ -467,8 +467,8 @@ float vpRealSense2::getDepthScale()
 void vpRealSense2::getGreyFrame(const rs2::frame &frame, vpImage<unsigned char> &grey)
 {
   auto vf = frame.as<rs2::video_frame>();
-  const unsigned int width = (unsigned int)vf.get_width();
-  const unsigned int height = (unsigned int)vf.get_height();
+  unsigned int width = (unsigned int)vf.get_width();
+  unsigned int height = (unsigned int)vf.get_height();
   grey.resize(height, width);
 
   if (frame.get_profile().format() == RS2_FORMAT_RGB8) {

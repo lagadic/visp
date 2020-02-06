@@ -201,7 +201,7 @@ double vpAdaptiveGain::setConstant(void)
 
   \return It returns the value of the computed gain.
 */
-double vpAdaptiveGain::value_const(const double x) const
+double vpAdaptiveGain::value_const(double x) const
 {
   double res = this->coeff_a * exp(-this->coeff_b * x) + this->coeff_c;
 
@@ -236,7 +236,7 @@ double vpAdaptiveGain::limitValue_const(void) const
 
   \return It returns the value of the computed gain.
   */
-double vpAdaptiveGain::value(const double x) const
+double vpAdaptiveGain::value(double x) const
 {
   this->lambda = this->value_const(x);
 
@@ -277,7 +277,7 @@ double vpAdaptiveGain::limitValue(void) const
 
   \sa value()
 */
-double vpAdaptiveGain::operator()(const double x) const { return this->value(x); }
+double vpAdaptiveGain::operator()(double x) const { return this->value(x); }
 
 /*!
   Gets the value of the gain at infinity (ie the value of \f$\lambda_\infty =

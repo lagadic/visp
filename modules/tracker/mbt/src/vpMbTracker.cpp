@@ -330,7 +330,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
           const int winXPos = I != NULL ? I->display->getWindowXPosition() : I_color->display->getWindowXPosition();
           const int winYPos = I != NULL ? I->display->getWindowYPosition() : I_color->display->getWindowYPosition();
-          const unsigned int width = I != NULL ? I->getWidth() : I_color->getWidth();
+          unsigned int width = I != NULL ? I->getWidth() : I_color->getWidth();
           d_help->init(Iref, winXPos + (int)width + 80, winYPos,
                        "Where to initialize...");
           vpDisplay::display(Iref);

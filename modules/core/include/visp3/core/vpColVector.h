@@ -266,10 +266,10 @@ public:
 
   double operator*(const vpColVector &x) const;
   vpMatrix operator*(const vpRowVector &v) const;
-  vpColVector operator*(const double x) const;
+  vpColVector operator*(double x) const;
   vpColVector &operator*=(double x);
 
-  vpColVector operator/(const double x) const;
+  vpColVector operator/(double x) const;
   vpColVector &operator/=(double x);
 
   vpColVector operator+(const vpColVector &v) const;

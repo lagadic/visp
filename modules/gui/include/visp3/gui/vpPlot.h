@@ -160,15 +160,15 @@ public:
                  double zmax);
   void navigate(void);
 
-  void plot(unsigned int graphNum, unsigned int curveNum, const double x, const double y);
-  void plot(unsigned int graphNum, const double x, const vpColVector &v_y);
-  void plot(unsigned int graphNum, const double x, const vpRowVector &v_y);
-  void plot(unsigned int graphNum, const double x, const vpPoseVector &v_y);
-  void plot(unsigned int graphNum, const double x, const vpTranslationVector &v_y);
-  void plot(unsigned int graphNum, const double x, const vpRotationVector &v_y);
-  vpMouseButton::vpMouseButtonType plot(unsigned int graphNum, unsigned int curveNum, const double x,
-                                        const double y, const double z);
-  vpMouseButton::vpMouseButtonType plot(unsigned int graphNum, const double x, const vpColVector &v_y,
+  void plot(unsigned int graphNum, unsigned int curveNum, double x, double y);
+  void plot(unsigned int graphNum, double x, const vpColVector &v_y);
+  void plot(unsigned int graphNum, double x, const vpRowVector &v_y);
+  void plot(unsigned int graphNum, double x, const vpPoseVector &v_y);
+  void plot(unsigned int graphNum, double x, const vpTranslationVector &v_y);
+  void plot(unsigned int graphNum, double x, const vpRotationVector &v_y);
+  vpMouseButton::vpMouseButtonType plot(unsigned int graphNum, unsigned int curveNum, double x,
+                                        double y, const double z);
+  vpMouseButton::vpMouseButtonType plot(unsigned int graphNum, double x, const vpColVector &v_y,
                                         const vpColVector &v_z);
 
   void resetPointList(unsigned int graphNum);

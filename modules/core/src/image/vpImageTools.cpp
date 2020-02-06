@@ -774,7 +774,7 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
   vpImageConvert::convert(I, I_double);
   vpImageConvert::convert(I_tpl, I_tpl_double);
 
-  const unsigned int height_tpl = I_tpl.getHeight(), width_tpl = I_tpl.getWidth();
+  unsigned int height_tpl = I_tpl.getHeight(), width_tpl = I_tpl.getWidth();
   I_score.resize(I.getHeight() - height_tpl, I.getWidth() - width_tpl, 0.0);
 
   if (useOptimized) {
@@ -911,7 +911,7 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
     }
   }
 
-  const unsigned int height_tpl = I2.getHeight(), width_tpl = I2.getWidth();
+  unsigned int height_tpl = I2.getHeight(), width_tpl = I2.getWidth();
   const double sum1 =
       (II[i0 + height_tpl][j0 + width_tpl] + II[i0][j0] - II[i0][j0 + width_tpl] - II[i0 + height_tpl][j0]);
   const double sum2 = (II_tpl[height_tpl][width_tpl] + II_tpl[0][0] - II_tpl[0][width_tpl] - II_tpl[height_tpl][0]);

@@ -563,7 +563,7 @@ void vpFeatureSegment::display(const vpCameraParameters &cam, const vpImage<vpRG
   - x_2}^2 + {y_1 - y_2}^2} \f] \f[ \alpha = arctan(\frac{y_1 - y_2}{x_1 -
   x_2}) \f]
 */
-void vpFeatureSegment::buildFrom(const double x1, const double y1, const double Z1, const double x2, const double y2,
+void vpFeatureSegment::buildFrom(double x1, double y1, const double Z1, double x2, double y2,
                                  const double Z2)
 {
   double l = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));

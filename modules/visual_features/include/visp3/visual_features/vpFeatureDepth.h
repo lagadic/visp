@@ -180,7 +180,7 @@ public:
     section Set coordinates
   */
 
-  void buildFrom(const double x, const double y, const double Z, const double LogZoverZstar);
+  void buildFrom(double x, double y, const double Z, const double LogZoverZstar);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
@@ -201,15 +201,15 @@ public:
   vpMatrix interaction(const unsigned int select = FEATURE_ALL);
 
   void print(const unsigned int select = FEATURE_ALL) const;
-  void set_x(const double x);
+  void set_x(double x);
 
-  void set_y(const double y);
+  void set_y(double y);
 
   void set_Z(const double Z);
 
   void set_LogZoverZstar(const double LogZoverZstar);
 
-  void set_xyZLogZoverZstar(const double x, const double y, const double Z, const double logZZs);
+  void set_xyZLogZoverZstar(double x, double y, const double Z, const double logZZs);
 };
 
 #endif

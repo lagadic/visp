@@ -447,7 +447,7 @@ void vpSimulator::changeZoomFactor(const float zoomFactor, const int index)
   //  this->setZoomFactor(zoomFactor);
 }
 
-void vpSimulator::initInternalViewer(const unsigned int width, const unsigned int height)
+void vpSimulator::initInternalViewer(unsigned int width, unsigned int height)
 {
   internal_width = width;
   internal_height = height;
@@ -481,7 +481,7 @@ void vpSimulator::initInternalViewer(const unsigned int width, const unsigned in
   bufferView = new unsigned char[3 * width * height];
 }
 
-void vpSimulator::initExternalViewer(const unsigned int width, const unsigned int height)
+void vpSimulator::initExternalViewer(unsigned int width, unsigned int height)
 {
 
   external_width = width;

@@ -257,7 +257,7 @@ unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color) { return
    \return The number of detected keypoints in the current image I.
  */
 unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                                        const unsigned int height, const unsigned int width)
+                                        unsigned int height, unsigned int width)
 {
   return buildReference(I, vpRect(iP, width, height));
 }
@@ -272,7 +272,7 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const v
    \return The number of detected keypoints in the current image I.
  */
 unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP,
-                                        const unsigned int height, const unsigned int width)
+                                        unsigned int height, unsigned int width)
 {
   return buildReference(I_color, vpRect(iP, width, height));
 }
@@ -3450,8 +3450,8 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color) { return mat
    \param width : Width of the region of interest
    \return The number of matched keypoints
  */
-unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                                    const unsigned int width)
+unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                                    unsigned int width)
 {
   return matchPoint(I, vpRect(iP, width, height));
 }
@@ -3466,8 +3466,8 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpIma
    \param width : Width of the region of interest
    \return The number of matched keypoints
  */
-unsigned int vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, const unsigned int height,
-                                    const unsigned int width)
+unsigned int vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, unsigned int height,
+                                    unsigned int width)
 {
   return matchPoint(I_color, vpRect(iP, width, height));
 }

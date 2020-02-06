@@ -247,13 +247,13 @@ public:
   /* build reference */
   virtual unsigned int buildReference(const vpImage<unsigned char> &I);
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                                      const unsigned int height, const unsigned int width);
+                                      unsigned int height, unsigned int width);
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   /* matching */
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I);
-  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                                  const unsigned int width);
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                                  unsigned int width);
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   /* display */

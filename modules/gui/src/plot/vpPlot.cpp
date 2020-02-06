@@ -283,7 +283,7 @@ void vpPlot::displayGrid()
   the x axis and given in the user unit system. \param y : The coordinate of
   the new point along the y axis and given in the user unit system.
 */
-void vpPlot::plot(unsigned int graphNum, unsigned int curveNum, const double x, const double y)
+void vpPlot::plot(unsigned int graphNum, unsigned int curveNum, double x, double y)
 {
   (graphList + graphNum)->plot(I, curveNum, x, y);
 }
@@ -299,7 +299,7 @@ void vpPlot::plot(unsigned int graphNum, unsigned int curveNum, const double x, 
   coordinates of the new points along the y axis and given in the user unit
   system.
 */
-void vpPlot::plot(unsigned int graphNum, const double x, const vpColVector &v_y)
+void vpPlot::plot(unsigned int graphNum, double x, const vpColVector &v_y)
 {
   if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
@@ -318,46 +318,7 @@ void vpPlot::plot(unsigned int graphNum, const double x, const vpColVector &v_y)
   coordinates of the new points along the y axis and given in the user unit
   system.
 */
-void vpPlot::plot(unsigned int graphNum, const double x, const vpRowVector &v_y)
-{
-  if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
-    for (unsigned int i = 0; i < v_y.getRows(); ++i)
-      this->plot(graphNum, i, x, v_y[i]);
-  } else
-    vpTRACE("error in plot vector : not the right dimension");
-}
-
-/*!
-  This function enables you to add new points in all curves of a plot. These
-  points are drawn with the parameters of the curves.
-
-  \param graphNum : The index of the graph in the window. As the number of
-  graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param x : The coordinate of the new points along the x axis and
-  given in the user unit system. \param v_y : y coordinates vector. The
-  coordinates of the new points along the y axis and given in the user unit
-  system.
-*/
-void vpPlot::plot(unsigned int graphNum, const double x, const vpPoseVector &v_y)
-{
-  if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
-    for (unsigned int i = 0; i < v_y.getRows(); ++i)
-      this->plot(graphNum, i, x, v_y[i]);
-  } else
-    vpTRACE("error in plot vector : not the right dimension");
-}
-/*!
-  This function enables you to add new points in all curves of a plot. These
-  points are drawn with the parameters of the curves.
-
-  \param graphNum : The index of the graph in the window. As the number of
-  graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param x : The coordinate of the new points along the x axis and
-  given in the user unit system. \param v_y : y coordinates vector. The
-  coordinates of the new points along the y axis and given in the user unit
-  system.
-*/
-void vpPlot::plot(unsigned int graphNum, const double x, const vpTranslationVector &v_y)
+void vpPlot::plot(unsigned int graphNum, double x, const vpRowVector &v_y)
 {
   if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
@@ -377,7 +338,46 @@ void vpPlot::plot(unsigned int graphNum, const double x, const vpTranslationVect
   coordinates of the new points along the y axis and given in the user unit
   system.
 */
-void vpPlot::plot(unsigned int graphNum, const double x, const vpRotationVector &v_y)
+void vpPlot::plot(unsigned int graphNum, double x, const vpPoseVector &v_y)
+{
+  if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
+    for (unsigned int i = 0; i < v_y.getRows(); ++i)
+      this->plot(graphNum, i, x, v_y[i]);
+  } else
+    vpTRACE("error in plot vector : not the right dimension");
+}
+/*!
+  This function enables you to add new points in all curves of a plot. These
+  points are drawn with the parameters of the curves.
+
+  \param graphNum : The index of the graph in the window. As the number of
+  graphic in a window is less or equal to 4, this parameter is between 0
+  and 3. \param x : The coordinate of the new points along the x axis and
+  given in the user unit system. \param v_y : y coordinates vector. The
+  coordinates of the new points along the y axis and given in the user unit
+  system.
+*/
+void vpPlot::plot(unsigned int graphNum, double x, const vpTranslationVector &v_y)
+{
+  if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
+    for (unsigned int i = 0; i < v_y.getRows(); ++i)
+      this->plot(graphNum, i, x, v_y[i]);
+  } else
+    vpTRACE("error in plot vector : not the right dimension");
+}
+
+/*!
+  This function enables you to add new points in all curves of a plot. These
+  points are drawn with the parameters of the curves.
+
+  \param graphNum : The index of the graph in the window. As the number of
+  graphic in a window is less or equal to 4, this parameter is between 0
+  and 3. \param x : The coordinate of the new points along the x axis and
+  given in the user unit system. \param v_y : y coordinates vector. The
+  coordinates of the new points along the y axis and given in the user unit
+  system.
+*/
+void vpPlot::plot(unsigned int graphNum, double x, const vpRotationVector &v_y)
 {
   if ((graphList + graphNum)->curveNbr == v_y.size()) {
     for (unsigned int i = 0; i < v_y.size(); ++i)
@@ -399,8 +399,8 @@ void vpPlot::plot(unsigned int graphNum, const double x, const vpRotationVector 
   The coordinate of the new point along the z axis and given in the user unit
   system.
 */
-vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, unsigned int curveNum, const double x,
-                                              const double y, const double z)
+vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, unsigned int curveNum, double x,
+                                              double y, const double z)
 {
   return (graphList + graphNum)->plot(I, curveNum, x, y, z);
 }
@@ -417,7 +417,7 @@ vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, unsigned in
   system. \param v_z : z coordinates vector. The coordinates of the new points
   along the z axis and given in the user unit system.
 */
-vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, const double x, const vpColVector &v_y,
+vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, double x, const vpColVector &v_y,
                                               const vpColVector &v_z)
 {
   vpMouseButton::vpMouseButtonType button = vpMouseButton::none;

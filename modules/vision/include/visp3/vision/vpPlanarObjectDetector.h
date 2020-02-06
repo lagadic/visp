@@ -188,8 +188,8 @@ public:
 
   // matching
   bool matchPoint(const vpImage<unsigned char> &I);
-  bool matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                  const unsigned int width);
+  bool matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                  unsigned int width);
   bool matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
   // database management
   void recordDetector(const std::string &objectName, const std::string &dataFile);

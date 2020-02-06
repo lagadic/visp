@@ -57,7 +57,7 @@ vpQuaternionVector::vpQuaternionVector() : vpRotationVector(4) {}
 vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q) : vpRotationVector(q) {}
 
 //! Constructor from doubles.
-vpQuaternionVector::vpQuaternionVector(const double x_, const double y_, const double z_, const double w_)
+vpQuaternionVector::vpQuaternionVector(double x_, double y_, const double z_, const double w_)
   : vpRotationVector(4)
 {
   set(x_, y_, z_, w_);

@@ -321,8 +321,8 @@ public:
              const vpFilterMatchingType &filterType = ratioDistanceThreshold);
 
   unsigned int buildReference(const vpImage<unsigned char> &I);
-  unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                              const unsigned int width);
+  unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                              unsigned int width);
   unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   void buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoint,
@@ -332,8 +332,8 @@ public:
                       const bool append = false, const int class_id = -1);
 
   unsigned int buildReference(const vpImage<vpRGBa> &I_color);
-  unsigned int buildReference(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, const unsigned int height,
-                              const unsigned int width);
+  unsigned int buildReference(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, unsigned int height,
+                              unsigned int width);
   unsigned int buildReference(const vpImage<vpRGBa> &I_color, const vpRect &rectangle);
 
   void buildReference(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &trainKeyPoint,
@@ -707,8 +707,8 @@ public:
              double &elapsedTime);
 
   unsigned int matchPoint(const vpImage<unsigned char> &I);
-  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                          const unsigned int width);
+  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                          unsigned int width);
   unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
@@ -727,8 +727,8 @@ public:
                            bool (*func)(const vpHomogeneousMatrix &) = NULL, const vpRect &rectangle = vpRect());
 
   unsigned int matchPoint(const vpImage<vpRGBa> &I_color);
-  unsigned int matchPoint(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, const unsigned int height,
-                          const unsigned int width);
+  unsigned int matchPoint(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, unsigned int height,
+                          unsigned int width);
   unsigned int matchPoint(const vpImage<vpRGBa> &I_color, const vpRect &rectangle);
 
   bool matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,

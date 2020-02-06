@@ -129,7 +129,7 @@ void vpMbDepthNormalTracker::addFace(vpMbtPolygon &polygon, const bool alreadyCl
   m_depthNormalFaces.push_back(normal_face);
 }
 
-void vpMbDepthNormalTracker::computeVisibility(const unsigned int width, const unsigned int height)
+void vpMbDepthNormalTracker::computeVisibility(unsigned int width, unsigned int height)
 {
   bool changed = false;
   faces.setVisible(width, height, m_cam, m_cMo, angleAppears, angleDisappears, changed);
@@ -647,8 +647,8 @@ void vpMbDepthNormalTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointX
 }
 #endif
 
-void vpMbDepthNormalTracker::segmentPointCloud(const std::vector<vpColVector> &point_cloud, const unsigned int width,
-                                               const unsigned int height)
+void vpMbDepthNormalTracker::segmentPointCloud(const std::vector<vpColVector> &point_cloud, unsigned int width,
+                                               unsigned int height)
 {
   m_depthNormalListOfActiveFaces.clear();
   m_depthNormalListOfDesiredFeatures.clear();
@@ -805,8 +805,8 @@ void vpMbDepthNormalTracker::track(const pcl::PointCloud<pcl::PointXYZ>::ConstPt
 }
 #endif
 
-void vpMbDepthNormalTracker::track(const std::vector<vpColVector> &point_cloud, const unsigned int width,
-                                   const unsigned int height)
+void vpMbDepthNormalTracker::track(const std::vector<vpColVector> &point_cloud, unsigned int width,
+                                   unsigned int height)
 {
   segmentPointCloud(point_cloud, width, height);
 

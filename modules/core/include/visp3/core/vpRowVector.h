@@ -220,7 +220,7 @@ public:
   vpRowVector &operator=(const vpMatrix &M);
   vpRowVector &operator=(const std::vector<double> &v);
   vpRowVector &operator=(const std::vector<float> &v);
-  vpRowVector &operator=(const double x);
+  vpRowVector &operator=(double x);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector &operator=(vpRowVector &&v);
   vpRowVector &operator=(const std::initializer_list<double> &list);
@@ -231,10 +231,10 @@ public:
 
   double operator*(const vpColVector &x) const;
   vpRowVector operator*(const vpMatrix &M) const;
-  vpRowVector operator*(const double x) const;
+  vpRowVector operator*(double x) const;
   vpRowVector &operator*=(double x);
 
-  vpRowVector operator/(const double x) const;
+  vpRowVector operator/(double x) const;
   vpRowVector &operator/=(double x);
 
   vpRowVector operator+(const vpRowVector &v) const;

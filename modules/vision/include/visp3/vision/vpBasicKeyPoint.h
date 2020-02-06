@@ -74,14 +74,14 @@ public:
   virtual unsigned int buildReference(const vpImage<unsigned char> &I) = 0;
 
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                                      const unsigned int height, const unsigned int width) = 0;
+                                      unsigned int height, unsigned int width) = 0;
 
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle) = 0;
 
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I) = 0;
 
-  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                                  const unsigned int width) = 0;
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                                  unsigned int width) = 0;
 
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle) = 0;
 

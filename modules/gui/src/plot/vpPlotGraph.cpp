@@ -440,8 +440,8 @@ void vpPlotGraph::rescaley(unsigned int side, double extremity)
   ydelt = (ymax - ymin) / (double)nbDivisiony;
 }
 
-void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min, const double x_max, const int nbDivx,
-                            const double y_min, const double y_max, const int nbDivy, const bool gx, const bool gy)
+void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, const int nbDivx,
+                            double y_min, double y_max, const int nbDivy, const bool gx, const bool gy)
 {
   this->xmin = x_min;
   this->xmax = x_max;
@@ -458,8 +458,8 @@ void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min, const
   scaleInitialized = true;
 }
 
-void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min, const double x_max, const int nbDivx,
-                            const double y_min, const double y_max, const int nbDivy, const double z_min,
+void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, const int nbDivx,
+                            double y_min, double y_max, const int nbDivy, const double z_min,
                             const double z_max, const int nbDivz, const bool gx, const bool gy)
 {
   this->xmin = x_min;
@@ -480,7 +480,7 @@ void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min, const
   scaleInitialized = true;
 }
 
-void vpPlotGraph::plot(vpImage<unsigned char> &I, unsigned int curveNb, const double x, const double y)
+void vpPlotGraph::plot(vpImage<unsigned char> &I, unsigned int curveNb, double x, double y)
 {
   if (!scaleInitialized) {
     if (x < 0) {
@@ -1043,7 +1043,7 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
 }
 
 vpMouseButton::vpMouseButtonType vpPlotGraph::plot(vpImage<unsigned char> &I, unsigned int curveNb,
-                                                   const double x, const double y, const double z)
+                                                   double x, double y, const double z)
 {
   if (!scaleInitialized) {
     if (x < 0) {

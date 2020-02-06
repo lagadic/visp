@@ -79,7 +79,7 @@ public:
   //! Destructor. Does nothing.
   virtual ~vpFeatureSegment() {}
   // change values of the segment
-  void buildFrom(const double x1, const double y1, const double Z1, const double x2, const double y2, const double Z2);
+  void buildFrom(double x1, double y1, const double Z1, double x2, double y2, const double Z2);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;

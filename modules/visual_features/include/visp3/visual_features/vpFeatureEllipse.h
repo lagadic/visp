@@ -76,11 +76,11 @@ public:
     \section Set coordinates
   */
   //! basic constructor
-  vpFeatureEllipse(const double x, const double y, const double mu20, const double mu11, const double mu02);
+  vpFeatureEllipse(double x, double y, const double mu20, const double mu11, const double mu02);
 
   // void buildFrom(const vpEllipse &p) ;
-  void buildFrom(const double x, const double y, const double mu20, const double mu11, const double mu02);
-  void buildFrom(const double x, const double y, const double mu20, const double mu11, const double mu02,
+  void buildFrom(double x, double y, const double mu20, const double mu11, const double mu02);
+  void buildFrom(double x, double y, const double mu20, const double mu11, const double mu02,
                  const double A, const double B, const double C);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
@@ -110,9 +110,9 @@ public:
   //! print the name of the feature
   void print(const unsigned int select = FEATURE_ALL) const;
 
-  void set_x(const double x);
-  void set_y(const double y);
-  void set_xy(const double x, const double y);
+  void set_x(double x);
+  void set_y(double y);
+  void set_xy(double x, double y);
   void setABC(const double A, const double B, const double C);
   void setMu(const double mu20, const double mu11, const double mu02);
 

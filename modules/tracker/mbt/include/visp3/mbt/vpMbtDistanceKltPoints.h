@@ -110,8 +110,8 @@ public:
   bool useScanLine;
 
 private:
-  double compute_1_over_Z(const double x, const double y);
-  void computeP_mu_t(const double x_in, const double y_in, double &x_out, double &y_out, const vpMatrix &cHc0);
+  double compute_1_over_Z(double x, double y);
+  void computeP_mu_t(double x_in, double y_in, double &x_out, double &y_out, const vpMatrix &cHc0);
   bool isTrackedFeature(const int id);
 
   // private:

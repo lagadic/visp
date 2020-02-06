@@ -149,9 +149,9 @@ public:
   vpTranslationVector operator-() const;
   vpMatrix operator*(const vpRowVector &v) const;
   // b = x * a (x=scalar)
-  vpTranslationVector operator*(const double x) const;
+  vpTranslationVector operator*(double x) const;
   vpTranslationVector &operator*=(double x);
-  vpTranslationVector operator/(const double x) const;
+  vpTranslationVector operator/(double x) const;
   vpTranslationVector &operator/=(double x);
   // Copy operator.   Allow operation such as A = v
   vpTranslationVector &operator=(const vpColVector &tv);

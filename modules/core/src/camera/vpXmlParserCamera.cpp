@@ -920,10 +920,10 @@ public:
   unsigned int getWidth() const { return image_width; }
 
   void setCameraName(const std::string &name) { camera_name = name; }
-  void setHeight(const unsigned int height) { image_height = height; }
+  void setHeight(unsigned int height) { image_height = height; }
   void setSubsampling_width(const unsigned int subsampling) { subsampling_width = subsampling; }
   void setSubsampling_height(const unsigned int subsampling) { subsampling_height = subsampling; }
-  void setWidth(const unsigned int width) { image_width = width; }
+  void setWidth(unsigned int width) { image_width = width; }
 
 private:
   vpCameraParameters camera;
@@ -1056,7 +1056,7 @@ void vpXmlParserCamera::setCameraName(const std::string &name)
   m_impl->setCameraName(name);
 }
 
-void vpXmlParserCamera::setHeight(const unsigned int height)
+void vpXmlParserCamera::setHeight(unsigned int height)
 {
   m_impl->setHeight(height);
 }
@@ -1071,7 +1071,7 @@ void vpXmlParserCamera::setSubsampling_height(const unsigned int subsampling)
   m_impl->setSubsampling_height(subsampling);
 }
 
-void vpXmlParserCamera::setWidth(const unsigned int width)
+void vpXmlParserCamera::setWidth(unsigned int width)
 {
   m_impl->setWidth(width);
 }

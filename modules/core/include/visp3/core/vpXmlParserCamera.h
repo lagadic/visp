@@ -193,10 +193,10 @@ public:
            const std::string &additionalInfo = "");
 
   void setCameraName(const std::string &name);
-  void setHeight(const unsigned int height);
+  void setHeight(unsigned int height);
   void setSubsampling_width(const unsigned int subsampling);
   void setSubsampling_height(const unsigned int subsampling);
-  void setWidth(const unsigned int width);
+  void setWidth(unsigned int width);
 
 private:
   vpXmlParserCamera(const vpXmlParserCamera &);            // noncopyable

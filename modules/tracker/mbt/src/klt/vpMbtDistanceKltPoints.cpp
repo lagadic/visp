@@ -233,7 +233,7 @@ void vpMbtDistanceKltPoints::computeInteractionMatrixAndResidu(vpColVector &_R, 
   }
 }
 
-double vpMbtDistanceKltPoints::compute_1_over_Z(const double x, const double y)
+double vpMbtDistanceKltPoints::compute_1_over_Z(double x, double y)
 {
   double num = cRc0_0n[0] * x + cRc0_0n[1] * y + cRc0_0n[2];
   double den = -(d0 - dt);
@@ -252,7 +252,7 @@ double vpMbtDistanceKltPoints::compute_1_over_Z(const double x, const double y)
   \param y_out : the y coordinates of the output point
   \param _cHc0 : the homography used to transfer the point
 */
-inline void vpMbtDistanceKltPoints::computeP_mu_t(const double x_in, const double y_in, double &x_out, double &y_out,
+inline void vpMbtDistanceKltPoints::computeP_mu_t(double x_in, double y_in, double &x_out, double &y_out,
                                                   const vpMatrix &_cHc0)
 {
   double p_mu_t_2 = x_in * _cHc0[2][0] + y_in * _cHc0[2][1] + _cHc0[2][2];

@@ -143,8 +143,8 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 }
 
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-bool check_results(const cv::Mat &mat, const vpImage<double> &I, const unsigned int half_size_y,
-                   const unsigned int half_size_x)
+bool check_results(const cv::Mat &mat, const vpImage<double> &I, unsigned int half_size_y,
+                   unsigned int half_size_x)
 {
   for (unsigned int i = half_size_y; i < I.getHeight() - half_size_y; i++) {
     for (unsigned int j = half_size_x; j < I.getWidth() - half_size_x; j++) {

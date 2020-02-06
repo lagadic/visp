@@ -271,7 +271,7 @@ vpMatrix M(R);
   vpMatrix& operator=(const std::initializer_list<double> &list);
   vpMatrix& operator=(const std::initializer_list<std::initializer_list<double> > &lists);
 #endif
-  vpMatrix &operator=(const double x);
+  vpMatrix &operator=(double x);
   //@}
 
   //-------------------------------------------------
@@ -361,18 +361,18 @@ vpMatrix M(R);
   vpMatrix operator-() const;
 
   //! Add x to all the element of the matrix : Aij = Aij + x
-  vpMatrix &operator+=(const double x);
+  vpMatrix &operator+=(double x);
   //! Substract x to all the element of the matrix : Aij = Aij - x
-  vpMatrix &operator-=(const double x);
+  vpMatrix &operator-=(double x);
   //! Multiply  all the element of the matrix by x : Aij = Aij * x
-  vpMatrix &operator*=(const double x);
+  vpMatrix &operator*=(double x);
   //! Divide  all the element of the matrix by x : Aij = Aij / x
   vpMatrix &operator/=(double x);
 
   // Cij = Aij * x (A is unchanged)
-  vpMatrix operator*(const double x) const;
+  vpMatrix operator*(double x) const;
   // Cij = Aij / x (A is unchanged)
-  vpMatrix operator/(const double x) const;
+  vpMatrix operator/(double x) const;
 
   /*!
     Return the sum of all the \f$a_{ij}\f$ elements of the matrix.

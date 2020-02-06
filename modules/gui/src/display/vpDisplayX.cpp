@@ -1929,8 +1929,8 @@ void vpDisplayX::displayImage(const unsigned char *bitmap)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int w,
-                                 const unsigned int h)
+void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int w,
+                                 unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
     switch (screen_depth) {
@@ -2142,8 +2142,8 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I, const vpImageP
 
   \sa init(), closeDisplay()
 */
-void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int w,
-                                 const unsigned int h)
+void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int w,
+                                 unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
     switch (screen_depth) {
@@ -2353,7 +2353,7 @@ void vpDisplayX::flushDisplay()
   \param iP : Top left corner of the region of interest
   \param w,h  : Width and height of the region of interest
 */
-void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, const unsigned int w, const unsigned int h)
+void vpDisplayX::flushDisplayROI(const vpImagePoint &iP, unsigned int w, unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
     XClearArea(display, window, (int)(iP.get_u() / m_scale), (int)(iP.get_v() / m_scale), w / m_scale, h / m_scale, 0);

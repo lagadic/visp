@@ -129,8 +129,8 @@ public:
   void getFramerate(double &framerate);
   void setFramerate(const double framerate);
 
-  void setWidth(const unsigned int width);
-  void setHeight(const unsigned int height);
+  void setWidth(unsigned int width);
+  void setHeight(unsigned int height);
 
   void setDeviceType(int type);
 

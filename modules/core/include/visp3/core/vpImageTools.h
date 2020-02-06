@@ -149,7 +149,7 @@ public:
                     const vpArray2D<float> &mapDu, const vpArray2D<float> &mapDv, vpImage<vpRGBa> &Iundist);
 
   template <class Type>
-  static void resize(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int width, const unsigned int height,
+  static void resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int width, unsigned int height,
                      const vpImageInterpolationType &method = INTERPOLATION_NEAREST, unsigned int nThreads=0);
 
   template <class Type>
@@ -1049,8 +1049,8 @@ void vpImageTools::resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires, co
   \warning The input \e I and output \e Ires images must be different.
 */
 template <class Type>
-void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int width,
-                          const unsigned int height, const vpImageInterpolationType &method,
+void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int width,
+                          unsigned int height, const vpImageInterpolationType &method,
                           unsigned int nThreads)
 {
   Ires.resize(height, width);

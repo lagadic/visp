@@ -266,8 +266,8 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
 }
 #endif
 
-bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, const unsigned int width,
-                                                 const unsigned int height, const std::vector<vpColVector> &point_cloud,
+bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width,
+                                                 unsigned int height, const std::vector<vpColVector> &point_cloud,
                                                  const unsigned int stepX, const unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_DENSE
                                                  ,
@@ -575,8 +575,8 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
   }
 }
 
-void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, const unsigned int width,
-                                     const unsigned int height, std::vector<vpImagePoint> &roiPts
+void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, unsigned int width,
+                                     unsigned int height, std::vector<vpImagePoint> &roiPts
 #if DEBUG_DISPLAY_DEPTH_DENSE
                                      ,
                                      std::vector<std::vector<vpImagePoint> > &roiPts_vec

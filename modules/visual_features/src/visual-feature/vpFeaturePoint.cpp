@@ -115,7 +115,7 @@ double vpFeaturePoint::get_Z() const { return Z; }
 
   \param x : \f$ x \f$ value to set.
 */
-void vpFeaturePoint::set_x(const double x)
+void vpFeaturePoint::set_x(double x)
 {
   s[0] = x;
   flags[0] = true;
@@ -135,7 +135,7 @@ double vpFeaturePoint::get_x() const { return s[0]; }
 
   \param y : \f$ y \f$ value to set.
 */
-void vpFeaturePoint::set_y(const double y)
+void vpFeaturePoint::set_y(double y)
 {
   s[1] = y;
   flags[1] = true;
@@ -160,7 +160,7 @@ double vpFeaturePoint::get_y() const { return s[1]; }
   \param y_ : \f$ y \f$ value to set.
   \param Z_ : \f$ Z \f$ value to set.
 */
-void vpFeaturePoint::set_xyZ(const double x_, const double y_, const double Z_)
+void vpFeaturePoint::set_xyZ(double x_, double y_, const double Z_)
 {
   set_x(x_);
   set_y(y_);
@@ -392,7 +392,7 @@ void vpFeaturePoint::print(const unsigned int select) const
   \param y_ : The \f$ y \f$ parameter.
   \param Z_ : The \f$ Z \f$ parameter.
 */
-void vpFeaturePoint::buildFrom(const double x_, const double y_, const double Z_)
+void vpFeaturePoint::buildFrom(double x_, double y_, const double Z_)
 {
 
   s[0] = x_;

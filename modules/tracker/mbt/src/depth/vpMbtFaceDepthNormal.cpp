@@ -147,8 +147,8 @@ void vpMbtFaceDepthNormal::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpM
 }
 
 #ifdef VISP_HAVE_PCL
-bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, const unsigned int width,
-                                                  const unsigned int height,
+bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width,
+                                                  unsigned int height,
                                                   const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
                                                   vpColVector &desired_features, const unsigned int stepX,
                                                   const unsigned int stepY
@@ -307,8 +307,8 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
 }
 #endif
 
-bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, const unsigned int width,
-                                                  const unsigned int height,
+bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width,
+                                                  unsigned int height,
                                                   const std::vector<vpColVector> &point_cloud,
                                                   vpColVector &desired_features, const unsigned int stepX,
                                                   const unsigned int stepY
@@ -651,8 +651,8 @@ bool vpMbtFaceDepthNormal::computePolygonCentroid(const std::vector<vpPoint> &po
   return true;
 }
 
-void vpMbtFaceDepthNormal::computeROI(const vpHomogeneousMatrix &cMo, const unsigned int width,
-                                      const unsigned int height, std::vector<vpImagePoint> &roiPts
+void vpMbtFaceDepthNormal::computeROI(const vpHomogeneousMatrix &cMo, unsigned int width,
+                                      unsigned int height, std::vector<vpImagePoint> &roiPts
 #if DEBUG_DISPLAY_DEPTH_NORMAL
                                       ,
                                       std::vector<std::vector<vpImagePoint> > &roiPts_vec

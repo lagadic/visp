@@ -333,7 +333,7 @@ vpTranslationVector vpTranslationVector::operator-() const // negate
   // t2 is now equal to : [3, 6, 9]
   \endcode
 */
-vpTranslationVector vpTranslationVector::operator*(const double x) const
+vpTranslationVector vpTranslationVector::operator*(double x) const
 {
   vpTranslationVector tv;
   for (unsigned int i = 0; i < dsize; i++) {
@@ -408,7 +408,7 @@ vpTranslationVector &vpTranslationVector::operator/=(double x)
   // t2 is now equal to : [4, 2, 1]
   \endcode
 */
-vpTranslationVector vpTranslationVector::operator/(const double x) const
+vpTranslationVector vpTranslationVector::operator/(double x) const
 {
   vpTranslationVector tv;
   for (unsigned int i = 0; i < dsize; i++) {

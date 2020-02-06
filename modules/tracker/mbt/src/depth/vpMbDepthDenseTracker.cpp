@@ -126,7 +126,7 @@ void vpMbDepthDenseTracker::addFace(vpMbtPolygon &polygon, const bool alreadyClo
   m_depthDenseFaces.push_back(normal_face);
 }
 
-void vpMbDepthDenseTracker::computeVisibility(const unsigned int width, const unsigned int height)
+void vpMbDepthDenseTracker::computeVisibility(unsigned int width, unsigned int height)
 {
   bool changed = false;
   faces.setVisible(width, height, m_cam, m_cMo, angleAppears, angleDisappears, changed);
@@ -598,8 +598,8 @@ void vpMbDepthDenseTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointXY
 }
 #endif
 
-void vpMbDepthDenseTracker::segmentPointCloud(const std::vector<vpColVector> &point_cloud, const unsigned int width,
-                                              const unsigned int height)
+void vpMbDepthDenseTracker::segmentPointCloud(const std::vector<vpColVector> &point_cloud, unsigned int width,
+                                              unsigned int height)
 {
   m_depthDenseListOfActiveFaces.clear();
 
@@ -731,8 +731,8 @@ void vpMbDepthDenseTracker::track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr
 }
 #endif
 
-void vpMbDepthDenseTracker::track(const std::vector<vpColVector> &point_cloud, const unsigned int width,
-                                  const unsigned int height)
+void vpMbDepthDenseTracker::track(const std::vector<vpColVector> &point_cloud, unsigned int width,
+                                  unsigned int height)
 {
   segmentPointCloud(point_cloud, width, height);
 

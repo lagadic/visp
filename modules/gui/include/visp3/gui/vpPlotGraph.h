@@ -180,10 +180,10 @@ public:
   void initGraph(unsigned int nbCurve);
   void initSize(vpImagePoint topLeft, unsigned int width, unsigned int height, unsigned int margei,
                 unsigned int margej);
-  void initScale(vpImage<unsigned char> &I, const double xmin, const double xmax, const int nbDivx, const double ymin,
-                 const double ymax, const int nbDivy, const bool gx, const bool gy);
-  void initScale(vpImage<unsigned char> &I, const double xmin, const double xmax, const int nbDivx, const double ymin,
-                 const double ymax, const int nbDivy, const double zmin, const double zmax, const int nbDivz,
+  void initScale(vpImage<unsigned char> &I, double xmin, double xmax, const int nbDivx, double ymin,
+                 double ymax, const int nbDivy, const bool gx, const bool gy);
+  void initScale(vpImage<unsigned char> &I, double xmin, double xmax, const int nbDivx, double ymin,
+                 double ymax, const int nbDivy, const double zmin, const double zmax, const int nbDivz,
                  const bool gx, const bool gy);
 
   void displayGrid(vpImage<unsigned char> &I);
@@ -199,9 +199,9 @@ public:
   bool move(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button);
   vpHomogeneousMatrix navigation(const vpImage<unsigned char> &I, bool &changed, vpMouseButton::vpMouseButtonType &b);
 
-  void plot(vpImage<unsigned char> &I, unsigned int curveNb, const double x, const double y);
-  vpMouseButton::vpMouseButtonType plot(vpImage<unsigned char> &I, unsigned int curveNb, const double x,
-                                        const double y, const double z);
+  void plot(vpImage<unsigned char> &I, unsigned int curveNb, double x, double y);
+  vpMouseButton::vpMouseButtonType plot(vpImage<unsigned char> &I, unsigned int curveNb, double x,
+                                        double y, const double z);
   void replot(vpImage<unsigned char> &I);
   void replot3D(vpImage<unsigned char> &I);
 

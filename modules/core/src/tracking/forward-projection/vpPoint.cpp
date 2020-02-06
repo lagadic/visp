@@ -469,8 +469,8 @@ void vpPoint::set_oZ(const double oZ) { oP[2] = oZ; }
 void vpPoint::set_oW(const double oW) { oP[3] = oW; }
 
 //! Set the point x coordinate in the image plane.
-void vpPoint::set_x(const double x) { p[0] = x; }
+void vpPoint::set_x(double x) { p[0] = x; }
 //! Set the point y coordinate in the image plane.
-void vpPoint::set_y(const double y) { p[1] = y; }
+void vpPoint::set_y(double y) { p[1] = y; }
 //! Set the point w coordinate in the image plane.
 void vpPoint::set_w(const double w) { p[2] = w; }

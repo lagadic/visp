@@ -130,7 +130,7 @@ public:
   vpQuaternionVector buildFrom(const vpThetaUVector &tu);
   vpQuaternionVector buildFrom(const vpColVector &q);
   vpQuaternionVector buildFrom(const std::vector<double> &q);
-  void set(const double x, const double y, const double z, const double w);
+  void set(double x, double y, const double z, const double w);
 
   double x() const;
   double y() const;

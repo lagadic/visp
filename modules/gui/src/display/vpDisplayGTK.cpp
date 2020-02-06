@@ -542,8 +542,8 @@ void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayGTK::displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int w,
-                                   const unsigned int h)
+void vpDisplayGTK::displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int w,
+                                   unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
     vpImage<unsigned char> Itemp;
@@ -615,8 +615,8 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayGTK::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int w,
-                                   const unsigned int h)
+void vpDisplayGTK::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int w,
+                                   unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
     vpImage<vpRGBa> Itemp;

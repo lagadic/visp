@@ -98,7 +98,7 @@ public:
                               , const vpImage<bool> *mask = NULL
   );
 #endif
-  bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, const unsigned int width, const unsigned int height,
+  bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
                               const std::vector<vpColVector> &point_cloud, const unsigned int stepX,
                               const unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_DENSE
@@ -226,7 +226,7 @@ protected:
   std::vector<PolygonLine> m_polygonLines;
 
 protected:
-  void computeROI(const vpHomogeneousMatrix &cMo, const unsigned int width, const unsigned int height,
+  void computeROI(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
                   std::vector<vpImagePoint> &roiPts
 #if DEBUG_DISPLAY_DEPTH_DENSE
                   ,

@@ -278,7 +278,7 @@ public:
     the screen. \param win_y : y coordinate of the new top left corner of the
     window in the screen.
   */
-  inline void setWindowPosition(const unsigned int win_x, const unsigned int win_y)
+  inline void setWindowPosition(unsigned int win_x, unsigned int win_y)
   {
     if (mWindow == NULL) {
       throw vpException(vpException::notInitialized, "Window not initialised, cannot set its position");

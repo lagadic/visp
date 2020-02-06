@@ -177,8 +177,8 @@ public:
   vpMatrix operator*(const vpMatrix &M) const;
   // operation v2 = A * v1 (A is unchanged)
   vpColVector operator*(const vpColVector &v) const;
-  vpRotationMatrix operator*(const double x) const;
-  vpRotationMatrix &operator*=(const double x);
+  vpRotationMatrix operator*(double x) const;
+  vpRotationMatrix &operator*=(double x);
 
   vpRotationMatrix& operator<<(double val);
   vpRotationMatrix& operator,(double val);

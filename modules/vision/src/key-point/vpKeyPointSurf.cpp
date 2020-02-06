@@ -262,7 +262,7 @@ unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I)
   \return the number of reference points.
 */
 unsigned int vpKeyPointSurf::buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                                            const unsigned int height, const unsigned int width)
+                                            unsigned int height, unsigned int width)
 {
   if ((iP.get_i() + height) >= I.getHeight() || (iP.get_j() + width) >= I.getWidth()) {
     vpTRACE("Bad size for the subimage");
@@ -413,7 +413,7 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
   \return the number of point which have been matched.
 */
 unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                                        const unsigned int height, const unsigned int width)
+                                        unsigned int height, unsigned int width)
 {
   if ((iP.get_i() + height) >= I.getHeight() || (iP.get_j() + width) >= I.getWidth()) {
     vpTRACE("Bad size for the subimage");

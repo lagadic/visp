@@ -123,8 +123,8 @@ public:
   void set_oY(const double oY);
   void set_oZ(const double oZ);
   void set_oW(const double oW);
-  void set_x(const double x);
-  void set_y(const double y);
+  void set_x(double x);
+  void set_y(double y);
   void set_w(const double w);
 
   void setWorldCoordinates(const double oX, const double oY, const double oZ);

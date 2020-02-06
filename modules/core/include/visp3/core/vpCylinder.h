@@ -110,7 +110,7 @@ public:
   void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP);
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
-  double computeZ(const double x, const double y) const;
+  double computeZ(double x, double y) const;
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                unsigned int thickness = 1);

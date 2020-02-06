@@ -90,7 +90,7 @@ public:
                std::string name = "");
 
 #ifdef VISP_HAVE_PCL
-  bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, const unsigned int width, const unsigned int height,
+  bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
                               const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
                               vpColVector &desired_features, const unsigned int stepX, const unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_NORMAL
@@ -100,7 +100,7 @@ public:
                               , const vpImage<bool> *mask = NULL
   );
 #endif
-  bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, const unsigned int width, const unsigned int height,
+  bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
                               const std::vector<vpColVector> &point_cloud, vpColVector &desired_features,
                               const unsigned int stepX, const unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_NORMAL
@@ -286,7 +286,7 @@ protected:
 
   bool computePolygonCentroid(const std::vector<vpPoint> &points, vpPoint &centroid);
 
-  void computeROI(const vpHomogeneousMatrix &cMo, const unsigned int width, const unsigned int height,
+  void computeROI(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
                   std::vector<vpImagePoint> &roiPts
 #if DEBUG_DISPLAY_DEPTH_NORMAL
                   ,

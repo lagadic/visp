@@ -154,7 +154,7 @@ public:
   //! constructor  set the size of the image and init all the pixel
   vpImage(unsigned int height, unsigned int width, Type value);
   //! constructor from an image stored as a continuous array in memory
-  vpImage(Type *const array, const unsigned int height, const unsigned int width, const bool copyData = false);
+  vpImage(Type *const array, unsigned int height, unsigned int width, const bool copyData = false);
   //! destructor
   virtual ~vpImage();
 
@@ -251,7 +251,7 @@ public:
   //! Set the size of the image
   void init(unsigned int height, unsigned int width, Type value);
   //! init from an image stored as a continuous array in memory
-  void init(Type *const array, const unsigned int height, const unsigned int width, const bool copyData = false);
+  void init(Type *const array, unsigned int height, unsigned int width, const bool copyData = false);
   void insert(const vpImage<Type> &src, const vpImagePoint &topLeft);
 
   //------------------------------------------------------------------
@@ -334,9 +334,9 @@ public:
   void quarterSizeImage(vpImage<Type> &res) const;
 
   // set the size of the image without initializing it.
-  void resize(const unsigned int h, const unsigned int w);
+  void resize(unsigned int h, unsigned int w);
   // set the size of the image and initialize it.
-  void resize(const unsigned int h, const unsigned int w, const Type &val);
+  void resize(unsigned int h, unsigned int w, const Type &val);
 
   void sub(const vpImage<Type> &B, vpImage<Type> &C);
   void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
@@ -720,7 +720,7 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
   \exception vpException::memoryAllocationError
 */
 template <class Type>
-void vpImage<Type>::init(Type *const array, const unsigned int h, const unsigned int w, const bool copyData)
+void vpImage<Type>::init(Type *const array, unsigned int h, unsigned int w, const bool copyData)
 {
   if (h != this->height) {
     if (row != NULL) {
@@ -836,7 +836,7 @@ vpImage<Type>::vpImage(unsigned int h, unsigned int w, Type value)
   \sa vpImage::init(array, height, width)
 */
 template <class Type>
-vpImage<Type>::vpImage(Type *const array, const unsigned int h, const unsigned int w, const bool copyData)
+vpImage<Type>::vpImage(Type *const array, unsigned int h, unsigned int w, const bool copyData)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
   init(array, h, w, copyData);
