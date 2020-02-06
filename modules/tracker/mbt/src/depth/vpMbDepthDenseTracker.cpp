@@ -527,7 +527,7 @@ void vpMbDepthDenseTracker::setDepthDenseFilteringMinDistance(double minDistance
   }
 }
 
-void vpMbDepthDenseTracker::setDepthDenseFilteringOccupancyRatio(const double occupancyRatio)
+void vpMbDepthDenseTracker::setDepthDenseFilteringOccupancyRatio(double occupancyRatio)
 {
   if (occupancyRatio < 0.0 || occupancyRatio > 1.0) {
     std::cerr << "occupancyRatio < 0.0 || occupancyRatio > 1.0" << std::endl;

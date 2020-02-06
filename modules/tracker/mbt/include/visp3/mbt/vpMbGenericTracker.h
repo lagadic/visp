@@ -335,7 +335,7 @@ public:
   virtual void setDepthDenseFilteringMaxDistance(double maxDistance);
   virtual void setDepthDenseFilteringMethod(int method);
   virtual void setDepthDenseFilteringMinDistance(double minDistance);
-  virtual void setDepthDenseFilteringOccupancyRatio(const double occupancyRatio);
+  virtual void setDepthDenseFilteringOccupancyRatio(double occupancyRatio);
   virtual void setDepthDenseSamplingStep(unsigned int stepX, unsigned int stepY);
 
   virtual void setDepthNormalFaceCentroidMethod(const vpMbtFaceDepthNormal::vpFaceCentroidType &method);

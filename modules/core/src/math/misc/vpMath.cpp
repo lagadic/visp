@@ -81,7 +81,7 @@ const double vpMath::ang_min_mc = 2.5e-4;
    \param value : Double number to check.
    \return Return true if value is not a number.
  */
-bool vpMath::isNaN(const double value)
+bool vpMath::isNaN(double value)
 {
 #if defined(VISP_HAVE_FUNC_ISNAN)
   return isnan(value);
@@ -107,7 +107,7 @@ bool vpMath::isNaN(const double value)
    negative infinity). \param value : Double number to check. \return Return
    true if value is infinity.
  */
-bool vpMath::isInf(const double value)
+bool vpMath::isInf(double value)
 {
 #if defined(VISP_HAVE_FUNC_ISINF)
   return isinf(value);

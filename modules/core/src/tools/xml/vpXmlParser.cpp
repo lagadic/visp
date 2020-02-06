@@ -363,7 +363,7 @@ void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, u
   \param label : label (name of the data) of the node
   \param value : double to write
 */
-void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label, const double value)
+void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label, double value)
 {
   char str[100];
   sprintf(str, "%lf", value);

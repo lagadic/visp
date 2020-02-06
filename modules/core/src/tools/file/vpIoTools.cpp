@@ -178,7 +178,7 @@ float swapFloat(float f)
 
 // Swap a double, the union is necessary because of the representation of a
 // double in memory in IEEE 754.
-double swapDouble(const double d)
+double swapDouble(double d)
 {
   union {
     double d;
@@ -2005,7 +2005,7 @@ void vpIoTools::writeBinaryValueLE(std::ofstream &file, float float_value)
 /*!
    Write a double value in little endian.
  */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, const double double_value)
+void vpIoTools::writeBinaryValueLE(std::ofstream &file, double double_value)
 {
 #ifdef VISP_BIG_ENDIAN
   // Swap bytes order to little endian

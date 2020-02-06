@@ -77,7 +77,7 @@
   \param alpha : Multiplication coefficient.
   \param beta : Constant value added to the old intensity.
 */
-void vp::adjust(vpImage<unsigned char> &I, const double alpha, const double beta)
+void vp::adjust(vpImage<unsigned char> &I, double alpha, double beta)
 {
   // Construct the look-up table
   unsigned char lut[256];
@@ -100,7 +100,7 @@ void vp::adjust(vpImage<unsigned char> &I, const double alpha, const double beta
   \param alpha : Multiplication coefficient.
   \param beta : Constant value added to the old intensity.
 */
-void vp::adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const double alpha, const double beta)
+void vp::adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double alpha, double beta)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -118,7 +118,7 @@ void vp::adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, co
   \param alpha : Multiplication coefficient.
   \param beta : Constant value added to the old intensity.
 */
-void vp::adjust(vpImage<vpRGBa> &I, const double alpha, const double beta)
+void vp::adjust(vpImage<vpRGBa> &I, double alpha, double beta)
 {
   // Construct the look-up table
   vpRGBa lut[256];
@@ -144,7 +144,7 @@ void vp::adjust(vpImage<vpRGBa> &I, const double alpha, const double beta)
   \param alpha : Multiplication coefficient.
   \param beta : Constant value added to the old intensity.
 */
-void vp::adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const double alpha, const double beta)
+void vp::adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double beta)
 {
   // Copy I1 to I2
   I2 = I1;

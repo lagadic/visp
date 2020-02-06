@@ -118,7 +118,7 @@ struct SegmentInfo {
   by a list of vpPoint representing the corners of the polygon face in 3D.
  */
 struct PolygonFaceInfo {
-  PolygonFaceInfo(const double dist, const vpPolygon &poly, const std::vector<vpPoint> &corners)
+  PolygonFaceInfo(double dist, const vpPolygon &poly, const std::vector<vpPoint> &corners)
     : distanceToCamera(dist), polygon(poly), faceCorners(corners)
   {
   }

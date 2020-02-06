@@ -260,7 +260,7 @@ public:
   void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3,
                    double pos4, double pos5, double pos6);
   void setPosition(const char *filename);
-  void setPositioningVelocity(const double vel) { positioningVelocity = vel; }
+  void setPositioningVelocity(double vel) { positioningVelocity = vel; }
   vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState);
 
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &velocity);

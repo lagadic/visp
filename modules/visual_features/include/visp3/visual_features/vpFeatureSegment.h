@@ -175,7 +175,7 @@ public:
     when normalized features are considered, or equal to \f$ x_c \f$
     otherwise.
   */
-  inline void setXc(const double val)
+  inline void setXc(double val)
   {
     s[0] = xc_ = val;
     flags[0] = true;
@@ -189,7 +189,7 @@ public:
     when normalized features are considered, or equal to \f$ y_c \f$
     otherwise.
   */
-  inline void setYc(const double val)
+  inline void setYc(double val)
   {
     s[1] = yc_ = val;
     flags[1] = true;
@@ -202,7 +202,7 @@ public:
     \param val : Value to set, that is either equal to \f$l_n= 1/l \f$ when
     normalized features are considered, or equal to \f$ l \f$ otherwise.
   */
-  inline void setL(const double val)
+  inline void setL(double val)
   {
     s[2] = l_ = val;
     flags[2] = true;
@@ -215,7 +215,7 @@ public:
 
     \param val : \f$ \alpha \f$ value to set.
   */
-  inline void setAlpha(const double val)
+  inline void setAlpha(double val)
   {
     s[3] = alpha_ = val;
     cos_a_ = cos(val);
@@ -235,7 +235,7 @@ public:
     \exception vpFeatureException::badInitializationError : If Z1 is behind
     the camera or equal to zero.
   */
-  inline void setZ1(const double val)
+  inline void setZ1(double val)
   {
     Z1_ = val;
 
@@ -268,7 +268,7 @@ public:
     \exception vpFeatureException::badInitializationError : If Z2 is behind
     the camera or equal to zero.
   */
-  inline void setZ2(const double val)
+  inline void setZ2(double val)
   {
     Z2_ = val;
 

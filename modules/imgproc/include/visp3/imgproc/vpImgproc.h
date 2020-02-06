@@ -83,11 +83,11 @@ typedef enum {
                               */
 } vpAutoThresholdMethod;
 
-VISP_EXPORT void adjust(vpImage<unsigned char> &I, const double alpha, const double beta);
-VISP_EXPORT void adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const double alpha,
-                        const double beta);
-VISP_EXPORT void adjust(vpImage<vpRGBa> &I, const double alpha, const double beta);
-VISP_EXPORT void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const double alpha, const double beta);
+VISP_EXPORT void adjust(vpImage<unsigned char> &I, double alpha, double beta);
+VISP_EXPORT void adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double alpha,
+                        double beta);
+VISP_EXPORT void adjust(vpImage<vpRGBa> &I, const double alpha, double beta);
+VISP_EXPORT void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double beta);
 
 VISP_EXPORT void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius = 150,
                        int bins = 256, float slope = 3.0f, bool fast = true);
@@ -105,9 +105,9 @@ VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, double gamma);
 VISP_EXPORT void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double gamma);
 
 VISP_EXPORT void retinex(vpImage<vpRGBa> &I, int scale = 240, int scaleDiv = 3,
-                         int level = RETINEX_UNIFORM, const double dynamic = 1.2, int kernelSize = -1);
+                         int level = RETINEX_UNIFORM, double dynamic = 1.2, int kernelSize = -1);
 VISP_EXPORT void retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int scale = 240, int scaleDiv = 3,
-                         int level = RETINEX_UNIFORM, const double dynamic = 1.2, int kernelSize = -1);
+                         int level = RETINEX_UNIFORM, double dynamic = 1.2, int kernelSize = -1);
 
 VISP_EXPORT void stretchContrast(vpImage<unsigned char> &I);
 VISP_EXPORT void stretchContrast(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2);

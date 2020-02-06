@@ -379,7 +379,7 @@ void vpJointVelTrajGenerator::init(const std::array<double, 7> &q,
                                    const std::array<double, 7> &q_max,
                                    const std::array<double, 7> &dq_max,
                                    const std::array<double, 7> &ddq_max,
-                                   const double delta_t)
+                                   double delta_t)
 {
   if (m_njoints != q_min.size() || m_njoints != q_max.size()
       || m_njoints != dq_max.size() || m_njoints != ddq_max.size()) {

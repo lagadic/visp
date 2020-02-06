@@ -127,7 +127,7 @@ public:
   void set_y(double y);
   void set_w(double w);
 
-  void setWorldCoordinates(const double oX, const double oY, const double oZ);
+  void setWorldCoordinates(double oX, double oY, double oZ);
   void setWorldCoordinates(const vpColVector &P);
   void setWorldCoordinates(const std::vector<double> &P);
 };

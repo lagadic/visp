@@ -3790,7 +3790,7 @@ void vpMbGenericTracker::setDepthDenseFilteringMinDistance(double minDistance)
   \sa setDepthDenseFilteringMethod
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setDepthDenseFilteringOccupancyRatio(const double occupancyRatio)
+void vpMbGenericTracker::setDepthDenseFilteringOccupancyRatio(double occupancyRatio)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {

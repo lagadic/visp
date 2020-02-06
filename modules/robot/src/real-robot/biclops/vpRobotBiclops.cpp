@@ -679,7 +679,7 @@ void vpRobotBiclops::get_fJe(vpMatrix &_fJe)
   \param velocity : Velocity in % of the maximum velocity between [0,100]. The
   maximum velocity is given vpBiclops::speedLimit.
 */
-void vpRobotBiclops::setPositioningVelocity(const double velocity)
+void vpRobotBiclops::setPositioningVelocity(double velocity)
 {
   if (velocity < 0 || velocity > 100) {
     vpERROR_TRACE("Bad positionning velocity");

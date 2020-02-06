@@ -84,7 +84,7 @@ public:
   virtual void setDepthDenseFilteringMaxDistance(double maxDistance);
   virtual void setDepthDenseFilteringMethod(int method);
   virtual void setDepthDenseFilteringMinDistance(double minDistance);
-  virtual void setDepthDenseFilteringOccupancyRatio(const double occupancyRatio);
+  virtual void setDepthDenseFilteringOccupancyRatio(double occupancyRatio);
 
   inline void setDepthDenseSamplingStep(unsigned int stepX, unsigned int stepY)
   {

@@ -150,7 +150,7 @@ public:
     m_depthDenseFilteringMinDist = minDistance;
   }
 
-  inline void setDepthDenseFilteringOccupancyRatio(const double occupancyRatio)
+  inline void setDepthDenseFilteringOccupancyRatio(double occupancyRatio)
   {
     if (occupancyRatio < 0.0 || occupancyRatio > 1.0) {
       std::cerr << "occupancyRatio < 0.0 || occupancyRatio > 1.0" << std::endl;

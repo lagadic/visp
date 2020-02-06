@@ -667,7 +667,7 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
   be in ]0:100].
 
 */
-void vpRobotFranka::setPositioningVelocity(const double velocity)
+void vpRobotFranka::setPositioningVelocity(double velocity)
 {
   m_positionningVelocity = velocity;
 }

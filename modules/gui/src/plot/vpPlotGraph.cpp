@@ -58,7 +58,7 @@
 
 #if defined(VISP_HAVE_DISPLAY)
 
-int laFonctionSansNom(const double delta);
+int laFonctionSansNom(double delta);
 void getGrid3DPoint(double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3);
 
 vpPlotGraph::vpPlotGraph()
@@ -248,7 +248,7 @@ void vpPlotGraph::setCurveThickness(unsigned int curveNum, unsigned int thicknes
   (curveList + curveNum)->thickness = thickness;
 }
 
-int laFonctionSansNom(const double delta)
+int laFonctionSansNom(double delta)
 {
   double d = delta;
   int power = 0;

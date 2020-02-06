@@ -179,8 +179,8 @@ public:
     a = tmp;
   }
 
-  static bool isNaN(const double value);
-  static bool isInf(const double value);
+  static bool isNaN(double value);
+  static bool isInf(double value);
 
   template <typename _Tp> static inline _Tp saturate(unsigned char v) { return _Tp(v); }
   template <typename _Tp> static inline _Tp saturate(char v) { return _Tp(v); }

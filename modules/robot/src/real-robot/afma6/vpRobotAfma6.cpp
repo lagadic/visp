@@ -916,7 +916,7 @@ void vpRobotAfma6::get_fJe(vpMatrix &fJe)
 
   \sa getPositioningVelocity()
 */
-void vpRobotAfma6::setPositioningVelocity(const double velocity) { positioningVelocity = velocity; }
+void vpRobotAfma6::setPositioningVelocity(double velocity) { positioningVelocity = velocity; }
 
 /*!
   Get the maximal velocity percentage used for a position control.
@@ -2116,7 +2116,7 @@ void vpRobotAfma6::move(const std::string &filename)
   \sa readPosFile(), move(const char *)
 
 */
-void vpRobotAfma6::move(const std::string &filename, const double velocity)
+void vpRobotAfma6::move(const std::string &filename, double velocity)
 {
   vpColVector q;
 

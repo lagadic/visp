@@ -289,7 +289,7 @@ public: /* Methode publiques */
        vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
 
   void move(const std::string &filename);
-  void move(const std::string &filename, const double velocity);
+  void move(const std::string &filename, double velocity);
 
   void openGripper();
 
@@ -305,7 +305,7 @@ public: /* Methode publiques */
   void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3,
                    double pos4, double pos5, double pos6);
   void setPosition(const std::string &filename);
-  void setPositioningVelocity(const double velocity);
+  void setPositioningVelocity(double velocity);
   void set_eMc(const vpHomogeneousMatrix &eMc);
 
   /* --- ETAT ------------------------------------------------------------- */

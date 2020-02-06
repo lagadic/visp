@@ -104,7 +104,7 @@ vpMbtPolygon::~vpMbtPolygon() {}
 
   \return Return true if the polygon is visible.
 */
-bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo,
+bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, double alpha, const bool &modulo,
                              const vpCameraParameters &cam, unsigned int width, unsigned int height)
 {
   //   std::cout << "Computing angle from MBT Face (cMo, alpha)" << std::endl;

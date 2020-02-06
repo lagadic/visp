@@ -111,9 +111,9 @@ public:
   void set_x(double x);
   void set_y(double y);
   void set_xy(double x, double y);
-  void setAtanOneOverRho(const double atan_one_over_rho);
-  void setOneOverRho(const double one_over_rho);
-  void setAlpha(const double alpha);
+  void setAtanOneOverRho(double atan_one_over_rho);
+  void setOneOverRho(double one_over_rho);
+  void setAlpha(double alpha);
 
 protected:
   unsigned int m_select; // Memory to know which features are used for display;

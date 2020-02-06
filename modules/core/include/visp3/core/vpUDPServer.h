@@ -149,7 +149,7 @@ struct DataType {
   int int_val;
 
   DataType() : double_val(0.0), int_val(0) {}
-  DataType(const double dbl, int i) : double_val(dbl), int_val(i) {}
+  DataType(double dbl, int i) : double_val(dbl), int_val(i) {}
 };
 
 int main() {

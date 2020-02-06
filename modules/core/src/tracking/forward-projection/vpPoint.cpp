@@ -110,7 +110,7 @@ vpPoint::vpPoint(const std::vector<double> &P)
   point in the object frame. \param oX, oY, oZ: Coordinates of a 3D point in
   the object frame.
 */
-void vpPoint::setWorldCoordinates(const double oX, const double oY, const double oZ)
+void vpPoint::setWorldCoordinates(double oX, double oY, double oZ)
 {
   oP[0] = oX;
   oP[1] = oY;

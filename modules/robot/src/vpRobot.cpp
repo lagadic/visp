@@ -236,7 +236,7 @@ vpColVector vpRobot::getPosition(vpRobot::vpControlFrameType frame)
   \param v_max : Maximum translation velocity expressed in m/s.
 
 */
-void vpRobot::setMaxTranslationVelocity(const double v_max)
+void vpRobot::setMaxTranslationVelocity(double v_max)
 {
   this->maxTranslationVelocity = v_max;
   return;

@@ -1021,7 +1021,7 @@ int main()
 
   \sa getPositioningVelocity()
 */
-void vpRobotViper650::setPositioningVelocity(const double velocity) { positioningVelocity = velocity; }
+void vpRobotViper650::setPositioningVelocity(double velocity) { positioningVelocity = velocity; }
 
 /*!
   Get the maximal velocity percentage used for a position control.

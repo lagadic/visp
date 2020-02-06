@@ -107,7 +107,7 @@ void vpFeatureVanishingPoint::set_xy(double x, double y)
 }
 
 //! Set vanishing point feature \f$ 1/\rho \f$ value.
-void vpFeatureVanishingPoint::setOneOverRho(const double one_over_rho)
+void vpFeatureVanishingPoint::setOneOverRho(double one_over_rho)
 {
   s[2] = one_over_rho;
   flags[2] = true;
@@ -115,7 +115,7 @@ void vpFeatureVanishingPoint::setOneOverRho(const double one_over_rho)
 }
 
 //! Set vanishing point feature \f$ \arctan(1/\rho) \f$ value.
-void vpFeatureVanishingPoint::setAtanOneOverRho(const double atan_one_over_rho)
+void vpFeatureVanishingPoint::setAtanOneOverRho(double atan_one_over_rho)
 {
   s[3] = atan_one_over_rho;
   flags[3] = true;
@@ -129,7 +129,7 @@ double vpFeatureVanishingPoint::getOneOverRho() const { return s[2]; }
 double vpFeatureVanishingPoint::getAtanOneOverRho() const { return s[3]; }
 
 //! Set vanishing point feature \f$ \alpha \f$ value.
-void vpFeatureVanishingPoint::setAlpha(const double alpha)
+void vpFeatureVanishingPoint::setAlpha(double alpha)
 {
   s[4] = alpha;
   flags[4] = true;

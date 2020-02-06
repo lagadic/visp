@@ -166,7 +166,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
   \param alpha : Gain.
   \param beta: Offset.
 */
-void iterate_method1(vpImage<vpRGBa> &I, const double alpha, const double beta)
+void iterate_method1(vpImage<vpRGBa> &I, double alpha, double beta)
 {
   unsigned int size = I.getWidth() * I.getHeight();
   unsigned char *ptrStart = (unsigned char *)I.bitmap;
@@ -187,7 +187,7 @@ void iterate_method1(vpImage<vpRGBa> &I, const double alpha, const double beta)
   \param alpha : Gain.
   \param beta: Offset.
 */
-void iterate_method1(vpImage<unsigned char> &I, const double alpha, const double beta)
+void iterate_method1(vpImage<unsigned char> &I, double alpha, double beta)
 {
   unsigned int size = I.getWidth() * I.getHeight();
   unsigned char *ptrStart = (unsigned char *)I.bitmap;
@@ -208,7 +208,7 @@ void iterate_method1(vpImage<unsigned char> &I, const double alpha, const double
   \param alpha : Gain.
   \param beta: Offset.
 */
-void iterate_method2(vpImage<vpRGBa> &I, const double alpha, const double beta)
+void iterate_method2(vpImage<vpRGBa> &I, double alpha, double beta)
 {
   for (unsigned int i = 0; i < I.getHeight(); i++) {
     for (unsigned int j = 0; j < I.getWidth(); j++) {
