@@ -3737,7 +3737,7 @@ void vpMbGenericTracker::setClipping(const std::map<std::string, unsigned int> &
   \sa setDepthDenseFilteringMethod
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setDepthDenseFilteringMaxDistance(const double maxDistance)
+void vpMbGenericTracker::setDepthDenseFilteringMaxDistance(double maxDistance)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
@@ -3772,7 +3772,7 @@ void vpMbGenericTracker::setDepthDenseFilteringMethod(const int method)
   \sa setDepthDenseFilteringMethod
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setDepthDenseFilteringMinDistance(const double minDistance)
+void vpMbGenericTracker::setDepthDenseFilteringMinDistance(double minDistance)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
@@ -4280,7 +4280,7 @@ void vpMbGenericTracker::setMask(const vpImage<bool> &mask)
 
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name)
+void vpMbGenericTracker::setMinLineLengthThresh(double minLineLengthThresh, const std::string &name)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
@@ -4299,7 +4299,7 @@ void vpMbGenericTracker::setMinLineLengthThresh(const double minLineLengthThresh
 
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name)
+void vpMbGenericTracker::setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &name)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
@@ -6137,7 +6137,7 @@ void vpMbGenericTracker::TrackerWrapper::init(const vpImage<unsigned char> &I)
 }
 
 void vpMbGenericTracker::TrackerWrapper::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3,
-                                                    const double radius, const int idFace, const std::string &name)
+                                                    const double radius, int idFace, const std::string &name)
 {
   if (m_trackerType & EDGE_TRACKER)
     vpMbEdgeTracker::initCircle(p1, p2, p3, radius, idFace, name);
@@ -6149,7 +6149,7 @@ void vpMbGenericTracker::TrackerWrapper::initCircle(const vpPoint &p1, const vpP
 }
 
 void vpMbGenericTracker::TrackerWrapper::initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius,
-                                                      const int idFace, const std::string &name)
+                                                      int idFace, const std::string &name)
 {
   if (m_trackerType & EDGE_TRACKER)
     vpMbEdgeTracker::initCylinder(p1, p2, radius, idFace, name);

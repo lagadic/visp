@@ -111,7 +111,7 @@ public:
 
 private:
   double computeZ(const double &x, const double &y);
-  bool isTrackedFeature(const int id);
+  bool isTrackedFeature(int id);
 
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS

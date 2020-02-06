@@ -83,7 +83,7 @@ public:
   };
 
 public:
-  vpTrackingException(const int id, const char *format, ...)
+  vpTrackingException(int id, const char *format, ...)
   {
     this->code = id;
     va_list args;
@@ -91,8 +91,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpTrackingException(const int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpTrackingException(const int id) : vpException(id) { ; }
+  vpTrackingException(int id, const std::string &msg) : vpException(id, msg) { ; }
+  explicit vpTrackingException(int id) : vpException(id) { ; }
 };
 
 #endif

@@ -1310,7 +1310,7 @@ void vpMbKltTracker::testTracking()
   \param idFace : Identifier of the polygon representing the revolution axis
   of the cylinder. \param name : The optional name of the cylinder.
 */
-void vpMbKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace,
+void vpMbKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, int idFace,
                                   const std::string & /*name*/)
 {
   vpMbtDistanceKltCylinder *kltPoly = new vpMbtDistanceKltCylinder();

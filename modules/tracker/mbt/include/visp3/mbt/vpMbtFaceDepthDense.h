@@ -138,14 +138,14 @@ public:
 
   void setScanLineVisibilityTest(const bool v);
 
-  inline void setDepthDenseFilteringMaxDistance(const double maxDistance)
+  inline void setDepthDenseFilteringMaxDistance(double maxDistance)
   {
     m_depthDenseFilteringMaxDist = maxDistance;
   }
 
   inline void setDepthDenseFilteringMethod(const int method) { m_depthDenseFilteringMethod = method; }
 
-  inline void setDepthDenseFilteringMinDistance(const double minDistance)
+  inline void setDepthDenseFilteringMinDistance(double minDistance)
   {
     m_depthDenseFilteringMinDist = minDistance;
   }

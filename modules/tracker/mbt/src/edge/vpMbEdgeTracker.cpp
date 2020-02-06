@@ -2348,7 +2348,7 @@ unsigned int vpMbEdgeTracker::initMbtTracking(unsigned int &nberrors_lines, unsi
   optional name of the circle.
 */
 void vpMbEdgeTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-                                 const int idFace, const std::string &name)
+                                 int idFace, const std::string &name)
 {
   addCircle(p1, p2, p3, radius, (int)idFace, name);
 }
@@ -2363,7 +2363,7 @@ void vpMbEdgeTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpP
   \param idFace : Id of the face that is associated to the cylinder to handle
   visibility test. \param name : The optional name of the cylinder.
 */
-void vpMbEdgeTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace,
+void vpMbEdgeTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, int idFace,
                                    const std::string &name)
 {
   addCylinder(p1, p2, radius, (int)idFace, name);

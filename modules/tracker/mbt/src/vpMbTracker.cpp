@@ -1229,9 +1229,9 @@ void vpMbTracker::savePose(const std::string &filename) const
   finitpos.close();
 }
 
-void vpMbTracker::addPolygon(const std::vector<vpPoint> &corners, const int idFace, const std::string &polygonName,
-                             bool useLod, const double minPolygonAreaThreshold,
-                             const double minLineLengthThreshold)
+void vpMbTracker::addPolygon(const std::vector<vpPoint> &corners, int idFace, const std::string &polygonName,
+                             bool useLod, double minPolygonAreaThreshold,
+                             double minLineLengthThreshold)
 {
   std::vector<vpPoint> corners_without_duplicates;
   corners_without_duplicates.push_back(corners[0]);
@@ -1286,8 +1286,8 @@ void vpMbTracker::addPolygon(const std::vector<vpPoint> &corners, const int idFa
 }
 
 void vpMbTracker::addPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-                             const int idFace, const std::string &polygonName, bool useLod,
-                             const double minPolygonAreaThreshold)
+                             int idFace, const std::string &polygonName, bool useLod,
+                             double minPolygonAreaThreshold)
 {
   vpMbtPolygon polygon;
   polygon.setNbPoint(4);
@@ -1366,8 +1366,8 @@ void vpMbTracker::addPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint
     faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
-void vpMbTracker::addPolygon(const vpPoint &p1, const vpPoint &p2, const int idFace, const std::string &polygonName,
-                             bool useLod, const double minLineLengthThreshold)
+void vpMbTracker::addPolygon(const vpPoint &p1, const vpPoint &p2, int idFace, const std::string &polygonName,
+                             bool useLod, double minLineLengthThreshold)
 {
   // A polygon as a single line that corresponds to the revolution axis of the
   // cylinder
@@ -1404,8 +1404,8 @@ void vpMbTracker::addPolygon(const vpPoint &p1, const vpPoint &p2, const int idF
     faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
-void vpMbTracker::addPolygon(const std::vector<std::vector<vpPoint> > &listFaces, const int idFace,
-                             const std::string &polygonName, bool useLod, const double minLineLengthThreshold)
+void vpMbTracker::addPolygon(const std::vector<std::vector<vpPoint> > &listFaces, int idFace,
+                             const std::string &polygonName, bool useLod, double minLineLengthThreshold)
 {
   int id = idFace;
   for (unsigned int i = 0; i < listFaces.size(); i++) {
@@ -2755,7 +2755,7 @@ void vpMbTracker::setLod(bool useLod, const std::string &name)
 
     \sa setLod(), setMinPolygonAreaThresh()
  */
-void vpMbTracker::setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name)
+void vpMbTracker::setMinLineLengthThresh(double minLineLengthThresh, const std::string &name)
 {
   for (unsigned int i = 0; i < faces.size(); i++) {
     if (name.empty() || faces[i]->name == name) {
@@ -2772,7 +2772,7 @@ void vpMbTracker::setMinLineLengthThresh(const double minLineLengthThresh, const
 
   \sa setLod(), setMinLineLengthThresh()
  */
-void vpMbTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name)
+void vpMbTracker::setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &name)
 {
   for (unsigned int i = 0; i < faces.size(); i++) {
     if (name.empty() || faces[i]->name == name) {
@@ -3153,9 +3153,9 @@ bool vpMbTracker::samePoint(const vpPoint &P1, const vpPoint &P2) const
     return false;
 }
 
-void vpMbTracker::addProjectionErrorPolygon(const std::vector<vpPoint> &corners, const int idFace, const std::string &polygonName,
-                                            bool useLod, const double minPolygonAreaThreshold,
-                                            const double minLineLengthThreshold)
+void vpMbTracker::addProjectionErrorPolygon(const std::vector<vpPoint> &corners, int idFace, const std::string &polygonName,
+                                            bool useLod, double minPolygonAreaThreshold,
+                                            double minLineLengthThreshold)
 {
   std::vector<vpPoint> corners_without_duplicates;
   corners_without_duplicates.push_back(corners[0]);
@@ -3196,8 +3196,8 @@ void vpMbTracker::addProjectionErrorPolygon(const std::vector<vpPoint> &corners,
 }
 
 void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-                                            const int idFace, const std::string &polygonName, bool useLod,
-                                            const double minPolygonAreaThreshold)
+                                            int idFace, const std::string &polygonName, bool useLod,
+                                            double minPolygonAreaThreshold)
 {
   vpMbtPolygon polygon;
   polygon.setNbPoint(4);
@@ -3270,8 +3270,8 @@ void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2
     m_projectionErrorFaces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
-void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, const int idFace, const std::string &polygonName,
-                                            bool useLod, const double minLineLengthThreshold)
+void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, int idFace, const std::string &polygonName,
+                                            bool useLod, double minLineLengthThreshold)
 {
   // A polygon as a single line that corresponds to the revolution axis of the
   // cylinder
@@ -3302,8 +3302,8 @@ void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2
     m_projectionErrorFaces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
-void vpMbTracker::addProjectionErrorPolygon(const std::vector<std::vector<vpPoint> > &listFaces, const int idFace,
-                                            const std::string &polygonName, bool useLod, const double minLineLengthThreshold)
+void vpMbTracker::addProjectionErrorPolygon(const std::vector<std::vector<vpPoint> > &listFaces, int idFace,
+                                            const std::string &polygonName, bool useLod, double minLineLengthThreshold)
 {
   int id = idFace;
   for (unsigned int i = 0; i < listFaces.size(); i++) {
@@ -3437,13 +3437,13 @@ void vpMbTracker::addProjectionErrorCylinder(const vpPoint &P1, const vpPoint &P
 }
 
 void vpMbTracker::initProjectionErrorCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3,
-                                            const double radius, const int idFace, const std::string &name)
+                                            const double radius, int idFace, const std::string &name)
 {
   addProjectionErrorCircle(p1, p2, p3, radius, idFace, name);
 }
 
 void vpMbTracker::initProjectionErrorCylinder(const vpPoint &p1, const vpPoint &p2, const double radius,
-                                              const int idFace, const std::string &name)
+                                              int idFace, const std::string &name)
 {
   addProjectionErrorCylinder(p1, p2, radius, idFace, name);
 }

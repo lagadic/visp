@@ -332,9 +332,9 @@ public:
   virtual void setClipping(const unsigned int &flags1, const unsigned int &flags2);
   virtual void setClipping(const std::map<std::string, unsigned int> &mapOfClippingFlags);
 
-  virtual void setDepthDenseFilteringMaxDistance(const double maxDistance);
-  virtual void setDepthDenseFilteringMethod(const int method);
-  virtual void setDepthDenseFilteringMinDistance(const double minDistance);
+  virtual void setDepthDenseFilteringMaxDistance(double maxDistance);
+  virtual void setDepthDenseFilteringMethod(int method);
+  virtual void setDepthDenseFilteringMinDistance(double minDistance);
   virtual void setDepthDenseFilteringOccupancyRatio(const double occupancyRatio);
   virtual void setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY);
 
@@ -377,8 +377,8 @@ public:
 
   virtual void setMask(const vpImage<bool> &mask);
 
-  virtual void setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name = "");
-  virtual void setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name = "");
+  virtual void setMinLineLengthThresh(double minLineLengthThresh, const std::string &name = "");
+  virtual void setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &name = "");
 
   virtual void setMovingEdge(const vpMe &me);
   virtual void setMovingEdge(const vpMe &me1, const vpMe &me2);
@@ -467,9 +467,9 @@ protected:
   virtual void computeVVSWeights();
 
   virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-                          const int idFace = 0, const std::string &name = "");
+                          int idFace = 0, const std::string &name = "");
 
-  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace = 0,
+  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, int idFace = 0,
                             const std::string &name = "");
 
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
@@ -589,9 +589,9 @@ private:
     virtual void computeVVSWeights();
 
     virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-                            const int idFace = 0, const std::string &name = "");
+                            int idFace = 0, const std::string &name = "");
 
-    virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace = 0,
+    virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, int idFace = 0,
                               const std::string &name = "");
 
     virtual void initFaceFromCorners(vpMbtPolygon &polygon);

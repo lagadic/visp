@@ -81,9 +81,9 @@ public:
 
   virtual void setCameraParameters(const vpCameraParameters &camera);
 
-  virtual void setDepthDenseFilteringMaxDistance(const double maxDistance);
-  virtual void setDepthDenseFilteringMethod(const int method);
-  virtual void setDepthDenseFilteringMinDistance(const double minDistance);
+  virtual void setDepthDenseFilteringMaxDistance(double maxDistance);
+  virtual void setDepthDenseFilteringMethod(int method);
+  virtual void setDepthDenseFilteringMinDistance(double minDistance);
   virtual void setDepthDenseFilteringOccupancyRatio(const double occupancyRatio);
 
   inline void setDepthDenseSamplingStep(const unsigned int stepX, const unsigned int stepY)
@@ -157,9 +157,9 @@ protected:
   using vpMbTracker::computeVVSWeights;
 
   virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-                          const int idFace = 0, const std::string &name = "");
+                          int idFace = 0, const std::string &name = "");
 
-  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace = 0,
+  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, int idFace = 0,
                             const std::string &name = "");
 
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);

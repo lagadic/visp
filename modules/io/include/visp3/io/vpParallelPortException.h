@@ -89,7 +89,7 @@ public:
   };
 
 public:
-  vpParallelPortException(const int id, const char *format, ...)
+  vpParallelPortException(int id, const char *format, ...)
   {
     this->code = id;
     va_list args;
@@ -97,8 +97,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpParallelPortException(const int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpParallelPortException(const int id) : vpException(id) { ; }
+  vpParallelPortException(int id, const std::string &msg) : vpException(id, msg) { ; }
+  explicit vpParallelPortException(int id) : vpException(id) { ; }
 };
 
 #endif

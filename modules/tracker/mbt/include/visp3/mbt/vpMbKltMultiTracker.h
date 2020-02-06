@@ -297,10 +297,10 @@ public:
   virtual void setLod(bool useLod, const std::string &name = "");
   virtual void setLod(bool useLod, const std::string &cameraName, const std::string &name);
 
-  virtual void setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name = "");
+  virtual void setMinLineLengthThresh(double minLineLengthThresh, const std::string &name = "");
 
-  virtual void setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name = "");
-  virtual void setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &cameraName,
+  virtual void setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &name = "");
+  virtual void setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &cameraName,
                                        const std::string &name);
 
   virtual void setNearClippingDistance(const double &dist);

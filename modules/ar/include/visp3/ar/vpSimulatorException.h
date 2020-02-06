@@ -70,9 +70,9 @@ public:
   };
 
 public:
-  vpSimulatorException(const int id, const char *format, ...);
-  vpSimulatorException(const int id, const std::string &msg);
-  explicit vpSimulatorException(const int id);
+  vpSimulatorException(int id, const char *format, ...);
+  vpSimulatorException(int id, const std::string &msg);
+  explicit vpSimulatorException(int id);
 };
 
 #endif

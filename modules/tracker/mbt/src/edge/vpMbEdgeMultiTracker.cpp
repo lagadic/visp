@@ -2429,7 +2429,7 @@ void vpMbEdgeMultiTracker::setLod(bool useLod, const std::string &cameraName, co
 
   \sa setLod(), setMinPolygonAreaThresh()
  */
-void vpMbEdgeMultiTracker::setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name)
+void vpMbEdgeMultiTracker::setMinLineLengthThresh(double minLineLengthThresh, const std::string &name)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {
@@ -2448,7 +2448,7 @@ void vpMbEdgeMultiTracker::setMinLineLengthThresh(const double minLineLengthThre
 
   \sa setLod(), setMinPolygonAreaThresh()
  */
-void vpMbEdgeMultiTracker::setMinLineLengthThresh(const double minLineLengthThresh, const std::string &cameraName,
+void vpMbEdgeMultiTracker::setMinLineLengthThresh(double minLineLengthThresh, const std::string &cameraName,
                                                   const std::string &name)
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(cameraName);
@@ -2468,7 +2468,7 @@ void vpMbEdgeMultiTracker::setMinLineLengthThresh(const double minLineLengthThre
 
   \sa setLod(), setMinLineLengthThresh()
  */
-void vpMbEdgeMultiTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name)
+void vpMbEdgeMultiTracker::setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &name)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {
@@ -2486,7 +2486,7 @@ void vpMbEdgeMultiTracker::setMinPolygonAreaThresh(const double minPolygonAreaTh
 
   \sa setLod(), setMinLineLengthThresh()
  */
-void vpMbEdgeMultiTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &cameraName,
+void vpMbEdgeMultiTracker::setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &cameraName,
                                                    const std::string &name)
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(cameraName);

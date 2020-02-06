@@ -1790,7 +1790,7 @@ void vpMbEdgeKltMultiTracker::setLod(bool useLod, const std::string &cameraName,
 
   \sa setLod(), setMinPolygonAreaThresh()
  */
-void vpMbEdgeKltMultiTracker::setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name)
+void vpMbEdgeKltMultiTracker::setMinLineLengthThresh(double minLineLengthThresh, const std::string &name)
 {
   vpMbEdgeMultiTracker::setMinLineLengthThresh(minLineLengthThresh, name);
 }
@@ -1806,7 +1806,7 @@ void vpMbEdgeKltMultiTracker::setMinLineLengthThresh(const double minLineLengthT
 
   \sa setLod(), setMinPolygonAreaThresh()
  */
-void vpMbEdgeKltMultiTracker::setMinLineLengthThresh(const double minLineLengthThresh, const std::string &cameraName,
+void vpMbEdgeKltMultiTracker::setMinLineLengthThresh(double minLineLengthThresh, const std::string &cameraName,
                                                      const std::string &name)
 {
   vpMbEdgeMultiTracker::setMinLineLengthThresh(minLineLengthThresh, cameraName, name);
@@ -1820,7 +1820,7 @@ void vpMbEdgeKltMultiTracker::setMinLineLengthThresh(const double minLineLengthT
 
   \sa setLod(), setMinLineLengthThresh()
  */
-void vpMbEdgeKltMultiTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name)
+void vpMbEdgeKltMultiTracker::setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &name)
 {
   vpMbEdgeMultiTracker::setMinPolygonAreaThresh(minPolygonAreaThresh, name);
   vpMbKltMultiTracker::setMinPolygonAreaThresh(minPolygonAreaThresh, name);
@@ -1836,7 +1836,7 @@ void vpMbEdgeKltMultiTracker::setMinPolygonAreaThresh(const double minPolygonAre
 
   \sa setLod(), setMinLineLengthThresh()
  */
-void vpMbEdgeKltMultiTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &cameraName,
+void vpMbEdgeKltMultiTracker::setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &cameraName,
                                                       const std::string &name)
 {
   vpMbEdgeMultiTracker::setMinPolygonAreaThresh(minPolygonAreaThresh, cameraName, name);

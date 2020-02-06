@@ -112,7 +112,7 @@ public:
 private:
   double compute_1_over_Z(double x, double y);
   void computeP_mu_t(double x_in, double y_in, double &x_out, double &y_out, const vpMatrix &cHc0);
-  bool isTrackedFeature(const int id);
+  bool isTrackedFeature(int id);
 
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS

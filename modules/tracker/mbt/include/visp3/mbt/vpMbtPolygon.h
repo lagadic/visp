@@ -138,7 +138,7 @@ public:
 
     \sa setLoD()
    */
-  inline void setMinLineLengthThresh(const double min_line_length) { this->minLineLengthThresh = min_line_length; }
+  inline void setMinLineLengthThresh(double min_line_length) { this->minLineLengthThresh = min_line_length; }
   /*!
     Set the minimum polygon area to be considered as visible in the LOD (level
     of detail) case. This threshold is only used when setLoD() is turned on.
@@ -149,7 +149,7 @@ public:
 
     \sa setLoD()
   */
-  inline void setMinPolygonAreaThresh(const double min_polygon_area) { this->minPolygonAreaThresh = min_polygon_area; }
+  inline void setMinPolygonAreaThresh(double min_polygon_area) { this->minPolygonAreaThresh = min_polygon_area; }
 
   /*!
    Set the name of the face.

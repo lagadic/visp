@@ -539,9 +539,9 @@ public:
    */
   virtual inline void setMaxIter(unsigned int max) { m_maxIter = max; }
 
-  virtual void setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name = "");
+  virtual void setMinLineLengthThresh(double minLineLengthThresh, const std::string &name = "");
 
-  virtual void setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name = "");
+  virtual void setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &name = "");
 
   virtual void setNearClippingDistance(const double &dist);
 
@@ -754,34 +754,34 @@ public:
 
 protected:
   /** @name Protected Member Functions Inherited from vpMbTracker */
-  void addPolygon(const std::vector<vpPoint> &corners, const int idFace = -1, const std::string &polygonName = "",
-                  bool useLod = false, const double minPolygonAreaThreshold = 2500.0,
-                  const double minLineLengthThreshold = 50.0);
-  void addPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius, const int idFace = -1,
+  void addPolygon(const std::vector<vpPoint> &corners, int idFace = -1, const std::string &polygonName = "",
+                  bool useLod = false, double minPolygonAreaThreshold = 2500.0,
+                  double minLineLengthThreshold = 50.0);
+  void addPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius, int idFace = -1,
                   const std::string &polygonName = "", bool useLod = false,
-                  const double minPolygonAreaThreshold = 2500.0);
-  void addPolygon(const vpPoint &p1, const vpPoint &p2, const int idFace = -1, const std::string &polygonName = "",
-                  bool useLod = false, const double minLineLengthThreshold = 50);
-  void addPolygon(const std::vector<std::vector<vpPoint> > &listFaces, const int idFace = -1,
+                  double minPolygonAreaThreshold = 2500.0);
+  void addPolygon(const vpPoint &p1, const vpPoint &p2, int idFace = -1, const std::string &polygonName = "",
+                  bool useLod = false, double minLineLengthThreshold = 50);
+  void addPolygon(const std::vector<std::vector<vpPoint> > &listFaces, int idFace = -1,
                   const std::string &polygonName = "", bool useLod = false,
-                  const double minLineLengthThreshold = 50);
+                  double minLineLengthThreshold = 50);
 
   void addProjectionErrorCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace = -1,
                                 const std::string &name = "");
   void addProjectionErrorCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace = -1, const std::string &name = "");
   void addProjectionErrorLine(vpPoint &p1, vpPoint &p2, int polygon = -1, std::string name = "");
 
-  void addProjectionErrorPolygon(const std::vector<vpPoint> &corners, const int idFace = -1, const std::string &polygonName = "",
-                                 bool useLod = false, const double minPolygonAreaThreshold = 2500.0,
+  void addProjectionErrorPolygon(const std::vector<vpPoint> &corners, int idFace = -1, const std::string &polygonName = "",
+                                 bool useLod = false, double minPolygonAreaThreshold = 2500.0,
                                  const double minLineLengthThreshold = 50.0);
-  void addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius, const int idFace = -1,
+  void addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius, int idFace = -1,
                                  const std::string &polygonName = "", bool useLod = false,
-                                 const double minPolygonAreaThreshold = 2500.0);
-  void addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, const int idFace = -1, const std::string &polygonName = "",
-                                 bool useLod = false, const double minLineLengthThreshold = 50);
-  void addProjectionErrorPolygon(const std::vector<std::vector<vpPoint> > &listFaces, const int idFace = -1,
+                                 double minPolygonAreaThreshold = 2500.0);
+  void addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, int idFace = -1, const std::string &polygonName = "",
+                                 bool useLod = false, double minLineLengthThreshold = 50);
+  void addProjectionErrorPolygon(const std::vector<std::vector<vpPoint> > &listFaces, int idFace = -1,
                                  const std::string &polygonName = "", bool useLod = false,
-                                 const double minLineLengthThreshold = 50);
+                                 double minLineLengthThreshold = 50);
 
   void createCylinderBBox(const vpPoint &p1, const vpPoint &p2, const double &radius,
                           std::vector<std::vector<vpPoint> > &listFaces);
@@ -832,7 +832,7 @@ protected:
     \param name : Name of the circle.
   */
   virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-                          const int idFace = 0, const std::string &name = "") = 0;
+                          int idFace = 0, const std::string &name = "") = 0;
 
 #ifdef VISP_HAVE_MODULE_GUI
   virtual void initClick(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color, const std::string &initFile,
@@ -861,7 +861,7 @@ protected:
     \param idFace : Id of the face associated to the cylinder.
     \param name : Name of the cylinder.
   */
-  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace = 0,
+  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, int idFace = 0,
                             const std::string &name = "") = 0;
 
   /*!
@@ -880,8 +880,8 @@ protected:
   virtual void initFaceFromLines(vpMbtPolygon &polygon) = 0;
 
   void initProjectionErrorCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-                                 const int idFace = 0, const std::string &name = "");
-  void initProjectionErrorCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace = 0,
+                                 int idFace = 0, const std::string &name = "");
+  void initProjectionErrorCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, int idFace = 0,
                                    const std::string &name = "");
   void initProjectionErrorFaceFromCorners(vpMbtPolygon &polygon);
   void initProjectionErrorFaceFromLines(vpMbtPolygon &polygon);

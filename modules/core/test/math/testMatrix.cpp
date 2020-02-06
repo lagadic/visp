@@ -73,7 +73,7 @@ bool test(const std::string &s, const vpMatrix &M, const std::vector<double> &be
   return true;
 }
 
-double getRandomValues(const double min, const double max)
+double getRandomValues(double min, double max)
 {
   return (max - min) * ((double)rand() / (double)RAND_MAX) + min;
 }
@@ -95,7 +95,7 @@ bool equalMatrix(const vpMatrix &A, const vpMatrix &B, const double tol = std::n
   return true;
 }
 
-vpMatrix generateRandomMatrix(const unsigned int rows, const unsigned int cols, const double min, const double max)
+vpMatrix generateRandomMatrix(const unsigned int rows, const unsigned int cols, double min, double max)
 {
   vpMatrix M(rows, cols);
 

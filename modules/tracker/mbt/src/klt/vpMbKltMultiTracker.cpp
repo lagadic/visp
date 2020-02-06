@@ -2351,7 +2351,7 @@ void vpMbKltMultiTracker::setMinLineLengthThresh(const double /*minLineLengthThr
 
   \sa setLod(), setMinLineLengthThresh()
  */
-void vpMbKltMultiTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name)
+void vpMbKltMultiTracker::setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &name)
 {
   for (std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
        it != m_mapOfKltTrackers.end(); ++it) {
@@ -2369,7 +2369,7 @@ void vpMbKltMultiTracker::setMinPolygonAreaThresh(const double minPolygonAreaThr
 
   \sa setLod(), setMinLineLengthThresh()
  */
-void vpMbKltMultiTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &cameraName,
+void vpMbKltMultiTracker::setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &cameraName,
                                                   const std::string &name)
 {
   std::map<std::string, vpMbKltTracker *>::const_iterator it_klt = m_mapOfKltTrackers.find(cameraName);

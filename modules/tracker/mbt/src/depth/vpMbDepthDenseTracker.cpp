@@ -503,7 +503,7 @@ void vpMbDepthDenseTracker::setCameraParameters(const vpCameraParameters &cam)
   }
 }
 
-void vpMbDepthDenseTracker::setDepthDenseFilteringMaxDistance(const double maxDistance)
+void vpMbDepthDenseTracker::setDepthDenseFilteringMaxDistance(double maxDistance)
 {
   for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
        it != m_depthDenseFaces.end(); ++it) {
@@ -519,7 +519,7 @@ void vpMbDepthDenseTracker::setDepthDenseFilteringMethod(const int method)
   }
 }
 
-void vpMbDepthDenseTracker::setDepthDenseFilteringMinDistance(const double minDistance)
+void vpMbDepthDenseTracker::setDepthDenseFilteringMinDistance(double minDistance)
 {
   for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
        it != m_depthDenseFaces.end(); ++it) {

@@ -106,7 +106,7 @@ double computeRegularStdev(const vpColVector &v)
   return std::sqrt(sum_squared_diff / divisor);
 }
 
-double getRandomValues(const double min, const double max)
+double getRandomValues(double min, double max)
 {
   return (max - min) * ((double)rand() / (double)RAND_MAX) + min;
 }

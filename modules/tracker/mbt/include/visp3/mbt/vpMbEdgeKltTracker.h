@@ -339,9 +339,9 @@ protected:
   using vpMbTracker::computeVVSPoseEstimation;
 
   virtual void init(const vpImage<unsigned char> &I);
-  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, const double r, const int idFace = 0,
+  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, const double r, int idFace = 0,
                           const std::string &name = "");
-  virtual void initCylinder(const vpPoint &, const vpPoint &, const double r, const int idFace,
+  virtual void initCylinder(const vpPoint &, const vpPoint &, const double r, int idFace,
                             const std::string &name = "");
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
