@@ -199,8 +199,8 @@ public:
   bool move(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button);
   vpHomogeneousMatrix navigation(const vpImage<unsigned char> &I, bool &changed, vpMouseButton::vpMouseButtonType &b);
 
-  void plot(vpImage<unsigned char> &I, const unsigned int curveNb, const double x, const double y);
-  vpMouseButton::vpMouseButtonType plot(vpImage<unsigned char> &I, const unsigned int curveNb, const double x,
+  void plot(vpImage<unsigned char> &I, unsigned int curveNb, const double x, const double y);
+  vpMouseButton::vpMouseButtonType plot(vpImage<unsigned char> &I, unsigned int curveNb, const double x,
                                         const double y, const double z);
   void replot(vpImage<unsigned char> &I);
   void replot3D(vpImage<unsigned char> &I);
@@ -210,12 +210,12 @@ public:
   void rescalez(unsigned int side, double extremity);
   // void rescale(double &min, double &max, double &delta, const int nbDiv,
   // int side);
-  void resetPointList(const unsigned int curveNum);
+  void resetPointList(unsigned int curveNum);
 
-  void setCurveColor(const unsigned int curveNum, const vpColor &color);
-  void setCurveThickness(const unsigned int curveNum, unsigned int thickness);
+  void setCurveColor(unsigned int curveNum, const vpColor &color);
+  void setCurveThickness(unsigned int curveNum, unsigned int thickness);
   void setGridThickness(unsigned int thickness) { this->gridThickness = thickness; };
-  void setLegend(const unsigned int curveNum, const std::string &legend);
+  void setLegend(unsigned int curveNum, const std::string &legend);
   void setTitle(const std::string &title);
   void setUnitX(const std::string &unitx);
   void setUnitY(const std::string &unity);

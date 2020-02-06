@@ -208,7 +208,7 @@ void vpPlotGraph::computeGraphParameters()
   yorg = dTopLeft.get_i() + (ymax * zoomy);
 }
 
-void vpPlotGraph::setCurveColor(const unsigned int curveNum, const vpColor &color)
+void vpPlotGraph::setCurveColor(unsigned int curveNum, const vpColor &color)
 {
   (curveList + curveNum)->color = color;
 }
@@ -237,13 +237,13 @@ void vpPlotGraph::setUnitZ(const std::string &unit_z)
   dispUnit = true;
 }
 
-void vpPlotGraph::setLegend(const unsigned int curveNum, const std::string &newlegend)
+void vpPlotGraph::setLegend(unsigned int curveNum, const std::string &newlegend)
 {
   (curveList + curveNum)->legend = newlegend;
   dispLegend = true;
 }
 
-void vpPlotGraph::setCurveThickness(const unsigned int curveNum, unsigned int thickness)
+void vpPlotGraph::setCurveThickness(unsigned int curveNum, unsigned int thickness)
 {
   (curveList + curveNum)->thickness = thickness;
 }
@@ -480,7 +480,7 @@ void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min, const
   scaleInitialized = true;
 }
 
-void vpPlotGraph::plot(vpImage<unsigned char> &I, const unsigned int curveNb, const double x, const double y)
+void vpPlotGraph::plot(vpImage<unsigned char> &I, unsigned int curveNb, const double x, const double y)
 {
   if (!scaleInitialized) {
     if (x < 0) {
@@ -580,7 +580,7 @@ bool vpPlotGraph::getPixelValue(vpImage<unsigned char> &I, vpImagePoint &iP)
   return false;
 }
 
-void vpPlotGraph::resetPointList(const unsigned int curveNum)
+void vpPlotGraph::resetPointList(unsigned int curveNum)
 {
   (curveList + curveNum)->pointListx.clear();
   (curveList + curveNum)->pointListy.clear();
@@ -1042,7 +1042,7 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
     displayLegend(I);
 }
 
-vpMouseButton::vpMouseButtonType vpPlotGraph::plot(vpImage<unsigned char> &I, const unsigned int curveNb,
+vpMouseButton::vpMouseButtonType vpPlotGraph::plot(vpImage<unsigned char> &I, unsigned int curveNb,
                                                    const double x, const double y, const double z)
 {
   if (!scaleInitialized) {
