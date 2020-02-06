@@ -528,7 +528,7 @@ public:
 
     \param gain : the desired value for the gain.
   */
-  virtual inline void setLambda(const double gain) { m_lambda = gain; }
+  virtual inline void setLambda(double gain) { m_lambda = gain; }
 
   virtual void setLod(const bool useLod, const std::string &name = "");
 

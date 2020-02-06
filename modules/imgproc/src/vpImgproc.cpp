@@ -331,7 +331,7 @@ void vp::equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const
   \param I : The grayscale image to apply gamma correction.
   \param gamma : Gamma value.
 */
-void vp::gammaCorrection(vpImage<unsigned char> &I, const double gamma)
+void vp::gammaCorrection(vpImage<unsigned char> &I, double gamma)
 {
   double inverse_gamma = 1.0;
   if (gamma > 0) {
@@ -358,7 +358,7 @@ void vp::gammaCorrection(vpImage<unsigned char> &I, const double gamma)
   \param I2 : The second grayscale image after gamma correction.
   \param gamma : Gamma value.
 */
-void vp::gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const double gamma)
+void vp::gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double gamma)
 {
   I2 = I1;
   vp::gammaCorrection(I2, gamma);
@@ -372,7 +372,7 @@ void vp::gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char
   \param I : The color image to apply gamma correction.
   \param gamma : Gamma value.
 */
-void vp::gammaCorrection(vpImage<vpRGBa> &I, const double gamma)
+void vp::gammaCorrection(vpImage<vpRGBa> &I, double gamma)
 {
   double inverse_gamma = 1.0;
   if (gamma > 0) {
@@ -402,7 +402,7 @@ void vp::gammaCorrection(vpImage<vpRGBa> &I, const double gamma)
   \param I2 : The second color image after gamma correction.
   \param gamma : Gamma value.
 */
-void vp::gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const double gamma)
+void vp::gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double gamma)
 {
   I2 = I1;
   vp::gammaCorrection(I2, gamma);

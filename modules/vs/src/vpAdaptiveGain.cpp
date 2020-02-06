@@ -144,7 +144,7 @@ void vpAdaptiveGain::initFromVoid(void)
   expected slope of \f$\lambda(||{\bf e}||)\f$ when \f$||{\bf e}||=0\f$:
   \f$\lambda'_0\f$.
 */
-void vpAdaptiveGain::initStandard(const double gain_at_zero, const double gain_at_infinity, double slope_at_zero)
+void vpAdaptiveGain::initStandard(double gain_at_zero, double gain_at_infinity, double slope_at_zero)
 {
   this->coeff_a = gain_at_zero - gain_at_infinity;
   // if (0 == this ->coeff_a)
