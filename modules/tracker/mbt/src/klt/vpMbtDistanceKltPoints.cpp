@@ -325,7 +325,7 @@ void vpMbtDistanceKltPoints::computeHomography(const vpHomogeneousMatrix &_cTc0,
   \param _id : the id of the current feature to test
   \return true if the id is in the list of tracked feature
 */
-bool vpMbtDistanceKltPoints::isTrackedFeature(const int _id)
+bool vpMbtDistanceKltPoints::isTrackedFeature(int _id)
 {
   //   std::map<int, vpImagePoint>::const_iterator iter = initPoints.begin();
   //   while(iter != initPoints.end()){

@@ -95,7 +95,7 @@
 
 #define MAX_RETINEX_SCALES 8
 
-std::vector<double> retinexScalesDistribution(const int scaleDiv, int level, const int scale)
+std::vector<double> retinexScalesDistribution(int scaleDiv, int level, int scale)
 {
   std::vector<double> scales(MAX_RETINEX_SCALES);
 
@@ -139,8 +139,8 @@ std::vector<double> retinexScalesDistribution(const int scaleDiv, int level, con
 
 // See: http://imagej.net/Retinex and
 // https://docs.gimp.org/en/plug-in-retinex.html
-void MSRCR(vpImage<vpRGBa> &I, const int _scale, const int scaleDiv, int level, const double dynamic,
-           const int _kernelSize)
+void MSRCR(vpImage<vpRGBa> &I, int _scale, int scaleDiv, int level, const double dynamic,
+           int _kernelSize)
 {
   // Calculate the scales of filtering according to the number of filter and
   // their distribution.
@@ -261,7 +261,7 @@ void MSRCR(vpImage<vpRGBa> &I, const int _scale, const int scaleDiv, int level, 
   saturated images. \param kernelSize : Kernel size for the gaussian blur
   operation. If -1, the kernel size is calculated from the image size.
 */
-void vp::retinex(vpImage<vpRGBa> &I, const int scale, const int scaleDiv, int level, const double dynamic,
+void vp::retinex(vpImage<vpRGBa> &I, int scale, int scaleDiv, int level, const double dynamic,
                  int kernelSize)
 {
   // Assert scale
@@ -303,7 +303,7 @@ void vp::retinex(vpImage<vpRGBa> &I, const int scale, const int scaleDiv, int le
   saturated images. \param kernelSize : Kernel size for the gaussian blur
   operation. If -1, the kernel size is calculated from the image size.
 */
-void vp::retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const int scale, const int scaleDiv, int level,
+void vp::retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int scale, int scaleDiv, int level,
                  const double dynamic, int kernelSize)
 {
   I2 = I1;

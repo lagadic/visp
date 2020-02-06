@@ -104,9 +104,9 @@ VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsig
 VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, double gamma);
 VISP_EXPORT void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double gamma);
 
-VISP_EXPORT void retinex(vpImage<vpRGBa> &I, const int scale = 240, const int scaleDiv = 3,
+VISP_EXPORT void retinex(vpImage<vpRGBa> &I, int scale = 240, int scaleDiv = 3,
                          int level = RETINEX_UNIFORM, const double dynamic = 1.2, int kernelSize = -1);
-VISP_EXPORT void retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const int scale = 240, const int scaleDiv = 3,
+VISP_EXPORT void retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int scale = 240, int scaleDiv = 3,
                          int level = RETINEX_UNIFORM, const double dynamic = 1.2, int kernelSize = -1);
 
 VISP_EXPORT void stretchContrast(vpImage<unsigned char> &I);

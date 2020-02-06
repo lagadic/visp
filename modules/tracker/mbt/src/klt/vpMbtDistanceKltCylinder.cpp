@@ -355,7 +355,7 @@ void vpMbtDistanceKltCylinder::computeInteractionMatrixAndResidu(const vpHomogen
   \param _id : the id of the current feature to test
   \return true if the id is in the list of tracked feature
 */
-bool vpMbtDistanceKltCylinder::isTrackedFeature(const int _id)
+bool vpMbtDistanceKltCylinder::isTrackedFeature(int _id)
 {
   std::map<int, vpImagePoint>::iterator iter = initPoints.find(_id);
   if (iter != initPoints.end())
