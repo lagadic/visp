@@ -241,7 +241,7 @@ public:
   void calculate(const vpImage<unsigned char> &I, const unsigned int nbins = 256, const unsigned int nbThreads = 1);
 
   void display(const vpImage<unsigned char> &I, const vpColor &color = vpColor::white, unsigned int thickness = 2,
-               const unsigned int maxValue_ = 0);
+               unsigned int maxValue_ = 0);
 
   void smooth(const unsigned int fsize = 3);
   unsigned getPeaks(std::list<vpHistogramPeak> &peaks);

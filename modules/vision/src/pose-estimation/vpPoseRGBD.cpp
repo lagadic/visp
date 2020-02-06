@@ -100,7 +100,7 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face,
                               vpColVector &plane_equation_estimated, vpColVector &centroid,
                               double &normalized_weights)
 {
-  const unsigned int max_iter = 10;
+  unsigned int max_iter = 10;
   double prev_error = 1e3;
   double error = 1e3 - 1;
   const unsigned int nPoints = static_cast<unsigned int>(point_cloud_face.size() / 3);

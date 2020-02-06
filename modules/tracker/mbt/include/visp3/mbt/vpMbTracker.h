@@ -537,7 +537,7 @@ public:
 
     \param max : the desired number of iteration
    */
-  virtual inline void setMaxIter(const unsigned int max) { m_maxIter = max; }
+  virtual inline void setMaxIter(unsigned int max) { m_maxIter = max; }
 
   virtual void setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name = "");
 

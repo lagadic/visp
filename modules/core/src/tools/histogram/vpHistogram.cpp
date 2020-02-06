@@ -350,7 +350,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
   image for example to keep a coherent vertical scale between the channels.
 */
 void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness,
-                          const unsigned int maxValue_)
+                          unsigned int maxValue_)
 {
   unsigned int width = I.getWidth(), height = I.getHeight();
   // Minimal width and height are 36 px

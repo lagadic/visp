@@ -1361,7 +1361,7 @@ void vpMbtFaceDepthNormal::estimatePlaneEquationSVD(const std::vector<double> &p
                                                     const vpHomogeneousMatrix &cMo,
                                                     vpColVector &plane_equation_estimated, vpColVector &centroid)
 {
-  const unsigned int max_iter = 10;
+  unsigned int max_iter = 10;
   double prev_error = 1e3;
   double error = 1e3 - 1;
 

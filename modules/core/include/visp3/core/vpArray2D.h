@@ -359,8 +359,8 @@ public:
         memset(this->data, 0, (size_t)(this->dsize) * sizeof(Type));
       } else if (recopyNeeded && this->rowPtrs != NULL) {
         // Recopy...
-        const unsigned int minRow = (this->rowNum < rowTmp) ? this->rowNum : rowTmp;
-        const unsigned int minCol = (this->colNum < colTmp) ? this->colNum : colTmp;
+        unsigned int minRow = (this->rowNum < rowTmp) ? this->rowNum : rowTmp;
+        unsigned int minCol = (this->colNum < colTmp) ? this->colNum : colTmp;
         for (unsigned int i = 0; i < this->rowNum; ++i) {
           for (unsigned int j = 0; j < this->colNum; ++j) {
             if ((minRow > i) && (minCol > j)) {
