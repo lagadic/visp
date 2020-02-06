@@ -275,9 +275,9 @@ public:
 
   void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, const std::string &name = "");
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
 
   /*! Return the address of the circle feature list. */
   virtual std::list<vpMbtDistanceCircle *> &getFeaturesCircle() { return circles_disp; }
@@ -337,7 +337,7 @@ public:
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               const bool displayFullModel=false);
+                                                               bool displayFullModel=false);
 
   virtual void loadConfigFile(const std::string &configFile);
 

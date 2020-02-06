@@ -52,10 +52,10 @@ public:
   virtual ~vpMbDepthNormalTracker();
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
 
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
 
   virtual inline vpMbtFaceDepthNormal::vpFeatureEstimationType getDepthFeatureEstimationMethod() const
   {
@@ -67,7 +67,7 @@ public:
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               const bool displayFullModel=false);
+                                                               bool displayFullModel=false);
 
   virtual inline vpColVector getRobustWeights() const { return m_w_depthNormal; }
 

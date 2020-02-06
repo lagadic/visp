@@ -905,7 +905,7 @@ void vpMbtFaceDepthNormal::computeInteractionMatrix(const vpHomogeneousMatrix &c
 
 void vpMbtFaceDepthNormal::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                    const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                   const bool displayFullModel)
+                                   bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -918,7 +918,7 @@ void vpMbtFaceDepthNormal::display(const vpImage<unsigned char> &I, const vpHomo
 
 void vpMbtFaceDepthNormal::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                                    const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                   const bool displayFullModel)
+                                   bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -1594,7 +1594,7 @@ std::vector<std::vector<double> > vpMbtFaceDepthNormal::getFeaturesForDisplay(co
 std::vector<std::vector<double> > vpMbtFaceDepthNormal::getModelForDisplay(unsigned int width, unsigned int height,
                                                                            const vpHomogeneousMatrix &cMo,
                                                                            const vpCameraParameters &cam,
-                                                                           const bool displayFullModel)
+                                                                           bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 

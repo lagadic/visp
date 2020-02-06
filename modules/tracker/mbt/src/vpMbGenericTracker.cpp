@@ -582,7 +582,7 @@ void vpMbGenericTracker::computeVVSWeights()
 */
 void vpMbGenericTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                  const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                 const bool displayFullModel)
+                                 bool displayFullModel)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
   if (it != m_mapOfTrackers.end()) {
@@ -608,7 +608,7 @@ void vpMbGenericTracker::display(const vpImage<unsigned char> &I, const vpHomoge
 */
 void vpMbGenericTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                                  const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                 const bool displayFullModel)
+                                 bool displayFullModel)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
   if (it != m_mapOfTrackers.end()) {
@@ -638,7 +638,7 @@ void vpMbGenericTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMa
 void vpMbGenericTracker::display(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                  const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
                                  const vpCameraParameters &cam1, const vpCameraParameters &cam2, const vpColor &color,
-                                 const unsigned int thickness, const bool displayFullModel)
+                                 const unsigned int thickness, bool displayFullModel)
 {
   if (m_mapOfTrackers.size() == 2) {
     std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
@@ -671,7 +671,7 @@ void vpMbGenericTracker::display(const vpImage<unsigned char> &I1, const vpImage
 void vpMbGenericTracker::display(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2, const vpHomogeneousMatrix &c1Mo,
                                  const vpHomogeneousMatrix &c2Mo, const vpCameraParameters &cam1,
                                  const vpCameraParameters &cam2, const vpColor &color, const unsigned int thickness,
-                                 const bool displayFullModel)
+                                 bool displayFullModel)
 {
   if (m_mapOfTrackers.size() == 2) {
     std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
@@ -699,7 +699,7 @@ void vpMbGenericTracker::display(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa
 void vpMbGenericTracker::display(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                  const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                                  const std::map<std::string, vpCameraParameters> &mapOfCameraParameters,
-                                 const vpColor &col, const unsigned int thickness, const bool displayFullModel)
+                                 const vpColor &col, const unsigned int thickness, bool displayFullModel)
 {
   // Display only for the given images
   for (std::map<std::string, const vpImage<unsigned char> *>::const_iterator it_img = mapOfImages.begin();
@@ -732,7 +732,7 @@ void vpMbGenericTracker::display(const std::map<std::string, const vpImage<unsig
 void vpMbGenericTracker::display(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfImages,
                                  const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                                  const std::map<std::string, vpCameraParameters> &mapOfCameraParameters,
-                                 const vpColor &col, const unsigned int thickness, const bool displayFullModel)
+                                 const vpColor &col, const unsigned int thickness, bool displayFullModel)
 {
   // Display only for the given images
   for (std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img = mapOfImages.begin();
@@ -5860,7 +5860,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVSWeights()
 
 void vpMbGenericTracker::TrackerWrapper::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                                  const vpCameraParameters &cam, const vpColor &col,
-                                                 const unsigned int thickness, const bool displayFullModel)
+                                                 const unsigned int thickness, bool displayFullModel)
 {
   if (displayFeatures) {
     std::vector<std::vector<double> > features = getFeaturesForDisplay();
@@ -5940,7 +5940,7 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<unsigned char> &I
 
 void vpMbGenericTracker::TrackerWrapper::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                                                  const vpCameraParameters &cam, const vpColor &col,
-                                                 const unsigned int thickness, const bool displayFullModel)
+                                                 const unsigned int thickness, bool displayFullModel)
 {
   if (displayFeatures) {
     std::vector<std::vector<double> > features = getFeaturesForDisplay();
@@ -6045,7 +6045,7 @@ std::vector<std::vector<double> > vpMbGenericTracker::TrackerWrapper::getFeature
 std::vector<std::vector<double> > vpMbGenericTracker::TrackerWrapper::getModelForDisplay(unsigned int width, unsigned int height,
                                                                                          const vpHomogeneousMatrix &cMo,
                                                                                          const vpCameraParameters &cam,
-                                                                                         const bool displayFullModel)
+                                                                                         bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 

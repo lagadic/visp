@@ -271,7 +271,7 @@ void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, cons
 */
 void vpMbtDistanceCircle::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                   const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                  const bool displayFullModel)
+                                  bool displayFullModel)
 {
   std::vector<double> params = getModelForDisplay(cMo, camera, displayFullModel);
 
@@ -295,7 +295,7 @@ void vpMbtDistanceCircle::display(const vpImage<unsigned char> &I, const vpHomog
 */
 void vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                                   const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                  const bool displayFullModel)
+                                  bool displayFullModel)
 {
   std::vector<double> params = getModelForDisplay(cMo, camera, displayFullModel);
 
@@ -347,7 +347,7 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
 */
 std::vector<double> vpMbtDistanceCircle::getModelForDisplay(const vpHomogeneousMatrix &cMo,
                                                             const vpCameraParameters &camera,
-                                                            const bool displayFullModel)
+                                                            bool displayFullModel)
 {
   std::vector<double> params;
 

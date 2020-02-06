@@ -1290,7 +1290,7 @@ void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
 */
 void vpMbEdgeTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                               const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                              const bool displayFullModel)
+                              bool displayFullModel)
 {
   //Display first the Moving-Edges
   if (displayFeatures) {
@@ -1332,7 +1332,7 @@ void vpMbEdgeTracker::display(const vpImage<unsigned char> &I, const vpHomogeneo
 */
 void vpMbEdgeTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                               const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                              const bool displayFullModel)
+                              bool displayFullModel)
 {
   //Display first the Moving-Edges
   if (displayFeatures) {
@@ -1410,7 +1410,7 @@ std::vector<std::vector<double> > vpMbEdgeTracker::getFeaturesForDisplayEdge()
 std::vector<std::vector<double> > vpMbEdgeTracker::getModelForDisplay(unsigned int width, unsigned int height,
                                                                       const vpHomogeneousMatrix &cMo,
                                                                       const vpCameraParameters &cam,
-                                                                      const bool displayFullModel)
+                                                                      bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 

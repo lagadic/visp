@@ -1236,7 +1236,7 @@ void vpMbEdgeKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, cons
 */
 void vpMbEdgeKltTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                  const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                 const bool displayFullModel)
+                                 bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbEdgeKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -1288,7 +1288,7 @@ void vpMbEdgeKltTracker::display(const vpImage<unsigned char> &I, const vpHomoge
 */
 void vpMbEdgeKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                                  const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                 const bool displayFullModel)
+                                 bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -1330,7 +1330,7 @@ void vpMbEdgeKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMa
 std::vector<std::vector<double> > vpMbEdgeKltTracker::getModelForDisplay(unsigned int width, unsigned int height,
                                                                          const vpHomogeneousMatrix &cMo,
                                                                          const vpCameraParameters &cam,
-                                                                         const bool displayFullModel)
+                                                                         bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 

@@ -284,7 +284,7 @@ void vpMbDepthDenseTracker::computeVVSWeights()
 
 void vpMbDepthDenseTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                     const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                    const bool displayFullModel)
+                                    bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbDepthDenseTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -299,7 +299,7 @@ void vpMbDepthDenseTracker::display(const vpImage<unsigned char> &I, const vpHom
 
 void vpMbDepthDenseTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                                     const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                    const bool displayFullModel)
+                                    bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbDepthDenseTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -328,7 +328,7 @@ void vpMbDepthDenseTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneou
 std::vector<std::vector<double> > vpMbDepthDenseTracker::getModelForDisplay(unsigned int width, unsigned int height,
                                                                             const vpHomogeneousMatrix &cMo,
                                                                             const vpCameraParameters &cam,
-                                                                            const bool displayFullModel)
+                                                                            bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 

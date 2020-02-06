@@ -102,26 +102,26 @@ public:
                                                const vpCameraParameters &_cam);
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
 
   virtual void display(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                        const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo, const vpCameraParameters &cam1,
                        const vpCameraParameters &cam2, const vpColor &color, const unsigned int thickness = 1,
-                       const bool displayFullModel = false);
+                       bool displayFullModel = false);
   virtual void display(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2, const vpHomogeneousMatrix &c1Mo,
                        const vpHomogeneousMatrix &c2Mo, const vpCameraParameters &cam1, const vpCameraParameters &cam2,
-                       const vpColor &color, const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const vpColor &color, const unsigned int thickness = 1, bool displayFullModel = false);
 
   virtual void display(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                        const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                        const std::map<std::string, vpCameraParameters> &mapOfCameraParameters, const vpColor &col,
-                       const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const unsigned int thickness = 1, bool displayFullModel = false);
   virtual void display(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfImages,
                        const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                        const std::map<std::string, vpCameraParameters> &mapOfCameraParameters, const vpColor &col,
-                       const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const unsigned int thickness = 1, bool displayFullModel = false);
 
   virtual std::vector<std::string> getCameraNames() const;
 
@@ -519,9 +519,9 @@ private:
     virtual inline int getTrackerType() const { return m_trackerType; }
 
     virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                         const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+                         const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
     virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                         const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+                         const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
 
     virtual std::vector<std::vector<double> > getFeaturesForDisplay();
 

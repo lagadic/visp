@@ -515,7 +515,7 @@ void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, co
 */
 void vpMbtDistanceCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                     const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                    const bool displayFullModel)
+                                    bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(),
                                                                 cMo, camera, displayFullModel);
@@ -540,7 +540,7 @@ void vpMbtDistanceCylinder::display(const vpImage<unsigned char> &I, const vpHom
 */
 void vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                                     const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                    const bool displayFullModel)
+                                    bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(),
                                                                 cMo, camera, displayFullModel);
@@ -615,7 +615,7 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
 std::vector<std::vector<double> > vpMbtDistanceCylinder::getModelForDisplay(unsigned int, unsigned int,
                                                                             const vpHomogeneousMatrix &cMo,
                                                                             const vpCameraParameters &camera,
-                                                                            const bool displayFullModel)
+                                                                            bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 

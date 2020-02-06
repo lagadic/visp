@@ -665,7 +665,7 @@ public:
     non visible surfaces).
   */
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false) = 0;
+                       const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false) = 0;
   /*!
     Display the 3D model at a given position using the given camera parameters
     on a color (RGBa) image.
@@ -679,7 +679,7 @@ public:
     non visible surfaces).
   */
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false) = 0;
+                       const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false) = 0;
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,

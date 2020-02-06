@@ -141,9 +141,9 @@ public:
   void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo);
 
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+               const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+               const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
   void displayMovingEdges(const vpImage<unsigned char> &I);
   void displayMovingEdges(const vpImage<vpRGBa> &I);
 
@@ -175,7 +175,7 @@ public:
   std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                        const vpHomogeneousMatrix &cMo,
                                                        const vpCameraParameters &cam,
-                                                       const bool displayFullModel = false);
+                                                       bool displayFullModel = false);
 
   /*!
     Get the name of the line.

@@ -114,9 +114,9 @@ public:
   void computeVisibilityDisplay();
 
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+               const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+               const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
 
   void displayFeature(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                       const double scale = 0.05, const unsigned int thickness = 1);
@@ -126,7 +126,7 @@ public:
   std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                        const vpHomogeneousMatrix &cMo,
                                                        const vpCameraParameters &cam,
-                                                       const bool displayFullModel = false);
+                                                       bool displayFullModel = false);
 
   inline unsigned int getNbFeatures() const { return (unsigned int)(m_pointCloudFace.size() / 3); }
 

@@ -1087,7 +1087,7 @@ void vpMbKltTracker::loadConfigFile(const std::string &configFile)
 */
 void vpMbKltTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                              const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                             const bool displayFullModel)
+                             bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -1139,7 +1139,7 @@ void vpMbKltTracker::display(const vpImage<unsigned char> &I, const vpHomogeneou
 */
 void vpMbKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                              const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                             const bool displayFullModel)
+                             bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -1220,7 +1220,7 @@ std::vector<std::vector<double> > vpMbKltTracker::getFeaturesForDisplayKlt()
 std::vector<std::vector<double> > vpMbKltTracker::getModelForDisplay(unsigned int width, unsigned int height,
                                                                      const vpHomogeneousMatrix &cMo,
                                                                      const vpCameraParameters &cam,
-                                                                     const bool displayFullModel)
+                                                                     bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 
