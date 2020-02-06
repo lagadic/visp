@@ -45,8 +45,10 @@
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
-#include <sys/select.h>
 #include <vector>
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#include <sys/select.h>
+#endif
 
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
