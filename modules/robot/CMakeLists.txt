@@ -232,7 +232,7 @@ if(USE_ARSDK)
   vp_set_source_file_compile_flag(src/real-robot/bebop2/vpRobotBebop2.cpp -Wno-old-style-cast -Wno-implicit-fallthrough -Wno-cast-qual -Wno-deprecated-declarations)
 endif()
 if(USE_FRANKA)
-  vp_set_source_file_compile_flag(src/real-robot/franka/vpForceTorqueGenerator_impl.cpp -Wno-shadow)
+  vp_set_source_file_compile_flag(src/real-robot/franka/vpForceTorqueGenerator_impl.cpp -Wno-shadow -Wno-deprecated-copy)
 endif()
 
 if(USE_FLIRPTUSDK)
