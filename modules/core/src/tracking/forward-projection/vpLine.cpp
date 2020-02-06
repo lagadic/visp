@@ -471,7 +471,7 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
   \param thickness : Thickness of the feature representation.
 */
 void vpLine::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
-                     const unsigned int thickness)
+                     unsigned int thickness)
 {
   vpFeatureDisplay::displayLine(p[0], p[1], cam, I, color, thickness);
 }
@@ -498,7 +498,7 @@ void vpLine::display(const vpImage<unsigned char> &I, const vpCameraParameters &
 */
 // non destructive wrt. cP and p
 void vpLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                     const vpColor &color, const unsigned int thickness)
+                     const vpColor &color, unsigned int thickness)
 {
   vpColVector _cP, _p;
   changeFrame(cMo, _cP);

@@ -243,7 +243,7 @@ void vpPlotGraph::setLegend(const unsigned int curveNum, const std::string &newl
   dispLegend = true;
 }
 
-void vpPlotGraph::setCurveThickness(const unsigned int curveNum, const unsigned int thickness)
+void vpPlotGraph::setCurveThickness(const unsigned int curveNum, unsigned int thickness)
 {
   (curveList + curveNum)->thickness = thickness;
 }

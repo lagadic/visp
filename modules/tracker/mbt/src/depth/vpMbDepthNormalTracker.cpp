@@ -279,7 +279,7 @@ void vpMbDepthNormalTracker::computeVVSInteractionMatrixAndResidu()
 }
 
 void vpMbDepthNormalTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                     const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                                     const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                      bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbDepthNormalTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
@@ -304,7 +304,7 @@ void vpMbDepthNormalTracker::display(const vpImage<unsigned char> &I, const vpHo
 }
 
 void vpMbDepthNormalTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                     const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                                     const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                      bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbDepthNormalTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);

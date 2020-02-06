@@ -78,7 +78,7 @@ public:
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
                               const vpMatrix &SobelX, const vpMatrix &SobelY, const bool display,
-                              const unsigned int length, const unsigned int thickness);
+                              const unsigned int length, unsigned int thickness);
 
   void display(const vpImage<unsigned char> & /*I*/, vpColor /*col*/) { ; }
   using vpMeTracker::display;

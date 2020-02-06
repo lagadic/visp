@@ -1086,7 +1086,7 @@ void vpMbKltTracker::loadConfigFile(const std::string &configFile)
   displayed, even the faces that are visible.
 */
 void vpMbKltTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                             const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                             const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                              bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
@@ -1138,7 +1138,7 @@ void vpMbKltTracker::display(const vpImage<unsigned char> &I, const vpHomogeneou
   displayed, even the faces that are not visible.
 */
 void vpMbKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                             const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                             const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                              bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);

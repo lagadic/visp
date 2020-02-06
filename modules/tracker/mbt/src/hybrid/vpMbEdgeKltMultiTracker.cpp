@@ -360,7 +360,7 @@ void vpMbEdgeKltMultiTracker::computeVVSWeights()
   visible faces).
 */
 void vpMbEdgeKltMultiTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                      const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                                      const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                       bool displayFullModel)
 {
   vpMbEdgeMultiTracker::display(I, cMo, cam, col, thickness, displayFullModel);
@@ -399,7 +399,7 @@ void vpMbEdgeKltMultiTracker::display(const vpImage<unsigned char> &I, const vpH
 */
 void vpMbEdgeKltMultiTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                                       const vpCameraParameters &cam, const vpColor &color,
-                                      const unsigned int thickness, bool displayFullModel)
+                                      unsigned int thickness, bool displayFullModel)
 {
   vpMbEdgeMultiTracker::display(I, cMo, cam, color, thickness, displayFullModel);
   //  vpMbKltMultiTracker::display(I, cMo_, cam_, color, thickness,
@@ -443,7 +443,7 @@ void vpMbEdgeKltMultiTracker::display(const vpImage<vpRGBa> &I, const vpHomogene
 void vpMbEdgeKltMultiTracker::display(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                       const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
                                       const vpCameraParameters &cam1, const vpCameraParameters &cam2,
-                                      const vpColor &color, const unsigned int thickness, bool displayFullModel)
+                                      const vpColor &color, unsigned int thickness, bool displayFullModel)
 {
   vpMbEdgeMultiTracker::display(I1, I2, c1Mo, c2Mo, cam1, cam2, color, thickness, displayFullModel);
   //  vpMbKltMultiTracker::display(I1, I2, c1Mo, c2Mo, cam1, cam2, color,
@@ -498,7 +498,7 @@ void vpMbEdgeKltMultiTracker::display(const vpImage<unsigned char> &I1, const vp
 void vpMbEdgeKltMultiTracker::display(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2,
                                       const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
                                       const vpCameraParameters &cam1, const vpCameraParameters &cam2,
-                                      const vpColor &color, const unsigned int thickness, bool displayFullModel)
+                                      const vpColor &color, unsigned int thickness, bool displayFullModel)
 {
   vpMbEdgeMultiTracker::display(I1, I2, c1Mo, c2Mo, cam1, cam2, color, thickness, displayFullModel);
   //  vpMbKltMultiTracker::display(I1, I2, c1Mo, c2Mo, cam1, cam2, color,
@@ -550,7 +550,7 @@ void vpMbEdgeKltMultiTracker::display(const vpImage<vpRGBa> &I1, const vpImage<v
 void vpMbEdgeKltMultiTracker::display(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                       const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                                       const std::map<std::string, vpCameraParameters> &mapOfCameraParameters,
-                                      const vpColor &col, const unsigned int thickness, bool displayFullModel)
+                                      const vpColor &col, unsigned int thickness, bool displayFullModel)
 {
   vpMbEdgeMultiTracker::display(mapOfImages, mapOfCameraPoses, mapOfCameraParameters, col, thickness, displayFullModel);
   //  vpMbKltMultiTracker::display(mapOfImages, mapOfCameraPoses,
@@ -594,7 +594,7 @@ void vpMbEdgeKltMultiTracker::display(const std::map<std::string, const vpImage<
 void vpMbEdgeKltMultiTracker::display(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfImages,
                                       const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                                       const std::map<std::string, vpCameraParameters> &mapOfCameraParameters,
-                                      const vpColor &col, const unsigned int thickness, bool displayFullModel)
+                                      const vpColor &col, unsigned int thickness, bool displayFullModel)
 {
   vpMbEdgeMultiTracker::display(mapOfImages, mapOfCameraPoses, mapOfCameraParameters, col, thickness, displayFullModel);
   //  vpMbKltMultiTracker::display(mapOfImages, mapOfCameraPoses,

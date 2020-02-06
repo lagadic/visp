@@ -514,7 +514,7 @@ void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, co
   \param displayFullModel : When true, display the circle even if non visible.
 */
 void vpMbtDistanceCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                    const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
+                                    const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
                                     bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(),
@@ -539,7 +539,7 @@ void vpMbtDistanceCylinder::display(const vpImage<unsigned char> &I, const vpHom
   \param displayFullModel : When true, display the circle even if non visible.
 */
 void vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                    const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
+                                    const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
                                     bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(),

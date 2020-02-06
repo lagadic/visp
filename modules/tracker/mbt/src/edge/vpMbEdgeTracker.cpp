@@ -1289,7 +1289,7 @@ void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
   visible faces).
 */
 void vpMbEdgeTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                              const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                              const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                               bool displayFullModel)
 {
   //Display first the Moving-Edges
@@ -1331,7 +1331,7 @@ void vpMbEdgeTracker::display(const vpImage<unsigned char> &I, const vpHomogeneo
   visible surfaces).
 */
 void vpMbEdgeTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                              const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                              const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                               bool displayFullModel)
 {
   //Display first the Moving-Edges

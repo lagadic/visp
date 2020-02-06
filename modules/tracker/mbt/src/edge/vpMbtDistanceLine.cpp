@@ -611,7 +611,7 @@ void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const 
   visible.
 */
 void vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
+                                const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
                                 bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
@@ -636,7 +636,7 @@ void vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogen
   visible.
 */
 void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
+                                const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
                                 bool displayFullModel)
 {
   std::vector<std::vector<double> > models =

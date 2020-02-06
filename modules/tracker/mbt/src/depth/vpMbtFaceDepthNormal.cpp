@@ -904,7 +904,7 @@ void vpMbtFaceDepthNormal::computeInteractionMatrix(const vpHomogeneousMatrix &c
 }
 
 void vpMbtFaceDepthNormal::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                   const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                                   const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                    bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
@@ -917,7 +917,7 @@ void vpMbtFaceDepthNormal::display(const vpImage<unsigned char> &I, const vpHomo
 }
 
 void vpMbtFaceDepthNormal::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                   const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                                   const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                    bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
@@ -931,7 +931,7 @@ void vpMbtFaceDepthNormal::display(const vpImage<vpRGBa> &I, const vpHomogeneous
 
 void vpMbtFaceDepthNormal::displayFeature(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                           const vpCameraParameters &cam, const double scale,
-                                          const unsigned int thickness)
+                                          unsigned int thickness)
 {
   if (m_faceActivated && m_isTrackedDepthNormalFace && m_isVisible) {
     // Desired feature
@@ -987,7 +987,7 @@ void vpMbtFaceDepthNormal::displayFeature(const vpImage<unsigned char> &I, const
 
 void vpMbtFaceDepthNormal::displayFeature(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                                           const vpCameraParameters &cam, const double scale,
-                                          const unsigned int thickness)
+                                          unsigned int thickness)
 {
   if (m_faceActivated && m_isTrackedDepthNormalFace && m_isVisible) {
     // Desired feature

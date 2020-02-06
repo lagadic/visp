@@ -592,7 +592,7 @@ public:
   /*!
     Arrow thickness used to display gradient and model orientation for projection error computation.
   */
-  virtual void setProjectionErrorDisplayArrowThickness(const unsigned int thickness) { m_projectionErrorDisplayThickness = thickness; }
+  virtual void setProjectionErrorDisplayArrowThickness(unsigned int thickness) { m_projectionErrorDisplayThickness = thickness; }
 
   virtual void setScanLineVisibilityTest(const bool &v) { useScanLine = v; }
 
@@ -665,7 +665,7 @@ public:
     non visible surfaces).
   */
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false) = 0;
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) = 0;
   /*!
     Display the 3D model at a given position using the given camera parameters
     on a color (RGBa) image.
@@ -679,7 +679,7 @@ public:
     non visible surfaces).
   */
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false) = 0;
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false) = 0;
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,

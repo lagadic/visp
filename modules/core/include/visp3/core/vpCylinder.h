@@ -113,9 +113,9 @@ public:
   double computeZ(const double x, const double y) const;
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               const unsigned int thickness = 1);
+               unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
+               const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
   vpCylinder *duplicate() const;
 

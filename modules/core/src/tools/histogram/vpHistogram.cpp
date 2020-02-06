@@ -349,7 +349,7 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
   from the current histogram. Useful to plot a 3 channels histogram for a RGB
   image for example to keep a coherent vertical scale between the channels.
 */
-void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color, const unsigned int thickness,
+void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness,
                           const unsigned int maxValue_)
 {
   unsigned int width = I.getWidth(), height = I.getHeight();

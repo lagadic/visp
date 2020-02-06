@@ -176,8 +176,8 @@ public:
 
   void saveData(const unsigned int graphNum, const std::string &dataFile, const std::string &title_prefix = "");
   void setColor(const unsigned int graphNum, const unsigned int curveNum, vpColor color);
-  void setGraphThickness(const unsigned int graphNum, const unsigned int thickness);
-  void setGridThickness(const unsigned int graphNum, const unsigned int thickness);
+  void setGraphThickness(const unsigned int graphNum, unsigned int thickness);
+  void setGridThickness(const unsigned int graphNum, unsigned int thickness);
   /*!
     Set the font of the characters. The display should be initialized before.
 
@@ -194,7 +194,7 @@ public:
   void setUnitX(const unsigned int graphNum, const std::string &unitx);
   void setUnitY(const unsigned int graphNum, const std::string &unity);
   void setUnitZ(const unsigned int graphNum, const std::string &unitz);
-  void setThickness(const unsigned int graphNum, const unsigned int curveNum, const unsigned int thickness);
+  void setThickness(const unsigned int graphNum, const unsigned int curveNum, unsigned int thickness);
 
 private:
   void initNbGraph(unsigned int nbGraph);

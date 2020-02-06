@@ -571,7 +571,7 @@ graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param curveNum : The index of the curve in the list of the curves belonging
 to the graphic. \param thickness : The thickness you want to use
 */
-void vpPlot::setThickness(const unsigned int graphNum, const unsigned int curveNum, const unsigned int thickness)
+void vpPlot::setThickness(const unsigned int graphNum, const unsigned int curveNum, unsigned int thickness)
 {
   (graphList + graphNum)->setCurveThickness(curveNum, thickness);
 }
@@ -584,7 +584,7 @@ belonging to a given graphic.
 graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param thickness : The thickness you want to use
 */
-void vpPlot::setGraphThickness(const unsigned int graphNum, const unsigned int thickness)
+void vpPlot::setGraphThickness(const unsigned int graphNum, unsigned int thickness)
 {
   for (unsigned int curveNum = 0; curveNum < (graphList + graphNum)->curveNbr; curveNum++)
     (graphList + graphNum)->setCurveThickness(curveNum, thickness);
@@ -598,7 +598,7 @@ void vpPlot::setGraphThickness(const unsigned int graphNum, const unsigned int t
   graphic in a window is less or equal to 4, this parameter is between 0
   and 3. \param thickness : The thickness you want to use
 */
-void vpPlot::setGridThickness(const unsigned int graphNum, const unsigned int thickness)
+void vpPlot::setGridThickness(const unsigned int graphNum, unsigned int thickness)
 {
   (graphList + graphNum)->setGridThickness(thickness);
 }

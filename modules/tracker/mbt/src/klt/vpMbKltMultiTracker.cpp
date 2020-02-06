@@ -310,7 +310,7 @@ void vpMbKltMultiTracker::computeVVSWeights()
   visible faces).
 */
 void vpMbKltMultiTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                                  const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                   bool displayFullModel)
 {
   std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.find(m_referenceCameraName);
@@ -333,7 +333,7 @@ void vpMbKltMultiTracker::display(const vpImage<unsigned char> &I, const vpHomog
   visible faces).
 */
 void vpMbKltMultiTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &cam, const vpColor &color, const unsigned int thickness,
+                                  const vpCameraParameters &cam, const vpColor &color, unsigned int thickness,
                                   bool displayFullModel)
 {
   std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.find(m_referenceCameraName);
@@ -361,7 +361,7 @@ void vpMbKltMultiTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousM
 void vpMbKltMultiTracker::display(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                   const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
                                   const vpCameraParameters &cam1, const vpCameraParameters &cam2, const vpColor &color,
-                                  const unsigned int thickness, bool displayFullModel)
+                                  unsigned int thickness, bool displayFullModel)
 {
   if (m_mapOfKltTrackers.size() == 2) {
     std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
@@ -391,7 +391,7 @@ void vpMbKltMultiTracker::display(const vpImage<unsigned char> &I1, const vpImag
 */
 void vpMbKltMultiTracker::display(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2, const vpHomogeneousMatrix &c1Mo,
                                   const vpHomogeneousMatrix &c2Mo, const vpCameraParameters &cam1,
-                                  const vpCameraParameters &cam2, const vpColor &color, const unsigned int thickness,
+                                  const vpCameraParameters &cam2, const vpColor &color, unsigned int thickness,
                                   bool displayFullModel)
 {
   if (m_mapOfKltTrackers.size() == 2) {
@@ -420,7 +420,7 @@ void vpMbKltMultiTracker::display(const vpImage<vpRGBa> &I1, const vpImage<vpRGB
 void vpMbKltMultiTracker::display(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                   const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                                   const std::map<std::string, vpCameraParameters> &mapOfCameraParameters,
-                                  const vpColor &col, const unsigned int thickness, bool displayFullModel)
+                                  const vpColor &col, unsigned int thickness, bool displayFullModel)
 {
 
   // Display only for the given images
@@ -453,7 +453,7 @@ void vpMbKltMultiTracker::display(const std::map<std::string, const vpImage<unsi
 void vpMbKltMultiTracker::display(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfImages,
                                   const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                                   const std::map<std::string, vpCameraParameters> &mapOfCameraParameters,
-                                  const vpColor &col, const unsigned int thickness, bool displayFullModel)
+                                  const vpColor &col, unsigned int thickness, bool displayFullModel)
 {
 
   // Display only for the given images

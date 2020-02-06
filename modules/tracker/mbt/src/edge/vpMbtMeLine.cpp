@@ -351,7 +351,7 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
                                          unsigned int &_nbFeatures,
                                          const vpMatrix &SobelX, const vpMatrix &SobelY,
                                          const bool display, const unsigned int length,
-                                         const unsigned int thickness)
+                                         unsigned int thickness)
 {
   _sumErrorRad = 0;
   _nbFeatures = 0;

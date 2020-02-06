@@ -125,14 +125,14 @@ public:
                                const vpCameraParameters &camera, vpColVector &correct_normal, vpPoint &centroid);
 
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
+               const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
+               const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
 
   void displayFeature(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                      const double scale = 0.05, const unsigned int thickness = 1);
+                      const double scale = 0.05, unsigned int thickness = 1);
   void displayFeature(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                      const double scale = 0.05, const unsigned int thickness = 1);
+                      const double scale = 0.05, unsigned int thickness = 1);
 
   std::vector<std::vector<double> > getFeaturesForDisplay(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                                                           const double scale = 0.05);

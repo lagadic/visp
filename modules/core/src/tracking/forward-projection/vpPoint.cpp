@@ -356,7 +356,7 @@ vpPoint *vpPoint::duplicate() const
   Display the point in the image.
 */
 void vpPoint::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                      const vpColor &color, const unsigned int thickness)
+                      const vpColor &color, unsigned int thickness)
 {
 
   vpColVector _cP, _p;
@@ -373,7 +373,7 @@ void vpPoint::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix
   Display the point in the image.
 */
 void vpPoint::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                      const vpColor &color, const unsigned int thickness)
+                      const vpColor &color, unsigned int thickness)
 {
   vpColVector _cP, _p;
   changeFrame(cMo, _cP);
@@ -403,7 +403,7 @@ vpPoint &vpPoint::operator=(const vpPoint &vpp)
   Display the point in the image.
 */
 void vpPoint::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
-                      const unsigned int thickness)
+                      unsigned int thickness)
 {
   vpFeatureDisplay::displayPoint(p[0], p[1], cam, I, color, thickness);
 }

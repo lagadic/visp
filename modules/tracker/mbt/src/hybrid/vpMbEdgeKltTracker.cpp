@@ -1235,7 +1235,7 @@ void vpMbEdgeKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, cons
   displayed, even the faces that are not visible.
 */
 void vpMbEdgeKltTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                 const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                                 const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                  bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbEdgeKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
@@ -1287,7 +1287,7 @@ void vpMbEdgeKltTracker::display(const vpImage<unsigned char> &I, const vpHomoge
   displayed, even the faces that are not visible.
 */
 void vpMbEdgeKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                 const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                                 const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                  bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);

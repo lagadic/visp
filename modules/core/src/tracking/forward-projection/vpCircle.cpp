@@ -292,14 +292,14 @@ void vpCircle::changeFrame(const vpHomogeneousMatrix &cMo)
 }
 
 void vpCircle::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
-                       const unsigned int thickness)
+                       unsigned int thickness)
 {
   vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I, color, thickness);
 }
 
 // non destructive wrt. cP and p
 void vpCircle::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &color, const unsigned int thickness)
+                       const vpColor &color, unsigned int thickness)
 {
   vpColVector _cP, _p;
   changeFrame(cMo, _cP);

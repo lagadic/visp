@@ -574,7 +574,7 @@ void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<vpRGBa> &_I)
 
 void vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                        const vpCameraParameters &camera, const vpColor &col,
-                                       const unsigned int thickness, const bool /*displayFullModel*/)
+                                       unsigned int thickness, const bool /*displayFullModel*/)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(cMo, camera);
 
@@ -587,7 +587,7 @@ void vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I, const vp
 
 void vpMbtDistanceKltCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
                                        const vpCameraParameters &camera, const vpColor &col,
-                                       const unsigned int thickness, const bool /*displayFullModel*/)
+                                       unsigned int thickness, const bool /*displayFullModel*/)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(cMo, camera);
 

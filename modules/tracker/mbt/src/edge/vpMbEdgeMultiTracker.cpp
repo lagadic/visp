@@ -504,7 +504,7 @@ void vpMbEdgeMultiTracker::computeVVSWeights()
   visible faces).
 */
 void vpMbEdgeMultiTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                   const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                                   const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                    bool displayFullModel)
 {
 
@@ -528,7 +528,7 @@ void vpMbEdgeMultiTracker::display(const vpImage<unsigned char> &I, const vpHomo
   visible faces).
 */
 void vpMbEdgeMultiTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                   const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
+                                   const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                    bool displayFullModel)
 {
 
@@ -558,7 +558,7 @@ void vpMbEdgeMultiTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneous
 void vpMbEdgeMultiTracker::display(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                    const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
                                    const vpCameraParameters &cam1, const vpCameraParameters &cam2, const vpColor &col,
-                                   const unsigned int thickness, bool displayFullModel)
+                                   unsigned int thickness, bool displayFullModel)
 {
 
   if (m_mapOfEdgeTrackers.size() == 2) {
@@ -591,7 +591,7 @@ void vpMbEdgeMultiTracker::display(const vpImage<unsigned char> &I1, const vpIma
 void vpMbEdgeMultiTracker::display(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2,
                                    const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
                                    const vpCameraParameters &cam1, const vpCameraParameters &cam2, const vpColor &col,
-                                   const unsigned int thickness, bool displayFullModel)
+                                   unsigned int thickness, bool displayFullModel)
 {
 
   if (m_mapOfEdgeTrackers.size() == 2) {
@@ -621,7 +621,7 @@ void vpMbEdgeMultiTracker::display(const vpImage<vpRGBa> &I1, const vpImage<vpRG
 void vpMbEdgeMultiTracker::display(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                    const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                                    const std::map<std::string, vpCameraParameters> &mapOfCameraParameters,
-                                   const vpColor &col, const unsigned int thickness, bool displayFullModel)
+                                   const vpColor &col, unsigned int thickness, bool displayFullModel)
 {
 
   // Display only for the given images
@@ -655,7 +655,7 @@ void vpMbEdgeMultiTracker::display(const std::map<std::string, const vpImage<uns
 void vpMbEdgeMultiTracker::display(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfImages,
                                    const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                                    const std::map<std::string, vpCameraParameters> &mapOfCameraParameters,
-                                   const vpColor &col, const unsigned int thickness, bool displayFullModel)
+                                   const vpColor &col, unsigned int thickness, bool displayFullModel)
 {
 
   // Display only for the given images

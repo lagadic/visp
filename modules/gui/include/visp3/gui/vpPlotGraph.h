@@ -213,8 +213,8 @@ public:
   void resetPointList(const unsigned int curveNum);
 
   void setCurveColor(const unsigned int curveNum, const vpColor &color);
-  void setCurveThickness(const unsigned int curveNum, const unsigned int thickness);
-  void setGridThickness(const unsigned int thickness) { this->gridThickness = thickness; };
+  void setCurveThickness(const unsigned int curveNum, unsigned int thickness);
+  void setGridThickness(unsigned int thickness) { this->gridThickness = thickness; };
   void setLegend(const unsigned int curveNum, const std::string &legend);
   void setTitle(const std::string &title);
   void setUnitX(const std::string &unitx);

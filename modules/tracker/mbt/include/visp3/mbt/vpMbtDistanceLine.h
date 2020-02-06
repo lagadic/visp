@@ -141,9 +141,9 @@ public:
   void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo);
 
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
+               const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, bool displayFullModel = false);
+               const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
   void displayMovingEdges(const vpImage<unsigned char> &I);
   void displayMovingEdges(const vpImage<vpRGBa> &I);
 

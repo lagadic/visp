@@ -586,7 +586,7 @@ void vpMbtDistanceKltPoints::displayPrimitive(const vpImage<vpRGBa> &_I)
 }
 
 void vpMbtDistanceKltPoints::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix & /*cMo*/,
-                                     const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
+                                     const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
                                      bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(camera, displayFullModel);
@@ -600,7 +600,7 @@ void vpMbtDistanceKltPoints::display(const vpImage<unsigned char> &I, const vpHo
 }
 
 void vpMbtDistanceKltPoints::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix & /*cMo*/,
-                                     const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
+                                     const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
                                      bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(camera, displayFullModel);
