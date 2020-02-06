@@ -88,7 +88,7 @@ namespace
 {
 int fastRound(float value) { return (int)(value + 0.5f); }
 
-void clipHistogram(const std::vector<int> &hist, std::vector<int> &clippedHist, const int limit)
+void clipHistogram(const std::vector<int> &hist, std::vector<int> &clippedHist, int limit)
 {
   clippedHist = hist;
   int clippedEntries = 0, clippedEntriesBefore = 0;
@@ -120,7 +120,7 @@ void clipHistogram(const std::vector<int> &hist, std::vector<int> &clippedHist, 
   } while (clippedEntries != clippedEntriesBefore);
 }
 
-void createHistogram(const int blockRadius, const int bins, const int blockXCenter, const int blockYCenter,
+void createHistogram(int blockRadius, int bins, int blockXCenter, int blockYCenter,
                      const vpImage<unsigned char> &I, std::vector<int> &hist)
 {
   std::fill(hist.begin(), hist.end(), 0);
@@ -137,7 +137,7 @@ void createHistogram(const int blockRadius, const int bins, const int blockXCent
   }
 }
 
-std::vector<float> createTransfer(const std::vector<int> &hist, const int limit, std::vector<int> &cdfs)
+std::vector<float> createTransfer(const std::vector<int> &hist, int limit, std::vector<int> &cdfs)
 {
   clipHistogram(hist, cdfs, limit);
   int hMin = (int)hist.size() - 1;
@@ -188,7 +188,7 @@ float transferValue(int v, std::vector<int> &clippedHist)
   return (cdf - cdfMin) / (float)(cdfMax - cdfMin);
 }
 
-float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clippedHist, const int limit)
+float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clippedHist, int limit)
 {
   clipHistogram(hist, clippedHist, limit);
 
@@ -225,7 +225,7 @@ float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clipp
   boxes of the given block size only and interpolates for locations in
   between.
 */
-void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const int blockRadius, const int bins,
+void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius, int bins,
                const float slope, bool fast)
 {
   if (blockRadius < 0) {
@@ -490,7 +490,7 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, con
   boxes of the given block size only and interpolates for locations in
   between.
 */
-void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const int blockRadius, const int bins, const float slope,
+void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int bins, const float slope,
                bool fast)
 {
   // Split

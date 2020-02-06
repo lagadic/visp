@@ -313,7 +313,7 @@ public:
     automatically determined with C++11.
     \sa setUseParallelRansac
   */
-  inline void setNbParallelRansacThreads(const int nb) { nbParallelRansacThreads = nb; }
+  inline void setNbParallelRansacThreads(int nb) { nbParallelRansacThreads = nb; }
 
   /*!
     \return True if the parallel RANSAC version should be used (depends also to C++11 availability).

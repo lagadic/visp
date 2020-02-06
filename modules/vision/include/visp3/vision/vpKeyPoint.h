@@ -1017,7 +1017,7 @@ public:
 
     \param nbIter : Maximum number of iterations for the Ransac
   */
-  inline void setRansacIteration(const int nbIter)
+  inline void setRansacIteration(int nbIter)
   {
     if (nbIter > 0) {
       m_nbRansacIterations = nbIter;
@@ -1070,7 +1070,7 @@ public:
 
     \param minCount : Minimum number of inlier for the consensus
   */
-  inline void setRansacMinInlierCount(const int minCount)
+  inline void setRansacMinInlierCount(int minCount)
   {
     if (minCount > 0) {
       m_nbRansacMinInlierCount = minCount;

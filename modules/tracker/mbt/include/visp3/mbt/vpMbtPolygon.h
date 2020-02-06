@@ -121,7 +121,7 @@ public:
 
     \param i : the new index of the face.
   */
-  virtual inline void setIndex(const int i) { index = i; }
+  virtual inline void setIndex(int i) { index = i; }
 
   // Due to a doxygen warning include the sample code in the doc, we remove
   // the inline and put the doc in the *.cpp file

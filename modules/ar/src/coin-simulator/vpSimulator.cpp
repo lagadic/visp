@@ -440,7 +440,7 @@ void vpSimulator::setZoomFactor(const float zoom)
   \param zoomFactor : the new zoom use to specify the apparent size of the
   object \param index : the index of the Scale object to modify (see comments)
 */
-void vpSimulator::changeZoomFactor(const float zoomFactor, const int index)
+void vpSimulator::changeZoomFactor(const float zoomFactor, int index)
 {
   SoScale *taille = (SoScale *)this->scene->getChild(index);
   taille->scaleFactor.setValue(zoomFactor, zoomFactor, zoomFactor);

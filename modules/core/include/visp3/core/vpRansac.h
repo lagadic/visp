@@ -74,7 +74,7 @@ template <class vpTransformation> class vpRansac
 public:
   static bool ransac(unsigned int npts, vpColVector &x, unsigned int s, double t, vpColVector &model,
                      vpColVector &inliers, int consensus = 1000, double not_used = 0.0,
-                     const int maxNbumbersOfTrials = 10000);
+                     int maxNbumbersOfTrials = 10000);
 };
 
 /*!
@@ -110,7 +110,7 @@ public:
 template <class vpTransformation>
 bool vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x, unsigned int s, double t, vpColVector &M,
                                         vpColVector &inliers, int consensus, double not_used,
-                                        const int maxNbumbersOfTrials)
+                                        int maxNbumbersOfTrials)
 {
   /*   bool isplanar; */
   /*   if (s == 4) isplanar = true; */

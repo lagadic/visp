@@ -255,7 +255,7 @@ protected:
   static std::vector<std::string> configValues;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  static int mkdir_p(const char *path, const int mode);
+  static int mkdir_p(const char *path, int mode);
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 };
 #endif

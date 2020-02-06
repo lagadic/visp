@@ -130,8 +130,8 @@ public:
   void setDepthDenseSamplingStepY(unsigned int stepY);
 
   void setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method);
-  void setDepthNormalPclPlaneEstimationMethod(const int method);
-  void setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter);
+  void setDepthNormalPclPlaneEstimationMethod(int method);
+  void setDepthNormalPclPlaneEstimationRansacMaxIter(int maxIter);
   void setDepthNormalPclPlaneEstimationRansacThreshold(double threshold);
   void setDepthNormalSamplingStepX(unsigned int stepX);
   void setDepthNormalSamplingStepY(unsigned int stepY);

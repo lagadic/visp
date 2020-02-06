@@ -143,7 +143,7 @@ public:
     m_depthDenseFilteringMaxDist = maxDistance;
   }
 
-  inline void setDepthDenseFilteringMethod(const int method) { m_depthDenseFilteringMethod = method; }
+  inline void setDepthDenseFilteringMethod(int method) { m_depthDenseFilteringMethod = method; }
 
   inline void setDepthDenseFilteringMinDistance(double minDistance)
   {

@@ -440,8 +440,8 @@ void vpPlotGraph::rescaley(unsigned int side, double extremity)
   ydelt = (ymax - ymin) / (double)nbDivisiony;
 }
 
-void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, const int nbDivx,
-                            double y_min, double y_max, const int nbDivy, const bool gx, const bool gy)
+void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, int nbDivx,
+                            double y_min, double y_max, int nbDivy, const bool gx, const bool gy)
 {
   this->xmin = x_min;
   this->xmax = x_max;
@@ -458,9 +458,9 @@ void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_ma
   scaleInitialized = true;
 }
 
-void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, const int nbDivx,
-                            double y_min, double y_max, const int nbDivy, double z_min,
-                            double z_max, const int nbDivz, const bool gx, const bool gy)
+void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, int nbDivx,
+                            double y_min, double y_max, int nbDivy, double z_min,
+                            double z_max, int nbDivz, const bool gx, const bool gy)
 {
   this->xmin = x_min;
   this->xmax = x_max;

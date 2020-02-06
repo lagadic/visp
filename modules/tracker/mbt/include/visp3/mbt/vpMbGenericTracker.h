@@ -90,7 +90,7 @@ public:
   };
 
   vpMbGenericTracker();
-  vpMbGenericTracker(unsigned int nbCameras, const int trackerType = EDGE_TRACKER);
+  vpMbGenericTracker(unsigned int nbCameras, int trackerType = EDGE_TRACKER);
   explicit vpMbGenericTracker(const std::vector<int> &trackerTypes);
   vpMbGenericTracker(const std::vector<std::string> &cameraNames, const std::vector<int> &trackerTypes);
 
@@ -340,8 +340,8 @@ public:
 
   virtual void setDepthNormalFaceCentroidMethod(const vpMbtFaceDepthNormal::vpFaceCentroidType &method);
   virtual void setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method);
-  virtual void setDepthNormalPclPlaneEstimationMethod(const int method);
-  virtual void setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter);
+  virtual void setDepthNormalPclPlaneEstimationMethod(int method);
+  virtual void setDepthNormalPclPlaneEstimationRansacMaxIter(int maxIter);
   virtual void setDepthNormalPclPlaneEstimationRansacThreshold(double threshold);
   virtual void setDepthNormalSamplingStep(unsigned int stepX, unsigned int stepY);
 
@@ -416,7 +416,7 @@ public:
 
   virtual void setScanLineVisibilityTest(const bool &v);
 
-  virtual void setTrackerType(const int type);
+  virtual void setTrackerType(int type);
   virtual void setTrackerType(const std::map<std::string, int> &mapOfTrackerTypes);
 
   virtual void setUseDepthDenseTracking(const std::string &name, const bool &useDepthDenseTracking);
@@ -508,7 +508,7 @@ private:
     vpColVector m_weightedError;
 
     TrackerWrapper();
-    explicit TrackerWrapper(const int trackerType);
+    explicit TrackerWrapper(int trackerType);
 
     virtual ~TrackerWrapper();
 
@@ -560,7 +560,7 @@ private:
 
     virtual void setScanLineVisibilityTest(const bool &v);
 
-    virtual void setTrackerType(const int type);
+    virtual void setTrackerType(int type);
 
     virtual void testTracking();
 

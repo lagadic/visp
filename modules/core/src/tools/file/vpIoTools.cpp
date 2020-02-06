@@ -506,7 +506,7 @@ bool vpIoTools::checkFifo(const std::string &fifofilename)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 // See:
 // https://gist.github.com/JonathonReinhart/8c0d90191c38af2dcadb102c4e202950
-int vpIoTools::mkdir_p(const char *path, const int mode)
+int vpIoTools::mkdir_p(const char *path, int mode)
 {
   /* Adapted from http://stackoverflow.com/a/2336245/119527 */
   const size_t len = strlen(path);

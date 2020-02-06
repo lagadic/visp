@@ -195,7 +195,7 @@ public:
   static double getMedian(const std::vector<double> &v);
   static double getStdev(const std::vector<double> &v, bool useBesselCorrection = false);
 
-  static int modulo(const int a, const int n);
+  static int modulo(int a, int n);
 
 private:
   static const double ang_min_sinc;

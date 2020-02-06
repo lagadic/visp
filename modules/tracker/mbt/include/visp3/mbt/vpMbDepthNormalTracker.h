@@ -90,9 +90,9 @@ public:
 
   virtual void setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method);
 
-  virtual void setDepthNormalPclPlaneEstimationMethod(const int method);
+  virtual void setDepthNormalPclPlaneEstimationMethod(int method);
 
-  virtual void setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter);
+  virtual void setDepthNormalPclPlaneEstimationRansacMaxIter(int maxIter);
 
   virtual void setDepthNormalPclPlaneEstimationRansacThreshold(double thresold);
 

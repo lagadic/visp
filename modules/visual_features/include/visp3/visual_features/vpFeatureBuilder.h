@@ -125,7 +125,7 @@ public:
 
   // create vpFeatureLine feature
   static void create(vpFeatureLine &s, const vpLine &l);
-  static void create(vpFeatureLine &s, const vpCylinder &c, const int line);
+  static void create(vpFeatureLine &s, const vpCylinder &c, int line);
 
 #ifdef VISP_HAVE_MODULE_ME
   static void create(vpFeatureLine &s, const vpCameraParameters &cam, const vpMeLine &mel);

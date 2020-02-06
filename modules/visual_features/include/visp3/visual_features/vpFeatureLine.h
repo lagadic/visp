@@ -209,7 +209,7 @@ public:
   virtual ~vpFeatureLine() {}
 
   //  void buildFrom(const vpLine &l) ;
-  //  void buildFrom(const vpCylinder &c, const int l) ;
+  //  void buildFrom(const vpCylinder &c, int l) ;
   void buildFrom(double rho, double theta);
   void buildFrom(double rho, double theta, double A, double B, double C, double D);
 

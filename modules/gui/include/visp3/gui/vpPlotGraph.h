@@ -180,10 +180,10 @@ public:
   void initGraph(unsigned int nbCurve);
   void initSize(vpImagePoint topLeft, unsigned int width, unsigned int height, unsigned int margei,
                 unsigned int margej);
-  void initScale(vpImage<unsigned char> &I, double xmin, double xmax, const int nbDivx, double ymin,
-                 double ymax, const int nbDivy, const bool gx, const bool gy);
-  void initScale(vpImage<unsigned char> &I, double xmin, double xmax, const int nbDivx, double ymin,
-                 double ymax, const int nbDivy, double zmin, double zmax, const int nbDivz,
+  void initScale(vpImage<unsigned char> &I, double xmin, double xmax, int nbDivx, double ymin,
+                 double ymax, int nbDivy, const bool gx, const bool gy);
+  void initScale(vpImage<unsigned char> &I, double xmin, double xmax, int nbDivx, double ymin,
+                 double ymax, int nbDivy, double zmin, double zmax, int nbDivz,
                  const bool gx, const bool gy);
 
   void displayGrid(vpImage<unsigned char> &I);
@@ -208,8 +208,7 @@ public:
   void rescalex(unsigned int side, double extremity);
   void rescaley(unsigned int side, double extremity);
   void rescalez(unsigned int side, double extremity);
-  // void rescale(double &min, double &max, double &delta, const int nbDiv,
-  // int side);
+  // void rescale(double &min, double &max, double &delta, int nbDiv, int side);
   void resetPointList(unsigned int curveNum);
 
   void setCurveColor(unsigned int curveNum, const vpColor &color);

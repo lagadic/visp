@@ -131,7 +131,7 @@ struct DataType {
   double double_val;
   int int_val;
   DataType() : double_val(0.0), int_val(0) {}
-  DataType(const double dbl, const int i) : double_val(dbl), int_val(i) {}
+  DataType(const double dbl, int i) : double_val(dbl), int_val(i) {}
 };
 
 int main() {
@@ -169,15 +169,15 @@ class VISP_EXPORT vpUDPClient
 {
 public:
   vpUDPClient();
-  vpUDPClient(const std::string &hostname, const int port);
+  vpUDPClient(const std::string &hostname, int port);
   virtual ~vpUDPClient();
 
   /** @name Inherited functionalities from vpUDPClient */
   //@{
-  void init(const std::string &hostname, const int port);
+  void init(const std::string &hostname, int port);
 
-  int receive(std::string &msg, const int timeoutMs = 0);
-  int receive(void *msg, size_t len, const int timeoutMs = 0);
+  int receive(std::string &msg, int timeoutMs = 0);
+  int receive(void *msg, size_t len, int timeoutMs = 0);
   int send(const std::string &msg);
   int send(const void *msg, size_t len);
   //@}

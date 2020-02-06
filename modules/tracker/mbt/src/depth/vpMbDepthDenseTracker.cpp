@@ -511,7 +511,7 @@ void vpMbDepthDenseTracker::setDepthDenseFilteringMaxDistance(double maxDistance
   }
 }
 
-void vpMbDepthDenseTracker::setDepthDenseFilteringMethod(const int method)
+void vpMbDepthDenseTracker::setDepthDenseFilteringMethod(int method)
 {
   for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
        it != m_depthDenseFaces.end(); ++it) {

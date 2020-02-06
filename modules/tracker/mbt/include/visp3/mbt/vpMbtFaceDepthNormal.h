@@ -152,9 +152,9 @@ public:
 
   inline void setFeatureEstimationMethod(const vpFeatureEstimationType &method) { m_featureEstimationMethod = method; }
 
-  inline void setPclPlaneEstimationMethod(const int method) { m_pclPlaneEstimationMethod = method; }
+  inline void setPclPlaneEstimationMethod(int method) { m_pclPlaneEstimationMethod = method; }
 
-  inline void setPclPlaneEstimationRansacMaxIter(const int maxIter) { m_pclPlaneEstimationRansacMaxIter = maxIter; }
+  inline void setPclPlaneEstimationRansacMaxIter(int maxIter) { m_pclPlaneEstimationRansacMaxIter = maxIter; }
 
   inline void setPclPlaneEstimationRansacThreshold(double threshold)
   {

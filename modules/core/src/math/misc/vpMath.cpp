@@ -283,4 +283,4 @@ double vpMath::getStdev(const std::vector<double> &v, bool useBesselCorrection)
 
   \return The modified modulo of a mod n.
 */
-int vpMath::modulo(const int a, const int n) { return ((a % n) + n) % n; }
+int vpMath::modulo(int a, int n) { return ((a % n) + n) % n; }

@@ -60,7 +60,7 @@ vpMbGenericTracker::vpMbGenericTracker()
   m_mapOfFeatureFactors[DEPTH_DENSE_TRACKER] = 1.0;
 }
 
-vpMbGenericTracker::vpMbGenericTracker(unsigned int nbCameras, const int trackerType)
+vpMbGenericTracker::vpMbGenericTracker(unsigned int nbCameras, int trackerType)
   : m_error(), m_L(), m_mapOfCameraTransformationMatrix(), m_mapOfFeatureFactors(), m_mapOfTrackers(),
     m_percentageGdPt(0.4), m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError()
 {
@@ -3754,7 +3754,7 @@ void vpMbGenericTracker::setDepthDenseFilteringMaxDistance(double maxDistance)
   \sa vpMbtFaceDepthDense::vpDepthDenseFilteringType
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setDepthDenseFilteringMethod(const int method)
+void vpMbGenericTracker::setDepthDenseFilteringMethod(int method)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
@@ -3856,7 +3856,7 @@ void vpMbGenericTracker::setDepthNormalFeatureEstimationMethod(
 
   \note This function will set the new parameter for all the cameras.
 */
-void vpMbGenericTracker::setDepthNormalPclPlaneEstimationMethod(const int method)
+void vpMbGenericTracker::setDepthNormalPclPlaneEstimationMethod(int method)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
@@ -4878,7 +4878,7 @@ void vpMbGenericTracker::setScanLineVisibilityTest(const bool &v)
 
   \warning This function has to be called before the loading of the CAD model.
 */
-void vpMbGenericTracker::setTrackerType(const int type)
+void vpMbGenericTracker::setTrackerType(int type)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
@@ -5474,7 +5474,7 @@ vpMbGenericTracker::TrackerWrapper::TrackerWrapper()
 #endif
 }
 
-vpMbGenericTracker::TrackerWrapper::TrackerWrapper(const int trackerType)
+vpMbGenericTracker::TrackerWrapper::TrackerWrapper(int trackerType)
   : m_error(), m_L(), m_trackerType(trackerType), m_w(), m_weightedError()
 {
   if ((m_trackerType & (EDGE_TRACKER |
@@ -6770,7 +6770,7 @@ void vpMbGenericTracker::TrackerWrapper::setScanLineVisibilityTest(const bool &v
   vpMbDepthDenseTracker::setScanLineVisibilityTest(v);
 }
 
-void vpMbGenericTracker::TrackerWrapper::setTrackerType(const int type)
+void vpMbGenericTracker::TrackerWrapper::setTrackerType(int type)
 {
   if ((type & (EDGE_TRACKER |
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))

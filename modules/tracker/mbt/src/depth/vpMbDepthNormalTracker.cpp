@@ -739,7 +739,7 @@ void vpMbDepthNormalTracker::setDepthNormalFeatureEstimationMethod(
   }
 }
 
-void vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationMethod(const int method)
+void vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationMethod(int method)
 {
   m_depthNormalPclPlaneEstimationMethod = method;
 
@@ -749,7 +749,7 @@ void vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationMethod(const int me
   }
 }
 
-void vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter)
+void vpMbDepthNormalTracker::setDepthNormalPclPlaneEstimationRansacMaxIter(int maxIter)
 {
   m_depthNormalPclPlaneEstimationRansacMaxIter = maxIter;
 

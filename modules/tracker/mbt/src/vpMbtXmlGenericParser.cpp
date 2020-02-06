@@ -1203,11 +1203,11 @@ public:
   {
     m_depthNormalFeatureEstimationMethod = method;
   }
-  void setDepthNormalPclPlaneEstimationMethod(const int method)
+  void setDepthNormalPclPlaneEstimationMethod(int method)
   {
     m_depthNormalPclPlaneEstimationMethod = method;
   }
-  void setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter)
+  void setDepthNormalPclPlaneEstimationRansacMaxIter(int maxIter)
   {
     m_depthNormalPclPlaneEstimationRansacMaxIter = maxIter;
   }
@@ -1775,7 +1775,7 @@ void vpMbtXmlGenericParser::setDepthNormalFeatureEstimationMethod(const vpMbtFac
 
   \param method : New PCL plane estimation method
 */
-void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationMethod(const int method)
+void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationMethod(int method)
 {
   m_impl->setDepthNormalPclPlaneEstimationMethod(method);
 }
@@ -1785,7 +1785,7 @@ void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationMethod(const int met
 
   \param maxIter : New maximum number of iterations
 */
-void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter)
+void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationRansacMaxIter(int maxIter)
 {
   m_impl->setDepthNormalPclPlaneEstimationRansacMaxIter(maxIter);
 }

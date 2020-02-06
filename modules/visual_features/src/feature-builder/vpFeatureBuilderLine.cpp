@@ -99,10 +99,9 @@ void vpFeatureBuilder::create(vpFeatureLine &s, const vpLine &t)
   \param line : The cylinder edge used to create the line feature.
   It can be vpCylinder::line1 or vpCylinder::line2.
 */
-void vpFeatureBuilder::create(vpFeatureLine &s, const vpCylinder &t, const int line)
+void vpFeatureBuilder::create(vpFeatureLine &s, const vpCylinder &t, int line)
 {
   try {
-
     double a = t.getA();
     double b = t.getB();
     double c = t.getC();

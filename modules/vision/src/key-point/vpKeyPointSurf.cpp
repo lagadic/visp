@@ -563,7 +563,7 @@ std::list<int *> *vpKeyPointSurf::matchPoint(std::list<float *> descriptorList, 
  \param index : The index of the desired reference point. The index must be
  between 0 and the number of reference points - 1.
 */
-float *vpKeyPointSurf::getDescriptorReferencePoint(const int index)
+float *vpKeyPointSurf::getDescriptorReferencePoint(int index)
 {
   if (index >= static_cast<int>(referenceImagePointsList.size()) || index < 0) {
     vpTRACE("Index of the reference point out of range");
@@ -592,7 +592,7 @@ float *vpKeyPointSurf::getDescriptorReferencePoint(const int index)
  \param index : The index of the desired reference point. The index must be
  between 0 and the number of reference points - 1.
 */
-int vpKeyPointSurf::getLaplacianReferencePoint(const int index)
+int vpKeyPointSurf::getLaplacianReferencePoint(int index)
 {
   if (index >= static_cast<int>(referenceImagePointsList.size()) || index < 0) {
     vpTRACE("Index of the reference point out of range");
@@ -624,7 +624,7 @@ int vpKeyPointSurf::getLaplacianReferencePoint(const int index)
  the point used to compute the descriptor. \param dir : The orientation of the
  descriptor (in degree).
 */
-void vpKeyPointSurf::getDescriptorParamReferencePoint(const int index, int &size, float &dir)
+void vpKeyPointSurf::getDescriptorParamReferencePoint(int index, int &size, float &dir)
 {
   if (index >= static_cast<int>(referenceImagePointsList.size()) || index < 0) {
     vpTRACE("Index of the reference point out of range");
