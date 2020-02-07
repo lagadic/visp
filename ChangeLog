@@ -36,6 +36,7 @@ ViSP 3.2.1 (under work)
     . Compatibility with Windows 10 SDK latest version to enable vpDisplayGDI
       usage
     . Compatibility with Fedora 30
+    . Compatibility with Raspberry 4 Alpine
     . New option to select CXX standard set by default to c++11
     . Introduce a timeout (default to 50ms) during DataMatrix code detection
       implemented in vpDetectorDataMatrixCode class
@@ -53,6 +54,8 @@ ViSP 3.2.1 (under work)
     . Use only OpenCV required modules to reduce the number of dependencies
     . Remove valgrind false positive memory leaks adding a suppression file
     . Introduce Java bindings for vpGenericTracker and vpDetectorAprilTag classes
+    . New vpImageDraw and vpFont classes for basic drawings (line, circle,
+      rectangle, text) in an image without the need of a vpDisplay
   - Tutorials
     . New tutorial: Installation from source for Windows with Visual C++ 2019
       (vc16)
