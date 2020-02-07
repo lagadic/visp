@@ -61,13 +61,11 @@ public:
   void init();
   vpCircle();
   explicit vpCircle(const vpColVector &oP);
-  vpCircle(const double A, const double B, const double C, const double X0, const double Y0, const double Z0,
-           const double R);
+  vpCircle(double A, double B, double C, double X0, double Y0, double Z0, double R);
   virtual ~vpCircle();
 
   void setWorldCoordinates(const vpColVector &oP);
-  void setWorldCoordinates(const double A, const double B, const double C, const double X0, const double Y0,
-                           const double Z0, const double R);
+  void setWorldCoordinates(double A, double B, double C, double X0, double Y0, double Z0, double R);
 
   double getA() const { return cP[0]; }
   double getB() const { return cP[1]; }
@@ -85,9 +83,9 @@ public:
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               const unsigned int thickness = 1);
+               unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
+               const vpColor &color = vpColor::green, unsigned int thickness = 1);
   vpCircle *duplicate() const;
 
   //###################

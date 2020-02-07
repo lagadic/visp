@@ -1197,26 +1197,26 @@ public:
 
   void setCameraParameters(const vpCameraParameters &cam) { m_cam = cam; }
 
-  void setDepthDenseSamplingStepX(const unsigned int stepX) { m_depthDenseSamplingStepX = stepX; }
-  void setDepthDenseSamplingStepY(const unsigned int stepY) { m_depthDenseSamplingStepY = stepY; }
+  void setDepthDenseSamplingStepX(unsigned int stepX) { m_depthDenseSamplingStepX = stepX; }
+  void setDepthDenseSamplingStepY(unsigned int stepY) { m_depthDenseSamplingStepY = stepY; }
   void setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method)
   {
     m_depthNormalFeatureEstimationMethod = method;
   }
-  void setDepthNormalPclPlaneEstimationMethod(const int method)
+  void setDepthNormalPclPlaneEstimationMethod(int method)
   {
     m_depthNormalPclPlaneEstimationMethod = method;
   }
-  void setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter)
+  void setDepthNormalPclPlaneEstimationRansacMaxIter(int maxIter)
   {
     m_depthNormalPclPlaneEstimationRansacMaxIter = maxIter;
   }
-  void setDepthNormalPclPlaneEstimationRansacThreshold(const double threshold)
+  void setDepthNormalPclPlaneEstimationRansacThreshold(double threshold)
   {
     m_depthNormalPclPlaneEstimationRansacThreshold = threshold;
   }
-  void setDepthNormalSamplingStepX(const unsigned int stepX) { m_depthNormalSamplingStepX = stepX; }
-  void setDepthNormalSamplingStepY(const unsigned int stepY) { m_depthNormalSamplingStepY = stepY; }
+  void setDepthNormalSamplingStepX(unsigned int stepX) { m_depthNormalSamplingStepX = stepX; }
+  void setDepthNormalSamplingStepY(unsigned int stepY) { m_depthNormalSamplingStepY = stepY; }
 
   void setEdgeMe(const vpMe &moving_edge) { m_ecm = moving_edge; }
 
@@ -1745,7 +1745,7 @@ void vpMbtXmlGenericParser::setCameraParameters(const vpCameraParameters &cam)
 
   \param stepX : New sampling step
 */
-void vpMbtXmlGenericParser::setDepthDenseSamplingStepX(const unsigned int stepX)
+void vpMbtXmlGenericParser::setDepthDenseSamplingStepX(unsigned int stepX)
 {
   m_impl->setDepthDenseSamplingStepX(stepX);
 }
@@ -1755,7 +1755,7 @@ void vpMbtXmlGenericParser::setDepthDenseSamplingStepX(const unsigned int stepX)
 
   \param stepY : New sampling step
 */
-void vpMbtXmlGenericParser::setDepthDenseSamplingStepY(const unsigned int stepY)
+void vpMbtXmlGenericParser::setDepthDenseSamplingStepY(unsigned int stepY)
 {
   m_impl->setDepthDenseSamplingStepY(stepY);
 }
@@ -1775,7 +1775,7 @@ void vpMbtXmlGenericParser::setDepthNormalFeatureEstimationMethod(const vpMbtFac
 
   \param method : New PCL plane estimation method
 */
-void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationMethod(const int method)
+void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationMethod(int method)
 {
   m_impl->setDepthNormalPclPlaneEstimationMethod(method);
 }
@@ -1785,7 +1785,7 @@ void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationMethod(const int met
 
   \param maxIter : New maximum number of iterations
 */
-void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationRansacMaxIter(const int maxIter)
+void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationRansacMaxIter(int maxIter)
 {
   m_impl->setDepthNormalPclPlaneEstimationRansacMaxIter(maxIter);
 }
@@ -1795,7 +1795,7 @@ void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationRansacMaxIter(const 
 
   \param threshold : New RANSAC threshold
 */
-void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationRansacThreshold(const double threshold)
+void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationRansacThreshold(double threshold)
 {
   m_impl->setDepthNormalPclPlaneEstimationRansacThreshold(threshold);
 }
@@ -1805,7 +1805,7 @@ void vpMbtXmlGenericParser::setDepthNormalPclPlaneEstimationRansacThreshold(cons
 
   \param stepX : New sampling step
 */
-void vpMbtXmlGenericParser::setDepthNormalSamplingStepX(const unsigned int stepX)
+void vpMbtXmlGenericParser::setDepthNormalSamplingStepX(unsigned int stepX)
 {
   m_impl->setDepthNormalSamplingStepX(stepX);
 }
@@ -1815,7 +1815,7 @@ void vpMbtXmlGenericParser::setDepthNormalSamplingStepX(const unsigned int stepX
 
   \param stepY : New sampling step
 */
-void vpMbtXmlGenericParser::setDepthNormalSamplingStepY(const unsigned int stepY)
+void vpMbtXmlGenericParser::setDepthNormalSamplingStepY(unsigned int stepY)
 {
   m_impl->setDepthNormalSamplingStepY(stepY);
 }

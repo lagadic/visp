@@ -121,7 +121,7 @@ public:
 
     \sa setTheta()
   */
-  void setRho(const double rho) { p[0] = rho; };
+  void setRho(double rho) { p[0] = rho; };
 
   /*!
     Sets the \f$ \theta \f$ angle value used to define the line in the
@@ -131,7 +131,7 @@ public:
 
     \sa setRho()
   */
-  void setTheta(const double theta) { p[1] = theta; };
+  void setTheta(double theta) { p[1] = theta; };
 
   /*!
 
@@ -169,9 +169,9 @@ public:
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               const unsigned int thickness = 1);
+               unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
+               const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
   vpLine *duplicate() const;
 };

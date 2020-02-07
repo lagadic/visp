@@ -83,7 +83,7 @@ public:
   bool solveQPi(const vpMatrix &Q, const vpColVector &r,
                 const vpMatrix &C, const vpColVector &d,
                 vpColVector &x,
-                const bool use_equality = false,
+                bool use_equality = false,
                 const double &tol = 1e-6);
 
   bool solveQP(const vpMatrix &Q, const vpColVector &r,
@@ -154,7 +154,7 @@ protected:
                                       const std::string fct)
   {
     // check data consistency
-    const unsigned int n = Q.getCols();
+    unsigned int n = Q.getCols();
     const bool Ab = (A != nullptr && b != nullptr && A->getRows());
     const bool Cd = (C != nullptr && d != nullptr && C->getRows());
 

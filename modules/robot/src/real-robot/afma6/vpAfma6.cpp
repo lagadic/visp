@@ -485,7 +485,6 @@ vpHomogeneousMatrix vpAfma6::getForwardKinematics(const vpColVector &q) const
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotAfma6.h>
 
@@ -1390,7 +1389,6 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const vpImage<unsigne
 
   \code
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotAfma6.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>

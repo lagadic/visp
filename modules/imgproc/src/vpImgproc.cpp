@@ -77,7 +77,7 @@
   \param alpha : Multiplication coefficient.
   \param beta : Constant value added to the old intensity.
 */
-void vp::adjust(vpImage<unsigned char> &I, const double alpha, const double beta)
+void vp::adjust(vpImage<unsigned char> &I, double alpha, double beta)
 {
   // Construct the look-up table
   unsigned char lut[256];
@@ -100,7 +100,7 @@ void vp::adjust(vpImage<unsigned char> &I, const double alpha, const double beta
   \param alpha : Multiplication coefficient.
   \param beta : Constant value added to the old intensity.
 */
-void vp::adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const double alpha, const double beta)
+void vp::adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double alpha, double beta)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -118,7 +118,7 @@ void vp::adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, co
   \param alpha : Multiplication coefficient.
   \param beta : Constant value added to the old intensity.
 */
-void vp::adjust(vpImage<vpRGBa> &I, const double alpha, const double beta)
+void vp::adjust(vpImage<vpRGBa> &I, double alpha, double beta)
 {
   // Construct the look-up table
   vpRGBa lut[256];
@@ -144,7 +144,7 @@ void vp::adjust(vpImage<vpRGBa> &I, const double alpha, const double beta)
   \param alpha : Multiplication coefficient.
   \param beta : Constant value added to the old intensity.
 */
-void vp::adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const double alpha, const double beta)
+void vp::adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double beta)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -242,7 +242,7 @@ void vp::equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned ch
   value channel (in HSV space), otherwise the histogram equalization is
   performed independently on the RGB channels.
 */
-void vp::equalizeHistogram(vpImage<vpRGBa> &I, const bool useHSV)
+void vp::equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV)
 {
   if (I.getWidth() * I.getHeight() == 0) {
     return;
@@ -317,7 +317,7 @@ void vp::equalizeHistogram(vpImage<vpRGBa> &I, const bool useHSV)
   value channel (in HSV space), otherwise the histogram equalization is
   performed independently on the RGB channels.
 */
-void vp::equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const bool useHSV)
+void vp::equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, bool useHSV)
 {
   I2 = I1;
   vp::equalizeHistogram(I2, useHSV);
@@ -331,7 +331,7 @@ void vp::equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const
   \param I : The grayscale image to apply gamma correction.
   \param gamma : Gamma value.
 */
-void vp::gammaCorrection(vpImage<unsigned char> &I, const double gamma)
+void vp::gammaCorrection(vpImage<unsigned char> &I, double gamma)
 {
   double inverse_gamma = 1.0;
   if (gamma > 0) {
@@ -358,7 +358,7 @@ void vp::gammaCorrection(vpImage<unsigned char> &I, const double gamma)
   \param I2 : The second grayscale image after gamma correction.
   \param gamma : Gamma value.
 */
-void vp::gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const double gamma)
+void vp::gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double gamma)
 {
   I2 = I1;
   vp::gammaCorrection(I2, gamma);
@@ -372,7 +372,7 @@ void vp::gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char
   \param I : The color image to apply gamma correction.
   \param gamma : Gamma value.
 */
-void vp::gammaCorrection(vpImage<vpRGBa> &I, const double gamma)
+void vp::gammaCorrection(vpImage<vpRGBa> &I, double gamma)
 {
   double inverse_gamma = 1.0;
   if (gamma > 0) {
@@ -402,7 +402,7 @@ void vp::gammaCorrection(vpImage<vpRGBa> &I, const double gamma)
   \param I2 : The second color image after gamma correction.
   \param gamma : Gamma value.
 */
-void vp::gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const double gamma)
+void vp::gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double gamma)
 {
   I2 = I1;
   vp::gammaCorrection(I2, gamma);
@@ -621,7 +621,7 @@ void vp::stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
   \param size : Size (must be odd) of the Gaussian blur kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
  */
-void vp::unsharpMask(vpImage<unsigned char> &I, const unsigned int size, const double weight)
+void vp::unsharpMask(vpImage<unsigned char> &I, unsigned int size, double weight)
 {
   if (weight < 1.0 && weight >= 0.0) {
     // Gaussian blurred image
@@ -646,8 +646,8 @@ void vp::unsharpMask(vpImage<unsigned char> &I, const unsigned int size, const d
   \param size : Size (must be odd) of the Gaussian blur kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
 */
-void vp::unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const unsigned int size,
-                     const double weight)
+void vp::unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, unsigned int size,
+                     double weight)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -663,7 +663,7 @@ void vp::unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I
   \param size : Size (must be odd) of the Gaussian blur kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
  */
-void vp::unsharpMask(vpImage<vpRGBa> &I, const unsigned int size, const double weight)
+void vp::unsharpMask(vpImage<vpRGBa> &I, unsigned int size, double weight)
 {
   if (weight < 1.0 && weight >= 0.0) {
     // Gaussian blurred image
@@ -698,7 +698,7 @@ void vp::unsharpMask(vpImage<vpRGBa> &I, const unsigned int size, const double w
   \param size : Size (must be odd) of the Gaussian blur kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
 */
-void vp::unsharpMask(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const unsigned int size, const double weight)
+void vp::unsharpMask(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, unsigned int size, double weight)
 {
   // Copy I1 to I2
   I2 = I1;

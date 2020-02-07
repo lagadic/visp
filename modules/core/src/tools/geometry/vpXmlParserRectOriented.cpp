@@ -120,7 +120,7 @@ public:
     m_rectangle = vpRectOriented(m_center, m_width, m_height, m_theta);
   }
 
-  void save(const std::string &filename, const bool append)
+  void save(const std::string &filename, bool append)
   {
     pugi::xml_document doc;
     pugi::xml_node root_node;
@@ -202,7 +202,7 @@ void vpXmlParserRectOriented::parse(const std::string &filename)
   \param append : if true and if the file exists, the data will be added to
   the data already in the file
 */
-void vpXmlParserRectOriented::save(const std::string &filename, const bool append)
+void vpXmlParserRectOriented::save(const std::string &filename, bool append)
 {
   m_impl->save(filename, append);
 }

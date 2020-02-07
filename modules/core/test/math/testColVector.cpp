@@ -106,7 +106,7 @@ double computeRegularStdev(const vpColVector &v)
   return std::sqrt(sum_squared_diff / divisor);
 }
 
-double getRandomValues(const double min, const double max)
+double getRandomValues(double min, double max)
 {
   return (max - min) * ((double)rand() / (double)RAND_MAX) + min;
 }
@@ -441,7 +441,7 @@ int main()
 
   {
     // Test insert with big vector
-    const unsigned int nb = 1000;
+    unsigned int nb = 1000;
     const unsigned int size = 10000;
     std::vector<vpColVector> vec(nb);
 

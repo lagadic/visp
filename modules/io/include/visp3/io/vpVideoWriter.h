@@ -131,9 +131,12 @@ int main()
   // Set up the framerate to 30Hz. Default is 25Hz.
   writer.setFramerate(30);
 
-#if defined VISP_HAVE_OPENCV
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+  writer.setCodec( cv::VideoWriter::fourcc('P','I','M','1') );
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
   writer.setCodec( CV_FOURCC('P','I','M','1') );
 #endif
+
   writer.setFileName("./test.mpeg");
 
   writer.open(I);
@@ -232,7 +235,7 @@ public:
 
     \param first_frame : The first frame index.
   */
-  inline void setFirstFrameIndex(const unsigned int first_frame) { this->firstFrame = first_frame; }
+  inline void setFirstFrameIndex(unsigned int first_frame) { this->firstFrame = first_frame; }
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
   /*!
       Sets the framerate in Hz of the video when encoding.

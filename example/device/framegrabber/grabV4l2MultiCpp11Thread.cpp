@@ -206,7 +206,7 @@ class StorageWorker
 {
 
 public:
-  StorageWorker(FrameQueue &queue, const std::string &filename, const unsigned int width, const unsigned int height)
+  StorageWorker(FrameQueue &queue, const std::string &filename, unsigned int width, unsigned int height)
     : m_queue(queue), m_filename(filename), m_width(width), m_height(height)
   {
   }
@@ -341,8 +341,8 @@ void capture(vpV4l2Grabber *const pGrabber, ShareImage &share_image)
   }
 }
 
-void display(const unsigned int width, const unsigned int height, const int win_x, const int win_y,
-             const unsigned int deviceId, ShareImage &share_image, FrameQueue &queue, const bool save)
+void display(unsigned int width, unsigned int height, int win_x, int win_y,
+             unsigned int deviceId, ShareImage &share_image, FrameQueue &queue, bool save)
 {
   vpImage<vpRGBa> local_img(height, width);
 

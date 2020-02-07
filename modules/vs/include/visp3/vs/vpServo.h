@@ -250,9 +250,9 @@ public:
   virtual ~vpServo();
 
   // create a new ste of  two visual features
-  void addFeature(vpBasicFeature &s, vpBasicFeature &s_star, const unsigned int select = vpBasicFeature::FEATURE_ALL);
+  void addFeature(vpBasicFeature &s, vpBasicFeature &s_star, unsigned int select = vpBasicFeature::FEATURE_ALL);
   // create a new ste of  two visual features
-  void addFeature(vpBasicFeature &s, const unsigned int select = vpBasicFeature::FEATURE_ALL);
+  void addFeature(vpBasicFeature &s, unsigned int select = vpBasicFeature::FEATURE_ALL);
 
   // compute the desired control law
   vpColVector computeControlLaw();
@@ -420,7 +420,7 @@ error vector is updated after a call of computeError() or computeControlLaw().
 
     For more details on these parameters see vpAdaptiveGain class.
    */
-  void setLambda(const double gain_at_zero, const double gain_at_infinity, const double slope_at_zero)
+  void setLambda(double gain_at_zero, double gain_at_infinity, double slope_at_zero)
   {
     lambda.initStandard(gain_at_zero, gain_at_infinity, slope_at_zero);
   }

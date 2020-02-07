@@ -161,8 +161,8 @@ public:
   explicit vpTemplateTracker(vpTemplateTrackerWarp *_warp);
   virtual ~vpTemplateTracker();
 
-  void display(const vpImage<unsigned char> &I, const vpColor &col = vpColor::green, const unsigned int thickness = 3);
-  void display(const vpImage<vpRGBa> &I, const vpColor &col = vpColor::green, const unsigned int thickness = 3);
+  void display(const vpImage<unsigned char> &I, const vpColor &col = vpColor::green, unsigned int thickness = 3);
+  void display(const vpImage<vpRGBa> &I, const vpColor &col = vpColor::green, unsigned int thickness = 3);
 
   bool getDiverge() const { return diverge; }
   vpColVector getdp() { return dp; }

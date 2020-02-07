@@ -74,14 +74,14 @@ public:
   virtual unsigned int buildReference(const vpImage<unsigned char> &I) = 0;
 
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                                      const unsigned int height, const unsigned int width) = 0;
+                                      unsigned int height, unsigned int width) = 0;
 
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle) = 0;
 
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I) = 0;
 
-  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                                  const unsigned int width) = 0;
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                                  unsigned int width) = 0;
 
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle) = 0;
 
@@ -114,7 +114,7 @@ public:
    between 0 and the number of reference points - 1. \param referencePoint :
    The coordinates of the desired reference point are copied there.
   */
-  inline void getReferencePoint(const unsigned int index, vpImagePoint &referencePoint)
+  inline void getReferencePoint(unsigned int index, vpImagePoint &referencePoint)
   {
     if (index >= referenceImagePointsList.size()) {
       vpTRACE("Index of the reference point out of range");
@@ -135,7 +135,7 @@ public:
    reference point are copied here. \param currentPoint : The coordinates of
    the desired current point are copied here.
   */
-  inline void getMatchedPoints(const unsigned int index, vpImagePoint &referencePoint, vpImagePoint &currentPoint)
+  inline void getMatchedPoints(unsigned int index, vpImagePoint &referencePoint, vpImagePoint &currentPoint)
   {
     if (index >= matchedReferencePoints.size()) {
       vpTRACE("Index of the matched points out of range");
@@ -170,7 +170,7 @@ public:
    referencePoint2 = referencePointsList[index];
    \endcode
   */
-  inline unsigned int getIndexInAllReferencePointList(const unsigned int indexInMatchedPointList)
+  inline unsigned int getIndexInAllReferencePointList(unsigned int indexInMatchedPointList)
   {
     if (indexInMatchedPointList >= matchedReferencePoints.size()) {
       vpTRACE("Index of the matched reference point out of range");

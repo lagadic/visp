@@ -57,7 +57,7 @@ namespace
 class ArithmFunctor
 {
 public:
-  ArithmFunctor(const vpColVector &v1, const vpColVector &v2, const unsigned int start, const unsigned int end)
+  ArithmFunctor(const vpColVector &v1, const vpColVector &v2, unsigned int start, unsigned int end)
     : m_add(), m_mul(), m_v1(v1), m_v2(v2), m_indexStart(start), m_indexEnd(end)
   {
   }

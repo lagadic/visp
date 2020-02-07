@@ -1333,7 +1333,7 @@ void vpFlyCaptureGrabber::setCameraPower(bool on)
     throw(vpException(vpException::fatalError, "Cannot power on the camera."));
   }
 
-  const unsigned int millisecondsToSleep = 100;
+  unsigned int millisecondsToSleep = 100;
   unsigned int regVal = 0;
   unsigned int retries = 10;
 

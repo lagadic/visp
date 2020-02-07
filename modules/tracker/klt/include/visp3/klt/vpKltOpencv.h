@@ -140,21 +140,21 @@ public:
 
   vpKltOpencv &operator=(const vpKltOpencv &copy);
   void track(const cv::Mat &I);
-  void setBlockSize(const int blockSize);
+  void setBlockSize(int blockSize);
   void setHarrisFreeParameter(double harris_k);
   void setInitialGuess(const std::vector<cv::Point2f> &guess_pts);
   void setInitialGuess(const std::vector<cv::Point2f> &init_pts, const std::vector<cv::Point2f> &guess_pts,
                        const std::vector<long> &fid);
-  void setMaxFeatures(const int maxCount);
+  void setMaxFeatures(int maxCount);
   void setMinDistance(double minDistance);
   void setMinEigThreshold(double minEigThreshold);
-  void setPyramidLevels(const int pyrMaxLevel);
+  void setPyramidLevels(int pyrMaxLevel);
   void setQuality(double qualityLevel);
   //! Does nothing. Just here for compat with previous releases that use
   //! OpenCV C api to do the tracking.
   void setTrackerId(int tid) { (void)tid; }
-  void setUseHarris(const int useHarrisDetector);
-  void setWindowSize(const int winSize);
+  void setUseHarris(int useHarrisDetector);
+  void setWindowSize(int winSize);
   void suppressFeature(const int &index);
 
 protected:
@@ -194,7 +194,6 @@ protected:
 #endif
 #endif
 
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpException.h>
@@ -339,7 +338,7 @@ public:
 
     \param input : The new size of the block.
   */
-  void setBlockSize(const int input)
+  void setBlockSize(int input)
   {
     initialized = 0;
     block_size = input;
@@ -366,7 +365,7 @@ public:
   void setIsFeatureValid(funccheck input) { IsFeatureValid = input; }
 
   /* Should be used only before initTracking */
-  void setMaxFeatures(const int input);
+  void setMaxFeatures(int input);
   /*!
     Set the minimal distance between two points during the initialisation.
 
@@ -401,7 +400,7 @@ public:
 
     \param input : The new maximal pyramid level.
   */
-  void setPyramidLevels(const int input)
+  void setPyramidLevels(int input)
   {
     initialized = 0;
     pyramid_level = input;
@@ -420,12 +419,12 @@ public:
 
     \param input : The new number of maximum features.
   */
-  void setUseHarris(const int input)
+  void setUseHarris(int input)
   {
     initialized = 0;
     use_harris = input;
   }
-  void setWindowSize(const int input)
+  void setWindowSize(int input)
   {
     initialized = 0;
     win_size = input;

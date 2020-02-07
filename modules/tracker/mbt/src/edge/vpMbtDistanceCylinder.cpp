@@ -116,7 +116,7 @@ void vpMbtDistanceCylinder::project(const vpHomogeneousMatrix &cMo)
   \param _p2 : The second extremity on the axis.
   \param r : Radius of the cylinder.
 */
-void vpMbtDistanceCylinder::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const double r)
+void vpMbtDistanceCylinder::buildFrom(const vpPoint &_p1, const vpPoint &_p2, double r)
 {
   c = new vpCylinder;
   p1 = new vpPoint;
@@ -181,7 +181,7 @@ void vpMbtDistanceCylinder::setMovingEdge(vpMe *_me)
   \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack,
+bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
                                            const vpImage<bool> *mask)
 {
   if (isvisible) {
@@ -514,8 +514,8 @@ void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, co
   \param displayFullModel : When true, display the circle even if non visible.
 */
 void vpMbtDistanceCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                    const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                    const bool displayFullModel)
+                                    const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
+                                    bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(),
                                                                 cMo, camera, displayFullModel);
@@ -539,8 +539,8 @@ void vpMbtDistanceCylinder::display(const vpImage<unsigned char> &I, const vpHom
   \param displayFullModel : When true, display the circle even if non visible.
 */
 void vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                    const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                    const bool displayFullModel)
+                                    const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
+                                    bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(),
                                                                 cMo, camera, displayFullModel);
@@ -615,7 +615,7 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
 std::vector<std::vector<double> > vpMbtDistanceCylinder::getModelForDisplay(unsigned int, unsigned int,
                                                                             const vpHomogeneousMatrix &cMo,
                                                                             const vpCameraParameters &camera,
-                                                                            const bool displayFullModel)
+                                                                            bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 

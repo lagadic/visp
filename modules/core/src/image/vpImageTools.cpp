@@ -376,7 +376,7 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpIm
   vpMath::saturate, otherwise overflow may occur.
 */
 void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                            vpImage<unsigned char> &Ires, const bool saturate)
+                            vpImage<unsigned char> &Ires, bool saturate)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
     throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
@@ -418,7 +418,7 @@ void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsi
   vpMath::saturate, otherwise overflow may occur.
 */
 void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                                 vpImage<unsigned char> &Ires, const bool saturate)
+                                 vpImage<unsigned char> &Ires, bool saturate)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
     throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
@@ -560,7 +560,7 @@ void vpImageTools::integralImage(const vpImage<unsigned char> &I, vpImage<double
 */
 double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
 #if VISP_HAVE_SSE2
-                                           const bool useOptimized)
+                                           bool useOptimized)
 #else
                                            const bool)
 #endif
@@ -752,8 +752,8 @@ void vpImageTools::extract(const vpImage<unsigned char> &Src, vpImage<double> &D
   \param useOptimized : Use optimized version (SSE, OpenMP, integral images, ...) if true and available.
 */
 void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpImage<unsigned char> &I_tpl,
-                                    vpImage<double> &I_score, const unsigned int step_u, const unsigned int step_v,
-                                    const bool useOptimized)
+                                    vpImage<double> &I_score, unsigned int step_u, unsigned int step_v,
+                                    bool useOptimized)
 {
   if (I.getSize() == 0) {
     std::cerr << "Error, input image is empty." << std::endl;
@@ -774,7 +774,7 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
   vpImageConvert::convert(I, I_double);
   vpImageConvert::convert(I_tpl, I_tpl_double);
 
-  const unsigned int height_tpl = I_tpl.getHeight(), width_tpl = I_tpl.getWidth();
+  unsigned int height_tpl = I_tpl.getHeight(), width_tpl = I_tpl.getWidth();
   I_score.resize(I.getHeight() - height_tpl, I.getWidth() - width_tpl, 0.0);
 
   if (useOptimized) {
@@ -866,7 +866,7 @@ int64_t vpImageTools::lerp2(int64_t A, int64_t B, int64_t t, int64_t t_1) {
 double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
                                            const vpImage<double> &II, const vpImage<double> &IIsq,
                                            const vpImage<double> &II_tpl, const vpImage<double> &IIsq_tpl,
-                                           const unsigned int i0, const unsigned int j0)
+                                           unsigned int i0, unsigned int j0)
 {
   double ab = 0.0;
 #if VISP_HAVE_SSE2
@@ -911,7 +911,7 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
     }
   }
 
-  const unsigned int height_tpl = I2.getHeight(), width_tpl = I2.getWidth();
+  unsigned int height_tpl = I2.getHeight(), width_tpl = I2.getWidth();
   const double sum1 =
       (II[i0 + height_tpl][j0 + width_tpl] + II[i0][j0] - II[i0][j0 + width_tpl] - II[i0 + height_tpl][j0]);
   const double sum2 = (II_tpl[height_tpl][width_tpl] + II_tpl[0][0] - II_tpl[0][width_tpl] - II_tpl[height_tpl][0]);

@@ -475,8 +475,8 @@ void vpD3DRenderer::setImg(const vpImage<vpRGBa> &im)
   Sets the image to display.
   \param im The image to display.
 */
-void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP, const unsigned int width,
-                              const unsigned int height)
+void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP, unsigned int width,
+                              unsigned int height)
 {
   // if the device has been initialized
   if (pd3dDevice != NULL) {
@@ -551,8 +551,8 @@ void vpD3DRenderer::setImg(const vpImage<unsigned char> &im)
   Sets the image to display.
   \param im The image to display.
 */
-void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im, const vpImagePoint &iP, const unsigned int width,
-                              const unsigned int height)
+void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im, const vpImagePoint &iP, unsigned int width,
+                              unsigned int height)
 {
   // if the device has been initialized
   if (pd3dDevice != NULL) {

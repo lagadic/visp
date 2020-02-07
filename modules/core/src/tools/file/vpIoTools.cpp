@@ -161,7 +161,7 @@ uint32_t swap32bits(const uint32_t val)
 
 // Swap a float, the union is necessary because of the representation of a
 // float in memory in IEEE 754.
-float swapFloat(const float f)
+float swapFloat(float f)
 {
   union {
     float f;
@@ -178,7 +178,7 @@ float swapFloat(const float f)
 
 // Swap a double, the union is necessary because of the representation of a
 // double in memory in IEEE 754.
-double swapDouble(const double d)
+double swapDouble(double d)
 {
   union {
     double d;
@@ -506,7 +506,7 @@ bool vpIoTools::checkFifo(const std::string &fifofilename)
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 // See:
 // https://gist.github.com/JonathonReinhart/8c0d90191c38af2dcadb102c4e202950
-int vpIoTools::mkdir_p(const char *path, const int mode)
+int vpIoTools::mkdir_p(const char *path, int mode)
 {
   /* Adapted from http://stackoverflow.com/a/2336245/119527 */
   const size_t len = strlen(path);
@@ -1354,7 +1354,7 @@ ext: .xml
    \endcode
 
  */
-std::string vpIoTools::getFileExtension(const std::string &pathname, const bool checkFile)
+std::string vpIoTools::getFileExtension(const std::string &pathname, bool checkFile)
 {
   if (checkFile && (vpIoTools::checkDirectory(pathname) || !vpIoTools::checkFilename(pathname))) {
     return "";
@@ -1991,7 +1991,7 @@ void vpIoTools::writeBinaryValueLE(std::ofstream &file, const uint32_t uint_valu
 /*!
    Write a float value in little endian.
  */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, const float float_value)
+void vpIoTools::writeBinaryValueLE(std::ofstream &file, float float_value)
 {
 #ifdef VISP_BIG_ENDIAN
   // Swap bytes order to little endian
@@ -2005,7 +2005,7 @@ void vpIoTools::writeBinaryValueLE(std::ofstream &file, const float float_value)
 /*!
    Write a double value in little endian.
  */
-void vpIoTools::writeBinaryValueLE(std::ofstream &file, const double double_value)
+void vpIoTools::writeBinaryValueLE(std::ofstream &file, double double_value)
 {
 #ifdef VISP_BIG_ENDIAN
   // Swap bytes order to little endian

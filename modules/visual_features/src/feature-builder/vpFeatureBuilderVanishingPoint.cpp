@@ -61,7 +61,7 @@
   vpFeatureVanishingPoint::selectOneOverRho() or vpFeatureVanishingPoint::selectAlpha() to build
   \f$ {\bf s} = (1/\rho, \alpha) \f$ visual feature.
 */
-void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpPoint &p, const unsigned int select)
+void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpPoint &p, unsigned int select)
 {
   if ((vpFeatureVanishingPoint::selectX() & select) || (vpFeatureVanishingPoint::selectY() & select)) {
     s.set_x(p.get_x());
@@ -95,7 +95,7 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpPoint &p, cons
 
   \warning An exception is thrown if the two lines are parallel when cartesian coordinates \f$ {\bf s} = (x, y) \f$ are used.
 */
-void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpFeatureLine &L1, const vpFeatureLine &L2, const unsigned int select)
+void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpFeatureLine &L1, const vpFeatureLine &L2, unsigned int select)
 {
   if ((vpFeatureVanishingPoint::selectX() & select) || (vpFeatureVanishingPoint::selectY() & select)) {
     double rho_l = L1.getRho();
@@ -160,7 +160,7 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpFeatureLine &L
   \warning An exception is thrown if the two lines are parallel when cartesian coordinates \f$ {\bf s} = (x, y) \f$ are used.
 
 */
-void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpLine &L1, const vpLine &L2, const unsigned int select)
+void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpLine &L1, const vpLine &L2, unsigned int select)
 {
   vpFeatureLine l1, l2;
   vpFeatureBuilder::create(l1, L1);
@@ -189,7 +189,7 @@ void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpLine &L1, cons
 void vpFeatureBuilder::create(vpFeatureVanishingPoint &s, const vpCameraParameters &cam,
                               const vpImagePoint &line1_ip1, const vpImagePoint &line1_ip2,
                               const vpImagePoint &line2_ip1, const vpImagePoint &line2_ip2,
-                              const unsigned int select)
+                              unsigned int select)
 {
   double x1 = 0, y1 = 0;
   double x2 = 0, y2 = 0;

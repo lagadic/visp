@@ -120,7 +120,7 @@ public:
 
   vpMeSite *getQueryList(const vpImage<unsigned char> &I, const int range);
 
-  void track(const vpImage<unsigned char> &im, const vpMe *me, const bool test_contraste = true);
+  void track(const vpImage<unsigned char> &im, const vpMe *me, bool test_contraste = true);
 
   /*!
     Set the angle of tangent at site

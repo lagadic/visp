@@ -68,8 +68,8 @@ class VISP_EXPORT vpImageFilter
 {
 public:
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
-  static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, const unsigned int gaussianFilterSize,
-                    const double thresholdCanny, const unsigned int apertureSobel);
+  static void canny(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ic, unsigned int gaussianFilterSize,
+                    double thresholdCanny, unsigned int apertureSobel);
 #endif
 
   /*!
@@ -79,7 +79,7 @@ public:
    \param r : coordinates (row) of the pixel
    \param c : coordinates (column) of the pixel
    */
-  template <class T> static double derivativeFilterX(const vpImage<T> &I, const unsigned int r, const unsigned int c)
+  template <class T> static double derivativeFilterX(const vpImage<T> &I, unsigned int r, unsigned int c)
   {
     return (2047.0 * (I[r][c + 1] - I[r][c - 1]) + 913.0 * (I[r][c + 2] - I[r][c - 2]) +
             112.0 * (I[r][c + 3] - I[r][c - 3])) /
@@ -93,7 +93,7 @@ public:
    \param r : coordinates (row) of the pixel
    \param c : coordinates (column) of the pixel
    */
-  template <class T> static double derivativeFilterY(const vpImage<T> &I, const unsigned int r, const unsigned int c)
+  template <class T> static double derivativeFilterY(const vpImage<T> &I, unsigned int r, unsigned int c)
   {
     return (2047.0 * (I[r + 1][c] - I[r - 1][c]) + 913.0 * (I[r + 2][c] - I[r - 2][c]) +
             112.0 * (I[r + 3][c] - I[r - 3][c])) /
@@ -114,8 +114,8 @@ public:
    */
 
   template <class T>
-  static double derivativeFilterX(const vpImage<T> &I, const unsigned int r, const unsigned int c, const double *filter,
-                                  const unsigned int size)
+  static double derivativeFilterX(const vpImage<T> &I, unsigned int r, unsigned int c, const double *filter,
+                                  unsigned int size)
   {
     unsigned int i;
     double result;
@@ -141,8 +141,8 @@ public:
   \sa vpImageFilter::getGaussianDerivativeKernel()
    */
   template <class T>
-  static double derivativeFilterY(const vpImage<T> &I, const unsigned int r, const unsigned int c, const double *filter,
-                                  const unsigned int size)
+  static double derivativeFilterY(const vpImage<T> &I, unsigned int r, unsigned int c, const double *filter,
+                                  unsigned int size)
   {
     unsigned int i;
     double result;
@@ -156,10 +156,10 @@ public:
   }
 
   static void filter(const vpImage<double> &I, vpImage<double> &Iu, vpImage<double> &Iv, const vpMatrix &M,
-                     const bool convolve = false);
+                     bool convolve = false);
 
   static void filter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpMatrix &M,
-                     const bool convolve = false);
+                     bool convolve = false);
 
   static void sepFilter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpColVector &kernelH,
                         const vpColVector &kernelV);
@@ -652,7 +652,7 @@ public:
    \param r : coordinates (row) of the pixel
    \param c : coordinates (column) of the pixel
    */
-  template <class T> static double gaussianFilter(const vpImage<T> &fr, const unsigned int r, const unsigned int c)
+  template <class T> static double gaussianFilter(const vpImage<T> &fr, unsigned int r, unsigned int c)
   {
     // filter Gaussien
     return (15.0 * fr[r][c] + 12.0 * (fr[r - 1][c] + fr[r][c - 1] + fr[r + 1][c] + fr[r][c + 1]) +

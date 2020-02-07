@@ -83,7 +83,7 @@ vpMbDepthDenseTracker::~vpMbDepthDenseTracker()
 #endif
 }
 
-void vpMbDepthDenseTracker::addFace(vpMbtPolygon &polygon, const bool alreadyClose)
+void vpMbDepthDenseTracker::addFace(vpMbtPolygon &polygon, bool alreadyClose)
 {
   if (polygon.nbpt < 3) {
     return;
@@ -126,7 +126,7 @@ void vpMbDepthDenseTracker::addFace(vpMbtPolygon &polygon, const bool alreadyClo
   m_depthDenseFaces.push_back(normal_face);
 }
 
-void vpMbDepthDenseTracker::computeVisibility(const unsigned int width, const unsigned int height)
+void vpMbDepthDenseTracker::computeVisibility(unsigned int width, unsigned int height)
 {
   bool changed = false;
   faces.setVisible(width, height, m_cam, m_cMo, angleAppears, angleDisappears, changed);
@@ -283,8 +283,8 @@ void vpMbDepthDenseTracker::computeVVSWeights()
 }
 
 void vpMbDepthDenseTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                    const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                    const bool displayFullModel)
+                                    const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
+                                    bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbDepthDenseTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -298,8 +298,8 @@ void vpMbDepthDenseTracker::display(const vpImage<unsigned char> &I, const vpHom
 }
 
 void vpMbDepthDenseTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                    const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                    const bool displayFullModel)
+                                    const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
+                                    bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbDepthDenseTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -328,7 +328,7 @@ void vpMbDepthDenseTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneou
 std::vector<std::vector<double> > vpMbDepthDenseTracker::getModelForDisplay(unsigned int width, unsigned int height,
                                                                             const vpHomogeneousMatrix &cMo,
                                                                             const vpCameraParameters &cam,
-                                                                            const bool displayFullModel)
+                                                                            bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 
@@ -430,7 +430,7 @@ void vpMbDepthDenseTracker::loadConfigFile(const std::string &configFile)
 }
 
 void vpMbDepthDenseTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                        const vpHomogeneousMatrix &cMo, const bool verbose)
+                                        const vpHomogeneousMatrix &cMo, bool verbose)
 {
   m_cMo.eye();
 
@@ -448,7 +448,7 @@ void vpMbDepthDenseTracker::reInitModel(const vpImage<unsigned char> &I, const s
 #if defined(VISP_HAVE_PCL)
 void vpMbDepthDenseTracker::reInitModel(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
                                         const std::string &cad_name, const vpHomogeneousMatrix &cMo,
-                                        const bool verbose)
+                                        bool verbose)
 {
   vpImage<unsigned char> I_dummy(point_cloud->height, point_cloud->width);
   reInitModel(I_dummy, cad_name, cMo, verbose);
@@ -503,7 +503,7 @@ void vpMbDepthDenseTracker::setCameraParameters(const vpCameraParameters &cam)
   }
 }
 
-void vpMbDepthDenseTracker::setDepthDenseFilteringMaxDistance(const double maxDistance)
+void vpMbDepthDenseTracker::setDepthDenseFilteringMaxDistance(double maxDistance)
 {
   for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
        it != m_depthDenseFaces.end(); ++it) {
@@ -511,7 +511,7 @@ void vpMbDepthDenseTracker::setDepthDenseFilteringMaxDistance(const double maxDi
   }
 }
 
-void vpMbDepthDenseTracker::setDepthDenseFilteringMethod(const int method)
+void vpMbDepthDenseTracker::setDepthDenseFilteringMethod(int method)
 {
   for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
        it != m_depthDenseFaces.end(); ++it) {
@@ -519,7 +519,7 @@ void vpMbDepthDenseTracker::setDepthDenseFilteringMethod(const int method)
   }
 }
 
-void vpMbDepthDenseTracker::setDepthDenseFilteringMinDistance(const double minDistance)
+void vpMbDepthDenseTracker::setDepthDenseFilteringMinDistance(double minDistance)
 {
   for (std::vector<vpMbtFaceDepthDense *>::const_iterator it = m_depthDenseFaces.begin();
        it != m_depthDenseFaces.end(); ++it) {
@@ -527,7 +527,7 @@ void vpMbDepthDenseTracker::setDepthDenseFilteringMinDistance(const double minDi
   }
 }
 
-void vpMbDepthDenseTracker::setDepthDenseFilteringOccupancyRatio(const double occupancyRatio)
+void vpMbDepthDenseTracker::setDepthDenseFilteringOccupancyRatio(double occupancyRatio)
 {
   if (occupancyRatio < 0.0 || occupancyRatio > 1.0) {
     std::cerr << "occupancyRatio < 0.0 || occupancyRatio > 1.0" << std::endl;
@@ -598,8 +598,8 @@ void vpMbDepthDenseTracker::segmentPointCloud(const pcl::PointCloud<pcl::PointXY
 }
 #endif
 
-void vpMbDepthDenseTracker::segmentPointCloud(const std::vector<vpColVector> &point_cloud, const unsigned int width,
-                                              const unsigned int height)
+void vpMbDepthDenseTracker::segmentPointCloud(const std::vector<vpColVector> &point_cloud, unsigned int width,
+                                              unsigned int height)
 {
   m_depthDenseListOfActiveFaces.clear();
 
@@ -731,8 +731,8 @@ void vpMbDepthDenseTracker::track(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr
 }
 #endif
 
-void vpMbDepthDenseTracker::track(const std::vector<vpColVector> &point_cloud, const unsigned int width,
-                                  const unsigned int height)
+void vpMbDepthDenseTracker::track(const std::vector<vpColVector> &point_cloud, unsigned int width,
+                                  unsigned int height)
 {
   segmentPointCloud(point_cloud, width, height);
 

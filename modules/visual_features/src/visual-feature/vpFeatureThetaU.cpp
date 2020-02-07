@@ -276,7 +276,7 @@ void vpFeatureThetaU::setFeatureThetaURotationType(const vpFeatureThetaURotation
   \param tu_x : \f$\theta u_x \f$ subset value to initialize.
   \sa get_TUz()
 */
-void vpFeatureThetaU::set_TUx(const double tu_x)
+void vpFeatureThetaU::set_TUx(double tu_x)
 {
   s[0] = tu_x;
   flags[0] = true;
@@ -289,7 +289,7 @@ void vpFeatureThetaU::set_TUx(const double tu_x)
   \param tu_y : \f$\theta u_y \f$ subset value to initialize.
   \sa get_TUy()
 */
-void vpFeatureThetaU::set_TUy(const double tu_y)
+void vpFeatureThetaU::set_TUy(double tu_y)
 {
   s[1] = tu_y;
   flags[1] = true;
@@ -302,7 +302,7 @@ void vpFeatureThetaU::set_TUy(const double tu_y)
   \param tu_z : \f$\theta u_z \f$ subset value to initialize.
   \sa get_TUz()
 */
-void vpFeatureThetaU::set_TUz(const double tu_z)
+void vpFeatureThetaU::set_TUz(double tu_z)
 {
   s[2] = tu_z;
   flags[2] = true;
@@ -405,7 +405,7 @@ double vpFeatureThetaU::get_TUz() const { return s[2]; }
   line corresponds to the \f$ \theta u_z \f$ visual feature.
 
 */
-vpMatrix vpFeatureThetaU::interaction(const unsigned int select)
+vpMatrix vpFeatureThetaU::interaction(unsigned int select)
 {
 
   vpMatrix L;
@@ -564,7 +564,7 @@ vpMatrix vpFeatureThetaU::interaction(const unsigned int select)
   \endcode
 
 */
-vpColVector vpFeatureThetaU::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeatureThetaU::error(const vpBasicFeature &s_star, unsigned int select)
 {
 
   if (fabs(s_star.get_s().sumSquare()) > 1e-6) {
@@ -620,7 +620,7 @@ vpColVector vpFeatureThetaU::error(const vpBasicFeature &s_star, const unsigned 
   s.print(vpFeatureThetaU::selectTUz()); // print only the ThetaU_z component
   \endcode
 */
-void vpFeatureThetaU::print(const unsigned int select) const
+void vpFeatureThetaU::print(unsigned int select) const
 {
   std::cout << "ThetaU:";
   if (vpFeatureThetaU::selectTUx() & select) {

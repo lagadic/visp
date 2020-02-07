@@ -131,7 +131,6 @@ int main()
   part of the current image. The small following example shows how to this
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpKeyPointSurf.h>
@@ -200,19 +199,19 @@ public:
   virtual ~vpKeyPointSurf();
 
   unsigned int buildReference(const vpImage<unsigned char> &I);
-  unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                              const unsigned int width);
+  unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                              unsigned int width);
   unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
   unsigned int matchPoint(const vpImage<unsigned char> &I);
-  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                          const unsigned int width);
+  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                          unsigned int width);
   unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
   void display(const vpImage<unsigned char> &Iref, const vpImage<unsigned char> &Icurrent, unsigned int size = 3);
   void display(const vpImage<unsigned char> &Icurrent, unsigned int size = 3, const vpColor &color = vpColor::green);
   std::list<int *> *matchPoint(std::list<float *> descriptorList, std::list<int> laplacianList);
-  float *getDescriptorReferencePoint(const int index);
-  int getLaplacianReferencePoint(const int index);
-  void getDescriptorParamReferencePoint(const int index, int &size, float &dir);
+  float *getDescriptorReferencePoint(int index);
+  int getLaplacianReferencePoint(int index);
+  void getDescriptorParamReferencePoint(int index, int &size, float &dir);
   /*!
 
     Sets the value of the hessian threhold.  Note that during the

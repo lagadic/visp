@@ -76,12 +76,12 @@ public:
     \section Set coordinates
   */
   //! basic constructor
-  vpFeatureEllipse(const double x, const double y, const double mu20, const double mu11, const double mu02);
+  vpFeatureEllipse(double x, double y, double mu20, double mu11, double mu02);
 
   // void buildFrom(const vpEllipse &p) ;
-  void buildFrom(const double x, const double y, const double mu20, const double mu11, const double mu02);
-  void buildFrom(const double x, const double y, const double mu20, const double mu11, const double mu02,
-                 const double A, const double B, const double C);
+  void buildFrom(double x, double y, double mu20, double mu11, double mu02);
+  void buildFrom(double x, double y, double mu20, double mu11, double mu02,
+                 double A, double B, double C);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
@@ -92,9 +92,9 @@ public:
 
   //! compute the error between two visual features from a subset
   //! a the possible features
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
   //! compute the error between a visual features and zero
-  vpColVector error(const unsigned int select = FEATURE_ALL);
+  vpColVector error(unsigned int select = FEATURE_ALL);
 
   double get_x() const { return s[0]; }
   double get_y() const { return s[1]; }
@@ -105,16 +105,16 @@ public:
   //! Default initialization.
   void init();
   //! compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL);
 
   //! print the name of the feature
-  void print(const unsigned int select = FEATURE_ALL) const;
+  void print(unsigned int select = FEATURE_ALL) const;
 
-  void set_x(const double x);
-  void set_y(const double y);
-  void set_xy(const double x, const double y);
-  void setABC(const double A, const double B, const double C);
-  void setMu(const double mu20, const double mu11, const double mu02);
+  void set_x(double x);
+  void set_y(double y);
+  void set_xy(double x, double y);
+  void setABC(double A, double B, double C);
+  void setMu(double mu20, double mu11, double mu02);
 
 public:
   /*!

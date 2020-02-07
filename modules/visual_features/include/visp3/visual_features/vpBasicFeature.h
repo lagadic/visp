@@ -116,21 +116,21 @@ public:
 
   virtual void init() = 0;
 
-  virtual vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
+  virtual vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
 
   // Get the feature vector.
   vpColVector get_s(unsigned int select = FEATURE_ALL) const;
   vpBasicFeatureDeallocatorType getDeallocate() { return deallocate; }
 
   // Get the feature vector dimension.
-  unsigned int getDimension(const unsigned int select = FEATURE_ALL) const;
+  unsigned int getDimension(unsigned int select = FEATURE_ALL) const;
   //! Compute the interaction matrix from a subset of the possible features.
-  virtual vpMatrix interaction(const unsigned int select = FEATURE_ALL) = 0;
+  virtual vpMatrix interaction(unsigned int select = FEATURE_ALL) = 0;
   //! Return element \e i in the state vector  (usage : x = s[i] )
-  virtual inline double operator[](const unsigned int i) const { return s[i]; }
+  virtual inline double operator[](unsigned int i) const { return s[i]; }
   vpBasicFeature &operator=(const vpBasicFeature &f);
   //! Print the name of the feature.
-  virtual void print(const unsigned int select = FEATURE_ALL) const = 0;
+  virtual void print(unsigned int select = FEATURE_ALL) const = 0;
 
   virtual vpBasicFeature *duplicate() const = 0;
 

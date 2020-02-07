@@ -69,7 +69,6 @@ instructions are provided here https://visp.inria.fr/3rd_freenect.
   (depth map and color image) from a Kinect.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vpKinect.h>
 

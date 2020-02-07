@@ -140,7 +140,7 @@ void vpMbtFaceDepthDense::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpMb
 #ifdef VISP_HAVE_PCL
 bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
                                                  const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
-                                                 const unsigned int stepX, const unsigned int stepY
+                                                 unsigned int stepX, unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_DENSE
                                                  ,
                                                  vpImage<unsigned char> &debugImage,
@@ -266,9 +266,9 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
 }
 #endif
 
-bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, const unsigned int width,
-                                                 const unsigned int height, const std::vector<vpColVector> &point_cloud,
-                                                 const unsigned int stepX, const unsigned int stepY
+bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width,
+                                                 unsigned int height, const std::vector<vpColVector> &point_cloud,
+                                                 unsigned int stepX, unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_DENSE
                                                  ,
                                                  vpImage<unsigned char> &debugImage,
@@ -575,8 +575,8 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
   }
 }
 
-void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, const unsigned int width,
-                                     const unsigned int height, std::vector<vpImagePoint> &roiPts
+void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, unsigned int width,
+                                     unsigned int height, std::vector<vpImagePoint> &roiPts
 #if DEBUG_DISPLAY_DEPTH_DENSE
                                      ,
                                      std::vector<std::vector<vpImagePoint> > &roiPts_vec
@@ -683,8 +683,8 @@ void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, const unsig
 }
 
 void vpMbtFaceDepthDense::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                  const bool displayFullModel)
+                                  const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
+                                  bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -696,8 +696,8 @@ void vpMbtFaceDepthDense::display(const vpImage<unsigned char> &I, const vpHomog
 }
 
 void vpMbtFaceDepthDense::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                  const bool displayFullModel)
+                                  const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
+                                  bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -734,7 +734,7 @@ void vpMbtFaceDepthDense::displayFeature(const vpImage<vpRGBa> & /*I*/, const vp
 std::vector<std::vector<double> > vpMbtFaceDepthDense::getModelForDisplay(unsigned int width, unsigned int height,
                                                                           const vpHomogeneousMatrix &cMo,
                                                                           const vpCameraParameters &cam,
-                                                                          const bool displayFullModel)
+                                                                          bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 
@@ -784,7 +784,7 @@ void vpMbtFaceDepthDense::setCameraParameters(const vpCameraParameters &camera)
   }
 }
 
-void vpMbtFaceDepthDense::setScanLineVisibilityTest(const bool v)
+void vpMbtFaceDepthDense::setScanLineVisibilityTest(bool v)
 {
   m_useScanLine = v;
 

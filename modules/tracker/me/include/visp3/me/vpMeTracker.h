@@ -106,7 +106,7 @@ public:
 
   vpMeTracker &operator=(vpMeTracker &f);
 
-  static bool inMask(const vpImage<bool> *mask, const unsigned int i, const unsigned int j);
+  static bool inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j);
 
   int outOfImage(int i, int j, int half, int row, int cols);
   int outOfImage(const vpImagePoint &iP, int half, int rows, int cols);
@@ -114,7 +114,7 @@ public:
   void reset();
 
   //! Sample pixels at a given interval
-  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false) = 0;
+  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack=false) = 0;
 
   /*!
     Set the initial range.

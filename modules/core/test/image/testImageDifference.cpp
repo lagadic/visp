@@ -89,7 +89,7 @@ void regularImageDifference(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2
 
 int main()
 {
-  const unsigned int width = 501, height = 447;
+  unsigned int width = 501, height = 447;
   vpImage<unsigned char> I1(height,width), I2(height,width), Idiff_regular(height,width), Idiff_sse(height,width);
   vpImage<vpRGBa> I1_color(height, width), I2_color(height, width), Idiff_regular_color(height, width), Idiff_sse_color(height, width);
   for (unsigned int i = 0; i < I1.getRows(); i++) {

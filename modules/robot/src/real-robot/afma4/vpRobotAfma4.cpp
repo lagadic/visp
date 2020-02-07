@@ -669,7 +669,7 @@ void vpRobotAfma4::get_fJe(vpMatrix &fJe)
 
   \sa getPositioningVelocity()
 */
-void vpRobotAfma4::setPositioningVelocity(const double velocity) { positioningVelocity = velocity; }
+void vpRobotAfma4::setPositioningVelocity(double velocity) { positioningVelocity = velocity; }
 
 /*!
   Get the maximal velocity percentage used for a position control.

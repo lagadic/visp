@@ -87,9 +87,9 @@ public:
 
   void setImg(const vpImage<vpRGBa> &I);
   void setImg(const vpImage<unsigned char> &I);
-  void setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width, const unsigned int height);
-  void setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width,
-                 const unsigned int height);
+  void setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
+  void setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
+                 unsigned int height);
 
   void setPixel(const vpImagePoint &iP, const vpColor &color);
 
@@ -126,12 +126,12 @@ private:
   void convert(const vpImage<unsigned char> &I, HBITMAP &hBmp);
 
   // converts a vpImage<vpRGBa> into a HBITMAP .
-  void convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width,
-                  const unsigned int height);
+  void convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
+                  unsigned int height);
 
   // converst a vpImage<unsigned char> into a HBITMAP .
-  void convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width,
-                  const unsigned int height);
+  void convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
+                  unsigned int height);
 };
 #endif
 #endif

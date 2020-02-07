@@ -150,8 +150,8 @@ void vpGDIRenderer::setImg(const vpImage<vpRGBa> &I)
   \param iP : Top left coordinates of the ROI.
   \param width, height : ROI width and height.
 */
-void vpGDIRenderer::setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width,
-                              const unsigned int height)
+void vpGDIRenderer::setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
+                              unsigned int height)
 {
   // converts the image into a HBITMAP
   convertROI(I, iP, width, height);
@@ -173,8 +173,8 @@ void vpGDIRenderer::setImg(const vpImage<unsigned char> &I)
   \param iP : Top left coordinates of the ROI.
   \param width, height : ROI width and height.
 */
-void vpGDIRenderer::setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width,
-                              const unsigned int height)
+void vpGDIRenderer::setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
+                              unsigned int height)
 {
   // converts the image into a HBITMAP
   convertROI(I, iP, width, height);
@@ -253,8 +253,8 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP &hBmp)
   \param iP : Top left coordinates of the ROI.
   \param width, height : ROI width and height.
 */
-void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width,
-                               const unsigned int height)
+void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
+                               unsigned int height)
 {
   int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
   int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
@@ -352,8 +352,8 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP &hBmp)
   \param iP : Top left coordinates of the ROI.
   \param width, height : ROI width and height.
 */
-void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width,
-                               const unsigned int height)
+void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
+                               unsigned int height)
 {
   int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
   int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);

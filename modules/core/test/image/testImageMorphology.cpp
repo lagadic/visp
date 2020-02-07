@@ -286,7 +286,7 @@ void generalDilatation(vpImage<unsigned char> &I,
 }
 
 // Generate a magic square matrix to get a consistent grayscale image
-void magicSquare(vpImage<unsigned char> &magic_square, const int N)
+void magicSquare(vpImage<unsigned char> &magic_square, int N)
 {
   magic_square.resize((unsigned int)N, (unsigned int)N, 0);
 

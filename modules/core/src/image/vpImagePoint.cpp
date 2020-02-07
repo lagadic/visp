@@ -118,7 +118,7 @@ int main()
   \endcode
 
 */
-vpImagePoint &vpImagePoint::operator/=(const double scale)
+vpImagePoint &vpImagePoint::operator/=(double scale)
 {
   this->i /= scale;
   this->j /= scale;
@@ -207,7 +207,7 @@ int main()
 }
   \endcode
 */
-VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const int offset)
+VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, int offset)
 {
   return (vpImagePoint(ip1.get_i() + offset, ip1.get_j() + offset));
 }
@@ -232,7 +232,7 @@ int main()
 }
   \endcode
 */
-VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const unsigned int offset)
+VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, unsigned int offset)
 {
   return (vpImagePoint(ip1.get_i() + offset, ip1.get_j() + offset));
 }
@@ -257,7 +257,7 @@ int main()
 }
   \endcode
 */
-VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const double offset)
+VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, double offset)
 {
   return (vpImagePoint(ip1.get_i() + offset, ip1.get_j() + offset));
 }
@@ -294,7 +294,7 @@ int main()
 }
   \endcode
 */
-VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const int offset)
+VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, int offset)
 {
   return (vpImagePoint(ip1.get_i() - offset, ip1.get_j() - offset));
 }
@@ -318,7 +318,7 @@ int main()
 }
   \endcode
 */
-VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const unsigned int offset)
+VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, unsigned int offset)
 {
   return (vpImagePoint(ip1.get_i() - offset, ip1.get_j() - offset));
 }
@@ -343,7 +343,7 @@ int main()
 }
   \endcode
 */
-VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const double offset)
+VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, double offset)
 {
   return (vpImagePoint(ip1.get_i() - offset, ip1.get_j() - offset));
 }
@@ -367,7 +367,7 @@ int main()
 }
   \endcode
 */
-VISP_EXPORT vpImagePoint operator*(const vpImagePoint &ip1, const double scale)
+VISP_EXPORT vpImagePoint operator*(const vpImagePoint &ip1, double scale)
 {
   return (vpImagePoint(ip1.get_i() * scale, ip1.get_j() * scale));
 }
@@ -391,7 +391,7 @@ int main()
 }
   \endcode
 */
-VISP_EXPORT vpImagePoint operator/(const vpImagePoint &ip1, const double scale)
+VISP_EXPORT vpImagePoint operator/(const vpImagePoint &ip1, double scale)
 {
   return (vpImagePoint(ip1.get_i() / scale, ip1.get_j() / scale));
 }

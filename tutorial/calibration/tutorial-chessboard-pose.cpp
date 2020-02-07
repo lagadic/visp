@@ -22,7 +22,7 @@
 #include <visp3/vision/vpPose.h>
 
 namespace {
-void calcChessboardCorners(const int width, const int height, const double squareSize, std::vector<vpPoint> &corners) {
+void calcChessboardCorners(int width, int height, double squareSize, std::vector<vpPoint> &corners) {
   corners.resize(0);
 
   for (int i = 0; i < height; i++) {

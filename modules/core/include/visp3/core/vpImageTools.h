@@ -87,7 +87,7 @@ public:
 
   template <class Type>
   static inline void binarise(vpImage<Type> &I, Type threshold1, Type threshold2, Type value1, Type value2, Type value3,
-                              const bool useLUT = true);
+                              bool useLUT = true);
   static void changeLUT(vpImage<unsigned char> &I, unsigned char A, unsigned char newA, unsigned char B,
                         unsigned char newB);
 
@@ -124,10 +124,10 @@ public:
   static void imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2, vpImage<vpRGBa> &Idiff);
 
   static void imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, vpImage<unsigned char> &Ires,
-                       const bool saturate = false);
+                       bool saturate = false);
 
   static void imageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                            vpImage<unsigned char> &Ires, const bool saturate = false);
+                            vpImage<unsigned char> &Ires, bool saturate = false);
 
   static void initUndistortMap(const vpCameraParameters &cam, unsigned int width, unsigned int height,
                                vpArray2D<int> &mapU, vpArray2D<int> &mapV,
@@ -139,7 +139,7 @@ public:
   static void integralImage(const vpImage<unsigned char> &I, vpImage<double> &II, vpImage<double> &IIsq);
 
   static double normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
-                                      const bool useOptimized = true);
+                                      bool useOptimized = true);
 
   static void normalize(vpImage<double> &I);
 
@@ -149,7 +149,7 @@ public:
                     const vpArray2D<float> &mapDu, const vpArray2D<float> &mapDv, vpImage<vpRGBa> &Iundist);
 
   template <class Type>
-  static void resize(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int width, const unsigned int height,
+  static void resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int width, unsigned int height,
                      const vpImageInterpolationType &method = INTERPOLATION_NEAREST, unsigned int nThreads=0);
 
   template <class Type>
@@ -157,8 +157,8 @@ public:
                      const vpImageInterpolationType &method = INTERPOLATION_NEAREST, unsigned int nThreads=0);
 
   static void templateMatching(const vpImage<unsigned char> &I, const vpImage<unsigned char> &I_tpl,
-                               vpImage<double> &I_score, const unsigned int step_u, const unsigned int step_v,
-                               const bool useOptimized = true);
+                               vpImage<double> &I_score, unsigned int step_u, unsigned int step_v,
+                               bool useOptimized = true);
 
   template <class Type>
   static void undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &newI,
@@ -187,7 +187,7 @@ private:
   // Cubic interpolation
   static float cubicHermite(const float A, const float B, const float C, const float D, const float t);
 
-  template <class Type> static Type getPixelClamped(const vpImage<Type> &I, const float u, const float v);
+  template <class Type> static Type getPixelClamped(const vpImage<Type> &I, float u, float v);
 
   static int coordCast(double x);
 
@@ -198,19 +198,19 @@ private:
 
   static double normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2, const vpImage<double> &II,
                                       const vpImage<double> &IIsq, const vpImage<double> &II_tpl,
-                                      const vpImage<double> &IIsq_tpl, const unsigned int i0, const unsigned int j0);
+                                      const vpImage<double> &IIsq_tpl, unsigned int i0, unsigned int j0);
 
   template <class Type>
-  static void resizeBicubic(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int i, const unsigned int j,
-                            const float u, const float v, const float xFrac, const float yFrac);
+  static void resizeBicubic(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i, unsigned int j,
+                            float u, float v, float xFrac, float yFrac);
 
   template <class Type>
-  static void resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int i, const unsigned int j,
-                             const float u, const float v, const float xFrac, const float yFrac);
+  static void resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i, unsigned int j,
+                             float u, float v, float xFrac, float yFrac);
 
   template <class Type>
-  static void resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int i, const unsigned int j,
-                            const float u, const float v);
+  static void resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i, unsigned int j,
+                            float u, float v);
 
   template <class Type>
   static void warpNN(const vpImage<Type> &src, const vpMatrix &T, vpImage<Type> &dst, bool affine, bool centerCorner, bool fixedPoint);
@@ -450,7 +450,7 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
 */
 template <class Type>
 inline void vpImageTools::binarise(vpImage<Type> &I, Type threshold1, Type threshold2, Type value1, Type value2,
-                                   Type value3, const bool useLUT)
+                                   Type value3, bool useLUT)
 {
   if (useLUT) {
     std::cerr << "LUT not available for this type ! Will use the iteration method." << std::endl;
@@ -482,7 +482,7 @@ inline void vpImageTools::binarise(vpImage<Type> &I, Type threshold1, Type thres
 */
 template <>
 inline void vpImageTools::binarise(vpImage<unsigned char> &I, unsigned char threshold1, unsigned char threshold2,
-                                   unsigned char value1, unsigned char value2, unsigned char value3, const bool useLUT)
+                                   unsigned char value1, unsigned char value2, unsigned char value3, bool useLUT)
 {
   if (useLUT) {
     // Construct the LUT
@@ -865,7 +865,7 @@ template <class Type> void vpImageTools::flip(vpImage<Type> &I)
   }
 }
 
-template <class Type> Type vpImageTools::getPixelClamped(const vpImage<Type> &I, const float u, const float v)
+template <class Type> Type vpImageTools::getPixelClamped(const vpImage<Type> &I, float u, float v)
 {
   unsigned int i, j;
   if (u < 0.f)
@@ -888,9 +888,8 @@ template <class Type> Type vpImageTools::getPixelClamped(const vpImage<Type> &I,
 // Reference:
 // http://blog.demofox.org/2015/08/15/resizing-images-with-bicubic-interpolation/
 template <class Type>
-void vpImageTools::resizeBicubic(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int i,
-                                 const unsigned int j, const float u, const float v, const float xFrac,
-                                 const float yFrac)
+void vpImageTools::resizeBicubic(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i,
+                                 unsigned int j, float u, float v, float xFrac, float yFrac)
 {
   // 1st row
   Type p00 = getPixelClamped(I, u - 1, v - 1);
@@ -925,9 +924,8 @@ void vpImageTools::resizeBicubic(const vpImage<Type> &I, vpImage<Type> &Ires, co
 }
 
 template <>
-inline void vpImageTools::resizeBicubic(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, const unsigned int i,
-                                        const unsigned int j, const float u, const float v, const float xFrac,
-                                        const float yFrac)
+inline void vpImageTools::resizeBicubic(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, unsigned int i,
+                                        unsigned int j, float u, float v, float xFrac, float yFrac)
 {
   // 1st row
   vpRGBa p00 = getPixelClamped(I, u - 1, v - 1);
@@ -977,9 +975,8 @@ inline void vpImageTools::resizeBicubic(const vpImage<vpRGBa> &I, vpImage<vpRGBa
 }
 
 template <class Type>
-void vpImageTools::resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int i,
-                                  const unsigned int j, const float u, const float v, const float xFrac,
-                                  const float yFrac)
+void vpImageTools::resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i,
+                                  unsigned int j, float u, float v, float xFrac, float yFrac)
 {
   unsigned int u0 = static_cast<unsigned int>(u);
   unsigned int v0 = static_cast<unsigned int>(v);
@@ -1001,9 +998,8 @@ void vpImageTools::resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, c
 }
 
 template <>
-inline void vpImageTools::resizeBilinear(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, const unsigned int i,
-                                         const unsigned int j, const float u, const float v, const float xFrac,
-                                         const float yFrac)
+inline void vpImageTools::resizeBilinear(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, unsigned int i,
+                                         unsigned int j, float u, float v, float xFrac, float yFrac)
 {
   unsigned int u0 = static_cast<unsigned int>(u);
   unsigned int v0 = static_cast<unsigned int>(v);
@@ -1029,8 +1025,8 @@ inline void vpImageTools::resizeBilinear(const vpImage<vpRGBa> &I, vpImage<vpRGB
 }
 
 template <class Type>
-void vpImageTools::resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int i,
-                                 const unsigned int j, const float u, const float v)
+void vpImageTools::resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i,
+                                 unsigned int j, float u, float v)
 {
   Ires[i][j] = getPixelClamped(I, u, v);
 }
@@ -1049,8 +1045,8 @@ void vpImageTools::resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires, co
   \warning The input \e I and output \e Ires images must be different.
 */
 template <class Type>
-void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int width,
-                          const unsigned int height, const vpImageInterpolationType &method,
+void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int width,
+                          unsigned int height, const vpImageInterpolationType &method,
                           unsigned int nThreads)
 {
   Ires.resize(height, width);

@@ -86,7 +86,7 @@ public:
   //! Destructor.
   virtual ~vpFeatureVanishingPoint() {}
 
-  void buildFrom(const double x, const double y);
+  void buildFrom(double x, double y);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
@@ -95,7 +95,7 @@ public:
 
   vpFeatureVanishingPoint *duplicate() const;
 
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = (selectX() | selectY()));
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = (selectX() | selectY()));
 
   double get_x() const;
   double get_y() const;
@@ -104,16 +104,16 @@ public:
   double getAlpha() const;
 
   void init();
-  vpMatrix interaction(const unsigned int select = (selectX() | selectY()));
+  vpMatrix interaction(unsigned int select = (selectX() | selectY()));
 
-  void print(const unsigned int select = (selectX() | selectY())) const;
+  void print(unsigned int select = (selectX() | selectY())) const;
 
-  void set_x(const double x);
-  void set_y(const double y);
-  void set_xy(const double x, const double y);
-  void setAtanOneOverRho(const double atan_one_over_rho);
-  void setOneOverRho(const double one_over_rho);
-  void setAlpha(const double alpha);
+  void set_x(double x);
+  void set_y(double y);
+  void set_xy(double x, double y);
+  void setAtanOneOverRho(double atan_one_over_rho);
+  void setOneOverRho(double one_over_rho);
+  void setAlpha(double alpha);
 
 protected:
   unsigned int m_select; // Memory to know which features are used for display;

@@ -66,7 +66,13 @@
 #define _vpUniRand_h_
 
 #include <visp3/core/vpConfig.h>
-#include <inttypes.h>
+// Visual Studio 2010 or previous is missing inttypes.h
+#if defined(_MSC_VER) && (_MSC_VER < 1700)
+typedef unsigned __int64 uint64_t;
+typedef unsigned __int32 uint32_t;
+#else
+#  include <inttypes.h>
+#endif
 
 /*!
   \class vpUniRand

@@ -234,7 +234,7 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, int i1, int j1, 
   \param thickness : Dashed line thickness.
 */
 void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
-                               const bool closeTheShape, const vpColor &color, unsigned int thickness)
+                               bool closeTheShape, const vpColor &color, unsigned int thickness)
 {
   if (ips.size() <= 1)
     return;
@@ -479,7 +479,7 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1, int
   points. \param color : Line color. \param thickness : Line thickness.
 */
 void vpDisplay::displayLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
-                            const bool closeTheShape, const vpColor &color, unsigned int thickness)
+                            bool closeTheShape, const vpColor &color, unsigned int thickness)
 {
   if (ips.size() <= 1)
     return;

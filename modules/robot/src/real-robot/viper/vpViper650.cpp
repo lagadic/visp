@@ -492,7 +492,6 @@ file.
   attached to the robot.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper650.h>
 #include <visp3/robot/vpViper650.h>
@@ -693,7 +692,6 @@ file.
   \param I : A B&W image send by the current camera in use.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper650.h>
 #include <visp3/robot/vpViper650.h>
@@ -760,7 +758,6 @@ file.
   \param I : A color image send by the current camera in use.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper650.h>
 #include <visp3/robot/vpViper650.h>

@@ -244,7 +244,7 @@ public:
 
   void setRotation(const std::string &sceneName, const vpRotationMatrix &wRo);
 
-  void setScale(const std::string &sceneName, const float factorx, const float factory, const float factorz);
+  void setScale(const std::string &sceneName, float factorx, float factory, float factorz);
 
   /*!
     Enable/Disable the appearance of the config dialog on startup.
@@ -255,7 +255,7 @@ public:
     \param showConfigDialog : if true, shows the dialog window (used to set
     the display options)
   */
-  inline void setShowConfigDialog(const bool showConfigDialog) { mshowConfigDialog = showConfigDialog; }
+  inline void setShowConfigDialog(bool showConfigDialog) { mshowConfigDialog = showConfigDialog; }
 
   void setVisibility(const std::string &sceneName, bool isVisible);
 
@@ -278,7 +278,7 @@ public:
     the screen. \param win_y : y coordinate of the new top left corner of the
     window in the screen.
   */
-  inline void setWindowPosition(const unsigned int win_x, const unsigned int win_y)
+  inline void setWindowPosition(unsigned int win_x, unsigned int win_y)
   {
     if (mWindow == NULL) {
       throw vpException(vpException::notInitialized, "Window not initialised, cannot set its position");

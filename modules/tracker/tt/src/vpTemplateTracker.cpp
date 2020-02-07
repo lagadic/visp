@@ -338,7 +338,7 @@ int main()
 }
   \endcode
  */
-void vpTemplateTracker::display(const vpImage<unsigned char> &I, const vpColor &col, const unsigned int thickness)
+void vpTemplateTracker::display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness)
 {
   if (I.display) { // Only if a display is associated to the image
     vpTemplateTrackerZone zoneWarped;
@@ -380,7 +380,7 @@ int main()
 }
   \endcode
  */
-void vpTemplateTracker::display(const vpImage<vpRGBa> &I, const vpColor &col, const unsigned int thickness)
+void vpTemplateTracker::display(const vpImage<vpRGBa> &I, const vpColor &col, unsigned int thickness)
 {
   if (I.display) { // Only if a display is associated to the image
     vpTemplateTrackerZone zoneWarped;

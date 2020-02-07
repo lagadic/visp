@@ -101,8 +101,7 @@ int main()
 
 #ifdef VISP_HAVE_PUGIXML
   vpXmlParserCamera p; // Create a XML parser
-  vpCameraParameters::vpCameraParametersProjType projModel; // Projection
-model
+  vpCameraParameters::vpCameraParametersProjType projModel; // Projection model
   // Use a perspective projection model without distortion
   projModel = vpCameraParameters::perspectiveProjWithoutDistortion;
   // Parse the xml file "myXmlFile.xml" to find the intrinsic camera
@@ -186,18 +185,18 @@ public:
   unsigned int getWidth() const;
 
   int parse(vpCameraParameters &cam, const std::string &filename, const std::string &camera_name,
-            const vpCameraParameters::vpCameraParametersProjType &projModel, const unsigned int image_width = 0,
-            const unsigned int image_height = 0);
+            const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int image_width = 0,
+            unsigned int image_height = 0);
 
   int save(const vpCameraParameters &cam, const std::string &filename, const std::string &camera_name,
-           const unsigned int image_width = 0, const unsigned int image_height = 0,
+           unsigned int image_width = 0, unsigned int image_height = 0,
            const std::string &additionalInfo = "");
 
   void setCameraName(const std::string &name);
-  void setHeight(const unsigned int height);
-  void setSubsampling_width(const unsigned int subsampling);
-  void setSubsampling_height(const unsigned int subsampling);
-  void setWidth(const unsigned int width);
+  void setHeight(unsigned int height);
+  void setSubsampling_width(unsigned int subsampling);
+  void setSubsampling_height(unsigned int subsampling);
+  void setWidth(unsigned int width);
 
 private:
   vpXmlParserCamera(const vpXmlParserCamera &);            // noncopyable

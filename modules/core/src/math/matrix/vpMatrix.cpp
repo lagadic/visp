@@ -4044,7 +4044,7 @@ column vector:
 13
   \endcode
  */
-vpColVector vpMatrix::getCol(const unsigned int j, const unsigned int i_begin, const unsigned int column_size) const
+vpColVector vpMatrix::getCol(unsigned int j, unsigned int i_begin, unsigned int column_size) const
 {
   if (i_begin + column_size > getRows() || j >= getCols())
     throw(vpException(vpException::dimensionError, "Unable to extract column %u from the %ux%u matrix", j, getRows(), getCols()));
@@ -4093,7 +4093,7 @@ column vector:
 13
   \endcode
  */
-vpColVector vpMatrix::getCol(const unsigned int j) const
+vpColVector vpMatrix::getCol(unsigned int j) const
 {
   return getCol(j, 0, rowNum);
 }
@@ -4133,7 +4133,7 @@ Row vector:
 4  5  6  7
   \endcode
  */
-vpRowVector vpMatrix::getRow(const unsigned int i) const
+vpRowVector vpMatrix::getRow(unsigned int i) const
 {
   return getRow(i, 0, colNum);
 }
@@ -4177,7 +4177,7 @@ Row vector:
 5  6  7
   \endcode
  */
-vpRowVector vpMatrix::getRow(const unsigned int i, const unsigned int j_begin, const unsigned int row_size) const
+vpRowVector vpMatrix::getRow(unsigned int i, unsigned int j_begin, unsigned int row_size) const
 {
   if (j_begin + row_size > colNum || i >= rowNum)
     throw(vpException(vpException::dimensionError, "Unable to extract a row vector from the matrix"));
@@ -4396,7 +4396,7 @@ void vpMatrix::stack(const vpMatrix &A, const vpColVector &c, vpMatrix &C)
   \warning Throw exception if the sizes of the matrices do not allow the
   insertion.
 */
-vpMatrix vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, const unsigned int r, const unsigned int c)
+vpMatrix vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, unsigned int r, unsigned int c)
 {
   vpMatrix C;
 
@@ -4418,7 +4418,7 @@ vpMatrix vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, const unsigned i
   \warning Throw exception if the sizes of the matrices do not
   allow the insertion.
 */
-void vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C, const unsigned int r, const unsigned int c)
+void vpMatrix::insert(const vpMatrix &A, const vpMatrix &B, vpMatrix &C, unsigned int r, unsigned int c)
 {
   if (((r + B.getRows()) <= A.getRows()) && ((c + B.getCols()) <= A.getCols())) {
     C.resize(A.getRows(), A.getCols(), false, false);
@@ -4906,7 +4906,7 @@ void vpMatrix::stack(const vpColVector &c)
   \param r : The index of the row to begin to insert data.
   \param c : The index of the column to begin to insert data.
 */
-void vpMatrix::insert(const vpMatrix &A, const unsigned int r, const unsigned int c)
+void vpMatrix::insert(const vpMatrix &A, unsigned int r, unsigned int c)
 {
   if ((r + A.getRows()) <= rowNum && (c + A.getCols()) <= colNum) {
     if (A.colNum == colNum && data != NULL && A.data != NULL && A.data != data) {
@@ -5703,7 +5703,7 @@ void vpMatrix::stackMatrices(const vpMatrix &A, const vpRowVector &B, vpMatrix &
   \param i : Index of the row to extract noting that row index start at 1 to get the first row.
 
 */
-vpRowVector vpMatrix::row(const unsigned int i)
+vpRowVector vpMatrix::row(unsigned int i)
 {
   vpRowVector c(getCols());
 
@@ -5729,7 +5729,7 @@ vpRowVector vpMatrix::row(const unsigned int i)
   This function returns the j-th columns of the matrix.
   \param j : Index of the column to extract noting that column index start at 1 to get the first column.
 */
-vpColVector vpMatrix::column(const unsigned int j)
+vpColVector vpMatrix::column(unsigned int j)
 {
   vpColVector c(getRows());
 

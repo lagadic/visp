@@ -79,10 +79,10 @@ class vpRect;
 
   \warning <B>An instance of the vpImagePoint class corresponds to a
   particular point. Thus, if you change the point coordinate using the
-  method set_i(const double i), it produces the same effect than if
-  you used the method set_v(const double v). These two methods change
+  method set_i(double i), it produces the same effect than if
+  you used the method set_v(double v). These two methods change
   the same private attribute. It is also true for the two methods
-  set_j(const double j) and set_u(const double u).</B>
+  set_j(double j) and set_u(double u).</B>
 */
 
 class VISP_EXPORT vpImagePoint
@@ -143,12 +143,12 @@ public:
     this->j -= ip.j;
     return *this;
   }
-  vpImagePoint &operator/=(const double scale);
+  vpImagePoint &operator/=(double scale);
   /*!
 
     Operator *=.
-*/
-  inline vpImagePoint &operator*=(const double scale)
+  */
+  inline vpImagePoint &operator*=(double scale)
   {
     this->i *= scale;
     this->j *= scale;
@@ -164,7 +164,7 @@ public:
 
     \sa set_j(), set_u(), set_v()
   */
-  inline void set_i(const double ii) { this->i = ii; }
+  inline void set_i(double ii) { this->i = ii; }
 
   /*!
 
@@ -175,7 +175,7 @@ public:
 
     \sa set_i(), set_u(), set_v()
   */
-  inline void set_j(const double jj) { this->j = jj; }
+  inline void set_j(double jj) { this->j = jj; }
 
   /*!
 
@@ -186,7 +186,7 @@ public:
 
     \sa set_i(), set_j(), set_u(), set_v()
   */
-  inline void set_ij(const double ii, const double jj)
+  inline void set_ij(double ii, double jj)
   {
     this->i = ii;
     this->j = jj;
@@ -223,7 +223,7 @@ public:
 
     \sa set_i(), set_j(), set_v()
   */
-  inline void set_u(const double u) { j = u; }
+  inline void set_u(double u) { j = u; }
 
   /*!
 
@@ -234,7 +234,7 @@ public:
 
     \sa set_i(), set_j(), set_u()
   */
-  inline void set_v(const double v) { i = v; }
+  inline void set_v(double v) { i = v; }
 
   /*!
 
@@ -245,7 +245,7 @@ public:
 
     \sa set_i(), set_j(), set_u(), set_v()
   */
-  inline void set_uv(const double u, const double v)
+  inline void set_uv(double u, double v)
   {
     this->i = v;
     this->j = u;
@@ -309,15 +309,15 @@ public:
   friend VISP_EXPORT bool operator!=(const vpImagePoint &ip1, const vpImagePoint &ip2);
   friend VISP_EXPORT vpImagePoint operator+=(const vpImagePoint &ip1, const vpImagePoint &ip2);
   friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const vpImagePoint &ip2);
-  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const int offset);
-  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const unsigned int offset);
-  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, const double offset);
+  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, int offset);
+  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, unsigned int offset);
+  friend VISP_EXPORT vpImagePoint operator+(const vpImagePoint &ip1, double offset);
   friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const vpImagePoint &ip2);
-  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const int offset);
-  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const unsigned int offset);
-  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const double offset);
-  friend VISP_EXPORT vpImagePoint operator*(const vpImagePoint &ip1, const double scale);
-  friend VISP_EXPORT vpImagePoint operator/(const vpImagePoint &ip1, const double scale);
+  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, int offset);
+  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, unsigned int offset);
+  friend VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, double offset);
+  friend VISP_EXPORT vpImagePoint operator*(const vpImagePoint &ip1, double scale);
+  friend VISP_EXPORT vpImagePoint operator/(const vpImagePoint &ip1, double scale);
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpImagePoint &ip);
 
 private:

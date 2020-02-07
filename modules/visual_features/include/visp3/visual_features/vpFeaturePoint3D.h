@@ -222,7 +222,7 @@ public:
   // build feature from a point (vpPoint)
   void buildFrom(const vpPoint &p);
   // set the point XY and Z-coordinates
-  void buildFrom(const double X, const double Y, const double Z);
+  void buildFrom(double X, double Y, double Z);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
@@ -234,7 +234,7 @@ public:
 
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
 
   // get the point X-coordinates
   double get_X() const;
@@ -246,19 +246,19 @@ public:
   // basic construction
   void init();
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL);
 
   // print the name of the feature
-  void print(const unsigned int select = FEATURE_ALL) const;
+  void print(unsigned int select = FEATURE_ALL) const;
 
   // set the point X-coordinates
-  void set_X(const double X);
+  void set_X(double X);
   // set the point Y-coordinates
-  void set_Y(const double Y);
+  void set_Y(double Y);
   // set the point depth (camera frame)
-  void set_Z(const double Z);
+  void set_Z(double Z);
   // set the point XY and Z-coordinates
-  void set_XYZ(const double X, const double Y, const double Z);
+  void set_XYZ(double X, double Y, double Z);
 
   static unsigned int selectX();
   static unsigned int selectY();

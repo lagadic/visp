@@ -52,7 +52,7 @@ vpRectOriented::vpRectOriented()
  * @param height The rectangle height.
  * @param theta The rectangle orientation (rad).
  */
-vpRectOriented::vpRectOriented(const vpImagePoint &center, const double width, const double height, const double theta)
+vpRectOriented::vpRectOriented(const vpImagePoint &center, double width, double height, double theta)
 {
   m_center = center;
   m_width = width;

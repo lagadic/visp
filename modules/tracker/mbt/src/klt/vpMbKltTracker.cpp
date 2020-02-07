@@ -1086,8 +1086,8 @@ void vpMbKltTracker::loadConfigFile(const std::string &configFile)
   displayed, even the faces that are visible.
 */
 void vpMbKltTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                             const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                             const bool displayFullModel)
+                             const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
+                             bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -1138,8 +1138,8 @@ void vpMbKltTracker::display(const vpImage<unsigned char> &I, const vpHomogeneou
   displayed, even the faces that are not visible.
 */
 void vpMbKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                             const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                             const bool displayFullModel)
+                             const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
+                             bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -1220,7 +1220,7 @@ std::vector<std::vector<double> > vpMbKltTracker::getFeaturesForDisplayKlt()
 std::vector<std::vector<double> > vpMbKltTracker::getModelForDisplay(unsigned int width, unsigned int height,
                                                                      const vpHomogeneousMatrix &cMo,
                                                                      const vpCameraParameters &cam,
-                                                                     const bool displayFullModel)
+                                                                     bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 
@@ -1310,7 +1310,7 @@ void vpMbKltTracker::testTracking()
   \param idFace : Identifier of the polygon representing the revolution axis
   of the cylinder. \param name : The optional name of the cylinder.
 */
-void vpMbKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace,
+void vpMbKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace,
                                   const std::string & /*name*/)
 {
   vpMbtDistanceKltCylinder *kltPoly = new vpMbtDistanceKltCylinder();
@@ -1340,8 +1340,8 @@ void vpMbKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, const do
   circle. \param radius : Radius of the circle. \param name : The optional
   name of the circle.
 */
-void vpMbKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-                                const int /*idFace*/, const std::string &name)
+void vpMbKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
+                                int /*idFace*/, const std::string &name)
 {
   addCircle(p1, p2, p3, radius, name);
 }
@@ -1354,7 +1354,7 @@ void vpMbKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPo
   center of the circle we have 3 points defining the plane that contains the
   circle. \param r : Radius of the circle. \param name : Name of the circle.
 */
-void vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r,
+void vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, double r,
                                const std::string &name)
 {
   bool already_here = false;
@@ -1395,7 +1395,7 @@ void vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoi
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbKltTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                 const vpHomogeneousMatrix &cMo, const bool verbose,
+                                 const vpHomogeneousMatrix &cMo, bool verbose,
                                  const vpHomogeneousMatrix &T)
 {
   m_cMo.eye();

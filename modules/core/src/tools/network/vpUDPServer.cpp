@@ -71,7 +71,7 @@
   \param port : Server port number.
   \note The server will listen to all the interfaces (see INADDR_ANY).
 */
-vpUDPServer::vpUDPServer(const int port)
+vpUDPServer::vpUDPServer(int port)
   : m_clientAddress(), m_clientLength(0), m_serverAddress(), m_socketFileDescriptor(0)
 #if defined(_WIN32)
     ,
@@ -87,7 +87,7 @@ vpUDPServer::vpUDPServer(const int port)
   \param hostname : Server hostname or IP address.
   \param port : Server port number.
 */
-vpUDPServer::vpUDPServer(const std::string &hostname, const int port)
+vpUDPServer::vpUDPServer(const std::string &hostname, int port)
   : m_clientAddress(), m_clientLength(0), m_serverAddress(), m_socketFileDescriptor(0)
 #if defined(_WIN32)
     ,
@@ -107,7 +107,7 @@ vpUDPServer::~vpUDPServer()
 #endif
 }
 
-void vpUDPServer::init(const std::string &hostname, const int port)
+void vpUDPServer::init(const std::string &hostname, int port)
 {
 #if defined(_WIN32)
   if (WSAStartup(MAKEWORD(2, 2), &m_wsa) != 0) {
@@ -192,7 +192,7 @@ void vpUDPServer::init(const std::string &hostname, const int port)
   there is an error, or 0 if there is a timeout. \note See
   vpUDPClient::receive for an example.
 */
-int vpUDPServer::receive(std::string &msg, const int timeoutMs)
+int vpUDPServer::receive(std::string &msg, int timeoutMs)
 {
   std::string hostInfo = "";
   return receive(msg, hostInfo, timeoutMs);
@@ -210,7 +210,7 @@ int vpUDPServer::receive(std::string &msg, const int timeoutMs)
   there is an error, or 0 if there is a timeout. \note See
   vpUDPClient::receive for an example.
 */
-int vpUDPServer::receive(std::string &msg, std::string &hostInfo, const int timeoutMs)
+int vpUDPServer::receive(std::string &msg, std::string &hostInfo, int timeoutMs)
 {
   fd_set s;
   FD_ZERO(&s);
@@ -285,7 +285,7 @@ int vpUDPServer::receive(std::string &msg, std::string &hostInfo, const int time
   \return The message length / size of the byte array sent.
   \note See vpUDPClient::send for an example.
 */
-int vpUDPServer::send(const std::string &msg, const std::string &hostname, const int port)
+int vpUDPServer::send(const std::string &msg, const std::string &hostname, int port)
 {
   if (msg.size() > VP_MAX_UDP_PAYLOAD) {
     std::cerr << "Message is too long!" << std::endl;

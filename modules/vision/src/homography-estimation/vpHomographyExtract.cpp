@@ -686,7 +686,7 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
 #endif
 }
 
-void vpHomography::computeDisplacement(const vpHomography &H, const double x, const double y,
+void vpHomography::computeDisplacement(const vpHomography &H, double x, double y,
                                        std::list<vpRotationMatrix> &vR, std::list<vpTranslationVector> &vT,
                                        std::list<vpColVector> &vN)
 {

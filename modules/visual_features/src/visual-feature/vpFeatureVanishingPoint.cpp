@@ -77,7 +77,7 @@ void vpFeatureVanishingPoint::init()
 vpFeatureVanishingPoint::vpFeatureVanishingPoint() { init(); }
 
 //! Set vanishing point feature \f$ x \f$ value.
-void vpFeatureVanishingPoint::set_x(const double x)
+void vpFeatureVanishingPoint::set_x(double x)
 {
   s[0] = x;
   flags[0] = true;
@@ -88,7 +88,7 @@ void vpFeatureVanishingPoint::set_x(const double x)
 double vpFeatureVanishingPoint::get_x() const { return s[0]; }
 
 //! Set vanishing point feature \f$ y \f$ value.
-void vpFeatureVanishingPoint::set_y(const double y)
+void vpFeatureVanishingPoint::set_y(double y)
 {
   s[1] = y;
   flags[1] = true;
@@ -99,7 +99,7 @@ void vpFeatureVanishingPoint::set_y(const double y)
 double vpFeatureVanishingPoint::get_y() const { return s[1]; }
 
 //! Set vanishing point visual feature \f$ {\bf s} = (x, y) \f$ from cartesian coordinates. Same as buildFrom().
-void vpFeatureVanishingPoint::set_xy(const double x, const double y)
+void vpFeatureVanishingPoint::set_xy(double x, double y)
 {
   set_x(x);
   set_y(y);
@@ -107,7 +107,7 @@ void vpFeatureVanishingPoint::set_xy(const double x, const double y)
 }
 
 //! Set vanishing point feature \f$ 1/\rho \f$ value.
-void vpFeatureVanishingPoint::setOneOverRho(const double one_over_rho)
+void vpFeatureVanishingPoint::setOneOverRho(double one_over_rho)
 {
   s[2] = one_over_rho;
   flags[2] = true;
@@ -115,7 +115,7 @@ void vpFeatureVanishingPoint::setOneOverRho(const double one_over_rho)
 }
 
 //! Set vanishing point feature \f$ \arctan(1/\rho) \f$ value.
-void vpFeatureVanishingPoint::setAtanOneOverRho(const double atan_one_over_rho)
+void vpFeatureVanishingPoint::setAtanOneOverRho(double atan_one_over_rho)
 {
   s[3] = atan_one_over_rho;
   flags[3] = true;
@@ -129,7 +129,7 @@ double vpFeatureVanishingPoint::getOneOverRho() const { return s[2]; }
 double vpFeatureVanishingPoint::getAtanOneOverRho() const { return s[3]; }
 
 //! Set vanishing point feature \f$ \alpha \f$ value.
-void vpFeatureVanishingPoint::setAlpha(const double alpha)
+void vpFeatureVanishingPoint::setAlpha(double alpha)
 {
   s[4] = alpha;
   flags[4] = true;
@@ -147,7 +147,7 @@ double vpFeatureVanishingPoint::getAlpha() const { return s[4]; }
  * \f$ \alpha \f$ visual feature. You can also use a combination like selectX() | selectY() to
  * select x and y visual features.
  */
-vpMatrix vpFeatureVanishingPoint::interaction(const unsigned int select)
+vpMatrix vpFeatureVanishingPoint::interaction(unsigned int select)
 {
   vpMatrix L;
 
@@ -271,7 +271,7 @@ vpMatrix vpFeatureVanishingPoint::interaction(const unsigned int select)
  * \f$ \alpha \f$ visual feature. You can also use a combination like selectX() | selectY() to
  * select x and y visual features.
  */
-vpColVector vpFeatureVanishingPoint::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeatureVanishingPoint::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -326,7 +326,7 @@ vpColVector vpFeatureVanishingPoint::error(const vpBasicFeature &s_star, const u
  * \f$ \alpha \f$ value. You can also use a combination like selectX() | selectY() to
  * display x and y values.
  */
-void vpFeatureVanishingPoint::print(const unsigned int select) const
+void vpFeatureVanishingPoint::print(unsigned int select) const
 {
   std::cout << "Vanishing point:";
   if (vpFeatureVanishingPoint::selectX() & select)
@@ -347,7 +347,7 @@ void vpFeatureVanishingPoint::print(const unsigned int select) const
 
 
 //! Set vanishing point visual feature \f$ {\bf s} = (x, y) \f$ from cartesian coordinates. Same as set_xy().
-void vpFeatureVanishingPoint::buildFrom(const double x, const double y)
+void vpFeatureVanishingPoint::buildFrom(double x, double y)
 {
   set_xy(x, y);
 }

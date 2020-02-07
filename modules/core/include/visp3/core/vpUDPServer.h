@@ -149,7 +149,7 @@ struct DataType {
   int int_val;
 
   DataType() : double_val(0.0), int_val(0) {}
-  DataType(const double dbl, const int i) : double_val(dbl), int_val(i) {}
+  DataType(double dbl, int i) : double_val(dbl), int_val(i) {}
 };
 
 int main() {
@@ -197,13 +197,13 @@ sizeof(data_type.double_val)+sizeof(data_type.int_val));
 class VISP_EXPORT vpUDPServer
 {
 public:
-  vpUDPServer(const int port);
-  vpUDPServer(const std::string &hostname, const int port);
+  vpUDPServer(int port);
+  vpUDPServer(const std::string &hostname, int port);
   virtual ~vpUDPServer();
 
-  int receive(std::string &msg, const int timeoutMs = 0);
-  int receive(std::string &msg, std::string &hostInfo, const int timeoutMs = 0);
-  int send(const std::string &msg, const std::string &hostname, const int port);
+  int receive(std::string &msg, int timeoutMs = 0);
+  int receive(std::string &msg, std::string &hostInfo, int timeoutMs = 0);
+  int send(const std::string &msg, const std::string &hostname, int port);
 
 private:
   char m_buf[VP_MAX_UDP_PAYLOAD];
@@ -217,7 +217,7 @@ private:
   WSADATA m_wsa;
 #endif
 
-  void init(const std::string &hostname, const int port);
+  void init(const std::string &hostname, int port);
 };
 
 #endif

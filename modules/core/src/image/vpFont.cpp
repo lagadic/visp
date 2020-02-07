@@ -59,6 +59,7 @@
 
 #include <visp3/core/vpFont.h>
 #include "private/Font.hpp"
+#include <stdint.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpFont::Impl

@@ -58,7 +58,6 @@ Microsoft Windows operating systems used for displaying graphics in a window.
 
   The example below shows how to display an image with this video device.
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/io/vpImageIo.h>
 

@@ -238,12 +238,12 @@ public:
     }
   };
 
-  void calculate(const vpImage<unsigned char> &I, const unsigned int nbins = 256, const unsigned int nbThreads = 1);
+  void calculate(const vpImage<unsigned char> &I, unsigned int nbins = 256, unsigned int nbThreads = 1);
 
-  void display(const vpImage<unsigned char> &I, const vpColor &color = vpColor::white, const unsigned int thickness = 2,
-               const unsigned int maxValue_ = 0);
+  void display(const vpImage<unsigned char> &I, const vpColor &color = vpColor::white, unsigned int thickness = 2,
+               unsigned int maxValue_ = 0);
 
-  void smooth(const unsigned int fsize = 3);
+  void smooth(unsigned int fsize = 3);
   unsigned getPeaks(std::list<vpHistogramPeak> &peaks);
   unsigned getPeaks(unsigned char dist, vpHistogramPeak &peak1, vpHistogramPeak &peak2);
   bool getPeaks(unsigned char dist, vpHistogramPeak &peakl, vpHistogramPeak &peakr, vpHistogramValey &valey);

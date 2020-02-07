@@ -84,7 +84,7 @@ public:
   };
 
 public:
-  vpPoseException(const int id, const char *format, ...)
+  vpPoseException(int id, const char *format, ...)
   {
     this->code = id;
     va_list args;
@@ -92,8 +92,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpPoseException(const int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpPoseException(const int id) : vpException(id) { ; }
+  vpPoseException(int id, const std::string &msg) : vpException(id, msg) { ; }
+  explicit vpPoseException(int id) : vpException(id) { ; }
   // vpPoseException() : vpException() { ;}
 };
 

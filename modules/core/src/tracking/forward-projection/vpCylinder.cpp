@@ -78,8 +78,7 @@ void vpCylinder::setWorldCoordinates(const vpColVector &o_P) { this->oP = o_P; }
   \param A,B,C,X0,Y0,Z0,R : Cylinder parameters \f$^{o}{\bf P}\f$.
 
 */
-void vpCylinder::setWorldCoordinates(const double A, const double B, const double C, const double X0, const double Y0,
-                                     const double Z0, const double R)
+void vpCylinder::setWorldCoordinates(double A, double B, double C, double X0, double Y0, double Z0, double R)
 {
   oP[0] = A;
   oP[1] = B;
@@ -132,8 +131,7 @@ vpCylinder::vpCylinder(const vpColVector &o_P)
   \sa setWorldCoordinates(const double,const double,const double,const
   double,const double,const double,const double)
 */
-vpCylinder::vpCylinder(const double A, const double B, const double C, const double X0, const double Y0,
-                       const double Z0, const double R)
+vpCylinder::vpCylinder(double A, double B, double C, double X0, double Y0, double Z0, double R)
 {
   init();
   setWorldCoordinates(A, B, C, X0, Y0, Z0, R);
@@ -362,7 +360,7 @@ void vpCylinder::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
   Compute the Z coordinate for the given normalized coordinate in the camera
   frame.
 */
-double vpCylinder::computeZ(const double x, const double y) const
+double vpCylinder::computeZ(double x, double y) const
 {
   double A = x * x + y * y + 1 - ((getA() * x + getB() * y + getC()) * (getA() * x + getB() * y + getC()));
   double B = (x * getX() + y * getY() + getZ());
@@ -382,7 +380,7 @@ vpCylinder *vpCylinder::duplicate() const
   Display the projection of the cylinder in the image as two lines.
 */
 void vpCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                         const vpColor &color, const unsigned int thickness)
+                         const vpColor &color, unsigned int thickness)
 {
 
   vpColVector _cP(7), _p(4);
@@ -395,7 +393,7 @@ void vpCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMat
   Display the projection of the cylinder in the image as two lines.
 */
 void vpCylinder::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
-                         const unsigned int thickness)
+                         unsigned int thickness)
 {
   vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[3], cam, I, color, thickness);
 }

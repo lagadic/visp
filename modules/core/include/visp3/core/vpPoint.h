@@ -73,11 +73,11 @@ public:
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               const unsigned int thickness = 1);
+               unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
+               const vpColor &color = vpColor::green, unsigned int thickness = 1);
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
+               const vpColor &color = vpColor::green, unsigned int thickness = 1);
   vpPoint *duplicate() const;
 
   // Get coordinates
@@ -115,19 +115,19 @@ public:
   void projection();
 
   // Set coordinates
-  void set_X(const double X);
-  void set_Y(const double Y);
-  void set_Z(const double Z);
-  void set_W(const double W);
-  void set_oX(const double oX);
-  void set_oY(const double oY);
-  void set_oZ(const double oZ);
-  void set_oW(const double oW);
-  void set_x(const double x);
-  void set_y(const double y);
-  void set_w(const double w);
+  void set_X(double X);
+  void set_Y(double Y);
+  void set_Z(double Z);
+  void set_W(double W);
+  void set_oX(double oX);
+  void set_oY(double oY);
+  void set_oZ(double oZ);
+  void set_oW(double oW);
+  void set_x(double x);
+  void set_y(double y);
+  void set_w(double w);
 
-  void setWorldCoordinates(const double oX, const double oY, const double oZ);
+  void setWorldCoordinates(double oX, double oY, double oZ);
   void setWorldCoordinates(const vpColVector &P);
   void setWorldCoordinates(const std::vector<double> &P);
 };

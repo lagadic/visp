@@ -304,7 +304,7 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack,
+bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
                                        const vpImage<bool> *mask)
 {
   for (unsigned int i = 0; i < meline.size(); i++) {
@@ -611,8 +611,8 @@ void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const 
   visible.
 */
 void vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                const bool displayFullModel)
+                                const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
+                                bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
       getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
@@ -636,8 +636,8 @@ void vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogen
   visible.
 */
 void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                const bool displayFullModel)
+                                const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
+                                bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
       getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
@@ -728,7 +728,7 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
 std::vector<std::vector<double> > vpMbtDistanceLine::getModelForDisplay(unsigned int width, unsigned int height,
                                                                         const vpHomogeneousMatrix &cMo,
                                                                         const vpCameraParameters &camera,
-                                                                        const bool displayFullModel)
+                                                                        bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 

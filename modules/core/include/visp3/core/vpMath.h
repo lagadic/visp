@@ -120,7 +120,7 @@ public:
   static inline long double comb(unsigned int n, unsigned int p);
 
   //   round x to the nearest integer
-  static inline int round(const double x);
+  static inline int round(double x);
 
   //   return the sign of x (+-1)
   static inline int(sign)(double x);
@@ -179,8 +179,8 @@ public:
     a = tmp;
   }
 
-  static bool isNaN(const double value);
-  static bool isInf(const double value);
+  static bool isNaN(double value);
+  static bool isInf(double value);
 
   template <typename _Tp> static inline _Tp saturate(unsigned char v) { return _Tp(v); }
   template <typename _Tp> static inline _Tp saturate(char v) { return _Tp(v); }
@@ -193,9 +193,9 @@ public:
 
   static double getMean(const std::vector<double> &v);
   static double getMedian(const std::vector<double> &v);
-  static double getStdev(const std::vector<double> &v, const bool useBesselCorrection = false);
+  static double getStdev(const std::vector<double> &v, bool useBesselCorrection = false);
 
-  static int modulo(const int a, const int n);
+  static int modulo(int a, int n);
 
 private:
   static const double ang_min_sinc;
@@ -238,7 +238,7 @@ long double vpMath::comb(unsigned int n, unsigned int p)
   \return Nearest integer of x.
 
 */
-int vpMath::round(const double x)
+int vpMath::round(double x)
 {
 #if defined(VISP_HAVE_FUNC_ROUND)
   //:: to design the global namespace and avoid to call recursively

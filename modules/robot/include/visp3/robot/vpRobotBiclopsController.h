@@ -53,8 +53,6 @@
 #include <pthread.h> /* Classe std::ostream.              */
 #include <stdio.h>   /* Classe std::ostream.              */
 
-#include <visp3/core/vpConfig.h>
-
 #include "Biclops.h"  // Contrib for Biclops robot
 #include "PMDUtils.h" // Contrib for Biclops robot
 
@@ -122,7 +120,7 @@ public:
   vpRobotBiclopsController();
   virtual ~vpRobotBiclopsController();
   void init(const std::string &configfile);
-  void setPosition(const vpColVector &q, const double percentVelocity);
+  void setPosition(const vpColVector &q, double percentVelocity);
   void setVelocity(const vpColVector &q_dot);
   vpColVector getPosition();
   vpColVector getActualPosition();

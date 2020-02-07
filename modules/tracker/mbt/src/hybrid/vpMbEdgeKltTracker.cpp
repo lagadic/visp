@@ -176,7 +176,7 @@ void vpMbEdgeKltTracker::resetTracker()
   vpMbKltTracker::resetTracker();
 }
 
-unsigned int vpMbEdgeKltTracker::initMbtTracking(const unsigned int lvl)
+unsigned int vpMbEdgeKltTracker::initMbtTracking(unsigned int lvl)
 {
   if (lvl >= scales.size() || !scales[lvl]) {
     throw vpException(vpException::dimensionError, "lvl not used.");
@@ -358,7 +358,7 @@ void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile)
   Realize the post tracking operations. Mostly visibility tests
 */
 bool vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char> &I, vpColVector &w_mbt, vpColVector &w_klt,
-                                      const unsigned int lvl)
+                                      unsigned int lvl)
 {
   postTrackingMbt(w_mbt, lvl);
 
@@ -414,7 +414,7 @@ bool vpMbEdgeKltTracker::postTracking(const vpImage<unsigned char> &I, vpColVect
   Realize the post tracking operations. Mostly visibility tests
 */
 bool vpMbEdgeKltTracker::postTracking(const vpImage<vpRGBa> &I_color, vpColVector &w_mbt, vpColVector &w_klt,
-                                      const unsigned int lvl)
+                                      unsigned int lvl)
 {
   postTrackingMbt(w_mbt, lvl);
 
@@ -476,7 +476,7 @@ bool vpMbEdgeKltTracker::postTracking(const vpImage<vpRGBa> &I_color, vpColVecto
   \param w : Vector of weight associated to the residual.
   \param lvl : Optional parameter to specify the level to track.
 */
-void vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
+void vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, unsigned int lvl)
 {
   if (lvl >= scales.size() || !scales[lvl]) {
     throw vpException(vpException::dimensionError, "_lvl not used.");
@@ -638,7 +638,7 @@ void vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, const unsigned int lvl)
   \param lvl : level of the pyramid.
 */
 void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsigned int &nbInfos, unsigned int &nbrow,
-                                    const unsigned int lvl)
+                                    unsigned int lvl)
 {
   vpColVector factor;
   nbrow = trackFirstLoop(I, factor, lvl);
@@ -983,7 +983,7 @@ void vpMbEdgeKltTracker::track(const vpImage<vpRGBa> &I_color)
 }
 
 unsigned int vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char> &I, vpColVector &factor,
-                                                const unsigned int lvl)
+                                                unsigned int lvl)
 {
   vpMbtDistanceLine *l;
   vpMbtDistanceCylinder *cy;
@@ -1103,7 +1103,7 @@ unsigned int vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char> &I,
 }
 
 void vpMbEdgeKltTracker::trackSecondLoop(const vpImage<unsigned char> &I, vpMatrix &L, vpColVector &error,
-                                         const vpHomogeneousMatrix &cMo, const unsigned int lvl)
+                                         const vpHomogeneousMatrix &cMo, unsigned int lvl)
 {
   vpMbtDistanceLine *l;
   vpMbtDistanceCylinder *cy;
@@ -1200,8 +1200,8 @@ void vpMbEdgeKltTracker::initFaceFromLines(vpMbtPolygon &polygon)
   circle. \param radius : Radius of the circle. \param idFace : Id of the face
   associated to the circle. \param name : The optional name of the circle.
 */
-void vpMbEdgeKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-                                    const int idFace, const std::string &name)
+void vpMbEdgeKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
+                                    int idFace, const std::string &name)
 {
   vpMbEdgeTracker::initCircle(p1, p2, p3, radius, idFace, name);
 }
@@ -1216,7 +1216,7 @@ void vpMbEdgeKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const 
   \param idFace : Id of the face associated to the cylinder.
   \param name : The optional name of the cylinder.
 */
-void vpMbEdgeKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace,
+void vpMbEdgeKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace,
                                       const std::string &name)
 {
   vpMbEdgeTracker::initCylinder(p1, p2, radius, idFace, name);
@@ -1235,8 +1235,8 @@ void vpMbEdgeKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, cons
   displayed, even the faces that are not visible.
 */
 void vpMbEdgeKltTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                 const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                 const bool displayFullModel)
+                                 const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
+                                 bool displayFullModel)
 {
   std::vector<std::vector<double> > models = vpMbEdgeKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -1287,8 +1287,8 @@ void vpMbEdgeKltTracker::display(const vpImage<unsigned char> &I, const vpHomoge
   displayed, even the faces that are not visible.
 */
 void vpMbEdgeKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                 const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                 const bool displayFullModel)
+                                 const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
+                                 bool displayFullModel)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
@@ -1330,7 +1330,7 @@ void vpMbEdgeKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMa
 std::vector<std::vector<double> > vpMbEdgeKltTracker::getModelForDisplay(unsigned int width, unsigned int height,
                                                                          const vpHomogeneousMatrix &cMo,
                                                                          const vpCameraParameters &cam,
-                                                                         const bool displayFullModel)
+                                                                         bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 
@@ -1381,7 +1381,7 @@ std::vector<std::vector<double> > vpMbEdgeKltTracker::getModelForDisplay(unsigne
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                     const vpHomogeneousMatrix &cMo, const bool verbose,
+                                     const vpHomogeneousMatrix &cMo, bool verbose,
                                      const vpHomogeneousMatrix &T)
 {
   // Reinit klt

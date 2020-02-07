@@ -154,7 +154,7 @@ public:
   //! constructor  set the size of the image and init all the pixel
   vpImage(unsigned int height, unsigned int width, Type value);
   //! constructor from an image stored as a continuous array in memory
-  vpImage(Type *const array, const unsigned int height, const unsigned int width, const bool copyData = false);
+  vpImage(Type *const array, unsigned int height, unsigned int width, bool copyData = false);
   //! destructor
   virtual ~vpImage();
 
@@ -251,15 +251,15 @@ public:
   //! Set the size of the image
   void init(unsigned int height, unsigned int width, Type value);
   //! init from an image stored as a continuous array in memory
-  void init(Type *const array, const unsigned int height, const unsigned int width, const bool copyData = false);
+  void init(Type *const array, unsigned int height, unsigned int width, bool copyData = false);
   void insert(const vpImage<Type> &src, const vpImagePoint &topLeft);
 
   //------------------------------------------------------------------
   //         Acces to the image
 
   //! operator[] allows operation like I[i] = x.
-  inline Type *operator[](const unsigned int i) { return row[i]; }
-  inline Type *operator[](const int i) { return row[i]; }
+  inline Type *operator[](unsigned int i) { return row[i]; }
+  inline Type *operator[](int i) { return row[i]; }
 
   //! operator[] allows operation like x = I[i]
   inline const Type *operator[](unsigned int i) const { return row[i]; }
@@ -271,13 +271,13 @@ public:
 
     \return Value of the image point (i, j).
   */
-  inline Type operator()(const unsigned int i, const unsigned int j) const { return bitmap[i * width + j]; }
+  inline Type operator()(unsigned int i, unsigned int j) const { return bitmap[i * width + j]; }
 
   /*!
     Set the value \e v of an image point with coordinates (i, j), with i the
     row position and j the column position.
   */
-  inline void operator()(const unsigned int i, const unsigned int j, const Type &v) { bitmap[i * width + j] = v; }
+  inline void operator()(unsigned int i, unsigned int j, const Type &v) { bitmap[i * width + j] = v; }
 
   /*!
     Get the value of an image point.
@@ -328,15 +328,15 @@ public:
   friend std::ostream &operator<<(std::ostream &s, const vpImage<double> &I);
 
   // Perform a look-up table transformation
-  void performLut(const Type (&lut)[256], const unsigned int nbThreads = 1);
+  void performLut(const Type (&lut)[256], unsigned int nbThreads = 1);
 
   // Returns a new image that's a quarter size of the current image
   void quarterSizeImage(vpImage<Type> &res) const;
 
   // set the size of the image without initializing it.
-  void resize(const unsigned int h, const unsigned int w);
+  void resize(unsigned int h, unsigned int w);
   // set the size of the image and initialize it.
-  void resize(const unsigned int h, const unsigned int w, const Type &val);
+  void resize(unsigned int h, unsigned int w, const Type &val);
 
   void sub(const vpImage<Type> &B, vpImage<Type> &C);
   void sub(const vpImage<Type> &A, const vpImage<Type> &B, vpImage<Type> &C);
@@ -495,7 +495,7 @@ struct ImageLut_Param_t {
 
   ImageLut_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) {}
 
-  ImageLut_Param_t(const unsigned int start_index, const unsigned int end_index, unsigned char *bitmap)
+  ImageLut_Param_t(unsigned int start_index, unsigned int end_index, unsigned char *bitmap)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap)
   {
   }
@@ -563,7 +563,7 @@ struct ImageLutRGBa_Param_t {
 
   ImageLutRGBa_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_bitmap(NULL) {}
 
-  ImageLutRGBa_Param_t(const unsigned int start_index, const unsigned int end_index, unsigned char *bitmap)
+  ImageLutRGBa_Param_t(unsigned int start_index, unsigned int end_index, unsigned char *bitmap)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_bitmap(bitmap)
   {
   }
@@ -720,7 +720,7 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
   \exception vpException::memoryAllocationError
 */
 template <class Type>
-void vpImage<Type>::init(Type *const array, const unsigned int h, const unsigned int w, const bool copyData)
+void vpImage<Type>::init(Type *const array, unsigned int h, unsigned int w, bool copyData)
 {
   if (h != this->height) {
     if (row != NULL) {
@@ -836,7 +836,7 @@ vpImage<Type>::vpImage(unsigned int h, unsigned int w, Type value)
   \sa vpImage::init(array, height, width)
 */
 template <class Type>
-vpImage<Type>::vpImage(Type *const array, const unsigned int h, const unsigned int w, const bool copyData)
+vpImage<Type>::vpImage(Type *const array, unsigned int h, unsigned int w, bool copyData)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
   init(array, h, w, copyData);
@@ -1742,7 +1742,7 @@ template <class Type> void vpImage<Type>::performLut(const Type (&)[256], const 
   the computation.
 */
 template <>
-inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], const unsigned int nbThreads)
+inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], unsigned int nbThreads)
 {
   unsigned int size = getWidth() * getHeight();
   unsigned char *ptrStart = (unsigned char *)bitmap;
@@ -1819,7 +1819,7 @@ inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], 
   intensity to his new value. \param nbThreads : Number of threads to use for
   the computation.
 */
-template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], const unsigned int nbThreads)
+template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], unsigned int nbThreads)
 {
   unsigned int size = getWidth() * getHeight();
   unsigned char *ptrStart = (unsigned char *)bitmap;

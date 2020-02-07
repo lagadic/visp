@@ -79,7 +79,7 @@ public:
   //! Destructor. Does nothing.
   virtual ~vpFeatureSegment() {}
   // change values of the segment
-  void buildFrom(const double x1, const double y1, const double Z1, const double x2, const double y2, const double Z2);
+  void buildFrom(double x1, double y1, double Z1, double x2, double y2, double Z2);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
@@ -89,7 +89,7 @@ public:
   vpFeatureSegment *duplicate() const;
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
 
   /*!
       Get the x coordinate of the segment center in the image plane.
@@ -145,9 +145,9 @@ public:
   void init();
 
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL);
 
-  void print(const unsigned int select = FEATURE_ALL) const;
+  void print(unsigned int select = FEATURE_ALL) const;
 
   /*!
     Indicates if the normalized features are considered.
@@ -175,7 +175,7 @@ public:
     when normalized features are considered, or equal to \f$ x_c \f$
     otherwise.
   */
-  inline void setXc(const double val)
+  inline void setXc(double val)
   {
     s[0] = xc_ = val;
     flags[0] = true;
@@ -189,7 +189,7 @@ public:
     when normalized features are considered, or equal to \f$ y_c \f$
     otherwise.
   */
-  inline void setYc(const double val)
+  inline void setYc(double val)
   {
     s[1] = yc_ = val;
     flags[1] = true;
@@ -202,7 +202,7 @@ public:
     \param val : Value to set, that is either equal to \f$l_n= 1/l \f$ when
     normalized features are considered, or equal to \f$ l \f$ otherwise.
   */
-  inline void setL(const double val)
+  inline void setL(double val)
   {
     s[2] = l_ = val;
     flags[2] = true;
@@ -215,7 +215,7 @@ public:
 
     \param val : \f$ \alpha \f$ value to set.
   */
-  inline void setAlpha(const double val)
+  inline void setAlpha(double val)
   {
     s[3] = alpha_ = val;
     cos_a_ = cos(val);
@@ -235,7 +235,7 @@ public:
     \exception vpFeatureException::badInitializationError : If Z1 is behind
     the camera or equal to zero.
   */
-  inline void setZ1(const double val)
+  inline void setZ1(double val)
   {
     Z1_ = val;
 
@@ -268,7 +268,7 @@ public:
     \exception vpFeatureException::badInitializationError : If Z2 is behind
     the camera or equal to zero.
   */
-  inline void setZ2(const double val)
+  inline void setZ2(double val)
   {
     Z2_ = val;
 

@@ -352,7 +352,7 @@ double vpMeSite::convolution(const vpImage<unsigned char> &I, const vpMe *me)
   is needed.
 
 */
-void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, const bool test_contraste)
+void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, bool test_contraste)
 {
   //   vpMeSite  *list_query_pixels ;
   //   int  max_rank =0 ;

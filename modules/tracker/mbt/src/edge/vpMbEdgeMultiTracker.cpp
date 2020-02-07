@@ -67,7 +67,7 @@ vpMbEdgeMultiTracker::vpMbEdgeMultiTracker()
 
   \param nbCameras : Number of cameras to use.
 */
-vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(const unsigned int nbCameras)
+vpMbEdgeMultiTracker::vpMbEdgeMultiTracker(unsigned int nbCameras)
   : m_mapOfCameraTransformationMatrix(), m_mapOfEdgeTrackers(), m_mapOfPyramidalImages(),
     m_referenceCameraName("Camera"), m_L_edgeMulti(), m_error_edgeMulti(), m_w_edgeMulti(), m_weightedError_edgeMulti()
 {
@@ -187,7 +187,7 @@ void vpMbEdgeMultiTracker::computeProjectionError()
 }
 
 void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                      const unsigned int lvl)
+                                      unsigned int lvl)
 {
   computeVVSInit();
   unsigned int nbrow = m_error_edgeMulti.getRows();
@@ -352,7 +352,7 @@ void vpMbEdgeMultiTracker::computeVVS(std::map<std::string, const vpImage<unsign
   }
 }
 
-void vpMbEdgeMultiTracker::computeVVSFirstPhasePoseEstimation(const unsigned int iter, bool &isoJoIdentity_)
+void vpMbEdgeMultiTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity_)
 {
   unsigned int nerror = m_weightedError_edgeMulti.getRows();
 
@@ -504,8 +504,8 @@ void vpMbEdgeMultiTracker::computeVVSWeights()
   visible faces).
 */
 void vpMbEdgeMultiTracker::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                   const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                   const bool displayFullModel)
+                                   const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
+                                   bool displayFullModel)
 {
 
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(m_referenceCameraName);
@@ -528,8 +528,8 @@ void vpMbEdgeMultiTracker::display(const vpImage<unsigned char> &I, const vpHomo
   visible faces).
 */
 void vpMbEdgeMultiTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                   const vpCameraParameters &cam, const vpColor &col, const unsigned int thickness,
-                                   const bool displayFullModel)
+                                   const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
+                                   bool displayFullModel)
 {
 
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(m_referenceCameraName);
@@ -558,7 +558,7 @@ void vpMbEdgeMultiTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneous
 void vpMbEdgeMultiTracker::display(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                    const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
                                    const vpCameraParameters &cam1, const vpCameraParameters &cam2, const vpColor &col,
-                                   const unsigned int thickness, const bool displayFullModel)
+                                   unsigned int thickness, bool displayFullModel)
 {
 
   if (m_mapOfEdgeTrackers.size() == 2) {
@@ -591,7 +591,7 @@ void vpMbEdgeMultiTracker::display(const vpImage<unsigned char> &I1, const vpIma
 void vpMbEdgeMultiTracker::display(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2,
                                    const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
                                    const vpCameraParameters &cam1, const vpCameraParameters &cam2, const vpColor &col,
-                                   const unsigned int thickness, const bool displayFullModel)
+                                   unsigned int thickness, bool displayFullModel)
 {
 
   if (m_mapOfEdgeTrackers.size() == 2) {
@@ -621,7 +621,7 @@ void vpMbEdgeMultiTracker::display(const vpImage<vpRGBa> &I1, const vpImage<vpRG
 void vpMbEdgeMultiTracker::display(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                    const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                                    const std::map<std::string, vpCameraParameters> &mapOfCameraParameters,
-                                   const vpColor &col, const unsigned int thickness, const bool displayFullModel)
+                                   const vpColor &col, unsigned int thickness, bool displayFullModel)
 {
 
   // Display only for the given images
@@ -655,7 +655,7 @@ void vpMbEdgeMultiTracker::display(const std::map<std::string, const vpImage<uns
 void vpMbEdgeMultiTracker::display(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfImages,
                                    const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
                                    const std::map<std::string, vpCameraParameters> &mapOfCameraParameters,
-                                   const vpColor &col, const unsigned int thickness, const bool displayFullModel)
+                                   const vpColor &col, unsigned int thickness, bool displayFullModel)
 {
 
   // Display only for the given images
@@ -838,7 +838,7 @@ std::map<std::string, vpMbHiddenFaces<vpMbtPolygon> > vpMbEdgeMultiTracker::getF
   \param level : Level corresponding to the list to return.
   \param circlesList : The list of the circles of the model.
 */
-void vpMbEdgeMultiTracker::getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, const unsigned int level) const
+void vpMbEdgeMultiTracker::getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
 
@@ -861,7 +861,7 @@ void vpMbEdgeMultiTracker::getLcircle(std::list<vpMbtDistanceCircle *> &circlesL
   return. \param circlesList : The list of the circles of the model.
 */
 void vpMbEdgeMultiTracker::getLcircle(const std::string &cameraName, std::list<vpMbtDistanceCircle *> &circlesList,
-                                      const unsigned int level) const
+                                      unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(cameraName);
   if (it != m_mapOfEdgeTrackers.end()) {
@@ -882,7 +882,7 @@ void vpMbEdgeMultiTracker::getLcircle(const std::string &cameraName, std::list<v
   \param cylindersList : The list of the cylinders of the model.
 */
 void vpMbEdgeMultiTracker::getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList,
-                                        const unsigned int level) const
+                                        unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
 
@@ -906,7 +906,7 @@ void vpMbEdgeMultiTracker::getLcylinder(std::list<vpMbtDistanceCylinder *> &cyli
 */
 void vpMbEdgeMultiTracker::getLcylinder(const std::string &cameraName,
                                         std::list<vpMbtDistanceCylinder *> &cylindersList,
-                                        const unsigned int level) const
+                                        unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(cameraName);
   if (it != m_mapOfEdgeTrackers.end()) {
@@ -926,7 +926,7 @@ void vpMbEdgeMultiTracker::getLcylinder(const std::string &cameraName,
   \param level : Level corresponding to the list to return.
   \param linesList : The list of the lines of the model.
 */
-void vpMbEdgeMultiTracker::getLline(std::list<vpMbtDistanceLine *> &linesList, const unsigned int level) const
+void vpMbEdgeMultiTracker::getLline(std::list<vpMbtDistanceLine *> &linesList, unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
 
@@ -949,7 +949,7 @@ void vpMbEdgeMultiTracker::getLline(std::list<vpMbtDistanceLine *> &linesList, c
   \param linesList : The list of the lines of the model.
 */
 void vpMbEdgeMultiTracker::getLline(const std::string &cameraName, std::list<vpMbtDistanceLine *> &linesList,
-                                    const unsigned int level) const
+                                    unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(cameraName);
   if (it != m_mapOfEdgeTrackers.end()) {
@@ -1036,7 +1036,7 @@ vpMe vpMbEdgeMultiTracker::getMovingEdge(const std::string &cameraName) const
 
   \return the number of good points for the reference camera.
 */
-unsigned int vpMbEdgeMultiTracker::getNbPoints(const unsigned int level) const
+unsigned int vpMbEdgeMultiTracker::getNbPoints(unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
 
@@ -1064,7 +1064,7 @@ unsigned int vpMbEdgeMultiTracker::getNbPoints(const unsigned int level) const
 
   \return the number of good points for the specified camera name.
 */
-unsigned int vpMbEdgeMultiTracker::getNbPoints(const std::string &cameraName, const unsigned int level) const
+unsigned int vpMbEdgeMultiTracker::getNbPoints(const std::string &cameraName, unsigned int level) const
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.find(cameraName);
   if (it != m_mapOfEdgeTrackers.end()) {
@@ -1247,7 +1247,7 @@ void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char> &I, const std:
   exist.
 */
 void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char> &I, const std::string &initFile,
-                                     const bool displayHelp, const vpHomogeneousMatrix &T)
+                                     bool displayHelp, const vpHomogeneousMatrix &T)
 {
   if (m_mapOfEdgeTrackers.empty()) {
     throw vpException(vpTrackingException::initializationError, "There is no camera !");
@@ -1303,8 +1303,8 @@ void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char> &I, const std:
   exist.
 */
 void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                                     const std::string &initFile1, const std::string &initFile2, const bool displayHelp,
-                                     const bool firstCameraIsReference)
+                                     const std::string &initFile1, const std::string &initFile2, bool displayHelp,
+                                     bool firstCameraIsReference)
 {
   if (m_mapOfEdgeTrackers.size() == 2) {
     std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
@@ -1366,7 +1366,7 @@ void vpMbEdgeMultiTracker::initClick(const vpImage<unsigned char> &I1, const vpI
 
 */
 void vpMbEdgeMultiTracker::initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                     const std::string &initFile, const bool displayHelp)
+                                     const std::string &initFile, bool displayHelp)
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
   if (it_edge != m_mapOfEdgeTrackers.end()) {
@@ -1439,7 +1439,7 @@ void vpMbEdgeMultiTracker::initClick(const std::map<std::string, const vpImage<u
   exist.
 */
 void vpMbEdgeMultiTracker::initClick(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
-                                     const std::map<std::string, std::string> &mapOfInitFiles, const bool displayHelp)
+                                     const std::map<std::string, std::string> &mapOfInitFiles, bool displayHelp)
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
   std::map<std::string, const vpImage<unsigned char> *>::const_iterator it_img =
@@ -1606,7 +1606,7 @@ void vpMbEdgeMultiTracker::initFromPose(const vpImage<unsigned char> &I, const v
 */
 void vpMbEdgeMultiTracker::initFromPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                         const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                        const bool firstCameraIsReference)
+                                        bool firstCameraIsReference)
 {
   // For Edge, initFromPose has the same behavior than setPose
   // So, for convenience we call setPose
@@ -1734,7 +1734,7 @@ void vpMbEdgeMultiTracker::loadConfigFile(const std::string &configFile)
   \sa loadConfigFile(const std::string &)
 */
 void vpMbEdgeMultiTracker::loadConfigFile(const std::string &configFile1, const std::string &configFile2,
-                                          const bool firstCameraIsReference)
+                                          bool firstCameraIsReference)
 {
   if (m_mapOfEdgeTrackers.size() == 2) {
     std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
@@ -1843,7 +1843,7 @@ CAO model files which include other CAO model files.
   \param T : optional transformation matrix (currently only for .cao) to transform
   3D points expressed in the original object frame to the desired object frame.
 */
-void vpMbEdgeMultiTracker::loadModel(const std::string &modelFile, const bool verbose,
+void vpMbEdgeMultiTracker::loadModel(const std::string &modelFile, bool verbose,
                                      const vpHomogeneousMatrix &T)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
@@ -1867,7 +1867,7 @@ void vpMbEdgeMultiTracker::loadModel(const std::string &modelFile, const bool ve
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeMultiTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                       const vpHomogeneousMatrix &cMo, const bool verbose,
+                                       const vpHomogeneousMatrix &cMo, bool verbose,
                                        const vpHomogeneousMatrix &T)
 {
   if (m_mapOfEdgeTrackers.size() != 1) {
@@ -1902,8 +1902,8 @@ void vpMbEdgeMultiTracker::reInitModel(const vpImage<unsigned char> &I, const st
 */
 void vpMbEdgeMultiTracker::reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                        const std::string &cad_name, const vpHomogeneousMatrix &c1Mo,
-                                       const vpHomogeneousMatrix &c2Mo, const bool verbose,
-                                       const bool firstCameraIsReference)
+                                       const vpHomogeneousMatrix &c2Mo, bool verbose,
+                                       bool firstCameraIsReference)
 {
   if (m_mapOfEdgeTrackers.size() == 2) {
     std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.begin();
@@ -1941,7 +1941,7 @@ void vpMbEdgeMultiTracker::reInitModel(const vpImage<unsigned char> &I1, const v
 void vpMbEdgeMultiTracker::reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                        const std::string &cad_name,
                                        const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                                       const bool verbose)
+                                       bool verbose)
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(m_referenceCameraName);
   std::map<std::string, const vpImage<unsigned char> *>::const_iterator it_img =
@@ -2095,7 +2095,7 @@ void vpMbEdgeMultiTracker::setCameraParameters(const vpCameraParameters &cam)
   otherwise it is the second one.
 */
 void vpMbEdgeMultiTracker::setCameraParameters(const vpCameraParameters &camera1, const vpCameraParameters &camera2,
-                                               const bool firstCameraIsReference)
+                                               bool firstCameraIsReference)
 {
   if (m_mapOfEdgeTrackers.empty()) {
     throw vpException(vpTrackingException::fatalError, "There is no camera !");
@@ -2278,7 +2278,7 @@ void vpMbEdgeMultiTracker::setCovarianceComputation(const bool &flag)
 
   \param displayF : set it to true to display the features.
 */
-void vpMbEdgeMultiTracker::setDisplayFeatures(const bool displayF)
+void vpMbEdgeMultiTracker::setDisplayFeatures(bool displayF)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {
@@ -2332,7 +2332,7 @@ void vpMbEdgeMultiTracker::setFarClippingDistance(const std::string &cameraName,
 
    \sa getGoodMovingEdgesRatioThreshold()
  */
-void vpMbEdgeMultiTracker::setGoodMovingEdgesRatioThreshold(const double threshold)
+void vpMbEdgeMultiTracker::setGoodMovingEdgesRatioThreshold(double threshold)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {
@@ -2389,7 +2389,7 @@ void vpMbEdgeMultiTracker::setNbRayCastingAttemptsForVisibility(const unsigned i
 
   \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
  */
-void vpMbEdgeMultiTracker::setLod(const bool useLod, const std::string &name)
+void vpMbEdgeMultiTracker::setLod(bool useLod, const std::string &name)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {
@@ -2409,7 +2409,7 @@ void vpMbEdgeMultiTracker::setLod(const bool useLod, const std::string &name)
 
   \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
  */
-void vpMbEdgeMultiTracker::setLod(const bool useLod, const std::string &cameraName, const std::string &name)
+void vpMbEdgeMultiTracker::setLod(bool useLod, const std::string &cameraName, const std::string &name)
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(cameraName);
 
@@ -2429,7 +2429,7 @@ void vpMbEdgeMultiTracker::setLod(const bool useLod, const std::string &cameraNa
 
   \sa setLod(), setMinPolygonAreaThresh()
  */
-void vpMbEdgeMultiTracker::setMinLineLengthThresh(const double minLineLengthThresh, const std::string &name)
+void vpMbEdgeMultiTracker::setMinLineLengthThresh(double minLineLengthThresh, const std::string &name)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {
@@ -2448,7 +2448,7 @@ void vpMbEdgeMultiTracker::setMinLineLengthThresh(const double minLineLengthThre
 
   \sa setLod(), setMinPolygonAreaThresh()
  */
-void vpMbEdgeMultiTracker::setMinLineLengthThresh(const double minLineLengthThresh, const std::string &cameraName,
+void vpMbEdgeMultiTracker::setMinLineLengthThresh(double minLineLengthThresh, const std::string &cameraName,
                                                   const std::string &name)
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(cameraName);
@@ -2468,7 +2468,7 @@ void vpMbEdgeMultiTracker::setMinLineLengthThresh(const double minLineLengthThre
 
   \sa setLod(), setMinLineLengthThresh()
  */
-void vpMbEdgeMultiTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &name)
+void vpMbEdgeMultiTracker::setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &name)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {
@@ -2486,7 +2486,7 @@ void vpMbEdgeMultiTracker::setMinPolygonAreaThresh(const double minPolygonAreaTh
 
   \sa setLod(), setMinLineLengthThresh()
  */
-void vpMbEdgeMultiTracker::setMinPolygonAreaThresh(const double minPolygonAreaThresh, const std::string &cameraName,
+void vpMbEdgeMultiTracker::setMinPolygonAreaThresh(double minPolygonAreaThresh, const std::string &cameraName,
                                                    const std::string &name)
 {
   std::map<std::string, vpMbEdgeTracker *>::const_iterator it_edge = m_mapOfEdgeTrackers.find(cameraName);
@@ -2568,7 +2568,7 @@ void vpMbEdgeMultiTracker::setNearClippingDistance(const std::string &cameraName
   Ogre rendering options) when Ogre visibility is enabled. By default, this
   functionality is turned off.
 */
-void vpMbEdgeMultiTracker::setOgreShowConfigDialog(const bool showConfigDialog)
+void vpMbEdgeMultiTracker::setOgreShowConfigDialog(bool showConfigDialog)
 {
   for (std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
        it != m_mapOfEdgeTrackers.end(); ++it) {
@@ -2684,7 +2684,7 @@ void vpMbEdgeMultiTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomog
 */
 void vpMbEdgeMultiTracker::setPose(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                    const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                   const bool firstCameraIsReference)
+                                   bool firstCameraIsReference)
 {
   if (m_mapOfEdgeTrackers.size() == 2) {
     std::map<std::string, vpMbEdgeTracker *>::const_iterator it = m_mapOfEdgeTrackers.begin();
