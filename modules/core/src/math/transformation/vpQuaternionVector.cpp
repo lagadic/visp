@@ -97,7 +97,7 @@ vpQuaternionVector::vpQuaternionVector(const vpThetaUVector &tu) : vpRotationVec
   \param qz : z quaternion parameter.
   \param qw : w quaternion parameter.
 */
-void vpQuaternionVector::set(const double qx, const double qy, const double qz, const double qw)
+void vpQuaternionVector::set(double qx, double qy, double qz, double qw)
 {
   data[0] = qx;
   data[1] = qy;
@@ -113,7 +113,7 @@ void vpQuaternionVector::set(const double qx, const double qy, const double qz, 
 
   \sa set()
 */
-vpQuaternionVector vpQuaternionVector::buildFrom(const double qx, const double qy, const double qz, const double qw)
+vpQuaternionVector vpQuaternionVector::buildFrom(double qx, double qy, double qz, double qw)
 {
   set(qx, qy, qz, qw);
   return *this;

@@ -66,16 +66,8 @@
 #include <visp3/core/vpFeatureDisplay.h>
 
 /*
-
-
-
 attributes and members directly related to the vpBasicFeature needs
 other functionalities ar useful but not mandatory
-
-
-
-
-
 */
 
 /*!
@@ -134,7 +126,7 @@ void vpFeatureLine::setRhoTheta(double rho, double theta)
   \param C_ : C value to set.
   \param D_ : D value to set.
 */
-void vpFeatureLine::setABCD(const double A_, const double B_, const double C_, const double D_)
+void vpFeatureLine::setABCD(double A_, double B_, double C_, double D_)
 {
   this->A = A_;
   this->B = B_;

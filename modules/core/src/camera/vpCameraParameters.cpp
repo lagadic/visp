@@ -97,8 +97,7 @@ vpCameraParameters::vpCameraParameters(const vpCameraParameters &c)
   \param cam_u0,cam_v0 : principal points
 
  */
-vpCameraParameters::vpCameraParameters(const double cam_px, const double cam_py, const double cam_u0,
-                                       const double cam_v0)
+vpCameraParameters::vpCameraParameters(double cam_px, double cam_py, double cam_u0, double cam_v0)
   : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER), u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
     kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0), height(0), isFov(false), m_hFovAngle(0),
     m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
@@ -116,8 +115,8 @@ vpCameraParameters::vpCameraParameters(const double cam_px, const double cam_py,
   \param cam_kdu : distorted to undistorted radial distortion
 
  */
-vpCameraParameters::vpCameraParameters(const double cam_px, const double cam_py, const double cam_u0,
-                                       const double cam_v0, const double cam_kud, const double cam_kdu)
+vpCameraParameters::vpCameraParameters(double cam_px, double cam_py, double cam_u0,
+                                       double cam_v0, double cam_kud, double cam_kdu)
   : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER), u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
     kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0), height(0), isFov(false), m_hFovAngle(0),
     m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
@@ -180,8 +179,8 @@ Field of view (horizontal: 56.145 and vertical: 43.6028 degrees)
    \endcode
 
  */
-void vpCameraParameters::initPersProjWithoutDistortion(const double cam_px, const double cam_py, const double cam_u0,
-                                                       const double cam_v0)
+void vpCameraParameters::initPersProjWithoutDistortion(double cam_px, double cam_py, double cam_u0,
+                                                       double cam_v0)
 {
   this->projModel = vpCameraParameters::perspectiveProjWithoutDistortion;
 
@@ -246,8 +245,8 @@ Camera parameters for perspective projection with distortion:
 Field of view (horizontal: 56.14497387 and vertical: 43.60281897 degrees)
 \endcode
 */
-void vpCameraParameters::initPersProjWithDistortion(const double cam_px, const double cam_py, const double cam_u0,
-                                                    const double cam_v0, const double cam_kud, const double cam_kdu)
+void vpCameraParameters::initPersProjWithDistortion(double cam_px, double cam_py, double cam_u0,
+                                                    double cam_v0, double cam_kud, double cam_kdu)
 {
   this->projModel = vpCameraParameters::perspectiveProjWithDistortion;
 
