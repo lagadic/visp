@@ -1,8 +1,6 @@
-
 /**
   \page tutorial-getting-started-iOS Tutorial: How to create a basic iOS application that uses ViSP 
   \tableofcontents
-
 
   \note We assume that you have \c "ViSP for iOS" either after following \ref tutorial-install-ios-package or \ref tutorial-install-iOS. Following one of these tutorials allows to exploit \c visp3.framework and \c opencv.framework to build an application for iOS devices.
 
@@ -24,15 +22,15 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/GettingStart
 - Launch Xcode
 - Follow <tt>"File>New>Project"</tt> menu and create a new <tt>"Single View Application"</tt>
 
-\image html img-getting-started-iOS-create.png
+\image html img-getting-started-iOS-create.jpg
 
 - Click on <tt>"Next"</tt> button and complete the options for your new project:
 
-\image html img-getting-started-iOS-options.png
+\image html img-getting-started-iOS-options.jpg
 
 - Click on <tt>"Next"</tt> button and select the folder where the new project will be saved. Once done click on <tt>"Create"</tt>. Now you should have something similar to:
 
-\image html img-getting-started-iOS-new.png
+\image html img-getting-started-iOS-new.jpg
 
 \section getting-started-iOS-link-visp Linking ViSP framework 
 
@@ -40,118 +38,53 @@ Now we need to link \c visp3.framework with the Xcode project.
 
 - Select the project navigator in the left hand panel (1) and click on project name <tt>"Getting Started"</tt> (2)
 
-\image html img-getting-started-iOS-navigator.png
+\image html img-getting-started-iOS-navigator.jpg
 
 - Use the Finder to drag & drop ViSP and OpenCV frameworks located in \c \<framework_dir\>/ios folder in the left hand panel containing all the project files.
-\image html img-getting-started-iOS-drag-drop.png
+\image html img-getting-started-iOS-drag-drop.jpg
 
 - In the dialog box, enable check box <tt>"Copy item if needed"</tt> to ease \c visp3.framework and \c opencv.framework headers location addition to the build options
 
-\image html img-getting-started-iOS-drag-drop-dialog.png
+\image html img-getting-started-iOS-drag-drop-dialog.jpg
 
 - Click on <tt>"Finish"</tt>. You should now get something similar to the following image
-\image html img-getting-started-iOS-link-visp.png
+\image html img-getting-started-iOS-link-visp.jpg
 
 \section getting-started-iOS-app Writing a ViSP iOS application
 
-- Because we will mix Objective C and ViSP C++ Code, rename \c ViewController.m file into \c ViewController.mm
-\image html img-getting-started-iOS-rename.png
+- Because we will mix Objective-C and ViSP C++ Code, rename \c ViewController.m file into \c ViewController.mm
+\image html img-getting-started-iOS-rename.jpg
 
-- Now copy/paste the following getting started sample code (inspired from tutorial-homography-from-points.cpp) into \c ViewController.mm
-\code
-#import "ViewController.h"
-
-#ifdef __cplusplus
-#import <visp3/visp.h>
-#endif
-
-@interface ViewController ()
-
-@end
-
-@implementation ViewController
-
-#pragma mark - Example of a function that uses ViSP
-- (void)processViSPHomography{
-    
-    std::vector<vpPoint> oP(4), aP(4), bP(4);
-    double L = 0.1;
-    
-    oP[0].setWorldCoordinates( -L,-L,   0);
-    oP[1].setWorldCoordinates(2*L,-L,   0);
-    oP[2].setWorldCoordinates(  L, 3*L, 0);
-    oP[3].setWorldCoordinates( -L, 4*L, 0);
-    
-    vpHomogeneousMatrix bMo(0,0, 1, 0, 0, 0) ;
-    vpHomogeneousMatrix aMb(0.2, 0, 0.1, 0,vpMath::rad(20), 0);
-    vpHomogeneousMatrix aMo = aMb*bMo ;
-    
-    // Normalized coordinates of points in the image frame
-    std::vector<double> xa(4), ya(4), xb(4), yb(4);
-    
-    for(int i=0 ; i < 4; i++){
-        oP[i].project(aMo);
-        xa[i] = oP[i].get_x();
-        ya[i] = oP[i].get_y();
-        oP[i].project(bMo);
-        xb[i] = oP[i].get_x();
-        yb[i] = oP[i].get_y();
-    }
-    
-    vpHomography aHb ;
-    
-    // Compute the homography
-    vpHomography::DLT(xb, yb, xa, ya, aHb, true);
-    
-    std::cout << "Homography:\n" << aHb << std::endl;
-    
-    vpRotationMatrix aRb;
-    vpTranslationVector atb;
-    vpColVector n;
-    
-    // Compute the 3D transformation
-    aHb.computeDisplacement(aRb, atb, n);
-    
-    std::cout << "atb: " << atb.t() << std::endl;
-    
-    // Compute coordinates in pixels of point 3
-    vpImagePoint iPa, iPb;
-    vpCameraParameters cam;
-    vpMeterPixelConversion::convertPoint(cam, xb[3], yb[3], iPb);
-    vpMeterPixelConversion::convertPoint(cam, xa[3], ya[3], iPa);
-    
-    std::cout << "Ground truth:" << std::endl;
-    std::cout << "  Point 3 in pixels in frame b: " << iPb << std::endl;
-    std::cout << "  Point 3 in pixels in frame a: " << iPa << std::endl;
-    
-    // Estimate the position in pixel of point 3 from the homography
-    vpMatrix H = cam.get_K() * aHb * cam.get_K_inverse();
-    
-    // Project the position in pixel of point 3 from the homography
-    std::cout << "Estimation from homography:" << std::endl;
-    std::cout << "  Point 3 in pixels in frame a: " << vpHomography::project(cam, aHb, iPb) << std::endl;
-}
-
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    [self processViSPHomography];
-}
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-@end
-\endcode
+- Now copy/paste `$VISP_WS/visp/tutorial/ios/GettingStarted/GettingStarted/ViewController.mm" file content into `ViewController.mm`. Note that this Objective-C code is inspired from tutorial-homography-from-points.cpp.
+\include GettingStarted/ViewController.mm
 In this sample, we first import the headers to use vpHomography class. Then we create a new function called \c processViSPHomography(). This function is finally called in viewDibLoad().
 - After the previous copy/paste, you should have something similar to
-\image html img-getting-started-iOS-code.jpeg
+\image html img-getting-started-iOS-code.jpg
 
 - Now we are ready to build this simple <tt>"Getting Started"</tt> application using Xcode <tt>"Product>Build"</tt> menu.
+\note Here it may be possible that you get a build issue \ref getting-started-ios-issue-libxml. Just follow the link to see how to fix this issue.
 
 - You can now run your code using <tt>"Product>Run"</tt> menu (Simulator or device does not bother because we are just executing code). You should obtain these logs showing that visp code was correctly executed by your iOS project.
-\image html img-getting-started-iOS-log.jpeg
+\image html img-getting-started-iOS-log.jpg
+
+\section getting-started-ios-issues Known issues
+\subsection getting-started-ios-issue-libxml iOS error: libxml/parser.h not found
+
+If you encounter the following issue `iOS error: libxml/parser.h not found`
+\image html img-getting-started-iOS-issue-libxml.jpg
+the solution to this problem is to add libxml path. To this end, as shown in the next image:
+\image html img-getting-started-iOS-issue-libxml-insert-path.jpg
+- Select the project navigator in the left hand panel (1)
+- Click on the project name (2)
+- Click on the project name here also (3)
+- Select `"Build Settings"` panel (4)
+- Select `"All"` and `"Combined"` settings view (5)
+- Enter `"header search"` in the search tool bar (6)
+- In `"Header Search Paths"` press `+` button for `"Debug"` and `"Release"` configurations and add a new line (7):
+\code
+    ${SDK_ROOT}/usr/include/libxml2
+\endcode
+- Then clean and build again. Issue should be fixed.
 
 \section getting-started-iOS-next Next tutorial
 
