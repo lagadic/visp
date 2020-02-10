@@ -37,6 +37,7 @@ endif()
 if(VISP_HAVE_REALSENSE2)
   # Add specific build flag to turn off warnings coming from librealsense 3rd party
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "/wd4244")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "/wd4267")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-function")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-reorder")
