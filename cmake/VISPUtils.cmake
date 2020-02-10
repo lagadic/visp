@@ -1349,3 +1349,40 @@ function(vp_cat_file in_file out_file)
   file(READ ${in_file} CONTENTS)
   file(APPEND ${out_file} "${CONTENTS}")
 endfunction()
+
+# Extract library name without lib prefix and extension suffix
+# UNIX  : libvisp_core.so.3.3 -> visp_core
+# UNIX  : libz.so -> z
+# MacOSX: libvisp_core-3.3.1.dylib -> visp_core-3.3.1
+# MacOSX: libz.dylib -> z
+macro(vp_get_libname var_name)
+  get_filename_component(__libname "${ARGN}" NAME)
+  string(REGEX REPLACE "^lib(.*)\\.(a|so|dll)(\\.[.0-9]+)?$" "\\1" __libname "${__libname}")
+  string(REGEX REPLACE "^lib(.*[^.])(\\.[0-9]+\\.)?.dylib$" "\\1" __libname "${__libname}")
+  set(${var_name} "${__libname}")
+endmacro()
+
+# Extract framework name to use with -framework name or path to use with -F path
+# MacOSX: /usr/local/opt/python/Frameworks/Python.framework/Versions/3.7/Python NAME -> Python
+# MacOSX: /usr/local/opt/python/Frameworks/Python.framework/Versions/3.7/Python PATH -> /usr/local/opt/python/Frameworks
+# MacOSX: /usr/local/opt/qt/lib/QtWidgets.framework/QtWidgets NAME -> QtWidgets
+# MacOSX: /usr/local/opt/qt/lib/QtWidgets.framework/QtWidgets PATH -> /usr/local/opt/qt/lib
+macro(vp_get_framework var_name)
+  set(__option)
+  foreach(d ${ARGN})
+    if(d MATCHES "PATH")
+      set(__option "PATH")
+    elseif(d MATCHES "NAME")
+      set(__option "NAME")
+    else()
+      set(__framework1 "${d}")
+    endif()
+  endforeach()
+
+  if (__option MATCHES "PATH")
+    string(REGEX REPLACE "(.+)?/(.+).framework/(.+)$" "\\1" __framework "${__framework1}")
+  elseif(__option MATCHES "NAME") # Default NAME
+    string(REGEX REPLACE "(.+)?/(.+).framework/(.+)$" "\\2" __framework "${__framework1}")
+  endif()
+  set(${var_name} "${__framework}")
+endmacro()
