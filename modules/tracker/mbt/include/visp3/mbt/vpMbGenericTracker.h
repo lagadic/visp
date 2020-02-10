@@ -216,6 +216,8 @@ public:
   virtual void getPose(vpHomogeneousMatrix &c1Mo, vpHomogeneousMatrix &c2Mo) const;
   virtual void getPose(std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses) const;
 
+  virtual std::string getReferenceCameraName() const;
+
   virtual inline vpColVector getRobustWeights() const { return m_w; }
 
   virtual int getTrackerType() const;
