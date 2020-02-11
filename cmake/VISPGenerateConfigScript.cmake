@@ -46,6 +46,30 @@ if(MINGW OR IOS)
   return()
 endif()
 
+macro(fix_prefix lst)
+  set(_lst)
+  foreach(item ${${lst}})
+    if(item MATCHES "^-l")
+      list(APPEND _lst "${item}")
+    elseif(item MATCHES "^-framework") # MacOS framework (assume single entry "-framework OpenCL")
+      list(APPEND _lst "${item}")
+    elseif(item MATCHES ".framework/")
+      vp_get_framework(_fmk_name "${item}" NAME)
+      vp_get_framework(_fmk_path "${item}" PATH)
+      list(APPEND _lst "-framework ${_fmk_name} -F${_fmk_path}")
+    elseif(item MATCHES "[\\/]")
+      get_filename_component(_libdir "${item}" PATH)
+      get_filename_component(_libname "${item}" NAME)
+      vp_get_libname(libname "${_libname}")
+      list(APPEND _lst "-L${_libdir}" "-l${libname}")
+    else() # could be "-pthread" (occured with Ubuntu 18.04)
+      list(APPEND _lst "${item}")
+    endif()
+  endforeach()
+  set(${lst} ${_lst})
+  unset(_lst)
+endmacro()
+
 if(NOT DEFINED CMAKE_HELPER_SCRIPT)
 
   if(UNIX)
@@ -234,25 +258,34 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     set(FILE_VISP_CONFIG_PC_INSTALL_IN "cmake/templates/visp.pc.in")
 
     #---------------------------------------------------------------------
-    # Updates vars needed to update VISP_CONFIG_LIBS_SCRIPT
+    # Set modules libraries list -lvisp_core;-lvisp_gui;...
     #----------------------------------------------------------------------
-    # prepend with ViSP own modules first
-    set(VISP_CONFIG_LIBS_SCRIPT "")
+    set(_module_libs)
     foreach(m ${VISP_MODULES_BUILD})
       # exclude visp_java* modules that doesn't lead to a library
       if(NOT m MATCHES "^visp_java")
-        get_filename_component(m_libname "${TARGET_LOCATION_${m}}" NAME)
-        list(APPEND VISP_CONFIG_LIBS_SCRIPT "$PREFIX/${VISP_LIB_INSTALL_PATH}/${m_libname}")
+        list(APPEND _module_libs "-l${m}")
       endif()
     endforeach()
-    # append deps
+
+    #---------------------------------------------------------------------
+    # Set 3rd-parties libraries list -L/usr/local/lib;-lm;-lopencv_core;...
+    #----------------------------------------------------------------------
+    set(_3rdparty_libs)
     foreach(m ${VISP_MODULES_BUILD})
-      list(APPEND VISP_CONFIG_LIBS_SCRIPT ${VISP_MODULE_${m}_LINK_DEPS})
+      list(APPEND _3rdparty_libs ${VISP_MODULE_${m}_LINK_DEPS})
     endforeach()
-    vp_list_unique(VISP_CONFIG_LIBS_SCRIPT)
-    vp_list_filterout(VISP_CONFIG_LIBS_SCRIPT "debug")
-    vp_list_filterout(VISP_CONFIG_LIBS_SCRIPT "optimized")
-    # Format the string to suppress CMake separators ";"
+    vp_list_filterout(_3rdparty_libs "optimized")
+    vp_list_filterout(_3rdparty_libs "debug")
+    vp_list_unique(_3rdparty_libs)
+    fix_prefix(_3rdparty_libs)
+    vp_list_unique(_3rdparty_libs)
+
+    #---------------------------------------------------------------------
+    # Updates vars needed to update VISP_CONFIG_LIBS_SCRIPT
+    #----------------------------------------------------------------------
+    # prepend with ViSP own modules first
+    set(VISP_CONFIG_LIBS_SCRIPT "-L\$PREFIX/${VISP_LIB_INSTALL_PATH}" "${_module_libs}" "${_3rdparty_libs}")
     vp_list_remove_separator(VISP_CONFIG_LIBS_SCRIPT)
 
     set(VISP_ECHO_NO_NEWLINE_CHARACTER "")
@@ -310,21 +343,7 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     vp_list_remove_separator(VISP_CONFIG_CFLAGS_PC)
 
     # prepend with ViSP own modules first
-    set(VISP_CONFIG_LIBS_PC "")
-    foreach(m ${VISP_MODULES_BUILD})
-      # exclude visp_java* module that doesn't lead to a library
-      if(NOT m MATCHES "^visp_java")
-        get_filename_component(m_libname "${TARGET_LOCATION_${m}}" NAME)
-        list(APPEND VISP_CONFIG_LIBS_PC "\${libdir}/${m_libname}")
-      endif()
-    endforeach()
-    # append deps
-    foreach(m ${VISP_MODULES_BUILD})
-      list(APPEND VISP_CONFIG_LIBS_PC ${VISP_MODULE_${m}_LINK_DEPS})
-    endforeach()
-    vp_list_filterout(VISP_CONFIG_LIBS_PC "optimized")
-    vp_list_filterout(VISP_CONFIG_LIBS_PC "debug")
-    vp_list_unique(VISP_CONFIG_LIBS_PC)
+    set(VISP_CONFIG_LIBS_PC "-L\${libdir}" "${_module_libs}" "${_3rdparty_libs}")
     vp_list_remove_separator(VISP_CONFIG_LIBS_PC)
 
     configure_file("${VISP_SOURCE_DIR}/${FILE_VISP_CONFIG_PC_INSTALL_IN}" "${FILE_VISP_CONFIG_PC_INSTALL}" @ONLY)
