@@ -3,7 +3,7 @@
 \page tutorial-install-osx-homebrew-package Tutorial: Installation from prebuilt packages for OSX with Homebrew
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP Homebrew package on OSX. These steps have been tested with Mac OS X 10.11.5 El Capitan. 
+In this tutorial you will learn how to install ViSP Homebrew package on OSX. These steps have been tested with macOS Catalina 10.15.3. 
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -28,35 +28,18 @@ $ brew install visp
 
 
 \section install_osx_brew_package_tips Tips and tricks
-\subsection install_osx_brew_package_build_from_source How to build from source
+\subsection install_osx_brew_package_build_from_source How to install visp from source
 
-To install ViSP with homebrew after building from source you may run:
+To build and install ViSP from source with homebrew you may run:
 
 \code
 $ brew install visp --build-from-source
 \endcode
 
-To know which are the additional build options, run:
-\code
-$ brew options visp
---c++11
-	Build using C++11 mode
---without-gsl
-	Build without gsl support
---without-libdc1394
-	Build without libdc1394 support
---without-opencv3
-	Build without opencv3 support
---without-x11
-	Build without x11 support
---without-zbar
-	Build without zbar support
-\endcode
-
-For example to disable zbar support, you may run
+\subsection install_osx_brew_package_uninstall How to uninstall visp formula
 
 \code
-$ brew install visp --build-from-source --without-zbar
+$ brew remove visp
 \endcode
 
 \subsection install_osx_brew_package_not_writable /usr/local/include/visp is not writable
