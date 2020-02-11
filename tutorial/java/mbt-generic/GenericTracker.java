@@ -49,7 +49,7 @@ public class GenericTracker extends JFrame {
     private VpMbGenericTracker tracker;
     private VpCameraParameters camColor;
     private VpCameraParameters camDepth;
-    private static String[] sequences = {"Cube", "Cube + Cylinder", "Castle"};
+    private static String[] sequences = {"Cube", "Cube + Cylinder", "Castle", "Castle depth"};
     private static String[] trackerTypes = {"Edges", "KLT", "Edges + KLT"};
     private static String vispInputImagePath = new String();
     private int sequenceId = 0;
@@ -120,7 +120,8 @@ public class GenericTracker extends JFrame {
         trackButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (sequenceId == 2) {
+                if (sequenceId == 3) {
+                    // 8 is dense depth tracker
                     int[] trackerTypes = new int[] {trackerType, 8};
                     tracker = new VpMbGenericTracker(trackerTypes);
                 } else {
@@ -149,11 +150,20 @@ public class GenericTracker extends JFrame {
                     String rootDir = new String(vispInputImagePath + "/mbt-depth/Castle-simu/");
                     String configFilename1 = new String(rootDir + "Config/chateau.xml");
                     String configFilename2 = new String(rootDir + "Config/chateau_depth.xml");
-                    tracker.loadConfigFile(tracker.getCameraNames(), new String[] {configFilename1, configFilename2});
-                    tracker.getCameraParameters(camColor, camDepth);
+                    if (sequenceId == 2) {
+                        tracker.loadConfigFile(configFilename1);
+                        tracker.getCameraParameters(camColor);
+                    } else {
+                        tracker.loadConfigFile(tracker.getCameraNames(), new String[] {configFilename1, configFilename2});
+                        tracker.getCameraParameters(camColor, camDepth);
+                    }
 
                     String modelFilename = new String(rootDir + "Models/chateau.cao");
-                    tracker.loadModel(tracker.getCameraNames(), new String[] {modelFilename, modelFilename});
+                    if (sequenceId == 2) {
+                        tracker.loadModel(modelFilename);
+                    } else {
+                        tracker.loadModel(tracker.getCameraNames(), new String[] {modelFilename, modelFilename});
+                    }
                     modelFilename = new String(rootDir + "Models/cube.cao");
                     VpHomogeneousMatrix T = new VpHomogeneousMatrix(-0.2, 0.12, -0.15, 0, 2.221441469, 2.221441469);
                     tracker.loadModel(modelFilename, false, T);
@@ -161,10 +171,12 @@ public class GenericTracker extends JFrame {
 
                     input = new String(rootDir + "Images/Image_%04d.pgm");
                     inputDepth = new String(rootDir + "Depth/Depth_%04d.bin");
-                    depthScale = 0.000030518f;
+                    depthScale = 0.000030518F;
 
-                    VpHomogeneousMatrix depth_M_color = new VpHomogeneousMatrix(-0.05, 0, 0, 0, 0, 0);
-                    tracker.setCameraTransformationMatrix("Camera2", depth_M_color);
+                    if (sequenceId == 3) {
+                        VpHomogeneousMatrix depth_M_color = new VpHomogeneousMatrix(-0.05, 0, 0, 0, 0, 0);
+                        tracker.setCameraTransformationMatrix("Camera2", depth_M_color);
+                    }
 
                     cMo_init = new VpHomogeneousMatrix(0.05000004917, 0.1058986038, 0.6010702848, -2.705260346, 0, 0);
                 }
@@ -186,7 +198,7 @@ public class GenericTracker extends JFrame {
                             BufferedImage tmp = toBufferedImage(I);
 
                             depth = null;
-                            if (sequenceId == 2) {
+                            if (sequenceId == 3) {
                                 try {
                                     byte[] fileContents =  Files.readAllBytes(Paths.get(String.format(inputDepth, idx)));
 
@@ -206,7 +218,7 @@ public class GenericTracker extends JFrame {
                             }
 
                             long start = System.currentTimeMillis();
-                            if (sequenceId == 2) {
+                            if (sequenceId == 3) {
                                 tracker.track(new String[] {"Camera1"}, new VpImageUChar[] {I}, new String[] {"Camera2"}, pointclouds,
                                         new int[] {depthWidth}, new int[] {depthHeight});
                             } else {
@@ -268,7 +280,7 @@ public class GenericTracker extends JFrame {
                                             }
                                         }
 
-                                        if (sequenceId == 2) {
+                                        if (sequenceId == 3) {
                                             canvasLabel.setIcon(new ImageIcon(joinBufferedImage(canvas, depth)));
                                         } else {
                                             canvasLabel.setIcon(new ImageIcon(canvas));
