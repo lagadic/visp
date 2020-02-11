@@ -358,28 +358,28 @@ To see which are the optional 3rd parties that are found during the configuratio
 \code
 $ cat $VISP_WS/visp-build/ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.2.0
+General configuration information for ViSP 3.3.0
 
-  Version control:               3.1.0-690-geb7c0779c-dirty
+  Version control:               3.2.0-799-ge98496a15
 
   Platform:
-    Timestamp:                   2018-11-30T13:54:41Z
-    Host:                        Linux 4.18.16-300.fc29.x86_64 x86_64
-    CMake:                       3.12.1
+    Timestamp:                   2020-02-11T14:49:44Z
+    Host:                        Linux 5.3.7-301.fc31.x86_64 x86_64
+    CMake:                       3.16.3
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/gmake
     Configuration:               Release
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                /usr/bin/c++  (ver 8.2.1)
+    C++ Compiler:                /usr/bin/c++  (ver 9.2.1)
     C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O2 -DNDEBUG
     C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
     C Compiler:                  /usr/bin/cc
     C flags (Release):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O2 -DNDEBUG
     C flags (Debug):             -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
-    Linker flags (Release):      
-    Linker flags (Debug):        
+    Linker flags (Release):
+    Linker flags (Debug):
 
   ViSP modules:
     To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
@@ -387,7 +387,7 @@ General configuration information for ViSP 3.2.0
     Disabled by dependency:      -
     Unavailable:                 java
 
-  Python (for build):            
+  Python (for build):            /usr/bin/python3
 
   Java:                          
     ant:                         NO
@@ -398,29 +398,34 @@ General configuration information for ViSP 3.2.0
     Build with moment combine:   no
 
   Mathematics: 
-    Use Lapack/blas:             yes (ver 3.8.0)
+    Use MKL:                     no
+    Use OpenBLAS:                no
+    Use Atlas:                   no
+    Use Netlib Lapack:           yes (ver 3.8.0)
     Use Lapack (built-in):       no
-    Use Eigen3:                  yes (ver 3.3.5)
-    Use OpenCV:                  yes (ver 3.4.1)
-    Use GSL:                     yes (ver 2.4)
+    Use Eigen3:                  yes (ver 3.3.7)
+    Use OpenCV:                  yes (ver 3.4.8)
+    Use GSL:                     no
 
   Simulator: 
     Ogre simulator: 
-    \- Use Ogre3D:               yes (ver 1.9.0)
-    \- Use OIS:                  yes (ver 1.3.0)
+    \- Use Ogre3D:               no
+    \- Use OIS:                  no
     Coin simulator: 
-    \- Use Coin3D:               yes (ver 3.1.3)
+    \- Use Coin3D:               no
     \- Use SoWin:                no
     \- Use SoXt:                 no
     \- Use SoQt:                 no
+    \- Use Qt5:                  no
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
   Media I/O: 
-    Use JPEG:                    yes (ver 62)
-    Use PNG:                     yes (ver 1.6.34)
-    \- Use ZLIB:                 yes (ver 1.2.11)
-    Use OpenCV:                  yes (ver 3.4.1)
+    Use JPEG:                    no
+    Use PNG:                     no
+    \- Use ZLIB:                 no
+    Use OpenCV:                  yes (ver 3.4.8)
+    Use stb_image (built-in):    no
 
   Real robots: 
     Use Afma4:                   no
@@ -430,22 +435,26 @@ General configuration information for ViSP 3.2.0
     Use Viper850:                no
     Use aria (Pioneer):          no
     Use PTU46:                   no
-    Use Biclops PT:              no
+    Use Biclops PTU:             no
+    Use Flir PTU SDK:            no
+    Use Parrot ARSDK:            no
+    \-Use ffmpeg:                no
     Use Virtuose:                no
+    Use qbdevice (built-in):     yes (ver 2.6.0)
 
   GUI: 
     Use X11:                     yes
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 3.4.1)
+    Use OpenCV:                  yes (ver 3.4.8)
     Use GDI:                     no
     Use Direct3D:                no
 
   Cameras: 
     Use DC1394-2.x:              yes (ver 2.2.2)
     Use CMU 1394:                no
-    Use V4L2:                    yes (ver 1.14.2)
+    Use V4L2:                    yes (ver 1.18.0)
     Use directshow:              no
-    Use OpenCV:                  yes (ver 3.4.1)
+    Use OpenCV:                  yes (ver 3.4.8)
     Use Flycapture:              no
     Use Pylon:                   no
 
@@ -456,33 +465,36 @@ General configuration information for ViSP 3.2.0
     \- Use libfreenect:          no
     \- Use libusb-1:             no
     \- Use pthread:              yes
-    Use PCL:                     yes (ver 1.8.1)
-    \- Use VTK:                  yes (ver 7.1.1)
+    Use PCL:                     no
+    \- Use VTK:                  no
 
   F/T sensors: 
     Use atidaq (built-in):       no
     Use comedi:                  no
+    Use IIT SDK:                 no
 
   Detection: 
-    Use zbar:                    yes (ver 0.20.1)
-    Use dmtx:                    yes (ver 0.7.5)
-    Use AprilTag (built-in):     yes (ver 0.9.8)
+    Use zbar:                    yes (ver 0.23)
+    Use dmtx:                    no
+    Use AprilTag (built-in):     yes (ver 3.1.1)
+    \- Use AprilTag big family:  no
 
   Misc: 
     Use Clipper (built-in):      yes (ver 6.4.2)
-    Use XML2:                    yes (ver 2.9.8)
+    Use pugixml (built-in):      yes (ver 1.9.0)
+    Use libxml2:                 no
 
   Optimization: 
     Use OpenMP:                  yes
     Use pthread:                 yes
     Use pthread (built-in):      no
-    Use cxx11:                   yes
-    cxx standard:                11
+    Use cxx standard:            11
 
   Documentation: 
-    Use doxygen:                 yes
+    Use doxygen:                 no
 
   Tests and samples:
+    Use catch2 (built-in):       yes (ver 2.9.2)
     Tests:                       yes
     Demos:                       yes
     Examples:                    yes
