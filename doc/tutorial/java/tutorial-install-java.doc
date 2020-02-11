@@ -126,7 +126,7 @@ A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
 $ ccmake ../visp
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
-\image html img-ccmake-ubuntu-all.png Snapshot of the `ccmake ../visp` command used to configure ViSP.
+\image html img-ccmake-ubuntu-all.png Snapshot of the `"ccmake ../visp"` command used to configure ViSP.
 
 In `$VISP_WS/visp-build/ViSP-third-party.txt` you should find something similar to the following snapshot that shows that `python`, `ant` and `JNI` are found:
 \code
@@ -196,7 +196,7 @@ Download the latest Eclipse version at the [Eclipse Download page](https://www.e
 
 Open Eclipse and select a workspace location of your choice, for example in `$VISP_WS/eclipse/eclipse-workspace` and press `Launch` button.
 
-\image html img-tutorial-java-eclipse-workspace.png
+\image html img-tutorial-java-eclipse-workspace.jpg
 
 Now we propose to create a ViSP user library ready to be used on all your next Java projects. To this end enter `"Window > Preferences"` menu:
 

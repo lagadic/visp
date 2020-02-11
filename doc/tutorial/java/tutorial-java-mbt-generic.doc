@@ -17,7 +17,7 @@ Open Eclipse and create a new Java project entering `"File > New > Java Project"
 
 In the `"New Java Project"` dialog write the name of your project (let say `visp-java-mbt-generic`). In JRE section, select the appropriate execution environment (JavaSE-11 if you install JDK 11, or JavaSE-13 if you install JDK 13). Then press `"Finish"` button.
 
-\image html img-java-mbt-generic-project.png
+\image html img-java-mbt-generic-project.jpg
 
 In the "New module-info.java" dialog that may appear, press `"Don't Create"` button.
 
@@ -27,7 +27,7 @@ In the "New module-info.java" dialog that may appear, press `"Don't Create"` but
 
 If you followed \ref tutorial-install-java, you should already have ViSP library set in your workspace’s user libraries; if not please check out \ref tutorial-install-java. Now you should be ready to add ViSP library to your project. Inside Eclipse’s Package Explorer just right-click on your project’s folder and go to `"Build Path > Add Libraries..."`.
 
-\image html img-java-mbt-generic-import-user-library.png
+\image html img-java-mbt-generic-import-user-library.jpg
 
 Select `"User Library"` and click on `"Next"`:
 
@@ -41,19 +41,19 @@ Check the checkbox of the ViSP library and press `"Finish"` button.
 
 Now import AprilTagDetection.java file in your project, pointing your mouse on `src` folder and with a right click entering `"Import"` menu. 
 
-\image html img-java-mbt-generic-import.png
+\image html img-java-mbt-generic-import.jpg
 
 Select `"General > File System"` and press `Next` button.
 
-\image html img-java-apriltag-import-file.png
+\image html img-java-apriltag-import-file.jpg
 
 Browse to `$VISP_WS/visp/tutorial/java/mbt-generic` folder, enable `mbt-generic` check box and press `Finish` button.
 
-\image html img-java-mbt-generic-import-mbt-generic.png
+\image html img-java-mbt-generic-import-mbt-generic.jpg
 
 Now expanding what's behind `src` you should see something similar to:
 
-\image html img-java-mbt-generic-project-complete.png
+\image html img-java-mbt-generic-project-complete.jpg
 
 \section java_mbt_gen_run Run tracking application
 
