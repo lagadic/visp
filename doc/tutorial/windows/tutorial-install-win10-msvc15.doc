@@ -367,7 +367,7 @@ C:\> exit
 
 \section install_win10_msvc15_dataset Install ViSP data set
 
-Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named `visp-images-x.y.z.zip`. 
+Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named `visp-images-x.y.z.zip`. Note that ViSP tutorials are not using ViSP data set.
 
 There are two ways to get ViSP data set:
 
