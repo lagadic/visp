@@ -1019,6 +1019,72 @@
           ""
         ]
       },
+      "getKltNbPoints": {
+        "j_code": [
+          ""
+        ],
+        "cpp_code": [
+          ""
+        ],
+        "jn_code": [
+          ""
+        ]
+      },	
+      "getKltMaskBorder": {
+        "j_code": [
+          ""
+        ],
+        "cpp_code": [
+          ""
+        ],
+        "jn_code": [
+          ""
+        ]
+      },	
+      "setKltMaskBorder": {
+        "j_code": [
+          ""
+        ],
+        "cpp_code": [
+          ""
+        ],
+        "jn_code": [
+          ""
+        ]
+      },	
+      "getKltThresholdAcceptation": {
+        "j_code": [
+          ""
+        ],
+        "cpp_code": [
+          ""
+        ],
+        "jn_code": [
+          ""
+        ]
+      },	
+      "setKltThresholdAcceptation": {
+        "j_code": [
+          ""
+        ],
+        "cpp_code": [
+          ""
+        ],
+        "jn_code": [
+          ""
+        ]
+      },	
+      "setUseKltTracking": {
+        "j_code": [
+          ""
+        ],
+        "cpp_code": [
+          ""
+        ],
+        "jn_code": [
+          ""
+        ]
+      },	
       "getModelForDisplay" : {
         "j_code" : [
           "//",
