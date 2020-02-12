@@ -1732,6 +1732,14 @@ void vpMbGenericTracker::getPose(std::map<std::string, vpHomogeneousMatrix> &map
 }
 
 /*!
+  Get name of the reference camera.
+*/
+std::string vpMbGenericTracker::getReferenceCameraName() const
+{
+  return  m_referenceCameraName;
+}
+
+/*!
   The tracker type for the reference camera.
 */
 int vpMbGenericTracker::getTrackerType() const
