@@ -173,9 +173,9 @@ $ source ~/.bashrc
 
 \section install_centos_dataset Install ViSP dataset
 
-Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named `visp-images-x.y.z.zip`. Note that ViSP tutorials are not using ViSP data set.
+Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
 
-There are two ways to get ViSP data set:
+We give hereafter the two ways to get this data set:
 
 <b>1. Get data set release</b>
 
