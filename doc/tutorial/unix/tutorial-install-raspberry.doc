@@ -80,6 +80,15 @@ and add a line with the name of the module:
 bcm2835-v4l2
 \endcode
 
+- To check if the camera is working you may run in a terminal:
+\code
+$ v4l2-ctl --overlay=1 # enable viewfinder
+\endcode
+Here you should see the live camera stream. To disable camera view run
+\code
+v4l2-ctl --overlay=0 # disable viewfinder
+\endcode
+
 \subsection install_raspberry_startx Start graphical user interface
 
 - To load the graphical user interface, type `startx` and press Enter on your keyboard. This will later allow to use ViSP vpDisplayX or vpDisplayOpenCV classes useful to display images in a X11 window.
