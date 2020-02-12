@@ -131,7 +131,7 @@ C:\> exit
 \endcode
 where `%%VISP_WS%\opencv-4.1.2\build` is where you have installed OpenCV. Inside this folder you should have a file named `OpenCVConfig.cmake`. 
 
-- You have also to add the location of OpenCV libraries corresponding to Visual Studio 15 2017 Win64 usage in the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\opencv-4.1.2\build\x64\vc16\bin`.
+- You have also to add the location of OpenCV libraries corresponding to Visual Studio 15 2017 usage in the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\opencv-4.1.2\build\x64\vc16\bin`.
 
 \subsubsection install_win10_msvc16_3rdparty_eigen Eigen3 3rd party
 
@@ -333,26 +333,39 @@ C:\> exit
 
 \section install_win10_msvc16_dataset Install ViSP data set
 
-Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code.
-They are available in Github (https://github.com/lagadic/visp-images) or in a separate archive named `visp-images-x.y.z.zip`.
-This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data from Github if you want to run ViSP examples or tests. Note that ViSP tutorials are not using ViSP data set.
+Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
 
-- Enter in your workspace `%%VISP_WS%` and clone the latest data set:
+We give hereafter the two ways to get this data set:
+
+<b>1. Get data set release</b>
+
+- Download `visp-images-3.3.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`.
+\image html img-win10-visp-images-3.3.0.png
+- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `%%VISP_WS%\visp-images-3.3.0`. Open a `cmd` Command Prompt and run
+\code
+C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.3.0
+C:\> exit
+\endcode
+
+<b>2. Get data set from github</b>
+
+- Use git to get the data set latest version:
 \code
 C:\> cd %VISP_WS%
-C:\> git clone https://github.com/lagadic/visp-images
+C:\> git clone https://github.com/lagadic/visp-images.git
 \endcode
-\image html img-win10-visp-images-git.png
-
-- ViSP examples and tests are able to detect automatically the location of the requested data if you position an environment variable called `VISP_INPUT_IMAGE_PATH`. In our case, this variable should be set to `%%VISP_WS%\visp-images`. Open a `cmd` Command Prompt and run
+\image html img-win10-visp-images.png
+- Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `%%VISP_WS%\visp-images`. Open a `cmd` Command Prompt and run
 \code
 C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images
 C:\> exit
 \endcode
 
-- From now, you can try to run ViSP examples and tests. For example, if you want to run `%%VISP_WS%\visp-build-vc16\example\device\display\Release\displayGDI.exe`, open a `cmd` Command Prompt, enter in the right folder and run:
+<b>Test data set usage</b>
+
+From now, you can try to run ViSP examples and tests. For example, if you want to run `%%VISP_WS%\visp-build-vc15\example\device\display\Release\displayGDI.exe`, open a `cmd` Command Prompt, enter in the right folder and run:
 \code
-C:\> cd %VISP_WS%\visp-build-vc16\example\device\display\Release
+C:\> cd %VISP_WS%\visp-build-vc15\example\device\display\Release
 C:\> displayGDI.exe
 
 A click to close the windows...

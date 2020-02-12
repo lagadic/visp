@@ -68,7 +68,7 @@ As shown in the next image, if you get the following issue on Ubuntu 18.04:
 \code
 Exception in thread "main" java.lang.UnsupportedClassVersionError: org/visp/core/VpMatrix has been compiled by a more recent version of the Java Runtime (class file version 57.0), this version of the Java Runtime only recognizes class file versions up to 55.0
 \endcode
-\image html img-tutorial-java-issue-jdk-version.png
+\image html img-tutorial-java-issue-jdk-version.jpg
 it means probably that you use JRE System Library 11 installed in `/usr/lib/jvm/java-1.11.0-openjdk-amd64` while ViSP is build with a more recent java version obtained after downloading JDK 13 for example.
 
 To fix this issue, as explained in \ref tutorial-install-java install JDK 11 and do a fresh ViSP build using java 11.
@@ -79,7 +79,7 @@ As shown in the next image, if you experience the following exception after ente
 \code
 Exception in thread "main" java.lang.UnsatisfiedLinkError: no visp_java321 in java.library.path: [/home/fspindle/visp_ws/visp-build/lib]
 \endcode
-\image html img-tutorial-java-issue-visp-version.png
+\image html img-tutorial-java-issue-visp-version.jpg
 
 - check that `visp-<version>.jar` is present in `$VISP_DIR/visp-build/bin`:
 \code
