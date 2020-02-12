@@ -1451,9 +1451,9 @@ void vpMbtFaceDepthNormal::estimatePlaneEquationSVD(const std::vector<double> &p
       residues[i] = std::fabs(A * point_cloud_face[3 * i] + B * point_cloud_face[3 * i + 1] +
                               C * point_cloud_face[3 * i + 2] + D) /
                     sqrt(A * A + B * B + C * C);
-      error += residues[i] * residues[i];
+      error += weights[i] * residues[i];
     }
-    error /= sqrt(error / total_w);
+    error /= total_w;
   }
 
   // Update final weights
