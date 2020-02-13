@@ -69,19 +69,23 @@ C:\> cmake -G "Visual Studio 15 2017" -A "x64" %VISP_WS%\visp
 C:\> cmake --build . --config Release --target install
 \endcode
 - ViSP is now installed in `%%VISP_WS%\visp-build-vc15\install` folder
-- Modify the `Path` var to add `%%VISP_WS%\visp-build-vc15\install\x64\vc15\bin` corresponding to the path to ViSP libraries.
+- Modify the `Path` var to add `%%VISP_WS%\visp-build-vc15\install\x64\vc15\bin` corresponding to the path to ViSP libraries. To this end, in a `cmd` Command Prompt run:
+\code
+C:\> setx Path "%Path%:%VISP_WS%\visp-build-vc15\install\x64\vc15\bin"
+C:\> exit
+\endcode
+\note Since `setx` command is not able to handle a var that has more than 1024 characters (which could be the case of `Path` var), it may happen that the previous command is not working as expected. In that case, to modify `Path` environment variable do the following:
+  - Open the Start Search, type in "env", and choose "Edit environment variables for your account"
+  - Click the "Environment Variables..." button
+  - Under the "User Variables" section (the upper half), find the row with "Path" in the first column, and click edit
+  - The "Edit environment variable" UI will appear.
+  - Click "New" button to add a new line with `%%VISP_WS%\visp-build-vc15\install\x64\vc15\bin`
+
 - Set `VISP_DIR` var to help CMake to find ViSP as a 3rd party
 \code
 C:\> setx VISP_DIR "%VISP_WS%\visp-build-vc15\install"
 C:\> exit
 \endcode
-
-\note Since `setx` command is not able to handle a var that has more than 1024 characters (which could be the case of `Path` var), to modify `Path` environment variable do the following:
-1. Open the Start Search, type in "env", and choose "Edit environment variables for your account"
-2. Click the "Environment Variables..." button
-3. Under the "User Variables" section (the upper half), find the row with "Path" in the first column, and click edit
-4. The "Edit environment variable" UI will appear.
-5. Click "New" button to add a new line with `%%VISP_WS%\visp-build-vc15\install\x64\vc15\bin`
 
 To have a trial, just jump to \ref install_win10_msvc15_dataset before running some binaries that you just build or jump to \ref install_win10_msvc15_next. You can later come back to the \ref install_win10_msvc15_advanced.
 
@@ -355,6 +359,12 @@ C:\> cmake --build . --config Release --target visp_doc
 \subsection install_win10_msvc15_env_var Set Path environment var
 
 Modify the `Path` var to add the path to ViSP dll libraries. To this end open the "Edit environment variable" UI, and modify `Path` to add a new line with `%%VISP_WS%\visp-build-vc15\install\x64\vc15\bin`.
+
+Modifying the `Path` could also be done in a `cmd` Command Prompt running:
+\code
+C:\> setx Path "%Path%:%VISP_WS%\visp-build-vc15\install\x64\vc15\bin"
+C:\> exit
+\endcode
 
 \subsection install_win10_msvc15_visp_dir Set VISP_DIR environment var
 

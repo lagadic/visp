@@ -1270,8 +1270,6 @@ std::vector<std::vector<double> > vpMbKltTracker::getModelForDisplay(unsigned in
   Test the quality of the tracking.
   The tracking is supposed to fail if less than 10 points are tracked.
 
-  \todo Find a efficient way to test the quality.
-
   \throw vpTrackingException::fatalError  if the test fails.
 */
 void vpMbKltTracker::testTracking()
