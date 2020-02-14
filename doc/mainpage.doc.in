@@ -116,7 +116,6 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \ref tutorial-getting-started-naoqi <br>This tutorial shows how to build a project that uses ViSP on NAOqi OS running on NAO, Romeo or Pepper humanoid robots.
 - \ref tutorial-import-visp-into-EclipseIDE <br>This tutorial shows how to import a CMake project that uses ViSP in Eclipse IDE.
-- \ref tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
 
 \subsection tuto_image Image manipulation
 
@@ -209,6 +208,11 @@ in one thread and display these images in an other thread.
 \subsection tuto_coding Contributing to ViSP source code
 
 - \ref tutorial-add-new-dependency <br>This tutorial explains how to introduce a new class that relies on a 3rd party SDK. Different use cases are given as example.
+
+\subsection tuto_contrib Extanding ViSP with contrib modules
+
+- \ref tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
+
 
 \section Citing_ViSP Citing ViSP
 
