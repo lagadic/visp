@@ -273,9 +273,9 @@ $ unzip ~/Downloads/visp-images-3.2.0.zip -d $VISP_WS
 - We suppose now that the data are located in `$VISP_WS/visp-images-3.3.0`.
 \code
 $ ls $VISP_WS/visp-images-3.3.0
-3dmodel	   LICENSE.txt    circle     ellipse-1    iv      mbt-capla     mire      warp
-AprilTag   README.md      cube       endianness   line    mbt-depth     mire-2    xml
-Klimt      calibration    ellipse    faces        mbt     mbt-lego      video
+3dmodel	   LICENSE.txt    circle     ellipse-1    iv      mbt-depth     video
+AprilTag   README.md      cube       endianness   line    mire          warp
+Klimt      calibration    ellipse    faces        mbt     mire-2        xml
 \endcode
 - Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.3.0`. It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched: 
 \code
