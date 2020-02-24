@@ -294,7 +294,7 @@ error:
 
     struct termios options;
 
-    #if (defined __APPLE__) || (defined __FreeBSD__)
+    #if (defined __APPLE__)
     speed_t custom_baudrate = BAUD_RATE;
     #endif
 
