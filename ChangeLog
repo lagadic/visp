@@ -12,6 +12,7 @@ ViSP 3.3.1 (under development)
     . [#713] 3.3.0 build fails on non-linux systems: fatal error: 'linux/serial.h'
       file not found
     . [#716] Build issue on FreeBSD with g++
+    . [#718] vpImage<unsigned char>::getValue() is not working on big endian arch
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:
