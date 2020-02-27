@@ -54,6 +54,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <visp3/core/vpDebug.h>
+#include <visp3/core/vpEndian.h>
 #include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
@@ -81,42 +82,6 @@
 #  else
 #    define PATH_MAX 1024
 #  endif
-#endif
-
-// Detect endianness of the host machine
-// Reference: http://www.boost.org/doc/libs/1_36_0/boost/detail/endian.hpp
-#if defined(__GLIBC__) || (defined(__GNUC__) && !defined(__llvm__) && !defined(__MINGW32__) && !defined(__FreeBSD__) && defined(__BYTE_ORDER__))
-#include <endian.h>
-#if (__BYTE_ORDER == __LITTLE_ENDIAN)
-#define VISP_LITTLE_ENDIAN
-#elif (__BYTE_ORDER == __BIG_ENDIAN)
-#define VISP_BIG_ENDIAN
-#elif (__BYTE_ORDER == __PDP_ENDIAN)
-// Currently not supported when reading / writing binary file
-#define VISP_PDP_ENDIAN
-//#error PDP endian is not supported. //Uncomment if needed/happens
-#else
-#error Unknown machine endianness detected.
-#endif
-#elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN) || defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)
-#define VISP_BIG_ENDIAN
-#elif defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN) || defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)
-#define VISP_LITTLE_ENDIAN
-#elif defined(__sparc) || defined(__sparc__) || defined(_POWER) || defined(__powerpc__) || defined(__ppc__) ||         \
-    defined(__hpux) || defined(_MIPSEB) || defined(_POWER) || defined(__s390__)
-
-#define VISP_BIG_ENDIAN
-#elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) || defined(_M_IX86) ||           \
-    defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) || defined(__amd64__) || defined(_M_AMD64) ||            \
-    defined(__x86_64) || defined(__x86_64__) || defined(_M_X64) || defined(__ANDROID__)
-    // It appears that all Android systems are little endian.
-    // Refer https://stackoverflow.com/questions/6212951/endianness-of-android-ndk
-#define VISP_LITTLE_ENDIAN
-#elif defined(WINRT) // For UWP
-// Refer https://social.msdn.microsoft.com/Forums/en-US/04c92ef9-e38e-415f-8958-ec9f7c196fd3/arm-endianess-under-windows-mobile?forum=windowsmobiledev
-#define VISP_LITTLE_ENDIAN
-#else
-#error Cannot detect host machine endianness.
 #endif
 
 std::string vpIoTools::baseName = "";

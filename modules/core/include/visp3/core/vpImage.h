@@ -46,10 +46,12 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
+#include <visp3/core/vpEndian.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpRGBa.h>
+
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 #include <visp3/core/vpThread.h>
 #endif
@@ -66,42 +68,6 @@ typedef long long int64_t;
 typedef unsigned short uint16_t;
 #else
 #  include <inttypes.h>
-#endif
-
-// Detect endianness of the host machine
-// Reference: http://www.boost.org/doc/libs/1_36_0/boost/detail/endian.hpp
-#if defined(__GLIBC__) || (defined(__GNUC__) && !defined(__llvm__) && !defined(__MINGW32__) && !defined(__FreeBSD__) && defined(__BYTE_ORDER__))
-#include <endian.h>
-#if (__BYTE_ORDER == __LITTLE_ENDIAN)
-#define VISP_LITTLE_ENDIAN
-#elif (__BYTE_ORDER == __BIG_ENDIAN)
-#define VISP_BIG_ENDIAN
-#elif (__BYTE_ORDER == __PDP_ENDIAN)
-// Currently not supported when reading / writing binary file
-#define VISP_PDP_ENDIAN
-//#error PDP endian is not supported. //Uncomment if needed/happens
-#else
-#error Unknown machine endianness detected.
-#endif
-#elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN) || defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)
-#define VISP_BIG_ENDIAN
-#elif defined(_LITTLE_ENDIAN) && !defined(_BIG_ENDIAN) || defined(__LITTLE_ENDIAN__) && !defined(__BIG_ENDIAN__)
-#define VISP_LITTLE_ENDIAN
-#elif defined(__sparc) || defined(__sparc__) || defined(_POWER) || defined(__powerpc__) || defined(__ppc__) ||         \
-    defined(__hpux) || defined(_MIPSEB) || defined(_POWER) || defined(__s390__)
-
-#define VISP_BIG_ENDIAN
-#elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) || defined(_M_IX86) ||           \
-    defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) || defined(__amd64__) || defined(_M_AMD64) ||            \
-    defined(__x86_64) || defined(__x86_64__) || defined(_M_X64) || defined(__ANDROID__)
-    // It appears that all Android systems are little endian.
-    // Refer https://stackoverflow.com/questions/6212951/endianness-of-android-ndk
-#define VISP_LITTLE_ENDIAN
-#elif defined(WINRT) // For UWP
-// Refer https://social.msdn.microsoft.com/Forums/en-US/04c92ef9-e38e-415f-8958-ec9f7c196fd3/arm-endianess-under-windows-mobile?forum=windowsmobiledev
-#define VISP_LITTLE_ENDIAN
-#else
-#error Cannot detect host machine endianness.
 #endif
 
 class vpDisplay;
@@ -1557,7 +1523,7 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
     throw vpException(vpImageException::notInitializedError, "Empty image!");
   }
 
-#if defined(VISP_LITTLE_ENDIAN)
+#if (defined(VISP_LITTLE_ENDIAN) || defined(VISP_BIG_ENDIAN))
   //Fixed-point arithmetic
   const int precision = 1 << 16;
   int64_t y = static_cast<int64_t>(i * precision);
@@ -1575,6 +1541,7 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
   int64_t x_ = x >> 16;
   int64_t y_ = y >> 16;
 
+#if defined(VISP_LITTLE_ENDIAN)
   if (y_ + 1 < height && x_ + 1 < width) {
     uint16_t up = *reinterpret_cast<uint16_t *>(bitmap + y_ * width + x_);
     uint16_t down = *reinterpret_cast<uint16_t *>(bitmap + (y_ + 1) * width + x_);
@@ -1590,23 +1557,6 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
     return row[y_][x_];
   }
 #elif defined(VISP_BIG_ENDIAN)
-  //Fixed-point arithmetic
-  const int precision = 1 << 16;
-  int64_t y = static_cast<int64_t>(i * precision);
-  int64_t x = static_cast<int64_t>(j * precision);
-
-  int64_t iround = y & (~0xFFFF);
-  int64_t jround = x & (~0xFFFF);
-
-  int64_t rratio = y - iround;
-  int64_t cratio = x - jround;
-
-  int64_t rfrac = precision - rratio;
-  int64_t cfrac = precision - cratio;
-
-  int64_t x_ = x >> 16;
-  int64_t y_ = y >> 16;
-
   if (y_ + 1 < height && x_ + 1 < width) {
     uint16_t up = *reinterpret_cast<uint16_t *>(bitmap + y_ * width + x_);
     uint16_t down = *reinterpret_cast<uint16_t *>(bitmap + (y_ + 1) * width + x_);
@@ -1621,6 +1571,7 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
   } else {
     return row[y_][x_];
   }
+#endif
 #else
   unsigned int iround = static_cast<unsigned int>(floor(i));
   unsigned int jround = static_cast<unsigned int>(floor(j));
