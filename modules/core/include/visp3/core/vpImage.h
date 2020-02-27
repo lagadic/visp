@@ -46,10 +46,12 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
+#include <visp3/core/vpEndian.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpRGBa.h>
+
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 #include <visp3/core/vpThread.h>
 #endif
@@ -1521,6 +1523,7 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
     throw vpException(vpImageException::notInitializedError, "Empty image!");
   }
 
+#if (defined(VISP_LITTLE_ENDIAN) || defined(VISP_BIG_ENDIAN))
   //Fixed-point arithmetic
   const int precision = 1 << 16;
   int64_t y = static_cast<int64_t>(i * precision);
@@ -1538,6 +1541,7 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
   int64_t x_ = x >> 16;
   int64_t y_ = y >> 16;
 
+#if defined(VISP_LITTLE_ENDIAN)
   if (y_ + 1 < height && x_ + 1 < width) {
     uint16_t up = *reinterpret_cast<uint16_t *>(bitmap + y_ * width + x_);
     uint16_t down = *reinterpret_cast<uint16_t *>(bitmap + (y_ + 1) * width + x_);
@@ -1552,6 +1556,45 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
   } else {
     return row[y_][x_];
   }
+#elif defined(VISP_BIG_ENDIAN)
+  if (y_ + 1 < height && x_ + 1 < width) {
+    uint16_t up = *reinterpret_cast<uint16_t *>(bitmap + y_ * width + x_);
+    uint16_t down = *reinterpret_cast<uint16_t *>(bitmap + (y_ + 1) * width + x_);
+
+    return static_cast<unsigned char>((((up >> 8) * rfrac + (down >> 8) * rratio) * cfrac +
+                                       ((up & 0x00FF) * rfrac + (down & 0x00FF) * rratio) * cratio) >> 32);
+  } else if (y_ + 1 < height) {
+    return static_cast<unsigned char>(((row[y_][x_] * rfrac + row[y_ + 1][x_] * rratio)) >> 16);
+  } else if (x_ + 1 < width) {
+    uint16_t up = *reinterpret_cast<uint16_t *>(bitmap + y_ * width + x_);
+    return static_cast<unsigned char>(((up >> 8) * cfrac + (up & 0x00FF) * cratio) >> 16);
+  } else {
+    return row[y_][x_];
+  }
+#endif
+#else
+  unsigned int iround = static_cast<unsigned int>(floor(i));
+  unsigned int jround = static_cast<unsigned int>(floor(j));
+
+  if (iround >= height || jround >= width) {
+    vpERROR_TRACE("Pixel outside the image") ;
+    throw(vpException(vpImageException::notInTheImage,
+          "Pixel outside the image"));
+  }
+
+  double rratio = i - static_cast<double>(iround);
+  double cratio = j - static_cast<double>(jround);
+
+  double rfrac = 1.0 - rratio;
+  double cfrac = 1.0 - cratio;
+
+  unsigned int iround_1 = (std::min)(height - 1, iround + 1);
+  unsigned int jround_1 = (std::min)(width - 1, jround + 1);
+
+  double value = (static_cast<double>(row[iround][jround])   * rfrac + static_cast<double>(row[iround_1][jround]) * rratio) * cfrac +
+                 (static_cast<double>(row[iround][jround_1]) * rfrac + static_cast<double>(row[iround_1][jround_1]) * rratio) * cratio;
+  return static_cast<unsigned char>(vpMath::round(value));
+#endif
 }
 
 template <> inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
