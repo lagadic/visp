@@ -37,28 +37,34 @@
   \file vpEndian.cpp
   \brief Functions for correct endianness handling.
 */
+#include <stdexcept>
 #include <visp3/core/vpEndian.h>
 
 namespace vpEndian
 {
-#ifdef VISP_BIG_ENDIAN
-// Swap 16 bits by shifting to the right the first byte and by shifting to the
-// left the second byte
+/*!
+  Swap 16 bits by shifting to the right the first byte and by shifting to the
+  left the second byte.
+*/
 uint16_t swap16bits(uint16_t val)
 {
   return (((val >> 8) & 0x00FF) | ((val << 8) & 0xFF00));
 }
 
-// Swap 32 bits by shifting to the right the first 2 bytes and by shifting to
-// the left the last 2 bytes
+/*!
+  Swap 32 bits by shifting to the right the first 2 bytes and by shifting to
+  the left the last 2 bytes.
+*/
 uint32_t swap32bits(uint32_t val)
 {
   return (((val >> 24) & 0x000000FF) | ((val >> 8) & 0x0000FF00) | ((val << 8) & 0x00FF0000) |
           ((val << 24) & 0xFF000000));
 }
 
-// Swap a float, the union is necessary because of the representation of a
-// float in memory in IEEE 754.
+/*!
+  Swap a float, the union is necessary because of the representation of a
+  float in memory in IEEE 754.
+*/
 float swapFloat(float f)
 {
   union {
@@ -74,8 +80,10 @@ float swapFloat(float f)
   return dat2.f;
 }
 
-// Swap a double, the union is necessary because of the representation of a
-// double in memory in IEEE 754.
+/*!
+  Swap a double, the union is necessary because of the representation of a
+  double in memory in IEEE 754.
+*/
 double swapDouble(double d)
 {
   union {
@@ -94,7 +102,6 @@ double swapDouble(double d)
   dat2.b[7] = dat1.b[0];
   return dat2.d;
 }
-#endif
 
 /*!
   Reinterpret an array of unsigned char stored in a little-endian way into an uint16_t value.

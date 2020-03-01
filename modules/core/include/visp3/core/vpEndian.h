@@ -85,23 +85,13 @@
 
 namespace vpEndian
 {
-#ifdef VISP_BIG_ENDIAN
-// Swap 16 bits by shifting to the right the first byte and by shifting to the
-// left the second byte
 VISP_EXPORT uint16_t swap16bits(uint16_t val);
 
-// Swap 32 bits by shifting to the right the first 2 bytes and by shifting to
-// the left the last 2 bytes
 VISP_EXPORT uint32_t swap32bits(uint32_t val);
 
-// Swap a float, the union is necessary because of the representation of a
-// float in memory in IEEE 754.
 VISP_EXPORT float swapFloat(float f);
 
-// Swap a double, the union is necessary because of the representation of a
-// double in memory in IEEE 754.
 VISP_EXPORT double swapDouble(double d);
-#endif
 
 VISP_EXPORT uint16_t reinterpret_cast_uchar_to_uint16_LE(unsigned char * const ptr);
 }

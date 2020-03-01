@@ -55,6 +55,14 @@ TEST_CASE("Test reinterpret_cast_uchar_to_uint16_LE", "[vpEndian_test]") {
   CHECK((val12 >> 8)== bitmap[3]);
 }
 
+TEST_CASE("Test bitwise shift operators and zero fill", "[vpEndian_test]") {
+  //https://docs.microsoft.com/en-us/cpp/cpp/left-shift-and-right-shift-operators-input-and-output?view=vs-2019
+  //https://devblogs.microsoft.com/cppblog/hello-arm-exploring-undefined-unspecified-and-implementation-defined-behavior-in-c/
+  for (uint16_t i = 0; i < 60000; i += 500) {
+    REQUIRE(((i >> 8) & 0x00FF) == (i >> 8));
+  }
+}
+
 int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
