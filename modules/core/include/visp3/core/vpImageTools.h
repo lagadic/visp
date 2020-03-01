@@ -1156,7 +1156,7 @@ void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsigned char
       }
     }
   } else if (method == INTERPOLATION_LINEAR) {
-    const int precision = 1 << 16;
+    const int32_t precision = 1 << 16;
     int64_t scaleY = static_cast<int64_t>((I.getHeight() - 1) / static_cast<float>(Ires.getHeight() - 1) * precision);
     int64_t scaleX = static_cast<int64_t>((I.getWidth() - 1) / static_cast<float>(Ires.getWidth() - 1) * precision);
 
@@ -1181,8 +1181,8 @@ void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsigned char
         int64_t cfrac = precision - cratio;
 
         if (y_ + 1 < static_cast<int64_t>(I.getHeight()) && x_ + 1 < static_cast<int64_t>(I.getWidth())) {
-          int64_t up = *reinterpret_cast<uint16_t *>(I.bitmap + y_ * I.getWidth() + x_);
-          int64_t down = *reinterpret_cast<uint16_t *>(I.bitmap + (y_ + 1) * I.getWidth() + x_);
+          uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(I.bitmap + y_ * I.getWidth() + x_);
+          uint16_t down = vpEndian::reinterpret_cast_uchar_to_uint16_LE(I.bitmap + (y_ + 1) * I.getWidth() + x_);
 
           Ires[i][j] = static_cast<unsigned char>((((up & 0x00FF) * rfrac + (down & 0x00FF) * rratio) * cfrac +
                                                   ((up >> 8) * rfrac + (down >> 8) * rratio) * cratio) >> 32);
@@ -1190,7 +1190,7 @@ void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsigned char
           Ires[i][j] = static_cast<unsigned char>(((*(I.bitmap + y_ * I.getWidth() + x_)
                                                   * rfrac + *(I.bitmap + (y_ + 1) * I.getWidth() + x_) * rratio)) >> 16);
         } else if (x_ + 1 < static_cast<int64_t>(I.getWidth())) {
-          uint16_t up = *reinterpret_cast<uint16_t *>(I.bitmap + y_ * I.getWidth() + x_);
+          uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(I.bitmap + y_ * I.getWidth() + x_);
           Ires[i][j] = static_cast<unsigned char>(((up & 0x00FF) * cfrac + (up >> 8) * cratio) >> 16);
         } else {
           Ires[i][j] = *(I.bitmap + y_ * I.getWidth() + x_);
@@ -1244,7 +1244,7 @@ void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires,
       }
     }
   } else {
-    const int precision = 1 << 16;
+    const int32_t precision = 1 << 16;
     int64_t scaleY = static_cast<int64_t>((I.getHeight() - 1) / static_cast<float>(Ires.getHeight() - 1) * precision);
     int64_t scaleX = static_cast<int64_t>((I.getWidth() - 1) / static_cast<float>(Ires.getWidth() - 1) * precision);
 
