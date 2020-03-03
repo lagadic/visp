@@ -138,6 +138,10 @@ object file: No such file or directory \endcode
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/3rdparty/FT_SDK_01_4/linux/ubuntu16.04/ftSensorLibReleaseExamples/library/bin/lin-x86_64/release
   \endcode
   where `$VISP_WS/3rdparty/FT_SDK_01_4` contains IIT SDK.
+
+  To configure the sensor, you may access the sensor through the web interface using uour favorite browser.
+  \image html vpForceTorqueIitSensor-ethernet.png
+
  */
 class VISP_EXPORT vpForceTorqueIitSensor
 {
@@ -147,7 +151,7 @@ public:
 
   void bias();
   bool connected(int timeout_ms = 0) const;
-  vpColVector getForceTorque();
+  vpColVector getForceTorque(bool filtered = false);
 
   void startStreaming();
   void stopStreaming();
@@ -162,6 +166,7 @@ protected:
   int m_numSensorsInLib;
 
   vpColVector m_ft;
+  vpColVector m_ft_filt;
 
   ftSensorsConnected m_ftSensorsData{};
 
