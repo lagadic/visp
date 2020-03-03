@@ -52,7 +52,7 @@
   Establish communication with sensor(-s) and start data acquisition thread.
 */
 vpForceTorqueIitSensor::vpForceTorqueIitSensor()
-  : m_ftLib(), m_numSensorsInLib(0), m_ft(6, 0), m_ftSensorsData(), m_acquisitionEnabled(false), m_dataValid(false),
+  : m_ftLib(), m_numSensorsInLib(0), m_ft(6, 0), m_ft_filt(6, 0), m_ftSensorsData(), m_acquisitionEnabled(false), m_dataValid(false),
     m_connected(false), m_acquisitionThread(), m_timeCur(), m_timePrev(), m_mutex(), m_warmupMilliseconds(500)
 {
   // Get number of connected in library sensors
@@ -147,7 +147,7 @@ void vpForceTorqueIitSensor::acquisitionLoop()
       const std::lock_guard<std::mutex> lock(m_mutex);
       for (unsigned int i = 0; i < 6; i++) {
         m_ft[i] = m_ftSensorsData.ftSensor->ft[i];
-        // Note that there exist also m_ftSensorsData.ftSensor->filt_ft[i]; that doesn't sound have filtered values
+        m_ft_filt[i] = m_ftSensorsData.ftSensor->filt_ft[i];
       }
     }
   }
@@ -183,11 +183,17 @@ bool vpForceTorqueIitSensor::connected(int timeout_ms) const
 /*!
   Get force-torque data in SI units.
  */
-vpColVector vpForceTorqueIitSensor::getForceTorque()
+vpColVector vpForceTorqueIitSensor::getForceTorque(bool filtered)
 {
   const std::lock_guard<std::mutex> lock(m_mutex);
-  return m_ft;
+  if (filtered) {
+    return m_ft_filt;
+  }
+  else {
+    return m_ft;
+  }
 }
+
 
 /*!
    Start acquisition thread and wait until data are available.

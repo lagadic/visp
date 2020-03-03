@@ -147,7 +147,7 @@ public:
 
   void bias();
   bool connected(int timeout_ms = 0) const;
-  vpColVector getForceTorque();
+  vpColVector getForceTorque(bool filtered = false);
 
   void startStreaming();
   void stopStreaming();
@@ -162,6 +162,7 @@ protected:
   int m_numSensorsInLib;
 
   vpColVector m_ft;
+  vpColVector m_ft_filt;
 
   ftSensorsConnected m_ftSensorsData{};
 

@@ -51,12 +51,15 @@ int main(int argc, char **argv)
 {
 #ifdef VISP_HAVE_FT_IIT_SDK
   bool opt_no_display = false;
+  bool opt_filtered = false;
 
   for (int i = 0; i < argc; i++) {
     if (std::string(argv[i]) == "--no-display" || std::string(argv[i]) == "-d")
       opt_no_display = true;
+    if (std::string(argv[i]) == "--filtered" || std::string(argv[i]) == "-f")
+      opt_filtered = true;
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "\nUsage: " << argv[0] << " [--no-display] [-d] [--help] [-h]\n" << std::endl;
+      std::cout << "\nUsage: " << argv[0] << " [--no-display] [--filtered] [--help] [-d] [-f] [-h]\n" << std::endl;
       return 0;
     }
   }
@@ -97,7 +100,7 @@ int main(int argc, char **argv)
   while (!end) {
     double t = vpTime::measureTimeMs();
 
-    ft = iit_ft.getForceTorque();
+    ft = iit_ft.getForceTorque(opt_filtered);
 #if defined(VISP_HAVE_DISPLAY)
     if (!opt_no_display) {
       vpColVector force = ft.extract(0, 3);
