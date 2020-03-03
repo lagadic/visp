@@ -182,6 +182,17 @@ bool vpForceTorqueIitSensor::connected(int timeout_ms) const
 
 /*!
   Get force-torque data in SI units.
+  \param[in] filtered : When true return filtered force-torque measurements,
+  when false return raw data.
+  If no filter is configured while getting filtered measurements, the SDK will
+  retun the raw data.
+  To configure the filter, you must access the sensor through the web interface.
+  The default ip address is 192.168.1.1 if in default mode.
+  Once in the web interface select NETWORK SETTINGS and you can configure the
+  Data Filtering Settings: 
+  - Filter Type: Low-Pass or High-Pass Butterworth
+  - Filter Order: 1, 2 or 3
+  - Cut-off Frequency: <freq> in Hz
  */
 vpColVector vpForceTorqueIitSensor::getForceTorque(bool filtered)
 {
