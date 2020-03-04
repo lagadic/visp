@@ -1,8 +1,5 @@
 language: cpp
 
-# Set Xcode version to 10.1 (default is 9.4)
-osx_image: xcode10.1
-
 env:
   - VISP_INPUT_IMAGE_PATH=${TRAVIS_BUILD_DIR}
 
@@ -13,24 +10,36 @@ jobs:
       arch: amd64
       compiler: gcc
     - os: linux
-      dist: xenial
+      dist: bionic
+      arch: amd64
+      compiler: gcc
+    - os: linux
+      dist: bionic
       arch: amd64
       compiler: clang
     - os: linux
-      dist: xenial
+      dist: bionic
       arch: arm64
       compiler: gcc
     - os: linux
-      dist: xenial
+      dist: bionic
       arch: ppc64le
       compiler: gcc
     - os: linux
-      dist: xenial
+      dist: bionic
       arch: s390x
       compiler: gcc
     - os: osx
+      # Set Xcode version to 10.1 (default is 9.4) / macOS 10.13
+      osx_image: xcode10.1
+      compiler: clang
+    - os: osx
+      # Set Xcode version to 11.3 / macOS 10.14
+      osx_image: xcode11.3
       compiler: gcc
     - os: osx
+      # Set Xcode version to 11.3 / macOS 10.14
+      osx_image: xcode11.3
       compiler: clang
 
 before_install:
@@ -85,13 +94,14 @@ before_install:
   # Get libs for Linux
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get update -qq; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq liblapack-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq cmake libopencv-dev libx11-dev libgsl0-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq cmake libopenblas-dev libgsl0-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq cmake libopencv-dev libx11-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libdc1394-22-dev libv4l-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libcoin80-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libjpeg-dev libpng12-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libswscale-dev libavutil-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libavformat-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libavcodec-dev libbz2-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libjpeg-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ] && [ $TRAVIS_DIST = 'xenial' ]; then sudo apt-get install -qq libpng12-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ] && [ $TRAVIS_DIST = 'bionic' ]; then sudo apt-get install -qq libpng-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libbz2-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libogre-1.9-dev libois-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libzbar-dev libdmtx-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq ant; fi"
