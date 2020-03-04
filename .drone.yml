@@ -34,6 +34,7 @@ steps:
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
     - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../platforms/scripts/valgrind/valgrind_visp.supp --suppressions=../platforms/scripts/valgrind/valgrind_visp_3rdparty.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
+    - valgrind -v --tool=helgrind ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
@@ -70,6 +71,7 @@ steps:
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
     - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../platforms/scripts/valgrind/valgrind_visp.supp --suppressions=../platforms/scripts/valgrind/valgrind_visp_3rdparty.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
+    - valgrind -v --tool=helgrind ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
@@ -106,6 +108,7 @@ steps:
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
     - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
+    - valgrind -v --tool=helgrind ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
@@ -142,6 +145,7 @@ steps:
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
     - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../platforms/scripts/valgrind/valgrind_visp.supp --suppressions=../platforms/scripts/valgrind/valgrind_visp_3rdparty.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
+    - valgrind -v --tool=helgrind ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure
 
 ---
@@ -178,4 +182,5 @@ steps:
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
     - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../platforms/scripts/valgrind/valgrind_visp.supp --suppressions=../platforms/scripts/valgrind/valgrind_visp_3rdparty.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
+    - valgrind -v --tool=helgrind ./modules/vision/testFindMatch
     - ctest -I 107,107 -V -VV --output-on-failure

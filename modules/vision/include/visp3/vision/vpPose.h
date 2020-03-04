@@ -60,6 +60,7 @@
 #include <vector>
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <atomic>
+#include <mutex>
 #endif
 
 #include <visp3/core/vpUniRand.h>
@@ -159,12 +160,12 @@ private:
                   const bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
                   bool (*func_)(const vpHomogeneousMatrix &)
               #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-                  , std::atomic<bool> &abort
+                  , std::atomic<bool> &abort, std::mutex &mutex
               #endif
                   )
       :
     #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-        m_abort(abort),
+        m_abort(abort), m_mutex(mutex),
     #endif
         m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
         m_func(func_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
@@ -187,6 +188,7 @@ private:
   private:
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::atomic<bool> &m_abort;
+    std::mutex &m_mutex;
 #endif
     std::vector<unsigned int> m_best_consensus;
     bool m_checkDegeneratePoints;
