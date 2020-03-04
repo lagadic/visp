@@ -11,7 +11,7 @@ steps:
   image: ubuntu:19.04
   environment:
     CC: clang
-    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
+    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DUSE_OPENCV=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
   commands:
     - lscpu
     - cat /proc/cpuinfo
@@ -33,9 +33,8 @@ steps:
     - make -j testFindMatch
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
-    - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../platforms/scripts/valgrind/valgrind_visp.supp --suppressions=../platforms/scripts/valgrind/valgrind_visp_3rdparty.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
     - valgrind -v --tool=helgrind ./modules/vision/testFindMatch
-    - ctest -I 107,107 -V -VV --output-on-failure
+    - ctest -I 109,109 -V -VV --output-on-failure
 
 ---
 kind: pipeline
@@ -50,7 +49,7 @@ steps:
   image: ubuntu:18.04
   environment:
     CC: gcc
-    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DDART_TESTING_TIMEOUT=2500 -DBUILD_TUTORIALS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
+    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DDART_TESTING_TIMEOUT=2500 -DUSE_OPENCV=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
   commands:
     - lscpu
     - cat /proc/cpuinfo
@@ -70,9 +69,8 @@ steps:
     - make -j testFindMatch
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
-    - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../platforms/scripts/valgrind/valgrind_visp.supp --suppressions=../platforms/scripts/valgrind/valgrind_visp_3rdparty.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
     - valgrind -v --tool=helgrind ./modules/vision/testFindMatch
-    - ctest -I 107,107 -V -VV --output-on-failure
+    - ctest -I 109,109 -V -VV --output-on-failure
 
 ---
 kind: pipeline
@@ -87,7 +85,7 @@ steps:
   image: ubuntu:18.04
   environment:
     CC: gcc
-    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DDART_TESTING_TIMEOUT=2500 -DBUILD_TUTORIALS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
+    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DDART_TESTING_TIMEOUT=2500 -DUSE_OPENCV=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
   commands:
     - lscpu
     - cat /proc/cpuinfo
@@ -107,9 +105,8 @@ steps:
     - make -j testFindMatch
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
-    - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
     - valgrind -v --tool=helgrind ./modules/vision/testFindMatch
-    - ctest -I 107,107 -V -VV --output-on-failure
+    - ctest -I 109,109 -V -VV --output-on-failure
 
 ---
 kind: pipeline
@@ -124,7 +121,7 @@ steps:
   image: ubuntu:18.04
   environment:
     CC: gcc
-    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
+    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DUSE_OPENCV=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
   commands:
     - lscpu
     - cat /proc/cpuinfo
@@ -144,9 +141,8 @@ steps:
     - make -j testFindMatch
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
-    - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../platforms/scripts/valgrind/valgrind_visp.supp --suppressions=../platforms/scripts/valgrind/valgrind_visp_3rdparty.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
     - valgrind -v --tool=helgrind ./modules/vision/testFindMatch
-    - ctest -I 107,107 -V -VV --output-on-failure
+    - ctest -I 109,109 -V -VV --output-on-failure
 
 ---
 kind: pipeline
@@ -161,7 +157,7 @@ steps:
   image: ubuntu:18.04
   environment:
     CC: gcc
-    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TUTORIALS=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
+    CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TUTORIALS=OFF -DUSE_OPENCV=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo'
   commands:
     - lscpu
     - cat /proc/cpuinfo
@@ -181,6 +177,6 @@ steps:
     - make -j testFindMatch
     - ldd modules/vision/testFindMatch
     - ./modules/vision/testFindMatch
-    - valgrind -v --leak-check=yes --show-reachable=yes --num-callers=50 --suppressions=../platforms/scripts/valgrind/valgrind_visp.supp --suppressions=../platforms/scripts/valgrind/valgrind_visp_3rdparty.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv.supp --suppressions=../platforms/scripts/valgrind/valgrind_opencv_3rdparty.supp ./modules/vision/testFindMatch
     - valgrind -v --tool=helgrind ./modules/vision/testFindMatch
-    - ctest -I 107,107 -V -VV --output-on-failure
+    - ctest -I 109,109 -V -VV --output-on-failure
+
