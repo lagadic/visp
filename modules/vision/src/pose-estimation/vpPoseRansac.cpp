@@ -297,8 +297,10 @@ bool vpPose::RansacFunctor::poseRansacImpl()
   }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  if (m_nbInliers >= m_ransacNbInlierConsensus)
+  if (m_nbInliers >= m_ransacNbInlierConsensus) {
+    std::lock_guard<std::mutex> guard(m_mutex);
     m_abort = true;
+  }
 #endif
 
   return foundSolution;
@@ -408,6 +410,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     std::vector<std::thread> threadpool;
     std::vector<RansacFunctor> ransacWorkers;
     const unsigned int nthreads = std::thread::hardware_concurrency();
+    std::mutex mutex;
 
     int splitTrials = ransacMaxTrials / nthreads;
     std::atomic<bool> abort{false};
@@ -415,11 +418,11 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
       unsigned int initial_seed = (unsigned int)i; //((unsigned int) time(NULL) ^ i);
       if (i < (size_t)nthreads - 1) {
         ransacWorkers.emplace_back(cMo, ransacNbInlierConsensus, splitTrials, ransacThreshold, initial_seed,
-                                   checkDegeneratePoints, listOfUniquePoints, func, abort);
+                                   checkDegeneratePoints, listOfUniquePoints, func, abort, mutex);
       } else {
         int maxTrialsRemainder = ransacMaxTrials - splitTrials * (nbThreads - 1);
         ransacWorkers.emplace_back(cMo, ransacNbInlierConsensus, maxTrialsRemainder, ransacThreshold, initial_seed,
-                                   checkDegeneratePoints, listOfUniquePoints, func, abort);
+                                   checkDegeneratePoints, listOfUniquePoints, func, abort, mutex);
       }
     }
 
@@ -451,11 +454,12 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
     // Sequential RANSAC
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::atomic<bool> abort{false};
+    std::mutex mutex;
 #endif
     RansacFunctor sequentialRansac(cMo, ransacNbInlierConsensus, ransacMaxTrials, ransacThreshold, 0,
                                    checkDegeneratePoints, listOfUniquePoints, func
                                #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-                                   , abort
+                                   , abort, mutex
                                #endif
                                    );
     sequentialRansac();
