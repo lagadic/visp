@@ -64,8 +64,8 @@ public:
   vpRobotTemplate();
   virtual ~vpRobotTemplate();
 
-  void get_eJe(vpMatrix &eJe);
-  void get_fJe(vpMatrix &fJe);
+  void get_eJe(vpMatrix &eJe_);
+  void get_fJe(vpMatrix &fJe_);
 
   /*!
     Return constant transformation between end-effector and tool frame.

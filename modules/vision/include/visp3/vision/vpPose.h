@@ -155,9 +155,9 @@ private:
   class RansacFunctor
   {
   public:
-    RansacFunctor(const vpHomogeneousMatrix &cMo_, const unsigned int ransacNbInlierConsensus_,
-                  const int ransacMaxTrials_, const double ransacThreshold_, const unsigned int initial_seed_,
-                  const bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
+    RansacFunctor(const vpHomogeneousMatrix &cMo_, unsigned int ransacNbInlierConsensus_,
+                  const int ransacMaxTrials_, double ransacThreshold_, unsigned int initial_seed_,
+                  bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
                   bool (*func_)(const vpHomogeneousMatrix &)
               #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
                   , std::atomic<bool> &abort, std::mutex &mutex
@@ -315,7 +315,7 @@ public:
     automatically determined with C++11.
     \sa setUseParallelRansac
   */
-  inline void setNbParallelRansacThreads(const int nb) { nbParallelRansacThreads = nb; }
+  inline void setNbParallelRansacThreads(int nb) { nbParallelRansacThreads = nb; }
 
   /*!
     \return True if the parallel RANSAC version should be used (depends also to C++11 availability).
@@ -329,7 +329,7 @@ public:
 
     \note Need C++11 or higher.
   */
-  inline void setUseParallelRansac(const bool use) { useParallelRansac = use; }
+  inline void setUseParallelRansac(bool use) { useParallelRansac = use; }
 
   /*!
     Get the vector of points.
@@ -355,8 +355,12 @@ public:
   static void findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                         const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                         unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
-                        const int &maxNbTrials=10000, const bool useParallelRansac=true, const unsigned int nthreads=0,
-                        bool (*func)(const vpHomogeneousMatrix &)=NULL);
+                        const int &maxNbTrials=10000, bool useParallelRansac=true, unsigned int nthreads=0,
+                        bool (*func)(const vpHomogeneousMatrix &) = NULL);
+
+  static bool computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
+                                              const vpCameraParameters &colorIntrinsics, const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo,
+                                              double *confidence_index = NULL);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!

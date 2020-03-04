@@ -11,11 +11,11 @@ This tutorial will guide you through the creation of a simple Java console appli
 
 \section java_started_create_project Create a new project
 
-Open Eclipse and create a new Java project; open the `"File"` menu, go to `"New"` and click on `"Java Project"`.
+Open Eclipse and create a new Java project entering `"File > New > Java Project"` menu.
 
 \image html img-tutorial-java-eclipse-create-new-project.jpeg
 
-In the `"New Java Project"` dialog write the name of your project (let say `visp-java-started`) and click on `"Finish"`.
+In the `"New Java Project"` dialog write the name of your project (let say `visp-java-started`). In JRE section, select the appropriate execution environment (JavaSE-11 if you install JDK 11, or JavaSE-13 if you install JDK 13). Then press `"Finish"` button.
 
 \image html img-tutorial-java-eclipse-java-started.jpeg
 
@@ -25,75 +25,75 @@ In the "New module-info.java" dialog that may appear, press `"Don't Create"` but
 
 \section java_started_user_lib Add a user library
 
-If you followed the previous tutorial (\ref tutorial-install-java), you should already have ViSP library set in your workspace’s user libraries; if not please check out the previous tutorial. Now you should be ready to add the library to your project. Inside Eclipse’s Package Explorer just right-click on your project’s folder and go to `"Build Path --> Add Libraries..."`.
+If you followed \ref tutorial-install-java, you should already have ViSP library set in your workspace’s user libraries; if not please check out \ref tutorial-install-java. Now you should be ready to add ViSP library to your project. Inside Eclipse’s Package Explorer just right-click on your project’s folder and go to `"Build Path > Add Libraries..."`.
 
 \image html img-tutorial-java-eclipse-add-libraries.jpeg
 
-Select `"User Libraries"` and click on `"Next"`:
+Select `"User Library"` and click on `"Next"`:
 
 \image html img-tutorial-java-eclipse-add-libraries2.jpeg
 
-Check the checkbox of the ViSP library and click `"Finish"`.
+Check the checkbox of the ViSP library and press `"Finish"` button.
 
 \image html img-tutorial-java-eclipse-add-libraries3.jpeg
 
 \section java_started_simple_app Create a simple application
 
-Now add a new Class to your project by right-clicking on your project’s folder and go to `"New --> Class"`. 
+Now add a new class to your project by right-clicking on your project’s folder and entering `"New > Class"` menu. 
 
 \image html img-tutorial-java-eclipse-new-class.jpeg
 
-Write a name of your choice for both the package and the class then click on `"Finish"`.
+Write a class name like `Started` and press `"Finish"` button.
 
 \image html img-tutorial-java-eclipse-new-class2.jpeg
 
 Now we are ready to write the code of our first application. Let’s start by importing the main classes part of `core` module (vpCameraParameters, vpColVector, vpImage, vpMatrix, vpRGBa). Then we load `visp_java` library. After we continue defining the `main()` method that shows how to manipulate ViSP classes in Java.
 
-The code of the Main class is the following:
-\code
-import org.visp.core.VpCameraParameters;
-import org.visp.core.VpColVector;
-import org.visp.core.VpImageRGBa;
-import org.visp.core.VpImageUChar;
-import org.visp.core.VpMatrix;
-import org.visp.core.VpRGBa;
-
-public class Main {
-  static {
-    System.loadLibrary("visp_java320");
-  }
-
-  public static void main(String[] args) {
-    // VpMatrix
-    VpMatrix vp = new VpMatrix(2,3,1.5);
-    System.out.println(vp.getCol(0));
-    System.out.println(vp.transpose());
-                
-    // VpColVector
-    VpColVector vpColVector = new VpColVector(10,1.5);
-    System.out.println(vpColVector.infinityNorm());
-                
-    // VpImageUChar
-    VpImageUChar imageUChar = new VpImageUChar(2, 4, (byte)220);
-    System.out.println(imageUChar);
-                
-    // VpImageRGBa
-    VpImageRGBa colorImage = new VpImageRGBa(3, 5, new VpRGBa((char)255,(char)0,(char)0,(char)255));
-    System.out.println(colorImage);
-                
-    // VpCameraParameters
-    VpCameraParameters vpCameraParameters = new VpCameraParameters(1.0, 1.0, 1.0, 1.0);
-    System.out.println(vpCameraParameters.get_K());
-  }
-}
-\endcode
+The code of the `Started` class also given in Started.java is the following:
+\include Started.java
 
 After a copy/paste you should have something similar to:
 
 \image html img-tutorial-java-eclipse-started-code.jpeg
 
-We can now try to build and run our application by clicking on the `"Run"` button. You should have the following output:
+We can now try to build and run this application entering`"Run > Run"` menu. You should have the following output:
 
 \image html img-tutorial-java-eclipse-started-console.jpeg
+
+\section java_started_issues Known issues
+
+\subsection java_started_issue_jre Exception Unsupported Class Version Error
+
+As shown in the next image, if you get the following issue on Ubuntu 18.04:
+\code
+Exception in thread "main" java.lang.UnsupportedClassVersionError: org/visp/core/VpMatrix has been compiled by a more recent version of the Java Runtime (class file version 57.0), this version of the Java Runtime only recognizes class file versions up to 55.0
+\endcode
+\image html img-tutorial-java-issue-jdk-version.jpg
+it means probably that you use JRE System Library 11 installed in `/usr/lib/jvm/java-1.11.0-openjdk-amd64` while ViSP is build with a more recent java version obtained after downloading JDK 13 for example.
+
+To fix this issue, as explained in \ref tutorial-install-java install JDK 11 and do a fresh ViSP build using java 11.
+
+\subsection java_started_issue_vsp_version Exception Unsatisfied Link Error
+
+As shown in the next image, if you experience the following exception after entering `"Run > Run"` menu:
+\code
+Exception in thread "main" java.lang.UnsatisfiedLinkError: no visp_java321 in java.library.path: [/home/fspindle/visp_ws/visp-build/lib]
+\endcode
+\image html img-tutorial-java-issue-visp-version.jpg
+
+- check that `visp-<version>.jar` is present in `$VISP_DIR/visp-build/bin`:
+\code
+$ ls $VISP_DIR/visp-build/bin
+visp-331.jar
+\endcode
+If this java archive is missing and if you follow \ref tutorial-install-java it means that JDK was not detected during CMake configuration or that you didn't build ViSP
+- modify the following line to match ViSP version present in `$VISP_DIR/visp-build/bin`
+\code
+    System.loadLibrary("visp_java331");
+\endcode
+
+\section java_started_next Next tutorial
+
+You are now ready to continue with \ref tutorial-java-apriltag.
 
 */

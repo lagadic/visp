@@ -39,7 +39,7 @@ int main()
   vpDisplay::getImage(I, Ioverlay) ;
   // Write the color image on the disk
   std::cout << "Save image in overlay.ppm" << std::endl;
-  std::string ofilename("overlay.ppm");
+  std::string ofilename("overlay.png");
   vpImageIo::write(Ioverlay, ofilename) ;
   // Wait for a click in the display window
   std::cout << "A click to quit..." << std::endl;

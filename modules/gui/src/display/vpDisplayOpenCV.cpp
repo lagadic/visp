@@ -673,8 +673,8 @@ void vpDisplayOpenCV::displayImage(const vpImage<unsigned char> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayOpenCV::displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int w,
-                                      const unsigned int h)
+void vpDisplayOpenCV::displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int w,
+                                      unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
@@ -870,8 +870,8 @@ void vpDisplayOpenCV::displayImage(const vpImage<vpRGBa> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayOpenCV::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int w,
-                                      const unsigned int h)
+void vpDisplayOpenCV::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int w,
+                                      unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)

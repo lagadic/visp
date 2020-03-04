@@ -212,7 +212,6 @@ int main()
 #endif
 
   return 0;
-#endif
 }
 \endcode
 */
@@ -220,15 +219,15 @@ class VISP_EXPORT vpMbEdgeKltTracker : public vpMbKltTracker, public vpMbEdgeTra
 {
 protected:
   //! The threshold used in the robust estimation of KLT.
-  double thresholdKLT;
+  double m_thresholdKLT;
   //! The threshold used in the robust estimation of MBT.
-  double thresholdMBT;
+  double m_thresholdMBT;
   //! The maximum iteration of the virtual visual servoing stage.
   unsigned int m_maxIterKlt;
   //! Robust weights for Edge
-  vpColVector w_mbt;
+  vpColVector m_w_mbt;
   //! Robust weights for KLT
-  vpColVector w_klt;
+  vpColVector m_w_klt;
   //! (s - s*)
   vpColVector m_error_hybrid;
   //! Robust weights
@@ -239,16 +238,16 @@ public:
   virtual ~vpMbEdgeKltTracker();
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
 
   virtual inline vpColVector getError() const { return m_error_hybrid; }
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               const bool displayFullModel=false);
+                                                               bool displayFullModel=false);
 
   virtual inline vpColVector getRobustWeights() const { return m_w_hybrid; }
 
@@ -261,8 +260,8 @@ public:
 
   virtual void loadConfigFile(const std::string &configFile);
 
-  void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo_,
-                   const bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
+  void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
+                   bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   void resetTracker();
 
   virtual void setCameraParameters(const vpCameraParameters &cam);
@@ -333,30 +332,30 @@ public:
 
 protected:
   virtual void computeVVS(const vpImage<unsigned char> &I, const unsigned int &nbInfos, unsigned int &nbrow,
-                          const unsigned int lvl = 0);
+                          unsigned int lvl = 0);
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
   using vpMbTracker::computeCovarianceMatrixVVS;
   using vpMbTracker::computeVVSPoseEstimation;
 
   virtual void init(const vpImage<unsigned char> &I);
-  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, const double r, const int idFace = 0,
+  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, double r, int idFace = 0,
                           const std::string &name = "");
-  virtual void initCylinder(const vpPoint &, const vpPoint &, const double r, const int idFace,
+  virtual void initCylinder(const vpPoint &, const vpPoint &, double r, int idFace,
                             const std::string &name = "");
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
-  unsigned int initMbtTracking(const unsigned int level = 0);
+  unsigned int initMbtTracking(unsigned int level = 0);
 
   bool postTracking(const vpImage<unsigned char> &I, vpColVector &w_mbt, vpColVector &w_klt,
-                    const unsigned int lvl = 0);
+                    unsigned int lvl = 0);
   bool postTracking(const vpImage<vpRGBa> &I_color, vpColVector &w_mbt, vpColVector &w_klt,
-                    const unsigned int lvl = 0);
-  void postTrackingMbt(vpColVector &w, const unsigned int level = 0);
+                    unsigned int lvl = 0);
+  void postTrackingMbt(vpColVector &w, unsigned int level = 0);
 
-  unsigned int trackFirstLoop(const vpImage<unsigned char> &I, vpColVector &factor, const unsigned int lvl = 0);
-  void trackSecondLoop(const vpImage<unsigned char> &I, vpMatrix &L, vpColVector &_error, vpHomogeneousMatrix &cMo,
-                       const unsigned int lvl = 0);
+  unsigned int trackFirstLoop(const vpImage<unsigned char> &I, vpColVector &factor, unsigned int lvl = 0);
+  void trackSecondLoop(const vpImage<unsigned char> &I, vpMatrix &L, vpColVector &_error, const vpHomogeneousMatrix &cMo,
+                       unsigned int lvl = 0);
 };
 
 #endif

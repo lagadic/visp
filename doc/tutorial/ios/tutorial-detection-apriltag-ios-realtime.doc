@@ -41,40 +41,43 @@ Since the principal point almost coincides with the image center, this tutorial 
 
 \section call_objectivec_swift Call Objective-C class from Swift
 
+Let us consider the Xcode project named `AprilTagLiveCamera` that is part of ViSP source code and located in `$VISP_WS/tutorial/ios/AprilTagLiveCamera`. 
+
+To open this application, if you followed \ref tutorial-install-ios-package simply run:
+\code
+$ cd ~/framework
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/AprilTagLiveCamera
+$ open ~/visp-ws/AprilTagLiveCamera -a Xcode
+\endcode
+
+or if you already downloaded ViSP following \ref tutorial-install-iOS run:
+\code
+$ open ~/framework/visp/tutorial/ios/AprilTagLiveCamera -a Xcode
+\endcode
+
+As described in \ref tutorial-detection-apriltag-ios once opened, you have just to drag & drop ViSP and OpenCV frameworks available in `~/framework/ios` if you followed \ref tutorial-install-ios-package.
+
 ViSP's AprilTag detection class is currently written in Objective-C.
 In order to use this Objective-C class from Swift, setting of Bridging-Header is necessary.
-Look for the "Objective-C Bridging Header" column in the build settings, and make sure that "VispDetector.h", which describes the detector class this time, is set.
-
+Look for the `"Objective-C Bridging Header"` column in the `"Build Settings"`, and make sure that "VispDetector.h", which describes the detector class this time, is set.
 \image html img-detection-apriltag-realtime-ios-call-objc.jpg
 
 The content of `VispDetector.h` is the following:
-\include VispDetector.h
+\include AprilTagLiveCamera/VispDetector.h
 
-and in `ViewController.swift`you have something similar to:
-\code
-class ViewController: UIViewController {
-    
-    // make Objective-C class instance here.
-    let visp = VispDetector()
-    
-    func imageDidCapture(_ uiImage: UIImage, withIntrinsicParam px: Float, and py: Float) {
-        // You can call method here.
-        imageView.image = visp.detectAprilTag(uiImage, px:px, py:py)
-    }    
-}
-\endcode
-
+and in `ViewController.swift`you have the following code:
+\include AprilTagLiveCamera/ViewController.swift
 
 \section distance_from_camera Distance from camera
 
-Detection and drawing processing is processed in VispDetector.mm.
+Detection and drawing processing is processed in `VispDetector.mm`.
 For details on the detection process, see \ref tutorial-detection-apriltag and on how to draw the pose of a tag, see the previous \ref tutorial-detection-apriltag-ios.
 
 The distance from the iOS device to the marker can be accurately detected if the tag size is properly set. 
 The distance can be obtained using the getTranslationVector() method from the homogeneous transformation matrix (`cMo_vec`) representing the pose with rotation (R) and position (t) of the marker in camera coordinates. 
 See here for more information vpHomogeneousMatrix class
 
-This is achieved in VispDetector.mm:
+This is achieved in `VispDetector.mm`:
 \code
 for(int i=0; i < NumberOfTags; i++){
     vpTranslationVector trans = cMo_vec[i].getTranslationVector();

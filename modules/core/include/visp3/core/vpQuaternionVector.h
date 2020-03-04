@@ -130,7 +130,7 @@ public:
   vpQuaternionVector buildFrom(const vpThetaUVector &tu);
   vpQuaternionVector buildFrom(const vpColVector &q);
   vpQuaternionVector buildFrom(const std::vector<double> &q);
-  void set(const double x, const double y, const double z, const double w);
+  void set(double x, double y, double z, double w);
 
   double x() const;
   double y() const;
@@ -140,9 +140,9 @@ public:
   vpQuaternionVector operator+(const vpQuaternionVector &q) const;
   vpQuaternionVector operator-(const vpQuaternionVector &q) const;
   vpQuaternionVector operator-() const;
-  vpQuaternionVector operator*(const double l) const;
+  vpQuaternionVector operator*(double l) const;
   vpQuaternionVector operator*(const vpQuaternionVector &rq) const;
-  vpQuaternionVector operator/(const double l) const;
+  vpQuaternionVector operator/( double l) const;
   vpQuaternionVector &operator=(const vpColVector &q);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpQuaternionVector &operator=(const vpQuaternionVector &q) = default;

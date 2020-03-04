@@ -198,8 +198,7 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<double> &v) : vpArray
   t_y, t_z)^T\f$ and a \f$\theta {\bf u}=(\theta u_x, \theta u_y, \theta
   u_z)^T\f$ rotation vector.
  */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const double tx, const double ty, const double tz, const double tux,
-                                         const double tuy, const double tuz)
+vpHomogeneousMatrix::vpHomogeneousMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz)
   : vpArray2D<double>(4, 4)
 {
   buildFrom(tx, ty, tz, tux, tuy, tuz);
@@ -253,8 +252,7 @@ void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpQuater
   t_z)^T\f$ and a \f$\theta {\bf u}=(\theta u_x, \theta u_y, \theta u_z)^T\f$
   rotation vector.
  */
-void vpHomogeneousMatrix::buildFrom(const double tx, const double ty, const double tz, const double tux,
-                                    const double tuy, const double tuz)
+void vpHomogeneousMatrix::buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz)
 {
   vpRotationMatrix R(tux, tuy, tuz);
   vpTranslationVector t(tx, ty, tz);
@@ -748,7 +746,7 @@ void vpHomogeneousMatrix::load(std::ifstream &f)
       }
     }
   } else {
-    throw(vpException(vpException::ioError, "Cannot laad homogeneous matrix: ifstream not open"));
+    throw(vpException(vpException::ioError, "Cannot load homogeneous matrix: ifstream not open"));
   }
 }
 
@@ -840,7 +838,7 @@ Last column:
 0
   \endcode
  */
-vpColVector vpHomogeneousMatrix::getCol(const unsigned int j) const
+vpColVector vpHomogeneousMatrix::getCol(unsigned int j) const
 {
   if (j >= getCols())
     throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the homogeneous matrix"));

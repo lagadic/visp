@@ -3,7 +3,7 @@
 \page tutorial-install-osx-homebrew Tutorial: Installation from source for OSX with Homebrew
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on OSX with Homebrew. These steps have been tested with Mac OS X 10.9.5 Mavericks, with 10.10.3 Yosemite, with 10.12.5 Sierra and with 10.14.2 Mojave.
+In this tutorial you will learn how to install ViSP from source on OSX with Homebrew. These steps have been tested with macOS Catalina 10.15.3.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -151,7 +151,7 @@ A more versatile way to configure the build is to use `ccmake`, the CMake GUI:
 $ ccmake ../visp
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
-\image html img-ccmake-osx-all.jpg Snapshot of the `ccmake ../visp` command used to configure ViSP.
+\image html img-ccmake-osx-all.jpg Snapshot of the `"ccmake ../visp"` command used to configure ViSP.
 
 \note If you encounter an error during CMake configuration, check \ref install_brew_issues section.
 
@@ -193,26 +193,43 @@ $ source ~/.bashrc
 
 \section install_brew_dataset Install ViSP dataset
 
-Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples or tests. Note that ViSP tutorials are not using ViSP data set.
+Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
 
-- After ViSP data set <a href="https://visp.inria.fr/download/">download</a> unzip the archive
+We give hereafter the two ways to get this data set:
+
+<b>1. Get data set release</b>
+
+- Download `visp-images-3.3.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
 \code
 $ unzip ~/Downloads/visp-images-3.2.0.zip -d $VISP_WS
 \endcode
-
-- We suppose now that the data are located in `$VISP_WS/visp-images-3.2.0`.
+- We suppose now that the data are located in `$VISP_WS/visp-images-3.3.0`.
 \code
-$ ls $VISP_WS/visp-images-3.2.0
-AprilTag   LICENSE.txt   calibration   cube      ellipse-1    iv     mbt         mire     video
-Klimt      README.md     circle	       ellipse	 endianness   line   mbt-depth   mire-2
+$ ls $VISP_WS/visp-images-3.3.0
+3dmodel	   LICENSE.txt    circle     ellipse-1    iv      mbt-depth     video
+AprilTag   README.md      cube       endianness   line    mire          warp
+Klimt      calibration    ellipse    faces        mbt     mire-2        xml
 \endcode
-
-- Set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to find the location of the data set. It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched: 
+- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.3.0`. It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched: 
 \code
-$ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
-$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.2.0" >> ~/.bashrc
+$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.3.0" >> ~/.bashrc
 $ source ~/.bashrc
 \endcode
+
+<b>2. Get data set from github</b>
+
+- Use git to get the data set latest version:
+\code
+C:\> cd $VISP_WS
+C:\> git clone https://github.com/lagadic/visp-images.git
+\endcode
+- Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS%/visp-images`. In a shell run:
+\code
+$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images" >> ~/.bashrc
+$ source ~/.bashrc
+\endcode
+
+<b>Test data set usage</b>
 
 - From now, you can try to run ViSP examples and tests. For example you can run `displayX` example that should open a windows with Klimt painting image and some overlay drawings:
 \code
@@ -334,6 +351,8 @@ $ make help | grep visp
 ... visp_examples
 ... visp_clipper
 ... visp_apriltag
+... visp_qbdevice
+... visp_pugixml
 ... visp_core
 ... visp_gui
 ... visp_imgproc
@@ -349,12 +368,12 @@ $ make help | grep visp
 ... visp_vs
 ... visp_vision
 ... visp_detection
-... visp_java
-... visp_java_jar
-... visp_java_jar_source_copy
 ... visp_mbt
 ... visp_tt
 ... visp_tt_mi
+... visp_java
+... visp_java_jar
+... visp_java_jar_source_copy
 \endcode
 
 \subsection install_brew_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
@@ -363,21 +382,21 @@ To see which are the optional 3rd parties that are found during the configuratio
 \code
 $ cat $VISP_WS/visp-build/ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.2.0
+General configuration information for ViSP 3.3.0
 
-  Version control:               3.1.0-689-g60f19bd63-dirty
+  Version control:               3.2.0-796-gc26c51bfe-dirty
 
   Platform:
-    Timestamp:                   2018-11-29T16:18:33Z
-    Host:                        Darwin 17.7.0 x86_64
-    CMake:                       3.12.4
+    Timestamp:                   2020-02-11T08:44:25Z
+    Host:                        Darwin 19.3.0 x86_64
+    CMake:                       3.16.4
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/make
     Configuration:               Release
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  (ver 10.0.0.10001145)
+    C++ Compiler:                /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  (ver 11.0.0.11000033)
     C++ flags (Release):         -Wall -Wextra -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
     C++ flags (Debug):           -Wall -Wextra -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
     C Compiler:                  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc
@@ -387,7 +406,7 @@ General configuration information for ViSP 3.2.0
     Linker flags (Debug):        
 
   ViSP modules:
-    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection java mbt tt tt_mi
+    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi java
     Disabled:                    -
     Disabled by dependency:      -
     Unavailable:                 -
@@ -396,18 +415,21 @@ General configuration information for ViSP 3.2.0
 
   Java:                          
     ant:                         /usr/local/bin/ant (ver 1.10.5)
-    JNI:                         /System/Library/Frameworks/JavaVM.framework/Headers /System/Library/Frameworks/JavaVM.framework/Headers /System/Library/Frameworks/JavaVM.framework/Headers
+    JNI:                         /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/JavaVM.framework/Headers /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/JavaVM.framework/Headers /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/JavaVM.framework/Headers
 
   Build options: 
     Build deprecated:            yes
     Build with moment combine:   no
 
   Mathematics: 
-    Use Lapack/blas:             yes (ver n/a)
+    Use MKL:                     no
+    Use OpenBLAS:                yes
+    Use Atlas:                   no
+    Use Netlib Lapack:           no
     Use Lapack (built-in):       no
-    Use Eigen3:                  yes (ver 3.3.5)
-    Use OpenCV:                  yes (ver 3.4.3)
-    Use GSL:                     yes (ver 2.5)
+    Use Eigen3:                  yes (ver 3.3.7)
+    Use OpenCV:                  yes (ver 4.2.0)
+    Use GSL:                     yes (ver 2.6)
 
   Simulator: 
     Ogre simulator: 
@@ -418,14 +440,16 @@ General configuration information for ViSP 3.2.0
     \- Use SoWin:                no
     \- Use SoXt:                 no
     \- Use SoQt:                 no
+    \- Use Qt5:                  no
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
   Media I/O: 
     Use JPEG:                    yes (ver 90)
-    Use PNG:                     yes (ver 1.6.35)
+    Use PNG:                     yes (ver 1.6.37)
     \- Use ZLIB:                 yes (ver 1.2.11)
-    Use OpenCV:                  yes (ver 3.4.3)
+    Use OpenCV:                  yes (ver 4.2.0)
+    Use stb_image (built-in):    no
 
   Real robots: 
     Use Afma4:                   no
@@ -435,59 +459,66 @@ General configuration information for ViSP 3.2.0
     Use Viper850:                no
     Use aria (Pioneer):          no
     Use PTU46:                   no
-    Use Biclops PT:              no
+    Use Biclops PTU:             no
+    Use Flir PTU SDK:            no
+    Use Parrot ARSDK:            no
+    \-Use ffmpeg:                no
     Use Virtuose:                no
+    Use qbdevice (built-in):     yes (ver 2.6.0)
 
   GUI: 
     Use X11:                     yes
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 3.4.3)
+    Use OpenCV:                  yes (ver 4.2.0)
     Use GDI:                     no
     Use Direct3D:                no
 
   Cameras: 
-    Use DC1394-2.x:              yes (ver 2.2.2)
+    Use DC1394-2.x:              yes (ver 2.2.6)
     Use CMU 1394:                no
     Use V4L2:                    no
     Use directshow:              no
-    Use OpenCV:                  yes (ver 3.4.3)
+    Use OpenCV:                  yes (ver 4.2.0)
     Use Flycapture:              no
-    Use Pylon:                   yes (ver  5.0.5.8973)
+    Use Pylon:                   no
 
   RGB-D sensors: 
-    Use Realsense:               yes (ver 1.12.1)
-    Use Realsense2:              yes (ver 2.16.5)
+    Use Realsense:               no
+    Use Realsense2:              yes (ver 2.17.0)
     Use Kinect:                  no
     \- Use libfreenect:          no
-    \- Use libusb-1:             yes (ver 1.0.22)
+    \- Use libusb-1:             yes (ver 1.0.23)
     \- Use pthread:              yes
-    Use PCL:                     yes (ver 1.8.1)
-    \- Use VTK:                  yes (ver 8.1.1)
+    Use PCL:                     yes (ver 1.9.1)
+    \- Use VTK:                  yes (ver 8.2.0)
 
   F/T sensors: 
     Use atidaq (built-in):       no
     Use comedi:                  no
+    Use IIT SDK:                 no
 
   Detection: 
     Use zbar:                    yes (ver 0.10)
     Use dmtx:                    no
-    Use AprilTag (built-in):     yes (ver 0.9.8)
+    Use AprilTag (built-in):     yes (ver 3.1.1)
+    \- Use AprilTag big family:  no
 
   Misc: 
     Use Clipper (built-in):      yes (ver 6.4.2)
-    Use XML2:                    yes (ver 2.9.4)
+    Use pugixml (built-in):      yes (ver 1.9.0)
+    Use libxml2:                 yes (ver 2.9.8)
 
   Optimization: 
     Use OpenMP:                  no
     Use pthread:                 yes
     Use pthread (built-in):      no
-    Use cxx11:                   yes
-    cxx standard:                11
+    Use cxx standard:            11
 
   Documentation: 
     Use doxygen:                 yes
 
   Tests and samples:
+    Use catch2 (built-in):       yes (ver 2.9.2)
     Tests:                       yes
     Demos:                       yes
     Examples:                    yes

@@ -73,12 +73,12 @@ bool test(const std::string &s, const vpMatrix &M, const std::vector<double> &be
   return true;
 }
 
-double getRandomValues(const double min, const double max)
+double getRandomValues(double min, double max)
 {
   return (max - min) * ((double)rand() / (double)RAND_MAX) + min;
 }
 
-bool equalMatrix(const vpMatrix &A, const vpMatrix &B, const double tol = std::numeric_limits<double>::epsilon())
+bool equalMatrix(const vpMatrix &A, const vpMatrix &B, double tol = std::numeric_limits<double>::epsilon())
 {
   if (A.getRows() != B.getRows() || A.getCols() != B.getCols()) {
     return false;
@@ -95,7 +95,7 @@ bool equalMatrix(const vpMatrix &A, const vpMatrix &B, const double tol = std::n
   return true;
 }
 
-vpMatrix generateRandomMatrix(const unsigned int rows, const unsigned int cols, const double min, const double max)
+vpMatrix generateRandomMatrix(unsigned int rows, unsigned int cols, double min, double max)
 {
   vpMatrix M(rows, cols);
 
@@ -382,7 +382,7 @@ int main(int argc, char *argv[])
       std::cout << "------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix insert() with same colNum " << std::endl;
       std::cout << "------------------------" << std::endl;
-      const unsigned int nb = ctest ? 10 : 100; // 10000;
+      unsigned int nb = ctest ? 10 : 100; // 10000;
       const unsigned int size = ctest ? 10 : 100;
 
       vpMatrix m_big(nb * size, 6);

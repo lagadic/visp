@@ -85,7 +85,7 @@ public:
   };
 
 public:
-  vpFeatureException(const int id, const char *format, ...)
+  vpFeatureException(int id, const char *format, ...)
   {
     this->code = id;
     va_list args;
@@ -93,8 +93,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpFeatureException(const int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpFeatureException(const int id) : vpException(id) { ; }
+  vpFeatureException(int id, const std::string &msg) : vpException(id, msg) { ; }
+  explicit vpFeatureException(int id) : vpException(id) { ; }
 };
 
 #endif

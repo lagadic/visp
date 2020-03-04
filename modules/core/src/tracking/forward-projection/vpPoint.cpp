@@ -110,7 +110,7 @@ vpPoint::vpPoint(const std::vector<double> &P)
   point in the object frame. \param oX, oY, oZ: Coordinates of a 3D point in
   the object frame.
 */
-void vpPoint::setWorldCoordinates(const double oX, const double oY, const double oZ)
+void vpPoint::setWorldCoordinates(double oX, double oY, double oZ)
 {
   oP[0] = oX;
   oP[1] = oY;
@@ -356,7 +356,7 @@ vpPoint *vpPoint::duplicate() const
   Display the point in the image.
 */
 void vpPoint::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                      const vpColor &color, const unsigned int thickness)
+                      const vpColor &color, unsigned int thickness)
 {
 
   vpColVector _cP, _p;
@@ -373,7 +373,7 @@ void vpPoint::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix
   Display the point in the image.
 */
 void vpPoint::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                      const vpColor &color, const unsigned int thickness)
+                      const vpColor &color, unsigned int thickness)
 {
   vpColVector _cP, _p;
   changeFrame(cMo, _cP);
@@ -403,7 +403,7 @@ vpPoint &vpPoint::operator=(const vpPoint &vpp)
   Display the point in the image.
 */
 void vpPoint::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
-                      const unsigned int thickness)
+                      unsigned int thickness)
 {
   vpFeatureDisplay::displayPoint(p[0], p[1], cam, I, color, thickness);
 }
@@ -451,26 +451,26 @@ void vpPoint::projection()
 }
 
 //! Set the point X coordinate in the camera frame.
-void vpPoint::set_X(const double X) { cP[0] = X; }
+void vpPoint::set_X(double X) { cP[0] = X; }
 //! Set the point Y coordinate in the camera frame.
-void vpPoint::set_Y(const double Y) { cP[1] = Y; }
+void vpPoint::set_Y(double Y) { cP[1] = Y; }
 //! Set the point Z coordinate in the camera frame.
-void vpPoint::set_Z(const double Z) { cP[2] = Z; }
+void vpPoint::set_Z(double Z) { cP[2] = Z; }
 //! Set the point W coordinate in the camera frame.
-void vpPoint::set_W(const double W) { cP[3] = W; }
+void vpPoint::set_W(double W) { cP[3] = W; }
 
 //! Set the point X coordinate in the object frame.
-void vpPoint::set_oX(const double oX) { oP[0] = oX; }
+void vpPoint::set_oX(double oX) { oP[0] = oX; }
 //! Set the point Y coordinate in the object frame.
-void vpPoint::set_oY(const double oY) { oP[1] = oY; }
+void vpPoint::set_oY(double oY) { oP[1] = oY; }
 //! Set the point Z coordinate in the object frame.
-void vpPoint::set_oZ(const double oZ) { oP[2] = oZ; }
+void vpPoint::set_oZ(double oZ) { oP[2] = oZ; }
 //! Set the point W coordinate in the object frame.
-void vpPoint::set_oW(const double oW) { oP[3] = oW; }
+void vpPoint::set_oW(double oW) { oP[3] = oW; }
 
 //! Set the point x coordinate in the image plane.
-void vpPoint::set_x(const double x) { p[0] = x; }
+void vpPoint::set_x(double x) { p[0] = x; }
 //! Set the point y coordinate in the image plane.
-void vpPoint::set_y(const double y) { p[1] = y; }
+void vpPoint::set_y(double y) { p[1] = y; }
 //! Set the point w coordinate in the image plane.
-void vpPoint::set_w(const double w) { p[2] = w; }
+void vpPoint::set_w(double w) { p[2] = w; }

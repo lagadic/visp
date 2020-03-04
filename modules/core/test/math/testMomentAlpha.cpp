@@ -123,7 +123,6 @@ int test_moment_alpha(const std::string &name, bool symmetry, const std::vector<
   for(size_t i = 0; i < vec_angle.size(); i++) {
     std::stringstream ss;
     ss << name << "-" << vec_angle[i] << "deg.pgm";
-    vpImage<unsigned char> I;
     std::cout << "Process image " << ss.str() << std::endl;
     vpImageIo::read(I, ss.str());
 

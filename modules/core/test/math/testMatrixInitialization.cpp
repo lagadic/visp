@@ -330,190 +330,189 @@ int main()
         return EXIT_FAILURE;
       }
     }
+  }
 
-    {
-      std::cout << "** Test vpRxyzVector" << std::endl;
-      vpRxyzVector rxyz_ref(0, M_PI_2, M_PI);
-      std::cout << "rxyz_ref: " << rxyz_ref.t() << std::endl;
+  {
+    std::cout << "** Test vpRxyzVector" << std::endl;
+    vpRxyzVector rxyz_ref(0, M_PI_2, M_PI);
+    std::cout << "rxyz_ref: " << rxyz_ref.t() << std::endl;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      {
-        vpRxyzVector rxyz = {0, M_PI_2, M_PI};
-        std::cout << "rxyz: " << rxyz.t() << std::endl;
-        if (! equal(rxyz_ref, rxyz, epsilon)) {
-          return EXIT_FAILURE;
-        }
-      }
-#endif
-      {
-        vpRxyzVector rxyz;
-        rxyz << 0, M_PI_2, M_PI;
-        std::cout << "rxyz: " << rxyz.t() << std::endl;
-        if (! equal(rxyz_ref, rxyz, epsilon)) {
-          return EXIT_FAILURE;
-        }
-        // Do it twice
-        rxyz << 0, M_PI_2, M_PI;
-        std::cout << "rxyz: " << rxyz.t() << std::endl;
-        if (! equal(rxyz_ref, rxyz, epsilon)) {
-          return EXIT_FAILURE;
-        }
+    {
+      vpRxyzVector rxyz = {0, M_PI_2, M_PI};
+      std::cout << "rxyz: " << rxyz.t() << std::endl;
+      if (! equal(rxyz_ref, rxyz, epsilon)) {
+        return EXIT_FAILURE;
       }
     }
-
-    {
-      std::cout << "** Test vpRzyxVector" << std::endl;
-      vpRzyxVector rzyx_ref(0, M_PI_2, M_PI);
-      std::cout << "rzyx_ref: " << rzyx_ref.t() << std::endl;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      {
-        vpRzyxVector rzyx = {0, M_PI_2, M_PI};
-        std::cout << "rzyx: " << rzyx.t() << std::endl;
-        if (! equal(rzyx_ref, rzyx, epsilon)) {
-          return EXIT_FAILURE;
-        }
-      }
 #endif
-      {
-        vpRzyxVector rzyx;
-        rzyx << 0, M_PI_2, M_PI;
-        std::cout << "rzyx: " << rzyx.t() << std::endl;
-        if (! equal(rzyx_ref, rzyx, epsilon)) {
-          return EXIT_FAILURE;
-        }
-        // Do it twice
-        rzyx << 0, M_PI_2, M_PI;
-        std::cout << "rzyx: " << rzyx.t() << std::endl;
-        if (! equal(rzyx_ref, rzyx, epsilon)) {
-          return EXIT_FAILURE;
-        }
+    {
+      vpRxyzVector rxyz;
+      rxyz << 0, M_PI_2, M_PI;
+      std::cout << "rxyz: " << rxyz.t() << std::endl;
+      if (! equal(rxyz_ref, rxyz, epsilon)) {
+        return EXIT_FAILURE;
+      }
+      // Do it twice
+      rxyz << 0, M_PI_2, M_PI;
+      std::cout << "rxyz: " << rxyz.t() << std::endl;
+      if (! equal(rxyz_ref, rxyz, epsilon)) {
+        return EXIT_FAILURE;
       }
     }
+  }
 
-    {
-      std::cout << "** Test vpRzyzVector" << std::endl;
-      vpRzyzVector rzyz_ref(0, M_PI_2, M_PI);
-      std::cout << "rzyz_ref: " << rzyz_ref.t() << std::endl;
+  {
+    std::cout << "** Test vpRzyxVector" << std::endl;
+    vpRzyxVector rzyx_ref(0, M_PI_2, M_PI);
+    std::cout << "rzyx_ref: " << rzyx_ref.t() << std::endl;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      {
-        vpRzyzVector rzyz = {0, M_PI_2, M_PI};
-        std::cout << "rzyz: " << rzyz.t() << std::endl;
-        if (! equal(rzyz_ref, rzyz, epsilon)) {
-          return EXIT_FAILURE;
-        }
-      }
-#endif
-      {
-        vpRzyzVector rzyz;
-        rzyz << 0, M_PI_2, M_PI;
-        std::cout << "rzyz: " << rzyz.t() << std::endl;
-        if (! equal(rzyz_ref, rzyz, epsilon)) {
-          return EXIT_FAILURE;
-        }
-        // Do it twice
-        rzyz << 0, M_PI_2, M_PI;
-        std::cout << "rzyz: " << rzyz.t() << std::endl;
-        if (! equal(rzyz_ref, rzyz, epsilon)) {
-          return EXIT_FAILURE;
-        }
+    {
+      vpRzyxVector rzyx = {0, M_PI_2, M_PI};
+      std::cout << "rzyx: " << rzyx.t() << std::endl;
+      if (! equal(rzyx_ref, rzyx, epsilon)) {
+        return EXIT_FAILURE;
       }
     }
-
-    {
-      std::cout << "** Test vpQuaternionVector" << std::endl;
-      vpThetaUVector tu_ref(0, M_PI_2, M_PI);
-      vpQuaternionVector q_ref(tu_ref);
-      std::cout << "q_ref: " << q_ref.t() << std::endl;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      {
-        vpQuaternionVector q = {q_ref[0], q_ref[1], q_ref[2], q_ref[3]};
-        std::cout << "q: " << q.t() << std::endl;
-        if (! equal(q_ref, q, epsilon)) {
-          return EXIT_FAILURE;
-        }
-      }
 #endif
-      {
-        vpQuaternionVector q;
-        q << q_ref[0], q_ref[1], q_ref[2], q_ref[3];
-        std::cout << "q: " << q.t() << std::endl;
-        if (! equal(q_ref, q, epsilon)) {
-          return EXIT_FAILURE;
-        }
-        // Do it twice
-        q << q_ref[0], q_ref[1], q_ref[2], q_ref[3];
-        std::cout << "q: " << q.t() << std::endl;
-        if (! equal(q_ref, q, epsilon)) {
-          return EXIT_FAILURE;
-        }
+    {
+      vpRzyxVector rzyx;
+      rzyx << 0, M_PI_2, M_PI;
+      std::cout << "rzyx: " << rzyx.t() << std::endl;
+      if (! equal(rzyx_ref, rzyx, epsilon)) {
+        return EXIT_FAILURE;
+      }
+      // Do it twice
+      rzyx << 0, M_PI_2, M_PI;
+      std::cout << "rzyx: " << rzyx.t() << std::endl;
+      if (! equal(rzyx_ref, rzyx, epsilon)) {
+        return EXIT_FAILURE;
       }
     }
+  }
 
-    {
-      std::cout << "** Test vpTranslationVector" << std::endl;
-      vpTranslationVector t_ref(0, 0.1, 0.5);
-      std::cout << "t_ref: " << t_ref.t() << std::endl;
+  {
+    std::cout << "** Test vpRzyzVector" << std::endl;
+    vpRzyzVector rzyz_ref(0, M_PI_2, M_PI);
+    std::cout << "rzyz_ref: " << rzyz_ref.t() << std::endl;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      {
-        vpTranslationVector t = {t_ref[0], t_ref[1], t_ref[2]};
-        std::cout << "t: " << t.t() << std::endl;
-        if (! equal(t_ref, t, epsilon)) {
-          return EXIT_FAILURE;
-        }
-      }
-#endif
-      {
-        vpTranslationVector t;
-        t << 0, 0.1, 0.5;
-        std::cout << "t: " << t.t() << std::endl;
-        if (! equal(t_ref, t, epsilon)) {
-          return EXIT_FAILURE;
-        }
-        // Do it twice
-        t << 0, 0.1, 0.5;
-        std::cout << "t: " << t.t() << std::endl;
-        if (! equal(t_ref, t, epsilon)) {
-          return EXIT_FAILURE;
-        }
+    {
+      vpRzyzVector rzyz = {0, M_PI_2, M_PI};
+      std::cout << "rzyz: " << rzyz.t() << std::endl;
+      if (! equal(rzyz_ref, rzyz, epsilon)) {
+        return EXIT_FAILURE;
       }
     }
-
-    {
-      std::cout << "** Test vpRotationMatrix" << std::endl;
-      vpRotationMatrix R_ref(vpRxyzVector(0, -M_PI_2, M_PI));
-      std::cout << "R_ref:\n" << R_ref << std::endl;
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      {
-        vpRotationMatrix R({0, 0, -1, 0, -1, 0, -1, 0, 0});
-        std::cout << "R:\n" << R << std::endl;
-        if (! equal(R_ref, R, epsilon)) {
-          return EXIT_FAILURE;
-        }
-      }
-      {
-        vpRotationMatrix R;
-        R = {0, 0, -1, 0, -1, 0, -1, 0, 0};
-        std::cout << "R:\n" << R << std::endl;
-        if (! equal(R_ref, R, epsilon)) {
-          return EXIT_FAILURE;
-        }
-      }
 #endif
-      {
-        vpRotationMatrix R;
-        R << 0, 0, -1, 0, -1, 0, -1, 0, 0;
-        std::cout << "R:\n" << R << std::endl;
-        if (! equal(R_ref, R, epsilon)) {
-          return EXIT_FAILURE;
-        }
-        // Do it twice
-        R << 0, 0, -1, 0, -1, 0, -1, 0, 0;
-        std::cout << "R:\n" << R << std::endl;
-        if (! equal(R_ref, R, epsilon)) {
-          return EXIT_FAILURE;
-        }
+    {
+      vpRzyzVector rzyz;
+      rzyz << 0, M_PI_2, M_PI;
+      std::cout << "rzyz: " << rzyz.t() << std::endl;
+      if (! equal(rzyz_ref, rzyz, epsilon)) {
+        return EXIT_FAILURE;
+      }
+      // Do it twice
+      rzyz << 0, M_PI_2, M_PI;
+      std::cout << "rzyz: " << rzyz.t() << std::endl;
+      if (! equal(rzyz_ref, rzyz, epsilon)) {
+        return EXIT_FAILURE;
       }
     }
+  }
 
+  {
+    std::cout << "** Test vpQuaternionVector" << std::endl;
+    vpThetaUVector tu_ref(0, M_PI_2, M_PI);
+    vpQuaternionVector q_ref(tu_ref);
+    std::cout << "q_ref: " << q_ref.t() << std::endl;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    {
+      vpQuaternionVector q = {q_ref[0], q_ref[1], q_ref[2], q_ref[3]};
+      std::cout << "q: " << q.t() << std::endl;
+      if (! equal(q_ref, q, epsilon)) {
+        return EXIT_FAILURE;
+      }
+    }
+#endif
+    {
+      vpQuaternionVector q;
+      q << q_ref[0], q_ref[1], q_ref[2], q_ref[3];
+      std::cout << "q: " << q.t() << std::endl;
+      if (! equal(q_ref, q, epsilon)) {
+        return EXIT_FAILURE;
+      }
+      // Do it twice
+      q << q_ref[0], q_ref[1], q_ref[2], q_ref[3];
+      std::cout << "q: " << q.t() << std::endl;
+      if (! equal(q_ref, q, epsilon)) {
+        return EXIT_FAILURE;
+      }
+    }
+  }
+
+  {
+    std::cout << "** Test vpTranslationVector" << std::endl;
+    vpTranslationVector t_ref(0, 0.1, 0.5);
+    std::cout << "t_ref: " << t_ref.t() << std::endl;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    {
+      vpTranslationVector t = {t_ref[0], t_ref[1], t_ref[2]};
+      std::cout << "t: " << t.t() << std::endl;
+      if (! equal(t_ref, t, epsilon)) {
+        return EXIT_FAILURE;
+      }
+    }
+#endif
+    {
+      vpTranslationVector t;
+      t << 0, 0.1, 0.5;
+      std::cout << "t: " << t.t() << std::endl;
+      if (! equal(t_ref, t, epsilon)) {
+        return EXIT_FAILURE;
+      }
+      // Do it twice
+      t << 0, 0.1, 0.5;
+      std::cout << "t: " << t.t() << std::endl;
+      if (! equal(t_ref, t, epsilon)) {
+        return EXIT_FAILURE;
+      }
+    }
+  }
+
+  {
+    std::cout << "** Test vpRotationMatrix" << std::endl;
+    vpRotationMatrix R_ref(vpRxyzVector(0, -M_PI_2, M_PI));
+    std::cout << "R_ref:\n" << R_ref << std::endl;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    {
+      vpRotationMatrix R({0, 0, -1, 0, -1, 0, -1, 0, 0});
+      std::cout << "R:\n" << R << std::endl;
+      if (! equal(R_ref, R, epsilon)) {
+        return EXIT_FAILURE;
+      }
+    }
+    {
+      vpRotationMatrix R;
+      R = {0, 0, -1, 0, -1, 0, -1, 0, 0};
+      std::cout << "R:\n" << R << std::endl;
+      if (! equal(R_ref, R, epsilon)) {
+        return EXIT_FAILURE;
+      }
+    }
+#endif
+    {
+      vpRotationMatrix R;
+      R << 0, 0, -1, 0, -1, 0, -1, 0, 0;
+      std::cout << "R:\n" << R << std::endl;
+      if (! equal(R_ref, R, epsilon)) {
+        return EXIT_FAILURE;
+      }
+      // Do it twice
+      R << 0, 0, -1, 0, -1, 0, -1, 0, 0;
+      std::cout << "R:\n" << R << std::endl;
+      if (! equal(R_ref, R, epsilon)) {
+        return EXIT_FAILURE;
+      }
+    }
   }
 
   std::cout << "Test succeed" << std::endl;

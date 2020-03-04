@@ -185,7 +185,7 @@ class VISP_EXPORT vpRxyzVector : public vpRotationVector
 public:
   vpRxyzVector();
   vpRxyzVector(const vpRxyzVector &rxyz);
-  vpRxyzVector(const double phi, const double theta, const double psi);
+  vpRxyzVector(double phi, double theta, double psi);
 
   // initialize a Rxyz vector from a rotation matrix
   explicit vpRxyzVector(const vpRotationMatrix &R);
@@ -206,7 +206,7 @@ public:
   vpRxyzVector buildFrom(const vpColVector &rxyz);
   vpRxyzVector buildFrom(const std::vector<double> &rxyz);
 
-  void buildFrom(const double phi, const double theta, const double psi);
+  void buildFrom(double phi, double theta, double psi);
 
   vpRxyzVector &operator=(const vpColVector &rxyz);
   vpRxyzVector &operator=(double x);

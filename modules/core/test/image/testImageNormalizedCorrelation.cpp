@@ -114,8 +114,8 @@ namespace
   }
 
   void templateMatching(const vpImage<unsigned char> &I, const vpImage<unsigned char> &I_tpl,
-                        vpImage<double> &I_score, const unsigned int step_u,
-                        const unsigned int step_v, const bool useOptimized)
+                        vpImage<double> &I_score, unsigned int step_u,
+                        unsigned int step_v, bool useOptimized)
   {
     unsigned int height_tpl = I_tpl.getHeight(), width_tpl = I_tpl.getWidth();
     vpImage<double> I_double, I_tpl_double, I_cur;

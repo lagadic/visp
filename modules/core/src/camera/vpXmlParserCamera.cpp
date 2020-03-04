@@ -112,7 +112,7 @@ public:
 
   int parse(vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
             const vpCameraParameters::vpCameraParametersProjType &projModel,
-            const unsigned int im_width, const unsigned int im_height)
+            unsigned int im_width, unsigned int im_height)
   {
     pugi::xml_document doc;
     if (!doc.load_file(filename.c_str())) {
@@ -148,8 +148,8 @@ public:
    */
   int read(const pugi::xml_node &node_, const std::string &cam_name,
            const vpCameraParameters::vpCameraParametersProjType &projModel,
-           const unsigned int im_width, const unsigned int im_height,
-           const unsigned int subsampl_width=0, const unsigned int subsampl_height=0)
+           unsigned int im_width, unsigned int im_height,
+           unsigned int subsampl_width=0, unsigned int subsampl_height=0)
   {
     vpXmlCodeType prop;
 
@@ -202,8 +202,8 @@ public:
    */
   int read_camera(const pugi::xml_node &node_, const std::string &cam_name,
                   const vpCameraParameters::vpCameraParametersProjType &projModel,
-                  const unsigned int im_width, const unsigned int im_height,
-                  const unsigned int subsampl_width, const unsigned int subsampl_height)
+                  unsigned int im_width, unsigned int im_height,
+                  unsigned int subsampl_width, unsigned int subsampl_height)
   {
     vpXmlCodeType prop;
     /* read value in the XML file. */
@@ -424,7 +424,7 @@ public:
   }
 
   int save(const vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
-           const unsigned int im_width, const unsigned int im_height,
+           unsigned int im_width, unsigned int im_height,
            const std::string &additionalInfo)
   {
     pugi::xml_document doc;
@@ -510,8 +510,8 @@ public:
    */
   int count(const pugi::xml_node &node_, const std::string &cam_name,
             const vpCameraParameters::vpCameraParametersProjType &projModel,
-            const unsigned int im_width, const unsigned int im_height,
-            const unsigned int subsampl_width=0, const unsigned int subsampl_height=0)
+            unsigned int im_width, unsigned int im_height,
+            unsigned int subsampl_width=0, unsigned int subsampl_height=0)
   {
     vpXmlCodeType prop;
     int nbCamera = 0;
@@ -551,8 +551,8 @@ public:
     \return number of available camera parameters corresponding with inputs.
    */
   pugi::xml_node find_camera(const pugi::xml_node &node_, const std::string &cam_name,
-                             const unsigned int im_width, const unsigned int im_height,
-                             const unsigned int subsampl_width=0, const unsigned int subsampl_height=0)
+                             unsigned int im_width, unsigned int im_height,
+                             unsigned int subsampl_width=0, unsigned int subsampl_height=0)
   {
     vpXmlCodeType prop;
 
@@ -588,8 +588,8 @@ public:
     \return error code.
    */
   int read_camera_header(const pugi::xml_node &node_, const std::string &cam_name,
-                         const unsigned int im_width, const unsigned int im_height,
-                         const unsigned int subsampl_width=0, const unsigned int subsampl_height=0)
+                         unsigned int im_width, unsigned int im_height,
+                         unsigned int subsampl_width=0, unsigned int subsampl_height=0)
   {
     vpXmlCodeType prop;
     /* read value in the XML file. */
@@ -676,9 +676,9 @@ public:
       Set as 0 if not ambiguous.
     \return error code.
    */
-  int write(pugi::xml_node &node, const std::string &cam_name, const unsigned int im_width,
-            const unsigned int im_height, const unsigned int subsampl_width=0,
-            const unsigned int subsampl_height=0)
+  int write(pugi::xml_node &node, const std::string &cam_name, unsigned int im_width,
+            unsigned int im_height, unsigned int subsampl_width=0,
+            unsigned int subsampl_height=0)
   {
     int back = SEQUENCE_OK;
 
@@ -920,10 +920,10 @@ public:
   unsigned int getWidth() const { return image_width; }
 
   void setCameraName(const std::string &name) { camera_name = name; }
-  void setHeight(const unsigned int height) { image_height = height; }
-  void setSubsampling_width(const unsigned int subsampling) { subsampling_width = subsampling; }
-  void setSubsampling_height(const unsigned int subsampling) { subsampling_height = subsampling; }
-  void setWidth(const unsigned int width) { image_width = width; }
+  void setHeight(unsigned int height) { image_height = height; }
+  void setSubsampling_width(unsigned int subsampling) { subsampling_width = subsampling; }
+  void setSubsampling_height(unsigned int subsampling) { subsampling_height = subsampling; }
+  void setWidth(unsigned int width) { image_width = width; }
 
 private:
   vpCameraParameters camera;
@@ -966,7 +966,7 @@ vpXmlParserCamera::~vpXmlParserCamera()
 */
 int vpXmlParserCamera::parse(vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
                              const vpCameraParameters::vpCameraParametersProjType &projModel,
-                             const unsigned int im_width, const unsigned int im_height)
+                             unsigned int im_width, unsigned int im_height)
 {
   return m_impl->parse(cam, filename, cam_name, projModel, im_width, im_height);
 }
@@ -1015,7 +1015,7 @@ int main()
   \endcode
 */
 int vpXmlParserCamera::save(const vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
-                            const unsigned int im_width, const unsigned int im_height,
+                            unsigned int im_width, unsigned int im_height,
                             const std::string &additionalInfo)
 {
   return m_impl->save(cam, filename, cam_name, im_width, im_height, additionalInfo);
@@ -1056,22 +1056,22 @@ void vpXmlParserCamera::setCameraName(const std::string &name)
   m_impl->setCameraName(name);
 }
 
-void vpXmlParserCamera::setHeight(const unsigned int height)
+void vpXmlParserCamera::setHeight(unsigned int height)
 {
   m_impl->setHeight(height);
 }
 
-void vpXmlParserCamera::setSubsampling_width(const unsigned int subsampling)
+void vpXmlParserCamera::setSubsampling_width(unsigned int subsampling)
 {
   m_impl->setSubsampling_width(subsampling);
 }
 
-void vpXmlParserCamera::setSubsampling_height(const unsigned int subsampling)
+void vpXmlParserCamera::setSubsampling_height(unsigned int subsampling)
 {
   m_impl->setSubsampling_height(subsampling);
 }
 
-void vpXmlParserCamera::setWidth(const unsigned int width)
+void vpXmlParserCamera::setWidth(unsigned int width)
 {
   m_impl->setWidth(width);
 }

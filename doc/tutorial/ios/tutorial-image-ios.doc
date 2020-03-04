@@ -17,24 +17,30 @@ Note that all the material (source code and image) used in this tutorial is part
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedImageProc
 \endcode
 
-
 \section image_ios_app StartedImageProc application
 
-Let us consider the Xcode project named \c StartedImageProc that is part of ViSP source code. This project is a Xcode \c "Single view application" where we renamed \c ViewController.m into \c ViewController.mm, introduced minor modifications in ViewController.h and add <a href="https://github.com/lagadic/visp/blob/master/tutorial/ios/StartedImageProc/StartedImageProc/monkey.png">monkey.png</a> image. 
+Let us consider the Xcode project named `StartedImageProc` that is part of ViSP source code and located in `$VISP_WS/tutorial/ios/StartedImageProc`. This project is a Xcode `"Single view application"` where we renamed `ViewController.m` into `ViewController.mm`, introduced minor modifications in `ViewController.h` and add <a href="https://github.com/lagadic/visp/blob/master/tutorial/ios/StartedImageProc/StartedImageProc/monkey.png">monkey.png</a> image.
 
-\image html img-started-imgproc-ios.jpeg
-
-To download the complete \c StartedImageProc project, run the following command:
-
+To open this application, if you followed \ref tutorial-install-ios-package simply run:
 \code
+$ cd ~/framework
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedImageProc
+$ open ~/visp-ws/StartedImageProc -a Xcode
 \endcode
 
-Once downloaded, you have just to drag & drop ViSP and OpenCV frameworks available following \ref tutorial-install-ios-package.
-\image html img-started-imgproc-ios-drag-drop.jpeg
+or if you already downloaded ViSP following \ref tutorial-install-iOS run:
+\code
+$ open ~/framework/visp/tutorial/ios/StartedImageProc -a Xcode
+\endcode
+
+Here you should see something similar to:
+\image html img-started-imgproc-ios.jpg
+
+Once opened, you have just to drag & drop ViSP and OpenCV frameworks available in `~/framework/ios` if you followed \ref tutorial-install-ios-package.
+\image html img-started-imgproc-ios-drag-drop.jpg
 
 In the dialog box, enable check box \c "Copy item if needed" to add \c visp3.framework and \c opencv.framework to the project.
-\image html img-started-imgproc-ios-drag-drop-dialog.png
+\image html img-started-imgproc-ios-drag-drop-dialog.jpg
 
 Now you should be able to build and run your application.
 
@@ -67,18 +73,24 @@ The following function implemented in \c ImageConversion.mm show how to convert 
 
 \section image_ios_output Application output
 
-- Now we are ready to build <tt>"StartedImaeProc"</tt> application using Xcode <tt>"Product>Build"</tt> menu. 
+- Now we are ready to build <tt>"StartedImageProc"</tt> application using Xcode <tt>"Product>Build"</tt> menu.
+\note Here it may be possible that you get a build issue \ref image_ios-issue-libxml. Just follow the link to see how to fix this issue.
 
-- Once build, if you run \c StartedImageProc application on your device, you should be able to see the following screen shots.
+- Once build, if you run `StartedImageProc` application on your device, you should be able to see the following screen shots.
 
-- Selecting \c "load image" gives the following result:
-\image html img-started-imgproc-ios-output-color.jpeg 
-- Selecting \c "convert to gray" gives the following result:
-\image html img-started-imgproc-ios-output-gray.png
-- Selecting \c "compute gradient" gives the following result:
-\image html img-started-imgproc-ios-output-gradient.png
-- Selecting \c "canny detector" gives the following result:
-\image html img-started-imgproc-ios-output-canny.png
+- Pressing `"load image"` button gives the following result:
+\image html img-started-imgproc-ios-output-color.jpg 
+- Pressing `"convert to gray"` button gives the following result:
+\image html img-started-imgproc-ios-output-gray.jpg
+- Pressing `"compute gradient"` button gives the following result:
+\image html img-started-imgproc-ios-output-gradient.jpg
+- Pressing `"canny detector"` button gives the following result:
+\image html img-started-imgproc-ios-output-canny.jpg
+
+\section image_ios-issues Known issues
+\subsection image_ios-issue-libxml iOS error: libxml/parser.h not found
+
+Follow \ref getting-started-ios-issue-libxml link if you get this issue.
 
 \section image_ios_next Next tutorial
 

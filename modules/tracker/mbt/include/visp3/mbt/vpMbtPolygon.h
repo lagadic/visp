@@ -109,7 +109,7 @@ public:
 
   inline bool isAppearing() const { return isappearing; }
   inline bool isPolygonOriented() { return hasOrientation; }
-  virtual bool isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo = false,
+  virtual bool isVisible(const vpHomogeneousMatrix &cMo, double alpha, const bool &modulo = false,
                          const vpCameraParameters &cam = vpCameraParameters(),
                          unsigned int width=0, unsigned int height=0);
   bool isVisible() const { return isvisible; }
@@ -121,11 +121,11 @@ public:
 
     \param i : the new index of the face.
   */
-  virtual inline void setIndex(const int i) { index = i; }
+  virtual inline void setIndex(int i) { index = i; }
 
   // Due to a doxygen warning include the sample code in the doc, we remove
   // the inline and put the doc in the *.cpp file
-  void setLod(const bool use_lod);
+  void setLod(bool use_lod);
   /*!
     Set the threshold for the minimum line length to be considered as visible
     in the LOD (level of detail) case. This threshold is only used when
@@ -138,7 +138,7 @@ public:
 
     \sa setLoD()
    */
-  inline void setMinLineLengthThresh(const double min_line_length) { this->minLineLengthThresh = min_line_length; }
+  inline void setMinLineLengthThresh(double min_line_length) { this->minLineLengthThresh = min_line_length; }
   /*!
     Set the minimum polygon area to be considered as visible in the LOD (level
     of detail) case. This threshold is only used when setLoD() is turned on.
@@ -149,7 +149,7 @@ public:
 
     \sa setLoD()
   */
-  inline void setMinPolygonAreaThresh(const double min_polygon_area) { this->minPolygonAreaThresh = min_polygon_area; }
+  inline void setMinPolygonAreaThresh(double min_polygon_area) { this->minPolygonAreaThresh = min_polygon_area; }
 
   /*!
    Set the name of the face.

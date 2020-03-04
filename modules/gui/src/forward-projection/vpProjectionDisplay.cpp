@@ -95,7 +95,7 @@ void vpProjectionDisplay::close() {}
 
 void vpProjectionDisplay::display(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cextMo,
                                   const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, const vpColor &color,
-                                  const bool &displayTraj, const unsigned int thickness)
+                                  const bool &displayTraj, unsigned int thickness)
 {
 
   for (std::list<vpForwardProjection *>::const_iterator it = listFp.begin(); it != listFp.end(); ++it) {
@@ -119,7 +119,7 @@ void vpProjectionDisplay::display(vpImage<unsigned char> &I, const vpHomogeneous
 
 void vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cextMo,
                                         const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                                        const unsigned int thickness)
+                                        unsigned int thickness)
 {
   vpHomogeneousMatrix c1Mc;
   c1Mc = cextMo * cMo.inverse();

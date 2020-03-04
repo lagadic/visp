@@ -270,7 +270,7 @@ public:
   //! Destructor. Does nothing.
   virtual ~vpFeaturePointPolar() {}
 
-  void buildFrom(const double rho, const double theta, const double Z);
+  void buildFrom(double rho, double theta, double Z);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
@@ -282,7 +282,7 @@ public:
 
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
 
   // basic construction
   void init();
@@ -295,19 +295,19 @@ public:
   double get_Z() const;
 
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL);
 
   // print the name of the feature
-  void print(const unsigned int select = FEATURE_ALL) const;
+  void print(unsigned int select = FEATURE_ALL) const;
 
   // set the point rho-coordinates
-  void set_rho(const double rho);
+  void set_rho(double rho);
   // set the point theta-coordinates
-  void set_theta(const double theta);
+  void set_theta(double theta);
   // set the point depth (camera frame)
-  void set_Z(const double Z);
+  void set_Z(double Z);
   // set the point rho, theta polar coordinates and Z coordinate
-  void set_rhoThetaZ(const double rho, const double theta, const double Z);
+  void set_rhoThetaZ(double rho, double theta, double Z);
 
   /*
     vpBasicFeature method instantiation
@@ -319,7 +319,7 @@ public:
     @name Deprecated functions
   */
   //! compute the error between a visual features and zero
-  vpColVector error(const unsigned int select = FEATURE_ALL);
+  vpColVector error(unsigned int select = FEATURE_ALL);
 };
 
 #endif

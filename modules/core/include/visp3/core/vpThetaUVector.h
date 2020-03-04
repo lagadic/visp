@@ -194,7 +194,7 @@ public:
   explicit vpThetaUVector(const vpColVector &tu);
   explicit vpThetaUVector(const std::vector<double> &tu);
 
-  vpThetaUVector(const double tux, const double tuy, const double tuz);
+  vpThetaUVector(double tux, double tuy, double tuz);
   //! Destructor.
   virtual ~vpThetaUVector(){};
 
@@ -214,7 +214,7 @@ public:
   vpThetaUVector buildFrom(const vpColVector &tu);
   vpThetaUVector buildFrom(const std::vector<double> &tu);
 
-  void buildFrom(const double tux, const double tuy, const double tuz);
+  void buildFrom(double tux, double tuy, double tuz);
 
   // extract the angle and the axis from the ThetaU representation
   void extract(double &theta, vpColVector &u) const;

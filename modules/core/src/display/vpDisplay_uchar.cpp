@@ -229,11 +229,12 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, int i1, int j1, 
   \param I : The image associated to the display.
   \param ips : List of image points.
   \param closeTheShape : If true, display a dashed line from the first and
-  last image points. \param color : Line color. \param thickness : Dashed line
-  thickness.
+  last image points.
+  \param color : Line color.
+  \param thickness : Dashed line thickness.
 */
 void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
-                               const bool closeTheShape, const vpColor &color, unsigned int thickness)
+                               bool closeTheShape, const vpColor &color, unsigned int thickness)
 {
   if (ips.size() <= 1)
     return;
@@ -254,12 +255,14 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::vecto
   - the centered moments expressed in pixels: \f$\mu_{20}, \mu_{11},
   \mu_{02}\f$;
   - the major and minor axis lenght in pixels and the excentricity of the
-  ellipse in radians: \f$a, b, e\f$. \param use_centered_moments : When false,
-  the parameters coef1, coef2, coef3 are the parameters \f$a, b, e\f$. When
-  true, the parameters coef1, coef2, coef3 are rather the centered moments
-  \f$\mu_{20}, \mu_{11}, \mu_{02}\f$ expressed in pixels. In that case, we
-  compute the parameters \e a, \e b and \e e from the centered moments. \param
-  color : Drawings color. \param thickness : Drawings thickness.
+  ellipse in radians: \f$a, b, e\f$.
+  \param use_centered_moments : When false, the parameters coef1, coef2, coef3
+  are the parameters \f$a, b, e\f$. When true, the parameters coef1, coef2,
+  coef3 are rather the centered moments \f$\mu_{20}, \mu_{11}, \mu_{02}\f$
+  expressed in pixels. In that case, we compute the parameters \e a, \e b and
+  \e e from the centered moments.
+  \param color : Ellipse color.
+  \param thickness : Ellipse thickness.
 
   All the points \f$(u_\theta,v_\theta)\f$ on the ellipse are drawn thanks to
   its parametric representation:
@@ -310,15 +313,18 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoi
   - the centered moments expressed in pixels: \f$\mu_{20}, \mu_{11},
   \mu_{02}\f$;
   - the major and minor axis lenght in pixels and the excentricity of the
-  ellipse in radians: \f$a, b, e\f$. \param theta1, theta2 : Angles
+  ellipse in radians: \f$a, b, e\f$.
+  \param theta1, theta2 : Angles
   \f$(\theta_1, \theta_2)\f$ in radians used to select a portion of the
   ellipse. If theta1=0 and theta2=vpMath::rad(360) all the ellipse is
-  displayed. \param use_centered_moments : When false, the parameters coef1,
+  displayed.
+  \param use_centered_moments : When false, the parameters coef1,
   coef2, coef3 are the parameters \f$a, b, e\f$. When true, the parameters
   coef1, coef2, coef3 are rather the centered moments \f$\mu_{20}, \mu_{11},
   \mu_{02}\f$ expressed in pixels. In that case, we compute the parameters \e
-  a, \e b and \e e from the centered moments. \param color : Drawings color.
-  \param thickness : Drawings thickness.
+  a, \e b and \e e from the centered moments.
+  \param color : Ellipse color.
+  \param thickness : Ellipse thickness.
 
   All the points \f$(u_\theta,v_\theta)\f$ on the ellipse are drawn thanks to
   its parametric representation:
@@ -362,7 +368,7 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoi
 
 /*!
   Display the projection of an object frame represented by 3 arrows in
-  the image.
+  the image. Red, green and blue arrows correspond to frame X, Y and Z axis respectively.
 
   \param I : The image associated to the display.
   \param cMo : Homogeneous matrix that gives the transformation
@@ -473,7 +479,7 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1, int
   points. \param color : Line color. \param thickness : Line thickness.
 */
 void vpDisplay::displayLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
-                            const bool closeTheShape, const vpColor &color, unsigned int thickness)
+                            bool closeTheShape, const vpColor &color, unsigned int thickness)
 {
   if (ips.size() <= 1)
     return;

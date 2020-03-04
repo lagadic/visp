@@ -131,7 +131,6 @@ keypoints and the index of the query keypoints.
 between current and reference keypoints.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpKeyPoint.h>
 
@@ -168,7 +167,6 @@ int main()
 image. The small following example shows how to do this:
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpKeyPoint.h>
@@ -323,26 +321,26 @@ public:
              const vpFilterMatchingType &filterType = ratioDistanceThreshold);
 
   unsigned int buildReference(const vpImage<unsigned char> &I);
-  unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                              const unsigned int width);
+  unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                              unsigned int width);
   unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   void buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoint,
-                      std::vector<cv::Point3f> &points3f, const bool append = false, const int class_id = -1);
+                      std::vector<cv::Point3f> &points3f, bool append = false, int class_id = -1);
   void buildReference(const vpImage<unsigned char> &I, const std::vector<cv::KeyPoint> &trainKeyPoint,
                       const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
-                      const bool append = false, const int class_id = -1);
+                      bool append = false, int class_id = -1);
 
   unsigned int buildReference(const vpImage<vpRGBa> &I_color);
-  unsigned int buildReference(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, const unsigned int height,
-                              const unsigned int width);
+  unsigned int buildReference(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, unsigned int height,
+                              unsigned int width);
   unsigned int buildReference(const vpImage<vpRGBa> &I_color, const vpRect &rectangle);
 
   void buildReference(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &trainKeyPoint,
-                      std::vector<cv::Point3f> &points3f, const bool append = false, const int class_id = -1);
+                      std::vector<cv::Point3f> &points3f, bool append = false, int class_id = -1);
   void buildReference(const vpImage<vpRGBa> &I, const std::vector<cv::KeyPoint> &trainKeyPoint,
                       const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
-                      const bool append = false, const int class_id = -1);
+                      bool append = false, int class_id = -1);
 
   static void compute3D(const cv::KeyPoint &candidate, const std::vector<vpPoint> &roi, const vpCameraParameters &cam,
                         const vpHomogeneousMatrix &cMo, cv::Point3f &point);
@@ -703,14 +701,14 @@ public:
   void loadConfigFile(const std::string &configFile);
 #endif
 
-  void loadLearningData(const std::string &filename, const bool binaryMode = false, const bool append = false);
+  void loadLearningData(const std::string &filename, bool binaryMode = false, bool append = false);
 
   void match(const cv::Mat &trainDescriptors, const cv::Mat &queryDescriptors, std::vector<cv::DMatch> &matches,
              double &elapsedTime);
 
   unsigned int matchPoint(const vpImage<unsigned char> &I);
-  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                          const unsigned int width);
+  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                          unsigned int width);
   unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
@@ -729,8 +727,8 @@ public:
                            bool (*func)(const vpHomogeneousMatrix &) = NULL, const vpRect &rectangle = vpRect());
 
   unsigned int matchPoint(const vpImage<vpRGBa> &I_color);
-  unsigned int matchPoint(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, const unsigned int height,
-                          const unsigned int width);
+  unsigned int matchPoint(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, unsigned int height,
+                          unsigned int width);
   unsigned int matchPoint(const vpImage<vpRGBa> &I_color, const vpRect &rectangle);
 
   bool matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
@@ -741,8 +739,8 @@ public:
 
   void reset();
 
-  void saveLearningData(const std::string &filename, const bool binaryMode = false,
-                        const bool saveTrainingImages = true);
+  void saveLearningData(const std::string &filename, bool binaryMode = false,
+                        bool saveTrainingImages = true);
 
   /*!
     Set if the covariance matrix has to be computed in the Virtual Visual
@@ -980,7 +978,7 @@ public:
 
     \param ratio : Ratio value (]0 ; 1])
   */
-  inline void setMatchingRatioThreshold(const double ratio)
+  inline void setMatchingRatioThreshold(double ratio)
   {
     if (ratio > 0.0 && (ratio < 1.0 || std::fabs(ratio - 1.0) < std::numeric_limits<double>::epsilon())) {
       m_matchingRatioThreshold = ratio;
@@ -995,7 +993,7 @@ public:
 
     \param percentage : Percentage value (]0 ; 100])
   */
-  inline void setRansacConsensusPercentage(const double percentage)
+  inline void setRansacConsensusPercentage(double percentage)
   {
     if (percentage > 0.0 &&
         (percentage < 100.0 || std::fabs(percentage - 100.0) < std::numeric_limits<double>::epsilon())) {
@@ -1019,7 +1017,7 @@ public:
 
     \param nbIter : Maximum number of iterations for the Ransac
   */
-  inline void setRansacIteration(const int nbIter)
+  inline void setRansacIteration(int nbIter)
   {
     if (nbIter > 0) {
       m_nbRansacIterations = nbIter;
@@ -1033,7 +1031,7 @@ public:
 
     \note Needs C++11 or higher.
   */
-  inline void setRansacParallel(const bool parallel)
+  inline void setRansacParallel(bool parallel)
   {
     m_ransacParallel = parallel;
   }
@@ -1044,7 +1042,7 @@ public:
     \param nthreads : Number of threads, if 0 the number of CPU threads will be determined
     \sa setRansacParallel
   */
-  inline void setRansacParallelNbThreads(const unsigned int nthreads)
+  inline void setRansacParallelNbThreads(unsigned int nthreads)
   {
     m_ransacParallelNbThreads = nthreads;
   }
@@ -1056,7 +1054,7 @@ public:
     \param reprojectionError : Maximum reprojection error in pixel (used by
     OpenCV function)
   */
-  inline void setRansacReprojectionError(const double reprojectionError)
+  inline void setRansacReprojectionError(double reprojectionError)
   {
     if (reprojectionError > 0.0) {
       m_ransacReprojectionError = reprojectionError;
@@ -1072,7 +1070,7 @@ public:
 
     \param minCount : Minimum number of inlier for the consensus
   */
-  inline void setRansacMinInlierCount(const int minCount)
+  inline void setRansacMinInlierCount(int minCount)
   {
     if (minCount > 0) {
       m_nbRansacMinInlierCount = minCount;
@@ -1087,7 +1085,7 @@ public:
 
     \param threshold : Maximum error in meter for ViSP function
   */
-  inline void setRansacThreshold(const double threshold)
+  inline void setRansacThreshold(double threshold)
   {
     if (threshold > 0.0) {
       m_ransacThreshold = threshold;
@@ -1103,7 +1101,7 @@ public:
     \param useAffine : True to use multiple affine transformations, false
     otherwise
   */
-  inline void setUseAffineDetection(const bool useAffine) { m_useAffineDetection = useAffine; }
+  inline void setUseAffineDetection(bool useAffine) { m_useAffineDetection = useAffine; }
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   /*!
@@ -1112,7 +1110,7 @@ public:
 
     \param useCrossCheck : True to use cross check, false otherwise
   */
-  inline void setUseBruteForceCrossCheck(const bool useCrossCheck)
+  inline void setUseBruteForceCrossCheck(bool useCrossCheck)
   {
     // Only available with BruteForce and with k=1 (i.e not used with a
     // ratioDistanceThreshold method)
@@ -1132,7 +1130,7 @@ public:
     \param useMatchTrainToQuery : True to match the train keypoints to the
     query keypoints
    */
-  inline void setUseMatchTrainToQuery(const bool useMatchTrainToQuery)
+  inline void setUseMatchTrainToQuery(bool useMatchTrainToQuery)
   {
     m_useMatchTrainToQuery = useMatchTrainToQuery;
   }
@@ -1144,7 +1142,7 @@ public:
     \param usePercentage : True to a percentage ratio of inliers, otherwise
     use a specified number of inliers
   */
-  inline void setUseRansacConsensusPercentage(const bool usePercentage) { m_useConsensusPercentage = usePercentage; }
+  inline void setUseRansacConsensusPercentage(bool usePercentage) { m_useConsensusPercentage = usePercentage; }
 
   /*!
     Set the flag to choose between the OpenCV or ViSP Ransac pose estimation
@@ -1153,7 +1151,7 @@ public:
     \param ransacVVS : True to use ViSP function, otherwise use OpenCV
     function
   */
-  inline void setUseRansacVVS(const bool ransacVVS) { m_useRansacVVS = ransacVVS; }
+  inline void setUseRansacVVS(bool ransacVVS) { m_useRansacVVS = ransacVVS; }
 
   /*!
     Set the flag to filter matches where multiple query keypoints are matched
@@ -1161,7 +1159,7 @@ public:
 
     \param singleMatchFilter : True to use the single match filter.
    */
-  inline void setUseSingleMatchFilter(const bool singleMatchFilter) { m_useSingleMatchFilter = singleMatchFilter; }
+  inline void setUseSingleMatchFilter(bool singleMatchFilter) { m_useSingleMatchFilter = singleMatchFilter; }
 
 private:
   //! If true, compute covariance matrix if the user select the pose

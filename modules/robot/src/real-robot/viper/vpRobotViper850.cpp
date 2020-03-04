@@ -136,7 +136,6 @@ void emergencyStopViper850(int signo)
 
   \code
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper850.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -383,7 +382,6 @@ void vpRobotViper850::init(void)
 
   \code
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper850.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -1020,7 +1018,6 @@ void vpRobotViper850::get_fJe(vpMatrix &fJe)
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper850.h>
 
 int main()
@@ -1044,7 +1041,7 @@ int main()
 
   \sa getPositioningVelocity()
 */
-void vpRobotViper850::setPositioningVelocity(const double velocity) { positioningVelocity = velocity; }
+void vpRobotViper850::setPositioningVelocity(double velocity) { positioningVelocity = velocity; }
 
 /*!
   Get the maximal velocity percentage used for a position control.
@@ -1089,7 +1086,6 @@ double vpRobotViper850::getPositioningVelocity(void) const { return positioningV
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper850.h>
 
 int main()
@@ -1285,7 +1281,6 @@ void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, const
   position is out of range.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper850.h>
 
 int main()
@@ -1314,8 +1309,8 @@ int main()
 
   \sa setPosition()
 */
-void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, const double pos1, const double pos2,
-                                  const double pos3, const double pos4, const double pos5, const double pos6)
+void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2,
+                                  double pos3, double pos4, double pos5, double pos6)
 {
   try {
     vpColVector position(6);
@@ -1347,7 +1342,6 @@ void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, const
   This method has the same behavior than the sample code given below;
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper850.h>
 
 int main()
@@ -1413,7 +1407,6 @@ void vpRobotViper850::setPosition(const std::string &filename)
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRxyzVector.h>
@@ -1642,7 +1635,6 @@ reference frame in m/s and rotations \f$ ^{c} \omega_x, ^{c} \omega_y, ^{c}
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpRobotViper850.h>
 
@@ -1817,7 +1809,6 @@ u}_z]\f$.
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper850.h>
 
 int main()
@@ -1980,7 +1971,6 @@ void vpRobotViper850::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper850.h>
 
 int main()
@@ -2078,7 +2068,6 @@ The code below shows how to read a position from a file and move the robot to
 this position.
 \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper850.h>
 
 int main()
@@ -2376,7 +2365,6 @@ bias.
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpRobotViper850.h>
 
@@ -2441,7 +2429,6 @@ bias.
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpRobotViper850.h>
 
@@ -2605,7 +2592,7 @@ void vpRobotViper850::setMaxRotationVelocity(double w_max)
   \param w6_max : Maximum rotation velocity expressed in rad/s on joint 6.
 */
 
-void vpRobotViper850::setMaxRotationVelocityJoint6(const double w6_max)
+void vpRobotViper850::setMaxRotationVelocityJoint6(double w6_max)
 {
   maxRotationVelocity_joint6 = w6_max;
   return;

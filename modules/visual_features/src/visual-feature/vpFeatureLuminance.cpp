@@ -150,7 +150,7 @@ vpFeatureLuminance::~vpFeatureLuminance()
 
   \param Z_ : \f$ Z \f$ value to set.
 */
-void vpFeatureLuminance::set_Z(const double Z_)
+void vpFeatureLuminance::set_Z(double Z_)
 {
   this->Z = Z_;
   flags[0] = true;

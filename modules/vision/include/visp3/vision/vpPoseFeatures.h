@@ -265,7 +265,7 @@ class VISP_EXPORT vpPoseSpecificFeature
 {
 public:
   vpPoseSpecificFeature() {}
-  virtual ~vpPoseSpecificFeature(){};
+  virtual ~vpPoseSpecificFeature() {}
 
   virtual vpColVector error() = 0;
   virtual vpMatrix currentInteraction() = 0;
@@ -299,7 +299,7 @@ public:
     tuple = new std::tuple<Args...>(args...);
   }
 
-  virtual ~vpPoseSpecificFeatureTemplate() { delete tuple; };
+  virtual ~vpPoseSpecificFeatureTemplate() { delete tuple; }
 
   virtual void createDesired() { buildDesiredFeatureWithTuple(desiredFeature, func_ptr, *tuple); }
 
@@ -347,7 +347,7 @@ public:
     obj = o;
   }
 
-  virtual ~vpPoseSpecificFeatureTemplateObject() { delete tuple; };
+  virtual ~vpPoseSpecificFeatureTemplateObject() { delete tuple; }
 
   virtual void createDesired() { buildDesiredFeatureObjectWithTuple(obj, desiredFeature, func_ptr, *tuple); }
 
@@ -547,7 +547,6 @@ private:
   with USE_CPP11 option from CMake.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/vision/vpPoseFeatures.h>
 
 void vp_createPoint(vpFeaturePoint &fp,const vpPoint &p){
@@ -601,7 +600,7 @@ void vpPoseFeatures::addSpecificFeature(RetType (*fct_ptr)(ArgsFunc...), Args &&
 
   totalSize++;
   if (featureSpecific_list.size() > maxSize)
-    maxSize = (unsigned int)featureSpecific_list.size();
+    maxSize = static_cast<unsigned int>(featureSpecific_list.size());
 }
 
 /*!
@@ -618,7 +617,6 @@ derived from vpForwardProjection (redefine track() function)
 with USE_CPP11 option from CMake.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/vision/vpPoseFeatures.h>
 
 class vp_createClass{
@@ -683,7 +681,7 @@ void vpPoseFeatures::addSpecificFeature(ObjType *obj, RetType (ObjType::*fct_ptr
 
   totalSize++;
   if (featureSpecific_list.size() > maxSize)
-    maxSize = (unsigned int)featureSpecific_list.size();
+    maxSize = static_cast<unsigned int>(featureSpecific_list.size());
 }
 #endif
 

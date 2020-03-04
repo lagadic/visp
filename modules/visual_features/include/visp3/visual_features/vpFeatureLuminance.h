@@ -109,24 +109,24 @@ public:
 
   vpFeatureLuminance *duplicate() const;
 
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
   void error(const vpBasicFeature &s_star, vpColVector &e);
   //! Compute the error between a visual features and zero
-  vpColVector error(const unsigned int select = FEATURE_ALL);
+  vpColVector error(unsigned int select = FEATURE_ALL);
 
   double get_Z() const;
 
   void init();
   void init(unsigned int _nbr, unsigned int _nbc, double _Z);
-  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL);
   void interaction(vpMatrix &L);
 
   vpFeatureLuminance &operator=(const vpFeatureLuminance &f);
 
-  void print(const unsigned int select = FEATURE_ALL) const;
+  void print(unsigned int select = FEATURE_ALL) const;
 
   void setCameraParameters(vpCameraParameters &_cam);
-  void set_Z(const double Z);
+  void set_Z(double Z);
 
 public:
   vpCameraParameters cam;

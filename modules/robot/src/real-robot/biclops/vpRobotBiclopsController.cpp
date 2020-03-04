@@ -187,7 +187,7 @@ void vpRobotBiclopsController::init(const std::string &configfile)
 
 */
 
-void vpRobotBiclopsController::setPosition(const vpColVector &q, const double percentVelocity)
+void vpRobotBiclopsController::setPosition(const vpColVector &q, double percentVelocity)
 {
   if (q.getRows() != vpBiclops::ndof) {
     vpERROR_TRACE("Bad dimension for positioning vector.");

@@ -443,7 +443,7 @@ vpRect vpTemplateTrackerZone::getBoundingBox() const
   triangles that define the zone. \param I : Image. \param col : Color used to
   display the triangles. \param thickness : Thickness of the triangle lines.
  */
-void vpTemplateTrackerZone::display(const vpImage<unsigned char> &I, const vpColor &col, const unsigned int thickness)
+void vpTemplateTrackerZone::display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness)
 {
   std::vector<vpImagePoint> ip;
   for (unsigned int i = 0; i < Zone.size(); i++) {
@@ -460,7 +460,7 @@ void vpTemplateTrackerZone::display(const vpImage<unsigned char> &I, const vpCol
   triangles that define the zone. \param I : Image. \param col : Color used to
   display the triangles. \param thickness : Thickness of the triangle lines.
  */
-void vpTemplateTrackerZone::display(const vpImage<vpRGBa> &I, const vpColor &col, const unsigned int thickness)
+void vpTemplateTrackerZone::display(const vpImage<vpRGBa> &I, const vpColor &col, unsigned int thickness)
 {
   std::vector<vpImagePoint> ip;
   for (unsigned int i = 0; i < Zone.size(); i++) {

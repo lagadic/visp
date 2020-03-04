@@ -180,14 +180,14 @@ public:
     section Set coordinates
   */
 
-  void buildFrom(const double x, const double y, const double Z, const double LogZoverZstar);
+  void buildFrom(double x, double y, double Z, double LogZoverZstar);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
   vpFeatureDepth *duplicate() const;
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
 
   double get_x() const;
 
@@ -198,18 +198,18 @@ public:
   double get_LogZoverZstar() const;
 
   void init();
-  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL);
 
-  void print(const unsigned int select = FEATURE_ALL) const;
-  void set_x(const double x);
+  void print(unsigned int select = FEATURE_ALL) const;
+  void set_x(double x);
 
-  void set_y(const double y);
+  void set_y(double y);
 
-  void set_Z(const double Z);
+  void set_Z(double Z);
 
-  void set_LogZoverZstar(const double LogZoverZstar);
+  void set_LogZoverZstar(double LogZoverZstar);
 
-  void set_xyZLogZoverZstar(const double x, const double y, const double Z, const double logZZs);
+  void set_xyZLogZoverZstar(double x, double y, double Z, double logZZs);
 };
 
 #endif

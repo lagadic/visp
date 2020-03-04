@@ -257,7 +257,7 @@ public: /* Methode publiques */
   void setPosition(const vpRobot::vpControlFrameType frame, const double q1, const double q2, const double q4,
                    const double q5);
   void setPosition(const char *filename);
-  void setPositioningVelocity(const double velocity);
+  void setPositioningVelocity(double velocity);
 
   /* --- ETAT ------------------------------------------------------------- */
 

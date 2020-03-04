@@ -214,13 +214,13 @@ protected:
   std::string xmlReadStringChild(xmlDocPtr doc, xmlNodePtr node);
   unsigned int xmlReadUnsignedIntChild(xmlDocPtr doc, xmlNodePtr node);
 
-  void xmlWriteBoolChild(xmlNodePtr node, const char *label, const bool value);
+  void xmlWriteBoolChild(xmlNodePtr node, const char *label, bool value);
   void xmlWriteCharChild(xmlNodePtr node, const char *label, const char *value);
-  void xmlWriteDoubleChild(xmlNodePtr node, const char *label, const double value);
-  void xmlWriteFloatChild(xmlNodePtr node, const char *label, const float value);
-  void xmlWriteIntChild(xmlNodePtr node, const char *label, const int value);
+  void xmlWriteDoubleChild(xmlNodePtr node, const char *label, double value);
+  void xmlWriteFloatChild(xmlNodePtr node, const char *label, float value);
+  void xmlWriteIntChild(xmlNodePtr node, const char *label, int value);
   void xmlWriteStringChild(xmlNodePtr node, const char *label, const std::string &value);
-  void xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, const unsigned int value);
+  void xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, unsigned int value);
   //@}
 
 protected:
@@ -242,7 +242,7 @@ public:
   virtual ~vpXmlParser();
 
   /* virtual */ void parse(const std::string &filename);
-  /* virtual */ void save(const std::string &filename, const bool append = false);
+  /* virtual */ void save(const std::string &filename, bool append = false);
 
   /*!
     Set the map describing the data to parse. This map stores the name of each

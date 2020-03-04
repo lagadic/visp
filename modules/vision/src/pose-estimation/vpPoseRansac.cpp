@@ -123,7 +123,7 @@ struct FindDegeneratePoint {
 bool vpPose::RansacFunctor::poseRansacImpl()
 {
   const unsigned int size = (unsigned int)m_listOfUniquePoints.size();
-  const unsigned int nbMinRandom = 4;
+  unsigned int nbMinRandom = 4;
   int nbTrials = 0;
 
   vpPoint p; // Point used to project using the estimated pose
@@ -472,7 +472,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
   }
 
   if (foundSolution) {
-    const unsigned int nbMinRandom = 4;
+    unsigned int nbMinRandom = 4;
     //    std::cout << "Nombre d'inliers " << nbInliers << std::endl ;
 
     // Display the random picked points
@@ -665,7 +665,7 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                        const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                        unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
                        const int &maxNbTrials,
-                       const bool useParallelRansac, const unsigned int nthreads,
+                       bool useParallelRansac, unsigned int nthreads,
                        bool (*func)(const vpHomogeneousMatrix &))
 {
   vpPose pose;

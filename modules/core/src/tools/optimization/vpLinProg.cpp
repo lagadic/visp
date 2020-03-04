@@ -96,8 +96,8 @@
 */
 bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const double &tol)
 {
-  const unsigned int m = A.getRows();
-  const unsigned int n = A.getCols();
+  unsigned int m = A.getRows();
+  unsigned int n = A.getCols();
 
   // degeneracy if A is actually null
   if(A.infinityNorm() < tol)
@@ -263,8 +263,8 @@ or \f$\mathbf{b} = \left[\begin{array}{c}0\\0\\1\end{array}\right]\f$ (not feasi
 */
 bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
 {
-  const unsigned int m = A.getRows();
-  const unsigned int n = A.getCols();
+  unsigned int m = A.getRows();
+  unsigned int n = A.getCols();
 
   // degeneracy if A is actually null
   if(A.infinityNorm() < tol)
@@ -363,8 +363,8 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
                         std::vector<BoundedIndex> l, std::vector<BoundedIndex> u,
                         const double &tol)
 {
-  const unsigned int n = c.getRows();
-  const unsigned int m = A.getRows();
+  unsigned int n = c.getRows();
+  unsigned int m = A.getRows();
   const unsigned int p = C.getRows();
 
   // check if we should forward a feasible point to the next solver
@@ -407,7 +407,9 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
   unsigned int s1 = 0, s2 = 0;
   for(unsigned int i = 0; i < n; ++i)
   {
-    const auto cmp = [&](const BoundedIndex &p){return p.first == i;};
+    const auto cmp = [&](const BoundedIndex &bi) {
+      return bi.first == i;
+    };
     // look for lower bound
     const bool has_low = find_if(l.begin(), l.end(), cmp) != l.end();
     // look for upper bound
@@ -448,8 +450,9 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
   for(unsigned int i = 0; i < n; ++i)
   {
     // lambda to find a bound for this index
-    const auto cmp = [&](const BoundedIndex &p)
-    {return p.first == i;};
+    const auto cmp = [&](const BoundedIndex &bi) {
+      return bi.first == i;
+    };
 
     // look for lower bound
     const auto low = find_if(l.begin(), l.end(), cmp);
@@ -576,7 +579,7 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
 */
 bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVector &x, const double &tol)
 {
-  const unsigned int n = c.getRows();
+  unsigned int n = c.getRows();
   unsigned int m = A.getRows();
 
   // find a feasible point is passed x is not

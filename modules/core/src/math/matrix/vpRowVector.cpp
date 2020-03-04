@@ -720,7 +720,7 @@ void vpRowVector::reshape(vpMatrix &M, const unsigned int &nrows, const unsigned
 
   The following example shows how to use this function:
   \code
-#include <visp/vpRowVector.h>
+#include <visp3/core/vpRowVector.h>
 
 int main()
 {
@@ -922,7 +922,7 @@ double vpRowVector::median(const vpRowVector &v)
 /*!
   Compute the standard deviation value of all the elements of the vector.
 */
-double vpRowVector::stdev(const vpRowVector &v, const bool useBesselCorrection)
+double vpRowVector::stdev(const vpRowVector &v, bool useBesselCorrection)
 {
   if (v.data == NULL || v.size() == 0) {
     throw(vpException(vpException::dimensionError, "Cannot compute mean value of an empty row vector"));

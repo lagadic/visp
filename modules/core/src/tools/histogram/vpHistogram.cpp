@@ -65,7 +65,7 @@ struct Histogram_Param_t {
 
   Histogram_Param_t() : m_start_index(0), m_end_index(0), m_lut(), m_histogram(NULL), m_I(NULL) {}
 
-  Histogram_Param_t(const unsigned int start_index, const unsigned int end_index, const vpImage<unsigned char> *const I)
+  Histogram_Param_t(unsigned int start_index, unsigned int end_index, const vpImage<unsigned char> *const I)
     : m_start_index(start_index), m_end_index(end_index), m_lut(), m_histogram(NULL), m_I(I)
   {
   }
@@ -235,7 +235,7 @@ void vpHistogram::init(unsigned size_)
   \param nbins : Number of bins to compute the histogram.
   \param nbThreads : Number of threads to use for the computation.
 */
-void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int nbins, const unsigned int nbThreads)
+void vpHistogram::calculate(const vpImage<unsigned char> &I, unsigned int nbins, unsigned int nbThreads)
 {
   if (size != nbins) {
     if (histogram != NULL) {
@@ -349,8 +349,8 @@ void vpHistogram::calculate(const vpImage<unsigned char> &I, const unsigned int 
   from the current histogram. Useful to plot a 3 channels histogram for a RGB
   image for example to keep a coherent vertical scale between the channels.
 */
-void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color, const unsigned int thickness,
-                          const unsigned int maxValue_)
+void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness,
+                          unsigned int maxValue_)
 {
   unsigned int width = I.getWidth(), height = I.getHeight();
   // Minimal width and height are 36 px
@@ -406,7 +406,7 @@ void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color,
   \sa calculate()
 
 */
-void vpHistogram::smooth(const unsigned int fsize)
+void vpHistogram::smooth(unsigned int fsize)
 {
   if (histogram == NULL) {
     vpERROR_TRACE("Histogram array not initialised\n");

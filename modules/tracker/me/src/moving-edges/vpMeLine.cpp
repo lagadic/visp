@@ -145,7 +145,7 @@ vpMeLine::~vpMeLine() { list.clear(); }
   initialized.
 
 */
-void vpMeLine::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
+void vpMeLine::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 {
   (void)doNotTrack;
   if (!me) {

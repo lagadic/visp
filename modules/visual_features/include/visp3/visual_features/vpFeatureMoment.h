@@ -221,7 +221,7 @@ public:
 
   int getDimension(unsigned int select = FEATURE_ALL) const;
   void init(void);
-  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL);
   void linkTo(vpFeatureMomentDatabase &featureMoments);
 
   /*!
@@ -233,7 +233,7 @@ public:
       Name of the feature used to locate it in the database of features.
       */
   virtual const char *name() const = 0;
-  void print(const unsigned int select = FEATURE_ALL) const;
+  void print(unsigned int select = FEATURE_ALL) const;
   virtual void printDependencies(std::ostream &os) const;
 
   void update(double A, double B, double C);

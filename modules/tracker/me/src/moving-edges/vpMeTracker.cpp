@@ -137,7 +137,7 @@ unsigned int vpMeTracker::totalNumberOfSignal() { return (unsigned int)list.size
   \param i : Pixel coordinate along the rows.
   \param j : Pixel coordinate along the columns.
 */
-bool vpMeTracker::inMask(const vpImage<bool> *mask, const unsigned int i, const unsigned int j)
+bool vpMeTracker::inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j)
 {
   try {
     return (mask == NULL || mask->getValue(i, j));

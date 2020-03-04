@@ -52,7 +52,7 @@
   Establish communication with sensor(-s) and start data acquisition thread.
 */
 vpForceTorqueIitSensor::vpForceTorqueIitSensor()
-  : m_ftLib(), m_numSensorsInLib(0), m_ft(6, 0), m_ftSensorsData(), m_acquisitionEnabled(false), m_dataValid(false),
+  : m_ftLib(), m_numSensorsInLib(0), m_ft(6, 0), m_ft_filt(6, 0), m_ftSensorsData(), m_acquisitionEnabled(false), m_dataValid(false),
     m_connected(false), m_acquisitionThread(), m_timeCur(), m_timePrev(), m_mutex(), m_warmupMilliseconds(500)
 {
   // Get number of connected in library sensors
@@ -147,7 +147,7 @@ void vpForceTorqueIitSensor::acquisitionLoop()
       const std::lock_guard<std::mutex> lock(m_mutex);
       for (unsigned int i = 0; i < 6; i++) {
         m_ft[i] = m_ftSensorsData.ftSensor->ft[i];
-        // Note that there exist also m_ftSensorsData.ftSensor->filt_ft[i]; that doesn't sound have filtered values
+        m_ft_filt[i] = m_ftSensorsData.ftSensor->filt_ft[i];
       }
     }
   }
@@ -182,12 +182,37 @@ bool vpForceTorqueIitSensor::connected(int timeout_ms) const
 
 /*!
   Get force-torque data in SI units.
+
+  \param[in] filtered : When true return filtered force-torque measurements,
+  when false return raw data.
+  If no filter is configured while getting filtered measurements, the SDK will
+  retun the raw data.
+  To configure the filter, you must access the sensor through the web interface.
+  The default ip address is `192.168.1.1` if in default mode.
+  Once in the web interface select NETWORK SETTINGS and you can configure the
+  Data Filtering Settings: 
+  - Filter Type: Low-Pass or High-Pass Butterworth
+  - Filter Order: 1, 2 or 3
+  - Cut-off Frequency: <freq> in Hz
+
+  \return A 6-dim vector \f$[F_x \; F_y \; F_z \; T_x \; T_y \; T_z]^T\f$ with forces \f$F_x\f$,
+  \f$F_y\f$, \f$F_z\f$ in N, and torques \f$T_x\f$, \f$T_y\f$, \f$T_z\f$ in Nm.
+
+  As shown in the next image, our sensor has IP  `192.168.100.10`. Filtering
+  is configured as Low-Pass, with a 3 order filter and a 10 Hz cutt-off frequency.
+  \image html vpForceTorqueIitSensor-ethernet.png
  */
-vpColVector vpForceTorqueIitSensor::getForceTorque()
+vpColVector vpForceTorqueIitSensor::getForceTorque(bool filtered)
 {
   const std::lock_guard<std::mutex> lock(m_mutex);
-  return m_ft;
+  if (filtered) {
+    return m_ft_filt;
+  }
+  else {
+    return m_ft;
+  }
 }
+
 
 /*!
    Start acquisition thread and wait until data are available.

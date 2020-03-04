@@ -23,7 +23,7 @@ if(VISP_HAVE_REALSENSE2)
   if(UNIX)
     visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare -Wno-pessimizing-move -Wno-unused-parameter -Wno-overloaded-virtual)
   else()
-    visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp /wd4244)
+    visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp /wd4244 /wd4267)
   endif()
 endif()
 

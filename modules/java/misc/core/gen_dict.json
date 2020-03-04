@@ -5,6 +5,7 @@
     "VpRowVector",
     "VpCameraParameters",
     "VpHomogeneousMatrix",
+    "VpImagePoint",
     "VpRotationVector",
     "VpPoint"
   ],
@@ -353,6 +354,20 @@
       "suffix": "J",
       "v_type": "vpHomogeneousMatrix",
       "j_import": "org.visp.core.VpHomogeneousMatrix"
+    },
+    "vpImagePoint": {
+      "j_type": "VpImagePoint",
+      "jn_args": [
+        [
+          "__int64",
+          ".nativeObj"
+        ]
+      ],
+      "jn_type": "long",
+      "jni_type": "jlong",
+      "jni_var": "vpImagePoint& %(n)s = *((vpImagePoint*)%(n)s_nativeObj)",
+      "suffix": "J",
+      "j_import": "org.visp.core.VpImagePoint"
     },
     "vpRotationVector": {
       "j_type": "VpRotationVector",

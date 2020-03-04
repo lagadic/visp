@@ -340,18 +340,18 @@ public:
   //@{
 
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
   virtual void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+                       const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
 
-  void getLline(std::list<vpMbtDistanceLine *> &linesList, const unsigned int level = 0) const;
-  void getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, const unsigned int level = 0) const;
-  void getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, const unsigned int level = 0) const;
+  void getLline(std::list<vpMbtDistanceLine *> &linesList, unsigned int level = 0) const;
+  void getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, unsigned int level = 0) const;
+  void getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, unsigned int level = 0) const;
 
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               const bool displayFullModel=false);
+                                                               bool displayFullModel=false);
 
   /*!
     Get the moving edge parameters.
@@ -367,7 +367,7 @@ public:
   */
   virtual inline vpMe getMovingEdge() const { return this->me; }
 
-  virtual unsigned int getNbPoints(const unsigned int level = 0) const;
+  virtual unsigned int getNbPoints(unsigned int level = 0) const;
 
   /*!
     Return the scales levels used for the tracking.
@@ -393,32 +393,32 @@ public:
   void loadConfigFile(const std::string &configFile);
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo_, const bool verbose = false,
+                           const vpHomogeneousMatrix &cMo, bool verbose = false,
                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   void resetTracker();
 
   /*!
     Set the camera parameters.
 
-    \param camera : the new camera parameters
+    \param cam : The new camera parameters.
   */
-  virtual void setCameraParameters(const vpCameraParameters &camera)
+  virtual void setCameraParameters(const vpCameraParameters &cam)
   {
-    this->cam = camera;
+    m_cam = cam;
 
     for (unsigned int i = 0; i < scales.size(); i += 1) {
       if (scales[i]) {
         for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[i].begin(); it != lines[i].end(); ++it) {
-          (*it)->setCameraParameters(cam);
+          (*it)->setCameraParameters(m_cam);
         }
 
         for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[i].begin(); it != cylinders[i].end();
              ++it) {
-          (*it)->setCameraParameters(cam);
+          (*it)->setCameraParameters(m_cam);
         }
 
         for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[i].begin(); it != circles[i].end(); ++it) {
-          (*it)->setCameraParameters(cam);
+          (*it)->setCameraParameters(m_cam);
         }
       }
     }
@@ -477,7 +477,7 @@ public:
 
      \sa getGoodMovingEdgesRatioThreshold()
    */
-  void setGoodMovingEdgesRatioThreshold(const double threshold) { percentageGdPt = threshold; }
+  void setGoodMovingEdgesRatioThreshold(double threshold) { percentageGdPt = threshold; }
 
   void setMovingEdge(const vpMe &me);
 
@@ -495,20 +495,20 @@ public:
 protected:
   /** @name Protected Member Functions Inherited from vpMbEdgeTracker */
   //@{
-  void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, const double r, int idFace = -1,
+  void addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, double r, int idFace = -1,
                  const std::string &name = "");
-  void addCylinder(const vpPoint &P1, const vpPoint &P2, const double r, int idFace = -1, const std::string &name = "");
+  void addCylinder(const vpPoint &P1, const vpPoint &P2, double r, int idFace = -1, const std::string &name = "");
   void addLine(vpPoint &p1, vpPoint &p2, int polygon = -1, std::string name = "");
   void addPolygon(vpMbtPolygon &p);
 
   void cleanPyramid(std::vector<const vpImage<unsigned char> *> &_pyramid);
   void computeProjectionError(const vpImage<unsigned char> &_I);
 
-  void computeVVS(const vpImage<unsigned char> &_I, const unsigned int lvl);
-  void computeVVSFirstPhase(const vpImage<unsigned char> &I, const unsigned int iter, double &count,
-                            const unsigned int lvl = 0);
-  void computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I, const unsigned int lvl = 0);
-  void computeVVSFirstPhasePoseEstimation(const unsigned int iter, bool &isoJoIdentity_);
+  void computeVVS(const vpImage<unsigned char> &_I, unsigned int lvl);
+  void computeVVSFirstPhase(const vpImage<unsigned char> &I, unsigned int iter, double &count,
+                            unsigned int lvl = 0);
+  void computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I, unsigned int lvl = 0);
+  void computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity_);
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
   virtual void computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> &I);
@@ -520,9 +520,9 @@ protected:
   void downScale(const unsigned int _scale);
   virtual std::vector<std::vector<double> > getFeaturesForDisplayEdge();
   virtual void init(const vpImage<unsigned char> &I);
-  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, const double radius,
-                          const int idFace = 0, const std::string &name = "");
-  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, const double radius, const int idFace = 0,
+  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
+                          int idFace = 0, const std::string &name = "");
+  virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace = 0,
                             const std::string &name = "");
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);

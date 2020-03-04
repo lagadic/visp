@@ -147,7 +147,7 @@ vpMeEllipse::~vpMeEllipse()
   initialized.
 
 */
-void vpMeEllipse::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
+void vpMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 {
   (void)doNotTrack;
   if (!me) {
@@ -682,7 +682,7 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I)
   \param n : The number of points in the list.
   \param iP : A pointer to a list of points belonging to the ellipse edge.
 */
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n, vpImagePoint *iP)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, unsigned int n, vpImagePoint *iP)
 {
   vpMatrix A(n, 5);
   vpColVector b_(n);
@@ -924,7 +924,7 @@ void vpMeEllipse::computeAngle(int ip1, int jp1, int ip2, int jp2)
   computeAngle(ip1, jp1, a1, ip2, jp2, a2);
 }
 
-void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const unsigned int n, unsigned *i, unsigned *j)
+void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, unsigned int n, unsigned *i, unsigned *j)
 {
   vpMatrix A(n, 5);
   vpColVector b_(n);

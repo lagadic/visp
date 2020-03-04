@@ -16,7 +16,7 @@
 namespace
 {
 //! [Print contours hierarchy func]
-void displayContourInfo(const vp::vpContour &contour, const int level)
+void displayContourInfo(const vp::vpContour &contour, int level)
 {
   std::cout << "\nContour:" << std::endl;
   std::cout << "\tlevel: " << level << std::endl;

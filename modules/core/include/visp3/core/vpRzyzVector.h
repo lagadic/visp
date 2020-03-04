@@ -191,7 +191,7 @@ public:
   // initialize a Rzyz vector from a ThetaU vector
   explicit vpRzyzVector(const vpThetaUVector &tu);
 
-  vpRzyzVector(const double phi, const double theta, const double psi);
+  vpRzyzVector(double phi, double theta, double psi);
   explicit vpRzyzVector(const vpColVector &rzyz);
   explicit vpRzyzVector(const std::vector<double> &rzyz);
 
@@ -206,7 +206,7 @@ public:
   vpRzyzVector buildFrom(const vpColVector &rxyz);
   vpRzyzVector buildFrom(const std::vector<double> &rxyz);
 
-  void buildFrom(const double phi, const double theta, const double psi);
+  void buildFrom(double phi, double theta, double psi);
 
   vpRzyzVector &operator=(const vpColVector &rzyz);
   vpRzyzVector &operator=(double x);

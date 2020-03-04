@@ -96,7 +96,7 @@ vpPlanarObjectDetector::~vpPlanarObjectDetector() {}
   \param ip : the list of image point.
   \param nbpt : the number of point.
 */
-void vpPlanarObjectDetector::computeRoi(vpImagePoint *ip, const unsigned int nbpt)
+void vpPlanarObjectDetector::computeRoi(vpImagePoint *ip, unsigned int nbpt)
 {
   if (nbpt < 3) {
     throw vpException(vpException::badValue, "Not enough point to compute the region of interest.");
@@ -302,7 +302,7 @@ bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
   \return true if the surface has been found.
 */
 bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                                        const unsigned int height, const unsigned int width)
+                                        unsigned int height, unsigned int width)
 {
   if ((iP.get_i() + height) >= I.getHeight() || (iP.get_j() + width) >= I.getWidth()) {
     vpTRACE("Bad size for the subimage");

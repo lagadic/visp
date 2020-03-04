@@ -1,0 +1,87 @@
+/**
+
+\page tutorial-java-apriltag Tutorial: AprilTag detection in java with ViSP
+\tableofcontents
+
+\section java_tag_intro Introduction
+
+We assume that you have already followed the previous tutorial \ref tutorial-java-started. It could be also useful to follow \ref tutorial-detection-apriltag to get an overview on AprilTag detection in ViSP.
+
+In this tutorial, you will see how to develop an application that allows to load an image and run AprilTag detection in java using ViSP library in Eclipse.
+
+\section java_tag_create_project Create a new project
+
+Open Eclipse and create a new Java project entering `"File > New > Java Project"` menu.
+
+\image html img-tutorial-java-eclipse-create-new-project.jpeg
+
+In the `"New Java Project"` dialog write the name of your project (let say `visp-java-apriltag`). In JRE section, select the appropriate execution environment (JavaSE-11 if you install JDK 11, or JavaSE-13 if you install JDK 13). Then press `"Finish"` button.
+
+\image html img-java-apriltag-project.jpg
+
+In the "New module-info.java" dialog that may appear, press `"Don't Create"` button.
+
+\image html img-tutorial-java-eclipse-dont-create.jpeg
+
+\section java_tag_user_lib Add a user library
+
+If you followed \ref tutorial-install-java, you should already have ViSP library set in your workspace as a user library; if not please check out \ref tutorial-install-java. Now you should be ready to add ViSP library to your project. Inside Eclipse’s Package Explorer just right-click on your project’s folder and go to `"Build Path > Add Libraries..."`.
+
+\image html img-java-apriltag-import-user-library.jpg
+
+Select `"User Library"` and click on `"Next"`:
+
+\image html img-tutorial-java-eclipse-add-libraries2.jpeg
+
+Check the checkbox of the ViSP library and press `"Finish"` button.
+
+\image html img-tutorial-java-eclipse-add-libraries3.jpeg
+
+\section java_tag_app Import AprilTag application java code
+
+Now import AprilTagDetection.java file in your project, pointing your mouse on `src` folder and with a right click entering `"Import"` menu. 
+
+\image html img-java-apriltag-import.jpg
+
+Select `"General > File System"` and press `"Next"` button.
+
+\image html img-java-apriltag-import-file.jpg
+
+Browse to `$VISP_WS/visp/tutorial/java/tag-detection` folder, enable `tag-detection` check box and press `"Finish"` button.
+
+\image html img-java-apriltag-import-file-apriltag.jpg
+
+Now expanding what's behind `src` you should see something similar to:
+
+\image html img-java-apriltag-project-complete.jpg
+
+\section java_tag_run Run AprilTag detection application
+
+We can now run this application entering`"Run > Run"` menu. Here you should see the application appearing:
+
+\image html img-java-apriltag-app-empty.png
+
+\ref install_ubuntu_dataset, press `"Open"` button, browse to `$ViSP_WS/visp-images/AprilTag/benchmark/640x480` folder and select `tag36_11_640x480.png` image.
+
+\image html img-java-apriltag-app-open-image.png
+
+Now press `"Detect"` button to run AprilTag detection and pose computation over the image.
+
+\image html img-java-apriltag-app-detect.png
+
+This application allows to modify some settings:
+- using `"Set tag size"` button you can specify for each tag Id its size. Default size is set to 0.053 meter. For example to modify the size of tags with Id 0 to 0.1 meter, press `"Set tag size"` to make appear a new window in which you have to press `"Add size"` button to enter Tag Id 0 and the corresponding size 0.1. Then press `"Validate"` button.
+\image html img-java-apriltag-app-tag-size.png
+- camera parameters which are set by default to px = py = 615.168 and u0 = 312.189, v0 = 243.437
+- tag format (default tag is 36h11)
+- pose estimation algorithm (default is homography). 
+
+To see estimated tag poses values press `"Show estimated poses"` button.
+
+Just try it... 
+
+\section java_tag_next Next tutorial
+
+You are now ready to continue with \ref tutorial-java-mbt-generic.
+
+*/

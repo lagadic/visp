@@ -184,7 +184,7 @@ public:
 
   void track(const vpImage<unsigned char> &Im);
 
-  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
+  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack=false);
   void reSample(const vpImage<unsigned char> &I);
   void leastSquare();
   void updateDelta();
@@ -236,7 +236,7 @@ public:
 
     \param useIntensityForRho : new value of the flag.
   */
-  inline void computeRhoSignFromIntensity(const bool useIntensityForRho) { _useIntensityForRho = useIntensityForRho; }
+  inline void computeRhoSignFromIntensity(bool useIntensityForRho) { _useIntensityForRho = useIntensityForRho; }
 
   // Static Functions
 public:

@@ -64,7 +64,6 @@
 
   The code below shows how to send a data over the parallel port.
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/io/vpParallelPort.h>
 
 int main()

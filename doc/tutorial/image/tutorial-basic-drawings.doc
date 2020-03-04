@@ -1,116 +1,151 @@
 /**
-  \page tutorial-basic-drawings Tutorial: How to draw basic drawings
+  \page tutorial-basic-drawings Tutorial: How to modify an image to insert basic drawings
   \tableofcontents
 
 \section basic_drawings_intro Introduction
 
-In this tutorial you will learn how to draw basic drawings with ViSP either on Unix-like systems (including OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
+In this tutorial you will learn how to modify the content of an image adding basic drawings without the need of an image display window. This functionality could be useful if none of the following 3rd parties are available: <a href="http://visp.inria.fr/3rdparty_gui/">X11, GDI, OpenCV, GTK, Direct3D</a>.
 
-Note that all the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+\section basic_drawings_draw Modify an image with basic drawings
+
+There is the vpImageDraw class that allows to modify an image by inserting basic drawings like point, circle, line, rectangle, polygon, frame. There is also vpFont class that allows to modify an image to insert text. These classes are used in testImageDraw.cpp.
+
+If you run the corresponding binary:
+\code
+$ cd $VISP_WS/visp-build/modules/core
+$ ./testImageDraw
+\endcode
+it will create `canvas_color.png` and `canvas_gray.png` images that give a good overview.
+
+- Content of `canvas_color.png` image that shows basic drawings inserted in a color image implemented as a `vpImage<vpRGBa>` is the following:
+\image html img-tutorial-drawings-color.png 
+- Content of `canvas_gray.png` image that shows basic drawings inserted in a gray level image implemented as a `vpImage<unsigned char>` is the following:
+\image html img-tutorial-drawings-gray.png 
+
+\subsection basic_drawings_point Draw a point in an image
+
+The following snippet shows how to modify color image I drawing a red point at pixel location (100, 200).
 
 \code
-$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
+vpImage<vpRGBa> I(480, 640);
+vpImagePoint ip(100, 200);
+vpImageDraw::drawPoint(I, ip, vpColor::red);
 \endcode
 
-\section basic_drawings_default How to display an image
+The following snippet shows how to modify a gray level image I drawing a white point at pixel location (100, 200).
 
-ViSP <a href="https://visp.inria.fr/gui/">gui module</a> provides Graphical User Interfaces capabilities. This module may use several optional third-party libraries which are: <a href="http://visp.inria.fr/3rdparty_gui/">OpenCV, X11, GTK, GDI, Direct3D</a>. We recommand to use X11 on unix-like systems thanks to vpDisplayX class and GDI on Windows thanks to vpDisplayGDI. 
+\code
+vpImage<unsigned char> I(480, 640);
+vpImagePoint ip(100, 200);
+unsigned char color = 255; // white
+vpImageDraw::drawPoint(I, ip, color);
+\endcode
 
-The following example also available in tutorial-viewer.cpp shows how to read and display an image. 
+\subsection line Draw a line between 2 points
 
-\include tutorial-viewer.cpp
+The following snippet shows how to modify color image I drawing an orange line with thickness 3 between pixels with coordinates (100, 200) and (300, 400).
 
-Here is the detailed explanation of the source, line by line :
-\snippet tutorial-viewer.cpp Include display
+\code
+vpImage<vpRGBa> I(480, 640);
+vpImagePoint ip1(100, 200);
+vpImagePoint ip2(300, 400);
+vpImageDraw::drawLine(I, ip1, ip2, vpColor::orange, 3);
+\endcode
 
-Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is available. The last one is also cross-platform and requires that OpenCV is available. 
+The following snippet shows how to modify gray level image I drawing a black line with thickness 3 between pixels with coordinates (100, 200) and (300, 400).
 
-\snippet tutorial-viewer.cpp Include io
-Include the header that allows to read/write PGM, PPM, PNG and JPEG images from the disk using vpImageIo class.
+\code
+vpImage<unsigned char> I(480, 640);
+vpImagePoint ip1(100, 200);
+vpImagePoint ip2(300, 400);
+unsigned char color = 0; // black
+vpImageDraw::drawLine(I, ip1, ip2, color, 3);
+\endcode
 
-\snippet tutorial-viewer.cpp vpImage construction
-Create an instance of a color image where each pixel is coded in RGBa.
+\subsection circle Draw a circle
 
-\snippet tutorial-viewer.cpp vpImage reading
-The image \c I is initialized by reading an image file from the disk. If the image format is not supported we throw an exception.
+The following snippet shows how to modify color image I drawing a green cercle with thickness 3, centered at pixel location (100, 200) and with radius 80 pixels.
 
-\snippet tutorial-viewer.cpp vpDisplay construction
-Create an instance of an image display window for image \c I. The first viewer that is available is used. Here we create the link between the image \c I and the display \c d. Note that an image can only have one display. 
+\code
+vpImage<vpRGBa> I(480, 640);
+vpImagePoint ip(100, 200);
+vpImageDraw::drawCircle(I, ip, 80, vpColor::green, 3);
+\endcode
 
-\snippet tutorial-viewer.cpp vpDisplay set title
-The title of the display is then set to \c "My image".  
+The following snippet shows how to modify gray level image I drawing a gray cercle with thickness 3, centered at pixel location (100, 200) and with radius 80 pixels.
 
-\snippet tutorial-viewer.cpp vpDisplay display
-First we display the content of the image \c I, then we flush the display to render the image.
+\code
+vpImage<unsigned char> I(480, 640);
+vpImagePoint ip(100, 200);
+unsigned char color = 128; // gray
+vpImageDraw::drawCircle(I, ip, 80, color, 3);
+\endcode
 
-\snippet tutorial-viewer.cpp vpDisplay get click
-Here we handle mouse events. We are waiting for a blocking mouse click to end the program.
+\subsection rectangle Draw a rectangle
 
-Here is a screen shot of the resulting output window :
+The following snippet shows how to modify color image I drawing a yellow rectangle with thickness 3, with top left corner location (100, 200), and rectangle width and height set to 150, 80 respectively.
 
-\image html img-monkey.png
+\code
+vpImage<vpRGBa> I(480, 640);
+vpImagePoint ip(100, 200);
+int w = 150;
+int h = 80;
+vpImageDraw::drawRectangle(I, vpRect(ip, w, h), vpColor::yellow, false, 3);
+\endcode
 
-\section basic_drawings_draw How to draw basic drawings
+The following snippet shows how to modify gray level image I drawing a light gray rectangle with thickness 3, with top left corner location (100, 200), and rectangle width and height set to 150, 80 respectively.
 
-\subsection point How to draw a point
+\code
+vpImage<unsigned char> I(480, 640);
+vpImagePoint ip(100, 200);
+int w = 150;
+int h = 80;
+unsigned char color = 200; // light gray
+vpImageDraw::drawRectangle(I, vpRect(ip, w, h), color, false, 3);
+\endcode
 
-As shown in tutorial-draw-point.cpp which source code is given below we use vpDisplay::displayPoint() function to draw a point in the overlay of a windows that displays a 3840 by 2160 grey image that has all the pixels set to 128 gray level.
+\subsection cross Draw a cross
 
-\include tutorial-draw-point.cpp
+The following snippet shows how to modify color image I drawing a blue cross with thickness 3, location (100, 200), and size 15 pixels.
 
-Here we draw a point at the center of a grey image with red color and thickness 2.
+\code
+vpImage<vpRGBa> I(480, 640);
+vpImagePoint ip(100, 200);
+int w = 150;
+int h = 80;
+vpImageDraw::drawCross(I, ip, 15, vpColor::blue, 1);
+\endcode
 
-\subsection line How to draw a line segment
+The following snippet shows how to modify gray level image I drawing a dark gray cross with thickness 3, location (100, 200), and size 15 pixels.
 
-As given in tutorial-draw-line.cpp we use vpDisplay::displayLine() function to draw a line segment on the screen.
+\code
+vpImage<unsigned char> I(480, 640);
+vpImagePoint ip(100, 200);
+int w = 150;
+int h = 80;
+unsigned char color = 50; // dark gray
+vpImageDraw::drawCross(I, ip, 15, color, 1);
+\endcode
 
-\snippet tutorial-draw-line.cpp Line
+\subsection basic_drawings_adding_text Insert text in an image
 
-Here we draw a red coloured line segment with the specified initial and final coordinates and thickness 10.
+The following snippet shows how to modify color image I drawing "Hello world" in white over a black background at location (100, 200).
 
-\subsection circle How to draw a circle
+\code
+vpImage<vpRGBa> I(480, 640);
+vpImagePoint ip(100, 200);
+font.drawText(I, "Test...", ip, vpColor::white, vpColor::black);
+\endcode
 
-As given in tutorial-image-display-scaled-auto.cpp we use vpDisplay::displayCircle() function to draw a circle on the screen.
+The following snippet shows how to modify gray level image I drawing "Hello world" in white over a black background at location (100, 200).
 
-\snippet tutorial-image-display-scaled-auto.cpp Circle
-
-Here we draw a red coloured filled circle at the center with radius of 200.
-
-\subsection rectangle How to draw a rectangle
-
-As given in tutorial-draw-rectangle.cpp we use vpDisplay::displayRectangle() function to draw a rectangle on the screen.
-
-\snippet tutorial-draw-rectangle.cpp Rectangle
-
-Here we draw a red coloured filled rectangle with specified top-left coordinates and width and height.
-
-\subsection cross How to draw a cross
-
-As given in tutorial-draw-cross.cpp we use vpDisplay::displayCross() function to draw a rectangle on the screen.
-
-\snippet tutorial-draw-cross.cpp Cross
-
-Here we draw a red coloured cross on the center with speicfied size and thickness 2.
-
-\section basic_drawings_adding_text How to add text in the window overlay
-
-As given in tutorial-draw-text.cpp we use vpDisplay::displayText() function to add text in the window overlay.
-
-\snippet tutorial-draw-text.cpp text
-
-Here `Hello world` is displayed in the middle of the image.
-
-\section basic_drawings_export How to export an image
-
-As given in tutorial-export-image.cpp which source code is given below, we use vpDisplay::getImage() function to update the image with an overlay. 
-
-\include tutorial-export-image.cpp
-
-\section basic_drawings_event_keyboard How to handle keyboard events
-
-As given in tutorial-event-keyboard.cpp which code is given below, we use vpDisplay::getKeyboardEvent() function to get the value of the key pressed.
-
-\include tutorial-event-keyboard.cpp
+\code
+vpImage<unsigned char> I(480, 640);
+vpImagePoint ip(100, 200);
+unsigned char color = 255; // white
+unsigned char background = 0; // black
+font.drawText(I, "Test...", ip, color, background);
+\endcode
 
 \section basic_drawings_next Next tutorial
 

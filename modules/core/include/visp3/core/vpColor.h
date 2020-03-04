@@ -64,7 +64,6 @@
   a circle) and a specific brown color (used to draw a rectangle).
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>

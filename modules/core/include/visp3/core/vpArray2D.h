@@ -302,8 +302,7 @@ public:
   \param recopy_ : if true, will perform an explicit recopy of the old data
   if needed and if flagNullify is set to false.
   */
-  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true,
-              const bool recopy_ = true)
+  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true, bool recopy_ = true)
   {
     if ((nrows == rowNum) && (ncols == colNum)) {
       if (flagNullify && this->data != NULL) {
@@ -359,8 +358,8 @@ public:
         memset(this->data, 0, (size_t)(this->dsize) * sizeof(Type));
       } else if (recopyNeeded && this->rowPtrs != NULL) {
         // Recopy...
-        const unsigned int minRow = (this->rowNum < rowTmp) ? this->rowNum : rowTmp;
-        const unsigned int minCol = (this->colNum < colTmp) ? this->colNum : colTmp;
+        unsigned int minRow = (this->rowNum < rowTmp) ? this->rowNum : rowTmp;
+        unsigned int minCol = (this->colNum < colTmp) ? this->colNum : colTmp;
         for (unsigned int i = 0; i < this->rowNum; ++i) {
           for (unsigned int j = 0; j < this->colNum; ++j) {
             if ((minRow > i) && (minCol > j)) {
@@ -539,7 +538,7 @@ public:
 
     \sa save()
   */
-  static bool load(const std::string &filename, vpArray2D<Type> &A, const bool binary = false, char *header = NULL)
+  static bool load(const std::string &filename, vpArray2D<Type> &A, bool binary = false, char *header = NULL)
   {
     std::fstream file;
 
@@ -736,7 +735,7 @@ public:
 
     \sa load()
   */
-  static bool save(const std::string &filename, const vpArray2D<Type> &A, const bool binary = false,
+  static bool save(const std::string &filename, const vpArray2D<Type> &A, bool binary = false,
                    const char *header = "")
   {
     std::fstream file;

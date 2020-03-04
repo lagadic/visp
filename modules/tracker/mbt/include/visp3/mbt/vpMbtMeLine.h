@@ -77,8 +77,8 @@ public:
   virtual ~vpMbtMeLine();
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
-                              const vpMatrix &SobelX, const vpMatrix &SobelY, const bool display,
-                              const unsigned int length, const unsigned int thickness);
+                              const vpMatrix &SobelX, const vpMatrix &SobelY, bool display,
+                              unsigned int length, unsigned int thickness);
 
   void display(const vpImage<unsigned char> & /*I*/, vpColor /*col*/) { ; }
   using vpMeTracker::display;
@@ -108,7 +108,7 @@ public:
   inline double get_c() const { return this->c; }
 
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, double rho,
-                    double theta, const bool doNoTrack);
+                    double theta, bool doNoTrack);
 
   void track(const vpImage<unsigned char> &I);
 
@@ -119,7 +119,7 @@ public:
 private:
   void bubbleSortI();
   void bubbleSortJ();
-  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack = false);
+  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack = false);
   void seekExtremities(const vpImage<unsigned char> &I);
   void setExtremities();
   void suppressPoints(const vpImage<unsigned char> &I);

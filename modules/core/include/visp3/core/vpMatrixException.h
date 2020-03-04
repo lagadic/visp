@@ -93,7 +93,7 @@ public:
   };
 
 public:
-  vpMatrixException(const int id, const char *format, ...)
+  vpMatrixException(int id, const char *format, ...)
   {
     this->code = id;
     va_list args;
@@ -101,8 +101,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpMatrixException(const int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpMatrixException(const int id) : vpException(id) { ; }
+  vpMatrixException(int id, const std::string &msg) : vpException(id, msg) { ; }
+  explicit vpMatrixException(int id) : vpException(id) { ; }
   // vpMatrixException() : vpException() { ;}
 };
 

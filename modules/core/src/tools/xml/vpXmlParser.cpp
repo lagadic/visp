@@ -331,7 +331,7 @@ void vpXmlParser::xmlWriteStringChild(xmlNodePtr node, const char *label, const 
   \param label : label (name of the data) of the node
   \param value : integer to write
 */
-void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label, const int value)
+void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label, int value)
 {
   char str[100];
   sprintf(str, "%d", value);
@@ -347,7 +347,7 @@ void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label, const int
   \param label : label (name of the data) of the node
   \param value : unsigned integer to write
 */
-void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, const unsigned int value)
+void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, unsigned int value)
 {
   char str[100];
   sprintf(str, "%u", value);
@@ -363,7 +363,7 @@ void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, c
   \param label : label (name of the data) of the node
   \param value : double to write
 */
-void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label, const double value)
+void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label, double value)
 {
   char str[100];
   sprintf(str, "%lf", value);
@@ -379,7 +379,7 @@ void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label, const 
   \param label : label (name of the data) of the node
   \param value : float to write
 */
-void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label, const float value)
+void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label, float value)
 {
   char str[100];
   sprintf(str, "%f", value);
@@ -395,7 +395,7 @@ void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label, const f
   \param label : label (name of the data) of the node
   \param value : boolean to write (true or false)
 */
-void vpXmlParser::xmlWriteBoolChild(xmlNodePtr node, const char *label, const bool value)
+void vpXmlParser::xmlWriteBoolChild(xmlNodePtr node, const char *label, bool value)
 {
   char str[2];
   sprintf(str, "%d", (int)value);
@@ -450,7 +450,7 @@ void vpXmlParser::parse(const std::string &filename)
   \param append : if true and if the file exists, the data will be added to
   the data already in the file
 */
-void vpXmlParser::save(const std::string &filename, const bool append)
+void vpXmlParser::save(const std::string &filename, bool append)
 {
   xmlDocPtr doc;
   xmlNodePtr root_node;

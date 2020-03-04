@@ -396,8 +396,8 @@ void vpViper850::init(vpViper850::vpToolType tool, const vpHomogeneousMatrix &eM
 */
 void vpViper850::parseConfigFile(const std::string &filename)
 {
-  vpRxyzVector erc;        // eMc rotation
-  vpTranslationVector etc; // eMc translation
+  vpRxyzVector erc_;        // eMc rotation
+  vpTranslationVector etc_; // eMc translation
 
   std::ifstream fdconfig(filename.c_str(), std::ios::in);
 
@@ -432,16 +432,16 @@ void vpViper850::parseConfigFile(const std::string &filename)
       break; // Nothing to do: camera name
 
     case 1: {
-      ss >> erc[0] >> erc[1] >> erc[2];
+      ss >> erc_[0] >> erc_[1] >> erc_[2];
 
       // Convert rotation from degrees to radians
-      erc = erc * M_PI / 180.0;
+      erc_ = erc_ * M_PI / 180.0;
       get_erc = true;
       break;
     }
 
     case 2: {
-      ss >> etc[0] >> etc[1] >> etc[2];
+      ss >> etc_[0] >> etc_[1] >> etc_[2];
       get_etc = true;
       break;
     }
@@ -456,7 +456,7 @@ void vpViper850::parseConfigFile(const std::string &filename)
 
   // Compute the eMc matrix from the translations and rotations
   if (get_etc && get_erc) {
-    this->set_eMc(etc, erc);
+    this->set_eMc(etc_, erc_);
   } else {
     throw vpRobotException(vpRobotException::readingParametersError,
                            "Could not read translation and rotation "
@@ -493,7 +493,6 @@ file.
   attached to the robot.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper850.h>
 #include <visp3/robot/vpViper850.h>
@@ -697,7 +696,6 @@ file.
   \param I : A B&W image send by the current camera in use.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper850.h>
 #include <visp3/robot/vpViper850.h>
@@ -764,7 +762,6 @@ file.
   \param I : A color image send by the current camera in use.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper850.h>
 #include <visp3/robot/vpViper850.h>

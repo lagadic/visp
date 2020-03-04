@@ -67,6 +67,8 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 
 - \ref tutorial-install-java <br>In this tutorial you will learn how to install ViSP for Java under Linux, macOS or Windows.
 - \ref tutorial-java-started <br>This tutorial explains how to create a Java application that uses some functionalities from ViSP core module.
+- \ref tutorial-java-apriltag <br>This tutorial explains how to create a Java application that allows to detect AprilTags in an image and compute tag poses.
+- \ref tutorial-java-mbt-generic <br>This tutorial explains how to create a Java application that allows to track an object using generic model-based tracker.
 
 \subsection tuto_android ViSP for Android
 
@@ -114,12 +116,12 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \ref tutorial-getting-started-naoqi <br>This tutorial shows how to build a project that uses ViSP on NAOqi OS running on NAO, Romeo or Pepper humanoid robots.
 - \ref tutorial-import-visp-into-EclipseIDE <br>This tutorial shows how to import a CMake project that uses ViSP in Eclipse IDE.
-- \ref tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
 
 \subsection tuto_image Image manipulation
 
 - \ref tutorial-image-display <br>In this tutorial you will learn how to display an image in a window and how to down scale the window size to be able to display images that are larger than the screen resolution.
-- \ref tutorial-basic-drawings <br>In this tutorial you will learn how to display basic primitives such as points, lines, circles, rectangles in an image display window.
+- \ref tutorial-image-display-overlay <br>In this tutorial you will learn how to display points, lines, circles, rectangles in overlay in an image display window.
+- \ref tutorial-basic-drawings <br>In this tutorial you will learn how to modify an image to draw points, lines, circles, rectangles.
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
 - \ref tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position.
@@ -206,6 +208,11 @@ in one thread and display these images in an other thread.
 \subsection tuto_coding Contributing to ViSP source code
 
 - \ref tutorial-add-new-dependency <br>This tutorial explains how to introduce a new class that relies on a 3rd party SDK. Different use cases are given as example.
+
+\subsection tuto_contrib Extanding ViSP with contrib modules
+
+- \ref tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
+
 
 \section Citing_ViSP Citing ViSP
 

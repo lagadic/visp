@@ -70,7 +70,7 @@ public:
   typedef enum { object_frame, camera_frame } vpPlaneFrame;
   vpPlane();
   vpPlane(const vpPlane &P);
-  vpPlane(const double A, const double B, const double C, const double D);
+  vpPlane(double A, double B, double C, double D);
   vpPlane(const vpPoint &P, const vpColVector &n, vpPlaneFrame frame = camera_frame);
   vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame = camera_frame);
   void init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame = camera_frame);
@@ -79,15 +79,15 @@ public:
 
   // SET the parameter
   /*! Set plane parameter A. */
-  inline void setA(const double a) { this->A = a; }
+  inline void setA(double a) { this->A = a; }
   /*! Set plane parameter B. */
-  inline void setB(const double b) { this->B = b; }
+  inline void setB(double b) { this->B = b; }
   /*! Set plane parameter C. */
-  inline void setC(const double c) { this->C = c; }
+  inline void setC(double c) { this->C = c; }
   /*! Set plane parameter D. */
-  inline void setD(const double d) { this->D = d; }
+  inline void setD(double d) { this->D = d; }
   /*! Set plane parameters A, B, C, D. */
-  inline void setABCD(const double a, const double b, const double c, const double d)
+  inline void setABCD(double a, double b, double c, double d)
   {
     this->A = a;
     this->B = b;

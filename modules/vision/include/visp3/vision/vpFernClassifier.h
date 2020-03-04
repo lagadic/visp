@@ -87,7 +87,6 @@ detect points and try to match them with the model.
   The following small example shows how to use the class.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpFernClassifier.h>
 
@@ -123,7 +122,6 @@ int main() {}
   part of the current image. The small following example shows how to do this.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpFernClassifier.h>
@@ -249,13 +247,13 @@ public:
   /* build reference */
   virtual unsigned int buildReference(const vpImage<unsigned char> &I);
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                                      const unsigned int height, const unsigned int width);
+                                      unsigned int height, unsigned int width);
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   /* matching */
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I);
-  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                                  const unsigned int width);
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                                  unsigned int width);
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   /* display */

@@ -531,7 +531,6 @@ int main(int argc, const char **argv)
         cam1.initPersProjWithoutDistortion(547, 542, 338, 234);
         cam2.initPersProjWithoutDistortion(547, 542, 338, 234);
 
-        vpMe me;
         me.setMaskSize(5);
         me.setMaskNumber(180);
         me.setRange(7);
@@ -541,7 +540,6 @@ int main(int argc, const char **argv)
         me.setSampleStep(4);
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-        vpKltOpencv klt;
         klt.setMaxFeatures(10000);
         klt.setWindowSize(5);
         klt.setQuality(0.01);

@@ -161,7 +161,7 @@ void vpFeatureTranslation::setFeatureTranslationType(const vpFeatureTranslationR
   \sa get_Tx()
 
 */
-void vpFeatureTranslation::set_Tx(const double t_x) { s[0] = t_x; }
+void vpFeatureTranslation::set_Tx(double t_x) { s[0] = t_x; }
 /*!
 
   Initialise the \f$t_y \f$ subset value of the 3D
@@ -171,7 +171,7 @@ void vpFeatureTranslation::set_Tx(const double t_x) { s[0] = t_x; }
   \sa get_Ty()
 
 */
-void vpFeatureTranslation::set_Ty(const double t_y) { s[1] = t_y; }
+void vpFeatureTranslation::set_Ty(double t_y) { s[1] = t_y; }
 /*!
 
   Initialise the \f$t_z \f$ subset value of the 3D
@@ -181,7 +181,7 @@ void vpFeatureTranslation::set_Ty(const double t_y) { s[1] = t_y; }
   \sa get_Tz()
 
 */
-void vpFeatureTranslation::set_Tz(const double t_z) { s[2] = t_z; }
+void vpFeatureTranslation::set_Tz(double t_z) { s[2] = t_z; }
 
 /*!
 
@@ -299,7 +299,7 @@ double vpFeatureTranslation::get_Tz() const { return s[2]; }
   line corresponds to the \f$ t_z \f$ visual feature.
 
 */
-vpMatrix vpFeatureTranslation::interaction(const unsigned int select)
+vpMatrix vpFeatureTranslation::interaction(unsigned int select)
 {
 
   vpMatrix L;
@@ -506,7 +506,7 @@ vpMatrix vpFeatureTranslation::interaction(const unsigned int select)
   \endcode
 
 */
-vpColVector vpFeatureTranslation::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeatureTranslation::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -561,7 +561,7 @@ vpColVector vpFeatureTranslation::error(const vpBasicFeature &s_star, const unsi
   s.print(vpFeatureTranslation::selectTz()); // print only the t_z component
   \endcode
 */
-void vpFeatureTranslation::print(const unsigned int select) const
+void vpFeatureTranslation::print(unsigned int select) const
 {
   std::cout << "Translation 3D:";
   if (vpFeatureTranslation::selectTx() & select) {

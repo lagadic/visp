@@ -5,8 +5,16 @@
      Copyright (C) 2005 - 2019 by Inria. All rights reserved.
                       https://visp.inria.fr
 
-
-ViSP 3.2.1 (under work)
+ViSP 3.3.1 (under development)
+  - New features and improvements
+    . Compatibility with FreeBSD
+  - Bug fixed
+    . [#713] 3.3.0 build fails on non-linux systems: fatal error: 'linux/serial.h'
+      file not found
+    . [#716] Build issue on FreeBSD with g++
+    . [#718] vpImage<unsigned char>::getValue() is not working on big endian arch
+----------------------------------------------
+ViSP 3.3.0 (released February 14, 2020)
   - Contributors:
     . This release was possible thanks to contributions from Fabien Spindler,
       Souriya Trinh, Gatien Gaumerais, Yasutomo Shirahama, Yash Kapoor, Noura Neji,
@@ -35,7 +43,8 @@ ViSP 3.2.1 (under work)
       vpRealSense2 class
     . Compatibility with Windows 10 SDK latest version to enable vpDisplayGDI
       usage
-    . Compatibility with Fedora 30
+    . Compatibility with Fedora 31
+    . Compatibility with Raspberry 4 Alpine
     . New option to select CXX standard set by default to c++11
     . Introduce a timeout (default to 50ms) during DataMatrix code detection
       implemented in vpDetectorDataMatrixCode class
@@ -52,6 +61,9 @@ ViSP 3.2.1 (under work)
     . Modify vpVideoReader to enable MTS video format reading
     . Use only OpenCV required modules to reduce the number of dependencies
     . Remove valgrind false positive memory leaks adding a suppression file
+    . Introduce Java bindings for vpGenericTracker and vpDetectorAprilTag classes
+    . New vpImageDraw and vpFont classes for basic drawings (line, circle,
+      rectangle, text) in an image without the need of a vpDisplay
   - Tutorials
     . New tutorial: Installation from source for Windows with Visual C++ 2019
       (vc16)
@@ -62,6 +74,8 @@ ViSP 3.2.1 (under work)
     . New tutorial: Visual servoing with FLIR Pan Tilt Unit
     . New tutorial: AprilTag marker real-time detection on iOS
     . New tutorial: Introduce a new class with 3rd-party dependencies
+    . New tutorial: AprilTag detection in java with ViSP
+    . New tutorial: Generic model-based tracking in java with ViSP
   - Bug fixed
     . [#523] dpkg-shlibdeps produces an error during Debian packaging
     . [#525] Tests are failing during Debian package build in a container
@@ -88,6 +102,8 @@ ViSP 3.2.1 (under work)
     . [#669] Fix segfault and memory leak when BEST_RESIDUAL_VIRTUAL_VS or
       HOMOGRAPHY_ORTHOGONAL_ITERATION pose estimation method are used
     . [#679] Fix display
+    . [#705] Fix error computation in the VVS loop for plane normal
+    . [#706] visp.pc pkg-config file not conform to man page
 ----------------------------------------------
 ViSP 3.2.0 (released January 23, 2019)
   - Contributors:

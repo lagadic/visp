@@ -102,7 +102,7 @@ public:
   vpPolygon3D(const vpPolygon3D &mbtp);
   virtual ~vpPolygon3D();
 
-  void addPoint(const unsigned int n, const vpPoint &P);
+  void addPoint(unsigned int n, const vpPoint &P);
 
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
@@ -197,7 +197,7 @@ public:
     clippingFlag = (clippingFlag | vpPolygon3D::FAR_CLIPPING);
   }
 
-  virtual void setNbPoint(const unsigned int nb);
+  virtual void setNbPoint(unsigned int nb);
 
   /*!
     Set the near distance for clipping.

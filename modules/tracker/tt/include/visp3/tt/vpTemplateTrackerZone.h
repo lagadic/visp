@@ -79,8 +79,8 @@ public:
   void copy(const vpTemplateTrackerZone &z);
 
   // display the area on an image
-  void display(const vpImage<unsigned char> &I, const vpColor &col = vpColor::green, const unsigned int thickness = 3);
-  void display(const vpImage<vpRGBa> &I, const vpColor &col = vpColor::green, const unsigned int thickness = 3);
+  void display(const vpImage<unsigned char> &I, const vpColor &col = vpColor::green, unsigned int thickness = 3);
+  void display(const vpImage<vpRGBa> &I, const vpColor &col = vpColor::green, unsigned int thickness = 3);
 
   // colorie le tieme triangle
   void fillTriangle(vpImage<unsigned char> &I, unsigned int id, unsigned char gray_level);

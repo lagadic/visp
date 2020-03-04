@@ -7,6 +7,7 @@ find_package(VISP REQUIRED visp_core visp_detection visp_io visp_gui visp_sensor
 set(tutorial_cpp
   tutorial-apriltag-detector.cpp
   tutorial-apriltag-detector-live.cpp
+  tutorial-apriltag-detector-live-rgbd-realsense.cpp
 )
 
 set(tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/AprilTag.pgm")
@@ -30,6 +31,7 @@ endif()
 if(VISP_HAVE_REALSENSE2)
   # Add specific build flag to turn off warnings coming from librealsense 3rd party
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "/wd4244")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "/wd4267")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-function")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-reorder")
@@ -38,4 +40,5 @@ endif()
 
 if(CXX_FLAGS_MUTE_WARNINGS)
   visp_set_source_file_compile_flag(tutorial-apriltag-detector-live.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+  visp_set_source_file_compile_flag(tutorial-apriltag-detector-live-rgbd-realsense.cpp ${CXX_FLAGS_MUTE_WARNINGS})
 endif()

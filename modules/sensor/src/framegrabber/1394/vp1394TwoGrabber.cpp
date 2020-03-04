@@ -99,7 +99,6 @@ setRingBufferSize().
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -179,7 +178,6 @@ vp1394TwoGrabber::~vp1394TwoGrabber()
 
   Here an example of single capture from the last camera found on the bus:
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -206,7 +204,6 @@ int main()
   If more than one camera is connected, it is also possible to select a
 specific camera by its GUID:
 \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -246,7 +243,6 @@ int main()
 
   Here an example of multi camera capture:
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -425,7 +421,6 @@ to the new video capture mode.
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -923,7 +918,6 @@ bool vp1394TwoGrabber::isFramerateSupported(vp1394TwoVideoModeType mode, vp1394T
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -1593,7 +1587,6 @@ the shutter as manual.
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -1660,7 +1653,6 @@ void vp1394TwoGrabber::setAutoShutter(bool enable)
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -1739,7 +1731,6 @@ void vp1394TwoGrabber::getAutoShutter(unsigned int &minvalue, unsigned int &maxv
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -1806,7 +1797,6 @@ void vp1394TwoGrabber::setAutoGain(bool enable)
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -1987,7 +1977,6 @@ void vp1394TwoGrabber::setTransmission(dc1394switch_t _switch)
   Below you will find an example that shows how to grab images in
   Format7 with a transmission speed set to 800Mbps in 1394b mode.
  \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -2111,7 +2100,6 @@ void vp1394TwoGrabber::open(vpImage<vpRGBa> &I)
   the ring buffer to be sure that the next image is the last one.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -2169,7 +2157,6 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue()
   the ring buffer to be sure that the next image is the last one.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -2227,7 +2214,6 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I)
   the ring buffer to be sure that the next image is the last one.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -2326,7 +2312,6 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<unsigned char> &I, uint64
   dequeue() ensure to get the last image, while the enqueue() frees
   the ring buffer to be sure that the next image is the last one.
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -2384,7 +2369,6 @@ dc1394video_frame_t *vp1394TwoGrabber::dequeue(vpImage<vpRGBa> &I)
   the ring buffer to be sure that the next image is the last one.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 
@@ -2969,7 +2953,6 @@ things as a side effect.
   camera found.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
 

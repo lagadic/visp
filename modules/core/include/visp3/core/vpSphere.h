@@ -66,10 +66,10 @@ public:
 
 public:
   explicit vpSphere(const vpColVector &oP);
-  vpSphere(const double X0, const double Y0, const double Z0, const double R);
+  vpSphere(double X0, double Y0, double Z0, double R);
 
   void setWorldCoordinates(const vpColVector &oP);
-  void setWorldCoordinates(const double X0, const double Y0, const double Z0, const double R);
+  void setWorldCoordinates(double X0, double Y0, double Z0, double R);
 
   double get_x() const { return p[0]; }
   double get_y() const { return p[1]; }
@@ -89,9 +89,9 @@ public:
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               const unsigned int thickness = 1);
+               unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
+               const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
   vpSphere *duplicate() const;
 };

@@ -102,8 +102,8 @@ vpMbtMeEllipse::~vpMbtMeEllipse() { list.clear(); }
 void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad,
                                             unsigned int &_nbFeatures,
                                             const vpMatrix &SobelX, const vpMatrix &SobelY,
-                                            const bool display, const unsigned int length,
-                                            const unsigned int thickness)
+                                            bool display, unsigned int length,
+                                            unsigned int thickness)
 {
   _sumErrorRad = 0;
   _nbFeatures = 0;
@@ -235,7 +235,7 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
 */
-void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
+void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 {
   if (!me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
@@ -383,7 +383,7 @@ void vpMbtMeEllipse::display(const vpImage<unsigned char> &I, vpColor col)
 
 void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
                                   double mu02_p,
-                                  const bool doNotTrack)
+                                  bool doNotTrack)
 {
   iPc = ic;
   mu20 = mu20_p;

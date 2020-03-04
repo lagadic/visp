@@ -72,7 +72,7 @@ vpForceTorqueAtiNetFTSensor::vpForceTorqueAtiNetFTSensor()
  * \param hostname : Device hostname or IP address.
  * \param port : Ethernet port.
  */
-vpForceTorqueAtiNetFTSensor::vpForceTorqueAtiNetFTSensor(const std::string &hostname, const int port)
+vpForceTorqueAtiNetFTSensor::vpForceTorqueAtiNetFTSensor(const std::string &hostname, int port)
   : vpUDPClient(hostname, port), m_counts_per_force(1000000), m_counts_per_torque(1000000000), m_scaling_factor(1),
     m_ft_bias(6, 0), m_data_count(0), m_data_count_prev(0), m_ft(6, 0), m_is_streaming_started(false)
 {

@@ -57,7 +57,6 @@
 #include <iomanip>
 #include <iostream>
 #include <stdlib.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpTime.h>

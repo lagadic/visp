@@ -90,7 +90,7 @@ void vpFeatureEllipse::init()
 vpFeatureEllipse::vpFeatureEllipse() : A(0), B(0), C(0) { init(); }
 
 //! compute the interaction matrix from a subset a the possible features
-vpMatrix vpFeatureEllipse::interaction(const unsigned int select)
+vpMatrix vpFeatureEllipse::interaction(unsigned int select)
 {
   vpMatrix L;
 
@@ -223,7 +223,7 @@ vpMatrix vpFeatureEllipse::interaction(const unsigned int select)
 
 //! compute the error between two visual features from a subset
 //! a the possible features
-vpColVector vpFeatureEllipse::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeatureEllipse::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -267,7 +267,7 @@ vpColVector vpFeatureEllipse::error(const vpBasicFeature &s_star, const unsigned
   return e;
 }
 
-void vpFeatureEllipse::print(const unsigned int select) const
+void vpFeatureEllipse::print(unsigned int select) const
 {
 
   std::cout << "Ellipse:  " << std::endl;
@@ -285,8 +285,7 @@ void vpFeatureEllipse::print(const unsigned int select) const
   std::cout << "A = " << A << " B = " << B << " C = " << C << std::endl;
 }
 
-void vpFeatureEllipse::buildFrom(const double x, const double y, const double mu20, const double mu11,
-                                 const double mu02)
+void vpFeatureEllipse::buildFrom(double x, double y, double mu20, double mu11, double mu02)
 {
 
   s[0] = x;
@@ -299,8 +298,8 @@ void vpFeatureEllipse::buildFrom(const double x, const double y, const double mu
     flags[i] = true;
 }
 
-void vpFeatureEllipse::buildFrom(const double x, const double y, const double mu20, const double mu11,
-                                 const double mu02, const double a, const double b, const double c)
+void vpFeatureEllipse::buildFrom(double x, double y, double mu20, double mu11,
+                                 double mu02, double a, double b, double c)
 {
 
   s[0] = x;
@@ -317,19 +316,19 @@ void vpFeatureEllipse::buildFrom(const double x, const double y, const double mu
     flags[i] = true;
 }
 
-void vpFeatureEllipse::set_x(const double x)
+void vpFeatureEllipse::set_x(double x)
 {
   s[0] = x;
   flags[0] = true;
 }
 
-void vpFeatureEllipse::set_y(const double y)
+void vpFeatureEllipse::set_y(double y)
 {
   s[1] = y;
   flags[1] = true;
 }
 
-void vpFeatureEllipse::set_xy(const double x, const double y)
+void vpFeatureEllipse::set_xy(double x, double y)
 {
   s[0] = x;
   s[1] = y;
@@ -337,7 +336,7 @@ void vpFeatureEllipse::set_xy(const double x, const double y)
     flags[i] = true;
 }
 
-void vpFeatureEllipse::setABC(const double a, const double b, const double c)
+void vpFeatureEllipse::setABC(double a, double b, double c)
 {
   this->A = a;
   this->B = b;
@@ -346,7 +345,7 @@ void vpFeatureEllipse::setABC(const double a, const double b, const double c)
     flags[i] = true;
 }
 
-void vpFeatureEllipse::setMu(const double mu20, const double mu11, const double mu02)
+void vpFeatureEllipse::setMu(double mu20, double mu11, double mu02)
 {
 
   s[2] = mu20;

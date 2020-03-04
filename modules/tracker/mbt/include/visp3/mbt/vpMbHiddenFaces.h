@@ -166,7 +166,7 @@ public:
   double getGoodNbRayCastingAttemptsRatio() { return ratioVisibleRay; }
 #endif
 
-  bool isAppearing(const unsigned int i) { return Lpol[i]->isAppearing(); }
+  bool isAppearing(unsigned int i) { return Lpol[i]->isAppearing(); }
 
 #ifdef VISP_HAVE_OGRE
   /*!
@@ -184,16 +184,16 @@ public:
 
   \return Return true if the polygon is visible.
 */
-  bool isVisible(const unsigned int i) { return Lpol[i]->isVisible(); }
+  bool isVisible(unsigned int i) { return Lpol[i]->isVisible(); }
 
 #ifdef VISP_HAVE_OGRE
   bool isVisibleOgre(const vpTranslationVector &cameraPos, const unsigned int &index);
 #endif
 
   //! operator[] as modifier.
-  inline PolygonType *operator[](const unsigned int i) { return Lpol[i]; }
+  inline PolygonType *operator[](unsigned int i) { return Lpol[i]; }
   //! operator[] as reader.
-  inline const PolygonType *operator[](const unsigned int i) const { return Lpol[i]; }
+  inline const PolygonType *operator[](unsigned int i) const { return Lpol[i]; }
 
   void reset();
 
@@ -251,7 +251,7 @@ public:
     Ogre rendering options) when Ogre visibility is enabled. By default, this
     functionality is turned off.
   */
-  inline void setOgreShowConfigDialog(const bool showConfigDialog) { ogreShowConfigDialog = showConfigDialog; }
+  inline void setOgreShowConfigDialog(bool showConfigDialog) { ogreShowConfigDialog = showConfigDialog; }
 #endif
 
   unsigned int setVisible(unsigned int width, unsigned int height, const vpCameraParameters &cam,
