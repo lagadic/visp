@@ -44,6 +44,15 @@
 #ifndef vpEndian_h
 #define vpEndian_h
 
+// Visual Studio 2010 or previous is missing inttypes.h
+#if defined(_MSC_VER) && (_MSC_VER < 1700)
+typedef unsigned short uint16_t;
+#else
+#  include <inttypes.h>
+#endif
+#include <stdint.h> //for uint32_t related types ; works also with >= VS2010 / _MSC_VER >= 1600
+#include <visp3/core/vpConfig.h>
+
 // Detect endianness of the host machine
 // Reference: http://www.boost.org/doc/libs/1_36_0/boost/detail/endian.hpp
 #if defined(__GLIBC__) || (defined(__GNUC__) && !defined(__llvm__) && !defined(__MINGW32__) && !defined(__FreeBSD__) && defined(__BYTE_ORDER__))
@@ -79,6 +88,19 @@
 #else
 #error Cannot detect host machine endianness.
 #endif
+
+namespace vpEndian
+{
+VISP_EXPORT uint16_t swap16bits(uint16_t val);
+
+VISP_EXPORT uint32_t swap32bits(uint32_t val);
+
+VISP_EXPORT float swapFloat(float f);
+
+VISP_EXPORT double swapDouble(double d);
+
+VISP_EXPORT uint16_t reinterpret_cast_uchar_to_uint16_LE(unsigned char * const ptr);
+}
 
 #endif
 

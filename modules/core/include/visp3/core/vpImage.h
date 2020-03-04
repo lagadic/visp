@@ -1525,7 +1525,7 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
 
 #if (defined(VISP_LITTLE_ENDIAN) || defined(VISP_BIG_ENDIAN))
   //Fixed-point arithmetic
-  const int precision = 1 << 16;
+  const int32_t precision = 1 << 16;
   int64_t y = static_cast<int64_t>(i * precision);
   int64_t x = static_cast<int64_t>(j * precision);
 
@@ -1541,37 +1541,20 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
   int64_t x_ = x >> 16;
   int64_t y_ = y >> 16;
 
-#if defined(VISP_LITTLE_ENDIAN)
   if (y_ + 1 < height && x_ + 1 < width) {
-    uint16_t up = *reinterpret_cast<uint16_t *>(bitmap + y_ * width + x_);
-    uint16_t down = *reinterpret_cast<uint16_t *>(bitmap + (y_ + 1) * width + x_);
+    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + y_ * width + x_);
+    uint16_t down = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + (y_ + 1) * width + x_);
 
     return static_cast<unsigned char>((((up & 0x00FF) * rfrac + (down & 0x00FF) * rratio) * cfrac +
                                        ((up >> 8) * rfrac + (down >> 8) * rratio) * cratio) >> 32);
   } else if (y_ + 1 < height) {
     return static_cast<unsigned char>(((row[y_][x_] * rfrac + row[y_ + 1][x_] * rratio)) >> 16);
   } else if (x_ + 1 < width) {
-    uint16_t up = *reinterpret_cast<uint16_t *>(bitmap + y_ * width + x_);
+    uint16_t up = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + y_ * width + x_);
     return static_cast<unsigned char>(((up & 0x00FF) * cfrac + (up >> 8) * cratio) >> 16);
   } else {
     return row[y_][x_];
   }
-#elif defined(VISP_BIG_ENDIAN)
-  if (y_ + 1 < height && x_ + 1 < width) {
-    uint16_t up = *reinterpret_cast<uint16_t *>(bitmap + y_ * width + x_);
-    uint16_t down = *reinterpret_cast<uint16_t *>(bitmap + (y_ + 1) * width + x_);
-
-    return static_cast<unsigned char>((((up >> 8) * rfrac + (down >> 8) * rratio) * cfrac +
-                                       ((up & 0x00FF) * rfrac + (down & 0x00FF) * rratio) * cratio) >> 32);
-  } else if (y_ + 1 < height) {
-    return static_cast<unsigned char>(((row[y_][x_] * rfrac + row[y_ + 1][x_] * rratio)) >> 16);
-  } else if (x_ + 1 < width) {
-    uint16_t up = *reinterpret_cast<uint16_t *>(bitmap + y_ * width + x_);
-    return static_cast<unsigned char>(((up >> 8) * cfrac + (up & 0x00FF) * cratio) >> 16);
-  } else {
-    return row[y_][x_];
-  }
-#endif
 #else
   unsigned int iround = static_cast<unsigned int>(floor(i));
   unsigned int jround = static_cast<unsigned int>(floor(j));
