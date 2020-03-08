@@ -157,15 +157,8 @@ private:
     RansacFunctor(const vpHomogeneousMatrix &cMo_, unsigned int ransacNbInlierConsensus_,
                   const int ransacMaxTrials_, double ransacThreshold_, unsigned int initial_seed_,
                   bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
-                  bool (*func_)(const vpHomogeneousMatrix &)
-              #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-                  , std::atomic<bool> &abort
-              #endif
-                  )
+                  bool (*func_)(const vpHomogeneousMatrix &))
       :
-    #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-        m_abort(abort),
-    #endif
         m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
         m_func(func_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
         m_ransacMaxTrials(ransacMaxTrials_), m_ransacNbInlierConsensus(ransacNbInlierConsensus_),
@@ -185,9 +178,6 @@ private:
     unsigned int getNbInliers() const { return m_nbInliers; }
 
   private:
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    std::atomic<bool> &m_abort;
-#endif
     std::vector<unsigned int> m_best_consensus;
     bool m_checkDegeneratePoints;
     vpHomogeneousMatrix m_cMo;

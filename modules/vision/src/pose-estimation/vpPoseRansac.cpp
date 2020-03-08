@@ -296,11 +296,6 @@ bool vpPose::RansacFunctor::poseRansacImpl()
     }
   }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  if (m_nbInliers >= m_ransacNbInlierConsensus)
-    m_abort = true;
-#endif
-
   return foundSolution;
 }
 
@@ -397,6 +392,8 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
         nbThreads = 1;
         executeParallelVersion = false;
       }
+    } else {
+      nbThreads = nbParallelRansacThreads;
     }
 #endif
   }
@@ -407,19 +404,17 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::vector<std::thread> threadpool;
     std::vector<RansacFunctor> ransacWorkers;
-    unsigned int nthreads = std::thread::hardware_concurrency();
 
-    int splitTrials = ransacMaxTrials / nthreads;
-    std::atomic<bool> abort{false};
-    for (size_t i = 0; i < (size_t)nthreads; i++) {
+    int splitTrials = ransacMaxTrials / nbThreads;
+    for (size_t i = 0; i < (size_t)nbThreads; i++) {
       unsigned int initial_seed = (unsigned int)i; //((unsigned int) time(NULL) ^ i);
-      if (i < (size_t)nthreads - 1) {
+      if (i < (size_t)nbThreads - 1) {
         ransacWorkers.emplace_back(cMo, ransacNbInlierConsensus, splitTrials, ransacThreshold, initial_seed,
-                                   checkDegeneratePoints, listOfUniquePoints, func, abort);
+                                   checkDegeneratePoints, listOfUniquePoints, func);
       } else {
         int maxTrialsRemainder = ransacMaxTrials - splitTrials * (nbThreads - 1);
         ransacWorkers.emplace_back(cMo, ransacNbInlierConsensus, maxTrialsRemainder, ransacThreshold, initial_seed,
-                                   checkDegeneratePoints, listOfUniquePoints, func, abort);
+                                   checkDegeneratePoints, listOfUniquePoints, func);
       }
     }
 
@@ -449,15 +444,8 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 #endif
   } else {
     // Sequential RANSAC
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    std::atomic<bool> abort{false};
-#endif
     RansacFunctor sequentialRansac(cMo, ransacNbInlierConsensus, ransacMaxTrials, ransacThreshold, 0,
-                                   checkDegeneratePoints, listOfUniquePoints, func
-                               #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-                                   , abort
-                               #endif
-                                   );
+                                   checkDegeneratePoints, listOfUniquePoints, func);
     sequentialRansac();
     foundSolution = sequentialRansac.getResult();
 
