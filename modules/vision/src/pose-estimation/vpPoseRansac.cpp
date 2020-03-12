@@ -313,9 +313,9 @@ bool vpPose::RansacFunctor::poseRansacImpl()
   otherwise
   \return True if we found at least 4 points with a reprojection
   error below ransacThreshold.
-  \note You can enable a multithreaded version if you have C++11 enabled using \e setUseParallelRansac
-  The number of threads used can then be set with \e setNbParallelRansacThreads
-  Filter flag can be used  with \e setRansacFilterFlag
+  \note You can enable a multithreaded version if you have C++11 enabled using setUseParallelRansac().
+  The number of threads used can then be set with setNbParallelRansacThreads().
+  Filter flag can be used  with setRansacFilterFlag().
 */
 bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))
 {
