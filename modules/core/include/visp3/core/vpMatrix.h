@@ -48,11 +48,6 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
-#ifdef VISP_HAVE_GSL
-#include <gsl/gsl_eigen.h>
-#include <gsl/gsl_math.h>
-#endif
-
 #include <iostream>
 #include <math.h>
 
@@ -244,6 +239,40 @@ vpMatrix M(R);
   //-------------------------------------------------
   // Setting a diagonal matrix
   //-------------------------------------------------
+  /** @name Linear algebra optimization  */
+  //@{
+  /*!
+   * Return the minimum size of rows and columns required to enable Blas/Lapack
+   * usage on matrices and vectors.
+   *
+   * To get more info see \ref tutorial-basic-linear-algebra.
+   *
+   * \sa setLapackMatrixMinSize()
+   */
+  static unsigned int getLapackMatrixMinSize() {
+    return m_lapack_min_size;
+  }
+
+  /*!
+   * Modify default size used to determine if Blas/Lapack basic linear algebra operations are enabled.
+   *
+   * To get more info see \ref tutorial-basic-linear-algebra.
+   *
+   * \param min_size : Minimum size of rows and columns required for a matrix or a vector to use
+   * Blas/Lapack third parties like MKL, OpenBLAS, Netlib or Atlas. When matrix or vector size is
+   * lower or equal to this parameter, Blas/Lapack is not used. In that case we prefer use naive code
+   * that runs faster for small matrices.
+   *
+   * \sa getLapackMatrixMinSize()
+   */
+  static void setLapackMatrixMinSize(unsigned int min_size) {
+    m_lapack_min_size = min_size;
+  }
+  //@}
+
+  //-------------------------------------------------
+  // Setting a diagonal matrix
+  //-------------------------------------------------
   /** @name Setting a diagonal matrix  */
   //@{
   void diag(const double &val = 1.0);
@@ -350,6 +379,7 @@ vpMatrix M(R);
   vpMatrix &operator-=(const vpMatrix &B);
   vpMatrix operator*(const vpMatrix &B) const;
   vpMatrix operator*(const vpRotationMatrix &R) const;
+  vpMatrix operator*(const vpHomogeneousMatrix &R) const;
   vpMatrix operator*(const vpVelocityTwistMatrix &V) const;
   vpMatrix operator*(const vpForceTwistMatrix &V) const;
   // operation t_out = A * t (A is unchanged, t and t_out are translation
@@ -806,12 +836,15 @@ vpMatrix M(R);
 #endif
 
 private:
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
-  static void blas_dgemm(char trans_a, char trans_b, int M, int N, int K, double alpha,
-                         double *a_data, int lda, double *b_data, int ldb, double beta, double *c_data,
-                         int ldc);
-  static void blas_dgemv(char trans, int M, int N, double alpha, double *a_data, int lda,
-                         double *x_data, int incx, double beta, double *y_data, int incy);
+  static unsigned int m_lapack_min_size;
+  static const unsigned int m_lapack_min_size_default;
+
+#if defined(VISP_HAVE_LAPACK)
+  static void blas_dgemm(char trans_a, char trans_b, unsigned int M_, unsigned int N_, unsigned int K_, double alpha,
+                         double *a_data, unsigned int lda_, double *b_data, unsigned int ldb_, double beta, double *c_data,
+                         unsigned int ldc_);
+  static void blas_dgemv(char trans, unsigned int M_, unsigned int N_, double alpha, double *a_data, unsigned int lda_,
+                         double *x_data, int incx_, double beta, double *y_data, int incy_);
 #endif
 
   static void computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls,

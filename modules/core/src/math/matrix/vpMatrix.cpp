@@ -55,6 +55,8 @@
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_GSL
+#include <gsl/gsl_eigen.h>
+#include <gsl/gsl_math.h>
 #include <gsl/gsl_linalg.h>
 #endif
 
@@ -65,6 +67,9 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpTranslationVector.h>
+
+const unsigned int vpMatrix::m_lapack_min_size_default = 8;
+unsigned int vpMatrix::m_lapack_min_size = vpMatrix::m_lapack_min_size_default;
 
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
@@ -617,20 +622,38 @@ void vpMatrix::AAt(vpMatrix &B) const
   if ((B.rowNum != rowNum) || (B.colNum != rowNum))
     B.resize(rowNum, rowNum, false, false);
 
-  // compute A*A^T
-  for (unsigned int i = 0; i < rowNum; i++) {
-    for (unsigned int j = i; j < rowNum; j++) {
-      double *pi = rowPtrs[i]; // row i
-      double *pj = rowPtrs[j]; // row j
+  // If available use Lapack only for small matrices
+  bool useLapack = (rowNum > vpMatrix::m_lapack_min_size && colNum > vpMatrix::m_lapack_min_size);
+#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN))
+  useLapack = false;
+#endif
 
-      // sum (row i .* row j)
-      double ssum = 0;
-      for (unsigned int k = 0; k < colNum; k++)
-        ssum += *(pi++) * *(pj++);
+  if (useLapack) {
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+    const double alpha = 1.0;
+    const double beta = 0.0;
+    const char transa = 't';
+    const char transb = 'n';
 
-      B[i][j] = ssum; // upper triangle
-      if (i != j)
-        B[j][i] = ssum; // lower triangle
+    vpMatrix::blas_dgemm(transa, transb, rowNum, rowNum, colNum, alpha, data, colNum, data, colNum, beta, B.data, rowNum);
+#endif
+  }
+  else {
+    // compute A*A^T
+    for (unsigned int i = 0; i < rowNum; i++) {
+      for (unsigned int j = i; j < rowNum; j++) {
+        double *pi = rowPtrs[i]; // row i
+        double *pj = rowPtrs[j]; // row j
+
+        // sum (row i .* row j)
+        double ssum = 0;
+        for (unsigned int k = 0; k < colNum; k++)
+          ssum += *(pi++) * *(pj++);
+
+        B[i][j] = ssum; // upper triangle
+        if (i != j)
+          B[j][i] = ssum; // lower triangle
+      }
     }
   }
 }
@@ -651,38 +674,44 @@ void vpMatrix::AtA(vpMatrix &B) const
   if ((B.rowNum != colNum) || (B.colNum != colNum))
     B.resize(colNum, colNum, false, false);
 
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
-  double alpha = 1.0;
-  double beta = 0.0;
-  char transa = 'n';
-  char transb = 't';
+  // If available use Lapack only for small matrices
+  bool useLapack = (rowNum > vpMatrix::m_lapack_min_size && colNum > vpMatrix::m_lapack_min_size);
+#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN))
+  useLapack = false;
+#endif
 
-  vpMatrix::blas_dgemm(transa, transb, colNum, colNum, rowNum, alpha, data, colNum, data, colNum, beta, B.data, colNum);
-#else
-  unsigned int i, j, k;
-  double s;
-  double *ptr;
-  for (i = 0; i < colNum; i++) {
-    double *Bi = B[i];
-    for (j = 0; j < i; j++) {
-      ptr = data;
-      s = 0;
-      for (k = 0; k < rowNum; k++) {
-        s += (*(ptr + i)) * (*(ptr + j));
+  if (useLapack) {
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+    const double alpha = 1.0;
+    const double beta = 0.0;
+    const char transa = 'n';
+    const char transb = 't';
+
+    vpMatrix::blas_dgemm(transa, transb, colNum, colNum, rowNum, alpha, data, colNum, data, colNum, beta, B.data, colNum);
+#endif
+  }
+  else {
+    for (unsigned int i = 0; i < colNum; i++) {
+      double *Bi = B[i];
+      for (unsigned int j = 0; j < i; j++) {
+        double *ptr = data;
+        double s = 0;
+        for (unsigned int k = 0; k < rowNum; k++) {
+          s += (*(ptr + i)) * (*(ptr + j));
+          ptr += colNum;
+        }
+        *Bi++ = s;
+        B[j][i] = s;
+      }
+      double *ptr = data;
+      double s = 0;
+      for (unsigned int k = 0; k < rowNum; k++) {
+        s += (*(ptr + i)) * (*(ptr + i));
         ptr += colNum;
       }
-      *Bi++ = s;
-      B[j][i] = s;
+      *Bi = s;
     }
-    ptr = data;
-    s = 0;
-    for (k = 0; k < rowNum; k++) {
-      s += (*(ptr + i)) * (*(ptr + i));
-      ptr += colNum;
-    }
-    *Bi = s;
   }
-#endif
 }
 
 /*!
@@ -1030,22 +1059,31 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
   if (A.rowNum != w.rowNum)
     w.resize(A.rowNum, false);
 
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
-  double alpha = 1.0;
-  double beta = 0.0;
-  char trans = 't';
-  int incr = 1;
+  // If available use Lapack only for small matrices
+  bool useLapack = (A.rowNum > vpMatrix::m_lapack_min_size && A.colNum > vpMatrix::m_lapack_min_size);
+#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN))
+  useLapack = false;
+#endif
 
-  vpMatrix::blas_dgemv(trans, A.colNum, A.rowNum, alpha, A.data, A.colNum, v.data, incr, beta, w.data, incr);
-#else
-  w = 0.0;
-  for (unsigned int j = 0; j < A.colNum; j++) {
-    double vj = v[j]; // optimization em 5/12/2006
-    for (unsigned int i = 0; i < A.rowNum; i++) {
-      w[i] += A.rowPtrs[i][j] * vj;
+  if (useLapack) {
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+    double alpha = 1.0;
+    double beta = 0.0;
+    char trans = 't';
+    int incr = 1;
+
+    vpMatrix::blas_dgemv(trans, A.colNum, A.rowNum, alpha, A.data, A.colNum, v.data, incr, beta, w.data, incr);
+#endif
+  }
+  else {
+    w = 0.0;
+    for (unsigned int j = 0; j < A.colNum; j++) {
+      double vj = v[j]; // optimization em 5/12/2006
+      for (unsigned int i = 0; i < A.rowNum; i++) {
+        w[i] += A.rowPtrs[i][j] * vj;
+      }
     }
   }
-#endif
 }
 
 //---------------------------------
@@ -1071,30 +1109,37 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
                       A.getCols(), B.getRows(), B.getCols()));
   }
 
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
-  double alpha = 1.0;
-  double beta = 0.0;
-  char trans = 'n';
+  // If available use Lapack only for small matrices
+  bool useLapack = (A.rowNum > vpMatrix::m_lapack_min_size && A.colNum > vpMatrix::m_lapack_min_size && B.colNum > vpMatrix::m_lapack_min_size);
+#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN))
+  useLapack = false;
+#endif
 
-  vpMatrix::blas_dgemm(trans, trans, B.colNum, A.rowNum, A.colNum, alpha, B.data, B.colNum, A.data, A.colNum, beta,
-                       C.data, B.colNum);
-#else
-  // 5/12/06 some "very" simple optimization to avoid indexation
-  unsigned int BcolNum = B.colNum;
-  unsigned int BrowNum = B.rowNum;
-  unsigned int i, j, k;
-  double **BrowPtrs = B.rowPtrs;
-  for (i = 0; i < A.rowNum; i++) {
-    double *rowptri = A.rowPtrs[i];
-    double *ci = C[i];
-    for (j = 0; j < BcolNum; j++) {
-      double s = 0;
-      for (k = 0; k < BrowNum; k++)
-        s += rowptri[k] * BrowPtrs[k][j];
-      ci[j] = s;
+  if (useLapack) {
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+    const double alpha = 1.0;
+    const double beta = 0.0;
+    const char trans = 'n';
+    vpMatrix::blas_dgemm(trans, trans, B.colNum, A.rowNum, A.colNum, alpha, B.data, B.colNum, A.data, A.colNum, beta,
+                         C.data, B.colNum);
+#endif
+  }
+  else {
+    // 5/12/06 some "very" simple optimization to avoid indexation
+    const unsigned int BcolNum = B.colNum;
+    const unsigned int BrowNum = B.rowNum;
+    double **BrowPtrs = B.rowPtrs;
+    for (unsigned int i = 0; i < A.rowNum; i++) {
+      const double *rowptri = A.rowPtrs[i];
+      double *ci = C[i];
+      for (unsigned int j = 0; j < BcolNum; j++) {
+        double s = 0;
+        for (unsigned int k = 0; k < BrowNum; k++)
+          s += rowptri[k] * BrowPtrs[k][j];
+        ci[j] = s;
+      }
     }
   }
-#endif
 }
 
 /*!
@@ -1119,17 +1164,20 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpRotationMat
                       A.getRows(), A.getCols(), B.getRows(), B.getCols()));
   }
 
+  // Considering perfMatrixMultiplication.cpp benchmark,
+  // using either OpenBLAS, MKL, or Netlib slow down this function with respect to the naive code.
+  // That's why Lapack usage is not used here.
+
   // 5/12/06 some "very" simple optimization to avoid indexation
-  unsigned int BcolNum = B.colNum;
-  unsigned int BrowNum = B.rowNum;
-  unsigned int i, j, k;
+  const unsigned int BcolNum = B.colNum;
+  const unsigned int BrowNum = B.rowNum;
   double **BrowPtrs = B.rowPtrs;
-  for (i = 0; i < A.rowNum; i++) {
-    double *rowptri = A.rowPtrs[i];
+  for (unsigned int i = 0; i < A.rowNum; i++) {
+    const double *rowptri = A.rowPtrs[i];
     double *ci = C[i];
-    for (j = 0; j < BcolNum; j++) {
+    for (unsigned int j = 0; j < BcolNum; j++) {
       double s = 0;
-      for (k = 0; k < BrowNum; k++)
+      for (unsigned int k = 0; k < BrowNum; k++)
         s += rowptri[k] * BrowPtrs[k][j];
       ci[j] = s;
     }
@@ -1157,18 +1205,21 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpHomogeneous
                       "rotation matrix",
                       A.getRows(), A.getCols(), B.getRows(), B.getCols()));
   }
+  // Considering perfMatrixMultiplication.cpp benchmark,
+  // using either OpenBLAS, MKL, or Netlib slow down this function with respect to the naive code.
+  // That's why Lapack is not use here.
+  // Using SSE2 doesn't speed up.
 
   // 5/12/06 some "very" simple optimization to avoid indexation
-  unsigned int BcolNum = B.colNum;
-  unsigned int BrowNum = B.rowNum;
-  unsigned int i, j, k;
+  const unsigned int BcolNum = B.colNum;
+  const unsigned int BrowNum = B.rowNum;
   double **BrowPtrs = B.rowPtrs;
-  for (i = 0; i < A.rowNum; i++) {
-    double *rowptri = A.rowPtrs[i];
+  for (unsigned int i = 0; i < A.rowNum; i++) {
+    const double *rowptri = A.rowPtrs[i];
     double *ci = C[i];
-    for (j = 0; j < BcolNum; j++) {
+    for (unsigned int j = 0; j < BcolNum; j++) {
       double s = 0;
-      for (k = 0; k < BrowNum; k++)
+      for (unsigned int k = 0; k < BrowNum; k++)
         s += rowptri[k] * BrowPtrs[k][j];
       ci[j] = s;
     }
@@ -1233,6 +1284,36 @@ vpMatrix vpMatrix::operator*(const vpRotationMatrix &R) const
 
   return C;
 }
+
+/*!
+  Operator that allow to multiply a matrix by a homogeneous matrix.
+  The matrix should be of dimension m-by-4.
+*/
+vpMatrix vpMatrix::operator*(const vpHomogeneousMatrix &M) const
+{
+  if (colNum != M.getRows()) {
+    throw(vpException(vpException::dimensionError, "Cannot multiply (%dx%d) matrix by (3x3) rotation matrix", rowNum,
+                      colNum));
+  }
+  vpMatrix C;
+  C.resize(rowNum, 4, false, false);
+
+  const unsigned int McolNum = M.getCols();
+  const unsigned int MrowNum = M.getRows();
+  for (unsigned int i = 0; i < rowNum; i++) {
+    const double *rowptri = rowPtrs[i];
+    double *ci = C[i];
+    for (unsigned int j = 0; j < McolNum; j++) {
+      double s = 0;
+      for (unsigned int k = 0; k < MrowNum; k++)
+        s += rowptri[k] * M[k][j];
+      ci[j] = s;
+    }
+  }
+
+  return C;
+}
+
 /*!
   Operator that allow to multiply a matrix by a velocity twist matrix.
   The matrix should be of dimension m-by-6.
@@ -1246,14 +1327,10 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
   vpMatrix M;
   M.resize(rowNum, 6, false, false);
 
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
-  double alpha = 1.0;
-  double beta = 0.0;
-  char trans = 'n';
-
-  vpMatrix::blas_dgemm(trans, trans, V.colNum, rowNum, colNum, alpha, V.data, V.colNum, data, colNum, beta, M.data,
-                       V.colNum);
-#else
+  // Considering perfMatrixMultiplication.cpp benchmark,
+  // using either OpenBLAS, MKL, or Netlib slow down this function with respect to the naive code.
+  // That's why Lapack is not used here.
+  // Speed up is only obtained using SSE2.
   bool checkSSE2 = vpCPUFeatures::checkSSE2();
 #if !VISP_HAVE_SSE2
   checkSSE2 = false;
@@ -1286,10 +1363,10 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
     }
 #endif
   } else {
-    unsigned int VcolNum = V.getCols();
-    unsigned int VrowNum = V.getRows();
+    const unsigned int VcolNum = V.getCols();
+    const unsigned int VrowNum = V.getRows();
     for (unsigned int i = 0; i < rowNum; i++) {
-      double *rowptri = rowPtrs[i];
+      const double *rowptri = rowPtrs[i];
       double *ci = M[i];
       for (unsigned int j = 0; j < VcolNum; j++) {
         double s = 0;
@@ -1299,7 +1376,6 @@ vpMatrix vpMatrix::operator*(const vpVelocityTwistMatrix &V) const
       }
     }
   }
-#endif
 
   return M;
 }
@@ -1316,16 +1392,54 @@ vpMatrix vpMatrix::operator*(const vpForceTwistMatrix &V) const
   vpMatrix M;
   M.resize(rowNum, 6, false, false);
 
-  unsigned int VcolNum = V.getCols();
-  unsigned int VrowNum = V.getRows();
-  for (unsigned int i = 0; i < rowNum; i++) {
-    double *rowptri = rowPtrs[i];
-    double *ci = M[i];
-    for (unsigned int j = 0; j < VcolNum; j++) {
-      double s = 0;
-      for (unsigned int k = 0; k < VrowNum; k++)
-        s += rowptri[k] * V[k][j];
-      ci[j] = s;
+  // Considering perfMatrixMultiplication.cpp benchmark,
+  // using either OpenBLAS, MKL, or Netlib slow down this function with respect to the naive code.
+  // That's why Lapack is not used here.
+  // Speed up is only obtained using SSE2.
+
+  bool checkSSE2 = vpCPUFeatures::checkSSE2();
+#if !VISP_HAVE_SSE2
+  checkSSE2 = false;
+#endif
+
+  if (checkSSE2) {
+#if VISP_HAVE_SSE2
+    vpMatrix V_trans;
+    V_trans.resize(6, 6, false, false);
+    for (unsigned int i = 0; i < 6; i++) {
+      for (unsigned int j = 0; j < 6; j++) {
+        V_trans[i][j] = V[j][i];
+      }
+    }
+
+    for (unsigned int i = 0; i < rowNum; i++) {
+      double *rowptri = rowPtrs[i];
+      double *ci = M[i];
+
+      for (int j = 0; j < 6; j++) {
+        __m128d v_mul = _mm_setzero_pd();
+        for (int k = 0; k < 6; k += 2) {
+          v_mul = _mm_add_pd(v_mul, _mm_mul_pd(_mm_loadu_pd(&rowptri[k]), _mm_loadu_pd(&V_trans[j][k])));
+        }
+
+        double v_tmp[2];
+        _mm_storeu_pd(v_tmp, v_mul);
+        ci[j] = v_tmp[0] + v_tmp[1];
+      }
+    }
+#endif
+  } else {
+    const unsigned int VcolNum = V.getCols();
+    const unsigned int VrowNum = V.getRows();
+    for (unsigned int i = 0; i < rowNum; i++) {
+      const double *rowptri = rowPtrs[i];
+      double *ci = M[i];
+      for (unsigned int j = 0; j < VcolNum; j++) {
+        double s = 0;
+        for (unsigned int k = 0; k < VrowNum; k++)
+          s += rowptri[k] * V[k][j];
+        ci[j] = s;
+      }
     }
   }
 
