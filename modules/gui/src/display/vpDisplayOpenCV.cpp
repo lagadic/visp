@@ -1383,7 +1383,7 @@ void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip, const vpColor &color,
   false.
 */
 void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, unsigned int w, unsigned int h,
-                                       const vpColor &color, bool fill, unsigned int thickness)
+                                       const vpColor &color, bool fill, unsigned int thickness, double opacity)
 {
   if (m_displayHasBeenInitialized) {
     if (fill == false) {
@@ -1419,6 +1419,20 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, unsigned int
 #else
       int filled = CV_FILLED;
 #endif
+
+      // Initialize overlay layer for transparency
+      cv::Mat overlay;
+      if (opacity < 1.0)
+      {
+        // Deep copy
+        overlay = m_background.clone();
+      }
+      else
+      {
+        // Shallow copy
+        overlay = m_background;
+      }      
+
       if (color.id < vpColor::id_unknown) {
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
         cvRectangle(
@@ -1427,7 +1441,7 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, unsigned int
             col[color.id], filled);
 #else
         cv::rectangle(
-            m_background, cv::Point(vpMath::round(topLeft.get_u() / m_scale), vpMath::round(topLeft.get_v() / m_scale)),
+            overlay, cv::Point(vpMath::round(topLeft.get_u() / m_scale), vpMath::round(topLeft.get_v() / m_scale)),
             cv::Point(vpMath::round((topLeft.get_u() + w) / m_scale), vpMath::round((topLeft.get_v() + h) / m_scale)),
             col[color.id], filled);
 #endif
@@ -1440,10 +1454,16 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, unsigned int
             cvcolor, filled);
 #else
         cv::rectangle(
-            m_background, cv::Point(vpMath::round(topLeft.get_u() / m_scale), vpMath::round(topLeft.get_v() / m_scale)),
+            overlay, cv::Point(vpMath::round(topLeft.get_u() / m_scale), vpMath::round(topLeft.get_v() / m_scale)),
             cv::Point(vpMath::round((topLeft.get_u() + w) / m_scale), vpMath::round((topLeft.get_v() + h) / m_scale)),
             cvcolor, filled);
 #endif
+      }
+
+      // Blend background and overlay
+      if (opacity < 1.0)
+      {
+        cv::addWeighted(overlay, opacity, m_background, 1.0 - opacity, 0.0, m_background);
       }
     }
   } else {
@@ -1463,7 +1483,7 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, unsigned int
   false.
 */
 void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight,
-                                       const vpColor &color, bool fill, unsigned int thickness)
+                                       const vpColor &color, bool fill, unsigned int thickness, double opacity)
 {
   if (m_displayHasBeenInitialized) {
     if (fill == false) {
@@ -1542,7 +1562,7 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, const vpImag
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */
-void vpDisplayOpenCV::displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness)
+void vpDisplayOpenCV::displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness, double opacity)
 {
   if (m_displayHasBeenInitialized) {
     if (fill == false) {

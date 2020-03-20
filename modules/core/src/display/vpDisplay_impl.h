@@ -376,19 +376,19 @@ void vp_display_display_polygon(const vpImage<Type> &I, const std::vector<vpImag
 
 template <class Type>
 void vp_display_display_rectangle(const vpImage<Type> &I, const vpImagePoint &topLeft, unsigned int width,
-                                  unsigned int height, const vpColor &color, bool fill, unsigned int thickness)
+                                  unsigned int height, const vpColor &color, bool fill, unsigned int thickness, double opacity)
 {
   if (I.display != NULL) {
-    (I.display)->displayRectangle(topLeft, width, height, color, fill, thickness);
+    (I.display)->displayRectangle(topLeft, width, height, color, fill, thickness, opacity);
   }
 }
 
 template <class Type>
 void vp_display_display_rectangle(const vpImage<Type> &I, const vpRect &rectangle, const vpColor &color, bool fill,
-                                  unsigned int thickness)
+                                  unsigned int thickness, double opacity)
 {
   if (I.display != NULL) {
-    (I.display)->displayRectangle(rectangle, color, fill, thickness);
+    (I.display)->displayRectangle(rectangle, color, fill, thickness, opacity);
   }
 }
 
@@ -422,23 +422,23 @@ void vp_display_display_rectangle(const vpImage<Type> &I, const vpImagePoint &ce
 
 template <class Type>
 void vp_display_display_rectangle(const vpImage<Type> &I, const vpImagePoint &topLeft, const vpImagePoint &bottomRight,
-                                  const vpColor &color, bool fill, unsigned int thickness)
+                                  const vpColor &color, bool fill, unsigned int thickness, double opacity)
 {
   if (I.display != NULL) {
-    (I.display)->displayRectangle(topLeft, bottomRight, color, fill, thickness);
+    (I.display)->displayRectangle(topLeft, bottomRight, color, fill, thickness, opacity);
   }
 }
 
 template <class Type>
 void vp_display_display_rectangle(const vpImage<Type> &I, int i, int j, unsigned int width, unsigned int height,
-                                  const vpColor &color, bool fill, unsigned int thickness)
+                                  const vpColor &color, bool fill, unsigned int thickness, double opacity)
 {
   if (I.display != NULL) {
     vpImagePoint topLeft;
     topLeft.set_i(i);
     topLeft.set_j(j);
 
-    (I.display)->displayRectangle(topLeft, width, height, color, fill, thickness);
+    (I.display)->displayRectangle(topLeft, width, height, color, fill, thickness, opacity);
   }
 }
 

@@ -2655,7 +2655,7 @@ void vpDisplayX::displayPoint(const vpImagePoint &ip, const vpColor &color, unsi
   false.
 */
 void vpDisplayX::displayRectangle(const vpImagePoint &topLeft, unsigned int w, unsigned int h, const vpColor &color,
-                                  bool fill, unsigned int thickness)
+                                  bool fill, unsigned int thickness, double opacity)
 {
   if (m_displayHasBeenInitialized) {
     if (thickness == 1)
@@ -2696,7 +2696,7 @@ void vpDisplayX::displayRectangle(const vpImagePoint &topLeft, unsigned int w, u
   false.
 */
 void vpDisplayX::displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color,
-                                  bool fill, unsigned int thickness)
+                                  bool fill, unsigned int thickness, double opacity)
 {
   if (m_displayHasBeenInitialized) {
     if (thickness == 1)
@@ -2747,7 +2747,7 @@ void vpDisplayX::displayRectangle(const vpImagePoint &topLeft, const vpImagePoin
   false.
 
 */
-void vpDisplayX::displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness)
+void vpDisplayX::displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness, double opacity)
 {
   if (m_displayHasBeenInitialized) {
     if (thickness == 1)

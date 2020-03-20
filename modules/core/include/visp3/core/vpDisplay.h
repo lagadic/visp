@@ -388,7 +388,7 @@ public:
     false.
   */
   virtual void displayRectangle(const vpImagePoint &topLeft, unsigned int width, unsigned int height,
-                                const vpColor &color, bool fill = false, unsigned int thickness = 1) = 0;
+                                const vpColor &color, bool fill = false, unsigned int thickness = 1, double opacity = 1.0) = 0;
   /*!
     Display a rectangle with \e topLeft as the top-left corner and \e
     width and \e height the rectangle size.
@@ -403,7 +403,7 @@ public:
     false.
   */
   virtual void displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color,
-                                bool fill = false, unsigned int thickness = 1) = 0;
+                                bool fill = false, unsigned int thickness = 1, double opacity = 1.0) = 0;
   /*!
     Display a rectangle with \e topLeft as the top-left corner and \e
     width and \e height the rectangle size.
@@ -418,7 +418,7 @@ public:
 
   */
   virtual void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false,
-                                unsigned int thickness = 1) = 0;
+                                unsigned int thickness = 1, double opacity = 1.0) = 0;
 
   /*!
     Flushes the display.
@@ -751,17 +751,17 @@ int main()
                              const vpColor &color, unsigned int thickness = 1, bool closed = true);
   static void displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &topLeft, unsigned int width,
                                unsigned int height, const vpColor &color, bool fill = false,
-                               unsigned int thickness = 1);
+                               unsigned int thickness = 1, double opacity = 1.0);
   static void displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &topLeft,
                                const vpImagePoint &bottomRight, const vpColor &color, bool fill = false,
-                               unsigned int thickness = 1);
+                               unsigned int thickness = 1, double opacity = 1.0);
   static void displayRectangle(const vpImage<unsigned char> &I, const vpRect &rectangle, const vpColor &color,
-                               bool fill = false, unsigned int thickness = 1);
+                               bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
   static void displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &center, float angle,
                                unsigned int width, unsigned int height, const vpColor &color,
                                unsigned int thickness = 1);
   static void displayRectangle(const vpImage<unsigned char> &I, int i, int j, unsigned int width, unsigned int height,
-                               const vpColor &color, bool fill = false, unsigned int thickness = 1);
+                               const vpColor &color, bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
   static void displayRectangle(const vpImage<unsigned char> &I, unsigned int i, unsigned int j, float angle,
                                unsigned int width, unsigned int height, const vpColor &color,
                                unsigned int thickness = 1);
@@ -849,15 +849,15 @@ int main()
                              unsigned int thickness = 1, bool closed = true);
   static void displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &topLeft, unsigned int width,
                                unsigned int height, const vpColor &color, bool fill = false,
-                               unsigned int thickness = 1);
+                               unsigned int thickness = 1, double opacity = 1.0);
   static void displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &topLeft, const vpImagePoint &bottomRight,
-                               const vpColor &color, bool fill = false, unsigned int thickness = 1);
+                               const vpColor &color, bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
   static void displayRectangle(const vpImage<vpRGBa> &I, const vpRect &rectangle, const vpColor &color,
-                               bool fill = false, unsigned int thickness = 1);
+                               bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
   static void displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &center, float angle, unsigned int width,
                                unsigned int height, const vpColor &color, unsigned int thickness = 1);
   static void displayRectangle(const vpImage<vpRGBa> &I, int i, int j, unsigned int width, unsigned int height,
-                               const vpColor &color, bool fill = false, unsigned int thickness = 1);
+                               const vpColor &color, bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
   static void displayRectangle(const vpImage<vpRGBa> &I, unsigned int i, unsigned int j, float angle,
                                unsigned int width, unsigned int height, const vpColor &color,
                                unsigned int thickness = 1);

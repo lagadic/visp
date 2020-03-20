@@ -546,9 +546,9 @@ void vpDisplay::displayPolygon(const vpImage<unsigned char> &I, const std::vecto
   false.
 */
 void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &topLeft, unsigned int width,
-                                 unsigned int height, const vpColor &color, bool fill, unsigned int thickness)
+                                 unsigned int height, const vpColor &color, bool fill, unsigned int thickness, double opacity)
 {
-  vp_display_display_rectangle(I, topLeft, width, height, color, fill, thickness);
+  vp_display_display_rectangle(I, topLeft, width, height, color, fill, thickness, opacity);
 }
 
 /*!
@@ -566,9 +566,9 @@ void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, const vpImageP
   false.
 */
 void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, int i, int j, unsigned int width, unsigned int height,
-                                 const vpColor &color, bool fill, unsigned int thickness)
+                                 const vpColor &color, bool fill, unsigned int thickness, double opacity)
 {
-  vp_display_display_rectangle(I, i, j, width, height, color, fill, thickness);
+  vp_display_display_rectangle(I, i, j, width, height, color, fill, thickness, opacity);
 }
 
 /*!
@@ -585,9 +585,9 @@ void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, int i, int j, 
   false.
 */
 void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, const vpRect &rectangle, const vpColor &color,
-                                 bool fill, unsigned int thickness)
+                                 bool fill, unsigned int thickness, double opacity)
 {
-  vp_display_display_rectangle(I, rectangle, color, fill, thickness);
+  vp_display_display_rectangle(I, rectangle, color, fill, thickness, opacity);
 }
 
 /*!
@@ -625,9 +625,9 @@ void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, const vpImageP
 */
 void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, const vpImagePoint &topLeft,
                                  const vpImagePoint &bottomRight, const vpColor &color, bool fill,
-                                 unsigned int thickness)
+                                 unsigned int thickness, double opacity)
 {
-  vp_display_display_rectangle(I, topLeft, bottomRight, color, fill, thickness);
+  vp_display_display_rectangle(I, topLeft, bottomRight, color, fill, thickness, opacity);
 }
 
 /*!

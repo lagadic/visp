@@ -236,10 +236,10 @@ protected:
   void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness = 1);
 
   void displayRectangle(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color,
-                        bool fill = false, unsigned int thickness = 1);
+                        bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
   void displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color,
-                        bool fill = false, unsigned int thickness = 1);
-  void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness = 1);
+                        bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
+  void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
 
   void flushDisplay();
   void flushDisplayROI(const vpImagePoint &iP, unsigned int width, unsigned int height);
