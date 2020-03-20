@@ -279,6 +279,8 @@ protected:
   bool getPointerPosition(vpImagePoint &ip);
 
   static void on_mouse(int event, int x, int y, int flags, void *param);
+
+  void overlay(std::function<void(cv::Mat&)> overlay_function, double opacity);
 };
 
 #endif
