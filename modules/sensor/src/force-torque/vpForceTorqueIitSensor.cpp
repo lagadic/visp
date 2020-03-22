@@ -190,10 +190,10 @@ bool vpForceTorqueIitSensor::connected(int timeout_ms) const
   To configure the filter, you must access the sensor through the web interface.
   The default ip address is `192.168.1.1` if in default mode.
   Once in the web interface select NETWORK SETTINGS and you can configure the
-  Data Filtering Settings: 
+  Data Filtering Settings:
   - Filter Type: Low-Pass or High-Pass Butterworth
   - Filter Order: 1, 2 or 3
-  - Cut-off Frequency: <freq> in Hz
+  - Cut-off Frequency: frequency in Hz
 
   \return A 6-dim vector \f$[F_x \; F_y \; F_z \; T_x \; T_y \; T_z]^T\f$ with forces \f$F_x\f$,
   \f$F_y\f$, \f$F_z\f$ in N, and torques \f$T_x\f$, \f$T_y\f$, \f$T_z\f$ in Nm.
