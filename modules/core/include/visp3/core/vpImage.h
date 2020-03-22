@@ -1409,7 +1409,7 @@ template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 }
 
 /*!
-  Retrieves pixel value from an image containing values of type \e Type
+  Retrieves pixel value from an image containing values of type `Type`.
 
   Gets the value of a sub-pixel with coordinates (i,j).
 
@@ -1418,8 +1418,7 @@ template <class Type> void vpImage<Type>::doubleSizeImage(vpImage<Type> &res)
 
   \return Pixel value.
 
-  \exception vpImageException::notInTheImage : If (i,j) is out
-  of the image.
+  \exception vpImageException::notInTheImage : If (i,j) is out of the image.
 */
 template <class Type> inline Type vpImage<Type>::getValue(unsigned int i, unsigned int j) const
 {
@@ -1431,7 +1430,7 @@ template <class Type> inline Type vpImage<Type>::getValue(unsigned int i, unsign
 }
 
 /*!
-  Retrieves pixel value from an image containing values of type \e Type with
+  Retrieves pixel value from an image containing values of type `Type` with
   sub-pixel accuracy.
 
   Gets the value of a sub-pixel with coordinates (i,j) with bilinear
@@ -1444,8 +1443,7 @@ template <class Type> inline Type vpImage<Type>::getValue(unsigned int i, unsign
 
   \return Interpolated sub-pixel value from the four neighbours.
 
-  \exception vpImageException::notInTheImage : If (i,j) is out
-  of the image.
+  \exception vpImageException::notInTheImage : If (i,j) is out of the image.
 */
 template <class Type> Type vpImage<Type>::getValue(double i, double j) const
 {
@@ -1475,20 +1473,7 @@ template <class Type> Type vpImage<Type>::getValue(double i, double j) const
 }
 
 /*!
-  Retrieves pixel value from an image of double with sub-pixel accuracy.
-
-  Gets the value of a sub-pixel with coordinates (i,j) with bilinear
-  interpolation.
-
-  See also vpImageTools::interpolate() for a similar result, but with a choice of the interpolation method.
-
-  \param i : Sub-pixel coordinate along the rows.
-  \param j : Sub-pixel coordinate along the columns.
-
-  \return Interpolated sub-pixel value from the four neighbours.
-
-  \exception vpImageException::notInTheImage : If (i,j) is out
-  of the image.
+  \relates vpImage
 */
 template <> inline double vpImage<double>::getValue(double i, double j) const
 {
@@ -1515,6 +1500,9 @@ template <> inline double vpImage<double>::getValue(double i, double j) const
          (row[iround][jround_1] * rfrac + row[iround_1][jround_1] * rratio) * cratio;
 }
 
+/*!
+  \relates vpImage
+ */
 template <> inline unsigned char vpImage<unsigned char>::getValue(double i, double j) const {
   if (i < 0 || j < 0 || i+1 > height || j+1 > width) {
     throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
@@ -1580,6 +1568,9 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
 #endif
 }
 
+/*!
+  \relates vpImage
+ */
 template <> inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
 {
   if (i < 0 || j < 0 || i+1 > height || j+1 > width) {
@@ -1634,16 +1625,25 @@ template <class Type> inline Type vpImage<Type>::getValue(const vpImagePoint &ip
   return getValue(ip.get_i(), ip.get_j());
 }
 
+/*!
+  \relates vpImage
+ */
 template <> inline double vpImage<double>::getValue(const vpImagePoint &ip) const
 {
   return getValue(ip.get_i(), ip.get_j());
 }
 
+/*!
+  \relates vpImage
+ */
 template <> inline unsigned char vpImage<unsigned char>::getValue(const vpImagePoint &ip) const
 {
   return getValue(ip.get_i(), ip.get_j());
 }
 
+/*!
+  \relates vpImage
+ */
 template <> inline vpRGBa vpImage<vpRGBa>::getValue(const vpImagePoint &ip) const
 {
   return getValue(ip.get_i(), ip.get_j());
@@ -1745,30 +1745,29 @@ template <class Type> void vpImage<Type>::sub(const vpImage<Type> &A, const vpIm
 }
 
 /*!
-
   \warning This generic method is not implemented. You should rather use the
   instantiated methods for unsigned char and vpRGBa images.
 
-  \sa vpImage<unsigned char>::performLut(const unsigned char (&)[256], const
-  unsigned int) \sa vpImage<vpRGBa char>::performLut(const vpRGBa (&)[256],
-  const unsigned int)
+  \sa vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], unsigned int nbThreads)
+  \sa vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], unsigned int nbThreads)
 
 */
-template <class Type> void vpImage<Type>::performLut(const Type (&)[256], const unsigned int)
+template <class Type> void vpImage<Type>::performLut(const Type (&)[256], unsigned int)
 {
   std::cerr << "Not implemented !" << std::endl;
 }
 
 /*!
+  \relates vpImage
+
   Modify the intensities of a grayscale image using the look-up table passed
   in parameter.
 
   \param lut : Look-up table (unsigned char array of size=256) which maps each
-  intensity to his new value. \param nbThreads : Number of threads to use for
-  the computation.
+  intensity to his new value.
+  \param nbThreads : Number of threads to use for the computation.
 */
-template <>
-inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], unsigned int nbThreads)
+template <> inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], unsigned int nbThreads)
 {
   unsigned int size = getWidth() * getHeight();
   unsigned char *ptrStart = (unsigned char *)bitmap;
@@ -1838,12 +1837,14 @@ inline void vpImage<unsigned char>::performLut(const unsigned char (&lut)[256], 
 }
 
 /*!
+  \relates vpImage
+
   Modify the intensities of a color image using the look-up table passed in
   parameter.
 
   \param lut : Look-up table (vpRGBa array of size=256) which maps each
-  intensity to his new value. \param nbThreads : Number of threads to use for
-  the computation.
+  intensity to his new value.
+  \param nbThreads : Number of threads to use for the computation.
 */
 template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], unsigned int nbThreads)
 {

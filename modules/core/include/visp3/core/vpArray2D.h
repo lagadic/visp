@@ -961,6 +961,9 @@ template <class Type> bool vpArray2D<Type>::operator==(const vpArray2D<Type>& A)
   return true;
 }
 
+/*!
+ * \relates vpArray2D
+ */
 template <> inline bool vpArray2D<double>::operator==(const vpArray2D<double>& A) const
 {
   if (A.rowNum != rowNum || A.colNum != colNum) {
