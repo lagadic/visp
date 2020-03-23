@@ -78,14 +78,14 @@
 #include <visp3/vs/vpServoDisplay.h>
 
 // List of allowed command line options
-#define GETOPTARGS "cdh"
+#define GETOPTARGS "cdho"
 
 void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display);
 
 /*!
 
-Print the program options.
+  Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
@@ -100,7 +100,7 @@ Simulation of a 2D visual servoing on a cylinder:\n\
 - display the camera view.\n\
           \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+  %s [-c] [-d] [-o] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -111,7 +111,10 @@ OPTIONS:                                               Default\n\
                   \n\
   -d \n\
      Turn off the display.\n\
-                  \n\
+                          \n\
+  -o \n\
+     Disable new projection operator usage for secondary task.\n\
+                          \n\
   -h\n\
      Print the help.\n");
 
@@ -121,16 +124,17 @@ OPTIONS:                                               Default\n\
 
 /*!
 
-Set the program options.
+  Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
   \param click_allowed : false if mouse click is not allowed.
   \param display : false if the display is to turn off.
+  \param new_proj_operator : If true, use new projection operator for secondary task.
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display, bool &new_proj_operator)
 {
   const char *optarg_;
   int c;
@@ -143,15 +147,16 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
     case 'd':
       display = false;
       break;
+    case 'o':
+      new_proj_operator = false;
+      break;
     case 'h':
       usage(argv[0], NULL);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -171,9 +176,10 @@ int main(int argc, const char **argv)
   try {
     bool opt_display = true;
     bool opt_click_allowed = true;
+    bool opt_new_proj_operator = true;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
+    if (getOptions(argc, argv, opt_click_allowed, opt_display, opt_new_proj_operator) == false) {
       exit(-1);
     }
 
@@ -196,24 +202,21 @@ int main(int argc, const char **argv)
 #endif
 
     if (opt_display) {
-      try {
-        // Display size is automatically defined by the image (Iint) and
-        // (Iext) size
-        displayInt.init(Iint, 100, 100, "Internal view");
-        displayExt.init(Iext, (int)(130 + Iint.getWidth()), 100, "External view");
-        // Display the image
-        // The image class has a member that specify a pointer toward
-        // the display that has been initialized in the display declaration
-        // therefore is is no longuer necessary to make a reference to the
-        // display variable.
-        vpDisplay::display(Iint);
-        vpDisplay::display(Iext);
-        vpDisplay::flush(Iint);
-        vpDisplay::flush(Iext);
-      } catch (...) {
-        vpERROR_TRACE("Error while displaying the image");
-        exit(-1);
-      }
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
+      // Display size is automatically defined by the image (Iint) and
+      // (Iext) size
+      displayInt.init(Iint, 100, 100, "Internal view");
+      displayExt.init(Iext, 130 + static_cast<int>(Iint.getWidth()), 100, "External view");
+#endif
+      // Display the image
+      // The image class has a member that specify a pointer toward
+      // the display that has been initialized in the display declaration
+      // therefore is is no longuer necessary to make a reference to the
+      // display variable.
+      vpDisplay::display(Iint);
+      vpDisplay::display(Iext);
+      vpDisplay::flush(Iint);
+      vpDisplay::flush(Iext);
     }
 
     vpProjectionDisplay externalview;
@@ -253,8 +256,7 @@ int main(int argc, const char **argv)
     // Build the desired line features thanks to the cylinder and especially
     // its paramaters in the image frame
     vpFeatureLine ld[2];
-    int i;
-    for (i = 0; i < 2; i++)
+    for (unsigned int i = 0; i < 2; i++)
       vpFeatureBuilder::create(ld[i], cylinder, i);
 
     // computes  the cylinder coordinates in the camera frame and its 2D
@@ -265,7 +267,7 @@ int main(int argc, const char **argv)
     // Build the current line features thanks to the cylinder and especially
     // its paramaters in the image frame
     vpFeatureLine l[2];
-    for (i = 0; i < 2; i++) {
+    for (unsigned int i = 0; i < 2; i++) {
       vpFeatureBuilder::create(l[i], cylinder, i);
       l[i].print();
     }
@@ -300,7 +302,8 @@ int main(int argc, const char **argv)
     task.print();
 
     if (opt_display && opt_click_allowed) {
-      std::cout << "\n\nClick in the internal camera view window to start..." << std::endl;
+      vpDisplay::displayText(Iint, 20, 20, "Click to start visual servo...", vpColor::white);
+      vpDisplay::flush(Iint);
       vpDisplay::getClick(Iint);
     }
 
@@ -311,10 +314,11 @@ int main(int argc, const char **argv)
     task.print();
 
     unsigned int iter = 0;
-    // The first loop is needed to reach the desired position
-    do {
+    bool stop = false;
+    bool start_secondary_task = false;
+
+    while (!stop) {
       std::cout << "---------------------------------------------" << iter++ << std::endl;
-      vpColVector v;
 
       // get the robot position
       robot.getPosition(wMc);
@@ -329,7 +333,7 @@ int main(int argc, const char **argv)
 
       // Build the current line features thanks to the cylinder and especially
       // its paramaters in the image frame
-      for (i = 0; i < 2; i++) {
+      for (unsigned int i = 0; i < 2; i++) {
         vpFeatureBuilder::create(l[i], cylinder, i);
       }
 
@@ -339,109 +343,112 @@ int main(int argc, const char **argv)
         vpDisplay::display(Iext);
         vpServoDisplay::display(task, cam, Iint);
         externalview.display(Iext, cextMo, cMo, cam, vpColor::red);
-        vpDisplay::flush(Iint);
-        vpDisplay::flush(Iext);
       }
 
       // compute the control law
-      v = task.computeControlLaw();
+      vpColVector v = task.computeControlLaw();
+
+      // Wait primary task convergence before considering secondary task
+      if (task.getError().sumSquare() < 1e-6) {
+        start_secondary_task = true;
+      }
+
+      if (start_secondary_task) {
+        // In this example the secondary task is cut in four
+        // steps. The first one consists in imposing a movement of the robot along
+        // the x axis of the object frame with a velocity of 0.5. The second one
+        // consists in imposing a movement of the robot along the y axis of the
+        // object frame with a velocity of 0.5. The third one consists in imposing a
+        // movement of the robot along the x axis of the object frame with a
+        // velocity of -0.5. The last one consists in imposing a movement of the
+        // robot along the y axis of the object frame with a velocity of -0.5.
+        // Each steps is made during 200 iterations.
+        vpColVector e1(6);
+        vpColVector e2(6);
+        vpColVector proj_e1;
+        vpColVector proj_e2;
+        static unsigned int iter_sec = 0;
+        double rapport = 0;
+        double vitesse = 0.5;
+        unsigned int tempo = 800;
+
+        if (iter_sec > tempo) {
+          stop = true;
+        }
+
+        if (iter_sec % tempo < 200) {
+          e2 = 0;
+          e1[0] = fabs(vitesse);
+          proj_e1 = task.secondaryTask(e1, opt_new_proj_operator);
+          rapport = vitesse / proj_e1[0];
+          proj_e1 *= rapport;
+          v += proj_e1;
+        }
+
+        if (iter_sec % tempo < 400 && iter_sec % tempo >= 200) {
+          e1 = 0;
+          e2[1] = fabs(vitesse);
+          proj_e2 = task.secondaryTask(e2, opt_new_proj_operator);
+          rapport = vitesse / proj_e2[1];
+          proj_e2 *= rapport;
+          v += proj_e2;
+        }
+
+        if (iter_sec % tempo < 600 && iter_sec % tempo >= 400) {
+          e2 = 0;
+          e1[0] = -fabs(vitesse);
+          proj_e1 = task.secondaryTask(e1, opt_new_proj_operator);
+          rapport = -vitesse / proj_e1[0];
+          proj_e1 *= rapport;
+          v += proj_e1;
+        }
+
+        if (iter_sec % tempo < 800 && iter_sec % tempo >= 600) {
+          e1 = 0;
+          e2[1] = -fabs(vitesse);
+          proj_e2 = task.secondaryTask(e2, opt_new_proj_operator);
+          rapport = -vitesse / proj_e2[1];
+          proj_e2 *= rapport;
+          v += proj_e2;
+        }
+
+        if (opt_display && opt_click_allowed) {
+          std::stringstream ss;
+          ss << std::string("New projection operator: ") + (opt_new_proj_operator ? std::string("yes (use option -o to use old one)") : std::string("no"));
+          vpDisplay::displayText(Iint, 20, 20, "Secondary task enabled: yes", vpColor::white);
+          vpDisplay::displayText(Iint, 40, 20, ss.str(), vpColor::white);
+        }
+
+        iter_sec ++;
+      }
+      else {
+        if (opt_display && opt_click_allowed) {
+          vpDisplay::displayText(Iint, 20, 20, "Secondary task: no", vpColor::white);
+        }
+      }
 
       // send the camera velocity to the controller
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
       std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
-    } while ((task.getError()).sumSquare() > 1e-9);
-
-    // Second loop is to compute the control law while taking into account the
-    // secondary task. In this example the secondary task is cut in four
-    // steps. The first one consists in impose a movement of the robot along
-    // the x axis of the object frame with a velocity of 0.5. The second one
-    // consists in impose a movement of the robot along the y axis of the
-    // object frame with a velocity of 0.5. The third one consists in impose a
-    // movement of the robot along the x axis of the object frame with a
-    // velocity of -0.5. The last one consists in impose a movement of the
-    // robot along the y axis of the object frame with a velocity of -0.5.
-    // Each steps is made during 200 iterations.
-    vpColVector e1(6);
-    e1 = 0;
-    vpColVector e2(6);
-    e2 = 0;
-    vpColVector proj_e1;
-    vpColVector proj_e2;
-    iter = 0;
-    double rapport = 0;
-    double vitesse = 0.5;
-    unsigned int tempo = 800;
-
-    while (iter < tempo) {
-      vpColVector v;
-
-      robot.getPosition(wMc);
-      // Compute the position of the object frame in the camera frame
-      cMo = wMc.inverse() * wMo;
-
-      cylinder.track(cMo);
-
-      for (i = 0; i < 2; i++) {
-        vpFeatureBuilder::create(l[i], cylinder, i);
-      }
 
       if (opt_display) {
-        vpDisplay::display(Iint);
-        vpDisplay::display(Iext);
-        vpServoDisplay::display(task, cam, Iint);
-        externalview.display(Iext, cextMo, cMo, cam, vpColor::red);
+        vpDisplay::displayText(Iint, 60, 20, "Click to stop visual servo...", vpColor::white);
+        if (vpDisplay::getClick(Iint, false)) {
+          stop = true;
+        }
         vpDisplay::flush(Iint);
         vpDisplay::flush(Iext);
       }
-
-      v = task.computeControlLaw();
-
-      if (iter % tempo < 200 /*&&  iter%tempo >= 0*/) {
-        e2 = 0;
-        e1[0] = fabs(vitesse);
-        proj_e1 = task.secondaryTask(e1);
-        rapport = vitesse / proj_e1[0];
-        proj_e1 *= rapport;
-        v += proj_e1;
-      }
-
-      if (iter % tempo < 400 && iter % tempo >= 200) {
-        e1 = 0;
-        e2[1] = fabs(vitesse);
-        proj_e2 = task.secondaryTask(e2);
-        rapport = vitesse / proj_e2[1];
-        proj_e2 *= rapport;
-        v += proj_e2;
-      }
-
-      if (iter % tempo < 600 && iter % tempo >= 400) {
-        e2 = 0;
-        e1[0] = -fabs(vitesse);
-        proj_e1 = task.secondaryTask(e1);
-        rapport = -vitesse / proj_e1[0];
-        proj_e1 *= rapport;
-        v += proj_e1;
-      }
-
-      if (iter % tempo < 800 && iter % tempo >= 600) {
-        e1 = 0;
-        e2[1] = -fabs(vitesse);
-        proj_e2 = task.secondaryTask(e2);
-        rapport = -vitesse / proj_e2[1];
-        proj_e2 *= rapport;
-        v += proj_e2;
-      }
-
-      robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-
-      std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
 
       iter++;
     }
 
     if (opt_display && opt_click_allowed) {
-      std::cout << "\nClick in the internal camera view window to end..." << std::endl;
+      vpDisplay::display(Iint);
+      vpServoDisplay::display(task, cam, Iint);
+      vpDisplay::displayText(Iint, 20, 20, "Click to quit...", vpColor::white);
+      vpDisplay::flush(Iint);
       vpDisplay::getClick(Iint);
     }
 
