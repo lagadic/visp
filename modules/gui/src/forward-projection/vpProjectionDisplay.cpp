@@ -134,18 +134,18 @@ void vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I, const vpHomog
   z.track(c1Mc);
 
   vpImagePoint ipo;
-  vpImagePoint ipx;
+  vpImagePoint ip;
 
   vpMeterPixelConversion::convertPoint(cam, o.p[0], o.p[1], ipo);
 
-  vpMeterPixelConversion::convertPoint(cam, x.p[0], x.p[1], ipx);
-  vpDisplay::displayArrow(I, ipo, ipx, vpColor::green, 4 + thickness, 2 + thickness, thickness);
+  vpMeterPixelConversion::convertPoint(cam, x.p[0], x.p[1], ip);
+  vpDisplay::displayArrow(I, ipo, ip, vpColor::red, 4 + thickness, 2 + thickness, thickness);
 
-  vpMeterPixelConversion::convertPoint(cam, y.p[0], y.p[1], ipx);
-  vpDisplay::displayArrow(I, ipo, ipx, vpColor::blue, 4 + thickness, 2 + thickness, thickness);
+  vpMeterPixelConversion::convertPoint(cam, y.p[0], y.p[1], ip);
+  vpDisplay::displayArrow(I, ipo, ip, vpColor::green, 4 + thickness, 2 + thickness, thickness);
 
-  vpMeterPixelConversion::convertPoint(cam, z.p[0], z.p[1], ipx);
-  vpDisplay::displayArrow(I, ipo, ipx, vpColor::red, 4 + thickness, 2 + thickness, thickness);
+  vpMeterPixelConversion::convertPoint(cam, z.p[0], z.p[1], ip);
+  vpDisplay::displayArrow(I, ipo, ip, vpColor::blue, 4 + thickness, 2 + thickness, thickness);
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
