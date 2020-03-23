@@ -105,7 +105,7 @@ void vpProjectionDisplay::display(vpImage<unsigned char> &I, const vpHomogeneous
 
   if (displayTraj) // display past camera positions
     for (unsigned int i = 0; i < traj.getRows(); ++i)
-      vpDisplay::displayCircle(I, (int)traj[i][0], (int)traj[i][1], 2, vpColor::green, true);
+      vpDisplay::displayCircle(I, static_cast<int>(traj[i][0]), static_cast<int>(traj[i][1]), 2, vpColor::green, true);
 
   displayCamera(I, cextMo, cMo, cam, thickness);
 
