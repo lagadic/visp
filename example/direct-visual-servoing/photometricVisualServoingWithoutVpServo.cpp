@@ -35,10 +35,12 @@
  *****************************************************************************/
 
 /*!
-  \example photometricVisualServoing.cpp
+  \example photometricVisualServoingWithoutVpServo.cpp
 
   Implemented from \cite Collewet08c.
 */
+
+#include <visp3/core/vpDebug.h>
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageTools.h>
@@ -58,7 +60,6 @@
 
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/visual_features/vpFeatureLuminance.h>
-#include <visp3/vs/vpServo.h>
 
 #include <stdlib.h>
 #include <visp3/robot/vpImageSimulator.h>
@@ -364,26 +365,53 @@ int main(int argc, const char **argv)
     sId.setCameraParameters(cam);
     sId.buildFrom(Id);
 
-    // Create visual-servoing task
-    vpServo servo;
-    // define the task
-    // - we want an eye-in-hand control law
-    // - robot is controlled in the camera frame
-    servo.setServo(vpServo::EYEINHAND_CAMERA);
-    // add current and desired visual features
-    servo.addFeature(sI, sId);
-    // set the gain
-    servo.setLambda(30);
-    // compute interaction matrix at the desired position
-    servo.setInteractionMatrixType(vpServo::CURRENT);
+    // Matrice d'interaction, Hessien, erreur,...
+    vpMatrix Lsd;      // matrice d'interaction a la position desiree
+    vpMatrix Hsd;      // hessien a la position desiree
+    vpMatrix H;        // Hessien utilise pour le levenberg-Marquartd
+    vpColVector error; // Erreur I-I*
+
+    // Compute the interaction matrix
+    // link the variation of image intensity to camera motion
+
+    // here it is computed at the desired position
+    sId.interaction(Lsd);
+
+    // Compute the Hessian H = L^TL
+    Hsd = Lsd.AtA();
+
+    // Compute the Hessian diagonal for the Levenberg-Marquartd
+    // optimization process
+    unsigned int n = 6;
+    vpMatrix diagHsd(n, n);
+    diagHsd.eye(n);
+    for (unsigned int i = 0; i < n; i++)
+      diagHsd[i][i] = Hsd[i][i];
+
+    // ------------------------------------------------------
+    // Control law
+    double lambda; // gain
+    vpColVector e;
+    vpColVector v; // camera velocity send to the robot
+
+    // ----------------------------------------------------------
+    // Minimisation
+
+    double mu; // mu = 0 : Gauss Newton ; mu != 0  : LM
+    double lambdaGN;
+
+    mu = 0.01;
+    lambda = 30;
+    lambdaGN = 30;
 
     // set a velocity control mode
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
+    // ----------------------------------------------------------
     int iter = 1;
-    double normError = 0;
-    vpColVector v; // camera velocity send to the robot
+    int iterGN = 90; // swicth to Gauss Newton after iterGN iterations
 
+    double normeError = 0;
     do {
       std::cout << "--------------------------------------------" << iter++ << std::endl;
 
@@ -406,17 +434,39 @@ int main(int argc, const char **argv)
       // Compute current visual feature
       sI.buildFrom(I);
 
-      v = servo.computeControlLaw(); // camera velocity send to the robot
+      // compute current error
+      sI.error(sId, error);
 
-      normError = servo.getError().sumSquare();
-      std::cout << " |e| = " << normError << std::endl;
-      std::cout << " |v| = " << sqrt(v.sumSquare()) << std::endl;
+      normeError = (error.sumSquare());
+      std::cout << "|e| " << normeError << std::endl;
+
+      // double t = vpTime::measureTimeMs() ;
+
+      // ---------- Levenberg Marquardt method --------------
+      {
+        if (iter > iterGN) {
+          mu = 0.0001;
+          lambda = lambdaGN;
+        }
+
+        // Compute the levenberg Marquartd term
+        {
+          H = ((mu * diagHsd) + Hsd).inverseByLU();
+        }
+        //	compute the control law
+        e = H * Lsd.t() * error;
+
+        v = -lambda * e;
+      }
+
+      std::cout << "lambda = " << lambda << "  mu = " << mu;
+      std::cout << " |Tc| = " << sqrt(v.sumSquare()) << std::endl;
 
       // send the robot velocity
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
       wMc = robot.getPosition();
       cMo = wMc.inverse() * wMo;
-    } while (normError > 10000 && iter < opt_niter);
+    } while (normeError > 10000 && iter < opt_niter);
 
     v = 0;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);

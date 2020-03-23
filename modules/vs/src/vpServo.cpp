@@ -137,7 +137,6 @@ vpServo::~vpServo()
   - In the control law the pseudo inverse will be used. The method
   setInteractionMatrixType() allows to use the transpose instead.
 
-
 */
 void vpServo::init()
 {
@@ -243,11 +242,11 @@ void vpServo::setServo(const vpServoType &servo_type)
 
 /*!
   Set a 6-dim column vector representing the degrees of freedom that are
-controlled in the camera frame. When set to 1, all the 6 dof are controlled.
+  controlled in the camera frame. When set to 1, all the 6 dof are controlled.
 
   \param dof : Degrees of freedom to control in the camera frame.
   Below we give the correspondance between the index of the vector and the
-considered dof:
+  considered dof:
   - dof[0] = 1 if translation along X is controled, 0 otherwise;
   - dof[1] = 1 if translation along Y is controled, 0 otherwise;
   - dof[2] = 1 if translation along Z is controled, 0 otherwise;
@@ -256,8 +255,8 @@ considered dof:
   - dof[5] = 1 if rotation along Z is controled, 0 otherwise;
 
   The following example shows how to use this function to control only wx, wy
-like a pan/tilt:
-\code
+  like a pan/tilt:
+  \code
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 
@@ -477,7 +476,7 @@ void vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &
 
   The following sample code explain how to use this method to add a visual
   feature point \f$(x,y)\f$:
- \code
+  \code
   vpFeaturePoint s, s_star;
   ...
   vpServo task;
@@ -868,6 +867,7 @@ bool vpServo::testInitialization()
 
   return false;
 }
+
 bool vpServo::testUpdated()
 {
   switch (servoType) {
@@ -936,115 +936,109 @@ vpColVector vpServo::computeControlLaw()
 {
   static int iteration = 0;
 
-  try {
-    vpVelocityTwistMatrix cVa; // Twist transformation matrix
-    vpMatrix aJe;              // Jacobian
+  vpVelocityTwistMatrix cVa; // Twist transformation matrix
+  vpMatrix aJe;              // Jacobian
 
-    if (iteration == 0) {
-      if (testInitialization() == false) {
-        vpERROR_TRACE("All the matrices are not correctly initialized");
-        throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
-                                                             "All the matrices are not correctly"
-                                                             "initialized"));
-      }
+  if (iteration == 0) {
+    if (testInitialization() == false) {
+      vpERROR_TRACE("All the matrices are not correctly initialized");
+      throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
+                                                           "All the matrices are not correctly"
+                                                           "initialized"));
     }
-    if (testUpdated() == false) {
-      vpERROR_TRACE("All the matrices are not correctly updated");
-    }
+  }
+  if (testUpdated() == false) {
+    vpERROR_TRACE("All the matrices are not correctly updated");
+  }
 
-    // test if all the required initialization have been done
-    switch (servoType) {
-    case NONE:
-      vpERROR_TRACE("No control law have been yet defined");
-      throw(vpServoException(vpServoException::servoError, "No control law have been yet defined"));
-      break;
-    case EYEINHAND_CAMERA:
-    case EYEINHAND_L_cVe_eJe:
-    case EYETOHAND_L_cVe_eJe:
+  // test if all the required initialization have been done
+  switch (servoType) {
+  case NONE:
+    vpERROR_TRACE("No control law have been yet defined");
+    throw(vpServoException(vpServoException::servoError, "No control law have been yet defined"));
+    break;
+  case EYEINHAND_CAMERA:
+  case EYEINHAND_L_cVe_eJe:
+  case EYETOHAND_L_cVe_eJe:
 
-      cVa = cVe;
-      aJe = eJe;
+    cVa = cVe;
+    aJe = eJe;
 
-      init_cVe = false;
-      init_eJe = false;
-      break;
-    case EYETOHAND_L_cVf_fVe_eJe:
-      cVa = cVf * fVe;
-      aJe = eJe;
-      init_fVe = false;
-      init_eJe = false;
-      break;
-    case EYETOHAND_L_cVf_fJe:
-      cVa = cVf;
-      aJe = fJe;
-      init_fJe = false;
-      break;
-    }
+    init_cVe = false;
+    init_eJe = false;
+    break;
+  case EYETOHAND_L_cVf_fVe_eJe:
+    cVa = cVf * fVe;
+    aJe = eJe;
+    init_fVe = false;
+    init_eJe = false;
+    break;
+  case EYETOHAND_L_cVf_fJe:
+    cVa = cVf;
+    aJe = fJe;
+    init_fJe = false;
+    break;
+  }
 
-    computeInteractionMatrix();
-    computeError();
+  computeInteractionMatrix();
+  computeError();
 
-    // compute  task Jacobian
-    if (iscJcIdentity)
-      J1 = L * cVa * aJe;
-    else
-      J1 = L * cJc * cVa * aJe;
+  // compute  task Jacobian
+  if (iscJcIdentity)
+    J1 = L * cVa * aJe;
+  else
+    J1 = L * cJc * cVa * aJe;
 
-    // handle the eye-in-hand eye-to-hand case
-    J1 *= signInteractionMatrix;
+  // handle the eye-in-hand eye-to-hand case
+  J1 *= signInteractionMatrix;
 
-    // pseudo inverse of the task Jacobian
-    // and rank of the task Jacobian
-    // the image of J1 is also computed to allows the computation
-    // of the projection operator
-    vpMatrix imJ1t, imJ1;
-    bool imageComputed = false;
+  // pseudo inverse of the task Jacobian
+  // and rank of the task Jacobian
+  // the image of J1 is also computed to allows the computation
+  // of the projection operator
+  vpMatrix imJ1t, imJ1;
+  bool imageComputed = false;
 
-    if (inversionType == PSEUDO_INVERSE) {
-      rankJ1 = J1.pseudoInverse(J1p, sv, 1e-6, imJ1, imJ1t);
+  if (inversionType == PSEUDO_INVERSE) {
+    rankJ1 = J1.pseudoInverse(J1p, sv, 1e-6, imJ1, imJ1t);
 
-      imageComputed = true;
-    } else
-      J1p = J1.t();
+    imageComputed = true;
+  } else
+    J1p = J1.t();
 
-    if (rankJ1 == J1.getCols()) {
-      /* if no degrees of freedom remains (rank J1 = ndof)
+  if (rankJ1 == J1.getCols()) {
+    /* if no degrees of freedom remains (rank J1 = ndof)
        WpW = I, multiply by WpW is useless
     */
-      e1 = J1p * error; // primary task
+    e1 = J1p * error; // primary task
 
-      WpW.eye(J1.getCols(), J1.getCols());
-    } else {
-      if (imageComputed != true) {
-        vpMatrix Jtmp;
-        // image of J1 is computed to allows the computation
-        // of the projection operator
-        rankJ1 = J1.pseudoInverse(Jtmp, sv, 1e-6, imJ1, imJ1t);
-      }
-      WpW = imJ1t * imJ1t.t();
+    WpW.eye(J1.getCols(), J1.getCols());
+  } else {
+    if (imageComputed != true) {
+      vpMatrix Jtmp;
+      // image of J1 is computed to allows the computation
+      // of the projection operator
+      rankJ1 = J1.pseudoInverse(Jtmp, sv, 1e-6, imJ1, imJ1t);
+    }
+    WpW = imJ1t.AAt();
 
 #ifdef DEBUG
-      std::cout << "rank J1: " << rankJ1 << std::endl;
-      imJ1t.print(std::cout, 10, "imJ1t");
-      imJ1.print(std::cout, 10, "imJ1");
+    std::cout << "rank J1: " << rankJ1 << std::endl;
+    imJ1t.print(std::cout, 10, "imJ1t");
+    imJ1.print(std::cout, 10, "imJ1");
 
-      WpW.print(std::cout, 10, "WpW");
-      J1.print(std::cout, 10, "J1");
-      J1p.print(std::cout, 10, "J1p");
+    WpW.print(std::cout, 10, "WpW");
+    J1.print(std::cout, 10, "J1");
+    J1p.print(std::cout, 10, "J1p");
 #endif
-      e1 = WpW * J1p * error;
-    }
-    e = -lambda(e1) * e1;
-
-    vpMatrix I;
-
-    I.eye(J1.getCols(), J1.getCols());
-
-    computeProjectionOperators();
-
-  } catch (...) {
-    throw;
+    e1 = WpW * J1p * error;
   }
+  e = -lambda(e1) * e1;
+
+  I.eye(J1.getCols());
+
+  // Compute classical projection operator
+  I_WpW = (I - WpW);
 
   iteration++;
   return e;
@@ -1089,122 +1083,117 @@ vpColVector vpServo::computeControlLaw(double t)
   static int iteration = 0;
   // static vpColVector e1_initial;
 
-  try {
-    vpVelocityTwistMatrix cVa; // Twist transformation matrix
-    vpMatrix aJe;              // Jacobian
+  vpVelocityTwistMatrix cVa; // Twist transformation matrix
+  vpMatrix aJe;              // Jacobian
 
-    if (iteration == 0) {
-      if (testInitialization() == false) {
-        vpERROR_TRACE("All the matrices are not correctly initialized");
-        throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
-                                                             "All the matrices are not correctly"
-                                                             "initialized"));
-      }
+  if (iteration == 0) {
+    if (testInitialization() == false) {
+      vpERROR_TRACE("All the matrices are not correctly initialized");
+      throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
+                                                           "All the matrices are not correctly"
+                                                           "initialized"));
     }
-    if (testUpdated() == false) {
-      vpERROR_TRACE("All the matrices are not correctly updated");
-    }
+  }
+  if (testUpdated() == false) {
+    vpERROR_TRACE("All the matrices are not correctly updated");
+  }
 
-    // test if all the required initialization have been done
-    switch (servoType) {
-    case NONE:
-      vpERROR_TRACE("No control law have been yet defined");
-      throw(vpServoException(vpServoException::servoError, "No control law have been yet defined"));
-      break;
-    case EYEINHAND_CAMERA:
-    case EYEINHAND_L_cVe_eJe:
-    case EYETOHAND_L_cVe_eJe:
+  // test if all the required initialization have been done
+  switch (servoType) {
+  case NONE:
+    vpERROR_TRACE("No control law have been yet defined");
+    throw(vpServoException(vpServoException::servoError, "No control law have been yet defined"));
+    break;
+  case EYEINHAND_CAMERA:
+  case EYEINHAND_L_cVe_eJe:
+  case EYETOHAND_L_cVe_eJe:
 
-      cVa = cVe;
-      aJe = eJe;
+    cVa = cVe;
+    aJe = eJe;
 
-      init_cVe = false;
-      init_eJe = false;
-      break;
-    case EYETOHAND_L_cVf_fVe_eJe:
-      cVa = cVf * fVe;
-      aJe = eJe;
-      init_fVe = false;
-      init_eJe = false;
-      break;
-    case EYETOHAND_L_cVf_fJe:
-      cVa = cVf;
-      aJe = fJe;
-      init_fJe = false;
-      break;
-    }
+    init_cVe = false;
+    init_eJe = false;
+    break;
+  case EYETOHAND_L_cVf_fVe_eJe:
+    cVa = cVf * fVe;
+    aJe = eJe;
+    init_fVe = false;
+    init_eJe = false;
+    break;
+  case EYETOHAND_L_cVf_fJe:
+    cVa = cVf;
+    aJe = fJe;
+    init_fJe = false;
+    break;
+  }
 
-    computeInteractionMatrix();
-    computeError();
+  computeInteractionMatrix();
+  computeError();
 
-    // compute  task Jacobian
-    J1 = L * cVa * aJe;
+  // compute  task Jacobian
+  J1 = L * cVa * aJe;
 
-    // handle the eye-in-hand eye-to-hand case
-    J1 *= signInteractionMatrix;
+  // handle the eye-in-hand eye-to-hand case
+  J1 *= signInteractionMatrix;
 
-    // pseudo inverse of the task Jacobian
-    // and rank of the task Jacobian
-    // the image of J1 is also computed to allows the computation
-    // of the projection operator
-    vpMatrix imJ1t, imJ1;
-    bool imageComputed = false;
+  // pseudo inverse of the task Jacobian
+  // and rank of the task Jacobian
+  // the image of J1 is also computed to allows the computation
+  // of the projection operator
+  vpMatrix imJ1t, imJ1;
+  bool imageComputed = false;
 
-    if (inversionType == PSEUDO_INVERSE) {
-      rankJ1 = J1.pseudoInverse(J1p, sv, 1e-6, imJ1, imJ1t);
+  if (inversionType == PSEUDO_INVERSE) {
+    rankJ1 = J1.pseudoInverse(J1p, sv, 1e-6, imJ1, imJ1t);
 
-      imageComputed = true;
-    } else
-      J1p = J1.t();
+    imageComputed = true;
+  } else
+    J1p = J1.t();
 
-    if (rankJ1 == J1.getCols()) {
-      /* if no degrees of freedom remains (rank J1 = ndof)
+  if (rankJ1 == J1.getCols()) {
+    /* if no degrees of freedom remains (rank J1 = ndof)
        WpW = I, multiply by WpW is useless
     */
-      e1 = J1p * error; // primary task
+    e1 = J1p * error; // primary task
 
-      WpW.eye(J1.getCols(), J1.getCols());
-    } else {
-      if (imageComputed != true) {
-        vpMatrix Jtmp;
-        // image of J1 is computed to allows the computation
-        // of the projection operator
-        rankJ1 = J1.pseudoInverse(Jtmp, sv, 1e-6, imJ1, imJ1t);
-      }
-      WpW = imJ1t * imJ1t.t();
+    WpW.eye(J1.getCols());
+  } else {
+    if (imageComputed != true) {
+      vpMatrix Jtmp;
+      // image of J1 is computed to allows the computation
+      // of the projection operator
+      rankJ1 = J1.pseudoInverse(Jtmp, sv, 1e-6, imJ1, imJ1t);
+    }
+    WpW = imJ1t.AAt();
 
 #ifdef DEBUG
-      std::cout << "rank J1 " << rankJ1 << std::endl;
-      std::cout << "imJ1t" << std::endl << imJ1t;
-      std::cout << "imJ1" << std::endl << imJ1;
+    std::cout << "rank J1 " << rankJ1 << std::endl;
+    std::cout << "imJ1t" << std::endl << imJ1t;
+    std::cout << "imJ1" << std::endl << imJ1;
 
-      std::cout << "WpW" << std::endl << WpW;
-      std::cout << "J1" << std::endl << J1;
-      std::cout << "J1p" << std::endl << J1p;
+    std::cout << "WpW" << std::endl << WpW;
+    std::cout << "J1" << std::endl << J1;
+    std::cout << "J1p" << std::endl << J1p;
 #endif
-      e1 = WpW * J1p * error;
-    }
-
-    // memorize the initial e1 value if the function is called the first time
-    // or if the time given as parameter is equal to 0.
-    if (iteration == 0 || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
-      e1_initial = e1;
-    }
-    // Security check. If size of e1_initial and e1 differ, that means that
-    // e1_initial was not set
-    if (e1_initial.getRows() != e1.getRows())
-      e1_initial = e1;
-
-    e = -lambda(e1) * e1 + lambda(e1) * e1_initial * exp(-mu * t);
-
-    vpMatrix I;
-
-    I.eye(J1.getCols(), J1.getCols());
-
-    computeProjectionOperators();
-  } catch (...) {
-    throw;
+    e1 = WpW * J1p * error;
   }
+
+  // memorize the initial e1 value if the function is called the first time
+  // or if the time given as parameter is equal to 0.
+  if (iteration == 0 || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
+    e1_initial = e1;
+  }
+  // Security check. If size of e1_initial and e1 differ, that means that
+  // e1_initial was not set
+  if (e1_initial.getRows() != e1.getRows())
+    e1_initial = e1;
+
+  e = -lambda(e1) * e1 + lambda(e1) * e1_initial * exp(-mu * t);
+
+  I.eye(J1.getCols());
+
+  // Compute classical projection operator
+  I_WpW = (I - WpW);
 
   iteration++;
   return e;
@@ -1249,138 +1238,127 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
 {
   static int iteration = 0;
 
-  try {
-    vpVelocityTwistMatrix cVa; // Twist transformation matrix
-    vpMatrix aJe;              // Jacobian
+  vpVelocityTwistMatrix cVa; // Twist transformation matrix
+  vpMatrix aJe;              // Jacobian
 
-    if (iteration == 0) {
-      if (testInitialization() == false) {
-        vpERROR_TRACE("All the matrices are not correctly initialized");
-        throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
-                                                             "All the matrices are not correctly"
-                                                             "initialized"));
-      }
+  if (iteration == 0) {
+    if (testInitialization() == false) {
+      vpERROR_TRACE("All the matrices are not correctly initialized");
+      throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
+                                                           "All the matrices are not correctly"
+                                                           "initialized"));
     }
-    if (testUpdated() == false) {
-      vpERROR_TRACE("All the matrices are not correctly updated");
-    }
+  }
+  if (testUpdated() == false) {
+    vpERROR_TRACE("All the matrices are not correctly updated");
+  }
 
-    // test if all the required initialization have been done
-    switch (servoType) {
-    case NONE:
-      vpERROR_TRACE("No control law have been yet defined");
-      throw(vpServoException(vpServoException::servoError, "No control law have been yet defined"));
-      break;
-    case EYEINHAND_CAMERA:
-    case EYEINHAND_L_cVe_eJe:
-    case EYETOHAND_L_cVe_eJe:
+  // test if all the required initialization have been done
+  switch (servoType) {
+  case NONE:
+    vpERROR_TRACE("No control law have been yet defined");
+    throw(vpServoException(vpServoException::servoError, "No control law have been yet defined"));
+    break;
+  case EYEINHAND_CAMERA:
+  case EYEINHAND_L_cVe_eJe:
+  case EYETOHAND_L_cVe_eJe:
 
-      cVa = cVe;
-      aJe = eJe;
+    cVa = cVe;
+    aJe = eJe;
 
-      init_cVe = false;
-      init_eJe = false;
-      break;
-    case EYETOHAND_L_cVf_fVe_eJe:
-      cVa = cVf * fVe;
-      aJe = eJe;
-      init_fVe = false;
-      init_eJe = false;
-      break;
-    case EYETOHAND_L_cVf_fJe:
-      cVa = cVf;
-      aJe = fJe;
-      init_fJe = false;
-      break;
-    }
+    init_cVe = false;
+    init_eJe = false;
+    break;
+  case EYETOHAND_L_cVf_fVe_eJe:
+    cVa = cVf * fVe;
+    aJe = eJe;
+    init_fVe = false;
+    init_eJe = false;
+    break;
+  case EYETOHAND_L_cVf_fJe:
+    cVa = cVf;
+    aJe = fJe;
+    init_fJe = false;
+    break;
+  }
 
-    computeInteractionMatrix();
-    computeError();
+  computeInteractionMatrix();
+  computeError();
 
-    // compute  task Jacobian
-    J1 = L * cVa * aJe;
+  // compute  task Jacobian
+  J1 = L * cVa * aJe;
 
-    // handle the eye-in-hand eye-to-hand case
-    J1 *= signInteractionMatrix;
+  // handle the eye-in-hand eye-to-hand case
+  J1 *= signInteractionMatrix;
 
-    // pseudo inverse of the task Jacobian
-    // and rank of the task Jacobian
-    // the image of J1 is also computed to allows the computation
-    // of the projection operator
-    vpMatrix imJ1t, imJ1;
-    bool imageComputed = false;
+  // pseudo inverse of the task Jacobian
+  // and rank of the task Jacobian
+  // the image of J1 is also computed to allows the computation
+  // of the projection operator
+  vpMatrix imJ1t, imJ1;
+  bool imageComputed = false;
 
-    if (inversionType == PSEUDO_INVERSE) {
-      rankJ1 = J1.pseudoInverse(J1p, sv, 1e-6, imJ1, imJ1t);
+  if (inversionType == PSEUDO_INVERSE) {
+    rankJ1 = J1.pseudoInverse(J1p, sv, 1e-6, imJ1, imJ1t);
 
-      imageComputed = true;
-    } else
-      J1p = J1.t();
+    imageComputed = true;
+  } else
+    J1p = J1.t();
 
-    if (rankJ1 == J1.getCols()) {
-      /* if no degrees of freedom remains (rank J1 = ndof)
+  if (rankJ1 == J1.getCols()) {
+    /* if no degrees of freedom remains (rank J1 = ndof)
        WpW = I, multiply by WpW is useless
     */
-      e1 = J1p * error; // primary task
+    e1 = J1p * error; // primary task
 
-      WpW.eye(J1.getCols(), J1.getCols());
-    } else {
-      if (imageComputed != true) {
-        vpMatrix Jtmp;
-        // image of J1 is computed to allows the computation
-        // of the projection operator
-        rankJ1 = J1.pseudoInverse(Jtmp, sv, 1e-6, imJ1, imJ1t);
-      }
-      WpW = imJ1t * imJ1t.t();
+    WpW.eye(J1.getCols());
+  } else {
+    if (imageComputed != true) {
+      vpMatrix Jtmp;
+      // image of J1 is computed to allows the computation
+      // of the projection operator
+      rankJ1 = J1.pseudoInverse(Jtmp, sv, 1e-6, imJ1, imJ1t);
+    }
+    WpW = imJ1t.AAt();
 
 #ifdef DEBUG
-      std::cout << "rank J1 " << rankJ1 << std::endl;
-      std::cout << "imJ1t" << std::endl << imJ1t;
-      std::cout << "imJ1" << std::endl << imJ1;
+    std::cout << "rank J1 " << rankJ1 << std::endl;
+    std::cout << "imJ1t" << std::endl << imJ1t;
+    std::cout << "imJ1" << std::endl << imJ1;
 
-      std::cout << "WpW" << std::endl << WpW;
-      std::cout << "J1" << std::endl << J1;
-      std::cout << "J1p" << std::endl << J1p;
+    std::cout << "WpW" << std::endl << WpW;
+    std::cout << "J1" << std::endl << J1;
+    std::cout << "J1p" << std::endl << J1p;
 #endif
-      e1 = WpW * J1p * error;
-    }
-
-    // memorize the initial e1 value if the function is called the first time
-    // or if the time given as parameter is equal to 0.
-    if (iteration == 0 || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
-      e1_initial = e1;
-    }
-    // Security check. If size of e1_initial and e1 differ, that means that
-    // e1_initial was not set
-    if (e1_initial.getRows() != e1.getRows())
-      e1_initial = e1;
-
-    e = -lambda(e1) * e1 + (e_dot_init + lambda(e1) * e1_initial) * exp(-mu * t);
-
-    vpMatrix I;
-
-    I.eye(J1.getCols(), J1.getCols());
-
-    computeProjectionOperators();
-  } catch (...) {
-    throw;
+    e1 = WpW * J1p * error;
   }
+
+  // memorize the initial e1 value if the function is called the first time
+  // or if the time given as parameter is equal to 0.
+  if (iteration == 0 || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
+    e1_initial = e1;
+  }
+  // Security check. If size of e1_initial and e1 differ, that means that
+  // e1_initial was not set
+  if (e1_initial.getRows() != e1.getRows())
+    e1_initial = e1;
+
+  e = -lambda(e1) * e1 + (e_dot_init + lambda(e1) * e1_initial) * exp(-mu * t);
+
+  I.eye(J1.getCols());
+
+  // Compute classical projection operator
+  I_WpW = (I - WpW);
 
   iteration++;
   return e;
 }
 
-void vpServo::computeProjectionOperators()
+void vpServo::computeProjectionOperators(const vpMatrix &J1_, const vpMatrix &I_, const vpMatrix &I_WpW_, const vpColVector &error_, vpMatrix &P_) const
 {
   // Initialization
-  unsigned int n = J1.getCols();
-  P.resize(n, n);
-
-  vpMatrix I;
-  I.eye(n);
-
-  // Compute classical projection operator
-  I_WpW = (I - WpW);
+  unsigned int n = J1_.getCols();
+  P_.resize(n, n);
 
   // Compute gain depending by the task error to ensure a smooth change
   // between the operators.
@@ -1388,7 +1366,7 @@ void vpServo::computeProjectionOperators()
   double e1_ = 0.7;
   double sig = 0.0;
 
-  double norm_e = error.frobeniusNorm();
+  double norm_e = error_.frobeniusNorm();
   if (norm_e > e1_)
     sig = 1.0;
   else if (e0_ <= norm_e && norm_e <= e1_)
@@ -1396,17 +1374,13 @@ void vpServo::computeProjectionOperators()
   else
     sig = 0.0;
 
-  vpMatrix J1t = J1.transpose();
+  vpMatrix eT_J = error_.t() * J1_;
+  vpMatrix eT_J_JT_e = eT_J.AAt();
+  double pp = eT_J_JT_e[0][0];
 
-  double pp = (error.t() * (J1 * J1t) * error);
+  vpMatrix P_norm_e = I_ - (1.0 / pp) * eT_J.AtA();
 
-  vpMatrix ee_t(n, n);
-  ee_t = error * error.t();
-
-  vpMatrix P_norm_e(n, n);
-  P_norm_e = I - (1.0 / pp) * J1t * ee_t * J1;
-
-  P = sig * P_norm_e + (1 - sig) * I_WpW;
+  P_ = sig * P_norm_e + (1 - sig) * I_WpW_;
 
   return;
 }
@@ -1504,8 +1478,11 @@ vpColVector vpServo::secondaryTask(const vpColVector &de2dt, const bool &useLarg
     }
   }
 
-  else
+  else {
+    computeProjectionOperators(J1, I, I_WpW, error, P);
+
     sec = P * de2dt;
+  }
 
   return sec;
 }
@@ -1583,7 +1560,6 @@ vpColVector vpServo::secondaryTask(const vpColVector &de2dt, const bool &useLarg
   v += task.secondaryTask(e2, de2dt, true) // Compute and add the secondary task using the large projection operator
   \endcode
 
-
   \sa computeControlLaw()
 */
 vpColVector vpServo::secondaryTask(const vpColVector &e2, const vpColVector &de2dt,
@@ -1611,63 +1587,63 @@ vpColVector vpServo::secondaryTask(const vpColVector &e2, const vpColVector &de2
       // between primary and secondary task.
       sec = -lambda(e1) * I_WpW * e2 + I_WpW * de2dt;
     }
-  } else
+  } else {
+    computeProjectionOperators(J1, I, I_WpW, error, P);
+
     sec = -lambda(e1) * P * e2 + P * de2dt;
+  }
 
   return sec;
 }
 
 /*!
   Compute and return the secondary task vector for joint limit avoidance
- \cite Marey:2010b using the new large projection operator (see equation(24)
-in the paper \cite Marey:2010). The robot avoids the joint limits very
-smoothly even when the main task constrains all the robot degrees of freedom.
+  \cite Marey:2010b using the new large projection operator (see equation(24)
+  in the paper \cite Marey:2010). The robot avoids the joint limits very
+  smoothly even when the main task constrains all the robot degrees of freedom.
 
   \param q : Actual joint positions vector
 
   \param dq : Actual joint velocities vector
 
-  \param qmin : Vector containing the low limit value of each joint in the
-chain.
-  \param qmax : Vector containing the high limit value of each joint in
-the chain.
+  \param qmin : Vector containing the low limit value of each joint in the chain.
+  \param qmax : Vector containing the high limit value of each joint in the chain.
 
-  \param rho : tuning paramenter  \f${\left [ 0,\frac{1}{2} \right
-]}\f$  used to define the safe configuration for the joint. When the joint
-angle value cross the max or min boundaries (\f${ q_{l_{0}}^{max} }\f$ and
-\f${q_{l_{0}}^{min}}\f$) the secondary task is actived gradually.
+  \param rho : tuning paramenter  \f${\left [ 0,\frac{1}{2} \right]}\f$
+  used to define the safe configuration for the joint. When the joint
+  angle value cross the max or min boundaries (\f${ q_{l_{0}}^{max} }\f$ and
+  \f${q_{l_{0}}^{min}}\f$) the secondary task is actived gradually.
 
-  \param rho1
-: tuning paramenter \f${\left ] 0,1 \right ]}\f$ to compute the external
-boundaries (\f${q_{l_{1}}^{max}}\f$ and \f${q_{l_{1}}^{min}}\f$) for the joint
-limits. Here the secondary task it completely activated with the highest gain.
+  \param rho1 : tuning paramenter \f${\left ] 0,1 \right ]}\f$ to compute the external
+  boundaries (\f${q_{l_{1}}^{max}}\f$ and \f${q_{l_{1}}^{min}}\f$) for the joint
+  limits. Here the secondary task it completely activated with the highest gain.
 
   \param lambda_tune : value \f${\left [ 0,1 \right ]}\f$ used to tune the
-difference in magnitude between the absolute value of the elements of the
-primary task and the elements of the secondary task. (See equation (17)
-\cite Marey:2010b )
+  difference in magnitude between the absolute value of the elements of the
+  primary task and the elements of the secondary task. (See equation (17)
+  \cite Marey:2010b )
 
-\code
-vpServo task;
-vpColVector qmin;
-vpColVector qmax;
-vpColVector q;
-vpColVector dq;
-// Fill vector qmin and qmax with min and max limits of the joints (same joint order than vector q).
-// Update vector of joint position q and velocities dq;
-...
-// Compute the velocity corresponding to the visual servoing
-vpColVector  v = task.computeControlLaw();
-// Compute and add the secondary task for the joint limit avoidance
-// using the large projection operator
-v += task.secondaryTaskJointLimitAvoidance(q, dq, qmin, qmax)
-\endcode
+  \code
+  vpServo task;
+  vpColVector qmin;
+  vpColVector qmax;
+  vpColVector q;
+  vpColVector dq;
+  // Fill vector qmin and qmax with min and max limits of the joints (same joint order than vector q).
+  // Update vector of joint position q and velocities dq;
+  ...
+  // Compute the velocity corresponding to the visual servoing
+  vpColVector  v = task.computeControlLaw();
+  // Compute and add the secondary task for the joint limit avoidance
+  // using the large projection operator
+  v += task.secondaryTaskJointLimitAvoidance(q, dq, qmin, qmax)
+  \endcode
 
  */
 vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq,
                                                       const vpColVector &qmin, const vpColVector &qmax,
                                                       const double &rho, const double &rho1,
-                                                      const double &lambda_tune) const
+                                                      const double &lambda_tune)
 {
   unsigned int const n = J1.getCols();
 
@@ -1698,6 +1674,8 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
   // Computation of gi ([nx1] vector) and lambda_l ([nx1] vector)
   vpMatrix g(n, n);
   vpColVector q2_i(n);
+
+  computeProjectionOperators(J1, I, I_WpW, error, P);
 
   for (unsigned int i = 0; i < n; i++) {
     q_l0_min[i] = qmin[i] + rho * (qmax[i] - qmin[i]);
@@ -1746,93 +1724,93 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
 }
 
 /*!
-   Return the projection operator \f${\bf I}-{\bf W}^+{\bf W}\f$. This
-operator is updated after a call of computeControlLaw().
+  Return the projection operator \f${\bf I}-{\bf W}^+{\bf W}\f$. This
+  operator is updated after a call of computeControlLaw().
 
-\code
- vpServo task;
- ...
- vpColVector  v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
- vpMatrix I_WpW = task.getI_WpW(); // Get the projection operator
-\endcode
- \sa getWpW()
+  \code
+  vpServo task;
+  ...
+  vpColVector  v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+  vpMatrix I_WpW = task.getI_WpW(); // Get the projection operator
+  \endcode
+  \sa getWpW()
  */
 vpMatrix vpServo::getI_WpW() const { return I_WpW; }
 
 /*!
-   Return the large projection operator. This operator is updated
-   after a call of computeControlLaw().
+  Return the large projection operator. This operator is updated
+  after a call of computeControlLaw().
 
- \code
- vpServo task;
- ...
- vpColVector  v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
- vpMatrix P = task.getP();          // Get the large projection operator
- \endcode
- \sa getP()
+  \code
+  vpServo task;
+  ...
+  vpColVector  v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+  vpMatrix P = task.getP();          // Get the large projection operator
+  \endcode
+  \sa getP()
  */
 vpMatrix vpServo::getLargeP() const { return P; }
 
 /*!
-   Return the task jacobian \f$J\f$. The task jacobian is updated after a call
-of computeControlLaw().
+  Return the task jacobian \f$J\f$. The task jacobian is updated after a call
+  of computeControlLaw().
 
-   In the general case, the task jacobian is given by \f${\bf J} = {\widehat
-{\bf L}} {^c}{\bf V}_a {^a}{\bf J}_e\f$.
- \code
- vpServo task;
- ...
- vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing vpMatrix
- J = task.getTaskJacobian(); // Get the task jacobian used to compute v
- \endcode
- \sa getTaskJacobianPseudoInverse(), getInteractionMatrix()
+  In the general case, the task jacobian is given by \f${\bf J} = {\widehat
+  {\bf L}} {^c}{\bf V}_a {^a}{\bf J}_e\f$.
+  \code
+  vpServo task;
+  ...
+  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing vpMatrix
+  J = task.getTaskJacobian(); // Get the task jacobian used to compute v
+  \endcode
+  \sa getTaskJacobianPseudoInverse(), getInteractionMatrix()
  */
 vpMatrix vpServo::getTaskJacobian() const { return J1; }
+
 /*!
-   Return the pseudo inverse of the task jacobian \f$J\f$.
+  Return the pseudo inverse of the task jacobian \f$J\f$.
 
-   In the general case, the task jacobian is given by \f${\bf J} = {\widehat
-{\bf L}} {^c}{\bf V}_a {^a}{\bf J}_e\f$.
+  In the general case, the task jacobian is given by \f${\bf J} = {\widehat
+  {\bf L}} {^c}{\bf V}_a {^a}{\bf J}_e\f$.
 
-   The task jacobian and its pseudo inverse are updated after a call of
-computeControlLaw().
+  The task jacobian and its pseudo inverse are updated after a call of computeControlLaw().
 
-   \return Pseudo inverse \f${J}^{+}\f$ of the task jacobian.
-\code
- vpServo task;
- ...
- vpColVector v = task.computeControlLaw();            // Compute the velocity corresponding to the visual servoing vpMatrix
- Jp = task.getTaskJacobianPseudoInverse(); // Get the pseudo inverse of task jacobian used to compute v \endcode
+  \return Pseudo inverse \f${J}^{+}\f$ of the task jacobian.
+  \code
+  vpServo task;
+  ...
+  vpColVector v = task.computeControlLaw();          // Compute the velocity corresponding to the visual servoing
+  vpMatrix Jp = task.getTaskJacobianPseudoInverse(); // Get the pseudo inverse of task jacobian used to compute v
+  \endcode
 
- \sa getTaskJacobian()
+  \sa getTaskJacobian()
  */
 vpMatrix vpServo::getTaskJacobianPseudoInverse() const { return J1p; }
 /*!
-   Return the rank of the task jacobian. The rank is updated after a call of
-computeControlLaw().
+  Return the rank of the task jacobian. The rank is updated after a call of computeControlLaw().
 
- \code
- vpServo task;
- ...
- vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
- unsigned int rank = task.getTaskRank(); // Get the rank of the task jacobian
- \endcode
+  \code
+  vpServo task;
+  ...
+  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+  unsigned int rank = task.getTaskRank();   // Get the rank of the task jacobian
+  \endcode
  */
 unsigned int vpServo::getTaskRank() const { return rankJ1; }
 
 /*!
-   Return the projection operator \f${\bf W}^+{\bf W}\f$. This operator is
-updated after a call of computeControlLaw().
+  Return the projection operator \f${\bf W}^+{\bf W}\f$. This operator is
+  updated after a call of computeControlLaw().
 
-   When the dimension of the task is equal to the number of degrees of freedom
-available \f${\bf W^+W = I}\f$.
+  When the dimension of the task is equal to the number of degrees of freedom
+  available \f${\bf W^+W = I}\f$.
 
- \code
- vpServo task;
- ...
- vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
- vpMatrix  WpW = task.getWpW(); // Get the projection operator
- \endcode
- \sa getI_WpW()
+  \code
+  vpServo task;
+  ...
+  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+  vpMatrix  WpW = task.getWpW(); // Get the projection operator
+  \endcode
+  \sa getI_WpW()
  */
 vpMatrix vpServo::getWpW() const { return WpW; }
