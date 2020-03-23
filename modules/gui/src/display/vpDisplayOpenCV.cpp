@@ -1160,60 +1160,67 @@ void vpDisplayOpenCV::displayCharString(const vpImagePoint &ip, const char *text
   when \e fill is set to false.
 */
 void vpDisplayOpenCV::displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill,
-                                    unsigned int thickness)
+                                    unsigned int thickness, double opacity)
 {
   if (m_displayHasBeenInitialized) {
+    int x = vpMath::round(center.get_u() / m_scale);
+    int y = vpMath::round(center.get_v() / m_scale);
+    int r = static_cast<int>(radius) / m_scale;
+    cv::Scalar cv_color;
+    if (color.id < vpColor::id_unknown)
+    {
+      cv_color = col[color.id];
+    }
+    else
+    {
+      cv_color = CV_RGB(color.R, color.G, color.B);
+    }
+
     if (fill == false) {
-      if (color.id < vpColor::id_unknown) {
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
-        cvCircle(m_background,
-                 cvPoint(vpMath::round(center.get_u() / m_scale), vpMath::round(center.get_v() / m_scale)),
-                 (int)radius / m_scale, col[color.id], (int)thickness);
+      cvCircle(
+        m_background,
+        cvPoint(x, y),
+        r,
+        cv_color,
+        (int)thickness);
 #else
-        cv::circle(m_background,
-                   cv::Point(vpMath::round(center.get_u() / m_scale), vpMath::round(center.get_v() / m_scale)),
-                   (int)radius / m_scale, col[color.id], (int)thickness);
+      cv::circle(
+        m_background,
+        cv::Point(x, y),
+        r,
+        cv_color,
+        (int)thickness);
 #endif
-      } else {
-        cvcolor = CV_RGB(color.R, color.G, color.B);
-#if VISP_HAVE_OPENCV_VERSION < 0x020408
-        cvCircle(m_background,
-                 cvPoint(vpMath::round(center.get_u() / m_scale), vpMath::round(center.get_v() / m_scale)),
-                 (int)radius / m_scale, cvcolor, (int)thickness);
-#else
-        cv::circle(m_background,
-                   cv::Point(vpMath::round(center.get_u() / m_scale), vpMath::round(center.get_v() / m_scale)),
-                   (int)radius / m_scale, cvcolor, (int)thickness);
-#endif
-      }
     } else {
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
       int filled = cv::FILLED;
 #else
       int filled = CV_FILLED;
 #endif
-      if (color.id < vpColor::id_unknown) {
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
-        cvCircle(m_background,
-                 cvPoint(vpMath::round(center.get_u() / m_scale), vpMath::round(center.get_v() / m_scale)),
-                 (int)radius / m_scale, col[color.id], filled);
+      overlay(
+        [x, y, r, cv_color, filled](cv::Mat image) {
+          cvCircle(
+            image,
+            cvPoint(x, y),
+            r,
+            cv_color,
+            filled);
+        },
+        opacity);
 #else
-        cv::circle(m_background,
-                   cv::Point(vpMath::round(center.get_u() / m_scale), vpMath::round(center.get_v() / m_scale)),
-                   (int)radius / m_scale, col[color.id], filled);
+      overlay(
+        [x, y, r, cv_color, filled](cv::Mat image) {
+          cv::circle(
+            image,
+            cv::Point(x, y),
+            r,
+            cv_color,
+            filled);
+        },
+        opacity);
 #endif
-      } else {
-        cvcolor = CV_RGB(color.R, color.G, color.B);
-#if VISP_HAVE_OPENCV_VERSION < 0x020408
-        cvCircle(m_background,
-                 cvPoint(vpMath::round(center.get_u() / m_scale), vpMath::round(center.get_v() / m_scale)),
-                 (int)radius / m_scale, cvcolor, filled);
-#else
-        cv::circle(m_background,
-                   cv::Point(vpMath::round(center.get_u() / m_scale), vpMath::round(center.get_v() / m_scale)),
-                   (int)radius / m_scale, cvcolor, filled);
-#endif
-      }
     }
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "OpenCV not initialized"));

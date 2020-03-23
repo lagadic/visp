@@ -218,7 +218,7 @@ protected:
   void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color = vpColor::green);
 
   void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false,
-                     unsigned int thickness = 1);
+                     unsigned int thickness = 1, double opacity = 1.0);
   void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1);
   void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                       unsigned int thickness = 1);

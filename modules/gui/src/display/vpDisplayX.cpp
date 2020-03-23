@@ -2480,7 +2480,7 @@ void vpDisplayX::displayCharString(const vpImagePoint &ip, const char *text, con
   when \e fill is set to false.
 */
 void vpDisplayX::displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill,
-                               unsigned int thickness)
+                               unsigned int thickness, double opacity)
 {
   if (m_displayHasBeenInitialized) {
     if (thickness == 1)

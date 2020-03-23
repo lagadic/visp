@@ -147,9 +147,9 @@ void vpDisplay::displayCharString(const vpImage<vpRGBa> &I, int i, int j, const 
   when \e fill is set to false.
 */
 void vpDisplay::displayCircle(const vpImage<vpRGBa> &I, const vpImagePoint &center, unsigned int radius,
-                              const vpColor &color, bool fill, unsigned int thickness)
+                              const vpColor &color, bool fill, unsigned int thickness, double opacity)
 {
-  vp_display_display_circle(I, center, radius, color, fill, thickness);
+  vp_display_display_circle(I, center, radius, color, fill, thickness, opacity);
 }
 
 /*!
@@ -163,9 +163,9 @@ void vpDisplay::displayCircle(const vpImage<vpRGBa> &I, const vpImagePoint &cent
   when \e fill is set to false.
 */
 void vpDisplay::displayCircle(const vpImage<vpRGBa> &I, int i, int j, unsigned int radius, const vpColor &color,
-                              bool fill, unsigned int thickness)
+                              bool fill, unsigned int thickness, double opacity)
 {
-  vp_display_display_circle(I, i, j, radius, color, fill, thickness);
+  vp_display_display_circle(I, i, j, radius, color, fill, thickness, opacity);
 }
 
 /*!

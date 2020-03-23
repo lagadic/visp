@@ -305,7 +305,7 @@ public:
     when \e fill is set to false.
   */
   virtual void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false,
-                             unsigned int thickness = 1) = 0;
+                             unsigned int thickness = 1, double opacity = 1.0) = 0;
   /*!
     Display a cross at the image point \e ip location.
     \param ip : Cross location.
@@ -715,9 +715,9 @@ int main()
   static void displayCharString(const vpImage<unsigned char> &I, int i, int j, const char *string,
                                 const vpColor &color);
   static void displayCircle(const vpImage<unsigned char> &I, const vpImagePoint &center, unsigned int radius,
-                            const vpColor &color, bool fill = false, unsigned int thickness = 1);
+                            const vpColor &color, bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
   static void displayCircle(const vpImage<unsigned char> &I, int i, int j, unsigned int radius, const vpColor &color,
-                            bool fill = false, unsigned int thickness = 1);
+                            bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
   static void displayCross(const vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned int size,
                            const vpColor &color, unsigned int thickness = 1);
   static void displayCross(const vpImage<unsigned char> &I, int i, int j, unsigned int size, const vpColor &color,
@@ -814,9 +814,9 @@ int main()
                                 const vpColor &color);
   static void displayCharString(const vpImage<vpRGBa> &I, int i, int j, const char *string, const vpColor &color);
   static void displayCircle(const vpImage<vpRGBa> &I, const vpImagePoint &center, unsigned int radius,
-                            const vpColor &color, bool fill = false, unsigned int thickness = 1);
+                            const vpColor &color, bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
   static void displayCircle(const vpImage<vpRGBa> &I, int i, int j, unsigned int radius, const vpColor &color,
-                            bool fill = false, unsigned int thickness = 1);
+                            bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
   static void displayCross(const vpImage<vpRGBa> &I, const vpImagePoint &ip, unsigned int size, const vpColor &color,
                            unsigned int thickness = 1);
   static void displayCross(const vpImage<vpRGBa> &I, int i, int j, unsigned int size, const vpColor &color,

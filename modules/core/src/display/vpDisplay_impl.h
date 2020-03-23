@@ -126,23 +126,23 @@ void vp_display_display_char_string(const vpImage<Type> &I, int i, int j, const 
 
 template <class Type>
 void vp_display_display_circle(const vpImage<Type> &I, const vpImagePoint &center, unsigned int radius,
-                               const vpColor &color, bool fill, unsigned int thickness)
+                               const vpColor &color, bool fill, unsigned int thickness, double opacity)
 {
   if (I.display != NULL) {
-    (I.display)->displayCircle(center, radius, color, fill, thickness);
+    (I.display)->displayCircle(center, radius, color, fill, thickness, opacity);
   }
 }
 
 template <class Type>
 void vp_display_display_circle(const vpImage<Type> &I, int i, int j, unsigned int radius, const vpColor &color,
-                               bool fill, unsigned int thickness)
+                               bool fill, unsigned int thickness, double opacity)
 {
   if (I.display != NULL) {
     vpImagePoint ip;
     ip.set_i(i);
     ip.set_j(j);
 
-    (I.display)->displayCircle(ip, radius, color, fill, thickness);
+    (I.display)->displayCircle(ip, radius, color, fill, thickness, opacity);
   }
 }
 
