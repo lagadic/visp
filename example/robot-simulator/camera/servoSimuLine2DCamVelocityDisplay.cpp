@@ -77,7 +77,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
 /*!
 
-Print the program options.
+  Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
@@ -113,7 +113,7 @@ OPTIONS:                                               Default\n\
 
 /*!
 
-Set the program options.
+  Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
@@ -139,12 +139,10 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
     case 'h':
       usage(argv[0], NULL);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -200,10 +198,8 @@ int main(int argc, const char **argv)
       }
     }
 
-    double px, py;
-    px = py = 600;
-    double u0, v0;
-    u0 = v0 = 256;
+    double px = 500, py = 500;
+    double u0 = 150, v0 = 160;
 
     vpCameraParameters cam(px, py, u0, v0);
 
@@ -306,7 +302,8 @@ int main(int argc, const char **argv)
     }
 
     if (opt_display && opt_click_allowed) {
-      std::cout << "\nClick in the camera view window to end..." << std::endl;
+      vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::white);
+      vpDisplay::flush(I);
       vpDisplay::getClick(I);
     }
 

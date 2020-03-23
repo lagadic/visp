@@ -71,7 +71,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
 /*!
 
-Print the program options.
+  Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
@@ -133,12 +133,10 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
     case 'h':
       usage(argv[0], NULL);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -272,6 +270,12 @@ int main(int argc, const char **argv)
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
       std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
+    }
+
+    if (opt_display && opt_click_allowed) {
+      vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::white);
+      vpDisplay::flush(I);
+      vpDisplay::getClick(I);
     }
 
     // Display task information

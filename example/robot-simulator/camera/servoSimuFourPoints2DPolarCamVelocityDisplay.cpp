@@ -88,7 +88,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
 /*!
 
-Print the program options.
+  Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
@@ -123,7 +123,7 @@ OPTIONS:                                               Default\n\
 }
 /*!
 
-Set the program options.
+  Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
@@ -149,12 +149,10 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
     case 'h':
       usage(argv[0], NULL);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -242,14 +240,11 @@ int main(int argc, const char **argv)
     }
     vpProjectionDisplay externalview;
 
-    double px, py;
-    px = py = 500;
-    double u0, v0;
-    u0 = 150, v0 = 160;
+    double px = 500, py = 500;
+    double u0 = 150, v0 = 160;
 
     vpCameraParameters cam(px, py, u0, v0);
 
-    int i;
     vpServo task;
     vpSimulatorCamera robot;
 
@@ -320,7 +315,7 @@ int main(int argc, const char **argv)
     point[2].setWorldCoordinates(0.25, 0.25, 0);
     point[3].setWorldCoordinates(-0.25, 0.25, 0);
 
-    for (i = 0; i < 4; i++)
+    for (unsigned int i = 0; i < 4; i++)
       externalview.insert(point[i]);
 
     // sets the desired position of the feature point s*"
@@ -328,7 +323,7 @@ int main(int argc, const char **argv)
 
     // computes the point coordinates in the desired camera frame and
     // its 2D coordinates
-    for (i = 0; i < 4; i++) {
+    for (unsigned int i = 0; i < 4; i++) {
       point[i].track(cMod);
       // Computes the polar coordinates from the image point
       // cartesian coordinates
@@ -337,12 +332,12 @@ int main(int argc, const char **argv)
 
     // computes the point coordinates in the camera frame and its 2D
     // coordinates
-    for (i = 0; i < 4; i++)
+    for (unsigned int i = 0; i < 4; i++)
       point[i].track(cMo);
 
     // sets the desired position of the point
     vpFeaturePointPolar p[4];
-    for (i = 0; i < 4; i++) {
+    for (unsigned int i = 0; i < 4; i++) {
       // retrieve x,y and Z of the vpPoint structure to initialize the
       // visual feature
       vpFeatureBuilder::create(p[i], point[i]);
@@ -367,7 +362,7 @@ int main(int argc, const char **argv)
     task.set_eJe(eJe);
 
     // we want to see a point on a point
-    for (i = 0; i < 4; i++)
+    for (unsigned int i = 0; i < 4; i++)
       task.addFeature(p[i], pd[i]);
 
     // set the gain
@@ -393,7 +388,7 @@ int main(int argc, const char **argv)
       cMo = wMc.inverse() * wMo;
 
       // Compute new point position
-      for (i = 0; i < 4; i++) {
+      for (unsigned int i = 0; i < 4; i++) {
         point[i].track(cMo);
         // retrieve x,y and Z of the vpPoint structure to compute the feature
         vpFeatureBuilder::create(p[i], point[i]);
@@ -438,11 +433,11 @@ int main(int argc, const char **argv)
       std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
 
       // Save current visual feature s = (rho,theta)
-      for (i = 0; i < 4; i++) {
+      for (unsigned int i = 0; i < 4; i++) {
         flog << p[i].get_rho() << " " << p[i].get_theta() << " ";
       }
       // Save current position of the points
-      for (i = 0; i < 4; i++) {
+      for (unsigned int i = 0; i < 4; i++) {
         flog << point[i].get_x() << " " << point[i].get_y() << " ";
       }
       flog << std::endl;
@@ -471,8 +466,8 @@ int main(int argc, const char **argv)
     cMo.print();
 
     if (opt_display && opt_click_allowed) {
-      // suppressed for automate test
-      std::cout << "\n\nClick in the internal view to end..." << std::endl;
+      vpDisplay::displayText(Iint, 20, 20, "Click to quit...", vpColor::white);
+      vpDisplay::flush(Iint);
       vpDisplay::getClick(Iint);
     }
     return EXIT_SUCCESS;
