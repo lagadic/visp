@@ -74,26 +74,26 @@ vpLine::vpLine() { init(); }
   equations of the two planes in the object frame. They are used to set
   the vpForwardProjection::oP public attribute.
 
-  \f[ A1 X + B1 Y + C1 Z +D1 = 0 \f]
-  \f[ A2 X + B2 Y + C2 Z +D2 = 0 \f]
-  Here \f$ (X, Y, Z) \f$ are the 3D coordinates in the object frame.
+  \f[ oA1 X + oB1 Y + oC1 Z + oD1 = 0 \f]
+  \f[ oA2 X + oB2 Y + oC2 Z + oD2 = 0 \f]
+  Here \f$ (X, Y, Z) \f$ are the 3D coordinates of a point in the object frame.
 
-  \param A1, B1, C1, D1 : The parameters used to define the first plane.
-  \param A2, B2, C2, D2 : The parameters used to define the second plane.
+  \param oA1, oB1, oC1, oD1 : The parameters used to define the first plane in the object frame.
+  \param oA2, oB2, oC2, oD2 : The parameters used to define the second plane in the object frame.
 
 */
-void vpLine::setWorldCoordinates(const double &A1, const double &B1, const double &C1, const double &D1,
-                                 const double &A2, const double &B2, const double &C2, const double &D2)
+void vpLine::setWorldCoordinates(const double &oA1, const double &oB1, const double &oC1, const double &oD1,
+                                 const double &oA2, const double &oB2, const double &oC2, const double &oD2)
 {
-  oP[0] = A1;
-  oP[1] = B1;
-  oP[2] = C1;
-  oP[3] = D1;
+  oP[0] = oA1;
+  oP[1] = oB1;
+  oP[2] = oC1;
+  oP[3] = oD1;
 
-  oP[4] = A2;
-  oP[5] = B2;
-  oP[6] = C2;
-  oP[7] = D2;
+  oP[4] = oA2;
+  oP[5] = oB2;
+  oP[6] = oC2;
+  oP[7] = oD2;
 }
 
 /*!
@@ -104,14 +104,14 @@ void vpLine::setWorldCoordinates(const double &A1, const double &B1, const doubl
   the equations of the two planes in the object frame. They are used to set
   the vpForwardProjection::oP public attribute.
 
-  \f[ A1 X + B1 Y + C1 Z +D1 = 0 \f]
-  \f[ A2 X + B2 Y + C2 Z +D2 = 0 \f]
-  Here \f$ (X, Y, Z) \f$ are the 3D coordinates in the object frame.
+  \f[ oA1 X + oB1 Y + oC1 Z + oD1 = 0 \f]
+  \f[ oA2 X + oB2 Y + oC2 Z + oD2 = 0 \f]
+  Here \f$ (X, Y, Z) \f$ are the 3D coordinates of a point in the object frame.
 
   \param oP_ : The column vector which contains the eight parameters
   needed to define the equations of the two planes in the object
-  frame. \f[ oP = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \\ A2 \\
-  B2 \\ C2 \\ D2 \end{array}\right] \f]
+  frame. \f[ oP = \left[\begin{array}{c}oA1 \\ oB1 \\ oC1 \\ oD1 \\ oA2 \\
+  oB2 \\ oC2 \\ oD2 \end{array}\right] \f]
 
 */
 void vpLine::setWorldCoordinates(const vpColVector &oP_)
@@ -130,17 +130,17 @@ void vpLine::setWorldCoordinates(const vpColVector &oP_)
   the equations of the two planes in the object frame. They are used to set
   the vpForwardProjection::oP public attribute.
 
-  \f[ A1 X + B1 Y + C1 Z +D1 = 0 \f]
-  \f[ A2 X + B2 Y + C2 Z +D2 = 0 \f]
-  Here \f$ (X, Y, Z) \f$ are the 3D coordinates in the object frame.
+  \f[ oA1 X + oB1 Y + oC1 Z + oD1 = 0 \f]
+  \f[ oA2 X + oB2 Y + oC2 Z + oD2 = 0 \f]
+  Here \f$ (X, Y, Z) \f$ are the 3D coordinates of a point in the object frame.
 
   \param oP1 : The column vector which contains the four parameters
-  needed to define the equations of the first plane. \f[ oP1 =
-  \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \end{array}\right] \f]
+  needed to define the equations of the first plane in the object frame. \f[ oP1 =
+  \left[\begin{array}{c}oA1 \\ oB1 \\ oC1 \\ oD1 \end{array}\right] \f]
 
   \param oP2 : The column vector which contains the four parameters
-  needed to define the equations of the second plane. \f[ oP2 =
-  \left[\begin{array}{c} A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
+  needed to define the equations of the second plane in the object frame. \f[ oP2 =
+  \left[\begin{array}{c} oA2 \\ oB2 \\ oC2 \\ oD2 \end{array}\right] \f]
 
 */
 void vpLine::setWorldCoordinates(const vpColVector &oP1, const vpColVector &oP2)
@@ -198,23 +198,24 @@ void vpLine::projection()
 /*!
 
   Computes the 2D parameters \e p of the line in the image plane thanks
-  to the 3D line features \e cP expressed in the camera frame. The
+  to the 3D line parameters \e cP expressed in the camera frame. The
   image plane parameters \f$p=(\rho , \theta)\f$ are updated in
   output.
 
-  \param cP_ : The vector containing the line features relative to the
-  camera frame. \f[ cP = \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1
-  \\ A2 \\ B2 \\ C2 \\ D2 \end{array}\right] \f]
+  \param[in] cP_ : The vector containing the line parameters relative to the
+  camera frame. \f[ cP = \left[\begin{array}{c}cA1 \\ cB1 \\ cC1 \\ cD1
+  \\ cA2 \\ cB2 \\ cC2 \\ cD2 \end{array}\right] \f]
 
-  \param p_ : The vector which contains the 2D line features expressed
+  \param[out] p_ : The vector which contains the 2D line features expressed
   in the image plane. \f[ p = \left[\begin{array}{c} \rho \\ \theta
   \end{array}\right] \f]
 
   \exception vpException::fatalError : Degenerate case, the image of the
   straight line is a point.
 */
-void vpLine::projection(const vpColVector &cP_, vpColVector &p_)
+void vpLine::projection(const vpColVector &cP_, vpColVector &p_) const
 {
+  p_.resize(2, false);
   // projection
 
   if (cP.getRows() != 8)
@@ -247,9 +248,6 @@ void vpLine::projection(const vpColVector &cP_, vpColVector &p_)
   double rho = -c * s;
   double theta = atan2(b, a);
 
-  if (p.getRows() != 2)
-    p.resize(2);
-
   p_[0] = rho;
   p_[1] = theta;
 }
@@ -257,7 +255,7 @@ void vpLine::projection(const vpColVector &cP_, vpColVector &p_)
 /*!
 
   Computes the line parameters \e cP in the camera frame thanks to the
-  line parameters  \e oP given in the object frame  and the homogeneous matrix
+  line parameters \e oP given in the object frame and the homogeneous matrix
   relative to the pose \e cMo  between the object frame and the camera
   frame. Thus the computation gives the equations of the two planes
   needed to define the line in the camera frame thanks to the
@@ -309,7 +307,7 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo) { changeFrame(cMo, cP);
 
   \param cP_ : The vector which will contain the parameters of the two
   planes in the camera frame. \f[ cP =
-  \left[\begin{array}{c}A1 \\ B1 \\ C1 \\ D1 \\ A2 \\ B2 \\ C2 \\ D2
+  \left[\begin{array}{c}cA1 \\ cB1 \\ cC1 \\ cD1 \\ cA2 \\ cB2 \\ cC2 \\ cD2
   \end{array}\right] \f]
 
   The code below shows how to use this method.
@@ -332,18 +330,15 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo) { changeFrame(cMo, cP);
   line.changeFrame(cMo, cP);
   \endcode
 */
-
-void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
+void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
 {
+  cP_.resize(8, false);
 
   double a1, a2, b1, b2, c1, c2, d1, d2;
   double A1, A2, B1, B2, C1, C2, D1, D2;
 
   // in case of verification
   // double x,y,z,ap1,ap2,bp1,bp2,cp1,cp2,dp1,dp2;
-
-  if (cP.getRows() != 8)
-    cP.resize(8);
 
   a1 = oP[0];
   b1 = oP[1];
@@ -484,6 +479,8 @@ void vpLine::display(const vpImage<unsigned char> &I, const vpCameraParameters &
   and the camera parameters which enable to convert the features from
   meter to pixel.
 
+  This method is non destructive wrt. cP and p internal line parameters.
+
   \param I : The image where the line must be displayed in overlay.
 
   \param cMo : The homogeneous matrix corresponding to the pose
@@ -496,7 +493,6 @@ void vpLine::display(const vpImage<unsigned char> &I, const vpCameraParameters &
 
   \param thickness : Thickness of the feature representation.
 */
-// non destructive wrt. cP and p
 void vpLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                      const vpColor &color, unsigned int thickness)
 {

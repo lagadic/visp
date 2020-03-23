@@ -64,6 +64,8 @@
 class VISP_EXPORT vpTracker
 {
 public:
+  /** @name Public Attributes Inherited from vpTracker */
+  //@{
   /*!
     Feature coordinates expressed in the image plane \e p. They correspond
     to 2D normalized coordinates expressed in meters.
@@ -79,25 +81,33 @@ public:
     in the camera frame are available.
   */
   bool cPAvailable;
+  //@}
 
 public:
-  //! Default initialization.
-  void init();
+  /** @name Public Member Functions Inherited from vpTracker */
+  //@{
   //! Default constructor.
   vpTracker();
   //! Copy constructor.
   vpTracker(const vpTracker &tracker);
-  //! Copy operator.
-  vpTracker &operator=(const vpTracker &tracker);
-
   //! Destructor.
   virtual ~vpTracker() { ; }
+
+  //! Return object parameters expressed in the 2D image plane computed by perspective projection.
+  vpColVector get_p() const { return p; }
+  //! Return object parameters expressed in the 3D camera frame.
+  vpColVector get_cP() const { return cP; }
+
+  //! Copy operator.
+  vpTracker &operator=(const vpTracker &tracker);
+  //@}
+
+protected:
+  /** @name Protected Member Functions Inherited from vpTracker */
+  //@{
+  //! Default initialization.
+  void init();
+  //@}
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

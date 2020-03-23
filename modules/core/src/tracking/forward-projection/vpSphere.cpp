@@ -39,53 +39,105 @@
 #include <visp3/core/vpFeatureDisplay.h>
 #include <visp3/core/vpSphere.h>
 
+/*!
+ * Initialize internal sphere parameters.
+ */
 void vpSphere::init()
 {
-
   oP.resize(4);
   cP.resize(4);
 
   p.resize(5);
 }
 
+/*!
+ * Set sphere 3D parameters from a 4-dim vector that contains 3D
+ * coordinates of its center and its radius.
+ * The 3D coordinates of the center are defined in the sphere frame.
+ *
+ * \param oP_ : 4-dim vector that contains [oX oY oZ R]^T where
+ * oX, oY, oZ are the 3D coordinates of the sphere center in [m] expressed in the object frame,
+ * and R is the sphere radius in [m].
+ */
 void vpSphere::setWorldCoordinates(const vpColVector &oP_) { this->oP = oP_; }
 
-void vpSphere::setWorldCoordinates(double X0, double Y0, double Z0, double R)
+/*!
+ * Set sphere 3D parameters from the 3D coordinates of its center and its radius.
+ * The 3D coordinates of the center are defined in the sphere frame.
+ *
+ * \param oX : 3D coordinate of the sphere center along X axis in [m].
+ * \param oY : 3D coordinate of the sphere center along X axis in [m].
+ * \param oZ : 3D coordinate of the sphere center along X axis in [m].
+ * \param R : Sphere radius in [m].
+ */
+void vpSphere::setWorldCoordinates(double oX, double oY, double oZ, double R)
 {
-  oP[0] = X0;
-  oP[1] = Y0;
-  oP[2] = Z0;
+  oP[0] = oX;
+  oP[1] = oY;
+  oP[2] = oZ;
   oP[3] = R;
 }
 
+/*!
+ * Default constructor.
+ */
 vpSphere::vpSphere() { init(); }
 
+/*!
+ * Create a sphere from a 4-dim vector that contains 3D coordinates of its center and its radius.
+ * The 3D coordinates of the center are defined in the sphere frame.
+ *
+ * \param oP_ : 4-dim vector that contains [oX oY oZ R]^T where
+ * oX, oY, oZ are the 3D coordinates of the sphere center in [m] expressed in the sphere frame,
+ * and R is the sphere radius in [m].
+ */
 vpSphere::vpSphere(const vpColVector &oP_)
 {
   init();
   setWorldCoordinates(oP_);
 }
 
-vpSphere::vpSphere(double X0, double Y0, double Z0, double R)
+/*!
+ * Create a sphere from the 3D coordinates of its center and its radius.
+ * The 3D coordinates of the center are defined in the sphere frame.
+ *
+ * \param oX : 3D coordinate of the sphere center along X axis in [m].
+ * \param oY : 3D coordinate of the sphere center along X axis in [m].
+ * \param oZ : 3D coordinate of the sphere center along X axis in [m].
+ * \param R : Sphere radius in [m].
+ */
+vpSphere::vpSphere(double oX, double oY, double oZ, double R)
 {
   init();
-  setWorldCoordinates(X0, Y0, Z0, R);
+  setWorldCoordinates(oX, oY, oZ, R);
 }
 
+/*!
+ * Destructor that does nothing.
+ */
 vpSphere::~vpSphere() {}
 
-//! perspective projection of the sphere
+/*!
+ * Perspective projection of the sphere.
+ * This method updates internal parameters (cP and p).
+ */
 void vpSphere::projection() { projection(cP, p); }
 
-//! Perspective projection of the circle.
-void vpSphere::projection(const vpColVector &cP_, vpColVector &p_)
+/*!
+ * Perspective projection of the sphere.
+ * Internal parameters (cP and p) are not modified.
+ *
+ * \param[in] cP_ : 4-dim vector corresponding to the sphere parameters in the camera frame.
+ * \param[out] p_ : 5-dim vector corresponding to the sphere parameters in the image plane.
+ */
+void vpSphere::projection(const vpColVector &cP_, vpColVector &p_) const
 {
-  double x0, y0, z0; // variables intermediaires
-  //   double k0, k1, k2, k3, k4;  //variables intermediaires
-  double E, A, B; // variables intermediaires
+  p_.resize(5, false);
+  double x0, y0, z0;
+  double E, A, B;
 
   // calcul des parametres M20, M11, M02 de l'ellipse
-  double s, r; // variables intermediaires
+  double s, r;
   r = cP_[3];
 
   x0 = cP_[0];
@@ -94,26 +146,19 @@ void vpSphere::projection(const vpColVector &cP_, vpColVector &p_)
 
   s = r * r - y0 * y0 - z0 * z0;
 
-  //   k0 = (r*r - x0*x0 -z0*z0)/s;
-  //   k1 = (x0*y0)/s;
-  //   k2 = (x0*z0)/s;
-  //   k3 = (y0*z0)/s;
-  //   k4 = (r*r - x0*x0 -y0*y0)/s;
-
   if ((s = z0 * z0 - r * r) < 0.0) {
-    vpERROR_TRACE("sphere derriere le plan image\n");
+    vpERROR_TRACE("Error: Sphere is behind image plane\n");
   }
 
   p_[0] = x0 * z0 / s; // x
   p_[1] = y0 * z0 / s; // y
 
   if (fabs(x0) > 1e-6) {
-    //   vpERROR_TRACE(" %f",r) ;
     double e = y0 / x0;
     double b = r / sqrt(s);
     double a = x0 * x0 + y0 * y0 + z0 * z0 - r * r;
     if (a < 0.0) {
-      vpERROR_TRACE("sphere derriere le plan image\n");
+      vpERROR_TRACE("Error: Sphere is behind image plane\n");
     }
     a = r * sqrt(a) / s;
     if (fabs(e) <= 1.0) {
@@ -126,7 +171,6 @@ void vpSphere::projection(const vpColVector &cP_, vpColVector &p_)
       B = a;
     }
   } else {
-    //   vpERROR_TRACE(" %f",r) ;
     E = 0.0;
     A = r / sqrt(s);
     B = r * sqrt(y0 * y0 + z0 * z0 - r * r) / s;
@@ -135,17 +179,27 @@ void vpSphere::projection(const vpColVector &cP_, vpColVector &p_)
   p_[2] = (A * A + B * B * E * E) / (1.0 + E * E); // mu20
   p_[3] = (A * A - B * B) * E / (1.0 + E * E);     // mu11
   p_[4] = (B * B + A * A * E * E) / (1.0 + E * E); // mu02
-
-  // vpERROR_TRACE(" %f",r) ;
-
-  //  std::cout << p.t() ;
 }
-//! perspective projection of the circle
+
+/*!
+ * Perspective projection of the sphere.
+ * Internal sphere parameters are modified in cP.
+ *
+ * \param cMo : Homogeneous transformation from camera frame to object frame.
+ */
 void vpSphere::changeFrame(const vpHomogeneousMatrix &cMo) { changeFrame(cMo, cP); }
 
-//! Perspective projection of the circle.
-void vpSphere::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
+/*!
+ * Perspective projection of the sphere.
+ * This method doesn't modify internal sphere parameters cP.
+ *
+ * \param cMo : Homogeneous transformation from camera frame to sphere frame.
+ * \param cP_ : Parameters of the sphere in the camera frame (cX, cY, cZ, R).
+ */
+void vpSphere::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
 {
+  cP_.resize(4, false);
+
   double x0, y0, z0; // variables intermediaires
 
   x0 = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2] + cMo[0][3];
@@ -159,14 +213,24 @@ void vpSphere::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
   cP_[2] = z0;
 }
 
-//! for memory issue (used by the vpServo class only)
+//! For memory issue (used by the vpServo class only).
 vpSphere *vpSphere::duplicate() const
 {
   vpSphere *feature = new vpSphere(*this);
   return feature;
 }
 
-// non destructive wrt. cP and p
+/*!
+ * Display the projection of a 3D sphere in image \e I.
+ * This method is non destructive wrt. cP and p internal sphere parameters.
+ *
+ * \param I : Image used as background.
+ * \param cMo : Homogeneous transformation from camera frame to object frame.
+ * The sphere is considered as viewed from this camera position.
+ * \param cam : Camera parameters.
+ * \param color : Color used to draw the sphere.
+ * \param thickness : Thickness used to draw the sphere.
+ */
 void vpSphere::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &color, unsigned int thickness)
 {
@@ -176,6 +240,14 @@ void vpSphere::display(const vpImage<unsigned char> &I, const vpHomogeneousMatri
   vpFeatureDisplay::displayEllipse(_p[0], _p[1], _p[2], _p[3], _p[4], cam, I, color, thickness);
 }
 
+/*!
+ * Display the projection of a 3D sphere in image \e I.
+ *
+ * \param I : Image used as background.
+ * \param cam : Camera parameters.
+ * \param color : Color used to draw the sphere.
+ * \param thickness : Thickness used to draw the sphere.
+ */
 void vpSphere::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
                        unsigned int thickness)
 {
