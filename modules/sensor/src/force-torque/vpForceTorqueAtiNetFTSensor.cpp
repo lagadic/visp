@@ -48,12 +48,14 @@
 // is not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 typedef struct response_struct {
   uint32_t rdt_sequence;
   uint32_t ft_sequence;
   uint32_t status;
   int32_t FTData[6];
 } RESPONSE;
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
  * Default constructor that set counts per force to 1000000, counts per torque to 1000000000 and scaling factor to 1.
