@@ -147,9 +147,9 @@ void vpDisplay::displayCharString(const vpImage<vpRGBa> &I, int i, int j, const 
   when \e fill is set to false.
 */
 void vpDisplay::displayCircle(const vpImage<vpRGBa> &I, const vpImagePoint &center, unsigned int radius,
-                              const vpColor &color, bool fill, unsigned int thickness, double opacity)
+                              const vpColor &color, bool fill, unsigned int thickness)
 {
-  vp_display_display_circle(I, center, radius, color, fill, thickness, opacity);
+  vp_display_display_circle(I, center, radius, color, fill, thickness);
 }
 
 /*!
@@ -163,9 +163,9 @@ void vpDisplay::displayCircle(const vpImage<vpRGBa> &I, const vpImagePoint &cent
   when \e fill is set to false.
 */
 void vpDisplay::displayCircle(const vpImage<vpRGBa> &I, int i, int j, unsigned int radius, const vpColor &color,
-                              bool fill, unsigned int thickness, double opacity)
+                              bool fill, unsigned int thickness)
 {
-  vp_display_display_circle(I, i, j, radius, color, fill, thickness, opacity);
+  vp_display_display_circle(I, i, j, radius, color, fill, thickness);
 }
 
 /*!
@@ -544,9 +544,9 @@ void vpDisplay::displayPolygon(const vpImage<vpRGBa> &I, const std::vector<vpIma
   false.
 */
 void vpDisplay::displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &topLeft, unsigned int width,
-                                 unsigned int height, const vpColor &color, bool fill, unsigned int thickness, double opacity)
+                                 unsigned int height, const vpColor &color, bool fill, unsigned int thickness)
 {
-  vp_display_display_rectangle(I, topLeft, width, height, color, fill, thickness, opacity);
+  vp_display_display_rectangle(I, topLeft, width, height, color, fill, thickness);
 }
 
 /*!
@@ -564,9 +564,9 @@ void vpDisplay::displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &t
   false.
 */
 void vpDisplay::displayRectangle(const vpImage<vpRGBa> &I, int i, int j, unsigned int width, unsigned int height,
-                                 const vpColor &color, bool fill, unsigned int thickness, double opacity)
+                                 const vpColor &color, bool fill, unsigned int thickness)
 {
-  vp_display_display_rectangle(I, i, j, width, height, color, fill, thickness, opacity);
+  vp_display_display_rectangle(I, i, j, width, height, color, fill, thickness);
 }
 
 /*!
@@ -583,9 +583,9 @@ void vpDisplay::displayRectangle(const vpImage<vpRGBa> &I, int i, int j, unsigne
   false.
 */
 void vpDisplay::displayRectangle(const vpImage<vpRGBa> &I, const vpRect &rectangle, const vpColor &color, bool fill,
-                                 unsigned int thickness, double opacity)
+                                 unsigned int thickness)
 {
-  vp_display_display_rectangle(I, rectangle, color, fill, thickness, opacity);
+  vp_display_display_rectangle(I, rectangle, color, fill, thickness);
 }
 
 /*!
@@ -622,9 +622,9 @@ void vpDisplay::displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &c
   false.
 */
 void vpDisplay::displayRectangle(const vpImage<vpRGBa> &I, const vpImagePoint &topLeft, const vpImagePoint &bottomRight,
-                                 const vpColor &color, bool fill, unsigned int thickness, double opacity)
+                                 const vpColor &color, bool fill, unsigned int thickness)
 {
-  vp_display_display_rectangle(I, topLeft, bottomRight, color, fill, thickness, opacity);
+  vp_display_display_rectangle(I, topLeft, bottomRight, color, fill, thickness);
 }
 
 /*!

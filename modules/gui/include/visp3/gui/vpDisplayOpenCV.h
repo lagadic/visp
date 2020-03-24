@@ -242,7 +242,7 @@ protected:
   void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color = vpColor::green);
 
   void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill = false,
-                     unsigned int thickness = 1, double opacity = 1.0);
+                     unsigned int thickness = 1);
   void displayCross(const vpImagePoint &ip, unsigned int size, const vpColor &color, unsigned int thickness = 1);
   void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                       unsigned int thickness = 1);
@@ -260,10 +260,10 @@ protected:
   void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness = 1);
 
   void displayRectangle(const vpImagePoint &topLeft, unsigned int width, unsigned int height, const vpColor &color,
-                        bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
+                        bool fill = false, unsigned int thickness = 1);
   void displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight, const vpColor &color,
-                        bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
-  void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness = 1, double opacity = 1.0);
+                        bool fill = false, unsigned int thickness = 1);
+  void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness = 1);
 
   void flushDisplay();
   void flushDisplayROI(const vpImagePoint &iP, unsigned int width, unsigned int height);

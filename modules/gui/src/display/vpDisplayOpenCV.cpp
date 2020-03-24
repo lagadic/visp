@@ -1160,7 +1160,7 @@ void vpDisplayOpenCV::displayCharString(const vpImagePoint &ip, const char *text
   when \e fill is set to false.
 */
 void vpDisplayOpenCV::displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill,
-                                    unsigned int thickness, double opacity)
+                                    unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     int x = vpMath::round(center.get_u() / m_scale);
@@ -1198,6 +1198,7 @@ void vpDisplayOpenCV::displayCircle(const vpImagePoint &center, unsigned int rad
 #else
       int filled = CV_FILLED;
 #endif
+      double opacity = static_cast<double>(color.A) / 255.0;
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
       overlay(
         [x, y, r, cv_color, filled](cv::Mat image) {
@@ -1390,7 +1391,7 @@ void vpDisplayOpenCV::displayPoint(const vpImagePoint &ip, const vpColor &color,
   false.
 */
 void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, unsigned int w, unsigned int h,
-                                       const vpColor &color, bool fill, unsigned int thickness, double opacity)
+                                       const vpColor &color, bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     
@@ -1430,7 +1431,7 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, unsigned int
 #else
       int filled = CV_FILLED;
 #endif
-
+      double opacity = static_cast<double>(color.A) / 255.0;
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
       overlay(
         [left, top, right, bottom, cv_color, filled](cv::Mat image) {
@@ -1472,7 +1473,7 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, unsigned int
   false.
 */
 void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, const vpImagePoint &bottomRight,
-                                       const vpColor &color, bool fill, unsigned int thickness, double opacity)
+                                       const vpColor &color, bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized)
   {
@@ -1512,6 +1513,7 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, const vpImag
 #else
       int filled = CV_FILLED;
 #endif
+      double opacity = static_cast<double>(color.A) / 255.0;
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
       overlay(
         [left, top, right, bottom, cv_color, filled](cv::Mat image) {
@@ -1552,7 +1554,7 @@ void vpDisplayOpenCV::displayRectangle(const vpImagePoint &topLeft, const vpImag
   rectangle. This parameter is only useful when \e fill is set to
   false.
 */
-void vpDisplayOpenCV::displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness, double opacity)
+void vpDisplayOpenCV::displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
     int left = vpMath::round(rectangle.getLeft() / m_scale);
@@ -1591,6 +1593,7 @@ void vpDisplayOpenCV::displayRectangle(const vpRect &rectangle, const vpColor &c
 #else
       int filled = CV_FILLED;
 #endif
+      double opacity = static_cast<double>(color.A) / 255.0;
 #if VISP_HAVE_OPENCV_VERSION < 0x020408
       overlay(
         [left, top, right, bottom, cv_color, filled](cv::Mat image) {
