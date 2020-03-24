@@ -358,7 +358,7 @@ error vector is updated after a call of computeError() or computeControlLaw().
   // Add a secondary task to avoid the joint limit.
   vpColVector secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq, const vpColVector &jointMin,
                                                const vpColVector &jointMax, const double &rho = 0.1,
-                                               const double &rho1 = 0.3, const double &lambda_tune = 0.7) const;
+                                               const double &rho1 = 0.3, const double &lambda_tune = 0.7);
 
   void setCameraDoF(const vpColVector &dof);
 
@@ -537,7 +537,7 @@ protected:
   /*!
     Compute the classic projetion operator and the large projection operator.
    */
-  void computeProjectionOperators();
+  void computeProjectionOperators(const vpMatrix &J1_, const vpMatrix &I_, const vpMatrix &I_WpW_, const vpColVector &error_, vpMatrix &P_) const;
 
 public:
   //! Interaction matrix
@@ -638,6 +638,8 @@ protected:
   //! Force the interaction matrix computation even if it is already done.
   bool forceInteractionMatrixComputation;
 
+  //! Identity matrix.
+  vpMatrix I;
   //! Projection operators \f$\bf WpW\f$.
   vpMatrix WpW;
   //! Projection operators \f$\bf I-WpW\f$.

@@ -83,13 +83,8 @@ void vpForwardProjection::project() { projection(cP, p); }
 */
 void vpForwardProjection::project(const vpHomogeneousMatrix &cMo)
 {
-  try {
-    changeFrame(cMo);
-    projection();
-  } catch (...) {
-    vpERROR_TRACE("Error caught");
-    throw;
-  }
+  changeFrame(cMo);
+  projection();
 }
 
 /*!
@@ -110,16 +105,6 @@ void vpForwardProjection::project(const vpHomogeneousMatrix &cMo)
 */
 void vpForwardProjection::track(const vpHomogeneousMatrix &cMo)
 {
-  try {
-    project(cMo);
-  } catch (...) {
-    vpERROR_TRACE("Error caught");
-    throw;
-  }
+  project(cMo);
 }
 
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

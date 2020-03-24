@@ -13,6 +13,10 @@ ViSP 3.3.1 (under development)
       file not found
     . [#716] Build issue on FreeBSD with g++
     . [#718] vpImage<unsigned char>::getValue() is not working on big endian arch
+    . [#726] Segfault in vpServo when the number of visual features is very
+      large (> 50.000)
+    . [#728] vpProjectionDisplay doesn't display frame with RGB colors respectively
+      for X, Y and Z axis
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:

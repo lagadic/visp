@@ -53,44 +53,50 @@
 /*!
   \class vpCylinder
   \ingroup group_core_geometry
-  \brief Class that defines what is a cylinder.
+  \brief Class that defines a 3D cylinder in the object frame and allows forward projection of a 3D cylinder in the
+  camera frame and in the 2D image plane by perspective projection.
+  All the parameters must be set in meter.
 
-  A cylinder may be represented by the equation:
-  \f$ (X - X_0)^2 + (Y - Y_0)^2 + (Z - Z_0)^2 - (A \; X + B \; Y + C \; Z)^2 -
+  A 3D cylinder of radius R is defined by the set of circles of radius R whose center belongs
+  to a straight line perpendicular to the plane of the circles.
+
+  A 3D cylinder has the followings parameters:
+  - **in the object frame**: the cylinder is represented by the equation:
+  \f$ (X - oX)^2 + (Y - oY)^2 + (Z - oZ)^2 - (oA \; X + oB \; Y + oC \; Z)^2 -
   R^2 = 0 \f$ with
-
-  \f$
+  \f[
   \left\{ \begin{array}{l}
-  A^2 + B^2 + C^2 = 1  \\
-  A \; X_0 + B \; Y_0 + C \; Z_0 = 0
+  oA^2 + oB^2 + oC^2 = 1  \\
+  oA \; oX + oB \; oY + oC \; oZ = 0
   \end{array} \right.
-  \f$
-
-  where \f$R\f$ is the radius of the cylinder, \f$A, B, C\f$ are the
-  coordinates of its direction vector and \f$X_0, Y_0, Z_0\f$ are the
+  \f]
+  where R is the radius of the cylinder, oA, oB, oC are the
+  coordinates of its direction vector and oX, oY, oZ are the
   coordinates of the nearest point belonging to the cylinder axis from the
   projection center.
+  The corresponding parameters are located in vpForwardProjection::oP 7-dim internal vector. They correspond
+  to oP = (oA, oB, oC, oX, oY, oZ, R).
+  Setting the cylinder parameters is achieved through the constructors with
+  parameters or setWorldCoordinates() methods.
+  To get theses parameters use get_oP().
 
-  Setting the cylinder parameters is achieved throw the constructors with
-  parameters or the setWorldCoordinates() methods.
-
-  Considering the set of parameters \f$^{o}{\bf P} =
-  ({^o}A,{^o}B,{^o}C,{^o}X_0,{^o}Y_0,{^o}Z_0,R)\f$ expressed in the world
+  - **in the camera frame**: parameters are saved in vpTracker::cP 7-dim internal vector
+  with cP =(cA, cB, cC, cX, cY, cZ, R). Considering the set of parameters oP expressed in the object
   frame, cylinder coordinates expressed in the camera frame are obtained using
-  changeFrame().
+  changeFrame(). To get these parameters use get_cP().
 
-  The projection of a cylinder on the image plane is (for
-  non-degenerated cases) a set of two straight lines with equation:
-
-  \f$
+  - **in the 2D image plane**: parameters are saved in vpTracker::p 4-dim vector.
+  They correspond to p = (\f$\rho_1\f$, \f$\theta_1\f$, \f$\rho_2\f$, \f$\theta_2\f$), noting
+  that for non-degenerated cases, the perspective projection of a cylinder on the image plane is a set of two
+  straight lines with equation:
+  \f[
   \left\{ \begin{array}{lll}
   x \;\cos\theta_1 + x \;\sin\theta_1 - \rho_1 = 0 \\
   y \;\cos\theta_2 + y \;\sin\theta_2 - \rho_2 = 0
   \end{array} \right.
-  \f$
-
-  The projection is achieved using projection() methods. The methods
-  getRho1(), getTheta1() and getRho2(), getTheta2() allow to access to the
+  \f]
+  Perspective projection is achieved using projection() methods. The methods
+  get_p(), getRho1(), getTheta1() and getRho2(), getTheta2() allow to access to the
   projected line parameters.
 */
 class VISP_EXPORT vpCylinder : public vpForwardProjection
@@ -103,10 +109,10 @@ public:
 
   vpCylinder();
   explicit vpCylinder(const vpColVector &oP);
-  vpCylinder(double A, double B, double C, double X0, double Y0, double Z0, double R);
+  vpCylinder(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
   virtual ~vpCylinder();
 
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP);
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const;
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
   double computeZ(double x, double y) const;
@@ -145,41 +151,41 @@ public:
   double getTheta2() const { return p[3]; }
 
   /*!
-    Return cylinder \f$A\f$ parameter expressed in the camera frame.
+    Return cylinder cA parameter expressed in the camera frame.
   */
   double getA() const { return cP[0]; }
   /*!
-    Return cylinder \f$B\f$ parameter expressed in the camera frame.
+    Return cylinder cB parameter expressed in the camera frame.
   */
   double getB() const { return cP[1]; }
   /*!
-    Return cylinder \f$C\f$ parameter expressed in the camera frame.
+    Return cylinder cC parameter expressed in the camera frame.
   */
   double getC() const { return cP[2]; }
   /*!
-    Return cylinder \f$X_0\f$ parameter expressed in the camera frame.
+    Return cylinder cX parameter expressed in the camera frame.
   */
   double getX() const { return cP[3]; }
   /*!
-    Return cylinder \f$Y_0\f$ parameter expressed in the camera frame.
+    Return cylinder cY parameter expressed in the camera frame.
   */
   double getY() const { return cP[4]; }
   /*!
-    Return cylinder \f$Z_0\f$ parameter expressed in the camera frame.
+    Return cylinder cZ parameter expressed in the camera frame.
   */
   double getZ() const { return cP[5]; }
   /*!
-    Return cylinder \f$R\f$ parameter corresponding to the cylinder radius.
+    Return cylinder R parameter corresponding to the cylinder radius.
   */
   double getR() const { return cP[6]; }
 
   void init();
 
   void projection();
-  void projection(const vpColVector &cP, vpColVector &p);
+  void projection(const vpColVector &cP, vpColVector &p) const;
 
   void setWorldCoordinates(const vpColVector &oP);
-  void setWorldCoordinates(double A, double B, double C, double X0, double Y0, double Z0, double R);
+  void setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
 };
 
 #endif

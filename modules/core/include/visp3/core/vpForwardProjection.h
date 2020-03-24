@@ -68,32 +68,16 @@ class VISP_EXPORT vpForwardProjection : public vpTracker
 {
 public:
   /*!
-    Feature coordinates expressed in the object frame, also called world
-    frame.
+    Used for memory issue especially in the vpServo class.
   */
-  vpColVector oP;
+  typedef enum { user, vpDisplayForwardProjection } vpForwardProjectionDeallocatorType;
 
-public:
-  /*!
-    Default initialisation of the feature parameters:
-    - in the object frame: \e oP
-    - in the camera frame: \e cP
-    - in the image plane: \e p.
-  */
-  virtual void init() = 0;
+  /** @name Public Member Functions Inherited from vpForwardProjection */
+  //@{
+  vpForwardProjection() : oP(), deallocate(user) {}
 
-  //! Destructor.
+  //! Destructor that does nothing.
   virtual ~vpForwardProjection() { ; }
-
-public:
-  /*!
-    Sets the parameters which define the feature in the object frame.
-
-    \param oP : Feature parameters expressed in the object frame used
-    to set the vpForwardProjection::oP public attribute.
-
-  */
-  virtual void setWorldCoordinates(const vpColVector &oP) = 0;
 
   /*!
 
@@ -114,7 +98,7 @@ public:
     With this method, the vpTracker::cP public attribute is not updated.
 
   */
-  virtual void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) = 0;
+  virtual void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const = 0;
   /*!
 
     Computes the features parameters in the camera frame (\e cP) thanks
@@ -132,31 +116,6 @@ public:
     the vpTracker::cP public attribute.
   */
   virtual void changeFrame(const vpHomogeneousMatrix &cMo) = 0;
-  /*!
-
-    Computes the feature parameters in the image plane from the
-    parameters expressed in the camera frame.
-
-    \param cP [input] : Feature parameters expressed in the camera frame.
-
-    \param p [output] : Feature parameters expressed in the image plane.
-  */
-  virtual void projection(const vpColVector &cP, vpColVector &p) = 0;
-
-  /*!
-    Computes the feature parameters in the image plane. These
-    parameters are than updated in the vpTracker::p public attribute.
-
-    \warning To compute these parameters, the method exploit the
-    feature parameters in the camera frame. Thus, vpTracker::cP need
-    to be updated before the call of this method.  For that, a call to
-    changeFrame(const vpHomogeneousMatrix &) is requested.
-  */
-  virtual void projection() = 0;
-
-  void project();
-  void project(const vpHomogeneousMatrix &cMo);
-  void track(const vpHomogeneousMatrix &cMo);
 
   /*!
 
@@ -197,33 +156,80 @@ public:
   virtual void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                        const vpColor &color = vpColor::green, unsigned int thickness = 1) = 0;
 
-  virtual void print() const;
-
   /*!
     Create an object with the same type.
   */
   virtual vpForwardProjection *duplicate() const = 0;
 
-public:
+  //! Return object parameters expressed in the 3D object frame.
+  vpColVector get_oP() const { return oP; }
+
+  vpForwardProjectionDeallocatorType getDeallocate() { return deallocate; }
+
+  virtual void print() const;
+
   /*!
-    Used for memory issue especially in the vpServo class.
+
+    Computes the feature parameters in the image plane from the
+    parameters expressed in the camera frame.
+
+    \param cP [input] : Feature parameters expressed in the camera frame.
+
+    \param p [output] : Feature parameters expressed in the image plane.
   */
-  typedef enum { user, vpDisplayForwardProjection } vpForwardProjectionDeallocatorType;
+  virtual void projection(const vpColVector &cP, vpColVector &p) const = 0;
+
+  /*!
+    Computes the feature parameters in the image plane. These
+    parameters are than updated in the vpTracker::p public attribute.
+
+    \warning To compute these parameters, the method exploit the
+    feature parameters in the camera frame. Thus, vpTracker::cP need
+    to be updated before the call of this method.  For that, a call to
+    changeFrame(const vpHomogeneousMatrix &) is requested.
+  */
+  virtual void projection() = 0;
+
+  void project();
+  void project(const vpHomogeneousMatrix &cMo);
+
+  void setDeallocate(vpForwardProjectionDeallocatorType d) { deallocate = d; }
+
+  /*!
+    Sets the parameters which define the feature in the object frame.
+
+    \param oP : Feature parameters expressed in the object frame used
+    to set the vpForwardProjection::oP public attribute.
+
+  */
+  virtual void setWorldCoordinates(const vpColVector &oP) = 0;
+
+  void track(const vpHomogeneousMatrix &cMo);
+  //@}
+
+protected:
+  /** @name Protected Member Functions Inherited from vpForwardProjection */
+  //@{
+  /*!
+    Default initialisation of the feature parameters:
+    - in the object frame: \e oP
+    - in the camera frame: \e cP
+    - in the image plane: \e p.
+  */
+  virtual void init() = 0;
+  //@}
+
+public:
+  /** @name Public Attributes Inherited from vpForwardProjection */
+  //@{
+  /*!
+    Feature coordinates expressed in the object frame.
+  */
+  vpColVector oP;
+  //@}
 
 private:
   vpForwardProjectionDeallocatorType deallocate;
-
-public:
-  vpForwardProjection() : oP(), deallocate(user) {}
-
-  void setDeallocate(vpForwardProjectionDeallocatorType d) { deallocate = d; }
-  vpForwardProjectionDeallocatorType getDeallocate() { return deallocate; }
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

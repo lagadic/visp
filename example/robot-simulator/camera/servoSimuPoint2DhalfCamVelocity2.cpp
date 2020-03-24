@@ -68,7 +68,7 @@ bool getOptions(int argc, const char **argv);
 
 /*!
 
-Print the program options.
+  Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
@@ -97,7 +97,7 @@ OPTIONS:                                               Default\n\
 
 /*!
 
-Set the program options.
+  Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
@@ -114,12 +114,10 @@ bool getOptions(int argc, const char **argv)
     case 'h':
       usage(argv[0], NULL);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
