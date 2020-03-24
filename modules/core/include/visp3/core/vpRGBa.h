@@ -87,7 +87,7 @@ public:
     \param a : Additional value.
 
   */
-  inline vpRGBa(const unsigned char &r, const unsigned char &g, const unsigned char &b, const unsigned char &a = 0)
+  inline vpRGBa(const unsigned char &r, const unsigned char &g, const unsigned char &b, const unsigned char &a = 255)
     : R(r), G(g), B(b), A(a)
   {
   }
