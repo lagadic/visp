@@ -52,11 +52,6 @@
 */
 
 #include <iostream>
-
-#include <visp3/core/vpConfig.h>
-
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -65,6 +60,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -186,23 +182,28 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> Iint(512, 512, 0);
     vpImage<unsigned char> Iext(512, 512, 0);
 
-// We open a window using either X11, GTK or GDI.
-#if defined VISP_HAVE_X11
+// We open a window if a display is available
+#ifdef VISP_HAVE_DISPLAY
+#  if defined VISP_HAVE_X11
     vpDisplayX displayInt;
     vpDisplayX displayExt;
-#elif defined VISP_HAVE_GTK
+#  elif defined VISP_HAVE_GTK
     vpDisplayGTK displayInt;
     vpDisplayGTK displayExt;
-#elif defined VISP_HAVE_GDI
+#  elif defined VISP_HAVE_GDI
     vpDisplayGDI displayInt;
     vpDisplayGDI displayExt;
-#elif defined VISP_HAVE_OPENCV
+#  elif defined VISP_HAVE_OPENCV
     vpDisplayOpenCV displayInt;
     vpDisplayOpenCV displayExt;
+#  elif defined VISP_HAVE_D3D9
+    vpDisplayD3D displayInt;
+    vpDisplayD3D displayExt;
+#endif
 #endif
 
     if (opt_display) {
-#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
+#ifdef VISP_HAVE_DISPLAY
       // Display size is automatically defined by the image (Iint) and
       // (Iext) size
       displayInt.init(Iint, 100, 100, "Internal view");
@@ -219,7 +220,9 @@ int main(int argc, const char **argv)
       vpDisplay::flush(Iext);
     }
 
+#ifdef VISP_HAVE_DISPLAY
     vpProjectionDisplay externalview;
+#endif
 
     // Set the camera parameters
     double px, py;
@@ -247,8 +250,9 @@ int main(int argc, const char **argv)
                         0, 0, 0, // point of the axis
                         0.1);    // radius
 
+#ifdef VISP_HAVE_DISPLAY
     externalview.insert(cylinder);
-
+#endif
     // sets the desired position of the visual feature
     cylinder.track(cMod);
     cylinder.print();
@@ -294,7 +298,9 @@ int main(int argc, const char **argv)
 
     // Display the initial scene
     vpServoDisplay::display(task, cam, Iint);
+#ifdef VISP_HAVE_DISPLAY
     externalview.display(Iext, cextMo, cMo, cam, vpColor::red);
+#endif
     vpDisplay::flush(Iint);
     vpDisplay::flush(Iext);
 
@@ -342,7 +348,9 @@ int main(int argc, const char **argv)
         vpDisplay::display(Iint);
         vpDisplay::display(Iext);
         vpServoDisplay::display(task, cam, Iint);
+#ifdef VISP_HAVE_DISPLAY
         externalview.display(Iext, cextMo, cMo, cam, vpColor::red);
+#endif
       }
 
       // compute the control law
@@ -461,15 +469,3 @@ int main(int argc, const char **argv)
     return EXIT_FAILURE;
   }
 }
-
-#else
-int main()
-{
-  std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..." << std::endl;
-  std::cout << "Tip if you are on a unix-like system:" << std::endl;
-  std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
-  std::cout << "Tip if you are on a windows-like system:" << std::endl;
-  std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
-  return EXIT_SUCCESS;
-}
-#endif
