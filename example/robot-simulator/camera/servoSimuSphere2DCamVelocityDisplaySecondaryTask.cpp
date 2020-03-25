@@ -53,6 +53,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpSphere.h>
+#include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -176,19 +177,24 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I(512, 512, 0);
     vpImage<unsigned char> Iext(512, 512, 0);
 
-// We open a window using either X11, GTK or GDI.
-#if defined VISP_HAVE_X11
+    // We open a window if a display is available
+#ifdef VISP_HAVE_DISPLAY
+#  if defined VISP_HAVE_X11
     vpDisplayX displayI;
     vpDisplayX displayExt;
-#elif defined VISP_HAVE_GTK
+#  elif defined VISP_HAVE_GTK
     vpDisplayGTK displayI;
     vpDisplayGTK displayExt;
-#elif defined VISP_HAVE_GDI
+#  elif defined VISP_HAVE_GDI
     vpDisplayGDI displayI;
     vpDisplayGDI displayExt;
-#elif defined VISP_HAVE_OPENCV
+#  elif defined VISP_HAVE_OPENCV
     vpDisplayOpenCV displayI;
     vpDisplayOpenCV displayExt;
+#  elif defined VISP_HAVE_D3D9
+    vpDisplayD3D displayI;
+    vpDisplayD3D displayExt;
+#  endif
 #endif
 
     if (opt_display) {
@@ -208,7 +214,9 @@ int main(int argc, const char **argv)
       vpDisplay::flush(Iext);
     }
 
+#ifdef VISP_HAVE_DISPLAY
     vpProjectionDisplay externalview;
+#endif
 
     double px = 600, py = 600;
     double u0 = I.getWidth()/2., v0 = I.getHeight() / 2.;
@@ -237,8 +245,9 @@ int main(int argc, const char **argv)
     vpSphere sphere;
     sphere.setWorldCoordinates(0, 0, 0, 0.1);
 
+#ifdef VISP_HAVE_DISPLAY
     externalview.insert(sphere);
-
+#endif
     // sets the desired position of the visual feature
     vpFeatureEllipse pd;
     sphere.track(cMod);
@@ -267,7 +276,9 @@ int main(int argc, const char **argv)
 
     // Display the initial scene
     vpServoDisplay::display(task, cam, I);
+#ifdef VISP_HAVE_DISPLAY
     externalview.display(Iext, cextMo, cMo, cam, vpColor::red);
+#endif
     vpDisplay::flush(I);
     vpDisplay::flush(Iext);
 
@@ -301,7 +312,9 @@ int main(int argc, const char **argv)
         vpDisplay::display(I);
         vpDisplay::display(Iext);
         vpServoDisplay::display(task, cam, I);
+#ifdef VISP_HAVE_DISPLAY
         externalview.display(Iext, cextMo, cMo, cam, vpColor::red);
+#endif
       }
 
       // compute the control law
