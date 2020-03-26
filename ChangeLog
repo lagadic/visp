@@ -17,6 +17,7 @@ ViSP 3.3.1 (under development)
       large (> 50.000)
     . [#728] vpProjectionDisplay doesn't display frame with RGB colors respectively
       for X, Y and Z axis
+    . [#731] Link issues using pkgconfig with static libraries
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:
