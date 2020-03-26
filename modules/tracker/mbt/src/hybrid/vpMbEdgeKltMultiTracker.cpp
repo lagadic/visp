@@ -1038,7 +1038,7 @@ void vpMbEdgeKltMultiTracker::initClick(const std::map<std::string, const vpImag
 }
 #endif //#ifdef VISP_HAVE_MODULE_GUI
 
-void vpMbEdgeKltMultiTracker::initCircle(const vpPoint &, const vpPoint &, const vpPoint &, const double, const int,
+void vpMbEdgeKltMultiTracker::initCircle(const vpPoint &, const vpPoint &, const vpPoint &, double, int,
                                          const std::string &)
 {
   std::cerr << "The method initCircle is not used in vpMbEdgeKltMultiTracker !" << std::endl;

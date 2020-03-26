@@ -214,9 +214,9 @@ public:
                          const std::map<std::string, std::string> &mapOfInitFiles, bool displayHelp = false);
 #endif
 
-  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, const double, const int,
+  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, double, int,
                           const std::string &name = "");
-  virtual void initCylinder(const vpPoint &, const vpPoint &, const double, const int, const std::string &name = "");
+  virtual void initCylinder(const vpPoint &, const vpPoint &, double, int, const std::string &name = "");
 
   virtual void initFromPose(const vpImage<unsigned char> &I, const std::string &initFile);
   virtual void initFromPose(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo);
