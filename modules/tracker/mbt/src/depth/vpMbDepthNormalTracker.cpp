@@ -816,13 +816,13 @@ void vpMbDepthNormalTracker::track(const std::vector<vpColVector> &point_cloud, 
 }
 
 void vpMbDepthNormalTracker::initCircle(const vpPoint & /*p1*/, const vpPoint & /*p2*/, const vpPoint & /*p3*/,
-                                        const double /*radius*/, const int /*idFace*/, const std::string & /*name*/)
+                                        double /*radius*/, int /*idFace*/, const std::string & /*name*/)
 {
   throw vpException(vpException::fatalError, "vpMbDepthNormalTracker::initCircle() should not be called!");
 }
 
-void vpMbDepthNormalTracker::initCylinder(const vpPoint & /*p1*/, const vpPoint & /*p2*/, const double /*radius*/,
-                                          const int /*idFace*/, const std::string & /*name*/)
+void vpMbDepthNormalTracker::initCylinder(const vpPoint & /*p1*/, const vpPoint & /*p2*/, double /*radius*/,
+                                          int /*idFace*/, const std::string & /*name*/)
 {
   throw vpException(vpException::fatalError, "vpMbDepthNormalTracker::initCylinder() should not be called!");
 }

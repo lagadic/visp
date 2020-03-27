@@ -742,13 +742,13 @@ void vpMbDepthDenseTracker::track(const std::vector<vpColVector> &point_cloud, u
 }
 
 void vpMbDepthDenseTracker::initCircle(const vpPoint & /*p1*/, const vpPoint & /*p2*/, const vpPoint & /*p3*/,
-                                       const double /*radius*/, const int /*idFace*/, const std::string & /*name*/)
+                                       double /*radius*/, int /*idFace*/, const std::string & /*name*/)
 {
   throw vpException(vpException::fatalError, "vpMbDepthDenseTracker::initCircle() should not be called!");
 }
 
-void vpMbDepthDenseTracker::initCylinder(const vpPoint & /*p1*/, const vpPoint & /*p2*/, const double /*radius*/,
-                                         const int /*idFace*/, const std::string & /*name*/)
+void vpMbDepthDenseTracker::initCylinder(const vpPoint & /*p1*/, const vpPoint & /*p2*/, double /*radius*/,
+                                         int /*idFace*/, const std::string & /*name*/)
 {
   throw vpException(vpException::fatalError, "vpMbDepthDenseTracker::initCylinder() should not be called!");
 }
