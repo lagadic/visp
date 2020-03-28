@@ -59,6 +59,7 @@
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpPlot.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/robot/vpSimulatorCamera.h>
@@ -70,11 +71,6 @@
 #define GETOPTARGS "dh"
 
 #ifdef VISP_HAVE_DISPLAY
-
-void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &display);
-void computeVisualFeatures(const vpSphere &sphere, vpGenericFeature &s);
-void computeInteractionMatrix(const vpGenericFeature &s, const vpSphere &sphere, vpMatrix &L);
 
 /*!
 
@@ -101,6 +97,9 @@ OPTIONS:                                               Default\n\
   -d \n\
      Turn off the display.\n\
             \n\
+  -p \n\
+     Turn off the plotter.\n\
+                                    \n\
   -h\n\
      Print the help.\n");
 
@@ -115,11 +114,12 @@ OPTIONS:                                               Default\n\
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
   \param display : Display activation.
+  \param plot : Plotter activation.
 
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &display)
+bool getOptions(int argc, const char **argv, bool &display, bool &plot)
 {
   const char *optarg_;
   int c;
@@ -129,15 +129,16 @@ bool getOptions(int argc, const char **argv, bool &display)
     case 'd':
       display = false;
       break;
+    case 'p':
+      plot = false;
+      break;
     case 'h':
       usage(argv[0], NULL);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -215,9 +216,10 @@ int main(int argc, const char **argv)
 {
   try {
     bool opt_display = true;
+    bool opt_plot = true;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_display) == false) {
+    if (getOptions(argc, argv, opt_display, opt_plot) == false) {
       exit(-1);
     }
 
@@ -243,7 +245,7 @@ int main(int argc, const char **argv)
       display[1].init(Iext1, 100, 100, "The first external view");
       display[2].init(Iext2, 100, 100, "The second external view");
       vpDisplay::setWindowPosition(Iint, 0, 0);
-      vpDisplay::setWindowPosition(Iext1, 700, 0);
+      vpDisplay::setWindowPosition(Iext1, 750, 0);
       vpDisplay::setWindowPosition(Iext2, 0, 550);
       vpDisplay::display(Iint);
       vpDisplay::flush(Iint);
@@ -253,9 +255,11 @@ int main(int argc, const char **argv)
       vpDisplay::flush(Iext2);
     }
 
+    vpPlot *plotter = NULL;
+
     vpServo task;
     vpSimulatorCamera robot;
-    float sampling_time = 0.040f; // Sampling period in second
+    float sampling_time = 0.020f; // Sampling period in second
     robot.setSamplingTime(sampling_time);
 
     // Since the task gain lambda is very high, we need to increase default
@@ -310,6 +314,23 @@ int main(int argc, const char **argv)
 
     task.setLambda(7);
 
+    if (opt_plot) {
+      plotter = new vpPlot(2, 480, 640, 750, 550, "Real time curves plotter");
+      plotter->setTitle(0, "Visual features error");
+      plotter->setTitle(1, "Camera velocities");
+      plotter->initGraph(0, task.getDimension());
+      plotter->initGraph(1, 6);
+      plotter->setLegend(0, 0, "error_feat_sx");
+      plotter->setLegend(0, 1, "error_feat_sy");
+      plotter->setLegend(0, 2, "error_feat_sz");
+      plotter->setLegend(1, 0, "vc_x");
+      plotter->setLegend(1, 1, "vc_y");
+      plotter->setLegend(1, 2, "vc_z");
+      plotter->setLegend(1, 3, "wc_x");
+      plotter->setLegend(1, 4, "wc_y");
+      plotter->setLegend(1, 5, "wc_z");
+    }
+
     vpWireFrameSimulator sim;
 
     // Set the scene
@@ -333,10 +354,10 @@ int main(int argc, const char **argv)
     sim.setInternalCameraParameters(camera);
     sim.setExternalCameraParameters(camera);
 
-    int stop = 10;
+    int max_iter = 10;
 
     if (opt_display) {
-      stop = 1000;
+      max_iter = 1000;
       // Get the internal and external views
       sim.getInternalImage(Iint);
       sim.getExternalImage(Iext1);
@@ -356,6 +377,8 @@ int main(int argc, const char **argv)
       vpDisplay::displayFrame(Iext2, camoMf, camera, 0.2, vpColor::none);
       vpDisplay::displayFrame(Iext2, camoMf * sim.get_fMo(), camera, 0.05, vpColor::none);
 
+      vpDisplay::displayText(Iint, 20, 20, "Click to start visual servo", vpColor::red);
+
       vpDisplay::flush(Iint);
       vpDisplay::flush(Iext1);
       vpDisplay::flush(Iext2);
@@ -370,16 +393,20 @@ int main(int argc, const char **argv)
     task.print();
 
     int iter = 0;
+    bool stop = false;
     vpColVector v;
 
-    while (iter++ < stop) {
+    double t_prev, t = vpTime::measureTimeMs();
+
+    while (iter++ < max_iter && !stop) {
+      t_prev = t;
+      t = vpTime::measureTimeMs();
+
       if (opt_display) {
         vpDisplay::display(Iint);
         vpDisplay::display(Iext1);
         vpDisplay::display(Iext2);
       }
-
-      double t = vpTime::measureTimeMs();
 
       robot.get_eJe(eJe);
       task.set_eJe(eJe);
@@ -400,6 +427,11 @@ int main(int argc, const char **argv)
       // object frame
       camoMf.buildFrom(0, 0.0, 2.5, 0, vpMath::rad(150), 0);
       camoMf = camoMf * (sim.get_fMo().inverse());
+
+      if (opt_plot) {
+        plotter->plot(0, iter, task.getError());
+        plotter->plot(1, iter, v);
+      }
 
       if (opt_display) {
         // Get the internal and external views
@@ -422,14 +454,38 @@ int main(int argc, const char **argv)
         vpDisplay::displayFrame(Iext2, camoMf, camera, 0.2, vpColor::none);
         vpDisplay::displayFrame(Iext2, camoMf * sim.get_fMo(), camera, 0.05, vpColor::none);
 
+        vpDisplay::displayText(Iint, 20, 20, "Click to stop visual servo", vpColor::red);
+
+        std::stringstream ss;
+        ss << "Loop time: " << t - t_prev << " ms";
+        vpDisplay::displayText(Iint, 40, 20, ss.str(), vpColor::red);
+
+        if (vpDisplay::getClick(Iint, false)) {
+          stop = true;
+        }
+
         vpDisplay::flush(Iint);
         vpDisplay::flush(Iext1);
         vpDisplay::flush(Iext2);
+
+        vpTime::wait(t, sampling_time * 1000); // Wait ms
       }
 
-      vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
-
       std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
+    }
+
+    if (opt_plot && plotter != NULL) {
+      vpDisplay::display(Iint);
+      sim.getInternalImage(Iint);
+      vpDisplay::displayFrame(Iint, cMo, camera, 0.2, vpColor::none);
+      vpDisplay::displayFrame(Iint, cdMo, camera, 0.2, vpColor::none);
+      vpDisplay::displayText(Iint, 20, 20, "Click to quit", vpColor::red);
+      if (vpDisplay::getClick(Iint)) {
+        stop = true;
+      }
+      vpDisplay::flush(Iint);
+
+      delete plotter;
     }
 
     task.print();
