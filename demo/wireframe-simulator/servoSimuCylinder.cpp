@@ -95,7 +95,7 @@ at a given distance from the world frame. In fact the object trajectory \n\
 is on a sphere whose center is the origin of the world frame.\n\
           \n\
 SYNOPSIS\n\
-  %s [-d] [-h]\n", name);
+  %s [-d] [-p] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                          \n\

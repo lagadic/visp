@@ -68,7 +68,7 @@
 #include <visp3/visual_features/vpGenericFeature.h>
 #include <visp3/vs/vpServo.h>
 
-#define GETOPTARGS "dh"
+#define GETOPTARGS "dhp"
 
 #ifdef VISP_HAVE_DISPLAY
 
@@ -90,7 +90,7 @@ The visual servoing consists in bringing the camera at a desired position from t
 The visual features used to compute the pose of the camera and thus the control law are special moments computed with the sphere's parameters.\n\
           \n\
 SYNOPSIS\n\
-  %s [-d] [-h]\n", name);
+  %s [-d]  [-p] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
