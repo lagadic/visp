@@ -325,7 +325,7 @@ int main(int argc, const char **argv)
       // Display a rectangle
       ip.set_i(I.getHeight() - 45);
       ip.set_j(-10);
-      vpDisplay::displayRectangle(I, ip, 60, 80, vpColor::orange, true, 2U, 0.5);
+      vpDisplay::displayRectangle(I, ip, 60, 80, vpColor(vpColor::orange, 127), true, 2U);
 
       // Display in overlay a blue arrow
       ip1.set_i(0);

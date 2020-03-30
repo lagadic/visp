@@ -284,12 +284,12 @@ int main(int argc, const char **argv)
       vpDisplay::display(I);
 
       // Display a transparent circle onto the image
-      vpColor transparent_red(vpColor::red, 127)
-      vpDisplay::displayCircle(I, vpImagePoint(I.getHeight() / 3, I.getWidth() / 2), I.getHeight() / 4, transparent_red, true, 1);
+      vpColor transparent_red(vpColor::red, 127);
+      vpDisplay::displayCircle(I, vpImagePoint(I.getHeight() / 3, I.getWidth() / 2), I.getHeight() / 4, transparent_red, true);
 
       // Display a second transparent circle
       vpColor very_transparent_blue(0, 0, 255, 63);
-      vpDisplay::displayCircle(I, vpImagePoint(2 * I.getHeight() / 3, I.getWidth() / 2), I.getHeight() / 4, very_transparent_blue, true, 1);
+      vpDisplay::displayCircle(I, vpImagePoint(2 * I.getHeight() / 3, I.getWidth() / 2), I.getHeight() / 4, very_transparent_blue, true);
       vpDisplay::flush(I);
 
       // Create a color image
