@@ -2216,7 +2216,7 @@ void vpDisplayOpenCV::overlay(std::function<void(cv::Mat&)> overlay_function, do
     overlay = m_background;
   }      
 
-  overlay_function(m_background);
+  overlay_function(overlay);
 
   // Blend background and overlay
   if (opacity < 1.0)
