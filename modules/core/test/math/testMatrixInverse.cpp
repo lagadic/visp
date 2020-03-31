@@ -228,8 +228,7 @@ void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, 
   bench.clear();
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) ||                \
-    defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     double det = 0.;
     // don't put singular matrices in the benchmark
     for (M = make_random_matrix(nb_rows, nb_cols); std::fabs(det = M.AtA().det()) < .01;
@@ -255,8 +254,7 @@ void create_bench_symmetric_positive_matrix(unsigned int nb_matrices, unsigned i
   bench.clear();
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) ||                \
-    defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     double det = 0.;
     // don't put singular matrices in the benchmark
     for (M = make_random_symmetric_positive_matrix(n); std::fabs(det = M.det()) < .01;
@@ -275,16 +273,29 @@ void create_bench_symmetric_positive_matrix(unsigned int nb_matrices, unsigned i
   }
 }
 
-void create_bench_random_triangular_matrix(unsigned int nb_matrices, unsigned int nb_rows, bool verbose,
+void create_bench_random_triangular_matrix(unsigned int nb_matrices, unsigned int n, bool verbose,
                                            std::vector<vpMatrix> &bench)
 {
   if (verbose)
-    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows << " by " << nb_rows << " triangular matrices" << std::endl;
+    std::cout << "Create a bench of " << nb_matrices << " " << n << " by " << n << " triangular matrices" << std::endl;
   bench.clear();
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
-    M = make_random_triangular_matrix(nb_rows);
-    //#endif
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+    double det = 0.;
+    // don't put singular matrices in the benchmark
+    for (M = make_random_triangular_matrix(n); std::fabs(det = M.det()) < .01;
+         M = make_random_triangular_matrix(n)) {
+      if (verbose) {
+        std::cout << "  Generated random symmetric positive matrix A=" << std::endl << M << std::endl;
+        std::cout << "  Generated random symmetric positive matrix not "
+                     "invertibleL: det="
+                  << det << ". Retrying..." << std::endl;
+      }
+    }
+#else
+    M = make_random_triangular_matrix(n);
+#endif
     bench.push_back(M);
   }
 }
@@ -422,8 +433,7 @@ int test_inverse_cholesky_opencv(bool verbose, const std::vector<vpMatrix> &benc
 }
 #endif
 
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) ||                \
-    defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 // SVD is only available for these 3rd parties
 int test_pseudo_inverse(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
@@ -478,8 +488,7 @@ void save_time(const std::string &method, bool verbose, bool use_plot_file, std:
 int main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) ||                \
-    defined(VISP_HAVE_GSL) || defined(VISP_HAVE_MKL)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     unsigned int nb_matrices = 1000;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
@@ -512,10 +521,6 @@ int main(int argc, const char *argv[])
       of << "\"LU OpenCV\""
          << "\t";
 #endif
-#if defined(VISP_HAVE_GSL)
-      of << "\"LU GSL\""
-         << "\t";
-#endif
 
 #if defined(VISP_HAVE_LAPACK)
       of << "\"Cholesky Lapack\""
@@ -532,8 +537,8 @@ int main(int argc, const char *argv[])
          << "\t";
 #endif
 
-#if defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
-      of << "\"Pseudo inverse (Lapack, OpenCV, GSL)\""
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+      of << "\"Pseudo inverse (Lapack, Eigen3 or OpenCV)\""
          << "\t";
 #endif
       of << std::endl;
@@ -586,10 +591,9 @@ int main(int argc, const char *argv[])
 #endif
 
       // Pseudo-inverse with SVD
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || \
-    defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       ret += test_pseudo_inverse(verbose, bench_random_matrices, time);
-      save_time("Pseudo inverse (Lapack, Eigen3, OpenCV or GSL): ", verbose, use_plot_file, of, time);
+      save_time("Pseudo inverse (Lapack, Eigen3, OpenCV): ", verbose, use_plot_file, of, time);
 #endif
 
       // Test inverse triangular
