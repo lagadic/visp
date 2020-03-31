@@ -447,68 +447,6 @@ int test_pseudo_inverse_lapack(bool verbose, const std::vector<vpMatrix> &bench,
 }
 #endif
 
-#if defined(VISP_HAVE_GSL)
-int test_pseudo_inverse_gsl(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time)
-{
-  if (verbose)
-    std::cout << "Test pseudo-inverse using Gsl 3rd party" << std::endl;
-  if (verbose)
-    std::cout << "  Pseudo-inverse on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
-
-  size_t size = bench.size();
-  std::vector<vpMatrix> PI(size), imA(size), imAt(size), kerAt(size);
-  std::vector<vpColVector> sv(size);
-  int ret = EXIT_SUCCESS;
-
-  // test 0
-  unsigned int test = 0;
-  double t = vpTime::measureTimeMs();
-  for (unsigned int i = 0; i < bench.size(); i++) {
-    PI[i] = bench[i].pseudoInverseGsl();
-  }
-  time[test] = vpTime::measureTimeMs() - t;
-  for (unsigned int i = 0; i < time.size(); i++) {
-    ret += test_pseudo_inverse(bench, PI);
-  }
-
-  // test 1
-  test++;
-  t = vpTime::measureTimeMs();
-  for (unsigned int i = 0; i < bench.size(); i++) {
-    bench[i].pseudoInverseGsl(PI[i]);
-  }
-  time[test] = vpTime::measureTimeMs() - t;
-  for (unsigned int i = 0; i < time.size(); i++) {
-    ret += test_pseudo_inverse(bench, PI);
-  }
-
-  // test 2
-  test++;
-  t = vpTime::measureTimeMs();
-  for (unsigned int i = 0; i < bench.size(); i++) {
-    bench[i].pseudoInverseGsl(PI[i], sv[i]);
-  }
-  time[test] = vpTime::measureTimeMs() - t;
-  for (unsigned int i = 0; i < time.size(); i++) {
-    ret += test_pseudo_inverse(bench, PI);
-  }
-
-  // test 3
-  test++;
-  t = vpTime::measureTimeMs();
-  for (unsigned int i = 0; i < bench.size(); i++) {
-    bench[i].pseudoInverseGsl(PI[i], sv[i], 1e-6, imA[i], imAt[i], kerAt[i]);
-  }
-  time[test] = vpTime::measureTimeMs() - t;
-
-  for (unsigned int i = 0; i < time.size(); i++) {
-    ret += test_pseudo_inverse(bench, PI, sv, imA, imAt, kerAt);
-  }
-
-  return ret;
-}
-#endif
-
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 int test_pseudo_inverse_opencv(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time)
 {
@@ -683,11 +621,6 @@ int main(int argc, const char *argv[])
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
         ret += test_pseudo_inverse_opencv(verbose, bench_random_matrices, time);
         save_time("OpenCV -", nrows[s], ncols[s], verbose, use_plot_file, of, time);
-#endif
-
-#if defined(VISP_HAVE_GSL)
-        ret += test_pseudo_inverse_gsl(verbose, bench_random_matrices, time);
-        save_time("GSL -", nrows[s], ncols[s], verbose, use_plot_file, of, time);
 #endif
       }
       if (use_plot_file)

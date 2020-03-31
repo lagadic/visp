@@ -203,6 +203,23 @@ vpMatrix make_random_symmetric_positive_matrix(unsigned int n)
   return A;
 }
 
+vpMatrix make_random_triangular_matrix(unsigned int nbrows)
+{
+  vpMatrix A;
+  A.resize(nbrows, nbrows);
+
+  for(unsigned int i=0; i < A.getRows(); i++) {
+    for(unsigned int j=i; j<A.getCols(); j++) {
+      A[i][j] = static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
+      if (i != j) {
+        A[j][i] = 0;
+      }
+    }
+  }
+
+  return A;
+}
+
 void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, unsigned int nb_cols, bool verbose,
                                 std::vector<vpMatrix> &bench)
 {
@@ -254,6 +271,20 @@ void create_bench_symmetric_positive_matrix(unsigned int nb_matrices, unsigned i
 #else
     M = make_random_symmetric_positive_matrix(n);
 #endif
+    bench.push_back(M);
+  }
+}
+
+void create_bench_random_triangular_matrix(unsigned int nb_matrices, unsigned int nb_rows, bool verbose,
+                                           std::vector<vpMatrix> &bench)
+{
+  if (verbose)
+    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows << " by " << nb_rows << " triangular matrices" << std::endl;
+  bench.clear();
+  for (unsigned int i = 0; i < nb_matrices; i++) {
+    vpMatrix M;
+    M = make_random_triangular_matrix(nb_rows);
+    //#endif
     bench.push_back(M);
   }
 }
@@ -351,27 +382,6 @@ int test_inverse_qr_lapack(bool verbose, const std::vector<vpMatrix> &bench, dou
 }
 #endif
 
-#if defined(VISP_HAVE_GSL)
-int test_inverse_lu_gsl(bool verbose, const std::vector<vpMatrix> &bench, double &time)
-{
-  if (verbose)
-    std::cout << "Test inverse by LU using GSL 3rd party" << std::endl;
-  // Compute inverse
-  if (verbose)
-    std::cout << "  Inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols()
-              << " matrix using LU decomposition (GSL)" << std::endl;
-  std::vector<vpMatrix> result(bench.size());
-  double t = vpTime::measureTimeMs();
-  for (unsigned int i = 0; i < bench.size(); i++) {
-    result[i] = bench[i].AtA().inverseByLUGsl() * bench[i].transpose();
-  }
-  time = vpTime::measureTimeMs() - t;
-
-  // Test inverse
-  return test_inverse(bench, result);
-}
-#endif
-
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 int test_inverse_lu_opencv(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
@@ -429,6 +439,25 @@ int test_pseudo_inverse(bool verbose, const std::vector<vpMatrix> &bench, double
   double t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
     result[i] = bench[i].AtA().pseudoInverse() * bench[i].transpose();
+  }
+  time = vpTime::measureTimeMs() - t;
+
+  // Test inverse
+  return test_inverse(bench, result);
+}
+
+int test_inverse_triangular(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+{
+  if (verbose)
+    std::cout << "Test inverse triangular using Lapack" << std::endl;
+  // Compute inverse
+  if (verbose)
+    std::cout << "  Triangular inverse " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix"
+              << std::endl;
+  std::vector<vpMatrix> result(bench.size());
+  double t = vpTime::measureTimeMs();
+  for (unsigned int i = 0; i < bench.size(); i++) {
+    result[i] = bench[i].inverseTriangular(true);
   }
   time = vpTime::measureTimeMs() - t;
 
@@ -516,12 +545,14 @@ int main(int argc, const char *argv[])
       create_bench_random_matrix(nb_matrices, nb_rows, nb_cols, verbose, bench_random_matrices);
       std::vector<vpMatrix> bench_symmetric_positive_matrices;
       create_bench_symmetric_positive_matrix(nb_matrices, nb_rows, verbose, bench_symmetric_positive_matrices);
+      std::vector<vpMatrix> bench_triangular_matrices;
+      create_bench_random_triangular_matrix(nb_matrices, nb_rows, verbose, bench_triangular_matrices);
 
       if (use_plot_file)
         of << iter << "\t";
 
       double time;
-// LU decomposition
+      // LU decomposition
 #if defined(VISP_HAVE_LAPACK)
       ret += test_inverse_lu_lapack(verbose, bench_random_matrices, time);
       save_time("Inverse by LU (Lapack): ", verbose, use_plot_file, of, time);
@@ -537,12 +568,7 @@ int main(int argc, const char *argv[])
       save_time("Inverse by LU (OpenCV): ", verbose, use_plot_file, of, time);
 #endif
 
-#if defined(VISP_HAVE_GSL)
-      ret += test_inverse_lu_gsl(verbose, bench_random_matrices, time);
-      save_time("Inverse by LU (GSL): ", verbose, use_plot_file, of, time);
-#endif
-
-// Cholesky for symmetric positive matrices
+      // Cholesky for symmetric positive matrices
 #if defined(VISP_HAVE_LAPACK)
       ret += test_inverse_cholesky_lapack(verbose, bench_symmetric_positive_matrices, time);
       save_time("Inverse by Cholesly (Lapack): ", verbose, use_plot_file, of, time);
@@ -553,17 +579,23 @@ int main(int argc, const char *argv[])
       save_time("Inverse by Cholesky (OpenCV): ", verbose, use_plot_file, of, time);
 #endif
 
-// QR decomposition
+      // QR decomposition
 #if defined(VISP_HAVE_LAPACK)
       ret += test_inverse_qr_lapack(verbose, bench_random_matrices, time);
       save_time("Inverse by QR (Lapack): ", verbose, use_plot_file, of, time);
 #endif
 
-// Pseudo-inverse with SVD
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) ||                \
+      // Pseudo-inverse with SVD
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) || \
     defined(VISP_HAVE_GSL)
       ret += test_pseudo_inverse(verbose, bench_random_matrices, time);
       save_time("Pseudo inverse (Lapack, Eigen3, OpenCV or GSL): ", verbose, use_plot_file, of, time);
+#endif
+
+      // Test inverse triangular
+#if defined(VISP_HAVE_LAPACK)
+      ret += test_inverse_triangular(verbose, bench_triangular_matrices, time);
+      save_time("Triangular inverse (Lapack): ", verbose, use_plot_file, of, time);
 #endif
 
       if (use_plot_file)
