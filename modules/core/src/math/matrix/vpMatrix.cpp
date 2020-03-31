@@ -53,13 +53,6 @@
 #include <vector>
 
 #include <visp3/core/vpConfig.h>
-
-#ifdef VISP_HAVE_GSL
-#include <gsl/gsl_eigen.h>
-#include <gsl/gsl_math.h>
-#include <gsl/gsl_linalg.h>
-#endif
-
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpDebug.h>
@@ -68,7 +61,49 @@
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpTranslationVector.h>
 
-const unsigned int vpMatrix::m_lapack_min_size_default = 8;
+#ifdef VISP_HAVE_LAPACK
+#  ifdef VISP_HAVE_GSL
+#    include <gsl/gsl_eigen.h>
+#    include <gsl/gsl_math.h>
+#    include <gsl/gsl_linalg.h>
+#  elif defined(VISP_HAVE_MKL)
+#    include <mkl.h>
+typedef MKL_INT integer;
+
+void vpMatrix::blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data, unsigned int lda_,
+                          double *w_data, double *work_data, unsigned int lwork_, int &info_)
+{
+  MKL_INT n = static_cast<MKL_INT>(n_);
+  MKL_INT lda = static_cast<MKL_INT>(lda_);
+  MKL_INT lwork = static_cast<MKL_INT>(lwork_);
+  MKL_INT info = static_cast<MKL_INT>(info_);
+
+  dsyev(&jobz, &uplo, &n, a_data, &lda, w_data, work_data, &lwork, &info);
+}
+
+#  else
+#    if defined(VISP_HAVE_LAPACK_BUILT_IN)
+typedef long int integer;
+#    else
+typedef int integer;
+#    endif
+extern "C" int dsyev_(char *jobz, char *uplo, integer *n, double *a, integer *lda,
+                      double *w, double *WORK, integer *lwork, integer *info);
+
+void vpMatrix::blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data, unsigned int lda_,
+                          double *w_data, double *work_data, unsigned int lwork_, int &info_)
+{
+  integer n = static_cast<integer>(n_);
+  integer lda = static_cast<integer>(lda_);
+  integer lwork = static_cast<integer>(lwork_);
+  integer info = static_cast<integer>(info_);
+
+  dsyev_(&jobz, &uplo, &n, a_data, &lda, w_data, work_data, &lwork, &info);
+}
+#  endif
+#endif
+
+const unsigned int vpMatrix::m_lapack_min_size_default = 0;
 unsigned int vpMatrix::m_lapack_min_size = vpMatrix::m_lapack_min_size_default;
 
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
@@ -623,13 +658,13 @@ void vpMatrix::AAt(vpMatrix &B) const
     B.resize(rowNum, rowNum, false, false);
 
   // If available use Lapack only for small matrices
-  bool useLapack = (rowNum > vpMatrix::m_lapack_min_size && colNum > vpMatrix::m_lapack_min_size);
-#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN))
+  bool useLapack = (rowNum > vpMatrix::m_lapack_min_size || colNum > vpMatrix::m_lapack_min_size);
+#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
   useLapack = false;
 #endif
 
   if (useLapack) {
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
     const double alpha = 1.0;
     const double beta = 0.0;
     const char transa = 't';
@@ -675,13 +710,13 @@ void vpMatrix::AtA(vpMatrix &B) const
     B.resize(colNum, colNum, false, false);
 
   // If available use Lapack only for small matrices
-  bool useLapack = (rowNum > vpMatrix::m_lapack_min_size && colNum > vpMatrix::m_lapack_min_size);
-#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN))
+  bool useLapack = (rowNum > vpMatrix::m_lapack_min_size || colNum > vpMatrix::m_lapack_min_size);
+#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
   useLapack = false;
 #endif
 
   if (useLapack) {
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
     const double alpha = 1.0;
     const double beta = 0.0;
     const char transa = 'n';
@@ -1060,13 +1095,13 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
     w.resize(A.rowNum, false);
 
   // If available use Lapack only for small matrices
-  bool useLapack = (A.rowNum > vpMatrix::m_lapack_min_size && A.colNum > vpMatrix::m_lapack_min_size);
-#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN))
+  bool useLapack = (A.rowNum > vpMatrix::m_lapack_min_size || A.colNum > vpMatrix::m_lapack_min_size);
+#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
   useLapack = false;
 #endif
 
   if (useLapack) {
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
     double alpha = 1.0;
     double beta = 0.0;
     char trans = 't';
@@ -1110,13 +1145,13 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
   }
 
   // If available use Lapack only for small matrices
-  bool useLapack = (A.rowNum > vpMatrix::m_lapack_min_size && A.colNum > vpMatrix::m_lapack_min_size && B.colNum > vpMatrix::m_lapack_min_size);
-#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN))
+  bool useLapack = (A.rowNum > vpMatrix::m_lapack_min_size || A.colNum > vpMatrix::m_lapack_min_size || B.colNum > vpMatrix::m_lapack_min_size);
+#if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
   useLapack = false;
 #endif
 
   if (useLapack) {
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
+#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL)
     const double alpha = 1.0;
     const double beta = 0.0;
     const char trans = 'n';
@@ -2120,14 +2155,13 @@ vpColVector vpMatrix::solveBySVD(const vpColVector &B) const
   This function calls the first following function that is available:
   - svdLapack() if Lapack 3rd party is installed
   - svdEigen3() if Eigen3 3rd party is installed
-  - svdOpenCV() if OpenCV 3rd party is installed
-  - svdGsl() if GSL 3rd party is installed.
+  - svdOpenCV() if OpenCV 3rd party is installed.
 
   If none of these previous 3rd parties is installed, we use by default
-svdLapack() with a Lapack built-in version.
+  svdLapack() with a Lapack built-in version.
 
   Given matrix \f$M\f$, this function computes it singular value decomposition
-such as
+  such as
 
   \f[ M = U \Sigma V^{\top} \f]
 
@@ -2175,7 +2209,7 @@ int main()
 }
   \endcode
 
-  \sa svdLapack(), svdEigen3(), svdOpenCV(), svdGsl()
+  \sa svdLapack(), svdEigen3(), svdOpenCV()
 */
 void vpMatrix::svd(vpColVector &w, vpMatrix &V)
 {
@@ -2185,8 +2219,6 @@ void vpMatrix::svd(vpColVector &w, vpMatrix &V)
   svdEigen3(w, V);
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
   svdOpenCV(w, V);
-#elif defined(VISP_HAVE_GSL)
-  svdGsl(w, V);
 #else
   (void)w;
   (void)V;
@@ -2196,15 +2228,15 @@ void vpMatrix::svd(vpColVector &w, vpMatrix &V)
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ and return the rank r of the matrix.
+  A\f$ and return the rank r of the matrix.
 
   \note By default, this function uses Lapack 3rd party. It is also possible
-to use a specific 3rd party suffixing this function name with one of the
-following 3rd party names (Lapack, Eigen3, OpenCV or Gsl).
+  to use a specific 3rd party suffixing this function name with one of the
+  following 3rd party names (Lapack, Eigen3 or OpenCV).
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
 
   \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
@@ -2256,8 +2288,6 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, double svThreshold) const
   return pseudoInverseEigen3(Ap, svThreshold);
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, svThreshold);
-#elif defined(VISP_HAVE_GSL)
-  return pseudoInverseGsl(Ap, svThreshold);
 #else
   (void)Ap;
   (void)svThreshold;
@@ -2269,15 +2299,15 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, double svThreshold) const
 
 /*!
   Compute and return the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n
-matrix \f$\bf A\f$.
+  matrix \f$\bf A\f$.
 
   \note By default, this function uses Lapack 3rd party. It is also possible
-to use a specific 3rd party suffixing this function name with one of the
-following 3rd party names (Lapack, Eigen3, OpenCV or Gsl).
+  to use a specific 3rd party suffixing this function name with one of the
+  following 3rd party names (Lapack, Eigen3 or OpenCV).
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
 
   \param svThreshold : Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
@@ -2325,8 +2355,6 @@ vpMatrix vpMatrix::pseudoInverse(double svThreshold) const
   return pseudoInverseEigen3(svThreshold);
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(svThreshold);
-#elif defined(VISP_HAVE_GSL)
-  return pseudoInverseGsl(svThreshold);
 #else
   (void)svThreshold;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
@@ -2339,11 +2367,11 @@ vpMatrix vpMatrix::pseudoInverse(double svThreshold) const
 #if defined(VISP_HAVE_LAPACK)
 /*!
   Compute and return the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n
-matrix \f$\bf A\f$ using Lapack 3rd party.
+  matrix \f$\bf A\f$ using Lapack 3rd party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
 
   \param svThreshold : Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
@@ -2411,11 +2439,11 @@ vpMatrix vpMatrix::pseudoInverseLapack(double svThreshold) const
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ and return the rank r of the matrix using Lapack 3rd party.
+  A\f$ and return the rank r of the matrix using Lapack 3rd party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
 
   \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
@@ -2485,17 +2513,17 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, double svThreshold) con
 }
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ along with singular values and return the rank r of the matrix using
-Lapack 3rd party.
+  A\f$ along with singular values and return the rank r of the matrix using
+  Lapack 3rd party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
 
   \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
   \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
-of this vector is equal to min(m, n).
+  of this vector is equal to min(m, n).
 
   \param svThreshold : Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
@@ -2566,18 +2594,18 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
-\f$\mbox{Ker}(A)\f$ and return the rank r of the matrix using Lapack 3rd
-party.
+  A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
+  \f$\mbox{Ker}(A)\f$ and return the rank r of the matrix using Lapack 3rd
+  party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather
-inverseByLU(), inverseByCholesky(), or inverseByQR() that are kwown as faster.
+  inverseByLU(), inverseByCholesky(), or inverseByQR() that are kwown as faster.
 
   Using singular value decomposition, we have:
 
   \f[
   {\bf A}_{m\times n} = {\bf U}_{m\times m} \; {\bf S}_{m\times n} \; {\bf
-V^\top}_{n\times n} \f] \f[
+  V^\top}_{n\times n} \f] \f[
   {\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} ({\bf A}) & | &
   \mbox{Ker} ({\bf A}^\top) \end{array} \right] {\bf S}_{m\times n}
   \left[
@@ -2588,7 +2616,7 @@ V^\top}_{n\times n} \f] \f[
   \f]
 
   where the diagonal of \f${\bf S}_{m\times n}\f$ corresponds to the matrix
-\f$A\f$ singular values.
+  \f$A\f$ singular values.
 
   This equation could be reformulated in a minimal way:
   \f[
@@ -2601,15 +2629,15 @@ V^\top}_{n\times n} \f] \f[
   \f]
 
   where the diagonal of \f${\bf S}_{r\times n}\f$ corresponds to the matrix
-\f$A\f$ first r singular values.
+  \f$A\f$ first r singular values.
 
   The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
-= { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
+  = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
 
   \param Ap: The Moore-Penros pseudo inverse \f$ {\bf A}^+ \f$.
 
   \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
-of this vector is equal to min(m, n).
+  of this vector is equal to min(m, n).
 
   \param svThreshold: Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
@@ -2620,9 +2648,9 @@ of this vector is equal to min(m, n).
   \param imAt: \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
 
   \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
-A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
-rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
-n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
+  A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
+  rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
+  n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
 
   \return The rank r of the matrix \f$\bf A\f$.
 
@@ -3431,388 +3459,24 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double
   return rank;
 }
 #endif
-#if defined(VISP_HAVE_GSL)
-/*!
-  Compute and return the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n
-matrix \f$\bf A\f$ using GSL 3rd party.
-
-  \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
-
-  \param svThreshold : Threshold used to test the singular values. If
-  a singular value is lower than this threshold we consider that the
-  matrix is not full rank.
-
-  \return The Moore-Penros pseudo inverse \f$ A^+ \f$.
-
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
-
-  \code
-#include <visp3/core/vpMatrix.h>
-
-int main()
-{
-  vpMatrix A(2, 3);
-
-  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
-  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
-
-  A.print(std::cout, 10, "A: ");
-
-  vpMatrix A_p = A.pseudoInverseGsl();
-
-  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
-}
-  \endcode
-
-  \sa pseudoInverse(double) const
-*/
-vpMatrix vpMatrix::pseudoInverseGsl(double svThreshold) const
-{
-  unsigned int nrows, ncols;
-  unsigned int nrows_orig = getRows();
-  unsigned int ncols_orig = getCols();
-
-  vpMatrix Ap;
-  Ap.resize(ncols_orig, nrows_orig, false);
-
-  if (nrows_orig >= ncols_orig) {
-    nrows = nrows_orig;
-    ncols = ncols_orig;
-  } else {
-    nrows = ncols_orig;
-    ncols = nrows_orig;
-  }
-
-  vpMatrix U, V;
-  U.resize(nrows, ncols, false);
-  V.resize(ncols, ncols, false);
-  vpColVector sv;
-  sv.resize(ncols, false);
-
-  if (nrows_orig >= ncols_orig)
-    U = *this;
-  else
-    U = (*this).t();
-
-  U.svdGsl(sv, V);
-
-  unsigned int rank;
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, nrows_orig, ncols_orig, svThreshold, Ap, rank);
-
-  return Ap;
-}
-
-/*!
-  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ and return the rank r of the matrix using GSL 3rd party.
-
-  \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
-
-  \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
-
-  \param svThreshold : Threshold used to test the singular values. If
-  a singular value is lower than this threshold we consider that the
-  matrix is not full rank.
-
-  \return The rank r of the matrix.
-
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
-
-  \code
-#include <visp3/core/vpMatrix.h>
-
-int main()
-{
-  vpMatrix A(2, 3);
-
-  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
-  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
-
-  A.print(std::cout, 10, "A: ");
-
-  vpMatrix A_p;
-  unsigned int rank = A.pseudoInverseGsl(A_p);
-
-  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
-  std::cout << "Rank: " << rank << std::endl;
-}
-  \endcode
-
-  \sa pseudoInverse(vpMatrix &, double) const
-*/
-unsigned int vpMatrix::pseudoInverseGsl(vpMatrix &Ap, double svThreshold) const
-{
-  unsigned int nrows, ncols;
-  unsigned int nrows_orig = getRows();
-  unsigned int ncols_orig = getCols();
-  unsigned int rank;
-
-  Ap.resize(ncols_orig, nrows_orig, false);
-
-  if (nrows_orig >= ncols_orig) {
-    nrows = nrows_orig;
-    ncols = ncols_orig;
-  } else {
-    nrows = ncols_orig;
-    ncols = nrows_orig;
-  }
-
-  vpMatrix U, V;
-  U.resize(nrows, ncols, false);
-  V.resize(ncols, ncols, false);
-  vpColVector sv;
-  sv.resize(ncols, false);
-
-  if (nrows_orig >= ncols_orig)
-    U = *this;
-  else
-    U = (*this).t();
-
-  U.svdGsl(sv, V);
-
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, nrows_orig, ncols_orig, svThreshold, Ap, rank);
-
-  return rank;
-}
-/*!
-  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ along with singular values and return the rank r of the matrix using GSL
-3rd party.
-
-  \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
-
-  \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
-
-  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
-of this vector is equal to min(m, n).
-
-  \param svThreshold : Threshold used to test the singular values. If
-  a singular value is lower than this threshold we consider that the
-  matrix is not full rank.
-
-  \return The rank r of the matrix \f$\bf A\f$.
-
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
-
-  \code
-#include <visp3/core/vpMatrix.h>
-
-int main()
-{
-  vpMatrix A(2, 3);
-
-  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
-  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
-
-  A.print(std::cout, 10, "A: ");
-
-  vpMatrix A_p;
-  vpColVector sv;
-  unsigned int rank = A.pseudoInverseGsl(A_p, sv);
-
-  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
-
-  std::cout << "Rank: " << rank << std::endl;
-  std::cout << "Singular values: " << sv.t() << std::endl;
-}
-  \endcode
-
-  \sa pseudoInverse(vpMatrix &, vpColVector &, double) const
-*/
-unsigned int vpMatrix::pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold) const
-{
-  unsigned int nrows, ncols;
-  unsigned int nrows_orig = getRows();
-  unsigned int ncols_orig = getCols();
-  unsigned int rank;
-
-  Ap.resize(ncols_orig, nrows_orig, false);
-
-  if (nrows_orig >= ncols_orig) {
-    nrows = nrows_orig;
-    ncols = ncols_orig;
-  } else {
-    nrows = ncols_orig;
-    ncols = nrows_orig;
-  }
-
-  vpMatrix U, V;
-  U.resize(nrows, ncols, false);
-  V.resize(ncols, ncols, false);
-  sv.resize(ncols, false);
-
-  if (nrows_orig >= ncols_orig)
-    U = *this;
-  else
-    U = (*this).t();
-
-  U.svdGsl(sv, V);
-
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, nrows_orig, ncols_orig, svThreshold, Ap, rank);
-
-  return rank;
-}
-
-/*!
-  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
-\f$\mbox{Ker}(A)\f$ and return the rank r of the matrix using GSL 3rd party.
-
-  \warning To inverse a square n-by-n matrix, you have to use rather
-inverseByLU(), inverseByCholesky(), or inverseByQR() that are kwown as faster.
-
-  Using singular value decomposition, we have:
-
-  \f[
-  {\bf A}_{m\times n} = {\bf U}_{m\times m} \; {\bf S}_{m\times n} \; {\bf
-V^\top}_{n\times n} \f] \f[
-  {\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} ({\bf A}) & | &
-  \mbox{Ker} ({\bf A}^\top) \end{array} \right] {\bf S}_{m\times n}
-  \left[
-  \begin{array}{c} \left[\mbox{Im} ({\bf A}^\top)\right]^\top \\
-  \\
-  \hline \\
-  \left[\mbox{Ker}({\bf A})\right]^\top \end{array}\right]
-  \f]
-
-  where the diagonal of \f${\bf S}_{m\times n}\f$ corresponds to the matrix
-\f$A\f$ singular values.
-
-  This equation could be reformulated in a minimal way:
-  \f[
-  {\bf A}_{m\times n} = \mbox{Im} ({\bf A}) \; {\bf S}_{r\times n}
-  \left[
-  \begin{array}{c} \left[\mbox{Im} ({\bf A}^\top)\right]^\top \\
-  \\
-  \hline \\
-  \left[\mbox{Ker}({\bf A})\right]^\top \end{array}\right]
-  \f]
-
-  where the diagonal of \f${\bf S}_{r\times n}\f$ corresponds to the matrix
-\f$A\f$ first r singular values.
-
-  The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
-= { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
-
-  \param Ap: The Moore-Penros pseudo inverse \f$ {\bf A}^+ \f$.
-
-  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
-of this vector is equal to min(m, n).
-
-  \param svThreshold: Threshold used to test the singular values. If
-  a singular value is lower than this threshold we consider that the
-  matrix is not full rank.
-
-  \param imA: \f$\mbox{Im}({\bf A})\f$ that is a m-by-r matrix.
-
-  \param imAt: \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
-
-  \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
-A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
-rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
-n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
-
-  \return The rank r of the matrix \f$\bf A\f$.
-
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
-
-  \code
-#include <visp3/core/vpMatrix.h>
-
-int main()
-{
-  vpMatrix A(2, 3);
-
-  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
-  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
-
-  A.print(std::cout, 10, "A: ");
-
-  vpColVector sv;
-  vpMatrix A_p, imA, imAt, kerAt;
-  unsigned int rank = A.pseudoInverseGsl(A_p, sv, 1e-6, imA, imAt, kerAt);
-
-  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
-  std::cout << "Rank: " << rank << std::endl;
-  std::cout << "Singular values: " << sv.t() << std::endl;
-  imA.print(std::cout, 10, "Im(A): ");
-  imAt.print(std::cout, 10, "Im(A^T): ");
-
-  if (kerAt.size()) {
-    kerAt.t().print(std::cout, 10, "Ker(A): ");
-  }
-  else {
-    std::cout << "Ker(A) empty " << std::endl;
-  }
-
-  // Reconstruct matrix A from ImA, ImAt, KerAt
-  vpMatrix S(rank, A.getCols());
-  for(unsigned int i = 0; i< rank; i++)
-    S[i][i] = sv[i];
-  vpMatrix Vt(A.getCols(), A.getCols());
-  Vt.insert(imAt.t(), 0, 0);
-  Vt.insert(kerAt, rank, 0);
-  (imA * S * Vt).print(std::cout, 10, "Im(A) * S * [Im(A^T) | Ker(A)]^T:");
-}
-  \endcode
-
-  \sa pseudoInverse(vpMatrix &, vpColVector &, double, vpMatrix &, vpMatrix &,
-vpMatrix &) const
-*/
-unsigned int vpMatrix::pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA,
-                                        vpMatrix &imAt, vpMatrix &kerA) const
-{
-  unsigned int nrows = getRows();
-  unsigned int ncols = getCols();
-  unsigned int rank;
-  vpMatrix U, V;
-  vpColVector sv_;
-
-  if (nrows < ncols) {
-    U.resize(ncols, ncols, true);
-    sv.resize(nrows, false);
-  } else {
-    U.resize(nrows, ncols, false);
-    sv.resize(ncols, false);
-  }
-
-  U.insert(*this, 0, 0);
-  U.svdGsl(sv_, V);
-
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank, imA, imAt, kerA);
-
-  // Remove singular values equal to to that correspond to the lines of 0
-  // introduced when m < n
-  for (unsigned int i = 0; i < sv.size(); i++)
-    sv[i] = sv_[i];
-
-  return rank;
-}
-#endif
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ along with singular values and return the rank r of the matrix.
+  A\f$ along with singular values and return the rank r of the matrix.
 
   \note By default, this function uses Lapack 3rd party. It is also possible
-to use a specific 3rd party suffixing this function name with one of the
-following 3rd party names (Lapack, Eigen3, OpenCV or Gsl).
+  to use a specific 3rd party suffixing this function name with one of the
+  following 3rd party names (Lapack, Eigen3 or OpenCV).
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
 
   \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
   \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
-of this vector is equal to min(m, n).
+  of this vector is equal to min(m, n).
 
   \param svThreshold : Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
@@ -3866,8 +3530,6 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
   return pseudoInverseEigen3(Ap, sv, svThreshold);
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, sv, svThreshold);
-#elif defined(VISP_HAVE_GSL)
-  return pseudoInverseGsl(Ap, sv, svThreshold);
 #else
   (void)Ap;
   (void)sv;
@@ -3961,21 +3623,21 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
-\f$\mbox{Ker}(A)\f$ and return the rank r of the matrix.
+  A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
+  \f$\mbox{Ker}(A)\f$ and return the rank r of the matrix.
 
   \note By default, this function uses Lapack 3rd party. It is also possible
-to use a specific 3rd party suffixing this function name with one of the
-following 3rd party names (Lapack, Eigen3, OpenCV or Gsl).
+  to use a specific 3rd party suffixing this function name with one of the
+  following 3rd party names (Lapack, Eigen3 or OpenCV).
 
   \warning To inverse a square n-by-n matrix, you have to use rather
-inverseByLU(), inverseByCholesky(), or inverseByQR() that are kwown as faster.
+  inverseByLU(), inverseByCholesky(), or inverseByQR() that are kwown as faster.
 
   Using singular value decomposition, we have:
 
   \f[
   {\bf A}_{m\times n} = {\bf U}_{m\times m} \; {\bf S}_{m\times n} \; {\bf
-V^\top}_{n\times n} \f] \f[
+  V^\top}_{n\times n} \f] \f[
   {\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} ({\bf A}) & | &
   \mbox{Ker} ({\bf A}^\top) \end{array} \right] {\bf S}_{m\times n}
   \left[
@@ -3986,7 +3648,7 @@ V^\top}_{n\times n} \f] \f[
   \f]
 
   where the diagonal of \f${\bf S}_{m\times n}\f$ corresponds to the matrix
-\f$A\f$ singular values.
+  \f$A\f$ singular values.
 
   This equation could be reformulated in a minimal way:
   \f[
@@ -3999,15 +3661,15 @@ V^\top}_{n\times n} \f] \f[
   \f]
 
   where the diagonal of \f${\bf S}_{r\times n}\f$ corresponds to the matrix
-\f$A\f$ first r singular values.
+  \f$A\f$ first r singular values.
 
   The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
-= { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
+  = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
 
   \param Ap: The Moore-Penros pseudo inverse \f$ {\bf A}^+ \f$.
 
   \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
-of this vector is equal to min(m, n).
+  of this vector is equal to min(m, n).
 
   \param svThreshold: Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
@@ -4018,9 +3680,9 @@ of this vector is equal to min(m, n).
   \param imAt: \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
 
   \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
-A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
-rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
-n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
+  A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
+  rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
+  n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
 
   \return The rank r of the matrix \f$\bf A\f$.
 
@@ -4102,8 +3764,6 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
   return pseudoInverseEigen3(Ap, sv, svThreshold, imA, imAt, kerAt);
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, sv, svThreshold, imA, imAt, kerAt);
-#elif defined(VISP_HAVE_GSL)
-  return pseudoInverseGsl(Ap, sv, svThreshold, imA, imAt, kerAt);
 #else
   (void)Ap;
   (void)sv;
@@ -5037,17 +4697,15 @@ void vpMatrix::insert(const vpMatrix &A, unsigned int r, unsigned int c)
 }
 
 /*!
-  Compute the eigenvalues of a n-by-n real symmetric matrix.
+  Compute the eigenvalues of a n-by-n real symmetric matrix using
+  Lapack 3rd party.
 
   \return The eigenvalues of a n-by-n real symmetric matrix.
 
-  \warning This method is only available if the Gnu Scientific Library
-  (GSL) is detected as a third party library.
-
   \exception vpException::dimensionError If the matrix is not square.
   \exception vpException::fatalError If the matrix is not symmetric.
-  \exception vpException::functionNotImplementedError If the GSL library is
-not detected.
+  \exception vpException::functionNotImplementedError If the Lapack 3rd party
+  is not detected.
 
   Here an example:
 \code
@@ -5076,26 +4734,28 @@ int main()
 */
 vpColVector vpMatrix::eigenValues() const
 {
+  vpColVector evalue(rowNum); // Eigen values
+
   if (rowNum != colNum) {
-    throw(vpException(vpException::dimensionError, "Cannot compute eigen values on a non square matrix (%dx%d)", rowNum,
-                      colNum));
+    throw(vpException(vpException::dimensionError,
+                      "Cannot compute eigen values on a non square matrix (%dx%d)",
+                      rowNum, colNum));
   }
 
-#ifdef VISP_HAVE_GSL /* be careful of the copy below */
-  {
-    // Check if the matrix is symetric: At - A = 0
-    vpMatrix At_A = (*this).t() - (*this);
-    for (unsigned int i = 0; i < rowNum; i++) {
-      for (unsigned int j = 0; j < rowNum; j++) {
-        // if (At_A[i][j] != 0) {
-        if (std::fabs(At_A[i][j]) > std::numeric_limits<double>::epsilon()) {
-          throw(vpException(vpException::fatalError, "Cannot compute eigen values on a non symetric matrix"));
-        }
+  // Check if the matrix is symetric: At - A = 0
+  vpMatrix At_A = (*this).t() - (*this);
+  for (unsigned int i = 0; i < rowNum; i++) {
+    for (unsigned int j = 0; j < rowNum; j++) {
+      // if (At_A[i][j] != 0) {
+      if (std::fabs(At_A[i][j]) > std::numeric_limits<double>::epsilon()) {
+        throw(vpException(vpException::fatalError, "Cannot compute eigen values on a non symetric matrix"));
       }
     }
+  }
 
-    vpColVector evalue(rowNum); // Eigen values
-
+#if defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_GSL) /* be careful of the copy below */
+  {
     gsl_vector *eval = gsl_vector_alloc(rowNum);
     gsl_matrix *evec = gsl_matrix_alloc(rowNum, colNum);
 
@@ -5120,23 +4780,33 @@ vpColVector vpMatrix::eigenValues() const
     gsl_vector_free(eval);
     gsl_matrix_free(m);
     gsl_matrix_free(evec);
-
-    return evalue;
   }
 #else
   {
-    throw(vpException(vpException::functionNotImplementedError, "Eigen values computation is not implemented. You "
-                                                                "should install GSL rd party"));
+    const char jobz = 'N';
+    const char uplo = 'U';
+    vpMatrix A = (*this);
+    vpColVector WORK;
+    unsigned int lwork = 3*colNum - 1;
+    WORK.resize(lwork);
+    int info;
+    vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, WORK.data, lwork, info);
   }
 #endif
+#else
+  {
+    throw(vpException(vpException::functionNotImplementedError,
+                      "Eigen values computation is not implemented. "
+                      "You should install Lapack 3rd party"));
+  }
+#endif
+  return evalue;
 }
 
 /*!
-  Compute the eigenvalues of a n-by-n real symmetric matrix.
+  Compute the eigenvalues of a n-by-n real symmetric matrix using
+  Lapack 3rd party.
   \return The eigenvalues of a n-by-n real symmetric matrix.
-
-  \warning This method is only available if the Gnu Scientific Library
-  (GSL) is detected as a third party library.
 
   \param evalue : Eigenvalues of the matrix.
 
@@ -5144,8 +4814,8 @@ vpColVector vpMatrix::eigenValues() const
 
   \exception vpException::dimensionError If the matrix is not square.
   \exception vpException::fatalError If the matrix is not symmetric.
-  \exception vpException::functionNotImplementedError If the GSL library is
-not detected.
+  \exception vpException::functionNotImplementedError If Lapack 3rd party is
+  not detected.
 
   Here an example:
 \code
@@ -5184,34 +4854,33 @@ int main()
 \sa eigenValues()
 
 */
-#ifdef VISP_HAVE_GSL /* be careful of the copy below */
 void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
-#else
-void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */) const
-#endif
 {
   if (rowNum != colNum) {
-    throw(vpException(vpException::dimensionError, "Cannot compute eigen values on a non square matrix (%dx%d)", rowNum,
-                      colNum));
+    throw(vpException(vpException::dimensionError,
+                      "Cannot compute eigen values on a non square matrix (%dx%d)",
+                      rowNum, colNum));
   }
 
-#ifdef VISP_HAVE_GSL /* be careful of the copy below */
-  {
-    // Check if the matrix is symetric: At - A = 0
-    vpMatrix At_A = (*this).t() - (*this);
-    for (unsigned int i = 0; i < rowNum; i++) {
-      for (unsigned int j = 0; j < rowNum; j++) {
-        // if (At_A[i][j] != 0) {
-        if (std::fabs(At_A[i][j]) > std::numeric_limits<double>::epsilon()) {
-          throw(vpException(vpException::fatalError, "Cannot compute eigen values on a non symetric matrix"));
-        }
+
+  // Check if the matrix is symetric: At - A = 0
+  vpMatrix At_A = (*this).t() - (*this);
+  for (unsigned int i = 0; i < rowNum; i++) {
+    for (unsigned int j = 0; j < rowNum; j++) {
+      // if (At_A[i][j] != 0) {
+      if (std::fabs(At_A[i][j]) > std::numeric_limits<double>::epsilon()) {
+        throw(vpException(vpException::fatalError, "Cannot compute eigen values on a non symetric matrix"));
       }
     }
+  }
 
-    // Resize the output matrices
-    evalue.resize(rowNum);
-    evector.resize(rowNum, colNum);
+  // Resize the output matrices
+  evalue.resize(rowNum);
+  evector.resize(rowNum, colNum);
 
+#if defined(VISP_HAVE_LAPACK)
+#if defined(VISP_HAVE_GSL) /* be careful of the copy below */
+  {
     gsl_vector *eval = gsl_vector_alloc(rowNum);
     gsl_matrix *evec = gsl_matrix_alloc(rowNum, colNum);
 
@@ -5244,10 +4913,24 @@ void vpMatrix::eigenValues(vpColVector & /* evalue */, vpMatrix & /* evector */)
     gsl_matrix_free(m);
     gsl_matrix_free(evec);
   }
+#else // defined(VISP_HAVE_GSL)
+  {
+    const char jobz = 'V';
+    const char uplo = 'U';
+    vpMatrix A = (*this);
+    vpColVector WORK;
+    unsigned int lwork = 3*colNum - 1;
+    WORK.resize(lwork);
+    int info;
+    vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, WORK.data, lwork, info);
+    evector = A.t();
+  }
+#endif // defined(VISP_HAVE_GSL)
 #else
   {
-    throw(vpException(vpException::functionNotImplementedError, "Eigen values computation is not implemented. You "
-                                                                "should install GSL rd party"));
+    throw(vpException(vpException::functionNotImplementedError,
+                      "Eigen values computation is not implemented. "
+                      "You should install GSL rd party"));
   }
 #endif
 }
@@ -5353,7 +5036,7 @@ int main()
   std:: cout << "Determinant by LU decomposition         : " << A.detByLU() << std::endl;
   std:: cout << "Determinant by LU decomposition (Lapack): " << A.detByLULapack() << std::endl;
   std:: cout << "Determinant by LU decomposition (OpenCV): " << A.detByLUOpenCV() << std::endl;
-  std:: cout << "Determinant by LU decomposition (GSL)   : " << A.detByLUGsl() << std::endl;
+  std:: cout << "Determinant by LU decomposition (Eigen3): " << A.detByLUEigen3() << std::endl;
 }
 \endcode
 */

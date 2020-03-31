@@ -697,10 +697,7 @@ class JavaWrapperGenerator(object):
             c_epilogue = []
 
             # Add 3rd party specific tags
-            # If Gsl or Lapack or OpenCV is missing, don't include them to prevent compilation error
-            if fi.name in ['detByLUGsl',    'svdGsl',    'inverseByLUGsl',    'pseudoInverseGsl',    'inverseByGsl']:
-                c_prologue.append('#if defined(VISP_HAVE_GSL)')
-
+            # If OpenCV, Lapack, or Eigen3 is missing, don't include them to prevent compilation error
             if fi.name in ['detByLUOpenCV', 'svdOpenCV', 'inverseByLUOpenCV', 'pseudoInverseOpenCV', 'inverseByOpenCV', 'inverseByCholeskyOpenCV']:
                 c_prologue.append('#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)')
 
@@ -989,10 +986,7 @@ class JavaWrapperGenerator(object):
                         c_prologue.append("%s %s;" % (a.ctype, a.name))
 
             # Add 3rd party specific tags
-            # If Gsl or Lapack or OpenCV is missing, don't include them to prevent compilation error
-            if fi.name in ['detByLUGsl',    'svdGsl',    'inverseByLUGsl',    'pseudoInverseGsl']:
-                ret += '\n    #endif'
-
+            # If OpenCV, Eigen3 or Lapack is missing, don't include them to prevent compilation error
             if fi.name in ['detByLUOpenCV', 'svdOpenCV', 'inverseByLUOpenCV', 'pseudoInverseOpenCV', 'inverseByOpenCV', 'inverseByCholeskyOpenCV']:
                 ret += '\n    #endif'
 

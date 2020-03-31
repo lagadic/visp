@@ -191,18 +191,33 @@
 
 // Defined if Intel MKL library available
 #cmakedefine VISP_HAVE_MKL
+#ifdef VISP_HAVE_MKL
+#define VISP_HAVE_LAPACK_MKL
+#endif
 
 // Defined if OpenBLAS library available
 #cmakedefine VISP_HAVE_OPENBLAS
+#ifdef VISP_HAVE_OPENBLAS
+#define VISP_HAVE_LAPACK_OPENBLAS
+#endif
 
 // Defined if Atlas library available
 #cmakedefine VISP_HAVE_ATLAS
+#ifdef VISP_HAVE_ATLAS
+#define VISP_HAVE_LAPACK_ATLAS
+#endif
 
 // Defined if LAPACK Netlib library available (-lblas -llapack)
 #cmakedefine VISP_HAVE_LAPACK_NETLIB
+#ifdef VISP_HAVE_NETLIB
+#define VISP_HAVE_LAPACK_NETLIB
+#endif
 
 // Defined if GSL library available (-lgsl -lgslcblas)
 #cmakedefine VISP_HAVE_GSL
+#ifdef VISP_HAVE_GSL
+#define define VISP_HAVE_LAPACK_GSL
+#endif
 
 // Defined if lapack/blas libraries are available (MKL, OpenBLAS, Atlas, Netlib or built-in)
 #cmakedefine VISP_HAVE_LAPACK
