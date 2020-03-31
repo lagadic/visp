@@ -959,10 +959,13 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////////
+#if defined(VISP_USE_MSVC) && defined(visp_EXPORTS)
+const __declspec(selectany) unsigned int vpMatrix::m_lapack_min_size_default = 0;
+__declspec(selectany) unsigned int vpMatrix::m_lapack_min_size = vpMatrix::m_lapack_min_size_default;
+#endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 VISP_EXPORT
 #endif
 vpMatrix operator*(const double &x, const vpMatrix &A);
-
 #endif

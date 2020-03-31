@@ -103,8 +103,10 @@ void vpMatrix::blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data,
 #  endif
 #endif
 
+#if !defined(VISP_USE_MSVC) || (defined(VISP_USE_MSVC) && !defined(VISP_BUILD_SHARED_LIBS))
 const unsigned int vpMatrix::m_lapack_min_size_default = 0;
 unsigned int vpMatrix::m_lapack_min_size = vpMatrix::m_lapack_min_size_default;
+#endif
 
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
