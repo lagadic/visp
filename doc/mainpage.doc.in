@@ -117,6 +117,10 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-getting-started-naoqi <br>This tutorial shows how to build a project that uses ViSP on NAOqi OS running on NAO, Romeo or Pepper humanoid robots.
 - \ref tutorial-import-visp-into-EclipseIDE <br>This tutorial shows how to import a CMake project that uses ViSP in Eclipse IDE.
 
+\subsection tuto_linear_algebra Linear algebra operations
+
+- \ref tutorial-basic-linear-algebra <br>This tutorial gives some information concerning basic linear algebra operations implementation for vector and matrix multiplication.
+
 \subsection tuto_image Image manipulation
 
 - \ref tutorial-image-display <br>In this tutorial you will learn how to display an image in a window and how to down scale the window size to be able to display images that are larger than the screen resolution.

@@ -1,0 +1,514 @@
+Default matrix/vector min size to enable Blas/Lapack optimization: 8
+Used matrix/vector min size to enable Blas/Lapack optimization: 0
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+perfMatrixMultiplication is a Catch v2.9.2 host application.
+Run with -? for options
+
+-------------------------------------------------------------------------------
+Benchmark matrix-matrix multiplication
+-------------------------------------------------------------------------------
+/home/fspindle/visp_ws/visp-fspindle/modules/core/test/math/perfMatrixMultiplication.cpp:217
+...............................................................................
+
+benchmark name                                  samples       iterations    estimated
+                                                mean          low mean      high mean
+                                                std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+(3x3)x(3x3) - Naive code                                100          251    2.0582 ms 
+                                                      83 ns        82 ns        87 ns 
+                                                       7 ns         2 ns        17 ns 
+                                                                                      
+(3x3)x(3x3) - ViSP                                      100          241    2.0485 ms 
+                                                      90 ns        87 ns        97 ns 
+                                                      18 ns         2 ns        35 ns 
+                                                                                      
+(6x6)x(6x6) - Naive code                                100          101    2.0806 ms 
+                                                     213 ns       211 ns       218 ns 
+                                                      14 ns         7 ns        24 ns 
+                                                                                      
+(6x6)x(6x6) - ViSP                                      100           98    2.0776 ms 
+                                                     210 ns       210 ns       213 ns 
+                                                       4 ns         0 ns        11 ns 
+                                                                                      
+(8x8)x(8x8) - Naive code                                100           55    2.0955 ms 
+                                                     383 ns       382 ns       385 ns 
+                                                       3 ns         1 ns         9 ns 
+                                                                                      
+(8x8)x(8x8) - ViSP                                      100           55    2.0845 ms 
+                                                     389 ns       388 ns       392 ns 
+                                                       6 ns         0 ns        15 ns 
+                                                                                      
+(10x10)x(10x10) - Naive code                            100           32    2.1216 ms 
+                                                     677 ns       668 ns       694 ns 
+                                                      57 ns        31 ns        90 ns 
+                                                                                      
+(10x10)x(10x10) - ViSP                                  100           32    2.0864 ms 
+                                                     651 ns       648 ns       657 ns 
+                                                      19 ns        11 ns        32 ns 
+                                                                                      
+(20x20)x(20x20) - Naive code                            100            4    2.1572 ms 
+                                                   5.445 us     5.388 us     5.667 us 
+                                                     497 ns       107 ns      1.15 us 
+                                                                                      
+(20x20)x(20x20) - ViSP                                  100            4    2.1008 ms 
+                                                   5.265 us     5.248 us     5.308 us 
+                                                     117 ns         7 ns       240 ns 
+                                                                                      
+(6x200)x(200x6) - Naive code                            100            3    2.1501 ms 
+                                                    7.16 us     7.153 us     7.188 us 
+                                                      65 ns         5 ns       155 ns 
+                                                                                      
+(6x200)x(200x6) - ViSP                                  100            3    2.1402 ms 
+                                                    7.15 us     7.131 us     7.198 us 
+                                                     133 ns         6 ns       250 ns 
+                                                                                      
+(200x6)x(6x200) - Naive code                            100            1   14.6541 ms 
+                                                 148.685 us   147.865 us   149.688 us 
+                                                   4.611 us     3.976 us     5.228 us 
+                                                                                      
+(200x6)x(6x200) - ViSP                                  100            1   14.7173 ms 
+                                                 148.684 us   147.164 us   151.479 us 
+                                                  10.232 us     6.354 us     15.39 us 
+                                                                                      
+(207x119)x(119x207) - Naive code                        100            1   498.901 ms 
+                                                 4.99702 ms   4.99163 ms   5.00597 ms 
+                                                  34.701 us    23.895 us    49.836 us 
+                                                                                      
+(207x119)x(119x207) - ViSP                              100            1   487.841 ms 
+                                                 4.89748 ms   4.88298 ms   4.91721 ms 
+                                                  85.857 us    68.204 us   106.916 us 
+                                                                                      
+(83x201)x(201x83) - Naive code                          100            1   135.934 ms 
+                                                 1.36039 ms   1.35449 ms    1.3718 ms 
+                                                  40.264 us    24.129 us    63.907 us 
+                                                                                      
+(83x201)x(201x83) - ViSP                                100            1   134.924 ms 
+                                                 1.34771 ms   1.34469 ms    1.3615 ms 
+                                                  28.066 us     3.005 us    66.603 us 
+                                                                                      
+(600x400)x(400x600) - Naive code                        100            1    15.1569 s 
+                                                 159.735 ms   156.243 ms   165.217 ms 
+                                                 21.8513 ms   16.0546 ms   31.6008 ms 
+                                                                                      
+(600x400)x(400x600) - ViSP                              100            1    21.4465 s 
+                                                  164.82 ms   159.901 ms   170.769 ms 
+                                                 27.4478 ms   23.5694 ms   31.2332 ms 
+                                                                                      
+(400x600)x(600x400) - Naive code                        100            1    10.1806 s 
+                                                 103.762 ms     103.2 ms    105.26 ms 
+                                                 4.34221 ms   2.05784 ms   9.15202 ms 
+                                                                                      
+(400x600)x(600x400) - ViSP                              100            1    10.2356 s 
+                                                 102.599 ms   102.318 ms   102.953 ms 
+                                                 1.59349 ms   1.32123 ms   2.03572 ms 
+                                                                                      
+
+-------------------------------------------------------------------------------
+Benchmark matrix-rotation matrix multiplication
+-------------------------------------------------------------------------------
+/home/fspindle/visp_ws/visp-fspindle/modules/core/test/math/perfMatrixMultiplication.cpp:294
+...............................................................................
+
+benchmark name                                  samples       iterations    estimated
+                                                mean          low mean      high mean
+                                                std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+(3x3)x(3x3) - Naive code                                100          175     2.065 ms 
+                                                     115 ns       114 ns       116 ns 
+                                                       2 ns         0 ns         5 ns 
+                                                                                      
+(3x3)x(3x3) - ViSP                                      100          233    2.0504 ms 
+                                                      89 ns        88 ns        93 ns 
+                                                       9 ns         2 ns        20 ns 
+                                                                                      
+
+-------------------------------------------------------------------------------
+Benchmark matrix-homogeneous matrix multiplication
+-------------------------------------------------------------------------------
+/home/fspindle/visp_ws/visp-fspindle/modules/core/test/math/perfMatrixMultiplication.cpp:379
+...............................................................................
+
+benchmark name                                  samples       iterations    estimated
+                                                mean          low mean      high mean
+                                                std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+(4x4)x(4x4) - Naive code                                100          150     2.055 ms 
+                                                     137 ns       136 ns       138 ns 
+                                                       3 ns         0 ns         8 ns 
+                                                                                      
+(4x4)x(4x4) - ViSP                                      100          165    2.0625 ms 
+                                                     113 ns       113 ns       114 ns 
+                                                       1 ns         0 ns         4 ns 
+                                                                                      
+
+-------------------------------------------------------------------------------
+Benchmark matrix-vector multiplication
+-------------------------------------------------------------------------------
+/home/fspindle/visp_ws/visp-fspindle/modules/core/test/math/perfMatrixMultiplication.cpp:467
+...............................................................................
+
+benchmark name                                  samples       iterations    estimated
+                                                mean          low mean      high mean
+                                                std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+(3x3)x(3x1) - Naive code                                100          295     2.065 ms 
+                                                      69 ns        69 ns        70 ns 
+                                                       1 ns         0 ns         2 ns 
+                                                                                      
+(3x3)x(3x1) - ViSP                                      100          282    2.0586 ms 
+                                                      71 ns        70 ns        71 ns 
+                                                       0 ns         0 ns         2 ns 
+                                                                                      
+(6x6)x(6x1) - Naive code                                100          212    2.0564 ms 
+                                                      87 ns        87 ns        88 ns 
+                                                       2 ns         0 ns         4 ns 
+                                                                                      
+(6x6)x(6x1) - ViSP                                      100          226    2.0566 ms 
+                                                      88 ns        88 ns        89 ns 
+                                                       2 ns         0 ns         4 ns 
+                                                                                      
+(8x8)x(8x1) - Naive code                                100          188     2.068 ms 
+                                                     118 ns       113 ns       125 ns 
+                                                      30 ns        23 ns        40 ns 
+                                                                                      
+(8x8)x(8x1) - ViSP                                      100          184    2.0608 ms 
+                                                     108 ns       105 ns       114 ns 
+                                                      17 ns         3 ns        34 ns 
+                                                                                      
+(10x10)x(10x1) - Naive code                             100          152    2.0672 ms 
+                                                     129 ns       129 ns       129 ns 
+                                                       0 ns         0 ns         1 ns 
+                                                                                      
+(10x10)x(10x1) - ViSP                                   100          156    2.0592 ms 
+                                                     155 ns       146 ns       166 ns 
+                                                      49 ns        40 ns        61 ns 
+                                                                                      
+(20x20)x(20x1) - Naive code                             100           61    2.0862 ms 
+                                                     451 ns       414 ns       498 ns 
+                                                     210 ns       181 ns       266 ns 
+                                                                                      
+(20x20)x(20x1) - ViSP                                   100           63    2.0916 ms 
+                                                     328 ns       316 ns       360 ns 
+                                                      89 ns         8 ns       161 ns 
+                                                                                      
+(6x200)x(200x1) - Naive code                            100           21    2.1021 ms 
+                                                     850 ns       848 ns       858 ns 
+                                                      17 ns         0 ns        42 ns 
+                                                                                      
+(6x200)x(200x1) - ViSP                                  100           25     2.135 ms 
+                                                     727 ns       724 ns       736 ns 
+                                                      22 ns         3 ns        42 ns 
+                                                                                      
+(200x6)x(6x1) - Naive code                              100           17    2.0672 ms 
+                                                   1.143 us      1.14 us     1.155 us 
+                                                      24 ns         1 ns        58 ns 
+                                                                                      
+(200x6)x(6x1) - ViSP                                    100           18    2.1618 ms 
+                                                   1.203 us     1.151 us     1.299 us 
+                                                     349 ns       222 ns       550 ns 
+                                                                                      
+(207x119)x(119x1) - Naive code                          100            2    3.4978 ms 
+                                                  15.208 us    14.854 us    16.057 us 
+                                                    2.67 us     1.155 us     4.747 us 
+                                                                                      
+(207x119)x(119x1) - ViSP                                100            2    3.1714 ms 
+                                                  14.827 us    14.707 us    15.349 us 
+                                                   1.091 us        68 ns     2.573 us 
+                                                                                      
+(83x201)x(201x1) - Naive code                           100            2    2.2558 ms 
+                                                   10.31 us    10.188 us     10.86 us 
+                                                   1.114 us       128 ns     2.635 us 
+                                                                                      
+(83x201)x(201x1) - ViSP                                 100            2    2.1934 ms 
+                                                  10.254 us    10.125 us    10.836 us 
+                                                   1.217 us       114 ns     2.891 us 
+                                                                                      
+(600x400)x(400x1) - Naive code                          100            1   20.9906 ms 
+                                                 206.775 us   202.576 us   214.611 us 
+                                                  28.186 us    17.429 us    43.144 us 
+                                                                                      
+(600x400)x(400x1) - ViSP                                100            1    21.108 ms 
+                                                 204.137 us   202.486 us   207.426 us 
+                                                  11.368 us      7.02 us    19.313 us 
+                                                                                      
+(400x600)x(600x1) - Naive code                          100            1   17.5502 ms 
+                                                 171.322 us    167.19 us   178.432 us 
+                                                  27.147 us    18.105 us    41.334 us 
+                                                                                      
+(400x600)x(600x1) - ViSP                                100            1   16.6953 ms 
+                                                  163.99 us   162.099 us   169.189 us 
+                                                  14.021 us     2.177 us    28.541 us 
+                                                                                      
+
+-------------------------------------------------------------------------------
+Benchmark AtA
+-------------------------------------------------------------------------------
+/home/fspindle/visp_ws/visp-fspindle/modules/core/test/math/perfMatrixMultiplication.cpp:548
+...............................................................................
+
+benchmark name                                  samples       iterations    estimated
+                                                mean          low mean      high mean
+                                                std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+(3x3) - Naive code                                      100          248    2.0584 ms 
+                                                      78 ns        78 ns        79 ns 
+                                                       1 ns         0 ns         3 ns 
+                                                                                      
+(3x3) - ViSP                                            100          253    2.0493 ms 
+                                                      78 ns        78 ns        78 ns 
+                                                       1 ns         0 ns         3 ns 
+                                                                                      
+(6x6) - Naive code                                      100          123    2.0664 ms 
+                                                     166 ns       166 ns       167 ns 
+                                                       3 ns         0 ns         7 ns 
+                                                                                      
+(6x6) - ViSP                                            100          126     2.079 ms 
+                                                     160 ns       160 ns       162 ns 
+                                                       3 ns         0 ns         7 ns 
+                                                                                      
+(8x8) - Naive code                                      100           73    2.0732 ms 
+                                                     278 ns       278 ns       280 ns 
+                                                       4 ns         0 ns         9 ns 
+                                                                                      
+(8x8) - ViSP                                            100           68    2.0876 ms 
+                                                     285 ns       277 ns       301 ns 
+                                                      54 ns        30 ns        82 ns 
+                                                                                      
+(10x10) - Naive code                                    100           40     2.064 ms 
+                                                     610 ns       609 ns       614 ns 
+                                                       9 ns         2 ns        22 ns 
+                                                                                      
+(10x10) - ViSP                                          100           40     2.104 ms 
+                                                     461 ns       460 ns       465 ns 
+                                                       8 ns         1 ns        19 ns 
+                                                                                      
+(20x20) - Naive code                                    100            6    2.0724 ms 
+                                                    3.35 us     3.318 us     3.508 us 
+                                                     315 ns         3 ns       752 ns 
+                                                                                      
+(20x20) - ViSP                                          100            7    2.3198 ms 
+                                                   3.321 us     3.173 us     3.582 us 
+                                                     974 ns       658 ns      1.51 us 
+                                                                                      
+(6x200) - Naive code                                    100            1   10.2023 ms 
+                                                   96.16 us    95.975 us    96.968 us 
+                                                   1.667 us       223 ns     3.923 us 
+                                                                                      
+(6x200) - ViSP                                          100            1    9.7965 ms 
+                                                  95.935 us    95.788 us    96.529 us 
+                                                   1.291 us       240 ns     3.001 us 
+                                                                                      
+(200x6) - Naive code                                    100            5    2.0975 ms 
+                                                   4.225 us     4.202 us     4.269 us 
+                                                     157 ns        95 ns       238 ns 
+                                                                                      
+(200x6) - ViSP                                          100            5    2.0885 ms 
+                                                   4.186 us     4.181 us     4.198 us 
+                                                      34 ns         3 ns        69 ns 
+                                                                                      
+(207x119) - Naive code                                  100            1   150.243 ms 
+                                                 1.45888 ms   1.45279 ms   1.46882 ms 
+                                                  38.919 us    27.397 us    59.832 us 
+                                                                                      
+(207x119) - ViSP                                        100            1    159.12 ms 
+                                                 1.62505 ms   1.58621 ms   1.67308 ms 
+                                                  218.65 us   183.593 us   261.324 us 
+                                                                                      
+(83x201) - Naive code                                   100            1    172.81 ms 
+                                                 1.67966 ms   1.64551 ms   1.72304 ms 
+                                                 195.375 us    159.33 us   245.241 us 
+                                                                                      
+(83x201) - ViSP                                         100            1   158.133 ms 
+                                                 1.88702 ms   1.83601 ms   1.95219 ms 
+                                                 293.448 us    240.35 us    358.23 us 
+                                                                                      
+(600x400) - Naive code                                  100            1    5.92544 s 
+                                                 55.8157 ms   55.4059 ms   56.5471 ms 
+                                                 2.70448 ms    1.7396 ms   4.57669 ms 
+                                                                                      
+(600x400) - ViSP                                        100            1    5.67416 s 
+                                                 56.0586 ms   55.2045 ms   57.5882 ms 
+                                                 5.65236 ms   3.58997 ms   8.75764 ms 
+                                                                                      
+(400x600) - Naive code                                  100            1    8.09972 s 
+                                                 78.3682 ms   77.9547 ms   78.9981 ms 
+                                                  2.5577 ms   1.92377 ms    4.1457 ms 
+                                                                                      
+(400x600) - ViSP                                        100            1    7.72763 s 
+                                                 79.1421 ms   78.7539 ms   79.5522 ms 
+                                                 2.03834 ms   1.81743 ms    2.3515 ms 
+                                                                                      
+
+-------------------------------------------------------------------------------
+Benchmark AAt
+-------------------------------------------------------------------------------
+/home/fspindle/visp_ws/visp-fspindle/modules/core/test/math/perfMatrixMultiplication.cpp:619
+...............................................................................
+
+benchmark name                                  samples       iterations    estimated
+                                                mean          low mean      high mean
+                                                std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+(3x3) - Naive code                                      100          233    2.0504 ms 
+                                                      81 ns        81 ns        82 ns 
+                                                       2 ns         1 ns         4 ns 
+                                                                                      
+(3x3) - ViSP                                            100          243    2.0655 ms 
+                                                      78 ns        78 ns        79 ns 
+                                                       2 ns         0 ns         4 ns 
+                                                                                      
+(6x6) - Naive code                                      100          130      2.08 ms 
+                                                     150 ns       149 ns       151 ns 
+                                                       3 ns         1 ns         6 ns 
+                                                                                      
+(6x6) - ViSP                                            100          126    2.0664 ms 
+                                                     160 ns       159 ns       162 ns 
+                                                       4 ns         0 ns         9 ns 
+                                                                                      
+(8x8) - Naive code                                      100           80      2.08 ms 
+                                                     253 ns       252 ns       255 ns 
+                                                       5 ns         2 ns        11 ns 
+                                                                                      
+(8x8) - ViSP                                            100           73    2.0659 ms 
+                                                     295 ns       281 ns       319 ns 
+                                                      90 ns        62 ns       139 ns 
+                                                                                      
+(10x10) - Naive code                                    100           49    2.1021 ms 
+                                                     446 ns       428 ns       482 ns 
+                                                     124 ns        74 ns       223 ns 
+                                                                                      
+(10x10) - ViSP                                          100           45     2.097 ms 
+                                                     552 ns       514 ns       601 ns 
+                                                     219 ns       177 ns       272 ns 
+                                                                                      
+(20x20) - Naive code                                    100            8    2.2912 ms 
+                                                   2.604 us     2.599 us     2.623 us 
+                                                      39 ns         3 ns        93 ns 
+                                                                                      
+(20x20) - ViSP                                          100            8    2.2584 ms 
+                                                    2.67 us     2.664 us     2.689 us 
+                                                      48 ns        12 ns       106 ns 
+                                                                                      
+(6x200) - Naive code                                    100            6    2.4558 ms 
+                                                     4.3 us     4.149 us      4.59 us 
+                                                   1.036 us       651 ns     1.694 us 
+                                                                                      
+(6x200) - ViSP                                          100            6     2.397 ms 
+                                                   3.999 us     3.992 us     4.017 us 
+                                                      48 ns         3 ns        99 ns 
+                                                                                      
+(200x6) - Naive code                                    100            1    8.3113 ms 
+                                                  81.165 us    79.558 us    84.379 us 
+                                                  11.177 us     6.292 us    18.133 us 
+                                                                                      
+(200x6) - ViSP                                          100            1    9.8496 ms 
+                                                  92.943 us    90.982 us     96.03 us 
+                                                  12.393 us     8.822 us    17.382 us 
+                                                                                      
+
+-------------------------------------------------------------------------------
+Benchmark matrix-velocity twist multiplication
+-------------------------------------------------------------------------------
+/home/fspindle/visp_ws/visp-fspindle/modules/core/test/math/perfMatrixMultiplication.cpp:690
+...............................................................................
+
+benchmark name                                  samples       iterations    estimated
+                                                mean          low mean      high mean
+                                                std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+(6x6)x(6x6) - Naive code                                100           81    2.0817 ms 
+                                                     245 ns       244 ns       247 ns 
+                                                       5 ns         2 ns        12 ns 
+                                                                                      
+(6x6)x(6x6) - ViSP                                      100          108    2.0628 ms 
+                                                     192 ns       181 ns       210 ns 
+                                                      68 ns        43 ns       103 ns 
+                                                                                      
+(20x6)x(6x6) - Naive code                               100           35    2.0755 ms 
+                                                     564 ns       548 ns       616 ns 
+                                                     126 ns        18 ns       275 ns 
+                                                                                      
+(20x6)x(6x6) - ViSP                                     100           63    2.0916 ms 
+                                                     306 ns       296 ns       324 ns 
+                                                      64 ns        37 ns        95 ns 
+                                                                                      
+(207x6)x(6x6) - Naive code                              100            4    2.1356 ms 
+                                                   5.063 us     4.916 us     5.553 us 
+                                                   1.186 us       203 ns     2.624 us 
+                                                                                      
+(207x6)x(6x6) - ViSP                                    100           10     2.244 ms 
+                                                   2.201 us     2.151 us     2.376 us 
+                                                     423 ns       115 ns       956 ns 
+                                                                                      
+(600x6)x(6x6) - Naive code                              100            2    2.9802 ms 
+                                                    14.9 us    14.264 us    16.068 us 
+                                                   4.241 us     2.581 us     6.159 us 
+                                                                                      
+(600x6)x(6x6) - ViSP                                    100            4    2.4448 ms 
+                                                    7.49 us     7.062 us     8.143 us 
+                                                   2.659 us     1.996 us     3.918 us 
+                                                                                      
+(1201x6)x(6x6) - Naive code                             100            1    2.9824 ms 
+                                                  30.347 us    28.918 us    32.637 us 
+                                                   9.064 us     6.267 us    12.235 us 
+                                                                                      
+(1201x6)x(6x6) - ViSP                                   100            2    2.3812 ms 
+                                                  11.591 us    11.548 us    11.802 us 
+                                                     420 ns        12 ns     1.003 us 
+                                                                                      
+
+-------------------------------------------------------------------------------
+Benchmark matrix-force twist multiplication
+-------------------------------------------------------------------------------
+/home/fspindle/visp_ws/visp-fspindle/modules/core/test/math/perfMatrixMultiplication.cpp:775
+...............................................................................
+
+benchmark name                                  samples       iterations    estimated
+                                                mean          low mean      high mean
+                                                std dev       low std dev   high std dev
+-------------------------------------------------------------------------------
+(6x6)x(6x6) - Naive code                                100           81    2.0736 ms 
+                                                     237 ns       236 ns       239 ns 
+                                                       6 ns         1 ns        14 ns 
+                                                                                      
+(6x6)x(6x6) - ViSP                                      100          115      2.07 ms 
+                                                     171 ns       170 ns       173 ns 
+                                                       5 ns         0 ns        12 ns 
+                                                                                      
+(20x6)x(6x6) - Naive code                               100           36    2.1168 ms 
+                                                     542 ns       541 ns       547 ns 
+                                                      10 ns         0 ns        24 ns 
+                                                                                      
+(20x6)x(6x6) - ViSP                                     100           68     2.074 ms 
+                                                     310 ns       296 ns       345 ns 
+                                                      99 ns        12 ns       180 ns 
+                                                                                      
+(207x6)x(6x6) - Naive code                              100            4    2.0968 ms 
+                                                   4.911 us     4.894 us     4.953 us 
+                                                     119 ns         4 ns       219 ns 
+                                                                                      
+(207x6)x(6x6) - ViSP                                    100           10      2.22 ms 
+                                                   2.266 us     2.231 us     2.357 us 
+                                                     257 ns        52 ns       461 ns 
+                                                                                      
+(600x6)x(6x6) - Naive code                              100            2    3.0368 ms 
+                                                  14.065 us    13.828 us    15.142 us 
+                                                    2.18 us       139 ns     5.158 us 
+                                                                                      
+(600x6)x(6x6) - ViSP                                    100            4    2.4864 ms 
+                                                   5.936 us     5.906 us     6.076 us 
+                                                     278 ns        21 ns       656 ns 
+                                                                                      
+(1201x6)x(6x6) - Naive code                             100            1    2.9552 ms 
+                                                  28.311 us    27.577 us    30.243 us 
+                                                   5.384 us       859 ns     9.746 us 
+                                                                                      
+(1201x6)x(6x6) - ViSP                                   100            2     2.521 ms 
+                                                  11.844 us    11.588 us    12.875 us 
+                                                   2.158 us       184 ns     4.971 us 
+                                                                                      
+
+===============================================================================
+All tests passed (60 assertions in 8 test cases)
+

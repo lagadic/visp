@@ -17,6 +17,8 @@ This page references all the tutorials in user zone.
 
 - \subpage tutorial_started
 
+- \subpage tutorial_linear_algebra
+
 - \subpage tutorial_image
 
 - \subpage tutorial_imgproc
@@ -133,6 +135,13 @@ This page introduces the user to the way to start with ViSP.
 - \subpage tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
 - \subpage tutorial-getting-started-naoqi <br>This tutorial shows how to build a project that uses ViSP on NAOqi OS running on NAO, Romeo or Pepper humanoid robots.
 - \subpage tutorial-import-visp-into-EclipseIDE <br>This tutorial explains how to import a CMake project in Eclipse IDE.
+
+*/
+
+/*! \page tutorial_linear_algebra Linear algebra operations
+This page introduces the user to linear algebra operations with ViSP.
+
+- \subpage tutorial-basic-linear-algebra <br>This tutorial gives some information concerning basic linear algebra operations implementation for vector and matrix multiplication.
 
 */
 
