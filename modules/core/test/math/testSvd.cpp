@@ -215,7 +215,7 @@ void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, 
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
     //#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) ||
-    //(VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+    //(VISP_HAVE_OPENCV_VERSION >= 0x020101)
     //    double det = 0.;
     //    // don't put singular matrices in the benchmark
     //    for(M = make_random_matrix(nb_rows, nb_cols);

@@ -525,8 +525,7 @@ void save_time(const std::string &method, unsigned int nrows, unsigned int ncols
 int main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) ||                \
-    defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     unsigned int nb_matrices = 10;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 12;
@@ -584,11 +583,6 @@ int main(int argc, const char *argv[])
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
         for (unsigned int i = 0; i < nb_svd_functions; i++)
           of << "\"OpenCV " << nrows[s] << "x" << ncols[s] << " test " << i << "\""
-             << "\t";
-#endif
-#if defined(VISP_HAVE_GSL)
-        for (unsigned int i = 0; i < nb_svd_functions; i++)
-          of << "\"GSL " << nrows[s] << "x" << ncols[s] << " test " << i << "\""
              << "\t";
 #endif
       }
