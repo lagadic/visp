@@ -43,6 +43,10 @@
 #include <visp3/core/vpConfig.h>
 #if defined(VISP_HAVE_OPENCV)
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <functional>
+#endif
+
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
@@ -70,6 +74,11 @@
   \brief The vpDisplayOpenCV allows to display image using the OpenCV library.
   Thus to enable this class OpenCV should be installed. Installation
   instructions are provided here https://visp.inria.fr/3rd_opencv.
+
+  \warning Since ViSP 3.3.1 or higher we introduce the alpha channel support for color
+  transparency. This new feature is only supported yet using vpDisplayOpenCV. See vpColor
+  header documentation and displayOpenCV.cpp example for usage displaying filled
+  transparent circles and rectangles.
 
   The example below shows how to display an image with this video device.
   \code
@@ -279,6 +288,10 @@ protected:
   bool getPointerPosition(vpImagePoint &ip);
 
   static void on_mouse(int event, int x, int y, int flags, void *param);
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  void overlay(std::function<void(cv::Mat&)> overlay_function, double opacity);
+#endif
 };
 
 #endif

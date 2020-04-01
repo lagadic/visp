@@ -68,6 +68,11 @@
   The \ref tutorial-getting-started is a good starting point to know
   how to use this class to display an image in a window.
 
+  \warning Since ViSP 3.3.1 or higher we introduce the alpha channel support for color
+  transparency. This new feature is only supported yet using vpDisplayOpenCV. See vpColor
+  header documentation and displayOpenCV.cpp example for usage when displaying filled
+  transparent circles and rectangles.
+
   The example below shows how to use this class.
 
   \code
@@ -300,7 +305,7 @@ public:
     \param center : Circle center position.
     \param radius : Circle radius.
     \param color : Circle color.
-    \param fill : When set to true fill the rectangle.
+    \param fill : When set to true fill the circle.
     \param thickness : Thickness of the circle. This parameter is only useful
     when \e fill is set to false.
   */

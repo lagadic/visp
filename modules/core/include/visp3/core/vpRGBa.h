@@ -87,7 +87,7 @@ public:
     \param a : Additional value.
 
   */
-  inline vpRGBa(const unsigned char &r, const unsigned char &g, const unsigned char &b, const unsigned char &a = 0)
+  inline vpRGBa(unsigned char r, unsigned char g, unsigned char b, unsigned char a = vpRGBa::alpha_default)
     : R(r), G(g), B(b), A(a)
   {
   }
@@ -100,7 +100,7 @@ public:
     \param v : Value to set.
 
   */
-  inline vpRGBa(const unsigned char &v) : R(v), G(v), B(v), A(v) {}
+  inline vpRGBa(unsigned char v) : R(v), G(v), B(v), A(v) {}
 
   /*!
     Copy constructor.
