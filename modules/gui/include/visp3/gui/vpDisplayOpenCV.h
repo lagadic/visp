@@ -75,6 +75,11 @@
   Thus to enable this class OpenCV should be installed. Installation
   instructions are provided here https://visp.inria.fr/3rd_opencv.
 
+  \warning Since ViSP 3.3.1 or higher we introduce the alpha channel support for color
+  transparency. This new feature is only supported yet using vpDisplayOpenCV. See vpColor
+  header documentation and displayOpenCV.cpp example for usage displaying filled
+  transparent circles and rectangles.
+
   The example below shows how to display an image with this video device.
   \code
 #include <visp3/core/vpImagePoint.h>

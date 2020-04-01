@@ -143,7 +143,9 @@ void vpDisplay::displayCharString(const vpImage<unsigned char> &I, int i, int j,
   \param center : Circle center position.
   \param radius : Circle radius.
   \param color : Circle color.
-  \param fill : When set to true fill the rectangle.
+  \param fill : When set to true fill the circle. When vpDisplayOpenCV is used,
+  and color alpha channel is set, filling feature can handle transparency. See vpColor
+  header class documentation.
   \param thickness : Thickness of the circle. This parameter is only useful
   when \e fill is set to false.
 */
@@ -159,7 +161,9 @@ void vpDisplay::displayCircle(const vpImage<unsigned char> &I, const vpImagePoin
   \param i,j : Circle center position.
   \param radius : Circle radius.
   \param color : Circle color.
-  \param fill : When set to true fill the rectangle.
+  \param fill : When set to true fill the circle. When vpDisplayOpenCV is used,
+  and color alpha channel is set, filling feature can handle transparency. See vpColor
+  header class documentation.
   \param thickness : Thickness of the circle. This parameter is only useful
   when \e fill is set to false.
 */
@@ -539,7 +543,9 @@ void vpDisplay::displayPolygon(const vpImage<unsigned char> &I, const std::vecto
   \param topLeft : Top-left corner of the rectangle.
   \param width,height : Rectangle size.
   \param color : Rectangle color.
-  \param fill : When set to true fill the rectangle.
+  \param fill : When set to true fill the rectangle. When vpDisplayOpenCV is used,
+  and color alpha channel is set, filling feature can handle transparency. See vpColor
+  header class documentation.
 
   \param thickness : Thickness of the four lines used to display the
   rectangle. This parameter is only useful when \e fill is set to
@@ -578,7 +584,9 @@ void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, int i, int j, 
   \param I : The image associated to the display.
   \param rectangle : Rectangle characteristics.
   \param color : Rectangle color.
-  \param fill : When set to true fill the rectangle.
+  \param fill : When set to true fill the rectangle. When vpDisplayOpenCV is used,
+  and color alpha channel is set, filling feature can handle transparency. See vpColor
+  header class documentation.
 
   \param thickness : Thickness of the four lines used to display the
   rectangle. This parameter is only useful when \e fill is set to
@@ -617,7 +625,9 @@ void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, const vpImageP
   \param topLeft : Top-left corner of the rectangle.
   \param bottomRight : Bottom-right corner of the rectangle.
   \param color : Rectangle color.
-  \param fill : When set to true fill the rectangle.
+  \param fill : When set to true fill the rectangle. When vpDisplayOpenCV is used,
+  and color alpha channel is set, filling feature can handle transparency. See vpColor
+  header class documentation.
 
   \param thickness : Thickness of the four lines used to display the
   rectangle. This parameter is only useful when \e fill is set to
