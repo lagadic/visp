@@ -49,7 +49,6 @@ set(example_cpp
   displayGTK.cpp
   displayX.cpp
   displayOpenCV.cpp
-  displayOpenCVTransparency.cpp
   displayXMulti.cpp
 )
 

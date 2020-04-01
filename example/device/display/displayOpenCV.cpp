@@ -322,10 +322,20 @@ int main(int argc, const char **argv)
         vpDisplay::displayDotLine(I, ip1, ip2, vpColor::green);
       }
 
-      // Display a rectangle
+      // Display a transparent rectangle
       ip.set_i(I.getHeight() - 45);
       ip.set_j(-10);
       vpDisplay::displayRectangle(I, ip, 60, 80, vpColor(vpColor::orange, 127), true, 2U);
+
+      // Display a transparent circle onto the image
+      vpColor transparent_red(vpColor::red, 127);
+      vpDisplay::displayCircle(I, vpImagePoint(I.getHeight() / 3, I.getWidth() / 2), I.getHeight() / 4,
+                               transparent_red, true);
+
+      // Display a second transparent circle
+      vpColor very_transparent_blue(0, 0, 255, 63);
+      vpDisplay::displayCircle(I, vpImagePoint(2 * I.getHeight() / 3, I.getWidth() / 2), I.getHeight() / 4,
+                               very_transparent_blue, true);
 
       // Display in overlay a blue arrow
       ip1.set_i(0);
