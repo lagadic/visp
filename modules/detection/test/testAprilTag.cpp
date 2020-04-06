@@ -98,6 +98,7 @@ struct TagGroundTruth {
   }
 };
 
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_EIGEN3)
 std::ostream &operator<<(std::ostream &os, TagGroundTruth &t)
 {
   os << t.m_message << std::endl;
@@ -107,6 +108,7 @@ std::ostream &operator<<(std::ostream &os, TagGroundTruth &t)
 
   return os;
 }
+#endif
 
 struct FailedTestCase {
   vpDetectorAprilTag::vpAprilTagFamily m_family;
@@ -155,19 +157,23 @@ TEST_CASE("Apriltag pose estimation test", "[apriltag_pose_estimation_test]") {
   };
 
   std::vector<vpDetectorAprilTag::vpPoseEstimationMethod> poseMethods = {vpDetectorAprilTag::HOMOGRAPHY,
-                                                                         vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS,
                                                                          vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION,
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_EIGEN3)
+                                                                         vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS,
                                                                          vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS,
                                                                          vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS,
                                                                          vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS
+#endif
                                                                         };
   std::map<vpDetectorAprilTag::vpPoseEstimationMethod, std::string> methodNames = {
     {vpDetectorAprilTag::HOMOGRAPHY, "HOMOGRAPHY"},
     {vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS, "HOMOGRAPHY_VIRTUAL_VS"},
     {vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION, "HOMOGRAPHY_ORTHOGONAL_ITERATION"},
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_EIGEN3)
     {vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS, "DEMENTHON_VIRTUAL_VS"},
     {vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, "LAGRANGE_VIRTUAL_VS"},
     {vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS, "BEST_RESIDUAL_VIRTUAL_VS"}
+#endif
   };
 
   const size_t nbTags = 5;
@@ -431,6 +437,7 @@ TEST_CASE("Apriltag corners accuracy test", "[apriltag_corners_accuracy_test]") 
   }
 }
 
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_EIGEN3)
 TEST_CASE("Apriltag regression test", "[apriltag_regression_test]") {
   const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "AprilTag/AprilTag.pgm");
   REQUIRE(vpIoTools::checkFilename(filename));
@@ -587,8 +594,8 @@ TEST_CASE("Apriltag copy constructor test", "[apriltag_copy_constructor_test]") 
   for (size_t idx = 0; idx < cMo_vec_copy.size(); idx++) {
     const vpHomogeneousMatrix& cMo = cMo_vec[idx];
     const vpHomogeneousMatrix& cMo_copy = cMo_vec_copy[idx];
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 4; j++) {
+    for (unsigned int i = 0; i < 3; i++) {
+      for (unsigned int j = 0; j < 4; j++) {
         CHECK(vpMath::equal(cMo[i][j], cMo_copy[i][j],
                             std::numeric_limits<double>::epsilon()));
       }
@@ -653,8 +660,8 @@ TEST_CASE("Apriltag assignment operator test", "[apriltag_assignment_operator_te
   for (size_t idx = 0; idx < cMo_vec_copy.size(); idx++) {
     const vpHomogeneousMatrix& cMo = cMo_vec[idx];
     const vpHomogeneousMatrix& cMo_copy = cMo_vec_copy[idx];
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 4; j++) {
+    for (unsigned int i = 0; i < 3; i++) {
+      for (unsigned int j = 0; j < 4; j++) {
         CHECK(vpMath::equal(cMo[i][j], cMo_copy[i][j],
                             std::numeric_limits<double>::epsilon()));
       }
@@ -740,6 +747,7 @@ TEST_CASE("Apriltag getTagsPoints3D test", "[apriltag_get_tags_points3D_test]") 
     }
   }
 }
+#endif // #if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_EIGEN3)
 
 int main(int argc, const char *argv[])
 {
