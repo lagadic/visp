@@ -1096,7 +1096,7 @@ void vpMatrix::multMatrixVector(const vpMatrix &A, const vpColVector &v, vpColVe
   if (A.rowNum != w.rowNum)
     w.resize(A.rowNum, false);
 
-  // If available use Lapack only for small matrices
+  // If available use Lapack only for large matrices
   bool useLapack = (A.rowNum > vpMatrix::m_lapack_min_size || A.colNum > vpMatrix::m_lapack_min_size);
 #if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
   useLapack = false;
@@ -1146,7 +1146,7 @@ void vpMatrix::mult2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
                       A.getCols(), B.getRows(), B.getCols()));
   }
 
-  // If available use Lapack only for small matrices
+  // If available use Lapack only for large matrices
   bool useLapack = (A.rowNum > vpMatrix::m_lapack_min_size || A.colNum > vpMatrix::m_lapack_min_size || B.colNum > vpMatrix::m_lapack_min_size);
 #if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
   useLapack = false;
