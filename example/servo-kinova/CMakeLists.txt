@@ -17,7 +17,10 @@
 # See http://visp.inria.fr for more information.
 #
 # This software was developed at:
-# Inria Rennes - Bretagne Atlantique
+# Harbin Institute of Technology HIT
+# Harbin city, China 
+#
+#Inria Rennes - Bretagne Atlantique
 # Campus Universitaire de Beaulieu
 # 35042 Rennes Cedex
 # France
@@ -33,7 +36,7 @@
 #
 # Authors:
 # Fabien Spindler
-#
+# Zubair Arif
 #############################################################################
 
 project(example-servo-kinova)
