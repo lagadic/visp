@@ -21,7 +21,7 @@ In ViSP, such basic operations are mainly implemented in vpMatrix class. Some of
   - vpMatrix::AAt()
   - vpMatrix::AAt(vpMatrix &) const
 
-These optimized operations are based on the use of BLAS and LAPACK third-party libraries. Several [optimized third-party](https://wiki.debian.org/DebianScience/LinearAlgebraLibraries) implementations are available for Lapack, but only one of the following third-party is used at the same time:
+These optimized operations are based on the use of [BLAS](https://en.wikipedia.org/wiki/Basic_Linear_Algebra_Subprograms) and [LAPACK](https://en.wikipedia.org/wiki/LAPACK) third-party libraries. Several [optimized third-party](https://wiki.debian.org/DebianScience/LinearAlgebraLibraries) implementations are available for Lapack, but only one of the following third-party is used at the same time:
 
 - [MKL](https://software.intel.com/en-us/mkl) for Intel Math Kernel Library
   - To install MKL on Ubuntu proceed with:
