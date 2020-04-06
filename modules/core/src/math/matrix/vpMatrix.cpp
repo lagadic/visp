@@ -711,7 +711,7 @@ void vpMatrix::AtA(vpMatrix &B) const
   if ((B.rowNum != colNum) || (B.colNum != colNum))
     B.resize(colNum, colNum, false, false);
 
-  // If available use Lapack only for small matrices
+  // If available use Lapack only for large matrices
   bool useLapack = (rowNum > vpMatrix::m_lapack_min_size || colNum > vpMatrix::m_lapack_min_size);
 #if !(defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN) && !defined(VISP_HAVE_GSL))
   useLapack = false;
