@@ -2294,8 +2294,7 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, double svThreshold) const
   (void)Ap;
   (void)svThreshold;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
-                                             "Install Lapack, Eigen3, OpenCV "
-                                             "or GSL 3rd party"));
+                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
@@ -2360,8 +2359,7 @@ vpMatrix vpMatrix::pseudoInverse(double svThreshold) const
 #else
   (void)svThreshold;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
-                                             "Install Lapack, Eigen3, OpenCV "
-                                             "or GSL 3rd party"));
+                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
@@ -3537,8 +3535,7 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
   (void)sv;
   (void)svThreshold;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
-                                             "Install Lapack, Eigen3, OpenCV "
-                                             "or GSL 3rd party"));
+                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
@@ -3774,8 +3771,7 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
   (void)imAt;
   (void)kerAt;
   throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
-                                             "Install Lapack, Eigen3, OpenCV "
-                                             "or GSL 3rd party"));
+                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
