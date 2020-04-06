@@ -13,6 +13,8 @@ ViSP 3.3.1 (under development)
     . Compatibility with FreeBSD
     . Introduce transparency when displaying filled circle and rectangle with
       vpDisplayOpenCV
+    . Complete refactoring of https://github.com/lagadic/visp_unity project
+      a wrapper between ViSP and Unity
   - Bug fixed
     . [#713] 3.3.0 build fails on non-linux systems: fatal error: 'linux/serial.h'
       file not found

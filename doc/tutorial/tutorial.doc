@@ -83,10 +83,10 @@ This page introduces the user to the way to exploit ViSP for Android platform.
 
 This page introduces the user to the way to exploit ViSP with Unity.
 
-- <a href="https://github.com/lagadic/visp_unity/blob/master/README.md">Developement of an interface and demo between ViSP and Unity engine.</a><br>This is the link to a project achieved during GSoC 2018 that shows how to use ViSP in Unity engine to achieve AR.
-- <a href="https://github.com/lagadic/visp_unity/wiki">ViSP for Unity introduction.</a><br>This is a brief introduction that explains the interaction between ViSP and Unity engine.
-- <a href="https://github.com/lagadic/visp_unity/wiki/Generating-DLL">Generating a DLL for Unity</a>.<br>This page explains how to generate DLLs for your Unity project.
-- <a href="https://github.com/lagadic/visp_unity/wiki/Running-in-Unity">Unity demo based on ViSP</a>.<br>This page shows how to track an AprilTag for an AR application and how to track an object using the generic model-based tracker implemented in VISP.
+- <a href="https://github.com/lagadic/visp_unity/blob/master/README.md">Github visp_unity project</a><br>This project contains a wrapper between ViSP and Unity engine. Two Unity AR applications that show the usage of the wrapper are also available. This is the link to a project started during GSoC 2018.
+- <a href="https://github.com/lagadic/visp_unity/wiki">ViSP for Unity introduction</a><br>This is an overview that explains the interaction between ViSP and Unity engine.
+- <a href="https://github.com/lagadic/visp_unity/wiki/Generating-ViSP-wrapper-plugin">How to build ViSP wrapper plugin for Unity</a><br>This tutorial explains how to generate ViSPUnity plugin for your Unity project depending on your platform (MacOS, Ubuntu, Windows).
+- <a href="https://github.com/lagadic/visp_unity/wiki/Unity-AR-demo-using-ViSP">How to run Unity AR application based on ViSP</a><br>This page shows how to track an AprilTag for an AR application and how to track a cube using the generic model-based tracker implemented in VISP.
 
 */
 
