@@ -31,15 +31,17 @@ These optimized operations are based on the use of [BLAS](https://en.wikipedia.o
 $ cd ~/Download
 $ tar xvzf l_mkl_2020.0.166.tgz
       \endverbatim
-    - Run the installer and chose an installation location. By default installation location is set to `$HOME/intel`.
+    - Run the installer as `sudo`. By default installation location is set to `/opt/intel`.
       \verbatim
 $ cd l_mkl_2020.0.166
-$ ./install_GUI.sh
+$ sudo ./install_GUI.sh
       \endverbatim
-    - Set `MKLROOT` environment var to be able to detect MKL during cmake configuration. If you keep the default installation location as `$HOME/intel` simply run:
+    - Now you have to [set environment variables](https://software.intel.com/en-us/mkl-linux-developer-guide-scripts-to-set-environment-variables) to be able to use MKL. To this end to make these environment variables permanent, source `mklvars.sh` script in bashrc file running:
       \verbatim
-$ echo "export MKLROOT=$HOME/intel/mkl" >> ~/.bashrc
+$ echo "source /opt/intel/compilers_and_libraries_2020.0.166/linux/mkl/bin/mklvars.sh intel64" >> ~/.bashrc
 $ source ~/.bashrc
+$ env | grep MKL
+MKLROOT=/opt/intel/compilers_and_libraries_2020.0.166/linux/mkl
       \endverbatim
 - [OpenBLAS](https://www.openblas.net/) an optimized BLAS library
   - To install openBLAS on Ubuntu proceed with:
