@@ -697,15 +697,15 @@ class JavaWrapperGenerator(object):
             c_epilogue = []
 
             # Add 3rd party specific tags
-            # If OpenCV, Lapack, or Eigen3 is missing, don't include them to prevent compilation error
-            if fi.name in ['detByLUOpenCV', 'svdOpenCV', 'inverseByLUOpenCV', 'pseudoInverseOpenCV', 'inverseByOpenCV', 'inverseByCholeskyOpenCV']:
-                c_prologue.append('#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)')
+            # If Lapack, Eigen3 or OpenCV are missing, don't include them to prevent compilation error
+            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack', 'inverseByCholeskyLapack', 'inverseByQRLapack']:
+                c_prologue.append('#if defined(VISP_HAVE_LAPACK)')
 
             if fi.name in ['detByLUEigen3', 'svdEigen3', 'inverseByLUEigen3', 'pseudoInverseEigen3', 'inverseByEigen3']:
                 c_prologue.append('#if defined(VISP_HAVE_EIGEN3)')
 
-            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack', 'inverseByCholeskyLapack', 'inverseByQRLapack']:
-                c_prologue.append('#if defined(VISP_HAVE_LAPACK)')
+            if fi.name in ['detByLUOpenCV', 'svdOpenCV', 'inverseByLUOpenCV', 'pseudoInverseOpenCV', 'inverseByOpenCV', 'inverseByCholeskyOpenCV']:
+                c_prologue.append('#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)')
 
             if type_dict[fi.ctype]["jni_type"] == "jdoubleArray" and type_dict[fi.ctype]["suffix"] != "[D":
                 fields = type_dict[fi.ctype]["jn_args"]
@@ -986,14 +986,14 @@ class JavaWrapperGenerator(object):
                         c_prologue.append("%s %s;" % (a.ctype, a.name))
 
             # Add 3rd party specific tags
-            # If OpenCV, Eigen3 or Lapack is missing, don't include them to prevent compilation error
-            if fi.name in ['detByLUOpenCV', 'svdOpenCV', 'inverseByLUOpenCV', 'pseudoInverseOpenCV', 'inverseByOpenCV', 'inverseByCholeskyOpenCV']:
+            # If Lapack, Eigen3 or OpenCV are missing, don't include them to prevent compilation error
+            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack', 'inverseByCholeskyLapack', 'inverseByQRLapack']:
                 ret += '\n    #endif'
 
             if fi.name in ['detByLUEigen3', 'svdEigen3', 'inverseByLUEigen3', 'pseudoInverseEigen3', 'inverseByEigen3']:
                 ret += '\n    #endif'
 
-            if fi.name in ['detByLULapack', 'svdLapack', 'inverseByLULapack', 'pseudoInverseLapack', 'inverseByLapack', 'inverseByCholeskyLapack', 'inverseByQRLapack']:
+            if fi.name in ['detByLUOpenCV', 'svdOpenCV', 'inverseByLUOpenCV', 'pseudoInverseOpenCV', 'inverseByOpenCV', 'inverseByCholeskyOpenCV']:
                 ret += '\n    #endif'
 
             rtype = type_dict[fi.ctype].get("jni_type", "jdoubleArray")

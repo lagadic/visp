@@ -486,8 +486,7 @@ int main(int argc, const char *argv[])
 #else
     (void)argc;
     (void)argv;
-    std::cout << "Test does nothing since you dont't have Eigen3, Lapack, "
-                 "OpenCV or GSL 3rd party"
+    std::cout << "Test does nothing since you dont't have Lapack, Eigen3 or OpenCV 3rd party"
               << std::endl;
     return EXIT_SUCCESS;
 #endif

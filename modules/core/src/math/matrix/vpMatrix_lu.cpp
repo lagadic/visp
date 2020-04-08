@@ -136,8 +136,8 @@ vpMatrix vpMatrix::inverseByLU() const
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   return inverseByLUOpenCV();
 #else
-  throw(vpException(vpException::fatalError, "Cannot compute matrix determinant. Install Eigen3, "
-                                             "Lapack, OpenCV or GSL 3rd party"));
+  throw(vpException(vpException::fatalError, "Cannot compute matrix determinant. "
+                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
@@ -190,8 +190,8 @@ double vpMatrix::detByLU() const
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     return detByLUOpenCV();
 #else
-    throw(vpException(vpException::fatalError, "Cannot compute matrix determinant. Install Lapack, "
-                                               "Eigen3, or OpenCV 3rd party"));
+    throw(vpException(vpException::fatalError, "Cannot compute matrix determinant. "
+                                               "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
   }
 }

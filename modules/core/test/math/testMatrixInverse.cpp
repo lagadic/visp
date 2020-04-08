@@ -433,13 +433,12 @@ int test_inverse_cholesky_opencv(bool verbose, const std::vector<vpMatrix> &benc
 }
 #endif
 
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 // SVD is only available for these 3rd parties
 int test_pseudo_inverse(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
   if (verbose)
-    std::cout << "Test pseudo inverse using either Eigen3, Lapack, OpenCV or "
-                 "GSL 3rd party"
+    std::cout << "Test pseudo inverse using either Lapack, Eigen3 or OpenCV 3rd party"
               << std::endl;
   // Compute inverse
   if (verbose)
@@ -591,7 +590,7 @@ int main(int argc, const char *argv[])
 #endif
 
       // Pseudo-inverse with SVD
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       ret += test_pseudo_inverse(verbose, bench_random_matrices, time);
       save_time("Pseudo inverse (Lapack, Eigen3, OpenCV): ", verbose, use_plot_file, of, time);
 #endif
@@ -620,8 +619,7 @@ int main(int argc, const char *argv[])
 #else
     (void)argc;
     (void)argv;
-    std::cout << "Test does nothing since you dont't have Eigen3, Lapack, "
-                 "OpenCV or GSL 3rd party"
+    std::cout << "Test does nothing since you dont't have Lapack, Eigen3 or OpenCV 3rd party"
               << std::endl;
     return EXIT_SUCCESS;
 #endif
