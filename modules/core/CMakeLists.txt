@@ -215,8 +215,8 @@ if(USE_ATLAS)
   list(APPEND opt_incs ${Atlas_INCLUDE_DIR})
   list(APPEND opt_libs ${Atlas_LIBRARIES})
 endif()
-if(USE_LAPACK_NETLIB)
-  list(APPEND opt_libs ${LAPACK_C_LIBRARIES})
+if(USE_NETLIB)
+  list(APPEND opt_libs ${NETLIB_LIBRARIES})
 endif()
 
 # Misc: xml, pthread, zlib

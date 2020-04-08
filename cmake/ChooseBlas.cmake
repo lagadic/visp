@@ -17,19 +17,19 @@
 
 set(AVAILABLE_VENDOR TRUE)
 
+# Since the FindLAPACK.cmake provided with CMake is for Fortran language,
+# we use here specific cmake Find files
 find_package(Atlas)
 find_package(OpenBLAS)
 find_package(MKL)
-# Since the FindLAPACK.cmake provided with CMake is for Fortran language,
-# in CMakeModules we have added FindLAPACK_C.cmake for C language
-find_package(LAPACK_C) # Netlib version
+find_package(Netlib)
 find_package(GSL)
 
 set(USE_LAPACK FALSE)
 set(USE_ATLAS FALSE)
 set(USE_OPENBLAS FALSE)
 set(USE_MKL FALSE)
-set(USE_LAPACK_NETLIB FALSE)
+set(USE_NETLIB FALSE)
 set(USE_GSL FALSE)
 
 if(MKL_FOUND)
@@ -38,7 +38,7 @@ elseif(OpenBLAS_FOUND)
   set(USE_BLAS/LAPACK "OpenBLAS" CACHE STRING "Selected BLAS library")
 elseif(ATLAS_FOUND)
   set(USE_BLAS/LAPACK "Atlas" CACHE STRING "Selected BLAS library")
-elseif(LAPACK_C_FOUND)
+elseif(NETLIB_FOUND)
   set(USE_BLAS/LAPACK "Netlib" CACHE STRING "Selected BLAS library")
 elseif(GSL_FOUND)
   set(USE_BLAS/LAPACK "GSL" CACHE STRING "Selected BLAS library")
@@ -74,7 +74,7 @@ if(AVAILABLE_VENDOR)
       set_property(CACHE USE_BLAS/LAPACK APPEND_STRING PROPERTY STRINGS ";Atlas")
     endif()
   endif()
-  if(LAPACK_C_FOUND)
+  if(NETLIB_FOUND)
     if(FIRST_PROPERTY)
       set(FIRST_PROPERTY FALSE)
       set_property(CACHE USE_BLAS/LAPACK PROPERTY STRINGS "Netlib")
@@ -104,8 +104,8 @@ if(AVAILABLE_VENDOR)
       set(USE_MKL TRUE)
     endif()
   elseif(USE_BLAS/LAPACK STREQUAL "Netlib" OR USE_BLAS/LAPACK STREQUAL "netlib")
-    if(LAPACK_C_FOUND)
-      set(USE_LAPACK_NETLIB TRUE)
+    if(NETLIB_FOUND)
+      set(USE_NETLIB TRUE)
     endif()
   elseif(USE_BLAS/LAPACK STREQUAL "GSL" OR USE_BLAS/LAPACK STREQUAL "gsl")
     if(GSL_FOUND)
