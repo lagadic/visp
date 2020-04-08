@@ -31,13 +31,14 @@ set(OpenBLAS_LIB_SEARCH_PATHS
 )
 
 find_path(OpenBLAS_INCLUDE_DIR NAMES cblas.h PATHS ${OpenBLAS_INCLUDE_SEARCH_PATHS})
+
+# Here we are looking for lapack library to be able to switch between OpenBLAS, Atlas and Netlib
+# with update-alternatives --config libblas.so.3-<multiarch>
+# and also for openblas library to be sure that openblas is installed
 if(UNIX)
-  # Here we are looking for lapack library to be able to swith between OpenBLAS, Atlas and Netlib
-  # with update-alternatives --config libblas.so.3-<multiarch>
-  find_library(OpenBLAS_LIB NAMES lapack PATHS ${OpenBLAS_LIB_SEARCH_PATHS})
-else()
-  find_library(OpenBLAS_LIB NAMES openblas PATHS ${OpenBLAS_LIB_SEARCH_PATHS})
+  find_library(OpenBLAS_LAPACK_LIB NAMES lapack PATHS ${OpenBLAS_LIB_SEARCH_PATHS})
 endif()
+find_library(OpenBLAS_LIB NAMES openblas PATHS ${OpenBLAS_LIB_SEARCH_PATHS})
 
 set(OpenBLAS_FOUND ON)
 
@@ -54,8 +55,9 @@ if(NOT OpenBLAS_LIB)
 endif()
 
 if(OpenBLAS_FOUND)
+  set(OpenBLAS_LIBRARIES ${OpenBLAS_LAPACK_LIB})
   if(NOT OpenBLAS_FIND_QUIETLY)
-    message(STATUS "Found OpenBLAS libraries: ${OpenBLAS_LIB}")
+    message(STATUS "Found OpenBLAS libraries: ${OpenBLAS_LAPACK_LIB}")
     message(STATUS "Found OpenBLAS include: ${OpenBLAS_INCLUDE_DIR}")
   endif()
 else()
