@@ -69,5 +69,6 @@ endif()
 mark_as_advanced(
   OpenBLAS_INCLUDE_DIR
   OpenBLAS_LIB
+  OpenBLAS_LAPACK_LIB
   OpenBLAS
 )
