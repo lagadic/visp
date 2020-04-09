@@ -15,6 +15,11 @@ ViSP 3.3.1 (under development)
       vpDisplayOpenCV
     . Complete refactoring of https://github.com/lagadic/visp_unity project
       a wrapper between ViSP and Unity
+    . BLAS/LAPACK usage for linear algebra with either Intel MKL, OpenBLAS, Atlas,
+      GSL, Netlib or Lapack built-in. Under Ubuntu, update-alternatives allows
+      to switch during runtime between OpenBLAS, Atlas and Netlib.
+  - Tutorials
+    . New tutorial: Basic linear algebra operations
   - Bug fixed
     . [#713] 3.3.0 build fails on non-linux systems: fatal error: 'linux/serial.h'
       file not found
@@ -25,6 +30,7 @@ ViSP 3.3.1 (under development)
     . [#728] vpProjectionDisplay doesn't display frame with RGB colors respectively
       for X, Y and Z axis
     . [#731] Link issues using pkgconfig with static libraries
+    . [#735] MKL and GSL Blas/Lapack 3rd parties incompatibility
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:
