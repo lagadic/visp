@@ -48,11 +48,6 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpVelocityTwistMatrix.h>
 
-#ifdef VISP_HAVE_GSL
-#include <gsl/gsl_eigen.h>
-#include <gsl/gsl_math.h>
-#endif
-
 #include <iostream>
 #include <math.h>
 
@@ -87,9 +82,6 @@ class vpForceTwistMatrix;
   - else if OpenCV is installed and detected by ViSP, this 3rd party is used,
     Installation instructions are provided here
   https://visp.inria.fr/3rd_opencv;
-  - else if GSL is installed and detected by ViSP, we use this other 3rd
-  party. Installation instructions are provided here
-  https://visp.inria.fr/3rd_gsl.
   - If none of these previous 3rd parties is installed, we use by default a
   Lapack built-in version.
 
@@ -244,6 +236,40 @@ vpMatrix M(R);
   //-------------------------------------------------
   // Setting a diagonal matrix
   //-------------------------------------------------
+  /** @name Linear algebra optimization  */
+  //@{
+  /*!
+   * Return the minimum size of rows and columns required to enable Blas/Lapack
+   * usage on matrices and vectors.
+   *
+   * To get more info see \ref tutorial-basic-linear-algebra.
+   *
+   * \sa setLapackMatrixMinSize()
+   */
+  static unsigned int getLapackMatrixMinSize() {
+    return m_lapack_min_size;
+  }
+
+  /*!
+   * Modify default size used to determine if Blas/Lapack basic linear algebra operations are enabled.
+   *
+   * To get more info see \ref tutorial-basic-linear-algebra.
+   *
+   * \param min_size : Minimum size of rows and columns required for a matrix or a vector to use
+   * Blas/Lapack third parties like MKL, OpenBLAS, Netlib or Atlas. When matrix or vector size is
+   * lower or equal to this parameter, Blas/Lapack is not used. In that case we prefer use naive code
+   * that runs faster for small matrices.
+   *
+   * \sa getLapackMatrixMinSize()
+   */
+  static void setLapackMatrixMinSize(unsigned int min_size) {
+    m_lapack_min_size = min_size;
+  }
+  //@}
+
+  //-------------------------------------------------
+  // Setting a diagonal matrix
+  //-------------------------------------------------
   /** @name Setting a diagonal matrix  */
   //@{
   void diag(const double &val = 1.0);
@@ -331,9 +357,6 @@ vpMatrix M(R);
 #ifdef VISP_HAVE_EIGEN3
   double detByLUEigen3() const;
 #endif
-#ifdef VISP_HAVE_GSL
-  double detByLUGsl() const;
-#endif
 #if defined(VISP_HAVE_LAPACK)
   double detByLULapack() const;
 #endif
@@ -350,6 +373,7 @@ vpMatrix M(R);
   vpMatrix &operator-=(const vpMatrix &B);
   vpMatrix operator*(const vpMatrix &B) const;
   vpMatrix operator*(const vpRotationMatrix &R) const;
+  vpMatrix operator*(const vpHomogeneousMatrix &R) const;
   vpMatrix operator*(const vpVelocityTwistMatrix &V) const;
   vpMatrix operator*(const vpForceTwistMatrix &V) const;
   // operation t_out = A * t (A is unchanged, t and t_out are translation
@@ -430,9 +454,6 @@ vpMatrix M(R);
 #if defined(VISP_HAVE_EIGEN3)
   vpMatrix inverseByLUEigen3() const;
 #endif
-#if defined(VISP_HAVE_GSL)
-  vpMatrix inverseByLUGsl() const;
-#endif
 #if defined(VISP_HAVE_LAPACK)
   vpMatrix inverseByLULapack() const;
 #endif
@@ -459,7 +480,6 @@ vpMatrix M(R);
 
   // inverse triangular matrix
   vpMatrix inverseTriangular(bool upper = true) const;
-
 
   vpMatrix pseudoInverse(double svThreshold = 1e-6) const;
   unsigned int pseudoInverse(vpMatrix &Ap, double svThreshold = 1e-6) const;
@@ -489,14 +509,6 @@ vpMatrix M(R);
   unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
                                    vpMatrix &kerAt) const;
 #endif
-#if defined(VISP_HAVE_GSL)
-  vpMatrix pseudoInverseGsl(double svThreshold = 1e-6) const;
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, double svThreshold = 1e-6) const;
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
-                                vpMatrix &kerAt) const;
-#endif
-
   //@}
 
   //-------------------------------------------------
@@ -517,9 +529,6 @@ vpMatrix M(R);
   void svd(vpColVector &w, vpMatrix &V);
 #ifdef VISP_HAVE_EIGEN3
   void svdEigen3(vpColVector &w, vpMatrix &V);
-#endif
-#ifdef VISP_HAVE_GSL
-  void svdGsl(vpColVector &w, vpMatrix &V);
 #endif
 #if defined(VISP_HAVE_LAPACK)
   void svdLapack(vpColVector &w, vpMatrix &V);
@@ -547,7 +556,7 @@ vpMatrix M(R);
   /** @name Eigen values  */
 
   //@{
-  // compute the eigen values using the Gnu Scientific library
+  // compute the eigen values using Lapack
   vpColVector eigenValues() const;
   void eigenValues(vpColVector &evalue, vpMatrix &evector) const;
   //@}
@@ -802,16 +811,147 @@ vpMatrix M(R);
   vp_deprecated vpRowVector row(unsigned int i);
   vp_deprecated vpColVector column(unsigned int j);
 
+  // Deprecated functions using GSL
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+  /*!
+     \deprecated You should rather use detByLULapack() or detByLU().
+   */
+  vp_deprecated double detByLUGsl() const {
+#if defined(VISP_HAVE_LAPACK)
+    return detByLULapack();
+#else
+    throw(vpException(vpException::fatalError,
+                      "Undefined detByLULapack(). Install Lapack 3rd party"));
+#endif
+  }
+
+  /*!
+     \deprecated You should rather use inverseByLULapack() or inverseByLU().
+   */
+  vp_deprecated vpMatrix inverseByLUGsl() const {
+#if defined(VISP_HAVE_LAPACK)
+    return inverseByLULapack();
+#else
+    throw(vpException(vpException::fatalError,
+                      "Undefined inverseByLULapack(). Install Lapack 3rd party"));
+#endif
+  }
+
+  /*!
+     \deprecated You should rather use inverseByCholeskyLapack() or inverseByCholesky().
+   */
+  vpMatrix inverseByCholeskyGsl() const {
+#if defined(VISP_HAVE_LAPACK)
+    return inverseByCholeskyLapack();
+#else
+    throw(vpException(vpException::fatalError,
+                      "Undefined inverseByCholeskyLapack(). Install Lapack 3rd party"));
+#endif
+  }
+
+  /*!
+     \deprecated You should rather use inverseByQRLapack() or inverseByQR().
+   */
+  vpMatrix inverseByQRGsl() const {
+#if defined(VISP_HAVE_LAPACK)
+    return inverseByQRLapack();
+#else
+    throw(vpException(vpException::fatalError,
+                      "Undefined inverseByQRLapack(). Install Lapack 3rd party"));
+#endif
+  }
+
+  /*!
+     \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
+   */
+  vpMatrix pseudoInverseGsl(double svThreshold = 1e-6) const {
+#if defined(VISP_HAVE_LAPACK)
+    return pseudoInverseLapack(svThreshold);
+#else
+    (void)svThreshold;
+    throw(vpException(vpException::fatalError,
+                      "Undefined pseudoInverseLapack(). Install Lapack 3rd party"));
+#endif
+  }
+
+  /*!
+     \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
+   */
+  unsigned int pseudoInverseGsl(vpMatrix &Ap, double svThreshold = 1e-6) const {
+#if defined(VISP_HAVE_LAPACK)
+    return pseudoInverseLapack(Ap, svThreshold);
+#else
+    (void)Ap;
+    (void)svThreshold;
+    throw(vpException(vpException::fatalError,
+                      "Undefined pseudoInverseLapack(). Install Lapack 3rd party"));
+#endif
+  }
+
+  /*!
+     \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
+   */
+  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const {
+#if defined(VISP_HAVE_LAPACK)
+    return pseudoInverseLapack(Ap, sv, svThreshold);
+#else
+    (void)Ap;
+    (void)sv;
+    (void)svThreshold;
+    throw(vpException(vpException::fatalError,
+                      "Undefined pseudoInverseLapack(). Install Lapack 3rd party"));
+#endif
+  }
+
+  /*!
+     \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
+   */
+  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
+                                vpMatrix &kerAt) const {
+#if defined(VISP_HAVE_LAPACK)
+    return pseudoInverseLapack(Ap, sv, svThreshold, imA, imAt, kerAt);
+#else
+    (void)Ap;
+    (void)sv;
+    (void)svThreshold;
+    (void)imA;
+    (void)imAt;
+    (void)kerAt;
+    throw(vpException(vpException::fatalError,
+                      "Undefined pseudoInverseLapack(). Install Lapack 3rd party"));
+#endif
+  }
+
+  /*!
+     \deprecated You should rather use svdLapack() or svd().
+   */
+  void svdGsl(vpColVector &w, vpMatrix &V) {
+#if defined(VISP_HAVE_LAPACK)
+    svdLapack(w, V);
+#else
+    (void)w;
+    (void)V;
+    throw(vpException(vpException::fatalError,
+                      "Undefined svdLapack(). Install Lapack 3rd party"));
+#endif
+  }
+
+#endif // ifndef DOXYGEN_SHOULD_SKIP_THIS
   //@}
 #endif
 
 private:
-#if defined(VISP_HAVE_LAPACK) && !defined(VISP_HAVE_LAPACK_BUILT_IN)
-  static void blas_dgemm(char trans_a, char trans_b, int M, int N, int K, double alpha,
-                         double *a_data, int lda, double *b_data, int ldb, double beta, double *c_data,
-                         int ldc);
-  static void blas_dgemv(char trans, int M, int N, double alpha, double *a_data, int lda,
-                         double *x_data, int incx, double beta, double *y_data, int incy);
+  static unsigned int m_lapack_min_size;
+  static const unsigned int m_lapack_min_size_default;
+
+#if defined(VISP_HAVE_LAPACK)
+  static void blas_dgemm(char trans_a, char trans_b, unsigned int M_, unsigned int N_, unsigned int K_, double alpha,
+                         double *a_data, unsigned int lda_, double *b_data, unsigned int ldb_, double beta, double *c_data,
+                         unsigned int ldc_);
+  static void blas_dgemv(char trans, unsigned int M_, unsigned int N_, double alpha, double *a_data, unsigned int lda_,
+                         double *x_data, int incx_, double beta, double *y_data, int incy_);
+  static void blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data, unsigned int lda_,
+                         double *w_data, double *work_data, unsigned int lwork_, int &info_);
 #endif
 
   static void computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls,
@@ -819,10 +959,13 @@ private:
 };
 
 //////////////////////////////////////////////////////////////////////////
+#if defined(VISP_USE_MSVC) && defined(visp_EXPORTS)
+const __declspec(selectany) unsigned int vpMatrix::m_lapack_min_size_default = 0;
+__declspec(selectany) unsigned int vpMatrix::m_lapack_min_size = vpMatrix::m_lapack_min_size_default;
+#endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 VISP_EXPORT
 #endif
 vpMatrix operator*(const double &x, const vpMatrix &A);
-
 #endif

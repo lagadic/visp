@@ -38,6 +38,23 @@
 
 #include <visp3/core/vpLinProg.h>
 
+bool equalMatrix(const vpMatrix& A, const vpMatrix& B, double tol=1e-9)
+{
+  if (A.getRows() != B.getRows() || A.getCols() != B.getCols()) {
+    return false;
+  }
+
+  for (unsigned int i = 0; i < A.getRows(); i++) {
+    for (unsigned int j = 0; j < A.getCols(); j++) {
+      if (!vpMath::equal(A[i][j], B[i][j], tol)) {
+        return false;
+      }
+    }
+  }
+
+  return true;
+}
+
 /*!
   Reduces the search space induced by an equality constraint.
 
@@ -118,7 +135,14 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
 
   if(full_rank) // caller thinks rank is n or m, can use basic QR
   {
+    std::cout << "1 QRDEBUG A(" << A.transpose().getRows() << "," << A.transpose().getCols() << "):\n" << A.transpose() << std::endl;
+
     r = A.transpose().qr(Q, R, false, true);
+    std::cout << "1 QRDEBUG rank: " << r << std::endl;
+    std::cout << "1 QRDEBUG Q:\n " << Q << std::endl;
+    std::cout << "1 QRDEBUG R:\n " << R << std::endl;
+    std::cout << "1 QRDEBUG A = Q*R ?\n " << equalMatrix(A.transpose(), Q*R) << std::endl;
+
     // degenerate but easy case - rank is number of columns
     if(r == n)
     {
@@ -141,7 +165,14 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
         IQQt[j][j] += 1;
       // most of the time the first n-m columns are just fine
       A = IQQt.extract(0,0,n,n-m);
-      if(A.qr(Q, R, false, false, tol) != n-m)
+      std::cout << "2 QRDEBUG A(" << A.getRows() << "," << A.getCols() << "):\n" << A << std::endl;
+      unsigned int r2 = A.qr(Q, R, false, false, tol);
+      std::cout << "2 QRDEBUG rank: " << r2 << std::endl;
+      std::cout << "2 QRDEBUG Q:\n " << Q << std::endl;
+      std::cout << "2 QRDEBUG R:\n " << R << std::endl;
+      std::cout << "2 QRDEBUG A = Q*R ?\n " << equalMatrix(A, Q*R) << std::endl;
+
+      if(r2 != n-m)
       {
         // rank deficiency, manually find n-m independent columns
         unsigned int j0;
@@ -161,8 +192,15 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
           if(!allZero(IQQt.getCol(j)))
           {
             A = vpMatrix::juxtaposeMatrices(A, IQQt.getCol(j));
-            if(A.qr(Q, R, false, false, tol) != A.getCols())
-              A.resize(n,A.getCols()-1, false);
+            std::cout << "3 QRDEBUG A(" << A.getRows() << "," << A.getCols() << "):\n" << A << std::endl;
+            unsigned int r3 = A.qr(Q, R, false, false, tol);
+            std::cout << "3 QRDEBUG rank: " << r3 << std::endl;
+            std::cout << "3 QRDEBUG Q:\n " << Q << std::endl;
+            std::cout << "3 QRDEBUG R:\n " << R << std::endl;
+            std::cout << "3 QRDEBUG A = Q*R ?\n " << equalMatrix(A, Q*R) << std::endl;
+
+            if(r != A.getCols())
+              A.resize(n,A.getCols()-1, false);            
           }
           j++;
         }
@@ -192,7 +230,13 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
       IQQt[j][j] += 1;
     // most of the time the first n-r columns are just fine
     A = IQQt.extract(0,0,n,n-r);
-    if(A.qr(Q, R, false, false, tol) != n-r)
+    std::cout << "4 QRDEBUG A(" << A.getRows() << "," << A.getCols() << "):\n" << A << std::endl;
+    unsigned int r4 = A.qr(Q, R, false, false, tol);
+    std::cout << "4 QRDEBUG rank: " << r4 << std::endl;
+    std::cout << "4 QRDEBUG Q:\n " << Q << std::endl;
+    std::cout << "4 QRDEBUG R:\n " << R << std::endl;
+    std::cout << "4 QRDEBUG A = Q*R ?\n " << equalMatrix(A, Q*R) << std::endl;
+    if(r4 != n-r)
     {
       // rank deficiency, manually find n-r independent columns
       unsigned int j0;
@@ -212,12 +256,20 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
         if(!allZero(IQQt.getCol(j)))
         {
           A = vpMatrix::juxtaposeMatrices(A, IQQt.getCol(j));
-          if(A.qr(Q, R, false, false, tol) != A.getCols())
+          std::cout << "5 QRDEBUG A(" << A.getRows() << "," << A.getCols() << "):\n" << A << std::endl;
+          unsigned int r5 = A.qr(Q, R, false, false, tol);
+          std::cout << "5 QRDEBUG rank: " << r5 << std::endl;
+          std::cout << "5 QRDEBUG Q:\n " << Q << std::endl;
+          std::cout << "5 QRDEBUG R:\n " << R << std::endl;
+          std::cout << "5 QRDEBUG A = Q*R ?\n " << equalMatrix(A, Q*R) << std::endl;
+
+          if(r5 != A.getCols())
             A.resize(n,A.getCols()-1, false);
         }
         j++;
       }
     }
+    exit(0); // QRDEBUG
     return true;
   }
   return false;

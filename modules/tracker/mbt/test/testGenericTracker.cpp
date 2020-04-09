@@ -282,7 +282,11 @@ namespace
     tracker_type[1] = vpMbGenericTracker::DEPTH_DENSE_TRACKER;
     vpMbGenericTracker tracker(tracker_type);
 #if defined(VISP_HAVE_PUGIXML)
-    tracker.loadConfigFile(input_directory + "/Config/chateau.xml", input_directory + "/Config/chateau_depth.xml");
+    std::string configFileCam1 = input_directory + std::string("/Config/chateau.xml");
+    std::string configFileCam2 = input_directory + std::string("/Config/chateau_depth.xml");
+    std::cout << "Load config file for camera 1: " << configFileCam1 << std::endl;
+    std::cout << "Load config file for camera 2: " << configFileCam2 << std::endl;
+    tracker.loadConfigFile(configFileCam1, configFileCam2);
 #else
     {
       vpCameraParameters cam_color, cam_depth;
