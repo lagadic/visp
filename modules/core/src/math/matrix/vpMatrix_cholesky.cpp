@@ -173,7 +173,11 @@ vpMatrix vpMatrix::inverseByCholeskyLapack() const
     cholesky.owner = 0;
     cholesky.block = 0;
 
+#if (GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 3)
     gsl_linalg_cholesky_decomp1(&cholesky);
+#else
+    gsl_linalg_cholesky_decomp(&cholesky);
+#endif
     gsl_linalg_cholesky_invert(&cholesky);
     return invA;
   }

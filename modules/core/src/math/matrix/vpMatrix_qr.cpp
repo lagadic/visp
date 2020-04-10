@@ -33,6 +33,7 @@
  *
  * Authors:
  * Filip Novotny
+ * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -54,6 +55,13 @@
 
 #ifdef VISP_HAVE_LAPACK
 #  ifdef VISP_HAVE_GSL
+#    if !(GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 2)
+// Needed for GSL_VERSION < 2.2 where gsl_linalg_tri_*_invert() not present
+#      include <gsl/gsl_math.h>
+#      include <gsl/gsl_vector.h>
+#      include <gsl/gsl_matrix.h>
+#      include <gsl/gsl_blas.h>
+#    endif
 #    include <gsl/gsl_linalg.h>
 #    include <gsl/gsl_permutation.h>
 #  endif
@@ -171,7 +179,25 @@ vpMatrix vpMatrix::inverseByQRLapack() const
     }
     gsl_linalg_QR_decomp(gsl_A, gsl_tau);
     gsl_linalg_QR_unpack(gsl_A, gsl_tau, gsl_Q, gsl_R);
+#if (GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 2)
     gsl_linalg_tri_upper_invert(gsl_R);
+#else
+    {
+      gsl_matrix_view m;
+      gsl_vector_view v;
+      for (unsigned int i = 0; i < rowNum; i++) {
+        double *Tii = gsl_matrix_ptr(gsl_R, i, i);
+        *Tii = 1.0 / (*Tii);
+        double aii = -(*Tii);
+        if (i > 0) {
+          m = gsl_matrix_submatrix(gsl_R, 0, 0, i, i);
+          v = gsl_matrix_subcolumn(gsl_R, i, 0, i);
+          gsl_blas_dtrmv(CblasUpper, CblasNoTrans, CblasNonUnit, &m.matrix, &v.vector);
+          gsl_blas_dscal(aii, &v.vector);
+        }
+      }
+    }
+#endif
     gsl_matrix_transpose(gsl_Q);
 
     gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, gsl_R, gsl_Q, 0, &gsl_inv);
@@ -1022,10 +1048,47 @@ vpMatrix vpMatrix::inverseTriangular(bool upper) const
   }
 
   if (upper) {
+#if (GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 2)
     gsl_linalg_tri_upper_invert(&gsl_inv);
+#else
+    {
+      gsl_matrix_view m;
+      gsl_vector_view v;
+      for (unsigned int i = 0; i < rowNum; i++) {
+        double *Tii = gsl_matrix_ptr(&gsl_inv, i, i);
+        *Tii = 1.0 / *Tii;
+        double aii = -(*Tii);
+        if (i > 0) {
+          m = gsl_matrix_submatrix(&gsl_inv, 0, 0, i, i);
+          v = gsl_matrix_subcolumn(&gsl_inv, i, 0, i);
+          gsl_blas_dtrmv(CblasUpper, CblasNoTrans, CblasNonUnit, &m.matrix, &v.vector);
+          gsl_blas_dscal(aii, &v.vector);
+        }
+      }
+    }
+#endif
   }
   else {
+#if (GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 2)
     gsl_linalg_tri_lower_invert(&gsl_inv);
+#else
+    {
+      gsl_matrix_view m;
+      gsl_vector_view v;
+      for (unsigned int i = 0; i < rowNum; i++) {
+        size_t j = rowNum - i - 1;
+        double *Tjj = gsl_matrix_ptr(&gsl_inv, j, j);
+        *Tjj = 1.0 / (*Tjj);
+        double ajj = -(*Tjj);
+        if (j < rowNum - 1) {
+          m = gsl_matrix_submatrix(&gsl_inv, j + 1, j + 1, rowNum - j - 1, rowNum - j - 1);
+          v = gsl_matrix_subcolumn(&gsl_inv, j, j + 1, rowNum - j - 1);
+          gsl_blas_dtrmv(CblasLower, CblasNoTrans, CblasNonUnit, &m.matrix, &v.vector);
+          gsl_blas_dscal(ajj, &v.vector);
+        }
+      }
+    }
+#endif
   }
 
   return inv;
