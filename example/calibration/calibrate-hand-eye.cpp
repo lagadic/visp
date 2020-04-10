@@ -56,6 +56,7 @@
 
 int main()
 {
+#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     // We want to calibrate the hand-eye extrinsic camera parameters from 6
     // couple of poses: cMo and wMe
@@ -145,4 +146,8 @@ int main()
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
+#else
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

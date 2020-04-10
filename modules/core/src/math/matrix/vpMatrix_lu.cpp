@@ -129,16 +129,63 @@ int main()
 */
 vpMatrix vpMatrix::inverseByLU() const
 {
+  if (colNum == 1 && rowNum == 1) {
+    vpMatrix inv;
+    inv.resize(1, 1, false);
+    double d = det();
+    if (std::fabs(d) < std::numeric_limits<double>::epsilon()) {
+      throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.", rowNum, colNum));
+    }
+    inv[0][0] = 1. / d;
+    return inv;
+  }
+  else if (colNum == 2 && rowNum == 2) {
+    vpMatrix inv;
+    inv.resize(2, 2, false);
+    double d = det();
+    if (std::fabs(d) < std::numeric_limits<double>::epsilon()) {
+      throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.", rowNum, colNum));
+    }
+    d = 1. / d;
+    inv[1][1] =  (*this)[0][0]*d;
+    inv[0][0] =  (*this)[1][1]*d;
+    inv[0][1] = -(*this)[0][1]*d;
+    inv[1][0] = -(*this)[1][0]*d;
+    return inv;
+  }
+  else if (colNum == 3 && rowNum == 3) {
+    vpMatrix inv;
+    inv.resize(3, 3, false);
+    double d = det();
+    if (std::fabs(d) < std::numeric_limits<double>::epsilon()) {
+      throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.", rowNum, colNum));
+    }
+    d = 1. / d;
+    inv[0][0] = ((*this)[1][1] * (*this)[2][2] - (*this)[1][2] * (*this)[2][1]) * d;
+    inv[0][1] = ((*this)[0][2] * (*this)[2][1] - (*this)[0][1] * (*this)[2][2]) * d;
+    inv[0][2] = ((*this)[0][1] * (*this)[1][2] - (*this)[0][2] * (*this)[1][1]) * d;
+
+    inv[1][0] = ((*this)[1][2] * (*this)[2][0] - (*this)[1][0] * (*this)[2][2]) * d;
+    inv[1][1] = ((*this)[0][0] * (*this)[2][2] - (*this)[0][2] * (*this)[2][0]) * d;
+    inv[1][2] = ((*this)[0][2] * (*this)[1][0] - (*this)[0][0] * (*this)[1][2]) * d;
+
+    inv[2][0] = ((*this)[1][0] * (*this)[2][1] - (*this)[1][1] * (*this)[2][0]) * d;
+    inv[2][1] = ((*this)[0][1] * (*this)[2][0] - (*this)[0][0] * (*this)[2][1]) * d;
+    inv[2][2] = ((*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0]) * d;
+    return inv;
+  }
+  else {
 #if defined(VISP_HAVE_LAPACK)
-  return inverseByLULapack();
+    return inverseByLULapack();
 #elif defined(VISP_HAVE_EIGEN3)
-  return inverseByLUEigen3();
+    return inverseByLUEigen3();
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-  return inverseByLUOpenCV();
+    return inverseByLUOpenCV();
 #else
-  throw(vpException(vpException::fatalError, "Cannot compute matrix determinant. "
-                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
+    throw(vpException(vpException::fatalError, "Cannot inverse by LU. "
+                                               "Install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
+  }
 }
 
 /*!
@@ -176,9 +223,13 @@ int main()
 */
 double vpMatrix::detByLU() const
 {
-  if (rowNum == 2 && colNum == 2) {
+  if (rowNum == 1 && colNum == 1) {
+    return (*this)[0][0];
+  }
+  else if (rowNum == 2 && colNum == 2) {
     return ((*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0]);
-  } else if (rowNum == 3 && colNum == 3) {
+  }
+  else if (rowNum == 3 && colNum == 3) {
     return ((*this)[0][0] * ((*this)[1][1] * (*this)[2][2] - (*this)[1][2] * (*this)[2][1]) -
             (*this)[0][1] * ((*this)[1][0] * (*this)[2][2] - (*this)[1][2] * (*this)[2][0]) +
             (*this)[0][2] * ((*this)[1][0] * (*this)[2][1] - (*this)[1][1] * (*this)[2][0]));
@@ -199,7 +250,7 @@ double vpMatrix::detByLU() const
 #if defined(VISP_HAVE_LAPACK)
 /*!
   Compute the inverse of a n-by-n matrix using the LU decomposition with
-Lapack 3rd party.
+  Lapack 3rd party.
 
   \return The inverse matrix.
 

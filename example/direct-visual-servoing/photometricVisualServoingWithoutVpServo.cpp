@@ -176,6 +176,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 
 int main(int argc, const char **argv)
 {
+#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -412,6 +413,9 @@ int main(int argc, const char **argv)
     int iterGN = 90; // swicth to Gauss Newton after iterGN iterations
 
     double normeError = 0;
+
+    vpChrono chrono;
+    chrono.start();
     do {
       std::cout << "--------------------------------------------" << iter++ << std::endl;
 
@@ -468,6 +472,9 @@ int main(int argc, const char **argv)
       cMo = wMc.inverse() * wMo;
     } while (normeError > 10000 && iter < opt_niter);
 
+    chrono.stop();
+    std::cout << "Time to convergence: " << chrono.getDurationMs() << " ms" << std::endl;
+
     v = 0;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
@@ -476,4 +483,10 @@ int main(int argc, const char **argv)
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
+#else
+  (void)argc;
+  (void)argv;
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

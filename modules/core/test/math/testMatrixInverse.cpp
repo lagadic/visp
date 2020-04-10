@@ -302,15 +302,35 @@ void create_bench_random_triangular_matrix(unsigned int nb_matrices, unsigned in
 
 int test_inverse(const std::vector<vpMatrix> &bench, const std::vector<vpMatrix> &result)
 {
+  double epsilon = 1e-10;
   for (unsigned int i = 0; i < bench.size(); i++) {
     vpMatrix I = bench[i] * result[i];
-    if (std::fabs(I.frobeniusNorm() - sqrt((double)bench[0].AtA().getRows())) > 1e-10) {
+    if (std::fabs(I.frobeniusNorm() - sqrt(static_cast<double>(bench[0].AtA().getRows()))) > epsilon) {
       std::cout << "Bad inverse[" << i << "]: " << I.frobeniusNorm() << " " << sqrt((double)bench[0].AtA().getRows())
                 << std::endl;
       return EXIT_FAILURE;
     }
   }
   return EXIT_SUCCESS;
+}
+
+int test_inverse_lu_small(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+{
+  if (verbose)
+    std::cout << "Test inverse by LU on small matrices" << std::endl;
+  // Compute inverse
+  if (verbose)
+    std::cout << "  Inverting " << bench[0].getRows() << "x" << bench[0].getCols()
+              << " small matrix." << std::endl;
+  std::vector<vpMatrix> result(bench.size());
+  double t = vpTime::measureTimeMs();
+  for (unsigned int i = 0; i < bench.size(); i++) {
+    result[i] = bench[i].inverseByLU();
+  }
+  time = vpTime::measureTimeMs() - t;
+
+  // Test inverse
+  return test_inverse(bench, result);
 }
 
 #if defined(VISP_HAVE_EIGEN3)
@@ -487,7 +507,6 @@ void save_time(const std::string &method, bool verbose, bool use_plot_file, std:
 int main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     unsigned int nb_matrices = 1000;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
@@ -545,17 +564,36 @@ int main(int argc, const char *argv[])
 
     int ret = EXIT_SUCCESS;
     for (unsigned int iter = 0; iter < nb_iterations; iter++) {
+      std::vector<vpMatrix> bench_random_matrices_11;
+      create_bench_random_matrix(nb_matrices, 1, 1, verbose, bench_random_matrices_11);
+      std::vector<vpMatrix> bench_random_matrices_22;
+      create_bench_random_matrix(nb_matrices, 2, 2, verbose, bench_random_matrices_22);
+      std::vector<vpMatrix> bench_random_matrices_33;
+      create_bench_random_matrix(nb_matrices, 3, 3, verbose, bench_random_matrices_33);
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       std::vector<vpMatrix> bench_random_matrices;
       create_bench_random_matrix(nb_matrices, nb_rows, nb_cols, verbose, bench_random_matrices);
       std::vector<vpMatrix> bench_symmetric_positive_matrices;
       create_bench_symmetric_positive_matrix(nb_matrices, nb_rows, verbose, bench_symmetric_positive_matrices);
       std::vector<vpMatrix> bench_triangular_matrices;
       create_bench_random_triangular_matrix(nb_matrices, nb_rows, verbose, bench_triangular_matrices);
+#endif
 
       if (use_plot_file)
         of << iter << "\t";
 
       double time;
+
+      // LU inverse on 1 by 1 matrices
+      ret += test_inverse_lu_small(verbose, bench_random_matrices_11, time);
+      save_time("Inverse by LU 1x1: ", verbose, use_plot_file, of, time);
+      // LU inverse on 2 by 2 matrices
+      ret += test_inverse_lu_small(verbose, bench_random_matrices_22, time);
+      save_time("Inverse by LU 2x2: ", verbose, use_plot_file, of, time);
+      // LU inverse on 3 by 3 matrices
+      ret += test_inverse_lu_small(verbose, bench_random_matrices_33, time);
+      save_time("Inverse by LU 3x3: ", verbose, use_plot_file, of, time);
+
       // LU decomposition
 #if defined(VISP_HAVE_LAPACK)
       ret += test_inverse_lu_lapack(verbose, bench_random_matrices, time);
@@ -616,13 +654,6 @@ int main(int argc, const char *argv[])
     }
 
     return ret;
-#else
-    (void)argc;
-    (void)argv;
-    std::cout << "Test does nothing since you dont't have Lapack, Eigen3 or OpenCV 3rd party"
-              << std::endl;
-    return EXIT_SUCCESS;
-#endif
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return EXIT_FAILURE;
