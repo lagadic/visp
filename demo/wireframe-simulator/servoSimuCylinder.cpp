@@ -67,7 +67,8 @@
 
 #define GETOPTARGS "dhp"
 
-#ifdef VISP_HAVE_DISPLAY
+#if defined(VISP_HAVE_DISPLAY) \
+  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 /*!
 
@@ -460,6 +461,12 @@ int main(int argc, const char **argv)
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
+}
+#elif !(defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+int main()
+{
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
 }
 #else
 int main()

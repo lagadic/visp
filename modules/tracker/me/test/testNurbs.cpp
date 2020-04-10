@@ -59,7 +59,8 @@
 #include <cstdlib>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpParseArgv.h>
-#if defined(VISP_HAVE_DISPLAY)
+#if defined(VISP_HAVE_DISPLAY) \
+  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 // List of allowed command line options
 #define GETOPTARGS "cdh"
@@ -364,6 +365,12 @@ int main(int argc, const char **argv)
   }
 }
 
+#elif !(defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+int main()
+{
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+}
 #else
 int main()
 {

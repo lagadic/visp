@@ -164,6 +164,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display,
 
 int main(int argc, const char **argv)
 {
+#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     bool opt_display = true;
     bool opt_click_allowed = true;
@@ -384,4 +385,10 @@ int main(int argc, const char **argv)
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
+#else
+  (void)argc;
+  (void)argv;
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

@@ -43,7 +43,8 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_MBT)
+#if defined(VISP_HAVE_MODULE_MBT) \
+  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <type_traits>
@@ -710,9 +711,15 @@ int main(int argc, const char *argv[])
     return EXIT_FAILURE;
   }
 }
+#elif !(defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+int main()
+{
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+}
 #else
 int main() {
   std::cout << "Enable MBT module (VISP_HAVE_MODULE_MBT) to launch this test." << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif
