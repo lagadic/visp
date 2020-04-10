@@ -132,17 +132,21 @@ vpMatrix vpMatrix::inverseByLU() const
   if (colNum == 1 && rowNum == 1) {
     vpMatrix inv;
     inv.resize(1, 1, false);
-    inv[0][0] = 1. / det();
+    double d = det();
+    if (std::fabs(d) < std::numeric_limits<double>::epsilon()) {
+      throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.", rowNum, colNum));
+    }
+    inv[0][0] = 1. / d;
     return inv;
   }
   else if (colNum == 2 && rowNum == 2) {
     vpMatrix inv;
     inv.resize(2, 2, false);
     double d = det();
-    d = 1. / d;
     if (std::fabs(d) < std::numeric_limits<double>::epsilon()) {
-      throw(vpException(vpException::fatalError, "Cannot inverse by LU. Matrix determinant is 0."));
+      throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.", rowNum, colNum));
     }
+    d = 1. / d;
     inv[1][1] =  (*this)[0][0]*d;
     inv[0][0] =  (*this)[1][1]*d;
     inv[0][1] = -(*this)[0][1]*d;
@@ -153,10 +157,10 @@ vpMatrix vpMatrix::inverseByLU() const
     vpMatrix inv;
     inv.resize(3, 3, false);
     double d = det();
-    d = 1. / d;
     if (std::fabs(d) < std::numeric_limits<double>::epsilon()) {
-      throw(vpException(vpException::fatalError, "Cannot inverse by LU. Matrix determinant is 0."));
+      throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.", rowNum, colNum));
     }
+    d = 1. / d;
     inv[0][0] = ((*this)[1][1] * (*this)[2][2] - (*this)[1][2] * (*this)[2][1]) * d;
     inv[0][1] = ((*this)[0][2] * (*this)[2][1] - (*this)[0][1] * (*this)[2][2]) * d;
     inv[0][2] = ((*this)[0][1] * (*this)[1][2] - (*this)[0][2] * (*this)[1][1]) * d;
