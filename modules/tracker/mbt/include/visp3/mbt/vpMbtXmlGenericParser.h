@@ -154,6 +154,8 @@ public:
   void setProjectionErrorMe(const vpMe &me);
   void setProjectionErrorKernelSize(const unsigned int &size);
 
+  void setVerbose(bool verbose);
+
 private:
   vpMbtXmlGenericParser(const vpMbtXmlGenericParser &);            // noncopyable
   vpMbtXmlGenericParser &operator=(const vpMbtXmlGenericParser &); //
@@ -161,6 +163,8 @@ private:
   // PIMPL idiom
   class Impl;
   Impl *m_impl;
+
+  bool m_verbose;
 };
 
 #endif

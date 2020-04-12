@@ -451,7 +451,7 @@ public:
   virtual void initFromPose(const vpImage<unsigned char> &I, const vpPoseVector &cPo);
   virtual void initFromPose(const vpImage<vpRGBa> &I_color, const vpPoseVector &cPo);
 
-  virtual void loadModel(const std::string &modelFile, bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
+  virtual void loadModel(const std::string &modelFile, int verbose=1, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   /*!
     Set the angle used to test polygons appearance.
@@ -699,8 +699,9 @@ public:
     Pure virtual method to adapt to each tracker.
 
     \param configFile : An xml config file to parse.
+    \param verbose : Verbose option.
   */
-  virtual void loadConfigFile(const std::string &configFile);
+  virtual void loadConfigFile(const std::string &configFile, bool verbose=true);
 
   /*!
     Reset the tracker.
@@ -888,7 +889,7 @@ protected:
 
   virtual void loadVRMLModel(const std::string &modelFile);
   virtual void loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
-                            int &startIdFace, bool verbose = false, bool parent = true,
+                            int &startIdFace, int verbose = 1, bool parent = true,
                             const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   void projectionErrorInitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo);

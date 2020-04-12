@@ -416,7 +416,7 @@ void vpMbDepthNormalTracker::init(const vpImage<unsigned char> &I)
   computeVisibility(I.getWidth(), I.getHeight());
 }
 
-void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile)
+void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
 #ifdef VISP_HAVE_PUGIXML
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::DEPTH_NORMAL_PARSER);
@@ -433,7 +433,10 @@ void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile)
   xmlp.setDepthNormalSamplingStepY(m_depthNormalSamplingStepY);
 
   try {
-    std::cout << " *********** Parsing XML for Mb Depth Tracker ************ " << std::endl;
+    if (verbose) {
+      std::cout << " *********** Parsing XML for Mb Depth Tracker ************ " << std::endl;
+    }
+    xmlp.setVerbose(verbose);
     xmlp.parse(configFile);
   } catch (const vpException &e) {
     std::cerr << "Exception: " << e.what() << std::endl;
@@ -467,7 +470,7 @@ void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile)
 }
 
 void vpMbDepthNormalTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                         const vpHomogeneousMatrix &cMo, bool verbose)
+                                         const vpHomogeneousMatrix &cMo, int verbose)
 {
   m_cMo.eye();
 
@@ -485,7 +488,7 @@ void vpMbDepthNormalTracker::reInitModel(const vpImage<unsigned char> &I, const 
 #if defined(VISP_HAVE_PCL)
 void vpMbDepthNormalTracker::reInitModel(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud,
                                          const std::string &cad_name, const vpHomogeneousMatrix &cMo,
-                                         bool verbose)
+                                         int verbose)
 {
   vpImage<unsigned char> I_dummy(point_cloud->height, point_cloud->width);
   reInitModel(I_dummy, cad_name, cMo, verbose);

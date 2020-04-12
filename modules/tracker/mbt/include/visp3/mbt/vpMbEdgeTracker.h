@@ -390,10 +390,10 @@ public:
 
   virtual inline vpColVector getRobustWeights() const { return m_w_edge; }
 
-  void loadConfigFile(const std::string &configFile);
+  void loadConfigFile(const std::string &configFile, bool verbose=true);
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo, bool verbose = false,
+                           const vpHomogeneousMatrix &cMo, int verbose=1,
                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   void resetTracker();
 

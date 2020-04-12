@@ -233,27 +233,27 @@ public:
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
 
-  virtual void loadConfigFile(const std::string &configFile);
+  virtual void loadConfigFile(const std::string &configFile, bool verbose=true);
 
   virtual void loadConfigFile(const std::string &configFile1, const std::string &configFile2,
                               bool firstCameraIsReference = true);
 
   virtual void loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles);
 
-  virtual void loadModel(const std::string &modelFile, bool verbose = false,
+  virtual void loadModel(const std::string &modelFile, int verbose=1,
                          const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo, bool verbose = false,
+                           const vpHomogeneousMatrix &cMo, int verbose=1,
                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   virtual void reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                            const std::string &cad_name, const vpHomogeneousMatrix &c1Mo,
-                           const vpHomogeneousMatrix &c2Mo, bool verbose = false,
+                           const vpHomogeneousMatrix &c2Mo, int verbose=1,
                            bool firstCameraIsReference = true);
   virtual void reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                            const std::string &cad_name,
                            const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                           bool verbose = false);
+                           int verbose=1);
 
   virtual void resetTracker();
 

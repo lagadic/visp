@@ -970,6 +970,7 @@ objects: KLT, camera.
 not found or wrong format for the data).
 
   \param configFile : full name of the xml file.
+  \param verbose : verbose option.
 
   The XML configuration file has the following form:
   \code
@@ -1003,10 +1004,10 @@ not found or wrong format for the data).
 </conf>
   \endcode
 */
-void vpMbKltTracker::loadConfigFile(const std::string &configFile)
+void vpMbKltTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
   // Load projection error config
-  vpMbTracker::loadConfigFile(configFile);
+  vpMbTracker::loadConfigFile(configFile, verbose);
 
 #ifdef VISP_HAVE_PUGIXML
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::KLT_PARSER);
@@ -1023,7 +1024,10 @@ void vpMbKltTracker::loadConfigFile(const std::string &configFile)
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
 
   try {
-    std::cout << " *********** Parsing XML for MBT KLT Tracker ************ " << std::endl;
+    if (verbose) {
+      std::cout << " *********** Parsing XML for MBT KLT Tracker ************ " << std::endl;
+    }
+    xmlp.setVerbose(verbose);
     xmlp.parse(configFile.c_str());
   } catch (...) {
     vpERROR_TRACE("Can't open XML file \"%s\"\n ", configFile.c_str());
@@ -1393,7 +1397,7 @@ void vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoi
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbKltTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                 const vpHomogeneousMatrix &cMo, bool verbose,
+                                 const vpHomogeneousMatrix &cMo, int verbose,
                                  const vpHomogeneousMatrix &T)
 {
   m_cMo.eye();

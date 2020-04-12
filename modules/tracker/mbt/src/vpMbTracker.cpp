@@ -1458,12 +1458,12 @@ is not wrl or cao.
 
   \param modelFile : the file containing the the 3D model description.
   The extension of this file is either .wrl or .cao.
-  \param verbose : verbose option to print additional information when loading
-CAO model files which include other CAO model files.
+  \param verbose : verbose option (0: no print, 1: intermediate print, 2: full print)
+to print additional information when loading CAO model files which include other CAO model files.
   \param odTo : optional transformation matrix (currently only for .cao) to transform
   3D points expressed in the original object frame to the desired object frame.
 */
-void vpMbTracker::loadModel(const std::string &modelFile, bool verbose, const vpHomogeneousMatrix &odTo)
+void vpMbTracker::loadModel(const std::string &modelFile, int verbose, const vpHomogeneousMatrix &odTo)
 {
   std::string::const_iterator it;
 
@@ -1678,8 +1678,8 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string &end
   \param modelFile : Full name of the main *.cao file containing the model.
   \param vectorOfModelFilename : A vector of *.cao files.
   \param startIdFace : Current Id of the face.
-  \param verbose : If true, will print additional information with CAO model
-  files which include other CAO model files.
+  \param verbose : Print additional information (0: no print, 1: intermediate, 2: full)
+   with CAO model files which include other CAO model files.
   \param parent : This parameter is
   set to true when parsing a parent CAO model file, and false when parsing an
   included CAO model file.
@@ -1687,18 +1687,20 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string &end
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
-                               int &startIdFace, bool verbose, bool parent,
+                               int &startIdFace, int verbose, bool parent,
                                const vpHomogeneousMatrix &odTo)
 {
   std::ifstream fileId;
   fileId.exceptions(std::ifstream::failbit | std::ifstream::eofbit);
   fileId.open(modelFile.c_str(), std::ifstream::in);
   if (fileId.fail()) {
-    std::cout << "cannot read CAO model file: " << modelFile << std::endl;
+    if (verbose > 0) {
+      std::cout << "cannot read CAO model file: " << modelFile << std::endl;
+    }
     throw vpException(vpException::ioError, "cannot read CAO model file");
   }
 
-  if (verbose) {
+  if (verbose > 1) {
     std::cout << "Model file : " << modelFile << std::endl;
   }
   vectorOfModelFilename.push_back(modelFile);
@@ -1717,8 +1719,10 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       fileId >> caoVersion;
       fileId.ignore(256, '\n'); // skip the rest of the line
     } else {
-      std::cout << "in vpMbTracker::loadCAOModel() -> Bad parameter header "
-                   "file : use V0, V1, ...";
+      if (verbose > 0) {
+        std::cout << "in vpMbTracker::loadCAOModel() -> Bad parameter header "
+                     "file : use V0, V1, ...";
+      }
       throw vpException(vpException::badValue, "in vpMbTracker::loadCAOModel() -> Bad parameter "
                                                "header file : use V0, V1, ...");
     }
@@ -1829,8 +1833,10 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
               throw vpException(vpException::ioError, "file cannot be open");
             }
           } else {
-            std::cout << "WARNING Cyclic dependency detected with file " << headerPath << " declared in " << modelFile
-                      << std::endl;
+            if (verbose > 0) {
+              std::cout << "WARNING Cyclic dependency detected with file " << headerPath << " declared in " << modelFile
+                        << std::endl;
+            }
           }
         }
       }
@@ -1846,7 +1852,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     fileId.ignore(256, '\n'); // skip the rest of the line
 
     nbPoints += caoNbrPoint;
-    if (verbose || (parent && !header)) {
+    if (verbose > 1 || (verbose > 0 && (parent && !header))) {
       std::cout << "> " << caoNbrPoint << " points" << std::endl;
     }
 
@@ -1892,7 +1898,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbLines += caoNbrLine;
     unsigned int *caoLinePoints = NULL;
-    if (verbose || (parent && !header)) {
+    if (verbose > 1 || (verbose > 0 && (parent && !header))) {
       std::cout << "> " << caoNbrLine << " lines" << std::endl;
     }
 
@@ -1970,7 +1976,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     fileId.ignore(256, '\n'); // skip the rest of the line
 
     nbPolygonLines += caoNbrPolygonLine;
-    if (verbose || (parent && !header)) {
+    if (verbose > 1 || (verbose > 0 && (parent && !header))) {
       std::cout << "> " << caoNbrPolygonLine << " polygon lines" << std::endl;
     }
 
@@ -2055,7 +2061,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     fileId.ignore(256, '\n'); // skip the rest of the line
 
     nbPolygonPoints += caoNbrPolygonPoint;
-    if (verbose || (parent && !header)) {
+    if (verbose > 1 || (verbose > 0 && (parent && !header))) {
       std::cout << "> " << caoNbrPolygonPoint << " polygon points" << std::endl;
     }
 
@@ -2124,7 +2130,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       fileId.ignore(256, '\n'); // skip the rest of the line
 
       nbCylinders += caoNbCylinder;
-      if (verbose || (parent && !header)) {
+      if (verbose > 1 || (verbose > 0 && (parent && !header))) {
         std::cout << "> " << caoNbCylinder << " cylinders" << std::endl;
       }
 
@@ -2200,7 +2206,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       fileId.ignore(256, '\n'); // skip the rest of the line
 
       nbCircles += caoNbCircle;
-      if (verbose || (parent && !header)) {
+      if (verbose > 1 || (verbose > 0 && (parent && !header))) {
         std::cout << "> " << caoNbCircle << " circles" << std::endl;
       }
 
@@ -2259,7 +2265,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     delete[] caoLinePoints;
 
     if (header && parent) {
-      if (verbose) {
+      if (verbose > 1) {
         std::cout << "Global information for " << vpIoTools::getName(modelFile) << " :" << std::endl;
         std::cout << "Total nb of points : " << nbPoints << std::endl;
         std::cout << "Total nb of lines : " << nbLines << std::endl;
@@ -2267,7 +2273,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         std::cout << "Total nb of polygon points : " << nbPolygonPoints << std::endl;
         std::cout << "Total nb of cylinders : " << nbCylinders << std::endl;
         std::cout << "Total nb of circles : " << nbCircles << std::endl;
-      } else {
+      } else if (verbose > 0) {
         std::cout << "> " << nbPoints << " points" << std::endl;
         std::cout << "> " << nbLines << " lines" << std::endl;
         std::cout << "> " << nbPolygonLines << " polygon lines" << std::endl;
@@ -3782,7 +3788,7 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
   }
 }
 
-void vpMbTracker::loadConfigFile(const std::string &configFile)
+void vpMbTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
 #ifdef VISP_HAVE_PUGIXML
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::PROJECTION_ERROR_PARSER);
@@ -3790,7 +3796,10 @@ void vpMbTracker::loadConfigFile(const std::string &configFile)
   xmlp.setProjectionErrorKernelSize(m_projectionErrorKernelSize);
 
   try {
-    std::cout << " *********** Parsing XML for ME projection error ************ " << std::endl;
+    if (verbose) {
+      std::cout << " *********** Parsing XML for ME projection error ************ " << std::endl;
+    }
+    xmlp.setVerbose(verbose);
     xmlp.parse(configFile);
   } catch (...) {
     throw vpException(vpException::ioError, "Cannot open XML file \"%s\"", configFile.c_str());

@@ -1249,6 +1249,7 @@ vpMbEdgeKltMultiTracker::initMbtTracking(std::map<std::string, const vpImage<uns
   not found or wrong format for the data).
 
   \param configFile : full name of the xml file.
+  \param verbose : verbose option.
 
   The XML configuration file has the following form:
   \code
@@ -1282,10 +1283,10 @@ vpMbEdgeKltMultiTracker::initMbtTracking(std::map<std::string, const vpImage<uns
 </conf>
   \endcode
 */
-void vpMbEdgeKltMultiTracker::loadConfigFile(const std::string &configFile)
+void vpMbEdgeKltMultiTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
-  vpMbEdgeMultiTracker::loadConfigFile(configFile);
-  vpMbKltMultiTracker::loadConfigFile(configFile);
+  vpMbEdgeMultiTracker::loadConfigFile(configFile, verbose);
+  vpMbKltMultiTracker::loadConfigFile(configFile, verbose);
 }
 
 /*!
@@ -1351,7 +1352,7 @@ int main()
   \param T : optional transformation matrix (currently only for .cao) to transform
   3D points expressed in the original object frame to the desired object frame.
 */
-void vpMbEdgeKltMultiTracker::loadModel(const std::string &modelFile, bool verbose,
+void vpMbEdgeKltMultiTracker::loadModel(const std::string &modelFile, int verbose,
                                         const vpHomogeneousMatrix &T)
 {
   vpMbEdgeMultiTracker::loadModel(modelFile, verbose, T);
@@ -1436,7 +1437,7 @@ void vpMbEdgeKltMultiTracker::reinit(/*const vpImage<unsigned char>& I */)
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeKltMultiTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                          const vpHomogeneousMatrix &cMo, bool verbose,
+                                          const vpHomogeneousMatrix &cMo, int verbose,
                                           const vpHomogeneousMatrix &T)
 {
   vpMbEdgeMultiTracker::reInitModel(I, cad_name, cMo, verbose, T);
@@ -1458,7 +1459,7 @@ void vpMbEdgeKltMultiTracker::reInitModel(const vpImage<unsigned char> &I, const
 */
 void vpMbEdgeKltMultiTracker::reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                           const std::string &cad_name, const vpHomogeneousMatrix &c1Mo,
-                                          const vpHomogeneousMatrix &c2Mo, bool verbose,
+                                          const vpHomogeneousMatrix &c2Mo, int verbose,
                                           bool firstCameraIsReference)
 {
   vpMbEdgeMultiTracker::reInitModel(I1, I2, cad_name, c1Mo, c2Mo, verbose, firstCameraIsReference);
@@ -1478,7 +1479,7 @@ void vpMbEdgeKltMultiTracker::reInitModel(const vpImage<unsigned char> &I1, cons
 void vpMbEdgeKltMultiTracker::reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                           const std::string &cad_name,
                                           const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                                          bool verbose)
+                                          int verbose)
 {
   vpMbEdgeMultiTracker::reInitModel(mapOfImages, cad_name, mapOfCameraPoses, verbose);
   vpMbKltMultiTracker::reInitModel(mapOfImages, cad_name, mapOfCameraPoses, verbose);

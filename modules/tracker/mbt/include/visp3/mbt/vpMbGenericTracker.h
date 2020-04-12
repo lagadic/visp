@@ -274,41 +274,41 @@ public:
   virtual void initFromPose(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
                             const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);
 
-  virtual void loadConfigFile(const std::string &configFile);
-  virtual void loadConfigFile(const std::string &configFile1, const std::string &configFile2);
-  virtual void loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles);
+  virtual void loadConfigFile(const std::string &configFile, bool verbose=true);
+  virtual void loadConfigFile(const std::string &configFile1, const std::string &configFile2, bool verbose=true);
+  virtual void loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles, bool verbose=true);
 
-  virtual void loadModel(const std::string &modelFile, bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
-  virtual void loadModel(const std::string &modelFile1, const std::string &modelFile2, bool verbose = false,
+  virtual void loadModel(const std::string &modelFile, int verbose=1, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
+  virtual void loadModel(const std::string &modelFile1, const std::string &modelFile2, int verbose=1,
                          const vpHomogeneousMatrix &T1=vpHomogeneousMatrix(), const vpHomogeneousMatrix &T2=vpHomogeneousMatrix());
-  virtual void loadModel(const std::map<std::string, std::string> &mapOfModelFiles, bool verbose = false,
+  virtual void loadModel(const std::map<std::string, std::string> &mapOfModelFiles, int verbose=1,
                          const std::map<std::string, vpHomogeneousMatrix> &mapOfT=std::map<std::string, vpHomogeneousMatrix>());
 
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo, bool verbose = false,
+                           const vpHomogeneousMatrix &cMo, int verbose=1,
                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   virtual void reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo, bool verbose = false,
+                           const vpHomogeneousMatrix &cMo, int verbose=1,
                            const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
   virtual void reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                            const std::string &cad_name1, const std::string &cad_name2, const vpHomogeneousMatrix &c1Mo,
-                           const vpHomogeneousMatrix &c2Mo, bool verbose = false,
+                           const vpHomogeneousMatrix &c2Mo, int verbose=1,
                            const vpHomogeneousMatrix &T1=vpHomogeneousMatrix(), const vpHomogeneousMatrix &T2=vpHomogeneousMatrix());
   virtual void reInitModel(const vpImage<vpRGBa> &I_color1, const vpImage<vpRGBa> &I_color2,
                            const std::string &cad_name1, const std::string &cad_name2, const vpHomogeneousMatrix &c1Mo,
-                           const vpHomogeneousMatrix &c2Mo, bool verbose = false,
+                           const vpHomogeneousMatrix &c2Mo, int verbose=1,
                            const vpHomogeneousMatrix &T1=vpHomogeneousMatrix(), const vpHomogeneousMatrix &T2=vpHomogeneousMatrix());
 
   virtual void reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                            const std::map<std::string, std::string> &mapOfModelFiles,
                            const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                           bool verbose = false,
+                           int verbose=1,
                            const std::map<std::string, vpHomogeneousMatrix> &mapOfT=std::map<std::string, vpHomogeneousMatrix>());
   virtual void reInitModel(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
                            const std::map<std::string, std::string> &mapOfModelFiles,
                            const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                           bool verbose = false,
+                           int verbose=1,
                            const std::map<std::string, vpHomogeneousMatrix> &mapOfT=std::map<std::string, vpHomogeneousMatrix>());
 
   virtual void resetTracker();
@@ -534,13 +534,13 @@ private:
 
     virtual void init(const vpImage<unsigned char> &I);
 
-    virtual void loadConfigFile(const std::string &configFile);
+    virtual void loadConfigFile(const std::string &configFile, bool verbose=true);
 
     virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                             const vpHomogeneousMatrix &cMo, bool verbose = false,
+                             const vpHomogeneousMatrix &cMo, int verbose=1,
                              const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
     virtual void reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name,
-                             const vpHomogeneousMatrix &cMo, bool verbose = false,
+                             const vpHomogeneousMatrix &cMo, int verbose=1,
                              const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
     virtual void resetTracker();
@@ -614,7 +614,7 @@ private:
                              const unsigned int pointcloud_width = 0, const unsigned int pointcloud_height = 0);
 
     virtual void reInitModel(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
-                             const std::string &cad_name, const vpHomogeneousMatrix &cMo, bool verbose = false,
+                             const std::string &cad_name, const vpHomogeneousMatrix &cMo, int verbose=1,
                              const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
 
 #ifdef VISP_HAVE_PCL

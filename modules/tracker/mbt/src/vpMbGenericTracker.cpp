@@ -2766,13 +2766,14 @@ void vpMbGenericTracker::initFromPose(const std::map<std::string, const vpImage<
   not found).
 
   \param configFile : full name of the xml file.
+  \param verbose : Print config info if verbose is set to true.
 */
-void vpMbGenericTracker::loadConfigFile(const std::string &configFile)
+void vpMbGenericTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
-    tracker->loadConfigFile(configFile);
+    tracker->loadConfigFile(configFile, verbose);
   }
 
   if (m_mapOfTrackers.find(m_referenceCameraName) == m_mapOfTrackers.end()) {
@@ -2795,10 +2796,11 @@ void vpMbGenericTracker::loadConfigFile(const std::string &configFile)
 
   \param configFile1 : Full name of the xml file for the first camera.
   \param configFile2 : Full name of the xml file for the second camera.
+  \param verbose : Print config info if verbose is set to true.
 
   \note This function assumes a stereo configuration of the generic tracker.
 */
-void vpMbGenericTracker::loadConfigFile(const std::string &configFile1, const std::string &configFile2)
+void vpMbGenericTracker::loadConfigFile(const std::string &configFile1, const std::string &configFile2, bool verbose)
 {
   if (m_mapOfTrackers.size() != 2) {
     throw vpException(vpException::fatalError, "The tracker is not set in a stereo configuration!");
@@ -2806,11 +2808,11 @@ void vpMbGenericTracker::loadConfigFile(const std::string &configFile1, const st
 
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.begin();
   TrackerWrapper *tracker = it_tracker->second;
-  tracker->loadConfigFile(configFile1);
+  tracker->loadConfigFile(configFile1, verbose);
 
   ++it_tracker;
   tracker = it_tracker->second;
-  tracker->loadConfigFile(configFile2);
+  tracker->loadConfigFile(configFile2, verbose);
 
   if (m_mapOfTrackers.find(m_referenceCameraName) == m_mapOfTrackers.end()) {
     throw vpException(vpException::fatalError, "Cannot find the reference camera:  %s!", m_referenceCameraName.c_str());
@@ -2831,10 +2833,11 @@ void vpMbGenericTracker::loadConfigFile(const std::string &configFile1, const st
   not found).
 
   \param mapOfConfigFiles : Map of xml files.
+  \param verbose : Print config info if verbose is set to true.
 
   \note Configuration files must be supplied for all the cameras.
 */
-void vpMbGenericTracker::loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles)
+void vpMbGenericTracker::loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles, bool verbose)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.begin();
        it_tracker != m_mapOfTrackers.end(); ++it_tracker) {
@@ -2842,7 +2845,7 @@ void vpMbGenericTracker::loadConfigFile(const std::map<std::string, std::string>
 
     std::map<std::string, std::string>::const_iterator it_config = mapOfConfigFiles.find(it_tracker->first);
     if (it_config != mapOfConfigFiles.end()) {
-      tracker->loadConfigFile(it_config->second);
+      tracker->loadConfigFile(it_config->second, verbose);
     } else {
       throw vpException(vpTrackingException::initializationError, "Missing configuration file for camera: %s!",
                         it_tracker->first.c_str());
@@ -2887,15 +2890,15 @@ is not wrl or cao.
 
   \param modelFile : the file containing the 3D model description.
   The extension of this file is either .wrl or .cao.
-  \param verbose : verbose option to print additional information when loading
-CAO model files which include other CAO model files.
+  \param verbose : verbose option to print additional information (0: no print, 1: intermediate, 2: full)
+when loading CAO model files which include other CAO model files.
   \param T : optional transformation matrix (currently only for .cao) to transform
   3D points expressed in the original object frame to the desired object frame.
 
   \note All the trackers will use the same model in case of stereo / multiple
 cameras configuration.
 */
-void vpMbGenericTracker::loadModel(const std::string &modelFile, bool verbose, const vpHomogeneousMatrix &T)
+void vpMbGenericTracker::loadModel(const std::string &modelFile, int verbose, const vpHomogeneousMatrix &T)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
@@ -2928,8 +2931,8 @@ is not wrl or cao.
 first camera. The extension of this file is either .wrl or .cao.
   \param modelFile2 : the file containing the the 3D model description for the second
 camera. The extension of this file is either .wrl or .cao.
-  \param verbose : verbose option to print additional information when loading CAO model files
-which include other CAO model files.
+  \param verbose : verbose option to print additional information (0: no print, 1: intermediate, 2: full)
+when loading CAO model files which include other CAO model files.
   \param T1 : optional transformation matrix (currently only for .cao) to transform
   3D points in \a modelFile1 expressed in the original object frame to the desired object frame.
   \param T2 : optional transformation matrix (currently only for .cao) to transform
@@ -2938,7 +2941,7 @@ which include other CAO model files.
 
   \note This function assumes a stereo configuration of the generic tracker.
 */
-void vpMbGenericTracker::loadModel(const std::string &modelFile1, const std::string &modelFile2, bool verbose,
+void vpMbGenericTracker::loadModel(const std::string &modelFile1, const std::string &modelFile2, int verbose,
                                    const vpHomogeneousMatrix &T1, const vpHomogeneousMatrix &T2)
 {
   if (m_mapOfTrackers.size() != 2) {
@@ -2976,8 +2979,8 @@ is not wrl or cao.
 
   \param mapOfModelFiles : map of files containing the 3D model description.
   The extension of this file is either .wrl or .cao.
-  \param verbose : verbose option to print additional information when loading
-CAO model files which include other CAO model files.
+  \param verbose : verbose option to print additional information (0: no print, 1: intermediate, 2: full)
+when loading CAO model files which include other CAO model files.
   \param mapOfT : optional map of transformation matrices (currently only for .cao)
   to transform 3D points in \a mapOfModelFiles expressed in the original object frame to
   the desired object frame (if the models have the same object frame which should be the
@@ -2985,7 +2988,7 @@ CAO model files which include other CAO model files.
 
   \note Each camera must have a model file.
 */
-void vpMbGenericTracker::loadModel(const std::map<std::string, std::string> &mapOfModelFiles, bool verbose,
+void vpMbGenericTracker::loadModel(const std::map<std::string, std::string> &mapOfModelFiles, int verbose,
                                    const std::map<std::string, vpHomogeneousMatrix> &mapOfT)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.begin();
@@ -3044,7 +3047,7 @@ void vpMbGenericTracker::preTracking(std::map<std::string, const vpImage<unsigne
   \param T : optional transformation matrix (currently only for .cao).
 */
 void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                     const vpHomogeneousMatrix &cMo, bool verbose,
+                                     const vpHomogeneousMatrix &cMo, int verbose,
                                      const vpHomogeneousMatrix &T)
 {
   if (m_mapOfTrackers.size() != 1) {
@@ -3078,7 +3081,7 @@ void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I, const std:
   \param T : optional transformation matrix (currently only for .cao).
 */
 void vpMbGenericTracker::reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name,
-                                     const vpHomogeneousMatrix &cMo, bool verbose,
+                                     const vpHomogeneousMatrix &cMo, int verbose,
                                      const vpHomogeneousMatrix &T)
 {
   if (m_mapOfTrackers.size() != 1) {
@@ -3123,7 +3126,7 @@ void vpMbGenericTracker::reInitModel(const vpImage<vpRGBa> &I_color, const std::
 void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                      const std::string &cad_name1, const std::string &cad_name2,
                                      const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                     bool verbose,
+                                     int verbose,
                                      const vpHomogeneousMatrix &T1, const vpHomogeneousMatrix &T2)
 {
   if (m_mapOfTrackers.size() == 2) {
@@ -3170,7 +3173,7 @@ void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I1, const vpI
 void vpMbGenericTracker::reInitModel(const vpImage<vpRGBa> &I_color1, const vpImage<vpRGBa> &I_color2,
                                      const std::string &cad_name1, const std::string &cad_name2,
                                      const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                     bool verbose,
+                                     int verbose,
                                      const vpHomogeneousMatrix &T1, const vpHomogeneousMatrix &T2)
 {
   if (m_mapOfTrackers.size() == 2) {
@@ -3211,7 +3214,7 @@ void vpMbGenericTracker::reInitModel(const vpImage<vpRGBa> &I_color1, const vpIm
 void vpMbGenericTracker::reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                      const std::map<std::string, std::string> &mapOfModelFiles,
                                      const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                                     bool verbose,
+                                     int verbose,
                                      const std::map<std::string, vpHomogeneousMatrix> &mapOfT)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(m_referenceCameraName);
@@ -3285,7 +3288,7 @@ void vpMbGenericTracker::reInitModel(const std::map<std::string, const vpImage<u
 void vpMbGenericTracker::reInitModel(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
                                      const std::map<std::string, std::string> &mapOfModelFiles,
                                      const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                                     bool verbose,
+                                     int verbose,
                                      const std::map<std::string, vpHomogeneousMatrix> &mapOfT)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(m_referenceCameraName);
@@ -6210,10 +6213,10 @@ void vpMbGenericTracker::TrackerWrapper::initMbtTracking(const vpImage<unsigned 
   }
 }
 
-void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &configFile)
+void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &configFile, bool verbose)
 {
   // Load projection error config
-  vpMbTracker::loadConfigFile(configFile);
+  vpMbTracker::loadConfigFile(configFile, verbose);
 
 #ifdef VISP_HAVE_PUGIXML
   vpMbtXmlGenericParser xmlp((vpMbtXmlGenericParser::vpParserType)m_trackerType);
@@ -6250,7 +6253,9 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
   xmlp.setDepthDenseSamplingStepY(m_depthDenseSamplingStepY);
 
   try {
-    std::cout << " *********** Parsing XML for";
+    if (verbose) {
+      std::cout << " *********** Parsing XML for";
+    }
 
     std::vector<std::string> tracker_names;
     if (m_trackerType & EDGE_TRACKER)
@@ -6264,14 +6269,20 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
     if (m_trackerType & DEPTH_DENSE_TRACKER)
       tracker_names.push_back("Depth Dense");
 
-    for (size_t i = 0; i < tracker_names.size(); i++) {
-      std::cout << " " << tracker_names[i];
-      if (i == tracker_names.size() - 1) {
-        std::cout << " ";
+    if (verbose) {
+      for (size_t i = 0; i < tracker_names.size(); i++) {
+        std::cout << " " << tracker_names[i];
+        if (i == tracker_names.size() - 1) {
+          std::cout << " ";
+        }
+      }
+
+      if (verbose) {
+        std::cout << "Model-Based Tracker ************ " << std::endl;
       }
     }
 
-    std::cout << "Model-Based Tracker ************ " << std::endl;
+    xmlp.setVerbose(verbose);
     xmlp.parse(configFile);
   } catch (...) {
     throw vpException(vpException::ioError, "Can't open XML file \"%s\"\n ", configFile.c_str());
@@ -6520,7 +6531,7 @@ void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char
 }
 
 void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
-                                                     const std::string &cad_name, const vpHomogeneousMatrix &cMo, bool verbose,
+                                                     const std::string &cad_name, const vpHomogeneousMatrix &cMo, int verbose,
                                                      const vpHomogeneousMatrix &T)
 {
   m_cMo.eye();
@@ -6633,14 +6644,14 @@ void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char
 }
 
 void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                                     const vpHomogeneousMatrix &cMo, bool verbose,
+                                                     const vpHomogeneousMatrix &cMo, int verbose,
                                                      const vpHomogeneousMatrix &T)
 {
   reInitModel(&I, NULL, cad_name, cMo, verbose, T);
 }
 
 void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name,
-                                                     const vpHomogeneousMatrix &cMo, bool verbose,
+                                                     const vpHomogeneousMatrix &cMo, int verbose,
                                                      const vpHomogeneousMatrix &T)
 {
   reInitModel(NULL, &I_color, cad_name, cMo, verbose, T);

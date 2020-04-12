@@ -1218,13 +1218,14 @@ void vpMbEdgeTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneou
   and visibility angles.
 
   \param configFile : full name of the xml file.
+  \param verbose : verbose option.
 
   \sa loadConfigFile(const char*)
 */
-void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
+void vpMbEdgeTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
   // Load projection error config
-  vpMbTracker::loadConfigFile(configFile);
+  vpMbTracker::loadConfigFile(configFile, verbose);
 
 #ifdef VISP_HAVE_PUGIXML
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::EDGE_PARSER);
@@ -1235,7 +1236,10 @@ void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
   xmlp.setEdgeMe(me);
 
   try {
-    std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
+    if (verbose) {
+      std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
+    }
+    xmlp.setVerbose(verbose);
     xmlp.parse(configFile);
   } catch (...) {
     throw vpException(vpException::ioError, "Cannot open XML file \"%s\"", configFile.c_str());
@@ -2448,7 +2452,7 @@ void vpMbEdgeTracker::resetTracker()
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                  const vpHomogeneousMatrix &cMo, bool verbose,
+                                  const vpHomogeneousMatrix &cMo, int verbose,
                                   const vpHomogeneousMatrix &T)
 {
   m_cMo.eye();

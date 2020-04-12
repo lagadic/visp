@@ -1517,6 +1517,7 @@ void vpMbKltMultiTracker::initFromPose(const std::map<std::string, const vpImage
   not found or wrong format for the data).
 
   \param configFile : full name of the xml file.
+  \param verbose : verbose option.
 
   The XML configuration file has the following form:
   \code
@@ -1550,12 +1551,12 @@ void vpMbKltMultiTracker::initFromPose(const std::map<std::string, const vpImage
 </conf>
   \endcode
 */
-void vpMbKltMultiTracker::loadConfigFile(const std::string &configFile)
+void vpMbKltMultiTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
   std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.find(m_referenceCameraName);
   if (it != m_mapOfKltTrackers.end()) {
     // Load ConfigFile for reference camera
-    it->second->loadConfigFile(configFile);
+    it->second->loadConfigFile(configFile, verbose);
     it->second->getCameraParameters(m_cam);
 
     // Set clipping
@@ -1683,7 +1684,7 @@ int main()
   \param T : optional transformation matrix (currently only for .cao) to transform
   3D points expressed in the original object frame to the desired object frame.
 */
-void vpMbKltMultiTracker::loadModel(const std::string &modelFile, bool verbose,
+void vpMbKltMultiTracker::loadModel(const std::string &modelFile, int verbose,
                                     const vpHomogeneousMatrix &T)
 {
   for (std::map<std::string, vpMbKltTracker *>::const_iterator it = m_mapOfKltTrackers.begin();
@@ -1758,7 +1759,7 @@ void vpMbKltMultiTracker::reinit(/* const vpImage<unsigned char>& I*/)
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbKltMultiTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                      const vpHomogeneousMatrix &cMo, bool verbose,
+                                      const vpHomogeneousMatrix &cMo, int verbose,
                                       const vpHomogeneousMatrix &T)
 {
   if (m_mapOfKltTrackers.size() != 1) {
@@ -1799,7 +1800,7 @@ void vpMbKltMultiTracker::reInitModel(const vpImage<unsigned char> &I, const std
 */
 void vpMbKltMultiTracker::reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                       const std::string &cad_name, const vpHomogeneousMatrix &c1Mo,
-                                      const vpHomogeneousMatrix &c2Mo, bool verbose,
+                                      const vpHomogeneousMatrix &c2Mo, int verbose,
                                       bool firstCameraIsReference)
 {
   if (m_mapOfKltTrackers.size() == 2) {
@@ -1841,7 +1842,7 @@ void vpMbKltMultiTracker::reInitModel(const vpImage<unsigned char> &I1, const vp
 void vpMbKltMultiTracker::reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                       const std::string &cad_name,
                                       const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                                      bool verbose)
+                                      int verbose)
 {
   std::map<std::string, vpMbKltTracker *>::const_iterator it_klt = m_mapOfKltTrackers.find(m_referenceCameraName);
   std::map<std::string, const vpImage<unsigned char> *>::const_iterator it_img =

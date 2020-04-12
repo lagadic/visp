@@ -258,10 +258,10 @@ public:
    */
   virtual inline double getNearClippingDistance() const { return vpMbKltTracker::getNearClippingDistance(); }
 
-  virtual void loadConfigFile(const std::string &configFile);
+  virtual void loadConfigFile(const std::string &configFile, bool verbose);
 
   void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
-                   bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
+                   int verbose1=1, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   void resetTracker();
 
   virtual void setCameraParameters(const vpCameraParameters &cam);
