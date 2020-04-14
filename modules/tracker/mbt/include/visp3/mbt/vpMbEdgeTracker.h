@@ -257,9 +257,6 @@ int main()
 
 class VISP_EXPORT vpMbEdgeTracker : public virtual vpMbTracker
 {
-  friend class vpMbEdgeMultiTracker;
-  friend class vpMbEdgeKltMultiTracker;
-
 protected:
   //! The moving edges parameters.
   vpMe me;
