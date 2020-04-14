@@ -20,6 +20,7 @@ ViSP 3.3.1 (under development)
       to switch during runtime between OpenBLAS, Atlas and Netlib.
   - Tutorials
     . New tutorial: Basic linear algebra operations
+    . New tutorial: How to create and build a project that uses ViSP without CMake
   - Bug fixed
     . [#713] 3.3.0 build fails on non-linux systems: fatal error: 'linux/serial.h'
       file not found
