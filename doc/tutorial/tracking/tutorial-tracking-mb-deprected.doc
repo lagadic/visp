@@ -931,7 +931,7 @@ This issue is similar to \ref mbdep_known_issues_example_with_ogre. It may occur
 - Press then OK to continue and start the tracking of the object.
 
 \section mbdep_next Next tutorial
-You are now ready to see the next \ref tutorial-tracking-mb-stereo-deprecated if you want to extend the tracking on multiple view images or  \ref tutorial-tracking-tt.
+You are now ready to see the next \ref tutorial-tracking-mb-generic if you want to use the new version of this tracker or \ref tutorial-tracking-tt.
 
 
 */

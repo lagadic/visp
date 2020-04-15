@@ -8,7 +8,7 @@
 ViSP 3.3.1 (under development)
   - Contributors:
     . This release was possible thanks to contributions from Fabien Spindler,
-      Pierre Chatelain
+      Pierre Chatelain, Souriya Trinh
   - New features and improvements
     . Compatibility with FreeBSD
     . Introduce transparency when displaying filled circle and rectangle with
@@ -17,7 +17,11 @@ ViSP 3.3.1 (under development)
       a wrapper between ViSP and Unity
     . BLAS/LAPACK usage for linear algebra with either Intel MKL, OpenBLAS, Atlas,
       GSL, Netlib or Lapack built-in. Under Ubuntu, update-alternatives allows
-      to switch during runtime between OpenBLAS, Atlas and Netlib.
+      to switch during runtime between OpenBLAS, Atlas and Netlib
+    . Remove vpMbEdgeMultiTracker, vpMbEdgeKltMultiTracker and vpMbKltMultiTracker
+      deprecated classes. Use rather vpMbGenericTracker
+    . visp.pc file used by pkg-config and visp-config script updated to
+      be able to build a project that uses ViSP as 3rd party without CMake 
   - Tutorials
     . New tutorial: Basic linear algebra operations
     . New tutorial: How to create and build a project that uses ViSP without CMake
