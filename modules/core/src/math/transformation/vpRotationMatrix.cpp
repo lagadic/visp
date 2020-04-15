@@ -174,7 +174,7 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpMatrix &M)
 }
 
 /*!
-  Set the first element of the rotation matrix.
+  Set rotation matrix first element.
 
   \param val : Value of the matrix first element.
   \return An updated matrix.

@@ -42,6 +42,10 @@ Glue the chessboard on a flat surface and put it under the camera.
 \subsection calib_ext_acq_data Acquire robot pose and images
 
 The objective here is to complete step 1. by acquiring couples of \f$^f{\bf M}_e\f$ poses and the corresponding images of the chessboard. To this end move the camera attached to the robot to different positions. At least 8 to 10 positions are requested. To define a good position you have to imagine a half sphere over the chessboard and select positions that discretise as much as possible all the half sphere surface. For each position you should see all the chessboard as large as possible in the image.
+
+The following image shows a set of 10 camera positions covering the half sphere over the chessboard. Each blue arrow represents camera z-axis pointing to a region close to the chessboard center. The orientation of the frame attached to the chessboard doesn't matter. The chessboard z-axis could be going upward or not.
+
+\image html img-eye2hand-camera-poses.png
  
 If you have a Franka robot, follow \ref franka_configure_ethernet and \ref franka_connect_desk instructions to power on the Panda robot. Then if this is not already done, follow \ref franka_prereq_libfranka and \ref franka_prereq_visp_build.
 
