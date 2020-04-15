@@ -270,6 +270,11 @@ if(WITH_PUGIXML)
   include_directories(${PUGIXML_INCLUDE_DIRS})
 endif()
 
+if(WITH_CATCH2)
+  # catch2 is private
+  include_directories(${CATCH2_INCLUDE_DIRS})
+endif()
+
 vp_add_module(mbt visp_vision visp_core visp_me visp_visual_features OPTIONAL visp_ar visp_klt visp_gui PRIVATE_OPTIONAL ${CLIPPER_LIBRARIES} ${PUGIXML_LIBRARIES} WRAP java)
 vp_glob_module_sources()
 
@@ -313,6 +318,7 @@ vp_create_module(${opt_libs})
 
 if(BUILD_TESTS)
   if(USE_OGRE)
+    vp_set_source_file_compile_flag(test/perfGenericTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy)
     vp_set_source_file_compile_flag(test/testGenericTracker.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy)
     vp_set_source_file_compile_flag(test/testGenericTrackerDepth.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy)
     vp_set_source_file_compile_flag(test/testMbtXmlGenericParser.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy)
