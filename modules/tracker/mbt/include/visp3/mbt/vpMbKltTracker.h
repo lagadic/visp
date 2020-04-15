@@ -215,9 +215,6 @@ int main()
 */
 class VISP_EXPORT vpMbKltTracker : public virtual vpMbTracker
 {
-  friend class vpMbKltMultiTracker;
-  friend class vpMbEdgeKltMultiTracker;
-
 protected:
 //! Temporary OpenCV image for fast conversion.
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
