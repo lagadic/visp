@@ -1,0 +1,77 @@
+
+/**
+  \page tutorial-getting-started-makefile Tutorial: How to create and build a project that uses ViSP without CMake 
+  \tableofcontents
+
+\note We assume in this tutorial that you have successfully installed ViSP either with an \ref tuto_install_sdk or with an \ref tuto_install_src.
+
+In this tutorial you will learn how to use ViSP without using CMake.
+
+\section started_makefile Using a classical Makefile
+
+There are two ways to integrate ViSP as a 3rd-party in a `Makefile`:
+- either using `pkg-config` over `visp.pc` file that you may find in ViSP installation folder; typically in `/usr/local/lib/pkgconfig` folder,
+- either using `visp-config` shell script file that you may find in ViSP build folder; typically in `$VISP_WS/visp-build/bin` folder.
+
+\subsection started_makefile_pkg_config Using pkg_config
+
+- To get compiler flags use:
+\verbatim
+$ pkg-config --cflags visp
+\endverbatim
+- To get linker flags use:
+\verbatim
+$ pkg-config --libs visp
+\endverbatim
+
+\note If `visp.pc` file used by `pkg-config` is not found, you may set `PKG_CONFIG_PATH` 
+environment variable with the path to access to `visp.pc` using a command similar to:
+\verbatim
+$ export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:<visp install tree>/lib/pkgconfig
+\endverbatim
+
+To build a file named `HelloWorld.cpp`, both command could be used in a `Makefile` which content would be the following:
+\verbatim
+CXX            = g++
+VISP_CFLAGS    = `pkg-config --cflags visp`
+VISP_LDFLAGS   = `pkg-config --libs visp`
+
+HelloWorld: HelloWorld.cpp
+	$(CXX) $(VISP_CFLAGS) -o HelloWorld HelloWorld.cpp $(VISP_LDFLAGS)
+
+clean:
+	rm -f *~ HelloWorld
+\endverbatim
+
+\subsection started_makefile_visp_config Using visp-config
+
+- To get compiler flags use:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ visp-config --cflags visp
+\endverbatim
+- To get linker flags use:
+\verbatim
+$ visp-config --libs visp
+\endverbatim
+
+To build a file named `HelloWorld.cpp`, both command could be used in a `Makefile` which content would be the following:
+\verbatim
+CXX            = g++
+VISP_BUILD_DIR = ${VISP_WS}/visp-build
+VISP_CFLAGS    = `$(VISP_BUILD_DIR)/bin/visp-config --cflags`
+VISP_LDFLAGS   = `$(VISP_BUILD_DIR)/bin/visp-config --libs
+
+HelloWorld: HelloWorld.cpp
+	$(CXX) $(VISP_CFLAGS) -o HelloWorld HelloWorld.cpp $(VISP_LDFLAGS)
+
+clean:
+	rm -f *~ HelloWorld
+\endverbatim
+
+
+\section started_makefile_next Next tutorial
+
+You are now ready to see the \ref tutorial-image-display.
+There is also the \ref tutorial-contrib-module that could be useful to understand how to introduce new developments in ViSP.
+*/

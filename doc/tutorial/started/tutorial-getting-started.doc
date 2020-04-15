@@ -1,11 +1,11 @@
 
 /**
-  \page tutorial-getting-started Tutorial: How to create and build a CMake project that uses ViSP on Unix or Windows 
+  \page tutorial-getting-started Tutorial: How to create and build a project that uses ViSP and CMake on Unix or Windows
   \tableofcontents
 
 \note We assume in this tutorial that you have successfully installed ViSP either with an \ref tuto_install_sdk or with an \ref tuto_install_src.
 
-In this tutorial you will learn how to use ViSP either on unix-like operating system (including OSX, Fedora, Ubuntu, Debian, ...) or on windows.
+In this tutorial you will learn how to use ViSP either on unix-like operating system (including OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
 
 The easiest way of using ViSP in your project is to use <a href="http://www.cmake.org/">CMake</a>. If you are not familiar with CMake, you can check the <a href="http://www.cmake.org/cmake/help/cmake_tutorial.html">tutorial</a>.
 
@@ -16,9 +16,10 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
 \endcode
 
 \section started_quick Quick getting started
-\subsection started_quick_unix On unix-like operating system
 
-In this section we show how to build a CMake project that uses ViSP as third-party on a unix-like OS. As a use case we will use the `image` project that is part of ViSP tutorials. The source code comes from https://github.com/lagadic/visp/tutorial/image.
+In this section we show how to build an existing project that uses ViSP as third-party and CMake for the build mechanism. As a use case we will use the `image` project that is part of ViSP tutorials. The source code comes from https://github.com/lagadic/visp/tutorial/image. It contains a set of source files `tutorial-viewer.cpp`, `tutorial-image-viewer.cpp` and a `CMakeLists.txt` file. We show here how to get these files and build them.
+
+\subsection started_quick_unix On unix-like operating system
 
 1. If you did \ref tutorial_install_pkg you have to create a workspace. If you did \ref tutorial_install_src jump to point 2. since your workspace should be already created.<br>
 Check if `VISP_WS` environment var exists:
@@ -66,8 +67,6 @@ $ ./tutorial-viewer monkey.pgm
 \endcode
 
 \subsection started_quick_win On windows operating system
-
-In this section we show how to build a CMake project that uses ViSP as third-party on Windows. As a use case we will use the `image` project that is part of ViSP tutorials. The source code comes from https://github.com/lagadic/visp/tutorial/image.
 
 1. If you did \ref tutorial_install_src jump to point 2. since your workspace should be already created.<br>
 Open a `cmd` Command Prompt and check if `VISP_WS` environment var exists:
