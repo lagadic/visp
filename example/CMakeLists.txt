@@ -82,6 +82,7 @@ visp_add_subdirectory(moments/polygon          REQUIRED_DEPS visp_core visp_vs v
 visp_add_subdirectory(ogre-simulator           REQUIRED_DEPS visp_core visp_vision visp_ar visp_blob visp_io visp_gui)
 visp_add_subdirectory(parse-argv               REQUIRED_DEPS visp_core visp_io)
 visp_add_subdirectory(pose-estimation          REQUIRED_DEPS visp_core visp_blob visp_vision visp_io visp_gui)
+visp_add_subdirectory(reflex-takktile          REQUIRED_DEPS visp_core visp_robot)
 visp_add_subdirectory(robot-simulator/afma6    REQUIRED_DEPS visp_core visp_vs visp_robot visp_io visp_gui)
 visp_add_subdirectory(robot-simulator/camera   REQUIRED_DEPS visp_core visp_vs visp_robot visp_io visp_gui)
 visp_add_subdirectory(robot-simulator/viper850 REQUIRED_DEPS visp_core visp_vs visp_robot visp_io visp_gui)
