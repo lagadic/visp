@@ -83,7 +83,7 @@ stability of the result.
   \f]
 
   with
-  \f[  ^a{\bf H}_b = ^a{\bf R}_b + \frac{^a{\bf t}_b}{^bd}
+  \f[  ^a{\bf H}_b = ^a{\bf R}_b - \frac{^a{\bf t}_b}{^bd}
   { ^b{\bf n}^T}
   \f]
 
