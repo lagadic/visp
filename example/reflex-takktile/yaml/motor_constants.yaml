@@ -1,0 +1,3 @@
+# Motor information that stays relatively constant
+motor_to_joint_inverted: [1, -1, 1, -1]
+motor_to_joint_gear_ratio: [1.42, 1.42, 1.42, 1.5]
