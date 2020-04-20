@@ -95,14 +95,11 @@ int main(int argc, char *argv[])
 
   reflex.open();
 
-  int iter = 0;
+  // Hit CTRL-C to stop
   while (true) {
 
     std::cout << reflex.getHandInfo() << std::endl;
     reflex.wait(50);
-
-    if (++iter > 5)
-      break;
   }
 
 #else
