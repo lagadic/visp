@@ -59,6 +59,12 @@
 
   This class was tested with the [Reflex Takktile2 hand](https://www.labs.righthandrobotics.com/reflexhand).
 
+  To communicate by Ethernet with the hand we recommend to setup computer network with a static configuration:
+  \verbatim
+  IP: 10.1.1.10
+  Gateway: 254.0.0.0
+  \endverbatim
+
 */
 class VISP_EXPORT vpReflexTakktile2
 {
