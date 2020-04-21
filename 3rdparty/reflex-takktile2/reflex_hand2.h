@@ -103,7 +103,7 @@ namespace reflex_hand2 {
     static constexpr float DYN_POS_SCALE = (4 * 2 * 3.1415926f) / 4095;  // Assuming resolution divider of 4
     static constexpr float DYN_VEL_SCALE = 0.01194f;  // rad/s for every velocity command -- http://support.robotis.com/en/product/actuator/dynamixel/mx_series/mx-28.htm#Actuator_Address_20
     static constexpr float ENC_SCALE = (2 * 3.1415926f) / 16383;
-    
+
     enum ControlMode{CM_IDLE = 0, CM_VELOCITY = 1, CM_POSITION = 2};
 
     typedef std::function<void(const ReflexHandState * const)> StateCallback;
@@ -114,8 +114,8 @@ namespace reflex_hand2 {
     ReflexHand(const std::string &network_interface);
     ~ReflexHand();
     bool listen(const double max_seconds);
-    void setServoTargets(const uint16_t *targets); 
-    void setServoControlModes(const ControlMode *modes); 
+    void setServoTargets(const uint16_t *targets);
+    void setServoControlModes(const ControlMode *modes);
     void setServoControlModes(const ControlMode mode);
     bool happy() { return happy_; }
     ReflexHandState rx_state_;
@@ -126,8 +126,8 @@ namespace reflex_hand2 {
     StateCallback state_cb_;
 
     bool happy_;
-    void tx(const char *msg, const uint16_t msg_len, const uint16_t port);
-    void rx(const char *msg, const uint16_t msg_len);
+    void tx(const uint8_t *msg, const uint16_t msg_len, const uint16_t port);
+    void rx(const uint8_t *msg, const uint16_t msg_len);
   };
 
 }

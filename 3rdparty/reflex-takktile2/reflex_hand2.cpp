@@ -118,7 +118,7 @@ ReflexHand::~ReflexHand() {}
 
 
 bool ReflexHand::listen(const double max_seconds) {
-  static char rxbuf[2000] = {0};
+  static uint8_t rxbuf[2000] = {0};
   fd_set rdset;
   FD_ZERO(&rdset);
   FD_SET(rx_sock_, &rdset);
@@ -140,7 +140,7 @@ bool ReflexHand::listen(const double max_seconds) {
 }
 
 
-void ReflexHand::tx(const char *msg, const uint16_t msg_len, const uint16_t port) {
+void ReflexHand::tx(const uint8_t *msg, const uint16_t msg_len, const uint16_t port) {
   mcast_addr_.sin_port = htons(port);
   int nsent = sendto(tx_sock_, msg, msg_len, 0, (sockaddr *)&mcast_addr_, sizeof(mcast_addr_));
   if (nsent < 0) {
@@ -162,8 +162,8 @@ void ReflexHand::setServoTargets(const uint16_t *targets) {
 
 
 void ReflexHand::setServoControlModes(const ControlMode *modes) {
-  char msg[NUM_SERVOS+1];
-  msg[0] = CP_SET_SERVO_MODE; 
+  uint8_t msg[NUM_SERVOS+1];
+  msg[0] = CP_SET_SERVO_MODE;
   for (int i = 0; i < NUM_SERVOS; i++)
     msg[i+1] = (uint8_t)modes[i];
   tx(msg, sizeof(msg), PORT_BASE);
@@ -176,7 +176,7 @@ void ReflexHand::setServoControlModes(const ControlMode mode) {
 }
 
 
-void ReflexHand::rx(const char *msg, const uint16_t msg_len) {
+void ReflexHand::rx(const uint8_t *msg, const uint16_t msg_len) {
   // first, check the packet format "magic byte" and the length
   if (msg[0] != 1) {
     printf("unexpected hand shake byte received on UDP multicast port: 0x%02x.\n", msg[0]);
@@ -278,8 +278,8 @@ int ReflexHand::setupNetwork(const std::string &network_interface) {
   err = errno;
   if(result < 0) {
     printf("couldn't set SO_REUSEADDR on UDP RX socket, fails with errno: %s\n", strerror(err));
-  } 
-                 
+  }
+
   sockaddr_in rx_bind_addr;
   memset(&rx_bind_addr, 0, sizeof(rx_bind_addr));
   rx_bind_addr.sin_family = AF_INET;
@@ -289,8 +289,8 @@ int ReflexHand::setupNetwork(const std::string &network_interface) {
   err = errno;
   if(result < 0) {
     printf("couldn't bind rx socket to port %d, fails with errno: %s\n", PORT_BASE, strerror(err));
-  } 
-                 
+  }
+
   ip_mreq mreq;
   mreq.imr_multiaddr.s_addr = inet_addr(mcast_addr_str);
   mreq.imr_interface.s_addr = inet_addr(tx_iface_addr.c_str());
@@ -298,10 +298,12 @@ int ReflexHand::setupNetwork(const std::string &network_interface) {
   err = errno;
   if(result < 0) {
     printf("couldn't add to multicast group, fails with errno: %s\n", strerror(err));
-  }                
+  }
   printf("connected!\n\n");
 
   happy_ = true;
+
+  return 0;
 }
 
 
