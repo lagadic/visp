@@ -74,7 +74,7 @@ public:
   public:
     std::vector<float> proximal;
     std::vector<float> distal_approx;
-    std::vector<std::vector<float> > pressure;
+    std::vector<std::vector<int> > pressure;
     std::vector<std::vector<bool> > contact;
 
     std::vector<float> joint_angle;

@@ -109,8 +109,8 @@ ReflexHandState rx_state_;
 ReflexHand::ReflexHand(): happy_(false) {
 }
 
-ReflexHand::ReflexHand(const std::string &interface): happy_(true) {
-  setupNetwork(interface);
+ReflexHand::ReflexHand(const std::string &network_interface): happy_(true) {
+  setupNetwork(network_interface);
 }
 
 
@@ -118,7 +118,7 @@ ReflexHand::~ReflexHand() {}
 
 
 bool ReflexHand::listen(const double max_seconds) {
-  static uint8_t rxbuf[2000] = {0};
+  static char rxbuf[2000] = {0};
   fd_set rdset;
   FD_ZERO(&rdset);
   FD_SET(rx_sock_, &rdset);
@@ -140,7 +140,7 @@ bool ReflexHand::listen(const double max_seconds) {
 }
 
 
-void ReflexHand::tx(const uint8_t *msg, const uint16_t msg_len, const uint16_t port) {
+void ReflexHand::tx(const char *msg, const uint16_t msg_len, const uint16_t port) {
   mcast_addr_.sin_port = htons(port);
   int nsent = sendto(tx_sock_, msg, msg_len, 0, (sockaddr *)&mcast_addr_, sizeof(mcast_addr_));
   if (nsent < 0) {
@@ -162,7 +162,7 @@ void ReflexHand::setServoTargets(const uint16_t *targets) {
 
 
 void ReflexHand::setServoControlModes(const ControlMode *modes) {
-  uint8_t msg[NUM_SERVOS+1];
+  char msg[NUM_SERVOS+1];
   msg[0] = CP_SET_SERVO_MODE; 
   for (int i = 0; i < NUM_SERVOS; i++)
     msg[i+1] = (uint8_t)modes[i];
@@ -176,7 +176,7 @@ void ReflexHand::setServoControlModes(const ControlMode mode) {
 }
 
 
-void ReflexHand::rx(const uint8_t *msg, const uint16_t msg_len) {
+void ReflexHand::rx(const char *msg, const uint16_t msg_len) {
   // first, check the packet format "magic byte" and the length
   if (msg[0] != 1) {
     printf("unexpected hand shake byte received on UDP multicast port: 0x%02x.\n", msg[0]);
@@ -212,8 +212,8 @@ void ReflexHand::rx(const uint8_t *msg, const uint16_t msg_len) {
 }
 
 
-int ReflexHand::setupNetwork(const std::string &interface) {
-  printf("Starting network interface %s.\n", interface.c_str());
+int ReflexHand::setupNetwork(const std::string &network_interface) {
+  printf("Starting network interface %s.\n", network_interface.c_str());
   const char *mcast_addr_str = "224.0.0.124"; // parameterize someday !
   tx_sock_ = socket(AF_INET, SOCK_DGRAM, 0);
   rx_sock_ = socket(AF_INET, SOCK_DGRAM, 0);
@@ -227,7 +227,7 @@ int ReflexHand::setupNetwork(const std::string &interface) {
 
   ifaddrs *ifaddr;
   if (getifaddrs(&ifaddr) == -1) {
-    printf("couldn't get ipv4 address of interface %s\n", interface.c_str());
+    printf("couldn't get ipv4 address of interface %s\n", network_interface.c_str());
     return -1;
   }
   std::string tx_iface_addr;
@@ -242,7 +242,7 @@ int ReflexHand::setupNetwork(const std::string &interface) {
     if (getnameinfo(ifa->ifa_addr, sizeof(struct sockaddr_in), host, NI_MAXHOST, NULL, 0, NI_NUMERICHOST))
       continue;
     printf("    found address %s on interface %s\n", host, ifa->ifa_name);
-    if (std::string(ifa->ifa_name) == interface) {
+    if (std::string(ifa->ifa_name) == network_interface) {
       printf("using %s as the tx interface for IPv4 UDP multicast\n", host);
       tx_iface_addr = host;
       found_interface = true;
@@ -252,7 +252,7 @@ int ReflexHand::setupNetwork(const std::string &interface) {
   freeifaddrs(ifaddr);
   int err = errno;
   if (!found_interface) {
-    printf("Unable to find IPv4 address of interface %s %s. Perhaps it needs to be set to a static address?\n", strerror(err), interface.c_str());
+    printf("Unable to find IPv4 address of interface %s %s. Perhaps it needs to be set to a static address?\n", strerror(err), network_interface.c_str());
     return -1;
   }
 

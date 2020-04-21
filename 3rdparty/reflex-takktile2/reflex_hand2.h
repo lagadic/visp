@@ -21,7 +21,6 @@
 
 #include <netinet/in.h>
 #include <string>
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
@@ -29,10 +28,8 @@
 #include <ifaddrs.h>
 #include <netdb.h>
 #include <stdio.h>
-
 #include <iostream>
 #include <errno.h>
-
 #include <functional>
 
 #define NUM_FINGERS                   3
@@ -67,7 +64,7 @@ namespace reflex_hand2 {
     public:
         float    proximal[NUM_FINGERS];
         float    distal_approx[NUM_FINGERS];
-        float    pressure[NUM_FINGERS][NUM_SENSORS_PER_FINGER];
+        int      pressure[NUM_FINGERS][NUM_SENSORS_PER_FINGER];
         bool     contact[NUM_FINGERS][NUM_SENSORS_PER_FINGER];
 
         float    joint_angle[NUM_DYNAMIXELS];
@@ -103,18 +100,18 @@ namespace reflex_hand2 {
     static constexpr uint16_t DYN_MIN_RAW = 0;
     static constexpr uint16_t DYN_MAX_RAW = 4095;
     static constexpr uint16_t DYN_MIN_RAW_WRAPPED = 16383;  // For checking negative wraps
-    static constexpr float DYN_POS_SCALE = (4 * 2 * 3.1415926) / 4095;  // Assuming resolution divider of 4
-    static constexpr float DYN_VEL_SCALE = 0.01194;  // rad/s for every velocity command -- http://support.robotis.com/en/product/actuator/dynamixel/mx_series/mx-28.htm#Actuator_Address_20
-    static constexpr float ENC_SCALE = (2 * 3.1415926) / 16383;
+    static constexpr float DYN_POS_SCALE = (4 * 2 * 3.1415926f) / 4095;  // Assuming resolution divider of 4
+    static constexpr float DYN_VEL_SCALE = 0.01194f;  // rad/s for every velocity command -- http://support.robotis.com/en/product/actuator/dynamixel/mx_series/mx-28.htm#Actuator_Address_20
+    static constexpr float ENC_SCALE = (2 * 3.1415926f) / 16383;
     
     enum ControlMode{CM_IDLE = 0, CM_VELOCITY = 1, CM_POSITION = 2};
 
     typedef std::function<void(const ReflexHandState * const)> StateCallback;
     void setStateCallback(StateCallback callback);
 
-    int setupNetwork(const std::string &interface);
+    int setupNetwork(const std::string &network_interface);
     ReflexHand();
-    ReflexHand(const std::string &interface);
+    ReflexHand(const std::string &network_interface);
     ~ReflexHand();
     bool listen(const double max_seconds);
     void setServoTargets(const uint16_t *targets); 
@@ -129,8 +126,8 @@ namespace reflex_hand2 {
     StateCallback state_cb_;
 
     bool happy_;
-    void tx(const uint8_t *msg, const uint16_t msg_len, const uint16_t port);
-    void rx(const uint8_t *msg, const uint16_t msg_len);
+    void tx(const char *msg, const uint16_t msg_len, const uint16_t port);
+    void rx(const char *msg, const uint16_t msg_len);
   };
 
 }

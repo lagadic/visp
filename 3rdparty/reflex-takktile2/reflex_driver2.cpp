@@ -18,7 +18,6 @@
 
 #include <chrono>
 #include <thread>
-#include <boost/bind.hpp>
 #include <cmath>
 #include <sstream>
 
@@ -540,7 +539,7 @@ bool* ReflexDriver::each_finger_touching(bool *touching) {
 
 // Calculates actual proximal angle using raw sensor value, wrap offset
 // for that finger, and calibrated "zero" point for that encoder
-float ReflexDriver::calc_proximal_angle(int raw_enc_value, int offset, double zero) {
+float ReflexDriver::calc_proximal_angle(int raw_enc_value, int offset, float zero) {
   int wrapped_enc_value = raw_enc_value + offset;
   float rad_value = (float) wrapped_enc_value * reflex_hand2::ReflexHand::ENC_SCALE;
   return (zero - rad_value);
@@ -549,7 +548,7 @@ float ReflexDriver::calc_proximal_angle(int raw_enc_value, int offset, double ze
 
 // Calculates joint angle from raw sensor value, motor gear ratio,
 // and calibrated "zero" point for the joint
-float ReflexDriver::calc_motor_angle(int inversion, int raw_dyn_value, double ratio, double zero) {
+float ReflexDriver::calc_motor_angle(int inversion, int raw_dyn_value, float ratio, float zero) {
   float rad_value = raw_dyn_value * reflex_hand2::ReflexHand::DYN_POS_SCALE / ratio;
   float zeroed_value = rad_value - zero;
   return inversion * zeroed_value;

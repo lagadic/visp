@@ -135,8 +135,8 @@ namespace reflex_driver2 {
     bool any_finger_touching();
     bool* each_finger_touching(bool *touching);
 
-    float calc_proximal_angle(int raw_enc_value, int offset, double zero);
-    float calc_motor_angle(int inversion, int raw_dyn_value, double ratio, double zero);
+    float calc_proximal_angle(int raw_enc_value, int offset, float zero);
+    float calc_motor_angle(int inversion, int raw_dyn_value, float ratio, float zero);
     float calc_distal_angle(float spool, float proximal);
     int calc_pressure(const reflex_hand2::ReflexHandState * const state, int finger, int sensor);
     int calc_contact(const reflex_hand2::ReflexHandState * const state, int finger, int sensor);
