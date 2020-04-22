@@ -61,9 +61,12 @@
 
   \brief Generic class defining intrinsic camera parameters.
 
-  Let us define the pinhole camera model implemented in ViSP. In this model
-  \cite Marchand16a, a scene view is formed by projecting 3D points into the
-  image plane using a perspective transformation.
+  Two camera models are implemented in ViSP.
+
+  <b>I. Pinhole camera model</b>
+
+  In this model \cite Marchand16a, a scene view is formed by projecting 3D points
+  into the image plane using a perspective transformation.
 
   \f[
   \left[ \begin{array}{c}
@@ -229,6 +232,28 @@
 
   An XML parser for camera parameters is also provided in vpXmlParserCamera.
 
+  <b>II. Kannala-Brandt camera model</b>
+
+  This model \cite KannalaBrandt deals with fish-eye lenses designed to cover
+  the whole hemispherical field in front of the camera and the angle of view
+  is very large. In this case, the inherent distortion of a fish-eye lens should
+  not be considered only as a derivation from the pinhole model.
+
+  The following projection in the general form is adapted:
+
+  \f[
+  \begin{array}{lcl}
+  r(\theta) &=& k_1 \theta + k_2 \theta^3 + k_3 \theta^5 + k_4 \theta^7 + k_5 \theta^9
+  \end{array}
+  \f]
+
+  where:
+  - \f$\theta\f$ is the angle in rad between a point in the real world and the
+  optical axis.
+  - \f$r\f$ is the distance between the image point and the principal point.
+
+  In ViSP, we only consider radially symmetric distortions (caused by fisheye lenses).
+
 */
 class VISP_EXPORT vpCameraParameters
 {
@@ -248,6 +273,7 @@ public:
   vpCameraParameters(const vpCameraParameters &c);
   vpCameraParameters(double px, double py, double u0, double v0);
   vpCameraParameters(double px, double py, double u0, double v0, double kud, double kdu);
+  vpCameraParameters(double px, double py, double u0, double v0, std::vector<double> distortion_coefficients);
 
   vpCameraParameters &operator=(const vpCameraParameters &c);
   bool operator==(const vpCameraParameters &c) const;
@@ -260,6 +286,7 @@ public:
   void initFromFov(const unsigned int &w, const unsigned int &h, const double &hfov, const double &vfov);
   void initPersProjWithoutDistortion(double px, double py, double u0, double v0);
   void initPersProjWithDistortion(double px, double py, double u0, double v0, double kud, double kdu);
+  void initProjWithKannalaBrandtDistortion(double px, double py, double u0, double v0, std::vector<double> distortion_coefficients);
 
   /*!
     Specify if the fov has been computed.
@@ -333,6 +360,8 @@ public:
   inline double get_v0() const { return v0; }
   inline double get_kud() const { return kud; }
   inline double get_kdu() const { return kdu; }
+  inline std::vector<double> get_distortion_coefs() const { return m_dist_coefs; }
+  inline bool is_KannalaBrandt() const { return m_isKannalaBrandt; }
 
   inline vpCameraParametersProjType get_projModel() const { return projModel; }
 
@@ -351,10 +380,12 @@ private:
   static const double DEFAULT_KDU_PARAMETER;
   static const vpCameraParametersProjType DEFAULT_PROJ_TYPE;
 
-  double px, py; //!< pixel size
-  double u0, v0; //!<  principal point
-  double kud;    //!< radial distortion (from undistorted to distorted)
-  double kdu;    //!< radial distortion (from distorted to undistorted)
+  double px, py;                       //!< Pixel size
+  double u0, v0;                       //!< Principal point
+  double kud;                          //!< Radial distortion (from undistorted to distorted)
+  double kdu;                          //!< Radial distortion (from distorted to undistorted)
+  bool m_isKannalaBrandt;              //!< Flag set if Kannala-Brandt camera model (lens distortion)
+  std::vector<double> m_dist_coefs;    //!< Coefficients for Kannala-Brandt distorsion model
 
   unsigned int width;                  //!< Width of the image used for the fov computation
   unsigned int height;                 //!< Height of the image used for the fov computation
