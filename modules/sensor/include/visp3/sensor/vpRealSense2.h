@@ -62,6 +62,7 @@
   \note Supported devices for Intel® RealSense™ SDK 2.0 (build 2.8.3):
     - Intel® RealSense™ Camera D400-Series (not tested)
     - Intel® RealSense™ Developer Kit SR300 (vpRealSense2 is ok)
+    - Intel® RealSense™ Tracking Camera T265 (under development)
 
   The usage of vpRealSense2 class is enabled when librealsense2 3rd party is
   successfully installed.
@@ -293,6 +294,12 @@ public:
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared1,
                unsigned char *const data_infrared2, rs2::align *const align_to);
+  void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, double *ts = NULL);
+  void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *pose,
+               vpColVector *vel, vpColVector *acc, unsigned int *tracker_confidence = NULL, double *ts = NULL);
+  void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *pose,
+               vpColVector *vel, vpColVector *acc, vpColVector *raw_acc, vpColVector *raw_gyro,
+               unsigned int *tracker_confidence = NULL, double *ts = NULL);
 
 #ifdef VISP_HAVE_PCL
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
@@ -312,13 +319,13 @@ public:
 
   void close();
 
-  vpCameraParameters getCameraParameters(
-      const rs2_stream &stream,
-      vpCameraParameters::vpCameraParametersProjType type = vpCameraParameters::perspectiveProjWithDistortion) const;
+  vpCameraParameters getCameraParameters( const rs2_stream &stream,
+      vpCameraParameters::vpCameraParametersProjType type = vpCameraParameters::perspectiveProjWithDistortion,
+      int index = -1) const;
 
   float getDepthScale();
 
-  rs2_intrinsics getIntrinsics(const rs2_stream &stream) const;
+  rs2_intrinsics getIntrinsics(const rs2_stream &stream, int index = -1) const;
 
   //! Get the value used when the pixel value (u, v) in the depth map is
   //! invalid for the point cloud. For instance, the Point Cloud Library (PCL)
@@ -335,7 +342,10 @@ public:
   //! Get a reference to `rs2::pipeline_profile`.
   rs2::pipeline_profile &getPipelineProfile() { return m_pipelineProfile; }
 
-  vpHomogeneousMatrix getTransformation(const rs2_stream &from, const rs2_stream &to) const;
+  //! Get the product line of the device being used.
+  inline std::string getProductLine() const { return m_product_line; }
+
+  vpHomogeneousMatrix getTransformation(const rs2_stream &from, const rs2_stream &to, int from_index = -1) const;
 
   void open(const rs2::config &cfg = rs2::config());
 
@@ -350,6 +360,10 @@ public:
   //! pointcloud).
   inline void setMaxZ(const float maxZ) { m_max_Z = maxZ; }
 
+  //! Get odometry data from T265 device and tracker's confidence
+  unsigned int getOdometryData(double &ts, vpHomogeneousMatrix *pose, vpColVector *vel, vpColVector *acc);
+  // see: mapper-confidence
+
 protected:
   float m_depthScale;
   float m_invalidDepthValue;
@@ -358,6 +372,10 @@ protected:
   rs2::pipeline_profile m_pipelineProfile;
   rs2::pointcloud m_pointcloud;
   rs2::points m_points;
+  vpTranslationVector m_pos;
+  vpQuaternionVector m_quat;
+  vpRotationMatrix m_rot;
+  std::string m_product_line;
 
   void getColorFrame(const rs2::frame &frame, vpImage<vpRGBa> &color);
   void getGreyFrame(const rs2::frame &frame, vpImage<unsigned char> &grey);

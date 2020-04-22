@@ -217,6 +217,197 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
   }
 }
 
+/*!
+  Acquire timestamped greyscale images from T265 RealSense device.
+  \param left  : Left image
+  \param right : Right image
+  \param ts    : Timestamp
+ */
+void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, double *ts)
+{
+  auto data = m_pipe.wait_for_frames();
+
+  if(left != NULL)
+  {
+    auto left_fisheye_frame  = data.get_fisheye_frame(1);
+    getNativeFrameData(left_fisheye_frame, (*left).bitmap);
+  }
+
+  if(right != NULL)
+  {
+    auto right_fisheye_frame = data.get_fisheye_frame(2);
+    getNativeFrameData(right_fisheye_frame, (*right).bitmap);
+  }
+
+  if(ts != NULL)
+    *ts = data.get_timestamp();
+}
+
+/*!
+  Acquire timestamped greyscale images and odometry data from T265 Realsense device
+  at 30Hz.
+  \param left               : Left image.
+  \param right              : Right image.
+  \param pose               : Pointer to pose.
+  \param vel                : Pointer to velocity vector.
+  \param acc                : Pointer to acceleration vector.
+  \param tracker_confidence : Pose estimation confidence (1: Low, 2: Medium, 3: High)
+  \param ts                 : Timestamp.
+ */
+void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *pose,
+             vpColVector *vel, vpColVector *acc, unsigned int *tracker_confidence, double *ts)
+{
+  auto data = m_pipe.wait_for_frames();
+
+  if(left != NULL)
+  {
+    auto left_fisheye_frame  = data.get_fisheye_frame(1);
+    getNativeFrameData(left_fisheye_frame, (*left).bitmap);
+  }
+
+  if(right != NULL)
+  {
+    auto right_fisheye_frame = data.get_fisheye_frame(2);
+    getNativeFrameData(right_fisheye_frame, (*right).bitmap);
+  }
+
+  auto pose_frame = data.first_or_default(RS2_STREAM_POSE);
+  auto pose_data  = pose_frame.as<rs2::pose_frame>().get_pose_data();
+
+  if(ts != NULL)
+    *ts = data.get_timestamp();
+
+  if(pose != NULL)
+  {
+    m_pos[0] = static_cast<double>(pose_data.translation.x);
+    m_pos[1] = static_cast<double>(pose_data.translation.y);
+    m_pos[2] = static_cast<double>(pose_data.translation.z);
+
+    m_quat[0] = static_cast<double>(pose_data.rotation.x);
+    m_quat[1] = static_cast<double>(pose_data.rotation.y);
+    m_quat[2] = static_cast<double>(pose_data.rotation.z);
+    m_quat[3] = static_cast<double>(pose_data.rotation.w);
+
+    *pose = vpHomogeneousMatrix(m_pos, m_quat);
+  }
+
+  if(vel != NULL)
+  {
+    (*vel)[0] = static_cast<double>(pose_data.velocity.x);
+    (*vel)[1] = static_cast<double>(pose_data.velocity.y);
+    (*vel)[2] = static_cast<double>(pose_data.velocity.z);
+    (*vel)[3] = static_cast<double>(pose_data.angular_velocity.x);
+    (*vel)[4] = static_cast<double>(pose_data.angular_velocity.y);
+    (*vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
+  }
+
+    if(acc != NULL)
+  {
+    (*acc)[0] = static_cast<double>(pose_data.acceleration.x);
+    (*acc)[1] = static_cast<double>(pose_data.acceleration.y);
+    (*acc)[2] = static_cast<double>(pose_data.acceleration.z);
+    (*acc)[3] = static_cast<double>(pose_data.angular_acceleration.x);
+    (*acc)[4] = static_cast<double>(pose_data.angular_acceleration.y);
+    (*acc)[5] = static_cast<double>(pose_data.angular_acceleration.z);
+  }
+
+  *tracker_confidence = pose_data.tracker_confidence;
+}
+
+/*!
+  Acquire timestamped greyscale images, odometry and raw motion data from T265 Realsense device
+  at 30Hz.
+  \param left               : Left image.
+  \param right              : Right image.
+  \param pose               : Pointer to pose.
+  \param vel                : Pointer to velocity vector.
+  \param acc                : Pointer to acceleration vector.
+  \param raw_accel          : Pointer to Accelerometer raw data vector.
+  \param raw_gyro           : Pointer to Gyro raw data vector.
+  \param tracker_confidence : Pose estimation confidence (1: Low, 2: Medium, 3: High)
+  \param ts                 : Timestamp.
+*/
+void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *pose,
+             vpColVector *vel, vpColVector *acc, vpColVector *raw_accel, vpColVector *raw_gyro,
+             unsigned int *tracker_confidence, double *ts)
+{
+  auto data = m_pipe.wait_for_frames();
+
+  if(left != NULL)
+  {
+    auto left_fisheye_frame  = data.get_fisheye_frame(1);
+    getNativeFrameData(left_fisheye_frame, (*left).bitmap);
+  }
+
+  if(right != NULL)
+  {
+    auto right_fisheye_frame = data.get_fisheye_frame(2);
+    getNativeFrameData(right_fisheye_frame, (*right).bitmap);
+  }
+
+  auto pose_frame = data.first_or_default(RS2_STREAM_POSE);
+  auto pose_data  = pose_frame.as<rs2::pose_frame>().get_pose_data();
+
+  if(ts != NULL)
+    *ts = data.get_timestamp();
+
+  if(pose != NULL)
+  {
+    m_pos[0] = static_cast<double>(pose_data.translation.x);
+    m_pos[1] = static_cast<double>(pose_data.translation.y);
+    m_pos[2] = static_cast<double>(pose_data.translation.z);
+
+    m_quat[0] = static_cast<double>(pose_data.rotation.x);
+    m_quat[1] = static_cast<double>(pose_data.rotation.y);
+    m_quat[2] = static_cast<double>(pose_data.rotation.z);
+    m_quat[3] = static_cast<double>(pose_data.rotation.w);
+
+    *pose = vpHomogeneousMatrix(m_pos, m_quat);
+  }
+
+  if(vel != NULL)
+  {
+    (*vel)[0] = static_cast<double>(pose_data.velocity.x);
+    (*vel)[1] = static_cast<double>(pose_data.velocity.y);
+    (*vel)[2] = static_cast<double>(pose_data.velocity.z);
+    (*vel)[3] = static_cast<double>(pose_data.angular_velocity.x);
+    (*vel)[4] = static_cast<double>(pose_data.angular_velocity.y);
+    (*vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
+  }
+
+  if(acc != NULL)
+  {
+    (*acc)[0] = static_cast<double>(pose_data.acceleration.x);
+    (*acc)[1] = static_cast<double>(pose_data.acceleration.y);
+    (*acc)[2] = static_cast<double>(pose_data.acceleration.z);
+    (*acc)[3] = static_cast<double>(pose_data.angular_acceleration.x);
+    (*acc)[4] = static_cast<double>(pose_data.angular_acceleration.y);
+    (*acc)[5] = static_cast<double>(pose_data.angular_acceleration.z);
+  }
+
+  auto accel_frame = data.first_or_default(RS2_STREAM_ACCEL);
+  auto accel_data  = accel_frame.as<rs2::motion_frame>().get_motion_data();
+
+  if(raw_accel != NULL)
+  {
+    (*raw_accel)[0] = static_cast<double>(accel_data.x);
+    (*raw_accel)[1] = static_cast<double>(accel_data.y);
+    (*raw_accel)[2] = static_cast<double>(accel_data.z);
+  }
+
+  auto gyro_frame = data.first_or_default(RS2_STREAM_GYRO);
+  auto gyro_data  = gyro_frame.as<rs2::motion_frame>().get_motion_data();
+
+  if(raw_gyro != NULL)
+  {
+    (*raw_gyro)[0] = static_cast<double>(gyro_data.x);
+    (*raw_gyro)[1] = static_cast<double>(gyro_data.y);
+    (*raw_gyro)[2] = static_cast<double>(gyro_data.z);
+  }
+
+  *tracker_confidence = pose_data.tracker_confidence;
+}
+
 #ifdef VISP_HAVE_PCL
 /*!
   Acquire data from RealSense device.
@@ -393,15 +584,16 @@ void vpRealSense2::close() { m_pipe.stop(); }
 /*!
    Return the camera parameters corresponding to a specific stream. This
    function has to be called after open().
-   \param stream : stream for which camera intrinsic parameters are returned.
-   \param type : Indicate if the model should include distorsion parameters or not.
+   \param stream : Stream for which camera intrinsic parameters are returned.
+   \param type   : Indicates if the model should include distorsion parameters or not.
+   \param index  : Index of camera in T265 device, 1: Left  2. Right
 
    \sa getIntrinsics()
  */
 vpCameraParameters vpRealSense2::getCameraParameters(const rs2_stream &stream,
-                                                     vpCameraParameters::vpCameraParametersProjType type) const
+                                                     vpCameraParameters::vpCameraParametersProjType type, int index) const
 {
-  auto rs_stream = m_pipelineProfile.get_stream(stream).as<rs2::video_stream_profile>();
+  auto rs_stream = m_pipelineProfile.get_stream(stream, index).as<rs2::video_stream_profile>();
   auto intrinsics = rs_stream.get_intrinsics();
 
   vpCameraParameters cam;
@@ -411,8 +603,24 @@ vpCameraParameters vpRealSense2::getCameraParameters(const rs2_stream &stream,
   double py = intrinsics.fy;
 
   if (type == vpCameraParameters::perspectiveProjWithDistortion) {
-    double kdu = intrinsics.coeffs[0];
-    cam.initPersProjWithDistortion(px, py, u0, v0, -kdu, kdu);
+    if(m_product_line.compare("T200") != 0) // Not a T265 => already existing distortion model
+    {
+      double kdu = intrinsics.coeffs[0];
+      cam.initPersProjWithDistortion(px, py, u0, v0, -kdu, kdu);
+    }
+
+    else // T265 => Use Kannala-Brandt distortion model with 5 coefficients
+    {
+      std::vector<double> tmp_coefs;
+      tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[0]));
+      tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[1]));
+      tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[2]));
+      tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[3]));
+      tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[4]));
+
+      cam.initProjWithKannalaBrandtDistortion(px, py, u0, v0, tmp_coefs);
+    }
+
   } else {
     cam.initPersProjWithoutDistortion(px, py, u0, v0);
   }
@@ -423,13 +631,14 @@ vpCameraParameters vpRealSense2::getCameraParameters(const rs2_stream &stream,
 /*!
    Get intrinsic parameters corresponding to the stream. This function has to
    be called after open().
-   \param stream : stream for which the camera intrinsic parameters are returned.
+   \param stream : Stream for which the camera intrinsic parameters are returned.
+   \param index  : Index of the stream.
 
    \sa getCameraParameters()
   */
-rs2_intrinsics vpRealSense2::getIntrinsics(const rs2_stream &stream) const
+rs2_intrinsics vpRealSense2::getIntrinsics(const rs2_stream &stream, int index) const
 {
-  auto vsp = m_pipelineProfile.get_stream(stream).as<rs2::video_stream_profile>();
+  auto vsp = m_pipelineProfile.get_stream(stream, index).as<rs2::video_stream_profile>();
   return vsp.get_intrinsics();
 }
 
@@ -812,12 +1021,25 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
 /*!
    Get the extrinsic transformation from one stream to another. This function
    has to be called after open().
-   \param from, to : streams for which the camera extrinsic parameters are returned.
+   \param from, to   : Streams for which the camera extrinsic parameters are returned.
+   \param from_index : Index of the stream from which we will calculate the transformation
   */
-vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, const rs2_stream &to) const
+vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, const rs2_stream &to, int from_index) const
 {
-  auto from_stream = m_pipelineProfile.get_stream(from);
-  auto to_stream = m_pipelineProfile.get_stream(to);
+  int to_index = -1;
+
+  if(from_index != -1) // If we have to specify indices for streams. (Ex.: T265 device having 2 fisheyes)
+  {
+    if(from_index == 1) // From left => To right.
+      to_index = 2;
+    else
+      if(from_index == 2) // From right => To left.
+        to_index = 1;
+  }
+
+  auto from_stream = m_pipelineProfile.get_stream(from, from_index);
+  auto to_stream = m_pipelineProfile.get_stream(to, to_index);
+
   rs2_extrinsics extrinsics = from_stream.get_extrinsics_to(to_stream);
 
   vpTranslationVector t;
@@ -833,6 +1055,58 @@ vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, cons
 }
 
 /*!
+  Get timestamped odometry data from T265 device
+  \param ts    : Timestamp
+  \param pose  : Translation and Orientation of T265 device as vpHomogeneous matrix
+  \param vel   : Linear and angular velocities of T265 device
+  \param acc   : Linear and angular velocities of T265 device
+ */
+unsigned int vpRealSense2::getOdometryData(double &ts, vpHomogeneousMatrix *pose, vpColVector *vel, vpColVector *acc)
+{
+  auto frame = m_pipe.wait_for_frames();
+  auto f = frame.first_or_default(RS2_STREAM_POSE);
+  auto pose_data = f.as<rs2::pose_frame>().get_pose_data();
+
+  ts = frame.get_timestamp();
+
+  if(pose != NULL)
+  {
+    m_pos[0] = static_cast<double>(pose_data.translation.x);
+    m_pos[1] = static_cast<double>(pose_data.translation.y);
+    m_pos[2] = static_cast<double>(pose_data.translation.z);
+
+    m_quat[0] = static_cast<double>(pose_data.rotation.x);
+    m_quat[1] = static_cast<double>(pose_data.rotation.y);
+    m_quat[2] = static_cast<double>(pose_data.rotation.z);
+    m_quat[3] = static_cast<double>(pose_data.rotation.w);
+
+    *pose = vpHomogeneousMatrix(m_pos, m_quat);
+  }
+
+  if(vel != NULL)
+  {
+    (*vel)[0] = static_cast<double>(pose_data.velocity.x);
+    (*vel)[1] = static_cast<double>(pose_data.velocity.y);
+    (*vel)[2] = static_cast<double>(pose_data.velocity.z);
+    (*vel)[3] = static_cast<double>(pose_data.angular_velocity.x);
+    (*vel)[4] = static_cast<double>(pose_data.angular_velocity.y);
+    (*vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
+  }
+
+  if(acc != NULL)
+  {
+    (*acc)[0] = static_cast<double>(pose_data.acceleration.x);
+    (*acc)[1] = static_cast<double>(pose_data.acceleration.y);
+    (*acc)[2] = static_cast<double>(pose_data.acceleration.z);
+    (*acc)[3] = static_cast<double>(pose_data.angular_acceleration.x);
+    (*acc)[4] = static_cast<double>(pose_data.angular_acceleration.y);
+    (*acc)[5] = static_cast<double>(pose_data.angular_acceleration.z);
+  }
+
+  return pose_data.tracker_confidence;
+}
+
+/*!
   Open access to the RealSense device and start the streaming.
  */
 void vpRealSense2::open(const rs2::config &cfg)
@@ -840,6 +1114,9 @@ void vpRealSense2::open(const rs2::config &cfg)
   m_pipelineProfile = m_pipe.start(cfg);
 
   rs2::device dev = m_pipelineProfile.get_device();
+
+  // Query device product line D400/SR300/L500/T200
+  m_product_line = dev.get_info(RS2_CAMERA_INFO_PRODUCT_LINE);
 
   // Go over the device's sensors
   for (rs2::sensor &sensor : dev.query_sensors()) {
