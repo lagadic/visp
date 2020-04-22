@@ -55,8 +55,7 @@
 int main()
 {
   try {
-    cv::Mat dist_I, undist_I;
-    vpCameraParameters cam_L, cam_R;
+    vpCameraParameters cam_L;
     vpRealSense2 rs;
     int cam_index = 1;
     // Both streams should be enabled. 
@@ -67,7 +66,6 @@ int main()
     
     rs.open(config);
     cam_L = rs.getCameraParameters(RS2_STREAM_FISHEYE, vpCameraParameters::perspectiveProjWithDistortion, cam_index);
-    cam_R = rs.getCameraParameters(RS2_STREAM_FISHEYE, vpCameraParameters::perspectiveProjWithDistortion, 2);
 
     vpImage<unsigned char> I((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
                               (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
@@ -86,25 +84,15 @@ int main()
     vpDisplayGDI fe_l(I, 10, 10, "Right image");
 #endif
 
-    cv::Matx33d K(cam_L.get_px(), 0, cam_L.get_u0(), 0, cam_L.get_py(), cam_L.get_v0(), 0, 0, 1);
-
-    std::vector<double> dist = cam_L.get_distortion_coefs();
-    cv::Vec4d D(dist[0], dist[1], dist[2], dist[3]);
-
-    cv::Mat map1, map2;
-    int count = 0;
     vpArray2D<int> mapU, mapV;
     vpArray2D<float> mapDu, mapDv;
+
     while (true) {
       double t = vpTime::measureTimeMs();
-      count++;
+
       rs.acquire(&I, NULL, NULL); // Acquire only left image
 
       vpDisplay::display(I);
-
-      // vpImageConvert::convert(I, dist_I);
-      // cv::fisheye::undistortImage(dist_I, undist_I, K, D, K);
-      // vpImageConvert::convert(undist_I, undistI);
 
       vpImageTools::undistortFisheye(I, cam_L, undistI);
       vpDisplay::display(undistI);
