@@ -59,7 +59,7 @@ int main()
   vpTranslationVector pos, pos_0, v_pos, v_pos_0; // v for visualization
   vpRotationMatrix rot, rot_0, v_rot, v_rot_0; // v for visualization
   vpRotationMatrix rot_z_mat(vpRxyzVector(0, 0, vpMath::rad(180)));
-  vpColVector vel(6), acc(6), raw_accel(3), raw_gyro(3);
+  vpColVector vel(6), acc(6), imu_acc(3), imu_avel(3);
   unsigned int tracker_confidence;
   double ts;
   vpImagePoint origin;
@@ -97,7 +97,7 @@ int main()
     vpDisplayGDI vf(vI, (int)Il.getWidth() - 150, (int)Il.getHeight(), "Pose visualizer");
 #endif
 
-    rs.acquire(&Il, &Ir, &pose, &vel, &acc, &raw_accel, &raw_gyro, &tracker_confidence, &ts);
+    rs.acquire(&Il, &Ir, &pose, &vel, &acc, &imu_avel, &imu_avel, &tracker_confidence, &ts);
 
     pos_0 = pose_0.getTranslationVector();
     rot_0 = pose_0.getRotationMatrix();
@@ -113,7 +113,7 @@ int main()
     while (true) {
       double t = vpTime::measureTimeMs();
 
-      rs.acquire(&Il, &Ir, &pose, &vel, &acc, &raw_accel, &raw_gyro, &tracker_confidence, &ts);
+      rs.acquire(&Il, &Ir, &pose, &vel, &acc, &imu_acc, &imu_avel, &tracker_confidence, &ts);
 
       vpDisplay::display(Il);
       vpDisplay::display(Ir);
@@ -150,10 +150,9 @@ int main()
       vpDisplay::flush(Ir);
       vpDisplay::flush(vI);
     
-      
       std::cout << "Loop time: " << std::setw(10) << vpTime::measureTimeMs() - t << "ms";
-      std::cout << std::setw(15) << "Accel: x = " << std::setw(10) << raw_accel[0] << " y = " << std::setw(10) << raw_accel[1] << " z = " << std::setw(10) << raw_accel[2];
-      std::cout << std::setw(15) << "Gyro : x = " << std::setw(10) << raw_gyro[0]  << " y = " << std::setw(10) << raw_gyro[1]  << " z = " << std::setw(10) << raw_gyro[2];
+      std::cout << std::setw(15) << "Accel: x = " << std::setw(10) << imu_acc[0] << " y = " << std::setw(10) << imu_acc[1] << " z = " << std::setw(10) << imu_acc[2];
+      std::cout << std::setw(15) << "Gyro : x = " << std::setw(10) << imu_avel[0]  << " y = " << std::setw(10) << imu_avel[1]  << " z = " << std::setw(10) << imu_avel[2];
       std::cout << std::endl;
     }
 

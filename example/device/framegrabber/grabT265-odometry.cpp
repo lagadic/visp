@@ -72,7 +72,7 @@ int main()
 
     vpDisplayX v_display(vI, 10, 10, "Pose visualizer");
 
-    tracker_confidence = rs.getOdometryData(ts, &pose_0, NULL, NULL); // Acquire first frame (pose only)
+    tracker_confidence = rs.getOdometryData(&pose_0, NULL, NULL, &ts); // Acquire first frame (pose only)
     pos_0 = pose_0.getTranslationVector();
     rot_0 = pose_0.getRotationMatrix();
 
@@ -86,7 +86,7 @@ int main()
 
     while (true) {
       double t = vpTime::measureTimeMs();
-      tracker_confidence = rs.getOdometryData(ts, &pose, NULL, NULL); // Acquire timestamped pose only
+      tracker_confidence = rs.getOdometryData(&pose, NULL, NULL, &ts); // Acquire timestamped pose only
 
       vpDisplay::display(vI);
 
