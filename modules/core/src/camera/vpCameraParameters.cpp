@@ -134,7 +134,7 @@ vpCameraParameters::vpCameraParameters(double cam_px, double cam_py, double cam_
 
  */
 vpCameraParameters::vpCameraParameters(double cam_px, double cam_py, double cam_u0,
-                                       double cam_v0, std::vector<double> coefficients)
+                                       double cam_v0, const std::vector<double> &coefficients)
   : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER), u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
     kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), m_isKannalaBrandt(false), m_dist_coefs(), width(0), height(0),
     isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER),
@@ -149,11 +149,9 @@ vpCameraParameters::vpCameraParameters(double cam_px, double cam_py, double cam_
 void vpCameraParameters::init()
 {
   if (fabs(this->px) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   if (fabs(this->py) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   this->inv_px = 1. / this->px;
@@ -210,11 +208,9 @@ void vpCameraParameters::initPersProjWithoutDistortion(double cam_px, double cam
   this->kdu = 0;
 
   if (fabs(px) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   if (fabs(py) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   this->inv_px = 1. / px;
@@ -276,11 +272,9 @@ void vpCameraParameters::initPersProjWithDistortion(double cam_px, double cam_py
   this->kdu = cam_kdu;
 
   if (fabs(px) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   if (fabs(py) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   this->inv_px = 1. / px;
@@ -296,7 +290,7 @@ void vpCameraParameters::initPersProjWithDistortion(double cam_px, double cam_py
   \param coefficients  : Distorsion coefficients.
 */
 void vpCameraParameters::initProjWithKannalaBrandtDistortion(double cam_px, double cam_py, double cam_u0, double cam_v0,
-                                                      std::vector<double> coefficients)
+                                                             const std::vector<double> &coefficients)
 {
   this->projModel = vpCameraParameters::perspectiveProjWithDistortion;
 
@@ -306,11 +300,9 @@ void vpCameraParameters::initProjWithKannalaBrandtDistortion(double cam_px, doub
   this->v0 = cam_v0;
 
   if (fabs(px) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   if (fabs(py) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   this->inv_px = 1. / px;
@@ -653,7 +645,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters 
     else
     {
       os << "  Coefficients: ";
-      std::vector<double> tmp_coefs = cam.get_distortion_coefs();
+      std::vector<double> tmp_coefs = cam.getKannalaBrandtDistortionCoeficients();
       for(unsigned int i = 0; i < tmp_coefs.size(); i++)
         os << " " << tmp_coefs[i];
       os << std::endl;

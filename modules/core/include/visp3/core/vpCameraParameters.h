@@ -273,7 +273,7 @@ public:
   vpCameraParameters(const vpCameraParameters &c);
   vpCameraParameters(double px, double py, double u0, double v0);
   vpCameraParameters(double px, double py, double u0, double v0, double kud, double kdu);
-  vpCameraParameters(double px, double py, double u0, double v0, std::vector<double> distortion_coefficients);
+  vpCameraParameters(double px, double py, double u0, double v0, const std::vector<double> &distortion_coefficients);
 
   vpCameraParameters &operator=(const vpCameraParameters &c);
   bool operator==(const vpCameraParameters &c) const;
@@ -286,7 +286,7 @@ public:
   void initFromFov(const unsigned int &w, const unsigned int &h, const double &hfov, const double &vfov);
   void initPersProjWithoutDistortion(double px, double py, double u0, double v0);
   void initPersProjWithDistortion(double px, double py, double u0, double v0, double kud, double kdu);
-  void initProjWithKannalaBrandtDistortion(double px, double py, double u0, double v0, std::vector<double> distortion_coefficients);
+  void initProjWithKannalaBrandtDistortion(double px, double py, double u0, double v0, const std::vector<double> &distortion_coefficients);
 
   /*!
     Specify if the fov has been computed.
@@ -360,7 +360,7 @@ public:
   inline double get_v0() const { return v0; }
   inline double get_kud() const { return kud; }
   inline double get_kdu() const { return kdu; }
-  inline std::vector<double> get_distortion_coefs() const { return m_dist_coefs; }
+  inline std::vector<double> getKannalaBrandtDistortionCoeficients() const { return m_dist_coefs; }
   inline bool is_KannalaBrandt() const { return m_isKannalaBrandt; }
 
   inline vpCameraParametersProjType get_projModel() const { return projModel; }
