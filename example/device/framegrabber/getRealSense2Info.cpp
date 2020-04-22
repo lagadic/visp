@@ -50,7 +50,11 @@ int main()
     vpRealSense2 rs;
     rs.open();
     std::cout << "RealSense characteristics:\n" << rs << std::endl;
-    std::cout << "Depth scale: " << std::setprecision(std::numeric_limits<float>::max_digits10) << rs.getDepthScale() << std::endl;
+
+    std::string product = rs.getProductLine();
+
+    if(product.compare("D400") == 0) // If it has depth sensor
+      std::cout << "Depth scale: " << std::setprecision(std::numeric_limits<float>::max_digits10) << rs.getDepthScale() << std::endl;
 
   } catch (const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
