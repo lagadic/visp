@@ -251,7 +251,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   \param pose               : Pointer to pose.
   \param vel                : Pointer to velocity vector.
   \param acc                : Pointer to acceleration vector.
-  \param tracker_confidence : Pose estimation confidence (1: Low, 2: Medium, 3: High)
+  \param tracker_confidence : Pose estimation confidence (1: Low, 2: Medium, 3: High). If set to NULL, the function won't return tracker_confidence
   \param ts                 : Timestamp.
  */
 void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *pose,
@@ -301,7 +301,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     (*vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
   }
 
-    if(acc != NULL)
+  if(acc != NULL)
   {
     (*acc)[0] = static_cast<double>(pose_data.acceleration.x);
     (*acc)[1] = static_cast<double>(pose_data.acceleration.y);
@@ -322,13 +322,13 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   \param pose               : Pointer to pose.
   \param vel                : Pointer to velocity vector.
   \param acc                : Pointer to acceleration vector.
-  \param raw_accel          : Pointer to Accelerometer raw data vector.
-  \param raw_gyro           : Pointer to Gyro raw data vector.
+  \param imu_acc            : Pointer to imu linear acceleration vector.
+  \param imu_avel           : Pointer to imu angular velocity vector.
   \param tracker_confidence : Pose estimation confidence (1: Low, 2: Medium, 3: High)
   \param ts                 : Timestamp.
 */
 void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *pose,
-             vpColVector *vel, vpColVector *acc, vpColVector *raw_accel, vpColVector *raw_gyro,
+             vpColVector *vel, vpColVector *acc, vpColVector *imu_acc, vpColVector *imu_avel,
              unsigned int *tracker_confidence, double *ts)
 {
   auto data = m_pipe.wait_for_frames();
@@ -388,21 +388,21 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   auto accel_frame = data.first_or_default(RS2_STREAM_ACCEL);
   auto accel_data  = accel_frame.as<rs2::motion_frame>().get_motion_data();
 
-  if(raw_accel != NULL)
+  if(imu_acc != NULL)
   {
-    (*raw_accel)[0] = static_cast<double>(accel_data.x);
-    (*raw_accel)[1] = static_cast<double>(accel_data.y);
-    (*raw_accel)[2] = static_cast<double>(accel_data.z);
+    (*imu_acc)[0] = static_cast<double>(accel_data.x);
+    (*imu_acc)[1] = static_cast<double>(accel_data.y);
+    (*imu_acc)[2] = static_cast<double>(accel_data.z);
   }
 
   auto gyro_frame = data.first_or_default(RS2_STREAM_GYRO);
   auto gyro_data  = gyro_frame.as<rs2::motion_frame>().get_motion_data();
 
-  if(raw_gyro != NULL)
+  if(imu_avel != NULL)
   {
-    (*raw_gyro)[0] = static_cast<double>(gyro_data.x);
-    (*raw_gyro)[1] = static_cast<double>(gyro_data.y);
-    (*raw_gyro)[2] = static_cast<double>(gyro_data.z);
+    (*imu_avel)[0] = static_cast<double>(gyro_data.x);
+    (*imu_avel)[1] = static_cast<double>(gyro_data.y);
+    (*imu_avel)[2] = static_cast<double>(gyro_data.z);
   }
 
   *tracker_confidence = pose_data.tracker_confidence;
@@ -586,7 +586,7 @@ void vpRealSense2::close() { m_pipe.stop(); }
    function has to be called after open().
    \param stream : Stream for which camera intrinsic parameters are returned.
    \param type   : Indicates if the model should include distorsion parameters or not.
-   \param index  : Index of camera in T265 device, 1: Left  2. Right
+   \param index  : Index of camera in T265 device, 1: Left  2. Right. Otherwise: -1(default)
 
    \sa getIntrinsics()
  */
@@ -632,7 +632,7 @@ vpCameraParameters vpRealSense2::getCameraParameters(const rs2_stream &stream,
    Get intrinsic parameters corresponding to the stream. This function has to
    be called after open().
    \param stream : Stream for which the camera intrinsic parameters are returned.
-   \param index  : Index of the stream.
+   \param index  : Index of the stream. Default: -1. In case of T265 camera: Left Fisheye: 1, Right Fisheye: 2
 
    \sa getCameraParameters()
   */
@@ -1022,7 +1022,7 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
    Get the extrinsic transformation from one stream to another. This function
    has to be called after open().
    \param from, to   : Streams for which the camera extrinsic parameters are returned.
-   \param from_index : Index of the stream from which we will calculate the transformation
+   \param from_index : Index of the stream from which we will calculate the transformation, 1: From left to right, 2: From right to left. Otherwise: -1(default)
   */
 vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, const rs2_stream &to, int from_index) const
 {
@@ -1056,18 +1056,19 @@ vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, cons
 
 /*!
   Get timestamped odometry data from T265 device
+  \param pose  : Translation and Orientation of T265 device as vpHomogeneous matrix.
+  \param vel   : Linear and angular velocities of T265 device.
+  \param acc   : Linear and angular velocities of T265 device.
   \param ts    : Timestamp
-  \param pose  : Translation and Orientation of T265 device as vpHomogeneous matrix
-  \param vel   : Linear and angular velocities of T265 device
-  \param acc   : Linear and angular velocities of T265 device
  */
-unsigned int vpRealSense2::getOdometryData(double &ts, vpHomogeneousMatrix *pose, vpColVector *vel, vpColVector *acc)
+unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *pose, vpColVector *vel, vpColVector *acc, double *ts)
 {
   auto frame = m_pipe.wait_for_frames();
   auto f = frame.first_or_default(RS2_STREAM_POSE);
   auto pose_data = f.as<rs2::pose_frame>().get_pose_data();
 
-  ts = frame.get_timestamp();
+  if(ts != NULL)
+    *ts = frame.get_timestamp();
 
   if(pose != NULL)
   {

@@ -60,9 +60,9 @@
   data from the Intel RealSense cameras.
 
   \note Supported devices for Intel® RealSense™ SDK 2.0 (build 2.8.3):
-    - Intel® RealSense™ Camera D400-Series (not tested)
-    - Intel® RealSense™ Developer Kit SR300 (vpRealSense2 is ok)
-    - Intel® RealSense™ Tracking Camera T265 (under development)
+    - Intel® RealSense™ Camera D400-Series
+    - Intel® RealSense™ Developer Kit SR300
+    - Intel® RealSense™ Tracking Camera T265
 
   The usage of vpRealSense2 class is enabled when librealsense2 3rd party is
   successfully installed.
@@ -298,7 +298,7 @@ public:
   void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *pose,
                vpColVector *vel, vpColVector *acc, unsigned int *tracker_confidence = NULL, double *ts = NULL);
   void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *pose,
-               vpColVector *vel, vpColVector *acc, vpColVector *raw_acc, vpColVector *raw_gyro,
+               vpColVector *vel, vpColVector *acc, vpColVector *imu_acc, vpColVector *imu_avel,
                unsigned int *tracker_confidence = NULL, double *ts = NULL);
 
 #ifdef VISP_HAVE_PCL
@@ -361,7 +361,7 @@ public:
   inline void setMaxZ(const float maxZ) { m_max_Z = maxZ; }
 
   //! Get odometry data from T265 device and tracker's confidence
-  unsigned int getOdometryData(double &ts, vpHomogeneousMatrix *pose, vpColVector *vel, vpColVector *acc);
+  unsigned int getOdometryData(vpHomogeneousMatrix *pose, vpColVector *vel, vpColVector *acc, double *ts = NULL);
   // see: mapper-confidence
 
 protected:
