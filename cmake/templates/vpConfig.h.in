@@ -421,6 +421,9 @@
 // Defined if qbdevice api from qb-robotics available.
 #cmakedefine VISP_HAVE_QBDEVICE
 
+// Defined if takktile2 api from Right Hand Robotics available.
+#cmakedefine VISP_HAVE_TAKKTILE2
+
 // Defined if linux/parport.h is available for parallel port usage.
 #cmakedefine VISP_HAVE_PARPORT
 
