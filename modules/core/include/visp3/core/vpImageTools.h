@@ -165,6 +165,9 @@ public:
                         unsigned int nThreads=2);
 
   template <class Type>
+  static void undistortFisheye(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &newI);
+
+  template <class Type>
   static void warpImage(const vpImage<Type> &src, const vpMatrix &T, vpImage<Type> &dst,
                         const vpImageInterpolationType &interpolation=INTERPOLATION_NEAREST,
                         bool fixedPointArithmetic=true, bool pixelCenter=false);
@@ -794,6 +797,28 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
     }
   }
 #endif
+}
+
+/*!
+  Undistort an image distorted by fisheye lens
+
+  \param I : Input image to undistort.
+
+  \param cam : Parameters of the camera causing distortion.
+
+  \param undistI : Undistorted output image. The size of this image
+  will be the same than the input image \e I.
+
+  \sa initUndistortMap, remap
+*/
+template<class Type>
+void vpImageTools::undistortFisheye(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &undistI)
+{
+  vpArray2D<int> mapU, mapV;
+  vpArray2D<float> mapDu, mapDv;
+
+  initUndistortMap(cam, I.getWidth(), I.getHeight(), mapU, mapV, mapDu, mapDv);
+  remap(I, mapU, mapV, mapDu, mapDv, undistI);
 }
 
 /*!

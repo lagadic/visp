@@ -472,14 +472,23 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   mapDu.resize(height, width, false, false);
   mapDv.resize(height, width, false, false);
 
+  bool is_KannalaBrandt = cam.is_KannalaBrandt(); // Check the projection model used
+
   float u0 = static_cast<float>(cam.get_u0());
   float v0 = static_cast<float>(cam.get_v0());
   float px = static_cast<float>(cam.get_px());
   float py = static_cast<float>(cam.get_py());
-  float kud = static_cast<float>(cam.get_kud());
+  float kud;
+  std::vector<double> dist_coefs;
 
-  if (std::fabs(static_cast<double>(kud)) <= std::numeric_limits<double>::epsilon()) {
-    // There is no need to undistort the image
+  if(!is_KannalaBrandt)
+    kud = static_cast<float>(cam.get_kud());
+
+  else
+    dist_coefs = cam.getKannalaBrandtDistortionCoeficients();
+
+  if (!is_KannalaBrandt && std::fabs(static_cast<double>(kud)) <= std::numeric_limits<double>::epsilon()) {
+    // There is no need to undistort the image (Perpective projection)
     for (unsigned int i = 0; i < height; i++) {
       for (unsigned int j = 0; j < width; j++) {
         mapU[i][j] = static_cast<int>(j);
@@ -492,26 +501,65 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
     return;
   }
 
-  float invpx = 1.0f / px;
-  float invpy = 1.0f / py;
+  float invpx, invpy;
+  float kud_px2 = 0., kud_py2 = 0., deltau_px, deltav_py;
+  float fr1, fr2;
+  float deltav, deltau;
+  float u_float, v_float;
+  int u_round, v_round;
+  double r, scale;
+  double theta, theta_d;
+  double theta2, theta4, theta6, theta8;
 
-  float kud_px2 = kud * invpx * invpx;
-  float kud_py2 = kud * invpy * invpy;
+  invpx = 1.0f / px;
+  invpy = 1.0f / py;
+
+  if(!is_KannalaBrandt)
+  {
+    kud_px2 = kud * invpx * invpx;
+    kud_py2 = kud * invpy * invpy;
+  }
 
   for (unsigned int v = 0; v < height; v++) {
-    float deltav = v - v0;
-    float fr1 = 1.0f + kud_py2 * deltav * deltav;
+    deltav = v - v0;
+
+    if(!is_KannalaBrandt)
+      fr1 = 1.0f + kud_py2 * deltav * deltav;
+    else
+      deltav_py = deltav * invpy;
 
     for (unsigned int u = 0; u < width; u++) {
       // computation of u,v : corresponding pixel coordinates in I.
-      float deltau = u - u0;
-      float fr2 = fr1 + kud_px2 * deltau * deltau;
+      deltau = u - u0;
+      if(!is_KannalaBrandt)
+      {
+        fr2 = fr1 + kud_px2 * deltau * deltau;
 
-      float u_float = deltau * fr2 + u0;
-      float v_float = deltav * fr2 + v0;
+        u_float = deltau * fr2 + u0;
+        v_float = deltav * fr2 + v0;
+      }
 
-      int u_round = static_cast<int>(u_float);
-      int v_round = static_cast<int>(v_float);
+      else
+      {
+        deltau_px = deltau * invpx;
+        r = sqrt(vpMath::sqr(deltau_px) + vpMath::sqr(deltav_py));
+        theta = atan(r);
+
+        theta2 = vpMath::sqr(theta);
+        theta4 = vpMath::sqr(theta2);
+        theta6 = theta2 * theta4;
+        theta8 = vpMath::sqr(theta4);
+
+        theta_d = theta * (1 + dist_coefs[0]*theta2 + dist_coefs[1]*theta4 +
+                           dist_coefs[2]*theta6 + dist_coefs[3]*theta8);
+
+        scale = (r == 0) ? 1.0 : theta_d / r;
+        u_float = static_cast<float>(deltau*scale + u0);
+        v_float = static_cast<float>(deltav*scale + v0);
+      }
+
+      u_round = static_cast<int>(u_float);
+      v_round = static_cast<int>(v_float);
 
       mapU[v][u] = u_round;
       mapV[v][u] = v_round;
