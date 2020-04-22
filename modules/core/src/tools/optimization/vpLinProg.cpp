@@ -38,23 +38,6 @@
 
 #include <visp3/core/vpLinProg.h>
 
-bool equalMatrix(const vpMatrix& A, const vpMatrix& B, double tol=1e-9)
-{
-  if (A.getRows() != B.getRows() || A.getCols() != B.getCols()) {
-    return false;
-  }
-
-  for (unsigned int i = 0; i < A.getRows(); i++) {
-    for (unsigned int j = 0; j < A.getCols(); j++) {
-      if (!vpMath::equal(A[i][j], B[i][j], tol)) {
-        return false;
-      }
-    }
-  }
-
-  return true;
-}
-
 /*!
   Reduces the search space induced by an equality constraint.
 
@@ -65,20 +48,20 @@ bool equalMatrix(const vpMatrix& A, const vpMatrix& B, double tol=1e-9)
 
   \param A : in = equality matrix (dimension m x n), out = projector to kernel (dimension n x (n-rank(A)))
   \param b : in = equality vector (dimension m), out = particular solution (dimension n)
-  \param full_rank : if we think A is full rank, leads to a faster result but a slower one if A is actually not full rank.
-  \param tol : tolerance to test the ranks
+  \param full_rank : if we think A is full rank, leads to a faster result but a slower one if A is actually not full
+  rank. \param tol : tolerance to test the ranks
 
   \return True if \f$\mathbf{A}\mathbf{x} = \mathbf{b}\f$ has a solution.
 
   Here is an example with \f$\mathbf{A} =
-\left[\begin{array}{cccc}1 & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 1 & 1& 0 & 0\end{array}\right]\f$
+  \left[\begin{array}{cccc}1 & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 1 & 1& 0 & 0\end{array}\right]\f$
   and \f$\mathbf{b} = \left[\begin{array}{c}1\\2\\3\end{array}\right]\f$ that become \f$\mathbf{A} =
-\left[\begin{array}{cc}0 & 0\\ 0 & 0\\ 1& 0\\ 0& 1\end{array}\right]\f$ and
- \f$\mathbf{b} = \left[\begin{array}{c}1\\2\\0\\0\end{array}\right]\f$.
+  \left[\begin{array}{cc}0 & 0\\ 0 & 0\\ 1& 0\\ 0& 1\end{array}\right]\f$ and
+  \f$\mathbf{b} = \left[\begin{array}{c}1\\2\\0\\0\end{array}\right]\f$.
 
- We indeed have \f$\forall \mathbf{z}\in\mathbb{R}^2, \left[\begin{array}{cccc}1 & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 1 & 1& 0 & 0\end{array}\right]
- \left(\left[\begin{array}{c}1\\2\\0\\0\end{array}\right] +
-\left[\begin{array}{cc}0 & 0\\ 0 & 0\\ 1& 0\\ 0& 1\end{array}\right]\mathbf{z}\right) = \left[\begin{array}{c}1\\2\\3\end{array}\right]\f$
+  We indeed have \f$\forall \mathbf{z}\in\mathbb{R}^2, \left[\begin{array}{cccc}1 & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 1 & 1& 0
+  & 0\end{array}\right] \left(\left[\begin{array}{c}1\\2\\0\\0\end{array}\right] + \left[\begin{array}{cc}0 & 0\\ 0 &
+  0\\ 1& 0\\ 0& 1\end{array}\right]\mathbf{z}\right) = \left[\begin{array}{c}1\\2\\3\end{array}\right]\f$
 
   \code
   #include <visp3/core/vpLinProg.h>
@@ -117,15 +100,12 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
   unsigned int n = A.getCols();
 
   // degeneracy if A is actually null
-  if(A.infinityNorm() < tol)
-  {
-    if(b.infinityNorm() < tol)
-    {
+  if (A.infinityNorm() < tol) {
+    if (b.infinityNorm() < tol) {
       b.resize(n);
       A.eye(n);
       return true;
-    }
-    else
+    } else
       return false;
   }
 
@@ -133,74 +113,46 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
   vpMatrix Q, R;
   unsigned int r;
 
-  if(full_rank) // caller thinks rank is n or m, can use basic QR
+  if (full_rank) // caller thinks rank is n or m, can use basic QR
   {
-    std::cout << "1 QRDEBUG A(" << A.transpose().getRows() << "," << A.transpose().getCols() << "):\n" << A.transpose() << std::endl;
-
     r = A.transpose().qr(Q, R, false, true);
-    std::cout << "1 QRDEBUG rank: " << r << std::endl;
-    std::cout << "1 QRDEBUG Q:\n " << Q << std::endl;
-    std::cout << "1 QRDEBUG R:\n " << R << std::endl;
-    std::cout << "1 QRDEBUG A = Q*R ?\n " << equalMatrix(A.transpose(), Q*R) << std::endl;
 
     // degenerate but easy case - rank is number of columns
-    if(r == n)
-    {
+    if (r == n) {
       // full rank a priori not feasible (A is high thin matrix)
       const vpColVector x = Q * R.inverseTriangular().t() * b.extract(0, r);
-      if(allClose(A, x, b, tol))
-      {
+      if (allClose(A, x, b, tol)) {
         b = x;
-        A.resize(n,0);
+        A.resize(n, 0);
         return true;
       }
       return false;
-    }
-    else if (r == m)  // most common use case - rank is number of rows
+    } else if (r == m) // most common use case - rank is number of rows
     {
       b = Q * R.inverseTriangular().t() * b;
       // build projection to kernel of Q^T, pick n-m independent columns of I - Q.Q^T
-      vpMatrix IQQt = -Q*Q.t();
-      for(unsigned int j = 0; j < n; ++j)
+      vpMatrix IQQt = -Q * Q.t();
+      for (unsigned int j = 0; j < n; ++j)
         IQQt[j][j] += 1;
       // most of the time the first n-m columns are just fine
-      A = IQQt.extract(0,0,n,n-m);
-      std::cout << "2 QRDEBUG A(" << A.getRows() << "," << A.getCols() << "):\n" << A << std::endl;
-      unsigned int r2 = A.qr(Q, R, false, false, tol);
-      std::cout << "2 QRDEBUG rank: " << r2 << std::endl;
-      std::cout << "2 QRDEBUG Q:\n " << Q << std::endl;
-      std::cout << "2 QRDEBUG R:\n " << R << std::endl;
-      std::cout << "2 QRDEBUG A = Q*R ?\n " << equalMatrix(A, Q*R) << std::endl;
-
-      if(r2 != n-m)
-      {
+      A = IQQt.extract(0, 0, n, n - m);
+      if (A.qr(Q, R, false, false, tol) != n - m) {
         // rank deficiency, manually find n-m independent columns
         unsigned int j0;
-        for(j0 = 0; j0 < n; ++j0)
-        {
-          if(!allZero(IQQt.getCol(j0)))
-          {
+        for (j0 = 0; j0 < n; ++j0) {
+          if (!allZero(IQQt.getCol(j0))) {
             A = IQQt.getCol(j0);
             break;
           }
         }
         // fill up
-        unsigned int j = j0+1;
-        while(A.getCols() < n-m)
-        {
+        unsigned int j = j0 + 1;
+        while (A.getCols() < n - m) {
           // add next column and check rank of A^T.A
-          if(!allZero(IQQt.getCol(j)))
-          {
+          if (!allZero(IQQt.getCol(j))) {
             A = vpMatrix::juxtaposeMatrices(A, IQQt.getCol(j));
-            std::cout << "3 QRDEBUG A(" << A.getRows() << "," << A.getCols() << "):\n" << A << std::endl;
-            unsigned int r3 = A.qr(Q, R, false, false, tol);
-            std::cout << "3 QRDEBUG rank: " << r3 << std::endl;
-            std::cout << "3 QRDEBUG Q:\n " << Q << std::endl;
-            std::cout << "3 QRDEBUG R:\n " << R << std::endl;
-            std::cout << "3 QRDEBUG A = Q*R ?\n " << equalMatrix(A, Q*R) << std::endl;
-
-            if(r != A.getCols())
-              A.resize(n,A.getCols()-1, false);            
+            if (A.qr(Q, R, false, false, tol) != A.getCols())
+              A.resize(n, A.getCols() - 1, false);
           }
           j++;
         }
@@ -212,64 +164,42 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
   // A may be non full rank, go for QR+Pivot
   vpMatrix P;
   r = A.transpose().qrPivot(Q, R, P, false, true);
-  Q = Q.extract(0,0,n,r);
-  const vpColVector x = Q
-      * R.inverseTriangular().t()
-      * P * b;
-  if(allClose(A, x, b, tol))
-  {
+  Q = Q.extract(0, 0, n, r);
+  const vpColVector x = Q * R.inverseTriangular().t() * P * b;
+  if (allClose(A, x, b, tol)) {
     b = x;
-    if(r == n)  // no dimension left
+    if (r == n) // no dimension left
     {
-      A.resize(n,0);
+      A.resize(n, 0);
       return true;
     }
     // build projection to kernel of Q, pick n-r independent columns of I - Q.Q^T
-    vpMatrix IQQt = -Q*Q.t();
-    for(unsigned int j = 0; j < n; ++j)
+    vpMatrix IQQt = -Q * Q.t();
+    for (unsigned int j = 0; j < n; ++j)
       IQQt[j][j] += 1;
     // most of the time the first n-r columns are just fine
-    A = IQQt.extract(0,0,n,n-r);
-    std::cout << "4 QRDEBUG A(" << A.getRows() << "," << A.getCols() << "):\n" << A << std::endl;
-    unsigned int r4 = A.qr(Q, R, false, false, tol);
-    std::cout << "4 QRDEBUG rank: " << r4 << std::endl;
-    std::cout << "4 QRDEBUG Q:\n " << Q << std::endl;
-    std::cout << "4 QRDEBUG R:\n " << R << std::endl;
-    std::cout << "4 QRDEBUG A = Q*R ?\n " << equalMatrix(A, Q*R) << std::endl;
-    if(r4 != n-r)
-    {
+    A = IQQt.extract(0, 0, n, n - r);
+    if (A.qr(Q, R, false, false, tol) != n - r) {
       // rank deficiency, manually find n-r independent columns
       unsigned int j0;
-      for(j0 = 0; j0 < n; ++j0)
-      {
-        if(!allZero(IQQt.getCol(j0)))
-        {
+      for (j0 = 0; j0 < n; ++j0) {
+        if (!allZero(IQQt.getCol(j0))) {
           A = IQQt.getCol(j0);
           break;
         }
       }
       // fill up
-      unsigned int j = j0+1;
-      while(A.getCols() < n-r)
-      {
+      unsigned int j = j0 + 1;
+      while (A.getCols() < n - r) {
         // add next column and check rank of A^T.A
-        if(!allZero(IQQt.getCol(j)))
-        {
+        if (!allZero(IQQt.getCol(j))) {
           A = vpMatrix::juxtaposeMatrices(A, IQQt.getCol(j));
-          std::cout << "5 QRDEBUG A(" << A.getRows() << "," << A.getCols() << "):\n" << A << std::endl;
-          unsigned int r5 = A.qr(Q, R, false, false, tol);
-          std::cout << "5 QRDEBUG rank: " << r5 << std::endl;
-          std::cout << "5 QRDEBUG Q:\n " << Q << std::endl;
-          std::cout << "5 QRDEBUG R:\n " << R << std::endl;
-          std::cout << "5 QRDEBUG A = Q*R ?\n " << equalMatrix(A, Q*R) << std::endl;
-
-          if(r5 != A.getCols())
-            A.resize(n,A.getCols()-1, false);
+          if (A.qr(Q, R, false, false, tol) != A.getCols())
+            A.resize(n, A.getCols() - 1, false);
         }
         j++;
       }
     }
-    exit(0); // QRDEBUG
     return true;
   }
   return false;
@@ -290,9 +220,9 @@ bool vpLinProg::colReduction(vpMatrix &A, vpColVector &b, bool full_rank, const 
   \return True if \f$\mathbf{A}\mathbf{x} = \mathbf{b}\f$ has a solution.
 
   Here is an example with \f$\mathbf{A} =
-\left[\begin{array}{cccc}1 & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 1 & 1& 0 & 0\end{array}\right]\f$
+  \left[\begin{array}{cccc}1 & 0 & 0 & 0\\ 0 & 1 & 0 & 0\\ 1 & 1& 0 & 0\end{array}\right]\f$
   and \f$\mathbf{b} = \left[\begin{array}{c}0\\0\\0\end{array}\right]\f$ (feasible)
-or \f$\mathbf{b} = \left[\begin{array}{c}0\\0\\1\end{array}\right]\f$ (not feasible).
+  or \f$\mathbf{b} = \left[\begin{array}{c}0\\0\\1\end{array}\right]\f$ (not feasible).
   \code
   #include <visp3/core/vpLinProg.h>
 
@@ -319,29 +249,24 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
   unsigned int n = A.getCols();
 
   // degeneracy if A is actually null
-  if(A.infinityNorm() < tol)
-  {
-    if(b.infinityNorm() < tol)
-    {
+  if (A.infinityNorm() < tol) {
+    if (b.infinityNorm() < tol) {
       b.resize(0);
-      A.resize(0,n);
+      A.resize(0, n);
       return true;
-    }
-    else
+    } else
       return false;
   }
 
   vpMatrix Q, R, P;
   const unsigned int r = A.qrPivot(Q, R, P, false, false, tol);
-  const vpColVector x = P.transpose() *
-      vpMatrix::stack(R.extract(0, 0, r, r).inverseTriangular(), vpMatrix(n-r, r))
-      * Q.extract(0, 0, m, r).transpose() * b;
+  const vpColVector x = P.transpose() * vpMatrix::stack(R.extract(0, 0, r, r).inverseTriangular(), vpMatrix(n - r, r)) *
+                        Q.extract(0, 0, m, r).transpose() * b;
 
-  if(allClose(A, x, b, tol))
-  {
-    if(r < m) // if r == m then (A,b) is not changed
+  if (allClose(A, x, b, tol)) {
+    if (r < m) // if r == m then (A,b) is not changed
     {
-      A = R.extract(0, 0, r, n)*P;
+      A = R.extract(0, 0, r, n) * P;
       b = Q.extract(0, 0, m, r).transpose() * b;
     }
     return true;
@@ -359,7 +284,7 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
                & \text{s.t.}& \mathbf{C}\mathbf{x} \leq \mathbf{d}\\
                & \text{s.t.}& \mathbf{x}_i \geq \mathbf{l}_i \text{~for some i}\\
                & \text{s.t.}& \mathbf{x}_j \leq \mathbf{u}_j \text{~for some j}
-\end{array}
+  \end{array}
 \f$
   \param c : cost vector (dimension n)
   \param A : equality matrix (dimension m x n)
@@ -375,7 +300,8 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
 
   Lower and upper bounds may be passed as a list of (index, bound) with C++11's braced initialization.
 
-  \warning This function is only available if c++11 or higher is activated during compilation. Configure ViSP using cmake -DUSE_CXX_STANDARD=11.
+  \warning This function is only available if c++11 or higher is activated during compilation. Configure ViSP using
+cmake -DUSE_CXX_STANDARD=11.
 
   Here is an example:
 
@@ -410,10 +336,8 @@ bool vpLinProg::rowReduction(vpMatrix &A, vpColVector &b, const double &tol)
 
   \sa BoundedIndex
 */
-bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
-                        const vpMatrix &C, const vpColVector &d, vpColVector &x,
-                        std::vector<BoundedIndex> l, std::vector<BoundedIndex> u,
-                        const double &tol)
+bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b, const vpMatrix &C, const vpColVector &d,
+                        vpColVector &x, std::vector<BoundedIndex> l, std::vector<BoundedIndex> u, const double &tol)
 {
   unsigned int n = c.getRows();
   unsigned int m = A.getRows();
@@ -421,32 +345,21 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
 
   // check if we should forward a feasible point to the next solver
   const bool feasible =
-      (x.getRows() == c.getRows())
-      && (A.getRows() == 0 || allClose(A, x, b, tol))
-      && (C.getRows() == 0 || allLesser(C, x, d, tol))
-      && (find_if(l.begin(), l.end(),
-                  [&](BoundedIndex &i){return x[i.first] < i.second-tol;})
-      == l.end())
-      && (find_if(u.begin(), u.end(),
-                  [&](BoundedIndex &i){return x[i.first] > i.second+tol;})
-      == u.end());
+      (x.getRows() == c.getRows()) && (A.getRows() == 0 || allClose(A, x, b, tol)) &&
+      (C.getRows() == 0 || allLesser(C, x, d, tol)) &&
+      (find_if(l.begin(), l.end(), [&](BoundedIndex &i) { return x[i.first] < i.second - tol; }) == l.end()) &&
+      (find_if(u.begin(), u.end(), [&](BoundedIndex &i) { return x[i.first] > i.second + tol; }) == u.end());
 
   // shortcut for unbounded variables with equality
-  if(!feasible && m && l.size() == 0 && u.size() == 0)
-  {
+  if (!feasible && m && l.size() == 0 && u.size() == 0) {
     // changes A.x = b to x = b + A.z
-    if(colReduction(A, b, false, tol))
-    {
-      if(A.getCols())
-      {
-        if(solveLP(A.transpose()*c, vpMatrix(0, n), vpColVector(0), C*A, d - C*b, x, {}, {}, tol))
-        {
-          x = b + A*x;
+    if (colReduction(A, b, false, tol)) {
+      if (A.getCols()) {
+        if (solveLP(A.transpose() * c, vpMatrix(0, n), vpColVector(0), C * A, d - C * b, x, {}, {}, tol)) {
+          x = b + A * x;
           return true;
         }
-      }
-      else if(C.getRows() && allLesser(C, b, d, tol))
-      {   // A.x = b has only 1 solution (the new b) and C.b <= d
+      } else if (C.getRows() && allLesser(C, b, d, tol)) { // A.x = b has only 1 solution (the new b) and C.b <= d
         x = b;
         return true;
       }
@@ -457,102 +370,90 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
 
   // count how many additional variables are needed to deal with bounds
   unsigned int s1 = 0, s2 = 0;
-  for(unsigned int i = 0; i < n; ++i)
-  {
-    const auto cmp = [&](const BoundedIndex &bi) {
-      return bi.first == i;
-    };
+  for (unsigned int i = 0; i < n; ++i) {
+    const auto cmp = [&](const BoundedIndex &bi) { return bi.first == i; };
     // look for lower bound
     const bool has_low = find_if(l.begin(), l.end(), cmp) != l.end();
     // look for upper bound
     const bool has_up = find_if(u.begin(), u.end(), cmp) != u.end();
-    if(has_low == has_up)
-    {
-      s1++;       // additional variable (double-bounded or unbounded variable)
-      if(has_low)
-        s2++;   // additional equality constraint (double-bounded)
+    if (has_low == has_up) {
+      s1++; // additional variable (double-bounded or unbounded variable)
+      if (has_low)
+        s2++; // additional equality constraint (double-bounded)
     }
   }
 
   // build equality matrix with slack variables
-  A.resize(m+p+s2, n+p+s1, false);
-  b.resize(A.getRows(),false);
-  if(feasible)
-    x.resize(n+p+s1, false);
+  A.resize(m + p + s2, n + p + s1, false);
+  b.resize(A.getRows(), false);
+  if (feasible)
+    x.resize(n + p + s1, false);
 
   // deal with slack variables for inequality
   // Cx <= d <=> Cx + y = d
-  for(unsigned int i = 0; i < p; ++i)
-  {
-    A[m+i][n+i] = 1;
-    b[m+i] = d[i];
-    for(unsigned int j = 0; j < n; ++j)
-      A[m+i][j] = C[i][j];
-    if(feasible)
-      x[n+i] = d[i] - C.getRow(i)*x.extract(0,n);
+  for (unsigned int i = 0; i < p; ++i) {
+    A[m + i][n + i] = 1;
+    b[m + i] = d[i];
+    for (unsigned int j = 0; j < n; ++j)
+      A[m + i][j] = C[i][j];
+    if (feasible)
+      x[n + i] = d[i] - C.getRow(i) * x.extract(0, n);
   }
   // x = P.(z - z0)
-  vpMatrix P;P.eye(n, n+p+s1);
-  vpColVector z0(n+p+s1);
+  vpMatrix P;
+  P.eye(n, n + p + s1);
+  vpColVector z0(n + p + s1);
 
   // slack variables for bounded terms
   // base slack variable is z1 (replaces x)
   // additional is z2
   unsigned int k1 = 0, k2 = 0;
-  for(unsigned int i = 0; i < n; ++i)
-  {
+  for (unsigned int i = 0; i < n; ++i) {
     // lambda to find a bound for this index
-    const auto cmp = [&](const BoundedIndex &bi) {
-      return bi.first == i;
-    };
+    const auto cmp = [&](const BoundedIndex &bi) { return bi.first == i; };
 
     // look for lower bound
     const auto low = find_if(l.begin(), l.end(), cmp);
     // look for upper bound
     const auto up = find_if(u.begin(), u.end(), cmp);
 
-    if(low == l.end())  // no lower bound
+    if (low == l.end()) // no lower bound
     {
-      if(up == u.end())   // no bounds, x = z1 - z2
+      if (up == u.end()) // no bounds, x = z1 - z2
       {
-        P[i][n+p+k1] = -1;
-        for(unsigned int j = 0; j < m+p; ++j)
-          A[j][n+p+k1] = -A[j][i];
-        if(feasible)
-        {
+        P[i][n + p + k1] = -1;
+        for (unsigned int j = 0; j < m + p; ++j)
+          A[j][n + p + k1] = -A[j][i];
+        if (feasible) {
           x[i] = std::max(x[i], 0.);
-          x[n+p+k1] = std::max(-x[i], 0.);
+          x[n + p + k1] = std::max(-x[i], 0.);
         }
         k1++;
-      }
-      else                // upper bound x <= u <=> z1 = -x + u >= 0
+      } else // upper bound x <= u <=> z1 = -x + u >= 0
       {
         z0[i] = up->second;
         P[i][i] = -1;
-        for(unsigned int j = 0; j < m+p; ++j)
+        for (unsigned int j = 0; j < m + p; ++j)
           A[j][i] *= -1;
-        if(feasible)
+        if (feasible)
           x[i] = up->second - x[i];
         u.erase(up);
       }
-    }
-    else                    // lower bound  x >= l <=> z1 = x - l >= 0
+    } else // lower bound  x >= l <=> z1 = x - l >= 0
     {
       z0[i] = -low->second;
-      if(up != u.end())   // both bounds  z1 + z2 = u - l
+      if (up != u.end()) // both bounds  z1 + z2 = u - l
       {
-        A[m+p+k2][i] = A[m+p+k2][n+p+k1] = 1;
-        b[m+p+k2] = up->second - low->second;
-        if(feasible)
-        {
+        A[m + p + k2][i] = A[m + p + k2][n + p + k1] = 1;
+        b[m + p + k2] = up->second - low->second;
+        if (feasible) {
           x[i] = up->second - x[i];
-          x[n+p+k1] = x[i] - low->second;
+          x[n + p + k1] = x[i] - low->second;
         }
         k1++;
         k2++;
         u.erase(up);
-      }
-      else if(feasible)             // only lower bound
+      } else if (feasible) // only lower bound
         x[i] = x[i] - low->second;
       l.erase(low);
     }
@@ -562,9 +463,8 @@ bool vpLinProg::solveLP(const vpColVector &c, vpMatrix A, vpColVector b,
   // c^T.x = (P^T.c)^T.z
   // A.x - b = A.P.Z - (b + A.P.z0)
   // A is already A.P
-  if(vpLinProg::simplex(P.transpose()*c, A, b+A*z0, x, tol))
-  {
-    x = P*(x - z0);
+  if (vpLinProg::simplex(P.transpose() * c, A, b + A * z0, x, tol)) {
+    x = P * (x - z0);
     return true;
   }
   return false;
@@ -635,44 +535,38 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
   unsigned int m = A.getRows();
 
   // find a feasible point is passed x is not
-  if(    (x.getRows() != c.getRows()) ||
-         !allGreater(x, -tol) ||
-         (m != 0 && !allClose(A, x, b, tol)) ||
-         [&x,&n](){unsigned int non0 = 0; // count non-0 in x, feasible if <= m
-         for(unsigned int i = 0; i < n; ++i)
-         if(x[i] > 0) non0++;
-         return non0;}() > m
-         )
-  {
+  if ((x.getRows() != c.getRows()) || !allGreater(x, -tol) || (m != 0 && !allClose(A, x, b, tol)) || [&x, &n]() {
+        unsigned int non0 = 0; // count non-0 in x, feasible if <= m
+        for (unsigned int i = 0; i < n; ++i)
+          if (x[i] > 0)
+            non0++;
+        return non0;
+      }() > m) {
     // min sum(z)
     //  st A.x + D.z =  with diag(D) = sign(b)
     // feasible = (0, |b|)
     // z should be minimized to 0 to get a feasible point for this simplex
-    vpColVector cz(n+m);
-    vpMatrix AD(m,n+m);
-    x.resize(n+m);
-    for(unsigned int i = 0; i < m; ++i)
-    {
+    vpColVector cz(n + m);
+    vpMatrix AD(m, n + m);
+    x.resize(n + m);
+    for (unsigned int i = 0; i < m; ++i) {
       // build AD and x
-      if(b[i] > -tol)
-      {
-        AD[i][n+i] = 1;
-        x[n+i] = b[i];
+      if (b[i] > -tol) {
+        AD[i][n + i] = 1;
+        x[n + i] = b[i];
+      } else {
+        AD[i][n + i] = -1;
+        x[n + i] = -b[i];
       }
-      else
-      {
-        AD[i][n+i] = -1;
-        x[n+i] = -b[i];
-      }
-      cz[n+i] = 1;
+      cz[n + i] = 1;
 
       // copy A
-      for(unsigned int j = 0; j < n; ++j)
+      for (unsigned int j = 0; j < n; ++j)
         AD[i][j] = A[i][j];
     }
     // solve to get feasibility
     vpLinProg::simplex(cz, AD, b, x, tol);
-    if(!allLesser(x.extract(n,m), tol))    // no feasible starting point found
+    if (!allLesser(x.extract(n, m), tol)) // no feasible starting point found
     {
       std::cout << "vpLinProg::simplex: constraints not feasible" << std::endl;
       x.resize(n);
@@ -684,139 +578,119 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
   // feasible part  x is >= 0 and Ax = b
 
   // try to reduce number of rows to remove rank deficiency
-  if(!rowReduction(A, b, tol))
-  {
+  if (!rowReduction(A, b, tol)) {
     std::cout << "vpLinProg::simplex: equality constraint not feasible" << std::endl;
     return false;
   }
   m = A.getRows();
-  if(m == 0)
-  {
+  if (m == 0) {
     // no constraints, solution is either unbounded or 0
     x = 0;
     return true;
   }
 
   // build base index from feasible point
-  vpMatrix Ab(m,m), An(m,n-m), Abi;
-  vpColVector cb(m), cn(n-m);
+  vpMatrix Ab(m, m), An(m, n - m), Abi;
+  vpColVector cb(m), cn(n - m);
   std::vector<unsigned int> B, N;
   // add all non-0 indices to B
-  for(unsigned int i = 0; i < n; ++i)
-  {
-    if(std::abs(x[i]) > tol)
+  for (unsigned int i = 0; i < n; ++i) {
+    if (std::abs(x[i]) > tol)
       B.push_back(i);
   }
   // if B not full then try to get Ab without null rows
   // get null rows of current Ab = A[B]
   std::vector<unsigned int> null_rows;
-  for(unsigned int i = 0; i < m; ++i)
-  {
+  for (unsigned int i = 0; i < m; ++i) {
     bool is_0 = true;
-    for(unsigned int j = 0; j < B.size(); ++j)
-    {
-      if(std::abs(A[i][B[j]]) > tol)
-      {
+    for (unsigned int j = 0; j < B.size(); ++j) {
+      if (std::abs(A[i][B[j]]) > tol) {
         is_0 = false;
         break;
       }
     }
-    if(is_0)
+    if (is_0)
       null_rows.push_back(i);
   }
 
   // add columns to B only if make Ab non-null
   // start from the end as it makes vpQuadProg faster
-  for(unsigned int j = n; j-- > 0; )
-  {
-    if(std::abs(x[j]) < tol)
-    {
+  for (unsigned int j = n; j-- > 0;) {
+    if (std::abs(x[j]) < tol) {
       bool in_N = true;
-      if(B.size() != m)
-      {
+      if (B.size() != m) {
         in_N = false;
-        for(unsigned int i = 0; i < null_rows.size(); ++i)
-        {
+        for (unsigned int i = 0; i < null_rows.size(); ++i) {
           in_N = true;
-          if(std::abs(A[null_rows[i]][j]) > tol)
-          {
-            null_rows.erase(null_rows.begin()+i);
+          if (std::abs(A[null_rows[i]][j]) > tol) {
+            null_rows.erase(null_rows.begin() + i);
             in_N = false;
             break;
           }
         }
         // update empty for next time
-        if(!in_N && null_rows.size())
-        {
+        if (!in_N && null_rows.size()) {
           bool redo = true;
-          while(redo)
-          {
+          while (redo) {
             redo = false;
-            for(unsigned int i = 0; i < null_rows.size(); ++i)
-            {
-              if(std::abs(A[null_rows[i]][j]) > tol)
-              {
+            for (unsigned int i = 0; i < null_rows.size(); ++i) {
+              if (std::abs(A[null_rows[i]][j]) > tol) {
                 redo = true;
-                null_rows.erase(null_rows.begin()+i);
+                null_rows.erase(null_rows.begin() + i);
                 break;
               }
             }
           }
         }
       }
-      if(in_N)
+      if (in_N)
         N.push_back(j);
       else
         B.push_back(j);
     }
   }
   // split A into (Ab, An) and c into (cb, cn)
-  for(unsigned int j = 0; j < m; ++j)
-  {
+  for (unsigned int j = 0; j < m; ++j) {
     cb[j] = c[B[j]];
-    for(unsigned int i = 0; i < m; ++i)
+    for (unsigned int i = 0; i < m; ++i)
       Ab[i][j] = A[i][B[j]];
   }
-  for(unsigned int j = 0; j < n-m; ++j)
-  {
+  for (unsigned int j = 0; j < n - m; ++j) {
     cn[j] = c[N[j]];
-    for(unsigned int i = 0; i < m; ++i)
+    for (unsigned int i = 0; i < m; ++i)
       An[i][j] = A[i][N[j]];
   }
 
-  std::vector<std::pair<double, unsigned int>> a;
+  std::vector<std::pair<double, unsigned int> > a;
   a.reserve(n);
 
-  vpColVector R(n-m), db(m);
+  vpColVector R(n - m), db(m);
 
-  while(true)
-  {
+  while (true) {
     Abi = Ab.inverseByQR();
     // find negative residual
-    R  = cn - An.t()*Abi.t()*cb;
+    R = cn - An.t() * Abi.t() * cb;
     unsigned int j;
-    for(j = 0; j < N.size(); ++j)
-    {
-      if(R[j] < -tol)
+    for (j = 0; j < N.size(); ++j) {
+      if (R[j] < -tol)
         break;
     }
 
     // no negative residual -> optimal point
-    if(j == N.size())
+    if (j == N.size())
       return true;
 
     // j will be added as a constraint, find the one to remove
     db = -Abi * An.getCol(j);
 
-    if(allGreater(db, -tol))  // unbounded
+    if (allGreater(db, -tol)) // unbounded
       return true;
 
     // compute alpha / step length to next constraint
     a.resize(0);
-    for(unsigned int k = 0; k < m; ++k)
-    {
-      if(db[k] < -tol)
-        a.push_back({-x[B[k]]/db[k], k});
+    for (unsigned int k = 0; k < m; ++k) {
+      if (db[k] < -tol)
+        a.push_back({-x[B[k]] / db[k], k});
     }
     // get smallest index for smallest alpha
     const auto amin = std::min_element(a.begin(), a.end());
@@ -825,18 +699,18 @@ bool vpLinProg::simplex(const vpColVector &c, vpMatrix A, vpColVector b, vpColVe
 
     // pivot between B[k] and N[j]
     // update x
-    for(unsigned int i = 0; i < B.size(); ++i)
+    for (unsigned int i = 0; i < B.size(); ++i)
       x[B[i]] += alpha * db[i];
     // N part of x
     x[N[j]] = alpha;
 
     // update A and c
     std::swap(cb[k], cn[j]);
-    for(unsigned int i = 0; i < m; ++i)
+    for (unsigned int i = 0; i < m; ++i)
       std::swap(Ab[i][k], An[i][j]);
 
     // update B and N
-    std::swap(B[k],N[j]);
+    std::swap(B[k], N[j]);
   }
 }
 #endif
