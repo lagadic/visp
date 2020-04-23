@@ -472,7 +472,8 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   mapDu.resize(height, width, false, false);
   mapDv.resize(height, width, false, false);
 
-  bool is_KannalaBrandt = cam.is_KannalaBrandt(); // Check the projection model used
+  vpCameraParameters::vpCameraParametersProjType projModel = cam.get_projModel();
+  bool is_KannalaBrandt = (projModel==vpCameraParameters::ProjWithKannalaBrandtDistortion); // Check the projection model used
 
   float u0 = static_cast<float>(cam.get_u0());
   float v0 = static_cast<float>(cam.get_v0());
