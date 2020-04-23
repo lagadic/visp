@@ -826,6 +826,10 @@ public:
         node_tmp.append_child(pugi::node_pcdata).text() = camera.get_kdu();
       }
       break;
+    
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature write_camera is not implemented for Kannala-Brandt projection model yet.");
+      break;
     }
     return back;
   }

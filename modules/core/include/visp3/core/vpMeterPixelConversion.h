@@ -114,6 +114,9 @@ public:
     case vpCameraParameters::perspectiveProjWithDistortion:
       convertPointWithDistortion(cam, x, y, u, v);
       break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature convertPoint is not implemented for Kannala-Brandt projection model yet.");
+      break;
     }
   }
 
@@ -149,6 +152,9 @@ public:
       break;
     case vpCameraParameters::perspectiveProjWithDistortion:
       convertPointWithDistortion(cam, x, y, iP);
+      break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature convertPoint is not implemented for Kannala-Brandt projection model yet.");
       break;
     }
   }
