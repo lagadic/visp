@@ -85,12 +85,12 @@ namespace reflex_driver2 {
     std::vector<std::vector<int>> tactile_offset_values; // Loaded from yaml and reset during calibration
 
     // finger file
-    std::vector<double> dynamixel_zero_point;  // Loaded from yaml and reset during calibration
-    std::vector<double> encoder_zero_point;    // Loaded from yaml and reset during calibration
+    std::vector<float> dynamixel_zero_point;  // Loaded from yaml and reset during calibration
+    std::vector<float> encoder_zero_point;    // Loaded from yaml and reset during calibration
 
     // motor constants
     std::vector<int> motor_to_joint_inverted;      // Loaded from yaml
-    std::vector<double> motor_to_joint_gear_ratio; // Loaded from yaml
+    std::vector<float> motor_to_joint_gear_ratio; // Loaded from yaml
 
     bool acquire_tactile;         // Updated by calibrate methods and in reflex_hand_state_cb()
     bool acquire_fingers;         // Updated by calibrate methods and in reflex_hand_state_cb()
@@ -115,11 +115,11 @@ namespace reflex_driver2 {
     }
 
     void split(std::string &input, std::string delim, std::vector<int> &split_vector);
-    void split(std::string &input, std::string delim, std::vector<double> &split_vector);
+    void split(std::string &input, std::string delim, std::vector<float> &split_vector);
     std::vector<std::string> extract_file_arrays(std::fstream &file, std::string &file_name);
     void load_params();
 
-    bool approx_equal(double a, double b, double error);
+    bool approx_equal(float a, float b, float error);
 
     uint16_t pos_rad_to_raw(float rad_command, int motor_idx);
     uint16_t speed_rad_to_raw(float rad_per_s_command, int motor_idx);
@@ -144,7 +144,7 @@ namespace reflex_driver2 {
     void calibrate_tactile_sensors(const reflex_hand2::ReflexHandState* const state);
     void calibrate_encoders_locally(const reflex_hand2::ReflexHandState* const state);
     void calibrate_motors_locally(const reflex_hand2::ReflexHandState* const state);
-    
+
     void log_current_tactile_locally(const reflex_hand2::ReflexHandState* const state);
     void log_current_tactile_to_file(const reflex_hand2::ReflexHandState* const state);
     void log_encoder_zero_to_file();

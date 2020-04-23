@@ -42,9 +42,9 @@ std::ostream& operator<<(std::ostream &os, const HandInfo &hand) {
     os << std::endl;
 
     os << "\tJoint Angle: " << hand.joint_angle[i] << " rad" << std::endl;
-    os << "\tJoint Angle: " << hand.joint_angle[i]*(180./3.1415926) << " deg" << std::endl;
+    os << "\tJoint Angle: " << hand.joint_angle[i]*(180.f/3.1415926f) << " deg" << std::endl;
     os << "\tVelocity: " << hand.velocity[i] << " rad/s" << std::endl;
-    os << "\tVelocity: " << hand.velocity[i]*(180./3.1415926) << " deg/s" << std::endl;
+    os << "\tVelocity: " << hand.velocity[i]*(180.f/3.1415926f) << " deg/s" << std::endl;
     os << "\tError State: " << hand.error_state[i] << std::endl;
   }
 
@@ -100,7 +100,6 @@ ReflexHandState::ReflexHandState() {
 ReflexHandState::~ReflexHandState() {}
 
 
-const static int PORT_BASE = 11333;
 int tx_sock_ = socket(AF_INET, SOCK_DGRAM, 0);
 int rx_sock_ = socket(AF_INET, SOCK_DGRAM, 0);
 sockaddr_in mcast_addr_;
@@ -123,8 +122,8 @@ bool ReflexHand::listen(const double max_seconds) {
   FD_ZERO(&rdset);
   FD_SET(rx_sock_, &rdset);
   timeval timeout;
-  timeout.tv_sec = (time_t)(max_seconds);
-  timeout.tv_usec = (suseconds_t)((max_seconds - timeout.tv_sec) * 1e6);
+  timeout.tv_sec = static_cast<time_t>(max_seconds);
+  timeout.tv_usec = static_cast<suseconds_t>((max_seconds - timeout.tv_sec) * 1e6);
   int rv = select(rx_sock_ + 1, &rdset, NULL, NULL, &timeout);
   // printf("File: %d\n", rv); // check or uncheck for debugging
   if (rv > 0 && FD_ISSET(rx_sock_, &rdset)) {
@@ -165,7 +164,7 @@ void ReflexHand::setServoControlModes(const ControlMode *modes) {
   uint8_t msg[NUM_SERVOS+1];
   msg[0] = CP_SET_SERVO_MODE;
   for (int i = 0; i < NUM_SERVOS; i++)
-    msg[i+1] = (uint8_t)modes[i];
+    msg[i+1] = static_cast<uint8_t>(modes[i]);
   tx(msg, sizeof(msg), PORT_BASE);
 }
 

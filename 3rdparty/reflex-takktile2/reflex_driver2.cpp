@@ -26,7 +26,7 @@
 
 using namespace reflex_driver2;
 
-#define CALIBRATION_ERROR 0.05  // Encoder delta signifying movement in calibration
+#define CALIBRATION_ERROR 0.05f  // Encoder delta signifying movement in calibration
 
 ReflexDriver::ReflexDriver()
   : reflex_hand(), tactile_offset_values(NUM_FINGERS, std::vector<int>(0)) {
@@ -73,7 +73,7 @@ void ReflexDriver::open(const std::string &network_interface_,
   latest_calibration_time = std::chrono::system_clock::to_time_t(std::chrono::system_clock::now());
 
   printf("Entering main reflex_driver program...\n");
-    
+
   if (!rh->listen(1)) {
     printf("Error in listen.\n");
   }
@@ -101,23 +101,23 @@ void ReflexDriver::split(std::string &input, std::string delim, std::vector<int>
 }
 
 
-// Splits a string of doubles into a vector
-void ReflexDriver::split(std::string &input, std::string delim, std::vector<double> &split_vector) {
+// Splits a string of floats into a vector
+void ReflexDriver::split(std::string &input, std::string delim, std::vector<float> &split_vector) {
   std::stringstream stream;
   stream.str(input);
   std::string entry;
   std::string::size_type size;
   std::string::size_type position;
-  double num;
+  float num;
 
   while ((position = input.find(delim)) != std::string::npos) {
     entry = input.substr(0, position);
-    num = std::stod(entry, &size);
+    num = std::stof(entry, &size);
     split_vector.push_back(num);
     input.erase(0, position + delim.length());
   }
 
-  num = std::stod(input, &size);
+  num = std::stof(input, &size);
   split_vector.push_back(num);
 }
 
@@ -166,14 +166,14 @@ void ReflexDriver::load_params() {
 
   // tactile params
   std::vector<std::string> tactile_values = extract_file_arrays(tactile_file, tactile_file_address);
-  for (int i = 0; i < NUM_FINGERS; i++) {
+  for (size_t i = 0; i < NUM_FINGERS; i++) {
     split(tactile_values[i], ", ", tactile_offset_values[i]);
   }
 }
 
 
-// Returns if two doubles are close
-bool ReflexDriver::approx_equal(double a, double b, double error) {
+// Returns if two floats are close
+bool ReflexDriver::approx_equal(float a, float b, float error) {
   return std::abs(a - b) <= std::abs(error);
 }
 
@@ -195,12 +195,13 @@ void ReflexDriver::wait(int milliseconds) {
 
 // Takes a rad command and returns Dynamixel command
 uint16_t ReflexDriver::pos_rad_to_raw(float rad_command, int motor_idx) {
-  float zeroed_command = motor_to_joint_inverted[motor_idx] * rad_command + dynamixel_zero_point[motor_idx];
-  float motor_ratio = (motor_to_joint_gear_ratio[motor_idx] / reflex_hand2::ReflexHand::DYN_POS_SCALE);
-  uint16_t command = (uint16_t) (zeroed_command * motor_ratio);
+  size_t idx = static_cast<size_t>(motor_idx);
+  float zeroed_command = motor_to_joint_inverted[idx] * rad_command + dynamixel_zero_point[idx];
+  float motor_ratio = (motor_to_joint_gear_ratio[idx] / reflex_hand2::ReflexHand::DYN_POS_SCALE);
+  uint16_t command = static_cast<uint16_t> (zeroed_command * motor_ratio);
   if (command > reflex_hand2::ReflexHand::DYN_MIN_RAW_WRAPPED) {
     printf("Finger %d set out of range (%d), reset to %d", motor_idx + 1,
-             (uint16_t) command, reflex_hand2::ReflexHand::DYN_MIN_RAW);
+             static_cast<uint16_t>(command), reflex_hand2::ReflexHand::DYN_MIN_RAW);
     command = reflex_hand2::ReflexHand::DYN_MIN_RAW;
   }
   return command;
@@ -209,12 +210,13 @@ uint16_t ReflexDriver::pos_rad_to_raw(float rad_command, int motor_idx) {
 
 // Takes a rad/s command and returns Dynamixel command
 uint16_t ReflexDriver::speed_rad_to_raw(float rad_per_s_command, int motor_idx) {
-  uint16_t command = std::abs(rad_per_s_command) *
-                     (motor_to_joint_gear_ratio[motor_idx] / reflex_hand2::ReflexHand::DYN_VEL_SCALE);
+  size_t idx = static_cast<size_t>(motor_idx);
+  uint16_t command = static_cast<uint16_t>(std::abs(rad_per_s_command) *
+                     (motor_to_joint_gear_ratio[idx] / reflex_hand2::ReflexHand::DYN_VEL_SCALE));
   if (command > 1023) {
     command = 1023;
   }
-  if (motor_to_joint_inverted[motor_idx] * rad_per_s_command < 0) {
+  if (motor_to_joint_inverted[idx] * rad_per_s_command < 0) {
     command += 1024;
   }
   if (command == 0) {
@@ -225,21 +227,23 @@ uint16_t ReflexDriver::speed_rad_to_raw(float rad_per_s_command, int motor_idx) 
 
 // Takes a Dynamixel speed command and return rad/s
 float ReflexDriver::speed_raw_to_rad(uint16_t raw_per_s_command, int motor_idx) {
+  size_t idx = static_cast<size_t>(motor_idx);
   float rad_per_s_command = raw_per_s_command * reflex_hand2::ReflexHand::DYN_VEL_SCALE /
-                     motor_to_joint_gear_ratio[motor_idx] ;
-  return rad_per_s_command * motor_to_joint_inverted[motor_idx];
+                     motor_to_joint_gear_ratio[idx] ;
+  return rad_per_s_command * motor_to_joint_inverted[idx];
 }
 
 
 
 // Takes the load, converts it to a float, then does a rolling filter
 float ReflexDriver::load_raw_to_signed(int load, int motor_idx) {
+  size_t idx = static_cast<size_t>(motor_idx);
   if (load > 1023) {
     load = (load - 1023);
   } else {
     load = -1 * load;
   }
-  float signed_load = (float) (motor_to_joint_inverted[motor_idx] * load);
+  float signed_load = static_cast<float> (motor_to_joint_inverted[idx] * load);
   float load_filter = 0.25;  // Rolling filter of noisy data
   float filter_load = load_filter * signed_load + (1 - load_filter) * load_last_value[motor_idx];
   load_last_value[motor_idx] = filter_load;
@@ -250,9 +254,9 @@ float ReflexDriver::load_raw_to_signed(int load, int motor_idx) {
 // Checks whether the motor positions will reset after mode switch, and corrects zero point
 // When switching modes (VELOCITY and POSITION) the motor will wrap values if above 14024 or below 13000
 void ReflexDriver::check_for_potential_motor_wraps_and_rezero() {
-  double motor_wrap;
-  for (int i = 0; i < NUM_SERVOS; i++) {
-    motor_wrap = 1025 * (reflex_hand2::ReflexHand::DYN_POS_SCALE / motor_to_joint_gear_ratio[i]);
+  float motor_wrap;
+  for (size_t i = 0; i < NUM_SERVOS; i++) {
+    motor_wrap = 1025.f * (reflex_hand2::ReflexHand::DYN_POS_SCALE / motor_to_joint_gear_ratio[i]);
   }
 }
 
@@ -273,9 +277,9 @@ void ReflexDriver::move_fingers_in(const reflex_hand2::ReflexHandState * const s
   rh->setServoControlModes(reflex_hand2::ReflexHand::CM_POSITION);
   uint16_t targets[NUM_SERVOS];
   int motor_step;
-  for (int i = 0; i < NUM_SERVOS; i++) {
+  for (size_t i = 0; i < NUM_SERVOS; i++) {
     motor_step = motor_to_joint_inverted[i] * calibration_dyn_increase[i];
-    targets[i] = state->dynamixel_angles_[i] + motor_step;
+    targets[i] = static_cast<uint16_t>(state->dynamixel_angles_[i] + motor_step);
   }
   set_raw_position(targets);
 }
@@ -287,7 +291,7 @@ void ReflexDriver::set_angle_position(const float *targets) {
   rh->setServoControlModes(reflex_hand2::ReflexHand::CM_POSITION);
   float adjusted_targets[NUM_SERVOS];
   uint16_t raw_targets[NUM_SERVOS];
-  bool finger1_arrived, finger2_arrived, finger3_arrived, preshape_arrived = false;
+  bool finger1_arrived = false, finger2_arrived = false, finger3_arrived = false, preshape_arrived = false;
 
   for (int i = 0; i < NUM_SERVOS; i++) {
     if (targets[i] < 0) {
@@ -305,11 +309,11 @@ void ReflexDriver::set_angle_position(const float *targets) {
 
     rh->setServoTargets(raw_targets);
 
-    for (int i = 0; i < NUM_SERVOS; i++) {
+    for (size_t i = 0; i < NUM_SERVOS; i++) {
       if (hand_info.load[i] > MAX_LOAD) {
-        printf("Finger %d overloaded at %f, loosening\n", i+1, hand_info.load[i]);
-        adjusted_targets[i] = hand_info.joint_angle[i] - 0.1;
-        raw_targets[i] = pos_rad_to_raw(adjusted_targets[i], i);
+        printf("Finger %ld overloaded at %f, loosening\n", i+1, hand_info.load[i]);
+        adjusted_targets[i] = hand_info.joint_angle[i] - 0.1f;
+        raw_targets[i] = pos_rad_to_raw(adjusted_targets[i], static_cast<int>(i));
         raw_cmd_last_value[i] = raw_targets[i];
       }
     }
@@ -345,12 +349,12 @@ void ReflexDriver::move_until_any_contact(const float *velocities) {
     for (int i = 0; i < NUM_FINGERS; i++) {
       all_zero = true;
       for (int j = 0; j < NUM_FINGERS; j++) {
-        all_zero = (adjusted_velocities[j] == 0) && all_zero;
+        all_zero = (std::fabs(adjusted_velocities[j]) < std::numeric_limits<float>::epsilon()) && all_zero;
       }
       if (all_zero) {
         return;
       }
-      if (adjusted_velocities[i] == 0) {
+      if (std::fabs(adjusted_velocities[i]) < std::numeric_limits<float>::epsilon()) {
         continue;
       }
       next_target = hand_info.joint_angle[i] + adjusted_velocities[i] * MOTOR_INCREMENT;
@@ -377,7 +381,7 @@ void ReflexDriver::move_until_each_contact(const float *velocities) {
     modified_velocities[i] = velocities[i];
   }
   raw_targets[NUM_SERVOS - 1] = pos_rad_to_raw(hand_info.joint_angle[NUM_SERVOS - 1], NUM_SERVOS - 1);
-  
+
   bool *touching_array = new bool[NUM_FINGERS];
   bool all_touching = false;
   bool all_zero;
@@ -390,12 +394,12 @@ void ReflexDriver::move_until_each_contact(const float *velocities) {
     for (int i = 0; i < NUM_FINGERS; i++) {
       all_zero = true;
       for (int j = 0; j < NUM_FINGERS; j++) {
-        all_zero = (modified_velocities[j] == 0) && all_zero;
+        all_zero = (std::fabs(modified_velocities[j]) < std::numeric_limits<float>::epsilon()) && all_zero;
       }
       if (all_zero) {
         break;
       }
-      if (modified_velocities[i] == 0 || touching_array[i] == true) {
+      if (std::fabs(modified_velocities[i]) < std::numeric_limits<float>::epsilon() || touching_array[i] == true) {
         continue;
       }
       next_targets[i] = hand_info.joint_angle[i] + modified_velocities[i] * MOTOR_INCREMENT;
@@ -404,7 +408,8 @@ void ReflexDriver::move_until_each_contact(const float *velocities) {
 
     all_touching = true;
     for (int i = 0; i < NUM_FINGERS; i++) {
-      all_touching = all_touching && (!modified_velocities[i] || touching_array[i]);
+//      all_touching = all_touching && (!modified_velocities[i] || touching_array[i]);
+      all_touching = all_touching && ((std::fabs(modified_velocities[i]) < std::numeric_limits<float>::epsilon()) || touching_array[i]);
       if (touching_array[i] || next_targets[i] < MIN_ANGLE) {
         modified_velocities[i] = 0;
       }
@@ -489,7 +494,7 @@ void ReflexDriver::set_tactile_thresholds(const int *thresholds) {
 
 // Returns the correct pressure calibration offset for finger[sensor]
 int ReflexDriver::pressure_offset(int finger, int sensor) {
-  return tactile_offset_values[finger][sensor];
+  return tactile_offset_values[static_cast<size_t>(finger)][static_cast<size_t>(sensor)];
 }
 
 
@@ -541,7 +546,7 @@ bool* ReflexDriver::each_finger_touching(bool *touching) {
 // for that finger, and calibrated "zero" point for that encoder
 float ReflexDriver::calc_proximal_angle(int raw_enc_value, int offset, float zero) {
   int wrapped_enc_value = raw_enc_value + offset;
-  float rad_value = (float) wrapped_enc_value * reflex_hand2::ReflexHand::ENC_SCALE;
+  float rad_value = wrapped_enc_value * reflex_hand2::ReflexHand::ENC_SCALE;
   return (zero - rad_value);
 }
 
@@ -584,7 +589,7 @@ void ReflexDriver::calibrate_tactile_sensors(const reflex_hand2::ReflexHandState
   tactile_file << "# Captured sensor values from unloaded state\n";
   log_current_tactile_locally(state);
   log_current_tactile_to_file(state);
-  
+
   tactile_file.close();
 
   acquire_tactile = false;
@@ -593,7 +598,7 @@ void ReflexDriver::calibrate_tactile_sensors(const reflex_hand2::ReflexHandState
 
 // Captures current encoder position locally as "zero" and save to file
 void ReflexDriver::calibrate_encoders_locally(const reflex_hand2::ReflexHandState * const state) {
-  for (int i = 0; i < NUM_FINGERS; i++) {
+  for (size_t i = 0; i < NUM_FINGERS; i++) {
     encoder_zero_point[i] = state->encoders_[i] * reflex_hand2::ReflexHand::ENC_SCALE;
     encoder_offset[i] = 0;
   }
@@ -607,11 +612,11 @@ void ReflexDriver::calibrate_motors_locally(const reflex_hand2::ReflexHandState 
   int motor_offset;
   float motor_scalar;
 
-  for (int i = 0; i < NUM_SERVOS; i++) {
+  for (size_t i = 0; i < NUM_SERVOS; i++) {
     motor_offset = motor_to_joint_inverted[i] * CALIBRATION_DYN_OFFSET[i];
     motor_scalar = reflex_hand2::ReflexHand::DYN_POS_SCALE / motor_to_joint_gear_ratio[i];
     dynamixel_zero_point[i] = (state->dynamixel_angles_[i] - motor_offset) * motor_scalar;
-    targets[i] = state->dynamixel_angles_[i] - motor_offset;
+    targets[i] = static_cast<uint16_t>(state->dynamixel_angles_[i] - motor_offset);
   }
   set_raw_position(targets);
 }
@@ -619,9 +624,9 @@ void ReflexDriver::calibrate_motors_locally(const reflex_hand2::ReflexHandState 
 
 // Saves local variables tactile_offset_values with current tactile position
 void ReflexDriver::log_current_tactile_locally(const reflex_hand2::ReflexHandState * const state) {
-  for (int i = 0; i < NUM_FINGERS; i++) {
-    for (int j = 0; j < NUM_SENSORS_PER_FINGER; j++) {
-      tactile_offset_values[i][j] = state->tactile_pressures_[TACTILE_BASE_IDX[i] + j];
+  for (size_t i = 0; i < NUM_FINGERS; i++) {
+    for (size_t j = 0; j < NUM_SENSORS_PER_FINGER; j++) {
+      tactile_offset_values[i][j] = state->tactile_pressures_[static_cast<size_t>(TACTILE_BASE_IDX[i]) + j];
     }
   }
 }
@@ -666,7 +671,7 @@ void ReflexDriver::log_motor_zero_to_file_and_close() {
 // the motion of fingers past that point
 bool ReflexDriver::check_for_finger_movement(const reflex_hand2::ReflexHandState * const state) {
   bool all_fingers_moved = true;
-  for (int i = 0; i < NUM_FINGERS; i++) {
+  for (size_t i = 0; i < NUM_FINGERS; i++) {
     float enc_pos = encoder_zero_point[i] -
                     state->encoders_[i] * reflex_hand2::ReflexHand::ENC_SCALE;
     if (std::abs(enc_pos) > CALIBRATION_ERROR) {
@@ -683,12 +688,12 @@ bool ReflexDriver::check_for_finger_movement(const reflex_hand2::ReflexHandState
 // Captures the current hand state
 void ReflexDriver::populate_motor_state(const reflex_hand2::ReflexHandState * const state) {
   char buffer[10];
-  for (int i = 0; i < NUM_SERVOS; i++) {
-    hand_info.raw_angle[i] = (float) state->dynamixel_angles_[i];
+  for (size_t i = 0; i < NUM_SERVOS; i++) {
+    hand_info.raw_angle[i] = state->dynamixel_angles_[i];
     //hand_info.velocity[i] = (float) state->dynamixel_speeds_[i];
-    hand_info.velocity[i] = speed_raw_to_rad(state->dynamixel_speeds_[i], i);
-    hand_info.load[i] = load_raw_to_signed(state->dynamixel_loads_[i], i);
-    hand_info.voltage[i] = (float) state->dynamixel_voltages_[i];
+    hand_info.velocity[i] = speed_raw_to_rad(state->dynamixel_speeds_[i], static_cast<int>(i));
+    hand_info.load[i] = load_raw_to_signed(state->dynamixel_loads_[i], static_cast<int>(i));
+    hand_info.voltage[i] = static_cast<float>(state->dynamixel_voltages_[i]);
     hand_info.temperature[i] = state->dynamixel_temperatures_[i];
     sprintf(buffer, "0x%02x", state->dynamixel_error_states_[i]);
     hand_info.error_state[i] = buffer;
@@ -699,7 +704,8 @@ void ReflexDriver::populate_motor_state(const reflex_hand2::ReflexHandState * co
 // Takes in hand state data and writes to hand_info
 // Also does calibration when certain booleans are enabled
 void ReflexDriver::reflex_hand_state_cb(const reflex_hand2::ReflexHandState * const state) {
-  for (int i = 0; i < NUM_FINGERS; i++) {
+  for (size_t i = 0; i < NUM_FINGERS; i++) {
+    int i_ = static_cast<int>(i);
     encoder_offset[i] = update_encoder_offset(state->encoders_[i],
                                               encoder_last_value[i],
                                               encoder_offset[i]);
@@ -713,28 +719,29 @@ void ReflexDriver::reflex_hand_state_cb(const reflex_hand2::ReflexHandState * co
                                                       encoder_zero_point[i]);
     hand_info.distal_approx[i] = calc_distal_angle(hand_info.joint_angle[i],
                                                    hand_info.proximal[i]);
-    for (int j = 0; j < 5; j++) {
-      hand_info.pressure[i][j] = calc_pressure(state, i, j);
-      hand_info.contact[i][j] = calc_contact(state, i, j);
+    for (size_t j = 0; j < 5; j++) {
+      int j_ = static_cast<int>(j);
+      hand_info.pressure[i][j] = calc_pressure(state, i_, j_);
+      hand_info.contact[i][j] = calc_contact(state, i_, j_);
     }
-    hand_info.pressure[i][5] = calc_pressure(state, i, 10);
-    hand_info.contact[i][5] = calc_contact(state, i, 5);
-    hand_info.pressure[i][6] = calc_pressure(state, i, 11);
-    hand_info.contact[i][6] = calc_contact(state, i, 6);
-    hand_info.pressure[i][7] = calc_pressure(state, i, 7);
-    hand_info.contact[i][7] = calc_contact(state, i, 7);
-    hand_info.pressure[i][8] = calc_pressure(state, i, 8);
-    hand_info.contact[i][8] = calc_contact(state, i, 8);
-    hand_info.pressure[i][9] = calc_pressure(state, i, 9);
-    hand_info.contact[i][9] = calc_contact(state, i, 9);
-    hand_info.pressure[i][10] = calc_pressure(state, i, 13);
-    hand_info.contact[i][10] = calc_contact(state, i, 10);
-    hand_info.pressure[i][11] = calc_pressure(state, i, 12);
-    hand_info.contact[i][11] = calc_contact(state, i, 11);
-    hand_info.pressure[i][12] = calc_pressure(state, i, 5);
-    hand_info.contact[i][12] = calc_contact(state, i, 12);
-    hand_info.pressure[i][13] = calc_pressure(state, i, 6);
-    hand_info.contact[i][13] = calc_contact(state, i, 13);
+    hand_info.pressure[i][5] = calc_pressure(state, i_, 10);
+    hand_info.contact[i][5] = calc_contact(state, i_, 5);
+    hand_info.pressure[i][6] = calc_pressure(state, i_, 11);
+    hand_info.contact[i][6] = calc_contact(state, i_, 6);
+    hand_info.pressure[i][7] = calc_pressure(state, i_, 7);
+    hand_info.contact[i][7] = calc_contact(state, i_, 7);
+    hand_info.pressure[i][8] = calc_pressure(state, i_, 8);
+    hand_info.contact[i][8] = calc_contact(state, i_, 8);
+    hand_info.pressure[i][9] = calc_pressure(state, i_, 9);
+    hand_info.contact[i][9] = calc_contact(state, i_, 9);
+    hand_info.pressure[i][10] = calc_pressure(state, i_, 13);
+    hand_info.contact[i][10] = calc_contact(state, i_, 10);
+    hand_info.pressure[i][11] = calc_pressure(state, i_, 12);
+    hand_info.contact[i][11] = calc_contact(state, i_, 11);
+    hand_info.pressure[i][12] = calc_pressure(state, i_, 5);
+    hand_info.contact[i][12] = calc_contact(state, i_, 12);
+    hand_info.pressure[i][13] = calc_pressure(state, i_, 6);
+    hand_info.contact[i][13] = calc_contact(state, i_, 13);
   }
   hand_info.joint_angle[NUM_SERVOS - 1] = calc_motor_angle(motor_to_joint_inverted[NUM_SERVOS - 1],
                                                           state->dynamixel_angles_[NUM_SERVOS - 1],
