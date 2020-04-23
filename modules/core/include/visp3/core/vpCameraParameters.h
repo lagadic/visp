@@ -264,7 +264,9 @@ public:
   typedef enum {
     perspectiveProjWithoutDistortion, //!< Perspective projection without
                                       //!< distortion model
-    perspectiveProjWithDistortion     //!< Perspective projection with distortion
+    perspectiveProjWithDistortion,    //!< Perspective projection with distortion
+                                      //!< model
+    ProjWithKannalaBrandtDistortion   //!< Projection with Kannala-Brandt distortion
                                       //!< model
   } vpCameraParametersProjType;
 
@@ -361,7 +363,6 @@ public:
   inline double get_kud() const { return kud; }
   inline double get_kdu() const { return kdu; }
   inline std::vector<double> getKannalaBrandtDistortionCoeficients() const { return m_dist_coefs; }
-  inline bool is_KannalaBrandt() const { return m_isKannalaBrandt; }
 
   inline vpCameraParametersProjType get_projModel() const { return projModel; }
 
@@ -384,7 +385,6 @@ private:
   double u0, v0;                       //!< Principal point
   double kud;                          //!< Radial distortion (from undistorted to distorted)
   double kdu;                          //!< Radial distortion (from distorted to undistorted)
-  bool m_isKannalaBrandt;              //!< Flag set if Kannala-Brandt camera model (lens distortion)
   std::vector<double> m_dist_coefs;    //!< Coefficients for Kannala-Brandt distorsion model
 
   unsigned int width;                  //!< Width of the image used for the fov computation
