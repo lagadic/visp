@@ -62,6 +62,7 @@ set(example_cpp
   grabT265-images.cpp
   grabT265-images-and-odometry.cpp
   grabT265-images-and-odometry-async.cpp
+  grabT265-imu.cpp
   grabT265-odometry.cpp
 )
 
@@ -83,6 +84,7 @@ if(VISP_HAVE_REALSENSE OR VISP_HAVE_REALSENSE2)
     visp_set_source_file_compile_flag(grabT265-images.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-comment -Wno-overloaded-virtual)
     visp_set_source_file_compile_flag(grabT265-images-and-odometry.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-comment -Wno-overloaded-virtual)
     visp_set_source_file_compile_flag(grabT265-images-and-odometry-async.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-comment -Wno-overloaded-virtual)
+    visp_set_source_file_compile_flag(grabT265-imu.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-comment -Wno-overloaded-virtual)
     visp_set_source_file_compile_flag(grabT265-odometry.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-comment -Wno-overloaded-virtual)
   else()
     visp_set_source_file_compile_flag(getRealSense2Info.cpp /wd4244 /wd4267)
@@ -92,6 +94,7 @@ if(VISP_HAVE_REALSENSE OR VISP_HAVE_REALSENSE2)
     visp_set_source_file_compile_flag(grabT265-images.cpp /wd4244 /wd4267)
     visp_set_source_file_compile_flag(grabT265-images-and-odometry.cpp /wd4244 /wd4267)
     visp_set_source_file_compile_flag(grabT265-images-and-odometry-async.cpp /wd4244 /wd4267)
+    visp_set_source_file_compile_flag(grabT265-imu.cpp /wd4244 /wd4267)
     visp_set_source_file_compile_flag(grabT265-odometry.cpp /wd4244 /wd4267)
     visp_set_source_file_compile_flag(saveRealSenseData.cpp /wd4244 /wd4267)
   endif()
