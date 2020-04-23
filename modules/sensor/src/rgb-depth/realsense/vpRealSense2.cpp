@@ -1108,6 +1108,92 @@ unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *pose, vpColVecto
 }
 
 /*!
+  Get timestamped IMU acceleration from RealSense T265 device at 62.5Hz.
+  \param imu_acc            : IMU linear acceleration vector
+  \param ts                 : Timestamp
+
+  \note This function should be used with RS2_STREAM_ACCEL stream enabled.
+  \note Be aware that IMU frame's X and Z axes are opposite to X and Z axes of pose frame.
+ */
+void vpRealSense2::getIMUAcceleration(vpColVector *imu_acc, double *ts)
+{
+  auto frame = m_pipe.wait_for_frames();
+  auto f = frame.first_or_default(RS2_STREAM_ACCEL);
+  auto imu_acc_data = f.as<rs2::motion_frame>().get_motion_data();
+
+  if(ts != NULL)
+    *ts = f.get_timestamp();
+
+  if(imu_acc != NULL)
+  {
+    (*imu_acc)[0] = static_cast<double>(imu_acc_data.x);
+    (*imu_acc)[1] = static_cast<double>(imu_acc_data.y);
+    (*imu_acc)[2] = static_cast<double>(imu_acc_data.z);
+  }
+}
+
+/*!
+  Get timestamped IMU angular velocities from RealSense T265 device at 200Hz.
+  \param imu_avel           : IMU angular velocity vector
+  \param ts                 : Timestamp
+
+  \note This function should be used with RS2_STREAM_GYRO stream enabled.
+  \note Be aware that IMU frame's X and Z axes are opposite to X and Z axes of pose frame.
+ */
+void vpRealSense2::getIMUVelocity(vpColVector *imu_avel, double *ts)
+{
+  auto frame = m_pipe.wait_for_frames();
+  auto f = frame.first_or_default(RS2_STREAM_GYRO);
+  auto imu_avel_data = f.as<rs2::motion_frame>().get_motion_data();
+
+  if(ts != NULL)
+    *ts = f.get_timestamp();
+
+  if(imu_avel != NULL)
+  {
+    (*imu_avel)[0] = static_cast<double>(imu_avel_data.x);
+    (*imu_avel)[1] = static_cast<double>(imu_avel_data.x);
+    (*imu_avel)[2] = static_cast<double>(imu_avel_data.x);
+  }
+}
+
+/*!
+  Get timestamped IMU data from RealSense T265 device.
+  \param imu_acc            : IMU linear acceleration vector
+  \param imu_avel           : IMU angular velocity vector
+  \param ts                 : Timestamp
+
+  \note Be aware that IMU frame's X and Z axes are opposite to X and Z axes of pose frame.
+ */
+void vpRealSense2::getIMUData(vpColVector *imu_acc, vpColVector *imu_avel, double *ts)
+{
+  auto data = m_pipe.wait_for_frames();
+
+  if(ts != NULL)
+    *ts = data.get_timestamp();
+
+  if(imu_acc != NULL)
+  {
+    auto acc_data = data.first_or_default(RS2_STREAM_ACCEL);
+    auto imu_acc_data = acc_data.as<rs2::motion_frame>().get_motion_data();
+
+    (*imu_acc)[0] = static_cast<double>(imu_acc_data.x);
+    (*imu_acc)[1] = static_cast<double>(imu_acc_data.y);
+    (*imu_acc)[2] = static_cast<double>(imu_acc_data.z);
+  }
+
+  if(imu_avel != NULL)
+  {
+    auto avel_data = data.first_or_default(RS2_STREAM_GYRO);
+    auto imu_avel_data = avel_data.as<rs2::motion_frame>().get_motion_data();
+
+    (*imu_avel)[0] = static_cast<double>(imu_avel_data.x);
+    (*imu_avel)[1] = static_cast<double>(imu_avel_data.y);
+    (*imu_avel)[2] = static_cast<double>(imu_avel_data.z);
+  }
+}
+
+/*!
   Open access to the RealSense device and start the streaming.
  */
 void vpRealSense2::open(const rs2::config &cfg)

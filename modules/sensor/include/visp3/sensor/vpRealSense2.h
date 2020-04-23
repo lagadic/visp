@@ -360,9 +360,18 @@ public:
   //! pointcloud).
   inline void setMaxZ(const float maxZ) { m_max_Z = maxZ; }
 
-  //! Get odometry data from T265 device and tracker's confidence
+  //! Get odometry data from T265 device.
   unsigned int getOdometryData(vpHomogeneousMatrix *pose, vpColVector *vel, vpColVector *acc, double *ts = NULL);
   // see: mapper-confidence
+
+  //! Get linear acceleration from IMU on T265 device at 62.5Hz.
+  void getIMUAcceleration(vpColVector *imu_acc, double *ts);
+
+  //! Get angular velocities from IMU on T265 device at 200Hz.
+  void getIMUVelocity(vpColVector *imu_avel, double *ts);
+
+  //! Get linear acceleration and angular velocity from IMU on T265.
+  void getIMUData(vpColVector *imu_acc, vpColVector *imu_avel, double *ts);
 
 protected:
   float m_depthScale;
