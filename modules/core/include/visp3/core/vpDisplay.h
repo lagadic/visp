@@ -42,6 +42,7 @@
 
 #include <sstream>
 #include <string>
+#include <list>
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColor.h>
@@ -733,6 +734,8 @@ int main()
                              unsigned int thickness = 1);
   static void displayDotLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
                              bool closeTheShape, const vpColor &color, unsigned int thickness = 1);
+  static void displayDotLine(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ips,
+                             bool closeTheShape, const vpColor &color, unsigned int thickness = 1);
   static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1,
                              const double &coef2, const double &coef3, bool use_centered_moments, const vpColor &color,
                              unsigned int thickness = 1);
@@ -747,6 +750,8 @@ int main()
   static void displayLine(const vpImage<unsigned char> &I, int i1, int j1, int i2, int j2, const vpColor &color,
                           unsigned int thickness = 1, bool segment = true);
   static void displayLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
+                          bool closeTheShape, const vpColor &color, unsigned int thickness = 1);
+  static void displayLine(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ips,
                           bool closeTheShape, const vpColor &color, unsigned int thickness = 1);
   static void displayPoint(const vpImage<unsigned char> &I, const vpImagePoint &ip, const vpColor &color,
                            unsigned int thickness = 1);
@@ -832,6 +837,8 @@ int main()
                              unsigned int thickness = 1);
   static void displayDotLine(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &ips, bool closeTheShape,
                              const vpColor &color, unsigned int thickness = 1);
+  static void displayDotLine(const vpImage<vpRGBa> &I, const std::list<vpImagePoint> &ips, bool closeTheShape,
+                             const vpColor &color, unsigned int thickness = 1);
   static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &coef1,
                              const double &coef2, const double &coef3, bool use_centered_moments, const vpColor &color,
                              unsigned int thickness = 1);
@@ -846,6 +853,8 @@ int main()
   static void displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, int j2, const vpColor &color,
                           unsigned int thickness = 1, bool segment = true);
   static void displayLine(const vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &ips, bool closeTheShape,
+                          const vpColor &color, unsigned int thickness = 1);
+  static void displayLine(const vpImage<vpRGBa> &I, const std::list<vpImagePoint> &ips, bool closeTheShape,
                           const vpColor &color, unsigned int thickness = 1);
   static void displayPoint(const vpImage<vpRGBa> &I, const vpImagePoint &ip, const vpColor &color,
                            unsigned int thickness = 1);

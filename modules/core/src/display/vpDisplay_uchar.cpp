@@ -231,7 +231,7 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, int i1, int j1, 
 /*!
   Display dashed lines for the list of image points.
   \param I : The image associated to the display.
-  \param ips : List of image points.
+  \param ips : Vector of image points.
   \param closeTheShape : If true, display a dashed line from the first and
   last image points.
   \param color : Line color.
@@ -248,6 +248,36 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::vecto
 
   if (closeTheShape)
     vp_display_display_dot_line(I, ips.front(), ips.back(), color, thickness);
+}
+
+/*!
+  Display dashed lines for the list of image points.
+  \param I : The image associated to the display.
+  \param ips : List of image points.
+  \param closeTheShape : If true, display a dashed line from the first and
+  last image points.
+  \param color : Line color.
+  \param thickness : Dashed line thickness.
+*/
+void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ips,
+                               bool closeTheShape, const vpColor &color, unsigned int thickness)
+{
+  if (ips.size() <= 1)
+    return;
+
+  std::list<vpImagePoint>::const_iterator it = ips.begin();
+
+  vpImagePoint ip_prev = *(it++);
+  for (; it != ips.end(); ++it) {
+    if (vpImagePoint::distance(ip_prev, *it) > 1) {
+      vp_display_display_dot_line(I, ip_prev, *it, color, thickness);
+      ip_prev = *it;
+    }
+  }
+
+  if (closeTheShape) {
+    vp_display_display_dot_line(I, ips.front(), ips.back(), color, thickness);
+  }
 }
 
 /*!
@@ -478,9 +508,10 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1, int
 /*!
   Display the lines formed by the list of image points.
   \param I : The image associated to the display.
-  \param ips : List of image points.
-  \param closeTheShape : If true, display a line from the first and last image
-  points. \param color : Line color. \param thickness : Line thickness.
+  \param ips : Vector of image points.
+  \param closeTheShape : If true, display a line from the first and last image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
 */
 void vpDisplay::displayLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
                             bool closeTheShape, const vpColor &color, unsigned int thickness)
@@ -493,6 +524,35 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, const std::vector<v
 
   if (closeTheShape)
     vp_display_display_line(I, ips.front(), ips.back(), color, thickness);
+}
+
+/*!
+  Display the lines formed by the list of image points.
+  \param I : The image associated to the display.
+  \param ips : List of image points.
+  \param closeTheShape : If true, display a line from the first and last image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
+*/
+void vpDisplay::displayLine(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ips,
+                            bool closeTheShape, const vpColor &color, unsigned int thickness)
+{
+  if (ips.size() <= 1)
+    return;
+
+  std::list<vpImagePoint>::const_iterator it = ips.begin();
+
+  vpImagePoint ip_prev = *(it++);
+  for (; it != ips.end(); ++it) {
+    if (vpImagePoint::distance(ip_prev, *it) > 1) {
+      vp_display_display_line(I, ip_prev, *it, color, thickness);
+      ip_prev = *it;
+    }
+  }
+
+  if (closeTheShape) {
+    vp_display_display_line(I, ips.front(), ips.back(), color, thickness);
+  }
 }
 
 /*!
