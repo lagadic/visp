@@ -29,22 +29,19 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Image acquisition with RealSense T265 sensor and librealsense2 and 
- * undistorting it using vpImageTools
+ * Images acquisition with RealSense T265 sensor and librealsense2.
  *
  *****************************************************************************/
 
 /*!
-  \example grabT265-image-undistort.cpp
-  This example shows how to retrieve single image from a RealSense T265 device
-  with librealsense2. Undistorting the image is done using vpImageTools.
+  \example testRealSense2_T265_images.cpp
+  This example shows how to retrieve images from a RealSense T265 sensor with
+  librealsense2.
 */
 
 #include <iostream>
 
-#include <opencv2/calib3d/calib3d.hpp>
 #include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpImageTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
@@ -55,55 +52,61 @@
 int main()
 {
   try {
-    vpCameraParameters cam_L;
+    double ts;
+    unsigned int display_scale = 2;
     vpRealSense2 rs;
-    int cam_index = 1;
-    // Both streams should be enabled. 
-    // Note: It is not currently possible to enable only one
+    std::string product_line = rs.getProductLine();
+    std::cout << "Product line: " << product_line << std::endl;
+
+    if (product_line != "T200") {
+      std::cout << "This example doesn't support devices that are not part of T200 product line family !" << std::endl;
+      return EXIT_SUCCESS;
+    }
     rs2::config config;
     config.enable_stream(RS2_STREAM_FISHEYE, 1, RS2_FORMAT_Y8);
     config.enable_stream(RS2_STREAM_FISHEYE, 2, RS2_FORMAT_Y8);
-    
+
     rs.open(config);
-    cam_L = rs.getCameraParameters(RS2_STREAM_FISHEYE, vpCameraParameters::perspectiveProjWithDistortion, cam_index);
 
-    vpImage<unsigned char> I((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
-                              (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
-    
-    vpImage<unsigned char> undistI((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
-                              (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
-    
+    // Creating left and right vpImages
+    vpImage<unsigned char> I_left((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
+                                  (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
 
-    cam_L.printParameters();
-    std::cout << std::endl;
-    
+    vpImage<unsigned char> I_right((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
+                                   (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
+
 #if defined(VISP_HAVE_X11)
-    vpDisplayX d(I, 10, 10, "Left image"); // Left
-    vpDisplayX d1(undistI, I.getWidth(), 10, "Undistorted image"); // Left
+    vpDisplayX display_left;  // Left image
+    vpDisplayX display_right; // Right image
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI fe_l(I, 10, 10, "Right image");
+    vpDisplayGDI display_left;  // Left image
+    vpDisplayGDI display_right; // Right image
 #endif
 
-    vpArray2D<int> mapU, mapV;
-    vpArray2D<float> mapDu, mapDv;
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+    display_left.setDownScalingFactor(display_scale);
+    display_right.setDownScalingFactor(display_scale);
+    display_left.init(I_left, 10, 10, "Left image");
+    display_right.init(I_right, static_cast<int>(I_left.getWidth()/display_scale) + 80, 10, "Right image"); // Right
+#endif
 
     while (true) {
       double t = vpTime::measureTimeMs();
 
-      rs.acquire(&I, NULL, NULL); // Acquire only left image
+      // Acquire both images with timestamp
+      rs.acquire(&I_left, &I_right, &ts);
 
-      vpDisplay::display(I);
+      vpDisplay::display(I_left);
+      vpDisplay::display(I_right);
 
-      vpImageTools::undistortFisheye(I, cam_L, undistI);
-      vpDisplay::display(undistI);
+      vpDisplay::displayText(I_left, 15*display_scale, 15*display_scale, "Click to quit", vpColor::red);
+      vpDisplay::displayText(I_right, 15*display_scale, 15*display_scale, "Click to quit", vpColor::red);
 
-      vpDisplay::displayText(I, 15, 15, "Click to quit", vpColor::red);
-      
-      if (vpDisplay::getClick(I, false))
+      if (vpDisplay::getClick(I_left, false) || vpDisplay::getClick(I_right, false)) {
         break;
-
-      vpDisplay::flush(I);
-      vpDisplay::flush(undistI);
+      }
+      vpDisplay::flush(I_left);
+      vpDisplay::flush(I_right);
 
       std::cout << "Loop time: " << vpTime::measureTimeMs() - t << std::endl;
     }

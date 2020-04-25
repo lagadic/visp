@@ -53,6 +53,8 @@ int main()
 
     std::string product = rs.getProductLine();
 
+    std::cout << "Product line: " << product << std::endl;
+
     if(rs.getDepthScale() != 0) // If it has depth sensor
       std::cout << "Depth scale: " << std::setprecision(std::numeric_limits<float>::max_digits10) << rs.getDepthScale() << std::endl;
 

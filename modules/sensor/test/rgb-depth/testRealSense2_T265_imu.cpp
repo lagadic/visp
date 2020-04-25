@@ -29,21 +29,21 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Images acquisition with RealSense T265 sensor and librealsense2.
+ * Acquisition of IMU data with RealSense T265 sensor and librealsense2.
  *
  *****************************************************************************/
 
 /*!
-  \example grabT265-images.cpp
-  This example shows how to retrieve images from a RealSense T265 sensor with
-  librealsense2.
+  \example testRealSense2_T265_imu.cpp
+  This example shows how to retrieve imu acceleration and velocity data 
+  from a RealSense T265 sensor and librealsense2.
+
 */
 
 #include <iostream>
 
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/sensor/vpRealSense2.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
@@ -51,51 +51,30 @@
 
 int main()
 {
-  try {
-    double ts;
-    vpRealSense2 rs;
-    rs2::config config;
-    config.enable_stream(RS2_STREAM_FISHEYE, 1, RS2_FORMAT_Y8);
-    config.enable_stream(RS2_STREAM_FISHEYE, 2, RS2_FORMAT_Y8);
+  vpColVector imu_acc, imu_vel;
 
+  try {
+    vpRealSense2 rs;
+    std::string product_line = rs.getProductLine();
+    std::cout << "Product line: " << product_line << std::endl;
+
+    if (product_line != "T200") {
+      std::cout << "This example doesn't support devices that are not part of T200 product line family !" << std::endl;
+      return EXIT_SUCCESS;
+    }
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_ACCEL);
+    config.enable_stream(RS2_STREAM_GYRO);
     rs.open(config);
 
-    // Creating left and right vpImages
-    vpImage<unsigned char> Il((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
-                              (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
-
-    vpImage<unsigned char> Ir((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
-                              (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
-
-#if defined(VISP_HAVE_X11)
-    vpDisplayX fe_l(Il, 10, 10, "Left image"); // Left
-    vpDisplayX fe_r(Ir, (int)Il.getWidth() + 80, 10, "Right image"); // Right
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI fe_l(Il, 10, 10, "Right image");
-    vpDisplayGDI fe_r(Ir, Il.getWidth() + 80, 10, "Left image");
-#endif
-
     while (true) {
-      double t = vpTime::measureTimeMs();
 
-      // Acquire both images with timestamp
-      rs.acquire(&Il, &Ir, &ts);
-
-      vpDisplay::display(Il);
-      vpDisplay::display(Ir);
-
-      vpDisplay::displayText(Il, 15, 15, "Click to quit", vpColor::red);
-      vpDisplay::displayText(Ir, 15, 15, "Click to quit", vpColor::red);
-
-      if (vpDisplay::getClick(Il, false) || vpDisplay::getClick(Ir, false)) {
-        break;
-      }
-      vpDisplay::flush(Il);
-      vpDisplay::flush(Ir);
-
-      std::cout << "Loop time: " << vpTime::measureTimeMs() - t << std::endl;
+      rs.getIMUData(&imu_acc, &imu_vel, NULL);
+      
+      std::cout << "Gyro vel: x = " << std::setw(12) << imu_vel[0] << " y = " << std::setw(12) << imu_vel[1] << " z = " << std::setw(12) << imu_vel[2];
+      std::cout << " Accel: x = " << std::setw(12) << imu_acc[0] << " y = " << std::setw(12) << imu_acc[1] << " z = " << std::setw(12) << imu_acc[2];
+      std::cout << std::endl;
     }
-
   } catch (const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;
   } catch (const std::exception &e) {

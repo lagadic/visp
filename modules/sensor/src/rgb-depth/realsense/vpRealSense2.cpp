@@ -70,8 +70,8 @@ bool operator==(const rs2_extrinsics &lhs, const rs2_extrinsics &rhs)
  * Default constructor.
  */
 vpRealSense2::vpRealSense2()
-  : m_depthScale(0.0f), m_invalidDepthValue(0.0f),
-    m_max_Z(8.0f), m_pipe(), m_pipelineProfile(), m_pointcloud(), m_points()
+  : m_depthScale(0.0f), m_invalidDepthValue(0.0f), m_max_Z(8.0f), m_pipe(), m_pipelineProfile(), m_pointcloud(),
+    m_points(), m_pos(), m_quat(), m_rot(), m_product_line(), m_init(false)
 {
 }
 
@@ -218,10 +218,24 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
 }
 
 /*!
-  Acquire timestamped greyscale images from T265 RealSense device.
-  \param left  : Left image
-  \param right : Right image
-  \param ts    : Timestamp
+  Acquire timestamped greyscale images from T265 RealSense device at 30Hz.
+  \param left  : Left image.
+  \param right : Right image.
+  \param ts    : Timestamp.
+
+  Pass NULL to one of these parameters if you don't want the corresponding data.
+
+  For example if you are only interested in the right fisheye image, use:
+  \code
+    vpRealSense2 rs;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_FISHEYE, 1, RS2_FORMAT_Y8);
+    config.enable_stream(RS2_STREAM_FISHEYE, 2, RS2_FORMAT_Y8);
+    rs.open(config);
+
+    vpImage<unsigned char> I_right;
+    rs.acquire(NULL, &I_right, NULL, NULL);
+  \endcode
  */
 void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, double *ts)
 {
@@ -230,44 +244,74 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   if(left != NULL)
   {
     auto left_fisheye_frame  = data.get_fisheye_frame(1);
+    unsigned int width = static_cast<unsigned int>(left_fisheye_frame.get_width());
+    unsigned int height = static_cast<unsigned int>(left_fisheye_frame.get_height());
+    left->resize(height, width);
     getNativeFrameData(left_fisheye_frame, (*left).bitmap);
   }
 
   if(right != NULL)
   {
     auto right_fisheye_frame = data.get_fisheye_frame(2);
+    unsigned int width = static_cast<unsigned int>(right_fisheye_frame.get_width());
+    unsigned int height = static_cast<unsigned int>(right_fisheye_frame.get_height());
+    right->resize(height, width);
     getNativeFrameData(right_fisheye_frame, (*right).bitmap);
   }
 
-  if(ts != NULL)
+  if(ts != NULL) {
     *ts = data.get_timestamp();
+  }
 }
 
 /*!
   Acquire timestamped greyscale images and odometry data from T265 Realsense device
   at 30Hz.
-  \param left               : Left image.
-  \param right              : Right image.
-  \param pose               : Pointer to pose.
-  \param vel                : Pointer to velocity vector.
-  \param acc                : Pointer to acceleration vector.
-  \param tracker_confidence : Pose estimation confidence (1: Low, 2: Medium, 3: High). If set to NULL, the function won't return tracker_confidence
-  \param ts                 : Timestamp.
+  \param left       : Left image.
+  \param right      : Right image.
+  \param cMw        : Pointer to pose from visual odometry.
+  \param odo_vel    : Pointer to 6-dim linear and angular velocities vector from visual odometry.
+  \param odo_acc    : Pointer to 6-dim linear and angular acceleration vector from visual odometry.
+  \param confidence : Pose estimation confidence (1: Low, 2: Medium, 3: High).
+  \param ts         : Timestamp.
+
+  Pass NULL to one of these parameters if you don't want the corresponding data.
+
+  For example if you are only interested in the pose, use:
+  \code
+    vpRealSense2 rs;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_POSE, RS2_FORMAT_6DOF);
+    config.enable_stream(RS2_STREAM_FISHEYE, 1, RS2_FORMAT_Y8);
+    config.enable_stream(RS2_STREAM_FISHEYE, 2, RS2_FORMAT_Y8);
+    config.enable_stream(RS2_STREAM_GYRO);
+    config.enable_stream(RS2_STREAM_ACCEL);
+    rs.open(config);
+
+    vpHomogeneousMatrix cMw;
+    rs.acquire(NULL, NULL, &cMw, NULL, NULL, NULL, NULL);
+  \endcode
  */
-void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *pose,
-             vpColVector *vel, vpColVector *acc, unsigned int *tracker_confidence, double *ts)
+void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *cMw,
+                           vpColVector *odo_vel, vpColVector *odo_acc, unsigned int *confidence, double *ts)
 {
   auto data = m_pipe.wait_for_frames();
 
   if(left != NULL)
   {
     auto left_fisheye_frame  = data.get_fisheye_frame(1);
+    unsigned int width = static_cast<unsigned int>(left_fisheye_frame.get_width());
+    unsigned int height = static_cast<unsigned int>(left_fisheye_frame.get_height());
+    left->resize(height, width);
     getNativeFrameData(left_fisheye_frame, (*left).bitmap);
   }
 
   if(right != NULL)
   {
     auto right_fisheye_frame = data.get_fisheye_frame(2);
+    unsigned int width = static_cast<unsigned int>(right_fisheye_frame.get_width());
+    unsigned int height = static_cast<unsigned int>(right_fisheye_frame.get_height());
+    right->resize(height, width);
     getNativeFrameData(right_fisheye_frame, (*right).bitmap);
   }
 
@@ -277,7 +321,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   if(ts != NULL)
     *ts = data.get_timestamp();
 
-  if(pose != NULL)
+  if(cMw != NULL)
   {
     m_pos[0] = static_cast<double>(pose_data.translation.x);
     m_pos[1] = static_cast<double>(pose_data.translation.y);
@@ -288,60 +332,70 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     m_quat[2] = static_cast<double>(pose_data.rotation.z);
     m_quat[3] = static_cast<double>(pose_data.rotation.w);
 
-    *pose = vpHomogeneousMatrix(m_pos, m_quat);
+    *cMw = vpHomogeneousMatrix(m_pos, m_quat);
   }
 
-  if(vel != NULL)
+  if(odo_vel != NULL)
   {
-    (*vel)[0] = static_cast<double>(pose_data.velocity.x);
-    (*vel)[1] = static_cast<double>(pose_data.velocity.y);
-    (*vel)[2] = static_cast<double>(pose_data.velocity.z);
-    (*vel)[3] = static_cast<double>(pose_data.angular_velocity.x);
-    (*vel)[4] = static_cast<double>(pose_data.angular_velocity.y);
-    (*vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
+    odo_vel->resize(6, false);
+    (*odo_vel)[0] = static_cast<double>(pose_data.velocity.x);
+    (*odo_vel)[1] = static_cast<double>(pose_data.velocity.y);
+    (*odo_vel)[2] = static_cast<double>(pose_data.velocity.z);
+    (*odo_vel)[3] = static_cast<double>(pose_data.angular_velocity.x);
+    (*odo_vel)[4] = static_cast<double>(pose_data.angular_velocity.y);
+    (*odo_vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
   }
 
-  if(acc != NULL)
+  if(odo_acc != NULL)
   {
-    (*acc)[0] = static_cast<double>(pose_data.acceleration.x);
-    (*acc)[1] = static_cast<double>(pose_data.acceleration.y);
-    (*acc)[2] = static_cast<double>(pose_data.acceleration.z);
-    (*acc)[3] = static_cast<double>(pose_data.angular_acceleration.x);
-    (*acc)[4] = static_cast<double>(pose_data.angular_acceleration.y);
-    (*acc)[5] = static_cast<double>(pose_data.angular_acceleration.z);
+    odo_acc->resize(6, false);
+    (*odo_acc)[0] = static_cast<double>(pose_data.acceleration.x);
+    (*odo_acc)[1] = static_cast<double>(pose_data.acceleration.y);
+    (*odo_acc)[2] = static_cast<double>(pose_data.acceleration.z);
+    (*odo_acc)[3] = static_cast<double>(pose_data.angular_acceleration.x);
+    (*odo_acc)[4] = static_cast<double>(pose_data.angular_acceleration.y);
+    (*odo_acc)[5] = static_cast<double>(pose_data.angular_acceleration.z);
   }
 
-  *tracker_confidence = pose_data.tracker_confidence;
+  if(confidence != NULL) {
+    *confidence = pose_data.tracker_confidence;
+  }
 }
 
 /*!
   Acquire timestamped greyscale images, odometry and raw motion data from T265 Realsense device
   at 30Hz.
-  \param left               : Left image.
-  \param right              : Right image.
-  \param pose               : Pointer to pose.
-  \param vel                : Pointer to velocity vector.
-  \param acc                : Pointer to acceleration vector.
-  \param imu_acc            : Pointer to imu linear acceleration vector.
-  \param imu_avel           : Pointer to imu angular velocity vector.
-  \param tracker_confidence : Pose estimation confidence (1: Low, 2: Medium, 3: High)
-  \param ts                 : Timestamp.
+  \param left       : Left image.
+  \param right      : Right image.
+  \param cMw        : Pointer to pose from visual odometry.
+  \param odo_vel    : Pointer to 6-dim linear and angular velocities vector from visual odometry.
+  \param odo_acc    : Pointer to 6-dim linear and angular acceleration vector from visual odometry.
+  \param imu_vel    : Pointer to IMU 3-dim angular velocity vector from gyro.
+  \param imu_acc    : Pointer to IMU 3-dim linear acceleration vector.
+  \param confidence : Pose estimation confidence (1: Low, 2: Medium, 3: High).
+  \param ts         : Timestamp.
 */
-void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *pose,
-             vpColVector *vel, vpColVector *acc, vpColVector *imu_acc, vpColVector *imu_avel,
-             unsigned int *tracker_confidence, double *ts)
+void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *cMw,
+                           vpColVector *odo_vel, vpColVector *odo_acc, vpColVector *imu_vel, vpColVector *imu_acc,
+                           unsigned int *confidence, double *ts)
 {
   auto data = m_pipe.wait_for_frames();
 
   if(left != NULL)
   {
     auto left_fisheye_frame  = data.get_fisheye_frame(1);
+    unsigned int width = static_cast<unsigned int>(left_fisheye_frame.get_width());
+    unsigned int height = static_cast<unsigned int>(left_fisheye_frame.get_height());
+    left->resize(height, width);
     getNativeFrameData(left_fisheye_frame, (*left).bitmap);
   }
 
   if(right != NULL)
   {
     auto right_fisheye_frame = data.get_fisheye_frame(2);
+    unsigned int width = static_cast<unsigned int>(right_fisheye_frame.get_width());
+    unsigned int height = static_cast<unsigned int>(right_fisheye_frame.get_height());
+    right->resize(height, width);
     getNativeFrameData(right_fisheye_frame, (*right).bitmap);
   }
 
@@ -351,7 +405,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   if(ts != NULL)
     *ts = data.get_timestamp();
 
-  if(pose != NULL)
+  if(cMw != NULL)
   {
     m_pos[0] = static_cast<double>(pose_data.translation.x);
     m_pos[1] = static_cast<double>(pose_data.translation.y);
@@ -362,27 +416,29 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     m_quat[2] = static_cast<double>(pose_data.rotation.z);
     m_quat[3] = static_cast<double>(pose_data.rotation.w);
 
-    *pose = vpHomogeneousMatrix(m_pos, m_quat);
+    *cMw = vpHomogeneousMatrix(m_pos, m_quat);
   }
 
-  if(vel != NULL)
+  if(odo_vel != NULL)
   {
-    (*vel)[0] = static_cast<double>(pose_data.velocity.x);
-    (*vel)[1] = static_cast<double>(pose_data.velocity.y);
-    (*vel)[2] = static_cast<double>(pose_data.velocity.z);
-    (*vel)[3] = static_cast<double>(pose_data.angular_velocity.x);
-    (*vel)[4] = static_cast<double>(pose_data.angular_velocity.y);
-    (*vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
+    odo_vel->resize(6, false);
+    (*odo_vel)[0] = static_cast<double>(pose_data.velocity.x);
+    (*odo_vel)[1] = static_cast<double>(pose_data.velocity.y);
+    (*odo_vel)[2] = static_cast<double>(pose_data.velocity.z);
+    (*odo_vel)[3] = static_cast<double>(pose_data.angular_velocity.x);
+    (*odo_vel)[4] = static_cast<double>(pose_data.angular_velocity.y);
+    (*odo_vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
   }
 
-  if(acc != NULL)
+  if(odo_acc != NULL)
   {
-    (*acc)[0] = static_cast<double>(pose_data.acceleration.x);
-    (*acc)[1] = static_cast<double>(pose_data.acceleration.y);
-    (*acc)[2] = static_cast<double>(pose_data.acceleration.z);
-    (*acc)[3] = static_cast<double>(pose_data.angular_acceleration.x);
-    (*acc)[4] = static_cast<double>(pose_data.angular_acceleration.y);
-    (*acc)[5] = static_cast<double>(pose_data.angular_acceleration.z);
+    odo_acc->resize(6, false);
+    (*odo_acc)[0] = static_cast<double>(pose_data.acceleration.x);
+    (*odo_acc)[1] = static_cast<double>(pose_data.acceleration.y);
+    (*odo_acc)[2] = static_cast<double>(pose_data.acceleration.z);
+    (*odo_acc)[3] = static_cast<double>(pose_data.angular_acceleration.x);
+    (*odo_acc)[4] = static_cast<double>(pose_data.angular_acceleration.y);
+    (*odo_acc)[5] = static_cast<double>(pose_data.angular_acceleration.z);
   }
 
   auto accel_frame = data.first_or_default(RS2_STREAM_ACCEL);
@@ -390,6 +446,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
 
   if(imu_acc != NULL)
   {
+    imu_acc->resize(3, false);
     (*imu_acc)[0] = static_cast<double>(accel_data.x);
     (*imu_acc)[1] = static_cast<double>(accel_data.y);
     (*imu_acc)[2] = static_cast<double>(accel_data.z);
@@ -398,14 +455,17 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   auto gyro_frame = data.first_or_default(RS2_STREAM_GYRO);
   auto gyro_data  = gyro_frame.as<rs2::motion_frame>().get_motion_data();
 
-  if(imu_avel != NULL)
+  if(imu_vel != NULL)
   {
-    (*imu_avel)[0] = static_cast<double>(gyro_data.x);
-    (*imu_avel)[1] = static_cast<double>(gyro_data.y);
-    (*imu_avel)[2] = static_cast<double>(gyro_data.z);
+    imu_vel->resize(3, false);
+    (*imu_vel)[0] = static_cast<double>(gyro_data.x);
+    (*imu_vel)[1] = static_cast<double>(gyro_data.y);
+    (*imu_vel)[2] = static_cast<double>(gyro_data.z);
   }
 
-  *tracker_confidence = pose_data.tracker_confidence;
+  if (confidence != NULL) {
+    *confidence = pose_data.tracker_confidence;
+  }
 }
 
 #ifdef VISP_HAVE_PCL
@@ -579,7 +639,13 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
   effect only after \c start() was called, otherwise an exception is raised.
   </blockquote>
  */
-void vpRealSense2::close() { m_pipe.stop(); }
+void vpRealSense2::close()
+{
+  if (m_init) {
+    m_pipe.stop();
+    m_init= false;
+  }
+}
 
 /*!
    Return the camera parameters corresponding to a specific stream. This
@@ -670,6 +736,26 @@ void vpRealSense2::getColorFrame(const rs2::frame &frame, vpImage<vpRGBa> &color
   */
 float vpRealSense2::getDepthScale()
 {
+  if (! m_init) {
+    rs2::config cfg;
+
+    rs2::pipeline pipe;
+    rs2::pipeline_profile pipeline_profile = pipe.start(cfg);
+
+    rs2::device dev = pipeline_profile.get_device();
+
+    // Query device product line D400/SR300/L500/T200
+    m_product_line = dev.get_info(RS2_CAMERA_INFO_PRODUCT_LINE);
+
+    // Go over the device's sensors
+    for (rs2::sensor &sensor : dev.query_sensors()) {
+      // Check if the sensor is a depth sensor
+      if (rs2::depth_sensor dpt = sensor.as<rs2::depth_sensor>()) {
+        m_depthScale = dpt.get_depth_scale();
+      }
+    }
+  }
+
   return m_depthScale;
 }
 
@@ -1055,13 +1141,15 @@ vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, cons
 }
 
 /*!
-  Get timestamped odometry data from T265 device
-  \param pose  : Translation and Orientation of T265 device as vpHomogeneous matrix.
-  \param vel   : Linear and angular velocities of T265 device.
-  \param acc   : Linear and angular velocities of T265 device.
-  \param ts    : Timestamp
+  Get timestamped odometry data from T265 device at 30Hz.
+  \param cMw     : Pose given by visual odometry.
+  \param odo_vel : Pointer to 6-dim linear and angular velocities vector from visual odometry.
+  \param odo_acc : Pointer to 6-dim linear and angular acceleration vector from visual odometry.
+  \param ts      : Timestamp.
+
+  \return Pose estimation confidence (1: Low, 2: Medium, 3: High).
  */
-unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *pose, vpColVector *vel, vpColVector *acc, double *ts)
+unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *cMw, vpColVector *odo_vel, vpColVector *odo_acc, double *ts)
 {
   auto frame = m_pipe.wait_for_frames();
   auto f = frame.first_or_default(RS2_STREAM_POSE);
@@ -1070,7 +1158,7 @@ unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *pose, vpColVecto
   if(ts != NULL)
     *ts = frame.get_timestamp();
 
-  if(pose != NULL)
+  if(cMw != NULL)
   {
     m_pos[0] = static_cast<double>(pose_data.translation.x);
     m_pos[1] = static_cast<double>(pose_data.translation.y);
@@ -1081,27 +1169,29 @@ unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *pose, vpColVecto
     m_quat[2] = static_cast<double>(pose_data.rotation.z);
     m_quat[3] = static_cast<double>(pose_data.rotation.w);
 
-    *pose = vpHomogeneousMatrix(m_pos, m_quat);
+    *cMw = vpHomogeneousMatrix(m_pos, m_quat);
   }
 
-  if(vel != NULL)
+  if(odo_vel != NULL)
   {
-    (*vel)[0] = static_cast<double>(pose_data.velocity.x);
-    (*vel)[1] = static_cast<double>(pose_data.velocity.y);
-    (*vel)[2] = static_cast<double>(pose_data.velocity.z);
-    (*vel)[3] = static_cast<double>(pose_data.angular_velocity.x);
-    (*vel)[4] = static_cast<double>(pose_data.angular_velocity.y);
-    (*vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
+    odo_vel->resize(6, false);
+    (*odo_vel)[0] = static_cast<double>(pose_data.velocity.x);
+    (*odo_vel)[1] = static_cast<double>(pose_data.velocity.y);
+    (*odo_vel)[2] = static_cast<double>(pose_data.velocity.z);
+    (*odo_vel)[3] = static_cast<double>(pose_data.angular_velocity.x);
+    (*odo_vel)[4] = static_cast<double>(pose_data.angular_velocity.y);
+    (*odo_vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
   }
 
-  if(acc != NULL)
+  if(odo_acc != NULL)
   {
-    (*acc)[0] = static_cast<double>(pose_data.acceleration.x);
-    (*acc)[1] = static_cast<double>(pose_data.acceleration.y);
-    (*acc)[2] = static_cast<double>(pose_data.acceleration.z);
-    (*acc)[3] = static_cast<double>(pose_data.angular_acceleration.x);
-    (*acc)[4] = static_cast<double>(pose_data.angular_acceleration.y);
-    (*acc)[5] = static_cast<double>(pose_data.angular_acceleration.z);
+    odo_acc->resize(6, false);
+    (*odo_acc)[0] = static_cast<double>(pose_data.acceleration.x);
+    (*odo_acc)[1] = static_cast<double>(pose_data.acceleration.y);
+    (*odo_acc)[2] = static_cast<double>(pose_data.acceleration.z);
+    (*odo_acc)[3] = static_cast<double>(pose_data.angular_acceleration.x);
+    (*odo_acc)[4] = static_cast<double>(pose_data.angular_acceleration.y);
+    (*odo_acc)[5] = static_cast<double>(pose_data.angular_acceleration.z);
   }
 
   return pose_data.tracker_confidence;
@@ -1109,11 +1199,23 @@ unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *pose, vpColVecto
 
 /*!
   Get timestamped IMU acceleration from RealSense T265 device at 62.5Hz.
-  \param imu_acc            : IMU linear acceleration vector
-  \param ts                 : Timestamp
+  \param imu_acc            : IMU 3-dim linear acceleration vector.
+  \param ts                 : Timestamp.
 
   \note This function should be used with RS2_STREAM_ACCEL stream enabled.
   \note Be aware that IMU frame's X and Z axes are opposite to X and Z axes of pose frame.
+
+  \code
+    vpRealSense2 rs;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_ACCEL);
+    rs.open(config);
+
+    vpColVector imu_acc;
+    double timestamp;
+    rs.getIMUAcceleration(&imu_acc, &timestamp);
+  \endcode
+
  */
 void vpRealSense2::getIMUAcceleration(vpColVector *imu_acc, double *ts)
 {
@@ -1126,6 +1228,7 @@ void vpRealSense2::getIMUAcceleration(vpColVector *imu_acc, double *ts)
 
   if(imu_acc != NULL)
   {
+    imu_acc->resize(3, false);
     (*imu_acc)[0] = static_cast<double>(imu_acc_data.x);
     (*imu_acc)[1] = static_cast<double>(imu_acc_data.y);
     (*imu_acc)[2] = static_cast<double>(imu_acc_data.z);
@@ -1134,38 +1237,63 @@ void vpRealSense2::getIMUAcceleration(vpColVector *imu_acc, double *ts)
 
 /*!
   Get timestamped IMU angular velocities from RealSense T265 device at 200Hz.
-  \param imu_avel           : IMU angular velocity vector
-  \param ts                 : Timestamp
+  \param imu_vel            : IMU 3-dim angular velocity vector from gyro.
+  \param ts                 : Timestamp.
 
   \note This function should be used with RS2_STREAM_GYRO stream enabled.
   \note Be aware that IMU frame's X and Z axes are opposite to X and Z axes of pose frame.
+
+  \code
+    vpRealSense2 rs;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_GYRO);
+    rs.open(config);
+
+    vpColVector imu_vel;
+    double timestamp;
+    rs.getIMUVelocity(&imu_vel, &timestamp);
+  \endcode
+
  */
-void vpRealSense2::getIMUVelocity(vpColVector *imu_avel, double *ts)
+void vpRealSense2::getIMUVelocity(vpColVector *imu_vel, double *ts)
 {
   auto frame = m_pipe.wait_for_frames();
   auto f = frame.first_or_default(RS2_STREAM_GYRO);
-  auto imu_avel_data = f.as<rs2::motion_frame>().get_motion_data();
+  auto imu_vel_data = f.as<rs2::motion_frame>().get_motion_data();
 
   if(ts != NULL)
     *ts = f.get_timestamp();
 
-  if(imu_avel != NULL)
+  if(imu_vel != NULL)
   {
-    (*imu_avel)[0] = static_cast<double>(imu_avel_data.x);
-    (*imu_avel)[1] = static_cast<double>(imu_avel_data.x);
-    (*imu_avel)[2] = static_cast<double>(imu_avel_data.x);
+    imu_vel->resize(3, false);
+    (*imu_vel)[0] = static_cast<double>(imu_vel_data.x);
+    (*imu_vel)[1] = static_cast<double>(imu_vel_data.x);
+    (*imu_vel)[2] = static_cast<double>(imu_vel_data.x);
   }
 }
 
 /*!
   Get timestamped IMU data from RealSense T265 device.
-  \param imu_acc            : IMU linear acceleration vector
-  \param imu_avel           : IMU angular velocity vector
-  \param ts                 : Timestamp
+  \param imu_acc            : IMU 3-dim linear acceleration vector.
+  \param imu_vel            : IMU 3-dim angular velocity vector from gyro.
+  \param ts                 : Timestamp.
 
   \note Be aware that IMU frame's X and Z axes are opposite to X and Z axes of pose frame.
+
+  \code
+    vpRealSense2 rs;
+    rs2::config config;
+    config.enable_stream(RS2_STREAM_ACCEL);
+    config.enable_stream(RS2_STREAM_GYRO);
+    rs.open(config);
+
+    vpColVector imu_acc, imu_vel;
+    double timestamp;
+    rs.getIMUVelocity(&imu_acc, &imu_vel, &timestamp);
+  \endcode
  */
-void vpRealSense2::getIMUData(vpColVector *imu_acc, vpColVector *imu_avel, double *ts)
+void vpRealSense2::getIMUData(vpColVector *imu_acc, vpColVector *imu_vel, double *ts)
 {
   auto data = m_pipe.wait_for_frames();
 
@@ -1177,19 +1305,21 @@ void vpRealSense2::getIMUData(vpColVector *imu_acc, vpColVector *imu_avel, doubl
     auto acc_data = data.first_or_default(RS2_STREAM_ACCEL);
     auto imu_acc_data = acc_data.as<rs2::motion_frame>().get_motion_data();
 
+    imu_acc->resize(3, false);
     (*imu_acc)[0] = static_cast<double>(imu_acc_data.x);
     (*imu_acc)[1] = static_cast<double>(imu_acc_data.y);
     (*imu_acc)[2] = static_cast<double>(imu_acc_data.z);
   }
 
-  if(imu_avel != NULL)
+  if(imu_vel != NULL)
   {
-    auto avel_data = data.first_or_default(RS2_STREAM_GYRO);
-    auto imu_avel_data = avel_data.as<rs2::motion_frame>().get_motion_data();
+    auto vel_data = data.first_or_default(RS2_STREAM_GYRO);
+    auto imu_vel_data = vel_data.as<rs2::motion_frame>().get_motion_data();
 
-    (*imu_avel)[0] = static_cast<double>(imu_avel_data.x);
-    (*imu_avel)[1] = static_cast<double>(imu_avel_data.y);
-    (*imu_avel)[2] = static_cast<double>(imu_avel_data.z);
+    imu_vel->resize(3, false);
+    (*imu_vel)[0] = static_cast<double>(imu_vel_data.x);
+    (*imu_vel)[1] = static_cast<double>(imu_vel_data.y);
+    (*imu_vel)[2] = static_cast<double>(imu_vel_data.z);
   }
 }
 
@@ -1198,6 +1328,9 @@ void vpRealSense2::getIMUData(vpColVector *imu_acc, vpColVector *imu_avel, doubl
  */
 void vpRealSense2::open(const rs2::config &cfg)
 {
+  if (m_init) {
+    close();
+  }
   m_pipelineProfile = m_pipe.start(cfg);
 
   rs2::device dev = m_pipelineProfile.get_device();
@@ -1212,6 +1345,34 @@ void vpRealSense2::open(const rs2::config &cfg)
       m_depthScale = dpt.get_depth_scale();
     }
   }
+  m_init = true;
+}
+
+/*!
+ * Get the product line of the device being used.
+ */
+std::string vpRealSense2::getProductLine()
+{
+  if (! m_init) {
+    rs2::config cfg;
+
+    rs2::pipeline pipe;
+    rs2::pipeline_profile pipeline_profile = pipe.start(cfg);
+
+    rs2::device dev = pipeline_profile.get_device();
+
+    // Query device product line D400/SR300/L500/T200
+    m_product_line = dev.get_info(RS2_CAMERA_INFO_PRODUCT_LINE);
+
+    // Go over the device's sensors
+    for (rs2::sensor &sensor : dev.query_sensors()) {
+      // Check if the sensor is a depth sensor
+      if (rs2::depth_sensor dpt = sensor.as<rs2::depth_sensor>()) {
+        m_depthScale = dpt.get_depth_scale();
+      }
+    }
+  }
+  return m_product_line;
 }
 
 namespace
@@ -1332,9 +1493,6 @@ int main()
  */
 std::ostream &operator<<(std::ostream &os, const vpRealSense2 &rs)
 {
-  os << std::left << std::setw(30) << "Device Name" << std::setw(20) << "Serial Number" << std::setw(20)
-     << "Firmware Version" << std::endl;
-
   rs2::device dev = rs.m_pipelineProfile.get_device();
   os << std::left << std::setw(30) << dev.get_info(RS2_CAMERA_INFO_NAME) << std::setw(20)
      << dev.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER) << std::setw(20) << dev.get_info(RS2_CAMERA_INFO_FIRMWARE_VERSION)

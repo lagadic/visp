@@ -295,10 +295,10 @@ public:
                std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared1,
                unsigned char *const data_infrared2, rs2::align *const align_to);
   void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, double *ts = NULL);
-  void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *pose,
-               vpColVector *vel, vpColVector *acc, unsigned int *tracker_confidence = NULL, double *ts = NULL);
-  void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *pose,
-               vpColVector *vel, vpColVector *acc, vpColVector *imu_acc, vpColVector *imu_avel,
+  void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *cMw,
+               vpColVector *odo_vel, vpColVector *odo_acc, unsigned int *confidence = NULL, double *ts = NULL);
+  void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *cMw,
+               vpColVector *odo_vel, vpColVector *odo_acc, vpColVector *imu_vel, vpColVector *imu_acc,
                unsigned int *tracker_confidence = NULL, double *ts = NULL);
 
 #ifdef VISP_HAVE_PCL
@@ -325,6 +325,12 @@ public:
 
   float getDepthScale();
 
+  void getIMUAcceleration(vpColVector *imu_acc, double *ts);
+
+  void getIMUData(vpColVector *imu_vel, vpColVector *imu_acc, double *ts);
+
+  void getIMUVelocity(vpColVector *imu_vel, double *ts);
+
   rs2_intrinsics getIntrinsics(const rs2_stream &stream, int index = -1) const;
 
   //! Get the value used when the pixel value (u, v) in the depth map is
@@ -336,14 +342,16 @@ public:
   //! pointcloud).
   inline float getMaxZ() const { return m_max_Z; }
 
+  //! Get odometry data from T265 device.
+  unsigned int getOdometryData(vpHomogeneousMatrix *cMw, vpColVector *odo_vel, vpColVector *odo_acc, double *ts = NULL);
+
   //! Get a reference to `rs2::pipeline`.
   rs2::pipeline &getPipeline() { return m_pipe; }
 
   //! Get a reference to `rs2::pipeline_profile`.
   rs2::pipeline_profile &getPipelineProfile() { return m_pipelineProfile; }
 
-  //! Get the product line of the device being used.
-  inline std::string getProductLine() const { return m_product_line; }
+  std::string getProductLine();
 
   vpHomogeneousMatrix getTransformation(const rs2_stream &from, const rs2_stream &to, int from_index = -1) const;
 
@@ -360,19 +368,6 @@ public:
   //! pointcloud).
   inline void setMaxZ(const float maxZ) { m_max_Z = maxZ; }
 
-  //! Get odometry data from T265 device.
-  unsigned int getOdometryData(vpHomogeneousMatrix *pose, vpColVector *vel, vpColVector *acc, double *ts = NULL);
-  // see: mapper-confidence
-
-  //! Get linear acceleration from IMU on T265 device at 62.5Hz.
-  void getIMUAcceleration(vpColVector *imu_acc, double *ts);
-
-  //! Get angular velocities from IMU on T265 device at 200Hz.
-  void getIMUVelocity(vpColVector *imu_avel, double *ts);
-
-  //! Get linear acceleration and angular velocity from IMU on T265.
-  void getIMUData(vpColVector *imu_acc, vpColVector *imu_avel, double *ts);
-
 protected:
   float m_depthScale;
   float m_invalidDepthValue;
@@ -385,6 +380,7 @@ protected:
   vpQuaternionVector m_quat;
   vpRotationMatrix m_rot;
   std::string m_product_line;
+  bool m_init;
 
   void getColorFrame(const rs2::frame &frame, vpImage<vpRGBa> &color);
   void getGreyFrame(const rs2::frame &frame, vpImage<unsigned char> &grey);
