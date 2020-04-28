@@ -52,6 +52,9 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/core/vpImageTools.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
@@ -59,85 +62,9 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpVideoReader.h>
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+#include "calibration-helper.hpp"
 
-class Settings
-{
-public:
-  Settings()
-    : boardSize(), calibrationPattern(UNDEFINED), squareSize(0.), input(), tempo(0.), goodInput(false), patternToUse()
-  {
-    boardSize = cv::Size(0, 0);
-    calibrationPattern = UNDEFINED;
-    squareSize = 0.025f;
-    goodInput = false;
-    tempo = 1.f;
-  }
-  enum Pattern { UNDEFINED, CHESSBOARD, CIRCLES_GRID };
-
-  bool read(const std::string &filename) // Read the parameters
-  {
-    // reading configuration file
-    if (!vpIoTools::loadConfigFile(filename))
-      return false;
-    vpIoTools::readConfigVar("BoardSize_Width:", boardSize.width);
-    vpIoTools::readConfigVar("BoardSize_Height:", boardSize.height);
-    vpIoTools::readConfigVar("Square_Size:", squareSize);
-    vpIoTools::readConfigVar("Calibrate_Pattern:", patternToUse);
-    vpIoTools::readConfigVar("Input:", input);
-    vpIoTools::readConfigVar("Tempo:", tempo);
-
-    std::cout << "grid width : " << boardSize.width << std::endl;
-    std::cout << "grid height: " << boardSize.height << std::endl;
-    std::cout << "square size: " << squareSize << std::endl;
-    std::cout << "pattern    : " << patternToUse << std::endl;
-    std::cout << "input seq  : " << input << std::endl;
-    std::cout << "tempo      : " << tempo << std::endl;
-    interprate();
-    return true;
-  }
-  void interprate()
-  {
-    goodInput = true;
-    if (boardSize.width <= 0 || boardSize.height <= 0) {
-      std::cerr << "Invalid Board size: " << boardSize.width << " " << boardSize.height << std::endl;
-      goodInput = false;
-    }
-    if (squareSize <= 10e-6) {
-      std::cerr << "Invalid square size " << squareSize << std::endl;
-      goodInput = false;
-    }
-
-    if (input.empty()) // Check for valid input
-      goodInput = false;
-
-    calibrationPattern = UNDEFINED;
-    if (patternToUse.compare("CHESSBOARD") == 0)
-      calibrationPattern = CHESSBOARD;
-    else if (patternToUse.compare("CIRCLES_GRID") == 0)
-      calibrationPattern = CIRCLES_GRID;
-    if (calibrationPattern == UNDEFINED) {
-      std::cerr << " Inexistent camera calibration mode: " << patternToUse << std::endl;
-      goodInput = false;
-    }
-  }
-
-public:
-  cv::Size boardSize;         // The size of the board -> Number of items by width and
-                              // height
-  Pattern calibrationPattern; // One of the Chessboard, circles, or asymmetric
-                              // circle pattern
-  float squareSize;           // The size of a square in your defined unit (point,
-                              // millimeter,etc).
-  std::string input;          // The input image sequence
-  float tempo;                // Tempo in seconds between two images. If > 10 wait a click to
-                              // continue
-  bool goodInput;
-
-private:
-  std::string patternToUse;
-};
-#endif
+using namespace calib_helper;
 
 int main(int argc, const char **argv)
 {
@@ -221,8 +148,7 @@ int main(int argc, const char **argv)
         return EXIT_FAILURE;
       }
 #endif
-    }
-    else {
+    } else {
       std::cout << "Initialize camera parameters with default values " << std::endl;
       // Initialize camera parameters
       double px = cam.get_px();
@@ -244,6 +170,7 @@ int main(int argc, const char **argv)
       }
     }
 
+    std::vector<CalibInfo> calib_info;
     do {
       reader.acquire(I);
 
@@ -254,29 +181,7 @@ int main(int argc, const char **argv)
       std::vector<cv::Point2f> pointBuf;
       vpImageConvert::convert(I, cvI);
 
-      bool found = false;
-      switch (s.calibrationPattern) // Find feature points on the input format
-      {
-      case Settings::CHESSBOARD:
-        // std::cout << "Use chessboard " << std::endl;
-        found = findChessboardCorners(cvI, s.boardSize, pointBuf,
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-                                      cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FAST_CHECK |
-                                          cv::CALIB_CB_NORMALIZE_IMAGE);
-#else
-                                      CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK |
-                                          CV_CALIB_CB_NORMALIZE_IMAGE);
-#endif
-        break;
-      case Settings::CIRCLES_GRID:
-        // std::cout << "Use circle grid " << std::endl;
-        found = findCirclesGrid(cvI, s.boardSize, pointBuf, cv::CALIB_CB_SYMMETRIC_GRID);
-        break;
-      case Settings::UNDEFINED:
-      default:
-        std::cout << "Unkown calibration grid " << std::endl;
-        break;
-      }
+      bool found = extractCalibrationPoints(s, cvI, pointBuf);
 
       std::cout << "frame: " << frame_index << ", status: " << found;
       if (!found)
@@ -286,20 +191,11 @@ int main(int argc, const char **argv)
 
       if (found) // If done with success,
       {
-        std::vector<vpImagePoint> data;
-
-        if (s.calibrationPattern == Settings::CHESSBOARD) {
-          // improve the found corners' coordinate accuracy for chessboard
-          cornerSubPix(cvI, pointBuf, cv::Size(11, 11), cv::Size(-1, -1),
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-                       cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 30, 0.1));
-#else
-                       cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
-#endif
-        }
         std::stringstream ss;
         ss << "image " << frame_index;
         vpDisplay::setTitle(I, ss.str());
+
+        std::vector<vpImagePoint> data;
         for (unsigned int i = 0; i < pointBuf.size(); i++) {
           vpImagePoint ip(pointBuf[i].y, pointBuf[i].x);
           data.push_back(ip);
@@ -307,14 +203,20 @@ int main(int argc, const char **argv)
         }
 
         // Calibration on a single mono image
+        std::vector<vpPoint> calib_points;
         vpCalibration calib;
         calib.setLambda(0.5);
-        calib.clearPoint();
         for (unsigned int i = 0; i < model.size(); i++) {
           calib.addPoint(model[i].get_oX(), model[i].get_oY(), model[i].get_oZ(), data[i]);
+          calib_points.push_back(vpPoint(model[i].get_oX(), model[i].get_oY(), model[i].get_oZ()));
+          calib_points.back().set_x(data[i].get_u());
+          calib_points.back().set_y(data[i].get_v());
         }
-        vpHomogeneousMatrix cMo;
 
+        // Add calibration info
+        calib_info.push_back(CalibInfo(I, calib_points, data));
+
+        vpHomogeneousMatrix cMo;
         if (calib.computeCalibration(vpCalibration::CALIB_VIRTUAL_VS, cMo, cam, false) == EXIT_SUCCESS) {
           //std::cout << "camera parameters for frame " << frame_index << ": " << cam << std::endl;
           calibrator.push_back(calib);
@@ -346,6 +248,14 @@ int main(int argc, const char **argv)
       return 0;
     }
 
+    // Display calibration pattern occupancy
+    drawCalibrationOccupancy(I, calib_info, s.boardSize.width);
+    vpDisplay::setTitle(I, "Calibration pattern occupancy");
+    vpDisplay::display(I);
+    vpDisplay::displayText(I, 15, 15, "Calibration pattern occupancy in the image", vpColor::red);
+    vpDisplay::flush(I);
+    vpDisplay::getClick(I);
+
     std::stringstream ss_additional_info;
     ss_additional_info << "<date>" << vpTime::getDateTime() << "</date>";
     ss_additional_info << "<nb_calibration_images>" << calibrator.size() << "</nb_calibration_images>";
@@ -373,7 +283,37 @@ int main(int argc, const char **argv)
     double error;
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS, calibrator, cam, error, false) == EXIT_SUCCESS) {
       std::cout << cam << std::endl;
-      std::cout << "Global reprojection error: " << error << std::endl;
+      vpDisplay::setTitle(I, "Reprojection error");
+
+      for (size_t i = 0; i < calibrator.size(); i++) {
+        double reproj_error = sqrt(calibrator[i].getResidual()/calibrator[i].get_npt());
+        std::cout << i << ") reprojection error: " << reproj_error << std::endl;
+
+        const CalibInfo& calib = calib_info[i];
+        I = calib.m_img;
+        vpDisplay::display(I);
+
+        std::ostringstream ss;
+        ss << "reprojection error: " << reproj_error;
+        vpDisplay::displayText(I, 15, 15, ss.str(), vpColor::red);
+        vpDisplay::displayText(I, 30, 15, "extracted points", vpColor::red);
+        vpDisplay::displayText(I, 45, 15, "projected points", vpColor::green);
+
+        for (size_t idx = 0; idx < calib.m_points.size(); idx++) {
+          vpDisplay::displayCross(I, calib.m_imPts[idx], 12, vpColor::red);
+
+          vpPoint pt = calib.m_points[idx];
+          pt.project(calibrator[i].cMo);
+          vpImagePoint imPt;
+          vpMeterPixelConversion::convertPoint(cam, pt.get_x(), pt.get_y(), imPt);
+          vpDisplay::displayCross(I, imPt, 12, vpColor::green);
+        }
+
+        vpDisplay::flush(I);
+        vpDisplay::getClick(I);
+      }
+
+      std::cout << "\nGlobal reprojection error: " << error << std::endl;
       ss_additional_info << "<global_reprojection_error><without_distortion>" << error << "</without_distortion>";
 
 #ifdef VISP_HAVE_PUGIXML
@@ -395,16 +335,118 @@ int main(int argc, const char **argv)
       std::cout << "Calibration without distortion failed." << std::endl;
       return EXIT_FAILURE;
     }
+    vpCameraParameters cam_without_dist = cam;
+    std::vector<vpCalibration> calibrator_without_dist = calibrator;
 
-    std::cout << "\nCalibration with distortion in progress on " << calibrator.size() << " images..." << std::endl;
+    std::cout << "\n\nCalibration with distortion in progress on " << calibrator.size() << " images..." << std::endl;
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST, calibrator, cam, error, false) ==
         EXIT_SUCCESS) {
       std::cout << cam << std::endl;
-      std::cout << "Global reprojection error: " << error << std::endl;
+
+      for (size_t i = 0; i < calibrator.size(); i++) {
+        std::cout << i << ") reprojection error: " << sqrt(calibrator[i].getResidual_dist()/calibrator[i].get_npt()) << std::endl;
+      }
+
+      std::cout << "\nGlobal reprojection error: " << error << std::endl;
       ss_additional_info << "<with_distortion>" << error << "</with_distortion></global_reprojection_error>";
 
+      vpImage<unsigned char> I_undist = I;
+#ifdef VISP_HAVE_X11
+    vpDisplayX d_undist(I_undist, I.getWidth(), 0, "Undistorted image", vpDisplay::SCALE_AUTO);
+#elif defined VISP_HAVE_GDI
+    vpDisplayGDI d_undist(I_undist, I.getWidth(), 0, "Undistorted image", vpDisplay::SCALE_AUTO);
+#elif defined VISP_HAVE_GTK
+    vpDisplayGTK d_undist(I_undist, I.getWidth(), 0, "Undistorted image", vpDisplay::SCALE_AUTO);
+#elif defined VISP_HAVE_OPENCV
+    vpDisplayOpenCV d_undist(I_undist, I.getWidth(), 0, "Undistorted image", vpDisplay::SCALE_AUTO);
+#endif
+
+      vpDisplay::setTitle(I, "Line fitting on distorted image");
+      vpDisplay::setTitle(I_undist, "Line fitting on undistorted image");
+      std::cout << "\nThis tool computes the line fitting error (RMSE) on image points extracted from the raw distorted image"
+                << " and on image points after undistortion (vpPixelMeterConversion::convertPoint())." << std::endl;
+      for (size_t idx = 0; idx < calib_info.size(); idx++) {
+        I = calib_info[idx].m_img;
+        vpImageTools::undistort(I, cam, I_undist);
+
+        vpDisplay::display(I);
+        vpDisplay::display(I_undist);
+
+        vpDisplay::displayText(I, 15, 15, "Draw lines from first / last points.", vpColor::red);
+        std::vector<vpImagePoint> grid_points = calib_info[idx].m_imPts;
+        for (int i = 0; i < s.boardSize.height; i++) {
+          std::vector<vpImagePoint> current_line(grid_points.begin() + i*s.boardSize.width,
+                                                 grid_points.begin() + (i+1)*s.boardSize.width);
+
+          std::vector<vpImagePoint> current_line_undist = undistort(cam, current_line);
+          double a = 0, b = 0, c = 0;
+          double line_fitting_error = lineFitting(current_line, a, b, c);
+          double line_fitting_error_undist = lineFitting(current_line_undist, a, b, c);
+          std::cout << "Line fitting error on distorted points: " << line_fitting_error
+                    << " ; on undistorted points: " << line_fitting_error_undist << std::endl;
+
+          vpImagePoint ip1 = current_line.front();
+          vpImagePoint ip2 = current_line.back();
+          vpDisplay::displayLine(I, ip1, ip2, vpColor::red);
+        }
+
+        std::cout << "\nThis tool computes the line fitting error (RMSE) on image points extracted from the undistorted image"
+                  << " (vpImageTools::undistort())." << std::endl;
+        cv::Mat cvI;
+        std::vector<cv::Point2f> pointBuf;
+        vpImageConvert::convert(I_undist, cvI);
+
+        bool found = extractCalibrationPoints(s, cvI, pointBuf);
+        if (found) {
+          std::vector<vpImagePoint> grid_points;
+          for (unsigned int i = 0; i < pointBuf.size(); i++) {
+            vpImagePoint ip(pointBuf[i].y, pointBuf[i].x);
+            grid_points.push_back(ip);
+            vpDisplay::displayCross(I_undist, ip, 10, vpColor::red);
+          }
+
+          std::cout << std::endl;
+          vpDisplay::displayText(I_undist, 15, 15, "Draw fitting lines from extracted points (cross).", vpColor::red);
+          for (int i = 0; i < s.boardSize.height; i++) {
+            std::vector<vpImagePoint> current_line(grid_points.begin() + i*s.boardSize.width,
+                                                   grid_points.begin() + (i+1)*s.boardSize.width);
+
+            double a = 0, b = 0, c = 0;
+            double line_fitting_error = lineFitting(current_line, a, b, c);
+            std::cout << "Undistorted image, line fitting error: " << line_fitting_error << std::endl;
+
+            vpImagePoint ip1;
+            ip1.set_u(current_line.front().get_u());
+            ip1.set_v( -(c + a*ip1.get_u()) / b );
+
+            vpImagePoint ip2;
+            ip2.set_u(current_line.back().get_u());
+            ip2.set_v( -(c + a*ip2.get_u()) / b );
+
+            vpDisplay::displayLine(I_undist, ip1, ip2, vpColor::red);
+          }
+        }
+
+        vpDisplay::flush(I);
+        vpDisplay::flush(I_undist);
+        vpDisplay::getClick(I);
+      }
+
 #ifdef VISP_HAVE_PUGIXML
+      std::cout << std::endl;
       vpXmlParserCamera xml;
+
+      // Camera poses
+      ss_additional_info << "<camera_poses>";
+      for (size_t i = 0; i < calibrator.size(); i++) {
+        vpPoseVector pose(calibrator[i].cMo);
+        ss_additional_info << "<cMo>" << pose.t() << "</cMo>";
+      }
+      for (size_t i = 0; i < calibrator.size(); i++) {
+        vpPoseVector pose(calibrator[i].cMo_dist);
+        ss_additional_info << "<cMo_dist>" << pose.t() << "</cMo_dist>";
+      }
+      ss_additional_info << "</camera_poses>";
 
       if (xml.save(cam, opt_output_file_name.c_str(), opt_camera_name, I.getWidth(), I.getHeight(), ss_additional_info.str()) ==
           vpXmlParserCamera::SEQUENCE_OK)

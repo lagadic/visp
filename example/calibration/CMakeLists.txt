@@ -73,6 +73,7 @@ list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-02.png" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-03.png" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-04.png" )
 list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/circles-05.png" )
+list(APPEND data2copy "${CMAKE_CURRENT_SOURCE_DIR}/camera_calibration_show_extrinsics.py" )
 
 # Copy the data files to the same location than the target
 foreach(data ${data2copy})
