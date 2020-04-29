@@ -282,7 +282,7 @@ public:
 
     double r_d = theta + k[0]*theta3 + k[1]*theta5 + k[2]*theta7 + k[3]*theta9;
 
-    double scale = (r == 0) ? 1.0 : r_d / r;
+    double scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : r_d / r;
 
     double x_d = x * scale;
     double y_d = y * scale;
@@ -325,7 +325,7 @@ public:
 
     double r_d = theta + k[0]*theta3 + k[1]*theta5 + k[2]*theta7 + k[3]*theta9;
 
-    double scale = r_d / r;
+    double scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : r_d / r;
 
     double x_d = x * scale;
     double y_d = y * scale;

@@ -70,7 +70,7 @@ bool operator==(const rs2_extrinsics &lhs, const rs2_extrinsics &rhs)
  * Default constructor.
  */
 vpRealSense2::vpRealSense2()
-  : m_depthScale(0.0f), m_invalidDepthValue(0.0f), m_max_Z(8.0f), m_pipe(), m_pipelineProfile(), m_pointcloud(),
+  : m_depthScale(0.0f), m_invalidDepthValue(0.0f), m_max_Z(8.0f), m_pipe(NULL), m_pipelineProfile(NULL), m_pointcloud(),
     m_points(), m_pos(), m_quat(), m_rot(), m_product_line()
 {
 }
@@ -645,6 +645,8 @@ void vpRealSense2::close()
     m_pipe->stop();
     delete m_pipe;
     delete m_pipelineProfile;
+    m_pipe = NULL;
+    m_pipelineProfile = NULL;
   }
 }
 

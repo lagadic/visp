@@ -282,13 +282,13 @@ public:
 
     std::vector<double> k = cam.getKannalaBrandtDistortionCoefficients();
 
+    const double EPS = 1e-8;
     // Use Newton-Raphson method to solve for the angle theta
-    if (r_d > 1e-8)
+    if (r_d > EPS)
     {
       // compensate distortion iteratively
       double theta = r_d;
 
-      const double EPS = 1e-8;
       for (int j = 0; j < 10; j++)
       {
         double theta2 = theta*theta, theta4 = theta2*theta2, theta6 = theta4*theta2, theta8 = theta6*theta2;
@@ -338,13 +338,13 @@ public:
 
     std::vector<double> k = cam.getKannalaBrandtDistortionCoefficients();
 
+    const double EPS = 1e-8;
     // Use Newton-Raphson method to solve for the angle theta
-    if (r_d > 1e-8)
+    if (r_d > EPS)
     {
       // compensate distortion iteratively
       double theta = r_d;
 
-      const double EPS = 1e-8;
       for (int j = 0; j < 10; j++)
       {
         double theta2 = theta*theta, theta4 = theta2*theta2, theta6 = theta4*theta2, theta8 = theta6*theta2;
