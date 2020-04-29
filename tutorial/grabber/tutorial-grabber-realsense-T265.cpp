@@ -3,7 +3,6 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpRealSense.h>
 #include <visp3/sensor/vpRealSense2.h>
 
 #include "record_helper.h"
@@ -13,7 +12,7 @@
  */
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2)
+#if defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
   try {
     std::string opt_seqname_left = "left%02d.png", opt_seqname_right = "right%02d.png";
     int opt_record_mode = 0;
@@ -49,25 +48,12 @@ int main(int argc, char **argv)
 
     vpImage<unsigned char> I_left, I_right;
 
-#ifdef VISP_HAVE_REALSENSE2
-    std::cout << "SDK        : Realsense 2" << std::endl;
     vpRealSense2 g;
     rs2::config config;
-
     config.enable_stream(RS2_STREAM_FISHEYE, 1);
     config.enable_stream(RS2_STREAM_FISHEYE, 2);
-
     g.open(config);
 
-#else
-    std::cout << "SDK        : Realsense 1" << std::endl;
-    vpRealSense g;
-    unsigned int width = 640, height = 480;
-    g.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(width, height, rs::format::rgba8, 60));
-    g.open();
-#endif
-    I_left.resize(800, 848);
-    I_right.resize(800, 848);
     g.acquire(&I_left, &I_right);
 
     std::cout << "Image size : " << I_left.getWidth() << " " << I_right.getHeight() << std::endl;
@@ -109,6 +95,6 @@ int main(int argc, char **argv)
 #else
   (void) argc;
   (void) argv;
-  std::cout << "Install librealsense, configure and build ViSP again to use this example" << std::endl;
+  std::cout << "Install librealsense version > 2.31.0, configure and build ViSP again to use this example" << std::endl;
 #endif
 }

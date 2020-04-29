@@ -2168,7 +2168,8 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VP_DEBUG \
                          VP_TRACE \
                          __APPLE__ \
-                         __MACH__
+                         __MACH__ \
+                         RS2_API_VERSION=23101
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

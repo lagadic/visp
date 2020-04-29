@@ -47,7 +47,8 @@
 #include <visp3/sensor/vpRealSense2.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+  (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && \
+  (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 
 int main()
 {
@@ -117,6 +118,25 @@ int main()
     std::cerr << e.what() << std::endl;
   }
 
+  return EXIT_SUCCESS;
+}
+#else
+int main()
+{
+#if !defined(VISP_HAVE_REALSENSE2)
+  std::cout << "You do not realsense2 SDK functionality enabled..." << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Install librealsense2, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+#elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
+#elif !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+  std::cout << "You don't have X11 or GDI display capabilities" << std::endl;
+#elif !(RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+  std::cout << "Install librealsense version > 2.31.0" << std::endl;
+#endif
   return EXIT_SUCCESS;
 }
 #endif

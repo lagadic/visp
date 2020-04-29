@@ -217,6 +217,7 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
   }
 }
 
+#if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 /*!
   Acquire timestamped greyscale images from T265 RealSense device at 30Hz.
   \param left  : Left image.
@@ -467,6 +468,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     *confidence = pose_data.tracker_confidence;
   }
 }
+#endif // #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 
 #ifdef VISP_HAVE_PCL
 /*!
@@ -1125,6 +1127,7 @@ vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, cons
   return to_M_from;
 }
 
+#if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 /*!
   Get timestamped odometry data from T265 device at 30Hz.
   \param cMw     : Pose given by visual odometry.
@@ -1307,6 +1310,7 @@ void vpRealSense2::getIMUData(vpColVector *imu_acc, vpColVector *imu_vel, double
     (*imu_vel)[2] = static_cast<double>(imu_vel_data.z);
   }
 }
+#endif // #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 
 /*!
   Open access to the RealSense device and start the streaming.
@@ -1324,8 +1328,10 @@ void vpRealSense2::open(const rs2::config &cfg)
 
   rs2::device dev = m_pipelineProfile->get_device();
 
+#if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
   // Query device product line D400/SR300/L500/T200
   m_product_line = dev.get_info(RS2_CAMERA_INFO_PRODUCT_LINE);
+#endif
 
   // Go over the device's sensors
   for (rs2::sensor &sensor : dev.query_sensors()) {
@@ -1337,13 +1343,17 @@ void vpRealSense2::open(const rs2::config &cfg)
 }
 
 /*!
- * Get the product line of the device being used.
+ * Get the product line of the device being used. This function need librealsense > 2.31.0. Otherwise it returns "unknown".
  */
 std::string vpRealSense2::getProductLine()
 {
+#if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
   if(m_pipe == NULL) // If pipe is not already created, create it. Otherwise, we have already determined the product line
     open();
   return m_product_line;
+#else
+  return (std::string("unknown"));
+#endif
 }
 
 namespace

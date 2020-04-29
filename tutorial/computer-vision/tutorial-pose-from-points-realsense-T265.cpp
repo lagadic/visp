@@ -11,7 +11,9 @@
 
 int main(int argc, char **argv)
 {
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) && (defined(VISP_HAVE_REALSENSE2))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) && \
+  defined(VISP_HAVE_REALSENSE2) && \
+  (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
   try {
     double opt_square_width = 0.12;
     int opt_camera_index = 1; // camera index: 1. Left, 2.Right
@@ -40,7 +42,7 @@ int main(int argc, char **argv)
     rs2::config config;
     config.enable_stream(RS2_STREAM_FISHEYE, 1);
     config.enable_stream(RS2_STREAM_FISHEYE, 2);
-    
+
     g.open(config);
     if(opt_camera_index == 1) // Left camera
         g.acquire(&I, NULL, NULL);
@@ -85,7 +87,7 @@ int main(int argc, char **argv)
       if(opt_camera_index == 1)
         g.acquire(&I, NULL, NULL);
       else
-        g.acquire(NULL, &I, NULL);  
+        g.acquire(NULL, &I, NULL);
 
       vpDisplay::display(I);
       if (apply_cv) {
@@ -137,13 +139,22 @@ int main(int argc, char **argv)
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
-#elif (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-  (void) argc;
-  (void) argv;
-  std::cout << "Install 3rd party dedicated to frame grabbing Realsense2, configure and build ViSP again to use this example" << std::endl;
-#else
-  (void) argc;
-  (void) argv;
+#elif !defined(VISP_HAVE_REALSENSE2)
+  (void)argc; (void)argv;
+  std::cout << "You do not realsense2 SDK functionality enabled..." << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Install librealsense2, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+#elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  (void)argc; (void)argv;
+  std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
+  std::cout << "Tip:" << std::endl;
+  std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
+#elif !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+  (void)argc; (void)argv;
   std::cout << "Install a 3rd party dedicated to image display (X11, GDI, OpenCV), configure and build ViSP again to use this example" << std::endl;
+#elif !(RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+  (void)argc; (void)argv;
+  std::cout << "Install librealsense version > 2.31.0" << std::endl;
 #endif
 }

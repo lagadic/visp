@@ -54,6 +54,7 @@ endif()
 if(CXX_FLAGS_MUTE_WARNINGS)
   # Add specific build flag to turn off warnings
   visp_set_source_file_compile_flag(tutorial-grabber-realsense.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+  visp_set_source_file_compile_flag(tutorial-grabber-realsense-T265.cpp ${CXX_FLAGS_MUTE_WARNINGS})
 endif()
 
 foreach(cpp ${tutorial_cpp})
