@@ -362,7 +362,7 @@ public:
   inline double get_v0() const { return v0; }
   inline double get_kud() const { return kud; }
   inline double get_kdu() const { return kdu; }
-  inline std::vector<double> getKannalaBrandtDistortionCoeficients() const { return m_dist_coefs; }
+  inline std::vector<double> getKannalaBrandtDistortionCoefficients() const { return m_dist_coefs; }
 
   inline vpCameraParametersProjType get_projModel() const { return projModel; }
 

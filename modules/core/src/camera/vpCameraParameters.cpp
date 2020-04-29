@@ -630,8 +630,11 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters 
     break;
   case vpCameraParameters::ProjWithKannalaBrandtDistortion:
     {
+      os << "Camera parameters for projection with Kannala-Brandt distortion:" << std::endl;
+      os << "  px = " << cam.get_px() << "\t py = " << cam.get_py() << std::endl;
+      os << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0() << std::endl;
       os << "  Coefficients: ";
-      std::vector<double> tmp_coefs = cam.getKannalaBrandtDistortionCoeficients();
+      std::vector<double> tmp_coefs = cam.getKannalaBrandtDistortionCoefficients();
       for(unsigned int i = 0; i < tmp_coefs.size(); i++)
         os << " " << tmp_coefs[i];
       os << std::endl;
