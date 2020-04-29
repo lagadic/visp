@@ -232,6 +232,10 @@ if(USE_ZLIB)
   list(APPEND opt_incs ${ZLIB_INCLUDE_DIRS})
   list(APPEND opt_libs ${ZLIB_LIBRARIES})
 endif()
+if(USE_OPENMP)
+  list(APPEND opt_incs ${OpenMP_CXX_INCLUDE_DIRS})
+  list(APPEND opt_libs ${OpenMP_CXX_LIBRARIES})
+endif()
 
 if(WITH_PUGIXML)
   # pugixml is private
