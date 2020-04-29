@@ -153,9 +153,9 @@ int main()
       vpDisplay::flush(I_right);
       vpDisplay::flush(I_pose);
     
-      std::cout << "Loop time: " << std::setw(10) << vpTime::measureTimeMs() - t << "ms confidence = " << confidence;
-      std::cout << " Gyro vel: x = " << std::setw(10) << imu_vel[0] << " y = " << std::setw(10) << imu_vel[1] << " z = " << std::setw(10) << imu_vel[2];
-      std::cout << " Accel: x = " << std::setw(10) << imu_acc[0] << " y = " << std::setw(10) << imu_acc[1] << " z = " << std::setw(10) << imu_acc[2];
+      std::cout << "Loop time: " << std::setw(8) << vpTime::measureTimeMs() - t << "ms. Confidence = " << confidence;
+      std::cout << " Gyro vel: x = " << std::setw(10) << std::setprecision(3) << imu_vel[0] << " y = " << std::setw(10) << std::setprecision(3) << imu_vel[1] << " z = " << std::setw(8) << imu_vel[2];
+      std::cout << " Accel: x = " << std::setw(10) << std::setprecision(3) << imu_acc[0] << " y = " << std::setw(10) << std::setprecision(3) << imu_acc[1] << " z = " << std::setw(8) << imu_acc[2];
       std::cout << std::endl;
     }
 
