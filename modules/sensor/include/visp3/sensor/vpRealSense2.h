@@ -346,10 +346,10 @@ public:
   unsigned int getOdometryData(vpHomogeneousMatrix *cMw, vpColVector *odo_vel, vpColVector *odo_acc, double *ts = NULL);
 
   //! Get a reference to `rs2::pipeline`.
-  rs2::pipeline &getPipeline() { return m_pipe; }
+  rs2::pipeline &getPipeline() { return *m_pipe; }
 
   //! Get a reference to `rs2::pipeline_profile`.
-  rs2::pipeline_profile &getPipelineProfile() { return m_pipelineProfile; }
+  rs2::pipeline_profile &getPipelineProfile() { return *m_pipelineProfile; }
 
   std::string getProductLine();
 
@@ -372,15 +372,14 @@ protected:
   float m_depthScale;
   float m_invalidDepthValue;
   float m_max_Z;
-  rs2::pipeline m_pipe;
-  rs2::pipeline_profile m_pipelineProfile;
+  rs2::pipeline *m_pipe;
+  rs2::pipeline_profile *m_pipelineProfile;
   rs2::pointcloud m_pointcloud;
   rs2::points m_points;
   vpTranslationVector m_pos;
   vpQuaternionVector m_quat;
   vpRotationMatrix m_rot;
   std::string m_product_line;
-  bool m_init;
 
   void getColorFrame(const rs2::frame &frame, vpImage<vpRGBa> &color);
   void getGreyFrame(const rs2::frame &frame, vpImage<unsigned char> &grey);
