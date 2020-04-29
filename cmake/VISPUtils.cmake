@@ -997,7 +997,7 @@ macro(vp_warnings_disable)
           set(${var} "${${var}} ${warning}")
         endforeach()
       endforeach()
-    elseif((CMAKE_COMPILER_IS_GNUCXX OR (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")) AND _gxx_warnings AND _flag_vars)
+    elseif((CMAKE_COMPILER_IS_GNUCXX OR (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")) AND _gxx_warnings AND _flag_vars)
       foreach(var ${_flag_vars})
         foreach(warning ${_gxx_warnings})
           if(NOT warning MATCHES "^-Wno-")
@@ -1477,20 +1477,7 @@ macro(vp_get_all_includes _includes_modules _includes_extra _system_include_dirs
   #---------------------------------------------------------------------
   # Get system_include_dirs to propagate in scripts for SonarQube
   #----------------------------------------------------------------------
-  set(SYSTEM_HEADERS vector iostream type_traits limits.h stdarg.h endian.h)
-  if ("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
-    list(APPEND COMPILER_INCLUDE_DIRS /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1)
-    list(APPEND COMPILER_INCLUDE_DIRS /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/10.0.0/include)
-    list(APPEND COMPILER_INCLUDE_DIRS /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/i386)
-  elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    # Todo
-  elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Intel")
-    # Todo
-  elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    # Todo
-  endif()
-
-  vp_find_path(SYSTEM_HEADERS ${_system_include_dirs} PATHS ${COMPILER_INCLUDE_DIRS})
+  list(APPEND _system_include_dirs ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
 
   foreach(lst ${_includes_modules} ${_includes_extra} ${_system_include_dirs})
     vp_list_unique(${lst})
@@ -1538,9 +1525,9 @@ macro(vp_get_all_libs _modules _extra_opt _extra_dbg _3rdparty)
           set(dep_opt "${CMAKE_MATCH_1}")
         elseif(dep MATCHES "^\\$<")
           message(WARNING "Unexpected CMake generator expression: ${dep}")
-		else()
-		  set(dep_dbg ${dep})
-		  set(dep_opt ${dep})
+    else()
+      set(dep_dbg ${dep})
+      set(dep_opt ${dep})
         endif()
         if (TARGET ${dep_opt})
           get_target_property(_type ${dep_opt} TYPE)

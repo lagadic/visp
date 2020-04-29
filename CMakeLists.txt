@@ -44,7 +44,7 @@ if(NOT CMAKE_TOOLCHAIN_FILE)
   endif()
 else(NOT CMAKE_TOOLCHAIN_FILE)
   #Android: set output folder to ${CMAKE_BINARY_DIR}
-  set( LIBRARY_OUTPUT_PATH_ROOT ${CMAKE_BINARY_DIR} CACHE PATH "root for library output, set this to change where android libs are compiled to" )
+  set(LIBRARY_OUTPUT_PATH_ROOT ${CMAKE_BINARY_DIR} CACHE PATH "root for library output, set this to change where android libs are compiled to" )
   # Crosscompiling
   set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory")
 endif()
@@ -81,20 +81,21 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
 
-project(VISP C CXX)
+cmake_minimum_required(VERSION 2.8.12.2) # needs to be before project() for policy CMP0025
 
 # Detect if the toolchain is for Aldebaran naoqi
 if(CMAKE_TOOLCHAIN_FILE AND I_AM_A_ROBOT)
   include(platforms/naoqi/cmake/extra.cmake)
 endif()
 
-cmake_minimum_required(VERSION 2.8.12.2)
-
 if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
 endif()
 if(POLICY CMP0022)
   cmake_policy(SET CMP0022 NEW) # Due to sensor ATIDAQ_LIBRARIES
+endif()
+if(POLICY CMP0025)
+  cmake_policy(SET CMP0025 NEW) # To set compiler id for Apple Clang to AppleClang instead of Clang. Required to detect OpenMP support on MacOS
 endif()
 if(POLICY CMP0053)
   cmake_policy(SET CMP0053 NEW) # For UsTK: VTK and Qt5
@@ -111,6 +112,8 @@ endif()
 if(POLICY CMP0075)
   cmake_policy(SET CMP0075 NEW) # For check_include_file and cmake 3.12.0
 endif()
+
+project(VISP C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
@@ -534,15 +537,7 @@ VP_OPTION(USE_GDI         GDI         ""    "Include gdi support"              "
 #VP_OPTION(USE_DIRECT3D    DIRECT3D    ""    "Include d3d support"             "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_DIRECTSHOW  DIRECTSHOW  ""    "Include dshow support"            "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 
-# Workaround libomp.so missing at run-time when using clang: https://github.com/travis-ci/travis-ci/issues/8613
-string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
-if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
-  set(COMPILER_SUPPORTS_OPENMP FALSE)
-else()
-  set(COMPILER_SUPPORTS_OPENMP TRUE)
-endif()
-
-VP_OPTION(USE_OPENMP      OpenMP      ""    "Include openmp support"           "" ON IF COMPILER_SUPPORTS_OPENMP)
+VP_OPTION(USE_OPENMP      OpenMP      ""    "Include openmp support"           "" ON)
 VP_OPTION(USE_EIGEN3      Eigen3      QUIET "Include eigen3 support"           "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_COIN3D      "Coin3D;MyCoin3D" "" "Include coin3d support"        "" ON IF OPENGL_FOUND AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_YARP        YARP        QUIET "Include yarp support"             "YARP_DIR" ON IF NOT WINRT AND NOT IOS)
