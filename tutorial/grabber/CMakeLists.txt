@@ -15,6 +15,7 @@ set(tutorial_cpp
   tutorial-grabber-opencv.cpp
   tutorial-grabber-opencv-threaded.cpp
   tutorial-grabber-realsense.cpp
+  tutorial-grabber-realsense-T265.cpp
   tutorial-grabber-v4l2.cpp
   tutorial-grabber-v4l2-threaded.cpp
   tutorial-video-reader.cpp
