@@ -106,6 +106,10 @@ before_install:
   - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libzbar-dev libdmtx-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq ant; fi"
 
+  # locate libomp
+  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo updatedb; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then locate libomp; fi"
+
 before_script:
   - mkdir build
   - cd build
