@@ -99,6 +99,9 @@ public:
     \f$ y = (v-v_0)*(1+k_{du}*r^2)/p_y  \f$
     with \f$ r^2=((u - u_0)/p_x)^2+((v-v_0)/p_y)^2 \f$ in the case of
     perspective projection with distortion.
+
+    In the case of a projection with Kannala-Brandt distortion, refer to
+    \cite KannalaBrandt.
   */
   inline static void convertPoint(const vpCameraParameters &cam,
                                   const double &u, const double &v, double &x, double &y)
@@ -111,7 +114,7 @@ public:
       convertPointWithDistortion(cam, u, v, x, y);
       break;
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
-      throw vpException(vpException::notImplementedError, "Feature convertPoint is not implemented for Kannala-Brandt projection model yet.");
+      convertPointWithKannalaBrandtDistortion(cam, u, v, x, y);
       break;
     }
   }
@@ -139,6 +142,9 @@ public:
     \f$ y = (v-v_0)*(1+k_{du}*r^2)/p_y  \f$
     with \f$ r^2=((u - u_0)/p_x)^2+((v-v_0)/p_y)^2 \f$ in the case of
     perspective projection with distortion.
+
+    In the case of a projection with Kannala-Brandt distortion, refer to
+    \cite KannalaBrandt.
   */
   inline static void convertPoint(const vpCameraParameters &cam,
                                   const vpImagePoint &iP, double &x, double &y)
@@ -151,7 +157,7 @@ public:
       convertPointWithDistortion(cam, iP, x, y);
       break;
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
-      throw vpException(vpException::notImplementedError, "Feature convertPoint is not implemented for Kannala-Brandt projection model yet.");
+      convertPointWithKannalaBrandtDistortion(cam, iP, x, y);
       break;
     }
   }
@@ -243,6 +249,119 @@ public:
                                 vpMath::sqr((iP.get_v() - cam.v0) * cam.inv_py));
     x = (iP.get_u() - cam.u0) * r2 * cam.inv_px;
     y = (iP.get_v() - cam.v0) * r2 * cam.inv_py;
+  }
+
+  /*!
+    Point coordinates conversion with Kannala-Brandt distortion from pixel
+    coordinates \f$(u,v)\ to normalized coordinates \f$(x,y)\f$ in meter.
+
+    \param[in]  cam : Camera parameters.
+    \param[in]  u   : Input coordinate in pixels along image horizontal axis.
+    \param[in]  v   : Input coordinate in pixels along image vertical axis.
+    \param[out] x   : Output coordinate in meter along image plane x-axis.
+    \param[out] y   : Output coordinate in meter along image plane y-axis.
+
+    \f$ x_d = (u-u_0)/px \f$
+    \f$ y_d = (v-v_0)/py \f$
+    \f$ r_d = \sqrt{x^2_d + y^2_d} \f$
+    Solve for \f$ \theta \f$ knowing that:
+    \f$ r_d = \theta + k_1 \theta^3 + k_2 \theta^5 + k_3 \theta^7 + k_4 \theta^5 \f$
+    Calcluate the distortion scale \f$ scale \f$:
+    \f$ scale = \tan(\theta) / r_d \f$
+    \f$ x   = x_d * scale \f$
+    \f$ y   = y_d * scale \f$
+  */
+  inline static void convertPointWithKannalaBrandtDistortion(const vpCameraParameters &cam, const double &u,
+                                                             const double &v, double &x, double &y)
+  {
+    double x_d = (u - cam.u0) / cam.px, y_d = (v - cam.v0) / cam.py;
+    double scale = 1.0;
+    double r_d = sqrt(vpMath::sqr(x_d) + vpMath::sqr(y_d));
+
+    r_d = std::min(std::max(-M_PI, r_d), M_PI); // FOV restricted to 180degrees.
+
+    std::vector<double> k = cam.getKannalaBrandtDistortionCoefficients();
+
+    // Use Newton-Raphson method to solve for the angle theta
+    if (r_d > 1e-8)
+    {
+      // compensate distortion iteratively
+      double theta = r_d;
+
+      const double EPS = 1e-8;
+      for (int j = 0; j < 10; j++)
+      {
+        double theta2 = theta*theta, theta4 = theta2*theta2, theta6 = theta4*theta2, theta8 = theta6*theta2;
+        double k0_theta2 = k[0] * theta2, k1_theta4 = k[1] * theta4, k2_theta6 = k[2] * theta6, k3_theta8 = k[3] * theta8;
+        /* new_theta = theta - theta_fix, theta_fix = f0(theta) / f0'(theta) */
+        double theta_fix = (theta * (1 + k0_theta2 + k1_theta4 + k2_theta6 + k3_theta8) - r_d) /
+                            (1 + 3*k0_theta2 + 5*k1_theta4 + 7*k2_theta6 + 9*k3_theta8);
+        theta = theta - theta_fix;
+        if (fabs(theta_fix) < EPS)
+            break;
+      }
+
+      scale = std::tan(theta) / r_d; // Scale of norm of (x,y) and (x_d, y_d)
+    }
+
+    x = x_d * scale;
+    y = y_d * scale;
+  }
+
+  /*!
+    Point coordinates conversion with Kannala-Brandt distortion from pixel
+    coordinates in pixel to normalized coordinates \f$(x,y)\f$ in meter.
+
+    \param[in] cam : camera parameters.
+    \param[in] iP : input coordinates in pixels.
+    \param[out] x : output coordinate in meter along image plane x-axis.
+    \param[out] y : output coordinate in meter along image plane y-axis.
+
+    \f$ x_d = (u-u_0)/px \f$
+    \f$ y_d = (v-v_0)/py \f$
+    \f$ r_d = \sqrt{x^2_d + y^2_d} \f$
+    Solve for \f$ \theta \f$ knowing that:
+    \f$ r_d = \theta + k_1 \theta^3 + k_2 \theta^5 + k_3 \theta^7 + k_4 \theta^5 \f$
+    Calcluate the distortion scale \f$ scale \f$:
+    \f$ scale = \tan(\theta) / r_d \f$
+    \f$ x   = x_d * scale \f$
+    \f$ y   = y_d * scale \f$
+   */
+  inline static void convertPointWithKannalaBrandtDistortion(const vpCameraParameters &cam, const vpImagePoint &iP,
+                                                             double &x, double &y)
+  {
+    double x_d = (iP.get_u() - cam.u0) / cam.px, y_d = (iP.get_v() - cam.v0) / cam.py;
+    double scale = 1.0;
+    double r_d = sqrt(vpMath::sqr(x_d) + vpMath::sqr(y_d));
+
+    r_d = std::min(std::max(-M_PI, r_d), M_PI); // FOV restricted to 180degrees.
+
+    std::vector<double> k = cam.getKannalaBrandtDistortionCoefficients();
+
+    // Use Newton-Raphson method to solve for the angle theta
+    if (r_d > 1e-8)
+    {
+      // compensate distortion iteratively
+      double theta = r_d;
+
+      const double EPS = 1e-8;
+      for (int j = 0; j < 10; j++)
+      {
+        double theta2 = theta*theta, theta4 = theta2*theta2, theta6 = theta4*theta2, theta8 = theta6*theta2;
+        double k0_theta2 = k[0] * theta2, k1_theta4 = k[1] * theta4, k2_theta6 = k[2] * theta6, k3_theta8 = k[3] * theta8;
+        /* new_theta = theta - theta_fix, theta_fix = f0(theta) / f0'(theta) */
+        double theta_fix = (theta * (1 + k0_theta2 + k1_theta4 + k2_theta6 + k3_theta8) - r_d) /
+                            (1 + 3*k0_theta2 + 5*k1_theta4 + 7*k2_theta6 + 9*k3_theta8);
+        theta = theta - theta_fix;
+        if (fabs(theta_fix) < EPS)
+            break;
+      }
+
+      scale = std::tan(theta) / r_d; // Scale of norm of (x,y) and (x_d, y_d)
+    }
+
+    x = x_d * scale;
+    y = y_d * scale;
   }
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
   //@}
