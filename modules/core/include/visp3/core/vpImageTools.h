@@ -165,7 +165,8 @@ public:
                         unsigned int nThreads=2);
 
   template <class Type>
-  static void undistortFisheye(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &newI);
+  static void undistort(const vpImage<Type> &I, vpArray2D<int> mapU, vpArray2D<int> mapV, vpArray2D<float> mapDu,
+                        vpArray2D<float> mapDv, vpImage<Type> &newI);
 
   template <class Type>
   static void warpImage(const vpImage<Type> &src, const vpMatrix &T, vpImage<Type> &dst,
@@ -800,25 +801,24 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
 }
 
 /*!
-  Undistort an image distorted by fisheye lens
+  Undistort an image.
 
-  \param I : Input image to undistort.
+  \param I       : Input image to undistort.
+  \param mapU    : Map that contains at each destination coordinate the u-coordinate in the source image.
+  \param mapV    : Map that contains at each destination coordinate the v-coordinate in the source image.
+  \param mapDu   : Map that contains at each destination coordinate the \f$ \Delta u \f$ for the interpolation.
+  \param mapDv   : Map that contains at each destination coordinate the \f$ \Delta v \f$ for the interpolation.
+  \param newI    : Undistorted output image. The size of this image will be the same as the input image \e I.
 
-  \param cam : Parameters of the camera causing distortion.
+  \note To undistort a fisheye image, you have to first call initUndistortMap() function to calculate maps and then
+  call undistort() with input maps.
 
-  \param undistI : Undistorted output image. The size of this image
-  will be the same than the input image \e I.
-
-  \sa initUndistortMap, remap
-*/
-template<class Type>
-void vpImageTools::undistortFisheye(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &undistI)
+ */
+template <class Type>
+void vpImageTools::undistort(const vpImage<Type> &I, vpArray2D<int> mapU, vpArray2D<int> mapV, vpArray2D<float> mapDu,
+                             vpArray2D<float> mapDv, vpImage<Type> &newI)
 {
-  vpArray2D<int> mapU, mapV;
-  vpArray2D<float> mapDu, mapDv;
-
-  initUndistortMap(cam, I.getWidth(), I.getHeight(), mapU, mapV, mapDu, mapDv);
-  remap(I, mapU, mapV, mapDu, mapDv, undistI);
+  remap(I, mapU, mapV, mapDu, mapDv, newI);
 }
 
 /*!

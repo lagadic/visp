@@ -486,7 +486,7 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
     kud = static_cast<float>(cam.get_kud());
 
   else
-    dist_coefs = cam.getKannalaBrandtDistortionCoeficients();
+    dist_coefs = cam.getKannalaBrandtDistortionCoefficients();
 
   if (!is_KannalaBrandt && std::fabs(static_cast<double>(kud)) <= std::numeric_limits<double>::epsilon()) {
     // There is no need to undistort the image (Perpective projection)

@@ -101,6 +101,8 @@ int main()
     vpArray2D<int> mapU, mapV;
     vpArray2D<float> mapDu, mapDv;
 
+    vpImageTools::initUndistortMap(cam_left, I.getWidth(), I.getHeight(), mapU, mapV, mapDu, mapDv);
+
     while (true) {
       double t = vpTime::measureTimeMs();
 
@@ -108,7 +110,7 @@ int main()
 
       vpDisplay::display(I);
 
-      vpImageTools::undistortFisheye(I, cam_left, I_undist);
+      vpImageTools::undistort(I, mapU, mapV, mapDu, mapDv, I_undist);
       vpDisplay::display(I_undist);
 
       vpDisplay::displayText(I, 15*display_scale, 15*display_scale, "Click to quit", vpColor::red);
