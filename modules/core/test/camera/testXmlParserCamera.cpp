@@ -113,6 +113,34 @@ int main()
     }
   }
 
+  {
+    std::cout << std::endl;
+    vpCameraParameters cam;
+    std::vector<double> distortion_coeffs = {-0.00297341705299914, 0.0352853797376156, -0.032205019146204, 0.004446716979146, 0};
+    cam.initProjWithKannalaBrandtDistortion(285.523895263672, 286.6708984375, 420.874114990234, 381.085388183594, distortion_coeffs);
+    std::string filename = tmp_dir + "test_write_cam_with_KannalaBrandt_distortion.xml";
+    {
+      vpXmlParserCamera xml;
+      std::cout << "Write to: " << filename << std::endl;
+      if (xml.save(cam, filename, "Camera", 800, 848) != vpXmlParserCamera::SEQUENCE_OK) {
+        std::cerr << "Cannot save XML file: " << filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+
+    vpCameraParameters cam_read;
+    {
+      vpXmlParserCamera xml;
+      xml.parse(cam_read, filename, "Camera", vpCameraParameters::ProjWithKannalaBrandtDistortion, 800, 848);
+      std::cout << "Cam write:\n" << cam << std::endl;
+      std::cout << "Cam read:\n" << cam_read << std::endl;
+      if (cam != cam_read) {
+        std::cerr << "Issue when parsing XML file: " << filename << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+  }
+
   vpIoTools::remove(tmp_dir);
 #endif
 
