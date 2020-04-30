@@ -73,7 +73,7 @@ int main()
     config.enable_stream(RS2_STREAM_FISHEYE, 1, RS2_FORMAT_Y8);
     config.enable_stream(RS2_STREAM_FISHEYE, 2, RS2_FORMAT_Y8);
     rs.open(config);
-    cam_left = rs.getCameraParameters(RS2_STREAM_FISHEYE, vpCameraParameters::perspectiveProjWithDistortion, cam_index);
+    cam_left = rs.getCameraParameters(RS2_STREAM_FISHEYE, vpCameraParameters::ProjWithKannalaBrandtDistortion, cam_index);
 
     vpImage<unsigned char> I((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
                              (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);

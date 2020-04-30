@@ -673,14 +673,16 @@ vpCameraParameters vpRealSense2::getCameraParameters(const rs2_stream &stream,
   double px = intrinsics.fx;
   double py = intrinsics.fy;
 
-  if (type == vpCameraParameters::perspectiveProjWithDistortion) {
-    if(m_product_line.compare("T200") != 0) // Not a T265 => already existing distortion model
+  switch (type)
+  {
+  case vpCameraParameters::perspectiveProjWithDistortion:
     {
       double kdu = intrinsics.coeffs[0];
       cam.initPersProjWithDistortion(px, py, u0, v0, -kdu, kdu);
     }
+    break;
 
-    else // T265 => Use Kannala-Brandt distortion model with 5 coefficients
+  case vpCameraParameters::ProjWithKannalaBrandtDistortion:
     {
       std::vector<double> tmp_coefs;
       tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[0]));
@@ -691,9 +693,12 @@ vpCameraParameters vpRealSense2::getCameraParameters(const rs2_stream &stream,
 
       cam.initProjWithKannalaBrandtDistortion(px, py, u0, v0, tmp_coefs);
     }
+    break;
 
-  } else {
+  case vpCameraParameters::perspectiveProjWithoutDistortion:
+  default:
     cam.initPersProjWithoutDistortion(px, py, u0, v0);
+    break;
   }
 
   return cam;
