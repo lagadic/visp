@@ -42,6 +42,7 @@
 #include <iostream>
 
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/sensor/vpRealSense2.h>
 
