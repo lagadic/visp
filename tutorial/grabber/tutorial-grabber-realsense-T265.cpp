@@ -71,8 +71,8 @@ int main(int argc, char **argv)
     std::cout << "No image viewer is available..." << std::endl;
 #endif
 
-    bool quit_left = false, quit_right = false;
-    while (!quit_left && !quit_right) {
+    bool quit = false;
+    while (!quit) {
       double t = vpTime::measureTimeMs();
 
       g.acquire(&I_left, &I_right);
@@ -80,8 +80,7 @@ int main(int argc, char **argv)
       vpDisplay::display(I_left);
       vpDisplay::display(I_right);
 
-      quit_left  = record_helper(opt_seqname_left, opt_record_mode, I_left);
-      quit_right = record_helper(opt_seqname_right, opt_record_mode, I_right);
+      quit  = record_helper(opt_seqname_left, opt_seqname_right, opt_record_mode, I_left, I_right);
 
       std::stringstream ss;
       ss << "Acquisition time: " << std::setprecision(3) << vpTime::measureTimeMs() - t << " ms";
