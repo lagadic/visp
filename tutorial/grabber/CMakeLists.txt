@@ -49,6 +49,7 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-parameter")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-pessimizing-move")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
 endif()
 
 if(CXX_FLAGS_MUTE_WARNINGS)
