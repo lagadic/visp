@@ -341,6 +341,15 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
   bool checkDegeneratePoints = ransacFlag == CHECK_DEGENERATE_POINTS;
 
   if (prefilterDegeneratePoints) {
+    //TODO:
+    {
+      std::ofstream f("debug_RANSAC_listOfPoints.txt");
+      for (const auto& pt : listOfPoints) {
+        f << std::setprecision(std::numeric_limits<double>::max_digits10) << pt.get_oX() << ", " << pt.get_oY() << ", " << pt.get_oZ()
+          << " / " << pt.get_x() << ", " << pt.get_y() << std::endl;
+      }
+    }
+
     // Remove degenerate object points
     std::map<vpPoint, size_t, CompareObjectPointDegenerate> filterObjectPointMap;
     size_t index_pt = 0;
@@ -348,6 +357,14 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
          ++it_pt, index_pt++) {
       if (filterObjectPointMap.find(*it_pt) == filterObjectPointMap.end()) {
         filterObjectPointMap[*it_pt] = index_pt;
+      }
+    }
+    //TODO:
+    {
+      std::ofstream f("debug_RANSAC_filterObjectPointMap.txt");
+      for (const auto& kv : filterObjectPointMap) {
+        f << std::setprecision(std::numeric_limits<double>::max_digits10) << kv.first.get_oX() << ", " << kv.first.get_oY() << ", " << kv.first.get_oZ()
+          << " / " << kv.first.get_x() << ", " << kv.first.get_y() << " / " << kv.second << std::endl;
       }
     }
 
@@ -359,6 +376,27 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 
         listOfUniquePoints.push_back(it->first);
         mapOfUniquePointIndex[listOfUniquePoints.size() - 1] = it->second;
+      }
+    }
+    //TODO:
+    {
+      std::ofstream f("debug_RANSAC_filterImagePointMap.txt");
+      for (const auto& kv : filterImagePointMap) {
+        f << std::setprecision(std::numeric_limits<double>::max_digits10) << kv.first.get_oX() << ", " << kv.first.get_oY() << ", " << kv.first.get_oZ()
+          << " / " << kv.first.get_x() << ", " << kv.first.get_y() << " / " << kv.second << std::endl;
+      }
+    }
+    {
+      std::ofstream f("debug_RANSAC_mapOfUniquePointIndex.txt");
+      for (const auto& kv : mapOfUniquePointIndex) {
+        f << kv.first << " / " << kv.second << std::endl;
+      }
+    }
+    {
+      std::ofstream f("debug_RANSAC_listOfUniquePoints.txt");
+      for (const auto& pt : listOfUniquePoints) {
+        f << std::setprecision(std::numeric_limits<double>::max_digits10) << pt.get_oX() << ", " << pt.get_oY() << ", " << pt.get_oZ()
+          << " / " << pt.get_x() << ", " << pt.get_y() << std::endl;
       }
     }
   } else {
@@ -552,6 +590,21 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
       }
     } else {
       return false;
+    }
+  }
+
+  //TODO:
+  {
+    std::ofstream f("debug_RANSAC_ransacInliers.txt");
+    for (const auto& pt : ransacInliers) {
+      f << std::setprecision(std::numeric_limits<double>::max_digits10) << pt.get_oX() << ", " << pt.get_oY() << ", " << pt.get_oZ()
+        << " / " << pt.get_x() << ", " << pt.get_y() << std::endl;
+    }
+  }
+  {
+    std::ofstream f("debug_RANSAC_ransacInlierIndex.txt");
+    for (const auto idx : ransacInlierIndex) {
+      f << idx << std::endl;
     }
   }
 

@@ -473,41 +473,44 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
 }
 } //namespace
 
-TEST_CASE("Print RANSAC number of iterations", "[ransac_pose]") {
-  const int sample_sizes[] = {2, 3, 4, 5, 6, 7, 8};
-  const double epsilon[] = {0.05, 0.1, 0.2, 0.25, 0.3, 0.4, 0.5};
+//TEST_CASE("Print RANSAC number of iterations", "[ransac_pose]") {
+//  const int sample_sizes[] = {2, 3, 4, 5, 6, 7, 8};
+//  const double epsilon[] = {0.05, 0.1, 0.2, 0.25, 0.3, 0.4, 0.5};
 
-  // Format output
-  const std::string spacing = "       ";
+//  // Format output
+//  const std::string spacing = "       ";
 
-  std::cout << spacing << " outliers percentage\n" << "nb pts\\";
-  for (int cpt2 = 0; cpt2 < 7; cpt2++) {
-    std::cout << std::setfill(' ') << std::setw(5) << epsilon[cpt2] << " ";
-  }
-  std::cout << std::endl;
+//  std::cout << spacing << " outliers percentage\n" << "nb pts\\";
+//  for (int cpt2 = 0; cpt2 < 7; cpt2++) {
+//    std::cout << std::setfill(' ') << std::setw(5) << epsilon[cpt2] << " ";
+//  }
+//  std::cout << std::endl;
 
-  std::cout << std::setfill(' ') << std::setw(7) << "+";
-  for (int cpt2 = 0; cpt2 < 6; cpt2++) {
-    std::cout << std::setw(7) << "-------";
-  }
-  std::cout << std::endl;
+//  std::cout << std::setfill(' ') << std::setw(7) << "+";
+//  for (int cpt2 = 0; cpt2 < 6; cpt2++) {
+//    std::cout << std::setw(7) << "-------";
+//  }
+//  std::cout << std::endl;
 
-  for (int cpt1 = 0; cpt1 < 7; cpt1++) {
-    std::cout << std::setfill(' ') << std::setw(6) << sample_sizes[cpt1] << "|";
+//  for (int cpt1 = 0; cpt1 < 7; cpt1++) {
+//    std::cout << std::setfill(' ') << std::setw(6) << sample_sizes[cpt1] << "|";
 
-    for (int cpt2 = 0; cpt2 < 7; cpt2++) {
-      int ransac_iters = vpPose::computeRansacIterations(0.99, epsilon[cpt2], sample_sizes[cpt1], -1);
-      std::cout << std::setfill(' ') << std::setw(6) << ransac_iters;
-    }
-    std::cout << std::endl;
-  }
-  std::cout << std::endl;
-}
+//    for (int cpt2 = 0; cpt2 < 7; cpt2++) {
+//      int ransac_iters = vpPose::computeRansacIterations(0.99, epsilon[cpt2], sample_sizes[cpt1], -1);
+//      std::cout << std::setfill(' ') << std::setw(6) << ransac_iters;
+//    }
+//    std::cout << std::endl;
+//  }
+//  std::cout << std::endl;
+//}
 
 TEST_CASE("RANSAC pose estimation tests", "[ransac_pose]") {
-  const std::vector<size_t> model_sizes = {10, 20, 50, 100, 200, 500, 1000, 0, 0};
-  const std::vector<bool> duplicates = {false, false, false, false, false, false, false, false, true};
-  const std::vector<bool> degenerates = {false, false, false, false, false, false, true, true, true};
+//  const std::vector<size_t> model_sizes = {10, 20, 50, 100, 200, 500, 1000, 0, 0};
+//  const std::vector<bool> duplicates = {false, false, false, false, false, false, false, false, true};
+//  const std::vector<bool> degenerates = {false, false, false, false, false, false, true, true, true};
+  const std::vector<size_t> model_sizes = {0};
+  const std::vector<bool> duplicates = {true};
+  const std::vector<bool> degenerates = {true};
 
   std::string visp_input_images = vpIoTools::getViSPImagesDataPath();
   std::string model_filename = vpIoTools::createFilePath(visp_input_images, "3dmodel/bunny/bunny.xyz");
@@ -517,17 +520,19 @@ TEST_CASE("RANSAC pose estimation tests", "[ransac_pose]") {
   readBunnyModelPoints(model_filename, bunnyModelPoints, bunnyModelPoints_noisy_original);
   CHECK(bunnyModelPoints.size() == bunnyModelPoints_noisy_original.size());
 
-  for (size_t i = 0; i < model_sizes.size(); i++) {
-    std::cout << "\n\n==============================================================================="
-              << std::endl;
-    if (model_sizes[i] == 0) {
-      std::cout << "Test on " << bunnyModelPoints_noisy_original.size() << " model points." << std::endl;
-    } else {
-      std::cout << "Test on " << model_sizes[i] << " model points." << std::endl;
-    }
-    std::cout << "Test duplicate: " << duplicates[i] << " ; Test degenerate: " << degenerates[i] << std::endl;
+  for (int idx = 0; idx < 2000; idx++) {
+    for (size_t i = 0; i < model_sizes.size(); i++) {
+      std::cout << "\n\n==============================================================================="
+                << std::endl;
+      if (model_sizes[i] == 0) {
+        std::cout << "Test on " << bunnyModelPoints_noisy_original.size() << " model points." << std::endl;
+      } else {
+        std::cout << "Test on " << model_sizes[i] << " model points." << std::endl;
+      }
+      std::cout << "Test duplicate: " << duplicates[i] << " ; Test degenerate: " << degenerates[i] << std::endl;
 
-    CHECK(testRansac(bunnyModelPoints, bunnyModelPoints_noisy_original, model_sizes[i], duplicates[i], degenerates[i]));
+      REQUIRE(testRansac(bunnyModelPoints, bunnyModelPoints_noisy_original, model_sizes[i], duplicates[i], degenerates[i]));
+    }
   }
 }
 

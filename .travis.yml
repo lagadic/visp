@@ -6,29 +6,9 @@ env:
 jobs:
   include:
     - os: linux
-      dist: xenial
-      arch: amd64
-      compiler: gcc
-    - os: linux
-      dist: bionic
-      arch: amd64
-      compiler: gcc
-    - os: linux
       dist: bionic
       arch: amd64
       compiler: clang
-    - os: linux
-      dist: bionic
-      arch: arm64
-      compiler: gcc
-    - os: linux
-      dist: bionic
-      arch: ppc64le
-      compiler: gcc
-    - os: linux
-      dist: bionic
-      arch: s390x
-      compiler: gcc
     - os: osx
       # Set Xcode version to 10.1 (default is 9.4) / macOS 10.13
       osx_image: xcode10.1
@@ -113,17 +93,19 @@ before_install:
 before_script:
   - mkdir build
   - cd build
-  - cmake ..
+  - cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF -DBUILD_TUTORIALS=OFF
     # Show 3rd parties that are detected
   - cat ViSP-third-party.txt
 
 script:
+  #- ctest --output-on-failure
+  - cd modules/vision
   - make
-  - ctest --output-on-failure
-
-notifications:
-  email:
-    recipients:
-      - Fabien.Spindler@inria.fr
-    on_success: change
-    on_failure: always
+  - ./testPoseRansac2
+  - cat debug_RANSAC_listOfPoints.txt
+  - cat debug_RANSAC_filterObjectPointMap.txt
+  - cat debug_RANSAC_filterImagePointMap.txt
+  - cat debug_RANSAC_mapOfUniquePointIndex.txt
+  - cat debug_RANSAC_listOfUniquePoints.txt
+  - cat debug_RANSAC_ransacInliers.txt
+  - cat debug_RANSAC_ransacInlierIndex.txt
