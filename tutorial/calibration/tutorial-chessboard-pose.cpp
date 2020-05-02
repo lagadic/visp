@@ -1,202 +1,108 @@
-//! \example tutorial-chessboard-pose.cpp
 #include <iostream>
-
-#include <visp3/core/vpConfig.h>
-
-#if VISP_HAVE_OPENCV_VERSION >= 0x020300
-
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/calib3d/calib3d.hpp>
-#include <opencv2/highgui/highgui.hpp>
-
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/core/vpIoTools.h>
+#include <map>
 #include <visp3/core/vpPoint.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/io/vpVideoReader.h>
-#include <visp3/vision/vpPose.h>
 
-namespace {
-void calcChessboardCorners(int width, int height, double squareSize, std::vector<vpPoint> &corners) {
-  corners.resize(0);
+#define eps 1e-6
 
-  for (int i = 0; i < height; i++) {
-    for (int j = 0; j < width; j++) {
-      vpPoint pt;
-      pt.set_oX(j*squareSize);
-      pt.set_oY(i*squareSize);
-      pt.set_oZ(0.0);
-      corners.push_back(pt);
-    }
+// For std::map<vpPoint>
+struct CompareObjectPointDegenerate {
+  bool operator()(const vpPoint &point1, const vpPoint &point2) const
+  {
+    const double dist1 = point1.get_oX()*point1.get_oX() + point1.get_oY()*point1.get_oY() + point1.get_oZ()*point1.get_oZ();
+    const double dist2 = point2.get_oX()*point2.get_oX() + point2.get_oY()*point2.get_oY() + point2.get_oZ()*point2.get_oZ();
+    if (dist1 - dist2 < -3*eps*eps)
+      return true;
+    if (dist1 - dist2 > 3*eps*eps)
+      return false;
+
+    if (point1.oP[0] - point2.oP[0] < -eps)
+      return true;
+    if (point1.oP[0] - point2.oP[0] > eps)
+      return false;
+
+    if (point1.oP[1] - point2.oP[1] < -eps)
+      return true;
+    if (point1.oP[1] - point2.oP[1] > eps)
+      return false;
+
+    if (point1.oP[2] - point2.oP[2] < -eps)
+      return true;
+    if (point1.oP[2] - point2.oP[2] > eps)
+      return false;
+
+    return false;
   }
-}
-} //namespace
+};
 
-int main(int argc, const char ** argv) {
-  int chessboard_width = 9, chessboard_height = 6;
-  double chessboard_square_size = 0.03;
-  std::string input_filename = "";
-  std::string intrinsic_file = "camera.xml";
-  std::string camera_name = "Camera";
+// For std::map<vpPoint>
+struct CompareImagePointDegenerate {
+  bool operator()(const vpPoint &point1, const vpPoint &point2) const
+  {
+    const double dist1 = point1.get_x()*point1.get_x() + point1.get_y()*point1.get_y();
+    const double dist2 = point2.get_x()*point2.get_x() + point2.get_y()*point2.get_y();
+    if (dist1 - dist2 < -2*eps*eps)
+      return true;
+    if (dist1 - dist2 > 2*eps*eps)
+      return false;
 
-  for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "-w" && i+1 < argc) {
-      chessboard_width = atoi(argv[i+1]);
-    } else if (std::string(argv[i]) == "-h" && i+1 < argc) {
-      chessboard_height = atoi(argv[i+1]);
-    } else if (std::string(argv[i]) == "--square_size" && i+1 < argc) {
-      chessboard_square_size = atof(argv[i+1]);
-    } else if (std::string(argv[i]) == "--input" && i+1 < argc) {
-      input_filename = std::string(argv[i+1]);
-    } else if (std::string(argv[i]) == "--intrinsic" && i+1 < argc) {
-      intrinsic_file = std::string(argv[i+1]);
-    } else if (std::string(argv[i]) == "--camera_name" && i+1 < argc) {
-      camera_name = std::string(argv[i+1]);
-    }
-    else if (std::string(argv[i]) == "--help") {
-      std::cout << argv[0] << " [-w <chessboard width>] [-w <chessboard height>] [--square_size <square size in meter>] [--input <input images path>] [--intrinsic <Camera intrinsic parameters xml file>] [--camera_name <Camera name in the xml intrinsic file>]" << std::endl;
-      return EXIT_SUCCESS;
-    }
+    if (point1.p[0] - point2.p[0] < -eps)
+      return true;
+    if (point1.p[0] - point2.p[0] > eps)
+      return false;
+
+    if (point1.p[1] - point2.p[1] < -eps)
+      return true;
+    if (point1.p[1] - point2.p[1] > eps)
+      return false;
+
+    return false;
   }
+};
 
-  std::cout << "Parameters:" << std::endl;
-  std::cout << "chessboard_width=" << chessboard_width << std::endl;
-  std::cout << "chessboard_height=" << chessboard_height << std::endl;
-  std::cout << "chessboard_square_size=" << chessboard_square_size << std::endl;
-  std::cout << "input_filename=" << input_filename << std::endl;
-  std::cout << "intrinsic_file=" << intrinsic_file << std::endl;
-  std::cout << "camera_name=" << camera_name << std::endl;
+int main()
+{
+  vpPoint pt1(-0.047064000000000002, 0.16838500000000001, -0.0010020000000000001);
+  vpPoint pt2(-0.047063000100000002, 0.1683859999, -0.0010029999000000002);
 
-  vpVideoReader reader;
-  if (input_filename.empty()) {
-    std::cerr << "input_filename.empty()" << std::endl;
-    return EXIT_FAILURE;
-  }
-  reader.setFileName(input_filename);
+  {
+    std::ifstream f("debug_RANSAC_listOfPoints.data");
+    double oX = 0, oY = 0, oZ = 0;
+    double x = 0, y = 0;
+    char c = ' ';
 
-  vpImage<vpRGBa> I;
-  reader.open(I);
+    std::vector<vpPoint> listOfPoints;
+    while (f >> oX >> c >> oY >> c >> oZ >> c >> x >> c >> y) {
+      vpPoint pt(oX, oY, oZ);
+      pt.set_x(x);
+      pt.set_y(y);
 
-#ifdef VISP_HAVE_X11
-  vpDisplayX d(I);
-#elif defined VISP_HAVE_GDI
-  vpDisplayGDI d(I);
-#elif defined VISP_HAVE_OPENCV
-  vpDisplayOpenCV d(I);
-#endif
-
-  std::vector<vpPoint> corners_pts;
-  calcChessboardCorners(chessboard_width, chessboard_height, chessboard_square_size, corners_pts);
-
-  vpCameraParameters cam;
-#ifdef VISP_HAVE_PUGIXML
-  vpXmlParserCamera parser;
-  if (!intrinsic_file.empty() && !camera_name.empty()) {
-    parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithDistortion);
-  }
-#endif
-  std::cout << "cam:\n" << cam << std::endl;
-
-  bool quit = false;
-  while (!quit && !reader.end()) {
-    reader.acquire(I);
-
-    cv::Mat matImg;
-    vpImageConvert::convert(I, matImg);
-
-    vpDisplay::displayText(I, 20, 20, "Right click to quit.", vpColor::red);
-
-    cv::Size chessboardSize(chessboard_width, chessboard_height);
-    std::vector<cv::Point2f> corners2D;
-    bool found = cv::findChessboardCorners(matImg, chessboardSize, corners2D,
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-                                   cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FAST_CHECK | cv::CALIB_CB_NORMALIZE_IMAGE);
-#else
-                                   CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
-#endif
-
-    vpHomogeneousMatrix cMo;
-    if (found) {
-      cv::Mat matImg_gray;
-      cv::cvtColor(matImg, matImg_gray, cv::COLOR_BGR2GRAY);
-      cv::cornerSubPix(matImg_gray, corners2D, cv::Size(11,11),
-                    cv::Size(-1,-1),
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-                    cv::TermCriteria( cv::TermCriteria::EPS+cv::TermCriteria::COUNT, 30, 0.1 ));
-#else
-                    cv::TermCriteria( CV_TERMCRIT_EPS+CV_TERMCRIT_ITER, 30, 0.1 ));
-#endif
-
-      for (size_t i = 0; i < corners_pts.size(); i++) {
-        vpImagePoint imPt(corners2D[i].y, corners2D[i].x);
-        double x = 0.0, y = 0.0;
-        vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
-        corners_pts[i].set_x(x);
-        corners_pts[i].set_y(y);
-      }
-
-      vpPose pose;
-      pose.addPoints(corners_pts);
-      vpHomogeneousMatrix cMo_dementhon, cMo_lagrange;
-      double r_dementhon = std::numeric_limits<double>::max(), r_lagrange = std::numeric_limits<double>::max();
-      bool pose_dementhon = pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
-      if (pose_dementhon)
-        r_dementhon = pose.computeResidual(cMo_dementhon);
-
-      bool pose_lagrange = pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
-      if (pose_lagrange)
-        r_lagrange = pose.computeResidual(cMo_lagrange);
-
-      cMo = (r_dementhon < r_lagrange) ? cMo_dementhon : cMo_lagrange;
-      if (!pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
-        std::cerr << "Problem when computing final pose using VVS" << std::endl;
-        return EXIT_FAILURE;
-      }
-
-      cv::drawChessboardCorners(matImg, chessboardSize, corners2D, found);
-      vpImageConvert::convert(matImg, I);
+      listOfPoints.push_back(pt);
     }
 
-    vpDisplay::display(I);
-
-    vpDisplay::displayText(I, 20, 20, "Left click for the next image, right click to quit.", vpColor::red);
-    if (found)
-      vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
-
-    vpDisplay::flush(I);
-
-    if (found) {
-      vpPoseVector pose_vec(cMo);
-      std::stringstream ss;
-      ss << "pose_cPo_" << reader.getFrameIndex() << ".yaml";
-      std::cout << "Save " << ss.str() << std::endl;
-      pose_vec.saveYAML(ss.str(), pose_vec);
-    }
-
-    vpMouseButton::vpMouseButtonType button;
-    if (vpDisplay::getClick(I, button, true)) {
-      switch (button) {
-        case vpMouseButton::button3:
-          quit = true;
-          break;
-
-        default:
-          break;
+    // Remove degenerate object points
+    std::map<vpPoint, size_t, CompareObjectPointDegenerate> filterObjectPointMap;
+    size_t index_pt = 0;
+    for (std::vector<vpPoint>::const_iterator it_pt = listOfPoints.begin(); it_pt != listOfPoints.end();
+         ++it_pt, index_pt++) {
+      const bool found = filterObjectPointMap.find(*it_pt) == filterObjectPointMap.end();
+      const bool found1 = filterObjectPointMap.find(pt1) == filterObjectPointMap.end();
+      const bool found2 = filterObjectPointMap.find(pt2) == filterObjectPointMap.end();
+      std::cout << std::setprecision(std::numeric_limits<double>::max_digits10) << it_pt->get_oX() << ", " << it_pt->get_oY() << ", " << it_pt->get_oZ()
+                << " / " << it_pt->get_x() << ", " << it_pt->get_y() << " / " << found << " / " << found1 << " / " << found2 << std::endl;
+      if (found) {
+        filterObjectPointMap[*it_pt] = index_pt;
       }
     }
+    std::cout << "\n\n\n\n" << std::endl;
+    for (const auto& kv : filterObjectPointMap) {
+      std::cout << std::setprecision(std::numeric_limits<double>::max_digits10) << kv.first.get_oX() << ", " << kv.first.get_oY() << ", " << kv.first.get_oZ()
+                << " / " << kv.first.get_x() << ", " << kv.first.get_y() << " / " << kv.second << std::endl;
+    }
+
+    std::cout << "\n\n\n\n" << std::endl;
+    std::cout << "found pt1: " << (filterObjectPointMap.find(pt1) != filterObjectPointMap.end()) << std::endl;
+    std::cout << "found pt2: " << (filterObjectPointMap.find(pt2) != filterObjectPointMap.end()) << std::endl;
   }
 
-  return EXIT_SUCCESS;
+  return 0;
 }
-#else
-int main() {
-  std::cerr << "OpenCV 2.3.0 or higher is requested to run the calibration." << std::endl;
-  return EXIT_SUCCESS;
-}
-#endif
-
