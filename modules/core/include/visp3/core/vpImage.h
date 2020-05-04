@@ -1300,6 +1300,10 @@ template <class Type> void vpImage<Type>::halfSizeImage(vpImage<Type> &res) cons
 template <class Type>
 void vpImage<Type>::subsample(unsigned int v_scale, unsigned int h_scale, vpImage<Type> &sampled) const
 {
+  if (v_scale == 1 && h_scale == 1) {
+    sampled = (*this);
+    return;
+  }
   unsigned int h = height / v_scale;
   unsigned int w = width / h_scale;
   sampled.resize(h, w);
