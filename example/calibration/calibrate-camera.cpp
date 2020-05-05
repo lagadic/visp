@@ -198,7 +198,7 @@ int main(int argc, const char **argv)
       }
     }
 
-    while (!reader.end()) {
+    do {
       reader.acquire(I);
 
       long frame_index = reader.getFrameIndex();
@@ -288,7 +288,7 @@ int main(int argc, const char **argv)
         vpDisplay::flush(I);
         vpTime::wait(s.tempo * 1000);
       }
-    }
+    } while (!reader.end());
 
     // Now we consider the multi image calibration
     // Calibrate by a non linear method based on virtual visual servoing
