@@ -257,7 +257,7 @@ int main(int argc, const char **argv)
         for (unsigned int i = 0; i < pointBuf.size(); i++) {
           vpImagePoint ip(pointBuf[i].y, pointBuf[i].x);
           data.push_back(ip);
-          vpDisplay::displayCross(I, ip, 10, vpColor::red);
+          vpDisplay::displayCross(I, ip, 10*vpDisplay::getDownScalingFactor(I), vpColor::red);
         }
 
         // Calibration on a single mono image
@@ -276,12 +276,15 @@ int main(int argc, const char **argv)
       }
 
       if (found)
-        vpDisplay::displayText(I, 15, 15, "Image processing succeed", vpColor::green);
+        vpDisplay::displayText(I, 15*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I),
+                               "Image processing succeed", vpColor::green);
       else
-        vpDisplay::displayText(I, 15, 15, "Image processing fails", vpColor::green);
+        vpDisplay::displayText(I, 15*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I),
+                               "Image processing fails", vpColor::green);
 
       if (s.tempo > 10.f) {
-        vpDisplay::displayText(I, 35, 15, "A click to process the next image", vpColor::green);
+        vpDisplay::displayText(I, 35*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I),
+                               "A click to process the next image", vpColor::green);
         vpDisplay::flush(I);
         vpDisplay::getClick(I);
       } else {
