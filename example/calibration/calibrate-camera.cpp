@@ -51,6 +51,7 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpXmlParserCamera.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
@@ -141,19 +142,36 @@ private:
 int main(int argc, const char **argv)
 {
   try {
-    std::string outputFileName = "camera.xml";
+    std::string opt_output_file_name = "camera.xml";
     Settings s;
-    const std::string inputSettingsFile = argc > 1 ? argv[1] : "default.cfg";
+    const std::string opt_inputSettingsFile = argc > 1 ? argv[1] : "default.cfg";
+    std::string opt_init_camera_xml_file;
+    std::string opt_camera_name = "Camera";
 
-    if (!s.read(inputSettingsFile)) {
-      std::cout << "Could not open the configuration file: \"" << inputSettingsFile << "\"" << std::endl;
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--init-from-xml")
+        opt_init_camera_xml_file = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--camera-name")
+        opt_camera_name = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--output")
+        opt_output_file_name = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+        std::cout << "\nUsage: " << argv[0]
+                  << " [<configuration file>.cfg] [--init-from-xml <camera-init.xml>]"
+                  << " [--camera-name <name>] [--output <file.xml>] [--help] [-h] \n" << std::endl;
+        return EXIT_SUCCESS;
+      }
+    }
+
+    if (!s.read(opt_inputSettingsFile)) {
+      std::cout << "Could not open the configuration file: \"" << opt_inputSettingsFile << "\"" << std::endl;
       std::cout << std::endl << "Usage: " << argv[0] << " <configuration file>.cfg" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     if (!s.goodInput) {
       std::cout << "Invalid input detected. Application stopping. " << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     // Start the calibration code
@@ -165,7 +183,7 @@ int main(int argc, const char **argv)
     }
     catch(const vpException &e) {
       std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
-      std::cout << "Check if input images name \"" << s.input << "\" set in " << inputSettingsFile << " config file is correct..." << std::endl;
+      std::cout << "Check if input images name \"" << s.input << "\" set in " << opt_inputSettingsFile << " config file is correct..." << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -180,14 +198,42 @@ int main(int argc, const char **argv)
 #endif
 
     vpCameraParameters cam;
+    bool init_from_xml = false;
+    if (! opt_init_camera_xml_file.empty()) {
+#ifdef VISP_HAVE_PUGIXML
+      if (! vpIoTools::checkFilename(opt_init_camera_xml_file)) {
+        std::cout << "Input camera file \"" << opt_init_camera_xml_file << "\" doesn't exist!" << std::endl;
+        std::cout << "Modify [--init-from-xml <camera-init.xml>] option value" << std::endl;
+        return EXIT_FAILURE;
+      }
+      init_from_xml = true;
+#else
+      std::cout << "Cannot initialize camera parameters from xml file: " << opt_init_camera_xml_file << std::endl;
+#endif
+    }
+    if (init_from_xml) {
+#ifdef VISP_HAVE_PUGIXML
+      std::cout << "Initialize camera parameters from xml file: " << opt_init_camera_xml_file << std::endl;
+      vpXmlParserCamera parser;
+      if (parser.parse(cam, opt_init_camera_xml_file, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion) != vpXmlParserCamera::SEQUENCE_OK) {
+        std::cout << "Unable to find camera with name \"" << opt_camera_name << "\" in file: " << opt_init_camera_xml_file << std::endl;
+        std::cout << "Modify [--camera-name <name>] option value" << std::endl;
+        return EXIT_FAILURE;
+      }
+#endif
+    }
+    else {
+      std::cout << "Initialize camera parameters with default values " << std::endl;
+      // Initialize camera parameters
+      double px = cam.get_px();
+      double py = cam.get_py();
+      // Set (u0,v0) in the middle of the image
+      double u0 = I.getWidth() / 2;
+      double v0 = I.getHeight() / 2;
+      cam.initPersProjWithoutDistortion(px, py, u0, v0);
+    }
 
-    // Initialize camera parameters
-    double px = cam.get_px();
-    double py = cam.get_py();
-    // Set (u0,v0) in the middle of the image
-    double u0 = I.getWidth() / 2;
-    double v0 = I.getHeight() / 2;
-    cam.initPersProjWithoutDistortion(px, py, u0, v0);
+    std::cout << "Camera parameters used for initialization:\n" << cam << std::endl;
 
     std::vector<vpPoint> model;
     std::vector<vpCalibration> calibrator;
@@ -198,7 +244,7 @@ int main(int argc, const char **argv)
       }
     }
 
-    while (!reader.end()) {
+    do {
       reader.acquire(I);
 
       long frame_index = reader.getFrameIndex();
@@ -257,7 +303,7 @@ int main(int argc, const char **argv)
         for (unsigned int i = 0; i < pointBuf.size(); i++) {
           vpImagePoint ip(pointBuf[i].y, pointBuf[i].x);
           data.push_back(ip);
-          vpDisplay::displayCross(I, ip, 10, vpColor::red);
+          vpDisplay::displayCross(I, ip, 10*vpDisplay::getDownScalingFactor(I), vpColor::red);
         }
 
         // Calibration on a single mono image
@@ -276,19 +322,22 @@ int main(int argc, const char **argv)
       }
 
       if (found)
-        vpDisplay::displayText(I, 15, 15, "Image processing succeed", vpColor::green);
+        vpDisplay::displayText(I, 15*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I),
+                               "Image processing succeed", vpColor::green);
       else
-        vpDisplay::displayText(I, 15, 15, "Image processing fails", vpColor::green);
+        vpDisplay::displayText(I, 15*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I),
+                               "Image processing fails", vpColor::green);
 
       if (s.tempo > 10.f) {
-        vpDisplay::displayText(I, 35, 15, "A click to process the next image", vpColor::green);
+        vpDisplay::displayText(I, 35*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I),
+                               "A click to process the next image", vpColor::green);
         vpDisplay::flush(I);
         vpDisplay::getClick(I);
       } else {
         vpDisplay::flush(I);
         vpTime::wait(s.tempo * 1000);
       }
-    }
+    } while (!reader.end());
 
     // Now we consider the multi image calibration
     // Calibrate by a non linear method based on virtual visual servoing
@@ -330,12 +379,12 @@ int main(int argc, const char **argv)
 #ifdef VISP_HAVE_PUGIXML
       vpXmlParserCamera xml;
 
-      if (xml.save(cam, outputFileName.c_str(), "Camera", I.getWidth(), I.getHeight()) ==
+      if (xml.save(cam, opt_output_file_name.c_str(), opt_camera_name, I.getWidth(), I.getHeight()) ==
           vpXmlParserCamera::SEQUENCE_OK)
-        std::cout << "Camera parameters without distortion successfully saved in \"" << outputFileName << "\""
+        std::cout << "Camera parameters without distortion successfully saved in \"" << opt_output_file_name << "\""
                   << std::endl;
       else {
-        std::cout << "Failed to save the camera parameters without distortion in \"" << outputFileName << "\""
+        std::cout << "Failed to save the camera parameters without distortion in \"" << opt_output_file_name << "\""
                   << std::endl;
         std::cout << "A file with the same name exists. Remove it to be able "
                      "to save the parameters..."
@@ -357,12 +406,12 @@ int main(int argc, const char **argv)
 #ifdef VISP_HAVE_PUGIXML
       vpXmlParserCamera xml;
 
-      if (xml.save(cam, outputFileName.c_str(), "Camera", I.getWidth(), I.getHeight(), ss_additional_info.str()) ==
+      if (xml.save(cam, opt_output_file_name.c_str(), opt_camera_name, I.getWidth(), I.getHeight(), ss_additional_info.str()) ==
           vpXmlParserCamera::SEQUENCE_OK)
-        std::cout << "Camera parameters without distortion successfully saved in \"" << outputFileName << "\""
+        std::cout << "Camera parameters without distortion successfully saved in \"" << opt_output_file_name << "\""
                   << std::endl;
       else {
-        std::cout << "Failed to save the camera parameters without distortion in \"" << outputFileName << "\""
+        std::cout << "Failed to save the camera parameters without distortion in \"" << opt_output_file_name << "\""
                   << std::endl;
         std::cout << "A file with the same name exists. Remove it to be able "
                      "to save the parameters..."

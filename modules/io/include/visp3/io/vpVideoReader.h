@@ -324,6 +324,8 @@ public:
     \return Returns the frame step value.
   */
   inline long getFrameStep() const { return m_frameStep; }
+
+  bool isVideoFormat() const;
   void open(vpImage<vpRGBa> &I);
   void open(vpImage<unsigned char> &I);
 
