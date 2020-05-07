@@ -106,6 +106,10 @@ before_install:
   - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libzbar-dev libdmtx-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq ant; fi"
 
+  # Workaround for linux + bionic + clang config where during test libomp.so is not found:
+  # error while loading shared libraries: libomp.so: cannot open shared object file: No such file or directory
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_COMPILER = 'clang' ]; then export LD_LIBRARY_PATH=/usr/local/clang-7.0.0/lib:$LD_LIBRARY_PATH; fi"
+
 before_script:
   - mkdir build
   - cd build

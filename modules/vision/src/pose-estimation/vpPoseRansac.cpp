@@ -68,6 +68,13 @@ namespace
 struct CompareObjectPointDegenerate {
   bool operator()(const vpPoint &point1, const vpPoint &point2) const
   {
+    const double dist1 = point1.get_oX()*point1.get_oX() + point1.get_oY()*point1.get_oY() + point1.get_oZ()*point1.get_oZ();
+    const double dist2 = point2.get_oX()*point2.get_oX() + point2.get_oY()*point2.get_oY() + point2.get_oZ()*point2.get_oZ();
+    if (dist1 - dist2 < -3*eps*eps)
+      return true;
+    if (dist1 - dist2 > 3*eps*eps)
+      return false;
+
     if (point1.oP[0] - point2.oP[0] < -eps)
       return true;
     if (point1.oP[0] - point2.oP[0] > eps)
@@ -91,6 +98,13 @@ struct CompareObjectPointDegenerate {
 struct CompareImagePointDegenerate {
   bool operator()(const vpPoint &point1, const vpPoint &point2) const
   {
+    const double dist1 = point1.get_x()*point1.get_x() + point1.get_y()*point1.get_y();
+    const double dist2 = point2.get_x()*point2.get_x() + point2.get_y()*point2.get_y();
+    if (dist1 - dist2 < -2*eps*eps)
+      return true;
+    if (dist1 - dist2 > 2*eps*eps)
+      return false;
+
     if (point1.p[0] - point2.p[0] < -eps)
       return true;
     if (point1.p[0] - point2.p[0] > eps)

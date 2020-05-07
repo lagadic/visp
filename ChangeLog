@@ -38,6 +38,7 @@ ViSP 3.3.1 (under development)
       for X, Y and Z axis
     . [#731] Link issues using pkgconfig with static libraries
     . [#735] MKL and GSL Blas/Lapack 3rd parties incompatibility
+    . [#750] Cannot detect OpenMP with clang on MacOS
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:
