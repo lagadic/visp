@@ -279,8 +279,8 @@ int main(int argc, const char **argv)
     ss_additional_info << "<board_size>" << s.boardSize.width << "x" << s.boardSize.height << "</board_size>";
     ss_additional_info << "<square_size>" << s.squareSize << "</square_size>";
 
-    std::cout << "\nCalibration without distortion in progress on " << calibrator.size() << " images..." << std::endl;
     double error;
+    std::cout << "\nCalibration without distortion in progress on " << calibrator.size() << " images..." << std::endl;
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS, calibrator, cam, error, false) == EXIT_SUCCESS) {
       std::cout << cam << std::endl;
       vpDisplay::setTitle(I, "Reprojection error");
@@ -342,9 +342,34 @@ int main(int argc, const char **argv)
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST, calibrator, cam, error, false) ==
         EXIT_SUCCESS) {
       std::cout << cam << std::endl;
+      vpDisplay::setTitle(I, "Reprojection error");
 
       for (size_t i = 0; i < calibrator.size(); i++) {
-        std::cout << i << ") reprojection error: " << sqrt(calibrator[i].getResidual_dist()/calibrator[i].get_npt()) << std::endl;
+        double reproj_error = sqrt(calibrator[i].getResidual_dist()/calibrator[i].get_npt());
+        std::cout << i << ") reprojection error: " << reproj_error << std::endl;
+
+        const CalibInfo& calib = calib_info[i];
+        I = calib.m_img;
+        vpDisplay::display(I);
+
+        std::ostringstream ss;
+        ss << "reprojection error: " << reproj_error;
+        vpDisplay::displayText(I, 15, 15, ss.str(), vpColor::red);
+        vpDisplay::displayText(I, 30, 15, "extracted points", vpColor::red);
+        vpDisplay::displayText(I, 45, 15, "projected points", vpColor::green);
+
+        for (size_t idx = 0; idx < calib.m_points.size(); idx++) {
+          vpDisplay::displayCross(I, calib.m_imPts[idx], 12, vpColor::red);
+
+          vpPoint pt = calib.m_points[idx];
+          pt.project(calibrator[i].cMo_dist);
+          vpImagePoint imPt;
+          vpMeterPixelConversion::convertPoint(cam, pt.get_x(), pt.get_y(), imPt);
+          vpDisplay::displayCross(I, imPt, 12, vpColor::green);
+        }
+
+        vpDisplay::flush(I);
+        vpDisplay::getClick(I);
       }
 
       std::cout << "\nGlobal reprojection error: " << error << std::endl;
@@ -361,11 +386,11 @@ int main(int argc, const char **argv)
     vpDisplayOpenCV d_undist(I_undist, I.getWidth(), 0, "Undistorted image", vpDisplay::SCALE_AUTO);
 #endif
 
-      vpDisplay::setTitle(I, "Line fitting on distorted image");
-      vpDisplay::setTitle(I_undist, "Line fitting on undistorted image");
-      std::cout << "\nThis tool computes the line fitting error (RMSE) on image points extracted from the raw distorted image"
-                << " and on image points after undistortion (vpPixelMeterConversion::convertPoint())." << std::endl;
+      vpDisplay::setTitle(I, "Straight lines have to be straight (distorted image)");
+      vpDisplay::setTitle(I_undist, "Straight lines have to be straight (undistorted image)");
       for (size_t idx = 0; idx < calib_info.size(); idx++) {
+        std::cout << "\nThis tool computes the line fitting error (mean distance error) on image points extracted from the raw distorted image." << std::endl;
+
         I = calib_info[idx].m_img;
         vpImageTools::undistort(I, cam, I_undist);
 
@@ -380,8 +405,8 @@ int main(int argc, const char **argv)
 
           std::vector<vpImagePoint> current_line_undist = undistort(cam, current_line);
           double a = 0, b = 0, c = 0;
-          double line_fitting_error = lineFitting(current_line, a, b, c);
-          double line_fitting_error_undist = lineFitting(current_line_undist, a, b, c);
+          double line_fitting_error = vpMath::lineFitting(current_line, a, b, c);
+          double line_fitting_error_undist = vpMath::lineFitting(current_line_undist, a, b, c);
           std::cout << "Line fitting error on distorted points: " << line_fitting_error
                     << " ; on undistorted points: " << line_fitting_error_undist << std::endl;
 
@@ -390,7 +415,7 @@ int main(int argc, const char **argv)
           vpDisplay::displayLine(I, ip1, ip2, vpColor::red);
         }
 
-        std::cout << "\nThis tool computes the line fitting error (RMSE) on image points extracted from the undistorted image"
+        std::cout << "\nThis tool computes the line fitting error (mean distance error) on image points extracted from the undistorted image"
                   << " (vpImageTools::undistort())." << std::endl;
         cv::Mat cvI;
         std::vector<cv::Point2f> pointBuf;
@@ -402,27 +427,19 @@ int main(int argc, const char **argv)
           for (unsigned int i = 0; i < pointBuf.size(); i++) {
             vpImagePoint ip(pointBuf[i].y, pointBuf[i].x);
             grid_points.push_back(ip);
-            vpDisplay::displayCross(I_undist, ip, 10, vpColor::red);
           }
 
-          std::cout << std::endl;
-          vpDisplay::displayText(I_undist, 15, 15, "Draw fitting lines from extracted points (cross).", vpColor::red);
+          vpDisplay::displayText(I_undist, 15, 15, "Draw lines from first / last points.", vpColor::red);
           for (int i = 0; i < s.boardSize.height; i++) {
             std::vector<vpImagePoint> current_line(grid_points.begin() + i*s.boardSize.width,
                                                    grid_points.begin() + (i+1)*s.boardSize.width);
 
             double a = 0, b = 0, c = 0;
-            double line_fitting_error = lineFitting(current_line, a, b, c);
+            double line_fitting_error = vpMath::lineFitting(current_line, a, b, c);
             std::cout << "Undistorted image, line fitting error: " << line_fitting_error << std::endl;
 
-            vpImagePoint ip1;
-            ip1.set_u(current_line.front().get_u());
-            ip1.set_v( -(c + a*ip1.get_u()) / b );
-
-            vpImagePoint ip2;
-            ip2.set_u(current_line.back().get_u());
-            ip2.set_v( -(c + a*ip2.get_u()) / b );
-
+            vpImagePoint ip1 = current_line.front();
+            vpImagePoint ip2 = current_line.back();
             vpDisplay::displayLine(I_undist, ip1, ip2, vpColor::red);
           }
         }

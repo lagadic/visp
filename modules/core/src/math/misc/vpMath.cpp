@@ -49,6 +49,7 @@
 
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpMatrix.h>
 
 #if defined(VISP_HAVE_FUNC__ISNAN)
 #include <float.h>
@@ -141,7 +142,6 @@ double vpMath::mcosc(double cosx, double x)
 }
 
 /*!
-
   Compute \f$ (1-sinc(x))/x^2 \f$ with \f$ sinc(x) = sinx / x \f$.
 
   \param sinx : value of sin(x).
@@ -159,7 +159,6 @@ double vpMath::msinc(double sinx, double x)
 }
 
 /*!
-
   Compute sinus cardinal \f$ \frac{sin(x)}{x} \f$.
 
   \param x : Value of x.
@@ -175,7 +174,6 @@ double vpMath::sinc(double x)
     return sin(x) / x;
 }
 /*!
-
   Compute sinus cardinal \f$ \frac{sin(x)}{x}\f$.
 
   \param sinx : Value of sin(x).
@@ -271,6 +269,49 @@ double vpMath::getStdev(const std::vector<double> &v, bool useBesselCorrection)
   }
 
   return std::sqrt(sq_sum / divisor);
+}
+
+/*!
+  Compute the line equation using least-squares fitting: \f$ ax + by + c = 0 \f$
+
+  \param imPts : Image points (size  >= 3).
+  \param a : a coefficient.
+  \param b : b coefficient.
+  \param c : c coefficient.
+
+  \return The mean distance error (point-to-line distance) between the points and the fitted line.
+*/
+double vpMath::lineFitting(const std::vector<vpImagePoint>& imPts, double& a, double& b, double& c)
+{
+  if (imPts.size() < 3) {
+    throw vpException(vpException::dimensionError, "Number of image points must be greater or equal to 3.");
+  }
+
+  vpMatrix A(static_cast<unsigned int>(imPts.size()), 3);
+
+  for (size_t i = 0; i < imPts.size(); i++) {
+    A[static_cast<unsigned int>(i)][0] = imPts[i].get_u();
+    A[static_cast<unsigned int>(i)][1] = imPts[i].get_v();
+    A[static_cast<unsigned int>(i)][2] = 1;
+  }
+
+  vpColVector w;
+  vpMatrix v;
+  A.svd(w, v);
+
+  a = v[0][2];
+  b = v[1][2];
+  c = v[2][2];
+
+  double error = 0;
+  for (size_t i = 0; i < imPts.size(); i++) {
+    double x0 = imPts[i].get_u();
+    double y0 = imPts[i].get_v();
+
+    error += std::fabs(a*x0 + b*y0 + c) / sqrt(a*a + b*b);
+  }
+
+  return error / imPts.size();
 }
 
 /*!

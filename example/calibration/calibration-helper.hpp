@@ -220,35 +220,6 @@ bool extractCalibrationPoints(const Settings &s, const cv::Mat &cvI, std::vector
     return found;
 }
 
-double lineFitting(const std::vector<vpImagePoint>& imPts, double& a, double& b, double& c)
-{
-  vpMatrix A(static_cast<unsigned int>(imPts.size()), 3);
-
-  for (size_t i = 0; i < imPts.size(); i++) {
-    A[static_cast<unsigned int>(i)][0] = imPts[i].get_u();
-    A[static_cast<unsigned int>(i)][1] = imPts[i].get_v();
-    A[static_cast<unsigned int>(i)][2] = 1;
-  }
-
-  vpColVector w;
-  vpMatrix v;
-  A.svd(w, v);
-
-  a = v[0][2];
-  b = v[1][2];
-  c = v[2][2];
-
-  double rms_error = 0;
-  for (size_t i = 0; i < imPts.size(); i++) {
-    double x0 = imPts[i].get_u();
-    double y0 = imPts[i].get_v();
-
-    rms_error += std::fabs(a*x0 + b*y0 + c) / sqrt(a*a + b*b);
-  }
-
-  return rms_error / imPts.size();
-}
-
 } //calib_helper
 
 #endif //DOXYGEN_SHOULD_SKIP_THIS
