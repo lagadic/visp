@@ -48,7 +48,16 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+namespace {
+void convertLineEquation(double A, double B, double C, double& a, double& b)
+{
+  a = -A/B;
+  b = C/B;
+}
+}
+
 TEST_CASE("Line fitting - Horizontal", "[line_fitting]") {
+  std::cout << "\nLine fitting - Horizontal" << std::endl;
   double a = 0, b = 10;
   std::vector<vpImagePoint> imPts;
   for (int i = 0; i < 3; i++) {
@@ -62,7 +71,8 @@ TEST_CASE("Line fitting - Horizontal", "[line_fitting]") {
   std::cout << "error: " << error << std::endl;
   std::cout << "a: " << a << " ; b: " << b << std::endl;
   std::cout << "A: " << A << " ; B: " << B << " ; C: " << C << std::endl;
-  double a_est = -A/B, b_est = -C/B;
+  double a_est = 0, b_est = 0;
+  convertLineEquation(A, B, C, a_est, b_est);
   std::cout << "-A/B: " << a_est << " ; -C/B: " << b_est << std::endl;
 
   CHECK(a == Approx(a_est).margin(1e-6));
@@ -70,6 +80,7 @@ TEST_CASE("Line fitting - Horizontal", "[line_fitting]") {
 }
 
 TEST_CASE("Line fitting", "[line_fitting]") {
+  std::cout << "\nLine fitting" << std::endl;
   double a = -4.68, b = 21.456;
   std::vector<vpImagePoint> imPts;
   const int nbPoints = 10;
@@ -85,7 +96,8 @@ TEST_CASE("Line fitting", "[line_fitting]") {
   std::cout << "error: " << error << std::endl;
   std::cout << "a: " << a << " ; b: " << b << std::endl;
   std::cout << "A: " << A << " ; B: " << B << " ; C: " << C << std::endl;
-  double a_est = -A/B, b_est = -C/B;
+  double a_est = 0, b_est = 0;
+  convertLineEquation(A, B, C, a_est, b_est);
   std::cout << "-A/B: " << a_est << " ; -C/B: " << b_est << std::endl;
 
   CHECK(a == Approx(a_est).epsilon(1e-6));
@@ -93,7 +105,8 @@ TEST_CASE("Line fitting", "[line_fitting]") {
 }
 
 TEST_CASE("Line fitting - Gaussian noise", "[line_fitting]") {
-  const double sigma = 1, mean = 0;
+  std::cout << "\nLine fitting - Gaussian noise" << std::endl;
+  const double sigma = 3, mean = 0;
   vpGaussRand gauss(sigma, mean);
 
   double a = -4.68, b = 21.456;
@@ -112,7 +125,8 @@ TEST_CASE("Line fitting - Gaussian noise", "[line_fitting]") {
   std::cout << "error: " << error << std::endl;
   std::cout << "a: " << a << " ; b: " << b << std::endl;
   std::cout << "A: " << A << " ; B: " << B << " ; C: " << C << std::endl;
-  double a_est = -A/B, b_est = -C/B;
+  double a_est = 0, b_est = 0;
+  convertLineEquation(A, B, C, a_est, b_est);
   std::cout << "-A/B: " << a_est << " ; -C/B: " << b_est << std::endl;
 
   REQUIRE(error < sigma);

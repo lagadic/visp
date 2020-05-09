@@ -272,7 +272,10 @@ double vpMath::getStdev(const std::vector<double> &v, bool useBesselCorrection)
 }
 
 /*!
-  Compute the line equation using least-squares fitting: \f$ ax + by + c = 0 \f$
+  Compute the line equation using least-squares fitting that minimizes the cost function:
+  \f[
+    \mathbf{E} = \sum_{i=1}^{n}\left ( ax_i + by_i - c \right )^2
+  \f]
 
   \param imPts : Image points (size  >= 3).
   \param a : a coefficient.
@@ -287,28 +290,38 @@ double vpMath::lineFitting(const std::vector<vpImagePoint>& imPts, double& a, do
     throw vpException(vpException::dimensionError, "Number of image points must be greater or equal to 3.");
   }
 
-  vpMatrix A(static_cast<unsigned int>(imPts.size()), 3);
-
+  double x_mean = 0, y_mean = 0;
   for (size_t i = 0; i < imPts.size(); i++) {
-    A[static_cast<unsigned int>(i)][0] = imPts[i].get_u();
-    A[static_cast<unsigned int>(i)][1] = imPts[i].get_v();
-    A[static_cast<unsigned int>(i)][2] = 1;
+    const vpImagePoint& imPt = imPts[i];
+    x_mean += imPt.get_u();
+    y_mean += imPt.get_v();
   }
+  x_mean /= imPts.size();
+  y_mean /= imPts.size();
 
-  vpColVector w;
-  vpMatrix v;
-  A.svd(w, v);
+  vpMatrix AtA(2, 2, 0.0);
+  for (size_t i = 0; i < imPts.size(); i++) {
+    const vpImagePoint& imPt = imPts[i];
+    AtA[0][0] += (imPt.get_u() - x_mean)*(imPt.get_u() - x_mean);
+    AtA[0][1] += (imPt.get_u() - x_mean)*(imPt.get_v() - y_mean);
+    AtA[1][1] += (imPt.get_v() - y_mean)*(imPt.get_v() - y_mean);
+  }
+  AtA[1][0] = AtA[0][1];
 
-  a = v[0][2];
-  b = v[1][2];
-  c = v[2][2];
+  vpColVector eigenvalues;
+  vpMatrix eigenvectors;
+  AtA.eigenValues(eigenvalues, eigenvectors);
+
+  a = eigenvectors[0][0];
+  b = eigenvectors[1][0];
+  c = a*x_mean + b*y_mean;
 
   double error = 0;
   for (size_t i = 0; i < imPts.size(); i++) {
     double x0 = imPts[i].get_u();
     double y0 = imPts[i].get_v();
 
-    error += std::fabs(a*x0 + b*y0 + c) / sqrt(a*a + b*b);
+    error += std::fabs(a*x0 + b*y0 - c);
   }
 
   return error / imPts.size();
