@@ -4743,7 +4743,7 @@ void vpMatrix::insert(const vpMatrix &A, unsigned int r, unsigned int c)
   Compute the eigenvalues of a n-by-n real symmetric matrix using
   Lapack 3rd party.
 
-  \return The eigenvalues of a n-by-n real symmetric matrix.
+  \return The eigenvalues of a n-by-n real symmetric matrix, sorted in ascending order.
 
   \exception vpException::dimensionError If the matrix is not square.
   \exception vpException::fatalError If the matrix is not symmetric.
@@ -4851,9 +4851,9 @@ vpColVector vpMatrix::eigenValues() const
   Lapack 3rd party.
   \return The eigenvalues of a n-by-n real symmetric matrix.
 
-  \param evalue : Eigenvalues of the matrix.
+  \param evalue : Eigenvalues of the matrix, sorted in ascending order.
 
-  \param evector : Eigenvector of the matrix.
+  \param evector : Corresponding eigenvectors of the matrix.
 
   \exception vpException::dimensionError If the matrix is not square.
   \exception vpException::fatalError If the matrix is not symmetric.
@@ -4895,7 +4895,6 @@ int main()
 \endcode
 
 \sa eigenValues()
-
 */
 void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
 {
@@ -4973,7 +4972,7 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
   {
     throw(vpException(vpException::functionNotImplementedError,
                       "Eigen values computation is not implemented. "
-                      "You should install GSL rd party"));
+                      "You should install Lapack 3rd party"));
   }
 #endif
 }
