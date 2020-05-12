@@ -52,55 +52,55 @@ To calibrate your camera you need to take snapshots of one of these two patterns
 To this end see \ref tutorial-grabber and use one of the binaries that could be found in `tutorial/grabber` folder to grab single shot images of the grid. 
 
 For example, with a webcam connected to a laptop running Linux (Ubuntu, Fedora...) use one of the following:
-\code
+\verbatim
 ./tutorial-grabber-v4l2 --seqname chessboard-%02d.png --record 1
 ./tutorial-grabber-opencv --seqname chessboard-%02d.png --record 1
-\endcode
+\endverbatim
 
 If you have rather a PointGrey camera use one of the following:
-\code
+\verbatim
 ./tutorial-grabber-1394 --seqname chessboard-%02d.png --record 1
 ./tutorial-grabber-flycapture --seqname chessboard-%02d.png --record 1
-\endcode
+\endverbatim
 
 If you have rather a firewire camera that doesn't come from PointGrey use one of the following:
-\code
+\verbatim
 ./tutorial-grabber-1394 --seqname chessboard-%02d.png --record 1
 ./tutorial-grabber-opencv --seqname chessboard-%02d.png --record 1
-\endcode
+\endverbatim
 
 If you have a Basler camera use rather:
-\code
+\verbatim
 ./tutorial-grabber-basler-pylon --seqname chessboard-%02d.png --record 1
-\endcode
+\endverbatim
 
 If you have a Realsense camera use rather:
-\code
+\verbatim
 ./tutorial-grabber-realsense --seqname chessboard-%02d.png --record 1
-\endcode
+\endverbatim
 
 If you have a Parrot Bebop 2 drone camera use rather:
-\code
+\verbatim
 ./tutorial-grabber-bebop2 --seqname chessboard-%02d.png --record 1
-\endcode
+\endverbatim
 or, if you want to calibrate the camera for HD 720p usage :
-\code
+\verbatim
 ./tutorial-grabber-bebop2 --seqname chessboard-%02d.png --record 1 --hd_resolution
-\endcode
+\endverbatim
 
 In all other cases, try with:
-\code
+\verbatim
 ./tutorial-grabber-opencv --seqname chessboard-%02d.png --record 1
-\endcode
+\endverbatim
 
-
-\section calibration_source_code Source code
+\section calibration Calibration
+\subsection calibration_source_code Source code
 
 All the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
-\code
+\verbatim
 $ svn export https://github.com/lagadic/visp.git/trunk/example/calibration
-\endcode
+\endverbatim
 
 The calibration tool is available in \c calibrate_camera.cpp located in \c example/calibration folder.
 
@@ -110,14 +110,14 @@ We will not describe in detail the source, but just mention that:
 - the calibration tool takes as input a configuration file that allows to precise the kind of pattern used in the images (chessboard or circles grid), and the location of the images used as input. If \c libjpeg and \c libpng 3rd party libraries are installed and detected during ViSP configuration, you may consider .pgm, .ppm, .jpg, .png images. Default configuration files are provided in \c example/calibration folder;
 - the resulting parameters are saved in \c camera.xml file. 
 
-\section calibration_chessboard Calibration from a chessboard
+\subsection calibration_chessboard With a chessboard
 
 In this section we consider the OpenCV chessboard pattern that has a size of 9 by 6. Each square of the chessboard is 0.025 meters large. We took 5 images called \c chessboard-01.png, \c chessboard-02.png, ..., \c chessboard-05.png. Hereafter we give an example of one of these images. 
 
 \image html img-chessboard-01.png Snapshot example of the 9 by 6 chessboard used to calibrate the camera.
 
 Before starting the calibration we need to create a configuration file. We create \c default-chessboard.cfg with the following content:
-\code
+\verbatim
 # Number of inner corners per a item row and column. (square, circle)
 BoardSize_Width: 9
 BoardSize_Height: 6
@@ -134,64 +134,92 @@ Input: chessboard-%02d.png
 
 # Tempo in seconds between two images. If > 10 wait a click to continue
 Tempo: 1
-\endcode
+\endverbatim
 
 \note The images and the configuration file used in this tutorial are available in ViSP source code and copied in the same folder than the \c calibrate_camera binary. 
 
 To estimate the camera parameters, just enter in ViSP \c \<binary_dir\>/examples/calibration and run:
-\code
+\verbatim
 ./calibrate-camera default-chessboard.cfg
-\endcode
+\endverbatim
 
 This command will produce the following output:
-\code
+\verbatim
+$ ./calibrate-camera default-chessboard.cfg 
+Settings from config file: default-chessboard.cfg
 grid width : 9
 grid height: 6
 square size: 0.025
 pattern    : CHESSBOARD
 input seq  : chessboard-%02d.png
 tempo      : 1
-frame: 1, status: 1, image used as input data
-frame: 2, status: 1, image used as input data
-frame: 3, status: 1, image used as input data
-frame: 4, status: 1, image used as input data
-frame: 5, status: 1, image used as input data
 
-Calibration without distorsion in progress on 5 images...
+Settings from command line options: 
+Ouput xml file : camera.xml
+Camera name    : Camera
+Initialize camera parameters with default values 
+Camera parameters used for initialization:
 Camera parameters for perspective projection without distortion:
-  px = 278.5184659	 py = 273.9720502
-  u0 = 162.1161106	 v0 = 113.1789595
+  px = 600	 py = 600
+  u0 = 160	 v0 = 120
 
-Global reprojection error: 0.2784261067
+frame: chessboard-01.png, grid detection status: 1, image used as input data
+frame: chessboard-02.png, grid detection status: 1, image used as input data
+frame: chessboard-03.png, grid detection status: 1, image used as input data
+frame: chessboard-04.png, grid detection status: 1, image used as input data
+frame: chessboard-05.png, grid detection status: 1, image used as input data
+
+Calibration without distortion in progress on 5 images...
+Camera parameters for perspective projection without distortion:
+  px = 278.4691133	 py = 273.919644
+  u0 = 162.0747622	 v0 = 113.1741874
+
+Image chessboard-01.png reprojection error: 0.2838491106
+Image chessboard-02.png reprojection error: 0.2942998857
+Image chessboard-03.png reprojection error: 0.2929256796
+Image chessboard-04.png reprojection error: 0.2303723931
+Image chessboard-05.png reprojection error: 0.2840455654
+
+Global reprojection error: 0.2781156295
 Camera parameters without distortion successfully saved in "camera.xml"
 
-Calibration with distorsion in progress on 5 images...
+
+Calibration with distortion in progress on 5 images...
 Camera parameters for perspective projection with distortion:
-  px = 276.3370556	 py = 271.9804892
-  u0 = 162.3656808	 v0 = 113.4484506
-  kud = 0.02739893948
-  kdu = -0.02719442967
+  px = 276.2969157	 py = 271.936205
+  u0 = 162.3242176	 v0 = 113.4435435
+  kud = 0.02725497499
+  kdu = -0.0270531618
 
-Global reprojection error: 0.2602153289
+Image chessboard-01.png reprojection error: 0.250220575
+Image chessboard-02.png reprojection error: 0.2799738954
+Image chessboard-03.png reprojection error: 0.2893539813
+Image chessboard-04.png reprojection error: 0.2233826617
+Image chessboard-05.png reprojection error: 0.2511659761
+
+Global reprojection error: 0.2600689246
+...
+Found camera with name: "Camera"
 Camera parameters without distortion successfully saved in "camera.xml"
 
-Estimated pose on input data 0: 0.1004079988  0.07228624926  0.2759094615  0.1622201484  -0.04594748279  -3.067523182  
-Estimated pose on input data 1: 0.1126235389  0.09590025615  0.2967542475  0.5743609549  -0.1960511892  -2.915893698  
-Estimated pose on input data 2: 0.09983133876  0.08044014071  0.2920209765  -0.02917708148  -0.6751719307  3.046437745  
-Estimated pose on input data 3: 0.07481330068  0.0832284992  0.2825482261  -0.09487329058  -0.220597075  -2.747906623  
-Estimated pose on input data 4: 0.08061439562  0.08765353523  0.2837166409  0.1009190234  -0.09325252997  -2.906079819
-\endcode
+Estimated pose using vpPoseVector format: [tx ty tz tux tuy tuz] with translation in meter and rotation in rad
+Estimated pose on input data extracted from chessboard-01.png: 0.1004466334  0.07229049716  0.2758692677  0.1621823026  -0.0458164854  -3.067508741
+Estimated pose on input data extracted from chessboard-02.png: 0.112665261  0.09590547941  0.2966974805  0.5742169145  -0.1960409946  -2.915910358
+Estimated pose on input data extracted from chessboard-03.png: 0.09987364227  0.0804425663  0.2919718007  -0.0290942939  -0.6750849954  3.046415023
+Estimated pose on input data extracted from chessboard-04.png: 0.07485768806  0.0832409091  0.2825267464  -0.09482399776  -0.2203175085  -2.74790008
+Estimated pose on input data extracted from chessboard-05.png: 0.08065827338  0.08766040109  0.2836760495  0.101029169  -0.09323618077  -2.906074386
+\endverbatim
 
 The resulting parameters are also saved in `./camera.xml` file.
 
-\section calibration_circle Calibration from a circles grid
+\subsection calibration_circle With a circles grid
 
 In this section we consider the ViSP symmetric circles grid pattern that has a size of 6 by 6. Each circle center of gravity is 0.034 meters distant from it's horizontal or vertical neighbor. We took 5 images called \c circles-01.pgm, \c circles-02.pgm, ..., \c circles-05.pgm. Hereafter we give an example of such an image. 
 
 \image html img-circles-grid-02.png Snapshot example of the symmetric circles grid used to calibrate the camera.
 
 Before starting the calibration we need to create a configuration file. We create \c circles-grid.cfg with the following content:
-\code
+\verbatim
 # Number of inner corners per a item row and column. (square, circle)
 BoardSize_Width: 6
 BoardSize_Height: 6
@@ -208,64 +236,257 @@ Input: circles-%02d.pgm
 
 # Tempo in seconds between two images. If > 10 wait a click to continue
 Tempo: 1
-\endcode
+\endverbatim
 
 \note The images and the configuration file used in this tutorial are available in ViSP source code and copied in the same folder than the \c calibrate_camera binary. 
 
 To estimate the camera parameters, just enter in ViSP \c \<binary_dir\>/examples/calibration and run:
-\code
+\verbatim
 ./calibrate-camera circles-grid.cfg
-\endcode
+\endverbatim
 
 This command will produce the following output:
-\code
+\verbatim
+Settings from config file: default-circles.cfg
 grid width : 6
 grid height: 6
 square size: 0.034
 pattern    : CIRCLES_GRID
 input seq  : circles-%02d.png
 tempo      : 1
-frame: 1, status: 1, image used as input data
-frame: 2, status: 1, image used as input data
-frame: 3, status: 1, image used as input data
-frame: 4, status: 1, image used as input data
-frame: 5, status: 1, image used as input data
 
-Calibration without distorsion in progress on 5 images...
+Settings from command line options: 
+Ouput xml file : camera.xml
+Camera name    : Camera
+Initialize camera parameters with default values 
+Camera parameters used for initialization:
 Camera parameters for perspective projection without distortion:
-  px = 276.7844987	 py = 273.2284128
-  u0 = 164.029061	 v0 = 113.2926414
+  px = 600	 py = 600
+  u0 = 160	 v0 = 120
+
+frame: circles-01.png, grid detection status: 1, image used as input data
+frame: circles-02.png, grid detection status: 1, image used as input data
+frame: circles-03.png, grid detection status: 1, image used as input data
+frame: circles-04.png, grid detection status: 1, image used as input data
+frame: circles-05.png, grid detection status: 1, image used as input data
+
+Calibration without distortion in progress on 5 images...
+Camera parameters for perspective projection without distortion:
+  px = 276.7844986	 py = 273.2284128
+  u0 = 164.0290612	 v0 = 113.2926415
+
+Image circles-01.png reprojection error: 0.3208042803
+Image circles-02.png reprojection error: 0.3407620251
+Image circles-03.png reprojection error: 0.2585271055
+Image circles-04.png reprojection error: 0.3512731001
+Image circles-05.png reprojection error: 0.3426717315
 
 Global reprojection error: 0.3245572722
 Camera parameters without distortion successfully saved in "camera.xml"
 
-Calibration with distorsion in progress on 5 images...
+
+Calibration with distortion in progress on 5 images...
 Camera parameters for perspective projection with distortion:
   px = 272.6576029	 py = 268.9209423
   u0 = 163.3267494	 v0 = 112.9548567
   kud = 0.03132515383
   kdu = -0.03098719022
 
+Image circles-01.png reprojection error: 0.2710474336
+Image circles-02.png reprojection error: 0.3062950023
+Image circles-03.png reprojection error: 0.2844035852
+Image circles-04.png reprojection error: 0.3376048355
+Image circles-05.png reprojection error: 0.2887550977
+
 Global reprojection error: 0.2985458516
+...
+Found camera with name: "Camera"
 Camera parameters without distortion successfully saved in "camera.xml"
 
-Estimated pose on input data 0: -0.08883802146  -0.07573082723  0.254649414  0.009277810667  -0.1162730223  -0.06217958144  
-Estimated pose on input data 1: -0.03031929668  -0.07792577124  0.226777101  0.04390110018  -0.474640394  0.09584680839  
-Estimated pose on input data 2: 0.02757364367  -0.08075508106  0.2416734821  0.2541005213  -0.469141926  0.5746851856  
-Estimated pose on input data 3: -0.08528071  -0.0552184701  0.216359278  0.433944401  -0.01692119727  -0.01151973247  
-Estimated pose on input data 4: -0.1104723502  -0.0854285443  0.2684946566  0.4130829919  0.1926077657  0.2736623762
-\endcode
+Estimated pose using vpPoseVector format: [tx ty tz tux tuy tuz] with translation in meter and rotation in rad
+Estimated pose on input data extracted from circles-01.png: -0.08883802146  -0.07573082723  0.254649414  0.009277810667  -0.1162730223  -0.06217958144
+Estimated pose on input data extracted from circles-02.png: -0.03031929668  -0.07792577124  0.226777101  0.04390110018  -0.474640394  0.09584680839
+Estimated pose on input data extracted from circles-03.png: 0.02757364367  -0.08075508106  0.2416734821  0.2541005213  -0.469141926  0.5746851856
+Estimated pose on input data extracted from circles-04.png: -0.08528071  -0.0552184701  0.216359278  0.433944401  -0.01692119727  -0.01151973247
+Estimated pose on input data extracted from circles-05.png: -0.1104723502  -0.0854285443  0.2684946566  0.4130829919  0.1926077657  0.2736623762
+\endverbatim
 
 The resulting parameters are also saved in `./camera.xml` file.
 
+\subsection calibration_tools Analysis tools
+
+Since ViSP 3.3.1 we provide a set of tools to analyse calibration results.
+
+\subsubsection calibration_tools_patterns Grid patterns
+
+Running `calibrate-camera` binary allows to visualize the locations of the calibration patterns in the image:
+\image html img-grid-patterns.png
+
+A good calibration is obtained when the patterns cover most part of the image.
+
+\subsubsection calibration_tools_repro_error Reprojection error
+
+Reprojection error could be seen in the next image. It shows the current reprojection error, the extracted points and the projected points using the estimated `cMo` camera pose and camera parameters:
+\image html img-calib-reprojection-error.png
+
+On the console, the global reprojection error is also given:
+\verbatim
+Calibration without distortion in progress on 5 images...
+Global reprojection error: 0.2781156295
+
+Calibration with distortion in progress on 5 images...
+Global reprojection error: 0.2600689246
+\endverbatim
+
+A good calibration is obtained when extracted and reprojected points are very close each other and when global reprojection error is less than 1.0. Smaller is the reprojection error, better is the calibration.
+
+\subsubsection calibration_tools_line_fit Line fitting
+
+To get an idea on how much there is distortion, `calibrate-camera` binary generates also the following images:
+- left image: draw lines starting from the first and last points using points findChessboardCorners() function from OpenCV. This should allow seeing how distorted is the image.
+- right image: image is undistorted, chessboard points are extracted and line fitting is computed. Here lines are drawn from 2D line equations estimated on points extracted from undistorted image (to check that the line fitting is correct)
+
+\image html img-calib-line-fitting.png
+
+On the console, RMS error for line fitting for points extracted from distorted image and after using vpPixelMeterConversion::convertPoint() is given:
+\verbatim
+Line fitting error on distorted points: 0.2630394859 ; on undistorted points: 0.1779744522
+Line fitting error on distorted points: 0.2397191393 ; on undistorted points: 0.1883295563
+Line fitting error on distorted points: 0.1886317017 ; on undistorted points: 0.1713784167
+Line fitting error on distorted points: 0.1453686602 ; on undistorted points: 0.1574874039
+Line fitting error on distorted points: 0.08931020024 ; on undistorted points: 0.1317065326
+Line fitting error on distorted points: 0.03638023684 ; on undistorted points: 0.09802067829
+\endverbatim
+
+RMS error for line fitting for points extracted from undistorted image is also printed on the console:
+\verbatim
+Undistorted image, line fitting error: 0.1631801528
+Undistorted image, line fitting error: 0.198887235
+Undistorted image, line fitting error: 0.1757022415
+Undistorted image, line fitting error: 0.1563067239
+Undistorted image, line fitting error: 0.1330949259
+Undistorted image, line fitting error: 0.07752279553
+\endverbatim
+
+\subsubsection calibration_tools_poses Camera poses
+There is `camera_calibration_show_extrinsics.py` script that allows to display camera poses. Prior to use that script, you need to install `scipy`:
+\verbatim
+$ sudo apt install python-pip
+$ pip install scipy
+\endverbatim
+
+To visualize camera poses used for calibration, run:
+\verbatim
+$ python camera_calibration_show_extrinsics.py --calibration camera.xml --scale_focal 20
+\endverbatim
+It reads the camera poses saved in `camera.xml` file and display them with respect to the calibration grid considered as static.
+\image html img-calib-script-extrinsic.png
+
+\subsection calibration_init How to get over calibration error
+
+The non linear algorithm used for calibration needs an initialization. By default the parameters used as initial guess are the one set in vpCameraParameters default constructor for `px` and `py`, while `u0` and `v0` are set to the image center coordinates. When images are near HD resolution or larger, or when the focal lens is large, this initial guess may be too far from the solution to make the algorithm converging. This behavior is illustrated below:
+\verbatim
+$ ./calibrate-camera chessboard.cfg
+Settings from config file: chessboard.cfg
+grid width : 9
+grid height: 8
+square size: 0.002
+pattern    : CHESSBOARD
+input seq  : image%01d.png
+tempo      : 1
+
+Settings from command line options: 
+Ouput xml file : camera.xml
+Camera name    : Camera
+Initialize camera parameters with default values 
+Camera parameters used for initialization:
+Camera parameters for perspective projection without distortion:
+  px = 600	 py = 600
+  u0 = 640	 v0 = 512
+
+Process frame: image1.png, grid detection status: 1, image used as input data
+frame: image1.png, unable to calibrate from single image, image rejected
+Process frame: image2.png, grid detection status: 1, image used as input data
+frame: image2.png, unable to calibrate from single image, image rejected
+Unable to calibrate. Image processing failed !
+\endverbatim 
+
+The work around is here to give an initial guess not so far from the solution so that it allows the algorithm to converge.
+
+This initial guess is to set in an xml file, like here in `camera-init.xml` file:
+\verbatim
+$ more camera-init.xml
+<?xml version="1.0"?>
+<root>
+  <camera>
+    <name>Camera</name>
+    <image_width>1080</image_width>
+    <image_height>1440</image_height>
+    <model>
+      <type>perspectiveProjWithoutDistortion</type>
+      <!--Pixel ratio-->
+      <px>9700</px>
+      <py>9700</py>
+      <!--Principal point-->
+      <u0>540</u0>
+      <v0>720</v0>
+    </model>
+  </camera>
+</root>
+\endverbatim
+We set the image size, `u0` and `v0` to the image center coordinates, and `px = py = 9700`.
+
+Now to use this file as initial guess, run:
+\verbatim
+$ calibrate-camera chessboard.cfg --init-from-xml camera-init.xml --camera-name Camera
+\endverbatim
+
+It shows that the algorithm is now able to estimate the parameters:
+\verbatim
+Settings from config file: chessboard.cfg
+grid width : 9
+grid height: 8
+square size: 0.002
+pattern    : CHESSBOARD
+input seq  : image%01d.png
+tempo      : 1
+
+Settings from command line options: 
+Init parameters: camera-init.xml
+Ouput xml file : camera.xml
+Camera name    : Camera
+Initialize camera parameters from xml file: camera-init.xml
+Found camera with name: "Camera"
+Camera parameters used for initialization:
+Camera parameters for perspective projection without distortion:
+  px = 9700	 py = 9700
+  u0 = 540	 v0 = 720
+
+Process frame: image1.png, grid detection status: 1, image used as input data
+Process frame: image2.png, grid detection status: 1, image used as input data
+
+Calibration without distortion in progress on 2 images...
+Camera parameters for perspective projection without distortion:
+  px = 9654.217159	 py = 9667.966935
+  u0 = 650.2304211	 v0 = 519.018459
+
+Image image1.png reprojection error: 0.8274370565
+Image image2.png reprojection error: 0.6922641507
+
+Global reprojection error: 0.7628504889
+Camera parameters without distortion successfully saved in "camera.xml"
+\endverbatim
 
 \section calibration_undistort Distorsion removal
 
-Once the camera is calibrated, you can remove the distortion in the images. The following example available in tutorial-undistort.cpp shows how to do it.
+Once the camera is calibrated, you can remove distortion in an image to generate an undistorted image. 
+
+\subsection calibration_undistort_single Undistort a single image 
+The following example available in tutorial-undistort.cpp shows how to do it.
 
 \include tutorial-undistort.cpp
 
-In this example we first load the image \c chessboard.pgm
+In this example we first load the image \c chessboard.png
 \snippet tutorial-undistort.cpp Load image
 
 Then we read the camera parameters with distortion of a camera named "Camera" from \c ./camera.xml file.
@@ -275,13 +496,36 @@ Then we read the camera parameters with distortion of a camera named "Camera" fr
 If vpXmlParserCamera is not available, we initialize the camera parameters "by hand" using the following code:
 \snippet tutorial-undistort.cpp Set camera parameters
 
-Finally, we create a new image \c Iud where distortion is removed. This image is saved in \c chessboard-undistort.pgm.
+Finally, we create a new image \c Iud where distortion is removed. This image is saved in \c chessboard-undistort.png.
 
 \snippet tutorial-undistort.cpp Create image without distorsion
 
-The resulting \c chessboard-undistort.pgm image is the following.
+The resulting \c chessboard-undistort.png image is the following.
 
-\image html img-chessboard-undistort.png \c chessboard-undistort.pgm image where distortion was removed.
+\image html img-chessboard-undistort.png \c chessboard-undistort.png image where distortion was removed.
+
+\subsection calibration_undistort_multi Undistort a sequence of images
+
+Instead of using vpImageTools::undistort() like in tutorial-undistort.cpp, we recommend to use vpImageTools::initUndistortMap() once over the first image, and then call vpImageTools::remap() for each image.
+
+The pseudo code is the following:
+\code
+      vpArray2D<int> mapU, mapV;
+      vpArray2D<float> mapDu, mapDv;
+      vpImage<unsigned char> I;       // Input image
+      vpImage<unsigned char> Iundist; // Undistorted output image
+      vpCameraParameters cam;
+      bool init_done = false;
+  
+      while (! end) {
+        acquire(I);
+        if (! init_done) {
+          vpImageTools::initUndistortMap(cam, I.getWidth(), I.getHeight(), mapU, mapV, mapDu, mapDv);
+          init_done = true;
+        }
+        vpImageTools::remap(I, mapU, mapV, mapDu, mapDv, Iundist);
+      }
+\endcode
 
 \section calibration_next Next tutorial
 

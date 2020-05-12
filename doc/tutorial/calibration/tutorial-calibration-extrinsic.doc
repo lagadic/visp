@@ -171,6 +171,26 @@ data:
 
 The source code corresponding to the binary is available in tutorial-hand-eye-calibration.cpp.
 
+\section calib_ext_tool Analysis tool
+
+\subsection calib_ext_tool_poses Camera poses
+
+Since ViSP 3.3.1 we provide `hand_eye_calibration_show_extrinsics.py` python script that allows to display camera poses used to acquire data.
+Prior to use that script, you need to install `scipy` and `pyyaml`:
+\verbatim
+$ sudo apt install python-pip
+$ pip install scipy pyyaml
+\endverbatim
+
+To visualize camera poses:
+\verbatim
+$ python hand_eye_calibration_show_extrinsics.py --ndata 8 --eMc_yaml eMc.yaml
+\endverbatim
+
+\image html img-calib-script-hand2eye.png
+
+We recall, that a good hand-eye calibration is obtained when the camera poses are covering the surface of a half sphere over the grid. 
+
 \section calib_ext_next Next tutorial
 
 You are now ready to follow \ref tutorial-franka-pbvs.
