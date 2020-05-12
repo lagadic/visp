@@ -129,12 +129,14 @@ private:
 
 struct CalibInfo
 {
-    CalibInfo(const vpImage<unsigned char> &img, const std::vector<vpPoint> &points, const std::vector<vpImagePoint> &imPts)
-        : m_img(img), m_points(points), m_imPts(imPts) {}
+    CalibInfo(const vpImage<unsigned char> &img, const std::vector<vpPoint> &points, const std::vector<vpImagePoint> &imPts,
+              const std::string &frame_name)
+        : m_img(img), m_points(points), m_imPts(imPts), m_frame_name(frame_name) {}
 
     vpImage<unsigned char> m_img;
     std::vector<vpPoint> m_points;
     std::vector<vpImagePoint> m_imPts;
+    std::string m_frame_name;
 };
 
 void drawCalibrationOccupancy(vpImage<unsigned char> &I, const std::vector<CalibInfo> &calib_info,

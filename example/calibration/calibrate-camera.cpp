@@ -41,6 +41,8 @@
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
 
+#include <map>
+
 #include <opencv2/calib3d/calib3d.hpp>
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
@@ -90,6 +92,7 @@ int main(int argc, const char **argv)
       }
     }
 
+    std::cout << "Settings from config file: " << argv[1] << std::endl;
     if (!s.read(opt_inputSettingsFile)) {
       std::cout << "Could not open the configuration file: \"" << opt_inputSettingsFile << "\"" << std::endl;
       std::cout << std::endl << "Usage: " << argv[0] << " <configuration file>.cfg" << std::endl;
@@ -99,6 +102,20 @@ int main(int argc, const char **argv)
     if (!s.goodInput) {
       std::cout << "Invalid input detected. Application stopping. " << std::endl;
       return EXIT_FAILURE;
+    }
+
+    std::cout << "\nSettings from command line options: " << std::endl;
+    if (!opt_init_camera_xml_file.empty()) {
+      std::cout << "Init parameters: " << opt_init_camera_xml_file << std::endl;
+    }
+    std::cout << "Ouput xml file : " << opt_output_file_name << std::endl;
+    std::cout << "Camera name    : " << opt_camera_name << std::endl;
+
+    // Check if output file name exists
+    if (vpIoTools::checkFilename(opt_output_file_name)) {
+      std::cout << "\nOutput file name " << opt_output_file_name << " already exists." << std::endl;
+      std::cout << "Remove this file or change output file name using [--output <file.xml>] command line option." << std::endl;
+      return EXIT_SUCCESS;
     }
 
     // Start the calibration code
@@ -124,7 +141,7 @@ int main(int argc, const char **argv)
     vpDisplayOpenCV d(I, vpDisplay::SCALE_AUTO);
 #endif
 
-    vpCameraParameters cam;
+    vpCameraParameters cam_init;
     bool init_from_xml = false;
     if (! opt_init_camera_xml_file.empty()) {
 #ifdef VISP_HAVE_PUGIXML
@@ -142,7 +159,7 @@ int main(int argc, const char **argv)
 #ifdef VISP_HAVE_PUGIXML
       std::cout << "Initialize camera parameters from xml file: " << opt_init_camera_xml_file << std::endl;
       vpXmlParserCamera parser;
-      if (parser.parse(cam, opt_init_camera_xml_file, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion) != vpXmlParserCamera::SEQUENCE_OK) {
+      if (parser.parse(cam_init, opt_init_camera_xml_file, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion) != vpXmlParserCamera::SEQUENCE_OK) {
         std::cout << "Unable to find camera with name \"" << opt_camera_name << "\" in file: " << opt_init_camera_xml_file << std::endl;
         std::cout << "Modify [--camera-name <name>] option value" << std::endl;
         return EXIT_FAILURE;
@@ -151,15 +168,15 @@ int main(int argc, const char **argv)
     } else {
       std::cout << "Initialize camera parameters with default values " << std::endl;
       // Initialize camera parameters
-      double px = cam.get_px();
-      double py = cam.get_py();
+      double px = cam_init.get_px();
+      double py = cam_init.get_py();
       // Set (u0,v0) in the middle of the image
       double u0 = I.getWidth() / 2;
       double v0 = I.getHeight() / 2;
-      cam.initPersProjWithoutDistortion(px, py, u0, v0);
+      cam_init.initPersProjWithoutDistortion(px, py, u0, v0);
     }
 
-    std::cout << "Camera parameters used for initialization:\n" << cam << std::endl;
+    std::cout << "Camera parameters used for initialization:\n" << cam_init << std::endl;
 
     std::vector<vpPoint> model;
     std::vector<vpCalibration> calibrator;
@@ -171,10 +188,16 @@ int main(int argc, const char **argv)
     }
 
     std::vector<CalibInfo> calib_info;
+    std::multimap<double, vpCameraParameters, std::less<double>> map_cam_sorted; // Sorted by residual
+
+    map_cam_sorted.insert(std::make_pair(1000, cam_init));
+
     do {
       reader.acquire(I);
-
       long frame_index = reader.getFrameIndex();
+      char filename[FILENAME_MAX];
+      sprintf(filename, s.input.c_str(), frame_index);
+      std::string frame_name = vpIoTools::getName(filename);
       vpDisplay::display(I);
 
       cv::Mat cvI;
@@ -183,17 +206,14 @@ int main(int argc, const char **argv)
 
       bool found = extractCalibrationPoints(s, cvI, pointBuf);
 
-      std::cout << "frame: " << frame_index << ", status: " << found;
+      std::cout << "frame: " << frame_name << ", grid detection status: " << found;
       if (!found)
         std::cout << ", image rejected" << std::endl;
       else
         std::cout << ", image used as input data" << std::endl;
 
-      if (found) // If done with success,
-      {
-        std::stringstream ss;
-        ss << "image " << frame_index;
-        vpDisplay::setTitle(I, ss.str());
+      if (found) { // If image processing done with success
+        vpDisplay::setTitle(I, frame_name);
 
         std::vector<vpImagePoint> data;
         for (unsigned int i = 0; i < pointBuf.size(); i++) {
@@ -213,13 +233,24 @@ int main(int argc, const char **argv)
           calib_points.back().set_y(data[i].get_v());
         }
 
-        // Add calibration info
-        calib_info.push_back(CalibInfo(I, calib_points, data));
-
         vpHomogeneousMatrix cMo;
-        if (calib.computeCalibration(vpCalibration::CALIB_VIRTUAL_VS, cMo, cam, false) == EXIT_SUCCESS) {
-          //std::cout << "camera parameters for frame " << frame_index << ": " << cam << std::endl;
-          calibrator.push_back(calib);
+        bool calib_status = false;
+        std::multimap<double, vpCameraParameters>::const_iterator it_cam;
+        for (it_cam = map_cam_sorted.begin(); it_cam != map_cam_sorted.end(); ++ it_cam) {
+          vpCameraParameters cam = it_cam->second;
+          if (calib.computeCalibration(vpCalibration::CALIB_VIRTUAL_VS, cMo, cam, false) == EXIT_SUCCESS) {
+            calibrator.push_back(calib);
+            // Add calibration info
+            calib_info.push_back(CalibInfo(I, calib_points, data, frame_name));
+            calib_status = true;
+            double residual = calib.getResidual();
+            map_cam_sorted.insert(std::make_pair(residual, cam));
+            break;
+          }
+        }
+        if (! calib_status) {
+          std::cout << "frame: " << frame_name << ", unable to calibrate from single image, image rejected" << std::endl;
+          found = false;
         }
       }
 
@@ -228,7 +259,7 @@ int main(int argc, const char **argv)
                                "Image processing succeed", vpColor::green);
       else
         vpDisplay::displayText(I, 15*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I),
-                               "Image processing fails", vpColor::green);
+                               "Image processing failed", vpColor::green);
 
       if (s.tempo > 10.f) {
         vpDisplay::displayText(I, 35*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I),
@@ -280,24 +311,27 @@ int main(int argc, const char **argv)
     ss_additional_info << "<square_size>" << s.squareSize << "</square_size>";
 
     double error;
+    // Initialize with camera parameter that has the lowest residual
+    vpCameraParameters cam = map_cam_sorted.begin()->second;
     std::cout << "\nCalibration without distortion in progress on " << calibrator.size() << " images..." << std::endl;
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS, calibrator, cam, error, false) == EXIT_SUCCESS) {
       std::cout << cam << std::endl;
-      vpDisplay::setTitle(I, "Reprojection error");
+      vpDisplay::setTitle(I, "Without distorsion results");
 
       for (size_t i = 0; i < calibrator.size(); i++) {
         double reproj_error = sqrt(calibrator[i].getResidual()/calibrator[i].get_npt());
-        std::cout << i << ") reprojection error: " << reproj_error << std::endl;
 
         const CalibInfo& calib = calib_info[i];
+        std::cout << "Image " << calib.m_frame_name << " reprojection error: " << reproj_error << std::endl;
         I = calib.m_img;
         vpDisplay::display(I);
 
         std::ostringstream ss;
-        ss << "reprojection error: " << reproj_error;
-        vpDisplay::displayText(I, 15, 15, ss.str(), vpColor::red);
-        vpDisplay::displayText(I, 30, 15, "extracted points", vpColor::red);
-        vpDisplay::displayText(I, 45, 15, "projected points", vpColor::green);
+        ss << "Reprojection error: " << reproj_error;
+        vpDisplay::displayText(I, 15*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), calib.m_frame_name, vpColor::red);
+        vpDisplay::displayText(I, 30*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), ss.str(), vpColor::red);
+        vpDisplay::displayText(I, 45*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), "Extracted points", vpColor::red);
+        vpDisplay::displayText(I, 60*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), "Projected points", vpColor::green);
 
         for (size_t idx = 0; idx < calib.m_points.size(); idx++) {
           vpDisplay::displayCross(I, calib.m_imPts[idx], 12, vpColor::red);
@@ -342,21 +376,22 @@ int main(int argc, const char **argv)
     if (vpCalibration::computeCalibrationMulti(vpCalibration::CALIB_VIRTUAL_VS_DIST, calibrator, cam, error, false) ==
         EXIT_SUCCESS) {
       std::cout << cam << std::endl;
-      vpDisplay::setTitle(I, "Reprojection error");
+      vpDisplay::setTitle(I, "With distorsion results");
 
       for (size_t i = 0; i < calibrator.size(); i++) {
         double reproj_error = sqrt(calibrator[i].getResidual_dist()/calibrator[i].get_npt());
-        std::cout << i << ") reprojection error: " << reproj_error << std::endl;
 
         const CalibInfo& calib = calib_info[i];
+        std::cout << "Image " << calib.m_frame_name << " reprojection error: " << reproj_error << std::endl;
         I = calib.m_img;
         vpDisplay::display(I);
 
         std::ostringstream ss;
-        ss << "reprojection error: " << reproj_error;
-        vpDisplay::displayText(I, 15, 15, ss.str(), vpColor::red);
-        vpDisplay::displayText(I, 30, 15, "extracted points", vpColor::red);
-        vpDisplay::displayText(I, 45, 15, "projected points", vpColor::green);
+        ss << "Reprojection error: " << reproj_error;
+        vpDisplay::displayText(I, 15*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), calib.m_frame_name, vpColor::red);
+        vpDisplay::displayText(I, 30*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), ss.str(), vpColor::red);
+        vpDisplay::displayText(I, 45*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), "Extracted points", vpColor::red);
+        vpDisplay::displayText(I, 60*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), "Projected points", vpColor::green);
 
         for (size_t idx = 0; idx < calib.m_points.size(); idx++) {
           vpDisplay::displayCross(I, calib.m_imPts[idx], 12, vpColor::red);
@@ -377,13 +412,13 @@ int main(int argc, const char **argv)
 
       vpImage<unsigned char> I_undist = I;
 #ifdef VISP_HAVE_X11
-    vpDisplayX d_undist(I_undist, I.getWidth(), 0, "Undistorted image", vpDisplay::SCALE_AUTO);
+      vpDisplayX d_undist(I_undist, I.getWidth()/vpDisplay::getDownScalingFactor(I) + 100, 0, "Undistorted image", vpDisplay::SCALE_AUTO);
 #elif defined VISP_HAVE_GDI
-    vpDisplayGDI d_undist(I_undist, I.getWidth(), 0, "Undistorted image", vpDisplay::SCALE_AUTO);
+      vpDisplayGDI d_undist(I_undist, I.getWidth()/vpDisplay::getDownScalingFactor(I) + 100, 0, "Undistorted image", vpDisplay::SCALE_AUTO);
 #elif defined VISP_HAVE_GTK
-    vpDisplayGTK d_undist(I_undist, I.getWidth(), 0, "Undistorted image", vpDisplay::SCALE_AUTO);
+      vpDisplayGTK d_undist(I_undist, I.getWidth()/vpDisplay::getDownScalingFactor(I) + 100, 0, "Undistorted image", vpDisplay::SCALE_AUTO);
 #elif defined VISP_HAVE_OPENCV
-    vpDisplayOpenCV d_undist(I_undist, I.getWidth(), 0, "Undistorted image", vpDisplay::SCALE_AUTO);
+      vpDisplayOpenCV d_undist(I_undist, I.getWidth()/vpDisplay::getDownScalingFactor(I) + 100, 0, "Undistorted image", vpDisplay::SCALE_AUTO);
 #endif
 
       vpDisplay::setTitle(I, "Straight lines have to be straight (distorted image)");
@@ -397,7 +432,8 @@ int main(int argc, const char **argv)
         vpDisplay::display(I);
         vpDisplay::display(I_undist);
 
-        vpDisplay::displayText(I, 15, 15, "Draw lines from first / last points.", vpColor::red);
+        vpDisplay::displayText(I, 15*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), calib_info[idx].m_frame_name, vpColor::red);
+        vpDisplay::displayText(I, 30*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), "Draw lines from first / last points.", vpColor::red);
         std::vector<vpImagePoint> grid_points = calib_info[idx].m_imPts;
         for (int i = 0; i < s.boardSize.height; i++) {
           std::vector<vpImagePoint> current_line(grid_points.begin() + i*s.boardSize.width,
@@ -407,7 +443,7 @@ int main(int argc, const char **argv)
           double a = 0, b = 0, c = 0;
           double line_fitting_error = vpMath::lineFitting(current_line, a, b, c);
           double line_fitting_error_undist = vpMath::lineFitting(current_line_undist, a, b, c);
-          std::cout << "Line fitting error on distorted points: " << line_fitting_error
+          std::cout << calib_info[idx].m_frame_name << " line " << i + 1 << " fitting error on distorted points: " << line_fitting_error
                     << " ; on undistorted points: " << line_fitting_error_undist << std::endl;
 
           vpImagePoint ip1 = current_line.front();
@@ -429,14 +465,15 @@ int main(int argc, const char **argv)
             grid_points.push_back(ip);
           }
 
-          vpDisplay::displayText(I_undist, 15, 15, "Draw lines from first / last points.", vpColor::red);
+          vpDisplay::displayText(I_undist, 15*vpDisplay::getDownScalingFactor(I_undist), 15*vpDisplay::getDownScalingFactor(I_undist), calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
+          vpDisplay::displayText(I_undist, 30*vpDisplay::getDownScalingFactor(I_undist), 15*vpDisplay::getDownScalingFactor(I_undist), "Draw lines from first / last points.", vpColor::red);
           for (int i = 0; i < s.boardSize.height; i++) {
             std::vector<vpImagePoint> current_line(grid_points.begin() + i*s.boardSize.width,
                                                    grid_points.begin() + (i+1)*s.boardSize.width);
 
             double a = 0, b = 0, c = 0;
             double line_fitting_error = vpMath::lineFitting(current_line, a, b, c);
-            std::cout << "Undistorted image, line fitting error: " << line_fitting_error << std::endl;
+            std::cout << calib_info[idx].m_frame_name << " undistorted image, line " << i + 1 << " fitting error: " << line_fitting_error << std::endl;
 
             vpImagePoint ip1 = current_line.front();
             vpImagePoint ip2 = current_line.back();
@@ -478,8 +515,9 @@ int main(int argc, const char **argv)
       }
 #endif
       std::cout << std::endl;
+      std::cout << "Estimated pose using vpPoseVector format: [tx ty tz tux tuy tuz] with translation in meter and rotation in rad" << std::endl;
       for (unsigned int i = 0; i < calibrator.size(); i++)
-        std::cout << "Estimated pose on input data " << i << ": " << vpPoseVector(calibrator[i].cMo_dist).t()
+        std::cout << "Estimated pose on input data extracted from " << calib_info[i].m_frame_name << ": " << vpPoseVector(calibrator[i].cMo_dist).t()
                   << std::endl;
 
     } else {
