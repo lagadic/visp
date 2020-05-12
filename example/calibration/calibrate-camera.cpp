@@ -199,14 +199,16 @@ int main(int argc, const char **argv)
       sprintf(filename, s.input.c_str(), frame_index);
       std::string frame_name = vpIoTools::getName(filename);
       vpDisplay::display(I);
+      vpDisplay::flush(I);
 
       cv::Mat cvI;
       std::vector<cv::Point2f> pointBuf;
       vpImageConvert::convert(I, cvI);
 
+      std::cout << "Process frame: " << frame_name << std::flush;
       bool found = extractCalibrationPoints(s, cvI, pointBuf);
 
-      std::cout << "frame: " << frame_name << ", grid detection status: " << found;
+      std::cout << ", grid detection status: " << found;
       if (!found)
         std::cout << ", image rejected" << std::endl;
       else
@@ -283,7 +285,8 @@ int main(int argc, const char **argv)
     drawCalibrationOccupancy(I, calib_info, s.boardSize.width);
     vpDisplay::setTitle(I, "Calibration pattern occupancy");
     vpDisplay::display(I);
-    vpDisplay::displayText(I, 15, 15, "Calibration pattern occupancy in the image", vpColor::red);
+    vpDisplay::displayText(I, 15*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), "Calibration pattern occupancy in the image", vpColor::red);
+    vpDisplay::displayText(I, I.getHeight()-15*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), "Click to continue...", vpColor::red);
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
 
@@ -334,15 +337,16 @@ int main(int argc, const char **argv)
         vpDisplay::displayText(I, 60*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), "Projected points", vpColor::green);
 
         for (size_t idx = 0; idx < calib.m_points.size(); idx++) {
-          vpDisplay::displayCross(I, calib.m_imPts[idx], 12, vpColor::red);
+          vpDisplay::displayCross(I, calib.m_imPts[idx], 12*vpDisplay::getDownScalingFactor(I), vpColor::red);
 
           vpPoint pt = calib.m_points[idx];
           pt.project(calibrator[i].cMo);
           vpImagePoint imPt;
           vpMeterPixelConversion::convertPoint(cam, pt.get_x(), pt.get_y(), imPt);
-          vpDisplay::displayCross(I, imPt, 12, vpColor::green);
+          vpDisplay::displayCross(I, imPt, 12*vpDisplay::getDownScalingFactor(I), vpColor::green);
         }
 
+        vpDisplay::displayText(I, I.getHeight()-15*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), "Click to continue...", vpColor::red);
         vpDisplay::flush(I);
         vpDisplay::getClick(I);
       }
@@ -394,15 +398,16 @@ int main(int argc, const char **argv)
         vpDisplay::displayText(I, 60*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), "Projected points", vpColor::green);
 
         for (size_t idx = 0; idx < calib.m_points.size(); idx++) {
-          vpDisplay::displayCross(I, calib.m_imPts[idx], 12, vpColor::red);
+          vpDisplay::displayCross(I, calib.m_imPts[idx], 12*vpDisplay::getDownScalingFactor(I), vpColor::red);
 
           vpPoint pt = calib.m_points[idx];
           pt.project(calibrator[i].cMo_dist);
           vpImagePoint imPt;
           vpMeterPixelConversion::convertPoint(cam, pt.get_x(), pt.get_y(), imPt);
-          vpDisplay::displayCross(I, imPt, 12, vpColor::green);
+          vpDisplay::displayCross(I, imPt, 12*vpDisplay::getDownScalingFactor(I), vpColor::green);
         }
 
+        vpDisplay::displayText(I, I.getHeight()-15*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), "Click to continue...", vpColor::red);
         vpDisplay::flush(I);
         vpDisplay::getClick(I);
       }
@@ -480,7 +485,15 @@ int main(int argc, const char **argv)
             vpDisplay::displayLine(I_undist, ip1, ip2, vpColor::red);
           }
         }
+        else {
+          std::string msg("Unable to detect grid on undistorted image");
+          std::cout << msg << std::endl;
+          std::cout << "Check that the grid is not too close to the image edges" << std::endl;
+          vpDisplay::displayText(I_undist, 15*vpDisplay::getDownScalingFactor(I_undist), 15*vpDisplay::getDownScalingFactor(I_undist), calib_info[idx].m_frame_name + std::string(" undistorted"), vpColor::red);
+          vpDisplay::displayText(I_undist, 30*vpDisplay::getDownScalingFactor(I_undist), 15*vpDisplay::getDownScalingFactor(I_undist), msg, vpColor::red);
+        }
 
+        vpDisplay::displayText(I, I.getHeight()-15*vpDisplay::getDownScalingFactor(I), 15*vpDisplay::getDownScalingFactor(I), "Click to continue...", vpColor::red);
         vpDisplay::flush(I);
         vpDisplay::flush(I_undist);
         vpDisplay::getClick(I);
