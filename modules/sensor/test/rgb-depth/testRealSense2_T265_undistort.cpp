@@ -42,7 +42,6 @@
 
 #include <iostream>
 
-#include <opencv2/calib3d/calib3d.hpp>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
