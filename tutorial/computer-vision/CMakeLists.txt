@@ -8,6 +8,7 @@ set(tutorial_cpp
   tutorial-homography-from-points.cpp
   tutorial-pose-from-points-image.cpp
   tutorial-pose-from-points-live.cpp
+  tutorial-pose-from-points-realsense-T265.cpp
   tutorial-pose-from-qrcode-image.cpp)
 
 set(tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/square.pgm")
@@ -42,10 +43,12 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-reorder")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
 endif()
 
 if(CXX_FLAGS_MUTE_WARNINGS)
   # Add specific build flag to turn off warnings
   visp_set_source_file_compile_flag(tutorial-pose-from-points-live.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+  visp_set_source_file_compile_flag(tutorial-pose-from-points-realsense-T265.cpp ${CXX_FLAGS_MUTE_WARNINGS})
 endif()
 

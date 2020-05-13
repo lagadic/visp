@@ -165,6 +165,10 @@ public:
                         unsigned int nThreads=2);
 
   template <class Type>
+  static void undistort(const vpImage<Type> &I, vpArray2D<int> mapU, vpArray2D<int> mapV, vpArray2D<float> mapDu,
+                        vpArray2D<float> mapDv, vpImage<Type> &newI);
+
+  template <class Type>
   static void warpImage(const vpImage<Type> &src, const vpMatrix &T, vpImage<Type> &dst,
                         const vpImageInterpolationType &interpolation=INTERPOLATION_NEAREST,
                         bool fixedPointArithmetic=true, bool pixelCenter=false);
@@ -794,6 +798,27 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
     }
   }
 #endif
+}
+
+/*!
+  Undistort an image.
+
+  \param I       : Input image to undistort.
+  \param mapU    : Map that contains at each destination coordinate the u-coordinate in the source image.
+  \param mapV    : Map that contains at each destination coordinate the v-coordinate in the source image.
+  \param mapDu   : Map that contains at each destination coordinate the \f$ \Delta u \f$ for the interpolation.
+  \param mapDv   : Map that contains at each destination coordinate the \f$ \Delta v \f$ for the interpolation.
+  \param newI    : Undistorted output image. The size of this image will be the same as the input image \e I.
+
+  \note To undistort a fisheye image, you have to first call initUndistortMap() function to calculate maps and then
+  call undistort() with input maps.
+
+ */
+template <class Type>
+void vpImageTools::undistort(const vpImage<Type> &I, vpArray2D<int> mapU, vpArray2D<int> mapV, vpArray2D<float> mapDu,
+                             vpArray2D<float> mapDv, vpImage<Type> &newI)
+{
+  remap(I, mapU, mapV, mapDu, mapDv, newI);
 }
 
 /*!

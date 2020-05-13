@@ -194,6 +194,9 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::perspectiveProjWithDistortion:
       filename_eMc = CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME;
       break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_MARLIN_F033C_CAMERA is not implemented for Kannala-Brandt projection model yet.");
+      break;
     }
     break;
   }
@@ -204,6 +207,9 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
       break;
     case vpCameraParameters::perspectiveProjWithDistortion:
       filename_eMc = CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME;
+      break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_PTGREY_FLEA2_CAMERA is not implemented for Kannala-Brandt projection model yet.");
       break;
     }
     break;
@@ -216,6 +222,9 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::perspectiveProjWithDistortion:
       filename_eMc = CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME;
       break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_SCHUNK_GRIPPER_CAMERA is not implemented for Kannala-Brandt projection model yet.");
+      break;
     }
     break;
   }
@@ -226,6 +235,9 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
       break;
     case vpCameraParameters::perspectiveProjWithDistortion:
       filename_eMc = CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
+      break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_GENERIC_CAMERA is not implemented for Kannala-Brandt projection model yet.");
       break;
     }
     break;
@@ -274,6 +286,9 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
       etc[1] = -0.0005;             // ty
       etc[2] = 0.1022;              // tz
       break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_MARLIN_F033C_CAMERA is not implemented for Kannala-Brandt projection model yet.");
+      break;
     }
     break;
   }
@@ -296,6 +311,9 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
       etc[1] = -0.0012;            // ty
       etc[2] = 0.078;              // tz
       break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_PTGREY_FLEA2_CAMERA is not implemented for Kannala-Brandt projection model yet.");
+      break;
     }
     break;
   }
@@ -310,6 +328,9 @@ void vpViper850::init(vpViper850::vpToolType tool, vpCameraParameters::vpCameraP
       etc[0] = 0; // tx
       etc[1] = 0; // ty
       etc[2] = 0; // tz
+      break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_GENERIC_CAMERA is not implemented for Kannala-Brandt projection model yet.");
       break;
     }
     break;
@@ -612,6 +633,9 @@ void vpViper850::getCameraParameters(vpCameraParameters &cam, const unsigned int
       case vpCameraParameters::perspectiveProjWithDistortion:
         cam.initPersProjWithDistortion(1214.0, 1213.0, 323.1, 240.0, -0.1824, 0.1881);
         break;
+      case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+        throw vpException(vpException::notImplementedError, "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
+        break;
       }
     } else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
@@ -633,6 +657,9 @@ void vpViper850::getCameraParameters(vpCameraParameters &cam, const unsigned int
       case vpCameraParameters::perspectiveProjWithDistortion:
         cam.initPersProjWithDistortion(831.3, 831.6, 322.7, 265.8, -0.1955, 0.2047);
         break;
+      case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+        throw vpException(vpException::notImplementedError, "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
+        break;
       }
     } else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
@@ -652,6 +679,9 @@ void vpViper850::getCameraParameters(vpCameraParameters &cam, const unsigned int
         break;
       case vpCameraParameters::perspectiveProjWithDistortion:
         cam.initPersProjWithDistortion(831.3, 831.6, 322.7, 265.8, -0.1955, 0.2047);
+        break;
+      case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+        throw vpException(vpException::notImplementedError, "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
         break;
       }
     } else {

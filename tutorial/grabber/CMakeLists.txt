@@ -15,6 +15,7 @@ set(tutorial_cpp
   tutorial-grabber-opencv.cpp
   tutorial-grabber-opencv-threaded.cpp
   tutorial-grabber-realsense.cpp
+  tutorial-grabber-realsense-T265.cpp
   tutorial-grabber-v4l2.cpp
   tutorial-grabber-v4l2-threaded.cpp
   tutorial-video-reader.cpp
@@ -48,11 +49,13 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-parameter")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-pessimizing-move")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
 endif()
 
 if(CXX_FLAGS_MUTE_WARNINGS)
   # Add specific build flag to turn off warnings
   visp_set_source_file_compile_flag(tutorial-grabber-realsense.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+  visp_set_source_file_compile_flag(tutorial-grabber-realsense-T265.cpp ${CXX_FLAGS_MUTE_WARNINGS})
 endif()
 
 foreach(cpp ${tutorial_cpp})

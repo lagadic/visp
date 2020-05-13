@@ -8,6 +8,7 @@ set(tutorial_cpp
   tutorial-apriltag-detector.cpp
   tutorial-apriltag-detector-live.cpp
   tutorial-apriltag-detector-live-rgbd-realsense.cpp
+  tutorial-apriltag-detector-live-T265-realsense.cpp
 )
 
 set(tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/AprilTag.pgm")
@@ -36,6 +37,7 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-reorder")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
 endif()
 
 if(CXX_FLAGS_MUTE_WARNINGS)

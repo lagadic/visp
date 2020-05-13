@@ -54,6 +54,7 @@ set(example_cpp
   grabOpenCV.cpp
   grabRealSense.cpp
   grabRealSense2.cpp
+  grabRealSense2_T265.cpp
   grabV4l2MultiCpp11Thread.cpp
   readRealSenseData.cpp
   saveRealSenseData.cpp
@@ -66,15 +67,17 @@ endif()
 
 if(VISP_HAVE_REALSENSE OR VISP_HAVE_REALSENSE2)
   if(UNIX)
-    visp_set_source_file_compile_flag(getRealSense2Info.cpp -Wno-unused-function -Wno-sign-compare -Wno-reorder -Wno-overloaded-virtual)
+    visp_set_source_file_compile_flag(getRealSense2Info.cpp -Wno-unused-function -Wno-sign-compare -Wno-reorder -Wno-overloaded-virtual  -Wno-ignored-qualifiers)
     # Add specific build flag to turn off warnings coming from PCL 3rd party
     visp_set_source_file_compile_flag(grabRealSense.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-sign-conversion -Wno-float-equal -Wno-unused-parameter -Wno-pessimizing-move -Wno-comment)
-    visp_set_source_file_compile_flag(grabRealSense2.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-comment -Wno-overloaded-virtual)
+    visp_set_source_file_compile_flag(grabRealSense2.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-comment -Wno-overloaded-virtual -Wno-ignored-qualifiers)
+    visp_set_source_file_compile_flag(grabRealSense2_T265.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-comment -Wno-overloaded-virtual -Wno-ignored-qualifiers)
     visp_set_source_file_compile_flag(readRealSenseData.cpp -Wno-deprecated-declarations -Wno-inconsistent-missing-override -Wno-missing-field-initializers -Wno-comment -Wno-float-equal -Wno-shadow)
-    visp_set_source_file_compile_flag(saveRealSenseData.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-comment -Wno-overloaded-virtual -Wno-missing-field-initializers -Wno-shadow)
+    visp_set_source_file_compile_flag(saveRealSenseData.cpp -Wno-sign-compare -Wno-reorder -Wno-unused-function -Wno-pessimizing-move -Wno-unused-parameter -Wno-comment -Wno-overloaded-virtual -Wno-missing-field-initializers -Wno-shadow -Wno-ignored-qualifiers)
   else()
     visp_set_source_file_compile_flag(getRealSense2Info.cpp /wd4244 /wd4267)
     visp_set_source_file_compile_flag(grabRealSense2.cpp /wd4244 /wd4267)
+    visp_set_source_file_compile_flag(grabRealSense2_T265.cpp /wd4244 /wd4267)
     visp_set_source_file_compile_flag(saveRealSenseData.cpp /wd4244 /wd4267)
   endif()
 else()

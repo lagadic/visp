@@ -565,9 +565,7 @@ int main(int argc, char *argv[])
 int main()
 {
 #if !defined(VISP_HAVE_REALSENSE)
-  std::cout << "Install RealSense SDK to make this test working. X11 or GDI "
-               "are needed also."
-            << std::endl;
+  std::cout << "This deprecated example is only working with librealsense 1.x " << std::endl;
 #elif !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11) "
                "to make this test working"

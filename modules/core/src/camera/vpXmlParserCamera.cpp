@@ -70,9 +70,15 @@
 #define LABEL_XML_PY "py"
 #define LABEL_XML_KUD "kud"
 #define LABEL_XML_KDU "kdu"
+#define LABEL_XML_K1 "k1"
+#define LABEL_XML_K2 "k2"
+#define LABEL_XML_K3 "k3"
+#define LABEL_XML_K4 "k4"
+#define LABEL_XML_K5 "k5"
 
 #define LABEL_XML_MODEL_WITHOUT_DISTORTION "perspectiveProjWithoutDistortion"
 #define LABEL_XML_MODEL_WITH_DISTORTION "perspectiveProjWithDistortion"
+#define LABEL_XML_MODEL_WITH_KANNALA_BRANDT_DISTORTION "ProjWithKannalaBrandtDistortion"
 
 #define LABEL_XML_ADDITIONAL_INFO "additional_information"
 
@@ -101,6 +107,11 @@ private:
     CODE_XML_PY,
     CODE_XML_KUD,
     CODE_XML_KDU,
+    CODE_XML_K1,
+    CODE_XML_K2,
+    CODE_XML_K3,
+    CODE_XML_K4,
+    CODE_XML_K5,
     CODE_XML_ADDITIONAL_INFO
   };
 
@@ -269,6 +280,11 @@ public:
       case CODE_XML_PY:
       case CODE_XML_KUD:
       case CODE_XML_KDU:
+      case CODE_XML_K1:
+      case CODE_XML_K2:
+      case CODE_XML_K3:
+      case CODE_XML_K4:
+      case CODE_XML_K5:
       default:
         back = SEQUENCE_ERROR;
         break;
@@ -326,6 +342,7 @@ public:
     double py = cam_tmp.get_py();
     double kud = cam_tmp.get_kud();
     double kdu = cam_tmp.get_kdu();
+    std::vector<double> distortion_coeffs;
     vpXmlCodeSequenceType back = SEQUENCE_OK;
     int validation = 0;
 
@@ -375,6 +392,31 @@ public:
         nb++;
         validation = validation | 0x40;
         break;
+      case CODE_XML_K1:
+        distortion_coeffs.push_back(node.text().as_double());
+        nb++;
+        validation = validation | 0x20;
+        break;
+      case CODE_XML_K2:
+        distortion_coeffs.push_back(node.text().as_double());
+        nb++;
+        validation = validation | 0x40;
+        break;
+      case CODE_XML_K3:
+        distortion_coeffs.push_back(node.text().as_double());
+        nb++;
+        validation = validation | 0x80;
+        break;
+      case CODE_XML_K4:
+        distortion_coeffs.push_back(node.text().as_double());
+        nb++;
+        validation = validation | 0x100;
+        break;
+      case CODE_XML_K5:
+        distortion_coeffs.push_back(node.text().as_double());
+        nb++;
+        validation = validation | 0x200;
+        break;
       case CODE_XML_BAD:
       case CODE_XML_OTHER:
       case CODE_XML_CAMERA:
@@ -399,7 +441,7 @@ public:
     }
 
     if (!strcmp(model_type.c_str(), LABEL_XML_MODEL_WITHOUT_DISTORTION)) {
-      if (nb != 5 || validation != 0x1F) {
+      if (nb != 5 || validation != 0x001F) {
         vpCERROR << "ERROR in 'model' field:\n";
         vpCERROR << "it must contain 5 parameters\n";
 
@@ -414,12 +456,39 @@ public:
         return SEQUENCE_ERROR;
       }
       cam_tmp.initPersProjWithDistortion(px, py, u0, v0, kud, kdu);
+    } else if (!strcmp(model_type.c_str(), LABEL_XML_MODEL_WITH_KANNALA_BRANDT_DISTORTION)) {
+      if (nb != 10 || validation != 0x3FF) { // at least one coefficient is missing. We should know which one
+        vpCERROR << "ERROR in 'model' field:\n";
+        vpCERROR << "it must contain 10 parameters\n";
+
+        std::vector<double> fixed_distortion_coeffs;
+
+        // In case disortion coefficients are missing, we should complete them with 0 values
+        // Since 0x3FF is 0011|1111|1111 and we are interrested in the most significant 1s shown below
+        //                  -- ---
+        // If we divide by 32 (>> 2^5 : 5 remaining least significant bits), we will have to check 5 bits only
+        int check = validation / 32;
+        int j = 0;
+
+        for(int i = 0; i < 5; i++)
+        {
+          int bit = check % 2; // if bit == 1 => the corresponding distortion coefficient is present.
+          if(!bit)
+            fixed_distortion_coeffs.push_back(0.);
+          else
+            fixed_distortion_coeffs.push_back(distortion_coeffs[j++]);
+          check /= 2;
+        }
+
+        cam_tmp.initProjWithKannalaBrandtDistortion(px, py, u0, v0, fixed_distortion_coeffs);
+        return SEQUENCE_ERROR;
+      }
+      cam_tmp.initProjWithKannalaBrandtDistortion(px, py, u0, v0, distortion_coeffs);
     } else {
       vpERROR_TRACE("projection model type doesn't match with any known model !");
 
       return SEQUENCE_ERROR;
     }
-
     return back;
   }
 
@@ -826,6 +895,55 @@ public:
         node_tmp.append_child(pugi::node_pcdata).text() = camera.get_kdu();
       }
       break;
+    
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      //<model>
+      node_model = node_camera.append_child(LABEL_XML_MODEL);
+      {
+        node_tmp = node_model.append_child(pugi::node_comment);
+        node_tmp.set_value("Projection model type");
+        //<type>with_KannalaBrandt_distortion</type>
+        node_tmp = node_model.append_child(LABEL_XML_MODEL_TYPE);
+        node_tmp.append_child(pugi::node_pcdata).set_value(LABEL_XML_MODEL_WITH_KANNALA_BRANDT_DISTORTION);
+
+        node_tmp = node_model.append_child(pugi::node_comment);
+        node_tmp.set_value("Pixel ratio");
+        //<px>
+        node_tmp = node_model.append_child(LABEL_XML_PX);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_px();
+        //<py>
+        node_tmp = node_model.append_child(LABEL_XML_PY);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_py();
+
+        node_tmp = node_model.append_child(pugi::node_comment);
+        node_tmp.set_value("Principal point");
+        //<u0>
+        node_tmp = node_model.append_child(LABEL_XML_U0);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_u0();
+        //<v0>
+        node_tmp = node_model.append_child(LABEL_XML_V0);
+        node_tmp.append_child(pugi::node_pcdata).text() = camera.get_v0();
+
+        //<k1>, <k2>, <k3>, <k4>, <k5>
+        std::vector<double> distortion_coefs = camera.getKannalaBrandtDistortionCoefficients();
+
+        if(distortion_coefs.size() != 5)
+          std::cout << "Make sure to have 5 distortion coefficients for Kannala-Brandt distortions." << std::endl;
+
+        node_tmp = node_model.append_child(pugi::node_comment);
+        node_tmp.set_value("Distortion coefficients");
+        node_tmp = node_model.append_child(LABEL_XML_K1);
+        distortion_coefs.size() == 0 ? node_tmp.append_child(pugi::node_pcdata).text() = 0 : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[0];
+        node_tmp = node_model.append_child(LABEL_XML_K2);
+        distortion_coefs.size() <= 1 ? node_tmp.append_child(pugi::node_pcdata).text() = 0 : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[1];
+        node_tmp = node_model.append_child(LABEL_XML_K3);
+        distortion_coefs.size() <= 2 ? node_tmp.append_child(pugi::node_pcdata).text() = 0 : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[2];
+        node_tmp = node_model.append_child(LABEL_XML_K4);
+        distortion_coefs.size() <= 3 ? node_tmp.append_child(pugi::node_pcdata).text() = 0 : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[3];
+        node_tmp = node_model.append_child(LABEL_XML_K5);
+        distortion_coefs.size() <= 4 ? node_tmp.append_child(pugi::node_pcdata).text() = 0 : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[4];
+      }
+      break;
     }
     return back;
   }
@@ -902,6 +1020,16 @@ public:
       val_int = CODE_XML_KUD;
     } else if (!strcmp(str, LABEL_XML_KDU)) {
       val_int = CODE_XML_KDU;
+    } else if (!strcmp(str, LABEL_XML_K1)) {
+      val_int = CODE_XML_K1;
+    } else if (!strcmp(str, LABEL_XML_K2)) {
+      val_int = CODE_XML_K2;
+    } else if (!strcmp(str, LABEL_XML_K3)) {
+      val_int = CODE_XML_K3;
+    } else if (!strcmp(str, LABEL_XML_K4)) {
+      val_int = CODE_XML_K4;
+    } else if (!strcmp(str, LABEL_XML_K5)) {
+      val_int = CODE_XML_K5;
     } else if (!strcmp(str, LABEL_XML_ADDITIONAL_INFO)) {
       val_int = CODE_XML_ADDITIONAL_INFO;
     } else {

@@ -29,6 +29,7 @@ foreach(cpp ${tutorial_cpp})
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-reorder")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
   endif()
 
   if(VISP_HAVE_PCL)
