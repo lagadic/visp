@@ -8,7 +8,7 @@ int main()
   try {
     //! [Load image]
     vpImage<unsigned char> I;
-    vpImageIo::read(I, "chessboard.png");
+    vpImageIo::read(I, "chessboard.jpg");
     //! [Load image]
 
     //! [Load camera parameters from xml]
@@ -33,7 +33,7 @@ int main()
     //! [Create image without distorsion]
     vpImage<unsigned char> Iud;
     vpImageTools::undistort(I, cam, Iud);
-    vpImageIo::write(Iud, "chessboard-undistort.png");
+    vpImageIo::write(Iud, "chessboard-undistort.jpg");
     //! [Create image without distorsion]
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
