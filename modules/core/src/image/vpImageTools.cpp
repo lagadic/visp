@@ -554,7 +554,8 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
         theta_d = theta * (1 + dist_coefs[0]*theta2 + dist_coefs[1]*theta4 +
                            dist_coefs[2]*theta6 + dist_coefs[3]*theta8);
 
-        scale = (r == 0) ? 1.0 : theta_d / r;
+        //scale = (r == 0) ? 1.0 : theta_d / r;
+        scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : theta_d / r;
         u_float = static_cast<float>(deltau*scale + u0);
         v_float = static_cast<float>(deltav*scale + v0);
       }
