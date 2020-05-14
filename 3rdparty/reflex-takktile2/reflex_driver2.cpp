@@ -254,10 +254,15 @@ float ReflexDriver::load_raw_to_signed(int load, int motor_idx) {
 // Checks whether the motor positions will reset after mode switch, and corrects zero point
 // When switching modes (VELOCITY and POSITION) the motor will wrap values if above 14024 or below 13000
 void ReflexDriver::check_for_potential_motor_wraps_and_rezero() {
-  float motor_wrap;
-  for (size_t i = 0; i < NUM_SERVOS; i++) {
-    motor_wrap = 1025.f * (reflex_hand2::ReflexHand::DYN_POS_SCALE / motor_to_joint_gear_ratio[i]);
-  }
+  // Since motor_wrap is not used, it produces a warning during build.
+  // That's why the code below is commented. An issue was posted here
+  // https://github.com/RightHandRobotics/reflex-api/issues/1
+  // and here
+  // https://github.com/RightHandRobotics/reflex-ros-pkg/issues/44
+  //float motor_wrap;
+  //for (size_t i = 0; i < NUM_SERVOS; i++) {
+  //  motor_wrap = 1025.f * (reflex_hand2::ReflexHand::DYN_POS_SCALE / motor_to_joint_gear_ratio[i]);
+  //}
 }
 
 
