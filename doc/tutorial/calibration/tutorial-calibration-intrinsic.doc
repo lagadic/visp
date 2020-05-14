@@ -378,12 +378,53 @@ A good calibration is obtained when the patterns cover most part of the image.
 Reprojection error could be seen in the next image. It shows the current reprojection error, the extracted points and the projected points using the estimated `cMo` camera pose and camera parameters:
 \image html img-calib-reprojection-error.jpg
 
-On the console, the global reprojection error is also given:
+On the console, the global reprojection error is also given for the model without distorsion parameters:
 \verbatim
-Calibration without distortion in progress on 5 images...
-Global reprojection error: 1.552697985
+Calibration without distortion in progress on 13 images...
+Camera parameters for perspective projection without distortion:
+  px = 557.2519329   py = 561.1776205
+  u0 = 360.0754485   v0 = 235.5240362
 
-Calibration with distortion in progress on 5 images...
+Image chessboard-01.jpg reprojection error: 1.230158891
+Image chessboard-02.jpg reprojection error: 1.447042293
+Image chessboard-03.jpg reprojection error: 2.078525011
+Image chessboard-04.jpg reprojection error: 1.553888654
+Image chessboard-05.jpg reprojection error: 1.697849369
+Image chessboard-06.jpg reprojection error: 2.284910081
+Image chessboard-07.jpg reprojection error: 1.387893707
+Image chessboard-08.jpg reprojection error: 1.664988951
+Image chessboard-09.jpg reprojection error: 0.9447032921
+Image chessboard-10.jpg reprojection error: 1.258540894
+Image chessboard-11.jpg reprojection error: 1.845113925
+Image chessboard-12.jpg reprojection error: 0.8621449347
+Image chessboard-13.jpg reprojection error: 1.254269691
+
+Global reprojection error: 1.552697985
+\endverbatim
+
+and for the model with both distorsion parameters:
+\verbatim
+Calibration with distortion in progress on 13 images...
+Camera parameters for perspective projection with distortion:
+  px = 536.982404    py = 537.4196388
+  u0 = 344.0958214   v0 = 235.1792108
+  kud = -0.2672672093
+  kdu = 0.3081092949
+
+Image chessboard-01.jpg reprojection error: 0.2395321578
+Image chessboard-02.jpg reprojection error: 1.238545486
+Image chessboard-03.jpg reprojection error: 0.3207755448
+Image chessboard-04.jpg reprojection error: 0.2601958886
+Image chessboard-05.jpg reprojection error: 0.2338664574
+Image chessboard-06.jpg reprojection error: 0.3297641256
+Image chessboard-07.jpg reprojection error: 0.2475833215
+Image chessboard-08.jpg reprojection error: 0.2602460339
+Image chessboard-09.jpg reprojection error: 0.3159699755
+Image chessboard-10.jpg reprojection error: 0.198531964
+Image chessboard-11.jpg reprojection error: 0.2287278629
+Image chessboard-12.jpg reprojection error: 0.406199404
+Image chessboard-13.jpg reprojection error: 0.1950310138
+
 Global reprojection error: 0.4338765096
 \endverbatim
 
@@ -392,12 +433,12 @@ A good calibration is obtained when extracted and reprojected points are very cl
 \subsubsection calibration_tools_line_fit Line fitting
 
 To get an idea on how much there is distortion, `calibrate-camera` binary generates also the following images:
-- left image: draw lines starting from the first and last points using points findChessboardCorners() function from OpenCV. This should allow seeing how distorted is the image.
-- right image: image is undistorted, chessboard points are extracted and line fitting is computed. Here lines are drawn from 2D line equations estimated on points extracted from undistorted image (to check that the line fitting is correct)
+- left image: draw lines starting from the first and last points using points `findChessboardCorners()` function from OpenCV. This should allow seeing how distorted is the image.
+- right image: image is undistorted, chessboard points are extracted and lines starting from the first and last points are drawn
 
 \image html img-calib-line-fitting.jpg
 
-On the console, RMS error for line fitting for points extracted from distorted image and after using vpPixelMeterConversion::convertPoint() is given:
+On the console, mean distance errors for line fitting for points extracted from distorted image and after using vpPixelMeterConversion::convertPoint() is given:
 \verbatim
 This tool computes the line fitting error (mean distance error) on image points extracted from the raw distorted image.
 chessboard-03.jpg line 1 fitting error on distorted points: 1.524931112 ; on undistorted points: 0.2997221937
@@ -408,7 +449,7 @@ chessboard-03.jpg line 5 fitting error on distorted points: 0.2932864898 ; on un
 chessboard-03.jpg line 6 fitting error on distorted points: 0.9474403828 ; on undistorted points: 0.03407551552
 \endverbatim
 
-RMS error for line fitting for points extracted from undistorted image is also printed on the console:
+Mean distance errors for line fitting for points extracted from undistorted image is also printed on the console:
 \verbatim
 This tool computes the line fitting error (mean distance error) on image points extracted from the undistorted image (vpImageTools::undistort()).
 chessboard-03.jpg undistorted image, line 1 fitting error: 0.0840157388
