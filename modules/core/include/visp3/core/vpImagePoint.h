@@ -47,7 +47,6 @@
 */
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpMath.h>
 
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
@@ -107,7 +106,7 @@ public:
   */
   inline vpImagePoint(const vpImagePoint &ip) : i(ip.i), j(ip.j) {}
   //! Destructor.
-  inline virtual ~vpImagePoint() { ; }
+  inline virtual ~vpImagePoint() { }
 
   /*!
     Copy operator.
@@ -273,35 +272,10 @@ public:
   */
   inline double get_v() const { return i; }
 
-  /*!
-
-    Compute the distance \f$ |iP1 - iP2| = \sqrt{(i_1-i_2)^2+(j_1-j_2)^2} \f$
-
-    \param iP1 : First point
-    \param iP2 : Second point
-
-    \return the distance between the two points.
-  */
-  static double distance(const vpImagePoint &iP1, const vpImagePoint &iP2)
-  {
-    return (sqrt(vpMath::sqr(iP1.get_i() - iP2.get_i()) + vpMath::sqr(iP1.get_j() - iP2.get_j())));
-  }
-
   static vpRect getBBox(const std::vector<vpImagePoint> &ipVec);
 
-  /*!
-
-    Compute the distance \f$ |iP1 - iP2| = (i_1-i_2)^2+(j_1-j_2)^2 \f$
-
-    \param iP1 : First point
-    \param iP2 : Second point
-
-    \return the distance between the two points.
-  */
-  static double sqrDistance(const vpImagePoint &iP1, const vpImagePoint &iP2)
-  {
-    return (vpMath::sqr(iP1.get_i() - iP2.get_i()) + vpMath::sqr(iP1.get_j() - iP2.get_j()));
-  }
+  static double distance(const vpImagePoint &iP1, const vpImagePoint &iP2);
+  static double sqrDistance(const vpImagePoint &iP1, const vpImagePoint &iP2);
 
   bool inRectangle(const vpRect &rect) const;
 

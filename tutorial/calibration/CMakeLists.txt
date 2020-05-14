@@ -10,7 +10,7 @@ set(tutorial_cpp
   tutorial-hand-eye-calibration.cpp
 )
 
-file(GLOB tutorial_data "*.yaml")
+file(GLOB tutorial_data "*.yaml" "*.py")
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

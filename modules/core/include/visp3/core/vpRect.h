@@ -72,6 +72,7 @@
 
 #include <cassert>
 #include <vector>
+#include <algorithm>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 

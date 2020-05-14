@@ -23,6 +23,10 @@ Note that all the material (source code) described in this tutorial is part of V
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/calibration
 \endcode
 
+\section calib_ext_recommendation Recommendations
+
+To get good calibration results follow these \ref calibration_recommendation.
+
 \section calib_ext_prereq Prerequisites
 
 \subsection calib_ext_intrinsic Get camera intrinsic parameters
@@ -45,7 +49,7 @@ The objective here is to complete step 1. by acquiring couples of \f$^f{\bf M}_e
 
 The following image shows a set of 10 camera positions covering the half sphere over the chessboard. Each blue arrow represents camera z-axis pointing to a region close to the chessboard center. The orientation of the frame attached to the chessboard doesn't matter. The chessboard z-axis could be going upward or not.
 
-\image html img-eye2hand-camera-poses.png
+\image html img-eye2hand-camera-poses.jpg
  
 If you have a Franka robot, follow \ref franka_configure_ethernet and \ref franka_connect_desk instructions to power on the Panda robot. Then if this is not already done, follow \ref franka_prereq_libfranka and \ref franka_prereq_visp_build.
 
@@ -170,6 +174,26 @@ data:
 \endcode
 
 The source code corresponding to the binary is available in tutorial-hand-eye-calibration.cpp.
+
+\section calib_ext_tool Analysis tool
+
+\subsection calib_ext_tool_poses Camera poses
+
+Since ViSP 3.3.1 we provide `hand_eye_calibration_show_extrinsics.py` python script that allows to display camera poses used to acquire data.
+Prior to use that script, you need to install `scipy` and `pyyaml`:
+\verbatim
+$ sudo apt install python-pip
+$ pip install scipy pyyaml
+\endverbatim
+
+To visualize camera poses:
+\verbatim
+$ python hand_eye_calibration_show_extrinsics.py --ndata 8 --eMc_yaml eMc.yaml
+\endverbatim
+
+\image html img-calib-script-hand2eye.jpg
+
+We recall, that a good hand-eye calibration is obtained when the camera poses are covering the surface of a half sphere over the grid. 
 
 \section calib_ext_next Next tutorial
 
