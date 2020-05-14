@@ -116,7 +116,12 @@ int main()
   {
     std::cout << std::endl;
     vpCameraParameters cam;
-    std::vector<double> distortion_coeffs = {-0.00297341705299914, 0.0352853797376156, -0.032205019146204, 0.004446716979146, 0};
+    std::vector<double> distortion_coeffs;
+    distortion_coeffs.push_back(-0.00297341705299914);
+    distortion_coeffs.push_back(0.0352853797376156);
+    distortion_coeffs.push_back(-0.032205019146204);
+    distortion_coeffs.push_back(0.004446716979146);
+    distortion_coeffs.push_back(0);
     cam.initProjWithKannalaBrandtDistortion(285.523895263672, 286.6708984375, 420.874114990234, 381.085388183594, distortion_coeffs);
     std::string filename = tmp_dir + "test_write_cam_with_KannalaBrandt_distortion.xml";
     {

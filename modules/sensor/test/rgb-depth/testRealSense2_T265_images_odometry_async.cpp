@@ -41,7 +41,6 @@
 */
 
 #include <iostream>
-#include <thread>
 
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/gui/vpDisplayX.h>
@@ -51,6 +50,8 @@
 #if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
   (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && \
   (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+
+#include <thread>
 
 int main()
 {
