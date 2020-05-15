@@ -12,13 +12,13 @@ int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   std::string opt_videoname = "bruegel.mpg";
-  int opt_subsample = 1;
+  unsigned int opt_subsample = 1;
 
   for (int i = 0; i < argc; i++) {
     if (std::string(argv[i]) == "--videoname")
       opt_videoname = std::string(argv[i + 1]);
     else if (std::string(argv[i]) == "--subsample")
-      opt_subsample = std::atoi(argv[i + 1]);
+      opt_subsample = static_cast<unsigned int>(std::atoi(argv[i + 1]));
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0] << " [--videoname <video name>] [--subsample <scale factor>] [--help] [-h]\n" << std::endl;
       return 0;
@@ -43,7 +43,7 @@ int main(int argc, char **argv)
 #else
   std::cout << "No image viewer is available..." << std::endl;
 #endif
-
+  display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
   display.init(I, 100, 100, "Template tracker");
   vpDisplay::display(I);
   vpDisplay::flush(I);
@@ -82,6 +82,8 @@ int main(int argc, char **argv)
     tracker.display(I, vpColor::red);
     //! [Display]
 
+    vpDisplay::displayText(I, 10*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I),
+                           "Click to quit", vpColor::red);
     if (vpDisplay::getClick(I, false))
       break;
 

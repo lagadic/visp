@@ -12,27 +12,34 @@ int main(int argc, const char *argv[])
 #ifdef VISP_HAVE_OPENCV
   //! [Check 3rd party]
   try {
+    std::string opt_videoname = "video-postcard.mpeg";
     bool opt_init_by_click = false;
+    unsigned int opt_subsample = 1;
     for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--init-by-click")
+      if (std::string(argv[i]) == "--videoname")
+        opt_videoname = std::string(argv[i + 1]);
+      else if (std::string(argv[i]) == "--init-by-click")
         opt_init_by_click = true;
-      else if (std::string(argv[i]) == "--help") {
-        std::cout << "Usage: " << argv[0] << " [--init-by-click] [--help]" << std::endl;
+      else if (std::string(argv[i]) == "--subsample")
+        opt_subsample = static_cast<unsigned int>(std::atoi(argv[i + 1]));
+      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+        std::cout << "Usage: " << argv[0] << " [--videoname <video name>] [--subsample <scale factor>] [--init-by-click] [--help] [-h]" << std::endl;
         return 0;
       }
     }
 
     //! [Create reader]
     vpVideoReader reader;
-    reader.setFileName("video-postcard.mpeg");
+    reader.setFileName(opt_videoname);
     //! [Create reader]
 
     //! [Acquire]
-    vpImage<unsigned char> I;
-    reader.acquire(I);
-//! [Acquire]
+    vpImage<unsigned char> I, Iacq;
+    reader.acquire(Iacq);
+    Iacq.subsample(opt_subsample, opt_subsample, I);
+    //! [Acquire]
 
-//! [Convert to OpenCV image]
+    //! [Convert to OpenCV image]
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
     IplImage *cvI = NULL;
 #else
@@ -98,7 +105,9 @@ int main(int argc, const char *argv[])
 
     //! [While loop]
     while (!reader.end()) {
-      reader.acquire(I);
+      double t = vpTime::measureTimeMs();
+      reader.acquire(Iacq);
+      Iacq.subsample(opt_subsample, opt_subsample, I);
       vpDisplay::display(I);
 
       vpImageConvert::convert(I, cvI);
@@ -132,7 +141,15 @@ int main(int argc, const char *argv[])
       tracker.track(cvI);
 
       tracker.display(I, vpColor::red);
+
+      vpDisplay::displayText(I, 10, 10, "Click to quit", vpColor::red);
+      if (vpDisplay::getClick(I, false))
+        break;
+
       vpDisplay::flush(I);
+      if (! reader.isVideoFormat()) {
+        vpTime::wait(t, 40);
+      }
     }
     //! [While loop]
 

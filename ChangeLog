@@ -8,7 +8,7 @@
 ViSP 3.3.1 (under development)
   - Contributors:
     . This release was possible thanks to contributions from Fabien Spindler,
-      Pierre Chatelain, Souriya Trinh
+      Pierre Chatelain, Souriya Trinh, Joudy Nader
   - New features and improvements
     . Compatibility with FreeBSD
     . Introduce transparency when displaying filled circle and rectangle with
@@ -24,6 +24,12 @@ ViSP 3.3.1 (under development)
       be able to build a project that uses ViSP as 3rd party without CMake
     . New vpReflexTakktile2 class and examples to control Reflex Takktile 2 hand
       from Right Hand Robotics.
+    . vpRealsense2 class was extended to support Intel Realsense T265 device
+    . Introduce Kannala Brandt projection model for fisheye cameras in vpCameraParameters
+    . Extend existing tools to support Kannala Brandt projection model for XML I/O,
+      undistort, pixel-meter and meter-pixel conversion
+    . Introduce analysis tools for camera calibration / hand-eye calibration
+      (see tutorials)
   - Tutorials
     . New tutorial: Basic linear algebra operations
     . New tutorial: How to create and build a project that uses ViSP without CMake
