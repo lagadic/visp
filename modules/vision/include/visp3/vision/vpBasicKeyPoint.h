@@ -69,7 +69,7 @@ public:
     matchedReferencePoints.resize(0);
     currentImagePointsList.resize(0);
     referenceImagePointsList.resize(0);
-  };
+  }
 
   virtual unsigned int buildReference(const vpImage<unsigned char> &I) = 0;
 
@@ -92,9 +92,9 @@ public:
                        const vpColor &color = vpColor::green) = 0;
 
   /*!
-   Indicate wether the reference has been built or not.
+    Indicate wether the reference has been built or not.
 
-   \return True if the reference of the current instance has been built.
+    \return True if the reference of the current instance has been built.
   */
   bool referenceBuilt() const { return _reference_computed; }
 
@@ -104,15 +104,16 @@ public:
 
     \return The pointer to the complete list of reference points.
   */
-  inline const vpImagePoint *getAllPointsInReferenceImage() { return &referenceImagePointsList[0]; };
+  inline const vpImagePoint *getAllPointsInReferenceImage() { return &referenceImagePointsList[0]; }
 
   /*!
     Get the nth reference point. This point is copied in the vpImagePoint
-   instance given in argument.
+    instance given in argument.
 
-   \param index : The index of the desired reference point. The index must be
-   between 0 and the number of reference points - 1. \param referencePoint :
-   The coordinates of the desired reference point are copied there.
+    \param index : The index of the desired reference point. The index must be
+    between 0 and the number of reference points - 1.
+    \param referencePoint :
+    The coordinates of the desired reference point are copied there.
   */
   inline void getReferencePoint(unsigned int index, vpImagePoint &referencePoint)
   {
@@ -126,14 +127,14 @@ public:
 
   /*!
     Get the nth couple of reference point and current point which have been
-   matched. These points are copied in the vpImagePoint instances given in
-   argument.
+    matched. These points are copied in the vpImagePoint instances given in
+    argument.
 
-   \param index : The index of the desired couple of reference point and
-   current point . The index must be between 0 and the number of matched
-   points - 1. \param referencePoint : The coordinates of the desired
-   reference point are copied here. \param currentPoint : The coordinates of
-   the desired current point are copied here.
+    \param index : The index of the desired couple of reference point and
+    current point. The index must be between 0 and the number of matched
+    points - 1.
+    \param referencePoint : The coordinates of the desired reference point are copied here.
+    \param currentPoint : The coordinates of the desired current point are copied here.
   */
   inline void getMatchedPoints(unsigned int index, vpImagePoint &referencePoint, vpImagePoint &currentPoint)
   {
@@ -144,7 +145,7 @@ public:
     referencePoint.set_ij(referenceImagePointsList[matchedReferencePoints[index]].get_i(),
                           referenceImagePointsList[matchedReferencePoints[index]].get_j());
     currentPoint.set_ij(currentImagePointsList[index].get_i(), currentImagePointsList[index].get_j());
-  };
+  }
 
   /*!
     Get the nth matched reference point index in the complete list of
@@ -180,16 +181,16 @@ public:
   }
 
   /*!
-   Get the number of reference points.
+    Get the number of reference points.
 
-   \return the number of reference points.
+    \return the number of reference points.
   */
   inline unsigned int getReferencePointNumber() const { return (unsigned int)referenceImagePointsList.size(); };
 
   /*!
-   Get the number of matched points.
+    Get the number of matched points.
 
-   \return the number of matched points.
+    \return the number of matched points.
   */
   inline unsigned int getMatchedPointNumber() const { return (unsigned int)matchedReferencePoints.size(); };
 
@@ -252,9 +253,3 @@ protected:
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */
