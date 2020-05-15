@@ -2177,10 +2177,20 @@ void vpKeyPoint::getObjectPoints(std::vector<vpPoint> &objectPoints) const
 /*!
    Get the query keypoints list in OpenCV type.
 
+   \param matches : If false return the list of all query keypoints extracted in the current image.
+   If true, return only the query keypoints list that have matches.
    \param keyPoints : List of query keypoints (or keypoints detected in the
    current image).
  */
-void vpKeyPoint::getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const { keyPoints = m_queryFilteredKeyPoints; }
+void vpKeyPoint::getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints, bool matches) const
+{
+  if (matches) {
+    keyPoints = m_queryFilteredKeyPoints;
+  }
+  else {
+    keyPoints = m_queryKeyPoints;
+  }
+}
 
 /*!
    Get the query keypoints list in ViSP type.
@@ -2188,7 +2198,15 @@ void vpKeyPoint::getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const {
    \param keyPoints : List of query keypoints (or keypoints detected in the
    current image).
  */
-void vpKeyPoint::getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints) const { keyPoints = currentImagePointsList; }
+void vpKeyPoint::getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints, bool matches) const
+{
+  if (matches) {
+    keyPoints = currentImagePointsList;
+  }
+  else {
+    vpConvert::convertFromOpenCV(m_queryKeyPoints, keyPoints);
+  }
+}
 
 /*!
    Get the train keypoints list in OpenCV type.

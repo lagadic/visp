@@ -656,8 +656,8 @@ public:
    */
   inline cv::Mat getQueryDescriptors() const { return m_queryDescriptors; }
 
-  void getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const;
-  void getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints) const;
+  void getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints, bool matches = true) const;
+  void getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints, bool matches = true) const;
 
   /*!
     Get the list of Ransac inliers.
