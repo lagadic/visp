@@ -188,7 +188,7 @@ int main(int argc, const char **argv)
     }
 
     std::vector<CalibInfo> calib_info;
-    std::multimap<double, vpCameraParameters, std::less<double>> map_cam_sorted; // Sorted by residual
+    std::multimap< double, vpCameraParameters, std::less<double> > map_cam_sorted; // Sorted by residual
 
     map_cam_sorted.insert(std::make_pair(1000, cam_init));
 
