@@ -103,7 +103,7 @@ int main(int argc, const char ** argv) {
   std::cout << "cam:\n" << cam << std::endl;
 
   bool quit = false;
-  while (!quit && !reader.end()) {
+  do {
     reader.acquire(I);
 
     cv::Mat matImg;
@@ -189,7 +189,7 @@ int main(int argc, const char ** argv) {
           break;
       }
     }
-  }
+  } while (!quit && !reader.end());
 
   return EXIT_SUCCESS;
 }
