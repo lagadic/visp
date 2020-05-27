@@ -36,6 +36,10 @@
 #include <visp3/core/vpCPUFeatures.h>
 #include <visp3/mbt/vpMbtFaceDepthDense.h>
 
+#ifdef VISP_HAVE_PCL
+#include <pcl/common/point_tests.h>
+#endif
+
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
 #define VISP_HAVE_SSE2 1

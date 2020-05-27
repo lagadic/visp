@@ -406,6 +406,7 @@ int main(int argc, const char *argv[])
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
     unsigned int nb_cols = 6;
+    unsigned int nb_rows_sym = 5;
     bool verbose = false;
     std::string plotfile("plot-svd.csv");
     bool use_plot_file = false;
@@ -442,7 +443,7 @@ int main(int argc, const char *argv[])
       std::vector<vpMatrix> bench_random_matrices;
       create_bench_random_matrix(nb_matrices, nb_rows, nb_cols, verbose, bench_random_matrices);
       std::vector<vpMatrix> bench_random_symmetric_matrices;
-      create_bench_random_symmetric_matrix(nb_matrices, nb_rows, verbose, bench_random_matrices);
+      create_bench_random_symmetric_matrix(nb_matrices, nb_rows_sym, verbose, bench_random_symmetric_matrices);
 
       if (use_plot_file)
         of << iter << "\t";
@@ -464,7 +465,7 @@ int main(int argc, const char *argv[])
 #endif
 
 #if defined(VISP_HAVE_LAPACK)
-      ret += test_eigen_values_lapack(verbose, bench_random_matrices, time);
+      ret += test_eigen_values_lapack(verbose, bench_random_symmetric_matrices, time);
       save_time("Eigen values (Lapack): ", verbose, use_plot_file, of, time);
 #endif
 

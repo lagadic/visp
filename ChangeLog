@@ -2,13 +2,14 @@
                      Visual Servoing Platform
                      Resume of the change log
 
-     Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+     Copyright (C) 2005 - 2020 by Inria. All rights reserved.
                       https://visp.inria.fr
 
 ViSP 3.3.1 (under development)
   - Contributors:
     . This release was possible thanks to contributions from Fabien Spindler,
       Pierre Chatelain, Souriya Trinh, Joudy Nader
+    . Thanks also to Sergio Agostinho
   - New features and improvements
     . Compatibility with FreeBSD
     . Introduce transparency when displaying filled circle and rectangle with
@@ -45,6 +46,8 @@ ViSP 3.3.1 (under development)
     . [#731] Link issues using pkgconfig with static libraries
     . [#735] MKL and GSL Blas/Lapack 3rd parties incompatibility
     . [#750] Cannot detect OpenMP with clang on MacOS
+    . [#763] VISP does not support the latest PCL release 1.11.0
+    . [#767] Compile from source on Ubuntu Focal raises CMake error with Ogre 1.9 or 2.1
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:
