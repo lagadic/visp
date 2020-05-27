@@ -87,7 +87,7 @@ typedef long int integer;
 #    else
 typedef int integer;
 #    endif
-extern "C" int dsyev_(char *jobz, char *uplo, integer *n, double *a, integer *lda,
+extern "C" integer dsyev_(char *jobz, char *uplo, integer *n, double *a, integer *lda,
                       double *w, double *WORK, integer *lwork, integer *info);
 
 void vpMatrix::blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data, unsigned int lda_,
@@ -99,6 +99,9 @@ void vpMatrix::blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data,
   integer info = static_cast<integer>(info_);
 
   dsyev_(&jobz, &uplo, &n, a_data, &lda, w_data, work_data, &lwork, &info);
+
+  lwork_ = static_cast<int>(lwork);
+  info_ = static_cast<int>(info);
 }
 #  endif
 #endif
@@ -4830,9 +4833,12 @@ vpColVector vpMatrix::eigenValues() const
     const char uplo = 'U';
     vpMatrix A = (*this);
     vpColVector WORK;
-    unsigned int lwork = 3*colNum - 1;
-    WORK.resize(lwork);
+    unsigned int lwork = -1; //(3*colNum - 1);
     int info;
+    double wkopt;
+    vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, &wkopt, lwork, info);
+    lwork = (unsigned int)wkopt;
+    WORK.resize(lwork);
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, WORK.data, lwork, info);
   }
 #endif
@@ -4904,7 +4910,6 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
                       rowNum, colNum));
   }
 
-
   // Check if the matrix is symetric: At - A = 0
   vpMatrix At_A = (*this).t() - (*this);
   for (unsigned int i = 0; i < rowNum; i++) {
@@ -4961,9 +4966,12 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
     const char uplo = 'U';
     vpMatrix A = (*this);
     vpColVector WORK;
-    unsigned int lwork = 3*colNum - 1;
-    WORK.resize(lwork);
+    unsigned int lwork = -1; //(3*colNum - 1);
     int info;
+    double wkopt;
+    vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, &wkopt, lwork, info);
+    lwork = (unsigned int)wkopt;
+    WORK.resize(lwork);
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, WORK.data, lwork, info);
     evector = A.t();
   }
