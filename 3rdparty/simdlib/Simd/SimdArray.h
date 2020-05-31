@@ -104,13 +104,6 @@ namespace Simd
     }
 #endif
 
-#ifdef SIMD_AVX512F_ENABLE
-    namespace Avx512f
-    {
-        typedef Array<__m512> Array512f;
-    }
-#endif
-
 #ifdef SIMD_NEON_ENABLE
     namespace Neon
     {

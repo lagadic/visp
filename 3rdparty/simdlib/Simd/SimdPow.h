@@ -146,61 +146,6 @@ namespace Simd
     }
 #endif //SIMD_AVX2_ENABLE
 
-#ifdef SIMD_AVX512F_ENABLE    
-    namespace Avx512f
-    {
-        class Pow
-        {
-            __m512i _exponent, _mantissa;
-            __m512 _one;
-
-            SIMD_INLINE __m512 Poly5(__m512 x, float a, float b, float c, float d, float e, float f) const
-            {
-                __m512 p = _mm512_set1_ps(f);
-                p = _mm512_fmadd_ps(x, p, _mm512_set1_ps(e));
-                p = _mm512_fmadd_ps(x, p, _mm512_set1_ps(d));
-                p = _mm512_fmadd_ps(x, p, _mm512_set1_ps(c));
-                p = _mm512_fmadd_ps(x, p, _mm512_set1_ps(b));
-                p = _mm512_fmadd_ps(x, p, _mm512_set1_ps(a));
-                return p;
-            }
-
-            SIMD_INLINE __m512 Exp2(__m512 x) const
-            {
-                x = _mm512_max_ps(_mm512_min_ps(x, _mm512_set1_ps(129.00000f)), _mm512_set1_ps(-126.99999f));
-                __m512i ipart = _mm512_cvtps_epi32(_mm512_sub_ps(x, _mm512_set1_ps(0.5f)));
-                __m512 fpart = _mm512_sub_ps(x, _mm512_cvtepi32_ps(ipart));
-                __m512 expipart = _mm512_castsi512_ps(_mm512_slli_epi32(_mm512_add_epi32(ipart, _mm512_set1_epi32(127)), 23));
-                __m512 expfpart = Poly5(fpart, 9.9999994e-1f, 6.9315308e-1f, 2.4015361e-1f, 5.5826318e-2f, 8.9893397e-3f, 1.8775767e-3f);
-                return _mm512_mul_ps(expipart, expfpart);
-            }
-
-            SIMD_INLINE __m512 Log2(__m512 x) const
-            {
-                __m512i i = _mm512_castps_si512(x);
-                __m512 e = _mm512_cvtepi32_ps(_mm512_sub_epi32(_mm512_srli_epi32(_mm512_and_si512(i, _exponent), 23), _mm512_set1_epi32(127)));
-                __m512 m = _mm512_or_ps(_mm512_castsi512_ps(_mm512_and_si512(i, _mantissa)), _one);
-                __m512 p = Poly5(m, 3.1157899f, -3.3241990f, 2.5988452f, -1.2315303f, 3.1821337e-1f, -3.4436006e-2f);
-                return _mm512_fmadd_ps(p, _mm512_sub_ps(m, _one), e);
-            }
-
-        public:
-
-            SIMD_INLINE Pow()
-            {
-                _exponent = _mm512_set1_epi32(0x7F800000);
-                _mantissa = _mm512_set1_epi32(0x007FFFFF);
-                _one = _mm512_set1_ps(1.0f);
-            }
-
-            SIMD_INLINE __m512 operator()(__m512 basis, __m512 exponent) const
-            {
-                return Exp2(_mm512_mul_ps(Log2(basis), exponent));
-            }
-        };
-    }
-#endif //SIMD_AVX512F_ENABLE
-
 #ifdef SIMD_NEON_ENABLE    
     namespace Neon
     {

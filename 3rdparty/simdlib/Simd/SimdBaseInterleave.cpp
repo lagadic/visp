@@ -27,21 +27,6 @@ namespace Simd
 {
     namespace Base
     {
-        void InterleaveUv(const uint8_t * u, size_t uStride, const uint8_t * v, size_t vStride, size_t width, size_t height, uint8_t * uv, size_t uvStride)
-        {
-            for (size_t row = 0; row < height; ++row)
-            {
-                for (size_t col = 0, offset = 0; col < width; ++col, offset += 2)
-                {
-                    uv[offset] = u[col];
-                    uv[offset + 1] = v[col];
-                }
-                u += uStride;
-                v += vStride;
-                uv += uvStride;
-            }
-        }
-
         void InterleaveBgr(const uint8_t * b, size_t bStride, const uint8_t * g, size_t gStride, const uint8_t * r, size_t rStride, size_t width, size_t height, uint8_t * bgr, size_t bgrStride)
         {
             for (size_t row = 0; row < height; ++row)

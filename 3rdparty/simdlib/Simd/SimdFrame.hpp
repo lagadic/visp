@@ -52,10 +52,6 @@ namespace Simd
         {
             /*! An undefined pixel format. */
             None = 0,
-            /*! Two planes (8-bit full size Y plane, 16-bit interlived half size UV plane) NV12 pixel format. */
-            Nv12,
-            /*! Three planes (8-bit full size Y plane, 8-bit half size U plane, 8-bit half size V plane) YUV420P pixel format. */
-            Yuv420p,
             /*! One plane 32-bit (4 8-bit channels) BGRA (Blue, Green, Red, Alpha) pixel format. */
             Bgra32,
             /*! One plane 24-bit (3 8-bit channels) BGR (Blue, Green, Red) pixel format. */
@@ -415,17 +411,6 @@ namespace Simd
         {
         case None:
             break;
-        case Nv12:
-            assert((width & 1) == 0 && (height & 1) == 0);
-            planes[0] = View<A>(width, height, stride0, View<A>::Gray8, data0);
-            planes[1] = View<A>(width / 2, height / 2, stride1, View<A>::Uv16, data1);
-            break;
-        case Yuv420p:
-            assert((width & 1) == 0 && (height & 1) == 0);
-            planes[0] = View<A>(width, height, stride0, View<A>::Gray8, data0);
-            planes[1] = View<A>(width / 2, height / 2, stride1, View<A>::Gray8, data1);
-            planes[2] = View<A>(width / 2, height / 2, stride2, View<A>::Gray8, data2);
-            break;
         case Bgra32:
             planes[0] = View<A>(width, height, stride0, View<A>::Bgra32, data0);
             break;
@@ -500,17 +485,6 @@ namespace Simd
         {
         case None:
             break;
-        case Nv12:
-            assert((width & 1) == 0 && (height & 1) == 0);
-            planes[0].Recreate(width, height, View<A>::Gray8);
-            planes[1].Recreate(width / 2, height / 2, View<A>::Uv16);
-            break;
-        case Yuv420p:
-            assert((width & 1) == 0 && (height & 1) == 0);
-            planes[0].Recreate(width, height, View<A>::Gray8);
-            planes[1].Recreate(width / 2, height / 2, View<A>::Gray8);
-            planes[2].Recreate(width / 2, height / 2, View<A>::Gray8);
-            break;
         case Bgra32:
             planes[0].Recreate(width, height, View<A>::Bgra32);
             break;
@@ -543,14 +517,6 @@ namespace Simd
             right = std::min<ptrdiff_t>(std::max<ptrdiff_t>(right, 0), width);
             bottom = std::min<ptrdiff_t>(std::max<ptrdiff_t>(bottom, 0), height);
 
-            if (format == Nv12 || format == Yuv420p)
-            {
-                left = left & ~1;
-                top = top & ~1;
-                right = (right + 1) & ~1;
-                bottom = (bottom + 1) & ~1;
-            }
-
             Frame frame;
             *(size_t*)&frame.width = right - left;
             *(size_t*)&frame.height = bottom - top;
@@ -559,12 +525,6 @@ namespace Simd
             frame.timestamp = timestamp;
 
             frame.planes[0] = planes[0].Region(left, top, right, bottom);
-
-            if (format == Nv12 || format == Yuv420p)
-                frame.planes[1] = planes[1].Region(left / 2, top / 2, right / 2, bottom / 2);
-
-            if (format == Yuv420p)
-                frame.planes[2] = planes[2].Region(left / 2, top / 2, right / 2, bottom / 2);
 
             return frame;
         }
@@ -628,8 +588,6 @@ namespace Simd
         switch (format)
         {
         case None:    return 0;
-        case Nv12:    return 2;
-        case Yuv420p: return 3;
         case Bgra32:  return 1;
         case Bgr24:   return 1;
         case Gray8:   return 1;
@@ -681,69 +639,9 @@ namespace Simd
 
         switch (src.format)
         {
-        case Frame<A>::Nv12:
-            switch (dst.format)
-            {
-            case Frame<A>::Yuv420p:
-                Copy(src.planes[0], dst.planes[0]);
-                DeinterleaveUv(src.planes[1], dst.planes[1], dst.planes[2]);
-                break;
-            case Frame<A>::Bgra32:
-            {
-                View<A> u(src.Size(), View<A>::Gray8), v(src.Size(), View<A>::Gray8);
-                DeinterleaveUv(src.planes[1], u, v);
-                Yuv420pToBgra(src.planes[0], u, v, dst.planes[0]);
-                break;
-            }
-            case Frame<A>::Bgr24:
-            {
-                View<A> u(src.Size(), View<A>::Gray8), v(src.Size(), View<A>::Gray8);
-                DeinterleaveUv(src.planes[1], u, v);
-                Yuv420pToBgr(src.planes[0], u, v, dst.planes[0]);
-                break;
-            }
-            case Frame<A>::Gray8:
-                Copy(src.planes[0], dst.planes[0]);
-                break;
-            default:
-                assert(0);
-            }
-            break;
-
-        case Frame<A>::Yuv420p:
-            switch (dst.format)
-            {
-            case Frame<A>::Nv12:
-                Copy(src.planes[0], dst.planes[0]);
-                InterleaveUv(src.planes[1], src.planes[2], dst.planes[1]);
-                break;
-            case Frame<A>::Bgra32:
-                Yuv420pToBgra(src.planes[0], src.planes[1], src.planes[2], dst.planes[0]);
-                break;
-            case Frame<A>::Bgr24:
-                Yuv420pToBgr(src.planes[0], src.planes[1], src.planes[2], dst.planes[0]);
-                break;
-            case Frame<A>::Gray8:
-                Copy(src.planes[0], dst.planes[0]);
-                break;
-            default:
-                assert(0);
-            }
-            break;
-
         case Frame<A>::Bgra32:
             switch (dst.format)
             {
-            case Frame<A>::Nv12:
-            {
-                View<A> u(src.Size(), View<A>::Gray8), v(src.Size(), View<A>::Gray8);
-                BgraToYuv420p(src.planes[0], dst.planes[0], u, v);
-                InterleaveUv(u, v, dst.planes[1]);
-                break;
-            }
-            case Frame<A>::Yuv420p:
-                BgraToYuv420p(src.planes[0], dst.planes[0], dst.planes[1], dst.planes[2]);
-                break;
             case Frame<A>::Bgr24:
                 BgraToBgr(src.planes[0], dst.planes[0]);
                 break;
@@ -758,16 +656,6 @@ namespace Simd
         case Frame<A>::Bgr24:
             switch (dst.format)
             {
-            case Frame<A>::Nv12:
-            {
-                View<A> u(src.Size(), View<A>::Gray8), v(src.Size(), View<A>::Gray8);
-                BgrToYuv420p(src.planes[0], dst.planes[0], u, v);
-                InterleaveUv(u, v, dst.planes[1]);
-                break;
-            }
-            case Frame<A>::Yuv420p:
-                BgrToYuv420p(src.planes[0], dst.planes[0], dst.planes[1], dst.planes[2]);
-                break;
             case Frame<A>::Bgra32:
                 BgrToBgra(src.planes[0], dst.planes[0]);
                 break;
@@ -782,15 +670,6 @@ namespace Simd
         case Frame<A>::Gray8:
             switch (dst.format)
             {
-            case Frame<A>::Nv12:
-                Copy(src.planes[0], dst.planes[0]);
-                Fill(dst.planes[1], 128);
-                break;
-            case Frame<A>::Yuv420p:
-                Copy(src.planes[0], dst.planes[0]);
-                Fill(dst.planes[1], 128);
-                Fill(dst.planes[2], 128);
-                break;
             case Frame<A>::Bgra32:
                 GrayToBgra(src.planes[0], dst.planes[0]);
                 break;

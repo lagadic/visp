@@ -79,8 +79,6 @@ namespace Simd
             None = 0,
             /*! A 8-bit gray pixel format. */
             Gray8,
-            /*! A 16-bit (2 8-bit channels) pixel format (UV plane of NV12 pixel format). */
-            Uv16,
             /*! A 24-bit (3 8-bit channels) BGR (Blue, Green, Red) pixel format. */
             Bgr24,
             /*! A 32-bit (4 8-bit channels) BGRA (Blue, Green, Red, Alpha) pixel format. */
@@ -95,18 +93,6 @@ namespace Simd
             Float,
             /*! A single channel 64-bit float point pixel format. */
             Double,
-            /*! A 8-bit Bayer pixel format (GRBG). */
-            BayerGrbg,
-            /*! A 8-bit Bayer pixel format (GBRG). */
-            BayerGbrg,
-            /*! A 8-bit Bayer pixel format (RGGB). */
-            BayerRggb,
-            /*! A 8-bit Bayer pixel format (BGGR). */
-            BayerBggr,
-            /*! A 24-bit (3 8-bit channels) HSV (Hue, Saturation, Value) pixel format. */
-            Hsv24,
-            /*! A 24-bit (3 8-bit channels) HSL (Hue, Saturation, Lightness) pixel format. */
-            Hsl24,
             /*! A 24-bit (3 8-bit channels) RGB (Red, Green, Blue) pixel format. */
             Rgb24,
         };
@@ -1030,7 +1016,6 @@ namespace Simd
         {
         case None:      return 0;
         case Gray8:     return 1;
-        case Uv16:      return 2;
         case Bgr24:     return 3;
         case Bgra32:    return 4;
         case Int16:     return 2;
@@ -1038,12 +1023,6 @@ namespace Simd
         case Int64:     return 8;
         case Float:     return 4;
         case Double:    return 8;
-        case BayerGrbg: return 1;
-        case BayerGbrg: return 1;
-        case BayerRggb: return 1;
-        case BayerBggr: return 1;
-        case Hsv24:     return 3;
-        case Hsl24:     return 3;
         case Rgb24:     return 3;
         default: assert(0); return 0;
         }
@@ -1060,7 +1039,6 @@ namespace Simd
         {
         case None:      return 0;
         case Gray8:     return 1;
-        case Uv16:      return 1;
         case Bgr24:     return 1;
         case Bgra32:    return 1;
         case Int16:     return 2;
@@ -1068,12 +1046,6 @@ namespace Simd
         case Int64:     return 8;
         case Float:     return 4;
         case Double:    return 8;
-        case BayerGrbg: return 1;
-        case BayerGbrg: return 1;
-        case BayerRggb: return 1;
-        case BayerBggr: return 1;
-        case Hsv24:     return 1;
-        case Hsl24:     return 1;
         case Rgb24:     return 1;
         default: assert(0); return 0;
         }
@@ -1090,7 +1062,6 @@ namespace Simd
         {
         case None:      return 0;
         case Gray8:     return 1;
-        case Uv16:      return 2;
         case Bgr24:     return 3;
         case Bgra32:    return 4;
         case Int16:     return 1;
@@ -1098,12 +1069,6 @@ namespace Simd
         case Int64:     return 1;
         case Float:     return 1;
         case Double:    return 1;
-        case BayerGrbg: return 1;
-        case BayerGbrg: return 1;
-        case BayerRggb: return 1;
-        case BayerBggr: return 1;
-        case Hsv24:     return 3;
-        case Hsl24:     return 3;
         case Rgb24:     return 3;
         default: assert(0); return 0;
         }
@@ -1120,7 +1085,6 @@ namespace Simd
         switch (format)
         {
         case Gray8:     return CV_8UC1;
-        case Uv16:      return CV_8UC2;
         case Bgr24:     return CV_8UC3;
         case Bgra32:    return CV_8UC4;
         case Int16:     return CV_16SC1;
@@ -1136,7 +1100,6 @@ namespace Simd
         switch (type)
         {
         case CV_8UC1:   return Gray8;
-        case CV_8UC2:   return Uv16;
         case CV_8UC3:   return Bgr24;
         case CV_8UC4:   return Bgra32;
         case CV_16SC1:  return Int16;

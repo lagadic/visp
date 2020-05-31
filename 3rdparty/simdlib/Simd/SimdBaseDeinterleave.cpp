@@ -27,22 +27,6 @@ namespace Simd
 {
     namespace Base
     {
-        void DeinterleaveUv(const uint8_t * uv, size_t uvStride, size_t width, size_t height,
-            uint8_t * u, size_t uStride, uint8_t * v, size_t vStride)
-        {
-            for (size_t row = 0; row < height; ++row)
-            {
-                for (size_t col = 0, offset = 0; col < width; ++col, offset += 2)
-                {
-                    u[col] = uv[offset];
-                    v[col] = uv[offset + 1];
-                }
-                uv += uvStride;
-                u += uStride;
-                v += vStride;
-            }
-        }
-
         void DeinterleaveBgr(const uint8_t * bgr, size_t bgrStride, size_t width, size_t height,
             uint8_t * b, size_t bStride, uint8_t * g, size_t gStride, uint8_t * r, size_t rStride)
         {

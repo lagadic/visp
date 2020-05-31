@@ -197,50 +197,6 @@ namespace Simd
     }
 #endif// SIMD_AVX2_ENABLE
 
-#ifdef SIMD_AVX512F_ENABLE
-    namespace Avx512f
-    {
-        SIMD_INLINE bool Aligned(size_t size, size_t align = sizeof(__m512))
-        {
-            return Simd::Aligned(size, align);
-        }
-
-        SIMD_INLINE bool Aligned(const void * ptr, size_t align = sizeof(__m512))
-        {
-            return Simd::Aligned(ptr, align);
-        }
-    }
-#endif// SIMD_AVX512F_ENABLE
-
-#ifdef SIMD_AVX512BW_ENABLE
-    namespace Avx512bw
-    {
-        using Avx512f::Aligned;
-    }
-#endif// SIMD_AVX512BW_ENABLE
-
-#ifdef SIMD_VMX_ENABLE
-    namespace Vmx
-    {
-        SIMD_INLINE bool Aligned(size_t size, size_t align = sizeof(vec_uchar16))
-        {
-            return Simd::Aligned(size, align);
-        }
-
-        SIMD_INLINE bool Aligned(const void * ptr, size_t align = sizeof(vec_uchar16))
-        {
-            return Simd::Aligned(ptr, align);
-        }
-    }
-#endif// SIMD_VMX_ENABLE
-
-#ifdef SIMD_VSX_ENABLE
-    namespace Vsx
-    {
-        using Vmx::Aligned;
-    }
-#endif// SIMD_VSX_ENABLE
-
 #ifdef SIMD_NEON_ENABLE
     namespace Neon
     {
@@ -255,21 +211,6 @@ namespace Simd
         }
     }
 #endif// SIMD_NEON_ENABLE
-
-#ifdef SIMD_MSA_ENABLE
-    namespace Msa
-    {
-        SIMD_INLINE bool Aligned(size_t size, size_t align = sizeof(v16u8))
-        {
-            return Simd::Aligned(size, align);
-        }
-
-        SIMD_INLINE bool Aligned(const void * ptr, size_t align = sizeof(v16u8))
-        {
-            return Simd::Aligned(ptr, align);
-        }
-    }
-#endif// SIMD_MSA_ENABLE
 }
 
 #endif//__SimdMemory_h__

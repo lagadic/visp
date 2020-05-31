@@ -40,19 +40,9 @@
 
 //#define SIMD_AVX2_DISABLE
 
-//#define SIMD_AVX512F_DISABLE
-
-//#define SIMD_AVX512BW_DISABLE
-
-//#define SIMD_VMX_DISABLE
-
-//#define SIMD_VSX_DISABLE
-
 //#define SIMD_NEON_DISABLE
 
 //#define SIMD_NEON_FP16_DISABLE
-
-//#define SIMD_MSA_DISABLE
 
 //#define SIMD_STATIC
 

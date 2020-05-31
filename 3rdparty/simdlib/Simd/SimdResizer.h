@@ -271,48 +271,6 @@ namespace Simd
     }
 #endif //SIMD_AVX2_ENABLE 
 
-#ifdef SIMD_AVX512F_ENABLE    
-    namespace Avx512f
-    {
-        class ResizerFloatBilinear : public Base::ResizerFloatBilinear
-        {
-            virtual void Run(const float * src, size_t srcStride, float * dst, size_t dstStride);
-        public:
-            ResizerFloatBilinear(const ResParam & param);
-        };
-
-        void * ResizerInit(size_t srcX, size_t srcY, size_t dstX, size_t dstY, size_t channels, SimdResizeChannelType type, SimdResizeMethodType method);
-    }
-#endif //SIMD_AVX512F_ENABLE 
-
-#ifdef SIMD_AVX512BW_ENABLE    
-    namespace Avx512bw
-    {
-        class ResizerByteBilinear : public Avx2::ResizerByteBilinear
-        {
-        protected:
-            template<size_t N> void Run(const uint8_t * src, size_t srcStride, uint8_t * dst, size_t dstStride);
-            void RunG(const uint8_t * src, size_t srcStride, uint8_t * dst, size_t dstStride);
-        public:
-            ResizerByteBilinear(const ResParam & param);
-
-            virtual void Run(const uint8_t * src, size_t srcStride, uint8_t * dst, size_t dstStride);
-        };
-
-        class ResizerByteArea : public Avx2::ResizerByteArea
-        {
-        protected:
-            template<size_t N> void Run(const uint8_t * src, size_t srcStride, uint8_t * dst, size_t dstStride);
-        public:
-            ResizerByteArea(const ResParam & param);
-
-            virtual void Run(const uint8_t * src, size_t srcStride, uint8_t * dst, size_t dstStride);
-        };
-
-        void * ResizerInit(size_t srcX, size_t srcY, size_t dstX, size_t dstY, size_t channels, SimdResizeChannelType type, SimdResizeMethodType method);
-    }
-#endif //SIMD_AVX512BW_ENABLE 
-
 #ifdef SIMD_NEON_ENABLE    
     namespace Neon
     {

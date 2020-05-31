@@ -30,49 +30,6 @@ namespace Simd
 #ifdef SIMD_AVX2_ENABLE    
     namespace Avx2
     {
-        template <bool align> SIMD_INLINE void InterleaveUv(const uint8_t * u, const uint8_t * v, uint8_t * uv)
-        {
-            __m256i _u = LoadPermuted<align>((__m256i*)u);
-            __m256i _v = LoadPermuted<align>((__m256i*)v);
-            Store<align>((__m256i*)uv + 0, UnpackU8<0>(_u, _v));
-            Store<align>((__m256i*)uv + 1, UnpackU8<1>(_u, _v));
-        }
-
-        template <bool align> void InterleaveUv(const uint8_t * u, size_t uStride, const uint8_t * v, size_t vStride,
-            size_t width, size_t height, uint8_t * uv, size_t uvStride)
-        {
-            assert(width >= A);
-            if (align)
-            {
-                assert(Aligned(uv) && Aligned(uvStride) && Aligned(u) && Aligned(uStride) && Aligned(v) && Aligned(vStride));
-            }
-
-            size_t bodyWidth = AlignLo(width, A);
-            size_t tail = width - bodyWidth;
-            for (size_t row = 0; row < height; ++row)
-            {
-                for (size_t col = 0, offset = 0; col < bodyWidth; col += A, offset += DA)
-                    InterleaveUv<align>(u + col, v + col, uv + offset);
-                if (tail)
-                {
-                    size_t col = width - A;
-                    size_t offset = 2 * col;
-                    InterleaveUv<false>(u + col, v + col, uv + offset);
-                }
-                u += uStride;
-                v += vStride;
-                uv += uvStride;
-            }
-        }
-
-        void InterleaveUv(const uint8_t * u, size_t uStride, const uint8_t * v, size_t vStride, size_t width, size_t height, uint8_t * uv, size_t uvStride)
-        {
-            if (Aligned(uv) && Aligned(uvStride) && Aligned(u) && Aligned(uStride) && Aligned(v) && Aligned(vStride))
-                InterleaveUv<true>(u, uStride, v, vStride, width, height, uv, uvStride);
-            else
-                InterleaveUv<false>(u, uStride, v, vStride, width, height, uv, uvStride);
-        }
-
         template <bool align> SIMD_INLINE void InterleaveBgr(const uint8_t * b, const uint8_t * g, const uint8_t * r, size_t offset, uint8_t * bgr)
         {
             __m256i _b = Load<align>((__m256i*)(b + offset));

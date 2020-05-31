@@ -386,101 +386,6 @@ namespace Simd
     }
 #endif
 
-#ifdef SIMD_AVX512F_ENABLE
-    namespace Avx512f
-    {
-        SIMD_INLINE bool SupportedByCPU()
-        {
-            return
-                Cpuid::CheckBit(Cpuid::Extended, Cpuid::Ebx, Cpuid::AVX512F);
-        }
-
-        SIMD_INLINE bool SupportedByOS()
-        {
-#if defined(_MSC_VER)
-            __try
-            {
-                __m512d value = _mm512_set1_pd(1.0);// try to execute of AVX-512-F instructions;
-                return true;
-            }
-            __except (EXCEPTION_EXECUTE_HANDLER)
-            {
-                return false;
-            }
-#else
-            return true;
-#endif
-        }
-
-        const bool Enable = SupportedByCPU() && SupportedByOS();
-    }
-#endif
-
-#ifdef SIMD_AVX512BW_ENABLE
-    namespace Avx512bw
-    {
-        SIMD_INLINE bool SupportedByCPU()
-        {
-            return
-                Cpuid::CheckBit(Cpuid::Extended, Cpuid::Ebx, Cpuid::AVX512F) &&
-                Cpuid::CheckBit(Cpuid::Extended, Cpuid::Ebx, Cpuid::AVX512BW);
-        }
-
-        SIMD_INLINE bool SupportedByOS()
-        {
-#if defined(_MSC_VER)
-            __try
-            {
-                __m512i value = _mm512_abs_epi8(_mm512_set1_epi8(1));// try to execute of AVX-512-BW instructions;
-                return true;
-            }
-            __except (EXCEPTION_EXECUTE_HANDLER)
-            {
-                return false;
-            }
-#else
-            return true;
-#endif
-        }
-
-        const bool Enable = SupportedByCPU() && SupportedByOS();
-    }
-#endif
-
-#ifdef SIMD_VMX_ENABLE
-    namespace Vmx
-    {
-        SIMD_INLINE bool SupportedByCPU()
-        {
-            return CpuInfo::CheckBit(AT_HWCAP, PPC_FEATURE_HAS_ALTIVEC);
-        }
-
-        SIMD_INLINE bool SupportedByOS()
-        {
-            return true;
-        }
-
-        const bool Enable = SupportedByCPU() && SupportedByOS();
-    }
-#endif
-
-#ifdef SIMD_VSX_ENABLE
-    namespace Vsx
-    {
-        SIMD_INLINE bool SupportedByCPU()
-        {
-            return CpuInfo::CheckBit(AT_HWCAP, PPC_FEATURE_HAS_VSX);
-        }
-
-        SIMD_INLINE bool SupportedByOS()
-        {
-            return true;
-        }
-
-        const bool Enable = SupportedByCPU() && SupportedByOS();
-    }
-#endif
-
 #ifdef SIMD_NEON_ENABLE
     namespace Neon
     {
@@ -508,35 +413,8 @@ namespace Simd
     }
 #endif
 
-#ifdef SIMD_MSA_ENABLE
-    namespace Msa
-    {
-        SIMD_INLINE bool SupportedByCPU()
-        {
-            return true;
-        }
-
-        SIMD_INLINE bool SupportedByOS()
-        {
-            return true;
-        }
-
-        const bool Enable = SupportedByCPU() && SupportedByOS();
-    }
-#endif
-
     SIMD_INLINE size_t Alignment()
     {
-#ifdef SIMD_AVX512BW_ENABLE
-        if (Avx512bw::Enable)
-            return sizeof(__m512i);
-        else
-#endif
-#ifdef SIMD_AVX512F_ENABLE
-        if (Avx512f::Enable)
-            return sizeof(__m512);
-        else
-#endif
 #ifdef SIMD_AVX2_ENABLE
         if (Avx2::Enable)
             return sizeof(__m256i);
@@ -567,24 +445,9 @@ namespace Simd
             return sizeof(__m128);
         else
 #endif
-#ifdef SIMD_VSX_ENABLE
-        if (Vsx::Enable)
-            return sizeof(__vector uint8_t);
-        else
-#endif
-#ifdef SIMD_VMX_ENABLE
-        if (Vmx::Enable)
-            return sizeof(__vector uint8_t);
-        else
-#endif
 #ifdef SIMD_NEON_ENABLE
         if (Neon::Enable)
             return sizeof(uint8x16_t);
-        else
-#endif
-#ifdef SIMD_MSA_ENABLE
-        if (Msa::Enable)
-            return sizeof(v16u8);
         else
 #endif
             return sizeof(void *);
@@ -641,30 +504,6 @@ namespace Simd
 #define SIMD_AVX2_FUNC(func) Simd::Avx2::Enable ? Simd::Avx2::func : 
 #else
 #define SIMD_AVX2_FUNC(func)
-#endif
-
-#ifdef SIMD_AVX512F_ENABLE
-#define SIMD_AVX512F_FUNC(func) Simd::Avx512f::Enable ? Simd::Avx512f::func : 
-#else
-#define SIMD_AVX512F_FUNC(func)
-#endif
-
-#ifdef SIMD_AVX512BW_ENABLE
-#define SIMD_AVX512BW_FUNC(func) Simd::Avx512bw::Enable ? Simd::Avx512bw::func : 
-#else
-#define SIMD_AVX512BW_FUNC(func)
-#endif
-
-#ifdef SIMD_VMX_ENABLE
-#define SIMD_VMX_FUNC(func) Simd::Vmx::Enable ? Simd::Vmx::func : 
-#else
-#define SIMD_VMX_FUNC(func)
-#endif
-
-#ifdef SIMD_VSX_ENABLE
-#define SIMD_VSX_FUNC(func) Simd::Vsx::Enable ? Simd::Vsx::func : 
-#else
-#define SIMD_VSX_FUNC(func)
 #endif
 
 #ifdef SIMD_NEON_ENABLE

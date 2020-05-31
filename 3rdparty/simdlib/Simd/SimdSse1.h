@@ -31,8 +31,6 @@ namespace Simd
 #ifdef SIMD_SSE_ENABLE
     namespace Sse
     {
-        void Fill32f(float * dst, size_t size, const float * value);
-
         void SquaredDifferenceSum32f(const float * a, const float * b, size_t size, float * sum);
 
         void SquaredDifferenceKahanSum32f(const float * a, const float * b, size_t size, float * sum);
