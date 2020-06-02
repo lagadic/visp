@@ -2291,14 +2291,14 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
 
   if (detectorNameTmp == "SIFT") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    cv::Ptr<cv::FeatureDetector> siftDetector = cv::xfeatures2d::SIFT::create();
+    cv::Ptr<cv::FeatureDetector> siftDetector;
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = siftDetector;
       if (m_maxFeatures > 0) {
-        siftDetector = cv::ORB::create(m_maxFeatures);
+        siftDetector = cv::xfeatures2d::SIFT::create(m_maxFeatures);
       }
       else {
-        siftDetector = cv::ORB::create();
+        siftDetector = cv::xfeatures2d::SIFT::create();
       }
     } else {
       std::cerr << "You should not use SIFT with Pyramid feature detection!" << std::endl;
@@ -3553,6 +3553,22 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpRec
     detect(I, m_queryKeyPoints, m_detectionTime, rectangle);
     extract(I, m_queryKeyPoints, m_queryDescriptors, m_extractionTime);
   }
+
+  return matchPoint(m_queryKeyPoints, m_queryDescriptors);
+}
+
+/*!
+   Match query keypoints with those built in the reference list using buildReference().
+
+   \param queryKeyPoints : List of the query keypoints.
+   \param queryDescriptors : List of the query descriptors.
+
+   \return The number of matched keypoints.
+ */
+unsigned int vpKeyPoint::matchPoint(const std::vector<cv::KeyPoint> &queryKeyPoints, const cv::Mat &queryDescriptors)
+{
+  m_queryKeyPoints = queryKeyPoints;
+  m_queryDescriptors = queryDescriptors;
 
   match(m_trainDescriptors, m_queryDescriptors, m_matches, m_matchingTime);
 

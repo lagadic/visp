@@ -200,7 +200,7 @@ vpHomography vpTemplateTrackerWarpHomography::getHomography(const vpColVector &P
 }
 void vpTemplateTrackerWarpHomography::getParam(const vpHomography &H, vpColVector &par) const
 {
-  par = 0;
+  par.resize(getNbParam(), false);
   for (unsigned int i = 0; i < 3; i++)
     for (unsigned int j = 0; j < 3; j++) {
       if (i + 3 * j != 8) {

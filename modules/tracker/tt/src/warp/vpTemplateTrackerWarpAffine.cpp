@@ -147,6 +147,7 @@ void vpTemplateTrackerWarpAffine::getParamInverse(const vpColVector &ParamM, vpC
   vpColVector TransInv(2);
   TransInv = -1 * MWrapInv * Trans;
 
+  ParamMinv.resize(getNbParam(), false);
   ParamMinv[0] = MWrapInv[0][0] - 1;
   ParamMinv[2] = MWrapInv[0][1];
   ParamMinv[1] = MWrapInv[1][0];
