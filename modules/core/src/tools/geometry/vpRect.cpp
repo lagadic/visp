@@ -248,39 +248,6 @@ bool vpRect::operator!=(const vpRect &r) const
 }
 
 /*!
- Intersection operator.
- \param r : Rectangle to insert.
- \return Intersection rectangle or null rectangle if the two rectangles do not
- intersect.
- */
-vpRect &vpRect::operator&=(const vpRect &r)
-{
-  double x1 = (std::max)(left, r.left);
-  double y1 = (std::max)(top, r.top);
-  width = (std::min)(left + width, r.left + r.width) - x1;
-  height = (std::min)(top + height, r.top + r.height) - y1;
-  left = x1;
-  top = y1;
-
-  if (width <= 0 || height <= 0) {
-    *this = vpRect();
-  }
-
-  return *this;
-}
-
-/*!
- Intersection operator.
- \return Intersection rectangle or null rectangle if the two rectangles do not
- intersect.
- */
-vpRect vpRect::operator&(const vpRect &r) const
-{
-  vpRect a = *this;
-  return a &= r;
-}
-
-/*!
   Check if an image point belongs to a rectangle.
 
   \param ip : the image point.

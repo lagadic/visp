@@ -85,7 +85,7 @@ public:
   };
 
 public:
-  vpDisplayException(const int id, const char *format, ...)
+  vpDisplayException(int id, const char *format, ...)
   {
     this->code = id;
     va_list args;
@@ -94,9 +94,9 @@ public:
     va_end(args);
   }
 
-  vpDisplayException(const int id, const std::string &msg) : vpException(id, msg) {}
+  vpDisplayException(int id, const std::string &msg) : vpException(id, msg) {}
 
-  explicit vpDisplayException(const int id) : vpException(id) {}
+  explicit vpDisplayException(int id) : vpException(id) {}
 };
 
 #endif

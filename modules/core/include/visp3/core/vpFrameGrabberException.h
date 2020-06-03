@@ -79,7 +79,7 @@ public:
   enum errorFrameGrabberCodeEnum { settingError, initializationError, otherError };
 
 public:
-  vpFrameGrabberException(const int id, const char *format, ...)
+  vpFrameGrabberException(int id, const char *format, ...)
   {
     this->code = id;
     va_list args;
@@ -87,8 +87,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpFrameGrabberException(const int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpFrameGrabberException(const int id) : vpException(id) { ; }
+  vpFrameGrabberException(int id, const std::string &msg) : vpException(id, msg) { ; }
+  explicit vpFrameGrabberException(int id) : vpException(id) { ; }
 };
 
 #endif /* #ifndef _vpFrameGrabberException_h_ */

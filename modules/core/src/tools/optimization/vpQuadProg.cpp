@@ -43,10 +43,11 @@
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 /*!
-Changes a canonical quadratic cost \f$\min \frac{1}{2}\mathbf{x}^T\mathbf{H}\mathbf{x} + \mathbf{c}^T\mathbf{x}\f$
-to the formulation used by this class \f$ \min ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2\f$.
+  Changes a canonical quadratic cost \f$\min \frac{1}{2}\mathbf{x}^T\mathbf{H}\mathbf{x} + \mathbf{c}^T\mathbf{x}\f$
+  to the formulation used by this class \f$ \min ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2\f$.
 
-Computes \f$(\mathbf{Q}, \mathbf{r})\f$ such that \f$\mathbf{H} = \mathbf{Q}^T\mathbf{Q}\f$ and \f$\mathbf{c} = -\mathbf{Q}^T\mathbf{r}\f$.
+  Computes \f$(\mathbf{Q}, \mathbf{r})\f$ such that \f$\mathbf{H} = \mathbf{Q}^T\mathbf{Q}\f$ and \f$\mathbf{c} =
+  -\mathbf{Q}^T\mathbf{r}\f$.
 
   \param H : canonical symmetric positive cost matrix (dimension n x n)
   \param c : canonical cost vector (dimension n)
@@ -63,13 +64,10 @@ Computes \f$(\mathbf{Q}, \mathbf{r})\f$ such that \f$\mathbf{H} = \mathbf{Q}^T\m
   \mathbf{x} = &  \arg\min & 2x_1^2 + x_2^2 + x_1x_2 + x_1 + x_2\\
               & \text{s.t.}& x_1 + x_2 = 1
               \end{array}
-\Leftrightarrow
-\begin{array}{lll}
-  \mathbf{x} = &  \arg\min & \frac{1}{2}\mathbf{x}^T\left[\begin{array}{cc}4 & 1 \\ 1 & 2\end{array}\right]\mathbf{x} + [1~1]\mathbf{x}\\
-               & \text{s.t.}& [1~1]\mathbf{x} = 1
-                \end{array}
-\f$
-  \code
+  \Leftrightarrow
+  \begin{array}{lll}
+  \mathbf{x} = &  \arg\min & \frac{1}{2}\mathbf{x}^T\left[\begin{array}{cc}4 & 1 \\ 1 & 2\end{array}\right]\mathbf{x} +
+  [1~1]\mathbf{x}\\ & \text{s.t.}& [1~1]\mathbf{x} = 1 \end{array} \f$ \code
 
   #include <visp3/core/vpLinProg.h>
 
@@ -94,48 +92,42 @@ Computes \f$(\mathbf{Q}, \mathbf{r})\f$ such that \f$\mathbf{H} = \mathbf{Q}^T\m
   }
   \endcode
 */
-#ifdef VISP_HAVE_GSL /* be careful of the copy below */
-void vpQuadProg::fromCanonicalCost(const vpMatrix &H, const vpColVector &c, vpMatrix &Q, vpColVector &r, const double &tol)
-#else
-void vpQuadProg::fromCanonicalCost(const vpMatrix &/*H*/, const vpColVector &/*c*/,
-                                   vpMatrix &/*Q*/, vpColVector &/*r*/, const double &/*tol*/)
-#endif
-
+void vpQuadProg::fromCanonicalCost(const vpMatrix &H, const vpColVector &c, vpMatrix &Q, vpColVector &r,
+                                   const double &tol)
 {
-#ifdef VISP_HAVE_GSL
-  const unsigned int n = H.getCols();
-  if(H.getRows() != n || c.getRows() != n)
-  {
-    throw(vpException(vpMatrixException::dimensionError, "vpQuadProg::fromCanonicalCost: H is not square or not the same dimension as c"));
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV)
+  unsigned int n = H.getCols();
+  if (H.getRows() != n || c.getRows() != n) {
+    throw(vpException(vpMatrixException::dimensionError,
+                      "vpQuadProg::fromCanonicalCost: H is not square or not the same dimension as c"));
   }
 
   vpColVector d(n);
-  vpMatrix    V(n,n);
+  vpMatrix V(n, n);
   // Compute the eigenvalues and eigenvectors
   H.eigenValues(d, V);
   // find first non-nullptr eigen value
   unsigned int k = 0;
-  for(unsigned int i = 0; i < n; ++i)
-  {
-    if(d[i] > tol)
+  for (unsigned int i = 0; i < n; ++i) {
+    if (d[i] > tol)
       d[i] = sqrt(d[i]);
-    else if(d[i] < tol)
+    else if (d[i] < tol)
       throw(vpException(vpMatrixException::matrixError, "vpQuadProg::fromCanonicalCost: H is not positive"));
     else
-      k = i+1;
+      k = i + 1;
   }
   // build (Q,r) such that H = Q.^T.Q and c = -Q^T.r
-  vpMatrix D(n-k,n-k);
-  vpMatrix P(n-k,n);
-  D.diag(d.extract(k,n-k));
-  for(unsigned int i = 0; i < n-k; ++i)
-    P[i][k+i] = 1;
+  vpMatrix D(n - k, n - k);
+  vpMatrix P(n - k, n);
+  D.diag(d.extract(k, n - k));
+  for (unsigned int i = 0; i < n - k; ++i)
+    P[i][k + i] = 1;
 
-  Q = D*P*V.transpose();
-  r = -Q.t().pseudoInverse()*c;
+  Q = D * P * V.transpose();
+  r = -Q.t().pseudoInverse() * c;
 #else
   throw(vpException(vpException::functionNotImplementedError, "Symmetric matrix decomposition is not implemented. You "
-                                                              "should install GSL 3rd party"));
+                                                              "should install Lapack, Eigen3 or OpenCV 3rd party"));
 #endif
 }
 
@@ -156,7 +148,7 @@ bool vpQuadProg::setEqualityConstraint(const vpMatrix &A, const vpColVector &b, 
 {
   x1 = b;
   Z = A;
-  if(A.getRows() == b.getRows() && vpLinProg::colReduction(Z, x1, false, tol))
+  if (A.getRows() == b.getRows() && vpLinProg::colReduction(Z, x1, false, tol))
     return true;
 
   std::cout << "vpQuadProg::setEqualityConstraint: equality constraint infeasible" << std::endl;
@@ -169,7 +161,7 @@ bool vpQuadProg::setEqualityConstraint(const vpMatrix &A, const vpColVector &b, 
   \f$\begin{array}{lll}
   \mathbf{x} = &  \arg\min & ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2 \\
                & \text{s.t.}& \mathbf{A}\mathbf{x} = \mathbf{b}\end{array}
-\f$
+  \f$
   \param Q : cost matrix (dimension c x n)
   \param r : cost vector (dimension c)
   \param A : equality matrix (dimension m x n)
@@ -181,21 +173,18 @@ bool vpQuadProg::setEqualityConstraint(const vpMatrix &A, const vpColVector &b, 
 
   This function is for internal use, no dimension check is performed and A and b may be modified.
 */
-bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r,
-                                   vpMatrix &A, vpColVector &b,
-                                   vpColVector &x, const double &tol)
+bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r, vpMatrix &A, vpColVector &b, vpColVector &x,
+                                   const double &tol)
 {
-  if(A.getRows())
-  {
-    if(!vpLinProg::colReduction(A, b, false, tol))
+  if (A.getRows()) {
+    if (!vpLinProg::colReduction(A, b, false, tol))
       return false;
 
-    if(A.getCols() && (Q*A).infinityNorm() > tol)
-      x = b + A*(Q*A).solveBySVD(r - Q*b);
+    if (A.getCols() && (Q * A).infinityNorm() > tol)
+      x = b + A * (Q * A).solveBySVD(r - Q * b);
     else
       x = b;
-  }
-  else
+  } else
     x = Q.solveBySVD(r);
   return true;
 }
@@ -252,27 +241,21 @@ bool vpQuadProg::solveByProjection(const vpMatrix &Q, const vpColVector &r,
 
   \sa setEqualityConstraint(), solveQPe()
 */
-bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r,
-                           vpColVector &x, const double &tol) const
+bool vpQuadProg::solveQPe(const vpMatrix &Q, const vpColVector &r, vpColVector &x, const double &tol) const
 {
-  const unsigned int n = Q.getCols();
-  if(Q.getRows() != r.getRows() ||
-     Z.getRows() != n ||
-     x1.getRows() != n)
-  {
-    std::cout << "vpQuadProg::solveQPe: wrong dimension\n" <<
-                 "Q: " << Q.getRows() << "x" << Q.getCols() << " - r: " << r.getRows() << std::endl;
+  unsigned int n = Q.getCols();
+  if (Q.getRows() != r.getRows() || Z.getRows() != n || x1.getRows() != n) {
+    std::cout << "vpQuadProg::solveQPe: wrong dimension\n"
+              << "Q: " << Q.getRows() << "x" << Q.getCols() << " - r: " << r.getRows() << std::endl;
     std::cout << "Z: " << Z.getRows() << "x" << Z.getCols() << " - x1: " << x1.getRows() << std::endl;
     throw vpMatrixException::dimensionError;
   }
-  if(Z.getCols())
-  {
-    if((Q*Z).infinityNorm() > tol)
-      x = x1 + Z*(Q*Z).solveBySVD(r - Q*x1);
+  if (Z.getCols()) {
+    if ((Q * Z).infinityNorm() > tol)
+      x = x1 + Z * (Q * Z).solveBySVD(r - Q * x1);
     else
       x = x1;
-  }
-  else
+  } else
     x = Q.solveBySVD(r);
   return true;
 }
@@ -284,7 +267,8 @@ bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r,
   \mathbf{x} = &  \arg\min & ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2 \\
                & \text{s.t.}& \mathbf{A}\mathbf{x} = \mathbf{b}\end{array}\f$
 
-  If the equality constraints \f$(\mathbf{A}, \mathbf{b})\f$ are the same between two calls, it is more efficient to use setEqualityConstraint() and solveQPe().
+  If the equality constraints \f$(\mathbf{A}, \mathbf{b})\f$ are the same between two calls,
+  it is more efficient to use setEqualityConstraint() and solveQPe().
 
   \param Q : cost matrix (dimension c x n)
   \param r : cost vector (dimension c)
@@ -322,13 +306,12 @@ bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r,
 
   \sa setEqualityConstraint(), solveQP(), solveQPi()
 */
-bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r, vpMatrix A, vpColVector b,
-                           vpColVector &x, const double &tol)
+bool vpQuadProg::solveQPe(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vpColVector b, vpColVector &x,
+                          const double &tol)
 {
   checkDimensions(Q, r, &A, &b, nullptr, nullptr, "solveQPe");
 
-  if(!solveByProjection(Q, r, A, b, x, tol))
-  {
+  if (!solveByProjection(Q, r, A, b, x, tol)) {
     std::cout << "vpQuadProg::solveQPe: equality constraint infeasible" << std::endl;
     return false;
   }
@@ -338,14 +321,15 @@ bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r, vpMatrix A, 
 /*!
   Solves a Quadratic Program under equality and inequality constraints.
 
-  If the equality constraints \f$(\mathbf{A}, \mathbf{b})\f$ are the same between two calls, it is more efficient to use setEqualityConstraint() and solveQPi().
+  If the equality constraints \f$(\mathbf{A}, \mathbf{b})\f$ are the same between two calls, it is more efficient to use
+  setEqualityConstraint() and solveQPi().
 
   \f$\begin{array}{lll}
   \mathbf{x} = &  \arg\min & ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2 \\
                & \text{s.t.}& \mathbf{A}\mathbf{x} = \mathbf{b} \\
                & \text{s.t.}& \mathbf{C}\mathbf{x} \leq \mathbf{d}
-\end{array}
-\f$
+  \end{array}
+  \f$
   \param Q : cost matrix (dimension c x n)
   \param r : cost vector (dimension c)
   \param A : equality matrix (dimension m x n)
@@ -386,29 +370,23 @@ bool vpQuadProg::solveQPe (const vpMatrix &Q, const vpColVector &r, vpMatrix A, 
 
   \sa resetActiveSet()
 */
-bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r,
-                         vpMatrix A, vpColVector b,
-                         const vpMatrix &C, const vpColVector &d,
-                         vpColVector &x,
-                         const double &tol)
+bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vpColVector b, const vpMatrix &C,
+                         const vpColVector &d, vpColVector &x, const double &tol)
 {
-  if(A.getRows() == 0)
+  if (A.getRows() == 0)
     return solveQPi(Q, r, C, d, x, false, tol);
 
   checkDimensions(Q, r, &A, &b, &C, &d, "solveQP");
 
-  if(!vpLinProg::colReduction(A, b, false, tol))
-  {
+  if (!vpLinProg::colReduction(A, b, false, tol)) {
     std::cout << "vpQuadProg::solveQP: equality constraint infeasible" << std::endl;
     return false;
   }
 
-  if(A.getCols() && solveQPi(Q*A, r - Q*b, C*A, d - C*b, x, false, tol))
-  {
-    x = b + A*x;
+  if (A.getCols() && solveQPi(Q * A, r - Q * b, C * A, d - C * b, x, false, tol)) {
+    x = b + A * x;
     return true;
-  }
-  else if(vpLinProg::allLesser(C, b, d, tol))  // Ax = b has only 1 solution
+  } else if (vpLinProg::allLesser(C, b, d, tol)) // Ax = b has only 1 solution
   {
     x = b;
     return true;
@@ -423,8 +401,8 @@ bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r,
   \f$\begin{array}{lll}
   \mathbf{x} = &  \arg\min & ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2 \\
                & \text{s.t.}& \mathbf{C}\mathbf{x} \leq \mathbf{d}
-\end{array}
-\f$
+  \end{array}
+  \f$
   \param Q : cost matrix (dimension c x n)
   \param r : cost vector (dimension c)
   \param C : inequality matrix (dimension p x n)
@@ -462,32 +440,24 @@ bool vpQuadProg::solveQP(const vpMatrix &Q, const vpColVector &r,
   }
   \endcode
 */
-bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
-                          const vpMatrix &C, const vpColVector &d,
-                          vpColVector &x, const bool use_equality,
-                          const double &tol)
+bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatrix &C, const vpColVector &d,
+                          vpColVector &x, bool use_equality, const double &tol)
 {
-  const unsigned int n = checkDimensions(Q, r, nullptr, nullptr, &C, &d, "solveQPi");
+  unsigned int n = checkDimensions(Q, r, nullptr, nullptr, &C, &d, "solveQPi");
 
-  if(use_equality)
-  {
-    if(Z.getRows() == n)
-    {
-      if(Z.getCols() && solveQPi(Q*Z, r - Q*x1, C*Z, d - C*x1, x, false, tol))
-      {
+  if (use_equality) {
+    if (Z.getRows() == n) {
+      if (Z.getCols() && solveQPi(Q * Z, r - Q * x1, C * Z, d - C * x1, x, false, tol)) {
         // back to initial solution
-        x = x1 + Z*x;
+        x = x1 + Z * x;
         return true;
-      }
-      else if(vpLinProg::allLesser(C, x1, d, tol))
-      {
+      } else if (vpLinProg::allLesser(C, x1, d, tol)) {
         x = x1;
         return true;
       }
       std::cout << "vpQuadProg::solveQPi: inequality constraint infeasible" << std::endl;
       return false;
-    }
-    else
+    } else
       std::cout << "vpQuadProg::solveQPi: use_equality before setEqualityConstraint" << std::endl;
   }
 
@@ -495,9 +465,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
 
   // look for trivial solution
   // r = 0 and d > 0 -> x = 0
-  if(vpLinProg::allZero(r, tol) &&
-     (d.getRows() == 0 || vpLinProg::allGreater(d, -tol)))
-  {
+  if (vpLinProg::allZero(r, tol) && (d.getRows() == 0 || vpLinProg::allGreater(d, -tol))) {
     x.resize(n);
     return true;
   }
@@ -507,10 +475,8 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
   vpMatrix A;
   vpColVector b;
   // check active set - all values should be < rows of C
-  for(auto v: active)
-  {
-    if(v >= p)
-    {
+  for (auto v : active) {
+    if (v >= p) {
       active.clear();
       std::cout << "vpQuadProg::solveQPi: some constraints have been removed since last call\n";
       break;
@@ -520,18 +486,16 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
   // warm start from previous active set
   A.resize((unsigned int)active.size(), n);
   b.resize((unsigned int)active.size());
-  for(unsigned int i = 0; i < active.size(); ++i)
-  {
-    for(unsigned int j = 0; j < n; ++j)
+  for (unsigned int i = 0; i < active.size(); ++i) {
+    for (unsigned int j = 0; j < n; ++j)
       A[i][j] = C[active[i]][j];
     b[i] = d[active[i]];
   }
-  if(!solveByProjection(Q, r, A, b, x, tol))
+  if (!solveByProjection(Q, r, A, b, x, tol))
     x.resize(n);
 
   // or from simplex if we really have no clue
-  if(!vpLinProg::allLesser(C, x, d, tol))
-  {
+  if (!vpLinProg::allLesser(C, x, d, tol)) {
     // feasible point with simplex:
     //  min r
     //   st C.(x + z1 - z2) + y - r = d
@@ -540,74 +504,64 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
     // feasible if r can be minimized to 0
 
     // count how many violated constraints
-    vpColVector e = d - C*x;
+    vpColVector e = d - C * x;
     unsigned int k = 0;
-    for(unsigned int i = 0; i < p; ++i)
-    {
-      if(e[i] < -tol)
+    for (unsigned int i = 0; i < p; ++i) {
+      if (e[i] < -tol)
         k++;
     }
     // cost vector
-    vpColVector c(2*n+p+k);
-    for(unsigned int i = 0; i < k; ++i)
-      c[2*n+p+i] = 1;
+    vpColVector c(2 * n + p + k);
+    for (unsigned int i = 0; i < k; ++i)
+      c[2 * n + p + i] = 1;
 
-    vpColVector xc(2*n+p+k);
+    vpColVector xc(2 * n + p + k);
 
-    vpMatrix A_lp(p, 2*n+p+k);
+    vpMatrix A_lp(p, 2 * n + p + k);
     unsigned int l = 0;
-    for(unsigned int i = 0; i < p; ++i)
-    {
+    for (unsigned int i = 0; i < p; ++i) {
       // copy [C -C] part
-      for(unsigned int j = 0; j < n; ++j)
-      {
+      for (unsigned int j = 0; j < n; ++j) {
         A_lp[i][j] = C[i][j];
-        A_lp[i][n+j] = -C[i][j];
+        A_lp[i][n + j] = -C[i][j];
       }
       // y-part
-      A_lp[i][2*n+i] = 1;
-      if(e[i] < -tol)
-      {
+      A_lp[i][2 * n + i] = 1;
+      if (e[i] < -tol) {
         // r-part
-        A_lp[i][2*n+p+l] = -1;
-        xc[2*n+p+l] = -e[i];
+        A_lp[i][2 * n + p + l] = -1;
+        xc[2 * n + p + l] = -e[i];
         l++;
-      }
-      else
-        xc[2*n+i] = e[i];
+      } else
+        xc[2 * n + i] = e[i];
     }
     vpLinProg::simplex(c, A_lp, e, xc);
 
     // r-part should be 0
-    if(!vpLinProg::allLesser(xc.extract(2*n+p, k), tol))
-    {
+    if (!vpLinProg::allLesser(xc.extract(2 * n + p, k), tol)) {
       std::cout << "vpQuadProg::solveQPi: inequality constraints not feasible" << std::endl;
       return false;
     }
 
     // update x to feasible point
-    x += xc.extract(0,n) - xc.extract(n,n);
+    x += xc.extract(0, n) - xc.extract(n, n);
     // init active/inactive sets from y-part of x
     active.clear();
     active.reserve(p);
     inactive.clear();
-    for(unsigned int i = 0; i < p; ++i)
-    {
-      if(C.getRow(i)*x - d[i] < -tol)
+    for (unsigned int i = 0; i < p; ++i) {
+      if (C.getRow(i) * x - d[i] < -tol)
         inactive.push_back(i);
       else
         active.push_back(i);
     }
-  }
-  else  // warm start feasible
+  } else // warm start feasible
   {
     // using previous active set, check that inactive is sync
-    if(active.size() + inactive.size() != p)
-    {
+    if (active.size() + inactive.size() != p) {
       inactive.clear();
-      for(unsigned int i = 0; i < p; ++i)
-      {
-        if(std::find(active.begin(), active.end(), i) == active.end())
+      for (unsigned int i = 0; i < p; ++i) {
+        if (std::find(active.begin(), active.end(), i) == active.end())
           inactive.push_back(i);
       }
     }
@@ -617,97 +571,82 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
   bool update_Ap = true;
   unsigned int last_active = C.getRows();
 
-  vpColVector u, g = r - Q*x, mu;
+  vpColVector u, g = r - Q * x, mu;
 
   // solve at one iteration
-  while (true)
-  {
+  while (true) {
     A.resize((unsigned int)active.size(), n);
     b.resize((unsigned int)active.size());
-    for(unsigned int i = 0; i < active.size(); ++i)
-    {
-      for(unsigned int j = 0; j < n; ++j)
+    for (unsigned int i = 0; i < active.size(); ++i) {
+      for (unsigned int j = 0; j < n; ++j)
         A[i][j] = C[active[i]][j];
     }
 
-    if(update_Ap && active.size())
+    if (update_Ap && active.size())
       Ap = A.pseudoInverse(); // to get Lagrange multipliers if needed
 
-    if(!solveByProjection(Q, g, A, b, u, tol))
-    {
+    if (!solveByProjection(Q, g, A, b, u, tol)) {
       std::cout << "vpQuadProg::solveQPi: QP seems infeasible, too many constraints activated\n";
       return false;
     }
 
     // 0-update = optimal or useless activated constraints
-    if(vpLinProg::allZero(u, tol))
-    {
+    if (vpLinProg::allZero(u, tol)) {
       // compute multipliers if any
       unsigned int ineqInd = (unsigned int)active.size();
-      if(active.size())
-      {
-        mu = -Ap.transpose() * Q.transpose() * (Q*u - g);
+      if (active.size()) {
+        mu = -Ap.transpose() * Q.transpose() * (Q * u - g);
         // find most negative one if any - except last activated in case of degeneracy
         double ineqMax = -tol;
-        for(unsigned int i = 0; i < mu.getRows(); ++i)
-        {
-          if(mu[i] < ineqMax && active[i] != last_active)
-          {
+        for (unsigned int i = 0; i < mu.getRows(); ++i) {
+          if (mu[i] < ineqMax && active[i] != last_active) {
             ineqInd = i;
             ineqMax = mu[i];
           }
         }
       }
 
-      if(ineqInd == active.size())   // KKT condition no useless constraint
+      if (ineqInd == active.size()) // KKT condition no useless constraint
         return true;
 
       // useless inequality, deactivate
       inactive.push_back(active[ineqInd]);
-      if(active.size() == 1)
+      if (active.size() == 1)
         active.clear();
       else
-        active.erase(active.begin()+ineqInd);
+        active.erase(active.begin() + ineqInd);
       update_Ap = true;
-    }
-    else    // u != 0, can improve xc
+    } else // u != 0, can improve xc
     {
       unsigned int ineqInd = 0;
       // step length to next constraint
       double alpha = 1;
-      for(unsigned int i = 0; i < inactive.size(); ++i)
-      {
-        const double Cu = C.getRow(inactive[i])*u;
-        if(Cu > tol)
-        {
-          const double a = (d[inactive[i]] - C.getRow(inactive[i])*x)/Cu;
-          if(a < alpha)
-          {
+      for (unsigned int i = 0; i < inactive.size(); ++i) {
+        const double Cu = C.getRow(inactive[i]) * u;
+        if (Cu > tol) {
+          const double a = (d[inactive[i]] - C.getRow(inactive[i]) * x) / Cu;
+          if (a < alpha) {
             alpha = a;
             ineqInd = i;
           }
         }
       }
-      if(alpha < 1)
-      {
+      if (alpha < 1) {
         last_active = inactive[ineqInd];
-        if(active.size())
-        {
+        if (active.size()) {
           auto it = active.begin();
-          while(it != active.end() && *it < inactive[ineqInd])
+          while (it != active.end() && *it < inactive[ineqInd])
             it++;
           active.insert(it, inactive[ineqInd]);
-        }
-        else
+        } else
           active.push_back(inactive[ineqInd]);
-        inactive.erase(inactive.begin()+ineqInd);
+        inactive.erase(inactive.begin() + ineqInd);
         update_Ap = true;
-      }
-      else
+      } else
         update_Ap = false;
       // update x for next iteration
       x += alpha * u;
-      g -= alpha*Q*u;
+      g -= alpha * Q * u;
     }
   }
 }
@@ -725,7 +664,7 @@ bool vpQuadProg::solveQPi(const vpMatrix &Q, const vpColVector &r,
 vpColVector vpQuadProg::solveSVDorQR(const vpMatrix &A, const vpColVector &b)
 {
   // assume A is full rank
-  if(A.getRows() > A.getCols())
+  if (A.getRows() > A.getCols())
     return A.solveBySVD(b);
   return A.solveByQR(b);
 }

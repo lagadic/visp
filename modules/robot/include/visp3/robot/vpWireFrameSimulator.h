@@ -49,7 +49,6 @@
 #include <list>
 #include <stdio.h>
 #include <string>
-#include <visp3/core/vpConfig.h>
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
@@ -479,7 +478,7 @@ public:
 
       \param factor : The ration for the camera size.
     */
-  inline void setCameraSizeFactor(const float factor) { cameraFactor = factor; }
+  inline void setCameraSizeFactor(float factor) { cameraFactor = factor; }
 
   /*!
       Set the color used to display the camera trajectory in the external
@@ -578,7 +577,7 @@ public:
 
       \param nbPt : The desired number of position which are saved.
     */
-  inline void setNbPtTrajectory(const unsigned int nbPt) { nbrPtLimit = nbPt; }
+  inline void setNbPtTrajectory(unsigned int nbPt) { nbrPtLimit = nbPt; }
 
   /*!
       Set the pose between the object and the fixed world frame.

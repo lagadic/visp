@@ -106,13 +106,13 @@ public:
   void resize(unsigned int n_data);
 
   //! Set iteration
-  void setIteration(const unsigned int iter) { it = iter; }
+  void setIteration(unsigned int iter) { it = iter; }
 
   /*!
     Set maximal noise threshold.
     \param noise_threshold : Maximal noise threshold.
   */
-  inline void setThreshold(const double noise_threshold) { NoiseThreshold = noise_threshold; }
+  inline void setThreshold(double noise_threshold) { NoiseThreshold = noise_threshold; }
 
   //! Simult Mestimator
   vpColVector simultMEstimator(vpColVector &residues);

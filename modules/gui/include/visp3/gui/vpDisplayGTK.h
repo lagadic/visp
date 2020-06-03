@@ -66,7 +66,6 @@ library. Thus to enable this class GTK should be installed. Installation
 
   The example below shows how to display an image with this video device.
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/io/vpImageIo.h>
@@ -218,10 +217,10 @@ protected:
   void displayImage(const vpImage<unsigned char> &I);
   void displayImage(const unsigned char *I);
 
-  void displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width,
-                       const unsigned int height);
-  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width,
-                       const unsigned int height);
+  void displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
+                       unsigned int height);
+  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
+                       unsigned int height);
 
   void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness = 1);
 
@@ -233,7 +232,7 @@ protected:
   void displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill = false, unsigned int thickness = 1);
 
   void flushDisplay();
-  void flushDisplayROI(const vpImagePoint &iP, const unsigned int width, const unsigned int height);
+  void flushDisplayROI(const vpImagePoint &iP, unsigned int width, unsigned int height);
 
   bool getClick(bool blocking = true);
   bool getClick(vpImagePoint &ip, bool blocking = true);

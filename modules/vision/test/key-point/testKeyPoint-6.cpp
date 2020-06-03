@@ -144,7 +144,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
   \return The string OpenCV type.
 
 */
-std::string getOpenCVType(const int type)
+std::string getOpenCVType(int type)
 {
   std::string type_string = "";
 

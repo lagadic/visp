@@ -7,9 +7,9 @@ int main(int argc, char *argv[])
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ndata" && i+1 < argc) {
       ndata = atoi(argv[i+1]);
-    } else if (std::string(argv[i]) == "--help") {
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0] << " [--ndata <number of data to process>] "
-                              "[--help]" << std::endl;
+                              "[--help] [-h]" << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -43,20 +43,35 @@ int main(int argc, char *argv[])
     cMo[i-1] = vpHomogeneousMatrix(cPo);
   }
 
-  vpHandEyeCalibration::calibrate(cMo, wMe, eMc);
+  int ret = vpHandEyeCalibration::calibrate(cMo, wMe, eMc);
 
-  // save eMc
-  std::ofstream file_eMc("eMc.txt");
-  eMc.save(file_eMc);
+  if (ret == 0) {
+    std::cout << std::endl << "** Hand-eye calibration succeed" << std::endl;
+    std::cout << std::endl << "** Hand-eye (eMc) transformation estimated:" << std::endl;
+    std::cout << eMc << std::endl;
+    std::cout << "** Corresponding pose vector: " << vpPoseVector(eMc).t() << std::endl;
 
-  vpPoseVector pose_vec(eMc);
-  std::cout << "\nSave eMc.yaml" << std::endl;
-  pose_vec.saveYAML("eMc.yaml", pose_vec);
+    vpThetaUVector erc(eMc.getRotationMatrix());
+    std::cout << std::endl << "** Translation [m]: " << eMc[0][3] << " " << eMc[1][3] << " " << eMc[2][3] << std::endl;
+    std::cout << "** Rotation (theta-u representation) [rad]: " << erc.t() << std::endl;
+    std::cout << "** Rotation (theta-u representation) [deg]: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
+    vpQuaternionVector quaternion(eMc.getRotationMatrix());
+    std::cout << "** Rotation (quaternion representation) [rad]: " << quaternion.t() << std::endl;
 
-  std::cout << "\nOutput: Hand-eye calibration result: eMc estimated " << std::endl;
-  std::cout << eMc << std::endl;
-  vpThetaUVector ePc(eMc);
-  std::cout << "theta U (deg): " << vpMath::deg(ePc[0]) << " " << vpMath::deg(ePc[1]) << " " << vpMath::deg(ePc[2]) << std::endl;
+    // save eMc
+    std::ofstream file_eMc("eMc.txt");
+    eMc.save(file_eMc);
+
+    vpPoseVector pose_vec(eMc);
+    std::string output_filename("eMc.yaml");
+    std::cout << std::endl << "Save transformation matrix eMc as a vpPoseVector in " << output_filename << std::endl;
+    pose_vec.saveYAML(output_filename, pose_vec);
+  }
+  else {
+    std::cout << std::endl << "** Hand-eye calibration failed" << std::endl;
+    std::cout << std::endl << "Check your input data and ensure they are covering the half sphere over the chessboard." << std::endl;
+    std::cout << std::endl << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html" << std::endl;
+  }
 
   return EXIT_SUCCESS;
 }

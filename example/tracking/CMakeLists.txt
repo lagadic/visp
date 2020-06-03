@@ -44,15 +44,12 @@ find_package(VISP REQUIRED visp_core visp_io visp_gui)
 
 set(example_cpp
   mbtEdgeKltTracking.cpp
-  mbtEdgeKltMultiTracking.cpp
-  mbtEdgeMultiTracking.cpp
   mbtEdgeTracking.cpp
   mbtGenericTracking.cpp
   mbtGenericTracking2.cpp
   mbtGenericTrackingDepth.cpp
   mbtGenericTrackingDepthOnly.cpp
   mbtKltTracking.cpp
-  mbtKltMultiTracking.cpp
   templateTracker.cpp
   trackDot2WithAutoDetection.cpp
   trackMeCircle.cpp
@@ -67,11 +64,7 @@ set(example_cpp
 if(BUILD_DEPRECATED_FUNCTIONS)
   if(MSVC)
     # Disable Visual C++ C4996 warning for MBT multi deprecation
-    if(BUILD_SHARED_LIBS)
-      vp_set_source_file_compile_flag(mbtEdgeMultiTracking.cpp /wd"4996")
-      vp_set_source_file_compile_flag(mbtEdgeKltMultiTracking.cpp /wd"4996")
-      vp_set_source_file_compile_flag(mbtKltMultiTracking.cpp /wd"4996")
-    else()
+    if(NOT BUILD_SHARED_LIBS)
       vp_warnings_disable(CMAKE_CXX_FLAGS /wd4996)
     endif()
   endif()
@@ -84,22 +77,12 @@ if(BUILD_DEPRECATED_FUNCTIONS)
     visp_set_source_file_compile_flag(mbtGenericTracking2.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy)
     visp_set_source_file_compile_flag(mbtGenericTrackingDepth.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy)
     visp_set_source_file_compile_flag(mbtGenericTrackingDepthOnly.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy)
-    visp_set_source_file_compile_flag(mbtEdgeMultiTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-deprecated-declarations -Wno-float-equal -Wno-deprecated-copy)
-    visp_set_source_file_compile_flag(mbtEdgeKltMultiTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-deprecated-declarations -Wno-float-equal -Wno-deprecated-copy)
-    visp_set_source_file_compile_flag(mbtKltMultiTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-deprecated-declarations -Wno-float-equal -Wno-deprecated-copy)
-  else()
-    visp_set_source_file_compile_flag(mbtEdgeMultiTracking.cpp -Wno-deprecated-declarations)
-    visp_set_source_file_compile_flag(mbtEdgeKltMultiTracking.cpp -Wno-deprecated-declarations)
-    visp_set_source_file_compile_flag(mbtKltMultiTracking.cpp -Wno-deprecated-declarations)
   endif()
 else()
   if(VISP_HAVE_OGRE)
     visp_set_source_file_compile_flag(mbtEdgeKltTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal)
-    visp_set_source_file_compile_flag(mbtEdgeKltMultiTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal)
-    visp_set_source_file_compile_flag(mbtEdgeMultiTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal)
     visp_set_source_file_compile_flag(mbtEdgeTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal)
     visp_set_source_file_compile_flag(mbtKltTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal)
-    visp_set_source_file_compile_flag(mbtKltMultiTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal)
     visp_set_source_file_compile_flag(mbtGenericTracking.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal)
     visp_set_source_file_compile_flag(mbtGenericTracking2.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal)
     visp_set_source_file_compile_flag(mbtGenericTrackingDepth.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal)
@@ -129,14 +112,6 @@ add_test(mbtEdgeKltTracking-cao-nocyl mbtEdgeKltTracking -c -f -C ${OPTION_TO_DE
 add_test(mbtEdgeTracking-cao-scanline    mbtEdgeTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 20)
 add_test(mbtEdgeKltTracking-cao-scanline mbtEdgeKltTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 20)
 add_test(mbtKltTracking-cao-scanline     mbtKltTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 20)
-
-add_test(mbtEdgeMultiTracking-cao    mbtEdgeMultiTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(mbtEdgeKltMultiTracking-cao mbtEdgeKltMultiTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(mbtKltMultiTracking-cao     mbtKltMultiTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
-
-add_test(mbtEdgeMultiTracking-cao-scanline    mbtEdgeMultiTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 20)
-add_test(mbtEdgeKltMultiTracking-cao-scanline mbtEdgeKltMultiTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 20)
-add_test(mbtKltMultiTracking-cao-scanline     mbtKltMultiTracking -c -f -l ${OPTION_TO_DESACTIVE_DISPLAY} -e 20)
 
 add_test(mbtGenericTracking               mbtGenericTracking -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(mbtGenericTracking-cao           mbtGenericTracking -c -f ${OPTION_TO_DESACTIVE_DISPLAY})
@@ -176,10 +151,6 @@ add_test(mbtGenericTrackingDepth-dense-normal-scanline-disable  mbtGenericTracki
 #add_test(mbtEdgeTracking-cao-ogre-scanline    mbtEdgeTracking -c -f -o -l ${OPTION_TO_DESACTIVE_DISPLAY})
 #add_test(mbtEdgeKltTracking-cao-ogre-scanline mbtEdgeKltTracking -c -f -o -l ${OPTION_TO_DESACTIVE_DISPLAY})
 #add_test(mbtKltTracking-cao-ogre-scanline     mbtKltTracking -c -f -o -l ${OPTION_TO_DESACTIVE_DISPLAY})
-
-#add_test(mbtEdgeMultiTracking-cao-ogre-scanline    mbtEdgeMultiTracking -c -f -o -l ${OPTION_TO_DESACTIVE_DISPLAY})
-#add_test(mbtEdgeKltMultiTracking-cao-ogre-scanline mbtEdgeKltMultiTracking -c -f -o -l ${OPTION_TO_DESACTIVE_DISPLAY})
-#add_test(mbtKltMultiTracking-cao-ogre-scanline     mbtKltMultiTracking -c -f -o -l ${OPTION_TO_DESACTIVE_DISPLAY})
 
 add_test(trackDot2WithAutoDetection trackDot2WithAutoDetection -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(trackMeCircle    trackMeCircle -c ${OPTION_TO_DESACTIVE_DISPLAY})

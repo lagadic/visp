@@ -69,7 +69,7 @@ public:
 
 private:
   static void calibrationVerifrMo(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
-                                  vpHomogeneousMatrix &eMc);
+                                  const vpHomogeneousMatrix &eMc);
   static int calibrationRotationTsai(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
                                      vpRotationMatrix &eRc);
   static int calibrationRotationTsaiOld(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,

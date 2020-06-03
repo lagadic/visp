@@ -191,23 +191,38 @@
 
 // Defined if Intel MKL library available
 #cmakedefine VISP_HAVE_MKL
+#ifdef VISP_HAVE_MKL
+#define VISP_HAVE_LAPACK_MKL
+#endif
 
 // Defined if OpenBLAS library available
 #cmakedefine VISP_HAVE_OPENBLAS
+#ifdef VISP_HAVE_OPENBLAS
+#define VISP_HAVE_LAPACK_OPENBLAS
+#endif
 
 // Defined if Atlas library available
 #cmakedefine VISP_HAVE_ATLAS
+#ifdef VISP_HAVE_ATLAS
+#define VISP_HAVE_LAPACK_ATLAS
+#endif
 
-// Defined if LAPACK Netlib library available (-lblas -llapack)
-#cmakedefine VISP_HAVE_LAPACK_NETLIB
+// Defined if Netlib library available (-lblas -llapack)
+#cmakedefine VISP_HAVE_NETLIB
+#ifdef VISP_HAVE_NETLIB
+#define VISP_HAVE_LAPACK_NETLIB
+#endif
 
 // Defined if GSL library available (-lgsl -lgslcblas)
 #cmakedefine VISP_HAVE_GSL
+#ifdef VISP_HAVE_GSL
+#define VISP_HAVE_LAPACK_GSL
+#endif
 
 // Defined if lapack/blas libraries are available (MKL, OpenBLAS, Atlas, Netlib or built-in)
 #cmakedefine VISP_HAVE_LAPACK
 // To keep compat with previous versions
-#ifdef VISP_HAVE_LAPACK
+#ifdef VISP_HAVE_NETLIB
 #  define VISP_HAVE_LAPACK_C
 #endif
 
@@ -345,6 +360,9 @@
 // Defined if ATIDAQ-C is build and available.
 #cmakedefine VISP_HAVE_ATIDAQ
 
+// Defined if IIT force-torque SDK is available.
+#cmakedefine VISP_HAVE_FT_IIT_SDK
+
 // Defined if Irisa's Afma4 robot available.
 #cmakedefine VISP_HAVE_AFMA4
 
@@ -361,6 +379,9 @@
 
 // Defined if Irisa's Ptu-46 pan-tilt head available.
 #cmakedefine VISP_HAVE_PTU46
+
+// Defined if Flir PTU SDK is available to control Flir PTU robot.
+#cmakedefine VISP_HAVE_FLIR_PTU_SDK
 
 // Defined if Irisa's Viper S650 robot available.
 #cmakedefine VISP_HAVE_VIPER650
@@ -399,6 +420,9 @@
 
 // Defined if qbdevice api from qb-robotics available.
 #cmakedefine VISP_HAVE_QBDEVICE
+
+// Defined if takktile2 api from Right Hand Robotics available.
+#cmakedefine VISP_HAVE_TAKKTILE2
 
 // Defined if linux/parport.h is available for parallel port usage.
 #cmakedefine VISP_HAVE_PARPORT

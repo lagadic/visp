@@ -1,0 +1,79 @@
+/**
+
+\page tutorial-java-mbt-generic Tutorial: Generic model-based tracking in java with ViSP
+\tableofcontents
+
+\section java_mbt_gen_intro Introduction
+
+We assume that you have already followed the previous tutorial \ref tutorial-java-started. It could be also useful to follow \ref tutorial-tracking-mb-generic to get an overview on model-based tracking in ViSP.
+
+In this tutorial, you will see how to develop an application that allows to load a sequence of images and run model-based tracking in java using ViSP library in Eclipse.
+
+\section java_mbt_gen_create_project Create a new project
+
+Open Eclipse and create a new Java project entering `"File > New > Java Project"` menu.
+
+\image html img-tutorial-java-eclipse-create-new-project.jpeg
+
+In the `"New Java Project"` dialog write the name of your project (let say `visp-java-mbt-generic`). In JRE section, select the appropriate execution environment (JavaSE-11 if you install JDK 11, or JavaSE-13 if you install JDK 13). Then press `"Finish"` button.
+
+\image html img-java-mbt-generic-project.jpg
+
+In the "New module-info.java" dialog that may appear, press `"Don't Create"` button.
+
+\image html img-tutorial-java-eclipse-dont-create.jpeg
+
+\section java_mbt_gen_user_lib Add a user library
+
+If you followed \ref tutorial-install-java, you should already have ViSP library set in your workspace’s user libraries; if not please check out \ref tutorial-install-java. Now you should be ready to add ViSP library to your project. Inside Eclipse’s Package Explorer just right-click on your project’s folder and go to `"Build Path > Add Libraries..."`.
+
+\image html img-java-mbt-generic-import-user-library.jpg
+
+Select `"User Library"` and click on `"Next"`:
+
+\image html img-tutorial-java-eclipse-add-libraries2.jpeg
+
+Check the checkbox of the ViSP library and press `"Finish"` button.
+
+\image html img-tutorial-java-eclipse-add-libraries3.jpeg
+
+\section java_mbt_gen_app Import generic tracker java code
+
+Now import AprilTagDetection.java file in your project, pointing your mouse on `src` folder and with a right click entering `"Import"` menu. 
+
+\image html img-java-mbt-generic-import.jpg
+
+Select `"General > File System"` and press `Next` button.
+
+\image html img-java-apriltag-import-file.jpg
+
+Browse to `$VISP_WS/visp/tutorial/java/mbt-generic` folder, enable `mbt-generic` check box and press `Finish` button.
+
+\image html img-java-mbt-generic-import-mbt-generic.jpg
+
+Now expanding what's behind `src` you should see something similar to:
+
+\image html img-java-mbt-generic-project-complete.jpg
+
+\section java_mbt_gen_run Run tracking application
+
+We can now run this application entering`"Run > Run"` menu. Here you should see the application appearing:
+
+\image html img-java-mbt-generic-app-empty.png
+
+\ref install_ubuntu_dataset, press `"Open ViSP Input Image"` button, browse to select `$ViSP_WS/visp-images` folder that contains ViSP dataset, and press `"open"` button as shown in the next image.
+
+\image html img-java-mbt-generic-app-open-data-set.png
+
+Now press `"Track"` button to run the tracker on a sequence that is part of ViSP dataset.
+
+\htmlonly
+<br>
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/q6k4O1ZgL-c" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
+\endhtmlonly
+
+This application allows to select features (edges alone, keypoints alone, or edges and keypoints together in the same scheme) that are used by the tracker. Just try it... 
+
+*/

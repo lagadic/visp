@@ -83,31 +83,31 @@ typedef enum {
                               */
 } vpAutoThresholdMethod;
 
-VISP_EXPORT void adjust(vpImage<unsigned char> &I, const double alpha, const double beta);
-VISP_EXPORT void adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const double alpha,
-                        const double beta);
-VISP_EXPORT void adjust(vpImage<vpRGBa> &I, const double alpha, const double beta);
-VISP_EXPORT void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const double alpha, const double beta);
+VISP_EXPORT void adjust(vpImage<unsigned char> &I, double alpha, double beta);
+VISP_EXPORT void adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double alpha,
+                        double beta);
+VISP_EXPORT void adjust(vpImage<vpRGBa> &I, const double alpha, double beta);
+VISP_EXPORT void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double beta);
 
-VISP_EXPORT void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const int blockRadius = 150,
-                       const int bins = 256, const float slope = 3.0f, const bool fast = true);
-VISP_EXPORT void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const int blockRadius = 150,
-                       const int bins = 256, const float slope = 3.0f, const bool fast = true);
+VISP_EXPORT void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius = 150,
+                       int bins = 256, float slope = 3.0f, bool fast = true);
+VISP_EXPORT void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius = 150,
+                       int bins = 256, float slope = 3.0f, bool fast = true);
 
 VISP_EXPORT void equalizeHistogram(vpImage<unsigned char> &I);
 VISP_EXPORT void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2);
-VISP_EXPORT void equalizeHistogram(vpImage<vpRGBa> &I, const bool useHSV = false);
-VISP_EXPORT void equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const bool useHSV = false);
+VISP_EXPORT void equalizeHistogram(vpImage<vpRGBa> &I, bool useHSV = false);
+VISP_EXPORT void equalizeHistogram(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, bool useHSV = false);
 
-VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, const double gamma);
-VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, const double gamma);
-VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, const double gamma);
-VISP_EXPORT void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const double gamma);
+VISP_EXPORT void gammaCorrection(vpImage<unsigned char> &I, double gamma);
+VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double gamma);
+VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, double gamma);
+VISP_EXPORT void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double gamma);
 
-VISP_EXPORT void retinex(vpImage<vpRGBa> &I, const int scale = 240, const int scaleDiv = 3,
-                         const int level = RETINEX_UNIFORM, const double dynamic = 1.2, const int kernelSize = -1);
-VISP_EXPORT void retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, const int scale = 240, const int scaleDiv = 3,
-                         const int level = RETINEX_UNIFORM, const double dynamic = 1.2, const int kernelSize = -1);
+VISP_EXPORT void retinex(vpImage<vpRGBa> &I, int scale = 240, int scaleDiv = 3,
+                         int level = RETINEX_UNIFORM, double dynamic = 1.2, int kernelSize = -1);
+VISP_EXPORT void retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int scale = 240, int scaleDiv = 3,
+                         int level = RETINEX_UNIFORM, double dynamic = 1.2, int kernelSize = -1);
 
 VISP_EXPORT void stretchContrast(vpImage<unsigned char> &I);
 VISP_EXPORT void stretchContrast(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2);
@@ -117,12 +117,12 @@ VISP_EXPORT void stretchContrast(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
 VISP_EXPORT void stretchContrastHSV(vpImage<vpRGBa> &I);
 VISP_EXPORT void stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2);
 
-VISP_EXPORT void unsharpMask(vpImage<unsigned char> &I, const unsigned int size = 7, const double weight = 0.6);
-VISP_EXPORT void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires, const unsigned int size = 7,
-                             const double weight = 0.6);
-VISP_EXPORT void unsharpMask(vpImage<vpRGBa> &I, const unsigned int size = 7, const double weight = 0.6);
-VISP_EXPORT void unsharpMask(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, const unsigned int size = 7,
-                             const double weight = 0.6);
+VISP_EXPORT void unsharpMask(vpImage<unsigned char> &I, unsigned int size = 7, double weight = 0.6);
+VISP_EXPORT void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires, unsigned int size = 7,
+                             double weight = 0.6);
+VISP_EXPORT void unsharpMask(vpImage<vpRGBa> &I, unsigned int size = 7, double weight = 0.6);
+VISP_EXPORT void unsharpMask(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, unsigned int size = 7,
+                             double weight = 0.6);
 
 VISP_EXPORT void
 connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents,

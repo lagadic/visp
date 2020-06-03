@@ -149,7 +149,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, unsigned int &n
   \param nbBins : Number of histogram bins.
   \param nbThreads : Number of computation threads.
 */
-unsigned int histogramSum(const vpImage<unsigned char> &I, const unsigned int nbBins, const unsigned int nbThreads)
+unsigned int histogramSum(const vpImage<unsigned char> &I, unsigned int nbBins, unsigned int nbThreads)
 {
   unsigned int sum = 0;
 
@@ -169,7 +169,7 @@ unsigned int histogramSum(const vpImage<unsigned char> &I, const unsigned int nb
   \param I : Input color image.
   \param nbBins : Number of histogram bins.
 */
-bool compareHistogram(const vpImage<unsigned char> &I, const unsigned int nbBins)
+bool compareHistogram(const vpImage<unsigned char> &I, unsigned int nbBins)
 {
   vpHistogram histogram_single_threaded;
   histogram_single_threaded.calculate(I, nbBins, 1);

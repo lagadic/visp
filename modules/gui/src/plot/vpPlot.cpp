@@ -78,8 +78,8 @@ vpPlot::vpPlot() : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30),
   \param x,y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 */
-vpPlot::vpPlot(const unsigned int graph_nbr, const unsigned int height, const unsigned int width, const int x,
-               const int y, const std::string &title)
+vpPlot::vpPlot(unsigned int graph_nbr, unsigned int height, unsigned int width, int x,
+               int y, const std::string &title)
   : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30), margej(40), factori(1.f), factorj(1.)
 {
   init(graph_nbr, height, width, x, y, title);
@@ -97,8 +97,8 @@ vpPlot::vpPlot(const unsigned int graph_nbr, const unsigned int height, const un
   \param x,y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 */
-void vpPlot::init(const unsigned int graph_nbr, const unsigned int height, const unsigned int width, const int x,
-                  const int y, const std::string &title)
+void vpPlot::init(unsigned int graph_nbr, unsigned int height, unsigned int width, int x,
+                  int y, const std::string &title)
 {
   I.init(height, width, 255);
 
@@ -209,7 +209,7 @@ void vpPlot::initGraph(unsigned int graphNum, unsigned int curveNbr) { (graphLis
 // vpPlot::initRange (const int graphNum,
 // 		   double xmin, double xmax, double /*xdelt*/,
 // 		   double ymin, double ymax, double /*ydelt*/,
-// 		   const bool gx, const bool gy)
+// 		   bool gx, bool gy)
 // {
 //   (graphList+graphNum)->initScale(I,xmin,xmax,10,ymin,ymax,10,gx,gy);
 // }
@@ -225,7 +225,7 @@ void vpPlot::initGraph(unsigned int graphNum, unsigned int curveNbr) { (graphLis
   the y axis given in the user coordinates. \param ymax : The initial maximum
   value along the y axis given in the user coordinates.
 */
-void vpPlot::initRange(const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax)
+void vpPlot::initRange(unsigned int graphNum, double xmin, double xmax, double ymin, double ymax)
 {
   (graphList + graphNum)->initScale(I, xmin, xmax, 10, ymin, ymax, 10, true, true);
 }
@@ -244,7 +244,7 @@ void vpPlot::initRange(const unsigned int graphNum, double xmin, double xmax, do
   zmax : The initial maximum value along the z axis given in the user
   coordinates.
 */
-void vpPlot::initRange(const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin,
+void vpPlot::initRange(unsigned int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin,
                        double zmax)
 {
   (graphList + graphNum)->initScale(I, xmin, xmax, 10, ymin, ymax, 10, zmin, zmax, 10, true, true);
@@ -258,7 +258,7 @@ void vpPlot::initRange(const unsigned int graphNum, double xmin, double xmax, do
   and 3. \param curveNum : The index of the curve in the list of the curves
   belonging to the graphic. \param color : The color you want to use
 */
-void vpPlot::setColor(const unsigned int graphNum, const unsigned int curveNum, vpColor color)
+void vpPlot::setColor(unsigned int graphNum, unsigned int curveNum, vpColor color)
 {
   (graphList + graphNum)->setCurveColor(curveNum, color);
 }
@@ -283,7 +283,7 @@ void vpPlot::displayGrid()
   the x axis and given in the user unit system. \param y : The coordinate of
   the new point along the y axis and given in the user unit system.
 */
-void vpPlot::plot(const unsigned int graphNum, const unsigned int curveNum, const double x, const double y)
+void vpPlot::plot(unsigned int graphNum, unsigned int curveNum, double x, double y)
 {
   (graphList + graphNum)->plot(I, curveNum, x, y);
 }
@@ -299,7 +299,7 @@ void vpPlot::plot(const unsigned int graphNum, const unsigned int curveNum, cons
   coordinates of the new points along the y axis and given in the user unit
   system.
 */
-void vpPlot::plot(const unsigned int graphNum, const double x, const vpColVector &v_y)
+void vpPlot::plot(unsigned int graphNum, double x, const vpColVector &v_y)
 {
   if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
@@ -318,46 +318,7 @@ void vpPlot::plot(const unsigned int graphNum, const double x, const vpColVector
   coordinates of the new points along the y axis and given in the user unit
   system.
 */
-void vpPlot::plot(const unsigned int graphNum, const double x, const vpRowVector &v_y)
-{
-  if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
-    for (unsigned int i = 0; i < v_y.getRows(); ++i)
-      this->plot(graphNum, i, x, v_y[i]);
-  } else
-    vpTRACE("error in plot vector : not the right dimension");
-}
-
-/*!
-  This function enables you to add new points in all curves of a plot. These
-  points are drawn with the parameters of the curves.
-
-  \param graphNum : The index of the graph in the window. As the number of
-  graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param x : The coordinate of the new points along the x axis and
-  given in the user unit system. \param v_y : y coordinates vector. The
-  coordinates of the new points along the y axis and given in the user unit
-  system.
-*/
-void vpPlot::plot(const unsigned int graphNum, const double x, const vpPoseVector &v_y)
-{
-  if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
-    for (unsigned int i = 0; i < v_y.getRows(); ++i)
-      this->plot(graphNum, i, x, v_y[i]);
-  } else
-    vpTRACE("error in plot vector : not the right dimension");
-}
-/*!
-  This function enables you to add new points in all curves of a plot. These
-  points are drawn with the parameters of the curves.
-
-  \param graphNum : The index of the graph in the window. As the number of
-  graphic in a window is less or equal to 4, this parameter is between 0
-  and 3. \param x : The coordinate of the new points along the x axis and
-  given in the user unit system. \param v_y : y coordinates vector. The
-  coordinates of the new points along the y axis and given in the user unit
-  system.
-*/
-void vpPlot::plot(const unsigned int graphNum, const double x, const vpTranslationVector &v_y)
+void vpPlot::plot(unsigned int graphNum, double x, const vpRowVector &v_y)
 {
   if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
     for (unsigned int i = 0; i < v_y.getRows(); ++i)
@@ -377,7 +338,46 @@ void vpPlot::plot(const unsigned int graphNum, const double x, const vpTranslati
   coordinates of the new points along the y axis and given in the user unit
   system.
 */
-void vpPlot::plot(const unsigned int graphNum, const double x, const vpRotationVector &v_y)
+void vpPlot::plot(unsigned int graphNum, double x, const vpPoseVector &v_y)
+{
+  if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
+    for (unsigned int i = 0; i < v_y.getRows(); ++i)
+      this->plot(graphNum, i, x, v_y[i]);
+  } else
+    vpTRACE("error in plot vector : not the right dimension");
+}
+/*!
+  This function enables you to add new points in all curves of a plot. These
+  points are drawn with the parameters of the curves.
+
+  \param graphNum : The index of the graph in the window. As the number of
+  graphic in a window is less or equal to 4, this parameter is between 0
+  and 3. \param x : The coordinate of the new points along the x axis and
+  given in the user unit system. \param v_y : y coordinates vector. The
+  coordinates of the new points along the y axis and given in the user unit
+  system.
+*/
+void vpPlot::plot(unsigned int graphNum, double x, const vpTranslationVector &v_y)
+{
+  if ((graphList + graphNum)->curveNbr == v_y.getRows()) {
+    for (unsigned int i = 0; i < v_y.getRows(); ++i)
+      this->plot(graphNum, i, x, v_y[i]);
+  } else
+    vpTRACE("error in plot vector : not the right dimension");
+}
+
+/*!
+  This function enables you to add new points in all curves of a plot. These
+  points are drawn with the parameters of the curves.
+
+  \param graphNum : The index of the graph in the window. As the number of
+  graphic in a window is less or equal to 4, this parameter is between 0
+  and 3. \param x : The coordinate of the new points along the x axis and
+  given in the user unit system. \param v_y : y coordinates vector. The
+  coordinates of the new points along the y axis and given in the user unit
+  system.
+*/
+void vpPlot::plot(unsigned int graphNum, double x, const vpRotationVector &v_y)
 {
   if ((graphList + graphNum)->curveNbr == v_y.size()) {
     for (unsigned int i = 0; i < v_y.size(); ++i)
@@ -399,8 +399,8 @@ void vpPlot::plot(const unsigned int graphNum, const double x, const vpRotationV
   The coordinate of the new point along the z axis and given in the user unit
   system.
 */
-vpMouseButton::vpMouseButtonType vpPlot::plot(const unsigned int graphNum, const unsigned int curveNum, const double x,
-                                              const double y, const double z)
+vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, unsigned int curveNum, double x,
+                                              double y, double z)
 {
   return (graphList + graphNum)->plot(I, curveNum, x, y, z);
 }
@@ -417,7 +417,7 @@ vpMouseButton::vpMouseButtonType vpPlot::plot(const unsigned int graphNum, const
   system. \param v_z : z coordinates vector. The coordinates of the new points
   along the z axis and given in the user unit system.
 */
-vpMouseButton::vpMouseButtonType vpPlot::plot(const unsigned int graphNum, const double x, const vpColVector &v_y,
+vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, double x, const vpColVector &v_y,
                                               const vpColVector &v_z)
 {
   vpMouseButton::vpMouseButtonType button = vpMouseButton::none;
@@ -473,7 +473,7 @@ void vpPlot::navigate()
 
   \param block : If true, this method waits a click.
 */
-void vpPlot::getPixelValue(const bool block)
+void vpPlot::getPixelValue(bool block)
 {
   vpImagePoint iP;
 
@@ -495,7 +495,7 @@ void vpPlot::getPixelValue(const bool block)
   graphic in a window is less or equal to 4, this parameter is between 0
   and 3. \param title : The graphic title.
 */
-void vpPlot::setTitle(const unsigned int graphNum, const std::string &title)
+void vpPlot::setTitle(unsigned int graphNum, const std::string &title)
 {
   (graphList + graphNum)->setTitle(title);
 }
@@ -507,7 +507,7 @@ void vpPlot::setTitle(const unsigned int graphNum, const std::string &title)
   graphic in a window is less or equal to 4, this parameter is between 0
   and 3. \param unitx : The name of the unit of the x axis.
 */
-void vpPlot::setUnitX(const unsigned int graphNum, const std::string &unitx)
+void vpPlot::setUnitX(unsigned int graphNum, const std::string &unitx)
 {
   (graphList + graphNum)->setUnitX(unitx);
 }
@@ -519,7 +519,7 @@ void vpPlot::setUnitX(const unsigned int graphNum, const std::string &unitx)
   graphic in a window is less or equal to 4, this parameter is between 0
   and 3. \param unity : The name of the unit of the y axis.
 */
-void vpPlot::setUnitY(const unsigned int graphNum, const std::string &unity)
+void vpPlot::setUnitY(unsigned int graphNum, const std::string &unity)
 {
   (graphList + graphNum)->setUnitY(unity);
 }
@@ -531,7 +531,7 @@ void vpPlot::setUnitY(const unsigned int graphNum, const std::string &unity)
   graphic in a window is less or equal to 4, this parameter is between 0
   and 3. \param unitz : The name of the unit of the z axis.
 */
-void vpPlot::setUnitZ(const unsigned int graphNum, const std::string &unitz)
+void vpPlot::setUnitZ(unsigned int graphNum, const std::string &unitz)
 {
   (graphList + graphNum)->setUnitZ(unitz);
 }
@@ -544,7 +544,7 @@ void vpPlot::setUnitZ(const unsigned int graphNum, const std::string &unitz)
   and 3. \param curveNum : The index of the curve in the list of the curves
   belonging to the graphic. \param legend : The legend of the curve.
 */
-void vpPlot::setLegend(const unsigned int graphNum, const unsigned int curveNum, const std::string &legend)
+void vpPlot::setLegend(unsigned int graphNum, unsigned int curveNum, const std::string &legend)
 {
   (graphList + graphNum)->setLegend(curveNum, legend);
 }
@@ -557,7 +557,7 @@ void vpPlot::setLegend(const unsigned int graphNum, const unsigned int curveNum,
   graphic in a window is less or equal to 4, this parameter is between 0
   and 3.
 */
-void vpPlot::resetPointList(const unsigned int graphNum)
+void vpPlot::resetPointList(unsigned int graphNum)
 {
   for (unsigned int i = 0; i < (graphList + graphNum)->curveNbr; i++)
     (graphList + graphNum)->resetPointList(i);
@@ -571,7 +571,7 @@ graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param curveNum : The index of the curve in the list of the curves belonging
 to the graphic. \param thickness : The thickness you want to use
 */
-void vpPlot::setThickness(const unsigned int graphNum, const unsigned int curveNum, const unsigned int thickness)
+void vpPlot::setThickness(unsigned int graphNum, unsigned int curveNum, unsigned int thickness)
 {
   (graphList + graphNum)->setCurveThickness(curveNum, thickness);
 }
@@ -584,7 +584,7 @@ belonging to a given graphic.
 graphic in a window is less or equal to 4, this parameter is between 0 and 3.
   \param thickness : The thickness you want to use
 */
-void vpPlot::setGraphThickness(const unsigned int graphNum, const unsigned int thickness)
+void vpPlot::setGraphThickness(unsigned int graphNum, unsigned int thickness)
 {
   for (unsigned int curveNum = 0; curveNum < (graphList + graphNum)->curveNbr; curveNum++)
     (graphList + graphNum)->setCurveThickness(curveNum, thickness);
@@ -598,7 +598,7 @@ void vpPlot::setGraphThickness(const unsigned int graphNum, const unsigned int t
   graphic in a window is less or equal to 4, this parameter is between 0
   and 3. \param thickness : The thickness you want to use
 */
-void vpPlot::setGridThickness(const unsigned int graphNum, const unsigned int thickness)
+void vpPlot::setGridThickness(unsigned int graphNum, unsigned int thickness)
 {
   (graphList + graphNum)->setGridThickness(thickness);
 }
@@ -612,7 +612,7 @@ void vpPlot::setGridThickness(const unsigned int graphNum, const unsigned int th
   and 3. \param curveNum : The index of the curve in the list of the curves
   belonging to the graphic.
 */
-void vpPlot::resetPointList(const unsigned int graphNum, const unsigned int curveNum)
+void vpPlot::resetPointList(unsigned int graphNum, unsigned int curveNum)
 {
   (graphList + graphNum)->resetPointList(curveNum);
 }
@@ -643,7 +643,7 @@ void vpPlot::resetPointList(const unsigned int graphNum, const unsigned int curv
   graphic in a window is less or equal to 4, this parameter is between 0
   and 3. \param dataFile : Name of the text file.
 */
-void vpPlot::saveData(const unsigned int graphNum, const std::string &dataFile, const std::string &title_prefix)
+void vpPlot::saveData(unsigned int graphNum, const std::string &dataFile, const std::string &title_prefix)
 {
   std::ofstream fichier;
   fichier.open(dataFile.c_str());

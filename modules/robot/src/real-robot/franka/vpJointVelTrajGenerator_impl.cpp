@@ -258,14 +258,14 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
       q_dot = (cVe * fJe).pseudoInverse() * v_cart_des; // TODO introduce try catch
     }
 
-    std::array<double, 7> dq_des;
+    std::array<double, 7> dq_des_eigen;
     for (size_t i = 0; i < 7; i++) // TODO create a function to convert
-      dq_des[i] = q_dot[i];
+      dq_des_eigen[i] = q_dot[i];
 
     std::array<double, 7> q_cmd;
     std::array<double, 7> dq_cmd;
 
-    auto dq_des_ = dq_des;
+    auto dq_des_ = dq_des_eigen;
     if (stop) { // Stop asked
       for (auto & dq_ : dq_des_) {
         dq_ = 0.0;
@@ -379,7 +379,7 @@ void vpJointVelTrajGenerator::init(const std::array<double, 7> &q,
                                    const std::array<double, 7> &q_max,
                                    const std::array<double, 7> &dq_max,
                                    const std::array<double, 7> &ddq_max,
-                                   const double delta_t)
+                                   double delta_t)
 {
   if (m_njoints != q_min.size() || m_njoints != q_max.size()
       || m_njoints != dq_max.size() || m_njoints != ddq_max.size()) {

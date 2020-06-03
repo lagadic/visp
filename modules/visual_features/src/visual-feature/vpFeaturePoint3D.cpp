@@ -97,7 +97,7 @@ vpFeaturePoint3D::vpFeaturePoint3D() { init(); }
   \sa get_X()
 
 */
-void vpFeaturePoint3D::set_X(const double X)
+void vpFeaturePoint3D::set_X(double X)
 {
   s[0] = X;
   flags[0] = true;
@@ -112,7 +112,7 @@ void vpFeaturePoint3D::set_X(const double X)
   \sa get_Y()
 
 */
-void vpFeaturePoint3D::set_Y(const double Y)
+void vpFeaturePoint3D::set_Y(double Y)
 {
   s[1] = Y;
   flags[1] = true;
@@ -127,7 +127,7 @@ void vpFeaturePoint3D::set_Y(const double Y)
   \sa get_Z()
 
 */
-void vpFeaturePoint3D::set_Z(const double Z)
+void vpFeaturePoint3D::set_Z(double Z)
 {
   s[2] = Z;
   flags[2] = true;
@@ -141,7 +141,7 @@ void vpFeaturePoint3D::set_Z(const double Z)
 
   \sa set_X(), set_Y(), set_Z()
 */
-void vpFeaturePoint3D::set_XYZ(const double X, const double Y, const double Z)
+void vpFeaturePoint3D::set_XYZ(double X, double Y, double Z)
 {
   set_X(X);
   set_Y(Y);
@@ -227,7 +227,7 @@ double vpFeaturePoint3D::get_Z() const { return s[2]; }
   line corresponds to the \f$ Z \f$ visual feature.
 
 */
-vpMatrix vpFeaturePoint3D::interaction(const unsigned int select)
+vpMatrix vpFeaturePoint3D::interaction(unsigned int select)
 {
   vpMatrix L;
 
@@ -355,7 +355,7 @@ vpMatrix vpFeaturePoint3D::interaction(const unsigned int select)
   \endcode
 
 */
-vpColVector vpFeaturePoint3D::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeaturePoint3D::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -445,7 +445,7 @@ void vpFeaturePoint3D::buildFrom(const vpPoint &p)
   on the camera which is not possible.
 
 */
-void vpFeaturePoint3D::buildFrom(const double X, const double Y, const double Z)
+void vpFeaturePoint3D::buildFrom(double X, double Y, double Z)
 {
 
   s[0] = X;
@@ -493,7 +493,7 @@ void vpFeaturePoint3D::buildFrom(const double X, const double Y, const double Z)
   s.print(vpFeaturePoint3D::selectZ()); // print only the Z component
   \endcode
 */
-void vpFeaturePoint3D::print(const unsigned int select) const
+void vpFeaturePoint3D::print(unsigned int select) const
 {
 
   std::cout << "Point3D:  ";

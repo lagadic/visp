@@ -225,24 +225,6 @@ void test_det_eigen3(bool verbose, const std::vector<vpMatrix> &bench, double &t
 }
 #endif
 
-#if defined(VISP_HAVE_GSL)
-void test_det_gsl(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
-{
-  if (verbose)
-    std::cout << "Test determinant using GSL 3rd party" << std::endl;
-  // Compute inverse
-  if (verbose)
-    std::cout << "  Matrix size: " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << std::endl;
-
-  result.resize(bench.size());
-  double t = vpTime::measureTimeMs();
-  for (unsigned int i = 0; i < bench.size(); i++) {
-    result[i] = bench[i].AtA().detByLUGsl();
-  }
-  time = vpTime::measureTimeMs() - t;
-}
-#endif
-
 #if defined(VISP_HAVE_LAPACK)
 void test_det_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
 {
@@ -291,8 +273,7 @@ void save_time(const std::string &method, bool verbose, bool use_plot_file, std:
 int main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_GSL) || defined(VISP_HAVE_LAPACK) ||                                \
-    (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     unsigned int nb_matrices = 1000;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
@@ -326,10 +307,6 @@ int main(int argc, const char *argv[])
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       of << "\"Determinant OpenCV\""
-         << "\t";
-#endif
-#if defined(VISP_HAVE_GSL)
-      of << "\"Determinant GSL\""
          << "\t";
 #endif
       of << std::endl;
@@ -367,45 +344,9 @@ int main(int argc, const char *argv[])
       save_time("Determinant by OpenCV: ", verbose, use_plot_file, of, time);
 #endif
 
-#if defined(VISP_HAVE_GSL)
-      std::vector<double> result_gsl;
-      test_det_gsl(verbose, bench, time, result_gsl);
-      save_time("Determinant by GSL: ", verbose, use_plot_file, of, time);
-#endif
-
       if (use_plot_file)
         of << std::endl;
 
-#if defined(VISP_HAVE_GSL) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-      // Compare results
-      for (unsigned int i = 0; i < bench.size(); i++) {
-        if (std::fabs(result_gsl[i] - result_opencv[i]) > 1e-6) {
-          std::cout << "Determinant differ between GSL and OpenCV: " << result_gsl[i] << " " << result_opencv[i]
-                    << std::endl;
-          ret = EXIT_FAILURE;
-        }
-      }
-#endif
-#if defined(VISP_HAVE_GSL) && defined(VISP_HAVE_LAPACK)
-      // Compare results
-      for (unsigned int i = 0; i < bench.size(); i++) {
-        if (std::fabs(result_gsl[i] - result_lapack[i]) > 1e-6) {
-          std::cout << "Determinant differ between GSL and Lapack: " << result_gsl[i] << " " << result_lapack[i]
-                    << std::endl;
-          ret = EXIT_FAILURE;
-        }
-      }
-#endif
-#if defined(VISP_HAVE_GSL) && defined(VISP_HAVE_EIGEN3)
-      // Compare results
-      for (unsigned int i = 0; i < bench.size(); i++) {
-        if (std::fabs(result_gsl[i] - result_eigen3[i]) > 1e-6) {
-          std::cout << "Determinant differ between GSL and Eigen3: " << result_gsl[i] << " " << result_eigen3[i]
-                    << std::endl;
-          ret = EXIT_FAILURE;
-        }
-      }
-#endif
 #if defined(VISP_HAVE_LAPACK) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
       // Compare results
       for (unsigned int i = 0; i < bench.size(); i++) {
@@ -452,8 +393,7 @@ int main(int argc, const char *argv[])
 #else
     (void)argc;
     (void)argv;
-    std::cout << "Test does nothing since you dont't have Eigen3, Lapack, "
-                 "OpenCV or GSL 3rd party"
+    std::cout << "Test does nothing since you dont't have Lapack, Eigen3 or OpenCV 3rd party"
               << std::endl;
     return EXIT_SUCCESS;
 #endif

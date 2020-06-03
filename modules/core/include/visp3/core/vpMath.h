@@ -80,6 +80,8 @@
 
 #endif
 
+#include <visp3/core/vpImagePoint.h>
+
 /*!
   \class vpMath
   \ingroup group_core_math_tools
@@ -120,7 +122,7 @@ public:
   static inline long double comb(unsigned int n, unsigned int p);
 
   //   round x to the nearest integer
-  static inline int round(const double x);
+  static inline int round(double x);
 
   //   return the sign of x (+-1)
   static inline int(sign)(double x);
@@ -179,8 +181,10 @@ public:
     a = tmp;
   }
 
-  static bool isNaN(const double value);
-  static bool isInf(const double value);
+  static bool isNaN(double value);
+  static bool isInf(double value);
+
+  static double lineFitting(const std::vector<vpImagePoint>& imPts, double& a, double& b, double& c);
 
   template <typename _Tp> static inline _Tp saturate(unsigned char v) { return _Tp(v); }
   template <typename _Tp> static inline _Tp saturate(char v) { return _Tp(v); }
@@ -193,9 +197,9 @@ public:
 
   static double getMean(const std::vector<double> &v);
   static double getMedian(const std::vector<double> &v);
-  static double getStdev(const std::vector<double> &v, const bool useBesselCorrection = false);
+  static double getStdev(const std::vector<double> &v, bool useBesselCorrection = false);
 
-  static int modulo(const int a, const int n);
+  static int modulo(int a, int n);
 
 private:
   static const double ang_min_sinc;
@@ -238,7 +242,7 @@ long double vpMath::comb(unsigned int n, unsigned int p)
   \return Nearest integer of x.
 
 */
-int vpMath::round(const double x)
+int vpMath::round(double x)
 {
 #if defined(VISP_HAVE_FUNC_ROUND)
   //:: to design the global namespace and avoid to call recursively
@@ -307,8 +311,10 @@ bool vpMath::greater(double x, double y, double s) { return (x > (y - s)); }
 /*!
 
  Sigmoid function between [x0,x1] with \f$ s(x)=0 if x\le x0\f$ and \f$ s(x)=1
-if x \ge x1 \f$ \param x : Value of x. \param x0 : Lower bound (default 0).
- \param x1 : Upper bound (default 1).
+if x \ge x1 \f$
+  \param x : Value of x.
+  \param x0 : Lower bound (default 0).
+  \param x1 : Upper bound (default 1).
   \param n : Degree of the exponential (default 12).
 
 \return Sigmoid value \f$1/(1+exp(-n*((x-x0)/(x1-x0)-0.5)))\f$

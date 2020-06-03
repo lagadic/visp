@@ -82,7 +82,7 @@ int main()
      }
      catch (...) {
        std::cout << "Cannot create " << username << " directory" << std::endl;
-       return false;
+       return EXIT_FAILURE;
      }
    }
   // Create a empty filename with name "username/file.txt"
@@ -104,6 +104,8 @@ int main()
   std::cout << "Remove: " << newfilename << std::endl;
   if (vpIoTools::remove(newfilename) == false)
     std::cout << "Unable to remove: " << newfilename << std::endl;
+
+  return EXIT_SUCCESS;
 }
   \endcode
 
@@ -188,7 +190,7 @@ public:
 #endif
 
   static std::string getAbsolutePathname(const std::string &pathname);
-  static std::string getFileExtension(const std::string &pathname, const bool checkFile = false);
+  static std::string getFileExtension(const std::string &pathname, bool checkFile = false);
   static std::string getName(const std::string &pathname);
   static std::string getNameWE(const std::string &pathname);
   static std::string getParent(const std::string &pathname);
@@ -239,8 +241,8 @@ public:
   static void writeBinaryValueLE(std::ofstream &file, const uint16_t ushort_value);
   static void writeBinaryValueLE(std::ofstream &file, const int32_t int_value);
   static void writeBinaryValueLE(std::ofstream &file, const uint32_t int_value);
-  static void writeBinaryValueLE(std::ofstream &file, const float float_value);
-  static void writeBinaryValueLE(std::ofstream &file, const double double_value);
+  static void writeBinaryValueLE(std::ofstream &file, float float_value);
+  static void writeBinaryValueLE(std::ofstream &file, double double_value);
 
   static bool parseBoolean(std::string input);
   static std::string trim(std::string s);
@@ -253,7 +255,7 @@ protected:
   static std::vector<std::string> configValues;
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-  static int mkdir_p(const char *path, const int mode);
+  static int mkdir_p(const char *path, int mode);
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 };
 #endif

@@ -99,9 +99,9 @@ public:
   int getSizeFilter() const { return m_size_filter; }
   std::string getName() const { return m_name; }
 
-  void setRange(const double _range) { m_range = _range; }
-  void setStep(const int _step) { m_step = _step; }
-  void setSizeFilter(const int _size_filter) { m_size_filter = _size_filter; }
+  void setRange(double _range) { m_range = _range; }
+  void setStep(int _step) { m_step = _step; }
+  void setSizeFilter(int _size_filter) { m_size_filter = _size_filter; }
   void setName(const std::string &_name) { m_name = _name; }
 
 protected:

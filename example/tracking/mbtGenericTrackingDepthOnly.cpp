@@ -43,7 +43,8 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)
+#if (defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)) \
+  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -250,7 +251,7 @@ void rs_deproject_pixel_to_point(float point[3], const rs_intrinsics &intrin, co
   point[2] = depth;
 }
 
-bool read_data(const unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I, vpImage<uint16_t> &I_depth_raw,
+bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I, vpImage<uint16_t> &I_depth_raw,
                std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width, unsigned int &pointcloud_height)
 {
   char buffer[256];
@@ -774,12 +775,17 @@ int main(int argc, const char **argv)
   }
 }
 
+#elif !(defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY))
+int main()
+{
+  std::cout << "Cannot run this example: visp_mbt, visp_gui modules are required."
+            << std::endl;
+  return EXIT_SUCCESS;
+}
 #else
 int main()
 {
-  std::cerr << "visp_mbt, visp_gui modules and OpenCV are required to run "
-               "this example."
-            << std::endl;
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

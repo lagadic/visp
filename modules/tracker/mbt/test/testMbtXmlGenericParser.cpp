@@ -44,7 +44,8 @@
 
 int main()
 {
-#ifdef VISP_HAVE_PUGIXML
+#if defined(VISP_HAVE_PUGIXML) \
+  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   std::string visp_images_dir = vpIoTools::getViSPImagesDataPath();
   if (vpIoTools::checkDirectory(visp_images_dir + "/xml")) {
     double eps = std::numeric_limits<double>::epsilon();
@@ -159,6 +160,8 @@ int main()
       }
     }
   }
+#elif !(defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
 #endif
 
   return EXIT_SUCCESS;

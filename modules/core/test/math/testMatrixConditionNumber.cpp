@@ -90,6 +90,7 @@ int test_condition_number(const std::string &test_name, const vpMatrix &M)
 
 int main()
 {
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV)
   vpMatrix M(3, 3);
   M.eye();
 
@@ -145,7 +146,9 @@ int main()
   else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
-
   std::cout << "Test succeed" << std::endl;
+#else
+  std::cout << "Test ignored: install Lapack, Eigen3 or OpenCV" << std::endl;
+#endif
   return EXIT_SUCCESS;
 }

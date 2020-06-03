@@ -50,7 +50,7 @@ href="https://visp.inria.fr/software-architecture" target="_parent">https://visp
 <p>ViSP full installation procedure using CMake is detailed in the \ref tuto_install_sdk "Installation from prebuild SDK tutorials" and \ref tuto_install_src "Installation from source tutorials". \ref tuto_started "Getting started tutorials" and documents in pdf are also available from <a
 href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr/publications</a>.</p>
 
-\section tutorial Tutorials
+\section tutorial Tutorials for ViSP users
 
 <p>Here after you will find a list of tutorials that show the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
 
@@ -60,12 +60,15 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \ref tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices.
-- \ref tutorial-detection-apriltag-ios <br>This tutorial shows how to do detect an AprilTag marker on iOS devices. 
+- \ref tutorial-detection-apriltag-ios <br>This tutorial shows how to do detect an AprilTag marker in an image on iOS devices. 
+- \ref tutorial-detection-apriltag-ios-realtime <br>This tutorial shows how to do detect in realtime an AprilTag marker on iOS devices. 
 
 \subsection tuto_java ViSP for Java
 
 - \ref tutorial-install-java <br>In this tutorial you will learn how to install ViSP for Java under Linux, macOS or Windows.
 - \ref tutorial-java-started <br>This tutorial explains how to create a Java application that uses some functionalities from ViSP core module.
+- \ref tutorial-java-apriltag <br>This tutorial explains how to create a Java application that allows to detect AprilTags in an image and compute tag poses.
+- \ref tutorial-java-mbt-generic <br>This tutorial explains how to create a Java application that allows to track an object using generic model-based tracker.
 
 \subsection tuto_android ViSP for Android
 
@@ -74,10 +77,10 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 
 \subsection tuto_unity ViSP for Unity
 
-- <a href="https://github.com/lagadic/visp_unity/blob/master/README.md">Developement of an interface and demo between ViSP and Unity engine.</a><br>This is the link to a project achieved during GSoC 2018 that shows how to use ViSP in Unity engine to achieve AR.
-- <a href="https://github.com/lagadic/visp_unity/wiki">ViSP for Unity introduction.</a><br>This is a brief introduction that explains the interaction between ViSP and Unity engine.
-- <a href="https://github.com/lagadic/visp_unity/wiki/Generating-DLL">Generating a DLL for Unity</a>.<br>This page explains how to generate DLLs for your Unity project.
-- <a href="https://github.com/lagadic/visp_unity/wiki/Running-in-Unity">Unity demo based on ViSP</a>.<br>This page shows how to track an AprilTag for an AR application and how to track an object using the generic model-based tracker implemented in VISP.
+- <a href="https://github.com/lagadic/visp_unity/blob/master/README.md">Github visp_unity project</a><br>This project contains a wrapper between ViSP and Unity engine. Two Unity AR applications that show the usage of the wrapper are also available. This is the link to a project started during GSoC 2018.
+- <a href="https://github.com/lagadic/visp_unity/wiki">ViSP for Unity introduction</a><br>This is an overview that explains the interaction between ViSP and Unity engine.
+- <a href="https://github.com/lagadic/visp_unity/wiki/Generating-ViSP-wrapper-plugin">How to build ViSP wrapper plugin for Unity</a><br>This tutorial explains how to generate ViSPUnity plugin for your Unity project depending on your platform (MacOS, Ubuntu, Windows).
+- <a href="https://github.com/lagadic/visp_unity/wiki/Unity-AR-demo-using-ViSP">How to run Unity AR application based on ViSP</a><br>This page shows how to track an AprilTag for an AR application and how to track a cube using the generic model-based tracker implemented in VISP.
 
 \subsection tuto_install_sdk Installation from prebuild SDK
 
@@ -100,7 +103,6 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-install-win10-mingw64 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Mingw-w64.
 - \ref tutorial-install-osx-homebrew <br>In this tutorial you will learn how to install ViSP from source on OSX with Homebrew.
 
-
 \subsection tuto_install_crosscompiling Installation from cross-compiling
 
 - \ref tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to cross-compile ViSP from source on Ubuntu host for Raspberry Pi target.
@@ -112,14 +114,19 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 \subsection tuto_started Getting started
 
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
+- \ref tutorial-getting-started-makefile <br>This tutorial shows how to build a project that uses ViSP without CMake using `visp-config` and `pkg-config` script called in a classical Makefile.
 - \ref tutorial-getting-started-naoqi <br>This tutorial shows how to build a project that uses ViSP on NAOqi OS running on NAO, Romeo or Pepper humanoid robots.
 - \ref tutorial-import-visp-into-EclipseIDE <br>This tutorial shows how to import a CMake project that uses ViSP in Eclipse IDE.
-- \ref tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
+
+\subsection tuto_linear_algebra Linear algebra operations
+
+- \ref tutorial-basic-linear-algebra <br>This tutorial gives some information concerning basic linear algebra operations implementation for vector and matrix multiplication.
 
 \subsection tuto_image Image manipulation
 
 - \ref tutorial-image-display <br>In this tutorial you will learn how to display an image in a window and how to down scale the window size to be able to display images that are larger than the screen resolution.
-- \ref tutorial-basic-drawings <br>In this tutorial you will learn how to display basic primitives such as points, lines, circles, rectangles in an image display window.
+- \ref tutorial-image-display-overlay <br>In this tutorial you will learn how to display points, lines, circles, rectangles in overlay in an image display window.
+- \ref tutorial-basic-drawings <br>In this tutorial you will learn how to modify an image to draw points, lines, circles, rectangles.
 - \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
 - \ref tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position.
@@ -150,7 +157,6 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-tracking-mb-generic-rgbd <br>This tutorial focuses on generic model-based trackers combining moving edges and/or keypoints with depth visual features.
 - \ref tutorial-tracking-mb-generic-apriltag-live <br>This tutorial is a simple use case. Using a webcam or an Intel RGB-D camera it shows how to test the generic model tracker on a cube that has an AprilTag glued on one face. The tag is here used to automate the tracker initialization.
 - \ref tutorial-tracking-mb-deprecated <br>This deprecated tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints.
-- \ref tutorial-tracking-mb-stereo-deprecated <br>This deprecated tutorial focuses on model-based trackers with stereo cameras.
 - \ref tutorial-tracking-mb-CAO-editor <br>This tutorial presents the project done during the GSoC 2017: two Blender plugins to import/export .cao model file and a Qt-based .cao editor.
 - \ref tutorial-tracking-mb-generic-rgbd-Blender <br>This tutorial shows how to use Blender to generate simulated data to test the model-based tracker.
 - \ref tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches.
@@ -182,7 +188,8 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-franka-pbvs <br>This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
 - \ref tutorial-franka-ibvs <br>This tutorial explains how to do an image-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
 - \ref tutorial-mbot-vs <br>This tutorial explains how to do a visual-servoing with the mBot Ranger educational robot kit equipped with a Raspberry Pi and a camera.
-- \ref tutorial-bebop2-vs <br> Explains how to implement an image -based visual-servoing (IBVS) with Parrot Bebop 2 drone.
+- \ref tutorial-bebop2-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Parrot Bebop 2 drone.
+- \ref tutorial-flir-ptu-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Flir pan-tilt unit and camera.
 
 \subsection tuto_bridge Bridges over other frameworks (OpenCV, MATLAB)
 
@@ -197,6 +204,19 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 in one thread and display these images in an other thread.
 
 @VISP_MAINPAGE_EXTENSION@
+
+\section tutorial_dev Tutorials for ViSP developers
+
+<p>Here after you will find a list of tutorials that show how to to modify ViSP.
+
+\subsection tuto_coding Contributing to ViSP source code
+
+- \ref tutorial-add-new-dependency <br>This tutorial explains how to introduce a new class that relies on a 3rd party SDK. Different use cases are given as example.
+
+\subsection tuto_contrib Extanding ViSP with contrib modules
+
+- \ref tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
+
 
 \section Citing_ViSP Citing ViSP
 
@@ -541,11 +561,6 @@ scheme, ...</p>
   - vpMbEdgeTracker
   - vpMbKltTracker
   - vpMbEdgeKltTracker
-
- The following classes that allow to track an object seen in two (stereo) or more images are deprecated and should no more be used. Use rather the vpMbGenericTracker class that can also handle multiple cameras:
-  - vpMbEdgeMultiTracker
-  - vpMbKltMultiTracker
-  - vpMbEdgeKltMultiTracker.
 */
 /*!
   \ingroup module_mbt

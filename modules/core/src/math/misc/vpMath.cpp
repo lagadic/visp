@@ -49,6 +49,7 @@
 
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpMatrix.h>
 
 #if defined(VISP_HAVE_FUNC__ISNAN)
 #include <float.h>
@@ -81,7 +82,7 @@ const double vpMath::ang_min_mc = 2.5e-4;
    \param value : Double number to check.
    \return Return true if value is not a number.
  */
-bool vpMath::isNaN(const double value)
+bool vpMath::isNaN(double value)
 {
 #if defined(VISP_HAVE_FUNC_ISNAN)
   return isnan(value);
@@ -107,7 +108,7 @@ bool vpMath::isNaN(const double value)
    negative infinity). \param value : Double number to check. \return Return
    true if value is infinity.
  */
-bool vpMath::isInf(const double value)
+bool vpMath::isInf(double value)
 {
 #if defined(VISP_HAVE_FUNC_ISINF)
   return isinf(value);
@@ -141,7 +142,6 @@ double vpMath::mcosc(double cosx, double x)
 }
 
 /*!
-
   Compute \f$ (1-sinc(x))/x^2 \f$ with \f$ sinc(x) = sinx / x \f$.
 
   \param sinx : value of sin(x).
@@ -159,7 +159,6 @@ double vpMath::msinc(double sinx, double x)
 }
 
 /*!
-
   Compute sinus cardinal \f$ \frac{sin(x)}{x} \f$.
 
   \param x : Value of x.
@@ -175,7 +174,6 @@ double vpMath::sinc(double x)
     return sin(x) / x;
 }
 /*!
-
   Compute sinus cardinal \f$ \frac{sin(x)}{x}\f$.
 
   \param sinx : Value of sin(x).
@@ -249,7 +247,7 @@ double vpMath::getMedian(const std::vector<double> &v)
 
   \return The standard deviation value.
 */
-double vpMath::getStdev(const std::vector<double> &v, const bool useBesselCorrection)
+double vpMath::getStdev(const std::vector<double> &v, bool useBesselCorrection)
 {
   if (v.empty()) {
     throw vpException(vpException::notInitialized, "Empty vector !");
@@ -258,7 +256,12 @@ double vpMath::getStdev(const std::vector<double> &v, const bool useBesselCorrec
   double mean = getMean(v);
 
   std::vector<double> diff(v.size());
+#if VISP_CXX_STANDARD > VISP_CXX_STANDARD_98
+  std::transform(v.begin(), v.end(), diff.begin(), std::bind(std::minus<double>(), std::placeholders::_1, mean));
+#else
   std::transform(v.begin(), v.end(), diff.begin(), std::bind2nd(std::minus<double>(), mean));
+#endif
+
   double sq_sum = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0);
   double divisor = (double)v.size();
   if (useBesselCorrection && v.size() > 1) {
@@ -266,6 +269,62 @@ double vpMath::getStdev(const std::vector<double> &v, const bool useBesselCorrec
   }
 
   return std::sqrt(sq_sum / divisor);
+}
+
+/*!
+  Compute the line equation using least-squares fitting that minimizes the cost function:
+  \f[
+    \mathbf{E} = \sum_{i=1}^{n}\left ( ax_i + by_i - c \right )^2
+  \f]
+
+  \param imPts : Image points (size  >= 3).
+  \param a : a coefficient.
+  \param b : b coefficient.
+  \param c : c coefficient.
+
+  \return The mean distance error (point-to-line distance) between the points and the fitted line.
+*/
+double vpMath::lineFitting(const std::vector<vpImagePoint>& imPts, double& a, double& b, double& c)
+{
+  if (imPts.size() < 3) {
+    throw vpException(vpException::dimensionError, "Number of image points must be greater or equal to 3.");
+  }
+
+  double x_mean = 0, y_mean = 0;
+  for (size_t i = 0; i < imPts.size(); i++) {
+    const vpImagePoint& imPt = imPts[i];
+    x_mean += imPt.get_u();
+    y_mean += imPt.get_v();
+  }
+  x_mean /= imPts.size();
+  y_mean /= imPts.size();
+
+  vpMatrix AtA(2, 2, 0.0);
+  for (size_t i = 0; i < imPts.size(); i++) {
+    const vpImagePoint& imPt = imPts[i];
+    AtA[0][0] += (imPt.get_u() - x_mean)*(imPt.get_u() - x_mean);
+    AtA[0][1] += (imPt.get_u() - x_mean)*(imPt.get_v() - y_mean);
+    AtA[1][1] += (imPt.get_v() - y_mean)*(imPt.get_v() - y_mean);
+  }
+  AtA[1][0] = AtA[0][1];
+
+  vpColVector eigenvalues;
+  vpMatrix eigenvectors;
+  AtA.eigenValues(eigenvalues, eigenvectors);
+
+  a = eigenvectors[0][0];
+  b = eigenvectors[1][0];
+  c = a*x_mean + b*y_mean;
+
+  double error = 0;
+  for (size_t i = 0; i < imPts.size(); i++) {
+    double x0 = imPts[i].get_u();
+    double y0 = imPts[i].get_v();
+
+    error += std::fabs(a*x0 + b*y0 - c);
+  }
+
+  return error / imPts.size();
 }
 
 /*!
@@ -278,4 +337,4 @@ double vpMath::getStdev(const std::vector<double> &v, const bool useBesselCorrec
 
   \return The modified modulo of a mod n.
 */
-int vpMath::modulo(const int a, const int n) { return ((a % n) + n) % n; }
+int vpMath::modulo(int a, int n) { return ((a % n) + n) % n; }

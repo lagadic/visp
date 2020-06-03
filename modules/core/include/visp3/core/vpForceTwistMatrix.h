@@ -177,8 +177,7 @@ public:
   vpForceTwistMatrix(const vpTranslationVector &t, const vpRotationMatrix &R);
   // Construction from Translation and rotation (ThetaU parameterization)
   vpForceTwistMatrix(const vpTranslationVector &t, const vpThetaUVector &thetau);
-  vpForceTwistMatrix(const double tx, const double ty, const double tz, const double tux, const double tuy,
-                     const double tuz);
+  vpForceTwistMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz);
 
   vpForceTwistMatrix(const vpRotationMatrix &R);
   vpForceTwistMatrix(const vpThetaUVector &thetau);
@@ -213,7 +212,7 @@ public:
     a 6-by-6 matrix. \exception vpException::fatalError When this function is
     called.
     */
-  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true)
+  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;

@@ -44,6 +44,11 @@
 */
 vpDetectorBase::vpDetectorBase() : m_polygon(), m_message(), m_nb_objects(0), m_timeout_ms(0) {}
 
+vpDetectorBase::vpDetectorBase(const vpDetectorBase &o)
+  : m_polygon(o.m_polygon), m_message(o.m_message), m_nb_objects(o.m_nb_objects), m_timeout_ms(o.m_timeout_ms)
+{
+}
+
 /*!
         Returns ith object container box as a vector of points.
 */

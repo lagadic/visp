@@ -273,7 +273,7 @@ public:
 
   // compute the error between two visual features from a subset
   // a the possible features
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
 
   vpFeatureThetaURotationRepresentationType getFeatureThetaURotationType() const;
 
@@ -284,13 +284,13 @@ public:
   // Basic construction.
   void init();
   // compute the interaction matrix from a subset a the possible features
-  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL);
 
-  void print(const unsigned int select = FEATURE_ALL) const;
+  void print(unsigned int select = FEATURE_ALL) const;
 
-  void set_TUx(const double tu_x);
-  void set_TUy(const double tu_y);
-  void set_TUz(const double tu_z);
+  void set_TUx(double tu_x);
+  void set_TUy(double tu_y);
+  void set_TUz(double tu_z);
 
   void setFeatureThetaURotationType(const vpFeatureThetaURotationRepresentationType r);
 

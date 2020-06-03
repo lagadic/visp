@@ -848,7 +848,6 @@ reference frame in m/s and rotations \f$ ^{c} \omega_x, ^{c} \omega_y, ^{c}
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpSimulatorAfma6.h>
 
@@ -1069,7 +1068,6 @@ void vpSimulatorAfma6::computeArticularVelocity()
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpSimulatorAfma6.h>
 
 int main()
@@ -1170,7 +1168,6 @@ void vpSimulatorAfma6::getVelocity(const vpRobot::vpControlFrameType frame, vpCo
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpSimulatorAfma6.h>
 
 int main()
@@ -1279,7 +1276,6 @@ void vpSimulatorAfma6::findHighestPositioningSpeed(vpColVector &q)
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpSimulatorAfma6.h>
 
 int main()
@@ -1481,7 +1477,6 @@ void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, cons
   position is out of range.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpSimulatorAfma6.h>
 
 int main()
@@ -1508,8 +1503,8 @@ int main()
 
   \sa setPosition()
 */
-void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, const double pos1, const double pos2,
-                                   const double pos3, const double pos4, const double pos5, const double pos6)
+void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2,
+                                   double pos3, double pos4, double pos5, double pos6)
 {
   try {
     vpColVector position(6);
@@ -1540,7 +1535,6 @@ void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, cons
   This method has the same behavior than the sample code given below;
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpSimulatorAfma6.h>
 
 int main()
@@ -1600,7 +1594,6 @@ void vpSimulatorAfma6::setPosition(const char *filename)
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 #include <visp3/core/vpRxyzVector.h>

@@ -65,16 +65,16 @@ ccache version 3.4.1
 $ brew install python ant cmake ninja ccache
 \endcode
 
-- At the time this tutorial was written, on macOS Mojave 10.14.5 we got Android Studio 3.5.1, NDK 20.0 (see \ref android_sdk_ndk_version) and the following other tools versions:
+- At the time this tutorial was written, on macOS Catalina 10.15.3 we got Android Studio 3.5.1, NDK 20.0 (see \ref android_sdk_ndk_version) and the following other tools versions:
 \code
 $ java --version
 java 11.0.4 2019-07-16 LTS
 $ python --version
-Python 2.7.15
+Python 2.7.16
 $ ant -version
 Apache Ant(TM) version 1.10.5 compiled on July 10 2018
 $ cmake -version
-cmake version 3.13.2
+cmake version 3.16.4
 $ ninja --version
 1.8.2
 $ ccache --version

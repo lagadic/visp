@@ -72,6 +72,7 @@
 
 #include <cassert>
 #include <vector>
+#include <algorithm>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 
@@ -88,10 +89,7 @@ public:
   /*!
     Returns the area of the rectangle.
   */
-  inline double getArea() const
-  {
-    return width*height;
-  }
+  inline double getArea() const { return width * height; }
 
   /*!
     Returns the bottom coordinate of the rectangle.
@@ -100,8 +98,22 @@ public:
   inline double getBottom() const { return (this->top + this->height - 1.0); }
 
   /*!
+    Returns the bottom-left position of the rectangle.
+
+    \sa getTopLeft(), getTopRight(), getBottomRight(), getBottom(), getLeft()
+  */
+  inline vpImagePoint getBottomLeft() const
+  {
+    vpImagePoint bottomLeft;
+    bottomLeft.set_u(getLeft());
+    bottomLeft.set_v(getBottom());
+    return bottomLeft;
+  }
+
+  /*!
     Returns the bottom-right coordinate of the rectangle.
-    \sa getTopLeft(), getBottom(), getRight()
+
+    \sa getTopLeft(), getTopRight(), getBottomLeft(), getBottom(), getRight()
   */
   inline vpImagePoint getBottomRight() const
   {
@@ -114,7 +126,7 @@ public:
 
   /*!
     Returns the center point of the rectangle. The center point
-    coordinates are (\e x, \e y)
+    coordinates are (\e x, \e y).
 
     The default coordinate system has origin (0, 0) in the top-left
     corner. The positive direction of the y axis is down, and the
@@ -130,7 +142,7 @@ public:
 
   /*!
     Returns the center point of the rectangle. The center point
-    coordinates are (\e x, \e y)
+    coordinates are (\e x, \e y).
 
     The default coordinate system has origin (0, 0) in the top-left
     corner. The positive direction of the y axis is down, and the
@@ -183,14 +195,27 @@ public:
   /*!
     Returns the top-left position of the rectangle.
 
-    \sa getBottomRight(), getTop(), getLeft()
+    \sa getTopRight(), getBottomRight(), getBottomLeft(), getTop(), getLeft()
   */
   inline vpImagePoint getTopLeft() const
   {
     vpImagePoint topLeft;
-    topLeft.set_u(this->left);
-    topLeft.set_v(this->top);
+    topLeft.set_u(getLeft());
+    topLeft.set_v(getTop());
     return topLeft;
+  }
+
+  /*!
+    Returns the top-right position of the rectangle.
+
+    \sa getTopLeft(), getBottomRight(), getBottomLeft(), getTop(), getRight()
+  */
+  inline vpImagePoint getTopRight() const
+  {
+    vpImagePoint topRight;
+    topRight.set_u(getRight());
+    topRight.set_v(getTop());
+    return topRight;
   }
 
   /*!
@@ -209,9 +234,41 @@ public:
 
   bool operator==(const vpRect &r) const;
   bool operator!=(const vpRect &r) const;
-  vpRect &operator&=(const vpRect &r);
+
+  /*!
+    Intersection operator.
+    \param r : Rectangle to insert.
+    \return Intersection rectangle or null rectangle if the two rectangles do not
+    intersect.
+   */
+  inline vpRect & operator &=(const vpRect &r)
+  {
+    double x1 = (std::max)(left, r.left);
+    double y1 = (std::max)(top, r.top);
+    width = (std::min)(left + width, r.left + r.width) - x1;
+    height = (std::min)(top + height, r.top + r.height) - y1;
+    left = x1;
+    top = y1;
+
+    if (width <= 0 || height <= 0) {
+      *this = vpRect();
+    }
+
+    return *this;
+  }
+
   vpRect &operator=(const vpRect &r);
-  vpRect operator&(const vpRect &r) const;
+
+  /*!
+    Intersection operator.
+    \return Intersection rectangle or null rectangle if the two rectangles do not
+    intersect.
+   */
+  inline vpRect operator &(const vpRect &r) const
+  {
+    vpRect a = *this;
+    return a &= r;
+  }
 
   friend VISP_EXPORT bool inRectangle(const vpImagePoint &ip, const vpRect &rect);
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRect &r);
@@ -268,9 +325,10 @@ public:
     Sets the coordinates of the rectangle's top left corner to
     (left, top), and its size to (width, height).
 
-    \param l : horizontal position of the rectangle upper/left corner
-    position. \param t : vertical position of the rectangle upper/left corner
-    position. \param w : rectangle width. \param h : rectangle height.
+    \param l : horizontal position of the rectangle upper/left corner position.
+    \param t : vertical position of the rectangle upper/left corner position.
+    \param w : rectangle width.
+    \param h : rectangle height.
 
   */
   inline void setRect(double l, double t, double w, double h)

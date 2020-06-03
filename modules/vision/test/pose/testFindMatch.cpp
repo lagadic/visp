@@ -57,6 +57,7 @@
 
 int main()
 {
+#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     std::cout << "Find Matches using Ransac" << std::endl;
     std::vector<vpPoint> P;
@@ -109,9 +110,13 @@ int main()
 
     std::cout << "Matching is " << (test_fail ? "badly" : "well") << " performed" << std::endl;
 
-    return test_fail;
+    return (test_fail ? EXIT_FAILURE : EXIT_SUCCESS);
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
+#else
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

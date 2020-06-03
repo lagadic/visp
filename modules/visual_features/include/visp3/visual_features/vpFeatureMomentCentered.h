@@ -94,7 +94,7 @@ public:
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   /* Add function due to pure virtual definition in vpBasicFeature.h */
-  vpMatrix interaction(const unsigned int /* select = FEATURE_ALL */)
+  vpMatrix interaction(unsigned int /* select = FEATURE_ALL */)
   {
     throw vpException(vpException::functionNotImplementedError, "Not implemented!");
   }

@@ -155,7 +155,6 @@ void vpDisplay::getImage(const vpImage<unsigned char> &Isrc, vpImage<vpRGBa> &Id
 
   The code below shows how to use this method.
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>

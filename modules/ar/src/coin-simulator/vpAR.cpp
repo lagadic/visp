@@ -81,7 +81,7 @@ vpAR::~vpAR() { kill(); }
         \param height : Height of the internal view.
         \param type : Type of background image ie gray scaled or color.
 */
-void vpAR::initInternalViewer(const unsigned int width, const unsigned int height, vpImageType type)
+void vpAR::initInternalViewer(unsigned int width, unsigned int height, vpImageType type)
 {
 
   vpSimulator::initInternalViewer(width, height);

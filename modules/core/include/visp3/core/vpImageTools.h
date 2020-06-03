@@ -87,7 +87,7 @@ public:
 
   template <class Type>
   static inline void binarise(vpImage<Type> &I, Type threshold1, Type threshold2, Type value1, Type value2, Type value3,
-                              const bool useLUT = true);
+                              bool useLUT = true);
   static void changeLUT(vpImage<unsigned char> &I, unsigned char A, unsigned char newA, unsigned char B,
                         unsigned char newB);
 
@@ -124,10 +124,10 @@ public:
   static void imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2, vpImage<vpRGBa> &Idiff);
 
   static void imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, vpImage<unsigned char> &Ires,
-                       const bool saturate = false);
+                       bool saturate = false);
 
   static void imageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                            vpImage<unsigned char> &Ires, const bool saturate = false);
+                            vpImage<unsigned char> &Ires, bool saturate = false);
 
   static void initUndistortMap(const vpCameraParameters &cam, unsigned int width, unsigned int height,
                                vpArray2D<int> &mapU, vpArray2D<int> &mapV,
@@ -136,7 +136,10 @@ public:
   static double interpolate(const vpImage<unsigned char> &I, const vpImagePoint &point,
                             const vpImageInterpolationType &method = INTERPOLATION_NEAREST);
 
-  static double normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2);
+  static void integralImage(const vpImage<unsigned char> &I, vpImage<double> &II, vpImage<double> &IIsq);
+
+  static double normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
+                                      bool useOptimized = true);
 
   static void normalize(vpImage<double> &I);
 
@@ -146,16 +149,24 @@ public:
                     const vpArray2D<float> &mapDu, const vpArray2D<float> &mapDv, vpImage<vpRGBa> &Iundist);
 
   template <class Type>
-  static void resize(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int width, const unsigned int height,
-                     const vpImageInterpolationType &method = INTERPOLATION_LINEAR, unsigned int nThreads = 0);
+  static void resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int width, unsigned int height,
+                     const vpImageInterpolationType &method = INTERPOLATION_NEAREST, unsigned int nThreads=0);
 
   template <class Type>
   static void resize(const vpImage<Type> &I, vpImage<Type> &Ires,
-                     const vpImageInterpolationType &method = INTERPOLATION_LINEAR, unsigned int nThreads = 0);
+                     const vpImageInterpolationType &method = INTERPOLATION_NEAREST, unsigned int nThreads=0);
+
+  static void templateMatching(const vpImage<unsigned char> &I, const vpImage<unsigned char> &I_tpl,
+                               vpImage<double> &I_score, unsigned int step_u, unsigned int step_v,
+                               bool useOptimized = true);
 
   template <class Type>
   static void undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &newI,
                         unsigned int nThreads=2);
+
+  template <class Type>
+  static void undistort(const vpImage<Type> &I, vpArray2D<int> mapU, vpArray2D<int> mapV, vpArray2D<float> mapDu,
+                        vpArray2D<float> mapDv, vpImage<Type> &newI);
 
   template <class Type>
   static void warpImage(const vpImage<Type> &src, const vpMatrix &T, vpImage<Type> &dst,
@@ -189,13 +200,17 @@ private:
   static float lerp(float A, float B, float t);
   static int64_t lerp2(int64_t A, int64_t B, int64_t t, int64_t t_1);
 
+  static double normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2, const vpImage<double> &II,
+                                      const vpImage<double> &IIsq, const vpImage<double> &II_tpl,
+                                      const vpImage<double> &IIsq_tpl, unsigned int i0, unsigned int j0);
+
   template <class Type>
   static void resizeBicubic(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i, unsigned int j,
                             float u, float v, float xFrac, float yFrac);
 
   template <class Type>
   static void resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i, unsigned int j,
-                             int u0, int v0, float xFrac, float yFrac);
+                             float u, float v, float xFrac, float yFrac);
 
   template <class Type>
   static void resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i, unsigned int j,
@@ -442,7 +457,7 @@ void vpImageTools::crop(const unsigned char *bitmap, unsigned int width, unsigne
 */
 template <class Type>
 inline void vpImageTools::binarise(vpImage<Type> &I, Type threshold1, Type threshold2, Type value1, Type value2,
-                                   Type value3, const bool useLUT)
+                                   Type value3, bool useLUT)
 {
   if (useLUT) {
     std::cerr << "LUT not available for this type ! Will use the iteration method." << std::endl;
@@ -474,7 +489,7 @@ inline void vpImageTools::binarise(vpImage<Type> &I, Type threshold1, Type thres
 */
 template <>
 inline void vpImageTools::binarise(vpImage<unsigned char> &I, unsigned char threshold1, unsigned char threshold2,
-                                   unsigned char value1, unsigned char value2, unsigned char value3, const bool useLUT)
+                                   unsigned char value1, unsigned char value2, unsigned char value3, bool useLUT)
 {
   if (useLUT) {
     // Construct the LUT
@@ -789,6 +804,27 @@ void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &c
 }
 
 /*!
+  Undistort an image.
+
+  \param I       : Input image to undistort.
+  \param mapU    : Map that contains at each destination coordinate the u-coordinate in the source image.
+  \param mapV    : Map that contains at each destination coordinate the v-coordinate in the source image.
+  \param mapDu   : Map that contains at each destination coordinate the \f$ \Delta u \f$ for the interpolation.
+  \param mapDv   : Map that contains at each destination coordinate the \f$ \Delta v \f$ for the interpolation.
+  \param newI    : Undistorted output image. The size of this image will be the same as the input image \e I.
+
+  \note To undistort a fisheye image, you have to first call initUndistortMap() function to calculate maps and then
+  call undistort() with input maps.
+
+ */
+template <class Type>
+void vpImageTools::undistort(const vpImage<Type> &I, vpArray2D<int> mapU, vpArray2D<int> mapV, vpArray2D<float> mapDu,
+                             vpArray2D<float> mapDv, vpImage<Type> &newI)
+{
+  remap(I, mapU, mapV, mapDu, mapDv, newI);
+}
+
+/*!
   Flip vertically the input image and give the result in the output image.
 
   \param I : Input image to flip.
@@ -957,8 +993,11 @@ inline void vpImageTools::resizeBicubic(const vpImage<vpRGBa> &I, vpImage<vpRGBa
 
 template <class Type>
 void vpImageTools::resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int i,
-                                  unsigned int j, int u0, int v0, float xFrac, float yFrac)
+                                  unsigned int j, float u, float v, float xFrac, float yFrac)
 {
+  int u0 = static_cast<int>(u);
+  int v0 = static_cast<int>(v);
+
   int u1 = (std::min)(static_cast<int>(I.getWidth()) - 1, u0 + 1);
   int v1 = v0;
 
@@ -977,16 +1016,19 @@ void vpImageTools::resizeBilinear(const vpImage<Type> &I, vpImage<Type> &Ires, u
 
 template <>
 inline void vpImageTools::resizeBilinear(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, unsigned int i,
-                                         unsigned int j, int u0, int v0, float xFrac, float yFrac)
+                                         unsigned int j, float u, float v, float xFrac, float yFrac)
 {
+  int u0 = static_cast<int>(u);
+  int v0 = static_cast<int>(v);
+
   int u1 = (std::min)(static_cast<int>(I.getWidth()) - 1, u0 + 1);
   int v1 = v0;
 
   int u2 = u0;
   int v2 = (std::min)(static_cast<int>(I.getHeight()) - 1, v0 + 1);
 
-  int u3 = (std::min)(static_cast<int>(I.getWidth()) - 1, u0 + 1);
-  int v3 = (std::min)(static_cast<int>(I.getHeight()) - 1, v0 + 1);
+  int u3 = u1;
+  int v3 = v2;
 
   for (int c = 0; c < 3; c++) {
     float col0 = lerp(static_cast<float>(reinterpret_cast<const unsigned char *>(&I[v0][u0])[c]),
@@ -1025,8 +1067,8 @@ void vpImageTools::resizeNearest(const vpImage<Type> &I, vpImage<Type> &Ires, un
     - and only with INTERPOLATION_AREA and INTERPOLATION_LINEAR methods
 */
 template <class Type>
-void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, const unsigned int width,
-                          const unsigned int height, const vpImageInterpolationType &method,
+void vpImageTools::resize(const vpImage<Type> &I, vpImage<Type> &Ires, unsigned int width,
+                          unsigned int height, const vpImageInterpolationType &method,
                           unsigned int nThreads)
 {
   Ires.resize(height, width);
@@ -1113,92 +1155,10 @@ void vpImageTools::resize(const vpImage<unsigned char> &I, vpImage<unsigned char
     return;
   }
 
-  if (method == INTERPOLATION_LINEAR) {
-#if 1
-    resizeSimdlib(I, Ires.getWidth(), Ires.getHeight(), Ires, INTERPOLATION_LINEAR);
-#else
-    const int nbits = 16;
-    const int precision = 1 << nbits;
-    const float precision_1 = 1 / static_cast<float>(precision);
-    const int64_t precision2 = 1ULL << (2*nbits);
-    const float precision_2 = 1 / static_cast<float>(precision2);
-
-    const float ratioW = I.getWidth() / static_cast<float>(Ires.getWidth());
-    const float ratioH = I.getHeight() / static_cast<float>(Ires.getHeight());
-    const float half = 0.5f;
-
-    const int64_t ratioW_i64 = static_cast<int64_t>(ratioW * precision);
-    const int64_t ratioH_i64 = static_cast<int64_t>(ratioH * precision);
-    const int64_t half_i64 = static_cast<int64_t>(half * precision);
-    const int64_t offsetW = static_cast<int64_t>(half * ratioW_i64) - half_i64;
-    const int64_t offsetH = static_cast<int64_t>(half * ratioH_i64) - half_i64;
-    const int64_t width_1_i64 = static_cast<int64_t>(I.getWidth()-1 * precision);
-    const int64_t height_1_i64 = static_cast<int64_t>(I.getHeight()-1 * precision);
-
-#if defined _OPENMP
-  if (nThreads > 0) {
-    omp_set_num_threads(static_cast<int>(nThreads));
-  }
-  #pragma omp parallel for schedule(dynamic)
-#endif
-    for (int i = 0; i < static_cast<int>(Ires.getHeight()); i++) {
-      int64_t y = i*ratioH_i64 + offsetH;
-      int64_t y_lower = y & (~0xFFFF);
-      if (y < 0) {
-        y = 0;
-        y_lower = 0;
-      } else if (y > height_1_i64) {
-        y = height_1_i64;
-        y_lower = 0;
-      }
-      const int64_t t = y - y_lower;
-      const int64_t t_1 = precision - t;
-      const int y_ = static_cast<int>(y_lower >> nbits);
-
-      for (unsigned int j = 0; j < Ires.getWidth(); j++) {
-        int64_t x = j*ratioW_i64 + offsetW;
-        int64_t x_lower = x & (~0xFFFF);
-        if (x < 0) {
-          x = 0;
-          x_lower = 0;
-        } else if (x > width_1_i64) {
-          x = width_1_i64;
-          x_lower = 0;
-        }
-        const int64_t s = x - x_lower;
-        const int64_t s_1 = precision - s;
-        const int x_ = static_cast<int>(x_lower >> nbits);
-
-        if (y_ < static_cast<int>(I.getHeight())-1 && x_ < static_cast<int>(I.getWidth())-1) {
-          const unsigned char val00 = I[y_][x_];
-          const unsigned char val01 = I[y_][x_+1];
-          const unsigned char val10 = I[y_+1][x_];
-          const unsigned char val11 = I[y_+1][x_+1];
-          const int64_t interp_i64 = s_1*t_1*val00 + s*t_1*val01 + s_1*t*val10 + s*t*val11;
-          const float interp = (interp_i64 >> (nbits*2)) + (interp_i64 & 0xFFFFFFFF) * precision_2;
-          Ires[i][j] = vpMath::saturate<unsigned char>(interp);
-        } else if (y_ < static_cast<int>(I.getHeight())-1) {
-          const unsigned char val00 = I[y_][x_];
-          const unsigned char val10 = I[y_+1][x_];
-          const int64_t interp_i64 = t_1*val00 + t*val10;
-          const float interp = (interp_i64 >> nbits) + (interp_i64 & 0xFFFF) * precision_1;
-          Ires[i][j] = vpMath::saturate<unsigned char>(interp);
-        } else if (x_ < static_cast<int>(I.getWidth())-1) {
-          const unsigned char val00 = I[y_][x_];
-          const unsigned char val01 = I[y_][x_+1];
-          const int64_t interp_i64 = s_1*val00 + s*val01;
-          const float interp = (interp_i64 >> nbits) + (interp_i64 & 0xFFFF) * precision_1;
-          Ires[i][j] = vpMath::saturate<unsigned char>(interp);
-        } else {
-          Ires[i][j] = I[y_][x_];
-        }
-      }
-    }
-#endif
-  } else if (method == INTERPOLATION_AREA) {
-#if 1
+  if (method == INTERPOLATION_AREA) {
     resizeSimdlib(I, Ires.getWidth(), Ires.getHeight(), Ires, INTERPOLATION_AREA);
-#endif
+  } else if (method == INTERPOLATION_LINEAR) {
+    resizeSimdlib(I, Ires.getWidth(), Ires.getHeight(), Ires, INTERPOLATION_LINEAR);
   } else {
     const float scaleY = I.getHeight() / static_cast<float>(Ires.getHeight());
     const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());
@@ -1241,114 +1201,10 @@ void vpImageTools::resize(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires,
     return;
   }
 
-  if (method == INTERPOLATION_LINEAR) {
-#if 1
-    resizeSimdlib(I, Ires.getWidth(), Ires.getHeight(), Ires, INTERPOLATION_LINEAR);
-#else
-    const int nbits = 16;
-    const int precision = 1 << nbits;
-    const float precision_1 = 1 / static_cast<float>(precision);
-    const int64_t precision2 = 1ULL << (2 * nbits);
-    const float precision_2 = 1 / static_cast<float>(precision2);
-
-    const float ratioW = I.getWidth() / static_cast<float>(Ires.getWidth());
-    const float ratioH = I.getHeight() / static_cast<float>(Ires.getHeight());
-    const float half = 0.5f;
-
-    const int64_t ratioW_i64 = static_cast<int64_t>(ratioW * precision);
-    const int64_t ratioH_i64 = static_cast<int64_t>(ratioH * precision);
-    const int64_t half_i64 = static_cast<int64_t>(half * precision);
-    const int64_t offsetW = static_cast<int64_t>(half * ratioW_i64) - half_i64;
-    const int64_t offsetH = static_cast<int64_t>(half * ratioH_i64) - half_i64;
-    const int64_t width_1_i64 = static_cast<int64_t>(I.getWidth() - 1 * precision);
-    const int64_t height_1_i64 = static_cast<int64_t>(I.getHeight() - 1 * precision);
-
-#if defined _OPENMP
-    if (nThreads > 0) {
-      omp_set_num_threads(static_cast<int>(nThreads));
-    }
-#pragma omp parallel for schedule(dynamic)
-#endif
-    for (int i = 0; i < static_cast<int>(Ires.getHeight()); i++) {
-      int64_t y = i * ratioH_i64 + offsetH;
-      int64_t y_lower = y & (~0xFFFF);
-      if (y < 0) {
-        y = 0;
-        y_lower = 0;
-      } else if (y > height_1_i64) {
-        y = height_1_i64;
-        y_lower = 0;
-      }
-      const int64_t t = y - y_lower;
-      const int64_t t_1 = precision - t;
-      const int y_ = static_cast<int>(y_lower >> nbits);
-
-      for (unsigned int j = 0; j < Ires.getWidth(); j++) {
-        int64_t x = j * ratioW_i64 + offsetW;
-        int64_t x_lower = x & (~0xFFFF);
-        if (x < 0) {
-          x = 0;
-          x_lower = 0;
-        } else if (x > width_1_i64) {
-          x = width_1_i64;
-          x_lower = 0;
-        }
-        const int64_t s = x - x_lower;
-        const int64_t s_1 = precision - s;
-        const int x_ = static_cast<int>(x_lower >> nbits);
-
-        if (y_ < static_cast<int>(I.getHeight()) - 1 && x_ < static_cast<int>(I.getWidth()) - 1) {
-          int64_t col0 = lerp2((I.bitmap + y_ * I.getWidth() + x_)->R, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->R, t, t_1);
-          int64_t col1 = lerp2((I.bitmap + y_ * I.getWidth() + x_ + 1)->R, (I.bitmap + (y_ + 1) * I.getWidth() + x_ + 1)->R, t, t_1);
-          const int64_t valueR = lerp2(col0, col1, s, s_1);
-
-          col0 = lerp2((I.bitmap + y_ * I.getWidth() + x_)->G, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->G, t, t_1);
-          col1 = lerp2((I.bitmap + y_ * I.getWidth() + x_ + 1)->G, (I.bitmap + (y_ + 1) * I.getWidth() + x_ + 1)->G, t, t_1);
-          const int64_t valueG = lerp2(col0, col1, s, s_1);
-
-          col0 = lerp2((I.bitmap + y_ * I.getWidth() + x_)->B, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->B, t, t_1);
-          col1 = lerp2((I.bitmap + y_ * I.getWidth() + x_ + 1)->B, (I.bitmap + (y_ + 1) * I.getWidth() + x_ + 1)->B, t, t_1);
-          const int64_t valueB = lerp2(col0, col1, s, s_1);
-
-          const float valueR_flt = (valueR >> (nbits * 2)) + (valueR & 0xFFFFFFFF) * precision_2;
-          const float valueG_flt = (valueG >> (nbits * 2)) + (valueG & 0xFFFFFFFF) * precision_2;
-          const float valueB_flt = (valueB >> (nbits * 2)) + (valueB & 0xFFFFFFFF) * precision_2;
-
-          Ires[i][j] = vpRGBa(vpMath::saturate<unsigned char>(valueR_flt),
-                              vpMath::saturate<unsigned char>(valueG_flt),
-                              vpMath::saturate<unsigned char>(valueB_flt));
-        } else if (y_ + 1 < static_cast<int64_t>(I.getHeight())) {
-          const int64_t valueR = lerp2((I.bitmap + y_ * I.getWidth() + x_)->R, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->R, t, t_1);
-          const int64_t valueG = lerp2((I.bitmap + y_ * I.getWidth() + x_)->G, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->G, t, t_1);
-          const int64_t valueB = lerp2((I.bitmap + y_ * I.getWidth() + x_)->B, (I.bitmap + (y_ + 1) * I.getWidth() + x_)->B, t, t_1);
-
-          const float valueR_flt = (valueR >> nbits) + (valueR & 0xFFFF) * precision_1;
-          const float valueG_flt = (valueG >> nbits) + (valueG & 0xFFFF) * precision_1;
-          const float valueB_flt = (valueB >> nbits) + (valueB & 0xFFFF) * precision_1;
-
-          Ires[i][j] = vpRGBa(vpMath::saturate<unsigned char>(valueR_flt),
-                              vpMath::saturate<unsigned char>(valueG_flt),
-                              vpMath::saturate<unsigned char>(valueB_flt));
-        } else if (x_ + 1 < static_cast<int64_t>(I.getWidth())) {
-          const int64_t valueR = lerp2((I.bitmap + x_)->R, (I.bitmap + x_ + 1)->R, s, s_1);
-          const int64_t valueG = lerp2((I.bitmap + x_)->G, (I.bitmap + x_ + 1)->G, s, s_1);
-          const int64_t valueB = lerp2((I.bitmap + x_)->B, (I.bitmap + x_ + 1)->B, s, s_1);
-
-          const float valueR_flt = (valueR >> nbits) + (valueR & 0xFFFF) * precision_1;
-          const float valueG_flt = (valueG >> nbits) + (valueG & 0xFFFF) * precision_1;
-          const float valueB_flt = (valueB >> nbits) + (valueB & 0xFFFF) * precision_1;
-
-          Ires[i][j] = vpRGBa(vpMath::saturate<unsigned char>(valueR_flt),
-                              vpMath::saturate<unsigned char>(valueG_flt),
-                              vpMath::saturate<unsigned char>(valueB_flt));
-        } else {
-          Ires[i][j] = *(I.bitmap + y_ * I.getWidth() + x_);
-        }
-      }
-    }
-#endif
-  } else if (method == INTERPOLATION_AREA) {
+  if (method == INTERPOLATION_AREA) {
     resizeSimdlib(I, Ires.getWidth(), Ires.getHeight(), Ires, INTERPOLATION_AREA);
+  } else if (method == INTERPOLATION_LINEAR) {
+    resizeSimdlib(I, Ires.getWidth(), Ires.getHeight(), Ires, INTERPOLATION_LINEAR);
   } else {
     const float scaleY = I.getHeight() / static_cast<float>(Ires.getHeight());
     const float scaleX = I.getWidth() / static_cast<float>(Ires.getWidth());

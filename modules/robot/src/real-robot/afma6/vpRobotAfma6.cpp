@@ -916,7 +916,7 @@ void vpRobotAfma6::get_fJe(vpMatrix &fJe)
 
   \sa getPositioningVelocity()
 */
-void vpRobotAfma6::setPositioningVelocity(const double velocity) { positioningVelocity = velocity; }
+void vpRobotAfma6::setPositioningVelocity(double velocity) { positioningVelocity = velocity; }
 
 /*!
   Get the maximal velocity percentage used for a position control.
@@ -954,7 +954,6 @@ three last parameters are the rotations expressed as a theta u vector in
   position is out of range.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpPoseVector.h>
 #include <visp3/robot/vpRobotAfma6.h>
 
@@ -1056,7 +1055,6 @@ void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, const vp
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotAfma6.h>
 #include <visp3/robot/vpRobotException.h>
 
@@ -1260,7 +1258,6 @@ void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, const vp
   position is out of range.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotAfma6.h>
 
 int main()
@@ -1291,8 +1288,8 @@ int main()
 
   \sa setPosition()
 */
-void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, const double pos1, const double pos2,
-                               const double pos3, const double pos4, const double pos5, const double pos6)
+void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2,
+                               double pos3, double pos4, double pos5, double pos6)
 {
   try {
     vpColVector position(6);
@@ -1324,7 +1321,6 @@ void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, const do
   This method has the same behavior than the sample code given below;
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotAfma6.h>
 
 int main()
@@ -2120,7 +2116,7 @@ void vpRobotAfma6::move(const std::string &filename)
   \sa readPosFile(), move(const char *)
 
 */
-void vpRobotAfma6::move(const std::string &filename, const double velocity)
+void vpRobotAfma6::move(const std::string &filename, double velocity)
 {
   vpColVector q;
 

@@ -63,20 +63,20 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpQ
 /*!
   Default constructor that initialize an homogeneous matrix as identity.
 */
-vpHomogeneousMatrix::vpHomogeneousMatrix() : vpArray2D<double>(4, 4) { eye(); }
+vpHomogeneousMatrix::vpHomogeneousMatrix() : vpArray2D<double>(4, 4), m_index(0) { eye(); }
 
 /*!
   Copy constructor that initialize an homogeneous matrix from another
   homogeneous matrix.
 */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(4, 4) { *this = M; }
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(4, 4), m_index(0) { *this = M; }
 
 /*!
   Construct an homogeneous matrix from a translation vector and \f$\theta {\bf
   u}\f$ rotation vector.
  */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpThetaUVector &tu)
-  : vpArray2D<double>(4, 4)
+  : vpArray2D<double>(4, 4), m_index(0)
 {
   buildFrom(t, tu);
   (*this)[3][3] = 1.;
@@ -87,7 +87,7 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpT
   matrix.
  */
 vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpRotationMatrix &R)
-  : vpArray2D<double>(4, 4)
+  : vpArray2D<double>(4, 4), m_index(0)
 {
   insert(R);
   insert(t);
@@ -97,7 +97,7 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpTranslationVector &t, const vpR
 /*!
   Construct an homogeneous matrix from a pose vector.
  */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p) : vpArray2D<double>(4, 4)
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p) : vpArray2D<double>(4, 4), m_index(0)
 {
   buildFrom(p[0], p[1], p[2], p[3], p[4], p[5]);
   (*this)[3][3] = 1.;
@@ -106,7 +106,7 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const vpPoseVector &p) : vpArray2D<doub
 /*!
   Construct an homogeneous matrix from a vector of float.
   \param v : Vector of 12 or 16 values corresponding to the values of the
-homogeneous matrix.
+  homogeneous matrix.
 
   The following example shows how to use this function:
   \code
@@ -142,16 +142,87 @@ M:
 0  0  0  1
   \endcode
   */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<float> &v) : vpArray2D<double>(4, 4)
+vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<float> &v) : vpArray2D<double>(4, 4), m_index(0)
 {
   buildFrom(v);
   (*this)[3][3] = 1.;
 }
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+/*!
+  Construct an homogeneous matrix from a list of 12 or 16 double values.
+  \param list : List of double.
+  The following code shows how to use this constructor to initialize an homogeneous matrix:
+  \code
+#include <visp3/core/vpHomogeneousMatrix.h>
+
+int main()
+{
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpHomogeneousMatrix M {
+    0, 0, 1, 0.1,
+    0, 1, 0, 0.2,
+    1, 0, 0, 0.3 };
+  std::cout << "M:\n" << M << std::endl;
+  vpHomogeneousMatrix N {
+    0, 0, 1, 0.1,
+    0, 1, 0, 0.2,
+    1, 0, 0, 0.3,
+    0, 0, 0, 1 };
+  std::cout << "N:\n" << N << std::endl;
+#endif
+}
+  \endcode
+  It produces the following output:
+  \code
+M:
+0  0  1  0.1
+0  1  0  0.2
+1  0  0  0.3
+0  0  0  1
+N:
+0  0  1  0.1
+0  1  0  0.2
+1  0  0  0.3
+0  0  0  1
+  \endcode
+ */
+vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(4, 4), m_index(0)
+{
+  if (list.size() == 12) {
+    std::copy(list.begin(), list.end(), data);
+    data[12] = 0.;
+    data[13] = 0.;
+    data[14] = 0.;
+    data[15] = 1.;
+  }
+  else if (list.size() == 16) {
+    std::copy(list.begin(), list.end(), data);
+    for (size_t i = 12; i < 15; i++) {
+      if (std::fabs(data[i]) > std::numeric_limits<double>::epsilon()) {
+        throw(vpException(vpException::fatalError, "Cannot initialize homogeneous matrix. "
+                          "List element %d (%f) should be 0.", i, data[i]));
+      }
+    }
+    if (std::fabs(data[15] - 1.) > std::numeric_limits<double>::epsilon()) {
+      throw(vpException(vpException::fatalError, "Cannot initialize homogeneous matrix. "
+                        "List element 15 (%f) should be 1.", data[15]));
+    }
+  }
+  else {
+    throw(vpException(vpException::fatalError, "Cannot initialize homogeneous matrix from a list (%d elements) that has not 12 or 16 elements", list.size()));
+  }
+
+  if (! isAnHomogeneousMatrix() ) {
+    throw(vpException(vpException::fatalError, "Rotation matrix initialization fails since it's elements doesn't represent a rotation matrix"));
+  }
+}
+#endif
+
 /*!
   Construct an homogeneous matrix from a vector of double.
   \param v : Vector of 12 or 16 values corresponding to the values of the
-homogeneous matrix.
+  homogeneous matrix.
 
   The following example shows how to use this function:
   \code
@@ -187,7 +258,7 @@ M:
 0  0  0  1
   \endcode
   */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<double> &v) : vpArray2D<double>(4, 4)
+vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<double> &v) : vpArray2D<double>(4, 4), m_index(0)
 {
   buildFrom(v);
   (*this)[3][3] = 1.;
@@ -198,9 +269,8 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::vector<double> &v) : vpArray
   t_y, t_z)^T\f$ and a \f$\theta {\bf u}=(\theta u_x, \theta u_y, \theta
   u_z)^T\f$ rotation vector.
  */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const double tx, const double ty, const double tz, const double tux,
-                                         const double tuy, const double tuz)
-  : vpArray2D<double>(4, 4)
+vpHomogeneousMatrix::vpHomogeneousMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz)
+  : vpArray2D<double>(4, 4), m_index(0)
 {
   buildFrom(tx, ty, tz, tux, tuy, tuz);
   (*this)[3][3] = 1.;
@@ -253,8 +323,7 @@ void vpHomogeneousMatrix::buildFrom(const vpTranslationVector &t, const vpQuater
   t_z)^T\f$ and a \f$\theta {\bf u}=(\theta u_x, \theta u_y, \theta u_z)^T\f$
   rotation vector.
  */
-void vpHomogeneousMatrix::buildFrom(const double tx, const double ty, const double tz, const double tux,
-                                    const double tuy, const double tuz)
+void vpHomogeneousMatrix::buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz)
 {
   vpRotationMatrix R(tux, tuy, tuz);
   vpTranslationVector t(tx, ty, tz);
@@ -532,6 +601,107 @@ vpTranslationVector vpHomogeneousMatrix::operator*(const vpTranslationVector &t)
   return t_out;
 }
 
+/*!
+  Set homogeneous matrix first element.
+
+  \param val : Value of the matrix first element.
+  \return An updated matrix.
+
+  The following example shows how to initialize a rotation matrix using this operator.
+  \code
+#include <visp3/core/vpHomogeneousMatrix.h>
+
+int main()
+{
+  vpHomogeneousMatrix M;
+  M << 0, 0, 1, 0.1,
+       0, 1, 0, 0.2,
+       1, 0, 0, 0.3;
+  std::cout << "M:\n" << M << std::endl;
+
+  vpHomogeneousMatrix N;
+  N << 0, 0, 1, 0.1,
+       0, 1, 0, 0.2,
+       1, 0, 0, 0.3,
+       0, 0, 0, 1;
+  std::cout << "N:\n" << N << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+M:
+0  0  1  0.1
+0  1  0  0.2
+1  0  0  0.3
+0  0  0  1
+N:
+0  0  1  0.1
+0  1  0  0.2
+1  0  0  0.3
+0  0  0  1
+  \endcode
+
+  \sa operator,()
+ */
+vpHomogeneousMatrix& vpHomogeneousMatrix::operator<<(double val)
+{
+  m_index = 0;
+  data[m_index] = val;
+  return *this;
+}
+
+/*!
+  Set the second and next element of the homogenous matrix.
+
+  \param val : Value of the matrix second or next element.
+  \return An updated matrix.
+
+  The following example shows how to initialize an homogeneous matrix using this operator.
+  \code
+#include <visp3/core/vpHomogeneousMatrix.h>
+
+int main()
+{
+  vpHomogeneousMatrix M;
+  M << 0, 0, 1, 0.1,
+       0, 1, 0, 0.2,
+       1, 0, 0, 0.3;
+  std::cout << "M:\n" << M << std::endl;
+
+  vpHomogeneousMatrix N;
+  N << 0, 0, 1, 0.1,
+       0, 1, 0, 0.2,
+       1, 0, 0, 0.3,
+       0, 0, 0, 1;
+  std::cout << "N:\n" << N << std::endl;
+}
+  \endcode
+  It produces the following printings:
+  \code
+M:
+0  0  1  0.1
+0  1  0  0.2
+1  0  0  0.3
+0  0  0  1
+N:
+0  0  1  0.1
+0  1  0  0.2
+1  0  0  0.3
+0  0  0  1
+  \endcode
+
+  \sa operator<<()
+ */
+vpHomogeneousMatrix& vpHomogeneousMatrix::operator,(double val)
+{
+  m_index ++;;
+  if (m_index >= size()) {
+    throw(vpException(vpException::dimensionError, "Cannot set homogenous matrix out of bounds. It has only %d elements while you try to initialize with %d elements", size(), m_index+1));
+  }
+  data[m_index] = val;
+  return *this;
+}
+
 /*********************************************************************/
 
 /*!
@@ -748,7 +918,7 @@ void vpHomogeneousMatrix::load(std::ifstream &f)
       }
     }
   } else {
-    throw(vpException(vpException::ioError, "Cannot laad homogeneous matrix: ifstream not open"));
+    throw(vpException(vpException::ioError, "Cannot load homogeneous matrix: ifstream not open"));
   }
 }
 
@@ -840,7 +1010,7 @@ Last column:
 0
   \endcode
  */
-vpColVector vpHomogeneousMatrix::getCol(const unsigned int j) const
+vpColVector vpHomogeneousMatrix::getCol(unsigned int j) const
 {
   if (j >= getCols())
     throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the homogeneous matrix"));

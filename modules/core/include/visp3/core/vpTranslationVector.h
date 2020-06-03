@@ -124,13 +124,13 @@ public:
       The translation vector is initialized to zero.
     */
   vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0) {};
-  vpTranslationVector(const double tx, const double ty, const double tz);
+  vpTranslationVector(double tx, double ty, double tz);
   vpTranslationVector(const vpTranslationVector &tv);
   explicit vpTranslationVector(const vpHomogeneousMatrix &M);
   explicit vpTranslationVector(const vpPoseVector &p);
   explicit vpTranslationVector(const vpColVector &v);
 
-  vpTranslationVector buildFrom(const double tx, const double ty, const double tz);
+  vpTranslationVector buildFrom(double tx, double ty, double tz);
   vpTranslationVector buildFrom(const vpHomogeneousMatrix &M);
   vpTranslationVector buildFrom(const vpPoseVector &p);
   vpTranslationVector buildFrom(const vpColVector &v);
@@ -149,9 +149,9 @@ public:
   vpTranslationVector operator-() const;
   vpMatrix operator*(const vpRowVector &v) const;
   // b = x * a (x=scalar)
-  vpTranslationVector operator*(const double x) const;
+  vpTranslationVector operator*(double x) const;
   vpTranslationVector &operator*=(double x);
-  vpTranslationVector operator/(const double x) const;
+  vpTranslationVector operator/(double x) const;
   vpTranslationVector &operator/=(double x);
   // Copy operator.   Allow operation such as A = v
   vpTranslationVector &operator=(const vpColVector &tv);
@@ -175,7 +175,7 @@ public:
     3-by-1 column vector.
     \exception vpException::fatalError When this function is called.
     */
-  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true)
+  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
@@ -183,7 +183,7 @@ public:
     throw(vpException(vpException::fatalError, "Cannot resize a translation vector"));
   };
 
-  void set(const double tx, const double ty, const double tz);
+  void set(double tx, double ty, double tz);
 
   // Skew Symmetric matrix
   vpMatrix skew() const;

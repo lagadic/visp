@@ -116,7 +116,7 @@ vpPoint &vpPolygon3D::getPoint(const unsigned int _index)
 
   \param nb : The number of corners.
 */
-void vpPolygon3D::setNbPoint(const unsigned int nb)
+void vpPolygon3D::setNbPoint(unsigned int nb)
 {
   nbpt = nb;
   if (p != NULL)
@@ -130,7 +130,7 @@ void vpPolygon3D::setNbPoint(const unsigned int nb)
   \param n : The index of the corner.
   \param P : The point to add.
 */
-void vpPolygon3D::addPoint(const unsigned int n, const vpPoint &P)
+void vpPolygon3D::addPoint(unsigned int n, const vpPoint &P)
 {
   // if( p!NULL && n < nbpt )
   p[n] = P;

@@ -425,7 +425,9 @@ int vpCalibration::computeCalibration(vpCalibrationMethodType method, vpHomogene
     this->cMo_dist = cMo_est;
 
     if (cam_est.get_px() < 0 || cam_est.get_py() < 0 || cam_est.get_u0() < 0 || cam_est.get_v0() < 0) {
-      std::cout << "Unable to calibrate the camera. Estimated parameters are negative." << std::endl;
+      if (verbose) {
+        std::cout << "Unable to calibrate the camera. Estimated parameters are negative." << std::endl;
+      }
       return EXIT_FAILURE;
     }
 
@@ -526,7 +528,9 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method, std::
     }
 
     if (cam_est.get_px() < 0 || cam_est.get_py() < 0 || cam_est.get_u0() < 0 || cam_est.get_v0() < 0) {
-      std::cout << "Unable to calibrate the camera. Estimated parameters are negative." << std::endl;
+      if (verbose) {
+        std::cout << "Unable to calibrate the camera. Estimated parameters are negative." << std::endl;
+      }
       return EXIT_FAILURE;
     }
 

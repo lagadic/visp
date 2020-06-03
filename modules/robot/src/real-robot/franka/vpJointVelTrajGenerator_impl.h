@@ -87,7 +87,7 @@ public:
              const std::array<double, 7> &q_max,
              const std::array<double, 7> &dq_max,
              const std::array<double, 7> &ddq_max,
-             const double delta_t);
+             double delta_t);
 
   std::array<double, 7> limitRate(const std::array<double, 7>& max_derivatives,
                                   const std::array<double, 7>& desired_values,

@@ -211,6 +211,7 @@ int test_pose(bool use_robust)
 
 int main()
 {
+#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     if (test_pose(false))
       return -1;
@@ -223,4 +224,8 @@ int main()
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
     return -1;
   }
+#else
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

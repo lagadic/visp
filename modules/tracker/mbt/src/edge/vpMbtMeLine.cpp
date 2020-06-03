@@ -94,7 +94,7 @@ vpMbtMeLine::~vpMbtMeLine() { list.clear(); }
 */
 void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                                double rho_, double theta_,
-                               const bool doNoTrack)
+                               bool doNoTrack)
 {
   vpCDEBUG(1) << " begin vpMeLine::initTracking()" << std::endl;
 
@@ -136,7 +136,7 @@ void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoi
   \param I : Image in which the line appears.
   \param doNoTrack : If true, ME are not tracked.
 */
-void vpMbtMeLine::sample(const vpImage<unsigned char> &I, const bool doNoTrack)
+void vpMbtMeLine::sample(const vpImage<unsigned char> &I, bool doNoTrack)
 {
   int rows = (int)I.getHeight();
   int cols = (int)I.getWidth();
@@ -350,8 +350,8 @@ void vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
 void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad,
                                          unsigned int &_nbFeatures,
                                          const vpMatrix &SobelX, const vpMatrix &SobelY,
-                                         const bool display, const unsigned int length,
-                                         const unsigned int thickness)
+                                         bool display, unsigned int length,
+                                         unsigned int thickness)
 {
   _sumErrorRad = 0;
   _nbFeatures = 0;

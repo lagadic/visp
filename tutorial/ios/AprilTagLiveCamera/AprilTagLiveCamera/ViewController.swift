@@ -18,10 +18,11 @@ class ViewController: UIViewController, VideoCaptureDelegate {
     }
     
     // pass image to detector.
+    //! [imageDidCapture]
     func imageDidCapture(_ uiImage: UIImage, with px: Float, and py: Float) {
         self.imageView.image = self.visp.detectAprilTag(uiImage, px:px, py:py)
     }
-    
+    //! [imageDidCapture]
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)

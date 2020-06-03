@@ -77,7 +77,7 @@ vpUDPClient::vpUDPClient()
   \param hostname : Server hostname or IP address.
   \param port : Server port number.
 */
-vpUDPClient::vpUDPClient(const std::string &hostname, const int port)
+vpUDPClient::vpUDPClient(const std::string &hostname, int port)
   : m_is_init(false), m_serverAddress(), m_serverLength(0), m_socketFileDescriptor()
 #if defined(_WIN32)
     , m_wsa()
@@ -113,7 +113,7 @@ void vpUDPClient::close()
   \param hostname : Server hostname or IP address.
   \param port : Server port number.
 */
-void vpUDPClient::init(const std::string &hostname, const int port)
+void vpUDPClient::init(const std::string &hostname, int port)
 {
   // Close connexion if already initialized
   close();
@@ -190,7 +190,7 @@ void vpUDPClient::init(const std::string &hostname, const int port)
   int val = *reinterpret_cast<const int *>(msg.c_str());
   \endcode
 */
-int vpUDPClient::receive(std::string &msg, const int timeoutMs)
+int vpUDPClient::receive(std::string &msg, int timeoutMs)
 {
   if (!m_is_init) {
     throw(vpException(vpException::notInitialized, "UDP client is not initialized"));
@@ -236,7 +236,7 @@ int vpUDPClient::receive(std::string &msg, const int timeoutMs)
   \return The message length / size of the byte array sent received, or -1 if
   there is an error, or 0 if there is a timeout.
 */
-int vpUDPClient::receive(void *msg, size_t len, const int timeoutMs)
+int vpUDPClient::receive(void *msg, size_t len, int timeoutMs)
 {
   if (!m_is_init) {
     throw(vpException(vpException::notInitialized, "UDP client is not initialized"));

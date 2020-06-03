@@ -83,7 +83,7 @@ stability of the result.
   \f]
 
   with
-  \f[  ^a{\bf H}_b = ^a{\bf R}_b + \frac{^a{\bf t}_b}{^bd}
+  \f[  ^a{\bf H}_b = ^a{\bf R}_b - \frac{^a{\bf t}_b}{^bd}
   { ^b{\bf n}^T}
   \f]
 
@@ -257,7 +257,7 @@ public:
     3-by-3 matrix.
     \exception vpException::fatalError When this function is called.
     */
-  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true)
+  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
@@ -294,7 +294,7 @@ public:
   static void computeDisplacement(const vpHomography &aHb, vpRotationMatrix &aRb, vpTranslationVector &atb,
                                   vpColVector &n);
 
-  static void computeDisplacement(const vpHomography &H, const double x, const double y,
+  static void computeDisplacement(const vpHomography &H, double x, double y,
                                   std::list<vpRotationMatrix> &vR, std::list<vpTranslationVector> &vT,
                                   std::list<vpColVector> &vN);
   static double computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpPlane &oN,

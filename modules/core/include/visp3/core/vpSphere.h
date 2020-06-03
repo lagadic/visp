@@ -53,23 +53,46 @@
 /*!
   \class vpSphere
   \ingroup group_core_geometry
-  \brief Class that defines what is a sphere.
+  \brief Class that defines a 3D sphere in the object frame and allows forward projection of a 3D sphere in the
+  camera frame and in the 2D image plane by perspective projection.
+  All the parameters must be set in meter.
 
-  Forward projection of a sphere.
+  A sphere has the followings parameters:
+  - **in the object frame**: the 3D coordinates oX, oY, oZ of the center and radius R. These
+  parameters registered in vpForwardProjection::oP internal 4-dim vector are set using the constructors vpSphere(double oX, double oY, double oZ, double R),
+  vpSphere(const vpColVector &oP) or the fonctions setWorldCoordinates(double oX, double oY, double oZ, double R)
+  and setWorldCoordinates(const vpColVector &oP).
+  To get theses parameters use get_oP().
+
+  - **in the camera frame**: the coordinates cX, cY, cZ of the center and radius R. These
+  parameters registered in vpTracker::cP internal 4-dim vector are computed using
+  changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const or changeFrame(const vpHomogeneousMatrix &cMo).
+  These parameters could be retrieved using getX(), getY(), getZ() and getR().
+  To get theses parameters use get_cP().
+
+  - **in the image plane**: the center (x, y) and the second order moments mu20, mu11, mu02 of the ellipse corresponding
+  to the perspective projection of the sphere. These parameters are registered in vpTracker::p internal 5-dim vector and computed using projection() and
+  projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using get_x(), get_y(), get_mu20(),
+  get_mu11() and get_mu02(). They correspond to 2D normalized sphere parameters with values expressed in meters.
+  To get theses parameters use get_p().
 */
 class VISP_EXPORT vpSphere : public vpForwardProjection
 {
 public:
-  void init();
   vpSphere();
+  explicit vpSphere(const vpColVector &oP);
+  vpSphere(double oX, double oY, double oZ, double R);
   virtual ~vpSphere();
 
-public:
-  explicit vpSphere(const vpColVector &oP);
-  vpSphere(const double X0, const double Y0, const double Z0, const double R);
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const;
+  void changeFrame(const vpHomogeneousMatrix &cMo);
 
-  void setWorldCoordinates(const vpColVector &oP);
-  void setWorldCoordinates(const double X0, const double Y0, const double Z0, const double R);
+  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
+               unsigned int thickness = 1);
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green, unsigned int thickness = 1);
+
+  vpSphere *duplicate() const;
 
   double get_x() const { return p[0]; }
   double get_y() const { return p[1]; }
@@ -80,20 +103,16 @@ public:
   double getX() const { return cP[0]; }
   double getY() const { return cP[1]; }
   double getZ() const { return cP[2]; }
-
   double getR() const { return cP[3]; }
 
   void projection();
-  void projection(const vpColVector &cP, vpColVector &p);
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP);
-  void changeFrame(const vpHomogeneousMatrix &cMo);
+  void projection(const vpColVector &cP, vpColVector &p) const;
 
-  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               const unsigned int thickness = 1);
-  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
+  void setWorldCoordinates(const vpColVector &oP);
+  void setWorldCoordinates(double oX, double oY, double oZ, double R);
 
-  vpSphere *duplicate() const;
+protected:
+  void init();
 };
 
 #endif

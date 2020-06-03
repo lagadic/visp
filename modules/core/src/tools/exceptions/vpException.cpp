@@ -61,7 +61,7 @@ vpException::vpException(int id, const char *format, ...) : code(id), message()
   va_end(args);
 }
 
-vpException::vpException(const int id, const char *format, va_list args) : code(id), message()
+vpException::vpException(int id, const char *format, va_list args) : code(id), message()
 {
   setMessage(format, args);
 }

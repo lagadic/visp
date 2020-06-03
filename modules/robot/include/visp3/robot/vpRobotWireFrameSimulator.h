@@ -349,7 +349,7 @@ public:
     }
   }
   /*! Set the parameter which enable or disable the singularity mangement */
-  void setSingularityManagement(const bool sm) { singularityManagement = sm; }
+  void setSingularityManagement(bool sm) { singularityManagement = sm; }
 
   /*!
     Activates extra printings when the robot reaches joint limits...

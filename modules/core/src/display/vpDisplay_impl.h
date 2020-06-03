@@ -358,11 +358,19 @@ void vp_display_display_point(const vpImage<Type> &I, int i, int j, const vpColo
 
 template <class Type>
 void vp_display_display_polygon(const vpImage<Type> &I, const std::vector<vpImagePoint> &vip, const vpColor &color,
-                                unsigned int thickness)
+                                unsigned int thickness, bool closed=true)
 {
   if (I.display != NULL) {
-    for (unsigned int i = 0; i < vip.size(); i++)
-      (I.display)->displayLine(vip[i], vip[(i + 1) % vip.size()], color, thickness);
+    if (closed) {
+      for (unsigned int i = 0; i < vip.size(); i++) {
+        (I.display)->displayLine(vip[i], vip[(i + 1) % vip.size()], color, thickness);
+      }
+    }
+    else {
+      for (unsigned int i = 1; i < vip.size(); i++) {
+        (I.display)->displayLine(vip[i-1], vip[i], color, thickness);
+      }
+    }
   }
 }
 

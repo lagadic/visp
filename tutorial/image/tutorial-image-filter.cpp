@@ -22,7 +22,7 @@ void display(vpImage<unsigned char> &I, const std::string &title)
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d(I);
 #elif defined(VISP_HAVE_D3D9)
-  vpDisplayD3d d(I);
+  vpDisplayD3D d(I);
 #else
   std::cout << "No image viewer is available..." << std::endl;
 #endif

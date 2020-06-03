@@ -120,11 +120,15 @@ public:
     notImplementedError,
     /** Position is out of range.
      */
-    positionOutOfRangeError
+    positionOutOfRangeError,
+    /*!
+      Signal exception returned after SIGINT (CTRL-C), SIGBUS, SIGSEGV, SIGSEGV (CTRL-\), SIGQUIT.
+    */
+    signalException
   };
 
 public:
-  vpRobotException(const int id, const char *format, ...)
+  vpRobotException(int id, const char *format, ...)
   {
     this->code = id;
     va_list args;
@@ -132,8 +136,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpRobotException(const int id, const std::string &msg) : vpException(id, msg) {}
-  explicit vpRobotException(const int id) : vpException(id) {}
+  vpRobotException(int id, const std::string &msg) : vpException(id, msg) {}
+  explicit vpRobotException(int id) : vpException(id) {}
 };
 
 #endif

@@ -1,21 +1,46 @@
 language: cpp
 
-os:
-  - linux
-  - osx
-
-# Set Xcode version to 10.1 (default is 9.4)
-osx_image: xcode10.1
-
 env:
   - VISP_INPUT_IMAGE_PATH=${TRAVIS_BUILD_DIR}
-  
-compiler:
-  - gcc
-  - clang
 
-sudo: required
-dist: trusty
+jobs:
+  include:
+    - os: linux
+      dist: xenial
+      arch: amd64
+      compiler: gcc
+    - os: linux
+      dist: bionic
+      arch: amd64
+      compiler: gcc
+    - os: linux
+      dist: bionic
+      arch: amd64
+      compiler: clang
+    - os: linux
+      dist: bionic
+      arch: arm64
+      compiler: gcc
+    - os: linux
+      dist: bionic
+      arch: ppc64le
+      compiler: gcc
+    - os: linux
+      dist: bionic
+      arch: s390x
+      compiler: gcc
+    - os: osx
+      # Set Xcode version to 10.1 (default is 9.4) / macOS 10.13
+      osx_image: xcode10.1
+      compiler: clang
+    - os: osx
+      # Set Xcode version to 11.3 / macOS 10.14
+      osx_image: xcode11.3
+      compiler: gcc
+    - os: osx
+      # Set Xcode version to 11.3 / macOS 10.14
+      osx_image: xcode11.3
+      compiler: clang
 
 before_install:
   - git clone --depth 1 https://github.com/lagadic/ViSP-images ${TRAVIS_BUILD_DIR}/ViSP-images
@@ -39,6 +64,7 @@ before_install:
   #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install gcc || brew link --overwrite gcc; fi"
   #- "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew upgrade; fi"
   # end work around
+
   # Work around for issue:
   # dyld: Library not loaded: /usr/local/opt/glog/lib/libglog.0.3.5.dylib
   # Referenced from: /usr/local/opt/opencv/lib/libopencv_sfm.3.4.dylib
@@ -46,41 +72,58 @@ before_install:
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install glog; fi"
   # end work around
 
+  # Work around for issue:
+  #==> Pouring python-3.7.6_1.high_sierra.bottle.tar.gz
+  # Error: The `brew link` step did not complete successfully
+  # The formula built, but is not symlinked into /usr/local
+  # Could not symlink Frameworks/Python.framework/Headers
+  # Target /usr/local/Frameworks/Python.framework/Headers
+  # is a symlink belonging to python@2. You can unlink it:
+  #   brew unlink python@2
+  # To force the link and overwrite all conflicting files:
+  #   brew link --overwrite python
+  - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew unlink python@2; fi"
+  # end work around
+
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install opencv; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install tesseract; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then export OpenCV_DIR=/usr/local/opt/opencv; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install libxml2 libdc1394 gsl; fi"
   - "if [ $TRAVIS_OS_NAME = 'osx' ]; then brew install ant; fi"
-  
+
   # Get libs for Linux
   - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get update -qq; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq cmake libopencv-dev libx11-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq liblapack-dev libgsl0-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libdc1394-22-dev libv4l-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libcoin80-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libxml2-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libjpeg-dev libpng12-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libswscale-dev libavutil-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libavformat-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libavcodec-dev libbz2-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libogre-1.9-dev libois-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq libzbar-dev libdmtx-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq ant; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ]; then sudo apt-get install -qq liblapack-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq cmake libopenblas-dev libgsl0-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq cmake libopencv-dev libx11-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libdc1394-22-dev libv4l-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libcoin80-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libjpeg-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ] && [ $TRAVIS_DIST = 'xenial' ]; then sudo apt-get install -qq libpng12-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ] && [ $TRAVIS_DIST = 'bionic' ]; then sudo apt-get install -qq libpng-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libbz2-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libogre-1.9-dev libois-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libzbar-dev libdmtx-dev; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq ant; fi"
+
+  # Workaround for linux + bionic + clang config where during test libomp.so is not found:
+  # error while loading shared libraries: libomp.so: cannot open shared object file: No such file or directory
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_COMPILER = 'clang' ]; then export LD_LIBRARY_PATH=/usr/local/clang-7.0.0/lib:$LD_LIBRARY_PATH; fi"
 
 before_script:
   - mkdir build
   - cd build
   - cmake ..
-  # Show 3rd parties that are detected
+    # Show 3rd parties that are detected
   - cat ViSP-third-party.txt
 
-script: 
+script:
   - make
   - ctest --output-on-failure
 
 notifications:
   email:
-    - Fabien.Spindler@inria.fr
-  on_success: change
-  on_failure: always
-   
+    recipients:
+      - Fabien.Spindler@inria.fr
+    on_success: change
+    on_failure: always

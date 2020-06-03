@@ -43,7 +43,7 @@
 /*
   Compute the distance d = |Pw1-Pw2|
 */
-inline double distance(const vpImagePoint &iP1, const double w1, const vpImagePoint &iP2, const double w2)
+inline double distance(const vpImagePoint &iP1, double w1, const vpImagePoint &iP2, double w2)
 {
   double distancei = iP1.get_i() - iP2.get_i();
   double distancej = iP1.get_j() - iP2.get_j();

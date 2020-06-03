@@ -86,7 +86,6 @@
   The following example shows how to use the class.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpPlanarObjectDetector.h>
@@ -189,8 +188,8 @@ public:
 
   // matching
   bool matchPoint(const vpImage<unsigned char> &I);
-  bool matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                  const unsigned int width);
+  bool matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                  unsigned int width);
   bool matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
   // database management
   void recordDetector(const std::string &objectName, const std::string &dataFile);
@@ -271,7 +270,7 @@ public:
 
 protected:
   virtual void init();
-  void computeRoi(vpImagePoint *ip, const unsigned int nbpt);
+  void computeRoi(vpImagePoint *ip, unsigned int nbpt);
   void initialiseRefCorners(const cv::Rect &_modelROI);
 };
 

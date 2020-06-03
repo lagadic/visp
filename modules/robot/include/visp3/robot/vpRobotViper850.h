@@ -66,7 +66,7 @@ extern "C" {
 #include <visp3/sensor/vpForceTorqueAtiSensor.h>
 #endif
 
-/*!
+/* !
   \class vpRobotViper850
 
   \ingroup group_robot_real_arm
@@ -115,20 +115,19 @@ extern "C" {
   - \f$ {\cal F}_c \f$: the camera or tool frame, with \f$^f{\bf M}_c = ^f{\bf
     M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
     a calibration stage. We can also consider a custom tool
-vpViper850::TOOL_CUSTOM and set this during robot initialisation or using
-set_eMc().
+    vpViper850::TOOL_CUSTOM and set this during robot initialisation or using
+    set_eMc().
 
   - \f$ {\cal F}_s \f$: the force/torque sensor frame, with \f$d7=0.0666\f$.
 
   This class allows to control the Viper650 arm robot in position
   and velocity:
   - in the joint space (vpRobot::ARTICULAR_FRAME),
-  - in the fixed reference frame \f$ {\cal F}_f \f$
-(vpRobot::REFERENCE_FRAME),
+  - in the fixed reference frame \f$ {\cal F}_f \f$ (vpRobot::REFERENCE_FRAME),
   - in the camera or tool frame \f$ {\cal F}_c \f$ (vpRobot::CAMERA_FRAME),
   - or in a mixed frame (vpRobot::MIXT_FRAME) where translations are expressed
-  in the reference frame \f$ {\cal F}_f \f$ and rotations in the camera or
-tool frame \f$ {\cal F}_c \f$ .
+    in the reference frame \f$ {\cal F}_f \f$ and rotations in the camera or
+    tool frame \f$ {\cal F}_c \f$ .
 
   End-effector frame (vpRobot::END_EFFECTOR_FRAME) is not implemented.
 
@@ -146,7 +145,6 @@ tool frame \f$ {\cal F}_c \f$ .
   class by calling the default constructor:
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper850.h>
 
 int main()
@@ -164,7 +162,6 @@ int main()
   distortion you need to initialize the robot with:
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/robot/vpRobotViper850.h>
 
 int main()
@@ -184,7 +181,6 @@ int main()
 
   \code
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper850.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -214,7 +210,6 @@ int main()
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpRobotViper850.h>
 
@@ -248,7 +243,6 @@ int main()
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpRobotViper850.h>
 
@@ -280,7 +274,6 @@ int main()
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpRobotViper850.h>
 
@@ -315,12 +308,15 @@ int main()
   \endcode
 
   It is also possible to specify the position of a custom tool cartesian
-frame. To this end this frame is to specify with respect of the end effector
-frame in \f$^e {\bf M}_c\f$ transformation. This could be done by initializing
-the robot thanks to init(vpViper850::vpToolType, const vpHomogeneousMatrix &)
-or init(vpViper850::vpToolType, const std::string &) or using set_eMc(). The
-following example illustrates this usecase: \code #include
-<visp3/core/vpHomogeneousMatrix.h> #include <visp3/robot/vpRobotViper850.h>
+  frame. To this end this frame is to specify with respect of the end effector
+  frame in \f$^e {\bf M}_c\f$ transformation. This could be done by initializing
+  the robot thanks to init(vpViper850::vpToolType, const vpHomogeneousMatrix &)
+  or init(vpViper850::vpToolType, const std::string &) or using set_eMc(). The
+  following example illustrates this usecase:
+
+  \code
+#include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/robot/vpRobotViper850.h>
 
 int main()
 {
@@ -468,10 +464,10 @@ public: /* Methode publiques */
 
   // Position control
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
-  void setPosition(const vpRobot::vpControlFrameType frame, const double pos1, const double pos2, const double pos3,
-                   const double pos4, const double pos5, const double pos6);
+  void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3,
+                   double pos4, double pos5, double pos6);
   void setPosition(const std::string &filename);
-  void setPositioningVelocity(const double velocity);
+  void setPositioningVelocity(double velocity);
 
   // State
   vpRobot::vpRobotStateType setRobotState(vpRobot::vpRobotStateType newState);

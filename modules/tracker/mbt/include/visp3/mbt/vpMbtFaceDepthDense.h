@@ -89,8 +89,8 @@ public:
 
 #ifdef VISP_HAVE_PCL
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
-                              const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud, const unsigned int stepX,
-                              const unsigned int stepY
+                              const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud, unsigned int stepX,
+                              unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_DENSE
                               ,
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
@@ -98,9 +98,9 @@ public:
                               , const vpImage<bool> *mask = NULL
   );
 #endif
-  bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, const unsigned int width, const unsigned int height,
-                              const std::vector<vpColVector> &point_cloud, const unsigned int stepX,
-                              const unsigned int stepY
+  bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
+                              const std::vector<vpColVector> &point_cloud, unsigned int stepX,
+                              unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_DENSE
                               ,
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
@@ -114,19 +114,19 @@ public:
   void computeVisibilityDisplay();
 
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+               const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+               const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
 
   void displayFeature(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                      const double scale = 0.05, const unsigned int thickness = 1);
+                      double scale = 0.05, unsigned int thickness = 1);
   void displayFeature(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                      const double scale = 0.05, const unsigned int thickness = 1);
+                      double scale = 0.05, unsigned int thickness = 1);
 
   std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                        const vpHomogeneousMatrix &cMo,
                                                        const vpCameraParameters &cam,
-                                                       const bool displayFullModel = false);
+                                                       bool displayFullModel = false);
 
   inline unsigned int getNbFeatures() const { return (unsigned int)(m_pointCloudFace.size() / 3); }
 
@@ -136,21 +136,21 @@ public:
 
   void setCameraParameters(const vpCameraParameters &camera);
 
-  void setScanLineVisibilityTest(const bool v);
+  void setScanLineVisibilityTest(bool v);
 
-  inline void setDepthDenseFilteringMaxDistance(const double maxDistance)
+  inline void setDepthDenseFilteringMaxDistance(double maxDistance)
   {
     m_depthDenseFilteringMaxDist = maxDistance;
   }
 
-  inline void setDepthDenseFilteringMethod(const int method) { m_depthDenseFilteringMethod = method; }
+  inline void setDepthDenseFilteringMethod(int method) { m_depthDenseFilteringMethod = method; }
 
-  inline void setDepthDenseFilteringMinDistance(const double minDistance)
+  inline void setDepthDenseFilteringMinDistance(double minDistance)
   {
     m_depthDenseFilteringMinDist = minDistance;
   }
 
-  inline void setDepthDenseFilteringOccupancyRatio(const double occupancyRatio)
+  inline void setDepthDenseFilteringOccupancyRatio(double occupancyRatio)
   {
     if (occupancyRatio < 0.0 || occupancyRatio > 1.0) {
       std::cerr << "occupancyRatio < 0.0 || occupancyRatio > 1.0" << std::endl;
@@ -159,7 +159,7 @@ public:
     }
   }
 
-  inline void setTracked(const bool tracked) { m_isTrackedDepthDenseFace = tracked; }
+  inline void setTracked(bool tracked) { m_isTrackedDepthDenseFace = tracked; }
 
 private:
   class PolygonLine
@@ -226,7 +226,7 @@ protected:
   std::vector<PolygonLine> m_polygonLines;
 
 protected:
-  void computeROI(const vpHomogeneousMatrix &cMo, const unsigned int width, const unsigned int height,
+  void computeROI(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
                   std::vector<vpImagePoint> &roiPts
 #if DEBUG_DISPLAY_DEPTH_DENSE
                   ,

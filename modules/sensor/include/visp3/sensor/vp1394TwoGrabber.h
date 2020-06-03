@@ -89,7 +89,6 @@ auto-shutter is provided in vp1394TwoGrabber() constructor:
   - If more than one camera is connected, it is also possible to select a
 specific camera by its GUID:
 \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -129,7 +128,6 @@ int main()
   - Here an example of multi camera capture.  An other example is available in
 setCamera():
 \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>

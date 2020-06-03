@@ -71,7 +71,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
 /*!
 
-Print the program options.
+  Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
@@ -133,12 +133,10 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
     case 'h':
       usage(argv[0], NULL);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -155,6 +153,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
 int main(int argc, const char **argv)
 {
+#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     bool opt_display = true;
     bool opt_click_allowed = true;
@@ -274,6 +273,12 @@ int main(int argc, const char **argv)
       std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
     }
 
+    if (opt_display && opt_click_allowed) {
+      vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::white);
+      vpDisplay::flush(I);
+      vpDisplay::getClick(I);
+    }
+
     // Display task information
     task.print();
     task.kill();
@@ -282,4 +287,10 @@ int main(int argc, const char **argv)
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
+#else
+  (void)argc;
+  (void)argv;
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

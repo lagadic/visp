@@ -75,7 +75,7 @@ vpPlane::vpPlane() : A(0), B(0), C(0), D(0) {}
   \param a, b, c, d : Parameters of the plane.
 
 */
-vpPlane::vpPlane(const double a, const double b, const double c, const double d) : A(a), B(b), C(c), D(d) {}
+vpPlane::vpPlane(double a, double b, double c, double d) : A(a), B(b), C(c), D(d) {}
 
 /*!
   Copy constructor.

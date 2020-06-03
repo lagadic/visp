@@ -538,6 +538,8 @@ int main(int argc, char* argv[])
   return EXIT_SUCCESS;
 #endif
 
+#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+
   Catch::Session session; // There must be exactly one instance
 
   // Let Catch (using Clara) parse the command line
@@ -549,6 +551,10 @@ int main(int argc, char* argv[])
   // This clamping has already been applied, so just return it here
   // You can also do any post run clean-up here
   return numFailed;
+#else
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }
 #else
 int main()

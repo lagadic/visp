@@ -193,6 +193,9 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::perspectiveProjWithDistortion:
       filename_eMc = CONST_EMC_MARLIN_F033C_WITH_DISTORTION_FILENAME;
       break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_MARLIN_F033C_CAMERA is not implemented for Kannala-Brandt projection model yet.");
+      break;
     }
     break;
   }
@@ -203,6 +206,9 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
       break;
     case vpCameraParameters::perspectiveProjWithDistortion:
       filename_eMc = CONST_EMC_PTGREY_FLEA2_WITH_DISTORTION_FILENAME;
+      break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_PTGREY_FLEA2_CAMERA is not implemented for Kannala-Brandt projection model yet.");
       break;
     }
     break;
@@ -215,6 +221,9 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
     case vpCameraParameters::perspectiveProjWithDistortion:
       filename_eMc = CONST_EMC_SCHUNK_GRIPPER_WITH_DISTORTION_FILENAME;
       break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_SCHUNK_GRIPPER_CAMERA is not implemented for Kannala-Brandt projection model yet.");
+      break;
     }
     break;
   }
@@ -225,6 +234,9 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
       break;
     case vpCameraParameters::perspectiveProjWithDistortion:
       filename_eMc = CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
+      break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_GENERIC_CAMERA is not implemented for Kannala-Brandt projection model yet.");
       break;
     }
     break;
@@ -273,6 +285,9 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
       etc[1] = -0.0005;             // ty
       etc[2] = 0.1022;              // tz
       break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_MARLIN_F033C_CAMERA is not implemented for Kannala-Brandt projection model yet.");
+      break;
     }
     break;
   }
@@ -295,6 +310,9 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
       etc[1] = -0.0012;            // ty
       etc[2] = 0.078;              // tz
       break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_PTGREY_FLEA2_CAMERA is not implemented for Kannala-Brandt projection model yet.");
+      break;
     }
     break;
   }
@@ -309,6 +327,9 @@ void vpViper650::init(vpViper650::vpToolType tool, vpCameraParameters::vpCameraP
       etc[0] = 0; // tx
       etc[1] = 0; // ty
       etc[2] = 0; // tz
+      break;
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+      throw vpException(vpException::notImplementedError, "Feature TOOL_GENERIC_CAMERA is not implemented for Kannala-Brandt projection model yet.");
       break;
     }
     break;
@@ -395,8 +416,8 @@ void vpViper650::init(vpViper650::vpToolType tool, const vpHomogeneousMatrix &eM
 */
 void vpViper650::parseConfigFile(const std::string &filename)
 {
-  vpRxyzVector erc;        // eMc rotation
-  vpTranslationVector etc; // eMc translation
+  vpRxyzVector erc_;        // eMc rotation
+  vpTranslationVector etc_; // eMc translation
 
   std::ifstream fdconfig(filename.c_str(), std::ios::in);
 
@@ -431,10 +452,10 @@ void vpViper650::parseConfigFile(const std::string &filename)
       break; // Nothing to do: camera name
 
     case 1: {
-      ss >> erc[0] >> erc[1] >> erc[2];
+      ss >> erc_[0] >> erc_[1] >> erc_[2];
 
       // Convert rotation from degrees to radians
-      erc = erc * M_PI / 180.0;
+      erc_ = erc_ * M_PI / 180.0;
       get_erc = true;
       break;
     }
@@ -455,7 +476,7 @@ void vpViper650::parseConfigFile(const std::string &filename)
 
   // Compute the eMc matrix from the translations and rotations
   if (get_etc && get_erc) {
-    this->set_eMc(etc, erc);
+    this->set_eMc(etc_, erc_);
   } else {
     throw vpRobotException(vpRobotException::readingParametersError,
                            "Could not read translation and rotation "
@@ -492,7 +513,6 @@ file.
   attached to the robot.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper650.h>
 #include <visp3/robot/vpViper650.h>
@@ -612,6 +632,9 @@ void vpViper650::getCameraParameters(vpCameraParameters &cam, const unsigned int
       case vpCameraParameters::perspectiveProjWithDistortion:
         cam.initPersProjWithDistortion(1214.0, 1213.0, 323.1, 240.0, -0.1824, 0.1881);
         break;
+      case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+        throw vpException(vpException::notImplementedError, "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
+        break;
       }
     } else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
@@ -633,6 +656,9 @@ void vpViper650::getCameraParameters(vpCameraParameters &cam, const unsigned int
       case vpCameraParameters::perspectiveProjWithDistortion:
         cam.initPersProjWithDistortion(831.3, 831.6, 322.7, 265.8, -0.1955, 0.2047);
         break;
+      case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+        throw vpException(vpException::notImplementedError, "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
+        break;
       }
     } else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
@@ -653,6 +679,9 @@ void vpViper650::getCameraParameters(vpCameraParameters &cam, const unsigned int
       case vpCameraParameters::perspectiveProjWithDistortion:
         cam.initPersProjWithDistortion(831.3, 831.6, 322.7, 265.8, -0.1955, 0.2047);
         break;
+      case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+        throw vpException(vpException::notImplementedError, "Feature getCameraParameters is not implemented for Kannala-Brandt projection model yet.");
+        break;
       }
     } else {
       vpTRACE("Cannot get default intrinsic camera parameters for this image "
@@ -664,10 +693,6 @@ void vpViper650::getCameraParameters(vpCameraParameters &cam, const unsigned int
   case vpViper650::TOOL_CUSTOM: {
     throw vpRobotException(vpRobotException::badValue, "No intrinsic parameters available for a custom tool");
   }
-  default:
-    vpERROR_TRACE("This error should not occur!");
-    throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
-    break;
   }
 #endif
   return;
@@ -697,7 +722,6 @@ file.
   \param I : A B&W image send by the current camera in use.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper650.h>
 #include <visp3/robot/vpViper650.h>
@@ -764,7 +788,6 @@ file.
   \param I : A color image send by the current camera in use.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRobotViper650.h>
 #include <visp3/robot/vpViper650.h>

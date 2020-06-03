@@ -106,7 +106,7 @@ vpFeaturePointPolar::vpFeaturePointPolar() : Z(1.) { init(); }
 
   \sa set_theta()
 */
-void vpFeaturePointPolar::set_rho(const double rho)
+void vpFeaturePointPolar::set_rho(double rho)
 {
   s[0] = rho;
   flags[0] = true;
@@ -116,7 +116,7 @@ void vpFeaturePointPolar::set_rho(const double rho)
 
   \sa set_rho()
 */
-void vpFeaturePointPolar::set_theta(const double theta)
+void vpFeaturePointPolar::set_theta(double theta)
 {
   s[1] = theta;
   flags[1] = true;
@@ -126,7 +126,7 @@ void vpFeaturePointPolar::set_theta(const double theta)
   Set the 3D point depth in the camera frame.
 
 */
-void vpFeaturePointPolar::set_Z(const double Z_)
+void vpFeaturePointPolar::set_Z(double Z_)
 {
   this->Z = Z_;
   flags[2] = true;
@@ -142,7 +142,7 @@ void vpFeaturePointPolar::set_Z(const double Z_)
 
   \sa set_rho(), set_theta(), set_Z()
 */
-void vpFeaturePointPolar::set_rhoThetaZ(const double rho, const double theta, const double Z_)
+void vpFeaturePointPolar::set_rhoThetaZ(double rho, double theta, double Z_)
 {
   set_rho(rho);
   set_theta(theta);
@@ -245,7 +245,7 @@ double vpFeaturePointPolar::get_Z() const { return this->Z; }
 
   In that case, L_theta is a 1 by 6 matrix.
 */
-vpMatrix vpFeaturePointPolar::interaction(const unsigned int select)
+vpMatrix vpFeaturePointPolar::interaction(unsigned int select)
 {
   vpMatrix L;
 
@@ -382,7 +382,7 @@ vpMatrix vpFeaturePointPolar::interaction(const unsigned int select)
   vpColVector e = s.error(s_star, vpFeaturePointPolar::selectRho());
   \endcode
 */
-vpColVector vpFeaturePointPolar::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeaturePointPolar::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -439,7 +439,7 @@ vpColVector vpFeaturePointPolar::error(const vpBasicFeature &s_star, const unsig
   s.print(vpFeaturePointPolar::selectRho()); // print only the rho component
   \endcode
 */
-void vpFeaturePointPolar::print(const unsigned int select) const
+void vpFeaturePointPolar::print(unsigned int select) const
 {
 
   std::cout << "Point:  Z=" << get_Z();
@@ -467,7 +467,7 @@ void vpFeaturePointPolar::print(const unsigned int select) const
   (\f$Z\f$ coordinate) is null. That means that the 3D point is
   on the camera which is not possible.
 */
-void vpFeaturePointPolar::buildFrom(const double rho, const double theta, const double Z_)
+void vpFeaturePointPolar::buildFrom(double rho, double theta, double Z_)
 {
 
   s[0] = rho;

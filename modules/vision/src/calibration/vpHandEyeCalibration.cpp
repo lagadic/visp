@@ -49,13 +49,13 @@
   \brief Compute the distances of the data to the mean obtained.
 
   \param[in] cMo : Vector of homogeneous matrices representing the transformation
-  between the camera and the scene (input)
+  between the camera and the scene.
   \param[in] rMe : Vector of homogeneous matrices representing the transformation
   between the effector (where the camera is fixed) and the reference
-  coordinates (base of the manipulator) (input). Must be the same size as cMo.
-  \param[out] eMc : Homogeneous matrix between the effector and the camera (input)
+  coordinates (base of the manipulator). Must be the same size as cMo.
+  \param[in] eMc : Homogeneous matrix between the effector and the camera.
 */
-void vpHandEyeCalibration::calibrationVerifrMo(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe, vpHomogeneousMatrix &eMc)
+void vpHandEyeCalibration::calibrationVerifrMo(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe, const vpHomogeneousMatrix &eMc)
 {
   unsigned int nbPose = (unsigned int) cMo.size();
   std::vector<vpTranslationVector> rTo(nbPose);

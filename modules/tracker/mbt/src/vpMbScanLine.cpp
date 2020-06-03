@@ -118,7 +118,7 @@ void vpMbScanLine::drawLineY(const vpColVector &a, const vpColVector &b, const v
   const bool b_sample_Y = (std::fabs(y0 - y1) > std::fabs(x0 - x1));
 
   for (unsigned int y = _y0; y < _y1; ++y) {
-    const double x = x0 + (x1 - x0) * (y - y0) / (y1 - y0);
+    double x = x0 + (x1 - x0) * (y - y0) / (y1 - y0);
     const double alpha = getAlpha(y, y0 * z0, z0, y1 * z1, z1);
     vpMbScanLineSegment s;
     s.p = x;
@@ -167,7 +167,7 @@ void vpMbScanLine::drawLineX(const vpColVector &a, const vpColVector &b, const v
   const bool b_sample_Y = (std::fabs(y0 - y1) > std::fabs(x0 - x1));
 
   for (unsigned int x = _x0; x < _x1; ++x) {
-    const double y = y0 + (y1 - y0) * (x - x0) / (x1 - x0);
+    double y = y0 + (y1 - y0) * (x - x0) / (x1 - x0);
     const double alpha = getAlpha(x, x0 * z0, z0, x1 * z1, z1);
     vpMbScanLineSegment s;
     s.p = y;
@@ -387,7 +387,7 @@ void vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, un
         // This part will only be used for MbKltTracking
         if (last_ID != -1) {
           const unsigned int x0 = (std::max)((unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
-          const double x1 = (std::min)((double)w, (double)s.p);
+          double x1 = (std::min)((double)w, (double)s.p);
           for (unsigned int x = x0 + maskBorder; x < x1 - maskBorder; ++x) {
             primitive_ids[(unsigned int)y][(unsigned int)x] = last_visible.ID;
 
@@ -462,7 +462,7 @@ void vpMbScanLine::drawScene(const std::vector<std::vector<std::pair<vpPoint, un
         // This part will only be used for MbKltTracking
         if (maskBorder != 0 && last_ID != -1) {
           const unsigned int y0 = (std::max)((unsigned int)0, (unsigned int)(std::ceil(last_visible.p)));
-          const double y1 = (std::min)((double)h, (double)s.p);
+          double y1 = (std::min)((double)h, (double)s.p);
           for (unsigned int y = y0 + maskBorder; y < y1 - maskBorder; ++y) {
             // primitive_ids[(unsigned int)y][(unsigned int)x] =
             // last_visible.ID;

@@ -166,7 +166,7 @@ public:
 
     \param nb_point : The number of control points used to compute the Nurbs.
   */
-  void setNbControlPoints(const unsigned int nb_point) { this->nbControlPoints = nb_point; }
+  void setNbControlPoints(unsigned int nb_point) { this->nbControlPoints = nb_point; }
 
   /*!
     Enables or disables the canny detection used during the extremities
@@ -182,7 +182,7 @@ public:
     \param th1 : The first threshold;
     \param th2 : The second threshold;
   */
-  void setCannyThreshold(const double th1, const double th2)
+  void setCannyThreshold(double th1, double th2)
   {
     this->cannyTh1 = th1;
     this->cannyTh2 = th2;
@@ -193,7 +193,7 @@ public:
 
   void track(const vpImage<unsigned char> &I);
 
-  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
+  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack=false);
   void reSample(const vpImage<unsigned char> &I);
   void updateDelta();
   void setExtremities();

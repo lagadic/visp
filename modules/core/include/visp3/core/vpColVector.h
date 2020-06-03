@@ -266,10 +266,10 @@ public:
 
   double operator*(const vpColVector &x) const;
   vpMatrix operator*(const vpRowVector &v) const;
-  vpColVector operator*(const double x) const;
+  vpColVector operator*(double x) const;
   vpColVector &operator*=(double x);
 
-  vpColVector operator/(const double x) const;
+  vpColVector operator/(double x) const;
   vpColVector &operator/=(double x);
 
   vpColVector operator+(const vpColVector &v) const;
@@ -307,7 +307,7 @@ public:
     \param flagNullify : If true, set the data to zero.
     \exception vpException::fatalError When \e ncols is not equal to 1.
    */
-  void resize(const unsigned int i, const bool flagNullify = true) { vpArray2D<double>::resize(i, 1, flagNullify); }
+  void resize(unsigned int i, bool flagNullify = true) { vpArray2D<double>::resize(i, 1, flagNullify); }
   /*!
     Resize the column vector to a \e nrows-dimension vector.
     This function can only be used with \e ncols = 1.
@@ -318,7 +318,7 @@ public:
     \exception vpException::fatalError When \e ncols is not equal to 1.
 
     */
-  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify)
+  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify)
   {
     if (ncols != 1) {
       throw(vpException(vpException::fatalError,
@@ -363,7 +363,7 @@ public:
   static vpColVector stack(const vpColVector &A, const vpColVector &B);
   static void stack(const vpColVector &A, const vpColVector &B, vpColVector &C);
 
-  static double stdev(const vpColVector &v, const bool useBesselCorrection = false);
+  static double stdev(const vpColVector &v, bool useBesselCorrection = false);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
@@ -404,7 +404,7 @@ public:
     stack(A, B, C);
   }
 
-  vp_deprecated void insert(const vpColVector &v, const unsigned int r, const unsigned int c = 0);
+  vp_deprecated void insert(const vpColVector &v, unsigned int r, unsigned int c = 0);
 //@}
 #endif
 };

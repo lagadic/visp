@@ -192,7 +192,7 @@ int computeThresholdIntermodes(const vpHistogram &hist)
   return (int)std::floor(tt / 2.0); // vpMath::round(tt / 2.0);
 }
 
-int computeThresholdIsoData(const vpHistogram &hist, const unsigned int imageSize)
+int computeThresholdIsoData(const vpHistogram &hist, unsigned int imageSize)
 {
   int threshold = 0;
 
@@ -227,7 +227,7 @@ int computeThresholdIsoData(const vpHistogram &hist, const unsigned int imageSiz
   return threshold;
 }
 
-int computeThresholdMean(const vpHistogram &hist, const unsigned int imageSize)
+int computeThresholdMean(const vpHistogram &hist, unsigned int imageSize)
 {
   // C. A. Glasbey, "An analysis of histogram-based thresholding algorithms,"
   // CVGIP: Graphical Models and Image Processing, vol. 55, pp. 532-537, 1993.
@@ -240,7 +240,7 @@ int computeThresholdMean(const vpHistogram &hist, const unsigned int imageSize)
   return (int)std::floor(sum_ip / imageSize);
 }
 
-int computeThresholdOtsu(const vpHistogram &hist, const unsigned int imageSize)
+int computeThresholdOtsu(const vpHistogram &hist, unsigned int imageSize)
 {
   // Otsu, N (1979), "A threshold selection method from gray-level
   // histograms",  IEEE Trans. Sys., Man., Cyber. 9: 62-66,

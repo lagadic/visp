@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.6)
 
 # By default set release configuration
 if(NOT CMAKE_BUILD_TYPE)
-  set(CMAKE_BUILD_TYPE "Release" CACHE String "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
+  set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
 
 find_package(VISP REQUIRED visp_core visp_detection visp_io visp_gui visp_sensor visp_vs)

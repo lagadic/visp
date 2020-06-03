@@ -52,3 +52,8 @@ foreach(cpp ${example_cpp})
     visp_add_dependency(${cpp} "examples")
   endif()
 endforeach()
+
+if(VISP_HAVE_LIBFREENECT)
+  visp_set_source_file_compile_flag(kinectAcquisition.cpp -Wno-unused-parameter)
+endif()
+

@@ -74,7 +74,7 @@
   \f]
   Only pixels in the input image fully covered by the kernel are considered.
 */
-void vpImageFilter::filter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpMatrix &M, const bool convolve)
+void vpImageFilter::filter(const vpImage<unsigned char> &I, vpImage<double> &If, const vpMatrix &M, bool convolve)
 {
   unsigned int size_y = M.getRows(), size_x = M.getCols();
   unsigned int half_size_y = size_y / 2, half_size_x = size_x / 2;
@@ -125,7 +125,7 @@ void vpImageFilter::filter(const vpImage<unsigned char> &I, vpImage<double> &If,
   \param convolve : If true, perform a convolution otherwise a correlation.
 */
 void vpImageFilter::filter(const vpImage<double> &I, vpImage<double> &Iu, vpImage<double> &Iv, const vpMatrix &M,
-                           const bool convolve)
+                           bool convolve)
 {
   unsigned int size = M.getRows();
   unsigned int half_size = size / 2;
@@ -296,8 +296,8 @@ int main()
   \param apertureSobel : Size of the mask for the Sobel operator (odd number).
 */
 void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
-                          const unsigned int gaussianFilterSize, const double thresholdCanny,
-                          const unsigned int apertureSobel)
+                          unsigned int gaussianFilterSize, double thresholdCanny,
+                          unsigned int apertureSobel)
 {
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
   IplImage *img_ipl = NULL;

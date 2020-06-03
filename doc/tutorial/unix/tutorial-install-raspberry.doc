@@ -80,6 +80,15 @@ and add a line with the name of the module:
 bcm2835-v4l2
 \endcode
 
+- To check if the camera is working you may run in a terminal:
+\code
+$ v4l2-ctl --overlay=1 # enable viewfinder
+\endcode
+Here you should see the live camera stream. To disable camera view run
+\code
+v4l2-ctl --overlay=0 # disable viewfinder
+\endcode
+
 \subsection install_raspberry_startx Start graphical user interface
 
 - To load the graphical user interface, type `startx` and press Enter on your keyboard. This will later allow to use ViSP vpDisplayX or vpDisplayOpenCV classes useful to display images in a X11 window.
@@ -211,7 +220,7 @@ A more versatile way to configure the build is to use `ccmake`, the CMake GUI:
 $ ccmake ../visp
 \endcode
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
-\image html img-ccmake-raspberry-all.png Snapshot of the `ccmake ../visp` command used to configure ViSP.
+\image html img-ccmake-raspberry-all.png Snapshot of the `"ccmake ../visp"` command used to configure ViSP.
 
 \subsection install_raspberry_visp_build Build ViSP libraries
 
@@ -251,26 +260,43 @@ $ source ~/.bashrc
 
 \section install_raspberry_dataset Install ViSP data set
 
-Some ViSP examples and tests require data (images, video, models) that are not part of ViSP source code but available in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from http://visp.inria.fr/download page. We provide here after the way to install these data if you want to run ViSP examples or tests. Note that ViSP tutorials are not using ViSP data set.
+Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
 
-- After ViSP data set <a href="https://visp.inria.fr/download/">download</a> unzip the archive
+We give hereafter the two ways to get this data set:
+
+<b>1. Get data set release</b>
+
+- Download `visp-images-3.3.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
 \code
 $ unzip ~/Downloads/visp-images-3.2.0.zip -d $VISP_WS
 \endcode
-
-- We suppose now that the data are located in `$VISP_WS/visp-images-3.2.0`.
+- We suppose now that the data are located in `$VISP_WS/visp-images-3.3.0`.
 \code
-$ ls $VISP_WS/visp-images-3.2.0
-AprilTag   LICENSE.txt   calibration   cube      ellipse-1    iv     mbt         mire     video
-Klimt      README.md     circle	       ellipse	 endianness   line   mbt-depth   mire-2
+$ ls $VISP_WS/visp-images-3.3.0
+3dmodel	   LICENSE.txt    circle     ellipse-1    iv      mbt-depth     video
+AprilTag   README.md      cube       endianness   line    mire          warp
+Klimt      calibration    ellipse    faces        mbt     mire-2        xml
 \endcode
-
-- Set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to find the location of the data set. It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched: 
+- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.3.0`. It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched: 
 \code
-$ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
-$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.2.0" >> ~/.bashrc
+$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.3.0" >> ~/.bashrc
 $ source ~/.bashrc
 \endcode
+
+<b>2. Get data set from github</b>
+
+- Use git to get the data set latest version:
+\code
+C:\> cd $VISP_WS
+C:\> git clone https://github.com/lagadic/visp-images.git
+\endcode
+- Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS%/visp-images`. In a shell run:
+\code
+$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images" >> ~/.bashrc
+$ source ~/.bashrc
+\endcode
+
+<b>Test data set usage</b>
 
 - From now, you can try to run ViSP examples and tests. For example you can run `displayX` example that should open a windows with Klimt painting image and some overlay drawings:
 \code
@@ -396,26 +422,26 @@ To see which are the optional 3rd parties that are found during the configuratio
 \code
 $ cat $VISP_WS/visp-build/ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.2.0
+General configuration information for ViSP 3.3.0
 
-  Version control:               3.1.0-690-geb7c077-dirty
+  Version control:               3.2.0-799-ge98496a
 
   Platform:
-    Timestamp:                   2018-11-30T14:51:25Z
+    Timestamp:                   2020-02-11T15:49:13Z
     Host:                        Linux 4.1.19-v7+ armv7l
     CMake:                       3.0.2
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/make
-    Configuration:               RelWithDebInfo
+    Configuration:               Release
 
   C/C++:
     Built as dynamic libs?:      yes
     C++ Compiler:                /usr/bin/c++  (ver 4.9.2)
-    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -fPIC -O3 -DNDEBUG
-    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -fPIC -g
+    C++ flags (Release):         -Wall -Wextra -fopenmp -fvisibility=hidden -fPIC -O3 -DNDEBUG
+    C++ flags (Debug):           -Wall -Wextra -fopenmp -fvisibility=hidden -fPIC -g
     C Compiler:                  /usr/bin/cc
-    C flags (Release):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -fPIC -O3 -DNDEBUG
-    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -fPIC -g
+    C flags (Release):           -Wall -Wextra -fopenmp -fvisibility=hidden -fPIC -O3 -DNDEBUG
+    C flags (Debug):             -Wall -Wextra -fopenmp -fvisibility=hidden -fPIC -g
     Linker flags (Release):      
     Linker flags (Debug):        
 
@@ -436,7 +462,10 @@ General configuration information for ViSP 3.2.0
     Build with moment combine:   no
 
   Mathematics: 
-    Use Lapack/blas:             yes (ver 3.7.0)
+    Use MKL:                     no
+    Use OpenBLAS:                no
+    Use Atlas:                   no
+    Use Netlib Lapack:           yes (ver 3.7.0)
     Use Lapack (built-in):       no
     Use Eigen3:                  yes (ver 3.2.2)
     Use OpenCV:                  yes (ver 2.4.9.1)
@@ -451,6 +480,7 @@ General configuration information for ViSP 3.2.0
     \- Use SoWin:                no
     \- Use SoXt:                 no
     \- Use SoQt:                 no
+    \- Use Qt5:                  no
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
@@ -459,6 +489,7 @@ General configuration information for ViSP 3.2.0
     Use PNG:                     yes (ver 1.2.50)
     \- Use ZLIB:                 yes (ver 1.2.8)
     Use OpenCV:                  yes (ver 2.4.9.1)
+    Use stb_image (built-in):    no
 
   Real robots: 
     Use Afma4:                   no
@@ -468,8 +499,12 @@ General configuration information for ViSP 3.2.0
     Use Viper850:                no
     Use aria (Pioneer):          no
     Use PTU46:                   no
-    Use Biclops PT:              no
+    Use Biclops PTU:             no
+    Use Flir PTU SDK:            no
+    Use Parrot ARSDK:            no
+    \-Use ffmpeg:                no
     Use Virtuose:                no
+    Use qbdevice (built-in):     no
 
   GUI: 
     Use X11:                     yes
@@ -500,27 +535,30 @@ General configuration information for ViSP 3.2.0
   F/T sensors: 
     Use atidaq (built-in):       no
     Use comedi:                  no
+    Use IIT SDK:                 no
 
   Detection: 
     Use zbar:                    yes (ver 0.10)
     Use dmtx:                    yes (ver 0.7.4)
-    Use AprilTag (built-in):     yes (ver 0.9.8)
+    Use AprilTag (built-in):     yes (ver 3.1.1)
+    \- Use AprilTag big family:  no
 
   Misc: 
     Use Clipper (built-in):      yes (ver 6.4.2)
-    Use XML2:                    yes (ver 2.9.1)
+    Use pugixml (built-in):      yes (ver 1.9.0)
+    Use libxml2:                 yes (ver 2.9.1)
 
   Optimization: 
     Use OpenMP:                  yes
     Use pthread:                 yes
     Use pthread (built-in):      no
-    Use cxx11:                   yes
-    cxx standard:                11
+    Use cxx standard:            no
 
   Documentation: 
     Use doxygen:                 no
 
   Tests and samples:
+    Use catch2 (built-in):       no
     Tests:                       yes
     Demos:                       yes
     Examples:                    yes

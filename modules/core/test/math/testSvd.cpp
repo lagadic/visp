@@ -182,7 +182,24 @@ vpMatrix make_random_matrix(unsigned int nbrows, unsigned int nbcols)
 
   for (unsigned int i = 0; i < A.getRows(); i++) {
     for (unsigned int j = 0; j < A.getCols(); j++) {
-      A[i][j] = (double)rand() / (double)RAND_MAX;
+      A[i][j] = static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
+    }
+  }
+
+  return A;
+}
+
+vpMatrix make_random_symmetric_matrix(unsigned int nbrows)
+{
+  vpMatrix A;
+  A.resize(nbrows, nbrows);
+
+  for(unsigned int i=0; i < A.getRows(); i++) {
+    for(unsigned int j=i; j<A.getCols(); j++) {
+      A[i][j] = static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
+      if (i != j) {
+        A[j][i] = A[i][j];
+      }
     }
   }
 
@@ -198,7 +215,7 @@ void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, 
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
     //#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) ||
-    //(VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+    //(VISP_HAVE_OPENCV_VERSION >= 0x020101)
     //    double det = 0.;
     //    // don't put singular matrices in the benchmark
     //    for(M = make_random_matrix(nb_rows, nb_cols);
@@ -217,6 +234,34 @@ void create_bench_random_matrix(unsigned int nb_matrices, unsigned int nb_rows, 
   }
 }
 
+void create_bench_random_symmetric_matrix(unsigned int nb_matrices, unsigned int nb_rows, bool verbose,
+                                          std::vector<vpMatrix> &bench)
+{
+  if (verbose)
+    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows << " by " << nb_rows << " symmetric matrices" << std::endl;
+  bench.clear();
+  for (unsigned int i = 0; i < nb_matrices; i++) {
+    vpMatrix M;
+    //#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) ||
+    //(VISP_HAVE_OPENCV_VERSION >= 0x020101) || defined(VISP_HAVE_GSL)
+    //    double det = 0.;
+    //    // don't put singular matrices in the benchmark
+    //    for(M = make_random_matrix(nb_rows, nb_cols);
+    //    std::fabs(det=M.AtA().det())<.01; M = make_random_matrix(nb_rows,
+    //    nb_cols)) {
+    //      if(verbose) {
+    //        std::cout << "  Generated random matrix AtA=" << std::endl <<
+    //        M.AtA() << std::endl; std::cout << "  Generated random matrix
+    //        not invertible: det=" << det << ". Retrying..." << std::endl;
+    //      }
+    //    }
+    //#else
+    M = make_random_symmetric_matrix(nb_rows);
+    //#endif
+    bench.push_back(M);
+  }
+}
+
 int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U, std::vector<vpColVector> s, std::vector<vpMatrix> V)
 {
   for (unsigned int i = 0; i < M.size(); i++) {
@@ -226,6 +271,25 @@ int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U, std::vector<vpCol
     vpMatrix D = M[i] - U_S_V;
     if (D.frobeniusNorm() > 1e-6) {
       std::cout << "SVD decomposition failed" << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+  return EXIT_SUCCESS;
+}
+
+int test_eigen_values(std::vector<vpMatrix> M, std::vector<vpColVector> e, std::vector<vpMatrix> V, std::vector<vpColVector> e2)
+{
+  for (unsigned int i = 0; i < M.size(); i++) {
+    vpColVector error_e = e[i] - e2[i];
+    if (error_e.frobeniusNorm() > 1e-6) {
+      std::cout << "Eigen values differ" << std::endl;
+      return EXIT_FAILURE;
+    }
+    vpMatrix D;
+    D.diag(e[i]);
+    vpMatrix MV_VD = M[i] * V[i] - V[i] * D;
+    if (MV_VD.frobeniusNorm() > 1e-6) {
+      std::cout << "Eigen values/vector decomposition failed" << std::endl;
       return EXIT_FAILURE;
     }
   }
@@ -277,29 +341,28 @@ int test_svd_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &ti
 
   return test_svd(bench, U, s, V);
 }
-#endif
 
-#if defined(VISP_HAVE_GSL)
-int test_svd_gsl(bool verbose, const std::vector<vpMatrix> &bench, double &time)
+int test_eigen_values_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
   if (verbose)
-    std::cout << "Test SVD using GSL 3rd party" << std::endl;
-  // Compute inverse
-  if (verbose)
-    std::cout << "  SVD on a " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
+    std::cout << "Test eigenValues() using Lapack 3rd party" << std::endl;
 
-  std::vector<vpMatrix> U = bench;
+  std::vector<vpColVector> e(bench.size());
+  std::vector<vpColVector> e2(bench.size());
   std::vector<vpMatrix> V(bench.size());
-  std::vector<vpColVector> s(bench.size());
 
-  double t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
-    U[i].svdGsl(s[i], V[i]);
+    e2[i] = bench[i].eigenValues();
   }
 
+  // Compute the eigenvalues and eigenvectors
+  double t = vpTime::measureTimeMs();
+  for (unsigned int i = 0; i < bench.size(); i++) {
+    bench[i].eigenValues(e[i], V[i]);
+  }
   time = vpTime::measureTimeMs() - t;
 
-  return test_svd(bench, U, s, V);
+  return test_eigen_values(bench, e, V, e2);
 }
 #endif
 
@@ -338,12 +401,12 @@ void save_time(const std::string &method, bool verbose, bool use_plot_file, std:
 int main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101) ||                \
-    defined(VISP_HAVE_GSL)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     unsigned int nb_matrices = 100;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
     unsigned int nb_cols = 6;
+    unsigned int nb_rows_sym = 5;
     bool verbose = false;
     std::string plotfile("plot-svd.csv");
     bool use_plot_file = false;
@@ -372,10 +435,6 @@ int main(int argc, const char *argv[])
       of << "\"SVD OpenCV\""
          << "\t";
 #endif
-#if defined(VISP_HAVE_GSL)
-      of << "\"SVD GSL\""
-         << "\t";
-#endif
       of << std::endl;
     }
 
@@ -383,6 +442,8 @@ int main(int argc, const char *argv[])
     for (unsigned int iter = 0; iter < nb_iterations; iter++) {
       std::vector<vpMatrix> bench_random_matrices;
       create_bench_random_matrix(nb_matrices, nb_rows, nb_cols, verbose, bench_random_matrices);
+      std::vector<vpMatrix> bench_random_symmetric_matrices;
+      create_bench_random_symmetric_matrix(nb_matrices, nb_rows_sym, verbose, bench_random_symmetric_matrices);
 
       if (use_plot_file)
         of << iter << "\t";
@@ -403,10 +464,11 @@ int main(int argc, const char *argv[])
       save_time("SVD (OpenCV): ", verbose, use_plot_file, of, time);
 #endif
 
-#if defined(VISP_HAVE_GSL)
-      ret += test_svd_gsl(verbose, bench_random_matrices, time);
-      save_time("SVD (GSL): ", verbose, use_plot_file, of, time);
+#if defined(VISP_HAVE_LAPACK)
+      ret += test_eigen_values_lapack(verbose, bench_random_symmetric_matrices, time);
+      save_time("Eigen values (Lapack): ", verbose, use_plot_file, of, time);
 #endif
+
       if (use_plot_file)
         of << std::endl;
     }
@@ -425,8 +487,7 @@ int main(int argc, const char *argv[])
 #else
     (void)argc;
     (void)argv;
-    std::cout << "Test does nothing since you dont't have Eigen3, Lapack, "
-                 "OpenCV or GSL 3rd party"
+    std::cout << "Test does nothing since you dont't have Lapack, Eigen3 or OpenCV 3rd party"
               << std::endl;
     return EXIT_SUCCESS;
 #endif

@@ -66,16 +66,8 @@
 #include <visp3/core/vpFeatureDisplay.h>
 
 /*
-
-
-
 attributes and members directly related to the vpBasicFeature needs
 other functionalities ar useful but not mandatory
-
-
-
-
-
 */
 
 /*!
@@ -112,7 +104,7 @@ vpFeatureLine::vpFeatureLine() : A(0), B(0), C(0), D(0) { init(); }
   \param rho : \f$ \rho \f$ value to set.
   \param theta : \f$ \theta \f$ value to set.
 */
-void vpFeatureLine::setRhoTheta(const double rho, const double theta)
+void vpFeatureLine::setRhoTheta(double rho, double theta)
 {
   s[0] = rho;
   s[1] = theta;
@@ -134,7 +126,7 @@ void vpFeatureLine::setRhoTheta(const double rho, const double theta)
   \param C_ : C value to set.
   \param D_ : D value to set.
 */
-void vpFeatureLine::setABCD(const double A_, const double B_, const double C_, const double D_)
+void vpFeatureLine::setABCD(double A_, double B_, double C_, double D_)
 {
   this->A = A_;
   this->B = B_;
@@ -195,7 +187,7 @@ void vpFeatureLine::setABCD(const double A_, const double B_, const double C_, c
   vpMatrix L_theta = s.interaction( vpBasicFeature::FEATURE_ALL );
   \endcode
 */
-vpMatrix vpFeatureLine::interaction(const unsigned int select)
+vpMatrix vpFeatureLine::interaction(unsigned int select)
 {
   vpMatrix L;
 
@@ -315,7 +307,7 @@ vpMatrix vpFeatureLine::interaction(const unsigned int select)
   s.error(s_star, vpFeatureLine::selectTheta());
   \endcode
 */
-vpColVector vpFeatureLine::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeatureLine::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -366,7 +358,7 @@ vpColVector vpFeatureLine::error(const vpBasicFeature &s_star, const unsigned in
   \endcode
 */
 
-void vpFeatureLine::print(const unsigned int select) const
+void vpFeatureLine::print(unsigned int select) const
 {
 
   std::cout << "Line:\t  " << A << "X+" << B << "Y+" << C << "Z +" << D << "=0" << std::endl;
@@ -392,7 +384,7 @@ void vpFeatureLine::print(const unsigned int select) const
   \param theta : The \f$ \theta \f$ parameter.
 
 */
-void vpFeatureLine::buildFrom(const double rho, const double theta)
+void vpFeatureLine::buildFrom(double rho, double theta)
 {
   s[0] = rho;
   s[1] = theta;
@@ -428,8 +420,7 @@ void vpFeatureLine::buildFrom(const double rho, const double theta)
   \param D_ : D parameter of the plan equation.
 
 */
-void vpFeatureLine::buildFrom(const double rho, const double theta, const double A_, const double B_, const double C_,
-                              const double D_)
+void vpFeatureLine::buildFrom(double rho, double theta, double A_, double B_, double C_, double D_)
 {
   s[0] = rho;
   s[1] = theta;

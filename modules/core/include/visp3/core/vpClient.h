@@ -67,7 +67,7 @@ documentation:
 #include <iostream>
 #include <visp3/core/vpClient.h>
 
-int main(int argc, char **argv)
+int main()
 {
   std::string servername = "localhost";
   unsigned int port = 35000;
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     if(client.send(&val) != sizeof(int))
       std::cout << "Error while sending" << std::endl;
     else
-      std::cout << Sending : " << val << std::endl;
+      std::cout << "Sending : " << val << std::endl;
 
     // Receiving a value from the first client
     if(client.receive(&val) != sizeof(int))

@@ -89,49 +89,48 @@
   \ingroup group_vision_keypoints
 
   \brief Class that allows keypoints detection (and descriptors extraction)
-and matching thanks to OpenCV library. Thus to enable this class OpenCV should
-be installed. Installation instructions are provided here
-https://visp.inria.fr/3rd_opencv.
+  and matching thanks to OpenCV library. Thus to enable this class OpenCV should
+  be installed. Installation instructions are provided here
+  https://visp.inria.fr/3rd_opencv.
 
   This class permits to use different types of detectors, extractors and
-matchers easily. So, the classical SIFT and SURF keypoints could be used, as
-well as ORB, FAST, (etc.) keypoints, depending of the version of OpenCV you
-use.
+  matchers easily. So, the classical SIFT and SURF keypoints could be used, as
+  well as ORB, FAST, (etc.) keypoints, depending of the version of OpenCV you
+  use.
 
   \note Due to some patents, SIFT and SURF are packaged in an external module
-called nonfree module in OpenCV version before 3.0.0 and in xfeatures2d
-from 3.0.0. You have to check you have the corresponding module to use SIFT
-and SURF.
+  called nonfree module in OpenCV version before 3.0.0 and in xfeatures2d
+  from 3.0.0. You have to check you have the corresponding module to use SIFT
+  and SURF.
 
   The goal of this class is to provide a tool to match reference keypoints
-from a reference image (or train keypoints in OpenCV terminology) and detected
-keypoints from a current image (or query keypoints in OpenCV terminology).
+  from a reference image (or train keypoints in OpenCV terminology) and detected
+  keypoints from a current image (or query keypoints in OpenCV terminology).
 
   If you supply the corresponding 3D coordinates corresponding to the 2D
-coordinates of the reference keypoints, you can also estimate the pose of the
-object by matching a set of detected keypoints in the current image with the
-reference keypoints.
+  coordinates of the reference keypoints, you can also estimate the pose of the
+  object by matching a set of detected keypoints in the current image with the
+  reference keypoints.
 
   If you use this class, the first thing you have to do is to build
   the reference keypoints by detecting keypoints in a reference image which
-contains the object to detect. Then you match keypoints detected in a current
-image with those detected in a reference image by calling matchPoint()
-methods. You can access to the lists of matched points thanks to the methods
-getMatchedPointsInReferenceImage() and getMatchedPointsInCurrentImage(). These
-two methods return a list of matched points. The nth element of the first list
-is matched with the nth element of the second list. To provide easy
-compatibility with OpenCV terminology, getTrainKeyPoints() give you access to
-the list of keypoints detected in train images (or reference images) and
-getQueryKeyPoints() give you access to the list of keypoints detected in a
-query image (or current image). The method getMatches() give you access to a
-list of cv::DMatch with the correspondence between the index of the train
-keypoints and the index of the query keypoints.
+  contains the object to detect. Then you match keypoints detected in a current
+  image with those detected in a reference image by calling matchPoint()
+  methods. You can access to the lists of matched points thanks to the methods
+  getMatchedPointsInReferenceImage() and getMatchedPointsInCurrentImage(). These
+  two methods return a list of matched points. The nth element of the first list
+  is matched with the nth element of the second list. To provide easy
+  compatibility with OpenCV terminology, getTrainKeyPoints() give you access to
+  the list of keypoints detected in train images (or reference images) and
+  getQueryKeyPoints() give you access to the list of keypoints detected in a
+  query image (or current image). The method getMatches() give you access to a
+  list of cv::DMatch with the correspondence between the index of the train
+  keypoints and the index of the query keypoints.
 
   The following small example shows how to use the class to do the matching
-between current and reference keypoints.
+  between current and reference keypoints.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpKeyPoint.h>
 
@@ -164,11 +163,10 @@ int main()
   \endcode
 
   It is also possible to build the reference keypoints in a region of interest
-(ROI) of an image and find keypoints to match in only a part of the current
-image. The small following example shows how to do this:
+  (ROI) of an image and find keypoints to match in only a part of the current
+  image. The small following example shows how to do this:
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/vision/vpKeyPoint.h>
@@ -323,26 +321,26 @@ public:
              const vpFilterMatchingType &filterType = ratioDistanceThreshold);
 
   unsigned int buildReference(const vpImage<unsigned char> &I);
-  unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                              const unsigned int width);
+  unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                              unsigned int width);
   unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
-  void buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoint,
-                      std::vector<cv::Point3f> &points3f, const bool append = false, const int class_id = -1);
-  void buildReference(const vpImage<unsigned char> &I, const std::vector<cv::KeyPoint> &trainKeyPoint,
-                      const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
-                      const bool append = false, const int class_id = -1);
+  unsigned int buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoint,
+                              std::vector<cv::Point3f> &points3f, bool append = false, int class_id = -1);
+  unsigned int buildReference(const vpImage<unsigned char> &I, const std::vector<cv::KeyPoint> &trainKeyPoint,
+                              const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
+                              bool append = false, int class_id = -1);
 
   unsigned int buildReference(const vpImage<vpRGBa> &I_color);
-  unsigned int buildReference(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, const unsigned int height,
-                              const unsigned int width);
+  unsigned int buildReference(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, unsigned int height,
+                              unsigned int width);
   unsigned int buildReference(const vpImage<vpRGBa> &I_color, const vpRect &rectangle);
 
-  void buildReference(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &trainKeyPoint,
-                      std::vector<cv::Point3f> &points3f, const bool append = false, const int class_id = -1);
-  void buildReference(const vpImage<vpRGBa> &I, const std::vector<cv::KeyPoint> &trainKeyPoint,
-                      const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
-                      const bool append = false, const int class_id = -1);
+  unsigned int buildReference(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &trainKeyPoint,
+                              std::vector<cv::Point3f> &points3f, bool append = false, int class_id = -1);
+  unsigned int buildReference(const vpImage<vpRGBa> &I, const std::vector<cv::KeyPoint> &trainKeyPoint,
+                              const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
+                              bool append = false, int class_id = -1);
 
   static void compute3D(const cv::KeyPoint &candidate, const std::vector<vpPoint> &roi, const vpCameraParameters &cam,
                         const vpHomogeneousMatrix &cMo, cv::Point3f &point);
@@ -658,8 +656,8 @@ public:
    */
   inline cv::Mat getQueryDescriptors() const { return m_queryDescriptors; }
 
-  void getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const;
-  void getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints) const;
+  void getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints, bool matches = true) const;
+  void getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints, bool matches = true) const;
 
   /*!
     Get the list of Ransac inliers.
@@ -703,14 +701,14 @@ public:
   void loadConfigFile(const std::string &configFile);
 #endif
 
-  void loadLearningData(const std::string &filename, const bool binaryMode = false, const bool append = false);
+  void loadLearningData(const std::string &filename, bool binaryMode = false, bool append = false);
 
   void match(const cv::Mat &trainDescriptors, const cv::Mat &queryDescriptors, std::vector<cv::DMatch> &matches,
              double &elapsedTime);
 
   unsigned int matchPoint(const vpImage<unsigned char> &I);
-  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                          const unsigned int width);
+  unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                          unsigned int width);
   unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   bool matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
@@ -729,8 +727,8 @@ public:
                            bool (*func)(const vpHomogeneousMatrix &) = NULL, const vpRect &rectangle = vpRect());
 
   unsigned int matchPoint(const vpImage<vpRGBa> &I_color);
-  unsigned int matchPoint(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, const unsigned int height,
-                          const unsigned int width);
+  unsigned int matchPoint(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, unsigned int height,
+                          unsigned int width);
   unsigned int matchPoint(const vpImage<vpRGBa> &I_color, const vpRect &rectangle);
 
   bool matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
@@ -741,8 +739,8 @@ public:
 
   void reset();
 
-  void saveLearningData(const std::string &filename, const bool binaryMode = false,
-                        const bool saveTrainingImages = true);
+  void saveLearningData(const std::string &filename, bool binaryMode = false,
+                        bool saveTrainingImages = true);
 
   /*!
     Set if the covariance matrix has to be computed in the Virtual Visual
@@ -917,17 +915,27 @@ public:
   }
 
   /*!
+   * Set maximum number of keypoints to extract.
+   * \warning This functionality is only available for ORB and SIFT extactors.
+   * \param maxFeatures : Maximum number of keypoints to extract. Set -1 to use default values.
+   */
+  void setMaxFeatures(int maxFeatures)
+  {
+    m_maxFeatures = maxFeatures;
+  }
+
+  /*!
     Set the filtering method to eliminate false matching.
     The different methods are:
-      - constantFactorDistanceThreshold (keep matches whose the descriptor
-    distance is below dist_min * factor)
-      - stdDistanceThreshold (keep matches whose the descriptor distance is
-    below dist_min + standard_deviation)
-      - ratioDistanceThreshold (keep matches enough discriminated: the ratio
-    distance between the 2 best matches is below the threshold)
-      - stdAndRatioDistanceThreshold (keep matches that agree with at least
-    one of the two conditions)
-      - noFilterMatching
+      - vpKeyPoint::constantFactorDistanceThreshold : Keep matches whose descriptor
+    distance is below dist_min * factor.
+      - vpKeyPoint::stdDistanceThreshold : Keep matches whose the descriptor distance is
+    below dist_min + standard_deviation.
+      - vpKeyPoint::ratioDistanceThreshold : Keep matches enough discriminated when the ratio
+    distance between the 2 best matches is below the threshold.
+      - vpKeyPoint::stdAndRatioDistanceThreshold : Keep matches that agree with at least
+    one of the two conditions.
+      - vpKeyPoint::noFilterMatching : No filter is applied.
 
     \param filterType : Type of the filtering method
   */
@@ -980,7 +988,7 @@ public:
 
     \param ratio : Ratio value (]0 ; 1])
   */
-  inline void setMatchingRatioThreshold(const double ratio)
+  inline void setMatchingRatioThreshold(double ratio)
   {
     if (ratio > 0.0 && (ratio < 1.0 || std::fabs(ratio - 1.0) < std::numeric_limits<double>::epsilon())) {
       m_matchingRatioThreshold = ratio;
@@ -995,7 +1003,7 @@ public:
 
     \param percentage : Percentage value (]0 ; 100])
   */
-  inline void setRansacConsensusPercentage(const double percentage)
+  inline void setRansacConsensusPercentage(double percentage)
   {
     if (percentage > 0.0 &&
         (percentage < 100.0 || std::fabs(percentage - 100.0) < std::numeric_limits<double>::epsilon())) {
@@ -1019,7 +1027,7 @@ public:
 
     \param nbIter : Maximum number of iterations for the Ransac
   */
-  inline void setRansacIteration(const int nbIter)
+  inline void setRansacIteration(int nbIter)
   {
     if (nbIter > 0) {
       m_nbRansacIterations = nbIter;
@@ -1033,7 +1041,7 @@ public:
 
     \note Needs C++11 or higher.
   */
-  inline void setRansacParallel(const bool parallel)
+  inline void setRansacParallel(bool parallel)
   {
     m_ransacParallel = parallel;
   }
@@ -1044,7 +1052,7 @@ public:
     \param nthreads : Number of threads, if 0 the number of CPU threads will be determined
     \sa setRansacParallel
   */
-  inline void setRansacParallelNbThreads(const unsigned int nthreads)
+  inline void setRansacParallelNbThreads(unsigned int nthreads)
   {
     m_ransacParallelNbThreads = nthreads;
   }
@@ -1056,7 +1064,7 @@ public:
     \param reprojectionError : Maximum reprojection error in pixel (used by
     OpenCV function)
   */
-  inline void setRansacReprojectionError(const double reprojectionError)
+  inline void setRansacReprojectionError(double reprojectionError)
   {
     if (reprojectionError > 0.0) {
       m_ransacReprojectionError = reprojectionError;
@@ -1072,7 +1080,7 @@ public:
 
     \param minCount : Minimum number of inlier for the consensus
   */
-  inline void setRansacMinInlierCount(const int minCount)
+  inline void setRansacMinInlierCount(int minCount)
   {
     if (minCount > 0) {
       m_nbRansacMinInlierCount = minCount;
@@ -1087,7 +1095,7 @@ public:
 
     \param threshold : Maximum error in meter for ViSP function
   */
-  inline void setRansacThreshold(const double threshold)
+  inline void setRansacThreshold(double threshold)
   {
     if (threshold > 0.0) {
       m_ransacThreshold = threshold;
@@ -1103,7 +1111,7 @@ public:
     \param useAffine : True to use multiple affine transformations, false
     otherwise
   */
-  inline void setUseAffineDetection(const bool useAffine) { m_useAffineDetection = useAffine; }
+  inline void setUseAffineDetection(bool useAffine) { m_useAffineDetection = useAffine; }
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
   /*!
@@ -1112,7 +1120,7 @@ public:
 
     \param useCrossCheck : True to use cross check, false otherwise
   */
-  inline void setUseBruteForceCrossCheck(const bool useCrossCheck)
+  inline void setUseBruteForceCrossCheck(bool useCrossCheck)
   {
     // Only available with BruteForce and with k=1 (i.e not used with a
     // ratioDistanceThreshold method)
@@ -1132,7 +1140,7 @@ public:
     \param useMatchTrainToQuery : True to match the train keypoints to the
     query keypoints
    */
-  inline void setUseMatchTrainToQuery(const bool useMatchTrainToQuery)
+  inline void setUseMatchTrainToQuery(bool useMatchTrainToQuery)
   {
     m_useMatchTrainToQuery = useMatchTrainToQuery;
   }
@@ -1144,7 +1152,7 @@ public:
     \param usePercentage : True to a percentage ratio of inliers, otherwise
     use a specified number of inliers
   */
-  inline void setUseRansacConsensusPercentage(const bool usePercentage) { m_useConsensusPercentage = usePercentage; }
+  inline void setUseRansacConsensusPercentage(bool usePercentage) { m_useConsensusPercentage = usePercentage; }
 
   /*!
     Set the flag to choose between the OpenCV or ViSP Ransac pose estimation
@@ -1153,7 +1161,7 @@ public:
     \param ransacVVS : True to use ViSP function, otherwise use OpenCV
     function
   */
-  inline void setUseRansacVVS(const bool ransacVVS) { m_useRansacVVS = ransacVVS; }
+  inline void setUseRansacVVS(bool ransacVVS) { m_useRansacVVS = ransacVVS; }
 
   /*!
     Set the flag to filter matches where multiple query keypoints are matched
@@ -1161,7 +1169,7 @@ public:
 
     \param singleMatchFilter : True to use the single match filter.
    */
-  inline void setUseSingleMatchFilter(const bool singleMatchFilter) { m_useSingleMatchFilter = singleMatchFilter; }
+  inline void setUseSingleMatchFilter(bool singleMatchFilter) { m_useSingleMatchFilter = singleMatchFilter; }
 
 private:
   //! If true, compute covariance matrix if the user select the pose
@@ -1302,6 +1310,8 @@ private:
   bool m_useSingleMatchFilter;
   //! Grayscale image buffer, used when passing color images
   vpImage<unsigned char> m_I;
+  //! Max number of features to extract, -1 to use default values
+  int m_maxFeatures;
 
   void affineSkew(double tilt, double phi, cv::Mat &img, cv::Mat &mask, cv::Mat &Ai);
 

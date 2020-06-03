@@ -57,7 +57,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) \
+  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -86,7 +87,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
 
 /*!
 
-Print the program options.
+  Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
@@ -121,7 +122,7 @@ OPTIONS:                                               Default\n\
 }
 /*!
 
-Set the program options.
+  Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
@@ -147,12 +148,10 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
     case 'h':
       usage(argv[0], NULL);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -205,14 +204,11 @@ int main(int argc, const char **argv)
     }
     vpProjectionDisplay externalview;
 
-    double px, py;
-    px = py = 500;
-    double u0, v0;
-    u0 = 150, v0 = 160;
+    double px = 500, py = 500;
+    double u0 = 150, v0 = 160;
 
     vpCameraParameters cam(px, py, u0, v0);
 
-    int i;
     vpServo task;
     vpSimulatorCamera robot;
 
@@ -233,8 +229,7 @@ int main(int argc, const char **argv)
     robot.getPosition(wMc);
     wMo = wMc * cMo;
 
-    vpHomogeneousMatrix cextMo(0, 0, 2, 0, 0,
-                               0); // vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60))   ;
+    vpHomogeneousMatrix cextMo(0, 0, 2, 0, 0, 0); // vpMath::rad(40),  vpMath::rad(10),  vpMath::rad(60));
 
     // sets the point coordinates in the object frame
     vpPoint point[4];
@@ -243,17 +238,17 @@ int main(int argc, const char **argv)
     point[2].setWorldCoordinates(0.1, 0.1, 0);
     point[3].setWorldCoordinates(-0.1, 0.1, 0);
 
-    for (i = 0; i < 4; i++)
+    for (unsigned i = 0; i < 4; i++)
       externalview.insert(point[i]);
 
     // computes  the point coordinates in the camera frame and its 2D
     // coordinates
-    for (i = 0; i < 4; i++)
+    for (unsigned i = 0; i < 4; i++)
       point[i].track(cMo);
 
     // sets the desired position of the point
     vpFeaturePoint p[4];
-    for (i = 0; i < 4; i++)
+    for (unsigned i = 0; i < 4; i++)
       vpFeatureBuilder::create(p[i], point[i]); // retrieve x,y and Z of the vpPoint structure
 
     // sets the desired position of the feature point s*
@@ -281,7 +276,7 @@ int main(int argc, const char **argv)
     task.set_eJe(eJe);
 
     // we want to see a point on a point
-    for (i = 0; i < 4; i++)
+    for (unsigned i = 0; i < 4; i++)
       task.addFeature(p[i], pd[i]);
 
     // set the gain
@@ -307,7 +302,7 @@ int main(int argc, const char **argv)
       cMo = wMc.inverse() * wMo;
 
       // update new point position and corresponding features
-      for (i = 0; i < 4; i++) {
+      for (unsigned i = 0; i < 4; i++) {
         point[i].track(cMo);
         // retrieve x,y and Z of the vpPoint structure
         vpFeatureBuilder::create(p[i], point[i]);
@@ -345,8 +340,8 @@ int main(int argc, const char **argv)
     cMo.print();
 
     if (opt_display && opt_click_allowed) {
-      // suppressed for automate test
-      std::cout << "\n\nClick in the internal view window to end..." << std::endl;
+      vpDisplay::displayText(Iint, 20, 20, "Click to quit...", vpColor::white);
+      vpDisplay::flush(Iint);
       vpDisplay::getClick(Iint);
     }
     return EXIT_SUCCESS;
@@ -354,6 +349,12 @@ int main(int argc, const char **argv)
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
+}
+#elif !(defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+int main()
+{
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
 }
 #else
 int main()

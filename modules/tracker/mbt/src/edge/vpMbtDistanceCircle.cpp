@@ -100,7 +100,7 @@ void vpMbtDistanceCircle::project(const vpHomogeneousMatrix &cMo) { circle->proj
   center of the circle we have 3 points defining the plane that contains the
   circle. \param r : Radius of the circle.
 */
-void vpMbtDistanceCircle::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, const double r)
+void vpMbtDistanceCircle::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, double r)
 {
   circle = new vpCircle;
   p1 = new vpPoint;
@@ -145,7 +145,7 @@ void vpMbtDistanceCircle::setMovingEdge(vpMe *_me)
   \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack,
+bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
                                          const vpImage<bool> *mask)
 {
   if (isvisible) {
@@ -270,8 +270,8 @@ void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, cons
   If false, display the circle only if visible.
 */
 void vpMbtDistanceCircle::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                  const bool displayFullModel)
+                                  const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
+                                  bool displayFullModel)
 {
   std::vector<double> params = getModelForDisplay(cMo, camera, displayFullModel);
 
@@ -294,8 +294,8 @@ void vpMbtDistanceCircle::display(const vpImage<unsigned char> &I, const vpHomog
   If false, display the circle only if visible.
 */
 void vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                  const bool displayFullModel)
+                                  const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
+                                  bool displayFullModel)
 {
   std::vector<double> params = getModelForDisplay(cMo, camera, displayFullModel);
 
@@ -322,7 +322,7 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
                                     p_me.get_ifloat(),
                                     p_me.get_jfloat(),
                                     static_cast<double>(p_me.getState())};
-#else   
+#else
       std::vector<double> params;
       params.push_back(0); //ME
       params.push_back(p_me.get_ifloat());
@@ -347,7 +347,7 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
 */
 std::vector<double> vpMbtDistanceCircle::getModelForDisplay(const vpHomogeneousMatrix &cMo,
                                                             const vpCameraParameters &camera,
-                                                            const bool displayFullModel)
+                                                            bool displayFullModel)
 {
   std::vector<double> params;
 
@@ -376,18 +376,15 @@ std::vector<double> vpMbtDistanceCircle::getModelForDisplay(const vpHomogeneousM
 }
 
 /*!
-    Enable to display the points along the ellipse with a color corresponding
+   Enable to display the points along the ellipse with a color corresponding
    to their state.
 
-    - If green : The vpMeSite is a good point.
-    - If blue : The point is removed because of the vpMeSite tracking phase
-   (constrast problem).
-    - If purple : The point is removed because of the vpMeSite tracking phase
-   (threshold problem).
-    - If blue : The point is removed because of the robust method in the
-   virtual visual servoing.
+   - If green : The vpMeSite is a good point.
+   - If blue : The point is removed because of the vpMeSite tracking phase (constrast problem).
+   - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
+   - If blue : The point is removed because of the robust method in the virtual visual servoing.
 
-    \param I : The image.
+   \param I : The image.
 */
 void vpMbtDistanceCircle::displayMovingEdges(const vpImage<unsigned char> &I)
 {

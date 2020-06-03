@@ -128,7 +128,7 @@ int main()
                                                         0, py, v0,
                                                         0,  0,  1);
       cv::Mat distCoeffs = cv::Mat::zeros(5,1,CV_64FC1);
-      double x2, y2, u2, v2;
+      double x2, y2;
 
       vpPixelMeterConversion::convertPoint(cam, u1, v1, x1, y1);
       vpPixelMeterConversion::convertPoint(cameraMatrix, distCoeffs, u1, v1, x2, y2);

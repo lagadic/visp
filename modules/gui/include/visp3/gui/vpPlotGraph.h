@@ -180,11 +180,11 @@ public:
   void initGraph(unsigned int nbCurve);
   void initSize(vpImagePoint topLeft, unsigned int width, unsigned int height, unsigned int margei,
                 unsigned int margej);
-  void initScale(vpImage<unsigned char> &I, const double xmin, const double xmax, const int nbDivx, const double ymin,
-                 const double ymax, const int nbDivy, const bool gx, const bool gy);
-  void initScale(vpImage<unsigned char> &I, const double xmin, const double xmax, const int nbDivx, const double ymin,
-                 const double ymax, const int nbDivy, const double zmin, const double zmax, const int nbDivz,
-                 const bool gx, const bool gy);
+  void initScale(vpImage<unsigned char> &I, double xmin, double xmax, int nbDivx, double ymin,
+                 double ymax, int nbDivy, bool gx, bool gy);
+  void initScale(vpImage<unsigned char> &I, double xmin, double xmax, int nbDivx, double ymin,
+                 double ymax, int nbDivy, double zmin, double zmax, int nbDivz,
+                 bool gx, bool gy);
 
   void displayGrid(vpImage<unsigned char> &I);
   void displayUnit(vpImage<unsigned char> &I);
@@ -199,23 +199,22 @@ public:
   bool move(const vpImage<unsigned char> &I, vpMouseButton::vpMouseButtonType &button);
   vpHomogeneousMatrix navigation(const vpImage<unsigned char> &I, bool &changed, vpMouseButton::vpMouseButtonType &b);
 
-  void plot(vpImage<unsigned char> &I, const unsigned int curveNb, const double x, const double y);
-  vpMouseButton::vpMouseButtonType plot(vpImage<unsigned char> &I, const unsigned int curveNb, const double x,
-                                        const double y, const double z);
+  void plot(vpImage<unsigned char> &I, unsigned int curveNb, double x, double y);
+  vpMouseButton::vpMouseButtonType plot(vpImage<unsigned char> &I, unsigned int curveNb, double x,
+                                        double y, double z);
   void replot(vpImage<unsigned char> &I);
   void replot3D(vpImage<unsigned char> &I);
 
   void rescalex(unsigned int side, double extremity);
   void rescaley(unsigned int side, double extremity);
   void rescalez(unsigned int side, double extremity);
-  // void rescale(double &min, double &max, double &delta, const int nbDiv,
-  // int side);
-  void resetPointList(const unsigned int curveNum);
+  // void rescale(double &min, double &max, double &delta, int nbDiv, int side);
+  void resetPointList(unsigned int curveNum);
 
-  void setCurveColor(const unsigned int curveNum, const vpColor &color);
-  void setCurveThickness(const unsigned int curveNum, const unsigned int thickness);
-  void setGridThickness(const unsigned int thickness) { this->gridThickness = thickness; };
-  void setLegend(const unsigned int curveNum, const std::string &legend);
+  void setCurveColor(unsigned int curveNum, const vpColor &color);
+  void setCurveThickness(unsigned int curveNum, unsigned int thickness);
+  void setGridThickness(unsigned int thickness) { this->gridThickness = thickness; };
+  void setLegend(unsigned int curveNum, const std::string &legend);
   void setTitle(const std::string &title);
   void setUnitX(const std::string &unitx);
   void setUnitY(const std::string &unity);

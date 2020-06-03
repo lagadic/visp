@@ -59,7 +59,6 @@
 #if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // Require opencv >= 4.0.0
 #  include <opencv2/imgproc/types_c.h>
 #  include <opencv2/imgproc.hpp>
-#  include <opencv2/imgcodecs.hpp>
 #  include <opencv2/highgui.hpp>
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
 #  include <opencv2/core/core.hpp>
@@ -135,24 +134,24 @@ public:
   static void convert(const vpImage<vpRGBa> &src, IplImage *&dest);
   static void convert(const vpImage<unsigned char> &src, IplImage *&dest);
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-  static void convert(const cv::Mat &src, vpImage<vpRGBa> &dest, const bool flip = false);
-  static void convert(const cv::Mat &src, vpImage<unsigned char> &dest, const bool flip = false,
+  static void convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool flip = false);
+  static void convert(const cv::Mat &src, vpImage<unsigned char> &dest, bool flip = false,
                       unsigned int nThreads=0);
   static void convert(const vpImage<vpRGBa> &src, cv::Mat &dest);
-  static void convert(const vpImage<unsigned char> &src, cv::Mat &dest, const bool copyData = true);
+  static void convert(const vpImage<unsigned char> &src, cv::Mat &dest, bool copyData = true);
 #endif
 #endif
 
 #ifdef VISP_HAVE_YARP
   static void convert(const vpImage<unsigned char> &src, yarp::sig::ImageOf<yarp::sig::PixelMono> *dest,
-                      const bool copyData = true);
+                      bool copyData = true);
   static void convert(const yarp::sig::ImageOf<yarp::sig::PixelMono> *src, vpImage<unsigned char> &dest,
-                      const bool copyData = true);
+                      bool copyData = true);
 
   static void convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp::sig::PixelRgba> *dest,
-                      const bool copyData = true);
+                      bool copyData = true);
   static void convert(const yarp::sig::ImageOf<yarp::sig::PixelRgba> *src, vpImage<vpRGBa> &dest,
-                      const bool copyData = true);
+                      bool copyData = true);
 
   static void convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp::sig::PixelRgb> *dest);
   static void convert(const yarp::sig::ImageOf<yarp::sig::PixelRgb> *src, vpImage<vpRGBa> &dest);
@@ -251,30 +250,30 @@ public:
   static void MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba, unsigned int size);
 
   static void HSVToRGBa(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
-                        const unsigned int size);
+                        unsigned int size);
   static void HSVToRGBa(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
-                        unsigned char *rgba, const unsigned int size);
+                        unsigned char *rgba, unsigned int size);
   static void RGBaToHSV(const unsigned char *rgba, double *hue, double *saturation, double *value,
-                        const unsigned int size);
+                        unsigned int size);
   static void RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation, unsigned char *value,
-                        const unsigned int size);
+                        unsigned int size);
 
   static void HSVToRGB(const double *hue, const double *saturation, const double *value, unsigned char *rgb,
-                       const unsigned int size);
+                       unsigned int size);
   static void HSVToRGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
-                       unsigned char *rgb, const unsigned int size);
+                       unsigned char *rgb, unsigned int size);
   static void RGBToHSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
-                       const unsigned int size);
+                       unsigned int size);
   static void RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
-                       const unsigned int size);
+                       unsigned int size);
 
 private:
   static void computeYCbCrLUT();
 
   static void HSV2RGB(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
-                      const unsigned int size, const unsigned int step);
-  static void RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value, const unsigned int size,
-                      const unsigned int step);
+                      unsigned int size, unsigned int step);
+  static void RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value, unsigned int size,
+                      unsigned int step);
 
 private:
   static bool YCbCrLUTcomputed;
@@ -285,9 +284,3 @@ private:
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

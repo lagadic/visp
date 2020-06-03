@@ -89,7 +89,6 @@
   \code
 #include <visp3/ar/vpAR.h>
 #include <visp3/core/vpCameraParameters.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 
@@ -151,7 +150,7 @@ public:
   vpAR() : background(false){};
 
   virtual ~vpAR();
-  void initInternalViewer(const unsigned int width, const unsigned int height, vpImageType type = grayImage);
+  void initInternalViewer(unsigned int width, unsigned int height, vpImageType type = grayImage);
   void setImage(vpImage<unsigned char> &I);
   void setImage(vpImage<vpRGBa> &I);
 };

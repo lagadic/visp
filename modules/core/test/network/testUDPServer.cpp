@@ -54,7 +54,7 @@ struct DataType {
   int int_val;
 
   DataType() : double_val(0.0), int_val(0) {}
-  DataType(const double dbl, const int i) : double_val(dbl), int_val(i) {}
+  DataType(double dbl, int i) : double_val(dbl), int_val(i) {}
 };
 }
 
@@ -93,7 +93,7 @@ int main()
 
     // Receive and send message
     while (true) {
-      int res = server.receive(msg, hostInfo, 5000);
+      res = server.receive(msg, hostInfo, 5000);
       if (res) {
         std::cout << "Server received: " << msg << " from: " << hostInfo << std::endl;
         std::cout << "Reply to the client: Echo: " << msg << std::endl;

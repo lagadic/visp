@@ -132,6 +132,6 @@ public:
     */
   const char *name() const { return "vpFeatureMomentAlpha"; }
 
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
 };
 #endif

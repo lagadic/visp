@@ -281,7 +281,6 @@ vpRGBa::alpha_default.
   \param flip : Set to true to vertically flip the converted image.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -377,7 +376,6 @@ void vpImageConvert::convert(const IplImage *src, vpImage<vpRGBa> &dest, bool fl
   \param flip : Set to true to vertically flip the converted image.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -471,7 +469,6 @@ void vpImageConvert::convert(const IplImage *src, vpImage<unsigned char> &dest, 
   \param dest : destination image
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -554,7 +551,6 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, IplImage *&dest)
   \param dest : destination image
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -636,7 +632,6 @@ greater) was detected during the configuration step.
   \param flip : Set to true to vertically flip the converted image.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
@@ -658,9 +653,9 @@ int main()
 }
   \endcode
 */
-void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, const bool flip)
+void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool flip)
 {
-  dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
 
   if (src.type() == CV_8UC4) {
     vpRGBa rgbaVal;
@@ -677,11 +672,10 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, const bo
           dest[i][j] = rgbaVal;
       }
   } else if (src.type() == CV_8UC3) {
-    if (!flip) {
+    if (src.isContinuous() && !flip) {
       SimdBgrToRgba(src.data, src.cols, src.rows, src.step[0], reinterpret_cast<uint8_t*>(dest.bitmap),
                     dest.getWidth() * sizeof(vpRGBa), vpRGBa::alpha_default);
     } else {
-      //Cannot use BGRToRGBa since src may not be continuous
       vpRGBa rgbaVal;
       rgbaVal.A = vpRGBa::alpha_default;
       for (unsigned int i = 0; i < dest.getRows(); ++i) {
@@ -699,7 +693,7 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBa> &dest, const bo
       }
     }
   } else if (src.type() == CV_8UC1) {
-    if (!flip) {
+    if (src.isContinuous() && !flip) {
       SimdGrayToBgra(src.data, src.cols, src.rows, src.step[0], reinterpret_cast<uint8_t*>(dest.bitmap),
                      dest.getWidth() * sizeof(vpRGBa), vpRGBa::alpha_default);
     } else {
@@ -740,7 +734,6 @@ are converted.
   OpenMP will choose the number of threads.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -761,7 +754,7 @@ int main()
 }
   \endcode
 */
-void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, const bool flip,
+void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, bool flip,
                              unsigned int nThreads)
 {
   if (src.type() == CV_8UC1) {
@@ -881,7 +874,7 @@ int main()
 }
   \endcode
 */
-void vpImageConvert::convert(const vpImage<unsigned char> &src, cv::Mat &dest, const bool copyData)
+void vpImageConvert::convert(const vpImage<unsigned char> &src, cv::Mat &dest, bool copyData)
 {
   if (copyData) {
     cv::Mat tmpMap((int)src.getRows(), (int)src.getCols(), CV_8UC1, (void *)src.bitmap);
@@ -909,7 +902,6 @@ YARP image class documentation.
 only update the image pointer.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -931,7 +923,7 @@ int main()
   \endcode
 */
 void vpImageConvert::convert(const vpImage<unsigned char> &src, yarp::sig::ImageOf<yarp::sig::PixelMono> *dest,
-                             const bool copyData)
+                             bool copyData)
 {
   if (copyData) {
     dest->resize(src.getWidth(), src.getHeight());
@@ -954,7 +946,6 @@ YARP image class documentation.
 only update the image pointer.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
@@ -980,7 +971,7 @@ int main()
   \endcode
 */
 void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelMono> *src, vpImage<unsigned char> &dest,
-                             const bool copyData)
+                             bool copyData)
 {
   dest.resize(src->height(), src->width());
   if (copyData)
@@ -1002,7 +993,6 @@ YARP image class documentation.
 only update the image pointer.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
@@ -1025,7 +1015,7 @@ int main()
   \endcode
 */
 void vpImageConvert::convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp::sig::PixelRgba> *dest,
-                             const bool copyData)
+                             bool copyData)
 {
   if (copyData) {
     dest->resize(src.getWidth(), src.getHeight());
@@ -1047,7 +1037,6 @@ YARP image class documentation.
 only update the image pointer.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
@@ -1074,7 +1063,7 @@ int main()
   \endcode
 */
 void vpImageConvert::convert(const yarp::sig::ImageOf<yarp::sig::PixelRgba> *src, vpImage<vpRGBa> &dest,
-                             const bool copyData)
+                             bool copyData)
 {
   dest.resize(src->height(), src->width());
   if (copyData)
@@ -1094,7 +1083,6 @@ YARP image class documentation.
   \param dest : Destination image in YARP format.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
@@ -1141,7 +1129,6 @@ YARP image class documentation.
   \param dest : Destination image in ViSP format.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpRGBa.h>
@@ -4142,7 +4129,7 @@ void vpImageConvert::MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba, un
 }
 
 void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, const double *value_, unsigned char *rgb,
-                             const unsigned int size, const unsigned int step)
+                             unsigned int size, unsigned int step)
 {
   for (unsigned int i = 0; i < size; i++) {
     double hue = hue_[i], saturation = saturation_[i], value = value_[i];
@@ -4212,7 +4199,7 @@ void vpImageConvert::HSV2RGB(const double *hue_, const double *saturation_, cons
 }
 
 void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
-                             const unsigned int size, const unsigned int step)
+                             unsigned int size, unsigned int step)
 {
   for (unsigned int i = 0; i < size; i++) {
     double red, green, blue;
@@ -4282,7 +4269,7 @@ void vpImageConvert::RGB2HSV(const unsigned char *rgb, double *hue, double *satu
   pixels.
 */
 void vpImageConvert::HSVToRGBa(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
-                               const unsigned int size)
+                               unsigned int size)
 {
   vpImageConvert::HSV2RGB(hue, saturation, value, rgba, size, 4);
 }
@@ -4300,7 +4287,7 @@ void vpImageConvert::HSVToRGBa(const double *hue, const double *saturation, cons
   pixels.
 */
 void vpImageConvert::HSVToRGBa(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
-                               unsigned char *rgba, const unsigned int size)
+                               unsigned char *rgba, unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
     double h = hue[i] / 255.0, s = saturation[i] / 255.0, v = value[i] / 255.0;
@@ -4322,7 +4309,7 @@ void vpImageConvert::HSVToRGBa(const unsigned char *hue, const unsigned char *sa
   \param size : The total image size or the number of pixels.
 */
 void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *saturation, double *value,
-                               const unsigned int size)
+                               unsigned int size)
 {
   vpImageConvert::RGB2HSV(rgba, hue, saturation, value, size, 4);
 }
@@ -4339,7 +4326,7 @@ void vpImageConvert::RGBaToHSV(const unsigned char *rgba, double *hue, double *s
   \param size : The total image size or the number of pixels.
 */
 void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation,
-                               unsigned char *value, const unsigned int size)
+                               unsigned char *value, unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
     double h, s, v;
@@ -4361,7 +4348,7 @@ void vpImageConvert::RGBaToHSV(const unsigned char *rgba, unsigned char *hue, un
   \param size : The total image size or the number of pixels.
 */
 void vpImageConvert::HSVToRGB(const double *hue, const double *saturation, const double *value, unsigned char *rgb,
-                              const unsigned int size)
+                              unsigned int size)
 {
   vpImageConvert::HSV2RGB(hue, saturation, value, rgb, size, 3);
 }
@@ -4376,7 +4363,7 @@ void vpImageConvert::HSVToRGB(const double *hue, const double *saturation, const
   \param size : The total image size or the number of pixels.
 */
 void vpImageConvert::HSVToRGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
-                              unsigned char *rgb, const unsigned int size)
+                              unsigned char *rgb, unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
     double h = hue[i] / 255.0, s = saturation[i] / 255.0, v = value[i] / 255.0;
@@ -4397,7 +4384,7 @@ void vpImageConvert::HSVToRGB(const unsigned char *hue, const unsigned char *sat
   \param size : The total image size or the number of pixels.
 */
 void vpImageConvert::RGBToHSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
-                              const unsigned int size)
+                              unsigned int size)
 {
   vpImageConvert::RGB2HSV(rgb, hue, saturation, value, size, 3);
 }
@@ -4413,7 +4400,7 @@ void vpImageConvert::RGBToHSV(const unsigned char *rgb, double *hue, double *sat
   \param size : The total image size or the number of pixels.
 */
 void vpImageConvert::RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation,
-                              unsigned char *value, const unsigned int size)
+                              unsigned char *value, unsigned int size)
 {
   for (unsigned int i = 0; i < size; i++) {
     double h, s, v;

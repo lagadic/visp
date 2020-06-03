@@ -831,7 +831,10 @@ RECURSIVE              = YES
 
 EXCLUDE                = "@VISP_SOURCE_DIR@/tutorial/ios/StartedImageProc/StartedImageProc/AppDelegate.h" \
                          "@VISP_SOURCE_DIR@/tutorial/ios/StartedImageProc/StartedImageProc/AppDelegate.m" \
-                         "@VISP_SOURCE_DIR@/tutorial/ios/StartedImageProc/StartedImageProc/ViewController.h"
+                         "@VISP_SOURCE_DIR@/tutorial/ios/StartedImageProc/StartedImageProc/ViewController.h" \
+                         "@VISP_SOURCE_DIR@/tutorial/ios/AprilTagLiveCamera/AprilTagLiveCamera/VispDetector.h" \
+                         "@VISP_SOURCE_DIR@/tutorial/ios/AprilTagLiveCamera/AprilTagLiveCamera/VispDetector.mm" \
+                         "@VISP_SOURCE_DIR@/tutorial/ios/AprilTagLiveCamera/VispHelper/ImageDisplay+withContext.h"
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded
@@ -2092,9 +2095,11 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_DMTX \
                          VISP_HAVE_EIGEN3 \
                          VISP_HAVE_FFMPEG \
+                         VISP_HAVE_FLIR_PTU_SDK \
                          VISP_HAVE_FRANKA \
                          VISP_HAVE_FRANKA_VERSION=0x000500 \
                          VISP_HAVE_FLYCAPTURE \
+                         VISP_HAVE_FT_IIT_SDK \
                          VISP_HAVE_GDI \
                          VISP_HAVE_GTK \
                          VISP_HAVE_GSL \
@@ -2128,6 +2133,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_SOWIN \
                          VISP_HAVE_SOQT \
                          VISP_HAVE_SOXT \
+                         VISP_HAVE_TAKKTILE2 \
                          VISP_HAVE_V4L2 \
                          VISP_HAVE_VIPER650 \
                          VISP_HAVE_VIPER650_DATA \
@@ -2162,7 +2168,8 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VP_DEBUG \
                          VP_TRACE \
                          __APPLE__ \
-                         __MACH__
+                         __MACH__ \
+                         RS2_API_VERSION=23101
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this
 # tag can be used to specify a list of macro names that should be expanded. The

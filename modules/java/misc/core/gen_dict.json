@@ -5,6 +5,7 @@
     "VpRowVector",
     "VpCameraParameters",
     "VpHomogeneousMatrix",
+    "VpImagePoint",
     "VpRotationVector",
     "VpPoint"
   ],
@@ -23,6 +24,55 @@
     "vpCPUFeatures"
   ],
   "ManualFuncs": {
+    "VpCameraParameters": {
+      "getKannalaBrandtDistortionCoefficients" : {
+        "j_code" : [
+          "//",
+          "// manual port",
+          "// C++: std::vector<double> getKannalaBrandtDistortionCoefficients()",
+          "//",
+          "//javadoc: VpCameraParameters::getKannalaBrandtDistortionCoefficients()\n",
+          "public double[] getKannalaBrandtDistortionCoefficients()",
+          "{",
+          "   return getKannalaBrandtDistortionCoefficients_2();",
+          "}"
+        ],
+        "jn_code" : [
+          "// C++: std::vector<double> getKannalaBrandtDistortionCoefficients()",
+          "private static native double[] getKannalaBrandtDistortionCoefficients_2();"
+        ],
+        "cpp_code" : [
+          "//",
+          "// manual port",
+          "// std::vector<double> getKannalaBrandtDistortionCoefficients()",
+          "//\n",
+          "JNIEXPORT jdoubleArray JNICALL Java_org_visp_core_VpCameraParameters_getKannalaBrandtDistortionCoefficients_12(JNIEnv*, jclass, jlong self);\n",
+          "JNIEXPORT jdoubleArray JNICALL Java_org_visp_core_VpCameraParameters_getKannalaBrandtDistortionCoefficients_12",
+          "  (JNIEnv* env, jclass, jlong self)",
+          "{",
+          "  static const char method_name[] = \"core::getKannalaBrandtDistortionCoefficients()\";",
+          "  try {",
+          "   LOGD(\"%s\", method_name);",
+          "   vpCameraParameters *cam = (vpCameraParameters*) self; //TODO: check for NULL",
+          "   std::vector<double> coefs = cam->getKannalaBrandtDistortionCoefficients();",
+          "   jdoubleArray jCoefs = env->NewDoubleArray(coefs.size());",
+          "   jdouble *ptr_jCoefs = NULL;",
+          "   ptr_jCoefs = env->GetDoubleArrayElements(jCoefs, 0);",
+          "   for (size_t i = 0; i < coefs.size(); i++) {",
+          "     ptr_jCoefs[i] = coefs[i];",
+          "   }",
+          "   env->ReleaseDoubleArrayElements(jCoefs, ptr_jCoefs, 0);",
+          "   return jCoefs;",
+          "  } catch(const std::exception &e) {",
+          "   throwJavaException(env, &e, method_name);",
+          "  } catch (...) {",
+          "   throwJavaException(env, 0, method_name);",
+          "  }",
+          "  return 0;",
+          "}"
+        ]
+      }
+    },
     "VpPoint": {
       "getWorldCoordinates": {
         "j_code": [
@@ -42,7 +92,7 @@
           "//\n\n",
           "JNIEXPORT jlong JNICALL Java_org_visp_core_VpPoint_getWorldCoordinates_12 (JNIEnv*, jclass, jlong);\n",
           "JNIEXPORT jlong JNICALL Java_org_visp_core_VpPoint_getWorldCoordinates_12",
-          "  (JNIEnv* env, jclass , jlong self)",
+          "  (JNIEnv* env, jclass, jlong self)",
           "{",
           "  static const char method_name[] = \"core::getWorldCoordinates_12()\";",
           "  try {",
@@ -353,6 +403,20 @@
       "suffix": "J",
       "v_type": "vpHomogeneousMatrix",
       "j_import": "org.visp.core.VpHomogeneousMatrix"
+    },
+    "vpImagePoint": {
+      "j_type": "VpImagePoint",
+      "jn_args": [
+        [
+          "__int64",
+          ".nativeObj"
+        ]
+      ],
+      "jn_type": "long",
+      "jni_type": "jlong",
+      "jni_var": "vpImagePoint& %(n)s = *((vpImagePoint*)%(n)s_nativeObj)",
+      "suffix": "J",
+      "j_import": "org.visp.core.VpImagePoint"
     },
     "vpRotationVector": {
       "j_type": "VpRotationVector",
