@@ -116,6 +116,7 @@ before_script:
   - cmake ..
     # Show 3rd parties that are detected
   - cat ViSP-third-party.txt
+  - cat include/visp3/core/vpConfig.h
 
 script:
   - make
