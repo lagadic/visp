@@ -51,7 +51,7 @@ jobs:
       osx_image: xcode11.3
       compiler: clang
       name: "macOS 10.14 AMD64 clang"
-      # jobs to test ViSP Java build
+    # jobs to test ViSP Java build
     - os: linux
       dist: bionic
       arch: amd64
@@ -59,7 +59,6 @@ jobs:
       env: BUILD_JAVA=1
       name: "Bionic AMD64 gcc Java"
     - os: osx
-      # Set Xcode version to 11.3 / macOS 10.14
       osx_image: xcode11.3
       compiler: clang
       env: BUILD_JAVA=1
@@ -127,7 +126,7 @@ before_install:
   - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libbz2-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libogre-1.9-dev libois-dev; fi"
   - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ]; then sudo apt-get install -qq libzbar-dev libdmtx-dev; fi"
-  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ] && [ -n $BUILD_JAVA ]; then sudo apt-get install -qq ant; fi"
+  - "if [ $TRAVIS_OS_NAME = 'linux' ] && [ $TRAVIS_CPU_ARCH = 'amd64' ] && [ $BUILD_JAVA ]; then sudo apt-get install -qq ant; fi"
 
   # Workaround for linux + bionic + clang config where during test libomp.so is not found:
   # error while loading shared libraries: libomp.so: cannot open shared object file: No such file or directory
@@ -136,10 +135,15 @@ before_install:
 before_script:
   - mkdir build
   - cd build
-  - if [ -n $BUILD_JAVA ]; then
+  # Build only ViSP modules and TESTS if BUILD_JAVA or if Arm64 since the build time is long
+  # Full Amr64 build is also done on Drone-CI
+  # Do not build Java if BUILD_JAVA is not set to try to decrease the build time
+  - if [ $BUILD_JAVA ] || [ $TRAVIS_CPU_ARCH = 'arm64' ]; then
+      echo "cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF";
       cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF;
     else
-      cmake ..;
+      echo "cmake .. -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF";
+      cmake .. -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF;
     fi
     # Show 3rd parties that are detected
   - cat ViSP-third-party.txt
