@@ -77,14 +77,12 @@ void vpTemplateTrackerSSDInverseCompositional::initCompInverse(const vpImage<uns
 
   for (unsigned int point = 0; point < templateSize; point++) {
     if ((!useTemplateSelect) || (ptTemplateSelect[point])) {
-      for (unsigned int it = 0; it < nbParam; it++)
-        dWtemp[it] = ptTemplate[point].dW[it];
+      memcpy(dWtemp.data, ptTemplate[point].dW, nbParam * sizeof(double));
 
       HiGtemp = - HCompInverse * dWtemp;
       ptTemplate[point].HiG = new double[nbParam];
 
-      for (unsigned int it = 0; it < nbParam; it++)
-        ptTemplate[point].HiG[it] = HiGtemp[it];
+      memcpy(ptTemplate[point].HiG, HiGtemp.data, nbParam * sizeof(double));
     }
   }
   compoInitialised = true;
