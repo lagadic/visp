@@ -3425,8 +3425,11 @@ void vpImageConvert::RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned
 
   \note The SIMD lib is used to accelerate processing on x86 and ARM architecture.
 */
-void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int width, unsigned int height,
-                                unsigned int nThreads)
+void vpImageConvert::RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int width, unsigned int height, unsigned int
+                              #if defined _OPENMP
+                                nThreads
+                              #endif
+                                )
 {
 #if defined _OPENMP
   if (nThreads > 0) {
@@ -3529,7 +3532,11 @@ void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned
   \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
 */
 void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned int width, unsigned int height,
-                               bool flip, unsigned int nThreads)
+                               bool flip, unsigned int
+                             #if defined _OPENMP
+                               nThreads
+                             #endif
+                               )
 {
   if (!flip) {
 #if defined _OPENMP

@@ -47,9 +47,6 @@
 #include <visp3/core/vpImageMorphology.h>
 #include "common.hpp"
 
-static const double maxMeanPixelError = 1.0;
-static const unsigned int width = 223, height = 151;
-
 TEST_CASE("Binary image morphology", "[image_morphology]") {
   unsigned char image_data[8 * 16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0,
                                        0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1,

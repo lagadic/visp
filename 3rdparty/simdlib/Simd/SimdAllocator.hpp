@@ -153,7 +153,7 @@ namespace Simd
         {
         }
 
-        template <typename U> SIMD_INLINE Allocator(const Allocator<U> & a)
+        template <typename U> SIMD_INLINE Allocator(const Allocator<U> & /*a*/)
         {
         }
 
@@ -175,7 +175,7 @@ namespace Simd
 #endif
         }
 
-        SIMD_INLINE pointer allocate(size_type size, const void * ptr = NULL)
+        SIMD_INLINE pointer allocate(size_type size, const void * /*ptr*/ = NULL)
         {
             return static_cast<pointer>(Allocate(size * sizeof(T), Alignment()));
         }
@@ -185,7 +185,7 @@ namespace Simd
             return ~static_cast<std::size_t>(0) / sizeof(T);
         }
 
-        SIMD_INLINE void deallocate(pointer ptr, size_type size)
+        SIMD_INLINE void deallocate(pointer ptr, size_type /*size*/)
         {
             Free(ptr);
         }
@@ -213,12 +213,12 @@ namespace Simd
         }
     };
 
-    template<typename T1, typename T2> SIMD_INLINE bool operator == (const Allocator<T1> & a1, const Allocator<T2> & a2)
+    template<typename T1, typename T2> SIMD_INLINE bool operator == (const Allocator<T1> & /*a1*/, const Allocator<T2> & /*a2*/)
     {
         return true;
     }
 
-    template<typename T1, typename T2> SIMD_INLINE bool operator != (const Allocator<T1> & a1, const Allocator<T2> & a2)
+    template<typename T1, typename T2> SIMD_INLINE bool operator != (const Allocator<T1> & /*a1*/, const Allocator<T2> & /*a2*/)
     {
         return false;
     }

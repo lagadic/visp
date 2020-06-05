@@ -8,7 +8,7 @@ platform:
 
 steps:
 - name: Build and Test
-  image: ubuntu:19.04
+  image: ubuntu:18.04
   environment:
     CC: clang
     CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF'
