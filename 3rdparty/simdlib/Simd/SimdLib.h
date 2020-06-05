@@ -263,50 +263,6 @@ extern "C"
 
     /*! @ingroup info
 
-        \fn size_t SimdCpuInfo(SimdCpuInfoType type);
-
-        \short Gets info about CPU and %Simd Library.
-
-        \note See enumeration ::SimdCpuInfoType.
-
-        Using example:
-        \verbatim
-        #include "Simd/SimdLib.h"
-        #include <iostream>
-
-        int main()
-        {
-            std::cout << "Sockets : " << SimdCpuInfo(SimdCpuInfoSockets) << std::endl;
-            std::cout << "Cores : " << SimdCpuInfo(SimdCpuInfoCores) << std::endl;
-            std::cout << "Threads : " << SimdCpuInfo(SimdCpuInfoThreads) << std::endl;
-            std::cout << "L1D Cache : " << SimdCpuInfo(SimdCpuInfoCacheL1) / 1024  << " KB" << std::endl;
-            std::cout << "L2 Cache : " << SimdCpuInfo(SimdCpuInfoCacheL2) / 1024  << " KB" << std::endl;
-            std::cout << "L3 Cache : " << SimdCpuInfo(SimdCpuInfoCacheL3) / 1024  << " KB" << std::endl;
-            std::cout << "SSE: " << (SimdCpuInfo(SimdCpuInfoSse) ? "Yes" : "No") << std::endl;
-            std::cout << "SSE2: " << (SimdCpuInfo(SimdCpuInfoSse2) ? "Yes" : "No") << std::endl;
-            std::cout << "SSE3: " << (SimdCpuInfo(SimdCpuInfoSse3) ? "Yes" : "No") << std::endl;
-            std::cout << "SSSE3: " << (SimdCpuInfo(SimdCpuInfoSsse3) ? "Yes" : "No") << std::endl;
-            std::cout << "SSE4.1: " << (SimdCpuInfo(SimdCpuInfoSse41) ? "Yes" : "No") << std::endl;
-            std::cout << "SSE4.2: " << (SimdCpuInfo(SimdCpuInfoSse42) ? "Yes" : "No") << std::endl;
-            std::cout << "AVX: " << (SimdCpuInfo(SimdCpuInfoAvx) ? "Yes" : "No") << std::endl;
-            std::cout << "AVX2: " << (SimdCpuInfo(SimdCpuInfoAvx2) ? "Yes" : "No") << std::endl;
-            std::cout << "AVX-512F: " << (SimdCpuInfo(SimdCpuInfoAvx512f) ? "Yes" : "No") << std::endl;
-            std::cout << "AVX-512BW: " << (SimdCpuInfo(SimdCpuInfoAvx512bw) ? "Yes" : "No") << std::endl;
-            std::cout << "PowerPC-Altivec: " << (SimdCpuInfo(SimdCpuInfoVmx) ? "Yes" : "No") << std::endl;
-            std::cout << "PowerPC-VSX: " << (SimdCpuInfo(SimdCpuInfoVsx) ? "Yes" : "No") << std::endl;
-            std::cout << "ARM-NEON: " << (SimdCpuInfo(SimdCpuInfoNeon) ? "Yes" : "No") << std::endl;
-            std::cout << "MIPS-MSA: " << (SimdCpuInfo(SimdCpuInfoMsa) ? "Yes" : "No") << std::endl;
-            return 0;
-        }
-        \endverbatim
-
-        \param [in] type - a type of required information.
-        \return a value which contains information about CPU and %Simd Library.
-    */
-    SIMD_API size_t SimdCpuInfo(SimdCpuInfoType type);
-
-    /*! @ingroup info
-
         \fn const char *SimdPerformanceStatistic();
 
         \short Gets internal performance statistics of %Simd Library.

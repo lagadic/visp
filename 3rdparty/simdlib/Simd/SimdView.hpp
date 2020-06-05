@@ -27,6 +27,7 @@
 #ifndef __SimdView_hpp__
 #define __SimdView_hpp__
 
+#include "Simd/SimdDefs.h"
 #include "Simd/SimdRectangle.hpp"
 #include "Simd/SimdAllocator.hpp"
 
@@ -94,7 +95,7 @@ namespace Simd
             /*! A single channel 64-bit float point pixel format. */
             Double,
             /*! A 24-bit (3 8-bit channels) RGB (Red, Green, Blue) pixel format. */
-            Rgb24,
+            Rgb24
         };
 
         /*!
@@ -1260,12 +1261,20 @@ namespace Simd
     {
         if (_owner && data)
             Allocator::Free(data);
+#ifdef SIMD_CPP_2011_ENABLE
         *(void**)&data = nullptr;
+#else
+        *(void**)&data = NULL;
+#endif
         _owner = false;
         *(size_t*)&width = 0;
         *(size_t*)&height = 0;
         *(ptrdiff_t *)&stride = 0;
+#ifdef SIMD_CPP_2011_ENABLE
         *(Format*)&format = Format::None;
+#else
+        *(Format*)&format = 0;
+#endif
     }
 
     // View utilities implementation:

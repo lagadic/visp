@@ -31,7 +31,7 @@ namespace Simd
     enum UpdateType
     {
         UpdateSet = 0,
-        UpdateAdd = 1,
+        UpdateAdd = 1
     };
 
     namespace Base

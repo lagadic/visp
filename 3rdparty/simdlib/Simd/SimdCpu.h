@@ -28,17 +28,6 @@
 
 namespace Simd
 {
-    namespace Base
-    {
-        size_t CpuSocketNumber();
-
-        size_t CpuCoreNumber();
-
-        size_t CpuThreadNumber();
-
-        size_t CpuCacheSize(size_t level);
-    }
-
 #ifdef SIMD_SSE_ENABLE
     namespace Sse
     {
@@ -103,34 +92,6 @@ namespace Simd
         }
     }
 #endif
-
-    namespace Cpu
-    {
-        const size_t SOCKET_NUMBER = Base::CpuSocketNumber();
-        const size_t CORE_NUMBER = Base::CpuCoreNumber();
-        const size_t THREAD_NUMBER = Base::CpuThreadNumber();
-        const size_t L1_CACHE_SIZE = Base::CpuCacheSize(1);
-        const size_t L2_CACHE_SIZE = Base::CpuCacheSize(2);
-        const size_t L3_CACHE_SIZE = Base::CpuCacheSize(3);
-    }
-
-    namespace Base
-    {
-        SIMD_INLINE size_t AlgCacheL1()
-        {
-            return Cpu::L1_CACHE_SIZE;
-        }
-
-        SIMD_INLINE size_t AlgCacheL2()
-        {
-            return Cpu::L2_CACHE_SIZE;
-        }
-
-        SIMD_INLINE size_t AlgCacheL3()
-        {
-            return Cpu::L3_CACHE_SIZE * Cpu::SOCKET_NUMBER / Cpu::CORE_NUMBER;
-        }
-    }
 }
 
 #endif//__SimdCpu_h__
