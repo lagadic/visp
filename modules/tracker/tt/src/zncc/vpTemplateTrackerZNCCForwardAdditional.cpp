@@ -70,6 +70,8 @@ void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(const vpImage<un
   double moyTij = 0;
   double moyIW = 0;
   double denom = 0;
+  double *tempt = new double[nbParam];
+
   for (unsigned int point = 0; point < templateSize; point++) {
     i = ptTemplate[point].y;
     j = ptTemplate[point].x;
@@ -124,7 +126,6 @@ void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(const vpImage<un
       dIWy = dIy.getValue(i2, j2);
       // Calcul du Hessien
       Warp->dWarp(X1, X2, p, dW);
-      double *tempt = new double[nbParam];
       for (unsigned int it = 0; it < nbParam; it++)
         tempt[it] = dW[0][it] * dIWx + dW[1][it] * dIWy;
 
@@ -139,9 +140,9 @@ void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(const vpImage<un
           Hdesire[it][jt] += prod * (dW[0][it] * (dW[0][jt] * d_Ixx + dW[1][jt] * d_Ixy) +
                                      dW[1][it] * (dW[0][jt] * d_Ixy + dW[1][jt] * d_Iyy));
       denom += (Tij - moyTij) * (Tij - moyTij) * (IW - moyIW) * (IW - moyIW);
-      delete[] tempt;
     }
   }
+  delete[] tempt;
 
   Hdesire = Hdesire / sqrt(denom);
   vpMatrix::computeHLM(Hdesire, lambdaDep, HLMdesire);
@@ -170,6 +171,7 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
   double evolRMS_init = 0;
   double evolRMS_prec = 0;
   double evolRMS_delta;
+  double *tempt = new double[nbParam];
 
   do {
     int Nbpoint = 0;
@@ -206,6 +208,7 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
     }
 
     if (!Nbpoint) {
+      delete[] tempt;
       throw(vpException(vpException::divideByZeroError, "Cannot track the template: no point"));
     }
 
@@ -234,7 +237,6 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
         dIWy = dIy.getValue(i2, j2);
         // Calcul du Hessien
         Warp->dWarp(X1, X2, p, dW);
-        double *tempt = new double[nbParam];
         for (unsigned int it = 0; it < nbParam; it++)
           tempt[it] = dW[0][it] * dIWx + dW[1][it] * dIWy;
 
@@ -245,7 +247,6 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
         double er = (Tij - IW);
         erreur += (er * er);
         denom += (Tij - moyTij) * (Tij - moyTij) * (IW - moyIW) * (IW - moyIW);
-        delete[] tempt;
       }
     }
     G = G / sqrt(denom);
@@ -254,6 +255,7 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
     try {
       dp = HLMdesireInverse * G;
     } catch (const vpException &e) {
+      delete[] tempt;
       throw(e);
     }
 
@@ -276,6 +278,7 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
     evolRMS_prec = evolRMS;
 
   } while ((iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps));
+  delete[] tempt;
 
   // std::cout<<"erreur "<<erreur<<std::endl;
   nbIteration = iteration;

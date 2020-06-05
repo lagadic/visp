@@ -110,6 +110,7 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
   double evolRMS_init = 0;
   double evolRMS_prec = 0;
   double evolRMS_delta;
+  double *tempt = new double[nbParam];
 
   do {
     unsigned int Nbpoint = 0;
@@ -150,7 +151,6 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
         // Calcul du Hessien
         Warp->dWarpCompo(X1, X2, p, ptTemplateCompo[point].dW, dW);
 
-        double *tempt = new double[nbParam];
         for (unsigned int it = 0; it < nbParam; it++)
           tempt[it] = dW[0][it] * dIWx + dW[1][it] * dIWy;
 
@@ -160,10 +160,10 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
 
         for (unsigned int it = 0; it < nbParam; it++)
           GDir[it] += er * tempt[it];
-        delete[] tempt;
       }
     }
     if (Nbpoint == 0) {
+      delete[] tempt;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     }
 
@@ -172,6 +172,7 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
     try {
       dp = (HLMDir).inverseByLU() * (GDir);
     } catch (const vpException &e) {
+      delete[] tempt;
       throw(e);
     }
 
@@ -196,6 +197,7 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
     evolRMS_prec = evolRMS;
 
   } while ( (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) );
+  delete[] tempt;
 
   nbIteration = iteration;
 }

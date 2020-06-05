@@ -88,6 +88,7 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
   double evolRMS_init = 0;
   double evolRMS_prec = 0;
   double evolRMS_delta;
+  double *tempt = new double[nbParam];
 
   do {
     unsigned int Nbpoint = 0;
@@ -118,7 +119,6 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
 
         Warp->dWarpCompo(X1, X2, p, ptTemplate[point].dW, dW);
 
-        double *tempt = new double[nbParam];
         for (unsigned int it = 0; it < nbParam; it++)
           tempt[it] = dW[0][it] * dIWx + dW[1][it] * dIWy;
 
@@ -131,10 +131,10 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
           G[it] += er * tempt[it];
 
         erreur += (er * er);
-        delete[] tempt;
       }
     }
     if (Nbpoint == 0) {
+      delete[] tempt;
       throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));
     }
 
@@ -143,6 +143,7 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
     try {
       dp = HLM.inverseByLU() * G;
     } catch (const vpException &e) {
+      delete[] tempt;
       throw(e);
     }
 
@@ -165,6 +166,7 @@ void vpTemplateTrackerSSDForwardCompositional::trackNoPyr(const vpImage<unsigned
     evolRMS_prec = evolRMS;
 
   } while ( (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) );
+  delete[] tempt;
 
   nbIteration = iteration;
 }
