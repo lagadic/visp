@@ -2292,14 +2292,14 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
   if (detectorNameTmp == "SIFT") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
     cv::Ptr<cv::FeatureDetector> siftDetector;
+    if (m_maxFeatures > 0) {
+      siftDetector = cv::xfeatures2d::SIFT::create(m_maxFeatures);
+    }
+    else {
+      siftDetector = cv::xfeatures2d::SIFT::create();
+    }
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = siftDetector;
-      if (m_maxFeatures > 0) {
-        siftDetector = cv::xfeatures2d::SIFT::create(m_maxFeatures);
-      }
-      else {
-        siftDetector = cv::xfeatures2d::SIFT::create();
-      }
     } else {
       std::cerr << "You should not use SIFT with Pyramid feature detection!" << std::endl;
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(siftDetector);
