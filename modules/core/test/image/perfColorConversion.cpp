@@ -40,20 +40,23 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#include <thread>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 #include "common.hpp"
 
 static std::string ipath = vpIoTools::getViSPImagesDataPath();
+static std::string imagePathColor = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
+static std::string imagePathGray = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
+static int nThreads = 0;
 
 TEST_CASE("Benchmark rgba to grayscale (naive code)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
   vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePath);
+  vpImageIo::read(I, imagePathColor);
 
   vpImage<unsigned char> I_gray(I.getHeight(), I.getWidth());
 
-  BENCHMARK("Benchmark rgba to grayscale Klimt (naive code)") {
+  BENCHMARK("Benchmark rgba to grayscale (naive code)") {
     common_tools::RGBaToGrayRef(reinterpret_cast<unsigned char *>(I.bitmap),
                                 I_gray.bitmap, I.getSize());
     return I_gray;
@@ -61,26 +64,24 @@ TEST_CASE("Benchmark rgba to grayscale (naive code)", "[benchmark]") {
 }
 
 TEST_CASE("Benchmark rgba to grayscale (ViSP)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
   vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePath);
+  vpImageIo::read(I, imagePathColor);
 
   vpImage<unsigned char> I_gray(I.getHeight(), I.getWidth());
 
-  BENCHMARK("Benchmark rgba to grayscale Klimt (ViSP)") {
-    vpImageConvert::convert(I, I_gray);
+  BENCHMARK("Benchmark rgba to grayscale (ViSP)") {
+    vpImageConvert::convert(I, I_gray, nThreads);
     return I_gray;
   };
 }
 
 TEST_CASE("Benchmark grayscale to rgba (naive code)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
   vpImage<unsigned char> I;
-  vpImageIo::read(I, imagePath);
+  vpImageIo::read(I, imagePathGray);
 
   vpImage<vpRGBa> I_color(I.getHeight(), I.getWidth());
 
-  BENCHMARK("Benchmark grayscale to rgba Klimt (naive code)") {
+  BENCHMARK("Benchmark grayscale to rgba (naive code)") {
     common_tools::grayToRGBaRef(I.bitmap, reinterpret_cast<unsigned char *>(I_color.bitmap),
                                 I.getSize());
     return I_color;
@@ -88,22 +89,20 @@ TEST_CASE("Benchmark grayscale to rgba (naive code)", "[benchmark]") {
 }
 
 TEST_CASE("Benchmark grayscale to rgba (ViSP)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
   vpImage<unsigned char> I;
-  vpImageIo::read(I, imagePath);
+  vpImageIo::read(I, imagePathGray);
 
   vpImage<vpRGBa> I_color(I.getHeight(), I.getWidth());
 
-  BENCHMARK("Benchmark grayscale to rgba Klimt (ViSP)") {
+  BENCHMARK("Benchmark grayscale to rgba (ViSP)") {
     vpImageConvert::convert(I, I_color);
     return I_color;
   };
 }
 
 TEST_CASE("Benchmark split RGBa (ViSP)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
   vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePath);
+  vpImageIo::read(I, imagePathColor);
 
   vpImage<unsigned char> R, G, B, A;
   BENCHMARK("Benchmark split RGBa (ViSP)") {
@@ -113,9 +112,8 @@ TEST_CASE("Benchmark split RGBa (ViSP)", "[benchmark]") {
 }
 
 TEST_CASE("Benchmark merge to RGBa (ViSP)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
   vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePath);
+  vpImageIo::read(I, imagePathColor);
 
   vpImage<unsigned char> R, G, B, A;
   vpImageConvert::split(I, &R, &G, &B, &A);
@@ -129,9 +127,8 @@ TEST_CASE("Benchmark merge to RGBa (ViSP)", "[benchmark]") {
 
 #if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
 TEST_CASE("Benchmark bgr to grayscale (naive code)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
   vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePath);
+  vpImageIo::read(I, imagePathColor);
 
   std::vector<unsigned char> bgr;
   common_tools::RGBaToBGR(I, bgr);
@@ -147,9 +144,8 @@ TEST_CASE("Benchmark bgr to grayscale (naive code)", "[benchmark]") {
 }
 
 TEST_CASE("Benchmark bgr to grayscale (ViSP)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
   vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePath);
+  vpImageIo::read(I, imagePathColor);
 
   std::vector<unsigned char> bgr;
   common_tools::RGBaToBGR(I, bgr);
@@ -159,7 +155,8 @@ TEST_CASE("Benchmark bgr to grayscale (ViSP)", "[benchmark]") {
   BENCHMARK("Benchmark bgr to grayscale (ViSP)") {
     vpImageConvert::BGRToGrey(bgr.data(),
                               I_gray.bitmap,
-                              I.getWidth(), I.getHeight(), false);
+                              I.getWidth(), I.getHeight(),
+                              false, nThreads);
     return I_gray;
   };
 
@@ -170,7 +167,7 @@ TEST_CASE("Benchmark bgr to grayscale (ViSP)", "[benchmark]") {
     vpImageConvert::convert(I, img);
 
     BENCHMARK("Benchmark bgr to grayscale (ViSP + OpenCV Mat type)") {
-      vpImageConvert::convert(img, I_gray);
+      vpImageConvert::convert(img, I_gray, false, nThreads);
       return I_gray;
     };
   }
@@ -180,8 +177,7 @@ TEST_CASE("Benchmark bgr to grayscale (ViSP)", "[benchmark]") {
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 TEST_CASE("Benchmark bgr to grayscale (OpenCV)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
-  cv::Mat img = cv::imread(imagePath);
+  cv::Mat img = cv::imread(imagePathColor);
   cv::Mat img_gray(img.size(), CV_8UC1);
 
   BENCHMARK("Benchmark bgr to grayscale (OpenCV)") {
@@ -194,15 +190,14 @@ TEST_CASE("Benchmark bgr to grayscale (OpenCV)", "[benchmark]") {
 // C++11 to be able to do bgr.data()
 #if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
 TEST_CASE("Benchmark bgr to rgba (naive code)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
   vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePath);
+  vpImageIo::read(I, imagePathColor);
 
   std::vector<unsigned char> bgr;
   common_tools::RGBaToBGR(I, bgr);
 
   vpImage<vpRGBa> I_bench(I.getHeight(), I.getWidth());
-  BENCHMARK("Benchmark bgr to rgba Klimt (naive code)") {
+  BENCHMARK("Benchmark bgr to rgba (naive code)") {
     common_tools::BGRToRGBaRef(bgr.data(), reinterpret_cast<unsigned char*>(I_bench.bitmap),
                                I.getWidth(), I.getHeight(), false);
     return I_bench;
@@ -210,9 +205,8 @@ TEST_CASE("Benchmark bgr to rgba (naive code)", "[benchmark]") {
 }
 
 TEST_CASE("Benchmark bgr to rgba (ViSP)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
   vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePath);
+  vpImageIo::read(I, imagePathColor);
 
   std::vector<unsigned char> bgr;
   common_tools::RGBaToBGR(I, bgr);
@@ -230,7 +224,7 @@ TEST_CASE("Benchmark bgr to rgba (ViSP)", "[benchmark]") {
   }
 
   vpImage<vpRGBa> I_rgba(I.getHeight(), I.getWidth());
-  BENCHMARK("Benchmark bgr to rgba Klimt (ViSP)") {
+  BENCHMARK("Benchmark bgr to rgba (ViSP)") {
     vpImageConvert::BGRToRGBa(bgr.data(), reinterpret_cast<unsigned char *>(I_rgba.bitmap),
                               I.getWidth(), I.getHeight(), false);
     return I_rgba;
@@ -242,7 +236,7 @@ TEST_CASE("Benchmark bgr to rgba (ViSP)", "[benchmark]") {
     cv::Mat img;
     vpImageConvert::convert(I, img);
 
-    BENCHMARK("Benchmark bgr to rgba Klimt (ViSP + OpenCV Mat type)") {
+    BENCHMARK("Benchmark bgr to rgba (ViSP + OpenCV Mat type)") {
       vpImageConvert::convert(img, I_rgba);
       return I_rgba;
     };
@@ -261,7 +255,16 @@ int main(int argc, char *argv[])
   auto cli = session.cli() // Get Catch's composite command line parser
     | Opt(runBenchmark)    // bind variable to a new option, with a hint string
     ["--benchmark"]        // the option names it will respond to
-    ("run benchmark?");    // description string for the help output
+    ("run benchmark?")     // description string for the help output
+    | Opt(imagePathColor, "imagePathColor")
+    ["--imagePathColor"]
+    ("Path to color image")
+    | Opt(imagePathGray, "imagePathColor")
+    ["--imagePathGray"]
+    ("Path to gray image")
+    | Opt(nThreads, "nThreads")
+    ["--nThreads"]
+    ("Number of threads");
 
   // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
@@ -270,6 +273,15 @@ int main(int argc, char *argv[])
   session.applyCommandLine(argc, argv);
 
   if (runBenchmark) {
+    vpImage<vpRGBa> I_color;
+    vpImageIo::read(I_color, imagePathColor);
+    std::cout << "imagePathColor:\n\t" << imagePathColor << "\n\t" << I_color.getWidth() << "x" << I_color.getHeight() << std::endl;
+
+    vpImage<unsigned char> I_gray;
+    vpImageIo::read(I_gray, imagePathGray);
+    std::cout << "imagePathGray:\n\t" << imagePathGray << "\n\t" << I_gray.getWidth() << "x" << I_gray.getHeight() << std::endl;
+    std::cout << "nThreads: " << nThreads << " / available threads: " << std::thread::hardware_concurrency() << std::endl;
+
     int numFailed = session.run();
 
     // numFailed is clamped to 255 as some unices only use the lower 8 bits.
