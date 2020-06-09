@@ -14,7 +14,9 @@ string(REGEX REPLACE "(-march=[a-z]*)|(-mtune=[a-z]*)|(-msse[0-9,\\.]*)|(-mavx[0
 
 file(GLOB_RECURSE SIMD_BASE_HDR ${CMAKE_CURRENT_SOURCE_DIR}/Simd/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Simd/*.hpp)
 
-if((CMAKE_SYSTEM_PROCESSOR STREQUAL "i686") OR (CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64") OR (MSVC AND (X86 OR X86_64)) OR MINGW)
+# Inspired from https://github.com/ermig1979/Simd/blob/master/prj/cmake/CMakeLists.txt
+# but here we use vars set in VISPDetectPlatform.cmake
+if(X86 OR X86_64)
 
     # Is it needed?
     if(CMAKE_SYSTEM_PROCESSOR STREQUAL "i686")
@@ -132,7 +134,7 @@ if((CMAKE_SYSTEM_PROCESSOR STREQUAL "i686") OR (CMAKE_SYSTEM_PROCESSOR STREQUAL 
     set_source_files_properties(${SIMD_LIB_SRC} PROPERTIES COMPILE_FLAGS "${SIMD_LIB_FLAGS}")
     add_library(${SIMD_LIBRARY} STATIC ${SIMD_LIB_SRC} ${SIMD_ALG_SRC} ${SIMD_BASE_HDR})
 
-elseif((CMAKE_SYSTEM_PROCESSOR MATCHES "arm") OR (CMAKE_SYSTEM_PROCESSOR STREQUAL "aarch64"))
+elseif(ARM OR AARCH64)
 
     if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") AND (NOT(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "7.0.0")))
         set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -Wno-psabi")
