@@ -36,13 +36,9 @@
  *
  *****************************************************************************/
 
-#include <visp3/core/vpCPUFeatures.h>
 #include <visp3/core/vpImageMorphology.h>
 
-#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
-#include <emmintrin.h>
-#define VISP_HAVE_SSE2 1
-#endif
+#include <Simd/SimdLib.hpp>
 
 /*!
   Erode a grayscale image using the given structuring element.
@@ -90,88 +86,8 @@ void vpImageMorphology::erosion(vpImage<unsigned char> &I, const vpConnexityType
     }
   }
 
-  if (connexity == CONNEXITY_4) {
-    unsigned int offset[5] = {1, J.getWidth(), J.getWidth() + 1, J.getWidth() + 2, J.getWidth() * 2 + 1};
-#if VISP_HAVE_SSE2
-    bool checkSSE2 = vpCPUFeatures::checkSSE2();
-#endif
-
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      unsigned int j = 0;
-      unsigned char *ptr_curr_J = J.bitmap + i * J.getWidth();
-      unsigned char *ptr_curr_I = I.bitmap + i * I.getWidth();
-
-#if VISP_HAVE_SSE2
-      if (checkSSE2 && I.getWidth() >= 16) {
-        for (; j <= I.getWidth() - 16; j += 16) {
-          __m128i m = _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[0]));
-          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[1])));
-          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[2])));
-          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[3])));
-          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[4])));
-
-          _mm_storeu_si128((__m128i *)(ptr_curr_I + j), m);
-        }
-      }
-#endif
-
-      for (; j < I.getWidth(); j++) {
-        unsigned char min_value = null_value;
-        for (int k = 0; k < 5; k++) {
-          min_value = (std::min)(min_value, *(ptr_curr_J + j + offset[k]));
-        }
-
-        *(ptr_curr_I + j) = min_value;
-      }
-    }
-  } else {
-    // CONNEXITY_8
-    unsigned int offset[9] = {0,
-                              1,
-                              2,
-                              J.getWidth(),
-                              J.getWidth() + 1,
-                              J.getWidth() + 2,
-                              J.getWidth() * 2,
-                              J.getWidth() * 2 + 1,
-                              J.getWidth() * 2 + 2};
-#if VISP_HAVE_SSE2
-    bool checkSSE2 = vpCPUFeatures::checkSSE2();
-#endif
-
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      unsigned int j = 0;
-      unsigned char *ptr_curr_J = J.bitmap + i * J.getWidth();
-      unsigned char *ptr_curr_I = I.bitmap + i * I.getWidth();
-
-#if VISP_HAVE_SSE2
-      if (checkSSE2 && I.getWidth() >= 16) {
-        for (; j <= I.getWidth() - 16; j += 16) {
-          __m128i m = _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[0]));
-          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[1])));
-          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[2])));
-          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[3])));
-          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[4])));
-          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[5])));
-          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[6])));
-          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[7])));
-          m = _mm_min_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[8])));
-
-          _mm_storeu_si128((__m128i *)(ptr_curr_I + j), m);
-        }
-      }
-#endif
-
-      for (; j < I.getWidth(); j++) {
-        unsigned char min_value = null_value;
-        for (int k = 0; k < 9; k++) {
-          min_value = (std::min)(min_value, *(ptr_curr_J + j + offset[k]));
-        }
-
-        *(ptr_curr_I + j) = min_value;
-      }
-    }
-  }
+  SimdImageErosion(I.bitmap, J.bitmap, I.getWidth(), I.getHeight(),
+                   connexity == CONNEXITY_4 ? SimdImageConnexity4 : SimdImageConnexity8);
 }
 
 /*!
@@ -220,86 +136,6 @@ void vpImageMorphology::dilatation(vpImage<unsigned char> &I, const vpConnexityT
     }
   }
 
-  if (connexity == CONNEXITY_4) {
-    unsigned int offset[5] = {1, J.getWidth(), J.getWidth() + 1, J.getWidth() + 2, J.getWidth() * 2 + 1};
-#if VISP_HAVE_SSE2
-    bool checkSSE2 = vpCPUFeatures::checkSSE2();
-#endif
-
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      unsigned int j = 0;
-      unsigned char *ptr_curr_J = J.bitmap + i * J.getWidth();
-      unsigned char *ptr_curr_I = I.bitmap + i * I.getWidth();
-
-#if VISP_HAVE_SSE2
-      if (checkSSE2 && I.getWidth() >= 16) {
-        for (; j <= I.getWidth() - 16; j += 16) {
-          __m128i m = _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[0]));
-          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[1])));
-          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[2])));
-          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[3])));
-          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[4])));
-
-          _mm_storeu_si128((__m128i *)(ptr_curr_I + j), m);
-        }
-      }
-#endif
-
-      for (; j < I.getWidth(); j++) {
-        unsigned char max_value = null_value;
-        for (int k = 0; k < 5; k++) {
-          max_value = (std::max)(max_value, *(ptr_curr_J + j + offset[k]));
-        }
-
-        *(ptr_curr_I + j) = max_value;
-      }
-    }
-  } else {
-    // CONNEXITY_8
-    unsigned int offset[9] = {0,
-                              1,
-                              2,
-                              J.getWidth(),
-                              J.getWidth() + 1,
-                              J.getWidth() + 2,
-                              J.getWidth() * 2,
-                              J.getWidth() * 2 + 1,
-                              J.getWidth() * 2 + 2};
-#if VISP_HAVE_SSE2
-    bool checkSSE2 = vpCPUFeatures::checkSSE2();
-#endif
-
-    for (unsigned int i = 0; i < I.getHeight(); i++) {
-      unsigned int j = 0;
-      unsigned char *ptr_curr_J = J.bitmap + i * J.getWidth();
-      unsigned char *ptr_curr_I = I.bitmap + i * I.getWidth();
-
-#if VISP_HAVE_SSE2
-      if (checkSSE2 && I.getWidth() >= 16) {
-        for (; j <= I.getWidth() - 16; j += 16) {
-          __m128i m = _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[0]));
-          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[1])));
-          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[2])));
-          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[3])));
-          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[4])));
-          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[5])));
-          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[6])));
-          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[7])));
-          m = _mm_max_epu8(m, _mm_loadu_si128((const __m128i *)(ptr_curr_J + j + offset[8])));
-
-          _mm_storeu_si128((__m128i *)(ptr_curr_I + j), m);
-        }
-      }
-#endif
-
-      for (; j < I.getWidth(); j++) {
-        unsigned char max_value = null_value;
-        for (int k = 0; k < 9; k++) {
-          max_value = (std::max)(max_value, *(ptr_curr_J + j + offset[k]));
-        }
-
-        *(ptr_curr_I + j) = max_value;
-      }
-    }
-  }
+  SimdImageDilatation(I.bitmap, J.bitmap, I.getWidth(), I.getHeight(),
+                      connexity == CONNEXITY_4 ? SimdImageConnexity4 : SimdImageConnexity8);
 }

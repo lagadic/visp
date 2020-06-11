@@ -6,21 +6,18 @@ from enum import Enum
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
 
-def nanoToMilli(nano):
-    return nano / 1000
-
 class BenchmarkResult:
     """BenchmarkResult class to hold perf numbers"""
 
     def __init__(self, name, mean_value, mean_lower_bound, mean_upper_bound, \
                  std_val, std_lower_bound, std_upper_bound):
         self.name = name
-        self.mean_value = nanoToMilli(mean_value)
-        self.mean_lower_bound = nanoToMilli(mean_lower_bound)
-        self.mean_upper_bound = nanoToMilli(mean_upper_bound)
-        self.std_val = nanoToMilli(std_val)
-        self.std_lower_bound = nanoToMilli(std_lower_bound)
-        self.std_upper_bound = nanoToMilli(std_upper_bound)
+        self.mean_value = mean_value
+        self.mean_lower_bound = mean_lower_bound
+        self.mean_upper_bound = mean_upper_bound
+        self.std_val = std_val
+        self.std_lower_bound = std_lower_bound
+        self.std_upper_bound = std_upper_bound
 
     def __str__(self):
         return "BenchmarkResults %s\nmean value=%f, lowerBound=%f, upperBound=%f\nstd:%f, lowerBound=%f, upperBound=%f" \
@@ -42,19 +39,58 @@ class Metric(Enum):
     lowMean = 'low_mean'
     highMean = 'high_mean'
 
+class Unit(Enum):
+    nano = 'nano'
+    micro = 'micro'
+    milli = 'milli'
+    sec = 'sec'
+
+def displayUnit(unit):
+    if unit == Unit.sec:
+        return "s"
+    elif unit == Unit.milli:
+        return "ms"
+    elif unit == Unit.micro:
+        return "us"
+    else:
+        return "ns"
+
+def nanoToMicro(nano):
+    return nano / 1000
+
+def nanoToMilli(nano):
+    # return nano / (1000*1000)
+    return nano
+
+def nanoToSec(nano):
+    return nano / (1000*1000*1000)
+
+def convertUnit(nano, unit):
+    if unit == Unit.sec:
+        return nanoToSec(nano)
+    elif unit == Unit.milli:
+        return nanoToMilli(nano)
+    elif unit == Unit.micro:
+        return nanoToMicro(nano)
+    else:
+        return nano
+
 parser = argparse.ArgumentParser()
 parser.add_argument("--before", help="Path to XML perf log for before comparison.", required=True)
 parser.add_argument("--after", help="Path to XML perf log for after comparison.", required=True)
 parser.add_argument("--before-label", help="Label for before column.", default='Before')
 parser.add_argument("--after-label", help="Label for after column.", default='After')
 parser.add_argument("--metric", help="Benchmark metric (mean, low_mean, high_mean).", type=Metric, choices=list(Metric), default=Metric.mean)
+parser.add_argument("--unit", help="Benchmark unit (nano, micro, milli, sec).", type=Unit, choices=list(Unit), default=Unit.micro)
 
 args = parser.parse_args()
 
 file_before = args.before
 file_after = args.after
+unit = args.unit
 print('Path to XML perf log for before comparison:', file_before)
 print('Path to XML perf log for after comparison:', file_after)
+print('Time unit:', unit)
 print()
 
 tree_before = ET.parse(file_before)
@@ -94,7 +130,8 @@ results_before = loadResults(root_before)
 results_after = loadResults(root_after)
 
 for r_before_name, r_before in results_before.items():
-    print('| {} | {} | {} | Speed-up |'.format(r_before_name, args.before_label, args.after_label))
+    title = '{} - time unit: {}'.format(r_before_name, displayUnit(unit))
+    print('| {} | {} | {} | Speed-up |'.format(title, args.before_label, args.after_label))
     print('| --- | --- | --- | --- |')
     if r_before_name in results_after:
         r_after = results_after[r_before_name]
@@ -103,15 +140,18 @@ for r_before_name, r_before in results_before.items():
             if b_before_name in r_after.results:
                 b_after = r_after.results[b_before_name]
 
-                metric_before = b_before.mean_value
-                metric_after = b_after.mean_value
-
                 if args.metric == Metric.lowMean:
                     metric_before = b_before.mean_lower_bound
                     metric_after = b_after.mean_lower_bound
                 elif args.metric == Metric.highMean:
                     metric_before = b_before.mean_upper_bound
                     metric_after = b_after.mean_upper_bound
+                else:
+                    metric_before = b_before.mean_value
+                    metric_after = b_after.mean_value
+
+                metric_before = convertUnit(metric_before, unit)
+                metric_after = convertUnit(metric_after, unit)
 
                 speed_up = metric_before / metric_after
                 print('| {} | {:.2f} | {:.2f} | {:.2f} |'.format(b_before_name, metric_before, metric_after, speed_up))
