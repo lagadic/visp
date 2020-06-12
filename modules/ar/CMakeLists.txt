@@ -41,48 +41,6 @@ set(opt_incs "")
 set(opt_libs "")
 
 if(USE_OGRE)
-  if(NOT OGRE_BUILD_PLATFORM_IPHONE)
-    if(WIN32 OR APPLE)
-      set(Boost_USE_STATIC_LIBS TRUE)
-    else()
-      # Statically linking boost to a dynamic Ogre build doesn't work on Linux 64bit
-      set(Boost_USE_STATIC_LIBS ${OGRE_STATIC})
-    endif()
-    if(MINGW)
-      # this is probably a bug in CMake: the boost find module tries to look for
-      # boost libraries with name libboost_*, but CMake already prefixes library
-      # search names with "lib". This is the workaround.
-      set(CMAKE_FIND_LIBRARY_PREFIXES ${CMAKE_FIND_LIBRARY_PREFIXES} "")
-    endif()
-    #set(Boost_ADDITIONAL_VERSIONS "1.53.0" "1.52.0" "1.51.0" "1.50.0" "1.49.0" "1.48.0" "1.47.0" "1.46.0" "1.45.0" "1.44.0" "1.44" "1.44.0" "1.42" "1.42.0" "1.41.0" "1.41" "1.40.0" "1.40" "1.39.0" "1.39" "1.38.0" "1.38" "1.37.0" "1.37" )
-    # Components that need to be linked with. Since Ogre 1.9 we need not only boost_thread and boost_date_time, but also boost_system
-    set(OGRE_BOOST_COMPONENTS thread system date_time)
-    if(WIN32)
-      list(APPEND OGRE_BOOST_COMPONENTS chrono)
-    endif()
-    find_package(Boost COMPONENTS ${OGRE_BOOST_COMPONENTS} QUIET)
-    mark_as_advanced(Boost_LIB_DIAGNOSTIC_DEFINITIONS Boost_DIR BOOST_THREAD_LIBRARY)
-    if(NOT Boost_FOUND)
-      set(OGRE_BOOST_COMPONENTS thread date_time)
-      if(WIN32)
-        list(APPEND OGRE_BOOST_COMPONENTS chrono)
-      endif()
-      find_package(Boost COMPONENTS ${OGRE_BOOST_COMPONENTS} QUIET)
-    endif()
-    if(NOT Boost_FOUND)
-      # Try again with the other type of libs
-      set(Boost_USE_STATIC_LIBS NOT ${Boost_USE_STATIC_LIBS})
-      find_package(Boost COMPONENTS ${OGRE_BOOST_COMPONENTS} QUIET)
-    endif()
-
-    if(Boost_FOUND)
-      # Set up referencing of Boost
-      #LIST(APPEND VISP_DEFS "-DBOOST_ALL_NO_LIB")
-      list(APPEND opt_incs ${Boost_INCLUDE_DIR})
-      list(APPEND opt_libs ${Boost_LIBRARIES})
-    endif()
-  endif()
-
   mark_as_advanced(OGRE_SAMPLES_INCLUDEPATH)
   #message("OGRE_SAMPLES_INCLUDEPATH: ${OGRE_SAMPLES_INCLUDEPATH}")
   if(OGRE_SAMPLES_INCLUDEPATH)
