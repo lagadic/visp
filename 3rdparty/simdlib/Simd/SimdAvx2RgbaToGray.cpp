@@ -61,7 +61,7 @@ namespace Simd
         {
             assert(width >= A);
             if (align)
-                assert(Aligned(bgra) && Aligned(rgbaStride) && Aligned(gray) && Aligned(grayStride));
+                assert(Aligned(rgba) && Aligned(rgbaStride) && Aligned(gray) && Aligned(grayStride));
 
             size_t alignedWidth = AlignLo(width, A);
             __m256i a[4];
