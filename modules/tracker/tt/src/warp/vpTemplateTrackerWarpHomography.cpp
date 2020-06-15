@@ -73,10 +73,10 @@ void vpTemplateTrackerWarpHomography::getdW0(const int &i, const int &j, const d
   double i_dy_ = i * dy;
   dIdW[0] = j_dx_;
   dIdW[1] = j * dy;
-  dIdW[2] = -j * j_dx_ - j * i_dy_;
+  dIdW[2] = -j * (j_dx_ + i_dy_);
   dIdW[3] = i * dx;
   dIdW[4] = i_dy_;
-  dIdW[5] = -i * j_dx_ - i * i_dy_;
+  dIdW[5] = -i * (j_dx_ + i_dy_);
   dIdW[6] = dx;
   dIdW[7] = dy;
 }
