@@ -951,7 +951,7 @@ private:
   static void blas_dgemv(char trans, unsigned int M_, unsigned int N_, double alpha, double *a_data, unsigned int lda_,
                          double *x_data, int incx_, double beta, double *y_data, int incy_);
   static void blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data, unsigned int lda_,
-                         double *w_data, double *work_data, unsigned int lwork_, int &info_);
+                         double *w_data, double *work_data, int lwork_, int &info_);
 #endif
 
   static void computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls,

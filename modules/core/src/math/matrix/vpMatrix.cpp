@@ -71,7 +71,7 @@
 typedef MKL_INT integer;
 
 void vpMatrix::blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data, unsigned int lda_,
-                          double *w_data, double *work_data, unsigned int lwork_, int &info_)
+                          double *w_data, double *work_data, int lwork_, int &info_)
 {
   MKL_INT n = static_cast<MKL_INT>(n_);
   MKL_INT lda = static_cast<MKL_INT>(lda_);
@@ -91,7 +91,7 @@ extern "C" integer dsyev_(char *jobz, char *uplo, integer *n, double *a, integer
                       double *w, double *WORK, integer *lwork, integer *info);
 
 void vpMatrix::blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data, unsigned int lda_,
-                          double *w_data, double *work_data, unsigned int lwork_, int &info_)
+                          double *w_data, double *work_data, int lwork_, int &info_)
 {
   integer n = static_cast<integer>(n_);
   integer lda = static_cast<integer>(lda_);
@@ -4833,11 +4833,11 @@ vpColVector vpMatrix::eigenValues() const
     const char uplo = 'U';
     vpMatrix A = (*this);
     vpColVector WORK;
-    unsigned int lwork = -1; //(3*colNum - 1);
+    int lwork = -1;
     int info;
     double wkopt;
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, &wkopt, lwork, info);
-    lwork = (unsigned int)wkopt;
+    lwork = static_cast<int>(wkopt);
     WORK.resize(lwork);
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, WORK.data, lwork, info);
   }
@@ -4966,11 +4966,11 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
     const char uplo = 'U';
     vpMatrix A = (*this);
     vpColVector WORK;
-    unsigned int lwork = -1; //(3*colNum - 1);
+    int lwork = -1;
     int info;
     double wkopt;
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, &wkopt, lwork, info);
-    lwork = (unsigned int)wkopt;
+    lwork = static_cast<int>(wkopt);
     WORK.resize(lwork);
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, WORK.data, lwork, info);
     evector = A.t();
