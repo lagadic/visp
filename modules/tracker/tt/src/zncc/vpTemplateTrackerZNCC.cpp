@@ -80,7 +80,6 @@ double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I, const vpC
         IW = I.getValue(i2, j2);
       else
         IW = BI.getValue(i2, j2);
-      // IW=getSubPixBspline4(I,i2,j2);
       moyTij += Tij;
       moyIW += IW;
       Nbpoint++;
@@ -94,7 +93,7 @@ double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I, const vpC
   moyTij = moyTij / Nbpoint;
   moyIW = moyIW / Nbpoint;
 
-  double nom = 0; //,denom=0;
+  double nom = 0;
   double var1 = 0, var2 = 0;
   for (unsigned int point = 0; point < templateSize; point++) {
     i = ptTemplate[point].y;
@@ -112,16 +111,12 @@ double vpTemplateTrackerZNCC::getCost(const vpImage<unsigned char> &I, const vpC
         IW = I.getValue(i2, j2);
       else
         IW = BI.getValue(i2, j2);
-      // IW=getSubPixBspline4(I,i2,j2);
       nom += (Tij - moyTij) * (IW - moyIW);
-      // denom+=(Tij-moyTij)*(Tij-moyTij)*(IW-moyIW)*(IW-moyIW);
       var1 += (IW - moyIW) * (IW - moyIW);
       var2 += (Tij - moyTij) * (Tij - moyTij);
 
       Nbpoint++;
     }
   }
-  // if(Nbpoint==0)return 10e10; // cannot occur
-  // return -nom/sqrt(denom);
   return -nom / sqrt(var1 * var2);
 }

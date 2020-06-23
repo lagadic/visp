@@ -147,7 +147,6 @@ void vpTemplateTrackerZNCCForwardAdditional::initHessienDesired(const vpImage<un
   Hdesire = Hdesire / sqrt(denom);
   vpMatrix::computeHLM(Hdesire, lambdaDep, HLMdesire);
   HLMdesireInverse = HLMdesire.inverseByLU();
-  // std::cout<<"Hdesire = "<<Hdesire<<std::endl;
 }
 
 void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned char> &I)
@@ -280,6 +279,5 @@ void vpTemplateTrackerZNCCForwardAdditional::trackNoPyr(const vpImage<unsigned c
   } while ((iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps));
   delete[] tempt;
 
-  // std::cout<<"erreur "<<erreur<<std::endl;
   nbIteration = iteration;
 }
