@@ -219,12 +219,13 @@ public:
     iterationGlobale = 0;
   }
   /*!
-   Set the number of pyramid levels used in the multi-resolution scheme.
-   If \e nlevels > 1, the tracker uses a pyramidal approach.
+    Set the number of pyramid levels used in the multi-resolution scheme.
+    If \e nlevels > 1, the tracker uses a pyramidal approach.
 
-   \param nlevels : Number of pyramid levels. Algorithm starts at level
-   nlevels-1. \param level_to_stop : Last level of the pyramid that will be
-   considered. Lowest level is zero.
+    \param nlevels : Number of pyramid levels. Algorithm starts at level
+    nlevels-1.
+    \param level_to_stop : Last level of the pyramid that will be
+    considered. Lowest level is zero.
    */
   void setPyramidal(unsigned int nlevels = 2, unsigned int level_to_stop = 1)
   {

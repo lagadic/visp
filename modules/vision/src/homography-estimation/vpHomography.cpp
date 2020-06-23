@@ -550,21 +550,24 @@ vpPoint vpHomography::project(const vpHomography &bHa, const vpPoint &Pa)
   At least 4 couples of points are needed.
 
   \param xb, yb : Coordinates vector of matched points in image b. These
-  coordinates are expressed in meters. \param xa, ya : Coordinates vector of
-  matched points in image a. These coordinates are expressed in meters. \param
-  aHb : Estimated homography that relies the transformation from image a to
-  image b. \param inliers : Vector that indicates if a matched point is an
-  inlier (true) or an outlier (false). \param residual : Global residual
-  computed as \f$r = \sqrt{1/n \sum_{inliers} {\| {^a{\bf p} - {\hat{^a{\bf
-  H}_b}} {^b{\bf p}}} \|}^{2}}\f$ with \f$n\f$ the number of inliers. \param
-  weights_threshold : Threshold applied on the weights updated during the
+  coordinates are expressed in meters.
+  \param xa, ya : Coordinates vector of
+  matched points in image a. These coordinates are expressed in meters.
+  \param aHb : Estimated homography that relies the transformation from image a to
+  image b.
+  \param inliers : Vector that indicates if a matched point is an
+  inlier (true) or an outlier (false).
+  \param residual : Global residual computed as
+  \f$r = \sqrt{1/n \sum_{inliers} {\| {^a{\bf p} - {\hat{^a{\bf H}_b}} {^b{\bf p}}} \|}^{2}}\f$
+  with \f$n\f$ the number of inliers.
+  \param weights_threshold : Threshold applied on the weights updated during the
   robust estimation and used to consider if a point is an outlier or an
   inlier. Values should be in [0:1]. A couple of matched points that have a
   weight lower than this threshold is considered as an outlier. A value equal
-  to zero indicates that all the points are inliers. \param niter : Number of
-  iterations of the estimation process. \param normalization : When set to
-  true, the coordinates of the points are normalized. The normalization
-  carried out is the one preconized by Hartley.
+  to zero indicates that all the points are inliers.
+  \param niter : Number of iterations of the estimation process.
+  \param normalization : When set to true, the coordinates of the points are normalized.
+  The normalization carried out is the one preconized by Hartley.
 
   \sa DLT(), ransac()
  */
