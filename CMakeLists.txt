@@ -1005,6 +1005,9 @@ if(USE_OPENCV)
   if(OPENCV_DNN_FOUND)
     set(VISP_HAVE_OPENCV_DNN TRUE)  # for header vpConfig.h
   endif()
+  if(OPENCV_OBJDETECT_FOUND)
+    set(VISP_HAVE_OPENCV_OBJDETECT TRUE)  # for header vpConfig.h
+  endif()
 endif()
 
 # coin and gui
