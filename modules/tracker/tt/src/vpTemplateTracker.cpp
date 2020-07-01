@@ -80,14 +80,12 @@ void vpTemplateTracker::setGaussianFilterSize(unsigned int new_taill)
 
 void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplateTrackerZone &zone)
 {
-  // 	std::cout<<"\tInitialise reference..."<<std::endl;
   zoneTracked = &zone;
 
   int largeur_im = (int)I.getWidth();
   int hauteur_im = (int)I.getHeight();
 
   unsigned int NbPointDsZone = 0;
-  // double xtotal=0,ytotal=0;
   int mod_fi, mod_fj;
   mod_fi = mod_i;
   mod_fj = mod_i;
@@ -96,13 +94,10 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplate
     for (int j = 0; j < largeur_im; j += mod_fj) {
       if (zone.inZone(i, j)) {
         NbPointDsZone++;
-        // xtotal+=j;
-        // ytotal+=i;
       }
     }
   }
 
-  // Warp->setCentre((double)xtotal/NbPointDsZone,(double)ytotal/NbPointDsZone);
 
   templateSize = NbPointDsZone;
   ptTemplate = new vpTemplateTrackerPoint[templateSize];
@@ -114,7 +109,6 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplate
   HLMdesire.resize(nbParam, nbParam);
 
   vpTemplateTrackerPoint pt;
-  // vpTemplateTrackerZPoint ptZ;
   vpImage<double> GaussI;
   vpImageFilter::filter(I, GaussI, fgG, taillef);
   vpImageFilter::getGradXGauss2D(I, dIx, fgG, fgdG, taillef);
@@ -123,9 +117,7 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplate
   unsigned int cpt_point = 0;
   templateSelectSize = 0;
   for (int i = 0; i < hauteur_im; i += mod_i) {
-    // for(int  j=minx_t;j<maxx_t;j++)
     for (int j = 0; j < largeur_im; j += mod_j) {
-      //      if(i%mod_i ==0 && j%mod_j ==0)
       if (zone.inZone(i, j)) {
         pt.x = j;
         pt.y = i;
@@ -136,16 +128,10 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplate
         if (pt.dx * pt.dx + pt.dy * pt.dy > thresholdGradient) {
           ptTemplateSelect[cpt_point] = true;
           templateSelectSize++;
-        } else
+        } else {
           ptTemplateSelect[cpt_point] = false;
-        // ptTemplate_select[cpt_point]=true;
-
-        /*if(blur)
-        pt.val=GaussI[i][j];
-      else
-        pt.val=I[i][j];*/
+        }
         pt.val = vpTemplateTrackerBSpline::getSubPixBspline4(GaussI, i, j);
-        // ptZone_pyr[NbLevelPyramid-cpt].push_back(pt);
 
         ptTemplate[cpt_point] = pt;
         cpt_point++;
@@ -153,20 +139,12 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplate
     }
   }
 
-  // 	std::cout<<"\tNb pt template apres scale:"<<cpt_point<<std::endl;
-  // 	std::cout<<"utilisation de
-  // "<<taille_template_select<<"/"<<cpt_point<<" =
-  // "<<100.*taille_template_select/cpt_point<<"% pour calcul
-  // derivees"<<std::endl;
-
   templateSize = cpt_point;
   GaussI.destroy();
-  // 	std::cout<<"\tEnd of reference initialisation ..."<<std::endl;
 }
 
 vpTemplateTracker::~vpTemplateTracker()
 {
-  // 	vpTRACE("destruction tracker");
   delete[] fgG;
   delete[] fgdG;
 
@@ -182,7 +160,6 @@ void vpTemplateTracker::resetTracker()
   // reset the tracker parameters
   p = 0;
 
-  // 	vpTRACE("resetTracking");
   if (pyrInitialised) {
     if (ptTemplatePyr) {
       for (unsigned int i = 0; i < nbLvlPyr; i++) {
@@ -430,7 +407,6 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
   ptp[3] = &p3;
 
   double *Cost = new double[4];
-  // Cost[0]=getCost(I,p0);
   Cost[0] = tMI;
   Cost[1] = getCost(I, p1);
   Cost[2] = getCost(I, p2);
@@ -440,41 +416,25 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
   talpha[1] = 1.;
   talpha[2] = alpha;
 
-  // for(int i=0;i<3;i++)
-  //	std::cout<<"alpha["<<i<<"] = "<<talpha[i]<<"   Cost["<<i<<"] =
-  //"<<Cost[i]<<std::endl;
-
-  // Utilise trois estimï¿œes de paraboles succesive ...
+  // Utilise trois estimees de paraboles succesive ...
   // A changer pour rendre adaptable
   for (unsigned int opt = 0; opt < nbIterBrent; opt++) {
-    // double a=talpha[0];
-    // double b=talpha[1];
-    // double c=talpha[2];
-    // double Cost0=Cost[0];
-    // double Cost1=Cost[1];
-    // double Cost2=Cost[2];
-
     vpMatrix A(3, 3);
     for (unsigned int i = 0; i < 3; i++) {
       A[i][0] = talpha[i] * talpha[i];
       A[i][1] = talpha[i];
       A[i][2] = 1.;
     }
-    // std::cout<<"A="<<A<<std::endl;
     vpColVector B(3);
     for (unsigned int i = 0; i < 3; i++)
       B[i] = Cost[i];
     vpColVector parabol(3);
     parabol = (A.t() * A).inverseByLU() * A.t() * B;
-    // vpColVector parabol(3);parabol=A.pseudoInverse()*B;
 
-    // si convexe
+    // If convexe
     if (parabol[0] > 0) {
       talpha[3] = -0.5 * parabol[1] / parabol[0];
-      // std::cout<<"parabol = "<<parabol<<std::endl;
-      // std::cout<<"convexe talpha = "<<talpha[3]<<std::endl;
-    } else // si concave
-    {
+    } else { // If concave
       int tindic_x_min = 0;
       int tindic_x_max = 0;
       for (int i = 1; i < 3; i++) {
@@ -485,23 +445,11 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
       }
 
       if (Cost[tindic_x_max] < Cost[tindic_x_min]) {
-        // talpha[3]=talpha[tindic_x_max]+1.;
         talpha[3] = talpha[tindic_x_max] + 1.;
-        /*if(talpha[tindic_x_min]>talpha[tindic_x_max])
-          talpha[3]=talpha[tindic_x_min]+1.;
-        else
-          talpha[3]=talpha[tindic_x_min]-1.;*/
       } else {
-        // talpha[3]=talpha[tindic_x_min]-1.;
         talpha[3] = talpha[tindic_x_min] - 1.;
-        /*if(talpha[tindic_x_min]<talpha[tindic_x_max])
-          talpha[3]=talpha[tindic_x_max]+1.;
-        else
-          talpha[3]=talpha[tindic_x_max]-1.;*/
       }
-      // std::cout<<"concave talpha="<<talpha[3]<<std::endl;
     }
-    // std::cout<<"talpha="<<talpha[3]<<std::endl;
     int indic_x_min = 0;
     int indic_x_max = 0;
     for (int i = 1; i < 3; i++) {
@@ -510,7 +458,6 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
       if (talpha[i] > talpha[indic_x_max])
         indic_x_max = i;
     }
-    // std::cout<<"talpha = "<<talpha[3]<<std::endl;
     if (talpha[3] > talpha[indic_x_max])
       if ((talpha[3] - talpha[indic_x_max]) > alpha)
         talpha[3] = talpha[indic_x_max] + 4.;
@@ -518,27 +465,6 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
       if ((talpha[indic_x_min] - talpha[3]) > alpha)
         talpha[3] = talpha[indic_x_min] - 4.;
 
-    /*if(((b-a)*(Cost1-Cost2)-(b-c)*(Cost1-Cost0))==0)
-    {Cost[3]=1000;break;}
-
-    //calcul du gain correspondant au minimum de la parabole estimï¿œe
-    talpha[3]=b-0.5*((b-a)*(b-a)*(Cost1-Cost2)-(b-c)*(b-c)*(Cost1-Cost0))/((b-a)*(Cost1-Cost2)-(b-c)*(Cost1-Cost0));
-    int indic_x_min=0;
-    int indic_x_max=0;
-    for(int i=1;i<3;i++)
-    {
-      if(talpha[i]<talpha[indic_x_min])
-        indic_x_min=i;
-      if(talpha[i]>talpha[indic_x_max])
-        indic_x_max=i;
-    }
-    std::cout<<"talpha = "<<talpha[3]<<std::endl;
-    if(talpha[3]>talpha[indic_x_max])
-      if((talpha[3]-talpha[indic_x_max])>alpha)talpha[3]=talpha[indic_x_max]+alpha;
-    if(talpha[3]<talpha[indic_x_min])
-      if((talpha[indic_x_min]-talpha[3])>alpha)talpha[3]=talpha[indic_x_min]-alpha;*/
-
-    // p3=tp-talpha[3]*direction;
     if (useCompositionnal) {
       adpt = talpha[3] * direction;
       if (useInverse)
@@ -551,7 +477,6 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
     }
 
     Cost[3] = getCost(I, p3);
-    // std::cout<<"new cost="<<Cost[3]<<std::endl;
 
     int indice_f_max = 0;
     for (int i = 1; i < 4; i++)
@@ -587,7 +512,6 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
  */
 void vpTemplateTracker::initPyramidal(unsigned int nbLvl, unsigned int l0)
 {
-  // 	vpTRACE("init_pyramidal");
   nbLvlPyr = nbLvl;
   l0Pyr = l0;
 
@@ -609,13 +533,11 @@ void vpTemplateTracker::initPyramidal(unsigned int nbLvl, unsigned int l0)
   HLMdesireInversePyr = new vpMatrix[nbLvlPyr];
 
   pyrInitialised = true;
-  // 	vpTRACE("fin init_pyramidal");
 }
+
 void vpTemplateTracker::initTrackingPyr(const vpImage<unsigned char> &I, vpTemplateTrackerZone &zone)
 {
-  // 	vpTRACE("initTrackingPyr");
   zoneTrackedPyr[0].copy(zone);
-  // vpTRACE("fin copy zone");
 
   pyr_IDes[0] = I;
   initTracking(pyr_IDes[0], zoneTrackedPyr[0]);
@@ -623,7 +545,7 @@ void vpTemplateTracker::initTrackingPyr(const vpImage<unsigned char> &I, vpTempl
   ptTemplateSelectPyr[0] = ptTemplateSelect;
   templateSizePyr[0] = templateSize;
 
-  // creationpyramide de zones et images desiree
+  // creation pyramide de zones et images desiree
   if (nbLvlPyr > 1) {
     for (unsigned int i = 1; i < nbLvlPyr; i++) {
       zoneTrackedPyr[i] = zoneTrackedPyr[i - 1].getPyramidDown();
@@ -633,18 +555,9 @@ void vpTemplateTracker::initTrackingPyr(const vpImage<unsigned char> &I, vpTempl
       ptTemplatePyr[i] = ptTemplate;
       ptTemplateSelectPyr[i] = ptTemplateSelect;
       templateSizePyr[i] = templateSize;
-      // reste probleme avec le Hessien
     }
   }
-  /*for(int i=0;i<nbLvlPyr;i++)
-  {
-    vpColVector ptemp(8);ptemp=0;
-    zoneTracked=&zoneTrackedPyr[i];
-    init_pos_evalRMS(ptemp);
-  }*/
   zoneTracked = &zoneTrackedPyr[0];
-
-  // 	vpTRACE("fin initTrackingPyr");
 }
 
 /*!
@@ -679,7 +592,6 @@ void vpTemplateTracker::initClick(const vpImage<unsigned char> &I, bool delaunay
   } else {
     initTracking(I, zoneRef_);
     initHessienDesired(I);
-    //    trackNoPyr(I);
   }
 }
 
@@ -706,7 +618,6 @@ void vpTemplateTracker::initFromPoints(const vpImage<unsigned char> &I, const st
   } else {
     initTracking(I, zoneRef_);
     initHessienDesired(I);
-    // trackNoPyr(I);
   }
 }
 
@@ -727,20 +638,14 @@ void vpTemplateTracker::initFromZone(const vpImage<unsigned char> &I, const vpTe
   } else {
     initTracking(I, zoneRef_);
     initHessienDesired(I);
-    //    trackNoPyr(I);
   }
 }
 
 void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
 {
-  // 	vpTRACE("initHessienDesiredPyr");
-
   templateSize = templateSizePyr[0];
-  // ptTemplateSupp=ptTemplateSuppPyr[0];
-  // ptTemplateCompo=ptTemplateCompoPyr[0];
   ptTemplate = ptTemplatePyr[0];
   ptTemplateSelect = ptTemplateSelectPyr[0];
-  //  ptTemplateSupp=new vpTemplateTrackerPointSuppMIInv[templateSize];
   try {
     initHessienDesired(I);
     ptTemplateSuppPyr[0] = ptTemplateSupp;
@@ -766,8 +671,6 @@ void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
       templateSize = templateSizePyr[i];
       ptTemplate = ptTemplatePyr[i];
       ptTemplateSelect = ptTemplateSelectPyr[i];
-      // ptTemplateSupp=ptTemplateSuppPyr[i];
-      // ptTemplateCompo=ptTemplateCompoPyr[i];
       try {
         initHessienDesired(Itemp);
         ptTemplateSuppPyr[i] = ptTemplateSupp;
@@ -785,7 +688,6 @@ void vpTemplateTracker::initHessienDesiredPyr(const vpImage<unsigned char> &I)
       }
     }
   }
-  // 	vpTRACE("fin initHessienDesiredPyr");
 }
 
 /*!
@@ -802,43 +704,18 @@ void vpTemplateTracker::track(const vpImage<unsigned char> &I)
 
 void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
 {
-  // vpTRACE("trackPyr");
   vpImage<unsigned char> *pyr_I;
-  //  pyr_I=new vpImage<unsigned char>[nbLvlPyr+1]; // Why +1 ?
   pyr_I = new vpImage<unsigned char>[nbLvlPyr]; // Why +1 ?
   pyr_I[0] = I;
 
   try {
     vpColVector ptemp(nbParam);
     if (nbLvlPyr > 1) {
-      //    vpColVector *p_sauv=new vpColVector[nbLvlPyr];
-      //    for(unsigned int i=0;i<nbLvlPyr;i++)p_sauv[i].resize(nbParam);
-
-      //    p_sauv[0]=p;
       for (unsigned int i = 1; i < nbLvlPyr; i++) {
         vpImageFilter::getGaussPyramidal(pyr_I[i - 1], pyr_I[i]);
-        // test getParamPyramidDown
-        /*vpColVector vX_test(2);vX_test[0]=15.;vX_test[1]=30.;
-        vpColVector vX_test2(2);
-        Warp->computeCoeff(p);
-        Warp->computeDenom(vX_test,p);
-        Warp->warpX(vX_test,vX_test2,p);
-        std::cout<<"p = "<<p.t()<<std::endl;*/
-        // std::cout<<"get p down"<<std::endl;
         Warp->getParamPyramidDown(p, ptemp);
         p = ptemp;
         zoneTracked = &zoneTrackedPyr[i];
-
-        //      p_sauv[i]=p;
-        /*std::cout<<"p_down = "<<p.t()<<std::endl;
-
-        vpColVector vX_testd(2);vX_testd[0]=15./2.;vX_testd[1]=30./2.;
-        vpColVector vX_testd2(2);
-        Warp->computeCoeff(p);
-        Warp->computeDenom(vX_testd,p);
-        Warp->warpX(vX_testd,vX_testd2,p);
-        std::cout<<2.*vX_testd2[0]<<","<<2.*vX_testd2[1]<<" <=>
-        "<<vX_test2[0]<<","<<vX_test2[1]<<std::endl;*/
       }
 
       for (int i = (int)nbLvlPyr - 1; i >= 0; i--) {
@@ -851,43 +728,15 @@ void vpTemplateTracker::trackPyr(const vpImage<unsigned char> &I)
           H = HdesirePyr[i];
           HLM = HLMdesirePyr[i];
           HLMdesireInverse = HLMdesireInversePyr[i];
-          //        zoneTracked=&zoneTrackedPyr[i];
           trackRobust(pyr_I[i]);
         }
-        // std::cout<<"get p up"<<std::endl;
-        //      ptemp=p_sauv[i-1];
         if (i > 0) {
           Warp->getParamPyramidUp(p, ptemp);
           p = ptemp;
           zoneTracked = &zoneTrackedPyr[i - 1];
         }
       }
-#if 0
-        if(l0Pyr==0)
-        {
-          templateSize=templateSizePyr[0];
-          ptTemplate=ptTemplatePyr[0];
-          ptTemplateSelect=ptTemplateSelectPyr[0];
-          ptTemplateSupp=ptTemplateSuppPyr[0];
-          ptTemplateCompo=ptTemplateCompoPyr[0];
-          H=HdesirePyr[0];
-          HLM=HLMdesirePyr[0];
-          HLMdesireInverse=HLMdesireInversePyr[0];
-          zoneTracked=&zoneTrackedPyr[0];
-          trackRobust(pyr_I[0]);
-        }
-
-        if (l0Pyr > 0) {
-    //      for (int l=(int)l0Pyr; l >=0; l--) {
-    //        Warp->getParamPyramidUp(p,ptemp);
-    //        p=ptemp;
-    //      }
-          zoneTracked=&zoneTrackedPyr[0];
-        }
-#endif
-      //    delete [] p_sauv;
     } else {
-      // std::cout<<"reviens a tracker de base"<<std::endl;
       trackRobust(I);
     }
     delete[] pyr_I;
@@ -907,13 +756,13 @@ void vpTemplateTracker::trackRobust(const vpImage<unsigned char> &I)
 
     trackNoPyr(I);
 
-    // std::cout<<"fct avant : "<<pre_fcost<<std::endl;
     double post_fcost = getCost(I, p);
-    // std::cout<<"fct apres : "<<post_fcost<<std::endl<<std::endl;
-    if (pre_fcost < post_fcost)
+    if (pre_fcost < post_fcost) {
       p = p_pre_estimation;
-  } else
+    }
+  } else {
     trackNoPyr(I);
+  }
 }
 
 /*!

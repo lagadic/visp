@@ -77,7 +77,6 @@ double vpTemplateTrackerSSD::getCost(const vpImage<unsigned char> &I, const vpCo
         IW = I.getValue(i2, j2);
       else
         IW = BI.getValue(i2, j2);
-      // IW=getSubPixBspline4(I,i2,j2);
       erreur += (Tij - IW) * (Tij - IW);
       Nbpoint++;
     }
@@ -114,7 +113,6 @@ double vpTemplateTrackerSSD::getSSD(const vpImage<unsigned char> &I, const vpCol
     if ((j2 < I.getWidth() - 1) && (i2 < I.getHeight() - 1) && (i2 > 0) && (j2 > 0)) {
       double Tij = ptTemplate[point].val;
       IW = I.getValue(i2, j2);
-      // IW=getSubPixBspline4(I,i2,j2);
       erreur += (Tij - IW) * (Tij - IW);
       Nbpoint++;
     }

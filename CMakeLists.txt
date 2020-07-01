@@ -1002,6 +1002,12 @@ if(USE_OPENCV)
     message(STATUS "opencv nonfree not found")
     set(VISP_HAVE_OPENCV_VERSION "(0)") # for vpConfig.h
   endif()
+  if(OPENCV_DNN_FOUND)
+    set(VISP_HAVE_OPENCV_DNN TRUE)  # for header vpConfig.h
+  endif()
+  if(OPENCV_OBJDETECT_FOUND)
+    set(VISP_HAVE_OPENCV_OBJDETECT TRUE)  # for header vpConfig.h
+  endif()
 endif()
 
 # coin and gui
