@@ -49,6 +49,8 @@ ViSP 3.3.1 (under development)
     . [#763] VISP does not support the latest PCL release 1.11.0
     . [#767] Compile from source on Ubuntu Focal raises CMake error with Ogre 1.9 or 2.1
     . [#777] Issue when calling vpMatrix::eigenValues() using lapack built-in
+    . [#780] Projects have to explicitely link against Boost when compiling ViSP with ar module
+    . [#781] Wrong share install path on unix-like system
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:

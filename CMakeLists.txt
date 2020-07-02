@@ -120,8 +120,6 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 include(cmake/VISPUtils.cmake)
 include(cmake/VISPDetectCXXStandard.cmake) # Set cxx standard to 11 by default
 
-vp_clear_vars(VISPModules_TARGETS)
-
 #-----------------------------------------------------------------------------
 # VISP version number.  An even minor number corresponds to releases.
 set(VISP_VERSION_MAJOR "3")
@@ -218,7 +216,7 @@ else() # UNIX
     vp_update(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}")
   endif()
   vp_update(VISP_BIN_INSTALL_PATH         "${CMAKE_INSTALL_BINDIR}")
-  vp_update(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp")
+  vp_update(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
   vp_update(VISP_3P_LIB_INSTALL_PATH      "${VISP_LIB_INSTALL_PATH}/visp/3rdparty")
   vp_update(VISP_SAMPLES_SRC_INSTALL_PATH "${VISP_INSTALL_DATAROOTDIR}/samples")
   vp_update(VISP_JAR_INSTALL_PATH         "${VISP_INSTALL_DATAROOTDIR}/java")

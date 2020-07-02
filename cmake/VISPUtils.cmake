@@ -1610,3 +1610,22 @@ macro(vp_get_all_libs _modules _extra_opt _extra_dbg _3rdparty)
     vp_list_reverse(${lst})
   endforeach()
 endmacro()
+
+# Filter libraries.
+# When a library is a target like Boost::thread or Boost::date_time
+# replace the target by its imported location /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+macro(vp_filter_libraries_with_imported_location libs)
+  set(__libs)
+  foreach(lib_ ${${libs}})
+    if(TARGET ${lib_})
+      get_target_property(imported_libs_ ${lib_} INPORTED_LOCATION)
+      if(imported_libs_)
+        list(APPEND __libs ${imported_libs_})
+      endif()
+    else()
+      list(APPEND __libs ${lib_})
+    endif()
+  endforeach()
+  set(${libs} ${__libs})
+endmacro()
+

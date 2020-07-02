@@ -41,6 +41,10 @@ set(opt_incs "")
 set(opt_libs "")
 
 if(USE_OGRE)
+  # With Ubuntu 20.04, OGRE_LIBRARIES contains Boost::thread that cannot
+  # be exported as is on pain of producing a build issue when ViSP is used
+  # as a 3rd party. That's why here we get its imported location.
+  vp_filter_libraries_with_imported_location(OGRE_LIBRARIES)
   mark_as_advanced(OGRE_SAMPLES_INCLUDEPATH)
   #message("OGRE_SAMPLES_INCLUDEPATH: ${OGRE_SAMPLES_INCLUDEPATH}")
   if(OGRE_SAMPLES_INCLUDEPATH)
