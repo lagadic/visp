@@ -446,7 +446,7 @@ void vpPoseFeatures::computePoseVVS(vpHomogeneousMatrix &cMo)
     vpMatrix L;
     vpColVector err;
     vpColVector v;
-
+    unsigned int rank_max = 0;
     unsigned int iter = 0;
 
     // while((int)((residu_1 - r)*1e12) != 0 )
@@ -461,14 +461,10 @@ void vpPoseFeatures::computePoseVVS(vpHomogeneousMatrix &cMo)
 
       // compute the pseudo inverse of the interaction matrix
       vpMatrix Lp;
-      unsigned int rank = L.pseudoInverse(Lp, 1e-16);
+      unsigned int rank = L.pseudoInverse(Lp, 1e-6);  // modif FC 1e-16
 
-      if (rank < 6) {
-        if (verbose)
-          vpTRACE("Rank must be at least 6 ! cMo not computed.");
-
-        break;
-      }
+      if (rank_max < rank)
+        rank_max = rank;
 
       // compute the VVS control law
       v = -lambda * Lp * err;
@@ -477,6 +473,11 @@ void vpPoseFeatures::computePoseVVS(vpHomogeneousMatrix &cMo)
       if (iter++ > vvsIterMax) {
         vpTRACE("Max iteration reached");
         break;
+      }
+    }
+    if (rank_max < 6) {
+      if (verbose) {
+        vpTRACE("Only %d pose parameters can be estimated.", rank_max);
       }
     }
 
@@ -510,6 +511,7 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix &cMo)
     vpRobust robust(2 * totalSize);
     robust.setThreshold(0.0000);
 
+    unsigned int rank_max = 0;
     unsigned int iter = 0;
 
     // while((int)((residu_1 - r)*1e12) !=0)
@@ -546,21 +548,22 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix &cMo)
       (W * L).pseudoInverse(Lp, 1e-6);
       unsigned int rank = L.pseudoInverse(LRank, 1e-6);
 
-      if (rank < 6) {
-        if (verbose)
-          vpTRACE("Rank must be at least 6 ! cMo not computed.");
-
-        break;
-      }
+      if (rank_max < rank)
+        rank_max = rank;
 
       // compute the VVS control law
       v = -lambda * Lp * W * error;
 
       cMo = vpExponentialMap::direct(v).inverse() * cMo;
-      ;
       if (iter++ > vvsIterMax) {
         vpTRACE("Max iteration reached");
         break;
+      }
+    }
+
+    if (rank_max < 6) {
+      if (verbose) {
+        vpTRACE("Only %d pose parameters can be estimated.", rank_max);
       }
     }
 
