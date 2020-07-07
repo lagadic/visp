@@ -120,6 +120,10 @@ list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 include(cmake/VISPUtils.cmake)
 include(cmake/VISPDetectCXXStandard.cmake) # Set cxx standard to 11 by default
 
+if (CMAKE_VERSION VERSION_LESS 3.0.0)
+  vp_clear_vars(VISPModules_TARGETS)
+endif()
+
 #-----------------------------------------------------------------------------
 # VISP version number.  An even minor number corresponds to releases.
 set(VISP_VERSION_MAJOR "3")
