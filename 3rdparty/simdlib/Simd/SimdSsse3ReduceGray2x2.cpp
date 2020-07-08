@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSSE3_ENABLE    
+#ifdef SIMD_SSSE3_ENABLE
     namespace Ssse3
     {
         SIMD_INLINE __m128i Average16(const __m128i & s0, const __m128i & s1)
@@ -89,5 +89,8 @@ namespace Simd
                 ReduceGray2x2<false>(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSsse3Reduce2x2.cpp.o) has no symbols
+    void dummy_SimdSsse3Reduce2x2(){};
 #endif// SIMD_SSSE3_ENABLE
 }

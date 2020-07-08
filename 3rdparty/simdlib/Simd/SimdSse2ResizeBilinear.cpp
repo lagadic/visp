@@ -214,6 +214,9 @@ namespace Simd
             }
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse2ResizeBilinear.cpp.o) has no symbols
+    void dummy_SimdSse2ResizeBilinear(){};
 #endif//SIMD_SSE2_ENABLE
 }
 

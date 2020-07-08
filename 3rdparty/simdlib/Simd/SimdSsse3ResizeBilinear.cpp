@@ -401,6 +401,9 @@ namespace Simd
             }
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSsse3ResizeBilinear.cpp.o) has no symbols
+    void dummy_SimdSsse3ResizeBilinear(){};
 #endif
 }
 

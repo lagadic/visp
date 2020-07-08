@@ -27,7 +27,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE    
+#ifdef SIMD_SSE2_ENABLE
     namespace Sse2
     {
         SIMD_INLINE __m128i Average8(const __m128i & s00, const __m128i & s01, const __m128i & s10, const __m128i & s11)
@@ -95,5 +95,8 @@ namespace Simd
                 ReduceGray2x2<false>(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse2ReduceGray2x2.cpp.o) has no symbols
+    void dummy_SimdSse2ReduceGray2x2(){};
 #endif// SIMD_SSE2_ENABLE
 }

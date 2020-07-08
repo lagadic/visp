@@ -176,7 +176,7 @@ namespace Simd
             case 2: Run<2>(src, srcStride, dst, dstStride); break;
             default:
                 assert(0);
-            }        
+            }
         }
 
         //---------------------------------------------------------------------
@@ -305,6 +305,9 @@ namespace Simd
                 return Sse::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse2Resizer.cpp.o) has no symbols
+    void dummy_SimdSse2Resizer(){};
 #endif//SIMD_SSE2_ENABLE
 }
 

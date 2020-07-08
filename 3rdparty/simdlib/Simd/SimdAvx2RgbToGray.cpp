@@ -85,5 +85,8 @@ namespace Simd
                 RgbToGray<false>(rgb, width, height, rgbStride, gray, grayStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2RgbToGray.cpp.o) has no symbols
+    void dummy_SimdAvx2RgbToGray(){};
 #endif//SIMD_AVX2_ENABLE
 }

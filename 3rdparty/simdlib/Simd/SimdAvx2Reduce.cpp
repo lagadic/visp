@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_AVX2_ENABLE    
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
 #ifdef SIMD_MADDUBS_ERROR
@@ -125,7 +125,7 @@ namespace Simd
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
             0xE, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
         const __m256i K8_BGR2 = SIMD_MM256_SETR_EPI8(
-            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0x0, 
+            -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0x0,
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0x1);
         const __m256i K8_BGR3 = SIMD_MM256_SETR_EPI8(
             -1, 0x2, 0x0, 0x3, 0x4, 0x7, 0x5, 0x8, 0x6, 0x9, 0xA, 0xD, 0xB, 0xE, 0xC, 0xF,
@@ -250,5 +250,8 @@ namespace Simd
                 ReduceColor2x2<false>(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride, channelCount);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2Reduce.cpp.o) has no symbols
+    void dummy_SimdAvx2Reduce(){};
 #endif// SIMD_AVX2_ENABLE
 }

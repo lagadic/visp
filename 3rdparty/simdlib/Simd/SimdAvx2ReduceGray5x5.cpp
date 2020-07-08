@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_AVX2_ENABLE    
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
         namespace
@@ -198,5 +198,8 @@ namespace Simd
                 ReduceGray5x5<false>(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2ReduceGray5x5.cpp.o) has no symbols
+    void dummy_SimdAvx2ReduceGray5x5(){};
 #endif// SIMD_AVX2_ENABLE
 }

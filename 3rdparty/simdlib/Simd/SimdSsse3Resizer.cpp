@@ -317,18 +317,18 @@ namespace Simd
             EstimateParams();
             switch (_param.channels)
             {
-            case 1: 
+            case 1:
                 if(_blocks)
                     RunG(src, srcStride, dst, dstStride);
                 else
-                    Run<1>(src, srcStride, dst, dstStride); 
+                    Run<1>(src, srcStride, dst, dstStride);
                 break;
             case 2: Run<2>(src, srcStride, dst, dstStride); break;
             case 3: Run<3>(src, srcStride, dst, dstStride); break;
             case 4: Run<4>(src, srcStride, dst, dstStride); break;
             default:
                 assert(0);
-            }        
+            }
         }
 
         //---------------------------------------------------------------------
@@ -342,6 +342,9 @@ namespace Simd
                 return Sse2::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSsse3Resizer.cpp.o) has no symbols
+    void dummy_SimdSsse3Resizer(){};
 #endif//SIMD_SSSE3_ENABLE
 }
 

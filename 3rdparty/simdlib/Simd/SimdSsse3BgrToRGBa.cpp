@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSSE3_ENABLE  
+#ifdef SIMD_SSSE3_ENABLE
     namespace Ssse3
     {
         template <bool align> SIMD_INLINE void BgrToRgba(const uint8_t * bgr, uint8_t * rgba, __m128i alpha, __m128i shuffle)
@@ -67,5 +67,8 @@ namespace Simd
                 BgrToRgba<false>(bgr, width, height, bgrStride, rgba, rgbaStride, alpha);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSsse3BgrToRGBa.cpp.o) has no symbols
+    void dummy_SimdSsse3BgrToRGBa(){};
 #endif// SIMD_SSSE3_ENABLE
 }

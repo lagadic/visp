@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_AVX2_ENABLE    
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
         template<bool align> SIMD_INLINE void StoreUnpacked(__m256i value, uint8_t * dst)
@@ -77,5 +77,8 @@ namespace Simd
                 StretchGray2x2<false>(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2StretchGray2x2.cpp.o) has no symbols
+    void dummy_SimdAvx2StretchGray2x2(){};
 #endif// SIMD_AVX2_ENABLE
 }

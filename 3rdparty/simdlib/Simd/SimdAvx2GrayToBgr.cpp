@@ -27,7 +27,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_AVX2_ENABLE    
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
         template <bool align> SIMD_INLINE void GrayToBgr(uint8_t * bgr, __m256i gray)
@@ -69,5 +69,8 @@ namespace Simd
                 GrayToBgr<false>(gray, width, height, grayStride, bgr, bgrStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2GrayToBgr.cpp.o) has no symbols
+    void dummy_SimdAvx2GrayToBgr(){};
 #endif// SIMD_AVX2_ENABLE
 }

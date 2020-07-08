@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSSE3_ENABLE    
+#ifdef SIMD_SSSE3_ENABLE
     namespace Ssse3
     {
         namespace
@@ -170,5 +170,8 @@ namespace Simd
                 ReduceGray4x4<false>(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSsse3Reduce4x4.cpp.o) has no symbols
+    void dummy_SimdSsse3Reduce4x4(){};
 #endif// SIMD_SSSE3_ENABLE
 }

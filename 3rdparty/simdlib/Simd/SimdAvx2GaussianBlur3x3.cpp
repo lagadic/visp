@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_AVX2_ENABLE    
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
         namespace
@@ -159,5 +159,8 @@ namespace Simd
                 GaussianBlur3x3<false>(src, srcStride, width, height, channelCount, dst, dstStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2GaussianBlur3x3.cpp.o) has no symbols
+    void dummy_SimdAvx2GaussianBlur3x3(){};
 #endif// SIMD_AVX2_ENABLE
 }

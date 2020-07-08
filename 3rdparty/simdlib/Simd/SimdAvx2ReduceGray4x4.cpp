@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_AVX2_ENABLE    
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
         namespace
@@ -75,7 +75,7 @@ namespace Simd
             return _mm256_add_epi16(_mm256_maddubs_epi16(_mm256_or_si256(K_ZERO, ab), K8_01_03), _mm256_maddubs_epi16(_mm256_or_si256(K_ZERO, cd), K8_03_01));
 #else
             return _mm256_add_epi16(_mm256_maddubs_epi16(ab, K8_01_03), _mm256_maddubs_epi16(cd, K8_03_01));
-#endif        
+#endif
         }
 
         SIMD_INLINE __m256i ReduceColNose(const uint8_t * src)
@@ -188,5 +188,8 @@ namespace Simd
                 ReduceGray4x4<false>(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2ReduceGray4x4.cpp.o) has no symbols
+    void dummy_SimdAvx2ReduceGray4x4(){};
 #endif// SIMD_AVX2_ENABLE
 }

@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_AVX2_ENABLE    
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
         template <bool compensation> SIMD_INLINE __m256i DivideBy16(__m256i value);
@@ -144,5 +144,8 @@ namespace Simd
                 ReduceGray3x3<false>(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride, compensation);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2ReduceGray3x3.cpp.o) has no symbols
+    void dummy_SimdAvx2ReduceGray3x3(){};
 #endif// SIMD_AVX2_ENABLE
 }

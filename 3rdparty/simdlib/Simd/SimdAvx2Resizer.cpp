@@ -29,7 +29,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_AVX2_ENABLE 
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
         ResizerByteBilinear::ResizerByteBilinear(const ResParam & param)
@@ -614,7 +614,7 @@ namespace Simd
                         float fx = _ax[dx];
                         pb[dx] = ps[sx] * (1.0f - fx) + ps[sx + cn] * fx;
                     }
-                }  
+                }
 
                 size_t dx = 0;
                 __m256 _fy0 = _mm256_set1_ps(fy0);
@@ -651,6 +651,9 @@ namespace Simd
                 return Avx::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);
         }
     }
-#endif //SIMD_AVX2_ENABLE 
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2Resizer.cpp.o) has no symbols
+    void dummy_SimdAvx2Resizer(){};
+#endif //SIMD_AVX2_ENABLE
 }
 

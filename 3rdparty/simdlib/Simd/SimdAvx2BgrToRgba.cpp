@@ -67,5 +67,8 @@ namespace Simd
                 BgrToRgba<false>(bgr, width, height, bgrStride, rgba, rgbaStride, alpha);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2BgrToRgba.cpp.o) has no symbols
+    void dummy_SimdAvx2BgrToRgba(){};
 #endif//SIMD_AVX2_ENABLE
 }

@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE    
+#ifdef SIMD_SSE2_ENABLE
     namespace Sse2
     {
         template <bool compensation> SIMD_INLINE __m128i DivideBy16(__m128i value);
@@ -118,5 +118,8 @@ namespace Simd
                 ReduceGray3x3<false>(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride, compensation);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse2ReduceGray3x3.cpp.o) has no symbols
+    void dummy_SimdSse2ReduceGray3x3(){};
 #endif// SIMD_SSE2_ENABLE
 }

@@ -27,7 +27,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE    
+#ifdef SIMD_SSE2_ENABLE
     namespace Sse2
     {
         namespace
@@ -68,5 +68,8 @@ namespace Simd
             Sse2::RgbaToGray(buffer.rgba, width, 1, 4 * width, gray, width);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse2RgbToGray.cpp.o) has no symbols
+    void dummy_SimdSse2RgbToGray(){};
 #endif//SIMD_SSE2_ENABLE
 }

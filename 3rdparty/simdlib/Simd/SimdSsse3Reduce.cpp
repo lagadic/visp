@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSSE3_ENABLE    
+#ifdef SIMD_SSSE3_ENABLE
     namespace Ssse3
     {
         SIMD_INLINE __m128i Average16(const __m128i & s0, const __m128i & s1)
@@ -91,7 +91,7 @@ namespace Simd
                 {
                     for (size_t c = 0; c < channelCount; ++c)
                         dst[evenSize/2 + c] = Base::Average(src0[evenSize + c], src1[evenSize + c]);
-                }                
+                }
                 src += 2 * srcStride;
                 dst += dstStride;
             }
@@ -119,7 +119,7 @@ namespace Simd
             __m128i m11 = _mm_or_si128(_mm_or_si128(_mm_shuffle_epi8(s10, K8_BGR2), _mm_shuffle_epi8(s11, K8_BGR3)), _mm_shuffle_epi8(s12, K8_BGR4));
             Store<align>((__m128i*)dst + 0, Average8(m00, m01, m10, m11));
             __m128i s03 = Load<align>((__m128i*)src0 + 3);
-            __m128i s04 = Load<align>((__m128i*)src0 + 4); 
+            __m128i s04 = Load<align>((__m128i*)src0 + 4);
             __m128i s13 = Load<align>((__m128i*)src1 + 3);
             __m128i s14 = Load<align>((__m128i*)src1 + 4);
             __m128i m02 = _mm_or_si128(_mm_shuffle_epi8(s01, K8_BGR5), _mm_shuffle_epi8(s02, K8_BGR6));
@@ -195,5 +195,8 @@ namespace Simd
                 ReduceColor2x2<false>(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride, channelCount);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSsse3Reduce.cpp.o) has no symbols
+    void dummy_SimdSsse3Reduce(){};
 #endif// SIMD_SSSE3_ENABLE
 }

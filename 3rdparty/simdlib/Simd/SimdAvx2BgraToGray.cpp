@@ -27,7 +27,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_AVX2_ENABLE    
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
         const __m256i K16_BLUE_RED = SIMD_MM256_SET2_EPI16(Base::BLUE_TO_GRAY_WEIGHT, Base::RED_TO_GRAY_WEIGHT);
@@ -90,5 +90,8 @@ namespace Simd
                 BgraToGray<false>(bgra, width, height, bgraStride, gray, grayStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2BgraToGray.cpp.o) has no symbols
+    void dummy_SimdAvx2BgraToGray(){};
 #endif// SIMD_AVX2_ENABLE
 }

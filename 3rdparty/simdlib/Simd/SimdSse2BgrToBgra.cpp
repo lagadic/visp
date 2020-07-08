@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE    
+#ifdef SIMD_SSE2_ENABLE
     namespace Sse2
     {
         template <bool align> SIMD_INLINE void Bgr48pToBgra32(uint8_t * bgra,
@@ -80,5 +80,8 @@ namespace Simd
                 Bgr48pToBgra32<false>(blue, blueStride, width, height, green, greenStride, red, redStride, bgra, bgraStride, alpha);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse2BgrToBgra.cpp.o) has no symbols
+    void dummy_SimdSse2BgrToBgra(){};
 #endif//SIMD_SSE2_ENABLE
 }

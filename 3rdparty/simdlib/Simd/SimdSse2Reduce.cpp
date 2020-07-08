@@ -29,7 +29,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE    
+#ifdef SIMD_SSE2_ENABLE
     namespace Sse2
     {
         void ReduceColor2x2(const uint8_t * src, size_t srcWidth, size_t srcHeight, size_t srcStride,
@@ -47,5 +47,8 @@ namespace Simd
             }
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse2Reduce.cpp.o) has no symbols
+    void dummy_SimdSse2Reduce(){};
 #endif// SIMD_SSE2_ENABLE
 }

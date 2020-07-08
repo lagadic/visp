@@ -27,7 +27,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSSE3_ENABLE    
+#ifdef SIMD_SSSE3_ENABLE
     namespace Ssse3
     {
         template <bool align> SIMD_INLINE void InterleaveBgr(const uint8_t * b, const uint8_t * g, const uint8_t * r, size_t offset, uint8_t * bgr)
@@ -124,5 +124,8 @@ namespace Simd
                 InterleaveBgra<false>(b, bStride, g, gStride, r, rStride, a, aStride, width, height, bgra, bgraStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSsse3Interleave.cpp.o) has no symbols
+    void dummy_SimdSsse3Interleave(){};
 #endif// SIMD_SSSE3_ENABLE
 }

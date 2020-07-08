@@ -26,10 +26,10 @@
 
 namespace Simd
 {
-#ifdef SIMD_AVX2_ENABLE    
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
-        const __m256i K8_SHFL_0S0 = SIMD_MM256_SETR_EPI8(0x2, 0x1, 0x0, 0x5, 0x4, 0x3, 0x8, 0x7, 0x6, 0xB, 0xA, 0x9, 0xE, 0xD, 0xC, -1, 
+        const __m256i K8_SHFL_0S0 = SIMD_MM256_SETR_EPI8(0x2, 0x1, 0x0, 0x5, 0x4, 0x3, 0x8, 0x7, 0x6, 0xB, 0xA, 0x9, 0xE, 0xD, 0xC, -1,
             0x0, -1, 0x4, 0x3, 0x2, 0x7, 0x6, 0x5, 0xA, 0x9, 0x8, 0xD, 0xC, 0xB, -1, 0xF);
         const __m256i K8_SHFL_0P0 = SIMD_MM256_SETR_EPI8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0x9,
             -1, 0x7, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1);
@@ -56,7 +56,7 @@ namespace Simd
             __m256i p0 = _mm256_permute4x64_epi64(s0, 0x1B);
             __m256i p1 = _mm256_permute4x64_epi64(s1, 0x1B);
             __m256i p2 = _mm256_permute4x64_epi64(s2, 0x1B);
-            Store<align>((__m256i*)dst + 0, _mm256_or_si256(_mm256_or_si256(_mm256_shuffle_epi8(s0, K8_SHFL_0S0), 
+            Store<align>((__m256i*)dst + 0, _mm256_or_si256(_mm256_or_si256(_mm256_shuffle_epi8(s0, K8_SHFL_0S0),
                 _mm256_shuffle_epi8(p0, K8_SHFL_0P0)), _mm256_shuffle_epi8(p1, K8_SHFL_0P1)));
             Store<align>((__m256i*)dst + 1, _mm256_or_si256(_mm256_or_si256(_mm256_shuffle_epi8(s1, K8_SHFL_1S1),
                 _mm256_shuffle_epi8(p0, K8_SHFL_1P0)), _mm256_shuffle_epi8(p2, K8_SHFL_1P2)));
@@ -93,5 +93,8 @@ namespace Simd
                 BgrToRgb<false>(bgr, bgrStride, width, height, rgb, rgbStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2BgrToRgb.cpp.o) has no symbols
+    void dummy_SimdAvx2BgrToRgb(){};
 #endif//SIMD_AVX2_ENABLE
 }

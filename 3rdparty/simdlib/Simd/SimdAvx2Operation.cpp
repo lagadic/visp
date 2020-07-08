@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_AVX2_ENABLE    
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
         template <SimdOperationBinary8uType type> SIMD_INLINE __m256i OperationBinary8u(const __m256i & a, const __m256i & b);
@@ -142,5 +142,8 @@ namespace Simd
                 OperationBinary8u<false>(a, aStride, b, bStride, width, height, channelCount, dst, dstStride, type);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2Operation.cpp.o) has no symbols
+    void dummy_SimdAvx2Operation(){};
 #endif// SIMD_AVX2_ENABLE
 }

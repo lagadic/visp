@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE    
+#ifdef SIMD_SSE2_ENABLE
     namespace Sse2
     {
         const __m128i K16_RED_BLUE = SIMD_MM_SET2_EPI16(Base::RED_TO_GRAY_WEIGHT, Base::BLUE_TO_GRAY_WEIGHT);
@@ -89,5 +89,8 @@ namespace Simd
                 RgbaToGray<false>(rgba, width, height, rgbaStride, gray, grayStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse2RgbaToGray.cpp.o) has no symbols
+    void dummy_SimdSse2RgbaToGray(){};
 #endif// SIMD_SSE2_ENABLE
 }

@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE    
+#ifdef SIMD_SSE2_ENABLE
     namespace Sse2
     {
         namespace
@@ -149,5 +149,8 @@ namespace Simd
                 GaussianBlur3x3<false>(src, srcStride, width, height, channelCount, dst, dstStride);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse2GaussianBlur3x3.cpp.o) has no symbols
+    void dummy_SimdSse2GaussianBlur3x3(){};
 #endif// SIMD_SSE2_ENABLE
 }

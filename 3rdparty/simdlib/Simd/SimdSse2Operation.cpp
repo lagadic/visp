@@ -26,7 +26,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE    
+#ifdef SIMD_SSE2_ENABLE
     namespace Sse2
     {
         template <SimdOperationBinary8uType type> SIMD_INLINE __m128i OperationBinary8u(const __m128i & a, const __m128i & b);
@@ -142,5 +142,8 @@ namespace Simd
                 OperationBinary8u<false>(a, aStride, b, bStride, width, height, channelCount, dst, dstStride, type);
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse2Operation.cpp.o) has no symbols
+    void dummy_SimdSse2Operation(){};
 #endif// SIMD_SSE2_ENABLE
 }
