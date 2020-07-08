@@ -10,7 +10,7 @@
 int main(int argc, const char *argv[])
 {
 //! [Macro defined]
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020200)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020200) && defined(VISP_HAVE_OPENCV_OBJDETECT)
   //! [Macro defined]
   try {
     //! [Default settings]
