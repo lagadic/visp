@@ -40,12 +40,19 @@
 #include <cpuid.h>
 #endif
 
+#if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
+#include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
+#endif
+
+// The following includes <sys/auxv.h> and <asm/hwcap.h> are not available for iOS.
+#if (TARGET_OS_IOS == 0) // not iOS
 #if defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/auxv.h>
 #if defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)
 #include <asm/hwcap.h>
+#endif
 #endif
 #endif
 
@@ -117,6 +124,7 @@ namespace Simd
     }
 #endif//defined(SIMD_X86_ENABLE) || defined(SIMD_X64_ENABLE)
 
+#if (TARGET_OS_IOS == 0) // not iOS
 #if defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE))
     namespace CpuInfo
     {
@@ -147,6 +155,7 @@ namespace Simd
         }
     }
 #endif//defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE))
+#endif//(TARGET_OS_IOS == 0) not iOS
 
 #ifdef SIMD_SSE_ENABLE
     namespace Sse
@@ -394,7 +403,7 @@ namespace Simd
 #if defined(_MSC_VER)
             return true;
 #elif defined(__GNUC__)
-#if defined(SIMD_ARM64_ENABLE)
+#if defined(SIMD_ARM64_ENABLE) || (TARGET_OS_IOS != 0) // iOS
             return true;
 #else
             return CpuInfo::CheckBit(AT_HWCAP, HWCAP_NEON);
@@ -459,55 +468,55 @@ namespace Simd
 #define SIMD_BASE_FUNC(func) Simd::Base::func
 
 #ifdef SIMD_SSE_ENABLE
-#define SIMD_SSE_FUNC(func) Simd::Sse::Enable ? Simd::Sse::func : 
+#define SIMD_SSE_FUNC(func) Simd::Sse::Enable ? Simd::Sse::func :
 #else
-#define SIMD_SSE_FUNC(func) 
+#define SIMD_SSE_FUNC(func)
 #endif
 
 #ifdef SIMD_SSE2_ENABLE
-#define SIMD_SSE2_FUNC(func) Simd::Sse2::Enable ? Simd::Sse2::func : 
+#define SIMD_SSE2_FUNC(func) Simd::Sse2::Enable ? Simd::Sse2::func :
 #else
-#define SIMD_SSE2_FUNC(func) 
+#define SIMD_SSE2_FUNC(func)
 #endif
 
 #ifdef SIMD_SSE3_ENABLE
-#define SIMD_SSE3_FUNC(func) Simd::Sse3::Enable ? Simd::Sse3::func : 
+#define SIMD_SSE3_FUNC(func) Simd::Sse3::Enable ? Simd::Sse3::func :
 #else
-#define SIMD_SSE3_FUNC(func) 
+#define SIMD_SSE3_FUNC(func)
 #endif
 
 #ifdef SIMD_SSSE3_ENABLE
-#define SIMD_SSSE3_FUNC(func) Simd::Ssse3::Enable ? Simd::Ssse3::func : 
+#define SIMD_SSSE3_FUNC(func) Simd::Ssse3::Enable ? Simd::Ssse3::func :
 #else
-#define SIMD_SSSE3_FUNC(func) 
+#define SIMD_SSSE3_FUNC(func)
 #endif
 
 #ifdef SIMD_SSE41_ENABLE
-#define SIMD_SSE41_FUNC(func) Simd::Sse41::Enable ? Simd::Sse41::func : 
+#define SIMD_SSE41_FUNC(func) Simd::Sse41::Enable ? Simd::Sse41::func :
 #else
-#define SIMD_SSE41_FUNC(func) 
+#define SIMD_SSE41_FUNC(func)
 #endif
 
 #ifdef SIMD_SSE42_ENABLE
-#define SIMD_SSE42_FUNC(func) Simd::Sse42::Enable ? Simd::Sse42::func : 
+#define SIMD_SSE42_FUNC(func) Simd::Sse42::Enable ? Simd::Sse42::func :
 #else
-#define SIMD_SSE42_FUNC(func) 
+#define SIMD_SSE42_FUNC(func)
 #endif
 
 #ifdef SIMD_AVX_ENABLE
-#define SIMD_AVX_FUNC(func) Simd::Avx::Enable ? Simd::Avx::func : 
+#define SIMD_AVX_FUNC(func) Simd::Avx::Enable ? Simd::Avx::func :
 #else
 #define SIMD_AVX_FUNC(func)
 #endif
 
 #ifdef SIMD_AVX2_ENABLE
-#define SIMD_AVX2_FUNC(func) Simd::Avx2::Enable ? Simd::Avx2::func : 
+#define SIMD_AVX2_FUNC(func) Simd::Avx2::Enable ? Simd::Avx2::func :
 #else
 #define SIMD_AVX2_FUNC(func)
 #endif
 
 #ifdef SIMD_NEON_ENABLE
-#define SIMD_NEON_FUNC(func) Simd::Neon::Enable ? Simd::Neon::func : 
+#define SIMD_NEON_FUNC(func) Simd::Neon::Enable ? Simd::Neon::func :
 #else
 #define SIMD_NEON_FUNC(func)
 #endif
