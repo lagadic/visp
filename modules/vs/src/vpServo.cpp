@@ -72,7 +72,7 @@ vpServo::vpServo()
     interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false), cVf(), init_cVf(false),
     fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false), errorComputed(false),
     interactionMatrixComputed(false), dim_task(0), taskWasKilled(false), forceInteractionMatrixComputation(false),
-    WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial(), iscJcIdentity(true), cJc(6, 6)
+    WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial(), iscJcIdentity(true), cJc(6, 6), m_first_iteration(true)
 {
   cJc.eye();
 }
@@ -97,7 +97,7 @@ vpServo::vpServo(vpServoType servo_type)
     inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false), cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(),
     init_eJe(false), fJe(), init_fJe(false), errorComputed(false), interactionMatrixComputed(false), dim_task(0),
     taskWasKilled(false), forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4), e1_initial(),
-    iscJcIdentity(true), cJc(6, 6)
+    iscJcIdentity(true), cJc(6, 6), m_first_iteration(true)
 {
   cJc.eye();
 }
@@ -170,6 +170,8 @@ void vpServo::init()
   forceInteractionMatrixComputation = false;
 
   rankJ1 = 0;
+
+  m_first_iteration = true;
 }
 
 /*!
@@ -934,17 +936,15 @@ bool vpServo::testUpdated()
 */
 vpColVector vpServo::computeControlLaw()
 {
-  static int iteration = 0;
-
   vpVelocityTwistMatrix cVa; // Twist transformation matrix
   vpMatrix aJe;              // Jacobian
 
-  if (iteration == 0) {
+  if (m_first_iteration) {
     if (testInitialization() == false) {
       vpERROR_TRACE("All the matrices are not correctly initialized");
-      throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
+      throw(vpServoException(vpServoException::servoError, "Cannot compute control law. "
                                                            "All the matrices are not correctly"
-                                                           "initialized"));
+                                                           "initialized."));
     }
   }
   if (testUpdated() == false) {
@@ -1040,7 +1040,7 @@ vpColVector vpServo::computeControlLaw()
   // Compute classical projection operator
   I_WpW = (I - WpW);
 
-  iteration++;
+  m_first_iteration = false;
   return e;
 }
 
@@ -1080,13 +1080,10 @@ vpColVector vpServo::computeControlLaw()
 */
 vpColVector vpServo::computeControlLaw(double t)
 {
-  static int iteration = 0;
-  // static vpColVector e1_initial;
-
   vpVelocityTwistMatrix cVa; // Twist transformation matrix
   vpMatrix aJe;              // Jacobian
 
-  if (iteration == 0) {
+  if (m_first_iteration) {
     if (testInitialization() == false) {
       vpERROR_TRACE("All the matrices are not correctly initialized");
       throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
@@ -1180,7 +1177,7 @@ vpColVector vpServo::computeControlLaw(double t)
 
   // memorize the initial e1 value if the function is called the first time
   // or if the time given as parameter is equal to 0.
-  if (iteration == 0 || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
+  if (m_first_iteration || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
     e1_initial = e1;
   }
   // Security check. If size of e1_initial and e1 differ, that means that
@@ -1195,7 +1192,7 @@ vpColVector vpServo::computeControlLaw(double t)
   // Compute classical projection operator
   I_WpW = (I - WpW);
 
-  iteration++;
+  m_first_iteration = false;
   return e;
 }
 
@@ -1236,12 +1233,10 @@ vpColVector vpServo::computeControlLaw(double t)
 */
 vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
 {
-  static int iteration = 0;
-
   vpVelocityTwistMatrix cVa; // Twist transformation matrix
   vpMatrix aJe;              // Jacobian
 
-  if (iteration == 0) {
+  if (m_first_iteration) {
     if (testInitialization() == false) {
       vpERROR_TRACE("All the matrices are not correctly initialized");
       throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
@@ -1335,7 +1330,7 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
 
   // memorize the initial e1 value if the function is called the first time
   // or if the time given as parameter is equal to 0.
-  if (iteration == 0 || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
+  if (m_first_iteration || std::fabs(t) < std::numeric_limits<double>::epsilon()) {
     e1_initial = e1;
   }
   // Security check. If size of e1_initial and e1 differ, that means that
@@ -1350,7 +1345,7 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
   // Compute classical projection operator
   I_WpW = (I - WpW);
 
-  iteration++;
+  m_first_iteration = false;
   return e;
 }
 

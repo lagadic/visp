@@ -676,6 +676,8 @@ protected:
   //! A diag matrix used to determine which are the degrees of freedom that
   //! are controlled in the camera frame
   vpMatrix cJc;
+
+  bool m_first_iteration; //!< True until first call of computeControlLaw() is achieved
 };
 
 #endif
