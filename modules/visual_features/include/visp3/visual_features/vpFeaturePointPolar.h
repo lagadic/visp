@@ -210,8 +210,6 @@ int main()
     // compute the control law
     vpColVector v = task.computeControlLaw(); // camera velocity
   }
-
-  task.kill();
 }
   \endcode
 

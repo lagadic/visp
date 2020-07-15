@@ -214,7 +214,6 @@ int main()
 
       vpTime::wait(robot.getSamplingTime() * 1000);
     }
-    task.kill();
   } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
   } catch (...) {

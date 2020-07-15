@@ -312,7 +312,6 @@ int main()
 
     vpTRACE("Display task information ");
     task.print();
-    task.kill();
     flog.close(); // Close the log file
     return EXIT_SUCCESS;
   }

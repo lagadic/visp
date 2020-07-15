@@ -85,8 +85,6 @@ int main()
     }
     std::cout << "Convergence in " << iter << " iterations" << std::endl;
 
-    task.kill();
-
 #ifdef VISP_HAVE_DISPLAY
     plotter.saveData(0, "error.dat");
     plotter.saveData(1, "vc.dat");

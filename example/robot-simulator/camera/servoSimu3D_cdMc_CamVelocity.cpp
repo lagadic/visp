@@ -286,9 +286,6 @@ int main(int argc, const char **argv)
     // Display task information
     task.print();
 
-    // Kill the task
-    task.kill();
-
     // Close the log file
     flog.close();
     return EXIT_SUCCESS;

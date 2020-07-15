@@ -238,7 +238,6 @@ static void *mainLoop(void *_simu)
   }
   // Print information about the task
   task.print();
-  task.kill();
   simu->closeMainApplication();
 
   void *a = NULL;

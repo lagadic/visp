@@ -93,7 +93,6 @@ int main()
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
       vpTime::wait(robot.getSamplingTime() * 1000);
     }
-    task.kill();
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   } catch (...) {

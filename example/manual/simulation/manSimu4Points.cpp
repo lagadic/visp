@@ -189,7 +189,6 @@ static void *mainLoop(void *_simu)
     // Wait 40 ms
     vpTime::wait(t, 40);
   }
-  task.kill();
   simu->closeMainApplication();
 
   void *a = NULL;

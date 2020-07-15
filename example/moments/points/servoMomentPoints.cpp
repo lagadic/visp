@@ -311,8 +311,6 @@ public:
       vpDisplay::flush(m_Iint);
     }
 
-    m_task.kill();
-
     vpDisplay::display(m_Iint);
     m_robot.getInternalView(m_Iint);
     vpDisplay::displayText(m_Iint, 20, 20, "Click to quit...", vpColor::red);

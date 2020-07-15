@@ -280,7 +280,6 @@ static void *mainLoop(void *_simu)
       vpTime::wait(t, sampling_time * 1000); // Wait 40 ms
     }
     pos--;
-    task.kill();
   }
 
   simu->closeMainApplication();

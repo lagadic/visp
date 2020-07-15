@@ -277,7 +277,6 @@ int main(int argc, const char **argv)
 
     // Display task information
     task.print();
-    task.kill();
 
     if (opt_display && opt_click_allowed) {
       vpDisplay::displayText(I, 20, 20, "Click to quit...", vpColor::white);

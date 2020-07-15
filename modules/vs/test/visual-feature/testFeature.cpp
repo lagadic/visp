@@ -84,10 +84,6 @@ int main()
       // Compute the error vector (s-s^*) for the ThetaU_z feature
       s.error(s_star, vpFeatureThetaU::selectTUz());
 
-      // A call to kill() is requested here to destroy properly the current
-      // and desired feature lists.
-      task.kill();
-
       std::cout << "End, call vpServo destructors..." << std::endl;
     }
     return 0;

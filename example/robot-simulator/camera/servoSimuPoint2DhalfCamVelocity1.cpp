@@ -252,7 +252,6 @@ int main(int argc, const char **argv)
 
     // Display task information
     task.print();
-    task.kill();
     std::cout << "Final camera location:\n " << cMo << std::endl;
     return EXIT_SUCCESS;
   } catch (const vpException &e) {

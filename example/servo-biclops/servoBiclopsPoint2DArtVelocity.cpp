@@ -409,7 +409,6 @@ int main(int argc, const char **argv)
 
     std::cout << "Display task information " << std::endl;
     task.print();
-    task.kill();
 
     fclose(fd);
 

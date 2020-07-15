@@ -289,7 +289,6 @@ int main(int argc, const char **argv)
     task.print();
 
     // Kill the task
-    task.kill();
 
     // Close the log file
     flog.close();
