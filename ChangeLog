@@ -51,6 +51,7 @@ ViSP 3.3.1 (under development)
     . [#777] Issue when calling vpMatrix::eigenValues() using lapack built-in
     . [#780] Projects have to explicitely link against Boost when compiling ViSP with ar module
     . [#781] Wrong share install path on unix-like system
+    . [#787] Unable to build simdlib 3rd party for iOS
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:

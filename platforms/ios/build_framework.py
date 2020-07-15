@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 """
 The script builds visp3.framework for iOS.
-The built framework is universal, it can be used to build app and run it on either iOS simulator
-or real device.
+The built framework is universal, it can be used to build app and run it on either iOS simulator or real device.
 
 Usage:
     ./build_framework.py <outputdir>
@@ -139,6 +138,7 @@ class Builder:
             "-DAPPLE_FRAMEWORK=ON",
             "-DCMAKE_INSTALL_PREFIX=install",
             "-DCMAKE_BUILD_TYPE=%s" % self.getConfiguration(),
+            "-DVISP_3P_LIB_INSTALL_PATH=lib/3rdparty",
             "-DBUILD_DEMOS=OFF",
             "-DBUILD_EXAMPLES=OFF",
             "-DBUILD_TESTS=OFF",
@@ -215,7 +215,7 @@ class Builder:
     def mergeLibs(self, builddir):
         res = os.path.join(builddir, "lib", self.getConfiguration(), "libvisp_merged.a")
         libs = glob.glob(os.path.join(builddir, "install", "lib", "*.a"))
-        libs3 = glob.glob(os.path.join(builddir, "install", "share", "ViSP", "3rdparty", "lib", "*.a"))
+        libs3 = glob.glob(os.path.join(builddir, "install", "lib", "3rdparty", "*.a"))
         print("Merging libraries:\n\t%s" % "\n\t".join(libs + libs3), file=sys.stderr)
         execute(["libtool", "-static", "-o", res] + libs + libs3)
 
