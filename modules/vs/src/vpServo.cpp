@@ -105,23 +105,13 @@ vpServo::vpServo(vpServoType servo_type)
 /*!
   Destructor.
 
-  In fact, it does nothing. You have to call kill() to destroy the
-  current and desired feature lists.
+  Since ViSP > 3.3.0 calls kill() to destroy the current and desired feature lists.
 
   \sa kill()
 */
-//  \exception vpServoException::notKilledProperly : Task was not killed
-//  properly. That means that you should explitly call kill().
-
 vpServo::~vpServo()
 {
-  if (taskWasKilled == false) {
-    vpTRACE("--- Begin Warning Warning Warning Warning Warning ---");
-    vpTRACE("--- You should explicitly call vpServo.kill()...  ---");
-    vpTRACE("--- End Warning Warning Warning Warning Warning   ---");
-    //     throw(vpServoException(vpServoException::notKilledProperly,
-    // 			   "Task was not killed properly"));
-  }
+  kill();
 }
 
 /*!
@@ -177,8 +167,8 @@ void vpServo::init()
 /*!
   Task destruction. Kill the current and desired visual feature lists.
 
-  It is mendatory to call explicitly this function to avoid potential
-  memory leaks.
+  This function is called in the destructor. Since ViSP > 3.3.0 it is no more
+  mandatory to call explicitely kill().
 
   \code
   vpServo task ;
@@ -186,7 +176,7 @@ void vpServo::init()
   ...
   task.addFeature(s); // Add current ThetaU feature
 
-  task.kill(); // A call to kill() is requested here
+  task.kill(); // This call is no more mandatory since achieved in the destructor
   \endcode
 
 */
@@ -282,8 +272,6 @@ int main()
     vpColVector v = servo.computeControlLaw(); // compute control law
     // only v[3] and v[4] corresponding to wx and wy are different from 0
   }
-
-  servo.kill();
 }
   \endcode
 */
