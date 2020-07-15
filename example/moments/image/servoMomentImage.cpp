@@ -352,8 +352,6 @@ public:
       vpTime::wait(t, sampling_time * 1000); // Wait 10 ms
     }
 
-    m_task.kill();
-
     m_imsim.getImage(m_Iint, m_cam);
     vpDisplay::display(m_Iint);
     vpDisplay::displayText(m_Iint, 20, 20, "Click to quit...", vpColor::red);

@@ -360,7 +360,6 @@ int main()
     v = 0;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
     vpDisplay::getClick(I);
-    task.kill();
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {

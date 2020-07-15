@@ -189,8 +189,6 @@ int main()
 
   task.print();
 
-  task.kill();
-
   return 0;
 }
     \endcode

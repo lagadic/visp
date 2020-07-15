@@ -292,7 +292,6 @@ static void *mainLoop(void *_simu)
   }
   std::cout << "\nDisplay task information" << std::endl;
   task.print();
-  task.kill();
 
   simu->closeMainApplication();
 

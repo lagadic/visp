@@ -310,7 +310,6 @@ static void *mainLoop(void *_simu)
   }
   // Display task information
   task.print();
-  task.kill();
 
   std::cout << "cMo:\n" << cMo << std::endl;
   vpPoseVector pose(cMo);

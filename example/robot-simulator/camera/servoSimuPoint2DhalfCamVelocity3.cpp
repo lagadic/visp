@@ -318,7 +318,6 @@ int main(int argc, const char **argv)
 
     // Display task information
     task.print();
-    task.kill();
     // Final camera location
     std::cout << "Final camera location: \n" << cMo << std::endl;
     return EXIT_SUCCESS;

@@ -396,7 +396,6 @@ int main()
     kinect.stop();
     std::cout << "Display task information: " << std::endl;
     task.print();
-    task.kill();
     flog.close(); // Close the log file
     return EXIT_SUCCESS;
   }

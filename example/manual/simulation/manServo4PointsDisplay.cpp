@@ -208,7 +208,6 @@ int main()
       // Wait 40 ms
       vpTime::wait(t, 40);
     }
-    task.kill();
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

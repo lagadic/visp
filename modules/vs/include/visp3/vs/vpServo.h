@@ -138,10 +138,6 @@ int main()
     v = task.computeControlLaw(); // Compute camera velocity skew
     error =  ( task.getError() ).sumSquare(); // error = s^2 - s_star^2
   } while (error > 0.0001); // Stop the task when current and desired visual features are close
-
-  // A call to kill() is requested here to destroy properly the current
-  // and desired feature lists.
-  task.kill();
 }
   \endcode
 
@@ -676,6 +672,8 @@ protected:
   //! A diag matrix used to determine which are the degrees of freedom that
   //! are controlled in the camera frame
   vpMatrix cJc;
+
+  bool m_first_iteration; //!< True until first call of computeControlLaw() is achieved
 };
 
 #endif

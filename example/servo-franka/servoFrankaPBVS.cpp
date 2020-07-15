@@ -402,8 +402,6 @@ int main(int argc, char **argv)
       plotter = nullptr;
     }
 
-    task.kill();
-
     if (!final_quit) {
       while (!final_quit) {
         rs.acquire(I);

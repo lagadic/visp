@@ -312,7 +312,6 @@ int main(int argc, char **argv)
 
     // Kill the servo task
     task.print();
-    task.kill();
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

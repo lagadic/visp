@@ -265,9 +265,6 @@ int main()
     // Display task information
     task.print();
 
-    // Kill the task
-    task.kill();
-
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {

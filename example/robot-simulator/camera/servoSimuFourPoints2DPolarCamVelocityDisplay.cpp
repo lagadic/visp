@@ -460,7 +460,6 @@ int main(int argc, const char **argv)
     task.print();
 
     // Kill the task
-    task.kill();
 
     std::cout << "Final robot position with respect to the object frame:\n";
     cMo.print();

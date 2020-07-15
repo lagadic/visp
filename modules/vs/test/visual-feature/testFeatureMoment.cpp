@@ -247,7 +247,6 @@ vpMatrix execute(const vpHomogeneousMatrix &cMo, const vpHomogeneousMatrix &cdMo
 
   task.computeControlLaw();
   vpMatrix mat = task.computeInteractionMatrix();
-  task.kill();
   return mat;
 }
 

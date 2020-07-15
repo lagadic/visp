@@ -255,7 +255,6 @@ int main()
 
     vpTRACE("Display task information ");
     task.print();
-    task.kill();
   }
   catch (const vpException &e) {
     std::cout << "Sorry PtU46 not available. Got exception: " << e << std::endl;
