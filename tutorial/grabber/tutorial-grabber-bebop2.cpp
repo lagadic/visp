@@ -3,6 +3,8 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
+
+#ifdef VISP_HAVE_MODULE_ROBOT
 #include <visp3/robot/vpRobotBebop2.h>
 
 #include "record_helper.h"
@@ -127,3 +129,9 @@ int main(int argc, char **argv)
   std::cout << "Install Parrot ARSDK3 and ffmpeg, configure and build ViSP again to use this example" << std::endl;
 #endif // #if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_FFMPEG)
 }
+#else
+int main()
+{
+  std::cout << "This tutorial needs visp_robot module that is not built." << std::endl;
+}
+#endif
