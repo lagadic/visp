@@ -62,7 +62,7 @@
   \ingroup group_vision_keypoints
 
   \brief Class that implements the Fern classifier and the YAPE detector
-thanks to the OpenCV library.
+  thanks to the OpenCV library.
 
   \deprecated This class is deprecated with OpenCV 3.0.0 or more recent.
 
@@ -71,15 +71,15 @@ thanks to the OpenCV library.
 
   This class provides a tool to match points between a model and the current
   image. The points of interests belonging to the model and the points
-detected in the current image are given in pixels thanks to the vpImagePoint
-class.
+  detected in the current image are given in pixels thanks to the vpImagePoint
+  class.
 
   For more details about the Ferns Classifier and the point detector,
   see \cite Ozuysal10 and \cite Lepetit04c.
 
   To use this class, you first have to detect points in the model and train
-the associated Fern classifier. Then, for each new grabbed image, You can
-detect points and try to match them with the model.
+  the associated Fern classifier. Then, for each new grabbed image, You can
+  detect points and try to match them with the model.
 
   As training can requires up to several minutes, it is possible to save (in a
   file) and load the classifier.
@@ -246,14 +246,14 @@ public:
 
   /* build reference */
   virtual unsigned int buildReference(const vpImage<unsigned char> &I);
-  virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                                      unsigned int height, unsigned int width);
+  virtual unsigned int buildReference(const vpImage<unsigned char> &_I, const vpImagePoint &_iP,
+                                      unsigned int _height, unsigned int _width);
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   /* matching */
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I);
-  virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
-                                  unsigned int width);
+  virtual unsigned int matchPoint(const vpImage<unsigned char> &_I, const vpImagePoint &_iP, unsigned int _height,
+                                  unsigned int _width);
   virtual unsigned int matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   /* display */
