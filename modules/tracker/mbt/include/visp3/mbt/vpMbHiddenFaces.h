@@ -325,7 +325,7 @@ template <class PolygonType> vpMbHiddenFaces<PolygonType>::~vpMbHiddenFaces()
 }
 
 /*!
-  Copy constructor.
+  \relates vpMbHiddenFaces
 */
 template <class PolygonType>
 vpMbHiddenFaces<PolygonType>::vpMbHiddenFaces(const vpMbHiddenFaces<PolygonType> &copy)
