@@ -80,5 +80,8 @@ int main(int argc, char **argv)
       init_done = false;
     }
   }
+#else
+  (void)argc;
+  (void)argv;
 #endif
 }
