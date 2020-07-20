@@ -531,7 +531,21 @@ scheme, ...</p>
   \defgroup group_detection_tag Tag detection
   Tag detection.
 */
-
+/*!
+  \ingroup module_detection
+  \defgroup group_detection_keypoint Keypoint detection and matching
+  Keypoint detection and matching.
+*/
+/*!
+  \ingroup module_detection
+  \defgroup group_detection_mbt_object Model-based object detection
+  Model-based object detection.
+*/
+/*!
+  \ingroup module_detection
+  \defgroup group_detection_dnn Deep learning object detection
+  Deep learning object detection.
+*/
 /*******************************************
  * Module tracker
  *******************************************/

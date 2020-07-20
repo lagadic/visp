@@ -41,6 +41,7 @@
 
 /*!
   \file vpKeyPointSurf.h
+  \ingroup group_detection_keypoint
 
   \brief Class that implements the SURF key points and technics thanks
   to the OpenCV library.

@@ -86,7 +86,7 @@
 
 /*!
   \class vpKeyPoint
-  \ingroup group_vision_keypoints
+  \ingroup group_vision_keypoints group_detection_keypoint group_detection_mbt_object
 
   \brief Class that allows keypoints detection (and descriptors extraction)
   and matching thanks to OpenCV library. Thus to enable this class OpenCV should
