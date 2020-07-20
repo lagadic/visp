@@ -38,8 +38,7 @@
 
 #include <visp3/vision/vpKeyPointSurf.h>
 
-#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x010100) &&                                     \
-    (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 1.1.0 < 3.0.0
+#if defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION < 0x030000)
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplay.h>

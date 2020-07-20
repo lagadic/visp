@@ -626,17 +626,7 @@ vpThread::Return performLutRGBaThread(vpThread::Args args)
 #endif
 
 /*!
-  \brief Image initialisation
-
-  Allocate memory for an [h x w] image.
-
-  \param w : Image width.
-  \param h : Image height.
-  \param value : Set all the element of the bitmap to \e value.
-
-  \exception vpException::memoryAllocationError
-
-  \sa vpImage::init(h, w)
+  \relates vpImage
 */
 template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w, Type value)
 {
@@ -648,21 +638,7 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w, T
 }
 
 /*!
-  \brief Image initialization
-
-  Allocate memory for an [h x w] image.
-
-  \param w : Image width.
-  \param h : Image height.
-
-  Element of the bitmap are not initialized
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \exception vpException::memoryAllocationError
-
+  \relates vpImage
 */
 template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
 {
@@ -709,17 +685,7 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
 }
 
 /*!
-  \brief Image initialization
-
-  Init from image data stored as a continuous array in memory.
-
-  \param array : Image data stored as a continuous array in memory
-  \param h : Image height.
-  \param w : Image width.
-  \param copyData : If false (by default) only the memory address is copied,
-  otherwise the data are copied.
-
-  \exception vpException::memoryAllocationError
+  \relates vpImage
 */
 template <class Type>
 void vpImage<Type>::init(Type *const array, unsigned int h, unsigned int w, bool copyData)
@@ -774,22 +740,7 @@ void vpImage<Type>::init(Type *const array, unsigned int h, unsigned int w, bool
 }
 
 /*!
-  \brief Constructor
-
-  Allocate memory for an [h x w] image.
-
-  \param w : Image width.
-  \param h : Image height.
-
-  Element of the bitmap are set to zero.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \exception vpException::memoryAllocationError
-
-  \sa vpImage::init(height, width)
+  \relates vpImage
 */
 template <class Type>
 vpImage<Type>::vpImage(unsigned int h, unsigned int w)
@@ -799,21 +750,7 @@ vpImage<Type>::vpImage(unsigned int h, unsigned int w)
 }
 
 /*!
-  \brief Constructor
-
-  Allocate memory for an [height x width] image.
-
-  \param w : Image width.
-  \param h : Image height.
-  \param value : Set all the element of the bitmap to value.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \return MEMORY_FAULT if memory allocation is impossible, else OK
-
-  \sa vpImage::init(height, width, value)
+  \relates vpImage
 */
 template <class Type>
 vpImage<Type>::vpImage(unsigned int h, unsigned int w, Type value)
@@ -823,19 +760,7 @@ vpImage<Type>::vpImage(unsigned int h, unsigned int w, Type value)
 }
 
 /*!
-  \brief Constructor
-
-  Construct a vpImage from a continuous array in memory.
-
-  \param array : Image data stored as a continuous array in memory.
-  \param h : Image height.
-  \param w : Image width.
-  \param copyData : If false (by default) only the memory address is copied,
-  otherwise the data are copied.
-
-  \return MEMORY_FAULT if memory allocation is impossible, else OK
-
-  \sa vpImage::init(array, height, width)
+  \relates vpImage
 */
 template <class Type>
 vpImage<Type>::vpImage(Type *const array, unsigned int h, unsigned int w, bool copyData)
@@ -845,13 +770,7 @@ vpImage<Type>::vpImage(Type *const array, unsigned int h, unsigned int w, bool c
 }
 
 /*!
-  \brief Constructor
-
-  No memory allocation is done
-
-  set all the element of the bitmap to value
-
-  \sa vpImage::resize(height, width) for memory allocation
+  \relates vpImage
 */
 template <class Type> vpImage<Type>::vpImage() :
   bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
@@ -937,7 +856,7 @@ template <class Type> void vpImage<Type>::destroy()
 template <class Type> vpImage<Type>::~vpImage() { destroy(); }
 
 /*!
-  Copy constructor
+  \relates vpImage
 */
 template <class Type>
 vpImage<Type>::vpImage(const vpImage<Type> &I)
@@ -949,7 +868,7 @@ vpImage<Type>::vpImage(const vpImage<Type> &I)
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
-  Move constructor
+  \relates vpImage
 */
 template <class Type>
 vpImage<Type>::vpImage(vpImage<Type> &&I)
