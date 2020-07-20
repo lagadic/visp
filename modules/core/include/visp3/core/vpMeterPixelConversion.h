@@ -75,9 +75,9 @@ public:
   /** @name Using ViSP camera parameters  */
   //@{
   static void convertEllipse(const vpCameraParameters &cam, const vpSphere &sphere, vpImagePoint &center,
-                             double &mu20_p, double &mu11_p, double &mu02_p);
+                             double &n20_p, double &n11_p, double &n02_p);
   static void convertEllipse(const vpCameraParameters &cam, const vpCircle &circle, vpImagePoint &center,
-                             double &mu20_p, double &mu11_p, double &mu02_p);
+                             double &n20_p, double &n11_p, double &n02_p);
   static void convertLine(const vpCameraParameters &cam, const double &rho_m, const double &theta_m, double &rho_p,
                           double &theta_p);
 
@@ -342,10 +342,10 @@ public:
   //@{
   static void convertEllipse(const cv::Mat &cameraMatrix,
                              const vpCircle &circle, vpImagePoint &center,
-                             double &mu20_p, double &mu11_p, double &mu02_p);
+                             double &n20_p, double &n11_p, double &n02_p);
   static void convertEllipse(const cv::Mat &cameraMatrix,
                              const vpSphere &sphere, vpImagePoint &center,
-                             double &mu20_p, double &mu11_p, double &mu02_p);
+                             double &n20_p, double &n11_p, double &n02_p);
   static void convertLine(const cv::Mat &cameraMatrix,
                           const double &rho_m, const double &theta_m,
                           double &rho_p, double &theta_p);

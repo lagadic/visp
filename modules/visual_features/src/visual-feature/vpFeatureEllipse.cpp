@@ -58,14 +58,8 @@
 
 /*
 
-
-
 attributes and members directly related to the vpBasicFeature needs
 other functionalities ar useful but not mandatory
-
-
-
-
 
 */
 
@@ -109,15 +103,15 @@ vpMatrix vpFeatureEllipse::interaction(unsigned int select)
                   "not set yet");
           break;
         case 2:
-          vpTRACE("Warning !!!  The interaction matrix is computed but mu20 "
+          vpTRACE("Warning !!!  The interaction matrix is computed but n20 "
                   "was not set yet");
           break;
         case 3:
-          vpTRACE("Warning !!!  The interaction matrix is computed but mu11 "
+          vpTRACE("Warning !!!  The interaction matrix is computed but n11 "
                   "was not set yet");
           break;
         case 4:
-          vpTRACE("Warning !!!  The interaction matrix is computed but mu02 "
+          vpTRACE("Warning !!!  The interaction matrix is computed but n02 "
                   "was not set yet");
           break;
         case 5:
@@ -142,9 +136,9 @@ vpMatrix vpFeatureEllipse::interaction(unsigned int select)
 
   double xc = s[0];
   double yc = s[1];
-  double mu20 = s[2];
-  double mu11 = s[3];
-  double mu02 = s[4];
+  double n20 = s[2];
+  double n11 = s[3];
+  double n02 = s[4];
 
   // eq 39
   double Z = 1 / (A * xc + B * yc + C);
@@ -155,9 +149,9 @@ vpMatrix vpFeatureEllipse::interaction(unsigned int select)
 
     H[0][0] = -1 / Z;
     H[0][1] = 0;
-    H[0][2] = xc / Z + A * mu20 + B * mu11;
-    H[0][3] = xc * yc + mu11;
-    H[0][4] = -1 - vpMath::sqr(xc) - mu20;
+    H[0][2] = xc / Z + A * n20 + B * n11;
+    H[0][3] = xc * yc + n11;
+    H[0][4] = -1 - vpMath::sqr(xc) - n20;
     H[0][5] = yc;
 
     L = vpMatrix::stack(L, H);
@@ -169,52 +163,52 @@ vpMatrix vpFeatureEllipse::interaction(unsigned int select)
 
     H[0][0] = 0;
     H[0][1] = -1 / Z;
-    H[0][2] = yc / Z + A * mu11 + B * mu02;
-    H[0][3] = 1 + vpMath::sqr(yc) + mu02;
-    H[0][4] = -xc * yc - mu11;
+    H[0][2] = yc / Z + A * n11 + B * n02;
+    H[0][3] = 1 + vpMath::sqr(yc) + n02;
+    H[0][4] = -xc * yc - n11;
     H[0][5] = -xc;
 
     L = vpMatrix::stack(L, H);
   }
 
-  if (vpFeatureEllipse::selectMu20() & select) {
+  if (vpFeatureEllipse::select_n20() & select) {
     vpMatrix H(1, 6);
     H = 0;
 
-    H[0][0] = -2 * (A * mu20 + B * mu11);
+    H[0][0] = -2 * (A * n20 + B * n11);
     H[0][1] = 0;
-    H[0][2] = 2 * ((1 / Z + A * xc) * mu20 + B * xc * mu11);
-    H[0][3] = 2 * (yc * mu20 + xc * mu11);
-    H[0][4] = -4 * mu20 * xc;
-    H[0][5] = 2 * mu11;
+    H[0][2] = 2 * ((1 / Z + A * xc) * n20 + B * xc * n11);
+    H[0][3] = 2 * (yc * n20 + xc * n11);
+    H[0][4] = -4 * n20 * xc;
+    H[0][5] = 2 * n11;
 
     L = vpMatrix::stack(L, H);
   }
 
-  if (vpFeatureEllipse::selectMu11() & select) {
+  if (vpFeatureEllipse::select_n11() & select) {
     vpMatrix H(1, 6);
     H = 0;
 
-    H[0][0] = -A * mu11 - B * mu02;
-    H[0][1] = -A * mu20 - B * mu11;
-    H[0][2] = A * yc * mu20 + (3 / Z - C) * mu11 + B * xc * mu02;
-    H[0][3] = 3 * yc * mu11 + xc * mu02;
-    H[0][4] = -yc * mu20 - 3 * xc * mu11;
-    H[0][5] = mu02 - mu20;
+    H[0][0] = -A * n11 - B * n02;
+    H[0][1] = -A * n20 - B * n11;
+    H[0][2] = A * yc * n20 + (3 / Z - C) * n11 + B * xc * n02;
+    H[0][3] = 3 * yc * n11 + xc * n02;
+    H[0][4] = -yc * n20 - 3 * xc * n11;
+    H[0][5] = n02 - n20;
 
     L = vpMatrix::stack(L, H);
   }
 
-  if (vpFeatureEllipse::selectMu02() & select) {
+  if (vpFeatureEllipse::select_n02() & select) {
     vpMatrix H(1, 6);
     H = 0;
 
     H[0][0] = 0;
-    H[0][1] = -2 * (A * mu11 + B * mu02);
-    H[0][2] = 2 * ((1 / Z + B * yc) * mu02 + A * yc * mu11);
-    H[0][3] = 4 * yc * mu02;
-    H[0][4] = -2 * (yc * mu11 + xc * mu02);
-    H[0][5] = -2 * mu11;
+    H[0][1] = -2 * (A * n11 + B * n02);
+    H[0][2] = 2 * ((1 / Z + B * yc) * n02 + A * yc * n11);
+    H[0][3] = 4 * yc * n02;
+    H[0][4] = -2 * (yc * n11 + xc * n02);
+    H[0][5] = -2 * n11;
     L = vpMatrix::stack(L, H);
   }
 
@@ -241,20 +235,20 @@ vpColVector vpFeatureEllipse::error(const vpBasicFeature &s_star, unsigned int s
       e = vpColVector::stack(e, ey);
     }
 
-    if (vpFeatureEllipse::selectMu20() & select) {
+    if (vpFeatureEllipse::select_n20() & select) {
       vpColVector ex(1);
       ex[0] = s[2] - s_star[2];
 
       e = vpColVector::stack(e, ex);
     }
 
-    if (vpFeatureEllipse::selectMu11() & select) {
+    if (vpFeatureEllipse::select_n11() & select) {
       vpColVector ey(1);
       ey[0] = s[3] - s_star[3];
       e = vpColVector::stack(e, ey);
     }
 
-    if (vpFeatureEllipse::selectMu02() & select) {
+    if (vpFeatureEllipse::select_n02() & select) {
       vpColVector ey(1);
       ey[0] = s[4] - s_star[4];
       e = vpColVector::stack(e, ey);
@@ -276,37 +270,35 @@ void vpFeatureEllipse::print(unsigned int select) const
   ;
   if (vpFeatureEllipse::selectY() & select)
     std::cout << " y=" << s[1] << std::endl;
-  if (vpFeatureEllipse::selectMu20() & select)
-    std::cout << " mu20=" << s[2] << std::endl;
-  if (vpFeatureEllipse::selectMu11() & select)
-    std::cout << " mu11=" << s[3] << std::endl;
-  if (vpFeatureEllipse::selectMu02() & select)
-    std::cout << " mu02=" << s[4] << std::endl;
+  if (vpFeatureEllipse::select_n20() & select)
+    std::cout << " n20=" << s[2] << std::endl;
+  if (vpFeatureEllipse::select_n11() & select)
+    std::cout << " n11=" << s[3] << std::endl;
+  if (vpFeatureEllipse::select_n02() & select)
+    std::cout << " n02=" << s[4] << std::endl;
   std::cout << "A = " << A << " B = " << B << " C = " << C << std::endl;
 }
 
-void vpFeatureEllipse::buildFrom(double x, double y, double mu20, double mu11, double mu02)
+void vpFeatureEllipse::buildFrom(double x, double y, double n20, double n11, double n02)
 {
-
   s[0] = x;
   s[1] = y;
-  s[2] = mu20;
-  s[3] = mu11;
-  s[4] = mu02;
+  s[2] = n20;
+  s[3] = n11;
+  s[4] = n02;
 
   for (int i = 0; i < 5; i++)
     flags[i] = true;
 }
 
-void vpFeatureEllipse::buildFrom(double x, double y, double mu20, double mu11,
-                                 double mu02, double a, double b, double c)
+void vpFeatureEllipse::buildFrom(double x, double y, double n20, double n11,
+                                 double n02, double a, double b, double c)
 {
-
   s[0] = x;
   s[1] = y;
-  s[2] = mu20;
-  s[3] = mu11;
-  s[4] = mu02;
+  s[2] = n20;
+  s[3] = n11;
+  s[4] = n02;
 
   this->A = a;
   this->B = b;
@@ -345,15 +337,33 @@ void vpFeatureEllipse::setABC(double a, double b, double c)
     flags[i] = true;
 }
 
-void vpFeatureEllipse::setMu(double mu20, double mu11, double mu02)
+/*!
+ * Update visual features corresponding to the second order centered moments of the ellipse normalized
+ * by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments
+ * and a the area).
+ * \param n20, n11, n02: Second order centered moments.
+ */
+void vpFeatureEllipse::setMoments(double n20, double n11, double n02)
 {
-
-  s[2] = mu20;
-  s[3] = mu11;
-  s[4] = mu02;
+  s[2] = n20;
+  s[3] = n11;
+  s[4] = n02;
   for (int i = 2; i < 5; i++)
     flags[i] = true;
 }
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+/*!
+ * \deprecated You should rather use setMoments().
+ * This function and its parameters are incorrectly named and are confusing since this function
+ * is waiting for second order centered moments of the ellipse normalized
+ * by its area that corresponds to \f$n_{ij} = \mu_{ij}/a\f$.
+ */
+void vpFeatureEllipse::setMu(double mu20, double mu11, double mu02)
+{
+  setMoments(mu20, mu11, mu02);
+}
+#endif
 
 /*!
 
@@ -367,20 +377,14 @@ void vpFeatureEllipse::setMu(double mu20, double mu11, double mu02)
 void vpFeatureEllipse::display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color,
                                unsigned int thickness) const
 {
-  try {
-    double x = s[0];
-    double y = s[1];
+  double x = s[0];
+  double y = s[1];
 
-    double mu20 = s[2];
-    double mu11 = s[3];
-    double mu02 = s[4];
+  double n20 = s[2];
+  double n11 = s[3];
+  double n02 = s[4];
 
-    vpFeatureDisplay::displayEllipse(x, y, mu20, mu11, mu02, cam, I, color, thickness);
-
-  } catch (...) {
-    vpERROR_TRACE("Error caught");
-    throw;
-  }
+  vpFeatureDisplay::displayEllipse(x, y, n20, n11, n02, cam, I, color, thickness);
 }
 
 /*!
@@ -395,31 +399,68 @@ void vpFeatureEllipse::display(const vpCameraParameters &cam, const vpImage<unsi
 void vpFeatureEllipse::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                                unsigned int thickness) const
 {
-  try {
     double x = s[0];
     double y = s[1];
 
-    double mu20 = s[2];
-    double mu11 = s[3];
-    double mu02 = s[4];
+    double n20 = s[2];
+    double n11 = s[3];
+    double n02 = s[4];
 
-    vpFeatureDisplay::displayEllipse(x, y, mu20, mu11, mu02, cam, I, color, thickness);
-
-  } catch (...) {
-    vpERROR_TRACE("Error caught");
-    throw;
-  }
+    vpFeatureDisplay::displayEllipse(x, y, n20, n11, n02, cam, I, color, thickness);
 }
 
-//! for memory issue (used by the vpServo class only)
+//! For memory issue (used by the vpServo class only).
 vpFeatureEllipse *vpFeatureEllipse::duplicate() const
 {
   vpFeatureEllipse *feature = new vpFeatureEllipse;
   return feature;
 }
 
+/*!
+ * Select as visual feature ellipse centroid coordinate along camera x-axis.
+ */
 unsigned int vpFeatureEllipse::selectX() { return FEATURE_LINE[0]; }
+/*!
+ * Select as visual feature ellipse centroid coordinate along camera y-axis.
+ */
 unsigned int vpFeatureEllipse::selectY() { return FEATURE_LINE[1]; }
-unsigned int vpFeatureEllipse::selectMu20() { return FEATURE_LINE[2]; }
-unsigned int vpFeatureEllipse::selectMu11() { return FEATURE_LINE[3]; }
-unsigned int vpFeatureEllipse::selectMu02() { return FEATURE_LINE[4]; }
+
+/*!
+ * Select as visual feature second order centered moments of the ellipse normalized
+ * by its area that corresponds to \f$n_20 = mu_20/a\f$.
+ */
+unsigned int vpFeatureEllipse::select_n20() { return FEATURE_LINE[2]; }
+/*!
+ * Select as visual feature second order centered moments of the ellipse normalized
+ * by its area that corresponds to \f$n_11 = mu_11/a\f$.
+ */
+unsigned int vpFeatureEllipse::select_n11() { return FEATURE_LINE[3]; }
+/*!
+ * Select as visual feature second order centered moments of the ellipse normalized
+ * by its area that corresponds to \f$n_02 = mu_02/a\f$.
+ */
+unsigned int vpFeatureEllipse::select_n02() { return FEATURE_LINE[4]; }
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+/*!
+ * \deprecated You should rather use select_n20().
+ * This function is incorrectly named and is confusing since it
+ * intends to select as visual feature second order centered moments of the ellipse normalized
+ * by its area that corresponds to \f$n_20 = mu_20/a\f$.
+ */
+vp_deprecated unsigned int vpFeatureEllipse::selectMu20() { return FEATURE_LINE[2]; }
+/*!
+ * \deprecated You should rather use select_n20().
+ * This function is incorrectly named and is confusing since it
+ * intends to select as visual feature second order centered moments of the ellipse normalized
+ * by its area that corresponds to \f$n_11 = mu_11/a\f$.
+ */
+vp_deprecated unsigned int vpFeatureEllipse::selectMu11() { return FEATURE_LINE[3]; }
+/*!
+ * \deprecated You should rather use select_n20().
+ * This function is incorrectly named and is confusing since it
+ * intends to select as visual feature second order centered moments of the ellipse normalized
+ * by its area that corresponds to \f$n_02 = mu_02/a\f$.
+ */
+vp_deprecated unsigned int vpFeatureEllipse::selectMu02() { return FEATURE_LINE[4]; }
+#endif

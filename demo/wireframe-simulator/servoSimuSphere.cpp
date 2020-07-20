@@ -163,22 +163,23 @@ bool getOptions(int argc, const char **argv, bool &display, bool &plot)
 
   with gx and gy the center of gravity of the ellipse,
   with h2 = (gx²+gy²)/(4*n20*gy²+4*n02*gx²-8n11gxgy)
-  with n20,n02,n11 the second order moments of the sphere
+  with n20,n02,n11 the second order centered moments of the sphere normalized by its area
+  (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area)
 */
 void computeVisualFeatures(const vpSphere &sphere, vpGenericFeature &s)
 {
   double gx = sphere.get_x();
   double gy = sphere.get_y();
-  double m02 = sphere.get_mu02();
-  double m20 = sphere.get_mu20();
-  double m11 = sphere.get_mu11();
+  double n02 = sphere.get_n02();
+  double n20 = sphere.get_n20();
+  double n11 = sphere.get_n11();
   double h2;
   // if (gx != 0 || gy != 0)
   if (std::fabs(gx) > std::numeric_limits<double>::epsilon() || std::fabs(gy) > std::numeric_limits<double>::epsilon())
     h2 = (vpMath::sqr(gx) + vpMath::sqr(gy)) /
-         (4 * m20 * vpMath::sqr(gy) + 4 * m02 * vpMath::sqr(gx) - 8 * m11 * gx * gy);
+         (4 * n20 * vpMath::sqr(gy) + 4 * n02 * vpMath::sqr(gx) - 8 * n11 * gx * gy);
   else
-    h2 = 1 / (4 * m20);
+    h2 = 1 / (4 * n20);
 
   double sx = gx * h2 / (sqrt(h2 + 1));
   double sy = gy * h2 / (sqrt(h2 + 1));

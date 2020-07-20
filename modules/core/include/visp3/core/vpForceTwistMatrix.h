@@ -234,7 +234,7 @@ public:
      \deprecated You should rather use eye().
    */
   vp_deprecated void setIdentity();
-//@}
+  //@}
 #endif
 };
 

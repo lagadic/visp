@@ -2197,6 +2197,8 @@ void vpKeyPoint::getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints, bool ma
 
    \param keyPoints : List of query keypoints (or keypoints detected in the
    current image).
+   \param matches : If false return the list of all query keypoints extracted in the current image.
+   If true, return only the query keypoints list that have matches.
  */
 void vpKeyPoint::getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints, bool matches) const
 {

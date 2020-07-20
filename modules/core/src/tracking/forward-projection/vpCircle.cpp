@@ -134,7 +134,7 @@ vpCircle::~vpCircle() {}
   projection in the image plane. Those 2D parameters are available in p
   vector.
 
-  See vpCircle::projection(const vpColVector &, vpColVector &) for a more
+  See vpCircle::projection(const vpColVector &, vpColVector &) const for a more
   detailed description of the parameters.
   */
 void vpCircle::projection() { projection(cP, p); }
@@ -149,11 +149,13 @@ void vpCircle::projection() { projection(cP, p); }
   - R is the circle radius in [m].
 
   \param p_: 2D circle output parameters. This is a 5 dimension vector. It
-  contains the following parameters: x, y, m20, m11, m02 where:
-  - x, y are the normalized coordinates of the center of the ellipse (ie the
+  contains the following parameters: x, y, n20, n11, n02 where:
+  - x, y are the normalized coordinates of the ellipse centroid (ie the
   perspective projection of a 3D circle becomes a 2D ellipse in the image) in
   the image plane.
-  - mu20, mu11, mu02 are the second order centered moments of the ellipse.
+  - n20, n11, n02 which are the second order centered moments of
+  the ellipse normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
+  \f$\mu_{ij}\f$ are the centered moments and a the area).
   */
 void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
 {
@@ -220,16 +222,17 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
     }
   }
 
-  det = (1.0 + vpMath::sqr(E));
-  double mu20 = (vpMath::sqr(A) + vpMath::sqr(B * E)) / det;
-  double mu11 = (vpMath::sqr(A) - vpMath::sqr(B)) * E / det;
-  double mu02 = (vpMath::sqr(B) + vpMath::sqr(A * E)) / det;
+  // Chaumette PhD Thesis 1990, eq 2.72 divided by 4 since n_ij = mu_ij_chaumette_thesis / 4
+  det = 4 * (1.0 + vpMath::sqr(E));
+  double n20 = (vpMath::sqr(A) + vpMath::sqr(B * E)) / det;
+  double n11 = (vpMath::sqr(A) - vpMath::sqr(B)) * E / det;
+  double n02 = (vpMath::sqr(B) + vpMath::sqr(A * E)) / det;
 
   p_[0] = xc;
   p_[1] = yc;
-  p_[2] = mu20;
-  p_[3] = mu11;
-  p_[4] = mu02;
+  p_[2] = n20;
+  p_[3] = n11;
+  p_[4] = n02;
 }
 
 /*!
@@ -361,9 +364,9 @@ void vpCircle::computeIntersectionPoint(const vpCircle &circle, const vpCameraPa
   double u0 = cam.get_u0();
   double v0 = cam.get_v0();
 
-  double mu11 = circle.p[3];
-  double mu02 = circle.p[4];
-  double mu20 = circle.p[2];
+  double n11 = circle.p[3];
+  double n02 = circle.p[4];
+  double n20 = circle.p[2];
   double Xg = u0 + circle.p[0] * px;
   double Yg = v0 + circle.p[1] * py;
 
@@ -373,18 +376,18 @@ void vpCircle::computeIntersectionPoint(const vpCircle &circle, const vpCameraPa
   double stheta = sin(theta);
   double ctheta = cos(theta);
   double sctheta = stheta * ctheta;
-  double m11yg = mu11 * Yg;
+  double m11yg = n11 * Yg;
   double ctheta2 = vpMath::sqr(ctheta);
-  double m02xg = mu02 * Xg;
-  double m11stheta = mu11 * stheta;
-  j = ((mu11 * Xg * sctheta - mu20 * Yg * sctheta + mu20 * rho * ctheta - m11yg + m11yg * ctheta2 + m02xg -
+  double m02xg = n02 * Xg;
+  double m11stheta = n11 * stheta;
+  j = ((n11 * Xg * sctheta - n20 * Yg * sctheta + n20 * rho * ctheta - m11yg + m11yg * ctheta2 + m02xg -
         m02xg * ctheta2 + m11stheta * rho) /
-       (mu20 * ctheta2 + 2.0 * m11stheta * ctheta + mu02 - mu02 * ctheta2));
+       (n20 * ctheta2 + 2.0 * m11stheta * ctheta + n02 - n02 * ctheta2));
   // Optimised calculation for Y
-  double rhom02 = rho * mu02;
+  double rhom02 = rho * n02;
   double sctheta2 = stheta * ctheta2;
   double ctheta3 = ctheta2 * ctheta;
-  i = (-(-rho * mu11 * stheta * ctheta - rhom02 + rhom02 * ctheta2 + mu11 * Xg * sctheta2 - mu20 * Yg * sctheta2 -
-         ctheta * mu11 * Yg + ctheta3 * mu11 * Yg + ctheta * mu02 * Xg - ctheta3 * mu02 * Xg) /
-       (mu20 * ctheta2 + 2.0 * mu11 * stheta * ctheta + mu02 - mu02 * ctheta2) / stheta);
+  i = (-(-rho * n11 * stheta * ctheta - rhom02 + rhom02 * ctheta2 + n11 * Xg * sctheta2 - n20 * Yg * sctheta2 -
+         ctheta * n11 * Yg + ctheta3 * n11 * Yg + ctheta * n02 * Xg - ctheta3 * n02 * Xg) /
+       (n20 * ctheta2 + 2.0 * n11 * stheta * ctheta + n02 - n02 * ctheta2) / stheta);
 }

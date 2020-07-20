@@ -849,8 +849,8 @@ void vpMeEllipse::track(const vpImage<unsigned char> &I)
   Computes the 0 order moment \f$ m_{00} \f$ which represents the area of the
   ellipse.
 
-  Computes the second central moments \f$ \mu_{20} \f$, \f$ \mu_{02} \f$ and
-  \f$ \mu_{11} \f$
+  Computes the second centered moments \f$ \mu_{20} \f$, \f$ \mu_{02} \f$ and
+  \f$ \mu_{11} \f$ computed with respect to the ellipse centroid.
 */
 void vpMeEllipse::computeMoments()
 {
@@ -861,6 +861,7 @@ void vpMeEllipse::computeMoments()
   m20 = m00 * (a * a + b * b * tane * tane) / (4 * (1 + tane * tane)) + m00 * iPc.get_i() * iPc.get_i();
   m02 = m00 * (a * a * tane * tane + b * b) / (4 * (1 + tane * tane)) + m00 * iPc.get_j() * iPc.get_j();
   m11 = m00 * tane * (a * a - b * b) / (4 * (1 + tane * tane)) + m00 * iPc.get_i() * iPc.get_j();
+  // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 15
   mu11 = m11 - iPc.get_j() * m10;
   mu02 = m02 - iPc.get_j() * m01;
   mu20 = m20 - iPc.get_i() * m10;

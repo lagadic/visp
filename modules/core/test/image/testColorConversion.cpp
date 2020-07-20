@@ -34,9 +34,9 @@
  *****************************************************************************/
 
 /*!
-  \example testImageConversion.cpp
+  \example testColorConversion.cpp
 
-  \brief Test image conversion.
+  \brief Test color conversion.
 */
 
 #include <visp3/core/vpConfig.h>

@@ -70,10 +70,14 @@
   These parameters could be retrieved using getX(), getY(), getZ() and getR().
   To get theses parameters use get_cP().
 
-  - **in the image plane**: the center (x, y) and the second order moments mu20, mu11, mu02 of the ellipse corresponding
-  to the perspective projection of the sphere. These parameters are registered in vpTracker::p internal 5-dim vector and computed using projection() and
-  projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using get_x(), get_y(), get_mu20(),
-  get_mu11() and get_mu02(). They correspond to 2D normalized sphere parameters with values expressed in meters.
+  - **in the image plane**: here we consider the parameters of the ellipse corresponding
+  to the perspective projection of the 3D sphere. The parameters are the ellipse centroid (x, y)
+  and n20, n11, n02 which are the second order centered moments of
+  the ellipse normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
+  \f$\mu_{ij}\f$ are the centered moments and a the area).
+  These parameters are registered in vpTracker::p internal 5-dim vector and computed using projection() and
+  projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using get_x(), get_y(), get_n20(),
+  get_n11() and get_n02(). They correspond to 2D normalized sphere parameters with values expressed in meters.
   To get theses parameters use get_p().
 */
 class VISP_EXPORT vpSphere : public vpForwardProjection
@@ -96,9 +100,10 @@ public:
 
   double get_x() const { return p[0]; }
   double get_y() const { return p[1]; }
-  double get_mu20() const { return p[2]; }
-  double get_mu11() const { return p[3]; }
-  double get_mu02() const { return p[4]; }
+
+  double get_n20() const { return p[2]; }
+  double get_n11() const { return p[3]; }
+  double get_n02() const { return p[4]; }
 
   double getX() const { return cP[0]; }
   double getY() const { return cP[1]; }
@@ -113,6 +118,36 @@ public:
 
 protected:
   void init();
+
+public:
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  /*!
+   * \deprecated You should rather use get_n20().
+   * This function is incorrectly named and is confusing since it
+   * returns second order centered moments of the ellipse normalized
+   * by its area that corresponds to \f$n_20 = mu_20/a\f$.
+   */
+  vp_deprecated double get_mu20() const { return p[2]; }
+  /*!
+   * \deprecated You should rather use get_n11().
+   * This function is incorrectly named and is confusing since it
+   * returns second order centered moments of the ellipse normalized
+   * by its area that corresponds to \f$n_11 = mu_11/a\f$.
+   */
+  vp_deprecated double get_mu11() const { return p[3]; }
+  /*!
+   * \deprecated You should rather use get_n02().
+   * This function is incorrectly named and is confusing since it
+   * returns second order centered moments of the ellipse normalized
+   * by its area that corresponds to \f$n_02 = mu_02/a\f$.
+   */
+  vp_deprecated double get_mu02() const { return p[4]; }
+  //@}
+#endif
 };
 
 #endif

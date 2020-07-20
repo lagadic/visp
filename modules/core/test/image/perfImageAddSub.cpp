@@ -36,9 +36,9 @@
 #include <visp3/core/vpConfig.h>
 
 /*!
-  \example testImageAddSub.cpp
+  \example perfImageAddSub.cpp
 
-  \brief Test images addition / substraction.
+  \brief Test images addition / substraction performances.
 */
 
 #if defined(VISP_HAVE_CATCH2)

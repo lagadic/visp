@@ -264,14 +264,14 @@ int main()
       circle.changeFrame(cMo);
       circle.projection();
       vpImagePoint center_p1, center_p2;
-      double mu20_p1, mu11_p1, mu02_p1, mu20_p2, mu11_p2, mu02_p2;
+      double n20_p1, n11_p1, n02_p1, n20_p2, n11_p2, n02_p2;
 
-      vpMeterPixelConversion::convertEllipse(cam, circle, center_p1, mu20_p1, mu11_p1, mu02_p1);
-      vpMeterPixelConversion::convertEllipse(cameraMatrix, circle, center_p2, mu20_p2, mu11_p2, mu02_p2);
+      vpMeterPixelConversion::convertEllipse(cam, circle, center_p1, n20_p1, n11_p1, n02_p1);
+      vpMeterPixelConversion::convertEllipse(cameraMatrix, circle, center_p2, n20_p2, n11_p2, n02_p2);
 
-      if ( !vpMath::equal(mu20_p1, mu20_p2, 1e-6) || !vpMath::equal(mu11_p1, mu11_p2, 1e-6) || !vpMath::equal(mu02_p1, mu02_p2, 1e-6)) {
-        std::cerr << "Error in ellipse from circle meter pixel conversion: visp result (" << mu20_p1 << ", " << mu11_p1 << ", " << mu02_p1 << ") "
-                  << "differ from OpenCV result (" << mu20_p2 << ", " << mu11_p2 << ", " << mu02_p2 << ")" << std::endl;
+      if ( !vpMath::equal(n20_p1, n20_p2, 1e-6) || !vpMath::equal(n11_p1, n11_p2, 1e-6) || !vpMath::equal(n02_p1, n02_p2, 1e-6)) {
+        std::cerr << "Error in ellipse from circle meter pixel conversion: visp result (" << n20_p1 << ", " << n11_p1 << ", " << n02_p1 << ") "
+                  << "differ from OpenCV result (" << n20_p2 << ", " << n11_p2 << ", " << n02_p2 << ")" << std::endl;
         return EXIT_FAILURE;
       }
       if ( vpImagePoint::distance(center_p1, center_p2) > 1e-6) {
@@ -285,12 +285,12 @@ int main()
       sphere.setWorldCoordinates(0, 0, 0, 0.1); // X0=0,Y0=0,Z0=0,R=0.1
       circle.changeFrame(cMo);
       circle.projection();
-      vpMeterPixelConversion::convertEllipse(cam, sphere, center_p1, mu20_p1, mu11_p1, mu02_p1);
-      vpMeterPixelConversion::convertEllipse(cameraMatrix, sphere, center_p2, mu20_p2, mu11_p2, mu02_p2);
+      vpMeterPixelConversion::convertEllipse(cam, sphere, center_p1, n20_p1, n11_p1, n02_p1);
+      vpMeterPixelConversion::convertEllipse(cameraMatrix, sphere, center_p2, n20_p2, n11_p2, n02_p2);
 
-      if ( !vpMath::equal(mu20_p1, mu20_p2, 1e-6) || !vpMath::equal(mu11_p1, mu11_p2, 1e-6) || !vpMath::equal(mu02_p1, mu02_p2, 1e-6)) {
-        std::cerr << "Error in ellipse from sphere meter pixel conversion: visp result (" << mu20_p1 << ", " << mu11_p1 << ", " << mu02_p1 << ") "
-                  << "differ from OpenCV result (" << mu20_p2 << ", " << mu11_p2 << ", " << mu02_p2 << ")" << std::endl;
+      if ( !vpMath::equal(n20_p1, n20_p2, 1e-6) || !vpMath::equal(n11_p1, n11_p2, 1e-6) || !vpMath::equal(n02_p1, n02_p2, 1e-6)) {
+        std::cerr << "Error in ellipse from sphere meter pixel conversion: visp result (" << n20_p1 << ", " << n11_p1 << ", " << n02_p1 << ") "
+                  << "differ from OpenCV result (" << n20_p2 << ", " << n11_p2 << ", " << n02_p2 << ")" << std::endl;
         return EXIT_FAILURE;
       }
       if ( vpImagePoint::distance(center_p1, center_p2) > 1e-6) {

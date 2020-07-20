@@ -1247,10 +1247,10 @@ void vpMbEdgeKltTracker::display(const vpImage<unsigned char> &I, const vpHomoge
       vpDisplay::displayLine(I, ip1, ip2, col, thickness);
     } else if (vpMath::equal(models[i][0], 1)) {
       vpImagePoint center(models[i][1], models[i][2]);
-      double mu20 = models[i][3];
-      double mu11 = models[i][4];
-      double mu02 = models[i][5];
-      vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true, col, thickness);
+      double n20 = models[i][3];
+      double n11 = models[i][4];
+      double n02 = models[i][5];
+      vpDisplay::displayEllipse(I, center, n20, n11, n02, true, col, thickness);
     }
   }
 
@@ -1299,10 +1299,10 @@ void vpMbEdgeKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMa
       vpDisplay::displayLine(I, ip1, ip2, col, thickness);
     } else if (vpMath::equal(models[i][0], 1)) {
       vpImagePoint center(models[i][1], models[i][2]);
-      double mu20 = models[i][3];
-      double mu11 = models[i][4];
-      double mu02 = models[i][5];
-      vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true, col, thickness);
+      double n20 = models[i][3];
+      double n11 = models[i][4];
+      double n02 = models[i][5];
+      vpDisplay::displayEllipse(I, center, n20, n11, n02, true, col, thickness);
     }
   }
 
