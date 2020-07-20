@@ -1098,10 +1098,10 @@ void vpMbKltTracker::display(const vpImage<unsigned char> &I, const vpHomogeneou
       vpDisplay::displayLine(I, ip1, ip2, col, thickness);
     } else if (vpMath::equal(models[i][0], 1)) {
       vpImagePoint center(models[i][1], models[i][2]);
-      double mu20 = models[i][3];
-      double mu11 = models[i][4];
-      double mu02 = models[i][5];
-      vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true, col, thickness);
+      double n20 = models[i][3];
+      double n11 = models[i][4];
+      double n02 = models[i][5];
+      vpDisplay::displayEllipse(I, center, n20, n11, n02, true, col, thickness);
     }
   }
 
@@ -1150,10 +1150,10 @@ void vpMbKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix
       vpDisplay::displayLine(I, ip1, ip2, col, thickness);
     } else if (vpMath::equal(models[i][0], 1)) {
       vpImagePoint center(models[i][1], models[i][2]);
-      double mu20 = models[i][3];
-      double mu11 = models[i][4];
-      double mu02 = models[i][5];
-      vpDisplay::displayEllipse(I, center, mu20, mu11, mu02, true, col, thickness);
+      double n20 = models[i][3];
+      double n11 = models[i][4];
+      double n02 = models[i][5];
+      vpDisplay::displayEllipse(I, center, n20, n11, n02, true, col, thickness);
     }
   }
 
@@ -1209,7 +1209,8 @@ std::vector<std::vector<double> > vpMbKltTracker::getFeaturesForDisplayKlt()
   - Line parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
   `<pt_end.i()>`, `<pt_end.j()>`
   - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
-  `<mu20>`, `<mu11>`, `<mu02>`
+  `<n_20>`, `<n_11>`, `<n_02>` where `<n_ij>` are the second order centered moments of the ellipse
+  normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area).
 
   \param width : Image width.
   \param height : Image height.

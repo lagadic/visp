@@ -1321,10 +1321,7 @@ bool vpDot2::isValid(const vpImage<unsigned char> &I, const vpDot2 &wantedDot)
 
   //  if (ellipsoidShape_precision != 0 && compute_moment) {
   if (std::fabs(ellipsoidShape_precision) > std::numeric_limits<double>::epsilon() && compute_moment) {
-    //       std::cout << "test shape precision......................\n";
-    // See F. Chaumette. Image moments: a general and useful set of features
-    // for visual servoing. IEEE Trans. on Robotics, 20(4):713-723, August
-    // 2004.
+    // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 15
 
     // mu11 = m11 - m00 * xg * yg = m11 - m00 * m10/m00 * m01/m00
     //      = m11 - m10 * m01 / m00
@@ -1737,7 +1734,7 @@ bool vpDot2::computeParameters(const vpImage<unsigned char> &I, const double &_u
     double tmpCenter_u = m10 / m00;
     double tmpCenter_v = m01 / m00;
 
-    // Updates the central moments
+    // Updates the second order centered moments
     if (compute_moment) {
       mu11 = m11 - tmpCenter_u * m01;
       mu02 = m02 - tmpCenter_v * m01;

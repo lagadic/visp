@@ -120,6 +120,9 @@ vpSphere::~vpSphere() {}
 /*!
  * Perspective projection of the sphere.
  * This method updates internal parameters (cP and p).
+ *
+ * See vpSphere::projection(const vpColVector &, vpColVector &) const for a more
+ * detailed description of the parameters.
  */
 void vpSphere::projection() { projection(cP, p); }
 
@@ -128,7 +131,14 @@ void vpSphere::projection() { projection(cP, p); }
  * Internal parameters (cP and p) are not modified.
  *
  * \param[in] cP_ : 4-dim vector corresponding to the sphere parameters in the camera frame.
- * \param[out] p_ : 5-dim vector corresponding to the sphere parameters in the image plane.
+ * \param[out] p_ : 5-dim vector corresponding to the sphere parameters in the image plane. It
+ * contains the following parameters: x, y, n20, n11, n02 where:
+ * - x, y are the normalized coordinates of the ellipse centroid (ie the
+ * perspective projection of a 3D circle becomes a 2D ellipse in the image) in
+ * the image plane.
+ * - n20, n11, n02 which are the second order centered moments of
+ * the ellipse normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
+ * \f$\mu_{ij}\f$ are the centered moments and a the area).
  */
 void vpSphere::projection(const vpColVector &cP_, vpColVector &p_) const
 {
@@ -176,9 +186,15 @@ void vpSphere::projection(const vpColVector &cP_, vpColVector &p_) const
     B = r * sqrt(y0 * y0 + z0 * z0 - r * r) / s;
   }
 
-  p_[2] = (A * A + B * B * E * E) / (1.0 + E * E); // mu20
-  p_[3] = (A * A - B * B) * E / (1.0 + E * E);     // mu11
-  p_[4] = (B * B + A * A * E * E) / (1.0 + E * E); // mu02
+  // Chaumette PhD Thesis 1990, eq 2.72 divided by 4 since n_ij = mu_ij_chaumette_thesis / 4
+  double det = 4 * (1.0 + vpMath::sqr(E));
+  double n20 = (vpMath::sqr(A) + vpMath::sqr(B * E)) / det;
+  double n11 = (vpMath::sqr(A) - vpMath::sqr(B)) * E / det;
+  double n02 = (vpMath::sqr(B) + vpMath::sqr(A * E)) / det;
+
+  p_[2] = n20;
+  p_[3] = n11;
+  p_[4] = n02;
 }
 
 /*!

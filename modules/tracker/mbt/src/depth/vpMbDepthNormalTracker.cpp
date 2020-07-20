@@ -346,7 +346,8 @@ std::vector<std::vector<double> > vpMbDepthNormalTracker::getFeaturesForDisplayD
   - Line parameters are: `<primitive id (here 0 for line)>`, `<pt_start.i()>`, `<pt_start.j()>`,
   `<pt_end.i()>`, `<pt_end.j()>`.
   - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
-  `<mu20>`, `<mu11>`, `<mu02>`.
+  `<n_20>`, `<n_11>`, `<n_02>` where `<n_ij>` are the second order centered moments of the ellipse
+  normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area).
 
   \param width : Image width.
   \param height : Image height.

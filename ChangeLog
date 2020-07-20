@@ -53,6 +53,7 @@ ViSP 3.3.1 (under development)
     . [#781] Wrong share install path on unix-like system
     . [#785] Static variable in vpServo
     . [#787] Unable to build simdlib 3rd party for iOS
+    . [#792] Mismatch between mu_ij and n_ij centered moments of an ellipse
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:

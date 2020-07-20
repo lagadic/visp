@@ -127,69 +127,63 @@ public:
 
   static const unsigned int SPIRAL_SEARCH_SIZE; /*!< Spiral size for the dot
               search. */
-  double m00;                                   /*!< Considering the general distribution moments for \f$ N \f$
-                                      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-                                      u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
-                                      with \f$i = j = 0 \f$.
+  double m00; /*!< Considering the general distribution moments for \f$ N \f$
+                   points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                   u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
+                   with \f$i = j = 0 \f$.
 
-                                      \sa setComputeMoments()
-                                          */
-  double m01;                                   /*!< Considering the general distribution moments for \f$ N \f$
-                                      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-                                      u_h^i v_h^j \f$, \f$ m_{01} \f$ is a first order moment
-                                      obtained with \f$i = 0 \f$ and \f$ j = 1 \f$.
+                   \sa setComputeMoments()
+               */
+  double m01; /*!< Considering the general distribution moments for \f$ N \f$
+                   points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                   u_h^i v_h^j \f$, \f$ m_{01} \f$ is a first order moment
+                   obtained with \f$i = 0 \f$ and \f$ j = 1 \f$.
 
-                                      \sa setComputeMoments()
-                                          */
-  double m10;                                   /*!< Considering the general distribution moments for \f$ N \f$
-                                      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-                                      u_h^i v_h^j \f$, \f$ m_{10} \f$ is a first order moment
-                                      obtained with \f$i = 1 \f$ and \f$ j = 0 \f$.
+                   \sa setComputeMoments()
+               */
+  double m10; /*!< Considering the general distribution moments for \f$ N \f$
+                   points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                   u_h^i v_h^j \f$, \f$ m_{10} \f$ is a first order moment
+                   obtained with \f$i = 1 \f$ and \f$ j = 0 \f$.
 
-                                      \sa setComputeMoments()
-                                          */
-  double m11;                                   /*!< Considering the general distribution moments for \f$ N \f$
-                                      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-                                      u_h^i v_h^j \f$, \f$ m_{11} \f$ is a first order moment
-                                      obtained with \f$i = 1 \f$ and \f$ j = 1 \f$.
+                   \sa setComputeMoments()
+               */
+  double m11; /*!< Considering the general distribution moments for \f$ N \f$
+                   points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                   u_h^i v_h^j \f$, \f$ m_{11} \f$ is a first order moment
+                   obtained with \f$i = 1 \f$ and \f$ j = 1 \f$.
 
-                                      \warning This moment is not computed for the moment.
+                   \sa setComputeMoments()
+               */
+  double m20; /*!< Considering the general distribution moments for \f$ N \f$
+                   points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                   u_h^i v_h^j \f$, \f$ m_{20} \f$ is a second order moment
+                   obtained with \f$i = 2 \f$ and \f$ j = 0 \f$.
 
-                                      \sa setComputeMoments()
-                                          */
-  double m20;                                   /*!< Considering the general distribution moments for \f$ N \f$
-                                      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-                                      u_h^i v_h^j \f$, \f$ m_{20} \f$ is a second order moment
-                                      obtained with \f$i = 2 \f$ and \f$ j = 0 \f$.
+                   \sa setComputeMoments()
+               */
+  double m02; /*!< Considering the general distribution moments for \f$ N \f$
+                   points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
+                   u_h^i v_h^j \f$, \f$ m_{02} \f$ is a second order moment
+                   obtained with \f$i = 0 \f$ and \f$ j = 2 \f$.
 
-                                      \warning This moment is not computed for the moment.
+                    \sa setComputeMoments()
+               */
+  double mu11; /*!< \f$ \mu_{11} \f$ is a second order centered moment defined
+                    by: \f$ \mu_{11} = m_{11} - \frac{m_{10}}{m_{00}}m_{01} \f$
 
-                                      \sa setComputeMoments()
-                                          */
-  double m02;                                   /*!< Considering the general distribution moments for \f$ N \f$
-                                      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
-                                      u_h^i v_h^j \f$, \f$ m_{02} \f$ is a second order moment
-                                      obtained with \f$i = 0 \f$ and \f$ j = 2 \f$.
+                    \sa setComputeMoments()
+                */
+  double mu20; /*!< \f$ \mu_{20} \f$ is a second order centered moment defined
+                    by: \f$ \mu_{20} = m_{20} - \frac{m_{10}}{m_{00}}m_{10} \f$
 
-                                      \warning This moment is not computed for the moment.
+                    \sa setComputeMoments()
+                */
+  double mu02; /*!< \f$ \mu_{02} \f$ is a second order centered moment defined
+                     by: \f$ \mu_{02} = m_{02} - \frac{m_{01}}{m_{00}}m_{01} \f$
 
-                                      \sa setComputeMoments()
-                                          */
-  double mu11;                                  /*!< \f$ \mu_{11} \f$ is a second order central moments defined
-                                      by: \f$ \mu_{11} = m_{11} - \frac{m_{10}}{m_{00}}m_{01} \f$
-
-                                      \sa setComputeMoments()
-                                          */
-  double mu20;                                  /*!< \f$ \mu_{20} \f$ is a second order central moments defined
-                                      by: \f$ \mu_{20} = m_{20} - \frac{m_{10}}{m_{00}}m_{10} \f$
-
-                                      \sa setComputeMoments()
-                                          */
-  double mu02;                                  /*!< \f$ \mu_{02} \f$ is a second order central moments defined
-                                      by: \f$ \mu_{02} = m_{02} - \frac{m_{01}}{m_{00}}m_{01} \f$
-
-                                      \sa setComputeMoments()
-                                          */
+                     \sa setComputeMoments()
+                */
 
   vpDot();
   explicit vpDot(const vpImagePoint &ip);
@@ -301,7 +295,8 @@ public:
     moments are not computed.
 
     Computed moment are vpDot::m00, vpDot::m10, vpDot::m01, vpDot::m11,
-    vpDot::m20, vpDot::m02.
+    vpDot::m20, vpDot::m02 and second order centered moments vpDot::mu11,
+    vpDot::mu20, vpDot::mu02 computed with respect to the blob centroid.
 
     The coordinates of the region's centroid (u, v) can be computed from the
     moments by \f$u=\frac{m10}{m00}\f$ and  \f$v=\frac{m01}{m00}\f$.

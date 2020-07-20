@@ -131,13 +131,15 @@ void vpFeatureDisplay::displayCylinder(double rho1, double theta1, double rho2, 
 }
 
 /*!
-  Display an ellipse with parameters \f$(x, y, \mu_{20}, \mu_{11}, \mu_{02})\f$ expressed in the image plane.
+  Display an ellipse with parameters \f$(x, y, n_{20}, n_{11}, n_{02})\f$ expressed in the image plane.
   These parameters are obtained after perspective projection of a 3D circle (see vpCircle) or a sphere (see vpSphere).
 
-  \param x, y, mu20, mu11, mu02 : Ellipse parameters where:
+  \param x, y, n20, n11, n02 : Ellipse parameters where:
   - \f$(x,y)\f$ are the normalized coordinates of the ellipse center,
   respectively along the horizontal and vertical axis in the image plane.
-  - \f$\mu_{20}, \mu_{11}, \mu_{02}\f$ are the centered moments expressed in the image plane.
+  - \f$n_{20}, n_{11}, n_{02}\f$ are the second order centered moments of the ellipse normalized
+  by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
+  \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature.
@@ -145,21 +147,21 @@ void vpFeatureDisplay::displayCylinder(double rho1, double theta1, double rho2, 
 
   \sa vpDisplay::displayEllipse()
 */
-void vpFeatureDisplay::displayEllipse(double x, double y, double mu20, double mu11, double mu02,
+void vpFeatureDisplay::displayEllipse(double x, double y, double n20, double n11, double n02,
                                       const vpCameraParameters &cam, const vpImage<unsigned char> &I,
                                       const vpColor &color, unsigned int thickness)
 {
   vpImagePoint center;
-  double mu20_p, mu11_p, mu02_p;
+  double n20_p, n11_p, n02_p;
   vpCircle circle;
   circle.p[0] = x;
   circle.p[1] = y;
-  circle.p[2] = mu20;
-  circle.p[3] = mu11;
-  circle.p[4] = mu02;
+  circle.p[2] = n20;
+  circle.p[3] = n11;
+  circle.p[4] = n02;
 
-  vpMeterPixelConversion::convertEllipse(cam, circle, center, mu20_p, mu11_p, mu02_p);
-  vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, color, thickness);
+  vpMeterPixelConversion::convertEllipse(cam, circle, center, n20_p, n11_p, n02_p);
+  vpDisplay::displayEllipse(I, center, n20_p, n11_p, n02_p, true, color, thickness);
 }
 
 /*!
@@ -241,13 +243,15 @@ void vpFeatureDisplay::displayCylinder(double rho1, double theta1, double rho2, 
 }
 
 /*!
-  Display an ellipse with parameters \f$(x, y, \mu_{20}, \mu_{11}, \mu_{02})\f$ expressed in the image plane.
+  Display an ellipse with parameters \f$(x, y, n_{20}, n_{11}, n_{02})\f$ expressed in the image plane.
   These parameters are obtained after perspective projection of a 3D circle (see vpCircle) or a sphere (see vpSphere).
 
-  \param x, y, mu20, mu11, mu02 : Ellipse parameters where:
+  \param x, y, n20, n11, n02 : Ellipse parameters where:
   - \f$(x,y)\f$ are the normalized coordinates of the ellipse center,
   respectively along the horizontal and vertical axis in the image plane.
-  - \f$\mu_{20}, \mu_{11}, \mu_{02}\f$ are the centered moments expressed in the image plane.
+  - \f$n_{20}, n_{11}, n_{02}\f$ are the second order centered moments of the ellipse normalized
+  by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
+  \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in the image plane.
   \param cam : Camera intrinsic parameters.
   \param I : Image.
   \param color : Color to use to display the feature.
@@ -255,19 +259,19 @@ void vpFeatureDisplay::displayCylinder(double rho1, double theta1, double rho2, 
 
   \sa vpDisplay::displayEllipse()
 */
-void vpFeatureDisplay::displayEllipse(double x, double y, double mu20, double mu11, double mu02,
+void vpFeatureDisplay::displayEllipse(double x, double y, double n20, double n11, double n02,
                                       const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                                       unsigned int thickness)
 {
   vpImagePoint center;
-  double mu20_p, mu11_p, mu02_p;
+  double n20_p, n11_p, n02_p;
   vpCircle circle;
   circle.p[0] = x;
   circle.p[1] = y;
-  circle.p[2] = mu20;
-  circle.p[3] = mu11;
-  circle.p[4] = mu02;
+  circle.p[2] = n20;
+  circle.p[3] = n11;
+  circle.p[4] = n02;
 
-  vpMeterPixelConversion::convertEllipse(cam, circle, center, mu20_p, mu11_p, mu02_p);
-  vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, color, thickness);
+  vpMeterPixelConversion::convertEllipse(cam, circle, center, n20_p, n11_p, n02_p);
+  vpDisplay::displayEllipse(I, center, n20_p, n11_p, n02_p, true, color, thickness);
 }
