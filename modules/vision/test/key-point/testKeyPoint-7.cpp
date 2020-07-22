@@ -445,7 +445,8 @@ void run_test(const std::string &env_ipath, const std::string &opath,  vpImage<T
 
 // Test with floating point descriptor
 #if defined(VISP_HAVE_OPENCV_NONFREE) ||                                                                               \
-  ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(VISP_HAVE_OPENCV_XFEATURES2D))
+  ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
+   (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400))
   {
     std::string keypointName = "SIFT";
     keyPoints.setDetector(keypointName);

@@ -247,7 +247,8 @@ int main(int argc, char *argv[])
   tracker.setProjectionErrorComputation(true);
   tracker.setProjectionErrorDisplay(display_projection_error);
 
-#if (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D))
+#if (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)) || \
+    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
   std::string detectorName = "SIFT";
   std::string extractorName = "SIFT";
   std::string matcherName = "BruteForce";
