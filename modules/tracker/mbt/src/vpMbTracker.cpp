@@ -2178,8 +2178,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         idFace += 4;
       }
 
-    } catch (...) {
+    } catch (const std::exception& e) {
       std::cerr << "Cannot get the number of cylinders. Defaulting to zero." << std::endl;
+      std::cerr << "Exception: " << e.what() << std::endl;
       caoNbCylinder = 0;
     }
 
@@ -2248,8 +2249,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         initProjectionErrorCircle(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace++, polygonName);
       }
 
-    } catch (...) {
+    } catch (const std::exception& e) {
       std::cerr << "Cannot get the number of circles. Defaulting to zero." << std::endl;
+      std::cerr << "Exception: " << e.what() << std::endl;
       caoNbCircle = 0;
     }
 
@@ -2279,8 +2281,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     //Go up: remove current model
     vectorOfModelFilename.pop_back();
-  } catch (...) {
+  } catch (const std::exception& e) {
     std::cerr << "Cannot read line!" << std::endl;
+    std::cerr << "Exception: " << e.what() << std::endl;
     throw vpException(vpException::ioError, "cannot read line");
   }
 }
