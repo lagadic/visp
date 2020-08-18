@@ -1261,7 +1261,9 @@ std::vector<std::vector<double> > vpMbKltTracker::getModelForDisplay(unsigned in
   for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles_disp.begin(); it != circles_disp.end(); ++it) {
     vpMbtDistanceCircle *displayCircle = *it;
     std::vector<double> paramsCircle = displayCircle->getModelForDisplay(cMo, cam, displayFullModel);
-    models.push_back(paramsCircle);
+    if (!paramsCircle.empty()) {
+      models.push_back(paramsCircle);
+    }
   }
 
   return models;
