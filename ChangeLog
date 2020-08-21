@@ -54,6 +54,7 @@ ViSP 3.3.1 (under development)
     . [#785] Static variable in vpServo
     . [#787] Unable to build simdlib 3rd party for iOS
     . [#792] Mismatch between mu_ij and n_ij centered moments of an ellipse
+    . [#801] Build issue with visp_java
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:
