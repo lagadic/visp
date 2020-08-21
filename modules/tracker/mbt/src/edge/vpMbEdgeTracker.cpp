@@ -1434,7 +1434,9 @@ std::vector<std::vector<double> > vpMbEdgeTracker::getModelForDisplay(unsigned i
       for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[scaleLevel].begin();
            it != circles[scaleLevel].end(); ++it) {
         std::vector<double> paramsCircle = (*it)->getModelForDisplay(cMo, cam, displayFullModel);
-        models.push_back(paramsCircle);
+        if (!paramsCircle.empty()) {
+          models.push_back(paramsCircle);
+        }
       }
       break; // displaying model on one scale only
     }
