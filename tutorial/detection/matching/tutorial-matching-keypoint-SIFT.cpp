@@ -10,7 +10,8 @@ int main()
 {
 //! [Define]
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) &&                                                                          \
-    (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D))
+    (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                     \
+     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400))
   //! [Define]
   vpImage<unsigned char> I;
 
@@ -56,9 +57,15 @@ int main()
                            vpColor::white, 2);
     //! [Display]
 
+    vpChrono chrono;
+    chrono.start();
     //! [Matching]
     unsigned int nbMatch = keypoint.matchPoint(I);
     //! [Matching]
+    chrono.stop();
+    std::ostringstream oss;
+    oss << "Computation time: " << chrono.getDurationMs() << " ms";
+    vpDisplay::displayText(Idisp, vpImagePoint(20, 20), oss.str(), vpColor::red);
 
     std::cout << "Matches=" << nbMatch << std::endl;
 
