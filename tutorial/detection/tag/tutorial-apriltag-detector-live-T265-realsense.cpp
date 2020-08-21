@@ -19,7 +19,8 @@
 int main(int argc, const char **argv)
 {
   //! [Macro defined]
-#if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_REALSENSE2)
+  // Realsense T265 is only supported if realsense API > 2.31.0
+#if defined(VISP_HAVE_APRILTAG) && defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
   //! [Macro defined]
 
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
@@ -212,9 +213,13 @@ int main(int argc, const char **argv)
   (void)argv;
 #ifndef VISP_HAVE_APRILTAG
   std::cout << "Enable Apriltag support, configure and build ViSP to run this tutorial" << std::endl;
+#elif defined(VISP_HAVE_REALSENSE2) && !(RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+  std::cout << "Realsense T265 device needs librealsense API > 2.31.0. ViSP is linked with librealsense API "
+            << RS2_API_VERSION_STR << ". You need to upgrade librealsense to use this example." << std::endl;
 #else
-  std::cout << "Install a 3rd party dedicated to frame grabbing (dc1394, cmu1394, v4l2, OpenCV, FlyCapture, Realsense2), configure and build ViSP again to use this example" << std::endl;
+  std::cout << "Install librealsense, configure and build ViSP again to use this example." << std::endl;
 #endif
 #endif
   return EXIT_SUCCESS;
 }
+
