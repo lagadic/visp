@@ -1819,7 +1819,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], un
       }
 
       ImageLutRGBa_Param_t *imageLut_param = new ImageLutRGBa_Param_t(start_index, end_index, (unsigned char *)bitmap);
-      memcpy(imageLut_param->m_lut, lut, 256 * sizeof(vpRGBa));
+      memcpy(static_cast<void*>(imageLut_param->m_lut), lut, 256 * sizeof(vpRGBa));
 
       imageLutParams.push_back(imageLut_param);
 
