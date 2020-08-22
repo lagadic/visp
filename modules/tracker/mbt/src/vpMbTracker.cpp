@@ -152,19 +152,21 @@ std::istream& safeGetline(std::istream& is, std::string& t)
 
   for(;;) {
     int c = sb->sbumpc();
-    switch (c) {
-    case '\n':
+    if (c == '\n') {
       return is;
-    case '\r':
+    }
+    else if (c == '\r') {
       if(sb->sgetc() == '\n')
         sb->sbumpc();
       return is;
-    case std::streambuf::traits_type::eof():
+    }
+    else if (c == std::streambuf::traits_type::eof()) {
       // Also handle the case when the last line has no line ending
       if(t.empty())
         is.setstate(std::ios::eofbit);
       return is;
-    default:
+    }
+    else { // default case
       t += (char)c;
     }
   }
