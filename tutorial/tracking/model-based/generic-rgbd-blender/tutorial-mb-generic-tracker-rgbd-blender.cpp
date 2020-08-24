@@ -35,7 +35,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
   sprintf(buffer, ss.str().c_str(), cpt);
   std::string filename_depth = buffer;
 
-  cv::Mat depth_raw = cv::imread(filename_depth, cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
+  cv::Mat depth_raw = cv::imread(filename_depth, cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR | cv::IMREAD_IGNORE_ORIENTATION);
   if (depth_raw.empty()) {
     std::cerr << "Cannot read: " << filename_depth << std::endl;
     return false;

@@ -429,7 +429,7 @@ int main(int argc, const char **argv)
     cv::Mat imageMat;
     filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
     std::cout << "   Reading the color image with c++ interface of opencv: " << filename << std::endl;
-    imageMat = cv::imread(filename, 1); // force to a three channel color image.
+    imageMat = cv::imread(filename, cv::IMREAD_COLOR); // Force to a three channel BGR color image.
     if (imageMat.data == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return -1;
@@ -443,7 +443,7 @@ int main(int argc, const char **argv)
     /* Read the pgm image */
 
     std::cout << "   Reading the greyscale image with opencv: " << filename << std::endl;
-    imageMat = cv::imread(filename, 0); // forced to grayscale.
+    imageMat = cv::imread(filename, cv::IMREAD_GRAYSCALE); // Forced to grayscale.
     if (imageMat.data == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return (-1);
@@ -462,7 +462,7 @@ int main(int argc, const char **argv)
     /* Read the color image */
 
     std::cout << "   Reading the color image with opencv: " << filename << std::endl;
-    imageMat = cv::imread(filename, 1); // force to a three channel color image.
+    imageMat = cv::imread(filename, cv::IMREAD_COLOR); // Force to a three channel BGR color image.
     if (imageMat.data == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return -1;
@@ -477,7 +477,7 @@ int main(int argc, const char **argv)
     /* Read the pgm image */
 
     std::cout << "   Reading the greyscale image with opencv: " << filename << std::endl;
-    imageMat = cv::imread(filename, 0);
+    imageMat = cv::imread(filename, cv::IMREAD_GRAYSCALE);
     if (imageMat.data == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return (-1);

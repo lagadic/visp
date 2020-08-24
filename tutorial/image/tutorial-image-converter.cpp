@@ -8,7 +8,7 @@ int main()
   try {
     cv::Mat A;
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-    A = cv::imread("monkey.bmp", cv::IMREAD_GRAYSCALE);
+    A = cv::imread("monkey.bmp", cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION);
 #else
     A = cv::imread("monkey.bmp", CV_LOAD_IMAGE_GRAYSCALE);
 #endif

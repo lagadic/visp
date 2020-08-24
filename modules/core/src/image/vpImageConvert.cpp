@@ -644,7 +644,7 @@ int main()
   cv::Mat Ip;
 
   // Read an image on a disk with openCV library
-  Ip = cv::imread("image.pgm", 1);// second parameter > 0 for a RGB encoding.
+  Ip = cv::imread("image.pgm", cv::IMREAD_COLOR); // Second parameter for a BGR encoding.
   // Convert the grayscale cv::Mat into vpImage<vpRGBa>
   vpImageConvert::convert(Ip, Ic);
 
@@ -745,7 +745,7 @@ int main()
   cv::Mat Ip;
 
   // Read an image on a disk with openCV library
-  Ip = cv::imread("image.pgm", 0);// second parameter = 0 for a gray level.
+  Ip = cv::imread("image.pgm", cv::IMREAD_GRAYSCALE); // Second parameter for a gray level.
   // Convert the grayscale cv::Mat into vpImage<unsigned char>
   vpImageConvert::convert(Ip, Ig);
 
