@@ -58,6 +58,7 @@ ViSP 3.3.1 (under development)
     . [#799] Issue when parsing .cao model with no newline at end of file
     . [#801] Build issue with visp_java
     . [#803] Segfault with MBT and when a circle disappears
+    . [#808] vpVirtuose.cpp doen't build with Visual 2019 (vc16)
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:

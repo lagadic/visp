@@ -597,14 +597,17 @@ void vpVirtuose::setArticularForce(const vpColVector &articularForce)
                       articularForce.size()));
   }
 
-  float articular_force[m_njoints];
+  float *articular_force = new float [m_njoints];
   for (unsigned int i = 0; i < m_njoints; i++)
     articular_force[i] = (float)articularForce[i];
 
   if (virtSetArticularForce(m_virtContext, articular_force)) {
+    delete[] articular_force;
     int err = virtGetErrorCode(m_virtContext);
     throw(vpException(vpException::fatalError, "Error calling virtSetArticularForce: error code %d", err));
   }
+
+  delete [] articular_force;
 }
 
 /*!
