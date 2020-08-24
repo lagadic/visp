@@ -95,7 +95,7 @@ public:
   vpMbHiddenFaces();
   virtual ~vpMbHiddenFaces();
   vpMbHiddenFaces(const vpMbHiddenFaces &copy);
-  vpMbHiddenFaces &operator=(vpMbHiddenFaces other);
+  vpMbHiddenFaces &operator=(vpMbHiddenFaces &other);
   friend void swap<PolygonType>(vpMbHiddenFaces &first, vpMbHiddenFaces &second);
 
   void addPolygon(PolygonType *p);
@@ -363,10 +363,9 @@ template <class PolygonType> void swap(vpMbHiddenFaces<PolygonType> &first, vpMb
   Copy assignment operator.
 */
 template <class PolygonType>
-vpMbHiddenFaces<PolygonType> &vpMbHiddenFaces<PolygonType>::operator=(vpMbHiddenFaces<PolygonType> other)
+vpMbHiddenFaces<PolygonType> &vpMbHiddenFaces<PolygonType>::operator=(vpMbHiddenFaces<PolygonType> &other)
 {
   swap(*this, other);
-
   return *this;
 }
 
