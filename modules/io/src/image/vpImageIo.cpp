@@ -287,17 +287,16 @@ void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename)
   }
 
   if (try_opencv_reader) {
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
-    // std::cout << "Use opencv to read the image" << std::endl;
-    cv::Mat cvI = cv::imread(final_filename, cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION);
-    if (cvI.cols == 0 && cvI.rows == 0) {
-      std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
-      throw(vpImageException(vpImageException::ioError, message));
-    }
-    vpImageConvert::convert(cvI, I);
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x030200
+    int flags = cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
+    int flags = cv::IMREAD_GRAYSCALE;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+    int flags = CV_LOAD_IMAGE_GRAYSCALE;
+#endif
     // std::cout << "Use opencv to read the image" << std::endl;
-    cv::Mat cvI = cv::imread(final_filename, CV_LOAD_IMAGE_GRAYSCALE);
+    cv::Mat cvI = cv::imread(final_filename, flags);
     if (cvI.cols == 0 && cvI.rows == 0) {
       std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
       throw(vpImageException(vpImageException::ioError, message));
@@ -391,17 +390,16 @@ void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename)
   }
 
   if (try_opencv_reader) {
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
-    // std::cout << "Use opencv to read the image" << std::endl;
-    cv::Mat cvI = cv::imread(final_filename, cv::IMREAD_COLOR | cv::IMREAD_IGNORE_ORIENTATION);
-    if (cvI.cols == 0 && cvI.rows == 0) {
-      std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
-      throw(vpImageException(vpImageException::ioError, message));
-    }
-    vpImageConvert::convert(cvI, I);
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x030200
+    int flags = cv::IMREAD_COLOR | cv::IMREAD_IGNORE_ORIENTATION;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
+    int flags = cv::IMREAD_COLOR;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+    int flags = CV_LOAD_IMAGE_COLOR;
+#endif
     // std::cout << "Use opencv to read the image" << std::endl;
-    cv::Mat cvI = cv::imread(final_filename, CV_LOAD_IMAGE_COLOR);
+    cv::Mat cvI = cv::imread(final_filename, flags);
     if (cvI.cols == 0 && cvI.rows == 0) {
       std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
       throw(vpImageException(vpImageException::ioError, message));
@@ -1395,14 +1393,15 @@ void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename)
 */
 void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  cv::Mat Ip = cv::imread(filename.c_str(), cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION);
-  if (!Ip.empty())
-    vpImageConvert::convert(Ip, I);
-  else
-    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  cv::Mat Ip = cv::imread(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x030200
+    int flags = cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
+    int flags = cv::IMREAD_GRAYSCALE;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+    int flags = CV_LOAD_IMAGE_GRAYSCALE;
+#endif
+  cv::Mat Ip = cv::imread(filename.c_str(), flags);
   if (!Ip.empty())
     vpImageConvert::convert(Ip, I);
   else
@@ -1440,14 +1439,15 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename)
 */
 void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  cv::Mat Ip = cv::imread(filename.c_str(), cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION);
-  if (!Ip.empty())
-    vpImageConvert::convert(Ip, I);
-  else
-    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  cv::Mat Ip = cv::imread(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x030200
+    int flags = cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
+    int flags = cv::IMREAD_GRAYSCALE;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+    int flags = CV_LOAD_IMAGE_GRAYSCALE;
+#endif
+  cv::Mat Ip = cv::imread(filename.c_str(), flags);
   if (!Ip.empty())
     vpImageConvert::convert(Ip, I);
   else
@@ -2127,14 +2127,15 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename)
 */
 void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  cv::Mat Ip = cv::imread(filename.c_str(), cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION);
-  if (!Ip.empty())
-    vpImageConvert::convert(Ip, I);
-  else
-    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  cv::Mat Ip = cv::imread(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x030200
+    int flags = cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
+    int flags = cv::IMREAD_GRAYSCALE;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+    int flags = CV_LOAD_IMAGE_GRAYSCALE;
+#endif
+  cv::Mat Ip = cv::imread(filename.c_str(), flags);
   if (!Ip.empty())
     vpImageConvert::convert(Ip, I);
   else
@@ -2172,14 +2173,15 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename)
 */
 void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-  cv::Mat Ip = cv::imread(filename.c_str(), cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION);
-  if (!Ip.empty())
-    vpImageConvert::convert(Ip, I);
-  else
-    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
-#elif (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  cv::Mat Ip = cv::imread(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x030200
+    int flags = cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
+    int flags = cv::IMREAD_GRAYSCALE;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+    int flags = CV_LOAD_IMAGE_GRAYSCALE;
+#endif
+  cv::Mat Ip = cv::imread(filename.c_str(), flags);
   if (!Ip.empty())
     vpImageConvert::convert(Ip, I);
   else
