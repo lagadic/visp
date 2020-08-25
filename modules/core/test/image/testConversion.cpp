@@ -429,7 +429,12 @@ int main(int argc, const char **argv)
     cv::Mat imageMat;
     filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
     std::cout << "   Reading the color image with c++ interface of opencv: " << filename << std::endl;
-    imageMat = cv::imread(filename, cv::IMREAD_COLOR); // Force to a three channel BGR color image.
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    int flags = cv::IMREAD_COLOR;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+    int flags = CV_LOAD_IMAGE_COLOR;
+#endif
+    imageMat = cv::imread(filename, flags); // Force to a three channel BGR color image.
     if (imageMat.data == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return -1;
@@ -443,7 +448,12 @@ int main(int argc, const char **argv)
     /* Read the pgm image */
 
     std::cout << "   Reading the greyscale image with opencv: " << filename << std::endl;
-    imageMat = cv::imread(filename, cv::IMREAD_GRAYSCALE); // Forced to grayscale.
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    flags = cv::IMREAD_GRAYSCALE;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+    flags = CV_LOAD_IMAGE_GRAYSCALE;
+#endif
+    imageMat = cv::imread(filename, flags); // Forced to grayscale.
     if (imageMat.data == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return (-1);
@@ -462,7 +472,12 @@ int main(int argc, const char **argv)
     /* Read the color image */
 
     std::cout << "   Reading the color image with opencv: " << filename << std::endl;
-    imageMat = cv::imread(filename, cv::IMREAD_COLOR); // Force to a three channel BGR color image.
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    flags = cv::IMREAD_COLOR;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+    flags = CV_LOAD_IMAGE_COLOR;
+#endif
+    imageMat = cv::imread(filename, flags); // Force to a three channel BGR color image.
     if (imageMat.data == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return -1;
@@ -477,7 +492,12 @@ int main(int argc, const char **argv)
     /* Read the pgm image */
 
     std::cout << "   Reading the greyscale image with opencv: " << filename << std::endl;
-    imageMat = cv::imread(filename, cv::IMREAD_GRAYSCALE);
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    flags = cv::IMREAD_GRAYSCALE;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+    flags = CV_LOAD_IMAGE_GRAYSCALE;
+#endif
+    imageMat = cv::imread(filename, flags);
     if (imageMat.data == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
       return (-1);
