@@ -78,7 +78,13 @@ This application allows to modify some settings:
 
 To see estimated tag poses values press `"Show estimated poses"` button.
 
-Just try it... 
+Just try it...
+
+\section java_tag_issues Known issues
+
+- \ref java_started_issue_jre
+- \ref java_started_issue_vsp_version
+- \ref java_started_issue_mkl
 
 \section java_tag_next Next tutorial
 

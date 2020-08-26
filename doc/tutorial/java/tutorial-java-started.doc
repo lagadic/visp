@@ -92,6 +92,20 @@ If this java archive is missing and if you follow \ref tutorial-install-java it 
     System.loadLibrary("visp_java331");
 \endcode
 
+\subsection java_started_issue_mkl Error running Java app with Intel MKL
+
+Running any Java app based on ViSP can lead to the following issue:
+\code
+  INTEL MKL ERROR: /opt/intel/compilers_and_libraries_2020.0.166/linux/mkl/lib/intel64_lin/libmkl_avx2.so: undefined symbol: mkl_sparse_optimize_bsr_trsm_i8.
+  Intel MKL FATAL ERROR: Cannot load libmkl_avx2.so or libmkl_def.so.
+\endcode
+
+There is no other satisfactory solution than to disable the use of Intel MKL 3rd party, configure and rebuilt ViSP libraries without MKL support.
+
+To this end, in a terminal launch `ccmake ../visp` and set `USE_BLAS/LAPACK` option to an other value than `MKL`; it could be `OpenBLAS`, `Atlas`, `GSL`, `Netlib` or `OFF`. It is recommended to set this var to `OFF` only when there is no other Blas/Lapack 3rd party available.
+
+A complete discussion about this issue is given here in [issue #806](https://github.com/lagadic/visp/issues/806).
+
 \section java_started_next Next tutorial
 
 You are now ready to continue with \ref tutorial-java-apriltag.

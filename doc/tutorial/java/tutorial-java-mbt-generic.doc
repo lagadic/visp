@@ -76,4 +76,10 @@ Now press `"Track"` button to run the tracker on a sequence that is part of ViSP
 
 This application allows to select features (edges alone, keypoints alone, or edges and keypoints together in the same scheme) that are used by the tracker. Just try it... 
 
+\section java_mbt_issues Known issues
+
+- \ref java_started_issue_jre
+- \ref java_started_issue_vsp_version
+- \ref java_started_issue_mkl
+
 */
