@@ -743,6 +743,13 @@ if(DOXYGEN_FOUND)
   else()
     set(DOXYGEN_SHOULD_SKIP_THIS "DOXYGEN_SHOULD_SKIP_THIS")
   endif()
+  # - DOXYGEN_USE_MATHJAX corresponding to USE_MATHJAX in the doxy file
+  VP_OPTION(USE_MATHJAX  "" "" "Use MathJax to generate latex formula" "" OFF)
+  if (USE_MATHJAX)
+    set(DOXYGEN_USE_MATHJAX "YES")
+  else()
+    set(DOXYGEN_USE_MATHJAX "NO")
+  endif()
 
   configure_file(${VISP_SOURCE_DIR}/doc/config-doxygen.in
     ${VISP_DOC_DIR}/config-doxygen
