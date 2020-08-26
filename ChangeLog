@@ -31,6 +31,7 @@ ViSP 3.3.1 (under development)
       undistort, pixel-meter and meter-pixel conversion
     . Introduce analysis tools for camera calibration / hand-eye calibration
       (see tutorials)
+    . New cmake option to use MathJax to speed up online doc build
   - Tutorials
     . New tutorial: Basic linear algebra operations
     . New tutorial: How to create and build a project that uses ViSP without CMake
@@ -60,6 +61,7 @@ ViSP 3.3.1 (under development)
     . [#803] Segfault with MBT and when a circle disappears
     . [#806] Error running the Java sample with intel-mkl 2020.2.254-1
     . [#808] vpVirtuose.cpp doen't build with Visual 2019 (vc16)
+    . [#812] Online doc formula rendering issue with Ghostscript on OSX
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:

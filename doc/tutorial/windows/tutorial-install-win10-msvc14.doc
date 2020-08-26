@@ -352,9 +352,17 @@ C:\> cmake --build . --config Release --target visp_doc
 
 The generated documentation is then available in `$VISP_WS/visp-build-vc14/doc/html/index.html`
 
-\note It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
+\note
+- To speed up generating online doc, particularly around formula rendering, you can use [MatJax](https://www.mathjax.org). To this end, install MathJax and build doc using:
 \code
-C:\> cmake -G "Visual Studio 14 2015"  -A "x64" %VISP_WS%\visp -DENABLE_FULL_DOC=ON
+C:\> npm install mathjax
+C:\> cmake -G "Visual Studio 14 2015" -A "x64" %VISP_WS%\visp -DUSE_MATHJAX=ON
+C:\> cmake --build . --config Release --target visp_doc
+\endcode
+
+- It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
+\code
+C:\> cmake -G "Visual Studio 14 2015" -A "x64" %VISP_WS%\visp -DENABLE_FULL_DOC=ON
 C:\> cmake --build . --config Release --target visp_doc
 \endcode
 

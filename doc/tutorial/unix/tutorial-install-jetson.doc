@@ -164,7 +164,15 @@ $ make -j4 visp_doc
 \endcode
 The generated documentation is then available in `$VISP_WS/visp-build/doc/html/index.html`
 
-\note It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
+\note
+- To speed up generating online doc, particularly around formula rendering, you can use [MatJax](https://www.mathjax.org). To this end, install MathJax and build doc using:
+\code
+$ npm install mathjax
+$ cmake ../visp -DUSE_MATHJAX=ON
+$ make -j4 visp_doc
+\endcode
+\note
+- It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
 \code
 $ cmake ../visp -DENABLE_FULL_DOC=ON
 $ make -j4 visp_doc
