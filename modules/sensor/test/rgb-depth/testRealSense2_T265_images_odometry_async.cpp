@@ -52,55 +52,39 @@
   (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 
 #include <thread>
+#include <functional>
 
 int main()
 {
   vpHomogeneousMatrix cMw, cMw_0;
-  vpHomogeneousMatrix cextMw(0, 0, 2, 0, 0, 0); // External camera view for pose visualization
+  vpHomogeneousMatrix cextMw(0, 0, 2, 0, 0, 0); // External camera view for pose visualization.
   vpColVector odo_vel, odo_acc, imu_acc, imu_vel;
   unsigned int confidence;
   vpImagePoint frame_origin;
-  std::list< std::pair<unsigned int, vpImagePoint> > frame_origins; // Frame origin's history for trajectory visualization
+  std::list< std::pair<unsigned int, vpImagePoint> > frame_origins; // Frame origin's history for trajectory visualization.
   unsigned int display_scale = 2;
 
   try {
-    rs2::pipeline pipe;
-    {
-      // The following code is in brackets to ensure rs2::pipeline_profile rs2::device destructors are called.
-      // Otherwise you should use pointers and call explicitely the destructor
-      rs2::pipeline_profile pipeline_profile = pipe.start();
-
-      rs2::device dev = pipeline_profile.get_device();
-      // Query device product line D400/SR300/L500/T200
-      std::string product_line = dev.get_info(RS2_CAMERA_INFO_PRODUCT_LINE);
-      std::cout << "Product line: " << product_line << std::endl;
-
-      if (product_line != "T200") {
-        std::cout << "This example doesn't support devices that are not part of T200 product line family !" << std::endl;
-        return EXIT_SUCCESS;
-      }
-      pipe.stop();
-    }
+    vpRealSense2 g;
 
     rs2::config config;
     config.enable_stream(RS2_STREAM_POSE, RS2_FORMAT_6DOF);
     config.enable_stream(RS2_STREAM_FISHEYE, 1, RS2_FORMAT_Y8);
     config.enable_stream(RS2_STREAM_FISHEYE, 2, RS2_FORMAT_Y8);
 
-    // Creating images for left and right cameras, and for visualizing trajectory
+    // Creating images for left and right cameras, and for visualizing trajectory.
     vpImage<unsigned char> I_left, I_right;
     vpImage<unsigned char> I_pose(300, 300, 0);
 
-    vpCameraParameters cam(300., 300., I_pose.getWidth()/2, I_pose.getHeight()/2); // For pose visualization
+    vpCameraParameters cam(300., 300., I_pose.getWidth()/2, I_pose.getHeight()/2); // For pose visualization.
 
-    // Define frame callback
-    // The callback is executed on a sensor thread and can be called simultaneously from multiple sensors
-    // Therefore any modification to common memory should be done under lock
-    auto callback = [&](const rs2::frame& frame)
+    // Define frame callback.
+    // The callback is executed on a sensor thread and can be called simultaneously from multiple sensors.
+    std::function<void(rs2::frame)> callback = [&](const rs2::frame &frame)
     {
       if (rs2::frameset fs = frame.as<rs2::frameset>())
       {
-        // With callbacks, all synchronized stream will arrive in a single frameset
+        // With callbacks, all synchronized stream will arrive in a single frameset.
         rs2::video_frame left_frame = fs.get_fisheye_frame(1);
         size_t size = left_frame.get_width() * left_frame.get_height();
         memcpy(I_left.bitmap, left_frame.get_data(), size);
@@ -141,7 +125,7 @@ int main()
       }
       else
       {
-        // Stream that bypass synchronization (such as IMU, Pose, ...) will produce single frames
+        // Stream that bypass synchronization (such as IMU, Pose, ...) will produce single frames.
         rs2_pose pose_data = frame.as<rs2::pose_frame>().get_pose_data();
         vpTranslationVector ctw(static_cast<double>(pose_data.translation.x),
                                 static_cast<double>(pose_data.translation.y),
@@ -178,14 +162,14 @@ int main()
       frame_origins.push_back(std::make_pair(confidence, frame_origin));
     };
 
-    // Start the pipline streaming according to configuration
-    rs2::pipeline_profile profiles = pipe.start(config, callback);
+    // Open vpRealSense2 object according to configuration and with the callback to be called.
+    g.open(config, callback);
 
-    I_left.resize(profiles.get_stream(RS2_STREAM_FISHEYE).as<rs2::video_stream_profile>().height(),
-                  profiles.get_stream(RS2_STREAM_FISHEYE).as<rs2::video_stream_profile>().width());
+    I_left.resize(g.getIntrinsics(RS2_STREAM_FISHEYE, 1).height,
+                  g.getIntrinsics(RS2_STREAM_FISHEYE, 1).width);
 
-    I_right.resize(profiles.get_stream(RS2_STREAM_FISHEYE).as<rs2::video_stream_profile>().height(),
-                   profiles.get_stream(RS2_STREAM_FISHEYE).as<rs2::video_stream_profile>().width());
+    I_right.resize(g.getIntrinsics(RS2_STREAM_FISHEYE, 2).height,
+                   g.getIntrinsics(RS2_STREAM_FISHEYE, 2).width);
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX display_left;  // Left image
