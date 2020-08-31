@@ -1348,6 +1348,38 @@ void vpRealSense2::open(const rs2::config &cfg)
 }
 
 /*!
+  Open access to the RealSense device and start the streaming.
+  \param cfg      : A rs2::config with requested filters on the pipeline configuration. By default no filters are applied.
+  \param callback : Stream callback, can be any callable object accepting rs2::frame. The callback is invoked immediately once a frame is ready.
+ */
+void vpRealSense2::open(const rs2::config &cfg, std::function<void(rs2::frame)> &callback)
+{
+  if (m_pipe != NULL) {
+    close();
+  }
+
+  m_pipe = new rs2::pipeline;
+  m_pipelineProfile = new rs2::pipeline_profile;
+
+  *m_pipelineProfile = m_pipe->start(cfg, callback);
+
+  rs2::device dev = m_pipelineProfile->get_device();
+
+#if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+  // Query device product line D400/SR300/L500/T200
+  m_product_line = dev.get_info(RS2_CAMERA_INFO_PRODUCT_LINE);
+#endif
+
+  // Go over the device's sensors
+  for (rs2::sensor &sensor : dev.query_sensors()) {
+    // Check if the sensor is a depth sensor
+    if (rs2::depth_sensor dpt = sensor.as<rs2::depth_sensor>()) {
+      m_depthScale = dpt.get_depth_scale();
+    }
+  }
+}
+
+/*!
  * Get the product line of the device being used. This function need librealsense > 2.31.0. Otherwise it returns "unknown".
  */
 std::string vpRealSense2::getProductLine()

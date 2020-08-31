@@ -359,6 +359,7 @@ public:
   vpHomogeneousMatrix getTransformation(const rs2_stream &from, const rs2_stream &to, int from_index = -1) const;
 
   void open(const rs2::config &cfg = rs2::config());
+  void open(const rs2::config &cfg, std::function<void(rs2::frame)> &callback);
 
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRealSense2 &rs);
 
