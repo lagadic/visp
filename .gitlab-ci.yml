@@ -1,0 +1,229 @@
+######################
+# Documentation:
+# - Gitlab CI results are pushed on https://gitlab.com/visp-ci
+# - https://gitlab.com/visp-ci/visp-mirror mirrors https://github.com/lagadic/visp
+######################
+
+######################
+# Stages
+######################
+
+stages:
+- test-build
+- test-install
+- test-pkgconfig
+
+######################
+# Unix templates
+######################
+
+.build_template: &unix_build_definition
+    stage: test-build
+    script:
+        - echo $CI_BUILDS_DIR
+        - echo $CI_PROJECT_DIR
+        - echo $HOME
+        - ls -als $HOME
+        - ls /
+        - pwd
+        #- source ${HOME}/.bashrc # Doesn't work !
+        - export VISP_INPUT_IMAGE_PATH="${HOME}/visp-ci/visp-images"
+        - echo $VISP_INPUT_IMAGE_PATH
+        #- ls $VISP_INPUT_IMAGE_PATH
+        - cmake --version
+        - mkdir -p build
+        - mkdir -p install
+        - cd build
+        - cmake .. -DCMAKE_INSTALL_PREFIX=$CI_PROJECT_DIR/install
+        - make -j $nproc install
+        - ctest -j $nproc
+    artifacts:
+        paths:
+            - install
+        when: on_success
+        expire_in: 1 week
+    except:
+        - tags
+
+.install_template: &unix_install_definition
+    stage: test-install
+    script:
+        - cd example
+        - mkdir build
+        - cd build
+        - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CI_PROJECT_DIR/install/lib
+        - cmake .. -DVISP_DIR=$CI_PROJECT_DIR/install/lib/cmake/visp
+        - make -j $nproc
+
+.pkgconfig_template: &unix_pkgconfig_definition
+    stage: test-pkgconfig
+    script:
+        - mkdir pkgconfig
+        - cd pkgconfig
+        - git clone https://github.com/lagadic/visp_test_pkg_config
+        - cd visp_test_pkg_config
+        - mkdir build
+        - cd build
+        - PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$CI_PROJECT_DIR/install/lib/pkgconfig
+        - echo $PKG_CONFIG_PATH
+        - ls $CI_PROJECT_DIR/install/lib/pkgconfig
+        - cmake ..
+        - make -j $nproc
+
+######################
+# Windows templates
+######################
+
+.build_template: &windows_build_definition
+    tags:
+        - windows
+    stage: test-build
+    script:
+        - $ErrorActionPreference = "Stop"
+        - if($Env:project_platform -eq "x64") {
+            $CMAKE_PLATFORM = "x64";
+          }
+          else {
+            $CMAKE_PLATFORM = "Win32";
+          }
+        - $VS_BUILD_TOOLS = "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools"
+        - $CMAKE_BIN = "${VS_BUILD_TOOLS}\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin"
+        - $VISP_INSTALL_PREFIX = "${CI_PROJECT_DIR}\$Env:cmake_install_prefix"
+        - $VISP_DLL_PATH = "${VISP_INSTALL_PREFIX}\x64\vc16\bin"
+        - $Env:Path = "$Env:Path;${CMAKE_BIN};${VISP_DLL_PATH}"
+        - $Env:Path
+        - pwd
+        - dir
+        - dir ${CI_PROJECT_DIR}
+        - cmake --version
+        # Get visp-images
+        - cd ${CI_PROJECT_DIR}
+        - mkdir visp-images
+        - cd visp-images
+        - git clone https://github.com/lagadic/visp-images.git
+        - $VISP_INPUT_IMAGE_PATH = "${CI_PROJECT_DIR}\visp-images\visp-images"
+        - dir $VISP_INPUT_IMAGE_PATH
+        # Build, install and test
+        - cd ${CI_PROJECT_DIR}
+        - mkdir build
+        - mkdir $Env:cmake_install_prefix
+        - cd build
+        - cmake -G $Env:generator -A $Env:cmake_platform -D CMAKE_INSTALL_PREFIX=${VISP_INSTALL_PREFIX} ..
+        - cmake --build . --config $Env:cmake_configuration --target INSTALL
+        - cmake --build . --config $Env:cmake_configuration --target RUN_TESTS
+    artifacts:
+        paths:
+            #- $Env:cmake_install_prefix # does not work. Use rather next line
+            - install
+        when: on_success
+        expire_in: 1 week
+
+.install_template: &windows_install_definition
+    stage: test-install
+    script:
+        - $ErrorActionPreference = "Stop"
+        - if($Env:project_platform -eq "x64") {
+            $CMAKE_PLATFORM = "x64";
+          }
+          else {
+            $CMAKE_PLATFORM = "Win32";
+          }
+        - $VS_BUILD_TOOLS = "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools"
+        - $CMAKE_BIN = "${VS_BUILD_TOOLS}\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin"
+        - $VISP_INSTALL_PREFIX = "${CI_PROJECT_DIR}\$Env:cmake_install_prefix"
+        - $VISP_DLL_PATH = "${VISP_INSTALL_PREFIX}\x64\vc16\bin"
+        - $Env:Path = "$Env:Path;${CMAKE_BIN};${VISP_DLL_PATH}"
+        - pwd
+        - dir
+        - dir $CI_PROJECT_DIR
+        - dir $VISP_DLL_PATH
+        - dir $VISP_INSTALL_PREFIX
+        - cd example
+        - dir
+        - mkdir build
+        - cd build
+        - cmake --verbose -G $Env:generator -A $Env:cmake_platform -D VISP_DIR=${VISP_INSTALL_PREFIX} ..
+        - cmake --build . --config $Env:cmake_configuration --target ALL_BUILD
+
+######################
+# Test Ubuntu 20.04
+######################
+
+ubuntu20-04-build:
+    <<: *unix_build_definition
+    tags:
+        - linux
+    image: "vispci/vispci:ubuntu-20.04"
+
+ubuntu20-04-install:
+    <<: *unix_install_definition
+    needs:
+        - job: "ubuntu20-04-build"
+          artifacts: true
+    tags:
+        - linux
+    image: "vispci/vispci:ubuntu-20.04"
+
+ubuntu20-04-pkgconfig:
+    <<: *unix_pkgconfig_definition
+    needs:
+        - job: "ubuntu20-04-build"
+          artifacts: true
+    tags:
+        - linux
+    image: "vispci/vispci:ubuntu-20.04"
+
+######################
+# Test Ubuntu 18.04
+######################
+
+ubuntu18-04-build:
+    <<: *unix_build_definition
+    tags:
+        - linux
+    image: "vispci/vispci:ubuntu-18.04"
+
+ubuntu18-04-install:
+    <<: *unix_install_definition
+    needs:
+        - job: "ubuntu18-04-build"
+          artifacts: true
+    tags:
+        - linux
+    image: "vispci/vispci:ubuntu-18.04"
+
+ubuntu18-04-pkgconfig:
+    <<: *unix_pkgconfig_definition
+    needs:
+        - job: "ubuntu18-04-build"
+          artifacts: true
+    tags:
+        - linux
+    image: "vispci/vispci:ubuntu-18.04"
+
+######################
+# Test Windows 10
+######################
+
+windows-cmake-x64-release-build:
+    <<: *windows_build_definition
+    before_script:
+        - $Env:generator = "Visual Studio 16 2019"
+        - $Env:cmake_platform = "x64"
+        - $Env:cmake_configuration = "Release"
+        - $Env:cmake_install_prefix = "install"
+
+windows-cmake-x64-release-install:
+    <<: *windows_install_definition
+    needs:
+        - job: "windows-cmake-x64-release-build"
+          artifacts: true
+    before_script:
+        - $Env:generator = "Visual Studio 16 2019"
+        - $Env:cmake_platform = "x64"
+        - $Env:cmake_configuration = "Release"
+        - $Env:cmake_install_prefix = "install"
+
+    tags:
+        - windows
+
