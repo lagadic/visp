@@ -179,7 +179,16 @@ void vpTemplateTrackerWarpHomography::warpXInv(const vpColVector &vX, vpColVecto
 void vpTemplateTrackerWarpHomography::getParamInverse(const vpColVector &ParamM, vpColVector &ParamMinv) const
 {
   vpHomography H = getHomography(ParamM);
-  vpHomography Hinv = H.inverse();
+  unsigned int rank;
+  double sv_threshold = 1e-16;
+  vpHomography Hinv;
+  int max_iter = 10, iter = 0;
+  do {
+    Hinv = H.inverse(sv_threshold, &rank);
+    iter ++;
+    sv_threshold /= 10.;
+  } while (rank != 3 && iter < max_iter);
+
   getParam(Hinv, ParamMinv);
 }
 
