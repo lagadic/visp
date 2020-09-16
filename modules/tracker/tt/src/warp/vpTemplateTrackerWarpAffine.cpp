@@ -181,6 +181,9 @@ void vpTemplateTrackerWarpAffine::pRondp(const vpColVector &p1, const vpColVecto
   TransRes = MWrap1 * Trans2 + Trans1;
   MWrapRes = MWrap1 * MWrap2;
 
+  if (pres.size() != p1.size()) {
+    pres.resize(p1.size(), false);
+  }
   pres[0] = MWrapRes[0][0] - 1;
   pres[2] = MWrapRes[0][1];
   pres[1] = MWrapRes[1][0];
