@@ -63,8 +63,13 @@ protected:
   unsigned int nbParam;
 
 public:
-  // constructor;
+  /*!
+   * Default constructor.
+   */
   vpTemplateTrackerWarp() : denom(1.), dW(), nbParam(0) {}
+  /*!
+   * Destructor.
+   */
   virtual ~vpTemplateTrackerWarp() {}
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -73,58 +78,130 @@ public:
 #endif
 
   /*!
-    Compute the derivative of the warping function according to its
-    parameters.
-
-    \param X1 : Point to consider in the derivative computation.
-    \param X2 : Point to consider in the derivative computation.
-    \param ParamM : Parameters of the warping function.
-    \param dW : Resulting derivative matrix.
-  */
-  virtual void dWarp(const vpColVector &X1, const vpColVector &X2, const vpColVector &ParamM, vpMatrix &dW) = 0;
+   * Compute the derivative matrix of the warping function at point \f$X=(u,v)\f$ according to the model parameters:
+   * \f[
+   * \frac{\partial M}{\partial p}(X_1, X_2, p)
+   * \f]
+   * \param X1 : Vector corresponding to the coordinates \f$(u_1, v_1)\f$ of the point to
+   * consider in the derivative computation.
+   * \param X2 : Vector corresponding to the coordinates \f$(u_1, v_1)\f$ of the point to
+   * consider in the derivative computation.
+   * \param p : Vector that contains the parameters of the warping function.
+   * \param dM : Resulting warping model derivative returned as a matrix.
+   */
+  virtual void dWarp(const vpColVector &X1, const vpColVector &X2, const vpColVector &p, vpMatrix &dM) = 0;
 
   /*!
-    Compute the compositionnal derivative of the warping function according to
-    its parameters.
+   * Compute the compositionnal derivative matrix of the warping function according to the model parameters.
+   * \param X1 : Point to consider in the derivative computation.
+   * \param X2 : Point to consider in the derivative computation.
+   * \param p : Vector that contains the parameters of the warping function.
+   * \param dwdp0 : Derivative matrix of the warping function according to
+   * the initial warping function parameters (p=0).
+   * \param dM : Resulting warping model compositionnal derivative returned as a 2-by-3 matrix.
+   */
+  virtual void dWarpCompo(const vpColVector &X1, const vpColVector &X2, const vpColVector &p, const double *dwdp0,
+                          vpMatrix &dM) = 0;
 
-    \param X1 : Point to consider in the derivative computation.
-    \param X2 : Point to consider in the derivative computation.
-    \param ParamM : Parameters of the warping function.
-    \param dwdp0 : Derivative matrix of the warping function according to the
-    initial warping function parameters (p=0). \param dW : Resulting
-    compositionnal derivative matrix.
+  /*!
+   * Compute the derivative of the image with relation to the warping function parameters.
+   * \param v : Coordinate (along the image rows axis) of the point to consider in the image.
+   * \param u : Coordinate (along the image columns axis) of the point to consider in the image.
+   * \param dv : Derivative on the y-axis (along the rows) of the point (x,y).
+   * \param du : Derivative on the x-axis (along the columns) of the point (x,y).
+   * \param dIdW : Resulting derivative matrix (image according to the warping function).
+   */
+  virtual void getdW0(const int &v, const int &u, const double &dv, const double &du, double *dIdW) = 0;
+
+  /*!
+   * Compute the derivative of the warping model \f$M\f$ according to the initial parameters \f$p_0\f$
+   * at point \f$X=(u,v)\f$:
+   * \f[
+   * \frac{\partial M}{\partial p}(X, p_0)
+   * \f]
+   *
+   * \param v : Coordinate (along the image rows axis) of the point X to consider in the image.
+   * \param u : Coordinate (along the image columns axis) of the point X to consider in the image.
+   * \param dIdW : Resulting 2-by-3 derivative matrix.
+   */
+  virtual void getdWdp0(const int &v, const int &u, double *dIdW) = 0;
+
+  /*!
+   * Compute inverse of the RT warping transformation.
+   * \param p : Vector that contains the rotation and translation parameters corresponding
+   * to the transformation to inverse.
+   * \param p_inv : Vector that contains the parameters of the inverse transformation \f$ {M(p)}^{-1}\f$.
+   */
+  virtual void getParamInverse(const vpColVector &p, vpColVector &p_inv) const = 0;
+
+  /*!
+   * Get the parameters of the warping function one level down
+   * where image size is divided by two along the lines and the columns.
+   * \param p : Vector that contains the current parameters of the warping function.
+   * \param p_down : Vector that contains the resulting parameters one level down.
+   */
+  virtual void getParamPyramidDown(const vpColVector &p, vpColVector &p_down) = 0;
+
+  /*!
+   * Get the parameters of the warping function one level up
+   * where image size is multiplied by two along the lines and the columns.
+   * \param p : Vector that contains the current parameters of the warping function.
+   * \param p_up : Vector that contains the resulting parameters one level up.
+   */
+  virtual void getParamPyramidUp(const vpColVector &p, vpColVector &p_up) = 0;
+
+  /*!
+    Tells if the warping function is ESM compatible.
+
+    \return true if it is ESM compatible, false otherwise.
   */
-  virtual void dWarpCompo(const vpColVector &X1, const vpColVector &X2, const vpColVector &ParamM, const double *dwdp0,
-                          vpMatrix &dW) = 0;
+  virtual bool isESMcompatible() const = 0;
 
+  /*!
+   * Compute the RT transformation resulting from the composition of two other RT transformations.
+   * \param p1 : Vector that contains the rotation and translation parameters corresponding
+   * to first transformation.
+   * \param p2 : Vector that contains the rotation and translation parameters corresponding
+   * to second transformation.
+   * \param p12 : Vector that contains the resulting transformation \f$ p_{12} = p_1 \circ p_2\f$.
+   */
+  virtual void pRondp(const vpColVector &p1, const vpColVector &p2, vpColVector &p12) const = 0;
+
+  /*!
+   * Warp point \f$(u_1,v_1)\f$ using the RT transformation model with parameters \f$p\f$.
+   * \f[(u_2, v_2) = M(p) * (u_1, v_1)\f]
+   * \param v1 : Coordinate (along the image rows axis) of the point to warp.
+   * \param u1 : Coordinate (along the image columns axis) of the point to warp.
+   * \param v2 : Coordinate of the warped point along the image rows axis.
+   * \param u2 : Coordinate of the warped point along the image column axis.
+   * \param p : Vector that contains the parameters of the RT transformation.
+   */
+  virtual void warpX(const int &v1, const int &u1, double &v2, double &u2, const vpColVector &p) = 0;
+
+  /*!
+   * Warp point \f$X_1=(u_1,v_1)\f$ using the RT transformation model.
+   * \f[X_1 = M(p) * X_2\f]
+   * \param X1 : Vector corresponding to the coordinates \f$(u_1, v_1)\f$ of the point to warp.
+   * \param X2 : Vector corresponding to the coordinates \f$(u_2, v_2)\f$ of the warped point.
+   * \param p : Vector that contains the parameters of the RT transformation.
+   */
+  virtual void warpX(const vpColVector &X1, vpColVector &X2, const vpColVector &p) = 0;
+
+  /*!
+   * Warp a point X1 with the inverse transformation \f$M\f$.
+   * \f[ X_2 = {\left( {^1}M_2 \right) }^{⁻1} \; X_1\f]
+   * \param X1 : Vector corresponding to the coordinates (u,v) of the point to warp.
+   * \param X2 : Vector corresponding to the coordinates (u,v) of the warped point.
+   * \param p : Parameters corresponding to the warping RT model \f${^1}M_2\f$.
+   */
+  virtual void warpXInv(const vpColVector &X1, vpColVector &X2, const vpColVector &p) = 0;
+
+
+  /** @name Inherited functionalities from vpTemplateTrackerWarp */
+  //@{
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
   void findWarp(const double *ut0, const double *vt0, const double *u, const double *v, int nb_pt, vpColVector &p);
 #endif
-
-  /*!
-    Compute the derivative of the image with relation to the warping function
-    parameters.
-
-    \param i : i coordinate (along the rows) of the point to consider in the
-    image. \param j : j coordinate (along the columns) of the point to
-    consider in the image. \param dy : Derivative on the y-axis (along the
-    rows) of the point (i,j). \param dx : Derivative on the x-axis (along the
-    columns) of the point (i,j). \param dIdW : Resulting derivative matrix
-    (Image according to the warping function).
-  */
-  virtual void getdW0(const int &i, const int &j, const double &dy, const double &dx, double *dIdW) = 0;
-
-  /*!
-    Compute the derivative of the warping function according to the initial
-    parameters.
-
-    \param i : i coordinate (along the rows) of the point to consider in the
-    image. \param j : j coordinate (along the columns) of the point to
-    consider in the image. \param dIdW : Resulting derivative matrix (Image
-    according to the warping function).
-  */
-  virtual void getdWdp0(const int &i, const int &j, double *dIdW) = 0;
-
   /*!
     Compute the distance between a zone and its associated warped zone.
 
@@ -139,47 +216,6 @@ public:
     \return Number of parameters.
   */
   unsigned int getNbParam() const { return nbParam; }
-
-  /*!
-    Get the inverse of the warping function parameters.
-
-    \param ParamM : Parameters of the warping function.
-    \param ParamMinv : Inverse parameters.
-  */
-  virtual void getParamInverse(const vpColVector &ParamM, vpColVector &ParamMinv) const = 0;
-
-  /*!
-    Get the parameters of the warping function one level down.
-
-    \param p : Current parameters of the warping function.
-    \param pdown : Resulting parameters on level down.
-  */
-  virtual void getParamPyramidDown(const vpColVector &p, vpColVector &pdown) = 0;
-
-  /*!
-    Get the parameters of the warping function one level up.
-
-    \param p : Current parameters of the warping function.
-    \param pup : Resulting parameters one level up.
-  */
-  virtual void getParamPyramidUp(const vpColVector &p, vpColVector &pup) = 0;
-
-  /*!
-    Tells if the warping function is ESM compatible.
-
-    \return True if it is ESM compatible, False otherwise.
-  */
-  virtual bool isESMcompatible() const = 0;
-
-  /*!
-    Get the displacement resulting from the composition of two other
-    displacements.
-
-    \param p1 : First displacement.
-    \param p2 : Second displacement.
-    \param pres : Displacement resulting from the composition of p1 and p2.
-  */
-  virtual void pRondp(const vpColVector &p1, const vpColVector &p2, vpColVector &pres) const = 0;
 
   /*!
     Set the number of parameters of the warping function.
@@ -205,35 +241,6 @@ public:
   void warp(const double *ut0, const double *vt0, int nb_pt, const vpColVector &p, double *u, double *v);
 
   /*!
-    Warp a point.
-
-    \param i : i coordinate (along the rows) of the point to warp.
-    \param j : j coordinate (along the columns) of the point to warp.
-    \param i2 : i coordinate (along the rows) of the warped point.
-    \param j2 : j coordinate (along the columns) of the warped point.
-    \param ParamM : Parameters of the warp.
-  */
-  virtual void warpX(const int &i, const int &j, double &i2, double &j2, const vpColVector &ParamM) = 0;
-
-  /*!
-    Warp a point.
-
-    \param vX : Coordinates of the point to warp.
-    \param vXres : Coordinates of the warped point.
-    \param ParamM : Parameters of the warping function.
-  */
-  virtual void warpX(const vpColVector &vX, vpColVector &vXres, const vpColVector &ParamM) = 0;
-
-  /*!
-    Inverse Warp a point.
-
-    \param vX : Coordinates of the point to warp.
-    \param vXres : Coordinates of the warped point.
-    \param ParamM : Parameters of the warping function.
-  */
-  virtual void warpXInv(const vpColVector &vX, vpColVector &vXres, const vpColVector &ParamM) = 0;
-
-  /*!
     Warp a triangle and store the result in a new zone.
 
     \param in : Triangle to warp.
@@ -249,9 +256,11 @@ public:
     \param in : Zone to warp.
     \param p : Parameters of the warping function. These parameters are
     estimated by the template tracker and returned using
-    vpTemplateTracker::getp(). \param out : Resulting zone.
+    vpTemplateTracker::getp().
+    \param out : Resulting zone.
   */
   void warpZone(const vpTemplateTrackerZone &in, const vpColVector &p, vpTemplateTrackerZone &out);
+  //@}
 };
 
 #endif
