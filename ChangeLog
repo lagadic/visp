@@ -62,6 +62,9 @@ ViSP 3.3.1 (under development)
     . [#806] Error running the Java sample with intel-mkl 2020.2.254-1
     . [#808] vpVirtuose.cpp doen't build with Visual 2019 (vc16)
     . [#812] Online doc formula rendering issue with Ghostscript on OSX
+    . [#817] vpIoTools::getFileExtension prints "Debug sepIndex: 0" to std::cout
+    . [#818] Model-based tracking issue using RGBD-data on Windows
+    . [#820] Error when composing two RT transformations in template tracker
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:
