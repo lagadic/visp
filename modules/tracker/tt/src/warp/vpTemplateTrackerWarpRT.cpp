@@ -160,7 +160,7 @@ void vpTemplateTrackerWarpRT::pRondp(const vpColVector &p1, const vpColVector &p
   vpColVector Trans2(2);
   vpMatrix MWrap2(2, 2);
   Trans2[0] = p2[1];
-  Trans2[1] = p2[1];
+  Trans2[1] = p2[2];
 
   MWrap2[0][0] = cos(p2[0]);
   MWrap2[0][1] = -sin(p2[0]);
