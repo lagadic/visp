@@ -39,140 +39,211 @@
  *****************************************************************************/
 #include <visp3/tt/vpTemplateTrackerWarpRT.h>
 
+/*!
+ * Construct a model with 3 parameters for rotation and translation initialized to zero.
+ */
 vpTemplateTrackerWarpRT::vpTemplateTrackerWarpRT()
 {
   nbParam = 3;
-  dW.resize(2, nbParam);
 }
 
-// get the parameter corresponding to the lower level of a gaussian pyramid
-void vpTemplateTrackerWarpRT::getParamPyramidDown(const vpColVector &p, vpColVector &pdown)
+/*!
+ * Get the parameters of the warping function one level down
+ * where image size is divided by two along the lines and the columns.
+ * \param p : 3-dim vector that contains the current parameters of the warping function.
+ * \param p_down : 3-dim vector that contains the resulting parameters one level down.
+ */
+void vpTemplateTrackerWarpRT::getParamPyramidDown(const vpColVector &p, vpColVector &p_down)
 {
-  pdown = p;
-  pdown[1] = p[1] / 2.;
-  pdown[2] = p[2] / 2.;
+  p_down[0] = p[0];
+  p_down[1] = p[1] / 2.;
+  p_down[2] = p[2] / 2.;
 }
 
-void vpTemplateTrackerWarpRT::getParamPyramidUp(const vpColVector &p, vpColVector &pup)
-{
-  pup = p;
-  pup[1] = p[1] * 2.;
-  pup[2] = p[2] * 2.;
-}
-/*calcul de di*dw(x,p0)/dp
+/*!
+ * Get the parameters of the warping function one level up
+ * where image size is multiplied by two along the lines and the columns.
+ * \param p : 3-dim vector that contains the current parameters of the warping function.
+ * \param p_up : 3-dim vector that contains the resulting parameters one level up.
  */
-void vpTemplateTrackerWarpRT::getdW0(const int &i, const int &j, const double &dy, const double &dx, double *dIdW)
+void vpTemplateTrackerWarpRT::getParamPyramidUp(const vpColVector &p, vpColVector &p_up)
 {
-  //   std::cout << "getdW0" << std::endl;
-  dIdW[0] = -i * dx + j * dy;
-  dIdW[1] = dx;
-  dIdW[2] = dy;
+  p_up[0] = p[0];
+  p_up[1] = p[1] * 2.;
+  p_up[2] = p[2] * 2.;
 }
-/*calcul de dw(x,p0)/dp
+
+/*!
+ * Compute the derivative of the image with relation to the warping function parameters.
+ * \param v : Coordinate (along the image rows axis) of the point to consider in the image.
+ * \param u : Coordinate (along the image columns axis) of the point to consider in the image.
+ * \param dv : Derivative on the v-axis (along the rows) of the point (u,v).
+ * \param du : Derivative on the u-axis (along the columns) of the point (u,v).
+ * \param dIdW : Resulting derivative matrix (image according to the warping function).
  */
-void vpTemplateTrackerWarpRT::getdWdp0(const int &i, const int &j, double *dIdW)
+void vpTemplateTrackerWarpRT::getdW0(const int &v, const int &u, const double &dv, const double &du, double *dIdW)
 {
-  dIdW[0] = -i;
+  dIdW[0] = -v * du + u * dv;
+  dIdW[1] = du;
+  dIdW[2] = dv;
+}
+
+/*!
+ * Compute the derivative of the warping model \f$M\f$ according to the initial parameters \f$p_0\f$
+ * at point \f$X=(u,v)\f$:
+ * \f[
+ * \frac{\partial M}{\partial p}(X, p_0)
+ * \f]
+ *
+ * \param v : Coordinate (along the image rows axis) of the point X(u,v) to consider in the image.
+ * \param u : Coordinate (along the image columns axis) of the point X(u,v) to consider in the image.
+ * \param dIdW : Resulting 2-by-3 derivative matrix.
+ */
+void vpTemplateTrackerWarpRT::getdWdp0(const int &v, const int &u, double *dIdW)
+{
+  dIdW[0] = -v;
   dIdW[1] = 1.;
   dIdW[2] = 0;
 
-  dIdW[3] = j;
+  dIdW[3] = u;
   dIdW[4] = 0;
   dIdW[5] = 1.;
 }
 
-void vpTemplateTrackerWarpRT::warpX(const int &i, const int &j, double &i2, double &j2, const vpColVector &ParamM)
-{
-  j2 = (cos(ParamM[0]) * j) - (sin(ParamM[0]) * i) + ParamM[1];
-  i2 = (sin(ParamM[0]) * j) + (cos(ParamM[0]) * i) + ParamM[2];
-}
-
-void vpTemplateTrackerWarpRT::warpX(const vpColVector &vX, vpColVector &vXres, const vpColVector &ParamM)
-{
-  vXres[0] = (cos(ParamM[0]) * vX[0]) - (sin(ParamM[0]) * vX[1]) + ParamM[1];
-  vXres[1] = (sin(ParamM[0]) * vX[0]) + (cos(ParamM[0]) * vX[1]) + ParamM[2];
-}
-
-void vpTemplateTrackerWarpRT::dWarp(const vpColVector &X1, const vpColVector & /*X2*/, const vpColVector &ParamM,
-                                    vpMatrix &dW_)
-{
-  double j = X1[0];
-  double i = X1[1];
-  dW_ = 0;
-  dW_[0][0] = (-sin(ParamM[0]) * j) - (cos(ParamM[0]) * i);
-  dW_[0][1] = 1;
-
-  dW_[1][0] = cos(ParamM[0]) * j - sin(ParamM[0]) * i;
-  dW_[1][2] = 1;
-}
-
-/*compute dw=dw/dx*dw/dp
+/*!
+ * Warp point \f$X_1=(u_1,v_1)\f$ using the transformation model with parameters \f$p\f$.
+ * \f[X_2 = {^2}M_1(p) * X_1\f]
+ * \param v1 : Coordinate (along the image rows axis) of the point \f$X_1=(u_1,v_1)\f$ to warp.
+ * \param u1 : Coordinate (along the image columns axis) of the point \f$X_1=(u_1,v_1)\f$ to warp.
+ * \param v2 : Coordinate of the warped point \f$X_2=(u_2,v_2)\f$ along the image rows axis.
+ * \param u2 : Coordinate of the warped point \f$X_2=(u_2,v_2)\f$ along the image column axis.
+ * \param p : 3-dim vector that contains the parameters of the transformation.
  */
-void vpTemplateTrackerWarpRT::dWarpCompo(const vpColVector & /*X1*/, const vpColVector & /*X2*/,
-                                         const vpColVector &ParamM, const double *dwdp0, vpMatrix &dW_)
+void vpTemplateTrackerWarpRT::warpX(const int &v1, const int &u1, double &v2, double &u2, const vpColVector &p)
 {
+  double c = cos(p[0]);
+  double s = sin(p[0]);
+
+  u2 = (c * u1) - (s * v1) + p[1];
+  v2 = (s * u1) + (c * v1) + p[2];
+}
+
+/*!
+ * Warp point \f$X_1=(u_1,v_1)\f$ using the transformation model.
+ * \f[X_2 = {^2}M_1(p) * X_1\f]
+ * \param X1 : 2-dim vector corresponding to the coordinates \f$(u_1, v_1)\f$ of the point to warp.
+ * \param X2 : 2-dim vector corresponding to the coordinates \f$(u_2, v_2)\f$ of the warped point.
+ * \param p : 3-dim vector that contains the parameters of the transformation.
+ */
+void vpTemplateTrackerWarpRT::warpX(const vpColVector &X1, vpColVector &X2, const vpColVector &p)
+{
+  double c = cos(p[0]);
+  double s = sin(p[0]);
+
+  X2[0] = (c * X1[0]) - (s * X1[1]) + p[1];
+  X2[1] = (s * X1[0]) + (c * X1[1]) + p[2];
+}
+
+/*!
+ * Compute the derivative matrix of the warping function at point \f$X=(u,v)\f$ according to the model parameters:
+ * \f[
+ * \frac{\partial M}{\partial p}(X, p)
+ * \f]
+ * \param X : 2-dim vector corresponding to the coordinates \f$(u_1, v_1)\f$ of the point to
+ * consider in the derivative computation.
+ * \param p : 3-dim vector that contains the parameters of the warping function.
+ * \param dM : Resulting warping model derivative returned as a 2-by-3 matrix.
+ */
+void vpTemplateTrackerWarpRT::dWarp(const vpColVector &X, const vpColVector &, const vpColVector &p,
+                                    vpMatrix &dM)
+{
+  double u = X[0];
+  double v = X[1];
+  double c = cos(p[0]);
+  double s = sin(p[0]);
+
+  dM[0][0] = - s * u - c * v;
+  dM[0][1] = 1;
+  dM[0][2] = 0;
+
+  dM[1][0] = c * u - s * v;
+  dM[1][1] = 0;
+  dM[1][2] = 1;
+}
+
+/*!
+ * Compute the compositionnal derivative matrix of the warping function according to the model parameters.
+ * \param p : 3-dim vector that contains the parameters of the warping function.
+ * \param dwdp0 : 2-by-3 derivative matrix of the warping function according to
+ * the initial warping function parameters (p=0).
+ * \param dM : Resulting warping model compositionnal derivative returned as a 2-by-3 matrix.
+ */
+void vpTemplateTrackerWarpRT::dWarpCompo(const vpColVector &, const vpColVector &,
+                                         const vpColVector &p, const double *dwdp0, vpMatrix &dM)
+{
+  double c = cos(p[0]);
+  double s = sin(p[0]);
+
   for (unsigned int i = 0; i < nbParam; i++) {
-    dW_[0][i] = (cos(ParamM[0]) * dwdp0[i]) - (sin(ParamM[0]) * dwdp0[i + nbParam]);
-    dW_[1][i] = (sin(ParamM[0]) * dwdp0[i]) + (cos(ParamM[0]) * dwdp0[i + nbParam]);
+    dM[0][i] = (c * dwdp0[i]) - (s * dwdp0[i + nbParam]);
+    dM[1][i] = (s * dwdp0[i]) + (c * dwdp0[i + nbParam]);
   }
 }
 
-void vpTemplateTrackerWarpRT::warpXInv(const vpColVector &vX, vpColVector &vXres, const vpColVector &ParamM)
+/*!
+ * Warp a point X1 with the inverse transformation \f$M\f$.
+ * \f[ X_2 = {\left({^1}M_2\right)}^{-1} \; X_1\f]
+ * \param X1 : 2-dim vector corresponding to the coordinates (u,v) of the point to warp.
+ * \param X2 : 2-dim vector corresponding to the coordinates (u,v) of the warped point.
+ * \param p : Parameters corresponding to the warping model \f${^1}M_2\f$.
+ */
+void vpTemplateTrackerWarpRT::warpXInv(const vpColVector &X1, vpColVector &X2, const vpColVector &p)
 {
-  //   std::cout << "warpXspe" << std::endl;
-  vXres[0] = (cos(ParamM[0]) * vX[0]) - (sin(ParamM[0]) * vX[1]) + ParamM[1];
-  vXres[1] = (sin(ParamM[0]) * vX[0]) + (cos(ParamM[0]) * vX[1]) + ParamM[2];
+  double c = cos(p[0]);
+  double s = sin(p[0]);
+
+  X2[0] = (c * X1[0]) - (s * X1[1]) + p[1];
+  X2[1] = (s * X1[0]) + (c * X1[1]) + p[2];
 }
 
-void vpTemplateTrackerWarpRT::getParamInverse(const vpColVector &ParamM, vpColVector &ParamMinv) const
+/*!
+ * Compute inverse of the warping transformation.
+ * \param p : 3-dim vector that contains the parameters corresponding
+ * to the transformation to inverse.
+ * \param p_inv : 3-dim vector that contains the parameters of the inverse transformation \f$ {M(p)}^{-1}\f$.
+ */
+void vpTemplateTrackerWarpRT::getParamInverse(const vpColVector &p, vpColVector &p_inv) const
 {
-  vpColVector Trans(2);
-  vpMatrix MWrap(2, 2);
-  Trans[0] = ParamM[1];
-  Trans[1] = ParamM[2];
-  MWrap[0][0] = cos(ParamM[0]);
-  MWrap[0][1] = -sin(ParamM[0]);
-  MWrap[1][0] = sin(ParamM[0]);
-  MWrap[1][1] = cos(ParamM[0]);
+  double c = cos(p[0]);
+  double s = sin(p[0]);
+  double u = p[1];
+  double v = p[2];
 
-  vpMatrix MWrapInv(2, 2);
-  MWrapInv = MWrap.transpose();
-  vpColVector TransInv(2);
-  TransInv = (-1.0) * MWrapInv * Trans;
-
-  ParamMinv[0] = atan2(MWrapInv[1][0], MWrapInv[1][1]);
-  ParamMinv[1] = TransInv[0];
-  ParamMinv[2] = TransInv[1];
+  p_inv[0] = atan2(-s, c);
+  p_inv[1] = -(c * u + s * v);
+  p_inv[2] =  s * u - c * v;
 }
 
-void vpTemplateTrackerWarpRT::pRondp(const vpColVector &p1, const vpColVector &p2, vpColVector &pres) const
+/*!
+ * Compute the transformation resulting from the composition of two other transformations.
+ * \param p1 : 3-dim vector that contains the parameters corresponding
+ * to first transformation.
+ * \param p2 : 3-dim vector that contains the parameters corresponding
+ * to second transformation.
+ * \param p12 : 3-dim vector that contains the resulting transformation \f$ p_{12} = p_1 \circ p_2\f$.
+ */
+void vpTemplateTrackerWarpRT::pRondp(const vpColVector &p1, const vpColVector &p2, vpColVector &p12) const
 {
-  vpColVector Trans1(2);
-  vpMatrix MWrap1(2, 2);
-  Trans1[0] = p1[1];
-  Trans1[1] = p1[2];
+  double c1 = cos(p1[0]);
+  double s1 = sin(p1[0]);
+  double c2 = cos(p2[0]);
+  double s2 = sin(p2[0]);
+  double u1 = p1[1];
+  double v1 = p1[2];
+  double u2 = p2[1];
+  double v2 = p2[2];
 
-  MWrap1[0][0] = cos(p1[0]);
-  MWrap1[0][1] = -sin(p1[0]);
-  MWrap1[1][0] = sin(p1[0]);
-  MWrap1[1][1] = cos(p1[0]);
-
-  vpColVector Trans2(2);
-  vpMatrix MWrap2(2, 2);
-  Trans2[0] = p2[1];
-  Trans2[1] = p2[1];
-
-  MWrap2[0][0] = cos(p2[0]);
-  MWrap2[0][1] = -sin(p2[0]);
-  MWrap2[1][0] = sin(p2[0]);
-  MWrap2[1][1] = cos(p2[0]);
-
-  vpColVector TransRes(2);
-  vpMatrix MWrapRes(2, 2);
-  TransRes = MWrap1 * Trans2 + Trans1;
-  MWrapRes = MWrap1 * MWrap2;
-
-  pres[0] = atan2(MWrapRes[1][0], MWrapRes[1][1]);
-  pres[1] = TransRes[0];
-  pres[2] = TransRes[1];
+  p12[0] = atan2(s1 * c2 + c1 * s2, c1 * c2 - s1 * s2);
+  p12[1] = c1 * u2 - s1 * v2 + u1;
+  p12[2] = s1 * u2 + c1 * v2 + v1;
 }
