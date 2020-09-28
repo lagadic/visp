@@ -1320,13 +1320,12 @@ std::string vpIoTools::getFileExtension(const std::string &pathname, bool checkF
   size_t dotIndex = pathname.rfind(extsep);
   if (dotIndex != std::string::npos) {
     // The extsep character exists
-  size_t npos = std::string::npos;
-  if ((sepIndex != static_cast<int>(npos) && static_cast<int>(dotIndex) > sepIndex) || sepIndex == static_cast<int>(npos)) {
-    if (sepIndex == static_cast<int>(npos)) {
+    size_t npos = std::string::npos;
+    if ((sepIndex != static_cast<int>(npos) && static_cast<int>(dotIndex) > sepIndex) || sepIndex == static_cast<int>(npos)) {
+      if (sepIndex == static_cast<int>(npos)) {
         sepIndex = 0;
-    std::cout << "Debug sepIndex: " << sepIndex << std::endl;
       }
-    size_t filenameIndex = static_cast<size_t>(sepIndex) + static_cast<size_t>(1);
+      size_t filenameIndex = static_cast<size_t>(sepIndex) + static_cast<size_t>(1);
 
       while (filenameIndex < dotIndex) {
         if (pathname.compare(filenameIndex, 1, extsep) != 0) {
