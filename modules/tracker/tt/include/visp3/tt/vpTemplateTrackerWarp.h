@@ -58,15 +58,14 @@
 class VISP_EXPORT vpTemplateTrackerWarp
 {
 protected:
-  double denom;
-  vpMatrix dW;
-  unsigned int nbParam;
+  double denom;         //!< Internal value used by homography warp model.
+  unsigned int nbParam; //!< Number of parameters used to model warp transformation.
 
 public:
   /*!
    * Default constructor.
    */
-  vpTemplateTrackerWarp() : denom(1.), dW(), nbParam(0) {}
+  vpTemplateTrackerWarp() : denom(1.), nbParam(0) {}
   /*!
    * Destructor.
    */
@@ -107,8 +106,8 @@ public:
    * Compute the derivative of the image with relation to the warping function parameters.
    * \param v : Coordinate (along the image rows axis) of the point to consider in the image.
    * \param u : Coordinate (along the image columns axis) of the point to consider in the image.
-   * \param dv : Derivative on the y-axis (along the rows) of the point (x,y).
-   * \param du : Derivative on the x-axis (along the columns) of the point (x,y).
+   * \param dv : Derivative on the v-axis (along the rows) of the point (u,v).
+   * \param du : Derivative on the u-axis (along the columns) of the point (u,v).
    * \param dIdW : Resulting derivative matrix (image according to the warping function).
    */
   virtual void getdW0(const int &v, const int &u, const double &dv, const double &du, double *dIdW) = 0;
@@ -120,15 +119,15 @@ public:
    * \frac{\partial M}{\partial p}(X, p_0)
    * \f]
    *
-   * \param v : Coordinate (along the image rows axis) of the point X to consider in the image.
-   * \param u : Coordinate (along the image columns axis) of the point X to consider in the image.
+ * \param v : Coordinate (along the image rows axis) of the point X(u,v) to consider in the image.
+ * \param u : Coordinate (along the image columns axis) of the point X(u,v) to consider in the image.
    * \param dIdW : Resulting 2-by-3 derivative matrix.
    */
   virtual void getdWdp0(const int &v, const int &u, double *dIdW) = 0;
 
   /*!
    * Compute inverse of the RT warping transformation.
-   * \param p : Vector that contains the rotation and translation parameters corresponding
+   * \param p : Vector that contains the parameters corresponding
    * to the transformation to inverse.
    * \param p_inv : Vector that contains the parameters of the inverse transformation \f$ {M(p)}^{-1}\f$.
    */
@@ -159,22 +158,22 @@ public:
 
   /*!
    * Compute the RT transformation resulting from the composition of two other RT transformations.
-   * \param p1 : Vector that contains the rotation and translation parameters corresponding
+   * \param p1 : Vector that contains the parameters corresponding
    * to first transformation.
-   * \param p2 : Vector that contains the rotation and translation parameters corresponding
+   * \param p2 : Vector that contains the parameters corresponding
    * to second transformation.
    * \param p12 : Vector that contains the resulting transformation \f$ p_{12} = p_1 \circ p_2\f$.
    */
   virtual void pRondp(const vpColVector &p1, const vpColVector &p2, vpColVector &p12) const = 0;
 
   /*!
-   * Warp point \f$(u_1,v_1)\f$ using the RT transformation model with parameters \f$p\f$.
-   * \f[(u_2, v_2) = M(p) * (u_1, v_1)\f]
-   * \param v1 : Coordinate (along the image rows axis) of the point to warp.
-   * \param u1 : Coordinate (along the image columns axis) of the point to warp.
-   * \param v2 : Coordinate of the warped point along the image rows axis.
-   * \param u2 : Coordinate of the warped point along the image column axis.
-   * \param p : Vector that contains the parameters of the RT transformation.
+   * Warp point \f$X_1=(u_1,v_1)\f$ using the transformation model with parameters \f$p\f$.
+   * \f[X_2 = {^2}M_1(p) * X_1\f]
+   * \param v1 : Coordinate (along the image rows axis) of the point \f$X_1=(u_1,v_1)\f$ to warp.
+   * \param u1 : Coordinate (along the image columns axis) of the point \f$X_1=(u_1,v_1)\f$ to warp.
+   * \param v2 : Coordinate of the warped point \f$X_2=(u_2,v_2)\f$ along the image rows axis.
+   * \param u2 : Coordinate of the warped point \f$X_2=(u_2,v_2)\f$ along the image column axis.
+   * \param p : Vector that contains the parameters of the transformation.
    */
   virtual void warpX(const int &v1, const int &u1, double &v2, double &u2, const vpColVector &p) = 0;
 
@@ -225,7 +224,6 @@ public:
   void setNbParam(unsigned int nb)
   {
     nbParam = nb;
-    dW.resize(2, nbParam);
   }
 
   /*!
