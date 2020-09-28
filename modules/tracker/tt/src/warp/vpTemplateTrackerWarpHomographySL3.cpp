@@ -42,10 +42,19 @@
 // findWarp special a SL3 car methode additionnelle ne marche pas (la derivee
 // n est calculable qu en p=0)
 // => resout le probleme de maniere compositionnelle
+/*!
+ * Find the displacement/warping function parameters from a list of points.
+ *
+ * \param ut0 : Original u coordinates.
+ * \param vt0 : Original v coordinates.
+ * \param u : Warped u coordinates.
+ * \param v : Warped v coordinates.
+ * \param nb_pt : Number of points.
+ * \param p : Resulting warping function parameters.
+ */
 void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0, const double *vt0, const double *u,
                                                   const double *v, int nb_pt, vpColVector &p)
 {
-  // std::cout<<"findWarp OVERLOADE"<<std::endl;
   vpColVector dp(nbParam);
   vpMatrix dW_(2, nbParam);
   vpMatrix dX(2, 1);
@@ -119,6 +128,9 @@ void vpTemplateTrackerWarpHomographySL3::findWarp(const double *ut0, const doubl
   delete[] dW_ddp0;
 }
 
+/*!
+ * Construct an homography SL3 model with 8 parameters initialized to zero.
+ */
 vpTemplateTrackerWarpHomographySL3::vpTemplateTrackerWarpHomographySL3() : G(), dGx(), A()
 {
   nbParam = 8;
@@ -146,7 +158,13 @@ vpTemplateTrackerWarpHomographySL3::~vpTemplateTrackerWarpHomographySL3() {}
 
 // get the parameter corresponding to the lower level of a gaussian pyramid
 // a refaire de facon analytique
-void vpTemplateTrackerWarpHomographySL3::getParamPyramidDown(const vpColVector &p, vpColVector &pdown)
+/*!
+ * Get the parameters of the warping function one level down
+ * where image size is divided by two along the lines and the columns.
+ * \param p : 8-dim vector that contains the current parameters of the warping function.
+ * \param p_down : 8-dim vector that contains the resulting parameters one level down.
+ */
+void vpTemplateTrackerWarpHomographySL3::getParamPyramidDown(const vpColVector &p, vpColVector &p_down)
 {
   double *u, *v;
   u = new double[4];
@@ -172,15 +190,21 @@ void vpTemplateTrackerWarpHomographySL3::getParamPyramidDown(const vpColVector &
     v2[i] = v2[i] / 2.;
     // std::cout<<"recherche "<<u2[i]<<","<<v2[i]<<std::endl;
   }
-  pdown = p;
-  findWarp(u, v, u2, v2, 4, pdown);
+  p_down = p;
+  findWarp(u, v, u2, v2, 4, p_down);
   delete[] u;
   delete[] v;
   delete[] u2;
   delete[] v2;
 }
 
-void vpTemplateTrackerWarpHomographySL3::getParamPyramidUp(const vpColVector &p, vpColVector &pup)
+/*!
+ * Get the parameters of the warping function one level up
+ * where image size is multiplied by two along the lines and the columns.
+ * \param p : 8-dim vector that contains the current parameters of the warping function.
+ * \param p_up : 8-dim vector that contains the resulting parameters one level up.
+ */
+void vpTemplateTrackerWarpHomographySL3::getParamPyramidUp(const vpColVector &p, vpColVector &p_up)
 {
   double *u, *v;
   u = new double[4];
@@ -199,7 +223,7 @@ void vpTemplateTrackerWarpHomographySL3::getParamPyramidUp(const vpColVector &p,
   u2 = new double[4];
   v2 = new double[4];
 
-  // pup=p;
+  // p_up=p;
 
   /*vpColVector ptest=pup;
   warp(u,v,4,ptest,u2,v2);
@@ -219,7 +243,7 @@ void vpTemplateTrackerWarpHomographySL3::getParamPyramidUp(const vpColVector &p,
     std::cout<<"#########################################################################################"<<std::endl;
     std::cout<<"recherche "<<u2[i]<<","<<v2[i]<<std::endl;*/
   }
-  findWarp(u, v, u2, v2, 4, pup);
+  findWarp(u, v, u2, v2, 4, p_up);
 
   delete[] u;
   delete[] v;
@@ -227,11 +251,24 @@ void vpTemplateTrackerWarpHomographySL3::getParamPyramidUp(const vpColVector &p,
   delete[] v2;
 }
 
-void vpTemplateTrackerWarpHomographySL3::computeDenom(vpColVector &vX, const vpColVector & /*ParamM*/)
+/*!
+ * Compute the projection denominator (Z) used in x = X/Z and y = Y/Z.
+ * \param X : Point with coordinates (u, v) to consider.
+ *
+ * \sa warpX(const vpColVector &, vpColVector &, const vpColVector &)
+ * \sa warpX(const int &, const int &, double &, double &, const vpColVector &)
+ * \sa dWarp(), dWarpCompo()
+ */
+void vpTemplateTrackerWarpHomographySL3::computeDenom(vpColVector &X, const vpColVector &)
 {
-  denom = vX[0] * G[2][0] + vX[1] * G[2][1] + G[2][2];
+  denom = X[0] * G[2][0] + X[1] * G[2][1] + G[2][2];
 }
 
+/*!
+ * Compute the exponential of the homography matrix defined by the given
+ * parameters.
+ * \param p : Parameters of the SL3 homography warping function.
+ */
 void vpTemplateTrackerWarpHomographySL3::computeCoeff(const vpColVector &p)
 {
   vpMatrix pA(3, 3);
@@ -250,20 +287,42 @@ void vpTemplateTrackerWarpHomographySL3::computeCoeff(const vpColVector &p)
   G = pA.expm();
 }
 
-void vpTemplateTrackerWarpHomographySL3::warpX(const vpColVector &vX, vpColVector &vXres,
-                                               const vpColVector & /*ParamM*/)
+/*!
+ * Warp point \f$X_1=(u_1,v_1)\f$ using the transformation model.
+ * \f[X_2 = {^2}M_1(p) * X_1\f]
+ * \param X1 : 2-dim vector corresponding to the coordinates \f$(u_1, v_1)\f$ of the point to warp.
+ * \param X2 : 2-dim vector corresponding to the coordinates \f$(u_2, v_2)\f$ of the warped point.
+ *
+ * \sa computeDenom()
+ */
+void vpTemplateTrackerWarpHomographySL3::warpX(const vpColVector &X1, vpColVector &X2,
+                                               const vpColVector &)
 {
-  double i = vX[1], j = vX[0];
-  vXres[0] = (j * G[0][0] + i * G[0][1] + G[0][2]) / denom;
-  vXres[1] = (j * G[1][0] + i * G[1][1] + G[1][2]) / denom;
-}
-void vpTemplateTrackerWarpHomographySL3::warpX(const int &i, const int &j, double &i2, double &j2,
-                                               const vpColVector & /*ParamM*/)
-{
-  j2 = (j * G[0][0] + i * G[0][1] + G[0][2]) / denom;
-  i2 = (j * G[1][0] + i * G[1][1] + G[1][2]) / denom;
+  double u = X1[0], v = X1[1];
+  X2[0] = (u * G[0][0] + v * G[0][1] + G[0][2]) / denom;
+  X2[1] = (u * G[1][0] + v * G[1][1] + G[1][2]) / denom;
 }
 
+/*!
+ * Warp point \f$X_1=(u_1,v_1)\f$ using the transformation model with parameters \f$p\f$.
+ * \f[X_2 = {^2}M_1(p) * X_1\f]
+ * \param v1 : Coordinate (along the image rows axis) of the point \f$X_1=(u_1,v_1)\f$ to warp.
+ * \param u1 : Coordinate (along the image columns axis) of the point \f$X_1=(u_1,v_1)\f$ to warp.
+ * \param v2 : Coordinate of the warped point \f$X_2=(u_2,v_2)\f$ along the image rows axis.
+ * \param u2 : Coordinate of the warped point \f$X_2=(u_2,v_2)\f$ along the image column axis.
+ *
+ * \sa computeDenom()
+ */
+void vpTemplateTrackerWarpHomographySL3::warpX(const int &v1, const int &u1, double &v2, double &u2, const vpColVector &)
+{
+  u2 = (u1 * G[0][0] + v1 * G[0][1] + G[0][2]) / denom;
+  v2 = (u1 * G[1][0] + v1 * G[1][1] + G[1][2]) / denom;
+}
+
+/*!
+ * Return the homography corresponding to the parameters.
+ * \return Corresponding homography.
+ */
 vpHomography vpTemplateTrackerWarpHomographySL3::getHomography() const
 {
   vpHomography H;
@@ -273,8 +332,21 @@ vpHomography vpTemplateTrackerWarpHomographySL3::getHomography() const
   return H;
 }
 
+/*!
+ * Compute the derivative matrix of the warping function at point \f$X=(u,v)\f$ according to the model parameters:
+ * \f[
+ * \frac{\partial M}{\partial p}(X, p)
+ * \f]
+ * \param X1 : 2-dim vector corresponding to the coordinates \f$(u_1, v_1)\f$ of the point to
+ * consider in the derivative computation.
+ * \param X2 : 2-dim vector corresponding to the coordinates \f$(u_2, v_2)\f$ of the point to
+ * consider in the derivative computation.
+ * \param dM : Resulting warping model derivative returned as a 2-by-8 matrix.
+ *
+ * \sa computeDenom()
+ */
 void vpTemplateTrackerWarpHomographySL3::dWarp(const vpColVector &X1, const vpColVector &X2,
-                                               const vpColVector & /*ParamM*/, vpMatrix &dW_)
+                                               const vpColVector &, vpMatrix &dM)
 {
   vpMatrix dhdx(2, 3);
   dhdx = 0;
@@ -293,31 +365,36 @@ void vpTemplateTrackerWarpHomographySL3::dWarp(const vpColVector &X1, const vpCo
     dGx[i][6] = G[i][2] * X1[0];
     dGx[i][7] = G[i][2] * X1[1];
   }
-  dW_ = dhdx * dGx;
+  dM = dhdx * dGx;
 }
 
-/*calcul de di*dw(x,p0)/dp
+/*!
+ * Compute the derivative of the image with relation to the warping function parameters.
+ * \param v : Coordinate (along the image rows axis) of the point to consider in the image.
+ * \param u : Coordinate (along the image columns axis) of the point to consider in the image.
+ * \param dv : Derivative on the v-axis (along the rows) of the point (u,v).
+ * \param du : Derivative on the u-axis (along the columns) of the point (u,v).
+ * \param dIdW : Resulting derivative matrix (image according to the warping function).
  */
-void vpTemplateTrackerWarpHomographySL3::getdW0(const int &i, const int &j, const double &dy, const double &dx,
-                                                double *dIdW)
+void vpTemplateTrackerWarpHomographySL3::getdW0(const int &v, const int &u, const double &dv, const double &du, double *dIdW)
 {
   vpMatrix dhdx(1, 3);
   dhdx = 0;
-  dhdx[0][0] = dx;
-  dhdx[0][1] = dy;
-  dhdx[0][2] = -j * dx - i * dy;
+  dhdx[0][0] = du;
+  dhdx[0][1] = dv;
+  dhdx[0][2] = -u * du - v * dv;
   G.eye();
 
   dGx = 0;
   for (unsigned int par = 0; par < 3; par++) {
     dGx[par][0] = G[par][0];
     dGx[par][1] = G[par][1];
-    dGx[par][2] = G[par][0] * i;
-    dGx[par][3] = G[par][1] * j;
-    dGx[par][4] = G[par][0] * j - G[par][1] * i;
-    dGx[par][5] = G[par][2] - G[par][1] * i;
-    dGx[par][6] = G[par][2] * j;
-    dGx[par][7] = G[par][2] * i;
+    dGx[par][2] = G[par][0] * v;
+    dGx[par][3] = G[par][1] * u;
+    dGx[par][4] = G[par][0] * u - G[par][1] * v;
+    dGx[par][5] = G[par][2] - G[par][1] * v;
+    dGx[par][6] = G[par][2] * u;
+    dGx[par][7] = G[par][2] * v;
   }
 
   for (unsigned int par = 0; par < nbParam; par++) {
@@ -327,29 +404,37 @@ void vpTemplateTrackerWarpHomographySL3::getdW0(const int &i, const int &j, cons
     dIdW[par] = res;
   }
 }
-/*calcul de dw(x,p0)/dp
+/*!
+ * Compute the derivative of the warping model \f$M\f$ according to the initial parameters \f$p_0\f$
+ * at point \f$X=(u,v)\f$:
+ * \f[
+ * \frac{\partial M}{\partial p}(X, p_0)
+ * \f]
+ *
+ * \param v : Coordinate (along the image rows axis) of the point X(u,v) to consider in the image.
+ * \param u : Coordinate (along the image columns axis) of the point X(u,v) to consider in the image.
+ * \param dIdW : Resulting 2-by-8 derivative matrix.
  */
-
-void vpTemplateTrackerWarpHomographySL3::getdWdp0(const int &i, const int &j, double *dIdW)
+void vpTemplateTrackerWarpHomographySL3::getdWdp0(const int &v, const int &u, double *dIdW)
 {
   vpMatrix dhdx(2, 3);
   dhdx = 0;
   dhdx[0][0] = 1.;
   dhdx[1][1] = 1.;
-  dhdx[0][2] = -j;
-  dhdx[1][2] = -i;
+  dhdx[0][2] = -u;
+  dhdx[1][2] = -v;
   G.eye();
 
   dGx = 0;
   for (unsigned int par = 0; par < 3; par++) {
     dGx[par][0] = G[par][0];
     dGx[par][1] = G[par][1];
-    dGx[par][2] = G[par][0] * i;
-    dGx[par][3] = G[par][1] * j;
-    dGx[par][4] = G[par][0] * j - G[par][1] * i;
-    dGx[par][5] = G[par][2] - G[par][1] * i;
-    dGx[par][6] = G[par][2] * j;
-    dGx[par][7] = G[par][2] * i;
+    dGx[par][2] = G[par][0] * v;
+    dGx[par][3] = G[par][1] * u;
+    dGx[par][4] = G[par][0] * u - G[par][1] * v;
+    dGx[par][5] = G[par][2] - G[par][1] * v;
+    dGx[par][6] = G[par][2] * u;
+    dGx[par][7] = G[par][2] * v;
   }
   vpMatrix dIdW_temp(2, nbParam);
   dIdW_temp = dhdx * dGx;
@@ -359,26 +444,38 @@ void vpTemplateTrackerWarpHomographySL3::getdWdp0(const int &i, const int &j, do
     dIdW[par + nbParam] = dIdW_temp[1][par];
   }
 }
-void vpTemplateTrackerWarpHomographySL3::getdWdp0(const double &i, const double &j, double *dIdW)
+
+/*!
+ * Compute the derivative of the warping model \f$M\f$ according to the initial parameters \f$p_0\f$
+ * at point \f$X=(u,v)\f$:
+ * \f[
+ * \frac{\partial M}{\partial p}(X, p_0)
+ * \f]
+ *
+ * \param v : Coordinate (along the image rows axis) of the point X(u,v) to consider in the image.
+ * \param u : Coordinate (along the image columns axis) of the point X(u,v) to consider in the image.
+ * \param dIdW : Resulting 2-by-8 derivative matrix.
+ */
+void vpTemplateTrackerWarpHomographySL3::getdWdp0(const double &v, const double &u, double *dIdW)
 {
   vpMatrix dhdx(2, 3);
   dhdx = 0;
   dhdx[0][0] = 1.;
   dhdx[1][1] = 1.;
-  dhdx[0][2] = -j;
-  dhdx[1][2] = -i;
+  dhdx[0][2] = -u;
+  dhdx[1][2] = -v;
   G.eye();
 
   dGx = 0;
   for (unsigned int par = 0; par < 3; par++) {
     dGx[par][0] = G[par][0];
     dGx[par][1] = G[par][1];
-    dGx[par][2] = G[par][0] * i;
-    dGx[par][3] = G[par][1] * j;
-    dGx[par][4] = G[par][0] * j - G[par][1] * i;
-    dGx[par][5] = G[par][2] - G[par][1] * i;
-    dGx[par][6] = G[par][2] * j;
-    dGx[par][7] = G[par][2] * i;
+    dGx[par][2] = G[par][0] * v;
+    dGx[par][3] = G[par][1] * u;
+    dGx[par][4] = G[par][0] * u - G[par][1] * v;
+    dGx[par][5] = G[par][2] - G[par][1] * v;
+    dGx[par][6] = G[par][2] * u;
+    dGx[par][7] = G[par][2] * v;
   }
   vpMatrix dIdW_temp(2, nbParam);
   dIdW_temp = dhdx * dGx;
@@ -388,24 +485,48 @@ void vpTemplateTrackerWarpHomographySL3::getdWdp0(const double &i, const double 
     dIdW[par + nbParam] = dIdW_temp[1][par];
   }
 }
-/*compute dw=dw/dx*dw/dp
+
+/*!
+ * Compute the compositionnal derivative matrix of the warping function according to the model parameters.
+ * \param X : 2-dim vector corresponding to the coordinates \f$(u_1, v_1)\f$ of the point to
+ * consider in the derivative computation.
+ * \param dwdp0 : 2-by-8 derivative matrix of the warping function according to
+ * the initial warping function parameters (p=0).
+ * \param dM : Resulting warping model compositionnal derivative returned as a 2-by-8 matrix.
+ *
+ * \sa computeDenom()
  */
 
-void vpTemplateTrackerWarpHomographySL3::dWarpCompo(const vpColVector & /*X1*/, const vpColVector &X2,
-                                                    const vpColVector & /*ParamM*/, const double *dwdp0, vpMatrix &dW_)
+void vpTemplateTrackerWarpHomographySL3::dWarpCompo(const vpColVector &, const vpColVector &X,
+                                                    const vpColVector &, const double *dwdp0, vpMatrix &dM)
 {
   for (unsigned int i = 0; i < nbParam; i++) {
-    dW_[0][i] = denom * ((G[0][0] - X2[0] * G[2][0]) * dwdp0[i] + (G[0][1] - X2[0] * G[2][1]) * dwdp0[i + nbParam]);
-    dW_[1][i] = denom * ((G[1][0] - X2[1] * G[2][0]) * dwdp0[i] + (G[1][1] - X2[1] * G[2][1]) * dwdp0[i + nbParam]);
+    dM[0][i] = denom * ((G[0][0] - X[0] * G[2][0]) * dwdp0[i] + (G[0][1] - X[0] * G[2][1]) * dwdp0[i + nbParam]);
+    dM[1][i] = denom * ((G[1][0] - X[1] * G[2][0]) * dwdp0[i] + (G[1][1] - X[1] * G[2][1]) * dwdp0[i + nbParam]);
   }
 }
 
-void vpTemplateTrackerWarpHomographySL3::getParamInverse(const vpColVector &ParamM, vpColVector &ParamMinv) const
+/*!
+ * Compute inverse of the warping transformation.
+ * \param p : 8-dim vector that contains the parameters corresponding
+ * to the transformation to inverse.
+ * \param p_inv : 8-dim vector that contains the parameters of the inverse transformation \f$ {M(p)}^{-1}\f$.
+ */
+void vpTemplateTrackerWarpHomographySL3::getParamInverse(const vpColVector &p, vpColVector &p_inv) const
 {
-  ParamMinv = -ParamM;
+  p_inv = -p;
 }
-void vpTemplateTrackerWarpHomographySL3::pRondp(const vpColVector &p1, const vpColVector &p2, vpColVector &pres) const
+
+/*!
+ * Compute the transformation resulting from the composition of two other transformations.
+ * \param p1 : 8-dim vector that contains the parameters corresponding
+ * to first transformation.
+ * \param p2 : 8-dim vector that contains the parameters corresponding
+ * to second transformation.
+ * \param p12 : 8-dim vector that contains the resulting transformation \f$ p_{12} = p_1 \circ p_2\f$.
+ */
+void vpTemplateTrackerWarpHomographySL3::pRondp(const vpColVector &p1, const vpColVector &p2, vpColVector &p12) const
 {
   // vrai que si commutatif ...
-  pres = p1 + p2;
+  p12 = p1 + p2;
 }
