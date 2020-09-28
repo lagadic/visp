@@ -234,7 +234,6 @@ void vpTemplateTrackerWarpAffine::getParamInverse(const vpColVector &p, vpColVec
   double ri_01 = -r_01 / det;
   double ri_10 = -r_10 / det;
 
-  p_inv.resize(getNbParam(), false);
   p_inv[0] = ri_00 - 1;
   p_inv[1] = ri_10;
   p_inv[2] = ri_01;
