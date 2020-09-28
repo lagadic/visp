@@ -229,7 +229,7 @@ public:
   void eye();
 
   //! invert the homography
-  vpHomography inverse() const;
+  vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank=NULL) const;
   //! invert the homography
   void inverse(vpHomography &Hi) const;
 

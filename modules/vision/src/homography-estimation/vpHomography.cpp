@@ -158,15 +158,24 @@ void vpHomography::insert(const vpTranslationVector &atb) { aMb.insert(atb); }
 void vpHomography::insert(const vpPlane &p) { this->bP = p; }
 
 /*!
-  \brief Invert the homography
+  Return inverted homography.
+
+  \param[in] sv_threshold : Threshold used to test the singular values. If
+  a singular value is lower than this threshold we consider that the
+  homography is not full rank.
+
+  \param[out] rank : Rank of the homography that should be 3.
 
   \return  \f$\bf H^{-1}\f$
 */
-vpHomography vpHomography::inverse() const
+vpHomography vpHomography::inverse(double sv_threshold, unsigned int *rank) const
 {
   vpMatrix M = (*this).convert();
   vpMatrix Minv;
-  M.pseudoInverse(Minv, 1e-16);
+  unsigned int r = M.pseudoInverse(Minv, sv_threshold);
+  if (rank != NULL) {
+    *rank = r;
+  }
 
   vpHomography H;
 
