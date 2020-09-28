@@ -182,4 +182,6 @@ vp_set_source_file_compile_flag(src/pose-estimation/vpPoseRansac.cpp -Wno-strict
 vp_set_source_file_compile_flag(src/pose-estimation/vpLevenbergMarquartd.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/key-point/vpKeyPoint.cpp -Wno-strict-overflow)
 
-add_test(testKeyPoint-2-multithreaded testKeyPoint-2 -c ${OPTION_TO_DESACTIVE_DISPLAY} -p)
+if(BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_gui AND BUILD_MODULE_visp_io)
+  add_test(testKeyPoint-2-multithreaded testKeyPoint-2 -c ${OPTION_TO_DESACTIVE_DISPLAY} -p)
+endif()
