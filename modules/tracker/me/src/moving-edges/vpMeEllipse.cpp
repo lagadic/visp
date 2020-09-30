@@ -316,6 +316,9 @@ void vpMeEllipse::computeAngle(const vpImagePoint &pt1, const vpImagePoint &pt2)
   double dmin1 = 1e6;
   double dmin2 = 1e6;
 
+  // recherche parmi les points candidats de ceux les plus proches de pt1 et pt2
+  // FC : on doit pouvoir faire beaucoup plus simple et moins couteux
+  // en travaillant directement sur les angles
   double k = 0;
   while (k < 2 * M_PI) {
 
@@ -431,12 +434,12 @@ void vpMeEllipse::seekExtremities(const vpImage<unsigned char> &I)
       k -= incr;
       // while ( k < -M_PI ) { k+=2*M_PI; }
 
-      i1 = b * cos(k); // equation of an ellipse
       j1 = a * sin(k); // equation of an ellipse
-      P.ifloat = iPc.get_i() - se * j1 + ce * i1;
-      P.i = (int)P.ifloat;
+      i1 = b * cos(k); // equation of an ellipse
       P.jfloat = iPc.get_j() + ce * j1 + se * i1;
       P.j = (int)P.jfloat;
+      P.ifloat = iPc.get_i() - se * j1 + ce * i1;
+      P.i = (int)P.ifloat;
 
       if (!outOfImage(P.i, P.j, 5, rows, cols)) {
         P.track(I, me, false);
@@ -664,9 +667,6 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I)
     std::cout << iP[k] << std::endl;
   }
 
-  iP1 = iP[0];
-  iP2 = iP[n - 1];
-
   initTracking(I, n, iP);
 }
 
@@ -854,7 +854,8 @@ void vpMeEllipse::track(const vpImage<unsigned char> &I)
 */
 void vpMeEllipse::computeMoments()
 {
-  double tane = tan(-1 / e);
+  double tane = -1. / tan(e);
+
   m00 = M_PI * a * b;
   m10 = m00 * iPc.get_i();
   m01 = m00 * iPc.get_j();
@@ -885,14 +886,14 @@ void vpMeEllipse::computeAngle(int ip1, int jp1, double &_alpha1, int ip2, int j
   double k = -M_PI;
   while (k < M_PI) {
 
-    double j1 = a * cos(k); // equation of an ellipse
-    double i1 = b * sin(k); // equation of an ellipse
+    double j1 = a * sin(k); // equation of an ellipse
+    double i1 = b * cos(k); // equation of an ellipse
 
     // (i1,j1) are the coordinates on the origin centered ellipse;
     // a rotation by "e" and a translation by (xci,jc) are done
     // to get the coordinates of the point on the shifted ellipse
-    double j11 = iPc.get_j() + ce * j1 - se * i1;
-    double i11 = iPc.get_i() - (se * j1 + ce * i1);
+    double j11 = iPc.get_j() + ce * j1 + se * i1;
+    double i11 = iPc.get_i() - se * j1 + ce * i1;
 
     double d = vpMath::sqr(ip1 - i11) + vpMath::sqr(jp1 - j11);
     if (d < dmin1) {
@@ -1010,40 +1011,41 @@ void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpImagePoint &c
 
   double k = smallalpha;
   while (k + incr < highalpha) {
-    j1 = A * cos(k); // equation of an ellipse
-    i1 = B * sin(k); // equation of an ellipse
+    j1 = A * sin(k); // equation of an ellipse
+    i1 = B * cos(k); // equation of an ellipse
 
-    j2 = A * cos(k + incr); // equation of an ellipse
-    i2 = B * sin(k + incr); // equation of an ellipse
+    j2 = A * sin(k + incr); // equation of an ellipse
+    i2 = B * cos(k + incr); // equation of an ellipse
 
     // (i1,j1) are the coordinates on the origin centered ellipse;
     // a rotation by "e" and a translation by (xci,jc) are done
     // to get the coordinates of the point on the shifted ellipse
-    iP11.set_j(center.get_j() + cos(E) * j1 - sin(E) * i1);
-    iP11.set_i(center.get_i() - (sin(E) * j1 + cos(E) * i1));
+    iP11.set_j(center.get_j() + cos(E) * j1 + sin(E) * i1);
+    iP11.set_i(center.get_i() - sin(E) * j1 + cos(E) * i1);
     // to get the coordinates of the point on the shifted ellipse
-    iP22.set_j(center.get_j() + cos(E) * j2 - sin(E) * i2);
-    iP22.set_i(center.get_i() - (sin(E) * j2 + cos(E) * i2));
-
+    iP22.set_j(center.get_j() + cos(E) * j2 + sin(E) * i2);
+    iP22.set_i(center.get_i() - sin(E) * j2 + cos(E) * i2);
     vpDisplay::displayLine(I, iP11, iP22, color, thickness);
 
     k += incr;
   }
 
-  j1 = A * cos(smallalpha); // equation of an ellipse
-  i1 = B * sin(smallalpha); // equation of an ellipse
+  // Modif FC
+  j1 = A * sin(smallalpha); // equation of an ellipse
+  i1 = B * cos(smallalpha); // equation of an ellipse
 
-  j2 = A * cos(highalpha); // equation of an ellipse
-  i2 = B * sin(highalpha); // equation of an ellipse
+  j2 = A * sin(highalpha); // equation of an ellipse
+  i2 = B * cos(highalpha); // equation of an ellipse
 
   // (i1,j1) are the coordinates on the origin centered ellipse;
   // a rotation by "e" and a translation by (xci,jc) are done
   // to get the coordinates of the point on the shifted ellipse
-  iP11.set_j(center.get_j() + cos(E) * j1 - sin(E) * i1);
-  iP11.set_i(center.get_i() - (sin(E) * j1 + cos(E) * i1));
+
+  iP11.set_j(center.get_j() + cos(E) * j1 + sin(E) * i1);
+  iP11.set_i(center.get_i() - sin(E) * j1 + cos(E) * i1);
   // to get the coordinates of the point on the shifted ellipse
-  iP22.set_j(center.get_j() + cos(E) * j2 - sin(E) * i2);
-  iP22.set_i(center.get_i() - (sin(E) * j2 + cos(E) * i2));
+  iP22.set_j(center.get_j() + cos(E) * j2 + sin(E) * i2);
+  iP22.set_i(center.get_i() - sin(E) * j2 + cos(E) * i2);
 
   vpDisplay::displayLine(I, center, iP11, vpColor::red, thickness);
   vpDisplay::displayLine(I, center, iP22, vpColor::blue, thickness);
@@ -1088,40 +1090,41 @@ void vpMeEllipse::display(const vpImage<vpRGBa> &I, const vpImagePoint &center, 
 
   double k = smallalpha;
   while (k + incr < highalpha) {
-    j1 = A * cos(k); // equation of an ellipse
-    i1 = B * sin(k); // equation of an ellipse
+    j1 = A * sin(k); // equation of an ellipse
+    i1 = B * cos(k); // equation of an ellipse
 
-    j2 = A * cos(k + incr); // equation of an ellipse
-    i2 = B * sin(k + incr); // equation of an ellipse
+    j2 = A * sin(k + incr); // equation of an ellipse
+    i2 = B * cos(k + incr); // equation of an ellipse
 
     // (i1,j1) are the coordinates on the origin centered ellipse;
     // a rotation by "e" and a translation by (xci,jc) are done
     // to get the coordinates of the point on the shifted ellipse
-    iP11.set_j(center.get_j() + cos(E) * j1 - sin(E) * i1);
-    iP11.set_i(center.get_i() - (sin(E) * j1 + cos(E) * i1));
+    iP11.set_j(center.get_j() + cos(E) * j1 + sin(E) * i1);
+    iP11.set_i(center.get_i() - sin(E) * j1 + cos(E) * i1);
     // to get the coordinates of the point on the shifted ellipse
-    iP22.set_j(center.get_j() + cos(E) * j2 - sin(E) * i2);
-    iP22.set_i(center.get_i() - (sin(E) * j2 + cos(E) * i2));
+    iP22.set_j(center.get_j() + cos(E) * j2 + sin(E) * i2);
+    iP22.set_i(center.get_i() - sin(E) * j2 + cos(E) * i2);
+    vpDisplay::displayLine(I, iP11, iP22, color, thickness);
 
     vpDisplay::displayLine(I, iP11, iP22, color, thickness);
 
     k += incr;
   }
 
-  j1 = A * cos(smallalpha); // equation of an ellipse
-  i1 = B * sin(smallalpha); // equation of an ellipse
+  j1 = A * sin(smallalpha); // equation of an ellipse
+  i1 = B * cos(smallalpha); // equation of an ellipse
 
-  j2 = A * cos(highalpha); // equation of an ellipse
-  i2 = B * sin(highalpha); // equation of an ellipse
+  j2 = A * sin(highalpha); // equation of an ellipse
+  i2 = B * cos(highalpha); // equation of an ellipse
 
   // (i1,j1) are the coordinates on the origin centered ellipse;
   // a rotation by "e" and a translation by (xci,jc) are done
   // to get the coordinates of the point on the shifted ellipse
-  iP11.set_j(center.get_j() + cos(E) * j1 - sin(E) * i1);
-  iP11.set_i(center.get_i() - (sin(E) * j1 + cos(E) * i1));
+  iP11.set_j(center.get_j() + cos(E) * j1 + sin(E) * i1);
+  iP11.set_i(center.get_i() - sin(E) * j1 + cos(E) * i1);
   // to get the coordinates of the point on the shifted ellipse
-  iP22.set_j(center.get_j() + cos(E) * j2 - sin(E) * i2);
-  iP22.set_i(center.get_i() - (sin(E) * j2 + cos(E) * i2));
+  iP22.set_j(center.get_j() + cos(E) * j2 + sin(E) * i2);
+  iP22.set_i(center.get_i() - sin(E) * j2 + cos(E) * i2);
 
   vpDisplay::displayLine(I, center, iP11, vpColor::red, thickness);
   vpDisplay::displayLine(I, center, iP22, vpColor::blue, thickness);

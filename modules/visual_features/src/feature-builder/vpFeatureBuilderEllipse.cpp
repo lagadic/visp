@@ -239,46 +239,28 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam
   \param s : Visual feature to initialize.
 
   \param cam : The parameters of the camera used to acquire the image
-  containing the vpDot2.
+  containing the vpMeEllipse
 
   \param t : The vpMeEllipse used to create the vpFeatureEllipse.
 */
 void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpMeEllipse &t)
 {
-  unsigned int order = 3;
-  vpMatrix mp(order, order);
-  mp = 0;
-  vpMatrix m(order, order);
-  m = 0;
 
-  // The opposite of vpDot and vpDot2 because moments in vpMeEllipse
-  // are computed in the ij coordinate system whereas the moments in vpDot
-  // and vpDot2  are computed in the uv coordinate system
-  mp[0][0] = t.get_m00();
-  mp[1][0] = t.get_m01();
-  mp[0][1] = t.get_m10();
-  mp[2][0] = t.get_m02();
-  mp[1][1] = t.get_m11();
-  mp[0][2] = t.get_m20();
+  // modif FC : creer un vpPixelMeterConversion::convertEllipse serait le mieux
+  // mais il faudrait ensuite passer du repere (u,v) au repere (i,j)
+  double xg,yg;
+  vpImagePoint xg_p = t.getCenter();
+  vpPixelMeterConversion::convertPoint(cam, xg_p, xg, yg);
+  // From (i,j) frame to (x,y) frame: mu_20 and mu_02 permuted
+  double mu_02 = t.get_mu20() / vpMath::sqr(cam.get_py());
+  double mu_11 = t.get_mu11() /(cam.get_px() * cam.get_py());
+  double mu_20 = t.get_mu02() / vpMath::sqr(cam.get_px());
 
-  vpPixelMeterConversion::convertMoment(cam, order, mp, m);
+  double n20 = mu_20 / t.get_m00() ;
+  double n11 = mu_11 / t.get_m00() ;
+  double n02 = mu_02 / t.get_m00() ;
 
-  double m00 = m[0][0];
-  double m01 = m[0][1];
-  double m10 = m[1][0];
-  double m02 = m[0][2];
-  double m11 = m[1][1];
-  double m20 = m[2][0];
-
-  // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq. 14
-  double xc = m10 / m00;
-  double yc = m01 / m00;
-
-  // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq. 15
-  double n20 = (m20 - m00 * vpMath::sqr(xc)) / (m00);
-  double n02 = (m02 - m00 * vpMath::sqr(yc)) / (m00);
-  double n11 = (m11 - m00 * xc * yc) / (m00);
-
-  s.buildFrom(xc, yc, n20, n11, n02);
+  s.buildFrom(xg, yg, n20, n11, n02);
 }
+
 #endif //#ifdef VISP_HAVE_MODULE_ME
