@@ -341,6 +341,8 @@ error vector is updated after a call of computeError() or computeControlLaw().
   */
   vpMatrix get_fJe() const { return fJe; }
 
+  double getPseudoInverseThreshold() const;
+
   // destruction (memory deallocation if required)
   void kill();
 
@@ -516,6 +518,8 @@ error vector is updated after a call of computeError() or computeControlLaw().
     init_fJe = true;
   }
 
+  void setPseudoInverseThreshold(double pseudo_inverse_threshold);
+
   /*!
     Test if all the initialization are correct. If true, the control law can
     be computed.
@@ -674,6 +678,8 @@ protected:
   vpMatrix cJc;
 
   bool m_first_iteration; //!< True until first call of computeControlLaw() is achieved
+
+  double m_pseudo_inverse_threshold; //!< Threshold used in the pseudo inverse
 };
 
 #endif

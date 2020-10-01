@@ -65,6 +65,9 @@
   - In the control law the pseudo inverse will be used. The method
   setInteractionMatrixType() allows to use the transpose instead.
 
+  \warning By default the threshold used to compute the pseudo-inverse is set to 1e-6.
+  Advanced user can modify this value using setPseudoInverseThreshold().
+
 */
 vpServo::vpServo()
   : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(vpServo::NONE), rankJ1(0),
@@ -72,7 +75,8 @@ vpServo::vpServo()
     interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false), cVf(), init_cVf(false),
     fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false), errorComputed(false),
     interactionMatrixComputed(false), dim_task(0), taskWasKilled(false), forceInteractionMatrixComputation(false),
-    WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial(), iscJcIdentity(true), cJc(6, 6), m_first_iteration(true)
+    WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial(), iscJcIdentity(true), cJc(6, 6), m_first_iteration(true),
+    m_pseudo_inverse_threshold(1e-6)
 {
   cJc.eye();
 }
@@ -988,7 +992,7 @@ vpColVector vpServo::computeControlLaw()
   bool imageComputed = false;
 
   if (inversionType == PSEUDO_INVERSE) {
-    rankJ1 = J1.pseudoInverse(J1p, sv, 1e-6, imJ1, imJ1t);
+    rankJ1 = J1.pseudoInverse(J1p, sv, m_pseudo_inverse_threshold, imJ1, imJ1t);
 
     imageComputed = true;
   } else
@@ -1006,7 +1010,7 @@ vpColVector vpServo::computeControlLaw()
       vpMatrix Jtmp;
       // image of J1 is computed to allows the computation
       // of the projection operator
-      rankJ1 = J1.pseudoInverse(Jtmp, sv, 1e-6, imJ1, imJ1t);
+      rankJ1 = J1.pseudoInverse(Jtmp, sv, m_pseudo_inverse_threshold, imJ1, imJ1t);
     }
     WpW = imJ1t.AAt();
 
@@ -1129,7 +1133,7 @@ vpColVector vpServo::computeControlLaw(double t)
   bool imageComputed = false;
 
   if (inversionType == PSEUDO_INVERSE) {
-    rankJ1 = J1.pseudoInverse(J1p, sv, 1e-6, imJ1, imJ1t);
+    rankJ1 = J1.pseudoInverse(J1p, sv, m_pseudo_inverse_threshold, imJ1, imJ1t);
 
     imageComputed = true;
   } else
@@ -1147,7 +1151,7 @@ vpColVector vpServo::computeControlLaw(double t)
       vpMatrix Jtmp;
       // image of J1 is computed to allows the computation
       // of the projection operator
-      rankJ1 = J1.pseudoInverse(Jtmp, sv, 1e-6, imJ1, imJ1t);
+      rankJ1 = J1.pseudoInverse(Jtmp, sv, m_pseudo_inverse_threshold, imJ1, imJ1t);
     }
     WpW = imJ1t.AAt();
 
@@ -1282,7 +1286,7 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
   bool imageComputed = false;
 
   if (inversionType == PSEUDO_INVERSE) {
-    rankJ1 = J1.pseudoInverse(J1p, sv, 1e-6, imJ1, imJ1t);
+    rankJ1 = J1.pseudoInverse(J1p, sv, m_pseudo_inverse_threshold, imJ1, imJ1t);
 
     imageComputed = true;
   } else
@@ -1300,7 +1304,7 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
       vpMatrix Jtmp;
       // image of J1 is computed to allows the computation
       // of the projection operator
-      rankJ1 = J1.pseudoInverse(Jtmp, sv, 1e-6, imJ1, imJ1t);
+      rankJ1 = J1.pseudoInverse(Jtmp, sv, m_pseudo_inverse_threshold, imJ1, imJ1t);
     }
     WpW = imJ1t.AAt();
 
@@ -1797,3 +1801,27 @@ unsigned int vpServo::getTaskRank() const { return rankJ1; }
   \sa getI_WpW()
  */
 vpMatrix vpServo::getWpW() const { return WpW; }
+
+/*!
+ * Return pseudo-inverse threshold used to test the singular values. If
+ * a singular value is lower than this threshold we consider that the
+ * matrix is not full rank.
+ *
+ * \sa setPseudoInverseThreshold()
+ */
+double vpServo::getPseudoInverseThreshold() const
+{
+  return m_pseudo_inverse_threshold;
+}
+
+/*!
+ * Set the pseudo-inverse threshold used to test the singular values. If
+ * a singular value is lower than this threshold we consider that the
+ * matrix is not full rank.
+ * \param pseudo_inverse_threshold : Value to use. Default value is set to 1e-6.
+ * \sa getPseudoInverseThreshold()
+ */
+void vpServo::setPseudoInverseThreshold(double pseudo_inverse_threshold)
+{
+  m_pseudo_inverse_threshold = pseudo_inverse_threshold;
+}
