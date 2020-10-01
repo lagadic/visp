@@ -248,7 +248,7 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam
 
   // modif FC : creer un vpPixelMeterConversion::convertEllipse serait le mieux
   // mais il faudrait ensuite passer du repere (u,v) au repere (i,j)
-  double xg,yg;
+  double xg = 0, yg = 0;
   vpImagePoint xg_p = t.getCenter();
   vpPixelMeterConversion::convertPoint(cam, xg_p, xg, yg);
   // From (i,j) frame to (x,y) frame: mu_20 and mu_02 permuted
