@@ -65,6 +65,7 @@ ViSP 3.3.1 (under development)
     . [#817] vpIoTools::getFileExtension prints "Debug sepIndex: 0" to std::cout
     . [#818] Model-based tracking issue using RGBD-data on Windows
     . [#820] Error when composing two RT transformations in template tracker
+    . [#822] Issue in ellipse display and usage
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:
