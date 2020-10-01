@@ -209,20 +209,14 @@ void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &cent
     double n02_p = coef3;
 
     if (use_centered_moments) {
-      if (std::fabs(n11_p) > std::numeric_limits<double>::epsilon()) {
+      // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 24
+      double val_p = sqrt(vpMath::sqr(n20_p - n02_p) + 4 * vpMath::sqr(n11_p));
+      a = sqrt(2 * (n20_p + n02_p + val_p));  // major axis
+      b = sqrt(2 * (n20_p + n02_p - val_p));  // minor axis
 
-        // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 24
-        double val_p = sqrt(vpMath::sqr(n20_p - n02_p) + 4 * vpMath::sqr(n11_p));
-        a = sqrt(2 * (n20_p + n02_p + val_p));
-        b = sqrt(2 * (n20_p + n02_p - val_p));
-
-        e = (n02_p - n20_p + val_p) / (2 * n11_p);
-        e = atan(e);
-      } else {
-        a = 2 * sqrt(n20_p);
-        b = 2 * sqrt(n02_p);
-        e = 0.;
-      }
+      double s = n02_p - n20_p + val_p;
+      double c = 2 * n11_p;
+      e = atan2(s,c);    // orientation
     } else {
       a = coef1;
       b = coef2;

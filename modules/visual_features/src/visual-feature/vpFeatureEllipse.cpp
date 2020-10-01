@@ -140,18 +140,17 @@ vpMatrix vpFeatureEllipse::interaction(unsigned int select)
   double n11 = s[3];
   double n02 = s[4];
 
-  // eq 39
-  double Z = 1 / (A * xc + B * yc + C);
+  double Zinv = A * xc + B * yc + C;
 
   if (vpFeatureEllipse::selectX() & select) {
     vpMatrix H(1, 6);
     H = 0;
-
-    H[0][0] = -1 / Z;
+    // Eq (14) of Chaumette 2004 TRO paper on moments
+    H[0][0] = -Zinv;
     H[0][1] = 0;
-    H[0][2] = xc / Z + A * n20 + B * n11;
-    H[0][3] = xc * yc + n11;
-    H[0][4] = -1 - vpMath::sqr(xc) - n20;
+    H[0][2] = xc * Zinv + 4.0 * (A * n20 + B * n11);
+    H[0][3] = xc * yc + 4.0 * n11;
+    H[0][4] = -1 - vpMath::sqr(xc) - 4.0 * n20;
     H[0][5] = yc;
 
     L = vpMatrix::stack(L, H);
@@ -160,12 +159,12 @@ vpMatrix vpFeatureEllipse::interaction(unsigned int select)
   if (vpFeatureEllipse::selectY() & select) {
     vpMatrix H(1, 6);
     H = 0;
-
+    // Eq (14) of Chaumette 2004 TRO paper on moments
     H[0][0] = 0;
-    H[0][1] = -1 / Z;
-    H[0][2] = yc / Z + A * n11 + B * n02;
-    H[0][3] = 1 + vpMath::sqr(yc) + n02;
-    H[0][4] = -xc * yc - n11;
+    H[0][1] = -Zinv;
+    H[0][2] = yc * Zinv + 4.0 * (A * n11 + B * n02);
+    H[0][3] = 1 + vpMath::sqr(yc) + 4.0 * n02;
+    H[0][4] = -xc * yc - 4.0 * n11;
     H[0][5] = -xc;
 
     L = vpMatrix::stack(L, H);
@@ -174,10 +173,10 @@ vpMatrix vpFeatureEllipse::interaction(unsigned int select)
   if (vpFeatureEllipse::select_n20() & select) {
     vpMatrix H(1, 6);
     H = 0;
-
-    H[0][0] = -2 * (A * n20 + B * n11);
+    // Eq (26) of Chaumette 2004 TRO paper on moments
+    H[0][0] = -2.0 * (A * n20 + B * n11);
     H[0][1] = 0;
-    H[0][2] = 2 * ((1 / Z + A * xc) * n20 + B * xc * n11);
+    H[0][2] = 2 * ((Zinv + A * xc) * n20 + B * xc * n11);
     H[0][3] = 2 * (yc * n20 + xc * n11);
     H[0][4] = -4 * n20 * xc;
     H[0][5] = 2 * n11;
@@ -188,10 +187,10 @@ vpMatrix vpFeatureEllipse::interaction(unsigned int select)
   if (vpFeatureEllipse::select_n11() & select) {
     vpMatrix H(1, 6);
     H = 0;
-
+    // Eq (26) of Chaumette 2004 TRO paper on moments
     H[0][0] = -A * n11 - B * n02;
     H[0][1] = -A * n20 - B * n11;
-    H[0][2] = A * yc * n20 + (3 / Z - C) * n11 + B * xc * n02;
+    H[0][2] = A * yc * n20 + (3 * Zinv - C) * n11 + B * xc * n02;
     H[0][3] = 3 * yc * n11 + xc * n02;
     H[0][4] = -yc * n20 - 3 * xc * n11;
     H[0][5] = n02 - n20;
@@ -202,10 +201,10 @@ vpMatrix vpFeatureEllipse::interaction(unsigned int select)
   if (vpFeatureEllipse::select_n02() & select) {
     vpMatrix H(1, 6);
     H = 0;
-
+    // Eq (26) of Chaumette 2004 TRO paper on moments
     H[0][0] = 0;
     H[0][1] = -2 * (A * n11 + B * n02);
-    H[0][2] = 2 * ((1 / Z + B * yc) * n02 + A * yc * n11);
+    H[0][2] = 2 * ((Zinv + B * yc) * n02 + A * yc * n11);
     H[0][3] = 4 * yc * n02;
     H[0][4] = -2 * (yc * n11 + xc * n02);
     H[0][5] = -2 * n11;
