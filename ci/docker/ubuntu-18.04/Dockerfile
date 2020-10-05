@@ -38,4 +38,15 @@ RUN mkdir -p ${HOME}/visp-ws \
     && echo "export VISP_WS=${HOME}/visp-ws" >> ${HOME}/.bashrc \
     && echo "export VISP_INPUT_IMAGE_PATH=${HOME}/visp-ws/visp-images" >> ${HOME}/.bashrc
 
+# Get visp
+RUN cd ${HOME}/visp-ws \
+    && git clone https://github.com/lagadic/visp
+
+# Build visp
+RUN cd ${HOME}/visp-ws \
+    && mkdir visp-build \
+    && cd visp-build \
+    && cmake ../visp \
+    && make
+
 WORKDIR /

@@ -32,9 +32,12 @@ ViSP 3.3.1 (under development)
     . Introduce analysis tools for camera calibration / hand-eye calibration
       (see tutorials)
     . New cmake option to use MathJax to speed up online doc build
+    . Docker images available on Docker Hub: 
+      https://hub.docker.com/repository/docker/vispci/vispci
   - Tutorials
     . New tutorial: Basic linear algebra operations
     . New tutorial: How to create and build a project that uses ViSP without CMake
+    . New tutorial: Installation from Docker images
   - Bug fixed
     . [#713] 3.3.0 build fails on non-linux systems: fatal error: 'linux/serial.h'
       file not found
