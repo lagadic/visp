@@ -111,6 +111,10 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-install-win10-msvc15-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2017 (vc15).
 - \ref tutorial-install-win10-msvc16-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2019 (vc16).
 
+\subsection tuto_install_docker Installation from Docker images
+
+- \ref tutorial-install-docker <br>In this tutorial you will be able to get a system up and running with Docker that has ViSP already installed. This tutorial is a good solution for people who have struggled with installation issues.
+
 \subsection tuto_started Getting started
 
 - \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
