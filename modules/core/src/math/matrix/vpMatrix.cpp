@@ -174,96 +174,70 @@ namespace {
 // Prototypes of specific functions
 vpMatrix subblock(const vpMatrix &, unsigned int, unsigned int);
 
-void compute_pseudo_inverse(const vpMatrix &a, const vpColVector &sv, const vpMatrix &v, unsigned int nrows,
-                            unsigned int ncols, unsigned int nrows_orig, unsigned int ncols_orig, double svThreshold,
-                            vpMatrix &Ap, unsigned int &rank)
+void compute_pseudo_inverse(const vpMatrix &U, const vpColVector &sv, const vpMatrix &V, unsigned int nrows,
+                            unsigned int ncols, double svThreshold, vpMatrix &Ap, int &rank_out,
+                            int *rank_in, vpMatrix *imA, vpMatrix *imAt, vpMatrix *kerAt)
 {
-  vpMatrix a1;
-  a1.resize(ncols, nrows, false, false);
-
-  // compute the highest singular value and the rank of h
-  double maxsv = 0;
-  for (unsigned int i = 0; i < ncols; i++) {
-    if (fabs(sv[i]) > maxsv)
-      maxsv = fabs(sv[i]);
-  }
-
-  rank = 0;
-
-  for (unsigned int i = 0; i < ncols; i++) {
-    if (fabs(sv[i]) > maxsv * svThreshold) {
-      rank++;
-    }
-
-    for (unsigned int j = 0; j < nrows; j++) {
-      a1[i][j] = 0.0;
-
-      for (unsigned int k = 0; k < ncols; k++) {
-        if (fabs(sv[k]) > maxsv * svThreshold) {
-          a1[i][j] += v[i][k] * a[j][k] / sv[k];
-        }
-      }
-    }
-  }
-  if (nrows_orig >= ncols_orig)
-    Ap = a1;
-  else
-    Ap = a1.t();
-}
-
-void compute_pseudo_inverse(const vpMatrix &U, const vpColVector &sv, const vpMatrix &V, unsigned int nrows_orig,
-                            unsigned int ncols_orig, double svThreshold, vpMatrix &Ap, unsigned int &rank,
-                            vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt)
-{
-  Ap.resize(ncols_orig, nrows_orig, true);
+  Ap.resize(ncols, nrows, true, false);
 
   // compute the highest singular value and the rank of h
   double maxsv = fabs(sv[0]);
 
-  rank = 0;
+  rank_out = 0;
 
-  for (unsigned int i = 0; i < ncols_orig; i++) {
+  for (unsigned int i = 0; i < ncols; i++) {
     if (fabs(sv[i]) > maxsv * svThreshold) {
-      rank++;
+      rank_out++;
     }
+  }
 
-    for (unsigned int j = 0; j < nrows_orig; j++) {
-      //      Ap[i][j] = 0.0;
+  unsigned int rank = static_cast<unsigned int>(rank_out);
+  if (rank_in) {
+    rank = static_cast<unsigned int>(*rank_in);
+  }
 
-      for (unsigned int k = 0; k < ncols_orig; k++) {
-        if (fabs(sv[k]) > maxsv * svThreshold) {
-          Ap[i][j] += V[i][k] * U[j][k] / sv[k];
-        }
+  for (unsigned int i = 0; i < ncols; i++) {
+    for (unsigned int j = 0; j < nrows; j++) {
+      for (unsigned int k = 0; k < rank; k++) {
+        Ap[i][j] += V[i][k] * U[j][k] / sv[k];
       }
     }
   }
 
-  // Compute im(A) and im(At)
-  imA.resize(nrows_orig, rank);
-  imAt.resize(ncols_orig, rank);
+  // Compute im(A)
+  if (imA) {
+    imA->resize(nrows, rank);
 
-  for (unsigned int i = 0; i < nrows_orig; i++) {
-    for (unsigned int j = 0; j < rank; j++) {
-      imA[i][j] = U[i][j];
+    for (unsigned int i = 0; i < nrows; i++) {
+      for (unsigned int j = 0; j < rank; j++) {
+        (*imA)[i][j] = U[i][j];
+      }
     }
   }
 
-  for (unsigned int i = 0; i < ncols_orig; i++) {
-    for (unsigned int j = 0; j < rank; j++) {
-      imAt[i][j] = V[i][j];
+  // Compute im(At)
+  if (imAt) {
+    imAt->resize(ncols, rank);
+    for (unsigned int i = 0; i < ncols; i++) {
+      for (unsigned int j = 0; j < rank; j++) {
+        (*imAt)[i][j] = V[i][j];
+      }
     }
   }
 
-  kerAt.resize(ncols_orig - rank, ncols_orig);
-  if (rank != ncols_orig) {
-    for (unsigned int j = 0, k = 0; j < ncols_orig; j++) {
-      // if( v.col(j) in kernel and non zero )
-      if ((fabs(sv[j]) <= maxsv * svThreshold) &&
-          (std::fabs(V.getCol(j).sumSquare()) > std::numeric_limits<double>::epsilon())) {
-        for (unsigned int i = 0; i < V.getRows(); i++) {
-          kerAt[k][i] = V[i][j];
+  // Compute ker(At)
+  if (kerAt) {
+    kerAt->resize(ncols - rank, ncols);
+    if (rank != ncols) {
+      for (unsigned int j = 0, k = 0; j < ncols; j++) {
+        // if( v.col(j) in kernel and non zero )
+        if ((fabs(sv[j]) <= maxsv * svThreshold) &&
+            (std::fabs(V.getCol(j).sumSquare()) > std::numeric_limits<double>::epsilon())) {
+          for (unsigned int i = 0; i < V.getRows(); i++) {
+            (*kerAt)[k][i] = V[i][j];
+          }
+          k++;
         }
-        k++;
       }
     }
   }
@@ -2278,7 +2252,7 @@ void vpMatrix::svd(vpColVector &w, vpMatrix &V)
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-  A\f$ and return the rank r of the matrix.
+  A\f$ and return the rank of the matrix.
 
   \note By default, this function uses Lapack 3rd party. It is also possible
   to use a specific 3rd party suffixing this function name with one of the
@@ -2294,9 +2268,9 @@ void vpMatrix::svd(vpColVector &w, vpMatrix &V)
   a singular value is lower than this threshold we consider that the
   matrix is not full rank.
 
-  \return The rank r of the matrix.
+  \return The rank of the matrix.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -2347,6 +2321,82 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, double svThreshold) const
 }
 
 /*!
+  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
+  A\f$ and return the rank of the matrix.
+
+  \note By default, this function uses Lapack 3rd party. It is also possible
+  to use a specific 3rd party suffixing this function name with one of the
+  following 3rd party names (Lapack, Eigen3 or OpenCV).
+
+  \warning To inverse a square n-by-n matrix, you have to use rather one of
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
+
+  \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \return The rank of the matrix.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  // This matrix rank is 2
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  vpMatrix A_p;
+  int rank_in = 2;
+  int rank_out = A.pseudoInverse(A_p, rank_in);
+  if (rank_out != rank_in) {
+    std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+  }
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  std::cout << "Rank in : " << rank_in << std::endl;
+  std::cout << "Rank out: " << rank_out << std::endl;
+}
+  \endcode
+
+  Once build, the previous example produces the following output:
+  \code
+A: [2,3]=
+   2  3  5
+  -4  2  3
+A^+ (pseudo-inverse): [3,2]=
+   0.117899 -0.190782
+   0.065380  0.039657
+   0.113612  0.052518
+Rank in : 2
+Rank out: 2
+  \endcode
+*/
+int vpMatrix::pseudoInverse(vpMatrix &Ap, int rank_in) const
+{
+#if defined(VISP_HAVE_LAPACK)
+  return pseudoInverseLapack(Ap, rank_in);
+#elif defined(VISP_HAVE_EIGEN3)
+  return pseudoInverseEigen3(Ap, rank_in);
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+  return pseudoInverseOpenCV(Ap, rank_in);
+#else
+  (void)Ap;
+  (void)svThreshold;
+  throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
+                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
+#endif
+}
+
+/*!
   Compute and return the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n
   matrix \f$\bf A\f$.
 
@@ -2364,7 +2414,7 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, double svThreshold) const
 
   \return The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -2411,6 +2461,71 @@ vpMatrix vpMatrix::pseudoInverse(double svThreshold) const
 #endif
 }
 
+/*!
+  Compute and return the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n
+  matrix \f$\bf A\f$.
+
+  \note By default, this function uses Lapack 3rd party. It is also possible
+  to use a specific 3rd party suffixing this function name with one of the
+  following 3rd party names (Lapack, Eigen3 or OpenCV).
+
+  \warning To inverse a square n-by-n matrix, you have to use rather one of
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \return The Moore-Penros pseudo inverse \f$ A^+ \f$.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  // This matrix rank is 2
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  int rank_in = 2;
+  vpMatrix A_p = A.pseudoInverseLapack(rank_in);
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+}
+  \endcode
+
+  Once build, the previous example produces the following output:
+  \code
+A: [2,3]=
+   2  3  5
+  -4  2  3
+A^+ (pseudo-inverse): [3,2]=
+   0.117899 -0.190782
+   0.065380  0.039657
+   0.113612  0.052518
+  \endcode
+
+*/
+vpMatrix vpMatrix::pseudoInverse(int rank_in) const
+{
+#if defined(VISP_HAVE_LAPACK)
+  return pseudoInverseLapack(rank_in);
+#elif defined(VISP_HAVE_EIGEN3)
+  return pseudoInverseEigen3(rank_in);
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+  return pseudoInverseOpenCV(rank_in);
+#else
+  (void)svThreshold;
+  throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
+                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
+#endif
+}
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #if defined(VISP_HAVE_LAPACK)
 /*!
@@ -2427,7 +2542,7 @@ vpMatrix vpMatrix::pseudoInverse(double svThreshold) const
 
   \return The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -2451,43 +2566,34 @@ int main()
 */
 vpMatrix vpMatrix::pseudoInverseLapack(double svThreshold) const
 {
-  unsigned int nrows, ncols;
-  unsigned int nrows_orig = getRows();
-  unsigned int ncols_orig = getCols();
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
 
-  vpMatrix Ap;
-  Ap.resize(ncols_orig, nrows_orig, false, false);
+  vpMatrix U, V, Ap;
+  vpColVector sv;
 
-  if (nrows_orig >= ncols_orig) {
-    nrows = nrows_orig;
-    ncols = ncols_orig;
+  Ap.resize(ncols, nrows, false, false);
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
   } else {
-    nrows = ncols_orig;
-    ncols = nrows_orig;
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
   }
 
-  vpMatrix U, V;
-  U.resize(nrows, ncols, false, false);
-  V.resize(ncols, ncols, false, false);
-  vpColVector sv;
-  sv.resize(ncols, false);
-
-  if (nrows_orig >= ncols_orig)
-    U = *this;
-  else
-    U = (*this).t();
-
+  U.insert(*this, 0, 0);
   U.svdLapack(sv, V);
 
-  unsigned int rank;
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, nrows_orig, ncols_orig, svThreshold, Ap, rank);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
 
   return Ap;
 }
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-  A\f$ and return the rank r of the matrix using Lapack 3rd party.
+  A\f$ and return the rank of the matrix using Lapack 3rd party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
   the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
@@ -2499,9 +2605,9 @@ vpMatrix vpMatrix::pseudoInverseLapack(double svThreshold) const
   a singular value is lower than this threshold we consider that the
   matrix is not full rank.
 
-  \return The rank r of the matrix.
+  \return The rank of the matrix.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -2527,41 +2633,33 @@ int main()
 */
 unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, double svThreshold) const
 {
-  unsigned int nrows, ncols;
-  unsigned int nrows_orig = getRows();
-  unsigned int ncols_orig = getCols();
-  unsigned int rank;
-
-  Ap.resize(ncols_orig, nrows_orig, false, false);
-
-  if (nrows_orig >= ncols_orig) {
-    nrows = nrows_orig;
-    ncols = ncols_orig;
-  } else {
-    nrows = ncols_orig;
-    ncols = nrows_orig;
-  }
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
 
   vpMatrix U, V;
-  U.resize(nrows, ncols, false, false);
-  V.resize(ncols, ncols, false, false);
   vpColVector sv;
-  sv.resize(ncols, true);
 
-  if (nrows_orig >= ncols_orig)
-    U = *this;
-  else
-    U = (*this).t();
+  Ap.resize(ncols, nrows, false, false);
 
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
   U.svdLapack(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, nrows_orig, ncols_orig, svThreshold, Ap, rank);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
 
-  return rank;
+  return static_cast<unsigned int>(rank_out);
 }
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-  A\f$ along with singular values and return the rank r of the matrix using
+  A\f$ along with singular values and return the rank of the matrix using
   Lapack 3rd party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
@@ -2577,9 +2675,9 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, double svThreshold) con
   a singular value is lower than this threshold we consider that the
   matrix is not full rank.
 
-  \return The rank r of the matrix \f$\bf A\f$.
+  \return The rank of the matrix \f$\bf A\f$.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -2608,42 +2706,39 @@ int main()
 */
 unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold) const
 {
-  unsigned int nrows, ncols;
-  unsigned int nrows_orig = getRows();
-  unsigned int ncols_orig = getCols();
-  unsigned int rank;
-
-  Ap.resize(ncols_orig, nrows_orig, false, false);
-
-  if (nrows_orig >= ncols_orig) {
-    nrows = nrows_orig;
-    ncols = ncols_orig;
-  } else {
-    nrows = ncols_orig;
-    ncols = nrows_orig;
-  }
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
 
   vpMatrix U, V;
-  U.resize(nrows, ncols, false, false);
-  V.resize(ncols, ncols, false, false);
-  sv.resize(ncols, false);
+  vpColVector sv_;
 
-  if (nrows_orig >= ncols_orig)
-    U = *this;
-  else
-    U = (*this).t();
+  Ap.resize(ncols, nrows, false, false);
 
-  U.svdLapack(sv, V);
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, nrows_orig, ncols_orig, svThreshold, Ap, rank);
+  U.insert(*this, 0, 0);
+  U.svdLapack(sv_, V);
 
-  return rank;
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold,  Ap, rank_out, NULL, NULL, NULL, NULL);
+
+  // Remove singular values equal to the one that corresponds to the lines of 0
+  // introduced when m < n
+  memcpy(sv.data, sv_.data, sv.size() * sizeof(double));
+
+  return static_cast<unsigned int>(rank_out);
 }
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
   A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
-  \f$\mbox{Ker}(A)\f$ and return the rank r of the matrix using Lapack 3rd
+  \f$\mbox{Ker}(A)\f$ and return the rank of the matrix using Lapack 3rd
   party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather
@@ -2700,9 +2795,9 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
   rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
   n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
 
-  \return The rank r of the matrix \f$\bf A\f$.
+  \return The rank of the matrix \f$\bf A\f$.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -2744,15 +2839,14 @@ int main()
 }
   \endcode
 
-  \sa pseudoInverse(vpMatrix &, vpColVector &, double, vpMatrix &, vpMatrix &,
-vpMatrix &) const
+  \sa pseudoInverse(vpMatrix &, vpColVector &, double, vpMatrix &, vpMatrix &, vpMatrix &) const
 */
 unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA,
                                            vpMatrix &imAt, vpMatrix &kerA) const
 {
   unsigned int nrows = getRows();
   unsigned int ncols = getCols();
-  unsigned int rank;
+  int rank_out;
   vpMatrix U, V;
   vpColVector sv_;
 
@@ -2767,24 +2861,392 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
   U.insert(*this, 0, 0);
   U.svdLapack(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank, imA, imAt, kerA);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold,  Ap, rank_out, NULL, &imA, &imAt, &kerA);
 
-  // Remove singular values equal to to that correspond to the lines of 0
+  // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
-  for (unsigned int i = 0; i < sv.size(); i++)
-    sv[i] = sv_[i];
+  memcpy(sv.data, sv_.data, sv.size() * sizeof(double));
 
-  return rank;
+  return static_cast<unsigned int>(rank_out);
 }
+
+/*!
+  Compute and return the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n
+  matrix \f$\bf A\f$ using Lapack 3rd party.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather one of
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
+
+  \param svThreshold : Threshold used to test the singular values. If
+  a singular value is lower than this threshold we consider that the
+  matrix is not full rank.
+
+  \param[in] rank_in : Known rank of the matrix.
+  \return The Moore-Penros pseudo inverse \f$ A^+ \f$.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  // This matrix rank is 2
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  int rank_in = 2;
+  vpMatrix A_p = A.pseudoInverseLapack(rank_in);
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  return 0;
+}
+  \endcode
+
+  \sa pseudoInverse(int) const
+*/
+vpMatrix vpMatrix::pseudoInverseLapack(int rank_in) const
+{
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
+  double svThreshold = 1e-26;
+
+  vpMatrix U, V, Ap;
+  vpColVector sv;
+
+  Ap.resize(ncols, nrows, false, false);
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
+  U.svdLapack(sv, V);
+
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+
+  return Ap;
+}
+
+/*!
+  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
+  A\f$ and return the rank of the matrix using Lapack 3rd party.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather one of
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
+
+  \param[out] Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \return The computed rank of the matrix.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  // This matrix rank is 2
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  vpMatrix A_p;
+  int rank_in = 2;
+  int rank_out = A.pseudoInverseLapack(A_p, rank_in);
+  if (rank_out != rank_in) {
+    std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+  }
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  std::cout << "Rank in : " << rank_in << std::endl;
+  std::cout << "Rank out: " << rank_out << std::endl;
+  return 0;
+}
+  \endcode
+
+  \sa pseudoInverse(vpMatrix &, int) const
+*/
+int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, int rank_in) const
+{
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
+  double svThreshold = 1e-26;
+
+  vpMatrix U, V;
+  vpColVector sv;
+
+  Ap.resize(ncols, nrows, false, false);
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
+  U.svdLapack(sv, V);
+
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+
+  return rank_out;
+}
+
+/*!
+  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
+  A\f$ along with singular values and return the rank of the matrix using
+  Lapack 3rd party.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather one of
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
+
+  \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
+
+  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
+  of this vector is equal to min(m, n).
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \return The rank of the matrix \f$\bf A\f$.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  // This matrix rank is 2
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  vpMatrix A_p;
+  vpColVector sv;
+  int rank_in = 2;
+
+  int rank_out = A.pseudoInverseLapack(A_p, sv, rank_in);
+  if (rank_out != rank_in) {
+    std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+  }
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  std::cout << "Rank in : " << rank_in << std::endl;
+  std::cout << "Rank out: " << rank_out << std::endl;
+  std::cout << "Singular values: " << sv.t() << std::endl;
+  return 0;
+}
+  \endcode
+
+  \sa pseudoInverse(vpMatrix &, vpColVector &, int) const
+*/
+int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in) const
+{
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
+  double svThreshold = 1e-26;
+
+  vpMatrix U, V;
+  vpColVector sv_;
+
+  Ap.resize(ncols, nrows, false, false);
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
+  U.svdLapack(sv_, V);
+
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+
+  // Remove singular values equal to the one that corresponds to the lines of 0
+  // introduced when m < n
+  memcpy(sv.data, sv_.data, sv.size() * sizeof(double));
+
+  return rank_out;
+}
+
+/*!
+  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
+  A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
+  \f$\mbox{Ker}(A)\f$ and return the rank of the matrix using Lapack 3rd
+  party.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather
+  inverseByLU(), inverseByCholesky(), or inverseByQR() that are kwown as faster.
+
+  Using singular value decomposition, we have:
+
+  \f[
+  {\bf A}_{m\times n} = {\bf U}_{m\times m} \; {\bf S}_{m\times n} \; {\bf
+  V^\top}_{n\times n} \f] \f[
+  {\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} ({\bf A}) & | &
+  \mbox{Ker} ({\bf A}^\top) \end{array} \right] {\bf S}_{m\times n}
+  \left[
+  \begin{array}{c} \left[\mbox{Im} ({\bf A}^\top)\right]^\top \\
+  \\
+  \hline \\
+  \left[\mbox{Ker}({\bf A})\right]^\top \end{array}\right]
+  \f]
+
+  where the diagonal of \f${\bf S}_{m\times n}\f$ corresponds to the matrix
+  \f$A\f$ singular values.
+
+  This equation could be reformulated in a minimal way:
+  \f[
+  {\bf A}_{m\times n} = \mbox{Im} ({\bf A}) \; {\bf S}_{r\times n}
+  \left[
+  \begin{array}{c} \left[\mbox{Im} ({\bf A}^\top)\right]^\top \\
+  \\
+  \hline \\
+  \left[\mbox{Ker}({\bf A})\right]^\top \end{array}\right]
+  \f]
+
+  where the diagonal of \f${\bf S}_{r\times n}\f$ corresponds to the matrix
+  \f$A\f$ first r singular values.
+
+  The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
+  = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
+
+  \param Ap: The Moore-Penros pseudo inverse \f$ {\bf A}^+ \f$.
+
+  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
+  of this vector is equal to min(m, n).
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \param imA: \f$\mbox{Im}({\bf A})\f$ that is a m-by-r matrix.
+
+  \param imAt: \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
+
+  \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
+  A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
+  rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
+  n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
+
+  \return The rank of the matrix \f$\bf A\f$.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  vpColVector sv;
+  vpMatrix A_p, imA, imAt, kerAt;
+  int rank_in = 2;
+  int rank_out = A.pseudoInverseLapack(A_p, sv, rank_in, imA, imAt, kerAt);
+
+  if (rank_out != rank_in) {
+    std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+  }
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  std::cout << "Rank in : " << rank_in << std::endl;
+  std::cout << "Rank out: " << rank_out << std::endl;
+  std::cout << "Singular values: " << sv.t() << std::endl;
+  imA.print(std::cout, 10, "Im(A): ");
+  imAt.print(std::cout, 10, "Im(A^T): ");
+
+  if (kerAt.size()) {
+    kerAt.t().print(std::cout, 10, "Ker(A): ");
+  }
+  else {
+    std::cout << "Ker(A) empty " << std::endl;
+  }
+
+  // Reconstruct matrix A from ImA, ImAt, KerAt
+  vpMatrix S(rank_in, A.getCols());
+  for(unsigned int i = 0; i< rank_in; i++)
+    S[i][i] = sv[i];
+  vpMatrix Vt(A.getCols(), A.getCols());
+  Vt.insert(imAt.t(), 0, 0);
+  Vt.insert(kerAt, rank_in, 0);
+  (imA * S * Vt).print(std::cout, 10, "Im(A) * S * [Im(A^T) | Ker(A)]^T:");
+}
+  \endcode
+
+  \sa pseudoInverse(vpMatrix &, vpColVector &, int, vpMatrix &, vpMatrix &, vpMatrix &) const
+*/
+int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA,
+                                  vpMatrix &imAt, vpMatrix &kerA) const
+{
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
+  double svThreshold = 1e-26;
+  vpMatrix U, V;
+  vpColVector sv_;
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
+  U.svdLapack(sv_, V);
+
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, &imA, &imAt, &kerA);
+
+  // Remove singular values equal to the one that corresponds to the lines of 0
+  // introduced when m < n
+  memcpy(sv.data, sv_.data, sv.size() * sizeof(double));
+
+  return rank_out;
+}
+
 #endif
 #if defined(VISP_HAVE_EIGEN3)
 /*!
   Compute and return the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n
-matrix \f$\bf A\f$ using Eigen3 3rd party.
+  matrix \f$\bf A\f$ using Eigen3 3rd party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
 
   \param svThreshold : Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
@@ -2792,7 +3254,7 @@ are kwown as faster.
 
   \return The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -2816,47 +3278,38 @@ int main()
 */
 vpMatrix vpMatrix::pseudoInverseEigen3(double svThreshold) const
 {
-  unsigned int nrows, ncols;
-  unsigned int nrows_orig = getRows();
-  unsigned int ncols_orig = getCols();
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
 
-  vpMatrix Ap;
-  Ap.resize(ncols_orig, nrows_orig, false);
+  vpMatrix U, V, Ap;
+  vpColVector sv;
 
-  if (nrows_orig >= ncols_orig) {
-    nrows = nrows_orig;
-    ncols = ncols_orig;
+  Ap.resize(ncols, nrows, false, false);
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
   } else {
-    nrows = ncols_orig;
-    ncols = nrows_orig;
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
   }
 
-  vpMatrix U, V;
-  U.resize(nrows, ncols, false);
-  V.resize(ncols, ncols, false);
-  vpColVector sv;
-  sv.resize(ncols, false);
-
-  if (nrows_orig >= ncols_orig)
-    U = *this;
-  else
-    U = (*this).t();
-
+  U.insert(*this, 0, 0);
   U.svdEigen3(sv, V);
 
-  unsigned int rank;
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, nrows_orig, ncols_orig, svThreshold, Ap, rank);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
 
   return Ap;
 }
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ and return the rank r of the matrix using Eigen3 3rd party.
+  A\f$ and return the rank of the matrix using Eigen3 3rd party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
 
   \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
@@ -2864,9 +3317,9 @@ are kwown as faster.
   a singular value is lower than this threshold we consider that the
   matrix is not full rank.
 
-  \return The rank r of the matrix.
+  \return The rank of the matrix.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -2892,59 +3345,51 @@ int main()
 */
 unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, double svThreshold) const
 {
-  unsigned int nrows, ncols;
-  unsigned int nrows_orig = getRows();
-  unsigned int ncols_orig = getCols();
-  unsigned int rank;
-
-  Ap.resize(ncols_orig, nrows_orig, false);
-
-  if (nrows_orig >= ncols_orig) {
-    nrows = nrows_orig;
-    ncols = ncols_orig;
-  } else {
-    nrows = ncols_orig;
-    ncols = nrows_orig;
-  }
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
 
   vpMatrix U, V;
-  U.resize(nrows, ncols, false);
-  V.resize(ncols, ncols, false);
   vpColVector sv;
-  sv.resize(ncols, false);
 
-  if (nrows_orig >= ncols_orig)
-    U = *this;
-  else
-    U = (*this).t();
+  Ap.resize(ncols, nrows, false, false);
 
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
   U.svdEigen3(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, nrows_orig, ncols_orig, svThreshold, Ap, rank);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
 
-  return rank;
+  return static_cast<unsigned int>(rank_out);
 }
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ along with singular values and return the rank r of the matrix using
-Eigen3 3rd party.
+  A\f$ along with singular values and return the rank of the matrix using
+  Eigen3 3rd party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
 
   \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
   \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
-of this vector is equal to min(m, n).
+  of this vector is equal to min(m, n).
 
   \param svThreshold : Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
   matrix is not full rank.
 
-  \return The rank r of the matrix \f$\bf A\f$.
+  \return The rank of the matrix \f$\bf A\f$.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -2973,52 +3418,49 @@ int main()
 */
 unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold) const
 {
-  unsigned int nrows, ncols;
-  unsigned int nrows_orig = getRows();
-  unsigned int ncols_orig = getCols();
-  unsigned int rank;
-
-  Ap.resize(ncols_orig, nrows_orig, false);
-
-  if (nrows_orig >= ncols_orig) {
-    nrows = nrows_orig;
-    ncols = ncols_orig;
-  } else {
-    nrows = ncols_orig;
-    ncols = nrows_orig;
-  }
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
 
   vpMatrix U, V;
-  U.resize(nrows, ncols, false);
-  V.resize(ncols, ncols, false);
-  sv.resize(ncols, false);
+  vpColVector sv_;
 
-  if (nrows_orig >= ncols_orig)
-    U = *this;
-  else
-    U = (*this).t();
+  Ap.resize(ncols, nrows, false, false);
 
-  U.svdEigen3(sv, V);
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, nrows_orig, ncols_orig, svThreshold, Ap, rank);
+  U.insert(*this, 0, 0);
+  U.svdEigen3(sv_, V);
 
-  return rank;
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold,  Ap, rank_out, NULL, NULL, NULL, NULL);
+
+  // Remove singular values equal to the one that corresponds to the lines of 0
+  // introduced when m < n
+  memcpy(sv.data, sv_.data, sv.size() * sizeof(double));
+
+  return static_cast<unsigned int>(rank_out);
 }
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
-\f$\mbox{Ker}(A)\f$ and return the rank r of the matrix using Eigen3 3rd
-party.
+  A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
+  \f$\mbox{Ker}(A)\f$ and return the rank of the matrix using Eigen3 3rd
+  party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather
-inverseByLU(), inverseByCholesky(), or inverseByQR() that are kwown as faster.
+  inverseByLU(), inverseByCholesky(), or inverseByQR() that are kwown as faster.
 
   Using singular value decomposition, we have:
 
   \f[
   {\bf A}_{m\times n} = {\bf U}_{m\times m} \; {\bf S}_{m\times n} \; {\bf
-V^\top}_{n\times n} \f] \f[
+  V^\top}_{n\times n} \f] \f[
   {\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} ({\bf A}) & | &
   \mbox{Ker} ({\bf A}^\top) \end{array} \right] {\bf S}_{m\times n}
   \left[
@@ -3029,7 +3471,7 @@ V^\top}_{n\times n} \f] \f[
   \f]
 
   where the diagonal of \f${\bf S}_{m\times n}\f$ corresponds to the matrix
-\f$A\f$ singular values.
+  \f$A\f$ singular values.
 
   This equation could be reformulated in a minimal way:
   \f[
@@ -3042,15 +3484,15 @@ V^\top}_{n\times n} \f] \f[
   \f]
 
   where the diagonal of \f${\bf S}_{r\times n}\f$ corresponds to the matrix
-\f$A\f$ first r singular values.
+  \f$A\f$ first r singular values.
 
   The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
-= { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
+  = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
 
   \param Ap: The Moore-Penros pseudo inverse \f$ {\bf A}^+ \f$.
 
   \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
-of this vector is equal to min(m, n).
+  of this vector is equal to min(m, n).
 
   \param svThreshold: Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
@@ -3061,13 +3503,13 @@ of this vector is equal to min(m, n).
   \param imAt: \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
 
   \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
-A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
-rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
-n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
+  A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
+  rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
+  n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
 
-  \return The rank r of the matrix \f$\bf A\f$.
+  \return The rank of the matrix \f$\bf A\f$.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -3109,15 +3551,14 @@ int main()
 }
   \endcode
 
-  \sa pseudoInverse(vpMatrix &, vpColVector &, double, vpMatrix &, vpMatrix &,
-vpMatrix &) const
+  \sa pseudoInverse(vpMatrix &, vpColVector &, double, vpMatrix &, vpMatrix &, vpMatrix &) const
 */
 unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA,
                                            vpMatrix &imAt, vpMatrix &kerA) const
 {
   unsigned int nrows = getRows();
   unsigned int ncols = getCols();
-  unsigned int rank;
+  int rank_out;
   vpMatrix U, V;
   vpColVector sv_;
 
@@ -3132,24 +3573,392 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double
   U.insert(*this, 0, 0);
   U.svdEigen3(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank, imA, imAt, kerA);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold,  Ap, rank_out, NULL, &imA, &imAt, &kerA);
 
-  // Remove singular values equal to to that correspond to the lines of 0
+  // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
-  for (unsigned int i = 0; i < sv.size(); i++)
-    sv[i] = sv_[i];
+  memcpy(sv.data, sv_.data, sv.size() * sizeof(double));
 
-  return rank;
+  return static_cast<unsigned int>(rank_out);
 }
+
+/*!
+  Compute and return the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n
+  matrix \f$\bf A\f$ using Eigen3 3rd party.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather one of
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
+
+  \param svThreshold : Threshold used to test the singular values. If
+  a singular value is lower than this threshold we consider that the
+  matrix is not full rank.
+
+  \param[in] rank_in : Known rank of the matrix.
+  \return The Moore-Penros pseudo inverse \f$ A^+ \f$.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  // This matrix rank is 2
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  int rank_in = 2;
+  vpMatrix A_p = A.pseudoInverseEigen3(rank_in);
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  return 0;
+}
+  \endcode
+
+  \sa pseudoInverse(int) const
+*/
+vpMatrix vpMatrix::pseudoInverseEigen3(int rank_in) const
+{
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
+  double svThreshold = 1e-26;
+
+  vpMatrix U, V, Ap;
+  vpColVector sv;
+
+  Ap.resize(ncols, nrows, false, false);
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
+  U.svdEigen3(sv, V);
+
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+
+  return Ap;
+}
+
+/*!
+  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
+  A\f$ and return the rank of the matrix using Eigen3 3rd party.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather one of
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
+
+  \param[out] Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \return The computed rank of the matrix.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  // This matrix rank is 2
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  vpMatrix A_p;
+  int rank_in = 2;
+  int rank_out = A.pseudoInverseEigen3(A_p, rank_in);
+  if (rank_out != rank_in) {
+    std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+  }
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  std::cout << "Rank in : " << rank_in << std::endl;
+  std::cout << "Rank out: " << rank_out << std::endl;
+  return 0;
+}
+  \endcode
+
+  \sa pseudoInverse(vpMatrix &, int) const
+*/
+int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, int rank_in) const
+{
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
+  double svThreshold = 1e-26;
+
+  vpMatrix U, V;
+  vpColVector sv;
+
+  Ap.resize(ncols, nrows, false, false);
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
+  U.svdEigen3(sv, V);
+
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+
+  return rank_out;
+}
+
+/*!
+  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
+  A\f$ along with singular values and return the rank of the matrix using
+  Eigen3 3rd party.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather one of
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
+
+  \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
+
+  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
+  of this vector is equal to min(m, n).
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \return The rank of the matrix \f$\bf A\f$.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  // This matrix rank is 2
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  vpMatrix A_p;
+  vpColVector sv;
+  int rank_in = 2;
+
+  int rank_out = A.pseudoInverseEigen3(A_p, sv, rank_in);
+  if (rank_out != rank_in) {
+    std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+  }
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  std::cout << "Rank in : " << rank_in << std::endl;
+  std::cout << "Rank out: " << rank_out << std::endl;
+  std::cout << "Singular values: " << sv.t() << std::endl;
+  return 0;
+}
+  \endcode
+
+  \sa pseudoInverse(vpMatrix &, vpColVector &, int) const
+*/
+int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in) const
+{
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
+  double svThreshold = 1e-26;
+
+  vpMatrix U, V;
+  vpColVector sv_;
+
+  Ap.resize(ncols, nrows, false, false);
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
+  U.svdEigen3(sv_, V);
+
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+
+  // Remove singular values equal to the one that corresponds to the lines of 0
+  // introduced when m < n
+  memcpy(sv.data, sv_.data, sv.size() * sizeof(double));
+
+  return rank_out;
+}
+
+/*!
+  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
+  A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
+  \f$\mbox{Ker}(A)\f$ and return the rank of the matrix using Eigen3 3rd
+  party.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather
+  inverseByLU(), inverseByCholesky(), or inverseByQR() that are kwown as faster.
+
+  Using singular value decomposition, we have:
+
+  \f[
+  {\bf A}_{m\times n} = {\bf U}_{m\times m} \; {\bf S}_{m\times n} \; {\bf
+  V^\top}_{n\times n} \f] \f[
+  {\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} ({\bf A}) & | &
+  \mbox{Ker} ({\bf A}^\top) \end{array} \right] {\bf S}_{m\times n}
+  \left[
+  \begin{array}{c} \left[\mbox{Im} ({\bf A}^\top)\right]^\top \\
+  \\
+  \hline \\
+  \left[\mbox{Ker}({\bf A})\right]^\top \end{array}\right]
+  \f]
+
+  where the diagonal of \f${\bf S}_{m\times n}\f$ corresponds to the matrix
+  \f$A\f$ singular values.
+
+  This equation could be reformulated in a minimal way:
+  \f[
+  {\bf A}_{m\times n} = \mbox{Im} ({\bf A}) \; {\bf S}_{r\times n}
+  \left[
+  \begin{array}{c} \left[\mbox{Im} ({\bf A}^\top)\right]^\top \\
+  \\
+  \hline \\
+  \left[\mbox{Ker}({\bf A})\right]^\top \end{array}\right]
+  \f]
+
+  where the diagonal of \f${\bf S}_{r\times n}\f$ corresponds to the matrix
+  \f$A\f$ first r singular values.
+
+  The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
+  = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
+
+  \param Ap: The Moore-Penros pseudo inverse \f$ {\bf A}^+ \f$.
+
+  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
+  of this vector is equal to min(m, n).
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \param imA: \f$\mbox{Im}({\bf A})\f$ that is a m-by-r matrix.
+
+  \param imAt: \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
+
+  \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
+  A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
+  rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
+  n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
+
+  \return The rank of the matrix \f$\bf A\f$.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  vpColVector sv;
+  vpMatrix A_p, imA, imAt, kerAt;
+  int rank_in = 2;
+  int rank_out = A.pseudoInverseEigen3(A_p, sv, rank_in, imA, imAt, kerAt);
+
+  if (rank_out != rank_in) {
+    std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+  }
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  std::cout << "Rank in : " << rank_in << std::endl;
+  std::cout << "Rank out: " << rank_out << std::endl;
+  std::cout << "Singular values: " << sv.t() << std::endl;
+  imA.print(std::cout, 10, "Im(A): ");
+  imAt.print(std::cout, 10, "Im(A^T): ");
+
+  if (kerAt.size()) {
+    kerAt.t().print(std::cout, 10, "Ker(A): ");
+  }
+  else {
+    std::cout << "Ker(A) empty " << std::endl;
+  }
+
+  // Reconstruct matrix A from ImA, ImAt, KerAt
+  vpMatrix S(rank_in, A.getCols());
+  for(unsigned int i = 0; i< rank_in; i++)
+    S[i][i] = sv[i];
+  vpMatrix Vt(A.getCols(), A.getCols());
+  Vt.insert(imAt.t(), 0, 0);
+  Vt.insert(kerAt, rank_in, 0);
+  (imA * S * Vt).print(std::cout, 10, "Im(A) * S * [Im(A^T) | Ker(A)]^T:");
+}
+  \endcode
+
+  \sa pseudoInverse(vpMatrix &, vpColVector &, int, vpMatrix &, vpMatrix &, vpMatrix &) const
+*/
+int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA,
+                                  vpMatrix &imAt, vpMatrix &kerA) const
+{
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
+  double svThreshold = 1e-26;
+  vpMatrix U, V;
+  vpColVector sv_;
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
+  U.svdEigen3(sv_, V);
+
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, &imA, &imAt, &kerA);
+
+  // Remove singular values equal to the one that corresponds to the lines of 0
+  // introduced when m < n
+  memcpy(sv.data, sv_.data, sv.size() * sizeof(double));
+
+  return rank_out;
+}
+
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 /*!
   Compute and return the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n
-matrix \f$\bf A\f$ using OpenCV 3rd party.
+  matrix \f$\bf A\f$ using OpenCV 3rd party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
 
   \param svThreshold : Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
@@ -3157,7 +3966,7 @@ are kwown as faster.
 
   \return The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -3181,47 +3990,38 @@ int main()
 */
 vpMatrix vpMatrix::pseudoInverseOpenCV(double svThreshold) const
 {
-  unsigned int nrows, ncols;
-  unsigned int nrows_orig = getRows();
-  unsigned int ncols_orig = getCols();
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
 
-  vpMatrix Ap;
-  Ap.resize(ncols_orig, nrows_orig, false);
+  vpMatrix U, V, Ap;
+  vpColVector sv;
 
-  if (nrows_orig >= ncols_orig) {
-    nrows = nrows_orig;
-    ncols = ncols_orig;
+  Ap.resize(ncols, nrows, false, false);
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
   } else {
-    nrows = ncols_orig;
-    ncols = nrows_orig;
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
   }
 
-  vpMatrix U, V;
-  U.resize(nrows, ncols, false);
-  V.resize(ncols, ncols, false);
-  vpColVector sv;
-  sv.resize(ncols, false);
-
-  if (nrows_orig >= ncols_orig)
-    U = *this;
-  else
-    U = (*this).t();
-
+  U.insert(*this, 0, 0);
   U.svdOpenCV(sv, V);
 
-  unsigned int rank;
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, nrows_orig, ncols_orig, svThreshold, Ap, rank);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
 
   return Ap;
 }
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ and return the rank r of the matrix using OpenCV 3rd party.
+  A\f$ and return the rank of the matrix using OpenCV 3rd party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
 
   \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
@@ -3229,9 +4029,9 @@ are kwown as faster.
   a singular value is lower than this threshold we consider that the
   matrix is not full rank.
 
-  \return The rank r of the matrix.
+  \return The rank of the matrix.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -3257,59 +4057,51 @@ int main()
 */
 unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, double svThreshold) const
 {
-  unsigned int nrows, ncols;
-  unsigned int nrows_orig = getRows();
-  unsigned int ncols_orig = getCols();
-  unsigned int rank;
-
-  Ap.resize(ncols_orig, nrows_orig, false);
-
-  if (nrows_orig >= ncols_orig) {
-    nrows = nrows_orig;
-    ncols = ncols_orig;
-  } else {
-    nrows = ncols_orig;
-    ncols = nrows_orig;
-  }
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
 
   vpMatrix U, V;
-  U.resize(nrows, ncols, false);
-  V.resize(ncols, ncols, false);
   vpColVector sv;
-  sv.resize(ncols, false);
 
-  if (nrows_orig >= ncols_orig)
-    U = *this;
-  else
-    U = (*this).t();
+  Ap.resize(ncols, nrows, false, false);
 
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
   U.svdOpenCV(sv, V);
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, nrows_orig, ncols_orig, svThreshold, Ap, rank);
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, NULL, NULL, NULL, NULL);
 
-  return rank;
+  return static_cast<unsigned int>(rank_out);
 }
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ along with singular values and return the rank r of the matrix using
-OpenCV 3rd party.
+  A\f$ along with singular values and return the rank of the matrix using
+  OpenCV 3rd party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
 
   \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
   \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
-of this vector is equal to min(m, n).
+  of this vector is equal to min(m, n).
 
   \param svThreshold : Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
   matrix is not full rank.
 
-  \return The rank r of the matrix \f$\bf A\f$.
+  \return The rank of the matrix \f$\bf A\f$.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -3338,52 +4130,49 @@ int main()
 */
 unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold) const
 {
-  unsigned int nrows, ncols;
-  unsigned int nrows_orig = getRows();
-  unsigned int ncols_orig = getCols();
-  unsigned int rank;
-
-  Ap.resize(ncols_orig, nrows_orig);
-
-  if (nrows_orig >= ncols_orig) {
-    nrows = nrows_orig;
-    ncols = ncols_orig;
-  } else {
-    nrows = ncols_orig;
-    ncols = nrows_orig;
-  }
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
 
   vpMatrix U, V;
-  U.resize(nrows, ncols, false);
-  V.resize(ncols, ncols, false);
-  sv.resize(ncols, false);
+  vpColVector sv_;
 
-  if (nrows_orig >= ncols_orig)
-    U = *this;
-  else
-    U = (*this).t();
+  Ap.resize(ncols, nrows, false, false);
 
-  U.svdOpenCV(sv, V);
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
 
-  compute_pseudo_inverse(U, sv, V, nrows, ncols, nrows_orig, ncols_orig, svThreshold, Ap, rank);
+  U.insert(*this, 0, 0);
+  U.svdOpenCV(sv_, V);
 
-  return rank;
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold,  Ap, rank_out, NULL, NULL, NULL, NULL);
+
+  // Remove singular values equal to the one that corresponds to the lines of 0
+  // introduced when m < n
+  memcpy(sv.data, sv_.data, sv.size() * sizeof(double));
+
+  return static_cast<unsigned int>(rank_out);
 }
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
-\f$\mbox{Ker}(A)\f$ and return the rank r of the matrix using OpenCV 3rd
-party.
+  A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
+  \f$\mbox{Ker}(A)\f$ and return the rank of the matrix using OpenCV 3rd
+  party.
 
   \warning To inverse a square n-by-n matrix, you have to use rather
-inverseByLU(), inverseByCholesky(), or inverseByQR() that are kwown as faster.
+  inverseByLU(), inverseByCholesky(), or inverseByQR() that are kwown as faster.
 
   Using singular value decomposition, we have:
 
   \f[
   {\bf A}_{m\times n} = {\bf U}_{m\times m} \; {\bf S}_{m\times n} \; {\bf
-V^\top}_{n\times n} \f] \f[
+  V^\top}_{n\times n} \f] \f[
   {\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} ({\bf A}) & | &
   \mbox{Ker} ({\bf A}^\top) \end{array} \right] {\bf S}_{m\times n}
   \left[
@@ -3394,7 +4183,7 @@ V^\top}_{n\times n} \f] \f[
   \f]
 
   where the diagonal of \f${\bf S}_{m\times n}\f$ corresponds to the matrix
-\f$A\f$ singular values.
+  \f$A\f$ singular values.
 
   This equation could be reformulated in a minimal way:
   \f[
@@ -3407,15 +4196,15 @@ V^\top}_{n\times n} \f] \f[
   \f]
 
   where the diagonal of \f${\bf S}_{r\times n}\f$ corresponds to the matrix
-\f$A\f$ first r singular values.
+  \f$A\f$ first r singular values.
 
   The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
-= { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
+  = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
 
   \param Ap: The Moore-Penros pseudo inverse \f$ {\bf A}^+ \f$.
 
   \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
-of this vector is equal to min(m, n).
+  of this vector is equal to min(m, n).
 
   \param svThreshold: Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
@@ -3426,13 +4215,13 @@ of this vector is equal to min(m, n).
   \param imAt: \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
 
   \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
-A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
-rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
-n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
+  A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
+  rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
+  n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
 
-  \return The rank r of the matrix \f$\bf A\f$.
+  \return The rank of the matrix \f$\bf A\f$.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -3474,15 +4263,14 @@ int main()
 }
   \endcode
 
-  \sa pseudoInverse(vpMatrix &, vpColVector &, double, vpMatrix &, vpMatrix &,
-vpMatrix &) const
+  \sa pseudoInverse(vpMatrix &, vpColVector &, double, vpMatrix &, vpMatrix &, vpMatrix &) const
 */
 unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA,
                                            vpMatrix &imAt, vpMatrix &kerA) const
 {
   unsigned int nrows = getRows();
   unsigned int ncols = getCols();
-  unsigned int rank;
+  int rank_out;
   vpMatrix U, V;
   vpColVector sv_;
 
@@ -3497,21 +4285,389 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double
   U.insert(*this, 0, 0);
   U.svdOpenCV(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank, imA, imAt, kerA);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold,  Ap, rank_out, NULL, &imA, &imAt, &kerA);
 
-  // Remove singular values equal to to that correspond to the lines of 0
+  // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
-  for (unsigned int i = 0; i < sv.size(); i++)
-    sv[i] = sv_[i];
+  memcpy(sv.data, sv_.data, sv.size() * sizeof(double));
 
-  return rank;
+  return static_cast<unsigned int>(rank_out);
 }
+
+/*!
+  Compute and return the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n
+  matrix \f$\bf A\f$ using OpenCV 3rd party.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather one of
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
+
+  \param svThreshold : Threshold used to test the singular values. If
+  a singular value is lower than this threshold we consider that the
+  matrix is not full rank.
+
+  \param[in] rank_in : Known rank of the matrix.
+  \return The Moore-Penros pseudo inverse \f$ A^+ \f$.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  // This matrix rank is 2
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  int rank_in = 2;
+  vpMatrix A_p = A.pseudoInverseOpenCV(rank_in);
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  return 0;
+}
+  \endcode
+
+  \sa pseudoInverse(int) const
+*/
+vpMatrix vpMatrix::pseudoInverseOpenCV(int rank_in) const
+{
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
+  double svThreshold = 1e-26;
+
+  vpMatrix U, V, Ap;
+  vpColVector sv;
+
+  Ap.resize(ncols, nrows, false, false);
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
+  U.svdOpenCV(sv, V);
+
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+
+  return Ap;
+}
+
+/*!
+  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
+  A\f$ and return the rank of the matrix using OpenCV 3rd party.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather one of
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
+
+  \param[out] Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \return The computed rank of the matrix.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  // This matrix rank is 2
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  vpMatrix A_p;
+  int rank_in = 2;
+  int rank_out = A.pseudoInverseOpenCV(A_p, rank_in);
+  if (rank_out != rank_in) {
+    std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+  }
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  std::cout << "Rank in : " << rank_in << std::endl;
+  std::cout << "Rank out: " << rank_out << std::endl;
+  return 0;
+}
+  \endcode
+
+  \sa pseudoInverse(vpMatrix &, int) const
+*/
+int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, int rank_in) const
+{
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
+  double svThreshold = 1e-26;
+
+  vpMatrix U, V;
+  vpColVector sv;
+
+  Ap.resize(ncols, nrows, false, false);
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
+  U.svdOpenCV(sv, V);
+
+  compute_pseudo_inverse(U, sv, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+
+  return rank_out;
+}
+
+/*!
+  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
+  A\f$ along with singular values and return the rank of the matrix using
+  OpenCV 3rd party.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather one of
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
+
+  \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
+
+  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
+  of this vector is equal to min(m, n).
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \return The rank of the matrix \f$\bf A\f$.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  // This matrix rank is 2
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  vpMatrix A_p;
+  vpColVector sv;
+  int rank_in = 2;
+
+  int rank_out = A.pseudoInverseOpenCV(A_p, sv, rank_in);
+  if (rank_out != rank_in) {
+    std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+  }
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  std::cout << "Rank in : " << rank_in << std::endl;
+  std::cout << "Rank out: " << rank_out << std::endl;
+  std::cout << "Singular values: " << sv.t() << std::endl;
+  return 0;
+}
+  \endcode
+
+  \sa pseudoInverse(vpMatrix &, vpColVector &, int) const
+*/
+int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in) const
+{
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
+  double svThreshold = 1e-26;
+
+  vpMatrix U, V;
+  vpColVector sv_;
+
+  Ap.resize(ncols, nrows, false, false);
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
+  U.svdOpenCV(sv_, V);
+
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, NULL, NULL, NULL);
+
+  // Remove singular values equal to the one that corresponds to the lines of 0
+  // introduced when m < n
+  memcpy(sv.data, sv_.data, sv.size() * sizeof(double));
+
+  return rank_out;
+}
+
+/*!
+  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
+  A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
+  \f$\mbox{Ker}(A)\f$ and return the rank of the matrix using OpenCV 3rd
+  party.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather
+  inverseByLU(), inverseByCholesky(), or inverseByQR() that are kwown as faster.
+
+  Using singular value decomposition, we have:
+
+  \f[
+  {\bf A}_{m\times n} = {\bf U}_{m\times m} \; {\bf S}_{m\times n} \; {\bf
+  V^\top}_{n\times n} \f] \f[
+  {\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} ({\bf A}) & | &
+  \mbox{Ker} ({\bf A}^\top) \end{array} \right] {\bf S}_{m\times n}
+  \left[
+  \begin{array}{c} \left[\mbox{Im} ({\bf A}^\top)\right]^\top \\
+  \\
+  \hline \\
+  \left[\mbox{Ker}({\bf A})\right]^\top \end{array}\right]
+  \f]
+
+  where the diagonal of \f${\bf S}_{m\times n}\f$ corresponds to the matrix
+  \f$A\f$ singular values.
+
+  This equation could be reformulated in a minimal way:
+  \f[
+  {\bf A}_{m\times n} = \mbox{Im} ({\bf A}) \; {\bf S}_{r\times n}
+  \left[
+  \begin{array}{c} \left[\mbox{Im} ({\bf A}^\top)\right]^\top \\
+  \\
+  \hline \\
+  \left[\mbox{Ker}({\bf A})\right]^\top \end{array}\right]
+  \f]
+
+  where the diagonal of \f${\bf S}_{r\times n}\f$ corresponds to the matrix
+  \f$A\f$ first r singular values.
+
+  The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
+  = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
+
+  \param Ap: The Moore-Penros pseudo inverse \f$ {\bf A}^+ \f$.
+
+  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
+  of this vector is equal to min(m, n).
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \param imA: \f$\mbox{Im}({\bf A})\f$ that is a m-by-r matrix.
+
+  \param imAt: \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
+
+  \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
+  A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
+  rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
+  n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
+
+  \return The rank of the matrix \f$\bf A\f$.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  vpColVector sv;
+  vpMatrix A_p, imA, imAt, kerAt;
+  int rank_in = 2;
+  int rank_out = A.pseudoInverseOpenCV(A_p, sv, rank_in, imA, imAt, kerAt);
+
+  if (rank_out != rank_in) {
+    std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+  }
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  std::cout << "Rank in : " << rank_in << std::endl;
+  std::cout << "Rank out: " << rank_out << std::endl;
+  std::cout << "Singular values: " << sv.t() << std::endl;
+  imA.print(std::cout, 10, "Im(A): ");
+  imAt.print(std::cout, 10, "Im(A^T): ");
+
+  if (kerAt.size()) {
+    kerAt.t().print(std::cout, 10, "Ker(A): ");
+  }
+  else {
+    std::cout << "Ker(A) empty " << std::endl;
+  }
+
+  // Reconstruct matrix A from ImA, ImAt, KerAt
+  vpMatrix S(rank_in, A.getCols());
+  for(unsigned int i = 0; i< rank_in; i++)
+    S[i][i] = sv[i];
+  vpMatrix Vt(A.getCols(), A.getCols());
+  Vt.insert(imAt.t(), 0, 0);
+  Vt.insert(kerAt, rank_in, 0);
+  (imA * S * Vt).print(std::cout, 10, "Im(A) * S * [Im(A^T) | Ker(A)]^T:");
+}
+  \endcode
+
+  \sa pseudoInverse(vpMatrix &, vpColVector &, int, vpMatrix &, vpMatrix &, vpMatrix &) const
+*/
+int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA,
+                                  vpMatrix &imAt, vpMatrix &kerA) const
+{
+  unsigned int nrows = getRows();
+  unsigned int ncols = getCols();
+  int rank_out;
+  double svThreshold = 1e-26;
+  vpMatrix U, V;
+  vpColVector sv_;
+
+  if (nrows < ncols) {
+    U.resize(ncols, ncols, true);
+    sv.resize(nrows, false);
+  } else {
+    U.resize(nrows, ncols, false);
+    sv.resize(ncols, false);
+  }
+
+  U.insert(*this, 0, 0);
+  U.svdOpenCV(sv_, V);
+
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, &imA, &imAt, &kerA);
+
+  // Remove singular values equal to the one that corresponds to the lines of 0
+  // introduced when m < n
+  memcpy(sv.data, sv_.data, sv.size() * sizeof(double));
+
+  return rank_out;
+}
+
 #endif
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-  A\f$ along with singular values and return the rank r of the matrix.
+  A\f$ along with singular values and return the rank of the matrix.
 
   \note By default, this function uses Lapack 3rd party. It is also possible
   to use a specific 3rd party suffixing this function name with one of the
@@ -3530,9 +4686,9 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double
   a singular value is lower than this threshold we consider that the
   matrix is not full rank.
 
-  \return The rank r of the matrix \f$\bf A\f$.
+  \return The rank of the matrix \f$\bf A\f$.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -3589,20 +4745,102 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
-A\f$ along with singular values, \f$\mbox{Im}(A)\f$ and \f$\mbox{Im}(A^T)\f$
-and return the rank r of the matrix.
+  A\f$ along with singular values and return the rank of the matrix.
 
-  See pseudoInverse(vpMatrix &, vpColVector &, double, vpMatrix &, vpMatrix &,
-vpMatrix &) const for a complete description of this function.
+  \note By default, this function uses Lapack 3rd party. It is also possible
+  to use a specific 3rd party suffixing this function name with one of the
+  following 3rd party names (Lapack, Eigen3 or OpenCV).
 
   \warning To inverse a square n-by-n matrix, you have to use rather one of
-the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
-are kwown as faster.
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
 
   \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
 
   \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
-of this vector is equal to min(m, n).
+  of this vector is equal to min(m, n).
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \return The rank of the matrix \f$\bf A\f$.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  vpMatrix A_p;
+  vpColVector sv;
+  int rank_in = 2;
+  int rank_out = A.pseudoInverse(A_p, sv, rank_in);
+  if (rank_out != rank_in) {
+    std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+  }
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+
+  std::cout << "Rank in : " << rank_in << std::endl;
+  std::cout << "Rank out: " << rank_out << std::endl;
+  std::cout << "Singular values: " << sv.t() << std::endl;
+}
+  \endcode
+
+  Once build, the previous example produces the following output:
+  \code
+A: [2,3]=
+   2  3  5
+  -4  2  3
+A^+ (pseudo-inverse): [3,2]=
+   0.117899 -0.190782
+   0.065380  0.039657
+   0.113612  0.052518
+Rank in : 2
+Rank out: 2
+Singular values: 6.874359351  4.443330227
+  \endcode
+*/
+int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in) const
+{
+#if defined(VISP_HAVE_LAPACK)
+  return pseudoInverseLapack(Ap, sv, rank_in);
+#elif defined(VISP_HAVE_EIGEN3)
+  return pseudoInverseEigen3(Ap, sv, rank_in);
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+  return pseudoInverseOpenCV(Ap, sv, rank_in);
+#else
+  (void)Ap;
+  (void)sv;
+  (void)svThreshold;
+  throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
+                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
+#endif
+}
+/*!
+  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
+  A\f$ along with singular values, \f$\mbox{Im}(A)\f$ and \f$\mbox{Im}(A^T)\f$
+  and return the rank of the matrix.
+
+  See pseudoInverse(vpMatrix &, vpColVector &, double, vpMatrix &, vpMatrix &, vpMatrix &) const
+  for a complete description of this function.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather one of
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
+
+  \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
+
+  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
+  of this vector is equal to min(m, n).
 
   \param svThreshold : Threshold used to test the singular values. If
   a singular value is lower than this threshold we consider that the
@@ -3612,9 +4850,9 @@ of this vector is equal to min(m, n).
 
   \param imAt: \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
 
-  \return The rank r of the matrix \f$\bf A\f$.
+  \return The rank of the matrix \f$\bf A\f$.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -3661,8 +4899,7 @@ Im(A^T): [3,2]=
    0.845615 -0.102722
   \endcode
 */
-unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA,
-                                     vpMatrix &imAt) const
+unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt) const
 {
   vpMatrix kerAt;
   return pseudoInverse(Ap, sv, svThreshold, imA, imAt, kerAt);
@@ -3670,8 +4907,92 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
 
 /*!
   Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
+  A\f$ along with singular values, \f$\mbox{Im}(A)\f$ and \f$\mbox{Im}(A^T)\f$
+  and return the rank of the matrix.
+
+  See pseudoInverse(vpMatrix &, vpColVector &, double, vpMatrix &, vpMatrix &, vpMatrix &) const
+  for a complete description of this function.
+
+  \warning To inverse a square n-by-n matrix, you have to use rather one of
+  the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
+  are kwown as faster.
+
+  \param Ap : The Moore-Penros pseudo inverse \f$ A^+ \f$.
+
+  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
+  of this vector is equal to min(m, n).
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \param imA: \f$\mbox{Im}({\bf A})\f$ that is a m-by-r matrix.
+
+  \param imAt: \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
+
+  \return The rank of the matrix \f$\bf A\f$.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  vpMatrix A_p;
+  vpColVector sv;
+  vpMatrix imA, imAt;
+  int rank_in = 2;
+  int rank_out = A.pseudoInverse(A_p, sv, rank_in, imA, imAt);
+  if (rank_out != rank_in) {
+    std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+  }
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  std::cout << "Rank in : " << rank_in << std::endl;
+  std::cout << "Rank out: " << rank_in << std::endl;
+  std::cout << "Singular values: " << sv.t() << std::endl;
+  imA.print(std::cout, 10, "Im(A): ");
+  imAt.print(std::cout, 10, "Im(A^T): ");
+}
+  \endcode
+
+  Once build, the previous example produces the following output:
+  \code
+A: [2,3]=
+   2  3  5
+  -4  2  3
+A^+ (pseudo-inverse): [3,2]=
+   0.117899 -0.190782
+   0.065380  0.039657
+   0.113612  0.052518
+Rank: 2
+Singular values: 6.874359351  4.443330227
+Im(A): [2,2]=
+   0.81458 -0.58003
+   0.58003  0.81458
+Im(A^T): [3,2]=
+  -0.100515 -0.994397
+   0.524244 -0.024967
+   0.845615 -0.102722
+  \endcode
+*/
+int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt) const
+{
+  vpMatrix kerAt;
+  return pseudoInverse(Ap, sv, rank_in, imA, imAt, kerAt);
+}
+
+/*!
+  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
   A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
-  \f$\mbox{Ker}(A)\f$ and return the rank r of the matrix.
+  \f$\mbox{Ker}(A)\f$ and return the rank of the matrix.
 
   \note By default, this function uses Lapack 3rd party. It is also possible
   to use a specific 3rd party suffixing this function name with one of the
@@ -3731,9 +5052,9 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
   rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
   n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
 
-  \return The rank r of the matrix \f$\bf A\f$.
+  \return The rank of the matrix \f$\bf A\f$.
 
-  Here an example to compute the pseudo-inverse of a 2-by-3 matrix.
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
 
   \code
 #include <visp3/core/vpMatrix.h>
@@ -3802,8 +5123,7 @@ Im(A) * S * [Im(A^T) | Ker(A)]^T:[2,3]=
   -4  2  3
   \endcode
 */
-unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
-                                     vpMatrix &kerAt) const
+unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const
 {
 #if defined(VISP_HAVE_LAPACK)
   return pseudoInverseLapack(Ap, sv, svThreshold, imA, imAt, kerAt);
@@ -3811,6 +5131,165 @@ unsigned int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThr
   return pseudoInverseEigen3(Ap, sv, svThreshold, imA, imAt, kerAt);
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
   return pseudoInverseOpenCV(Ap, sv, svThreshold, imA, imAt, kerAt);
+#else
+  (void)Ap;
+  (void)sv;
+  (void)svThreshold;
+  (void)imA;
+  (void)imAt;
+  (void)kerAt;
+  throw(vpException(vpException::fatalError, "Cannot compute pseudo-inverse. "
+                                             "Install Lapack, Eigen3 or OpenCV 3rd party"));
+#endif
+}
+
+/*!
+  Compute the Moore-Penros pseudo inverse \f$A^+\f$ of a m-by-n matrix \f$\bf
+  A\f$ along with singular values, \f$\mbox{Im}(A)\f$, \f$\mbox{Im}(A^T)\f$ and
+  \f$\mbox{Ker}(A)\f$ and return the rank of the matrix.
+
+  \note By default, this function uses Lapack 3rd party. It is also possible
+  to use a specific 3rd party suffixing this function name with one of the
+  following 3rd party names (Lapack, Eigen3 or OpenCV).
+
+  \warning To inverse a square n-by-n matrix, you have to use rather
+  inverseByLU(), inverseByCholesky(), or inverseByQR() that are kwown as faster.
+
+  Using singular value decomposition, we have:
+
+  \f[
+  {\bf A}_{m\times n} = {\bf U}_{m\times m} \; {\bf S}_{m\times n} \; {\bf
+  V^\top}_{n\times n} \f] \f[
+  {\bf A}_{m\times n} = \left[\begin{array}{ccc}\mbox{Im} ({\bf A}) & | &
+  \mbox{Ker} ({\bf A}^\top) \end{array} \right] {\bf S}_{m\times n}
+  \left[
+  \begin{array}{c} \left[\mbox{Im} ({\bf A}^\top)\right]^\top \\
+  \\
+  \hline \\
+  \left[\mbox{Ker}({\bf A})\right]^\top \end{array}\right]
+  \f]
+
+  where the diagonal of \f${\bf S}_{m\times n}\f$ corresponds to the matrix
+  \f$A\f$ singular values.
+
+  This equation could be reformulated in a minimal way:
+  \f[
+  {\bf A}_{m\times n} = \mbox{Im} ({\bf A}) \; {\bf S}_{r\times n}
+  \left[
+  \begin{array}{c} \left[\mbox{Im} ({\bf A}^\top)\right]^\top \\
+  \\
+  \hline \\
+  \left[\mbox{Ker}({\bf A})\right]^\top \end{array}\right]
+  \f]
+
+  where the diagonal of \f${\bf S}_{r\times n}\f$ corresponds to the matrix
+  \f$A\f$ first r singular values.
+
+  The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
+  = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
+
+  \param Ap: The Moore-Penros pseudo inverse \f$ {\bf A}^+ \f$.
+
+  \param sv: Vector corresponding to matrix \f$A\f$ singular values. The size
+  of this vector is equal to min(m, n).
+
+  \param[in] rank_in : Known rank of the matrix.
+
+  \param imA: \f$\mbox{Im}({\bf A})\f$ that is a m-by-r matrix.
+
+  \param imAt: \f$\mbox{Im}({\bf A}^T)\f$ that is n-by-r matrix.
+
+  \param kerAt: The matrix that contains the null space (kernel) of \f$\bf
+  A\f$ defined by the matrix \f${\bf X}^T\f$. If matrix \f$\bf A\f$ is full
+  rank, the dimension of \c kerAt is (0, n), otherwise the dimension is (n-r,
+  n). This matrix is thus the transpose of \f$\mbox{Ker}({\bf A})\f$.
+
+  \return The rank of the matrix \f$\bf A\f$.
+
+  Here an example to compute the pseudo-inverse of a 2-by-3 matrix that is rank 2.
+
+  \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  vpMatrix A(2, 3);
+
+  A[0][0] = 2; A[0][1] = 3; A[0][2] = 5;
+  A[1][0] = -4; A[1][1] = 2; A[1][2] = 3;
+
+  A.print(std::cout, 10, "A: ");
+
+  vpColVector sv;
+  vpMatrix A_p, imA, imAt, kerAt;
+  int rank_in = 2;
+  int rank_out = A.pseudoInverse(A_p, sv, rank_in, imA, imAt, kerAt);
+  if (rank_out != rank_in) {
+    std::cout << "There is a possibility that the pseudo-inverse in wrong." << std::endl;
+    std::cout << "Are you sure that the matrix rank is " << rank_in << std::endl;
+  }
+
+  A_p.print(std::cout, 10, "A^+ (pseudo-inverse): ");
+  std::cout << "Rank in : " << rank_in << std::endl;
+  std::cout << "Rank out: " << rank_out << std::endl;
+  std::cout << "Singular values: " << sv.t() << std::endl;
+  imA.print(std::cout, 10, "Im(A): ");
+  imAt.print(std::cout, 10, "Im(A^T): ");
+
+  if (kerAt.size()) {
+    kerAt.t().print(std::cout, 10, "Ker(A): ");
+  }
+  else {
+    std::cout << "Ker(A) empty " << std::endl;
+  }
+
+  // Reconstruct matrix A from ImA, ImAt, KerAt
+  vpMatrix S(rank, A.getCols());
+  for(unsigned int i = 0; i< rank_in; i++)
+    S[i][i] = sv[i];
+  vpMatrix Vt(A.getCols(), A.getCols());
+  Vt.insert(imAt.t(), 0, 0);
+  Vt.insert(kerAt, rank, 0);
+  (imA * S * Vt).print(std::cout, 10, "Im(A) * S * [Im(A^T) | Ker(A)]^T:");
+}
+  \endcode
+
+  Once build, the previous example produces the following output:
+  \code
+A: [2,3]=
+   2  3  5
+  -4  2  3
+A^+ (pseudo-inverse): [3,2]=
+   0.117899 -0.190782
+   0.065380  0.039657
+   0.113612  0.052518
+Rank in : 2
+Rank out: 2
+Singular values: 6.874359351  4.443330227
+Im(A): [2,2]=
+   0.81458 -0.58003
+   0.58003  0.81458
+Im(A^T): [3,2]=
+  -0.100515 -0.994397
+   0.524244 -0.024967
+   0.845615 -0.102722
+Ker(A): [3,1]=
+  -0.032738
+  -0.851202
+   0.523816
+Im(A) * S * [Im(A^T) | Ker(A)]^T:[2,3]=
+   2  3  5
+  -4  2  3
+  \endcode
+*/
+int vpMatrix::pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const
+{
+#if defined(VISP_HAVE_LAPACK)
+  return pseudoInverseLapack(Ap, sv, rank_in, imA, imAt, kerAt);
+#elif defined(VISP_HAVE_EIGEN3)
+  return pseudoInverseEigen3(Ap, sv, rank_in, imA, imAt, kerAt);
+#elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
+  return pseudoInverseOpenCV(Ap, sv, rank_in, imA, imAt, kerAt);
 #else
   (void)Ap;
   (void)sv;
@@ -5001,7 +6480,7 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
   a singular value is lower than this threshold we consider that the
   matrix is not full rank.
 
-  \return The rank r of the matrix.
+  \return The rank of the matrix.
 */
 
 unsigned int vpMatrix::kernel(vpMatrix &kerAt, double svThreshold) const

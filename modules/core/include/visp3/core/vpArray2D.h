@@ -299,8 +299,7 @@ public:
   after resize. If false, the initial values from the common part of the
   array (common part between old and new version of the array) are kept.
   Default value is true.
-  \param recopy_ : if true, will perform an explicit recopy of the old data
-  if needed and if flagNullify is set to false.
+  \param recopy_ : if true, will perform an explicit recopy of the old data.
   */
   void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true, bool recopy_ = true)
   {
