@@ -388,9 +388,17 @@ void vpSimulatorAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::v
     }
     break;
   }
-  case vpAfma6::TOOL_CUSTOM:
+  case vpAfma6::TOOL_CUSTOM:  {
+    std::cout << "The custom tool is not handled in vpSimulatorAfma6.cpp" << std::endl;
+    break;
+  }
+  case vpAfma6::TOOL_INTEL_D435_CAMERA: {
+    std::cout << "The Intel D435 camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
+    break;
+  }
   case vpAfma6::TOOL_GENERIC_CAMERA: {
     std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
+    break;
   }
   }
 
@@ -443,10 +451,20 @@ void vpSimulatorAfma6::getCameraParameters(vpCameraParameters &cam, const unsign
     }
     break;
   }
-  case vpAfma6::TOOL_CUSTOM:
-  case vpAfma6::TOOL_GENERIC_CAMERA:
-  case vpAfma6::TOOL_VACUUM: {
+  case vpAfma6::TOOL_CUSTOM: {
+    std::cout << "The generic tool is not handled in vpSimulatorAfma6.cpp" << std::endl;
+    break;
+  }
+  case vpAfma6::TOOL_INTEL_D435_CAMERA: {
+    std::cout << "The Intel D435 camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
+    break;
+  }
+  case vpAfma6::TOOL_GENERIC_CAMERA: {
     std::cout << "The generic camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
+    break;
+  }
+  case vpAfma6::TOOL_VACUUM: {
+    std::cout << "The vacuum tool is not handled in vpSimulatorAfma6.cpp" << std::endl;
     break;
   }
   default:
@@ -2246,6 +2264,10 @@ void vpSimulatorAfma6::initArms()
   }
   case vpAfma6::TOOL_CUSTOM: {
     std::cout << "The custom tool is not handled in vpSimulatorAfma6.cpp" << std::endl;
+    break;
+  }
+  case vpAfma6::TOOL_INTEL_D435_CAMERA: {
+    std::cout << "The Intel D435 camera is not handled in vpSimulatorAfma6.cpp" << std::endl;
     break;
   }
   case vpAfma6::TOOL_GENERIC_CAMERA: {
