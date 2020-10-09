@@ -191,14 +191,26 @@ void vpCalibration::computePose(const vpCameraParameters &camera, vpHomogeneousM
   // compute the initial pose using Lagrange method followed by a non linear
   // minimisation method
   // Pose by Lagrange it provides an initialization of the pose
-  pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
-  double residual_lagrange = pose.computeResidual(cMo_lagrange);
+  double residual_lagrange = std::numeric_limits<double>::max();
+  double residual_dementhon = std::numeric_limits<double>::max();
+  try {
+    pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
+    residual_lagrange = pose.computeResidual(cMo_lagrange);
+  }
+  catch(const vpException &e) {
+    std::cout << "Pose from Lagrange exception: " << e.getMessage() << std::endl;
+  }
 
   // compute the initial pose using Dementhon method followed by a non linear
   // minimisation method
   // Pose by Dementhon it provides an initialization of the pose
-  pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
-  double residual_dementhon = pose.computeResidual(cMo_dementhon);
+  try {
+    pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
+    residual_dementhon = pose.computeResidual(cMo_dementhon);
+  }
+  catch(const vpException &e) {
+    std::cout << "Pose from Dementhon exception: " << e.getMessage() << std::endl;
+  }
 
   // we keep the better initialization
   if (residual_lagrange < residual_dementhon)
