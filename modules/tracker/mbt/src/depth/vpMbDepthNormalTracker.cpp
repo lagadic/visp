@@ -256,8 +256,7 @@ void vpMbDepthNormalTracker::computeVVSInit()
   m_w_depthNormal.resize(nb_features, false);
   m_w_depthNormal = 1;
 
-  m_robust_depthNormal.resize(nb_features);
-  m_robust_depthNormal.setThreshold(1e-3);
+  m_robust_depthNormal.setMinMedianAbsoluteDeviation(1e-3);
 }
 
 void vpMbDepthNormalTracker::computeVVSInteractionMatrixAndResidu()

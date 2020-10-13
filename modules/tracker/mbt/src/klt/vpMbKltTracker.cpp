@@ -868,8 +868,7 @@ void vpMbKltTracker::computeVVSInit()
   m_w_klt.resize(nbFeatures, false);
   m_w_klt = 1;
 
-  m_robust_klt.resize(nbFeatures);
-  m_robust_klt.setThreshold(2 / m_cam.get_px());
+  m_robust_klt.setMinMedianAbsoluteDeviation(2 / m_cam.get_px());
 }
 
 void vpMbKltTracker::computeVVSInteractionMatrixAndResidu()
