@@ -109,8 +109,7 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face,
   vpColVector residues(nPoints);
   vpMatrix M(nPoints, 3);
   vpRobust tukey;
-  tukey.setThreshold(1e-4);
-  tukey.resize(nPoints);
+  tukey.setMinMedianAbsoluteDeviation(1e-4);
   vpColVector normal;
 
   plane_equation_estimated.resize(4, false);

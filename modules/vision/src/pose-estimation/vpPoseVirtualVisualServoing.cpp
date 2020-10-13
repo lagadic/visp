@@ -167,8 +167,8 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
 
     // we stop the minimization when the error is bellow 1e-8
     vpMatrix W;
-    vpRobust robust((unsigned int)(2 * listP.size()));
-    robust.setThreshold(0.0000);
+    vpRobust robust;
+    robust.setMinMedianAbsoluteDeviation(0.00001);
     vpColVector w, res;
 
     unsigned int nb = (unsigned int)listP.size();
@@ -236,7 +236,6 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
       for (unsigned int k = 0; k < error.getRows() / 2; k++) {
         res[k] = vpMath::sqr(error[2 * k]) + vpMath::sqr(error[2 * k + 1]);
       }
-      robust.setIteration(0);
       robust.MEstimator(vpRobust::TUKEY, res, w);
 
       // compute the pseudo inverse of the interaction matrix

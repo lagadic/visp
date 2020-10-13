@@ -102,8 +102,6 @@ private:
 #endif
 #endif
 
-#define USE_ORIGINAL_TUKEY_CODE 1
-
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #if HAVE_TRANSFORM
@@ -303,38 +301,19 @@ inline void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &r
 
 template <typename T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x, vpColVector &weights)
 {
-  T cst_const = static_cast<T>(4.6851);
-  T inv_cst_const = 1 / cst_const;
-  T inv_sig = 1 / sig;
+  double C = sig * 4.6851;
 
+  // Here we consider that sig cannot be equal to 0
   for (unsigned int i = 0; i < (unsigned int)x.size(); i++) {
-#if USE_ORIGINAL_TUKEY_CODE
-    if (std::fabs(sig) <= std::numeric_limits<T>::epsilon() &&
-        std::fabs(weights[i]) > std::numeric_limits<double>::epsilon() // sig should be equal to 0
-                                                                       // only if NoiseThreshold
-                                                                       // ==
-                                                                       // 0
-    ) {
-      weights[i] = 1;
-      continue;
-    }
-#endif
+    double xi = x[i] / C;
+    xi *= xi;
 
-    double xi_sig = x[(size_t)i] * inv_sig;
-
-    if ((std::fabs(xi_sig) <= cst_const)
-#if USE_ORIGINAL_TUKEY_CODE
-        && std::fabs(weights[i]) > std::numeric_limits<double>::epsilon() // Consider the previous
-                                                                          // weights here
-#endif
-    ) {
-      weights[i] = (1 - (xi_sig * inv_cst_const) * (xi_sig * inv_cst_const)) *
-                   (1 - (xi_sig * inv_cst_const) * (xi_sig * inv_cst_const)); // vpMath::sqr( 1 -
-                                                                              // vpMath::sqr(xi_sig *
-                                                                              // inv_cst_const) );
-    } else {
-      // Outlier - could resize list of points tracked here?
+    if (xi > 1.) {
       weights[i] = 0;
+    } else {
+      xi = 1 - xi;
+      xi *= xi;
+      weights[i] = xi;
     }
   }
 }
@@ -411,35 +390,20 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, 
 
 template <class T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x, std::vector<T> &weights)
 {
-  T cst_const = static_cast<T>(4.6851);
-  T inv_cst_const = 1 / cst_const;
-  T inv_sig = 1 / sig;
+  T C = static_cast<T>(4.6851) * sig;
+  weights.resize(x.size());
 
+  // Here we consider that sig cannot be equal to 0
   for (size_t i = 0; i < x.size(); i++) {
-#if USE_ORIGINAL_TUKEY_CODE
-    if (std::fabs(sig) <= std::numeric_limits<T>::epsilon() &&
-        std::fabs(weights[i]) > std::numeric_limits<T>::epsilon() // sig should be equal to 0 only
-                                                                  // if NoiseThreshold == 0
-    ) {
-      weights[i] = 1;
-      continue;
-    }
-#endif
+    double xi = x[i] / C;
+    xi *= xi;
 
-    T xi_sig = x[i] * inv_sig;
-
-    if ((std::fabs(xi_sig) <= cst_const)
-#if USE_ORIGINAL_TUKEY_CODE
-        && std::fabs(weights[i]) > std::numeric_limits<T>::epsilon() // Consider the previous
-                                                                     // weights here
-#endif
-    ) {
-      // vpMath::sqr( 1 - vpMath::sqr(xi_sig * inv_cst_const) );
-      weights[i] = (1 - (xi_sig * inv_cst_const) * (xi_sig * inv_cst_const)) *
-                   (1 - (xi_sig * inv_cst_const) * (xi_sig * inv_cst_const));
-    } else {
-      // Outlier - could resize list of points tracked here?
+    if (xi > 1.) {
       weights[i] = 0;
+    } else {
+      xi = 1 - xi;
+      xi *= xi;
+      weights[i] = xi;
     }
   }
 }

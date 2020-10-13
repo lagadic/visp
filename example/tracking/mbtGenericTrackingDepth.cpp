@@ -419,45 +419,6 @@ void loadConfiguration(vpMbTracker *const tracker,
 
 int main(int argc, const char **argv)
 {
-  {
-    // Test TukeyEstimator
-    {
-      vpMbtTukeyEstimator<double> tukey_estimator;
-      std::vector<double> residues;
-      residues.push_back(0.5);
-      residues.push_back(0.1);
-      residues.push_back(0.15);
-      residues.push_back(0.14);
-      residues.push_back(0.12);
-      std::vector<double> weights(5, 1);
-
-      tukey_estimator.MEstimator(residues, weights, 1e-3);
-
-      for (size_t i = 0; i < weights.size(); i++) {
-        std::cout << "residues[" << i << "]=" << residues[i] << " ; weights[i" << i << "]=" << weights[i] << std::endl;
-      }
-      std::cout << std::endl;
-    }
-
-    {
-      vpMbtTukeyEstimator<float> tukey_estimator;
-      std::vector<float> residues;
-      residues.push_back(0.5f);
-      residues.push_back(0.1f);
-      residues.push_back(0.15f);
-      residues.push_back(0.14f);
-      residues.push_back(0.12f);
-      std::vector<float> weights(5, 1);
-
-      tukey_estimator.MEstimator(residues, weights, (float)1e-3);
-
-      for (size_t i = 0; i < weights.size(); i++) {
-        std::cout << "residues[" << i << "]=" << residues[i] << " ; weights[i" << i << "]=" << weights[i] << std::endl;
-      }
-      std::cout << std::endl;
-    }
-  }
-
   try {
     std::string env_ipath;
     std::string opt_ipath;

@@ -561,9 +561,8 @@ void vpMeEllipse::leastSquare()
 
   unsigned int iter = 0;
   vpColVector b_(numberOfSignal());
-  vpRobust r(numberOfSignal());
-  r.setThreshold(2);
-  r.setIteration(0);
+  vpRobust r;
+  r.setMinMedianAbsoluteDeviation(2);
   vpMatrix D(numberOfSignal(), numberOfSignal());
   D.eye();
   vpMatrix DA, DAmemory;
@@ -602,7 +601,6 @@ void vpMeEllipse::leastSquare()
 
     vpColVector residu(nos_1);
     residu = b_ - A * x;
-    r.setIteration(iter);
     r.MEstimator(vpRobust::TUKEY, residu, w);
 
     k = 0;

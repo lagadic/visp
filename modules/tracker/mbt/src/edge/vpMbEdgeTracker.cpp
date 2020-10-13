@@ -746,12 +746,9 @@ void vpMbEdgeTracker::computeVVSInit()
   m_factor.resize(nbrow, false);
   m_factor = 1;
 
-  m_robustLines.resize(nberrors_lines);
-  m_robustCylinders.resize(nberrors_cylinders);
-  m_robustCircles.resize(nberrors_circles);
-  m_robustLines.setThreshold(2.0 / m_cam.get_px());
-  m_robustCylinders.setThreshold(2.0 / m_cam.get_px());
-  m_robustCircles.setThreshold(vpMath::sqr(2.0 / m_cam.get_px()));
+  m_robustLines.setMinMedianAbsoluteDeviation(2.0 / m_cam.get_px());
+  m_robustCylinders.setMinMedianAbsoluteDeviation(2.0 / m_cam.get_px());
+  m_robustCircles.setMinMedianAbsoluteDeviation(vpMath::sqr(2.0 / m_cam.get_px()));
 
   m_wLines.resize(nberrors_lines, false);
   m_wLines = 1;

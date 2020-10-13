@@ -120,11 +120,11 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
   if ((!only_1) && (!only_2))
     n *= 2;
 
-  vpRobust robust(n);
+  vpRobust robust;
   vpColVector res(n);
   vpColVector w(n);
   w = 1;
-  robust.setThreshold(0.0000);
+  robust.setMinMedianAbsoluteDeviation(0.00001);
   vpMatrix W(2 * n, 2 * n);
   W = 0;
   vpMatrix c2Rc1(3, 3);
@@ -223,8 +223,6 @@ double vpHomography::computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint
     }
 
     if (userobust) {
-      robust.setIteration(0);
-
       for (unsigned int l = 0; l < n; l++) {
         res[l] = vpMath::sqr(e[2 * l]) + vpMath::sqr(e[2 * l + 1]);
       }
@@ -305,11 +303,11 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
   // if ( (! only_1) && (! only_2) )
   //  n *=2 ;
 
-  vpRobust robust(n);
+  vpRobust robust;
   vpColVector res(n);
   vpColVector w(n);
   w = 1;
-  robust.setThreshold(0.0000);
+  robust.setMinMedianAbsoluteDeviation(0.00001);
   vpMatrix W(2 * n, 2 * n);
   W = 0;
 
@@ -446,7 +444,6 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
     }
 
     if (userobust) {
-      robust.setIteration(0);
       for (unsigned int l = 0; l < n; l++) {
         res[l] = vpMath::sqr(e[2 * l]) + vpMath::sqr(e[2 * l + 1]);
       }
@@ -517,11 +514,11 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
   // if ( (! only_1) && (! only_2) )
   //  n *=2 ;
 
-  vpRobust robust(n);
+  vpRobust robust;
   vpColVector res(n);
   vpColVector w(n);
   w = 1;
-  robust.setThreshold(0.0000);
+  robust.setMinMedianAbsoluteDeviation(0.00001);
   vpMatrix W(2 * n, 2 * n);
   W = 0;
 
@@ -657,7 +654,6 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
     }
 
     if (userobust) {
-      robust.setIteration(0);
       for (unsigned int k_ = 0; k_ < n; k_++) {
         res[k_] = vpMath::sqr(e[2 * k_]) + vpMath::sqr(e[2 * k_ + 1]);
       }

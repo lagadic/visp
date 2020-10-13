@@ -508,8 +508,8 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix &cMo)
     vpColVector v;
     vpColVector error; // error vector
 
-    vpRobust robust(2 * totalSize);
-    robust.setThreshold(0.0000);
+    vpRobust robust;
+    robust.setMinMedianAbsoluteDeviation(0.00001);
 
     unsigned int rank_max = 0;
     unsigned int iter = 0;
@@ -534,7 +534,6 @@ void vpPoseFeatures::computePoseRobustVVS(vpHomogeneousMatrix &cMo)
       for (unsigned int k = 0; k < error.getRows() / 2; k++) {
         res[k] = vpMath::sqr(error[2 * k]) + vpMath::sqr(error[2 * k + 1]);
       }
-      robust.setIteration(0);
       robust.MEstimator(vpRobust::TUKEY, res, w);
 
       // compute the pseudo inverse of the interaction matrix

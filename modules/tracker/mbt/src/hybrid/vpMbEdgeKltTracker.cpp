@@ -671,7 +671,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
   }
 
   vpColVector v; // "speed" for VVS
-  vpRobust robust_mbt(0), robust_klt(0);
+  vpRobust robust_mbt, robust_klt;
   vpHomography H;
 
   vpMatrix LTL;
@@ -706,13 +706,11 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
   if (nbrow != 0) {
     m_w_mbt.resize(nbrow, false);
     m_w_mbt = 1; // needed in vpRobust::psiTukey()
-    robust_mbt.resize(nbrow);
   }
 
   if (nbInfos != 0) {
     m_w_klt.resize(2 * nbInfos, false);
     m_w_klt = 1; // needed in vpRobust::psiTukey()
-    robust_klt.resize(2 * nbInfos);
   }
 
   double mu = m_initialMu;
@@ -788,7 +786,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
           residuMBT += fabs(R_mbt[i]);
         residuMBT /= R_mbt.getRows();
 
-        robust_mbt.setThreshold(m_thresholdMBT / m_cam.get_px());
+        robust_mbt.setMinMedianAbsoluteDeviation(m_thresholdMBT / m_cam.get_px());
         robust_mbt.MEstimator(vpRobust::TUKEY, R_mbt, m_w_mbt);
 
         L.insert(L_mbt, 0, 0);
@@ -800,7 +798,7 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
           residuKLT += fabs(R_klt[i]);
         residuKLT /= R_klt.getRows();
 
-        robust_klt.setThreshold(m_thresholdKLT / m_cam.get_px());
+        robust_klt.setMinMedianAbsoluteDeviation(m_thresholdKLT / m_cam.get_px());
         robust_klt.MEstimator(vpRobust::TUKEY, R_klt, m_w_klt);
 
         L.insert(L_klt, nbrow, 0);

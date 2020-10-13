@@ -652,7 +652,7 @@ void vpHomography::robust(const std::vector<double> &xb, const std::vector<doubl
     vpMatrix WA;
     vpMatrix WAp;
     unsigned int iter = 0;
-    vpRobust r(nbLinesA * n); // M-Estimator
+    vpRobust r; // M-Estimator
 
     while (iter < niter) {
       WA = W * A;
@@ -662,7 +662,6 @@ void vpHomography::robust(const std::vector<double> &xb, const std::vector<doubl
       residu = Y - A * X;
 
       // Compute the weights using the Tukey biweight M-Estimator
-      r.setIteration(iter);
       r.MEstimator(vpRobust::TUKEY, residu, w);
 
       // Update the weights matrix
