@@ -707,6 +707,9 @@ class JavaWrapperGenerator(object):
             if fi.name in ['detByLUOpenCV', 'svdOpenCV', 'inverseByLUOpenCV', 'pseudoInverseOpenCV', 'inverseByOpenCV', 'inverseByCholeskyOpenCV']:
                 c_prologue.append('#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)')
 
+            if fi.name in ['detByLUGsl', 'svdGsl', 'inverseByLUGsl', 'pseudoInverseGsl', 'inverseByGsl', 'inverseByCholeskyGsl', 'inverseByQRGsl']:
+                c_prologue.append('#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS) && defined(VISP_HAVE_LAPACK)')
+
             if type_dict[fi.ctype]["jni_type"] == "jdoubleArray" and type_dict[fi.ctype]["suffix"] != "[D":
                 fields = type_dict[fi.ctype]["jn_args"]
                 c_epilogue.append( \
@@ -994,6 +997,9 @@ class JavaWrapperGenerator(object):
                 ret += '\n    #endif'
 
             if fi.name in ['detByLUOpenCV', 'svdOpenCV', 'inverseByLUOpenCV', 'pseudoInverseOpenCV', 'inverseByOpenCV', 'inverseByCholeskyOpenCV']:
+                ret += '\n    #endif'
+
+            if fi.name in ['detByLUGsl', 'svdGsl', 'inverseByLUGsl', 'pseudoInverseGsl', 'inverseByGsl', 'inverseByCholeskyGsl', 'inverseByQRGsl']:
                 ret += '\n    #endif'
 
             rtype = type_dict[fi.ctype].get("jni_type", "jdoubleArray")
