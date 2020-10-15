@@ -116,13 +116,13 @@ public:
   /** @name Inherited functionalities from vpException */
   //@{
   //! Send the object code.
-  int getCode(void);
+  int getCode() const;
 
   //! Send a reference (constant) related the error message (can be empty).
-  const std::string &getStringMessage(void) const;
+  const std::string &getStringMessage() const;
   //! send a pointer on the array of  \e char related to the error string.
   //! Cannot be  \e NULL.
-  const char *getMessage(void) const;
+  const char *getMessage() const;
   //@}
 
   //! Print the error structure.
