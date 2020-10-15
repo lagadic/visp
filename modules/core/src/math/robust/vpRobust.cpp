@@ -57,7 +57,11 @@
   Default constructor.
 */
 vpRobust::vpRobust()
-  : m_normres(), m_sorted_normres(), m_sorted_residues(), m_mad_min(0.0017), m_mad_prev(0), m_iter(0), m_size(0), m_mad(0)
+  : m_normres(), m_sorted_normres(), m_sorted_residues(), m_mad_min(0.0017), m_mad_prev(0),
+    #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+    m_iter(0),
+    #endif
+    m_size(0), m_mad(0)
 {
 }
 
@@ -306,7 +310,11 @@ double vpRobust::select(vpColVector &a, unsigned int l, unsigned int r, unsigned
   \param n_data : Size of the data vector.
 */
 vpRobust::vpRobust(unsigned int n_data)
-  : m_normres(), m_sorted_normres(), m_sorted_residues(), m_mad_min(0.0017), m_mad_prev(0), m_iter(0), m_size(n_data), m_mad(0)
+  : m_normres(), m_sorted_normres(), m_sorted_residues(), m_mad_min(0.0017), m_mad_prev(0),
+    #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+    m_iter(0),
+    #endif
+    m_size(n_data), m_mad(0)
 {
   vpCDEBUG(2) << "vpRobust constructor reached" << std::endl;
 
