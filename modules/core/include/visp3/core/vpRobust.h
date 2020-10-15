@@ -107,8 +107,10 @@ private:
   double m_mad_min;
   //! Previous value of residual vector Median Absolute Deviation
   double m_mad_prev;
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   //! Iteration, only used in deprecated simultMEstimator()
   unsigned int m_iter;
+#endif
   //! Size of the containers
   unsigned int m_size;
   //! Residual vector Median Absolute Deviation
