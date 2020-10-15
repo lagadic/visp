@@ -85,7 +85,7 @@
 
   To detect only downward jumps in \f$ s(t) \f$ use
   testDownwardJump().To detect only upward jumps in \f$ s(t) \f$ use
-  testUpwardJump(). To detect both, downard and upward jumps use
+  testUpwardJump(). To detect both, downward and upward jumps use
   testDownUpwardJump().
 
   If a jump is detected, the jump location is given by the last instant
