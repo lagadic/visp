@@ -69,6 +69,7 @@ ViSP 3.3.1 (under development)
     . [#818] Model-based tracking issue using RGBD-data on Windows
     . [#820] Error when composing two RT transformations in template tracker
     . [#822] Issue in ellipse display and usage
+    . [#832] Memory leak when reading a sequence of images with vpVideoReader
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:

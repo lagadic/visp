@@ -119,6 +119,10 @@ void vpVideoReader::setFileName(const std::string &filename)
 */
 void vpVideoReader::getProperties()
 {
+  if (m_isOpen) {
+    return;
+  }
+
   if (!m_initFileName) {
     throw(vpImageException(vpImageException::noFileNameError, "The generic filename has to be set"));
   }
