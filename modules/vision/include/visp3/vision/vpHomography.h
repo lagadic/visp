@@ -74,8 +74,8 @@ some tools for homography computation.
   points set.  These 2 sets are the only data needed to compute the
   homography.  One method used is the one introduced by Ezio Malis during his
   PhD \cite TheseMalis. A normalization is carried out on this points in order
-to improve the conditioning of the problem, what leads to improve the
-stability of the result.
+  to improve the conditioning of the problem, what leads to improve the
+  stability of the result.
 
   Store and compute the homography such that
   \f[
@@ -83,7 +83,7 @@ stability of the result.
   \f]
 
   with
-  \f[  ^a{\bf H}_b = ^a{\bf R}_b - \frac{^a{\bf t}_b}{^bd}
+  \f[  ^a{\bf H}_b = ^a{\bf R}_b + \frac{^a{\bf t}_b}{^bd}
   { ^b{\bf n}^T}
   \f]
 
