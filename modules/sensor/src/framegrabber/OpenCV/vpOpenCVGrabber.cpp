@@ -214,7 +214,7 @@ void vpOpenCVGrabber::setFramerate(const double framerate)
         \exception vpFrameGrabberException::initializationError If no
         camera was found.
 */
-void vpOpenCVGrabber::setWidth(const unsigned int w)
+void vpOpenCVGrabber::setWidth(unsigned int w)
 {
   if (cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_WIDTH, w)) {
     close();
@@ -236,7 +236,7 @@ void vpOpenCVGrabber::setWidth(const unsigned int w)
         \exception vpFrameGrabberException::initializationError If no
         camera was found.
 */
-void vpOpenCVGrabber::setHeight(const unsigned int h)
+void vpOpenCVGrabber::setHeight(unsigned int h)
 {
   if (cvSetCaptureProperty(capture, CV_CAP_PROP_FRAME_HEIGHT, h)) {
     close();

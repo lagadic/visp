@@ -158,15 +158,24 @@ void vpHomography::insert(const vpTranslationVector &atb) { aMb.insert(atb); }
 void vpHomography::insert(const vpPlane &p) { this->bP = p; }
 
 /*!
-  \brief Invert the homography
+  Return inverted homography.
+
+  \param[in] sv_threshold : Threshold used to test the singular values. If
+  a singular value is lower than this threshold we consider that the
+  homography is not full rank.
+
+  \param[out] rank : Rank of the homography that should be 3.
 
   \return  \f$\bf H^{-1}\f$
 */
-vpHomography vpHomography::inverse() const
+vpHomography vpHomography::inverse(double sv_threshold, unsigned int *rank) const
 {
   vpMatrix M = (*this).convert();
   vpMatrix Minv;
-  M.pseudoInverse(Minv, 1e-16);
+  unsigned int r = M.pseudoInverse(Minv, sv_threshold);
+  if (rank != NULL) {
+    *rank = r;
+  }
 
   vpHomography H;
 
@@ -550,21 +559,24 @@ vpPoint vpHomography::project(const vpHomography &bHa, const vpPoint &Pa)
   At least 4 couples of points are needed.
 
   \param xb, yb : Coordinates vector of matched points in image b. These
-  coordinates are expressed in meters. \param xa, ya : Coordinates vector of
-  matched points in image a. These coordinates are expressed in meters. \param
-  aHb : Estimated homography that relies the transformation from image a to
-  image b. \param inliers : Vector that indicates if a matched point is an
-  inlier (true) or an outlier (false). \param residual : Global residual
-  computed as \f$r = \sqrt{1/n \sum_{inliers} {\| {^a{\bf p} - {\hat{^a{\bf
-  H}_b}} {^b{\bf p}}} \|}^{2}}\f$ with \f$n\f$ the number of inliers. \param
-  weights_threshold : Threshold applied on the weights updated during the
+  coordinates are expressed in meters.
+  \param xa, ya : Coordinates vector of
+  matched points in image a. These coordinates are expressed in meters.
+  \param aHb : Estimated homography that relies the transformation from image a to
+  image b.
+  \param inliers : Vector that indicates if a matched point is an
+  inlier (true) or an outlier (false).
+  \param residual : Global residual computed as
+  \f$r = \sqrt{1/n \sum_{inliers} {\| {^a{\bf p} - {\hat{^a{\bf H}_b}} {^b{\bf p}}} \|}^{2}}\f$
+  with \f$n\f$ the number of inliers.
+  \param weights_threshold : Threshold applied on the weights updated during the
   robust estimation and used to consider if a point is an outlier or an
   inlier. Values should be in [0:1]. A couple of matched points that have a
   weight lower than this threshold is considered as an outlier. A value equal
-  to zero indicates that all the points are inliers. \param niter : Number of
-  iterations of the estimation process. \param normalization : When set to
-  true, the coordinates of the points are normalized. The normalization
-  carried out is the one preconized by Hartley.
+  to zero indicates that all the points are inliers.
+  \param niter : Number of iterations of the estimation process.
+  \param normalization : When set to true, the coordinates of the points are normalized.
+  The normalization carried out is the one preconized by Hartley.
 
   \sa DLT(), ransac()
  */
@@ -640,7 +652,7 @@ void vpHomography::robust(const std::vector<double> &xb, const std::vector<doubl
     vpMatrix WA;
     vpMatrix WAp;
     unsigned int iter = 0;
-    vpRobust r(nbLinesA * n); // M-Estimator
+    vpRobust r; // M-Estimator
 
     while (iter < niter) {
       WA = W * A;
@@ -650,7 +662,6 @@ void vpHomography::robust(const std::vector<double> &xb, const std::vector<doubl
       residu = Y - A * X;
 
       // Compute the weights using the Tukey biweight M-Estimator
-      r.setIteration(iter);
       r.MEstimator(vpRobust::TUKEY, residu, w);
 
       // Update the weights matrix

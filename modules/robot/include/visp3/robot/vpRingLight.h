@@ -64,7 +64,6 @@
   the lighting system.
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/robot/vpRingLight.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -87,7 +86,6 @@ int main()
 
   Here is an example showing how to turn on the lighting during 10 seconds.
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpTime.h>
 #include <visp3/robot/vpRingLight.h>
 

@@ -145,7 +145,7 @@ vpMeLine::~vpMeLine() { list.clear(); }
   initialized.
 
 */
-void vpMeLine::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
+void vpMeLine::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 {
   (void)doNotTrack;
   if (!me) {
@@ -270,9 +270,8 @@ void vpMeLine::leastSquare()
 
   unsigned int i;
 
-  vpRobust r(numberOfSignal());
-  r.setThreshold(2);
-  r.setIteration(0);
+  vpRobust r;
+  r.setMinMedianAbsoluteDeviation(2);
   vpMatrix D(numberOfSignal(), numberOfSignal());
   D.eye();
   vpMatrix DA, DAmemory;
@@ -313,7 +312,6 @@ void vpMeLine::leastSquare()
 
       vpColVector residu(nos_1);
       residu = B - A * x;
-      r.setIteration(iter);
       r.MEstimator(vpRobust::TUKEY, residu, w);
 
       k = 0;
@@ -372,7 +370,6 @@ void vpMeLine::leastSquare()
 
       vpColVector residu(nos_1);
       residu = B - A * x;
-      r.setIteration(iter);
       r.MEstimator(vpRobust::TUKEY, residu, w);
 
       k = 0;

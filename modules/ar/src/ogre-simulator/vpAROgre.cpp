@@ -761,7 +761,7 @@ void vpAROgre::setVisibility(const std::string &sceneName, bool isVisible)
   \param factory : Scale factor along the x-axis.
   \param factorz : Scale factor along the x-axis.
 */
-void vpAROgre::setScale(const std::string &sceneName, const float factorx, const float factory, const float factorz)
+void vpAROgre::setScale(const std::string &sceneName, float factorx, float factory, float factorz)
 {
   // Reset the scale to its original value
   mSceneMgr->getSceneNode(sceneName)->scale(Ogre::Vector3(1, 1, 1) / mSceneMgr->getSceneNode(sceneName)->getScale());
@@ -1054,7 +1054,7 @@ void vpAROgre::getRenderingOutput(vpImage<vpRGBa> &I, const vpHomogeneousMatrix 
   if (I.getHeight() != mWindow->getHeight() || I.getWidth() != mWindow->getWidth()) {
     I.resize(mWindow->getHeight(), mWindow->getWidth());
   }
-  Ogre::HardwarePixelBufferSharedPtr mPixelBuffer = dynTexPtr->getBuffer();
+  mPixelBuffer = dynTexPtr->getBuffer();
   mPixelBuffer->lock(Ogre::HardwareBuffer::HBL_DISCARD);
   const Ogre::PixelBox &pixelBox = mPixelBuffer->getCurrentLock();
   dynTexPtr->getBuffer()->blitToMemory(pixelBox);

@@ -93,6 +93,8 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
   double moyIref = 0;
   double moyIc = 0;
   double denom = 0;
+  double *tempt = new double[nbParam];
+
   moydIrefdp.resize(nbParam);
   moydIrefdp = 0;
   vpMatrix moyd2Iref(nbParam, nbParam);
@@ -125,7 +127,6 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
         moydIrefdp[it] += ptTemplate[point].dW[it];
 
       Warp->dWarp(X1, X2, p, dW);
-      double *tempt = new double[nbParam];
       for (unsigned int it = 0; it < nbParam; it++)
         tempt[it] = dW[0][it] * dIcx + dW[1][it] * dIcy;
       double d_Ixx = dIxx.getValue(i2, j2);
@@ -138,7 +139,6 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
                                 dW[1][it] * (dW[0][jt] * d_Ixy + dW[1][jt] * d_Iyy));
         }
 
-      delete[] tempt;
     }
   }
 
@@ -181,7 +181,6 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
 
       Warp->dWarp(X1, X2, p, dW);
 
-      double *tempt = new double[nbParam];
       for (unsigned int it = 0; it < nbParam; it++) {
         tempt[it] = dW[0][it] * dIcx + dW[1][it] * dIcy;
       }
@@ -201,7 +200,6 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
         }
       }
 
-      delete[] tempt;
 
       for (unsigned int it = 0; it < nbParam; it++)
         sIcdIref[it] += prodIc * (ptTemplate[point].dW[it] - moydIrefdp[it]);
@@ -211,6 +209,8 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
       sIcIref += (Iref - moyIref) * (Ic - moyIc);
     }
   }
+  delete[] tempt;
+
   covarIref = sqrt(covarIref);
   covarIc = sqrt(covarIc);
 

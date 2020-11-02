@@ -42,7 +42,6 @@
 
 void vpCircle::init()
 {
-
   oP.resize(7);
   cP.resize(7);
 
@@ -50,47 +49,48 @@ void vpCircle::init()
 }
 
 /*!
-  Set the world coordinates of the circle from the intersection of a plane and
-  a sphere. We mean here the coordinates of the circle in the object frame
+  Set the parameters of the 3D circle in the object frame.
 
-  \param oP_ : oP[0], oP[1], oP[2] correspond to A, B, C from the plane
-  equation Ax + By + Cz = 0. oP[3], oP[4], oP[5] correspond to X, Y, Z the
+  \param oP_ : This 7-dim vector defines the parameters oP[0], oP[1], oP[2] corresponding
+  to parameters oA, oB, oC of the plane with equation oA*(x-oX)+oB*(y-oY)+oC*(z-oZ)=0
+  passing through the 3D sphere center.  oP[3], oP[4], oP[5] correspond to oX, oY, oZ the
   coordinates of the center of the sphere. oP[6] corresponds to the radius of
   the sphere.
 */
 void vpCircle::setWorldCoordinates(const vpColVector &oP_) { this->oP = oP_; }
 
 /*!
-  Set the world coordinates of the circle from the intersection of a plane and
-  a sphere. We mean here the coordinates of the circle in the object frame
+  Set the 3D circle coordinates in the object frame.
 
-  \param A : A from the plane equation Ax + By + Cz = 0.
-  \param B : B from the plane equation Ax + By + Cz = 0.
-  \param C : C from the plane equation Ax + By + Cz = 0.
-  \param X0 : X Coordinate of the center of the sphere.
-  \param Y0 : Y Coordinate of the center of the sphere.
-  \param Z0 : Z Coordinate of the center of the sphere.
+  \param oA, oB, oC : Parameters of the plane with equation oA*(x-oX)+oB*(y-oY)+oC*(z-oZ)=0
+  passing through the 3D sphere center.
+  \param oX : Coordinate of the center of the sphere along X-axis in the object frame.
+  \param oY : Coordinate of the center of the sphere along Y-axis in the object frame.
+  \param oZ : Coordinate of the center of the sphere along Z-axis in the object frame.
   \param R : Radius of the sphere.
 */
-void vpCircle::setWorldCoordinates(const double A, const double B, const double C, const double X0, const double Y0,
-                                   const double Z0, const double R)
+void vpCircle::setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R)
 {
-  oP[0] = A;
-  oP[1] = B;
-  oP[2] = C;
-  oP[3] = X0;
-  oP[4] = Y0;
-  oP[5] = Z0;
+  oP[0] = oA;
+  oP[1] = oB;
+  oP[2] = oC;
+  oP[3] = oX;
+  oP[4] = oY;
+  oP[5] = oZ;
   oP[6] = R;
 }
 
+/*!
+ * Default constructor that initialize internal vectors.
+ */
 vpCircle::vpCircle() { init(); }
 
 /*!
   Construct the circle from the intersection of a plane and a sphere.
 
-  \param oP_ : oP[0], oP[1], oP[2] correspond to A, B, C from the plane
-  equation Ax + By + Cz = 0. oP[3], oP[4], oP[5] correspond to X, Y, Z the
+  \param oP_ : This 7-dim vector defines the parameters oP[0], oP[1], oP[2] corresponding
+  to parameters oA, oB, oC of the plane with equation oA*(x-oX)+oB*(y-oY)+oC*(z-oZ)=0
+  passing through the 3D sphere center.  oP[3], oP[4], oP[5] correspond to oX, oY, oZ the
   coordinates of the center of the sphere. oP[6] corresponds to the radius of
   the sphere.
 
@@ -103,25 +103,27 @@ vpCircle::vpCircle(const vpColVector &oP_)
 }
 
 /*!
-  Construct the circle from the intersection of a plane and a sphere.
+  Construct the 3D circle from the intersection of a plane and a sphere with
+  coordinates expressed in the object frame.
 
-  \param A : A from the plane equation Ax + By + Cz = 0.
-  \param B : B from the plane equation Ax + By + Cz = 0.
-  \param C : C from the plane equation Ax + By + Cz = 0.
-  \param X0 : X Coordinate of the center of the sphere.
-  \param Y0 : Y Coordinate of the center of the sphere.
-  \param Z0 : Z Coordinate of the center of the sphere.
+  \param oA, oB, oC : Parameters of the plane with equation oA*(x-oX)+oB*(y-oY)+oC*(z-oZ)=0
+  passing through the 3D sphere center.
+  \param oX : Coordinate of the center of the sphere along X-axis in the object frame.
+  \param oY : Coordinate of the center of the sphere along Y-axis in the object frame.
+  \param oZ : Coordinate of the center of the sphere along Z-axis in the object frame.
   \param R : Radius of the sphere.
 
   \sa setWorldCoordinates()
 */
-vpCircle::vpCircle(const double A, const double B, const double C, const double X0, const double Y0, const double Z0,
-                   const double R)
+vpCircle::vpCircle(double oA, double oB, double oC, double oX, double oY, double oZ, double R)
 {
   init();
-  setWorldCoordinates(A, B, C, X0, Y0, Z0, R);
+  setWorldCoordinates(oA, oB, oC, oX, oY, oZ, R);
 }
 
+/*!
+ * Default destructor that does nothing.
+ */
 vpCircle::~vpCircle() {}
 
 /*!
@@ -132,29 +134,33 @@ vpCircle::~vpCircle() {}
   projection in the image plane. Those 2D parameters are available in p
   vector.
 
-  See vpCircle::projection(const vpColVector &, vpColVector &) for a more
+  See vpCircle::projection(const vpColVector &, vpColVector &) const for a more
   detailed description of the parameters.
   */
 void vpCircle::projection() { projection(cP, p); }
 
 /*!
   Perspective projection of the circle.
-  \param cP_: 3D cercle input parameters. This vector is of dimension 7. It
-  contains the following parameters: A, B, C, X0, Y0, Z0, r where
-  - A,B,C are the parameters of the plane with equation Ax+By+Cz+D=0
-  containing the circle
-  - X0,Y0,Z0 are the 3D coordinates of the cercle in the camera frame
-  - r is the circle radius.
+  \param cP_: 3D cercle input parameters expressed in the camera frame.
+  This 7-dim vector contains the following parameters: cA, cB, cC, cX, cY, cZ, R where
+  - cA, cB, cC are the parameters of the plane with equation cA*(x-cX)+cB*(y-cY)+cC*(z-cZ)=0
+  passing through the 3D sphere center.
+  - cX, cY, cZ are the 3D coordinates of the circle in the camera frame
+  - R is the circle radius in [m].
 
   \param p_: 2D circle output parameters. This is a 5 dimension vector. It
-  contains the following parameters: xc, yc, m20, m11, m02 where:
-  - xc,yc are the normalized coordinates of the center of the ellipse (ie the
+  contains the following parameters: x, y, n20, n11, n02 where:
+  - x, y are the normalized coordinates of the ellipse centroid (ie the
   perspective projection of a 3D circle becomes a 2D ellipse in the image) in
   the image plane.
-  - mu20,mu11,mu02 are the second order centered moments of the ellipse.
+  - n20, n11, n02 which are the second order centered moments of
+  the ellipse normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
+  \f$\mu_{ij}\f$ are the centered moments and a the area).
   */
-void vpCircle::projection(const vpColVector &cP_, vpColVector &p_)
+void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
 {
+  p_.resize(5, false);
+
   vpColVector K(6);
   {
     double A = cP_[0];
@@ -182,14 +188,8 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_)
     K[5] = 1 - 2 * C * Z0 + C * C * s;
   }
 
-  //  {
-  //    std::cout << "K dans vpCircle::projection(): " << std::endl;
-  //    for (unsigned int i=1; i<6; i++)
-  //      std::cout << K[i]/K[0] << std::endl;
-  //  }
   double det = K[2] * K[2] - K[0] * K[1];
   if (fabs(det) < 1e-8) {
-    vpERROR_TRACE("division par 0");
     throw(vpException(vpException::divideByZeroError, "division par 0"));
   }
 
@@ -201,7 +201,6 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_)
 
   double A, B, E;
 
-  // if (fabs(K[2])<1e-6)
   if (fabs(K[2]) < std::numeric_limits<double>::epsilon()) {
     E = 0.0;
     if (K[0] > K[1]) {
@@ -223,21 +222,29 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_)
     }
   }
 
-  det = (1.0 + vpMath::sqr(E));
-  double mu20 = (vpMath::sqr(A) + vpMath::sqr(B * E)) / det;
-  double mu11 = (vpMath::sqr(A) - vpMath::sqr(B)) * E / det;
-  double mu02 = (vpMath::sqr(B) + vpMath::sqr(A * E)) / det;
+  // Chaumette PhD Thesis 1990, eq 2.72 divided by 4 since n_ij = mu_ij_chaumette_thesis / 4
+  det = 4 * (1.0 + vpMath::sqr(E));
+  double n20 = (vpMath::sqr(A) + vpMath::sqr(B * E)) / det;
+  double n11 = (vpMath::sqr(A) - vpMath::sqr(B)) * E / det;
+  double n02 = (vpMath::sqr(B) + vpMath::sqr(A * E)) / det;
 
   p_[0] = xc;
   p_[1] = yc;
-  p_[2] = mu20;
-  p_[3] = mu11;
-  p_[4] = mu02;
+  p_[2] = n20;
+  p_[3] = n11;
+  p_[4] = n02;
 }
 
-//! perspective projection of the circle
-void vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
+/*!
+  From the 3D coordinates of the circle in the object frame oP that are set using for
+  example vpCircle(double oA, double oB, double oC, double oX, double oY, double oZ, double R)
+  or setWorldCoordinates(), compute the 3D coordinates of the circle in the camera frame cP = cMo * oP.
+
+  \param cMo : Transformation from camera to object frame.
+  \param cP_ : 3D normalized coordinates of the circle in the camera frame cP = (cA, cB, cC, cX, cY, cZ, R).
+*/void vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
 {
+  cP_.resize(7, false);
 
   double A, B, C;
   A = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2];
@@ -259,14 +266,16 @@ void vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_)
   cP_[5] = Z0;
 
   cP_[6] = R;
-
-  // vpTRACE("_cP :") ; std::cout << _cP.t() ;
 }
 
-//! perspective projection of the circle
+/*!
+ * Perspective projection of the circle.
+ * Internal circle parameters are modified in cP.
+ *
+ * \param cMo : Homogeneous transformation from camera frame to object frame.
+ */
 void vpCircle::changeFrame(const vpHomogeneousMatrix &cMo)
 {
-
   double A, B, C;
   A = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2];
   B = cMo[1][0] * oP[0] + cMo[1][1] * oP[1] + cMo[1][2] * oP[2];
@@ -287,19 +296,35 @@ void vpCircle::changeFrame(const vpHomogeneousMatrix &cMo)
   cP[5] = Z0;
 
   cP[6] = R;
-
-  // vpTRACE("_cP :") ; std::cout << _cP.t() ;
 }
 
+/*!
+ * Display the projection of a 3D circle in image \e I.
+ *
+ * \param I : Image used as background.
+ * \param cam : Camera parameters.
+ * \param color : Color used to draw the circle.
+ * \param thickness : Thickness used to draw the circle.
+ */
 void vpCircle::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
-                       const unsigned int thickness)
+                       unsigned int thickness)
 {
   vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I, color, thickness);
 }
 
-// non destructive wrt. cP and p
+/*!
+ * Display the projection of a sphere in image \e I.
+ * This method is non destructive wrt. cP and p internal circle parameters.
+ *
+ * \param I : Image used as background.
+ * \param cMo : Homogeneous transformation from camera frame to object frame.
+ * The circle is considered as viewed from this camera position.
+ * \param cam : Camera parameters.
+ * \param color : Color used to draw the sphere.
+ * \param thickness : Thickness used to draw the circle.
+ */
 void vpCircle::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                       const vpColor &color, const unsigned int thickness)
+                       const vpColor &color, unsigned int thickness)
 {
   vpColVector _cP, _p;
   changeFrame(cMo, _cP);
@@ -323,10 +348,11 @@ vpCircle *vpCircle::duplicate() const
   \sa changeFrame(), projection()
 
   \param circle : Circle to consider for the intersection.
-  \param cam : Camera parameters that have to be used for the intersection
-  computation. \param rho : The rho parameter of the line. \param theta : The
-  theta parameter of the line. \param i : resulting i-coordinate of the
-  intersection point. \param j : resulting j-coordinate of the intersection
+  \param cam : Camera parameters that have to be used for the intersection computation.
+  \param rho : The rho parameter of the line.
+  \param theta : The theta parameter of the line.
+  \param i : resulting i-coordinate of the intersection point.
+  \param j : resulting j-coordinate of the intersection
   point.
 */
 void vpCircle::computeIntersectionPoint(const vpCircle &circle, const vpCameraParameters &cam, const double &rho,
@@ -338,9 +364,9 @@ void vpCircle::computeIntersectionPoint(const vpCircle &circle, const vpCameraPa
   double u0 = cam.get_u0();
   double v0 = cam.get_v0();
 
-  double mu11 = circle.p[3];
-  double mu02 = circle.p[4];
-  double mu20 = circle.p[2];
+  double n11 = circle.p[3];
+  double n02 = circle.p[4];
+  double n20 = circle.p[2];
   double Xg = u0 + circle.p[0] * px;
   double Yg = v0 + circle.p[1] * py;
 
@@ -350,18 +376,18 @@ void vpCircle::computeIntersectionPoint(const vpCircle &circle, const vpCameraPa
   double stheta = sin(theta);
   double ctheta = cos(theta);
   double sctheta = stheta * ctheta;
-  double m11yg = mu11 * Yg;
+  double m11yg = n11 * Yg;
   double ctheta2 = vpMath::sqr(ctheta);
-  double m02xg = mu02 * Xg;
-  double m11stheta = mu11 * stheta;
-  j = ((mu11 * Xg * sctheta - mu20 * Yg * sctheta + mu20 * rho * ctheta - m11yg + m11yg * ctheta2 + m02xg -
+  double m02xg = n02 * Xg;
+  double m11stheta = n11 * stheta;
+  j = ((n11 * Xg * sctheta - n20 * Yg * sctheta + n20 * rho * ctheta - m11yg + m11yg * ctheta2 + m02xg -
         m02xg * ctheta2 + m11stheta * rho) /
-       (mu20 * ctheta2 + 2.0 * m11stheta * ctheta + mu02 - mu02 * ctheta2));
+       (n20 * ctheta2 + 2.0 * m11stheta * ctheta + n02 - n02 * ctheta2));
   // Optimised calculation for Y
-  double rhom02 = rho * mu02;
+  double rhom02 = rho * n02;
   double sctheta2 = stheta * ctheta2;
   double ctheta3 = ctheta2 * ctheta;
-  i = (-(-rho * mu11 * stheta * ctheta - rhom02 + rhom02 * ctheta2 + mu11 * Xg * sctheta2 - mu20 * Yg * sctheta2 -
-         ctheta * mu11 * Yg + ctheta3 * mu11 * Yg + ctheta * mu02 * Xg - ctheta3 * mu02 * Xg) /
-       (mu20 * ctheta2 + 2.0 * mu11 * stheta * ctheta + mu02 - mu02 * ctheta2) / stheta);
+  i = (-(-rho * n11 * stheta * ctheta - rhom02 + rhom02 * ctheta2 + n11 * Xg * sctheta2 - n20 * Yg * sctheta2 -
+         ctheta * n11 * Yg + ctheta3 * n11 * Yg + ctheta * n02 * Xg - ctheta3 * n02 * Xg) /
+       (n20 * ctheta2 + 2.0 * n11 * stheta * ctheta + n02 - n02 * ctheta2) / stheta);
 }

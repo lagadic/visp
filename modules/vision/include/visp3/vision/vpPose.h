@@ -154,18 +154,11 @@ private:
   class RansacFunctor
   {
   public:
-    RansacFunctor(const vpHomogeneousMatrix &cMo_, const unsigned int ransacNbInlierConsensus_,
-                  const int ransacMaxTrials_, const double ransacThreshold_, const unsigned int initial_seed_,
-                  const bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
-                  bool (*func_)(const vpHomogeneousMatrix &)
-              #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-                  , std::atomic<bool> &abort
-              #endif
-                  )
+    RansacFunctor(const vpHomogeneousMatrix &cMo_, unsigned int ransacNbInlierConsensus_,
+                  const int ransacMaxTrials_, double ransacThreshold_, unsigned int initial_seed_,
+                  bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
+                  bool (*func_)(const vpHomogeneousMatrix &))
       :
-    #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-        m_abort(abort),
-    #endif
         m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
         m_func(func_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
         m_ransacMaxTrials(ransacMaxTrials_), m_ransacNbInlierConsensus(ransacNbInlierConsensus_),
@@ -185,9 +178,6 @@ private:
     unsigned int getNbInliers() const { return m_nbInliers; }
 
   private:
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    std::atomic<bool> &m_abort;
-#endif
     std::vector<unsigned int> m_best_consensus;
     bool m_checkDegeneratePoints;
     vpHomogeneousMatrix m_cMo;
@@ -222,14 +212,7 @@ public:
   bool coplanar(int &coplanar_plane_type);
   void displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
   void displayModel(vpImage<vpRGBa> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
-#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-  /*!
-    @name Deprecated functions
-  */
-  //@{
-  vp_deprecated void init();
-  //@}
-#endif
+
   void poseDementhonPlan(vpHomogeneousMatrix &cMo);
   void poseDementhonNonPlan(vpHomogeneousMatrix &cMo);
   void poseLagrangePlan(vpHomogeneousMatrix &cMo);
@@ -320,7 +303,7 @@ public:
     automatically determined with C++11.
     \sa setUseParallelRansac
   */
-  inline void setNbParallelRansacThreads(const int nb) { nbParallelRansacThreads = nb; }
+  inline void setNbParallelRansacThreads(int nb) { nbParallelRansacThreads = nb; }
 
   /*!
     \return True if the parallel RANSAC version should be used (depends also to C++11 availability).
@@ -334,7 +317,7 @@ public:
 
     \note Need C++11 or higher.
   */
-  inline void setUseParallelRansac(const bool use) { useParallelRansac = use; }
+  inline void setUseParallelRansac(bool use) { useParallelRansac = use; }
 
   /*!
     Get the vector of points.
@@ -360,8 +343,21 @@ public:
   static void findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                         const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                         unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
-                        const int &maxNbTrials=10000, const bool useParallelRansac=true, const unsigned int nthreads=0,
-                        bool (*func)(const vpHomogeneousMatrix &)=NULL);
+                        const int &maxNbTrials=10000, bool useParallelRansac=true, unsigned int nthreads=0,
+                        bool (*func)(const vpHomogeneousMatrix &) = NULL);
+
+  static bool computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
+                                              const vpCameraParameters &colorIntrinsics, const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo,
+                                              double *confidence_index = NULL);
+
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  vp_deprecated void init();
+  //@}
+#endif
 };
 
 #endif

@@ -74,8 +74,8 @@ some tools for homography computation.
   points set.  These 2 sets are the only data needed to compute the
   homography.  One method used is the one introduced by Ezio Malis during his
   PhD \cite TheseMalis. A normalization is carried out on this points in order
-to improve the conditioning of the problem, what leads to improve the
-stability of the result.
+  to improve the conditioning of the problem, what leads to improve the
+  stability of the result.
 
   Store and compute the homography such that
   \f[
@@ -229,7 +229,7 @@ public:
   void eye();
 
   //! invert the homography
-  vpHomography inverse() const;
+  vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank=NULL) const;
   //! invert the homography
   void inverse(vpHomography &Hi) const;
 
@@ -257,7 +257,7 @@ public:
     3-by-3 matrix.
     \exception vpException::fatalError When this function is called.
     */
-  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true)
+  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
@@ -294,7 +294,7 @@ public:
   static void computeDisplacement(const vpHomography &aHb, vpRotationMatrix &aRb, vpTranslationVector &atb,
                                   vpColVector &n);
 
-  static void computeDisplacement(const vpHomography &H, const double x, const double y,
+  static void computeDisplacement(const vpHomography &H, double x, double y,
                                   std::list<vpRotationMatrix> &vR, std::list<vpTranslationVector> &vT,
                                   std::list<vpColVector> &vN);
   static double computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpPlane &oN,

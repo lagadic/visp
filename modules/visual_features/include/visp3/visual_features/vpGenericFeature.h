@@ -195,9 +195,9 @@ public:
 
   vpGenericFeature *duplicate() const;
 
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
 
-  vpColVector error(const unsigned int select = FEATURE_ALL);
+  vpColVector error(unsigned int select = FEATURE_ALL);
 
   vpMatrix getInteractionMatrix() const { return L; }
   void get_s(vpColVector &s) const;
@@ -207,9 +207,9 @@ public:
 
   void init();
 
-  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL);
 
-  void print(const unsigned int select = FEATURE_ALL) const;
+  void print(unsigned int select = FEATURE_ALL) const;
   void setInteractionMatrix(const vpMatrix &L);
   void setError(const vpColVector &error_vector);
   void set_s(const vpColVector &s);

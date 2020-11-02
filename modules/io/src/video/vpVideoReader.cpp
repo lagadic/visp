@@ -119,6 +119,10 @@ void vpVideoReader::setFileName(const std::string &filename)
 */
 void vpVideoReader::getProperties()
 {
+  if (m_isOpen) {
+    return;
+  }
+
   if (!m_initFileName) {
     throw(vpImageException(vpImageException::noFileNameError, "The generic filename has to be set"));
   }
@@ -865,4 +869,30 @@ bool vpVideoReader::checkImageNameFormat(const std::string &format) const
     }
   }
   return true;
+}
+
+/*!
+ * Indicate if the video is an encoded single video file.
+ *
+ * \return true if the video format corresponds to an encoded single video file like one of the following
+ * avi, mpeg, mp4, mts, mov, ogv, wmv, flv, mkv. Return false, if the video is a sequence of successive
+ * images (png, jpeg, ppm, pgm...).
+ */
+bool vpVideoReader::isVideoFormat() const
+{
+  // Video format
+  switch (m_formatType) {
+  case FORMAT_AVI:
+  case FORMAT_MPEG:
+  case FORMAT_MPEG4:
+  case FORMAT_MTS:
+  case FORMAT_MOV:
+  case FORMAT_OGV:
+  case FORMAT_WMV:
+  case FORMAT_FLV:
+  case FORMAT_MKV:
+    return true;
+  default:
+    return false;
+  }
 }

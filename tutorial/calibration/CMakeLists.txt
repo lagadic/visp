@@ -10,7 +10,7 @@ set(tutorial_cpp
   tutorial-hand-eye-calibration.cpp
 )
 
-file(GLOB tutorial_data "*.yaml")
+file(GLOB tutorial_data "*.yaml" "*.py")
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
@@ -21,9 +21,9 @@ endforeach()
 
 if(VISP_HAVE_REALSENSE2)
   if(UNIX)
-    visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare -Wno-pessimizing-move -Wno-unused-parameter -Wno-overloaded-virtual)
+    visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare -Wno-pessimizing-move -Wno-unused-parameter -Wno-overloaded-virtual -Wno-ignored-qualifiers)
   else()
-    visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp /wd4244)
+    visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp /wd4244 /wd4267)
   endif()
 endif()
 

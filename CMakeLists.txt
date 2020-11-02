@@ -44,7 +44,7 @@ if(NOT CMAKE_TOOLCHAIN_FILE)
   endif()
 else(NOT CMAKE_TOOLCHAIN_FILE)
   #Android: set output folder to ${CMAKE_BINARY_DIR}
-  set( LIBRARY_OUTPUT_PATH_ROOT ${CMAKE_BINARY_DIR} CACHE PATH "root for library output, set this to change where android libs are compiled to" )
+  set(LIBRARY_OUTPUT_PATH_ROOT ${CMAKE_BINARY_DIR} CACHE PATH "root for library output, set this to change where android libs are compiled to" )
   # Crosscompiling
   set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation Directory")
 endif()
@@ -81,20 +81,21 @@ if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE "Release" CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
 endif()
 
-project(VISP C CXX)
+cmake_minimum_required(VERSION 2.8.12.2) # needs to be before project() for policy CMP0025
 
 # Detect if the toolchain is for Aldebaran naoqi
 if(CMAKE_TOOLCHAIN_FILE AND I_AM_A_ROBOT)
   include(platforms/naoqi/cmake/extra.cmake)
 endif()
 
-cmake_minimum_required(VERSION 2.8.12.2)
-
 if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW) # For UsTK: Qt5
 endif()
 if(POLICY CMP0022)
   cmake_policy(SET CMP0022 NEW) # Due to sensor ATIDAQ_LIBRARIES
+endif()
+if(POLICY CMP0025)
+  cmake_policy(SET CMP0025 NEW) # To set compiler id for Apple Clang to AppleClang instead of Clang. Required to detect OpenMP support on MacOS
 endif()
 if(POLICY CMP0053)
   cmake_policy(SET CMP0053 NEW) # For UsTK: VTK and Qt5
@@ -109,16 +110,20 @@ if(POLICY CMP0075)
   cmake_policy(SET CMP0075 NEW) # For check_include_file and cmake 3.12.0
 endif()
 
+project(VISP C CXX)
+
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
 
 include(cmake/VISPUtils.cmake)
 
-vp_clear_vars(VISPModules_TARGETS)
+if (CMAKE_VERSION VERSION_LESS 3.0.0)
+  vp_clear_vars(VISPModules_TARGETS)
+endif()
 
 #-----------------------------------------------------------------------------
 # VISP version number.  An even minor number corresponds to releases.
 set(VISP_VERSION_MAJOR "3")
-set(VISP_VERSION_MINOR "2")
+set(VISP_VERSION_MINOR "3")
 set(VISP_VERSION_PATCH "1")
 set(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}")
 # Package revision number
@@ -137,78 +142,85 @@ endif()
 #----------------------------------------------------------------------
 include(cmake/VISPDetectPlatform.cmake)
 
-# Set the path where to install the lib
-if(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
-  if(DEFINED VISP_RUNTIME AND DEFINED VISP_ARCH)
-    set(VISP_INSTALL_BINARIES_PREFIX "${VISP_ARCH}/${VISP_RUNTIME}/")
-  else()
-    message(STATUS "Can't detect runtime and/or arch")
-    set(VISP_INSTALL_BINARIES_PREFIX "")
-  endif()
-elseif(ANDROID)
-  vp_update(VISP_INSTALL_BINARIES_PREFIX "sdk/native/")
-else()
-  set(VISP_INSTALL_BINARIES_PREFIX "")
-endif()
-
 # where to install the library and headers
 if(ANDROID)
+  # Where to build modules
+  set(LIBRARY_OUTPUT_PATH                 "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
+  # Where to build internal 3rdparties
+  vp_update(VISP_3P_LIBRARY_OUTPUT_PATH   "${VISP_BINARY_DIR}/3rdparty/lib/${ANDROID_NDK_ABI_NAME}")
+
+  vp_update(VISP_INSTALL_BINARIES_PREFIX "sdk/native/")
   # set binary path
-  vp_update(VISP_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}bin/${ANDROID_NDK_ABI_NAME}")
+  vp_update(VISP_BIN_INSTALL_PATH         "sdk/native/bin/${ANDROID_NDK_ABI_NAME}")
 
   # set samples path
-  vp_update(VISP_SAMPLES_BIN_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}samples/${ANDROID_NDK_ABI_NAME}")
+  vp_update(VISP_SAMPLES_BIN_INSTALL_PATH "sdk/native/samples/${ANDROID_NDK_ABI_NAME}")
 
-  set(LIBRARY_OUTPUT_PATH                 "${VISP_BINARY_DIR}/lib/${ANDROID_NDK_ABI_NAME}")
-  vp_update(VISP_3P_LIBRARY_OUTPUT_PATH   "${VISP_BINARY_DIR}/3rdparty/lib/${ANDROID_NDK_ABI_NAME}")
-  vp_update(VISP_LIB_INSTALL_PATH         sdk/native/libs/${ANDROID_NDK_ABI_NAME})
-  vp_update(VISP_LIB_ARCHIVE_INSTALL_PATH sdk/native/staticlibs/${ANDROID_NDK_ABI_NAME})
-  vp_update(VISP_3P_LIB_INSTALL_PATH      sdk/native/3rdparty/libs/${ANDROID_NDK_ABI_NAME})
-  vp_update(VISP_CONFIG_INSTALL_PATH      sdk/native/jni)
-  vp_update(VISP_INC_INSTALL_PATH         sdk/native/jni/include)
-  vp_update(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
-  vp_update(VISP_INSTALL_DATAROOTDIR      sdk/etc)
-else()
+  vp_update(VISP_LIB_INSTALL_PATH         "sdk/native/libs/${ANDROID_NDK_ABI_NAME}")
+  vp_update(VISP_LIB_ARCHIVE_INSTALL_PATH "sdk/native/staticlibs/${ANDROID_NDK_ABI_NAME}")
+  vp_update(VISP_3P_LIB_INSTALL_PATH      "sdk/native/3rdparty/libs/${ANDROID_NDK_ABI_NAME}")
+  vp_update(VISP_CONFIG_INSTALL_PATH      "sdk/native/jni")
+  vp_update(VISP_INC_INSTALL_PATH         "sdk/native/jni/include")
+  vp_update(VISP_SAMPLES_SRC_INSTALL_PATH "samples/native")
+  vp_update(VISP_INSTALL_DATAROOTDIR      "sdk/etc")
+
+elseif(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
+  # Where to build modules
   set(LIBRARY_OUTPUT_PATH         "${VISP_BINARY_DIR}/lib")
-  set(VISP_3P_LIBRARY_OUTPUT_PATH "${VISP_BINARY_DIR}/3rdparty/lib${LIB_SUFFIX}")
-  if(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
-    if(VISP_STATIC)
-      vp_update(VISP_LIB_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}staticlib${LIB_SUFFIX}")
-    else()
-      vp_update(VISP_LIB_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}lib${LIB_SUFFIX}")
-    endif()
-    set(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_BINARIES_PREFIX}staticlib${LIB_SUFFIX}")
-    set(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
-    set(VISP_JAR_INSTALL_PATH         java)
-    set(VISP_INC_INSTALL_PATH         "${CMAKE_INSTALL_INCLUDEDIR}")
-    set(VISP_BIN_INSTALL_PATH         "${VISP_INSTALL_BINARIES_PREFIX}bin")
-    set(VISP_INSTALL_DATAROOTDIR       "")
-    # where to install the data (share for linux)
-    # set(VISP_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
-    set(VISP_CONFIG_INSTALL_PATH      ".")
-  else()
-    #----------------------------------------------------------------------
-    # Multi-arch option that should be enable for debian packaging
-    #----------------------------------------------------------------------
-    VP_OPTION(ENABLE_MULTIARCH  "" "" "Enable multi-arch support"  "" OFF IF (NOT APPLE))
+  # Where to build internal 3rdparties
+  vp_update(VISP_3P_LIBRARY_OUTPUT_PATH "${VISP_BINARY_DIR}/3rdparty/lib${LIB_SUFFIX}")
 
-    # The location where includes and libraries will be installed
-    if(ENABLE_MULTIARCH)
-      # The 2 following lines should be used to enable multi-arch support.
-      set(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LIBRARY_ARCHITECTURE}")
-      set(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE}")
-    else()
-      # catkin doesn't support multi-arch; use rather the next 2 lines
-      set(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}")
-      set(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}")
-    endif()
-    set(VISP_BIN_INSTALL_PATH         "${CMAKE_INSTALL_BINDIR}")
-    set(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp")
-    set(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_DATAROOTDIR}/3rdparty/${VISP_LIB_INSTALL_PATH}")
-    set(VISP_SAMPLES_SRC_INSTALL_PATH "${VISP_INSTALL_DATAROOTDIR}/samples")
-    set(VISP_JAR_INSTALL_PATH         "${VISP_INSTALL_DATAROOTDIR}/java")
-    set(VISP_CONFIG_INSTALL_PATH      "${VISP_LIB_INSTALL_PATH}/cmake/visp")
+  if(DEFINED VISP_RUNTIME AND DEFINED VISP_ARCH)
+    vp_update(VISP_INSTALL_BINARIES_PREFIX "${VISP_ARCH}/${VISP_RUNTIME}/")
+  else()
+    message(STATUS "Can't detect runtime and/or arch")
+    vp_update(VISP_INSTALL_BINARIES_PREFIX "")
   endif()
+
+  if(VISP_STATIC)
+    vp_update(VISP_LIB_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}staticlib${LIB_SUFFIX}")
+  else()
+    vp_update(VISP_LIB_INSTALL_PATH "${VISP_INSTALL_BINARIES_PREFIX}lib${LIB_SUFFIX}")
+  endif()
+  vp_update(VISP_3P_LIB_INSTALL_PATH      "${VISP_INSTALL_BINARIES_PREFIX}staticlib${LIB_SUFFIX}")
+  vp_update(VISP_SAMPLES_SRC_INSTALL_PATH samples/native)
+  vp_update(VISP_JAR_INSTALL_PATH         java)
+  vp_update(VISP_INC_INSTALL_PATH         "${CMAKE_INSTALL_INCLUDEDIR}")
+  vp_update(VISP_BIN_INSTALL_PATH         "${VISP_INSTALL_BINARIES_PREFIX}bin")
+  vp_update(VISP_INSTALL_DATAROOTDIR       "")
+  # where to install the data (share for linux)
+  # set(VISP_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
+  vp_update(VISP_CONFIG_INSTALL_PATH      ".")
+
+else() # UNIX
+  # Where to build modules
+  set(LIBRARY_OUTPUT_PATH         "${VISP_BINARY_DIR}/lib")
+  # Where to build internal 3rdparties
+  vp_update(VISP_3P_LIBRARY_OUTPUT_PATH "${VISP_BINARY_DIR}/3rdparty/lib${LIB_SUFFIX}")
+
+  vp_update(VISP_INSTALL_BINARIES_PREFIX "")
+
+  #----------------------------------------------------------------------
+  # Multi-arch option that should be enable for debian packaging
+  #----------------------------------------------------------------------
+  VP_OPTION(ENABLE_MULTIARCH  "" "" "Enable multi-arch support"  "" OFF IF (NOT APPLE))
+
+  # The location where includes and libraries will be installed
+  if(ENABLE_MULTIARCH)
+    # The 2 following lines should be used to enable multi-arch support.
+    vp_update(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}/${CMAKE_LIBRARY_ARCHITECTURE}")
+    vp_update(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}/${CMAKE_LIBRARY_ARCHITECTURE}")
+  else()
+    # catkin doesn't support multi-arch; use rather the next 2 lines
+    vp_update(VISP_INC_INSTALL_PATH       "${CMAKE_INSTALL_INCLUDEDIR}")
+    vp_update(VISP_LIB_INSTALL_PATH       "${CMAKE_INSTALL_LIBDIR}")
+  endif()
+  vp_update(VISP_BIN_INSTALL_PATH         "${CMAKE_INSTALL_BINDIR}")
+  vp_update(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
+  vp_update(VISP_3P_LIB_INSTALL_PATH      "${VISP_LIB_INSTALL_PATH}/visp/3rdparty")
+  vp_update(VISP_SAMPLES_SRC_INSTALL_PATH "${VISP_INSTALL_DATAROOTDIR}/samples")
+  vp_update(VISP_JAR_INSTALL_PATH         "${VISP_INSTALL_DATAROOTDIR}/java")
+  vp_update(VISP_CONFIG_INSTALL_PATH      "${VISP_LIB_INSTALL_PATH}/cmake/visp")
 endif()
 
 # the include directory we depend on for the build
@@ -240,7 +252,9 @@ include_directories(${VISP_INCLUDE_DIR})
 VP_OPTION(ENABLE_SSE2  "" "" "Enable SSE2 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
 VP_OPTION(ENABLE_SSE3  "" "" "Enable SSE3 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
 VP_OPTION(ENABLE_SSSE3 "" "" "Enable SSSE3 instructions" "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86_64)) ) # X86 disabled since it produces an issue on Debian i386
-VP_OPTION(ENABLE_AVX   "" "" "Enable AVX instructions"   "" OFF) # should be explicitely enabled, used in matrix transpose code
+if(X86_64)
+  VP_OPTION(ENABLE_AVX   "" "" "Enable AVX instructions"   "" OFF) # should be explicitely enabled, used in matrix transpose code
+endif()
 
 #----------------------------------------------------------------------
 # BLAS / LAPACK
@@ -514,6 +528,7 @@ VP_OPTION(USE_FLYCAPTURE  FlyCapture  ""    "Include FlyCapture SDK support for 
 VP_OPTION(USE_PYLON       Pylon       ""    "Include Pylon SDK support for Basler cameras" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_JACO2       JACO2       ""    "Include JACO2 SDK support for KINOVA JACO 2 ROBOT SDK" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_COMEDI      Comedi      ""    "Include comedi (linux control and measurement device interface) support" "" ON IF NOT WINRT AND NOT IOS)
+VP_OPTION(USE_FTIITSDK    FTIITSDK    ""    "Include IIT force-torque SDK support" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_BICLOPS     BICLOPS     ""    "Include biclops support"          "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PTU46       PTU46       ""    "Include ptu-46 support"           "" ON IF UNIX AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_FLIRPTUSDK  FlirPtuSDK  ""    "Include Flir PTU SDK support"     "" ON IF NOT WINRT AND NOT IOS)
@@ -522,20 +537,8 @@ VP_OPTION(USE_GDI         GDI         ""    "Include gdi support"              "
 #VP_OPTION(USE_DIRECT3D    DIRECT3D    ""    "Include d3d support"             "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_DIRECTSHOW  DIRECTSHOW  ""    "Include dshow support"            "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 
-# Workaround libomp.so missing at run-time when using clang: https://github.com/travis-ci/travis-ci/issues/8613
-string(COMPARE NOTEQUAL "" "$ENV{TRAVIS}" RUNNING_ON_TRAVIS)
-if (${RUNNING_ON_TRAVIS} AND CMAKE_C_COMPILER_ID MATCHES "Clang")
-  set(COMPILER_SUPPORTS_OPENMP FALSE)
-else()
-  set(COMPILER_SUPPORTS_OPENMP TRUE)
-endif()
-
-VP_OPTION(USE_OPENMP      OpenMP      ""    "Include openmp support"           "" ON IF COMPILER_SUPPORTS_OPENMP)
+VP_OPTION(USE_OPENMP      OpenMP      ""    "Include openmp support"           "" ON)
 VP_OPTION(USE_EIGEN3      Eigen3      QUIET "Include eigen3 support"           "" ON IF NOT WINRT AND NOT IOS)
-# Since the FindLAPACK.cmake provided with CMake is for Fortran language,
-# in CMakeModules we have added FindLAPACK_C.cmake for C language
-#VP_OPTION(USE_LAPACK      LAPACK_C    ""    "Include lapack support"           "" ON IF NOT WINRT AND NOT IOS)
-VP_OPTION(USE_GSL         GSL         ""    "Include gsl support"              "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_COIN3D      "Coin3D;MyCoin3D" "" "Include coin3d support"        "" ON IF OPENGL_FOUND AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_YARP        YARP        QUIET "Include yarp support"             "YARP_DIR" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_OGRE        OGRE        QUIET "Include Ogre support"             "OGRE_DIR" ON IF NOT WINRT AND NOT IOS)
@@ -610,15 +613,75 @@ VP_OPTION(USE_ARIA        ARIA         ""    "Include aria support"         "" O
 VP_OPTION(USE_ZBAR        ZBAR         ""    "Include zbar support"         "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_DMTX        DMTX         ""    "Include dmtx support"         "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_PCL         PCL          QUIET "Include Point Cloud Library support" "" ON IF NOT WINRT AND NOT IOS)
+
+# ----------------------------------------------------------------------------
+# Handle cxx standard depending on specific 3rd parties. Should be before module parsing and VISP3rdParty.cmake include
+# ----------------------------------------------------------------------------
+# if c++ standard is not at leat c++11, force 3rd parties that require at least c++11 to OFF
+if(VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_11)
+  if(USE_REALSENSE)
+     message(WARNING "librealsense 3rd party was detected and needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable librealsense usage turning USE_REALSENSE=OFF.")
+     unset(USE_REALSENSE)
+     set(USE_REALSENSE OFF CACHE BOOL "Include RealSense SDK support" FORCE)
+  endif()
+  if(USE_REALSENSE2)
+     message(WARNING "librealsense2 3rd party was detected and needs at least c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable librealsense2 usage turning USE_REALSENSE2=OFF.")
+     unset(USE_REALSENSE2)
+     set(USE_REALSENSE2 OFF CACHE BOOL "Include RealSense2 SDK support" FORCE)
+  endif()
+  if(USE_FRANKA)
+     message(WARNING "libfranka 3rd party was detected and needs at least c++11 c++11 standard compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable libfranka usage turning USE_FRANKA=OFF.")
+     unset(USE_FRANKA)
+     set(USE_FRANKA OFF CACHE BOOL "Include libfranka SDK support for Franka Emika robots" FORCE)
+  endif()
+  if((OpenCV_VERSION VERSION_GREATER 4.0.0) OR (OpenCV_VERSION VERSION_EQUAL 4.0.0))
+    # if c++ standard is not at least 11: disable opencv 4.x usage
+    message(WARNING "OpenCV ${OpenCV_VERSION} 3rd party was detected and needs c++11 or higher compiler flag while you have set c++${USE_CXX_STANDARD}. Thus we disable OpenCV usage turning USE_OPENCV=OFF")
+    unset(USE_OPENCV)
+    set(USE_OPENCV OFF CACHE BOOL "Include OpenCV support" FORCE)
+  endif()
+  # Downgrade to cxx98 to completely disable cxx11
+  unset(CMAKE_CXX_STANDARD)
+endif()
+
+# Upgrade c++ standard to 14 for pcl 1.9.1.99 that enables by default c++ 14 standard
+if(USE_PCL)
+  if(PCL_VERSION VERSION_GREATER 1.9.1)
+    # pcl > 1.9.1 requires c++14
+    # if c++14 option is OFF, force to c++14
+    if((VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14) AND CXX14_STANDARD_FOUND)
+      message(WARNING "pcl ${PCL_VERSION} 3rd party was detected and needs c++14 compiler flags that is turned off. Thus to enable pcl usage we turn USE_CXX_STANDARD=14.")
+      set(USE_CXX_STANDARD "14" CACHE STRING "cxx standard" FORCE) # Update cmake-gui option
+      unset(CMAKE_CXX_STANDARD)
+      set(CMAKE_CXX_STANDARD 14)
+      set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_14}) # for vpConfig.h
+    endif()
+  endif()
+endif()
+
+# Upgrade c++ standard to 14 for IIT force-torque SDK that needs at least c++ 14 standard
+if(USE_FTIITSDK)
+  if((VISP_CXX_STANDARD LESS VISP_CXX_STANDARD_14) AND CXX14_STANDARD_FOUND)
+    message(WARNING "IIT force-torque SDK 3rd party was detected and needs c++14 compiler flags that is turned off. Thus to enable IIT SDK usage we turn USE_CXX_STANDARD=14.")
+    set(USE_CXX_STANDARD "14" CACHE STRING "cxx standard" FORCE) # Update cmake-gui option
+    unset(CMAKE_CXX_STANDARD)
+    set(CMAKE_CXX_STANDARD 14)
+    set(VISP_CXX_STANDARD ${VISP_CXX_STANDARD_14}) # for vpConfig.h
+  endif()
+endif()
+
+# ----------------------------------------------------------------------------
+# Build-in 3rd parties. Should be after c++ standard potential modification
+# ----------------------------------------------------------------------------
 VP_OPTION(WITH_PTHREAD    ""           ""    "Build pthread as built-in library"   "" ON IF (NOT USE_PTHREAD) AND (WIN32 OR MINGW) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0))
 # Since C99 is not supported by MSVC 2010 or prior, we disable apriltag if MSVC < 2012
 VP_OPTION(WITH_APRILTAG   ""           ""    "Build AprilTag as built-in library"  "" ON IF (USE_PTHREAD OR WITH_PTHREAD) AND (NOT WINRT_8_1) AND (NOT WINRT_8_0) AND (NOT MSVC_VERSION LESS 1700))
 VP_OPTION(WITH_ATIDAQ     ""           ""    "Build atidaq-c as built-in library"  "" ON IF USE_COMEDI AND NOT WINRT)
 VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"   "" ON IF USE_OPENCV)
-VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_BLAS/LAPACK)
+VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_LAPACK)
 VP_OPTION(WITH_PUGIXML    ""           ""    "Build pugixml as built-in library"   "" ON)
-VP_OPTION(WITH_QBDEVICE   ""           ""    "Build qbdevice-api as built-in library" "" ON IF USE_CXX11 AND (NOT WINRT) AND (NOT IOS))
-
+VP_OPTION(WITH_QBDEVICE   ""           ""    "Build qbdevice-api as built-in library" "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND (NOT WINRT) AND (NOT IOS))
+VP_OPTION(WITH_TAKKTILE2  ""           ""    "Build Right Hand takktile2 driver as built-in library"   "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND (NOT WIN32) AND (NOT WINRT) AND (NOT IOS))
 
 # Use stb_image as built-in library only when OpenCV, libjpeg and libpng not available
 if(NOT USE_OPENCV AND (NOT USE_PNG OR NOT USE_JPEG))
@@ -707,6 +770,13 @@ if(DOXYGEN_FOUND)
   else()
     set(DOXYGEN_SHOULD_SKIP_THIS "DOXYGEN_SHOULD_SKIP_THIS")
   endif()
+  # - DOXYGEN_USE_MATHJAX corresponding to USE_MATHJAX in the doxy file
+  VP_OPTION(USE_MATHJAX  "" "" "Use MathJax to generate latex formula" "" OFF)
+  if (USE_MATHJAX)
+    set(DOXYGEN_USE_MATHJAX "YES")
+  else()
+    set(DOXYGEN_USE_MATHJAX "NO")
+  endif()
 
   configure_file(${VISP_SOURCE_DIR}/doc/config-doxygen.in
     ${VISP_DOC_DIR}/config-doxygen
@@ -773,7 +843,7 @@ if(UNIX AND NOT ANDROID)
     file(MAKE_DIRECTORY ${VISP_BINARY_DIR}/doc/man/man1)
     add_custom_command(
       OUTPUT ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
-      COMMAND ${GZIP} --best -c ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1 > ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
+      COMMAND ${GZIP} -9 -c ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1 > ${VISP_BINARY_DIR}/doc/man/man1/visp-config.1.gz
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/man1/visp-config.1
     )
     add_custom_target(man ALL
@@ -836,12 +906,17 @@ VP_SET(VISP_HAVE_PNG         TRUE IF (BUILD_MODULE_visp_core AND USE_PNG))
 VP_SET(VISP_HAVE_YARP        TRUE IF (BUILD_MODULE_visp_core AND USE_YARP))
 VP_SET(VISP_HAVE_EIGEN3      TRUE IF (BUILD_MODULE_visp_core AND USE_EIGEN3))
 VP_SET(VISP_HAVE_MKL         TRUE IF (BUILD_MODULE_visp_core AND USE_MKL))
+VP_SET(VISP_HAVE_NETLIB      TRUE IF (BUILD_MODULE_visp_core AND USE_NETLIB))
 VP_SET(VISP_HAVE_OPENBLAS    TRUE IF (BUILD_MODULE_visp_core AND USE_OPENBLAS))
 VP_SET(VISP_HAVE_ATLAS       TRUE IF (BUILD_MODULE_visp_core AND USE_ATLAS))
 VP_SET(VISP_HAVE_GSL         TRUE IF (BUILD_MODULE_visp_core AND USE_GSL))
 VP_SET(VISP_HAVE_LAPACK      TRUE IF (BUILD_MODULE_visp_core AND (USE_LAPACK OR WITH_LAPACK)))
-VP_SET(VISP_HAVE_LAPACK_NETLIB   TRUE IF (BUILD_MODULE_visp_core AND USE_LAPACK_NETLIB))
+VP_SET(VISP_HAVE_LAPACK_ATLAS    TRUE IF (BUILD_MODULE_visp_core AND USE_ATLAS))
 VP_SET(VISP_HAVE_LAPACK_BUILT_IN TRUE IF (BUILD_MODULE_visp_core AND WITH_LAPACK))
+VP_SET(VISP_HAVE_LAPACK_GSL      TRUE IF (BUILD_MODULE_visp_core AND USE_GSL))
+VP_SET(VISP_HAVE_LAPACK_MKL      TRUE IF (BUILD_MODULE_visp_core AND USE_MKL))
+VP_SET(VISP_HAVE_LAPACK_NETLIB   TRUE IF (BUILD_MODULE_visp_core AND USE_NETLIB))
+VP_SET(VISP_HAVE_LAPACK_OPENBLAS TRUE IF (BUILD_MODULE_visp_core AND USE_OPENBLAS))
 VP_SET(VISP_HAVE_PTHREAD     TRUE IF (BUILD_MODULE_visp_core AND USE_PTHREAD))
 VP_SET(VISP_HAVE_XML2        TRUE IF (BUILD_MODULE_visp_core AND USE_XML2))
 VP_SET(VISP_HAVE_PCL         TRUE IF (BUILD_MODULE_visp_core AND USE_PCL))
@@ -899,11 +974,13 @@ VP_SET(VISP_HAVE_FLYCAPTURE  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FLYCAPTUR
 VP_SET(VISP_HAVE_PYLON  TRUE IF (BUILD_MODULE_visp_sensor AND USE_PYLON))
 VP_SET(VISP_HAVE_COMEDI      TRUE IF (BUILD_MODULE_visp_sensor AND USE_COMEDI))
 VP_SET(VISP_HAVE_ATIDAQ      TRUE IF (BUILD_MODULE_visp_sensor AND WITH_ATIDAQ))
+VP_SET(VISP_HAVE_FT_IIT_SDK  TRUE IF (BUILD_MODULE_visp_sensor AND USE_FTIITSDK))
 VP_SET(VISP_HAVE_CLIPPER     TRUE IF (BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_klt AND WITH_CLIPPER))
 VP_SET(VISP_HAVE_APRILTAG    TRUE IF (BUILD_MODULE_visp_detection AND WITH_APRILTAG))
 VP_SET(VISP_HAVE_PUGIXML     TRUE IF (BUILD_MODULE_visp_core AND WITH_PUGIXML))
 VP_SET(VISP_DISABLE_APRILTAG_BIG_FAMILY TRUE IF (CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo" AND CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.5))
 VP_SET(VISP_HAVE_QBDEVICE    TRUE IF (BUILD_MODULE_visp_robot AND WITH_QBDEVICE))
+VP_SET(VISP_HAVE_TAKKTILE2   TRUE IF (BUILD_MODULE_visp_robot AND WITH_TAKKTILE2))
 VP_SET(VISP_HAVE_CATCH2      TRUE IF (BUILD_MODULE_visp_core AND WITH_CATCH2))
 
 VP_SET(VISP_BUILD_SHARED_LIBS TRUE IF BUILD_SHARED_LIBS) # for header vpConfig.h
@@ -961,6 +1038,12 @@ if(USE_OPENCV)
   else()
     message(STATUS "opencv nonfree not found")
     set(VISP_HAVE_OPENCV_VERSION "(0)") # for vpConfig.h
+  endif()
+  if(OPENCV_DNN_FOUND)
+    set(VISP_HAVE_OPENCV_DNN TRUE)  # for header vpConfig.h
+  endif()
+  if(OPENCV_OBJDETECT_FOUND)
+    set(VISP_HAVE_OPENCV_OBJDETECT TRUE)  # for header vpConfig.h
   endif()
 endif()
 
@@ -1390,14 +1473,15 @@ status("    Build with moment combine:"  ENABLE_MOMENTS_COMBINE_MATRICES THEN "y
 # ===================== Optional 3rd parties =====================
 status("")
 status("  Mathematics: ")
-status("    Use MKL:"                USE_MKL            THEN "yes" ELSE "no")
-status("    Use OpenBLAS:"           USE_OPENBLAS       THEN "yes" ELSE "no")
-status("    Use Atlas:"              USE_ATLAS          THEN "yes" ELSE "no")
-status("    Use Netlib Lapack:"      USE_LAPACK_NETLIB  THEN "yes (ver ${LAPACK_C_VERSION})" ELSE "no")
-status("    Use Lapack (built-in):"  WITH_LAPACK        THEN "yes (ver ${LAPACK_VERSION})" ELSE "no")
+status("    Blas/Lapack:"            (USE_LAPACK OR WITH_LAPACK) THEN "yes" ELSE "no")
+status("    \\- Use MKL:"            USE_MKL            THEN "yes" ELSE "no")
+status("    \\- Use OpenBLAS:"       USE_OPENBLAS       THEN "yes" ELSE "no")
+status("    \\- Use Atlas:"          USE_ATLAS          THEN "yes" ELSE "no")
+status("    \\- Use Netlib:"         USE_NETLIB         THEN "yes (ver ${NETLIB_VERSION})" ELSE "no")
+status("    \\- Use GSL:"            USE_GSL            THEN "yes (ver ${GSL_VERSION})" ELSE "no")
+status("    \\- Use Lapack (built-in):" WITH_LAPACK     THEN "yes (ver ${LAPACK_VERSION})" ELSE "no")
 status("    Use Eigen3:"             USE_EIGEN3         THEN "yes (ver ${EIGEN3_VERSION_STRING})" ELSE "no")
 status("    Use OpenCV:"             USE_OPENCV         THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
-status("    Use GSL:"                USE_GSL            THEN "yes (ver ${GSL_VERSION})" ELSE "no")
 status("")
 status("  Simulator: ")
 status("    Ogre simulator: ")
@@ -1438,6 +1522,7 @@ status("    Use Parrot ARSDK:"       USE_ARSDK        THEN "yes" ELSE "no")
 status("    \\-Use ffmpeg:"          USE_FFMPEG       THEN "yes" ELSE "no")
 status("    Use Virtuose:"           USE_VIRTUOSE     THEN "yes" ELSE "no")
 status("    Use qbdevice (built-in):" WITH_QBDEVICE   THEN "yes (ver ${QBDEVICE_VERSION})" ELSE "no")
+status("    Use takktile2 (built-in):" WITH_TAKKTILE2 THEN "yes (ver ${TAKKTILE2_VERSION})" ELSE "no")
 status("")
 status("  GUI: ")
 status("    Use X11:"                USE_X11          THEN "yes" ELSE "no")
@@ -1468,6 +1553,7 @@ status("")
 status("  F/T sensors: ")
 status("    Use atidaq (built-in):"  WITH_ATIDAQ      THEN "yes (ver ${ATIDAQ_VERSION})" ELSE "no")
 status("    Use comedi:"             USE_COMEDI       THEN "yes (ver ${COMEDI_VERSION})" ELSE "no")
+status("    Use IIT SDK:"            USE_FTIITSDK     THEN "yes" ELSE "no")
 status("")
 status("  Detection: ")
 status("    Use zbar:"                      USE_ZBAR                            THEN "yes (ver ${ZBAR_VERSION})" ELSE "no")

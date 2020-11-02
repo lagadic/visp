@@ -242,8 +242,7 @@ vpForceTwistMatrix::vpForceTwistMatrix(const vpRotationMatrix &R) : vpArray2D<do
   \param tux,tuy,tuz : \f$\theta {\bf u}\f$ rotation vector expressed in
   radians used to initialize \f$R\f$.
 */
-vpForceTwistMatrix::vpForceTwistMatrix(const double tx, const double ty, const double tz, const double tux,
-                                       const double tuy, const double tuz)
+vpForceTwistMatrix::vpForceTwistMatrix(double tx, double ty, double tz, double tux, double tuy, double tuz)
   : vpArray2D<double>(6, 6)
 {
   vpTranslationVector T(tx, ty, tz);
@@ -328,7 +327,6 @@ sensor frame into the probe frame :
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpForceTwistMatrix.h>
 #include <visp3/robot/vpRobotViper850.h>
 
@@ -337,7 +335,6 @@ int main()
 #ifdef VISP_HAVE_VIPER850
   vpRobotViper850 robot;
   vpColVector sH = robot.getForceTorque(sH); // Get the force/torque measures
-#endif
 
   // Set the transformation from sensor frame to the probe frame
   vpHomogeneousMatrix pMs;
@@ -349,8 +346,7 @@ int main()
   // Compute the resulting force/torque in the probe frame
   vpColVector pH(6); // Force/torque in the probe frame
   pH = pFs * sH;
-
-  return 0;
+#endif
 }
   \endcode
 

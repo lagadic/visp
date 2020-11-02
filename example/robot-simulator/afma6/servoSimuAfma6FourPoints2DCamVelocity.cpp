@@ -56,8 +56,9 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD)) &&                                        \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI))
+#if ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD)) \
+  && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI)) \
+  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 // We need to use threading capabilities. Thus on Unix-like
 // platforms, the libpthread third-party library need to be
@@ -338,7 +339,6 @@ int main(int argc, const char **argv)
 
     // Display task information
     task.print();
-    task.kill();
 
     std::cout << "Final robot position with respect to the object frame:\n";
     cMo.print();
@@ -356,21 +356,28 @@ int main(int argc, const char **argv)
   }
   return EXIT_SUCCESS;
 }
-#else
+#elif !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 int main()
 {
-#if (!(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)))
-  std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..." << std::endl;
+  std::cout << "You do not have X11, or GDI (Graphical Device Interface) of OpenCV functionalities to display images..." << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
+  return EXIT_SUCCESS;
+}
+#elif !(defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+int main()
+{
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+}
 #else
+int main()
+{
   std::cout << "You do not have threading capabilities" << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install pthread, configure again ViSP using cmake and build again this example" << std::endl;
-#endif
   return EXIT_SUCCESS;
 }
-
 #endif

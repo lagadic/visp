@@ -147,37 +147,37 @@ private:
 
 public:
   vpPlot();
-  vpPlot(const unsigned int nbGraph, const unsigned int height = 700, const unsigned int width = 700, const int x = -1,
-         const int y = -1, const std::string &title = "");
+  vpPlot(unsigned int nbGraph, unsigned int height = 700, unsigned int width = 700, int x = -1,
+         int y = -1, const std::string &title = "");
   virtual ~vpPlot();
-  void getPixelValue(const bool block);
-  void init(const unsigned int nbGraph, const unsigned int height = 700, const unsigned int width = 700,
-            const int x = -1, const int y = -1, const std::string &title = "");
+  void getPixelValue(bool block);
+  void init(unsigned int nbGraph, unsigned int height = 700, unsigned int width = 700,
+            int x = -1, int y = -1, const std::string &title = "");
   void initGraph(unsigned int graphNum, unsigned int curveNbr);
 
-  void initRange(const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax);
-  void initRange(const unsigned int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin,
+  void initRange(unsigned int graphNum, double xmin, double xmax, double ymin, double ymax);
+  void initRange(unsigned int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin,
                  double zmax);
   void navigate(void);
 
-  void plot(const unsigned int graphNum, const unsigned int curveNum, const double x, const double y);
-  void plot(const unsigned int graphNum, const double x, const vpColVector &v_y);
-  void plot(const unsigned int graphNum, const double x, const vpRowVector &v_y);
-  void plot(const unsigned int graphNum, const double x, const vpPoseVector &v_y);
-  void plot(const unsigned int graphNum, const double x, const vpTranslationVector &v_y);
-  void plot(const unsigned int graphNum, const double x, const vpRotationVector &v_y);
-  vpMouseButton::vpMouseButtonType plot(const unsigned int graphNum, const unsigned int curveNum, const double x,
-                                        const double y, const double z);
-  vpMouseButton::vpMouseButtonType plot(const unsigned int graphNum, const double x, const vpColVector &v_y,
+  void plot(unsigned int graphNum, unsigned int curveNum, double x, double y);
+  void plot(unsigned int graphNum, double x, const vpColVector &v_y);
+  void plot(unsigned int graphNum, double x, const vpRowVector &v_y);
+  void plot(unsigned int graphNum, double x, const vpPoseVector &v_y);
+  void plot(unsigned int graphNum, double x, const vpTranslationVector &v_y);
+  void plot(unsigned int graphNum, double x, const vpRotationVector &v_y);
+  vpMouseButton::vpMouseButtonType plot(unsigned int graphNum, unsigned int curveNum, double x,
+                                        double y, double z);
+  vpMouseButton::vpMouseButtonType plot(unsigned int graphNum, double x, const vpColVector &v_y,
                                         const vpColVector &v_z);
 
-  void resetPointList(const unsigned int graphNum);
-  void resetPointList(const unsigned int graphNum, const unsigned int curveNum);
+  void resetPointList(unsigned int graphNum);
+  void resetPointList(unsigned int graphNum, unsigned int curveNum);
 
-  void saveData(const unsigned int graphNum, const std::string &dataFile, const std::string &title_prefix = "");
-  void setColor(const unsigned int graphNum, const unsigned int curveNum, vpColor color);
-  void setGraphThickness(const unsigned int graphNum, const unsigned int thickness);
-  void setGridThickness(const unsigned int graphNum, const unsigned int thickness);
+  void saveData(unsigned int graphNum, const std::string &dataFile, const std::string &title_prefix = "");
+  void setColor(unsigned int graphNum, unsigned int curveNum, vpColor color);
+  void setGraphThickness(unsigned int graphNum, unsigned int thickness);
+  void setGridThickness(unsigned int graphNum, unsigned int thickness);
   /*!
     Set the font of the characters. The display should be initialized before.
 
@@ -189,12 +189,12 @@ public:
     if (display->isInitialised())
       vpDisplay::setFont(I, font.c_str());
   }
-  void setLegend(const unsigned int graphNum, const unsigned int curveNum, const std::string &legend);
-  void setTitle(const unsigned int graphNum, const std::string &title);
-  void setUnitX(const unsigned int graphNum, const std::string &unitx);
-  void setUnitY(const unsigned int graphNum, const std::string &unity);
-  void setUnitZ(const unsigned int graphNum, const std::string &unitz);
-  void setThickness(const unsigned int graphNum, const unsigned int curveNum, const unsigned int thickness);
+  void setLegend(unsigned int graphNum, unsigned int curveNum, const std::string &legend);
+  void setTitle(unsigned int graphNum, const std::string &title);
+  void setUnitX(unsigned int graphNum, const std::string &unitx);
+  void setUnitY(unsigned int graphNum, const std::string &unity);
+  void setUnitZ(unsigned int graphNum, const std::string &unitz);
+  void setThickness(unsigned int graphNum, unsigned int curveNum, unsigned int thickness);
 
 private:
   void initNbGraph(unsigned int nbGraph);

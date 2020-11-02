@@ -1044,7 +1044,7 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
   for (unsigned int p = 0; p < nbPose; p++) {
     table_cal[p].cam_dist = cam_est;
     // perViewError =
-    // table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_dist, cam_est);
+     table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_dist, cam_est);
     // totalError += perViewError*perViewError * table_cal[p].npt;
     // totalPoints += (int)table_cal[p].npt;
   }

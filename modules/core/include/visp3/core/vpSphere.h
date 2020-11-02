@@ -53,47 +53,101 @@
 /*!
   \class vpSphere
   \ingroup group_core_geometry
-  \brief Class that defines what is a sphere.
+  \brief Class that defines a 3D sphere in the object frame and allows forward projection of a 3D sphere in the
+  camera frame and in the 2D image plane by perspective projection.
+  All the parameters must be set in meter.
 
-  Forward projection of a sphere.
+  A sphere has the followings parameters:
+  - **in the object frame**: the 3D coordinates oX, oY, oZ of the center and radius R. These
+  parameters registered in vpForwardProjection::oP internal 4-dim vector are set using the constructors vpSphere(double oX, double oY, double oZ, double R),
+  vpSphere(const vpColVector &oP) or the fonctions setWorldCoordinates(double oX, double oY, double oZ, double R)
+  and setWorldCoordinates(const vpColVector &oP).
+  To get theses parameters use get_oP().
+
+  - **in the camera frame**: the coordinates cX, cY, cZ of the center and radius R. These
+  parameters registered in vpTracker::cP internal 4-dim vector are computed using
+  changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const or changeFrame(const vpHomogeneousMatrix &cMo).
+  These parameters could be retrieved using getX(), getY(), getZ() and getR().
+  To get theses parameters use get_cP().
+
+  - **in the image plane**: here we consider the parameters of the ellipse corresponding
+  to the perspective projection of the 3D sphere. The parameters are the ellipse centroid (x, y)
+  and n20, n11, n02 which are the second order centered moments of
+  the ellipse normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where
+  \f$\mu_{ij}\f$ are the centered moments and a the area).
+  These parameters are registered in vpTracker::p internal 5-dim vector and computed using projection() and
+  projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using get_x(), get_y(), get_n20(),
+  get_n11() and get_n02(). They correspond to 2D normalized sphere parameters with values expressed in meters.
+  To get theses parameters use get_p().
 */
 class VISP_EXPORT vpSphere : public vpForwardProjection
 {
 public:
-  void init();
   vpSphere();
+  explicit vpSphere(const vpColVector &oP);
+  vpSphere(double oX, double oY, double oZ, double R);
   virtual ~vpSphere();
 
-public:
-  explicit vpSphere(const vpColVector &oP);
-  vpSphere(const double X0, const double Y0, const double Z0, const double R);
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const;
+  void changeFrame(const vpHomogeneousMatrix &cMo);
 
-  void setWorldCoordinates(const vpColVector &oP);
-  void setWorldCoordinates(const double X0, const double Y0, const double Z0, const double R);
+  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
+               unsigned int thickness = 1);
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green, unsigned int thickness = 1);
+
+  vpSphere *duplicate() const;
 
   double get_x() const { return p[0]; }
   double get_y() const { return p[1]; }
-  double get_mu20() const { return p[2]; }
-  double get_mu11() const { return p[3]; }
-  double get_mu02() const { return p[4]; }
+
+  double get_n20() const { return p[2]; }
+  double get_n11() const { return p[3]; }
+  double get_n02() const { return p[4]; }
 
   double getX() const { return cP[0]; }
   double getY() const { return cP[1]; }
   double getZ() const { return cP[2]; }
-
   double getR() const { return cP[3]; }
 
   void projection();
-  void projection(const vpColVector &cP, vpColVector &p);
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP);
-  void changeFrame(const vpHomogeneousMatrix &cMo);
+  void projection(const vpColVector &cP, vpColVector &p) const;
 
-  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               const unsigned int thickness = 1);
-  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
+  void setWorldCoordinates(const vpColVector &oP);
+  void setWorldCoordinates(double oX, double oY, double oZ, double R);
 
-  vpSphere *duplicate() const;
+protected:
+  void init();
+
+public:
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  /*!
+   * \deprecated You should rather use get_n20().
+   * This function is incorrectly named and is confusing since it
+   * returns second order centered moments of the ellipse normalized
+   * by its area that corresponds to \f$n_20 = mu_20/a\f$.
+   */
+  vp_deprecated double get_mu20() const { return p[2]; }
+  /*!
+   * \deprecated You should rather use get_n11().
+   * This function is incorrectly named and is confusing since it
+   * returns second order centered moments of the ellipse normalized
+   * by its area that corresponds to \f$n_11 = mu_11/a\f$.
+   */
+  vp_deprecated double get_mu11() const { return p[3]; }
+  /*!
+   * \deprecated You should rather use get_n02().
+   * This function is incorrectly named and is confusing since it
+   * returns second order centered moments of the ellipse normalized
+   * by its area that corresponds to \f$n_02 = mu_02/a\f$.
+   */
+  vp_deprecated double get_mu02() const { return p[4]; }
+  //@}
+#endif
 };
 
 #endif

@@ -47,7 +47,8 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)
+#if (defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)) \
+  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -531,7 +532,6 @@ int main(int argc, const char **argv)
         cam1.initPersProjWithoutDistortion(547, 542, 338, 234);
         cam2.initPersProjWithoutDistortion(547, 542, 338, 234);
 
-        vpMe me;
         me.setMaskSize(5);
         me.setMaskNumber(180);
         me.setRange(7);
@@ -541,7 +541,6 @@ int main(int argc, const char **argv)
         me.setSampleStep(4);
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-        vpKltOpencv klt;
         klt.setMaxFeatures(10000);
         klt.setWindowSize(5);
         klt.setQuality(0.01);
@@ -656,14 +655,17 @@ int main(int argc, const char **argv)
   }
 }
 
-#else
-
+#elif !(defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY))
 int main()
 {
-  std::cout << "visp_mbt, visp_gui modules and OpenCV are required to run "
-               "this example."
+  std::cout << "Cannot run this example: visp_mbt, visp_gui modules are required."
             << std::endl;
   return EXIT_SUCCESS;
 }
-
+#else
+int main()
+{
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+}
 #endif

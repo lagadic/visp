@@ -35,6 +35,8 @@
 #ifndef _vpDetectorAprilTag_h_
 #define _vpDetectorAprilTag_h_
 
+#include <map>
+
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_APRILTAG
@@ -244,14 +246,16 @@ public:
 
   vpDetectorAprilTag(const vpAprilTagFamily &tagFamily = TAG_36h11,
                      const vpPoseEstimationMethod &poseEstimationMethod = HOMOGRAPHY_VIRTUAL_VS);
+  vpDetectorAprilTag(const vpDetectorAprilTag &o);
+  vpDetectorAprilTag &operator=(vpDetectorAprilTag o);
   virtual ~vpDetectorAprilTag();
 
   bool detect(const vpImage<unsigned char> &I);
-  bool detect(const vpImage<unsigned char> &I, const double tagSize, const vpCameraParameters &cam,
+  bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
               std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2=NULL,
               std::vector<double> *projErrors=NULL, std::vector<double> *projErrors2=NULL);
 
-  bool getPose(size_t tagIndex, const double tagSize, const vpCameraParameters &cam,
+  bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam,
                vpHomogeneousMatrix &cMo, vpHomogeneousMatrix *cMo2=NULL,
                double *projError=NULL, double *projError2=NULL);
 
@@ -260,23 +264,30 @@ public:
   */
   inline vpPoseEstimationMethod getPoseEstimationMethod() const { return m_poseEstimationMethod; }
 
-  void setAprilTagDecodeSharpening(const double decodeSharpening);
-  void setAprilTagNbThreads(const int nThreads);
+  std::vector<std::vector<vpImagePoint> > getTagsCorners() const;
+  std::vector<int> getTagsId() const;
+  std::vector<std::vector<vpPoint> > getTagsPoints3D(const std::vector<int>& tagsId, const std::map<int, double>& tagsSize) const;
+
+  void setAprilTagDecodeSharpening(double decodeSharpening);
+  void setAprilTagFamily(const vpAprilTagFamily &tagFamily);
+  void setAprilTagNbThreads(int nThreads);
   void setAprilTagPoseEstimationMethod(const vpPoseEstimationMethod &poseEstimationMethod);
-  void setAprilTagQuadDecimate(const float quadDecimate);
-  void setAprilTagQuadSigma(const float quadSigma);
-  void setAprilTagRefineDecode(const bool refineDecode);
-  void setAprilTagRefineEdges(const bool refineEdges);
-  void setAprilTagRefinePose(const bool refinePose);
+  void setAprilTagQuadDecimate(float quadDecimate);
+  void setAprilTagQuadSigma(float quadSigma);
+  void setAprilTagRefineDecode(bool refineDecode);
+  void setAprilTagRefineEdges(bool refineEdges);
+  void setAprilTagRefinePose(bool refinePose);
 
   /*! Allow to enable the display of overlay tag information in the windows
    * (vpDisplay) associated to the input image. */
-  inline void setDisplayTag(const bool display, const vpColor &color=vpColor::none,
-                            const unsigned int thickness=2) {
+  inline void setDisplayTag(bool display, const vpColor &color=vpColor::none,
+                            unsigned int thickness=2) {
     m_displayTag = display;
     m_displayTagColor = color;
     m_displayTagThickness = thickness;
   }
+
+  friend void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2);
 
   void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame);
 
@@ -288,8 +299,7 @@ protected:
   vpAprilTagFamily m_tagFamily;
 
 private:
-  vpDetectorAprilTag(const vpDetectorAprilTag &);            // noncopyable
-  vpDetectorAprilTag &operator=(const vpDetectorAprilTag &); //
+  vpCameraParameters m_defaultCam;
 
   // PIMPL idiom
   class Impl;

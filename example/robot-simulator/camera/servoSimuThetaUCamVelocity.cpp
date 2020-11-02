@@ -66,7 +66,7 @@ void usage(const char *name, const char *badparam);
 bool getOptions(int argc, const char **argv);
 /*!
 
-Print the program options.
+  Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
@@ -95,7 +95,7 @@ OPTIONS:                                               Default\n\
 
 /*!
 
-Set the program options.
+  Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
@@ -113,12 +113,10 @@ bool getOptions(int argc, const char **argv)
     case 'h':
       usage(argv[0], NULL);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -135,6 +133,7 @@ bool getOptions(int argc, const char **argv)
 
 int main(int argc, const char **argv)
 {
+#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     // Read the command line options
     if (getOptions(argc, argv) == false) {
@@ -213,10 +212,15 @@ int main(int argc, const char **argv)
 
     // Display task information
     task.print();
-    task.kill();
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
+#else
+  (void)argc;
+  (void)argv;
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

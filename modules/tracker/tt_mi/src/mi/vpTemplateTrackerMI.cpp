@@ -70,7 +70,6 @@ void vpTemplateTrackerMI::setBspline(const vpBsplineType &newbs)
   dPrt = new double[Ncb * Ncb * (int)(nbParam)];
   d2Prt = new double[Ncb * Ncb * (int)(nbParam * nbParam)];
 
-  /*std::cout<<Nc*Nc*influBspline<<std::endl;std::cout<<Nc*Nc*nbParam*influBspline<<std::endl;*/
   PrtD = new double[Nc * Nc * influBspline];
   dPrtD = new double[Nc * Nc * (int)(nbParam)*influBspline];
   PrtTout = new double[Nc * Nc * influBspline * (1 + (int)(nbParam + nbParam * nbParam))];
@@ -158,7 +157,6 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
   memset(Prt, 0, Ncb_ * Ncb_ * sizeof(double));
   memset(PrtD, 0, Nc_ * Nc_ * influBspline_ * sizeof(double));
 
-  // Warp->ComputeMAtWarp(tp);
   Warp->computeCoeff(tp);
   for (unsigned int point = 0; point < templateSize; point++) {
     X1[0] = ptTemplate[point].x;
@@ -169,7 +167,6 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
     double j2 = X2[0];
     double i2 = X2[1];
 
-    // Tij=Templ[i-(int)Triangle->GetMiny()][j-(int)Triangle->GetMinx()];
     if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
       Nbpoint++;
 
@@ -187,7 +184,7 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
       double er = IW_Nc - cr;
       double et = Tij_Nc - ct;
 
-      // Calcul de l'histogramme joint par interpolation bilinÃaire
+      // Calcul de l'histogramme joint par interpolation bilineaire
       // (Bspline ordre 1)
       vpTemplateTrackerMIBSpline::PutPVBsplineD(PrtD, cr, er, ct, et, Nc, 1., bspline);
     }
@@ -226,7 +223,6 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
   }
 
   for (unsigned int r = 0; r < Ncb_; r++) {
-    // if(Pr[r]!=0)
     if (std::fabs(Pr[r]) > std::numeric_limits<double>::epsilon()) {
       MI -= Pr[r] * log(Pr[r]);
     }
@@ -235,7 +231,6 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
     }
     for (unsigned int t = 0; t < Ncb_; t++) {
       unsigned int r_Ncb_t_ = r * Ncb_ + t;
-      // if(Prt[r*Ncb+t]!=0)
       if (std::fabs(Prt[r_Ncb_t_]) > std::numeric_limits<double>::epsilon()) {
         MI += Prt[r_Ncb_t_] * log(Prt[r_Ncb_t_]);
       }
@@ -247,8 +242,8 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
 
 double vpTemplateTrackerMI::getNormalizedCost(const vpImage<unsigned char> &I, const vpColVector &tp)
 {
-  // Attention, cette version calculée de la NMI ne pourra pas atteindre le
-  // maximum de 2 Ceci est du au fait que par defaut, l'image est floutée dans
+  // Attention, cette version calculee de la NMI ne pourra pas atteindre le
+  // maximum de 2. Ceci est du au fait que par defaut, l'image est floutee dans
   // vpTemplateTracker::initTracking()
 
   double MI = 0;
@@ -427,10 +422,8 @@ void vpTemplateTrackerMI::computeHessien(vpMatrix &Hessian)
   unsigned int nbParam2 = nbParam * nbParam;
 
   for (unsigned int t = 0; t < Ncb_; t++) {
-    // if(Pt[t]!=0)
     if (Pt[t] > seuilevitinf) {
       for (unsigned int r = 0; r < Ncb_; r++) {
-        // if(Prt[r*Ncb+t]!=0)
         if (Prt[r * Ncb_ + t] > seuilevitinf) {
           unsigned int r_Ncb_t_ = r * Ncb_ + t;
           unsigned int r_Ncb_t_nbParam_ = r_Ncb_t_ * nbParam ;
@@ -463,7 +456,6 @@ void vpTemplateTrackerMI::computeHessien(vpMatrix &Hessian)
 void vpTemplateTrackerMI::computeHessienNormalized(vpMatrix &Hessian)
 {
   double seuilevitinf = 1e-200;
-  // double dtemp;
   double u = 0, v = 0, B = 0;
   m_du.resize(nbParam);
   m_dv.resize(nbParam);
@@ -495,10 +487,8 @@ void vpTemplateTrackerMI::computeHessienNormalized(vpMatrix &Hessian)
   unsigned int nbParam2 = nbParam * nbParam;
 
   for (unsigned int t = 0; t < Ncb_; t++) {
-    // if(Pt[t]!=0)
     if (Pt[t] > seuilevitinf) {
       for (unsigned int r = 0; r < Ncb_; r++) {
-        // if(Prt[r*Ncb+t]!=0)
         unsigned int r_Ncb_t_ = r * Ncb_ + t;
         if (Prt[r_Ncb_t_] > seuilevitinf) {
           unsigned int r_Ncb_t_nbParam_ = r_Ncb_t_ * nbParam;
@@ -508,7 +498,6 @@ void vpTemplateTrackerMI::computeHessienNormalized(vpMatrix &Hessian)
           }
           double log_Pt_Pr_ = log(Pt[t] * Pr[r]);
           double log_Prt_ = log(Prt[r_Ncb_t_]);
-          // dtemp=1.+log(Prt[r*Ncb+t]/Pt[t]);
           // u = som(Pxy.logPxPy)
           u += Prt[r_Ncb_t_] * log_Pt_Pr_;
           // v = som(Pxy.logPxy)
@@ -561,7 +550,6 @@ void vpTemplateTrackerMI::computeGradient()
   unsigned int Ncb_ = static_cast<unsigned int>(Ncb);
   double dtemp;
   for (unsigned int t = 0; t < Ncb_; t++) {
-    // if(Pt[t]!=0)
     if (Pt[t] > seuilevitinf) {
       for (unsigned int r = 0; r < Ncb_; r++) {
         unsigned int r_Ncb_t_ = r * Ncb_ + t;
@@ -619,7 +607,6 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc, cons
   memset(tPrt, 0, tNcb * tNcb * sizeof(double));
   memset(tPrtD, 0, nc_ * nc_ * tinfluBspline * sizeof(double));
 
-  // Warp->ComputeMAtWarp(tp);
   Warp->computeCoeff(tp);
   for (unsigned int point = 0; point < templateSize; point++) {
     X1[0] = ptTemplate[point].x;
@@ -630,8 +617,7 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc, cons
     double j2 = X2[0];
     double i2 = X2[1];
 
-    // Tij=Templ[i-(int)Triangle->GetMiny()][j-(int)Triangle->GetMinx()];
-    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth()) - 1) {
+     if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth()) - 1) {
       Nbpoint++;
 
       double Tij = ptTemplate[point].val;
@@ -675,7 +661,6 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc, cons
   } else {
     for (unsigned int r = 0; r < tNcb; r++)
       for (unsigned int t = 0; t < tNcb; t++)
-        // printf("%f ",tPrt[r*tNcb+t]);
         tPrt[r * tNcb + t] = tPrt[r * tNcb + t] / Nbpoint;
     // calcul Pr;
     memset(tPr, 0, tNcb * sizeof(double));
@@ -691,19 +676,16 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc, cons
         tPt[t] += tPrt[r * tNcb + t];
     }
     for (unsigned int r = 0; r < tNcb; r++)
-      // if(tPr[r]!=0)
       if (std::fabs(tPr[r]) > std::numeric_limits<double>::epsilon())
         MI -= tPr[r] * log(tPr[r]);
 
     for (unsigned int t = 0; t < tNcb; t++)
-      // if(tPt[t]!=0)
-      if (std::fabs(tPt[t]) > std::numeric_limits<double>::epsilon())
+       if (std::fabs(tPt[t]) > std::numeric_limits<double>::epsilon())
         MI -= tPt[t] * log(tPt[t]);
 
     for (unsigned int r = 0; r < tNcb; r++)
       for (unsigned int t = 0; t < tNcb; t++)
-        // if(tPrt[r*tNcb+t]!=0)
-        if (std::fabs(tPrt[r * tNcb + t]) > std::numeric_limits<double>::epsilon())
+         if (std::fabs(tPrt[r * tNcb + t]) > std::numeric_limits<double>::epsilon())
           MI += tPrt[r * tNcb + t] * log(tPrt[r * tNcb + t]);
   }
   delete[] tPrtD;
@@ -740,7 +722,6 @@ double vpTemplateTrackerMI::getMI256(const vpImage<unsigned char> &I, const vpCo
     double j2 = X2[0];
     double i2 = X2[1];
 
-    // Tij=Templ[i-(int)Triangle->GetMiny()][j-(int)Triangle->GetMinx()];
     if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth()) - 1) {
       Nbpoint++;
 
@@ -767,14 +748,11 @@ double vpTemplateTrackerMI::getMI256(const vpImage<unsigned char> &I, const vpCo
 
   for (unsigned int t = 0; t < 256; t++) {
     for (unsigned int r = 0; r < 256; r++) {
-      // if(Prt256[r][t]!=0)
       if (std::fabs(Prt256[r][t]) > std::numeric_limits<double>::epsilon())
         MI += Prt256[r][t] * log(Prt256[r][t]);
     }
-    // if(Pt256[t]!=0)
     if (std::fabs(Pt256[t]) > std::numeric_limits<double>::epsilon())
       MI += -Pt256[t] * log(Pt256[t]);
-    // if(Pr256[t]!=0)
     if (std::fabs(Pr256[t]) > std::numeric_limits<double>::epsilon())
       MI += -Pr256[t] * log(Pr256[t]);
   }

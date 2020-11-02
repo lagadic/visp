@@ -324,8 +324,6 @@ int main()
         v = 0;
         // Stop robot
         robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-        // Kill the task
-        task.kill();
         return 0;
       }
 
@@ -368,15 +366,10 @@ int main()
     // Display task information
     task.print();
 
-    // Kill the task
-    task.kill();
-
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {
     flog.close(); // Close the log file
-    // Kill the task
-    task.kill();
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

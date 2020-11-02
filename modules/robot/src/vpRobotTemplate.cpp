@@ -92,22 +92,22 @@ vpRobotTemplate::~vpRobotTemplate()
 /*!
   Get the robot Jacobian expressed in the end-effector frame.
 
-  \param[out] eJe : End-effector frame Jacobian.
+  \param[out] eJe_ : End-effector frame Jacobian.
 */
-void vpRobotTemplate::get_eJe(vpMatrix &eJe)
+void vpRobotTemplate::get_eJe(vpMatrix &eJe_)
 {
-  (void) eJe;
+  (void) eJe_;
   std::cout << "Not implemented ! " << std::endl;
 }
 
 /*!
   Get the robot Jacobian expressed in the robot reference frame.
 
-  \param[out] fJe : Base (or reference) frame Jacobian.
+  \param[out] fJe_ : Base (or reference) frame Jacobian.
 */
-void vpRobotTemplate::get_fJe(vpMatrix &fJe)
+void vpRobotTemplate::get_fJe(vpMatrix &fJe_)
 {
-  (void) fJe;
+  (void) fJe_;
   std::cout << "Not implemented ! " << std::endl;
 }
 

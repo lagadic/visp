@@ -11,24 +11,28 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
-  std::string videoname = "bruegel.mpg";
+  std::string opt_videoname = "bruegel.mpg";
+  unsigned int opt_subsample = 1;
 
   for (int i = 0; i < argc; i++) {
     if (std::string(argv[i]) == "--videoname")
-      videoname = std::string(argv[i + 1]);
-    else if (std::string(argv[i]) == "--help") {
-      std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--help]\n" << std::endl;
+      opt_videoname = std::string(argv[i + 1]);
+    else if (std::string(argv[i]) == "--subsample")
+      opt_subsample = static_cast<unsigned int>(std::atoi(argv[i + 1]));
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout << "\nUsage: " << argv[0] << " [--videoname <video name>] [--subsample <scale factor>] [--help] [-h]\n" << std::endl;
       return 0;
     }
   }
 
-  std::cout << "Video name: " << videoname << std::endl;
+  std::cout << "Video name: " << opt_videoname << std::endl;
 
-  vpImage<unsigned char> I;
+  vpImage<unsigned char> I, Iacq;
 
   vpVideoReader g;
-  g.setFileName(videoname);
-  g.open(I);
+  g.setFileName(opt_videoname);
+  g.open(Iacq);
+  Iacq.subsample(opt_subsample, opt_subsample, I);
 
 #if defined(VISP_HAVE_X11)
   vpDisplayX display;
@@ -39,7 +43,7 @@ int main(int argc, char **argv)
 #else
   std::cout << "No image viewer is available..." << std::endl;
 #endif
-
+  display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
   display.init(I, 100, 100, "Template tracker");
   vpDisplay::display(I);
   vpDisplay::flush(I);
@@ -59,7 +63,9 @@ int main(int argc, char **argv)
   //! [Init]
 
   while (1) {
-    g.acquire(I);
+    double t = vpTime::measureTimeMs();
+    g.acquire(Iacq);
+    Iacq.subsample(opt_subsample, opt_subsample, I);
     vpDisplay::display(I);
 
     //! [Track]
@@ -76,10 +82,15 @@ int main(int argc, char **argv)
     tracker.display(I, vpColor::red);
     //! [Display]
 
+    vpDisplay::displayText(I, 10*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I),
+                           "Click to quit", vpColor::red);
     if (vpDisplay::getClick(I, false))
       break;
 
     vpDisplay::flush(I);
+    if (! g.isVideoFormat()) {
+      vpTime::wait(t, 40);
+    }
   }
 #else
   (void)argc;

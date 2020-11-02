@@ -129,7 +129,7 @@ bool crossesEastBorder(const vpImage<int> &I, bool checked[8], const vpImagePoin
   return I[i][j] != 0 && ((unsigned int)point.get_j() == I.getWidth() - 1 || b);
 }
 
-void addContourPoint(vpImage<int> &I, vp::vpContour *border, const vpImagePoint &point, bool checked[8], const int nbd)
+void addContourPoint(vpImage<int> &I, vp::vpContour *border, const vpImagePoint &point, bool checked[8], int nbd)
 {
   border->m_points.push_back(vpImagePoint(point.get_i() - 1, point.get_j() - 1)); // remove 1-pixel padding
 
@@ -144,7 +144,7 @@ void addContourPoint(vpImage<int> &I, vp::vpContour *border, const vpImagePoint 
   } // Otherwise leave it alone
 }
 
-void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, vp::vpContour *border, const int nbd)
+void followBorder(vpImage<int> &I, const vpImagePoint &ij, vpImagePoint &i2j2, vp::vpContour *border, int nbd)
 {
   vpDirection dir;
   if (!fromTo(ij, i2j2, dir)) {
@@ -222,7 +222,7 @@ bool isHoleBorderStart(const vpImage<int> &I, unsigned int i, unsigned int j)
   return (I[i][j] >= 1 && (j == I.getWidth() - 1 || I[i][j + 1] == 0));
 }
 
-void getContoursList(const vp::vpContour &root, const int level, vp::vpContour &contour_list)
+void getContoursList(const vp::vpContour &root, int level, vp::vpContour &contour_list)
 {
   if (level > 0) {
     vp::vpContour *contour_node = new vp::vpContour;

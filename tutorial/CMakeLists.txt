@@ -59,7 +59,6 @@ visp_add_subdirectory(tracking/model-based/old/edges       REQUIRED_DEPS visp_co
 visp_add_subdirectory(tracking/model-based/old/generic     REQUIRED_DEPS visp_core visp_mbt visp_io visp_gui)
 visp_add_subdirectory(tracking/model-based/old/hybrid      REQUIRED_DEPS visp_core visp_mbt visp_klt visp_io visp_gui)
 visp_add_subdirectory(tracking/model-based/old/keypoint    REQUIRED_DEPS visp_core visp_mbt visp_klt visp_io visp_gui)
-visp_add_subdirectory(tracking/model-based/old/stereo-deprecated REQUIRED_DEPS visp_core visp_mbt visp_io visp_gui)
 visp_add_subdirectory(tracking/template-tracker            REQUIRED_DEPS visp_core visp_tt visp_io visp_gui)
 visp_add_subdirectory(tracking/moving-edges                REQUIRED_DEPS visp_core visp_me visp_io visp_gui visp_sensor)
 visp_add_subdirectory(visual-servo/ibvs                    REQUIRED_DEPS visp_core visp_robot visp_vs visp_blob visp_vision visp_io visp_gui visp_ar)

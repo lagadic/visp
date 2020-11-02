@@ -247,13 +247,14 @@ public:
     moments are not computed.
 
     Computed moment are vpDot::m00, vpDot::m10, vpDot::m01, vpDot::m11,
-    vpDot::m20, vpDot::m02.
+    vpDot::m20, vpDot::m02 and second order centereed moments vpDot::mu11,
+    vpDot::mu20, vpDot::mu02 computed with respect to the blob centroid.
 
     The coordinates of the region's centroid (u, v) can be computed from the
-    moments by \f$u=\frac{m10}{m00}\f$ and  \f$v=\frac{m01}{m00}\f$.
+    moments by \f$u=\frac{m10}{m00}\f$ and \f$v=\frac{m01}{m00}\f$.
 
   */
-  void setComputeMoments(const bool activate) { compute_moment = activate; }
+  void setComputeMoments(bool activate) { compute_moment = activate; }
 
   /*!
     Set the percentage of sampled points that are considered non conform
@@ -291,7 +292,7 @@ public:
 
     \sa setGraphicsThickness()
   */
-  void setGraphics(const bool activate) { graphics = activate; }
+  void setGraphics(bool activate) { graphics = activate; }
   /*!
     Modify the default thickness that is set to 1 of the drawings in overlay
     when setGraphics() is enabled.
@@ -397,17 +398,17 @@ public:
 
      \sa setComputeMoments()
          */
-  double mu11; /*!< \f$ \mu_{11} \f$ is a second order central moments defined
+  double mu11; /*!< \f$ \mu_{11} \f$ is a second order centered moment defined
      by: \f$ \mu_{11} = m_{11} - \frac{m_{10}}{m_{00}}m_{01} \f$
 
      \sa setComputeMoments()
          */
-  double mu20; /*!< \f$ \mu_{20} \f$ is a second order central moments defined
+  double mu20; /*!< \f$ \mu_{20} \f$ is a second order centered moment defined
      by: \f$ \mu_{20} = m_{20} - \frac{m_{10}}{m_{00}}m_{10} \f$
 
      \sa setComputeMoments()
          */
-  double mu02; /*!< \f$ \mu_{02} \f$ is a second order central moments defined
+  double mu02; /*!< \f$ \mu_{02} \f$ is a second order centered moments defined
      by: \f$ \mu_{02} = m_{02} - \frac{m_{01}}{m_{00}}m_{01} \f$
 
      \sa setComputeMoments()

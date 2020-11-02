@@ -42,6 +42,7 @@
 
 set(VIRTUOSE_API $ENV{VIRTUOSE_HOME})
 if(UNIX)
+  list(APPEND VIRTUOSE_API /home/soft/virtuose/VirtuoseAPI_v4_03)
   list(APPEND VIRTUOSE_API /home/soft/virtuose/VirtuoseAPI_v3_98)
   list(APPEND VIRTUOSE_API /home/soft/virtuose/Livraison_3_97/VirtuoseAPI_v3_97)
   list(APPEND VIRTUOSE_API /home/soft/virtuose/Livraison_3_90/VirtuoseAPI_v3_93)
@@ -55,6 +56,7 @@ if(UNIX)
     list(APPEND VIRTUOSE_ARCH "x86")
   endif()
 elseif(MSVC)
+  list(APPEND VIRTUOSE_API "C:/VirtuoseAPI_v4_03")
   list(APPEND VIRTUOSE_API "C:/VirtuoseAPI_v3_98")
   list(APPEND VIRTUOSE_API "C:/VirtuoseAPI_v3_97")
   list(APPEND VIRTUOSE_API "C:/VirtuoseAPI_v3_93")
@@ -79,6 +81,10 @@ elseif(MSVC)
     set(VIRTUOSE_MSVC_RUNTIME VC2013)
   elseif(MSVC_VERSION EQUAL 1900)
     set(VIRTUOSE_MSVC_RUNTIME VC2015)
+  elseif(MSVC_VERSION MATCHES "^191[0-9]$")
+    set(VIRTUOSE_MSVC_RUNTIME VC2017)
+  elseif(MSVC_VERSION MATCHES "^192[0-9]$")
+    set(VIRTUOSE_MSVC_RUNTIME VC2019)
   endif()
 
 else()
@@ -129,8 +135,9 @@ elseif(MSVC)
   )
   
   if(VIRTUOSE_LIBRARIES_DEBUG AND VIRTUOSE_LIBRARIES_RELEASE)
-    set(VIRTUOSE_LIBRARIES debug     ${VIRTUOSE_LIBRARIES_DEBUG}
-	                       optimized ${VIRTUOSE_LIBRARIES_RELEASE})
+    set(VIRTUOSE_LIBRARIES
+      debug ${VIRTUOSE_LIBRARIES_DEBUG}
+      optimized ${VIRTUOSE_LIBRARIES_RELEASE})
 	                       
   elseif(VIRTUOSE_LIBRARIES_DEBUG)
     set(VIRTUOSE_LIBRARIES ${VIRTUOSE_LIBRARIES_DEBUG})

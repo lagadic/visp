@@ -185,7 +185,7 @@ previous code to consider as visual feature \f$s = (l, \alpha)\f$.
 
   In that case, L is a 2 by 6 matrix.
 */
-vpMatrix vpFeatureSegment::interaction(const unsigned int select)
+vpMatrix vpFeatureSegment::interaction(unsigned int select)
 {
 
   vpMatrix L;
@@ -360,7 +360,7 @@ vpMatrix vpFeatureSegment::interaction(const unsigned int select)
   visual feature.
 
 */
-vpColVector vpFeatureSegment::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeatureSegment::error(const vpBasicFeature &s_star, unsigned int select)
 {
   vpColVector e(0);
 
@@ -421,7 +421,7 @@ vpColVector vpFeatureSegment::error(const vpBasicFeature &s_star, const unsigned
   vpFeatureSegment: (l = 0.105005; alpha = 92.1305 deg)
   \endcode
 */
-void vpFeatureSegment::print(const unsigned int select) const
+void vpFeatureSegment::print(unsigned int select) const
 {
   std::cout << "vpFeatureSegment: (";
   if (vpFeatureSegment::selectXc() & select) {
@@ -563,8 +563,7 @@ void vpFeatureSegment::display(const vpCameraParameters &cam, const vpImage<vpRG
   - x_2}^2 + {y_1 - y_2}^2} \f] \f[ \alpha = arctan(\frac{y_1 - y_2}{x_1 -
   x_2}) \f]
 */
-void vpFeatureSegment::buildFrom(const double x1, const double y1, const double Z1, const double x2, const double y2,
-                                 const double Z2)
+void vpFeatureSegment::buildFrom(double x1, double y1, double Z1, double x2, double y2, double Z2)
 {
   double l = sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
   double x_c = (x1 + x2) / 2.;

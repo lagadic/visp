@@ -72,6 +72,7 @@
 
 #include <cassert>
 #include <vector>
+#include <algorithm>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 
@@ -233,9 +234,41 @@ public:
 
   bool operator==(const vpRect &r) const;
   bool operator!=(const vpRect &r) const;
-  vpRect &operator&=(const vpRect &r);
+
+  /*!
+    Intersection operator.
+    \param r : Rectangle to insert.
+    \return Intersection rectangle or null rectangle if the two rectangles do not
+    intersect.
+   */
+  inline vpRect & operator &=(const vpRect &r)
+  {
+    double x1 = (std::max)(left, r.left);
+    double y1 = (std::max)(top, r.top);
+    width = (std::min)(left + width, r.left + r.width) - x1;
+    height = (std::min)(top + height, r.top + r.height) - y1;
+    left = x1;
+    top = y1;
+
+    if (width <= 0 || height <= 0) {
+      *this = vpRect();
+    }
+
+    return *this;
+  }
+
   vpRect &operator=(const vpRect &r);
-  vpRect operator&(const vpRect &r) const;
+
+  /*!
+    Intersection operator.
+    \return Intersection rectangle or null rectangle if the two rectangles do not
+    intersect.
+   */
+  inline vpRect operator &(const vpRect &r) const
+  {
+    vpRect a = *this;
+    return a &= r;
+  }
 
   friend VISP_EXPORT bool inRectangle(const vpImagePoint &ip, const vpRect &rect);
   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRect &r);

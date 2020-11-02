@@ -304,7 +304,7 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack,
+bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
                                        const vpImage<bool> *mask)
 {
   for (unsigned int i = 0; i < meline.size(); i++) {
@@ -611,8 +611,8 @@ void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const 
   visible.
 */
 void vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                const bool displayFullModel)
+                                const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
+                                bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
       getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
@@ -636,8 +636,8 @@ void vpMbtDistanceLine::display(const vpImage<unsigned char> &I, const vpHomogen
   visible.
 */
 void vpMbtDistanceLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                const bool displayFullModel)
+                                const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
+                                bool displayFullModel)
 {
   std::vector<std::vector<double> > models =
       getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
@@ -690,21 +690,21 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
   std::vector<std::vector<double> > features;
 
   for (size_t i = 0; i < meline.size(); i++) {
-    vpMbtMeLine *line = meline[i];
-    if (line != NULL) {
-      for (std::list<vpMeSite>::const_iterator it = line->getMeList().begin(); it != line->getMeList().end(); ++it) {
-        vpMeSite p_me = *it;
+    vpMbtMeLine *me_l = meline[i];
+    if (me_l != NULL) {
+      for (std::list<vpMeSite>::const_iterator it = me_l->getMeList().begin(); it != me_l->getMeList().end(); ++it) {
+        vpMeSite p_me_l = *it;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
         std::vector<double> params = {0, //ME
-                                      p_me.get_ifloat(),
-                                      p_me.get_jfloat(),
-                                      static_cast<double>(p_me.getState())};
+                                      p_me_l.get_ifloat(),
+                                      p_me_l.get_jfloat(),
+                                      static_cast<double>(p_me_l.getState())};
 #else
         std::vector<double> params;
         params.push_back(0); // ME
-        params.push_back(p_me.get_ifloat());
-        params.push_back(p_me.get_jfloat());
-        params.push_back(static_cast<double>(p_me.getState()));
+        params.push_back(p_me_l.get_ifloat());
+        params.push_back(p_me_l.get_jfloat());
+        params.push_back(static_cast<double>(p_me_l.getState()));
 #endif
         features.push_back(params);
       }
@@ -728,7 +728,7 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
 std::vector<std::vector<double> > vpMbtDistanceLine::getModelForDisplay(unsigned int width, unsigned int height,
                                                                         const vpHomogeneousMatrix &cMo,
                                                                         const vpCameraParameters &camera,
-                                                                        const bool displayFullModel)
+                                                                        bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 
@@ -771,7 +771,7 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getModelForDisplay(unsigned
                                       ip1.get_j(),
                                       ip2.get_i(),
                                       ip2.get_j()};
-#else   
+#else
         std::vector<double> params;
         params.push_back(0); //0 for line parameters
         params.push_back(ip1.get_i());

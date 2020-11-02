@@ -61,7 +61,7 @@ vpException::vpException(int id, const char *format, ...) : code(id), message()
   va_end(args);
 }
 
-vpException::vpException(const int id, const char *format, va_list args) : code(id), message()
+vpException::vpException(int id, const char *format, va_list args) : code(id), message()
 {
   setMessage(format, args);
 }
@@ -87,11 +87,11 @@ void vpException::setMessage(const char *format, va_list args)
 /* --- ACCESSORS ---------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */
 
-const char *vpException::getMessage(void) const { return (this->message).c_str(); }
+const char *vpException::getMessage() const { return (this->message).c_str(); }
 
-const std::string &vpException::getStringMessage(void) const { return this->message; }
+const std::string &vpException::getStringMessage() const { return this->message; }
 
-int vpException::getCode(void) { return this->code; }
+int vpException::getCode() const { return this->code; }
 
 /*!
   Overloading of the what() method of std::exception to return the vpException

@@ -174,7 +174,7 @@ vpRotationMatrix &vpRotationMatrix::operator=(const vpMatrix &M)
 }
 
 /*!
-  Set the first element of the rotation matrix.
+  Set rotation matrix first element.
 
   \param val : Value of the matrix first element.
   \return An updated matrix.
@@ -488,7 +488,7 @@ vpRotationMatrix::vpRotationMatrix(const vpMatrix &R) : vpArray2D<double>(3, 3),
   Construct a 3-by-3 rotation matrix from \f$ \theta {\bf u}=(\theta u_x,
   \theta u_y, \theta u_z)^T\f$ angle representation.
  */
-vpRotationMatrix::vpRotationMatrix(const double tux, const double tuy, const double tuz) : vpArray2D<double>(3, 3), m_index(0)
+vpRotationMatrix::vpRotationMatrix(double tux, double tuy, double tuz) : vpArray2D<double>(3, 3), m_index(0)
 {
   buildFrom(tux, tuy, tuz);
 }
@@ -754,7 +754,7 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpRzyxVector &v)
   Construct a 3-by-3 rotation matrix from \f$ \theta {\bf u}=(\theta u_x,
   \theta u_y, \theta u_z)^T\f$ angle representation.
  */
-vpRotationMatrix vpRotationMatrix::buildFrom(const double tux, const double tuy, const double tuz)
+vpRotationMatrix vpRotationMatrix::buildFrom(double tux, double tuy, double tuz)
 {
   vpThetaUVector tu(tux, tuy, tuz);
   buildFrom(tu);
@@ -839,7 +839,7 @@ Last column:
 1
   \endcode
  */
-vpColVector vpRotationMatrix::getCol(const unsigned int j) const
+vpColVector vpRotationMatrix::getCol(unsigned int j) const
 {
   if (j >= getCols())
     throw(vpException(vpException::dimensionError, "Unable to extract a column vector from the homogeneous matrix"));

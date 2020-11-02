@@ -71,9 +71,9 @@ const vpCameraParameters::vpCameraParametersProjType vpCameraParameters::DEFAULT
 */
 vpCameraParameters::vpCameraParameters()
   : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER), u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
-    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0), height(0), isFov(false), m_hFovAngle(0),
-    m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
-    projModel(DEFAULT_PROJ_TYPE)
+    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), m_dist_coefs(), width(0), height(0),
+    isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER),
+    inv_py(1. / DEFAULT_PY_PARAMETER), projModel(DEFAULT_PROJ_TYPE)
 {
   init();
 }
@@ -83,9 +83,9 @@ vpCameraParameters::vpCameraParameters()
  */
 vpCameraParameters::vpCameraParameters(const vpCameraParameters &c)
   : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER), u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
-    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0), height(0), isFov(false), m_hFovAngle(0),
-    m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
-    projModel(DEFAULT_PROJ_TYPE)
+    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), m_dist_coefs(), width(0), height(0),
+    isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER),
+    inv_py(1. / DEFAULT_PY_PARAMETER), projModel(DEFAULT_PROJ_TYPE)
 {
   init(c);
 }
@@ -97,12 +97,11 @@ vpCameraParameters::vpCameraParameters(const vpCameraParameters &c)
   \param cam_u0,cam_v0 : principal points
 
  */
-vpCameraParameters::vpCameraParameters(const double cam_px, const double cam_py, const double cam_u0,
-                                       const double cam_v0)
+vpCameraParameters::vpCameraParameters(double cam_px, double cam_py, double cam_u0, double cam_v0)
   : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER), u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
-    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0), height(0), isFov(false), m_hFovAngle(0),
-    m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
-    projModel(DEFAULT_PROJ_TYPE)
+    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), m_dist_coefs(), width(0), height(0),
+    isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER),
+    inv_py(1. / DEFAULT_PY_PARAMETER), projModel(DEFAULT_PROJ_TYPE)
 {
   initPersProjWithoutDistortion(cam_px, cam_py, cam_u0, cam_v0);
 }
@@ -116,14 +115,32 @@ vpCameraParameters::vpCameraParameters(const double cam_px, const double cam_py,
   \param cam_kdu : distorted to undistorted radial distortion
 
  */
-vpCameraParameters::vpCameraParameters(const double cam_px, const double cam_py, const double cam_u0,
-                                       const double cam_v0, const double cam_kud, const double cam_kdu)
+vpCameraParameters::vpCameraParameters(double cam_px, double cam_py, double cam_u0,
+                                       double cam_v0, double cam_kud, double cam_kdu)
   : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER), u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
-    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), width(0), height(0), isFov(false), m_hFovAngle(0),
-    m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER), inv_py(1. / DEFAULT_PY_PARAMETER),
-    projModel(DEFAULT_PROJ_TYPE)
+    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), m_dist_coefs(), width(0), height(0),
+    isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER),
+    inv_py(1. / DEFAULT_PY_PARAMETER), projModel(DEFAULT_PROJ_TYPE)
 {
   initPersProjWithDistortion(cam_px, cam_py, cam_u0, cam_v0, cam_kud, cam_kdu);
+}
+
+/*!
+  Constructor for projection with Kannala-Brandt distortion model
+
+  \param cam_px,cam_py : pixel size
+  \param cam_u0,cam_v0 : principal points
+  \param coefficients  : distorsion model coefficients
+
+ */
+vpCameraParameters::vpCameraParameters(double cam_px, double cam_py, double cam_u0,
+                                       double cam_v0, const std::vector<double> &coefficients)
+  : px(DEFAULT_PX_PARAMETER), py(DEFAULT_PY_PARAMETER), u0(DEFAULT_U0_PARAMETER), v0(DEFAULT_V0_PARAMETER),
+    kud(DEFAULT_KUD_PARAMETER), kdu(DEFAULT_KDU_PARAMETER), m_dist_coefs(), width(0), height(0),
+    isFov(false), m_hFovAngle(0), m_vFovAngle(0), fovNormals(), inv_px(1. / DEFAULT_PX_PARAMETER),
+    inv_py(1. / DEFAULT_PY_PARAMETER), projModel(DEFAULT_PROJ_TYPE)
+{
+  initProjWithKannalaBrandtDistortion(cam_px, cam_py, cam_u0, cam_v0, coefficients);
 }
 
 /*!
@@ -132,11 +149,9 @@ vpCameraParameters::vpCameraParameters(const double cam_px, const double cam_py,
 void vpCameraParameters::init()
 {
   if (fabs(this->px) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   if (fabs(this->py) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   this->inv_px = 1. / this->px;
@@ -180,8 +195,8 @@ Field of view (horizontal: 56.145 and vertical: 43.6028 degrees)
    \endcode
 
  */
-void vpCameraParameters::initPersProjWithoutDistortion(const double cam_px, const double cam_py, const double cam_u0,
-                                                       const double cam_v0)
+void vpCameraParameters::initPersProjWithoutDistortion(double cam_px, double cam_py, double cam_u0,
+                                                       double cam_v0)
 {
   this->projModel = vpCameraParameters::perspectiveProjWithoutDistortion;
 
@@ -193,11 +208,9 @@ void vpCameraParameters::initPersProjWithoutDistortion(const double cam_px, cons
   this->kdu = 0;
 
   if (fabs(px) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   if (fabs(py) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   this->inv_px = 1. / px;
@@ -246,8 +259,8 @@ Camera parameters for perspective projection with distortion:
 Field of view (horizontal: 56.14497387 and vertical: 43.60281897 degrees)
 \endcode
 */
-void vpCameraParameters::initPersProjWithDistortion(const double cam_px, const double cam_py, const double cam_u0,
-                                                    const double cam_v0, const double cam_kud, const double cam_kdu)
+void vpCameraParameters::initPersProjWithDistortion(double cam_px, double cam_py, double cam_u0,
+                                                    double cam_v0, double cam_kud, double cam_kdu)
 {
   this->projModel = vpCameraParameters::perspectiveProjWithDistortion;
 
@@ -259,15 +272,41 @@ void vpCameraParameters::initPersProjWithDistortion(const double cam_px, const d
   this->kdu = cam_kdu;
 
   if (fabs(px) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   if (fabs(py) < 1e-6) {
-    vpERROR_TRACE("Camera parameter px = 0");
     throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
   }
   this->inv_px = 1. / px;
   this->inv_py = 1. / py;
+}
+
+/*!
+  Initialization with specific parameters using Kannala-Brandt distortion model
+  \param cam_px,cam_py : The ratio between the focal length and the size of a pixel.
+  \param cam_u0,cam_v0 : Principal points coordinates in pixels.
+  \param coefficients  : Distorsion coefficients.
+*/
+void vpCameraParameters::initProjWithKannalaBrandtDistortion(double cam_px, double cam_py, double cam_u0, double cam_v0,
+                                                             const std::vector<double> &coefficients)
+{
+  this->projModel = vpCameraParameters::ProjWithKannalaBrandtDistortion;
+
+  this->px = cam_px;
+  this->py = cam_py;
+  this->u0 = cam_u0;
+  this->v0 = cam_v0;
+
+  if (fabs(px) < 1e-6) {
+    throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
+  }
+  if (fabs(py) < 1e-6) {
+    throw(vpException(vpException::divideByZeroError, "Camera parameter px = 0"));
+  }
+  this->inv_px = 1. / px;
+  this->inv_py = 1. / py;
+
+  this->m_dist_coefs = coefficients;
 }
 
 /*!
@@ -367,6 +406,7 @@ vpCameraParameters &vpCameraParameters::operator=(const vpCameraParameters &cam)
   v0 = cam.v0;
   kud = cam.kud;
   kdu = cam.kdu;
+  m_dist_coefs = cam.m_dist_coefs;
 
   inv_px = cam.inv_px;
   inv_py = cam.inv_py;
@@ -397,6 +437,10 @@ bool vpCameraParameters::operator==(const vpCameraParameters &c) const {
       !vpMath::equal(inv_px, c.inv_px, std::numeric_limits<double>::epsilon()) ||
       !vpMath::equal(inv_py, c.inv_py, std::numeric_limits<double>::epsilon()))
     return false;
+
+  for(unsigned int i = 0; i < m_dist_coefs.size(); i++)
+    if(!vpMath::equal(m_dist_coefs[i], c.m_dist_coefs[i], std::numeric_limits<double>::epsilon()))
+      return false;
 
   if (isFov != c.isFov ||
       !vpMath::equal(m_hFovAngle, c.m_hFovAngle, std::numeric_limits<double>::epsilon()) ||
@@ -547,6 +591,12 @@ void vpCameraParameters::printParameters()
     std::cout << "  kud = " << kud << std::endl;
     std::cout << "  kdu = " << kdu << std::endl;
     break;
+  case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+    std::cout << "  Coefficients: ";
+    for (unsigned int i = 0; i < m_dist_coefs.size(); i++)
+      std::cout << " " << m_dist_coefs[i];
+    std::cout << std::endl;
+    break;
   }
   // Restore ostream format
   std::cout.flags(original_flags);
@@ -567,15 +617,28 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpCameraParameters 
     os << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0() << std::endl;
     break;
   case vpCameraParameters::perspectiveProjWithDistortion:
-    std::ios_base::fmtflags original_flags = os.flags();
-    os.precision(10);
-    os << "Camera parameters for perspective projection with distortion:" << std::endl;
-    os << "  px = " << cam.get_px() << "\t py = " << cam.get_py() << std::endl;
-    os << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0() << std::endl;
-    os << "  kud = " << cam.get_kud() << std::endl;
-    os << "  kdu = " << cam.get_kdu() << std::endl;
-
-    os.flags(original_flags); // restore os to standard state
+    {
+      std::ios_base::fmtflags original_flags = os.flags();
+      os.precision(10);
+      os << "Camera parameters for perspective projection with distortion:" << std::endl;
+      os << "  px = " << cam.get_px() << "\t py = " << cam.get_py() << std::endl;
+      os << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0() << std::endl;
+      os << "  kud = " << cam.get_kud() << std::endl;
+      os << "  kdu = " << cam.get_kdu() << std::endl;
+      os.flags(original_flags); // restore os to standard state
+    }
+    break;
+  case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+    {
+      os << "Camera parameters for projection with Kannala-Brandt distortion:" << std::endl;
+      os << "  px = " << cam.get_px() << "\t py = " << cam.get_py() << std::endl;
+      os << "  u0 = " << cam.get_u0() << "\t v0 = " << cam.get_v0() << std::endl;
+      os << "  Coefficients: ";
+      std::vector<double> tmp_coefs = cam.getKannalaBrandtDistortionCoefficients();
+      for(unsigned int i = 0; i < tmp_coefs.size(); i++)
+        os << " " << tmp_coefs[i];
+      os << std::endl;
+    }
     break;
   }
   return os;

@@ -54,7 +54,7 @@
   Basic constructor that calls the constructor of the class vpMeTracker.
 */
 vpMbtMeEllipse::vpMbtMeEllipse()
-  : iPc(), a(0.), b(0.), e(0.), ce(0.), se(0.), mu11(0.), mu20(0.), mu02(0.), thresholdWeight(0.), expecteddensity(0.)
+  : iPc(), a(0.), b(0.), e(0.), ce(0.), se(0.), n11(0.), n20(0.), n02(0.), thresholdWeight(0.), expecteddensity(0.)
 {
 }
 
@@ -62,7 +62,7 @@ vpMbtMeEllipse::vpMbtMeEllipse()
   Copy constructor.
 */
 vpMbtMeEllipse::vpMbtMeEllipse(const vpMbtMeEllipse &meellipse)
-  : vpMeTracker(meellipse), iPc(meellipse.iPc), a(0.), b(0.), e(0.), ce(0.), se(0.), mu11(0.), mu20(0.), mu02(0.),
+  : vpMeTracker(meellipse), iPc(meellipse.iPc), a(0.), b(0.), e(0.), ce(0.), se(0.), n11(0.), n20(0.), n02(0.),
     thresholdWeight(0.), expecteddensity(0.)
 {
   a = meellipse.a;
@@ -72,9 +72,9 @@ vpMbtMeEllipse::vpMbtMeEllipse(const vpMbtMeEllipse &meellipse)
   ce = meellipse.ce;
   se = meellipse.se;
 
-  mu11 = meellipse.mu11;
-  mu20 = meellipse.mu20;
-  mu02 = meellipse.mu02;
+  n11 = meellipse.n11;
+  n20 = meellipse.n20;
+  n02 = meellipse.n02;
 
   expecteddensity = meellipse.expecteddensity;
 }
@@ -102,8 +102,8 @@ vpMbtMeEllipse::~vpMbtMeEllipse() { list.clear(); }
 void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad,
                                             unsigned int &_nbFeatures,
                                             const vpMatrix &SobelX, const vpMatrix &SobelY,
-                                            const bool display, const unsigned int length,
-                                            const unsigned int thickness)
+                                            bool display, unsigned int length,
+                                            unsigned int thickness)
 {
   _sumErrorRad = 0;
   _nbFeatures = 0;
@@ -120,8 +120,8 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
     if (!outOfImage(vpMath::round(iSite), vpMath::round(jSite), 0, height,
                     width)) { // Check if necessary
       // The tangent angle to the ellipse at a site
-      double theta = atan((-mu02 * jSite + mu02 * iPc.get_j() + mu11 * iSite - mu11 * iPc.get_i()) /
-                          (mu20 * iSite - mu11 * jSite + mu11 * iPc.get_j() - mu20 * iPc.get_i())) -
+      double theta = atan((-n02 * jSite + n02 * iPc.get_j() + n11 * iSite - n11 * iPc.get_i()) /
+                          (n20 * iSite - n11 * jSite + n11 * iPc.get_j() - n20 * iPc.get_i())) -
                      M_PI / 2;
 
       double deltaNormalized = theta;
@@ -235,7 +235,7 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
   \exception vpTrackingException::initializationError : Moving edges not
   initialized.
 */
-void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
+void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 {
   if (!me) {
     vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
@@ -281,8 +281,8 @@ void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, const bool doNotTra
     // If point is in the image, add to the sample list
     if (!outOfImage(vpMath::round(iP_i), vpMath::round(iP_j), 0, height, width)) {
       // The tangent angle to the ellipse at a site
-      double theta = atan((-mu02 * iP_j + mu02 * iPc.get_j() + mu11 * iP_i - mu11 * iPc.get_i()) /
-                          (mu20 * iP_i - mu11 * iP_j + mu11 * iPc.get_j() - mu20 * iPc.get_i())) -
+      double theta = atan((-n02 * iP_j + n02 * iPc.get_j() + n11 * iP_i - n11 * iPc.get_i()) /
+                          (n20 * iP_i - n11 * iP_j + n11 * iPc.get_j() - n20 * iPc.get_i())) -
                      M_PI / 2;
 
       vpMeSite pix;
@@ -342,8 +342,8 @@ void vpMbtMeEllipse::updateTheta()
     iP.set_j(p_me.jfloat);
 
     // The tangent angle to the ellipse at a site
-    double theta = atan((-mu02 * p_me.jfloat + mu02 * iPc.get_j() + mu11 * p_me.ifloat - mu11 * iPc.get_i()) /
-                        (mu20 * p_me.ifloat - mu11 * p_me.jfloat + mu11 * iPc.get_j() - mu20 * iPc.get_i())) -
+    double theta = atan((-n02 * p_me.jfloat + n02 * iPc.get_j() + n11 * p_me.ifloat - n11 * iPc.get_i()) /
+                        (n20 * p_me.ifloat - n11 * p_me.jfloat + n11 * iPc.get_j() - n20 * iPc.get_i())) -
                    M_PI / 2;
 
     p_me.alpha = theta;
@@ -378,28 +378,28 @@ void vpMbtMeEllipse::suppressPoints()
  */
 void vpMbtMeEllipse::display(const vpImage<unsigned char> &I, vpColor col)
 {
-  vpDisplay::displayEllipse(I, iPc, mu20, mu11, mu02, true, col);
+  vpDisplay::displayEllipse(I, iPc, n20, n11, n02, true, col);
 }
 
-void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
-                                  double mu02_p,
-                                  const bool doNotTrack)
+void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic,
+                                  double n20_p, double n11_p, double n02_p, bool doNotTrack)
 {
   iPc = ic;
-  mu20 = mu20_p;
-  mu11 = mu11_p;
-  mu02 = mu02_p;
+  n20 = n20_p;
+  n11 = n11_p;
+  n02 = n02_p;
 
-  if (std::fabs(mu11_p) > std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(n11_p) > std::numeric_limits<double>::epsilon()) {
 
-    double val_p = sqrt(vpMath::sqr(mu20_p - mu02_p) + 4 * vpMath::sqr(mu11_p));
-    a = sqrt((mu20_p + mu02_p + val_p) / 2);
-    b = sqrt((mu20_p + mu02_p - val_p) / 2);
+    // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 24
+    double val_p = sqrt(vpMath::sqr(n20_p - n02_p) + 4 * vpMath::sqr(n11_p));
+    a = sqrt(2 * (n20_p + n02_p + val_p));
+    b = sqrt(2 * (n20_p + n02_p - val_p));
 
-    e = (mu02_p - mu20_p + val_p) / (2 * mu11_p);
+    e = (n02_p - n20_p + val_p) / (2 * n11_p);
   } else {
-    a = sqrt(mu20_p);
-    b = sqrt(mu02_p);
+    a = 2 * sqrt(n20_p);
+    b = 2 * sqrt(n02_p);
     e = 0.;
   }
 
@@ -439,24 +439,25 @@ void vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
   }
 }
 
-void vpMbtMeEllipse::updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p,
-                                      double mu11_p, double mu02_p)
+void vpMbtMeEllipse::updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ic,
+                                      double n20_p, double n11_p, double n02_p)
 {
   iPc = ic;
-  mu20 = mu20_p;
-  mu11 = mu11_p;
-  mu02 = mu02_p;
+  n20 = n20_p;
+  n11 = n11_p;
+  n02 = n02_p;
 
-  if (std::fabs(mu11_p) > std::numeric_limits<double>::epsilon()) {
+  if (std::fabs(n11_p) > std::numeric_limits<double>::epsilon()) {
 
-    double val_p = sqrt(vpMath::sqr(mu20_p - mu02_p) + 4 * vpMath::sqr(mu11_p));
-    a = sqrt((mu20_p + mu02_p + val_p) / 2);
-    b = sqrt((mu20_p + mu02_p - val_p) / 2);
+    // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 24
+    double val_p = sqrt(vpMath::sqr(n20_p - n02_p) + 4 * vpMath::sqr(n11_p));
+    a = sqrt(2 * (n20_p + n02_p + val_p));
+    b = sqrt(2 * (n20_p + n02_p - val_p));
 
-    e = (mu02_p - mu20_p + val_p) / (2 * mu11_p);
+    e = (n02_p - n20_p + val_p) / (2 * n11_p);
   } else {
-    a = sqrt(mu20_p);
-    b = sqrt(mu02_p);
+    a = 2 * sqrt(n20_p);
+    b = 2 * sqrt(n02_p);
     e = 0.;
   }
 

@@ -110,9 +110,9 @@ public:
   bool useScanLine;
 
 private:
-  double compute_1_over_Z(const double x, const double y);
-  void computeP_mu_t(const double x_in, const double y_in, double &x_out, double &y_out, const vpMatrix &cHc0);
-  bool isTrackedFeature(const int id);
+  double compute_1_over_Z(double x, double y);
+  void computeP_mu_t(double x_in, double y_in, double &x_out, double &y_out, const vpMatrix &cHc0);
+  bool isTrackedFeature(int id);
 
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -142,9 +142,9 @@ public:
   void computeInteractionMatrixAndResidu(vpColVector &_R, vpMatrix &_J);
 
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+               const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
   void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &col, const unsigned int thickness = 1, const bool displayFullModel = false);
+               const vpColor &col, unsigned int thickness = 1, bool displayFullModel = false);
 
   void displayPrimitive(const vpImage<unsigned char> &_I);
   void displayPrimitive(const vpImage<vpRGBa> &_I);
@@ -152,7 +152,7 @@ public:
   std::vector<std::vector<double> > getFeaturesForDisplay();
 
   std::vector<std::vector<double> > getModelForDisplay(const vpCameraParameters &cam,
-                                                       const bool displayFullModel = false);
+                                                       bool displayFullModel = false);
 
   /*!
     Get the camera parameters of the face.

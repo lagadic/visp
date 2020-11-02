@@ -97,7 +97,7 @@ vpKeyPoint::vpKeyPoint(const vpFeatureDetectorType &detectorType, const vpFeatur
     m_useBruteForceCrossCheck(true),
 #endif
     m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true),
-    m_useSingleMatchFilter(true), m_I()
+    m_useSingleMatchFilter(true), m_I(), m_maxFeatures(-1)
 {
   initFeatureNames();
 
@@ -133,7 +133,7 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
     m_useBruteForceCrossCheck(true),
 #endif
     m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true),
-    m_useSingleMatchFilter(true), m_I()
+    m_useSingleMatchFilter(true), m_I(), m_maxFeatures(-1)
 {
   initFeatureNames();
 
@@ -147,10 +147,10 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
   Constructor to initialize specified detector, extractor, matcher and
   filtering method.
 
-  \param detectorNames : List of name detector for allowing multiple
-  detectors. \param extractorNames : List of name extractor for allowing
-  multiple extractors. \param matcherName : Name of the matcher. \param
-  filterType : Filtering matching method chosen.
+  \param detectorNames : List of name detector for allowing multiple detectors.
+  \param extractorNames : List of name extractor for allowing multiple extractors.
+  \param matcherName : Name of the matcher.
+  \param filterType : Filtering matching method chosen.
  */
 vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std::vector<std::string> &extractorNames,
                        const std::string &matcherName, const vpFilterMatchingType &filterType)
@@ -168,7 +168,7 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std:
     m_useBruteForceCrossCheck(true),
 #endif
     m_useConsensusPercentage(false), m_useKnn(false), m_useMatchTrainToQuery(false), m_useRansacVVS(true),
-    m_useSingleMatchFilter(true), m_I()
+    m_useSingleMatchFilter(true), m_I(), m_maxFeatures(-1)
 {
   initFeatureNames();
   init();
@@ -176,11 +176,11 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std:
 
 /*!
    Apply an affine and skew transformation to an image.
-   \param tilt : Tilt value in the direction of x
-   \param phi : Rotation value
-   \param img : Modified image after the transformation
-   \param mask : Mask containing the location of the image pixels after the
-   transformation \param Ai : Inverse affine matrix
+   \param tilt : Tilt value in the direction of x.
+   \param phi : Rotation value.
+   \param img : Modified image after the transformation.
+   \param mask : Mask containing the location of the image pixels after the transformation.
+   \param Ai : Inverse affine matrix
  */
 void vpKeyPoint::affineSkew(double tilt, double phi, cv::Mat &img, cv::Mat &mask, cv::Mat &Ai)
 {
@@ -250,14 +250,14 @@ unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color) { return
 /*!
    Build the reference keypoints list in a region of interest in the image.
 
-   \param I : Input reference image
+   \param I : Input reference image.
    \param iP : Position of the top-left corner of the region of interest.
    \param height : Height of the region of interest.
    \param width : Width of the region of interest.
    \return The number of detected keypoints in the current image I.
  */
 unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                                        const unsigned int height, const unsigned int width)
+                                        unsigned int height, unsigned int width)
 {
   return buildReference(I, vpRect(iP, width, height));
 }
@@ -265,14 +265,14 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const v
 /*!
    Build the reference keypoints list in a region of interest in the image.
 
-   \param I_color : Input reference image
+   \param I_color : Input reference image.
    \param iP : Position of the top-left corner of the region of interest.
    \param height : Height of the region of interest.
    \param width : Width of the region of interest.
    \return The number of detected keypoints in the current image I.
  */
 unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP,
-                                        const unsigned int height, const unsigned int width)
+                                        unsigned int height, unsigned int width)
 {
   return buildReference(I_color, vpRect(iP, width, height));
 }
@@ -308,8 +308,7 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const v
     }
 
     bool first = true;
-    for (std::vector<cv::Mat>::const_iterator it = listOfTrainDescriptors.begin(); it != listOfTrainDescriptors.end();
-         ++it) {
+    for (std::vector<cv::Mat>::const_iterator it = listOfTrainDescriptors.begin(); it != listOfTrainDescriptors.end(); ++it) {
       if (first) {
         first = false;
         it->copyTo(m_trainDescriptors);
@@ -322,8 +321,8 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const v
     extract(I, m_trainKeyPoints, m_trainDescriptors, m_extractionTime);
   }
 
-  // Save the correspondence keypoint class_id with the training image_id in a
-  // map  Used to display the matching with all the training images
+  // Save the correspondence keypoint class_id with the training image_id in a map.
+  // Used to display the matching with all the training images.
   for (std::vector<cv::KeyPoint>::const_iterator it = m_trainKeyPoints.begin(); it != m_trainKeyPoints.end(); ++it) {
     m_mapOfImageId[it->class_id] = m_currentImageId;
   }
@@ -360,15 +359,15 @@ unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const vp
    Build the reference keypoints list and compute the 3D position
    corresponding of the keypoints locations.
 
-   \param I : Input image
+   \param I : Input image.
    \param trainKeyPoints : List of the train keypoints.
-   \param points3f : Output list of the 3D position corresponding of the
-   keypoints locations. \param append : If true, append the supply train
-   keypoints with those already present. \param class_id : The class id to be
-   set to the input cv::KeyPoint if != -1.
+   \param points3f : Output list of the 3D position corresponding of the keypoints locations.
+   \param append : If true, append the supply train keypoints with those already present.
+   \param class_id : The class id to be set to the input cv::KeyPoint if != -1.
+   \return The number of detected keypoints in the current image I.
  */
-void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoints,
-                                std::vector<cv::Point3f> &points3f, const bool append, const int class_id)
+unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &trainKeyPoints,
+                                        std::vector<cv::Point3f> &points3f, bool append, int class_id)
 {
   cv::Mat trainDescriptors;
   // Copy the input list of keypoints
@@ -398,22 +397,22 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, std::vector<cv:
     points3f = trainPoints_tmp;
   }
 
-  buildReference(I, trainKeyPoints, trainDescriptors, points3f, append, class_id);
+  return (buildReference(I, trainKeyPoints, trainDescriptors, points3f, append, class_id));
 }
 
 /*!
    Build the reference keypoints list and compute the 3D position
    corresponding of the keypoints locations.
 
-   \param I_color : Input image
+   \param I_color : Input image.
    \param trainKeyPoints : List of the train keypoints.
-   \param points3f : Output list of the 3D position corresponding of the
-   keypoints locations. \param append : If true, append the supply train
-   keypoints with those already present. \param class_id : The class id to be
-   set to the input cv::KeyPoint if != -1.
+   \param points3f : Output list of the 3D position corresponding of the keypoints locations.
+   \param append : If true, append the supply train keypoints with those already present.
+   \param class_id : The class id to be set to the input cv::KeyPoint if != -1.
+   \return The number of detected keypoints in the current image I.
  */
-void vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &trainKeyPoints,
-                                std::vector<cv::Point3f> &points3f, const bool append, const int class_id)
+unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &trainKeyPoints,
+                                        std::vector<cv::Point3f> &points3f, bool append, int class_id)
 {
   cv::Mat trainDescriptors;
   // Copy the input list of keypoints
@@ -443,31 +442,32 @@ void vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, std::vector<cv::
     points3f = trainPoints_tmp;
   }
 
-  buildReference(I_color, trainKeyPoints, trainDescriptors, points3f, append, class_id);
+  return (buildReference(I_color, trainKeyPoints, trainDescriptors, points3f, append, class_id));
 }
 
 /*!
    Build the reference keypoints list and compute the 3D position
    corresponding of the keypoints locations.
 
-   \param I : Input image
+   \param I : Input image.
    \param trainKeyPoints : List of the train keypoints.
-   \param points3f : List of the 3D position corresponding of the keypoints
-   locations. \param trainDescriptors : List of the train descriptors. \param
-   append : If true, append the supply train keypoints with those already
-   present. \param class_id : The class id to be set to the input cv::KeyPoint
-   if != -1.
+   \param points3f : List of the 3D position corresponding of the keypoints locations.
+   \param trainDescriptors : List of the train descriptors.
+   \param append : If true, append the supply train keypoints with those already present.
+   \param class_id : The class id to be set to the input cv::KeyPoint if != -1.
+
+   \return The number of keypoints in the current image I.
  */
-void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vector<cv::KeyPoint> &trainKeyPoints,
-                                const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
-                                const bool append, const int class_id)
+unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vector<cv::KeyPoint> &trainKeyPoints,
+                                        const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
+                                        bool append, int class_id)
 {
   if (!append) {
-    m_currentImageId = 0;
+    m_trainPoints.clear();
     m_mapOfImageId.clear();
     m_mapOfImages.clear();
-    this->m_trainKeyPoints.clear();
-    this->m_trainPoints.clear();
+    m_currentImageId = 0;
+    m_trainKeyPoints.clear();
   }
 
   m_currentImageId++;
@@ -480,10 +480,9 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vect
     }
   }
 
-  // Save the correspondence keypoint class_id with the training image_id in a
-  // map  Used to display the matching with all the training images
-  for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints_tmp.begin(); it != trainKeyPoints_tmp.end();
-       ++it) {
+  // Save the correspondence keypoint class_id with the training image_id in a map.
+  // Used to display the matching with all the training images.
+  for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints_tmp.begin(); it != trainKeyPoints_tmp.end(); ++it) {
     m_mapOfImageId[it->class_id] = m_currentImageId;
   }
 
@@ -491,43 +490,45 @@ void vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vect
   m_mapOfImages[m_currentImageId] = I;
 
   // Append reference lists
-  this->m_trainKeyPoints.insert(this->m_trainKeyPoints.end(), trainKeyPoints_tmp.begin(), trainKeyPoints_tmp.end());
+  m_trainKeyPoints.insert(m_trainKeyPoints.end(), trainKeyPoints_tmp.begin(), trainKeyPoints_tmp.end());
   if (!append) {
-    trainDescriptors.copyTo(this->m_trainDescriptors);
+    trainDescriptors.copyTo(m_trainDescriptors);
   } else {
-    this->m_trainDescriptors.push_back(trainDescriptors);
+    m_trainDescriptors.push_back(trainDescriptors);
   }
-  this->m_trainPoints.insert(this->m_trainPoints.end(), points3f.begin(), points3f.end());
+  this->m_trainPoints.insert(m_trainPoints.end(), points3f.begin(), points3f.end());
 
   // Convert OpenCV type to ViSP type for compatibility
-  vpConvert::convertFromOpenCV(this->m_trainKeyPoints, referenceImagePointsList);
-  vpConvert::convertFromOpenCV(this->m_trainPoints, m_trainVpPoints);
+  vpConvert::convertFromOpenCV(m_trainKeyPoints, referenceImagePointsList);
+  vpConvert::convertFromOpenCV(m_trainPoints, m_trainVpPoints);
 
   // Add train descriptors in matcher object
   m_matcher->clear();
   m_matcher->add(std::vector<cv::Mat>(1, m_trainDescriptors));
 
   _reference_computed = true;
+
+  return static_cast<unsigned int>(m_trainKeyPoints.size());
 }
 
 /*!
    Build the reference keypoints list and compute the 3D position
    corresponding of the keypoints locations.
 
-   \param I_color : Input image
+   \param I_color : Input image.
    \param trainKeyPoints : List of the train keypoints.
-   \param points3f : List of the 3D position corresponding of the keypoints
-   locations. \param trainDescriptors : List of the train descriptors. \param
-   append : If true, append the supply train keypoints with those already
-   present. \param class_id : The class id to be set to the input cv::KeyPoint
-   if != -1.
+   \param points3f : List of the 3D position corresponding of the keypoints locations.
+   \param trainDescriptors : List of the train descriptors.
+   \param append : If true, append the supply train keypoints with those already present.
+   \param class_id : The class id to be set to the input cv::KeyPoint if != -1.
+   \return The number of detected keypoints in the current image I.
  */
-void vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const std::vector<cv::KeyPoint> &trainKeyPoints,
-                                const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
-                                const bool append, const int class_id)
+unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const std::vector<cv::KeyPoint> &trainKeyPoints,
+                                        const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
+                                        bool append, int class_id)
 {
   vpImageConvert::convert(I_color, m_I);
-  buildReference(m_I, trainKeyPoints, trainDescriptors, points3f, append, class_id);
+  return (buildReference(m_I, trainKeyPoints, trainDescriptors, points3f, append, class_id));
 }
 
 /*!
@@ -540,10 +541,10 @@ void vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const std::vecto
    in the camera frame.
 
    \param candidate : Keypoint we want to compute the 3D coordinate.
-   \param roi : List of 3D points in the camera frame representing a planar
-   face. \param cam : Camera parameters. \param cMo : Homogeneous matrix
-   between the world and the camera frames. \param point : 3D coordinate in
-   the world/object frame computed.
+   \param roi : List of 3D points in the camera frame representing a planar face.
+   \param cam : Camera parameters.
+   \param cMo : Homogeneous matrix between the world and the camera frames.
+   \param point : 3D coordinate in the world/object frame computed.
  */
 void vpKeyPoint::compute3D(const cv::KeyPoint &candidate, const std::vector<vpPoint> &roi,
                            const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, cv::Point3f &point)
@@ -582,10 +583,10 @@ void vpKeyPoint::compute3D(const cv::KeyPoint &candidate, const std::vector<vpPo
    in the camera frame.
 
    \param candidate : vpImagePoint we want to compute the 3D coordinate.
-   \param roi : List of 3D points in the camera frame representing a planar
-   face. \param cam : Camera parameters. \param cMo : Homogeneous matrix
-   between the world and the camera frames. \param point : 3D coordinate in
-   the world/object frame computed.
+   \param roi : List of 3D points in the camera frame representing a planar face.
+   \param cam : Camera parameters.
+   \param cMo : Homogeneous matrix between the world and the camera frames.
+   \param point : 3D coordinate in the world/object frame computed.
  */
 void vpKeyPoint::compute3D(const vpImagePoint &candidate, const std::vector<vpPoint> &roi,
                            const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo, vpPoint &point)
@@ -622,12 +623,13 @@ void vpKeyPoint::compute3D(const vpImagePoint &candidate, const std::vector<vpPo
    \param cMo : Homogeneous matrix between the world and the camera frames.
    \param cam : Camera parameters.
    \param candidates : In input, list of keypoints detected in the whole
-   image, in output, list of keypoints only located on planes. \param polygons
-   : List of 2D polygons representing the projection of the faces in the image
-   plane. \param  roisPt : List of faces, with the 3D coordinates known in the
-   camera frame. \param points : Output list of computed 3D coordinates (in
-   the world/object frame) of keypoints located only on faces. \param
-   descriptors : Optional parameter, pointer to the descriptors to filter.
+   image, in output, list of keypoints only located on planes.
+   \param polygons : List of 2D polygons representing the projection of the faces in
+   the image plane.
+   \param  roisPt : List of faces, with the 3D coordinates known in the camera frame.
+   \param points : Output list of computed 3D coordinates (in
+   the world/object frame) of keypoints located only on faces.
+   \param descriptors : Optional parameter, pointer to the descriptors to filter.
  */
 void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                                               std::vector<cv::KeyPoint> &candidates,
@@ -635,7 +637,6 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
                                               const std::vector<std::vector<vpPoint> > &roisPt,
                                               std::vector<cv::Point3f> &points, cv::Mat *descriptors)
 {
-
   std::vector<cv::KeyPoint> candidatesToCheck = candidates;
   candidates.clear();
   points.clear();
@@ -685,13 +686,13 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
    \param cMo : Homogeneous matrix between the world and the camera frames.
    \param cam : Camera parameters.
    \param candidates : In input, list of vpImagePoint located in the whole
-   image, in output, list of vpImagePoint only located on planes. \param
-   polygons : List of 2D polygons representing the projection of the faces in
-   the image plane. \param  roisPt : List of faces, with the 3D coordinates
-   known in the camera frame. \param points : Output list of computed 3D
-   coordinates (in the world/object frame) of vpImagePoint located only on
-   faces. \param descriptors : Optional parameter, pointer to the descriptors
-   to filter
+   image, in output, list of vpImagePoint only located on planes.
+   \param polygons : List of 2D polygons representing the projection of the faces in
+   the image plane.
+   \param  roisPt : List of faces, with the 3D coordinates known in the camera frame.
+   \param points : Output list of computed 3D coordinates (in the world/object frame)
+   of vpImagePoint located only on faces.
+   \param descriptors : Optional parameter, pointer to the descriptors to filter.
  */
 void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                                               std::vector<vpImagePoint> &candidates,
@@ -699,7 +700,6 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
                                               const std::vector<std::vector<vpPoint> > &roisPt,
                                               std::vector<vpPoint> &points, cv::Mat *descriptors)
 {
-
   std::vector<vpImagePoint> candidatesToCheck = candidates;
   candidates.clear();
   points.clear();
@@ -742,13 +742,13 @@ void vpKeyPoint::compute3DForPointsInPolygons(const vpHomogeneousMatrix &cMo, co
    \param cMo : Homogeneous matrix between the world and the camera frames.
    \param cam : Camera parameters.
    \param candidates : In input, list of keypoints detected in the whole
-   image, in output, list of keypoints only located on cylinders. \param
-   cylinders : List of vpCylinder corresponding of the cylinder objects in the
-   scene, projected in the camera frame. \param vectorOfCylinderRois : For
-   each cylinder, the corresponding list of bounding box. \param points :
-   Output list of computed 3D coordinates in the world/object frame for each
-   keypoint located on a cylinder. \param descriptors : Optional parameter,
-   pointer to the descriptors to filter.
+   image, in output, list of keypoints only located on cylinders.
+   \param cylinders : List of vpCylinder corresponding of the cylinder objects in the
+   scene, projected in the camera frame.
+   \param vectorOfCylinderRois : For each cylinder, the corresponding list of bounding box.
+   \param points : Output list of computed 3D coordinates in the world/object frame for each
+   keypoint located on a cylinder.
+   \param descriptors : Optional parameter, pointer to the descriptors to filter.
  */
 void vpKeyPoint::compute3DForPointsOnCylinders(
     const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, std::vector<cv::KeyPoint> &candidates,
@@ -817,13 +817,13 @@ void vpKeyPoint::compute3DForPointsOnCylinders(
    \param cMo : Homogeneous matrix between the world and the camera frames.
    \param cam : Camera parameters.
    \param candidates : In input, list of vpImagePoint located in the image, in
-   output, list of vpImagePoint only located on cylinders. \param cylinders :
-   List of vpCylinder corresponding of the cylinder objects in the scene,
-   projected in the camera frame. \param vectorOfCylinderRois : For each
-   cylinder, the corresponding list of bounding box. \param points : Output
-   list of computed 3D coordinates in the world/object frame for each
-   vpImagePoint located on a cylinder. \param descriptors : Optional
-   parameter, pointer to the descriptors to filter.
+   output, list of vpImagePoint only located on cylinders.
+   \param cylinders : List of vpCylinder corresponding of the cylinder objects in the scene,
+   projected in the camera frame.
+   \param vectorOfCylinderRois : For each cylinder, the corresponding list of bounding box.
+   \param points : Output list of computed 3D coordinates in the world/object frame for each
+   vpImagePoint located on a cylinder.
+   \param descriptors : Optional parameter, pointer to the descriptors to filter.
  */
 void vpKeyPoint::compute3DForPointsOnCylinders(
     const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, std::vector<vpImagePoint> &candidates,
@@ -1085,8 +1085,9 @@ bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomog
    of the 3D model with the estimated pose.
 
    \param matchKeyPoints : List of pairs between the detected keypoints and
-   the corresponding 3D points. \param cam : Camera parameters. \param cMo_est
-   : Estimated pose of the object.
+   the corresponding 3D points.
+   \param cam : Camera parameters.
+   \param cMo_est : Estimated pose of the object.
 
    \return The mean square error (in pixel) between the location of the
    detected keypoints and the location of the projection of the 3D model with
@@ -1817,9 +1818,9 @@ void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa
    \param I : Input image.
    \param keyPoints : List of keypoints we want to extract their descriptors.
    \param descriptors : Descriptors matrix with at each row the descriptors
-   values for each keypoint. \param trainPoints : Pointer to the list of 3D
-   train points, when a keypoint cannot be extracted, we need to remove the
-   corresponding 3D point.
+   values for each keypoint.
+   \param trainPoints : Pointer to the list of 3D train points, when a keypoint
+   cannot be extracted, we need to remove the corresponding 3D point.
  */
 void vpKeyPoint::extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
                          std::vector<cv::Point3f> *trainPoints)
@@ -1834,9 +1835,9 @@ void vpKeyPoint::extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoi
    \param I_color : Input image.
    \param keyPoints : List of keypoints we want to extract their descriptors.
    \param descriptors : Descriptors matrix with at each row the descriptors
-   values for each keypoint. \param trainPoints : Pointer to the list of 3D
-   train points, when a keypoint cannot be extracted, we need to remove the
-   corresponding 3D point.
+   values for each keypoint.
+   \param trainPoints : Pointer to the list of 3D train points, when a keypoint
+   cannot be extracted, we need to remove the corresponding 3D point.
  */
 void vpKeyPoint::extract(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
                          std::vector<cv::Point3f> *trainPoints)
@@ -1851,9 +1852,9 @@ void vpKeyPoint::extract(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoin
    \param matImg : Input image.
    \param keyPoints : List of keypoints we want to extract their descriptors.
    \param descriptors : Descriptors matrix with at each row the descriptors
-   values for each keypoint. \param trainPoints : Pointer to the list of 3D
-   train points, when a keypoint cannot be extracted, we need to remove the
-   corresponding 3D point.
+   values for each keypoint.
+   \param trainPoints : Pointer to the list of 3D train points, when a keypoint cannot
+   be extracted, we need to remove the corresponding 3D point.
  */
 void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
                          std::vector<cv::Point3f> *trainPoints)
@@ -1868,8 +1869,9 @@ void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPo
    \param I : Input image.
    \param keyPoints : List of keypoints we want to extract their descriptors.
    \param descriptors : Descriptors matrix with at each row the descriptors
-   values for each keypoint. \param elapsedTime : Elapsed time. \param
-   trainPoints : Pointer to the list of 3D train points, when a keypoint
+   values for each keypoint.
+   \param elapsedTime : Elapsed time.
+   \param trainPoints : Pointer to the list of 3D train points, when a keypoint
    cannot be extracted, we need to remove the corresponding 3D point.
  */
 void vpKeyPoint::extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
@@ -1886,8 +1888,9 @@ void vpKeyPoint::extract(const vpImage<unsigned char> &I, std::vector<cv::KeyPoi
    \param I_color : Input image.
    \param keyPoints : List of keypoints we want to extract their descriptors.
    \param descriptors : Descriptors matrix with at each row the descriptors
-   values for each keypoint. \param elapsedTime : Elapsed time. \param
-   trainPoints : Pointer to the list of 3D train points, when a keypoint
+   values for each keypoint.
+   \param elapsedTime : Elapsed time.
+   \param trainPoints : Pointer to the list of 3D train points, when a keypoint
    cannot be extracted, we need to remove the corresponding 3D point.
  */
 void vpKeyPoint::extract(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
@@ -1904,8 +1907,9 @@ void vpKeyPoint::extract(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoin
    \param matImg : Input image.
    \param keyPoints : List of keypoints we want to extract their descriptors.
    \param descriptors : Descriptors matrix with at each row the descriptors
-   values for each keypoint. \param elapsedTime : Elapsed time. \param
-   trainPoints : Pointer to the list of 3D train points, when a keypoint
+   values for each keypoint.
+   \param elapsedTime : Elapsed time.
+   \param trainPoints : Pointer to the list of 3D train points, when a keypoint
    cannot be extracted, we need to remove the corresponding 3D point.
  */
 void vpKeyPoint::extract(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, cv::Mat &descriptors,
@@ -2173,18 +2177,38 @@ void vpKeyPoint::getObjectPoints(std::vector<vpPoint> &objectPoints) const
 /*!
    Get the query keypoints list in OpenCV type.
 
+   \param matches : If false return the list of all query keypoints extracted in the current image.
+   If true, return only the query keypoints list that have matches.
    \param keyPoints : List of query keypoints (or keypoints detected in the
    current image).
  */
-void vpKeyPoint::getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints) const { keyPoints = m_queryFilteredKeyPoints; }
+void vpKeyPoint::getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints, bool matches) const
+{
+  if (matches) {
+    keyPoints = m_queryFilteredKeyPoints;
+  }
+  else {
+    keyPoints = m_queryKeyPoints;
+  }
+}
 
 /*!
    Get the query keypoints list in ViSP type.
 
    \param keyPoints : List of query keypoints (or keypoints detected in the
    current image).
+   \param matches : If false return the list of all query keypoints extracted in the current image.
+   If true, return only the query keypoints list that have matches.
  */
-void vpKeyPoint::getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints) const { keyPoints = currentImagePointsList; }
+void vpKeyPoint::getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints, bool matches) const
+{
+  if (matches) {
+    keyPoints = currentImagePointsList;
+  }
+  else {
+    vpConvert::convertFromOpenCV(m_queryKeyPoints, keyPoints);
+  }
+}
 
 /*!
    Get the train keypoints list in OpenCV type.
@@ -2268,8 +2292,23 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
   }
 
   if (detectorNameTmp == "SIFT") {
-#ifdef VISP_HAVE_OPENCV_XFEATURES2D
-    cv::Ptr<cv::FeatureDetector> siftDetector = cv::xfeatures2d::SIFT::create();
+#if defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
+    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+    // SIFT is no more patented since 09/03/2020
+    cv::Ptr<cv::FeatureDetector> siftDetector;
+    if (m_maxFeatures > 0) {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+      siftDetector = cv::SIFT::create(m_maxFeatures);
+#else
+      siftDetector = cv::xfeatures2d::SIFT::create(m_maxFeatures);
+#endif
+    } else {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+      siftDetector = cv::SIFT::create();
+#else
+      siftDetector = cv::xfeatures2d::SIFT::create();
+#endif
+    }
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = siftDetector;
     } else {
@@ -2312,7 +2351,13 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(fastDetector);
     }
   } else if (detectorNameTmp == "ORB") {
-    cv::Ptr<cv::FeatureDetector> orbDetector = cv::ORB::create();
+    cv::Ptr<cv::FeatureDetector> orbDetector;
+    if (m_maxFeatures > 0) {
+      orbDetector = cv::ORB::create(m_maxFeatures);
+    }
+    else {
+      orbDetector = cv::ORB::create();
+    }
     if (!usePyramid) {
       m_detectors[detectorNameTmp] = orbDetector;
     } else {
@@ -2418,7 +2463,6 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
            << " or it is not available in OpenCV version: " << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
     throw vpException(vpException::fatalError, ss_msg.str());
   }
-
 #endif
 }
 
@@ -2446,8 +2490,14 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
   m_extractors[extractorName] = cv::DescriptorExtractor::create(extractorName);
 #else
   if (extractorName == "SIFT") {
-#ifdef VISP_HAVE_OPENCV_XFEATURES2D
+#if defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
+    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+    // SIFT is no more patented since 09/03/2020
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+    m_extractors[extractorName] = cv::SIFT::create();
+#else
     m_extractors[extractorName] = cv::xfeatures2d::SIFT::create();
+#endif
 #else
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the extractor: SIFT. OpenCV version  " << std::hex << VISP_HAVE_OPENCV_VERSION
@@ -2611,8 +2661,11 @@ void vpKeyPoint::initFeatureNames()
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))
   m_mapOfDetectorNames[DETECTOR_STAR] = "STAR";
 #endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
+    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
   m_mapOfDetectorNames[DETECTOR_SIFT] = "SIFT";
+#endif
+#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
   m_mapOfDetectorNames[DETECTOR_SURF] = "SURF";
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
@@ -2632,8 +2685,11 @@ void vpKeyPoint::initFeatureNames()
   m_mapOfDescriptorNames[DESCRIPTOR_FREAK] = "FREAK";
   m_mapOfDescriptorNames[DESCRIPTOR_BRIEF] = "BRIEF";
 #endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
+#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
+    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
   m_mapOfDescriptorNames[DESCRIPTOR_SIFT] = "SIFT";
+#endif
+#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
   m_mapOfDescriptorNames[DESCRIPTOR_SURF] = "SURF";
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
@@ -2969,10 +3025,10 @@ void vpKeyPoint::loadConfigFile(const std::string &configFile)
 
    \param filename : Path of the learning file.
    \param binaryMode : If true, the learning file is in a binary mode,
-   otherwise it is in XML mode. \param append : If true, concatenate the
-   learning data, otherwise reset the variables.
+   otherwise it is in XML mode.
+   \param append : If true, concatenate the learning data, otherwise reset the variables.
  */
-void vpKeyPoint::loadLearningData(const std::string &filename, const bool binaryMode, const bool append)
+void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, bool append)
 {
   int startClassId = 0;
   int startImageId = 0;
@@ -3444,14 +3500,14 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color) { return mat
    Match keypoints detected in a region of interest of the image with those
    built in the reference list.
 
-   \param I : Input image
-   \param iP : Coordinate of the top-left corner of the region of interest
-   \param height : Height of the region of interest
-   \param width : Width of the region of interest
-   \return The number of matched keypoints
+   \param I : Input image.
+   \param iP : Coordinate of the top-left corner of the region of interest.
+   \param height : Height of the region of interest.
+   \param width : Width of the region of interest.
+   \return The number of matched keypoints.
  */
-unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int height,
-                                    const unsigned int width)
+unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                                    unsigned int width)
 {
   return matchPoint(I, vpRect(iP, width, height));
 }
@@ -3460,14 +3516,14 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpIma
    Match keypoints detected in a region of interest of the image with those
    built in the reference list.
 
-   \param I_color : Input image
-   \param iP : Coordinate of the top-left corner of the region of interest
-   \param height : Height of the region of interest
-   \param width : Width of the region of interest
-   \return The number of matched keypoints
+   \param I_color : Input image.
+   \param iP : Coordinate of the top-left corner of the region of interest.
+   \param height : Height of the region of interest.
+   \param width : Width of the region of interest.
+   \return The number of matched keypoints.
  */
-unsigned int vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, const unsigned int height,
-                                    const unsigned int width)
+unsigned int vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, unsigned int height,
+                                    unsigned int width)
 {
   return matchPoint(I_color, vpRect(iP, width, height));
 }
@@ -3476,9 +3532,9 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpImag
    Match keypoints detected in a region of interest of the image with those
    built in the reference list.
 
-   \param I : Input image
-   \param rectangle : Rectangle of the region of interest
-   \return The number of matched keypoints
+   \param I : Input image.
+   \param rectangle : Rectangle of the region of interest.
+   \return The number of matched keypoints.
  */
 unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpRect &rectangle)
 {
@@ -3520,6 +3576,22 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpRec
     detect(I, m_queryKeyPoints, m_detectionTime, rectangle);
     extract(I, m_queryKeyPoints, m_queryDescriptors, m_extractionTime);
   }
+
+  return matchPoint(m_queryKeyPoints, m_queryDescriptors);
+}
+
+/*!
+   Match query keypoints with those built in the reference list using buildReference().
+
+   \param queryKeyPoints : List of the query keypoints.
+   \param queryDescriptors : List of the query descriptors.
+
+   \return The number of matched keypoints.
+ */
+unsigned int vpKeyPoint::matchPoint(const std::vector<cv::KeyPoint> &queryKeyPoints, const cv::Mat &queryDescriptors)
+{
+  m_queryKeyPoints = queryKeyPoints;
+  m_queryDescriptors = queryDescriptors;
 
   match(m_trainDescriptors, m_queryDescriptors, m_matches, m_matchingTime);
 
@@ -3566,9 +3638,9 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpRec
    Match keypoints detected in a region of interest of the image with those
    built in the reference list.
 
-   \param I_color : Input image
-   \param rectangle : Rectangle of the region of interest
-   \return The number of matched keypoints
+   \param I_color : Input image.
+   \param rectangle : Rectangle of the region of interest.
+   \return The number of matched keypoints.
  */
 unsigned int vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpRect &rectangle)
 {
@@ -3580,13 +3652,13 @@ unsigned int vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpRect
    Match keypoints detected in the image with those built in the reference
    list and compute the pose.
 
-   \param I : Input image
-   \param cam : Camera parameters
-   \param cMo : Homogeneous matrix between the object frame and the camera frame
+   \param I : Input image.
+   \param cam : Camera parameters.
+   \param cMo : Homogeneous matrix between the object frame and the camera frame.
    \param func : Function pointer to filter the pose in Ransac pose
-   estimation, if we want to eliminate the poses which do not respect some criterion
-   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
-   \return True if the matching and the pose estimation are OK, false otherwise
+   estimation, if we want to eliminate the poses which do not respect some criterion.
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider.
+   \return True if the matching and the pose estimation are OK, false otherwise.
  */
 bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                             bool (*func)(const vpHomogeneousMatrix &), const vpRect &rectangle)
@@ -3599,13 +3671,13 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
    Match keypoints detected in the image with those built in the reference
    list and compute the pose.
 
-   \param I_color : Input image
-   \param cam : Camera parameters
-   \param cMo : Homogeneous matrix between the object frame and the camera frame
+   \param I_color : Input image.
+   \param cam : Camera parameters.
+   \param cMo : Homogeneous matrix between the object frame and the camera frame.
    \param func : Function pointer to filter the pose in Ransac pose
-   estimation, if we want to eliminate the poses which do not respect some criterion
-   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
-   \return True if the matching and the pose estimation are OK, false otherwise
+   estimation, if we want to eliminate the poses which do not respect some criterion.
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider.
+   \return True if the matching and the pose estimation are OK, false otherwise.
  */
 bool vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                             bool (*func)(const vpHomogeneousMatrix &), const vpRect &rectangle)
@@ -3618,16 +3690,16 @@ bool vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParame
    Match keypoints detected in the image with those built in the reference
    list and compute the pose.
 
-   \param I : Input image
-   \param cam : Camera parameters
-   \param cMo : Homogeneous matrix between the object frame and the camera frame
+   \param I : Input image.
+   \param cam : Camera parameters.
+   \param cMo : Homogeneous matrix between the object frame and the camera frame.
    \param error : Reprojection mean square error (in pixel) between the
-   2D points and the projection of the 3D points with the estimated pose
-   \param elapsedTime : Time to detect, extract, match and compute the pose
+   2D points and the projection of the 3D points with the estimated pose.
+   \param elapsedTime : Time to detect, extract, match and compute the pose.
    \param func : Function pointer to filter the pose in Ransac pose
-   estimation, if we want to eliminate the poses which do not respect some criterion
-   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
-   \return True if the matching and the pose estimation are OK, false otherwise
+   estimation, if we want to eliminate the poses which do not respect some criterion.
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider.
+   \return True if the matching and the pose estimation are OK, false otherwise.
  */
 bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                             double &error, double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &),
@@ -3805,16 +3877,16 @@ bool vpKeyPoint::matchPoint(const vpImage<unsigned char> &I, const vpCameraParam
    Match keypoints detected in the image with those built in the reference
    list and compute the pose.
 
-   \param I_color : Input image
-   \param cam : Camera parameters
-   \param cMo : Homogeneous matrix between the object frame and the camera frame
+   \param I_color : Input image.
+   \param cam : Camera parameters.
+   \param cMo : Homogeneous matrix between the object frame and the camera frame.
    \param error : Reprojection mean square error (in pixel) between the
-   2D points and the projection of the 3D points with the estimated pose
-   \param elapsedTime : Time to detect, extract, match and compute the pose
+   2D points and the projection of the 3D points with the estimated pose.
+   \param elapsedTime : Time to detect, extract, match and compute the pose.
    \param func : Function pointer to filter the pose in Ransac pose
-   estimation, if we want to eliminate the poses which do not respect some criterion
-   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
-   \return True if the matching and the pose estimation are OK, false otherwise
+   estimation, if we want to eliminate the poses which do not respect some criterion.
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider.
+   \return True if the matching and the pose estimation are OK, false otherwise.
  */
 bool vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                             double &error, double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &),
@@ -3829,19 +3901,21 @@ bool vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParame
    Match keypoints detected in the image with those built in the reference
    list and return the bounding box and the center of gravity.
 
-   \param I : Input image
-   \param boundingBox : Bounding box that contains the good matches
+   \param I : Input image.
+   \param boundingBox : Bounding box that contains the good matches.
    \param centerOfGravity : Center of gravity computed from the location of
-   the good matches (could differ of the center of the bounding box) \param
-   isPlanarObject : If the object is planar, the homography matrix is
+   the good matches (could differ of the center of the bounding box).
+   \param isPlanarObject : If the object is planar, the homography matrix is
    estimated to eliminate outliers, otherwise it is the fundamental matrix
-   which is estimated \param imPts1 : Pointer to the list of reference
-   keypoints if not null \param imPts2 : Pointer to the list of current
-   keypoints if not null \param meanDescriptorDistance : Pointer to the value
-   of the average distance of the descriptors if not null \param
-   detection_score : Pointer to the value of the detection score if not null
+   which is estimated.
+   \param imPts1 : Pointer to the list of reference keypoints if not null.
+   \param imPts2 : Pointer to the list of current keypoints if not null.
+   \param meanDescriptorDistance : Pointer to the value
+   of the average distance of the descriptors if not null.
+   \param detection_score : Pointer to the value of the detection score if not null.
    \param rectangle : Rectangle corresponding to the ROI (Region of Interest)
-   to consider \return True if the object is present, false otherwise
+   to consider.
+   \return True if the object is present, false otherwise.
  */
 bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &boundingBox,
                                      vpImagePoint &centerOfGravity, const bool isPlanarObject,
@@ -3967,18 +4041,18 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, vpRect &bo
    list, compute the pose and return also the bounding box and the center of
    gravity.
 
-   \param I : Input image
-   \param cam : Camera parameters
-   \param cMo : Homogeneous matrix between the object frame and the camera frame
+   \param I : Input image.
+   \param cam : Camera parameters.
+   \param cMo : Homogeneous matrix between the object frame and the camera frame.
    \param error : Reprojection mean square error (in pixel) between the
-   2D points and the projection of the 3D points with the estimated pose
-   \param elapsedTime : Time to detect, extract, match and compute the pose
-   \param boundingBox : Bounding box that contains the good matches
+   2D points and the projection of the 3D points with the estimated pose.
+   \param elapsedTime : Time to detect, extract, match and compute the pose.
+   \param boundingBox : Bounding box that contains the good matches.
    \param centerOfGravity : Center of gravity computed from the location of
-   the good matches (could differ of the center of the bounding box)
+   the good matches (could differ of the center of the bounding box).
    \param func : Function pointer to filter the pose in Ransac pose estimation, if we
-   want to eliminate the poses which do not respect some criterion
-   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider
+   want to eliminate the poses which do not respect some criterion.
+   \param rectangle : Rectangle corresponding to the ROI (Region of Interest) to consider.
    \return True if the matching and the pose estimation are OK, false otherwise.
  */
 bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, const vpCameraParameters &cam,
@@ -4023,16 +4097,18 @@ bool vpKeyPoint::matchPointAndDetect(const vpImage<unsigned char> &I, const vpCa
 }
 
 /*!
-    Apply a set of affine transormations to the image, detect keypoints and
-    reproject them into initial image coordinates.
-    See http://www.ipol.im/pub/algo/my_affine_sift/ for the details.
-    See https://github.com/Itseez/opencv/blob/master/samples/python2/asift.py
+   Apply a set of affine transormations to the image, detect keypoints and
+   reproject them into initial image coordinates.
+   See http://www.ipol.im/pub/algo/my_affine_sift/ for the details.
+   See https://github.com/Itseez/opencv/blob/master/samples/python2/asift.py
    for the Python implementation by Itseez and Matt Sheckells for the current
-   implementation in C++. \param I : Input image \param listOfKeypoints : List
-   of detected keypoints in the multiple images after affine transformations
-    \param listOfDescriptors : Corresponding list of descriptors
-    \param listOfAffineI : Optional parameter, list of images after affine
-   transformations
+   implementation in C++.
+   \param I : Input image.
+   \param listOfKeypoints : List of detected keypoints in the multiple images after
+   affine transformations.
+   \param listOfDescriptors : Corresponding list of descriptors.
+   \param listOfAffineI : Optional parameter, list of images after affine
+   transformations.
  */
 void vpKeyPoint::detectExtractAffine(const vpImage<unsigned char> &I,
                                      std::vector<std::vector<cv::KeyPoint> > &listOfKeypoints,
@@ -4239,13 +4315,12 @@ void vpKeyPoint::reset()
 /*!
    Save the learning data in a file in XML or binary mode.
 
-   \param filename : Path of the save file
+   \param filename : Path of the save file.
    \param binaryMode : If true, the data are saved in binary mode, otherwise
-   in XML mode
-   \param saveTrainingImages : If true, save also the training
-   images on disk
+   in XML mode.
+   \param saveTrainingImages : If true, save also the training images on disk.
  */
-void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, const bool saveTrainingImages)
+void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, bool saveTrainingImages)
 {
   std::string parent = vpIoTools::getParent(filename);
   if (!parent.empty()) {

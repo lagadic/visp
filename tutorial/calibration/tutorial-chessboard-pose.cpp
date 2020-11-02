@@ -22,7 +22,7 @@
 #include <visp3/vision/vpPose.h>
 
 namespace {
-void calcChessboardCorners(const int width, const int height, const double squareSize, std::vector<vpPoint> &corners) {
+void calcChessboardCorners(int width, int height, double squareSize, std::vector<vpPoint> &corners) {
   corners.resize(0);
 
   for (int i = 0; i < height; i++) {
@@ -103,7 +103,7 @@ int main(int argc, const char ** argv) {
   std::cout << "cam:\n" << cam << std::endl;
 
   bool quit = false;
-  while (!quit && !reader.end()) {
+  do {
     reader.acquire(I);
 
     cv::Mat matImg;
@@ -189,7 +189,7 @@ int main(int argc, const char ** argv) {
           break;
       }
     }
-  }
+  } while (!quit && !reader.end());
 
   return EXIT_SUCCESS;
 }

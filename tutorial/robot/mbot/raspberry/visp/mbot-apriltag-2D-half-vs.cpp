@@ -190,9 +190,11 @@ int main(int argc, const char **argv)
       t = vpTime::measureTimeMs() - t;
       time_vec.push_back(t);
 
-      std::stringstream ss;
-      ss << "Detection time: " << t << " ms";
-      vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+      {
+        std::stringstream ss;
+        ss << "Detection time: " << t << " ms";
+        vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+      }
 
       if (detector.getNbObjects() == 1) {
         // Display visual features

@@ -1,0 +1,206 @@
+/**
+
+\page tutorial-install-docker Tutorial: Installation from Docker images
+\tableofcontents
+
+\section install_docker_intro Introduction
+
+Even with the detailed and tested \ref tutorial_install_src tutorials, sometimes it is tough for people to get a system up and running with ViSP. That's why in this tutorial we explain how to get ready to use Docker images that contains ViSP source code with already build tests, examples and tutorials that you may just run to discover ViSP capabilities.
+
+Our Docker images available on [Docker Hub](https://hub.docker.com/repository/docker/vispci/vispci) are around 1 GB in size (compressed size) and contain minimal things to discover and start to play with ViSP.
+
+\section install_docker_engine Install Docker Engine
+
+\subsection install_docker_engine_ubuntu On Ubuntu host
+
+As mentioned [here](https://docs.docker.com/engine/install/ubuntu/), to install Docker Engine on Ubuntu host using the repository, follow the instructions:
+
+- Update the apt package index and install packages to allow apt to use a repository over HTTPS:
+\verbatim
+$ sudo apt-get update
+
+$ sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    gnupg-agent \
+    software-properties-common
+\endverbatim
+
+- Add Docker’s official GPG key:
+\verbatim
+$ curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+\endverbatim
+
+- Use the following command to set up the stable repository
+\verbatim
+$ sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+\endverbatim
+
+- Update the apt package index, and install the latest version of Docker Engine and containerd
+\verbatim
+$ sudo apt-get update
+$ sudo apt-get install docker-ce docker-ce-cli containerd.io
+\endverbatim
+
+
+\subsection install_docker_engine_mac On MacOS host
+
+- To install Docker Engine on MacOS host, first go to the [Docker Store](https://hub.docker.com/editions/community/docker-ce-desktop-mac) and download Docker Desktop for Mac.
+
+- Double-click Docker.dmg to open the installer, then drag Moby the whale to the Applications folder.
+
+- Double-click Docker.app in the Applications folder to start Docker.
+
+- You are prompted to authorize Docker.app with your system password after you launch it. Privileged access is needed to install networking components and links to the Docker apps.
+
+\section install_docker_visp Install Docker ViSP images
+
+In [Docker Hub](https://hub.docker.com/repository/docker/vispci/vispci) we provide various ready to use Docker images with ViSP already built that could be used on an Ubuntu or MacOS host.
+
+\subsection install_docker_visp_ubuntu_18_04 Ubuntu 18.04 image
+
+\note The `Dockerfile` used to generate this image is available [here](https://github.com/lagadic/visp/blob/master/ci/docker/ubuntu-18.04/Dockerfile).
+
+To use the docker image installed on an Ubuntu 18.04 system, use the following instructions:
+\verbatim
+$ docker pull vispci/vispci:ubuntu-18.04
+$ docker run -it vispci/vispci:ubuntu-18.04
+\endverbatim
+
+Within the container, ViSP workspace is installed in `$HOME/visp-ws` folder:
+\verbatim
+[root@7152a1ec64ba]# ls $HOME/visp-ws
+visp  visp-build  visp-images
+\endverbatim
+
+- In `visp` folder you will find a [Github](https://github.com/lagadic/visp) clone of the source code. To update its content with the last changes, run `cd visp; git pull`
+- In `visp-build` folder you will find ViSP libraries and all the build binaries corresponding to the tests, examples and tutorials. If you updated `visp` folder content, don't forget to refresh your build with `cd visp-build; cmake ../visp; make` 
+- In `visp-images` folder you will find the dataset used by the tests and examples. 
+
+\subsection install_docker_visp_ubuntu_20_04 Ubuntu 20.04 image
+
+\note The `Dockerfile` used to generate this image is available [here](https://github.com/lagadic/visp/blob/master/ci/docker/ubuntu-20.04/Dockerfile).
+
+To use the docker image installed on an Ubuntu 20.04 system, use the following instructions:
+\verbatim
+$ docker pull vispci/vispci:ubuntu-20.04
+$ docker run -it vispci/vispci:ubuntu-20.04
+\endverbatim
+
+Within the container, ViSP workspace is installed in `$HOME/visp-ws` folder:
+\verbatim
+[root@7152a1ec64ba]# ls $HOME/visp-ws
+visp  visp-build  visp-images
+\endverbatim
+
+- In `visp` folder you will find a [Github](https://github.com/lagadic/visp) clone of the source code. To update its content with the last changes, run `cd visp; git pull`
+- In `visp-build` folder you will find ViSP libraries and all the build binaries corresponding to the tests, examples and tutorials. If you updated `visp` folder content, don't forget to refresh your build with `cd visp-build; cmake ../visp; make` 
+- In `visp-images` folder you will find the dataset used by the tests and examples. 
+
+\section install_docker_run Run Docker ViSP images
+
+\subsection install_docker_run_ubuntu On Ubuntu host
+
+\note The following instructions refer to \ref install_docker_visp_ubuntu_20_04, but could be easily adapted to any other image.
+
+With Docker installed on a MacOS host, when you run ViSP binaries that open GUI window to display for example an image you will get the following error:
+\verbatim
+$ docker pull vispci/vispci:ubuntu-20.04
+$ docker run -it vispci/vispci:ubuntu-20.04
+[root@7152a1ec64ba]# cd $HOME/visp-ws/visp-build/tutorial/image
+[root@7152a1ec64ba]# ./tutorial-viewer monkey.png 
+Catch an exception: Error [2]:	Can't connect display on server .
+\endverbatim
+
+In order to run GUIs from the container, you will need to:
+- Determine the IP Address of your Ubuntu host
+\verbatim
+...
+wlp2s0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 1500
+        inet 192.168.1.5  netmask 255.255.255.0  broadcast 192.168.1.255
+...
+\endverbatim
+- Allow access to the X11 server
+\verbatim
+$ xhost +
+access control disabled, clients can connect from any host
+\endverbatim
+- Start or connect to your Docker container.
+\verbatim
+$ docker run --device=/dev/video0:/dev/video0 -v /tmp/.X11-unix:/tmp/.X11-unix -e DISPLAY=$DISPLAY -it vispci/vispci:ubuntu-20.04
+\endverbatim
+- You are now ready to run binaries that open GUI
+\verbatim
+[root@7152a1ec64ba]# cd $HOME/visp-ws/visp-build/tutorial/image 
+[root@7152a1ec64ba]# ./tutorial-viewer monkey.png 
+A click to quit...
+\endverbatim
+\image html img-monkey.png·
+- You are now also ready to run binaries that require access to your camera
+\verbatim
+[root@7152a1ec64ba]# cd $HOME/visp-ws/visp-build/tutorial/grabber 
+[root@7152a1ec64ba]# ./tutorial-grabber-v4l2 
+Use device : 0
+Recording  : disabled
+Warning: cannot set input channel to 2
+Image size : 640 480
+\endverbatim
+or with this other tutorial
+\verbatim
+[root@7152a1ec64ba]# ./tutorial-grabber-opencv 
+Use device : 0
+Recording  : disabled
+\endverbatim
+
+\subsection install_docker_run_mac On MacOS host
+
+\note The following instructions refer to \ref install_docker_visp_ubuntu_20_04, but could be easily adapted to any other image.
+
+With Docker installed on a MacOS host, when you run ViSP binaries that open GUI window to display for example an image you will get the following error:
+\verbatim
+$ docker pull vispci/vispci:ubuntu-20.04
+$ docker run -it vispci/vispci:ubuntu-20.04
+[root@7152a1ec64ba]# cd $HOME/visp-ws/visp-build/tutorial/image
+[root@7152a1ec64ba]# ./tutorial-viewer monkey.png 
+Catch an exception: Error [2]:	Can't connect display on server .
+\endverbatim
+
+In order to run GUIs from the container, you will need to:
+- Install [XQuartz](https://www.xquartz.org/) 2.7.11 or later
+- After installing XQuartz, start it and open XQuartz -> Preferences from the menu bar. Go to the last tab, Security, and enable both "Allow connections from network clients" and "Authenticate connections" checkboxes and restart XQuartz.
+\image html img-xquartz-security.jpg
+- Now your Mac will be listening on port 6000 for X11 connections. Record the IP Address of your Mac as you will need it in your containers.
+\verbatim
+$ ifconfig en0 | grep inet | awk '$1=="inet" {print $2}'
+192.168.1.18
+\endverbatim
+- Add the IP Address of your Mac to the X11 allowed list.
+\verbatim
+$ xhost + 192.168.1.18
+192.168.1.18 being added to access control list
+\endverbatim
+- Start or connect to your Docker container.
+\verbatim
+$ docker run -it vispci/vispci:ubuntu-20.04
+\endverbatim
+- Export the `DISPLAY` variable within your container. 
+\verbatim
+[root@7152a1ec64ba]# export DISPLAY=192.168.1.18:0  
+\endverbatim
+- You are now ready to run binaries that open GUI
+\verbatim
+[root@7152a1ec64ba]# cd $HOME/visp-ws/visp-build/tutorial/image 
+[root@7152a1ec64ba]# ./tutorial-viewer monkey.png 
+A click to quit...
+\endverbatim
+\image html img-monkey.png·
+
+\section install_docker_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+
+*/

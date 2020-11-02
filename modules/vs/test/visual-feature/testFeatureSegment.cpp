@@ -43,7 +43,8 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_MODULE_ROBOT
+#if defined(VISP_HAVE_MODULE_ROBOT) \
+  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpDisplay.h>
@@ -239,10 +240,6 @@ int main(int argc, const char **argv)
 
     } while ((task.getError()).sumSquare() > 0.0005);
 
-    // A call to kill() is requested here to destroy properly the current
-    // and desired feature lists.
-    task.kill();
-
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
     if (graph != NULL)
       delete graph;
@@ -260,6 +257,12 @@ int main(int argc, const char **argv)
   }
 }
 
+#elif !(defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+int main()
+{
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+}
 #else
 int main()
 {

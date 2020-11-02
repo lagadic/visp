@@ -56,6 +56,7 @@
 
 int main()
 {
+#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     // We want to calibrate the hand-eye extrinsic camera parameters from 6
     // couple of poses: cMo and wMe
@@ -133,16 +134,33 @@ int main()
     // - cMo[6]: camera to object poses as six homogeneous transformations
     // - wMe[6]: world to hand (end-effector) poses as six homogeneous
     // transformations
-    vpHandEyeCalibration::calibrate(cMo, wMe, eMc);
+    int ret = vpHandEyeCalibration::calibrate(cMo, wMe, eMc);
 
-    std::cout << std::endl << "Output: hand-eye calibration result: eMc estimated " << std::endl;
-    std::cout << eMc << std::endl;
-    eMc.extract(erc);
-    std::cout << "Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2])
-        << std::endl;
+    if (ret == 0) {
+      std::cout << std::endl << "** Hand-eye calibration succeed" << std::endl;
+      std::cout << std::endl << "** Hand-eye (eMc) transformation estimated:" << std::endl;
+      std::cout << eMc << std::endl;
+      std::cout << "** Corresponding pose vector: " << vpPoseVector(eMc).t() << std::endl;
+      eMc.extract(erc);
+      std::cout << std::endl << "** Translation [m]: " << eMc[0][3] << " " << eMc[1][3] << " " << eMc[2][3] << std::endl;
+      std::cout << "** Rotation (theta-u representation) [rad]: " << erc.t() << std::endl;
+      std::cout << "** Rotation (theta-u representation) [deg]: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
+      vpQuaternionVector quaternion(eMc.getRotationMatrix());
+      std::cout << "** Rotation (quaternion representation) [rad]: " << quaternion.t() << std::endl;
+    }
+    else {
+      std::cout << std::endl << "** Hand-eye calibration failed" << std::endl;
+      std::cout << std::endl << "Check your input data and ensure they are covering the half sphere over the chessboard." << std::endl;
+      std::cout << std::endl << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html" << std::endl;
+    }
+
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
+#else
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

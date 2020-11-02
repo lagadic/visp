@@ -89,6 +89,8 @@ public:
   static const std::string CONST_EMC_GRIPPER_WITH_DISTORTION_FILENAME;
   static const std::string CONST_EMC_VACUUM_WITHOUT_DISTORTION_FILENAME;
   static const std::string CONST_EMC_VACUUM_WITH_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_INTEL_D435_WITHOUT_DISTORTION_FILENAME;
+  static const std::string CONST_EMC_INTEL_D435_WITH_DISTORTION_FILENAME;
   static const std::string CONST_EMC_GENERIC_WITHOUT_DISTORTION_FILENAME;
   static const std::string CONST_EMC_GENERIC_WITH_DISTORTION_FILENAME;
   static const std::string CONST_CAMERA_AFMA6_FILENAME;
@@ -114,13 +116,20 @@ public:
   */
   static const char *const CONST_GENERIC_CAMERA_NAME;
 
+  /*!
+    Name of the Intel D435 camera attached to the robot hand
+    (vpAfma6ToolType::TOOL_INTEL_D435_CAMERA).
+  */
+  static const char *const CONST_INTEL_D435_CAMERA_NAME;
+
   //! List of possible tools that can be attached to the robot end-effector.
   typedef enum {
-    TOOL_CCMOP,          /*!< Pneumatic CCMOP gripper. */
-    TOOL_GRIPPER,        /*!< Pneumatic gripper with 2 fingers. */
-    TOOL_VACUUM,         /*!< Pneumatic vaccum gripper. */
-    TOOL_GENERIC_CAMERA, /*!< A generic camera. */
-    TOOL_CUSTOM          /*!< A user defined tool. */
+    TOOL_CCMOP,             /*!< Pneumatic CCMOP gripper. */
+    TOOL_GRIPPER,           /*!< Pneumatic gripper with 2 fingers. */
+    TOOL_VACUUM,            /*!< Pneumatic vaccum gripper. */
+    TOOL_GENERIC_CAMERA,    /*!< A generic camera. */
+    TOOL_INTEL_D435_CAMERA, /*!< Intel D435 camera */
+    TOOL_CUSTOM             /*!< A user defined tool. */
   } vpAfma6ToolType;
 
   //! Default tool attached to the robot end effector

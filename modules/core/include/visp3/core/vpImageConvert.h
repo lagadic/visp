@@ -59,7 +59,6 @@
 #if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // Require opencv >= 4.0.0
 #  include <opencv2/imgproc/types_c.h>
 #  include <opencv2/imgproc.hpp>
-#  include <opencv2/imgcodecs.hpp>
 #  include <opencv2/highgui.hpp>
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
 #  include <opencv2/core/core.hpp>
@@ -109,8 +108,9 @@ class VISP_EXPORT vpImageConvert
 public:
   static void createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<vpRGBa> &dest_rgba);
   static void createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigned char> &dest_depth);
+
   static void convert(const vpImage<unsigned char> &src, vpImage<vpRGBa> &dest);
-  static void convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> &dest);
+  static void convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> &dest, unsigned int nThreads=0);
 
   static void convert(const vpImage<float> &src, vpImage<unsigned char> &dest);
   static void convert(const vpImage<unsigned char> &src, vpImage<float> &dest);
@@ -135,23 +135,24 @@ public:
   static void convert(const vpImage<vpRGBa> &src, IplImage *&dest);
   static void convert(const vpImage<unsigned char> &src, IplImage *&dest);
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-  static void convert(const cv::Mat &src, vpImage<vpRGBa> &dest, const bool flip = false);
-  static void convert(const cv::Mat &src, vpImage<unsigned char> &dest, const bool flip = false);
+  static void convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool flip = false);
+  static void convert(const cv::Mat &src, vpImage<unsigned char> &dest, bool flip = false,
+                      unsigned int nThreads=0);
   static void convert(const vpImage<vpRGBa> &src, cv::Mat &dest);
-  static void convert(const vpImage<unsigned char> &src, cv::Mat &dest, const bool copyData = true);
+  static void convert(const vpImage<unsigned char> &src, cv::Mat &dest, bool copyData = true);
 #endif
 #endif
 
 #ifdef VISP_HAVE_YARP
   static void convert(const vpImage<unsigned char> &src, yarp::sig::ImageOf<yarp::sig::PixelMono> *dest,
-                      const bool copyData = true);
+                      bool copyData = true);
   static void convert(const yarp::sig::ImageOf<yarp::sig::PixelMono> *src, vpImage<unsigned char> &dest,
-                      const bool copyData = true);
+                      bool copyData = true);
 
   static void convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp::sig::PixelRgba> *dest,
-                      const bool copyData = true);
+                      bool copyData = true);
   static void convert(const yarp::sig::ImageOf<yarp::sig::PixelRgba> *src, vpImage<vpRGBa> &dest,
-                      const bool copyData = true);
+                      bool copyData = true);
 
   static void convert(const vpImage<vpRGBa> &src, yarp::sig::ImageOf<yarp::sig::PixelRgb> *dest);
   static void convert(const yarp::sig::ImageOf<yarp::sig::PixelRgb> *src, vpImage<vpRGBa> &dest);
@@ -177,7 +178,6 @@ public:
     \f] \param b Blue component from the YUV coding format. This value is
     computed using: \f[b = 0.9999695*y + 2.04112*(u-128) - 0.0016314*(v-128)
     \f]
-
   */
   static inline void YUVToRGB(unsigned char y, unsigned char u, unsigned char v, unsigned char &r, unsigned char &g,
                               unsigned char &b)
@@ -222,14 +222,17 @@ public:
   static void RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned int size);
   static void RGBaToRGB(unsigned char *rgba, unsigned char *rgb, unsigned int size);
 
+  static void RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int width, unsigned int height,
+                        bool flip = false);
   static void RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int size);
+  static void RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int width, unsigned int height,
+                         unsigned int nThreads=0);
   static void RGBaToGrey(unsigned char *rgba, unsigned char *grey, unsigned int size);
 
   static void RGBToRGBa(unsigned char *rgb, unsigned char *rgba, unsigned int width, unsigned int height,
                         bool flip = false);
-  static void RGBToGrey(unsigned char *rgb, unsigned char *grey, unsigned int width, unsigned int height,
-                        bool flip = false);
 
+  static void GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsigned int width, unsigned int height);
   static void GreyToRGBa(unsigned char *grey, unsigned char *rgba, unsigned int size);
   static void GreyToRGB(unsigned char *grey, unsigned char *rgb, unsigned int size);
 
@@ -237,7 +240,7 @@ public:
                         bool flip = false);
 
   static void BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned int width, unsigned int height,
-                        bool flip = false);
+                        bool flip = false, unsigned int nThreads=0);
 
   static void YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb, unsigned int size);
   static void YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgb, unsigned int size);
@@ -248,30 +251,30 @@ public:
   static void MONO16ToRGBa(unsigned char *grey16, unsigned char *rgba, unsigned int size);
 
   static void HSVToRGBa(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
-                        const unsigned int size);
+                        unsigned int size);
   static void HSVToRGBa(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
-                        unsigned char *rgba, const unsigned int size);
+                        unsigned char *rgba, unsigned int size);
   static void RGBaToHSV(const unsigned char *rgba, double *hue, double *saturation, double *value,
-                        const unsigned int size);
+                        unsigned int size);
   static void RGBaToHSV(const unsigned char *rgba, unsigned char *hue, unsigned char *saturation, unsigned char *value,
-                        const unsigned int size);
+                        unsigned int size);
 
   static void HSVToRGB(const double *hue, const double *saturation, const double *value, unsigned char *rgb,
-                       const unsigned int size);
+                       unsigned int size);
   static void HSVToRGB(const unsigned char *hue, const unsigned char *saturation, const unsigned char *value,
-                       unsigned char *rgb, const unsigned int size);
+                       unsigned char *rgb, unsigned int size);
   static void RGBToHSV(const unsigned char *rgb, double *hue, double *saturation, double *value,
-                       const unsigned int size);
+                       unsigned int size);
   static void RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
-                       const unsigned int size);
+                       unsigned int size);
 
 private:
   static void computeYCbCrLUT();
 
   static void HSV2RGB(const double *hue, const double *saturation, const double *value, unsigned char *rgba,
-                      const unsigned int size, const unsigned int step);
-  static void RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value, const unsigned int size,
-                      const unsigned int step);
+                      unsigned int size, unsigned int step);
+  static void RGB2HSV(const unsigned char *rgb, double *hue, double *saturation, double *value, unsigned int size,
+                      unsigned int step);
 
 private:
   static bool YCbCrLUTcomputed;
@@ -282,9 +285,3 @@ private:
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

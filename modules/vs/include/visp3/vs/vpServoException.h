@@ -81,7 +81,7 @@ public:
   };
 
 public:
-  vpServoException(const int id, const char *format, ...)
+  vpServoException(int id, const char *format, ...)
   {
     this->code = id;
     va_list args;
@@ -89,8 +89,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpServoException(const int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpServoException(const int id) : vpException(id) { ; }
+  vpServoException(int id, const std::string &msg) : vpException(id, msg) { ; }
+  explicit vpServoException(int id) : vpException(id) { ; }
 };
 
 #endif

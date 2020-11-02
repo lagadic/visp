@@ -41,43 +41,27 @@
   \file vpRobust.cpp
 */
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpDebug.h>
-#include <visp3/core/vpMath.h>
-
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <algorithm> // std::swap
+
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpDebug.h>
+#include <visp3/core/vpMath.h>
 #include <visp3/core/vpRobust.h>
-
-#define vpITMAX 100
-#define vpEPS 3.0e-7
-#define vpCST 1
-
-// ===================================================================
-/*!
-  \brief Constructor.
-  \param n_data : Size of the data vector.
-
-*/
-vpRobust::vpRobust(unsigned int n_data)
-  : normres(), sorted_normres(), sorted_residues(), NoiseThreshold(0.0017), sig_prev(0), it(0), swap(0), size(n_data)
-{
-  vpCDEBUG(2) << "vpRobust constructor reached" << std::endl;
-
-  normres.resize(n_data);
-  sorted_normres.resize(n_data);
-  sorted_residues.resize(n_data);
-  // NoiseThreshold=0.0017; //Can not be more accurate than 1 pixel
-}
 
 /*!
   Default constructor.
 */
 vpRobust::vpRobust()
-  : normres(), sorted_normres(), sorted_residues(), NoiseThreshold(0.0017), sig_prev(0), it(0), swap(0), size(0)
+  : m_normres(), m_sorted_normres(), m_sorted_residues(), m_mad_min(0.0017), m_mad_prev(0),
+    #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+    m_iter(0),
+    #endif
+    m_size(0), m_mad(0)
 {
 }
 
@@ -91,14 +75,16 @@ vpRobust::vpRobust(const vpRobust &other) { *this = other; }
  */
 vpRobust &vpRobust::operator=(const vpRobust &other)
 {
-  normres = other.normres;
-  sorted_normres = other.sorted_normres;
-  sorted_residues = other.sorted_residues;
-  NoiseThreshold = other.NoiseThreshold;
-  sig_prev = other.sig_prev;
-  it = other.it;
-  swap = other.swap;
-  size = other.size;
+  m_normres = other.m_normres;
+  m_sorted_normres = other.m_sorted_normres;
+  m_sorted_residues = other.m_sorted_residues;
+  m_mad_min = other.m_mad_min;
+  m_mad = other.m_mad;
+  m_mad_prev = other.m_mad_prev;
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  m_iter = other.m_iter;
+#endif
+  m_size = other.m_size;
   return *this;
 }
 
@@ -108,132 +94,240 @@ vpRobust &vpRobust::operator=(const vpRobust &other)
  */
 vpRobust &vpRobust::operator=(const vpRobust &&other)
 {
-  normres = std::move(other.normres);
-  sorted_normres = std::move(other.sorted_normres);
-  sorted_residues = std::move(other.sorted_residues);
-  NoiseThreshold = std::move(other.NoiseThreshold);
-  sig_prev = std::move(other.sig_prev);
-  it = std::move(other.it);
-  swap = std::move(other.swap);
-  size = std::move(other.size);
+  m_normres = std::move(other.m_normres);
+  m_sorted_normres = std::move(other.m_sorted_normres);
+  m_sorted_residues = std::move(other.m_sorted_residues);
+  m_mad_min = std::move(other.m_mad_min);
+  m_mad_prev = std::move(other.m_mad_prev);
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  m_iter = std::move(other.m_iter);
+#endif
+  m_size = std::move(other.m_size);
   return *this;
 }
 #endif
 
 /*!
-  \brief Resize containers.
+  Resize containers.
   \param n_data : size of input data vector.
-
 */
 void vpRobust::resize(unsigned int n_data)
 {
-
-  if (n_data != size) {
-    normres.resize(n_data);
-    sorted_normres.resize(n_data);
-    sorted_residues.resize(n_data);
-    size = n_data;
+  if (n_data != m_size) {
+    m_normres.resize(n_data);
+    m_sorted_normres.resize(n_data);
+    m_sorted_residues.resize(n_data);
+    m_size = n_data;
   }
 }
 
 // ===================================================================
 /*!
 
-  \brief Calculate an Mestimate given a particular loss function using MAD
+  Calculate an M-estimate given a particular influence function using MAD
   (Median Absolute Deviation) as a scale estimate at each iteration.
 
-  \pre Requires a column vector of residues.
+  \param[in] method : Type of influence function.
 
-  \post Keeps a copy of the weights so that rejected points are kept at zero
-  weight.
+  \param[in] residues : Vector of residues \f$ r \f$ of the parameters to estimate.
 
-  \param method : Type of M-Estimator \f$\rho(r_i)\f$:
-
-  - TUKEY : \f$ \rho(r_i, C) = \left\{
-  \begin{array}{ll}
-  \frac{r_i^6}{6} - \frac{C^2r_i^4}{2} +\frac{C^4r_i^2}{2} & \mbox{if} |r_i| <
-  C \\ \frac{1}{6} C^6 & \mbox{else} \end{array} \right. \f$ with influence
-  function \f$ \psi(r_i, C) = \left\{ \begin{array}{ll} r_i(r_i^2-C^2)^2 &
-  \mbox{if} |r_i| < C \\ 0 & \mbox{else} \end{array} \right. \f$ where
-  \f$C=4.7 \hat{\sigma} \f$ and with \f$ \hat{\sigma} = 1.48{Med}_i(|r_i -
-  {Med}_j(r_j)|) \f$
-
-  - CAUCHY :
-
-  - HUBER :
-
-  \param residues : Residues \f$ r_i \f$ used in the previous formula.
-
-  \param weights : Vector of weights \f$w_i =
-  \frac{\psi(r_i)}{r_i}\f$. Values are in [0, 1]. A value near zero
-  means that the data is an outlier. This vector must have the same size
-  residue vector.
-
-  \return Returns a Column Vector of weights associated to each residue.
+  \param[out] weights : Vector of weights \f$w(r)\f$. Values are in [0, 1]. A value near zero
+  means that the data is an outlier.
  */
-
-// ===================================================================
 void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector &residues, vpColVector &weights)
 {
-
   double med = 0;        // median
   double normmedian = 0; // Normalized median
-  double sigma = 0;      // Standard Deviation
 
   // resize vector only if the size of residue vector has changed
   unsigned int n_data = residues.getRows();
+  weights.resize(n_data, false);
   resize(n_data);
 
-  sorted_residues = residues;
+  m_sorted_residues = residues;
 
   unsigned int ind_med = (unsigned int)(ceil(n_data / 2.0)) - 1;
 
   // Calculate median
-  med = select(sorted_residues, 0, (int)n_data - 1, (int)ind_med /*(int)n_data/2*/);
+  med = select(m_sorted_residues, 0, n_data - 1, ind_med);
   // residualMedian = med ;
 
   // Normalize residues
   for (unsigned int i = 0; i < n_data; i++) {
-    normres[i] = (fabs(residues[i] - med));
-    sorted_normres[i] = (fabs(sorted_residues[i] - med));
+    m_normres[i] = (fabs(residues[i] - med));
+    m_sorted_normres[i] = (fabs(m_sorted_residues[i] - med));
   }
 
   // Calculate MAD
-  normmedian = select(sorted_normres, 0, (int)n_data - 1, (int)ind_med /*(int)n_data/2*/);
+  normmedian = select(m_sorted_normres, 0, n_data - 1, ind_med);
   // normalizedResidualMedian = normmedian ;
   // 1.48 keeps scale estimate consistent for a normal probability dist.
-  sigma = 1.4826 * normmedian; // median Absolute Deviation
+  m_mad = 1.4826 * normmedian; // median Absolute Deviation
 
   // Set a minimum threshold for sigma
   // (when sigma reaches the level of noise in the image)
-  if (sigma < NoiseThreshold) {
-    sigma = NoiseThreshold;
+  if (m_mad < m_mad_min) {
+    m_mad = m_mad_min;
   }
-
   switch (method) {
   case TUKEY: {
-    psiTukey(sigma, normres, weights);
-
-    vpCDEBUG(2) << "Tukey's function computed" << std::endl;
+    psiTukey(m_mad, m_normres, weights);
     break;
   }
   case CAUCHY: {
-    psiCauchy(sigma, normres, weights);
+    psiCauchy(m_mad, m_normres, weights);
     break;
   }
   case HUBER: {
-    psiHuber(sigma, normres, weights);
+    psiHuber(m_mad, m_normres, weights);
     break;
   }
   }
 }
 
+/*!
+  Calculation of Tukey's influence function.
+
+  \param sigma : sigma parameters.
+  \param x : normalized residue vector.
+  \param weights : weight vector.
+*/
+
+void vpRobust::psiTukey(double sig, const vpColVector &x, vpColVector &weights)
+{
+  unsigned int n_data = x.getRows();
+  double C = sig * 4.6851;
+
+  // Here we consider that sig cannot be equal to 0
+  for (unsigned int i = 0; i < n_data; i++) {
+    double xi = x[i] / C;
+    xi *= xi;
+
+    if (xi > 1.) {
+      weights[i] = 0;
+    } else {
+      xi = 1 - xi;
+      xi *= xi;
+      weights[i] = xi;
+    }
+  }
+}
+
+/*!
+  Calculation of Tukey's influence function.
+
+  \param sigma : sigma parameters.
+  \param x : normalized residue vector.
+  \param weights : weight vector.
+*/
+void vpRobust::psiHuber(double sig, const vpColVector &x, vpColVector &weights)
+{
+  double C = sig * 1.2107;
+  unsigned int n_data = x.getRows();
+
+  for (unsigned int i = 0; i < n_data; i++) {
+    double xi = x[i] / C;
+    if (fabs(xi) > 1.)
+      weights[i] = std::fabs(1./xi);
+    else
+      weights[i] = 1;
+  }
+}
+
+/*!
+  Calculation of Cauchy's influence function.
+
+  \param sigma : sigma parameter.
+  \param x : normalized residue vector.
+  \param weights : weight vector.
+*/
+
+void vpRobust::psiCauchy(double sig, const vpColVector &x, vpColVector &weights)
+{
+  unsigned int n_data = x.getRows();
+  double C = sig * 2.3849;
+
+  // Calculate Cauchy's equation
+  for (unsigned int i = 0; i < n_data; i++) {
+    weights[i] = 1. / (1. + vpMath::sqr(x[i] / (C)));
+  }
+}
+
+/*!
+  Partition function.
+  \param a : vector to be sorted.
+  \param l : first value to be considered.
+  \param r : last value to be considered.
+*/
+int vpRobust::partition(vpColVector &a, unsigned int l, unsigned int r)
+{
+  unsigned int i = l - 1;
+  unsigned int j = r;
+  double v = a[r];
+
+  for (;;) {
+    while (a[++i] < v)
+      ;
+    while (v < a[--j])
+      if (j == l)
+        break;
+    if (i >= j)
+      break;
+    std::swap(a[i], a[j]);
+  }
+  std::swap(a[i], a[r]);
+  return i;
+}
+
+/*!
+  \brief Sort a part of a vector and select a value of this new vector.
+  \param a : vector to be sorted
+  \param l : first value to be considered
+  \param r : last value to be considered
+  \param k : value to be selected
+*/
+double vpRobust::select(vpColVector &a, unsigned int l, unsigned int r, unsigned int k)
+{
+  while (r > l) {
+    unsigned int i = partition(a, l, r);
+    if (i >= k)
+      r = i - 1;
+    if (i <= k)
+      l = i + 1;
+  }
+  return a[k];
+}
+
+/**********************
+ * Below are deprecated functions
+ */
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+#define vpITMAX 100
+#define vpEPS 3.0e-7
+
+/*!
+  \deprecated You should rather use the default constructor.
+  \param n_data : Size of the data vector.
+*/
+vpRobust::vpRobust(unsigned int n_data)
+  : m_normres(), m_sorted_normres(), m_sorted_residues(), m_mad_min(0.0017), m_mad_prev(0),
+    #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+    m_iter(0),
+    #endif
+    m_size(n_data), m_mad(0)
+{
+  vpCDEBUG(2) << "vpRobust constructor reached" << std::endl;
+
+  m_normres.resize(n_data);
+  m_sorted_normres.resize(n_data);
+  m_sorted_residues.resize(n_data);
+  // m_mad_min=0.0017; //Can not be more accurate than 1 pixel
+}
+
 void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector &residues,
                           const vpColVector &all_residues, vpColVector &weights)
 {
-
   double normmedian = 0; // Normalized median
-  double sigma = 0;      // Standard Deviation
 
   unsigned int n_all_data = all_residues.getRows();
   vpColVector all_normres(n_all_data);
@@ -243,27 +337,27 @@ void vpRobust::MEstimator(const vpRobustEstimatorType method, const vpColVector 
   normmedian = computeNormalizedMedian(all_normres, residues, all_residues, weights);
 
   // 1.48 keeps scale estimate consistent for a normal probability dist.
-  sigma = 1.4826 * normmedian; // Median Absolute Deviation
+  m_mad = 1.4826 * normmedian; // Median Absolute Deviation
 
   // Set a minimum threshold for sigma
   // (when sigma reaches the level of noise in the image)
-  if (sigma < NoiseThreshold) {
-    sigma = NoiseThreshold;
+  if (m_mad < m_mad_min) {
+    m_mad = m_mad_min;
   }
 
   switch (method) {
   case TUKEY: {
-    psiTukey(sigma, all_normres, weights);
+    psiTukey(m_mad, all_normres, weights);
 
     vpCDEBUG(2) << "Tukey's function computed" << std::endl;
     break;
   }
   case CAUCHY: {
-    psiCauchy(sigma, all_normres, weights);
+    psiCauchy(m_mad, all_normres, weights);
     break;
   }
   case HUBER: {
-    psiHuber(sigma, all_normres, weights);
+    psiHuber(m_mad, all_normres, weights);
     break;
   }
   };
@@ -281,14 +375,9 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres, const vpColVe
   // resize vector only if the size of residue vector has changed
   resize(n_data);
 
-  sorted_residues = residues;
+  m_sorted_residues = residues;
   vpColVector no_null_weight_residues;
   no_null_weight_residues.resize(n_data);
-
-  // all_normres.resize(n_all_data); // Normalized Residue
-  // vpColVector sorted_normres(n_data); // Normalized Residue
-  // vpColVector sorted_residues = residues;
-  // vpColVector sorted_residues;
 
   unsigned int index = 0;
   for (unsigned int j = 0; j < n_data; j++) {
@@ -298,61 +387,48 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres, const vpColVe
       index++;
     }
   }
-  sorted_residues.resize(index);
-  memcpy(sorted_residues.data, no_null_weight_residues.data, index * sizeof(double));
+  m_sorted_residues.resize(index);
+  memcpy(m_sorted_residues.data, no_null_weight_residues.data, index * sizeof(double));
   n_data = index;
-
-  vpCDEBUG(2) << "vpRobust MEstimator reached. No. data = " << n_data << std::endl;
 
   // Calculate Median
   // Be careful to not use the rejected residues for the
   // calculation.
 
   unsigned int ind_med = (unsigned int)(ceil(n_data / 2.0)) - 1;
-  med = select(sorted_residues, 0, (int)n_data - 1, (int)ind_med /*(int)n_data/2*/);
+  med = select(m_sorted_residues, 0, n_data - 1, ind_med);
 
-  unsigned int i;
   // Normalize residues
-  for (i = 0; i < n_all_data; i++) {
+  for (unsigned int i = 0; i < n_all_data; i++) {
     all_normres[i] = (fabs(all_residues[i] - med));
   }
 
-  for (i = 0; i < n_data; i++) {
-    sorted_normres[i] = (fabs(sorted_residues[i] - med));
+  for (unsigned int i = 0; i < n_data; i++) {
+    m_sorted_normres[i] = (fabs(m_sorted_residues[i] - med));
   }
   // MAD calculated only on first iteration
-
-  // normmedian = Median(normres, weights);
-  // normmedian = Median(normres);
-  normmedian = select(sorted_normres, 0, (int)n_data - 1, (int)ind_med /*(int)n_data/2*/);
+  normmedian = select(m_sorted_normres, 0, n_data - 1, ind_med);
 
   return normmedian;
 }
 
-// ===================================================================
 /*!
- * \brief Calculate an Mestimate with a simultaneous scale estimate
- *				using HUBER's influence function
- * \pre Requires a column vector of residues
- * \post None
- * \return Returns a Column Vector of weights associated to each residue
+ * \deprecated This function is useless.
+ * Calculate an Mestimate with a simultaneous scale estimate using HUBER's influence function
+ * \param[in] residues : Vector of residues. The content of the vector is changed.
+ * \return Returns a vector of weights associated to each residue.
  */
-// ===================================================================
 vpColVector vpRobust::simultMEstimator(vpColVector &residues)
 {
-
   double med = 0;   // Median
-  double sigma = 0; // Standard Deviation
 
   unsigned int n_data = residues.getRows();
   vpColVector norm_res(n_data); // Normalized Residue
   vpColVector w(n_data);
 
-  vpCDEBUG(2) << "vpRobust MEstimator reached. No. data = " << n_data << std::endl;
-
   // Calculate Median
   unsigned int ind_med = (unsigned int)(ceil(n_data / 2.0)) - 1;
-  med = select(residues, 0, (int)n_data - 1, (int)ind_med /*(int)n_data/2*/);
+  med = select(residues, 0, n_data - 1, ind_med /*(int)n_data/2*/);
 
   // Normalize residues
   for (unsigned int i = 0; i < n_data; i++)
@@ -361,31 +437,29 @@ vpColVector vpRobust::simultMEstimator(vpColVector &residues)
   // Check for various methods.
   // For Huber compute Simultaneous scale estimate
   // For Others use MAD calculated on first iteration
-  if (it == 0) {
-    double normmedian = select(norm_res, 0, (int)n_data - 1, (int)ind_med /*(int)n_data/2*/); // Normalized Median
+  if (m_iter == 0) {
+    double normmedian = select(norm_res, 0, n_data - 1, ind_med); // Normalized Median
     // 1.48 keeps scale estimate consistent for a normal probability dist.
-    sigma = 1.4826 * normmedian; // Median Absolute Deviation
+    m_mad = 1.4826 * normmedian; // Median Absolute Deviation
   } else {
     // compute simultaneous scale estimate
-    sigma = simultscale(residues);
+    m_mad = simultscale(residues);
   }
 
   // Set a minimum threshold for sigma
   // (when sigma reaches the level of noise in the image)
-  if (sigma < NoiseThreshold) {
-    sigma = NoiseThreshold;
+  if (m_mad < m_mad_min) {
+    m_mad = m_mad_min;
   }
 
-  vpCDEBUG(2) << "MAD and C computed" << std::endl;
+  psiHuber(m_mad, norm_res, w);
 
-  psiHuber(sigma, norm_res, w);
-
-  sig_prev = sigma;
+  m_mad_prev = m_mad;
 
   return w;
 }
 
-double vpRobust::simultscale(vpColVector &x)
+double vpRobust::simultscale(const vpColVector &x)
 {
   unsigned int p = 6; // Number of parameters to be estimated.
   unsigned int n = x.getRows();
@@ -417,7 +491,7 @@ double vpRobust::simultscale(vpColVector &x)
 #endif
       std::cout << "x[i] = " << x[i] << std::endl;
       std::cout << "chi = " << chiTmp << std::endl;
-      std::cout << "Sum chi = " << chiTmp * vpMath::sqr(sig_prev) << std::endl;
+      std::cout << "Sum chi = " << chiTmp * vpMath::sqr(m_mad_prev) << std::endl;
 #if defined(VISP_HAVE_FUNC_STD_ERFC)
       std::cout << "Expectation = " << chiTmp * std::erfc(chiTmp) << std::endl;
 #elif defined(VISP_HAVE_FUNC_ERFC)
@@ -431,14 +505,14 @@ double vpRobust::simultscale(vpColVector &x)
 #endif
   }
 
-  sigma2 = Sum_chi * vpMath::sqr(sig_prev) / ((n - p) * Expectation);
+  sigma2 = Sum_chi * vpMath::sqr(m_mad_prev) / ((n - p) * Expectation);
 
 #ifdef VP_DEBUG
 #if VP_DEBUG_MODE == 3
   {
     std::cout << "Expectation = " << Expectation << std::endl;
     std::cout << "Sum chi = " << Sum_chi << std::endl;
-    std::cout << "sig_prev" << sig_prev << std::endl;
+    std::cout << "MAD prev" << m_mad_prev << std::endl;
     std::cout << "sig_out" << sqrt(fabs(sigma2)) << std::endl;
   }
 #endif
@@ -464,10 +538,10 @@ double vpRobust::constrainedChi(vpRobustEstimatorType method, double x)
 double vpRobust::constrainedChiTukey(double x)
 {
   double sct = 0;
-  double s = sig_prev;
+  double s = m_mad_prev;
   // double epsillon=0.5;
 
-  if (fabs(x) <= 4.7 * sig_prev) {
+  if (fabs(x) <= 4.7 * m_mad_prev) {
     double a = 4.7;
     // sct =
     // (vpMath::sqr(s*a-x)*vpMath::sqr(s*a+x)*vpMath::sqr(x))/(s*vpMath::sqr(vpMath::sqr(a*vpMath::sqr(s))));
@@ -483,8 +557,8 @@ double vpRobust::constrainedChiTukey(double x)
 double vpRobust::constrainedChiCauchy(double x)
 {
   double sct = 0;
-  // double u = x/sig_prev;
-  double s = sig_prev;
+  // double u = x/m_mad_prev;
+  double s = m_mad_prev;
   double b = 2.3849;
 
   sct = -1 * (vpMath::sqr(x) * b) / (s * (vpMath::sqr(s * b) + vpMath::sqr(x)));
@@ -495,7 +569,7 @@ double vpRobust::constrainedChiCauchy(double x)
 double vpRobust::constrainedChiHuber(double x)
 {
   double sct = 0;
-  double u = x / sig_prev;
+  double u = x / m_mad_prev;
   double c = 1.2107; // 1.345;
 
   if (fabs(u) <= c)
@@ -509,7 +583,7 @@ double vpRobust::constrainedChiHuber(double x)
 double vpRobust::simult_chi_huber(double x)
 {
   double sct = 0;
-  double u = x / sig_prev;
+  double u = x / m_mad_prev;
   double c = 1.2107; // 1.345;
 
   if (fabs(u) <= c) {
@@ -521,142 +595,6 @@ double vpRobust::simult_chi_huber(double x)
   }
 
   return sct;
-}
-
-/*!
-  \brief calculation of Tukey's influence function
-
-  \param sigma : sigma parameters
-  \param x : normalized residue vector
-  \param weights : weight vector
-*/
-
-void vpRobust::psiTukey(double sig, vpColVector &x, vpColVector &weights)
-{
-
-  unsigned int n_data = x.getRows();
-  double cst_const = vpCST * 4.6851;
-
-  for (unsigned int i = 0; i < n_data; i++) {
-    // if(sig==0 && weights[i]!=0)
-    if (std::fabs(sig) <= std::numeric_limits<double>::epsilon() &&
-        std::fabs(weights[i]) > std::numeric_limits<double>::epsilon()) {
-      weights[i] = 1;
-      continue;
-    }
-
-    double xi_sig = x[i] / sig;
-
-    // if((fabs(xi_sig)<=(cst_const)) && weights[i]!=0)
-    if ((std::fabs(xi_sig) <= (cst_const)) && std::fabs(weights[i]) > std::numeric_limits<double>::epsilon()) {
-      weights[i] = vpMath::sqr(1 - vpMath::sqr(xi_sig / cst_const));
-      // w[i] = vpMath::sqr(1-vpMath::sqr(x[i]/sig/4.7));
-    } else {
-      // Outlier - could resize list of points tracked here?
-      weights[i] = 0;
-    }
-  }
-}
-
-/*!
-  \brief calculation of Tukey's influence function
-
-  \param sigma : sigma parameters
-  \param x : normalized residue vector
-  \param weights : weight vector
-*/
-void vpRobust::psiHuber(double sig, vpColVector &x, vpColVector &weights)
-{
-  double c = 1.2107; // 1.345;
-  unsigned int n_data = x.getRows();
-
-  for (unsigned int i = 0; i < n_data; i++) {
-    // if(weights[i]!=0)
-    if (std::fabs(weights[i]) > std::numeric_limits<double>::epsilon()) {
-      double xi_sig = x[i] / sig;
-      if (fabs(xi_sig) <= c)
-        weights[i] = 1;
-      else
-        weights[i] = c / fabs(xi_sig);
-    }
-  }
-}
-
-/*!
-  \brief calculation of Cauchy's influence function
-
-  \param sigma : sigma parameters
-  \param x : normalized residue vector
-  \param weights : weight vector
-*/
-
-void vpRobust::psiCauchy(double sig, vpColVector &x, vpColVector &weights)
-{
-  unsigned int n_data = x.getRows();
-  double const_sig = 2.3849 * sig;
-
-  // Calculate Cauchy's equation
-  for (unsigned int i = 0; i < n_data; i++) {
-    weights[i] = 1 / (1 + vpMath::sqr(x[i] / (const_sig)));
-
-    // If one coordinate is an outlier the other is too!
-    // w[i] < 0.01 is a threshold to be set
-    /*if(w[i] < 0.01)
-      {
-      if(i%2 == 0)
-      {
-      w[i+1] = w[i];
-      i++;
-      }
-      else
-      w[i-1] = w[i];
-      }*/
-  }
-}
-
-/*!
-  \brief partition function
-  \param a : vector to be sorted
-  \param l : first value to be considered
-  \param r : last value to be considered
-*/
-int vpRobust::partition(vpColVector &a, int l, int r)
-{
-  int i = l - 1;
-  int j = r;
-  double v = a[(unsigned int)r];
-
-  for (;;) {
-    while (a[(unsigned int)++i] < v)
-      ;
-    while (v < a[(unsigned int)--j])
-      if (j == l)
-        break;
-    if (i >= j)
-      break;
-    exch(a[(unsigned int)i], a[(unsigned int)j]);
-  }
-  exch(a[(unsigned int)i], a[(unsigned int)r]);
-  return i;
-}
-
-/*!
-  \brief sort a part of a vector and select a value of this new vector
-  \param a : vector to be sorted
-  \param l : first value to be considered
-  \param r : last value to be considered
-  \param k : value to be selected
-*/
-double vpRobust::select(vpColVector &a, int l, int r, int k)
-{
-  while (r > l) {
-    int i = partition(a, l, r);
-    if (i >= k)
-      r = i - 1;
-    if (i <= k)
-      l = i + 1;
-  }
-  return a[(unsigned int)k];
 }
 
 #if !defined(VISP_HAVE_FUNC_ERFC) && !defined(VISP_HAVE_FUNC_STD_ERFC)
@@ -749,148 +687,8 @@ double vpRobust::gammln(double xx)
 }
 #endif
 
-// double
-// vpRobust::median(const vpColVector &v)
-// {
-//   int i,j;
-//   int inf, sup;
-//   int n = v.getRows() ;
-//   vpColVector infsup(n) ;
-//   vpColVector eq(n) ;
-//
-//   for (i=0;i<n;i++)
-//   {
-//     // We compute the number of elements superior to the current value
-//     (sup)
-//     // the number of elements inferior (inf) to the current value and
-//     // the number of elements equal to the current value (eq)
-//     inf = sup = 0;
-//     for (j=0;j<n;j++)
-//     {
-//       if (i != j)
-//       {
-// 	if (v[i] <= v[j]) inf++;
-// 	if (v[i] >= v[j]) sup++;
-// 	if (v[i] == v[j]) eq[i]++;
-//       }
-//     }
-//     // We compute then difference between inf and sup
-//     // the median should be for |inf-sup| = 0 (1 if an even number of
-//     element)
-//     // which means that there are the same number of element in the array
-//     // that are greater and smaller that this value.
-//     infsup[i] = abs(inf-sup);
-//   }
-//
-//   // seek for the smaller value of |inf-sup| (should be 0 or 1)
-//   int imin = 0 ; // index of the median in the array
-//   //double eqmax = 0 ; // count of equal values
-//   // min cannot be greater than the number of element
-//   double min = n;
-//
-//   // number of medians
-//   int mediancount = 0;
-//   // array of medians
-//   int *medianindex = new int[n];
-//
-//   for (i=0; i<n; i++)
-//   {
-//     if(infsup[i] < min)
-//     {
-//       min = infsup[i];
-//       imin = i ;
-//
-//       //reset count of median values
-//       mediancount=0;
-//       medianindex[mediancount]=i;
-//     }
-//     else if(infsup[i]==min) //If there is another median
-//     {
-//       mediancount++;
-//       medianindex[mediancount]=i;
-//     }
-//   }
-//
-//   // Choose smalest data to be the median
-//   /*for(i=0; i<mediancount+1; i++)
-//     {
-//     //Choose the value with the greatest count
-//     if(eq[medianindex[i]] > eqmax)
-//     {
-//     eqmax = eq[medianindex[i]];
-//     imin = medianindex[i];
-//     }
-//     //If we have identical counts
-//     // Choose smalest data to be the median
-//     //if(v[medianindex[i]] < v[imin])
-//     //	imin = medianindex[i];
-//     }*/
-//
-//   // return the median
-//   delete []medianindex;
-//   return(v[imin]);
-// }
-//
-// // Calculate median only for the residues which have
-// // not be rejected. i.e. weight=0
-// double
-// vpRobust::median(const vpColVector &v, vpColVector &weights)
-// {
-//   int i,j;
-//   int inf, sup;
-//   int n = v.getRows() ;
-//   vpColVector infsup(n) ;
-//   vpColVector eq(n) ;
-//
-//   for (i=0;i<n;i++)
-//   {
-//     if(weights[i]!=0)
-//     {
-//       // We compute the number of elements superior to the current value
-//       (sup)
-//       // the number of elements inferior (inf) to the current value and
-//       // the number of elements equal to the current value (eq)
-//       inf = sup = 0;
-//       for (j=0;j<n;j++)
-//       {
-// 	if (weights[j]!=0 && i!=j)
-// 	{
-// 	  if (v[i] <= v[j]) inf++;
-// 	  if (v[i] >= v[j]) sup++;
-// 	  if (v[i] == v[j]) eq[i]++;
-// 	}
-//       }
-//       // We compute then difference between inf and sup
-//       // the median should be for |inf-sup| = 0 (1 if an even number of
-//       element)
-//       // which means that there are the same number of element in the array
-//       // that are greater and smaller that this value.
-//       infsup[i] = abs(inf-sup);
-//     }
-//   }
-//
-//   // seek for the smaller value of |inf-sup| (should be 0 or 1)
-//   int imin = 0 ; // index of the median in the array
-//   //double eqmax = 0 ; // count of equal values
-//   // min cannot be greater than the number of element
-//   double min = n;
-//
-//   for (i=0; i<n; i++)
-//   {
-//     if(weights[i]!=0)
-//     {
-//       if(infsup[i] < min)
-//       {
-// 	min = infsup[i];
-// 	imin = i ;
-//       }
-//     }
-//   }
-//
-//   // return the median
-//   return(v[imin]);
-// }
-
 #undef vpITMAX
 #undef vpEPS
-#undef vpCST
+
+#endif
+

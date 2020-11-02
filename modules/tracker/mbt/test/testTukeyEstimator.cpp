@@ -47,7 +47,7 @@
 #include <visp3/core/vpRobust.h>
 #include <visp3/mbt/vpMbtTukeyEstimator.h>
 
-int main(int /*argc*/, const char ** /*argv*/)
+int main()
 {
   size_t nb_elements = 1000;
   int nb_iterations = 100;
@@ -57,28 +57,26 @@ int main(int /*argc*/, const char ** /*argv*/)
   noise.seed((unsigned int)time(NULL));
 
   vpColVector residues_col((unsigned int)nb_elements);
-  vpColVector weights_col((unsigned int)nb_elements, 1.0), weights_col_save;
+  vpColVector weights_col, weights_col_save;
   for (size_t i = 0; i < nb_elements; i++) {
     residues_col[(unsigned int)i] = noise();
   }
 
-  vpRobust robust((unsigned int)nb_elements);
-  robust.setThreshold(noise_threshold);
+  vpRobust robust;
+  robust.setMinMedianAbsoluteDeviation(noise_threshold);
   double t_robust = vpTime::measureTimeMs();
   for (int i = 0; i < nb_iterations; i++) {
     robust.MEstimator(vpRobust::TUKEY, residues_col, weights_col);
   }
   t_robust = vpTime::measureTimeMs() - t_robust;
-
   {
-
     vpMbtTukeyEstimator<double> tukey_estimator;
     std::vector<double> residues(nb_elements);
     for (size_t i = 0; i < residues.size(); i++) {
       residues[i] = residues_col[(unsigned int)i];
     }
 
-    std::vector<double> weights(nb_elements, 1);
+    std::vector<double> weights;
     double t = vpTime::measureTimeMs();
     for (int i = 0; i < nb_iterations; i++) {
       tukey_estimator.MEstimator(residues, weights, noise_threshold);

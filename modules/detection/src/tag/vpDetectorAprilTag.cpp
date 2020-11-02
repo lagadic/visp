@@ -65,8 +65,8 @@ class vpDetectorAprilTag::Impl
 {
 public:
   Impl(const vpAprilTagFamily &tagFamily, const vpPoseEstimationMethod &method)
-    : m_cam(), m_poseEstimationMethod(method), m_tagFamily(tagFamily), m_tagSize(1.0), m_td(NULL),
-      m_tf(NULL), m_detections(NULL), m_zAlignedWithCameraFrame(false)
+    : m_poseEstimationMethod(method), m_tagsId(), m_tagFamily(tagFamily),
+      m_td(NULL), m_tf(NULL), m_detections(NULL), m_zAlignedWithCameraFrame(false)
   {
     switch (m_tagFamily) {
     case TAG_36h11:
@@ -131,6 +131,79 @@ public:
 
     m_mapOfCorrespondingPoseMethods[DEMENTHON_VIRTUAL_VS] = vpPose::DEMENTHON;
     m_mapOfCorrespondingPoseMethods[LAGRANGE_VIRTUAL_VS] = vpPose::LAGRANGE;
+  }
+
+  Impl(const Impl &o)
+    : m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagsId(o.m_tagsId), m_tagFamily(o.m_tagFamily),
+      m_td(NULL), m_tf(NULL), m_detections(NULL), m_zAlignedWithCameraFrame(o.m_zAlignedWithCameraFrame)
+  {
+    switch (m_tagFamily) {
+    case TAG_36h11:
+      m_tf = tag36h11_create();
+      break;
+
+    case TAG_36h10:
+      m_tf = tag36h10_create();
+      break;
+
+    case TAG_36ARTOOLKIT:
+      break;
+
+    case TAG_25h9:
+      m_tf = tag25h9_create();
+      break;
+
+    case TAG_25h7:
+      m_tf = tag25h7_create();
+      break;
+
+    case TAG_16h5:
+      m_tf = tag16h5_create();
+      break;
+
+    case TAG_CIRCLE21h7:
+      m_tf = tagCircle21h7_create();
+      break;
+
+    case TAG_CIRCLE49h12:
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+      m_tf = tagCircle49h12_create();
+#endif
+      break;
+
+    case TAG_CUSTOM48h12:
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+      m_tf = tagCustom48h12_create();
+#endif
+      break;
+
+    case TAG_STANDARD52h13:
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+      m_tf = tagStandard52h13_create();
+#endif
+      break;
+
+    case TAG_STANDARD41h12:
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+      m_tf = tagStandard41h12_create();
+#endif
+      break;
+
+    default:
+      throw vpException(vpException::fatalError, "Unknow Tag family!");
+    }
+
+    if (m_tagFamily != TAG_36ARTOOLKIT && m_tf) {
+      m_td = apriltag_detector_create();
+      apriltag_detector_add_family(m_td, m_tf);
+    }
+
+    m_mapOfCorrespondingPoseMethods[DEMENTHON_VIRTUAL_VS] = vpPose::DEMENTHON;
+    m_mapOfCorrespondingPoseMethods[LAGRANGE_VIRTUAL_VS] = vpPose::LAGRANGE;
+
+    if (o.m_detections != NULL) {
+      m_detections = apriltag_detections_copy(o.m_detections);
+    }
   }
 
   ~Impl()
@@ -212,9 +285,10 @@ public:
     }
   }
 
-  bool detect(const vpImage<unsigned char> &I, std::vector<std::vector<vpImagePoint> > &polygons,
-              std::vector<std::string> &messages, const bool displayTag, const vpColor color,
-              const unsigned int thickness, std::vector<vpHomogeneousMatrix> *cMo_vec,
+  bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
+              std::vector<std::vector<vpImagePoint> > &polygons,
+              std::vector<std::string> &messages, bool displayTag, const vpColor color,
+              unsigned int thickness, std::vector<vpHomogeneousMatrix> *cMo_vec,
               std::vector<vpHomogeneousMatrix> *cMo_vec2, std::vector<double> *projErrors,
               std::vector<double> *projErrors2)
   {
@@ -246,8 +320,9 @@ public:
     int nb_detections = zarray_size(m_detections);
     bool detected = nb_detections > 0;
 
-    polygons.resize((size_t)nb_detections);
-    messages.resize((size_t)nb_detections);
+    polygons.resize(static_cast<size_t>(nb_detections));
+    messages.resize(static_cast<size_t>(nb_detections));
+    m_tagsId.resize(static_cast<size_t>(nb_detections));
 
     for (int i = 0; i < zarray_size(m_detections); i++) {
       apriltag_detection_t *det;
@@ -261,6 +336,7 @@ public:
       std::stringstream ss;
       ss << m_tagFamily << " id: " << det->id;
       messages[static_cast<size_t>(i)] = ss.str();
+      m_tagsId[static_cast<size_t>(i)] = det->id;
 
       if (displayTag) {
         vpColor Ox = (color == vpColor::none) ? vpColor::red : color;
@@ -281,7 +357,7 @@ public:
       if (computePose) {
         vpHomogeneousMatrix cMo, cMo2;
         double err1, err2;
-        if (getPose(static_cast<size_t>(i), m_tagSize, m_cam, cMo, cMo_vec2 ? &cMo2 : NULL,
+        if (getPose(static_cast<size_t>(i), tagSize, cam, cMo, cMo_vec2 ? &cMo2 : NULL,
                     projErrors ? &err1 : NULL, projErrors2 ? &err2 : NULL)) {
           cMo_vec->push_back(cMo);
           if (cMo_vec2) {
@@ -301,7 +377,7 @@ public:
     return detected;
   }
 
-  bool getPose(size_t tagIndex, const double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, vpHomogeneousMatrix *cMo2,
+  bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo, vpHomogeneousMatrix *cMo2,
                double *projErrors, double *projErrors2) {
     if (m_detections == NULL) {
       throw(vpException(vpException::fatalError, "Cannot get tag index=%d pose: detection empty", tagIndex));
@@ -554,54 +630,97 @@ public:
       *err2 = err_2;
   }
 
-  void setCameraParameters(const vpCameraParameters &cam) { m_cam = cam; }
+  bool getZAlignedWithCameraAxis() { return m_zAlignedWithCameraFrame; }
 
-  void setAprilTagDecodeSharpening(const double decodeSharpening) {
+  bool getAprilTagDecodeSharpening(double &decodeSharpening) const {
+    if (m_td) {
+      decodeSharpening = m_td->decode_sharpening;
+      return true;
+    }
+    return false;
+  }
+
+  bool getNbThreads(int &nThreads) const {
+    if (m_td) {
+      nThreads = m_td->nthreads;
+      return true;
+    }
+    return false;
+  }
+
+  bool getQuadDecimate(float &quadDecimate) const {
+    if (m_td) {
+      quadDecimate = m_td->quad_decimate;
+      return true;
+    }
+    return false;
+  }
+  
+  bool getQuadSigma(float &quadSigma) const {
+    if (m_td) {
+      quadSigma = m_td->quad_sigma;
+      return true;
+    }
+    return false;
+  }
+
+  bool getRefineEdges(bool &refineEdges) const {
+    if (m_td) {
+      refineEdges = m_td->refine_edges;
+      return true;
+    }
+    return false;
+  }
+
+  bool getZAlignedWithCameraAxis() const {
+    return m_zAlignedWithCameraFrame;
+  }
+
+  std::vector<int> getTagsId() const { return m_tagsId; }
+
+  void setAprilTagDecodeSharpening(double decodeSharpening) {
     if (m_td) {
       m_td->decode_sharpening = decodeSharpening;
     }
   }
 
-  void setNbThreads(const int nThreads) {
+  void setNbThreads(int nThreads) {
     if (m_td) {
       m_td->nthreads = nThreads;
     }
   }
 
-  void setQuadDecimate(const float quadDecimate) {
+  void setQuadDecimate(float quadDecimate) {
     if (m_td) {
       m_td->quad_decimate = quadDecimate;
     }
   }
 
-  void setQuadSigma(const float quadSigma) {
+  void setQuadSigma(float quadSigma) {
     if (m_td) {
       m_td->quad_sigma = quadSigma;
     }
   }
 
-  void setRefineDecode(const bool) { }
+  void setRefineDecode(bool) { }
 
-  void setRefineEdges(const bool refineEdges) {
+  void setRefineEdges(bool refineEdges) {
     if (m_td) {
       m_td->refine_edges = refineEdges ? 1 : 0;
     }
   }
 
-  void setRefinePose(const bool) { }
-
-  void setTagSize(const double tagSize) { m_tagSize = tagSize; }
+  void setRefinePose(bool) { }
 
   void setPoseEstimationMethod(const vpPoseEstimationMethod &method) { m_poseEstimationMethod = method; }
 
   void setZAlignedWithCameraAxis(bool zAlignedWithCameraFrame) { m_zAlignedWithCameraFrame = zAlignedWithCameraFrame; }
 
 protected:
-  vpCameraParameters m_cam;
   std::map<vpPoseEstimationMethod, vpPose::vpPoseMethodType> m_mapOfCorrespondingPoseMethods;
   vpPoseEstimationMethod m_poseEstimationMethod;
+  std::vector<int> m_tagsId;
   vpAprilTagFamily m_tagFamily;
-  double m_tagSize;
   apriltag_detector_t *m_td;
   apriltag_family_t *m_tf;
   zarray_t *m_detections;
@@ -612,9 +731,23 @@ protected:
 vpDetectorAprilTag::vpDetectorAprilTag(const vpAprilTagFamily &tagFamily,
                                        const vpPoseEstimationMethod &poseEstimationMethod)
   : m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(2),
-    m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily),
+    m_poseEstimationMethod(poseEstimationMethod), m_tagFamily(tagFamily), m_defaultCam(),
     m_impl(new Impl(tagFamily, poseEstimationMethod))
 {
+}
+
+vpDetectorAprilTag::vpDetectorAprilTag(const vpDetectorAprilTag &o)
+  : vpDetectorBase (o),
+    m_displayTag(false), m_displayTagColor(vpColor::none), m_displayTagThickness(2),
+    m_poseEstimationMethod(o.m_poseEstimationMethod), m_tagFamily(o.m_tagFamily), m_defaultCam(),
+    m_impl(new Impl(*o.m_impl))
+{
+}
+
+vpDetectorAprilTag &vpDetectorAprilTag::operator=(vpDetectorAprilTag o)
+{
+  swap(*this, o);
+  return *this;
 }
 
 vpDetectorAprilTag::~vpDetectorAprilTag() { delete m_impl; }
@@ -633,7 +766,8 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I)
   m_nb_objects = 0;
 
   std::vector<vpHomogeneousMatrix> cMo_vec;
-  bool detected = m_impl->detect(I, m_polygon, m_message, m_displayTag,
+  const double tagSize = 1.0;
+  bool detected = m_impl->detect(I, tagSize, m_defaultCam, m_polygon, m_message, m_displayTag,
                                  m_displayTagColor, m_displayTagThickness,
                                  NULL, NULL, NULL, NULL);
   m_nb_objects = m_message.size();
@@ -658,7 +792,7 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I)
 
   \sa getPose()
 */
-bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, const double tagSize, const vpCameraParameters &cam,
+bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
                                 std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2,
                                 std::vector<double> *projErrors, std::vector<double> *projErrors2)
 {
@@ -666,9 +800,7 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, const double ta
   m_polygon.clear();
   m_nb_objects = 0;
 
-  m_impl->setTagSize(tagSize);
-  m_impl->setCameraParameters(cam);
-  bool detected = m_impl->detect(I, m_polygon, m_message, m_displayTag,
+  bool detected = m_impl->detect(I, tagSize, cam, m_polygon, m_message, m_displayTag,
                                  m_displayTagColor, m_displayTagThickness,
                                  &cMo_vec, cMo_vec2, projErrors, projErrors2);
   m_nb_objects = m_message.size();
@@ -683,6 +815,7 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, const double ta
   considers that all the tags have the same size.
 
   \param[in] tagIndex : Index of the tag. Value should be in range [0, nb tags-1] with nb_tags = getNbObjects().
+  Note that this index doesn't correspond to the tag id.
   \param[in] tagSize : Tag size in meter corresponding to the external width of the pattern.
   \param[in] cam : Camera intrinsic parameters.
   \param[out] cMo : Pose of the tag.
@@ -694,27 +827,130 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, const double ta
   The following code shows how to use this function:
   \code
   vpCameraParameters cam;
-  vpDetectorAprilTag detector(tagFamily);
+  vpDetectorAprilTag detector(vpDetectorAprilTag::TAG_36h11);
   detector.detect(I);
   for (size_t i = 0; i < detector.getNbObjects(); i++) {
     vpHomogeneousMatrix cMo;
-    double tagSize;
+    double tagSize = 0.1;
     detector.getPose(i, tagSize, cam, cMo);
   }
   \endcode
 
-  \sa detect(const vpImage<unsigned char> &, const double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> &)
+  \sa detect(const vpImage<unsigned char> &, double, const vpCameraParameters &, std::vector<vpHomogeneousMatrix> *,
+             std::vector<vpHomogeneousMatrix> *, std::vector<double> *, std::vector<double> *)
  */
-bool vpDetectorAprilTag::getPose(size_t tagIndex, const double tagSize, const vpCameraParameters &cam,
+bool vpDetectorAprilTag::getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam,
                                  vpHomogeneousMatrix &cMo, vpHomogeneousMatrix *cMo2,
                                  double *projError, double *projError2)
 {
-  return (m_impl->getPose(tagIndex, tagSize, cam, cMo, cMo2, projError, projError2));
+  return m_impl->getPose(tagIndex, tagSize, cam, cMo, cMo2, projError, projError2);
 }
 
-void vpDetectorAprilTag::setAprilTagDecodeSharpening(const double decodeSharpening)
+/*!
+  Return a vector that contains for each tag id the corresponding tag 3D corners coordinates in the tag frame.
+
+  \param tagsId : A vector containing the id of each tag that is detected. It's size corresponds
+  to the number of tags that are detected. This vector is returned by getTagsId().
+
+  \param tagsSize : a map that contains as first element a tag id and as second elements its 3D size in meter.
+  When first element of this map is -1, the second element corresponds to the default tag size.
+  \code
+  std::map<int, double> tagsSize;
+  tagsSize[-1] = 0.05; // Default tag size in meter, used when detected tag id is not in this map
+  tagsSize[10] = 0.1;  // All tags with id 10 are 0.1 meter large
+  tagsSize[20] = 0.2;  // All tags with id 20 are 0.2 meter large
+  \endcode
+
+  \sa getTagsCorners(), getTagsId()
+ */
+std::vector<std::vector<vpPoint> > vpDetectorAprilTag::getTagsPoints3D(const std::vector<int>& tagsId,
+                                                                       const std::map<int, double>& tagsSize) const
 {
-  return (m_impl->setAprilTagDecodeSharpening(decodeSharpening));
+  std::vector<std::vector<vpPoint> > tagsPoints3D;
+
+  double default_size = -1;
+  {
+    std::map<int, double>::const_iterator it = tagsSize.find(-1);
+    if (it != tagsSize.end()) {
+      default_size = it->second; // Default size
+    }
+  }
+  for (size_t i = 0; i < tagsId.size(); i++) {
+    std::map<int, double>::const_iterator it = tagsSize.find(tagsId[i]);
+    double tagSize = default_size; // Default size
+    if (it == tagsSize.end()) {
+      if (default_size < 0) { // no default size found
+        throw(vpException(vpException::fatalError, "Tag with id %d has no 3D size or there is no default 3D size defined", tagsId[i]));
+      }
+    } else {
+      tagSize = it->second;
+    }
+    std::vector<vpPoint> points3D(4);
+    if (m_impl->getZAlignedWithCameraAxis()) {
+      points3D[0] = vpPoint(-tagSize/2,  tagSize/2, 0);
+      points3D[1] = vpPoint( tagSize/2,  tagSize/2, 0);
+      points3D[2] = vpPoint( tagSize/2, -tagSize/2, 0);
+      points3D[3] = vpPoint(-tagSize/2, -tagSize/2, 0);
+    } else {
+      points3D[0] = vpPoint(-tagSize/2, -tagSize/2, 0);
+      points3D[1] = vpPoint( tagSize/2, -tagSize/2, 0);
+      points3D[2] = vpPoint( tagSize/2,  tagSize/2, 0);
+      points3D[3] = vpPoint(-tagSize/2,  tagSize/2, 0);
+    }
+    tagsPoints3D.push_back(points3D);
+  }
+
+  return tagsPoints3D;
+}
+
+/*!
+  Return the corners coordinates for the detected tags.
+
+  \sa getTagsId(), getTagsPoints3D()
+*/
+std::vector<std::vector<vpImagePoint> > vpDetectorAprilTag::getTagsCorners() const
+{
+  return m_polygon;
+}
+
+/*!
+  Return the decoded Apriltag id for each detection.
+
+  \sa getTagsCorners(), getTagsPoints3D()
+*/
+std::vector<int> vpDetectorAprilTag::getTagsId() const
+{
+  return m_impl->getTagsId();
+}
+
+void vpDetectorAprilTag::setAprilTagDecodeSharpening(double decodeSharpening)
+{
+  return m_impl->setAprilTagDecodeSharpening(decodeSharpening);
+}
+
+void vpDetectorAprilTag::setAprilTagFamily(const vpAprilTagFamily &tagFamily)
+{
+  //back-up settings
+  double decodeSharpening = 0.25;
+  m_impl->getAprilTagDecodeSharpening(decodeSharpening);
+  int nThreads = 1;
+  m_impl->getNbThreads(nThreads);
+  float quadDecimate = 1;
+  m_impl->getQuadDecimate(quadDecimate);
+  float quadSigma = 0;
+  m_impl->getQuadSigma(quadSigma);
+  bool refineEdges = true;
+  m_impl->getRefineEdges(refineEdges);
+  bool zAxis = m_impl->getZAlignedWithCameraAxis();
+
+  delete m_impl;
+  m_impl = new Impl(tagFamily, m_poseEstimationMethod);
+  m_impl->setAprilTagDecodeSharpening(decodeSharpening);
+  m_impl->setNbThreads(nThreads);
+  m_impl->setQuadDecimate(quadDecimate);
+  m_impl->setQuadSigma(quadSigma);
+  m_impl->setRefineEdges(refineEdges);
+  m_impl->setZAlignedWithCameraAxis(zAxis);
 }
 
 /*!
@@ -722,10 +958,11 @@ void vpDetectorAprilTag::setAprilTagDecodeSharpening(const double decodeSharpeni
 
   \param nThreads : Number of thread.
 */
-void vpDetectorAprilTag::setAprilTagNbThreads(const int nThreads)
+void vpDetectorAprilTag::setAprilTagNbThreads(int nThreads)
 {
-  if (nThreads > 0)
+  if (nThreads > 0) {
     m_impl->setNbThreads(nThreads);
+  }
 }
 
 /*!
@@ -751,7 +988,7 @@ void vpDetectorAprilTag::setAprilTagPoseEstimationMethod(const vpPoseEstimationM
 
   \param quadDecimate : Value for quad_decimate.
 */
-void vpDetectorAprilTag::setAprilTagQuadDecimate(const float quadDecimate)
+void vpDetectorAprilTag::setAprilTagQuadDecimate(float quadDecimate)
 {
   m_impl->setQuadDecimate(quadDecimate);
 }
@@ -768,7 +1005,7 @@ void vpDetectorAprilTag::setAprilTagQuadDecimate(const float quadDecimate)
 
   \param quadSigma : Value for quad_sigma.
 */
-void vpDetectorAprilTag::setAprilTagQuadSigma(const float quadSigma)
+void vpDetectorAprilTag::setAprilTagQuadSigma(float quadSigma)
 {
   m_impl->setQuadSigma(quadSigma);
 }
@@ -777,7 +1014,7 @@ void vpDetectorAprilTag::setAprilTagQuadSigma(const float quadSigma)
 /*!
   Deprecated parameter from AprilTag 2 version.
 */
-vp_deprecated void vpDetectorAprilTag::setAprilTagRefineDecode(const bool refineDecode) {
+vp_deprecated void vpDetectorAprilTag::setAprilTagRefineDecode(bool refineDecode) {
   m_impl->setRefineDecode(refineDecode);
 }
 #endif
@@ -796,7 +1033,7 @@ vp_deprecated void vpDetectorAprilTag::setAprilTagRefineDecode(const bool refine
 
   \param refineEdges : If true, set refine_edges to 1.
 */
-void vpDetectorAprilTag::setAprilTagRefineEdges(const bool refineEdges)
+void vpDetectorAprilTag::setAprilTagRefineEdges(bool refineEdges)
 {
   m_impl->setRefineEdges(refineEdges);
 }
@@ -805,11 +1042,18 @@ void vpDetectorAprilTag::setAprilTagRefineEdges(const bool refineEdges)
 /*!
   Deprecated parameter from AprilTag 2 version.
 */
-vp_deprecated void vpDetectorAprilTag::setAprilTagRefinePose(const bool refinePose)
+vp_deprecated void vpDetectorAprilTag::setAprilTagRefinePose(bool refinePose)
 {
   m_impl->setRefinePose(refinePose);
 }
 #endif
+
+void swap(vpDetectorAprilTag &o1, vpDetectorAprilTag &o2)
+{
+  using std::swap;
+
+  swap(o1.m_impl, o2.m_impl);
+}
 
 /*!
  * Modify the resulting tag pose returned by getPose() in order to get

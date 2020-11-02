@@ -9,6 +9,6 @@ Name: ViSP
 Description: Visual Servoing Platform
 URL: https://visp.inria.fr
 Version: @VISP_VERSION@
-Libs: @VISP_CONFIG_LIBS_PC@
+Libs: @VISP_SCRIPT_PC_LIBS@ @VISP_SCRIPT_PC_LIBS_PRIVATE@
 
-Cflags: @VISP_CONFIG_CFLAGS_PC@
+Cflags: @VISP_SCRIPT_PC_CFLAGS@

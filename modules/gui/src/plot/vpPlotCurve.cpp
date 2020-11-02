@@ -60,7 +60,7 @@ vpPlotCurve::~vpPlotCurve()
   pointListz.clear();
 }
 
-void vpPlotCurve::plotPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, const double x, const double y)
+void vpPlotCurve::plotPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, double x, double y)
 {
   nbPoint++;
 
@@ -95,8 +95,7 @@ void vpPlotCurve::plotPoint(const vpImage<unsigned char> &I, const vpImagePoint 
   pointListz.push_back(0.0);
 }
 
-void vpPlotCurve::plotList(const vpImage<unsigned char> &I, const double xorg, const double yorg, const double zoomx,
-                           const double zoomy)
+void vpPlotCurve::plotList(const vpImage<unsigned char> &I, double xorg, double yorg, double zoomx, double zoomy)
 {
   std::list<double>::const_iterator it_ptListx = pointListx.begin();
   std::list<double>::const_iterator it_ptListy = pointListy.begin();

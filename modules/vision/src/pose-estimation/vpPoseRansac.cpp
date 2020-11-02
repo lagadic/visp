@@ -68,6 +68,13 @@ namespace
 struct CompareObjectPointDegenerate {
   bool operator()(const vpPoint &point1, const vpPoint &point2) const
   {
+    const double dist1 = point1.get_oX()*point1.get_oX() + point1.get_oY()*point1.get_oY() + point1.get_oZ()*point1.get_oZ();
+    const double dist2 = point2.get_oX()*point2.get_oX() + point2.get_oY()*point2.get_oY() + point2.get_oZ()*point2.get_oZ();
+    if (dist1 - dist2 < -3*eps*eps)
+      return true;
+    if (dist1 - dist2 > 3*eps*eps)
+      return false;
+
     if (point1.oP[0] - point2.oP[0] < -eps)
       return true;
     if (point1.oP[0] - point2.oP[0] > eps)
@@ -91,6 +98,13 @@ struct CompareObjectPointDegenerate {
 struct CompareImagePointDegenerate {
   bool operator()(const vpPoint &point1, const vpPoint &point2) const
   {
+    const double dist1 = point1.get_x()*point1.get_x() + point1.get_y()*point1.get_y();
+    const double dist2 = point2.get_x()*point2.get_x() + point2.get_y()*point2.get_y();
+    if (dist1 - dist2 < -2*eps*eps)
+      return true;
+    if (dist1 - dist2 > 2*eps*eps)
+      return false;
+
     if (point1.p[0] - point2.p[0] < -eps)
       return true;
     if (point1.p[0] - point2.p[0] > eps)
@@ -123,7 +137,7 @@ struct FindDegeneratePoint {
 bool vpPose::RansacFunctor::poseRansacImpl()
 {
   const unsigned int size = (unsigned int)m_listOfUniquePoints.size();
-  const unsigned int nbMinRandom = 4;
+  unsigned int nbMinRandom = 4;
   int nbTrials = 0;
 
   vpPoint p; // Point used to project using the estimated pose
@@ -296,11 +310,6 @@ bool vpPose::RansacFunctor::poseRansacImpl()
     }
   }
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  if (m_nbInliers >= m_ransacNbInlierConsensus)
-    m_abort = true;
-#endif
-
   return foundSolution;
 }
 
@@ -313,9 +322,9 @@ bool vpPose::RansacFunctor::poseRansacImpl()
   otherwise
   \return True if we found at least 4 points with a reprojection
   error below ransacThreshold.
-  \note You can enable a multithreaded version if you have C++11 enabled using \e setUseParallelRansac
-  The number of threads used can then be set with \e setNbParallelRansacThreads
-  Filter flag can be used  with \e setRansacFilterFlag
+  \note You can enable a multithreaded version if you have C++11 enabled using setUseParallelRansac().
+  The number of threads used can then be set with setNbParallelRansacThreads().
+  Filter flag can be used  with setRansacFilterFlag().
 */
 bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))
 {
@@ -397,6 +406,8 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
         nbThreads = 1;
         executeParallelVersion = false;
       }
+    } else {
+      nbThreads = nbParallelRansacThreads;
     }
 #endif
   }
@@ -407,19 +418,17 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::vector<std::thread> threadpool;
     std::vector<RansacFunctor> ransacWorkers;
-    const unsigned int nthreads = std::thread::hardware_concurrency();
 
-    int splitTrials = ransacMaxTrials / nthreads;
-    std::atomic<bool> abort{false};
-    for (size_t i = 0; i < (size_t)nthreads; i++) {
+    int splitTrials = ransacMaxTrials / nbThreads;
+    for (size_t i = 0; i < (size_t)nbThreads; i++) {
       unsigned int initial_seed = (unsigned int)i; //((unsigned int) time(NULL) ^ i);
-      if (i < (size_t)nthreads - 1) {
+      if (i < (size_t)nbThreads - 1) {
         ransacWorkers.emplace_back(cMo, ransacNbInlierConsensus, splitTrials, ransacThreshold, initial_seed,
-                                   checkDegeneratePoints, listOfUniquePoints, func, abort);
+                                   checkDegeneratePoints, listOfUniquePoints, func);
       } else {
         int maxTrialsRemainder = ransacMaxTrials - splitTrials * (nbThreads - 1);
         ransacWorkers.emplace_back(cMo, ransacNbInlierConsensus, maxTrialsRemainder, ransacThreshold, initial_seed,
-                                   checkDegeneratePoints, listOfUniquePoints, func, abort);
+                                   checkDegeneratePoints, listOfUniquePoints, func);
       }
     }
 
@@ -449,15 +458,8 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
 #endif
   } else {
     // Sequential RANSAC
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    std::atomic<bool> abort{false};
-#endif
     RansacFunctor sequentialRansac(cMo, ransacNbInlierConsensus, ransacMaxTrials, ransacThreshold, 0,
-                                   checkDegeneratePoints, listOfUniquePoints, func
-                               #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-                                   , abort
-                               #endif
-                                   );
+                                   checkDegeneratePoints, listOfUniquePoints, func);
     sequentialRansac();
     foundSolution = sequentialRansac.getResult();
 
@@ -468,7 +470,7 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
   }
 
   if (foundSolution) {
-    const unsigned int nbMinRandom = 4;
+    unsigned int nbMinRandom = 4;
     //    std::cout << "Nombre d'inliers " << nbInliers << std::endl ;
 
     // Display the random picked points
@@ -661,7 +663,7 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                        const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                        unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
                        const int &maxNbTrials,
-                       const bool useParallelRansac, const unsigned int nthreads,
+                       bool useParallelRansac, unsigned int nthreads,
                        bool (*func)(const vpHomogeneousMatrix &))
 {
   vpPose pose;

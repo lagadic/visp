@@ -104,7 +104,7 @@ int main()
 tu: 0  1.570796327  3.141592654
   \endcode
 */
-vpThetaUVector::vpThetaUVector(const double tux, const double tuy, const double tuz) : vpRotationVector(3)
+vpThetaUVector::vpThetaUVector(double tux, double tuy, double tuz) : vpRotationVector(3)
 {
   buildFrom(tux, tuy, tuz);
 }
@@ -444,7 +444,7 @@ vpColVector vpThetaUVector::getU() const
 /*!
   Build a \f$\theta {\bf u}\f$ vector from 3 angles in radian.
 */
-void vpThetaUVector::buildFrom(const double tux, const double tuy, const double tuz)
+void vpThetaUVector::buildFrom(double tux, double tuy, double tuz)
 {
   data[0] = tux;
   data[1] = tuy;

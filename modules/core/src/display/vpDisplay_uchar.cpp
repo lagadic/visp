@@ -143,7 +143,9 @@ void vpDisplay::displayCharString(const vpImage<unsigned char> &I, int i, int j,
   \param center : Circle center position.
   \param radius : Circle radius.
   \param color : Circle color.
-  \param fill : When set to true fill the rectangle.
+  \param fill : When set to true fill the circle. When vpDisplayOpenCV is used,
+  and color alpha channel is set, filling feature can handle transparency. See vpColor
+  header class documentation.
   \param thickness : Thickness of the circle. This parameter is only useful
   when \e fill is set to false.
 */
@@ -159,7 +161,9 @@ void vpDisplay::displayCircle(const vpImage<unsigned char> &I, const vpImagePoin
   \param i,j : Circle center position.
   \param radius : Circle radius.
   \param color : Circle color.
-  \param fill : When set to true fill the rectangle.
+  \param fill : When set to true fill the circle. When vpDisplayOpenCV is used,
+  and color alpha channel is set, filling feature can handle transparency. See vpColor
+  header class documentation.
   \param thickness : Thickness of the circle. This parameter is only useful
   when \e fill is set to false.
 */
@@ -227,13 +231,14 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, int i1, int j1, 
 /*!
   Display dashed lines for the list of image points.
   \param I : The image associated to the display.
-  \param ips : List of image points.
+  \param ips : Vector of image points.
   \param closeTheShape : If true, display a dashed line from the first and
-  last image points. \param color : Line color. \param thickness : Dashed line
-  thickness.
+  last image points.
+  \param color : Line color.
+  \param thickness : Dashed line thickness.
 */
 void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
-                               const bool closeTheShape, const vpColor &color, unsigned int thickness)
+                               bool closeTheShape, const vpColor &color, unsigned int thickness)
 {
   if (ips.size() <= 1)
     return;
@@ -246,6 +251,36 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::vecto
 }
 
 /*!
+  Display dashed lines for the list of image points.
+  \param I : The image associated to the display.
+  \param ips : List of image points.
+  \param closeTheShape : If true, display a dashed line from the first and
+  last image points.
+  \param color : Line color.
+  \param thickness : Dashed line thickness.
+*/
+void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ips,
+                               bool closeTheShape, const vpColor &color, unsigned int thickness)
+{
+  if (ips.size() <= 1)
+    return;
+
+  std::list<vpImagePoint>::const_iterator it = ips.begin();
+
+  vpImagePoint ip_prev = *(it++);
+  for (; it != ips.end(); ++it) {
+    if (vpImagePoint::distance(ip_prev, *it) > 1) {
+      vp_display_display_dot_line(I, ip_prev, *it, color, thickness);
+      ip_prev = *it;
+    }
+  }
+
+  if (closeTheShape) {
+    vp_display_display_dot_line(I, ips.front(), ips.back(), color, thickness);
+  }
+}
+
+/*!
   Display an ellipse from its parameters expressed in pixels.
   \param I : Image to consider.
   \param center : Center \f$(u_c, v_c)\f$ of the ellipse.
@@ -254,12 +289,14 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::vecto
   - the centered moments expressed in pixels: \f$\mu_{20}, \mu_{11},
   \mu_{02}\f$;
   - the major and minor axis lenght in pixels and the excentricity of the
-  ellipse in radians: \f$a, b, e\f$. \param use_centered_moments : When false,
-  the parameters coef1, coef2, coef3 are the parameters \f$a, b, e\f$. When
-  true, the parameters coef1, coef2, coef3 are rather the centered moments
-  \f$\mu_{20}, \mu_{11}, \mu_{02}\f$ expressed in pixels. In that case, we
-  compute the parameters \e a, \e b and \e e from the centered moments. \param
-  color : Drawings color. \param thickness : Drawings thickness.
+  ellipse in radians: \f$a, b, e\f$.
+  \param use_centered_moments : When false, the parameters coef1, coef2, coef3
+  are the parameters \f$a, b, e\f$. When true, the parameters coef1, coef2,
+  coef3 are rather the centered moments \f$\mu_{20}, \mu_{11}, \mu_{02}\f$
+  expressed in pixels. In that case, we compute the parameters \e a, \e b and
+  \e e from the centered moments.
+  \param color : Ellipse color.
+  \param thickness : Ellipse thickness.
 
   All the points \f$(u_\theta,v_\theta)\f$ on the ellipse are drawn thanks to
   its parametric representation:
@@ -288,8 +325,8 @@ void vpDisplay::displayDotLine(const vpImage<unsigned char> &I, const std::vecto
     vpDisplay::display(I);
     ellipse.track(I);
 
-    vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_mu20(),
-                              ellipse.get_mu11(), ellipse.get_mu02(), true, vpColor::orange, 1);
+    vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_n20(),
+                              ellipse.get_n11(), ellipse.get_n02(), true, vpColor::orange, 1);
     vpDisplay::flush(I);
   \endcode
 */
@@ -310,15 +347,18 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoi
   - the centered moments expressed in pixels: \f$\mu_{20}, \mu_{11},
   \mu_{02}\f$;
   - the major and minor axis lenght in pixels and the excentricity of the
-  ellipse in radians: \f$a, b, e\f$. \param theta1, theta2 : Angles
+  ellipse in radians: \f$a, b, e\f$.
+  \param theta1, theta2 : Angles
   \f$(\theta_1, \theta_2)\f$ in radians used to select a portion of the
   ellipse. If theta1=0 and theta2=vpMath::rad(360) all the ellipse is
-  displayed. \param use_centered_moments : When false, the parameters coef1,
+  displayed.
+  \param use_centered_moments : When false, the parameters coef1,
   coef2, coef3 are the parameters \f$a, b, e\f$. When true, the parameters
   coef1, coef2, coef3 are rather the centered moments \f$\mu_{20}, \mu_{11},
   \mu_{02}\f$ expressed in pixels. In that case, we compute the parameters \e
-  a, \e b and \e e from the centered moments. \param color : Drawings color.
-  \param thickness : Drawings thickness.
+  a, \e b and \e e from the centered moments.
+  \param color : Ellipse color.
+  \param thickness : Ellipse thickness.
 
   All the points \f$(u_\theta,v_\theta)\f$ on the ellipse are drawn thanks to
   its parametric representation:
@@ -347,8 +387,8 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoi
     vpDisplay::display(I);
     ellipse.track(I);
 
-    vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_mu20(),
-                              ellipse.get_mu11(), ellipse.get_mu02(),
+    vpDisplay::displayEllipse(I, ellipse.getCenter(), ellipse.get_n20(),
+                              ellipse.get_n11(), ellipse.get_n02(),
                               ellipse.getSmallestAngle(),
     ellipse.getHighestAngle(), true, vpColor::orange, 1); vpDisplay::flush(I);
   \endcode
@@ -362,7 +402,7 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoi
 
 /*!
   Display the projection of an object frame represented by 3 arrows in
-  the image.
+  the image. Red, green and blue arrows correspond to frame X, Y and Z axis respectively.
 
   \param I : The image associated to the display.
   \param cMo : Homogeneous matrix that gives the transformation
@@ -468,12 +508,13 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, int i1, int j1, int
 /*!
   Display the lines formed by the list of image points.
   \param I : The image associated to the display.
-  \param ips : List of image points.
-  \param closeTheShape : If true, display a line from the first and last image
-  points. \param color : Line color. \param thickness : Line thickness.
+  \param ips : Vector of image points.
+  \param closeTheShape : If true, display a line from the first and last image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
 */
 void vpDisplay::displayLine(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &ips,
-                            const bool closeTheShape, const vpColor &color, unsigned int thickness)
+                            bool closeTheShape, const vpColor &color, unsigned int thickness)
 {
   if (ips.size() <= 1)
     return;
@@ -483,6 +524,35 @@ void vpDisplay::displayLine(const vpImage<unsigned char> &I, const std::vector<v
 
   if (closeTheShape)
     vp_display_display_line(I, ips.front(), ips.back(), color, thickness);
+}
+
+/*!
+  Display the lines formed by the list of image points.
+  \param I : The image associated to the display.
+  \param ips : List of image points.
+  \param closeTheShape : If true, display a line from the first and last image points.
+  \param color : Line color.
+  \param thickness : Line thickness.
+*/
+void vpDisplay::displayLine(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ips,
+                            bool closeTheShape, const vpColor &color, unsigned int thickness)
+{
+  if (ips.size() <= 1)
+    return;
+
+  std::list<vpImagePoint>::const_iterator it = ips.begin();
+
+  vpImagePoint ip_prev = *(it++);
+  for (; it != ips.end(); ++it) {
+    if (vpImagePoint::distance(ip_prev, *it) > 1) {
+      vp_display_display_line(I, ip_prev, *it, color, thickness);
+      ip_prev = *it;
+    }
+  }
+
+  if (closeTheShape) {
+    vp_display_display_line(I, ips.front(), ips.back(), color, thickness);
+  }
 }
 
 /*!
@@ -517,11 +587,12 @@ void vpDisplay::displayPoint(const vpImage<unsigned char> &I, int i, int j, cons
   \param vip : Vector of image point that define the vertexes of the polygon.
   \param color : Line color.
   \param thickness : Line thickness.
+  \param closed : When true display a closed polygon with a segment between first and last image point.
 */
 void vpDisplay::displayPolygon(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
-                               const vpColor &color, unsigned int thickness)
+                               const vpColor &color, unsigned int thickness, bool closed)
 {
-  vp_display_display_polygon(I, vip, color, thickness);
+  vp_display_display_polygon(I, vip, color, thickness, closed);
 }
 
 /*!
@@ -532,7 +603,9 @@ void vpDisplay::displayPolygon(const vpImage<unsigned char> &I, const std::vecto
   \param topLeft : Top-left corner of the rectangle.
   \param width,height : Rectangle size.
   \param color : Rectangle color.
-  \param fill : When set to true fill the rectangle.
+  \param fill : When set to true fill the rectangle. When vpDisplayOpenCV is used,
+  and color alpha channel is set, filling feature can handle transparency. See vpColor
+  header class documentation.
 
   \param thickness : Thickness of the four lines used to display the
   rectangle. This parameter is only useful when \e fill is set to
@@ -571,7 +644,9 @@ void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, int i, int j, 
   \param I : The image associated to the display.
   \param rectangle : Rectangle characteristics.
   \param color : Rectangle color.
-  \param fill : When set to true fill the rectangle.
+  \param fill : When set to true fill the rectangle. When vpDisplayOpenCV is used,
+  and color alpha channel is set, filling feature can handle transparency. See vpColor
+  header class documentation.
 
   \param thickness : Thickness of the four lines used to display the
   rectangle. This parameter is only useful when \e fill is set to
@@ -610,7 +685,9 @@ void vpDisplay::displayRectangle(const vpImage<unsigned char> &I, const vpImageP
   \param topLeft : Top-left corner of the rectangle.
   \param bottomRight : Bottom-right corner of the rectangle.
   \param color : Rectangle color.
-  \param fill : When set to true fill the rectangle.
+  \param fill : When set to true fill the rectangle. When vpDisplayOpenCV is used,
+  and color alpha channel is set, filling feature can handle transparency. See vpColor
+  header class documentation.
 
   \param thickness : Thickness of the four lines used to display the
   rectangle. This parameter is only useful when \e fill is set to

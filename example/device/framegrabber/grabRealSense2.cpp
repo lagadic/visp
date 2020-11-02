@@ -65,7 +65,7 @@ bool cancelled = false, update_pointcloud = false;
 class ViewerWorker
 {
 public:
-  explicit ViewerWorker(const bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) {}
+  explicit ViewerWorker(bool color_mode, std::mutex &mutex) : m_colorMode(color_mode), m_mutex(mutex) {}
 
   void run()
   {
@@ -141,6 +141,14 @@ int main()
 {
   try {
     vpRealSense2 rs;
+
+    std::string product_line = rs.getProductLine();
+    std::cout << "Product line: " << product_line << std::endl;
+
+    if (product_line == "T200") {
+      std::cout << "This example doesn't support T200 product line family !" << std::endl;
+      return EXIT_SUCCESS;
+    }
     rs2::config config;
     config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
     config.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);

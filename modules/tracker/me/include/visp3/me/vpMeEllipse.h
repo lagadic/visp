@@ -63,8 +63,8 @@
 
   \brief Class that tracks an ellipse moving edges.
 
-  In this class, an ellipse is defined as the set of points \f$ (i,j) \f$ of
-  the image frame (For more information about the image frame see the
+  In this class, an ellipse is defined in an image as the set of points \f$ (i,j) \f$ in
+  the image frame (for more information about the image frame see the
   vpImagePoint documentation) that satisfy the implicit equation :
 
   \f[ i^2 + K_0j^2 + 2K_1ij + 2K_2i + 2K_3j + K4 = 0 \f]
@@ -117,7 +117,7 @@ public:
   void track(const vpImage<unsigned char> &I);
 
   void initTracking(const vpImage<unsigned char> &I);
-  void initTracking(const vpImage<unsigned char> &I, const unsigned int n, vpImagePoint *iP);
+  void initTracking(const vpImage<unsigned char> &I, unsigned int n, vpImagePoint *iP);
   void initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP);
   void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double a_p, double b_p, double e_p,
                     double low_alpha, double high_alpha);
@@ -133,12 +133,12 @@ public:
     @name Deprecated functions
   */
   //@{
-  void initTracking(const vpImage<unsigned char> &I, const unsigned int n, unsigned *i, unsigned *j);
+  void initTracking(const vpImage<unsigned char> &I, unsigned int n, unsigned *i, unsigned *j);
 //@}
 #endif // VISP_BUILD_DEPRECATED_FUNCTIONS
 
   /*!
-    Gets the 0 order moment \f$ m_{00} \f$ which represents the area of the
+    Gets the zero order moment \f$ m_{00} \f$ which represents the area of the
     ellipse.
 
     \return the value of \f$ m_{00} \f$.
@@ -146,7 +146,7 @@ public:
   inline double get_m00() const { return m00; }
 
   /*!
-    Gets the 1 order raw moment \f$ m_{10} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
+    Gets the first order raw moment \f$ m_{10} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
     j^m \f$.
 
     \return the value of \f$ m_{10} \f$.
@@ -154,7 +154,7 @@ public:
   inline double get_m10() const { return m10; }
 
   /*!
-    Gets the 1 order raw moment \f$ m_{01} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
+    Gets the first order raw moment \f$ m_{01} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
     j^m \f$.
 
     \return the value of \f$ m_{01} \f$.
@@ -162,7 +162,7 @@ public:
   inline double get_m01() const { return m01; }
 
   /*!
-    Gets the 2 order raw moment \f$ m_{11} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
+    Gets the second order raw moment \f$ m_{11} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
     j^m \f$.
 
     \return the value of \f$ m_{11} \f$.
@@ -170,7 +170,7 @@ public:
   inline double get_m11() const { return m11; }
 
   /*!
-    Gets the 2 order raw moment \f$ m_{20} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
+    Gets the second order raw moment \f$ m_{20} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
     j^m \f$.
 
     \return the value of \f$ m_{11} \f$.
@@ -178,7 +178,7 @@ public:
   inline double get_m20() const { return m20; }
 
   /*!
-    Gets the 2 order raw moment \f$ m_{02} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
+    Gets the second order raw moment \f$ m_{02} \f$ with \f$ m_{nm} = \sum_{i,j}i^n
     j^m \f$.
 
     \return the value of \f$ m_{11} \f$.
@@ -186,21 +186,21 @@ public:
   inline double get_m02() const { return m02; }
 
   /*!
-    Gets the 2 order central moment \f$ \mu_{11} \f$.
+    Gets the second order centered moment \f$ \mu_{11} \f$.
 
     \return the value of \f$ \mu_{11} \f$.
   */
   inline double get_mu11() const { return mu11; }
 
   /*!
-    Gets the 2 order central moment \f$ \mu_{02} \f$.
+    Gets the second order centered moment \f$ \mu_{02} \f$.
 
     \return the value of \f$ \mu_{02} \f$.
   */
   inline double get_mu02() const { return mu02; }
 
   /*!
-    Gets the 2 order central moment \f$ \mu_{20} \f$.
+    Gets the second order centered moment \f$ \mu_{20} \f$.
 
     \return the value of \f$ \mu_{20} \f$.
   */
@@ -256,7 +256,7 @@ public:
 
     \param threshold : The new value of the threshold.
   */
-  void setThresholdRobust(const double threshold)
+  void setThresholdRobust(double threshold)
   {
     if (threshold < 0) {
       thresholdWeight = 0;
@@ -305,9 +305,9 @@ protected:
   double se;
   //! Stores the value of the \f$ alpha \f$ angle for each vpMeSite.
   std::list<double> angle;
-  //! Surface
+  //! Ellipse area
   double m00;
-  //! Second order central moments
+  //! Second order centered moments computed with respect of the ellipse centroid
   double mu11, mu20, mu02;
   //! First order raw moments
   double m10, m01;
@@ -320,7 +320,7 @@ protected:
 
 private:
   void computeAngle(const vpImagePoint &pt1, const vpImagePoint &pt);
-  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
+  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack=false);
   void reSample(const vpImage<unsigned char> &I);
   void leastSquare();
   void updateTheta();

@@ -41,7 +41,7 @@ int main(int argc, char **argv)
 #elif defined(VISP_HAVE_GTK)
     vpDisplayGTK d(I, vpDisplay::SCALE_AUTO);
 #elif defined(VISP_HAVE_D3D9)
-    vpDisplayD3d d(I, vpDisplay::SCALE_AUTO);
+    vpDisplayD3D d(I, vpDisplay::SCALE_AUTO);
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif

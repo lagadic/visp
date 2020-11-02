@@ -126,7 +126,6 @@ int main()
 
   \code
 #include <visp3/core/vpColVector.h>
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/robot/vpSimulatorAfma6.h>
 
@@ -230,10 +229,10 @@ public:
   void setJointLimit(const vpColVector &limitMin, const vpColVector &limitMax);
 
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
-  void setPosition(const vpRobot::vpControlFrameType frame, const double pos1, const double pos2, const double pos3,
-                   const double pos4, const double pos5, const double pos6);
+  void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3,
+                   double pos4, double pos5, double pos6);
   void setPosition(const char *filename);
-  void setPositioningVelocity(const double vel) { positioningVelocity = vel; }
+  void setPositioningVelocity(double vel) { positioningVelocity = vel; }
   bool setPosition(const vpHomogeneousMatrix &cdMo, vpImage<unsigned char> *Iint = NULL, const double &errMax = 0.001);
   vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState);
 

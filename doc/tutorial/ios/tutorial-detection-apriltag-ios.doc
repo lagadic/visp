@@ -18,23 +18,30 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedApril
 
 \section apriltag_detection_basic_ios AprilTag detection and pose estimation (single image)
 
-Let us consider the Xcode project named \c StartedAprilTag that is part of ViSP source code. This project is a Xcode \c "Single view application" that contain \c ImageConversion.h and \c ImageConversion.mm to convert from/to UIImage to ViSP images (see \ref image_ios_convert). It contains also \c ImageDisplay.h and \c ImageDisplay.mm files useful to display lines and frames in an image overlay, \c ViewController.mm that handles the tag detection, and an image \c AprilTag.png used as input.
-\image html img-detection-apriltag-ios-xcode.png
+Let us consider the Xcode project named `StartedAprilTag` that is part of ViSP source code and located in `$VISP_WS/tutorial/ios/StartedAprilTag`. This project is a Xcode `"Single view application"` that contain `ImageConversion.h` and `ImageConversion.mm` to convert from/to UIImage to ViSP images (see \ref image_ios_convert). It contains also `ImageDisplay.h` and `ImageDisplay.mm` files useful to display lines and frames in an image overlay, `ViewController.mm` that handles the tag detection, and an image `AprilTag.png` used as input.
 
-To download the complete \c StartedAprilTag project, run the following command:
-
+To open this application, if you followed \ref tutorial-install-ios-package simply run:
 \code
+$ cd ~/framework
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedAprilTag
+$ open ~/visp-ws/StartedImageProc -a Xcode
 \endcode
 
-Once downloaded, you have just to drag & drop ViSP and OpenCV frameworks available following \ref tutorial-install-ios-package.
-\image html img-detection-apriltag-ios-drag-drop.png
+or if you already downloaded ViSP following \ref tutorial-install-iOS run:
+\code
+$ open ~/framework/visp/tutorial/ios/StartedAprilTag -a Xcode
+\endcode
 
-In the dialog box, enable check box \c "Copy item if needed" to add \c visp3.framework and \c opencv.framework to the project.
-\image html img-started-imgproc-ios-drag-drop-dialog.png
+Here you should see something similar to:
+\image html img-detection-apriltag-ios-xcode.jpg
+
+Once opened, you have just to drag & drop ViSP and OpenCV frameworks available in `~/framework/ios` if you followed \ref tutorial-install-ios-package.
+\image html img-detection-apriltag-ios-drag-drop.jpg
+
+In the dialog box, enable check box `"Copy item if needed"` to add `visp3.framework` and `opencv.framework` to the project.
+\image html img-started-imgproc-ios-drag-drop-dialog.jpg
 
 Now you should be able to build and run your application.
-
 
 \section apriltag_detection_display Image display functions
 
@@ -55,9 +62,14 @@ The following function implemented in `ImageDisplay.mm` show how to display a 3D
 \section apriltag_detection_basic_output Application output
 
 - Now we are ready to build <tt>"StartedAprilTag"</tt> application using Xcode <tt>"Product>Build"</tt> menu. 
-- Once build, if you run \c StartedAprilTag application on your device, you should be able to see the following screen shot:
+- Once build, if you run `StartedAprilTag` application on your device, you should be able to see the following screen shot:
 
-\image html img-detection-apriltag-ios-output.png
+\image html img-detection-apriltag-ios-output.jpg
+
+\section apriltag_detection-issues Known issues
+\subsection apriltag_detection-issue-libxml iOS error: libxml/parser.h not found
+
+Follow \ref getting-started-ios-issue-libxml link if you get this issue.
 
 \section apriltag_detection_ios_next Next tutorial
 

@@ -280,7 +280,6 @@ int main()
 
     std::cout << "Display task information: " << std::endl;
     task.print();
-    task.kill();
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {

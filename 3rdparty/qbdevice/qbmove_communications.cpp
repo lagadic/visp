@@ -64,8 +64,12 @@
     #include <stdlib.h>
 #endif
 
-#if !(defined(_WIN32) || defined(_WIN64)) && !(defined(__APPLE__))
+#if !(defined(_WIN32) || defined(_WIN64)) && !(defined(__APPLE__)) && !(defined(__FreeBSD__))
     #include <linux/serial.h>
+#endif
+
+#if (defined(__FreeBSD__))
+    #include <sys/serial.h>
 #endif
 
 #if (defined(__APPLE__))
@@ -316,7 +320,7 @@ error:
         goto error;
     }
 
-#if (defined __APPLE__)
+#if (defined __APPLE__) || (defined __FreeBSD__)
 
     // set baud rate
     if (BAUD_RATE > 460800){

@@ -58,8 +58,8 @@
 
 #if defined(VISP_HAVE_DISPLAY)
 
-int laFonctionSansNom(const double delta);
-void getGrid3DPoint(const double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3);
+int laFonctionSansNom(double delta);
+void getGrid3DPoint(double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3);
 
 vpPlotGraph::vpPlotGraph()
   : xorg(0.), yorg(0.), zoomx(1.), zoomy(1.), xmax(10), ymax(10), xmin(0), ymin(-10), xdelt(1), ydelt(1), gridx(true),
@@ -208,7 +208,7 @@ void vpPlotGraph::computeGraphParameters()
   yorg = dTopLeft.get_i() + (ymax * zoomy);
 }
 
-void vpPlotGraph::setCurveColor(const unsigned int curveNum, const vpColor &color)
+void vpPlotGraph::setCurveColor(unsigned int curveNum, const vpColor &color)
 {
   (curveList + curveNum)->color = color;
 }
@@ -237,18 +237,18 @@ void vpPlotGraph::setUnitZ(const std::string &unit_z)
   dispUnit = true;
 }
 
-void vpPlotGraph::setLegend(const unsigned int curveNum, const std::string &newlegend)
+void vpPlotGraph::setLegend(unsigned int curveNum, const std::string &newlegend)
 {
   (curveList + curveNum)->legend = newlegend;
   dispLegend = true;
 }
 
-void vpPlotGraph::setCurveThickness(const unsigned int curveNum, const unsigned int thickness)
+void vpPlotGraph::setCurveThickness(unsigned int curveNum, unsigned int thickness)
 {
   (curveList + curveNum)->thickness = thickness;
 }
 
-int laFonctionSansNom(const double delta)
+int laFonctionSansNom(double delta)
 {
   double d = delta;
   int power = 0;
@@ -440,8 +440,8 @@ void vpPlotGraph::rescaley(unsigned int side, double extremity)
   ydelt = (ymax - ymin) / (double)nbDivisiony;
 }
 
-void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min, const double x_max, const int nbDivx,
-                            const double y_min, const double y_max, const int nbDivy, const bool gx, const bool gy)
+void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, int nbDivx,
+                            double y_min, double y_max, int nbDivy, bool gx, bool gy)
 {
   this->xmin = x_min;
   this->xmax = x_max;
@@ -458,9 +458,9 @@ void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min, const
   scaleInitialized = true;
 }
 
-void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min, const double x_max, const int nbDivx,
-                            const double y_min, const double y_max, const int nbDivy, const double z_min,
-                            const double z_max, const int nbDivz, const bool gx, const bool gy)
+void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, int nbDivx,
+                            double y_min, double y_max, int nbDivy, double z_min,
+                            double z_max, int nbDivz, bool gx, bool gy)
 {
   this->xmin = x_min;
   this->xmax = x_max;
@@ -480,7 +480,7 @@ void vpPlotGraph::initScale(vpImage<unsigned char> &I, const double x_min, const
   scaleInitialized = true;
 }
 
-void vpPlotGraph::plot(vpImage<unsigned char> &I, const unsigned int curveNb, const double x, const double y)
+void vpPlotGraph::plot(vpImage<unsigned char> &I, unsigned int curveNb, double x, double y)
 {
   if (!scaleInitialized) {
     if (x < 0) {
@@ -580,7 +580,7 @@ bool vpPlotGraph::getPixelValue(vpImage<unsigned char> &I, vpImagePoint &iP)
   return false;
 }
 
-void vpPlotGraph::resetPointList(const unsigned int curveNum)
+void vpPlotGraph::resetPointList(unsigned int curveNum)
 {
   (curveList + curveNum)->pointListx.clear();
   (curveList + curveNum)->pointListy.clear();
@@ -837,7 +837,7 @@ void vpPlotGraph::computeGraphParameters3D()
   ptZorg = w_zval - zoomz_3D * zmax;
 }
 
-void getGrid3DPoint(const double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3)
+void getGrid3DPoint(double pente, vpImagePoint &iPunit, vpImagePoint &ip1, vpImagePoint &ip2, vpImagePoint &ip3)
 {
   if (pente <= 1) {
     ip1 = iPunit - vpImagePoint(3, 0);
@@ -1042,8 +1042,8 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
     displayLegend(I);
 }
 
-vpMouseButton::vpMouseButtonType vpPlotGraph::plot(vpImage<unsigned char> &I, const unsigned int curveNb,
-                                                   const double x, const double y, const double z)
+vpMouseButton::vpMouseButtonType vpPlotGraph::plot(vpImage<unsigned char> &I, unsigned int curveNb,
+                                                   double x, double y, double z)
 {
   if (!scaleInitialized) {
     if (x < 0) {

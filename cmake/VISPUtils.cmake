@@ -135,8 +135,6 @@ function(vp_parse_properties_file file var_prefix)
   endif()
 endfunction()
 
-
-
 macro(vp_update VAR)
   if(NOT DEFINED ${VAR})
     if("x${ARGN}" STREQUAL "x")
@@ -369,6 +367,13 @@ macro(vp_list_unique __lst)
   endif()
 endmacro()
 
+# safe list reversal macro
+macro(vp_list_reverse __lst)
+  if(${__lst})
+    list(REVERSE ${__lst})
+  endif()
+endmacro()
+
 # list empty elements removal macro
 macro(vp_list_remove_empty __lst)
   if(${__lst})
@@ -443,10 +448,8 @@ macro(vp_list_replace_separator __lst __separator)
     list(LENGTH ${__lst} __lenght)
     if(__lenght GREATER 1)
       MATH(EXPR __lenght "${__lenght} - 1")
-      message("__lenght: ${__lenght}")
       foreach(_i RANGE 1 ${__lenght}-1)
         list(GET ${__lst} ${_i} element)
-        message("element ${_i}: ${element}")
        set(__lst_reformated "${__lst_reformated}${__separator}${element}")
       endforeach()
     endif()
@@ -669,7 +672,11 @@ endmacro()
 
 # add install command
 function(vp_install_target)
-  install(TARGETS ${ARGN})
+  if(APPLE_FRAMEWORK AND BUILD_SHARED_LIBS)
+    install(TARGETS ${ARGN} FRAMEWORK DESTINATION ${VISP_3P_LIB_INSTALL_PATH})
+  else()
+    install(TARGETS ${ARGN})
+  endif()
 
   set(isPackage 0)
   unset(__package)
@@ -692,11 +699,30 @@ function(vp_install_target)
     set(${__package}_TARGETS "${${__package}_TARGETS}" CACHE INTERNAL "List of ${__package} targets")
   endif()
 
-  if(INSTALL_CREATE_DISTRIB)
-    if(MSVC AND NOT BUILD_SHARED_LIBS)
-      set(__target "${ARGV0}")
+  if(MSVC)
+    set(__target "${ARGV0}")
 
-      set(isArchive 0)
+    # don't move this into global scope of this file: compiler settings (like MSVC variable) are not available during processing
+    if(BUILD_SHARED_LIBS)  # no defaults for static libs (modern CMake is required)
+      if(NOT CMAKE_VERSION VERSION_LESS 3.6.0)
+        option(INSTALL_PDB_COMPONENT_EXCLUDE_FROM_ALL "Don't install PDB files by default" ON)
+        option(INSTALL_PDB "Add install PDB rules" ON)
+      elseif(NOT CMAKE_VERSION VERSION_LESS 3.1.0)
+        option(INSTALL_PDB_COMPONENT_EXCLUDE_FROM_ALL "Don't install PDB files by default (not supported)" OFF)
+        option(INSTALL_PDB "Add install PDB rules" OFF)
+      endif()
+    endif()
+
+    if(INSTALL_PDB AND NOT INSTALL_IGNORE_PDB
+        AND NOT OPENCV_${__target}_PDB_SKIP
+    )
+      set(__location_key "ARCHIVE")  # static libs
+      get_target_property(__target_type ${__target} TYPE)
+      if("${__target_type}" STREQUAL "SHARED_LIBRARY")
+        set(__location_key "RUNTIME")  # shared libs (.DLL)
+      endif()
+
+      set(processDst 0)
       set(isDst 0)
       unset(__dst)
       foreach(e ${ARGN})
@@ -704,32 +730,48 @@ function(vp_install_target)
           set(__dst "${e}")
           break()
         endif()
-        if(isArchive EQUAL 1 AND e STREQUAL "DESTINATION")
+        if(processDst EQUAL 1 AND e STREQUAL "DESTINATION")
           set(isDst 1)
         endif()
-        if(e STREQUAL "ARCHIVE")
-          set(isArchive 1)
+        if(e STREQUAL "${__location_key}")
+          set(processDst 1)
         else()
-          set(isArchive 0)
+          set(processDst 0)
         endif()
       endforeach()
 
 #      message(STATUS "Process ${__target} dst=${__dst}...")
       if(DEFINED __dst)
-        if(CMAKE_VERSION VERSION_LESS 2.8.12)
-          get_target_property(fname ${__target} LOCATION_DEBUG)
-          if(fname MATCHES "\\.lib$")
-            string(REGEX REPLACE "\\.lib$" ".pdb" fname "${fname}")
-            install(FILES ${fname} DESTINATION ${__dst} CONFIGURATIONS Debug)
+        if(NOT CMAKE_VERSION VERSION_LESS 3.1.0)
+          set(__pdb_install_component "pdb")
+          if(DEFINED INSTALL_PDB_COMPONENT AND INSTALL_PDB_COMPONENT)
+            set(__pdb_install_component "${INSTALL_PDB_COMPONENT}")
+          endif()
+          set(__pdb_exclude_from_all "")
+          if(INSTALL_PDB_COMPONENT_EXCLUDE_FROM_ALL)
+            if(NOT CMAKE_VERSION VERSION_LESS 3.6.0)
+              set(__pdb_exclude_from_all EXCLUDE_FROM_ALL)
+            else()
+              message(WARNING "INSTALL_PDB_COMPONENT_EXCLUDE_FROM_ALL requires CMake 3.6+")
+            endif()
           endif()
 
-          get_target_property(fname ${__target} LOCATION_RELEASE)
-          if(fname MATCHES "\\.lib$")
-            string(REGEX REPLACE "\\.lib$" ".pdb" fname "${fname}")
-            install(FILES ${fname} DESTINATION ${__dst} CONFIGURATIONS Release)
+#          message(STATUS "Adding PDB file installation rule: target=${__target} dst=${__dst} component=${__pdb_install_component}")
+          if("${__target_type}" STREQUAL "SHARED_LIBRARY" OR "${__target_type}" STREQUAL "MODULE_LIBRARY")
+            install(FILES "$<TARGET_PDB_FILE:${__target}>" DESTINATION "${__dst}"
+                COMPONENT ${__pdb_install_component} OPTIONAL ${__pdb_exclude_from_all})
+          else()
+            # There is no generator expression similar to TARGET_PDB_FILE and TARGET_PDB_FILE can't be used: https://gitlab.kitware.com/cmake/cmake/issues/16932
+            # However we still want .pdb files like: 'lib/Debug/visp_core331d.pdb' or '3rdparty/lib/visp_apriltag.pdb'
+            install(FILES "$<TARGET_PROPERTY:${__target},ARCHIVE_OUTPUT_DIRECTORY>/$<CONFIG>/$<IF:$<BOOL:$<TARGET_PROPERTY:${__target},COMPILE_PDB_NAME_DEBUG>>,$<TARGET_PROPERTY:${__target},COMPILE_PDB_NAME_DEBUG>,$<TARGET_PROPERTY:${__target},COMPILE_PDB_NAME>>.pdb"
+                DESTINATION "${__dst}" CONFIGURATIONS Debug
+                COMPONENT ${__pdb_install_component} OPTIONAL ${__pdb_exclude_from_all})
+            install(FILES "$<TARGET_PROPERTY:${__target},ARCHIVE_OUTPUT_DIRECTORY>/$<CONFIG>/$<IF:$<BOOL:$<TARGET_PROPERTY:${__target},COMPILE_PDB_NAME_RELEASE>>,$<TARGET_PROPERTY:${__target},COMPILE_PDB_NAME_RELEASE>,$<TARGET_PROPERTY:${__target},COMPILE_PDB_NAME>>.pdb"
+                DESTINATION "${__dst}" CONFIGURATIONS Release
+                COMPONENT ${__pdb_install_component} OPTIONAL ${__pdb_exclude_from_all})
           endif()
         else()
-          # CMake 2.8.12 brokes PDB support in STATIC libraries for MSVS
+          message(WARNING "PDB files installation is not supported (need CMake >= 3.1.0)")
         endif()
       endif()
     endif()
@@ -955,7 +997,7 @@ macro(vp_warnings_disable)
           set(${var} "${${var}} ${warning}")
         endforeach()
       endforeach()
-    elseif((CMAKE_COMPILER_IS_GNUCXX OR (${CMAKE_CXX_COMPILER_ID} STREQUAL "Clang")) AND _gxx_warnings AND _flag_vars)
+    elseif((CMAKE_COMPILER_IS_GNUCXX OR (${CMAKE_CXX_COMPILER_ID} MATCHES "Clang")) AND _gxx_warnings AND _flag_vars)
       foreach(var ${_flag_vars})
         foreach(warning ${_gxx_warnings})
           if(NOT warning MATCHES "^-Wno-")
@@ -1349,3 +1391,241 @@ function(vp_cat_file in_file out_file)
   file(READ ${in_file} CONTENTS)
   file(APPEND ${out_file} "${CONTENTS}")
 endfunction()
+
+# Extract library name without lib prefix and extension suffix
+# UNIX  : libvisp_core.so.3.3 -> visp_core
+# UNIX  : libz.so -> z
+# MacOSX: libvisp_core-3.3.1.dylib -> visp_core-3.3.1
+# MacOSX: libz.dylib -> z
+macro(vp_get_libname var_name)
+  get_filename_component(__libname "${ARGN}" NAME)
+  string(REGEX REPLACE "^lib(.*)\\.(a|so|dll)(\\.[.0-9]+)?$" "\\1" __libname "${__libname}")
+  string(REGEX REPLACE "^lib(.*[^.])(\\.[0-9]+\\.)?.dylib$" "\\1" __libname "${__libname}")
+  set(${var_name} "${__libname}")
+endmacro()
+
+# Extract framework name to use with -framework name or path to use with -F path
+# MacOSX: /usr/local/opt/python/Frameworks/Python.framework/Versions/3.7/Python NAME -> Python
+# MacOSX: /usr/local/opt/python/Frameworks/Python.framework/Versions/3.7/Python PATH -> /usr/local/opt/python/Frameworks
+# MacOSX: /usr/local/opt/qt/lib/QtWidgets.framework/QtWidgets NAME -> QtWidgets
+# MacOSX: /usr/local/opt/qt/lib/QtWidgets.framework/QtWidgets PATH -> /usr/local/opt/qt/lib
+macro(vp_get_framework var_name)
+  set(__option)
+  foreach(d ${ARGN})
+    if(d MATCHES "PATH")
+      set(__option "PATH")
+    elseif(d MATCHES "NAME")
+      set(__option "NAME")
+    else()
+      set(__framework1 "${d}")
+    endif()
+  endforeach()
+
+  if (__option MATCHES "PATH")
+    string(REGEX REPLACE "(.+)?/(.+).framework/(.+)$" "\\1" __framework "${__framework1}")
+  elseif(__option MATCHES "NAME") # Default NAME
+    string(REGEX REPLACE "(.+)?/(.+).framework/(.+)$" "\\2" __framework "${__framework1}")
+  endif()
+  set(${var_name} "${__framework}")
+endmacro()
+
+# build the list of visp cxx flags to propagate (OpenMP, CXX11) in scripts
+#  _cxx_flags : variable to hold list of cxx flags we depend on
+macro(vp_get_all_cflags _cxx_flags)
+  set(${_cxx_flags} "")
+
+  if(BUILD_TEST_COVERAGE)
+    # Add build options for test coverage. Currently coverage is only supported
+    # on gcc compiler
+    # Because using -fprofile-arcs with shared lib can cause problems like:
+    # hidden symbol `__bb_init_func', we add this option only for static
+    # library build
+    list(INSERT ${_cxx_flags} 0 "-ftest-coverage")
+    list(INSERT ${_cxx_flags} 0 "-fprofile-arcs")
+  endif()
+
+  # Propagate c++ standard compiler option if enabled during ViSP build
+  if((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11) AND CXX11_CXX_FLAGS)
+    list(INSERT ${_cxx_flags} 0  ${CXX11_CXX_FLAGS})
+  elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14) AND CXX14_CXX_FLAGS)
+    list(INSERT ${_cxx_flags} 0  ${CXX14_CXX_FLAGS})
+  elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_17) AND CXX17_CXX_FLAGS)
+    list(INSERT ${_cxx_flags} 0  ${CXX17_CXX_FLAGS})
+  endif()
+
+  # Propagate openmp compiler option if enabled during ViSP build
+  if(VISP_HAVE_OPENMP)
+    list(INSERT ${_cxx_flags} 0  ${OpenMP_CXX_FLAGS})
+  endif()
+endmacro()
+
+# build the list of visp includes for all modules and dependencies
+#  _include_modules : variable to hold list of includes for all modules
+#  _include_extra : variable to hold list of includes for extra dependencies
+macro(vp_get_all_includes _includes_modules _includes_extra _system_include_dirs)
+  set(${_includes_modules} "")
+  set(${_includes_extra} "")
+  set(${_system_include_dirs} "")
+
+  foreach(m ${VISP_MODULES_BUILD})
+    list(APPEND ${_includes_extra} ${VISP_MODULE_${m}_INC_DEPS})
+    if(EXISTS "${VISP_MODULE_${m}_LOCATION}/include")
+      list(INSERT ${_includes_modules} 0 "${VISP_MODULE_${m}_LOCATION}/include")
+    endif()
+  endforeach()
+
+  #---------------------------------------------------------------------
+  # Get system_include_dirs to propagate in scripts for SonarQube
+  #----------------------------------------------------------------------
+  list(APPEND _system_include_dirs ${CMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES})
+
+  foreach(lst ${_includes_modules} ${_includes_extra} ${_system_include_dirs})
+    vp_list_unique(${lst})
+  endforeach()
+endmacro()
+
+# build the list of visp libs and dependencies for all modules
+#  _modules : variable to hold list of all modules
+#    When linking against static libraries, if libfoo depends on libbar, then
+#    libfoo must come first in the linker flags. This is done
+#    in _module where modules are reordered.
+#  _extra_opt : variable to hold list of extra dependencies (default)
+#  _extra_dbg : variable to hold list of extra dependencies (debug configuration)
+#  _3rdparty : variable to hold list of prebuilt 3rdparty libraries
+macro(vp_get_all_libs _modules _extra_opt _extra_dbg _3rdparty)
+  set(${_modules} "")
+  set(${_extra_dbg} "")
+  set(${_extra_opt} "")
+  set(${_3rdparty} "")
+  foreach(m ${VISP_MODULES_PUBLIC})
+    if(TARGET ${m})
+      get_target_property(deps ${m} INTERFACE_LINK_LIBRARIES)
+      if(NOT deps)
+        set(deps "")
+      endif()
+    else()
+      set(deps "")
+    endif()
+    set(_rev_deps "${deps};${m}")
+    vp_list_reverse(_rev_deps)
+    foreach (dep ${_rev_deps})
+      if(DEFINED VISP_MODULE_${dep}_LOCATION)
+        list(INSERT ${_modules} 0 ${dep})
+      endif()
+    endforeach()
+
+    foreach (dep ${deps} ${VISP_LINKER_LIBS})
+      if (NOT DEFINED VISP_MODULE_${dep}_LOCATION)
+        if(dep MATCHES "^\\$<LINK_ONLY:([^>]+)>$")
+          set(dep_dbg "${CMAKE_MATCH_1}")
+          set(dep_opt "${CMAKE_MATCH_1}")
+        elseif(dep MATCHES "^\\$<\\$<CONFIG:DEBUG>:([^>]+)>$")
+         set(dep_dbg "${CMAKE_MATCH_1}")
+       elseif(dep MATCHES "^\\$<\\$<NOT:\\$<CONFIG:DEBUG>>:([^>]+)>$")
+          set(dep_opt "${CMAKE_MATCH_1}")
+        elseif(dep MATCHES "^\\$<")
+          message(WARNING "Unexpected CMake generator expression: ${dep}")
+        else()
+          set(dep_dbg ${dep})
+          set(dep_opt ${dep})
+        endif()
+        if (TARGET ${dep_opt})
+          get_target_property(_type ${dep_opt} TYPE)
+          if((_type STREQUAL "STATIC_LIBRARY" AND BUILD_SHARED_LIBS)
+              OR _type STREQUAL "INTERFACE_LIBRARY"
+              OR DEFINED VISP_MODULE_${dep_opt}_LOCATION  # ViSP modules
+          )
+            # nothing
+          else()
+            get_target_property(_output ${dep_opt} IMPORTED_LOCATION)
+            if(NOT _output)
+              get_target_property(_output ${dep_opt} ARCHIVE_OUTPUT_DIRECTORY)
+              get_target_property(_output_name ${dep_opt} OUTPUT_NAME)
+              if(NOT _output_name)
+                set(_output_name "${dep_opt}")
+              endif()
+            else()
+              get_filename_component(_output_name "${_output}" NAME)
+            endif()
+            string(FIND "${_output}" "${CMAKE_BINARY_DIR}" _POS)
+            if (_POS EQUAL 0)
+              vp_get_libname(_libname "${_output_name}")
+              list(INSERT ${_3rdparty} 0 ${dep_opt})
+            else()
+              if(_output)
+                list(INSERT ${_extra_opt} 0 ${_output})
+              else()
+                list(INSERT ${_extra_opt} 0 ${dep_opt})
+              endif()
+            endif()
+          endif()
+        elseif(NOT "${dep_opt}" STREQUAL "") # avoid empty string insertion
+          list(INSERT ${_extra_opt} 0 ${dep_opt})
+        endif()
+        if (TARGET ${dep_dbg})
+          get_target_property(_type ${dep_dbg} TYPE)
+          if((_type STREQUAL "STATIC_LIBRARY" AND BUILD_SHARED_LIBS)
+              OR _type STREQUAL "INTERFACE_LIBRARY"
+              OR DEFINED VISP_MODULE_${dep_dbg}_LOCATION  # ViSP modules
+          )
+            # nothing
+          else()
+            get_target_property(_output ${dep_dbg} IMPORTED_LOCATION)
+            if(NOT _output)
+              get_target_property(_output ${dep_dbg} ARCHIVE_OUTPUT_DIRECTORY)
+              get_target_property(_output_name ${dep_dbg} OUTPUT_NAME)
+              if(NOT _output_name)
+                set(_output_name "${dep_dbg}")
+              endif()
+            else()
+              get_filename_component(_output_name "${_output}" NAME)
+            endif()
+            string(FIND "${_output}" "${CMAKE_BINARY_DIR}" _POS)
+            if (_POS EQUAL 0)
+              vp_get_libname(_libname "${_output_name}")
+              list(INSERT ${_3rdparty} 0 ${dep_dbg})
+            else()
+              if(_output)
+                list(INSERT ${_extra_dbg} 0 ${_output})
+              else()
+                list(INSERT ${_extra_dbg} 0 ${dep_dbg})
+              endif()
+            endif()
+          endif()
+        elseif(NOT "${dep_dbg}" STREQUAL "") # avoid empty string insertion
+          list(INSERT ${_extra_dbg} 0 ${dep_dbg})
+        endif()
+      endif()
+    endforeach()
+  endforeach()
+
+  vp_list_filterout(${_modules} "^[\$]<")
+  vp_list_filterout(${_3rdparty} "^[\$]<")
+  vp_list_filterout(${_extra_opt} "^[\$]<")
+  vp_list_filterout(${_extra_dbg} "^[\$]<")
+
+  # convert CMake lists to makefile literals
+  foreach(lst ${_modules} ${_3rdparty} ${_extra_opt} ${_extra_dbg})
+    vp_list_unique(${lst})
+    vp_list_reverse(${lst})
+  endforeach()
+endmacro()
+
+# Filter libraries.
+# When a library is a target like Boost::thread or Boost::date_time
+# replace the target by its imported location /usr/lib/x86_64-linux-gnu/libboost_thread.so.1.71.0
+macro(vp_filter_libraries_with_imported_location libs)
+  set(__libs)
+  foreach(lib_ ${${libs}})
+    if(TARGET ${lib_})
+      get_target_property(imported_libs_ ${lib_} INPORTED_LOCATION)
+      if(imported_libs_)
+        list(APPEND __libs ${imported_libs_})
+      endif()
+    else()
+      list(APPEND __libs ${lib_})
+    endif()
+  endforeach()
+  set(${libs} ${__libs})
+endmacro()
+

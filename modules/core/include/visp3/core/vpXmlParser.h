@@ -62,9 +62,8 @@
 /*!
   \class vpXmlParser
 
-  \deprecated This class intends to simplify the creation of xml parser based on
-  the libxml2 third party library. It was declared deprecated after ViSP 3.2.0 release
-  since we introduce pugixml built-in 3rd party library that replaces favorably libxml2.
+  This class intends to simplify the creation of xml parser based on
+  the libxml2 third party library.
 
   This class can be useful to manage external data parameters (for example for
   configuration of an experiment, ...).
@@ -72,6 +71,10 @@
   \warning This class is only available if libxml2 is installed and detected
   by ViSP. Installation instructions are provided here
   https://visp.inria.fr/3rd_xml2.
+
+  \note After ViSP 3.2.0 release we introduce pugixml built-in 3rd party library
+  that replaces favorably libxml2. For example vpXmlParserCamera uses now pugixml instead
+  of inheriting from vpXmlParser.
 
   In order to use this class, you have to create a new class inheriting from
   this one. In the child class, you have to implement the methods:
@@ -175,7 +178,7 @@
   \endcode
 
 */
-class vp_deprecated VISP_EXPORT vpXmlParser
+class VISP_EXPORT vpXmlParser
 {
 protected:
   /** @name Protected Member Functions Inherited from vpXmlParser */
@@ -211,13 +214,13 @@ protected:
   std::string xmlReadStringChild(xmlDocPtr doc, xmlNodePtr node);
   unsigned int xmlReadUnsignedIntChild(xmlDocPtr doc, xmlNodePtr node);
 
-  void xmlWriteBoolChild(xmlNodePtr node, const char *label, const bool value);
+  void xmlWriteBoolChild(xmlNodePtr node, const char *label, bool value);
   void xmlWriteCharChild(xmlNodePtr node, const char *label, const char *value);
-  void xmlWriteDoubleChild(xmlNodePtr node, const char *label, const double value);
-  void xmlWriteFloatChild(xmlNodePtr node, const char *label, const float value);
-  void xmlWriteIntChild(xmlNodePtr node, const char *label, const int value);
+  void xmlWriteDoubleChild(xmlNodePtr node, const char *label, double value);
+  void xmlWriteFloatChild(xmlNodePtr node, const char *label, float value);
+  void xmlWriteIntChild(xmlNodePtr node, const char *label, int value);
   void xmlWriteStringChild(xmlNodePtr node, const char *label, const std::string &value);
-  void xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, const unsigned int value);
+  void xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, unsigned int value);
   //@}
 
 protected:
@@ -239,7 +242,7 @@ public:
   virtual ~vpXmlParser();
 
   /* virtual */ void parse(const std::string &filename);
-  /* virtual */ void save(const std::string &filename, const bool append = false);
+  /* virtual */ void save(const std::string &filename, bool append = false);
 
   /*!
     Set the map describing the data to parse. This map stores the name of each

@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Benchmark rgba to grayscale image conversion.
+ * Benchmark color image conversion.
  *
  *****************************************************************************/
 
@@ -40,117 +40,208 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+#include <thread>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
+#include "common.hpp"
 
-namespace {
 static std::string ipath = vpIoTools::getViSPImagesDataPath();
-
-void computeRegularRGBaToGrayscale(const unsigned char * rgba, unsigned char *grey, unsigned int size)
-{
-  const unsigned char *pt_input = rgba;
-  const unsigned char *pt_end = rgba + size * 4;
-  unsigned char *pt_output = grey;
-
-  while (pt_input != pt_end) {
-    *pt_output = (unsigned char)(0.2126 * (*pt_input) + 0.7152 * (*(pt_input + 1)) + 0.0722 * (*(pt_input + 2)));
-    pt_input += 4;
-    pt_output++;
-  }
-}
-
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-void computeRegularBGRToGrayscale(unsigned char *bgr, unsigned char *grey, unsigned int width,
-                                  unsigned int height, bool flip=false)
-{
-  // if we have to flip the image, we start from the end last scanline so the
-  // step is negative
-  int lineStep = (flip) ? -(int)(width * 3) : (int)(width * 3);
-
-  // starting source address = last line if we need to flip the image
-  unsigned char *src = (flip) ? bgr + (width * height * 3) + lineStep : bgr;
-
-  unsigned int j = 0;
-  unsigned int i = 0;
-
-  for (i = 0; i < height; i++) {
-    unsigned char *line = src;
-    for (j = 0; j < width; j++) {
-      *grey++ = (unsigned char)(0.2126 * *(line + 2) + 0.7152 * *(line + 1) + 0.0722 * *(line + 0));
-      line += 3;
-    }
-
-    // go to the next line
-    src += lineStep;
-  }
-}
-#endif
-}
+static std::string imagePathColor = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
+static std::string imagePathGray = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
+static int nThreads = 0;
 
 TEST_CASE("Benchmark rgba to grayscale (naive code)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
   vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePath);
+  vpImageIo::read(I, imagePathColor);
 
   vpImage<unsigned char> I_gray(I.getHeight(), I.getWidth());
 
-  BENCHMARK("Benchmark rgba to grayscale Klimt (naive code)") {
-    computeRegularRGBaToGrayscale(reinterpret_cast<unsigned char *>(I.bitmap),
-                                  I_gray.bitmap, I.getSize());
+  BENCHMARK("Benchmark rgba to grayscale (naive code)") {
+    common_tools::RGBaToGrayRef(reinterpret_cast<unsigned char *>(I.bitmap),
+                                I_gray.bitmap, I.getSize());
     return I_gray;
   };
 }
 
 TEST_CASE("Benchmark rgba to grayscale (ViSP)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
   vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePath);
+  vpImageIo::read(I, imagePathColor);
 
   vpImage<unsigned char> I_gray(I.getHeight(), I.getWidth());
 
-  BENCHMARK("Benchmark rgba to grayscale Klimt (ViSP)") {
-    vpImageConvert::convert(I, I_gray);
+  BENCHMARK("Benchmark rgba to grayscale (ViSP)") {
+    vpImageConvert::convert(I, I_gray, nThreads);
     return I_gray;
   };
 }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-TEST_CASE("Benchmark bgr to grayscale (naive code)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
-  cv::Mat img = cv::imread(imagePath);
+TEST_CASE("Benchmark grayscale to rgba (naive code)", "[benchmark]") {
+  vpImage<unsigned char> I;
+  vpImageIo::read(I, imagePathGray);
 
-  vpImage<unsigned char> I_gray(img.rows, img.cols);
+  vpImage<vpRGBa> I_color(I.getHeight(), I.getWidth());
+
+  BENCHMARK("Benchmark grayscale to rgba (naive code)") {
+    common_tools::grayToRGBaRef(I.bitmap, reinterpret_cast<unsigned char *>(I_color.bitmap),
+                                I.getSize());
+    return I_color;
+  };
+}
+
+TEST_CASE("Benchmark grayscale to rgba (ViSP)", "[benchmark]") {
+  vpImage<unsigned char> I;
+  vpImageIo::read(I, imagePathGray);
+
+  vpImage<vpRGBa> I_color(I.getHeight(), I.getWidth());
+
+  BENCHMARK("Benchmark grayscale to rgba (ViSP)") {
+    vpImageConvert::convert(I, I_color);
+    return I_color;
+  };
+}
+
+TEST_CASE("Benchmark split RGBa (ViSP)", "[benchmark]") {
+  vpImage<vpRGBa> I;
+  vpImageIo::read(I, imagePathColor);
+
+  vpImage<unsigned char> R, G, B, A;
+  BENCHMARK("Benchmark split RGBa (ViSP)") {
+    vpImageConvert::split(I, &R, &G, &B, &A);
+    return R;
+  };
+}
+
+TEST_CASE("Benchmark merge to RGBa (ViSP)", "[benchmark]") {
+  vpImage<vpRGBa> I;
+  vpImageIo::read(I, imagePathColor);
+
+  vpImage<unsigned char> R, G, B, A;
+  vpImageConvert::split(I, &R, &G, &B, &A);
+
+  vpImage<vpRGBa> I_merge(I.getHeight(), I.getWidth());
+  BENCHMARK("Benchmark merge to RGBa (ViSP)") {
+    vpImageConvert::merge(&R, &G, &B, &A, I_merge);
+    return I_merge;
+  };
+}
+
+#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
+TEST_CASE("Benchmark bgr to grayscale (naive code)", "[benchmark]") {
+  vpImage<vpRGBa> I;
+  vpImageIo::read(I, imagePathColor);
+
+  std::vector<unsigned char> bgr;
+  common_tools::RGBaToBGR(I, bgr);
+
+  vpImage<unsigned char> I_gray(I.getHeight(), I.getWidth());
 
   BENCHMARK("Benchmark bgr to grayscale (naive code)") {
-    computeRegularBGRToGrayscale(reinterpret_cast<unsigned char*>(img.ptr<uchar>()),
-                                 reinterpret_cast<unsigned char *>(I_gray.bitmap),
-                                 I_gray.getWidth(), I_gray.getHeight());
+    common_tools::BGRToGrayRef(bgr.data(),
+                               reinterpret_cast<unsigned char *>(I_gray.bitmap),
+                               I_gray.getWidth(), I_gray.getHeight(), false);
     return I_gray;
   };
 }
 
 TEST_CASE("Benchmark bgr to grayscale (ViSP)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
-  cv::Mat img = cv::imread(imagePath);
+  vpImage<vpRGBa> I;
+  vpImageIo::read(I, imagePathColor);
 
-  std::vector<unsigned char> grayscale(img.rows*img.cols);
+  std::vector<unsigned char> bgr;
+  common_tools::RGBaToBGR(I, bgr);
+
+  vpImage<unsigned char> I_gray(I.getHeight(), I.getWidth());
 
   BENCHMARK("Benchmark bgr to grayscale (ViSP)") {
-    vpImageConvert::BGRToGrey(reinterpret_cast<unsigned char *>(img.ptr<uchar>()),
-                              grayscale.data(), img.cols, img.rows);
-    return grayscale;
+    vpImageConvert::BGRToGrey(bgr.data(),
+                              I_gray.bitmap,
+                              I.getWidth(), I.getHeight(),
+                              false, nThreads);
+    return I_gray;
   };
-}
 
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+  SECTION("OpenCV Mat type")
+  {
+    cv::Mat img;
+    vpImageConvert::convert(I, img);
+
+    BENCHMARK("Benchmark bgr to grayscale (ViSP + OpenCV Mat type)") {
+      vpImageConvert::convert(img, I_gray, false, nThreads);
+      return I_gray;
+    };
+  }
+#endif
+}
+#endif
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 TEST_CASE("Benchmark bgr to grayscale (OpenCV)", "[benchmark]") {
-  std::string imagePath = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
-  cv::Mat img = cv::imread(imagePath);
+  cv::Mat img = cv::imread(imagePathColor);
   cv::Mat img_gray(img.size(), CV_8UC1);
 
   BENCHMARK("Benchmark bgr to grayscale (OpenCV)") {
     cv::cvtColor(img, img_gray, cv::COLOR_BGR2GRAY);
     return img_gray;
   };
+}
+#endif
+
+// C++11 to be able to do bgr.data()
+#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
+TEST_CASE("Benchmark bgr to rgba (naive code)", "[benchmark]") {
+  vpImage<vpRGBa> I;
+  vpImageIo::read(I, imagePathColor);
+
+  std::vector<unsigned char> bgr;
+  common_tools::RGBaToBGR(I, bgr);
+
+  vpImage<vpRGBa> I_bench(I.getHeight(), I.getWidth());
+  BENCHMARK("Benchmark bgr to rgba (naive code)") {
+    common_tools::BGRToRGBaRef(bgr.data(), reinterpret_cast<unsigned char*>(I_bench.bitmap),
+                               I.getWidth(), I.getHeight(), false);
+    return I_bench;
+  };
+}
+
+TEST_CASE("Benchmark bgr to rgba (ViSP)", "[benchmark]") {
+  vpImage<vpRGBa> I;
+  vpImageIo::read(I, imagePathColor);
+
+  std::vector<unsigned char> bgr;
+  common_tools::RGBaToBGR(I, bgr);
+
+  SECTION("Check BGR to RGBa conversion")
+  {
+    vpImage<vpRGBa> ref(I.getHeight(), I.getWidth());
+    common_tools::BGRToRGBaRef(bgr.data(), reinterpret_cast<unsigned char*>(ref.bitmap),
+                               I.getWidth(), I.getHeight(), false);
+    vpImage<vpRGBa> rgba(I.getHeight(), I.getWidth());
+    vpImageConvert::BGRToRGBa(bgr.data(), reinterpret_cast<unsigned char *>(rgba.bitmap),
+                              I.getWidth(), I.getHeight(), false);
+
+    CHECK((rgba == ref));
+  }
+
+  vpImage<vpRGBa> I_rgba(I.getHeight(), I.getWidth());
+  BENCHMARK("Benchmark bgr to rgba (ViSP)") {
+    vpImageConvert::BGRToRGBa(bgr.data(), reinterpret_cast<unsigned char *>(I_rgba.bitmap),
+                              I.getWidth(), I.getHeight(), false);
+    return I_rgba;
+  };
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+  SECTION("OpenCV Mat type")
+  {
+    cv::Mat img;
+    vpImageConvert::convert(I, img);
+
+    BENCHMARK("Benchmark bgr to rgba (ViSP + OpenCV Mat type)") {
+      vpImageConvert::convert(img, I_rgba);
+      return I_rgba;
+    };
+  }
+#endif
 }
 #endif
 
@@ -164,7 +255,16 @@ int main(int argc, char *argv[])
   auto cli = session.cli() // Get Catch's composite command line parser
     | Opt(runBenchmark)    // bind variable to a new option, with a hint string
     ["--benchmark"]        // the option names it will respond to
-    ("run benchmark?");    // description string for the help output
+    ("run benchmark?")     // description string for the help output
+    | Opt(imagePathColor, "imagePathColor")
+    ["--imagePathColor"]
+    ("Path to color image")
+    | Opt(imagePathGray, "imagePathColor")
+    ["--imagePathGray"]
+    ("Path to gray image")
+    | Opt(nThreads, "nThreads")
+    ["--nThreads"]
+    ("Number of threads");
 
   // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
@@ -173,6 +273,15 @@ int main(int argc, char *argv[])
   session.applyCommandLine(argc, argv);
 
   if (runBenchmark) {
+    vpImage<vpRGBa> I_color;
+    vpImageIo::read(I_color, imagePathColor);
+    std::cout << "imagePathColor:\n\t" << imagePathColor << "\n\t" << I_color.getWidth() << "x" << I_color.getHeight() << std::endl;
+
+    vpImage<unsigned char> I_gray;
+    vpImageIo::read(I_gray, imagePathGray);
+    std::cout << "imagePathGray:\n\t" << imagePathGray << "\n\t" << I_gray.getWidth() << "x" << I_gray.getHeight() << std::endl;
+    std::cout << "nThreads: " << nThreads << " / available threads: " << std::thread::hardware_concurrency() << std::endl;
+
     int numFailed = session.run();
 
     // numFailed is clamped to 255 as some unices only use the lower 8 bits.

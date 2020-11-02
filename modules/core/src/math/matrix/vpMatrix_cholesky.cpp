@@ -54,10 +54,13 @@
 #endif
 
 #ifdef VISP_HAVE_LAPACK
+#  ifdef VISP_HAVE_GSL
+#    include <gsl/gsl_linalg.h>
+#  endif
 #  ifdef VISP_HAVE_MKL
-#include <mkl.h>
+#    include <mkl.h>
 typedef MKL_INT integer;
-#  else
+#  elif !defined(VISP_HAVE_GSL)
 #    ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
 #    else
@@ -158,33 +161,57 @@ int main()
 */
 vpMatrix vpMatrix::inverseByCholeskyLapack() const
 {
-  if (rowNum != colNum) {
-    throw(vpMatrixException(vpMatrixException::matrixError, "Cannot inverse a non-square matrix (%ux%u) by Cholesky",
-                            rowNum, colNum));
+#if defined(VISP_HAVE_GSL)
+  {
+    vpMatrix invA = *this;
+
+    gsl_matrix cholesky;
+    cholesky.size1 = rowNum;
+    cholesky.size2 = colNum;
+    cholesky.tda = cholesky.size2;
+    cholesky.data = invA.data;
+    cholesky.owner = 0;
+    cholesky.block = 0;
+
+#if (GSL_MAJOR_VERSION >= 2 && GSL_MINOR_VERSION >= 3)
+    gsl_linalg_cholesky_decomp1(&cholesky);
+#else
+    gsl_linalg_cholesky_decomp(&cholesky);
+#endif
+    gsl_linalg_cholesky_invert(&cholesky);
+    return invA;
   }
+#else
+  {
+    if (rowNum != colNum) {
+      throw(vpMatrixException(vpMatrixException::matrixError, "Cannot inverse a non-square matrix (%ux%u) by Cholesky",
+                              rowNum, colNum));
+    }
 
-  integer rowNum_ = (integer)this->getRows();
-  integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
-  integer info;
+    integer rowNum_ = (integer)this->getRows();
+    integer lda = (integer)rowNum_; // lda is the number of rows because we don't use a submatrix
+    integer info;
 
-  vpMatrix A = *this;
-  dpotrf_((char *)"L", &rowNum_, A.data, &lda, &info);
+    vpMatrix A = *this;
+    dpotrf_((char *)"L", &rowNum_, A.data, &lda, &info);
 
-  if (info != 0)
-    throw(vpException(vpException::fatalError, "Cannot inverse by Cholesky with Lapack: error in dpotrf_()"));
+    if (info != 0)
+      throw(vpException(vpException::fatalError, "Cannot inverse by Cholesky with Lapack: error in dpotrf_()"));
 
-  dpotri_((char *)"L", &rowNum_, A.data, &lda, &info);
-  if (info != 0) {
-    std::cout << "cholesky:dpotri_:error" << std::endl;
-    throw vpMatrixException::badValue;
+    dpotri_((char *)"L", &rowNum_, A.data, &lda, &info);
+    if (info != 0) {
+      std::cout << "cholesky:dpotri_:error" << std::endl;
+      throw vpMatrixException::badValue;
+    }
+
+    for (unsigned int i = 0; i < A.getRows(); i++)
+      for (unsigned int j = 0; j < A.getCols(); j++)
+        if (i > j)
+          A[i][j] = A[j][i];
+
+    return A;
   }
-
-  for (unsigned int i = 0; i < A.getRows(); i++)
-    for (unsigned int j = 0; j < A.getCols(); j++)
-      if (i > j)
-        A[i][j] = A[j][i];
-
-  return A;
+#endif
 }
 #endif
 

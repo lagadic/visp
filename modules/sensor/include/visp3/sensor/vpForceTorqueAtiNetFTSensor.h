@@ -107,7 +107,7 @@ class VISP_EXPORT vpForceTorqueAtiNetFTSensor : public vpUDPClient
 {
 public:
   vpForceTorqueAtiNetFTSensor();
-  vpForceTorqueAtiNetFTSensor(const std::string &hostname, const int port);
+  vpForceTorqueAtiNetFTSensor(const std::string &hostname, int port);
   virtual ~vpForceTorqueAtiNetFTSensor();
 
   void bias(unsigned int n_counts = 50);

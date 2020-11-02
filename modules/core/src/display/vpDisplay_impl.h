@@ -204,24 +204,19 @@ void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &cent
     j1 = j2 = i1 = i2 = 0;
     double a = 0., b = 0., e = 0.;
 
-    double mu20_p = coef1;
-    double mu11_p = coef2;
-    double mu02_p = coef3;
+    double n20_p = coef1;
+    double n11_p = coef2;
+    double n02_p = coef3;
 
     if (use_centered_moments) {
-      if (std::fabs(mu11_p) > std::numeric_limits<double>::epsilon()) {
+      // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 24
+      double val_p = sqrt(vpMath::sqr(n20_p - n02_p) + 4 * vpMath::sqr(n11_p));
+      a = sqrt(2 * (n20_p + n02_p + val_p));  // major axis
+      b = sqrt(2 * (n20_p + n02_p - val_p));  // minor axis
 
-        double val_p = sqrt(vpMath::sqr(mu20_p - mu02_p) + 4 * vpMath::sqr(mu11_p));
-        a = sqrt((mu20_p + mu02_p + val_p) / 2);
-        b = sqrt((mu20_p + mu02_p - val_p) / 2);
-
-        e = (mu02_p - mu20_p + val_p) / (2 * mu11_p);
-        e = atan(e);
-      } else {
-        a = sqrt(mu20_p);
-        b = sqrt(mu02_p);
-        e = 0.;
-      }
+      double s = n02_p - n20_p + val_p;
+      double c = 2 * n11_p;
+      e = atan2(s,c);    // orientation
     } else {
       a = coef1;
       b = coef2;
@@ -358,11 +353,19 @@ void vp_display_display_point(const vpImage<Type> &I, int i, int j, const vpColo
 
 template <class Type>
 void vp_display_display_polygon(const vpImage<Type> &I, const std::vector<vpImagePoint> &vip, const vpColor &color,
-                                unsigned int thickness)
+                                unsigned int thickness, bool closed=true)
 {
   if (I.display != NULL) {
-    for (unsigned int i = 0; i < vip.size(); i++)
-      (I.display)->displayLine(vip[i], vip[(i + 1) % vip.size()], color, thickness);
+    if (closed) {
+      for (unsigned int i = 0; i < vip.size(); i++) {
+        (I.display)->displayLine(vip[i], vip[(i + 1) % vip.size()], color, thickness);
+      }
+    }
+    else {
+      for (unsigned int i = 1; i < vip.size(); i++) {
+        (I.display)->displayLine(vip[i-1], vip[i], color, thickness);
+      }
+    }
   }
 }
 

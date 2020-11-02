@@ -45,6 +45,7 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/gui/vpPlot.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 vpMatrix randM(int n, int m)
 {
   vpMatrix M(n,m);
@@ -109,3 +110,4 @@ public:
   void wait() {}
 };
 #endif
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

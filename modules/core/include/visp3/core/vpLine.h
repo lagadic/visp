@@ -53,40 +53,39 @@
   \class vpLine
   \ingroup group_core_geometry
 
-  \brief Class that defines a line in the object frame, the
-  camera frame and the image plane. All the parameters
-  must be set in meter.
+  \brief Class that defines a 3D line in the object frame and allows forward projection
+  of the line in the camera frame and in the 2D image plane by perspective projection.
+  All the parameters must be set in meter.
 
-  \par Object and camera frame parametrization:
-  In the 3D frames, the object frame parameters (\e oP) and the camera
-  frame parameters (\e cP), the line is defined as the intersection
-  between two plans. Thus, the parameters which define the line are
-  the parameters which define the two equations of the two plans. Each
-  point which belongs to the line is a solution of those two
+  Note that a 3D line is defined from the intersection between two 3D planes.
+
+  A 3D line has the followings parameters:
+  - **in the 3D object frame**: parameters are located in vpForwardProjection::oP 8-dim internal vector. They correspond
+  to the parameters oA1, oB1, oC1, oD1 and oA2, oB2, oC2, oD2 defining the equations of the two planes.
+  Each point \f$ (X, Y, Z) \f$ which belongs to the 3D line is a solution of those two
   equations:
-  \f[ A1 X + B1 Y + C1 Z +D1 = 0 \f]
-  \f[ A2 X + B2 Y + C2 Z +D2 = 0 \f]
-  Here \f$ (X, Y, Z) \f$ are the 3D coordinates in one of the two 3D frames.
-  In this class it is easily possible to compute the parameters (\e cP) of the
-  line in the camera frame thanks to its parameters (\e oP) in the
-  object frame. But you have to notes that four constraints are
-  added in the planes equations.
-  \f[ D1 = 0 \f]
-  \f[ D2 > 0 \f]
-  \f[ A1 A2 + B1 B2 + C1 C2 = 0 \f]
-  \f[ || A2 || = 1 \f]
-  The line parameters \e oP corresponding to the object frame are
-  located in the vpForwardProjection::oP public attribute, where \e oP
-  is a vector defined as: \f[ oP = \left[\begin{array}{c}A1_o \\ B1_o
-  \\ C1_o \\ D1_o \\ A2_o \\ B2_o \\ C2_o \\ D2_o \end{array}\right]
-  \f]
-  The line parameters corresponding to the camera frame are located
-  in the vpTracker::cP public attribute, where \e cP is a vector
-  defined as: \f[ cP = \left[\begin{array}{c}A1_c \\ B1_c \\ C1_c \\
-  D1_c \\ A2_c \\ B2_c \\ C2_c \\ D2_c \end{array}\right] \f]
+  \f[ oA1*X + oB1*Y + oC1*Z + oD1 = 0 \f]
+  \f[ oA2*X + oB2*Y + oC2*Z + oD2 = 0 \f]
+  To update these line parameters you may use setWorldCoordinates(). To get theses parameters use get_oP().
 
-  \par Image plane parametrization:
-  In the image plane, the line is defined thanks to its 2D equation.
+  - **in the 3D camera frame**: parameters are saved in vpTracker::cP 8-dim internal vector. They correspond
+  to the parameters cA1, cB1, cC1, cD1 and cA2, cB2, cC2, cD2 defining the equations of the two planes.
+  Each point \f$ (X, Y, Z) \f$ which belongs to the 3D line is a solution of those two
+  equations:
+  \f[ cA1*X + cB1*Y + cC1*Z + cD1 = 0 \f]
+  \f[ cA2*X + cB2*Y + cC2*Z + cD2 = 0 \f]
+  It is easily possible to compute these parameters thanks to the corresponding 3D parameters oP in the
+  object frame. But you have to note that four constraints are added in the planes equations.
+  \f[ cD1 = 0 \f]
+  \f[ cD2 > 0 \f]
+  \f[ cA1*cA2 + cB1*cB2 + cC1*cC2 = 0 \f]
+  \f[ || cA2 || = 1 \f]
+  To compute these parameters you may use changeFrame(). To get these parameters use get_cP().
+
+  - **in the 2D image plane**: parameters are saved in vpTracker::p 2-dim vector. They correspond
+  to the parameters (\f$\rho\f$, \f$\theta\f$). These
+  2D parameters are obtained from the perspective projection of the 3D line parameters expressed
+  in the camera frame. They are defined thanks to the 2D equation of a line.
   \f[ x \; cos(\theta) + y \; sin(\theta) -\rho = 0 \f] Here \f$ x
   \f$ and \f$ y \f$ are the coordinates of a point belonging to the
   line in the image plane while \f$ \rho \f$ and \f$ \theta \f$ are
@@ -99,39 +98,36 @@
   \image latex vpFeatureLine.ps  width=10cm
   The line parameters corresponding to the image frame are located
   in the vpTracker::p public attribute, where \e p is a vector defined
-  as: \f[ p = \left[\begin{array}{c} \rho \\ \theta \end{array}\right]
-  \f]
+  as: \f[ p = \left[\begin{array}{c} \rho \\ \theta \end{array}\right] \f]
+  To compute these parameters use projection(). To get the corresponding values use get_p().
 */
 class VISP_EXPORT vpLine : public vpForwardProjection
 {
-
 public:
-  void init();
-
   vpLine();
   //! Destructor
   virtual ~vpLine() { ; }
 
-  /*!
+  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const;
+  void changeFrame(const vpHomogeneousMatrix &cMo);
 
-    Sets the \f$ \rho \f$ parameter used to define the line in the
+  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
+               unsigned int thickness = 1);
+  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green, unsigned int thickness = 1);
+
+  vpLine *duplicate() const;
+
+  /*!
+    Gets the \f$ \rho \f$ value corresponding to one of the
+    two parameters used to define the line parametrization in the
     image plane.
 
-    \param rho : The desired value for \f$ \rho \f$.
+    \return Returns the current value of \f$ \rho \f$.
 
-    \sa setTheta()
+    \sa getTheta()
   */
-  void setRho(const double rho) { p[0] = rho; };
-
-  /*!
-    Sets the \f$ \theta \f$ angle value used to define the line in the
-    image plane.
-
-    \param theta : The desired value for \f$ \theta \f$ angle.
-
-    \sa setRho()
-  */
-  void setTheta(const double theta) { p[1] = theta; };
+  double getRho() const { return p[0]; }
 
   /*!
 
@@ -146,34 +142,38 @@ public:
   double getTheta() const { return p[1]; }
 
   /*!
-    Gets the \f$ \rho \f$ value corresponding to one of the
-    two parameters used to define the line parametrization in the
+
+    Sets the \f$ \rho \f$ parameter used to define the line in the
     image plane.
 
-    \return Returns the current value of \f$ \rho \f$.
+    \param rho : The desired value for \f$ \rho \f$.
 
-    \sa getTheta()
+    \sa setTheta()
   */
-  double getRho() const { return p[0]; }
+  void setRho(double rho) { p[0] = rho; }
 
-  void setWorldCoordinates(const double &A1, const double &B1, const double &C1, const double &D1, const double &A2,
-                           const double &B2, const double &C2, const double &D2);
+  /*!
+    Sets the \f$ \theta \f$ angle value used to define the line in the
+    image plane.
+
+    \param theta : The desired value for \f$ \theta \f$ angle.
+
+    \sa setRho()
+  */
+  void setTheta(double theta) { p[1] = theta; }
+
+  void setWorldCoordinates(const double &oA1, const double &oB1, const double &oC1, const double &oD1,
+                           const double &oA2, const double &oB2, const double &oC2, const double &oD2);
 
   void setWorldCoordinates(const vpColVector &oP1, const vpColVector &oP2);
 
   void setWorldCoordinates(const vpColVector &oP);
 
   void projection();
-  void projection(const vpColVector &cP, vpColVector &p);
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP);
-  void changeFrame(const vpHomogeneousMatrix &cMo);
+  void projection(const vpColVector &cP, vpColVector &p) const;
 
-  void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
-               const unsigned int thickness = 1);
-  void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-               const vpColor &color = vpColor::green, const unsigned int thickness = 1);
-
-  vpLine *duplicate() const;
+protected:
+  void init();
 };
 
 #endif

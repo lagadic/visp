@@ -86,7 +86,7 @@ public:
   };
 
 public:
-  vpImageException(const int id, const char *format, ...)
+  vpImageException(int id, const char *format, ...)
   {
     this->code = id;
     va_list args;
@@ -94,8 +94,8 @@ public:
     setMessage(format, args);
     va_end(args);
   }
-  vpImageException(const int id, const std::string &msg) : vpException(id, msg) { ; }
-  explicit vpImageException(const int id) : vpException(id) { ; }
+  vpImageException(int id, const std::string &msg) : vpException(id, msg) { ; }
+  explicit vpImageException(int id) : vpException(id) { ; }
 };
 
 #endif

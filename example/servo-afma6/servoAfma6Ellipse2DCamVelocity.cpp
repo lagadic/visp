@@ -157,14 +157,14 @@ int main()
     vpTRACE("sets the desired position of the visual feature ");
     vpFeatureEllipse cd;
     std::ifstream f("dat/ellipse.dat");
-    double x, y, mu20, mu11, mu02;
+    double x, y, n20, n11, n02;
     f >> x;
     f >> y;
-    f >> mu20;
-    f >> mu11;
-    f >> mu02;
+    f >> n20;
+    f >> n11;
+    f >> n02;
     f.close();
-    cd.buildFrom(x, y, mu20, mu11, mu02);
+    cd.buildFrom(x, y, n20, n11, n02);
     cd.setABC(0, 0, 10);
 
     task.setServo(vpServo::EYEINHAND_CAMERA);
@@ -224,7 +224,6 @@ int main()
 
     vpTRACE("Display task information ");
     task.print();
-    task.kill();
     return EXIT_SUCCESS;
   }
   catch (const vpException &e) {

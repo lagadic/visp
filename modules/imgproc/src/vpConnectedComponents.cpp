@@ -46,8 +46,8 @@
 
 namespace
 {
-void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &listOfNeighbors, const unsigned int i,
-                  const unsigned int j, const vpImageMorphology::vpConnexityType &connexity)
+void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &listOfNeighbors, unsigned int i,
+                  unsigned int j, const vpImageMorphology::vpConnexityType &connexity)
 {
   unsigned char currValue = I[i][j];
 
@@ -86,7 +86,7 @@ void getNeighbors(const vpImage<unsigned char> &I, std::queue<vpImagePoint> &lis
 }
 
 void visitNeighbors(vpImage<unsigned char> &I_copy, std::queue<vpImagePoint> &listOfNeighbors, vpImage<int> &labels,
-                    const int current_label, const vpImageMorphology::vpConnexityType &connexity)
+                    int current_label, const vpImageMorphology::vpConnexityType &connexity)
 {
   // Visit the neighbors
   while (!listOfNeighbors.empty()) {

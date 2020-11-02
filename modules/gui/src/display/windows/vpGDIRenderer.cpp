@@ -150,8 +150,8 @@ void vpGDIRenderer::setImg(const vpImage<vpRGBa> &I)
   \param iP : Top left coordinates of the ROI.
   \param width, height : ROI width and height.
 */
-void vpGDIRenderer::setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width,
-                              const unsigned int height)
+void vpGDIRenderer::setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
+                              unsigned int height)
 {
   // converts the image into a HBITMAP
   convertROI(I, iP, width, height);
@@ -173,8 +173,8 @@ void vpGDIRenderer::setImg(const vpImage<unsigned char> &I)
   \param iP : Top left coordinates of the ROI.
   \param width, height : ROI width and height.
 */
-void vpGDIRenderer::setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width,
-                              const unsigned int height)
+void vpGDIRenderer::setImgROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
+                              unsigned int height)
 {
   // converts the image into a HBITMAP
   convertROI(I, iP, width, height);
@@ -253,8 +253,8 @@ void vpGDIRenderer::convert(const vpImage<vpRGBa> &I, HBITMAP &hBmp)
   \param iP : Top left coordinates of the ROI.
   \param width, height : ROI width and height.
 */
-void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, const unsigned int width,
-                               const unsigned int height)
+void vpGDIRenderer::convertROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
+                               unsigned int height)
 {
   int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
   int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
@@ -352,8 +352,8 @@ void vpGDIRenderer::convert(const vpImage<unsigned char> &I, HBITMAP &hBmp)
   \param iP : Top left coordinates of the ROI.
   \param width, height : ROI width and height.
 */
-void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, const unsigned int width,
-                               const unsigned int height)
+void vpGDIRenderer::convertROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
+                               unsigned int height)
 {
   int i_min = (std::max)((int)ceil(iP.get_i() / m_rscale), 0);
   int j_min = (std::max)((int)ceil(iP.get_j() / m_rscale), 0);
@@ -592,18 +592,43 @@ void vpGDIRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
   // displays a solid line That's why in that case we implement the dashdot
   // line manually drawing multiple small lines
   if (thickness != 1 && style != PS_SOLID) {
+    vpImagePoint ip1_ = ip1;
+    vpImagePoint ip2_ = ip2;
+
     double size = 10. * m_rscale;
-    double length = sqrt(vpMath::sqr(ip2.get_i() - ip1.get_i()) + vpMath::sqr(ip2.get_j() - ip1.get_j()));
-    double deltaj = size / length * (ip2.get_j() - ip1.get_j());
-    double deltai = size / length * (ip2.get_i() - ip1.get_i());
-    double slope = (ip2.get_i() - ip1.get_i()) / (ip2.get_j() - ip1.get_j());
-    double orig = ip1.get_i() - slope * ip1.get_j();
-    for (unsigned int j = (unsigned int)ip1.get_j(); j < ip2.get_j(); j += (unsigned int)(2 * deltaj)) {
-      double i = slope * j + orig;
-      // move to the starting point
-      MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
-      // Draw the line
-      LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale), vpMath::round((i + deltai) / m_rscale));
+    double length = sqrt(vpMath::sqr(ip2_.get_i() - ip1_.get_i()) + vpMath::sqr(ip2_.get_j() - ip1_.get_j()));
+    bool vertical_line = (int)ip2_.get_j() == (int)ip1_.get_j();
+    if (vertical_line) {
+      if (ip2_.get_i() < ip1_.get_i()) {
+        std::swap(ip1_, ip2_);
+      }
+    } else if (ip2_.get_j() < ip1_.get_j()) {
+      std::swap(ip1_, ip2_);
+    }
+
+    double diff_j = vertical_line ? 1 : ip2_.get_j() - ip1_.get_j();
+    double deltaj = size / length * diff_j;
+    double deltai = size / length * (ip2_.get_i() - ip1_.get_i());
+    double slope = (ip2_.get_i() - ip1_.get_i()) / diff_j;
+    double orig = ip1_.get_i() - slope * ip1_.get_j();
+
+    if (vertical_line) {
+      for (unsigned int i = (unsigned int)ip1_.get_i(); i < ip2_.get_i(); i += (unsigned int)(2 * deltai)) {
+        double j = ip1_.get_j();
+
+        // Move to the starting point
+        MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
+        // Draw the line
+        LineTo(hDCMem, vpMath::round(j / m_rscale), vpMath::round((i + deltai) / m_rscale));
+      }
+    } else {
+      for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
+        double i = slope * j + orig;
+        // Move to the starting point
+        MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
+        // Draw the line
+        LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale), vpMath::round((i + deltai) / m_rscale));
+      }
     }
   } else {
     // move to the starting point

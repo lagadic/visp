@@ -475,8 +475,8 @@ void vpD3DRenderer::setImg(const vpImage<vpRGBa> &im)
   Sets the image to display.
   \param im The image to display.
 */
-void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP, const unsigned int width,
-                              const unsigned int height)
+void vpD3DRenderer::setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP, unsigned int width,
+                              unsigned int height)
 {
   // if the device has been initialized
   if (pd3dDevice != NULL) {
@@ -551,8 +551,8 @@ void vpD3DRenderer::setImg(const vpImage<unsigned char> &im)
   Sets the image to display.
   \param im The image to display.
 */
-void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im, const vpImagePoint &iP, const unsigned int width,
-                              const unsigned int height)
+void vpD3DRenderer::setImgROI(const vpImage<unsigned char> &im, const vpImagePoint &iP, unsigned int width,
+                              unsigned int height)
 {
   // if the device has been initialized
   if (pd3dDevice != NULL) {
@@ -717,18 +717,43 @@ void vpD3DRenderer::drawLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
     // displays a solid line That's why in that case we implement the dashdot
     // line manually drawing multiple small lines
     if (thickness != 1 && style != PS_SOLID) {
+      vpImagePoint ip1_ = ip1;
+      vpImagePoint ip2_ = ip2;
+
       double size = 10. * m_rscale;
-      double length = sqrt(vpMath::sqr(ip2.get_i() - ip1.get_i()) + vpMath::sqr(ip2.get_j() - ip1.get_j()));
-      double deltaj = size / length * (ip2.get_j() - ip1.get_j());
-      double deltai = size / length * (ip2.get_i() - ip1.get_i());
-      double slope = (ip2.get_i() - ip1.get_i()) / (ip2.get_j() - ip1.get_j());
-      double orig = ip1.get_i() - slope * ip1.get_j();
-      for (unsigned int j = (unsigned int)ip1.get_j(); j < ip2.get_j(); j += (unsigned int)(2 * deltaj)) {
-        double i = slope * j + orig;
-        // move to the starting point
-        MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
-        // Draw the line
-        LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale), vpMath::round((i + deltai) / m_rscale));
+      double length = sqrt(vpMath::sqr(ip2_.get_i() - ip1_.get_i()) + vpMath::sqr(ip2_.get_j() - ip1_.get_j()));
+      bool vertical_line = (int)ip2_.get_j() == (int)ip1_.get_j();
+      if (vertical_line) {
+        if (ip2_.get_i() < ip1_.get_i()) {
+          std::swap(ip1_, ip2_);
+        }
+      } else if (ip2_.get_j() < ip1_.get_j()) {
+        std::swap(ip1_, ip2_);
+      }
+
+      double diff_j = vertical_line ? 1 : ip2_.get_j() - ip1_.get_j();
+      double deltaj = size / length * diff_j;
+      double deltai = size / length * (ip2_.get_i() - ip1_.get_i());
+      double slope = (ip2_.get_i() - ip1_.get_i()) / diff_j;
+      double orig = ip1_.get_i() - slope * ip1_.get_j();
+
+      if (vertical_line) {
+        for (unsigned int i = (unsigned int)ip1_.get_i(); i < ip2_.get_i(); i += (unsigned int)(2 * deltai)) {
+          double j = ip1_.get_j();
+
+          // Move to the starting point
+          MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
+          // Draw the line
+          LineTo(hDCMem, vpMath::round(j / m_rscale), vpMath::round((i + deltai) / m_rscale));
+        }
+      } else {
+        for (unsigned int j = (unsigned int)ip1_.get_j(); j < ip2_.get_j(); j += (unsigned int)(2 * deltaj)) {
+          double i = slope * j + orig;
+          // Move to the starting point
+          MoveToEx(hDCMem, vpMath::round(j / m_rscale), vpMath::round(i / m_rscale), NULL);
+          // Draw the line
+          LineTo(hDCMem, vpMath::round((j + deltaj) / m_rscale), vpMath::round((i + deltai) / m_rscale));
+        }
       }
     } else {
       // move to the starting point

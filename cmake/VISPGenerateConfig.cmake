@@ -102,7 +102,11 @@ endif()
 # -------------------------------------------------------------------------------------------
 
 # Export the library
-export(TARGETS ${VISPModules_TARGETS} FILE "${PROJECT_BINARY_DIR}/VISPModules.cmake")
+if (CMAKE_VERSION VERSION_LESS 3.0.0)
+  export(TARGETS ${VISPModules_TARGETS} FILE "${PROJECT_BINARY_DIR}/VISPModules.cmake")
+else()
+  export(EXPORT VISPModules FILE "${PROJECT_BINARY_DIR}/VISPModules.cmake")
+endif()
 
 ## Update include dirs
 set(VISP_INCLUDE_DIRS_CONFIGCMAKE "${VISP_INCLUDE_DIR}")

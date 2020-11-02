@@ -154,7 +154,7 @@ public:
   // constructor
   vpPoseVector();
   // constructor from 3 angles (in radian)
-  vpPoseVector(const double tx, const double ty, const double tz, const double tux, const double tuy, const double tuz);
+  vpPoseVector(double tx, double ty, double tz, double tux, double tuy, double tuz);
   // constructor convert an homogeneous matrix in a pose
   explicit vpPoseVector(const vpHomogeneousMatrix &M);
   // constructor  convert a translation and a "thetau" vector into a pose
@@ -166,8 +166,7 @@ public:
   */
   virtual ~vpPoseVector(){};
 
-  vpPoseVector buildFrom(const double tx, const double ty, const double tz, const double tux, const double tuy,
-                         const double tuz);
+  vpPoseVector buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
   // convert an homogeneous matrix in a pose
   vpPoseVector buildFrom(const vpHomogeneousMatrix &M);
   //  convert a translation and a "thetau" vector into a pose
@@ -241,7 +240,7 @@ public:
     6-by-1 column vector.
     \exception vpException::fatalError When this function is called.
     */
-  void resize(const unsigned int nrows, const unsigned int ncols, const bool flagNullify = true)
+  void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
     (void)ncols;
@@ -251,7 +250,7 @@ public:
 
   // Save an homogeneous matrix in a file
   void save(std::ofstream &f) const;
-  void set(const double tx, const double ty, const double tz, const double tux, const double tuy, const double tuz);
+  void set(double tx, double ty, double tz, double tux, double tuy, double tuz);
   vpRowVector t() const;
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

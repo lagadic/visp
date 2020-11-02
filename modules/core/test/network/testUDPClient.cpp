@@ -51,7 +51,7 @@ struct DataType {
   int int_val;
 
   DataType() : double_val(0.0), int_val(0) {}
-  DataType(const double dbl, const int i) : double_val(dbl), int_val(i) {}
+  DataType(double dbl, int i) : double_val(dbl), int_val(i) {}
 };
 }
 
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
     // Send user message
     while (true) {
       std::cout << "Enter the message to send:" << std::endl;
-      std::string msg = "";
+      msg.clear();
       std::getline(std::cin, msg);
       if (client.send(msg) != (int)msg.size())
         std::cerr << "Error client.send()!" << std::endl;

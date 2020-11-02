@@ -51,12 +51,11 @@ vpTemplateTrackerSSDInverseCompositional::vpTemplateTrackerSSDInverseComposition
 void vpTemplateTrackerSSDInverseCompositional::initCompInverse(const vpImage<unsigned char> & /*I*/)
 {
   H = 0;
-  int i, j;
 
   for (unsigned int point = 0; point < templateSize; point++) {
     if ((!useTemplateSelect) || (ptTemplateSelect[point])) {
-      i = ptTemplate[point].y;
-      j = ptTemplate[point].x;
+      int i = ptTemplate[point].y;
+      int j = ptTemplate[point].x;
       ptTemplate[point].dW = new double[nbParam];
 
       Warp->getdW0(i, j, ptTemplate[point].dy, ptTemplate[point].dx, ptTemplate[point].dW);
@@ -66,25 +65,22 @@ void vpTemplateTrackerSSDInverseCompositional::initCompInverse(const vpImage<uns
           H[it][jt] += ptTemplate[point].dW[it] * ptTemplate[point].dW[jt];
     }
   }
-  HInv = H;
-  vpMatrix HLMtemp(nbParam, nbParam);
+
+  vpMatrix HLMtemp;
   vpMatrix::computeHLM(H, lambdaDep, HLMtemp);
 
-  HCompInverse.resize(nbParam, nbParam);
   HCompInverse = HLMtemp.inverseByLU();
-  vpColVector dWtemp(nbParam);
-  vpColVector HiGtemp(nbParam);
 
   for (unsigned int point = 0; point < templateSize; point++) {
     if ((!useTemplateSelect) || (ptTemplateSelect[point])) {
-      for (unsigned int it = 0; it < nbParam; it++)
-        dWtemp[it] = ptTemplate[point].dW[it];
-
-      HiGtemp = - HCompInverse * dWtemp;
       ptTemplate[point].HiG = new double[nbParam];
 
-      for (unsigned int it = 0; it < nbParam; it++)
-        ptTemplate[point].HiG[it] = HiGtemp[it];
+      for (unsigned int i = 0; i < HCompInverse.getRows(); i ++) {
+        ptTemplate[point].HiG[i] = 0;
+        for (unsigned int j = 0; j < HCompInverse.getCols(); j ++) {
+          ptTemplate[point].HiG[i] -= HCompInverse[i][j] * ptTemplate[point].dW[j];
+        }
+      }
     }
   }
   compoInitialised = true;

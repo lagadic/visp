@@ -62,25 +62,18 @@
   \example testDisplays.cpp
 
   \brief Test all the displays. Draws several shapes.
-
 */
 
 // List of allowed command line options
 #define GETOPTARGS "hldc"
 
-void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &list, bool &click_allowed, bool &display);
-void draw(vpImage<vpRGBa> &I);
-
 /*!
-
   Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
-
  */
-void usage(const char *name, const char *badparam)
+static void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
 Test video devices or display.\n\
@@ -109,7 +102,6 @@ OPTIONS:                                               Default\n\
 }
 
 /*!
-
   Set the program options.
 
   \param argc : Command line number of parameters.
@@ -118,9 +110,8 @@ OPTIONS:                                               Default\n\
   \param click_allowed : Mouse click activation.
   \param display : Display activation.
   \return false if the program has to be stopped, true otherwise.
-
 */
-bool getOptions(int argc, const char **argv, bool &list, bool &click_allowed, bool &display)
+static bool getOptions(int argc, const char **argv, bool &list, bool &click_allowed, bool &display)
 {
   const char *optarg_;
   int c;
@@ -159,7 +150,7 @@ bool getOptions(int argc, const char **argv, bool &list, bool &click_allowed, bo
   return true;
 }
 
-void draw(vpImage<vpRGBa> &I)
+template <typename Type> static void draw(vpImage<Type> &I)
 {
   vpImagePoint iP1, iP2;
   unsigned int w, h;
@@ -203,9 +194,21 @@ void draw(vpImage<vpRGBa> &I)
   iP2.set_j(340);
   vpDisplay::displayDotLine(I, iP1, iP2, vpColor::blue, 3);
 
-  // static void 	displayFrame (const vpImage< vpRGBa > &I, const
-  // vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size,
-  // vpColor color)
+  iP1.set_i(220);
+  iP1.set_j(400);
+  iP2.set_i(120);
+  iP2.set_j(400);
+  vpDisplay::displayDotLine(I, iP1, iP2, vpColor::cyan, 3);
+
+  iP1.set_i(220);
+  iP1.set_j(480);
+  iP2.set_i(120);
+  iP2.set_j(450);
+  vpDisplay::displayDotLine(I, iP1, iP2, vpColor::green, 3);
+
+  vpHomogeneousMatrix cMo(vpTranslationVector(0.15, -0.07, 0.37), vpRotationMatrix(vpRxyzVector(0.1, -0.4, 0.41)));
+  vpCameraParameters cam(600, 600, 320, 240);
+  vpDisplay::displayFrame(I, cMo, cam, 0.05, vpColor::none, 3);
 
   iP1.set_i(140);
   iP1.set_j(80);
@@ -243,6 +246,114 @@ void draw(vpImage<vpRGBa> &I)
   iP1.set_i(380);
   iP1.set_j(400);
   vpDisplay::displayRectangle(I, iP1, 45, w, h, vpColor::green, 3);
+
+  std::vector<vpImagePoint> polygon;
+  polygon.push_back(vpImagePoint(250, 500));
+  polygon.push_back(vpImagePoint(350, 600));
+  polygon.push_back(vpImagePoint(450, 500));
+  polygon.push_back(vpImagePoint(350, 400));
+  vpDisplay::displayPolygon(I, polygon, vpColor::green, 3);
+
+  polygon.clear();
+  polygon.push_back(vpImagePoint(300, 500));
+  polygon.push_back(vpImagePoint(350, 550));
+  polygon.push_back(vpImagePoint(400, 500));
+  polygon.push_back(vpImagePoint(350, 450));
+  vpDisplay::displayPolygon(I, polygon, vpColor::cyan, 3, false);
+}
+
+template <typename Type> static void runTest(bool opt_display, bool opt_click_allowed)
+{
+  vpImage<Type> Ix;
+  vpImage<Type> Igtk;
+  vpImage<Type> Icv;
+  vpImage<Type> Igdi;
+  vpImage<Type> Id3d;
+
+#if defined VISP_HAVE_X11
+  vpDisplayX *displayX = new vpDisplayX;
+  Ix.init(480, 640, 255);
+  if (opt_display) {
+    displayX->init(Ix, 100, 100, "Display X11");
+    vpDisplay::display(Ix);
+    draw(Ix);
+    vpDisplay::flush(Ix);
+    if (opt_click_allowed)
+      vpDisplay::getClick(Ix);
+  }
+#endif
+
+#if defined(VISP_HAVE_OPENCV)
+  vpDisplayOpenCV *displayCv = new vpDisplayOpenCV;
+  Icv.init(480, 640, 255);
+  if (opt_display) {
+    displayCv->init(Icv, 100, 100, "Display OpenCV");
+    vpDisplay::display(Icv);
+    draw(Icv);
+    vpDisplay::flush(Icv);
+    if (opt_click_allowed)
+      vpDisplay::getClick(Icv);
+  }
+#endif
+
+#if defined VISP_HAVE_GTK
+  vpDisplayGTK *displayGtk = new vpDisplayGTK;
+  Igtk.init(480, 640, 255);
+  if (opt_display) {
+    displayGtk->init(Igtk, 100, 100, "Display GTK");
+    vpDisplay::display(Igtk);
+    draw(Igtk);
+    vpDisplay::flush(Igtk);
+    if (opt_click_allowed)
+      vpDisplay::getClick(Igtk);
+  }
+#endif
+
+#if defined VISP_HAVE_GDI
+  vpDisplayGDI *displayGdi = new vpDisplayGDI;
+  Igdi.init(480, 640, 255);
+  if (opt_display) {
+    displayGdi->init(Igdi, 100, 100, "Display GDI");
+    vpDisplay::display(Igdi);
+    draw(Igdi);
+    vpDisplay::flush(Igdi);
+    if (opt_click_allowed)
+      vpDisplay::getClick(Igdi);
+  }
+#endif
+
+#if defined VISP_HAVE_D3D9
+  vpDisplayD3D *displayD3d = new vpDisplayD3D;
+  Id3d.init(480, 640, 255);
+  if (opt_display) {
+    displayD3d->init(Id3d, 100, 100, "Display Direct 3D");
+    vpDisplay::display(Id3d);
+    draw(Id3d);
+    vpDisplay::flush(Id3d);
+    if (opt_click_allowed)
+      vpDisplay::getClick(Id3d);
+  }
+#endif
+
+#if defined VISP_HAVE_X11
+  delete displayX;
+#endif
+
+#if defined VISP_HAVE_GTK
+  delete displayGtk;
+#endif
+
+#if defined(VISP_HAVE_OPENCV)
+  delete displayCv;
+#endif
+
+#if defined VISP_HAVE_GDI
+  delete displayGdi;
+#endif
+
+#if defined VISP_HAVE_D3D9
+  delete displayD3d;
+#endif
 }
 
 int main(int argc, const char **argv)
@@ -287,114 +398,21 @@ int main(int argc, const char **argv)
       return (0);
     }
 
-    // Create a grey level image
-    vpImage<unsigned char> I;
-    // Create a color image
-    vpImage<vpRGBa> Irgba;
-
     // Create a color image for each display.
-    vpImage<vpRGBa> Ix;
-    vpImage<vpRGBa> Igtk;
-    vpImage<vpRGBa> Icv;
-    vpImage<vpRGBa> Igdi;
-    vpImage<vpRGBa> Id3d;
+    runTest<vpRGBa>(opt_display, opt_click_allowed);
 
-#if defined VISP_HAVE_X11
-    vpDisplayX *displayX = NULL;
-    displayX = new vpDisplayX;
-    Ix.init(480, 640, 255);
-    if (opt_display) {
-      displayX->init(Ix, 100, 100, "Display X11");
-      vpDisplay::display(Ix);
-      draw(Ix);
-      vpDisplay::flush(Ix);
-      if (opt_click_allowed)
-        vpDisplay::getClick(Ix);
-    }
-#endif
+    // Create a grayscale image for each display.
+    runTest<unsigned char>(opt_display, opt_click_allowed);
 
-#if defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV *displayCv = NULL;
-    displayCv = new vpDisplayOpenCV;
-    Icv.init(480, 640, 255);
-    if (opt_display) {
-      displayCv->init(Icv, 100, 100, "Display OpenCV");
-      vpDisplay::display(Icv);
-      draw(Icv);
-      vpDisplay::flush(Icv);
-      if (opt_click_allowed)
-        vpDisplay::getClick(Icv);
-    }
-#endif
-
-#if defined VISP_HAVE_GTK
-    vpDisplayGTK *displayGtk = NULL;
-    displayGtk = new vpDisplayGTK;
-    Igtk.init(480, 640, 255);
-    if (opt_display) {
-      displayGtk->init(Igtk, 100, 100, "Display GTK");
-      vpDisplay::display(Igtk);
-      draw(Igtk);
-      vpDisplay::flush(Igtk);
-      if (opt_click_allowed)
-        vpDisplay::getClick(Igtk);
-    }
-#endif
-
-#if defined VISP_HAVE_GDI
-    vpDisplayGDI *displayGdi = NULL;
-    displayGdi = new vpDisplayGDI;
-    Igdi.init(480, 640, 255);
-    if (opt_display) {
-      displayGdi->init(Igdi, 100, 100, "Display GDI");
-      vpDisplay::display(Igdi);
-      draw(Igdi);
-      vpDisplay::flush(Igdi);
-      if (opt_click_allowed)
-        vpDisplay::getClick(Igdi);
-    }
-#endif
-
-#if defined VISP_HAVE_D3D9
-    vpDisplayD3D *displayD3d = NULL;
-    displayD3d = new vpDisplayD3D;
-    Id3d.init(480, 640, 255);
-    if (opt_display) {
-      displayD3d->init(Id3d, 100, 100, "Display Direct 3D");
-      vpDisplay::display(Id3d);
-      draw(Id3d);
-      vpDisplay::flush(Id3d);
-      if (opt_click_allowed)
-        vpDisplay::getClick(Id3d);
-    }
-#endif
-
-#if defined VISP_HAVE_X11
-    delete displayX;
-#endif
-
-#if defined VISP_HAVE_GTK
-    delete displayGtk;
-#endif
-
-#if defined(VISP_HAVE_OPENCV)
-    delete displayCv;
-#endif
-
-#if defined VISP_HAVE_GDI
-    delete displayGdi;
-#endif
-
-#if defined VISP_HAVE_D3D9
-    delete displayD3d;
-#endif
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return (-1);
   }
 }
-
 #else
-int main() { std::cout << "You do not have display functionalities..." << std::endl; }
-
+int main()
+{
+  std::cout << "You do not have display functionalities..." << std::endl;
+  return 0;
+}
 #endif

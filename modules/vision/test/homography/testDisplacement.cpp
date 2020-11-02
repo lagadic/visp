@@ -74,6 +74,7 @@ bool test(const std::string &s, const vpHomography &H, const std::vector<double>
 
 int main()
 {
+#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     {
       vpHomography H;
@@ -185,9 +186,13 @@ int main()
       std::cout << "H" << std::endl << H << std::endl;
     }
     std::cout << "All tests succeed" << std::endl;
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
+#else
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

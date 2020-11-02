@@ -10,7 +10,7 @@
 
 int main(int argc, const char *argv[])
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020200)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020200) && defined(VISP_HAVE_OPENCV_OBJDETECT)
   try {
     std::string opt_face_cascade_name = "./haarcascade_frontalface_alt.xml";
     unsigned int opt_device = 0;

@@ -40,8 +40,6 @@
   Implemented from \cite Collewet08c.
 */
 
-#include <visp3/core/vpDebug.h>
-
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/io/vpImageIo.h>
@@ -60,6 +58,7 @@
 
 #include <visp3/io/vpParseArgv.h>
 #include <visp3/visual_features/vpFeatureLuminance.h>
+#include <visp3/vs/vpServo.h>
 
 #include <stdlib.h>
 #include <visp3/robot/vpImageSimulator.h>
@@ -90,7 +89,8 @@ void usage(const char *name, const char *badparam, std::string ipath, int niter)
 Tracking of Surf key-points.\n\
 \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] [-c] [-d] [-n <number of iterations>] [-h]\n", name);
+  %s [-i <input image path>] [-c] [-d] [-n <number of iterations>] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -113,7 +113,8 @@ OPTIONS:                                               Default\n\
      Number of iterations.\n\
 \n\
   -h\n\
-     Print the help.\n", ipath.c_str(), niter);
+     Print the help.\n",
+          ipath.c_str(), niter);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -154,12 +155,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
     case 'h':
       usage(argv[0], NULL, ipath, niter);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_, ipath, niter);
       return false;
-      break;
     }
   }
 
@@ -176,6 +175,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 
 int main(int argc, const char **argv)
 {
+#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -336,7 +336,7 @@ int main(int argc, const char **argv)
 #endif
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_GTK)
     if (opt_display) {
-      d1.init(Idiff, 40 + (int)I.getWidth(), 10, "photometric visual servoing : s-s* ");
+      d1.init(Idiff, 40 + static_cast<int>(I.getWidth()), 10, "photometric visual servoing : s-s* ");
       vpDisplay::display(Idiff);
       vpDisplay::flush(Idiff);
     }
@@ -365,53 +365,28 @@ int main(int argc, const char **argv)
     sId.setCameraParameters(cam);
     sId.buildFrom(Id);
 
-    // Matrice d'interaction, Hessien, erreur,...
-    vpMatrix Lsd;      // matrice d'interaction a la position desiree
-    vpMatrix Hsd;      // hessien a la position desiree
-    vpMatrix H;        // Hessien utilise pour le levenberg-Marquartd
-    vpColVector error; // Erreur I-I*
-
-    // Compute the interaction matrix
-    // link the variation of image intensity to camera motion
-
-    // here it is computed at the desired position
-    sId.interaction(Lsd);
-
-    // Compute the Hessian H = L^TL
-    Hsd = Lsd.AtA();
-
-    // Compute the Hessian diagonal for the Levenberg-Marquartd
-    // optimization process
-    unsigned int n = 6;
-    vpMatrix diagHsd(n, n);
-    diagHsd.eye(n);
-    for (unsigned int i = 0; i < n; i++)
-      diagHsd[i][i] = Hsd[i][i];
-
-    // ------------------------------------------------------
-    // Control law
-    double lambda; // gain
-    vpColVector e;
-    vpColVector v; // camera velocity send to the robot
-
-    // ----------------------------------------------------------
-    // Minimisation
-
-    double mu; // mu = 0 : Gauss Newton ; mu != 0  : LM
-    double lambdaGN;
-
-    mu = 0.01;
-    lambda = 30;
-    lambdaGN = 30;
+    // Create visual-servoing task
+    vpServo servo;
+    // define the task
+    // - we want an eye-in-hand control law
+    // - robot is controlled in the camera frame
+    servo.setServo(vpServo::EYEINHAND_CAMERA);
+    // add current and desired visual features
+    servo.addFeature(sI, sId);
+    // set the gain
+    servo.setLambda(30);
+    // compute interaction matrix at the desired position
+    servo.setInteractionMatrixType(vpServo::CURRENT);
 
     // set a velocity control mode
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-    // ----------------------------------------------------------
     int iter = 1;
-    int iterGN = 90; // swicth to Gauss Newton after iterGN iterations
+    double normError = 0;
+    vpColVector v; // camera velocity send to the robot
 
-    double normeError = 0;
+    vpChrono chrono;
+    chrono.start();
     do {
       std::cout << "--------------------------------------------" << iter++ << std::endl;
 
@@ -434,39 +409,20 @@ int main(int argc, const char **argv)
       // Compute current visual feature
       sI.buildFrom(I);
 
-      // compute current error
-      sI.error(sId, error);
+      v = servo.computeControlLaw(); // camera velocity send to the robot
 
-      normeError = (error.sumSquare());
-      std::cout << "|e| " << normeError << std::endl;
-
-      // double t = vpTime::measureTimeMs() ;
-
-      // ---------- Levenberg Marquardt method --------------
-      {
-        if (iter > iterGN) {
-          mu = 0.0001;
-          lambda = lambdaGN;
-        }
-
-        // Compute the levenberg Marquartd term
-        {
-          H = ((mu * diagHsd) + Hsd).inverseByLU();
-        }
-        //	compute the control law
-        e = H * Lsd.t() * error;
-
-        v = -lambda * e;
-      }
-
-      std::cout << "lambda = " << lambda << "  mu = " << mu;
-      std::cout << " |Tc| = " << sqrt(v.sumSquare()) << std::endl;
+      normError = servo.getError().sumSquare();
+      std::cout << " |e| = " << normError << std::endl;
+      std::cout << " |v| = " << sqrt(v.sumSquare()) << std::endl;
 
       // send the robot velocity
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
       wMc = robot.getPosition();
       cMo = wMc.inverse() * wMo;
-    } while (normeError > 10000 && iter < opt_niter);
+    } while (normError > 10000 && iter < opt_niter);
+
+    chrono.stop();
+    std::cout << "Time to convergence: " << chrono.getDurationMs() << " ms" << std::endl;
 
     v = 0;
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
@@ -476,4 +432,10 @@ int main(int argc, const char **argv)
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
+#else
+  (void)argc;
+  (void)argv;
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

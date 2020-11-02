@@ -668,3 +668,21 @@
    fun:_ZNSt3__113basic_ostreamIcNS_11char_traitsIcEEE3putEc
 }
 
+#==18150== 231 bytes in 1 blocks are still reachable in loss record 101 of 169
+#==18150==    at 0x5FD1: malloc (in /usr/local/Cellar/valgrind/3.15.0/lib/valgrind/vgpreload_memcheck-amd64-darwin.so)
+#==18150==    by 0xD3BBD5: currentlocale (in /usr/lib/system/libsystem_c.dylib)
+#==18150==    by 0xA4833: vpMbtXmlGenericParser::vpMbtXmlGenericParser(int) (vpMbtXmlGenericParser.cpp:1455)
+#==18150==    by 0x9C895: vpMbTracker::loadConfigFile(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&) (vpMbTracker.cpp:3788)
+#==18150==    by 0x69988: vpMbGenericTracker::TrackerWrapper::loadConfigFile(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&) (vpMbGenericTracker.cpp:6216)
+#==18150==    by 0x5C454: vpMbGenericTracker::loadConfigFile(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&) (vpMbGenericTracker.cpp:2809)
+#==18150==    by 0x100009F86: bool (anonymous namespace)::run<unsigned char>(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char> > const&, bool, bool, bool, int, int, bool, bool, bool) (testGenericTracker.cpp:285)
+#==18150==    by 0x1000056B5: main (testGenericTracker.cpp:701)
+{
+   visp-osx-std::locale
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   ...
+   fun:currentlocale
+   fun:_ZN21vpMbtXmlGenericParserC2Ei
+}

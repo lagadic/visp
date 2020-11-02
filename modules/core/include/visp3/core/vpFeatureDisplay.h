@@ -70,11 +70,11 @@ public:
                               const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                               unsigned int thickness = 1);
 
-  static void displayEllipse(double x, double y, double mu20, double mu11, double m02, const vpCameraParameters &cam,
+  static void displayEllipse(double x, double y, double n20, double n11, double n02, const vpCameraParameters &cam,
                              const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                              unsigned int thickness = 1);
 
-  static void displayEllipse(double x, double y, double mu20, double mu11, double m02, const vpCameraParameters &cam,
+  static void displayEllipse(double x, double y, double n20, double n11, double n02, const vpCameraParameters &cam,
                              const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
                              unsigned int thickness = 1);
 

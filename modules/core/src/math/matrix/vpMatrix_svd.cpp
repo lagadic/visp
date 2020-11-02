@@ -52,15 +52,14 @@
 #include <Eigen/SVD>
 #endif
 
-#ifdef VISP_HAVE_GSL
-#include <gsl/gsl_linalg.h>
-#endif
-
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
 #include <opencv2/core/core.hpp>
 #endif
 
 #ifdef VISP_HAVE_LAPACK
+#  ifdef VISP_HAVE_GSL
+#    include <gsl/gsl_linalg.h>
+#  endif
 #  ifdef VISP_HAVE_MKL
 #include <mkl.h>
 typedef MKL_INT integer;
@@ -149,7 +148,7 @@ int main()
 }
   \endcode
 
-  \sa svd(), svdEigen3(), svdLapack(), svdGsl()
+  \sa svd(), svdEigen3(), svdLapack()
 */
 void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
 {
@@ -177,7 +176,7 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
   Singular value decomposition (SVD) using Lapack 3rd party.
 
   Given matrix \f$M\f$, this function computes it singular value decomposition
-such as
+  such as
 
   \f[ M = U \Sigma V^{\top} \f]
 
@@ -236,154 +235,111 @@ int main()
 }
   \endcode
 
-  \sa svd(), svdEigen3(), svdOpenCV(), svdGsl()
+  \sa svd(), svdEigen3(), svdOpenCV()
 */
 void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
 {
-  w.resize(this->getCols());
-  V.resize(this->getCols(), this->getCols());
+#ifdef VISP_HAVE_GSL
+  {
+    // GSL cannot consider M < N. In that case we transpose input matrix
+    vpMatrix U;
+    unsigned int nc = getCols();
+    unsigned int nr = getRows();
 
-  integer m = (integer)(this->getCols());
-  integer n = (integer)(this->getRows());
-  integer lda = m;
-  integer ldu = m;
-  integer ldvt = (std::min)(m, n);
-  integer info, lwork;
+    if(rowNum < colNum) {
+      U = this->transpose();
+      nc = getRows();
+      nr = getCols();
+    }
+    else {
+      nc = getCols();
+      nr = getRows();
+    }
 
-  double wkopt;
-  double *work;
+    w.resize(nc);
+    V.resize(nc, nc);
 
-  integer *iwork = new integer[8 * static_cast<integer>((std::min)(n, m))];
+    gsl_vector *work = gsl_vector_alloc(nc);
 
-  double *s = w.data;
-  double *a = new double[static_cast<unsigned int>(lda * n)];
-  memcpy(a, this->data, this->getRows() * this->getCols() * sizeof(double));
-  double *u = V.data;
-  double *vt = this->data;
+    gsl_matrix A;
+    A.size1 = nr;
+    A.size2 = nc;
+    A.tda = A.size2;
+    if(rowNum < colNum) {
+      A.data = U.data;
+    }
+    else {
+      A.data = this->data;
+    }
+    A.owner = 0;
+    A.block = 0;
 
-  lwork = -1;
-  dgesdd_((char *)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, iwork, &info);
-  lwork = (int)wkopt;
-  work = new double[static_cast<unsigned int>(lwork)];
+    gsl_matrix V_;
+    V_.size1 = nc;
+    V_.size2 = nc;
+    V_.tda = V_.size2;
+    V_.data = V.data;
+    V_.owner = 0;
+    V_.block = 0;
 
-  dgesdd_((char *)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, iwork, &info);
+    gsl_vector S;
+    S.size = nc;
+    S.stride = 1;
+    S.data = w.data;
+    S.owner = 0;
+    S.block = 0;
 
-  if (info > 0) {
-    throw(vpMatrixException(vpMatrixException::fatalError, "The algorithm computing SVD failed to converge."));
+    gsl_linalg_SV_decomp(&A, &V_, &S, work);
+
+    if(rowNum < colNum) {
+      (*this) = V.transpose();
+      V = U;
+    }
+
+    gsl_vector_free(work);
   }
+#else
+  {
+    w.resize(this->getCols());
+    V.resize(this->getCols(), this->getCols());
 
-  V = V.transpose();
-  delete[] work;
-  delete[] iwork;
-  delete[] a;
+    integer m = (integer)(this->getCols());
+    integer n = (integer)(this->getRows());
+    integer lda = m;
+    integer ldu = m;
+    integer ldvt = (std::min)(m, n);
+    integer info, lwork;
+
+    double wkopt;
+    double *work;
+
+    integer *iwork = new integer[8 * static_cast<integer>((std::min)(n, m))];
+
+    double *s = w.data;
+    double *a = new double[static_cast<unsigned int>(lda * n)];
+    memcpy(a, this->data, this->getRows() * this->getCols() * sizeof(double));
+    double *u = V.data;
+    double *vt = this->data;
+
+    lwork = -1;
+    dgesdd_((char *)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, &wkopt, &lwork, iwork, &info);
+    lwork = (int)wkopt;
+    work = new double[static_cast<unsigned int>(lwork)];
+
+    dgesdd_((char *)"S", &m, &n, a, &lda, s, u, &ldu, vt, &ldvt, work, &lwork, iwork, &info);
+
+    if (info > 0) {
+      throw(vpMatrixException(vpMatrixException::fatalError, "The algorithm computing SVD failed to converge."));
+    }
+
+    V = V.transpose();
+    delete[] work;
+    delete[] iwork;
+    delete[] a;
+  }
+#endif
 }
 #endif
-
-#ifdef VISP_HAVE_GSL
-
-/*!
-
-  Singular value decomposition (SVD) using GSL 3rd party.
-
-  Given matrix \f$M\f$, this function computes it singular value decomposition
-such as
-
-  \f[ M = U \Sigma V^{\top} \f]
-
-  \warning This method is destructive wrt. to the matrix \f$ M \f$ to
-  decompose. You should make a COPY of that matrix if needed.
-
-  \param w : Vector of singular values: \f$ \Sigma = diag(w) \f$.
-
-  \param V : Matrix \f$ V \f$.
-
-  \return Matrix \f$ U \f$.
-
-  \note The singular values are ordered in decreasing
-  fashion in \e w. It means that the highest singular value is in \e w[0].
-
-  Here an example of SVD decomposition of a non square Matrix M.
-
-\code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMatrix.h>
-
-int main()
-{
-  vpMatrix M(3,2);
-  M[0][0] = 1;
-  M[1][0] = 2;
-  M[2][0] = 0.5;
-
-  M[0][1] = 6;
-  M[1][1] = 8 ;
-  M[2][1] = 9 ;
-
-  vpMatrix V;
-  vpColVector w;
-  vpMatrix Mrec;
-  vpMatrix Sigma;
-
-  M.svdGsl(w, V);
-  // Here M is modified and is now equal to U
-
-  // Construct the diagonal matrix from the singular values
-  Sigma.diag(w);
-
-  // Reconstruct the initial matrix M using the decomposition
-  Mrec =  M * Sigma * V.t();
-
-  // Here, Mrec is obtained equal to the initial value of M
-  // Mrec[0][0] = 1;
-  // Mrec[1][0] = 2;
-  // Mrec[2][0] = 0.5;
-  // Mrec[0][1] = 6;
-  // Mrec[1][1] = 8 ;
-  // Mrec[2][1] = 9 ;
-
-  std::cout << "Reconstructed M matrix: \n" << Mrec << std::endl;
-}
-  \endcode
-
-  \sa svd(), svdEigen3(), svdOpenCV(), svdLapack()
-*/
-void vpMatrix::svdGsl(vpColVector &w, vpMatrix &V)
-{
-  w.resize(this->getCols());
-  V.resize(this->getCols(), this->getCols());
-
-  unsigned int nc = getCols();
-  unsigned int nr = getRows();
-  gsl_vector *work = gsl_vector_alloc(nc);
-
-  gsl_matrix A;
-  A.size1 = nr;
-  A.size2 = nc;
-  A.tda = A.size2;
-  A.data = this->data;
-  A.owner = 0;
-  A.block = 0;
-
-  gsl_matrix V_;
-  V_.size1 = nc;
-  V_.size2 = nc;
-  V_.tda = V_.size2;
-  V_.data = V.data;
-  V_.owner = 0;
-  V_.block = 0;
-
-  gsl_vector S;
-  S.size = nc;
-  S.stride = 1;
-  S.data = w.data;
-  S.owner = 0;
-  S.block = 0;
-
-  gsl_linalg_SV_decomp(&A, &V_, &S, work);
-
-  gsl_vector_free(work);
-}
-#endif // # #GSL
 
 #ifdef VISP_HAVE_EIGEN3
 /*!
@@ -391,7 +347,7 @@ void vpMatrix::svdGsl(vpColVector &w, vpMatrix &V)
   Singular value decomposition (SVD) using Eigen3 3rd party.
 
   Given matrix \f$M\f$, this function computes it singular value decomposition
-such as
+  such as
 
   \f[ M = U \Sigma V^{\top} \f]
 
@@ -450,7 +406,7 @@ int main()
 }
   \endcode
 
-  \sa svd(), svdLapack(), svdOpenCV(), svdGsl()
+  \sa svd(), svdLapack(), svdOpenCV()
 */
 void vpMatrix::svdEigen3(vpColVector &w, vpMatrix &V)
 {

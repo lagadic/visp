@@ -194,9 +194,6 @@ This will declare a tracker with edge + KLT features for the color camera and de
 
 \subsection mb_rgbd_interface_with_the_code Interfacing with the code
 
-\note
-This section is more or less similar to the \ref mbdep_stereo_interface_with_the_code section in \ref tutorial-tracking-mb-stereo-deprecated
-
 Each essential method used to initialize the tracker and process the tracking have three signatures in order to ease the call to the method and according to three working modes:
 -  tracking using one camera, the signature remains the same.
 -  tracking using two cameras, all the necessary methods accept directly the corresponding parameters for each camera.

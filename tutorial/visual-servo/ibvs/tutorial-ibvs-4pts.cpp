@@ -45,8 +45,6 @@ int main()
       vpColVector v = task.computeControlLaw();
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
     }
-
-    task.kill();
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }

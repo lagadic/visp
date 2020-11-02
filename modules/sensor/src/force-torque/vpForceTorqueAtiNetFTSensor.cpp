@@ -48,12 +48,14 @@
 // is not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 typedef struct response_struct {
   uint32_t rdt_sequence;
   uint32_t ft_sequence;
   uint32_t status;
   int32_t FTData[6];
 } RESPONSE;
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
  * Default constructor that set counts per force to 1000000, counts per torque to 1000000000 and scaling factor to 1.
@@ -72,7 +74,7 @@ vpForceTorqueAtiNetFTSensor::vpForceTorqueAtiNetFTSensor()
  * \param hostname : Device hostname or IP address.
  * \param port : Ethernet port.
  */
-vpForceTorqueAtiNetFTSensor::vpForceTorqueAtiNetFTSensor(const std::string &hostname, const int port)
+vpForceTorqueAtiNetFTSensor::vpForceTorqueAtiNetFTSensor(const std::string &hostname, int port)
   : vpUDPClient(hostname, port), m_counts_per_force(1000000), m_counts_per_torque(1000000000), m_scaling_factor(1),
     m_ft_bias(6, 0), m_data_count(0), m_data_count_prev(0), m_ft(6, 0), m_is_streaming_started(false)
 {

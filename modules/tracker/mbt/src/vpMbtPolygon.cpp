@@ -104,7 +104,7 @@ vpMbtPolygon::~vpMbtPolygon() {}
 
   \return Return true if the polygon is visible.
 */
-bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha, const bool &modulo,
+bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, double alpha, const bool &modulo,
                              const vpCameraParameters &cam, unsigned int width, unsigned int height)
 {
   //   std::cout << "Computing angle from MBT Face (cMo, alpha)" << std::endl;
@@ -250,7 +250,7 @@ bool vpMbtPolygon::isVisible(const vpHomogeneousMatrix &cMo, const double alpha,
 
 int main()
 {
-  pImage<unsigned char> I;
+  vpImage<unsigned char> I;
 
   // Acquire an image
   vpImageIo::read(I, "my-image.pgm");
@@ -269,11 +269,9 @@ int main()
   while (true) {
     // tracking loop
   }
-
-  return 0;
 }
   \endcode
 
   \sa setMinLineLengthThresh(), setMinPolygonAreaThresh()
  */
-void vpMbtPolygon::setLod(const bool use_lod) { this->useLod = use_lod; }
+void vpMbtPolygon::setLod(bool use_lod) { this->useLod = use_lod; }

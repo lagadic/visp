@@ -39,7 +39,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) &&                                                                          \
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020000) && \
     (VISP_HAVE_OPENCV_VERSION < 0x030000) // Require opencv >= 2.0.0 and < 3.0.0
 
 #include <visp3/core/vpColor.h>

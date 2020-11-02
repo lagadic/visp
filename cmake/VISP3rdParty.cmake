@@ -49,6 +49,14 @@ if(WITH_QBDEVICE)
   set(QBDEVICE_VERSION ${QBDEVICE_MAJOR_VERSION}.${QBDEVICE_MINOR_VERSION}.${QBDEVICE_PATCH_VERSION})
 endif()
 
+if(WITH_TAKKTILE2)
+  set(TAKKTILE2_LIBRARY visp_reflex_takktile2)
+  add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/reflex-takktile2")
+  set(TAKKTILE2_INCLUDE_DIRS "${${TAKKTILE2_LIBRARY}_SOURCE_DIR}" "${${TAKKTILE2_LIBRARY}_BINARY_DIR}")
+  set(TAKKTILE2_LIBRARIES ${TAKKTILE2_LIBRARY})
+  set(TAKKTILE2_VERSION ${TAKKTILE2_MAJOR_VERSION}.${TAKKTILE2_MINOR_VERSION}.${TAKKTILE2_PATCH_VERSION})
+endif()
+
 if(WITH_PUGIXML)
   set(PUGIXML_LIBRARY visp_pugixml)
   add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/pugixml-1.9")
@@ -56,6 +64,12 @@ if(WITH_PUGIXML)
   set(PUGIXML_LIBRARIES ${PUGIXML_LIBRARY})
   set(PUGIXML_VERSION ${PUGIXML_MAJOR_VERSION}.${PUGIXML_MINOR_VERSION}.${PUGIXML_PATCH_VERSION})
 endif()
+
+# simdlib is always enabled since it contains fallback code to plain C++ code
+set(SIMD_LIBRARY visp_simdlib)
+add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/simdlib")
+set(SIMDLIB_INCLUDE_DIRS "${VISP_SOURCE_DIR}/3rdparty/simdlib")
+set(SIMDLIB_LIBRARIES ${SIMD_LIBRARY})
 
 if(WITH_STBIMAGE)
   set(STBIMAGE_LIBRARY visp_stbimage)

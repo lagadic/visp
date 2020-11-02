@@ -71,7 +71,7 @@ bool getOptions(int argc, const char **argv);
 
 /*!
 
-Print the program options.
+  Print the program options.
 
   \param name : Program name.
   \param badparam : Bad parameter name.
@@ -103,7 +103,7 @@ OPTIONS:                                               Default\n\
 
 /*!
 
-Set the program options.
+  Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
@@ -121,12 +121,10 @@ bool getOptions(int argc, const char **argv)
     case 'h':
       usage(argv[0], NULL);
       return false;
-      break;
 
     default:
       usage(argv[0], optarg_);
       return false;
-      break;
     }
   }
 
@@ -143,13 +141,13 @@ bool getOptions(int argc, const char **argv)
 
 int main(int argc, const char **argv)
 {
+#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     // Read the command line options
     if (getOptions(argc, argv) == false) {
       exit(-1);
     }
 
-    int i;
     vpServo task;
     vpSimulatorCamera robot;
 
@@ -182,12 +180,12 @@ int main(int argc, const char **argv)
 
     // computes  the point coordinates in the camera frame and its 2D
     // coordinates
-    for (i = 0; i < 4; i++)
+    for (unsigned int i = 0; i < 4; i++)
       point[i].track(cMo);
 
     // sets the desired position of the point
     vpFeaturePoint p[4];
-    for (i = 0; i < 4; i++)
+    for (unsigned int i = 0; i < 4; i++)
       vpFeatureBuilder::create(p[i], point[i]); // retrieve x,y and Z of the vpPoint structure
 
     // sets the desired position of the point
@@ -215,7 +213,7 @@ int main(int argc, const char **argv)
     task.set_eJe(eJe);
 
     // we want to see a point on a point
-    for (i = 0; i < 4; i++)
+    for (unsigned int i = 0; i < 4; i++)
       task.addFeature(p[i], pd[i]);
 
     // set the gain
@@ -241,7 +239,7 @@ int main(int argc, const char **argv)
       cMo = wMc.inverse() * wMo;
 
       // update new point position and corresponding features
-      for (i = 0; i < 4; i++) {
+      for (unsigned int i = 0; i < 4; i++) {
         point[i].track(cMo);
         // retrieve x,y and Z of the vpPoint structure
         vpFeatureBuilder::create(p[i], point[i]);
@@ -264,10 +262,15 @@ int main(int argc, const char **argv)
 
     // Display task information
     task.print();
-    task.kill();
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
+#else
+  (void)argc;
+  (void)argv;
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

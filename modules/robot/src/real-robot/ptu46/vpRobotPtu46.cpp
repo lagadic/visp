@@ -276,7 +276,7 @@ void vpRobotPtu46::get_fJe(vpMatrix &fJe)
 
   \param velocity : Velocity in % of the maximum velocity between [0,100].
 */
-void vpRobotPtu46::setPositioningVelocity(const double velocity) { positioningVelocity = velocity; }
+void vpRobotPtu46::setPositioningVelocity(double velocity) { positioningVelocity = velocity; }
 /*!
   Get the velocity in % used for a position control.
 

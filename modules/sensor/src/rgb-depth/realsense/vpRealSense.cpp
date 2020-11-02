@@ -666,7 +666,7 @@ int main()
 }
   \endcode
  */
-void vpRealSense::setEnableStream(const rs::stream &stream, const bool status) { m_enableStreams[stream] = status; }
+void vpRealSense::setEnableStream(const rs::stream &stream, bool status) { m_enableStreams[stream] = status; }
 
 #ifdef VISP_HAVE_PCL
 /*!

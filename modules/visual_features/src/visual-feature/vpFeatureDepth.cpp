@@ -99,7 +99,7 @@ vpFeatureDepth::vpFeatureDepth() : x(0), y(0), Z(1.) { init(); }
 
   \param LogZoverZstar : \f$ log(\frac{Z}{Z^*}) \f$ value to set.
 */
-void vpFeatureDepth::set_LogZoverZstar(const double LogZoverZstar) { s[0] = LogZoverZstar; }
+void vpFeatureDepth::set_LogZoverZstar(double LogZoverZstar) { s[0] = LogZoverZstar; }
 
 /*!
   Get the value of \f$ log(\frac{Z}{Z^*}) \f$ which represents the logarithm
@@ -115,7 +115,7 @@ double vpFeatureDepth::get_LogZoverZstar() const { return s[0]; }
 
   \param x_ : \f$ x \f$ value to set.
 */
-void vpFeatureDepth::set_x(const double x_)
+void vpFeatureDepth::set_x(double x_)
 {
   this->x = x_;
   flags[0] = true;
@@ -135,7 +135,7 @@ double vpFeatureDepth::get_x() const { return x; }
 
   \param y_ : \f$ y \f$ value to set.
 */
-void vpFeatureDepth::set_y(const double y_)
+void vpFeatureDepth::set_y(double y_)
 {
   this->y = y_;
   flags[1] = true;
@@ -155,7 +155,7 @@ double vpFeatureDepth::get_y() const { return y; }
 
   \param Z_ : \f$ Z \f$ value to set.
 */
-void vpFeatureDepth::set_Z(const double Z_)
+void vpFeatureDepth::set_Z(double Z_)
 {
   this->Z = Z_;
   flags[2] = true;
@@ -181,7 +181,7 @@ double vpFeatureDepth::get_Z() const { return Z; }
   \param Z_ : \f$ Z \f$ value to set.
   \param LogZoverZstar : \f$ log(\frac{Z}{Z^*}) \f$ value to set.
 */
-void vpFeatureDepth::set_xyZLogZoverZstar(const double x_, const double y_, const double Z_, const double LogZoverZstar)
+void vpFeatureDepth::set_xyZLogZoverZstar(double x_, double y_, double Z_, double LogZoverZstar)
 {
   set_x(x_);
   set_y(y_);
@@ -217,7 +217,7 @@ void vpFeatureDepth::set_xyZLogZoverZstar(const double x_, const double y_, cons
   vpMatrix L_x = s.interaction();
   \endcode
 */
-vpMatrix vpFeatureDepth::interaction(const unsigned int select)
+vpMatrix vpFeatureDepth::interaction(unsigned int select)
 {
   vpMatrix L;
 
@@ -314,7 +314,7 @@ vpMatrix vpFeatureDepth::interaction(const unsigned int select)
   s.error(s_star);
   \endcode
 */
-vpColVector vpFeatureDepth::error(const vpBasicFeature &s_star, const unsigned int select)
+vpColVector vpFeatureDepth::error(const vpBasicFeature &s_star, unsigned int select)
 {
 
   if (fabs(s_star.get_s().sumSquare()) > 1e-6) {
@@ -345,7 +345,7 @@ vpColVector vpFeatureDepth::error(const vpBasicFeature &s_star, const unsigned i
   s.print(); // print all the 2 components of the feature
   \endcode
 */
-void vpFeatureDepth::print(const unsigned int select) const
+void vpFeatureDepth::print(unsigned int select) const
 {
   if (FEATURE_ALL & select) {
     std::cout << "Point:  x=" << get_x();
@@ -369,7 +369,7 @@ void vpFeatureDepth::print(const unsigned int select) const
   \param Z_ : The \f$ Z \f$ parameter.
   \param LogZoverZstar : The \f$ log(\frac{Z}{Z^*}) \f$ parameter.
 */
-void vpFeatureDepth::buildFrom(const double x_, const double y_, const double Z_, const double LogZoverZstar)
+void vpFeatureDepth::buildFrom(double x_, double y_, double Z_, double LogZoverZstar)
 {
 
   s[0] = LogZoverZstar;

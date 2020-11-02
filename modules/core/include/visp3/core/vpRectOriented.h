@@ -54,7 +54,7 @@ class VISP_EXPORT vpRectOriented
 public:
   vpRectOriented();
 
-  vpRectOriented(const vpImagePoint &center, const double width, const double height, const double theta = 0);
+  vpRectOriented(const vpImagePoint &center, double width, double height, double theta = 0);
 
   vpRectOriented(const vpRect &rect);
 

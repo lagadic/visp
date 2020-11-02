@@ -331,7 +331,7 @@ void vpKltOpencv::display(const vpImage<vpRGBa> &I, const std::vector<cv::Point2
   \param maxCount : Maximum number of features to detect and track. Default
   value is set to 500.
 */
-void vpKltOpencv::setMaxFeatures(const int maxCount) { m_maxCount = maxCount; }
+void vpKltOpencv::setMaxFeatures(int maxCount) { m_maxCount = maxCount; }
 
 /*!
   Set the window size used to refine the corner locations.
@@ -340,7 +340,7 @@ void vpKltOpencv::setMaxFeatures(const int maxCount) { m_maxCount = maxCount; }
   is set to 10. For example, if \e winSize=5 , then a 5*2+1 \f$\times\f$ 5*2+1
   = 11 \f$\times\f$ 11 search window is used.
 */
-void vpKltOpencv::setWindowSize(const int winSize) { m_winSize = winSize; }
+void vpKltOpencv::setWindowSize(int winSize) { m_winSize = winSize; }
 
 /*!
   Set the parameter characterizing the minimal accepted quality of image
@@ -369,7 +369,7 @@ void vpKltOpencv::setHarrisFreeParameter(double harris_k) { m_harris_k = harris_
   \param useHarrisDetector : If 1 (default value), use the Harris detector. If
   0 use the eigenvalue.
 */
-void vpKltOpencv::setUseHarris(const int useHarrisDetector) { m_useHarrisDetector = useHarrisDetector; }
+void vpKltOpencv::setUseHarris(int useHarrisDetector) { m_useHarrisDetector = useHarrisDetector; }
 
 /*!
   Set the minimal Euclidean distance between detected corners during
@@ -396,7 +396,7 @@ void vpKltOpencv::setMinEigThreshold(double minEigThreshold) { m_minEigThreshold
   \param blockSize : Size of an average block for computing a derivative
   covariation matrix over each pixel neighborhood. Default value is set to 3.
 */
-void vpKltOpencv::setBlockSize(const int blockSize) { m_blockSize = blockSize; }
+void vpKltOpencv::setBlockSize(int blockSize) { m_blockSize = blockSize; }
 
 /*!
   Set the maximal pyramid level. If the level is zero, then no pyramid is
@@ -406,7 +406,7 @@ void vpKltOpencv::setBlockSize(const int blockSize) { m_blockSize = blockSize; }
   pyramids are not used (single level), if set to 1, two levels are used, and
   so on. Default value is set to 3.
 */
-void vpKltOpencv::setPyramidLevels(const int pyrMaxLevel) { m_pyrMaxLevel = pyrMaxLevel; }
+void vpKltOpencv::setPyramidLevels(int pyrMaxLevel) { m_pyrMaxLevel = pyrMaxLevel; }
 
 /*!
   Set the points that will be used as initial guess during the next call to
@@ -770,7 +770,7 @@ vpKltOpencv::~vpKltOpencv() { cleanAll(); }
 
   \param input : The new number of maximum features.
 */
-void vpKltOpencv::setMaxFeatures(const int input)
+void vpKltOpencv::setMaxFeatures(int input)
 {
   initialized = 0;
   maxFeatures = input;

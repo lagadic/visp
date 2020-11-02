@@ -291,7 +291,7 @@ void vpMeNurbs::initTracking(const vpImage<unsigned char> &I, const std::list<vp
   \param I : Image in which the edge appears.
   \param doNotTrack : Inherited parameter, not used.
 */
-void vpMeNurbs::sample(const vpImage<unsigned char> &I, const bool doNotTrack)
+void vpMeNurbs::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 {
   (void)doNotTrack;
   int rows = (int)I.getHeight();

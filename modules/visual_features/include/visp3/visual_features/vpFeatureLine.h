@@ -209,9 +209,9 @@ public:
   virtual ~vpFeatureLine() {}
 
   //  void buildFrom(const vpLine &l) ;
-  //  void buildFrom(const vpCylinder &c, const int l) ;
-  void buildFrom(const double rho, const double theta);
-  void buildFrom(const double rho, const double theta, const double A, const double B, const double C, const double D);
+  //  void buildFrom(const vpCylinder &c, int l) ;
+  void buildFrom(double rho, double theta);
+  void buildFrom(double rho, double theta, double A, double B, double C, double D);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
@@ -219,7 +219,7 @@ public:
                unsigned int thickness = 1) const;
   vpFeatureLine *duplicate() const;
 
-  vpColVector error(const vpBasicFeature &s_star, const unsigned int select = FEATURE_ALL);
+  vpColVector error(const vpBasicFeature &s_star, unsigned int select = FEATURE_ALL);
   // vpColVector error(const int select = FEATURE_ALL)  ;
 
   /*!
@@ -233,12 +233,12 @@ public:
   double getTheta() const { return s[1]; }
 
   void init();
-  vpMatrix interaction(const unsigned int select = FEATURE_ALL);
+  vpMatrix interaction(unsigned int select = FEATURE_ALL);
 
-  void print(const unsigned int select = FEATURE_ALL) const;
+  void print(unsigned int select = FEATURE_ALL) const;
 
-  void setRhoTheta(const double rho, const double theta);
-  void setABCD(const double A, const double B, const double C, const double D);
+  void setRhoTheta(double rho, double theta);
+  void setABCD(double A, double B, double C, double D);
 
 public:
   static unsigned int selectRho();

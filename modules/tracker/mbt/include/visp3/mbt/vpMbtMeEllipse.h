@@ -154,8 +154,8 @@ public:
   virtual ~vpMbtMeEllipse();
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
-                              const vpMatrix &SobelX, const vpMatrix &SobelY, const bool display,
-                              const unsigned int length, const unsigned int thickness);
+                              const vpMatrix &SobelX, const vpMatrix &SobelY, bool display,
+                              unsigned int length, unsigned int thickness);
 
   void display(const vpImage<unsigned char> &I, vpColor col);
   using vpMeTracker::display;
@@ -163,25 +163,56 @@ public:
   int getExpectedDensity() { return (int)expecteddensity; }
 
   /*!
-    Gets the 2 order central moment \f$ \mu_{11} \f$.
+    Gets second order centered moment of the ellipse normalized by its area \f$ n_{11} = \mu_{11} / a \f$.
 
-    \return the value of \f$ \mu_{11} \f$.
+    \return Value of \f$ n_{11} \f$.
   */
-  inline double get_mu11() const { return mu11; }
+  inline double get_n11() const { return n11; }
 
   /*!
-    Gets the 2 order central moment \f$ \mu_{02} \f$.
+    Gets second order centered moment of the ellipse normalized by its area \f$ n_{02} = \mu_{02} / a \f$.
 
-    \return the value of \f$ \mu_{02} \f$.
+    \return Value of \f$ n_{02} \f$.
   */
-  inline double get_mu02() const { return mu02; }
+  inline double get_n02() const { return n02; }
 
   /*!
-    Gets the 2 order central moment \f$ \mu_{20} \f$.
+    Gets second order centered moment of the ellipse normalized by its area \f$ n_{20} = \mu_{20} / a \f$.
 
-    \return the value of \f$ \mu_{20} \f$.
+    \return Value of \f$ n_{20} \f$.
   */
-  inline double get_mu20() const { return mu20; }
+  inline double get_n20() const { return n20; }
+
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  /*!
+    \deprecated You should rather use get_n11().
+    This function is incorrectly named and is confusing since it
+    returns second order centered moments of the ellipse normalized
+    by its area that corresponds to \f$n_11 = mu_11/a\f$.
+  */
+  vp_deprecated inline double get_mu11() const { return n11; }
+
+  /*!
+    \deprecated You should rather use get_n02().
+    This function is incorrectly named and is confusing since it
+    returns second order centered moments of the ellipse normalized
+    by its area that corresponds to \f$n_02 = mu_02/a\f$.
+  */
+  vp_deprecated inline double get_mu02() const { return n02; }
+
+  /*!
+    \deprecated You should rather use get_n20().
+    This function is incorrectly named and is confusing since it
+    returns second order centered moments of the ellipse normalized
+    by its area that corresponds to \f$n_20 = mu_20/a\f$.
+  */
+  vp_deprecated inline double get_mu20() const { return n20; }
+  //@}
+  #endif // VISP_BUILD_DEPRECATED_FUNCTIONS
 
   /*!
     Gets the center of the ellipse.
@@ -214,13 +245,13 @@ public:
     E = e;
   }
 
-  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
-                    double mu02_p, const bool doNotTrack);
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double n20_p, double n11_p,
+                    double n02_p, bool doNotTrack);
 
   void track(const vpImage<unsigned char> &I);
 
-  void updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ic, double mu20_p, double mu11_p,
-                        double mu02_p);
+  void updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ic, double n20_p, double n11_p,
+                        double n02_p);
 
 protected:
   //! The coordinates of the ellipse center.
@@ -239,15 +270,16 @@ protected:
   //! Value of sin(e).
   double se;
 
-  //! Second order central moments
-  double mu11, mu20, mu02;
+  //! Second order centered moments of the ellipse normalized by its area (i.e., such that
+  //! \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area).
+  double n11, n20, n02;
   //! Threshold for the robust least square.
   double thresholdWeight;
   //! Expected number of me to track along the ellipse.
   double expecteddensity;
 
 private:
-  virtual void sample(const vpImage<unsigned char> &image, const bool doNotTrack=false);
+  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack=false);
   void reSample(const vpImage<unsigned char> &I);
   void updateTheta();
   void suppressPoints();

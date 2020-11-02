@@ -138,10 +138,6 @@ int main()
     v = task.computeControlLaw(); // Compute camera velocity skew
     error =  ( task.getError() ).sumSquare(); // error = s^2 - s_star^2
   } while (error > 0.0001); // Stop the task when current and desired visual features are close
-
-  // A call to kill() is requested here to destroy properly the current
-  // and desired feature lists.
-  task.kill();
 }
   \endcode
 
@@ -250,9 +246,9 @@ public:
   virtual ~vpServo();
 
   // create a new ste of  two visual features
-  void addFeature(vpBasicFeature &s, vpBasicFeature &s_star, const unsigned int select = vpBasicFeature::FEATURE_ALL);
+  void addFeature(vpBasicFeature &s, vpBasicFeature &s_star, unsigned int select = vpBasicFeature::FEATURE_ALL);
   // create a new ste of  two visual features
-  void addFeature(vpBasicFeature &s, const unsigned int select = vpBasicFeature::FEATURE_ALL);
+  void addFeature(vpBasicFeature &s, unsigned int select = vpBasicFeature::FEATURE_ALL);
 
   // compute the desired control law
   vpColVector computeControlLaw();
@@ -345,6 +341,8 @@ error vector is updated after a call of computeError() or computeControlLaw().
   */
   vpMatrix get_fJe() const { return fJe; }
 
+  double getPseudoInverseThreshold() const;
+
   // destruction (memory deallocation if required)
   void kill();
 
@@ -358,7 +356,7 @@ error vector is updated after a call of computeError() or computeControlLaw().
   // Add a secondary task to avoid the joint limit.
   vpColVector secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq, const vpColVector &jointMin,
                                                const vpColVector &jointMax, const double &rho = 0.1,
-                                               const double &rho1 = 0.3, const double &lambda_tune = 0.7) const;
+                                               const double &rho1 = 0.3, const double &lambda_tune = 0.7);
 
   void setCameraDoF(const vpColVector &dof);
 
@@ -420,7 +418,7 @@ error vector is updated after a call of computeError() or computeControlLaw().
 
     For more details on these parameters see vpAdaptiveGain class.
    */
-  void setLambda(const double gain_at_zero, const double gain_at_infinity, const double slope_at_zero)
+  void setLambda(double gain_at_zero, double gain_at_infinity, double slope_at_zero)
   {
     lambda.initStandard(gain_at_zero, gain_at_infinity, slope_at_zero);
   }
@@ -520,6 +518,8 @@ error vector is updated after a call of computeError() or computeControlLaw().
     init_fJe = true;
   }
 
+  void setPseudoInverseThreshold(double pseudo_inverse_threshold);
+
   /*!
     Test if all the initialization are correct. If true, the control law can
     be computed.
@@ -537,7 +537,7 @@ protected:
   /*!
     Compute the classic projetion operator and the large projection operator.
    */
-  void computeProjectionOperators();
+  void computeProjectionOperators(const vpMatrix &J1_, const vpMatrix &I_, const vpMatrix &I_WpW_, const vpColVector &error_, vpMatrix &P_) const;
 
 public:
   //! Interaction matrix
@@ -638,6 +638,8 @@ protected:
   //! Force the interaction matrix computation even if it is already done.
   bool forceInteractionMatrixComputation;
 
+  //! Identity matrix.
+  vpMatrix I;
   //! Projection operators \f$\bf WpW\f$.
   vpMatrix WpW;
   //! Projection operators \f$\bf I-WpW\f$.
@@ -674,6 +676,10 @@ protected:
   //! A diag matrix used to determine which are the degrees of freedom that
   //! are controlled in the camera frame
   vpMatrix cJc;
+
+  bool m_first_iteration; //!< True until first call of computeControlLaw() is achieved
+
+  double m_pseudo_inverse_threshold; //!< Threshold used in the pseudo inverse
 };
 
 #endif

@@ -135,6 +135,22 @@ Then in the while loop, at each iteration we acquire a new image
 
 This new image is then given as input to the AprilTag detector.
 
+\section apriltag_detection_rgbd Improve pose estimation accuracy using a RGB-D camera
+
+When the tag is small in the image or when the tag corners location are extracted poorly, you may experience z-axis flipping if you analyse carefully the pose of the tag. The following images illustrate this behavior.
+
+\image html img-apriltag-pose-ambiguity.png These are 3 successive images acquired by the Realsense D435 color camera with tag pose in overlay. In the image in the middle, you can see the z-axis flipping phenomena where z-axis in blue is not oriented as expected.
+
+The pose is computed from the 4 tag corners location, assuming a planar object, and this behavior is inherent to the planar pose estimation ambiguity, see [Dementhon](http://users.umiacs.umd.edu/~daniel/daniel_papersfordownload/oberkampfDeMenthonPaper.pdf).
+
+To lift this ambiguity, we propose to use the depth map of a RGB-D sensor in order to bring additional 3D information. The pose estimation can then be seen as a 3D-3D optimization process implemented in vpPose::computePlanarObjectPoseFromRGBD(). As shown in the following images, using this method with a Realsense D435 sensor allows to overcome this ambiguity.
+
+\image html img-apriltag-pose-ambiguity-resolved.png These are the same 3 successive images acquired by the Realsense color camera with resulting pose in overlay, but here we used depth map aligned with color image given as input to vpPose::computePlanarObjectPoseFromRGBD(). As you can see in the 3 images z-axis flipping phenomena doesn't occur any more.
+
+An example that shows how to use this function is given in tutorial-apriltag-detector-live-rgbd-realsense.cpp. In this example we are using a Realsense D435 or equivalent RGB-D sensor, but it could be adapted to any other RGB-D sensor as long as you can align depth map and color image.
+
+\snippet tutorial-apriltag-detector-live-rgbd-realsense.cpp Pose from depth map
+
 \section apriltag_detection_next Next tutorial
 
 You are now ready to see the \ref tutorial-detection-barcode, that illustrates how to detect QR codes in an image.

@@ -338,20 +338,20 @@ int main(int argc, char **argv)
 
         vpTranslationVector cd_t_c = cdMc.getTranslationVector();
         vpThetaUVector cd_tu_c = cdMc.getThetaUVector();
-        double error_t = sqrt(cd_t_c.sumSquare());
+        double error_tr = sqrt(cd_t_c.sumSquare());
         double error_tu = vpMath::deg(sqrt(cd_tu_c.sumSquare()));
 
         ss.str("");
-        ss << "error_t: " << error_t;
+        ss << "error_t: " << error_tr;
         vpDisplay::displayText(I, 20, static_cast<int>(I.getWidth()) - 150, ss.str(), vpColor::red);
         ss.str("");
         ss << "error_tu: " << error_tu;
         vpDisplay::displayText(I, 40, static_cast<int>(I.getWidth()) - 150, ss.str(), vpColor::red);
 
         if (opt_verbose)
-          std::cout << "error translation: " << error_t << " ; error rotation: " << error_tu << std::endl;
+          std::cout << "error translation: " << error_tr << " ; error rotation: " << error_tu << std::endl;
 
-        if (error_t < convergence_threshold_t && error_tu < convergence_threshold_tu) {
+        if (error_tr < convergence_threshold_t && error_tu < convergence_threshold_tu) {
           has_converged = true;
           std::cout << "Servo task has converged" << std::endl;;
           vpDisplay::displayText(I, 100, 20, "Servo task has converged", vpColor::red);
@@ -401,8 +401,6 @@ int main(int argc, char **argv)
       delete plotter;
       plotter = nullptr;
     }
-
-    task.kill();
 
     if (!final_quit) {
       while (!final_quit) {

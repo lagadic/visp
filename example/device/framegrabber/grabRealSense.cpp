@@ -250,9 +250,7 @@ int main()
   }
 
 #elif !defined(VISP_HAVE_REALSENSE)
-  std::cout << "Install RealSense SDK to make this test working" << std::endl;
-  std::cout << "Tip:" << std::endl;
-  std::cout << "- After installation, configure again ViSP using cmake and build again this example" << std::endl;
+  std::cout << "This deprecated example is only working with librealsense 1.x" << std::endl;
 #elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
   std::cout << "Tip:" << std::endl;

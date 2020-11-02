@@ -47,7 +47,8 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)
+#if (defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)) \
+  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -579,13 +580,11 @@ int main(int argc, const char **argv)
         dynamic_cast<vpMbGenericTracker *>(tracker)->loadConfigFile(mapOfConfigFiles);
 #else
         // By setting the parameters:
-        vpCameraParameters cam;
         cam.initPersProjWithoutDistortion(547, 542, 338, 234);
         mapOfCameraParams["Camera1"] = cam;
         mapOfCameraParams["Camera2"] = cam;
         mapOfCameraParams["Camera3"] = cam;
 
-        vpMe me;
         me.setMaskSize(5);
         me.setMaskNumber(180);
         me.setRange(7);
@@ -593,13 +592,12 @@ int main(int argc, const char **argv)
         me.setMu1(0.5);
         me.setMu2(0.5);
         me.setSampleStep(4);
-        std::map<std::string, vpMe> mapOfMe;
+
         mapOfMe["Camera1"] = me;
         mapOfMe["Camera2"] = me;
         mapOfMe["Camera3"] = me;
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-        vpKltOpencv klt;
         klt.setMaxFeatures(10000);
         klt.setWindowSize(5);
         klt.setQuality(0.01);
@@ -607,7 +605,7 @@ int main(int argc, const char **argv)
         klt.setHarrisFreeParameter(0.01);
         klt.setBlockSize(3);
         klt.setPyramidLevels(3);
-        std::map<std::string, vpKltOpencv> mapOfKlt;
+
         mapOfKlt["Camera1"] = klt;
         mapOfKlt["Camera2"] = klt;
         mapOfKlt["Camera3"] = klt;
@@ -625,7 +623,6 @@ int main(int argc, const char **argv)
         tracker->setNearClippingDistance(0.01);
         tracker->setFarClippingDistance(0.90);
 
-        std::map<std::string, unsigned int> mapOfClippingFlags;
         dynamic_cast<vpMbGenericTracker *>(tracker)->getClipping(mapOfClippingFlags);
         for (std::map<std::string, unsigned int>::iterator it = mapOfClippingFlags.begin();
              it != mapOfClippingFlags.end(); ++it) {
@@ -744,14 +741,17 @@ int main(int argc, const char **argv)
   }
 }
 
-#else
-
+#elif !(defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY))
 int main()
 {
-  std::cout << "visp_mbt, visp_gui modules and OpenCV are required to run "
-               "this example."
+  std::cout << "Cannot run this example: visp_mbt, visp_gui modules are required."
             << std::endl;
   return EXIT_SUCCESS;
 }
-
+#else
+int main()
+{
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+}
 #endif

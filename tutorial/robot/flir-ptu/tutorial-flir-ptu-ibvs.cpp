@@ -288,8 +288,6 @@ int main(int argc, char **argv)
     }
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
-
-    task.kill();
   }
   catch (const vpRobotException & e) {
     std::cout << "Catch Flir Ptu exception: " << e.getMessage() << std::endl;

@@ -40,6 +40,8 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
 
+#include <Simd/SimdLib.hpp>
+
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #include <emmintrin.h>
 #define VISP_HAVE_SSE2 1
@@ -137,7 +139,7 @@ void vpImageTools::changeLUT(vpImage<unsigned char> &I, unsigned char A, unsigne
 
 /*!
   Compute the signed difference between the two images I1 and I2 for
-  visualization issue : Idiff = I1-I2
+  visualization purpose: Idiff = I1-I2
 
   - pixels with a null difference are set to 128.
   - A negative difference implies a pixel value < 128
@@ -154,8 +156,9 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1, const vpIma
     throw(vpException(vpException::dimensionError, "The two images have not the same size"));
   }
 
-  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth())) {
     Idiff.resize(I1.getHeight(), I1.getWidth());
+  }
 
   bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
 #if !VISP_HAVE_SSSE3
@@ -206,7 +209,7 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1, const vpIma
 
 /*!
   Compute the signed difference between the two images I1 and I2 RGB
-  components for visualization issue : Idiff = I1-I2. The fourth component
+  components for visualization purpose: Idiff = I1-I2. The fourth component
   named A is not compared. It is set to 0 in the resulting difference image.
 
   - pixels with a null difference are set to R=128, G=128, B=128.
@@ -225,8 +228,9 @@ void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1, const vpImage<vpRG
                       I1.getWidth(), I1.getHeight(), I2.getWidth(), I2.getHeight()));
   }
 
-  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth())) {
     Idiff.resize(I1.getHeight(), I1.getWidth());
+  }
 
   bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
 #if !VISP_HAVE_SSSE3
@@ -298,8 +302,9 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<unsigned char> &I1, con
     throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
   }
 
-  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth())) {
     Idiff.resize(I1.getHeight(), I1.getWidth());
+  }
 
   unsigned int n = I1.getHeight() * I1.getWidth();
   for (unsigned int b = 0; b < n; b++) {
@@ -321,8 +326,9 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<double> &I1, const vpIm
     throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
   }
 
-  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth())) {
     Idiff.resize(I1.getHeight(), I1.getWidth());
+  }
 
   unsigned int n = I1.getHeight() * I1.getWidth();
   for (unsigned int b = 0; b < n; b++) {
@@ -349,8 +355,9 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpIm
     throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
   }
 
-  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth()))
+  if ((I1.getHeight() != Idiff.getHeight()) || (I1.getWidth() != Idiff.getWidth())) {
     Idiff.resize(I1.getHeight(), I1.getWidth());
+  }
 
   unsigned int n = I1.getHeight() * I1.getWidth();
   for (unsigned int b = 0; b < n; b++) {
@@ -374,9 +381,13 @@ void vpImageTools::imageDifferenceAbsolute(const vpImage<vpRGBa> &I1, const vpIm
   \param Ires : \f$ Ires = I1 + I2 \f$
   \param saturate : If true, saturate the result to [0 ; 255] using
   vpMath::saturate, otherwise overflow may occur.
+
+  \note The simd lib is used to accelerate processing on x86 and ARM architecture.
+
+  \warning This function does not work in-place (Ires object must be different from I1 and I2).
 */
 void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                            vpImage<unsigned char> &Ires, const bool saturate)
+                            vpImage<unsigned char> &Ires, bool saturate)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
     throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
@@ -386,26 +397,12 @@ void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsi
     Ires.resize(I1.getHeight(), I1.getWidth());
   }
 
-  unsigned char *ptr_I1 = I1.bitmap;
-  unsigned char *ptr_I2 = I2.bitmap;
-  unsigned char *ptr_Ires = Ires.bitmap;
-  unsigned int cpt = 0;
+  typedef Simd::View<Simd::Allocator> View;
+  View img1(I1.getWidth(), I1.getHeight(), I1.getWidth(), View::Gray8, I1.bitmap);
+  View img2(I2.getWidth(), I2.getHeight(), I2.getWidth(), View::Gray8, I2.bitmap);
+  View imgAdd(Ires.getWidth(), Ires.getHeight(), Ires.getWidth(), View::Gray8, Ires.bitmap);
 
-#if VISP_HAVE_SSE2
-  if (vpCPUFeatures::checkSSE2() && Ires.getSize() >= 16) {
-    for (; cpt <= Ires.getSize() - 16; cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
-      const __m128i v1 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(ptr_I1));
-      const __m128i v2 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(ptr_I2));
-      const __m128i vres = saturate ? _mm_adds_epu8(v1, v2) : _mm_add_epi8(v1, v2);
-
-      _mm_storeu_si128(reinterpret_cast<__m128i *>(ptr_Ires), vres);
-    }
-  }
-#endif
-
-  for (; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
-    *ptr_Ires = saturate ? vpMath::saturate<unsigned char>((short int)*ptr_I1 + (short int)*ptr_I2) : *ptr_I1 + *ptr_I2;
-  }
+  Simd::OperationBinary8u(img1, img2, imgAdd, saturate ? SimdOperationBinary8uSaturatedAddition : SimdOperationBinary8uAddition);
 }
 
 /*!
@@ -416,9 +413,13 @@ void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsi
   \param Ires : \f$ Ires = I1 - I2 \f$
   \param saturate : If true, saturate the result to [0 ; 255] using
   vpMath::saturate, otherwise overflow may occur.
+
+  \note The simd lib is used to accelerate processing on x86 and ARM architecture.
+
+  \warning This function does not work in-place (Ires object must be different from I1 and I2).
 */
 void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
-                                 vpImage<unsigned char> &Ires, const bool saturate)
+                                 vpImage<unsigned char> &Ires, bool saturate)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
     throw(vpException(vpException::dimensionError, "The two images do not have the same size"));
@@ -428,28 +429,12 @@ void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage
     Ires.resize(I1.getHeight(), I1.getWidth());
   }
 
-  unsigned char *ptr_I1 = I1.bitmap;
-  unsigned char *ptr_I2 = I2.bitmap;
-  unsigned char *ptr_Ires = Ires.bitmap;
-  unsigned int cpt = 0;
+  typedef Simd::View<Simd::Allocator> View;
+  View img1(I1.getWidth(), I1.getHeight(), I1.getWidth(), View::Gray8, I1.bitmap);
+  View img2(I2.getWidth(), I2.getHeight(), I2.getWidth(), View::Gray8, I2.bitmap);
+  View imgAdd(Ires.getWidth(), Ires.getHeight(), Ires.getWidth(), View::Gray8, Ires.bitmap);
 
-#if VISP_HAVE_SSE2
-  if (vpCPUFeatures::checkSSE2() && Ires.getSize() >= 16) {
-    for (; cpt <= Ires.getSize() - 16; cpt += 16, ptr_I1 += 16, ptr_I2 += 16, ptr_Ires += 16) {
-      const __m128i v1 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(ptr_I1));
-      const __m128i v2 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(ptr_I2));
-      const __m128i vres = saturate ? _mm_subs_epu8(v1, v2) : _mm_sub_epi8(v1, v2);
-
-      _mm_storeu_si128(reinterpret_cast<__m128i *>(ptr_Ires), vres);
-    }
-  }
-#endif
-
-  for (; cpt < Ires.getSize(); cpt++, ++ptr_I1, ++ptr_I2, ++ptr_Ires) {
-    *ptr_Ires = saturate ?
-          vpMath::saturate<unsigned char>(static_cast<short int>(*ptr_I1) - static_cast<short int>(*ptr_I2)) :
-          *ptr_I1 - *ptr_I2;
-  }
+  Simd::OperationBinary8u(img1, img2, imgAdd, saturate ? SimdOperationBinary8uSaturatedSubtraction : SimdOperationBinary8uSubtraction);
 }
 
 /*!
@@ -472,14 +457,24 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   mapDu.resize(height, width, false, false);
   mapDv.resize(height, width, false, false);
 
+  vpCameraParameters::vpCameraParametersProjType projModel = cam.get_projModel();
+  bool is_KannalaBrandt = (projModel==vpCameraParameters::ProjWithKannalaBrandtDistortion); // Check the projection model used
+
   float u0 = static_cast<float>(cam.get_u0());
   float v0 = static_cast<float>(cam.get_v0());
   float px = static_cast<float>(cam.get_px());
   float py = static_cast<float>(cam.get_py());
-  float kud = static_cast<float>(cam.get_kud());
+  float kud;
+  std::vector<double> dist_coefs;
 
-  if (std::fabs(static_cast<double>(kud)) <= std::numeric_limits<double>::epsilon()) {
-    // There is no need to undistort the image
+  if(!is_KannalaBrandt)
+    kud = static_cast<float>(cam.get_kud());
+
+  else
+    dist_coefs = cam.getKannalaBrandtDistortionCoefficients();
+
+  if (!is_KannalaBrandt && std::fabs(static_cast<double>(kud)) <= std::numeric_limits<double>::epsilon()) {
+    // There is no need to undistort the image (Perpective projection)
     for (unsigned int i = 0; i < height; i++) {
       for (unsigned int j = 0; j < width; j++) {
         mapU[i][j] = static_cast<int>(j);
@@ -492,26 +487,66 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
     return;
   }
 
-  float invpx = 1.0f / px;
-  float invpy = 1.0f / py;
+  float invpx, invpy;
+  float kud_px2 = 0., kud_py2 = 0., deltau_px, deltav_py;
+  float fr1, fr2;
+  float deltav, deltau;
+  float u_float, v_float;
+  int u_round, v_round;
+  double r, scale;
+  double theta, theta_d;
+  double theta2, theta4, theta6, theta8;
 
-  float kud_px2 = kud * invpx * invpx;
-  float kud_py2 = kud * invpy * invpy;
+  invpx = 1.0f / px;
+  invpy = 1.0f / py;
+
+  if(!is_KannalaBrandt)
+  {
+    kud_px2 = kud * invpx * invpx;
+    kud_py2 = kud * invpy * invpy;
+  }
 
   for (unsigned int v = 0; v < height; v++) {
-    float deltav = v - v0;
-    float fr1 = 1.0f + kud_py2 * deltav * deltav;
+    deltav = v - v0;
+
+    if(!is_KannalaBrandt)
+      fr1 = 1.0f + kud_py2 * deltav * deltav;
+    else
+      deltav_py = deltav * invpy;
 
     for (unsigned int u = 0; u < width; u++) {
       // computation of u,v : corresponding pixel coordinates in I.
-      float deltau = u - u0;
-      float fr2 = fr1 + kud_px2 * deltau * deltau;
+      deltau = u - u0;
+      if(!is_KannalaBrandt)
+      {
+        fr2 = fr1 + kud_px2 * deltau * deltau;
 
-      float u_float = deltau * fr2 + u0;
-      float v_float = deltav * fr2 + v0;
+        u_float = deltau * fr2 + u0;
+        v_float = deltav * fr2 + v0;
+      }
 
-      int u_round = static_cast<int>(u_float);
-      int v_round = static_cast<int>(v_float);
+      else
+      {
+        deltau_px = deltau * invpx;
+        r = sqrt(vpMath::sqr(deltau_px) + vpMath::sqr(deltav_py));
+        theta = atan(r);
+
+        theta2 = vpMath::sqr(theta);
+        theta4 = vpMath::sqr(theta2);
+        theta6 = theta2 * theta4;
+        theta8 = vpMath::sqr(theta4);
+
+        theta_d = theta * (1 + dist_coefs[0]*theta2 + dist_coefs[1]*theta4 +
+                           dist_coefs[2]*theta6 + dist_coefs[3]*theta8);
+
+        //scale = (r == 0) ? 1.0 : theta_d / r;
+        scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : theta_d / r;
+        u_float = static_cast<float>(deltau*scale + u0);
+        v_float = static_cast<float>(deltav*scale + v0);
+      }
+
+      u_round = static_cast<int>(u_float);
+      v_round = static_cast<int>(v_float);
 
       mapU[v][u] = u_round;
       mapV[v][u] = v_round;
@@ -560,7 +595,7 @@ void vpImageTools::integralImage(const vpImage<unsigned char> &I, vpImage<double
 */
 double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
 #if VISP_HAVE_SSE2
-                                           const bool useOptimized)
+                                           bool useOptimized)
 #else
                                            const bool)
 #endif
@@ -627,7 +662,6 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
   \param I : The image.
   \param V : The result vector.
 */
-
 void vpImageTools::columnMean(const vpImage<double> &I, vpRowVector &V)
 {
   unsigned int height = I.getHeight(), width = I.getWidth();
@@ -752,8 +786,8 @@ void vpImageTools::extract(const vpImage<unsigned char> &Src, vpImage<double> &D
   \param useOptimized : Use optimized version (SSE, OpenMP, integral images, ...) if true and available.
 */
 void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpImage<unsigned char> &I_tpl,
-                                    vpImage<double> &I_score, const unsigned int step_u, const unsigned int step_v,
-                                    const bool useOptimized)
+                                    vpImage<double> &I_score, unsigned int step_u, unsigned int step_v,
+                                    bool useOptimized)
 {
   if (I.getSize() == 0) {
     std::cerr << "Error, input image is empty." << std::endl;
@@ -774,7 +808,7 @@ void vpImageTools::templateMatching(const vpImage<unsigned char> &I, const vpIma
   vpImageConvert::convert(I, I_double);
   vpImageConvert::convert(I_tpl, I_tpl_double);
 
-  const unsigned int height_tpl = I_tpl.getHeight(), width_tpl = I_tpl.getWidth();
+  unsigned int height_tpl = I_tpl.getHeight(), width_tpl = I_tpl.getWidth();
   I_score.resize(I.getHeight() - height_tpl, I.getWidth() - width_tpl, 0.0);
 
   if (useOptimized) {
@@ -866,7 +900,7 @@ int64_t vpImageTools::lerp2(int64_t A, int64_t B, int64_t t, int64_t t_1) {
 double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
                                            const vpImage<double> &II, const vpImage<double> &IIsq,
                                            const vpImage<double> &II_tpl, const vpImage<double> &IIsq_tpl,
-                                           const unsigned int i0, const unsigned int j0)
+                                           unsigned int i0, unsigned int j0)
 {
   double ab = 0.0;
 #if VISP_HAVE_SSE2
@@ -911,7 +945,7 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
     }
   }
 
-  const unsigned int height_tpl = I2.getHeight(), width_tpl = I2.getWidth();
+  unsigned int height_tpl = I2.getHeight(), width_tpl = I2.getWidth();
   const double sum1 =
       (II[i0 + height_tpl][j0 + width_tpl] + II[i0][j0] - II[i0][j0 + width_tpl] - II[i0 + height_tpl][j0]);
   const double sum2 = (II_tpl[height_tpl][width_tpl] + II_tpl[0][0] - II_tpl[0][width_tpl] - II_tpl[height_tpl][0]);
@@ -1089,6 +1123,32 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
       }
     }
   }
+}
+
+void vpImageTools::resizeSimdlib(const vpImage<vpRGBa> &Isrc, unsigned int resizeWidth,
+                                 unsigned int resizeHeight, vpImage<vpRGBa> &Idst,
+                                 int method)
+{
+  Idst.resize(resizeHeight, resizeWidth);
+
+  typedef Simd::View<Simd::Allocator> View;
+  View src(Isrc.getWidth(), Isrc.getHeight(), Isrc.getWidth() * sizeof(vpRGBa), View::Bgra32, Isrc.bitmap);
+  View dst(Idst.getWidth(), Idst.getHeight(), Idst.getWidth() * sizeof(vpRGBa), View::Bgra32, Idst.bitmap);
+
+  Simd::Resize(src, dst, method == INTERPOLATION_LINEAR ? SimdResizeMethodBilinear : SimdResizeMethodArea);
+}
+
+void vpImageTools::resizeSimdlib(const vpImage<unsigned char> &Isrc, unsigned int resizeWidth,
+                                 unsigned int resizeHeight, vpImage<unsigned char> &Idst,
+                                 int method)
+{
+  Idst.resize(resizeHeight, resizeWidth);
+
+  typedef Simd::View<Simd::Allocator> View;
+  View src(Isrc.getWidth(), Isrc.getHeight(), Isrc.getWidth(), View::Gray8, Isrc.bitmap);
+  View dst(Idst.getWidth(), Idst.getHeight(), Idst.getWidth(), View::Gray8, Idst.bitmap);
+
+  Simd::Resize(src, dst, method == INTERPOLATION_LINEAR ? SimdResizeMethodBilinear : SimdResizeMethodArea);
 }
 
 bool vpImageTools::checkFixedPoint(unsigned int x, unsigned int y, const vpMatrix &T, bool affine)

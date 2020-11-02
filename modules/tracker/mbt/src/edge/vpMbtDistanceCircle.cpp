@@ -100,7 +100,7 @@ void vpMbtDistanceCircle::project(const vpHomogeneousMatrix &cMo) { circle->proj
   center of the circle we have 3 points defining the plane that contains the
   circle. \param r : Radius of the circle.
 */
-void vpMbtDistanceCircle::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, const double r)
+void vpMbtDistanceCircle::buildFrom(const vpPoint &_p1, const vpPoint &_p2, const vpPoint &_p3, double r)
 {
   circle = new vpCircle;
   p1 = new vpPoint;
@@ -145,7 +145,7 @@ void vpMbtDistanceCircle::setMovingEdge(vpMe *_me)
   \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
   \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const bool doNotTrack,
+bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
                                          const vpImage<bool> *mask)
 {
   if (isvisible) {
@@ -169,9 +169,9 @@ bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const 
 
     try {
       vpImagePoint ic;
-      double mu20_p, mu11_p, mu02_p;
-      vpMeterPixelConversion::convertEllipse(cam, *circle, ic, mu20_p, mu11_p, mu02_p);
-      meEllipse->initTracking(I, ic, mu20_p, mu11_p, mu02_p, doNotTrack);
+      double n20_p, n11_p, n02_p;
+      vpMeterPixelConversion::convertEllipse(cam, *circle, ic, n20_p, n11_p, n02_p);
+      meEllipse->initTracking(I, ic, n20_p, n11_p, n02_p, doNotTrack);
     } catch (...) {
       // vpTRACE("the circle can't be initialized");
       return false;
@@ -225,9 +225,9 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
     try {
 
       vpImagePoint ic;
-      double mu20_p, mu11_p, mu02_p;
-      vpMeterPixelConversion::convertEllipse(cam, *circle, ic, mu20_p, mu11_p, mu02_p);
-      meEllipse->updateParameters(I, ic, mu20_p, mu11_p, mu02_p);
+      double n20_p, n11_p, n02_p;
+      vpMeterPixelConversion::convertEllipse(cam, *circle, ic, n20_p, n11_p, n02_p);
+      meEllipse->updateParameters(I, ic, n20_p, n11_p, n02_p);
     } catch (...) {
       Reinit = true;
     }
@@ -270,16 +270,16 @@ void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, cons
   If false, display the circle only if visible.
 */
 void vpMbtDistanceCircle::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                  const bool displayFullModel)
+                                  const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
+                                  bool displayFullModel)
 {
   std::vector<double> params = getModelForDisplay(cMo, camera, displayFullModel);
 
   vpImagePoint center(params[0], params[1]);
-  double mu20_p = params[2];
-  double mu11_p = params[3];
-  double mu02_p = params[4];
-  vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
+  double n20_p = params[2];
+  double n11_p = params[3];
+  double n02_p = params[4];
+  vpDisplay::displayEllipse(I, center, n20_p, n11_p, n02_p, true, col, thickness);
 }
 
 /*!
@@ -294,16 +294,16 @@ void vpMbtDistanceCircle::display(const vpImage<unsigned char> &I, const vpHomog
   If false, display the circle only if visible.
 */
 void vpMbtDistanceCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                  const vpCameraParameters &camera, const vpColor &col, const unsigned int thickness,
-                                  const bool displayFullModel)
+                                  const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
+                                  bool displayFullModel)
 {
   std::vector<double> params = getModelForDisplay(cMo, camera, displayFullModel);
 
   vpImagePoint center(params[1], params[2]);
-  double mu20_p = params[3];
-  double mu11_p = params[4];
-  double mu02_p = params[5];
-  vpDisplay::displayEllipse(I, center, mu20_p, mu11_p, mu02_p, true, col, thickness);
+  double n20_p = params[3];
+  double n11_p = params[4];
+  double n02_p = params[5];
+  vpDisplay::displayEllipse(I, center, n20_p, n11_p, n02_p, true, col, thickness);
 }
 
 /*!
@@ -322,7 +322,7 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
                                     p_me.get_ifloat(),
                                     p_me.get_jfloat(),
                                     static_cast<double>(p_me.getState())};
-#else   
+#else
       std::vector<double> params;
       params.push_back(0); //ME
       params.push_back(p_me.get_ifloat());
@@ -339,7 +339,9 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
 /*!
   Return a list of ellipse parameters to display the primitive at a given pose and camera parameters.
   - Parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
-  `<mu20>`, `<mu11>`, `<mu02>`
+  `<n20>`, `<n11>`, `<n02>` which are respectively the ellipse centroid coordinates and
+  second order centered moments of the ellipse normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$
+  where \f$\mu_{ij}\f$ are the centered moments and a the area).
 
   \param cMo : Pose used to project the 3D model into the image.
   \param camera : The camera parameters.
@@ -347,7 +349,7 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
 */
 std::vector<double> vpMbtDistanceCircle::getModelForDisplay(const vpHomogeneousMatrix &cMo,
                                                             const vpCameraParameters &camera,
-                                                            const bool displayFullModel)
+                                                            bool displayFullModel)
 {
   std::vector<double> params;
 
@@ -362,32 +364,29 @@ std::vector<double> vpMbtDistanceCircle::getModelForDisplay(const vpHomogeneousM
     }
 
     vpImagePoint center;
-    double mu20_p, mu11_p, mu02_p;
-    vpMeterPixelConversion::convertEllipse(camera, *circle, center, mu20_p, mu11_p, mu02_p);
+    double n20_p, n11_p, n02_p;
+    vpMeterPixelConversion::convertEllipse(camera, *circle, center, n20_p, n11_p, n02_p);
     params.push_back(1); //1 for ellipse parameters
     params.push_back(center.get_i());
     params.push_back(center.get_j());
-    params.push_back(mu20_p);
-    params.push_back(mu11_p);
-    params.push_back(mu02_p);
+    params.push_back(n20_p);
+    params.push_back(n11_p);
+    params.push_back(n02_p);
   }
 
   return params;
 }
 
 /*!
-    Enable to display the points along the ellipse with a color corresponding
+   Enable to display the points along the ellipse with a color corresponding
    to their state.
 
-    - If green : The vpMeSite is a good point.
-    - If blue : The point is removed because of the vpMeSite tracking phase
-   (constrast problem).
-    - If purple : The point is removed because of the vpMeSite tracking phase
-   (threshold problem).
-    - If blue : The point is removed because of the robust method in the
-   virtual visual servoing.
+   - If green : The vpMeSite is a good point.
+   - If blue : The point is removed because of the vpMeSite tracking phase (constrast problem).
+   - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
+   - If blue : The point is removed because of the robust method in the virtual visual servoing.
 
-    \param I : The image.
+   \param I : The image.
 */
 void vpMbtDistanceCircle::displayMovingEdges(const vpImage<unsigned char> &I)
 {
@@ -445,27 +444,27 @@ void vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatri
     // Get the parameters of the ellipse in the image plane
     double xg = circle->p[0];
     double yg = circle->p[1];
-    double mu20 = circle->p[2];
-    double mu11 = circle->p[3];
-    double mu02 = circle->p[4];
+    double n20 = circle->p[2];
+    double n11 = circle->p[3];
+    double n02 = circle->p[4];
 
     unsigned int j = 0;
 
     for (std::list<vpMeSite>::const_iterator it = meEllipse->getMeList().begin(); it != meEllipse->getMeList().end();
          ++it) {
       vpPixelMeterConversion::convertPoint(cam, it->j, it->i, x, y);
-      H[0] = 2 * (mu11 * (y - yg) + mu02 * (xg - x));
-      H[1] = 2 * (mu20 * (yg - y) + mu11 * (x - xg));
-      H[2] = vpMath::sqr(y - yg) - mu02;
-      H[3] = 2 * (yg * (x - xg) + y * xg + mu11 - x * y);
-      H[4] = vpMath::sqr(x - xg) - mu20;
+      H[0] = 2 * (n11 * (y - yg) + n02 * (xg - x));
+      H[1] = 2 * (n20 * (yg - y) + n11 * (x - xg));
+      H[2] = vpMath::sqr(y - yg) - n02;
+      H[3] = 2 * (yg * (x - xg) + y * xg + n11 - x * y);
+      H[4] = vpMath::sqr(x - xg) - n20;
 
       for (unsigned int k = 0; k < 6; k++)
         L[j][k] = H[0] * H1[0][k] + H[1] * H1[1][k] + H[2] * H1[2][k] + H[3] * H1[3][k] + H[4] * H1[4][k];
 
-      error[j] = mu02 * vpMath::sqr(x) + mu20 * vpMath::sqr(y) - 2 * mu11 * x * y + 2 * (mu11 * yg - mu02 * xg) * x +
-                 2 * (mu11 * xg - mu20 * yg) * y + mu02 * vpMath::sqr(xg) + mu20 * vpMath::sqr(yg) -
-                 2 * mu11 * xg * yg + vpMath::sqr(mu11) - mu20 * mu02;
+      error[j] = n02 * vpMath::sqr(x) + n20 * vpMath::sqr(y) - 2 * n11 * x * y + 2 * (n11 * yg - n02 * xg) * x +
+                 2 * (n11 * xg - n20 * yg) * y + n02 * vpMath::sqr(xg) + n20 * vpMath::sqr(yg) -
+                 2 * n11 * xg * yg + vpMath::sqr(n11) - n20 * n02;
 
       j++;
     }

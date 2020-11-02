@@ -210,7 +210,7 @@ TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]") {
 
       oss.str("");
       oss << sz.first << "x" << sz.second;
-      oss << " - transposeTilingSO(M)";
+      oss << " - transposeTilingSO(M, tileSize=" << g_tileSize << ")";
       BENCHMARK(oss.str().c_str()) {
         vpMatrix Mt = transposeTilingSO(M, g_tileSize);
         REQUIRE(Mt == Mt_true);
@@ -219,7 +219,7 @@ TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]") {
 
       oss.str("");
       oss << sz.first << "x" << sz.second;
-      oss << " - transposeTiling(M)";
+      oss << " - transposeTiling(M, tileSize=" << g_tileSize << ")";
       BENCHMARK(oss.str().c_str()) {
         vpMatrix Mt = transposeTiling(M, g_tileSize);
         REQUIRE(Mt == Mt_true);

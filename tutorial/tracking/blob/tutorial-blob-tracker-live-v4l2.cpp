@@ -9,17 +9,27 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
-int main()
+int main(int argc, char **argv)
 {
 #if ((defined(VISP_HAVE_V4L2) || (VISP_HAVE_OPENCV_VERSION >= 0x020100)) &&                                            \
      (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)))
+
+  int device = 0;
+  if (argc == 2) {
+    device = std::atoi(argv[1]);
+  }
   vpImage<unsigned char> I; // Create a gray level image container
 
+  std::stringstream ss;
+  ss << "/dev/video" << device;
+
+  std::cout << "Connect to: " << ss.str() << std::endl;
 #if defined(VISP_HAVE_V4L2)
   vpV4l2Grabber g;
+  g.setDevice(ss.str());
   g.open(I);
 #elif defined(VISP_HAVE_OPENCV)
-  cv::VideoCapture g(0); // open the default camera
+  cv::VideoCapture g(device); // open the default camera
   if (!g.isOpened()) {   // check if we succeeded
     std::cout << "Failed to open the camera" << std::endl;
     return -1;
@@ -70,5 +80,8 @@ int main()
       init_done = false;
     }
   }
+#else
+  (void)argc;
+  (void)argv;
 #endif
 }

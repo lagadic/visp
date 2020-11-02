@@ -115,6 +115,7 @@ int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const v
 
 int main()
 {
+#if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     int test_planar_fail = 0, test_non_planar_fail = 0, fail = 0;
 
@@ -388,4 +389,8 @@ int main()
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
+#else
+  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
+  return EXIT_SUCCESS;
+#endif
 }

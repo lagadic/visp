@@ -49,12 +49,50 @@
 
   \ingroup group_core_gui
 
-  \brief Class to define colors available for display functionnalities.
+  \brief Class to define RGB colors available for display functionnalities.
 
-  You may use predefined colors (black, white, red, green, blue, cyan
-  and orange) or specify your own color by settings its R,G,B values.
+  - You may use predefined colors:
+    - vpColor::black, vpColor::white,
+    - vpColor::lightGray, vpColor::gray, vpColor::darkGray,
+    - vpColor::lightRed, vpColor::red, vpColor::darkRed,
+    - vpColor::lightGreen, vpColor::green, vpColor::darkGreen,
+    - vpColor::lightBlue, vpColor::blue, vpColor::darkBlue,
+    - vpColor::yellow, vpColor::cyan, vpColor::orange, vpColor::purple
+    \code
+    vpColor color1(vpColor::lightGreen);
+    vpColor color2 = vpColor::lightGreen;
+    \endcode
+  - or specify your own color by settings its R,G,B values.
+    \code
+    unsigned char R=140, G=255, B=140;
+    vpColor color1(R, G, B);
+    vpColor color2;
+    color2.setColor(R, G, B);
+    \endcode
 
-  An identifier vpColorIdentifier is associated to each color. This
+  \warning Since ViSP 3.3.1 or higher we introduce the alpha channel support for color
+  transparency.
+  This feature is for the moment only supported using vpDisplayOpenCV.
+  To use transparency you may set an additional alpha parameter. When the value is 255,
+  there is no transparency. A value equal to 0 means that the color is completely
+  transparent. The following examples show how to introduce transparency:
+  - using predefined colors:
+    \code
+    unsigned char alpha = 128;
+    vpColor color1(vpColor::lightGreen, alpha);
+    vpColor color2 = vpColor(vpColor::lightGreen, alpha);
+    \endcode
+  - or using user defined colors:
+    \code
+    unsigned char R=140, G=255, B=140, alpha=128;
+    vpColor color1(R, G, B, alpha);
+    vpColor color2;
+    color2.setColor(R, G, B, alpha);
+    \endcode
+  See displayOpenCV.cpp example for complete usage when displaying filled transparent
+  circles or rectangles.
+
+  An identifier vpColor::vpColorIdentifier is associated to each color. This
   identifier is useful to determine if a color is predefined or
   specified by it R,G,B values. In that last case, the identifier is
   always set to vpColor::id_unknown.
@@ -64,7 +102,6 @@
   a circle) and a specific brown color (used to draw a rectangle).
 
   \code
-#include <visp3/core/vpConfig.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
@@ -215,6 +252,29 @@ public:
   inline vpColor(unsigned char r, unsigned char g, unsigned char b,
                  vpColor::vpColorIdentifier cid = vpColor::id_unknown)
     : vpRGBa(r, g, b), id(cid){}
+  /*!
+    Construct a color from its RGB values and alpha channel.
+
+    \param r : Red component.
+    \param g : Green component.
+    \param b : Blue component.
+    \param alpha : Alpha channel for transparency.
+
+    \param cid : The color identifier to indicate if this color is or
+    not a predefined one.
+  */
+  inline vpColor(unsigned char r, unsigned char g, unsigned char b, unsigned char alpha,
+                 vpColor::vpColorIdentifier cid = vpColor::id_unknown)
+    : vpRGBa(r, g, b, alpha), id(cid){}
+  /*!
+    Construct a color with an alpha channel.
+
+    \param color : RGB color.
+    \param alpha : Alpha channel for transparency.
+  */
+  inline vpColor(const vpColor &color, unsigned char alpha)
+    : vpRGBa(color.R, color.G, color.B, alpha), id(color.id) {}
+
   /*! Default destructor. */
   inline virtual ~vpColor(){}
 
@@ -226,17 +286,18 @@ public:
     \param r : Red component.
     \param g : Green component.
     \param b : Blue component.
+    \param a : Alpha component for transparency.
 
     The color identifier is set to vpColor::id_unknown to indicate
     that this color is not a predefined one.
 
   */
-  inline void setColor(unsigned char r, unsigned char g, unsigned char b)
+  inline void setColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a=vpRGBa::alpha_default)
   {
     this->R = r;
     this->G = g;
     this->B = b;
-    this->A = 0;
+    this->A = a;
     id = id_unknown;
   }
 
