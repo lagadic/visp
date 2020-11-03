@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-ros-package Tutorial: Installation from prebuilt packages for ROS
+\page tutorial-bridge-ros Tutorial: Using ViSP with ROS 1
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from prebuilt ROS packages on Linux Ubuntu or Debian. 
@@ -9,7 +9,7 @@ In this tutorial you will learn how to install ViSP from prebuilt ROS packages o
 
 \section install_ros_package ViSP ROS package
 
-ViSP is available as a <a href="http://wiki.ros.org/visp">ROS package</a> for \e groovy, \e hydro, \e indigo, \e jade and \e kinetic distro. Under Ubuntu, to get the package simply type:
+ViSP is available as a <a href="http://wiki.ros.org/visp">ROS package</a> for `groovy`, `hydro`, `indigo`, `jade`, `kinetic` and `melodic` distros. Under Ubuntu, to get the package simply type:
 
 \code
 $ sudo apt-get install ros-<distro>-visp
