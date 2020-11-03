@@ -67,8 +67,8 @@ To start with the generic markerless model-based tracker we recommend to underst
 The tutorial-mb-generic-tracker.cpp example uses the following data as input:
 - a video file; `teabox.mpg` is the default video.
 - a cad model that describes the object to track. In our case the file `teabox.cao` is the default one. See \ref mb_generic_model section to learn how the teabox is modeled and section \ref mb_generic_advanced_cao to learn how to model an other object.
-- a file with extension `*.init` that contains the 3D coordinates of some points used to compute an initial pose which serves to initialize the tracker. The user has than to click in the image on the corresponding 2D points. The default file is named `teabox.init`. The content of this file is detailed in \ref mb_generic_started_src_explained section.
-- an optional image with extension `*.ppm` that may help the user to remember the location of the corresponding 3D points specified in `*.init` file.
+- a file with extension `*.init` that contains the 3D coordinates of some points used to compute an initial pose which serves to initialize the tracker. The user has than to click in the image on the corresponding 2D points. The default file is named `teabox.init`. The content of this file is detailed in \ref mb_generic_init_user section.
+- an optional image with extension `*.ppm` that may help the user to remember the location of the corresponding 3D points specified in `*.init` file. To know more about this file see \ref mb_generic_init_user section.
 
 As an output the tracker provides the pose \f$^c {\bf M}_o \f$ corresponding to a 4 by 4 matrix that corresponds to the geometric transformation between the frame attached to the object (in our case the tea box) and the frame attached to the camera. The pose is return as a vpHomogeneousMatrix container. 
 
@@ -173,27 +173,8 @@ tracker->loadModel(objectname + ".wrl");
 Once the model of the object to track is loaded, with the next line the display in the image window of additional drawings in overlay such as the moving edges positions, is then enabled by:
 \snippet tutorial-mb-generic-tracker.cpp Set display
 
-Now we have to initialize the tracker. With the next line we choose to use a user interaction. 
+Now we have to initialize the tracker. With the next line we choose to use a user interaction (see \ref mb_generic_init_user).
 \snippet tutorial-mb-generic-tracker.cpp Init
-
-The user has to click in the image on four vertices with their 3D coordinates defined in the \c "teabox.init" file. The following image shows where the user has to click.
-
-\image html img-teabox-click.jpg Image \c "teabox.ppm" used to help the user to initialize the tracker. 
-
-Matched 2D and 3D coordinates are then used to compute an initial pose used to initialize the tracker. Note also that the third optional argument "true" is used here to enable the display of an image that may help the user for the initialization. The name of this image is the same as the \c "*.init" file except the extension that should be \c ".ppm". In our case it will be \c "teabox.ppm".
-
-The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user initialization is provided hereafter. Note that all the characters after character '#' are considered as comments. 
-
-\includelineno tutorial/tracking/model-based/generic/model/teabox/teabox.init
-
-We give now the signification of each line of this file:
-- line 1: Number of 3D points that are defined in this file. At least 4 points are required. Four is the minimal number of points requested to compute a pose.
-- line 2: Each point is defined by its 3D coordinates. Here we define the first point with coordinates (0,0,0). In the previous figure it corresponds to vertex 0 of the tea box. This point is also the origin of the frame in which all the points are defined.  
-- line 3: 3D coordinates of vertex 3.
-- line 4: 3D coordinates of vertex 2.
-- line 5: 3D coordinates of vertex 5.
-
-Here the user has to click on vertex 0, 3, 2 and 5 in the window that displays image \c I. From the 3D coordinates defined in \c teabox.init and the corresponding 2D coordinates of the vertices obtained by user interaction a pose is computed that is then used to initialize the tracker.
 
 Next, in the infinite while loop, after displaying the next image, we track the object on a new image \c I.
 \snippet tutorial-mb-generic-tracker.cpp Track
@@ -207,9 +188,9 @@ Next lines are used first to retrieve the camera parameters used by the tracker,
 The last lines are here to free the memory allocated for the display and tracker:
 \snippet tutorial-mb-generic-tracker.cpp Cleanup
 
-\section mb_generic_model Teabox CAD model
+\section mb_generic_model Tracker CAD model
 
-ViSP supports two different ways to describe CAD models, either in `cao` or in `vrml` format.
+ViSP model-based tracker supports two different ways to describe CAD models, either in `cao` or in `vrml` format.
 - `cao` format is specific to ViSP. It allows to describe the CAD model of an object using a text file with extension `.cao`.
 - `vrml` format is supported only if Coin 3rd party is installed. This format allows to describe the CAD model of an object using a text file with extension `.wrl`.
 
@@ -278,6 +259,61 @@ We provide now a line by line description of the file where the faces of the box
 - line 13 to 20: 3D coordinates of the 8 tea box vertices.
 - line 34 to 29: Each line describe a face. In this example, a face is defined by 4 vertices. For example, the first face join vertices 0,1,2,3. The orientation of the face is counter clockwise by going from vertex 0 to vertex 1, then 2 and 3. This fixes the orientation of the normal of the face going outside the object.
 
+
+\section mb_generic_init Tracker initialization
+
+There are two ways to initialize the tracker, either by user interaction, either using an initial pose provided by a specific algorithm.
+
+\subsection mb_generic_init_user Initialization by user click
+
+The tracker could be initialized by the user that has to click on at least 4 points on the object seen in the image. To this end, vpMbGenericTracker::initClick() function has to be used.
+
+\snippet tutorial-mb-generic-tracker.cpp Init
+
+The previous line of code, loads a file named \c "<objectname>.init" and waits for user click. When an image named \c "<objectname>.ppm" exists besides \c "<objectname>.init" and when the last parameter of the function is set to `true`, the image is displayed to help the user to know where to click. Supported image formats are `.ppm`, `.pgm`, `.png`, `.jpeg` and `.jpg`.
+
+Let us consider the teabox example.
+
+The user has to click in the image on four vertices with their 3D coordinates defined in the \c "teabox.init" file. The following image \c "teabox.ppm" shows where the user has to click.
+
+\image html img-teabox-click.jpg Image \c "teabox.ppm" used to help the user to initialize the tracker.
+
+Matched 2D and 3D coordinates are then used to compute an initial pose used to initialize the tracker. Note also that the third optional argument "true" is used here to enable the display of an image that may help the user for the initialization. The name of this image is the same as the \c "*.init" file except the extension that should be \c ".ppm". In our case it will be \c "teabox.ppm".
+
+The content of \c teabox.init file that defines 3D coordinates of some points of the model used during user initialization is provided hereafter. Note that all the characters after character '#' are considered as comments.
+
+\includelineno tutorial/tracking/model-based/generic/model/teabox/teabox.init
+
+We give now the signification of each line of this file:
+- line 1: Number of 3D points that are defined in this file. At least 4 points are required. Four is the minimal number of points requested to compute a pose.
+- line 2: Each point is defined by its 3D coordinates. Here we define the first point with coordinates (0,0,0). In the previous figure it corresponds to vertex 0 of the tea box. This point is also the origin of the frame in which all the points are defined.
+
+- line 3: 3D coordinates of vertex 3.
+- line 4: 3D coordinates of vertex 2.
+- line 5: 3D coordinates of vertex 5.
+
+Here the user has to click on vertex 0, 3, 2 and 5 in the window that displays image \c I. From the 3D coordinates defined in \c teabox.init and the corresponding 2D coordinates of the vertices obtained by user interaction a pose is computed that is then used to initialize the tracker.
+
+<b>How to choose good points for manual initialization</b>
+
+To select which 3D points to put in the `.init` file that are used to initialize manually the tracker, you should ensure that:
+
+- The projection of the points (usually we use four 3D points but could be more in the `.init` file) in the image must be visible
+- The spatial distribution of the projection of 3D points in the image should be as wide as possible in the image (ie they should not be distributed over a very small part in the image), they should be not aligned and not located in the same plane when the object is non planar
+- Usually, we copy/paste coordinates of 3D points from `.cao` file.
+
+\subsection mb_generic_init_pose Initialization by external pose
+
+The other way to initialize the tracker is to use an initial pose provided by an external algorithm. To this end, vpMbGenericTracker::initFromPose() function has to be used.
+
+\snippet tutorial-mb-generic-tracker-apriltag-webcam.cpp Init
+
+Initial pose named `cMo` is here a vpHomogeneousMatrix object.
+
+There are several ways to get an initial pose:
+- by using a fiducal marker such an AprilTag that could be detected online and which pose can serve as initialization; see \ref tutorial-tracking-mb-generic-apriltag-live
+- when the object is textured, by learning the keypoint descriptors located on visible faces; see \ref tutorial-detection-object
+- by using advanced deep learning algorithms...
 
 \section mb_generic_settings Tracker settings
 
@@ -1108,6 +1144,24 @@ or
 \code
 vpMbGenericTracker::setUseDepthNormalTracking("name of the face", boolean);
 \endcode
+
+\subsection mb_generic_advanced_display How to save tracking results without vpDisplay
+
+The classical way to save tracking results is to use vpDisplay::getImage() as in tutorial-export-image.cpp to exploit the display window in order to get the image and all the drawings in overlay in a RGBa image and then to save the resulting image.
+
+But on embedded systems, it is not always possible to open a display window with vpDisplayX, vpDisplayOpenCV or vpDisplayGDI to view real-time tracking results. That's why we propose to use vpMbGenericTracker::getModelForDisplay() and vpMbGenericTracker::getFeaturesForDisplay() in conjunction with vpImageDraw to draw tracking results directly in an image that could be saved during tracking.
+
+The following code from testGenericTracker.cpp shows how to draw the CAD model in an image named `resultsColor` or `resultsDepth`:
+
+\snippet testGenericTracker.cpp Draw CAD model
+
+There is also the possibility to draw the tracked features in the same images:
+
+\snippet testGenericTracker.cpp Draw features
+
+And then to save the images in a file:
+
+\snippet testGenericTracker.cpp Save drawings
 
 \section mb_generic_use_case Use case
 

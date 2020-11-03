@@ -486,7 +486,7 @@ namespace
         ss << "Nb features: " << tracker.getError().getRows();
         vpDisplay::displayText(I_depth, 40, 20, ss.str(), vpColor::red);
       } else if (save) {
-        //Models
+        //! [Draw CAD model]
         std::map<std::string, std::vector<std::vector<double> > > mapOfModels;
         std::map<std::string, unsigned int> mapOfW;
         mapOfW["Camera1"] = I.getWidth();
@@ -511,8 +511,9 @@ namespace
             }
           }
         }
+        //! [Draw CAD model]
 
-        //Features
+        //! [Draw features]
         std::map<std::string, std::vector<std::vector<double> > > mapOfFeatures;
         tracker.getFeaturesForDisplay(mapOfFeatures);
         for (std::map<std::string, std::vector<std::vector<double> > >::const_iterator it = mapOfFeatures.begin();
@@ -539,6 +540,7 @@ namespace
             }
           }
         }
+        //! [Draw features]
 
         //Computation time
         std::ostringstream oss;
@@ -581,6 +583,7 @@ namespace
         vpDisplay::flush(I);
         vpDisplay::flush(I_depth);
       } else if (save) {
+        //! [Save drawings]
         char buffer[256];
         std::ostringstream oss;
         oss << "results/image_%04d.png";
@@ -590,6 +593,7 @@ namespace
         results.insert(resultsDepth, vpImagePoint(0, resultsColor.getWidth()));
 
         vpImageIo::write(results, buffer);
+        //! [Save drawings]
       }
 
       if (opt_display && opt_click_allowed) {

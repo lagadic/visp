@@ -308,7 +308,9 @@ int main(int argc, const char **argv)
 
         // Initialize the tracker with the result of the detection
         if (state == state_tracking) {
+          //! [Init]
           tracker.initFromPose(I, cMo);
+          //! [Init]
         }
       }
 
