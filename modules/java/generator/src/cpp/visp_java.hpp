@@ -1,4 +1,6 @@
 // This file is part of ViSP project.
+#ifndef VISP_JAVA_HPP
+#define	VISP_JAVA_HPP
 
 #undef LOGE
 #undef LOGD
@@ -14,10 +16,6 @@
 #  define LOGE(...)
 #  define LOGD(...)
 #endif
-
-#ifndef VISP_JAVA_HPP
-#define	VISP_JAVA_HPP
-
 
 #define CONSTRUCTOR(ENV, CLS) ENV->GetMethodID(CLS, "<init>", "(I)V")
 
