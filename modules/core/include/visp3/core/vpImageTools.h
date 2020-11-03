@@ -635,14 +635,11 @@ template <class Type> void *vpUndistortInternalType<Type>::vpUndistort_threaded(
   \warning This function works only with Types authorizing "+,-,
   multiplication by a scalar" operators.
 
-  \warning This function is time consuming :
-    - On "Rhea"(Intel Core 2 Extreme X6800 2.93GHz, 2Go RAM)
-      or "Charon"(Intel Xeon 3 GHz, 2Go RAM) : ~8 ms for a 640x480 image.
+  Since this function is time consuming, if you want to undistort multiple images, you should rather
+  call initUndistortMap() once and then remap() to undistort the images.
+  This will be less time consuming.
 
-  \note If you want to undistort multiple images, you should call `vpImageTools::initUndistortMap()`
-  once and then `vpImageTools::remap()` to undistort the images. This will be less time consuming.
-
-  \sa initUndistortMap, remap
+  \sa initUndistortMap(), remap()
 */
 template <class Type>
 void vpImageTools::undistort(const vpImage<Type> &I, const vpCameraParameters &cam, vpImage<Type> &undistI,
