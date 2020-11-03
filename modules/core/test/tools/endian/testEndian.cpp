@@ -65,6 +65,16 @@ TEST_CASE("Test bitwise shift operators and zero fill", "[vpEndian_test]") {
 
 int main(int argc, char *argv[])
 {
+#if defined(VISP_LITTLE_ENDIAN)
+  std::cout << "Detected endianess: LE" << std::endl;
+#elif defined(VISP_BIG_ENDIAN)
+  std::cout << "Detected endianess: BE" << std::endl;
+#elif defined(VISP_PDB_ENDIAN)
+  std::cout << "Detected endianess: PDB" << std::endl;
+#else
+  std::cout << "Detected endianess: unknown" << std::endl;
+#endif
+
   Catch::Session session; // There must be exactly one instance
 
   // Let Catch (using Clara) parse the command line
