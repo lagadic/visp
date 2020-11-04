@@ -43,7 +43,7 @@ if(NOT DEFINED WINRT_8_1)
   list(APPEND tutorial_cpp tutorial-matching-surf-homography-deprecated.cpp)
 endif()
 
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/video-postcard.mpeg" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/video-postcard.mp4" )
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

@@ -8,11 +8,11 @@ find_package(VISP REQUIRED visp_core visp_mbt visp_klt visp_io visp_gui)
 set(tutorial_cpp
   tutorial-mb-hybrid-tracker.cpp)
 
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.mpg" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.mp4" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.xml" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.cao" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.init" )
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.ppm" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/teabox.png" )
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

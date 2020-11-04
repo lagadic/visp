@@ -14,7 +14,7 @@ int main(int argc, char **argv)
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
 
   try {
-    std::string opt_videoname = "model/teabox/teabox.mpg";
+    std::string opt_videoname = "model/teabox/teabox.mp4";
     std::string opt_modelname = "model/teabox/teabox.cao";
     int opt_tracker = 0;
 
@@ -25,10 +25,10 @@ int main(int argc, char **argv)
         opt_modelname = std::string(argv[i + 1]);
       else if (std::string(argv[i]) == "--tracker")
         opt_tracker = atoi(argv[i + 1]);
-      else if (std::string(argv[i]) == "--help") {
+      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0]
                   << " [--video <video name>] [--model <model name>] "
-                     "[--tracker <0=egde|1=keypoint|2=hybrid>] [--help]\n"
+                     "[--tracker <0=egde|1=keypoint|2=hybrid>] [--help] [-h]\n"
                   << std::endl;
         return 0;
       }

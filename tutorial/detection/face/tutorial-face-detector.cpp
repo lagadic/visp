@@ -15,7 +15,7 @@ int main(int argc, const char *argv[])
   try {
     //! [Default settings]
     std::string opt_face_cascade_name = "./haarcascade_frontalface_alt.xml";
-    std::string opt_video = "video.mpeg";
+    std::string opt_video = "video.mp4";
     //! [Default settings]
 
     for (int i = 0; i < argc; i++) {
@@ -23,10 +23,10 @@ int main(int argc, const char *argv[])
         opt_face_cascade_name = std::string(argv[i + 1]);
       else if (std::string(argv[i]) == "--video")
         opt_video = std::string(argv[i + 1]);
-      else if (std::string(argv[i]) == "--help") {
+      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "Usage: " << argv[0]
-                  << " [--haar <haarcascade xml filename>] [--video <input "
-                     "video file>] [--help]"
+                  << " [--haar <haarcascade xml filename>] [--video <input video file>]"
+                  << " [--help] [-h]"
                   << std::endl;
         return 0;
       }

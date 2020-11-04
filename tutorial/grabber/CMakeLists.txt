@@ -22,7 +22,7 @@ set(tutorial_cpp
   tutorial-video-recorder.cpp
 )
 
-set(tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/video.mpg")
+set(tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/video.mp4")
 
 if(VISP_HAVE_FLYCAPTURE)
   # Add specific build flag to turn off warnings coming from PointGrey flycapture 3rd party

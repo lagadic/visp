@@ -23,7 +23,7 @@ int main(int argc, const char **argv)
   vpImage<unsigned char> I;
 
   vpVideoReader reader;
-  reader.setFileName("video-postcard.mpeg");
+  reader.setFileName("video-postcard.mp4");
   reader.acquire(I);
 
   const std::string detectorName = "ORB";

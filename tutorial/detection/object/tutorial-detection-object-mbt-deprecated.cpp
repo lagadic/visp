@@ -13,7 +13,7 @@ int main(int argc, char **argv)
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400)
   //! [MBT code]
   try {
-    std::string videoname = "teabox.mpg";
+    std::string videoname = "teabox.mp4";
 
     for (int i = 0; i < argc; i++) {
       if (std::string(argv[i]) == "--name")
