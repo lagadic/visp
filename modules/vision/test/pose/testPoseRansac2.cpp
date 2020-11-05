@@ -238,7 +238,11 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   for (size_t i = 0; i < vectorOfIndex.size(); i++) {
     vectorOfIndex[i] = i;
   }
-  std::random_shuffle(vectorOfIndex.begin(), vectorOfIndex.end());
+
+  //std::random_shuffle(vectorOfIndex.begin(), vectorOfIndex.end()); // std::random_shuffle is deprecated in C++14
+  std::random_device rng;
+  std::mt19937 urng(rng());
+  std::shuffle(vectorOfIndex.begin(), vectorOfIndex.end(), urng);
 
   std::vector<vpPoint> bunnyModelPoints_noisy_tmp = bunnyModelPoints_noisy;
   bunnyModelPoints_noisy.clear();
