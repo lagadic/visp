@@ -133,6 +133,16 @@ set(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PAT
 # Package revision number
 set(VISP_REVISION "1")
 
+#-----------------------------------------------------------------------------
+# TO BE CHECKED BEFORE NEXT RELEASE
+#
+# see here: https://github.com/PointCloudLibrary/pcl/issues/3680
+# when this is fixed, we can remove the following 3 lines.
+if(NOT DEFINED CMAKE_SUPPRESS_DEVELOPER_WARNINGS)
+  set(CMAKE_SUPPRESS_DEVELOPER_WARNINGS 1 CACHE INTERNAL "No dev warnings")
+endif()
+#-----------------------------------------------------------------------------
+
 find_file(GNU_INSTALL_DIRS_FROM_CMAKE NAMES GNUInstallDirs.cmake PATHS ${CMAKE_ROOT}/Modules)
 mark_as_advanced(GNU_INSTALL_DIRS_FROM_CMAKE)
 if(GNU_INSTALL_DIRS_FROM_CMAKE)
