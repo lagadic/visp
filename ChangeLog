@@ -71,6 +71,7 @@ ViSP 3.3.1 (under development)
     . [#822] Issue in ellipse display and usage
     . [#832] Memory leak when reading a sequence of images with vpVideoReader
     . [#838] vpImage::getValue() fails on Alpha arch
+    . [#841] Build issue with PCL 1.11.0 on OSX
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:

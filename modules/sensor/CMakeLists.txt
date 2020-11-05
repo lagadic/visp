@@ -123,7 +123,11 @@ if(USE_PCL)
         if(${lib_}_LIBRARY)
           list(APPEND opt_libs ${${lib_}_LIBRARY})
         else()
-          list(APPEND opt_libs ${lib_})
+          # Here on OSX with PCL 1.11.1, ${lib_} may contain
+          # /Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/usr/lib/libz.tbd
+          # /Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/usr/lib/libexpat.tbd
+          # that doesn't exists. That's why next line was removed.
+          #list(APPEND opt_libs ${lib_})
         endif()
       endif()
     endif()
@@ -227,12 +231,19 @@ if(USE_PCL)
       elseif(EXISTS ${lib_})
         list(APPEND opt_libs "${lib_}")
       else()
-        # standalone lib like "m" or "-framework ApplicationServices -framework CoreServices"
+        # ${lib_} contains standalone lib like "m" or OSX frameworks like "-framework ApplicationServices -framework CoreServices"
+        # or non existing libs like /Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/usr/lib/libz.tbd
         find_library(lib_LOCATION ${lib_})
         if(lib_LOCATION)
           list(APPEND opt_libs ${lib_LOCATION})
-        else()
+        elseif(lib_ MATCHES "^-framework")
+          # Here ${lib_} may contain "-framework ApplicationServices -framework CoreServices"
+          # "-framework Cocoa"
           list(APPEND opt_libs ${lib_})
+        else()
+          # Here ${lib_} may contain "/Library/Developer/CommandLineTools/SDKs/MacOSX10.15.sdk/usr/lib/libz.tbd"
+          # that doesn't exists. We don't add it.
+          #list(APPEND opt_libs ${lib_})
         endif()
       endif()
     endforeach()
