@@ -1,3 +1,13 @@
+# Note: 2020.11.05 by Fabien
+# This file is not parsed with cmake 3.18.4 on Catalina 10.15.7. Same with 3.15.3
+# cmake uses instead /usr/local/Cellar/cmake/3.18.4/share/cmake/Modules/Platform/iOS.cmake
+# The question is since when this file is useless.
+# With respect to /usr/local/Cellar/cmake/3.18.4/share/cmake/Modules/Platform/iOS.cmake
+# the only useful things are the setting of CMAKE_FIND_ROOT_PATH that is mandatory
+# to detect opencv2.framework for iOS.
+# CMAKE_FIND_ROOT_PATH  is now set in Toolchain-iPhoneOS_Xcode.cmake and in
+# Toolchain-iPhoneSimulator_Xcode.cmake
+
 # This file is based off of the Platform/Darwin.cmake and Platform/UnixPaths.cmake
 # files which are included with CMake 2.8.4
 # It has been altered for iOS development
