@@ -139,11 +139,6 @@ int main(int argc, char **argv)
         break;
     }
     vpDisplay::getClick(I);
-//! [Cleanup]
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
-    SoDB::finish();
-#endif
-    //! [Cleanup]
   } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
   }

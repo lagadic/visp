@@ -192,7 +192,7 @@ vpMbTracker::vpMbTracker()
     m_projectionErrorFaces(), m_projectionErrorOgreShowConfigDialog(false),
     m_projectionErrorMe(), m_projectionErrorKernelSize(2), m_SobelX(5,5), m_SobelY(5,5),
     m_projectionErrorDisplay(false), m_projectionErrorDisplayLength(20), m_projectionErrorDisplayThickness(1),
-    m_projectionErrorCam(), m_mask(NULL), m_I()
+    m_projectionErrorCam(), m_mask(NULL), m_I(), m_sodb_init_called(false)
 {
   oJo.eye();
   // Map used to parse additional information in CAO model files,
@@ -227,6 +227,12 @@ vpMbTracker::~vpMbTracker() {
       delete ci;
     ci = NULL;
   }
+#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
+  if (m_sodb_init_called) {
+    // Cleanup memory allocated by Coin library used to load a vrml model
+    SoDB::finish();
+  }
+#endif
 }
 
 #ifdef VISP_HAVE_MODULE_GUI
@@ -1483,25 +1489,13 @@ void vpMbTracker::addPolygon(const std::vector<std::vector<vpPoint> > &listFaces
   file (.wrl) or a CAO file (.cao). CAO format is described in the
   loadCAOModel() method.
 
-  \warning When this class is called to load a vrml model, remember that you
-  have to call Call SoDD::finish() before ending the program.
-  \code
-int main()
-{
-    ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
-  SoDB::finish();
-#endif
-}
-  \endcode
-
   \throw vpException::ioError if the file cannot be open, or if its extension
-is not wrl or cao.
+  is not wrl or cao.
 
   \param modelFile : the file containing the the 3D model description.
   The extension of this file is either .wrl or .cao.
   \param verbose : verbose option to print additional information when loading
-CAO model files which include other CAO model files.
+  CAO model files which include other CAO model files.
   \param odTo : optional transformation matrix (currently only for .cao) to transform
   3D points expressed in the original object frame to the desired object frame.
 */
@@ -1538,25 +1532,13 @@ void vpMbTracker::loadModel(const std::string &modelFile, bool verbose, const vp
 
 /*!
   Load the 3D model of the object from a vrml file. Only LineSet and FaceSet
-are extracted from the vrml file.
-
-  \warning When this class is called, remember that you have to call Call
-  SoDD::finish() before ending the program.
-  \code
-int main()
-{
-    ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
-  SoDB::finish();
-#endif
-}
-  \endcode
+  are extracted from the vrml file.
 
   \warning The cylinders extracted using this method do not use the Cylinder
   keyword of vrml since vrml exporter such as Blender or AC3D consider a
   cylinder as an IndexedFaceSet. To test whether an indexedFaceSet is a
-cylinder or not, the name of the geometry is read. If the name begins with
-"cyl" then the faceset is supposed to be a cylinder. For example, the line
+  cylinder or not, the name of the geometry is read. If the name begins with
+  "cyl" then the faceset is supposed to be a cylinder. For example, the line
   \code
 geometry DEF cyl_cylinder1 IndexedFaceSet
   \endcode
@@ -1569,6 +1551,7 @@ geometry DEF cyl_cylinder1 IndexedFaceSet
 void vpMbTracker::loadVRMLModel(const std::string &modelFile)
 {
 #ifdef VISP_HAVE_COIN3D
+  m_sodb_init_called = true;
   SoDB::init(); // Call SoDB::finish() before ending the program.
 
   SoInput in;

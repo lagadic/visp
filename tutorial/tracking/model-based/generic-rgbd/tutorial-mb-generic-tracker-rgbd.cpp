@@ -117,6 +117,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
     }
   }
 
+  std::cout << "DEBUG: point cloud size: " << pointcloud->width << " " << pointcloud->height << std::endl;
   return true;
 }
 }

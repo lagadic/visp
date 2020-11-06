@@ -221,6 +221,8 @@ protected:
   const vpImage<bool> *m_mask;
   //! Grayscale image buffer, used when passing color images
   vpImage<unsigned char> m_I;
+  //! Flag that indicates that SoDB::init(); was called
+  bool m_sodb_init_called;
 
 public:
   vpMbTracker();

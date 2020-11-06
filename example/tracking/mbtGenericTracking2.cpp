@@ -727,13 +727,6 @@ int main(int argc, const char **argv)
     delete tracker;
     tracker = NULL;
 
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
-    // Cleanup memory allocated by Coin library used to load a vrml model in
-    // vpMbGenericTracker::loadModel() We clean only if Coin was used.
-    if (!cao3DModel)
-      SoDB::finish();
-#endif
-
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

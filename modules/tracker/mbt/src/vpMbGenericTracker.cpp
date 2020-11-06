@@ -2903,18 +2903,6 @@ void vpMbGenericTracker::loadConfigFile(const std::map<std::string, std::string>
   file (.wrl) or a CAO file (.cao). CAO format is described in the
   loadCAOModel() method.
 
-  \warning When this class is called to load a vrml model, remember that you
-  have to call Call SoDD::finish() before ending the program.
-  \code
-int main()
-{
-    ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
-  SoDB::finish();
-#endif
-}
-  \endcode
-
   \throw vpException::ioError if the file cannot be open, or if its extension
 is not wrl or cao.
 
@@ -2942,27 +2930,15 @@ void vpMbGenericTracker::loadModel(const std::string &modelFile, bool verbose, c
   file (.wrl) or a CAO file (.cao). CAO format is described in the
   loadCAOModel() method.
 
-  \warning When this class is called to load a vrml model, remember that you
-  have to call Call SoDD::finish() before ending the program.
-  \code
-int main()
-{
-    ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
-  SoDB::finish();
-#endif
-}
-  \endcode
-
   \throw vpException::ioError if the file cannot be open, or if its extension
-is not wrl or cao.
+  is not wrl or cao.
 
   \param modelFile1 : the file containing the 3D model description for the
-first camera. The extension of this file is either .wrl or .cao.
+  first camera. The extension of this file is either .wrl or .cao.
   \param modelFile2 : the file containing the the 3D model description for the second
-camera. The extension of this file is either .wrl or .cao.
+  camera. The extension of this file is either .wrl or .cao.
   \param verbose : verbose option to print additional information when loading CAO model files
-which include other CAO model files.
+  which include other CAO model files.
   \param T1 : optional transformation matrix (currently only for .cao) to transform
   3D points in \a modelFile1 expressed in the original object frame to the desired object frame.
   \param T2 : optional transformation matrix (currently only for .cao) to transform
@@ -2992,25 +2968,13 @@ void vpMbGenericTracker::loadModel(const std::string &modelFile1, const std::str
   file (.wrl) or a CAO file (.cao). CAO format is described in the
   loadCAOModel() method.
 
-  \warning When this class is called to load a vrml model, remember that you
-  have to call Call SoDD::finish() before ending the program.
-  \code
-int main()
-{
-    ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
-  SoDB::finish();
-#endif
-}
-  \endcode
-
   \throw vpException::ioError if the file cannot be open, or if its extension
-is not wrl or cao.
+  is not wrl or cao.
 
   \param mapOfModelFiles : map of files containing the 3D model description.
   The extension of this file is either .wrl or .cao.
   \param verbose : verbose option to print additional information when loading
-CAO model files which include other CAO model files.
+  CAO model files which include other CAO model files.
   \param mapOfT : optional map of transformation matrices (currently only for .cao)
   to transform 3D points in \a mapOfModelFiles expressed in the original object frame to
   the desired object frame (if the models have the same object frame which should be the
