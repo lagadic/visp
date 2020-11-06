@@ -11,7 +11,7 @@ set(tutorial_cpp
   tutorial-face-detector-live-threaded.cpp)
 
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/haarcascade_frontalface_alt.xml" )
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/video.mpeg" )
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/video.mp4" )
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

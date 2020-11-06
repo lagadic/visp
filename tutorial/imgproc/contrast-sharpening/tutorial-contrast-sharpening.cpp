@@ -20,7 +20,7 @@ int main(int argc, const char **argv)
 #if defined(VISP_HAVE_MODULE_IMGPROC) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
   //! [Macro defined]
   //!
-  std::string input_filename = "Crayfish-low-contrast.ppm";
+  std::string input_filename = "Crayfish-low-contrast.png";
   int blockRadius = 150;
   int bins = 256;
   float slope = 3.0f;
@@ -43,11 +43,10 @@ int main(int argc, const char **argv)
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
                 << " [--input <input image>]"
-                   " [--blockRadius <block radius for CLAHE>] [--bins <nb "
-                   "histogram bins for CLAHE>] [--slope <slope for CLAHE>]"
-                   " [--size <Gaussian kernel size>] [--weight <unsharp mask "
-                   "weighting>]"
-                   " [--help]"
+                   " [--blockRadius <block radius for CLAHE>] "
+                   " [--bins <nb histogram bins for CLAHE>] [--slope <slope for CLAHE>]"
+                   " [--size <Gaussian kernel size>] [--weight <unsharp mask weighting>]"
+                   " [--help] [-h]"
                 << std::endl;
       return EXIT_SUCCESS;
     }

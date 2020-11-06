@@ -87,7 +87,6 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt SDK from Ubuntu or Debian packages.
 - \ref tutorial-install-archlinux-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK for Arch Linux.
 - \ref tutorial-install-osx-homebrew-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK on OSX with Homebrew.
-- \ref tutorial-install-ros-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK for ROS.
 
 \subsection tuto_install_src Installation from source
 
@@ -195,10 +194,11 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-bebop2-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Parrot Bebop 2 drone.
 - \ref tutorial-flir-ptu-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Flir pan-tilt unit and camera.
 
-\subsection tuto_bridge Bridges over other frameworks (OpenCV, MATLAB)
+\subsection tuto_bridge Bridges over other frameworks (OpenCV, MATLAB, ROS-1)
 
 - \ref tutorial-bridge-opencv <br>This tutorial explicit how to convert OpenCV to/from ViSP structures such as camera parameters, images...
 - \ref tutorial-visp-matlab <br>This tutorial shows how to invoke MATLAB functions from ViSP using MATLAB Engine.
+- \ref tutorial-bridge-ros <br>In this tutorial you will learn how to install ViSP prebuilt SDK for ROS and get pointers to existing ROS packages that are using ViSP.
 
 \subsection tuto_tools Other tools
 

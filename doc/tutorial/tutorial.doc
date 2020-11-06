@@ -100,7 +100,6 @@ This page introduces the user to the way to install ViSP from existing prebuild 
 - \subpage tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt library SDK from Ubuntu or Debian packages.
 - \subpage tutorial-install-archlinux-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK for Arch Linux.
 - \subpage tutorial-install-osx-homebrew-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK on OSX with Homebrew.
-- \subpage tutorial-install-ros-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK for ROS.
 
 */
 
@@ -244,11 +243,12 @@ This page introduces the user to the way to achieve a visual servoing.
 
 */
 
-/*! \page tutorial_bridge Bridges over other frameworks (OpenCV, MATLAB)
-This page introduces the user the way to bridge other frameworks like OpenCV or MATLAB.
+/*! \page tutorial_bridge Bridges over other frameworks (OpenCV, MATLAB, ROS-1)
+This page introduces the user the way to bridge other frameworks like OpenCV, MATLAB or ROS-1.
 
 - \subpage tutorial-bridge-opencv <br>This tutorial explicit how to convert OpenCV to/from ViSP structures such as camera parameters, images...
 - \subpage tutorial-visp-matlab <br>This tutorial shows how to invoke MATLAB functions from ViSP using MATLAB Engine. 
+- \subpage tutorial-bridge-ros <br>In this tutorial you will learn how to install ViSP prebuilt SDK for ROS and get pointers to existing ROS packages that are using ViSP.
 
 */
 

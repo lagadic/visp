@@ -11,7 +11,7 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
-  std::string opt_videoname = "bruegel.mpg";
+  std::string opt_videoname = "bruegel.mp4";
   unsigned int opt_subsample = 1;
 
   for (int i = 0; i < argc; i++) {

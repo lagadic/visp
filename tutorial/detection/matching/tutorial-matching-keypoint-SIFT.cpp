@@ -16,7 +16,7 @@ int main()
   vpImage<unsigned char> I;
 
   vpVideoReader reader;
-  reader.setFileName("video-postcard.mpeg");
+  reader.setFileName("video-postcard.mp4");
   reader.acquire(I);
 
   //! [Construction]

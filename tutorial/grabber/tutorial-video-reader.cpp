@@ -8,22 +8,24 @@
 //! [Include]
 
 /*!
- This example allows to read and display a video from a file.
- It only requires that ViSP is build with OpenCV.
+   This example allows to read and display a video from a file.
+   It only requires that ViSP is build with OpenCV.
 
- Example: ./tutorial-video-reader --name video.mpg
+   Example: ./tutorial-video-reader --name video.mp4
  */
 int main(int argc, char **argv)
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
   try {
-    std::string videoname = "video.mpg";
+    std::string videoname = "video.mp4";
 
     for (int i = 0; i < argc; i++) {
       if (std::string(argv[i]) == "--name")
         videoname = std::string(argv[i + 1]);
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0] << " [--name <video name> (default: " << videoname << ")] [--help] [-h]\n" << std::endl;
+        std::cout << "\nUsage: " << argv[0]
+                  << " [--name <video name> (default: " << videoname << ")]"
+                  << " [--help] [-h]\n" << std::endl;
         return 0;
       }
     }

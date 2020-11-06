@@ -15,8 +15,8 @@ int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020300)
   try {
-    std::string opt_videoname_left = "teabox_left.mpg";
-    std::string opt_videoname_right = "teabox_right.mpg";
+    std::string opt_videoname_left = "teabox_left.mp4";
+    std::string opt_videoname_right = "teabox_right.mp4";
     int opt_tracker1 = vpMbGenericTracker::EDGE_TRACKER;
     int opt_tracker2 = vpMbGenericTracker::EDGE_TRACKER;
 

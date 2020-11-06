@@ -12,7 +12,7 @@ int main(int argc, const char *argv[])
 #ifdef VISP_HAVE_OPENCV
   //! [Check 3rd party]
   try {
-    std::string opt_videoname = "video-postcard.mpeg";
+    std::string opt_videoname = "video-postcard.mp4";
     bool opt_init_by_click = false;
     unsigned int opt_subsample = 1;
     for (int i = 0; i < argc; i++) {
@@ -23,7 +23,9 @@ int main(int argc, const char *argv[])
       else if (std::string(argv[i]) == "--subsample")
         opt_subsample = static_cast<unsigned int>(std::atoi(argv[i + 1]));
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "Usage: " << argv[0] << " [--videoname <video name>] [--subsample <scale factor>] [--init-by-click] [--help] [-h]" << std::endl;
+        std::cout << "Usage: " << argv[0]
+                  << " [--videoname <video name>] [--subsample <scale factor>] [--init-by-click]"
+                  << " [--help] [-h]" << std::endl;
         return 0;
       }
     }

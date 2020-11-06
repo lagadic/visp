@@ -1434,7 +1434,8 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
     throw vpException(vpImageException::notInitializedError, "Empty image!");
   }
 
-#if (defined(VISP_LITTLE_ENDIAN) || defined(VISP_BIG_ENDIAN))
+  // alpha architecture is bi-endianness. The following optimization makes testImageGetValue failing
+#if (defined(VISP_LITTLE_ENDIAN) || defined(VISP_BIG_ENDIAN)) && !(defined(__alpha__) || defined(_M_ALPHA))
   //Fixed-point arithmetic
   const int32_t precision = 1 << 16;
   int64_t y = static_cast<int64_t>(i * precision);

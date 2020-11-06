@@ -9,7 +9,7 @@ int main()
 #ifdef VISP_HAVE_OPENCV
   try {
     vpVideoReader reader;
-    reader.setFileName("video-postcard.mpeg");
+    reader.setFileName("video-postcard.mp4");
 
     vpImage<unsigned char> I;
     reader.acquire(I);

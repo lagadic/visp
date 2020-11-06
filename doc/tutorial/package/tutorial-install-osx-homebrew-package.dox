@@ -1,0 +1,72 @@
+/**
+
+\page tutorial-install-osx-homebrew-package Tutorial: Installation from prebuilt packages for OSX with Homebrew
+\tableofcontents
+
+In this tutorial you will learn how to install ViSP Homebrew package on OSX. These steps have been tested with macOS Catalina 10.15.3.
+
+\note Concerning ViSP installation, we provide also other \ref tutorial.
+
+\section install_osx_brew_package_required Install prerequisities
+
+First, go to http://brew.sh to install Homebrew.
+
+\section install_osx_brew_visp Install ViSP with homebrew
+
+To get information on ViSP package:
+\verbatim
+$ brew update
+$ brew info visp
+\endverbatim
+
+To install ViSP and additional dependencies (cmake, opencv3, libdc1304, gsl, zbar, x11), just run:
+
+\verbatim
+$ brew update
+$ brew install visp
+\endverbatim
+
+
+\section install_osx_brew_package_tips Tips and tricks
+\subsection install_osx_brew_package_build_from_source How to install visp from source
+
+To build and install ViSP from source with homebrew you may run:
+
+\verbatim
+$ brew install visp --build-from-source
+\endverbatim
+
+\subsection install_osx_brew_package_uninstall How to uninstall visp formula
+
+\verbatim
+$ brew remove visp
+\endverbatim
+
+\subsection install_osx_brew_package_not_writable /usr/local/include/visp is not writable
+
+If during ViSP installation you get the following error
+
+\verbatim
+$ brew install visp
+...
+==> Pouring visp-3.0.0.el_capitan.bottle.tar.gz
+Error: The `brew link` step did not complete successfully
+The formula built, but is not symlinked into /usr/local
+Could not symlink include/visp/visp_modules.h
+/usr/local/include/visp is not writable.
+
+You can try again using:
+  brew link visp
+...
+\endverbatim
+it means maybe that you install other softwares without brew in /usr/local.
+A work arround is to change the owner of the corresponding folder like:
+\verbatim
+$ sudo chown {your-user-name} /usr/local/include
+\endverbatim
+
+\section install_osx_brew_package_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
+
+*/

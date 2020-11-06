@@ -578,7 +578,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
   the user has to click in the image. This file should have .init extension
   (ie teabox.init).
   \param displayHelp : Optionnal display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
-  should have the same generic name as the init file (ie teabox.ppm). This
+  should have the same generic name as the init file (ie teabox.ppm or teabox.png). This
   image may be used to show where to click. This functionality is only
   available if visp_io module is used.
   \param T : optional transformation matrix to transform
@@ -615,7 +615,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> &I, const std::string &
   the user has to click in the image. This file should have .init extension
   (ie teabox.init).
   \param displayHelp : Optionnal display of an image (.ppm, .pgm, .jpg, .jpeg, .png) that
-  should have the same generic name as the init file (ie teabox.ppm). This
+  should have the same generic name as the init file (ie teabox.ppm or teabox.png). This
   image may be used to show where to click. This functionality is only
   available if visp_io module is used.
   \param T : optional transformation matrix to transform

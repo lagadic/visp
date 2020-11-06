@@ -13,7 +13,7 @@
 
  Example to save an mpeg video:
 
-    ./tutorial-video-recorder --device 0 --name myvideo.mpeg
+    ./tutorial-video-recorder --device 0 --name myvideo.mp4
 
  Example to save a sequence of png images:
 
@@ -36,8 +36,9 @@ int main(int argc, const char *argv[])
       opt_device = atoi(argv[i + 1]);
     else if (std::string(argv[i]) == "--name")
       opt_videoname = std::string(argv[i + 1]);
-    else if (std::string(argv[i]) == "--help") {
-      std::cout << "\nUsage: " << argv[0] << " [--device <device number>] [--name <video name>] [--help]\n"
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout << "\nUsage: " << argv[0]
+                << " [--device <device number>] [--name <video name>] [--help][-h]\n"
                 << std::endl;
       return 0;
     }

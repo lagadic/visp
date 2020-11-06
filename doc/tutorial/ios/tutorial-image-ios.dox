@@ -1,0 +1,99 @@
+/**
+
+\page tutorial-image-ios Tutorial: Image processing on iOS
+\tableofcontents
+
+This tutorial supposes that you have followed the \ref tutorial-getting-started-iOS.
+
+\section image_ios_intro Introduction
+
+In this tutorial you will learn how to do simple image processing on iOS devices with ViSP. This application loads a color image (<a href="https://github.com/lagadic/visp/blob/master/tutorial/ios/StartedImageProc/StartedImageProc/monkey.png">monkey.png</a>) and allows the user to visualize either this image in grey level, either the image gradients, or either canny edges on iOS simulator or devices. 
+
+In ViSP images are carried out using vpImage class. However in iOS, image rendering has to be done using UIImage class that is part of the Core Graphics framework available in iOS. In this tutorial we provide the functions that allow to convert a vpImage to an UIImage and \e vice \e versa. 
+
+Note that all the material (source code and image) used in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\verbatim
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedImageProc
+\endverbatim
+
+\section image_ios_app StartedImageProc application
+
+Let us consider the Xcode project named `StartedImageProc` that is part of ViSP source code and located in `$VISP_WS/tutorial/ios/StartedImageProc`. This project is a Xcode `"Single view application"` where we renamed `ViewController.m` into `ViewController.mm`, introduced minor modifications in `ViewController.h` and add <a href="https://github.com/lagadic/visp/blob/master/tutorial/ios/StartedImageProc/StartedImageProc/monkey.png">monkey.png</a> image.
+
+To open this application, if you followed \ref tutorial-install-ios-package simply run:
+\verbatim
+$ cd $HOME/framework
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/StartedImageProc
+$ open StartedImageProc -a Xcode
+\endverbatim
+
+or if you already downloaded ViSP following \ref tutorial-install-iOS run:
+\verbatim
+$ open ~/framework/visp/tutorial/ios/StartedImageProc -a Xcode
+\endverbatim
+
+Here you should see something similar to:
+\image html img-started-imgproc-ios.jpg
+
+Once opened, you have just to drag & drop ViSP and OpenCV frameworks available in `$HOME/framework/ios` if you followed \ref tutorial-install-ios-package.
+\image html img-started-imgproc-ios-drag-drop.jpg
+
+In the dialog box, enable check box `"Copy item if needed"` to add `visp3.framework` and `opencv2.framework` to the project.
+\image html img-started-imgproc-ios-drag-drop-dialog.jpg
+
+Now you should be able to build and run your application.
+
+\section image_ios_convert Image conversion functions
+
+The Xcode project `StartedImageProc` contains `ImageConversion.h` and `ImageConversion.mm` files that implement the functions to convert UIImage to ViSP vpImage and vice versa.
+\subsection image_ios_convert_uiimage_vpimage_color UIImage to color vpImage
+
+The following function implemented in \c ImageConversion.mm show how to convert an `UIImage` into a `vpImage<vpRGBa>` instanciated as a color image. 
+
+\snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm vpImageColorFromUIImage
+
+\subsection image_ios_convert_uiimage_vpimage_gray UIImage to gray vpImage 
+
+The following function implemented in `ImageConversion.mm` show how to convert an `UIImage` into a `vpImage<unsigned char>` instanciated as a grey level image. 
+
+\snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm vpImageGrayFromUIImage
+
+\subsection image_ios_convert_vpimage_color_uiimage Color vpImage to UIImage
+
+The following function implemented in `ImageConversion.mm` show how to convert a gray level `vpImage<unsigned char>` into an UIImage. 
+
+\snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm UIImageFromVpImageColor
+
+\subsection image_ios_convert_vpimage_gray_uiimage Gray vpImage to UIImage
+
+The following function implemented in `ImageConversion.mm` show how to convert a color `vpImage<vpRGBa>` into an `UIImage`. 
+
+\snippet tutorial/ios/StartedImageProc/StartedImageProc/ImageConversion.mm UIImageFromVpImageGray
+
+\section image_ios_output Application output
+
+- Now we are ready to build `"StartedImageProc"` application using Xcode `"Product > Build"` menu.
+\note Here it may be possible that you get a build issue \ref image_ios-issue-libxml. Just follow the link to see how to fix this issue.
+
+- Once build, if you run `StartedImageProc` application on your device, you should be able to see the following screen shots.
+
+- Pressing `"load image"` button gives the following result:
+\image html img-started-imgproc-ios-output-color.jpg 
+- Pressing `"convert to gray"` button gives the following result:
+\image html img-started-imgproc-ios-output-gray.jpg
+- Pressing `"compute gradient"` button gives the following result:
+\image html img-started-imgproc-ios-output-gradient.jpg
+- Pressing `"canny detector"` button gives the following result:
+\image html img-started-imgproc-ios-output-canny.jpg
+
+\section image_ios-issues Known issues
+\subsection image_ios-issue-libxml iOS error: libxml/parser.h not found
+
+Follow \ref getting-started-ios-issue-libxml link if you get this issue.
+
+\section image_ios_next Next tutorial
+
+You are now ready to see the \ref tutorial-detection-apriltag-ios.
+
+*/

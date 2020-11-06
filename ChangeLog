@@ -70,6 +70,9 @@ ViSP 3.3.1 (under development)
     . [#820] Error when composing two RT transformations in template tracker
     . [#822] Issue in ellipse display and usage
     . [#832] Memory leak when reading a sequence of images with vpVideoReader
+    . [#838] vpImage::getValue() fails on Alpha arch
+    . [#841] Build issue with PCL 1.11.0 on OSX
+    . [#842] iOS framework build process is unable to detect opencv2.framework as 3rd party
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:
