@@ -2,69 +2,69 @@
   \page tutorial-getting-started-iOS Tutorial: How to create a basic iOS application that uses ViSP 
   \tableofcontents
 
-  \note We assume that you have \c "ViSP for iOS" either after following \ref tutorial-install-ios-package or \ref tutorial-install-iOS. Following one of these tutorials allows to exploit \c visp3.framework and \c opencv.framework to build an application for iOS devices.
+  \note We assume that you have `"ViSP for iOS"` either after following \ref tutorial-install-ios-package or \ref tutorial-install-iOS. Following one of these tutorials allows to exploit `visp3.framework` and `opencv2.framework` to build an application for iOS devices.
 
-In this tutorial we suppose that you install \c visp3.framework in a folder named \c \<framework_dir\>/ios. If \c \<framework_dir\> corresponds to \c ~/framework, you should get the following:
+In this tutorial we suppose that you install `visp3.framework` in a folder named `<framework_dir>/ios`. If `<framework_dir>` corresponds to `$HOME/framework`, you should get the following:
 
-\code
-$ ls ~/framework/ios
+\verbatim
+$ ls $HOME/framework/ios
 opencv2.framework         visp3.framework
-\endcode
+\endverbatim
 
 Note also that all the material (source code and Xcode project) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
-\code
+\verbatim
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/GettingStarted
-\endcode
+\endverbatim
 
 \section getting-started-iOS-create Create a new Xcode project
 
 - Launch Xcode
-- Follow <tt>"File>New>Project"</tt> menu and create a new <tt>"Single View Application"</tt>
+- Follow `"File > New > Project"` menu and create a new iOS `"App"`
 
 \image html img-getting-started-iOS-create.jpg
 
-- Click on <tt>"Next"</tt> button and complete the options for your new project:
+- Click on `"Next"` button and complete the options for your new project:
 
 \image html img-getting-started-iOS-options.jpg
 
-- Click on <tt>"Next"</tt> button and select the folder where the new project will be saved. Once done click on <tt>"Create"</tt>. Now you should have something similar to:
+- Click on `"Next"` button and select the folder where the new project will be saved. Once done click on `"Create"`. Now you should have something similar to:
 
 \image html img-getting-started-iOS-new.jpg
 
 \section getting-started-iOS-link-visp Linking ViSP framework 
 
-Now we need to link \c visp3.framework with the Xcode project.
+Now we need to link `visp3.framework` with the Xcode project.
 
-- Select the project navigator in the left hand panel (1) and click on project name <tt>"Getting Started"</tt> (2)
+- Select the project navigator in the left hand panel (1) and click on project name `"Getting Started"` (2)
 
 \image html img-getting-started-iOS-navigator.jpg
 
-- Use the Finder to drag & drop ViSP and OpenCV frameworks located in \c \<framework_dir\>/ios folder in the left hand panel containing all the project files.
+- Use the Finder to drag & drop ViSP and OpenCV frameworks located in `<framework_dir>/ios` folder in the left hand panel containing all the project files.
 \image html img-getting-started-iOS-drag-drop.jpg
 
-- In the dialog box, enable check box <tt>"Copy item if needed"</tt> to ease \c visp3.framework and \c opencv.framework headers location addition to the build options
+- In the dialog box, enable check box `"Copy item if needed"` to ease `visp3.framework` and `opencv2.framework` headers location addition to the build options
 
 \image html img-getting-started-iOS-drag-drop-dialog.jpg
 
-- Click on <tt>"Finish"</tt>. You should now get something similar to the following image
+- Click on `"Finish"`. You should now get something similar to the following image
 \image html img-getting-started-iOS-link-visp.jpg
 
 \section getting-started-iOS-app Writing a ViSP iOS application
 
-- Because we will mix Objective-C and ViSP C++ Code, rename \c ViewController.m file into \c ViewController.mm
+- Because we will mix Objective-C and ViSP C++ Code, rename `ViewController.m` file into `ViewController.mm`
 \image html img-getting-started-iOS-rename.jpg
 
-- Now copy/paste `$VISP_WS/visp/tutorial/ios/GettingStarted/GettingStarted/ViewController.mm" file content into `ViewController.mm`. Note that this Objective-C code is inspired from tutorial-homography-from-points.cpp.
+- Now copy/paste `$VISP_WS/visp/tutorial/ios/GettingStarted/GettingStarted/ViewController.mm` file content into `ViewController.mm`. Note that this Objective-C code is inspired from tutorial-homography-from-points.cpp.
 \include GettingStarted/ViewController.mm
-In this sample, we first import the headers to use vpHomography class. Then we create a new function called \c processViSPHomography(). This function is finally called in viewDibLoad().
+In this sample, we first import the headers to use vpHomography class. Then we create a new function called \c processViSPHomography(). This function is finally called in `viewDibLoad()`.
 - After the previous copy/paste, you should have something similar to
 \image html img-getting-started-iOS-code.jpg
 
-- Now we are ready to build this simple <tt>"Getting Started"</tt> application using Xcode <tt>"Product>Build"</tt> menu.
+- Now we are ready to build this simple `"Getting Started"` application using Xcode `"Product > Build"` menu.
 \note Here it may be possible that you get a build issue \ref getting-started-ios-issue-libxml. Just follow the link to see how to fix this issue.
 
-- You can now run your code using <tt>"Product>Run"</tt> menu (Simulator or device does not bother because we are just executing code). You should obtain these logs showing that visp code was correctly executed by your iOS project.
+- You can now run your code using `"Product > Run"` menu (Simulator or device does not bother because we are just executing code). You should obtain these logs showing that visp code was correctly executed by your iOS project.
 \image html img-getting-started-iOS-log.jpg
 
 \section getting-started-ios-issues Known issues

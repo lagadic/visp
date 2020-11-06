@@ -1,0 +1,41 @@
+/**
+
+\page tutorial-install-ios-package Tutorial: Installation from prebuilt packages for iOS devices
+\tableofcontents
+
+In this tutorial you will learn how to install ViSP prebuilt framework for iOS devices. 
+
+\note Concerning ViSP installation, we provide also other \ref tutorial.
+
+\section install_ios_package_list ViSP framework for iOS
+
+ViSP is available as a prebuilt framework for iOS devices. Go to ViSP <a href="https://visp.inria.fr/download">download page</a> and get `"ViSP for iOS"` as a zip archive. Since this package was build with OpenCV as 3rd party, the zip archive contains also OpenCV framework it was built with to ensure compatibility.
+
+To install ViSP framework in a folder denoted `<framework_dir>/ios` that could be set to `$HOME/framework/ios` <a href="https://visp.inria.fr/download">download</a> `"ViSP for iOS"` with Safari or Firefox and do the following:
+
+\verbatim
+$ mkdir -p $HOME/framework/ios
+\endverbatim
+
+If downloaded with Safari continue with:
+\verbatim
+$ mv $HOME/Downloads/visp3/* $HOME/framework/ios/
+\endverbatim
+or if downloaded with Firefox, run:
+\verbatim
+$ unzip $HOME/Downloads/visp3.framework*.zip -d $HOME/framework/ios
+\endverbatim
+
+The content of `<framework_dir>/ios` should be the following:
+\verbatim
+$ ls $HOME/framework/ios
+opencv2.framework      visp3.framework
+\endverbatim
+
+\note ViSP framework is build with capabilities that enables the usage of the following 3rd parties: XML, OpenCV, pthread, apriltag, lapack.
+
+\section install_ios_package_next Next tutorial
+
+You are now ready to see the next \ref tutorial-getting-started-iOS that will show you how to use ViSP as a 3rd party to build your own iOS application.
+
+*/

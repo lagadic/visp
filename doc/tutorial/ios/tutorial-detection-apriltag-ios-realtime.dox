@@ -11,9 +11,9 @@ In this tutorial, you will be able to learn how to detect with Swift 4 and get c
 
 All the material (Xcode project) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
-\code
+\verbatim
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/AprilTagLiveCamera
-\endcode
+\endverbatim
 
 Once downloaded, you have just to drag & drop ViSP and OpenCV frameworks available following \ref tutorial-install-ios-package.
 
@@ -44,18 +44,18 @@ Since the principal point almost coincides with the image center, this tutorial 
 Let us consider the Xcode project named `AprilTagLiveCamera` that is part of ViSP source code and located in `$VISP_WS/tutorial/ios/AprilTagLiveCamera`. 
 
 To open this application, if you followed \ref tutorial-install-ios-package simply run:
-\code
-$ cd ~/framework
+\verbatim
+$ cd $HOME/framework
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/ios/AprilTagLiveCamera
-$ open ~/visp-ws/AprilTagLiveCamera -a Xcode
-\endcode
+$ open AprilTagLiveCamera -a Xcode
+\endverbatim
 
 or if you already downloaded ViSP following \ref tutorial-install-iOS run:
-\code
-$ open ~/framework/visp/tutorial/ios/AprilTagLiveCamera -a Xcode
-\endcode
+\verbatim
+$ open $HOME/framework/visp/tutorial/ios/AprilTagLiveCamera -a Xcode
+\endverbatim
 
-As described in \ref tutorial-detection-apriltag-ios once opened, you have just to drag & drop ViSP and OpenCV frameworks available in `~/framework/ios` if you followed \ref tutorial-install-ios-package.
+As described in \ref tutorial-detection-apriltag-ios once opened, you have just to drag & drop ViSP and OpenCV frameworks available in `$HOME/framework/ios` if you followed \ref tutorial-install-ios-package.
 
 ViSP's AprilTag detection class is currently written in Objective-C.
 In order to use this Objective-C class from Swift, setting of Bridging-Header is necessary.
@@ -65,7 +65,7 @@ Look for the `"Objective-C Bridging Header"` column in the `"Build Settings"`, a
 The content of `VispDetector.h` is the following:
 \include AprilTagLiveCamera/VispDetector.h
 
-and in `ViewController.swift`you have the following code:
+and in `ViewController.swift` you have the following code:
 \include AprilTagLiveCamera/ViewController.swift
 
 \section distance_from_camera Distance from camera
