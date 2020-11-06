@@ -39,7 +39,7 @@ Check the checkbox of the ViSP library and press `"Finish"` button.
 
 \section java_started_simple_app Create a simple application
 
-Now add a new class to your project by right-clicking on your project’s folder and entering `"New > Class"` menu. 
+Now add a new class to your project by right-clicking on your project’s folder and entering `"New > Class"` menu.
 
 \image html img-tutorial-java-eclipse-new-class.jpeg
 
@@ -65,9 +65,9 @@ We can now try to build and run this application entering`"Run > Run"` menu. You
 \subsection java_started_issue_jre Exception Unsupported Class Version Error
 
 As shown in the next image, if you get the following issue on Ubuntu 18.04:
-\code
+\verbatim
 Exception in thread "main" java.lang.UnsupportedClassVersionError: org/visp/core/VpMatrix has been compiled by a more recent version of the Java Runtime (class file version 57.0), this version of the Java Runtime only recognizes class file versions up to 55.0
-\endcode
+\endverbatim
 \image html img-tutorial-java-issue-jdk-version.jpg
 it means probably that you use JRE System Library 11 installed in `/usr/lib/jvm/java-1.11.0-openjdk-amd64` while ViSP is build with a more recent java version obtained after downloading JDK 13 for example.
 
@@ -76,29 +76,29 @@ To fix this issue, as explained in \ref tutorial-install-java install JDK 11 and
 \subsection java_started_issue_vsp_version Exception Unsatisfied Link Error
 
 As shown in the next image, if you experience the following exception after entering `"Run > Run"` menu:
-\code
+\verbatim
 Exception in thread "main" java.lang.UnsatisfiedLinkError: no visp_java321 in java.library.path: [/home/fspindle/visp_ws/visp-build/lib]
-\endcode
+\endverbatim
 \image html img-tutorial-java-issue-visp-version.jpg
 
 - check that `visp-<version>.jar` is present in `$VISP_DIR/visp-build/bin`:
-\code
+\verbatim
 $ ls $VISP_DIR/visp-build/bin
 visp-331.jar
-\endcode
+\endverbatim
 If this java archive is missing and if you follow \ref tutorial-install-java it means that JDK was not detected during CMake configuration or that you didn't build ViSP
 - modify the following line to match ViSP version present in `$VISP_DIR/visp-build/bin`
-\code
+\verbatim
     System.loadLibrary("visp_java331");
-\endcode
+\endverbatim
 
 \subsection java_started_issue_mkl Error running Java app with Intel MKL
 
 Running any Java app based on ViSP can lead to the following issue:
-\code
+\verbatim
   INTEL MKL ERROR: /opt/intel/compilers_and_libraries_2020.0.166/linux/mkl/lib/intel64_lin/libmkl_avx2.so: undefined symbol: mkl_sparse_optimize_bsr_trsm_i8.
   Intel MKL FATAL ERROR: Cannot load libmkl_avx2.so or libmkl_def.so.
-\endcode
+\endverbatim
 
 There is no other satisfactory solution than to disable the use of Intel MKL 3rd party, configure and rebuilt ViSP libraries without MKL support.
 
