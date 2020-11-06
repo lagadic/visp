@@ -111,7 +111,9 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
       float point[3];
       float pixel[2] = {(float)j, (float)i};
       rs_deproject_pixel_to_point(point, depth_intrinsic, pixel, scaled_depth);
-      pointcloud->push_back(pcl::PointXYZ(point[0], point[1], point[2]));
+      pointcloud->points[(size_t) (i*width + j)].x = point[0];
+      pointcloud->points[(size_t) (i*width + j)].y = point[1];
+      pointcloud->points[(size_t) (i*width + j)].z = point[2];
     }
   }
 
