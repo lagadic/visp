@@ -104,6 +104,11 @@ state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker,
   tracker.display(I, cMo, cam, vpColor::red, 2);
   vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
   vpDisplay::displayText(I, 40, 20, "State: tracking in progress", vpColor::red);
+  {
+    std::stringstream ss;
+    ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt();
+    vpDisplay::displayText(I, 60, 20, ss.str(), vpColor::red);
+  }
 
   return state_tracking;
 }
@@ -413,6 +418,13 @@ int main(int argc, const char **argv)
         }
         else {
           state = track(I_gray, tracker, opt_projection_error_threshold, cMo);
+        }
+        {
+          std::stringstream ss;
+          ss << "Features: edges " << tracker.getNbFeaturesEdge()
+             << ", klt " << tracker.getNbFeaturesKlt()
+             << ", depth " << tracker.getNbFeaturesDepthDense();
+          vpDisplay::displayText(I_gray, I_gray.getHeight() - 30, 20, ss.str(), vpColor::red);
         }
       }
 
