@@ -1911,6 +1911,9 @@ void vpMbEdgeTracker::reinitMovingEdge(const vpImage<unsigned char> &I, const vp
 
 void vpMbEdgeTracker::resetMovingEdge()
 {
+  // Clear ME to be displayed
+  m_featuresToBeDisplayedEdge.clear();
+
   for (unsigned int i = 0; i < scales.size(); i += 1) {
     if (scales[i]) {
       for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[i].begin(); it != lines[i].end(); ++it) {
