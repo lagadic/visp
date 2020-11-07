@@ -1263,6 +1263,13 @@ macro(vp_get_version_from_pkg LIBNAME PKG_PATH OUTPUT_VAR)
   endif()
 endmacro()
 
+macro(vp_get_version_from_pkg2 LIBNAME PKG_PATH OUTPUT_VAR)
+  if(EXISTS "${PKG_PATH}/${LIBNAME}.pc")
+    file(STRINGS "${PKG_PATH}/${LIBNAME}.pc" line_to_parse REGEX "^version=[0-9.]*.*$" LIMIT_COUNT 1)
+    string(REGEX REPLACE ".*version=([^ ]+).*" "\\1" ${OUTPUT_VAR} "${line_to_parse}" )
+  endif()
+endmacro()
+
 macro(vp_cmake_script_append_var content_var)
   foreach(var_name ${ARGN})
     set(${content_var} "${${content_var}}

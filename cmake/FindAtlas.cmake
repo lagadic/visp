@@ -5,9 +5,8 @@
 #
 # The following are set after configuration is done:
 #  Atlas_FOUND
-#  Atlas_INCLUDE_DIRS
+#  Atlas_INCLUDE_DIR
 #  Atlas_LIBRARIES
-#  Atlas_LIBRARYRARY_DIRS
 
 set(Atlas_INCLUDE_SEARCH_PATHS
   /usr/include/atlas
