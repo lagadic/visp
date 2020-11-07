@@ -36,33 +36,13 @@ jobs:
       arch: s390x
       compiler: gcc
       name: "Bionic s390x gcc"
-    - os: osx
-      # Set Xcode version to 10.1 (default is 9.4) / macOS 10.13
-      osx_image: xcode10.1
-      compiler: clang
-      name: "macOS 10.13 AMD64 clang"
-    - os: osx
-      # Set Xcode version to 11.3 / macOS 10.14
-      osx_image: xcode11.3
-      compiler: gcc
-      name: "macOS 10.14 AMD64 gcc"
-    - os: osx
-      # Set Xcode version to 11.3 / macOS 10.14
-      osx_image: xcode11.3
-      compiler: clang
-      name: "macOS 10.14 AMD64 clang"
-    # jobs to test ViSP Java build
+    # job to test ViSP Java build
     - os: linux
       dist: bionic
       arch: amd64
       compiler: gcc
       env: BUILD_JAVA=1
       name: "Bionic AMD64 gcc Java"
-    - os: osx
-      osx_image: xcode11.3
-      compiler: clang
-      env: BUILD_JAVA=1
-      name: "macOS 10.14 AMD64 gcc Java"
 
 before_install:
   - git clone --depth 1 https://github.com/lagadic/ViSP-images ${TRAVIS_BUILD_DIR}/ViSP-images
@@ -136,7 +116,7 @@ before_script:
   - mkdir build
   - cd build
   # Build only ViSP modules and TESTS if BUILD_JAVA or if Arm64 since the build time is long
-  # Full Amr64 build is also done on Drone-CI
+  # Full Arm64 build is also done on Drone-CI
   # Do not build Java if BUILD_JAVA is not set to try to decrease the build time
   - if [ $BUILD_JAVA ] || [ $TRAVIS_CPU_ARCH = 'arm64' ]; then
       echo "cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF";
