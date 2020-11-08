@@ -498,18 +498,18 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
        it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
     if (tracker->m_trackerType & EDGE_TRACKER) {
-      m_nb_feat_edge = tracker->m_error_edge.size();
+      m_nb_feat_edge += tracker->m_error_edge.size();
     }
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     if (tracker->m_trackerType & KLT_TRACKER) {
-      m_nb_feat_klt = tracker->m_error_klt.size();
+      m_nb_feat_klt += tracker->m_error_klt.size();
     }
 #endif
     if (tracker->m_trackerType & DEPTH_NORMAL_TRACKER) {
-      m_nb_feat_depthNormal = tracker->m_error_depthNormal.size();
+      m_nb_feat_depthNormal += tracker->m_error_depthNormal.size();
     }
     if (tracker->m_trackerType & DEPTH_DENSE_TRACKER) {
-      m_nb_feat_depthDense = tracker->m_error_depthDense.size();
+      m_nb_feat_depthDense += tracker->m_error_depthDense.size();
     }
   }
 
