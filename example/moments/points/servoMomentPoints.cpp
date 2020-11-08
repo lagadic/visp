@@ -256,7 +256,6 @@ public:
     obj.setType(vpMomentObject::DISCRETE);
 
     std::cout << "Display task information " << std::endl;
-    ;
     m_task.print();
 
     vpDisplay::display(m_Iint);

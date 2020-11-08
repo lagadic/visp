@@ -363,7 +363,6 @@ void display(unsigned int width, unsigned int height, int win_x, int win_y,
     vpMouseButton::vpMouseButtonType button;
 
     vpImage<unsigned char> I_red(height, width), I_green(height, width), I_blue(height, width), I_alpha(height, width);
-    ;
     vpImage<unsigned char> I_red_gaussian(height, width), I_green_gaussian(height, width),
         I_blue_gaussian(height, width);
     vpImage<double> I_red_gaussian_double, I_green_gaussian_double, I_blue_gaussian_double;

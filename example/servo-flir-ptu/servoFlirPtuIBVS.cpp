@@ -140,7 +140,6 @@ int main(int argc, char **argv)
       opt_adaptive_gain = true;
     } else if (std::string(argv[i]) == "--constant-gain" || std::string(argv[i]) == "-g") {
       opt_constant_gain = std::stod(argv[i + 1]);
-      ;
     } else if (std::string(argv[i]) == "--task-sequencing") {
       opt_task_sequencing = true;
     } else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {

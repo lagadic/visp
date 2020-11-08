@@ -467,7 +467,6 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
     // only for simulation
 
     c2Mc1 = vpExponentialMap::direct(c2Tcc1).inverse() * c2Mc1;
-    ;
     //   UpdatePose2(c2Tcc1, c2Mc1) ;
     r = (W * e).sumSquare();
 
@@ -677,7 +676,6 @@ double vpHomography::computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpP
     // only for simulation
 
     c2Mc1 = vpExponentialMap::direct(c2Tcc1).inverse() * c2Mc1;
-    ;
     //   UpdatePose2(c2Tcc1, c2Mc1) ;
     r = (W * e).sumSquare();
 

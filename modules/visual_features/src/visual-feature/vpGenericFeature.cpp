@@ -382,7 +382,6 @@ void vpGenericFeature::setInteractionMatrix(const vpMatrix &L_)
 {
   if (L_.getRows() != dim_s) {
     std::cout << L_.getRows() << "  " << dim_s << std::endl;
-    ;
     vpERROR_TRACE("size mismatch between interaction matrix size "
                   "and feature dimension");
     throw(vpFeatureException(vpFeatureException::sizeMismatchError, "size mismatch between interaction matrix size "

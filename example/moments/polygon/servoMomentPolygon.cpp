@@ -250,7 +250,6 @@ public:
     obj.setType(vpMomentObject::DENSE_POLYGON);
 
     std::cout << "Display task information " << std::endl;
-    ;
     m_task.print();
 
     vpDisplay::display(m_Iint);

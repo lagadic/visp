@@ -207,7 +207,6 @@ int main(int argc, const char **argv)
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
       std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
-      ;
     }
 
     // Display task information
