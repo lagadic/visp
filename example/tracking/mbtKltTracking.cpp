@@ -352,10 +352,10 @@ int main(int argc, const char **argv)
 
     // Load tracker config file (camera parameters and moving edge settings)
     vpCameraParameters cam;
-#if defined(VISP_HAVE_PUGIXML)
     // From the xml file
     tracker.loadConfigFile(configFile);
-#else
+#if 0
+    // Corresponding parameters manually set to have an example code
     // By setting the parameters:
     cam.initPersProjWithoutDistortion(547, 542, 338, 234);
 
@@ -448,9 +448,9 @@ int main(int argc, const char **argv)
         if (opt_display)
           vpDisplay::display(I);
         tracker.resetTracker();
-#if defined(VISP_HAVE_PUGIXML)
         tracker.loadConfigFile(configFile);
-#else
+#if 0
+    // Corresponding parameters manually set to have an example code
         // By setting the parameters:
         cam.initPersProjWithoutDistortion(547, 542, 338, 234);
 

@@ -60,10 +60,7 @@
 #include <visp3/visual_features/vpFeatureVanishingPoint.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
-
-#ifdef VISP_HAVE_PUGIXML
 #include <visp3/core/vpXmlParserCamera.h>
-#endif
 
 #if !defined(VISP_HAVE_ARSDK)
 int main()
@@ -132,14 +129,9 @@ int main(int argc, char **argv)
           i++;
         } else if (std::string(argv[i]) == "--intrinsic") {
 
-#ifdef VISP_HAVE_PUGIXML
           opt_cam_parameters = std::string(argv[i + 1]);
           opt_has_cam_parameters = true;
           i++;
-#else
-          std::cout << "PUGIXML is required for custom camera parameters input." << std::endl;
-          return 0;
-#endif
         } else if (std::string(argv[i]) == "--hd_stream") {
           stream_res = 1;
         } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {

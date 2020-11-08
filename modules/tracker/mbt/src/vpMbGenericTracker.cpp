@@ -6217,9 +6217,7 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
   // Load projection error config
   vpMbTracker::loadConfigFile(configFile);
 
-#ifdef VISP_HAVE_PUGIXML
   vpMbtXmlGenericParser xmlp((vpMbtXmlGenericParser::vpParserType)m_trackerType);
-
   xmlp.setCameraParameters(m_cam);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
@@ -6337,9 +6335,6 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
 
   // Depth dense
   setDepthDenseSamplingStep(xmlp.getDepthDenseSamplingStepX(), xmlp.getDepthDenseSamplingStepY());
-#else
-  std::cerr << "pugixml third-party is not properly built to read config file: " << configFile << std::endl;
-#endif
 }
 
 #ifdef VISP_HAVE_PCL

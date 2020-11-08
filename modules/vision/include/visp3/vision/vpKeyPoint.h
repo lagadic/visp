@@ -703,9 +703,7 @@ public:
                            vpImage<vpRGBa> &IMatching);
   void insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> &IMatching);
 
-#ifdef VISP_HAVE_PUGIXML
   void loadConfigFile(const std::string &configFile);
-#endif
 
   void loadLearningData(const std::string &filename, bool binaryMode = false, bool append = false);
 

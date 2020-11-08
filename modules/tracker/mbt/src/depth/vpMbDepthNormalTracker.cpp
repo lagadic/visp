@@ -418,7 +418,6 @@ void vpMbDepthNormalTracker::init(const vpImage<unsigned char> &I)
 
 void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile)
 {
-#ifdef VISP_HAVE_PUGIXML
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::DEPTH_NORMAL_PARSER);
 
   xmlp.setCameraParameters(m_cam);
@@ -461,9 +460,6 @@ void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile)
   setDepthNormalPclPlaneEstimationRansacMaxIter(xmlp.getDepthNormalPclPlaneEstimationRansacMaxIter());
   setDepthNormalPclPlaneEstimationRansacThreshold(xmlp.getDepthNormalPclPlaneEstimationRansacThreshold());
   setDepthNormalSamplingStep(xmlp.getDepthNormalSamplingStepX(), xmlp.getDepthNormalSamplingStepY());
-#else
-  std::cerr << "pugixml third-party is not properly built to read config file: " << configFile << std::endl;
-#endif
 }
 
 void vpMbDepthNormalTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,

@@ -1198,18 +1198,16 @@ void vpAfma6::set_eMc(const vpHomogeneousMatrix &eMc)
 
   \warning This method needs XML library to parse the file defined in
   vpAfma6::CONST_CAMERA_AFMA6_FILENAME and containing the camera
-  parameters. If XML is detected by ViSP, VISP_HAVE_PUGIXML macro is
-  defined in include/visp3/core/vpConfig.h file.
+  parameters.
 
   \warning Thid method needs also an access to the files containing the
   camera parameters in XML format. This access is available if
   VISP_HAVE_AFMA6_DATA macro is defined in include/visp3/core/vpConfig.h file.
 
-  - If VISP_HAVE_AFMA6_DATA and VISP_HAVE_PUGIXML macros are defined,
-  this method gets the camera parameters from const_camera_Afma6.xml
-  config file.
+  - If VISP_HAVE_AFMA6_DATA is defined, this method gets the camera parameters
+  from const_camera_Afma6.xml config file.
 
-  - If these two macros are not defined, this method set the camera parameters
+  - If this macro is not defined, this method sets the camera parameters
   to default one.
 
   \param cam : In output, camera parameters to fill.
@@ -1239,7 +1237,7 @@ int main()
   // Get the intrinsic camera parameters depending on the image size
   // Camera parameters are read from
   // /udd/fspindle/robot/Afma6/current/include/const_camera_Afma6.xml
-  // if VISP_HAVE_AFMA6_DATA and VISP_HAVE_PUGIXML macros are defined in vpConfig.h file
+  // if VISP_HAVE_AFMA6_DATA macro is defined in vpConfig.h file
   try {
     robot.getCameraParameters (cam, I.getWidth(), I.getHeight());
   }
@@ -1258,7 +1256,7 @@ parameters are not found.
 void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &image_width,
                                   const unsigned int &image_height) const
 {
-#if defined(VISP_HAVE_PUGIXML) && defined(VISP_HAVE_AFMA6_DATA)
+#if defined(VISP_HAVE_AFMA6_DATA)
   vpXmlParserCamera parser;
   switch (getToolType()) {
   case vpAfma6::TOOL_CCMOP: {

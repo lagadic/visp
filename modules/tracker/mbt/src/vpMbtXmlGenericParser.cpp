@@ -34,8 +34,6 @@
  *****************************************************************************/
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_PUGIXML
-
 #include <iostream>
 #include <map>
 #include <clocale>
@@ -1949,9 +1947,3 @@ void vpMbtXmlGenericParser::setProjectionErrorKernelSize(const unsigned int &siz
 {
   m_impl->setProjectionErrorKernelSize(size);
 }
-
-#elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_mbt.a(vpMbtXmlGenericParser.cpp.o)
-// has no symbols
-void dummy_vpMbtXmlGenericParser(){};
-#endif

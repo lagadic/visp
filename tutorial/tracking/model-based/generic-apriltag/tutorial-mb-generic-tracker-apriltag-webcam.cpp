@@ -177,13 +177,11 @@ int main(int argc, const char **argv)
 
   vpCameraParameters cam;
   bool camIsInit = false;
-#ifdef VISP_HAVE_PUGIXML
   vpXmlParserCamera parser;
   if (!opt_intrinsic_file.empty() && !opt_camera_name.empty()) {
     parser.parse(cam, opt_intrinsic_file, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
     camIsInit = true;
   }
-#endif
 
   try {
     vpImage<unsigned char> I;

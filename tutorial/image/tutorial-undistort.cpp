@@ -13,7 +13,6 @@ int main()
 
     //! [Load camera parameters from xml]
     vpCameraParameters cam;
-#ifdef VISP_HAVE_PUGIXML
     vpXmlParserCamera p;
     vpCameraParameters::vpCameraParametersProjType projModel;
     projModel = vpCameraParameters::perspectiveProjWithDistortion;
@@ -23,7 +22,7 @@ int main()
     }
 //! [Load camera parameters from xml]
 //! [Set camera parameters]
-#else
+#if 0
     cam.initPersProjWithDistortion(582.7, 580.6, 326.6, 215.0, -0.3372, 0.4021);
 #endif
     //! [Set camera parameters]

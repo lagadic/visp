@@ -291,10 +291,8 @@ int main(int argc, char **argv)
 
     // If provided, read camera intrinsics from command line option
     if (!opt_intrinsic.empty() && !opt_camera_name.empty()) {
-#ifdef VISP_HAVE_PUGIXML
       vpXmlParserCamera parser;
       parser.parse(cam, opt_intrinsic, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
-#endif
     } else {
       std::cout << "***************************************************************" << std::endl;
       std::cout << "Warning, use hard coded values for intrinsic camera parameters." << std::endl;

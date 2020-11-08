@@ -44,7 +44,6 @@
 
 int main()
 {
-#ifdef VISP_HAVE_PUGIXML
 #if defined(_WIN32)
   std::string tmp_dir = "C:/temp/";
 #else
@@ -90,7 +89,6 @@ int main()
   }
 
   vpIoTools::remove(tmp_dir);
-#endif
 
   return EXIT_SUCCESS;
 }

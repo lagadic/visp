@@ -44,8 +44,7 @@
 
 int main()
 {
-#if defined(VISP_HAVE_PUGIXML) \
-  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV)
   std::string visp_images_dir = vpIoTools::getViSPImagesDataPath();
   if (vpIoTools::checkDirectory(visp_images_dir + "/xml")) {
     double eps = std::numeric_limits<double>::epsilon();

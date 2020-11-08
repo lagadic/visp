@@ -44,8 +44,6 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_PUGIXML
-
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/mbt/vpMbtFaceDepthNormal.h>
 #include <visp3/me/vpMe.h>
@@ -162,7 +160,5 @@ private:
   class Impl;
   Impl *m_impl;
 };
-
-#endif
 
 #endif

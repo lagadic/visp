@@ -94,12 +94,10 @@ int main(int argc, const char ** argv) {
   calcChessboardCorners(chessboard_width, chessboard_height, chessboard_square_size, corners_pts);
 
   vpCameraParameters cam;
-#ifdef VISP_HAVE_PUGIXML
   vpXmlParserCamera parser;
   if (!intrinsic_file.empty() && !camera_name.empty()) {
     parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithDistortion);
   }
-#endif
   std::cout << "cam:\n" << cam << std::endl;
 
   bool quit = false;

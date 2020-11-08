@@ -120,16 +120,7 @@ int main(int argc, char **argv)
     mapOfCameraTransformationMatrix["Camera2"] = cRightMcLeft;
 
     tracker.setCameraTransformationMatrix(mapOfCameraTransformationMatrix);
-//! [Set camera transformation matrix]
-
-#ifndef VISP_HAVE_PUGIXML
-    std::cout << "\n**********************************************************\n"
-              << "Warning: we are not able to load the tracker settings from\n"
-              << "the xml config files since ViSP is not build with pugixml\n"
-              << "3rd party. As a consequence, the tracking may fail!"
-              << "\n**********************************************************\n"
-              << std::endl;
-#endif
+    //! [Set camera transformation matrix]
 
     //! [Init]
     tracker.initClick(I_left, I_right, objectname_left + ".init", objectname_right + ".init", true);

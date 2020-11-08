@@ -249,9 +249,9 @@ namespace
     std::vector<int> tracker_type;
     tracker_type.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
     vpMbGenericTracker tracker(tracker_type);
-#if defined(VISP_HAVE_PUGIXML)
     tracker.loadConfigFile(input_directory + "/Config/chateau_depth.xml");
-#else
+#if 0
+    // Corresponding parameters manually set to have an example code
     {
       vpCameraParameters cam_depth;
       cam_depth.initPersProjWithoutDistortion(700.0, 700.0, 320.0, 240.0);

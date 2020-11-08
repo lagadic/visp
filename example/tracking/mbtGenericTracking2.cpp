@@ -291,7 +291,7 @@ int main(int argc, const char **argv)
     else
       ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.pgm");
 
-#if defined(VISP_HAVE_PUGIXML) && USE_XML
+#if USE_XML
     std::string configFile;
     if (!opt_configFile.empty())
       configFile = opt_configFile;
@@ -411,7 +411,7 @@ int main(int argc, const char **argv)
     std::map<std::string, vpCameraParameters> mapOfCameraParams;
 
 // Initialise the tracker: camera parameters, moving edge and KLT settings
-#if defined(VISP_HAVE_PUGIXML) && USE_XML
+#if USE_XML
     // From the xml file
     std::map<std::string, std::string> mapOfConfigFiles;
     mapOfConfigFiles["Camera1"] = configFile;
@@ -576,7 +576,7 @@ int main(int argc, const char **argv)
         }
 
         tracker->resetTracker();
-#if defined(VISP_HAVE_PUGIXML) && USE_XML
+#if USE_XML
         dynamic_cast<vpMbGenericTracker *>(tracker)->loadConfigFile(mapOfConfigFiles);
 #else
         // By setting the parameters:

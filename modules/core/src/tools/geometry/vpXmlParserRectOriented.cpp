@@ -43,8 +43,6 @@
 
 #include <visp3/core/vpXmlParserRectOriented.h>
 
-#ifdef VISP_HAVE_PUGIXML
-
 #include <map>
 #include <pugixml.hpp>
 #include <visp3/core/vpIoTools.h>
@@ -216,9 +214,3 @@ void vpXmlParserRectOriented::setRectangle(const vpRectOriented &rectangle)
 {
   m_impl->setRectangle(rectangle);
 }
-
-#elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpXmlParserRectOriented.cpp.o) has
-// no symbols
-void dummy_vpXmlParserRectOriented(){};
-#endif //VISP_HAVE_PUGIXML
