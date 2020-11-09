@@ -42,7 +42,8 @@
 
 vpMbGenericTracker::vpMbGenericTracker()
   : m_error(), m_L(), m_mapOfCameraTransformationMatrix(), m_mapOfFeatureFactors(), m_mapOfTrackers(),
-    m_percentageGdPt(0.4), m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError()
+    m_percentageGdPt(0.4), m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError(),
+    m_nb_feat_edge(0), m_nb_feat_klt(0), m_nb_feat_depthNormal(0), m_nb_feat_depthDense(0)
 {
   m_mapOfTrackers["Camera"] = new TrackerWrapper(EDGE_TRACKER);
 
@@ -62,7 +63,8 @@ vpMbGenericTracker::vpMbGenericTracker()
 
 vpMbGenericTracker::vpMbGenericTracker(unsigned int nbCameras, int trackerType)
   : m_error(), m_L(), m_mapOfCameraTransformationMatrix(), m_mapOfFeatureFactors(), m_mapOfTrackers(),
-    m_percentageGdPt(0.4), m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError()
+    m_percentageGdPt(0.4), m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError(),
+    m_nb_feat_edge(0), m_nb_feat_klt(0), m_nb_feat_depthNormal(0), m_nb_feat_depthDense(0)
 {
   if (nbCameras == 0) {
     throw vpException(vpTrackingException::fatalError, "Cannot use no camera!");
@@ -98,7 +100,8 @@ vpMbGenericTracker::vpMbGenericTracker(unsigned int nbCameras, int trackerType)
 
 vpMbGenericTracker::vpMbGenericTracker(const std::vector<int> &trackerTypes)
   : m_error(), m_L(), m_mapOfCameraTransformationMatrix(), m_mapOfFeatureFactors(), m_mapOfTrackers(),
-    m_percentageGdPt(0.4), m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError()
+    m_percentageGdPt(0.4), m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError(),
+    m_nb_feat_edge(0), m_nb_feat_klt(0), m_nb_feat_depthNormal(0), m_nb_feat_depthDense(0)
 {
   if (trackerTypes.empty()) {
     throw vpException(vpException::badValue, "There is no camera!");
@@ -137,7 +140,8 @@ vpMbGenericTracker::vpMbGenericTracker(const std::vector<int> &trackerTypes)
 vpMbGenericTracker::vpMbGenericTracker(const std::vector<std::string> &cameraNames,
                                        const std::vector<int> &trackerTypes)
   : m_error(), m_L(), m_mapOfCameraTransformationMatrix(), m_mapOfFeatureFactors(), m_mapOfTrackers(),
-    m_percentageGdPt(0.4), m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError()
+    m_percentageGdPt(0.4), m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError(),
+    m_nb_feat_edge(0), m_nb_feat_klt(0), m_nb_feat_depthNormal(0), m_nb_feat_depthDense(0)
 {
   if (cameraNames.size() != trackerTypes.size() || cameraNames.empty()) {
     throw vpException(vpTrackingException::badValue,
@@ -313,6 +317,11 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
   double factorDepth = m_mapOfFeatureFactors[DEPTH_NORMAL_TRACKER];
   double factorDepthDense = m_mapOfFeatureFactors[DEPTH_DENSE_TRACKER];
 
+  m_nb_feat_edge = 0;
+  m_nb_feat_klt = 0;
+  m_nb_feat_depthNormal = 0;
+  m_nb_feat_depthDense = 0;
+
   while (std::fabs(normRes_1 - normRes) > m_stopCriteriaEpsilon && (iter < m_maxIter)) {
     computeVVSInteractionMatrixAndResidu(mapOfImages, mapOfVelocityTwist);
 
@@ -482,6 +491,26 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
     }
 
     iter++;
+  }
+
+  // Update features number
+  for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
+       it != m_mapOfTrackers.end(); ++it) {
+    TrackerWrapper *tracker = it->second;
+    if (tracker->m_trackerType & EDGE_TRACKER) {
+      m_nb_feat_edge += tracker->m_error_edge.size();
+    }
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+    if (tracker->m_trackerType & KLT_TRACKER) {
+      m_nb_feat_klt += tracker->m_error_klt.size();
+    }
+#endif
+    if (tracker->m_trackerType & DEPTH_NORMAL_TRACKER) {
+      m_nb_feat_depthNormal += tracker->m_error_depthNormal.size();
+    }
+    if (tracker->m_trackerType & DEPTH_DENSE_TRACKER) {
+      m_nb_feat_depthDense += tracker->m_error_depthDense.size();
+    }
   }
 
   computeCovarianceMatrixVVS(isoJoIdentity_, W_true, cMo_prev, L_true, LVJ_true, m_error);
@@ -1507,6 +1536,8 @@ void vpMbGenericTracker::getMovingEdge(std::map<std::string, vpMe> &mapOfMovingE
 
   \note Multi-scale moving edge tracking is not possible, scale level=0 must
   be used.
+
+  \sa getNbFeaturesEdge()
 */
 unsigned int vpMbGenericTracker::getNbPoints(unsigned int level) const
 {
@@ -1801,9 +1832,9 @@ void vpMbGenericTracker::initCircle(const vpPoint & /*p1*/, const vpPoint & /*p2
   the image acquired by the second camera. This file should have .init
   extension.
   \param displayHelp : Optionnal display of an image that should
-  have the same generic name as the init file (ie teabox.ppm). This image may
+  have the same generic name as the init file (ie teabox.ppm, or teabox.png). This image may
   be used to show where to click. This functionality is only available if
-  visp_io module is used.
+  visp_io module is used. Supported image formats are .pgm, .ppm, .png, .jpeg.
   \param T1 : optional transformation matrix to transform 3D points in \a initFile1
   expressed in the original object frame to the desired object frame.
   \param T2 : optional transformation matrix to transform 3D points in \a initFile2
@@ -1870,9 +1901,9 @@ void vpMbGenericTracker::initClick(const vpImage<unsigned char> &I1, const vpIma
   the image acquired by the second camera. This file should have .init
   extension.
   \param displayHelp : Optionnal display of an image that should
-  have the same generic name as the init file (ie teabox.ppm). This image may
+  have the same generic name as the init file (ie teabox.ppm, or teabox.png). This image may
   be used to show where to click. This functionality is only available if
-  visp_io module is used.
+  visp_io module is used. Supported image formats are .pgm, .ppm, .png, .jpeg.
   \param T1 : optional transformation matrix to transform 3D points in \a initFile1
   expressed in the original object frame to the desired object frame.
   \param T2 : optional transformation matrix to transform 3D points in \a initFile2
@@ -1935,10 +1966,10 @@ void vpMbGenericTracker::initClick(const vpImage<vpRGBa> &I_color1, const vpImag
   \param mapOfImages : Map of grayscale images.
   \param mapOfInitFiles : Map of files containing the points where to click
   for each camera.
-  \param displayHelp : Optionnal display of an image that
-  should have the same generic name as the init file (ie teabox.ppm). This
-  image may be used to show where to click. This functionality is only
-  available if visp_io module is used.
+  \param displayHelp : Optionnal display of an image that should
+  have the same generic name as the init file (ie teabox.ppm, or teabox.png). This image may
+  be used to show where to click. This functionality is only available if
+  visp_io module is used. Supported image formats are .pgm, .ppm, .png, .jpeg.
   \param mapOfT : optional map of transformation matrices to transform
   3D points in \a mapOfInitFiles expressed in the original object frame to the
   desired object frame (if the init points are expressed in the same object frame
@@ -2037,10 +2068,10 @@ void vpMbGenericTracker::initClick(const std::map<std::string, const vpImage<uns
   \param mapOfColorImages : Map of color images.
   \param mapOfInitFiles : Map of files containing the points where to click
   for each camera.
-  \param displayHelp : Optionnal display of an image that
-  should have the same generic name as the init file (ie teabox.ppm). This
-  image may be used to show where to click. This functionality is only
-  available if visp_io module is used.
+  \param displayHelp : Optionnal display of an image that should
+  have the same generic name as the init file (ie teabox.ppm, or teabox.png). This image may
+  be used to show where to click. This functionality is only available if
+  visp_io module is used. Supported image formats are .pgm, .ppm, .png, .jpeg.
   \param mapOfT : optional map of transformation matrices to transform
   3D points in \a mapOfInitFiles expressed in the original object frame to the
   desired object frame (if the init points are expressed in the same object frame
@@ -2872,18 +2903,6 @@ void vpMbGenericTracker::loadConfigFile(const std::map<std::string, std::string>
   file (.wrl) or a CAO file (.cao). CAO format is described in the
   loadCAOModel() method.
 
-  \warning When this class is called to load a vrml model, remember that you
-  have to call Call SoDD::finish() before ending the program.
-  \code
-int main()
-{
-    ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
-  SoDB::finish();
-#endif
-}
-  \endcode
-
   \throw vpException::ioError if the file cannot be open, or if its extension
 is not wrl or cao.
 
@@ -2911,27 +2930,15 @@ void vpMbGenericTracker::loadModel(const std::string &modelFile, bool verbose, c
   file (.wrl) or a CAO file (.cao). CAO format is described in the
   loadCAOModel() method.
 
-  \warning When this class is called to load a vrml model, remember that you
-  have to call Call SoDD::finish() before ending the program.
-  \code
-int main()
-{
-    ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
-  SoDB::finish();
-#endif
-}
-  \endcode
-
   \throw vpException::ioError if the file cannot be open, or if its extension
-is not wrl or cao.
+  is not wrl or cao.
 
   \param modelFile1 : the file containing the 3D model description for the
-first camera. The extension of this file is either .wrl or .cao.
+  first camera. The extension of this file is either .wrl or .cao.
   \param modelFile2 : the file containing the the 3D model description for the second
-camera. The extension of this file is either .wrl or .cao.
+  camera. The extension of this file is either .wrl or .cao.
   \param verbose : verbose option to print additional information when loading CAO model files
-which include other CAO model files.
+  which include other CAO model files.
   \param T1 : optional transformation matrix (currently only for .cao) to transform
   3D points in \a modelFile1 expressed in the original object frame to the desired object frame.
   \param T2 : optional transformation matrix (currently only for .cao) to transform
@@ -2961,25 +2968,13 @@ void vpMbGenericTracker::loadModel(const std::string &modelFile1, const std::str
   file (.wrl) or a CAO file (.cao). CAO format is described in the
   loadCAOModel() method.
 
-  \warning When this class is called to load a vrml model, remember that you
-  have to call Call SoDD::finish() before ending the program.
-  \code
-int main()
-{
-    ...
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
-  SoDB::finish();
-#endif
-}
-  \endcode
-
   \throw vpException::ioError if the file cannot be open, or if its extension
-is not wrl or cao.
+  is not wrl or cao.
 
   \param mapOfModelFiles : map of files containing the 3D model description.
   The extension of this file is either .wrl or .cao.
   \param verbose : verbose option to print additional information when loading
-CAO model files which include other CAO model files.
+  CAO model files which include other CAO model files.
   \param mapOfT : optional map of transformation matrices (currently only for .cao)
   to transform 3D points in \a mapOfModelFiles expressed in the original object frame to
   the desired object frame (if the models have the same object frame which should be the

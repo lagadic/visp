@@ -77,7 +77,6 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
   unsigned int height = 0, width = 0;
   vpIoTools::readBinaryValueLE(file_depth, height);
   vpIoTools::readBinaryValueLE(file_depth, width);
-
   I_depth_raw.resize(height, width);
 
   uint16_t depth_value = 0;
@@ -112,10 +111,13 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
       float point[3];
       float pixel[2] = {(float)j, (float)i};
       rs_deproject_pixel_to_point(point, depth_intrinsic, pixel, scaled_depth);
-      pointcloud->push_back(pcl::PointXYZ(point[0], point[1], point[2]));
+      pointcloud->points[(size_t) (i*width + j)].x = point[0];
+      pointcloud->points[(size_t) (i*width + j)].y = point[1];
+      pointcloud->points[(size_t) (i*width + j)].z = point[2];
     }
   }
 
+  std::cout << "DEBUG: point cloud size: " << pointcloud->width << " " << pointcloud->height << std::endl;
   return true;
 }
 }
@@ -126,7 +128,7 @@ int main(int argc, char *argv[])
   std::string config_color = "model/cube/cube.xml", config_depth = "model/cube/cube_depth.xml";
   std::string model_color = "model/cube/cube.cao", model_depth = "model/cube/cube.cao";
   std::string init_file = "model/cube/cube.init";
-  int frame_cpt = 0;
+  unsigned int frame_cpt = 0;
   bool disable_depth = false;
 
   for (int i = 1; i < argc; i++) {
@@ -153,6 +155,16 @@ int main(int argc, char *argv[])
     }
   }
 
+  std::cout << "Tracked features: " << std::endl;
+#ifdef VISP_HAVE_OPENCV
+  std::cout << "  Use edges   : 1" << std::endl;
+  std::cout << "  Use klt     : 1" << std::endl;
+  std::cout << "  Use depth   : " << ! disable_depth << std::endl;
+#else
+  std::cout << "  Use edges   : 1" << std::endl;
+  std::cout << "  Use klt     : 0" << std::endl;
+  std::cout << "  Use depth   : 0" << std::endl;
+#endif
   std::cout << "Config files: " << std::endl;
   std::cout << "  Input directory: " << "\"" << input_directory << "\"" << std::endl;
   std::cout << "  Config color: " << "\"" << config_color << "\"" << std::endl;
@@ -192,7 +204,8 @@ int main(int argc, char *argv[])
   std::vector<int> trackerTypes;
 #ifdef VISP_HAVE_OPENCV
   trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
-  trackerTypes.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
+  if (!disable_depth)
+    trackerTypes.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
 #else
   trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER);
 #endif
@@ -248,7 +261,7 @@ int main(int argc, char *argv[])
     bool quit = false;
     while (! quit) {
       double t = vpTime::measureTimeMs();
-      read_data(frame_cpt, input_directory, I_color, I_depth_raw, pointcloud);
+      quit = ! read_data(frame_cpt, input_directory, I_color, I_depth_raw, pointcloud);
       vpImageConvert::convert(I_color, I_gray);
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
@@ -284,6 +297,18 @@ int main(int argc, char *argv[])
       std::stringstream ss;
       ss << "Computation time: " << t << " ms";
       vpDisplay::displayText(I_gray, 20, 20, ss.str(), vpColor::red);
+      {
+        std::stringstream ss;
+        ss << "Nb features: " << tracker.getError().size();
+        vpDisplay::displayText(I_gray, I_gray.getHeight() - 50, 20, ss.str(), vpColor::red);
+      }
+      {
+        std::stringstream ss;
+        ss << "Features: edges " << tracker.getNbFeaturesEdge()
+           << ", klt " << tracker.getNbFeaturesKlt()
+           << ", depth " << tracker.getNbFeaturesDepthDense();
+        vpDisplay::displayText(I_gray, I_gray.getHeight() - 30, 20, ss.str(), vpColor::red);
+      }
 
       vpDisplay::flush(I_gray);
       vpDisplay::flush(I_depth);
@@ -301,6 +326,10 @@ int main(int argc, char *argv[])
 
   std::cout << "\nProcessing time, Mean: " << vpMath::getMean(times_vec) << " ms ; Median: " << vpMath::getMedian(times_vec)
             << " ; Std: " << vpMath::getStdev(times_vec) << " ms" << std::endl;
+
+  vpDisplay::displayText(I_gray, 60, 20, "Click to quit", vpColor::red);
+  vpDisplay::flush(I_gray);
+  vpDisplay::getClick(I_gray);
 
   return EXIT_SUCCESS;
 }

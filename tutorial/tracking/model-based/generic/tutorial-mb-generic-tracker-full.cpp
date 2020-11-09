@@ -190,16 +190,18 @@ int main(int argc, char **argv)
       //! [Display]
       vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
       vpDisplay::displayText(I, 10, 10, "A click to exit...", vpColor::red);
+      {
+        std::stringstream ss;
+        ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt();
+        vpDisplay::displayText(I, 30, 10, ss.str(), vpColor::red);
+      }
       vpDisplay::flush(I);
 
       if (vpDisplay::getClick(I, false))
         break;
     }
     vpDisplay::getClick(I);
-//! [Cleanup]
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
-    SoDB::finish();
-#endif
+    //! [Cleanup]
     delete display;
     //! [Cleanup]
   } catch (const vpException &e) {

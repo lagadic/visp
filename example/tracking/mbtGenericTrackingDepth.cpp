@@ -759,6 +759,13 @@ int main(int argc, const char **argv)
           ss.str("");
           ss << "nb features: " << tracker->getError().getRows();
           vpDisplay::displayText(I_depth, 80, 20, ss.str(), vpColor::red);
+          {
+            std::stringstream ss;
+            ss << "Features: edges " << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesEdge()
+               << ", klt " << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesKlt()
+               << ", depth " << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesDepthDense();
+            vpDisplay::displayText(I, I.getHeight() - 30, 20, ss.str(), vpColor::red);
+          }
         }
       }
 
@@ -808,13 +815,6 @@ int main(int argc, const char **argv)
 
     delete tracker;
     tracker = NULL;
-
-#if defined(VISP_HAVE_COIN3D) && (COIN_MAJOR_VERSION >= 2)
-    // Cleanup memory allocated by Coin library used to load a vrml model in
-    // vpMbGenericTracker::loadModel() We clean only if Coin was used.
-    if (use_vrml)
-      SoDB::finish();
-#endif
 
     return EXIT_SUCCESS;
   } catch (const vpException &e) {

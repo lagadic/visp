@@ -440,6 +440,11 @@ int main(int argc, char **argv)
           ss << "Rotation tu: " << std::setprecision(4) << vpMath::deg(pose[3]) << " " << vpMath::deg(pose[4]) << " " << vpMath::deg(pose[5]) << " [deg]";
           vpDisplay::displayText(I, 100, 20, ss.str(), vpColor::green);
         }
+        {
+          std::stringstream ss;
+          ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt();
+          vpDisplay::displayText(I, 120, 20, ss.str(), vpColor::red);
+        }
       }
 
       if (learn_position) {

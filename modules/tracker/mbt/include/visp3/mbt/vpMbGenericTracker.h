@@ -195,6 +195,25 @@ public:
   virtual void getMovingEdge(vpMe &me1, vpMe &me2) const;
   virtual void getMovingEdge(std::map<std::string, vpMe> &mapOfMovingEdges) const;
 
+  /*!
+   * Return the number of depth dense features taken into account in the virtual visual-servoing scheme.
+   */
+  virtual inline unsigned int getNbFeaturesDepthDense() const { return m_nb_feat_depthDense; }
+  /*!
+   * Return the number of depth normal features features taken into account in the virtual visual-servoing scheme.
+   */
+  virtual inline unsigned int getNbFeaturesDepthNormal() const { return m_nb_feat_depthNormal; }
+  /*!
+   * Return the number of moving-edges features taken into account in the virtual visual-servoing scheme.
+   *
+   * This function is similar to getNbPoints().
+   */
+  virtual inline unsigned int getNbFeaturesEdge() const { return m_nb_feat_edge; }
+  /*!
+   * Return the number of klt keypoints features taken into account in the virtual visual-servoing scheme.
+   */
+  virtual inline unsigned int getNbFeaturesKlt() const { return m_nb_feat_klt; }
+
   virtual unsigned int getNbPoints(unsigned int level = 0) const;
   virtual void getNbPoints(std::map<std::string, unsigned int> &mapOfNbPoints, unsigned int level = 0) const;
 
@@ -654,5 +673,15 @@ protected:
   vpColVector m_w;
   //! Weighted error
   vpColVector m_weightedError;
+
+  //! Number of moving-edges features
+  unsigned int m_nb_feat_edge;
+  //! Number of klt features
+  unsigned int m_nb_feat_klt;
+  //! Number of depth normal features
+  unsigned int m_nb_feat_depthNormal;
+  //! Number of depth dense features
+  unsigned int m_nb_feat_depthDense;
+
 };
 #endif
