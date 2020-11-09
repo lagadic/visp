@@ -6131,7 +6131,7 @@ void vpMbGenericTracker::TrackerWrapper::init(const vpImage<unsigned char> &I)
     bool a = false;
     vpMbEdgeTracker::visibleFace(I, m_cMo, a); // should be useless, but keep it for nbvisiblepolygone
 
-    initMovingEdge(I, m_cMo);
+    vpMbEdgeTracker::initMovingEdge(I, m_cMo);
   }
 
   if (m_trackerType & DEPTH_NORMAL_TRACKER)
@@ -6714,8 +6714,9 @@ void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> * 
     return;
   }
 
-  if (m_trackerType & EDGE_TRACKER)
-    resetMovingEdge();
+  if (m_trackerType & EDGE_TRACKER) {
+    vpMbEdgeTracker::resetMovingEdge();
+  }
 
   if (useScanLine) {
     faces.computeClippedPolygons(m_cMo, m_cam);
@@ -6731,7 +6732,7 @@ void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> * 
       i--;
       if(scales[i]){
         downScale(i);
-        initMovingEdge(*Ipyramid[i], cMo);
+        vpMbEdgeTracker::initMovingEdge(*Ipyramid[i], cMo);
         upScale(i);
       }
     } while(i != 0);
@@ -6739,8 +6740,9 @@ void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> * 
     cleanPyramid(Ipyramid);
   }
 #else
-  if (m_trackerType & EDGE_TRACKER)
-    initMovingEdge(I ? *I : m_I, m_cMo);
+  if (m_trackerType & EDGE_TRACKER) {
+    vpMbEdgeTracker::initMovingEdge(I ? *I : m_I, m_cMo);
+  }
 #endif
 
   // Depth normal
