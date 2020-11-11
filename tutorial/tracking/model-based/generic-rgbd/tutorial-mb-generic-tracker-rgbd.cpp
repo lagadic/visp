@@ -90,7 +90,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
   // Transform pointcloud
   pointcloud->width = width;
   pointcloud->height = height;
-  pointcloud->reserve((size_t)width * height);
+  pointcloud->resize((size_t)width * height);
 
   // Only for Creative SR300
   const float depth_scale = 0.00100000005f;
@@ -117,7 +117,6 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
     }
   }
 
-  std::cout << "DEBUG: point cloud size: " << pointcloud->width << " " << pointcloud->height << std::endl;
   return true;
 }
 }
@@ -204,11 +203,10 @@ int main(int argc, char *argv[])
   std::vector<int> trackerTypes;
 #ifdef VISP_HAVE_OPENCV
   trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
-  if (!disable_depth)
-    trackerTypes.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
 #else
   trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER);
 #endif
+  trackerTypes.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
   vpMbGenericTracker tracker(trackerTypes);
   //! [Constructor]
   //! [Load config file]
