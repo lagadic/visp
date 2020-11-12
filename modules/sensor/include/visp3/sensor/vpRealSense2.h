@@ -286,14 +286,14 @@ public:
   vpRealSense2();
   virtual ~vpRealSense2();
 
-  void acquire(vpImage<unsigned char> &grey);
-  void acquire(vpImage<vpRGBa> &color);
+  void acquire(vpImage<unsigned char> &grey, double *ts=NULL);
+  void acquire(vpImage<vpRGBa> &color, double *ts=NULL);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared,
-               rs2::align *const align_to = NULL);
+               rs2::align *const align_to = NULL, double *ts=NULL);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared1,
-               unsigned char *const data_infrared2, rs2::align *const align_to);
+               unsigned char *const data_infrared2, rs2::align *const align_to, double *ts=NULL);
 #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
   void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, double *ts = NULL);
   void acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *cMw,
@@ -306,17 +306,17 @@ public:
 #ifdef VISP_HAVE_PCL
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
-               unsigned char *const data_infrared = NULL, rs2::align *const align_to = NULL);
+               unsigned char *const data_infrared = NULL, rs2::align *const align_to = NULL, double *ts=NULL);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
-               unsigned char *const data_infrared1, unsigned char *const data_infrared2, rs2::align *const align_to);
+               unsigned char *const data_infrared1, unsigned char *const data_infrared2, rs2::align *const align_to, double *ts=NULL);
 
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
-               unsigned char *const data_infrared = NULL, rs2::align *const align_to = NULL);
+               unsigned char *const data_infrared = NULL, rs2::align *const align_to = NULL, double *ts=NULL);
   void acquire(unsigned char *const data_image, unsigned char *const data_depth,
                std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
-               unsigned char *const data_infrared1, unsigned char *const data_infrared2, rs2::align *const align_to);
+               unsigned char *const data_infrared1, unsigned char *const data_infrared2, rs2::align *const align_to, double *ts=NULL);
 #endif
 
   void close();
