@@ -41,8 +41,6 @@
 
 #include <visp3/core/vpXmlParserCamera.h>
 
-#ifdef VISP_HAVE_PUGIXML
-
 #include <pugixml.hpp>
 
 #include <visp3/core/vpDebug.h>
@@ -1203,9 +1201,3 @@ void vpXmlParserCamera::setWidth(unsigned int width)
 {
   m_impl->setWidth(width);
 }
-
-#elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpXmlParserCamera.cpp.o) has
-// no symbols
-void dummy_vpXmlParserCamera(){};
-#endif // VISP_HAVE_PUGIXML

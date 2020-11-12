@@ -49,8 +49,6 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_PUGIXML
-
 #include <visp3/core/vpHomogeneousMatrix.h>
 
 /*!
@@ -98,7 +96,6 @@ in radians --> <theta_ux>0.20</theta_ux> <theta_uy>0.30</theta_uy>
 
 int main(int argc, char* argv[])
 {
-#ifdef VISP_HAVE_PUGIXML
   vpHomogeneousMatrix eMc;
 
   // Create a XML parser
@@ -112,7 +109,6 @@ int main(int argc, char* argv[])
   }
   else
     std::cout << "Homogeneous matrix " << name <<": " << std::endl << eMc << std::endl;
-#endif
 
   return 0;
 }
@@ -132,7 +128,6 @@ int main(int argc, char* argv[])
 
 int main(int argc, char* argv[])
 {
-#ifdef VISP_HAVE_PUGIXML
   // Create Pose Vector and convert to homogeneous matrix
   vpPoseVector r(1.0,1.3,3.5,0.2,0.3,0.5);
   vpHomogeneousMatrix M(r);
@@ -150,7 +145,6 @@ int main(int argc, char* argv[])
   if (p.save(M, filename, name_M) != vpXmlParserHomogeneousMatrix::SEQUENCE_OK) {
     std::cout << "Cannot save the Homogeneous matrix" << std::endl;
   }
-#endif
   return 0;
 }
   \endcode
@@ -182,5 +176,4 @@ private:
   class Impl;
   Impl *m_impl;
 };
-#endif //VISP_HAVE_PUGIXML
 #endif

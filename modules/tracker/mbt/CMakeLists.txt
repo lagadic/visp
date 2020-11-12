@@ -280,10 +280,9 @@ if(WITH_CLIPPER)
   include_directories(${CLIPPER_INCLUDE_DIRS})
 endif()
 
-if(WITH_PUGIXML)
-  # pugixml is private
-  include_directories(${PUGIXML_INCLUDE_DIRS})
-endif()
+# pugixml is always enabled to provide default XML I/O capabilities
+# pugixml is private
+include_directories(${PUGIXML_INCLUDE_DIRS})
 
 if(WITH_CATCH2)
   # catch2 is private

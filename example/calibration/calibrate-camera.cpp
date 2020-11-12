@@ -144,19 +144,14 @@ int main(int argc, const char **argv)
     vpCameraParameters cam_init;
     bool init_from_xml = false;
     if (! opt_init_camera_xml_file.empty()) {
-#ifdef VISP_HAVE_PUGIXML
       if (! vpIoTools::checkFilename(opt_init_camera_xml_file)) {
         std::cout << "Input camera file \"" << opt_init_camera_xml_file << "\" doesn't exist!" << std::endl;
         std::cout << "Modify [--init-from-xml <camera-init.xml>] option value" << std::endl;
         return EXIT_FAILURE;
       }
       init_from_xml = true;
-#else
-      std::cout << "Cannot initialize camera parameters from xml file: " << opt_init_camera_xml_file << std::endl;
-#endif
     }
     if (init_from_xml) {
-#ifdef VISP_HAVE_PUGIXML
       std::cout << "Initialize camera parameters from xml file: " << opt_init_camera_xml_file << std::endl;
       vpXmlParserCamera parser;
       if (parser.parse(cam_init, opt_init_camera_xml_file, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion) != vpXmlParserCamera::SEQUENCE_OK) {
@@ -164,7 +159,6 @@ int main(int argc, const char **argv)
         std::cout << "Modify [--camera-name <name>] option value" << std::endl;
         return EXIT_FAILURE;
       }
-#endif
     } else {
       std::cout << "Initialize camera parameters with default values " << std::endl;
       // Initialize camera parameters
@@ -354,7 +348,6 @@ int main(int argc, const char **argv)
       std::cout << "\nGlobal reprojection error: " << error << std::endl;
       ss_additional_info << "<global_reprojection_error><without_distortion>" << error << "</without_distortion>";
 
-#ifdef VISP_HAVE_PUGIXML
       vpXmlParserCamera xml;
 
       if (xml.save(cam, opt_output_file_name.c_str(), opt_camera_name, I.getWidth(), I.getHeight()) ==
@@ -368,7 +361,6 @@ int main(int argc, const char **argv)
                      "to save the parameters..."
                   << std::endl;
       }
-#endif
     } else {
       std::cout << "Calibration without distortion failed." << std::endl;
       return EXIT_FAILURE;
@@ -499,7 +491,6 @@ int main(int argc, const char **argv)
         vpDisplay::getClick(I);
       }
 
-#ifdef VISP_HAVE_PUGIXML
       std::cout << std::endl;
       vpXmlParserCamera xml;
 
@@ -526,7 +517,6 @@ int main(int argc, const char **argv)
                      "to save the parameters..."
                   << std::endl;
       }
-#endif
       std::cout << std::endl;
       std::cout << "Estimated pose using vpPoseVector format: [tx ty tz tux tuy tuz] with translation in meter and rotation in rad" << std::endl;
       for (unsigned int i = 0; i < calibrator.size(); i++)

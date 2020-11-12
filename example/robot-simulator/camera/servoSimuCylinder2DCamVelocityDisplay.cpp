@@ -311,7 +311,6 @@ int main(int argc, const char **argv)
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
 
       std::cout << "|| s - s* || = " << (task.getError()).sumSquare() << std::endl;
-      ;
 
       //   vpDisplay::getClick(I) ;
     } while ((task.getError()).sumSquare() > 1e-9);

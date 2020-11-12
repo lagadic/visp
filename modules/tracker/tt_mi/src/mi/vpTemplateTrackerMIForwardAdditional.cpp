@@ -202,7 +202,6 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
         Warp->dWarp(X1, X2, p, dW);
 
         double *tptemp = new double[nbParam];
-        ;
         for (unsigned int it = 0; it < nbParam; it++)
           tptemp[it] = (dW[0][it] * dx + dW[1][it] * dy);
         if (ApproxHessian == HESSIAN_NONSECOND || hessianComputation == vpTemplateTrackerMI::USE_HESSIEN_DESIRE)

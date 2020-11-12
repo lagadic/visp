@@ -45,8 +45,6 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_PUGIXML
-
 #include <visp3/core/vpCameraParameters.h>
 
 /*!
@@ -98,8 +96,6 @@
 int main()
 {
   vpCameraParameters cam; // Create a camera parameter container
-
-#ifdef VISP_HAVE_PUGIXML
   vpXmlParserCamera p; // Create a XML parser
   vpCameraParameters::vpCameraParametersProjType projModel; // Projection model
   // Use a perspective projection model without distortion
@@ -130,7 +126,6 @@ int main()
 
   // Save the parameters in a new file "myXmlFileWithNoise.xml"
   p.save(cam,"myXmlFileWithNoise.xml",p.getCameraName(),p.getWidth(),p.getHeight());
-#endif
 }
   \endcode
 
@@ -156,14 +151,12 @@ int main()
   // Set the camera parameters for a model without distortion
   cam.initPersProjWithoutDistortion(px, py, u0, v0);
 
-#ifdef VISP_HAVE_PUGIXML
   // Create a XML parser
   vpXmlParserCamera p;
   // Save the camera parameters in an XML file.
   if (p.save(cam, "myNewXmlFile.xml", "myNewCamera", 320, 240) != vpXmlParserCamera::SEQUENCE_OK) {
     std::cout << "Cannot save camera parameters" << std::endl;
   }
-#endif
 }
   \endcode
 */
@@ -206,5 +199,4 @@ private:
   class Impl;
   Impl *m_impl;
 };
-#endif //VISP_HAVE_PUGIXML
 #endif

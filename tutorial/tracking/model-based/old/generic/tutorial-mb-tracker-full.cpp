@@ -42,9 +42,7 @@ int main(int argc, char **argv)
 
     std::cout << "Video name: " << opt_videoname << std::endl;
     std::cout << "Tracker requested config files: " << objectname << ".[init,"
-#ifdef VISP_HAVE_PUGIXML
               << "xml,"
-#endif
               << "cao or wrl]" << std::endl;
     std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
 
@@ -91,12 +89,10 @@ int main(int argc, char **argv)
 
     bool usexml = false;
 //! [Load xml]
-#ifdef VISP_HAVE_PUGIXML
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker->loadConfigFile(objectname + ".xml");
       usexml = true;
     }
-#endif
     //! [Load xml]
 
     if (!usexml) {

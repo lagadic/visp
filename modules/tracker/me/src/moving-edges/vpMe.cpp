@@ -187,12 +187,10 @@ else  { Ac=P[1];  Bc=P[0]; }  //  leur abscisse x)
     if (code_P[0] != 0000) {
       n = 0; // c'est P[0] qu'on clippera
       for (i = 0, bit_i = 1; !(code_P[0] & bit_i); i++, bit_i <<= 1) {
-        ;
       }
     } else {
       n = 1; // c'est P[1] qu'on clippera
       for (i = 0, bit_i = 1; !(code_P[1] & bit_i); i++, bit_i <<= 1) {
-        ;
       }
     }
 

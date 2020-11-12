@@ -44,8 +44,6 @@
 */
 #include <visp3/core/vpXmlParserHomogeneousMatrix.h>
 
-#ifdef VISP_HAVE_PUGIXML
-
 #include <pugixml.hpp>
 
 /* ----------------------------- LABEL XML ----------------------------- */
@@ -549,8 +547,3 @@ void vpXmlParserHomogeneousMatrix::setHomogeneousMatrixName(const std::string &n
 {
   m_impl->setHomogeneousMatrixName(name);
 }
-#elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning:
-// libvisp_core.a(vpXmlParserHomogeneousMatrix.cpp.o) has no symbols
-void dummy_vpXmlParserHomogeneousMatrix(){};
-#endif //VISP_HAVE_PUGIXML

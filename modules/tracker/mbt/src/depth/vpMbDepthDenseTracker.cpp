@@ -390,7 +390,6 @@ void vpMbDepthDenseTracker::init(const vpImage<unsigned char> &I)
 
 void vpMbDepthDenseTracker::loadConfigFile(const std::string &configFile)
 {
-#ifdef VISP_HAVE_PUGIXML
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::DEPTH_DENSE_PARSER);
 
   xmlp.setCameraParameters(m_cam);
@@ -425,9 +424,6 @@ void vpMbDepthDenseTracker::loadConfigFile(const std::string &configFile)
     setClipping(clippingFlag | vpPolygon3D::FOV_CLIPPING);
 
   setDepthDenseSamplingStep(xmlp.getDepthDenseSamplingStepX(), xmlp.getDepthDenseSamplingStepY());
-#else
-  std::cerr << "pugixml third-party is not properly built to read config file: " << configFile << std::endl;
-#endif
 }
 
 void vpMbDepthDenseTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,

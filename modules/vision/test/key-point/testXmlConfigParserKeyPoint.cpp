@@ -44,7 +44,6 @@
 
 int main()
 {
-#ifdef VISP_HAVE_PUGIXML
   std::string visp_images_dir = vpIoTools::getViSPImagesDataPath();
   if (vpIoTools::checkDirectory(visp_images_dir + "/xml")) {
     double eps = std::numeric_limits<double>::epsilon();
@@ -88,7 +87,6 @@ int main()
       }
     }
   }
-#endif
 
   return EXIT_SUCCESS;
 }

@@ -251,7 +251,6 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
       v = -lambda * Lp * W * error;
 
       cMo = vpExponentialMap::direct(v).inverse() * cMo;
-      ;
       if (iter++ > vvsIterMax)
         break;
     }

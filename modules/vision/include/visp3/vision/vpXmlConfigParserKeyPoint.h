@@ -49,8 +49,6 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_PUGIXML
-
 #include <string>
 
 /*!
@@ -104,5 +102,4 @@ private:
   class Impl;
   Impl *m_impl;
 };
-#endif //VISP_HAVE_PUGIXML
 #endif

@@ -48,9 +48,7 @@
 #include <opencv2/calib3d/calib3d.hpp>
 #endif
 
-#ifdef VISP_HAVE_PUGIXML
 #include <pugixml.hpp>
-#endif
 
 namespace
 {
@@ -2945,7 +2943,6 @@ void vpKeyPoint::insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vp
   }
 }
 
-#ifdef VISP_HAVE_PUGIXML
 /*!
    Load configuration parameters from an XML config file.
 
@@ -3018,7 +3015,6 @@ void vpKeyPoint::loadConfigFile(const std::string &configFile)
     throw vpException(vpException::ioError, "Can't open XML file \"%s\"\n ", configFile.c_str());
   }
 }
-#endif
 
 /*!
    Load learning data saved on disk.
@@ -3223,7 +3219,6 @@ void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, 
 
     file.close();
   } else {
-#ifdef VISP_HAVE_PUGIXML
     pugi::xml_document doc;
 
     /*parse the file and get the DOM */
@@ -3398,9 +3393,6 @@ void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, 
     } else {
       cv::vconcat(m_trainDescriptors, trainDescriptorsTmp, m_trainDescriptors);
     }
-#else
-    std::cout << "Error: pugixml is not properly built!" << std::endl;
-#endif
   }
 
   // Convert OpenCV type to ViSP type for compatibility
@@ -4519,7 +4511,6 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
 
     file.close();
   } else {
-#ifdef VISP_HAVE_PUGIXML
     pugi::xml_document doc;
     pugi::xml_node node = doc.append_child(pugi::node_declaration);
     node.append_attribute("version") = "1.0";
@@ -4640,9 +4631,6 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
     }
 
     doc.save_file(filename.c_str(), PUGIXML_TEXT("  "), pugi::format_default, pugi::encoding_utf8);
-#else
-    std::cerr << "Error: pugixml is not properly built!" << std::endl;
-#endif
   }
 }
 

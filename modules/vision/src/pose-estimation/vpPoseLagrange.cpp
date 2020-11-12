@@ -612,7 +612,6 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     {
       std::cout << "ax1+bx2 (devrait etre 0) " << (a * X1 + b * X2).t() << std::endl;
       std::cout << "norme X1 " << X1.sumSquare() << std::endl;
-      ;
     }
 #endif
 

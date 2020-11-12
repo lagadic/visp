@@ -1255,6 +1255,18 @@ macro(vp_parse_header2 LIBNAME HDR_PATH VARNAME)
   endif()
 endmacro()
 
+# parse header file to get library version
+# the REGEX matches a line that starts with #define + DEFINE_NAME + "(name) 0.0.0(.dev)"
+# with optional (name) and (.dev)
+# e.g. #define OPENBLAS_VERSION " OpenBLAS 0.3.12.dev "
+# e.g. #define PNG_LIBPNG_VER_STRING "1.5.10"
+macro(vp_parse_header3 LIBNAME HDR_PATH DEFINE_NAME OUTPUT_VAR)
+  if(EXISTS "${HDR_PATH}")
+    file(STRINGS "${HDR_PATH}" line_to_parse REGEX "^#define[ \t]+${DEFINE_NAME}[ \t]+\"[ \t]*[^0-9]*([0-9]+\\.[0-9]+\\.[0-9]+(\\.[^0-9 \t]+)?)[ \t]*\"$" LIMIT_COUNT 1)
+    string(REGEX REPLACE "^#define[ \t]+${DEFINE_NAME}[ \t]+\"[ \t]*[^0-9]*([0-9]+\\.[0-9]+\\.[0-9]+(\\.[^0-9 \t]+)?)[ \t]*\"$" "\\1" ${OUTPUT_VAR} "${line_to_parse}" )
+  endif()
+endmacro()
+
 # read single version info from the pkg file
 macro(vp_get_version_from_pkg LIBNAME PKG_PATH OUTPUT_VAR)
   if(EXISTS "${PKG_PATH}/${LIBNAME}.pc")

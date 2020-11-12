@@ -140,7 +140,6 @@ int main(int argc, char **argv)
       opt_adaptive_gain = true;
     } else if (std::string(argv[i]) == "--constant-gain" || std::string(argv[i]) == "-g") {
       opt_constant_gain = std::stod(argv[i + 1]);
-      ;
     } else if (std::string(argv[i]) == "--task-sequencing") {
       opt_task_sequencing = true;
     } else if (std::string(argv[i]) == "--quad-decimate" && i + 1 < argc) {
@@ -291,10 +290,8 @@ int main(int argc, char **argv)
 
     // If provided, read camera intrinsics from command line option
     if (!opt_intrinsic.empty() && !opt_camera_name.empty()) {
-#ifdef VISP_HAVE_PUGIXML
       vpXmlParserCamera parser;
       parser.parse(cam, opt_intrinsic, opt_camera_name, vpCameraParameters::perspectiveProjWithoutDistortion);
-#endif
     } else {
       std::cout << "***************************************************************" << std::endl;
       std::cout << "Warning, use hard coded values for intrinsic camera parameters." << std::endl;

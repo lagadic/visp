@@ -3812,7 +3812,6 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
 
 void vpMbTracker::loadConfigFile(const std::string &configFile)
 {
-#ifdef VISP_HAVE_PUGIXML
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::PROJECTION_ERROR_PARSER);
   xmlp.setProjectionErrorMe(m_projectionErrorMe);
   xmlp.setProjectionErrorKernelSize(m_projectionErrorKernelSize);
@@ -3829,10 +3828,6 @@ void vpMbTracker::loadConfigFile(const std::string &configFile)
 
   setProjectionErrorMovingEdge(meParser);
   setProjectionErrorKernelSize(xmlp.getProjectionErrorKernelSize());
-
-#else
-  std::cerr << "pugixml third-party is not properly built to read config file: " << configFile << std::endl;
-#endif
 }
 
 /*!

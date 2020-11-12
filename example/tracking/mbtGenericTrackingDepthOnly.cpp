@@ -331,12 +331,12 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
 }
 
 void loadConfiguration(vpMbTracker *const tracker, const std::string &
-#if defined(VISP_HAVE_PUGIXML) && USE_XML
+#if USE_XML
                        configFile_depth
 #endif
 )
 {
-#if defined(VISP_HAVE_PUGIXML) && USE_XML
+#if USE_XML
   // From the xml file
   dynamic_cast<vpMbGenericTracker *>(tracker)->loadConfigFile(configFile_depth);
 #else

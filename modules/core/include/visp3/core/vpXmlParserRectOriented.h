@@ -47,8 +47,6 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_PUGIXML
-
 #include <visp3/core/vpRectOriented.h>
 
 /*!
@@ -114,5 +112,4 @@ private:
   class Impl;
   Impl *m_impl;
 };
-#endif //VISP_HAVE_PUGIXML
 #endif //vpXmlParserRectOriented_h

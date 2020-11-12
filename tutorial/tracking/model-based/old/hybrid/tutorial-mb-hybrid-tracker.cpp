@@ -30,9 +30,7 @@ int main(int argc, char **argv)
 
     std::cout << "Video name: " << videoname << std::endl;
     std::cout << "Tracker requested config files: " << objectname << ".[init,"
-#ifdef VISP_HAVE_PUGIXML
               << "xml,"
-#endif
               << "cao or wrl]" << std::endl;
     std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
 
@@ -46,25 +44,20 @@ int main(int argc, char **argv)
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX display(I, 100, 100, "Model-based hybrid tracker");
-    ;
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display(I, 100, 100, "Model-based hybrid tracker");
-    ;
 #elif defined(VISP_HAVE_OPENCV)
     vpDisplayOpenCV display(I, 100, 100, "Model-based hybrid tracker");
-    ;
 #else
     std::cout << "No image viewer is available..." << std::endl;
 #endif
 
     vpMbEdgeKltTracker tracker;
     bool usexml = false;
-#ifdef VISP_HAVE_PUGIXML
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;
     }
-#endif
     if (!usexml) {
       vpMe me;
       me.setMaskSize(5);
