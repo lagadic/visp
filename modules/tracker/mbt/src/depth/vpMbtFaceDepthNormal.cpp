@@ -497,7 +497,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeaturesPCL(const pcl::PointCloud<pcl::
     extract.setNegative(false);
     extract.filter(*point_cloud_face_extracted);
 
-#if PCL_VERSION_COMPARE(>=, 1, 8, 0)
+#if PCL_VERSION_COMPARE(>=, 1, 7, 2)
     pcl::PointXYZ centroid_point_pcl;
     if (pcl::computeCentroid(*point_cloud_face_extracted, centroid_point_pcl)) {
       pcl::PointXYZ face_normal;
