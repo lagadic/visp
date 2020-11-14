@@ -229,14 +229,10 @@ void compute_pseudo_inverse(const vpMatrix &U, const vpColVector &sv, const vpMa
   if (kerAt) {
     kerAt->resize(ncols - rank, ncols);
     if (rank != ncols) {
-      for (unsigned int j = 0, k = 0; j < ncols; j++) {
-        // if( v.col(j) in kernel and non zero )
-        if ((fabs(sv[j]) <= maxsv * svThreshold) &&
-            (std::fabs(V.getCol(j).sumSquare()) > std::numeric_limits<double>::epsilon())) {
-          for (unsigned int i = 0; i < V.getRows(); i++) {
-            (*kerAt)[k][i] = V[i][j];
-          }
-          k++;
+      for (unsigned int k = 0; k < (ncols - rank); k++) {
+        unsigned j = k + rank;
+        for (unsigned int i = 0; i < V.getRows(); i++) {
+          (*kerAt)[k][i] = V[i][j];
         }
       }
     }
