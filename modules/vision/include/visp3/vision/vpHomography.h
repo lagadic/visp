@@ -220,13 +220,19 @@ public:
   void buildFrom(const vpPoseVector &arb, const vpPlane &bP);
   //! Construction from homogeneous matrix and a plane
   void buildFrom(const vpHomogeneousMatrix &aMb, const vpPlane &bP);
+
+  vpHomography collineation2homography(const vpCameraParameters &cam) const;
+
   vpMatrix convert() const;
 
   void computeDisplacement(vpRotationMatrix &aRb, vpTranslationVector &atb, vpColVector &n);
 
   void computeDisplacement(const vpColVector &nd, vpRotationMatrix &aRb, vpTranslationVector &atb, vpColVector &n);
 
+  double det() const;
   void eye();
+
+  vpHomography homography2collineation(const vpCameraParameters &cam) const;
 
   //! invert the homography
   vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank=NULL) const;

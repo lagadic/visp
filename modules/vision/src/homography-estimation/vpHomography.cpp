@@ -471,6 +471,16 @@ void vpHomography::build(vpHomography &aHb, const vpHomogeneousMatrix &aMb, cons
 }
 
 /*!
+ * Return homography determinant.
+ */
+double vpHomography::det() const
+{
+  return ((*this)[0][0] * ((*this)[1][1] * (*this)[2][2] - (*this)[1][2] * (*this)[2][1]) -
+          (*this)[0][1] * ((*this)[1][0] * (*this)[2][2] - (*this)[1][2] * (*this)[2][0]) +
+          (*this)[0][2] * ((*this)[1][0] * (*this)[2][1] - (*this)[1][1] * (*this)[2][0]));
+}
+
+/*!
   Set the homography as identity transformation by setting the diagonal to 1
   and all other values to 0.
 */
@@ -495,9 +505,9 @@ void vpHomography::setIdentity() { eye(); }
 #endif // #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
 /*!
-  Given \c iPa a point with coordinates \f$(u_a,v_a)\f$ expressed in pixel in
-  image a, and the homography \c bHa that links image a and b, computes the
-  coordinates of the point \f$(u_b,v_b)\f$ in the image b using the camera
+  Given `iPa` a pixel with coordinates \f$(u_a,v_a)\f$ in
+  image a, and the homography `bHa` in the Euclidian space or calibrated domain that links image a and b, computes the
+  coordinates of the pixel \f$(u_b,v_b)\f$ in the image b using the camera
   parameters matrix \f$\bf K\f$.
 
   Compute \f$^b{\bf p} = {\bf K} \; {^b}{\bf H}_a \; {\bf K}^{-1} {^a}{\bf
@@ -510,10 +520,10 @@ vpImagePoint vpHomography::project(const vpCameraParameters &cam, const vpHomogr
 {
   double xa = iPa.get_u();
   double ya = iPa.get_v();
-  vpMatrix H = cam.get_K() * bHa.convert() * cam.get_K_inverse();
-  double z = xa * H[2][0] + ya * H[2][1] + H[2][2];
-  double xb = (xa * H[0][0] + ya * H[0][1] + H[0][2]) / z;
-  double yb = (xa * H[1][0] + ya * H[1][1] + H[1][2]) / z;
+  vpHomography bGa = bHa.homography2collineation(cam);
+  double z = xa * bGa[2][0] + ya * bGa[2][1] + bGa[2][2];
+  double xb = (xa * bGa[0][0] + ya * bGa[0][1] + bGa[0][2]) / z;
+  double yb = (xa * bGa[1][0] + ya * bGa[1][1] + bGa[1][2]) / z;
 
   vpImagePoint iPb(yb, xb);
 
@@ -521,8 +531,8 @@ vpImagePoint vpHomography::project(const vpCameraParameters &cam, const vpHomogr
 }
 
 /*!
-  Given \c Pa a point with normalized coordinates \f$(x_a,y_a,1)\f$ in the
-  image plane a, and the homography \c bHa that links image a and b, computes
+  Given `Pa` a point with normalized coordinates \f$(x_a,y_a,1)\f$ in the
+  image plane a, and the homography `bHa` in the Euclidian space that links image a and b, computes
   the normalized coordinates of the point \f$(x_b,y_b,1)\f$ in the image plane
   b.
 
@@ -757,4 +767,116 @@ vpMatrix vpHomography::convert() const
       M[i][j] = (*this)[i][j];
 
   return M;
+}
+
+/*!
+ * Transform an homography from pixel space to calibrated domain.
+ *
+ * Given homography \f$\bf G\f$ corresponding to the collineation matrix in the pixel space,
+ * compute the homography matrix \f$\bf H\f$ in the Euclidian space or calibrated domain using:
+ * \f[ {\bf H} = {\bf K}^{-1} {\bf G} {\bf K} \f]
+ * \param[in] cam : Camera parameters used to fill \f${\bf K}\f$ matrix such as
+ * \f[{\bf K} =
+ * \left[ \begin{array}{ccc}
+ * p_x & 0   & u_0  \\
+ * 0   & p_y & v_0 \\
+ * 0   & 0   & 1
+ * \end{array}\right]
+ * \f]
+ * \return The corresponding homography matrix \f$\bf H\f$ in the Euclidian space or calibrated domain.
+ *
+ * \sa homography2collineation()
+ */
+vpHomography vpHomography::collineation2homography(const vpCameraParameters &cam) const
+{
+  vpHomography H;
+  double px = cam.get_px();
+  double py = cam.get_py();
+  double u0 = cam.get_u0();
+  double v0 = cam.get_v0();
+  double one_over_px = cam.get_px_inverse();
+  double one_over_py = cam.get_py_inverse();
+  double h00 = (*this)[0][0], h01 = (*this)[0][1], h02 = (*this)[0][2];
+  double h10 = (*this)[1][0], h11 = (*this)[1][1], h12 = (*this)[1][2];
+  double h20 = (*this)[2][0], h21 = (*this)[2][1], h22 = (*this)[2][2];
+
+  double u0_one_over_px = u0 * one_over_px;
+  double v0_one_over_py = v0 * one_over_py;
+
+  double A = h00 * one_over_px - h20 * u0_one_over_px;
+  double B = h01 * one_over_px - h21 * u0_one_over_px;
+  double C = h02 * one_over_px - h22 * u0_one_over_px;
+  double D = h10 * one_over_py - h20 * v0_one_over_py;
+  double E = h11 * one_over_py - h21 * v0_one_over_py;
+  double F = h12 * one_over_py - h22 * v0_one_over_py;
+
+  H[0][0] = A * px;
+  H[1][0] = D * px;
+  H[2][0] = h20 * px;
+
+  H[0][1] = B * py;
+  H[1][1] = E * py;
+  H[2][1] = h21 * py;
+
+  H[0][2] = A * u0 + B * v0 + C;
+  H[1][2] = D * u0 + E * v0 + F;
+  H[2][2] = h20 * u0 + h21 * v0 + h22;
+
+  return H;
+}
+
+/*!
+ * Transform an homography from calibrated domain to pixel space.
+ *
+ * Given homography \f$\bf H\f$ in the Euclidian space or in the calibrated domain,
+ * compute the homography \f$\bf G\f$ corresponding to the collineation matrix in the pixel space using:
+ * \f[ {\bf G} = {\bf K} {\bf H} {\bf K}^{-1} \f]
+ * \param[in] cam : Camera parameters used to fill \f${\bf K}\f$ matrix such as
+ * \f[{\bf K} =
+ * \left[ \begin{array}{ccc}
+ * p_x & 0   & u_0  \\
+ * 0   & p_y & v_0 \\
+ * 0   & 0   & 1
+ * \end{array}\right]
+ * \f]
+ * \return The corresponding collineation matrix \f$\bf G\f$ in the pixel space.
+ *
+ * \sa collineation2homography()
+ */
+vpHomography vpHomography::homography2collineation(const vpCameraParameters &cam) const
+{
+  vpHomography H;
+  double px = cam.get_px();
+  double py = cam.get_py();
+  double u0 = cam.get_u0();
+  double v0 = cam.get_v0();
+  double one_over_px = cam.get_px_inverse();
+  double one_over_py = cam.get_py_inverse();
+  double h00 = (*this)[0][0], h01 = (*this)[0][1], h02 = (*this)[0][2];
+  double h10 = (*this)[1][0], h11 = (*this)[1][1], h12 = (*this)[1][2];
+  double h20 = (*this)[2][0], h21 = (*this)[2][1], h22 = (*this)[2][2];
+
+  double A = h00 * px + u0 * h20;
+  double B = h01 * px + u0 * h21;
+  double C = h02 * px + u0 * h22;
+  double D = h10 * py + v0 * h20;
+  double E = h11 * py + v0 * h21;
+  double F = h12 * py + v0 * h22;
+
+  H[0][0] = A * one_over_px;
+  H[1][0] = D * one_over_px;
+  H[2][0] = h20 * one_over_px;
+
+  H[0][1] = B * one_over_py;
+  H[1][1] = E * one_over_py;
+  H[2][1] = h21 * one_over_py;
+
+  double u0_one_over_px = u0 * one_over_px;
+  double v0_one_over_py = v0 * one_over_py;
+
+  H[0][2] = -A * u0_one_over_px - B * v0_one_over_py + C;
+  H[1][2] = -D * u0_one_over_px - E * v0_one_over_py + F;
+  H[2][2] = - h20 * u0_one_over_px - h21 * v0_one_over_py + h22;
+
+  return H;
 }
