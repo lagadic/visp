@@ -49,6 +49,65 @@
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
+namespace {
+/*!
+ * Transform an homography from calibrated domain to pixel space.
+ *
+ * Given homography \f$\bf H\f$ in the Euclidian space or in the calibrated domain,
+ * compute the homography \f$\bf G\f$ corresponding to the collineation matrix in the pixel space using:
+ * \f[ {\bf G} = {\bf K} {\bf H} {\bf K}^{-1} \f]
+ * \param[in] H : Homography in the calibrated domain.
+ * \param[in] cam : Camera parameters used to fill \f${\bf K}\f$ matrix such as
+ * \f[{\bf K} =
+ * \left[ \begin{array}{ccc}
+ * p_x & 0   & u_0  \\
+ * 0   & p_y & v_0 \\
+ * 0   & 0   & 1
+ * \end{array}\right]
+ * \f]
+ * \return The corresponding collineation matrix \f$\bf G\f$ in the pixel space.
+ *
+ * \sa vpHomography::homography2collineation()
+ */
+vpMatrix homography2collineation(const vpMatrix &H, const vpCameraParameters &cam)
+{
+  vpMatrix G(3, 3);
+  double px = cam.get_px();
+  double py = cam.get_py();
+  double u0 = cam.get_u0();
+  double v0 = cam.get_v0();
+  double one_over_px = cam.get_px_inverse();
+  double one_over_py = cam.get_py_inverse();
+  double h00 = H[0][0], h01 = H[0][1], h02 = H[0][2];
+  double h10 = H[1][0], h11 = H[1][1], h12 = H[1][2];
+  double h20 = H[2][0], h21 = H[2][1], h22 = H[2][2];
+
+  double A = h00 * px + u0 * h20;
+  double B = h01 * px + u0 * h21;
+  double C = h02 * px + u0 * h22;
+  double D = h10 * py + v0 * h20;
+  double E = h11 * py + v0 * h21;
+  double F = h12 * py + v0 * h22;
+
+  G[0][0] = A * one_over_px;
+  G[1][0] = D * one_over_px;
+  G[2][0] = h20 * one_over_px;
+
+  G[0][1] = B * one_over_py;
+  G[1][1] = E * one_over_py;
+  G[2][1] = h21 * one_over_py;
+
+  double u0_one_over_px = u0 * one_over_px;
+  double v0_one_over_py = v0 * one_over_py;
+
+  G[0][2] = -A * u0_one_over_px - B * v0_one_over_py + C;
+  G[1][2] = -D * u0_one_over_px - E * v0_one_over_py + F;
+  G[2][2] = - h20 * u0_one_over_px - h21 * v0_one_over_py + h22;
+
+  return G;
+}
+}
+
 vpMbKltTracker::vpMbKltTracker()
   :
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
@@ -479,8 +538,8 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> * const I, const vpIma
         vpGEMM(cdtc, Nc, -invDc, cdRc, 1.0, cdHc, VP_GEMM_B_T);
         cdHc /= cdHc[2][2];
 
-        // Create the 2D homography
-        vpMatrix cdGc = m_cam.get_K() * cdHc * m_cam.get_K_inverse();
+        // Compute homography in the pixel space cdGc = K * cdHc * K^{-1}
+        vpMatrix cdGc = homography2collineation(cdHc, m_cam);
 
         // Points displacement
         std::map<int, vpImagePoint>::const_iterator iter = kltpoly->getCurrentPoints().begin();
