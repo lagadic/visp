@@ -181,12 +181,12 @@ void compute_pseudo_inverse(const vpMatrix &U, const vpColVector &sv, const vpMa
   Ap.resize(ncols, nrows, true, false);
 
   // compute the highest singular value and the rank of h
-  double maxsv = fabs(sv[0]);
+  double maxsv = sv[0];
 
   rank_out = 0;
 
   for (unsigned int i = 0; i < ncols; i++) {
-    if (fabs(sv[i]) > maxsv * svThreshold) {
+    if (sv[i] > maxsv * svThreshold) {
       rank_out++;
     }
   }
@@ -6505,14 +6505,14 @@ unsigned int vpMatrix::kernel(vpMatrix &kerAt, double svThreshold) const
   // Compute the highest singular value and rank of the matrix
   double maxsv = 0;
   for (unsigned int i = 0; i < nbcol; i++) {
-    if (fabs(sv[i]) > maxsv) {
-      maxsv = fabs(sv[i]);
+    if (sv[i] > maxsv) {
+      maxsv = sv[i];
     }
   }
 
   unsigned int rank = 0;
   for (unsigned int i = 0; i < nbcol; i++) {
-    if (fabs(sv[i]) > maxsv * svThreshold) {
+    if (sv[i] > maxsv * svThreshold) {
       rank++;
     }
   }
@@ -6521,7 +6521,7 @@ unsigned int vpMatrix::kernel(vpMatrix &kerAt, double svThreshold) const
   if (rank != nbcol) {
     for (unsigned int j = 0, k = 0; j < nbcol; j++) {
       // if( v.col(j) in kernel and non zero )
-      if ((fabs(sv[j]) <= maxsv * svThreshold) &&
+      if ((sv[j] <= maxsv * svThreshold) &&
           (std::fabs(V.getCol(j).sumSquare()) > std::numeric_limits<double>::epsilon())) {
         for (unsigned int i = 0; i < V.getRows(); i++) {
           kerAt[k][i] = V[i][j];
@@ -6737,15 +6737,15 @@ double vpMatrix::cond(double svThreshold) const
   // Compute the highest singular value
   double maxsv = 0;
   for (unsigned int i = 0; i < nbcol; i++) {
-    if (fabs(sv[i]) > maxsv) {
-      maxsv = fabs(sv[i]);
+    if (sv[i] > maxsv) {
+      maxsv = sv[i];
     }
   }
 
   // Compute the rank of the matrix
   unsigned int rank = 0;
   for (unsigned int i = 0; i < nbcol; i++) {
-    if (fabs(sv[i]) > maxsv * svThreshold) {
+    if (sv[i] > maxsv * svThreshold) {
       rank++;
     }
   }
@@ -6753,8 +6753,8 @@ double vpMatrix::cond(double svThreshold) const
   // Compute the lowest singular value
   double minsv = maxsv;
   for (unsigned int i = 0; i < rank; i++) {
-    if (fabs(sv[i]) < minsv) {
-      minsv = fabs(sv[i]);
+    if (sv[i] < minsv) {
+      minsv = sv[i];
     }
   }
 

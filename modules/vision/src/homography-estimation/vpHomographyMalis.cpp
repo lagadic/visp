@@ -234,18 +234,18 @@ void HLM2D(unsigned int nb_pts, vpMatrix &points_des, vpMatrix &points_cour, vpM
         pour effectuer un controle sur le rang de la matrice : pas plus
         de 2 valeurs singulieres quasi=0
   *****/
-  vals_inf = fabs(sv[0]);
+  vals_inf = sv[0];
   vect = 0;
   contZeros = 0;
-  if (fabs(sv[0]) < eps) {
+  if (sv[0] < eps) {
     contZeros = contZeros + 1;
   }
   for (unsigned int j = 1; j < 9; j++) {
-    if (fabs(sv[j]) < vals_inf) {
-      vals_inf = fabs(sv[j]);
+    if (sv[j] < vals_inf) {
+      vals_inf = sv[j];
       vect = j;
     }
-    if (fabs(sv[j]) < eps) {
+    if (sv[j] < eps) {
       contZeros = contZeros + 1;
     }
   }
