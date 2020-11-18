@@ -792,6 +792,26 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, b
       }
     }
   }
+  else if (src.type() == CV_8UC4) {
+    dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+    if (src.isContinuous()) {
+      BGRaToGrey((unsigned char *)src.data, (unsigned char *)dest.bitmap, (unsigned int)src.cols, (unsigned int)src.rows,
+                 flip, nThreads);
+    } else {
+      if (flip) {
+        for (unsigned int i = 0; i < dest.getRows(); ++i) {
+          BGRaToGrey((unsigned char *)src.data + i * src.step1(),
+                     (unsigned char *)dest.bitmap + (dest.getRows() - i - 1) * dest.getCols(),
+                     (unsigned int)dest.getCols(), 1, false);
+        }
+      } else {
+        for (unsigned int i = 0; i < dest.getRows(); ++i) {
+          BGRaToGrey((unsigned char *)src.data + i * src.step1(), (unsigned char *)dest.bitmap + i * dest.getCols(),
+                     (unsigned int)dest.getCols(), 1, false);
+        }
+      }
+    }
+  }
 }
 
 /*!
@@ -3561,6 +3581,51 @@ void vpImageConvert::BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned
       for (unsigned int j = 0; j < width; j++) {
         *grey++ = (unsigned char)(0.2126 * *(line + 2) + 0.7152 * *(line + 1) + 0.0722 * *(line + 0));
         line += 3;
+      }
+
+      // go to the next line
+      src += lineStep;
+    }
+  }
+}
+
+/*!
+  Converts a BGRa image to greyscale.
+  Flips the image verticaly if needed.
+  Assumes that grey is already resized.
+
+  \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
+*/
+void vpImageConvert::BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsigned int width, unsigned int height,
+                                bool flip, unsigned int
+                                #if defined _OPENMP
+                                nThreads
+                                #endif
+                               )
+{
+  if (!flip) {
+#if defined _OPENMP
+    if (nThreads > 0) {
+      omp_set_num_threads(static_cast<int>(nThreads));
+    }
+#pragma omp parallel for
+#endif
+    for (int i = 0; i < static_cast<int>(height); i++) {
+      SimdBgraToGray(bgra + i*width*4, width, 1, width * 4, grey + i*width, width);
+    }
+  } else {
+    // if we have to flip the image, we start from the end last scanline so
+    // the  step is negative
+    int lineStep = (flip) ? -(int)(width * 4) : (int)(width * 4);
+
+    // starting source address = last line if we need to flip the image
+    unsigned char *src = (flip) ? bgra + (width * height * 4) + lineStep : bgra;
+
+    for (unsigned int i = 0; i < height; i++) {
+      unsigned char *line = src;
+      for (unsigned int j = 0; j < width; j++) {
+        *grey++ = (unsigned char)(0.2126 * *(line + 2) + 0.7152 * *(line + 1) + 0.0722 * *(line + 0));
+        line += 4;
       }
 
       // go to the next line

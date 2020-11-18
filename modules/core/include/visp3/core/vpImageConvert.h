@@ -242,6 +242,9 @@ public:
   static void BGRToGrey(unsigned char *bgr, unsigned char *grey, unsigned int width, unsigned int height,
                         bool flip = false, unsigned int nThreads=0);
 
+  static void BGRaToGrey(unsigned char *bgra, unsigned char *grey, unsigned int width, unsigned int height,
+                         bool flip = false, unsigned int nThreads=0);
+
   static void YCbCrToRGB(unsigned char *ycbcr, unsigned char *rgb, unsigned int size);
   static void YCbCrToRGBa(unsigned char *ycbcr, unsigned char *rgb, unsigned int size);
   static void YCrCbToRGB(unsigned char *ycbcr, unsigned char *rgb, unsigned int size);
