@@ -623,7 +623,7 @@ void vpHomography::robust(const std::vector<double> &xb, const std::vector<doubl
     vpMatrix A(nbLinesA * n, 8);
     vpColVector X(8);
     vpColVector Y(nbLinesA * n);
-    vpMatrix W(nbLinesA * n, nbLinesA * n); // Weight matrix
+    vpMatrix W(nbLinesA * n, nbLinesA * n, 0); // Weight matrix
 
     vpColVector w(nbLinesA * n);
 
@@ -682,10 +682,6 @@ void vpHomography::robust(const std::vector<double> &xb, const std::vector<doubl
       for (unsigned int i = 0; i < 8; i++)
         aHbn.data[i] = X[i];
       aHbn[2][2] = 1;
-      {
-        vpMatrix aHbnorm = aHbn.convert();
-        aHbnorm /= aHbnorm[2][2];
-      }
 
       iter++;
     }
