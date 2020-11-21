@@ -38,7 +38,7 @@
 
 project(demo-wireframe-simulator)
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.12.2)
 
 find_package(VISP REQUIRED visp_core visp_robot visp_vs visp_io visp_gui)
 
