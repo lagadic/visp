@@ -200,7 +200,7 @@ public:
   }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpArray2D<Type>(vpArray2D<Type> &&A)
+  vpArray2D<Type>(vpArray2D<Type> &&A) noexcept
   {
     rowNum = A.rowNum;
     colNum = A.colNum;
@@ -429,7 +429,7 @@ public:
   }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpArray2D<Type> &operator=(vpArray2D<Type> &&other)
+  vpArray2D<Type> &operator=(vpArray2D<Type> &&other) noexcept
   {
     if (this != &other) {
       free(data);

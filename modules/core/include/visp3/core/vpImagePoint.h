@@ -121,10 +121,10 @@ public:
   /*!
     Move operator.
   */
-  inline vpImagePoint &operator=(const vpImagePoint &&ip)
+  inline vpImagePoint &operator=(const vpImagePoint &&ip) noexcept
   {
-    this->i = std::move(ip.i);
-    this->j = std::move(ip.j);
+    this->i = ip.i;
+    this->j = ip.j;
     return *this;
   }
 #endif
