@@ -113,6 +113,9 @@ if(USE_PCL)
     if(TARGET ${lib_})
       # This is a PCL or VTK library
       list(APPEND PCL_VTK_LIBRARIES ${lib_})
+      if(lib_ MATCHES "^FLANN")
+        mark_as_advanced(flann_DIR)
+      endif()
     else()
       # Other libraries sqlite3, boost..., optimized, debug
       if(EXISTS ${lib_} OR ${lib_} MATCHES "optimized" OR ${lib_} MATCHES "debug")
