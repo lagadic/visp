@@ -1,6 +1,6 @@
 project(tutorial-detection-face)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.12.2)
 
 find_package(VISP REQUIRED visp_detection visp_io visp_gui visp_sensor)
 

@@ -1,6 +1,6 @@
 project(visp-mbot)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.12.2)
 
 # By default set release configuration
 if(NOT CMAKE_BUILD_TYPE)
