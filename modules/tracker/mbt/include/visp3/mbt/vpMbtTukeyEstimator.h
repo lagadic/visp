@@ -395,7 +395,7 @@ template <class T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vecto
 
   // Here we consider that sig cannot be equal to 0
   for (size_t i = 0; i < x.size(); i++) {
-    double xi = x[i] / C;
+    T xi = x[i] / C;
     xi *= xi;
 
     if (xi > 1.) {

@@ -1,6 +1,6 @@
 project(tutorial-tracking-mb-edges)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.12.2)
 
 find_package(VISP REQUIRED visp_core visp_mbt visp_io visp_gui)
 
