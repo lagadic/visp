@@ -274,6 +274,7 @@ libraries in the `Path` environment variable.
 Open the "Edit environment variable" UI, and modify by hand `Path` to add respectively:
 - a new line with `C:\Program Files\PCL 1.11.1\bin`
 - a new line with `C:\Program Files\OpenNI2\Redist`
+- a new line with `C:\Program Files\PCL 1.11.1\3rdParty\VTK\bin`
 
 \subsubsection install_win10_msvc16_3rdparty_flycapture FlyCapture 3rd party
 
