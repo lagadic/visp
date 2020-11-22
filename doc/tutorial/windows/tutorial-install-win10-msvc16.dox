@@ -280,6 +280,7 @@ Open the "Edit environment variable" UI, and modify by hand `Path` to add respec
 I you have a PointGrey or FLIR USB 2.0, USB 3.0, GigE or FireWire camera (DragonFly2, Flea3...), you may
 install FlyCapture. Otherwise you can skip this section.
 
+<b>1. Install FlyCapture SDK</b>
 Complete installation instructions are given [here](https://www.ptgrey.com/KB/10020). We recap hereafter the
 main instructions to install FlyCapture SDK under Windows:
 
@@ -290,6 +291,12 @@ to download `FlyCapture_2.13.3.61_x64.exe` file.
 - Double-click the downloaded software executable and follow the installation instructions.
 - Select the correct driver for the camera when prompted by the installation instructions.
 - Reboot the system.
+
+<b>2. Complete FlyCapture SDK</b>
+
+In order to find `FlyCapture2_v100.dll` you need to add the location of the library to the `Path` environment var.
+Open the "Edit environment variable" UI, and modify by hand `Path` to add a new line with
+`C:\Program Files\Point Grey Research\FlyCapture2\bin64`.
 
 \subsubsection install_win10_msvc16_3rdparty_pylon Pylon 3rd party
 
