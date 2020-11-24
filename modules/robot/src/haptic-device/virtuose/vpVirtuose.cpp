@@ -52,7 +52,7 @@
  * Authorize indexing on all movements by default.
  */
 vpVirtuose::vpVirtuose()
-  : m_virtContext(NULL), m_ip("localhost#53210"), m_verbose(false), m_apiMajorVersion(0), m_apiMinorVersion(0),
+  : m_virtContext(NULL), m_ip_port("localhost#5000"), m_verbose(false), m_apiMajorVersion(0), m_apiMinorVersion(0),
     m_ctrlMajorVersion(0), m_ctrlMinorVersion(0), m_typeCommand(COMMAND_TYPE_IMPEDANCE), m_indexType(INDEXING_ALL),
     m_is_init(false), m_period(0.001f), m_njoints(6)
 {
@@ -61,7 +61,7 @@ vpVirtuose::vpVirtuose()
 }
 
 /*!
- * Default destructor that delete the VirtContext object.
+ * Delete the VirtContext object.
  */
 void vpVirtuose::close()
 {
@@ -77,6 +77,19 @@ void vpVirtuose::close()
 vpVirtuose::~vpVirtuose()
 {
   close();
+}
+
+/*!
+ * Set haptic device ip address and communication port.
+ * \param[in] ip: Host IP address. Default value set in constructor is "localhost".
+ * \param[in] port: Host communication port. Default value set in constructor is 5000.
+ */
+void vpVirtuose::setIpAddressAndPort(const std::string &ip, int port)
+{
+  std::stringstream ss;
+  ss << ip << "#" << port;
+
+  m_ip_port = ss.str();
 }
 
 /*!
@@ -531,11 +544,12 @@ vpColVector vpVirtuose::getVelocity() const
 void vpVirtuose::init()
 {
   if (!m_is_init) {
-    m_virtContext = virtOpen(m_ip.c_str());
+    m_virtContext = virtOpen(m_ip_port.c_str());
 
     if (m_virtContext == NULL) {
       int err = virtGetErrorCode(m_virtContext);
-      throw(vpException(vpException::fatalError, "Cannot open haptic device: %s", virtGetErrorMessage(err)));
+      throw(vpException(vpException::fatalError, "Cannot open communication with haptic device using %s: %s. Check ip and port values",
+                        m_ip_port.c_str(), virtGetErrorMessage(err)));
     }
 
     if (virtGetControlerVersion(m_virtContext, &m_ctrlMajorVersion, &m_ctrlMinorVersion)) {

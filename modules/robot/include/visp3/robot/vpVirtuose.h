@@ -177,9 +177,8 @@ public:
   void setForce(const vpColVector &force);
   void setForceFactor(const float &forceFactor);
   void setIndexingMode(const VirtIndexingType &type);
-  /*! Set haptic device ip address and port. Default value is
-   * "localhost#5000".*/
-  inline void setIpAddress(const std::string &ip) { m_ip = ip; }
+  void setIpAddressAndPort(const std::string &ip, int port);
+
   void setObservationFrame(const vpPoseVector &position);
   void setPeriodicFunction(VirtPeriodicFunction CallBackVirt);
   void setPosition(vpPoseVector &position);
@@ -198,9 +197,26 @@ public:
   void startPeriodicFunction();
   void stopPeriodicFunction();
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  /*!
+    @name Deprecated functions
+  */
+  //@{
+  /*!
+   * \deprecated You should rather use setIpAddressAndPort() that is more explicit.
+   *
+   * Set haptic device ip address and port. Default value is
+   * "localhost#5000".
+   *
+   * \sa setIpAddressAndPort()
+   */
+  vp_deprecated inline void setIpAddress(const std::string &ip_port) { m_ip_port = ip_port; }
+  //@}
+#endif
+
 protected:
   VirtContext m_virtContext;
-  std::string m_ip;
+  std::string m_ip_port;
   bool m_verbose;
   int m_apiMajorVersion;
   int m_apiMinorVersion;

@@ -94,13 +94,40 @@ void CallBackVirtuose(VirtContext VC, void *ptr)
   return;
 }
 
-int main()
+int main(int argc, char **argv)
 {
+  std::string opt_ip = "localhost";
+  int opt_port = 5000;
+  for (int i = 0; i < argc; i++) {
+    if (std::string(argv[i]) == "--ip")
+      opt_ip = std::string(argv[i + 1]);
+    else if (std::string(argv[i]) == "--port")
+      opt_port = std::atoi(argv[i + 1]);
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout << "\nUsage: " << argv[0]
+                << " [--ip <localhost>] [--port <port>]"
+                   " [--help] [-h]\n"
+                << std::endl
+                << "Description: " << std::endl
+                << " --ip <localhost>" << std::endl
+                << "\tHost IP address. Default value: \"localhost\"." << std::endl
+                << std::endl
+                << " --port <port>" << std::endl
+                << "\tCommunication port. Default value: 5000." << std::endl
+                << "\tSuggested values: " << std::endl
+                << "\t- 5000 to communicate with the Virtuose." << std::endl
+                << "\t- 53210 to communicate with the Virtuose equipped with the Glove." << std::endl
+                << std::endl;
+      return 0;
+    }
+  }
+
   try {
     float period = 0.001f;
     vpVirtuose virtuose;
     virtuose.setTimeStep(period);
-    virtuose.setIpAddress("localhost#53210");
+    std::cout << "Try to connect to " << opt_ip << " port " << opt_port << std::endl;
+    virtuose.setIpAddressAndPort(opt_ip, opt_port);
     virtuose.setVerbose(true);
     virtuose.setPowerOn();
 
