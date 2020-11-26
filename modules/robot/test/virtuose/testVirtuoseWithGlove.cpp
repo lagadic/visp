@@ -61,6 +61,7 @@
 int main()
 {
   int port = 53210;
+  std::string ip = "localhost";
 
   std::vector<vpVirtuose> virtuose(4); // 0: virtuose, 1: thumb, 2: index, 3: middle
   std::vector<vpHomogeneousMatrix> wMd(4);
@@ -70,11 +71,8 @@ int main()
 
   // Open device
   for (size_t device=0; device < virtuose.size(); device ++) {
-    std::stringstream ss; ss << port + device;
-    std::string ip = "localhost#" + ss.str();
-    std::cout << "Connect to: " << ip << std::endl;
-
-    virtuose[device].setIpAddress(ip);
+    std::cout << "Try to connect to " << ip << " port " << (port  + device) << std::endl;
+    virtuose[device].setIpAddressAndPort(ip, port + device);
     virtuose[device].init();
   }
 
