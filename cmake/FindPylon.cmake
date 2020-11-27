@@ -124,7 +124,11 @@ elseif(MSVC)
   )
 
 elseif(UNIX)
-  set(PYLON_ROOT_SEARCH_PATH /opt/pylon5)
+  set(PYLON_ROOT_SEARCH_PATH
+    /opt/pylon5
+    /opt/pylon
+  )
+
   # For more possible versions, just add more paths below.
   # list(APPEND PYLON_ROOT_SEARCH_PATH "/somepath/include")
 
