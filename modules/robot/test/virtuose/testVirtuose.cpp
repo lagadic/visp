@@ -92,6 +92,8 @@ int main(int argc, char **argv)
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
   }
 #else
+  (void)argc;
+  (void)argv;
   std::cout << "You should install Virtuose SDK to use this binary..." << std::endl;
 #endif
 }
