@@ -453,6 +453,9 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpPoseV
   if (!m_handler) {
     throw(vpException(vpException::fatalError, "Cannot get Franka robot position: robot is not connected"));
   }
+  if (frame == JOINT_STATE) {
+    throw(vpException(vpException::fatalError, "Cannot get Franka joint position as a pose vector"));
+  }
 
   franka::RobotState robot_state = getRobotInternalState();
 
