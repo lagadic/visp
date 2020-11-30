@@ -2173,6 +2173,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_GTK \
                          VISP_HAVE_GSL \
                          VISP_HAVE_FUNC_INET_NTOP \
+                         VISP_HAVE_JACOSDK \
                          VISP_HAVE_JPEG \
                          VISP_HAVE_LAPACK \
                          VISP_HAVE_LIBFREENECT \

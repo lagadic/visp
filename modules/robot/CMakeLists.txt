@@ -98,6 +98,11 @@ if(USE_PTU46)
   list(APPEND opt_libs ${PTU46_LIBRARIES})
 endif()
 
+if(USE_JACOSDK)
+  list(APPEND opt_incs ${JACOSDK_INCLUDE_DIRS})
+  list(APPEND opt_libs ${JACOSDK_LIBRARIES})
+endif()
+
 if(USE_FLIRPTUSDK)
   list(APPEND opt_incs ${FLIRPTUSDK_INCLUDE_DIRS})
   list(APPEND opt_libs ${FLIRPTUSDK_LIBRARIES})
