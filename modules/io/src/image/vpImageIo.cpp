@@ -372,6 +372,8 @@ void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename)
 #endif
     break;
   case FORMAT_PNG:
+    std::cout << "appelle readPNG()" << std::endl;
+
 #if defined(VISP_HAVE_PNG)
     readPNG(I, final_filename);
 #else
@@ -2175,11 +2177,11 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
 {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
 #if VISP_HAVE_OPENCV_VERSION >= 0x030200
-    int flags = cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION;
+    int flags = cv::IMREAD_COLOR | cv::IMREAD_IGNORE_ORIENTATION;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x030000
-    int flags = cv::IMREAD_GRAYSCALE;
+    int flags = cv::IMREAD_COLOR;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    int flags = CV_LOAD_IMAGE_GRAYSCALE;
+    int flags = CV_LOAD_IMAGE_COLOR;
 #endif
   cv::Mat Ip = cv::imread(filename.c_str(), flags);
   if (!Ip.empty())
