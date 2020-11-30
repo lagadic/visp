@@ -20,8 +20,7 @@
 # JACOSDK_LIBRARIES
 #
 # Authors:
-# Zubair Arif
-# HIT University-Harbin China
+# Fabien Spindler
 #############################################################################
 
 set(JACOSDK_INC_SEARCH_PATH /usr/JACO-SDK/API)
