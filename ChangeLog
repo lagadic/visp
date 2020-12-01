@@ -77,6 +77,7 @@ ViSP 3.3.1 (under development)
     . [#842] iOS framework build process is unable to detect opencv2.framework as 3rd party
     . [#845] Fix ME display when calling setPose() without track() after
     . [#857] Reading a color image with vpImageIo::readPNG() can lead to a gray level image
+    . [#859] Wrong visp.pc content with PCL 1.10.0 around VTK library names
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:

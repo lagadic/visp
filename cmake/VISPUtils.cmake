@@ -56,15 +56,6 @@ endif()
 # TODO: adding macros for android build
 # -------------------------------------------
 
-macro(visp_get_libname var_name)
-  get_filename_component(__libname "${ARGN}" NAME)
-  # visp_core.so.3.4 -> visp_core
-  string(REGEX REPLACE "^lib(.+)\\.(a|so|dll)(\\.[.0-9]+)?$" "\\1" __libname "${__libname}")
-  # MacOSX: libvisp_core.3.3.1.dylib -> visp_core
-  string(REGEX REPLACE "^lib(.+[^.0-9])\\.([.0-9]+\\.)?dylib$" "\\1" __libname "${__libname}")
-  set(${var_name} "${__libname}")
-endmacro()
-
 macro(vp_path_join result_var P1 P2_)
   string(REGEX REPLACE "^[/]+" "" P2 "${P2_}")
   if("${P1}" STREQUAL "" OR "${P1}" STREQUAL ".")
@@ -1407,11 +1398,12 @@ endfunction()
 # Extract library name without lib prefix and extension suffix
 # UNIX  : libvisp_core.so.3.3 -> visp_core
 # UNIX  : libz.so -> z
+# UNIX  : libvtkRenderingOpenGL2-7.1.so.7.1p.1 -> vtkRenderingOpenGL2-7.1
 # MacOSX: libvisp_core-3.3.1.dylib -> visp_core-3.3.1
 # MacOSX: libz.dylib -> z
 macro(vp_get_libname var_name)
   get_filename_component(__libname "${ARGN}" NAME)
-  string(REGEX REPLACE "^lib(.*)\\.(a|so|dll)(\\.[.0-9]+)?$" "\\1" __libname "${__libname}")
+  string(REGEX REPLACE "^lib(.*)\\.(a|so|dll)(\\.[.0-9a-z]+)?$" "\\1" __libname "${__libname}")
   string(REGEX REPLACE "^lib(.*[^.])(\\.[0-9]+\\.)?.dylib$" "\\1" __libname "${__libname}")
   set(${var_name} "${__libname}")
 endmacro()
