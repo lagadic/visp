@@ -164,6 +164,8 @@ int main(int argc, char*argv[])
   std::cout << "The end" << std::endl;
   return EXIT_SUCCESS;
 #else
+  (void)(argc);
+  (void)(argv);
   std::cout << "Install Jaco SDK, configure and build again ViSP to use this example..." << std::endl;
 #endif
 }

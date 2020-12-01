@@ -481,11 +481,30 @@ void vpRobotKinova::getJointPosition(vpColVector &q)
  * Get robot position.
  *
  * \param[in] frame : Considered cartesian frame or joint state.
- * \param[out] q : Position of the arm. Joint angles are expressed in rad,
- * while cartesian position are expressed in meter for translations and radian
- * for rotations.
+ * \param[out] position : Either joint or cartesian position. When `frame` is set to vpRobot::JOINT_STATE, `position` contains joint angles expressed in rad,
+ * while when `frame` is set to vpRobot::END_EFFECTOR_FRAME `position` contains the cartesian position of the end-effector in the robot base frame as a 6-dim vector,
+ * with first the 3 translations expressed in meter, and then the 3 Euler rotations Rxyz expressed in radians.
+ *
+ * The following code shows how to use this fonction and convert the resulting position into an homogeneous matrix
+ * that gives the transformation between the robot base frame and the end-effector:
+ * \code
+ * vpColVector position;
+ * ...
+ * robot.getPosition(vpRobot::END_EFFECTOR_FRAME, position);
+ * vpTranslationVector wte; // reference frame to end-effector frame translations
+ * vpRxyzVector wre; // reference frame to end-effector frame rotations
+ * // Update the transformation between reference frame and end-effector frame
+ * for (unsigned int i=0; i < 3; i++) {
+ *   wte[i] = position[i];   // tx, ty, tz
+ *   wre[i] = position[i+3]; // ry, ry, rz
+ * }
+ * // Create a rotation matrix from the Rxyz rotation angles
+ * vpRotationMatrix wRe(wre); // reference frame to end-effector frame rotation matrix
+ * // Create reference frame to end-effector frame transformation in terms of an homogeneous matrix
+ * vpHomogeneousMatrix wMe(wte, wRe);
+ * \endcode
  */
-void vpRobotKinova::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q)
+void vpRobotKinova::getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position)
 {
   if (!m_plugin_loaded) {
     throw(vpException(vpException::fatalError, "Jaco SDK plugin not loaded"));
@@ -495,22 +514,61 @@ void vpRobotKinova::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
   }
 
   if (frame == JOINT_STATE) {
-    getJointPosition(q);
+    getJointPosition(position);
   }
   else if (frame == END_EFFECTOR_FRAME) {
     CartesianPosition currentCommand;
     // We get the actual cartesian position of the robot
     KinovaGetCartesianCommand(currentCommand);
-    q.resize(6);
-    q[0] = currentCommand.Coordinates.X;
-    q[1] = currentCommand.Coordinates.Y;
-    q[2] = currentCommand.Coordinates.Z;
-    q[3] = currentCommand.Coordinates.ThetaX;
-    q[4] = currentCommand.Coordinates.ThetaY;
-    q[5] = currentCommand.Coordinates.ThetaZ;
+    position.resize(6);
+    position[0] = currentCommand.Coordinates.X;
+    position[1] = currentCommand.Coordinates.Y;
+    position[2] = currentCommand.Coordinates.Z;
+    position[3] = currentCommand.Coordinates.ThetaX;
+    position[4] = currentCommand.Coordinates.ThetaY;
+    position[5] = currentCommand.Coordinates.ThetaZ;
   }
   else {
     std::cout << "Not implemented ! " << std::endl;
+  }
+}
+
+/*!
+ * Get robot position.
+ *
+ * \param[in] frame : Type of cartesian position to retrieve. Admissible value is:
+ * - vpRobot::END_EFFECTOR_FRAME to retrieve the cartesian position of the end-effector frame wrt the robot base frame.
+ * \param[out] pose : Cartesian position of the end-effector in the robot base frame as a 6-dim pose vector,
+ * with first the 3 translations expressed in meter, and then the 3 rotations in radian as a \f$\theta {\bf u}\f$ vector (see vpThetaUVector).
+ *
+ * The following code shows how to use this function and convert the resulting position into an homogeneous matrix
+ * that gives the transformation between the robot base frame and the end-effector:
+ * \code
+ * vpPoseVector pose;
+ * ...
+ * robot.getPosition(vpRobot::END_EFFECTOR_FRAME, pose);
+ * // Create reference frame to end-effector frame transformation in terms of an homogeneous matrix
+ * vpHomogeneousMatrix wMe(pose);
+ * \endcode
+ */
+void vpRobotKinova::getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &pose)
+{
+  if (frame == JOINT_STATE) {
+    throw(vpException(vpException::fatalError, "Cannot get Jaco joint position as a pose vector"));
+  }
+
+  vpColVector position;
+  getPosition(frame, position);
+
+  vpRxyzVector rxyz; // reference frame to end-effector frame rotations
+  // Update the transformation between reference frame and end-effector frame
+  for (unsigned int i=0; i < 3; i++) {
+    pose[i] = position[i];   // tx, ty, tz
+    rxyz[i] = position[i+3]; // ry, ry, rz
+  }
+  vpThetaUVector tu(rxyz);
+  for (unsigned int i=0; i < 3; i++) {
+    pose[i+3] = tu[i];   // tux, tuy, tuz
   }
 }
 

@@ -4,7 +4,7 @@
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++.
-These steps have been tested on Windows 10 (64 bit), with CMake 3.16.4 and Visual Studio Community 2019.
+These steps have been tested on Windows 10 (64 bit), with CMake 3.19.0 and Visual Studio Community 2019.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -326,6 +326,32 @@ on "Next" button.
 - In the "Ready to install" panel, click on the "Install" button
 - Reboot the system.
 
+\subsubsection install_win10_msvc16_3rdparty_jaco Kinova Jaco 3rd party
+
+If you have a
+[Kinova Jaco](https://www.kinovarobotics.com/en/products/assistive-technologies/kinova-jaco-assistive-robotic-arm)
+assistive robotic arm, it could be useful to install the corresponding SDK to be able to use vpRobotKinova class.
+This class is an interface over Kinova Jaco SDK and allows to control
+Gen2 4, 6 and 7 DoF [arm](https://www.kinovarobotics.com/en/resources/gen2-technical-resources).
+
+<b>1. Install Kinova Jaco SDK</b>
+
+- [Download](https://www.kinovarobotics.com/en/resources/gen2-technical-resources) the SDK.
+At the time this tutorial was written, we downloaded SDK 1.5.1 that comes in `PS 0000 0009_1.5.1.zip` (254M).
+- Extract the zip content in a tempory folder like `C:\temp\kinova-jaco`
+- At this step you should have the following
+\verbatim
+C:\> dir C:\temp\kinova-jaco\windows
+17/12/2018  21:48         6 234 383 Kinova-Jaco-Usb-Driver-(usblib)-Installer.exe
+30/01/2019  00:02               207 ReadMe.txt
+29/01/2019  23:58        64 658 780 SDK_GEN2_1_5_1_x86.exe
+09/08/2017  21:38        13 767 776 vc_redist_x86.exe
+\endverbatim
+- Install the SDK executing `SDK_GEN2_1_5_1_x86.exe`. Keep default installation options.
+- After installation, the SDK is available in `C:\Program Files (x86)\JACO-SDK`
+
+There is no need to complete installation process as for previous 3rd parties.
+
 \subsection install_win10_msvc16_get_source Get ViSP source code
 
 There are different ways to get ViSP source code.
@@ -335,7 +361,7 @@ Once `visp-x.y.z.tar.gz` or `visp-x.y.z.zip` is downloaded, uncompress the file 
 using for axample <a href="http://www.win-rar.com">WinRAR</a>.
 
 - You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>.
-Once visp-snapshot-yyyy-mm-dd.tar.gz is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
+Once `visp-snapshot-yyyy-mm-dd.tar.gz` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
 using for axample <a href="http://www.win-rar.com">WinRAR</a>.
 
 - Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a>

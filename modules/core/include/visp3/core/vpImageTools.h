@@ -627,7 +627,7 @@ template <class Type> void *vpUndistortInternalType<Type>::vpUndistort_threaded(
 
   \param undistI : Undistorted output image. The size of this image
   will be the same than the input image \e I. If the distortion
-  parameter \f$K_d\f$ is null (see cam.get_kd_mp()), \e undistI is
+  parameter \f$k_{ud}\f$ is null, meaning that `cam.get_kud() == 0`, \e undistI is
   just a copy of \e I.
 
   \param nThreads : Number of threads to use if pthreads library is available.

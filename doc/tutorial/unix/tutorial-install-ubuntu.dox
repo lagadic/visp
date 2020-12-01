@@ -178,6 +178,27 @@ I you have a Panda robot from Franka Emika, you may install libfranka in order t
 
 Installation instructions are provided following \ref franka_prereq_libfranka. There is also the \ref tutorial-franka-pbvs that explains how to install a real-time Linux kernel requested to control the robot by \ref franka_prereq_rt_linux.
 
+\subsubsection install_ubuntu_3rdparty__3rdparty_jaco Kinova Jaco 3rd party
+
+If you have a
+[Kinova Jaco](https://www.kinovarobotics.com/en/products/assistive-technologies/kinova-jaco-assistive-robotic-arm)
+assistive robotic arm, it could be useful to install the corresponding SDK to be able to use vpRobotKinova class.
+This class is an interface over Kinova Jaco SDK and allows to control
+Gen2 4, 6 and 7 DoF [arm](https://www.kinovarobotics.com/en/resources/gen2-technical-resources).
+
+To install Kinova Jaco SDK:
+
+- [Download](https://www.kinovarobotics.com/en/resources/gen2-technical-resources) the SDK.
+At the time this tutorial was written, we downloaded SDK 1.5.1 that comes in `PS 0000 0009_1.5.1.zip` (254M).
+- Extract the zip content in a tempory folder like `/tmp/kinova-jaco`
+- Enter `Ubuntu/<version>/64 bits` folder and run the installer:
+\verbatim
+$ cd /tmp/kinova-jaco
+$ cd Ubuntu/16_04/64 bits
+$ sh ./installSDK64.sh
+\endverbatim
+- After installation, the SDK is available in `/opt/JACO-SDK`
+
 \subsubsection install_ubuntu_3rdparty_other Other optional 3rd parties
 
 We give also the way to install other 3rd party libraries to enable specific capabilities.

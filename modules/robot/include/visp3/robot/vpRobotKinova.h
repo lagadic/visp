@@ -114,7 +114,8 @@ public:
   int getActiveDevice() const { return m_active_device; }
   int getNumDevices() const { return m_devices_count; }
   void getDisplacement(const vpRobot::vpControlFrameType frame, vpColVector &q);
-  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position);
+  void getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &pose);
 
   void homing();
 

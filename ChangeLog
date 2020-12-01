@@ -34,6 +34,8 @@ ViSP 3.3.1 (under development)
     . New cmake option to use MathJax to speed up online doc build
     . Docker images available on Docker Hub: 
       https://hub.docker.com/repository/docker/vispci/vispci
+    . Support of Kinova Jaco assistive robot arm that could be controlled
+      using vpRobotKinova 
   - Tutorials
     . New tutorial: Basic linear algebra operations
     . New tutorial: How to create and build a project that uses ViSP without CMake
@@ -74,6 +76,7 @@ ViSP 3.3.1 (under development)
     . [#841] Build issue with PCL 1.11.0 on OSX
     . [#842] iOS framework build process is unable to detect opencv2.framework as 3rd party
     . [#845] Fix ME display when calling setPose() without track() after
+    . [#857] Reading a color image with vpImageIo::readPNG() can lead to a gray level image
 ----------------------------------------------
 ViSP 3.3.0 (released February 14, 2020)
   - Contributors:
