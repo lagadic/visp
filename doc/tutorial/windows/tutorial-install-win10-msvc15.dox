@@ -197,7 +197,7 @@ where `%%VISP_WS%\eigen-3.3.8\build-vc15\install` is where you have installed Ei
 
 <b>4. Known issue with Eigen 3.3.8</b>
 
-- Following \ref install_win10_msvc16_build instructions, during `visp_core` build you may get an issue:
+- Following \ref install_win10_msvc15_build instructions, during `visp_core` build you may get an issue:
 \verbatim
 eigen_assert_exception is not member of Eigen
 \endverbatim
