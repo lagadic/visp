@@ -24,7 +24,7 @@ ViSP 3.3.1 (under development)
     . visp.pc file used by pkg-config and visp-config script updated to
       be able to build a project that uses ViSP as 3rd party without CMake
     . New vpReflexTakktile2 class and examples to control Reflex Takktile 2 hand
-      from Right Hand Robotics.
+      from Right Hand Robotics
     . vpRealsense2 class was extended to support Intel Realsense T265 device
     . Introduce Kannala Brandt projection model for fisheye cameras in vpCameraParameters
     . Extend existing tools to support Kannala Brandt projection model for XML I/O,
@@ -34,8 +34,9 @@ ViSP 3.3.1 (under development)
     . New cmake option to use MathJax to speed up online doc build
     . Docker images available on Docker Hub: 
       https://hub.docker.com/repository/docker/vispci/vispci
-    . Support of Kinova Jaco assistive robot arm that could be controlled
-      using vpRobotKinova 
+    . Support of Kinova Jaco assistive robotic arm that could be controlled
+      using vpRobotKinova
+    . Compat with Basler Pylon 6.x Camera Software Suite
   - Tutorials
     . New tutorial: Basic linear algebra operations
     . New tutorial: How to create and build a project that uses ViSP without CMake

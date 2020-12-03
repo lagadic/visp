@@ -277,10 +277,17 @@ If you have a Basler FireWire, Camera Link, GigE or USB3.0 camera, you may insta
 skip this section.
 
 To install Pylon:
-- Visit [Basler Software Download page](https://www.baslerweb.com/en/support/downloads/software-downloads/) to
-download and install the SDK corresponding to your platform. At the time this tutorial we written we selected
-"Pylon 5.0.11 Camera Software Suite Windows" to download `Basler_pylon_5.0.11.10913.exe` file.
-- Double-click on downloaded file and follow the installation instructions.
+- Visit [Basler Software Download page](https://www.baslerweb.com/en/support/downloads/software-downloads/)
+to download and install the SDK corresponding to your platform. At the time
+this tutorial was written, we downloaded "Pylon 6.1.1 Camera Software Suite Windows".
+\note If during the SDK installation you retrieve an installation error like the following:
+\verbatim
+We're sorry, but the installation could not be completed.
+The following error has occured:
+Error code: 0x800700005, Refused Access
+\endverbatim 
+it means certainly that there is an application that needs access to Internet that is not closed. Typically,
+we encounter this issue with our Anti-Virus Kaspersky tool. Once Kaspersky was paused, installation succeed.
 - Be carreful to select "Developer" profile during the installation in order to install Pylon SDK headers (.h)
 besides the dll.
 \image html img-win10-pylon-developer.png

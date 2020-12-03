@@ -306,15 +306,16 @@ can skip this section.
 
 To install Pylon:
 - Visit [Basler Software Download page](https://www.baslerweb.com/en/support/downloads/software-downloads/)
-to download and install the SDK corresponding to your platform. You can try to select
-"Pylon 6.1.1 Camera Software Suite Windows"  to download `Basler_pylon_6.1.1.19832.exe` file, but at the time
-this tutorial was written, we issued an installation error.
+to download and install the SDK corresponding to your platform. At the time
+this tutorial was written, we downloaded "Pylon 6.1.1 Camera Software Suite Windows".
+\note If during the SDK installation you retrieve an installation error like the following:
 \verbatim
 We're sorry, but the installation could not be completed.
 The following error has occured:
 Error code: 0x800700005, Refused Access
 \endverbatim 
-In that case try to install "Pylon 5.1.0 Camera Software Suite Windows".
+it means certainly that there is an application that needs access to Internet that is not closed. Typically,
+we encounter this issue with our Anti-Virus Kaspersky tool. Once Kaspersky was paused, installation succeed.
 - Double-click on downloaded file and follow the installation instructions.
 - Be carreful to select "Developer" profile during the installation in order to install Pylon SDK headers (.h)
 besides the dll.
