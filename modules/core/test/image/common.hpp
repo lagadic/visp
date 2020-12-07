@@ -596,6 +596,30 @@ void BGRToRGBaRef(unsigned char *bgr, unsigned char *rgba, unsigned int width, u
   }
 }
 
+void BGRaToRGBaRef(unsigned char *bgra, unsigned char *rgba, unsigned int width, unsigned int height, bool flip)
+{
+  // if we have to flip the image, we start from the end last scanline so the
+  // step is negative
+  int lineStep = (flip) ? -(int)(width * 4) : (int)(width * 4);
+
+  // starting source address = last line if we need to flip the image
+  unsigned char *src = (flip) ? (bgra + (width * height * 4) + lineStep) : bgra;
+
+  for (unsigned int i = 0; i < height; i++) {
+    unsigned char *line = src;
+    for (unsigned int j = 0; j < width; j++) {
+      *rgba++ = *(line + 2);
+      *rgba++ = *(line + 1);
+      *rgba++ = *(line + 0);
+      *rgba++ = *(line + 3);
+
+      line += 4;
+    }
+    // go to the next line
+    src += lineStep;
+  }
+}
+
 #if VISP_HAVE_OPENCV_VERSION >= 0x020101
 void fill(cv::Mat& img)
 {

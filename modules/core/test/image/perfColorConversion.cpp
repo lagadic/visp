@@ -243,6 +243,47 @@ TEST_CASE("Benchmark bgr to rgba (ViSP)", "[benchmark]") {
   }
 #endif
 }
+
+TEST_CASE("Benchmark bgra to rgba (naive code)", "[benchmark]") {
+  vpImage<vpRGBa> I;
+  vpImageIo::read(I, imagePathColor);
+
+  std::vector<unsigned char> bgra;
+  common_tools::RGBaToBGRa(I, bgra);
+
+  vpImage<vpRGBa> I_bench(I.getHeight(), I.getWidth());
+  BENCHMARK("Benchmark bgra to rgba (naive code)") {
+    common_tools::BGRaToRGBaRef(bgra.data(), reinterpret_cast<unsigned char*>(I_bench.bitmap),
+                                I.getWidth(), I.getHeight(), false);
+    return I_bench;
+  };
+}
+
+TEST_CASE("Benchmark bgra to rgba (ViSP)", "[benchmark]") {
+  vpImage<vpRGBa> I;
+  vpImageIo::read(I, imagePathColor);
+
+  std::vector<unsigned char> bgra;
+  common_tools::RGBaToBGRa(I, bgra);
+
+  SECTION("Check BGRa to RGBa conversion")
+  {
+    vpImage<vpRGBa> ref(I.getHeight(), I.getWidth());
+    common_tools::BGRaToRGBaRef(bgra.data(), reinterpret_cast<unsigned char*>(ref.bitmap),
+                                I.getWidth(), I.getHeight(), false);
+    vpImage<vpRGBa> rgba(I.getHeight(), I.getWidth());
+    vpImageConvert::BGRaToRGBa(bgra.data(), reinterpret_cast<unsigned char *>(rgba.bitmap),
+                               I.getWidth(), I.getHeight(), false);
+
+    CHECK((rgba == ref));
+  }
+  vpImage<vpRGBa> I_rgba(I.getHeight(), I.getWidth());
+  BENCHMARK("Benchmark bgra to rgba (ViSP)") {
+    vpImageConvert::BGRaToRGBa(bgra.data(), reinterpret_cast<unsigned char *>(I_rgba.bitmap),
+                               I.getWidth(), I.getHeight(), false);
+    return I_rgba;
+  };
+}
 #endif
 
 int main(int argc, char *argv[])
