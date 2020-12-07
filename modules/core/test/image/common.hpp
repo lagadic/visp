@@ -35,6 +35,7 @@
 
 #ifndef common_HPP
 #define common_HPP
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageMorphology.h>
 #include <visp3/core/vpImageConvert.h>
@@ -271,6 +272,23 @@ void RGBaToBGR(const vpImage<vpRGBa> &rgba, std::vector<unsigned char> &bgr)
     vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char *>(bgra.bitmap),
                               reinterpret_cast<unsigned char *>(bgr.data()),
                               bgra.getSize());
+}
+
+/// Color conversion
+void RGBaToBGRa(const vpImage<vpRGBa> &rgba, std::vector<unsigned char> &bgra)
+{
+    bgra.resize(rgba.getSize()*4);
+
+    vpImage<vpRGBa> bgra_(rgba.getHeight(), rgba.getWidth());
+    vpImage<unsigned char> R(rgba.getHeight(), rgba.getWidth());
+    vpImage<unsigned char> G(rgba.getHeight(), rgba.getWidth());
+    vpImage<unsigned char> B(rgba.getHeight(), rgba.getWidth());
+    vpImage<unsigned char> A(rgba.getHeight(), rgba.getWidth());
+
+    vpImageConvert::split(rgba, &R, &G, &B, &A);
+    vpImageConvert::merge(&B, &G, &R, &A, bgra_);
+
+    memcpy(reinterpret_cast<unsigned char *>(bgra.data()), reinterpret_cast<unsigned char *>(bgra_.bitmap), rgba.getSize()*4);
 }
 
 void grayToRGBaRef(unsigned char *grey, unsigned char *rgba, unsigned int size)
