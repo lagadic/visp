@@ -52,7 +52,7 @@ $ sudo apt-get upgrade
 \verbatim
 $ sudo raspi-config
 \endverbatim
-- Enter in menu "5/ Interfacing Options" to enable the camera.
+- Enter in menu "Interfacing Options" to enable the camera.
 - Do a reboot
 \verbatim
 $ sudo reboot
