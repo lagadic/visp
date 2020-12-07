@@ -40,7 +40,7 @@ namespace Simd
         {
             _bgra.bgra = Load4<align>(bgra);
             uint8x16_t tmp = _bgra.bgra.val[0];
-            _bgra.bgra.val[0] = _bgra.bgr.val[2];
+            _bgra.bgra.val[0] = _bgra.bgra.val[2];
             _bgra.bgra.val[2] = tmp;
             Store4<align>(rgba, _bgra.bgra);
         }
@@ -59,9 +59,9 @@ namespace Simd
             {
                 for (size_t col = 0, colRgba = 0; col < alignedWidth; col += A, colRgba += A4)
                     // colBgra = colRgba
-                    BgrToRgba<align>(bgra + colRgba, rgba + colRgba, _bgra);
+                    BgraToRgba<align>(bgra + colRgba, rgba + colRgba, _bgra);
                 if (width != alignedWidth)
-                    BgrToRgba<false>(bgra + 4 * (width - A), rgba + 4 * (width - A), _bgra);
+                    BgraToRgba<false>(bgra + 4 * (width - A), rgba + 4 * (width - A), _bgra);
                 bgra += bgraStride;
                 rgba += rgbaStride;
             }
@@ -70,9 +70,9 @@ namespace Simd
         void BgraToRgba(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * rgba, size_t rgbaStride)
         {
             if (Aligned(rgba) && Aligned(rgbaStride) && Aligned(bgra) && Aligned(bgraStride))
-                BgrToRgba<true>(bgra, width, height, bgraStride, rgba, rgbaStride);
+                BgraToRgba<true>(bgra, width, height, bgraStride, rgba, rgbaStride);
             else
-                BgrToRgba<false>(bgra, width, height, bgraStride, rgba, rgbaStride);
+                BgraToRgba<false>(bgra, width, height, bgraStride, rgba, rgbaStride);
         }
     }
 #endif// SIMD_NEON_ENABLE
