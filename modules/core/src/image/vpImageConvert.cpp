@@ -3545,6 +3545,43 @@ void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned
 }
 
 /*!
+  Converts a BGRa image to RGBa.
+
+  Flips the image verticaly if needed.
+  Assumes that rgba is already resized before caling this function.
+
+  \note If flip is false, the SIMD lib is used to accelerate processing on x86 and ARM architecture.
+*/
+void vpImageConvert::BGRaToRGBa(unsigned char *bgra, unsigned char *rgba, unsigned int width, unsigned int height,
+                               bool flip)
+{
+  if (!flip) {
+    SimdBgraToRgba(bgra, width, height, width*4, rgba, width * 4);
+  } else {
+    // if we have to flip the image, we start from the end last scanline so the
+    // step is negative
+    int lineStep = (flip) ? -(int)(width * 4) : (int)(width * 4);
+
+    // starting source address = last line if we need to flip the image
+    unsigned char *src = (flip) ? (bgra + (width * height * 4) + lineStep) : bgra;
+
+    for (unsigned int i = 0; i < height; i++) {
+      unsigned char *line = src;
+      for (unsigned int j = 0; j < width; j++) {
+        *rgba++ = *(line + 2);
+        *rgba++ = *(line + 1);
+        *rgba++ = *(line + 0);
+        *rgba++ = *(line + 3);
+
+        line += 4;
+      }
+      // go to the next line
+      src += lineStep;
+    }
+  }
+}
+
+/*!
   Converts a BGR image to greyscale.
   Flips the image verticaly if needed.
   Assumes that grey is already resized.
