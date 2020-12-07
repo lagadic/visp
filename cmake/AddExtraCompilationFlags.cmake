@@ -36,6 +36,8 @@
 #
 #############################################################################
 
+# Warning: here ViSPDetectPlatform.cmake should be called before this file to set ARM var used below
+
 set(VISP_EXTRA_C_FLAGS "")
 set(VISP_EXTRA_CXX_FLAGS "")
 
@@ -92,6 +94,20 @@ elseif(MSVC)
     # your catch(...) blocks to catch structured exceptions.
     add_extra_compiler_option("/EHa")
   endif()
+endif()
+
+# Note here ViSPDetectPlatform.cmake should be called before this file to set ARM var
+if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") AND (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 6.0) AND (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 9.0) AND ARM)
+  # Here to disable warnings due to gcc bug introduced in gcc 7 on arm.
+  #
+  # The warning occuring with g++ 8.3 on a Raspbery Pi 4:
+  # /usr/include/c++/8/bits/vector.tcc:413:7: note: parameter passing for argument of type
+  # ‘std::vector<vpImagePoint>::iterator’ {aka ‘__gnu_cxx::__normal_iterator<vpImagePoint*,
+  # std::vector<vpImagePoint> >’} changed in GCC 7.1
+  #
+  # See here: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=77728
+  # and here: https://stackoverflow.com/questions/48149323/what-does-the-gcc-warning-project-parameter-passing-for-x-changed-in-gcc-7-1-m
+  add_extra_compiler_option(-Wno-psabi)
 endif()
 
 if(USE_OPENMP)
