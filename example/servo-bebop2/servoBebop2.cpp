@@ -74,6 +74,12 @@ int main()
   std::cout << "\nThis example requires ffmpeg library. You should install it.\n" << std::endl;
   return EXIT_SUCCESS;
 }
+#elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+int main()
+{
+  std::cout << "\nThis example requires cxx11 standard or higher. Turn it on using cmake -DUSE_CXX_STANDARD=11.\n" << std::endl;
+  return EXIT_SUCCESS;
+}
 #else
 
 bool compareImagePoint(std::pair<size_t, vpImagePoint> p1, std::pair<size_t, vpImagePoint> p2)

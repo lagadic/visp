@@ -664,7 +664,7 @@ General configuration information for ViSP 3.3.1
 
 \section issue_win10_mingw Known issues
 
-\subsection issue_win10_mingw_opencv_rc gcc: error: long: No such file or directory
+\subsection issue_win10_mingw_opencv_allocator gcc: error: long: No such file or directory
 
 This issue occurs with OpenCV 4.5.0 and is referenced
 [here](https://answers.opencv.org/question/228737/gcc-error-long-no-such-file-or-directory/).

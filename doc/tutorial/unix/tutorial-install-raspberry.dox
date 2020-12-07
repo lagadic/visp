@@ -3,11 +3,13 @@
 \page tutorial-install-raspberry Tutorial: Installation from source for Raspberry Pi
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on <a href="http://www.raspberrypi.org/help/what-is-a-raspberry-pi">Raspberry Pi 1 or Pi 2</a> equipped with an optional HD camera module.
+In this tutorial you will learn how to install ViSP from source on [Raspberry Pi](http://www.raspberrypi.org/help/what-is-a-raspberry-pi)
+equipped with an optional HD camera module. This tutorial was tested with a RPi 1, RPi 2 model B and RPi 4 model B.
 
 \image html img-raspberry-pi.jpg
 
-In a first section we give some useful instructions to start with a Raspberry PI. Then in the second section, we focus on the installation of ViSP from source.
+In a first section we give some useful instructions to start with a Raspberry PI. Then in the second section, we focus on the installation
+of ViSP from source.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -15,17 +17,22 @@ In a first section we give some useful instructions to start with a Raspberry PI
 
 \subsection install_raspberry_setup Setting up Raspberry Pi
 
-- There are a lot of documentation and tutorial that explain different ways to setup a Raspberry Pi. A good reference is the official page <a href="http://www.raspberrypi.org/">http://www.raspberrypi.org</a>
+- There are a lot of documentation and tutorial that explain different ways to setup a Raspberry Pi. A good reference is the official
+page http://www.raspberrypi.org/.
 
-- We suggest to start with NOOBS (New Out Of the Box Software). Bellow we resume the different steps that are fully described in <a href="http://www.raspberrypi.org/help/noobs-setup/">http://www.raspberrypi.org/help/noobs-setup</a>:
+- We suggest to start with NOOBS (New Out Of the Box Software). Bellow we resume the different steps that are fully described
+in http://www.raspberrypi.org/help/noobs-setup/:
   - Format you SD card (at least 4Go are requested) on your computer. To this end you can use "GParted partition editor"  under Ubuntu.
-  - Download Noobs "Offline and network install" zip file from <a href="http://www.raspberrypi.org/downloads/">http://www.raspberrypi.org/downloads</a>.
+  - Download Noobs "Offline and network install" zip file from http://www.raspberrypi.org/downloads/.
   - Unzip all the files on the SD card.
   - Insert your SD Card into your Raspberry Pi.
   - Plug in your keyboard, mouse, monitor and Ethernet cables.
   - Now plug in the USB power cable to your Pi.
-  - Your Raspberry Pi will boot, and a window will appear with a list of different operating systems that you can install. Select the "recommended Raspbian" checkbox and click on "Install" button.
-  - When the install process has completed, the Raspberry Pi configuration menu (raspi-config) will load. Here you are able to set the time and date for your region and enable a Raspberry Pi camera board, or even create users. You can exit this menu by using Tab on your keyboard to move to Finish.
+  - Your Raspberry Pi will boot, and a window will appear with a list of different operating systems that you can install.
+    Select the "recommended Raspbian" checkbox and click on "Install" button.
+  - When the install process has completed, the Raspberry Pi configuration menu (raspi-config) will load. Here you are able
+    to set the time and date for your region and enable a Raspberry Pi camera board, or even create users. You can exit this
+    menu by using Tab on your keyboard to move to Finish.
 
 \subsection install_raspberry_login Logging in
 
@@ -41,11 +48,11 @@ $ sudo apt-get upgrade
 
 \subsection install_raspberry_camera Setting up a Raspberry Pi camera
 
-- If you have a Raspberry Pi camera module see <a href="http://www.raspberrypi.org/help/camera-module-setup/">http://www.raspberrypi.org/help/camera-module-setup</a>. To resume, enable the camera using:
+- If you have a Raspberry Pi camera module see http://www.raspberrypi.org/help/camera-module-setup/. To resume, enable the camera using:
 \verbatim
 $ sudo raspi-config
 \endverbatim
-- Enter in menu "5/ Interfacing Options" to enable the camera.
+- Enter in menu "Interfacing Options" to enable the camera.
 - Do a reboot
 \verbatim
 $ sudo reboot
@@ -71,7 +78,8 @@ videodev 121362 3 bcm2835_v4l2,v4l2_common,videobuf2_core
 $ v4l2-ctl --list-formats
 \endverbatim
 
-- After each Raspberry Pi reboot you need to relaunch the previous modprobe command. To load bcm2835-v4l2 module during reboot, you can edit `/etc/modules` file
+- After each Raspberry Pi reboot you need to relaunch the previous modprobe command. To load bcm2835-v4l2 module during reboot,
+you can edit `/etc/modules` file
 \verbatim
 $ sudo nano /etc/modules
 \endverbatim
@@ -91,7 +99,8 @@ v4l2-ctl --overlay=0 # disable viewfinder
 
 \subsection install_raspberry_startx Start graphical user interface
 
-- To load the graphical user interface, type `startx` and press Enter on your keyboard. This will later allow to use ViSP vpDisplayX or vpDisplayOpenCV classes useful to display images in a X11 window.
+- To load the graphical user interface, type `startx` and press Enter on your keyboard. This will later allow to use ViSP
+vpDisplayX or vpDisplayOpenCV classes useful to display images in a X11 window.
 
 \section install_raspberry_visp_prerequisities Install prerequisites
 
@@ -102,7 +111,8 @@ $ sudo apt-get install build-essential cmake-curses-gui git subversion wget
 
 \section install_raspberry_ws Create a workspace
 
-First create a workspace that will contain all ViSP source, build, data set and optional 3rd parties. This workspace is here set to `$HOME/visp-ws` folder, but it could be set to any other location.
+First create a workspace that will contain all ViSP source, build, data set and optional 3rd parties. This workspace is
+here set to `$HOME/visp-ws` folder, but it could be set to any other location.
 
 In a terminal, run:
 \verbatim
@@ -117,7 +127,8 @@ In this section, we give minimal instructions to build ViSP from source just to 
 
 - Install a small number of recommended 3rd parties
 \verbatim
-$ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev libzbar-dev libpthread-stubs0-dev libjpeg-dev libpng12-dev
+$ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev \
+  libzbar-dev libpthread-stubs0-dev libjpeg-dev libpng12-dev
 \endverbatim
 
 - Get ViSP source code
@@ -140,7 +151,8 @@ $ echo "export VISP_DIR=$VISP_WS/visp-build" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 
-To have a trial, just jump to \ref install_raspberry_dataset before running some binaries that you just build or jump to \ref install_raspberry_next. You can later come back to the \ref install_raspberry_advanced.
+To have a trial, just jump to \ref install_raspberry_dataset before running some binaries that you just build or
+jump to \ref install_raspberry_next. You can later come back to the \ref install_raspberry_advanced.
 
 \section install_raspberry_advanced Advanced ViSP installation
 
@@ -148,11 +160,17 @@ To have a trial, just jump to \ref install_raspberry_dataset before running some
 
 ViSP is interfaced with several optional 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
 
-\note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do not want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP. It is therefore possible to skip in a first time this section and start directly to \ref install_raspberry_quick. Later, if you realize that a third-party library is missing, you can still install it, go back to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build ViSP again as explained in \ref install_raspberry_tips_new_3rdparty.
+\note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do not want
+to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP.
+It is therefore possible to skip in a first time this section and start directly to \ref install_raspberry_quick.
+Later, if you realize that a third-party library is missing, you can still install it, go back to the build folder,
+configure ViSP with CMake to detect the newly installed third-party library and build ViSP again as explained
+in \ref install_raspberry_tips_new_3rdparty.
 
 \subsubsection install_raspberry_visp_3rd_party Install recommended 3rd parties
 
-ViSP is interfaced with several optional 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install the following:
+ViSP is interfaced with several optional 3rd party libraries. 
+The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install the following:
 
 - OpenCV
 - libX11 to be able to open a window to display images
@@ -163,7 +181,8 @@ ViSP is interfaced with several optional 3rd party libraries. The <a href="http:
 
 Installation of recommended 3rd parties could be performed running:
 \verbatim
-$ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev libzbar-dev libpthread-stubs0-dev
+$ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev \
+  libzbar-dev libpthread-stubs0-dev
 \endverbatim
 
 \subsubsection install_raspberry_visp_3rd_party_other Other optional 3rd parties
@@ -179,7 +198,8 @@ $ sudo apt-get install libjpeg-dev libpng12-dev
 
 There are different ways to get ViSP source code on Raspberry Pi:
 
-- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
+- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball.
+Once downloaded, uncompress the file using either
 \verbatim
 $ tar xvzf visp-x.y.z.tar.gz -C $VISP_WS
 \endverbatim
@@ -188,24 +208,28 @@ or
 $ unzip visp-x.y.z.zip -d $VISP_WS
 \endverbatim
 
-- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
+- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded,
+uncompress the file using
 \verbatim
 $ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz -C $VISP_WS
 \endverbatim
 
-- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the following command
+- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using
+the following command
 \verbatim
 $ cd $VISP_WS
 $ git clone https://github.com/lagadic/visp.git
 \endverbatim
 
-We suppose now that ViSP source is in the directory `$VISP_WS/visp`. The following should be adapted if you downloaded ViSP from a zip or tarball. In that case, the source is rather in something like `$VISP_WS/visp-x.y.z`.
+We suppose now that ViSP source is in the directory `$VISP_WS/visp`. The following should be adapted if you
+downloaded ViSP from a zip or tarball. In that case, the source is rather in something like `$VISP_WS/visp-x.y.z`.
 
 \subsection install_raspberry_visp_config Configure ViSP from source
 
 These are the steps to configure ViSP from source with CMake:
 
-- In the workspace, create first a directory named `visp-build` that will contain all the build material; generated Makefiles, object files, output libraries and binaries.
+- In the workspace, create first a directory named `visp-build` that will contain all the build material;
+generated Makefiles, object files, output libraries and binaries.
 \verbatim
 $ mkdir $VISP_WS/visp-build
 \endverbatim
@@ -219,7 +243,9 @@ A more versatile way to configure the build is to use `ccmake`, the CMake GUI:
 \verbatim
 $ ccmake ../visp
 \endverbatim
-The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
+The following image shows that this command allows to configure (just by pressing [c] key) the build in a more
+advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that
+will be used. To generate the makefiles, just press [g] key in the ccmake gui.
 \image html img-ccmake-raspberry-all.png Snapshot of the `"ccmake ../visp"` command used to configure ViSP.
 
 \subsection install_raspberry_visp_build Build ViSP libraries
@@ -245,14 +271,16 @@ $ make -j4 visp_doc
 The generated documentation is then available in `$VISP_WS/visp-build/doc/html/index.html`
 
 \note
-- To speed up generating online doc, particularly around formula rendering, you can use [MatJax](https://www.mathjax.org). To this end, install MathJax and build doc using:
+- To speed up generating online doc, particularly around formula rendering, you can use [MatJax](https://www.mathjax.org).
+To this end, install MathJax and build doc using:
 \verbatim
 $ npm install mathjax
 $ cmake ../visp -DUSE_MATHJAX=ON
 $ make -j4 visp_doc
 \endverbatim
 \note
-- It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
+- It is also possible to generate a more complete documentation that includes also all the internal classes.
+This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
 \verbatim
 $ cmake ../visp -DENABLE_FULL_DOC=ON
 $ make -j4 visp_doc
@@ -260,7 +288,9 @@ $ make -j4 visp_doc
 
 \subsection install_raspberry_visp_dir Set VISP_DIR environment var
 
-In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path to the `VISPConfig.cmake` file:
+In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one
+described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path to the
+`VISPConfig.cmake` file:
 \verbatim
 $ echo "export VISP_DIR=$VISP_WS/visp-build" >> ~/.bashrc
 $ source ~/.bashrc
@@ -268,7 +298,10 @@ $ source ~/.bashrc
 
 \section install_raspberry_dataset Install ViSP data set
 
-Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
+Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP
+source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a
+separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from http://visp.inria.fr/download page.
+Note that ViSP tutorials are not using ViSP data set.
 
 We give hereafter the two ways to get this data set:
 
@@ -285,7 +318,10 @@ $ ls $VISP_WS/visp-images-3.3.0
 AprilTag   README.md      cube       endianness   line    mire          warp
 Klimt      calibration    ellipse    faces        mbt     mire-2        xml
 \endverbatim
-- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.3.0`. It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched:
+- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect
+automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.3.0`.
+It is more convenient if this environment variables is automatically added to your bash session every time a new
+shell is launched:
 \verbatim
 $ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.3.0" >> ~/.bashrc
 $ source ~/.bashrc
@@ -298,7 +334,9 @@ $ source ~/.bashrc
 C:\> cd $VISP_WS
 C:\> git clone https://github.com/lagadic/visp-images.git
 \endverbatim
-- Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS%/visp-images`. In a shell run:
+- Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect
+automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS%/visp-images`.
+In a shell run:
 \verbatim
 $ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images" >> ~/.bashrc
 $ source ~/.bashrc
@@ -306,7 +344,8 @@ $ source ~/.bashrc
 
 <b>Test data set usage</b>
 
-- From now, you can try to run ViSP examples and tests. For example you can run `displayX` example that should open a windows with Klimt painting image and some overlay drawings:
+- From now, you can try to run ViSP examples and tests. For example you can run `displayX` example that should open
+a windows with Klimt painting image and some overlay drawings:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ ./example/device/display/displayX
@@ -324,13 +363,16 @@ Bye
 
 \subsection install_raspberry_tips_new_3rdparty How to take into account a newly installed 3rd party
 
-Since all 3rd parties are optional you may have started to install only some of them. Imagine that you just installed a new third-party, or that you upgraded the version of this 3rd party. The next step is to go back to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build again ViSP. This could be achieved with:
+Since all 3rd parties are optional you may have started to install only some of them. Imagine that you just installed
+a new third-party, or that you upgraded the version of this 3rd party. The next step is to go back to the build folder,
+configure ViSP with CMake to detect the newly installed third-party library and build again ViSP. This could be achieved with:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
 \endverbatim
 
-Here you can check the content of the `ViSP-third-party.txt` file and see if the newly installed 3rd party is well detected (see \ref install_raspberry_tips_3rd_party).
+Here you can check the content of the `ViSP-third-party.txt` file and see if the newly installed 3rd party is well
+detected (see \ref install_raspberry_tips_3rd_party).
 
 Finally, you need to rebuild ViSP with:
 \verbatim
@@ -339,7 +381,8 @@ $ make -j4
 
 \subsection install_raspberry_tips_install How to install ViSP
 
-Installing ViSP is optional and not recommended, since ViSP could be used as a 3rd party without installation. If you still want to proceed with the installation run:
+Installing ViSP is optional and not recommended, since ViSP could be used as a 3rd party without installation.
+If you still want to proceed with the installation run:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ sudo make install
@@ -352,7 +395,10 @@ $ make -j4
 $ sudo make install
 \endverbatim
 
-\note If you proceed to ViSP installation in a system folder like `/usr` or `/usr/local` there is no need to \ref install_raspberry_visp_dir that helps CMake to find ViSP libraries in an external project that uses ViSP as a 3rd party. If you rather install ViSP in a non "standard" folder, let say `/my/install/folder`, you have to set `VISP_DIR` to `/my/install/folder/lib/cmake/visp` that contains the `VISPConfig.cmake` file:
+\note If you proceed to ViSP installation in a system folder like `/usr` or `/usr/local` there is no need to
+\ref install_raspberry_visp_dir that helps CMake to find ViSP libraries in an external project that uses ViSP as a 3rd party.
+If you rather install ViSP in a non "standard" folder, let say `/my/install/folder`, you have to set `VISP_DIR`
+to `/my/install/folder/lib/cmake/visp` that contains the `VISPConfig.cmake` file:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DCMAKE_INSTALL_PREFIX=/my/install/folder
@@ -397,13 +443,17 @@ $ make -j4 visp_mbt
 To know which are the target available with `make`:
 \verbatim
 $ make help | grep visp
-... visp_demos
-... visp_examples
-... visp_modules
 ... visp_tests
 ... visp_tutorials
+... visp_examples
+... visp_demos
+... visp_modules
 ... visp_clipper
 ... visp_apriltag
+... visp_qbdevice
+... visp_reflex_takktile2
+... visp_pugixml
+... visp_simdlib
 ... visp_core
 ... visp_gui
 ... visp_imgproc
@@ -426,30 +476,32 @@ $ make help | grep visp
 
 \subsection install_raspberry_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
 
-To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `$VISP_WS/visp-build`. We provide hereafter an example of a possible content of this file that contains also build info.
+To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP
+during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `$VISP_WS/visp-build`.
+We provide hereafter an example of a possible content of this file that contains also build info.
 \verbatim
 $ cat $VISP_WS/visp-build/ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.3.0
+General configuration information for ViSP 3.3.1
 
-  Version control:               3.2.0-799-ge98496a
+  Version control:               3.2.0-1295-g1656e6037
 
   Platform:
-    Timestamp:                   2020-02-11T15:49:13Z
-    Host:                        Linux 4.1.19-v7+ armv7l
-    CMake:                       3.0.2
+    Timestamp:                   2020-12-07T13:18:39Z
+    Host:                        Linux 5.4.79-v7l+ armv7l
+    CMake:                       3.13.4
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/make
     Configuration:               Release
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                /usr/bin/c++  (ver 4.9.2)
-    C++ flags (Release):         -Wall -Wextra -fopenmp -fvisibility=hidden -fPIC -O3 -DNDEBUG
-    C++ flags (Debug):           -Wall -Wextra -fopenmp -fvisibility=hidden -fPIC -g
+    C++ Compiler:                /usr/bin/c++  (ver 8.3.0)
+    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -fPIC -O3 -DNDEBUG
+    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -fPIC -g
     C Compiler:                  /usr/bin/cc
-    C flags (Release):           -Wall -Wextra -fopenmp -fvisibility=hidden -fPIC -O3 -DNDEBUG
-    C flags (Debug):             -Wall -Wextra -fopenmp -fvisibility=hidden -fPIC -g
+    C flags (Release):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -fPIC -O3 -DNDEBUG
+    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -fPIC -g
     Linker flags (Release):
     Linker flags (Debug):
 
@@ -461,29 +513,30 @@ General configuration information for ViSP 3.3.0
 
   Python (for build):            /usr/bin/python2.7
 
-  Java:
-    ant:                         NO
+  Java:                          
+    ant:                         /usr/bin/ant (ver 1.10.5)
     JNI:                         NO
 
-  Build options:
+  Build options: 
     Build deprecated:            yes
     Build with moment combine:   no
 
-  Mathematics:
-    Use MKL:                     no
-    Use OpenBLAS:                no
-    Use Atlas:                   no
-    Use Netlib Lapack:           yes (ver 3.7.0)
-    Use Lapack (built-in):       no
-    Use Eigen3:                  yes (ver 3.2.2)
-    Use OpenCV:                  yes (ver 2.4.9.1)
-    Use GSL:                     yes (ver 1.16)
+  Mathematics: 
+    Blas/Lapack:                 yes
+    \- Use MKL:                  no
+    \- Use OpenBLAS:             no
+    \- Use Atlas:                no
+    \- Use Netlib:               yes (ver 3.8.0)
+    \- Use GSL:                  no
+    \- Use Lapack (built-in):    no
+    Use Eigen3:                  yes (ver 3.3.7)
+    Use OpenCV:                  yes (ver 3.2.0)
 
-  Simulator:
-    Ogre simulator:
-    \- Use Ogre3D:               yes (ver 1.9.0)
+  Simulator: 
+    Ogre simulator: 
+    \- Use Ogre3D:               no
     \- Use OIS:                  no
-    Coin simulator:
+    Coin simulator: 
     \- Use Coin3D:               no
     \- Use SoWin:                no
     \- Use SoXt:                 no
@@ -492,19 +545,20 @@ General configuration information for ViSP 3.3.0
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
-  Media I/O:
+  Media I/O: 
     Use JPEG:                    yes (ver 62)
-    Use PNG:                     yes (ver 1.2.50)
-    \- Use ZLIB:                 yes (ver 1.2.8)
-    Use OpenCV:                  yes (ver 2.4.9.1)
+    Use PNG:                     yes (ver 1.6.36)
+    \- Use ZLIB:                 yes (ver 1.2.11)
+    Use OpenCV:                  yes (ver 3.2.0)
     Use stb_image (built-in):    no
 
-  Real robots:
+  Real robots: 
     Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
     Use Viper650:                no
     Use Viper850:                no
+    Use Kinova Jaco:             no
     Use aria (Pioneer):          no
     Use PTU46:                   no
     Use Biclops PTU:             no
@@ -512,25 +566,26 @@ General configuration information for ViSP 3.3.0
     Use Parrot ARSDK:            no
     \-Use ffmpeg:                no
     Use Virtuose:                no
-    Use qbdevice (built-in):     no
+    Use qbdevice (built-in):     yes (ver 2.6.0)
+    Use takktile2 (built-in):    yes (ver 1.0.0)
 
-  GUI:
+  GUI: 
     Use X11:                     yes
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 2.4.9.1)
+    Use OpenCV:                  yes (ver 3.2.0)
     Use GDI:                     no
     Use Direct3D:                no
 
-  Cameras:
-    Use DC1394-2.x:              yes (ver 2.2.3)
+  Cameras: 
+    Use DC1394-2.x:              yes (ver 2.2.5)
     Use CMU 1394:                no
-    Use V4L2:                    yes (ver 1.6.0)
+    Use V4L2:                    yes (ver 1.16.3)
     Use directshow:              no
-    Use OpenCV:                  yes (ver 2.4.9.1)
+    Use OpenCV:                  yes (ver 3.2.0)
     Use Flycapture:              no
     Use Pylon:                   no
 
-  RGB-D sensors:
+  RGB-D sensors: 
     Use Realsense:               no
     Use Realsense2:              no
     Use Kinect:                  no
@@ -540,33 +595,33 @@ General configuration information for ViSP 3.3.0
     Use PCL:                     no
     \- Use VTK:                  no
 
-  F/T sensors:
+  F/T sensors: 
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
 
-  Detection:
-    Use zbar:                    yes (ver 0.10)
-    Use dmtx:                    yes (ver 0.7.4)
+  Detection: 
+    Use zbar:                    yes (ver 0.22)
+    Use dmtx:                    no
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
 
-  Misc:
+  Misc: 
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
-    Use libxml2:                 yes (ver 2.9.1)
+    Use libxml2:                 yes (ver 2.9.4)
 
-  Optimization:
+  Optimization: 
     Use OpenMP:                  yes
     Use pthread:                 yes
     Use pthread (built-in):      no
-    Use cxx standard:            no
+    Use cxx standard:            11
 
-  Documentation:
+  Documentation: 
     Use doxygen:                 no
 
   Tests and samples:
-    Use catch2 (built-in):       no
+    Use catch2 (built-in):       yes (ver 2.9.2)
     Tests:                       yes
     Demos:                       yes
     Examples:                    yes
@@ -579,10 +634,14 @@ General configuration information for ViSP 3.3.0
 
 \section install_raspberry_next Next tutorial
 
-You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project on Raspberry Pi or on any other system. Then if you have a Raspberry Pi camera module, you can also follow the \ref tutorial-tracking-blob especially subsection Tracking form v4l2 live cameras.
+You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to
+build your own project on Raspberry Pi or on any other system. Then if you have a Raspberry Pi camera module, you can
+also follow the \ref tutorial-tracking-blob especially subsection Tracking form v4l2 live cameras.
 
-You may also be interested in \ref tutorial-install-crosscompiling-raspberry if you want to speed up the build process or deploy ViSP on other Raspberry boards.
+You may also be interested in \ref tutorial-install-crosscompiling-raspberry if you want to speed up the build process
+or deploy ViSP on other Raspberry boards.
 
-There is also \ref tutorial-mbot-vs that uses a Raspberry Pi in order to control a mBot Ranger educational robot kit by visual-servoing.
+There is also \ref tutorial-mbot-vs that uses a Raspberry Pi in order to control a mBot Ranger educational robot
+kit by visual-servoing.
 
 */
