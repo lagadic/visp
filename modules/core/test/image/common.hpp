@@ -35,6 +35,7 @@
 
 #ifndef common_HPP
 #define common_HPP
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImageMorphology.h>
 #include <visp3/core/vpImageConvert.h>
@@ -271,6 +272,23 @@ void RGBaToBGR(const vpImage<vpRGBa> &rgba, std::vector<unsigned char> &bgr)
     vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char *>(bgra.bitmap),
                               reinterpret_cast<unsigned char *>(bgr.data()),
                               bgra.getSize());
+}
+
+/// Color conversion
+void RGBaToBGRa(const vpImage<vpRGBa> &rgba, std::vector<unsigned char> &bgra)
+{
+    bgra.resize(rgba.getSize()*4);
+
+    vpImage<vpRGBa> bgra_(rgba.getHeight(), rgba.getWidth());
+    vpImage<unsigned char> R(rgba.getHeight(), rgba.getWidth());
+    vpImage<unsigned char> G(rgba.getHeight(), rgba.getWidth());
+    vpImage<unsigned char> B(rgba.getHeight(), rgba.getWidth());
+    vpImage<unsigned char> A(rgba.getHeight(), rgba.getWidth());
+
+    vpImageConvert::split(rgba, &R, &G, &B, &A);
+    vpImageConvert::merge(&B, &G, &R, &A, bgra_);
+
+    memcpy(reinterpret_cast<unsigned char *>(bgra.data()), reinterpret_cast<unsigned char *>(bgra_.bitmap), rgba.getSize()*4);
 }
 
 void grayToRGBaRef(unsigned char *grey, unsigned char *rgba, unsigned int size)
@@ -572,6 +590,30 @@ void BGRToRGBaRef(unsigned char *bgr, unsigned char *rgba, unsigned int width, u
       *rgba++ = vpRGBa::alpha_default;
 
       line += 3;
+    }
+    // go to the next line
+    src += lineStep;
+  }
+}
+
+void BGRaToRGBaRef(unsigned char *bgra, unsigned char *rgba, unsigned int width, unsigned int height, bool flip)
+{
+  // if we have to flip the image, we start from the end last scanline so the
+  // step is negative
+  int lineStep = (flip) ? -(int)(width * 4) : (int)(width * 4);
+
+  // starting source address = last line if we need to flip the image
+  unsigned char *src = (flip) ? (bgra + (width * height * 4) + lineStep) : bgra;
+
+  for (unsigned int i = 0; i < height; i++) {
+    unsigned char *line = src;
+    for (unsigned int j = 0; j < width; j++) {
+      *rgba++ = *(line + 2);
+      *rgba++ = *(line + 1);
+      *rgba++ = *(line + 0);
+      *rgba++ = *(line + 3);
+
+      line += 4;
     }
     // go to the next line
     src += lineStep;

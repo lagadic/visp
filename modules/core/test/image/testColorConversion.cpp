@@ -128,6 +128,21 @@ TEST_CASE("BGR to Gray conversion", "[image_conversion]") {
 }
 #endif
 
+TEST_CASE("BGRa to RGBa conversion", "[image_conversion]") {
+  vpImage<vpRGBa> rgba_ref(height, width);
+  common_tools::fill(rgba_ref);
+
+  std::vector<unsigned char> bgra_ref;
+  common_tools::RGBaToBGRa(rgba_ref, bgra_ref);
+
+  vpImage<vpRGBa> rgba(rgba_ref.getHeight(), rgba_ref.getWidth());
+  vpImageConvert::BGRaToRGBa(bgra_ref.data(), reinterpret_cast<unsigned char*>(rgba.bitmap), rgba.getWidth(), rgba.getHeight());
+
+  double error = 0;
+  CHECK(common_tools::almostEqual(rgba_ref, rgba, maxMeanPixelError, error));
+  std::cout << "BGRa to RGBa conversion, mean error: " << error << std::endl;
+}
+
 TEST_CASE("Split <==> Merge conversion", "[image_conversion]") {
   vpImage<vpRGBa> rgba_ref(height, width);
   common_tools::fill(rgba_ref);
