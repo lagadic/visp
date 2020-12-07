@@ -448,6 +448,24 @@ extern "C"
     */
     SIMD_API void SimdBgrToRgba(const uint8_t * bgr, size_t width, size_t height, size_t bgrStride, uint8_t * rgba, size_t rgbaStride, uint8_t alpha);
 
+    /*! @ingroup bgr_conversion
+
+        \fn void SimdBgraToRgba(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * rgba, size_t rgbaStride);
+
+        \short Converts 24-bit BGRA image to 32-bit RGBA image.
+
+        All images must have the same width and height.
+
+        \param [in] bgra - a pointer to pixels data of input 24-bit BGR image.
+        \param [in] width - an image width.
+        \param [in] height - an image height.
+        \param [in] bgraStride - a row size of the bgra image.
+        \param [out] rgba - a pointer to pixels data of output 32-bit BGRA image.
+        \param [in] rgbaStride - a row size of the rgba image.
+        \param [in] alpha - a value of alpha channel.
+    */
+    SIMD_API void SimdBgraToRgba(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * rgba, size_t rgbaStride);
+
     /*! @ingroup other_conversion
 
         \fn void SimdBgr48pToBgra32(const uint8_t * blue, size_t blueStride, size_t width, size_t height, const uint8_t * green, size_t greenStride, const uint8_t * red, size_t redStride, uint8_t * bgra, size_t bgraStride, uint8_t alpha);

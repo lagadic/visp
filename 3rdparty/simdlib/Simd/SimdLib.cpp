@@ -236,6 +236,26 @@ SIMD_API void SimdBgrToRgba(const uint8_t *bgr, size_t width, size_t height, siz
         Base::BgrToRgba(bgr, width, height, bgrStride, rgba, rgbaStride, alpha);
 }
 
+SIMD_API void SimdBgraToRgba(const uint8_t *bgra, size_t width, size_t height, size_t bgraStride, uint8_t *rgba, size_t rgbaStride)
+{
+#if defined(SIMD_AVX2_ENABLE) //&& !defined(SIMD_CLANG_AVX2_BGR_TO_BGRA_ERROR)
+    if(Avx2::Enable && width >= Avx2::A)
+        Avx2::BgraToRgba(bgra, width, height, bgraStride, rgba, rgbaStride);
+    else
+#endif
+#ifdef SIMD_SSSE3_ENABLE
+    if(Ssse3::Enable && width >= Ssse3::A)
+        Ssse3::BgraToRgba(bgra, width, height, bgraStride, rgba, rgbaStride);
+    else
+#endif
+#ifdef SIMD_NEON_ENABLE
+    if (Neon::Enable && width >= Neon::A)
+        Neon::BgraToRgba(bgra, width, height, bgraStride, rgba, rgbaStride);
+    else
+#endif
+        Base::BgraToRgba(bgra, width, height, bgraStride, rgba, rgbaStride);
+}
+
 SIMD_API void SimdBgr48pToBgra32(const uint8_t * blue, size_t blueStride, size_t width, size_t height,
     const uint8_t * green, size_t greenStride, const uint8_t * red, size_t redStride, uint8_t * bgra, size_t bgraStride, uint8_t alpha)
 {
