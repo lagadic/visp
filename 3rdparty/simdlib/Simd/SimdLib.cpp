@@ -238,7 +238,7 @@ SIMD_API void SimdBgrToRgba(const uint8_t *bgr, size_t width, size_t height, siz
 
 SIMD_API void SimdBgraToRgba(const uint8_t *bgra, size_t width, size_t height, size_t bgraStride, uint8_t *rgba, size_t rgbaStride)
 {
-#if defined(SIMD_AVX2_ENABLE) //&& !defined(SIMD_CLANG_AVX2_BGR_TO_BGRA_ERROR)
+#if defined(SIMD_AVX2_ENABLE)
     if(Avx2::Enable && width >= Avx2::A)
         Avx2::BgraToRgba(bgra, width, height, bgraStride, rgba, rgbaStride);
     else

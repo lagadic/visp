@@ -58,7 +58,6 @@ namespace Simd
             for (size_t row = 0; row < height; ++row)
             {
                 for (size_t col = 0, colRgba = 0; col < alignedWidth; col += A, colRgba += A4)
-                    // colBgra = colRgba
                     BgraToRgba<align>(bgra + colRgba, rgba + colRgba, _bgra);
                 if (width != alignedWidth)
                     BgraToRgba<false>(bgra + 4 * (width - A), rgba + 4 * (width - A), _bgra);

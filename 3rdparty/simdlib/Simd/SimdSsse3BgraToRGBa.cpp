@@ -32,8 +32,8 @@ namespace Simd
         template <bool align> SIMD_INLINE void BgraToRgba(const uint8_t * bgra, uint8_t * rgba, __m128i shuffle)
         {
             Store<align>((__m128i*)rgba + 0, _mm_shuffle_epi8(Load<align>((__m128i*)(bgra + 0)), shuffle));
-            Store<align>((__m128i*)rgba + 1, _mm_shuffle_epi8(Load<false>((__m128i*)(bgra + 16)), shuffle));
-            Store<align>((__m128i*)rgba + 2, _mm_shuffle_epi8(Load<false>((__m128i*)(bgra + 32)), shuffle));
+            Store<align>((__m128i*)rgba + 1, _mm_shuffle_epi8(Load<align>((__m128i*)(bgra + 16)), shuffle));
+            Store<align>((__m128i*)rgba + 2, _mm_shuffle_epi8(Load<align>((__m128i*)(bgra + 32)), shuffle));
             Store<align>((__m128i*)rgba + 3, _mm_shuffle_epi8(Load<align>((__m128i*)(bgra + 48)), shuffle));
         }
 

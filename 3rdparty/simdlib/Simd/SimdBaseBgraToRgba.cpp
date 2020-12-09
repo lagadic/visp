@@ -28,31 +28,23 @@ namespace Simd
 {
     namespace Base
     {
-        void BgraToRgba(const uint8_t *bgra, size_t size, uint8_t *rgba, bool lastRow)
+        void BgraToRgba(const uint8_t *bgra, size_t size, uint8_t *rgba)
         {
-            for (size_t i = (lastRow ? 1 : 0); i < size; ++i, bgra += 4, rgba += 4)
+            for (size_t i = 0; i < size; ++i, bgra += 4, rgba += 4)
             {
                 *(int32_t*)rgba = (*(int32_t*)bgra);
                 std::swap(rgba[0], rgba[2]);
-            }
-            if (lastRow)
-            {
-                rgba[0] = bgra[2];
-                rgba[1] = bgra[1];
-                rgba[2] = bgra[0];
-                rgba[3] = bgra[3];
             }
         }
 
         void BgraToRgba(const uint8_t *bgra, size_t width, size_t height, size_t bgraStride, uint8_t *rgba, size_t rgbaStride)
         {
-            for (size_t row = 1; row < height; ++row)
+            for (size_t row = 0; row < height; ++row)
             {
-                BgraToRgba(bgra, width, rgba, false);
+                BgraToRgba(bgra, width, rgba);
                 bgra += bgraStride;
                 rgba += rgbaStride;
             }
-            BgraToRgba(bgra, width, rgba, true);
         }
     }
 }

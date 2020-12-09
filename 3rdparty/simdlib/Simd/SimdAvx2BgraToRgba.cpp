@@ -32,10 +32,10 @@ namespace Simd
     {
         template <bool align> SIMD_INLINE void BgraToRgba(const uint8_t * bgra, uint8_t * rgba)
         {
-            Store<align>((__m256i*)rgba + 0, BgraToRgba<false>(Load<align>((__m256i*)(bgra + 0))));
-            Store<align>((__m256i*)rgba + 1, BgraToRgba<false>(Load<false>((__m256i*)(bgra + 32))));
-            Store<align>((__m256i*)rgba + 2, BgraToRgba<false>(Load<false>((__m256i*)(bgra + 64))));
-            Store<align>((__m256i*)rgba + 3, BgraToRgba<true >(Load<align>((__m256i*)(bgra + 96))));
+            Store<align>((__m256i*)rgba + 0, BgraToRgba(Load<align>((__m256i*)(bgra + 0))));
+            Store<align>((__m256i*)rgba + 1, BgraToRgba(Load<align>((__m256i*)(bgra + 32))));
+            Store<align>((__m256i*)rgba + 2, BgraToRgba(Load<align>((__m256i*)(bgra + 64))));
+            Store<align>((__m256i*)rgba + 3, BgraToRgba(Load<align>((__m256i*)(bgra + 96))));
         }
 
         template <bool align> void BgraToRgba(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * rgba, size_t rgbaStride)
