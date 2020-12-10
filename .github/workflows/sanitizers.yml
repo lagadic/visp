@@ -2,9 +2,10 @@ name: Ubuntu-sanitizers
 
 on:
   schedule:
+    # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#scheduled-events
     # * is a special character in YAML so you have to quote this string
-    # everyday at 2 am
-    - cron:  '0 2 * * *'
+    # every Sunday at 2 am
+    - cron:  '0 2 * * SUN'
 
 jobs:
   build-ubuntu-sanitizers:
