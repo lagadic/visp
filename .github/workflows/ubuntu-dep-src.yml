@@ -1,6 +1,11 @@
 name: Ubuntu-dep-src
 
-on: [push, pull_request]
+# https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 2 * * SUN'
 
 jobs:
   build-ubuntu-dep-src:
