@@ -201,14 +201,7 @@ namespace Simd
             return _mm256_or_si256(_mm256_shuffle_epi8(_mm256_permute4x64_epi64(bgr, 0xE9), K8_BGRA_TO_RGB_SHUFFLE), alpha);
         }
 
-        template<bool tail> __m256i BgraToRgba(const __m256i & bgra);
-
-        template<> SIMD_INLINE __m256i BgraToRgba<false>(const __m256i & bgra)
-        {
-            return _mm256_shuffle_epi8(bgra, K8_BGRA_TO_RGBA_SHUFFLE);
-        }
-
-        template<> SIMD_INLINE __m256i BgraToRgba<true>(const __m256i & bgra)
+        SIMD_INLINE __m256i BgraToRgba(const __m256i & bgra)
         {
             return _mm256_shuffle_epi8(bgra, K8_BGRA_TO_RGBA_SHUFFLE);
         }

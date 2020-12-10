@@ -452,11 +452,11 @@ extern "C"
 
         \fn void SimdBgraToRgba(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * rgba, size_t rgbaStride);
 
-        \short Converts 24-bit BGRA image to 32-bit RGBA image.
+        \short Converts 32-bit BGRA image to 32-bit RGBA image.
 
         All images must have the same width and height.
 
-        \param [in] bgra - a pointer to pixels data of input 24-bit BGR image.
+        \param [in] bgra - a pointer to pixels data of input 32-bit BGRA image.
         \param [in] width - an image width.
         \param [in] height - an image height.
         \param [in] bgraStride - a row size of the bgra image.
