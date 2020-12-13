@@ -107,10 +107,35 @@ namespace Simd
         void StretchGray2x2(const uint8_t *src, size_t srcWidth, size_t srcHeight, size_t srcStride,
             uint8_t *dst, size_t dstWidth, size_t dstHeight, size_t dstStride);
 
-        // ViSP custom SIMD code
+        /* ViSP custom SIMD code */
         void ImageErosion(uint8_t * img, const uint8_t * buff, size_t width, size_t height, SimdImageConnexityType connexityType);
 
         void ImageDilatation(uint8_t * img, const uint8_t * buff, size_t width, size_t height, SimdImageConnexityType connexityType);
+
+        double SimdVectorSum(const double * vec, size_t size);
+
+        double SimdVectorSumSquare(const double * vec, size_t size);
+
+        double SimdVectorStdev(const double * vec, size_t size, bool useBesselCorrection);
+
+        void SimdVectorHadamard(const double * src1, const double * src2, size_t size, double * dst);
+
+        void SimdMatMulTwist(const double * mat, size_t rows, const double * twist, double * dst);
+
+        void SimdMatTranspose(const double * mat, size_t rows, size_t cols, double * dst);
+
+        void SimdImageDifference(const unsigned char * img1, const unsigned char * img2, size_t size, unsigned char * imgDiff);
+
+        void SimdNormalizedCorrelation(const double * img1, double mean1, const double * img2, double mean2, size_t size,
+                                       double& a2, double& b2, double& ab);
+
+        void SimdNormalizedCorrelation2(const double * img1, size_t width1, const double * img2,
+                                        size_t width2, size_t height2, size_t i0, size_t j0, double& ab);
+
+        void SimdRemap(const unsigned char * src, size_t channels, size_t width, size_t height, size_t offset,
+                       const int * mapU, const int * mapV, const float * mapDu, const float * mapDv, unsigned char * dst);
+
+        void SimdComputeJtR(const double * J, size_t rows, const double * R, double * dst);
     }
 }
 #endif//__SimdBase_h__

@@ -107,7 +107,15 @@ vpMatrix generateRandomMatrix(unsigned int rows, unsigned int cols, double min, 
 
   return M;
 }
+
+std::vector<double> computeHadamard(const std::vector<double>& v1, const std::vector<double>& v2)
+{
+  std::vector<double> result;
+  std::transform(v1.begin(), v1.end(), v2.begin(),
+                 std::back_inserter(result), std::multiplies<double>());
+  return result;
 }
+} // namespace
 
 int main(int argc, char *argv[])
 {
@@ -667,10 +675,19 @@ int main(int argc, char *argv[])
         M2.data[i] = i + 2;
       }
 
+      // Reference
+      std::vector<double> references = computeHadamard(std::vector<double>(M1.data, M1.data + M1.size()),
+                                                       std::vector<double>(M2.data, M2.data + M2.size()));
+
       std::cout << "M1:\n" << M1 << std::endl;
       std::cout << "\nM2:\n" << M2 << std::endl;
       M2 = M1.hadamard(M2);
       std::cout << "\nRes:\n" << M2 << std::endl;
+
+      if (!test("M2", M2, references)) {
+        std::cerr << "Error with Hadamard product" << std::endl;
+        return EXIT_FAILURE;
+      }
     }
 
     {

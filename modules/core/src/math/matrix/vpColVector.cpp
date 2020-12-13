@@ -58,10 +58,7 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRotationVector.h>
 
-#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
-#include <emmintrin.h>
-#define VISP_HAVE_SSE2 1
-#endif
+#include <Simd/SimdLib.hpp>
 
 //! Operator that allows to add two column vectors.
 vpColVector vpColVector::operator+(const vpColVector &v) const
@@ -1140,49 +1137,7 @@ double vpColVector::stdev(const vpColVector &v, bool useBesselCorrection)
     throw(vpException(vpException::dimensionError, "Cannot compute column vector stdev: vector empty"));
   }
 
-  double mean_value = mean(v);
-  double sum_squared_diff = 0.0;
-  unsigned int i = 0;
-
-#if VISP_HAVE_SSE2
-  if (vpCPUFeatures::checkSSE2()) {
-    __m128d v_sub, v_mul, v_sum = _mm_setzero_pd();
-    __m128d v_mean = _mm_set1_pd(mean_value);
-
-    if (v.getRows() >= 4) {
-      for (; i <= v.getRows() - 4; i += 4) {
-        v_sub = _mm_sub_pd(_mm_loadu_pd(v.data + i), v_mean);
-        v_mul = _mm_mul_pd(v_sub, v_sub);
-        v_sum = _mm_add_pd(v_mul, v_sum);
-
-        v_sub = _mm_sub_pd(_mm_loadu_pd(v.data + i + 2), v_mean);
-        v_mul = _mm_mul_pd(v_sub, v_sub);
-        v_sum = _mm_add_pd(v_mul, v_sum);
-      }
-    }
-
-    double res[2];
-    _mm_storeu_pd(res, v_sum);
-
-    sum_squared_diff = res[0] + res[1];
-  }
-// Old code used before SSE
-//#else
-//  for(unsigned int i = 0; i < v.size(); i++) {
-//    sum_squared_diff += (v[i]-mean_value) * (v[i]-mean_value);
-//  }
-#endif
-
-  for (; i < v.getRows(); i++) {
-    sum_squared_diff += (v[i] - mean_value) * (v[i] - mean_value);
-  }
-
-  double divisor = (double)v.size();
-  if (useBesselCorrection && v.size() > 1) {
-    divisor = divisor - 1;
-  }
-
-  return std::sqrt(sum_squared_diff / divisor);
+  return SimdVectorStdev(v.data, v.rowNum, useBesselCorrection);
 }
 
 /*!
@@ -1479,39 +1434,7 @@ int vpColVector::print(std::ostream &s, unsigned int length, char const *intro) 
   */
 double vpColVector::sum() const
 {
-  double sum = 0.0;
-  unsigned int i = 0;
-
-#if VISP_HAVE_SSE2
-  if (vpCPUFeatures::checkSSE2()) {
-    __m128d v_sum1 = _mm_setzero_pd(), v_sum2 = _mm_setzero_pd(), v_sum;
-
-    if (rowNum >= 4) {
-      for (; i <= rowNum - 4; i += 4) {
-        v_sum1 = _mm_add_pd(_mm_loadu_pd(data + i), v_sum1);
-        v_sum2 = _mm_add_pd(_mm_loadu_pd(data + i + 2), v_sum2);
-      }
-    }
-
-    v_sum = _mm_add_pd(v_sum1, v_sum2);
-
-    double res[2];
-    _mm_storeu_pd(res, v_sum);
-
-    sum = res[0] + res[1];
-  }
-// Old code used before SSE
-//#else
-//  for (unsigned int i=0;i<rowNum;i++) {
-//    sum += rowPtrs[i][0];
-//  }
-#endif
-
-  for (; i < rowNum; i++) {
-    sum += (*this)[i];
-  }
-
-  return sum;
+  return SimdVectorSum(data, rowNum);
 }
 
 /*!
@@ -1522,42 +1445,7 @@ double vpColVector::sum() const
   */
 double vpColVector::sumSquare() const
 {
-  double sum_square = 0.0;
-  unsigned int i = 0;
-
-#if VISP_HAVE_SSE2
-  if (vpCPUFeatures::checkSSE2()) {
-    __m128d v_mul1, v_mul2;
-    __m128d v_sum = _mm_setzero_pd();
-
-    if (rowNum >= 4) {
-      for (; i <= rowNum - 4; i += 4) {
-        v_mul1 = _mm_mul_pd(_mm_loadu_pd(data + i), _mm_loadu_pd(data + i));
-        v_mul2 = _mm_mul_pd(_mm_loadu_pd(data + i + 2), _mm_loadu_pd(data + i + 2));
-
-        v_sum = _mm_add_pd(v_mul1, v_sum);
-        v_sum = _mm_add_pd(v_mul2, v_sum);
-      }
-    }
-
-    double res[2];
-    _mm_storeu_pd(res, v_sum);
-
-    sum_square = res[0] + res[1];
-  }
-// Old code used before SSE
-//#else
-//  for (unsigned int i=0;i<rowNum;i++) {
-//    double x=rowPtrs[i][0];
-//    sum_square += x*x;
-//  }
-#endif
-
-  for (; i < rowNum; i++) {
-    sum_square += (*this)[i] * (*this)[i];
-  }
-
-  return sum_square;
+  return SimdVectorSumSquare(data, rowNum);
 }
 
 /*!
@@ -1593,8 +1481,8 @@ double vpColVector::frobeniusNorm() const
 /*!
   Compute the Hadamard product (element wise vector multiplication).
   \param v : Second vector;
-  \return v1.hadamard(v2) The kronecker product : \f$ v1 \circ v2 = (v1 \circ
-  v2)_{i} = (v1)_{i} (v2)_{i} \f$
+  \return v1.hadamard(v2) The kronecker product :
+  \f$ v1 \circ v2 = (v1 \circ v2)_{i} = (v1)_{i} (v2)_{i} \f$
 */
 vpColVector vpColVector::hadamard(const vpColVector &v) const
 {
@@ -1605,20 +1493,7 @@ vpColVector vpColVector::hadamard(const vpColVector &v) const
   vpColVector out;
   out.resize(rowNum, false);
 
-  unsigned int i = 0;
-
-#if VISP_HAVE_SSE2
-  if (vpCPUFeatures::checkSSE2() && dsize >= 2) {
-    for (; i <= dsize - 2; i += 2) {
-      __m128d vout = _mm_mul_pd(_mm_loadu_pd(data + i), _mm_loadu_pd(v.data + i));
-      _mm_storeu_pd(out.data + i, vout);
-    }
-  }
-#endif
-
-  for (; i < dsize; i++) {
-    out.data[i] = data[i] * v.data[i];
-  }
+  SimdVectorHadamard(data, v.data, rowNum, out.data);
 
   return out;
 }

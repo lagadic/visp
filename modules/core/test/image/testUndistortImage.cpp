@@ -247,9 +247,9 @@ int main(int argc, const char **argv)
       exit(-1);
     }
 
-//
-// Here starts really the test
-//
+    //
+    // Here starts really the test
+    //
     vpImage<vpRGBa> I, I_; // Input image
     vpImage<unsigned char> I_gray;
     vpImage<vpRGBa> U; // undistorted output image
@@ -373,6 +373,35 @@ int main(int argc, const char **argv)
     filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_remap.pgm"));
     std::cout << "Write undistorted image with remap: " << filename << std::endl;
     vpImageIo::write(U_remap_gray, filename);
+
+    // Compute images difference
+    vpImage<vpRGBa> U_diff_abs;
+    vpImageTools::imageDifferenceAbsolute(U, U_remap, U_diff_abs);
+    double mean_diff = 0.0;
+    for (unsigned int i = 0; i < U_diff_abs.getHeight(); i++) {
+      for (unsigned int j = 0; j < U_diff_abs.getWidth(); j++) {
+        mean_diff += U_diff_abs[i][j].R;
+        mean_diff += U_diff_abs[i][j].G;
+        mean_diff += U_diff_abs[i][j].B;
+        mean_diff += U_diff_abs[i][j].A;
+      }
+    }
+    double remap_mean_error = mean_diff / (4*U_diff_abs.getSize());
+    std::cout << "U_diff_abs mean value: " << remap_mean_error << std::endl;
+    const double remap_error_threshold = 0.5;
+    if (remap_mean_error > remap_error_threshold) {
+      std::cerr << "Issue with vpImageTools::remap() with vpRGBa image" << std::endl;
+      return 1;
+    }
+
+    vpImage<unsigned char> U_diff_gray_abs;
+    vpImageTools::imageDifferenceAbsolute(U_gray, U_remap_gray, U_diff_gray_abs);
+    double remap_mean_error_gray = U_diff_gray_abs.getSum() / U_diff_gray_abs.getSize();
+    std::cout << "U_diff_gray_abs mean value: " << remap_mean_error_gray << std::endl;
+    if (remap_mean_error_gray > remap_error_threshold) {
+      std::cerr << "Issue with vpImageTools::remap() with unsigned char image" << std::endl;
+      return 1;
+    }
 
     // Write the undistorted difference images on the disk
     vpImage<vpRGBa> U_diff;

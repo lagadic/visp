@@ -70,42 +70,6 @@ bool test(const std::string &s, const vpColVector &v, const std::vector<double> 
   return true;
 }
 
-double computeRegularSum(const vpColVector &v)
-{
-  double sum = 0.0;
-
-  for (unsigned int i = 0; i < v.getRows(); i++) {
-    sum += v[i];
-  }
-
-  return sum;
-}
-
-double computeRegularSumSquare(const vpColVector &v)
-{
-  double sum_square = 0.0;
-
-  for (unsigned int i = 0; i < v.getRows(); i++) {
-    sum_square += v[i] * v[i];
-  }
-
-  return sum_square;
-}
-
-double computeRegularStdev(const vpColVector &v)
-{
-  double mean_value = computeRegularSum(v) / v.getRows();
-  double sum_squared_diff = 0.0;
-
-  for (unsigned int i = 0; i < v.size(); i++) {
-    sum_squared_diff += (v[i] - mean_value) * (v[i] - mean_value);
-  }
-
-  double divisor = (double)v.size();
-
-  return std::sqrt(sum_squared_diff / divisor);
-}
-
 double getRandomValues(double min, double max)
 {
   return (max - min) * ((double)rand() / (double)RAND_MAX) + min;
@@ -352,91 +316,6 @@ int main()
     }
     std::cout << "r: [" << r << "]^T" << std::endl;
     r.print(std::cout, 8, "r");
-  }
-
-  // Test sum, sumSquare, stdev
-  {
-    srand(0);
-    vpGaussRand noise(10.0, 0.0);
-
-    int nbIterations = 1000;
-    unsigned int size = 117;
-
-    vpColVector v(size);
-    for (unsigned int cpt = 0; cpt < v.getRows(); cpt++) {
-      v[cpt] = rand() % 1000 + noise();
-    }
-
-    std::cout << "\nv.getRows()=" << v.getRows() << std::endl;
-
-    double regular_sum = 0.0;
-    double t_regular = vpTime::measureTimeMs();
-    for (int iteration = 0; iteration < nbIterations; iteration++) {
-      regular_sum += computeRegularSum(v);
-    }
-    t_regular = vpTime::measureTimeMs() - t_regular;
-
-    double sse_sum = 0.0;
-    double t_sse = vpTime::measureTimeMs();
-    for (int iteration = 0; iteration < nbIterations; iteration++) {
-      sse_sum += v.sum();
-    }
-    t_sse = vpTime::measureTimeMs() - t_sse;
-
-    std::cout << "\nregular_sum=" << regular_sum << " ; sse_sum=" << sse_sum << std::endl;
-    std::cout << "t_regular=" << t_regular << " ms ; t_sse=" << t_sse << " ms" << std::endl;
-    std::cout << "Speed-up: " << (t_regular / t_sse) << "X" << std::endl;
-
-    if (!vpMath::equal(regular_sum, sse_sum, std::numeric_limits<double>::epsilon())) {
-      std::cerr << "Problem when computing v.sum()!" << std::endl;
-      return EXIT_FAILURE;
-    }
-
-    double regular_sumSquare = 0.0;
-    t_regular = vpTime::measureTimeMs();
-    for (int iteration = 0; iteration < nbIterations; iteration++) {
-      regular_sumSquare += computeRegularSumSquare(v);
-    }
-    t_regular = vpTime::measureTimeMs() - t_regular;
-
-    double sse_sumSquare = 0.0;
-    t_sse = vpTime::measureTimeMs();
-    for (int iteration = 0; iteration < nbIterations; iteration++) {
-      sse_sumSquare += v.sumSquare();
-    }
-    t_sse = vpTime::measureTimeMs() - t_sse;
-
-    std::cout << "\nregular_sumSquare=" << regular_sumSquare << " ; sse_sumSquare=" << sse_sumSquare << std::endl;
-    std::cout << "t_regular=" << t_regular << " ms ; t_sse=" << t_sse << " ms" << std::endl;
-    std::cout << "Speed-up: " << (t_regular / t_sse) << "X" << std::endl;
-
-    if (!vpMath::equal(regular_sumSquare, sse_sumSquare, std::numeric_limits<double>::epsilon())) {
-      std::cerr << "Problem when computing v.sumSquare()!" << std::endl;
-      return EXIT_FAILURE;
-    }
-
-    double regular_stdev = 0.0;
-    t_regular = vpTime::measureTimeMs();
-    for (int iteration = 0; iteration < nbIterations; iteration++) {
-      regular_stdev += computeRegularStdev(v);
-    }
-    t_regular = vpTime::measureTimeMs() - t_regular;
-
-    double sse_stdev = 0.0;
-    t_sse = vpTime::measureTimeMs();
-    for (int iteration = 0; iteration < nbIterations; iteration++) {
-      sse_stdev += vpColVector::stdev(v, false);
-    }
-    t_sse = vpTime::measureTimeMs() - t_sse;
-
-    std::cout << "\nregular_stdev=" << regular_stdev << " ; sse_stdev=" << sse_stdev << std::endl;
-    std::cout << "t_regular=" << t_regular << " ms ; t_sse=" << t_sse << " ms" << std::endl;
-    std::cout << "Speed-up: " << (t_regular / t_sse) << "X" << std::endl;
-
-    if (!vpMath::equal(regular_stdev, sse_stdev, std::numeric_limits<double>::epsilon())) {
-      std::cerr << "Problem when computing vpColVector::stdev()!" << std::endl;
-      return EXIT_FAILURE;
-    }
   }
 
   {
