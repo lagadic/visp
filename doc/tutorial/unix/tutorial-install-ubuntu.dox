@@ -3,20 +3,24 @@
 \page tutorial-install-ubuntu Tutorial: Installation from source for Linux Ubuntu or Debian
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Linux Ubuntu. These steps have been tested with Ubuntu 16.04 64bits LTS, 17.04 64bits, 18.04 64bits LTS, 18.10 64bits and Debian 9.6.0 64bits distributions, but should work with any other distribution as well.
+In this tutorial you will learn how to install ViSP from source on Linux Ubuntu. These steps have been tested with
+Ubuntu 16.04 64bits LTS, 17.04 64bits, 18.04 64bits LTS, 18.10 64bits 20.04 64bits LTS and Debian 9.6.0 64bits
+distributions, but should work with any other distribution as well.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
 \section install_ubuntu_required Install prerequisites
 
-Prior to build and install ViSP from source, you may install GNU g++ compiler, CMake, git and subversion. This can be achieved running:
+Prior to build and install ViSP from source, you may install GNU g++ compiler, CMake, git and subversion.
+This can be achieved running:
 \verbatim
 $ sudo apt-get install build-essential cmake-curses-gui git subversion wget
 \endverbatim
 
 \section install_ubuntu_ws Create a workspace
 
-First create a workspace that will contain all ViSP source, build, data set and optional 3rd parties. This workspace is here set to `$HOME/visp-ws` folder, but it could be set to any other location.
+First create a workspace that will contain all ViSP source, build, data set and optional 3rd parties.
+This workspace is here set to `$HOME/visp-ws` folder, but it could be set to any other location.
 
 In a terminal, run:
 \verbatim
@@ -60,7 +64,8 @@ $ echo "export VISP_DIR=$VISP_WS/visp-build" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 
-To have a trial, just jump to \ref install_ubuntu_dataset before running some binaries that you just build or jump to \ref install_ubuntu_next. You can later come back to the \ref install_ubuntu_advanced.
+To have a trial, just jump to \ref install_ubuntu_dataset before running some binaries that you just build or jump to
+\ref install_ubuntu_next. You can later come back to the \ref install_ubuntu_advanced.
 
 \section install_ubuntu_advanced Advanced ViSP installation
 
@@ -68,7 +73,12 @@ To have a trial, just jump to \ref install_ubuntu_dataset before running some bi
 
 ViSP is interfaced with several optional 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
 
-\note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do not want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP. It is therefore possible to skip in a first time this section and start directly to \ref install_ubuntu_quick. Later, if you realize that a third-party library is missing, you can still install it, go back to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build ViSP again as explained in \ref install_ubuntu_tips_new_3rdparty.
+\note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do
+not want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP.
+It is therefore possible to skip in a first time this section and start directly to \ref install_ubuntu_quick. Later,
+if you realize that a third-party library is missing, you can still install it, go back to the build folder,
+configure ViSP with CMake to detect the newly installed third-party library and build ViSP again as explained
+in \ref install_ubuntu_tips_new_3rdparty.
 
 \subsubsection install_ubuntu_3rdparty_recommended Recommended 3rd parties
 
@@ -95,7 +105,8 @@ $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv
 
 \subsubsection install_ubuntu_3rdparty_realsense librealsense 2.x 3rd party
 
-I you have an Intel RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x in order to use vpRealSense2 class. Otherwise you can skip this section.
+I you have an Intel RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x in order to use vpRealSense2 class.
+Otherwise you can skip this section.
 
 Installation instructions are given in the <a href="https://github.com/IntelRealSense/librealsense/blob/master/doc/installation.md">tutorial</a>.
 
@@ -141,42 +152,93 @@ If you are able to visualize the images, it means that you succeed in librealsen
 
 \subsubsection install_ubuntu_3rdparty_flycapture FlyCapture 3rd party
 
-FlyCapture is the SDK provided by <a href="https://www.ptgrey.com/">FLIR (previously Point Grey)</a> to work with FLIR USB 2.0, USB 3.0, Gigabit Ethernet or FireWire cameras. If you don't have such a camera you can skip this section.
+FlyCapture is the SDK provided by <a href="https://www.ptgrey.com/">FLIR (previously Point Grey)</a> to work with
+FLIR USB 2.0, USB 3.0, Gigabit Ethernet or FireWire cameras. If you have such a camera, once FlyCapture is installed
+you may use vpFlyCapture class. Otherwise you can skip this section.
 
-
-1. Download FlyCapture2 SDK from the <a href="https://www.flir.com/support-center/iis/machine-vision/downloads/spinnaker-sdk-flycapture-and-firmware-download/">FLIR Downloads</a> web page. You will need a downloads account to access the Download links.
+1. Download FlyCapture2 SDK from the [FLIR Downloads](https://www.flir.com/support-center/iis/machine-vision/downloads/spinnaker-sdk-flycapture-and-firmware-download/)
+web page. You will need a downloads account to access the Download links.
 
 2. Unpack the software in a temporary directory.
 
-3. Follow instructions provided in `README` file to install required dependencies (libraw1394-11, libgtkmm-2.4-dev, libglademm-2.4-dev, libgtkglextmm-x11-1.2-dev, libusb-1.0). For example, for Ubuntu 18.04 run:
+3. Follow instructions provided in `README` file to install required dependencies (`libraw1394-11`, `libgtkmm-2.4-dev`,
+`libglademm-2.4-dev`, `libgtkglextmm-x11-1.2-dev`, `libusb-1.0`). For example, for Ubuntu 18.04 run:
 
         $ sudo apt-get install libraw1394-11 libavcodec57 libavformat57  \
-        libswscale4 libswresample2 libavutil55 libgtkmm-2.4-1v5          \
-        libglademm-2.4-1v5 libgtkglextmm-x11-1.2-0v5 libgtkmm-2.4-dev    \
-        libglademm-2.4-dev libgtkglextmm-x11-1.2-dev libusb-1.0-0
+          libswscale4 libswresample2 libavutil55 libgtkmm-2.4-1v5        \
+          libglademm-2.4-1v5 libgtkglextmm-x11-1.2-0v5 libgtkmm-2.4-dev  \
+          libglademm-2.4-dev libgtkglextmm-x11-1.2-dev libusb-1.0-0
 
 4. Run the install script in the same directory into which you unpacked the software.
 
         $ sudo sh install_flycapture.sh
 
-5. Follow the instructions of the script. This installs all the FlyCapture2 libraries, example code, sample applications, and documentation.
-The script prompts you to configure udev so that devices can be used by a particular user. If you choose to configure devices, the script changes permissions on the nodes by overwriting the default Ubuntu permissions and giving the user full read and write access to the device nodes.
+5. Follow the instructions of the script. This installs all the FlyCapture2 libraries, example code, sample applications,
+and documentation. The script prompts you to configure udev so that devices can be used by a particular user. If you choose
+to configure devices, the script changes permissions on the nodes by overwriting the default Ubuntu permissions and giving
+the user full read and write access to the device nodes.
 
 6. Restart your computer for the user permissions to take effect.
 
 \subsubsection install_ubuntu_3rdparty_pylon Pylon 3rd party
 
-The Pylon Camera Software Suite is a collection of drivers and tools for operating any <a href="https://www.baslerweb.com/en/">Basler camera</a> (IEEE1394, Camera Link, GigE or USB3.0 interface). If you don't have a Basler camera you can skip this section.
+The Pylon Camera Software Suite is a collection of drivers and tools for operating any [Basler camera](https://www.baslerweb.com/en/)
+(IEEE1394, Camera Link, GigE or USB3.0 interface). If you don't have a Basler camera you can skip this section.
 
-To install Pylon, visit <a href="https://www.baslerweb.com/en/support/downloads/software-downloads/">Basler Software Download</a> page to download and install the SDK corresponding to your platform.
+To install Pylon, visit [Basler Software Download](https://www.baslerweb.com/en/support/downloads/software-downloads/") page
+to download and install the SDK corresponding to your platform.
 
 Pylon Camera Software Suite installation enables vpPylonGrabber class usage.
+
+\subsubsection install_ubuntu_3rdparty_ueye IDS uEye 3rd party
+
+If you have an [IDS](https://en.ids-imaging.com/) camera you may install IDS Software Suite for uEye cameras. To this end:
+- enter the [download area](https://en.ids-imaging.com/downloads.html)
+- select `"uEye industrial cameras"`
+- in the `"Firmware"` tab, select `"uEye (IDS Software Suite)"` and press `"SHOW"` button
+- in the `"Operating system"` tab select `"Linux"` or `"Linux ARM"` and press the search button
+- in the `"Software package"` section you should see the last `"IDS Software Suite"` version you may download.
+  At the time this tutorial was written, we downloaded `"IDS Software Suite 4.93"` version.
+
+Once downloaded, you may unzip the archive
+\verbatim
+$ tar xvzf ids-software-suite-linux-4.93.0-64.tgz
+\endverbatim
+
+Open the README file `ueye-linux-readme-*.html` and check compatibility list
+\verbatim
+Below is a list of successfully tested distributions for the current IDS Software Suite:
+
+    Debian 10.2 (buster)
+    Debian 9.11 (stretch)
+    Ubuntu 19.10 (eoan)
+    Ubuntu 18.04.3 LTS (bionic)
+\endverbatim
+
+If the Software Suite is compatible with your OS, proceed to the installation:
+\verbatim
+$ sudo sh ./ueye_*.run
+\endverbatim
+
+After installation, you may start the uEye daemons separately with systemd by typing:
+\verbatim
+$ sudo systemctl start ueyeethdrc
+$ sudo systemctl start ueyeusbdrc
+\endverbatim
+
+To test the Sofware Suite installation, plug a camera and run `ueyedemo` binary.
+\verbatim
+$ ueyedemo
+\endverbatim
+
+IDS uEye Camera Software Suite installation enables vpUeyeGrabber class usage.
 
 \subsubsection install_ubuntu_3rdparty_franka libfranka 3rd party
 
 I you have a Panda robot from Franka Emika, you may install libfranka in order to use vpRobotFranka class. Otherwise you can skip this section.
 
-Installation instructions are provided following \ref franka_prereq_libfranka. There is also the \ref tutorial-franka-pbvs that explains how to install a real-time Linux kernel requested to control the robot by \ref franka_prereq_rt_linux.
+Installation instructions are provided following \ref franka_prereq_libfranka. There is also the \ref tutorial-franka-pbvs that explains
+how to install a real-time Linux kernel requested to control the robot by \ref franka_prereq_rt_linux.
 
 \subsubsection install_ubuntu_3rdparty__3rdparty_jaco Kinova Jaco 3rd party
 
@@ -203,7 +265,8 @@ $ sh ./installSDK64.sh
 
 We give also the way to install other 3rd party libraries to enable specific capabilities.
 
-- If you have an Intel Realsense RGB-D camera (R200, F200, LR200, RZ300) you may install librealsense 1.12.1 following these <a href="https://github.com/IntelRealSense/librealsense/blob/v1.12.1/doc/installation.md">installation instructions</a>.
+- If you have an Intel Realsense RGB-D camera (R200, F200, LR200, RZ300) you may install librealsense 1.12.1 following
+  these [installation instructions](https://github.com/IntelRealSense/librealsense/blob/v1.12.1/doc/installation.md).
 - You may also install PCL library using:
 \verbatim
 $ sudo apt-get install libpcl-dev
@@ -237,7 +300,8 @@ $ sudo apt-get install libgsl-dev
 
 There are different ways to get ViSP source code:
 
-- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once downloaded, uncompress the file using either
+- You can download the <a href="http://visp.inria.fr/download">latest release</a> as a zip or a tarball.
+  Once downloaded, uncompress the file using either
 \verbatim
 $ tar xvzf visp-x.y.z.tar.gz -C $VISP_WS
 \endverbatim
@@ -246,24 +310,27 @@ or
 $ unzip visp-x.y.z.zip -d $VISP_WS
 \endverbatim
 
-- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>. Once downloaded, uncompress the file using
+- You can also download a <a href="http://visp.inria.fr/download#snapshot">daily snapshot</a>.
+  Once downloaded, uncompress the file using
 \verbatim
 $ tar xvzf visp-snapshot-yyyy-mm-dd.tar.gz -C $VISP_WS
 \endverbatim
 
-- Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the following command
+- Or you get the cutting-edge ViSP from [GitHub repository](https://github.com/lagadic/visp) using the following command
 \verbatim
 $ cd $VISP_WS
 $ git clone https://github.com/lagadic/visp.git
 \endverbatim
 
-We suppose now that ViSP source is in the directory `$VISP_WS/visp`. The following should be adapted if you downloaded ViSP from a zip or tarball. In that case, the source is rather in something like `$VISP_WS/visp-x.y.z`.
+We suppose now that ViSP source is in the directory `$VISP_WS/visp`. The following should be adapted if you downloaded
+ViSP from a zip or tarball. In that case, the source is rather in something like `$VISP_WS/visp-x.y.z`.
 
 \subsection install_ubuntu_visp_config Configure ViSP from source
 
 These are the steps to configure ViSP from source with CMake:
 
-- In the workspace, create first a directory named `visp-build` that will contain all the build material; generated Makefiles, object files, output libraries and binaries.
+- In the workspace, create first a directory named `visp-build` that will contain all the build material; generated Makefiles,
+  object files, output libraries and binaries.
 \verbatim
 $ mkdir $VISP_WS/visp-build
 \endverbatim
@@ -277,7 +344,9 @@ A more versatile way to configure the build is to use `ccmake`, the CMake GUI:
 \verbatim
 $ ccmake ../visp
 \endverbatim
-The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
+The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced
+way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used.
+To generate the makefiles, just press [g] key in the ccmake gui.
 \image html img-ccmake-ubuntu-all.png Snapshot of the `ccmake ../visp` command used to configure ViSP.
 
 \subsection install_ubuntu_visp_build Build ViSP libraries
@@ -303,14 +372,16 @@ $ make -j4 visp_doc
 The generated documentation is then available in `$VISP_WS/visp-build/doc/html/index.html`
 
 \note
-- To speed up generating online doc, particularly around formula rendering, you can use [MatJax](https://www.mathjax.org). To this end, install MathJax and build doc using:
+- To speed up generating online doc, particularly around formula rendering, you can use [MatJax](https://www.mathjax.org).
+  To this end, install MathJax and build doc using:
 \verbatim
 $ npm install mathjax
 $ cmake ../visp -DUSE_MATHJAX=ON
 $ make -j4 visp_doc
 \endverbatim
 \note
-- It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
+- It is also possible to generate a more complete documentation that includes also all the internal classes.
+  This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
 \verbatim
 $ cmake ../visp -DENABLE_FULL_DOC=ON
 $ make -j4 visp_doc
@@ -318,7 +389,8 @@ $ make -j4 visp_doc
 
 \subsection install_ubuntu_visp_dir Set VISP_DIR environment var
 
-In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path to the `VISPConfig.cmake` file:
+In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one described
+in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path to the `VISPConfig.cmake` file:
 \verbatim
 $ echo "export VISP_DIR=$VISP_WS/visp-build" >> ~/.bashrc
 $ source ~/.bashrc
@@ -326,7 +398,9 @@ $ source ~/.bashrc
 
 \section install_ubuntu_dataset Install ViSP data set
 
-Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
+Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code.
+This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`.
+This archive could be downloaded from http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
 
 We give hereafter the two ways to get this data set:
 
@@ -343,7 +417,9 @@ $ ls $VISP_WS/visp-images-3.3.0
 AprilTag   README.md      cube       endianness   line    mire          warp
 Klimt      calibration    ellipse    faces        mbt     mire-2        xml
 \endverbatim
-- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.3.0`. It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched:
+- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect
+  automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.3.0`.
+  It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched:
 \verbatim
 $ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.3.0" >> ~/.bashrc
 $ source ~/.bashrc
@@ -356,7 +432,8 @@ $ source ~/.bashrc
 C:\> cd $VISP_WS
 C:\> git clone https://github.com/lagadic/visp-images.git
 \endverbatim
-- Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS%/visp-images`. In a shell run:
+- Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically
+  the location of the requested data. In our case, this variable should be set to `$VISP_WS%/visp-images`. In a shell run:
 \verbatim
 $ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images" >> ~/.bashrc
 $ source ~/.bashrc
@@ -364,7 +441,8 @@ $ source ~/.bashrc
 
 <b>Test data set usage</b>
 
-- From now, you can try to run ViSP examples and tests. For example you can run `displayX` example that should open a windows with Klimt painting image and some overlay drawings:
+- From now, you can try to run ViSP examples and tests. For example you can run `displayX` example that should open a windows with
+  Klimt painting image and some overlay drawings:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ ./example/device/display/displayX
@@ -382,13 +460,16 @@ Bye
 
 \subsection install_ubuntu_tips_new_3rdparty How to take into account a newly installed 3rd party
 
-Since all 3rd parties are optional you may have started to install only some of them. Imagine that you just installed a new third-party, or that you upgraded the version of this 3rd party. The next step is to go back to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build again ViSP. This could be achieved with:
+Since all 3rd parties are optional you may have started to install only some of them. Imagine that you just installed a new third-party,
+or that you upgraded the version of this 3rd party. The next step is to go back to the build folder, configure ViSP with CMake to detect
+the newly installed third-party library and build again ViSP. This could be achieved with:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
 \endverbatim
 
-Here you can check the content of the `ViSP-third-party.txt` file and see if the newly installed 3rd party is well detected (see \ref install_ubuntu_tips_3rd_party).
+Here you can check the content of the `ViSP-third-party.txt` file and see if the newly installed 3rd party is well detected
+(see \ref install_ubuntu_tips_3rd_party).
 
 Finally, you need to rebuild ViSP with:
 \verbatim
@@ -397,7 +478,8 @@ $ make -j4
 
 \subsection install_ubuntu_tips_install How to install ViSP
 
-Installing ViSP is optional and not recommended, since ViSP could be used as a 3rd party without installation. If you still want to proceed with the installation run:
+Installing ViSP is optional and not recommended, since ViSP could be used as a 3rd party without installation.
+If you still want to proceed with the installation run:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ sudo make install
@@ -410,7 +492,10 @@ $ make -j4
 $ sudo make install
 \endverbatim
 
-\note If you proceed to ViSP installation in a system folder like `/usr` or `/usr/local` there is no need to \ref install_ubuntu_visp_dir that helps CMake to find ViSP libraries in an external project that uses ViSP as a 3rd party. If you rather install ViSP in a non "standard" folder, let say `/my/install/folder`, you have to set `VISP_DIR` to `/my/install/folder/lib/cmake/visp` that contains the `VISPConfig.cmake` file:
+\note If you proceed to ViSP installation in a system folder like `/usr` or `/usr/local` there is no need
+to \ref install_ubuntu_visp_dir that helps CMake to find ViSP libraries in an external project that uses ViSP as a 3rd party.
+If you rather install ViSP in a non "standard" folder, let say `/my/install/folder`, you have to set `VISP_DIR`
+to `/my/install/folder/lib/cmake/visp` that contains the `VISPConfig.cmake` file:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DCMAKE_INSTALL_PREFIX=/my/install/folder
@@ -489,32 +574,34 @@ $ make help | grep visp
 
 \subsection install_ubuntu_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
 
-To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `$VISP_WS/visp-build`. We provide hereafter an example of a possible content of this file that contains also build info.
+To see which are the optional 3rd parties that are found during the configuration stage and that will be used by
+ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `$VISP_WS/visp-build`.
+We provide hereafter an example of a possible content of this file that contains also build info.
 \verbatim
 $ cat $VISP_WS/visp-build/ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.3.0
+General configuration information for ViSP 3.3.1
 
-  Version control:               3.2.0-796-gc26c51bfe
+  Version control:               3.2.0-1313-g31602e1f7-dirty
 
   Platform:
-    Timestamp:                   2020-02-11T07:06:58Z
-    Host:                        Linux 5.3.0-28-generic x86_64
+    Timestamp:                   2020-12-11T12:10:30Z
+    Host:                        Linux 5.4.0-53-generic x86_64
     CMake:                       3.16.4
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/make
-    Configuration:               Release
+    Configuration:               RelWithDebInfo
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                /usr/bin/c++  (ver 7.4.0)
-    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
-    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
-    C Compiler:                  /usr/bin/cc
-    C flags (Release):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
-    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
-    Linker flags (Release):
-    Linker flags (Debug):
+    C++ Compiler:                /usr/bin/g++  (ver 7.5.0)
+    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -mavx -fPIC -O3 -DNDEBUG
+    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -mavx -fPIC -g
+    C Compiler:                  /usr/bin/gcc
+    C flags (Release):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -mavx -fPIC -O3 -DNDEBUG
+    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -mavx -fPIC -g
+    Linker flags (Release):      
+    Linker flags (Debug):        
 
   ViSP modules:
     To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi java
@@ -524,29 +611,30 @@ General configuration information for ViSP 3.3.0
 
   Python (for build):            /usr/bin/python2.7
 
-  Java:
+  Java:                          
     ant:                         /usr/bin/ant (ver 1.10.5)
     JNI:                         /home/fspindle/visp_ws/java/jdk-11.0.6/include /home/fspindle/visp_ws/java/jdk-11.0.6/include/linux /home/fspindle/visp_ws/java/jdk-11.0.6/include
 
-  Build options:
+  Build options: 
     Build deprecated:            yes
     Build with moment combine:   no
 
-  Mathematics:
-    Use MKL:                     no
-    Use OpenBLAS:                no
-    Use Atlas:                   no
-    Use Netlib Lapack:           yes (ver 3.7.1)
-    Use Lapack (built-in):       no
+  Mathematics: 
+    Blas/Lapack:                 yes
+    \- Use MKL:                  no
+    \- Use OpenBLAS:             yes (ver 0.2.20)
+    \- Use Atlas:                no
+    \- Use Netlib:               no
+    \- Use GSL:                  no
+    \- Use Lapack (built-in):    no
     Use Eigen3:                  yes (ver 3.3.4)
     Use OpenCV:                  yes (ver 3.2.0)
-    Use GSL:                     no
 
-  Simulator:
-    Ogre simulator:
+  Simulator: 
+    Ogre simulator: 
     \- Use Ogre3D:               yes (ver 1.9.0)
     \- Use OIS:                  yes (ver 1.3.0)
-    Coin simulator:
+    Coin simulator: 
     \- Use Coin3D:               yes (ver 4.0.0)
     \- Use SoWin:                no
     \- Use SoXt:                 no
@@ -555,47 +643,50 @@ General configuration information for ViSP 3.3.0
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
-  Media I/O:
+  Media I/O: 
     Use JPEG:                    yes (ver 80)
     Use PNG:                     yes (ver 1.6.34)
     \- Use ZLIB:                 yes (ver 1.2.11)
     Use OpenCV:                  yes (ver 3.2.0)
     Use stb_image (built-in):    no
 
-  Real robots:
+  Real robots: 
     Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  yes (ver 0.7.1)
     Use Viper650:                no
     Use Viper850:                no
+    Use Kinova Jaco:             yes
     Use aria (Pioneer):          no
     Use PTU46:                   no
     Use Biclops PTU:             no
     Use Flir PTU SDK:            no
     Use Parrot ARSDK:            yes
     \-Use ffmpeg:                yes
-    Use Virtuose:                no
+    Use Virtuose:                yes
     Use qbdevice (built-in):     yes (ver 2.6.0)
+    Use takktile2 (built-in):    yes (ver 1.0.0)
 
-  GUI:
+  GUI: 
     Use X11:                     yes
     Use GTK:                     no
     Use OpenCV:                  yes (ver 3.2.0)
     Use GDI:                     no
     Use Direct3D:                no
 
-  Cameras:
+  Cameras: 
     Use DC1394-2.x:              yes (ver 2.2.5)
     Use CMU 1394:                no
     Use V4L2:                    yes (ver 1.14.2)
     Use directshow:              no
     Use OpenCV:                  yes (ver 3.2.0)
-    Use Flycapture:              yes
-    Use Pylon:                   no
+    Use FLIR Flycapture:         yes
+    Use Basler Pylon:            no
+    Use IDS uEye:                yes (ver 4.93.0)
 
-  RGB-D sensors:
+  RGB-D sensors: 
     Use Realsense:               no
-    Use Realsense2:              yes (ver 2.32.1)
+    Use Realsense2:              yes (ver 2.36.0)
     Use Kinect:                  no
     \- Use libfreenect:          no
     \- Use libusb-1:             yes (ver 1.0.21)
@@ -603,29 +694,29 @@ General configuration information for ViSP 3.3.0
     Use PCL:                     yes (ver 1.8.1)
     \- Use VTK:                  yes (ver 6.3.0)
 
-  F/T sensors:
+  F/T sensors: 
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
 
-  Detection:
+  Detection: 
     Use zbar:                    yes (ver 0.10)
     Use dmtx:                    yes (ver 0.7.4)
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
 
-  Misc:
+  Misc: 
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
     Use libxml2:                 yes (ver 2.9.4)
 
-  Optimization:
+  Optimization: 
     Use OpenMP:                  yes
     Use pthread:                 yes
     Use pthread (built-in):      no
     Use cxx standard:            11
 
-  Documentation:
+  Documentation: 
     Use doxygen:                 yes
 
   Tests and samples:
