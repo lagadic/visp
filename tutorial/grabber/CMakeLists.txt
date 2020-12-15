@@ -12,6 +12,7 @@ set(tutorial_cpp
   tutorial-grabber-bebop2.cpp
   tutorial-grabber-CMU1394.cpp
   tutorial-grabber-flycapture.cpp
+  tutorial-grabber-ids-ueye.cpp
   tutorial-grabber-opencv.cpp
   tutorial-grabber-opencv-threaded.cpp
   tutorial-grabber-realsense.cpp
