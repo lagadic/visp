@@ -140,7 +140,7 @@ int main(int argc, const char *argv[])
         std::cout << "Auto gain         : " << (g.setGain(true) ? "enabled" : "N/A") << std::endl;
       }
       else {
-        std::cout << "Manual gain       : " << (g.setGain(false, std::atof(opt_gain.c_str())) ? (std::string(opt_gain) + " %") : "N/A") << std::endl;
+        std::cout << "Manual gain       : " << (g.setGain(false, std::atoi(opt_gain.c_str())) ? (std::string(opt_gain) + " %") : "N/A") << std::endl;
       }
     }
     if (! opt_shutter.empty()) {

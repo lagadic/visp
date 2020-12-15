@@ -29,7 +29,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find Intel RealSense SDK to work with R200, F200 and SR300 devices.
+# Try to find IDS uEye Software Suite.
 # Once run this will define:
 #
 # UEYE_FOUND
@@ -63,8 +63,15 @@ find_path(UEYE_INCLUDE_DIRS ueye.h
     ${UEYE_INC_SEARCH_PATH}
 )
 
+set(lib_suffix)
+if(MSVC)
+  if(CMAKE_CL_64)
+    set(lib_suffix "_64")
+  endif()
+endif()
+
 find_library(UEYE_LIBRARY_API
-  NAMES ueye_api
+  NAMES ueye_api${lib_suffix}
   PATHS
     ${UEYE_LIB_SEARCH_PATH}
 )

@@ -327,6 +327,35 @@ on "Next" button.
 - In the "Ready to install" panel, click on the "Install" button
 - Reboot the system.
 
+\subsubsection install_win10_msvc16_3rdparty_ueye IDS uEye 3rd party
+
+If you have an [IDS](https://en.ids-imaging.com/) camera you may install IDS Software Suite for uEye cameras. To this end:
+- enter the [download area](https://en.ids-imaging.com/downloads.html)
+- select `"uEye industrial cameras"`
+- in the `"Firmware"` tab, select `"uEye (IDS Software Suite)"` and press `"SHOW"` button
+- in the `"Operating system"` tab select `"Windows"` and press the search button
+- in the `"Software package"` section you should see the last `"IDS Software Suite - Full installer"` version you may download.
+  At the time this tutorial was written, we downloaded `"ids-software-suite-full-64-49400.zip"` file.
+
+Once downloaded, you may extract the archive.
+
+Open the README file `readme-ids-software-suite-win-*.html` and check compatibility list
+\verbatim
+IDS Software Suite has been tested with the following Windows 10 version:
+- Edition: Windows 10 Pro
+    Version: 1909
+    Version: 2004
+\endverbatim
+
+If the Software Suite is compatible with your OS, proceed to the installation:
+- Double-click on the extracted file (in our case `uEye64_49400_WHQL.exe` to start the installation.
+  The uEye driver installation is menu-driven.
+- Keep default configuration and proceed to the installation.
+
+To test the Sofware Suite installation, plug a camera, enter `"Start"` menu and run `"IDS > uEyeDirectShow Demo"` binary.
+
+IDS uEye Camera Software Suite installation enables vpUeyeGrabber class usage.
+
 \subsubsection install_win10_msvc16_3rdparty_jaco Kinova Jaco 3rd party
 
 If you have a
