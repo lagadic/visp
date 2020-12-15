@@ -128,6 +128,24 @@ TEST_CASE("BGR to Gray conversion", "[image_conversion]") {
 }
 #endif
 
+TEST_CASE("BGRa to Gray conversion", "[image_conversion]") {
+  vpImage<vpRGBa> rgba_ref(height, width);
+  common_tools::fill(rgba_ref);
+
+  vpImage<unsigned char> gray_ref;
+  vpImageConvert::convert(rgba_ref, gray_ref);
+
+  std::vector<unsigned char> bgra;
+  common_tools::RGBaToBGRa(rgba_ref, bgra);
+
+  vpImage<unsigned char> gray(gray_ref.getHeight(), gray_ref.getWidth());
+  vpImageConvert::BGRaToGrey(bgra.data(), gray.bitmap, gray.getWidth(), gray.getHeight());
+
+  double error = 0;
+  CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
+  std::cout << "BGRa to Gray conversion, mean error: " << error << std::endl;
+}
+
 TEST_CASE("BGRa to RGBa conversion", "[image_conversion]") {
   vpImage<vpRGBa> rgba_ref(height, width);
   common_tools::fill(rgba_ref);
