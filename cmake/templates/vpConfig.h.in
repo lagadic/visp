@@ -354,11 +354,14 @@
 // Defined if DirectShow library is available (only under Windows).
 #cmakedefine VISP_HAVE_DIRECTSHOW
 
-// Defined if PointGrey FlyCapture SDK available.
+// Defined if FLIR FlyCapture SDK available.
 #cmakedefine VISP_HAVE_FLYCAPTURE
 
 // Defined if Basler Pylon SDK available.
 #cmakedefine VISP_HAVE_PYLON
+
+// Defined if IDS uEye SDK available.
+#cmakedefine VISP_HAVE_UEYE
 
 // Defined if Comedi (linux control and measurement cdevice interface) available.
 #cmakedefine VISP_HAVE_COMEDI
