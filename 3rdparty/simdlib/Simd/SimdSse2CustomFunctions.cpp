@@ -185,8 +185,8 @@ namespace Simd
         {
             __m128d v_sum1 = _mm_setzero_pd(), v_sum2 = _mm_setzero_pd();
 
-            int i = 0;
-            for (; i <= static_cast<int>(size) - 4; i += 4) {
+            size_t i = 0;
+            for (; i <= size - 4; i += 4) {
                 v_sum1 = _mm_add_pd(_mm_loadu_pd(vec + i), v_sum1);
                 v_sum2 = _mm_add_pd(_mm_loadu_pd(vec + i + 2), v_sum2);
             }
@@ -207,12 +207,12 @@ namespace Simd
         double SimdVectorSumSquare(const double * vec, size_t size)
         {
             double sum_square = 0.0;
-            int i = 0;
+            size_t i = 0;
 
             __m128d v_mul1, v_mul2;
             __m128d v_sum = _mm_setzero_pd();
 
-            for (; i <= static_cast<int>(size) - 4; i += 4) {
+            for (; i <= size - 4; i += 4) {
                 v_mul1 = _mm_mul_pd(_mm_loadu_pd(vec + i), _mm_loadu_pd(vec + i));
                 v_mul2 = _mm_mul_pd(_mm_loadu_pd(vec + i + 2), _mm_loadu_pd(vec + i + 2));
 
@@ -236,12 +236,12 @@ namespace Simd
         {
             double mean_value = SimdVectorSum(vec, size) / size;
             double sum_squared_diff = 0.0;
-            int i = 0;
+            size_t i = 0;
 
             __m128d v_sub, v_mul, v_sum = _mm_setzero_pd();
             __m128d v_mean = _mm_set1_pd(mean_value);
 
-            for (; i <= static_cast<int>(size) - 4; i += 4) {
+            for (; i <= size - 4; i += 4) {
                 v_sub = _mm_sub_pd(_mm_loadu_pd(vec + i), v_mean);
                 v_mul = _mm_mul_pd(v_sub, v_sub);
                 v_sum = _mm_add_pd(v_mul, v_sum);
@@ -270,8 +270,8 @@ namespace Simd
 
         void SimdVectorHadamard(const double * src1, const double * src2, size_t size, double * dst)
         {
-            int i = 0;
-            for (; i <= static_cast<int>(size) - 2; i += 2) {
+            size_t i = 0;
+            for (; i <= size - 2; i += 2) {
                 __m128d vout = _mm_mul_pd(_mm_loadu_pd(src1 + i), _mm_loadu_pd(src2 + i));
                 _mm_storeu_pd(dst + i, vout);
             }
@@ -426,16 +426,16 @@ namespace Simd
             __m128d v_JTR_4_5 = _mm_setzero_pd();
 
             for (size_t i = 0; i < rows; i++) {
-              const __m128d v_error = _mm_set1_pd(R[i]);
+                const __m128d v_error = _mm_set1_pd(R[i]);
 
-              __m128d v_interaction = _mm_loadu_pd(&J[i*6]);
-              v_JTR_0_1 = _mm_add_pd(v_JTR_0_1, _mm_mul_pd(v_interaction, v_error));
+                __m128d v_interaction = _mm_loadu_pd(&J[i*6]);
+                v_JTR_0_1 = _mm_add_pd(v_JTR_0_1, _mm_mul_pd(v_interaction, v_error));
 
-              v_interaction = _mm_loadu_pd(&J[i*6 + 2]);
-              v_JTR_2_3 = _mm_add_pd(v_JTR_2_3, _mm_mul_pd(v_interaction, v_error));
+                v_interaction = _mm_loadu_pd(&J[i*6 + 2]);
+                v_JTR_2_3 = _mm_add_pd(v_JTR_2_3, _mm_mul_pd(v_interaction, v_error));
 
-              v_interaction = _mm_loadu_pd(&J[i*6 + 4]);
-              v_JTR_4_5 = _mm_add_pd(v_JTR_4_5, _mm_mul_pd(v_interaction, v_error));
+                v_interaction = _mm_loadu_pd(&J[i*6 + 4]);
+                v_JTR_4_5 = _mm_add_pd(v_JTR_4_5, _mm_mul_pd(v_interaction, v_error));
             }
 
             _mm_storeu_pd(dst, v_JTR_0_1);

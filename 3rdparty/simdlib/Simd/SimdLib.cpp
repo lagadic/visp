@@ -766,7 +766,8 @@ SIMD_API void SimdImageDilatation(uint8_t * img, const uint8_t * buff, size_t wi
 SIMD_API double SimdVectorSum(const double * vec, size_t size)
 {
 #ifdef SIMD_SSE2_ENABLE
-    if (Sse2::Enable && size*sizeof(double) >= Sse2::A)
+    const int unrollLoopSize = 2;
+    if (Sse2::Enable && size*sizeof(double) >= unrollLoopSize*Sse2::A)
         return Sse2::SimdVectorSum(vec, size);
     else
 #endif
@@ -776,7 +777,8 @@ SIMD_API double SimdVectorSum(const double * vec, size_t size)
 SIMD_API double SimdVectorSumSquare(const double * vec, size_t size)
 {
 #ifdef SIMD_SSE2_ENABLE
-    if (Sse2::Enable && size*sizeof(double) >= Sse2::A)
+    const int unrollLoopSize = 2;
+    if (Sse2::Enable && size*sizeof(double) >= unrollLoopSize*Sse2::A)
         return Sse2::SimdVectorSumSquare(vec, size);
     else
 #endif
@@ -786,7 +788,8 @@ SIMD_API double SimdVectorSumSquare(const double * vec, size_t size)
 SIMD_API double SimdVectorStdev(const double * vec, size_t size, bool useBesselCorrection)
 {
 #ifdef SIMD_SSE2_ENABLE
-    if (Sse2::Enable && size*sizeof(double) >= Sse2::A)
+    const int unrollLoopSize = 2;
+    if (Sse2::Enable && size*sizeof(double) >= unrollLoopSize*Sse2::A)
         return Sse2::SimdVectorStdev(vec, size, useBesselCorrection);
     else
 #endif
