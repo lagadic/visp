@@ -131,14 +131,13 @@ int main(int argc, const char *argv[])
       //! [Update image size]
     }
 
-    if (! opt_fps.empty()) {
-      if (opt_fps == "auto") {
-        std::cout << "Auto framerate    : " << (g.setFrameRate(true) ? "enabled" : "N/A") << std::endl;
-      }
-      else {
-        std::cout << "Manual framerate  : " << (g.setFrameRate(false, std::atof(opt_fps.c_str())) ? (std::string(opt_fps) + " Hz") : "N/A") << std::endl;
-      }
+    if (opt_subsample > 1) {
+      std::cout << "Subsampling factor: " << opt_subsample << std::endl;
+      g.setSubsampling(opt_subsample);
+      // Since subsampling may affect image size, rescale image in case of
+      I.resize(g.getFrameHeight(), g.getFrameWidth());
     }
+
     if (! opt_gain.empty()) {
       if (opt_gain == "auto") {
         std::cout << "Auto gain         : " << (g.setGain(true) ? "enabled" : "N/A") << std::endl;
@@ -156,13 +155,6 @@ int main(int argc, const char *argv[])
       }
     }
 
-    if (opt_subsample > 1) {
-      std::cout << "Subsampling factor: " << opt_subsample << std::endl;
-      g.setSubsampling(opt_subsample);
-      // Since subsampling may affect image size, rescale image in case of
-      I.resize(g.getFrameHeight(), g.getFrameWidth());
-    }
-
     if (opt_white_balance > 0) {
       bool wb = (opt_white_balance ? true : false);
       std::cout << "Subsampling factor: " << opt_subsample << std::endl;
@@ -173,6 +165,15 @@ int main(int argc, const char *argv[])
     if (! opt_color_mode.empty()) {
       if (g.setColorMode(opt_color_mode)) {
         std::cout << "Color mode        : " << opt_color_mode << std::endl;
+      }
+    }
+
+    if (! opt_fps.empty()) {
+      if (opt_fps == "auto") {
+        std::cout << "Auto framerate    : " << (g.setFrameRate(true) ? "enabled" : "N/A") << std::endl;
+      }
+      else {
+        std::cout << "Manual framerate  : " << (g.setFrameRate(false, std::atof(opt_fps.c_str())) ? (std::string(opt_fps) + " Hz") : "N/A") << std::endl;
       }
     }
 
