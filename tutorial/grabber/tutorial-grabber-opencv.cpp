@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/io/vpImageStorageWorker.h>
 
-#include "record_helper.h"
+//#define USE_COLOR // Comment to acquire gray level images
 
 // usage: binary -h
 // device name: 0 is the default to dial with the first camera,
@@ -65,11 +66,24 @@ int main(int argc, char **argv)
 
     std::cout << "Image size : " << frame.rows << " " << frame.cols << std::endl;
 
-    // vpImage<vpRGBa> I; // for color images
-    vpImage<unsigned char> I; // for gray images
+#ifdef USE_COLOR
+    vpImage<vpRGBa> I;        // To acquire color images
+#else
+    vpImage<unsigned char> I; // To acquire gray images
+#endif
     vpImageConvert::convert(frame, I);
 
     vpDisplayOpenCV d(I);
+
+#ifdef USE_COLOR
+    vpImageQueue<vpRGBa> image_queue(opt_seqname, opt_record_mode);
+    vpImageStorageWorker<vpRGBa> image_storage_worker(std::ref(image_queue));
+    std::thread image_storage_thread(&vpImageStorageWorker<vpRGBa>::run, &image_storage_worker);
+#else
+    vpImageQueue<unsigned char> image_queue(opt_seqname, opt_record_mode);
+    vpImageStorageWorker<unsigned char> image_storage_worker(std::ref(image_queue));
+    std::thread image_storage_thread(&vpImageStorageWorker<unsigned char>::run, &image_storage_worker);
+#endif
 
     bool quit = false;
     while (! quit) {
@@ -80,13 +94,15 @@ int main(int argc, char **argv)
 
       vpDisplay::display(I);
 
-      quit = record_helper(opt_seqname, opt_record_mode, I);
+      quit = image_queue.record(I);
 
       std::stringstream ss;
       ss << "Acquisition time: " << std::setprecision(3) << vpTime::measureTimeMs() - t << " ms";
       vpDisplay::displayText(I, I.getHeight() - 20, 10, ss.str(), vpColor::red);
       vpDisplay::flush(I);
     }
+    image_queue.cancel();
+    image_storage_thread.join();
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }

@@ -60,7 +60,7 @@ if(CXX_FLAGS_MUTE_WARNINGS)
 endif()
 
 foreach(cpp ${tutorial_cpp})
-  visp_add_target(${cpp} record_helper.cpp record_helper.h)
+  visp_add_target(${cpp})
   if(COMMAND visp_add_dependency)
     visp_add_dependency(${cpp} "tutorials")
   endif()
