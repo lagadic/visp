@@ -37,6 +37,8 @@ ViSP 3.3.1 (under development)
     . Support of Kinova Jaco assistive robotic arm that could be controlled
       using vpRobotKinova
     . Compat with Basler Pylon 6.x Camera Software Suite
+    . New wrapper in vpUeyeGrabber to support IDS uEye Camera Software Suite
+    . Compat with OpenCV 4.5.0
   - Tutorials
     . New tutorial: Basic linear algebra operations
     . New tutorial: How to create and build a project that uses ViSP without CMake
