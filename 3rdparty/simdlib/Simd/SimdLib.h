@@ -460,7 +460,7 @@ extern "C"
         \param [in] width - an image width.
         \param [in] height - an image height.
         \param [in] bgraStride - a row size of the bgra image.
-        \param [out] rgba - a pointer to pixels data of output 32-bit BGRA image.
+        \param [out] rgba - a pointer to pixels data of output 32-bit RGBA image.
         \param [in] rgbaStride - a row size of the rgba image.
         \param [in] alpha - a value of alpha channel.
     */
@@ -1120,10 +1120,48 @@ extern "C"
     SIMD_API void SimdStretchGray2x2(const uint8_t * src, size_t srcWidth, size_t srcHeight, size_t srcStride,
         uint8_t * dst, size_t dstWidth, size_t dstHeight, size_t dstStride);
 
-    // ViSP custom SIMD code
+    /* ViSP custom SIMD code */
+    // vpImageMorphology::erosion()
     SIMD_API void SimdImageErosion(uint8_t * img, const uint8_t * buff, size_t width, size_t height, SimdImageConnexityType connexityType);
 
+    // vpImageMorphology::dilatation
     SIMD_API void SimdImageDilatation(uint8_t * img, const uint8_t * buff, size_t width, size_t height, SimdImageConnexityType connexityType);
+
+    // vpColVector::sum()
+    SIMD_API double SimdVectorSum(const double * vec, size_t size);
+
+    // vpColVector::sumSquare()
+    SIMD_API double SimdVectorSumSquare(const double * vec, size_t size);
+
+    // vpColVector::stdev()
+    SIMD_API double SimdVectorStdev(const double * vec, size_t size, bool useBesselCorrection);
+
+    // vpColVector::hadamard(const vpColVector &v)
+    SIMD_API void SimdVectorHadamard(const double * src1, const double * src2, size_t size, double * dst);
+
+    // vpMatrix::operator*(const vpVelocityTwistMatrix &V)
+    SIMD_API void SimdMatMulTwist(const double * mat, size_t rows, const double * twist, double * dst);
+
+    // vpMatrix::transpose(vpMatrix &At)
+    SIMD_API void SimdMatTranspose(const double * mat, size_t rows, size_t cols, double * dst);
+
+    // vpImageTools::imageDifference
+    SIMD_API void SimdImageDifference(const unsigned char * img1, const unsigned char * img2, size_t size, unsigned char * imgDiff);
+
+    // vpImageTools::normalizedCorrelation
+    SIMD_API void SimdNormalizedCorrelation(const double * img1, double mean1, const double * img2, double mean2, size_t size,
+                                            double& a2, double& b2, double& ab, bool useOptimized);
+
+    // vpImageTools::normalizedCorrelation
+    SIMD_API void SimdNormalizedCorrelation2(const double * img1, size_t width1, const double * img2,
+                                             size_t width2, size_t height2, size_t i0, size_t j0, double& ab);
+
+    // vpImageTools::remap()
+    SIMD_API void SimdRemap(const unsigned char * src, size_t channels, size_t width, size_t height, size_t offset,
+                            const int * mapU, const int * mapV, const float * mapDu, const float * mapDv, unsigned char * dst);
+
+    // vpMbTracker::computeJTR(const vpMatrix &interaction, const vpColVector &error, vpColVector &JTR)
+    SIMD_API void SimdComputeJtR(const double * J, size_t rows, const double * R, double * dst);
 
 #ifdef __cplusplus
 }

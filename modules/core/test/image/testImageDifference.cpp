@@ -118,14 +118,13 @@ int main()
       vpImageTools::imageDifference(I1, I2, Idiff_sse);
       t_sse += vpTime::measureTimeMs() - t;
 
-      bool same_result = Idiff_regular == Idiff_sse;
-      std::cout << "(Idiff_regular == Idiff_sse)? " << same_result << std::endl;
-      if (!same_result) {
+      if (Idiff_regular != Idiff_sse) {
         std::cerr << "Problem with vpImageTools::imageDifference()" << std::endl;
         return EXIT_FAILURE;
       }
     }
 
+    std::cout << "(Idiff_regular == Idiff_sse)" << std::endl;
     std::cout << "t_regular: " << t_regular << " ms ; mean t_regular: " << t_regular/256 << " ms" << std::endl;
     std::cout << "t_sse: " << t_sse << " ms ; mean t_sse: " << t_sse/256 << " ms" << std::endl;
     std::cout << "speed-up: " << t_regular / t_sse << " X" << std::endl;
@@ -150,14 +149,13 @@ int main()
       vpImageTools::imageDifference(I1_color, I2_color, Idiff_sse_color);
       t_sse += vpTime::measureTimeMs() - t;
 
-      bool same_result = Idiff_regular_color == Idiff_sse_color;
-      std::cout << "(Idiff_regular_color == Idiff_sse_color)? " << same_result << std::endl;
-      if (!same_result) {
+      if (Idiff_regular_color != Idiff_sse_color) {
         std::cerr << "Problem with vpImageTools::imageDifference()" << std::endl;
         return EXIT_FAILURE;
       }
     }
 
+    std::cout << "(Idiff_regular_color == Idiff_sse_color)" << std::endl;
     std::cout << "t_regular: " << t_regular << " ms ; mean t_regular: " << t_regular/256 << " ms" << std::endl;
     std::cout << "t_sse: " << t_sse << " ms ; mean t_sse: " << t_sse/256 << " ms" << std::endl;
     std::cout << "speed-up: " << t_regular / t_sse << " X" << std::endl;

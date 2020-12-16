@@ -66,6 +66,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReasonForCall, LPVOID lpReserved)
 #include "Simd/SimdSse1.h"
 #include "Simd/SimdSse2.h"
 #include "Simd/SimdSsse3.h"
+#include "Simd/SimdAvx1.h"
 #include "Simd/SimdAvx2.h"
 #include "Simd/SimdNeon.h"
 
@@ -741,7 +742,7 @@ SIMD_API void SimdStretchGray2x2(const uint8_t *src, size_t srcWidth, size_t src
         Base::StretchGray2x2(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
 }
 
-// ViSP custom SIMD code
+/* ViSP custom SIMD code */
 SIMD_API void SimdImageErosion(uint8_t * img, const uint8_t * buff, size_t width, size_t height, SimdImageConnexityType connexityType)
 {
 #ifdef SIMD_SSE2_ENABLE
@@ -760,4 +761,124 @@ SIMD_API void SimdImageDilatation(uint8_t * img, const uint8_t * buff, size_t wi
     else
 #endif
         Base::ImageDilatation(img, buff, width, height, connexityType);
+}
+
+SIMD_API double SimdVectorSum(const double * vec, size_t size)
+{
+#ifdef SIMD_SSE2_ENABLE
+    const int unrollLoopSize = 2;
+    if (Sse2::Enable && size*sizeof(double) >= unrollLoopSize*Sse2::A)
+        return Sse2::SimdVectorSum(vec, size);
+    else
+#endif
+        return Base::SimdVectorSum(vec, size);
+}
+
+SIMD_API double SimdVectorSumSquare(const double * vec, size_t size)
+{
+#ifdef SIMD_SSE2_ENABLE
+    const int unrollLoopSize = 2;
+    if (Sse2::Enable && size*sizeof(double) >= unrollLoopSize*Sse2::A)
+        return Sse2::SimdVectorSumSquare(vec, size);
+    else
+#endif
+        return Base::SimdVectorSumSquare(vec, size);
+}
+
+SIMD_API double SimdVectorStdev(const double * vec, size_t size, bool useBesselCorrection)
+{
+#ifdef SIMD_SSE2_ENABLE
+    const int unrollLoopSize = 2;
+    if (Sse2::Enable && size*sizeof(double) >= unrollLoopSize*Sse2::A)
+        return Sse2::SimdVectorStdev(vec, size, useBesselCorrection);
+    else
+#endif
+        return Base::SimdVectorStdev(vec, size, useBesselCorrection);
+}
+
+SIMD_API void SimdVectorHadamard(const double * src1, const double * src2, size_t size, double * dst)
+{
+#ifdef SIMD_SSE2_ENABLE
+    if (Sse2::Enable && size*sizeof(double) >= Sse2::A)
+        Sse2::SimdVectorHadamard(src1, src2, size, dst);
+    else
+#endif
+        Base::SimdVectorHadamard(src1, src2, size, dst);
+}
+
+SIMD_API void SimdMatMulTwist(const double * mat, size_t rows, const double * twist, double * dst)
+{
+#ifdef SIMD_SSE2_ENABLE
+    if (Sse2::Enable)
+        Sse2::SimdMatMulTwist(mat, rows, twist, dst);
+    else
+#endif
+        Base::SimdMatMulTwist(mat, rows, twist, dst);
+}
+
+SIMD_API void SimdMatTranspose(const double * mat, size_t rows, size_t cols, double * dst)
+{
+#ifdef SIMD_AVX_ENABLE
+    if (Avx::Enable)
+        Avx::SimdMatTranspose(mat, rows, cols, dst);
+    else
+#endif
+        Base::SimdMatTranspose(mat, rows, cols, dst);
+}
+
+SIMD_API void SimdImageDifference(const unsigned char * img1, const unsigned char * img2, size_t size, unsigned char * imgDiff)
+{
+#ifdef SIMD_SSSE3_ENABLE
+    if (Ssse3::Enable && size >= Ssse3::A)
+        Ssse3::SimdImageDifference(img1,img2, size, imgDiff);
+    else
+#endif
+        Base::SimdImageDifference(img1, img2, size, imgDiff);
+}
+
+SIMD_API void SimdNormalizedCorrelation(const double * img1, double mean1, const double * img2, double mean2, size_t size,
+                                        double& a2, double& b2, double& ab, bool useOptimized)
+{
+    if (useOptimized) {
+#ifdef SIMD_SSE2_ENABLE
+        if (Sse2::Enable && size*sizeof(double) >= Sse2::A)
+            Sse2::SimdNormalizedCorrelation(img1, mean1, img2, mean2, size, a2, b2, ab);
+        else
+#endif
+            Base::SimdNormalizedCorrelation(img1, mean1, img2, mean2, size, a2, b2, ab);
+    } else {
+        Base::SimdNormalizedCorrelation(img1, mean1, img2, mean2, size, a2, b2, ab);
+    }
+}
+
+SIMD_API void SimdNormalizedCorrelation2(const double * img1, size_t width1, const double * img2,
+                                         size_t width2, size_t height2, size_t i0, size_t j0, double& ab)
+{
+#ifdef SIMD_SSE2_ENABLE
+    if (Sse2::Enable && width2*sizeof(double) >= Sse2::A)
+        Sse2::SimdNormalizedCorrelation2(img1, width1, img2, width2, height2, i0, j0, ab);
+    else
+#endif
+        Base::SimdNormalizedCorrelation2(img1, width1, img2, width2, height2, i0, j0, ab);
+}
+
+SIMD_API void SimdRemap(const unsigned char * src, size_t channels, size_t width, size_t height, size_t offset,
+                        const int * mapU, const int * mapV, const float * mapDu, const float * mapDv, unsigned char * dst)
+{
+#ifdef SIMD_SSE2_ENABLE
+    if (Sse2::Enable && channels >= 4)
+        Sse2::SimdRemap(src, channels, width, height, offset, mapU, mapV, mapDu, mapDv, dst);
+    else
+#endif
+        Base::SimdRemap(src, channels, width, height, offset, mapU, mapV, mapDu, mapDv, dst);
+}
+
+SIMD_API void SimdComputeJtR(const double * J, size_t rows, const double * R, double * dst)
+{
+#ifdef SIMD_SSE2_ENABLE
+    if (Sse2::Enable)
+        Sse2::SimdComputeJtR(J, rows, R, dst);
+    else
+#endif
+        Base::SimdComputeJtR(J, rows, R, dst);
 }

@@ -859,6 +859,11 @@ TEST_CASE("Benchmark matrix-force twist multiplication", "[benchmark]") {
 
 int main(int argc, char *argv[])
 {
+  // Set random seed explicitly to avoid confusion
+  // See: https://en.cppreference.com/w/cpp/numeric/random/srand
+  // If rand() is used before any calls to srand(), rand() behaves as if it was seeded with srand(1).
+  srand(1);
+
   Catch::Session session; // There must be exactly one instance
   unsigned int lapackMinSize = vpMatrix::getLapackMatrixMinSize();
 

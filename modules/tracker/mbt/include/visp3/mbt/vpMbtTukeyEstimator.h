@@ -271,7 +271,7 @@ inline void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector
 
 template <>
 inline void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights,
-                                            const float NoiseThreshold)
+                                                   const float NoiseThreshold)
 {
   bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
 #if !VISP_HAVE_SSSE3
@@ -286,7 +286,7 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &res
 
 template <>
 inline void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &residues, std::vector<double> &weights,
-                                             const double NoiseThreshold)
+                                                    const double NoiseThreshold)
 {
   bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
 #if !VISP_HAVE_SSSE3

@@ -42,20 +42,6 @@
 
 #include <Simd/SimdLib.hpp>
 
-#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
-#include <emmintrin.h>
-#define VISP_HAVE_SSE2 1
-
-#if defined __SSE3__ || (defined _MSC_VER && _MSC_VER >= 1500)
-#include <pmmintrin.h>
-#define VISP_HAVE_SSE3 1
-#endif
-#if defined __SSSE3__ || (defined _MSC_VER && _MSC_VER >= 1500)
-#include <tmmintrin.h>
-#define VISP_HAVE_SSSE3 1
-#endif
-#endif
-
 /*!
   Change the look up table (LUT) of an image. Considering pixel gray
   level values \f$ l \f$ in the range \f$[A, B]\f$, this method allows
@@ -160,51 +146,7 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1, const vpIma
     Idiff.resize(I1.getHeight(), I1.getWidth());
   }
 
-  bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
-#if !VISP_HAVE_SSSE3
-  checkSSSE3 = false;
-#endif
-
-  unsigned int i = 0;
-  if (checkSSSE3) {
-#if VISP_HAVE_SSSE3
-    if (I1.getSize() >= 16) {
-      const __m128i mask1 = _mm_set_epi8(-1, 14, -1, 12, -1, 10, -1, 8, -1, 6, -1, 4, -1, 2, -1, 0);
-      const __m128i mask2 = _mm_set_epi8(-1, 15, -1, 13, -1, 11, -1, 9, -1, 7, -1, 5, -1, 3, -1, 1);
-
-      const __m128i mask_out2 = _mm_set_epi8(14, -1, 12, -1, 10, -1, 8, -1, 6, -1, 4, -1, 2, -1, 0, -1);
-
-      for (; i <= I1.getSize()-16; i+= 16) {
-        const __m128i vdata1 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(I1.bitmap + i));
-        const __m128i vdata2 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(I2.bitmap + i));
-
-        __m128i vdata1_reorg = _mm_shuffle_epi8(vdata1, mask1);
-        __m128i vdata2_reorg = _mm_shuffle_epi8(vdata2, mask1);
-
-        const __m128i vshift = _mm_set1_epi16(128);
-        __m128i vdata_diff = _mm_add_epi16(_mm_sub_epi16(vdata1_reorg, vdata2_reorg), vshift);
-
-        const __m128i v255 = _mm_set1_epi16(255);
-        const __m128i vzero = _mm_setzero_si128();
-        const __m128i vdata_diff_min_max1 = _mm_max_epi16(_mm_min_epi16(vdata_diff, v255), vzero);
-
-        vdata1_reorg = _mm_shuffle_epi8(vdata1, mask2);
-        vdata2_reorg = _mm_shuffle_epi8(vdata2, mask2);
-
-        vdata_diff = _mm_add_epi16(_mm_sub_epi16(vdata1_reorg, vdata2_reorg), vshift);
-        const __m128i vdata_diff_min_max2 = _mm_max_epi16(_mm_min_epi16(vdata_diff, v255), vzero);
-
-        _mm_storeu_si128(reinterpret_cast<__m128i *>(Idiff.bitmap + i), _mm_or_si128(_mm_shuffle_epi8(vdata_diff_min_max1, mask1),
-                                                                                     _mm_shuffle_epi8(vdata_diff_min_max2, mask_out2)));
-      }
-    }
-#endif
-  }
-
-  for (; i < I1.getSize(); i++) {
-    int diff = I1.bitmap[i] - I2.bitmap[i] + 128;
-    Idiff.bitmap[i] = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diff, 255), 0));
-  }
+  SimdImageDifference(I1.bitmap, I2.bitmap, I1.getSize(), Idiff.bitmap);
 }
 
 /*!
@@ -232,57 +174,8 @@ void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1, const vpImage<vpRG
     Idiff.resize(I1.getHeight(), I1.getWidth());
   }
 
-  bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
-#if !VISP_HAVE_SSSE3
-  checkSSSE3 = false;
-#endif
-
-  unsigned int i = 0;
-  if (checkSSSE3) {
-#if VISP_HAVE_SSSE3
-    if (I1.getSize() >= 4) {
-      const __m128i mask1 = _mm_set_epi8(-1, 14, -1, 12, -1, 10, -1, 8, -1, 6, -1, 4, -1, 2, -1, 0);
-      const __m128i mask2 = _mm_set_epi8(-1, 15, -1, 13, -1, 11, -1, 9, -1, 7, -1, 5, -1, 3, -1, 1);
-
-      const __m128i mask_out2 = _mm_set_epi8(14, -1, 12, -1, 10, -1, 8, -1, 6, -1, 4, -1, 2, -1, 0, -1);
-
-      for (; i <= I1.getSize()-4; i+= 4) {
-        const __m128i vdata1 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(I1.bitmap + i));
-        const __m128i vdata2 = _mm_loadu_si128(reinterpret_cast<const __m128i *>(I2.bitmap + i));
-
-        __m128i vdata1_reorg = _mm_shuffle_epi8(vdata1, mask1);
-        __m128i vdata2_reorg = _mm_shuffle_epi8(vdata2, mask1);
-
-        const __m128i vshift = _mm_set1_epi16(128);
-        __m128i vdata_diff = _mm_add_epi16(_mm_sub_epi16(vdata1_reorg, vdata2_reorg), vshift);
-
-        const __m128i v255 = _mm_set1_epi16(255);
-        const __m128i vzero = _mm_setzero_si128();
-        const __m128i vdata_diff_min_max1 = _mm_max_epi16(_mm_min_epi16(vdata_diff, v255), vzero);
-
-        vdata1_reorg = _mm_shuffle_epi8(vdata1, mask2);
-        vdata2_reorg = _mm_shuffle_epi8(vdata2, mask2);
-
-        vdata_diff = _mm_add_epi16(_mm_sub_epi16(vdata1_reorg, vdata2_reorg), vshift);
-        const __m128i vdata_diff_min_max2 = _mm_max_epi16(_mm_min_epi16(vdata_diff, v255), vzero);
-
-        _mm_storeu_si128(reinterpret_cast<__m128i *>(Idiff.bitmap + i), _mm_or_si128(_mm_shuffle_epi8(vdata_diff_min_max1, mask1),
-                                                                                     _mm_shuffle_epi8(vdata_diff_min_max2, mask_out2)));
-      }
-    }
-#endif
-  }
-
-  for (; i < I1.getSize(); i++) {
-    int diffR = I1.bitmap[i].R - I2.bitmap[i].R + 128;
-    int diffG = I1.bitmap[i].G - I2.bitmap[i].G + 128;
-    int diffB = I1.bitmap[i].B - I2.bitmap[i].B + 128;
-    int diffA = I1.bitmap[i].A - I2.bitmap[i].A + 128;
-    Idiff.bitmap[i].R = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffR, 255), 0));
-    Idiff.bitmap[i].G = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffG, 255), 0));
-    Idiff.bitmap[i].B = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffB, 255), 0));
-    Idiff.bitmap[i].A = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffA, 255), 0));
-  }
+  SimdImageDifference(reinterpret_cast<unsigned char *>(I1.bitmap), reinterpret_cast<unsigned char *>(I2.bitmap),
+                      I1.getSize()*4, reinterpret_cast<unsigned char *>(Idiff.bitmap));
 }
 
 /*!
@@ -593,12 +486,7 @@ void vpImageTools::integralImage(const vpImage<unsigned char> &I, vpImage<double
   \param I2 : The second image.
   \param useOptimized : Use SSE if true and available.
 */
-double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
-#if VISP_HAVE_SSE2
-                                           bool useOptimized)
-#else
-                                           const bool)
-#endif
+double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2, bool useOptimized)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
     throw vpException(vpException::dimensionError, "Error: in vpImageTools::normalizedCorrelation(): "
@@ -613,45 +501,7 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
   double a2 = 0.0;
   double b2 = 0.0;
 
-  unsigned int cpt = 0;
-
-#if VISP_HAVE_SSE2
-  if (vpCPUFeatures::checkSSE2() && I1.getSize() >= 2 && useOptimized) {
-    const double *ptr_I1 = I1.bitmap;
-    const double *ptr_I2 = I2.bitmap;
-
-    const __m128d v_mean_a = _mm_set1_pd(a);
-    const __m128d v_mean_b = _mm_set1_pd(b);
-    __m128d v_ab = _mm_setzero_pd();
-    __m128d v_a2 = _mm_setzero_pd();
-    __m128d v_b2 = _mm_setzero_pd();
-
-    for (; cpt <= I1.getSize() - 2; cpt += 2, ptr_I1 += 2, ptr_I2 += 2) {
-      const __m128d v1 = _mm_loadu_pd(ptr_I1);
-      const __m128d v2 = _mm_loadu_pd(ptr_I2);
-      const __m128d norm_a = _mm_sub_pd(v1, v_mean_a);
-      const __m128d norm_b = _mm_sub_pd(v2, v_mean_b);
-      v_ab = _mm_add_pd(v_ab, _mm_mul_pd(norm_a, norm_b));
-      v_a2 = _mm_add_pd(v_a2, _mm_mul_pd(norm_a, norm_a));
-      v_b2 = _mm_add_pd(v_b2, _mm_mul_pd(norm_b, norm_b));
-    }
-
-    double v_res_ab[2], v_res_a2[2], v_res_b2[2];
-    _mm_storeu_pd(v_res_ab, v_ab);
-    _mm_storeu_pd(v_res_a2, v_a2);
-    _mm_storeu_pd(v_res_b2, v_b2);
-
-    ab = v_res_ab[0] + v_res_ab[1];
-    a2 = v_res_a2[0] + v_res_a2[1];
-    b2 = v_res_b2[0] + v_res_b2[1];
-  }
-#endif
-
-  for (; cpt < I1.getSize(); cpt++) {
-    ab += (I1.bitmap[cpt] - a) * (I2.bitmap[cpt] - b);
-    a2 += vpMath::sqr(I1.bitmap[cpt] - a);
-    b2 += vpMath::sqr(I2.bitmap[cpt] - b);
-  }
+  SimdNormalizedCorrelation(I1.bitmap, a, I2.bitmap, b, I1.getSize(), a2, b2, ab, useOptimized);
 
   return ab / sqrt(a2 * b2);
 }
@@ -903,47 +753,7 @@ double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpIm
                                            unsigned int i0, unsigned int j0)
 {
   double ab = 0.0;
-#if VISP_HAVE_SSE2
-  bool use_sse_version = true;
-  if (vpCPUFeatures::checkSSE2() && I2.getWidth() >= 2) {
-    const double *ptr_I1 = I1.bitmap;
-    const double *ptr_I2 = I2.bitmap;
-
-    __m128d v_ab = _mm_setzero_pd();
-
-    for (unsigned int i = 0; i < I2.getHeight(); i++) {
-      unsigned int j = 0;
-      ptr_I1 = &I1.bitmap[(i0 + i) * I1.getWidth() + j0];
-
-      for (; j <= I2.getWidth() - 2; j += 2, ptr_I1 += 2, ptr_I2 += 2) {
-        const __m128d v1 = _mm_loadu_pd(ptr_I1);
-        const __m128d v2 = _mm_loadu_pd(ptr_I2);
-        v_ab = _mm_add_pd(v_ab, _mm_mul_pd(v1, v2));
-      }
-
-      for (; j < I2.getWidth(); j++) {
-        ab += (I1[i0 + i][j0 + j]) * I2[i][j];
-      }
-    }
-
-    double v_res_ab[2];
-    _mm_storeu_pd(v_res_ab, v_ab);
-
-    ab += v_res_ab[0] + v_res_ab[1];
-  } else {
-    use_sse_version = false;
-  }
-#else
-  bool use_sse_version = false;
-#endif
-
-  if (!use_sse_version) {
-    for (unsigned int i = 0; i < I2.getHeight(); i++) {
-      for (unsigned int j = 0; j < I2.getWidth(); j++) {
-        ab += (I1[i0 + i][j0 + j]) * I2[i][j];
-      }
-    }
-  }
+  SimdNormalizedCorrelation2(I1.bitmap, I1.getWidth(), I2.bitmap, I2.getWidth(), I2.getHeight(), i0, j0, ab);
 
   unsigned int height_tpl = I2.getHeight(), width_tpl = I2.getWidth();
   const double sum1 =
@@ -1018,110 +828,12 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
 {
   Iundist.resize(I.getHeight(), I.getWidth());
 
-  bool checkSSE2 = vpCPUFeatures::checkSSE2();
-#if !VISP_HAVE_SSE2
-  checkSSE2 = false;
-#endif
-
-  if (checkSSE2) {
-#if defined VISP_HAVE_SSE2
 #if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
 #pragma omp parallel for schedule(dynamic)
 #endif
-    for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); i_++) {
-      const unsigned int i = static_cast<unsigned int>(i_);
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
-
-        int u_round = mapU[i][j];
-        int v_round = mapV[i][j];
-
-        const __m128 vdu = _mm_set1_ps(mapDu[i][j]);
-        const __m128 vdv = _mm_set1_ps(mapDv[i][j]);
-
-        if (0 <= u_round && 0 <= v_round && u_round < static_cast<int>(I.getWidth()) - 1
-            && v_round < static_cast<int>(I.getHeight()) - 1) {
-  #define VLERP(va, vb, vt) _mm_add_ps(va, _mm_mul_ps(_mm_sub_ps(vb, va), vt));
-
-          // process interpolation
-          const __m128 vdata1 =
-              _mm_set_ps(static_cast<float>(I[v_round][u_round].A), static_cast<float>(I[v_round][u_round].B),
-                         static_cast<float>(I[v_round][u_round].G), static_cast<float>(I[v_round][u_round].R));
-
-          const __m128 vdata2 =
-              _mm_set_ps(static_cast<float>(I[v_round][u_round + 1].A), static_cast<float>(I[v_round][u_round + 1].B),
-                         static_cast<float>(I[v_round][u_round + 1].G), static_cast<float>(I[v_round][u_round + 1].R));
-
-          const __m128 vdata3 =
-              _mm_set_ps(static_cast<float>(I[v_round + 1][u_round].A), static_cast<float>(I[v_round + 1][u_round].B),
-                         static_cast<float>(I[v_round + 1][u_round].G), static_cast<float>(I[v_round + 1][u_round].R));
-
-          const __m128 vdata4 = _mm_set_ps(
-              static_cast<float>(I[v_round + 1][u_round + 1].A), static_cast<float>(I[v_round + 1][u_round + 1].B),
-              static_cast<float>(I[v_round + 1][u_round + 1].G), static_cast<float>(I[v_round + 1][u_round + 1].R));
-
-          const __m128 vcol0 = VLERP(vdata1, vdata2, vdu);
-          const __m128 vcol1 = VLERP(vdata3, vdata4, vdu);
-          const __m128 vvalue = VLERP(vcol0, vcol1, vdv);
-
-  #undef VLERP
-
-          float values[4];
-          _mm_storeu_ps(values, vvalue);
-          Iundist[i][j].R = static_cast<unsigned char>(values[0]);
-          Iundist[i][j].G = static_cast<unsigned char>(values[1]);
-          Iundist[i][j].B = static_cast<unsigned char>(values[2]);
-          Iundist[i][j].A = static_cast<unsigned char>(values[3]);
-        } else {
-          Iundist[i][j] = 0;
-        }
-      }
-    }
-#endif
-  } else {
-#if defined _OPENMP // only to disable warning: ignoring #pragma omp parallel [-Wunknown-pragmas]
-#pragma omp parallel for schedule(dynamic)
-#endif
-    for (int i_ = 0; i_ < static_cast<int>(I.getHeight()); i_++) {
-      const unsigned int i = static_cast<unsigned int>(i_);
-      for (unsigned int j = 0; j < I.getWidth(); j++) {
-
-        int u_round = mapU[i][j];
-        int v_round = mapV[i][j];
-
-        float du = mapDu[i][j];
-        float dv = mapDv[i][j];
-
-        if (0 <= u_round && 0 <= v_round && u_round < static_cast<int>(I.getWidth()) - 1
-            && v_round < static_cast<int>(I.getHeight()) - 1) {
-          // process interpolation
-          float col0 = lerp(I[v_round][u_round].R, I[v_round][u_round + 1].R, du);
-          float col1 = lerp(I[v_round + 1][u_round].R, I[v_round + 1][u_round + 1].R, du);
-          float value = lerp(col0, col1, dv);
-
-          Iundist[i][j].R = static_cast<unsigned char>(value);
-
-          col0 = lerp(I[v_round][u_round].G, I[v_round][u_round + 1].G, du);
-          col1 = lerp(I[v_round + 1][u_round].G, I[v_round + 1][u_round + 1].G, du);
-          value = lerp(col0, col1, dv);
-
-          Iundist[i][j].G = static_cast<unsigned char>(value);
-
-          col0 = lerp(I[v_round][u_round].B, I[v_round][u_round + 1].B, du);
-          col1 = lerp(I[v_round + 1][u_round].B, I[v_round + 1][u_round + 1].B, du);
-          value = lerp(col0, col1, dv);
-
-          Iundist[i][j].B = static_cast<unsigned char>(value);
-
-          col0 = lerp(I[v_round][u_round].A, I[v_round][u_round + 1].A, du);
-          col1 = lerp(I[v_round + 1][u_round].A, I[v_round + 1][u_round + 1].A, du);
-          value = lerp(col0, col1, dv);
-
-          Iundist[i][j].A = static_cast<unsigned char>(value);
-        } else {
-          Iundist[i][j] = 0;
-        }
-      }
-    }
+  for (int i = 0; i < static_cast<int>(I.getHeight()); i++) {
+    SimdRemap(reinterpret_cast<unsigned char *>(I.bitmap), 4, I.getWidth(), I.getHeight(), i*I.getWidth(), mapU.data, mapV.data,
+              mapDu.data, mapDv.data, reinterpret_cast<unsigned char *>(Iundist.bitmap));
   }
 }
 
