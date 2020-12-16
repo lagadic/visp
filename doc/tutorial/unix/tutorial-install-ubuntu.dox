@@ -152,7 +152,7 @@ If you are able to visualize the images, it means that you succeed in librealsen
 
 \subsubsection install_ubuntu_3rdparty_flycapture FlyCapture 3rd party
 
-FlyCapture is the SDK provided by <a href="https://www.ptgrey.com/">FLIR (previously Point Grey)</a> to work with
+FlyCapture is the SDK provided by [FLIR (previously Point Grey)](https://www.ptgrey.com/) to work with
 FLIR USB 2.0, USB 3.0, Gigabit Ethernet or FireWire cameras. If you have such a camera, once FlyCapture is installed
 you may use vpFlyCapture class. Otherwise you can skip this section.
 
@@ -185,7 +185,7 @@ the user full read and write access to the device nodes.
 The Pylon Camera Software Suite is a collection of drivers and tools for operating any [Basler camera](https://www.baslerweb.com/en/)
 (IEEE1394, Camera Link, GigE or USB3.0 interface). If you don't have a Basler camera you can skip this section.
 
-To install Pylon, visit [Basler Software Download](https://www.baslerweb.com/en/support/downloads/software-downloads/") page
+To install Pylon, visit [Basler Software Download](https://www.baslerweb.com/en/support/downloads/software-downloads/) page
 to download and install the SDK corresponding to your platform.
 
 Pylon Camera Software Suite installation enables vpPylonGrabber class usage.
@@ -266,7 +266,7 @@ $ sh ./installSDK64.sh
 We give also the way to install other 3rd party libraries to enable specific capabilities.
 
 - If you have an Intel Realsense RGB-D camera (R200, F200, LR200, RZ300) you may install librealsense 1.12.1 following
-  these [installation instructions](https://github.com/IntelRealSense/librealsense/blob/v1.12.1/doc/installation.md).
+  these <a href="https://github.com/IntelRealSense/librealsense/blob/v1.12.1/doc/installation.md">installation instructions</a>.
 - You may also install PCL library using:
 \verbatim
 $ sudo apt-get install libpcl-dev
