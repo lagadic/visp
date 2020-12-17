@@ -298,6 +298,35 @@ besides the dll.
 - In the "Ready to install" panel, click on the "Install" button
 - Reboot the system.
 
+\subsubsection install_win10_msvc15_3rdparty_ueye IDS uEye 3rd party
+
+If you have an [IDS](https://en.ids-imaging.com/) camera you may install IDS Software Suite for uEye cameras. To this end:
+- enter the [download area](https://en.ids-imaging.com/downloads.html)
+- select `"uEye industrial cameras"`
+- in the `"Firmware"` tab, select `"uEye (IDS Software Suite)"` and press `"SHOW"` button
+- in the `"Operating system"` tab select `"Windows"` and press the search button
+- in the `"Software package"` section you should see the last `"IDS Software Suite - Full installer"` version you may download.
+  At the time this tutorial was written, we downloaded `"ids-software-suite-full-64-49400.zip"` file.
+
+Once downloaded, you may extract the archive.
+
+Open the README file `readme-ids-software-suite-win-*.html` and check compatibility list
+\verbatim
+IDS Software Suite has been tested with the following Windows 10 version:
+- Edition: Windows 10 Pro
+    Version: 1909
+    Version: 2004
+\endverbatim
+
+If the Software Suite is compatible with your OS, proceed to the installation:
+- Double-click on the extracted file (in our case `uEye64_49400_WHQL.exe` to start the installation.
+  The uEye driver installation is menu-driven.
+- Keep default configuration and proceed to the installation.
+
+To test the Sofware Suite installation, plug a camera, enter `"Start"` menu and run `"IDS > uEyeDirectShow Demo"` binary.
+
+IDS uEye Camera Software Suite installation enables vpUeyeGrabber class usage.
+
 \subsubsection install_win10_msvc15_3rdparty_zbar zbar 3rd party
 
 If you want to work with QR codes (see \ref tutorial-detection-barcode), we recommend to install zbar 3rd party.
@@ -630,14 +659,14 @@ also build info.
 \code
 $ type $VISP_WS/visp-build-vc15/ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.3.0
+General configuration information for ViSP 3.3.1
 
-  Version control:               3.2.0-786-g89b25aa-dirty
+  Version control:               3.2.0-1319-gc2a046a-dirty
 
   Platform:
-    Timestamp:                   2020-02-07T14:32:04Z
+    Timestamp:                   2020-12-15T13:23:34Z
     Host:                        Windows 10.0.17134 AMD64
-    CMake:                       3.16.4
+    CMake:                       3.19.0
     CMake generator:             Visual Studio 15 2017
     CMake build tool:            C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/MSBuild/15.0/Bin/MSBuild.exe
     MSVC:                        1910
@@ -672,14 +701,15 @@ General configuration information for ViSP 3.3.0
     Build with moment combine:   no
 
   Mathematics: 
-    Use MKL:                     no
-    Use OpenBLAS:                no
-    Use Atlas:                   no
-    Use Netlib Lapack:           no
-    Use Lapack (built-in):       yes (ver 3.2.1)
+    Blas/Lapack:                 yes
+    \- Use MKL:                  no
+    \- Use OpenBLAS:             no
+    \- Use Atlas:                no
+    \- Use Netlib:               no
+    \- Use GSL:                  no
+    \- Use Lapack (built-in):    yes (ver 3.2.1)
     Use Eigen3:                  yes (ver 3.3.8)
     Use OpenCV:                  yes (ver 4.5.0)
-    Use GSL:                     no
 
   Simulator: 
     Ogre simulator: 
@@ -707,6 +737,7 @@ General configuration information for ViSP 3.3.0
     Use Franka:                  no
     Use Viper650:                no
     Use Viper850:                no
+    Use Kinova Jaco:             yes
     Use aria (Pioneer):          no
     Use PTU46:                   no
     Use Biclops PTU:             no
@@ -715,6 +746,7 @@ General configuration information for ViSP 3.3.0
     \-Use ffmpeg:                no
     Use Virtuose:                no
     Use qbdevice (built-in):     yes (ver 2.6.0)
+    Use takktile2 (built-in):    no
 
   GUI: 
     Use X11:                     no
@@ -729,8 +761,9 @@ General configuration information for ViSP 3.3.0
     Use V4L2:                    no
     Use directshow:              no
     Use OpenCV:                  yes (ver 4.5.0)
-    Use Flycapture:              yes
-    Use Pylon:                   yes (ver 5.1.0)
+    Use FLIR Flycapture:         yes
+    Use Basler Pylon:            no
+    Use IDS uEye:                yes (ver 4.94.0)
 
   RGB-D sensors: 
     Use Realsense:               no

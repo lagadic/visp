@@ -4,8 +4,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
-
-#include "record_helper.h"
+#include <visp3/io/vpImageStorageWorker.h>
 
 /*!
   Grab images from an Intel realsense camera
@@ -14,7 +13,7 @@ int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
   try {
-    std::string opt_seqname_left = "left%02d.png", opt_seqname_right = "right%02d.png";
+    std::string opt_seqname_left = "left-%04d.png", opt_seqname_right = "right-%04d.png";
     int opt_record_mode = 0;
     int opt_fps = 30;
 
@@ -31,13 +30,13 @@ int main(int argc, char **argv)
                   << "  " << argv[0] << "\n"
                   << "\nExamples to record single shot images:\n"
                   << "  " << argv[0] << " --record 1\n"
-                  << "  " << argv[0] << " --record 1\n"
+                  << "\nExamples to record a sequence of images:\n"
+                  << "  " << argv[0] << " --record 0\n"
                   << std::endl;
         return 0;
       }
     }
 
-    // std::cout << "Recording  : " << (opt_seqname.empty() ? "disabled" : "enabled") << std::endl;
     std::cout << "Framerate  : " << opt_fps << std::endl;
 
     std::string text_record_mode = std::string("Record mode: ") + (opt_record_mode ? std::string("single") : std::string("continuous"));
@@ -71,6 +70,13 @@ int main(int argc, char **argv)
     std::cout << "No image viewer is available..." << std::endl;
 #endif
 
+    vpImageQueue<unsigned char> image_queue_left(opt_seqname_left, opt_record_mode);
+    vpImageQueue<unsigned char> image_queue_right(opt_seqname_right, opt_record_mode);
+    vpImageStorageWorker<unsigned char> image_left_storage_worker(std::ref(image_queue_left));
+    vpImageStorageWorker<unsigned char> image_right_storage_worker(std::ref(image_queue_right));
+    std::thread image_left_storage_thread(&vpImageStorageWorker<unsigned char>::run, &image_left_storage_worker);
+    std::thread image_right_storage_thread(&vpImageStorageWorker<unsigned char>::run, &image_right_storage_worker);
+
     bool quit = false;
     while (!quit) {
       double t = vpTime::measureTimeMs();
@@ -80,7 +86,8 @@ int main(int argc, char **argv)
       vpDisplay::display(I_left);
       vpDisplay::display(I_right);
 
-      quit  = record_helper(opt_seqname_left, opt_seqname_right, opt_record_mode, I_left, I_right);
+      quit = image_queue_left.record(I_left);
+      quit |= image_queue_right.record(I_right, NULL, image_queue_left.getRecordingTrigger(), true);
 
       std::stringstream ss;
       ss << "Acquisition time: " << std::setprecision(3) << vpTime::measureTimeMs() - t << " ms";
@@ -88,6 +95,10 @@ int main(int argc, char **argv)
       vpDisplay::flush(I_left);
       vpDisplay::flush(I_right);
     }
+    image_queue_left.cancel();
+    image_queue_right.cancel();
+    image_left_storage_thread.join();
+    image_right_storage_thread.join();
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }

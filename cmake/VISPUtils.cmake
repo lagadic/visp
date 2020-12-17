@@ -1258,6 +1258,17 @@ macro(vp_parse_header3 LIBNAME HDR_PATH DEFINE_NAME OUTPUT_VAR)
   endif()
 endmacro()
 
+# parse header file to get library version
+# the REGEX matches a line that starts with #define + DEFINE_NAME + name(0, 0, 0)"
+# with optional (name) and (.dev)
+# e.g. #   define UEYE_VERSION_CODE   UEYE_VERSION(4, 93, 0)
+macro(vp_parse_header4 LIBNAME HDR_PATH DEFINE_NAME OUTPUT_VAR)
+  if(EXISTS "${HDR_PATH}")
+    file(STRINGS "${HDR_PATH}" line_to_parse REGEX "^#[ \t]*define[ \t]+${DEFINE_NAME}[ \t]+[^0-9]*[(]([0-9]+),[ \t]*([0-9]+),[ \t]*([0-9]+)[)]$" LIMIT_COUNT 1)
+    string(REGEX REPLACE "^#[ \t]*define[ \t]+${DEFINE_NAME}[ \t]+[^0-9]*[(]([0-9]+),[ \t]*([0-9]+),[ \t]*([0-9]+)[)]$" "\\1.\\2.\\3" ${OUTPUT_VAR} "${line_to_parse}" )
+  endif()
+endmacro()
+
 # read single version info from the pkg file
 macro(vp_get_version_from_pkg LIBNAME PKG_PATH OUTPUT_VAR)
   if(EXISTS "${PKG_PATH}/${LIBNAME}.pc")
