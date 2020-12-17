@@ -102,7 +102,7 @@ public:
   /*!
    * Return recording trigger indicating if recording is started.
    */
-  int getRecordingTrigger() const
+  bool getRecordingTrigger() const
   {
     return m_recording_trigger;
   }
