@@ -13,7 +13,7 @@
  */
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_FFMPEG)
+#if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_FFMPEG) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   try {
     std::string opt_seqname;
     int opt_record_mode = 0;
@@ -131,7 +131,15 @@ int main(int argc, char **argv)
 #else
   (void)argc;
   (void)argv;
-  std::cout << "Install Parrot ARSDK3 and ffmpeg, configure and build ViSP again to use this example" << std::endl;
+#ifndef VISP_HAVE_ARSDK
+  std::cout << "Install Parrot ARSDK3, configure and build ViSP again to use this example" << std::endl;
+#endif
+#ifndef VISP_HAVE_FFMPEG
+  std::cout << "Install ffmpeg, configure and build ViSP again to use this example" << std::endl;
+#endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  std::cout << "This turorial should be built with c++11 support" << std::endl;
+#endif
 #endif // #if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_FFMPEG)
 }
 #else

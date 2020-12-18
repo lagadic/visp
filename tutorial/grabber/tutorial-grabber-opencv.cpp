@@ -52,7 +52,7 @@ int main(int argc, char **argv)
     std::cout << "Record name: " << opt_seqname << std::endl;
   }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020100) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   try {
     cv::VideoCapture cap(opt_device); // open the default camera
     if (!cap.isOpened()) {        // check if we succeeded
@@ -109,6 +109,11 @@ int main(int argc, char **argv)
 #else
   (void) argc;
   (void) argv;
+#if (VISP_HAVE_OPENCV_VERSION < 0x020100)
   std::cout << "Install OpenCV, configure and build ViSP again to use this example" << std::endl;
+#endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  std::cout << "This turorial should be built with c++11 support" << std::endl;
+#endif
 #endif
 }

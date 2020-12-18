@@ -12,7 +12,7 @@
  */
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2)
+#if defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   try {
     std::string opt_seqname;
     int opt_record_mode = 0;
@@ -111,6 +111,11 @@ int main(int argc, char **argv)
 #else
   (void) argc;
   (void) argv;
-  std::cout << "Install librealsense, configure and build ViSP again to use this example" << std::endl;
+#if !(defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2))
+  std::cout << "Install librealsense version > 2.31.0, configure and build ViSP again to use this example" << std::endl;
+#endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  std::cout << "This turorial should be built with c++11 support" << std::endl;
+#endif
 #endif
 }
