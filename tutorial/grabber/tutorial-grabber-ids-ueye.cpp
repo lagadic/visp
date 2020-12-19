@@ -15,7 +15,7 @@
  */
 int main(int argc, const char *argv[])
 {
-#ifdef VISP_HAVE_UEYE
+#if defined(VISP_HAVE_UEYE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   try {
     unsigned int opt_camera = 0;
     std::string opt_seqname;
@@ -249,6 +249,11 @@ int main(int argc, const char *argv[])
 #else
   (void) argc;
   (void) argv;
-  std::cout << "Install IDS Pylon SDK, configure and build ViSP again to use this example" << std::endl;
+#ifndef VISP_HAVE_UEYE
+  std::cout << "Install IDS uEye SDK, configure and build ViSP again to use this example" << std::endl;
+#endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  std::cout << "This turorial should be built with c++11 support" << std::endl;
+#endif
 #endif
 }

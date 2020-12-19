@@ -36,6 +36,10 @@
 #ifndef vpImageQueue_h
 #define vpImageQueue_h
 
+#include <visp3/core/vpConfig.h>
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
 #include <string>
 #include <queue>
 #include <mutex>
@@ -272,4 +276,4 @@ private:
 };
 
 #endif
-
+#endif

@@ -766,7 +766,7 @@ if(DOXYGEN_FOUND)
     ${VISP_DOC_DIR}/config-doxygen
     @ONLY )
 
-  # set vars used in mainpage.doc.in
+  # set vars used in mainpage.dox.in
   # - VISP_MAINPAGE_EXTENSION
   set(VISP_MAINPAGE_EXTENSION "")
   if(VISP_CONTRIB_MODULES_PATH)
@@ -779,7 +779,7 @@ if(DOXYGEN_FOUND)
     endforeach()
   endif()
 
-  configure_file(${VISP_SOURCE_DIR}/doc/mainpage.doc.in
+  configure_file(${VISP_SOURCE_DIR}/doc/mainpage.dox.in
     ${VISP_DOC_DIR}/mainpage.doc
     @ONLY )
 else()

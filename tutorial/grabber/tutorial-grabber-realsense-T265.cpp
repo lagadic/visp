@@ -11,7 +11,7 @@
  */
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+#if defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0)) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   try {
     std::string opt_seqname_left = "left-%04d.png", opt_seqname_right = "right-%04d.png";
     int opt_record_mode = 0;
@@ -105,6 +105,11 @@ int main(int argc, char **argv)
 #else
   (void) argc;
   (void) argv;
+#if !(defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0)))
   std::cout << "Install librealsense version > 2.31.0, configure and build ViSP again to use this example" << std::endl;
+#endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  std::cout << "This turorial should be built with c++11 support" << std::endl;
+#endif
 #endif
 }

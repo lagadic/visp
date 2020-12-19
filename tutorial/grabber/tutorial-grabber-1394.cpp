@@ -5,9 +5,10 @@
 #include <visp3/sensor/vp1394TwoGrabber.h>
 #include <visp3/io/vpImageStorageWorker.h>
 
+
 int main(int argc, char **argv)
 {
-#ifdef VISP_HAVE_DC1394
+#if defined(VISP_HAVE_DC1394) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   try {
     std::string opt_seqname;
     int opt_record_mode = 0;
@@ -106,6 +107,11 @@ int main(int argc, char **argv)
 #else
   (void) argc;
   (void) argv;
+#ifndef VISP_HAVE_DC1394
   std::cout << "Install libdc1394, configure and build ViSP again to use this example" << std::endl;
+#endif
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  std::cout << "This turorial should be built with c++11 support" << std::endl;
+#endif
 #endif
 }
