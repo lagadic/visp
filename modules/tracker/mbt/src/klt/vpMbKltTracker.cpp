@@ -1061,12 +1061,13 @@ not found or wrong format for the data).
 </conf>
   \endcode
 */
-void vpMbKltTracker::loadConfigFile(const std::string &configFile)
+void vpMbKltTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
   // Load projection error config
-  vpMbTracker::loadConfigFile(configFile);
+  vpMbTracker::loadConfigFile(configFile, verbose);
 
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::KLT_PARSER);
+  xmlp.setVerbose(verbose);
   xmlp.setKltMaxFeatures(10000);
   xmlp.setKltWindowSize(5);
   xmlp.setKltQuality(0.01);
@@ -1079,7 +1080,9 @@ void vpMbKltTracker::loadConfigFile(const std::string &configFile)
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
 
   try {
-    std::cout << " *********** Parsing XML for MBT KLT Tracker ************ " << std::endl;
+    if (verbose) {
+      std::cout << " *********** Parsing XML for MBT KLT Tracker ************ " << std::endl;
+    }
     xmlp.parse(configFile.c_str());
   } catch (...) {
     vpERROR_TRACE("Can't open XML file \"%s\"\n ", configFile.c_str());

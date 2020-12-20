@@ -1215,22 +1215,26 @@ void vpMbEdgeTracker::setPose(const vpImage<vpRGBa> &I_color, const vpHomogeneou
   and visibility angles.
 
   \param configFile : full name of the xml file.
+  \param verbose : verbose flag.
 
   \sa loadConfigFile(const char*)
 */
-void vpMbEdgeTracker::loadConfigFile(const std::string &configFile)
+void vpMbEdgeTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
   // Load projection error config
-  vpMbTracker::loadConfigFile(configFile);
+  vpMbTracker::loadConfigFile(configFile, verbose);
 
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::EDGE_PARSER);
+  xmlp.setVerbose(verbose);
   xmlp.setCameraParameters(m_cam);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
   xmlp.setEdgeMe(me);
 
   try {
-    std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
+    if (verbose) {
+      std::cout << " *********** Parsing XML for Mb Edge Tracker ************ " << std::endl;
+    }
     xmlp.parse(configFile);
   } catch (...) {
     throw vpException(vpException::ioError, "Cannot open XML file \"%s\"", configFile.c_str());

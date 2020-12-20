@@ -416,10 +416,10 @@ void vpMbDepthNormalTracker::init(const vpImage<unsigned char> &I)
   computeVisibility(I.getWidth(), I.getHeight());
 }
 
-void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile)
+void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::DEPTH_NORMAL_PARSER);
-
+  xmlp.setVerbose(verbose);
   xmlp.setCameraParameters(m_cam);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
@@ -432,7 +432,9 @@ void vpMbDepthNormalTracker::loadConfigFile(const std::string &configFile)
   xmlp.setDepthNormalSamplingStepY(m_depthNormalSamplingStepY);
 
   try {
-    std::cout << " *********** Parsing XML for Mb Depth Tracker ************ " << std::endl;
+    if (verbose) {
+      std::cout << " *********** Parsing XML for Mb Depth Tracker ************ " << std::endl;
+    }
     xmlp.parse(configFile);
   } catch (const vpException &e) {
     std::cerr << "Exception: " << e.what() << std::endl;

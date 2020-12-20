@@ -273,12 +273,13 @@ not found or wrong format for the data).
 </conf>
   \endcode
 */
-void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile)
+void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
   // Load projection error config
-  vpMbTracker::loadConfigFile(configFile);
+  vpMbTracker::loadConfigFile(configFile, verbose);
 
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::EDGE_PARSER | vpMbtXmlGenericParser::KLT_PARSER);
+  xmlp.setVerbose(verbose);
   xmlp.setCameraParameters(m_cam);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
@@ -295,7 +296,9 @@ void vpMbEdgeKltTracker::loadConfigFile(const std::string &configFile)
   xmlp.setKltMaskBorder(maskBorder);
 
   try {
-    std::cout << " *********** Parsing XML for Mb Edge KLT Tracker ************ " << std::endl;
+    if (verbose) {
+      std::cout << " *********** Parsing XML for Mb Edge KLT Tracker ************ " << std::endl;
+    }
     xmlp.parse(configFile.c_str());
   } catch (...) {
     vpERROR_TRACE("Can't open XML file \"%s\"\n ", configFile.c_str());

@@ -3769,14 +3769,17 @@ void vpMbTracker::projectionErrorInitMovingEdge(const vpImage<unsigned char> &I,
   }
 }
 
-void vpMbTracker::loadConfigFile(const std::string &configFile)
+void vpMbTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::PROJECTION_ERROR_PARSER);
+  xmlp.setVerbose(verbose);
   xmlp.setProjectionErrorMe(m_projectionErrorMe);
   xmlp.setProjectionErrorKernelSize(m_projectionErrorKernelSize);
 
   try {
-    std::cout << " *********** Parsing XML for ME projection error ************ " << std::endl;
+    if (verbose) {
+      std::cout << " *********** Parsing XML for ME projection error ************ " << std::endl;
+    }
     xmlp.parse(configFile);
   } catch (...) {
     throw vpException(vpException::ioError, "Cannot open XML file \"%s\"", configFile.c_str());

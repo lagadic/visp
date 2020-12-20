@@ -698,11 +698,12 @@ public:
   /*!
     Load a config file to parameterise the behavior of the tracker.
 
-    Pure virtual method to adapt to each tracker.
+    Virtual method to adapt to each tracker.
 
     \param configFile : An xml config file to parse.
+    \param verbose : verbose flag.
   */
-  virtual void loadConfigFile(const std::string &configFile);
+  virtual void loadConfigFile(const std::string &configFile, bool verbose=true);
 
   /*!
     Reset the tracker.
