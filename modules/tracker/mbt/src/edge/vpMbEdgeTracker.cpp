@@ -1990,7 +1990,7 @@ void vpMbEdgeTracker::addLine(vpPoint &P1, vpPoint &P2, int polygon, std::string
           l = new vpMbtDistanceLine;
 
           l->setCameraParameters(m_cam);
-          l->buildFrom(P1, P2);
+          l->buildFrom(P1, P2, m_rand);
           l->addPolygon(polygon);
           l->setMovingEdge(&me);
           l->hiddenface = &faces;

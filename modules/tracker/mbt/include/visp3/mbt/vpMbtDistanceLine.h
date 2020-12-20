@@ -49,6 +49,7 @@
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpLine.h>
 #include <visp3/core/vpPoint.h>
+#include <visp3/core/vpUniRand.h>
 #include <visp3/mbt/vpMbHiddenFaces.h>
 #include <visp3/mbt/vpMbtMeLine.h>
 #include <visp3/visual_features/vpFeatureLine.h>
@@ -135,7 +136,7 @@ public:
 
   void addPolygon(const int &index);
 
-  void buildFrom(vpPoint &_p1, vpPoint &_p2);
+  void buildFrom(vpPoint &_p1, vpPoint &_p2, vpUniRand& rand_gen);
 
   bool closeToImageBorder(const vpImage<unsigned char> &I, const unsigned int threshold);
   void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo);

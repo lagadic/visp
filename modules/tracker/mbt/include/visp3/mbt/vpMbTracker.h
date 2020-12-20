@@ -223,6 +223,8 @@ protected:
   vpImage<unsigned char> m_I;
   //! Flag that indicates that SoDB::init(); was called
   bool m_sodb_init_called;
+  //! Random number generator used in vpMbtDistanceLine::buildFrom()
+  vpUniRand m_rand;
 
 public:
   vpMbTracker();

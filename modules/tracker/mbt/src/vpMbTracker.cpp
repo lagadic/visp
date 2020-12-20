@@ -189,7 +189,7 @@ vpMbTracker::vpMbTracker()
     m_projectionErrorFaces(), m_projectionErrorOgreShowConfigDialog(false),
     m_projectionErrorMe(), m_projectionErrorKernelSize(2), m_SobelX(5,5), m_SobelY(5,5),
     m_projectionErrorDisplay(false), m_projectionErrorDisplayLength(20), m_projectionErrorDisplayThickness(1),
-    m_projectionErrorCam(), m_mask(NULL), m_I(), m_sodb_init_called(false)
+    m_projectionErrorCam(), m_mask(NULL), m_I(), m_sodb_init_called(false), m_rand()
 {
   oJo.eye();
   // Map used to parse additional information in CAO model files,
@@ -3341,7 +3341,7 @@ void vpMbTracker::addProjectionErrorLine(vpPoint &P1, vpPoint &P2, int polygon, 
     l = new vpMbtDistanceLine;
 
     l->setCameraParameters(m_cam);
-    l->buildFrom(P1, P2);
+    l->buildFrom(P1, P2, m_rand);
     l->addPolygon(polygon);
     l->setMovingEdge(&m_projectionErrorMe);
     l->hiddenface = &m_projectionErrorFaces;

@@ -83,10 +83,11 @@ vpMbtFaceDepthNormal::~vpMbtFaceDepthNormal()
   \param P1 : The first extremity of the line.
   \param P2 : The second extremity of the line.
   \param faces : Pointer to vpMbHiddenFaces.
+  \param rand_gen : Random number generator used in vpMbtDistanceLine::buildFrom().
   \param polygon : The index of the polygon to which the line belongs.
   \param name : the optional name of the line
 */
-void vpMbtFaceDepthNormal::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpMbtPolygon> *const faces, int polygon,
+void vpMbtFaceDepthNormal::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpMbtPolygon> *const faces, vpUniRand& rand_gen, int polygon,
                                    std::string name)
 {
   // Build a PolygonLine to be able to easily display the lines model
@@ -125,7 +126,7 @@ void vpMbtFaceDepthNormal::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpM
     l = new vpMbtDistanceLine;
 
     l->setCameraParameters(m_cam);
-    l->buildFrom(P1, P2);
+    l->buildFrom(P1, P2, rand_gen);
     l->addPolygon(polygon);
     l->hiddenface = faces;
     l->useScanLine = m_useScanLine;

@@ -108,13 +108,13 @@ void vpMbDepthNormalTracker::addFace(vpMbtPolygon &polygon, bool alreadyClose)
   unsigned int nbpt = polygon.getNbPoint();
   if (nbpt > 0) {
     for (unsigned int i = 0; i < nbpt - 1; i++) {
-      normal_face->addLine(polygon.p[i], polygon.p[i + 1], &m_depthNormalHiddenFacesDisplay, polygon.getIndex(),
+      normal_face->addLine(polygon.p[i], polygon.p[i + 1], &m_depthNormalHiddenFacesDisplay, m_rand, polygon.getIndex(),
                            polygon.getName());
     }
 
     if (!alreadyClose) {
       // Add last line that closes the face
-      normal_face->addLine(polygon.p[nbpt - 1], polygon.p[0], &m_depthNormalHiddenFacesDisplay, polygon.getIndex(),
+      normal_face->addLine(polygon.p[nbpt - 1], polygon.p[0], &m_depthNormalHiddenFacesDisplay, m_rand, polygon.getIndex(),
                            polygon.getName());
     }
   }
