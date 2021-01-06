@@ -372,8 +372,6 @@ void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename)
 #endif
     break;
   case FORMAT_PNG:
-    std::cout << "appelle readPNG()" << std::endl;
-
 #if defined(VISP_HAVE_PNG)
     readPNG(I, final_filename);
 #else
