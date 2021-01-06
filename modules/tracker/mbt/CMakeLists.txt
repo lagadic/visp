@@ -353,11 +353,8 @@ if(BUILD_TESTS)
   endif()
 endif()
 
-# Improvement: remove hack to glob the test folder with vp_add_tests
-# TODO: re-enable tests after PR #365 (make MBT edges deterministic)
 vp_add_tests(DEPENDS_ON visp_core visp_gui visp_io)
 
-# TODO: re-enable tests after PR #365 (make MBT edges deterministic)
 #add_test(testGenericTracker-edge                            testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1) #already added by vp_add_tests
 add_test(testGenericTracker-edge-scanline                           testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1 -l)
 add_test(testGenericTracker-KLT                                     testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2)
