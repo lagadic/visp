@@ -293,9 +293,9 @@ public:
   virtual void initFromPose(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
                             const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses);
 
-  virtual void loadConfigFile(const std::string &configFile);
-  virtual void loadConfigFile(const std::string &configFile1, const std::string &configFile2);
-  virtual void loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles);
+  virtual void loadConfigFile(const std::string &configFile, bool verbose=true);
+  virtual void loadConfigFile(const std::string &configFile1, const std::string &configFile2, bool verbose=true);
+  virtual void loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles, bool verbose=true);
 
   virtual void loadModel(const std::string &modelFile, bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
   virtual void loadModel(const std::string &modelFile1, const std::string &modelFile2, bool verbose = false,
@@ -553,7 +553,7 @@ private:
 
     virtual void init(const vpImage<unsigned char> &I);
 
-    virtual void loadConfigFile(const std::string &configFile);
+    virtual void loadConfigFile(const std::string &configFile, bool verbose=true);
 
     virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
                              const vpHomogeneousMatrix &cMo, bool verbose = false,

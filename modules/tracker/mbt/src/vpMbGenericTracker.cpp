@@ -2799,13 +2799,14 @@ void vpMbGenericTracker::initFromPose(const std::map<std::string, const vpImage<
   not found).
 
   \param configFile : full name of the xml file.
+  \param verbose : verbose flag.
 */
-void vpMbGenericTracker::loadConfigFile(const std::string &configFile)
+void vpMbGenericTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
-    tracker->loadConfigFile(configFile);
+    tracker->loadConfigFile(configFile, verbose);
   }
 
   if (m_mapOfTrackers.find(m_referenceCameraName) == m_mapOfTrackers.end()) {
@@ -2828,10 +2829,11 @@ void vpMbGenericTracker::loadConfigFile(const std::string &configFile)
 
   \param configFile1 : Full name of the xml file for the first camera.
   \param configFile2 : Full name of the xml file for the second camera.
+  \param verbose : verbose flag.
 
   \note This function assumes a stereo configuration of the generic tracker.
 */
-void vpMbGenericTracker::loadConfigFile(const std::string &configFile1, const std::string &configFile2)
+void vpMbGenericTracker::loadConfigFile(const std::string &configFile1, const std::string &configFile2, bool verbose)
 {
   if (m_mapOfTrackers.size() != 2) {
     throw vpException(vpException::fatalError, "The tracker is not set in a stereo configuration!");
@@ -2839,11 +2841,11 @@ void vpMbGenericTracker::loadConfigFile(const std::string &configFile1, const st
 
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.begin();
   TrackerWrapper *tracker = it_tracker->second;
-  tracker->loadConfigFile(configFile1);
+  tracker->loadConfigFile(configFile1, verbose);
 
   ++it_tracker;
   tracker = it_tracker->second;
-  tracker->loadConfigFile(configFile2);
+  tracker->loadConfigFile(configFile2, verbose);
 
   if (m_mapOfTrackers.find(m_referenceCameraName) == m_mapOfTrackers.end()) {
     throw vpException(vpException::fatalError, "Cannot find the reference camera:  %s!", m_referenceCameraName.c_str());
@@ -2864,10 +2866,11 @@ void vpMbGenericTracker::loadConfigFile(const std::string &configFile1, const st
   not found).
 
   \param mapOfConfigFiles : Map of xml files.
+  \param verbose : verbose flag.
 
   \note Configuration files must be supplied for all the cameras.
 */
-void vpMbGenericTracker::loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles)
+void vpMbGenericTracker::loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles, bool verbose)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.begin();
        it_tracker != m_mapOfTrackers.end(); ++it_tracker) {
@@ -2875,7 +2878,7 @@ void vpMbGenericTracker::loadConfigFile(const std::map<std::string, std::string>
 
     std::map<std::string, std::string>::const_iterator it_config = mapOfConfigFiles.find(it_tracker->first);
     if (it_config != mapOfConfigFiles.end()) {
-      tracker->loadConfigFile(it_config->second);
+      tracker->loadConfigFile(it_config->second, verbose);
     } else {
       throw vpException(vpTrackingException::initializationError, "Missing configuration file for camera: %s!",
                         it_tracker->first.c_str());
@@ -6207,12 +6210,13 @@ void vpMbGenericTracker::TrackerWrapper::initMbtTracking(const vpImage<unsigned 
   }
 }
 
-void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &configFile)
+void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &configFile, bool verbose)
 {
   // Load projection error config
-  vpMbTracker::loadConfigFile(configFile);
+  vpMbTracker::loadConfigFile(configFile, verbose);
 
   vpMbtXmlGenericParser xmlp((vpMbtXmlGenericParser::vpParserType)m_trackerType);
+  xmlp.setVerbose(verbose);
   xmlp.setCameraParameters(m_cam);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
@@ -6245,7 +6249,9 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
   xmlp.setDepthDenseSamplingStepY(m_depthDenseSamplingStepY);
 
   try {
-    std::cout << " *********** Parsing XML for";
+    if (verbose) {
+      std::cout << " *********** Parsing XML for";
+    }
 
     std::vector<std::string> tracker_names;
     if (m_trackerType & EDGE_TRACKER)
@@ -6259,14 +6265,17 @@ void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &confi
     if (m_trackerType & DEPTH_DENSE_TRACKER)
       tracker_names.push_back("Depth Dense");
 
-    for (size_t i = 0; i < tracker_names.size(); i++) {
-      std::cout << " " << tracker_names[i];
-      if (i == tracker_names.size() - 1) {
-        std::cout << " ";
+    if (verbose) {
+      for (size_t i = 0; i < tracker_names.size(); i++) {
+        std::cout << " " << tracker_names[i];
+        if (i == tracker_names.size() - 1) {
+          std::cout << " ";
+        }
       }
+
+      std::cout << "Model-Based Tracker ************ " << std::endl;
     }
 
-    std::cout << "Model-Based Tracker ************ " << std::endl;
     xmlp.parse(configFile);
   } catch (...) {
     throw vpException(vpException::ioError, "Can't open XML file \"%s\"\n ", configFile.c_str());

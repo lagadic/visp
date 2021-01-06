@@ -105,13 +105,13 @@ void vpMbDepthDenseTracker::addFace(vpMbtPolygon &polygon, bool alreadyClose)
   unsigned int nbpt = polygon.getNbPoint();
   if (nbpt > 0) {
     for (unsigned int i = 0; i < nbpt - 1; i++) {
-      normal_face->addLine(polygon.p[i], polygon.p[i + 1], &m_depthDenseHiddenFacesDisplay, polygon.getIndex(),
+      normal_face->addLine(polygon.p[i], polygon.p[i + 1], &m_depthDenseHiddenFacesDisplay, m_rand, polygon.getIndex(),
                            polygon.getName());
     }
 
     if (!alreadyClose) {
       // Add last line that closes the face
-      normal_face->addLine(polygon.p[nbpt - 1], polygon.p[0], &m_depthDenseHiddenFacesDisplay, polygon.getIndex(),
+      normal_face->addLine(polygon.p[nbpt - 1], polygon.p[0], &m_depthDenseHiddenFacesDisplay, m_rand, polygon.getIndex(),
                            polygon.getName());
     }
   }
@@ -388,10 +388,10 @@ void vpMbDepthDenseTracker::init(const vpImage<unsigned char> &I)
   computeVisibility(I.getWidth(), I.getHeight());
 }
 
-void vpMbDepthDenseTracker::loadConfigFile(const std::string &configFile)
+void vpMbDepthDenseTracker::loadConfigFile(const std::string &configFile, bool verbose)
 {
   vpMbtXmlGenericParser xmlp(vpMbtXmlGenericParser::DEPTH_DENSE_PARSER);
-
+  xmlp.setVerbose(verbose);
   xmlp.setCameraParameters(m_cam);
   xmlp.setAngleAppear(vpMath::deg(angleAppears));
   xmlp.setAngleDisappear(vpMath::deg(angleDisappears));
@@ -400,7 +400,9 @@ void vpMbDepthDenseTracker::loadConfigFile(const std::string &configFile)
   xmlp.setDepthDenseSamplingStepY(m_depthDenseSamplingStepY);
 
   try {
-    std::cout << " *********** Parsing XML for Mb Depth Dense Tracker ************ " << std::endl;
+    if (verbose) {
+      std::cout << " *********** Parsing XML for Mb Depth Dense Tracker ************ " << std::endl;
+    }
     xmlp.parse(configFile);
   } catch (const vpException &e) {
     std::cerr << "Exception: " << e.what() << std::endl;

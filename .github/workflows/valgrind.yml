@@ -28,7 +28,7 @@ jobs:
       run: lsb_release -a
 
     - name: Install dependencies
-      run: sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev valgrind
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev valgrind
 
     - name: Clone ViSP-images
       run: |

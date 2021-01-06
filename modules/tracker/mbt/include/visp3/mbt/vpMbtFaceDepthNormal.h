@@ -86,7 +86,7 @@ public:
   vpMbtFaceDepthNormal();
   virtual ~vpMbtFaceDepthNormal();
 
-  void addLine(vpPoint &p1, vpPoint &p2, vpMbHiddenFaces<vpMbtPolygon> *const faces, int polygon = -1,
+  void addLine(vpPoint &p1, vpPoint &p2, vpMbHiddenFaces<vpMbtPolygon> *const faces, vpUniRand& rand_gen, int polygon = -1,
                std::string name = "");
 
 #ifdef VISP_HAVE_PCL

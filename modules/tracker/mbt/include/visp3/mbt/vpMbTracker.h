@@ -223,6 +223,8 @@ protected:
   vpImage<unsigned char> m_I;
   //! Flag that indicates that SoDB::init(); was called
   bool m_sodb_init_called;
+  //! Random number generator used in vpMbtDistanceLine::buildFrom()
+  vpUniRand m_rand;
 
 public:
   vpMbTracker();
@@ -698,11 +700,12 @@ public:
   /*!
     Load a config file to parameterise the behavior of the tracker.
 
-    Pure virtual method to adapt to each tracker.
+    Virtual method to adapt to each tracker.
 
     \param configFile : An xml config file to parse.
+    \param verbose : verbose flag.
   */
-  virtual void loadConfigFile(const std::string &configFile);
+  virtual void loadConfigFile(const std::string &configFile, bool verbose=true);
 
   /*!
     Reset the tracker.

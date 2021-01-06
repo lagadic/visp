@@ -160,10 +160,11 @@ void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L)
   Build a vpMbtDistanceLine thanks to two points corresponding to the
   extremities.
 
-  \param _p1 : The first extremity.
-  \param _p2 : The second extremity.
+  \param _p1      : The first extremity.
+  \param _p2      : The second extremity.
+  \param rand_gen : Random number generator.
 */
-void vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
+void vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2, vpUniRand& rand_gen)
 {
   if (line == NULL) {
     line = new vpLine;
@@ -189,9 +190,9 @@ void vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2)
   // if((V1-V2).sumSquare()!=0)
   if (std::fabs((V1 - V2).sumSquare()) > std::numeric_limits<double>::epsilon()) {
     vpColVector V3(3);
-    V3[0] = double(rand() % 1000) / 100;
-    V3[1] = double(rand() % 1000) / 100;
-    V3[2] = double(rand() % 1000) / 100;
+    V3[0] = double(rand_gen.next() % 1000) / 100;
+    V3[1] = double(rand_gen.next() % 1000) / 100;
+    V3[2] = double(rand_gen.next() % 1000) / 100;
 
     vpColVector v_tmp1, v_tmp2;
     v_tmp1 = V2 - V1;
