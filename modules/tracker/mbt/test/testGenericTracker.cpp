@@ -568,8 +568,7 @@ namespace
       if ( !use_mask && (t_err2 > t_thresh || tu_err2 > tu_thresh) ) { //no accuracy test with mask
         std::cerr << "Pose estimated exceeds the threshold (t_thresh = " << t_thresh << " ; tu_thresh = " << tu_thresh << ")!" << std::endl;
         std::cout << "t_err: " << t_err2 << " ; tu_err: " << tu_err2 << std::endl;
-        //TODO: fix MBT to make tests deterministic
-//        return EXIT_FAILURE;
+        return EXIT_FAILURE;
       }
 
       if (opt_display) {
