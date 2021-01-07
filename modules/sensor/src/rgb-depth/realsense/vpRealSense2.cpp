@@ -70,8 +70,8 @@ bool operator==(const rs2_extrinsics &lhs, const rs2_extrinsics &rhs)
  * Default constructor.
  */
 vpRealSense2::vpRealSense2()
-  : m_depthScale(0.0f), m_invalidDepthValue(0.0f), m_max_Z(8.0f), m_pipe(NULL), m_pipelineProfile(NULL), m_pointcloud(),
-    m_points(), m_pos(), m_quat(), m_rot(), m_product_line()
+  : m_depthScale(0.0f), m_invalidDepthValue(0.0f), m_max_Z(8.0f), m_pipe(), m_pipelineProfile(), m_pointcloud(),
+    m_points(), m_pos(), m_quat(), m_rot(), m_product_line(), m_init(false)
 {
 }
 
@@ -88,7 +88,7 @@ vpRealSense2::~vpRealSense2() { close(); }
  */
 void vpRealSense2::acquire(vpImage<unsigned char> &grey, double *ts)
 {
-  auto data = m_pipe->wait_for_frames();
+  auto data = m_pipe.wait_for_frames();
   auto color_frame = data.get_color_frame();
   getGreyFrame(color_frame, grey);
   if (ts != NULL) {
@@ -103,7 +103,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> &grey, double *ts)
  */
 void vpRealSense2::acquire(vpImage<vpRGBa> &color, double *ts)
 {
-  auto data = m_pipe->wait_for_frames();
+  auto data = m_pipe.wait_for_frames();
   auto color_frame = data.get_color_frame();
   getColorFrame(color_frame, color);
   if (ts != NULL) {
@@ -189,7 +189,7 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
                            std::vector<vpColVector> *const data_pointCloud, unsigned char *const data_infrared1,
                            unsigned char *const data_infrared2, rs2::align *const align_to, double *ts)
 {
-  auto data = m_pipe->wait_for_frames();
+  auto data = m_pipe.wait_for_frames();
   if (align_to != NULL) {
     // Infrared stream is not aligned
     // see https://github.com/IntelRealSense/librealsense/issues/1556#issuecomment-384919994
@@ -254,7 +254,7 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
  */
 void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, double *ts)
 {
-  auto data = m_pipe->wait_for_frames();
+  auto data = m_pipe.wait_for_frames();
 
   if(left != NULL) {
     auto left_fisheye_frame  = data.get_fisheye_frame(1);
@@ -308,7 +308,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
 void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> *right, vpHomogeneousMatrix *cMw,
                            vpColVector *odo_vel, vpColVector *odo_acc, unsigned int *confidence, double *ts)
 {
-  auto data = m_pipe->wait_for_frames();
+  auto data = m_pipe.wait_for_frames();
 
   if(left != NULL) {
     auto left_fisheye_frame  = data.get_fisheye_frame(1);
@@ -388,7 +388,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
                            vpColVector *odo_vel, vpColVector *odo_acc, vpColVector *imu_vel, vpColVector *imu_acc,
                            unsigned int *confidence, double *ts)
 {
-  auto data = m_pipe->wait_for_frames();
+  auto data = m_pipe.wait_for_frames();
 
   if(left != NULL) {
     auto left_fisheye_frame  = data.get_fisheye_frame(1);
@@ -512,7 +512,7 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
                            pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud, unsigned char *const data_infrared1,
                            unsigned char *const data_infrared2, rs2::align *const align_to, double *ts)
 {
-  auto data = m_pipe->wait_for_frames();
+  auto data = m_pipe.wait_for_frames();
   if (align_to != NULL) {
     // Infrared stream is not aligned
     // see https://github.com/IntelRealSense/librealsense/issues/1556#issuecomment-384919994
@@ -597,7 +597,7 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
                            pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud, unsigned char *const data_infrared1,
                            unsigned char *const data_infrared2, rs2::align *const align_to, double *ts)
 {
-  auto data = m_pipe->wait_for_frames();
+  auto data = m_pipe.wait_for_frames();
   if (align_to != NULL) {
     // Infrared stream is not aligned
     // see https://github.com/IntelRealSense/librealsense/issues/1556#issuecomment-384919994
@@ -657,12 +657,9 @@ void vpRealSense2::acquire(unsigned char *const data_image, unsigned char *const
  */
 void vpRealSense2::close()
 {
-  if (m_pipe != NULL) {
-    m_pipe->stop();
-    delete m_pipe;
-    delete m_pipelineProfile;
-    m_pipe = NULL;
-    m_pipelineProfile = NULL;
+  if (m_init) {
+    m_pipe.stop();
+    m_init = false;
   }
 }
 
@@ -678,7 +675,7 @@ void vpRealSense2::close()
 vpCameraParameters vpRealSense2::getCameraParameters(const rs2_stream &stream,
                                                      vpCameraParameters::vpCameraParametersProjType type, int index) const
 {
-  auto rs_stream = m_pipelineProfile->get_stream(stream, index).as<rs2::video_stream_profile>();
+  auto rs_stream = m_pipelineProfile.get_stream(stream, index).as<rs2::video_stream_profile>();
   auto intrinsics = rs_stream.get_intrinsics();
 
   vpCameraParameters cam;
@@ -728,7 +725,7 @@ vpCameraParameters vpRealSense2::getCameraParameters(const rs2_stream &stream,
   */
 rs2_intrinsics vpRealSense2::getIntrinsics(const rs2_stream &stream, int index) const
 {
-  auto vsp = m_pipelineProfile->get_stream(stream, index).as<rs2::video_stream_profile>();
+  auto vsp = m_pipelineProfile.get_stream(stream, index).as<rs2::video_stream_profile>();
   return vsp.get_intrinsics();
 }
 
@@ -760,8 +757,26 @@ void vpRealSense2::getColorFrame(const rs2::frame &frame, vpImage<vpRGBa> &color
   */
 float vpRealSense2::getDepthScale()
 {
-  if(m_pipe == NULL) // If pipe is not yet created, create it. Otherwise, we already know depth scale.
-   open();
+  if (! m_init) { // If pipe is not yet created, create it. Otherwise, we already know depth scale.
+    rs2::pipeline *pipe = new rs2::pipeline;
+    rs2::pipeline_profile *pipelineProfile = new rs2::pipeline_profile;
+    *pipelineProfile = pipe->start();
+
+    rs2::device dev = pipelineProfile->get_device();
+
+    // Go over the device's sensors
+    for (rs2::sensor &sensor : dev.query_sensors()) {
+      // Check if the sensor is a depth sensor
+      if (rs2::depth_sensor dpt = sensor.as<rs2::depth_sensor>()) {
+        m_depthScale = dpt.get_depth_scale();
+      }
+    }
+
+    pipe->stop();
+    delete pipe;
+    delete pipelineProfile;
+  }
+
   return m_depthScale;
 }
 
@@ -1129,8 +1144,8 @@ vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, cons
         to_index = 1;
   }
 
-  auto from_stream = m_pipelineProfile->get_stream(from, from_index);
-  auto to_stream = m_pipelineProfile->get_stream(to, to_index);
+  auto from_stream = m_pipelineProfile.get_stream(from, from_index);
+  auto to_stream = m_pipelineProfile.get_stream(to, to_index);
 
   rs2_extrinsics extrinsics = from_stream.get_extrinsics_to(to_stream);
 
@@ -1158,7 +1173,7 @@ vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, cons
  */
 unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *cMw, vpColVector *odo_vel, vpColVector *odo_acc, double *ts)
 {
-  auto frame = m_pipe->wait_for_frames();
+  auto frame = m_pipe.wait_for_frames();
   auto f = frame.first_or_default(RS2_STREAM_POSE);
   auto pose_data = f.as<rs2::pose_frame>().get_pose_data();
 
@@ -1226,7 +1241,7 @@ unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *cMw, vpColVector
  */
 void vpRealSense2::getIMUAcceleration(vpColVector *imu_acc, double *ts)
 {
-  auto frame = m_pipe->wait_for_frames();
+  auto frame = m_pipe.wait_for_frames();
   auto f = frame.first_or_default(RS2_STREAM_ACCEL);
   auto imu_acc_data = f.as<rs2::motion_frame>().get_motion_data();
 
@@ -1264,7 +1279,7 @@ void vpRealSense2::getIMUAcceleration(vpColVector *imu_acc, double *ts)
  */
 void vpRealSense2::getIMUVelocity(vpColVector *imu_vel, double *ts)
 {
-  auto frame = m_pipe->wait_for_frames();
+  auto frame = m_pipe.wait_for_frames();
   auto f = frame.first_or_default(RS2_STREAM_GYRO);
   auto imu_vel_data = f.as<rs2::motion_frame>().get_motion_data();
 
@@ -1302,7 +1317,7 @@ void vpRealSense2::getIMUVelocity(vpColVector *imu_vel, double *ts)
  */
 void vpRealSense2::getIMUData(vpColVector *imu_acc, vpColVector *imu_vel, double *ts)
 {
-  auto data = m_pipe->wait_for_frames();
+  auto data = m_pipe.wait_for_frames();
 
   if(ts != NULL)
     *ts = data.get_timestamp();
@@ -1336,16 +1351,13 @@ void vpRealSense2::getIMUData(vpColVector *imu_acc, vpColVector *imu_vel, double
  */
 void vpRealSense2::open(const rs2::config &cfg)
 {
-  if (m_pipe != NULL) {
+  if (m_init) {
     close();
   }
 
-  m_pipe = new rs2::pipeline;
-  m_pipelineProfile = new rs2::pipeline_profile;
+  m_pipelineProfile = m_pipe.start(cfg);
 
-  *m_pipelineProfile = m_pipe->start(cfg);
-
-  rs2::device dev = m_pipelineProfile->get_device();
+  rs2::device dev = m_pipelineProfile.get_device();
 
 #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
   // Query device product line D400/SR300/L500/T200
@@ -1359,6 +1371,8 @@ void vpRealSense2::open(const rs2::config &cfg)
       m_depthScale = dpt.get_depth_scale();
     }
   }
+
+  m_init = true;
 }
 
 /*!
@@ -1368,16 +1382,13 @@ void vpRealSense2::open(const rs2::config &cfg)
  */
 void vpRealSense2::open(const rs2::config &cfg, std::function<void(rs2::frame)> &callback)
 {
-  if (m_pipe != NULL) {
+  if (m_init) {
     close();
   }
 
-  m_pipe = new rs2::pipeline;
-  m_pipelineProfile = new rs2::pipeline_profile;
+  m_pipelineProfile = m_pipe.start(cfg, callback);
 
-  *m_pipelineProfile = m_pipe->start(cfg, callback);
-
-  rs2::device dev = m_pipelineProfile->get_device();
+  rs2::device dev = m_pipelineProfile.get_device();
 
 #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
   // Query device product line D400/SR300/L500/T200
@@ -1391,6 +1402,8 @@ void vpRealSense2::open(const rs2::config &cfg, std::function<void(rs2::frame)> 
       m_depthScale = dpt.get_depth_scale();
     }
   }
+
+  m_init = true;
 }
 
 /*!
@@ -1399,8 +1412,23 @@ void vpRealSense2::open(const rs2::config &cfg, std::function<void(rs2::frame)> 
 std::string vpRealSense2::getProductLine()
 {
 #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
-  if(m_pipe == NULL) // If pipe is not already created, create it. Otherwise, we have already determined the product line
-    open();
+  if (! m_init) { // If pipe is not already created, create it. Otherwise, we have already determined the product line
+    rs2::pipeline *pipe = new rs2::pipeline;
+    rs2::pipeline_profile *pipelineProfile = new rs2::pipeline_profile;
+    *pipelineProfile = pipe->start();
+
+    rs2::device dev = pipelineProfile->get_device();
+
+#if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+    // Query device product line D400/SR300/L500/T200
+    m_product_line = dev.get_info(RS2_CAMERA_INFO_PRODUCT_LINE);
+#endif
+
+    pipe->stop();
+    delete pipe;
+    delete pipelineProfile;
+  }
+
   return m_product_line;
 #else
   return (std::string("unknown"));
@@ -1525,7 +1553,7 @@ int main()
  */
 std::ostream &operator<<(std::ostream &os, const vpRealSense2 &rs)
 {
-  rs2::device dev = rs.m_pipelineProfile->get_device();
+  rs2::device dev = rs.m_pipelineProfile.get_device();
   os << std::left << std::setw(30) << dev.get_info(RS2_CAMERA_INFO_NAME) << std::setw(20)
      << dev.get_info(RS2_CAMERA_INFO_SERIAL_NUMBER) << std::setw(20) << dev.get_info(RS2_CAMERA_INFO_FIRMWARE_VERSION)
      << std::endl;
