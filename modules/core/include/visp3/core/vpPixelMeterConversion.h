@@ -73,6 +73,9 @@ class VISP_EXPORT vpPixelMeterConversion
 public:
   /** @name Using ViSP camera parameters  */
   //@{
+  static void convertEllipse(const vpCameraParameters &cam,
+                             const vpImagePoint &center_p, double n20_p, double n11_p, double n02_p,
+                             double &xc_m, double &yc_m, double &n20_m, double &n11_m, double &n02_m);
   static void convertLine(const vpCameraParameters &cam, const double &rho_p, const double &theta_p, double &rho_m,
                           double &theta_m);
 
@@ -369,6 +372,9 @@ public:
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
   /** @name Using OpenCV camera parameters  */
   //@{
+  static void convertEllipse(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs,
+                             const vpImagePoint &center_p, double n20_p, double n11_p, double n02_p,
+                             double &xc_m, double &yc_m, double &n20_m, double &n11_m, double &n02_m);
   static void convertLine(const cv::Mat &cameraMatrix,
                           const double &rho_p, const double &theta_p,
                           double &rho_m, double &theta_m);

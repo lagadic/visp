@@ -74,10 +74,13 @@ class VISP_EXPORT vpMeterPixelConversion
 public:
   /** @name Using ViSP camera parameters  */
   //@{
-  static void convertEllipse(const vpCameraParameters &cam, const vpSphere &sphere, vpImagePoint &center,
+  static void convertEllipse(const vpCameraParameters &cam, const vpSphere &sphere, vpImagePoint &center_p,
                              double &n20_p, double &n11_p, double &n02_p);
-  static void convertEllipse(const vpCameraParameters &cam, const vpCircle &circle, vpImagePoint &center,
+  static void convertEllipse(const vpCameraParameters &cam, const vpCircle &circle, vpImagePoint &center_p,
                              double &n20_p, double &n11_p, double &n02_p);
+  static void convertEllipse(const vpCameraParameters &cam,
+                             double xc_m, double yc_m, double n20_m, double n11_m, double n02_m,
+                             vpImagePoint &center_p, double &n20_p, double &n11_p, double &n02_p);
   static void convertLine(const vpCameraParameters &cam, const double &rho_m, const double &theta_m, double &rho_p,
                           double &theta_p);
 
@@ -106,7 +109,6 @@ public:
     In the case of a projection with Kannala-Brandt distortion, refer to
     \cite KannalaBrandt.
   */
-
   inline static void convertPoint(const vpCameraParameters &cam,
                                   const double &x, const double &y, double &u, double &v)
   {
@@ -346,6 +348,9 @@ public:
   static void convertEllipse(const cv::Mat &cameraMatrix,
                              const vpSphere &sphere, vpImagePoint &center,
                              double &n20_p, double &n11_p, double &n02_p);
+  static void convertEllipse(const cv::Mat &cameraMatrix,
+                             double xc_m, double yc_m, double n20_m, double n11_m, double n02_m,
+                             vpImagePoint &center_p, double &n20_p, double &n11_p, double &n02_p);
   static void convertLine(const cv::Mat &cameraMatrix,
                           const double &rho_m, const double &theta_m,
                           double &rho_p, double &theta_p);
