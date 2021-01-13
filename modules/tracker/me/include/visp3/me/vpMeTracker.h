@@ -66,8 +66,12 @@ class VISP_EXPORT vpMeTracker : public vpTracker
 {
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:
+  /** @name Public Attributes Inherited from vpMeTracker */
+  //@{
 #else
 protected:
+  /** @name Protected Attributes Inherited from vpMeTracker */
+  //@{
 #endif
   //! Tracking dependent variables/functions
   //! List of tracked moving edges points.
@@ -78,9 +82,13 @@ protected:
   int nGoodElement;
   //! Mask used to disable tracking on a part of image
   const vpImage<bool> *m_mask;
+  //@}
 
 protected:
+  /** @name Protected Attributes Inherited from vpMeTracker */
+  //@{
   vpMeSite::vpMeSiteDisplayType selectDisplay;
+  //@}
 
 public:
   // Constructor/Destructor
@@ -88,40 +96,14 @@ public:
   vpMeTracker(const vpMeTracker &meTracker);
   virtual ~vpMeTracker();
 
-  void init();
-  void initTracking(const vpImage<unsigned char> &I);
-
-  //! Track sampled pixels.
-  void track(const vpImage<unsigned char> &I);
-
-  unsigned int numberOfSignal();
-  unsigned int totalNumberOfSignal();
-
+  /** @name Public Member Functions Inherited from vpMeTracker */
+  //@{
   virtual void display(const vpImage<unsigned char> &I, vpColor col) = 0;
   virtual void display(const vpImage<unsigned char> &I);
   virtual void display(const vpImage<vpRGBa> &I);
   void display(const vpImage<unsigned char> &I, vpColVector &w, unsigned int &index_w);
 
-  void setDisplay(vpMeSite::vpMeSiteDisplayType select) { selectDisplay = select; }
-
-  vpMeTracker &operator=(vpMeTracker &f);
-
   static bool inMask(const vpImage<bool> *mask, unsigned int i, unsigned int j);
-
-  int outOfImage(int i, int j, int half, int row, int cols);
-  int outOfImage(const vpImagePoint &iP, int half, int rows, int cols);
-
-  void reset();
-
-  //! Sample pixels at a given interval
-  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack=false) = 0;
-
-  /*!
-    Set the initial range.
-
-    \param r : initial range.
-  */
-  void setInitRange(const unsigned int &r) { init_range = r; }
 
   /*!
     Return the initial range.
@@ -131,32 +113,11 @@ public:
   inline unsigned int getInitRange() { return init_range; }
 
   /*!
-    Set the mask
-
-    \param mask : Mask.
-  */
-  virtual void setMask(const vpImage<bool> &mask) { m_mask = &mask; }
-
-  /*!
-    Set the moving edges initialisation parameters
-
-    \param p_me : Moving Edges.
-  */
-  void setMe(vpMe *p_me) { this->me = p_me; }
-
-  /*!
     Return the moving edges initialisation parameters
 
     \return Moving Edges.
   */
   inline vpMe *getMe() { return me; }
-
-  /*!
-    Set the list of moving edges
-
-    \param l : list of Moving Edges.
-  */
-  void setMeList(const std::list<vpMeSite> &l) { list = l; }
 
   /*!
     Return the list of moving edges
@@ -173,10 +134,64 @@ public:
   */
   inline int getNbPoints() const { return nGoodElement; }
 
+  void init();
+  void initTracking(const vpImage<unsigned char> &I);
+
+  unsigned int numberOfSignal();
+
+  vpMeTracker &operator=(vpMeTracker &f);
+
+  int outOfImage(int i, int j, int half, int row, int cols);
+  int outOfImage(const vpImagePoint &iP, int half, int rows, int cols);
+
+  void reset();
+
+  //! Sample pixels at a given interval
+  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack=false) = 0;
+
+  void setDisplay(vpMeSite::vpMeSiteDisplayType select) { selectDisplay = select; }
+
+  /*!
+    Set the initial range.
+
+    \param r : initial range.
+  */
+  void setInitRange(const unsigned int &r) { init_range = r; }
+
+  /*!
+    Set the mask
+
+    \param mask : Mask.
+  */
+  virtual void setMask(const vpImage<bool> &mask) { m_mask = &mask; }
+
+  /*!
+    Set the moving edges initialisation parameters
+
+    \param p_me : Moving Edges.
+  */
+  void setMe(vpMe *p_me) { this->me = p_me; }
+
+  /*!
+    Set the list of moving edges
+
+    \param l : list of Moving Edges.
+  */
+  void setMeList(const std::list<vpMeSite> &l) { list = l; }
+
+  unsigned int totalNumberOfSignal();
+
+  //! Track sampled pixels.
+  void track(const vpImage<unsigned char> &I);
+  //@}
+
 #ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:
+  /** @name Public Attributes Inherited from vpMeTracker */
+  //@{
   int query_range;
   bool display_point; // if 1 (TRUE) displays the line that is being tracked
+  //@}
 #endif
 };
 
