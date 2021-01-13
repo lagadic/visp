@@ -737,11 +737,12 @@ int main()
   static void displayDotLine(const vpImage<unsigned char> &I, const std::list<vpImagePoint> &ips,
                              bool closeTheShape, const vpColor &color, unsigned int thickness = 1);
   static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1,
-                             const double &coef2, const double &coef3, bool use_centered_moments, const vpColor &color,
-                             unsigned int thickness = 1);
+                             const double &coef2, const double &coef3, bool use_normalized_centered_moments, const vpColor &color,
+                             unsigned int thickness = 1, bool display_center = false, bool display_arc = false);
   static void displayEllipse(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &coef1,
-                             const double &coef2, const double &coef3, const double &theta1, const double &theta2,
-                             bool use_centered_moments, const vpColor &color, unsigned int thickness = 1);
+                             const double &coef2, const double &coef3, const double &smallalpha, const double &highalpha,
+                             bool use_normalized_centered_moments, const vpColor &color, unsigned int thickness = 1,
+                             bool display_center = false, bool display_arc = false);
   static void displayFrame(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                            const vpCameraParameters &cam, double size, const vpColor &color = vpColor::none,
                            unsigned int thickness = 1, const vpImagePoint &offset = vpImagePoint(0, 0));
@@ -841,10 +842,11 @@ int main()
                              const vpColor &color, unsigned int thickness = 1);
   static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &coef1,
                              const double &coef2, const double &coef3, bool use_centered_moments, const vpColor &color,
-                             unsigned int thickness = 1);
+                             unsigned int thickness = 1, bool display_center = false, bool display_arc = false);
   static void displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &coef1,
                              const double &coef2, const double &coef3, const double &theta1, const double &theta2,
-                             bool use_centered_moments, const vpColor &color, unsigned int thickness = 1);
+                             bool use_centered_moments, const vpColor &color, unsigned int thickness = 1,
+                             bool display_center = false, bool display_arc = false);
   static void displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                            double size, const vpColor &color = vpColor::none, unsigned int thickness = 1,
                            const vpImagePoint &offset = vpImagePoint(0, 0));
