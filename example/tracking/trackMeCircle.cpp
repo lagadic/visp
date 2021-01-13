@@ -280,7 +280,6 @@ int main(int argc, const char **argv)
     vpMe me;
     me.setRange(20);
     me.setSampleStep(2);
-    me.setPointsToTrack(60);
     me.setThreshold(15000);
 
     E1.setMe(&me);
@@ -292,11 +291,11 @@ int main(int argc, const char **argv)
     } else {
       // Create a list of points to automate the test
       std::vector<vpImagePoint> ip;
-      ip.push_back(vpImagePoint(39, 136));
-      ip.push_back(vpImagePoint(42, 83));
-      ip.push_back(vpImagePoint(86, 55));
-      ip.push_back(vpImagePoint(132, 72));
-      ip.push_back(vpImagePoint(145, 134));
+      ip.push_back(vpImagePoint(78, 203));
+      ip.push_back(vpImagePoint(62, 125));
+      ip.push_back(vpImagePoint(128, 101));
+      ip.push_back(vpImagePoint(167, 147));
+      ip.push_back(vpImagePoint(147, 200));
 
       E1.initTracking(I, ip);
     }
