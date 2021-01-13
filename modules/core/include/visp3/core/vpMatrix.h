@@ -31,9 +31,6 @@
  * Description:
  * Matrix manipulation.
  *
- * Authors:
- * Eric Marchand
- *
  *****************************************************************************/
 
 #ifndef vpMatrix_H
@@ -532,6 +529,8 @@ vpMatrix M(R);
   //@{
   double cond(double svThreshold = 1e-6) const;
   unsigned int kernel(vpMatrix &kerAt, double svThreshold = 1e-6) const;
+  unsigned int nullSpace(vpMatrix &kerA, double svThreshold = 1e-6) const;
+  unsigned int nullSpace(vpMatrix &kerA, int dim) const;
 
   // solve Ax=B using the SVD decomposition (usage A = solveBySVD(B,x) )
   void solveBySVD(const vpColVector &B, vpColVector &x) const;
