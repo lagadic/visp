@@ -175,6 +175,7 @@ public:
    */
   vp_deprecated void setIteration(unsigned int iter) { m_iter = iter; }
   /*!
+    \deprecated You should rather use setMinMedianAbsoluteDeviation().
     Set minimal median absolute deviation (MAD) value.
     Given the input vector or residual, when MAD(residual) < mad_min
     we set MAD(residual) = mad_min.
