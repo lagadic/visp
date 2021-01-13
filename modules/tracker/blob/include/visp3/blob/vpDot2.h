@@ -136,6 +136,25 @@ public:
 
   void display(const vpImage<unsigned char> &I, vpColor color = vpColor::red, unsigned int thickness = 1) const;
 
+  /*!
+    Gets the second order normalized centered moment \f$ n_{ij} \f$
+    as a 3-dim vector containing \f$ n_{20}, n_{11}, n_{02} \f$
+    such as \f$ n_{ij}  = \mu_{ij}/m_{00} \f$
+
+    \return The 3-dim vector containing \f$ n_{20}, n_{11}, n_{02} \f$.
+
+    \sa getCog(), getArea()
+  */
+  inline vpColVector get_nij() const
+  {
+    vpColVector nij(3);
+    nij[0] = mu20 / m00;
+    nij[1] = mu11 / m00;
+    nij[2] = mu02 / m00;
+
+    return nij;
+  }
+
   double getArea() const;
   /*!
 
@@ -348,7 +367,11 @@ public:
   static void trackAndDisplay(vpDot2 dot[], const unsigned int &n, vpImage<unsigned char> &I,
                               std::vector<vpImagePoint> &cogs, vpImagePoint *cogStar = NULL);
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 public:
+#else
+private:
+#endif
   double m00;  /*!< Considering the general distribution moments for \f$ N \f$
      points defined by the relation \f$ m_{ij} = \sum_{h=0}^{N}
      u_h^i v_h^j \f$, \f$ m_{00} \f$ is a zero order moment obtained
