@@ -382,10 +382,9 @@ namespace
       const double t_thresh = useScanline ? 0.003 : 0.002;
       const double tu_thresh = useScanline ? 0.5 : 0.4;
       if ( !use_mask && (t_err2 > t_thresh || tu_err2 > tu_thresh) ) { //no accuracy test with mask
-        std::cerr << "Pose estimated exceeds the threshold (t_thresh = 0.003, tu_thresh = 0.5)!" << std::endl;
-        std::cout << "t_err: " << sqrt(t_err.sumSquare()) << " ; tu_err: " << vpMath::deg(sqrt(tu_err.sumSquare())) << std::endl;
-        //TODO: fix MBT to make tests deterministic
-//        return EXIT_FAILURE;
+        std::cerr << "Pose estimated exceeds the threshold (t_thresh = " << t_thresh << ", tu_thresh = " << tu_thresh << ")!" << std::endl;
+        std::cout << "t_err: " << t_err2 << " ; tu_err: " << tu_err2 << std::endl;
+        return EXIT_FAILURE;
       }
 
       if (opt_display) {

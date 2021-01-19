@@ -362,7 +362,7 @@ namespace
     //Take the highest thresholds between all CI machines
 #ifdef VISP_HAVE_COIN3D
     map_thresh[vpMbGenericTracker::EDGE_TRACKER]
-        = useScanline ? std::pair<double, double>(0.005, 3.9) : std::pair<double, double>(0.007, 2.9);
+        = useScanline ? std::pair<double, double>(0.005, 3.9) : std::pair<double, double>(0.007, 3.2);
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     map_thresh[vpMbGenericTracker::KLT_TRACKER]
         = useScanline ? std::pair<double, double>(0.006, 1.9) : std::pair<double, double>(0.005, 1.3);
@@ -568,8 +568,7 @@ namespace
       if ( !use_mask && (t_err2 > t_thresh || tu_err2 > tu_thresh) ) { //no accuracy test with mask
         std::cerr << "Pose estimated exceeds the threshold (t_thresh = " << t_thresh << " ; tu_thresh = " << tu_thresh << ")!" << std::endl;
         std::cout << "t_err: " << t_err2 << " ; tu_err: " << tu_err2 << std::endl;
-        //TODO: fix MBT to make tests deterministic
-//        return EXIT_FAILURE;
+        return EXIT_FAILURE;
       }
 
       if (opt_display) {
