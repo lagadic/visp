@@ -117,11 +117,25 @@ VISP_EXPORT void stretchContrast(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2)
 VISP_EXPORT void stretchContrastHSV(vpImage<vpRGBa> &I);
 VISP_EXPORT void stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2);
 
-VISP_EXPORT void unsharpMask(vpImage<unsigned char> &I, unsigned int size = 7, double weight = 0.6);
-VISP_EXPORT void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires, unsigned int size = 7,
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+/*!
+  @name Deprecated functions
+*/
+//@{
+vp_deprecated VISP_EXPORT void unsharpMask(vpImage<unsigned char> &I, unsigned int size = 7, double weight = 0.6);
+vp_deprecated VISP_EXPORT void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires, unsigned int size = 7,
+                                           double weight = 0.6);
+vp_deprecated VISP_EXPORT void unsharpMask(vpImage<vpRGBa> &I, unsigned int size = 7, double weight = 0.6);
+vp_deprecated VISP_EXPORT void unsharpMask(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, unsigned int size = 7,
+                                           double weight = 0.6);
+//@}
+#endif
+
+VISP_EXPORT void unsharpMask(vpImage<unsigned char> &I, float sigma, double weight = 0.6);
+VISP_EXPORT void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires, float sigma,
                              double weight = 0.6);
-VISP_EXPORT void unsharpMask(vpImage<vpRGBa> &I, unsigned int size = 7, double weight = 0.6);
-VISP_EXPORT void unsharpMask(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, unsigned int size = 7,
+VISP_EXPORT void unsharpMask(vpImage<vpRGBa> &I, float sigma, double weight = 0.6);
+VISP_EXPORT void unsharpMask(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, float sigma,
                              double weight = 0.6);
 
 VISP_EXPORT void
