@@ -362,12 +362,12 @@ namespace
     //Take the highest thresholds between all CI machines
 #ifdef VISP_HAVE_COIN3D
     map_thresh[vpMbGenericTracker::EDGE_TRACKER]
-        = useScanline ? std::pair<double, double>(0.005, 3.9) : std::pair<double, double>(0.007, 3.2);
+        = useScanline ? std::pair<double, double>(0.005, 3.9) : std::pair<double, double>(0.007, 3.4);
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     map_thresh[vpMbGenericTracker::KLT_TRACKER]
-        = useScanline ? std::pair<double, double>(0.006, 1.9) : std::pair<double, double>(0.005, 1.3);
+        = useScanline ? std::pair<double, double>(0.006, 1.9) : std::pair<double, double>(0.005, 1.5);
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER]
-        = useScanline ? std::pair<double, double>(0.005, 3.2) : std::pair<double, double>(0.006, 2.8);
+        = useScanline ? std::pair<double, double>(0.005, 3.4) : std::pair<double, double>(0.006, 3.0);
 #endif
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = useScanline ? std::pair<double, double>(0.003, 1.7) : std::pair<double, double>(0.002, 0.8);
@@ -384,7 +384,7 @@ namespace
     map_thresh[vpMbGenericTracker::KLT_TRACKER]
         = useScanline ? std::pair<double, double>(0.006, 1.7) : std::pair<double, double>(0.005, 1.4);
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER]
-        = useScanline ? std::pair<double, double>(0.004, 1.2) : std::pair<double, double>(0.004, 1.0);
+        = useScanline ? std::pair<double, double>(0.004, 1.2) : std::pair<double, double>(0.004, 1.2);
 #endif
     map_thresh[vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::DEPTH_DENSE_TRACKER]
         = useScanline ? std::pair<double, double>(0.002, 0.7) : std::pair<double, double>(0.001, 0.4);
