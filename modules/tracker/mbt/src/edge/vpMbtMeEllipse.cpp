@@ -218,6 +218,9 @@ void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImage
     if (alpha2 <= alpha1) {
       alpha2 += 2 * M_PI;
     }
+    if (std::fabs(alpha2 - alpha1) < m_arcEpsilon) {
+      alpha2 = alpha1 + 2.0 * M_PI;
+    }
     // useful for track(I)
     iP1 = *pt1;
     iP2 = *pt2;

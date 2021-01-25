@@ -433,6 +433,8 @@ protected:
   unsigned int m_numberOfGoodPoints;
   //! Track an arc of ellipse (true) or a complete one (false).
   bool m_trackArc;
+  //! Epsilon value used to check if arc angles are the same
+  double m_arcEpsilon;
 
 protected:
   void computeAbeFromNij();

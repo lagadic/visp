@@ -65,7 +65,7 @@ vpMeEllipse::vpMeEllipse()
     expecteddensity(0.),
     #endif
     m_alphamin(0.), m_alphamax(0.), m_uc(0.), m_vc(0.), m_n20(0.), m_n11(0.), m_n02(0.),
-    m_expectedDensity(0), m_numberOfGoodPoints(0), m_trackArc(false)
+    m_expectedDensity(0), m_numberOfGoodPoints(0), m_trackArc(false), m_arcEpsilon(1e-6)
 {
   // Resize internal parameters vector
   // K0 u^2 + K1 v^2 + 2 K2 u v + 2 K3 u + 2 K4 v + K5 =  0
@@ -392,6 +392,7 @@ void vpMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 #endif
 
   // starting angle for sampling
+  std::cout << "DEBUG: dans sample() (alpha2 - alpha1): " << vpMath::deg(alpha2 - alpha1) << std::endl;
   double ang = alpha1 + ((alpha2 - alpha1) - static_cast<double>(m_expectedDensity) * incr)/2.0;
   // sample positions
   for (unsigned int i = 0; i < m_expectedDensity; i++) {
@@ -910,6 +911,9 @@ void vpMeEllipse::initTracking(const vpImage<unsigned char> &I, const std::vecto
     if (alpha2 <= alpha1) {
       alpha2 += 2.0 * M_PI;
     }
+    if (std::fabs(alpha2 - alpha1) < m_arcEpsilon) {
+      alpha2 = alpha1 + 2.0 * M_PI;
+    }
   }
   else {
     alpha1 = 0.0;
@@ -994,8 +998,11 @@ void vpMeEllipse::track(const vpImage<unsigned char> &I)
   if (m_trackArc) {
     alpha1 = computeAngleOnEllipse(iP1);
     alpha2 = computeAngleOnEllipse(iP2);
-    if (alpha2 < alpha1) {
+    if (alpha2 <= alpha1) {
       alpha2 += 2.0 * M_PI;
+    }
+    if (std::fabs(alpha2 - alpha1) < m_arcEpsilon) {
+      alpha2 = alpha1 + 2.0 * M_PI;
     }
   }
   // Compute the ellipse parameters from the tracked points and manage the lists
