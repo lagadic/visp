@@ -327,7 +327,7 @@ namespace
     depth_M_color[0][3] = -0.05;
     tracker.initFromPose(I, depth_M_color*cMo_truth);
 
-    bool click = false, quit = false;
+    bool click = false, quit = false, correct_accuracy = true;
     std::vector<double> vec_err_t, vec_err_tu;
     std::vector<double> time_vec;
     while (read_data(input_directory, cpt_frame, cam_depth, I, I_depth_raw, pointcloud, cMo_truth) && !quit
@@ -384,7 +384,7 @@ namespace
       if ( !use_mask && (t_err2 > t_thresh || tu_err2 > tu_thresh) ) { //no accuracy test with mask
         std::cerr << "Pose estimated exceeds the threshold (t_thresh = " << t_thresh << ", tu_thresh = " << tu_thresh << ")!" << std::endl;
         std::cout << "t_err: " << t_err2 << " ; tu_err: " << tu_err2 << std::endl;
-        return EXIT_FAILURE;
+        correct_accuracy = false;
       }
 
       if (opt_display) {
@@ -429,7 +429,7 @@ namespace
     if (!vec_err_tu.empty())
       std::cout << "Max thetau error: " << *std::max_element(vec_err_tu.begin(), vec_err_tu.end()) << std::endl;
 
-    return EXIT_SUCCESS;
+    return correct_accuracy ? EXIT_SUCCESS : EXIT_FAILURE;
   }
 }
 
