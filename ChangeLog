@@ -25,6 +25,7 @@ ViSP 3.3.1 (under development)
       be able to build a project that uses ViSP as 3rd party without CMake
     . New vpReflexTakktile2 class and examples to control Reflex Takktile 2 hand
       from Right Hand Robotics
+    . New vpGaussianFilter class for Gaussian blur operation
     . vpRealsense2 class was extended to support Intel Realsense T265 device
     . Introduce Kannala Brandt projection model for fisheye cameras in vpCameraParameters
     . Extend existing tools to support Kannala Brandt projection model for XML I/O,
