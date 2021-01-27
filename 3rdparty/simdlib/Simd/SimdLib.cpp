@@ -61,6 +61,7 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReasonForCall, LPVOID lpReserved)
 #include "Simd/SimdLog.h"
 
 #include "Simd/SimdResizer.h"
+#include "Simd/SimdGaussianBlur.h"
 
 #include "Simd/SimdBase.h"
 #include "Simd/SimdSse1.h"
@@ -425,6 +426,19 @@ SIMD_API void SimdGaussianBlur3x3(const uint8_t * src, size_t srcStride, size_t 
     else
 #endif
         Base::GaussianBlur3x3(src, srcStride, width, height, channelCount, dst, dstStride);
+}
+
+SIMD_API void* SimdGaussianBlurInit(size_t width, size_t height, size_t channels, const float* sigma, const float* epsilon)
+{
+    typedef void* (*SimdGaussianBlurInitPtr) (size_t width, size_t height, size_t channels, const float* sigma, const float* epsilon);
+    const static SimdGaussianBlurInitPtr simdGaussianBlurInit = SIMD_FUNC3(GaussianBlurInit, SIMD_AVX2_FUNC, SIMD_SSE41_FUNC, SIMD_NEON_FUNC);
+
+    return simdGaussianBlurInit(width, height, channels, sigma, epsilon);
+}
+
+SIMD_API void SimdGaussianBlurRun(const void* filter, const uint8_t* src, size_t srcStride, uint8_t* dst, size_t dstStride)
+{
+    ((GaussianBlur*)filter)->Run(src, srcStride, dst, dstStride);
 }
 
 SIMD_API void SimdGrayToBgr(const uint8_t * gray, size_t width, size_t height, size_t grayStride, uint8_t * bgr, size_t bgrStride)

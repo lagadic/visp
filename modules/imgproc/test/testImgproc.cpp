@@ -314,8 +314,9 @@ int main(int argc, const char **argv)
 
     // Unsharp Mask
     vpImage<vpRGBa> I_color_unsharp_mask;
+    const float sigma = 1.0f;
     t = vpTime::measureTimeMs();
-    vp::unsharpMask(I_color, I_color_unsharp_mask);
+    vp::unsharpMask(I_color, I_color_unsharp_mask, sigma);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do color unsharp mask: " << t << " ms" << std::endl;
 
@@ -395,7 +396,7 @@ int main(int argc, const char **argv)
     // Unsharp Mask
     vpImage<unsigned char> I_unsharp_mask;
     t = vpTime::measureTimeMs();
-    vp::unsharpMask(I, I_unsharp_mask);
+    vp::unsharpMask(I, I_unsharp_mask, sigma);
     t = vpTime::measureTimeMs() - t;
     std::cout << "Time to do grayscale unsharp mask: " << t << " ms" << std::endl;
 
