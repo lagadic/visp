@@ -585,7 +585,6 @@ void vpImageDraw::drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &cen
     vpImagePoint iP22;
     iP22.set_uv(u0 + cose * u - sine * v, v0 + sine * u + cose * v);
 
-    std::cout << "DEBUG drawLine: " << iP11 << " - " << iP22 << std::endl;
     drawLine(I, iP11, iP22, color, thickness);
 
     iP11 = iP22;
