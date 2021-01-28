@@ -256,7 +256,7 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
 
   if (list.empty()) {
     vpDERROR_TRACE(2, "Tracking error: too few pixel to track");
-    throw(vpTrackingException(vpTrackingException::notEnoughPointError, "too few pixel to track"));
+    throw(vpTrackingException(vpTrackingException::notEnoughPointError, "Too few pixel to track"));
   }
 
   nGoodElement = 0;
