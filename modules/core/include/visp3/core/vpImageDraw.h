@@ -44,6 +44,7 @@
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpColor.h>
+#include <visp3/core/vpMath.h>
 #include <visp3/core/vpRect.h>
 #include <visp3/core/vpCameraParameters.h>
 
@@ -78,11 +79,11 @@ public:
                              unsigned int thickness = 1);
 
   static void drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &center, double coef1,
-                          double coef2, double coef3, bool use_centered_moments, unsigned char color,
-                          double theta1 = 0, double theta2 = 360, unsigned int thickness = 1);
+                          double coef2, double coef3, bool use_normalized_centered_moments, unsigned char color,
+                          double smallalpha = 0, double highalpha = 2 * M_PI, unsigned int thickness = 1);
   static void drawEllipse(vpImage<vpRGBa> &I, const vpImagePoint &center, double coef1,
-                          double coef2, double coef3, bool use_centered_moments, const vpColor &color,
-                          double theta1 = 0, double theta2 = 360, unsigned int thickness = 1);
+                          double coef2, double coef3, bool use_normalized_centered_moments, const vpColor &color,
+                          double smallalpha = 0, double highalpha = 2 * M_PI, unsigned int thickness = 1);
 
   static void drawFrame(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                         const vpCameraParameters &cam, double size, unsigned char color,

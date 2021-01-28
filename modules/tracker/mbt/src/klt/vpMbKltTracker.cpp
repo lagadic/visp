@@ -1022,12 +1022,13 @@ void vpMbKltTracker::track(const vpImage<vpRGBa> &I_color)
 /*!
   Load the xml configuration file.
   From the configuration file initialize the parameters corresponding to the
-objects: KLT, camera.
+  objects: KLT, camera.
 
   \throw vpException::ioError if the file has not been properly parsed (file
-not found or wrong format for the data).
+  not found or wrong format for the data).
 
   \param configFile : full name of the xml file.
+  \param verbose : Set true to activate the verbose mode, false otherwise.
 
   The XML configuration file has the following form:
   \code

@@ -55,7 +55,6 @@
    \param[in] cam : camera parameters.
    \param[in] rho_p, theta_p : Line parameters expressed in pixels.
    \param[out] rho_m, theta_m : Line parameters expressed in meters in the image plane.
-
 */
 void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
                                          const double &rho_m, const double &theta_m,
@@ -80,13 +79,13 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
   parameters of the 3D circle expressed in the image plane (these parameters are obtained after perspective projection
   of the 3D circle) in the image with values in pixels using ViSP camera parameters.
 
-  The ellipse resulting from the perspective projection is here represented by its parameters \f$x_c, y_c, \mu_{20},
-  \mu_{11}, \mu_{02}\f$ corresponding to its center coordinates in pixel and the centered moments.
+  The ellipse resulting from the conversion is here represented by its parameters \f$u_c,v_c,n_{20},
+  n_{11}, n_{02}\f$ corresponding to its center coordinates in pixel and the centered moments normalized by its area.
 
   \param[in] cam : Intrinsic camera parameters.
   \param[in] circle : 3D circle with internal vector `circle.p[]` that contains the ellipse parameters expressed
   in the image plane. These parameters are internaly updated after perspective projection of the sphere.
-  \param[out] center : Center of the corresponding ellipse in the image with coordinates expressed in pixels.
+  \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in pixels.
   \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area
   (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
 
@@ -97,11 +96,11 @@ void vpMeterPixelConversion::convertLine(const vpCameraParameters &cam,
   circle.changeFrame(cMo);
   circle.projection();
   vpMeterPixelConversion::convertEllipse(cam, circle, center_p, n20_p, n11_p, n02_p);
-  vpDisplay::displayEllipse(I, center_p, n20_p, n11_p, n02_p);
+  vpDisplay::displayEllipse(I, center_p, n20_p, n11_p, n02_p, true, vpColor::red);
   \endcode
  */
 void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam,
-                                            const vpCircle &circle, vpImagePoint &center,
+                                            const vpCircle &circle, vpImagePoint &center_p,
                                             double &n20_p, double &n11_p, double &n02_p)
 {
   // Get the parameters of the ellipse in the image plane
@@ -112,7 +111,7 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam,
   double n02_m = circle.p[4];
 
   // Convert from meter to pixels
-  vpMeterPixelConversion::convertPoint(cam, xc_m, yc_m, center);
+  vpMeterPixelConversion::convertPoint(cam, xc_m, yc_m, center_p);
   n20_p = n20_m * vpMath::sqr(cam.get_px());
   n11_p = n11_m * cam.get_px() * cam.get_py();
   n02_p = n02_m * vpMath::sqr(cam.get_py());
@@ -121,15 +120,15 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam,
 /*!
   Noting that the perspective projection of a 3D sphere is usually an ellipse, using the camera intrinsic parameters converts the
   parameters of the 3D sphere expressed in the image plane (these parameters are obtained after perspective projection
-  of the 3D sphere) in the image with values in pixels using ViSP camera parameters.
+  of the 3D sphere) in the image with values in pixels.
 
-  The ellipse resulting from the perspective projection is here represented by its parameters \f$x_c,y_c,\mu_{20},
-  \mu_{11}, \mu_{02}\f$ corresponding to its center coordinates in pixel and the centered moments.
+  The ellipse resulting from the conversion is here represented by its parameters \f$u_c,v_c,n_{20},
+  n_{11}, n_{02}\f$ corresponding to its center coordinates in pixel and the centered moments normalized by its area.
 
   \param[in] cam : Intrinsic camera parameters.
   \param[in] sphere : 3D sphere with internal vector `circle.p[]` that contains the ellipse parameters expressed
   in the image plane. These parameters are internaly updated after perspective projection of the sphere.
-  \param[out] center : Center of the corresponding ellipse in the image with coordinates expressed in pixels.
+  \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in pixels.
   \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area
   (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
 
@@ -140,10 +139,10 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam,
   sphere.changeFrame(cMo);
   sphere.projection();
   vpMeterPixelConversion::convertEllipse(cam, sphere, center_p, n20_p, n11_p, n02_p);
-  vpDisplay::displayEllipse(I, center_p, n20_p, n11_p, n02_p);
+  vpDisplay::displayEllipse(I, center_p, n20_p, n11_p, n02_p, true, vpColor::red);
   \endcode
  */
-void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const vpSphere &sphere, vpImagePoint &center,
+void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const vpSphere &sphere, vpImagePoint &center_p,
                                             double &n20_p, double &n11_p, double &n02_p)
 {
   // Get the parameters of the ellipse in the image plane
@@ -154,7 +153,34 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, const
   double n02_m = sphere.p[4];
 
   // Convert from meter to pixels
-  vpMeterPixelConversion::convertPoint(cam, xc_m, yc_m, center);
+  vpMeterPixelConversion::convertPoint(cam, xc_m, yc_m, center_p);
+  n20_p = n20_m * vpMath::sqr(cam.get_px());
+  n11_p = n11_m * cam.get_px() * cam.get_py();
+  n02_p = n02_m * vpMath::sqr(cam.get_py());
+}
+
+/*!
+  Convert parameters of an ellipse expressed in the image plane (these parameters are obtained after perspective projection
+  of the 3D sphere) in the image with values in pixels using ViSP intrinsic camera parameters.
+
+  The ellipse resulting from the conversion is here represented by its parameters \f$u_c,v_c,n_{20},
+  n_{11}, n_{02}\f$ corresponding to its center coordinates in pixel and the centered moments normalized by its area.
+
+  \param[in] cam : Intrinsic camera parameters.
+  \param[in] xc_m, yc_m : Center of the ellipse in the image plane with normalized coordinates expressed in meters.
+  \param[in] n20_m, n11_m, n02_m : Second order centered moments of the ellipse normalized by its area
+  (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in meter.
+  \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in pixels.
+  \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area
+  (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
+
+ */
+void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam,
+                                            double xc_m, double yc_m, double n20_m, double n11_m, double n02_m,
+                                            vpImagePoint &center_p, double &n20_p, double &n11_p, double &n02_p)
+{
+  // Convert from meter to pixels
+  vpMeterPixelConversion::convertPoint(cam, xc_m, yc_m, center_p);
   n20_p = n20_m * vpMath::sqr(cam.get_px());
   n11_p = n11_m * cam.get_px() * cam.get_py();
   n02_p = n02_m * vpMath::sqr(cam.get_py());
@@ -197,8 +223,8 @@ void vpMeterPixelConversion::convertLine(const cv::Mat &cameraMatrix,
   parameters of the 3D circle expressed in the image plane (these parameters are obtained after perspective projection
   of the 3D circle) in the image with values in pixels using OpenCV camera parameters.
 
-  The ellipse resulting from the perspective projection is here represented by its parameters \f$x_c, y_c, \mu_{20},
-  \mu_{11}, \mu_{02}\f$ corresponding to its center coordinates in pixel and the centered moments.
+  The ellipse resulting from the conversion is here represented by its parameters \f$u_c,v_c,n_{20},
+  n_{11}, n_{02}\f$ corresponding to its center coordinates in pixel and the centered moments normalized by its area.
 
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] circle : 3D circle with internal vector `circle.p[]` that contains the ellipse parameters expressed
@@ -217,7 +243,7 @@ void vpMeterPixelConversion::convertLine(const cv::Mat &cameraMatrix,
                                                     0, py, v0,
                                                     0,  0,  1);
   vpMeterPixelConversion::convertEllipse(cameraMatrix, circle, center_p, n20_p, n11_p, n02_p);
-  vpDisplay::displayEllipse(I, center_p, n20_p, n11_p, n02_p);
+  vpDisplay::displayEllipse(I, center_p, n20_p, n11_p, n02_p, true, vpColor::red);
   \endcode
  */
 void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix,
@@ -246,8 +272,8 @@ void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix,
   parameters of the 3D sphere expressed in the image plane (these parameters are obtained after perspective projection
   of the 3D sphere) in the image with values in pixels using OpenCV camera parameters.
 
-  The ellipse resulting from the perspective projection is here represented by its parameters \f$x_c,y_c,\mu_{20},
-  \mu_{11}, \mu_{02}\f$ corresponding to its center coordinates in pixel and the centered moments.
+  The ellipse resulting from the conversion is here represented by its parameters \f$u_c,v_c,n_{20},
+  n_{11}, n_{02}\f$ corresponding to its center coordinates in pixel and the centered moments normalized by its area.
 
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] sphere : 3D sphere with internal vector `circle.p[]` that contains the ellipse parameters expressed
@@ -266,7 +292,7 @@ void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix,
                                                     0, py, v0,
                                                     0,  0,  1);
   vpMeterPixelConversion::convertEllipse(cameraMatrix, sphere, center_p, n20_p, n11_p, n02_p);
-  vpDisplay::displayEllipse(I, center_p, n20_p, n11_p, n02_p);
+  vpDisplay::displayEllipse(I, center_p, n20_p, n11_p, n02_p, true, vpColor::red);
   \endcode
  */
 void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix,
@@ -288,6 +314,37 @@ void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix,
   n20_p = n20_m * vpMath::sqr(px);
   n11_p = n11_m * px * py;
   n02_p = n02_m * vpMath::sqr(py);
+}
+
+/*!
+  Convert parameters of an ellipse expressed in the image plane (these parameters are obtained after perspective projection
+  of the 3D sphere) in the image with values in pixels using ViSP intrinsic camera parameters.
+
+  The ellipse resulting from the conversion is here represented by its parameters \f$u_c,v_c,n_{20},
+  n_{11}, n_{02}\f$ corresponding to its center coordinates in pixel and the centered moments normalized by its area.
+
+  \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
+  \param[in] xc_m, yc_m : Center of the ellipse in the image plane with normalized coordinates expressed in meters.
+  \param[in] n20_m, n11_m, n02_m : Second order centered moments of the ellipse normalized by its area
+  (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in meter.
+  \param[out] center_p : Center \f$(u_c, v_c)\f$ of the corresponding ellipse in the image with coordinates expressed in pixels.
+  \param[out] n20_p, n11_p, n02_p : Second order centered moments of the ellipse normalized by its area
+  (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area) expressed in pixels.
+ */
+void vpMeterPixelConversion::convertEllipse(const cv::Mat &cameraMatrix,
+                                            double xc_m, double yc_m, double n20_m, double n11_m, double n02_m,
+                                            vpImagePoint &center_p, double &n20_p, double &n11_p, double &n02_p)
+{
+  double px = cameraMatrix.at<double>(0,0);
+  double py = cameraMatrix.at<double>(1,1);
+  cv::Mat distCoeffs = cv::Mat::zeros(5,1,CV_64FC1);
+
+  // Convert from meter to pixels
+  vpMeterPixelConversion::convertPoint(cameraMatrix, distCoeffs, xc_m, yc_m, center_p);
+  n20_p = n20_m * vpMath::sqr(px);
+  n11_p = n11_m * px * py;
+  n02_p = n02_m * vpMath::sqr(py);
+
 }
 
 /*!

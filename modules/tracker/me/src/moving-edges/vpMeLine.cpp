@@ -274,8 +274,7 @@ void vpMeLine::leastSquare()
   r.setMinMedianAbsoluteDeviation(2);
   vpMatrix D(numberOfSignal(), numberOfSignal());
   D.eye();
-  vpMatrix DA, DAmemory;
-  vpColVector DAx;
+  vpMatrix DA(numberOfSignal(), 2);
   vpColVector w(numberOfSignal());
   vpColVector B(numberOfSignal());
   w = 1;
@@ -307,7 +306,12 @@ void vpMeLine::leastSquare()
     }
 
     while (iter < 4 && distance > 0.05) {
-      DA = D * A;
+      for (unsigned int i = 0; i < k ; i++) {
+        for (unsigned int j = 0; j < 2 ; j++) {
+          DA[i][j] = w[i] * A[i][j];
+        }
+      }
+
       x = DA.pseudoInverse(1e-26) * D * B;
 
       vpColVector residu(nos_1);

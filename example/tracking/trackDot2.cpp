@@ -400,22 +400,14 @@ int main(int argc, const char **argv)
     if (1) {
       std::cout << "COG: " << std::endl;
       cog = d.getCog();
-      std::cout << "  u: " << cog.get_u() << " v: " << cog.get_v() << " - " << d.m10 / d.m00 << " " << d.m01 / d.m00
-                << std::endl;
+      std::cout << "  u: " << cog.get_u() << " v: " << cog.get_v() << std::endl;
       std::cout << "Size:" << std::endl;
       std::cout << "  w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
       std::cout << "Area: " << d.getArea() << std::endl;
-      std::cout << "Moments:" << std::endl;
-      std::cout << "  m00: " << d.m00 << std::endl;
-      std::cout << "  m10: " << d.m10 << std::endl;
-      std::cout << "  m01: " << d.m01 << std::endl;
-      std::cout << "  m11: " << d.m11 << std::endl;
-      std::cout << "  m02: " << d.m02 << std::endl;
-      std::cout << "  m20: " << d.m20 << std::endl;
-      std::cout << "Centered moments:" << std::endl;
-      std::cout << "  mu11: " << d.mu11 << std::endl;
-      std::cout << "  mu02: " << d.mu02 << std::endl;
-      std::cout << "  mu20: " << d.mu20 << std::endl;
+      std::cout << "Centered normalized moments nij:" << std::endl;
+      std::cout << "  n20: " << d.get_nij()[0] << std::endl;
+      std::cout << "  n11: " << d.get_nij()[1] << std::endl;
+      std::cout << "  n02: " << d.get_nij()[2] << std::endl;
       std::cout << "Settings:" << std::endl;
       std::cout << "  gray level min: " << d.getGrayLevelMin() << std::endl;
       std::cout << "  gray level max: " << d.getGrayLevelMax() << std::endl;
@@ -454,22 +446,14 @@ int main(int argc, const char **argv)
 
       std::cout << "COG (" << vpTime::measureTimeMs() - time << " ms): " << std::endl;
       cog = d.getCog();
-      std::cout << "  u: " << cog.get_u() << " v: " << cog.get_v() << " - " << d.m10 / d.m00 << " " << d.m01 / d.m00
-                << std::endl;
+      std::cout << "  u: " << cog.get_u() << " v: " << cog.get_v() << std::endl;
       std::cout << "Size:" << std::endl;
       std::cout << "  w: " << d.getWidth() << " h: " << d.getHeight() << std::endl;
       std::cout << "Area: " << d.getArea() << std::endl;
-      std::cout << "Moments:" << std::endl;
-      std::cout << "  m00: " << d.m00 << std::endl;
-      std::cout << "  m10: " << d.m10 << std::endl;
-      std::cout << "  m01: " << d.m01 << std::endl;
-      std::cout << "  m11: " << d.m11 << std::endl;
-      std::cout << "  m02: " << d.m02 << std::endl;
-      std::cout << "  m20: " << d.m20 << std::endl;
-      std::cout << "Centered moments:" << std::endl;
-      std::cout << "  mu11: " << d.mu11 << std::endl;
-      std::cout << "  mu02: " << d.mu02 << std::endl;
-      std::cout << "  mu20: " << d.mu20 << std::endl;
+      std::cout << "Centered normalized moments nij:" << std::endl;
+      std::cout << "  n20: " << d.get_nij()[0] << std::endl;
+      std::cout << "  n11: " << d.get_nij()[1] << std::endl;
+      std::cout << "  n02: " << d.get_nij()[2] << std::endl;
       std::cout << "Settings:" << std::endl;
       std::cout << "  gray level min: " << d.getGrayLevelMin() << std::endl;
       std::cout << "  gray level max: " << d.getGrayLevelMax() << std::endl;

@@ -73,7 +73,7 @@
 #include <visp3/me/vpMeEllipse.h>
 
 // List of allowed command line options
-#define GETOPTARGS "cdi:h"
+#define GETOPTARGS "acdi:h"
 
 void usage(const char *name, const char *badparam, std::string ipath);
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display);
@@ -90,10 +90,10 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 void usage(const char *name, const char *badparam, std::string ipath)
 {
   fprintf(stdout, "\n\
-Test of ellipse tracking using vpMeEllipse.\n\
+Example of ellipse or arc of ellipse tracking using vpMeEllipse.\n\
 \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] [-c] [-h]\n", name);
+  %s [-i <input image path>] [-c] [-a] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -112,6 +112,9 @@ OPTIONS:                                               Default\n\
   -d \n\
      Turn off the display.\n\
 \n\
+  -a \n\
+     Enable arc of ellipse tracking.\n\
+\n\
   -h\n\
      Print the help.\n", ipath.c_str());
 
@@ -127,17 +130,21 @@ OPTIONS:                                               Default\n\
   \param ipath : Input image path.
   \param click_allowed : Mouse click activation.
   \param display : Display activation.
+  \param trackArc : Enable arc of an ellipse tracking.
 
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, bool &trackArc)
 {
   const char *optarg_;
   int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
+    case 'a':
+      trackArc = true;
+      break;
     case 'c':
       click_allowed = false;
       break;
@@ -181,6 +188,7 @@ int main(int argc, const char **argv)
     std::string filename;
     bool opt_click_allowed = true;
     bool opt_display = true;
+    bool opt_track_arc = false;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -191,7 +199,7 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display) == false) {
+    if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display, opt_track_arc) == false) {
       exit(-1);
     }
 
@@ -281,35 +289,33 @@ int main(int argc, const char **argv)
       vpDisplay::flush(I);
     }
 
-    vpMeEllipse E1;
+    vpMeEllipse me_ellipse;
 
     vpMe me;
     me.setRange(20);
-    me.setSampleStep(2);
-    me.setPointsToTrack(60);
+    me.setSampleStep(10);
     me.setThreshold(15000);
 
-    E1.setMe(&me);
-    E1.setDisplay(vpMeSite::RANGE_RESULT);
+    me_ellipse.setMe(&me);
+    me_ellipse.setDisplay(vpMeSite::RANGE_RESULT);
     if (opt_click_allowed)
-      E1.initTracking(I);
+      me_ellipse.initTracking(I, opt_track_arc);
     else {
-      // Create a list of points to automate the test
+      // Create a list of clockwise points to automate the test
       std::vector<vpImagePoint> ip;
-      ip.push_back(vpImagePoint(33, 276));
-      ip.push_back(vpImagePoint(83, 126));
-      ip.push_back(vpImagePoint(201, 36));
-      ip.push_back(vpImagePoint(243, 164));
       ip.push_back(vpImagePoint(195, 329));
+      ip.push_back(vpImagePoint(243, 164));
+      ip.push_back(vpImagePoint(201, 36));
+      ip.push_back(vpImagePoint(83, 126));
+      ip.push_back(vpImagePoint(33, 276));
 
-      E1.initTracking(I, ip);
+      me_ellipse.initTracking(I, ip, opt_track_arc);
     }
     if (opt_display) {
-      E1.display(I, vpColor::green);
+      me_ellipse.display(I, vpColor::green);
     }
 
-    vpERROR_TRACE("sample step %f ", E1.getMe()->getSampleStep());
-    E1.track(I);
+    vpERROR_TRACE("sample step %f ", me_ellipse.getMe()->getSampleStep());
     if (opt_display && opt_click_allowed) {
       std::cout << "A click to continue..." << std::endl;
       vpDisplay::getClick(I);
@@ -330,10 +336,10 @@ int main(int argc, const char **argv)
         vpDisplay::display(I);
       }
 
-      E1.track(I);
+      me_ellipse.track(I);
 
       if (opt_display) {
-        E1.display(I, vpColor::green);
+        me_ellipse.display(I, vpColor::green);
         vpDisplay::flush(I);
       }
     }

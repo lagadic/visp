@@ -133,42 +133,15 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpSphere &t)
   \param cam : The parameters of the camera used to acquire the image
   containing the vpDot.
 
-  \param t : The vpDot used to create the vpFeatureEllipse.
+  \param blob : The blob used to create the vpFeatureEllipse.
 */
-void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpDot &t)
+void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpDot &blob)
 {
-  unsigned int order = 3;
-  vpMatrix mp(order, order);
-  mp = 0;
-  vpMatrix m(order, order);
-  m = 0;
+  double xc = 0, yc = 0;
+  vpPixelMeterConversion::convertPoint(cam, blob.getCog(), xc, yc);
+  vpColVector nij = blob.get_nij();
 
-  mp[0][0] = t.m00;
-  mp[1][0] = t.m10;
-  mp[0][1] = t.m01;
-  mp[2][0] = t.m20;
-  mp[1][1] = t.m11;
-  mp[0][2] = t.m02;
-
-  vpPixelMeterConversion::convertMoment(cam, order, mp, m);
-
-  double m00 = m[0][0];
-  double m01 = m[0][1];
-  double m10 = m[1][0];
-  double m02 = m[0][2];
-  double m11 = m[1][1];
-  double m20 = m[2][0];
-
-  // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq. 14
-  double xc = m10 / m00;
-  double yc = m01 / m00;
-
-  // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq. 15
-  double n20 = (m20 - m00 * vpMath::sqr(xc)) / (m00);
-  double n02 = (m02 - m00 * vpMath::sqr(yc)) / (m00);
-  double n11 = (m11 - m00 * xc * yc) / (m00);
-
-  s.buildFrom(xc, yc, n20, n11, n02);
+  s.buildFrom(xc, yc, nij[0], nij[1], nij[2]);
 }
 
 /*!
@@ -186,42 +159,15 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam
   \param cam : The parameters of the camera used to acquire the image
   containing the vpDot2.
 
-  \param t : The vpDot2 used to create the vpFeatureEllipse.
+  \param blob : The blob used to create the vpFeatureEllipse.
 */
-void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpDot2 &t)
+void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpDot2 &blob)
 {
-  unsigned int order = 3;
-  vpMatrix mp(order, order);
-  mp = 0;
-  vpMatrix m(order, order);
-  m = 0;
+  double xc = 0, yc = 0;
+  vpPixelMeterConversion::convertPoint(cam, blob.getCog(), xc, yc);
+  vpColVector nij = blob.get_nij();
 
-  mp[0][0] = t.m00;
-  mp[1][0] = t.m10;
-  mp[0][1] = t.m01;
-  mp[2][0] = t.m20;
-  mp[1][1] = t.m11;
-  mp[0][2] = t.m02;
-
-  vpPixelMeterConversion::convertMoment(cam, order, mp, m);
-
-  double m00 = m[0][0];
-  double m01 = m[0][1];
-  double m10 = m[1][0];
-  double m02 = m[0][2];
-  double m11 = m[1][1];
-  double m20 = m[2][0];
-
-  // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq. 14
-  double xc = m10 / m00;
-  double yc = m01 / m00;
-
-  // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq. 15
-  double n20 = (m20 - m00 * vpMath::sqr(xc)) / (m00);
-  double n02 = (m02 - m00 * vpMath::sqr(yc)) / (m00);
-  double n11 = (m11 - m00 * xc * yc) / (m00);
-
-  s.buildFrom(xc, yc, n20, n11, n02);
+  s.buildFrom(xc, yc, nij[0], nij[1], nij[2]);
 }
 #endif //#ifdef VISP_HAVE_MODULE_BLOB
 
@@ -230,35 +176,25 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam
   Initialize an ellipse feature thanks to a vpMeEllipse and camera parameters.
   The vpFeatureEllipse is initialized thanks to the parameters
   of the ellipse given in pixel. The camera parameters are used to convert the
-  pixel parameters to parameters given in meter.
+  pixel parameters to parameters given in meters in the image plane.
 
   \warning With a vpMeEllipse there is no information about 3D parameters.
   Thus the parameters \f$(A,B,C)\f$ can not be set. You have to compute them
-  and initialized them outside the method.
+  and initialize them outside the method.
 
-  \param s : Visual feature to initialize.
+  \param[out] s : Visual feature to initialize.
 
-  \param cam : The parameters of the camera used to acquire the image
+  \param[in] cam : The parameters of the camera used to acquire the image
   containing the vpMeEllipse
 
-  \param t : The vpMeEllipse used to create the vpFeatureEllipse.
+  \param[in] ellipse : The tracked vpMeEllipse used to create the vpFeatureEllipse.
 */
-void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpMeEllipse &t)
+void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpMeEllipse &ellipse)
 {
-
-  // modif FC : creer un vpPixelMeterConversion::convertEllipse serait le mieux
-  // mais il faudrait ensuite passer du repere (u,v) au repere (i,j)
-  double xg = 0, yg = 0;
-  vpImagePoint xg_p = t.getCenter();
-  vpPixelMeterConversion::convertPoint(cam, xg_p, xg, yg);
-  // From (i,j) frame to (x,y) frame: mu_20 and mu_02 permuted
-  double mu_02 = t.get_mu20() / vpMath::sqr(cam.get_py());
-  double mu_11 = t.get_mu11() /(cam.get_px() * cam.get_py());
-  double mu_20 = t.get_mu02() / vpMath::sqr(cam.get_px());
-
-  double n20 = mu_20 / t.get_m00() ;
-  double n11 = mu_11 / t.get_m00() ;
-  double n02 = mu_02 / t.get_m00() ;
+  double xg, yg, n20, n11, n02;
+  vpPixelMeterConversion::convertEllipse(cam, ellipse.getCenter(),
+                                         ellipse.get_nij()[0], ellipse.get_nij()[1], ellipse.get_nij()[2],
+                                         xg, yg, n20, n11, n02);
 
   s.buildFrom(xg, yg, n20, n11, n02);
 }

@@ -481,42 +481,22 @@ void vpImageDraw::drawDottedLine(vpImage<vpRGBa> &I, const vpImagePoint &ip1, co
   Draw an ellipse in an image from its parameters expressed in pixels.
   \param[in,out] I : Image where to draw the ellipse.
   \param[in] center : Center \f$(u_c, v_c)\f$ of the ellipse.
-  \param[in] coef1, coef2, coef3 : Depending on the parameter \e
-  use_centered_moments these parameters are:
-  - the centered moments expressed in pixels: \f$\mu_{20}, \mu_{11},
-  \mu_{02}\f$;
+  \param coef1, coef2, coef3 : Depending on the parameter \e
+  use_normalized_centered_moments these parameters are:
+  - second order centered moments of the ellipse normalized by its area
+    (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
+    centered moments and a the area) expressed in pixels.
   - the major and minor axis lenght in pixels and the excentricity of the
   ellipse in radians: \f$a, b, e\f$.
-  \param[in] theta1, theta2 : Angles
-  \f$(\theta_1, \theta_2)\f$ in radians used to select a portion of the
-  ellipse. If theta1=0 and theta2=vpMath::rad(360) all the ellipse is
-  displayed.
-  \param[in] use_centered_moments : When false, the parameters coef1, coef2, coef3
-  are the parameters \f$a, b, e\f$. When true, the parameters coef1, coef2,
-  coef3 are rather the centered moments \f$\mu_{20}, \mu_{11}, \mu_{02}\f$
-  expressed in pixels. In that case, we compute the parameters \e a, \e b and
-  \e e from the centered moments.
+  \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
+  \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
+  \param use_normalized_centered_moments : When false, the parameters coef1,
+  coef2, coef3 are the parameters \f$a, b, e\f$. When true, the parameters
+  coef1, coef2, coef3 are rather the normalized centered moments \f$n_{20}, n_{11},
+  n_{02}\f$ expressed in pixels. In that case, we compute the parameters \e
+  a, \e b and \e e from the centered moments.
   \param[in] color : Ellipse color.
   \param[in] thickness : Ellipse thickness.
-
-  All the points \f$(u_\theta,v_\theta)\f$ on the ellipse are drawn thanks to
-  its parametric representation:
-
-  \f[ \left(\begin{array}{c}
-  u_\theta \\
-  v_\theta
-  \end{array} \right) = \left(\begin{array}{c}
-  u_c \\
-  v_c
-  \end{array} \right) + \left(\begin{array}{cc}
-  \cos(e) & -\sin(e) \\
-  \sin(e) & \cos(e)
-  \end{array} \right) \left(\begin{array}{c}
-  a \cos(\theta) \\
-  b \sin(\theta)
-  \end{array} \right) \f]
-
-  with \f$\theta_1 \leq \theta \leq \theta_2\f$.
 
   The following example shows how to use for example this function to draw
   the result of a tracking.
@@ -526,36 +506,38 @@ void vpImageDraw::drawDottedLine(vpImage<vpRGBa> &I, const vpImagePoint &ip1, co
     vpDisplay::display(I);
     ellipse.track(I);
 
-    vpImageDraw::DrawEllipse(I, ellipse.getCenter(), ellipse.get_n20(),
-                             ellipse.get_n11(), ellipse.get_n02(),
-                             ellipse.getSmallestAngle(),
-                             ellipse.getHighestAngle(), true, vpColor::orange, 1);
+    vpImageDraw::drawEllipse(I, ellipse.getCenter(),
+                             ellipse.get_nij()[0], ellipse.get_nij()[1], ellipse.get_nij()[2],
+                             true,
+                             ellipse.getSmallestAngle(), ellipse.getHighestAngle(),
+                             vpColor::orange, 1);
   \endcode
 */
 void vpImageDraw::drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &center, double coef1,
-                              double coef2, double coef3, bool use_centered_moments, unsigned char color,
-                              double theta1, double theta2, unsigned int thickness)
+                              double coef2, double coef3, bool use_normalized_centered_moments, unsigned char color,
+                              double smallalpha, double highalpha, unsigned int thickness)
 {
   double a = 0., b = 0., e = 0.;
 
-  double n20_p = coef1;
-  double n11_p = coef2;
-  double n02_p = coef3;
+  if (use_normalized_centered_moments) {
+    // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 24
+    // Similar code as in function vpMeEllipse::computeAbeFromNij() in vpMeEllipse.cpp
+    double n20_p = coef1;
+    double n11_p = coef2;
+    double n02_p = coef3;
+    double num = n20_p - n02_p;
+    double d = num * num + 4.0 * n11_p * n11_p;   // always >= 0
 
-  if (use_centered_moments) {
-    if (std::fabs(n11_p) > std::numeric_limits<double>::epsilon()) {
-
-      // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 24
-      double val_p = sqrt(vpMath::sqr(n20_p - n02_p) + 4 * vpMath::sqr(n11_p));
-      a = sqrt(2 * (n20_p + n02_p + val_p));
-      b = sqrt(2 * (n20_p + n02_p - val_p));
-
-      e = (n02_p - n20_p + val_p) / (2 * n11_p);
-      e = atan(e);
-    } else {
-      a = 2 * sqrt(n20_p);
-      b = 2 * sqrt(n02_p);
-      e = 0.;
+    if (d <= std::numeric_limits<double>::epsilon()) { // circle
+      e = 0.0;  // case n20 = n02 and n11 = 0 : circle, e undefined
+      a = b = 2.0*sqrt(n20_p);
+    }
+    else { // real ellipse
+      e = atan2(2.0*n11_p, num)/2.0;  // e in [-Pi/2 ; Pi/2]
+      d = sqrt(d); // d in sqrt always >= 0
+      num = n20_p + n02_p;
+      a = sqrt(2.0*(num + d)); // term in sqrt always > 0
+      b = sqrt(2.0*(num - d)); // term in sqrt always > 0
     }
   } else {
     a = coef1;
@@ -563,47 +545,49 @@ void vpImageDraw::drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &cen
     e = coef3;
   }
 
+  // For all what follows similar code as in function vpMeEllipse::display() in vpMeEllipse.cpp
+
   // Approximation of the circumference of an ellipse:
   // [Ramanujan, S., "Modular Equations and Approximations to ,"
   // Quart. J. Pure. Appl. Math., vol. 45 (1913-1914), pp. 350-372]
-  double t = (a - b) / (a + b);
-  double circumference = M_PI * (a + b) * (1 + 3 * vpMath::sqr(t) / (10 + sqrt(4 - 3 * vpMath::sqr(t))));
+  double angle = highalpha - smallalpha;
 
-  int nbpoints = static_cast<int>(floor(circumference / 5));
+  double t = (a - b) / (a + b);
+  t *= t;  // t^2
+  double circumference = (angle/2.0) * (a + b) * (1.0 + 3.0 * t / (10.0 + sqrt(4.0 - 3.0 * t)));
+  unsigned int nbpoints = (unsigned int)(floor(circumference / 20));
   if (nbpoints < 10) {
     nbpoints = 10;
   }
-  double incr = 2 * M_PI / nbpoints; // angle increment
+  double incr = angle / nbpoints; // angle increment
 
-  double smallalpha = vpMath::rad(theta1);
-  double highalpha = vpMath::rad(theta2);
-  double ce = cos(e);
-  double se = sin(e);
+  double u0 = center.get_u();
+  double v0 = center.get_v();
+  double cose = cos(e);
+  double sine = sin(e);
 
-  double k = smallalpha;
-  double j1 = a * cos(k); // equation of an ellipse
-  double i1 = b * sin(k); // equation of an ellipse
-
+  double u = a * cos(smallalpha); // equation of an ellipse
+  double v = b * sin(smallalpha); // equation of an ellipse
+  angle = smallalpha;
   // (i1,j1) are the coordinates on the origin centered ellipse ;
   // a rotation by "e" and a translation by (xci,jc) are done
   // to get the coordinates of the point on the shifted ellipse
-  vpImagePoint iP11, iP22;
-  iP11.set_j(center.get_j() + ce * j1 - se * i1);
-  iP11.set_i(center.get_i() + se * j1 + ce * i1);
+  vpImagePoint iP11;
+  iP11.set_uv(u0 + cose * u - sine * v, v0 + sine * u + cose * v);
 
-  while (k + incr < highalpha + incr) {
-    double j2 = a * cos(k + incr); // equation of an ellipse
-    double i2 = b * sin(k + incr); // equation of an ellipse
-
+  // display the arc of the ellipse by succesive small segments
+  for (unsigned int i = 0; i < nbpoints; i++) {
+    angle += incr;
+    // Two concentric circles method used
+    u = a * cos(angle);
+    v = b * sin(angle);
     // to get the coordinates of the point on the shifted ellipse
-    iP22.set_j(center.get_j() + ce * j2 - se * i2);
-    iP22.set_i(center.get_i() + se * j2 + ce * i2);
+    vpImagePoint iP22;
+    iP22.set_uv(u0 + cose * u - sine * v, v0 + sine * u + cose * v);
 
     drawLine(I, iP11, iP22, color, thickness);
 
     iP11 = iP22;
-
-    k += incr;
   }
 }
 
@@ -611,42 +595,22 @@ void vpImageDraw::drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &cen
   Draw an ellipse in an image from its parameters expressed in pixels.
   \param[in,out] I : Image where to draw the ellipse.
   \param[in] center : Center \f$(u_c, v_c)\f$ of the ellipse.
-  \param[in] coef1, coef2, coef3 : Depending on the parameter \e
-  use_centered_moments these parameters are:
-  - the centered moments expressed in pixels: \f$\mu_{20}, \mu_{11},
-  \mu_{02}\f$;
+  \param coef1, coef2, coef3 : Depending on the parameter \e
+  use_normalized_centered_moments these parameters are:
+  - second order centered moments of the ellipse normalized by its area
+    (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the
+    centered moments and a the area) expressed in pixels.
   - the major and minor axis lenght in pixels and the excentricity of the
   ellipse in radians: \f$a, b, e\f$.
-  \param[in] theta1, theta2 : Angles
-  \f$(\theta_1, \theta_2)\f$ in radians used to select a portion of the
-  ellipse. If theta1=0 and theta2=vpMath::rad(360) all the ellipse is
-  displayed.
-  \param[in] use_centered_moments : When false, the parameters coef1, coef2, coef3
-  are the parameters \f$a, b, e\f$. When true, the parameters coef1, coef2,
-  coef3 are rather the centered moments \f$\mu_{20}, \mu_{11}, \mu_{02}\f$
-  expressed in pixels. In that case, we compute the parameters \e a, \e b and
-  \e e from the centered moments.
+  \param smallalpha : Smallest \f$ alpha \f$ angle in rad (0 for a complete ellipse).
+  \param highalpha : Highest \f$ alpha \f$ angle in rad (2 \f$ \Pi \f$ for a complete ellipse).
+  \param use_normalized_centered_moments : When false, the parameters coef1,
+  coef2, coef3 are the parameters \f$a, b, e\f$. When true, the parameters
+  coef1, coef2, coef3 are rather the normalized centered moments \f$n_{20}, n_{11},
+  n_{02}\f$ expressed in pixels. In that case, we compute the parameters \e
+  a, \e b and \e e from the centered moments.
   \param[in] color : Ellipse color.
   \param[in] thickness : Ellipse thickness.
-
-  All the points \f$(u_\theta,v_\theta)\f$ on the ellipse are drawn thanks to
-  its parametric representation:
-
-  \f[ \left(\begin{array}{c}
-  u_\theta \\
-  v_\theta
-  \end{array} \right) = \left(\begin{array}{c}
-  u_c \\
-  v_c
-  \end{array} \right) + \left(\begin{array}{cc}
-  \cos(e) & -\sin(e) \\
-  \sin(e) & \cos(e)
-  \end{array} \right) \left(\begin{array}{c}
-  a \cos(\theta) \\
-  b \sin(\theta)
-  \end{array} \right) \f]
-
-  with \f$\theta_1 \leq \theta \leq \theta_2\f$.
 
   The following example shows how to use for example this function to draw
   the result of a tracking.
@@ -656,35 +620,38 @@ void vpImageDraw::drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &cen
     vpDisplay::display(I);
     ellipse.track(I);
 
-    vpImageDraw::DrawEllipse(I, ellipse.getCenter(), ellipse.get_n20(),
-                             ellipse.get_n11(), ellipse.get_n02(),
-                             ellipse.getSmallestAngle(),
-                             ellipse.getHighestAngle(), true, vpColor::orange, 1);
+    vpImageDraw::drawEllipse(I, ellipse.getCenter(),
+                             ellipse.get_nij()[0], ellipse.get_nij()[1], ellipse.get_nij()[2],
+                             true,
+                             ellipse.getSmallestAngle(), ellipse.getHighestAngle(),
+                             vpColor::orange, 1);
   \endcode
 */
 void vpImageDraw::drawEllipse(vpImage<vpRGBa> &I, const vpImagePoint &center, double coef1,
-                              double coef2, double coef3, bool use_centered_moments, const vpColor &color,
-                              double theta1, double theta2, unsigned int thickness)
+                              double coef2, double coef3, bool use_normalized_centered_moments, const vpColor &color,
+                              double smallalpha, double highalpha, unsigned int thickness)
 {
   double a = 0., b = 0., e = 0.;
 
-  double n20_p = coef1;
-  double n11_p = coef2;
-  double n02_p = coef3;
+  if (use_normalized_centered_moments) {
+    // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 24
+    // Similar code as in function vpMeEllipse::computeAbeFromNij() in vpMeEllipse.cpp
+    double n20_p = coef1;
+    double n11_p = coef2;
+    double n02_p = coef3;
+    double num = n20_p - n02_p;
+    double d = num * num + 4.0 * n11_p * n11_p;   // always >= 0
 
-  if (use_centered_moments) {
-    if (std::fabs(n11_p) > std::numeric_limits<double>::epsilon()) {
-      // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 24
-      double val_p = sqrt(vpMath::sqr(n20_p - n02_p) + 4 * vpMath::sqr(n11_p));
-      a = sqrt(2 * (n20_p + n02_p + val_p));
-      b = sqrt(2 * (n20_p + n02_p - val_p));
-
-      e = (n02_p - n20_p + val_p) / (2 * n11_p);
-      e = atan(e);
-    } else {
-      a = 2 * sqrt(n20_p);
-      b = 2 * sqrt(n02_p);
-      e = 0.;
+    if (d <= std::numeric_limits<double>::epsilon()) { // circle
+      e = 0.0;  // case n20 = n02 and n11 = 0 : circle, e undefined
+      a = b = 2.0*sqrt(n20_p);
+    }
+    else { // real ellipse
+      e = atan2(2.0*n11_p, num)/2.0;  // e in [-Pi/2 ; Pi/2]
+      d = sqrt(d); // d in sqrt always >= 0
+      num = n20_p + n02_p;
+      a = sqrt(2.0*(num + d)); // term in sqrt always > 0
+      b = sqrt(2.0*(num - d)); // term in sqrt always > 0
     }
   } else {
     a = coef1;
@@ -692,47 +659,49 @@ void vpImageDraw::drawEllipse(vpImage<vpRGBa> &I, const vpImagePoint &center, do
     e = coef3;
   }
 
+  // For all what follows similar code as in function vpMeEllipse::display() in vpMeEllipse.cpp
+
   // Approximation of the circumference of an ellipse:
   // [Ramanujan, S., "Modular Equations and Approximations to ,"
   // Quart. J. Pure. Appl. Math., vol. 45 (1913-1914), pp. 350-372]
-  double t = (a - b) / (a + b);
-  double circumference = M_PI * (a + b) * (1 + 3 * vpMath::sqr(t) / (10 + sqrt(4 - 3 * vpMath::sqr(t))));
+  double angle = highalpha - smallalpha;
 
-  int nbpoints = static_cast<int>(floor(circumference / 5));
+  double t = (a - b) / (a + b);
+  t *= t;  // t^2
+  double circumference = (angle/2.0) * (a + b) * (1.0 + 3.0 * t / (10.0 + sqrt(4.0 - 3.0 * t)));
+  unsigned int nbpoints = (unsigned int)(floor(circumference / 20));
   if (nbpoints < 10) {
     nbpoints = 10;
   }
-  double incr = 2 * M_PI / nbpoints; // angle increment
+  double incr = angle / nbpoints; // angle increment
 
-  double smallalpha = vpMath::rad(theta1);
-  double highalpha = vpMath::rad(theta2);
-  double ce = cos(e);
-  double se = sin(e);
+  double u0 = center.get_u();
+  double v0 = center.get_v();
+  double cose = cos(e);
+  double sine = sin(e);
 
-  double k = smallalpha;
-  double j1 = a * cos(k); // equation of an ellipse
-  double i1 = b * sin(k); // equation of an ellipse
-
+  double u = a * cos(smallalpha); // equation of an ellipse
+  double v = b * sin(smallalpha); // equation of an ellipse
+  angle = smallalpha;
   // (i1,j1) are the coordinates on the origin centered ellipse ;
   // a rotation by "e" and a translation by (xci,jc) are done
   // to get the coordinates of the point on the shifted ellipse
-  vpImagePoint iP11, iP22;
-  iP11.set_j(center.get_j() + ce * j1 - se * i1);
-  iP11.set_i(center.get_i() + se * j1 + ce * i1);
+  vpImagePoint iP11;
+  iP11.set_uv(u0 + cose * u - sine * v, v0 + sine * u + cose * v);
 
-  while (k + incr < highalpha + incr) {
-    double j2 = a * cos(k + incr); // equation of an ellipse
-    double i2 = b * sin(k + incr); // equation of an ellipse
-
+  // display the arc of the ellipse by succesive small segments
+  for (unsigned int i = 0; i < nbpoints; i++) {
+    angle += incr;
+    // Two concentric circles method used
+    u = a * cos(angle);
+    v = b * sin(angle);
     // to get the coordinates of the point on the shifted ellipse
-    iP22.set_j(center.get_j() + ce * j2 - se * i2);
-    iP22.set_i(center.get_i() + se * j2 + ce * i2);
+    vpImagePoint iP22;
+    iP22.set_uv(u0 + cose * u - sine * v, v0 + sine * u + cose * v);
 
     drawLine(I, iP11, iP22, color, thickness);
 
     iP11 = iP22;
-
-    k += incr;
   }
 }
 

@@ -54,35 +54,23 @@
   Basic constructor that calls the constructor of the class vpMeTracker.
 */
 vpMbtMeEllipse::vpMbtMeEllipse()
-  : iPc(), a(0.), b(0.), e(0.), ce(0.), se(0.), n11(0.), n20(0.), n02(0.), thresholdWeight(0.), expecteddensity(0.)
+  : vpMeEllipse()
 {
 }
 
 /*!
   Copy constructor.
 */
-vpMbtMeEllipse::vpMbtMeEllipse(const vpMbtMeEllipse &meellipse)
-  : vpMeTracker(meellipse), iPc(meellipse.iPc), a(0.), b(0.), e(0.), ce(0.), se(0.), n11(0.), n20(0.), n02(0.),
-    thresholdWeight(0.), expecteddensity(0.)
+vpMbtMeEllipse::vpMbtMeEllipse(const vpMbtMeEllipse &me_ellipse)
+  : vpMeEllipse(me_ellipse)
 {
-  a = meellipse.a;
-  b = meellipse.b;
-  e = meellipse.e;
-
-  ce = meellipse.ce;
-  se = meellipse.se;
-
-  n11 = meellipse.n11;
-  n20 = meellipse.n20;
-  n02 = meellipse.n02;
-
-  expecteddensity = meellipse.expecteddensity;
 }
-
 /*!
-  Basic destructor.
+  Destructor.
 */
-vpMbtMeEllipse::~vpMbtMeEllipse() { list.clear(); }
+vpMbtMeEllipse::~vpMbtMeEllipse()
+{
+}
 
 /*!
   Compute the projection error of the ellipse.
@@ -90,49 +78,44 @@ vpMbtMeEllipse::~vpMbtMeEllipse() { list.clear(); }
   of the tangent of the considered sample. Error is expressed in radians
   between 0 and M_PI/2.0;
 
-  \param _I : Image in which the line appears.
-  \param _sumErrorRad : sum of the error per feature.
-  \param _nbFeatures : Number of features used to compute _sumErrorRad.
+  \param I : Image in which the line appears.
+  \param sumErrorRad : sum of the error per feature.
+  \param nbFeatures : Number of features used to compute _sumErrorRad.
   \param SobelX : Sobel kernel in X-direction.
   \param SobelX : Sobel kernel in Y-direction.
   \param display : If true, display gradient and model orientation.
   \param length : Length of arrows used to show gradient and model orientation.
   \param thickness : Thickness of arrows used to show gradient and model orientation.
 */
-void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad,
-                                            unsigned int &_nbFeatures,
+void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &I, double &sumErrorRad,
+                                            unsigned int &nbFeatures,
                                             const vpMatrix &SobelX, const vpMatrix &SobelY,
                                             bool display, unsigned int length,
                                             unsigned int thickness)
 {
-  _sumErrorRad = 0;
-  _nbFeatures = 0;
+  sumErrorRad = 0;
+  nbFeatures = 0;
 
-  double offset = std::floor(SobelX.getRows() / 2.0f);
-  //  std::cout << "offset=" << offset << std::endl;
-  int height = (int)_I.getHeight();
-  int width = (int)_I.getWidth();
+  double offset = static_cast<double>(std::floor(SobelX.getRows() / 2.0f));
+  int height = static_cast<int>(I.getHeight());
+  int width = static_cast<int>(I.getWidth());
+
+  double max_iImg = height - 1.;
+  double max_jImg = width - 1.;
+
+  vpColVector vecSite(2);
+  vpColVector vecGrad(2);
 
   for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
     double iSite = it->ifloat;
     double jSite = it->jfloat;
 
-    if (!outOfImage(vpMath::round(iSite), vpMath::round(jSite), 0, height,
-                    width)) { // Check if necessary
+    if (!outOfImage(vpMath::round(iSite), vpMath::round(jSite), 0, height, width)) { // Check if necessary
       // The tangent angle to the ellipse at a site
-      double theta = atan((-n02 * jSite + n02 * iPc.get_j() + n11 * iSite - n11 * iPc.get_i()) /
-                          (n20 * iSite - n11 * jSite + n11 * iPc.get_j() - n20 * iPc.get_i())) -
-                     M_PI / 2;
+      double theta = computeTheta(vpImagePoint(iSite, jSite));
 
-      double deltaNormalized = theta;
-      while (deltaNormalized < 0)
-        deltaNormalized += M_PI;
-      while (deltaNormalized > M_PI)
-        deltaNormalized -= M_PI;
-
-      vpColVector vecSite(2);
-      vecSite[0] = cos(deltaNormalized);
-      vecSite[1] = sin(deltaNormalized);
+      vecSite[0] = cos(theta);
+      vecSite[1] = sin(theta);
       vecSite.normalize();
 
       double gradientX = 0;
@@ -148,12 +131,12 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
           if (jImg < 0)
             jImg = 0.0;
 
-          if (iImg > _I.getHeight() - 1)
-            iImg = _I.getHeight() - 1;
-          if (jImg > _I.getWidth() - 1)
-            jImg = _I.getWidth() - 1;
+          if (iImg > max_iImg)
+            iImg = max_iImg;
+          if (jImg > max_jImg)
+            jImg = max_jImg;
 
-          gradientX += SobelX[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
+          gradientX += SobelX[i][j] * I((unsigned int)iImg, (unsigned int)jImg);
         }
       }
 
@@ -167,12 +150,12 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
           if (jImg < 0)
             jImg = 0.0;
 
-          if (iImg > _I.getHeight() - 1)
-            iImg = _I.getHeight() - 1;
-          if (jImg > _I.getWidth() - 1)
-            jImg = _I.getWidth() - 1;
+          if (iImg > max_iImg)
+            iImg = max_iImg;
+          if (jImg > max_jImg)
+            jImg = max_jImg;
 
-          gradientY += SobelY[i][j] * _I((unsigned int)iImg, (unsigned int)jImg);
+          gradientY += SobelY[i][j] * I((unsigned int)iImg, (unsigned int)jImg);
         }
       }
 
@@ -182,19 +165,6 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
       while (angle > M_PI)
         angle -= M_PI;
 
-      //      if(std::fabs(deltaNormalized-angle) > M_PI / 2)
-      //      {
-      //        sumErrorRad += sqrt(vpMath::sqr(deltaNormalized-angle)) - M_PI
-      //        / 2;
-      //      } else {
-      //        sumErrorRad += sqrt(vpMath::sqr(deltaNormalized-angle));
-      //      }
-
-      //      double angle1 = sqrt(vpMath::sqr(deltaNormalized-angle));
-      //      double angle2 = sqrt(vpMath::sqr(deltaNormalized-
-      //      (angle-M_PI)));
-
-      vpColVector vecGrad(2);
       vecGrad[0] = cos(angle);
       vecGrad[1] = sin(angle);
       vecGrad.normalize();
@@ -203,101 +173,114 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &_I, do
       double angle2 = acos(vecSite * (-vecGrad));
 
       if (display) {
-        vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(deltaNormalized)),
-                                (int)(it->get_j() + length*sin(deltaNormalized)), vpColor::blue,
+        vpDisplay::displayArrow(I, it->get_i(), it->get_j(), static_cast<int>(it->get_i() + length*cos(theta)),
+                                static_cast<int>(it->get_j() + length*sin(theta)), vpColor::blue,
                                 length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
         if (angle1 < angle2) {
-          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(angle)),
-                                  (int)(it->get_j() + length*sin(angle)), vpColor::red,
+          vpDisplay::displayArrow(I, it->get_i(), it->get_j(), static_cast<int>(it->get_i() + length*cos(angle)),
+                                  static_cast<int>(it->get_j() + length*sin(angle)), vpColor::red,
                                   length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
         } else {
-          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(angle+M_PI)),
-                                  (int)(it->get_j() + length*sin(angle+M_PI)), vpColor::red,
+          vpDisplay::displayArrow(I, it->get_i(), it->get_j(), static_cast<int>(it->get_i() + length*cos(angle+M_PI)),
+                                  static_cast<int>(it->get_j() + length*sin(angle+M_PI)), vpColor::red,
                                   length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
         }
       }
 
-      _sumErrorRad += (std::min)(angle1, angle2);
+      sumErrorRad += (std::min)(angle1, angle2);
 
-      _nbFeatures++;
+      nbFeatures++;
     }
   }
 }
 
+void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &center_p,
+                                  double n20_p, double n11_p, double n02_p, bool doNotTrack,
+                                  vpImagePoint *pt1, const vpImagePoint *pt2)
+{
+  if (pt1 != NULL && pt2 != NULL) {
+    m_trackArc = true;
+  }
+
+  // useful for sample(I) : uc, vc, a, b, e, Ki, alpha1, alpha2
+  m_uc = center_p.get_u();
+  m_vc = center_p.get_v();
+  m_n20 = n20_p;
+  m_n11 = n11_p;
+  m_n02 = n02_p;
+
+  computeAbeFromNij();
+  computeKiFromNij();
+
+  if (m_trackArc) {
+    alpha1 = computeAngleOnEllipse(*pt1);
+    alpha2 = computeAngleOnEllipse(*pt2);
+    if ((alpha2 <= alpha1) || (std::fabs(alpha2 - alpha1) < m_arcEpsilon)) {
+      alpha2 += 2.0 * M_PI;
+    }
+    // useful for track(I)
+    iP1 = *pt1;
+    iP2 = *pt2;
+  }
+  else {
+    alpha1 = 0.0;
+    alpha2 = 2.0 * M_PI;
+    // useful for track(I)
+    vpImagePoint ip;
+    computePointOnEllipse(alpha1, ip);
+    iP1 = iP2 = ip;
+  }
+  // useful for display(I) so useless if no display before track(I)
+  iPc.set_uv(m_uc, m_vc);
+
+  sample(I, doNotTrack);
+
+  try {
+    if (!doNotTrack)
+      track(I);
+  } catch (const vpException &exception) {
+    throw(exception);
+  }
+}
+
 /*!
-  Construct a list of vpMeSite moving edges at a particular sampling
-  step between the two extremities. The two extremities are defined by
-  the points with the smallest and the biggest \f$ alpha \f$ angle.
+  Track the ellipse in the image I.
 
   \param I : Image in which the ellipse appears.
-  \param doNotTrack : If true, ME are not tracked.
-
-  \exception vpTrackingException::initializationError : Moving edges not
-  initialized.
 */
-void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
+void vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
 {
-  if (!me) {
-    vpDERROR_TRACE(2, "Tracking error: Moving edges not initialized");
-    throw(vpTrackingException(vpTrackingException::initializationError, "Moving edges not initialized"));
-  }
-
-  int height = (int)I.getHeight();
-  int width = (int)I.getWidth();
-
-  // if (me->getSampleStep()==0)
-  if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon()) {
-    std::cout << "In vpMbtMeEllipse::sample: ";
-    std::cout << "function called with sample step = 0";
-    // return fatalError;
-  }
-
-  // Approximation of the circumference of an ellipse:
-  // [Ramanujan, S., "Modular Equations and Approximations to ,"
-  // Quart. J. Pure. Appl. Math., vol. 45 (1913-1914), pp. 350-372]
-  double t = (a - b) / (a + b);
-  double circumference = M_PI * (a + b) * (1 + 3 * vpMath::sqr(t) / (10 + sqrt(4 - 3 * vpMath::sqr(t))));
-  int nb_points_to_track = (int)(circumference / me->getSampleStep());
-  double incr = 2 * M_PI / nb_points_to_track;
-
-  expecteddensity = 0; // nb_points_to_track;
-
-  // Delete old list
-  list.clear();
-
-  // sample positions
-  double k = 0;
-  for (int pt = 0; pt < nb_points_to_track; pt++) {
-    double j = a * cos(k); // equation of an ellipse
-    double i = b * sin(k); // equation of an ellipse
-
-    double iP_j = iPc.get_j() + ce * j - se * i;
-    double iP_i = iPc.get_i() + se * j + ce * i;
-
-    // vpColor col = vpColor::red;
-    // vpDisplay::displayCross(I, vpImagePoint(iP_i, iP_j),  5, col) ; //debug
-    // only
-
-    // If point is in the image, add to the sample list
-    if (!outOfImage(vpMath::round(iP_i), vpMath::round(iP_j), 0, height, width)) {
-      // The tangent angle to the ellipse at a site
-      double theta = atan((-n02 * iP_j + n02 * iPc.get_j() + n11 * iP_i - n11 * iPc.get_i()) /
-                          (n20 * iP_i - n11 * iP_j + n11 * iPc.get_j() - n20 * iPc.get_i())) -
-                     M_PI / 2;
-
-      vpMeSite pix;
-      pix.init((int)iP_i, (int)iP_j, theta);
-      pix.setDisplay(selectDisplay);
-      pix.setState(vpMeSite::NO_SUPPRESSION);
-
-      list.push_back(pix);
-      expecteddensity++;
+  try {
+    vpMeTracker::track(I);
+    if (m_mask != NULL) {
+      // Expected density could be modified if some vpMeSite are no more tracked because they are outside the mask.
+      m_expectedDensity = static_cast<unsigned int>(list.size());
     }
-    k += incr;
+  } catch (const vpException &exception) {
+    throw(exception);
   }
+}
 
-  if (!doNotTrack)
-    vpMeTracker::initTracking(I);
+/*!
+ * Update ellipse parameters.
+ */
+void vpMbtMeEllipse::updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &center_p,
+                                      double n20_p, double n11_p, double n02_p)
+{
+  m_uc = center_p.get_u();
+  m_vc = center_p.get_v();
+  m_n20 = n20_p;
+  m_n11 = n11_p;
+  m_n02 = n02_p;
+
+  computeAbeFromNij();
+  computeKiFromNij();
+
+  suppressPoints();
+  reSample(I);
+
+  // remet a jour l'angle delta pour chaque  point de la liste
+  updateTheta();
 }
 
 /*!
@@ -321,33 +304,71 @@ void vpMbtMeEllipse::reSample(const vpImage<unsigned char> &I)
   }
 
   unsigned int n = numberOfSignal();
-  if ((double)n < 0.9 * expecteddensity) {
+  if ((double)n < 0.9 * m_expectedDensity) {
     sample(I);
     vpMeTracker::track(I);
   }
 }
 
 /*!
-  Compute the oriantation angle for each vpMeSite.
+  Construct a list of vpMeSite moving edges at a particular sampling
+  step between the two extremities. The two extremities are defined by
+  the points with the smallest and the biggest \f$ alpha \f$ angle.
 
-  \note The \f$ \theta \f$ angle is useful during the tracking part.
+  \param I : Image in which the ellipse appears.
+  \param doNotTrack : If true, moving-edges are not tracked.
+
+  \exception vpTrackingException::initializationError : Moving edges not
+  initialized.
+
 */
-void vpMbtMeEllipse::updateTheta()
+void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 {
-  vpMeSite p_me;
-  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end(); ++it) {
-    p_me = *it;
+  // Warning: similar code in vpMeEllipse::sample() except for display that is removed here
+  if (!me) {
+    throw(vpException(vpException::fatalError, "Moving edges on ellipse not initialized"));
+  }
+  // Delete old lists
+  list.clear();
+  angle.clear();
+
+  int nbrows = static_cast<int>(I.getHeight());
+  int nbcols = static_cast<int>(I.getWidth());
+
+  if (std::fabs(me->getSampleStep()) <= std::numeric_limits<double>::epsilon()) {
+    std::cout << "In vpMeEllipse::sample: ";
+    std::cout << "function called with sample step = 0, set to 10 dg";
+    me->setSampleStep(10.0);
+  }
+  double incr = vpMath::rad(me->getSampleStep()); // angle increment
+  // alpha2 - alpha1 = 2 * M_PI for a complete ellipse
+  m_expectedDensity = static_cast<unsigned int>(floor((alpha2 - alpha1) / incr));
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
+  expecteddensity = static_cast<double>(m_expectedDensity);
+#endif
+
+  // starting angle for sampling
+  double ang = alpha1 + ((alpha2 - alpha1) - static_cast<double>(m_expectedDensity) * incr)/2.0;
+  // sample positions
+  for (unsigned int i = 0; i < m_expectedDensity; i++) {
     vpImagePoint iP;
-    iP.set_i(p_me.ifloat);
-    iP.set_j(p_me.jfloat);
-
-    // The tangent angle to the ellipse at a site
-    double theta = atan((-n02 * p_me.jfloat + n02 * iPc.get_j() + n11 * p_me.ifloat - n11 * iPc.get_i()) /
-                        (n20 * p_me.ifloat - n11 * p_me.jfloat + n11 * iPc.get_j() - n20 * iPc.get_i())) -
-                   M_PI / 2;
-
-    p_me.alpha = theta;
-    *it = p_me;
+    computePointOnEllipse(ang,iP);
+    // If point is in the image, add to the sample list
+    // Check done in (i,j) frame)
+    if (!outOfImage(vpMath::round(iP.get_i()), vpMath::round(iP.get_j()), 0, nbrows, nbcols)) {
+      double theta = computeTheta(iP);
+      vpMeSite pix;
+      // (i,j) frame used for vpMeSite
+      pix.init(iP.get_i(), iP.get_j(), theta);
+      pix.setDisplay(selectDisplay);
+      pix.setState(vpMeSite::NO_SUPPRESSION);
+      list.push_back(pix);
+      angle.push_back(ang);
+    }
+    ang += incr;
+  }
+  if (!doNotTrack) {
+    vpMeTracker::initTracking(I);
   }
 }
 
@@ -358,119 +379,13 @@ void vpMbtMeEllipse::updateTheta()
 void vpMbtMeEllipse::suppressPoints()
 {
   // Loop through list of sites to track
-  for (std::list<vpMeSite>::iterator itList = list.begin(); itList != list.end();) {
-    vpMeSite s = *itList; // current reference pixel
+  for (std::list<vpMeSite>::iterator it = list.begin(); it != list.end();) {
+    vpMeSite s = *it; // current reference pixel
     if (s.getState() != vpMeSite::NO_SUPPRESSION)
-      itList = list.erase(itList);
+      it = list.erase(it);
     else
-      ++itList;
+      ++it;
   }
-}
-
-/*!
-  Display the ellipse.
-
-  \warning To effectively display the ellipse a call to
-  vpDisplay::flush() is needed.
-
-  \param I : Image in which the ellipse appears.
-  \param col : Color of the displayed ellipse.
- */
-void vpMbtMeEllipse::display(const vpImage<unsigned char> &I, vpColor col)
-{
-  vpDisplay::displayEllipse(I, iPc, n20, n11, n02, true, col);
-}
-
-void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic,
-                                  double n20_p, double n11_p, double n02_p, bool doNotTrack)
-{
-  iPc = ic;
-  n20 = n20_p;
-  n11 = n11_p;
-  n02 = n02_p;
-
-  if (std::fabs(n11_p) > std::numeric_limits<double>::epsilon()) {
-
-    // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 24
-    double val_p = sqrt(vpMath::sqr(n20_p - n02_p) + 4 * vpMath::sqr(n11_p));
-    a = sqrt(2 * (n20_p + n02_p + val_p));
-    b = sqrt(2 * (n20_p + n02_p - val_p));
-
-    e = (n02_p - n20_p + val_p) / (2 * n11_p);
-  } else {
-    a = 2 * sqrt(n20_p);
-    b = 2 * sqrt(n02_p);
-    e = 0.;
-  }
-
-  e = atan(e);
-
-  ce = cos(e);
-  se = sin(e);
-
-  sample(I, doNotTrack);
-
-  if (!doNotTrack)
-    vpMeTracker::initTracking(I);
-
-  try {
-    if (!doNotTrack)
-      track(I);
-  } catch (const vpException &exception) {
-    throw(exception);
-  }
-}
-
-/*!
-  Track the ellipse in the image I.
-
-  \param I : Image in which the ellipse appears.
-*/
-void vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
-{
-  try {
-    vpMeTracker::track(I);
-    if (m_mask != NULL) {
-      // Expected density could be modified if some vpMeSite are no more tracked because they are outside the mask.
-      expecteddensity = (double)list.size();
-    }
-  } catch (const vpException &exception) {
-    throw(exception);
-  }
-}
-
-void vpMbtMeEllipse::updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ic,
-                                      double n20_p, double n11_p, double n02_p)
-{
-  iPc = ic;
-  n20 = n20_p;
-  n11 = n11_p;
-  n02 = n02_p;
-
-  if (std::fabs(n11_p) > std::numeric_limits<double>::epsilon()) {
-
-    // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 24
-    double val_p = sqrt(vpMath::sqr(n20_p - n02_p) + 4 * vpMath::sqr(n11_p));
-    a = sqrt(2 * (n20_p + n02_p + val_p));
-    b = sqrt(2 * (n20_p + n02_p - val_p));
-
-    e = (n02_p - n20_p + val_p) / (2 * n11_p);
-  } else {
-    a = 2 * sqrt(n20_p);
-    b = 2 * sqrt(n02_p);
-    e = 0.;
-  }
-
-  e = atan(e);
-
-  ce = cos(e);
-  se = sin(e);
-
-  suppressPoints();
-  reSample(I);
-
-  // remet a jour l'angle delta pour chaque  point de la liste
-  updateTheta();
 }
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

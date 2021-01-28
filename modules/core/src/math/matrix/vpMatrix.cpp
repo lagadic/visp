@@ -6274,7 +6274,6 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
 
   \return The rank of the matrix.
 */
-
 unsigned int vpMatrix::kernel(vpMatrix &kerAt, double svThreshold) const
 {
   unsigned int nbline = getRows();
@@ -6328,6 +6327,132 @@ unsigned int vpMatrix::kernel(vpMatrix &kerAt, double svThreshold) const
   }
 
   return rank;
+}
+
+/*!
+  Function to compute the null space (the kernel) of a m-by-n matrix \f$\bf
+  A\f$.
+
+  The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
+  = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
+
+  \param kerA: The matrix that contains the null space (kernel) of \f$\bf
+  A\f$. If matrix \f$\bf A\f$ is full rank, the dimension of \c kerA is (n, 0),
+  otherwise its dimension is (n, n-r).
+
+  \param svThreshold: Threshold used to test the singular values. The dimension
+  of kerA corresponds to the number of singular values lower than this threshold
+
+  \return The dimension of the nullspace, that is \f$ n - r \f$.
+*/
+unsigned int vpMatrix::nullSpace(vpMatrix &kerA, double svThreshold) const
+{
+  unsigned int nbrow = getRows();
+  unsigned int nbcol = getCols();
+
+  vpMatrix U, V;               // Copy of the matrix, SVD function is destructive
+  vpColVector sv;
+  sv.resize(nbcol, false);    // singular values
+  V.resize(nbcol, nbcol, false); // V matrix of singular value decomposition
+
+  // Copy and resize matrix to have at least as many rows as columns
+  // kernel is computed in svd method only if the matrix has more rows than
+  // columns
+
+  if (nbrow < nbcol)
+    U.resize(nbcol, nbcol, true);
+  else
+    U.resize(nbrow, nbcol, false);
+
+  U.insert(*this, 0, 0);
+
+  U.svd(sv, V);
+
+  // Compute the highest singular value and rank of the matrix
+  double maxsv = sv[0];
+
+  unsigned int rank = 0;
+  for (unsigned int i = 0; i < nbcol; i++) {
+    if (sv[i] > maxsv * svThreshold) {
+      rank++;
+    }
+  }
+
+  kerA.resize(nbcol, nbcol - rank);
+  if (rank != nbcol) {
+    for (unsigned int j = 0, k = 0; j < nbcol; j++) {
+      // if( v.col(j) in kernel and non zero )
+      if (sv[j] <= maxsv * svThreshold) {
+        for (unsigned int i = 0; i < nbcol; i++) {
+          kerA[i][k] = V[i][j];
+        }
+        k++;
+      }
+    }
+  }
+
+  return (nbcol - rank);
+}
+
+/*!
+  Function to compute the null space (the kernel) of a m-by-n matrix \f$\bf
+  A\f$.
+
+  The null space of a matrix \f$\bf A\f$ is defined as \f$\mbox{Ker}({\bf A})
+  = { {\bf X} : {\bf A}*{\bf X} = {\bf 0}}\f$.
+
+  \param kerA: The matrix that contains the null space (kernel) of \f$\bf
+  A\f$. If matrix \f$\bf A\f$ is full rank, the dimension of \c kerA is (n, 0),
+  otherwise its dimension is (n, n-r).
+
+  \param dim: the dimension of the null space when it is known a priori
+
+  \return The estimated dimension of the nullspace, that is \f$ n - r \f$, by
+  using 1e-6 as threshold for the sigular values.
+*/
+unsigned int vpMatrix::nullSpace(vpMatrix &kerA, int dim) const
+{
+  unsigned int nbrow = getRows();
+  unsigned int nbcol = getCols();
+  unsigned int dim_ = static_cast<unsigned int>(dim);
+
+  vpMatrix U, V;               // Copy of the matrix, SVD function is destructive
+  vpColVector sv;
+  sv.resize(nbcol, false);    // singular values
+  V.resize(nbcol, nbcol, false); // V matrix of singular value decomposition
+
+  // Copy and resize matrix to have at least as many rows as columns
+  // kernel is computed in svd method only if the matrix has more rows than
+  // columns
+
+  if (nbrow < nbcol)
+    U.resize(nbcol, nbcol, true);
+  else
+    U.resize(nbrow, nbcol, false);
+
+  U.insert(*this, 0, 0);
+
+  U.svd(sv, V);
+
+  kerA.resize(nbcol, dim_);
+  if (dim_ != 0) {
+    unsigned int rank = nbcol - dim_;
+    for (unsigned int k = 0; k < dim_; k++) {
+      unsigned int j = k + rank;
+      for (unsigned int i = 0; i < nbcol; i++) {
+        kerA[i][k] = V[i][j];
+      }
+    }
+  }
+
+  double maxsv = sv[0];
+  unsigned int rank = 0;
+  for (unsigned int i = 0; i < nbcol; i++) {
+    if (sv[i] > maxsv * 1e-6) {
+      rank++;
+    }
+  }
+  return (nbcol - rank);
 }
 
 /*!
@@ -6582,20 +6707,6 @@ void vpMatrix::computeHLM(const vpMatrix &H, const double &alpha, vpMatrix &HLM)
 }
 
 /*!
-  \deprecated This function is deprecated. You should rather use frobeniusNorm().
-
-  Compute and return the Euclidean norm (also called Frobenius norm) \f$||A|| = \sqrt{ \sum{A_{ij}^2}}\f$.
-
-  \return The Euclidean norm (also called Frobenius norm) if the matrix is initialized, 0 otherwise.
-
-  \sa frobeniusNorm(), infinityNorm(), inducedL2Norm()
-*/
-vp_deprecated double vpMatrix::euclideanNorm() const
-{
-  return frobeniusNorm();
-}
-
-/*!
   Compute and return the Frobenius norm (also called Euclidean norm) \f$||A|| = \sqrt{ \sum{A_{ij}^2}}\f$.
 
   \return The Frobenius norm (also called Euclidean norm) if the matrix is initialized, 0 otherwise.
@@ -6608,9 +6719,9 @@ double vpMatrix::frobeniusNorm() const
   for (unsigned int i = 0; i < dsize; i++) {
     double x = *(data + i);
     norm += x * x;
- }
+  }
 
- return sqrt(norm);
+  return sqrt(norm);
 }
 
 /*!
@@ -6789,6 +6900,20 @@ void vpMatrix::conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, c
 }
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+/*!
+  \deprecated This function is deprecated. You should rather use frobeniusNorm().
+
+  Compute and return the Euclidean norm (also called Frobenius norm) \f$||A|| = \sqrt{ \sum{A_{ij}^2}}\f$.
+
+  \return The Euclidean norm (also called Frobenius norm) if the matrix is initialized, 0 otherwise.
+
+  \sa frobeniusNorm(), infinityNorm(), inducedL2Norm()
+*/
+vp_deprecated double vpMatrix::euclideanNorm() const
+{
+  return frobeniusNorm();
+}
+
 vpMatrix vpMatrix::stackMatrices(const vpColVector &A, const vpColVector &B)
 {
   return (vpMatrix)(vpColVector::stack(A, B));

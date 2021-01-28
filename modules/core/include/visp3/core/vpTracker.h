@@ -84,8 +84,6 @@ public:
   //@}
 
 public:
-  /** @name Public Member Functions Inherited from vpTracker */
-  //@{
   //! Default constructor.
   vpTracker();
   //! Copy constructor.
@@ -93,6 +91,8 @@ public:
   //! Destructor.
   virtual ~vpTracker() { ; }
 
+  /** @name Public Member Functions Inherited from vpTracker */
+  //@{
   //! Return object parameters expressed in the 2D image plane computed by perspective projection.
   vpColVector get_p() const { return p; }
   //! Return object parameters expressed in the 3D camera frame.

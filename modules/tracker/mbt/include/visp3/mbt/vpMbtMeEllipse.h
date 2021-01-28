@@ -44,18 +44,10 @@
 #ifndef vpMbtMeEllipse_HH
 #define vpMbtMeEllipse_HH
 
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpMatrix.h>
-
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/me/vpMeSite.h>
-#include <visp3/me/vpMeTracker.h>
-
-#include <visp3/core/vpColor.h>
-#include <visp3/core/vpImage.h>
-
 #include <list>
 #include <math.h>
+
+#include <visp3/me/vpMeEllipse.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -63,225 +55,33 @@
   \class vpMbtMeEllipse
   \ingroup group_mbt_features
 
-  \brief Class that tracks an ellipse moving edges.
-
-  In this class, an ellipse is defined as the set of points \f$ (i,j) \f$ of
-  the image frame (For more information about the image frame see the
-  vpImagePoint documentation) that satisfy the implicit equation :
-
-  \f[ i^2 + K_0j^2 + 2K_1ij + 2K_2i + 2K_3j + K4 = 0 \f]
-
-  If \f$ K_0 \f$ is equal to 1 and \f$ K_1 \f$ is equal to 0 the the set of
-  points \f$ (i,j) \f$ represents a circle.
-
-  The five parameters are stored in the public attribute K.
-
-  An ellipse is also defined thanks to three other parameter which are \f$ a
-  \f$, \f$ b \f$ and \f$ e \f$. \f$ a \f$ represents the semiminor axis and
-  \f$ b \f$ is the semimajor axis. Here \f$ e \f$ is the angle made by the
-  major axis and the i axis of the image frame \f$ (i,j) \f$. The following
-  figure shows better meaning of those parameters.
-
-  \image html vpMeEllipse.gif
-  \image latex vpMeEllipse.ps  width=10cm
-
-  It is possible to compute the coordinates \f$ (i,j) \f$ of a point which
-  belongs to the ellipse thanks to the following equations :
-
-  \f[ i = i_c + b cos(e) cos(\alpha) - a sin(e) sin(\alpha) \f]
-  \f[ j = j_c + b sin(e) cos(\alpha) + a cos(e) sin(\alpha) \f]
-
-  Here the coordinates \f$ (i_c,j_c) \f$ are the coordinates of the ellipse
-  center in the image frame and \f$ \alpha \f$ is an angle beetween \f$
-  [0,2\pi] \f$ and which enables to describe all the points of the ellipse.
-
-  \image html vpMeEllipse2.gif
-  \image latex vpMeEllipse2.ps  width=10cm
-
-  The example below available in tutorial-me-ellipse-tracker.cpp and described
-  in \ref tutorial-tracking-me, section \ref tracking_me_ellipse shows how to
-  use this class.
-
-  \include tutorial-me-ellipse-tracker.cpp
-
-  The code below shows how to use this class.
-\code
-#include <visp3/core/vpConfig.h>
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImagePoint.h>
-#include <visp3/mbt/vpMbtMeEllipse.h>
-
-int main()
-{
-  vpImage<unsigned char> I;
-
-  // I is the image containing the ellipse to track
-
-  // Set the moving-edges tracker parameters
-  vpMe me;
-  me.setRange(25);
-  me.setPointsToTrack(20);
-  me.setThreshold(15000);
-  me.setSampleStep(10);
-
-  // Initialize the moving-edges ellipse tracker parameters
-  vpMbtMeEllipse ellipse;
-  ellipse.setMe(&me);
-
-  // Initialize the tracking. You have to click on five different points belonging to the ellipse.
-  ellipse.initTracking(I);
-
-  while ( 1 )
-  {
-    // ... Here the code to read or grab the next image.
-
-    // Track the ellipse.
-    ellipse.track(I);
-  }
-  return 0;
-}
-\endcode
-
-  \note It is possible to display the ellipse as an overlay. For that you
-  must use the display function of the class vpMbtMeEllipse.
+  \brief Class that tracks an ellipse moving edges with specific capabilities for
+  model-based tracking.
 */
-
-class VISP_EXPORT vpMbtMeEllipse : public vpMeTracker
+class VISP_EXPORT vpMbtMeEllipse : public vpMeEllipse
 {
 public:
+  using vpMeTracker::display;
+
   vpMbtMeEllipse();
-  vpMbtMeEllipse(const vpMbtMeEllipse &meellipse);
+  vpMbtMeEllipse(const vpMbtMeEllipse &me_ellipse);
   virtual ~vpMbtMeEllipse();
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
                               const vpMatrix &SobelX, const vpMatrix &SobelY, bool display,
                               unsigned int length, unsigned int thickness);
 
-  void display(const vpImage<unsigned char> &I, vpColor col);
-  using vpMeTracker::display;
-
-  int getExpectedDensity() { return (int)expecteddensity; }
-
-  /*!
-    Gets second order centered moment of the ellipse normalized by its area \f$ n_{11} = \mu_{11} / a \f$.
-
-    \return Value of \f$ n_{11} \f$.
-  */
-  inline double get_n11() const { return n11; }
-
-  /*!
-    Gets second order centered moment of the ellipse normalized by its area \f$ n_{02} = \mu_{02} / a \f$.
-
-    \return Value of \f$ n_{02} \f$.
-  */
-  inline double get_n02() const { return n02; }
-
-  /*!
-    Gets second order centered moment of the ellipse normalized by its area \f$ n_{20} = \mu_{20} / a \f$.
-
-    \return Value of \f$ n_{20} \f$.
-  */
-  inline double get_n20() const { return n20; }
-
-#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
-  /*!
-    @name Deprecated functions
-  */
-  //@{
-  /*!
-    \deprecated You should rather use get_n11().
-    This function is incorrectly named and is confusing since it
-    returns second order centered moments of the ellipse normalized
-    by its area that corresponds to \f$n_11 = mu_11/a\f$.
-  */
-  vp_deprecated inline double get_mu11() const { return n11; }
-
-  /*!
-    \deprecated You should rather use get_n02().
-    This function is incorrectly named and is confusing since it
-    returns second order centered moments of the ellipse normalized
-    by its area that corresponds to \f$n_02 = mu_02/a\f$.
-  */
-  vp_deprecated inline double get_mu02() const { return n02; }
-
-  /*!
-    \deprecated You should rather use get_n20().
-    This function is incorrectly named and is confusing since it
-    returns second order centered moments of the ellipse normalized
-    by its area that corresponds to \f$n_20 = mu_20/a\f$.
-  */
-  vp_deprecated inline double get_mu20() const { return n20; }
-  //@}
-  #endif // VISP_BUILD_DEPRECATED_FUNCTIONS
-
-  /*!
-    Gets the center of the ellipse.
-  */
-  inline vpImagePoint getCenter() const { return iPc; }
-
-  /*!
-    Gets the semiminor axis of the ellipse.
-  */
-  inline double getA() const { return a; }
-
-  /*!
-    Gets the semimajor axis of the ellipse.
-  */
-  inline double getB() const { return b; }
-
-  /*!
-    Gets the angle made by the major axis and the i axis of the image frame
-    \f$ (i,j) \f$
-  */
-  inline double getE() const { return e; }
-
-  /*!
-    Gets the parameters a, b, e of the ellipse.
-  */
-  void getEquationParam(double &A, double &B, double &E)
-  {
-    A = a;
-    B = b;
-    E = e;
-  }
-
-  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double n20_p, double n11_p,
-                    double n02_p, bool doNotTrack);
+  void initTracking(const vpImage<unsigned char> &I,
+                    const vpImagePoint &ic, double n20_p, double n11_p, double n02_p, bool doNotTrack,
+                    vpImagePoint *pt1 = NULL, const vpImagePoint *pt2 = NULL);
 
   void track(const vpImage<unsigned char> &I);
-
-  void updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &ic, double n20_p, double n11_p,
-                        double n02_p);
-
-protected:
-  //! The coordinates of the ellipse center.
-  vpImagePoint iPc;
-  //! \f$ a \f$ is the semiminor axis of the ellipse.
-  double a;
-  //! \f$ b \f$ is the semimajor axis of the ellipse.
-  double b;
-  //! \f$ e \f$ is the angle made by the major axis and the i axis of the
-  //! image frame \f$ (i,j) \f$.
-  double e;
-
-protected:
-  //! Value of cos(e).
-  double ce;
-  //! Value of sin(e).
-  double se;
-
-  //! Second order centered moments of the ellipse normalized by its area (i.e., such that
-  //! \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area).
-  double n11, n20, n02;
-  //! Threshold for the robust least square.
-  double thresholdWeight;
-  //! Expected number of me to track along the ellipse.
-  double expecteddensity;
+  void updateParameters(const vpImage<unsigned char> &I,
+                        const vpImagePoint &center_p, double n20_p, double n11_p, double n02_p);
 
 private:
-  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack=false);
   void reSample(const vpImage<unsigned char> &I);
-  void updateTheta();
+  void sample(const vpImage<unsigned char> &I, bool doNotTrack=false);
   void suppressPoints();
 };
 

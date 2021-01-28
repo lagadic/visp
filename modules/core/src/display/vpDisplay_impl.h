@@ -193,75 +193,99 @@ void vp_display_display_dot_line(const vpImage<Type> &I, int i1, int j1, int i2,
 
 template <class Type>
 void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &center, const double &coef1,
-                                const double &coef2, const double &coef3, const double &theta1, const double &theta2,
-                                bool use_centered_moments, const vpColor &color, unsigned int thickness)
+                                const double &coef2, const double &coef3, const double &smallalpha, const double &highalpha,
+                                bool use_normalized_centered_moments, const vpColor &color, unsigned int thickness, bool display_center, bool display_arc)
 {
   if (I.display != NULL) {
-    double j1, i1;
-    vpImagePoint iP11;
-    double j2, i2;
-    vpImagePoint iP22;
-    j1 = j2 = i1 = i2 = 0;
     double a = 0., b = 0., e = 0.;
 
-    double n20_p = coef1;
-    double n11_p = coef2;
-    double n02_p = coef3;
-
-    if (use_centered_moments) {
+    if (use_normalized_centered_moments) {
       // Chaumette, Image Moments: A General and Useful Set of Features for Visual Servoing, TRO 2004, eq 24
-      double val_p = sqrt(vpMath::sqr(n20_p - n02_p) + 4 * vpMath::sqr(n11_p));
-      a = sqrt(2 * (n20_p + n02_p + val_p));  // major axis
-      b = sqrt(2 * (n20_p + n02_p - val_p));  // minor axis
+      // Similar code as in function vpMeEllipse::computeAbeFromNij() in vpMeEllipse.cpp
+      double n20_p = coef1;
+      double n11_p = coef2;
+      double n02_p = coef3;
+      double num = n20_p - n02_p;
+      double d = num * num + 4.0 * n11_p * n11_p;   // always >= 0
 
-      double s = n02_p - n20_p + val_p;
-      double c = 2 * n11_p;
-      e = atan2(s,c);    // orientation
+      if (d <= std::numeric_limits<double>::epsilon()) { // circle
+        e = 0.0;  // case n20 = n02 and n11 = 0 : circle, e undefined
+        a = b = 2.0*sqrt(n20_p);
+      }
+      else { // real ellipse
+        e = atan2(2.0*n11_p, num)/2.0;  // e in [-Pi/2 ; Pi/2]
+        d = sqrt(d); // d in sqrt always >= 0
+        num = n20_p + n02_p;
+        a = sqrt(2.0*(num + d)); // term in sqrt always > 0
+        b = sqrt(2.0*(num - d)); // term in sqrt always > 0
+      }
     } else {
       a = coef1;
       b = coef2;
       e = coef3;
     }
 
+    // For all what follows similar code as in function vpMeEllipse::display() in vpMeEllipse.cpp
+
     // Approximation of the circumference of an ellipse:
     // [Ramanujan, S., "Modular Equations and Approximations to ,"
     // Quart. J. Pure. Appl. Math., vol. 45 (1913-1914), pp. 350-372]
+    double angle = highalpha - smallalpha;
+
+    // Disable arc drawing when the ellipse is complete
+    if (std::fabs(angle - 2* M_PI) <= std::numeric_limits<double>::epsilon()) {
+      display_arc = false;
+    }
+
     double t = (a - b) / (a + b);
-    double circumference = M_PI * (a + b) * (1 + 3 * vpMath::sqr(t) / (10 + sqrt(4 - 3 * vpMath::sqr(t))));
-
-    int nbpoints = (int)(floor(circumference / 5));
-    if (nbpoints < 10)
+    t *= t;  // t^2
+    double circumference = (angle/2.0) * (a + b) * (1.0 + 3.0 * t / (10.0 + sqrt(4.0 - 3.0 * t)));
+    unsigned int nbpoints = (unsigned int)(floor(circumference / 20));
+    if (nbpoints < 10) {
       nbpoints = 10;
-    double incr = 2 * M_PI / nbpoints; // angle increment
+    }
+    double incr = angle / nbpoints; // angle increment
 
-    double smallalpha = theta1;
-    double highalpha = theta2;
-    double ce = cos(e);
-    double se = sin(e);
+    double u0 = center.get_u();
+    double v0 = center.get_v();
+    double cose = cos(e);
+    double sine = sin(e);
 
-    double k = smallalpha;
-    j1 = a * cos(k); // equation of an ellipse
-    i1 = b * sin(k); // equation of an ellipse
-
+    double u = a * cos(smallalpha); // equation of an ellipse
+    double v = b * sin(smallalpha); // equation of an ellipse
+    angle = smallalpha;
     // (i1,j1) are the coordinates on the origin centered ellipse ;
     // a rotation by "e" and a translation by (xci,jc) are done
     // to get the coordinates of the point on the shifted ellipse
-    iP11.set_j(center.get_j() + ce * j1 - se * i1);
-    iP11.set_i(center.get_i() + se * j1 + ce * i1);
+    vpImagePoint iP11;
+    iP11.set_uv(u0 + cose * u - sine * v, v0 + sine * u + cose * v);
 
-    while (k + incr < highalpha + incr) {
-      j2 = a * cos(k + incr); // equation of an ellipse
-      i2 = b * sin(k + incr); // equation of an ellipse
+    if (display_arc) {
+      // Display the line from the center to the first extremity for an arc
+      (I.display)->displayLine(center, iP11, color, thickness);
+    }
 
+    // display the arc of the ellipse by succesive small segments
+    for (unsigned int i = 0; i < nbpoints; i++) {
+      angle += incr;
+      // Two concentric circles method used
+      u = a * cos(angle);
+      v = b * sin(angle);
       // to get the coordinates of the point on the shifted ellipse
-      iP22.set_j(center.get_j() + ce * j2 - se * i2);
-      iP22.set_i(center.get_i() + se * j2 + ce * i2);
+      vpImagePoint iP22;
+      iP22.set_uv(u0 + cose * u - sine * v, v0 + sine * u + cose * v);
 
       (I.display)->displayLine(iP11, iP22, color, thickness);
 
       iP11 = iP22;
-
-      k += incr;
+    }
+    if (display_center) {
+      // display a cross at the center of the ellipse
+      (I.display)->displayCross(center, 20, vpColor::red, thickness);
+    }
+    if (display_arc) {
+      // Display the line from the center to the second extremity for an arc
+      (I.display)->displayLine(center, iP11, color, thickness);
     }
   }
 }

@@ -135,12 +135,12 @@ public:
   static void create(vpFeatureEllipse &s, const vpCircle &c);
   static void create(vpFeatureEllipse &s, const vpSphere &sphere);
 #ifdef VISP_HAVE_MODULE_BLOB
-  static void create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpDot &d);
-  static void create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpDot2 &d);
+  static void create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpDot &blob);
+  static void create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpDot2 &blob);
 #endif
 
 #ifdef VISP_HAVE_MODULE_ME
-  static void create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpMeEllipse &d);
+  static void create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpMeEllipse &ellipse);
 #endif
 
   // To keep compat with previous releases, we set cartesian coordinates as default initialising select var to selectX() or selectY()
