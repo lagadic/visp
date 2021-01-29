@@ -268,8 +268,6 @@ void vpMeLine::leastSquare()
   vpColVector x(2), x_1(2);
   x_1 = 0;
 
-  unsigned int i;
-
   vpRobust r;
   r.setMinMedianAbsoluteDeviation(2);
   vpMatrix D(numberOfSignal(), numberOfSignal());
@@ -319,7 +317,7 @@ void vpMeLine::leastSquare()
       r.MEstimator(vpRobust::TUKEY, residu, w);
 
       k = 0;
-      for (i = 0; i < nos_1; i++) {
+      for (unsigned int i = 0; i < nos_1; i++) {
         D[k][k] = w[k];
         k++;
       }
@@ -377,7 +375,7 @@ void vpMeLine::leastSquare()
       r.MEstimator(vpRobust::TUKEY, residu, w);
 
       k = 0;
-      for (i = 0; i < nos_1; i++) {
+      for (unsigned int i = 0; i < nos_1; i++) {
         D[k][k] = w[k];
         k++;
       }
