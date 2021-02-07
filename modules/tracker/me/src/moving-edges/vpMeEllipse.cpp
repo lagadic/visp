@@ -112,7 +112,6 @@ vpMeEllipse::~vpMeEllipse()
   tangent to the curve and the u axis. This angle is used for tracking the
   vpMeSite.
 
-  \param theta : The computed value.
   \param iP : The point belonging to the ellipse where the angle is computed.
 */
 double vpMeEllipse::computeTheta(const vpImagePoint &iP) const
@@ -128,8 +127,7 @@ double vpMeEllipse::computeTheta(const vpImagePoint &iP) const
   tangent to the curve and the u axis. This angle is used for tracking the
   vpMeSite.
 
-  \param theta : The computed value.
-  \param iP : The point belonging to the ellipse where the angle is computed.
+  \param u,v : The point belonging to the ellipse where the angle is computed.
 */
 double vpMeEllipse::computeTheta(double u, double v) const
 {

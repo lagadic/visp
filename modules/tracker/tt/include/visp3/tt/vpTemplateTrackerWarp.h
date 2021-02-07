@@ -188,7 +188,7 @@ public:
 
   /*!
    * Warp a point X1 with the inverse transformation \f$M\f$.
-   * \f[ X_2 = {\left( {^1}M_2 \right) }^{⁻1} \; X_1\f]
+   * \f[ X_2 = {\left( {^1}M_2 \right) }^{-1} \; X_1\f]
    * \param X1 : Vector corresponding to the coordinates (u,v) of the point to warp.
    * \param X2 : Vector corresponding to the coordinates (u,v) of the warped point.
    * \param p : Parameters corresponding to the warping RT model \f${^1}M_2\f$.
