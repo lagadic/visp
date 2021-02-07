@@ -37,7 +37,7 @@ int main(int argc, const char **argv)
     } else if (std::string(argv[i]) == "--slope" && i + 1 < argc) {
       slope = (float)atof(argv[i + 1]);
     } else if (std::string(argv[i]) == "--sigma" && i + 1 < argc) {
-      sigma = (unsigned int)atoi(argv[i + 1]);
+      sigma = (float)atof(argv[i + 1]);
     } else if (std::string(argv[i]) == "--weight" && i + 1 < argc) {
       weight = atof(argv[i + 1]);
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {

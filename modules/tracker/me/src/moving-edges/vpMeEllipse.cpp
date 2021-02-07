@@ -587,7 +587,7 @@ void vpMeEllipse::leastSquare(const vpImage<unsigned char> &I, const std::vector
 
   double um = I.getWidth() / 2.;
   double vm = I.getHeight() / 2.;
-  unsigned int n = iP.size();
+  unsigned int n = static_cast<unsigned int>(iP.size());
 
   vpMatrix A(n, 6);
 
