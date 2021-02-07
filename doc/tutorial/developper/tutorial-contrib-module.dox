@@ -199,8 +199,10 @@ $ cmake-gui ../visp
 \section contrib_advanced Advanced contrib module
 
 We provide here after the link to existing contrib modules that use advanced functionalities:
-- https://github.com/lagadic/visp_contrib : contains a module name <b>imgproc</b> that implements various image processing algorithms. In this module you will also find the way to introduce tests
-- https://github.com/lagadic/ustk : a ViSP extension for ultrasound images called UsTK for Ultrasound Toolkit. This extension contains multiple modules. The \c modules/CMakeLists.txt file allows here to detect optional 3rd parties. It allows also to generate a separate doxygen documentation that contains only the classes part or UsTK. Tutorials and tests are also considered in UsTK. 
+- https://github.com/lagadic/visp_contrib contains some toy examples (their content is already in ViSP) with:
+  - a module named <b>flycapture</b> to see how to add a wrapper over Flycapture SDK
+  - an other module named <b>imgproc_contrib</b> to see how to implement various image processing algorithms. In this module you will also find the way to introduce tests.
+- https://github.com/lagadic/ustk : a ViSP extension for ultrasound images called UsTK for Ultrasound Toolkit. This extension contains multiple modules. The `modules/CMakeLists.txt` file allows here to detect optional 3rd parties. It allows also to generate a separate doxygen documentation that contains only the classes part or UsTK. Tutorials and tests are also considered in UsTK.
 
 \section contrib_next Next tutorial
 
