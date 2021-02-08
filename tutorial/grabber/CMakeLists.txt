@@ -30,7 +30,7 @@ if(VISP_HAVE_FLYCAPTURE)
   visp_set_source_file_compile_flag(tutorial-grabber-flycapture.cpp -Wno-unknown-pragmas -Wno-ignored-qualifiers)
 endif()
 if(VISP_HAVE_PYLON)
-  visp_set_source_file_compile_flag(tutorial-grabber-basler-pylon.cpp -Wno-unknown-pragmas -Wno-overloaded-virtual -Wno-unused-parameter)
+  visp_set_source_file_compile_flag(tutorial-grabber-basler-pylon.cpp -Wno-unknown-pragmas -Wno-overloaded-virtual -Wno-unused-parameter -Wno-unused-variable)
 endif()
 
 if(VISP_HAVE_REALSENSE)
