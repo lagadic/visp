@@ -79,4 +79,6 @@ if(USE_PCL)
 
   mark_as_advanced(USB_10_INCLUDE_DIR)
   mark_as_advanced(USB_10_LIBRARY)
+
+  mark_as_advanced(Boost_THREAD_LIBRARY_RELEASE)  # Requested on Ubuntu 20.04
 endif()
