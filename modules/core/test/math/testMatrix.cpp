@@ -52,6 +52,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include <iterator> // for std::back_inserter
+
 namespace
 {
 bool test(const std::string &s, const vpMatrix &M, const std::vector<double> &bench)
