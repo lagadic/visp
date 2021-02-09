@@ -24,28 +24,27 @@ These optimized operations are based on the use of [BLAS](https://en.wikipedia.o
 
 - [MKL](https://software.intel.com/en-us/mkl) for Intel Math Kernel Library. It provides an optimized BLAS and an optimized subset of LAPACK. 
   - To install MKL on Ubuntu proceed with:
-    - [Download](https://software.intel.com/en-us/mkl/choose-download/linux) directly from Intel the installer for linux like `l_mkl_2020.0.166.tgz` or more recent
-    - Extract the installer from archive
+    - [Download oneAPI Base Toolkit](https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl.html) where `oneMKL` is included by selecting "Operating System: Linux", "Distribution: Web & Local" and "Installer Type: Local". At the time this tutorial was written we downloaded  `l_BaseKit_p_2021.1.0.2659_offline.sh`.
+    - Run the installer as `sudo`.
       \verbatim
-$ cd ~/Download
-$ tar xvzf l_mkl_2020.0.166.tgz
+$ sudo sh l_BaseKit_p_2021.1.0.2659_offline.sh
       \endverbatim
-    - Run the installer as `sudo`. By default installation location is set to `/opt/intel`.
+    - Customize your installation to change Installation Location: `/opt/intel/oneapi`
+    - Now you have to [set environment variables](https://software.intel.com/content/www/us/en/develop/documentation/get-started-with-intel-oneapi-base-linux/top/before-you-begin.html#before-you-begin_GUID-338EB548-7DB6-410E-B4BF-E65C017389C4) to be able to use MKL. To this end to make these environment variables permanent, source `setvars.sh` script in bashrc file running:
       \verbatim
-$ cd l_mkl_2020.0.166
-$ sudo ./install_GUI.sh
-      \endverbatim
-    - Now you have to [set environment variables](https://software.intel.com/en-us/mkl-linux-developer-guide-scripts-to-set-environment-variables) to be able to use MKL. To this end to make these environment variables permanent, source `mklvars.sh` script in bashrc file running:
-      \verbatim
-$ echo "source /opt/intel/compilers_and_libraries_2020.0.166/linux/mkl/bin/mklvars.sh intel64" >> ~/.bashrc
+$ echo "source /opt/intel/oneapi/setvars.sh" >> ~/.bashrc
 $ source ~/.bashrc
 $ env | grep MKL
-MKLROOT=/opt/intel/compilers_and_libraries_2020.0.166/linux/mkl
+MKLROOT=/opt/intel/oneapi/mkl/latest
       \endverbatim
 - [OpenBLAS](https://www.openblas.net/) an optimized BLAS library. It provides only an optimized BLAS and uses LAPACK reference implementation.
   - To install openBLAS on Ubuntu proceed with:
     \verbatim
 $ sudo apt install libopenblas-dev
+    \endverbatim
+  - To install openBLAS on OSX proceed with:
+    \verbatim
+$ brew install openblas
     \endverbatim
 - [Atlas](http://math-atlas.sourceforge.net/) for Automatically Tuned Linear Algebra Software. It provides an optimized BLAS and an optimized subset of LAPACK. 
   - To install Atlas on Ubuntu proceed with:
@@ -56,6 +55,10 @@ $ sudo apt install libatlas-base-dev
   - To install GSL on Ubuntu proceed with:
     \verbatim
 $ sudo apt install libgsl-dev
+    \endverbatim
+  - To install GSL on OSX proceed with:
+    \verbatim
+$ brew install gsl
     \endverbatim
 - [Netlib](https://www.netlib.org/) a collection of mathematical software. It provides a reference implementation for BLAS and LAPACK. 
   - To install Netlib on Ubuntu proceed with:
