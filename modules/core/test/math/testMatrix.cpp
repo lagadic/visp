@@ -110,7 +110,6 @@ vpMatrix generateRandomMatrix(unsigned int rows, unsigned int cols, double min, 
   return M;
 }
 
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
 std::vector<double> computeHadamard(const std::vector<double>& v1, const std::vector<double>& v2)
 {
   std::vector<double> result;
@@ -118,7 +117,6 @@ std::vector<double> computeHadamard(const std::vector<double>& v1, const std::ve
                  std::back_inserter(result), std::multiplies<double>());
   return result;
 }
-#endif
 } // namespace
 
 int main(int argc, char *argv[])
@@ -669,7 +667,6 @@ int main(int argc, char *argv[])
 #endif
 
     {
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
       std::cout << "\n------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix::hadamard()" << std::endl;
       std::cout << "------------------------" << std::endl;
@@ -693,7 +690,6 @@ int main(int argc, char *argv[])
         std::cerr << "Error with Hadamard product" << std::endl;
         return EXIT_FAILURE;
       }
-#endif
     }
 
     {
