@@ -46,9 +46,6 @@
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 
-#include <gdk/gdkrgb.h>
-#include <gtk/gtk.h>
-
 /*!
   \file vpDisplayGTK.h
   \brief Define the GTK console to display images.
@@ -61,7 +58,7 @@
   \ingroup group_gui_display
 
   \brief The vpDisplayGTK allows to display image using the GTK 3rd party
-library. Thus to enable this class GTK should be installed. Installation
+  library. Thus to enable this class GTK should be installed. Installation
   instructions are provided here https://visp.inria.fr/3rd_gtk.
 
   The example below shows how to display an image with this video device.
@@ -137,19 +134,6 @@ int main()
 class VISP_EXPORT vpDisplayGTK : public vpDisplay
 {
 private:
-  //! true if GTK display is ready to use
-  GtkWidget *widget;
-  GdkPixmap *m_background;
-  GdkGC *m_gc;
-  GdkColor blue, red, yellow, green, cyan, orange, white, black, gdkcolor, lightBlue, darkBlue, lightRed, darkRed,
-      lightGreen, darkGreen, purple, lightGray, gray, darkGray;
-  GdkColormap *colormap;
-
-  GdkFont *font;
-  guchar *vectgtk;
-  GdkColor **col;
-  int ncol, nrow;
-
   typedef enum {
     id_black = 0,
     id_white,
@@ -174,12 +158,12 @@ private:
 
 public:
   vpDisplayGTK();
-  vpDisplayGTK(int winx, int winy, const std::string &title = "");
+  vpDisplayGTK(int win_x, int win_y, const std::string &win_title = "");
   vpDisplayGTK(vpImage<unsigned char> &I, vpScaleType type);
-  vpDisplayGTK(vpImage<unsigned char> &I, int winx = -1, int winy = -1, const std::string &title = "",
+  vpDisplayGTK(vpImage<unsigned char> &I, int win_x = -1, int win_y = -1, const std::string &win_title = "",
                vpScaleType type = SCALE_DEFAULT);
   vpDisplayGTK(vpImage<vpRGBa> &I, vpScaleType type);
-  vpDisplayGTK(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "",
+  vpDisplayGTK(vpImage<vpRGBa> &I, int win_x = -1, int win_y = -1, const std::string &win_title = "",
                vpScaleType type = SCALE_DEFAULT);
 
   virtual ~vpDisplayGTK();
@@ -187,17 +171,17 @@ public:
   void getImage(vpImage<vpRGBa> &I);
   unsigned int getScreenDepth();
   unsigned int getScreenHeight();
-  void getScreenSize(unsigned int &width, unsigned int &height);
+  void getScreenSize(unsigned int &screen_width, unsigned int &screen_height);
   unsigned int getScreenWidth();
 
-  void init(vpImage<unsigned char> &I, int winx = -1, int winy = -1, const std::string &title = "");
-  void init(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "");
-  void init(unsigned int width, unsigned int height, int winx = -1, int winy = -1, const std::string &title = "");
+  void init(vpImage<unsigned char> &I, int win_x = -1, int win_y = -1, const std::string &win_title = "");
+  void init(vpImage<vpRGBa> &I, int win_x = -1, int win_y = -1, const std::string &win_title = "");
+  void init(unsigned int win_width, unsigned int win_height, int win_x = -1, int win_y = -1, const std::string &win_title = "");
 
 protected:
   void setFont(const std::string &fontname);
-  void setTitle(const std::string &title);
-  void setWindowPosition(int winx, int winy);
+  void setTitle(const std::string &win_title);
+  void setWindowPosition(int win_x, int win_y);
 
   void clearDisplay(const vpColor &color = vpColor::white);
 
@@ -242,13 +226,12 @@ protected:
   bool getKeyboardEvent(std::string &key, bool blocking = true);
   bool getPointerMotionEvent(vpImagePoint &ip);
   bool getPointerPosition(vpImagePoint &ip);
+
+private:
+  // Implementation
+  class Impl;
+  Impl *m_impl;
 };
 
 #endif
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

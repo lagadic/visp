@@ -43,9 +43,9 @@
 #
 #############################################################################
 
-IF(UNIX OR WIN32)
+if(UNIX OR WIN32)
 
-  FIND_PATH( GTK2_gtk_INCLUDE_PATH gtk/gtk.h
+  find_path( GTK2_gtk_INCLUDE_PATH gtk/gtk.h
     $ENV{GTK2_DIR}/include/gtk-2.0
     $ENV{GTK2_HOME}/include/gtk-2.0
     /usr/include/gtk-2.0
@@ -60,7 +60,7 @@ IF(UNIX OR WIN32)
   # for both.
   #  - Atanas Georgiev <atanas@cs.columbia.edu>
 
-  FIND_PATH( GTK2_glibconfig_INCLUDE_PATH glibconfig.h
+  find_path( GTK2_glibconfig_INCLUDE_PATH glibconfig.h
     $ENV{GTK2_DIR}/lib/glib-2.0/include
     $ENV{GTK2_HOME}/lib/glib-2.0/include
     /usr/lib/glib-2.0/include
@@ -72,7 +72,7 @@ IF(UNIX OR WIN32)
     /sw/lib/glib-2.0/include
   )
 
-  FIND_PATH( GTK2_glib_INCLUDE_PATH glib.h
+  find_path( GTK2_glib_INCLUDE_PATH glib.h
     $ENV{GTK2_DIR}/include/glib-2.0
     $ENV{GTK2_HOME}/include/glib-2.0
     /usr/include/glib-2.0
@@ -81,7 +81,7 @@ IF(UNIX OR WIN32)
     /sw/include/glib-2.0
   )
 
-  FIND_PATH( GTK2_pango_INCLUDE_PATH pango/pango.h
+  find_path( GTK2_pango_INCLUDE_PATH pango/pango.h
     $ENV{GTK2_DIR}/include/pango-1.0
     $ENV{GTK2_HOME}/include/pango-1.0
     /usr/include/pango-1.0
@@ -90,7 +90,16 @@ IF(UNIX OR WIN32)
     /sw/include/pango-1.0
   )
 
-  FIND_PATH( GTK2_cairo_INCLUDE_PATH cairo.h
+  find_path( GTK2_harfbuzz_INCLUDE_PATH hb.h
+    $ENV{GTK2_DIR}/include/harfbuzz
+    $ENV{GTK2_HOME}/include/harfbuzz
+    /usr/include/harfbuzz
+    /opt/gnome/include/harfbuzz
+    C:/GTK/include/harfbuzz
+    /sw/include/harfbuzz
+  )
+
+  find_path( GTK2_cairo_INCLUDE_PATH cairo.h
     $ENV{GTK2_DIR}/include/cairo
     $ENV{GTK2_HOME}/include/cairo
     /usr/include/cairo
@@ -99,7 +108,7 @@ IF(UNIX OR WIN32)
     /sw/include/cairo
   )
 
-  FIND_PATH( GTK2_gdkconfig_INCLUDE_PATH gdkconfig.h
+  find_path( GTK2_gdkconfig_INCLUDE_PATH gdkconfig.h
     $ENV{GTK2_DIR}/lib/gtk-2.0/include
     $ENV{GTK2_HOME}/lib/gtk-2.0/include
     /usr/lib/gtk-2.0/include
@@ -111,7 +120,7 @@ IF(UNIX OR WIN32)
     /usr/lib/x86_64-linux-gnu/gtk-2.0/include
   )
 
-  FIND_PATH( GTK2_gdkpixbuf_INCLUDE_PATH gdk-pixbuf/gdk-pixbuf.h
+  find_path( GTK2_gdkpixbuf_INCLUDE_PATH gdk-pixbuf/gdk-pixbuf.h
     $ENV{GTK2_DIR}/gdk-pixbuf-2.0
     $ENV{GTK2_HOME}/gdk-pixbuf-2.0
     /usr/include/gdk-pixbuf-2.0
@@ -120,9 +129,7 @@ IF(UNIX OR WIN32)
     /sw/include/gtk-2.0
   )
 
-  #MESSAGE("GTK2_gdkpixbuf_INCLUDE_PATH: ${GTK2_gdkpixbuf_INCLUDE_PATH}")
-
-  FIND_PATH( GTK2_atk_INCLUDE_PATH atk/atk.h
+  find_path( GTK2_atk_INCLUDE_PATH atk/atk.h
     $ENV{GTK2_DIR}/include/atk-1.0
     $ENV{GTK2_HOME}/include/atk-1.0
     /usr/include/atk-1.0
@@ -131,7 +138,7 @@ IF(UNIX OR WIN32)
     /sw/include/atk-1.0
   )
 
-  FIND_LIBRARY( GTK2_gtk_LIBRARY
+  find_library( GTK2_gtk_LIBRARY
     NAMES  gtk-x11-2.0 gtk-win32-2.0
     PATHS $ENV{GTK2_DIR}/lib
     PATHS $ENV{GTK2_HOME}/lib
@@ -144,7 +151,7 @@ IF(UNIX OR WIN32)
 	  /sw/lib
   )
 
-  FIND_LIBRARY( GTK2_gdk_LIBRARY
+  find_library( GTK2_gdk_LIBRARY
     NAMES  gdk-x11-2.0 gdk-win32-2.0
     PATHS  $ENV{GTK2_DIR}/lib
     PATHS  $ENV{GTK2_HOME}/lib
@@ -157,7 +164,7 @@ IF(UNIX OR WIN32)
 	   /sw/lib
   )
 
-  FIND_LIBRARY( GTK2_gmodule_LIBRARY
+  find_library( GTK2_gmodule_LIBRARY
     NAMES  gmodule-2.0
     PATHS  $ENV{GTK2_DIR}/lib
     PATHS  $ENV{GTK2_HOME}/lib
@@ -170,7 +177,7 @@ IF(UNIX OR WIN32)
 	   /sw/lib
   )
 
-  FIND_LIBRARY( GTK2_glib_LIBRARY
+  find_library( GTK2_glib_LIBRARY
     NAMES  glib-2.0
     PATHS  $ENV{GTK2_DIR}/lib
     PATHS  $ENV{GTK2_HOME}/lib
@@ -183,7 +190,7 @@ IF(UNIX OR WIN32)
 	   /sw/lib
   )
 
-  FIND_LIBRARY( GTK2_gthread_LIBRARY
+  find_library( GTK2_gthread_LIBRARY
     NAMES  gthread-2.0
     PATHS  $ENV{GTK2_DIR}/lib
     PATHS  $ENV{GTK2_HOME}/lib
@@ -196,7 +203,7 @@ IF(UNIX OR WIN32)
 	   /sw/lib
   )
 
-  FIND_LIBRARY( GTK2_gobject_LIBRARY
+  find_library( GTK2_gobject_LIBRARY
     NAMES  gobject-2.0
     PATHS  $ENV{GTK2_DIR}/lib
     PATHS  $ENV{GTK2_HOME}/lib
@@ -206,75 +213,78 @@ IF(UNIX OR WIN32)
 	   /sw/lib
   )
 
-  IF(GTK2_gtk_INCLUDE_PATH)
-  IF(GTK2_glib_INCLUDE_PATH)
-  IF(GTK2_glibconfig_INCLUDE_PATH)
-  IF(GTK2_gtk_LIBRARY)
-  IF(GTK2_glib_LIBRARY)
-  IF(GTK2_pango_INCLUDE_PATH)
-  IF(GTK2_gdkconfig_INCLUDE_PATH)
-    IF(GTK2_atk_INCLUDE_PATH)
-    # Assume that if gtk and glib were found, the other
-    # supporting libraries have also been found.
+  if(GTK2_gtk_INCLUDE_PATH)
+  if(GTK2_glib_INCLUDE_PATH)
+  if(GTK2_glibconfig_INCLUDE_PATH)
+  if(GTK2_gtk_LIBRARY)
+  if(GTK2_glib_LIBRARY)
+  if(GTK2_pango_INCLUDE_PATH)
+  if(GTK2_gdkconfig_INCLUDE_PATH)
+    if(GTK2_atk_INCLUDE_PATH)
+      # Assume that if gtk and glib were found, the other
+      # supporting libraries have also been found.
 
-    SET( GTK2_FOUND "YES" )
-    SET( GTK2_INCLUDE_DIRS ${GTK2_gtk_INCLUDE_PATH}
-                           ${GTK2_glib_INCLUDE_PATH} 
-                           ${GTK2_glibconfig_INCLUDE_PATH}
-			   ${GTK2_pango_INCLUDE_PATH}
-			   ${GTK2_atk_INCLUDE_PATH}
-                           ${GTK2_gdkconfig_INCLUDE_PATH})
-    IF(GTK2_cairo_INCLUDE_PATH)
-      LIST(APPEND GTK2_INCLUDE_DIRS  ${GTK2_cairo_INCLUDE_PATH} )
-    ENDIF(GTK2_cairo_INCLUDE_PATH)
-    IF(GTK2_gdkpixbuf_INCLUDE_PATH)
-      LIST(APPEND GTK2_INCLUDE_DIRS  ${GTK2_gdkpixbuf_INCLUDE_PATH} )
-    ENDIF()
-    IF(GTK2_gdkconfig_INCLUDE_PATH)
-      LIST(APPEND GTK2_INCLUDE_DIRS  ${GTK2_gdkconfig_INCLUDE_PATH} )
-    ENDIF(GTK2_gdkconfig_INCLUDE_PATH)
+      set( GTK2_FOUND "YES" )
+      set( GTK2_INCLUDE_DIRS ${GTK2_gtk_INCLUDE_PATH}
+                             ${GTK2_glib_INCLUDE_PATH}
+                             ${GTK2_glibconfig_INCLUDE_PATH}
+                             ${GTK2_pango_INCLUDE_PATH}
+                             ${GTK2_atk_INCLUDE_PATH}
+                             ${GTK2_gdkconfig_INCLUDE_PATH})
+      if(GTK2_cairo_INCLUDE_PATH)
+        list(APPEND GTK2_INCLUDE_DIRS  ${GTK2_cairo_INCLUDE_PATH} )
+      endif()
+      if(GTK2_gdkpixbuf_INCLUDE_PATH)
+        LIST(APPEND GTK2_INCLUDE_DIRS  ${GTK2_gdkpixbuf_INCLUDE_PATH} )
+      endif()
+      if(GTK2_gdkconfig_INCLUDE_PATH)
+        LIST(APPEND GTK2_INCLUDE_DIRS  ${GTK2_gdkconfig_INCLUDE_PATH} )
+      endif()
+      if(GTK2_harfbuzz_INCLUDE_PATH)
+        LIST(APPEND GTK2_INCLUDE_DIRS  ${GTK2_harfbuzz_INCLUDE_PATH} )
+      endif()
    
-    SET( GTK2_LIBRARIES ${GTK2_gtk_LIBRARY}
-                        ${GTK2_gdk_LIBRARY}
-                        ${GTK2_glib_LIBRARY} 
-			${GTK2_gobject_LIBRARY})
+      set( GTK2_LIBRARIES ${GTK2_gtk_LIBRARY}
+                          ${GTK2_gdk_LIBRARY}
+                          ${GTK2_glib_LIBRARY}
+                          ${GTK2_gobject_LIBRARY})
 
-    get_filename_component(GTK2_LIB_DIR ${GTK2_gtk_LIBRARY} PATH)
-    vp_get_version_from_pkg("gtk+-2.0" "${GTK2_LIB_DIR}/pkgconfig" GTK2_VERSION)
+      get_filename_component(GTK2_LIB_DIR ${GTK2_gtk_LIBRARY} PATH)
+      vp_get_version_from_pkg("gtk+-2.0" "${GTK2_LIB_DIR}/pkgconfig" GTK2_VERSION)
 
-    IF(GTK2_gmodule_LIBRARY)
-      LIST(APPEND GTK2_LIBRARIES ${GTK2_gmodule_LIBRARY})
-    ENDIF(GTK2_gmodule_LIBRARY)
-    IF(GTK2_gthread_LIBRARY)
-      LIST(APPEND GTK2_LIBRARIES ${GTK2_gthread_LIBRARY})
-    ENDIF(GTK2_gthread_LIBRARY)
+      if(GTK2_gmodule_LIBRARY)
+        list(APPEND GTK2_LIBRARIES ${GTK2_gmodule_LIBRARY})
+      endif()
+      if(GTK2_gthread_LIBRARY)
+        list(APPEND GTK2_LIBRARIES ${GTK2_gthread_LIBRARY})
+      endif()
 
- ELSE(GTK2_atk_INCLUDE_PATH)
-   MESSAGE("Can not find atk")
- ENDIF(GTK2_atk_INCLUDE_PATH)
-  ELSE(GTK2_gdkconfig_INCLUDE_PATH)
-       #MESSAGE("Can not find gdkconfig include")
-  ENDIF(GTK2_gdkconfig_INCLUDE_PATH)
-  ELSE(GTK2_pango_INCLUDE_PATH)
-       #MESSAGE("Can not find pango includes")
-  ENDIF(GTK2_pango_INCLUDE_PATH)
-  ELSE(GTK2_glib_LIBRARY)
-       #MESSAGE("Can not find glib lib")
-  ENDIF(GTK2_glib_LIBRARY)
-  ELSE(GTK2_gtk_LIBRARY)
-       #MESSAGE("Can not find gtk lib")
-  ENDIF(GTK2_gtk_LIBRARY)
-  ELSE(GTK2_glibconfig_INCLUDE_PATH) 
-   #MESSAGE("Can not find glibconfig includes")
-  ENDIF(GTK2_glibconfig_INCLUDE_PATH) 
-  ELSE(GTK2_glib_INCLUDE_PATH) 
-   #MESSAGE("Can not find glib includes")
-  ENDIF(GTK2_glib_INCLUDE_PATH) 
-  ELSE(GTK2_gtk_INCLUDE_PATH)
-   #MESSAGE("Can not find gtk includes")
-  ENDIF(GTK2_gtk_INCLUDE_PATH)
+    else(GTK2_atk_INCLUDE_PATH)
+      message("Can not find atk")
+    endif()
+  else(GTK2_gdkconfig_INCLUDE_PATH)
+    #message("Can not find gdkconfig include")
+  endif(GTK2_gdkconfig_INCLUDE_PATH)
+  else(GTK2_pango_INCLUDE_PATH)
+    #message("Can not find pango includes")
+  endif(GTK2_pango_INCLUDE_PATH)
+  else(GTK2_glib_LIBRARY)
+    #message("Can not find glib lib")
+  endif(GTK2_glib_LIBRARY)
+  else(GTK2_gtk_LIBRARY)
+    #message("Can not find gtk lib")
+  endif(GTK2_gtk_LIBRARY)
+  else(GTK2_glibconfig_INCLUDE_PATH)
+    #message("Can not find glibconfig includes")
+  endif(GTK2_glibconfig_INCLUDE_PATH)
+  else(GTK2_glib_INCLUDE_PATH)
+    #message("Can not find glib includes")
+  endif(GTK2_glib_INCLUDE_PATH)
+  else(GTK2_gtk_INCLUDE_PATH)
+    #message("Can not find gtk includes")
+  endif(GTK2_gtk_INCLUDE_PATH)
 
-  MARK_AS_ADVANCED(
+  mark_as_advanced(
     GTK2_gdk_LIBRARY
     GTK2_glib_INCLUDE_PATH
     GTK2_glib_LIBRARY
@@ -288,11 +298,11 @@ IF(UNIX OR WIN32)
     GTK2_gobject_LIBRARY
     GTK2_pango_INCLUDE_PATH 
     GTK2_cairo_INCLUDE_PATH
+    GTK2_harfbuzz_INCLUDE_PATH
     GTK2_gdkpixbuf_INCLUDE_PATH
   )
 
-ELSE(UNIX OR WIN32)
-  MESSAGE("FindGTK2 is working on UNIX/LINUX and Windows, only!")
-
-ENDIF(UNIX OR WIN32)
+else(UNIX OR WIN32)
+  message("FindGTK2 is working on UNIX/LINUX and Windows, only!")
+endif()
 

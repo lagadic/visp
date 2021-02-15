@@ -60,8 +60,512 @@
 // debug / exception
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpDisplayException.h>
+#include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpMath.h>
+
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
+#include <gtk/gtk.h>
+#include <gdk/gdk.h>
+#include <gdk/gdkrgb.h>
+
+class vpDisplayGTK::Impl
+{
+public:
+  Impl()
+    : m_widget(NULL), m_background(NULL), m_gc(NULL), m_blue(), m_red(), m_yellow(), m_green(), m_cyan(), m_orange(),
+      m_white(), m_black(), m_gdkcolor(), m_lightBlue(), m_darkBlue(), m_lightRed(), m_darkRed(), m_lightGreen(), m_darkGreen(),
+      m_purple(), m_lightGray(), m_gray(), m_darkGray(), m_colormap(NULL), m_font(NULL), m_vectgtk(NULL), m_col(NULL)
+  {
+
+  }
+
+  ~Impl() {}
+
+  void init(unsigned int win_width, unsigned int win_height, int win_x, int win_y, const std::string &title)
+  {
+    gint width = static_cast<gint>(win_width);
+    gint height = static_cast<gint>(win_height);
+
+    /* Initialisation of the gdk et gdk_rgb library */
+    int *argc = NULL;
+    char **argv;
+
+    gtk_init(argc, &argv);
+
+    /* Create the window*/
+    m_widget = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+
+    gtk_widget_add_events(m_widget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK);
+
+    gtk_window_set_default_size(GTK_WINDOW(m_widget), width, height);
+
+    gtk_window_move(GTK_WINDOW(m_widget), win_x, win_y);
+
+    gtk_widget_show(m_widget);
+
+    gdk_rgb_init();
+
+    /* Create background pixmap */
+    m_background = gdk_pixmap_new(m_widget->window, width, height, -1);
+
+    /* Create graphic context */
+    m_gc = gdk_gc_new(m_widget->window);
+
+    /* get the colormap  */
+    m_colormap = gdk_window_get_colormap(m_widget->window);
+
+    m_col = new GdkColor *[vpColor::id_unknown]; // id_unknown = number of predefined colors
+
+    /* Create color */
+    gdk_color_parse("light blue", &m_lightBlue);
+    gdk_colormap_alloc_color(m_colormap, &m_lightBlue, FALSE, TRUE);
+    m_col[vpColor::id_lightBlue] = &m_lightBlue;
+
+    gdk_color_parse("blue", &m_blue);
+    gdk_colormap_alloc_color(m_colormap, &m_blue, FALSE, TRUE);
+    m_col[vpColor::id_blue] = &m_blue;
+
+    gdk_color_parse("dark blue", &m_darkBlue);
+    gdk_colormap_alloc_color(m_colormap, &m_darkBlue, FALSE, TRUE);
+    m_col[vpColor::id_darkBlue] = &m_darkBlue;
+
+    gdk_color_parse("#FF8C8C", &m_lightRed);
+    gdk_colormap_alloc_color(m_colormap, &m_lightRed, FALSE, TRUE);
+    m_col[vpColor::id_lightRed] = &m_lightRed;
+
+    gdk_color_parse("red", &m_red);
+    gdk_colormap_alloc_color(m_colormap, &m_red, FALSE, TRUE);
+    m_col[vpColor::id_red] = &m_red;
+
+    gdk_color_parse("dark red", &m_darkRed);
+    gdk_colormap_alloc_color(m_colormap, &m_darkRed, FALSE, TRUE);
+    m_col[vpColor::id_darkRed] = &m_darkRed;
+
+    gdk_color_parse("light green", &m_lightGreen);
+    gdk_colormap_alloc_color(m_colormap, &m_lightGreen, FALSE, TRUE);
+    m_col[vpColor::id_lightGreen] = &m_lightGreen;
+
+    gdk_color_parse("green", &m_green);
+    gdk_colormap_alloc_color(m_colormap, &m_green, FALSE, TRUE);
+    m_col[vpColor::id_green] = &m_green;
+
+    gdk_color_parse("dark green", &m_darkGreen);
+    gdk_colormap_alloc_color(m_colormap, &m_darkGreen, FALSE, TRUE);
+    m_col[vpColor::id_darkGreen] = &m_darkGreen;
+
+    gdk_color_parse("yellow", &m_yellow);
+    gdk_colormap_alloc_color(m_colormap, &m_yellow, FALSE, TRUE);
+    m_col[vpColor::id_yellow] = &m_yellow;
+
+    gdk_color_parse("cyan", &m_cyan);
+    gdk_colormap_alloc_color(m_colormap, &m_cyan, FALSE, TRUE);
+    m_col[vpColor::id_cyan] = &m_cyan;
+
+    gdk_color_parse("orange", &m_orange);
+    gdk_colormap_alloc_color(m_colormap, &m_orange, FALSE, TRUE);
+    m_col[vpColor::id_orange] = &m_orange;
+
+    gdk_color_parse("purple", &m_purple);
+    gdk_colormap_alloc_color(m_colormap, &m_purple, FALSE, TRUE);
+    m_col[vpColor::id_purple] = &m_purple;
+
+    gdk_color_parse("white", &m_white);
+    gdk_colormap_alloc_color(m_colormap, &m_white, FALSE, TRUE);
+    m_col[vpColor::id_white] = &m_white;
+
+    gdk_color_parse("black", &m_black);
+    gdk_colormap_alloc_color(m_colormap, &m_black, FALSE, TRUE);
+    m_col[vpColor::id_black] = &m_black;
+
+    gdk_color_parse("#C0C0C0", &m_lightGray);
+    gdk_colormap_alloc_color(m_colormap, &m_lightGray, FALSE, TRUE);
+    m_col[vpColor::id_lightGray] = &m_lightGray;
+
+    gdk_color_parse("#808080", &m_gray);
+    gdk_colormap_alloc_color(m_colormap, &m_gray, FALSE, TRUE);
+    m_col[vpColor::id_gray] = &m_gray;
+
+    gdk_color_parse("#404040", &m_darkGray);
+    gdk_colormap_alloc_color(m_colormap, &m_darkGray, FALSE, TRUE);
+    m_col[vpColor::id_darkGray] = &m_darkGray;
+
+    // Try to load a default font
+    m_font = gdk_font_load("-*-times-medium-r-normal-*-16-*-*-*-*-*-*-*");
+    if (m_font == NULL)
+      m_font = gdk_font_load("-*-courier-bold-r-normal-*-*-140-*-*-*-*-*-*");
+    if (m_font == NULL)
+      m_font = gdk_font_load("-*-courier 10 pitch-medium-r-normal-*-16-*-*-*-*-*-*-*");
+
+    if (!title.empty())
+      gdk_window_set_title(m_widget->window, title.c_str());
+  }
+
+  void setFont(const std::string &fontname)
+  {
+    m_font = gdk_font_load((const gchar *)fontname.c_str());
+  }
+
+  void setTitle(const std::string &title)
+  {
+    gdk_window_set_title(m_widget->window, title.c_str());
+  }
+
+  void setWindowPosition(int win_x, int win_y)
+  {
+    gtk_window_move(GTK_WINDOW(m_widget), win_x, win_y);
+  }
+
+  void displayImage(const vpImage<unsigned char> &I, unsigned int scale, gint width, gint height)
+  {
+    if (scale == 1) {
+      /* Copie de l'image dans le pixmap fond */
+      gdk_draw_gray_image(m_background, m_gc, 0, 0, width, height, GDK_RGB_DITHER_NONE, I.bitmap, width);
+    } else {
+      vpImage<unsigned char> sampled;
+      I.subsample(scale, scale, sampled);
+      gdk_draw_gray_image(m_background, m_gc, 0, 0, width, height, GDK_RGB_DITHER_NONE, sampled.bitmap, width);
+    }
+
+    /* Le pixmap background devient le fond de la zone de dessin */
+    gdk_window_set_back_pixmap(m_widget->window, m_background, FALSE);
+  }
+
+  void displayImage(const vpImage<vpRGBa> &I, unsigned int scale, gint width, gint height)
+  {
+    if (scale == 1) {
+      /* Copie de l'image dans le pixmap fond */
+      gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, width, height, GDK_RGB_DITHER_NONE, (unsigned char *)I.bitmap, 4 * width);
+    } else {
+      vpImage<vpRGBa> sampled;
+      I.subsample(scale, scale, sampled);
+      gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, width, height, GDK_RGB_DITHER_NONE, (unsigned char *)sampled.bitmap, 4 * width);
+    }
+
+    /* Le pixmap background devient le fond de la zone de dessin */
+    gdk_window_set_back_pixmap(m_widget->window, m_background, FALSE);
+  }
+
+  void displayImageROI(const vpImage<unsigned char> &I, gint j_min, gint i_min, gint width, gint height)
+  {
+    gdk_draw_gray_image(m_background, m_gc, j_min, i_min,
+                        width, height, GDK_RGB_DITHER_NONE, I.bitmap, width);
+    /* Le pixmap background devient le fond de la zone de dessin */
+    gdk_window_set_back_pixmap(m_widget->window, m_background, FALSE);
+  }
+
+  void displayImageROI(const vpImage<vpRGBa> &I, gint j_min, gint i_min, gint width, gint height)
+  {
+    gdk_draw_rgb_32_image(m_background, m_gc, j_min, i_min, width, height, GDK_RGB_DITHER_NONE,
+                          (unsigned char *)I.bitmap, width * 4);
+
+    /* Le pixmap background devient le fond de la zone de dessin */
+    gdk_window_set_back_pixmap(m_widget->window, m_background, FALSE);
+  }
+
+  void closeDisplay()
+  {
+    if (m_col != NULL) {
+      delete[] m_col;
+      m_col = NULL;
+    }
+
+    if (m_widget != NULL) {
+      gdk_window_hide(m_widget->window);
+      gdk_window_destroy(m_widget->window);
+      gtk_widget_destroy(m_widget);
+      m_widget = NULL;
+    }
+  }
+
+  void flushDisplay()
+  {
+    gdk_window_clear(m_widget->window);
+    gdk_flush();
+  }
+
+  void displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color, unsigned int scale)
+  {
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(m_gc, m_col[color.id]);
+    else {
+      m_gdkcolor.red = 256 * color.R;
+      m_gdkcolor.green = 256 * color.G;
+      m_gdkcolor.blue = 256 * color.B;
+      gdk_colormap_alloc_color(m_colormap, &m_gdkcolor, FALSE, TRUE);
+      gdk_gc_set_foreground(m_gc, &m_gdkcolor);
+    }
+    if (m_font != NULL)
+      gdk_draw_string(m_background, m_font, m_gc, vpMath::round(ip.get_u() / scale),
+                      vpMath::round(ip.get_v() / scale), (const gchar *)text);
+    else
+      std::cout << "Cannot draw string: no font is selected" << std::endl;
+  }
+
+  void displayCircle(const vpImagePoint &center, unsigned int radius, const vpColor &color, bool fill,
+                     unsigned int thickness, unsigned int scale)
+  {
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(m_gc, m_col[color.id]);
+    else {
+      m_gdkcolor.red = 256 * color.R;
+      m_gdkcolor.green = 256 * color.G;
+      m_gdkcolor.blue = 256 * color.B;
+      gdk_colormap_alloc_color(m_colormap, &m_gdkcolor, FALSE, TRUE);
+      gdk_gc_set_foreground(m_gc, &m_gdkcolor);
+    }
+
+    gdk_gc_set_line_attributes(m_gc, static_cast<gint>(thickness), GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+
+    if (fill == false)
+      gdk_draw_arc(m_background, m_gc, FALSE, vpMath::round((center.get_u() - radius) / scale),
+                   vpMath::round((center.get_v() - radius) / scale), static_cast<gint>(2. * radius / scale),
+                   static_cast<gint>(2. * radius / scale), 23040, 23040); /* 23040 = 360*64 */
+    else
+      gdk_draw_arc(m_background, m_gc, TRUE, vpMath::round((center.get_u() - radius) / scale),
+                   vpMath::round((center.get_v() - radius) / scale), static_cast<gint>(2. * radius / scale),
+                   static_cast<gint>(2. * radius / scale), 23040, 23040); /* 23040 = 360*64 */
+  }
+
+  void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness, unsigned int scale)
+  {
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(m_gc, m_col[color.id]);
+    else {
+      m_gdkcolor.red = 256 * color.R;
+      m_gdkcolor.green = 256 * color.G;
+      m_gdkcolor.blue = 256 * color.B;
+      gdk_colormap_alloc_color(m_colormap, &m_gdkcolor, FALSE, TRUE);
+      gdk_gc_set_foreground(m_gc, &m_gdkcolor);
+    }
+
+    gdk_gc_set_line_attributes(m_gc, static_cast<gint>(thickness), GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    gdk_draw_line(m_background, m_gc, vpMath::round(ip1.get_u() / scale), vpMath::round(ip1.get_v() / scale),
+                  vpMath::round(ip2.get_u() / scale), vpMath::round(ip2.get_v() / scale));
+    gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+  }
+
+  void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness, unsigned int scale)
+  {
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(m_gc, m_col[color.id]);
+    else {
+      m_gdkcolor.red = 256 * color.R;
+      m_gdkcolor.green = 256 * color.G;
+      m_gdkcolor.blue = 256 * color.B;
+      gdk_colormap_alloc_color(m_colormap, &m_gdkcolor, FALSE, TRUE);
+      gdk_gc_set_foreground(m_gc, &m_gdkcolor);
+    }
+
+    gdk_gc_set_line_attributes(m_gc, static_cast<gint>(thickness), GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    gdk_draw_line(m_background, m_gc, vpMath::round(ip1.get_u() / scale), vpMath::round(ip1.get_v() / scale),
+                  vpMath::round(ip2.get_u() / scale), vpMath::round(ip2.get_v() / scale));
+  }
+
+  void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness, unsigned int scale)
+  {
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(m_gc, m_col[color.id]);
+    else {
+      m_gdkcolor.red = 256 * color.R;
+      m_gdkcolor.green = 256 * color.G;
+      m_gdkcolor.blue = 256 * color.B;
+      gdk_colormap_alloc_color(m_colormap, &m_gdkcolor, FALSE, TRUE);
+      gdk_gc_set_foreground(m_gc, &m_gdkcolor);
+    }
+
+    if (thickness == 1) {
+      gdk_draw_point(m_background, m_gc, vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale));
+    } else {
+      gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(ip.get_u() / scale),
+                         vpMath::round(ip.get_v() / scale), static_cast<gint>(thickness), static_cast<gint>(thickness));
+    }
+  }
+
+  void displayRectangle(const vpImagePoint &topLeft, unsigned int w, unsigned int h, const vpColor &color,
+                        bool fill, unsigned int thickness, unsigned int scale)
+  {
+    if (color.id < vpColor::id_unknown)
+      gdk_gc_set_foreground(m_gc, m_col[color.id]);
+    else {
+      m_gdkcolor.red = 256 * color.R;
+      m_gdkcolor.green = 256 * color.G;
+      m_gdkcolor.blue = 256 * color.B;
+      gdk_colormap_alloc_color(m_colormap, &m_gdkcolor, FALSE, TRUE);
+      gdk_gc_set_foreground(m_gc, &m_gdkcolor);
+    }
+    gdk_gc_set_line_attributes(m_gc, static_cast<gint>(thickness), GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+
+    if (fill == false)
+      gdk_draw_rectangle(m_background, m_gc, FALSE, vpMath::round(topLeft.get_u() / scale),
+                         vpMath::round(topLeft.get_v() / scale), static_cast<gint>(w / scale), static_cast<gint>(h / scale));
+    else
+      gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(topLeft.get_u() / scale),
+                         vpMath::round(topLeft.get_v() / scale), static_cast<gint>(w / scale), static_cast<gint>(h / scale));
+
+    if (thickness > 1)
+      gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+  }
+
+  bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking, unsigned int scale, const GdkEventType	&event_type)
+  {
+    bool ret = false;
+    do {
+      GdkEvent *ev = NULL;
+      while ((ev = gdk_event_get())) {
+        if (ev->any.window == m_widget->window && ev->type == event_type) {
+          double u = ((GdkEventButton *)ev)->x;
+          double v = ((GdkEventButton *)ev)->y;
+          ip.set_u(u * scale);
+          ip.set_v(v * scale);
+
+          switch (static_cast<int>(((GdkEventButton *)ev)->button)) {
+          case 1:
+            button = vpMouseButton::button1;
+            break;
+          case 2:
+            button = vpMouseButton::button2;
+            break;
+          case 3:
+            button = vpMouseButton::button3;
+            break;
+          }
+          ret = true;
+        }
+        gdk_event_free(ev);
+      }
+      if (blocking) {
+        flushDisplay();
+        vpTime::wait(100);
+      }
+
+    } while (ret == false && blocking == true);
+    return ret;
+  }
+
+  void getImage(vpImage<vpRGBa> &I, gint width, gint height)
+  {
+    GdkImage *ImageGtk;
+    ImageGtk = gdk_image_get(m_background, 0, 0, width, height);
+
+    I.resize(height, width);
+    guint32 pixel;
+
+    guchar OctetRouge, OctetVert, OctetBleu, mask;
+    mask = 0x000000FF;
+
+    for (gint y = 0; y < height; y++) {
+      for (gint x = 0; x < width; x++) {
+        pixel = gdk_image_get_pixel(ImageGtk, x, y);
+        OctetBleu = static_cast<guchar>(pixel) & mask;
+        OctetVert = static_cast<guchar>(pixel >> 8) & mask;
+        OctetRouge = static_cast<guchar>(pixel >> 16) & mask;
+        I[y][x].R = OctetRouge;
+        I[y][x].G = OctetVert;
+        I[y][x].B = OctetBleu;
+        I[y][x].A = vpRGBa::alpha_default; // default opacity
+      }
+    }
+  }
+
+  unsigned int getScreenDepth()
+  {
+    return static_cast<unsigned int>(gdk_window_get_visual(m_widget->window)->depth);
+  }
+
+  bool getKeyboardEvent(std::string &key, bool blocking)
+  {
+    bool ret = false;
+    int cpt = 0;
+    do {
+      GdkEvent *ev = NULL;
+      while ((ev = gdk_event_get()) != NULL) {
+        cpt++;
+        //	printf("event %d type %d on window %p My window %p\n",
+        // cpt, ev->type, ev->any.window, widget->window);
+
+        if (ev->any.window == m_widget->window && ev->type == GDK_KEY_PRESS) {
+          // std::cout << "Key val: \"" << gdk_keyval_name (ev->key.keyval)
+          // /*ev->key.string*/ << "\"" << std::endl;
+          key = gdk_keyval_name(ev->key.keyval);
+          ret = true;
+          // printf("Key press detection\n");
+        }
+        gdk_event_free(ev);
+      }
+      if (blocking) {
+        flushDisplay();
+        vpTime::wait(100);
+      }
+    } while (ret == false && blocking == true);
+    return ret;
+  }
+
+  bool getPointerMotionEvent(vpImagePoint &ip, unsigned int scale)
+  {
+    bool ret = false;
+    GdkEvent *ev = NULL;
+    if ((ev = gdk_event_get())) {
+      if (ev->any.window == m_widget->window && ev->type == GDK_MOTION_NOTIFY) {
+        double u = ((GdkEventMotion *)ev)->x;
+        double v = ((GdkEventMotion *)ev)->y;
+        ip.set_u(u * scale);
+        ip.set_v(v * scale);
+
+        ret = true;
+      }
+      gdk_event_free(ev);
+    }
+    return ret;
+  }
+
+  void getPointerPosition(vpImagePoint &ip, unsigned int scale)
+  {
+    gint u, v;
+    gdk_window_get_pointer(m_widget->window, &u, &v, NULL);
+    ip.set_u(static_cast<double>(u) * scale);
+    ip.set_v(static_cast<double>(v) * scale);
+  }
+
+  void getScreenSize(bool is_init, unsigned int &w, unsigned int &h)
+  {
+    if (!is_init) {
+      int *argc = NULL;
+      char **argv;
+
+      gtk_init(argc, &argv);
+
+      GtkWidget *widget_ = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+      gtk_window_set_default_size(GTK_WINDOW(widget_), 100, 100);
+      gtk_widget_show(widget_);
+
+      GdkScreen *screen_ = gdk_window_get_screen(widget_->window);
+      w = static_cast<unsigned int>(gdk_screen_get_width(screen_));
+      h = static_cast<unsigned int>(gdk_screen_get_height(screen_));
+      gtk_widget_destroy(widget_);
+    } else {
+      GdkScreen *screen_ = gdk_window_get_screen(m_widget->window);
+      w = static_cast<unsigned int>(gdk_screen_get_width(screen_));
+      h = static_cast<unsigned int>(gdk_screen_get_height(screen_));
+    }
+  }
+
+private:
+  GtkWidget *m_widget;
+  GdkPixmap *m_background;
+  GdkGC *m_gc;
+  GdkColor m_blue, m_red, m_yellow, m_green, m_cyan, m_orange, m_white, m_black, m_gdkcolor;
+  GdkColor m_lightBlue, m_darkBlue, m_lightRed, m_darkRed, m_lightGreen, m_darkGreen, m_purple;
+  GdkColor m_lightGray, m_gray, m_darkGray;
+  GdkColormap *m_colormap;
+
+  GdkFont *m_font;
+  guchar *m_vectgtk;
+  GdkColor **m_col;
+};
+
+#endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
 
@@ -85,9 +589,7 @@
 
 */
 vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, vpScaleType scaleType)
-  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(), green(), cyan(), orange(), white(), black(),
-    gdkcolor(), lightBlue(), darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(), lightGray(),
-    gray(), darkGray(), colormap(NULL), font(NULL), vectgtk(NULL), col(NULL), ncol(0), nrow(0)
+  : vpDisplay(), m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -99,8 +601,8 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, vpScaleType scaleType)
   (8 bits).
 
   \param I : Image to be displayed (not that image has to be initialized).
-  \param x, y : The window is set at position x,y (column index, row index).
-  \param title : Window title.
+  \param win_x, win_y : The window is set at position (win_x,win_y) with column index and row index respectively.
+  \param win_title : Window title.
   \param scaleType : If this parameter is set to:
   - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
     is fully displayed in the screen;
@@ -116,13 +618,11 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, vpScaleType scaleType)
   and the columns.
 
 */
-vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, int x, int y, const std::string &title, vpScaleType scaleType)
-  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(), green(), cyan(), orange(), white(), black(),
-    gdkcolor(), lightBlue(), darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(), lightGray(),
-    gray(), darkGray(), colormap(NULL), font(NULL), vectgtk(NULL), col(NULL), ncol(0), nrow(0)
+vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, int win_x, int win_y, const std::string &win_title, vpScaleType scaleType)
+  : vpDisplay(), m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
-  init(I, x, y, title);
+  init(I, win_x, win_y, win_title);
 }
 
 /*!
@@ -145,9 +645,7 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, int x, int y, const std::s
   and the columns.
 */
 vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, vpScaleType scaleType)
-  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(), green(), cyan(), orange(), white(), black(),
-    gdkcolor(), lightBlue(), darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(), lightGray(),
-    gray(), darkGray(), colormap(NULL), font(NULL), vectgtk(NULL), col(NULL), ncol(0), nrow(0)
+  : vpDisplay(), m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -158,8 +656,8 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, vpScaleType scaleType)
   (32 bits).
 
   \param I : Image to be displayed (not that image has to be initialized)
-  \param x, y : The window is set at position x,y (column index, row index).
-  \param title : Window title.
+  \param win_x, win_y : The window is set at position (win_x,win_y) with column index and row index respectively.
+  \param win_title : Window title.
   \param scaleType : If this parameter is set to:
   - vpDisplay::SCALE_AUTO, the display size is adapted to ensure the image
     is fully displayed in the screen;
@@ -174,13 +672,11 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, vpScaleType scaleType)
   - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
   and the columns.
 */
-vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, int x, int y, const std::string &title, vpScaleType scaleType)
-  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(), green(), cyan(), orange(), white(), black(),
-    gdkcolor(), lightBlue(), darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(), lightGray(),
-    gray(), darkGray(), colormap(NULL), font(NULL), vectgtk(NULL), col(NULL), ncol(0), nrow(0)
+vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, int win_x, int win_y, const std::string &win_title, vpScaleType scaleType)
+  : vpDisplay(), m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
-  init(I, x, y, title);
+  init(I, win_x, win_y, win_title);
 }
 
 /*!
@@ -188,8 +684,8 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, int x, int y, const std::string &
   Constructor that just initialize the display position in the screen
   and the display title.
 
-  \param x, y : The window is set at position x,y (column index, row index).
-  \param title : Window title.
+  \param win_x, win_y : The window is set at position (win_x,win_y) with column index and row index respectively.
+  \param win_title : Window title.
 
   To initialize the display size, you need to call init().
 
@@ -205,14 +701,12 @@ int main()
 }
   \endcode
 */
-vpDisplayGTK::vpDisplayGTK(int x, int y, const std::string &title)
-  : widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(), green(), cyan(), orange(), white(), black(),
-    gdkcolor(), lightBlue(), darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(), lightGray(),
-    gray(), darkGray(), colormap(NULL), font(NULL), vectgtk(NULL), col(NULL), ncol(0), nrow(0)
+vpDisplayGTK::vpDisplayGTK(int win_x, int win_y, const std::string &win_title)
+  : vpDisplay(), m_impl(new Impl())
 {
-  m_windowXPosition = x;
-  m_windowYPosition = y;
-  m_title = title;
+  m_windowXPosition = win_x;
+  m_windowYPosition = win_y;
+  m_title = win_title;
 }
 
 /*!
@@ -235,10 +729,7 @@ int main()
   \endcode
 */
 vpDisplayGTK::vpDisplayGTK()
-  : vpDisplay(), widget(NULL), m_background(NULL), m_gc(NULL), blue(), red(), yellow(), green(), cyan(), orange(),
-    white(), black(), gdkcolor(), lightBlue(), darkBlue(), lightRed(), darkRed(), lightGreen(), darkGreen(), purple(),
-    lightGray(), gray(), darkGray(), colormap(NULL), font(NULL), vectgtk(NULL), col(NULL), ncol(0), nrow(0)
-
+  : vpDisplay(), m_impl(new Impl())
 {
 }
 
@@ -251,23 +742,23 @@ vpDisplayGTK::~vpDisplayGTK() { closeDisplay(); }
   Initialize the display (size, position and title) of a gray level image.
 
   \param I : Image to be displayed (not that image has to be initialized)
-  \param x, y : The window is set at position x,y (column index, row index).
-  \param title : Window title.
+  \param win_x, win_y : The window is set at position (win_x,win_y) with column index and row index respectively.
+  \param win_title : Window title.
 
 */
-void vpDisplayGTK::init(vpImage<unsigned char> &I, int x, int y, const std::string &title)
+void vpDisplayGTK::init(vpImage<unsigned char> &I, int win_x, int win_y, const std::string &win_title)
 {
   if ((I.getHeight() == 0) || (I.getWidth() == 0)) {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "Image not initialized"));
   }
 
-  if (x != -1)
-    m_windowXPosition = x;
-  if (y != -1)
-    m_windowYPosition = y;
+  if (win_x != -1)
+    m_windowXPosition = win_x;
+  if (win_y != -1)
+    m_windowYPosition = win_y;
 
-  if (!title.empty())
-    m_title = title;
+  if (!win_title.empty())
+    m_title = win_title;
 
   setScale(m_scaleType, I.getWidth(), I.getHeight());
   init(I.getWidth(), I.getHeight(), m_windowXPosition, m_windowYPosition, m_title);
@@ -281,23 +772,23 @@ void vpDisplayGTK::init(vpImage<unsigned char> &I, int x, int y, const std::stri
   image in RGBa format.
 
   \param I : Image to be displayed (not that image has to be initialized)
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param win_x, win_y : The window is set at position (win_x,win_y) with column index and row index respectively.
   \param title : Window title.
 
 */
-void vpDisplayGTK::init(vpImage<vpRGBa> &I, int x, int y, const std::string &title)
+void vpDisplayGTK::init(vpImage<vpRGBa> &I, int win_x, int win_y, const std::string &win_title)
 {
   if ((I.getHeight() == 0) || (I.getWidth() == 0)) {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "Image not initialized"));
   }
 
-  if (x != -1)
-    m_windowXPosition = x;
-  if (y != -1)
-    m_windowYPosition = y;
+  if (win_x != -1)
+    m_windowXPosition = win_x;
+  if (win_y != -1)
+    m_windowYPosition = win_y;
 
-  if (!title.empty())
-    m_title = title;
+  if (!win_title.empty())
+    m_title = win_title;
 
   setScale(m_scaleType, I.getWidth(), I.getHeight());
   init(I.getWidth(), I.getHeight(), m_windowXPosition, m_windowYPosition, m_title);
@@ -308,143 +799,31 @@ void vpDisplayGTK::init(vpImage<vpRGBa> &I, int x, int y, const std::string &tit
 /*!
   Initialize the display size, position and title.
 
-  \param w, h : Width and height of the window.
-  \param x, y : The window is set at position x,y (column index, row index).
+  \param win_width, win_height : Width and height of the window.
+  \param win_x, win_y : The window is set at position (win_x,win_y) with column index and row index respectively.
   \param title : Window title.
 
 */
-void vpDisplayGTK::init(unsigned int w, unsigned int h, int x, int y, const std::string &title)
+void vpDisplayGTK::init(unsigned int win_width, unsigned int win_height, int win_x, int win_y, const std::string &win_title)
 {
-  /* Initialisation of thegdk et gdk_rgb library */
-  int *argc = NULL;
-  char **argv;
+  setScale(m_scaleType, win_width, win_height);
 
-  gtk_init(argc, &argv);
+  m_width = win_width / m_scale;
+  m_height = win_height / m_scale;
 
-  setScale(m_scaleType, w, h);
+  if (win_x != -1)
+    m_windowXPosition = win_x;
+  if (win_y != -1)
+    m_windowYPosition = win_y;
 
-  m_width = w / m_scale;
-  m_height = h / m_scale;
+  m_title = win_title;
 
-  /* Create the window*/
-  widget = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-
-  gtk_widget_add_events(widget, GDK_BUTTON_PRESS_MASK | GDK_BUTTON_RELEASE_MASK | GDK_POINTER_MOTION_MASK);
-
-  gtk_window_set_default_size(GTK_WINDOW(widget), (gint)m_width, (gint)m_height);
-
-  if (x != -1)
-    m_windowXPosition = x;
-  if (y != -1)
-    m_windowYPosition = y;
-
-  gtk_window_move(GTK_WINDOW(widget), m_windowXPosition, m_windowYPosition);
-
-  gtk_widget_show(widget);
-
-  gdk_rgb_init();
-
-  /* Create background pixmap */
-  m_background = gdk_pixmap_new(widget->window, (gint)m_width, (gint)m_height, -1);
-
-  /* Create graphic context */
-  m_gc = gdk_gc_new(widget->window);
-
-  /* get the colormap  */
-  colormap = gdk_window_get_colormap(widget->window);
-
-  col = new GdkColor *[vpColor::id_unknown]; // id_unknown = number of predefined colors
-
-  /* Create color */
-  gdk_color_parse("light blue", &lightBlue);
-  gdk_colormap_alloc_color(colormap, &lightBlue, FALSE, TRUE);
-  col[vpColor::id_lightBlue] = &lightBlue;
-
-  gdk_color_parse("blue", &blue);
-  gdk_colormap_alloc_color(colormap, &blue, FALSE, TRUE);
-  col[vpColor::id_blue] = &blue;
-
-  gdk_color_parse("dark blue", &darkBlue);
-  gdk_colormap_alloc_color(colormap, &darkBlue, FALSE, TRUE);
-  col[vpColor::id_darkBlue] = &darkBlue;
-
-  gdk_color_parse("#FF8C8C", &lightRed);
-  gdk_colormap_alloc_color(colormap, &lightRed, FALSE, TRUE);
-  col[vpColor::id_lightRed] = &lightRed;
-
-  gdk_color_parse("red", &red);
-  gdk_colormap_alloc_color(colormap, &red, FALSE, TRUE);
-  col[vpColor::id_red] = &red;
-
-  gdk_color_parse("dark red", &darkRed);
-  gdk_colormap_alloc_color(colormap, &darkRed, FALSE, TRUE);
-  col[vpColor::id_darkRed] = &darkRed;
-
-  gdk_color_parse("light green", &lightGreen);
-  gdk_colormap_alloc_color(colormap, &lightGreen, FALSE, TRUE);
-  col[vpColor::id_lightGreen] = &lightGreen;
-
-  gdk_color_parse("green", &green);
-  gdk_colormap_alloc_color(colormap, &green, FALSE, TRUE);
-  col[vpColor::id_green] = &green;
-
-  gdk_color_parse("dark green", &darkGreen);
-  gdk_colormap_alloc_color(colormap, &darkGreen, FALSE, TRUE);
-  col[vpColor::id_darkGreen] = &darkGreen;
-
-  gdk_color_parse("yellow", &yellow);
-  gdk_colormap_alloc_color(colormap, &yellow, FALSE, TRUE);
-  col[vpColor::id_yellow] = &yellow;
-
-  gdk_color_parse("cyan", &cyan);
-  gdk_colormap_alloc_color(colormap, &cyan, FALSE, TRUE);
-  col[vpColor::id_cyan] = &cyan;
-
-  gdk_color_parse("orange", &orange);
-  gdk_colormap_alloc_color(colormap, &orange, FALSE, TRUE);
-  col[vpColor::id_orange] = &orange;
-
-  gdk_color_parse("purple", &purple);
-  gdk_colormap_alloc_color(colormap, &purple, FALSE, TRUE);
-  col[vpColor::id_purple] = &purple;
-
-  gdk_color_parse("white", &white);
-  gdk_colormap_alloc_color(colormap, &white, FALSE, TRUE);
-  col[vpColor::id_white] = &white;
-
-  gdk_color_parse("black", &black);
-  gdk_colormap_alloc_color(colormap, &black, FALSE, TRUE);
-  col[vpColor::id_black] = &black;
-
-  gdk_color_parse("#C0C0C0", &lightGray);
-  gdk_colormap_alloc_color(colormap, &lightGray, FALSE, TRUE);
-  col[vpColor::id_lightGray] = &lightGray;
-
-  gdk_color_parse("#808080", &gray);
-  gdk_colormap_alloc_color(colormap, &gray, FALSE, TRUE);
-  col[vpColor::id_gray] = &gray;
-
-  gdk_color_parse("#404040", &darkGray);
-  gdk_colormap_alloc_color(colormap, &darkGray, FALSE, TRUE);
-  col[vpColor::id_darkGray] = &darkGray;
-
-  // Try to load a default font
-  font = gdk_font_load("-*-times-medium-r-normal-*-16-*-*-*-*-*-*-*");
-  if (font == NULL)
-    font = gdk_font_load("-*-courier-bold-r-normal-*-*-140-*-*-*-*-*-*");
-  if (font == NULL)
-    font = gdk_font_load("-*-courier 10 pitch-medium-r-normal-*-16-*-*-*-*-*-*-*");
-
-  m_title = title;
-  if (!title.empty())
-    gdk_window_set_title(widget->window, m_title.c_str());
+  m_impl->init(m_width, m_height, m_windowXPosition, m_windowYPosition, m_title);
 
   m_displayHasBeenInitialized = true;
 }
 
 /*!
-
-  \warning Not implemented yet.
 
   Set the font used to display a text in overlay. The display is
   performed using displayCharString().
@@ -456,7 +835,10 @@ void vpDisplayGTK::init(unsigned int w, unsigned int h, int x, int y, const std:
 
   \sa displayCharString()
 */
-void vpDisplayGTK::setFont(const std::string &fontname) { font = gdk_font_load((const gchar *)fontname.c_str()); }
+void vpDisplayGTK::setFont(const std::string &fontname)
+{
+  m_impl->setFont(fontname);
+}
 
 /*!
   Set the window title.
@@ -466,8 +848,9 @@ void vpDisplayGTK::setTitle(const std::string &title)
 {
   if (m_displayHasBeenInitialized) {
     m_title = title;
-    if (!title.empty())
-      gdk_window_set_title(widget->window, m_title.c_str());
+    if (!title.empty()) {
+      m_impl->setTitle(title);
+    }
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -476,17 +859,16 @@ void vpDisplayGTK::setTitle(const std::string &title)
 /*!
   Set the window position in the screen.
 
-  \param winx, winy : Position of the upper-left window's border in the
+  \param win_x, win_y : Position of the upper-left window's border in the
   screen.
 
   \exception vpDisplayException::notInitializedError : If the video
   device is not initialized.
 */
-void vpDisplayGTK::setWindowPosition(int winx, int winy)
+void vpDisplayGTK::setWindowPosition(int win_x, int win_y)
 {
-
   if (m_displayHasBeenInitialized) {
-    gtk_window_move(GTK_WINDOW(widget), winx, winy);
+    m_impl->setWindowPosition(win_x, win_y);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -505,21 +887,8 @@ void vpDisplayGTK::setWindowPosition(int winx, int winy)
 */
 void vpDisplayGTK::displayImage(const vpImage<unsigned char> &I)
 {
-
   if (m_displayHasBeenInitialized) {
-    if (m_scale == 1) {
-      /* Copie de l'image dans le pixmap fond */
-      gdk_draw_gray_image(m_background, m_gc, 0, 0, (gint)m_width, (gint)m_height, GDK_RGB_DITHER_NONE, I.bitmap,
-                          (gint)m_width);
-    } else {
-      vpImage<unsigned char> sampled;
-      I.subsample(m_scale, m_scale, sampled);
-      gdk_draw_gray_image(m_background, m_gc, 0, 0, (gint)m_width, (gint)m_height, GDK_RGB_DITHER_NONE, sampled.bitmap,
-                          (gint)m_width);
-    }
-
-    /* Le pixmap background devient le fond de la zone de dessin */
-    gdk_window_set_back_pixmap(widget->window, m_background, FALSE);
+    m_impl->displayImage(I, m_scale, static_cast<gint>(m_width), static_cast<gint>(m_height));
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -550,14 +919,11 @@ void vpDisplayGTK::displayImageROI(const vpImage<unsigned char> &I, const vpImag
     vpImageTools::crop(I, iP.get_i(), iP.get_j(), h, w, Itemp, m_scale, m_scale);
 
     /* Copie de l'image dans le pixmap fond */
-    int i_min = (std::max)((int)ceil(iP.get_i() / m_scale), 0);
-    int j_min = (std::max)((int)ceil(iP.get_j() / m_scale), 0);
+    int i_min = (std::max)(static_cast<int>(ceil(iP.get_i() / m_scale)), 0);
+    int j_min = (std::max)(static_cast<int>(ceil(iP.get_j() / m_scale)), 0);
 
-    gdk_draw_gray_image(m_background, m_gc, (gint)j_min, (gint)i_min, (gint)Itemp.getWidth(), (gint)Itemp.getHeight(),
-                        GDK_RGB_DITHER_NONE, Itemp.bitmap, (gint)Itemp.getWidth());
-
-    /* Le pixmap background devient le fond de la zone de dessin */
-    gdk_window_set_back_pixmap(widget->window, m_background, FALSE);
+    m_impl->displayImageROI(Itemp, static_cast<gint>(j_min), static_cast<gint>(i_min),
+                            static_cast<gint>(Itemp.getWidth()), static_cast<gint>(Itemp.getHeight()));
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -576,23 +942,8 @@ void vpDisplayGTK::displayImageROI(const vpImage<unsigned char> &I, const vpImag
 */
 void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
 {
-
   if (m_displayHasBeenInitialized) {
-    if (m_scale == 1) {
-      /* Copie de l'image dans le pixmap fond */
-      gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, (gint)m_width, (gint)m_height, GDK_RGB_DITHER_NONE,
-                            (unsigned char *)I.bitmap, (gint)(4 * m_width));
-    } else {
-      vpImage<vpRGBa> sampled;
-      I.subsample(m_scale, m_scale, sampled);
-      gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, (gint)m_width, (gint)m_height, GDK_RGB_DITHER_NONE,
-                            (unsigned char *)sampled.bitmap, (gint)(4 * m_width));
-    }
-    /* Permet de fermer la fenetre si besoin (cas des sequences d'images) */
-    // while (g_main_iteration(FALSE));
-
-    /* Le pixmap background devient le fond de la zone de dessin */
-    gdk_window_set_back_pixmap(widget->window, m_background, FALSE);
+    m_impl->displayImage(I, m_scale, static_cast<gint>(m_width), static_cast<gint>(m_height));
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -623,14 +974,11 @@ void vpDisplayGTK::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint 
     vpImageTools::crop(I, iP.get_i(), iP.get_j(), h, w, Itemp, m_scale, m_scale);
 
     /* Copie de l'image dans le pixmap fond */
-    int i_min = (std::max)((int)ceil(iP.get_i() / m_scale), 0);
-    int j_min = (std::max)((int)ceil(iP.get_j() / m_scale), 0);
+    int i_min = (std::max)(static_cast<int>(ceil(iP.get_i() / m_scale)), 0);
+    int j_min = (std::max)(static_cast<int>(ceil(iP.get_j() / m_scale)), 0);
 
-    gdk_draw_rgb_32_image(m_background, m_gc, (gint)j_min, (gint)i_min, (gint)Itemp.getWidth(), (gint)Itemp.getHeight(),
-                          GDK_RGB_DITHER_NONE, (unsigned char *)Itemp.bitmap, (gint)Itemp.getWidth() * 4);
-
-    /* Le pixmap background devient le fond de la zone de dessin */
-    gdk_window_set_back_pixmap(widget->window, m_background, FALSE);
+    m_impl->displayImageROI(Itemp, static_cast<gint>(j_min), static_cast<gint>(i_min),
+                            static_cast<gint>(Itemp.getWidth()), static_cast<gint>(Itemp.getHeight()));
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -650,17 +998,8 @@ void vpDisplayGTK::displayImage(const unsigned char * /* I */) { vpTRACE(" not i
 */
 void vpDisplayGTK::closeDisplay()
 {
-  if (col != NULL) {
-    delete[] col;
-    col = NULL;
-  }
+  m_impl->closeDisplay();
 
-  if (widget != NULL) {
-    gdk_window_hide(widget->window);
-    gdk_window_destroy(widget->window);
-    gtk_widget_destroy(widget);
-    widget = NULL;
-  }
   m_displayHasBeenInitialized = false;
 }
 
@@ -671,8 +1010,7 @@ void vpDisplayGTK::closeDisplay()
 void vpDisplayGTK::flushDisplay()
 {
   if (m_displayHasBeenInitialized) {
-    gdk_window_clear(widget->window);
-    gdk_flush();
+    m_impl->flushDisplay();
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -686,8 +1024,7 @@ void vpDisplayGTK::flushDisplayROI(const vpImagePoint & /*iP*/, const unsigned i
                                    const unsigned int /*height*/)
 {
   if (m_displayHasBeenInitialized) {
-    gdk_window_clear(widget->window);
-    gdk_flush();
+    m_impl->flushDisplay();
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -713,11 +1050,8 @@ void vpDisplayGTK::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2
     double b = ip2.get_j() - ip1.get_j();
     double lg = sqrt(vpMath::sqr(a) + vpMath::sqr(b));
 
-    // if ((a==0)&&(b==0))
-    if ((std::fabs(a) <= std::numeric_limits<double>::epsilon()) &&
-        (std::fabs(b) <= std::numeric_limits<double>::epsilon())) {
-      // DisplayCrossLarge(i1,j1,3,col) ;
-    } else {
+    if ((std::fabs(a) > std::numeric_limits<double>::epsilon()) &&
+        (std::fabs(b) > std::numeric_limits<double>::epsilon())) {
       a /= lg;
       b /= lg;
 
@@ -759,20 +1093,7 @@ void vpDisplayGTK::displayArrow(const vpImagePoint &ip1, const vpImagePoint &ip2
 void vpDisplayGTK::displayCharString(const vpImagePoint &ip, const char *text, const vpColor &color)
 {
   if (m_displayHasBeenInitialized) {
-    if (color.id < vpColor::id_unknown)
-      gdk_gc_set_foreground(m_gc, col[color.id]);
-    else {
-      gdkcolor.red = 256 * color.R;
-      gdkcolor.green = 256 * color.G;
-      gdkcolor.blue = 256 * color.B;
-      gdk_colormap_alloc_color(colormap, &gdkcolor, FALSE, TRUE);
-      gdk_gc_set_foreground(m_gc, &gdkcolor);
-    }
-    if (font != NULL)
-      gdk_draw_string(m_background, font, m_gc, vpMath::round(ip.get_u() / m_scale),
-                      vpMath::round(ip.get_v() / m_scale), (const gchar *)text);
-    else
-      std::cout << "Cannot draw string: no font is selected" << std::endl;
+    m_impl->displayCharString(ip, text, color, m_scale);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -793,26 +1114,7 @@ void vpDisplayGTK::displayCircle(const vpImagePoint &center, unsigned int radius
     if (thickness == 1)
       thickness = 0;
 
-    if (color.id < vpColor::id_unknown)
-      gdk_gc_set_foreground(m_gc, col[color.id]);
-    else {
-      gdkcolor.red = 256 * color.R;
-      gdkcolor.green = 256 * color.G;
-      gdkcolor.blue = 256 * color.B;
-      gdk_colormap_alloc_color(colormap, &gdkcolor, FALSE, TRUE);
-      gdk_gc_set_foreground(m_gc, &gdkcolor);
-    }
-
-    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
-
-    if (fill == false)
-      gdk_draw_arc(m_background, m_gc, FALSE, vpMath::round((center.get_u() - radius) / m_scale),
-                   vpMath::round((center.get_v() - radius) / m_scale), (gint)(2. * radius / m_scale),
-                   (gint)(2. * radius / m_scale), 23040, 23040); /* 23040 = 360*64 */
-    else
-      gdk_draw_arc(m_background, m_gc, TRUE, vpMath::round((center.get_u() - radius) / m_scale),
-                   vpMath::round((center.get_v() - radius) / m_scale), (gint)(2. * radius / m_scale),
-                   (gint)(2. * radius / m_scale), 23040, 23040); /* 23040 = 360*64 */
+    m_impl->displayCircle(center, radius, color, fill, thickness, m_scale);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -863,20 +1165,7 @@ void vpDisplayGTK::displayDotLine(const vpImagePoint &ip1, const vpImagePoint &i
     if (thickness == 1)
       thickness = 0;
 
-    if (color.id < vpColor::id_unknown)
-      gdk_gc_set_foreground(m_gc, col[color.id]);
-    else {
-      gdkcolor.red = 256 * color.R;
-      gdkcolor.green = 256 * color.G;
-      gdkcolor.blue = 256 * color.B;
-      gdk_colormap_alloc_color(colormap, &gdkcolor, FALSE, TRUE);
-      gdk_gc_set_foreground(m_gc, &gdkcolor);
-    }
-
-    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_ON_OFF_DASH, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
-    gdk_draw_line(m_background, m_gc, vpMath::round(ip1.get_u() / m_scale), vpMath::round(ip1.get_v() / m_scale),
-                  vpMath::round(ip2.get_u() / m_scale), vpMath::round(ip2.get_v() / m_scale));
-    gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    m_impl->displayDotLine(ip1, ip2, color, thickness, m_scale);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -895,19 +1184,7 @@ void vpDisplayGTK::displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
     if (thickness == 1)
       thickness = 0;
 
-    if (color.id < vpColor::id_unknown)
-      gdk_gc_set_foreground(m_gc, col[color.id]);
-    else {
-      gdkcolor.red = 256 * color.R;
-      gdkcolor.green = 256 * color.G;
-      gdkcolor.blue = 256 * color.B;
-      gdk_colormap_alloc_color(colormap, &gdkcolor, FALSE, TRUE);
-      gdk_gc_set_foreground(m_gc, &gdkcolor);
-    }
-
-    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
-    gdk_draw_line(m_background, m_gc, vpMath::round(ip1.get_u() / m_scale), vpMath::round(ip1.get_v() / m_scale),
-                  vpMath::round(ip2.get_u() / m_scale), vpMath::round(ip2.get_v() / m_scale));
+    m_impl->displayLine(ip1, ip2, color, thickness, m_scale);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -922,22 +1199,7 @@ void vpDisplayGTK::displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2,
 void vpDisplayGTK::displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    if (color.id < vpColor::id_unknown)
-      gdk_gc_set_foreground(m_gc, col[color.id]);
-    else {
-      gdkcolor.red = 256 * color.R;
-      gdkcolor.green = 256 * color.G;
-      gdkcolor.blue = 256 * color.B;
-      gdk_colormap_alloc_color(colormap, &gdkcolor, FALSE, TRUE);
-      gdk_gc_set_foreground(m_gc, &gdkcolor);
-    }
-
-    if (thickness == 1) {
-      gdk_draw_point(m_background, m_gc, vpMath::round(ip.get_u() / m_scale), vpMath::round(ip.get_v() / m_scale));
-    } else {
-      gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(ip.get_u() / m_scale),
-                         vpMath::round(ip.get_v() / m_scale), thickness, thickness);
-    }
+    m_impl->displayPoint(ip, color, thickness, m_scale);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -963,26 +1225,7 @@ void vpDisplayGTK::displayRectangle(const vpImagePoint &topLeft, unsigned int w,
     if (thickness == 1)
       thickness = 0;
 
-    if (color.id < vpColor::id_unknown)
-      gdk_gc_set_foreground(m_gc, col[color.id]);
-    else {
-      gdkcolor.red = 256 * color.R;
-      gdkcolor.green = 256 * color.G;
-      gdkcolor.blue = 256 * color.B;
-      gdk_colormap_alloc_color(colormap, &gdkcolor, FALSE, TRUE);
-      gdk_gc_set_foreground(m_gc, &gdkcolor);
-    }
-    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
-
-    if (fill == false)
-      gdk_draw_rectangle(m_background, m_gc, FALSE, vpMath::round(topLeft.get_u() / m_scale),
-                         vpMath::round(topLeft.get_v() / m_scale), (gint)w / m_scale, (gint)h / m_scale);
-    else
-      gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(topLeft.get_u() / m_scale),
-                         vpMath::round(topLeft.get_v() / m_scale), (gint)w / m_scale, (gint)h / m_scale);
-
-    if (thickness > 1)
-      gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    m_impl->displayRectangle(topLeft, w, h, color, fill, thickness, m_scale);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -1007,30 +1250,10 @@ void vpDisplayGTK::displayRectangle(const vpImagePoint &topLeft, const vpImagePo
     if (thickness == 1)
       thickness = 0;
 
-    if (color.id < vpColor::id_unknown)
-      gdk_gc_set_foreground(m_gc, col[color.id]);
-    else {
-      gdkcolor.red = 256 * color.R;
-      gdkcolor.green = 256 * color.G;
-      gdkcolor.blue = 256 * color.B;
-      gdk_colormap_alloc_color(colormap, &gdkcolor, FALSE, TRUE);
-      gdk_gc_set_foreground(m_gc, &gdkcolor);
-    }
+    unsigned int w = static_cast<unsigned int>(vpMath::round(bottomRight.get_u() - topLeft.get_u()));
+    unsigned int h = static_cast<unsigned int>(vpMath::round(bottomRight.get_v() - topLeft.get_v()));
 
-    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
-
-    int w = vpMath::round(bottomRight.get_u() - topLeft.get_u());
-    int h = vpMath::round(bottomRight.get_v() - topLeft.get_v());
-
-    if (fill == false)
-      gdk_draw_rectangle(m_background, m_gc, FALSE, vpMath::round(topLeft.get_u() / m_scale),
-                         vpMath::round(topLeft.get_v() / m_scale), w / m_scale, h / m_scale);
-    else
-      gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(topLeft.get_u() / m_scale),
-                         vpMath::round(topLeft.get_v() / m_scale), w / m_scale, h / m_scale);
-
-    if (thickness > 1)
-      gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    m_impl->displayRectangle(topLeft, w, h, color, fill, thickness, m_scale);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -1051,33 +1274,13 @@ void vpDisplayGTK::displayRectangle(const vpImagePoint &topLeft, const vpImagePo
 void vpDisplayGTK::displayRectangle(const vpRect &rectangle, const vpColor &color, bool fill, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-    if (color.id < vpColor::id_unknown)
-      gdk_gc_set_foreground(m_gc, col[color.id]);
-    else {
-      gdkcolor.red = 256 * color.R;
-      gdkcolor.green = 256 * color.G;
-      gdkcolor.blue = 256 * color.B;
-      gdk_colormap_alloc_color(colormap, &gdkcolor, FALSE, TRUE);
-      gdk_gc_set_foreground(m_gc, &gdkcolor);
-    }
-
     if (thickness == 1)
       thickness = 0;
 
-    gdk_gc_set_line_attributes(m_gc, (gint)thickness, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
-
-    if (fill == false)
-      gdk_draw_rectangle(m_background, m_gc, FALSE, vpMath::round(rectangle.getLeft() / m_scale),
-                         vpMath::round(rectangle.getTop() / m_scale), vpMath::round(rectangle.getWidth() / m_scale),
-                         vpMath::round(rectangle.getHeight() / m_scale));
-
-    else
-      gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(rectangle.getLeft() / m_scale),
-                         vpMath::round(rectangle.getTop() / m_scale), vpMath::round(rectangle.getWidth() / m_scale),
-                         vpMath::round(rectangle.getHeight() / m_scale));
-
-    if (thickness > 1)
-      gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
+    vpImagePoint topLeft = rectangle.getTopLeft();
+    unsigned int w = static_cast<unsigned int>(vpMath::round(rectangle.getWidth()));
+    unsigned int h = static_cast<unsigned int>(vpMath::round(rectangle.getRight()));
+    m_impl->displayRectangle(topLeft, w, h, color, fill, thickness, m_scale);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -1103,27 +1306,9 @@ bool vpDisplayGTK::getClick(bool blocking)
   bool ret = false;
 
   if (m_displayHasBeenInitialized) {
-
-    //    flushDisplay() ;
-    // int cpt =0;
-    do {
-      GdkEvent *ev = NULL;
-      while ((ev = gdk_event_get()) != NULL) {
-        // cpt++;
-        //	printf("event %d type %d on window %p My window %p\n",
-        // cpt, ev->type, ev->any.window, widget->window);
-
-        if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS) {
-          ret = true;
-          // printf("Click detection\n");
-        }
-        gdk_event_free(ev);
-      }
-      if (blocking) {
-        flushDisplay();
-        vpTime::wait(100);
-      }
-    } while (ret == false && blocking == true);
+    vpImagePoint ip;
+    vpMouseButton::vpMouseButtonType button;
+    ret = m_impl->getClick(ip, button, blocking, m_scale, GDK_BUTTON_PRESS);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -1151,25 +1336,8 @@ bool vpDisplayGTK::getClick(vpImagePoint &ip, bool blocking)
   bool ret = false;
 
   if (m_displayHasBeenInitialized) {
-
-    double u, v;
-    do {
-      GdkEvent *ev = NULL;
-      while ((ev = gdk_event_get()) != NULL) {
-        if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS) {
-          u = ((GdkEventButton *)ev)->x;
-          v = ((GdkEventButton *)ev)->y;
-          ip.set_u(u * m_scale);
-          ip.set_v(v * m_scale);
-          ret = true;
-        }
-        gdk_event_free(ev);
-      }
-      if (blocking) {
-        flushDisplay();
-        vpTime::wait(100);
-      }
-    } while (ret == false && blocking == true);
+    vpMouseButton::vpMouseButtonType button;
+    ret = m_impl->getClick(ip, button, blocking, m_scale, GDK_BUTTON_PRESS);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -1200,37 +1368,7 @@ bool vpDisplayGTK::getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &
   bool ret = false;
 
   if (m_displayHasBeenInitialized) {
-    double u, v;
-    do {
-      GdkEvent *ev = NULL;
-      while ((ev = gdk_event_get())) {
-        if (ev->any.window == widget->window && ev->type == GDK_BUTTON_PRESS) {
-          u = ((GdkEventButton *)ev)->x;
-          v = ((GdkEventButton *)ev)->y;
-          ip.set_u(u * m_scale);
-          ip.set_v(v * m_scale);
-
-          switch ((int)((GdkEventButton *)ev)->button) {
-          case 1:
-            button = vpMouseButton::button1;
-            break;
-          case 2:
-            button = vpMouseButton::button2;
-            break;
-          case 3:
-            button = vpMouseButton::button3;
-            break;
-          }
-          ret = true;
-        }
-        gdk_event_free(ev);
-      }
-      if (blocking) {
-        flushDisplay();
-        vpTime::wait(100);
-      }
-
-    } while (ret == false && blocking == true);
+    ret = m_impl->getClick(ip, button, blocking, m_scale, GDK_BUTTON_PRESS);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -1265,39 +1403,7 @@ bool vpDisplayGTK::getClickUp(vpImagePoint &ip, vpMouseButton::vpMouseButtonType
   bool ret = false;
 
   if (m_displayHasBeenInitialized) {
-
-    // flushDisplay() ;
-    double u, v;
-    do {
-      GdkEvent *ev = NULL;
-      while ((ev = gdk_event_get()) != NULL) {
-        if (ev->any.window == widget->window && ev->type == GDK_BUTTON_RELEASE) {
-          u = ((GdkEventButton *)ev)->x;
-          v = ((GdkEventButton *)ev)->y;
-          ip.set_u(u * m_scale);
-          ip.set_v(v * m_scale);
-
-          switch ((int)((GdkEventButton *)ev)->button) {
-          case 1:
-            button = vpMouseButton::button1;
-            break;
-          case 2:
-            button = vpMouseButton::button2;
-            break;
-          case 3:
-            button = vpMouseButton::button3;
-            break;
-          }
-          ret = true;
-        }
-        gdk_event_free(ev);
-      }
-      if (blocking) {
-        flushDisplay();
-        vpTime::wait(100);
-      }
-
-    } while (ret == false && blocking == true);
+    ret = m_impl->getClick(ip, button, blocking, m_scale, GDK_BUTTON_RELEASE);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -1312,31 +1418,7 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
 {
   // should certainly be optimized.
   if (m_displayHasBeenInitialized) {
-
-    GdkImage *ImageGtk;
-    /*
-     */
-
-    ImageGtk = gdk_image_get(m_background, 0, 0, (gint)m_width, (gint)m_height);
-
-    I.resize(m_height, m_width);
-    guint32 pixel;
-    gint x, y;
-    guchar OctetRouge, OctetVert, OctetBleu, mask;
-    mask = 0x000000FF;
-
-    for (y = 0; y < (gint)m_height; y++) {
-      for (x = 0; x < (gint)m_width; x++) {
-        pixel = gdk_image_get_pixel(ImageGtk, x, y);
-        OctetBleu = (guchar)pixel & mask;
-        OctetVert = (guchar)(pixel >> 8) & mask;
-        OctetRouge = (guchar)(pixel >> 16) & mask;
-        I[y][x].R = OctetRouge;
-        I[y][x].G = OctetVert;
-        I[y][x].B = OctetBleu;
-        I[y][x].A = vpRGBa::alpha_default; // default opacity
-      }
-    }
+    m_impl->getImage(I, static_cast<gint>(m_width), static_cast<gint>(m_height));
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -1349,10 +1431,7 @@ void vpDisplayGTK::getImage(vpImage<vpRGBa> &I)
 */
 unsigned int vpDisplayGTK::getScreenDepth()
 {
-
-  unsigned int depth;
-
-  depth = (unsigned int)gdk_window_get_visual(widget->window)->depth;
+  unsigned int depth = m_impl->getScreenDepth();
 
   return (depth);
 }
@@ -1377,26 +1456,8 @@ bool vpDisplayGTK::getKeyboardEvent(bool blocking)
   bool ret = false;
 
   if (m_displayHasBeenInitialized) {
-
-    int cpt = 0;
-    do {
-      GdkEvent *ev = NULL;
-      while ((ev = gdk_event_get()) != NULL) {
-        cpt++;
-        //	printf("event %d type %d on window %p My window %p\n",
-        // cpt, ev->type, ev->any.window, widget->window);
-
-        if (ev->any.window == widget->window && ev->type == GDK_KEY_PRESS) {
-          ret = true;
-          // printf("Key press detection\n");
-        }
-        gdk_event_free(ev);
-      }
-      if (blocking) {
-        flushDisplay();
-        vpTime::wait(100);
-      }
-    } while (ret == false && blocking == true);
+    std::string key;
+    ret = m_impl->getKeyboardEvent(key, blocking);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -1427,29 +1488,7 @@ bool vpDisplayGTK::getKeyboardEvent(std::string &key, bool blocking)
   bool ret = false;
 
   if (m_displayHasBeenInitialized) {
-
-    int cpt = 0;
-    do {
-      GdkEvent *ev = NULL;
-      while ((ev = gdk_event_get()) != NULL) {
-        cpt++;
-        //	printf("event %d type %d on window %p My window %p\n",
-        // cpt, ev->type, ev->any.window, widget->window);
-
-        if (ev->any.window == widget->window && ev->type == GDK_KEY_PRESS) {
-          // std::cout << "Key val: \"" << gdk_keyval_name (ev->key.keyval)
-          // /*ev->key.string*/ << "\"" << std::endl;
-          key = gdk_keyval_name(ev->key.keyval);
-          ret = true;
-          // printf("Key press detection\n");
-        }
-        gdk_event_free(ev);
-      }
-      if (blocking) {
-        flushDisplay();
-        vpTime::wait(100);
-      }
-    } while (ret == false && blocking == true);
+    ret = m_impl->getKeyboardEvent(key, blocking);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -1473,18 +1512,7 @@ bool vpDisplayGTK::getPointerMotionEvent(vpImagePoint &ip)
   bool ret = false;
 
   if (m_displayHasBeenInitialized) {
-    GdkEvent *ev = NULL;
-    if ((ev = gdk_event_get())) {
-      if (ev->any.window == widget->window && ev->type == GDK_MOTION_NOTIFY) {
-        double u = ((GdkEventMotion *)ev)->x;
-        double v = ((GdkEventMotion *)ev)->y;
-        ip.set_u(u * m_scale);
-        ip.set_v(v * m_scale);
-
-        ret = true;
-      }
-      gdk_event_free(ev);
-    }
+    ret = m_impl->getPointerMotionEvent(ip, m_scale);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -1504,10 +1532,7 @@ bool vpDisplayGTK::getPointerMotionEvent(vpImagePoint &ip)
 bool vpDisplayGTK::getPointerPosition(vpImagePoint &ip)
 {
   if (m_displayHasBeenInitialized) {
-    int u, v;
-    gdk_window_get_pointer(widget->window, &u, &v, NULL);
-    ip.set_u(u * m_scale);
-    ip.set_v(v * m_scale);
+    m_impl->getPointerPosition(ip, m_scale);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "GTK not initialized"));
   }
@@ -1523,25 +1548,7 @@ void vpDisplayGTK::getScreenSize(unsigned int &w, unsigned int &h)
 {
   w = h = 0;
 
-  if (!m_displayHasBeenInitialized) {
-    int *argc = NULL;
-    char **argv;
-
-    gtk_init(argc, &argv);
-
-    GtkWidget *widget_ = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(widget_), 100, 100);
-    gtk_widget_show(widget_);
-
-    GdkScreen *screen_ = gdk_window_get_screen(widget_->window);
-    w = (unsigned int)gdk_screen_get_width(screen_);
-    h = (unsigned int)gdk_screen_get_height(screen_);
-    gtk_widget_destroy(widget_);
-  } else {
-    GdkScreen *screen_ = gdk_window_get_screen(widget->window);
-    w = (unsigned int)gdk_screen_get_width(screen_);
-    h = (unsigned int)gdk_screen_get_height(screen_);
-  }
+  m_impl->getScreenSize(m_displayHasBeenInitialized, w, h);
 }
 
 /*!
