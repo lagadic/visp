@@ -268,6 +268,7 @@ if(USE_PCL)
   mark_as_advanced(pkgcfg_lib_PC_FLANN_flann pkgcfg_lib_PC_FLANN_flann_cpp)
   mark_as_advanced(pkgcfg_lib_PC_OPENNI2_OpenNI2 pkgcfg_lib_PC_OPENNI2_OpenNI2 pkgcfg_lib_PC_OPENNI_OpenNI)
   mark_as_advanced(lib_LOCATION)
+  mark_as_advanced(Boost_THREAD_LIBRARY_RELEASE)
 endif()
 
 if(WITH_ATIDAQ)
