@@ -4,10 +4,7 @@
 \tableofcontents
 
 In this tutorial you will learn how to build ViSP framework from source on OSX in order to use it for iOS developments. These steps have been tested:
-- on OSX High Sierra 10.13.6, with CMake 3.10.1, Xcode 10.0, and Python 2.7.10.
-- on OSX Mojave 10.14.2, with CMake 3.13.2, Xcode 10.1 and Python 2.7.15.
-- on OSX Catalina 10.15.3, with CMake 3.15.3, Xcode 11.7 and Python 2.7.16.
-- on OSX Catalina 10.15.7, with CMake 3.18.4, Xcode 12.1 and Python 2.7.16.
+- on OSX Catalina 10.15.7, with CMake 3.19.4, Xcode 12.4 and Python 2.7.16.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -21,7 +18,7 @@ In this tutorial you will learn how to build ViSP framework from source on OSX i
 
 We suggest to follow these steps in order to install OpenCV framework in such a way that the resulting ViSP framework builds with OpenCV as 3rd party. This could be useful for users who want to use ViSP and OpenCV together. It will also allow to exploit keypoints throw ViSP classes (vpKltOpencv, vpKeyPoint) or the model-based tracker in his hybrid version (vpMbKltTracker). If you are not interested in capabilities leveraged by using OpenCV as 3rd party, just skip this section.
 
-- Download the latest <a href="http://opencv.org/releases.html">OpenCV for iOS</a> like \c opencv-4.5.0-ios-framework.zip
+- Download the latest <a href="http://opencv.org/releases.html">OpenCV for iOS</a> like \c opencv-4.5.1-ios-framework.zip
 - Unzip the archive in a directory denoted `<framework_dir>/ios`. If `<framework_dir>` is for example the following folder `$HOME/framework` just do the following:
 \verbatim
 $ mkdir -p $HOME/framework/ios
@@ -32,7 +29,7 @@ $ mv $HOME/Downloads/opencv2.framework $HOME/framework/ios/
 \endverbatim
 or if the download was either performed with Firefox, do the following
 \verbatim
-$ unzip $HOME/Downloads/opencv-4.5.0-ios-framework.zip -d $HOME/framework/ios
+$ unzip $HOME/Downloads/opencv-4.5.1-ios-framework.zip -d $HOME/framework/ios
 \endverbatim
 - Add `opencv2.framework` to iPhoneOS existing frameworks
 \verbatim
