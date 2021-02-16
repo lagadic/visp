@@ -151,7 +151,6 @@ if(X86 OR X86_64)
     add_library(${SIMD_LIBRARY} STATIC ${SIMD_LIB_SRC} ${SIMD_ALG_SRC} ${SIMD_BASE_HDR})
 
 elseif(ARM OR AARCH64)
-
     if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") AND (NOT(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "7.0.0")))
         set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -Wno-psabi")
     endif()
@@ -176,6 +175,85 @@ elseif(ARM OR AARCH64)
     set_source_files_properties(${SIMD_LIB_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${CXX_NEON_FLAG}")
     add_library(${SIMD_LIBRARY} STATIC ${SIMD_LIB_SRC} ${SIMD_BASE_SRC} ${SIMD_NEON_SRC} ${SIMD_BASE_HDR})
 
+elseif(WINRT)
+    if(CMAKE_GENERATOR_PLATFORM MATCHES "ARM")
+        add_definitions(-DSIMD_NEON_FP16_DISABLE)
+        add_definitions(-DSIMD_NEON_DISABLE)
+        set(CXX_NEON_FLAG "")
+
+        file(GLOB_RECURSE SIMD_BASE_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdBase*.cpp)
+        set_source_files_properties(${SIMD_BASE_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS}")
+
+        file(GLOB_RECURSE SIMD_LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdLib.cpp)
+        set_source_files_properties(${SIMD_LIB_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${CXX_NEON_FLAG}")
+       add_library(${SIMD_LIBRARY} STATIC ${SIMD_LIB_SRC} ${SIMD_BASE_SRC} ${SIMD_NEON_SRC} ${SIMD_BASE_HDR})
+    else()
+        # Flags check
+        set(SSE_FLAG    "")
+        set(SSE2_FLAG   "")
+        set(SSE3_FLAG   "")
+        set(SSSE3_FLAG  "")
+        set(SSE4_1_FLAG "")
+        set(SSE4_2_FLAG "")
+        set(AVX_FLAG    "")
+        set(AVX2_FLAG   "")
+
+        vp_check_compiler_flag(CXX "/arch:SSE"    HAVE_SSE_FLAG     "${PROJECT_SOURCE_DIR}/cmake/checks/cpu_sse.cpp")
+        vp_check_compiler_flag(CXX "/arch:SSE2"   HAVE_SSE2_FLAG    "${PROJECT_SOURCE_DIR}/cmake/checks/cpu_sse2.cpp")
+        vp_check_compiler_flag(CXX "/arch:AVX"    HAVE_AVX_FLAG     "${PROJECT_SOURCE_DIR}/cmake/checks/cpu_avx.cpp")
+        vp_check_compiler_flag(CXX "/arch:AVX2"   HAVE_AVX2_FLAG    "${PROJECT_SOURCE_DIR}/cmake/checks/cpu_avx2.cpp")
+
+        if(HAVE_SSE_FLAG)
+            set(SSE_FLAG "/arch:SSE")
+        endif()
+        if(HAVE_SSE2_FLAG)
+            set(SSE2_FLAG "/arch:SSE2")
+        endif()
+        if(HAVE_AVX_FLAG)
+            set(AVX_FLAG    "/arch:AVX")
+            set(SSE4_2_FLAG "/arch:AVX")
+            set(SSE4_1_FLAG "/arch:AVX")
+            set(SSSE3_FLAG  "/arch:AVX")
+            set(SSE3_FLAG   "/arch:AVX")
+        endif()
+        if(HAVE_AVX2_FLAG)
+            set(AVX2_FLAG "/arch:AVX2")
+        endif()
+
+        file(GLOB_RECURSE SIMD_BASE_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdBase*.cpp)
+        set_source_files_properties(${SIMD_BASE_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS}")
+
+        file(GLOB_RECURSE SIMD_SSE1_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdSse1*.cpp)
+        set_source_files_properties(${SIMD_SSE1_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${SSE_FLAG}")
+
+        file(GLOB_RECURSE SIMD_SSE2_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdSse2*.cpp)
+        set_source_files_properties(${SIMD_SSE2_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${SSE2_FLAG}")
+
+        file(GLOB_RECURSE SIMD_SSE3_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdSse3*.cpp)
+        set_source_files_properties(${SIMD_SSE3_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${SSE3_FLAG}")
+
+        file(GLOB_RECURSE SIMD_SSSE3_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdSsse3*.cpp)
+        set_source_files_properties(${SIMD_SSSE3_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${SSSE3_FLAG}")
+
+        file(GLOB_RECURSE SIMD_SSE41_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdSse41*.cpp)
+        set_source_files_properties(${SIMD_SSE41_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${SSE4_1_FLAG}")
+
+        file(GLOB_RECURSE SIMD_SSE42_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdSse42*.cpp)
+        set_source_files_properties(${SIMD_SSE42_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${SSE4_2_FLAG}")
+
+        file(GLOB_RECURSE SIMD_AVX1_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdAvx1*.cpp)
+        set_source_files_properties(${SIMD_AVX1_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${AVX_FLAG}")
+
+        file(GLOB_RECURSE SIMD_AVX2_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdAvx2*.cpp)
+        set_source_files_properties(${SIMD_AVX2_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${AVX2_FLAG}")
+
+        set(SIMD_LIB_FLAGS "${COMMON_CXX_FLAGS} ${AVX2_FLAG}")
+        set(SIMD_ALG_SRC ${SIMD_BASE_SRC} ${SIMD_SSE1_SRC} ${SIMD_SSE2_SRC} ${SIMD_SSE3_SRC} ${SIMD_SSSE3_SRC} ${SIMD_SSE41_SRC} ${SIMD_SSE42_SRC} ${SIMD_AVX1_SRC} ${SIMD_AVX2_SRC})
+
+        file(GLOB_RECURSE SIMD_LIB_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdLib.cpp)
+        set_source_files_properties(${SIMD_LIB_SRC} PROPERTIES COMPILE_FLAGS "${SIMD_LIB_FLAGS}")
+        add_library(${SIMD_LIBRARY} STATIC ${SIMD_LIB_SRC} ${SIMD_ALG_SRC} ${SIMD_BASE_HDR})
+    endif()
 else()
     file(GLOB_RECURSE SIMD_BASE_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdBase*.cpp)
     set_source_files_properties(${SIMD_BASE_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS}")
