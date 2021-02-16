@@ -146,7 +146,7 @@ TEST_CASE("Benchmark vpColVector::sum()", "[benchmark]") {
     std::vector<double> vec(size);
     vpColVector v(size);
     for (size_t i = 0; i < 11; i++) {
-      vec[i] = 2*i;
+      vec[i] = 2.*i;
       v[static_cast<unsigned int>(i)] = vec[i];
     }
     CHECK(v.sum() == Approx(std::accumulate(vec.begin(), vec.end(), 0.0)).epsilon(std::numeric_limits<double>::epsilon()));
@@ -198,7 +198,7 @@ TEST_CASE("Benchmark vpColVector::sumSquare()", "[benchmark]") {
     std::vector<double> vec(size);
     vpColVector v(size);
     for (size_t i = 0; i < 11; i++) {
-      vec[i] = 2*i;
+      vec[i] = 2.*i;
       v[static_cast<unsigned int>(i)] = vec[i];
     }
     CHECK(v.sumSquare() == Approx(std::inner_product(vec.begin(), vec.end(), vec.begin(), 0.0)).epsilon(std::numeric_limits<double>::epsilon()));
@@ -252,7 +252,7 @@ TEST_CASE("Benchmark vpColVector::stdev()", "[benchmark]") {
     std::vector<double> vec(size);
     vpColVector v(size);
     for (size_t i = 0; i < 11; i++) {
-      vec[i] = 2*i;
+      vec[i] = 2.*i;
       v[static_cast<unsigned int>(i)] = vec[i];
     }
     CHECK(vpColVector::stdev(v) == Approx(stddev(vec)).epsilon(std::numeric_limits<double>::epsilon()));
@@ -308,8 +308,8 @@ TEST_CASE("Benchmark vpColVector::hadamard()", "[benchmark]") {
     const unsigned int size = 11;
     std::vector<double> vec1(size), vec2(size);
     for (size_t i = 0; i < 11; i++) {
-      vec1[i] = 2*i;
-      vec2[i] = 3*i + 5;
+      vec1[i] = 2.*i;
+      vec2[i] = 3.*i + 5.;
     }
     vpColVector v1(vec1), v2(vec2);
     vpColVector res1 = v1.hadamard(v2);
