@@ -773,7 +773,7 @@ void vpDisplayGTK::init(vpImage<unsigned char> &I, int win_x, int win_y, const s
 
   \param I : Image to be displayed (not that image has to be initialized)
   \param win_x, win_y : The window is set at position (win_x,win_y) with column index and row index respectively.
-  \param title : Window title.
+  \param win_title : Window title.
 
 */
 void vpDisplayGTK::init(vpImage<vpRGBa> &I, int win_x, int win_y, const std::string &win_title)
@@ -796,12 +796,13 @@ void vpDisplayGTK::init(vpImage<vpRGBa> &I, int win_x, int win_y, const std::str
   I.display = this;
   m_displayHasBeenInitialized = true;
 }
+
 /*!
   Initialize the display size, position and title.
 
   \param win_width, win_height : Width and height of the window.
   \param win_x, win_y : The window is set at position (win_x,win_y) with column index and row index respectively.
-  \param title : Window title.
+  \param win_title : Window title.
 
 */
 void vpDisplayGTK::init(unsigned int win_width, unsigned int win_height, int win_x, int win_y, const std::string &win_title)
