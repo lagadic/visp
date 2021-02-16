@@ -259,6 +259,12 @@ if(USE_PCL)
         endif()
       endif()
     endforeach()
+
+    # On win10 + msvc 15 2017 with pcl 1.9.1 opengl32.lib needde by vtkRenderingOpenGL-8.1-gd.lib is not found
+    # Here we explicitely add opengl
+    if(OPENGL_LIBRARIES)
+      list(APPEND opt_libs ${OPENGL_LIBRARIES})
+    endif()
   endif()
   mark_as_advanced(Qt5Core_DIR Qt5Gui_DIR Qt5Network_DIR Qt5WebKit_DIR Qt5Widgets_DIR Qt5Sql_DIR)
   mark_as_advanced(DAVIDSDK_INCLUDE_DIR DAVIDSDK_LIBRARY RSSDK_DIR DSSDK_DIR VTK_DIR)
