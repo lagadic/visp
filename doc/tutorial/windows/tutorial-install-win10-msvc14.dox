@@ -4,7 +4,7 @@
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++.
-These steps have been tested on Windows 10 (64 bit), with CMake 3.16.4 and Visual Studio 2015. 
+These steps have been tested on Windows 10 (64 bit), with CMake 3.19.4 and Visual Studio 2015.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -27,7 +27,7 @@ thanks to vpDisplayGDI class.
 \subsection install_win10_msvc14_3rd_cmake CMake
 
 CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64 platform
-(at the time this tuto was written it was the file `cmake-3.13.1-win64-x64.msi`). To install just double click on the msi file.
+(at the time this tuto was written it was the file `cmake-3.19.4-win64-x64.msi`). To install just double click on the msi file.
 
 \subsection install_win10_msvc14_3rd_git Git
 
@@ -41,45 +41,45 @@ This workspace is here set to `C:\visp-ws` folder, but it could be set to any ot
 To create the workspace, open a `cmd` Command Prompt (a fast way to launch this window is to press the Win + R keys
 on your keyboard. Then, type `cmd` or `cmd.exe` and press Enter or click/tap OK) and run the following to create
 a workspace environment var named `VISP_WS`:
-\code
+\verbatim
 C:\> setx VISP_WS "C:\visp-ws"
 C:\> exit
-\endcode
+\endverbatim
 Open a new `cmd` Command Prompt and create the corresponding folder
-\code
+\verbatim
 C:\> mkdir %VISP_WS%
 C:\> exit
-\endcode
+\endverbatim
 
 \section install_win10_msvc14_quick Quick ViSP installation
 
 In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering in \ref install_win10_msvc14_advanced.
 
 - Open a new `cmd` Command Prompt and get ViSP source code in the workspace
-\code
+\verbatim
 C:\> cd %VISP_WS%
 C:\> git clone https://github.com/lagadic/visp.git
-\endcode
+\endverbatim
 - Create a build directory
-\code
+\verbatim
 C:\> mkdir %VISP_WS%\visp-build-vc14
 C:\> cd %VISP_WS%\visp-build-vc14
-\endcode
+\endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 14 2015 and 64 bits hardware):
-\code
+\verbatim
 C:\> cmake -G "Visual Studio 14 2015" -A "x64" %VISP_WS%\visp
-\endcode
+\endverbatim
 - Build and install ViSP (installation doesn't need administrator privileges)
-\code
+\verbatim
 C:\> cmake --build . --config Release --target install
-\endcode
+\endverbatim
 - ViSP is now installed in `%%VISP_WS%\visp-build-vc14\install` folder
 - Modify the `Path` var to add `%%VISP_WS%\visp-build-vc14\install\x64\vc14\bin` corresponding to the path to ViSP libraries.
   To this end, in a `cmd` Command Prompt run:
-\code
+\verbatim
 C:\> setx Path "%Path%:%VISP_WS%\visp-build-vc14\install\x64\vc14\bin"
 C:\> exit
-\endcode
+\endverbatim
 \note Since `setx` command is not able to handle a var that has more than 1024 characters (which could be the case of `Path` var),
 it may happen that the previous command is not working as expected. In that case, to modify `Path` environment variable do the following:
   - Open the Start Search, type in "env", and choose "Edit environment variables for your account"
@@ -89,10 +89,10 @@ it may happen that the previous command is not working as expected. In that case
   - Click "New" button to add a new line with `%%VISP_WS%\visp-build-vc14\install\x64\vc14\bin`
 
 - Set `VISP_DIR` var to help CMake to find ViSP as a 3rd party
-\code
+\verbatim
 C:\> setx VISP_DIR "%VISP_WS%\visp-build-vc14\install"
 C:\> exit
-\endcode
+\endverbatim
 
 To have a trial, just jump to \ref install_win10_msvc14_dataset before running some binaries that you just build or jump
 to \ref install_win10_msvc14_next. You can later come back to the \ref install_win10_msvc14_advanced.
@@ -102,13 +102,51 @@ to \ref install_win10_msvc14_next. You can later come back to the \ref install_w
 \subsection install_win10_msvc14_3rdparty Install 3rd parties
 
 ViSP is interfaced with several 3rd party libraries. The [complete list is provided here](https://visp.inria.fr/software-architecture).
-We recommend to install \ref install_win10_msvc14_3rdparty_opencv in the workspace. If you have an
+To use optimized matrix operations you may install \ref install_win10_msvc14_3rdparty_eigen.
+We recommend also to install \ref install_win10_msvc14_3rdparty_opencv in the workspace. If you have an
 Intel Realsense depth camera you may also install \ref install_win10_msvc14_3rdparty_realsense.
 If your camera is a PointGrey you may install \ref install_win10_msvc14_3rdparty_flycapture,
 while if your camera is a Basler, you may rather install \ref install_win10_msvc14_3rdparty_pylon.
 If you want to be able to detect a QR code you may install \ref install_win10_msvc14_3rdparty_zbar.
-To use optimized matrix operations you may install \ref install_win10_msvc14_3rdparty_eigen.
 Other 3rd parties are optional and should be considered only by expert developers.
+
+\subsubsection install_win10_msvc14_3rdparty_eigen Eigen3 3rd party
+
+- Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
+written we downloaded `eigen-3.3.9.zip` archive corresponding to Eigen 3.3.9.
+- Extract the content of the archive in `%%VISP_WS%`.
+- Once unzipped, you should have Eigen in `%%VISP_WS%\eigen-3.3.9`
+
+<b>2. Build and install Eigen3 from source</b>
+
+- Create a build directory
+\verbatim
+C:\> mkdir %VISP_WS%\eigen-3.3.9\build-vc14
+C:\> cd %VISP_WS%\eigen-3.3.9\build-vc14
+\endverbatim
+- Run CMake in build directory (here the generator is chosen for Visual Studio 14 2016 and 64 bits hardware
+and installation folder is set to `%%VISP_WS%\eigen-3.3.9\build-vc14\install` folder):
+\verbatim
+C:\> cmake -G "Visual Studio 14 2016" -A "x64" %VISP_WS%\eigen-3.3.9 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.9\build-vc14\install
+\endverbatim
+- Build and install Eigen3 (installation doesn't need administrator privileges)
+\verbatim
+C:\> cmake --build . --config Release --target install
+\endverbatim
+- eigen is now installed in `%%VISP_WS%\eigen-3.3.9\build-vc14\install` folder
+
+<b>3. Complete Eigen3 installation</b>
+
+Now you have to complete Eigen3 installation setting some environment vars:
+- In order that ViSP detects Eigen3 you have to set `EIGEN_DIR` environment variable. Start up a `cmd` Command Prompt
+and enter:
+\verbatim
+C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.3.9\build-vc14\install\share\eigen3\cmake"
+C:\> exit
+\endverbatim
+where `%%VISP_WS%\eigen-3.3.9\build-vc14\install` is where you have installed Eigen3. Inside the folder
+`%%VISP_WS%\eigen-3.3.9\build-vc14\install\share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
+- There is no need to set `Path` environment var since Eigen3 is a template that has no library.
 
 \subsubsection install_win10_msvc14_3rdparty_opencv OpenCV 3rd party
 
@@ -116,80 +154,32 @@ Other 3rd parties are optional and should be considered only by expert developer
 
 First you have to get OpenCV:
 - From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got
-`opencv-4.5.0-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous
+`opencv-4.5.1-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous
 OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%`.
 \image html img-win10-extract-opencv.png
 - The installer extract all the material in `%%VISP_WS%\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.5.0`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.5.1`.
 
-\note OpenCV 4.5.0 win pack installer contains prebuild OpenCV libraries build with Visual Studio 14 2015 (vc14)
-and Visual Studio 15 2017 (vc15). These libraries are located in `%%VISP_WS%\opencv-4.5.0\build\x64\vc14` and
-`%%VISP_WS%\opencv-4.5.0\build\x64\vc15` respectively.
+\note OpenCV 4.5.1 win pack installer contains prebuild OpenCV libraries build with Visual Studio 14 2015 (vc14)
+and Visual Studio 15 2017 (vc15). These libraries are located in `%%VISP_WS%\opencv-4.5.1\build\x64\vc14` and
+`%%VISP_WS%\opencv-4.5.1\build\x64\vc15` respectively.
 
 <b>2. Complete OpenCV installation</b>
 
 Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd` Command Prompt
 and enter:
-\code
-C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.0\build"
+\verbatim
+C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.1\build"
 C:\> exit
-\endcode
-where `%%VISP_WS%\opencv-4.5.0\build` is where you have installed OpenCV. Inside this folder you should have a
+\endverbatim
+where `%%VISP_WS%\opencv-4.5.1\build` is where you have installed OpenCV. Inside this folder you should have a
 file named `OpenCVConfig.cmake`. 
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 14 2016 usage in the
 `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with
-`%%VISP_WS%\opencv-4.5.0\build\x64\vc14\bin`.
-
-\subsubsection install_win10_msvc14_3rdparty_eigen Eigen3 3rd party
-
-- Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
-written we downloaded `eigen-3.3.8.zip` archive corresponding to Eigen 3.3.8.
-- Extract the content of the archive in `%%VISP_WS%`.
-- Once unzipped, you should have Eigen in `%%VISP_WS%\eigen-3.3.8`
-
-<b>2. Build and install Eigen3 from source</b>
-
-- Create a build directory
-\code
-C:\> mkdir %VISP_WS%\eigen-3.3.8\build-vc14
-C:\> cd %VISP_WS%\eigen-3.3.8\build-vc14
-\endcode
-- Run CMake in build directory (here the generator is chosen for Visual Studio 14 2016 and 64 bits hardware
-and installation folder is set to `%%VISP_WS%\eigen-3.3.8\build-vc14\install` folder):
-\code
-C:\> cmake -G "Visual Studio 14 2016" -A "x64" %VISP_WS%\eigen-3.3.8 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.8\build-vc14\install
-\endcode
-- Build and install Eigen3 (installation doesn't need administrator privileges)
-\code
-C:\> cmake --build . --config Release --target install
-\endcode
-- eigen is now installed in `%%VISP_WS%\eigen-3.3.8\build-vc14\install` folder
-
-<b>3. Complete Eigen3 installation</b>
-
-Now you have to complete Eigen3 installation setting some environment vars:
-- In order that ViSP detects Eigen3 you have to set `EIGEN_DIR` environment variable. Start up a `cmd` Command Prompt
-and enter:
-\code
-C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.3.8\build-vc14\install\share\eigen3\cmake"
-C:\> exit
-\endcode
-where `%%VISP_WS%\eigen-3.3.8\build-vc14\install` is where you have installed Eigen3. Inside the folder
-`%%VISP_WS%\eigen-3.3.8\build-vc14\install\share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
-- There is no need to set `Path` environment var since Eigen3 is a template that has no library.
-
-<b>4. Known issue with Eigen 3.3.8</b>
-
-- Following \ref install_win10_msvc14_build instructions, during `visp_core` build you may get an issue:
-\verbatim
-eigen_assert_exception is not member of Eigen
-\endverbatim
-\image html img-win10-issue-eigen-3.3.8.png
-
-- See \ref install_msvc16_tips_eigen_3_3_8 to get a work around.
+`%%VISP_WS%\opencv-4.5.1\build\x64\vc14\bin`.
 
 \subsubsection install_win10_msvc14_3rdparty_realsense librealsense 3rd party
 
@@ -308,10 +298,10 @@ and adapted for compiling under Visual following the steps:
 
 - Get ZBarWin64 source code from <a href="https://github.com/dani4/ZBarWin64">Github repository</a>.
   To this end open a `cmd` Command Prompt and hit:
-\code
+\verbatim
 C:\> cd %VISP_WS%
 C:\> git clone https://github.com/dani4/ZBarWin64
-\endcode
+\endverbatim
 
 <b>2. Build zbar from source</b>
 - Then open `%%VISP_WS%\ZBarWin64\zbar64.sln` solution file with Visual Studio C++
@@ -320,10 +310,10 @@ C:\> git clone https://github.com/dani4/ZBarWin64
 
 <b>3. Complete zbar installation</b>
 - To complete the installation, set `ZBAR_DIR` environment variable:
-\code
+\verbatim
 C:\> setx ZBAR_DIR "%VISP_WS%\ZBarWin64"
 C:\> exit
-\endcode
+\endverbatim
 - You have also to add the location of zbar and iconv libraries in the `Path` environment variable.
   Open the "Edit environment variable" UI, and modify `Path` to add 2 new lines, one with
   `%%VISP_WS%\ZBarWin64\x64\Release`, another with `%%VISP_WS%\ZBarWin64\zbar\libiconv\dll_x64`.
@@ -342,10 +332,10 @@ There are different ways to get ViSP source code.
 
 - Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a>
   using the `git` command line tool:
-\code
+\verbatim
 C:\> cd %VISP_WS%
 C:\> git clone https://github.com/lagadic/visp.git
-\endcode
+\endverbatim
 
 We suppose now that ViSP source is in `%%VISP_WS%\visp`. 
 
@@ -367,14 +357,14 @@ be located in `%%VISP_WS%/visp-build-vc14`.
 \note Installation folder is set to `%%VISP_WS%/visp-build-vc14/install`. If you want to change the installation folder
 to `C:\Program Files (x86)\ViSP`, make sure that you have administrator privileges to write in that folder before modifying `CMAKE_INSTALL_PREFIX`. 
 \warning If you forgot to set `Eigen3_DIR` environment var, you will get the following warning in `cmake_gui`:
-\code
+\verbatim
 CMake Warning at CMakeLists.txt:1156 (message):
   Eigen3 config file is detected in C:/visp-ws/eigen-3.3.7/build-vc14.  Using
   C:/visp-ws/eigen-3.3.7/build-vc14/Eigen3Config.cmake doesn't allow to use a
   valid Eigen3 include dir: C://include/eigen3.  Modify Eigen3_DIR to point
   to Eigen3Config.cmake file located in Eigen3 installation folder or turn
   USE_EIGEN3 OFF.
-\endcode We strongly recommend to fix this warning. To this end:
+\endverbatim We strongly recommend to fix this warning. To this end:
     - close `cmake-gui`
     - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\eigen-3.3.7\build-vc14\install\share\eigen3\cmake"`
     - open again `cmake-gui`
@@ -429,35 +419,35 @@ To build ViSP documentation, you have first to install [Doxygen](http://www.doxy
   we downloaded `doxygen-1.8.16-setup.exe`
 - Run the installer following default options
 - Open a new `cmd` Command Prompt and enter build directory
-\code
+\verbatim
 C:\> cd %VISP_WS%\visp-build-vc14
-\endcode
+\endverbatim
 - Run CMake in build directory:
-\code
+\verbatim
 C:\> cmake -G "Visual Studio 14 2015" -A "x64" %VISP_WS%\visp
-\endcode
+\endverbatim
 - Build documentation using:
-\code
+\verbatim
 C:\> cmake --build . --config Release --target visp_doc
-\endcode
+\endverbatim
 
 The generated documentation is then available in `$VISP_WS/visp-build-vc14/doc/html/index.html`
 
 \note
 - To speed up generating online doc, particularly around formula rendering, you can use [MatJax](https://www.mathjax.org).
   To this end, install MathJax and build doc using:
-\code
+\verbatim
 C:\> npm install mathjax
 C:\> cmake -G "Visual Studio 14 2015" -A "x64" %VISP_WS%\visp -DUSE_MATHJAX=ON
 C:\> cmake --build . --config Release --target visp_doc
-\endcode
+\endverbatim
 
 - It is also possible to generate a more complete documentation that includes also all the internal classes. This could
   be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
-\code
+\verbatim
 C:\> cmake -G "Visual Studio 14 2015" -A "x64" %VISP_WS%\visp -DENABLE_FULL_DOC=ON
 C:\> cmake --build . --config Release --target visp_doc
-\endcode
+\endverbatim
 
 \subsection install_win10_msvc14_env_var Set Path environment var
 
@@ -465,19 +455,19 @@ Modify the `Path` var to add the path to ViSP dll libraries. To this end open th
 and modify `Path` to add a new line with `%%VISP_WS%\visp-build-vc14\install\x64\vc14\bin`.
 
 Modifying the `Path` could also be done in a `cmd` Command Prompt running:
-\code
+\verbatim
 C:\> setx Path "%Path%:%VISP_WS%\visp-build-vc14\install\x64\vc14\bin"
 C:\> exit
-\endcode
+\endverbatim
 
 \subsection install_win10_msvc14_visp_dir Set VISP_DIR environment var
 
 In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one
 described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path to the `VISPConfig.cmake` file:
-\code
+\verbatim
 C:\> setx VISP_DIR "%VISP_WS%\visp-build-vc14\install"
 C:\> exit
-\endcode
+\endverbatim
 
 \section install_win10_msvc14_dataset Install ViSP dataset
 
@@ -495,32 +485,32 @@ We give hereafter the two ways to get this data set:
 - Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to
 detect automatically the location of the requested data. In our case, this variable should be set to `%%VISP_WS%\visp-images-3.3.0`.
 Open a `cmd` Command Prompt and run
-\code
+\verbatim
 C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.3.0
 C:\> exit
-\endcode
+\endverbatim
 
 <b>2. Get data set from github</b>
 
 - Use git to get the data set latest version:
-\code
+\verbatim
 C:\> cd %VISP_WS%
 C:\> git clone https://github.com/lagadic/visp-images.git
-\endcode
+\endverbatim
 \image html img-win10-visp-images.png
 - Once cloned, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect
   automatically the location of the requested data. In our case, this variable should be set to `%%VISP_WS%\visp-images`.
   Open a `cmd` Command Prompt and run
-\code
+\verbatim
 C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images
 C:\> exit
-\endcode
+\endverbatim
 
 <b>Test data set usage</b>
 
 From now, you can try to run ViSP examples and tests. For example, if you want to run
 `%%VISP_WS%\visp-build-vc15\example\device\display\Release\displayGDI.exe`, open a `cmd` Command Prompt, enter in the right folder and run:
-\code
+\verbatim
 C:\> cd %VISP_WS%\visp-build-vc15\example\device\display\Release
 C:\> displayGDI.exe
 
@@ -531,7 +521,7 @@ Cross position: 392, 306
 
 A click to exit the program...
 Bye
-\endcode
+\endverbatim
 
 \section install_win10_msvc14_tip Tip and tricks
 
@@ -539,19 +529,19 @@ Bye
 
 If one of the following command lines are not working:
 
-\code
+\verbatim
 C:\> nmake
 C:\> cl
-\endcode
+\endverbatim
 
 it may possible that you have more then one Visual Studio version installed on your system.
 
 To select Visual Studio 2015 (vc14) you may open a `cmd` Command Prompt, enter in the corresponding Visual Studio folder and run `vcvarsall.bat`:
 
-\code
+\verbatim
 C:\> cd C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC
 C:\> vcvarsall.bat
-\endcode
+\endverbatim
 
 \subsection install_msvc14_tips_new_3rdparty How to take into account a newly installed 3rd party
 
@@ -559,63 +549,63 @@ Since all 3rd parties are optional you may have started to install only some of 
 installed a new third-party, or that you upgraded the version of this 3rd party. The next step is to go back
 to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build
 again ViSP. This could be achieved with:
-\code
+\verbatim
 $ cd $VISP_WS/visp-build-msvc14
 $ cmake ../visp
-\endcode
+\endverbatim
 
 Here you can check the content of the `ViSP-third-party.txt` file and see if the newly installed 3rd party is well detected.
 
 Finally, you need to rebuild and install ViSP with:
-\code
+\verbatim
 $ cmake --build . --config Release --target install
-\endcode
+\endverbatim
 
 \subsection install_msvc14_tips_uninstall How to uninstall ViSP
 After ViSP installation, you can remove installed material using:
-\code
+\verbatim
 $ cd $VISP_WS/visp-build-msvc14
 $ cmake --build . --config Release --target uninstall
-\endcode
+\endverbatim
 
 \subsection install_msvc14_tips_modules How to build only ViSP libraries
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
-\code
+\verbatim
 $ cd $VISP_WS/visp-build-msvc14
 $ cmake --build . --config Release --target visp_modules
-\endcode
+\endverbatim
 
 \subsection install_msvc14_tips_module_once How to build a ViSP specific module
 
 If you want to build a given module and all the dependencies:
-\code
+\verbatim
 $ cd $VISP_WS/visp-build-msvc14
 $ cmake --build . --config Release --target visp_<module_name>
-\endcode
+\endverbatim
 
 For example to build the model-based tracker module named mbt, run:
-\code
+\verbatim
 $ cd $VISP_WS/visp-build-msvc14
 $ cmake --build . --config Release --target visp_mbt
-\endcode
+\endverbatim
 
 \subsection install_msvc14_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
 
 To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP
 during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `$VISP_WS/visp-build`.
 We provide hereafter an example of a possible content of this file that contains also build info.
-\code
+\verbatim
 $ type $VISP_WS/visp-build-vc14/ViSP-third-party.txt
 ==========================================================
 General configuration information for ViSP 3.3.1
 
-  Version control:               3.2.0-1320-g8c8c204
+  Version control:               3.2.0-1402-g0fdcf95-dirty
 
   Platform:
-    Timestamp:                   2020-12-15T13:51:48Z
+    Timestamp:                   2021-02-16T09:59:12Z
     Host:                        Windows 10.0.17134 AMD64
-    CMake:                       3.19.0
+    CMake:                       3.19.4
     CMake generator:             Visual Studio 14 2015
     CMake build tool:            C:/Program Files (x86)/MSBuild/14.0/bin/MSBuild.exe
     MSVC:                        1900
@@ -623,13 +613,13 @@ General configuration information for ViSP 3.3.1
   C/C++:
     Built as dynamic libs?:      yes
     C++ Compiler:                C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/x86_amd64/cl.exe  (ver 19.0.24215.1)
-    C++ flags (Release):         /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MP4   /EHa -openmp -std=c++11 /Gy /bigobj /MD /O2 /Ob2 /DNDEBUG
-    C++ flags (Debug):           /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MP4   /EHa -openmp -std=c++11 /Gy /bigobj /MDd /Zi /Ob0 /Od /RTC1
+    C++ flags (Release):         /DWIN32 /D_WINDOWS /W3 /GR /EHsc  /MP4   /EHa -openmp -std=c++11 /Gy /bigobj /MD /O2 /Ob2 /DNDEBUG
+    C++ flags (Debug):           /DWIN32 /D_WINDOWS /W3 /GR /EHsc  /MP4   /EHa -openmp -std=c++11 /Gy /bigobj /MDd /Zi /Ob0 /Od /RTC1
     C Compiler:                  C:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/bin/x86_amd64/cl.exe
-    C flags (Release):           /DWIN32 /D_WINDOWS /W3   /MP4   /EHa -openmp -std=c++11 /MD /O2 /Ob2 /DNDEBUG
-    C flags (Debug):             /DWIN32 /D_WINDOWS /W3   /MP4   /EHa -openmp -std=c++11 /MDd /Zi /Ob0 /Od /RTC1
-    Linker flags (Release):      /machine:x64 /INCREMENTAL:NO
-    Linker flags (Debug):        /machine:x64 /debug /INCREMENTAL /ignore:4099
+    C flags (Release):           /DWIN32 /D_WINDOWS /W3    /MP4   /EHa -openmp -std=c++11 /MD /O2 /Ob2 /DNDEBUG
+    C flags (Debug):             /DWIN32 /D_WINDOWS /W3    /MP4   /EHa -openmp -std=c++11 /MDd /Zi /Ob0 /Od /RTC1
+    Linker flags (Release):      /machine:x64  /INCREMENTAL:NO
+    Linker flags (Debug):        /machine:x64  /debug /INCREMENTAL /ignore:4099
 
   ViSP modules:
     To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
@@ -657,8 +647,8 @@ General configuration information for ViSP 3.3.1
     \- Use Netlib:               no
     \- Use GSL:                  no
     \- Use Lapack (built-in):    yes (ver 3.2.1)
-    Use Eigen3:                  yes (ver 3.3.8)
-    Use OpenCV:                  yes (ver 4.5.0)
+    Use Eigen3:                  yes (ver 3.3.9)
+    Use OpenCV:                  yes (ver 4.5.1)
 
   Simulator: 
     Ogre simulator: 
@@ -677,7 +667,7 @@ General configuration information for ViSP 3.3.1
     Use JPEG:                    no
     Use PNG:                     no
     \- Use ZLIB:                 no
-    Use OpenCV:                  yes (ver 4.5.0)
+    Use OpenCV:                  yes (ver 4.5.1)
     Use stb_image (built-in):    no
 
   Real robots: 
@@ -700,7 +690,7 @@ General configuration information for ViSP 3.3.1
   GUI: 
     Use X11:                     no
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 4.5.0)
+    Use OpenCV:                  yes (ver 4.5.1)
     Use GDI:                     yes
     Use Direct3D:                no
 
@@ -709,7 +699,7 @@ General configuration information for ViSP 3.3.1
     Use CMU 1394:                no
     Use V4L2:                    no
     Use directshow:              no
-    Use OpenCV:                  yes (ver 4.5.0)
+    Use OpenCV:                  yes (ver 4.5.1)
     Use FLIR Flycapture:         yes
     Use Basler Pylon:            no
     Use IDS uEye:                yes (ver 4.94.0)
@@ -721,8 +711,8 @@ General configuration information for ViSP 3.3.1
     \- Use libfreenect:          no
     \- Use libusb-1:             no
     \- Use pthread:              no
-    Use PCL:                     no
-    \- Use VTK:                  no
+    Use PCL:                     yes (ver 1.8.1)
+    \- Use VTK:                  yes (ver 8.0.0)
 
   F/T sensors: 
     Use atidaq (built-in):       no
@@ -759,7 +749,21 @@ General configuration information for ViSP 3.3.1
   Install path:                  C:/visp-ws/visp-build-vc14/install
 
 ==========================================================
-\endcode
+\endverbatim
+
+\subsection install_win10_msvc14_issue_librealsense_cpu_too_old librealsense installer returns an unrecoverable SEH exception
+
+At the end of the `Intel Relasense SDK` installation process or when running `Intel Realsense Viewer`,
+if you get the following error message:
+\verbatim
+Program terminated due to an unrecoverable SEH exception:
+Illegal CPU instruction!
+Possibly newer CPU architecture is required
+\endverbatim
+
+it means that your CPU is too old to support a recent version of the Intel Realsense SDK.
+A workaround is to install an older version. In our case installing
+`Intel.RealSense.SDK-WIN10-2.32.1.1297.exe` does the trick.
 
 \section install_win10_msvc14_next Next tutorial
 
