@@ -145,6 +145,7 @@ public:
     \param node_ : XML tree, pointing on a marker equipement.
     \param cam_name : name of the camera : useful if the xml file has multiple
     camera parameters. Set as "" if the camera name is not ambiguous.
+    \param projModel : Projection model type.
     \param im_width : width of image  on which camera calibration was performed.
       Set as 0 if not ambiguous.
     \param im_height : height of the image  on which camera calibration
@@ -199,6 +200,7 @@ public:
     \param node_ : XML tree, pointing on a marker equipement.
     \param cam_name : name of the camera : useful if the xml file has multiple
     camera parameters. Set as "" if the camera name is not ambiguous.
+    \param projModel : Projection model type.
     \param im_width : width of image  on which camera calibration was performed.
       Set as 0 if not ambiguous.
     \param im_height : height of the image  on which camera calibration
@@ -565,6 +567,7 @@ public:
     \param node_ : XML tree, pointing on a marker equipement.
     \param cam_name : name of the camera : useful if the xml file has multiple
     camera parameters. Set as "" if the camera name is not ambiguous.
+    \param projModel : Projection model type.
     \param im_width : width of image  on which camera calibration was performed.
       Set as 0 if not ambiguous.
     \param im_height : height of the image  on which camera calibration

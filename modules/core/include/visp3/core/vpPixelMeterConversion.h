@@ -256,7 +256,7 @@ public:
 
   /*!
     Point coordinates conversion with Kannala-Brandt distortion from pixel
-    coordinates \f$(u,v)\ to normalized coordinates \f$(x,y)\f$ in meter.
+    coordinates \f$(u,v)\f$ to normalized coordinates \f$(x,y)\f$ in meter.
 
     \param[in]  cam : Camera parameters.
     \param[in]  u   : Input coordinate in pixels along image horizontal axis.

@@ -209,7 +209,7 @@ public:
 
     \param[in] cam : camera parameters.
     \param[in] x : input coordinate in meter along image plane x-axis.
-    \param[in]y : input coordinate in meter along image plane y-axis.
+    \param[in] y : input coordinate in meter along image plane y-axis.
     \param[out] u : output coordinate in pixels along image horizontal axis.
     \param[out] v : output coordinate in pixels along image vertical axis.
 

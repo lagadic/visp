@@ -258,18 +258,11 @@ int vpMath::round(double x)
 /*!
   Return the sign of x.
 
+  \param x : Value to test.
   \return -1 if x is negative, +1 if positive and 0 if zero.
 
 */
-int
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-    (
-#endif
-        vpMath::sign
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-        )
-#endif
-        (double x)
+int ( vpMath::sign ) (double x)
 {
   if (fabs(x) < std::numeric_limits<double>::epsilon())
     return 0;

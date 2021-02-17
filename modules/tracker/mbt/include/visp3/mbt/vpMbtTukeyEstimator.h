@@ -226,6 +226,9 @@ inline void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<
 #endif
 }
 
+/*!
+ * \relates vpMbtTukeyEstimator
+ */
 template <>
 inline void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector<double> &residues,
                                                                std::vector<double> &weights, const double NoiseThreshold)
@@ -269,6 +272,9 @@ inline void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector
 #endif
 }
 
+/*!
+ * \relates vpMbtTukeyEstimator
+ */
 template <>
 inline void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights,
                                                    const float NoiseThreshold)
@@ -284,6 +290,9 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &res
     MEstimator_impl(residues, weights, NoiseThreshold);
 }
 
+/*!
+ * \relates vpMbtTukeyEstimator
+ */
 template <>
 inline void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &residues, std::vector<double> &weights,
                                                     const double NoiseThreshold)
@@ -299,6 +308,9 @@ inline void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &r
     MEstimator_impl(residues, weights, NoiseThreshold);
 }
 
+/*!
+ * Consider Tukey influence function.
+ */
 template <typename T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x, vpColVector &weights)
 {
   double C = sig * 4.6851;
@@ -318,6 +330,9 @@ template <typename T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::ve
   }
 }
 
+/*!
+ * \relates vpMbtTukeyEstimator
+ */
 template <>
 inline void vpMbtTukeyEstimator<double>::MEstimator(const vpColVector &residues, vpColVector &weights,
                                                     const double NoiseThreshold)
@@ -352,6 +367,9 @@ inline void vpMbtTukeyEstimator<double>::MEstimator(const vpColVector &residues,
   psiTukey(sigma, m_normres, weights);
 }
 
+/*!
+ * \relates vpMbtTukeyEstimator
+ */
 template <>
 inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, vpColVector &weights,
                                                    const double NoiseThreshold)
@@ -388,6 +406,9 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, 
   psiTukey(sigma, m_normres, weights);
 }
 
+/*!
+ * Consider Tukey influence function.
+ */
 template <class T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::vector<T> &x, std::vector<T> &weights)
 {
   T C = static_cast<T>(4.6851) * sig;
