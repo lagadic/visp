@@ -57,7 +57,7 @@ import org.visp.io.VpImageIo;
 
 public class ApriltagDetection extends JFrame {
     static {
-        System.loadLibrary("visp_java330");
+        System.loadLibrary("visp_java340");
     }
 
     private static final long serialVersionUID = 1L;
@@ -71,7 +71,8 @@ public class ApriltagDetection extends JFrame {
     private static int[] tagFamilies = {0, 3, 5, 6, 7, 8, 9, 10};
     private static String[] poseEstimationMethodNames = {"HOMOGRAPHY", "HOMOGRAPHY_VIRTUAL_VS", "DEMENTHON_VIRTUAL_VS",
             "LAGRANGE_VIRTUAL_VS", "BEST_RESIDUAL_VIRTUAL_VS", "HOMOGRAPHY_ORTHOGONAL_ITERATION"};
-    private Object[][] data = { { new Integer(-1), new Double(0.053) } };
+    @SuppressWarnings("deprecation")
+	private Object[][] data = { { Integer.valueOf(-1), Double.valueOf(0.053) } };
     private JTextArea poseArea;
 
     public ApriltagDetection() {
@@ -365,16 +366,16 @@ public class ApriltagDetection extends JFrame {
         JLabel v0Label = new JLabel("v0:");
         //Intrinsics input
         JFormattedTextField pxField = new JFormattedTextField(NumberFormat.getNumberInstance());
-        pxField.setValue(new Double(cam.get_py()));
+        pxField.setValue(Double.valueOf(cam.get_py()));
         pxField.setColumns(10);
         JFormattedTextField pyField = new JFormattedTextField(NumberFormat.getNumberInstance());
-        pyField.setValue(new Double(cam.get_py()));
+        pyField.setValue(Double.valueOf(cam.get_py()));
         pyField.setColumns(10);
         JFormattedTextField u0Field = new JFormattedTextField(NumberFormat.getNumberInstance());
-        u0Field.setValue(new Double(cam.get_u0()));
+        u0Field.setValue(Double.valueOf(cam.get_u0()));
         u0Field.setColumns(10);
         JFormattedTextField v0Field = new JFormattedTextField(NumberFormat.getNumberInstance());
-        v0Field.setValue(new Double(cam.get_v0()));
+        v0Field.setValue(Double.valueOf(cam.get_v0()));
         v0Field.setColumns(10);
         //Tell accessibility tools about label/textfield pairs.
         pxLabel.setLabelFor(pxField);
@@ -612,3 +613,4 @@ public class ApriltagDetection extends JFrame {
         });
     }
 }
+
