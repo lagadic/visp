@@ -70,7 +70,7 @@
 #include <visp3/core/vpUniRand.h>
 
 vpUniRand::vpUniRand() :
-  m_maxInvDbl(1.0 / UINT32_MAX), m_maxInvFlt(1.0f / UINT32_MAX), m_rng()
+  m_maxInvDbl(1.0 / static_cast<double>(UINT32_MAX)), m_maxInvFlt(1.0f / static_cast<float>(UINT32_MAX)), m_rng()
 {
 }
 
@@ -83,7 +83,7 @@ vpUniRand::vpUniRand() :
   \sa setSeed
 */
 vpUniRand::vpUniRand(uint64_t seed, uint64_t seq) :
-  m_maxInvDbl(1.0 / UINT32_MAX), m_maxInvFlt(1.0f / UINT32_MAX), m_rng()
+  m_maxInvDbl(1.0 / static_cast<double>(UINT32_MAX)), m_maxInvFlt(1.0f / static_cast<float>(UINT32_MAX)), m_rng()
 {
   setSeed(seed, seq);
 }
