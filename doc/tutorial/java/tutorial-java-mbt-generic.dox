@@ -43,7 +43,7 @@ If you followed \ref tutorial-install-java, you should already have ViSP library
 
 \section java_mbt_gen_app Import generic tracker java code
 
-- Now import GenericTracker.java` file in your project, pointing your mouse on `src` folder and with a right click entering `"Import"` menu.
+- Now import `GenericTracker.java` file in your project, pointing your mouse on `src` folder and with a right click entering `"Import"` menu.
 
 \image html img-java-mbt-generic-import.jpg
 
