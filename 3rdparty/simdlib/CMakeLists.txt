@@ -10,7 +10,8 @@ if(UNIX)
     endif()
 endif()
 
-string(REGEX REPLACE "(-march=[a-z]*)|(-mtune=[a-z]*)|(-msse[0-9,\\.]*)|(-mavx[0-9]*)|(-mfma)" "" COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS}")
+# on android, we have -march=armv7-a that need to be removed
+string(REGEX REPLACE "(-march=[a-z0-9-]*)|(-mtune=[a-z]*)|(-msse[0-9,\\.]*)|(-mavx[0-9]*)|(-mfma)" "" COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS}")
 
 file(GLOB_RECURSE SIMD_BASE_HDR ${CMAKE_CURRENT_SOURCE_DIR}/Simd/*.h ${CMAKE_CURRENT_SOURCE_DIR}/Simd/*.hpp)
 
