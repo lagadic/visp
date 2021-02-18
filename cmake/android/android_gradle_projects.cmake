@@ -1,6 +1,9 @@
 # https://developer.android.com/studio/releases/gradle-plugin
-set(ANDROID_GRADLE_PLUGIN_VERSION "3.2.1" CACHE STRING "Android Gradle Plugin version (3.0+)")
+set(ANDROID_GRADLE_PLUGIN_VERSION "3.2.1" CACHE STRING "Android Gradle Plugin version")
 message(STATUS "Android Gradle Plugin version: ${ANDROID_GRADLE_PLUGIN_VERSION}")
+
+set(GRADLE_VERSION "5.6.4" CACHE STRING "Gradle version")
+message(STATUS "Gradle version: ${GRADLE_VERSION}")
 
 set(ANDROID_COMPILE_SDK_VERSION "26" CACHE STRING "Android compileSdkVersion")
 set(ANDROID_MIN_SDK_VERSION "21" CACHE STRING "Android minSdkVersion")
@@ -38,9 +41,11 @@ set(ANDROID_ABI_FILTER "${ANDROID_INSTALL_ABI_FILTER}")
 configure_file("${VISP_SOURCE_DIR}/samples/android/build.gradle.in" "${ANDROID_TMP_INSTALL_BASE_DIR}/${ANDROID_INSTALL_SAMPLES_DIR}/build.gradle" @ONLY)
 install(FILES "${ANDROID_TMP_INSTALL_BASE_DIR}/${ANDROID_INSTALL_SAMPLES_DIR}/build.gradle" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}" COMPONENT samples)
 
+configure_file("${VISP_SOURCE_DIR}/platforms/android/gradle-wrapper/gradle/wrapper/gradle-wrapper.properties.in" "${ANDROID_BUILD_BASE_DIR}/gradle/wrapper/gradle-wrapper.properties" @ONLY)
+install(FILES "${ANDROID_BUILD_BASE_DIR}/gradle/wrapper/gradle-wrapper.properties" DESTINATION "${ANDROID_INSTALL_SAMPLES_DIR}/gradle/wrapper" COMPONENT samples)
+
 set(GRADLE_WRAPPER_FILES
     "gradle/wrapper/gradle-wrapper.jar"
-    "gradle/wrapper/gradle-wrapper.properties"
     "gradlew.bat"
     "gradlew"
     "gradle.properties"
@@ -71,7 +76,7 @@ def vispsdk='../'
 //def vispsdk='/<path to ViSP-android-sdk>'
 //println vispsdk
 include ':visp'
-project(':visa').projectDir = new File(vispsdk + '/sdk')
+project(':visp').projectDir = new File(vispsdk + '/sdk')
 ")
 
 
@@ -105,17 +110,29 @@ macro(add_android_project target path)
 include ':${__dir}'
 ")
 
-  # build apk
-  set(APK_FILE "${ANDROID_BUILD_BASE_DIR}/${__dir}/build/outputs/apk/release/${__dir}-${ANDROID_ABI}-release-unsigned.apk")
-  vp_update(VISP_GRADLE_VERBOSE_OPTIONS "-i")
-  add_custom_command(
-      OUTPUT "${APK_FILE}" "${VISP_DEPHELPER}/android_sample_${__dir}"
-      COMMAND ./gradlew ${VISP_GRADLE_VERBOSE_OPTIONS} "${__dir}:assemble"
-      COMMAND ${CMAKE_COMMAND} -E touch "${VISP_DEPHELPER}/android_sample_${__dir}"
-      WORKING_DIRECTORY "${ANDROID_BUILD_BASE_DIR}"
-      DEPENDS ${depends} visp_java_android
-      COMMENT "Building ViSP Android sample project: ${__dir}"
-  )
+  if (BUILD_ANDROID_EXAMPLES)
+    # build apk
+    set(APK_FILE "${ANDROID_BUILD_BASE_DIR}/${__dir}/build/outputs/apk/release/${__dir}-${ANDROID_ABI}-release-unsigned.apk")
+    vp_update(VISP_GRADLE_VERBOSE_OPTIONS "-i")
+    add_custom_command(
+        OUTPUT "${APK_FILE}" "${VISP_DEPHELPER}/android_sample_${__dir}"
+        COMMAND ./gradlew ${VISP_GRADLE_VERBOSE_OPTIONS} "${__dir}:assemble"
+        COMMAND ${CMAKE_COMMAND} -E touch "${VISP_DEPHELPER}/android_sample_${__dir}"
+        WORKING_DIRECTORY "${ANDROID_BUILD_BASE_DIR}"
+        DEPENDS ${depends} visp_java_android
+        COMMENT "Building ViSP Android sample project: ${__dir}"
+    )
+  else()  # install only
+    # copy samples
+    add_custom_command(
+        OUTPUT "${VISP_DEPHELPER}/android_sample_${__dir}"
+        COMMAND ${CMAKE_COMMAND} -E touch "${VISP_DEPHELPER}/android_sample_${__dir}"
+        WORKING_DIRECTORY "${ANDROID_BUILD_BASE_DIR}"
+        DEPENDS ${depends} visp_java_android
+        COMMENT "Copying ViSP Android sample project: ${__dir}"
+    )
+  endif()
+
   file(REMOVE "${VISP_DEPHELPER}/android_sample_${__dir}")  # force rebuild after CMake run
 
   add_custom_target(android_sample_${__dir} ALL DEPENDS "${VISP_DEPHELPER}/android_sample_${__dir}" SOURCES "${ANDROID_SAMPLE_MANIFEST_PATH}")
