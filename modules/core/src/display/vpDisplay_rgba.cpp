@@ -319,7 +319,7 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &cen
                                const double &coef2, const double &coef3, bool use_normalized_centered_moments,
                                const vpColor &color, unsigned int thickness, bool display_center, bool display_arc)
 {
-  vpDisplay::displayEllipse(I, center, coef1, coef2, coef3, 0., M_2_PI, use_normalized_centered_moments, color,
+  vpDisplay::displayEllipse(I, center, coef1, coef2, coef3, 0., 2 * M_PI, use_normalized_centered_moments, color,
                             thickness, display_center, display_arc);
 }
 
