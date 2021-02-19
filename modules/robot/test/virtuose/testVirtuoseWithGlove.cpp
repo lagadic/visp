@@ -72,7 +72,7 @@ int main()
   // Open device
   for (size_t device=0; device < virtuose.size(); device ++) {
     std::cout << "Try to connect to " << ip << " port " << (port  + device) << std::endl;
-    virtuose[device].setIpAddressAndPort(ip, port + device);
+    virtuose[device].setIpAddressAndPort(ip, port + static_cast<int>(device));
     virtuose[device].init();
   }
 
