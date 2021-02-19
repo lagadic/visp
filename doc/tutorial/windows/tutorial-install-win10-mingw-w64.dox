@@ -134,7 +134,51 @@ just build or jump to \ref install_win10_mingw64_next. You can later come back t
 
 ViSP is interfaced with several 3rd party libraries. The 
 <a href="https://visp.inria.fr/software-architecture">complete list is provided here</a>.
-We recommend to install \ref install_win10_mingw64_3rdparty_opencv in the workspace.
+We recommend to install \ref install_win10_mingw64_3rdparty_eigen and
+\ref install_win10_mingw64_3rdparty_opencv in the workspace.
+
+\subsubsection install_win10_mingw64_3rdparty_eigen Eigen3 3rd party
+
+Even if Eigen3 is designed as a template we recommend to install the library with MinGW.
+
+<b>1. Get Eigen3</b>
+
+- Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
+written we downloaded `eigen-3.3.9.zip` archive corresponding to Eigen 3.3.9.
+- Extract the content of the archive in `%%VISP_WS%`.
+- Once unzipped, you should have Eigen in `%%VISP_WS%\eigen-3.3.9`
+
+<b>2. Build and install Eigen3 from source</b>
+
+- Create a build directory
+\verbatim
+C:\> mkdir %VISP_WS%\eigen-3.3.9\build-mingw
+C:\> cd %VISP_WS%\eigen-3.3.\build-mingw
+\endverbatim
+- Run CMake in build directory (here the generator is chosen for MinGW and installation folder is set to
+`%%VISP_WS%\eigen-3.3.9\build-mingw\install` folder):
+\verbatim
+C:\> cmake -G "MinGW Makefiles" %VISP_WS%\eigen-3.3.9 \
+     -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.9\build-mingw\install
+\endverbatim
+- Build and install Eigen3 (installation doesn't need administrator privileges)
+\verbatim
+C:\> cmake --build . --config Release --target install -j4
+\endverbatim
+- Eigen3 is now installed in `%%VISP_WS%\eigen-3.3.9\build-mingw\install` folder.
+
+<b>3. Complete Eigen3 installation</b>
+
+Now you have to complete Eigen3 installation setting some environment vars:
+- In order that ViSP detects eigen you have to set `EIGEN_DIR` environment variable. Start up a `cmd` Command Prompt
+and enter:
+\verbatim
+C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.3.9\build-mingw\install\share\eigen3\cmake"
+C:\> exit
+\endverbatim
+where `%%VISP_WS%\eigen-3.3.9\build-mingw\install` is where you have installed Eigen3. Inside the folder
+`%%VISP_WS%\eigen-3.3.9\build-mingw\install\share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
+- There is no need to set `Path` environment var since Eigen3 is a template that has no library.
 
 \subsubsection install_win10_mingw64_3rdparty_opencv OpenCV 3rd party
 
@@ -142,35 +186,35 @@ We recommend to install \ref install_win10_mingw64_3rdparty_opencv in the worksp
 
 First you have to get OpenCV:
 - From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got
-`opencv-4.5.0-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous
+`opencv-4.5.1-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous
 OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%`.
 \image html img-win10-extract-opencv.png
 - The installer extract all the material in `%%VISP_WS%\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.5.0`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.5.1`.
 
-\note OpenCV 4.5.0 win pack installer contains prebuild OpenCV libraries build with Visual Studio 14 2015 (vc14)
+\note OpenCV 4.5.1 win pack installer contains prebuild OpenCV libraries build with Visual Studio 14 2015 (vc14)
 and Visual Studio 15 2017 (vc15) but there is no build for MinGW. That's why you need to build yourself OpenCV
-from source and install the libraries in `%%VISP_WS%\opencv-4.5.0\build\x64\mingw`.
+from source and install the libraries in `%%VISP_WS%\opencv-4.5.1\build\x64\mingw`.
 
 <b>2. Configure, build and install OpenCV from source</b>
 
 - Open a `cmd` Command Prompt and create a build folder 
 \verbatim
-C:\> mkdir %VISP_WS%\opencv-4.5.0\build-mingw
-C:\> cd %VISP_WS%\opencv-4.5.0\build-mingw
+C:\> mkdir %VISP_WS%\opencv-4.5.1\build-mingw
+C:\> cd %VISP_WS%\opencv-4.5.1\build-mingw
 \endverbatim
-- Run CMake in build directory and set the install dir to `%VISP_WS%\opencv-4.5.0\build`. We disable also
+- Run CMake in build directory and set the install dir to `%VISP_WS%\opencv-4.5.1\build`. We disable also
 tests build in order to speed up the build process:
 \verbatim
-C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.5.0\build \
-     -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF -DWITH_OPENCL_D3D11_NV=OFF -DOPENCV_ENABLE_ALLOCATOR_STATS=OFF
+C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.5.1\build \
+     -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF
 \endverbatim
 - Build and install OpenCV for MinGW (installation doesn't need administrator privileges)
 \verbatim
 C:\> cmake --build . --config Release --target install -j4
 \endverbatim
-- OpenCV is now installed in `%%VISP_WS%\opencv-4.5.0\build` folder
+- OpenCV is now installed in `%%VISP_WS%\opencv-4.5.1\build` folder
 
 \note With OpenCV 4.5.0 if you don't set `OPENCV_ENABLE_ALLOCATOR_STATS=OFF` you will get an
 \ref issue_win10_mingw_opencv_allocator.
@@ -200,68 +244,6 @@ running:
 C:\> setx Path "%Path%:%VISP_WS%\opencv-4.5.0\build\x64\mingw\bin"
 C:\> exit
 \endverbatim
-
-\subsubsection install_win10_mingw64_3rdparty_eigen Eigen3 3rd party
-
-Even if Eigen3 is designed as a template we recommend to install the library with MinGW.
-
-<b>1. Get Eigen3</b>
-
-- Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
-written we downloaded `eigen-3.3.8.zip` archive corresponding to Eigen 3.3.8.
-- Extract the content of the archive in `%%VISP_WS%`.
-- Once unzipped, you should have Eigen in `%%VISP_WS%\eigen-3.3.8`
-
-<b>2. Build and install Eigen3 from source</b>
-
-- Create a build directory
-\verbatim
-C:\> mkdir %VISP_WS%\eigen-3.3.8\build-mingw
-C:\> cd %VISP_WS%\eigen-3.3.\build-mingw
-\endverbatim
-- Run CMake in build directory (here the generator is chosen for MinGW and installation folder is set to
-`%%VISP_WS%\eigen-3.3.8\build-mingw\install` folder):
-\verbatim
-C:\> cmake -G "MinGW Makefiles" %VISP_WS%\eigen-3.3.8 \
-     -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.8\build-mingw\install
-\endverbatim
-- Build and install Eigen3 (installation doesn't need administrator privileges)
-\verbatim
-C:\> cmake --build . --config Release --target install -j4
-\endverbatim
-- Eigen3 is now installed in `%%VISP_WS%\eigen-3.3.8\build-mingw\install` folder.
-
-<b>3. Complete Eigen3 installation</b>
-
-Now you have to complete Eigen3 installation setting some environment vars:
-- In order that ViSP detects eigen you have to set `EIGEN_DIR` environment variable. Start up a `cmd` Command Prompt
-and enter:
-\verbatim
-C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.3.8\build-mingw\install\share\eigen3\cmake"
-C:\> exit
-\endverbatim
-where `%%VISP_WS%\eigen-3.3.8\build-mingw\install` is where you have installed Eigen3. Inside the folder
-`%%VISP_WS%\eigen-3.3.8\build-mingw\install\share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
-- There is no need to set `Path` environment var since Eigen3 is a template that has no library.
-
-<b>4. Known issue with Eigen 3.3.8</b>
-
-- Following \ref install_win10_msvc15_build instructions, during `visp_core` build you may get an issue:
-\verbatim
-Building CXX object modules/core/CMakeFiles/visp_core.dir/src/math/matrix/vpMatrix_lu.cpp.obj
-In file included from C:/visp-ws/eigen-3.3.8/build-mingw/install/include/eigen3/Eigen/Core:88,
-                 from C:/visp-ws/eigen-3.3.8/build-mingw/install/include/eigen3/Eigen/Dense:1,
-                 from C:/visp-ws/visp/modules/core/include/visp3/core/vpEigenConversion.h:41,
-                 from C:\visp-ws\visp\modules\core\src\math\matrix\vpEigenConversion.cpp:37:
-C:/visp-ws/eigen-3.3.8/build-mingw/install/include/eigen3/Eigen/src/Core/products/Parallelizer.h: In function 'void Eigen::internal::parallelize_gemm(const Functor&, Index, Index, Index, bool)':
-C:/visp-ws/eigen-3.3.8/build-mingw/install/include/eigen3/Eigen/src/Core/products/Parallelizer.h:162:40: error: 'eigen_assert_exception' is not a member of 'Eigen'
-   if (errorCount) EIGEN_THROW_X(Eigen::eigen_assert_exception());
-                                        ^~~~~~~~~~~~~~~~~~~~~~
-C:/visp-ws/eigen-3.3.8/build-mingw/install/include/eigen3/Eigen/src/Core/util/Macros.h:1017:34: note: in definition of macro 'EIGEN_THROW_X'
- #  define EIGEN_THROW_X(X) throw X
-\endverbatim
-
-- See \ref install_msvc16_tips_eigen_3_3_8 to get a work around.
 
 \subsection install_win10_mingw64_get_source Get ViSP source code
 
