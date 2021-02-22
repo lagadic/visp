@@ -615,6 +615,52 @@ $ ccmake -DUSE_X11=OFF ../ViSP
 $ make -j4
 \endverbatim
 
+\subsection install_brew_issues_numpy Importing the multiarray numpy extension module failed
+
+When running `cmake` to configure ViSP you encounter the following issue:
+
+\verbatim
+$ cmake ../visp
+...
+-- Found PythonLibs: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX11.1.sdk/usr/lib/libpython2.7.tbd (found suitable exact version "2.7.16")
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/usr/local/lib/python2.7/site-packages/numpy/__init__.py", line 142, in <module>
+  File "/usr/local/lib/python2.7/site-packages/numpy/core/__init__.py", line 71, in <module>
+ImportError:
+
+IMPORTANT: PLEASE READ THIS FOR ADVICE ON HOW TO SOLVE THIS ISSUE!
+
+Importing the multiarray numpy extension module failed.  Most
+likely you are trying to import a failed build of numpy.
+Here is how to proceed:
+- If you're working with a numpy git repository, try `git clean -xdf`
+  (removes all files not under version control) and rebuild numpy.
+- If you are simply trying to use the numpy version that you have installed:
+  your installation is broken - please reinstall numpy.
+- If you have already reinstalled and that did not fix the problem, then:
+  1. Check that you are using the Python you expect (you're using /usr/local/opt/python@2/bin/python2.7),
+     and that you have no directories in your PATH or PYTHONPATH that can
+     interfere with the Python and numpy versions you're trying to use.
+  2. If (1) looks fine, you can open a new issue at
+     https://github.com/numpy/numpy/issues.  Please include details on:
+     - how you installed Python
+     - how you installed numpy
+     - your operating system
+     - whether or not you have multiple versions of Python installed
+     - if you built from source, your compiler versions and ideally a build log
+
+     Note: this error has many possible causes, so please don't comment on
+     an existing issue about this - open a new one instead.
+
+Original error was: No module named _multiarray_umath
+\endverbatim
+
+use the following command to solve this issue:
+\verbatim
+$ pip install -U numpy
+\endverbatim
+
 \section install_brew_next Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
