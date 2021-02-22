@@ -1,4 +1,6 @@
 // This file is part of ViSP project.
+// It is subject to the license terms in the LICENSE file found in the top-level directory
+// of this distribution and at https://visp.inria.fr/visp-license/
 
 //
 // Notes about integration ViSP into existed Android Studio application project are below (application 'app' module should exist).
@@ -19,11 +21,11 @@
 //
 //   Edit "settings.gradle" and add these lines:
 //
-//   def visp_sdk='<path_to_visp_android_sdk_rootdir>'
+//   def vispsdk='<path_to_visp_android_sdk_rootdir>'
 //   // You can put declaration above into gradle.properties file instead (including file in HOME directory),
-//   // but without 'def' and apostrophe symbols ('): visp_sdk=<path_to_visp_android_sdk_rootdir>
+//   // but without 'def' and apostrophe symbols ('): vispsdk=<path_to_visp_android_sdk_rootdir>
 //   include ':visp'
-//   project(':visp').projectDir = new File(visp_sdk + '/sdk')
+//   project(':visp').projectDir = new File(vispsdk + '/sdk')
 //
 //
 //
@@ -47,7 +49,7 @@
 // - avoid using of "ViSPLoader.initAsync()" approach - it is deprecated
 //   It may load library with different version (from ViSP Android Manager, which is installed separatelly on device)
 //
-// - use "System.loadLibrary("visp_java")" or "ViSPLoader.initDebug()"
+// - use "System.loadLibrary("visp_java4")" or "ViSPLoader.initDebug()"
 //   TODO: Add accurate API to load ViSP native library
 //
 //
@@ -56,11 +58,11 @@
 //
 // - Use find_package() in app/CMakeLists.txt:
 //
-//   find_package(ViSP 3.4 REQUIRED java)
+//   find_package(ViSP 3.3 REQUIRED java)
 //   ...
-//   target_link_libraries(native-lib ${ViSP_LIBRARIES})
+//   target_link_libraries(native-lib ${VISP_LIBRARIES})
 //
-// - Add "ViSP_DIR" and enable C++ exceptions/RTTI support via app/build.gradle
+// - Add "VISP_DIR" and enable C++ exceptions/RTTI support via app/build.gradle
 //   Documentation about CMake options: https://developer.android.com/ndk/guides/cmake.html
 //
 //   defaultConfig {
@@ -68,7 +70,7 @@
 //       externalNativeBuild {
 //           cmake {
 //               cppFlags "-std=c++11 -frtti -fexceptions"
-//               arguments "-DViSP_DIR=" + visp_sdk + "/sdk/native/jni" // , "-DANDROID_ARM_NEON=TRUE"
+//               arguments "-DViSP_DIR=" + vispsdk + "/sdk/native/jni" // , "-DANDROID_ARM_NEON=TRUE"
 //           }
 //       }
 //   }
@@ -79,35 +81,55 @@
 //   splits {
 //       abi {
 //           enable true
+//           universalApk false
 //           reset()
 //           include 'armeabi-v7a' // , 'x86', 'x86_64', 'arm64-v8a'
-//           universalApk false
 //       }
 //   }
 //
 
 apply plugin: 'com.android.library'
 
-println "ViSP: " + project.buildscript.sourceFile
+def vispVersionName = "@ ViSP_VERSION@"
+def vispVersionCode = ((@ ViSP_VERSION_MAJOR@ * 100 + @ ViSP_VERSION_MINOR@) * 100 + @ ViSP_VERSION_PATCH@) * 10 + 0
+
+println "ViSP: " +vispVersionName + " " + project.buildscript.sourceFile
 
 android {
     compileSdkVersion @ANDROID_COMPILE_SDK_VERSION@
-    //buildToolsVersion "27.0.3" // not needed since com.android.tools.build:gradle:3.0.0
 
     defaultConfig {
         minSdkVersion @ANDROID_MIN_SDK_VERSION@
         targetSdkVersion @ANDROID_TARGET_SDK_VERSION@
+
+        versionCode vispVersionCode
+        versionName vispVersionName
+
+        externalNativeBuild {
+            cmake {
+                arguments "-DANDROID_STL=@ANDROID_STL@"
+                targets "visp_jni_shared"
+            }
+        }
     }
 
     buildTypes {
+        debug {
+            packagingOptions {
+                doNotStrip '**/*.so'  // controlled by ViSP CMake scripts
+            }
+        }
         release {
+            packagingOptions {
+                doNotStrip '**/*.so'  // controlled by ViSP CMake scripts
+            }
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_6
-        targetCompatibility JavaVersion.VERSION_1_6
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     sourceSets {
@@ -117,6 +139,12 @@ android {
             aidl.srcDirs = ['java/src']
             res.srcDirs = ['java/res']
             manifest.srcFile 'java/AndroidManifest.xml'
+        }
+    }
+
+    externalNativeBuild {
+        cmake {
+            path (project.projectDir.toString() + '/libcxx_helper/CMakeLists.txt')
         }
     }
 }

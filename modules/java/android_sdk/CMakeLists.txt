@@ -2,7 +2,7 @@
 project(${the_module}_android)
 
 if(ANDROID_EXECUTABLE)
-  set(VISP_JAVA_DIR "${VISP_BINARY_DIR}/android_sdk" CACHE INTERNAL "")
+  set(VISP_JAVA_DIR "${ViSP_BINARY_DIR}/android_sdk" CACHE INTERNAL "")
 else()  # gradle
   set(VISP_JAVA_DIR "${ANDROID_BUILD_BASE_DIR}/visp" CACHE INTERNAL "")
 endif()
@@ -44,7 +44,7 @@ foreach(file ${seed_project_files_rel})
 endforeach()
 
 list(APPEND depends gen_visp_java_source "${VISP_DEPHELPER}/gen_visp_java_source")
-vp_copyfiles_add_target(${the_module}_android_source_copy JAVA_SRC_COPY "Copy Java(Andoid SDK) source files" ${depends})
+vp_copyfiles_add_target(${the_module}_android_source_copy JAVA_SRC_COPY "Copy Java(Android SDK) source files" ${depends})
 file(REMOVE "${VISP_DEPHELPER}/${the_module}_android_source_copy")  # force rebuild after CMake run
 
 set(depends ${the_module}_android_source_copy "${VISP_DEPHELPER}/${the_module}_android_source_copy")
@@ -73,12 +73,12 @@ install(FILES "${VISP_JAVA_DIR}/${ANDROID_PROJECT_PROPERTIES_FILE}" DESTINATION 
 install(FILES "${VISP_JAVA_DIR}/${ANDROID_MANIFEST_FILE}" DESTINATION ${JAVA_INSTALL_ROOT} COMPONENT java)
 
 # build jar
-set(JAR_FILE "${VISP_BINARY_DIR}/bin/classes.jar")
+set(JAR_FILE "${ViSP_BINARY_DIR}/bin/classes.jar")
 # build the library project
 # normally we should do this after a native part, but for a library project we can build the java part first
 add_custom_command(
     OUTPUT "${JAR_FILE}" "${VISP_DEPHELPER}/${the_module}_android"
-    COMMAND ${ANT_EXECUTABLE} -q -noinput -k debug -Djava.target=1.7 -Djava.source=1.7
+    COMMAND ${ANT_EXECUTABLE} -q -noinput -k debug -Djava.target=1.6 -Djava.source=1.6
     COMMAND ${CMAKE_COMMAND} -E touch "${VISP_DEPHELPER}/${the_module}_android"
     WORKING_DIRECTORY "${VISP_JAVA_DIR}"
     DEPENDS ${depends}
@@ -97,9 +97,9 @@ FILE(MAKE_DIRECTORY \"\$ENV{DESTDIR}\${CMAKE_INSTALL_PREFIX}/${JAVA_INSTALL_ROOT
 vp_update(ANDROID_COMPILE_SDK_VERSION "27")
 vp_update(ANDROID_MIN_SDK_VERSION "14")
 vp_update(ANDROID_TARGET_SDK_VERSION "21")
-
 configure_file("${CMAKE_CURRENT_SOURCE_DIR}/build.gradle.in" "${CMAKE_CURRENT_BINARY_DIR}/build.gradle" @ONLY)
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/build.gradle" DESTINATION ${JAVA_INSTALL_ROOT}/.. COMPONENT java)
+
 
 else()  # gradle build
 #
@@ -118,11 +118,23 @@ foreach(file ${seed_project_files_rel})
   configure_file("${__base_dir}/${file}" "${VISP_JAVA_DIR}/${file}" @ONLY)
   list(APPEND depends "${__base_dir}/${file}")
   get_filename_component(install_subdir "${file}" PATH)
-  install(FILES "${VISP_JAVA_DIR}/${file}" DESTINATION "${JAVA_INSTALL_ROOT}/${install_subdir}" COMPONENT java)
+  if(NOT file STREQUAL "build.gradle")
+    install(FILES "${VISP_JAVA_DIR}/${file}" DESTINATION "${JAVA_INSTALL_ROOT}/${install_subdir}" COMPONENT java)
+  endif()
+endforeach()
+
+# copy libcxx_helper
+set(__base_dir "${CMAKE_CURRENT_SOURCE_DIR}/")
+file(GLOB_RECURSE __files_rel RELATIVE "${__base_dir}/" "${__base_dir}/libcxx_helper/*")
+foreach(file ${__files_rel})
+  configure_file("${__base_dir}/${file}" "${VISP_JAVA_DIR}/${file}" @ONLY)
+  list(APPEND depends "${__base_dir}/${file}")
+  get_filename_component(install_subdir "${file}" PATH)
+  install(FILES "${VISP_JAVA_DIR}/${file}" DESTINATION "${JAVA_INSTALL_ROOT}/../${install_subdir}" COMPONENT java)
 endforeach()
 
 list(APPEND depends gen_visp_java_source "${VISP_DEPHELPER}/gen_visp_java_source")
-vp_copyfiles_add_target(${the_module}_android_source_copy JAVA_SRC_COPY "Copy Java(Andoid SDK) source files" ${depends})
+vp_copyfiles_add_target(${the_module}_android_source_copy JAVA_SRC_COPY "Copy Java(Android SDK) source files" ${depends})
 file(REMOVE "${VISP_DEPHELPER}/${the_module}_android_source_copy")  # force rebuild after CMake run
 
 set(depends ${the_module}_android_source_copy "${VISP_DEPHELPER}/${the_module}_android_source_copy")
