@@ -17,17 +17,15 @@ $ export VISP_WS=$HOME/visp-ws
 $ mkdir -p $VISP_WS
 \endverbatim
 
-\section java_install_jdk Install Java Development Kit 11 (JDK)
+\section java_install_jdk Install Java Development Kit (JDK)
 
-\note At the time this tutorial was updated, the lastest Java SE Development Kit (JDK) is version 15. ViSP for Java tutorials were not tested with this last version. In the past, we experienced that JDK 13 was  not compatible with the last gradle 5.6 release (see <a href="https://github.com/gradle/gradle/issues/8681">issue here</a>) needed in \ref tutorial-create-android-sdk.
-
-That's why we recommand to install Java SE LTS Development Kit 11.0.10 (JDK 11 LTS).
+\note At the time this tutorial was updated, the lastest Java SE Development Kit (JDK) is version 15. There is also JDK 11 LTS that could be used. Here we recall \ref java_install_tips_uninstall_jdk if you need to upgrade or downgrade JDK version.
 
 \subsection java_install_jdk_unix On Ubuntu or Debian platform
 
-From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-11.0.6_linux-x64_bin.tar.gz`. After JDK download and extraction of the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK.
+From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-15.0.2_linux-x64_bin.tar.gz`. After JDK download and extraction of the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK.
 \verbatim
-$ tar xvzf jdk-11.0.10_linux-x64_bin.tar.gz -C $VISP_WS
+$ tar xvzf jdk-15.0.2_linux-x64_bin.tar.gz -C $VISP_WS
 $ echo 'export JAVA_HOME=$VISP_VS/jdk-11.0.10' >> ~/.bashrc
 $ echo 'export PATH=${JAVA_HOME}/bin:${PATH}' >> ~/.bashrc
 $ source ~/.bashrc
@@ -36,32 +34,66 @@ $ source ~/.bashrc
 After installation check JDK version:
 \verbatim
 $ java --version
-java 11.0.10 2021-01-19 LTS
+java 15.0.2 2021-01-19
 \endverbatim
 
 \subsection java_install_jdk_osx On Mac OSX platform
 
-From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-11.0.6_osx-x64_bin.dmg` and install the package.
-
-After installation check JDK version:
+\warning On macOS Catalina 10.15.7 with Xcode 12.4, the installation of JDK 11 or 15 from the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website by downloading and installing `jdk-11.0.10_osx-x64_bin.dmg` or `jdk-15.0.2_osx-x64_bin.dmg` doesn't allow the detection of JNI necessary to build `visp_java.jar`. That's why we recommend to install JDK using brew.
 \verbatim
-$ java --version
-java 11.0.6 2020-01-14 LTS
+$ more ViSP-third-party.txt
+  ...
+  Java:                          
+    ant:                         /usr/local/bin/ant (ver 1.10.9)
+    JNI:                         no
 \endverbatim
 
-\note If you have a more recent version like java 13 (that comes with JDK 13) or java 12 (that comes with JDK 12), you need to uninstall it. See \ref java_install_tips_uninstall_jdk to proceed.
+\note If you already have an old JDK version you may remove it before installing OpenJDK:
+\verbatim
+$ ls /Library/Java/JavaVirtualMachines/
+jdk-11.0.10.jdk
+\endverbatim
+Here it shows that `jdk-11.0.10` is installed. To remove this version, see \ref java_install_tips_uninstall_jdk.
+
+To install OpenJDK with brew:
+
+- run:
+\verbatim
+$ brew install openjdk
+\endverbatim
+
+- To know which version is installed:
+\verbatim
+$ brew info openjdk
+openjdk: stable 15.0.1 (bottled) [keg-only]
+\endverbatim
+
+- Now for the system Java wrappers to find this JDK, symlink it with:
+\verbatim
+$ sudo ln -sfn /usr/local/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
+\endverbatim
+
+- Set `JAVA_HOME` env var to help JNI headers and libraries detection
+\verbatim
+$ echo 'export JAVA_HOME=$(/usr/libexec/java_home)' >> ~/.bashrc
+$ source ~/.bashrc
+\endverbatim
+
+- After installation check JDK version:
+\verbatim
+$ java --version
+openjdk 15.0.1 2020-10-20
+\endverbatim
 
 \subsection java_install_jdk_win On Windows platform
 
-From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-11.0.6_windows-x64_bin.exe` and run the binary. In order to make `java.exe` available, we had also to add its location `C:\Program Files\Java\jdk-11.0.6\bin` to the `%%PATH%` environment variable.
+From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-15.0.2_windows-x64_bin.exe` and run the binary. In order to make `java.exe` available, we had also to add its location `C:\Program Files\Java\jdk-15.0.2\bin` to the `%%PATH%` environment variable.
 
 After installation check JDK version:
 \verbatim
 $ java -version
-java version 11.0.6 2020-01-14 LTS
+java version 15.0.2 2021-01-19
 \endverbatim
-
-\note If you have a more recent version like JDK 13 or JDK 12, you need to uninstall it. See \ref java_install_tips_uninstall_jdk to proceed.
 
 \section java_linux Install Prerequisites
 
@@ -109,21 +141,21 @@ $ cd $VISP_WS
 $ git clone https://github.com/lagadic/visp.git
 \endverbatim
 
-We suppose now that ViSP source is in the directory \c $VISP_WS/visp. The following should be adapted if you downloaded ViSP from a zip or tarball. In that case, the source is rather in something like \c $VISP_WS/visp-x.y.z.
+We suppose now that ViSP source is in the directory `$VISP_WS/visp`. The following should be adapted if you downloaded ViSP from a zip or tarball. In that case, the source is rather in something like `$VISP_WS/visp-x.y.z`.
 
 \subsection install_java_visp_config Configuring ViSP from source
 
-- In the workspace, create first a directory named \c visp-build that will contain all the build material; generated Makefiles, object files, output libraries and binaries.
+- In the workspace, create first a directory named `visp-build` that will contain all the build material; generated Makefiles, object files, output libraries and binaries.
 \verbatim
 $ mkdir $VISP_WS/visp-build
 \endverbatim
 
-- Enter the \c visp-build folder and configure the build:
+- Enter the `visp-build` folder and configure the build:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
 \endverbatim
-A more versatile way to configure the build is to use \c ccmake, the CMake GUI:
+A more versatile way to configure the build is to use `ccmake`, the CMake GUI:
 \verbatim
 $ ccmake ../visp
 \endverbatim
@@ -167,10 +199,9 @@ General configuration information for ViSP 3.3.1
 
   Java:
     ant:                         /usr/bin/ant (ver 1.10.7)
-    JNI:                         $VISP_WS/jdk-11.0.10/include $VISP_WS/jdk-11.0.10/include/linux $VISP_WS/jdk-11.0.10/include
+    JNI:                         $VISP_WS/jdk-15.0.2/include $VISP_WS/jdk-15.0.2/include/linux $VISP_WS/jdk-15.0.2/include
 
 \endverbatim
-
 
 \subsection install_java_visp_build Building ViSP libraries
 
@@ -200,8 +231,9 @@ Open Eclipse and select a workspace location of your choice, for example in `$VI
 
 \image html img-tutorial-java-eclipse-workspace.jpg
 
-Now we propose to create a ViSP user library ready to be used on all your next Java projects. To this end enter `"Window > Preferences"` menu:
-
+Now we propose to create a ViSP user library ready to be used on all your next Java projects. To this end, 
+- if you are on OS X enter `"Eclipse > Preferences..."` menu
+- otherwise enter `"Window > Preferences"` menu:
 \image html img-tutorial-java-eclipse1.jpeg Open Preferences panel in Eclipse
 
 In the Preferences panel navigate under `"Java > Build Path > User Libraries"` and choose **New**. Enter a name for the library (e.g visp) and press **OK** button.
@@ -218,7 +250,7 @@ Once done, press `"Apply and Close"` button.
 
 \subsection java_install_tips_uninstall_jdk How to uninstall JDK
 
-\note At the time this tutorial was updated, the lastest Java SE Development Kit (JDK) was version 13. We experienced that JDK 13 and JDK 12 are not compatible with the last gradle 5.6 release (see <a href="https://github.com/gradle/gradle/issues/8681">issue here</a>) needed in \ref tutorial-create-android-sdk. That's why we give here some tips to uninstall JDK to be able to downgrade JDK version.
+Here we give here some tips to uninstall JDK to be able to downgrade or upgrade JDK version.
 
 <b>On Ubuntu or Debian platform</b>
 
