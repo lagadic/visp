@@ -5,7 +5,9 @@
 
 \section java_intro Introduction
 
-This tutorial will help you to install ViSP for Java on your desktop. This tutorial shows how to proceed if your desktop is running Linux or OSX. If you are rather running Windows, you need to adapt its content.
+At this point we suppose that you succeed to build ViSP from source following one \ref tutorial_install_src tutorials.
+
+This tutorial will help you to build ViSP from source for Java on your desktop. It shows how to proceed if your desktop is running Linux, OSX or Windows.
 
 \section java_ws Create a workspace
 
@@ -17,16 +19,16 @@ $ mkdir -p $VISP_WS
 
 \section java_install_jdk Install Java Development Kit 11 (JDK)
 
-\note At the time this tutorial was updated, the lastest Java SE Development Kit (JDK) was version 13. We experienced that JDK 13 and JDK 12 are not compatible with the last gradle 5.6 release (see <a href="https://github.com/gradle/gradle/issues/8681">issue here</a>) needed in \ref tutorial-create-android-sdk.
+\note At the time this tutorial was updated, the lastest Java SE Development Kit (JDK) is version 15. ViSP for Java tutorials were not tested with this last version. In the past, we experienced that JDK 13 was  not compatible with the last gradle 5.6 release (see <a href="https://github.com/gradle/gradle/issues/8681">issue here</a>) needed in \ref tutorial-create-android-sdk.
 
-That's why we recommand to install Java SE Development Kit 11.0.6 LTS (JDK 11).
+That's why we recommand to install Java SE LTS Development Kit 11.0.10 (JDK 11 LTS).
 
 \subsection java_install_jdk_unix On Ubuntu or Debian platform
 
 From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-11.0.6_linux-x64_bin.tar.gz`. After JDK download and extraction of the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK.
 \verbatim
-$ tar xvzf jdk-11.0.6_linux-x64_bin.tar.gz -C $VISP_WS
-$ echo 'export JAVA_HOME=$VISP_VS/jdk-11.0.6' >> ~/.bashrc
+$ tar xvzf jdk-11.0.10_linux-x64_bin.tar.gz -C $VISP_WS
+$ echo 'export JAVA_HOME=$VISP_VS/jdk-11.0.10' >> ~/.bashrc
 $ echo 'export PATH=${JAVA_HOME}/bin:${PATH}' >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
@@ -34,7 +36,7 @@ $ source ~/.bashrc
 After installation check JDK version:
 \verbatim
 $ java --version
-java 11.0.6 2020-01-14 LTS
+java 11.0.10 2021-01-19 LTS
 \endverbatim
 
 \subsection java_install_jdk_osx On Mac OSX platform
@@ -132,59 +134,59 @@ In `$VISP_WS/visp-build/ViSP-third-party.txt` you should find something similar 
 \verbatim
 $ more ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.3.0
+General configuration information for ViSP 3.3.1
 
-  Version control:               1041074e9-dirty
+  Version control:               3.2.0-1408-g4d4323805-dirty
 
   Platform:
-    Timestamp:                   2020-01-27T15:37:47Z
-    Host:                        Linux 5.3.0-26-generic x86_64
-    CMake:                       3.10.2
+    Timestamp:                   2021-02-17T14:23:18Z
+    Host:                        Linux 5.4.0-56-generic x86_64
+    CMake:                       3.16.3
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/make
     Configuration:               Release
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                /usr/bin/c++  (ver 7.4.0)
-    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
-    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C++ Compiler:                /usr/bin/c++  (ver 9.3.0)
+    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
     C Compiler:                  /usr/bin/cc
-    C flags (Release):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
-    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C flags (Release):           -Wall -Wextra -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
     Linker flags (Release):
     Linker flags (Debug):
 
   ViSP modules:
-    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection java mbt tt tt
-_mi
+    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi java
     Disabled:                    -
     Disabled by dependency:      -
     Unavailable:                 -
 
-  Python (for build):            /usr/bin/python2.7
+  Python (for build):            /usr/bin/python3
 
   Java:
-    ant:                         /usr/bin/ant (ver 1.10.5)
-    JNI:                         $VISP_WS/jdk-11.0.6/include $VISP_WS/jdk-11.0.6/include/linux $VISP_WS/jdk-11.0.6/include
+    ant:                         /usr/bin/ant (ver 1.10.7)
+    JNI:                         $VISP_WS/jdk-11.0.10/include $VISP_WS/jdk-11.0.10/include/linux $VISP_WS/jdk-11.0.10/include
+
 \endverbatim
 
 
 \subsection install_java_visp_build Building ViSP libraries
 
-- To build ViSP Java libraries on Linux, proceed with:
+- To build ViSP modules and java libraries on Linux, proceed with:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ make -j$(nproc) visp_java
 \endverbatim
 
-- To build ViSP Java libraries on MacOS/OSX, proceed with:
+- To build ViSP modules and java libraries on MacOS/OSX, proceed with:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ make -j$(sysctl -n hw.ncpu) visp_java
 \endverbatim
 
-Note that ViSP Java ARchive is now available in `$VISP_WS/visp-build/bin/visp-330.jar`.
+Note that ViSP Java ARchive is now available in `$VISP_WS/visp-build/bin/visp-340.jar`.
 
 \section set_up_visp_java_eclipse Setting Up ViSP Java in Eclipse
 
@@ -206,7 +208,7 @@ In the Preferences panel navigate under `"Java > Build Path > User Libraries"` a
 
 \image html img-tutorial-java-eclipse2.jpeg Create a new User Library
 
-Press `"Add External JARs"` button, browse to select <b>`$VISP_WS/visp-build/bin/visp-330.jar`</b> from your computer. After adding the jar, select `"Native library location"`, press first `"Edit"`, press `"External Folder"`, browse to select the folder <b>`$VISP-WS/visp_build/lib`</b> containing ViSP libraries and finally press **OK** button. We recall that the libraries have the extension <b>.so</b> in linux, <b>.dylib</b> in MacOS and <b>.dll</b> in Windows.
+Press `"Add External JARs"` button, browse to select <b>`$VISP_WS/visp-build/bin/visp-340.jar`</b> from your computer. After adding the jar, select `"Native library location"`, press first `"Edit"`, press `"External Folder"`, browse to select the folder <b>`$VISP-WS/visp_build/lib`</b> containing ViSP libraries and finally press **OK** button. We recall that the libraries have the extension <b>.so</b> in linux, <b>.dylib</b> in MacOS and <b>.dll</b> in Windows.
 
 \image html img-tutorial-java-eclipse3.jpeg Add jar and native libraries to User Library
 

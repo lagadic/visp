@@ -4,7 +4,7 @@
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++.
-These steps have been tested on Windows 10 (64 bit), with CMake 3.19.0 and Visual Studio Community 2019.
+These steps have been tested on Windows 10 (64 bit), with CMake 3.19.4 and Visual Studio Community 2019.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -35,7 +35,7 @@ if "Windows 10 SDK" is enabled like in the following image
 \subsection install_win10_msvc16_3rd_cmake CMake
 
 CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64 platform 
-(at the time this tutorial was written it was the file `cmake-3.19.0-win64-x64.msi`).
+(at the time this tutorial was written it was the file `cmake-3.19.4-win64-x64.msi`).
 To install just double click on the msi file.
 
 \subsection install_win10_msvc16_3rd_git Git
@@ -116,12 +116,55 @@ just build or jump to \ref install_win10_msvc16_next. You can later come back to
 
 ViSP is interfaced with several 3rd party libraries. The
 <a href="https://visp.inria.fr/software-architecture">complete list is provided here</a>.
-We recommend to install \ref install_win10_msvc16_3rdparty_opencv in the workspace. If you have an
+To use optimized matrix operations you may install \ref install_win10_msvc16_3rdparty_eigen.
+We recommend also to install \ref install_win10_msvc16_3rdparty_opencv in the workspace. If you have an
 Intel Realsense depth camera you may also install \ref install_win10_msvc16_3rdparty_realsense.
 If your camera is a PointGrey you may install \ref install_win10_msvc16_3rdparty_flycapture, while
-if your camera is a Basler, you may rather install \ref install_win10_msvc16_3rdparty_pylon. To use
-optimized matrix operations you may install \ref install_win10_msvc16_3rdparty_eigen. Other 3rd
+if your camera is a Basler, you may rather install \ref install_win10_msvc16_3rdparty_pylon. Other 3rd
 parties are optional and should be considered only by expert developers.
+
+\subsubsection install_win10_msvc16_3rdparty_eigen Eigen3 3rd party
+
+Even if Eigen3 is designed as a template we recommend to install the library with Visual Studio.
+
+<b>1. Get Eigen3</b>
+
+- Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
+written we downloaded `eigen-3.3.9.zip` archive corresponding to Eigen 3.3.9.
+- Extract the content of the archive in `%%VISP_WS%`.
+- Once unzipped, you should have Eigen in `%%VISP_WS%\eigen-3.3.9`
+
+<b>2. Build and install Eigen3 from source</b>
+
+- Create a build directory
+\verbatim
+C:\> mkdir %VISP_WS%\eigen-3.3.9\build-vc16
+C:\> cd %VISP_WS%\eigen-3.3.9\build-vc16
+\endverbatim
+- Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019 and installation folder is set
+ to `%%VISP_WS%\eigen-3.3.9\build-vc16\install` folder):
+\verbatim
+C:\> cmake -G "Visual Studio 16 2019" -A "x64" %VISP_WS%\eigen-3.3.9 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.9\build-vc16\install
+\endverbatim
+- Build and install Eigen3 (installation doesn't need administrator privileges)
+\verbatim
+C:\> cmake --build . --config Release --target install
+\endverbatim
+- Eigen3 is now installed in `%%VISP_WS%\eigen-3.3.9\build-vc16\install` folder
+
+<b>3. Complete Eigen3 installation</b>
+
+Now you have to complete Eigen3 installation setting some environment vars:
+- In order that ViSP detects Eigen3 you have to set `EIGEN_DIR` environment variable. Start up a `cmd`
+Command Prompt and enter:
+\verbatim
+C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.3.9\build-vc16\install\share\eigen3\cmake"
+C:\> exit
+\endverbatim
+where `%%VISP_WS%\eigen-3.3.9\build-vc16\install` is where you have installed Eigen3.
+Inside the folder `%%VISP_WS%\eigen-3.3.9\build-vc16\install\share\eigen3\cmake` you should have a file
+named `Eigen3Config.cmake`.
+- There is no need to set `Path` environment var since Eigen3 is a template that has no library.
 
 \subsubsection install_win10_msvc16_3rdparty_opencv OpenCV 3rd party
 
@@ -129,14 +172,14 @@ parties are optional and should be considered only by expert developers.
 
 First you have to get OpenCV:
 - From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got
-`opencv-4.5.0-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the
+`opencv-4.5.1-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the
 previous OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%`.
 \image html img-win10-extract-opencv.png
 - The installer extract all the material in `%%VISP_WS%\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.5.0`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.5.1`.
 
-\note OpenCV 4.5.0 win pack installer doesn't contain prebuild OpenCV libraries build with
+\note OpenCV 4.5.1 win pack installer doesn't contain prebuild OpenCV libraries build with
 Visual Studio 16 2019. It contains only prebuild libraries build with previous Visual Studio version
 (vc14 and vc15). That's why we need to build OpenCV from source.
 
@@ -144,13 +187,13 @@ Visual Studio 16 2019. It contains only prebuild libraries build with previous V
 
 - Create a build directory
 \verbatim
-C:\> mkdir %VISP_WS%\opencv-4.5.0\build-vc16
-C:\> cd %VISP_WS%\opencv-4.5.0\build-vc16
+C:\> mkdir %VISP_WS%\opencv-4.5.1\build-vc16
+C:\> cd %VISP_WS%\opencv-4.5.1\build-vc16
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019) and installation dir is set
-to the existing folder `%%VISP_WS%\opencv-4.5.0\build`:
+to the existing folder `%%VISP_WS%\opencv-4.5.1\build`:
 \verbatim
-C:\> cmake -G "Visual Studio 16 2019" -A "x64" %VISP_WS%\opencv-4.5.0\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.5.0\build
+C:\> cmake -G "Visual Studio 16 2019" -A "x64" %VISP_WS%\opencv-4.5.1\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.5.1\build
 \endverbatim
 - Build and install OpenCV using release and debug configuration respectively (installation doesn't need
 administrator privileges)
@@ -165,68 +208,15 @@ Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
 \verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.0\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.1\build"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\opencv-4.5.0\build` is where you have installed OpenCV. Inside this folder you should
+where `%%VISP_WS%\opencv-4.5.1\build` is where you have installed OpenCV. Inside this folder you should
 have a file named `OpenCVConfig.cmake`. 
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 16 2019 usage in
 the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new
-line with `%%VISP_WS%\opencv-4.5.0\build\x64\vc16\bin`.
-
-\subsubsection install_win10_msvc16_3rdparty_eigen Eigen3 3rd party
-
-Even if Eigen3 is designed as a template we recommend to install the library with Visual Studio.
-
-<b>1. Get Eigen3</b>
-
-- Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
-written we downloaded `eigen-3.3.8.zip` archive corresponding to Eigen 3.3.8.
-- Extract the content of the archive in `%%VISP_WS%`.
-- Once unzipped, you should have Eigen in `%%VISP_WS%\eigen-3.3.8`
-
-<b>2. Build and install Eigen3 from source</b>
-
-- Create a build directory
-\verbatim
-C:\> mkdir %VISP_WS%\eigen-3.3.8\build-vc16
-C:\> cd %VISP_WS%\eigen-3.3.8\build-vc16
-\endverbatim
-- Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019 and installation folder is set
- to `%%VISP_WS%\eigen-3.3.8\build-vc16\install` folder):
-\verbatim
-C:\> cmake -G "Visual Studio 16 2019" -A "x64" %VISP_WS%\eigen-3.3.8 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.8\build-vc16\install
-\endverbatim
-- Build and install Eigen3 (installation doesn't need administrator privileges)
-\verbatim
-C:\> cmake --build . --config Release --target install
-\endverbatim
-- Eigen3 is now installed in `%%VISP_WS%\eigen-3.3.8\build-vc16\install` folder
-
-<b>3. Complete Eigen3 installation</b>
-
-Now you have to complete Eigen3 installation setting some environment vars:
-- In order that ViSP detects Eigen3 you have to set `EIGEN_DIR` environment variable. Start up a `cmd`
-Command Prompt and enter:
-\verbatim
-C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.3.8\build-vc16\install\share\eigen3\cmake"
-C:\> exit
-\endverbatim
-where `%%VISP_WS%\eigen-3.3.8\build-vc16\install` is where you have installed Eigen3.
-Inside the folder `%%VISP_WS%\eigen-3.3.8\build-vc16\install\share\eigen3\cmake` you should have a file
-named `Eigen3Config.cmake`.
-- There is no need to set `Path` environment var since Eigen3 is a template that has no library.
-
-<b>4. Known issue with Eigen 3.3.8</b>
-
-- Following \ref install_win10_msvc16_build instructions, during `visp_core` build you may get an issue:
-\verbatim
-eigen_assert_exception is not member of Eigen
-\endverbatim
-\image html img-win10-issue-eigen-3.3.8.png
-
-- See \ref install_msvc16_tips_eigen_3_3_8 to get a work around.
+line with `%%VISP_WS%\opencv-4.5.1\build\x64\vc16\bin`.
 
 \subsubsection install_win10_msvc16_3rdparty_realsense librealsense 3rd party
 
@@ -238,8 +228,7 @@ vpRealSense2 class. Otherwise you can skip this section.
 Intel Realsense SDK 2.0 contains librealsense. To install this SDK:
 - Go to https://github.com/IntelRealSense/librealsense/releases
 - Download `Intel.RealSense.SDK-WIN10-<version>.exe` corresponding to the last Intel Realsense SDK 2.0 release.
-At the time this tutorial was written, we downloaded `Intel.RealSense.SDK-WIN10-2.40.0.2482.exe` corresponding
-to `<version>` 2.40.0.2482.
+At the time this tutorial was written, we downloaded `Intel.RealSense.SDK-WIN10-2.42.0.2845.exe`.
 - Execute `Intel.RealSense.SDK-WIN10-<version>.exe` and follow default installation steps.
 
 <b>2. Complete Intel Realsense SDK 2.0 installation</b>
@@ -424,14 +413,14 @@ to write in that folder before modifying `CMAKE_INSTALL_PREFIX`.
 \warning If you forgot to set `Eigen3_DIR` environment var, you will get the following warning in `cmake_gui`:
 \verbatim
 CMake Warning at CMakeLists.txt:1156 (message):
-  Eigen3 config file is detected in C:/visp-ws/eigen-3.3.8/build-vc16.  Using
-  C:/visp-ws/eigen-3.3.8/build-vc16/Eigen3Config.cmake doesn't allow to use a
+  Eigen3 config file is detected in C:/visp-ws/eigen-3.3.9/build-vc16.  Using
+  C:/visp-ws/eigen-3.3.9/build-vc16/Eigen3Config.cmake doesn't allow to use a
   valid Eigen3 include dir: C://include/eigen3.  Modify Eigen3_DIR to point
   to Eigen3Config.cmake file located in Eigen3 installation folder or turn
   USE_EIGEN3 OFF.
 \endverbatim We strongly recommend to fix this warning. To this end:
     - close `cmake-gui`
-    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\eigen-3.3.8\build-vc16\install\share\eigen3\cmake"`
+    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\eigen-3.3.9\build-vc16\install\share\eigen3\cmake"`
     - open again `cmake-gui`
     - delete the cache using menu `File > Delete Cache`
     - and configure again ViSP.
@@ -656,12 +645,12 @@ $ type $VISP_WS/visp-build-vc16/ViSP-third-party.txt
 ==========================================================
 General configuration information for ViSP 3.3.1
 
-  Version control:               3.2.0-1264-g7ab2826b1-dirty
+  Version control:               3.2.0-1391-g43b97871e-dirty
 
   Platform:
-    Timestamp:                   2020-11-21T14:46:29Z
+    Timestamp:                   2021-02-11T15:58:43Z
     Host:                        Windows 10.0.17763 AMD64
-    CMake:                       3.19.0
+    CMake:                       3.19.4
     CMake generator:             Visual Studio 16 2019
     CMake build tool:            C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe
     MSVC:                        1923
@@ -703,8 +692,8 @@ General configuration information for ViSP 3.3.1
     \- Use Netlib:               no
     \- Use GSL:                  no
     \- Use Lapack (built-in):    yes (ver 3.2.1)
-    Use Eigen3:                  yes (ver 3.3.8)
-    Use OpenCV:                  yes (ver 4.5.0)
+    Use Eigen3:                  yes (ver 3.3.9)
+    Use OpenCV:                  yes (ver 4.5.1)
 
   Simulator: 
     Ogre simulator: 
@@ -723,7 +712,7 @@ General configuration information for ViSP 3.3.1
     Use JPEG:                    no
     Use PNG:                     no
     \- Use ZLIB:                 no
-    Use OpenCV:                  yes (ver 4.5.0)
+    Use OpenCV:                  yes (ver 4.5.1)
     Use stb_image (built-in):    no
 
   Real robots: 
@@ -732,20 +721,21 @@ General configuration information for ViSP 3.3.1
     Use Franka:                  no
     Use Viper650:                no
     Use Viper850:                no
+    Use Kinova Jaco:             no
     Use aria (Pioneer):          no
     Use PTU46:                   no
     Use Biclops PTU:             no
     Use Flir PTU SDK:            no
     Use Parrot ARSDK:            no
     \-Use ffmpeg:                no
-    Use Virtuose:                no
+    Use Virtuose:                yes
     Use qbdevice (built-in):     yes (ver 2.6.0)
     Use takktile2 (built-in):    no
 
   GUI: 
     Use X11:                     no
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 4.5.0)
+    Use OpenCV:                  yes (ver 4.5.1)
     Use GDI:                     yes
     Use Direct3D:                no
 
@@ -754,13 +744,14 @@ General configuration information for ViSP 3.3.1
     Use CMU 1394:                no
     Use V4L2:                    no
     Use directshow:              no
-    Use OpenCV:                  yes (ver 4.5.0)
-    Use Flycapture:              yes
-    Use Pylon:                   no
+    Use OpenCV:                  yes (ver 4.5.1)
+    Use FLIR Flycapture:         yes
+    Use Basler Pylon:            yes (ver 6.1.1)
+    Use IDS uEye:                no
 
   RGB-D sensors: 
     Use Realsense:               no
-    Use Realsense2:              yes (ver 2.40.0)
+    Use Realsense2:              yes (ver 2.42.0)
     Use Kinect:                  no
     \- Use libfreenect:          no
     \- Use libusb-1:             no
@@ -788,7 +779,7 @@ General configuration information for ViSP 3.3.1
     Use OpenMP:                  yes
     Use pthread:                 no
     Use pthread (built-in):      yes (ver 3.0.1)
-    Use cxx standard:            11
+    Use cxx standard:            14
 
   Documentation: 
     Use doxygen:                 yes
@@ -818,10 +809,24 @@ This issue is known and reported [here](https://bugs.archlinux.org/task/68118).
 
 A quick fix is to comment the corresponding line 162 in
 `%%VISP_WS%\eigen-3.3.8\build-vc16\install\include\eigen3\Eigen\src\Core\Products\Parallelizer.h` like
-\code
+\verbatim
   //if (errorCount) EIGEN_THROW_X(Eigen::eigen_assert_exception());
 #endif
-\endcode
+\endverbatim
+
+\subsection install_win10_msvc16_issue_librealsense_cpu_too_old librealsense installer returns an unrecoverable SEH exception
+
+At the end of the `Intel Relasense SDK` installation process or when running `Intel Realsense Viewer`,
+if you get the following error message:
+\verbatim
+Program terminated due to an unrecoverable SEH exception:
+Illegal CPU instruction!
+Possibly newer CPU architecture is required
+\endverbatim
+
+it means that your CPU is too old to support a recent version of the Intel Realsense SDK.
+A workaround is to install an older version. In our case installing
+`Intel.RealSense.SDK-WIN10-2.32.1.1297.exe` does the trick.
 
 \section install_win10_msvc16_next Next tutorial
 

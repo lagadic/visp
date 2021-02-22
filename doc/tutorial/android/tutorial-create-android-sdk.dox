@@ -12,37 +12,37 @@ This tutorial assumes you have the following software installed and configured: 
 
 \subsection android_sdk_prereq_linux On Ubuntu or debian
 
-- Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit 11.0.4 LTS (JDK 11)</a>
+- Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit 11.0.10 LTS (JDK 11)</a>
   following \ref java_install_jdk tutorial.
 - To install <a href="https://developer.android.com/studio/">Android SDK and NDK</a> follow the link to
   <a href="https://developer.android.com/studio/">Android Studio</a>, download and install Android Studio.
   Once installed start Android Studio using default settings. This allows to download Android SDK that will be installed
-  in `$HOME/Android/sdk` on Ubuntu. Now to install Android NDK, with Android Studio
+  in `$HOME/Android/Sdk` on Ubuntu. Now to install Android NDK, with Android Studio
   start a new Native C++ Android project using the default configuration. From this new project enter
   `"File > Settings... > Appearence > System Settings > Android SDK"` menu. Select the `"SDK Tools"` tab
-  and check the boxes next to `LLDB`, `CMake`, and `NDK (Side by side)`.
+  and check the boxes next to `CMake`, and `NDK (Side by side)`.
   Once all the tools are downloaded, you can exit Android Studio.
-- Now to install <a href="https://www.python.org/downloads/">Python Interpreter (prefer versions 2.7 or 3.6)</a>,
+- Now to install <a href="https://www.python.org/downloads/">Python Interpreter (prefer version 3.x)</a>,
   <a href="https://cmake.org/download/">CMake</a>, <a href="https://github.com/ninja-build/ninja/releases">Ninja</a>
   and <a href="https://ccache.samba.org/">ccache</a> (a compiler cache for a faster build) run the following:
 \code
-$ sudo apt-get install python ant cmake-curses-gui ninja-build ccache
+$ sudo apt-get install python3 ant cmake-curses-gui ninja-build ccache
 \endcode
 
-- At the time this tutorial was written, on Ubuntu 18.04 LTS we got Android Studio 3.5.1, NDK 20.0 (see \ref android_sdk_ndk_version) and the following other tools versions:
+- At the time this tutorial was written, on Ubuntu 20.04 LTS we got Android Studio 4.1.2, NDK 22.0 (see \ref android_sdk_ndk_version) and the following other tools versions:
 \code
 $ java --version
-java 11.0.4 2019-07-16 LTS
-$ python --version
-Python 2.7.15+
+java 11.0.10 2021-01-19 LTS
+$ python3 --version
+Python 3.8.5
 $ ant -version
-Apache Ant(TM) version 1.10.5 compiled on March 28 2019
+Apache Ant(TM) version 1.10.7 compiled on October 24 2019
 $ cmake -version
-cmake version 3.10.2
+cmake version 3.16.3
 $ ninja --version
-1.8.2
+1.10.0
 $ ccache --version
-ccache version 3.4.1
+ccache version 3.7.7
 \endcode
 
 \subsection android_sdk_prereq_osx On Mac OSX
@@ -163,18 +163,19 @@ $ mkdir $VISP_WS/visp-build-android-sdk
 Enter the directory `$VISP_WS/platforms/android` having the python build script and check which are the command line options that are available.
 \code
 $ cd $VISP_WS/visp/platforms/android
-$ python build_sdk.py --help
+$ python3 build_sdk.py --help
 \endcode
 
 Generally the script has to be used like:
 \code
-$ python build_sdk.py --config <ndk-*.config.py> --sdk_path <path-to-Android-Sdk> --ndk_path <path-to-Android-Sdk>/ndk-bundle <installation-directory> <visp-source-code-directory>
+$ python3 build_sdk.py --config <ndk-*.config.py> --sdk_path <path-to-Android-Sdk> --ndk_path <path-to-Android-Sdk>/ndk-bundle <installation-directory> <visp-source-code-directory>
 \endcode
 
 In `$VISP_WS/visp/platforms/android` folder we provide different NDK config files:
 \code
 $ ls ndk-*.config.py
-ndk-10.config.py	ndk-16.config.py	ndk-17.config.py	ndk-18.config.py	ndk-20.config.py
+ndk-10.config.py  ndk-17.config.py               ndk-18.config.py  ndk-22.config.py
+ndk-16.config.py  ndk-18-api-level-21.config.py  ndk-20.config.py
 \endcode
 The file that should be used after `--config` option should match your NDK version (see \ref android_sdk_ndk_version).
 
@@ -189,34 +190,45 @@ This will speed up the installation process.
 Once build ViSP Android SDK will be available in `$VISP_WS/visp-build-android-sdk/ViSP-android-sdk/sdk` folder. Its content should be similar to the following:
 \code
 $ cd $VISP_WS/visp-build-android-sdk/ViSP-android-sdk/sdk 
-$ find . -type d -depth 3
-./native/libs/armeabi-v7a
-./native/libs/x86
-./native/libs/arm64-v8a
-./native/libs/x86_64
+$ find . -maxdepth 3 -type d
+./native
+./native/3rdparty
 ./native/3rdparty/libs
-./native/staticlibs/armeabi-v7a
-./native/staticlibs/x86
-./native/staticlibs/arm64-v8a
+./native/staticlibs
 ./native/staticlibs/x86_64
-./native/jni/abi-x86_64
-./native/jni/include
-./native/jni/abi-x86
-./native/jni/abi-arm64-v8a
+./native/staticlibs/arm64-v8a
+./native/staticlibs/x86
+./native/staticlibs/armeabi-v7a
+./native/libs
+./native/libs/x86_64
+./native/libs/arm64-v8a
+./native/libs/x86
+./native/libs/armeabi-v7a
+./native/jni
 ./native/jni/abi-armeabi-v7a
-./etc/data/wireframe-simulator
-./etc/data/robot-simulator
-./java/res/values
+./native/jni/include
+./native/jni/abi-x86_64
+./native/jni/abi-arm64-v8a
+./native/jni/abi-x86
+./java
+./java/src
 ./java/src/org
+./java/javadoc
+./java/res
+./java/res/values
+./etc
+./etc/data
+./etc/data/robot-simulator
+./etc/data/wireframe-simulator
 \endcode
 
 \subsection android_sdk_build_linux On Linux or Debian
 
-For example, on Ubuntu the command might look like
+For example, on Ubuntu 20.04 the command might look like
 \code
 $ mkdir $VISP_WS/visp-build-android-sdk
 $ cd $VISP_WS/visp/platforms/android
-$ python build_sdk.py --config ndk-20.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk-bundle $VISP_WS/visp-build-android-sdk $VISP_WS/visp
+$ python3 build_sdk.py --config ndk-22.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk/22.0.7026061 $VISP_WS/visp-build-android-sdk $VISP_WS/visp
 \endcode
 
 \subsection android_sdk_build_osx On Mac OSX
@@ -225,7 +237,7 @@ For example, on OSX the command might rather look like
 \code
 $ mkdir $VISP_WS/visp-build-android-sdk
 $ cd $VISP_WS/visp/platforms/android
-$ python build_sdk.py --config ndk-20.config.py --sdk_path $HOME/Library/Android/sdk --ndk_path $HOME/Library/Android/sdk/ndk-bundle $VISP_WS/visp-build-android-sdk $VISP_WS/visp
+$ python3 build_sdk.py --config ndk-22.config.py --sdk_path $HOME/Library/Android/sdk --ndk_path $HOME/Library/Android/sdk/ndk-bundle $VISP_WS/visp-build-android-sdk $VISP_WS/visp
 \endcode
 
 \subsection android_sdk_build_win On Windows
@@ -234,14 +246,14 @@ For example, on Windows the command might rather look like
 \code
 C:\> mkdir %VISP_WS%\visp-build-android-sdk
 C:\> cd %VISP_WS%\visp\platforms\android
-C:\> python build_sdk.py --config ndk-20.config.py --sdk_path %USERPROFILE%\AppData\Local\Android\Sdk --ndk_path %USERPROFILE%\AppData\Local\Android\Sdk\ndk\20.0.5594570 %VISP_WS%\visp-build-android-sdk %VISP_WS%\visp
+C:\> python3 build_sdk.py --config ndk-22.config.py --sdk_path %USERPROFILE%\AppData\Local\Android\Sdk --ndk_path %USERPROFILE%\AppData\Local\Android\Sdk\ndk\20.0.5594570 %VISP_WS%\visp-build-android-sdk %VISP_WS%\visp
 \endcode
 
 \subsection android_sdk_build_issue Known issue
 
 If you're experiencing problems with `ccache` or if you don't install `ccache`, you can try a build without it adding `--no_ccache` command line option like the following on Ubuntu:
 \code
-$ python build_sdk.py --no_ccache --config ndk-18.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk-bundle $VISP_WS/visp-build-android-sdk $VISP_WS/visp
+$ python3 build_sdk.py --no_ccache --config ndk-18.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk-bundle $VISP_WS/visp-build-android-sdk $VISP_WS/visp
 \endcode
 
 \section android_sdk_tips Tips & tricks
@@ -253,6 +265,8 @@ The following swnapshot shows that NDK 18.1 is used:
 \image html img-android-ndk-version-18.1.png
 This other snapshot shows that NDK 20.0 is used:
 \image html img-android-ndk-version-20.0.png
+This other snapshot taken on Ubuntu 20.04 with Android Studio 4.1.2 shows that NDK 22.0 is used:
+\image html img-android-ndk-version-22.0.png
 
 \section android_sdk_next Next tutorial
 

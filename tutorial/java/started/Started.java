@@ -7,7 +7,7 @@ import org.visp.core.VpRGBa;
 
 public class Started {
   static {
-    System.loadLibrary("visp_java330");
+    System.loadLibrary("visp_java340");
   }
   public static void main(String[] args) {
     // VpMatrix

@@ -67,6 +67,8 @@ In this sample, we first import the headers to use vpHomography class. Then we c
 - You can now run your code using `"Product > Run"` menu (Simulator or device does not bother because we are just executing code). You should obtain these logs showing that visp code was correctly executed by your iOS project.
 \image html img-getting-started-iOS-log.jpg
 
+- if you don't see the output (1) presented in the red rectangle in the previous image, you may click on icon (2) to display `All Output`.
+
 \section getting-started-ios-issues Known issues
 \subsection getting-started-ios-issue-libxml iOS error: libxml/parser.h not found
 

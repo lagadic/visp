@@ -593,7 +593,7 @@ public:
   /*!
     Initialize the display (size, position and title) of a gray level image.
 
-    \param I : Image to be displayed (not that image has to be initialized)
+    \param I : Image to be displayed (not that image has to be initialized).
     \param x : Horizontal position of the upper/left window corner.
     \param y : Vertical position of the upper/left window corner.
     \param title : Window title.
@@ -603,7 +603,7 @@ public:
     Initialize the display (size, position and title) of a color
     image in RGBa format.
 
-    \param I : Image to be displayed (not that image has to be initialized)
+    \param I : Image to be displayed (not that image has to be initialized).
     \param x : Horizontal position of the upper/left window corner.
     \param y : Vertical position of the upper/left window corner.
     \param title : Window title.
@@ -621,53 +621,53 @@ public:
 
     The following example shows how to use this function
     \code
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/io/vpImageIo.h>
+    #include <visp3/gui/vpDisplayD3D.h>
+    #include <visp3/gui/vpDisplayGDI.h>
+    #include <visp3/gui/vpDisplayGTK.h>
+    #include <visp3/gui/vpDisplayOpenCV.h>
+    #include <visp3/gui/vpDisplayX.h>
+    #include <visp3/io/vpImageIo.h>
 
-int main()
-{
-#ifdef VISP_HAVE_DISPLAY
-  vpImage<unsigned char> I;
-  vpImageIo::read(I, "lena.pgm");
+    int main()
+    {
+    #ifdef VISP_HAVE_DISPLAY
+      vpImage<unsigned char> I;
+      vpImageIo::read(I, "lena.pgm");
 
-  vpDisplay *d;
+      vpDisplay *d;
 
-#if defined(VISP_HAVE_X11)
-  d = new vpDisplayX;
-#elif defined(VISP_HAVE_GTK)
-  d = new vpDisplayGTK;
-#elif defined(VISP_HAVE_GDI)
-  d = new vpDisplayGDI;
-#elif defined(VISP_HAVE_D3D9)
-  d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
-  d = new vpDisplayOpenCV;
-#else
-  std::cout << "Sorry, no video device is available" << std::endl;
-  return -1;
-#endif
+    #if defined(VISP_HAVE_X11)
+      d = new vpDisplayX;
+    #elif defined(VISP_HAVE_GTK)
+      d = new vpDisplayGTK;
+    #elif defined(VISP_HAVE_GDI)
+      d = new vpDisplayGDI;
+    #elif defined(VISP_HAVE_D3D9)
+      d = new vpDisplayD3D;
+    #elif defined(VISP_HAVE_OPENCV)
+      d = new vpDisplayOpenCV;
+    #else
+      std::cout << "Sorry, no video device is available" << std::endl;
+      return -1;
+    #endif
 
-  d->init(I.getWidth(), I.getHeight(), 10, 20, "viewer");
+      d->init(I.getWidth(), I.getHeight(), 10, 20, "viewer");
 
-  // Now associate the display to the image
-  I.display = d;
+      // Now associate the display to the image
+      I.display = d;
 
-  // Set the display background with image I content
-  vpDisplay::display(I);
+      // Set the display background with image I content
+      vpDisplay::display(I);
 
-  // Flush the foreground and background display
-  vpDisplay::flush(I);
+      // Flush the foreground and background display
+      vpDisplay::flush(I);
 
-  // wait for a mouse clink in the display to exit
-  vpDisplay::getClick(I);
+      // wait for a mouse clink in the display to exit
+      vpDisplay::getClick(I);
 
-  delete d;
-#endif
-}
+      delete d;
+    #endif
+    }
     \endcode
   */
   virtual void init(unsigned int width, unsigned int height, int x = -1, int y = -1, const std::string &title = "") = 0;

@@ -92,7 +92,7 @@ static inline double sgn(double v)
 // random number between [0, 1)
 static inline float randf()
 {
-    return (float)(rand() / (RAND_MAX + 1.0f));
+    return (float)(rand() / (static_cast<float>(RAND_MAX) + 1.0f));
 }
 
 

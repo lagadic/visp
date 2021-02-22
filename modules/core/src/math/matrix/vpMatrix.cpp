@@ -2634,7 +2634,7 @@ int main()
   \sa pseudoInverse(vpMatrix &, vpColVector &, double, vpMatrix &, vpMatrix &, vpMatrix &) const
 */
 unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA,
-                                           vpMatrix &imAt, vpMatrix &kerA) const
+                                           vpMatrix &imAt, vpMatrix &kerAt) const
 {
   unsigned int nrows = getRows();
   unsigned int ncols = getCols();
@@ -2653,7 +2653,7 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
   U.insert(*this, 0, 0);
   U.svdLapack(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold,  Ap, rank_out, NULL, &imA, &imAt, &kerA);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold,  Ap, rank_out, NULL, &imA, &imAt, &kerAt);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -2669,10 +2669,6 @@ unsigned int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double
   \warning To inverse a square n-by-n matrix, you have to use rather one of
   the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
   are kwown as faster.
-
-  \param svThreshold : Threshold used to test the singular values. If
-  a singular value is lower than this threshold we consider that the
-  matrix is not full rank.
 
   \param[in] rank_in : Known rank of the matrix.
   \return The Moore-Penros pseudo inverse \f$ A^+ \f$.
@@ -3001,7 +2997,7 @@ int main()
   \sa pseudoInverse(vpMatrix &, vpColVector &, int, vpMatrix &, vpMatrix &, vpMatrix &) const
 */
 int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA,
-                                  vpMatrix &imAt, vpMatrix &kerA) const
+                                  vpMatrix &imAt, vpMatrix &kerAt) const
 {
   unsigned int nrows = getRows();
   unsigned int ncols = getCols();
@@ -3021,7 +3017,7 @@ int vpMatrix::pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in, vp
   U.insert(*this, 0, 0);
   U.svdLapack(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, &imA, &imAt, &kerA);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, &imA, &imAt, &kerAt);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -3346,7 +3342,7 @@ int main()
   \sa pseudoInverse(vpMatrix &, vpColVector &, double, vpMatrix &, vpMatrix &, vpMatrix &) const
 */
 unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA,
-                                           vpMatrix &imAt, vpMatrix &kerA) const
+                                           vpMatrix &imAt, vpMatrix &kerAt) const
 {
   unsigned int nrows = getRows();
   unsigned int ncols = getCols();
@@ -3365,7 +3361,7 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double
   U.insert(*this, 0, 0);
   U.svdEigen3(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold,  Ap, rank_out, NULL, &imA, &imAt, &kerA);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold,  Ap, rank_out, NULL, &imA, &imAt, &kerAt);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -3381,10 +3377,6 @@ unsigned int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double
   \warning To inverse a square n-by-n matrix, you have to use rather one of
   the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
   are kwown as faster.
-
-  \param svThreshold : Threshold used to test the singular values. If
-  a singular value is lower than this threshold we consider that the
-  matrix is not full rank.
 
   \param[in] rank_in : Known rank of the matrix.
   \return The Moore-Penros pseudo inverse \f$ A^+ \f$.
@@ -3713,7 +3705,7 @@ int main()
   \sa pseudoInverse(vpMatrix &, vpColVector &, int, vpMatrix &, vpMatrix &, vpMatrix &) const
 */
 int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA,
-                                  vpMatrix &imAt, vpMatrix &kerA) const
+                                  vpMatrix &imAt, vpMatrix &kerAt) const
 {
   unsigned int nrows = getRows();
   unsigned int ncols = getCols();
@@ -3733,7 +3725,7 @@ int vpMatrix::pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in, vp
   U.insert(*this, 0, 0);
   U.svdEigen3(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, &imA, &imAt, &kerA);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, &imA, &imAt, &kerAt);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -4058,7 +4050,7 @@ int main()
   \sa pseudoInverse(vpMatrix &, vpColVector &, double, vpMatrix &, vpMatrix &, vpMatrix &) const
 */
 unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA,
-                                           vpMatrix &imAt, vpMatrix &kerA) const
+                                           vpMatrix &imAt, vpMatrix &kerAt) const
 {
   unsigned int nrows = getRows();
   unsigned int ncols = getCols();
@@ -4077,7 +4069,7 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double
   U.insert(*this, 0, 0);
   U.svdOpenCV(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold,  Ap, rank_out, NULL, &imA, &imAt, &kerA);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold,  Ap, rank_out, NULL, &imA, &imAt, &kerAt);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n
@@ -4093,10 +4085,6 @@ unsigned int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double
   \warning To inverse a square n-by-n matrix, you have to use rather one of
   the following functions inverseByLU(), inverseByQR(), inverseByCholesky() that
   are kwown as faster.
-
-  \param svThreshold : Threshold used to test the singular values. If
-  a singular value is lower than this threshold we consider that the
-  matrix is not full rank.
 
   \param[in] rank_in : Known rank of the matrix.
   \return The Moore-Penros pseudo inverse \f$ A^+ \f$.
@@ -4425,7 +4413,7 @@ int main()
   \sa pseudoInverse(vpMatrix &, vpColVector &, int, vpMatrix &, vpMatrix &, vpMatrix &) const
 */
 int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA,
-                                  vpMatrix &imAt, vpMatrix &kerA) const
+                                  vpMatrix &imAt, vpMatrix &kerAt) const
 {
   unsigned int nrows = getRows();
   unsigned int ncols = getCols();
@@ -4445,7 +4433,7 @@ int vpMatrix::pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in, vp
   U.insert(*this, 0, 0);
   U.svdOpenCV(sv_, V);
 
-  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, &imA, &imAt, &kerA);
+  compute_pseudo_inverse(U, sv_, V, nrows, ncols, svThreshold, Ap, rank_out, &rank_in, &imA, &imAt, &kerAt);
 
   // Remove singular values equal to the one that corresponds to the lines of 0
   // introduced when m < n

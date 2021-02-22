@@ -14,7 +14,7 @@ endif()
 
 find_host_program(ANT_EXECUTABLE NAMES ${ANT_NAME}
   PATHS "${ANT_DIR_ENV_PATH}/bin" "${ProgramFiles_ENV_PATH}/apache-ant/bin"
-  NO_DEFAULT_PATH
+#  NO_DEFAULT_PATH
   )
 
 find_host_program(ANT_EXECUTABLE NAMES ${ANT_NAME})
@@ -29,7 +29,7 @@ if(ANT_EXECUTABLE)
     unset(ANT_EXECUTABLE CACHE)
   else()
     string(REGEX MATCH "[0-9]+.[0-9]+.[0-9]+" ANT_VERSION "${ANT_VERSION_FULL}")
-    set(ANT_VERSION "${ANT_VERSION}" CACHE INTERNAL "Detected ant vesion")
+    set(ANT_VERSION "${ANT_VERSION}" CACHE INTERNAL "Detected ant version")
 
     message(STATUS "Found apache ant: ${ANT_EXECUTABLE} (${ANT_VERSION})")
   endif()

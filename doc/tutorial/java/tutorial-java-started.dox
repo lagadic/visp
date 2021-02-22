@@ -15,7 +15,7 @@ Open Eclipse and create a new Java project entering `"File > New > Java Project"
 
 \image html img-tutorial-java-eclipse-create-new-project.jpeg
 
-In the `"New Java Project"` dialog write the name of your project (let say `visp-java-started`). In JRE section, select the appropriate execution environment (JavaSE-11 if you install JDK 11, or JavaSE-13 if you install JDK 13). Then press `"Finish"` button.
+In the `"New Java Project"` dialog write the name of your project (let say `visp-java-started`). In JRE section, select the appropriate execution environment (JavaSE-11 if you install JDK 11, or JavaSE-15 if you install JDK 15). Then press `"Finish"` button.
 
 \image html img-tutorial-java-eclipse-java-started.jpeg
 
@@ -25,38 +25,42 @@ In the "New module-info.java" dialog that may appear, press `"Don't Create"` but
 
 \section java_started_user_lib Add a user library
 
-If you followed \ref tutorial-install-java, you should already have ViSP library set in your workspace’s user libraries; if not please check out \ref tutorial-install-java. Now you should be ready to add ViSP library to your project. Inside Eclipse’s Package Explorer just right-click on your project’s folder and go to `"Build Path > Add Libraries..."`.
+If you followed \ref tutorial-install-java, you should already have ViSP library set in your workspace’s user libraries; if not please check out \ref tutorial-install-java. Now you should be ready to add ViSP library to your project.
+
+- Inside Eclipse’s Package Explorer just right-click on your project’s folder and go to `"Build Path > Add Libraries..."`.
 
 \image html img-tutorial-java-eclipse-add-libraries.jpeg
 
-Select `"User Library"` and click on `"Next"`:
+- Select `"User Library"` and click on `"Next"`:
 
 \image html img-tutorial-java-eclipse-add-libraries2.jpeg
 
-Check the checkbox of the ViSP library and press `"Finish"` button.
+- Check the checkbox of the ViSP library and press `"Finish"` button. At this point, if you don't see `visp`, it means that you didn't follow the section \ref create_user_library.
 
 \image html img-tutorial-java-eclipse-add-libraries3.jpeg
 
 \section java_started_simple_app Create a simple application
 
-Now add a new class to your project by right-clicking on your project’s folder and entering `"New > Class"` menu.
+To create a simple application that uses ViSP:
+
+- First add a new class to your project by right-clicking on your project’s folder and entering `"New > Class"` menu.
 
 \image html img-tutorial-java-eclipse-new-class.jpeg
 
-Write a class name like `Started` and press `"Finish"` button.
+- Then choose a class name like `Started` and press `"Finish"` button.
 
 \image html img-tutorial-java-eclipse-new-class2.jpeg
 
-Now we are ready to write the code of our first application. Let’s start by importing the main classes part of `core` module (vpCameraParameters, vpColVector, vpImage, vpMatrix, vpRGBa). Then we load `visp_java` library. After we continue defining the `main()` method that shows how to manipulate ViSP classes in Java.
-
-The code of the `Started` class also given in Started.java is the following:
+Now we are ready to add the code of our first application in `Started.java` file. The code of the `Started` class is the following:
 \include Started.java
 
-After a copy/paste you should have something similar to:
+- As you can see, at the beginning we import the main classes part of `core` module (VpCameraParameters, VpColVector, VpImageRGBa, VpImageUChar, VpMatrix and VpRGBa). Then we load `visp_java` library. After we continue defining the `main()` method that shows how to manipulate ViSP classes in Java.
+
+- Now you should copy/paste the code in your `visp-java-started` project in `Started.java` file to have something similar to:
 
 \image html img-tutorial-java-eclipse-started-code.jpeg
 
-We can now try to build and run this application entering`"Run > Run"` menu. You should have the following output:
+- You can now try to build and run this application entering`"Run > Run"` menu. You should have the following output:
 
 \image html img-tutorial-java-eclipse-started-console.jpeg
 

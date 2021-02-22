@@ -82,7 +82,7 @@ vpMbtMeEllipse::~vpMbtMeEllipse()
   \param sumErrorRad : sum of the error per feature.
   \param nbFeatures : Number of features used to compute _sumErrorRad.
   \param SobelX : Sobel kernel in X-direction.
-  \param SobelX : Sobel kernel in Y-direction.
+  \param SobelY : Sobel kernel in Y-direction.
   \param display : If true, display gradient and model orientation.
   \param length : Length of arrows used to show gradient and model orientation.
   \param thickness : Thickness of arrows used to show gradient and model orientation.

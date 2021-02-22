@@ -666,7 +666,7 @@ public:
 
   bool getRefineEdges(bool &refineEdges) const {
     if (m_td) {
-      refineEdges = m_td->refine_edges;
+      refineEdges = (m_td->refine_edges ? true : false);
       return true;
     }
     return false;
