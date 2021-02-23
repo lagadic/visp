@@ -90,7 +90,7 @@ int main(int argc, char **argv)
                     g[i].acquire(&I[i], NULL, NULL);
                     if(!d[i].isInitialised())
                     {
-                        d[i].init(I[i], 900*i, 10, "T265 left image");
+                        d[i].init(I[i], 100*i, 100*i, "T265 left image");
                     }
                 }
 
@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 
                     if(!d[i].isInitialised())
                     {
-                        d[i].init(I[i], 900, 10, "D435");
+                        d[i].init(I[i], 100*i, 100*i, "D435");
                     }
                 }
 
