@@ -116,7 +116,8 @@ int main(int argc, char **argv)
         if(clicked)
             break;
     }
-}
+
+    return EXIT_SUCCESS;
 #else
   (void) argc;
   (void) argv;
@@ -127,3 +128,4 @@ int main(int argc, char **argv)
   std::cout << "This turorial should be built with c++11 support" << std::endl;
 #endif
 #endif
+}
