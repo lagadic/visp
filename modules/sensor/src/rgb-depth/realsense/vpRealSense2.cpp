@@ -1349,7 +1349,7 @@ void vpRealSense2::getIMUData(vpColVector *imu_acc, vpColVector *imu_vel, double
 /*!
   Open access to the RealSense device and start the streaming.
  */
-void vpRealSense2::open(const rs2::config &cfg)
+bool vpRealSense2::open(const rs2::config &cfg)
 {
   if (m_init) {
     close();
@@ -1373,6 +1373,7 @@ void vpRealSense2::open(const rs2::config &cfg)
   }
 
   m_init = true;
+  return m_init;
 }
 
 /*!
@@ -1380,7 +1381,7 @@ void vpRealSense2::open(const rs2::config &cfg)
   \param cfg      : A rs2::config with requested filters on the pipeline configuration. By default no filters are applied.
   \param callback : Stream callback, can be any callable object accepting rs2::frame. The callback is invoked immediately once a frame is ready.
  */
-void vpRealSense2::open(const rs2::config &cfg, std::function<void(rs2::frame)> &callback)
+bool vpRealSense2::open(const rs2::config &cfg, std::function<void(rs2::frame)> &callback)
 {
   if (m_init) {
     close();
@@ -1404,6 +1405,7 @@ void vpRealSense2::open(const rs2::config &cfg, std::function<void(rs2::frame)> 
   }
 
   m_init = true;
+  return m_init;
 }
 
 /*!
