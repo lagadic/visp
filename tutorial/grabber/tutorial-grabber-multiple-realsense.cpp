@@ -13,19 +13,22 @@
 int main(int argc, char **argv)
 {
 #if defined(VISP_HAVE_REALSENSE) || defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    std::vector<std::pair<bool, std::string>> type_serial_nb;
-    std::vector<bool> cam_found;
+  std::vector<std::pair<std::string, std::string> > type_serial_nb;
+  std::vector<bool> cam_found;
 
-    for (int i = 0; i < argc; i++) 
-    {
-        if (std::string(argv[i]) == "--T265")
-            type_serial_nb.push_back(std::make_pair(true, std::string(argv[i + 1])));
-        else if (std::string(argv[i]) == "--D435")
-            type_serial_nb.push_back(std::make_pair(false, std::string(argv[i + 1])));
-        else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") 
-        {
-            std::cout << "\nUsage: " << argv[0]
-                << " [--T265 <serial number> ] [--D435 <serial number>]\n"
+  for (int i = 0; i < argc; i++) {
+    if (std::string(argv[i]) == "--T265") {
+      type_serial_nb.push_back(std::make_pair("T265", std::string(argv[i + 1])));
+    }
+    else if (std::string(argv[i]) == "--D435") {
+      type_serial_nb.push_back(std::make_pair("D435", std::string(argv[i + 1])));
+    }
+    else if (std::string(argv[i]) == "--SR300") {
+      type_serial_nb.push_back(std::make_pair("SR300", std::string(argv[i + 1])));
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout << "\nUsage: " << argv[0]
+                << " [--T265 <serial number>] [--D435 <serial number>] [--SR300 <serial number>]\n"
                 << "\nExample to use 2 T265 cameras:\n"
                 << "  " << argv[0] << " --T265 11622110511 --T265 11622110433 \n"
                 << "\nExample to use 1 T265 and 1 D435 cameras:\n"
@@ -33,91 +36,82 @@ int main(int argc, char **argv)
                 << "\nExample to use 2 T265 and 1 D435 cameras:\n"
                 << "  " << argv[0] << " --T265 11622110511 --T265 11622110433 --D435 752112070408 \n"
                 << std::endl;
-            return 0;
-        }
+      return 0;
     }
+  }
 
-    rs2::config T265_cfg, D435_cfg;
-    vpRealSense2 g[type_serial_nb.size()];
-    vpImage<unsigned char> I[type_serial_nb.size()];
+  rs2::config T265_cfg, D435_cfg;
+  vpRealSense2 g[type_serial_nb.size()];
+  vpImage<unsigned char> I[type_serial_nb.size()];
 
 #ifdef VISP_HAVE_X11
-    vpDisplayX d[type_serial_nb.size()];
+  vpDisplayX d[type_serial_nb.size()];
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d[type_serial_nb.size()];
+  vpDisplayGDI d[type_serial_nb.size()];
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV d[type_serial_nb.size()];
+  vpDisplayOpenCV d[type_serial_nb.size()];
 #else
-    std::cout << "No image viewer is available..." << std::endl;
+  std::cout << "No image viewer is available..." << std::endl;
 #endif
-    
-    bool clicked = false;
 
-    for(int i = 0; i < type_serial_nb.size(); i++)
-    {
-        if(type_serial_nb[i].first) // T265.
-        {
-            std::cout << "Opening T265 with ID: " << type_serial_nb[i].second << "." << std::endl;
-            T265_cfg.enable_device(type_serial_nb[i].second);
-            T265_cfg.enable_stream(RS2_STREAM_FISHEYE, 1, RS2_FORMAT_Y8);
-            T265_cfg.enable_stream(RS2_STREAM_FISHEYE, 2, RS2_FORMAT_Y8);
-            cam_found.push_back(g[i].open(T265_cfg));
-            if(!cam_found.back())
-                std::cout << "Device with ID: " << type_serial_nb[i].second << " not found." << std::endl;
+  bool clicked = false;
+
+  for (size_t i = 0; i < type_serial_nb.size(); i++) {
+    std::cout << "Opening " << type_serial_nb[i].first << " with ID: " << type_serial_nb[i].second << "." << std::endl;
+    if (type_serial_nb[i].first == "T265") { // T265.
+      T265_cfg.enable_device(type_serial_nb[i].second);
+      T265_cfg.enable_stream(RS2_STREAM_FISHEYE, 1, RS2_FORMAT_Y8);
+      T265_cfg.enable_stream(RS2_STREAM_FISHEYE, 2, RS2_FORMAT_Y8);
+      cam_found.push_back(g[i].open(T265_cfg));
+      if(!cam_found.back()) {
+        std::cout << "Device with ID: " << type_serial_nb[i].second << " not found." << std::endl;
+      }
+    }
+    else { // D435 or SR300
+      D435_cfg.enable_device(type_serial_nb[i].second);
+      D435_cfg.disable_stream(RS2_STREAM_DEPTH);
+      D435_cfg.disable_stream(RS2_STREAM_INFRARED);
+      D435_cfg.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
+      cam_found.push_back(g[i].open(D435_cfg));
+      if(!cam_found.back()) {
+        std::cout << "Device with ID: " << type_serial_nb[i].second << " not found." << std::endl;
+      }
+    }
+  }
+
+  while (true) {
+    for (size_t i = 0; i < type_serial_nb.size(); i++) {
+      if (cam_found[i]) {
+        if (type_serial_nb[i].first == "T265") { // T265.
+          g[i].acquire(&I[i], NULL, NULL);
+          if (!d[i].isInitialised()) {
+            d[i].init(I[i], 100*i, 100*i, "T265 left image");
+          }
         }
 
-        else // D435.
-        {
-            std::cout << "Opening D435 with ID: " << type_serial_nb[i].second << "." << std::endl;
-            D435_cfg.enable_device(type_serial_nb[i].second);
-            D435_cfg.disable_stream(RS2_STREAM_DEPTH);
-            D435_cfg.disable_stream(RS2_STREAM_INFRARED);
-            D435_cfg.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, 30);
-            cam_found.push_back(g[i].open(D435_cfg));
-            if(!cam_found.back())
-                std::cout << "Device with ID: " << type_serial_nb[i].second << " not found." << std::endl;
+        else { // D435.
+          g[i].acquire(I[i]);
+
+          if (!d[i].isInitialised()) {
+            d[i].init(I[i], 100*i, 100*i, type_serial_nb[i].first.c_str());
+          }
         }
+
+        vpDisplay::display(I[i]);
+        vpDisplay::flush(I[i]);
+        clicked = vpDisplay::getClick(I[i], false);
+      }
+
+      if(clicked) {
+        break;
+      }
     }
 
-    while(true)
-    {
-        for(int i = 0; i < type_serial_nb.size(); i++)
-        {
-            if(cam_found[i])
-            {
-                if(type_serial_nb[i].first) // T265.
-                {
-                    g[i].acquire(&I[i], NULL, NULL);
-                    if(!d[i].isInitialised())
-                    {
-                        d[i].init(I[i], 100*i, 100*i, "T265 left image");
-                    }
-                }
-
-                else // D435.
-                {
-                    g[i].acquire(I[i]);
-
-                    if(!d[i].isInitialised())
-                    {
-                        d[i].init(I[i], 100*i, 100*i, "D435");
-                    }
-                }
-
-                vpDisplay::display(I[i]);
-                vpDisplay::flush(I[i]);
-                clicked = vpDisplay::getClick(I[i], false);
-            }
-
-            if(clicked)
-                break;
-        }
-
-        if(clicked)
-            break;
+    if(clicked) {
+      break;
     }
 
-    return EXIT_SUCCESS;
+  }
 #else
   (void) argc;
   (void) argv;
@@ -128,4 +122,5 @@ int main(int argc, char **argv)
   std::cout << "This turorial should be built with c++11 support" << std::endl;
 #endif
 #endif
+  return EXIT_SUCCESS;
 }

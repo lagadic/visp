@@ -173,7 +173,7 @@ int main()
 
   If you want to change the default stream parameters, refer to the
   librealsense2 `rs2::config` documentation. The following code allows to
-  capture the color stream in 1920x1080:
+  capture the color stream in 1920x1080 at 30 Hz:
 
 \code
 #include <visp3/gui/vpDisplayGDI.h>
@@ -213,7 +213,7 @@ int main() {
 }
   \endcode
 
-  This example shows how to get depth stream aligned on color stream:
+  This other example shows how to get depth stream aligned on color stream:
   \code
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -258,7 +258,8 @@ int main() {
   References to `rs2::pipeline_profile` and `rs2::pipeline` can be retrieved
   with (`rs.open() must be called before`):
   \code
-rs2::pipeline_profile& profile = rs.getPipelineProfile(); rs2::pipeline& pipeline = rs.getPipeline();
+  rs2::pipeline_profile& profile = rs.getPipelineProfile();
+  rs2::pipeline& pipeline = rs.getPipeline();
   \endcode
 
   Information about the sensor can be printed with:
@@ -268,17 +269,19 @@ rs2::pipeline_profile& profile = rs.getPipelineProfile(); rs2::pipeline& pipelin
 int main() {
   vpRealSense2 rs;
   rs.open();
-    std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
+  std::cout << "RealSense sensor characteristics: \n" << rs << std::endl;
 
   return 0;
 }
   \endcode
 
-  \note This class has been tested with the Intel RealSense SR300
-  (Firmware: 3.21.0.0) using librealsense (API version: 2.8.3). Refer to the
-  librealsense2 documentation or [API how
-  to](https://github.com/IntelRealSense/librealsense/wiki/API-How-To) for
-  additional information.
+  It is also possible to use several RealSense sensors at the same time. In that case, you need to create a
+  vpRealSense2 object for each device and use vpRealSense2::enable_device(const std::string &serial_number)
+  to select the device explicitly by its serial number. An example is provided
+  in tutorial-grabber-multiple-realsense.cpp.
+
+  \note Additional information can be found in the
+  [librealsense wiki](https://github.com/IntelRealSense/librealsense/wiki/).
 */
 class VISP_EXPORT vpRealSense2
 {
