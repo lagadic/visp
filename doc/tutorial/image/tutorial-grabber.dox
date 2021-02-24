@@ -195,6 +195,36 @@ To grab a sequence of images, you may rather use:
 ./tutorial-grabber-realsense --seqname I%04d.pgm --record 0
 \endcode
 
+\subsection tutorial-grabber-multiple-realsense-use How to acquire images from 2 Realsense devices
+
+Once tutorial-grabber-multiple-realsense.cpp is built, the binary usage is given by:
+\code
+./tutorial-grabber-multiple-realsense --help
+\endcode
+To acquire images from 2 T265 devices with serial numbers 11622110511 and 11622110433 respectively, run:
+\code
+./tutorial-grabber-multiple-realsense --T265 11622110511 --T265 11622110433
+\endcode
+To acquire images from 1 T265 device (Serial Number:11622110511) and 1 D435 device (Serial Number: 752112070408), you may use:
+\code
+./tutorial-grabber-multiple-realsense --T265 11622110511 --D435 752112070408
+\endcode
+
+\note There is getRealSense2Info.cpp in `example/device/framegrabber` folder that could be used to get the device serial number.
+\verbatim
+$ ./getRealSense2Info 
+RealSense characteristics:
+Intel RealSense T265          11622110409         0.2.0.951           
+ Device info: 
+    Name                          : 	Intel RealSense T265
+    Serial Number                 : 	11622110409
+    Firmware Version              : 	0.2.0.951
+    Physical Port                 : 	2-3-2
+    Product Id                    : 	0B37
+    Usb Type Descriptor           : 	3.1
+    Product Line                  : 	T200
+\endverbatim
+
 \section grabber-camera-opencv Frame grabbing using OpenCV
 
 It is also possible to grab images using OpenCV. You may find an example in tutorial-grabber-opencv.cpp.
