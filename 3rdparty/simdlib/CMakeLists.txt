@@ -19,13 +19,6 @@ file(GLOB_RECURSE SIMD_BASE_HDR ${CMAKE_CURRENT_SOURCE_DIR}/Simd/*.h ${CMAKE_CUR
 # but here we use vars set in VISPDetectPlatform.cmake
 if(X86 OR X86_64)
 
-    # Is it needed?
-    if(CMAKE_SYSTEM_PROCESSOR STREQUAL "i686")
-        set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -m32")
-    elseif(CMAKE_SYSTEM_PROCESSOR STREQUAL "x86_64")
-        set(COMMON_CXX_FLAGS "${COMMON_CXX_FLAGS} -m64")
-    endif()
-
     # Flags check
     set(SSE_FLAG    "")
     set(SSE2_FLAG   "")
