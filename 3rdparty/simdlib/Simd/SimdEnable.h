@@ -44,8 +44,8 @@
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
-// The following includes <sys/auxv.h> and <asm/hwcap.h> are not available for iOS.
-#if (TARGET_OS_IOS == 0) // not iOS
+// The following includes <sys/auxv.h> and <asm/hwcap.h> are not available for macOS, iOS.
+#if !defined(__APPLE__) // not macOS, iOS
 #if defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)
 #include <unistd.h>
 #include <fcntl.h>
@@ -124,7 +124,7 @@ namespace Simd
     }
 #endif//defined(SIMD_X86_ENABLE) || defined(SIMD_X64_ENABLE)
 
-#if (TARGET_OS_IOS == 0) // not iOS
+#if !defined(__APPLE__) // not macOS, iOS
 #if defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE))
     namespace CpuInfo
     {
