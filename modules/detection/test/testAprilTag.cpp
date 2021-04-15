@@ -735,11 +735,10 @@ TEST_CASE("Apriltag getTagsPoints3D test", "[apriltag_get_tags_points3D_test]") 
     // Note that using epsilon = std::numeric_limits<double>::epsilon() makes this test
     // failing on Ubuntu 18.04 when none of the Lapack 3rd party libraries, nor the built-in are used.
     // Admissible espilon value is 1e-14. Using 1e-15 makes the test failing.
-#ifdef VISP_HAVE_LAPACK
-    double epsilon = std::numeric_limits<double>::epsilon();
-#else
+    // Again on Debian i386 where Lapack is enable, using std::numeric_limits<double>::epsilon()
+    // makes this test failing.
     double epsilon = 1e-12;
-#endif
+
     for (unsigned int row = 0; row < cMo.getRows(); row++) {
       for (unsigned int col = 0; col < cMo.getCols(); col++) {
         CHECK(vpMath::equal(cMo[row][col], cMo_manual[row][col], epsilon));
