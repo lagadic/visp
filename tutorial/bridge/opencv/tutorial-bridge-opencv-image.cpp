@@ -1,0 +1,77 @@
+//! \example tutorial-bridge-opencv-image.cpp
+#include <visp3/core/vpImageConvert.h>
+#include <visp3/io/vpImageIo.h>
+
+#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#endif
+
+int main()
+{
+#if VISP_HAVE_OPENCV_VERSION >= 0x020300
+  // From ViSP to OpenCV conversion
+  {
+    //! [Load ViSP color image]
+    vpImage<vpRGBa> Irgba;
+    vpImageIo::read(Irgba, "monkey.jpeg");
+    //! [Load ViSP color image]
+
+    //! [Load ViSP grey image]
+    vpImage<unsigned char> Igrey;
+    vpImageIo::read(Igrey, "monkey.jpeg");
+    //! [Load ViSP grey image]
+
+    //! [Convert to OpenCV color image]
+    cv::Mat cv_img_color;
+    vpImageConvert::convert(Irgba, cv_img_color);
+    //! [Convert to OpenCV color image]
+
+    //! [Convert to OpenCV grey image]
+    cv::Mat cv_img_grey;
+    vpImageConvert::convert(Igrey, cv_img_grey);
+    //! [Convert to OpenCV grey image]
+
+    std::cout << "Save converted images from vpImage to cv::Mat" << std::endl;
+    std::cout << "- monkey-cv-color.jpeg" << std::endl;
+    std::cout << "- monkey-cv-grey.jpeg" << std::endl;
+    //! [Save OpenCV color image]
+    cv::imwrite("monkey-cv-color.jpeg", cv_img_color);
+    //! [Save OpenCV color image]
+    //! [Save OpenCV grey image]
+    cv::imwrite("monkey-cv-grey.jpeg", cv_img_grey);
+    //! [Save OpenCV grey image]
+  }
+
+  // From OpenCV to ViSP conversion
+  {
+    //! [Load OpenCV color image]
+    cv::Mat cv_img_color = imread("monkey.jpeg", cv::IMREAD_COLOR);
+    //! [Load OpenCV color image]
+
+    //! [Convert to ViSP color image]
+    vpImage<vpRGBa> Irgba;
+    vpImageConvert::convert(cv_img_color, Irgba);
+    //! [Convert to ViSP color image]
+
+    //! [Load OpenCV grey image]
+    cv::Mat cv_img_grey = imread("monkey.jpeg", cv::IMREAD_GRAYSCALE);
+    //! [Load OpenCV grey image]
+
+    //! [Convert to ViSP grey image]
+    vpImage<unsigned char> Igrey;
+    vpImageConvert::convert(cv_img_grey, Igrey);
+    //! [Convert to ViSP grey image]
+
+    std::cout << "Save converted images from cv::Mat to vpImage" << std::endl;
+    std::cout << "- monkey-vp-color.jpeg" << std::endl;
+    std::cout << "- monkey-vp-grey.jpeg" << std::endl;
+    //! [Save ViSP color image]
+    vpImageIo::write(Irgba, "monkey-vp-color.jpeg");
+    //! [Save ViSP color image]
+    //! [Save ViSP grey image]
+    vpImageIo::write(Igrey, "monkey-vp-grey.jpeg");
+    //! [Save ViSP grey image]
+  }
+#endif
+}
