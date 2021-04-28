@@ -3,13 +3,16 @@
 \page tutorial-bridge-opencv Tutorial: Bridge over OpenCV
 \tableofcontents
 
-ViSP is interfaced with OpenCV third party. In this tutorial we explain how to convert data such as camera parameters or images from ViSP to OpenCV or \e vice \e versa.
+ViSP is interfaced with OpenCV third party. In this tutorial we explain how to convert data such
+as camera parameters or images from ViSP to OpenCV or \e vice \e versa.
 
 \section tutorial_bridge_opencv_cam Camera parameters conversions
 
-ViSP camera parameters are implemented in vpCameraParameters class. If you want to calibrate a camera with ViSP tools follow \ref tutorial-calibration-intrinsic.
+ViSP camera parameters are implemented in vpCameraParameters class. If you want to calibrate
+a camera with ViSP tools follow \ref tutorial-calibration-intrinsic.
 
-Let us recall the pinhole camera model implemented in ViSP. In this model, a scene view is formed by projecting 3D points into the image plane using a perspective transformation.
+Let us recall the pinhole camera model implemented in ViSP. In this model, a scene view is formed
+by projecting 3D points into the image plane using a perspective transformation.
 
 
 \f[
@@ -37,7 +40,7 @@ where:
 - \f$(u_0,v_0)\f$ is a principal point that is usually near the image center
 - \f$(p_x,p_y)\f$ are the focal lengths expressed in pixel units.
 
-When \f$Z_c \neq 0\f$, the previous equation si equivalent to the following:
+When \f$Z_c \neq 0\f$, the previous equation is equivalent to the following:
 \f[
   \begin{array}{lcl}
   x &=& X_c / Z_c \\
@@ -61,13 +64,17 @@ Real lenses usually have some radial distortion. So, the above model is extended
   \end{array}
   \f]
 
-where \f$k_{ud}\f$ is the first order radial distorsion. Higher order distorsion coefficients are not considered in ViSP.
+where \f$k_{ud}\f$ is the first order radial distortion. Higher order distortion coefficients are not considered in ViSP.
 
-\note In ViSP we introduce an extra parameter named \f$k_{du}\f$ which is the radial first order distorsion that allows to transform pixels in meters. If this parameter is unknown as in OpenCV a good approximation is to consider \f$k_{du} = - k_{ud}\f$
+\note In ViSP we introduce an extra parameter named \f$k_{du}\f$ which is the radial first order distortion
+that allows to transform pixels in meters. If this parameter is unknown as in OpenCV a good
+ approximation is to consider \f$k_{du} = - k_{ud}\f$
 
-Even if OpenCV notations are different, this model is exactly the same then the one used in OpenCV and described <a href="http://docs.opencv.org/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html">here</a> where higher order OpenCV distorsion parameters are turned to 0.
+Even if OpenCV notations are different, this model is exactly the same then the one used in
+OpenCV and described <a href="http://docs.opencv.org/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html">here</a>
+where higher order OpenCV distortion parameters are turned to 0.
 
-The following table gives the correspondances between ViSP and OpenCV parameters:
+The following table gives the correspondences between ViSP and OpenCV parameters:
 
 
 \f[
@@ -89,26 +96,161 @@ The following table gives the correspondances between ViSP and OpenCV parameters
   \end{array}
   \f]
 
-From a coding point of view, let us consider the following code also available in tutorial-bridge-opencv.cpp where we initialize camera parameters using ViSP:
+From a coding point of view, let us consider the following code also available in
+tutorial-bridge-opencv-camera-param.cpp where we initialize camera parameters using ViSP:
 
-\snippet tutorial-bridge-opencv.cpp Set ViSP camera parameters
+\snippet tutorial-bridge-opencv-camera-param.cpp Set ViSP camera parameters
 
 These parameters could be used to initialize OpenCV camera parameters:
 
-\snippet tutorial-bridge-opencv.cpp Set OpenCV camera parameters
+\snippet tutorial-bridge-opencv-camera-param.cpp Set OpenCV camera parameters
 
 \section tutorial_bridge_opencv_image Image conversions
 
-ViSP image is implemented in vpImage class, while OpenCV images in cv::Mat class. All the functions that allow image conversion from ViSP to OpenCV or \e vice \e versa are implemented in vpImageConvert.
+ViSP image is implemented in vpImage class, while OpenCV images in `cv::Mat` class. All the functions
+that allow image conversion from ViSP to OpenCV or \e vice \e versa are implemented in vpImageConvert.
 
-Some examples are available in tutorial-bridge-opencv.cpp.
+Some image conversion examples could be found in tutorial-bridge-opencv-camera-param.cpp.
+There is also tutorial-bridge-opencv-image.cpp from where the following snippets are extracted.
 
-For example, the following code allow to read an image with ViSP:
+\subsection tutorial_bridge_opencv_image_vp_to_cv From ViSP to OpenCV image conversion
 
-\snippet tutorial-bridge-opencv.cpp Load ViSP image
+- **Color image conversion**
 
-and then convert the image in OpenCV using:
+  The following code allows to read a color image with ViSP:
+  \snippet tutorial-bridge-opencv-image.cpp Load ViSP color image
+  and then convert the image in OpenCV using:
+  \snippet tutorial-bridge-opencv-image.cpp Convert to OpenCV color image
+  before saving the converted color image
+  \snippet tutorial-bridge-opencv-image.cpp Save OpenCV color image
 
-\snippet tutorial-bridge-opencv.cpp Convert ViSP 2 OpenCV image
+- **Grey scale image conversion**
+
+  The following code allows to read a grey scale image with ViSP. Note here that if the
+  input image (ie. `monkey.jpeg`) is a color image, vpImageIo::read() converts implicitly
+  the color image in a grey scale image:
+  \snippet tutorial-bridge-opencv-image.cpp Load ViSP grey image
+  and then convert the image in OpenCV using:
+  \snippet tutorial-bridge-opencv-image.cpp Convert to OpenCV grey image
+  before saving the converted grey image
+  \snippet tutorial-bridge-opencv-image.cpp Save OpenCV grey image
+
+\subsection tutorial_bridge_opencv_image_cv_to_vp From OpenCV to ViSP image conversion
+
+- **Color image conversion**
+
+  The following code allows to read a color image with OpenCV:
+  \snippet tutorial-bridge-opencv-image.cpp Load OpenCV color image
+  and then convert the image in ViSP using:
+  \snippet tutorial-bridge-opencv-image.cpp Convert to ViSP color image
+  before saving the converted color image
+  \snippet tutorial-bridge-opencv-image.cpp Save ViSP color image
+
+- **Grey scale image conversion**
+
+  The following code allows to read a grey scale image with OpenCV:
+  \snippet tutorial-bridge-opencv-image.cpp Load OpenCV grey image
+  and then convert the image in ViSP using:
+  \snippet tutorial-bridge-opencv-image.cpp Convert to ViSP grey image
+  before saving the converted grey image
+  \snippet tutorial-bridge-opencv-image.cpp Save ViSP grey image
+
+\section tutorial_bridge_opencv_matrix Matrix conversions
+
+ViSP matrices are implemented in different classes:
+- vpMatrix for a non specific matrix
+- vpHomogeneousMatrix for a 4-by-4 homogeneous matrix
+- vpHomography for a 3-by-3 homography matrix
+- vpRotationMatrix for a 3-by-3 rotation matrix
+
+while OpenCV matrices are always implemented as a `cv::Mat`.
+
+Up to now, there is no specific function that does the conversion between ViSP and OpenCv matrices.
+
+Note that each element of a ViSP matrix is a double and that ViSP matrices are row-major.
+
+In the following subsections we illustrate how to convert a vpMatrix to a `cv::Mat`, but the code could be easily
+adapted to other ViSP specific matrices as long as the corresponding OpenCV matrix contains double
+elements and that it has the same size as the ViSP specific matrix. 
+
+\subsection tutorial_bridge_opencv_matrix_cv_to_vp From OpenCV to ViSP matrix conversion
+
+- The following code also available in tutorial-bridge-opencv-matrix.cpp shows how to create
+  an OpenCV row-major matrix with size 3 rows by 4 cols that contains double elements.
+  \snippet tutorial-bridge-opencv-matrix.cpp Create OpenCV matrix
+
+- **Deep copy conversion**
+
+  To convert the previous matrix in a vpMatrix using a deep copy, you may use:
+  \snippet tutorial-bridge-opencv-matrix.cpp Convert to ViSP matrix with deep copy
+
+  The content of the matrices is now the following:
+  \verbatim
+M_cv: 
+[1, 2, 3, 4;
+ 5, 6, 7, 8;
+ 9, 10, 11, 12]
+M: 
+1  2  3  4
+5  6  7  8
+9  10  11  12
+  \endverbatim
+
+\subsection tutorial_bridge_opencv_matrix_vp_to_cv From ViSP to OpenCV conversion
+
+- The following code also available in tutorial-bridge-opencv-matrix.cpp shows how to create a ViSP
+  row-major matrix with size 3 rows by 4 cols that contains double elements.
+  \snippet tutorial-bridge-opencv-matrix.cpp Create ViSP matrix
+
+- **Deep copy conversion**
+
+  To convert the previous matrix in a `cv::Mat` using a deep copy, you may use:
+  \snippet tutorial-bridge-opencv-matrix.cpp Convert to OpenCV matrix with deep copy
+
+  The content of the matrices is now the following:
+  \verbatim
+M: 
+1  2  3  4
+5  6  7  8
+9  10  11  12
+M_cv_deep: 
+[1, 2, 3, 4;
+ 5, 6, 7, 8;
+ 9, 10, 11, 12]
+  \endverbatim
+
+- **Pointer assignment, without deep copy conversion**
+
+  For performance issues, there is also the possibility to just copy the data pointer. To this end, you may use:
+  \snippet tutorial-bridge-opencv-matrix.cpp Convert to OpenCV matrix without deep copy
+
+  The content of the matrices is now the following:
+  \verbatim
+M: 
+1  2  3  4
+5  6  7  8
+9  10  11  12
+M_cv: 
+[1, 2, 3, 4;
+ 5, 6, 7, 8;
+ 9, 10, 11, 12]
+  \endverbatim
+
+  As a side effect, you may know that modifying one of the matrices (ie. `M` like below or `M_cv`)
+  will affect the content of both matrices. Let us illustrate this behavior, where the diagonal of `M` is set to 1:
+  \snippet tutorial-bridge-opencv-matrix.cpp Modify ViSP matrix
+
+  As expected, the content of `M_cv` matrix is also changed:
+  \verbatim
+Set M = eye
+M: 
+1  0  0  0
+0  1  0  0
+0  0  1  0
+M_cv: 
+[1, 0, 0, 0;
+ 0, 1, 0, 0;
+ 0, 0, 1, 0]
+  \endverbatim
 
 **/

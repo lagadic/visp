@@ -1,4 +1,4 @@
-//! \example tutorial-bridge-opencv.cpp
+//! \example tutorial-bridge-opencv-camera-param.cpp
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
