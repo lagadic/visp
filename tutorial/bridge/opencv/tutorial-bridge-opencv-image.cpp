@@ -1,4 +1,6 @@
 //! \example tutorial-bridge-opencv-image.cpp
+#include <iostream>
+
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/io/vpImageIo.h>
 
@@ -46,7 +48,11 @@ int main()
   // From OpenCV to ViSP conversion
   {
     //! [Load OpenCV color image]
-    cv::Mat cv_img_color = imread("monkey.jpeg", cv::IMREAD_COLOR);
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    cv::Mat cv_img_color = cv::imread("monkey.jpeg", cv::IMREAD_COLOR);
+#else
+    cv::Mat cv_img_color = cv::imread("monkey.jpeg", CV_LOAD_IMAGE_COLOR);
+#endif
     //! [Load OpenCV color image]
 
     //! [Convert to ViSP color image]
@@ -55,7 +61,11 @@ int main()
     //! [Convert to ViSP color image]
 
     //! [Load OpenCV grey image]
-    cv::Mat cv_img_grey = imread("monkey.jpeg", cv::IMREAD_GRAYSCALE);
+#if VISP_HAVE_OPENCV_VERSION >= 0x030000
+    cv::Mat cv_img_grey = cv::imread("monkey.jpeg", cv::IMREAD_GRAYSCALE);
+#else
+    cv::Mat cv_img_grey = cv::imread("monkey.jpeg", CV_LOAD_IMAGE_GRAYSCALE);
+#endif
     //! [Load OpenCV grey image]
 
     //! [Convert to ViSP grey image]
