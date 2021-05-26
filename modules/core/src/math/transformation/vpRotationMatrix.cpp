@@ -54,7 +54,6 @@
 // Debug trace
 #include <math.h>
 #include <visp3/core/vpDebug.h>
-const double vpRotationMatrix::threshold = 1e-6;
 
 /*!
   Initialize the rotation matrix as identity.
@@ -236,7 +235,7 @@ R:
  */
 vpRotationMatrix& vpRotationMatrix::operator,(double val)
 {
-  m_index ++;;
+  m_index ++;
   if (m_index >= size()) {
     throw(vpException(vpException::dimensionError, "Cannot set rotation matrix out of bounds. It has only %d elements while you try to initialize with %d elements", size(), m_index+1));
   }
@@ -396,9 +395,8 @@ vpRotationMatrix &vpRotationMatrix::operator*=(double x)
 /*!
   Test if the rotation matrix is really a rotation matrix.
 */
-bool vpRotationMatrix::isARotationMatrix() const
+bool vpRotationMatrix::isARotationMatrix(double threshold) const
 {
-  unsigned int i, j;
   bool isRotation = true;
 
   if (getCols() != 3 || getRows() != 3) {
@@ -407,28 +405,32 @@ bool vpRotationMatrix::isARotationMatrix() const
 
   // test R^TR = Id ;
   vpRotationMatrix RtR = (*this).t() * (*this);
-  for (i = 0; i < 3; i++) {
-    for (j = 0; j < 3; j++) {
+  for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int j = 0; j < 3; j++) {
       if (i == j) {
-        if (fabs(RtR[i][j] - 1) > threshold)
+        if (fabs(RtR[i][j] - 1) > threshold) {
           isRotation = false;
+        }
       } else {
-        if (fabs(RtR[i][j]) > threshold)
+        if (fabs(RtR[i][j]) > threshold) {
           isRotation = false;
+        }
       }
     }
   }
   // test if it is a basis
   // test || Ci || = 1
-  for (i = 0; i < 3; i++) {
-    if ((sqrt(vpMath::sqr(RtR[0][i]) + vpMath::sqr(RtR[1][i]) + vpMath::sqr(RtR[2][i])) - 1) > threshold)
+  for (unsigned int i = 0; i < 3; i++) {
+    if ((sqrt(vpMath::sqr(RtR[0][i]) + vpMath::sqr(RtR[1][i]) + vpMath::sqr(RtR[2][i])) - 1) > threshold) {
       isRotation = false;
+    }
   }
 
   // test || Ri || = 1
-  for (i = 0; i < 3; i++) {
-    if ((sqrt(vpMath::sqr(RtR[i][0]) + vpMath::sqr(RtR[i][1]) + vpMath::sqr(RtR[i][2])) - 1) > threshold)
+  for (unsigned int i = 0; i < 3; i++) {
+    if ((sqrt(vpMath::sqr(RtR[i][0]) + vpMath::sqr(RtR[i][1]) + vpMath::sqr(RtR[i][2])) - 1) > threshold) {
       isRotation = false;
+    }
   }
 
   //  test if the basis is orthogonal
@@ -445,6 +447,7 @@ vpRotationMatrix::vpRotationMatrix() : vpArray2D<double>(3, 3), m_index(0) { eye
   rotation matrix.
 */
 vpRotationMatrix::vpRotationMatrix(const vpRotationMatrix &M) : vpArray2D<double>(3, 3), m_index(0) { (*this) = M; }
+
 /*!
   Construct a 3-by-3 rotation matrix from an homogeneous matrix.
 */
@@ -540,9 +543,8 @@ vpRotationMatrix vpRotationMatrix::t() const
 {
   vpRotationMatrix Rt;
 
-  unsigned int i, j;
-  for (i = 0; i < 3; i++)
-    for (j = 0; j < 3; j++)
+  for (unsigned int i = 0; i < 3; i++)
+    for (unsigned int j = 0; j < 3; j++)
       Rt[j][i] = (*this)[i][j];
 
   return Rt;
@@ -605,7 +607,6 @@ void vpRotationMatrix::printVector()
 */
 vpRotationMatrix vpRotationMatrix::buildFrom(const vpThetaUVector &v)
 {
-  unsigned int i, j;
   double theta, si, co, sinc, mcosc;
   vpRotationMatrix R;
 
@@ -625,8 +626,8 @@ vpRotationMatrix vpRotationMatrix::buildFrom(const vpThetaUVector &v)
   R[2][1] = sinc * v[0] + mcosc * v[2] * v[1];
   R[2][2] = co + mcosc * v[2] * v[2];
 
-  for (i = 0; i < 3; i++)
-    for (j = 0; j < 3; j++)
+  for (unsigned int i = 0; i < 3; i++)
+    for (unsigned int j = 0; j < 3; j++)
       (*this)[i][j] = R[i][j];
 
   return *this;
