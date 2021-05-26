@@ -13,8 +13,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-16.04, ubuntu-18.04, ubuntu-20.04]
-        compiler: [8, 9]
+        os: [ubuntu-18.04, ubuntu-20.04]
+        compiler: [9, 11]
 
     steps:
     # https://github.com/marketplace/actions/cancel-workflow-action
@@ -31,6 +31,9 @@ jobs:
 
     - name: Print OS information
       run: lsb_release -a
+
+    - name: Print compiler information
+      run: dpkg --list | grep compiler
 
     - name: Install dependencies
       run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
