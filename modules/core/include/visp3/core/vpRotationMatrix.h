@@ -141,7 +141,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpRotationMatrix(){};
+  virtual ~vpRotationMatrix(){}
 
   vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M);
   vpRotationMatrix buildFrom(const vpThetaUVector &v);
@@ -160,7 +160,7 @@ public:
   vpRotationMatrix inverse() const;
   void inverse(vpRotationMatrix &R) const;
 
-  bool isARotationMatrix() const;
+  bool isARotationMatrix(double threshold=1e-6) const;
 
   // copy operator from vpRotationMatrix
   vpRotationMatrix &operator=(const vpRotationMatrix &R);
@@ -197,7 +197,7 @@ public:
     (void)ncols;
     (void)flagNullify;
     throw(vpException(vpException::fatalError, "Cannot resize a rotation matrix"));
-  };
+  }
 
   // transpose
   vpRotationMatrix t() const;
@@ -214,16 +214,13 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init(){};
+  vp_deprecated void init(){}
   /*!
      \deprecated You should rather use eye().
    */
   vp_deprecated void setIdentity();
 //@}
 #endif
-
-private:
-  static const double threshold;
 
 protected:
   unsigned int m_index;

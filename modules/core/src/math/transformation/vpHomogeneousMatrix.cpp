@@ -213,8 +213,25 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
     throw(vpException(vpException::fatalError, "Cannot initialize homogeneous matrix from a list (%d elements) that has not 12 or 16 elements", list.size()));
   }
 
-  if (! isAnHomogeneousMatrix() ) {
-    throw(vpException(vpException::fatalError, "Rotation matrix initialization fails since it's elements doesn't represent a rotation matrix"));
+  if (!isAnHomogeneousMatrix()) {
+    if (isAnHomogeneousMatrix(1e-3)) {
+      // re-orthogonalize rotation matrix since the input is close to a valid rotation matrix
+      vpMatrix U {
+        {data[0], data[1], data[2]},
+        {data[4], data[5], data[6]},
+        {data[8], data[9], data[10]}
+      };
+      vpColVector w;
+      vpMatrix V;
+      U.svd(w, V);
+      vpMatrix R = U * V.t();
+
+      data[0] = R[0][0]; data[1] = R[0][1]; data[2] = R[0][2];
+      data[4] = R[1][0]; data[5] = R[1][1]; data[6] = R[1][2];
+      data[8] = R[2][0]; data[9] = R[2][1]; data[10] = R[2][2];
+    } else {
+      throw(vpException(vpException::fatalError, "Rotation matrix initialization fails since it's elements doesn't represent a rotation matrix"));
+    }
   }
 }
 #endif
@@ -694,7 +711,7 @@ N:
  */
 vpHomogeneousMatrix& vpHomogeneousMatrix::operator,(double val)
 {
-  m_index ++;;
+  m_index ++;
   if (m_index >= size()) {
     throw(vpException(vpException::dimensionError, "Cannot set homogenous matrix out of bounds. It has only %d elements while you try to initialize with %d elements", size(), m_index+1));
   }
@@ -708,12 +725,12 @@ vpHomogeneousMatrix& vpHomogeneousMatrix::operator,(double val)
   Test if the 3x3 rotational part of the homogeneous matrix is really
   a rotation matrix.
 */
-bool vpHomogeneousMatrix::isAnHomogeneousMatrix() const
+bool vpHomogeneousMatrix::isAnHomogeneousMatrix(double threshold) const
 {
   vpRotationMatrix R;
   extract(R);
 
-  return R.isARotationMatrix();
+  return R.isARotationMatrix(threshold);
 }
 
 /*!
