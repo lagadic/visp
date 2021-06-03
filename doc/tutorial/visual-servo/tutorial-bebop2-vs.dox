@@ -320,6 +320,7 @@ vpRobotBebop2 drone(false, true, "192.168.43.1"); // This creates the drone with
 \n\n
 
 \section bebop2_next Next tutorial
+
 If needed, you can see \ref tutorial-grabber corresponding section dedicated to Parrot Bebop 2 to get images of the calibration grid.\n
 You can also calibrate your drone camera and generate an XML file usable in the servoing program (see \ref tutorial-calibration-intrinsic).\n
 If you need more details about this program, check the comments in servoBebop2.cpp.\n

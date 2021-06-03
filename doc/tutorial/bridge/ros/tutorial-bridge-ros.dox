@@ -38,11 +38,13 @@ We provide also other ROS packages that exploit ViSP:
   -# ROS nodes that allow to control specific hardware such as for the moment robots that can be controlled
      only in our lab due to proprietary drivers: Afma6 gantry robot, Biclops PT head, ADEPT Viper 650 and 850
      robots described [here](https://team.inria.fr/rainbow/research/robotics-platforms/) and other robots
-     that anyone can buy and use with open-source drivers interfaced in ViSP: Pioneer mobile robot, Parrot bebop2 drone 
+     that anyone can buy and use with open-source drivers interfaced in ViSP: Pioneer mobile robot, Parrot bebop2 drone.
+     This [tutorial](http://wiki.ros.org/visp_ros/Tutorials/How%20to%20do%20visual%20servoing%20with%20Parrot%20Bebop%202%20drone%20and%20visp_ros)
+     explains how to visual-servo a Parrot bebop2 drone like in the next video.
 \htmlonly
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/le07g-RRsJM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
 \endhtmlonly
-  -# a tutorial that shows how to simulate a Franka Panda robot using [CoppeliaSim](https://www.coppeliarobotics.com/).
+  -# a [tutorial](http://docs.ros.org/en/noetic/api/visp_ros/html/tutorial-franka-coppeliasim.html) that shows how to simulate a Franka Panda robot using [CoppeliaSim](https://www.coppeliarobotics.com/).
      The simulation is a physical simulation with a model that has been accurately identified from a real Franka robot.
      All the details are in the paper:<br>
      <em>C. Gaz, M. Cognetti, A. Oliva, P. Robuffo Giordano, A. De Luca, Dynamic Identification of the Franka
