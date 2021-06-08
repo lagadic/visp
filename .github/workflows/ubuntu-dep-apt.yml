@@ -14,7 +14,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-18.04, ubuntu-20.04]
-        compiler: [9, 11]
+        compiler: [9, 10]
 
     steps:
     # https://github.com/marketplace/actions/cancel-workflow-action
