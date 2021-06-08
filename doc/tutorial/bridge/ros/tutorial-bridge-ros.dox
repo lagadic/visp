@@ -9,7 +9,7 @@ In this tutorial you will learn how to install ViSP from prebuilt ROS packages o
 
 \section install_ros_package ViSP ROS package
 
-ViSP is available as a <a href="http://wiki.ros.org/visp">ROS package</a> for `groovy`, `hydro`, `indigo`, `jade`, `kinetic` and `melodic` distros. Under Ubuntu, to get the package simply type:
+ViSP is available as a [ROS package](http://wiki.ros.org/visp) for `kinetic`, `melodic` and `noetic` distros. Under Ubuntu, to get the package simply type:
 
 \code
 $ sudo apt-get install ros-<distro>-visp
@@ -19,13 +19,43 @@ $ sudo apt-get install ros-<distro>-visp
 
 We provide also other ROS packages that exploit ViSP:
 
-- <a href="http://wiki.ros.org/vision_visp">vision_visp</a>: a metapackage that contains
-  -# <a href="http://wiki.ros.org/visp_bridge">visp_bridge</a>: a bunch of wrappers between ViSP and ROS data structures 
-  -# <a href="http://wiki.ros.org/visp_tracker">visp_tracker</a>: a ROS version of ViSP model-based tracker  
-  -# <a href="http://wiki.ros.org/visp_auto_tracker">visp_auto_tracker</a>: a tracker with auto-detection of a target
-- <a href="http://wiki.ros.org/visp_ros">visp_ros</a>: a ViSP extension for ROS users that makes ROS easy to use
-- <a href="http://wiki.ros.org/demo_pioneer">demo_pioneer</a>: a set of ROS visual-servoing demos using a Pioneer robot and based on ViSP
-
+- [vision_visp](http://wiki.ros.org/vision_visp): a metapackage that contains
+  -# [visp_bridge](http://wiki.ros.org/visp_bridge): a bunch of wrappers between ViSP and ROS data structures 
+  -# [visp_tracker](http://wiki.ros.org/visp_tracker): a ROS version of ViSP model-based tracker
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/UK10KMMJFCI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+  -# [visp_auto_tracker](http://wiki.ros.org/visp_auto_tracker): a tracker with auto-detection of a target
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/_dFF0_vWRcA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+- [visp_ros](http://wiki.ros.org/visp_ros): a ViSP extension for ROS users that makes ROS easy to use. It contains:
+  -# a library with new C++ classes (vpROSGrabber, vpROSRobot, vpROSRobotPioneer, vpROSRobotFrankaCoppeliasim) 
+     that could be used like usual ViSP classes. They are based on ROS, but to use them there is no need to know
+     so much about ROS. Thus, the library makes possible to use ROS in a transparent way, either by building
+     classical binaries without catkin, either by building ROS nodes with catkin but without the need to write
+     ROS specific code. Creating a ROS node out of ViSP becomes simple 
+  -# ROS nodes that allow to control specific hardware such as for the moment robots that can be controlled
+     only in our lab due to proprietary drivers: Afma6 gantry robot, Biclops PT head, ADEPT Viper 650 and 850
+     robots described [here](https://team.inria.fr/rainbow/research/robotics-platforms/) and other robots
+     that anyone can buy and use with open-source drivers interfaced in ViSP: Pioneer mobile robot, Parrot bebop2 drone.
+     This [tutorial](http://wiki.ros.org/visp_ros/Tutorials/How%20to%20do%20visual%20servoing%20with%20Parrot%20Bebop%202%20drone%20and%20visp_ros)
+     explains how to visual-servo a Parrot bebop2 drone like in the next video.
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/le07g-RRsJM" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+  -# a [tutorial](http://docs.ros.org/en/noetic/api/visp_ros/html/tutorial-franka-coppeliasim.html) that shows how to simulate a Franka Panda robot using [CoppeliaSim](https://www.coppeliarobotics.com/).
+     The simulation is a physical simulation with a model that has been accurately identified from a real Franka robot.
+     All the details are in the paper:<br>
+     <em>C. Gaz, M. Cognetti, A. Oliva, P. Robuffo Giordano, A. De Luca, Dynamic Identification of the Franka
+     Emika Panda Robot With Retrieval of Feasible Parameters Using Penalty-Based Optimization. IEEE RA-L, 2019.</em>
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/02Bx093Fuak" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+- [demo_pioneer](http://wiki.ros.org/demo_pioneer): a set of ROS visual-servoing demos using a Pioneer robot and based on ViSP
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/n3UmgCXw5lY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
 
 \section install_ros_package_next Next tutorial
 
