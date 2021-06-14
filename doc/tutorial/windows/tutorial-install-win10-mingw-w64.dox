@@ -230,18 +230,18 @@ Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
 \verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.0\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.1\build"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\opencv-4.0.0\build` is where you have installed OpenCV. Inside this folder you should
+where `%%VISP_WS%\opencv-4.5.1\build` is where you have installed OpenCV. Inside this folder you should
 have a file named `OpenCVConfig.cmake`. 
 
 - You have also to add the location of OpenCV libraries corresponding to MinGW usage in the `Path`
 environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with
-`%%VISP_WS%\opencv-4.5.0\build\x64\mingw\bin`. Modifying the `Path` could also be done in a `cmd` Command Prompt
+`%%VISP_WS%\opencv-4.5.1\build\x64\mingw\bin`. Modifying the `Path` could also be done in a `cmd` Command Prompt
 running:
 \verbatim
-C:\> setx Path "%Path%:%VISP_WS%\opencv-4.5.0\build\x64\mingw\bin"
+C:\> setx Path "%Path%:%VISP_WS%\opencv-4.5.1\build\x64\mingw\bin"
 C:\> exit
 \endverbatim
 
@@ -542,7 +542,7 @@ General configuration information for ViSP 3.3.1
     \- Use GSL:                  no
     \- Use Lapack (built-in):    yes (ver 3.2.1)
     Use Eigen3:                  yes (ver 3.3.8)
-    Use OpenCV:                  yes (ver 4.5.0)
+    Use OpenCV:                  yes (ver 4.5.1)
 
   Simulator: 
     Ogre simulator: 
@@ -561,7 +561,7 @@ General configuration information for ViSP 3.3.1
     Use JPEG:                    no
     Use PNG:                     no
     \- Use ZLIB:                 no
-    Use OpenCV:                  yes (ver 4.5.0)
+    Use OpenCV:                  yes (ver 4.5.1)
     Use stb_image (built-in):    no
 
   Real robots: 
@@ -584,7 +584,7 @@ General configuration information for ViSP 3.3.1
   GUI: 
     Use X11:                     no
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 4.5.0)
+    Use OpenCV:                  yes (ver 4.5.1)
     Use GDI:                     no
     Use Direct3D:                no
 
@@ -593,7 +593,7 @@ General configuration information for ViSP 3.3.1
     Use CMU 1394:                no
     Use V4L2:                    no
     Use directshow:              no
-    Use OpenCV:                  yes (ver 4.5.0)
+    Use OpenCV:                  yes (ver 4.5.1)
     Use Flycapture:              no
     Use Pylon:                   no
 
