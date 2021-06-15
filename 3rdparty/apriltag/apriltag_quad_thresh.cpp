@@ -1484,7 +1484,7 @@ zarray_t* do_gradient_clusters(image_u8_t* threshim, int ts, int y0, int y1, int
     struct uint64_zarray_entry **clustermap = (struct uint64_zarray_entry **)calloc(nclustermap, sizeof(struct uint64_zarray_entry*));
 
     int mem_chunk_size = 2048;
-    struct uint64_zarray_entry** mem_pools = (struct uint64_zarray_entry**)malloc(sizeof(struct uint64_zarray_entry *)*2*nclustermap/mem_chunk_size);
+    struct uint64_zarray_entry** mem_pools = (struct uint64_zarray_entry**)malloc(sizeof(struct uint64_zarray_entry *)*(1 + 2 * nclustermap / mem_chunk_size)); // SmodeTech: avoid memory corruption when nclustermap < mem_chunk_siz
     int mem_pool_idx = 0;
     int mem_pool_loc = 0;
     mem_pools[mem_pool_idx] = (struct uint64_zarray_entry *)calloc(mem_chunk_size, sizeof(struct uint64_zarray_entry));
