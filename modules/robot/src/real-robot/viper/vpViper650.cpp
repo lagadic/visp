@@ -461,7 +461,7 @@ void vpViper650::parseConfigFile(const std::string &filename)
     }
 
     case 2: {
-      ss >> etc[0] >> etc[1] >> etc[2];
+      ss >> etc_[0] >> etc_[1] >> etc_[2];
       get_etc = true;
       break;
     }
@@ -471,7 +471,6 @@ void vpViper650::parseConfigFile(const std::string &filename)
                              filename.c_str(), lineNum));
     }
   }
-
   fdconfig.close();
 
   // Compute the eMc matrix from the translations and rotations
