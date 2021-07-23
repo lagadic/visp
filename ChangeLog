@@ -14,6 +14,7 @@ ViSP 3.4.1 (under development)
       identified from a real Franka robot using ViSP, ROS and CoppeliaSim.
       More info on http://wiki.ros.org/visp_ros
   - Bug fixed
+    . [#913] Cannot build tutorial with librealsense < 2.31.0
 ----------------------------------------------
 ViSP 3.4.0 (released February 26, 2021)
   - Contributors:
