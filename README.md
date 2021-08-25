@@ -2,7 +2,7 @@
 
 Platform | Build Status |
 -------- | ------------ |
-Linux and OS X | [![Build Status](https://travis-ci.com/lagadic/visp.png)](https://travis-ci.com/lagadic/visp) |
+Linux and OS X | [![Build Status](https://app.travis-ci.com/lagadic/visp.svg?branch=master)](https://app.travis-ci.com/lagadic/visp) |
 Windows | [![Build status](https://ci.appveyor.com/api/projects/status/121dscdkryf5dbn0/branch/master?svg=true)](https://ci.appveyor.com/project/fspindle/visp/branch/master) |
 ARM | [![Build Status](https://cloud.drone.io/api/badges/lagadic/visp/status.svg)](https://cloud.drone.io/lagadic/visp) |
 
