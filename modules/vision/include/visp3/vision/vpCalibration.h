@@ -103,7 +103,10 @@ public:
   vpHomogeneousMatrix rMe; //!< Position of the effector in relation to the
   //!< reference coordinates (manipulator base coordinates)
   vpHomogeneousMatrix eMc; //!< Position of the camera in end-effector frame using camera parameters without distorsion
-  vpHomogeneousMatrix eMc_dist; //!< Position of the camera in end-effector frame using camera parameters with distorsion
+  vpHomogeneousMatrix
+      eMc_dist; //!< Position of the camera in end-effector frame using camera parameters with distorsion
+
+  double m_aspect_ratio; //!< Fix aspect ratio (px/py)
 
 public:
   // Constructor
@@ -125,12 +128,11 @@ public:
   */
   //@{
   vp_deprecated static void calibrationTsai(const std::vector<vpHomogeneousMatrix> &cMo,
-                                            const std::vector<vpHomogeneousMatrix> &rMe,
-                                            vpHomogeneousMatrix &eMc);
+                                            const std::vector<vpHomogeneousMatrix> &rMe, vpHomogeneousMatrix &eMc);
   vp_deprecated static int computeCalibrationTsai(const std::vector<vpCalibration> &table_cal, vpHomogeneousMatrix &eMc,
                                                   vpHomogeneousMatrix &eMc_dist);
-  //@}
-  #endif
+//@}
+#endif
 
   //! Suppress all the point in the array of point
   int clearPoint();
@@ -166,6 +168,7 @@ public:
 
   //! set the gain for the virtual visual servoing algorithm
   static void setLambda(const double &lambda) { gain = lambda; }
+  void setAspectRatio(double aspect_ratio);
   int writeData(const char *filename);
 
 private:
@@ -176,14 +179,15 @@ private:
   void calibVVS(vpCameraParameters &cam, vpHomogeneousMatrix &cMo, bool verbose = false);
 
   static void calibVVSMulti(unsigned int nbPose, vpCalibration table_cal[], vpCameraParameters &cam,
-                            bool verbose = false);
+                            bool verbose = false, double aspect_ratio = -1);
   static void calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCameraParameters &cam,
-                            double &globalReprojectionError, bool verbose = false);
+                            double &globalReprojectionError, bool verbose = false, double aspect_ratio = -1);
   void calibVVSWithDistortion(vpCameraParameters &cam, vpHomogeneousMatrix &cMo, bool verbose = false);
   static void calibVVSWithDistortionMulti(unsigned int nbPose, vpCalibration table_cal[], vpCameraParameters &cam,
-                                          bool verbose = false);
+                                          bool verbose = false, double aspect_ratio = -1);
   static void calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal, vpCameraParameters &cam,
-                                          double &globalReprojectionError, bool verbose = false);
+                                          double &globalReprojectionError, bool verbose = false,
+                                          double aspect_ratio = -1);
 
 private:
   unsigned int npt; //!< number of points used in calibration computation

@@ -72,8 +72,9 @@ int vpCalibration::init()
   Default constructor.
  */
 vpCalibration::vpCalibration()
-  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), npt(0), LoX(), LoY(), LoZ(), Lip(), residual(1000.),
-    residual_dist(1000.)
+  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), m_aspect_ratio(-1), npt(0), LoX(), LoY(), LoZ(),
+    Lip(), residual(1000.), residual_dist(1000.)
+
 {
   init();
 }
@@ -81,8 +82,8 @@ vpCalibration::vpCalibration()
   Copy constructor.
  */
 vpCalibration::vpCalibration(const vpCalibration &c)
-  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), npt(0), LoX(), LoY(), LoZ(), Lip(), residual(1000.),
-    residual_dist(1000.)
+  : cMo(), cMo_dist(), cam(), cam_dist(), rMe(), eMc(), eMc_dist(), m_aspect_ratio(-1), npt(0), LoX(), LoY(), LoZ(),
+    Lip(), residual(1000.), residual_dist(1000.)
 {
   (*this) = c;
 }
@@ -117,6 +118,8 @@ vpCalibration &vpCalibration::operator=(const vpCalibration &twinCalibration)
 
   eMc = twinCalibration.eMc;
   eMc_dist = twinCalibration.eMc_dist;
+
+  m_aspect_ratio = twinCalibration.m_aspect_ratio;
 
   return (*this);
 }
@@ -196,8 +199,7 @@ void vpCalibration::computePose(const vpCameraParameters &camera, vpHomogeneousM
   try {
     pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
     residual_lagrange = pose.computeResidual(cMo_lagrange);
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Pose from Lagrange exception: " << e.getMessage() << std::endl;
   }
 
@@ -207,8 +209,7 @@ void vpCalibration::computePose(const vpCameraParameters &camera, vpHomogeneousM
   try {
     pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
     residual_dementhon = pose.computeResidual(cMo_dementhon);
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Pose from Dementhon exception: " << e.getMessage() << std::endl;
   }
 
@@ -499,12 +500,12 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method, std::
         table_cal[0].cam_dist = cam_est;
         table_cal[0].cMo_dist = table_cal[0].cMo;
       }
-      calibVVSMulti(table_cal, cam_est, globalReprojectionError, verbose);
+      calibVVSMulti(table_cal, cam_est, globalReprojectionError, verbose, table_cal[0].m_aspect_ratio);
       break;
     }
     case CALIB_VIRTUAL_VS:
     case CALIB_VIRTUAL_VS_DIST: {
-      calibVVSMulti(table_cal, cam_est, globalReprojectionError, verbose);
+      calibVVSMulti(table_cal, cam_est, globalReprojectionError, verbose, table_cal[0].m_aspect_ratio);
       break;
     }
     }
@@ -526,7 +527,7 @@ int vpCalibration::computeCalibrationMulti(vpCalibrationMethodType method, std::
       if (verbose)
         std::cout << "Compute camera parameters with distortion" << std::endl;
 
-      calibVVSWithDistortionMulti(table_cal, cam_est, globalReprojectionError, verbose);
+      calibVVSWithDistortionMulti(table_cal, cam_est, globalReprojectionError, verbose, table_cal[0].m_aspect_ratio);
     } break;
     }
     // Print camera parameters
@@ -784,4 +785,16 @@ int vpCalibration::displayGrid(vpImage<unsigned char> &I, vpColor color, unsigne
     ++it_LoZ;
   }
   return 0;
+}
+
+/*!
+ * Set pixel aspect ratio px/py.
+ * \param[in] aspect_ratio : px/py aspect ratio. Value need to be positive.
+ * To estimate a model where px=py set 1 as aspect ratio.
+ */
+void vpCalibration::setAspectRatio(double aspect_ratio)
+{
+  if (aspect_ratio > 0.) {
+    m_aspect_ratio = aspect_ratio;
+  }
 }

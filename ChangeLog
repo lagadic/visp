@@ -9,6 +9,8 @@ ViSP 3.4.1 (under development)
   - Contributors:
     . Fabien Spindler, Souriya Trinh
   - New features and improvements
+    . Camera calibration model can now consider px/py aspect ratio and estimate
+      a model where px = py
   - Tutorials
     . Physical simulation of a Franka robot, with a model that has been accurately
       identified from a real Franka robot using ViSP, ROS and CoppeliaSim.
