@@ -52,7 +52,7 @@
 #include <cassert>
 
 /*!
-  Computes moments from a vector of points describing a polygon.
+  Computes moments from a vector of points describing a polygon (\cite Steger96).
   The points must be stored in a clockwise order. Used internally.
   \param p : moment order (first index)
   \param q : moment order (second index)
@@ -193,11 +193,9 @@ int main()
 
   return 0;
 }
-
   \endcode
 
-  This other example shows how to consider an object as a discrete set of four
-points.
+  This other example shows how to consider an object as a discrete set of four points.
 
   \code
 #include <visp3/core/vpMomentObject.h>
@@ -253,14 +251,14 @@ void vpMomentObject::fromVector(std::vector<vpPoint> &points)
 }
 
 /*!
-  Computes basic moments from an image.
+  Computes basic moments from an image based on this reference \cite Bakthavatchalam13a.
+
   There is no assumption made about whether the input is dense or discrete but
-it's more common to use vpMomentObject::DENSE_FULL_OBJECT with this method.
+  it's more common to use vpMomentObject::DENSE_FULL_OBJECT with this method.
 
   \param image : Image to consider.
-  \param threshold : Pixels with a luminance lower than this threshold will be
-considered. \param cam : Camera parameters used to convert pixels coordinates
-in meters in the image plane.
+  \param threshold : Pixels with a luminance lower than this threshold will be considered.
+  \param cam : Camera parameters used to convert pixels coordinates in meters in the image plane.
 
   The code below shows how to use this function.
   \code
@@ -359,16 +357,15 @@ void vpMomentObject::fromImage(const vpImage<unsigned char> &image, unsigned cha
 }
 
 /*!
- * Manikandan. B
- * Photometric moments v2
- * Intended to be used by 'vpMomentObject's of type DENSE_FULL_OBJECT
+ * Computes basic moments from an image based on this reference \cite Bakthavatchalam13a.
+ *
+ * Intended to be used by vpMomentObject with DENSE_FULL_OBJECT object type,
+ * see setType().
  * @param image                   : Grayscale image
  * @param cam                     : Camera parameters (to change to )
- * @param bg_type                 : White/Black background surrounding the
- * image
- * @param normalize_with_pix_size : This flag if SET, the moments, after
- * calculation are normalized w.r.t  pixel size available from camera
- * parameters
+ * @param bg_type                 : White/Black background surrounding the image
+ * @param normalize_with_pix_size : When this flag if set, the moments, after
+ * calculation are normalized w.r.t pixel size available from camera parameters.
  */
 void vpMomentObject::fromImage(const vpImage<unsigned char> &image, const vpCameraParameters &cam,
                                vpCameraImgBckGrndType bg_type, bool normalize_with_pix_size)
@@ -454,7 +451,7 @@ void vpMomentObject::fromImage(const vpImage<unsigned char> &image, const vpCame
 
 /*!
   Does exactly the work of the default constructor as it existed in the very
-  first version of vpMomentObject
+  first version of vpMomentObject.
  */
 void vpMomentObject::init(unsigned int orderinp)
 {
@@ -466,7 +463,7 @@ void vpMomentObject::init(unsigned int orderinp)
 }
 
 /*!
-  Helper to copy constructor
+  Helper to copy constructor.
  */
 void vpMomentObject::init(const vpMomentObject &objin)
 {
@@ -509,18 +506,17 @@ vpMomentObject::vpMomentObject(const vpMomentObject &srcobj)
 
 /*!
   Returns all basic moment values \f$m_{ij}\f$ with \f$i \in
-[0:\mbox{order}]\f$ and \f$j \in [0:\mbox{order}]\f$.
+  [0:\mbox{order}]\f$ and \f$j \in [0:\mbox{order}]\f$.
 
   \return Vector of moment values. To access \f$m_{ij}\f$, you have to read
-vpMomentObject::get()[j*(order+1)+i].
+  vpMomentObject::get()[j*(order+1)+i].
 
   For example, if the maximal order is 3, the following values are provided:
   \code
 m00 m10 m20 m01 m11 m21 m02 m12 m12 m30 m03
   \endcode
 
-  To access for example to the basic moment m12, you should use this kind of
-code:
+  To access for example to the basic moment m12, you should use this kind of code:
 \code
 vpMomentObject obj(3);
 // ... initialise the object using fromVector() or fromImage()
@@ -577,7 +573,6 @@ void vpMomentObject::set(unsigned int i, unsigned int j, const double &value_ij)
   m02 m12  x  x
   m03 x    x  x
   \endcode
-
 */
 VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpMomentObject &m)
 {
@@ -617,17 +612,17 @@ void vpMomentObject::printWithIndices(const vpMomentObject &momobj, std::ostream
 }
 
 /*!
- This function returns a vpMatrix of size (order+1, order+1).
+  This function returns a vpMatrix of size (order+1, order+1).
 \code
  vpMomentObject obj(8);
  obj.setType(vpMomentObject::DENSE_FULL_OBJECT);
  obj.fromImageWeighted(I, cam, vpMomentObject::BLACK); // cam should have the camera parameters
  vpMatrix Mpq = vpMomentObject::convertTovpMatrix(obj);
 \endcode
- Instead of accessing the moment m21 as obj.get(2,1), you can now do
-Mpq[2][1]. This is useful when you want to use the functions available in
-vpMatrix. One use case i see now is to copy the contents of the matrix to a
-file or std::cout. For instance, like
+  Instead of accessing the moment m21 as obj.get(2,1), you can now do
+  Mpq[2][1]. This is useful when you want to use the functions available in
+  vpMatrix. One use case i see now is to copy the contents of the matrix to a
+  file or std::cout. For instance, like
 \code
  // Print to console
  Mpq.maplePrint(std::cout);
@@ -636,12 +631,11 @@ file or std::cout. For instance, like
  Mpq.maplePrint(fileMpq);
 \endcode
 
-The output can be copied and pasted to MAPLE as a matrix.
+  The output can be copied and pasted to MAPLE as a matrix.
 
-\warning
-The moments that are not calculated have zeros. For instance, for a
-vpMomentObject of order 8, the moment m[7,2] is not calculated. It will have 0
-by default. User discretion is advised.
+  \warning The moments that are not calculated have zeros. For instance, for a
+  vpMomentObject of order 8, the moment m[7,2] is not calculated. It will have 0
+  by default. User discretion is advised.
 */
 vpMatrix vpMomentObject::convertTovpMatrix(const vpMomentObject &momobj)
 {

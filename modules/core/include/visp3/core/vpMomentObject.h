@@ -59,51 +59,54 @@ class vpCameraParameters;
   \brief Class for generic objects.
 
   It contains all basic moments often described by \f$m_{ij}\f$ of order
-\f$i+j\f$ going from \f$m_{00}\f$ to the order used as parameter in
-vpMomentObject() constructor. All other moments implemented in ViSP (gravity
-center, alpha orientation, centered moments...) use this moment object as a
-combination of its different values.
+  \f$i+j\f$ going from \f$m_{00}\f$ to the order used as parameter in
+  vpMomentObject() constructor. All other moments implemented in ViSP (gravity
+  center, alpha orientation, centered moments...) use this moment object as a
+  combination of its different values.
 
   When constructing a vpMomentObject() you need first to specify the maximum
-used moment order as parameter.
+  used moment order as parameter.
 
   Then there are three ways to initialize a vpMomentObject. Firstly using
-fromImage() you can considerer a dense object \e O defined by a binary image.
-Secondly, as described in fromVector() you can also define a dense object \e O
-by a closed contour. In these two cases, 2D basic moments are defined by:
+  fromImage() you can considerer a dense object \e O defined by an image.
+  Secondly, as described in fromVector() you can also define a dense object \e O
+  by a closed contour. In these two cases, 2D basic moments are defined by:
   \f[m_{ij} = \int \int_{O} x^i y^j dx dy\f]
 
   Lastly, as presented in fromVector() you can consider a discrete set of \e n
-points. In that last case, the basic moments are defined by \f[m_{ij} =
-\sum_{k=1}^{n} x_k^i y_k^j \f]
+  points. In that last case, the basic moments are defined by \f[m_{ij} =
+  \sum_{k=1}^{n} x_k^i y_k^j \f]
 
   With setType() method you can specify the object type.
 
+  The implementation is based on the following references
+  \cite Steger96, \cite Chaumette04a, \cite Tahri05z, \cite Bakthavatchalam13a.
 
-  \attention Be careful with the object order. When you specify a maximum
-order in the vpMomentObject::vpMomentObject constructor (see its detailed
-description), it will compute all moment orders up to the order you specified.
-If you want to access the values \f$ m_{ij} \f$ with the vpMomentObject::get
-method, you can do object.get()[j*(order+1)+i].
+  \warning Be careful with the object order. When you specify a maximum
+  order in the vpMomentObject::vpMomentObject constructor (see its detailed
+  description), it will compute all moment orders up to the order you specified.
+  If you want to access the values \f$ m_{ij} \f$ with the vpMomentObject::get
+  method, you can do object.get()[j*(order+1)+i].
 
-    A few tips about which orders to use in different situations:
-    - moment based visual servoing: use vpMomentObject(6). This will compute
-moment values up to order 6 which will enable vpFeatureMoments up to order 5
-which is the maximum order required for common moments.
-    - computing gravity center: use vpMomentObject(1). You only need \f$
-m_{00},m_{01},m_{10} \f$. You should compute moments up to order 1.
-    - computing gravity center interaction matrix
-(vpFeatureMomentGravityCenter): use vpMomentObject(2). This will compute
-moment values till order 2 since they are needed for the interaction matrix of
-vpFeatureMoments of order 1.
-
+  A few tips about which orders to use in different situations:
+  - moment based visual servoing: use vpMomentObject(6). This will compute
+    moment values up to order 6 which will enable vpFeatureMoments up to order 5
+    which is the maximum order required for common moments.
+  - computing gravity center: use vpMomentObject(1). You only need \f$
+    m_{00},m_{01},m_{10} \f$. You should compute moments up to order 1.
+  - computing gravity center interaction matrix with vpFeatureMomentGravityCenter:
+    use vpMomentObject(2). This will compute moment values till order 2
+    since they are needed for the interaction matrix of vpFeatureMoments of order 1.
 
   The following example shows how to create a moment object from 4 discrete
-points locate on a plane one meter in front of the camera. It shows also how
-to get the basic moments that are computed and how to compute other classical
-moments such as the gravity center or the centered moments. \code #include
-<visp3/core/vpMomentCommon.h> #include <visp3/core/vpMomentObject.h> #include
-<visp3/core/vpPoint.h>
+  points locate on a plane one meter in front of the camera. It shows also how
+  to get the basic moments that are computed and how to compute other classical
+  moments such as the gravity center or the centered moments.
+
+\code
+#include <visp3/core/vpMomentCommon.h>
+#include <visp3/core/vpMomentObject.h>
+#include <visp3/core/vpPoint.h>
 
 int main()
 {
@@ -116,59 +119,59 @@ int main()
   vec_p.push_back( vpPoint(-0.2,-0.15, 0.0) ); // values in meters
 
   // These points are observed by a camera
-  vpHomogeneousMatrix cMo(0, 0, 1, 0, 0, 0); // We set the camera to be 1m far
-the object
+  vpHomogeneousMatrix cMo(0, 0, 1, 0, 0, 0); // We set the camera to be 1m far the object
   // ... update cMo from an image processing
 
-  // Apply the perspective projection to update the points coordinates in the
-camera plane for(unsigned int i=0; i<vec_p.size(); ++i) vec_p[i].project(cMo);
+  // Apply the perspective projection to update the points coordinates in the camera plane
+  for (unsigned int i=0; i<vec_p.size(); ++i)
+    vec_p[i].project(cMo);
 
   std::cout << "Considered points: " << std::endl;
   for(unsigned int i=0; i<vec_p.size(); ++i)
-    std::cout << "point " << i << ": " << vec_p[i].get_x() << ", " <<
-vec_p[i].get_y() << std::endl;
+    std::cout << "point " << i << ": " << vec_p[i].get_x() << ", " << vec_p[i].get_y() << std::endl;
 
   // Define an image moment object from the previous points
   vpMomentObject obj(5); // use moments up to order 5
-  obj.setType(vpMomentObject::DISCRETE); // initialize the object as
-constituted by discrete points obj.fromVector(vec_p); // init the object from
-the points
+  obj.setType(vpMomentObject::DISCRETE); // initialize the object as constituted by discrete points
+  obj.fromVector(vec_p); // init the object from the points
 
   // --- Access the computed moments by querying the moment object
 
   // 1. Getting a vector of doubles
   std::vector<double> moment = obj.get();
-  std::cout << std::endl << "Basic moment available (from vector of doubles) "
-<< std::endl; for(unsigned int k=0; k<=obj.getOrder(); k++) { for(unsigned int
-l=0; l<(obj.getOrder()+1)-k; l++){ std::cout << "m" << l << k << "=" <<
-moment[k*(momobj.getOrder()+1)+ l] << "\t";
-        }
-        std::cout<<std::endl;
+  std::cout << std::endl << "Basic moment available (from vector of doubles)" << std::endl;
+  for(unsigned int k=0; k<=obj.getOrder(); k++) {
+    for(unsigned int l=0; l<(obj.getOrder()+1)-k; l++) {
+      std::cout << "m" << l << k << "=" << moment[k*(momobj.getOrder()+1)+ l] << "\t";
     }
+    std::cout<<std::endl;
+  }
 
   // 2. Print the contents of moment object directly
   std::cout << std::endl << "Basic moment available: ";
   std::cout << obj << std::endl;
 
   // 3. Directly indexing the moment object
-  std::cout << std::endl << "Direct acces to some basic moments: " <<
-std::endl; std::cout << "m00: " << obj.get(0, 0) << std::endl; std::cout <<
-"m10: " << obj.get(1, 0) << std::endl; std::cout << "m01: " << obj.get(0, 1)
-<< std::endl; std::cout << "m22: " << obj.get(2, 2) << std::endl; std::cout <<
-"m20: " << obj.get(2, 0) << std::endl; std::cout << "m02: " << obj.get(0, 2)
-<< std::endl;
+  std::cout << std::endl << "Direct acces to some basic moments: " << std::endl;
+  std::cout << "m00: " << obj.get(0, 0) << std::endl;
+  std::cout << "m10: " << obj.get(1, 0) << std::endl;
+  std::cout << "m01: " << obj.get(0, 1) << std::endl;
+  std::cout << "m22: " << obj.get(2, 2) << std::endl;
+  std::cout << "m20: " << obj.get(2, 0) << std::endl;
+  std::cout << "m02: " << obj.get(0, 2) << std::endl;
 
   // Get common moments computed using basic moments
   double m00 = vpMomentCommon::getSurface(obj); // surface = m00
   double alpha = vpMomentCommon::getAlpha(obj); // orientation
-  std::vector<double> mu_3 = vpMomentCommon::getMu3(obj); // centered moment
-up to 3rd order
+  std::vector<double> mu_3 = vpMomentCommon::getMu3(obj); // centered moment up to 3rd order
 
-  std::cout << std::endl << "Common moments computed using basic moments:" <<
-std::endl; std::cout << "Surface: " << m00 << std::endl; std::cout << "Alpha:
-" << alpha << std::endl; std::cout << "Centered moments (mu03, mu12, mu21,
-mu30): "; for(unsigned int i=0; i<mu_3.size(); ++i) std::cout << mu_3[i] << "
-"; std::cout << std::endl;
+  std::cout << std::endl << "Common moments computed using basic moments:" << std::endl;
+  std::cout << "Surface: " << m00 << std::endl;
+  std::cout << "Alpha: " << alpha << std::endl;
+  std::cout << "Centered moments (mu03, mu12, mu21, mu30): ";
+  for(unsigned int i=0; i<mu_3.size(); ++i)
+    std::cout << mu_3[i] << " ";
+  std::cout << std::endl;
 
   return 0;
 }
@@ -213,8 +216,8 @@ Centered moments (mu03, mu12, mu21, mu30): 0.003375 0.0045625 -0.00228125 -0.000
 \endcode
 
   Note that in the continuous case, the moment object \f$m_{00}\f$ corresponds
-to the surface \f$a\f$ of the object. In the discrete case, it is the number
-of discrete points \f$n\f$.
+  to the surface \f$a\f$ of the object. In the discrete case, it is the number
+  of discrete points \f$n\f$.
 */
 class VISP_EXPORT vpMomentObject
 {
@@ -235,8 +238,8 @@ public:
      Type of camera image background.
    */
   typedef enum {
-    BLACK = 0, /*! Black background */
-    WHITE = 1, /*! No functionality as of now */
+    BLACK = 0, //!< Black background
+    WHITE = 1, //!< Not functional right now
   } vpCameraImgBckGrndType;
 
   bool flg_normalize_intensity; // To scale the intensity of each individual
