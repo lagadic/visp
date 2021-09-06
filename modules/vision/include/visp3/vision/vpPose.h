@@ -350,6 +350,10 @@ public:
                                               const vpCameraParameters &colorIntrinsics, const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo,
                                               double *confidence_index = NULL);
 
+  static bool computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<std::vector<vpImagePoint>> &corners,
+                                              const vpCameraParameters &colorIntrinsics, const std::vector<std::vector<vpPoint>> &point3d, vpHomogeneousMatrix &cMo,
+                                              double *confidence_index = NULL);
+                                              
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions
