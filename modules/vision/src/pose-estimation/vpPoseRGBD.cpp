@@ -340,6 +340,33 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
   return false;
 }
 
+
+/*!
+  Compute the pose of a planar object from corresponding 2D-3D point coordinates and depth map.
+  Depth map is here used to estimate the 3D plane of the object.
+
+  This implementation reserved for the case when multiple tags is put on the plane. And there is an object 
+    like robot arm obstruct the view and intefere with the plane equation estimation, therefore this function 
+    considers only the 3d point inside the visible tags
+
+  For this case, each polygon is an april tag
+
+  \param[in] depthMap : Depth map aligned to the color image from where \e corners are extracted.
+  \param[in] corners : Vector of tags with subvector containing  2D pixel coordinates each tag in an image.
+  \param[in] colorIntrinsics : Camera parameters used to convert \e corners from pixel to meters.
+  \param[in] point3d : Vector of tags with subvector containing 3D points corresponding to the model of the planar object.
+  \param[out] cMo : Computed pose.
+  \param[out] confidence_index : Confidence index in range [0, 1]. When values are close to 1, it means
+  that pose estimation confidence is high. Values close to 0 indicate that pose is not well estimated.
+  This confidence index corresponds to the product between the normalized number of depth data covering the tag
+  and the normalized M-estimator weights returned by the robust estimation of the tag 3D plane.
+
+
+
+  \return true if pose estimation succeed, false otherwise.
+ */
+
+
 bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
                                              const std::vector<std::vector<vpImagePoint> > &corners,
                                              const vpCameraParameters &colorIntrinsics,
