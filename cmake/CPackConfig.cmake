@@ -45,7 +45,7 @@ SET(CPACK_PACKAGE_NAME "libvisp")
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Visual tracking and visual servoing library in C++ (development files)")
 SET(CPACK_PACKAGE_CONTACT "Fabien Spindler <Fabien.Spindler@inria.fr>")
 SET(CPACK_PACKAGE_VENDOR "Inria, French National Institute for Research in Computer Science and Control")
-SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
+SET(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE.txt")
 
 SET(CPACK_PACKAGE_VERSION ${VISP_VERSION})
@@ -95,7 +95,7 @@ endif()
 
 set(BUILD_SHARED_LIBS ON CACHE BOOL "Build ViSP with shared libraries." FORCE)
 
-
+SET(VISP_CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 if(WIN32 AND NOT UNIX)
   include(${VISP_CMAKE_MODULE_PATH}/CPackConfigNsis.cmake)
 elseif(APPLE)
