@@ -48,8 +48,8 @@
 #define DEBUG_LEVEL1 0
 #define DEBUG_LEVEL2 0
 
-#undef MAX   /* FC unused anywhere */
-#undef MIN   /* FC unused anywhere */
+#undef MAX /* FC unused anywhere */
+#undef MIN /* FC unused anywhere */
 
 void vpCalibration::calibLagrange(vpCameraParameters &cam_est, vpHomogeneousMatrix &cMo_est)
 {
@@ -176,8 +176,13 @@ void vpCalibration::calibLagrange(vpCameraParameters &cam_est, vpHomogeneousMatr
 
   resul[2] = sqrt(sol[3] * sol[3] + sol[4] * sol[4] + sol[5] * sol[5] /* px */
                   - resul[0] * resul[0]);
-  resul[3] = sqrt(sol[6] * sol[6] + sol[7] * sol[7] + sol[8] * sol[8] /* py */
-                  - resul[1] * resul[1]);
+
+  if (m_aspect_ratio > 0.) {
+    resul[3] = resul[2] / m_aspect_ratio;
+  } else {
+    resul[3] = sqrt(sol[6] * sol[6] + sol[7] * sol[7] + sol[8] * sol[8] /* py */
+                    - resul[1] * resul[1]);
+  }
 
   cam_est.initPersProjWithoutDistortion(resul[2], resul[3], resul[0], resul[1]);
 
@@ -258,8 +263,14 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
     iter++;
     residu_1 = r;
 
-    double px = cam_est.get_px();
-    double py = cam_est.get_py();
+    double px, py;
+    if (m_aspect_ratio > 0.) {
+      px = cam_est.get_px();
+      py = px / m_aspect_ratio;
+    } else {
+      px = cam_est.get_px(); // default
+      py = cam_est.get_py();
+    }
     double u0 = cam_est.get_u0();
     double v0 = cam_est.get_v0();
 
@@ -283,7 +294,7 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
     error = P - Pd;
     // r = r/n_points ;
 
-    vpMatrix L(n_points * 2, 10);
+    vpMatrix L(n_points * 2, 9 + (m_aspect_ratio > 0. ? 0 : 1));
     for (unsigned int i = 0; i < n_points; i++) {
       double x = cX[i];
       double y = cY[i];
@@ -306,7 +317,13 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
         L[2 * i][6] = 1;
         L[2 * i][7] = 0;
         L[2 * i][8] = X;
-        L[2 * i][9] = 0;
+        if (m_aspect_ratio > 0.) {
+          L[2 * i][8] = X;
+        } else // default
+        {
+          L[2 * i][8] = X;
+          L[2 * i][9] = 0;
+        }
       }
       {
         L[2 * i + 1][0] = 0;
@@ -319,8 +336,12 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
       {
         L[2 * i + 1][6] = 0;
         L[2 * i + 1][7] = 1;
-        L[2 * i + 1][8] = 0;
-        L[2 * i + 1][9] = Y;
+        if (m_aspect_ratio > 0.) {
+          L[2 * i + 1][8] = Y;
+        } else {
+          L[2 * i + 1][8] = 0;
+          L[2 * i + 1][9] = Y;
+        }
       }
     } // end interaction
     vpMatrix Lp;
@@ -336,7 +357,11 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
     for (unsigned int i = 0; i < 6; i++)
       Tc_v[i] = Tc[i];
 
-    cam_est.initPersProjWithoutDistortion(px + Tc[8], py + Tc[9], u0 + Tc[6], v0 + Tc[7]);
+    if (m_aspect_ratio > 0.) {
+      cam_est.initPersProjWithoutDistortion(px + Tc[8], (px + Tc[8]) / m_aspect_ratio, u0 + Tc[6], v0 + Tc[7]);
+    } else {
+      cam_est.initPersProjWithoutDistortion(px + Tc[8], py + Tc[9], u0 + Tc[6], v0 + Tc[7]); // default
+    }
 
     cMo_est = vpExponentialMap::direct(Tc_v).inverse() * cMo_est;
     if (verbose)
@@ -357,7 +382,7 @@ void vpCalibration::calibVVS(vpCameraParameters &cam_est, vpHomogeneousMatrix &c
 }
 
 void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCameraParameters &cam_est,
-                                  double &globalReprojectionError, bool verbose)
+                                  double &globalReprojectionError, bool verbose, double aspect_ratio)
 {
   std::ios::fmtflags original_flags(std::cout.flags());
   std::cout.precision(10);
@@ -420,8 +445,14 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
     iter++;
     residu_1 = r;
 
-    double px = cam_est.get_px();
-    double py = cam_est.get_py();
+    double px, py;
+    if (aspect_ratio > 0.) {
+      px = cam_est.get_px();
+      py = px / aspect_ratio;
+    } else {
+      px = cam_est.get_px(); // default
+      py = cam_est.get_py();
+    }
     double u0 = cam_est.get_u0();
     double v0 = cam_est.get_v0();
 
@@ -454,7 +485,7 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
     error = P - Pd;
     // r = r/nbPointTotal ;
 
-    vpMatrix L(nbPointTotal * 2, nbPose6 + 4);
+    vpMatrix L(nbPointTotal * 2, nbPose6 + 3 + (aspect_ratio > 0. ? 0 : 1));
     curPoint = 0; // current point indice
     for (unsigned int p = 0; p < nbPose; p++) {
       unsigned int q = 6 * p;
@@ -484,8 +515,12 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
           {
             L[curPoint2][nbPose6] = 1;
             L[curPoint2][nbPose6 + 1] = 0;
-            L[curPoint2][nbPose6 + 2] = X;
-            L[curPoint2][nbPose6 + 3] = 0;
+            if (aspect_ratio > 0.) {
+              L[curPoint2][nbPose6 + 2] = X;
+            } else { // default
+              L[curPoint2][nbPose6 + 2] = X;
+              L[curPoint2][nbPose6 + 3] = 0;
+            }
           }
           {
             L[curPoint21][q] = 0;
@@ -498,8 +533,12 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
           {
             L[curPoint21][nbPose6] = 0;
             L[curPoint21][nbPose6 + 1] = 1;
-            L[curPoint21][nbPose6 + 2] = 0;
-            L[curPoint21][nbPose6 + 3] = Y;
+            if (aspect_ratio > 0.) {
+              L[curPoint21][nbPose6 + 2] = Y;
+            } else { // default
+              L[curPoint21][nbPose6 + 2] = 0;
+              L[curPoint21][nbPose6 + 3] = Y;
+            }
           }
         }
         curPoint++;
@@ -518,8 +557,14 @@ void vpCalibration::calibVVSMulti(std::vector<vpCalibration> &table_cal, vpCamer
     for (unsigned int i = 0; i < nbPose6; i++)
       Tc_v[i] = Tc[i];
 
-    cam_est.initPersProjWithoutDistortion(px + Tc[nbPose6 + 2], py + Tc[nbPose6 + 3], u0 + Tc[nbPose6],
-                                          v0 + Tc[nbPose6 + 1]);
+    if (aspect_ratio > 0.) {
+      cam_est.initPersProjWithoutDistortion(px + Tc[nbPose6 + 2], (px + Tc[nbPose6 + 2]) / aspect_ratio,
+                                            u0 + Tc[nbPose6], v0 + Tc[nbPose6 + 1]);
+    } else // default
+    {
+      cam_est.initPersProjWithoutDistortion(px + Tc[nbPose6 + 2], py + Tc[nbPose6 + 3], u0 + Tc[nbPose6],
+                                            v0 + Tc[nbPose6 + 1]);
+    }
 
     //    cam.setKd(get_kd() + Tc[10]) ;
     vpColVector Tc_v_Tmp(6);
@@ -600,8 +645,14 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
     double u0 = cam_est.get_u0();
     double v0 = cam_est.get_v0();
 
-    double px = cam_est.get_px();
-    double py = cam_est.get_py();
+    double px, py;
+    if (m_aspect_ratio > 0.) {
+      px = cam_est.get_px();
+      py = px / m_aspect_ratio;
+    } else {
+      px = cam_est.get_px(); // default
+      py = cam_est.get_py();
+    }
 
     double inv_px = 1 / px;
     double inv_py = 1 / py;
@@ -611,7 +662,7 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
 
     double k2ud = 2 * kud;
     double k2du = 2 * kdu;
-    vpMatrix L(n_points * 4, 12);
+    vpMatrix L(n_points * 4, 11 + (m_aspect_ratio > 0. ? 0 : 1));
 
     for (unsigned int i = 0; i < n_points; i++) {
       unsigned int i4 = 4 * i;
@@ -687,10 +738,18 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
         {
           L[i4][6] = 1 + kr2du + k2du * xp02;
           L[i4][7] = k2du * up0 * yp0 * inv_py;
-          L[i4][8] = X + k2du * xp02 * xp0;
-          L[i4][9] = k2du * up0 * yp02 * inv_py;
-          L[i4][10] = -(up0) * (r2du);
-          L[i4][11] = 0;
+
+          if (m_aspect_ratio > 0.) {
+            L[i4][8] = X + k2du * xp02 * xp0 + k2du * up0 * yp02 * inv_py;
+            L[i4][9] = -(up0) * (r2du);
+            L[i4][10] = 0;
+          } else // default
+          {
+            L[i4][8] = X + k2du * xp02 * xp0;
+            L[i4][9] = k2du * up0 * yp02 * inv_py;
+            L[i4][10] = -(up0) * (r2du);
+            L[i4][11] = 0;
+          }
         }
         {
           L[i41][0] = 0;
@@ -703,10 +762,17 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
         {
           L[i41][6] = k2du * xp0 * vp0 * inv_px;
           L[i41][7] = 1 + kr2du + k2du * yp02;
-          L[i41][8] = k2du * vp0 * xp02 * inv_px;
-          L[i41][9] = Y + k2du * yp02 * yp0;
-          L[i41][10] = -vp0 * r2du;
-          L[i41][11] = 0;
+          if (m_aspect_ratio > 0.) {
+            L[i41][8] = k2du * vp0 * xp02 * inv_px + Y + k2du * yp02 * yp0;
+            L[i41][9] = -vp0 * r2du;
+            L[i41][10] = 0;
+          } else // default
+          {
+            L[i41][8] = k2du * vp0 * xp02 * inv_px;
+            L[i41][9] = Y + k2du * yp02 * yp0;
+            L[i41][10] = -vp0 * r2du;
+            L[i41][11] = 0;
+          }
         }
         //---undistorted to distorted
         {
@@ -720,10 +786,17 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
         {
           L[i42][6] = 1;
           L[i42][7] = 0;
-          L[i42][8] = X * kr2ud;
-          L[i42][9] = 0;
-          L[i42][10] = 0;
-          L[i42][11] = px * X * r2ud;
+          if (m_aspect_ratio > 0.) {
+            L[i42][8] = X * kr2ud;
+            L[i42][9] = 0;
+            L[i42][10] = px * X * r2ud;
+          } else // default
+          {
+            L[i42][8] = X * kr2ud;
+            L[i42][9] = 0;
+            L[i42][10] = 0;
+            L[i42][11] = px * X * r2ud;
+          }
         }
         {
           L[i43][0] = Ayx * (-inv_z);
@@ -736,10 +809,16 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
         {
           L[i43][6] = 0;
           L[i43][7] = 1;
-          L[i43][8] = 0;
-          L[i43][9] = Y * kr2ud;
-          L[i43][10] = 0;
-          L[i43][11] = py * Y * r2ud;
+          if (m_aspect_ratio > 0.) {
+            L[i43][8] = Y * kr2ud;
+            L[i43][9] = 0;
+            L[i43][10] = py * Y * r2ud;
+          } else {
+            L[i43][8] = 0;
+            L[i43][9] = Y * kr2ud;
+            L[i43][10] = 0;
+            L[i43][11] = py * Y * r2ud;
+          }
         }
       } // end interaction
     }   // end interaction
@@ -760,7 +839,12 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
     for (unsigned int i = 0; i < 6; i++)
       Tc_v[i] = Tc[i];
 
-    cam_est.initPersProjWithDistortion(px + Tc[8], py + Tc[9], u0 + Tc[6], v0 + Tc[7], kud + Tc[11], kdu + Tc[10]);
+    if (m_aspect_ratio > 0.) {
+      cam_est.initPersProjWithDistortion(px + Tc[8], (px + Tc[8]) / m_aspect_ratio, u0 + Tc[6], v0 + Tc[7],
+                                         kud + Tc[10], kdu + Tc[9]);
+    } else {
+      cam_est.initPersProjWithDistortion(px + Tc[8], py + Tc[9], u0 + Tc[6], v0 + Tc[7], kud + Tc[11], kdu + Tc[10]);
+    }
 
     cMo_est = vpExponentialMap::direct(Tc_v).inverse() * cMo_est;
     if (verbose)
@@ -782,7 +866,7 @@ void vpCalibration::calibVVSWithDistortion(vpCameraParameters &cam_est, vpHomoge
 }
 
 void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &table_cal, vpCameraParameters &cam_est,
-                                                double &globalReprojectionError, bool verbose)
+                                                double &globalReprojectionError, bool verbose, double aspect_ratio)
 {
   std::ios::fmtflags original_flags(std::cout.flags());
   std::cout.precision(10);
@@ -858,10 +942,16 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
       }
     }
 
-    vpMatrix L(nbPointTotal * 4, nbPose6 + 6);
+    vpMatrix L(nbPointTotal * 4, nbPose6 + 5 + (aspect_ratio > 0. ? 0 : 1));
     curPoint = 0; // current point indice
-    double px = cam_est.get_px();
-    double py = cam_est.get_py();
+    double px, py;
+    if (aspect_ratio > 0.) {
+      px = cam_est.get_px();
+      py = px / aspect_ratio;
+    } else {
+      px = cam_est.get_px(); // default
+      py = cam_est.get_py();
+    }
     double u0 = cam_est.get_u0();
     double v0 = cam_est.get_v0();
 
@@ -943,10 +1033,16 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
           {
             L[curInd][nbPose6] = 1 + kr2du + k2du * xp02;
             L[curInd][nbPose6 + 1] = k2du * up0 * yp0 * inv_py;
-            L[curInd][nbPose6 + 2] = X + k2du * xp02 * xp0;
-            L[curInd][nbPose6 + 3] = k2du * up0 * yp02 * inv_py;
-            L[curInd][nbPose6 + 4] = -(up0) * (r2du);
-            L[curInd][nbPose6 + 5] = 0;
+            if (aspect_ratio > 0.) {
+              L[curInd][nbPose6 + 2] = X + k2du * xp02 * xp0 + k2du * up0 * yp02 * inv_py;
+              L[curInd][nbPose6 + 3] = -(up0) * (r2du);
+              L[curInd][nbPose6 + 4] = 0;
+            } else {
+              L[curInd][nbPose6 + 2] = X + k2du * xp02 * xp0;
+              L[curInd][nbPose6 + 3] = k2du * up0 * yp02 * inv_py;
+              L[curInd][nbPose6 + 4] = -(up0) * (r2du);
+              L[curInd][nbPose6 + 5] = 0;
+            }
           }
           curInd++;
           {
@@ -960,10 +1056,16 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
           {
             L[curInd][nbPose6] = k2du * xp0 * vp0 * inv_px;
             L[curInd][nbPose6 + 1] = 1 + kr2du + k2du * yp02;
-            L[curInd][nbPose6 + 2] = k2du * vp0 * xp02 * inv_px;
-            L[curInd][nbPose6 + 3] = Y + k2du * yp02 * yp0;
-            L[curInd][nbPose6 + 4] = -vp0 * r2du;
-            L[curInd][nbPose6 + 5] = 0;
+            if (aspect_ratio > 0.) {
+              L[curInd][nbPose6 + 2] = k2du * vp0 * xp02 * inv_px + Y + k2du * yp02 * yp0;
+              L[curInd][nbPose6 + 3] = -vp0 * r2du;
+              L[curInd][nbPose6 + 4] = 0;
+            } else {
+              L[curInd][nbPose6 + 2] = k2du * vp0 * xp02 * inv_px;
+              L[curInd][nbPose6 + 3] = Y + k2du * yp02 * yp0;
+              L[curInd][nbPose6 + 4] = -vp0 * r2du;
+              L[curInd][nbPose6 + 5] = 0;
+            }
           }
           curInd++;
           //---undistorted to distorted
@@ -978,10 +1080,16 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
           {
             L[curInd][nbPose6] = 1;
             L[curInd][nbPose6 + 1] = 0;
-            L[curInd][nbPose6 + 2] = X * kr2ud;
-            L[curInd][nbPose6 + 3] = 0;
-            L[curInd][nbPose6 + 4] = 0;
-            L[curInd][nbPose6 + 5] = px * X * r2ud;
+            if (aspect_ratio > 0.) {
+              L[curInd][nbPose6 + 2] = X * kr2ud;
+              L[curInd][nbPose6 + 3] = 0;
+              L[curInd][nbPose6 + 4] = px * X * r2ud;
+            } else {
+              L[curInd][nbPose6 + 2] = X * kr2ud;
+              L[curInd][nbPose6 + 3] = 0;
+              L[curInd][nbPose6 + 4] = 0;
+              L[curInd][nbPose6 + 5] = px * X * r2ud;
+            }
           }
           curInd++;
           {
@@ -995,10 +1103,16 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
           {
             L[curInd][nbPose6] = 0;
             L[curInd][nbPose6 + 1] = 1;
-            L[curInd][nbPose6 + 2] = 0;
-            L[curInd][nbPose6 + 3] = Y * kr2ud;
-            L[curInd][nbPose6 + 4] = 0;
-            L[curInd][nbPose6 + 5] = py * Y * r2ud;
+            if (aspect_ratio > 0.) {
+              L[curInd][nbPose6 + 2] = Y * kr2ud;
+              L[curInd][nbPose6 + 3] = 0;
+              L[curInd][nbPose6 + 4] = py * Y * r2ud;
+            } else {
+              L[curInd][nbPose6 + 2] = 0;
+              L[curInd][nbPose6 + 3] = Y * kr2ud;
+              L[curInd][nbPose6 + 4] = 0;
+              L[curInd][nbPose6 + 5] = py * Y * r2ud;
+            }
           }
         } // end interaction
         curPoint++;
@@ -1019,8 +1133,13 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
     for (unsigned int i = 0; i < 6 * nbPose; i++)
       Tc_v[i] = Tc[i];
 
-    cam_est.initPersProjWithDistortion(px + Tc[nbPose6 + 2], py + Tc[nbPose6 + 3], u0 + Tc[nbPose6],
-                                       v0 + Tc[nbPose6 + 1], kud + Tc[nbPose6 + 5], kdu + Tc[nbPose6 + 4]);
+    if (aspect_ratio > 0.) {
+      cam_est.initPersProjWithDistortion(px + Tc[nbPose6 + 2], (px + Tc[nbPose6 + 2]) / aspect_ratio, u0 + Tc[nbPose6],
+                                         v0 + Tc[nbPose6 + 1], kud + Tc[nbPose6 + 4], kdu + Tc[nbPose6 + 3]);
+    } else {
+      cam_est.initPersProjWithDistortion(px + Tc[nbPose6 + 2], py + Tc[nbPose6 + 3], u0 + Tc[nbPose6],
+                                         v0 + Tc[nbPose6 + 1], kud + Tc[nbPose6 + 5], kdu + Tc[nbPose6 + 4]);
+    }
 
     vpColVector Tc_v_Tmp(6);
     for (unsigned int p = 0; p < nbPose; p++) {
@@ -1044,477 +1163,49 @@ void vpCalibration::calibVVSWithDistortionMulti(std::vector<vpCalibration> &tabl
   for (unsigned int p = 0; p < nbPose; p++) {
     table_cal[p].cam_dist = cam_est;
     // perViewError =
-     table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_dist, cam_est);
+    table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_dist, cam_est);
     // totalError += perViewError*perViewError * table_cal[p].npt;
     // totalPoints += (int)table_cal[p].npt;
   }
   globalReprojectionError = sqrt(r / (nbPointTotal));
+
+  if (verbose)
+    std::cout << " Global std dev " << globalReprojectionError << std::endl;
 
   // Restore ostream format
   std::cout.flags(original_flags);
 }
 
 void vpCalibration::calibVVSMulti(unsigned int nbPose, vpCalibration table_cal[], vpCameraParameters &cam_est,
-                                  bool verbose)
+                                  bool verbose, double aspect_ratio)
 {
-  std::ios::fmtflags original_flags(std::cout.flags());
-  std::cout.precision(10);
-  unsigned int nbPoint[256];     // number of points by image
-  unsigned int nbPointTotal = 0; // total number of points
+  std::vector<vpCalibration> v_table_cal(nbPose);
+  double globalReprojectionError = 0;
+  for (unsigned int i = 0; i < nbPose; i++) {
+    v_table_cal[i] = table_cal[i];
+  }
 
-  unsigned int nbPose6 = 6 * nbPose;
+  calibVVSMulti(v_table_cal, cam_est, globalReprojectionError, verbose, aspect_ratio);
 
   for (unsigned int i = 0; i < nbPose; i++) {
-    nbPoint[i] = table_cal[i].npt;
-    nbPointTotal += nbPoint[i];
+    table_cal[i] = v_table_cal[i];
   }
-
-  if (nbPointTotal < 4) {
-    // vpERROR_TRACE("Not enough point to calibrate");
-    throw(vpCalibrationException(vpCalibrationException::notInitializedError, "Not enough point to calibrate"));
-  }
-
-  vpColVector oX(nbPointTotal), cX(nbPointTotal);
-  vpColVector oY(nbPointTotal), cY(nbPointTotal);
-  vpColVector oZ(nbPointTotal), cZ(nbPointTotal);
-  vpColVector u(nbPointTotal);
-  vpColVector v(nbPointTotal);
-
-  vpColVector P(2 * nbPointTotal);
-  vpColVector Pd(2 * nbPointTotal);
-  vpImagePoint ip;
-
-  unsigned int curPoint = 0; // current point indice
-  for (unsigned int p = 0; p < nbPose; p++) {
-    std::list<double>::const_iterator it_LoX = table_cal[p].LoX.begin();
-    std::list<double>::const_iterator it_LoY = table_cal[p].LoY.begin();
-    std::list<double>::const_iterator it_LoZ = table_cal[p].LoZ.begin();
-    std::list<vpImagePoint>::const_iterator it_Lip = table_cal[p].Lip.begin();
-
-    for (unsigned int i = 0; i < nbPoint[p]; i++) {
-      oX[curPoint] = *it_LoX;
-      oY[curPoint] = *it_LoY;
-      oZ[curPoint] = *it_LoZ;
-
-      ip = *it_Lip;
-      u[curPoint] = ip.get_u();
-      v[curPoint] = ip.get_v();
-
-      ++it_LoX;
-      ++it_LoY;
-      ++it_LoZ;
-      ++it_Lip;
-
-      curPoint++;
-    }
-  }
-  //  double lambda = 0.1 ;
-  unsigned int iter = 0;
-
-  double residu_1 = 1e12;
-  double r = 1e12 - 1;
-  while (vpMath::equal(residu_1, r, threshold) == false && iter < nbIterMax) {
-
-    iter++;
-    residu_1 = r;
-
-    double px = cam_est.get_px();
-    double py = cam_est.get_py();
-    double u0 = cam_est.get_u0();
-    double v0 = cam_est.get_v0();
-
-    r = 0;
-    curPoint = 0; // current point indice
-    for (unsigned int p = 0; p < nbPose; p++) {
-      vpHomogeneousMatrix cMoTmp = table_cal[p].cMo;
-      for (unsigned int i = 0; i < nbPoint[p]; i++) {
-        unsigned int curPoint2 = 2 * curPoint;
-
-        cX[curPoint] =
-            oX[curPoint] * cMoTmp[0][0] + oY[curPoint] * cMoTmp[0][1] + oZ[curPoint] * cMoTmp[0][2] + cMoTmp[0][3];
-        cY[curPoint] =
-            oX[curPoint] * cMoTmp[1][0] + oY[curPoint] * cMoTmp[1][1] + oZ[curPoint] * cMoTmp[1][2] + cMoTmp[1][3];
-        cZ[curPoint] =
-            oX[curPoint] * cMoTmp[2][0] + oY[curPoint] * cMoTmp[2][1] + oZ[curPoint] * cMoTmp[2][2] + cMoTmp[2][3];
-
-        Pd[curPoint2] = u[curPoint];
-        Pd[curPoint2 + 1] = v[curPoint];
-
-        P[curPoint2] = cX[curPoint] / cZ[curPoint] * px + u0;
-        P[curPoint2 + 1] = cY[curPoint] / cZ[curPoint] * py + v0;
-
-        r += (vpMath::sqr(P[curPoint2] - Pd[curPoint2]) + vpMath::sqr(P[curPoint2 + 1] - Pd[curPoint2 + 1]));
-        curPoint++;
-      }
-    }
-
-    vpColVector error;
-    error = P - Pd;
-    // r = r/nbPointTotal ;
-
-    vpMatrix L(nbPointTotal * 2, nbPose6 + 4);
-    curPoint = 0; // current point indice
-    for (unsigned int p = 0; p < nbPose; p++) {
-      unsigned int q = 6 * p;
-      for (unsigned int i = 0; i < nbPoint[p]; i++) {
-        unsigned int curPoint2 = 2 * curPoint;
-        unsigned int curPoint21 = curPoint2 + 1;
-
-        double x = cX[curPoint];
-        double y = cY[curPoint];
-        double z = cZ[curPoint];
-
-        double inv_z = 1 / z;
-
-        double X = x * inv_z;
-        double Y = y * inv_z;
-
-        //---------------
-        {
-          {
-            L[curPoint2][q] = px * (-inv_z);
-            L[curPoint2][q + 1] = 0;
-            L[curPoint2][q + 2] = px * (X * inv_z);
-            L[curPoint2][q + 3] = px * X * Y;
-            L[curPoint2][q + 4] = -px * (1 + X * X);
-            L[curPoint2][q + 5] = px * Y;
-          }
-          {
-            L[curPoint2][nbPose6] = 1;
-            L[curPoint2][nbPose6 + 1] = 0;
-            L[curPoint2][nbPose6 + 2] = X;
-            L[curPoint2][nbPose6 + 3] = 0;
-          }
-          {
-            L[curPoint21][q] = 0;
-            L[curPoint21][q + 1] = py * (-inv_z);
-            L[curPoint21][q + 2] = py * (Y * inv_z);
-            L[curPoint21][q + 3] = py * (1 + Y * Y);
-            L[curPoint21][q + 4] = -py * X * Y;
-            L[curPoint21][q + 5] = -py * X;
-          }
-          {
-            L[curPoint21][nbPose6] = 0;
-            L[curPoint21][nbPose6 + 1] = 1;
-            L[curPoint21][nbPose6 + 2] = 0;
-            L[curPoint21][nbPose6 + 3] = Y;
-          }
-        }
-        curPoint++;
-      } // end interaction
-    }
-    vpMatrix Lp;
-    Lp = L.pseudoInverse(1e-10);
-
-    vpColVector e;
-    e = Lp * error;
-
-    vpColVector Tc, Tc_v(nbPose6);
-    Tc = -e * gain;
-
-    //   Tc_v =0 ;
-    for (unsigned int i = 0; i < nbPose6; i++)
-      Tc_v[i] = Tc[i];
-
-    cam_est.initPersProjWithoutDistortion(px + Tc[nbPose6 + 2], py + Tc[nbPose6 + 3], u0 + Tc[nbPose6],
-                                          v0 + Tc[nbPose6 + 1]);
-
-    //    cam.setKd(get_kd() + Tc[10]) ;
-    vpColVector Tc_v_Tmp(6);
-
-    for (unsigned int p = 0; p < nbPose; p++) {
-      for (unsigned int i = 0; i < 6; i++)
-        Tc_v_Tmp[i] = Tc_v[6 * p + i];
-
-      table_cal[p].cMo = vpExponentialMap::direct(Tc_v_Tmp, 1).inverse() * table_cal[p].cMo;
-    }
-    if (verbose)
-      std::cout << " std dev " << sqrt(r / nbPointTotal) << std::endl;
-  }
-  if (iter == nbIterMax) {
-    vpERROR_TRACE("Iterations number exceed the maximum allowed (%d)", nbIterMax);
-    throw(vpCalibrationException(vpCalibrationException::convergencyError, "Maximum number of iterations reached"));
-  }
-  for (unsigned int p = 0; p < nbPose; p++) {
-    table_cal[p].cMo_dist = table_cal[p].cMo;
-    table_cal[p].cam = cam_est;
-    table_cal[p].cam_dist = cam_est;
-    double deviation, deviation_dist;
-    table_cal[p].computeStdDeviation(deviation, deviation_dist);
-  }
-  if (verbose)
-    std::cout << " Global std dev " << sqrt(r / nbPointTotal) << std::endl;
-
-  // Restore ostream format
-  std::cout.flags(original_flags);
 }
 
 void vpCalibration::calibVVSWithDistortionMulti(unsigned int nbPose, vpCalibration table_cal[],
-                                                vpCameraParameters &cam_est, bool verbose)
+                                                vpCameraParameters &cam_est, bool verbose, double aspect_ratio)
 {
-  std::ios::fmtflags original_flags(std::cout.flags());
-  std::cout.precision(10);
-  unsigned int nbPoint[1024];    // number of points by image
-  unsigned int nbPointTotal = 0; // total number of points
-
-  unsigned int nbPose6 = 6 * nbPose;
+  std::vector<vpCalibration> v_table_cal(nbPose);
+  double globalReprojectionError = 0;
   for (unsigned int i = 0; i < nbPose; i++) {
-    nbPoint[i] = table_cal[i].npt;
-    nbPointTotal += nbPoint[i];
+    v_table_cal[i] = table_cal[i];
   }
 
-  if (nbPointTotal < 4) {
-    // vpERROR_TRACE("Not enough point to calibrate");
-    throw(vpCalibrationException(vpCalibrationException::notInitializedError, "Not enough point to calibrate"));
+  calibVVSWithDistortionMulti(v_table_cal, cam_est, globalReprojectionError, verbose, aspect_ratio);
+
+  for (unsigned int i = 0; i < nbPose; i++) {
+    table_cal[i] = v_table_cal[i];
   }
-
-  vpColVector oX(nbPointTotal), cX(nbPointTotal);
-  vpColVector oY(nbPointTotal), cY(nbPointTotal);
-  vpColVector oZ(nbPointTotal), cZ(nbPointTotal);
-  vpColVector u(nbPointTotal);
-  vpColVector v(nbPointTotal);
-
-  vpColVector P(4 * nbPointTotal);
-  vpColVector Pd(4 * nbPointTotal);
-  vpImagePoint ip;
-
-  unsigned int curPoint = 0; // current point indice
-  for (unsigned int p = 0; p < nbPose; p++) {
-    std::list<double>::const_iterator it_LoX = table_cal[p].LoX.begin();
-    std::list<double>::const_iterator it_LoY = table_cal[p].LoY.begin();
-    std::list<double>::const_iterator it_LoZ = table_cal[p].LoZ.begin();
-    std::list<vpImagePoint>::const_iterator it_Lip = table_cal[p].Lip.begin();
-
-    for (unsigned int i = 0; i < nbPoint[p]; i++) {
-      oX[curPoint] = *it_LoX;
-      oY[curPoint] = *it_LoY;
-      oZ[curPoint] = *it_LoZ;
-
-      ip = *it_Lip;
-      u[curPoint] = ip.get_u();
-      v[curPoint] = ip.get_v();
-
-      ++it_LoX;
-      ++it_LoY;
-      ++it_LoZ;
-      ++it_Lip;
-      curPoint++;
-    }
-  }
-  //  double lambda = 0.1 ;
-  unsigned int iter = 0;
-
-  double residu_1 = 1e12;
-  double r = 1e12 - 1;
-  while (vpMath::equal(residu_1, r, threshold) == false && iter < nbIterMax) {
-    iter++;
-    residu_1 = r;
-
-    r = 0;
-    curPoint = 0; // current point indice
-    for (unsigned int p = 0; p < nbPose; p++) {
-      vpHomogeneousMatrix cMoTmp = table_cal[p].cMo_dist;
-      for (unsigned int i = 0; i < nbPoint[p]; i++) {
-        cX[curPoint] =
-            oX[curPoint] * cMoTmp[0][0] + oY[curPoint] * cMoTmp[0][1] + oZ[curPoint] * cMoTmp[0][2] + cMoTmp[0][3];
-        cY[curPoint] =
-            oX[curPoint] * cMoTmp[1][0] + oY[curPoint] * cMoTmp[1][1] + oZ[curPoint] * cMoTmp[1][2] + cMoTmp[1][3];
-        cZ[curPoint] =
-            oX[curPoint] * cMoTmp[2][0] + oY[curPoint] * cMoTmp[2][1] + oZ[curPoint] * cMoTmp[2][2] + cMoTmp[2][3];
-
-        curPoint++;
-      }
-    }
-
-    vpMatrix L(nbPointTotal * 4, nbPose6 + 6);
-    curPoint = 0; // current point indice
-    double px = cam_est.get_px();
-    double py = cam_est.get_py();
-    double u0 = cam_est.get_u0();
-    double v0 = cam_est.get_v0();
-
-    double inv_px = 1 / px;
-    double inv_py = 1 / py;
-
-    double kud = cam_est.get_kud();
-    double kdu = cam_est.get_kdu();
-
-    double k2ud = 2 * kud;
-    double k2du = 2 * kdu;
-
-    for (unsigned int p = 0; p < nbPose; p++) {
-      unsigned int q = 6 * p;
-      for (unsigned int i = 0; i < nbPoint[p]; i++) {
-        unsigned int curPoint4 = 4 * curPoint;
-        double x = cX[curPoint];
-        double y = cY[curPoint];
-        double z = cZ[curPoint];
-
-        double inv_z = 1 / z;
-        double X = x * inv_z;
-        double Y = y * inv_z;
-
-        double X2 = X * X;
-        double Y2 = Y * Y;
-        double XY = X * Y;
-
-        double up = u[curPoint];
-        double vp = v[curPoint];
-
-        Pd[curPoint4] = up;
-        Pd[curPoint4 + 1] = vp;
-
-        double up0 = up - u0;
-        double vp0 = vp - v0;
-
-        double xp0 = up0 * inv_px;
-        double xp02 = xp0 * xp0;
-
-        double yp0 = vp0 * inv_py;
-        double yp02 = yp0 * yp0;
-
-        double r2du = xp02 + yp02;
-        double kr2du = kdu * r2du;
-
-        P[curPoint4] = u0 + px * X - kr2du * (up0);
-        P[curPoint4 + 1] = v0 + py * Y - kr2du * (vp0);
-
-        double r2ud = X2 + Y2;
-        double kr2ud = 1 + kud * r2ud;
-
-        double Axx = px * (kr2ud + k2ud * X2);
-        double Axy = px * k2ud * XY;
-        double Ayy = py * (kr2ud + k2ud * Y2);
-        double Ayx = py * k2ud * XY;
-
-        Pd[curPoint4 + 2] = up;
-        Pd[curPoint4 + 3] = vp;
-
-        P[curPoint4 + 2] = u0 + px * X * kr2ud;
-        P[curPoint4 + 3] = v0 + py * Y * kr2ud;
-
-        r += (vpMath::sqr(P[curPoint4] - Pd[curPoint4]) + vpMath::sqr(P[curPoint4 + 1] - Pd[curPoint4 + 1]) +
-              vpMath::sqr(P[curPoint4 + 2] - Pd[curPoint4 + 2]) + vpMath::sqr(P[curPoint4 + 3] - Pd[curPoint4 + 3])) *
-             0.5;
-
-        unsigned int curInd = curPoint4;
-        //---------------
-        {
-          {
-            L[curInd][q] = px * (-inv_z);
-            L[curInd][q + 1] = 0;
-            L[curInd][q + 2] = px * X * inv_z;
-            L[curInd][q + 3] = px * X * Y;
-            L[curInd][q + 4] = -px * (1 + X2);
-            L[curInd][q + 5] = px * Y;
-          }
-          {
-            L[curInd][nbPose6] = 1 + kr2du + k2du * xp02;
-            L[curInd][nbPose6 + 1] = k2du * up0 * yp0 * inv_py;
-            L[curInd][nbPose6 + 2] = X + k2du * xp02 * xp0;
-            L[curInd][nbPose6 + 3] = k2du * up0 * yp02 * inv_py;
-            L[curInd][nbPose6 + 4] = -(up0) * (r2du);
-            L[curInd][nbPose6 + 5] = 0;
-          }
-          curInd++;
-          {
-            L[curInd][q] = 0;
-            L[curInd][q + 1] = py * (-inv_z);
-            L[curInd][q + 2] = py * Y * inv_z;
-            L[curInd][q + 3] = py * (1 + Y2);
-            L[curInd][q + 4] = -py * XY;
-            L[curInd][q + 5] = -py * X;
-          }
-          {
-            L[curInd][nbPose6] = k2du * xp0 * vp0 * inv_px;
-            L[curInd][nbPose6 + 1] = 1 + kr2du + k2du * yp02;
-            L[curInd][nbPose6 + 2] = k2du * vp0 * xp02 * inv_px;
-            L[curInd][nbPose6 + 3] = Y + k2du * yp02 * yp0;
-            L[curInd][nbPose6 + 4] = -vp0 * r2du;
-            L[curInd][nbPose6 + 5] = 0;
-          }
-          curInd++;
-          //---undistorted to distorted
-          {
-            L[curInd][q] = Axx * (-inv_z);
-            L[curInd][q + 1] = Axy * (-inv_z);
-            L[curInd][q + 2] = Axx * (X * inv_z) + Axy * (Y * inv_z);
-            L[curInd][q + 3] = Axx * X * Y + Axy * (1 + Y2);
-            L[curInd][q + 4] = -Axx * (1 + X2) - Axy * XY;
-            L[curInd][q + 5] = Axx * Y - Axy * X;
-          }
-          {
-            L[curInd][nbPose6] = 1;
-            L[curInd][nbPose6 + 1] = 0;
-            L[curInd][nbPose6 + 2] = X * kr2ud;
-            L[curInd][nbPose6 + 3] = 0;
-            L[curInd][nbPose6 + 4] = 0;
-            L[curInd][nbPose6 + 5] = px * X * r2ud;
-          }
-          curInd++;
-          {
-            L[curInd][q] = Ayx * (-inv_z);
-            L[curInd][q + 1] = Ayy * (-inv_z);
-            L[curInd][q + 2] = Ayx * (X * inv_z) + Ayy * (Y * inv_z);
-            L[curInd][q + 3] = Ayx * XY + Ayy * (1 + Y2);
-            L[curInd][q + 4] = -Ayx * (1 + X2) - Ayy * XY;
-            L[curInd][q + 5] = Ayx * Y - Ayy * X;
-          }
-          {
-            L[curInd][nbPose6] = 0;
-            L[curInd][nbPose6 + 1] = 1;
-            L[curInd][nbPose6 + 2] = 0;
-            L[curInd][nbPose6 + 3] = Y * kr2ud;
-            L[curInd][nbPose6 + 4] = 0;
-            L[curInd][nbPose6 + 5] = py * Y * r2ud;
-          }
-        } // end interaction
-        curPoint++;
-      } // end interaction
-    }
-
-    vpColVector error;
-    error = P - Pd;
-    // r = r/nbPointTotal ;
-
-    vpMatrix Lp;
-    /*double rank =*/
-    L.pseudoInverse(Lp, 1e-10);
-    vpColVector e;
-    e = Lp * error;
-    vpColVector Tc, Tc_v(6 * nbPose);
-    Tc = -e * gain;
-    for (unsigned int i = 0; i < 6 * nbPose; i++)
-      Tc_v[i] = Tc[i];
-
-    cam_est.initPersProjWithDistortion(px + Tc[nbPose6 + 2], py + Tc[nbPose6 + 3], u0 + Tc[nbPose6],
-                                       v0 + Tc[nbPose6 + 1], kud + Tc[nbPose6 + 5], kdu + Tc[nbPose6 + 4]);
-
-    vpColVector Tc_v_Tmp(6);
-    for (unsigned int p = 0; p < nbPose; p++) {
-      for (unsigned int i = 0; i < 6; i++)
-        Tc_v_Tmp[i] = Tc_v[6 * p + i];
-
-      table_cal[p].cMo_dist = vpExponentialMap::direct(Tc_v_Tmp).inverse() * table_cal[p].cMo_dist;
-    }
-    if (verbose)
-      std::cout << " std dev: " << sqrt(r / nbPointTotal) << std::endl;
-    // std::cout <<  "   residual: " << r << std::endl;
-  }
-  if (iter == nbIterMax) {
-    vpERROR_TRACE("Iterations number exceed the maximum allowed (%d)", nbIterMax);
-    throw(vpCalibrationException(vpCalibrationException::convergencyError, "Maximum number of iterations reached"));
-  }
-
-  for (unsigned int p = 0; p < nbPose; p++) {
-    table_cal[p].cam_dist = cam_est;
-    table_cal[p].computeStdDeviation_dist(table_cal[p].cMo_dist, cam_est);
-  }
-  if (verbose)
-    std::cout << " Global std dev " << sqrt(r / (nbPointTotal)) << std::endl;
-
-  // Restore ostream format
-  std::cout.flags(original_flags);
 }
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -1577,12 +1268,11 @@ int vpCalibration::computeCalibrationTsai(const std::vector<vpCalibration> &tabl
 
     return 0;
   } else {
-    throw (vpException(vpException::dimensionError, "At least 3 images are needed to compute hand-eye calibration !\n"));
+    throw(vpException(vpException::dimensionError, "At least 3 images are needed to compute hand-eye calibration !\n"));
   }
 }
 
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-
 
 #undef DEBUG_LEVEL1
 #undef DEBUG_LEVEL2
