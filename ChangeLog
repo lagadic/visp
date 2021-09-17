@@ -15,6 +15,7 @@ ViSP 3.4.1 (under development)
       More info on http://wiki.ros.org/visp_ros
   - Bug fixed
     . [#913] Cannot build tutorial with librealsense < 2.31.0
+    . [#926] Packaging with CPack doesn't work with Ogre dependency
 ----------------------------------------------
 ViSP 3.4.0 (released February 26, 2021)
   - Contributors:
