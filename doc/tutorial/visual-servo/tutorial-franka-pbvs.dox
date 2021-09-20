@@ -252,7 +252,7 @@ To learn more about adaptive gain and task sequencing see \ref tutorial-boost-vs
 You can continue with the \ref tutorial-franka-ibvs that shows how to implement an image-based visual servoing scheme with the Franka robot or follow \ref tutorial-ibvs that will give some hints on image-based visual servoing in simulation with a free flying camera. 
 
 If you want to achieve a physical simulation of a Franka robot, with a model that has been accurately identified
-from a real Franka robot, like in the next video, we recommend to make a tour on [visp_ros](http://wiki.ros.org/visp_ros). Here you will find a ROS package that allows to implement position, velocity and impedence control of a simulated Franka robot using ROS and [CoppeliaSim](https://www.coppeliarobotics.com/).
+from a real Franka robot, like in the next video, we recommend to make a tour on \ref tutorial-franka-sim that is available in [visp_ros](http://wiki.ros.org/visp_ros). Here you will find a ROS package that allows to implement position, velocity and impedance control of a simulated Franka robot using ROS and [CoppeliaSim](https://www.coppeliarobotics.com/).
 
 \htmlonly
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/QQ89sbmufZE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
