@@ -7,7 +7,7 @@
 
 ViSP 3.4.1 (under development)
   - Contributors:
-    . Fabien Spindler, Souriya Trinh
+    . Fabien Spindler, Souriya Trinh, Olivier Kermorgant
   - New features and improvements
     . Camera calibration model can now consider px/py aspect ratio and estimate
       a model where px = py
