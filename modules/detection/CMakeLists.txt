@@ -76,6 +76,12 @@ if(WITH_CATCH2)
   include_directories(${CATCH2_INCLUDE_DIRS})
 endif()
 
+# TensorRT
+if(USE_TENSORRT)
+  list(APPEND opt_incs ${TENSORRT_INCLUDE_DIRS})
+  list(APPEND opt_libs ${TENSORRT_LIBRARIES})
+endif()
+
 # OpenCV
 if(USE_OPENCV)
   # On win32 since OpenCV 2.4.7 and on OSX with OpenCV 2.4.10 we cannot use OpenCV_LIBS to set ViSP 3rd party libraries.
@@ -104,6 +110,10 @@ if(USE_OPENCV)
     list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_objdetect")
     if(OpenCV_VERSION AND ((OpenCV_VERSION VERSION_EQUAL 3.4.3) OR (OpenCV_VERSION VERSION_GREATER 3.4.3)))
       list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_dnn")
+    endif()
+
+    if(USE_TENSORRT)
+      list(APPEND OpenCV_REQUIRED_LIB_COMPONENTS "opencv_cudaarithm" "opencv_cudawarping")
     endif()
 
     foreach(component_ ${OpenCV_REQUIRED_LIB_COMPONENTS})
