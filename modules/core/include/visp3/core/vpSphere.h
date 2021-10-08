@@ -59,10 +59,9 @@
 
   A sphere has the followings parameters:
   - **in the object frame**: the 3D coordinates oX, oY, oZ of the center and radius R. These
-  parameters registered in vpForwardProjection::oP internal 4-dim vector are set using the constructors vpSphere(double oX, double oY, double oZ, double R),
-  vpSphere(const vpColVector &oP) or the fonctions setWorldCoordinates(double oX, double oY, double oZ, double R)
-  and setWorldCoordinates(const vpColVector &oP).
-  To get theses parameters use get_oP().
+  parameters registered in vpForwardProjection::oP internal 4-dim vector are set using the constructors vpSphere(double
+  oX, double oY, double oZ, double R), vpSphere(const vpColVector &oP) or the fonctions setWorldCoordinates(double oX,
+  double oY, double oZ, double R) and setWorldCoordinates(const vpColVector &oP). To get theses parameters use get_oP().
 
   - **in the camera frame**: the coordinates cX, cY, cZ of the center and radius R. These
   parameters registered in vpTracker::cP internal 4-dim vector are computed using
@@ -93,7 +92,11 @@ public:
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                unsigned int thickness = 1);
+  void display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
+               unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green, unsigned int thickness = 1);
+  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor &color = vpColor::green, unsigned int thickness = 1);
 
   vpSphere *duplicate() const;

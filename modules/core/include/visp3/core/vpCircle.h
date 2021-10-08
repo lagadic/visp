@@ -61,8 +61,8 @@
 
   A 3D circle has the followings parameters:
   - **in the object frame**: the parameters oA, oB, oC corresponding to the 3D plane with equation
-  oA*(x-oX)+oB*(y-oY)+oC*(z-oZ)=0 passing through the 3D sphere center and the
-  3D coordinates oX, oY, oZ of the center and radius R of the 3D sphere. These
+  oA*(X-oX)+oB*(Y-oY)+oC*(Z-oZ)=0 where (X,Y,Z) are the coordinates of a 3D point belonging to the plane passing through
+  the 3D sphere center (oX,oY,oZ) and the 3D coordinates oX, oY, oZ of the center and radius R of the 3D sphere. These
   parameters registered in vpForwardProjection::oP internal 7-dim vector are set using the constructors
   vpCircle(double oA, double oB, double oC, double oX, double oY, double oZ, double R),
   vpCircle(const vpColVector &oP) or the fonctions
@@ -96,12 +96,16 @@ public:
   vpCircle(double oA, double oB, double oC, double oX, double oY, double oZ, double R);
   virtual ~vpCircle();
 
-  void changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP) const;
+  void changeFrame(const vpHomogeneousMatrix &noMo, vpColVector &noP) const;
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                unsigned int thickness = 1);
+  void display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
+               unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+               const vpColor &color = vpColor::green, unsigned int thickness = 1);
+  void display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor &color = vpColor::green, unsigned int thickness = 1);
   vpCircle *duplicate() const;
 

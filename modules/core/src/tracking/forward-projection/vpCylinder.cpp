@@ -381,6 +381,28 @@ void vpCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMat
 
 /*!
  * Display the projection of a 3D cylinder in image \e I as two lines corresponding to the limbs.
+ * This method is non destructive wrt. cP and p internal 3D point parameters.
+ *
+ * \param I : Image used as background.
+ * \param cMo : Homogeneous transformation from camera frame to object frame.
+ * The point is considered as viewed from this camera position.
+ * \param cam : Camera parameters.
+ * \param color : Color used to draw the sphere.
+ * \param thickness : Thickness used to draw the sphere.
+ */
+
+void vpCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                         const vpColor &color, unsigned int thickness)
+{
+
+  vpColVector _cP(7), _p(4);
+  changeFrame(cMo, _cP);
+  projection(_cP, _p);
+  vpFeatureDisplay::displayCylinder(_p[0], _p[1], _p[2], _p[3], cam, I, color, thickness);
+}
+
+/*!
+ * Display the projection of a 3D cylinder in image \e I as two lines corresponding to the limbs.
  *
  * \param I : Image used as background.
  * \param cam : Camera parameters.
@@ -388,6 +410,20 @@ void vpCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMat
  * \param thickness : Thickness used to draw the point.
  */
 void vpCylinder::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
+                         unsigned int thickness)
+{
+  vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[3], cam, I, color, thickness);
+}
+
+/*!
+ * Display the projection of a 3D cylinder in image \e I as two lines corresponding to the limbs.
+ *
+ * \param I : Image used as background.
+ * \param cam : Camera parameters.
+ * \param color : Color used to draw the point.
+ * \param thickness : Thickness used to draw the point.
+ */
+void vpCylinder::display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color,
                          unsigned int thickness)
 {
   vpFeatureDisplay::displayCylinder(p[0], p[1], p[2], p[3], cam, I, color, thickness);

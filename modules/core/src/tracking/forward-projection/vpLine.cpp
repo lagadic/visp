@@ -190,10 +190,7 @@ void vpLine::setWorldCoordinates(const vpColVector &oP1, const vpColVector &oP2)
   line.projection();
   \endcode
 */
-void vpLine::projection()
-{
-  projection(cP, p);
-}
+void vpLine::projection() { projection(cP, p); }
 
 /*!
 
@@ -473,6 +470,27 @@ void vpLine::display(const vpImage<unsigned char> &I, const vpCameraParameters &
 
 /*!
 
+  Displays the line in the image \e I thanks to the 2D parameters of
+  the line \e p in the image plane (vpTracker::p) and the camera
+  parameters which enable to convert the parameters from meter to pixel.
+
+  \param I : The image where the line must be displayed.
+
+  \param cam : The camera parameters to enable the conversion from
+                meter to pixel.
+
+  \param color : The desired color to display the line in the image.
+
+  \param thickness : Thickness of the feature representation.
+                          */
+void vpLine::display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color,
+                     unsigned int thickness)
+{
+  vpFeatureDisplay::displayLine(p[0], p[1], cam, I, color, thickness);
+}
+
+/*!
+
   Displays the line in the image \e I thanks to the parameters in the
   object frame (vpForwardProjection::oP), the homogeneous matrix
   relative to the pose between the camera frame and the object frame
@@ -501,8 +519,42 @@ void vpLine::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix 
   try {
     projection(_cP, _p);
     vpFeatureDisplay::displayLine(_p[0], _p[1], cam, I, color, thickness);
+  } catch (...) {
+    // Skip potential exception: due to a degenerate case: the image of the straight line is a point!
   }
-  catch(...) {
+}
+
+/*!
+
+  Displays the line in the image \e I thanks to the parameters in the
+  object frame (vpForwardProjection::oP), the homogeneous matrix
+  relative to the pose between the camera frame and the object frame
+  and the camera parameters which enable to convert the features from
+  meter to pixel.
+
+  This method is non destructive wrt. cP and p internal line parameters.
+
+  \param I : The image where the line must be displayed in overlay.
+
+  \param cMo : The homogeneous matrix corresponding to the pose
+                between the camera frame and the object frame.
+
+  \param cam : The camera parameters to enable the conversion from
+                meter to pixel.
+
+  \param color : The desired color to display the line in the image.
+
+  \param thickness : Thickness of the feature representation.
+                          */
+void vpLine::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                     const vpColor &color, unsigned int thickness)
+{
+  vpColVector _cP, _p;
+  changeFrame(cMo, _cP);
+  try {
+    projection(_cP, _p);
+    vpFeatureDisplay::displayLine(_p[0], _p[1], cam, I, color, thickness);
+  } catch (...) {
     // Skip potential exception: due to a degenerate case: the image of the straight line is a point!
   }
 }

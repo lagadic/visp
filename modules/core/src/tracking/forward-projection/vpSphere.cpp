@@ -258,6 +258,26 @@ void vpSphere::display(const vpImage<unsigned char> &I, const vpHomogeneousMatri
 
 /*!
  * Display the projection of a 3D sphere in image \e I.
+ * This method is non destructive wrt. cP and p internal sphere parameters.
+ *
+ * \param I : Image used as background.
+ * \param cMo : Homogeneous transformation from camera frame to object frame.
+ * The sphere is considered as viewed from this camera position.
+ * \param cam : Camera parameters.
+ * \param color : Color used to draw the sphere.
+ * \param thickness : Thickness used to draw the sphere.
+ */
+void vpSphere::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &color, unsigned int thickness)
+{
+  vpColVector _cP, _p;
+  changeFrame(cMo, _cP);
+  projection(_cP, _p);
+  vpFeatureDisplay::displayEllipse(_p[0], _p[1], _p[2], _p[3], _p[4], cam, I, color, thickness);
+}
+
+/*!
+ * Display the projection of a 3D sphere in image \e I.
  *
  * \param I : Image used as background.
  * \param cam : Camera parameters.
@@ -265,6 +285,20 @@ void vpSphere::display(const vpImage<unsigned char> &I, const vpHomogeneousMatri
  * \param thickness : Thickness used to draw the sphere.
  */
 void vpSphere::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
+                       unsigned int thickness)
+{
+  vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I, color, thickness);
+}
+
+/*!
+ * Display the projection of a 3D sphere in image \e I.
+ *
+ * \param I : Image used as background.
+ * \param cam : Camera parameters.
+ * \param color : Color used to draw the sphere.
+ * \param thickness : Thickness used to draw the sphere.
+ */
+void vpSphere::display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color,
                        unsigned int thickness)
 {
   vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I, color, thickness);

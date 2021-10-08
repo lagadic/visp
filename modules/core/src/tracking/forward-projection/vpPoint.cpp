@@ -433,6 +433,20 @@ void vpPoint::display(const vpImage<unsigned char> &I, const vpCameraParameters 
   vpFeatureDisplay::displayPoint(p[0], p[1], cam, I, color, thickness);
 }
 
+/*!
+ * Display the projection of a 3D point in image \e I.
+ *
+ * \param I : Image used as background.
+ * \param cam : Camera parameters.
+ * \param color : Color used to draw the point.
+ * \param thickness : Thickness used to draw the point.
+ */
+void vpPoint::display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color,
+                      unsigned int thickness)
+{
+  vpFeatureDisplay::displayPoint(p[0], p[1], cam, I, color, thickness);
+}
+
 // Get coordinates
 //! Get the point cX coordinate in the camera frame.
 double vpPoint::get_X() const { return cP[0]; }
