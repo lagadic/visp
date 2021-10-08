@@ -18,6 +18,7 @@ ViSP 3.4.1 (under development)
   - Bug fixed
     . [#913] Cannot build tutorial with librealsense < 2.31.0
     . [#926] Packaging with CPack doesn't work with Ogre dependency
+    . [#933] tutorial-apriltag-detector-live-rgbd-realsense.cpp doesn't work
 ----------------------------------------------
 ViSP 3.4.0 (released February 26, 2021)
   - Contributors:
