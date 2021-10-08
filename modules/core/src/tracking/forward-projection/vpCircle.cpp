@@ -52,7 +52,7 @@ void vpCircle::init()
   Set the parameters of the 3D circle in the object frame.
 
   \param oP_ : This 7-dim vector defines the parameters oP[0], oP[1], oP[2] corresponding
-  to parameters oA, oB, oC of the plane with equation oA*(x-oX)+oB*(y-oY)+oC*(z-oZ)=0
+  to parameters oA, oB, oC of the plane with equation oA*(X-oX)+oB*(Y-oY)+oC*(Z-oZ)=0
   passing through the 3D sphere center.  oP[3], oP[4], oP[5] correspond to oX, oY, oZ the
   coordinates of the center of the sphere. oP[6] corresponds to the radius of
   the sphere.
@@ -62,7 +62,7 @@ void vpCircle::setWorldCoordinates(const vpColVector &oP_) { this->oP = oP_; }
 /*!
   Set the 3D circle coordinates in the object frame.
 
-  \param oA, oB, oC : Parameters of the plane with equation oA*(x-oX)+oB*(y-oY)+oC*(z-oZ)=0
+  \param oA, oB, oC : Parameters of the plane with equation oA*(X-oX)+oB*(Y-oY)+oC*(Z-oZ)=0
   passing through the 3D sphere center.
   \param oX : Coordinate of the center of the sphere along X-axis in the object frame.
   \param oY : Coordinate of the center of the sphere along Y-axis in the object frame.
@@ -89,7 +89,7 @@ vpCircle::vpCircle() { init(); }
   Construct the circle from the intersection of a plane and a sphere.
 
   \param oP_ : This 7-dim vector defines the parameters oP[0], oP[1], oP[2] corresponding
-  to parameters oA, oB, oC of the plane with equation oA*(x-oX)+oB*(y-oY)+oC*(z-oZ)=0
+  to parameters oA, oB, oC of the plane with equation oA*(X-oX)+oB*(Y-oY)+oC*(Z-oZ)=0
   passing through the 3D sphere center.  oP[3], oP[4], oP[5] correspond to oX, oY, oZ the
   coordinates of the center of the sphere. oP[6] corresponds to the radius of
   the sphere.
@@ -106,7 +106,7 @@ vpCircle::vpCircle(const vpColVector &oP_)
   Construct the 3D circle from the intersection of a plane and a sphere with
   coordinates expressed in the object frame.
 
-  \param oA, oB, oC : Parameters of the plane with equation oA*(x-oX)+oB*(y-oY)+oC*(z-oZ)=0
+  \param oA, oB, oC : Parameters of the plane with equation oA*(X-oX)+oB*(Y-oY)+oC*(Z-oZ)=0
   passing through the 3D sphere center.
   \param oX : Coordinate of the center of the sphere along X-axis in the object frame.
   \param oY : Coordinate of the center of the sphere along Y-axis in the object frame.
@@ -238,34 +238,37 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
 /*!
   From the 3D coordinates of the circle in the object frame oP that are set using for
   example vpCircle(double oA, double oB, double oC, double oX, double oY, double oZ, double R)
-  or setWorldCoordinates(), compute the 3D coordinates of the circle in the camera frame cP = cMo * oP.
+  or setWorldCoordinates(), compute the 3D coordinates of the circle in a new object frame noP = noMo * oP.
+  Internal parameters of the circle remain unchanged.
 
-  \param cMo : Transformation from camera to object frame.
-  \param cP_ : 3D normalized coordinates of the circle in the camera frame cP = (cA, cB, cC, cX, cY, cZ, R).
-*/void vpCircle::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
+  \param noMo : Transformation from camera to object frame.
+  \param noP : 3D normalized coordinates of the circle in the a new ojbect frame noP = (noA, noB, noC, noX, noY, noZ,
+  R).
+*/
+void vpCircle::changeFrame(const vpHomogeneousMatrix &noMo, vpColVector &noP) const
 {
-  cP_.resize(7, false);
+  noP.resize(7, false);
 
   double A, B, C;
-  A = cMo[0][0] * oP[0] + cMo[0][1] * oP[1] + cMo[0][2] * oP[2];
-  B = cMo[1][0] * oP[0] + cMo[1][1] * oP[1] + cMo[1][2] * oP[2];
-  C = cMo[2][0] * oP[0] + cMo[2][1] * oP[1] + cMo[2][2] * oP[2];
+  A = noMo[0][0] * oP[0] + noMo[0][1] * oP[1] + noMo[0][2] * oP[2];
+  B = noMo[1][0] * oP[0] + noMo[1][1] * oP[1] + noMo[1][2] * oP[2];
+  C = noMo[2][0] * oP[0] + noMo[2][1] * oP[1] + noMo[2][2] * oP[2];
 
   double X0, Y0, Z0;
-  X0 = cMo[0][3] + cMo[0][0] * oP[3] + cMo[0][1] * oP[4] + cMo[0][2] * oP[5];
-  Y0 = cMo[1][3] + cMo[1][0] * oP[3] + cMo[1][1] * oP[4] + cMo[1][2] * oP[5];
-  Z0 = cMo[2][3] + cMo[2][0] * oP[3] + cMo[2][1] * oP[4] + cMo[2][2] * oP[5];
+  X0 = noMo[0][3] + noMo[0][0] * oP[3] + noMo[0][1] * oP[4] + noMo[0][2] * oP[5];
+  Y0 = noMo[1][3] + noMo[1][0] * oP[3] + noMo[1][1] * oP[4] + noMo[1][2] * oP[5];
+  Z0 = noMo[2][3] + noMo[2][0] * oP[3] + noMo[2][1] * oP[4] + noMo[2][2] * oP[5];
   double R = oP[6];
 
-  cP_[0] = A;
-  cP_[1] = B;
-  cP_[2] = C;
+  noP[0] = A;
+  noP[1] = B;
+  noP[2] = C;
 
-  cP_[3] = X0;
-  cP_[4] = Y0;
-  cP_[5] = Z0;
+  noP[3] = X0;
+  noP[4] = Y0;
+  noP[5] = Z0;
 
-  cP_[6] = R;
+  noP[6] = R;
 }
 
 /*!
@@ -299,7 +302,8 @@ void vpCircle::changeFrame(const vpHomogeneousMatrix &cMo)
 }
 
 /*!
- * Display the projection of a 3D circle in image \e I.
+ * Display the projection of a 3D circle in image \e I using internal coordinates in the image plane (x,y,n20,n11,n02)
+ * available in `p` vector. These coordinates may be updated using projection().
  *
  * \param I : Image used as background.
  * \param cam : Camera parameters.
@@ -307,6 +311,21 @@ void vpCircle::changeFrame(const vpHomogeneousMatrix &cMo)
  * \param thickness : Thickness used to draw the circle.
  */
 void vpCircle::display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color,
+                       unsigned int thickness)
+{
+  vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I, color, thickness);
+}
+
+/*!
+ * Display the projection of a 3D circle in image \e I using internal coordinates in the image plane (x,y,n20,n11,n02)
+ * available in `p` vector. These coordinates may be updated using projection().
+ *
+ * \param I : Image used as background.
+ * \param cam : Camera parameters.
+ * \param color : Color used to draw the circle.
+ * \param thickness : Thickness used to draw the circle.
+ */
+void vpCircle::display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color,
                        unsigned int thickness)
 {
   vpFeatureDisplay::displayEllipse(p[0], p[1], p[2], p[3], p[4], cam, I, color, thickness);
@@ -331,7 +350,28 @@ void vpCircle::display(const vpImage<unsigned char> &I, const vpHomogeneousMatri
   projection(_cP, _p);
   vpFeatureDisplay::displayEllipse(_p[0], _p[1], _p[2], _p[3], _p[4], cam, I, color, thickness);
 }
-//! for memory issue (used by the vpServo class only)
+
+/*!
+ * Display the projection of a sphere in image \e I.
+ * This method is non destructive wrt. cP and p internal circle parameters.
+ *
+ * \param I : Image used as background.
+ * \param cMo : Homogeneous transformation from camera frame to object frame.
+ * The circle is considered as viewed from this camera position.
+ * \param cam : Camera parameters.
+ * \param color : Color used to draw the sphere.
+ * \param thickness : Thickness used to draw the circle.
+ */
+void vpCircle::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                       const vpColor &color, unsigned int thickness)
+{
+  vpColVector _cP, _p;
+  changeFrame(cMo, _cP);
+  projection(_cP, _p);
+  vpFeatureDisplay::displayEllipse(_p[0], _p[1], _p[2], _p[3], _p[4], cam, I, color, thickness);
+}
+
+//! For memory issue (used by the vpServo class only)
 vpCircle *vpCircle::duplicate() const
 {
   vpCircle *feature = new vpCircle(*this);

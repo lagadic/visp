@@ -59,8 +59,8 @@ class vpHomogeneousMatrix;
 
   A 3D point has the followings parameters:
   - **in the object frame**: the normalized 3D coordinates oX, oY, oZ, oW of the point. These
-  parameters registered in vpForwardProjection::oP internal 4-dim vector are set using the constructors vpPoint(double oX, double oY, double oZ),
-  vpPoint(const vpColVector &oP) and vpPoint(const std::vector<double> &oP) or the fonctions
+  parameters registered in vpForwardProjection::oP internal 4-dim vector are set using the constructors vpPoint(double
+ oX, double oY, double oZ), vpPoint(const vpColVector &oP) and vpPoint(const std::vector<double> &oP) or the fonctions
   setWorldCoordinates(double oX, double oY, double oZ),
   setWorldCoordinates(const vpColVector &oP) and setWorldCoordinates(const std::vector<double> &oP).
  To get theses parameters use get_oP().
@@ -72,10 +72,10 @@ class vpHomogeneousMatrix;
   To get theses parameters use get_cP().
 
   - **in the image plane**: the 2D normalized coordinates (x, y, 1) corresponding
-  to the perspective projection of the point. These parameters are registered in vpTracker::p internal 3-dim vector and computed using projection() and
-  projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using get_x() and get_y().
-  They correspond to 2D normalized point parameters with values expressed in meters.
-  To get theses parameters use get_p().
+  to the perspective projection of the point. These parameters are registered in vpTracker::p internal 3-dim vector and
+ computed using projection() and projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using
+ get_x() and get_y(). They correspond to 2D normalized point parameters with values expressed in meters. To get theses
+ parameters use get_p().
 
 */
 class VISP_EXPORT vpPoint : public vpForwardProjection
@@ -96,6 +96,8 @@ public:
   void changeFrame(const vpHomogeneousMatrix &cMo);
 
   void display(const vpImage<unsigned char> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
+               unsigned int thickness = 1);
+  void display(const vpImage<vpRGBa> &I, const vpCameraParameters &cam, const vpColor &color = vpColor::green,
                unsigned int thickness = 1);
   void display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                const vpColor &color = vpColor::green, unsigned int thickness = 1);
