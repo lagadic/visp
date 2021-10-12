@@ -149,6 +149,9 @@ Consider you downloaded the files (model and labels), to run object detection on
 $ ./tutorial-dnn-tensorrt-live --model ssd_mobilenet.onnx --labels pascal-voc-labels.txt
 \endcode
 
+Running the above example on an image will show results like the following:
+\image html img-detection-objects.jpeg
+
 An example of the object detection can be viewed in this <a href="">video</a>.
 
 */
