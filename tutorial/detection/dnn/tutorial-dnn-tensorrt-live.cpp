@@ -23,15 +23,24 @@
 #include <visp3/core/vpIoTools.h>
 
 #include <visp3/detection/vpDetectorDNN.h>
+//! [OpenCV CUDA header files]
 #include <opencv2/core/cuda.hpp>
 #include <opencv4/opencv2/cudaarithm.hpp>
 #include <opencv4/opencv2/cudawarping.hpp>
+//! [OpenCV CUDA header files]
+
+//! [CUDA header files]
 #include <cuda_runtime_api.h>
+//! [CUDA header files]
+
+//! [TRT header files]
 #include <NvInfer.h>
 #include <NvOnnxParser.h>
+//! [TRT header files]
 
 #include <sys/stat.h>
 
+//! [Preprocess image]
 void preprocessImage(cv::Mat& img, float* gpu_input, const nvinfer1::Dims& dims, float meanR, float meanG, float meanB)
 {
 	if(img.empty())
@@ -66,7 +75,9 @@ void preprocessImage(cv::Mat& img, float* gpu_input, const nvinfer1::Dims& dims,
 		chw.emplace_back(cv::cuda::GpuMat(input_size, CV_32FC1, gpu_input + i * input_width * input_height));
 	cv::cuda::split(flt_image, chw);
 }
+//! [Preprocess image]
 
+//! [getSizeByDim function]
 size_t getSizeByDim(const nvinfer1::Dims& dims)
 {
 	size_t size = 1;
@@ -74,7 +85,9 @@ size_t getSizeByDim(const nvinfer1::Dims& dims)
 		size *= dims.d[i];
 	return size;
 }
+//! [getSizeByDim function]
 
+//! [PostProcess results]
 std::vector< cv::Rect> postprocessResults(std::vector< void* >buffers, const std::vector< nvinfer1::Dims >& output_dims, int batch_size, int image_width, int image_height, float confThresh, float nmsThresh, std::vector< int >& classIds)
 {
 	// private variables of vpDetectorDNN
@@ -114,16 +127,16 @@ std::vector< cv::Rect> postprocessResults(std::vector< void* >buffers, const std
 
 	      if(maxScore > confThresh)
 	      {
-		int left = (int)(cpu_outputs[1][4*i] * image_width);
-		int top = (int)(cpu_outputs[1][4*i + 1] * image_height);
-		int right = (int)(cpu_outputs[1][4*i + 2] * image_width);
-		int bottom = (int)(cpu_outputs[1][4*i + 3] * image_height);
-		int width = right - left + 1;
-		int height = bottom - top + 1;
+			int left = (int)(cpu_outputs[1][4*i] * image_width);
+			int top = (int)(cpu_outputs[1][4*i + 1] * image_height);
+			int right = (int)(cpu_outputs[1][4*i + 2] * image_width);
+			int bottom = (int)(cpu_outputs[1][4*i + 3] * image_height);
+			int width = right - left + 1;
+			int height = bottom - top + 1;
 
-		m_boxes.push_back(cv::Rect(left, top, width, height));
-		m_classIds.push_back(maxClass);
-		m_confidences.push_back(maxScore);
+			m_boxes.push_back(cv::Rect(left, top, width, height));
+			m_classIds.push_back(maxClass);
+			m_confidences.push_back(maxScore);
 	      }
     	}
 
@@ -138,7 +151,7 @@ std::vector< cv::Rect> postprocessResults(std::vector< void* >buffers, const std
 	classIds = m_classIds; // Returning detected objects class Ids.
 	return m_boxesNMS;
 }
-
+//! [PostProcess results]
 
 class Logger : public nvinfer1::ILogger
 {
@@ -165,8 +178,9 @@ struct TRTDestroy
 template< class T >
 using TRTUniquePtr = std::unique_ptr< T, TRTDestroy >;
 
-
+//! [ParseOnnxModel]
 bool parseOnnxModel(const std::string& model_path, TRTUniquePtr< nvinfer1::ICudaEngine >& engine, TRTUniquePtr< nvinfer1::IExecutionContext >& context)
+//! [ParseOnnxModel]
 {
 	// this section of code is from jetson-inference's `tensorNet`, to test if the GIE already exists.
 	char cache_prefix[FILENAME_MAX];
@@ -177,6 +191,7 @@ bool parseOnnxModel(const std::string& model_path, TRTUniquePtr< nvinfer1::ICuda
 
 	std::cout << "attempting to open engine cache file " << cache_path << std::endl;
 
+	//! [ParseOnnxModel engine exists]
 	if(vpIoTools::checkFilename(cache_path))
 	{
 		char* engineStream = NULL;
@@ -213,11 +228,13 @@ bool parseOnnxModel(const std::string& model_path, TRTUniquePtr< nvinfer1::ICuda
 
 		return true;
 	}
+	//! [ParseOnnxModel engine exists]
 
+	//! [ParseOnnxModel engine does not exist]
 	else
 	{
 		if(!vpIoTools::checkFilename(model_path))
-		{
+			{
 			std::cerr << "Could not parse ONNX model. File not found" << std::endl;
 			return false;
 		}
@@ -276,6 +293,7 @@ bool parseOnnxModel(const std::string& model_path, TRTUniquePtr< nvinfer1::ICuda
 
 		return true;
 	}
+	//! [ParseOnnxModel engine does not exist]
 }
 
 int main(int argc, char** argv)
@@ -313,8 +331,8 @@ int main(int argc, char** argv)
         	labelFile = std::string(argv[i+1]);
       	  } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         	std::cout << argv[0] << " --device <camera device number> --input <path to image or video>"
-                          		" (camera is used if input is empty) --model <path to net trained weights>"
-					" --config <path to net config file>"
+									" (camera is used if input is empty) --model <path to net trained weights>"
+									" --config <path to net config file>"
                                 	" --input-scale <input scale factor> --mean <meanR meanG meanB>"
                                 	" --confThresh <confidence threshold>"
                                 	" --nmsThresh <NMS threshold> --labels <path to label file>" << std::endl;
@@ -334,6 +352,7 @@ int main(int argc, char** argv)
       		}
     	}
 
+	//! [Create GIE]
 	// Parse the model and initialize the engine and the context.
 	TRTUniquePtr< nvinfer1::ICudaEngine > engine{nullptr};
 	TRTUniquePtr< nvinfer1::IExecutionContext > context{nullptr};
@@ -342,11 +361,13 @@ int main(int argc, char** argv)
 		std::cout << "Make sure the model file exists. To see available models, plese visit: \n\twww.github.com/lagadic/visp-images/dnn/object_detection/" << std::endl;
 		return 0;
 	}
+	//! [Create GIE]
 
 	std::vector < nvinfer1::Dims > input_dims;
 	std::vector < nvinfer1::Dims > output_dims;
 	std::vector < void* > buffers(engine->getNbBindings()); // buffers for input and output data.
 
+	//! [Get I/O dimensions]
 	for(int i = 0; i < engine->getNbBindings(); ++i)
 	{
 		auto binding_size = getSizeByDim(engine->getBindingDimensions(i)) * batch_size * sizeof(float);
@@ -367,7 +388,9 @@ int main(int argc, char** argv)
 		std::cerr << "Expect at least one input and one output for network" << std::endl;
 		return -1;
 	}
+	//! [Get I/O dimensions]
 
+	//! [OpenCV VideoCapture]
 	cv::VideoCapture capture;
 
 	if (input.empty()) {
@@ -380,6 +403,7 @@ int main(int argc, char** argv)
     	int cap_height = (int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
     	capture.set(cv::CAP_PROP_FRAME_WIDTH, cap_width / opt_scale);
     	capture.set(cv::CAP_PROP_FRAME_HEIGHT, cap_height / opt_scale);
+	//! [OpenCV VideoCapture]
 
 	vpImage<vpRGBa> I;
 	cv::Mat frame;
@@ -394,6 +418,7 @@ int main(int argc, char** argv)
 	vpDisplayX d(I);
 
 	double start, stop;
+	//! [Main loop]
 	while(!vpDisplay::getClick(I, false))
 	{
 		// get frame.
@@ -422,6 +447,7 @@ int main(int argc, char** argv)
 		}
 		vpDisplay::flush(I);
 	}
+	//! [Main loop]
 
 	for(void* buf : buffers)
 		cudaFree(buf);
