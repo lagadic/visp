@@ -1,0 +1,154 @@
+/**
+
+\page tutorial-detection-tensorrt Tutorial: Deep learning object detection on NVIDIA GPU
+\tableofcontents
+
+\section dnn_trt_intro Introduction
+This tutorial shows how to run object detection inference using NVIDIA <a href="https://developer.nvidia.com/tensorrt">TensorRT</a> inference SDK.
+
+For this tutorial, you'll need `ssd_mobilenet.onnx` pre-trained model, and `pascal-voc-labels.txt` label's file containing the corresponding labels.
+These files can be found in <a href="https://github.com/lagadic/visp-images">ViSP Images</a>.
+
+Note that the source code described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/dnn
+\endcode
+
+Before running this tutorial, make sure you have installed:
+- CUDA (version 10.2 or higher)
+- TensorRT (version 7.1 or higher)
+- OpenCV built from source (version 4.5.2 or higher)
+
+\section dnn_trt_cuda_install Install CUDA
+CUDA is a parallel computing platform and programming model invented by <a href="https://nvidia.com">NVIDIA</a>.
+To install NVIDIA CUDA Toolkit on your machine, please follow this step-by-step <a href="https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html">guide</a>.
+
+\section dnn_trt_trt_install Install TensorRT
+TensorRT is a C++ library that facilitates high-performance inference on NVIDIA GPUs.
+To download and install TensorRT, please follow this step-by-step <a href="https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html#downloading">guide</a>.
+
+\section dnn_trt_opencv_install Install OpenCV from source
+To be able to run the tutorial, you should install OpenCV from source, since some extra modules are required (`cudev`, `cudaarithm` and `cudawarping` are not included in `libopencv-contrib-dev` package).
+To do so, proceed as follows:
+
+- In `VISP_WS`, clone `opencv` and `opencv_contrib` repos:
+\code
+$ cd $VISP_WS
+$ git clone https://github.com/opencv/opencv
+$ git clone https://github.com/opencv/opencv_contrib
+\endcode
+
+- Create `build` directory in `opencv` directory
+\code
+$ cd opencv && mkdir build && cd build
+\endcode
+
+- To install opencv with extra modules, execute the following command:
+\code
+$ cmake -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules -DBUILD_opencv_cudev=ON -DBUILD_opencv_cudaarithm=ON -DBUILD_opencv_cudawarping=ON ../
+\endcode
+
+- Note that if you want a more advanced way to configure the build process, you can use `ccmake`:
+\code
+$ ccmake -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules ../
+\endcode
+
+- Launch build process:
+\code
+$ make -j$(nproc)
+$ sudo make install
+\endcode
+
+
+\section dnn_trt_example Tutorial description
+In the following section is a detailed description of the tutorial.
+
+\subsection header_files Include header files
+Include header files for required extra modules to handle CUDA.
+\snippet tutorial-dnn-tensorrt-live.cpp OpenCV CUDA header files
+
+Include `cuda_runtime_api.h` header file that defines the public host functions and types for the CUDA runtime API.
+\snippet tutorial-dnn-tensorrt-live.cpp CUDA header files
+
+Include TensorRT header files.
+`NvInfer.h` is the top-level API file for TensorRT.
+`NvOnnxParser.h` is the API for the <a href="https://onnx.ai/">ONNX</a> Parser.
+\snippet tutorial-dnn-tensorrt-live.cpp TRT header files
+
+\subsection preprocessing Pre-processing
+Prepare input image for inference with OpenCV.
+First, upload image to GPU, resize it to match model's input dimensions, normalize with `meanR` `meanG` `meanB` being the values used for mean substraction.
+Transform data to tensor (copy data to channel by channel to `gpu_input`).
+In the case of `ssd_mobilenet.onnx`, the input dimension is 1x3x300x300.
+\snippet tutorial-dnn-tensorrt-live.cpp Preprocess image
+
+\subsection postprocessing Post-processing
+After running the inference, depending on the model used, you will get different results dimensions on the output.
+These results should be post processed.
+In the case of `ssd_mobilenet.onnx`, there is 2 outputs:
+- `scores` of dimension : 1x3000x21
+- `boxes` of dimension : 1x3000x4
+
+In fact, the model will output 3000 guesses of boxes (bounding boxes) with 21 scores each (1 score for each class).
+The result of the inference being on the GPU, we should first proceed by copying it to the CPU.
+Post processing consists of filtering the predictions where we're not sure about the class detected and then merging multiple detections that can occur approximately at the same locations.
+`confThresh` is the confidence threshold used to filter the detections after inference.
+`nmsThresh` is the Non-Maximum Threshold. It is used to merge multiple detections being in the same location approximately.
+\snippet tutorial-dnn-tensorrt-live.cpp PostProcess results
+
+\subsection parseOnnx Parse ONNX Model
+Parse ONNX model.
+\snippet tutorial-dnn-tensorrt-live.cpp ParseOnnxModel
+`model_path` is the path to **onnx** file.
+
+`engine` is used for executing inference on a built network.
+
+`context` is used for executing inference.
+
+To parse ONNX model, we should first proceed by initializing TensorRT **Context** and **Engine**.
+To do this, we should create an instance of **Builder**. With **Builder**, we can create **Network** that can create the **Parser**.
+
+If we already have the GPU inference engine loaded once, it will be serialized and saved in a cache file (with .engine extension). In this case,
+the engine file will be loaded, then inference runtime created, engine and context loaded.
+\snippet tutorial-dnn-tensorrt-live.cpp ParseOnnxModel engine exists
+
+Otherwise, we should parse the ONNX model (for the first time only), create an instance of builder. The builder can be configured to select the amount of GPU memory to be used for tactic selection or FP16/INT8 modes.
+Create **engine** and **context** to be used in the main pipeline, and serialize and save the engine for later use.
+\snippet tutorial-dnn-tensorrt-live.cpp ParseOnnxModel engine does not exist
+
+\subsection Main_pipeline Main pipeline
+Start by parsing the model and creating **engine** and **context**.
+\snippet tutorial-dnn-tensorrt-live.cpp Create GIE
+
+Using **engine**, we can get the dimensions of the input and outputs, and create buffers respectively.
+\snippet tutorial-dnn-tensorrt-live.cpp Get I/O dimensions
+
+Create a grabber to retrieve image from webcam (or external camera) or read images from image or video.
+\snippet tutorial-dnn-tensorrt-live.cpp OpenCV VideoCapture
+
+- Capture a new frame from the grabber,
+- Convert this frame to vpImage used for display,
+- Call **preprocessImage()** function to copy the `frame` to GPU and store in `input` buffer,
+- Perform inference with **context->enqueue()**,
+- Call **postprocessResults()** function to filter the outputs,
+- Display the image with the bounding boxes.
+\snippet tutorial-dnn-tensorrt-live.cpp Main loop
+
+\section tutorial_usage Usage
+To use this tutorial, you should have downloaded an **onnx** file of a model with its corresponding labels in *txt* file format.
+To start, you may find the **ssd_mobilenet.onnx** model <a href="https://github.com/lagadic/visp-images/dnn/">here</a> .
+
+To see the options, run:
+\code
+$ ./tutorial-dnn-tensorrt-live --help
+\endcode
+
+Consider you downloaded the files (model and labels), to run object detection on images from webcam, run:
+\code
+$ ./tutorial-dnn-tensorrt-live --model ssd_mobilenet.onnx --labels pascal-voc-labels.txt
+\endcode
+
+An example of the object detection can be viewed in this <a href="">video</a>.
+
+*/

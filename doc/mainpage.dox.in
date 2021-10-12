@@ -174,6 +174,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-detection-object-deprecated <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object. We recommend to follow rather \ref tutorial-detection-object that uses vpMbGenericTracker class.
 - \ref tutorial-detection-apriltag <br>This tutorial focuses on AprilTag patterns detection and pose estimation.
 - \ref tutorial-detection-dnn <br>This tutorial shows how to do deep learning object detection.
+- \ref tutorial-detection-tensorrt <br>This tutorial shows how to perform object detection inference using NVIDIA TensorRT inference SDK.
 
 \subsection tuto_computer_vision Computer vision
 
