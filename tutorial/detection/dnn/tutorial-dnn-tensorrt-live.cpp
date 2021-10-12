@@ -107,46 +107,46 @@ std::vector< cv::Rect> postprocessResults(std::vector< void* >buffers, const std
 	// post process
 	int N = output_dims[0].d[1], C = output_dims[0].d[2]; // (1 x N x C format); N: Number of output detection boxes (fixed in the model), C: Number of classes.
 	for(int i = 0; i < N; i++) // for all N (boxes)
-        {
-      		uint32_t maxClass = 0;
-	        float maxScore = -1000.0f;
+	{
+		uint32_t maxClass = 0;
+		float maxScore = -1000.0f;
 
-	      	for(int j = 1; j < C; j++) // ignore background (classId = 0).
-	      	{
-			const float score = cpu_outputs[0][i * C + j];
+		for(int j = 1; j < C; j++) // ignore background (classId = 0).
+		{
+		const float score = cpu_outputs[0][i * C + j];
 
-			if(score < confThresh)
-				continue;
+		if(score < confThresh)
+			continue;
 
-			if(score > maxScore)
-			{
-				maxScore = score;
-				maxClass = j;
-			}
-	      }
+		if(score > maxScore)
+		{
+			maxScore = score;
+			maxClass = j;
+		}
+		}
 
-	      if(maxScore > confThresh)
-	      {
-			int left = (int)(cpu_outputs[1][4*i] * image_width);
-			int top = (int)(cpu_outputs[1][4*i + 1] * image_height);
-			int right = (int)(cpu_outputs[1][4*i + 2] * image_width);
-			int bottom = (int)(cpu_outputs[1][4*i + 3] * image_height);
-			int width = right - left + 1;
-			int height = bottom - top + 1;
+		if(maxScore > confThresh)
+		{
+		int left = (int)(cpu_outputs[1][4*i] * image_width);
+		int top = (int)(cpu_outputs[1][4*i + 1] * image_height);
+		int right = (int)(cpu_outputs[1][4*i + 2] * image_width);
+		int bottom = (int)(cpu_outputs[1][4*i + 3] * image_height);
+		int width = right - left + 1;
+		int height = bottom - top + 1;
 
-			m_boxes.push_back(cv::Rect(left, top, width, height));
-			m_classIds.push_back(maxClass);
-			m_confidences.push_back(maxScore);
-	      }
-    	}
+		m_boxes.push_back(cv::Rect(left, top, width, height));
+		m_classIds.push_back(maxClass);
+		m_confidences.push_back(maxScore);
+		}
+	}
 
 	cv::dnn::NMSBoxes(m_boxes, m_confidences, confThresh, nmsThresh, m_indices);
-  	m_boxesNMS.resize(m_indices.size());
-  	for (size_t i = 0; i < m_indices.size(); ++i)
-  	{
-      		int idx = m_indices[i];
-      		m_boxesNMS[i] = m_boxes[idx];
-  	}
+	m_boxesNMS.resize(m_indices.size());
+	for (size_t i = 0; i < m_indices.size(); ++i)
+	{
+			int idx = m_indices[i];
+			m_boxesNMS[i] = m_boxes[idx];
+	}
 
 	classIds = m_classIds; // Returning detected objects class Ids.
 	return m_boxesNMS;
@@ -234,7 +234,7 @@ bool parseOnnxModel(const std::string& model_path, TRTUniquePtr< nvinfer1::ICuda
 	else
 	{
 		if(!vpIoTools::checkFilename(model_path))
-			{
+		{
 			std::cerr << "Could not parse ONNX model. File not found" << std::endl;
 			return false;
 		}
@@ -300,57 +300,57 @@ int main(int argc, char** argv)
 {
 	int opt_device = 0;
 	unsigned int opt_scale = 2;
-   	std::string input = "";
+	std::string input = "";
 	std::string model = "ssd-mobilenet.onnx";
-    	std::string config = "";
-    	float meanR = 127.5f, meanG = 127.5f, meanB = 127.5f;
-    	float confThresh = 0.5f;
-    	float nmsThresh = 0.4f;
-    	std::string labelFile = "pascal-voc-labels.txt";
+	std::string config = "";
+	float meanR = 127.5f, meanG = 127.5f, meanB = 127.5f;
+	float confThresh = 0.5f;
+	float nmsThresh = 0.4f;
+	std::string labelFile = "pascal-voc-labels.txt";
 
 	for (int i = 1; i < argc; i++) {
 	  if (std::string(argv[i]) == "--device" && i+1 < argc) {
-        	opt_device = atoi(argv[i+1]);
-      	  } else if (std::string(argv[i]) == "--input" && i+1 < argc) {
-        	input = std::string(argv[i+1]);
-      	  } else if (std::string(argv[i]) == "--model" && i+1 < argc) {
-        	model = std::string(argv[i+1]);
-	  } else if (std::string(argv[i]) == "--config" && i+1 < argc) {
-        	config = std::string(argv[i+1]);
-      	  } else if (std::string(argv[i]) == "--input-scale" && i+1 < argc) {
-		opt_scale = atoi(argv[i+1]);
-	  } else if (std::string(argv[i]) == "--mean" && i+3 < argc) {
-        	meanR = atof(argv[i+1]);
-        	meanG = atof(argv[i+2]);
-        	meanB = atof(argv[i+3]);
-      	  } else if (std::string(argv[i]) == "--confThresh" && i+1 < argc) {
-        	confThresh = (float)atof(argv[i+1]);
-      	  } else if (std::string(argv[i]) == "--nmsThresh" && i+1 < argc) {
-        	nmsThresh = (float)atof(argv[i+1]);
-          } else if (std::string(argv[i]) == "--labels" && i+1 < argc) {
-        	labelFile = std::string(argv[i+1]);
-      	  } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        	std::cout << argv[0] << " --device <camera device number> --input <path to image or video>"
+			opt_device = atoi(argv[i+1]);
+		} else if (std::string(argv[i]) == "--input" && i+1 < argc) {
+			input = std::string(argv[i+1]);
+		} else if (std::string(argv[i]) == "--model" && i+1 < argc) {
+			model = std::string(argv[i+1]);
+		} else if (std::string(argv[i]) == "--config" && i+1 < argc) {
+			config = std::string(argv[i+1]);
+		} else if (std::string(argv[i]) == "--input-scale" && i+1 < argc) {
+			opt_scale = atoi(argv[i+1]);
+		} else if (std::string(argv[i]) == "--mean" && i+3 < argc) {
+			meanR = atof(argv[i+1]);
+			meanG = atof(argv[i+2]);
+			meanB = atof(argv[i+3]);
+		} else if (std::string(argv[i]) == "--confThresh" && i+1 < argc) {
+			confThresh = (float)atof(argv[i+1]);
+		} else if (std::string(argv[i]) == "--nmsThresh" && i+1 < argc) {
+			nmsThresh = (float)atof(argv[i+1]);
+		} else if (std::string(argv[i]) == "--labels" && i+1 < argc) {
+			labelFile = std::string(argv[i+1]);
+		} else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+			std::cout << argv[0] << " --device <camera device number> --input <path to image or video>"
 									" (camera is used if input is empty) --model <path to net trained weights>"
 									" --config <path to net config file>"
-                                	" --input-scale <input scale factor> --mean <meanR meanG meanB>"
-                                	" --confThresh <confidence threshold>"
-                                	" --nmsThresh <NMS threshold> --labels <path to label file>" << std::endl;
-	    return EXIT_SUCCESS;
-	  }
+									" --input-scale <input scale factor> --mean <meanR meanG meanB>"
+									" --confThresh <confidence threshold>"
+									" --nmsThresh <NMS threshold> --labels <path to label file>" << std::endl;
+		return EXIT_SUCCESS;
+		}
 	}
 
 	std::string model_path(model);
 	int batch_size = 1;
 
-    	std::vector<std::string> labels;
-    	if (!labelFile.empty()) {
-      		std::ifstream f_label(labelFile);
-      		std::string line;
-      		while (std::getline(f_label, line)) {
-        		labels.push_back(line);
-      		}
-    	}
+	std::vector<std::string> labels;
+	if (!labelFile.empty()) {
+		std::ifstream f_label(labelFile);
+		std::string line;
+		while (std::getline(f_label, line)) {
+			labels.push_back(line);
+		}
+	}
 
 	//! [Create GIE]
 	// Parse the model and initialize the engine and the context.
@@ -394,15 +394,15 @@ int main(int argc, char** argv)
 	cv::VideoCapture capture;
 
 	if (input.empty()) {
-      		capture.open(opt_device);
-    	} else {
-      		capture.open(input);
-    	}
+		capture.open(opt_device);
+	} else {
+		capture.open(input);
+	}
 
 	int cap_width = (int)capture.get(cv::CAP_PROP_FRAME_WIDTH);
-    	int cap_height = (int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
-    	capture.set(cv::CAP_PROP_FRAME_WIDTH, cap_width / opt_scale);
-    	capture.set(cv::CAP_PROP_FRAME_HEIGHT, cap_height / opt_scale);
+	int cap_height = (int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
+	capture.set(cv::CAP_PROP_FRAME_WIDTH, cap_width / opt_scale);
+	capture.set(cv::CAP_PROP_FRAME_HEIGHT, cap_height / opt_scale);
 	//! [OpenCV VideoCapture]
 
 	vpImage<vpRGBa> I;
@@ -455,19 +455,19 @@ int main(int argc, char** argv)
 	return 0;
 }
 #else
-  int main()
-  {
-    std::cout << "OpenCV is not built with CUDA." << std::endl;
+	int main()
+	{
+		std::cout << "OpenCV is not built with CUDA." << std::endl;
 
-    return EXIT_SUCCESS;
-  }
+		return EXIT_SUCCESS;
+	}
 #endif
 
 #else
-  int main()
-  {
-    std::cout << "ViSP is not built with TensorRT." << std::endl;
+	int main()
+	{
+		std::cout << "ViSP is not built with TensorRT." << std::endl;
 
-    return EXIT_SUCCESS;
-  }
+		return EXIT_SUCCESS;
+	}
 #endif
