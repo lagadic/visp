@@ -32,15 +32,11 @@
  * Pose computation from RGBD.
  *
  *****************************************************************************/
-#define VP_TRACE
-#define VP_DEBUG
-
-#include <visp/vpDebug.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpRobust.h>
 #include <visp3/vision/vpPose.h>
-#define VP_DEBUG_MODE 3 // Activate debug level 1 and 2
+
 namespace
 {
 vpHomogeneousMatrix compute3d3dTransformation(const std::vector<vpPoint> &p, const std::vector<vpPoint> &q)
@@ -406,7 +402,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
   for (size_t i = 0; i < vec_polygon.size(); i++) {
     vpPolygon polygon(corners[i]);
     vpRect bb = polygon.getBoundingBox();
-    
+    totalArea+= polygon.getArea();
     std::vector<double> points_3d;
 
     unsigned int top = static_cast<unsigned int>(std::max(0, static_cast<int>(bb.getTop())));
@@ -457,7 +453,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
     if (coplanar_points) {
       // if all tags is coplanar, use point insides tag_points_3d to estimate the plane
       estimatePlaneEquationSVD(tag_points_3d, plane_equation, centroid, normalized_weights);
-
+      int count = 0;
       for (size_t j = 0; j < corners.size(); j++) {
         std::vector<vpImagePoint> tag_corner = corners[j];
         for (size_t i = 0; i < tag_corner.size(); i++) {
@@ -470,36 +466,32 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
             Z = -Z;
           }
           p.push_back(vpPoint(x * Z, y * Z, Z));
-          pose_points[j].set_x(x);
-          pose_points[j].set_y(y);
+          pose_points[count].set_x(x);
+          pose_points[count].set_y(y);
+          count++;
         }
       }
     } else {
-      // if the tags is not planar, estimate the plane for each tags
-
+      // if the tags is not coplanar, estimate the plane for each tags
       int count = 0;
       int recomputedTag = 0; //number of tags in which 3d points are well registered
 
-      // vpCDEBUG(2) << "tag_points_3d_nonplanar size            :" << std::to_string(tag_points_3d_nonplanar.size()) << std::endl;
       for (size_t k = 0; k < tag_points_3d_nonplanar.size(); k++) {
 
         std::vector<double> rec_points_3d = tag_points_3d_nonplanar[k];
         double tag_normalized_weights = 0;
-        // vpCDEBUG(2) << "NonPlanar. k            :" << std::to_string(k) << std::endl;
-        // vpCDEBUG(2) << "NonPlanar. rec_points_3d:" << std::to_string(rec_points_3d.size()) << std:: endl;
-        if (rec_points_3d.size() > 0) {
-
-          //increase recomputedTag to calculatenor normalized_weights
+        
+        if (rec_points_3d.size() >= 9) {
+          //The array must has at least 3 points
+          //increase recomputedTag to calculate normalized_weights
           recomputedTag++;
 
           estimatePlaneEquationSVD(rec_points_3d, plane_equation, centroid, tag_normalized_weights);
           normalized_weights += tag_normalized_weights;
 
-          // get the 2d points at the tag whose plane just recomputed
+          //get the 2d points at the tag whose plane just recomputed
           std::vector<vpImagePoint> tag_corner = corners[k];
-          // // vpCDEBUG(2) <<  "Nonplanar. corners size:" << std::to_string(tag_corner.size()) << std::endl;
           for (size_t i = 0; i < tag_corner.size(); i++) {
-            // vpCDEBUG(2) <<  "i:" << std::to_string(i) << std::endl;
             const vpImagePoint &imPt = tag_corner[i];
             double x = 0, y = 0;
             vpPixelMeterConversion::convertPoint(colorIntrinsics, imPt.get_u(), imPt.get_v(), x, y);
@@ -518,43 +510,46 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
         // The issue happens with Orbbec camera while Realsenses are fine
         // To prevent exception while computePose, skip the failed estimation tag's 4 corners
           count += 4;
-          // vpCDEBUG(2) << "REC POINT HAS NO ELEMENTS AT tag:" << std::to_string(tagsId[k]) << std::endl;
         }
       }
 
-      // vpCDEBUG(2) << "count:" << std::to_string(count) << std::endl;
-      // vpCDEBUG(2) << "recomputedTag:" << std::to_string(recomputedTag) << std::endl;
+
       normalized_weights = normalized_weights / recomputedTag;
     }
-    // vpCDEBUG(2) <<  "point3d:" << std::to_string(point3d.size()) << std::endl;
+  
     for (size_t i = 0; i < point3d.size(); i++) {
       std::vector<vpPoint> tagPoint3d = point3d[i];
       // Some times the some tags do not have any points registered due to small size
       // The issue happens with Orbbec camera while Realsenses are fine
       // To prevent wrong estimation or exception (p and q sizes are differents), 
       //        ignore the recomputer vector (tag_points_3d_nonplanar) which size = 0
-      // vpCDEBUG(2) <<  "tag_points_3d_nonplanar:" << std::to_string(tag_points_3d_nonplanar.size()) << std::endl;
-      if (tag_points_3d_nonplanar[i].size() > 0) {
-        for (size_t j = 0; j < tagPoint3d.size(); j++) {
-          q.push_back(tagPoint3d[j]);
+      
+      if (coplanar_points) {
+          for (size_t j = 0; j < tagPoint3d.size(); j++) 
+            q.push_back(tagPoint3d[j]);
+      }
+      else{
+        if (tag_points_3d_nonplanar[i].size() > 0) {
+          for (size_t j = 0; j < tagPoint3d.size(); j++) 
+            q.push_back(tagPoint3d[j]);
         }
       }
     }
 
-    // vpCDEBUG(2) <<  "p:" << std::to_string(p.size()) << std::endl;
-    // vpCDEBUG(2) <<  "q:" << std::to_string(q.size()) << std::endl;
-    
-    cMo = compute3d3dTransformation(p, q);
+   
+    if (p.size() == q.size())
+    {
+      cMo = compute3d3dTransformation(p, q);
 
-    if (validPose(cMo)) {
-      vpPose pose;
-      pose.addPoints(pose_points);
-      if (pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
-        if (confidence_index != NULL) {
-          *confidence_index = std::min(1.0, normalized_weights * static_cast<double>(nb_points_3d) / totalArea);
-          // vpCDEBUG(2) << "confidence_index:" << std::to_string(*confidence_index) << std::endl;
+      if (validPose(cMo)) {
+        vpPose pose;
+        pose.addPoints(pose_points);
+        if (pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
+          if (confidence_index != NULL) {
+            *confidence_index = std::min(1.0, normalized_weights * static_cast<double>(nb_points_3d) / totalArea);
+          }
+          return true;
         }
-        return true;
       }
     }
   }
