@@ -84,10 +84,9 @@ int main(int argc, const char **argv)
     vpRealSense2 g;
     rs2::config config;
     unsigned int width = 640, height = 480;
-    config.disable_stream(RS2_STREAM_DEPTH);
-    config.disable_stream(RS2_STREAM_INFRARED);
     config.enable_stream(RS2_STREAM_COLOR, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_RGBA8, 30);
     config.enable_stream(RS2_STREAM_DEPTH, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_Z16, 30);
+    config.enable_stream(RS2_STREAM_INFRARED, static_cast<int>(width), static_cast<int>(height), RS2_FORMAT_Y8, 30);
 
     vpImage<unsigned char> I;
     vpImage<vpRGBa> I_color(height, width);
@@ -95,7 +94,11 @@ int main(int argc, const char **argv)
     vpImage<vpRGBa> I_depth;
 
     g.open(config);
+std::cout << "debug 2" << std::endl;
     const float depth_scale = g.getDepthScale();
+    std::cout << "I_color: " << I_color.getWidth() << " " << I_color.getHeight() << std::endl;
+std::cout << "I_depth_raw: " << I_depth_raw.getWidth() << " " << I_depth_raw.getHeight() << std::endl;
+
     rs2::align align_to_color = RS2_STREAM_COLOR;
     g.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap), reinterpret_cast<unsigned char *>(I_depth_raw.bitmap),
               NULL, NULL, &align_to_color);
@@ -145,7 +148,6 @@ int main(int argc, const char **argv)
     detector.setDisplayTag(display_tag, color_id < 0 ? vpColor::none : vpColor::getColor(color_id), thickness);
     detector.setZAlignedWithCameraAxis(align_frame);
     //! [AprilTag detector settings]
-
     std::vector<double> time_vec;
     for (;;) {
       double t = vpTime::measureTimeMs();

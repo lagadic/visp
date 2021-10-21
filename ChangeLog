@@ -7,14 +7,18 @@
 
 ViSP 3.4.1 (under development)
   - Contributors:
-    . Fabien Spindler, Souriya Trinh
+    . Fabien Spindler, Souriya Trinh, Olivier Kermorgant
   - New features and improvements
+    . Camera calibration model can now consider px/py aspect ratio and estimate
+      a model where px = py
   - Tutorials
     . Physical simulation of a Franka robot, with a model that has been accurately
       identified from a real Franka robot using ViSP, ROS and CoppeliaSim.
       More info on http://wiki.ros.org/visp_ros
   - Bug fixed
     . [#913] Cannot build tutorial with librealsense < 2.31.0
+    . [#926] Packaging with CPack doesn't work with Ogre dependency
+    . [#933] tutorial-apriltag-detector-live-rgbd-realsense.cpp doesn't work
 ----------------------------------------------
 ViSP 3.4.0 (released February 26, 2021)
   - Contributors:

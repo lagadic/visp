@@ -37,9 +37,10 @@
 #############################################################################
 
 
-# To install the generated debian package use the gdebi-gtk package 
-# installer on Ubuntu:
-# gdebi-gtk libvisp-dev-2.6.1-1_i386.deb
+# To install the generated debian package use:
+#   sudo dpkg -i libvisp-dev_3.4.1-1_amd64.deb
+# To unstall the package use:
+#   sudo apt-get remove libvisp-dev
 
 # $ dpkg --print-architecture
 FIND_PROGRAM(DPKG_CMD dpkg)
@@ -122,7 +123,12 @@ IF(USE_SOQT)
   set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libsoqt4-dev (>=1.4.2~svn20090224-2)")
 ENDIF()
 IF(USE_OGRE)
-  set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libogre-dev (>=1.7.3)")
+  if(OGRE_VERSION VERSION_LESS_EQUAL "1.7.3")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libogre-dev (>=1.7.3)")
+  else()
+    string(REGEX MATCH "[0-9]+\\.[0-9]+" OGRE_VERSION_MINOR ${OGRE_VERSION})
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libogre-${OGRE_VERSION_MINOR}-dev (>=${OGRE_VERSION})")
+  endif()
   # since ogre-samples-media is not available on ubuntu oneiric 11.10 for example, we need an extra test to add this dependency
   IF(OGRE_MEDIA_DIR)
     if(DEBIAN_DISTRO_RELEASE)
