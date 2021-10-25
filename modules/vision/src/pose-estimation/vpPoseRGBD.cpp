@@ -368,7 +368,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
                                              const std::vector<std::vector<vpImagePoint> > &corners,
                                              const vpCameraParameters &colorIntrinsics,
                                              const std::vector<std::vector<vpPoint> > &point3d,
-                                             const std::vector<u_int16_t> &tagsId, vpHomogeneousMatrix &cMo,
+                                             vpHomogeneousMatrix &cMo,
                                              double *confidence_index, bool coplanar_points)
 {
 
