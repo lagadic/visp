@@ -368,8 +368,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
                                              const std::vector<std::vector<vpImagePoint> > &corners,
                                              const vpCameraParameters &colorIntrinsics,
                                              const std::vector<std::vector<vpPoint> > &point3d,
-                                             vpHomogeneousMatrix &cMo,
-                                             double *confidence_index, bool coplanar_points)
+                                             vpHomogeneousMatrix &cMo, double *confidence_index, bool coplanar_points)
 {
 
   if (corners.size() != point3d.size()) {
@@ -394,10 +393,10 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
 
   std::vector<vpPolygon> vec_polygon(corners.size());
 
-  //If coplanar is True, the tags_points_3d  will be used to compute one plane 
+  // If coplanar is True, the tags_points_3d  will be used to compute one plane
   std::vector<double> tag_points_3d;
 
-  //Otherwise the vector of planes will be used to compute each plane for each vector
+  // Otherwise the vector of planes will be used to compute each plane for each vector
   std::vector<std::vector<double> > tag_points_3d_nonplanar;
   int nb_points_3d_non_planar = 0;
 
@@ -408,8 +407,8 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
     vpPolygon polygon(corners[i]);
     vpRect bb = polygon.getBoundingBox();
 
-    //The Area to calculate final confidence index should be total area of the tags
-    totalArea+= polygon.getArea();
+    // The Area to calculate final confidence index should be total area of the tags
+    totalArea += polygon.getArea();
 
     unsigned int top = static_cast<unsigned int>(std::max(0, static_cast<int>(bb.getTop())));
     unsigned int bottom = static_cast<unsigned int>(
@@ -433,8 +432,8 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
       }
     }
 
-    //If coplanar_points is True, feed all 3d points to single vector
-    //Otherwise, each vector will hold 3d points for seperate planes
+    // If coplanar_points is True, feed all 3d points to single vector
+    // Otherwise, each vector will hold 3d points for seperate planes
     if (coplanar_points) {
       tag_points_3d.insert(tag_points_3d.end(), points_3d.begin(), points_3d.end());
     } else {
@@ -482,21 +481,21 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
     } else {
       // if the tags is not coplanar, estimate the plane for each tags
       int count = 0;
-    
+
       for (size_t k = 0; k < tag_points_3d_nonplanar.size(); k++) {
 
         std::vector<double> rec_points_3d = tag_points_3d_nonplanar[k];
         double tag_normalized_weights = 0;
-        
+
         if (rec_points_3d.size() >= 9) {
-          //The array must has at least 3 points for the function estimatePlaneEquationSVD not to crash
+          // The array must has at least 3 points for the function estimatePlaneEquationSVD not to crash
 
           estimatePlaneEquationSVD(rec_points_3d, plane_equation, centroid, tag_normalized_weights);
           normalized_weights += tag_normalized_weights;
 
-          //get the 2d points of the tag the plane just recomputed
+          // get the 2d points of the tag the plane just recomputed
           std::vector<vpImagePoint> tag_corner = corners[k];
-          
+
           for (size_t i = 0; i < tag_corner.size(); i++) {
             const vpImagePoint &imPt = tag_corner[i];
             double x = 0, y = 0;
@@ -512,36 +511,34 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
             count++;
           }
         } else {
-        // Some times the some tags do not have any points registered due to small size or bad alignment btw depth and rgb
-        // The issue happens with Orbbec camera while Realsenses are fine
-        // To prevent exception while computePose, skip recomputing the failed estimation tag's (4 point - corners)
+          // Some times the some tags do not have any points registered due to small size or bad alignment btw depth and
+          // rgb The issue happens with Orbbec camera while Realsenses are fine To prevent exception while computePose,
+          // skip recomputing the failed estimation tag's (4 point - corners)
           count += 4;
         }
       }
       normalized_weights = normalized_weights / tag_points_3d_nonplanar.size();
     }
-  
+
     for (size_t i = 0; i < point3d.size(); i++) {
       std::vector<vpPoint> tagPoint3d = point3d[i];
       // Some times the some tags do not have any points registered due to small size
       // The issue happens with Orbbec camera while Realsenses are fine
-      // To prevent wrong estimation or exception (p and q sizes are differents), 
+      // To prevent wrong estimation or exception (p and q sizes are differents),
       //        ignore the recomputer vector (tag_points_3d_nonplanar) which size = 0
       if (coplanar_points) {
-          for (size_t j = 0; j < tagPoint3d.size(); j++) 
-            q.push_back(tagPoint3d[j]);
-      }
-      else{
+        for (size_t j = 0; j < tagPoint3d.size(); j++)
+          q.push_back(tagPoint3d[j]);
+      } else {
         if (tag_points_3d_nonplanar[i].size() > 0) {
-          for (size_t j = 0; j < tagPoint3d.size(); j++) 
+          for (size_t j = 0; j < tagPoint3d.size(); j++)
             q.push_back(tagPoint3d[j]);
         }
       }
     }
 
-    //Due to the possibility of q's size might less than p's, check their size should be identical
-    if (p.size() == q.size())
-    {
+    // Due to the possibility of q's size might less than p's, check their size should be identical
+    if (p.size() == q.size()) {
       cMo = compute3d3dTransformation(p, q);
 
       if (validPose(cMo)) {
