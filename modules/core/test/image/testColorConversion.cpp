@@ -45,6 +45,8 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/io/vpImageIo.h>
 #include "common.hpp"
 
 static const double maxMeanPixelError = 1.0;
@@ -108,7 +110,6 @@ TEST_CASE("RGB <==> RGBa conversion", "[image_conversion]") {
   CHECK((rgba == rgba_ref));
 }
 
-#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
 TEST_CASE("BGR to Gray conversion", "[image_conversion]") {
   vpImage<vpRGBa> rgba_ref(height, width);
   common_tools::fill(rgba_ref);
@@ -126,7 +127,6 @@ TEST_CASE("BGR to Gray conversion", "[image_conversion]") {
   CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
   std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
 }
-#endif
 
 TEST_CASE("BGRa to Gray conversion", "[image_conversion]") {
   vpImage<vpRGBa> rgba_ref(height, width);
@@ -237,6 +237,313 @@ TEST_CASE("OpenCV Mat <==> vpImage conversion", "[image_conversion]") {
   }
 }
 #endif
+
+void col2im(const std::vector<uint8_t>& buffer, vpImage<uint8_t>& I_Bayer_8U)
+{
+  for (unsigned int i = 0; i < I_Bayer_8U.getHeight(); i++) {
+    for (unsigned int j = 0; j < I_Bayer_8U.getWidth(); j++) {
+      I_Bayer_8U[i][j] = buffer[j*I_Bayer_8U.getHeight() + i];
+    }
+  }
+}
+
+void col2im(const std::vector<uint16_t>& buffer, vpImage<uint16_t>& I_Bayer_16U)
+{
+  for (unsigned int i = 0; i < I_Bayer_16U.getHeight(); i++) {
+    for (unsigned int j = 0; j < I_Bayer_16U.getWidth(); j++) {
+      I_Bayer_16U[i][j] = buffer[j*I_Bayer_16U.getHeight() + i];
+    }
+  }
+}
+
+void convertTo(const vpImage<uint16_t>& I_RGBA_16U, vpImage<vpRGBa>& I_RGBA_8U, int divisor=1 << (12-8))
+{
+  for (unsigned int i = 0; i < I_RGBA_8U.getHeight(); i++) {
+    for (unsigned int j = 0; j < I_RGBA_8U.getWidth(); j++) {
+      I_RGBA_8U[i][j] = vpRGBa(vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i*I_RGBA_8U.getWidth() + j)*4 + 0] / (float)divisor),
+                               vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i*I_RGBA_8U.getWidth() + j)*4 + 1] / (float)divisor),
+                               vpMath::saturate<unsigned char>(I_RGBA_16U[0][(i*I_RGBA_8U.getWidth() + j)*4 + 2] / (float)divisor));
+    }
+  }
+}
+
+double computePSNR(const vpImage<vpRGBa>& I_RGBA_8U, const vpImage<vpRGBa>& I_RGBA_8U_ref)
+{
+  double mse = 0;
+  for (unsigned int i = 0; i < I_RGBA_8U.getHeight(); i++) {
+    for (unsigned int j = 0; j < I_RGBA_8U.getWidth(); j++) {
+      vpColVector err = I_RGBA_8U[i][j] - I_RGBA_8U_ref[i][j];
+      mse += vpMath::sqr(err[0]) + vpMath::sqr(err[1]) + vpMath::sqr(err[2]);
+    }
+  }
+  mse /= I_RGBA_8U.getHeight()*I_RGBA_8U.getWidth()*3;
+
+  return 10*std::log10(255*255 / mse);
+}
+
+TEST_CASE("Bayer conversion", "[image_conversion]") {
+  // Load original Klimt image
+  vpImage<vpRGBa> I_RGBA_8U_ref;
+  vpImageIo::read(I_RGBA_8U_ref, vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Klimt/Klimt.ppm"));
+
+  vpImage<vpRGBa> I_RGBA_8U(I_RGBA_8U_ref.getHeight(), I_RGBA_8U_ref.getWidth());
+  int height = I_RGBA_8U_ref.getHeight(), width = I_RGBA_8U_ref.getWidth();
+  const double min_PSNR_bilinear = 21, min_PSNR_Malvar = 23;
+
+  SECTION("16-bit")
+  {
+    std::vector<uint16_t> buffer(height*width);
+    vpImage<uint16_t> I_Bayer_16U(height, width);
+    vpImage<uint16_t> I_RGBA_16U(1, I_Bayer_16U.getHeight()*I_Bayer_16U.getWidth()*4);
+
+    SECTION("BGGR")
+    {
+      const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_12bits.raw");
+
+      std::FILE* f = std::fopen(filename.c_str(), "r");
+      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
+      REQUIRE(sread == buffer.size());
+
+      col2im(buffer, I_Bayer_16U);
+
+      SECTION("Bilinear")
+      {
+        vpImageConvert::demosaicBGGRToRGBaBilinear(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(), I_Bayer_16U.getHeight());
+
+        convertTo(I_RGBA_16U, I_RGBA_8U);
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "16-bit - BGGR - Bilinear - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_bilinear);
+      }
+
+      SECTION("Malvar")
+      {
+        vpImageConvert::demosaicBGGRToRGBaMalvar(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(), I_Bayer_16U.getHeight());
+
+        convertTo(I_RGBA_16U, I_RGBA_8U);
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "16-bit - BGGR - Malvar - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_Malvar);
+      }
+    }
+
+    SECTION("GBRG")
+    {
+      const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_12bits.raw");
+
+      std::FILE* f = std::fopen(filename.c_str(), "r");
+      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
+      REQUIRE(sread == buffer.size());
+
+      col2im(buffer, I_Bayer_16U);
+
+      SECTION("Bilinear")
+      {
+        vpImageConvert::demosaicGBRGToRGBaBilinear(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(), I_Bayer_16U.getHeight());
+
+        convertTo(I_RGBA_16U, I_RGBA_8U);
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "16-bit - GBRG - Bilinear - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_bilinear);
+      }
+
+      SECTION("Malvar")
+      {
+        vpImageConvert::demosaicGBRGToRGBaMalvar(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(), I_Bayer_16U.getHeight());
+
+        convertTo(I_RGBA_16U, I_RGBA_8U);
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "16-bit - GBRG - Malvar - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_Malvar);
+      }
+    }
+
+    SECTION("GRBG")
+    {
+      const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_12bits.raw");
+
+      std::FILE* f = std::fopen(filename.c_str(), "r");
+      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
+      REQUIRE(sread == buffer.size());
+
+      col2im(buffer, I_Bayer_16U);
+
+      SECTION("Bilinear")
+      {
+        vpImageConvert::demosaicGRBGToRGBaBilinear(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(), I_Bayer_16U.getHeight());
+
+        convertTo(I_RGBA_16U, I_RGBA_8U);
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "16-bit - GRBG - Bilinear - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_bilinear);
+      }
+
+      SECTION("Malvar")
+      {
+        vpImageConvert::demosaicGRBGToRGBaMalvar(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(), I_Bayer_16U.getHeight());
+
+        convertTo(I_RGBA_16U, I_RGBA_8U);
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "16-bit - GRBG - Malvar - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_Malvar);
+      }
+    }
+
+    SECTION("RGGB")
+    {
+      const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_12bits.raw");
+
+      std::FILE* f = std::fopen(filename.c_str(), "r");
+      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
+      REQUIRE(sread == buffer.size());
+
+      col2im(buffer, I_Bayer_16U);
+
+      SECTION("Bilinear")
+      {
+        vpImageConvert::demosaicRGGBToRGBaBilinear(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(), I_Bayer_16U.getHeight());
+
+        convertTo(I_RGBA_16U, I_RGBA_8U);
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "16-bit - RGGB - Bilinear - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_bilinear);
+      }
+
+      SECTION("Malvar")
+      {
+        vpImageConvert::demosaicRGGBToRGBaMalvar(I_Bayer_16U.bitmap, I_RGBA_16U.bitmap, I_Bayer_16U.getWidth(), I_Bayer_16U.getHeight());
+
+        convertTo(I_RGBA_16U, I_RGBA_8U);
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "16-bit - RGGB - Malvar - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_Malvar);
+      }
+    }
+  }
+
+  SECTION("8-bit")
+  {
+    std::vector<uint8_t> buffer(height*width);
+    vpImage<uint8_t> I_Bayer_8U(height, width);
+    vpImage<vpRGBa> I_RGBA_8U(I_Bayer_8U.getHeight(), I_Bayer_8U.getWidth());
+
+    SECTION("BGGR")
+    {
+      const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_08bits.raw");
+
+      std::FILE* f = std::fopen(filename.c_str(), "r");
+      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
+      REQUIRE(sread == buffer.size());
+
+      col2im(buffer, I_Bayer_8U);
+
+      SECTION("Bilinear")
+      {
+        vpImageConvert::demosaicBGGRToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap), I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "8-bit - BGGR - Bilinear - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_bilinear);
+      }
+
+      SECTION("Malvar")
+      {
+        vpImageConvert::demosaicBGGRToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap), I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "8-bit - BGGR - Malvar - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_Malvar);
+      }
+    }
+
+    SECTION("GBRG")
+    {
+      const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_08bits.raw");
+
+      std::FILE* f = std::fopen(filename.c_str(), "r");
+      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
+      REQUIRE(sread == buffer.size());
+
+      col2im(buffer, I_Bayer_8U);
+
+      SECTION("Bilinear")
+      {
+        vpImageConvert::demosaicGBRGToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap), I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "8-bit - GBRG - Bilinear - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_bilinear);
+      }
+
+      SECTION("Malvar")
+      {
+        vpImageConvert::demosaicGBRGToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap), I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "8-bit - GBRG - Malvar - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_Malvar);
+      }
+    }
+
+    SECTION("GRBG")
+    {
+      const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_08bits.raw");
+
+      std::FILE* f = std::fopen(filename.c_str(), "r");
+      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
+      REQUIRE(sread == buffer.size());
+
+      col2im(buffer, I_Bayer_8U);
+
+      SECTION("Bilinear")
+      {
+        vpImageConvert::demosaicGRBGToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap), I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "8-bit - GRBG - Bilinear - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_bilinear);
+      }
+
+      SECTION("Malvar")
+      {
+        vpImageConvert::demosaicGRBGToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap), I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "8-bit - GRBG - Malvar - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_Malvar);
+      }
+    }
+
+    SECTION("RGGB")
+    {
+      const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_08bits.raw");
+
+      std::FILE* f = std::fopen(filename.c_str(), "r");
+      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
+      REQUIRE(sread == buffer.size());
+
+      col2im(buffer, I_Bayer_8U);
+
+      SECTION("Bilinear")
+      {
+        vpImageConvert::demosaicRGGBToRGBaBilinear(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap), I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "8-bit - RGGB - Bilinear - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_bilinear);
+      }
+
+      SECTION("Malvar")
+      {
+        vpImageConvert::demosaicRGGBToRGBaMalvar(I_Bayer_8U.bitmap, reinterpret_cast<uint8_t *>(I_RGBA_8U.bitmap), I_Bayer_8U.getWidth(), I_Bayer_8U.getHeight());
+
+        double PSNR = computePSNR(I_RGBA_8U, I_RGBA_8U_ref);
+        std::cout << "8-bit - RGGB - Malvar - PSNR: " << PSNR << std::endl;
+        CHECK(PSNR >= min_PSNR_Malvar);
+      }
+    }
+  }
+}
 
 int main(int argc, char *argv[])
 {

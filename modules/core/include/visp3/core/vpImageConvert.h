@@ -273,20 +273,28 @@ public:
   static void RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
                        unsigned int size);
 
-  static void demosaicGBRGToRGBaBilinear(const uint16_t *gbrg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
-
-  static void demosaicGRBGToRGBaBilinear(const uint16_t *grbg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
-
+  static void demosaicBGGRToRGBaBilinear(const uint8_t *bggr, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
   static void demosaicBGGRToRGBaBilinear(const uint16_t *bggr, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
 
+  static void demosaicGBRGToRGBaBilinear(const uint8_t *gbrg, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+  static void demosaicGBRGToRGBaBilinear(const uint16_t *gbrg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+
+  static void demosaicGRBGToRGBaBilinear(const uint8_t *grbg, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+  static void demosaicGRBGToRGBaBilinear(const uint16_t *grbg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+
+  static void demosaicRGGBToRGBaBilinear(const uint8_t *rggb, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
   static void demosaicRGGBToRGBaBilinear(const uint16_t *rggb, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
 
-  static void demosaicGBRGToRGBaMalvar(const uint16_t *gbrg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
-
-  static void demosaicGRBGToRGBaMalvar(const uint16_t *grbg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
-
+  static void demosaicBGGRToRGBaMalvar(const uint8_t *bggr, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
   static void demosaicBGGRToRGBaMalvar(const uint16_t *bggr, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
 
+  static void demosaicGBRGToRGBaMalvar(const uint8_t *gbrg, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+  static void demosaicGBRGToRGBaMalvar(const uint16_t *gbrg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+
+  static void demosaicGRBGToRGBaMalvar(const uint8_t *grbg, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+  static void demosaicGRBGToRGBaMalvar(const uint16_t *grbg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+
+  static void demosaicRGGBToRGBaMalvar(const uint8_t *rggb, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
   static void demosaicRGGBToRGBaMalvar(const uint16_t *rggb, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
 
 private:
