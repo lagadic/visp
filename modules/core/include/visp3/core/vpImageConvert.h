@@ -118,8 +118,8 @@ public:
   static void convert(const vpImage<double> &src, vpImage<unsigned char> &dest);
   static void convert(const vpImage<unsigned char> &src, vpImage<double> &dest);
 
-  static void convert(const vpImage<uint16_t> &src, vpImage<unsigned char> &dest);
-  static void convert(const vpImage<unsigned char> &src, vpImage<uint16_t> &dest);
+  static void convert(const vpImage<uint16_t> &src, vpImage<unsigned char> &dest, unsigned char bitshift=8);
+  static void convert(const vpImage<unsigned char> &src, vpImage<uint16_t> &dest, unsigned char bitshift=8);
 
   /*!
     Make a copy of an image.
@@ -272,6 +272,22 @@ public:
                        unsigned int size);
   static void RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsigned char *saturation, unsigned char *value,
                        unsigned int size);
+
+  static void demosaicGBRGToRGBaBilinear(const uint16_t *gbrg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+
+  static void demosaicGRBGToRGBaBilinear(const uint16_t *grbg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+
+  static void demosaicBGGRToRGBaBilinear(const uint16_t *bggr, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+
+  static void demosaicRGGBToRGBaBilinear(const uint16_t *rggb, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+
+  static void demosaicGBRGToRGBaMalvar(const uint16_t *gbrg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+
+  static void demosaicGRBGToRGBaMalvar(const uint16_t *grbg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+
+  static void demosaicBGGRToRGBaMalvar(const uint16_t *bggr, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
+
+  static void demosaicRGGBToRGBaMalvar(const uint16_t *rggb, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads=0);
 
 private:
   static void computeYCbCrLUT();
