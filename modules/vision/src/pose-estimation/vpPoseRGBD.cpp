@@ -490,8 +490,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
       for (size_t k = 0; k < tag_points_3d_nonplanar.size(); k++) {
         std::vector<double> rec_points_3d = tag_points_3d_nonplanar[k];
         double tag_normalized_weights = 0;
-        int tag_corner_size = corners[k].size();
-
+      
         if (rec_points_3d.size() >= 9) {
           // The array must has at least 3 points for the function estimatePlaneEquationSVD not to crash
           estimatePlaneEquationSVD(rec_points_3d, plane_equation, centroid, tag_normalized_weights);
@@ -500,7 +499,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
           // Get the 2d points of the tag the plane just recomputed
           std::vector<vpImagePoint> tag_corner = corners[k];
 
-          for (size_t i = 0; i < tag_corner_size; i++) {
+          for (size_t i = 0; i < tag_corner.size(); i++) {
             const vpImagePoint &imPt = tag_corner[i];
             double x = 0, y = 0;
             vpPixelMeterConversion::convertPoint(colorIntrinsics, imPt.get_u(), imPt.get_v(), x, y);
@@ -518,7 +517,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
           // Sometimes an object may do not have enough points registered due to small size or bad alignment btw depth
           // and rgb. This behavior happens with Orbbec camera while Realsenses was fine. To prevent exception while
           // computePose, skip recomputing the failed estimation tag's (4 point - corners)
-          count += tag_corner_size;
+          count += corners[k].size();
         }
       }
       normalized_weights = normalized_weights / tag_points_3d_nonplanar.size();
