@@ -290,9 +290,7 @@ double vpRobust::select(vpColVector &a, unsigned int l, unsigned int r, unsigned
 {
   while (r > l) {
     unsigned int i = partition(a, l, r);
-    if ( i == 0 )
-      r = 0;
-    else if ( i >= k )
+    if (i >= k)
       r = i - 1;
     if (i <= k)
       l = i + 1;
