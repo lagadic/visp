@@ -116,9 +116,9 @@ void demosaicBGGRToRGBaBilinearTpl(const T *bggr, T *rgba, unsigned int width, u
   rgba[2] = bggr[0];
 
   // (0,w-1)
-  rgba[width*4 + 0] = bggr[2*width - 1];
-  rgba[width*4 + 1] = bggr[width - 1];
-  rgba[width*4 + 2] = bggr[width - 2];
+  rgba[(width-1)*4 + 0] = bggr[2*width - 1];
+  rgba[(width-1)*4 + 1] = bggr[width - 1];
+  rgba[(width-1)*4 + 2] = bggr[width - 2];
 
   // (h-1,0)
   rgba[((height-1)*width)*4 + 0] = bggr[(height-1)*width + 1];
@@ -159,13 +159,13 @@ void demosaicBGGRToRGBaBilinearTpl(const T *bggr, T *rgba, unsigned int width, u
   // j == width-1
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.5f*bggr[i*width - 1] + 0.5f*bggr[(i+2)*width - 1]);
-      rgba[(i*width*4 + width-1) + 1] = bggr[(i+1)*width - 1];
-      rgba[(i*width*4 + width-1) + 2] = bggr[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 0] = static_cast<T>(0.5f*bggr[i*width - 1] + 0.5f*bggr[(i+2)*width - 1]);
+      rgba[(i*width + width-1)*4 + 1] = bggr[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 2] = bggr[(i+1)*width - 2];
     } else {
-      rgba[(i*width*4 + width-1) + 0] = bggr[(i+1)*width - 1];
-      rgba[(i*width*4 + width-1) + 1] = bggr[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.5f*bggr[i*width - 2] + 0.5f*bggr[(i+2)*width - 2]);
+      rgba[(i*width + width-1)*4 + 0] = bggr[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 1] = bggr[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 2] = static_cast<T>(0.5f*bggr[i*width - 2] + 0.5f*bggr[(i+2)*width - 2]);
     }
   }
 
@@ -225,9 +225,9 @@ void demosaicGBRGToRGBaBilinearTpl(const T *gbrg, T *rgba, unsigned int width, u
   rgba[2] = gbrg[1];
 
   // (0,w-1)
-  rgba[width*4 + 0] = gbrg[2*width - 2];
-  rgba[width*4 + 1] = gbrg[width - 2];
-  rgba[width*4 + 2] = gbrg[width - 1];
+  rgba[(width-1)*4 + 0] = gbrg[2*width - 2];
+  rgba[(width-1)*4 + 1] = gbrg[width - 2];
+  rgba[(width-1)*4 + 2] = gbrg[width - 1];
 
   // (h-1,0)
   rgba[((height-1)*width)*4 + 0] = gbrg[(height-1)*width];
@@ -268,13 +268,13 @@ void demosaicGBRGToRGBaBilinearTpl(const T *gbrg, T *rgba, unsigned int width, u
   // j == width-1
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.5f*gbrg[i*width - 2] + 0.5f*gbrg[(i+2)*width - 2]);
-      rgba[(i*width*4 + width-1) + 1] = gbrg[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 2] = gbrg[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 0] = static_cast<T>(0.5f*gbrg[i*width - 2] + 0.5f*gbrg[(i+2)*width - 2]);
+      rgba[(i*width + width-1)*4 + 1] = gbrg[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 2] = gbrg[(i+1)*width - 1];
     } else {
-      rgba[(i*width*4 + width-1) + 0] = gbrg[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 1] = gbrg[(i+1)*width - 1];
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.5f*gbrg[i*width - 1] + 0.5f*gbrg[(i+2)*width - 1]);
+      rgba[(i*width + width-1)*4 + 0] = gbrg[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 1] = gbrg[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 2] = static_cast<T>(0.5f*gbrg[i*width - 1] + 0.5f*gbrg[(i+2)*width - 1]);
     }
   }
 
@@ -334,9 +334,9 @@ void demosaicGRBGToRGBaBilinearTpl(const T *grbg, T *rgba, unsigned int width, u
   rgba[2] = grbg[width];
 
   // (0,w-1)
-  rgba[width*4 + 0] = grbg[width - 1];
-  rgba[width*4 + 1] = grbg[width - 2];
-  rgba[width*4 + 2] = grbg[2*width - 2];
+  rgba[(width-1)*4 + 0] = grbg[width - 1];
+  rgba[(width-1)*4 + 1] = grbg[width - 2];
+  rgba[(width-1)*4 + 2] = grbg[2*width - 2];
 
   // (h-1,0)
   rgba[((height-1)*width)*4 + 0] = grbg[(height-2)*width + 1];
@@ -377,13 +377,13 @@ void demosaicGRBGToRGBaBilinearTpl(const T *grbg, T *rgba, unsigned int width, u
   // j == width-1
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[(i*width*4 + width-1) + 0] = grbg[(i+1)*width - 1];
-      rgba[(i*width*4 + width-1) + 1] = grbg[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.5f*grbg[i*width - 2] + 0.5f*grbg[(i+2)*width - 2]);
+      rgba[(i*width + width-1)*4 + 0] = grbg[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 1] = grbg[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 2] = static_cast<T>(0.5f*grbg[i*width - 2] + 0.5f*grbg[(i+2)*width - 2]);
     } else {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.5f*grbg[i*width - 1] + 0.5f*grbg[(i+2)*width - 1]);
-      rgba[(i*width*4 + width-1) + 1] = grbg[(i+1)*width - 1];
-      rgba[(i*width*4 + width-1) + 2] = grbg[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 0] = static_cast<T>(0.5f*grbg[i*width - 1] + 0.5f*grbg[(i+2)*width - 1]);
+      rgba[(i*width + width-1)*4 + 1] = grbg[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 2] = grbg[(i+1)*width - 2];
     }
   }
 
@@ -443,9 +443,9 @@ void demosaicRGGBToRGBaBilinearTpl(const T *rggb, T *rgba, unsigned int width, u
   rgba[2] = rggb[width + 1];
 
   // (0,w-1)
-  rgba[width*4 + 0] = rggb[width - 2];
-  rgba[width*4 + 1] = rggb[width - 1];
-  rgba[width*4 + 2] = rggb[2*width - 1];
+  rgba[(width-1)*4 + 0] = rggb[width - 2];
+  rgba[(width-1)*4 + 1] = rggb[width - 1];
+  rgba[(width-1)*4 + 2] = rggb[2*width - 1];
 
   // (h-1,0)
   rgba[((height-1)*width)*4 + 0] = rggb[(height-2)*width];
@@ -486,13 +486,13 @@ void demosaicRGGBToRGBaBilinearTpl(const T *rggb, T *rgba, unsigned int width, u
   // j == width-1
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[(i*width*4 + width-1) + 0] = rggb[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 1] = rggb[(i+1)*width - 1];
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.5f*rggb[i*width - 1] + 0.5f*rggb[(i+2)*width - 1]);
+      rgba[(i*width + width-1)*4 + 0] = rggb[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 1] = rggb[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 2] = static_cast<T>(0.5f*rggb[i*width - 1] + 0.5f*rggb[(i+2)*width - 1]);
     } else {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.5f*rggb[i*width - 2] + 0.5f*rggb[(i+2)*width - 2]);
-      rgba[(i*width*4 + width-1) + 1] = rggb[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 2] = rggb[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 0] = static_cast<T>(0.5f*rggb[i*width - 2] + 0.5f*rggb[(i+2)*width - 2]);
+      rgba[(i*width + width-1)*4 + 1] = rggb[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 2] = rggb[(i+1)*width - 1];
     }
   }
 
@@ -554,9 +554,9 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
   rgba[2] = bggr[0];
 
   // (0,w-1)
-  rgba[width*4 + 0] = bggr[2*width - 1];
-  rgba[width*4 + 1] = bggr[width - 1];
-  rgba[width*4 + 2] = bggr[width - 2];
+  rgba[(width-1)*4 + 0] = bggr[2*width - 1];
+  rgba[(width-1)*4 + 1] = bggr[width - 1];
+  rgba[(width-1)*4 + 2] = bggr[width - 2];
 
   // (h-1,0)
   rgba[((height-1)*width)*4 + 0] = bggr[(height-1)*width + 1];
@@ -584,13 +584,13 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
   // i == 1
   for (unsigned int j = 1; j < width-1; j++) {
     if (j % 2 == 0) {
-      rgba[j*4 + 0] = static_cast<T>(0.5f*bggr[width + j - 1] + 0.5f*bggr[width + j + 1]);
-      rgba[j*4 + 1] = bggr[width + j];
-      rgba[j*4 + 2] = static_cast<T>(0.5f*bggr[j] + 0.5f*bggr[2*width + j]);
+      rgba[(width + j)*4 + 0] = static_cast<T>(0.5f*bggr[width + j - 1] + 0.5f*bggr[width + j + 1]);
+      rgba[(width + j)*4 + 1] = bggr[width + j];
+      rgba[(width + j)*4 + 2] = static_cast<T>(0.5f*bggr[j] + 0.5f*bggr[2*width + j]);
     } else {
-      rgba[j*4 + 0] = bggr[width + j];
-      rgba[j*4 + 1] = static_cast<T>(0.25f*bggr[j] + 0.25f*bggr[width + j - 1] + 0.25f*bggr[width + j + 1] + 0.25f*bggr[2*width + j]);
-      rgba[j*4 + 2] = static_cast<T>(0.25f*bggr[j - 1] + 0.25f*bggr[j + 1] + 0.25f*bggr[2*width + j - 1] + 0.25f*bggr[2*width + j + 1]);
+      rgba[(width + j)*4 + 0] = bggr[width + j];
+      rgba[(width + j)*4 + 1] = static_cast<T>(0.25f*bggr[j] + 0.25f*bggr[width + j - 1] + 0.25f*bggr[width + j + 1] + 0.25f*bggr[2*width + j]);
+      rgba[(width + j)*4 + 2] = static_cast<T>(0.25f*bggr[j - 1] + 0.25f*bggr[j + 1] + 0.25f*bggr[2*width + j - 1] + 0.25f*bggr[2*width + j + 1]);
     }
   }
 
@@ -610,54 +610,54 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
   // j == 1
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[i*width*4 + 0] = static_cast<T>(0.5f*bggr[(i-1)*width + 1] + 0.5f*bggr[(i+1)*width + 1]);
-      rgba[i*width*4 + 1] = bggr[i*width + 1];
-      rgba[i*width*4 + 2] = static_cast<T>(0.5f*bggr[i*width] + 0.5f*bggr[i*width + 2]);
+      rgba[(i*width + 1)*4 + 0] = static_cast<T>(0.5f*bggr[(i-1)*width + 1] + 0.5f*bggr[(i+1)*width + 1]);
+      rgba[(i*width + 1)*4 + 1] = bggr[i*width + 1];
+      rgba[(i*width + 1)*4 + 2] = static_cast<T>(0.5f*bggr[i*width] + 0.5f*bggr[i*width + 2]);
     } else {
-      rgba[i*width*4 + 0] = bggr[i*width + 1];
-      rgba[i*width*4 + 1] = static_cast<T>(0.25f*bggr[(i-1)*width + 1] + 0.25f*bggr[i*width] + 0.25f*bggr[i*width + 2] + 0.25f*bggr[(i+1)*width + 1]);
-      rgba[i*width*4 + 2] = static_cast<T>(0.25f*bggr[(i-1)*width] + 0.25f*bggr[(i-1)*width + 2] + 0.25f*bggr[(i+1)*width] + 0.25f*bggr[(i+1)*width + 2]);
+      rgba[(i*width + 1)*4 + 0] = bggr[i*width + 1];
+      rgba[(i*width + 1)*4 + 1] = static_cast<T>(0.25f*bggr[(i-1)*width + 1] + 0.25f*bggr[i*width] + 0.25f*bggr[i*width + 2] + 0.25f*bggr[(i+1)*width + 1]);
+      rgba[(i*width + 1)*4 + 2] = static_cast<T>(0.25f*bggr[(i-1)*width] + 0.25f*bggr[(i-1)*width + 2] + 0.25f*bggr[(i+1)*width] + 0.25f*bggr[(i+1)*width + 2]);
     }
   }
 
   // j == width-2
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.25f*bggr[i*width - 3] + 0.25f*bggr[i*width - 1] + 0.25f*bggr[(i+2)*width - 3] + 0.25f*bggr[(i+2)*width - 1]);
-      rgba[(i*width*4 + width-1) + 1] = static_cast<T>(0.25f*bggr[i*width - 2] + 0.25f*bggr[(i+1)*width - 3] +
+      rgba[(i*width + width-2)*4 + 0] = static_cast<T>(0.25f*bggr[i*width - 3] + 0.25f*bggr[i*width - 1] + 0.25f*bggr[(i+2)*width - 3] + 0.25f*bggr[(i+2)*width - 1]);
+      rgba[(i*width + width-2)*4 + 1] = static_cast<T>(0.25f*bggr[i*width - 2] + 0.25f*bggr[(i+1)*width - 3] +
           0.25f*bggr[(i+1)*width - 1] + 0.25f*bggr[(i+2)*width - 2]);
-      rgba[(i*width*4 + width-1) + 2] = bggr[(i+1)*width - 2];
+      rgba[(i*width + width-2)*4 + 2] = bggr[(i+1)*width - 2];
     } else {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.5f*bggr[(i+1)*width - 3] + 0.5f*bggr[(i+1)*width - 1]);
-      rgba[(i*width*4 + width-1) + 1] = bggr[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.5f*bggr[i*width - 2] + 0.5f*bggr[(i+2)*width - 2]);
+      rgba[(i*width + width-2)*4 + 0] = static_cast<T>(0.5f*bggr[(i+1)*width - 3] + 0.5f*bggr[(i+1)*width - 1]);
+      rgba[(i*width + width-2)*4 + 1] = bggr[(i+1)*width - 2];
+      rgba[(i*width + width-2)*4 + 2] = static_cast<T>(0.5f*bggr[i*width - 2] + 0.5f*bggr[(i+2)*width - 2]);
     }
   }
 
   // j == width-1
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.5f*bggr[i*width - 1] + 0.5f*bggr[(i+2)*width - 1]);
-      rgba[(i*width*4 + width-1) + 1] = bggr[(i+1)*width - 1];
-      rgba[(i*width*4 + width-1) + 2] = bggr[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 0] = static_cast<T>(0.5f*bggr[i*width - 1] + 0.5f*bggr[(i+2)*width - 1]);
+      rgba[(i*width + width-1)*4 + 1] = bggr[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 2] = bggr[(i+1)*width - 2];
     } else {
-      rgba[(i*width*4 + width-1) + 0] = bggr[(i+1)*width - 1];
-      rgba[(i*width*4 + width-1) + 1] = bggr[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.5f*bggr[i*width - 2] + 0.5f*bggr[(i+2)*width - 2]);
+      rgba[(i*width + width-1)*4 + 0] = bggr[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 1] = bggr[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 2] = static_cast<T>(0.5f*bggr[i*width - 2] + 0.5f*bggr[(i+2)*width - 2]);
     }
   }
 
   // i == height-2
   for (unsigned int j = 1; j < width-1; j++) {
     if (j % 2 == 0) {
-      rgba[((height-1)*width + j)*4 + 0] = static_cast<T>(0.25f*bggr[(height-3)*width + j - 1] + 0.25f*bggr[(height-3)*width + j + 1] +
+      rgba[((height-2)*width + j)*4 + 0] = static_cast<T>(0.25f*bggr[(height-3)*width + j - 1] + 0.25f*bggr[(height-3)*width + j + 1] +
           0.25f*bggr[(height-1)*width + j - 1] + 0.25f*bggr[(height-1)*width + j + 1]);
-      rgba[((height-1)*width + j)*4 + 1] = static_cast<T>(0.5f*bggr[(height-2)*width + j - 1] + 0.5f*bggr[(height-2)*width + j + 1]);
-      rgba[((height-1)*width + j)*4 + 2] = bggr[(height-2)*width + j];
+      rgba[((height-2)*width + j)*4 + 1] = static_cast<T>(0.5f*bggr[(height-2)*width + j - 1] + 0.5f*bggr[(height-2)*width + j + 1]);
+      rgba[((height-2)*width + j)*4 + 2] = bggr[(height-2)*width + j];
     } else {
-      rgba[((height-1)*width + j)*4 + 0] = static_cast<T>(0.5f*bggr[(height-3)*width + j] + 0.5f*bggr[(height-1)*width + j]);
-      rgba[((height-1)*width + j)*4 + 1] = bggr[(height-2)*width + j];
-      rgba[((height-1)*width + j)*4 + 2] = static_cast<T>(0.5f*bggr[(height-2)*width + j - 1] + 0.5f*bggr[(height-2)*width + j + 1]);
+      rgba[((height-2)*width + j)*4 + 0] = static_cast<T>(0.5f*bggr[(height-3)*width + j] + 0.5f*bggr[(height-1)*width + j]);
+      rgba[((height-2)*width + j)*4 + 1] = bggr[(height-2)*width + j];
+      rgba[((height-2)*width + j)*4 + 2] = static_cast<T>(0.5f*bggr[(height-2)*width + j - 1] + 0.5f*bggr[(height-2)*width + j + 1]);
     }
   }
 
@@ -717,9 +717,9 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
   rgba[2] = gbrg[1];
 
   // (0,w-1)
-  rgba[width*4 + 0] = gbrg[2*width - 2];
-  rgba[width*4 + 1] = gbrg[width - 2];
-  rgba[width*4 + 2] = gbrg[width - 1];
+  rgba[(width-1)*4 + 0] = gbrg[2*width - 2];
+  rgba[(width-1)*4 + 1] = gbrg[width - 2];
+  rgba[(width-1)*4 + 2] = gbrg[width - 1];
 
   // (h-1,0)
   rgba[((height-1)*width)*4 + 0] = gbrg[(height-1)*width];
@@ -747,13 +747,13 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
   // i == 1
   for (unsigned int j = 1; j < width-1; j++) {
     if (j % 2 == 0) {
-      rgba[j*4 + 0] = gbrg[width + j];
-      rgba[j*4 + 1] = static_cast<T>(0.25f*gbrg[j] + 0.25f*gbrg[width + j - 1] + 0.25f*gbrg[width + j + 1] + 0.25f*gbrg[2*width + j]);
-      rgba[j*4 + 2] = static_cast<T>(0.25f*gbrg[j - 1] + 0.25f*gbrg[j + 1] + 0.25f*gbrg[2*width + j - 1] + 0.25f*gbrg[2*width + j + 1]);
+      rgba[(width + j)*4 + 0] = gbrg[width + j];
+      rgba[(width + j)*4 + 1] = static_cast<T>(0.25f*gbrg[j] + 0.25f*gbrg[width + j - 1] + 0.25f*gbrg[width + j + 1] + 0.25f*gbrg[2*width + j]);
+      rgba[(width + j)*4 + 2] = static_cast<T>(0.25f*gbrg[j - 1] + 0.25f*gbrg[j + 1] + 0.25f*gbrg[2*width + j - 1] + 0.25f*gbrg[2*width + j + 1]);
     } else {
-      rgba[j*4 + 0] = static_cast<T>(0.5f*gbrg[width + j - 1] + 0.5f*gbrg[width + j + 1]);
-      rgba[j*4 + 1] = gbrg[width + j];
-      rgba[j*4 + 2] = static_cast<T>(0.5f*gbrg[j] + 0.5f*gbrg[2*width + j]);
+      rgba[(width + j)*4 + 0] = static_cast<T>(0.5f*gbrg[width + j - 1] + 0.5f*gbrg[width + j + 1]);
+      rgba[(width + j)*4 + 1] = gbrg[width + j];
+      rgba[(width + j)*4 + 2] = static_cast<T>(0.5f*gbrg[j] + 0.5f*gbrg[2*width + j]);
     }
   }
 
@@ -773,27 +773,27 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
   // j == 1
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[i*width*4 + 0] = static_cast<T>(0.25f*gbrg[(i-1)*width] + 0.25f*gbrg[(i-1)*width + 2] + 0.25f*gbrg[(i+1)*width] + 0.5f*gbrg[(i+1)*width + 2]);
-      rgba[i*width*4 + 1] = static_cast<T>(0.25f*gbrg[(i-1)*width + 1] + 0.25f*gbrg[i*width] + 0.25f*gbrg[i*width + 2] + 0.5f*gbrg[(i+1)*width + 1]);
-      rgba[i*width*4 + 2] = gbrg[i*width + 1];
+      rgba[(i*width + 1)*4 + 0] = static_cast<T>(0.25f*gbrg[(i-1)*width] + 0.25f*gbrg[(i-1)*width + 2] + 0.25f*gbrg[(i+1)*width] + 0.5f*gbrg[(i+1)*width + 2]);
+      rgba[(i*width + 1)*4 + 1] = static_cast<T>(0.25f*gbrg[(i-1)*width + 1] + 0.25f*gbrg[i*width] + 0.25f*gbrg[i*width + 2] + 0.5f*gbrg[(i+1)*width + 1]);
+      rgba[(i*width + 1)*4 + 2] = gbrg[i*width + 1];
     } else {
-      rgba[i*width*4 + 0] = static_cast<T>(0.5f*gbrg[i*width] + 0.5f*gbrg[i*width + 2]);
-      rgba[i*width*4 + 1] = gbrg[i*width + 1];
-      rgba[i*width*4 + 2] = static_cast<T>(0.5f*gbrg[(i-1)*width + 1] + 0.5f*gbrg[(i+1)*width + 1]);
+      rgba[(i*width + 1)*4 + 0] = static_cast<T>(0.5f*gbrg[i*width] + 0.5f*gbrg[i*width + 2]);
+      rgba[(i*width + 1)*4 + 1] = gbrg[i*width + 1];
+      rgba[(i*width + 1)*4 + 2] = static_cast<T>(0.5f*gbrg[(i-1)*width + 1] + 0.5f*gbrg[(i+1)*width + 1]);
     }
   }
 
   // j == width-2
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.5f*gbrg[i*width - 2] + 0.5f*gbrg[(i+2)*width - 2]);
-      rgba[(i*width*4 + width-1) + 1] = gbrg[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.5f*gbrg[(i+1)*width - 3] + 0.5f*gbrg[(i+1)*width - 1]);
+      rgba[(i*width + width-2)*4 + 0] = static_cast<T>(0.5f*gbrg[i*width - 2] + 0.5f*gbrg[(i+2)*width - 2]);
+      rgba[(i*width + width-2)*4 + 1] = gbrg[(i+1)*width - 2];
+      rgba[(i*width + width-2)*4 + 2] = static_cast<T>(0.5f*gbrg[(i+1)*width - 3] + 0.5f*gbrg[(i+1)*width - 1]);
     } else {
-      rgba[(i*width*4 + width-1) + 0] = gbrg[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 1] = static_cast<T>(0.25f*gbrg[i*width - 2] + 0.25f*gbrg[(i+1)*width - 3] +
+      rgba[(i*width + width-2)*4 + 0] = gbrg[(i+1)*width - 2];
+      rgba[(i*width + width-2)*4 + 1] = static_cast<T>(0.25f*gbrg[i*width - 2] + 0.25f*gbrg[(i+1)*width - 3] +
           0.25f*gbrg[(i+1)*width - 1] + 0.25f*gbrg[(i+2)*width - 2]);
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.25f*gbrg[i*width - 3] + 0.25f*gbrg[i*width - 1] +
+      rgba[(i*width + width-2)*4 + 2] = static_cast<T>(0.25f*gbrg[i*width - 3] + 0.25f*gbrg[i*width - 1] +
           0.25f*gbrg[(i+2)*width - 3] + 0.25f*gbrg[(i+2)*width - 1]);
     }
   }
@@ -801,28 +801,28 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
   // j == width-1
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.5f*gbrg[i*width - 2] + 0.5f*gbrg[(i+2)*width - 2]);
-      rgba[(i*width*4 + width-1) + 1] = gbrg[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 2] = gbrg[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 0] = static_cast<T>(0.5f*gbrg[i*width - 2] + 0.5f*gbrg[(i+2)*width - 2]);
+      rgba[(i*width + width-1)*4 + 1] = gbrg[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 2] = gbrg[(i+1)*width - 1];
     } else {
-      rgba[(i*width*4 + width-1) + 0] = gbrg[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 1] = gbrg[(i+1)*width - 1];
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.5f*gbrg[i*width - 1] + 0.5f*gbrg[(i+2)*width - 1]);
+      rgba[(i*width + width-1)*4 + 0] = gbrg[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 1] = gbrg[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 2] = static_cast<T>(0.5f*gbrg[i*width - 1] + 0.5f*gbrg[(i+2)*width - 1]);
     }
   }
 
   // i == height-2
   for (unsigned int j = 1; j < width-1; j++) {
     if (j % 2 == 0) {
-      rgba[((height-1)*width + j)*4 + 0] = static_cast<T>(0.5f*gbrg[(height-3)*width + j] + 0.5f*gbrg[(height-1)*width + j]);
-      rgba[((height-1)*width + j)*4 + 1] = gbrg[(height-2)*width + j];
-      rgba[((height-1)*width + j)*4 + 2] = static_cast<T>(0.5f*gbrg[(height-2)*width + j - 1] + 0.5f*gbrg[(height-2)*width + j + 1]);
+      rgba[((height-2)*width + j)*4 + 0] = static_cast<T>(0.5f*gbrg[(height-3)*width + j] + 0.5f*gbrg[(height-1)*width + j]);
+      rgba[((height-2)*width + j)*4 + 1] = gbrg[(height-2)*width + j];
+      rgba[((height-2)*width + j)*4 + 2] = static_cast<T>(0.5f*gbrg[(height-2)*width + j - 1] + 0.5f*gbrg[(height-2)*width + j + 1]);
     } else {
-      rgba[((height-1)*width + j)*4 + 0] = static_cast<T>(0.25f*gbrg[(height-3)*width + j - 1] + 0.25f*gbrg[(height-3)*width + j + 1] +
+      rgba[((height-2)*width + j)*4 + 0] = static_cast<T>(0.25f*gbrg[(height-3)*width + j - 1] + 0.25f*gbrg[(height-3)*width + j + 1] +
           0.25f*gbrg[(height-1)*width + j - 1] + 0.25f*gbrg[(height-1)*width + j + 1]);
-      rgba[((height-1)*width + j)*4 + 1] = static_cast<T>(0.25f*gbrg[(height-3)*width + j] + 0.25f*gbrg[(height-2)*width + j - 1] +
+      rgba[((height-2)*width + j)*4 + 1] = static_cast<T>(0.25f*gbrg[(height-3)*width + j] + 0.25f*gbrg[(height-2)*width + j - 1] +
           0.25f*gbrg[(height-2)*width + j + 1] + 0.25f*gbrg[(height-1)*width + j]);
-      rgba[((height-1)*width + j)*4 + 2] = gbrg[(height-2)*width + j];
+      rgba[((height-2)*width + j)*4 + 2] = gbrg[(height-2)*width + j];
     }
   }
 
@@ -882,9 +882,9 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
   rgba[2] = grbg[width];
 
   // (0,w-1)
-  rgba[width*4 + 0] = grbg[width - 1];
-  rgba[width*4 + 1] = grbg[width - 2];
-  rgba[width*4 + 2] = grbg[2*width - 2];
+  rgba[(width-1)*4 + 0] = grbg[width - 1];
+  rgba[(width-1)*4 + 1] = grbg[width - 2];
+  rgba[(width-1)*4 + 2] = grbg[2*width - 2];
 
   // (h-1,0)
   rgba[((height-1)*width)*4 + 0] = grbg[(height-2)*width + 1];
@@ -912,13 +912,13 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
   // i == 1
   for (unsigned int j = 1; j < width-1; j++) {
     if (j % 2 == 0) {
-      rgba[j*4 + 0] = static_cast<T>(0.25f*grbg[j - 1] + 0.25f*grbg[j + 1] + 0.25f*grbg[2*width + j - 1] + 0.25f*grbg[2*width + j + 1]);
-      rgba[j*4 + 1] = static_cast<T>(0.25f*grbg[j] + 0.25f*grbg[width + j - 1] + 0.25f*grbg[width + j + 1] + 0.25f*grbg[2*width + j]);
-      rgba[j*4 + 2] = grbg[width + j];
+      rgba[(width + j)*4 + 0] = static_cast<T>(0.25f*grbg[j - 1] + 0.25f*grbg[j + 1] + 0.25f*grbg[2*width + j - 1] + 0.25f*grbg[2*width + j + 1]);
+      rgba[(width + j)*4 + 1] = static_cast<T>(0.25f*grbg[j] + 0.25f*grbg[width + j - 1] + 0.25f*grbg[width + j + 1] + 0.25f*grbg[2*width + j]);
+      rgba[(width + j)*4 + 2] = grbg[width + j];
     } else {
-      rgba[j*4 + 0] = static_cast<T>(0.5f*grbg[j] + 0.5f*grbg[2*width + j]);
-      rgba[j*4 + 1] = grbg[width + j];
-      rgba[j*4 + 2] = static_cast<T>(0.5f*grbg[width + j - 1] + 0.5f*grbg[width + j + 1]);
+      rgba[(width + j)*4 + 0] = static_cast<T>(0.5f*grbg[j] + 0.5f*grbg[2*width + j]);
+      rgba[(width + j)*4 + 1] = grbg[width + j];
+      rgba[(width + j)*4 + 2] = static_cast<T>(0.5f*grbg[width + j - 1] + 0.5f*grbg[width + j + 1]);
     }
   }
 
@@ -938,53 +938,53 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
   // j == 1
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[i*width*4 + 0] = grbg[i*width + 1];
-      rgba[i*width*4 + 1] = static_cast<T>(0.25f*grbg[(i-1)*width + 1] + 0.25f*grbg[i*width] + 0.25f*grbg[i*width + 2] + 0.25f*grbg[(i+1)*width + 1]);
-      rgba[i*width*4 + 2] = static_cast<T>(0.25f*grbg[(i-1)*width] + 0.25f*grbg[(i-1)*width + 2] + 0.25f*grbg[(i+1)*width] + 0.25f*grbg[(i+1)*width + 2]);
+      rgba[(i*width + 1)*4 + 0] = grbg[i*width + 1];
+      rgba[(i*width + 1)*4 + 1] = static_cast<T>(0.25f*grbg[(i-1)*width + 1] + 0.25f*grbg[i*width] + 0.25f*grbg[i*width + 2] + 0.25f*grbg[(i+1)*width + 1]);
+      rgba[(i*width + 1)*4 + 2] = static_cast<T>(0.25f*grbg[(i-1)*width] + 0.25f*grbg[(i-1)*width + 2] + 0.25f*grbg[(i+1)*width] + 0.25f*grbg[(i+1)*width + 2]);
     } else {
-      rgba[i*width*4 + 0] = static_cast<T>(0.5f*grbg[(i-1)*width + 1] + 0.5f*grbg[(i+1)*width + 1]);
-      rgba[i*width*4 + 1] = grbg[i*width + 1];
-      rgba[i*width*4 + 2] = static_cast<T>(0.5f*grbg[i*width] + 0.5f*grbg[i*width + 2]);
+      rgba[(i*width + 1)*4 + 0] = static_cast<T>(0.5f*grbg[(i-1)*width + 1] + 0.5f*grbg[(i+1)*width + 1]);
+      rgba[(i*width + 1)*4 + 1] = grbg[i*width + 1];
+      rgba[(i*width + 1)*4 + 2] = static_cast<T>(0.5f*grbg[i*width] + 0.5f*grbg[i*width + 2]);
     }
   }
 
   // j == width-2
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.5f*grbg[(i+1)*width - 3] + 0.5f*grbg[(i+1)*width - 1]);
-      rgba[(i*width*4 + width-1) + 1] = grbg[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.5f*grbg[i*width - 2] + 0.5f*grbg[(i+2)*width - 2]);
+      rgba[(i*width + width-2)*4 + 0] = static_cast<T>(0.5f*grbg[(i+1)*width - 3] + 0.5f*grbg[(i+1)*width - 1]);
+      rgba[(i*width + width-2)*4 + 1] = grbg[(i+1)*width - 2];
+      rgba[(i*width + width-2)*4 + 2] = static_cast<T>(0.5f*grbg[i*width - 2] + 0.5f*grbg[(i+2)*width - 2]);
     } else {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.25f*grbg[i*width - 3] + 0.25f*grbg[i*width - 1] + 0.25f*grbg[(i+2)*width - 3] + 0.25f*grbg[(i+2)*width - 1]);
-      rgba[(i*width*4 + width-1) + 1] = static_cast<T>(0.25f*grbg[i*width - 2] + 0.25f*grbg[(i+1)*width - 3] + 0.25f*grbg[(i+1)*width - 1] + 0.25f*grbg[(i+2)*width - 2]);
-      rgba[(i*width*4 + width-1) + 2] = grbg[(i+1)*width - 2];
+      rgba[(i*width + width-2)*4 + 0] = static_cast<T>(0.25f*grbg[i*width - 3] + 0.25f*grbg[i*width - 1] + 0.25f*grbg[(i+2)*width - 3] + 0.25f*grbg[(i+2)*width - 1]);
+      rgba[(i*width + width-2)*4 + 1] = static_cast<T>(0.25f*grbg[i*width - 2] + 0.25f*grbg[(i+1)*width - 3] + 0.25f*grbg[(i+1)*width - 1] + 0.25f*grbg[(i+2)*width - 2]);
+      rgba[(i*width + width-2)*4 + 2] = grbg[(i+1)*width - 2];
     }
   }
 
   // j == width-1
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[(i*width*4 + width-1) + 0] = grbg[(i+1)*width - 1];
-      rgba[(i*width*4 + width-1) + 1] = grbg[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.5f*grbg[i*width - 2] + 0.5f*grbg[(i+2)*width - 2]);
+      rgba[(i*width + width-1)*4 + 0] = grbg[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 1] = grbg[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 2] = static_cast<T>(0.5f*grbg[i*width - 2] + 0.5f*grbg[(i+2)*width - 2]);
     } else {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.5f*grbg[i*width - 1] + 0.5f*grbg[(i+2)*width - 1]);
-      rgba[(i*width*4 + width-1) + 1] = grbg[(i+1)*width - 1];
-      rgba[(i*width*4 + width-1) + 2] = grbg[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 0] = static_cast<T>(0.5f*grbg[i*width - 1] + 0.5f*grbg[(i+2)*width - 1]);
+      rgba[(i*width + width-1)*4 + 1] = grbg[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 2] = grbg[(i+1)*width - 2];
     }
   }
 
   // i == height-2
   for (unsigned int j = 1; j < width-1; j++) {
     if (j % 2 == 0) {
-      rgba[((height-1)*width + j)*4 + 0] = static_cast<T>(0.5f*grbg[(height-2)*width + j - 1] + 0.5f*grbg[(height-2)*width + j + 1]);
-      rgba[((height-1)*width + j)*4 + 1] = grbg[(height-2)*width + j];
-      rgba[((height-1)*width + j)*4 + 2] = static_cast<T>(0.5f*grbg[(height-3)*width + j] + 0.5f*grbg[(height-1)*width + j]);
+      rgba[((height-2)*width + j)*4 + 0] = static_cast<T>(0.5f*grbg[(height-2)*width + j - 1] + 0.5f*grbg[(height-2)*width + j + 1]);
+      rgba[((height-2)*width + j)*4 + 1] = grbg[(height-2)*width + j];
+      rgba[((height-2)*width + j)*4 + 2] = static_cast<T>(0.5f*grbg[(height-3)*width + j] + 0.5f*grbg[(height-1)*width + j]);
     } else {
-      rgba[((height-1)*width + j)*4 + 0] = grbg[(height-2)*width + j];
-      rgba[((height-1)*width + j)*4 + 1] = static_cast<T>(0.25f*grbg[(height-3)*width + j] + 0.25f*grbg[(height-2)*width + j - 1] +
+      rgba[((height-2)*width + j)*4 + 0] = grbg[(height-2)*width + j];
+      rgba[((height-2)*width + j)*4 + 1] = static_cast<T>(0.25f*grbg[(height-3)*width + j] + 0.25f*grbg[(height-2)*width + j - 1] +
           0.25f*grbg[(height-2)*width + j + 1] + 0.25f*grbg[(height-1)*width + j]);
-      rgba[((height-1)*width + j)*4 + 2] = static_cast<T>(0.25f*grbg[(height-3)*width + j - 1] + 0.25f*grbg[(height-3)*width + j + 1] +
+      rgba[((height-2)*width + j)*4 + 2] = static_cast<T>(0.25f*grbg[(height-3)*width + j - 1] + 0.25f*grbg[(height-3)*width + j + 1] +
           0.25f*grbg[(height-1)*width + j - 1] + 0.25f*grbg[(height-1)*width + j + 1]);
     }
   }
@@ -1045,9 +1045,9 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
   rgba[2] = rggb[width + 1];
 
   // (0,w-1)
-  rgba[width*4 + 0] = rggb[width - 2];
-  rgba[width*4 + 1] = rggb[width - 1];
-  rgba[width*4 + 2] = rggb[2*width - 1];
+  rgba[(width-1)*4 + 0] = rggb[width - 2];
+  rgba[(width-1)*4 + 1] = rggb[width - 1];
+  rgba[(width-1)*4 + 2] = rggb[2*width - 1];
 
   // (h-1,0)
   rgba[((height-1)*width)*4 + 0] = rggb[(height-2)*width];
@@ -1075,13 +1075,13 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
   // i == 1
   for (unsigned int j = 1; j < width-1; j++) {
     if (j % 2 == 0) {
-      rgba[j*4 + 0] = static_cast<T>(0.5f*rggb[j] + 0.5f*rggb[2*width + j]);
-      rgba[j*4 + 1] = rggb[width + j];
-      rgba[j*4 + 2] = static_cast<T>(0.5f*rggb[width + j - 1] + 0.5f*rggb[width + j + 1]);
+      rgba[(width + j)*4 + 0] = static_cast<T>(0.5f*rggb[j] + 0.5f*rggb[2*width + j]);
+      rgba[(width + j)*4 + 1] = rggb[width + j];
+      rgba[(width + j)*4 + 2] = static_cast<T>(0.5f*rggb[width + j - 1] + 0.5f*rggb[width + j + 1]);
     } else {
-      rgba[j*4 + 0] = static_cast<T>(0.25f*rggb[j - 1] + 0.25f*rggb[j + 1] + 0.25f*rggb[2*width + j - 1] + 0.25f*rggb[2*width + j + 1]);
-      rgba[j*4 + 1] = static_cast<T>(0.25f*rggb[j] + 0.25f*rggb[width + j - 1] + 0.25f*rggb[width + j + 1] + 0.25f*rggb[2*width + j]);
-      rgba[j*4 + 2] = rggb[width + j];
+      rgba[(width + j)*4 + 0] = static_cast<T>(0.25f*rggb[j - 1] + 0.25f*rggb[j + 1] + 0.25f*rggb[2*width + j - 1] + 0.25f*rggb[2*width + j + 1]);
+      rgba[(width + j)*4 + 1] = static_cast<T>(0.25f*rggb[j] + 0.25f*rggb[width + j - 1] + 0.25f*rggb[width + j + 1] + 0.25f*rggb[2*width + j]);
+      rgba[(width + j)*4 + 2] = rggb[width + j];
     }
   }
 
@@ -1101,54 +1101,54 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
   // j == 1
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[i*width*4 + 0] = static_cast<T>(0.5f*rggb[i*width] + 0.5f*rggb[i*width + 2]);
-      rgba[i*width*4 + 1] = rggb[i*width + 1];
-      rgba[i*width*4 + 2] = static_cast<T>(0.5f*rggb[(i-1)*width + 1] + 0.5f*rggb[(i+1)*width + 1]);
+      rgba[(i*width + 1)*4 + 0] = static_cast<T>(0.5f*rggb[i*width] + 0.5f*rggb[i*width + 2]);
+      rgba[(i*width + 1)*4 + 1] = rggb[i*width + 1];
+      rgba[(i*width + 1)*4 + 2] = static_cast<T>(0.5f*rggb[(i-1)*width + 1] + 0.5f*rggb[(i+1)*width + 1]);
     } else {
-      rgba[i*width*4 + 0] = static_cast<T>(0.25f*rggb[(i-1)*width] + 0.25f*rggb[(i-1)*width + 2] + 0.25f*rggb[(i+1)*width] + 0.25f*rggb[(i+1)*width + 2]);
-      rgba[i*width*4 + 1] = static_cast<T>(0.25f*rggb[(i-1)*width + 1] + 0.25f*rggb[i*width] + 0.25f*rggb[i*width + 2] + 0.25f*rggb[(i+1)*width + 1]);
-      rgba[i*width*4 + 2] = rggb[i*width + 1];
+      rgba[(i*width + 1)*4 + 0] = static_cast<T>(0.25f*rggb[(i-1)*width] + 0.25f*rggb[(i-1)*width + 2] + 0.25f*rggb[(i+1)*width] + 0.25f*rggb[(i+1)*width + 2]);
+      rgba[(i*width + 1)*4 + 1] = static_cast<T>(0.25f*rggb[(i-1)*width + 1] + 0.25f*rggb[i*width] + 0.25f*rggb[i*width + 2] + 0.25f*rggb[(i+1)*width + 1]);
+      rgba[(i*width + 1)*4 + 2] = rggb[i*width + 1];
     }
   }
 
   // j == width-2
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[(i*width*4 + width-1) + 0] = rggb[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 1] = static_cast<T>(0.25f*rggb[i*width - 2] + 0.25f*rggb[(i+1)*width - 3] + 0.25f*rggb[(i+1)*width - 1] + 0.25f*rggb[(i+2)*width - 2]);
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.25f*rggb[i*width - 3] + 0.25f*rggb[i*width - 1] + 0.25f*rggb[(i+2)*width - 3] + 0.25f*rggb[(i+2)*width - 1]);
+      rgba[(i*width + width-2)*4 + 0] = rggb[(i+1)*width - 2];
+      rgba[(i*width + width-2)*4 + 1] = static_cast<T>(0.25f*rggb[i*width - 2] + 0.25f*rggb[(i+1)*width - 3] + 0.25f*rggb[(i+1)*width - 1] + 0.25f*rggb[(i+2)*width - 2]);
+      rgba[(i*width + width-2)*4 + 2] = static_cast<T>(0.25f*rggb[i*width - 3] + 0.25f*rggb[i*width - 1] + 0.25f*rggb[(i+2)*width - 3] + 0.25f*rggb[(i+2)*width - 1]);
     } else {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.5f*rggb[i*width - 2] + 0.5f*rggb[(i+2)*width - 2]);
-      rgba[(i*width*4 + width-1) + 1] = rggb[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.5f*rggb[(i+1)*width - 3] + 0.5f*rggb[(i+1)*width - 1]);
+      rgba[(i*width + width-2)*4 + 0] = static_cast<T>(0.5f*rggb[i*width - 2] + 0.5f*rggb[(i+2)*width - 2]);
+      rgba[(i*width + width-2)*4 + 1] = rggb[(i+1)*width - 2];
+      rgba[(i*width + width-2)*4 + 2] = static_cast<T>(0.5f*rggb[(i+1)*width - 3] + 0.5f*rggb[(i+1)*width - 1]);
     }
   }
 
   // j == width-1
   for (unsigned int i = 1; i < height-1; i++) {
     if (i % 2 == 0) {
-      rgba[(i*width*4 + width-1) + 0] = rggb[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 1] = rggb[(i+1)*width - 1];
-      rgba[(i*width*4 + width-1) + 2] = static_cast<T>(0.5f*rggb[i*width - 1] + 0.5f*rggb[(i+2)*width - 1]);
+      rgba[(i*width + width-1)*4 + 0] = rggb[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 1] = rggb[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 2] = static_cast<T>(0.5f*rggb[i*width - 1] + 0.5f*rggb[(i+2)*width - 1]);
     } else {
-      rgba[(i*width*4 + width-1) + 0] = static_cast<T>(0.5f*rggb[i*width - 2] + 0.5f*rggb[(i+2)*width - 2]);
-      rgba[(i*width*4 + width-1) + 1] = rggb[(i+1)*width - 2];
-      rgba[(i*width*4 + width-1) + 2] = rggb[(i+1)*width - 1];
+      rgba[(i*width + width-1)*4 + 0] = static_cast<T>(0.5f*rggb[i*width - 2] + 0.5f*rggb[(i+2)*width - 2]);
+      rgba[(i*width + width-1)*4 + 1] = rggb[(i+1)*width - 2];
+      rgba[(i*width + width-1)*4 + 2] = rggb[(i+1)*width - 1];
     }
   }
 
   // i == height-2
   for (unsigned int j = 1; j < width-1; j++) {
     if (j % 2 == 0) {
-      rgba[((height-1)*width + j)*4 + 0] = rggb[(height-2)*width + j];
-      rgba[((height-1)*width + j)*4 + 1] = static_cast<T>(0.25f*rggb[(height-3)*width + j] + 0.25f*rggb[(height-2)*width + j - 1] +
+      rgba[((height-2)*width + j)*4 + 0] = rggb[(height-2)*width + j];
+      rgba[((height-2)*width + j)*4 + 1] = static_cast<T>(0.25f*rggb[(height-3)*width + j] + 0.25f*rggb[(height-2)*width + j - 1] +
           0.25f*rggb[(height-2)*width + j + 1] + 0.25f*rggb[(height-1)*width + j]);
-      rgba[((height-1)*width + j)*4 + 2] = static_cast<T>(0.25f*rggb[(height-3)*width + j - 1] + 0.25f*rggb[(height-3)*width + j + 1] +
+      rgba[((height-2)*width + j)*4 + 2] = static_cast<T>(0.25f*rggb[(height-3)*width + j - 1] + 0.25f*rggb[(height-3)*width + j + 1] +
           0.25f*rggb[(height-1)*width + j - 1] + 0.25f*rggb[(height-1)*width + j + 1]);
     } else {
-      rgba[((height-1)*width + j)*4 + 0] = static_cast<T>(0.5f*rggb[(height-2)*width + j - 1] + 0.5f*rggb[(height-2)*width + j + 1]);
-      rgba[((height-1)*width + j)*4 + 1] = rggb[(height-2)*width + j];
-      rgba[((height-1)*width + j)*4 + 2] = static_cast<T>(0.5f*rggb[(height-3)*width + j] + 0.5f*rggb[(height-1)*width + j]);
+      rgba[((height-2)*width + j)*4 + 0] = static_cast<T>(0.5f*rggb[(height-2)*width + j - 1] + 0.5f*rggb[(height-2)*width + j + 1]);
+      rgba[((height-2)*width + j)*4 + 1] = rggb[(height-2)*width + j];
+      rgba[((height-2)*width + j)*4 + 2] = static_cast<T>(0.5f*rggb[(height-3)*width + j] + 0.5f*rggb[(height-1)*width + j]);
     }
   }
 

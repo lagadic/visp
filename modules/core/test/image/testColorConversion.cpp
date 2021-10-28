@@ -288,7 +288,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
 
   vpImage<vpRGBa> I_RGBA_8U(I_RGBA_8U_ref.getHeight(), I_RGBA_8U_ref.getWidth());
   int height = I_RGBA_8U_ref.getHeight(), width = I_RGBA_8U_ref.getWidth();
-  const double min_PSNR_bilinear = 21, min_PSNR_Malvar = 23;
+  const double min_PSNR_bilinear = 21, min_PSNR_Malvar = 24;
 
   SECTION("16-bit")
   {
