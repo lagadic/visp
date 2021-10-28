@@ -300,7 +300,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
     {
       const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_12bits.raw");
 
-      std::FILE* f = std::fopen(filename.c_str(), "r");
+      std::FILE* f = std::fopen(filename.c_str(), "rb");
       size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
       REQUIRE(sread == buffer.size());
 
@@ -331,7 +331,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
     {
       const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_12bits.raw");
 
-      std::FILE* f = std::fopen(filename.c_str(), "r");
+      std::FILE* f = std::fopen(filename.c_str(), "rb");
       size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
       REQUIRE(sread == buffer.size());
 
@@ -362,7 +362,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
     {
       const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_12bits.raw");
 
-      std::FILE* f = std::fopen(filename.c_str(), "r");
+      std::FILE* f = std::fopen(filename.c_str(), "rb");
       size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
       REQUIRE(sread == buffer.size());
 
@@ -393,7 +393,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
     {
       const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_12bits.raw");
 
-      std::FILE* f = std::fopen(filename.c_str(), "r");
+      std::FILE* f = std::fopen(filename.c_str(), "rb");
       size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
       REQUIRE(sread == buffer.size());
 
@@ -431,7 +431,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
     {
       const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_08bits.raw");
 
-      std::FILE* f = std::fopen(filename.c_str(), "r");
+      std::FILE* f = std::fopen(filename.c_str(), "rb");
       size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
       REQUIRE(sread == buffer.size());
 
@@ -460,7 +460,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
     {
       const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_08bits.raw");
 
-      std::FILE* f = std::fopen(filename.c_str(), "r");
+      std::FILE* f = std::fopen(filename.c_str(), "rb");
       size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
       REQUIRE(sread == buffer.size());
 
@@ -489,7 +489,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
     {
       const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_08bits.raw");
 
-      std::FILE* f = std::fopen(filename.c_str(), "r");
+      std::FILE* f = std::fopen(filename.c_str(), "rb");
       size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
       REQUIRE(sread == buffer.size());
 
@@ -518,7 +518,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
     {
       const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_08bits.raw");
 
-      std::FILE* f = std::fopen(filename.c_str(), "r");
+      std::FILE* f = std::fopen(filename.c_str(), "rb");
       size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
       REQUIRE(sread == buffer.size());
 
