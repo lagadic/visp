@@ -154,15 +154,13 @@ private:
   class RansacFunctor
   {
   public:
-    RansacFunctor(const vpHomogeneousMatrix &cMo_, unsigned int ransacNbInlierConsensus_,
-                  const int ransacMaxTrials_, double ransacThreshold_, unsigned int initial_seed_,
-                  bool checkDegeneratePoints_, const std::vector<vpPoint> &listOfUniquePoints_,
-                  bool (*func_)(const vpHomogeneousMatrix &))
-      :
-        m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
-        m_func(func_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0),
-        m_ransacMaxTrials(ransacMaxTrials_), m_ransacNbInlierConsensus(ransacNbInlierConsensus_),
-        m_ransacThreshold(ransacThreshold_), m_uniRand(initial_seed_)
+    RansacFunctor(const vpHomogeneousMatrix &cMo_, unsigned int ransacNbInlierConsensus_, const int ransacMaxTrials_,
+                  double ransacThreshold_, unsigned int initial_seed_, bool checkDegeneratePoints_,
+                  const std::vector<vpPoint> &listOfUniquePoints_, bool (*func_)(const vpHomogeneousMatrix &))
+      : m_best_consensus(), m_checkDegeneratePoints(checkDegeneratePoints_), m_cMo(cMo_), m_foundSolution(false),
+        m_func(func_), m_listOfUniquePoints(listOfUniquePoints_), m_nbInliers(0), m_ransacMaxTrials(ransacMaxTrials_),
+        m_ransacNbInlierConsensus(ransacNbInlierConsensus_), m_ransacThreshold(ransacThreshold_),
+        m_uniRand(initial_seed_)
     {
     }
 
@@ -201,7 +199,7 @@ protected:
 
 public:
   vpPose();
-  vpPose(const std::vector<vpPoint>& lP);
+  vpPose(const std::vector<vpPoint> &lP);
   virtual ~vpPose();
   void addPoint(const vpPoint &P);
   void addPoints(const std::vector<vpPoint> &lP);
@@ -343,12 +341,20 @@ public:
   static void findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                         const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                         unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
-                        const int &maxNbTrials=10000, bool useParallelRansac=true, unsigned int nthreads=0,
+                        const int &maxNbTrials = 10000, bool useParallelRansac = true, unsigned int nthreads = 0,
                         bool (*func)(const vpHomogeneousMatrix &) = NULL);
 
   static bool computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
-                                              const vpCameraParameters &colorIntrinsics, const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo,
+                                              const vpCameraParameters &colorIntrinsics,
+                                              const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo,
                                               double *confidence_index = NULL);
+
+  static bool computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
+                                              const std::vector<std::vector<vpImagePoint> > &corners,
+                                              const vpCameraParameters &colorIntrinsics,
+                                              const std::vector<std::vector<vpPoint> > &point3d,
+                                              vpHomogeneousMatrix &cMo, double *confidence_index = NULL,
+                                              bool coplanar_points = true);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!

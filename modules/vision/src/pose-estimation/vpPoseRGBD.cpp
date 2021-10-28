@@ -33,13 +33,15 @@
  *
  *****************************************************************************/
 
-#include <visp3/vision/vpPose.h>
-#include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpRobust.h>
+#include <visp3/vision/vpPose.h>
 
-namespace {
-vpHomogeneousMatrix compute3d3dTransformation(const std::vector<vpPoint>& p, const std::vector<vpPoint>& q) {
+namespace
+{
+vpHomogeneousMatrix compute3d3dTransformation(const std::vector<vpPoint> &p, const std::vector<vpPoint> &q)
+{
   double N = static_cast<double>(p.size());
 
   vpColVector p_bar(3, 0.0);
@@ -66,13 +68,13 @@ vpHomogeneousMatrix compute3d3dTransformation(const std::vector<vpPoint>& p, con
     }
   }
 
-  vpMatrix pct_qc = pc.t()*qc;
+  vpMatrix pct_qc = pc.t() * qc;
   vpMatrix U = pct_qc, V;
   vpColVector W;
   U.svd(W, V);
 
   vpMatrix Vt = V.t();
-  vpMatrix R = U*Vt;
+  vpMatrix R = U * Vt;
 
   double det = R.det();
   if (det < 0) {
@@ -80,10 +82,10 @@ vpHomogeneousMatrix compute3d3dTransformation(const std::vector<vpPoint>& p, con
     Vt[2][1] *= -1;
     Vt[2][2] *= -1;
 
-    R = U*Vt;
+    R = U * Vt;
   }
 
-  vpColVector t = p_bar - R*q_bar;
+  vpColVector t = p_bar - R * q_bar;
 
   vpHomogeneousMatrix cMo;
   for (unsigned int i = 0; i < 3; i++) {
@@ -96,9 +98,8 @@ vpHomogeneousMatrix compute3d3dTransformation(const std::vector<vpPoint>& p, con
   return cMo;
 }
 
-void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face,
-                              vpColVector &plane_equation_estimated, vpColVector &centroid,
-                              double &normalized_weights)
+void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpColVector &plane_equation_estimated,
+                              vpColVector &centroid, double &normalized_weights)
 {
   unsigned int max_iter = 10;
   double prev_error = 1e3;
@@ -171,7 +172,8 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face,
     error = 0.0;
     for (unsigned int i = 0; i < nPoints; i++) {
       residues[i] = std::fabs(A * point_cloud_face[3 * i] + B * point_cloud_face[3 * i + 1] +
-                    C * point_cloud_face[3 * i + 2] + D) / sqrt(A * A + B * B + C * C);
+                              C * point_cloud_face[3 * i + 2] + D) /
+                    sqrt(A * A + B * B + C * C);
       error += weights[i] * residues[i];
     }
     error /= total_w;
@@ -208,11 +210,13 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face,
   normalized_weights = total_w / nPoints;
 }
 
-double computeZMethod1(const vpColVector& plane_equation, double x, double y) {
-  return -plane_equation[3] / (plane_equation[0]*x + plane_equation[1]*y + plane_equation[2]);
+double computeZMethod1(const vpColVector &plane_equation, double x, double y)
+{
+  return -plane_equation[3] / (plane_equation[0] * x + plane_equation[1] * y + plane_equation[2]);
 }
 
-bool validPose(const vpHomogeneousMatrix& cMo) {
+bool validPose(const vpHomogeneousMatrix &cMo)
+{
   bool valid = true;
 
   for (unsigned int i = 0; i < cMo.getRows() && valid; i++) {
@@ -225,7 +229,7 @@ bool validPose(const vpHomogeneousMatrix& cMo) {
 
   return valid;
 }
-}
+} // namespace
 
 /*!
   Compute the pose of a planar object from corresponding 2D-3D point coordinates and depth map.
@@ -248,11 +252,13 @@ bool validPose(const vpHomogeneousMatrix& cMo) {
   \return true if pose estimation succeed, false otherwise.
  */
 bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
-                                             const vpCameraParameters &colorIntrinsics, const std::vector<vpPoint> &point3d,
-                                             vpHomogeneousMatrix &cMo, double *confidence_index)
+                                             const vpCameraParameters &colorIntrinsics,
+                                             const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo,
+                                             double *confidence_index)
 {
   if (corners.size() != point3d.size()) {
-    throw(vpException(vpException::fatalError, "Cannot compute pose from RGBD, 3D (%d) and 2D (%d) data doesn't have the same size",
+    throw(vpException(vpException::fatalError,
+                      "Cannot compute pose from RGBD, 3D (%d) and 2D (%d) data doesn't have the same size",
                       point3d.size(), corners.size()));
   }
   std::vector<vpPoint> pose_points;
@@ -260,74 +266,297 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
     *confidence_index = 0.0;
   }
 
-  for (size_t i = 0; i < point3d.size(); i ++) {
+  for (size_t i = 0; i < point3d.size(); i++) {
     pose_points.push_back(point3d[i]);
   }
 
   vpPolygon polygon(corners);
   vpRect bb = polygon.getBoundingBox();
-  unsigned int top = static_cast<unsigned int>(std::max( 0, static_cast<int>(bb.getTop()) ));
-  unsigned int bottom = static_cast<unsigned int>(std::min( static_cast<int>(depthMap.getHeight())-1, static_cast<int>(bb.getBottom()) ));
-  unsigned int left = static_cast<unsigned int>(std::max( 0, static_cast<int>(bb.getLeft()) ));
-  unsigned int right = static_cast<unsigned int>(std::min( static_cast<int>(depthMap.getWidth())-1, static_cast<int>(bb.getRight()) ));
+  unsigned int top = static_cast<unsigned int>(std::max(0, static_cast<int>(bb.getTop())));
+  unsigned int bottom =
+      static_cast<unsigned int>(std::min(static_cast<int>(depthMap.getHeight()) - 1, static_cast<int>(bb.getBottom())));
+  unsigned int left = static_cast<unsigned int>(std::max(0, static_cast<int>(bb.getLeft())));
+  unsigned int right =
+      static_cast<unsigned int>(std::min(static_cast<int>(depthMap.getWidth()) - 1, static_cast<int>(bb.getRight())));
 
   std::vector<double> points_3d;
-  points_3d.reserve( (bottom-top)*(right-left) );
+  points_3d.reserve((bottom - top) * (right - left));
   for (unsigned int idx_i = top; idx_i < bottom; idx_i++) {
-      for (unsigned int idx_j = left; idx_j < right; idx_j++) {
-          vpImagePoint imPt(idx_i, idx_j);
-          if (depthMap[idx_i][idx_j] > 0 && polygon.isInside(imPt)) {
-              double x = 0, y = 0;
-              vpPixelMeterConversion::convertPoint(colorIntrinsics, imPt.get_u(), imPt.get_v(), x, y);
-              double Z = depthMap[idx_i][idx_j];
-              points_3d.push_back(x*Z);
-              points_3d.push_back(y*Z);
-              points_3d.push_back(Z);
-          }
+    for (unsigned int idx_j = left; idx_j < right; idx_j++) {
+      vpImagePoint imPt(idx_i, idx_j);
+      if (depthMap[idx_i][idx_j] > 0 && polygon.isInside(imPt)) {
+        double x = 0, y = 0;
+        vpPixelMeterConversion::convertPoint(colorIntrinsics, imPt.get_u(), imPt.get_v(), x, y);
+        double Z = depthMap[idx_i][idx_j];
+        points_3d.push_back(x * Z);
+        points_3d.push_back(y * Z);
+        points_3d.push_back(Z);
       }
+    }
   }
 
   unsigned int nb_points_3d = static_cast<unsigned int>(points_3d.size() / 3);
 
   if (nb_points_3d > 4) {
-      std::vector<vpPoint> p, q;
+    std::vector<vpPoint> p, q;
 
-      // Plane equation
-      vpColVector plane_equation, centroid;
-      double normalized_weights = 0;
-      estimatePlaneEquationSVD(points_3d, plane_equation, centroid, normalized_weights);
+    // Plane equation
+    vpColVector plane_equation, centroid;
+    double normalized_weights = 0;
+    estimatePlaneEquationSVD(points_3d, plane_equation, centroid, normalized_weights);
 
+    for (size_t j = 0; j < corners.size(); j++) {
+      const vpImagePoint &imPt = corners[j];
+      double x = 0, y = 0;
+      vpPixelMeterConversion::convertPoint(colorIntrinsics, imPt.get_u(), imPt.get_v(), x, y);
+      double Z = computeZMethod1(plane_equation, x, y);
+      if (Z < 0) {
+        Z = -Z;
+      }
+      p.push_back(vpPoint(x * Z, y * Z, Z));
+
+      pose_points[j].set_x(x);
+      pose_points[j].set_y(y);
+    }
+
+    for (size_t i = 0; i < point3d.size(); i++) {
+      q.push_back(point3d[i]);
+    }
+
+    cMo = compute3d3dTransformation(p, q);
+
+    if (validPose(cMo)) {
+      vpPose pose;
+      pose.addPoints(pose_points);
+      if (pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
+        if (confidence_index != NULL) {
+          *confidence_index = std::min(1.0, normalized_weights * static_cast<double>(nb_points_3d) / polygon.getArea());
+        }
+        return true;
+      }
+    }
+  }
+
+  return false;
+}
+
+/*!
+  Compute the pose of multiple planar object from corresponding 2D-3D point coordinates and depth map.
+  Depth map is here used to estimate the 3D plane of each planar object.
+
+  This implementation is reserved for the case where multiple planar objects are considered and where an
+  object like robot arm obstruct the view and interfere with plane equation estimation for each single object.
+  Therefore this function considers only the 3D point inside the visible tags.
+
+  \param[in] depthMap : Depth map aligned to the color image from where \e corners are extracted.
+
+  \param[in] corners : Vector where each element is a vector containing 2D pixel coordinates of the 2D polygon that
+  defines the object edges in an image.
+
+  \param[in] colorIntrinsics : Camera parameters used to convert \e corners from pixel to
+  meters.
+
+  \param[in] point3d : Vector where each element is a vector containing 3D points coordinates of the 3D polygon that
+  defines the model of the planar object.
+
+  \param[out] cMo : Computed pose.
+
+  \param[out] confidence_index : Confidence index in range [0, 1]. When values are close to 1, it means that pose
+  estimation confidence is high. Values close to 0 indicate that pose is not well estimated. This confidence index
+  corresponds to the product between the normalized number of depth data covering the tag and the normalized M-estimator
+  weights returned by the robust estimation of the tag 3D plane.
+
+  \param[in] coplanar_points : There are cases where all the planar objects are not in the same plane. In order to
+  differentiate these cases, this parameter will be used to compute the common plane for all objects if its value is
+  true and compute the plane invidually for each object otherwise.
+
+  \return true if pose estimation succeed, false otherwise.
+ */
+bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
+                                             const std::vector<std::vector<vpImagePoint> > &corners,
+                                             const vpCameraParameters &colorIntrinsics,
+                                             const std::vector<std::vector<vpPoint> > &point3d,
+                                             vpHomogeneousMatrix &cMo, double *confidence_index, bool coplanar_points)
+{
+
+  if (corners.size() != point3d.size()) {
+    throw(vpException(vpException::fatalError,
+                      "Cannot compute pose from RGBD, 3D (%d) and 2D (%d) data doesn't have the same size",
+                      point3d.size(), corners.size()));
+  }
+  std::vector<vpPoint> pose_points;
+  if (confidence_index != NULL) {
+    *confidence_index = 0.0;
+  }
+
+  for (size_t i = 0; i < point3d.size(); i++) {
+    std::vector<vpPoint> tagPoint3d = point3d[i];
+    for (size_t j = 0; j < tagPoint3d.size(); j++) {
+      pose_points.push_back(tagPoint3d[j]);
+    }
+  }
+
+  // Total area of the polygon to estimate confidence
+  double totalArea = 0.0;
+
+  // If coplanar is true, the tags_points_3d  will be used to compute one plane
+  std::vector<double> tag_points_3d;
+
+  // Otherwise the vector of planes will be used to compute each plane for each vector
+  std::vector<std::vector<double> > tag_points_3d_nonplanar;
+  int nb_points_3d_non_planar = 0;
+
+  // Loop through each object, compute 3d point cloud of each
+  for (size_t i = 0; i < corners.size(); i++) {
+    std::vector<double> points_3d;
+    vpPolygon polygon(corners[i]);
+    vpRect bb = polygon.getBoundingBox();
+
+    // The area to calculate final confidence index should be total area of the tags
+    totalArea += polygon.getArea();
+
+    unsigned int top = static_cast<unsigned int>(std::max(0, static_cast<int>(bb.getTop())));
+    unsigned int bottom = static_cast<unsigned int>(
+        std::min(static_cast<int>(depthMap.getHeight()) - 1, static_cast<int>(bb.getBottom())));
+    unsigned int left = static_cast<unsigned int>(std::max(0, static_cast<int>(bb.getLeft())));
+    unsigned int right =
+        static_cast<unsigned int>(std::min(static_cast<int>(depthMap.getWidth()) - 1, static_cast<int>(bb.getRight())));
+
+    points_3d.reserve((bottom - top) * (right - left));
+    for (unsigned int idx_i = top; idx_i < bottom; idx_i++) {
+      for (unsigned int idx_j = left; idx_j < right; idx_j++) {
+        vpImagePoint imPt(idx_i, idx_j);
+        if (depthMap[idx_i][idx_j] > 0 && polygon.isInside(imPt)) {
+          double x = 0, y = 0;
+          vpPixelMeterConversion::convertPoint(colorIntrinsics, imPt.get_u(), imPt.get_v(), x, y);
+          double Z = depthMap[idx_i][idx_j];
+          points_3d.push_back(x * Z);
+          points_3d.push_back(y * Z);
+          points_3d.push_back(Z);
+        }
+      }
+    }
+
+    // If coplanar_points is true, feed all 3d points to single vector
+    // Otherwise, each vector will hold 3d points for seperate planes
+    if (coplanar_points) {
+      tag_points_3d.insert(tag_points_3d.end(), points_3d.begin(), points_3d.end());
+    } else {
+      tag_points_3d_nonplanar.push_back(points_3d);
+      nb_points_3d_non_planar += points_3d.size();
+    }
+  }
+
+  unsigned int nb_points_3d = 0;
+
+  if (coplanar_points) {
+    nb_points_3d = static_cast<unsigned int>(tag_points_3d.size() / 3);
+  } else {
+    nb_points_3d = static_cast<unsigned int>(nb_points_3d_non_planar / 3);
+  }
+
+  if (nb_points_3d > 4) {
+    std::vector<vpPoint> p, q;
+
+    // Plane equation
+    vpColVector plane_equation, centroid;
+    double normalized_weights = 0;
+
+    if (coplanar_points) {
+      // If all objects are coplanar, use points insides tag_points_3d to estimate the plane
+      estimatePlaneEquationSVD(tag_points_3d, plane_equation, centroid, normalized_weights);
+      int count = 0;
       for (size_t j = 0; j < corners.size(); j++) {
-          const vpImagePoint& imPt = corners[j];
+        std::vector<vpImagePoint> tag_corner = corners[j];
+        for (size_t i = 0; i < tag_corner.size(); i++) {
+          const vpImagePoint &imPt = tag_corner[i];
           double x = 0, y = 0;
           vpPixelMeterConversion::convertPoint(colorIntrinsics, imPt.get_u(), imPt.get_v(), x, y);
           double Z = computeZMethod1(plane_equation, x, y);
+          std::cout << Z;
           if (Z < 0) {
-              Z = -Z;
+            Z = -Z;
           }
-          p.push_back(vpPoint(x*Z, y*Z, Z));
-
-          pose_points[j].set_x(x);
-          pose_points[j].set_y(y);
+          p.push_back(vpPoint(x * Z, y * Z, Z));
+          pose_points[count].set_x(x);
+          pose_points[count].set_y(y);
+          count++;
+        }
       }
+    } else {
+      // If the tags is not coplanar, estimate the plane for each tags
+      int count = 0;
 
-      for (size_t i = 0; i < point3d.size(); i ++) {
-        q.push_back(point3d[i]);
+      for (size_t k = 0; k < tag_points_3d_nonplanar.size(); k++) {
+        std::vector<double> rec_points_3d = tag_points_3d_nonplanar[k];
+        double tag_normalized_weights = 0;
+      
+        if (rec_points_3d.size() >= 9) {
+          // The array must has at least 3 points for the function estimatePlaneEquationSVD not to crash
+          estimatePlaneEquationSVD(rec_points_3d, plane_equation, centroid, tag_normalized_weights);
+          normalized_weights += tag_normalized_weights;
+
+          // Get the 2d points of the tag the plane just recomputed
+          std::vector<vpImagePoint> tag_corner = corners[k];
+
+          for (size_t i = 0; i < tag_corner.size(); i++) {
+            const vpImagePoint &imPt = tag_corner[i];
+            double x = 0, y = 0;
+            vpPixelMeterConversion::convertPoint(colorIntrinsics, imPt.get_u(), imPt.get_v(), x, y);
+            double Z = computeZMethod1(plane_equation, x, y);
+
+            if (Z < 0) {
+              Z = -Z;
+            }
+            p.push_back(vpPoint(x * Z, y * Z, Z));
+            pose_points[count].set_x(x);
+            pose_points[count].set_y(y);
+            count++;
+          }
+        } else {
+          // Sometimes an object may do not have enough points registered due to small size or bad alignment btw depth
+          // and rgb. This behavior happens with Orbbec camera while Realsenses was fine. To prevent exception while
+          // computePose, skip recomputing the failed estimation tag's (4 point - corners)
+          count += corners[k].size();
+        }
       }
+      normalized_weights = normalized_weights / tag_points_3d_nonplanar.size();
+    }
 
+    for (size_t i = 0; i < point3d.size(); i++) {
+      std::vector<vpPoint> tagPoint3d = point3d[i];
+      // Sometimes an object may do not have enough points registered due to small size.
+      // The issue happens with Orbbec camera while Realsenses was fine.
+      // To prevent wrong estimation or exception (p and q sizes are differents),
+      // ignore the recomputer vector (tag_points_3d_nonplanar) when size = 0
+      if (coplanar_points) {
+        for (size_t j = 0; j < tagPoint3d.size(); j++) {
+          q.push_back(tagPoint3d[j]);
+        }
+      } else {
+        if (tag_points_3d_nonplanar[i].size() > 0) {
+          for (size_t j = 0; j < tagPoint3d.size(); j++) {
+            q.push_back(tagPoint3d[j]);
+          }
+        }
+      }
+    }
+
+    // Due to the possibility of q's size might less than p's, check their size should be identical
+    if (p.size() == q.size()) {
       cMo = compute3d3dTransformation(p, q);
 
       if (validPose(cMo)) {
-          vpPose pose;
-          pose.addPoints(pose_points);
-          if (pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
-            if (confidence_index != NULL) {
-              *confidence_index = std::min(1.0, normalized_weights * static_cast<double>(nb_points_3d) / polygon.getArea());
-            }
-            return true;
+        vpPose pose;
+        pose.addPoints(pose_points);
+        if (pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
+          if (confidence_index != NULL) {
+            *confidence_index = std::min(1.0, normalized_weights * static_cast<double>(nb_points_3d) / totalArea);
           }
+          return true;
+        }
       }
+    }
   }
-
   return false;
 }
