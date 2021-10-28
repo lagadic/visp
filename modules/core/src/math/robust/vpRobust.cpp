@@ -41,12 +41,12 @@
   \file vpRobust.cpp
 */
 
-#include <cmath>  // std::fabs
-#include <limits> // numeric_limits
+#include <algorithm> // std::swap
+#include <cmath>     // std::fabs
+#include <limits>    // numeric_limits
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <algorithm> // std::swap
 
 #include <visp3/core/vpColVector.h>
 #include <visp3/core/vpDebug.h>
@@ -58,9 +58,9 @@
 */
 vpRobust::vpRobust()
   : m_normres(), m_sorted_normres(), m_sorted_residues(), m_mad_min(0.0017), m_mad_prev(0),
-    #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
     m_iter(0),
-    #endif
+#endif
     m_size(0), m_mad(0)
 {
 }
@@ -228,7 +228,7 @@ void vpRobust::psiHuber(double sig, const vpColVector &x, vpColVector &weights)
   for (unsigned int i = 0; i < n_data; i++) {
     double xi = x[i] / C;
     if (fabs(xi) > 1.)
-      weights[i] = std::fabs(1./xi);
+      weights[i] = std::fabs(1. / xi);
     else
       weights[i] = 1;
   }
@@ -259,10 +259,10 @@ void vpRobust::psiCauchy(double sig, const vpColVector &x, vpColVector &weights)
   \param l : first value to be considered.
   \param r : last value to be considered.
 */
-int vpRobust::partition(vpColVector &a, unsigned int l, unsigned int r)
+int vpRobust::partition(vpColVector &a, int l, int r)
 {
-  unsigned int i = l - 1;
-  unsigned int j = r;
+  int i = l - 1;
+  int j = r;
   double v = a[r];
 
   for (;;) {
@@ -286,10 +286,10 @@ int vpRobust::partition(vpColVector &a, unsigned int l, unsigned int r)
   \param r : last value to be considered
   \param k : value to be selected
 */
-double vpRobust::select(vpColVector &a, unsigned int l, unsigned int r, unsigned int k)
+double vpRobust::select(vpColVector &a, int l, int r, int k)
 {
   while (r > l) {
-    unsigned int i = partition(a, l, r);
+    int i = partition(a, l, r);
     if (i >= k)
       r = i - 1;
     if (i <= k)
@@ -311,9 +311,9 @@ double vpRobust::select(vpColVector &a, unsigned int l, unsigned int r, unsigned
 */
 vpRobust::vpRobust(unsigned int n_data)
   : m_normres(), m_sorted_normres(), m_sorted_residues(), m_mad_min(0.0017), m_mad_prev(0),
-    #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
     m_iter(0),
-    #endif
+#endif
     m_size(n_data), m_mad(0)
 {
   vpCDEBUG(2) << "vpRobust constructor reached" << std::endl;
@@ -420,7 +420,7 @@ double vpRobust::computeNormalizedMedian(vpColVector &all_normres, const vpColVe
  */
 vpColVector vpRobust::simultMEstimator(vpColVector &residues)
 {
-  double med = 0;   // Median
+  double med = 0; // Median
 
   unsigned int n_data = residues.getRows();
   vpColVector norm_res(n_data); // Normalized Residue
@@ -691,4 +691,3 @@ double vpRobust::gammln(double xx)
 #undef vpEPS
 
 #endif
-
