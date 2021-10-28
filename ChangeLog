@@ -7,7 +7,7 @@
 
 ViSP 3.4.1 (under development)
   - Contributors:
-    . Fabien Spindler, Souriya Trinh, Olivier Kermorgant
+    . Fabien Spindler, Souriya Trinh, Olivier Kermorgant, Thuc Long Ha
   - New features and improvements
     . Camera calibration model can now consider px/py aspect ratio and estimate
       a model where px = py
@@ -19,6 +19,7 @@ ViSP 3.4.1 (under development)
     . [#913] Cannot build tutorial with librealsense < 2.31.0
     . [#926] Packaging with CPack doesn't work with Ogre dependency
     . [#933] tutorial-apriltag-detector-live-rgbd-realsense.cpp doesn't work
+    . [#937] Segfault in vpRobust when data to consider is a 2-dim vector
 ----------------------------------------------
 ViSP 3.4.0 (released February 26, 2021)
   - Contributors:
