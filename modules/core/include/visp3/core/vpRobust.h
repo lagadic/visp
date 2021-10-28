@@ -44,8 +44,8 @@
 #ifndef vpRobust_h
 #define vpRobust_h
 
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpMath.h>
 
 /*!
@@ -132,7 +132,7 @@ public:
    *
    * \sa setMinMedianAbsoluteDeviation()
    */
-  double getMedianAbsoluteDeviation() {return m_mad;};
+  double getMedianAbsoluteDeviation() { return m_mad; };
 
   /*!
    * Return the min value used to threshold residual vector Median Absolute Deviation (MAD).
@@ -140,7 +140,7 @@ public:
    *
    * \sa setMinMedianAbsoluteDeviation()
    */
-  double getMinMedianAbsoluteDeviation() {return m_mad_min;};
+  double getMinMedianAbsoluteDeviation() { return m_mad_min; };
 
   void MEstimator(const vpRobustEstimatorType method, const vpColVector &residues, vpColVector &weights);
 
@@ -157,7 +157,7 @@ public:
    * Default value is set to 0.0017 in the default constructor.
    *
    * \sa getMinMedianAbsoluteDeviation()
-  */
+   */
   inline void setMinMedianAbsoluteDeviation(double mad_min) { m_mad_min = mad_min; }
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -204,8 +204,8 @@ private:
   //@}
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-  double computeNormalizedMedian(vpColVector &all_normres, const vpColVector &residues,
-                                 const vpColVector &all_residues, const vpColVector &weights);
+  double computeNormalizedMedian(vpColVector &all_normres, const vpColVector &residues, const vpColVector &all_residues,
+                                 const vpColVector &weights);
   //! Calculate various scale estimates
   double simultscale(const vpColVector &x);
   //! Partial derivative of loss function with respect to the scale
@@ -244,9 +244,9 @@ private:
   /** @name Sort function  */
   //@{
   //! Sort function using partition method
-  int partition(vpColVector &a, unsigned int l, unsigned int r);
+  int partition(vpColVector &a, int l, int r);
   //! Sort the vector and select a value in the sorted vector
-  double select(vpColVector &a, unsigned int l, unsigned int r, unsigned int k);
+  double select(vpColVector &a, int l, int r, int k);
   //@}
 };
 
