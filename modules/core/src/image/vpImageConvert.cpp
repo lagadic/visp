@@ -4408,41 +4408,129 @@ void vpImageConvert::RGBToHSV(const unsigned char *rgb, unsigned char *hue, unsi
 
 // Bilinear
 
+/*!
+  Converts an array of uint8 Bayer data to an array of interleaved R, G, B and A values using bilinear demosaicing method.
+
+  \param[IN] bggr : Array of Bayer data arranged into BGGR pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicBGGRToRGBaBilinear(const uint8_t *bggr, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicBGGRToRGBaBilinearTpl(bggr, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint16 Bayer data to an array of interleaved R, G, B and A values using bilinear demosaicing method.
+
+  \param[IN] bggr : Array of Bayer data arranged into BGGR pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicBGGRToRGBaBilinear(const uint16_t *bggr, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicBGGRToRGBaBilinearTpl(bggr, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint8 Bayer data to an array of interleaved R, G, B and A values using bilinear demosaicing method.
+
+  \param[IN] gbrg : Array of Bayer data arranged into GBRG pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicGBRGToRGBaBilinear(const uint8_t *gbrg, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicGBRGToRGBaBilinearTpl(gbrg, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint16 Bayer data to an array of interleaved R, G, B and A values using bilinear demosaicing method.
+
+  \param[IN] gbrg : Array of Bayer data arranged into GBRG pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicGBRGToRGBaBilinear(const uint16_t *gbrg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicGBRGToRGBaBilinearTpl(gbrg, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint8 Bayer data to an array of interleaved R, G, B and A values using bilinear demosaicing method.
+
+  \param[IN] grbg : Array of Bayer data arranged into GRBG pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicGRBGToRGBaBilinear(const uint8_t *grbg, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicGRBGToRGBaBilinearTpl(grbg, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint16 Bayer data to an array of interleaved R, G, B and A values using bilinear demosaicing method.
+
+  \param[IN] grbg : Array of Bayer data arranged into GRBG pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicGRBGToRGBaBilinear(const uint16_t *grbg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicGRBGToRGBaBilinearTpl(grbg, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint8 Bayer data to an array of interleaved R, G, B and A values using bilinear demosaicing method.
+
+  \param[IN] rggb : Array of Bayer data arranged into RGGB pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicRGGBToRGBaBilinear(const uint8_t *rggb, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicRGGBToRGBaBilinearTpl(rggb, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint16 Bayer data to an array of interleaved R, G, B and A values using bilinear demosaicing method.
+
+  \param[IN] rggb : Array of Bayer data arranged into RGGB pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicRGGBToRGBaBilinear(const uint16_t *rggb, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicRGGBToRGBaBilinearTpl(rggb, rgba, width, height, nThreads);
@@ -4450,41 +4538,129 @@ void vpImageConvert::demosaicRGGBToRGBaBilinear(const uint16_t *rggb, uint16_t *
 
 // Malvar
 
+/*!
+  Converts an array of uint8 Bayer data to an array of interleaved R, G, B and A values using Malvar @Malvar2004HighqualityLI demosaicing method.
+
+  \param[IN] bggr : Array of Bayer data arranged into BGGR pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicBGGRToRGBaMalvar(const uint8_t *bggr, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicBGGRToRGBaMalvarTpl(bggr, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint16 Bayer data to an array of interleaved R, G, B and A values using Malvar @Malvar2004HighqualityLI demosaicing method.
+
+  \param[IN] bggr : Array of Bayer data arranged into BGGR pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicBGGRToRGBaMalvar(const uint16_t *bggr, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicBGGRToRGBaMalvarTpl(bggr, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint8 Bayer data to an array of interleaved R, G, B and A values using Malvar @Malvar2004HighqualityLI demosaicing method.
+
+  \param[IN] gbrg : Array of Bayer data arranged into GBRG pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicGBRGToRGBaMalvar(const uint8_t *gbrg, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicGBRGToRGBaMalvarTpl(gbrg, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint16 Bayer data to an array of interleaved R, G, B and A values using Malvar @Malvar2004HighqualityLI demosaicing method.
+
+  \param[IN] gbrg : Array of Bayer data arranged into GBRG pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicGBRGToRGBaMalvar(const uint16_t *gbrg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicGBRGToRGBaMalvarTpl(gbrg, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint8 Bayer data to an array of interleaved R, G, B and A values using Malvar @Malvar2004HighqualityLI demosaicing method.
+
+  \param[IN] grbg : Array of Bayer data arranged into GRBG pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicGRBGToRGBaMalvar(const uint8_t *grbg, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicGRBGToRGBaMalvarTpl(grbg, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint16 Bayer data to an array of interleaved R, G, B and A values using Malvar @Malvar2004HighqualityLI demosaicing method.
+
+  \param[IN] grbg : Array of Bayer data arranged into GRBG pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicGRBGToRGBaMalvar(const uint16_t *grbg, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicGRBGToRGBaMalvarTpl(grbg, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint8 Bayer data to an array of interleaved R, G, B and A values using Malvar @Malvar2004HighqualityLI demosaicing method.
+
+  \param[IN] rggb : Array of Bayer data arranged into RGGB pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicRGGBToRGBaMalvar(const uint8_t *rggb, uint8_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicRGGBToRGBaMalvarTpl(rggb, rgba, width, height, nThreads);
 }
 
+/*!
+  Converts an array of uint16 Bayer data to an array of interleaved R, G, B and A values using Malvar @Malvar2004HighqualityLI demosaicing method.
+
+  \param[IN] rggb : Array of Bayer data arranged into RGGB pattern.
+  \param[OUT] rgba : Array of R, G, B and A values converted from Bayer image.
+  \param[IN] width : Bayer image width.
+  \param[IN] height : Bayer image height.
+  \param[IN] nThreads : Number of OpenMP threads to use if available.
+
+  \note rgba array must be preallocated beforehand. Alpha channel is left as-is.
+*/
 void vpImageConvert::demosaicRGGBToRGBaMalvar(const uint16_t *rggb, uint16_t *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
   demosaicRGGBToRGBaMalvarTpl(rggb, rgba, width, height, nThreads);
