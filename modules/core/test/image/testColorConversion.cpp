@@ -281,6 +281,20 @@ double computePSNR(const vpImage<vpRGBa>& I_RGBA_8U, const vpImage<vpRGBa>& I_RG
   return 10*std::log10(255*255 / mse);
 }
 
+void readBinaryFile(const std::string& filename, std::vector<uint16_t>& buffer)
+{
+  std::FILE* f = std::fopen(filename.c_str(), "rb");
+  size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
+  REQUIRE(sread == buffer.size());
+
+#ifdef VISP_BIG_ENDIAN
+  std::vector<uint16_t> tmp = buffer;
+  for (size_t i = 0; i < tmp.size(); i++) {
+    buffer[i] = vpEndian::swap16bits(tmp[i]);
+  }
+#endif
+}
+
 TEST_CASE("Bayer conversion", "[image_conversion]") {
   // Load original Klimt image
   vpImage<vpRGBa> I_RGBA_8U_ref;
@@ -299,10 +313,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
     SECTION("BGGR")
     {
       const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_BGGR_12bits.raw");
-
-      std::FILE* f = std::fopen(filename.c_str(), "rb");
-      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
-      REQUIRE(sread == buffer.size());
+      readBinaryFile(filename, buffer);
 
       col2im(buffer, I_Bayer_16U);
 
@@ -330,10 +341,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
     SECTION("GBRG")
     {
       const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GBRG_12bits.raw");
-
-      std::FILE* f = std::fopen(filename.c_str(), "rb");
-      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
-      REQUIRE(sread == buffer.size());
+      readBinaryFile(filename, buffer);
 
       col2im(buffer, I_Bayer_16U);
 
@@ -361,10 +369,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
     SECTION("GRBG")
     {
       const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_GRBG_12bits.raw");
-
-      std::FILE* f = std::fopen(filename.c_str(), "rb");
-      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
-      REQUIRE(sread == buffer.size());
+      readBinaryFile(filename, buffer);
 
       col2im(buffer, I_Bayer_16U);
 
@@ -392,10 +397,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
     SECTION("RGGB")
     {
       const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Bayer/Klimt_Bayer_560x558_RGGB_12bits.raw");
-
-      std::FILE* f = std::fopen(filename.c_str(), "rb");
-      size_t sread = std::fread(&buffer[0], sizeof buffer[0], buffer.size(), f);
-      REQUIRE(sread == buffer.size());
+      readBinaryFile(filename, buffer);
 
       col2im(buffer, I_Bayer_16U);
 
