@@ -862,10 +862,9 @@ SIMD_API void SimdMatTranspose(const double * mat, size_t rows, size_t cols, dou
 
 SIMD_API void SimdImageDifference(const unsigned char * img1, const unsigned char * img2, size_t size, unsigned char * imgDiff)
 {
-  //TODO:
-#ifdef SIMD_SSSE3_ENABLE
-    if (Ssse3::Enable && size >= Ssse3::A)
-        Ssse3::SimdImageDifference(img1,img2, size, imgDiff);
+#ifdef SIMD_SSE41_ENABLE
+    if (Sse41::Enable && size >= Sse41::A)
+        Sse41::SimdImageDifference(img1,img2, size, imgDiff);
     else
 #endif
         Base::SimdImageDifference(img1, img2, size, imgDiff);

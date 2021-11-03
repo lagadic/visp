@@ -102,7 +102,7 @@ void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const st
   while (cpt_elt != nb_elt) {
     // Skip empty lines or lines starting with # (comment)
     while (std::getline(fd, line) && (line.compare(0, 1, "#") == 0 || line.size() == 0)) {
-    };
+    }
 
     if (fd.eof()) {
       fd.close();
