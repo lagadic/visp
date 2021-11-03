@@ -70,6 +70,9 @@ namespace Simd
         void RgbToBgra(const uint8_t* rgb, size_t width, size_t height, size_t rgbStride, uint8_t* bgra, size_t bgraStride, uint8_t alpha);
 
         void RgbToGray(const uint8_t* rgb, size_t width, size_t height, size_t rgbStride, uint8_t* gray, size_t grayStride);
+
+        // ViSP custom SIMD code
+        void SimdImageDifference(const unsigned char * img1, const unsigned char * img2, size_t size, unsigned char * imgDiff);
     }
 #endif// SIMD_SSE41_ENABLE
 }
