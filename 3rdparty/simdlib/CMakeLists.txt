@@ -93,9 +93,9 @@ if(X86 OR X86_64)
 
     file(GLOB_RECURSE SIMD_AVX2_SRC ${CMAKE_CURRENT_SOURCE_DIR}/Simd/SimdAvx2*.cpp)
     if(MSVC)
-        set_source_files_properties(${SIMD_AVX2_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${AVX2_FLAG}")
+        set_source_files_properties(${SIMD_AVX2_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${AVX2_FLAG} -mno-avx256-split-unaligned-load -mno-avx256-split-unaligned-store")
     else()
-        set_source_files_properties(${SIMD_AVX2_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${AVX2_FLAG} -mfma")
+        set_source_files_properties(${SIMD_AVX2_SRC} PROPERTIES COMPILE_FLAGS "${COMMON_CXX_FLAGS} ${AVX2_FLAG} -mfma -mbmi -mbmi2 -mlzcnt -fabi-version=4 -mno-avx256-split-unaligned-load -mno-avx256-split-unaligned-store")
     endif()
 
     set(SIMD_LIB_FLAGS "${COMMON_CXX_FLAGS} ${AVX2_FLAG}")

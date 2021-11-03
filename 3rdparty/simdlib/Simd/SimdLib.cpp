@@ -61,8 +61,10 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReasonForCall, LPVOID lpReserved)
 #include "Simd/SimdConst.h"
 #include "Simd/SimdLog.h"
 
-#include "Simd/SimdResizer.h"
 #include "Simd/SimdGaussianBlur.h"
+#include "Simd/SimdImageLoad.h"
+#include "Simd/SimdImageSave.h"
+#include "Simd/SimdResizer.h"
 
 #include "Simd/SimdBase.h"
 #include "Simd/SimdSse2.h"
@@ -449,6 +451,34 @@ SIMD_API void SimdGrayToBgra(const uint8_t * gray, size_t width, size_t height, 
     else
 #endif
         Base::GrayToBgra(gray, width, height, grayStride, bgra, bgraStride, alpha);
+}
+
+SIMD_API uint8_t* SimdImageSaveToMemory(const uint8_t* src, size_t stride, size_t width, size_t height, SimdPixelFormatType format, SimdImageFileType file, int quality, size_t* size)
+{
+    const static Simd::ImageSaveToMemoryPtr imageSaveToMemory = SIMD_FUNC3(ImageSaveToMemory, SIMD_AVX2_FUNC, SIMD_SSE41_FUNC, SIMD_NEON_FUNC);
+
+    return imageSaveToMemory(src, stride, width, height, format, file, quality, size);
+}
+
+SIMD_API SimdBool SimdImageSaveToFile(const uint8_t* src, size_t stride, size_t width, size_t height, SimdPixelFormatType format, SimdImageFileType file, int quality, const char* path)
+{
+    const static Simd::ImageSaveToMemoryPtr imageSaveToMemory = SIMD_FUNC3(ImageSaveToMemory, SIMD_AVX2_FUNC, SIMD_SSE41_FUNC, SIMD_NEON_FUNC);
+
+    return ImageSaveToFile(imageSaveToMemory, src, stride, width, height, format, file, quality, path);
+}
+
+SIMD_API uint8_t* SimdImageLoadFromMemory(const uint8_t* data, size_t size, size_t* stride, size_t* width, size_t* height, SimdPixelFormatType* format)
+{
+    const static Simd::ImageLoadFromMemoryPtr imageLoadFromMemory = SIMD_FUNC3(ImageLoadFromMemory, SIMD_AVX2_FUNC, SIMD_SSE41_FUNC, SIMD_NEON_FUNC);
+
+    return imageLoadFromMemory(data, size, stride, width, height, format);
+}
+
+SIMD_API uint8_t* SimdImageLoadFromFile(const char* path, size_t* stride, size_t* width, size_t* height, SimdPixelFormatType* format)
+{
+    const static Simd::ImageLoadFromMemoryPtr imageLoadFromMemory = SIMD_FUNC3(ImageLoadFromMemory, SIMD_AVX2_FUNC, SIMD_SSE41_FUNC, SIMD_NEON_FUNC);
+
+    return ImageLoadFromFile(imageLoadFromMemory, path, stride, width, height, format);
 }
 
 SIMD_API void SimdInterleaveBgr(const uint8_t * b, size_t bStride, const uint8_t * g, size_t gStride, const uint8_t * r, size_t rStride,
