@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -58,8 +58,8 @@ namespace Simd
         Log<T>(array.data, array.size, name);
     }
 
-#ifdef SIMD_SSE_ENABLE
-    namespace Sse
+#ifdef SIMD_SSE2_ENABLE
+    namespace Sse2
     {
         SIMD_INLINE void Log(const __m128 & value, const std::string & name)
         {
@@ -67,12 +67,7 @@ namespace Simd
             _mm_storeu_ps(buffer, value);
             Simd::Log<float>(buffer, F, name);
         }
-    }
-#endif //SIMD_SSE_ENABLE
 
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
-    {
         template<class T> SIMD_INLINE void Log(const __m128i & value, const std::string & name)
         {
             const size_t n = sizeof(__m128i) / sizeof(T);
@@ -86,7 +81,7 @@ namespace Simd
 #ifdef SIMD_SSE41_ENABLE
     namespace Sse41
     {
-        using namespace Sse;
+        using namespace Sse2;
     }
 #endif //SIMD_SSE41_ENABLE
 
@@ -173,13 +168,14 @@ namespace Simd
 #define SIMD_LOG2(value) Log<int16_t>(value, #value)
 #define SIMD_LOG4(value) Log<int32_t>(value, #value)
 
-#define SIMD_LOG_SS(message) \
+#define SIMD_LOG_ERROR(message) \
 { \
-    std::cout << __FUNCTION__  << " : " << message << std::endl; \
-    std::cout.flush(); \
+    std::stringstream ss; \
+    ss << std::endl << " In function " << SIMD_FUNCTION << ":" << std::endl; \
+    ss << " In file " << __FILE__ << ":" << __LINE__ << ":" << std::endl; \
+    ss << " Error: " << message << std::endl << std::endl; \
+    std::cerr << ss.str() << std::flush; \
 }
-
-#define SIMD_LOG_LINE() std::cout << __FUNCTION__  << " : " << __LINE__ << std::endl << std::flush; 
 
 #else//SIMD_LOG_ENABLE
 
@@ -188,9 +184,7 @@ namespace Simd
 #define SIMD_LOG2(value)
 #define SIMD_LOG4(value)
 
-#define SIMD_LOG_SS(message)
-
-#define SIMD_LOG_LINE()
+#define SIMD_LOG_ERROR(message)
 
 #endif//SIMD_LOG_ENABLE 
 

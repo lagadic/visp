@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2017 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -21,30 +21,47 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-#include "Simd/SimdDefs.h"
-#include <algorithm>
+#include "Simd/SimdEnable.h"
+#include "Simd/SimdCpu.h"
+
+#if defined(_MSC_VER)
+#include <windows.h>
+#endif
 
 namespace Simd
 {
-    namespace Base
+#ifdef SIMD_SSE41_ENABLE
+    namespace Sse41
     {
-        void BgraToRgba(const uint8_t *bgra, size_t size, uint8_t *rgba)
+        SIMD_INLINE bool SupportedByCPU()
         {
-            for (size_t i = 0; i < size; ++i, bgra += 4, rgba += 4)
-            {
-                *(int32_t*)rgba = (*(int32_t*)bgra);
-                std::swap(rgba[0], rgba[2]);
-            }
+            return 
+                Base::CheckBit(Cpuid::Ordinary, Cpuid::Ecx, Cpuid::SSE41) &&
+                Base::CheckBit(Cpuid::Ordinary, Cpuid::Ecx, Cpuid::SSE42);
         }
 
-        void BgraToRgba(const uint8_t *bgra, size_t width, size_t height, size_t bgraStride, uint8_t *rgba, size_t rgbaStride)
+        SIMD_INLINE bool SupportedByOS()
         {
-            for (size_t row = 0; row < height; ++row)
+#if defined(_MSC_VER)
+            __try
             {
-                BgraToRgba(bgra, width, rgba);
-                bgra += bgraStride;
-                rgba += rgbaStride;
+                int value = _mm_testz_si128(_mm_set1_epi8(0), _mm_set1_epi8(-1)); // try to execute of SSE41 instructions;
+                uint32_t crc = _mm_crc32_u8(0, 1); // try to execute of SSE42 instructions;
+                return true;
             }
+            __except (EXCEPTION_EXECUTE_HANDLER)
+            {
+                return false;
+            }
+#else
+            return true;
+#endif
+        }
+
+        bool GetEnable()
+        {
+            return SupportedByCPU() && SupportedByOS();
         }
     }
+#endif
 }

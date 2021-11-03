@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2018 Yermalayeu Ihar.
+* Copyright (c) 2011-2020 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@ namespace Simd
                 _mm256_and_si256(_mm256_srli_si256(s01, 1), K16_00FF),
                 _mm256_and_si256(s11, K16_00FF),
                 _mm256_and_si256(_mm256_srli_si256(s11, 1), K16_00FF));
-            return PackU16ToU8(lo, hi);
+            return PackI16ToU8(lo, hi);
         }
 #else
         SIMD_INLINE __m256i Average16(const __m256i & s0, const __m256i & s1)
@@ -52,7 +52,7 @@ namespace Simd
 
         SIMD_INLINE __m256i Average8(const __m256i & s00, const __m256i & s01, const __m256i & s10, const __m256i & s11)
         {
-            return PackU16ToU8(Average16(s00, s10), Average16(s01, s11));
+            return PackI16ToU8(Average16(s00, s10), Average16(s01, s11));
         }
 #endif
 

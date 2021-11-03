@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar.
+* Copyright (c) 2011-2020 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -21,20 +21,46 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-#ifndef __SimdSse_h__
-#define __SimdSse_h__
+#include "Simd/SimdEnable.h"
+#include "Simd/SimdCpu.h"
 
-#include "Simd/SimdDefs.h"
+#if defined(_MSC_VER)
+#include <windows.h>
+#endif
 
 namespace Simd
 {
-#ifdef SIMD_SSE_ENABLE
-    namespace Sse
+#ifdef SIMD_AVX_ENABLE
+    namespace Avx
     {
-        void SquaredDifferenceSum32f(const float * a, const float * b, size_t size, float * sum);
+        SIMD_INLINE bool SupportedByCPU()
+        {
+            return
+                Base::CheckBit(Cpuid::Ordinary, Cpuid::Ecx, Cpuid::OSXSAVE) &&
+                Base::CheckBit(Cpuid::Ordinary, Cpuid::Ecx, Cpuid::AVX);
+        }
 
-        void SquaredDifferenceKahanSum32f(const float * a, const float * b, size_t size, float * sum);
+        SIMD_INLINE bool SupportedByOS()
+        {
+#if defined(_MSC_VER)
+            __try
+            {
+                __m256d value = _mm256_set1_pd(1.0);// try to execute of AVX instructions;
+                return true;
+            }
+            __except (EXCEPTION_EXECUTE_HANDLER)
+            {
+                return false;
+            }
+#else
+            return true;
+#endif
+        }
+
+        bool GetEnable()
+        {
+            return SupportedByCPU() && SupportedByOS();
+        }
     }
-#endif// SIMD_SSE_ENABLE
+#endif
 }
-#endif//__SimdSse_h__

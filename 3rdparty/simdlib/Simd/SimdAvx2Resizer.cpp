@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
 */
 #include "Simd/SimdMemory.h"
 #include "Simd/SimdResizer.h"
+#include "Simd/SimdResizerCommon.h"
 #include "Simd/SimdStore.h"
 #include "Simd/SimdSet.h"
 #include "Simd/SimdUpdate.h"
@@ -33,7 +34,7 @@ namespace Simd
     namespace Avx2
     {
         ResizerByteBilinear::ResizerByteBilinear(const ResParam & param)
-            : Ssse3::ResizerByteBilinear(param)
+            : Sse41::ResizerByteBilinear(param)
         {
         }
 
@@ -223,7 +224,7 @@ namespace Simd
         {
             __m256i lo = ResizerByteBilinearInterpolateY<align>((__m256i*)bx0 + 0, (__m256i*)bx1 + 0, alpha);
             __m256i hi = ResizerByteBilinearInterpolateY<align>((__m256i*)bx0 + 1, (__m256i*)bx1 + 1, alpha);
-            Store<false>((__m256i*)dst, PackU16ToU8(lo, hi));
+            Store<false>((__m256i*)dst, PackI16ToU8(lo, hi));
         }
 
         template<size_t N> void ResizerByteBilinear::Run(const uint8_t * src, size_t srcStride, uint8_t * dst, size_t dstStride)
@@ -523,7 +524,7 @@ namespace Simd
             float * pbx[2] = { _bx[0].data, _bx[1].data };
             int32_t prev = -2;
             size_t rsa = AlignLo(rs, Avx::F);
-            size_t rsh = AlignLo(rs, Sse::F);
+            size_t rsh = AlignLo(rs, Sse2::F);
             for (size_t dy = 0; dy < _param.dstH; dy++, dst += dstStride)
             {
                 float fy1 = _ay[dy];
@@ -560,10 +561,10 @@ namespace Simd
                             __m256 s1 = _mm256_shuffle_ps(s0145, s2367, 0xDD);
                             _mm256_store_ps(pb + dx, _mm256_fmadd_ps(s0, fx0, _mm256_mul_ps(s1, fx1)));
                         }
-                        for (; dx < rsh; dx += Sse::F)
+                        for (; dx < rsh; dx += Sse2::F)
                         {
-                            __m128 s01 = Sse::Load(ps + _ix[dx + 0], ps + _ix[dx + 1]);
-                            __m128 s23 = Sse::Load(ps + _ix[dx + 2], ps + _ix[dx + 3]);
+                            __m128 s01 = Sse2::Load(ps + _ix[dx + 0], ps + _ix[dx + 1]);
+                            __m128 s23 = Sse2::Load(ps + _ix[dx + 2], ps + _ix[dx + 3]);
                             __m128 fx1 = _mm_load_ps(_ax.data + dx);
                             __m128 fx0 = _mm_sub_ps(_mm256_castps256_ps128(_1), fx1);
                             __m128 m0 = _mm_mul_ps(fx0, _mm_shuffle_ps(s01, s23, 0x88));
@@ -625,7 +626,7 @@ namespace Simd
                     __m256 b1 = _mm256_load_ps(pbx[1] + dx);
                     _mm256_storeu_ps(dst + dx, _mm256_fmadd_ps(b0, _fy0, _mm256_mul_ps(b1, _fy1)));
                 }
-                for (; dx < rsh; dx += Sse::F)
+                for (; dx < rsh; dx += Sse2::F)
                 {
                     __m128 m0 = _mm_mul_ps(_mm_load_ps(pbx[0] + dx), _mm256_castps256_ps128(_fy0));
                     __m128 m1 = _mm_mul_ps(_mm_load_ps(pbx[1] + dx), _mm256_castps256_ps128(_fy1));
@@ -641,11 +642,11 @@ namespace Simd
         void * ResizerInit(size_t srcX, size_t srcY, size_t dstX, size_t dstY, size_t channels, SimdResizeChannelType type, SimdResizeMethodType method)
         {
             ResParam param(srcX, srcY, dstX, dstY, channels, type, method, sizeof(__m256i));
-            if (type == SimdResizeChannelByte && method == SimdResizeMethodBilinear && dstX >= A)
+            if (param.IsByteBilinear() && dstX >= A)
                 return new ResizerByteBilinear(param);
-            else if (type == SimdResizeChannelByte && method == SimdResizeMethodArea)
+            else if (param.IsByteArea())
                 return new ResizerByteArea(param);
-            else if (type == SimdResizeChannelFloat && (method == SimdResizeMethodBilinear || method == SimdResizeMethodCaffeInterp))
+            else if (param.IsFloatBilinear())
                 return new ResizerFloatBilinear(param);
             else
                 return Avx::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);

@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
 */
 #include "Simd/SimdMemory.h"
 #include "Simd/SimdResizer.h"
+#include "Simd/SimdCopyPixel.h"
 
 namespace Simd
 {
@@ -132,8 +133,6 @@ namespace Simd
         ResizerByteArea::ResizerByteArea(const ResParam & param)
             : Resizer(param)
         {
-            double scale = Simd::Max(float(_param.srcW) / _param.dstW, float(_param.srcH) / _param.dstH);
-
             _ay.Resize(_param.dstH + 1);
             _iy.Resize(_param.dstH + 1);
             EstimateParams(_param.srcH, _param.dstH, Base::AREA_RANGE, _ay.data, _iy.data);
@@ -234,28 +233,173 @@ namespace Simd
 
         //---------------------------------------------------------------------
 
+        ResizerShortBilinear::ResizerShortBilinear(const ResParam& param)
+            : Resizer(param)
+        {
+            _ay.Resize(_param.dstH, false, _param.align);
+            _iy.Resize(_param.dstH, false, _param.align);
+            EstimateIndexAlpha(_param.srcH, _param.dstH, 1, _iy.data, _ay.data);
+            size_t rs = _param.dstW * _param.channels;
+            _ax.Resize(rs, false, _param.align);
+            _ix.Resize(rs, false, _param.align);
+            EstimateIndexAlpha(_param.srcW, _param.dstW, _param.channels, _ix.data, _ax.data);
+            _bx[0].Resize(rs, false, _param.align);
+            _bx[1].Resize(rs, false, _param.align);
+        }
+
+        void ResizerShortBilinear::EstimateIndexAlpha(size_t srcSize, size_t dstSize, size_t channels, int32_t* indices, float* alphas)
+        {
+            float scale = (float)srcSize / dstSize;
+            for (size_t i = 0; i < dstSize; ++i)
+            {
+                float alpha = (float)((i + 0.5f) * scale - 0.5f);
+                ptrdiff_t index = (ptrdiff_t)::floor(alpha);
+                alpha -= index;
+                if (index < 0)
+                {
+                    index = 0;
+                    alpha = 0;
+                }
+                if (index > (ptrdiff_t)srcSize - 2)
+                {
+                    index = srcSize - 2;
+                    alpha = 1;
+                }
+                for (size_t c = 0; c < channels; c++)
+                {
+                    size_t offset = i * channels + c;
+                    indices[offset] = (int32_t)(channels * index + c);
+                    alphas[offset] = alpha;
+                }
+            }
+        }
+
+        void ResizerShortBilinear::Run(const uint8_t* src, size_t srcStride, uint8_t* dst, size_t dstStride)
+        {
+            Run((const uint16_t*)src, srcStride / sizeof(uint16_t), (uint16_t*)dst, dstStride / sizeof(uint16_t));
+        }
+
+        template<size_t N> void ResizerShortBilinear::RunB(const uint16_t* src, size_t srcStride, uint16_t* dst, size_t dstStride)
+        {
+            size_t rs = _param.dstW * N;
+            float* pbx[2] = { _bx[0].data, _bx[1].data };
+            int32_t prev = -2;
+            for (size_t dy = 0; dy < _param.dstH; dy++, dst += dstStride)
+            {
+                float fy1 = _ay[dy];
+                float fy0 = 1.0f - fy1;
+                int32_t sy = _iy[dy];
+                int32_t k = 0;
+                if (sy == prev)
+                    k = 2;
+                else if (sy == prev + 1)
+                {
+                    Swap(pbx[0], pbx[1]);
+                    k = 1;
+                }
+                prev = sy;
+                for (; k < 2; k++)
+                {
+                    float* pb = pbx[k];
+                    const uint16_t* ps = src + (sy + k) * srcStride;
+                    for (size_t dx = 0; dx < rs; dx++)
+                    {
+                        int32_t sx = _ix[dx];
+                        float fx = _ax[dx];
+                        pb[dx] = ps[sx] * (1.0f - fx) + ps[sx + N] * fx;
+                    }
+                }
+                for (size_t dx = 0; dx < rs; dx++)
+                    dst[dx] = Round(pbx[0][dx] * fy0 + pbx[1][dx] * fy1);
+            }
+        }
+
+        template<size_t N> void ResizerShortBilinear::RunS(const uint16_t* src, size_t srcStride, uint16_t* dst, size_t dstStride)
+        {
+            size_t rs = _param.dstW * N;
+            for (size_t dy = 0; dy < _param.dstH; dy++, dst += dstStride)
+            {
+                float fy1 = _ay[dy];
+                float fy0 = 1.0f - fy1;
+                int32_t sy = _iy[dy];
+                const uint16_t* ps0 = src + (sy + 0) * srcStride;
+                const uint16_t* ps1 = src + (sy + 1) * srcStride;
+                for (size_t dx = 0; dx < rs; dx++)
+                {
+                    int32_t sx = _ix[dx];
+                    float fx1 = _ax[dx];
+                    float fx0 = 1.0f - fx1;
+                    float r0 = ps0[sx] * fx0 + ps0[sx + N] * fx1;
+                    float r1 = ps1[sx] * fx0 + ps1[sx + N] * fx1;
+                    dst[dx] = Round(r0 * fy0 + r1 * fy1);
+                }
+            }
+        }
+
+        void ResizerShortBilinear::Run(const uint16_t* src, size_t srcStride, uint16_t* dst, size_t dstStride)
+        {
+            bool sparse = _param.dstH * 2.0 <= _param.srcH;
+            switch (_param.channels)
+            {
+            case 1: sparse ? RunS<1>(src, srcStride, dst, dstStride) : RunB<1>(src, srcStride, dst, dstStride); return;
+            case 2: sparse ? RunS<2>(src, srcStride, dst, dstStride) : RunB<2>(src, srcStride, dst, dstStride); return;
+            case 3: sparse ? RunS<3>(src, srcStride, dst, dstStride) : RunB<3>(src, srcStride, dst, dstStride); return;
+            case 4: sparse ? RunS<4>(src, srcStride, dst, dstStride) : RunB<4>(src, srcStride, dst, dstStride); return;
+            default:
+                assert(0);
+            }
+        }
+
+        //---------------------------------------------------------------------
+
         ResizerFloatBilinear::ResizerFloatBilinear(const ResParam & param)
             : Resizer(param)
         {
             _ay.Resize(_param.dstH, false, _param.align);
             _iy.Resize(_param.dstH, false, _param.align);
-            EstimateIndexAlpha(_param.srcH, _param.dstH, 1, _param.method == SimdResizeMethodCaffeInterp, _iy.data, _ay.data);
+            EstimateIndexAlpha(_param.srcH, _param.dstH, 1, _iy.data, _ay.data);
             size_t rs = _param.dstW * _param.channels;
             _ax.Resize(rs, false, _param.align);
             _ix.Resize(rs, false, _param.align);
-            EstimateIndexAlpha(_param.srcW, _param.dstW, _param.channels, _param.method == SimdResizeMethodCaffeInterp, _ix.data, _ax.data);
+            EstimateIndexAlpha(_param.srcW, _param.dstW, _param.channels, _ix.data, _ax.data);
             _bx[0].Resize(rs, false, _param.align);
             _bx[1].Resize(rs, false, _param.align);
         }
 
-        void ResizerFloatBilinear::EstimateIndexAlpha(size_t srcSize, size_t dstSize, size_t channels, bool caffeInterp, int32_t * indices, float * alphas)
+        void ResizerFloatBilinear::EstimateIndexAlpha(size_t srcSize, size_t dstSize, size_t channels, int32_t * indices, float * alphas)
         {
-            if (caffeInterp)
+            if (_param.method == SimdResizeMethodBilinear)
+            {
+                float scale = (float)srcSize / dstSize;
+                for (size_t i = 0; i < dstSize; ++i)
+                {
+                    float alpha = (float)((i + 0.5f) * scale - 0.5f);
+                    ptrdiff_t index = (ptrdiff_t)::floor(alpha);
+                    alpha -= index;
+                    if (index < 0)
+                    {
+                        index = 0;
+                        alpha = 0;
+                    }
+                    if (index > (ptrdiff_t)srcSize - 2)
+                    {
+                        index = srcSize - 2;
+                        alpha = 1;
+                    }
+                    for (size_t c = 0; c < channels; c++)
+                    {
+                        size_t offset = i * channels + c;
+                        indices[offset] = (int32_t)(channels * index + c);
+                        alphas[offset] = alpha;
+                    }
+                }
+            }            
+            else if (_param.method == SimdResizeMethodCaffeInterp)
             {
                 float scale = dstSize > 1 ? float(srcSize - 1) / float(dstSize - 1) : 0.0f;
                 for (size_t i = 0; i < dstSize; ++i)
                 {
-                    float alpha = float(i)*scale;
+                    float alpha = float(i) * scale;
                     ptrdiff_t index = (ptrdiff_t)::floor(alpha);
                     alpha -= index;
                     if (index > (ptrdiff_t)srcSize - 2)
@@ -266,17 +410,17 @@ namespace Simd
                     for (size_t c = 0; c < channels; c++)
                     {
                         size_t offset = i * channels + c;
-                        indices[offset] = (int32_t)(channels*index + c);
+                        indices[offset] = (int32_t)(channels * index + c);
                         alphas[offset] = alpha;
                     }
                 }
             }
-            else
+            else if (_param.method == SimdResizeMethodInferenceEngineInterp)
             {
                 float scale = (float)srcSize / dstSize;
                 for (size_t i = 0; i < dstSize; ++i)
                 {
-                    float alpha = (float)((i + 0.5f)*scale - 0.5f);
+                    float alpha = float(i) * scale;
                     ptrdiff_t index = (ptrdiff_t)::floor(alpha);
                     alpha -= index;
                     if (index < 0)
@@ -284,7 +428,7 @@ namespace Simd
                         index = 0;
                         alpha = 0;
                     }
-                    if (index >(ptrdiff_t)srcSize - 2)
+                    if (index > (ptrdiff_t)srcSize - 2)
                     {
                         index = srcSize - 2;
                         alpha = 1;
@@ -292,11 +436,13 @@ namespace Simd
                     for (size_t c = 0; c < channels; c++)
                     {
                         size_t offset = i * channels + c;
-                        indices[offset] = (int32_t)(channels*index + c);
+                        indices[offset] = (int32_t)(channels * index + c);
                         alphas[offset] = alpha;
                     }
                 }
             }
+            else
+                assert(0);
         }
 
         void ResizerFloatBilinear::Run(const uint8_t * src, size_t srcStride, uint8_t * dst, size_t dstStride)
@@ -346,15 +492,80 @@ namespace Simd
 
         //---------------------------------------------------------------------
 
+        ResizerNearest::ResizerNearest(const ResParam& param)
+            : Resizer(param)
+        {
+            _pixelSize = _param.PixelSize();
+            _iy.Resize(_param.dstH, false, _param.align);
+            EstimateIndex(_param.srcH, _param.dstH, 1, _iy.data);
+            _ix.Resize(_param.dstW, false, _param.align);
+            EstimateIndex(_param.srcW, _param.dstW, _pixelSize, _ix.data);
+        }
+
+        void ResizerNearest::EstimateIndex(size_t srcSize, size_t dstSize, size_t pixelSize, int32_t* indices)
+        {
+            float scale = (float)srcSize / dstSize;
+            for (size_t i = 0; i < dstSize; ++i)
+            {
+                float alpha = (i + 0.5f) * scale;
+                int index = RestrictRange((int)::floor(alpha), 0, (int)srcSize - 1);
+                indices[i] = (int)(index * pixelSize);
+            }
+        }
+
+        void ResizerNearest::Resize(const uint8_t* src, size_t srcStride, uint8_t* dst, size_t dstStride)
+        {
+            for (size_t dy = 0; dy < _param.dstH; dy++)
+            {
+                const uint8_t* srcRow = src + _iy[dy] * srcStride;
+                for (size_t dx = 0, offset = 0; dx < _param.dstW; dx++, offset += _pixelSize)
+                    memcpy(dst + offset, srcRow + _ix[dx], _pixelSize);
+                dst += dstStride;
+            }
+        }
+
+        template<size_t N> void ResizerNearest::Resize(const uint8_t* src, size_t srcStride, uint8_t* dst, size_t dstStride)
+        {
+            for (size_t dy = 0; dy < _param.dstH; dy++)
+            {
+                const uint8_t * srcRow = src + _iy[dy] * srcStride;
+                for (size_t dx = 0, offset = 0; dx < _param.dstW; dx++, offset += N)
+                    CopyPixel<N>(srcRow + _ix[dx], dst + offset);
+                dst += dstStride;
+            }
+        }
+
+        void ResizerNearest::Run(const uint8_t* src, size_t srcStride, uint8_t* dst, size_t dstStride)
+        {
+            switch (_pixelSize)
+            {
+            case 1: Resize<1>(src, srcStride, dst, dstStride); break;
+            case 2: Resize<2>(src, srcStride, dst, dstStride); break;
+            case 3: Resize<3>(src, srcStride, dst, dstStride); break;
+            case 4: Resize<4>(src, srcStride, dst, dstStride); break;
+            case 6: Resize<6>(src, srcStride, dst, dstStride); break;
+            case 8: Resize<8>(src, srcStride, dst, dstStride); break;
+            case 12: Resize<12>(src, srcStride, dst, dstStride); break;
+            default:
+                Resize(src, srcStride, dst, dstStride);
+            }
+        }
+
+        //---------------------------------------------------------------------
+
         void * ResizerInit(size_t srcX, size_t srcY, size_t dstX, size_t dstY, size_t channels, SimdResizeChannelType type, SimdResizeMethodType method)
         {
             ResParam param(srcX, srcY, dstX, dstY, channels, type, method, sizeof(void*));
-            if (type == SimdResizeChannelByte && method == SimdResizeMethodBilinear)
+            if (param.IsByteBilinear())
                 return new ResizerByteBilinear(param);
-            else  if (type == SimdResizeChannelByte && method == SimdResizeMethodArea)
+            else if (param.IsByteArea())
                 return new ResizerByteArea(param);
-            else if (type == SimdResizeChannelFloat && (method == SimdResizeMethodBilinear || method == SimdResizeMethodCaffeInterp))
+            else if (param.IsShortBilinear())
+                return new ResizerShortBilinear(param);
+            else if (param.IsFloatBilinear())
                 return new ResizerFloatBilinear(param);
+            else if (param.IsNearest())
+                return new ResizerNearest(param);
             else
                 return NULL;
         }

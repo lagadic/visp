@@ -673,7 +673,7 @@ dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
       }
   } else if (src.type() == CV_8UC3) {
     if (src.isContinuous() && !flip) {
-      SimdBgrToRgba(src.data, src.cols, src.rows, src.step[0], reinterpret_cast<uint8_t*>(dest.bitmap),
+      SimdRgbToBgra(src.data, src.cols, src.rows, src.step[0], reinterpret_cast<uint8_t*>(dest.bitmap),
                     dest.getWidth() * sizeof(vpRGBa), vpRGBa::alpha_default);
     } else {
       vpRGBa rgbaVal;
@@ -3519,7 +3519,7 @@ void vpImageConvert::BGRToRGBa(unsigned char *bgr, unsigned char *rgba, unsigned
                                bool flip)
 {
   if (!flip) {
-    SimdBgrToRgba(bgr, width, height, width*3, rgba, width * sizeof(vpRGBa), vpRGBa::alpha_default);
+    SimdRgbToBgra(bgr, width, height, width*3, rgba, width * sizeof(vpRGBa), vpRGBa::alpha_default);
   } else {
     // if we have to flip the image, we start from the end last scanline so the
     // step is negative

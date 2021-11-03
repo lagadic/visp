@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar.
+* Copyright (c) 2011-2020 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -54,10 +54,13 @@ namespace Simd
             if (!_info.empty())
             {
                 std::sort(_candidates.begin(), _candidates.end(), [](const Candidate & a, const Candidate & b) { return a.Mean() < b.Mean(); });
-                std::cout << std::setprecision(3) << std::fixed;
                 std::cout << "Simd::Runtime " << _info << " : ";
+                int64_t f = TimeFrequency();
                 for (size_t i = 0; i < _candidates.size(); ++i)
-                    std::cout << _candidates[i].func.Name() << ": " << _candidates[i].Mean()*1000.0 << "  ";
+                {
+                    int64_t t = _candidates[i].Mean();
+                    std::cout << _candidates[i].func.Name() << ": " << t * 1000 / f << "." << (t * 1000000 / f) % 1000 << "  ";
+                }
                 std::cout << std::endl;
             }
 #endif
@@ -104,18 +107,18 @@ namespace Simd
         {
             Func func;
             size_t count;
-            double sum, min, max;
+            int64_t sum, min, max;
 
             SIMD_INLINE Candidate(const Func & f)
                 : func(f)
                 , count(0)
                 , sum(0)
-                , min(std::numeric_limits<double>::max())
-                , max(std::numeric_limits<double>::min())
+                , min(std::numeric_limits<int64_t>::max())
+                , max(0)
             {
             }
 
-            SIMD_INLINE void Update(const double & value)
+            SIMD_INLINE void Update(int64_t value)
             {
                 count += 1;
                 sum += value;
@@ -123,9 +126,14 @@ namespace Simd
                 max = std::max(max, value);
             }
 
-            SIMD_INLINE double Mean() const
+            SIMD_INLINE int64_t Mean() const
             {
-                return (sum - min - max) / (count - 2);
+                if( count > 2)
+                    return (sum - min - max) / (count - 2);
+                else if (count > 0)
+                    return sum / count;
+                else
+                    return sum;
             }
         };
         typedef std::vector<Candidate> Candidates;
@@ -144,9 +152,9 @@ namespace Simd
                 if (_info.empty())
                     _info = current->func.Info(args);
 #endif
-                double start = Simd::Time();
+                int64_t start = Simd::TimeCounter();
                 current->func.Run(args);
-                current->Update(Simd::Time() - start);
+                current->Update(Simd::TimeCounter() - start);
             }
             else
             {
@@ -173,10 +181,10 @@ namespace Simd
         SIMD_INLINE Candidate * Best()
         {
             Candidate * best = &_candidates[0];
-            double min = best->Mean();
+            int64_t min = best->Mean();
             for (size_t i = 1; i < _candidates.size(); ++i)
             {
-                double mean = _candidates[i].Mean();
+                int64_t mean = _candidates[i].Mean();
                 if (mean < min)
                 {
                     min = mean;
