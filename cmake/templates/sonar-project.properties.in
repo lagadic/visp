@@ -15,4 +15,6 @@ sonar.exclusions=3rdparty/**/*,cmake/**/*,platforms/**/*,doc/**/*,modules/**/*.t
 # Source code language
 sonar.language=c++
 sonar.cxx.includeDirectories=@VISP_SONARQUBE_INCLUDE_DIRS@
-
+# Empty c lang patterns to avoid error:
+# "Language of file '*.h' can not be decided as the file matches patterns of both sonar.lang.patterns.c++ and sonar.lang.patterns.c"
+sonar.lang.patterns.c=""
