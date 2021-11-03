@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -297,12 +297,12 @@ namespace Simd
         void * ResizerInit(size_t srcX, size_t srcY, size_t dstX, size_t dstY, size_t channels, SimdResizeChannelType type, SimdResizeMethodType method)
         {
             ResParam param(srcX, srcY, dstX, dstY, channels, type, method, sizeof(__m128i));
-            if (type == SimdResizeChannelByte && method == SimdResizeMethodBilinear && (channels == 1 || channels == 2) && dstX >= A)
+            if (param.IsByteBilinear() && (channels == 1 || channels == 2) && dstX >= A)
                 return new ResizerByteBilinear(param);
-            else if (type == SimdResizeChannelByte && method == SimdResizeMethodArea)
+            else if (param.IsByteArea())
                 return new ResizerByteArea(param);
             else
-                return Sse::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);
+                return Base::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);
         }
     }
 #else

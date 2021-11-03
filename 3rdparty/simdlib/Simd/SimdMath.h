@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar,
+* Copyright (c) 2011-2021 Yermalayeu Ihar,
 *               2018-2019 Radchenko Andrey.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -66,11 +66,21 @@ namespace Simd
 #define SIMD_ROUND
     SIMD_INLINE int Round(double value)
     {
-#if defined(SIMD_SSE2_ENABLE) && ((defined(_MSC_VER) && defined(_M_X64)) || (defined(__GNUC__) && defined(__x86_64__)))
-        __m128d t = _mm_set_sd(value);
-        return _mm_cvtsd_si32(t);
+#if defined(SIMD_X64_ENABLE) && !defined(SIMD_SSE2_DISABLE)
+        __m128d _value = _mm_set_sd(value);
+        return _mm_cvtsd_si32(_value);
 #else
-        return (int)(value + (value >= 0 ? 0.5 : -0.5));
+        return (int)(value + (value >= 0.0 ? 0.5 : -0.5));
+#endif
+    }
+
+    SIMD_INLINE int Round(float value)
+    {
+#if defined(SIMD_X64_ENABLE) && !defined(SIMD_SSE2_DISABLE)
+        __m128 _value = _mm_set_ss(value);
+        return _mm_cvtss_si32(_value);
+#else
+        return (int)(value + (value >= 0.0f ? 0.5f : -0.5f));
 #endif
     }
 #endif
@@ -263,8 +273,8 @@ namespace Simd
         }
     }
 
-#ifdef SIMD_SSE_ENABLE
-    namespace Sse
+#ifdef SIMD_SSE2_ENABLE
+    namespace Sse2
     {
         SIMD_INLINE __m128 Square(__m128 value)
         {
@@ -330,12 +340,7 @@ namespace Simd
             __m128 m = _mm_max_ps(s0, s1);
             return _mm_store_ss(dst, _mm_max_ss(m, _mm_shuffle_ps(m, m, 1)));
         }
-    }
-#endif//SIMD_SSE_ENABLE
 
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
-    {
         SIMD_INLINE __m128i SaturateI16ToU8(__m128i value)
         {
             return _mm_min_epi16(K16_00FF, _mm_max_epi16(value, K_ZERO));
@@ -508,17 +513,8 @@ namespace Simd
     }
 #endif// SIMD_SSE2_ENABLE
 
-#ifdef SIMD_SSE3_ENABLE
-    namespace Sse3
-    {
-#if defined(_MSC_VER) && _MSC_VER >= 1700  && _MSC_VER < 1900 // Visual Studio 2012/2013 compiler bug      
-        using Sse::RightNotZero;
-#endif
-    }
-#endif//SIMD_SSE3_ENABLE
-
-#ifdef SIMD_SSSE3_ENABLE
-    namespace Ssse3
+#ifdef SIMD_SSE41_ENABLE
+    namespace Sse41
     {
         using namespace Sse2;
 
@@ -538,12 +534,7 @@ namespace Simd
         {
             return _mm_maddubs_epi16(UnpackU8<part>(a, b), K8_01_FF);
         }
-    }
-#endif// SIMD_SSSE3_ENABLE
 
-#ifdef SIMD_SSE41_ENABLE
-    namespace Sse41
-    {
 #if defined(_MSC_VER) && _MSC_VER >= 1700  && _MSC_VER < 1900 // Visual Studio 2012/2013 compiler bug     
         using Sse::RightNotZero;
 #endif

@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2017 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,8 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSSE3_ENABLE
-    namespace Ssse3
+#ifdef SIMD_SSE41_ENABLE    
+    namespace Sse41
     {
         namespace
         {
@@ -170,8 +170,5 @@ namespace Simd
                 ReduceGray4x4<false>(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
         }
     }
-#else
-    // Work arround to avoid warning: libvisp_simdlib.a(SimdSsse3Reduce4x4.cpp.o) has no symbols
-    void dummy_SimdSsse3Reduce4x4(){};
-#endif// SIMD_SSSE3_ENABLE
+#endif
 }

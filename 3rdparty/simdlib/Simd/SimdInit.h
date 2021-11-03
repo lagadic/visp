@@ -28,7 +28,22 @@
 
 namespace Simd
 {
-#if defined(_MSC_VER) && (defined(SIMD_X64_ENABLE) || defined(SIMD_X86_ENABLE))
+
+#if defined(_MSC_VER) && !defined(__clang__) && (defined(SIMD_X64_ENABLE) || defined(SIMD_X86_ENABLE))
+
+#define SIMD_INIT_AS_CHAR
+
+#elif defined(__GNUC__) || defined(__clang__) || (defined(_MSC_VER) && defined(SIMD_NEON_ENABLE))
+
+#define SIMD_INIT_AS_LONGLONG
+
+#else
+
+#error This platform is unsupported!
+
+#endif
+
+#if defined(SIMD_INIT_AS_CHAR)
 
     template <class T> SIMD_INLINE char GetChar(T value, size_t index)
     {
@@ -50,7 +65,7 @@ namespace Simd
 	Simd::GetChar(int64_t(a), 4), Simd::GetChar(int64_t(a), 5), \
 	Simd::GetChar(int64_t(a), 6), Simd::GetChar(int64_t(a), 7)
 
-#elif defined(__GNUC__) || (defined(_MSC_VER) && defined(SIMD_NEON_ENABLE))
+#elif defined(SIMD_INIT_AS_LONGLONG)
 
 #define SIMD_CHAR_AS_LONGLONG(a) (((long long)a) & 0xFF)
 
@@ -94,11 +109,15 @@ namespace Simd
 #define SIMD_LL_SET2_EPI32(a, b) \
     SIMD_INT_AS_LONGLONG(a) | (SIMD_INT_AS_LONGLONG(b) << 32)
 
-#endif//defined(__GNUC__) || (defined(_MSC_VER) && defined(SIMD_NEON_ENABLE))
+#else
+
+#error This platform is unsupported!
+
+#endif
 
 #if defined(SIMD_SSE2_ENABLE)
 
-#if defined(_MSC_VER)
+#if defined(SIMD_INIT_AS_CHAR)
 
 #define SIMD_MM_SET1_EPI8(a) \
     {SIMD_AS_CHAR(a), SIMD_AS_CHAR(a), SIMD_AS_CHAR(a), SIMD_AS_CHAR(a), \
@@ -148,7 +167,7 @@ namespace Simd
 #define SIMD_MM_SETR_EPI64(a0, a1) \
     {SIMD_AS_8CHARS(a0), SIMD_AS_8CHARS(a1)}
 
-#elif defined(__GNUC__)
+#elif defined(SIMD_INIT_AS_LONGLONG)
 
 #define SIMD_MM_SET1_EPI8(a) \
     {SIMD_LL_SET1_EPI8(a), SIMD_LL_SET1_EPI8(a)}
@@ -192,7 +211,7 @@ namespace Simd
 
 #if defined(SIMD_AVX2_ENABLE)
 
-#if defined(_MSC_VER)
+#if defined(SIMD_INIT_AS_CHAR)
 
 #define SIMD_MM256_SET1_EPI8(a) \
 	{SIMD_AS_CHAR(a), SIMD_AS_CHAR(a), SIMD_AS_CHAR(a), SIMD_AS_CHAR(a), \
@@ -263,7 +282,7 @@ namespace Simd
 #define SIMD_MM256_SETR_EPI64(a0, a1, a2, a3) \
     {SIMD_AS_8CHARS(a0), SIMD_AS_8CHARS(a1), SIMD_AS_8CHARS(a2), SIMD_AS_8CHARS(a3)}
 
-#elif defined(__GNUC__)
+#elif defined(SIMD_INIT_AS_LONGLONG)
 
 #define SIMD_MM256_SET1_EPI8(a) \
     {SIMD_LL_SET1_EPI8(a), SIMD_LL_SET1_EPI8(a), \
@@ -310,7 +329,7 @@ namespace Simd
 #define SIMD_MM256_SETR_EPI64(a0, a1, a2, a3) \
     {a0, a1, a2, a3}
 
-#endif// defined(_MSC_VER) || defined(__GNUC__)
+#endif
 
 #endif// SIMD_AVX2_ENABLE
 

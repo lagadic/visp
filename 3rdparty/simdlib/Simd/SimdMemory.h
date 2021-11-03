@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2018 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *               2016-2016 Sintegrial Technologies.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -28,9 +28,10 @@
 #include "Simd/SimdDefs.h"
 #include "Simd/SimdMath.h"
 
-#if defined(__GNUC__) && defined(SIMD_ALLOCATE_ERROR_MESSAGE)
+#if defined(SIMD_ALLOCATE_ERROR_MESSAGE)
 #include <iostream>
 #endif
+#include <memory>
 
 namespace Simd
 {
@@ -88,17 +89,18 @@ namespace Simd
         align = AlignHi(align, sizeof(void *));
         size = AlignHi(size, align);
         int result = ::posix_memalign(&ptr, align, size);
-#ifdef SIMD_ALLOCATE_ERROR_MESSAGE
         if (result != 0)
-            std::cout << "The function posix_memalign can't allocate " << size << " bytes with align " << align << " !" << std::endl << std::flush;
-#endif
-#ifdef SIMD_ALLOCATE_ASSERT
-        assert(result == 0);
-#endif
+            ptr = NULL;
 #else
         ptr = malloc(size);
 #endif
-
+#ifdef SIMD_ALLOCATE_ERROR_MESSAGE
+        if (ptr == NULL)
+            std::cout << "The function posix_memalign can't allocate " << size << " bytes with align " << align << " !" << std::endl << std::flush;
+#endif
+#ifdef SIMD_ALLOCATE_ASSERT
+        assert(ptr);
+#endif
 #ifdef SIMD_NO_MANS_LAND
         if (ptr)
             ptr = (char*)ptr + SIMD_NO_MANS_LAND;
@@ -121,13 +123,66 @@ namespace Simd
 #endif
     }
 
+    //---------------------------------------------------------------------------------------------
+
     struct Deletable
     {
         virtual ~Deletable() {}
     };
 
-#ifdef SIMD_SSE_ENABLE
-    namespace Sse
+    //---------------------------------------------------------------------------------------------
+
+#if defined(SIMD_CPP_2011_ENABLE)
+    template<class T> using Holder = std::unique_ptr<T>;
+#else
+    template <class T> class Holder
+    {
+        T* _ptr;
+
+    public:
+        Holder(T* ptr)
+            : _ptr(ptr)
+        {
+        }
+
+        ~Holder()
+        {
+            if (_ptr)
+                delete _ptr;
+        }
+
+        T& operator * ()
+        {
+            return *_ptr;
+        }
+
+        const T& operator * () const
+        {
+            return *_ptr;
+        }
+
+        T* operator -> ()
+        {
+            return _ptr;
+        }
+
+        const T* operator -> () const
+        {
+            return _ptr;
+        }
+
+        operator bool() const 
+        {
+            return _ptr != NULL;
+        }
+    };
+#endif
+
+    //---------------------------------------------------------------------------------------------
+
+
+#ifdef SIMD_SSE2_ENABLE
+    namespace Sse2
     {
         SIMD_INLINE bool Aligned(size_t size, size_t align = sizeof(__m128))
         {
@@ -137,43 +192,16 @@ namespace Simd
         SIMD_INLINE bool Aligned(const void * ptr, size_t align = sizeof(__m128))
         {
             return Simd::Aligned(ptr, align);
-        }
-    }
-#endif// SIMD_SSE_ENABLE
-
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
-    {
-        using Sse::Aligned;
+        }        
     }
 #endif// SIMD_SSE2_ENABLE
-
-#ifdef SIMD_SSE3_ENABLE
-    namespace Sse3
-    {
-        using Sse::Aligned;
-    }
-#endif// SIMD_SSE3_ENABLE
-
-#ifdef SIMD_SSSE3_ENABLE
-    namespace Ssse3
-    {
-        using Sse::Aligned;
-    }
-#endif// SIMD_SSSE3_ENABLE
 
 #ifdef SIMD_SSE41_ENABLE
     namespace Sse41
     {
-        using Sse::Aligned;
+        using Sse2::Aligned;
     }
 #endif// SIMD_SSE41_ENABLE
-
-#ifdef SIMD_SSE42_ENABLE
-    namespace Sse42
-    {
-    }
-#endif// SIMD_SSE42_ENABLE
 
 #ifdef SIMD_AVX_ENABLE
     namespace Avx

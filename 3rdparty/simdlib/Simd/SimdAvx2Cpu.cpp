@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2017 Yermalayeu Ihar.
+* Copyright (c) 2011-2020 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -21,23 +21,48 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-#include "Simd/SimdConversion.h"
+#include "Simd/SimdEnable.h"
+#include "Simd/SimdCpu.h"
+
+#if defined(_MSC_VER)
+#include <windows.h>
+#endif
 
 namespace Simd
 {
-    namespace Base
+#ifdef SIMD_AVX2_ENABLE
+    namespace Avx2
     {
-        void RgbToGray(const uint8_t *rgb, size_t width, size_t height, size_t rgbStride, uint8_t *gray, size_t grayStride)
+        SIMD_INLINE bool SupportedByCPU()
         {
-            for (size_t row = 0; row < height; ++row)
+            return
+                Base::CheckBit(Cpuid::Ordinary, Cpuid::Ecx, Cpuid::OSXSAVE) &&
+                Base::CheckBit(Cpuid::Extended, Cpuid::Ebx, Cpuid::AVX2) &&
+                Base::CheckBit(Cpuid::Ordinary, Cpuid::Ecx, Cpuid::FMA) &&
+                Base::CheckBit(Cpuid::Ordinary, Cpuid::Ecx, Cpuid::F16C);
+        }
+
+        SIMD_INLINE bool SupportedByOS()
+        {
+#if defined(_MSC_VER)
+            __try
             {
-                const uint8_t * pRgb = rgb + row*rgbStride;
-                uint8_t * pGray = gray + row*grayStride;
-                for (const uint8_t *pGrayEnd = pGray + width; pGray < pGrayEnd; pGray += 1, pRgb += 3)
-                {
-                    *pGray = RgbToGray(pRgb[0], pRgb[1], pRgb[2]);
-                }
+                __m256i value = _mm256_abs_epi8(_mm256_set1_epi8(1));// try to execute of AVX2 instructions;
+                return true;
             }
+            __except (EXCEPTION_EXECUTE_HANDLER)
+            {
+                return false;
+            }
+#else
+            return true;
+#endif
+        }
+
+        bool GetEnable()
+        {
+            return SupportedByCPU() && SupportedByOS();
         }
     }
+#endif
 }

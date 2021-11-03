@@ -76,25 +76,13 @@ namespace Simd
         const int DIVISION_BY_9_FACTOR = (1 << DIVISION_BY_9_SHIFT) / 9;
     }
 
-#ifdef SIMD_SSE_ENABLE    
-    namespace Sse
+#ifdef SIMD_SSE2_ENABLE    
+    namespace Sse2
     {
         const size_t F = sizeof(__m128) / sizeof(float);
         const size_t DF = 2 * F;
         const size_t QF = 4 * F;
         const size_t HF = F / 2;
-    }
-#endif// SIMD_SSE_ENABLE
-
-#ifdef SIMD_SSE2_ENABLE    
-    namespace Sse2
-    {
-        using namespace Sse;
-#if defined(_MSC_VER) && _MSC_VER >= 1700  && _MSC_VER < 1900 // Visual Studio 2012/2013 compiler bug
-        using Sse::F;
-        using Sse::DF;
-        using Sse::QF;
-#endif
 
         const size_t A = sizeof(__m128i);
         const size_t DA = 2 * A;
@@ -128,6 +116,7 @@ namespace Simd
         const __m128i K16_0020 = SIMD_MM_SET1_EPI16(0x0020);
         const __m128i K16_0080 = SIMD_MM_SET1_EPI16(0x0080);
         const __m128i K16_00FF = SIMD_MM_SET1_EPI16(0x00FF);
+        const __m128i K16_0101 = SIMD_MM_SET1_EPI16(0x0101);
         const __m128i K16_FF00 = SIMD_MM_SET1_EPI16(0xFF00);
 
         const __m128i K32_00000001 = SIMD_MM_SET1_EPI32(0x00000001);
@@ -138,6 +127,7 @@ namespace Simd
         const __m128i K32_0000FFFF = SIMD_MM_SET1_EPI32(0x0000FFFF);
         const __m128i K32_00010000 = SIMD_MM_SET1_EPI32(0x00010000);
         const __m128i K32_01000000 = SIMD_MM_SET1_EPI32(0x01000000);
+        const __m128i K32_00FF0000 = SIMD_MM_SET1_EPI32(0x00FF0000);
         const __m128i K32_00FFFFFF = SIMD_MM_SET1_EPI32(0x00FFFFFF);
         const __m128i K32_FFFFFF00 = SIMD_MM_SET1_EPI32(0xFFFFFF00);
 
@@ -162,22 +152,15 @@ namespace Simd
     }
 #endif// SIMD_SSE2_ENABLE
 
-#ifdef SIMD_SSE3_ENABLE    
-    namespace Sse3
+#ifdef SIMD_SSE41_ENABLE    
+    namespace Sse41
     {
         using namespace Sse2;
 #if defined(_MSC_VER) && _MSC_VER >= 1700  && _MSC_VER < 1900 // Visual Studio 2012/2013 compiler bug      
-        using Sse::F;
-        using Sse::DF;
-        using Sse::QF;
+        using Sse2::F;
+        using Sse2::DF;
+        using Sse2::QF;
 #endif
-    }
-#endif// SIMD_SSE3_ENABLE
-
-#ifdef SIMD_SSSE3_ENABLE    
-    namespace Ssse3
-    {
-        using namespace Sse3;
 
         const __m128i K8_SHUFFLE_GRAY_TO_BGR0 = SIMD_MM_SETR_EPI8(0x0, 0x0, 0x0, 0x1, 0x1, 0x1, 0x2, 0x2, 0x2, 0x3, 0x3, 0x3, 0x4, 0x4, 0x4, 0x5);
         const __m128i K8_SHUFFLE_GRAY_TO_BGR1 = SIMD_MM_SETR_EPI8(0x5, 0x5, 0x6, 0x6, 0x6, 0x7, 0x7, 0x7, 0x8, 0x8, 0x8, 0x9, 0x9, 0x9, 0xA, 0xA);
@@ -207,26 +190,7 @@ namespace Simd
         const __m128i K8_SHUFFLE_BGR1_TO_RED = SIMD_MM_SETR_EPI8(-1, -1, -1, -1, -1, 0x1, 0x4, 0x7, 0xA, 0xD, -1, -1, -1, -1, -1, -1);
         const __m128i K8_SHUFFLE_BGR2_TO_RED = SIMD_MM_SETR_EPI8(-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0x0, 0x3, 0x6, 0x9, 0xC, 0xF);
     }
-#endif// SIMD_SSSE3_ENABLE
-
-#ifdef SIMD_SSE41_ENABLE    
-    namespace Sse41
-    {
-        using namespace Ssse3;
-#if defined(_MSC_VER) && _MSC_VER >= 1700  && _MSC_VER < 1900 // Visual Studio 2012/2013 compiler bug      
-        using Sse::F;
-        using Sse::DF;
-        using Sse::QF;
-#endif
-    }
 #endif// SIMD_SSE41_ENABLE
-
-#ifdef SIMD_SSE42_ENABLE    
-    namespace Sse42
-    {
-        using namespace Sse41;
-    }
-#endif// SIMD_SSE42_ENABLE
 
 #ifdef SIMD_AVX_ENABLE    
     namespace Avx
@@ -282,6 +246,7 @@ namespace Simd
         const __m256i K16_0020 = SIMD_MM256_SET1_EPI16(0x0020);
         const __m256i K16_0080 = SIMD_MM256_SET1_EPI16(0x0080);
         const __m256i K16_00FF = SIMD_MM256_SET1_EPI16(0x00FF);
+        const __m256i K16_0101 = SIMD_MM256_SET1_EPI16(0x0101);
         const __m256i K16_FF00 = SIMD_MM256_SET1_EPI16(0xFF00);
 
         const __m256i K32_00000001 = SIMD_MM256_SET1_EPI32(0x00000001);
@@ -292,6 +257,7 @@ namespace Simd
         const __m256i K32_0000FFFF = SIMD_MM256_SET1_EPI32(0x0000FFFF);
         const __m256i K32_00010000 = SIMD_MM256_SET1_EPI32(0x00010000);
         const __m256i K32_01000000 = SIMD_MM256_SET1_EPI32(0x01000000);
+        const __m256i K32_00FF0000 = SIMD_MM256_SET1_EPI32(0x00FF0000);
         const __m256i K32_FFFFFF00 = SIMD_MM256_SET1_EPI32(0xFFFFFF00);
 
         const __m256i K16_Y_ADJUST = SIMD_MM256_SET1_EPI16(Base::Y_ADJUST);
@@ -310,6 +276,8 @@ namespace Simd
         const __m256i K16_GV_RT = SIMD_MM256_SET2_EPI16(Base::GREEN_TO_V_WEIGHT, Base::BGR_TO_YUV_ROUND_TERM);
 
         const __m256i K16_DIVISION_BY_9_FACTOR = SIMD_MM256_SET1_EPI16(Base::DIVISION_BY_9_FACTOR);
+
+        const __m256i K64_00000000FFFFFFFF = SIMD_MM256_SET2_EPI32(0xFFFFFFFF, 0);
 
         const __m256i K8_SHUFFLE_0 = SIMD_MM256_SETR_EPI8(
             0x70, 0x70, 0x70, 0x70, 0x70, 0x70, 0x70, 0x70, 0x70, 0x70, 0x70, 0x70, 0x70, 0x70, 0x70, 0x70,
@@ -389,11 +357,11 @@ namespace Simd
             -1, -1, -1, -1, -1, 0x1, 0x4, 0x7, 0xA, 0xD, -1, -1, -1, -1, -1, -1,
             -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0x0, 0x3, 0x6, 0x9, 0xC, 0xF);
 
-        const __m256i K8_BGRA_TO_BGR_SHUFFLE = SIMD_MM256_SETR_EPI8(
+        const __m256i K8_BGR_TO_BGRA_SHUFFLE = SIMD_MM256_SETR_EPI8(
             0x0, 0x1, 0x2, -1, 0x3, 0x4, 0x5, -1, 0x6, 0x7, 0x8, -1, 0x9, 0xA, 0xB, -1,
             0x4, 0x5, 0x6, -1, 0x7, 0x8, 0x9, -1, 0xA, 0xB, 0xC, -1, 0xD, 0xE, 0xF, -1);
 
-        const __m256i K8_BGRA_TO_RGB_SHUFFLE = SIMD_MM256_SETR_EPI8(
+        const __m256i K8_RGB_TO_BGRA_SHUFFLE = SIMD_MM256_SETR_EPI8(
             0x2, 0x1, 0x0, -1, 0x5, 0x4, 0x3, -1, 0x8, 0x7, 0x6, -1, 0xB, 0xA, 0x9, -1,
             0x6, 0x5, 0x4, -1, 0x9, 0x8, 0x7, -1, 0xC, 0xB, 0xA, -1, 0xF, 0xE, 0xD, -1);
 
@@ -402,6 +370,12 @@ namespace Simd
             0x2, 0x1, 0x0, 0x3, 0x6, 0x5, 0x4, 0x7, 0xA, 0x9, 0x8, 0xB, 0xE, 0xD, 0xC, 0xF);
 
         const __m256i K32_TWO_UNPACK_PERMUTE = SIMD_MM256_SETR_EPI32(0, 2, 4, 6, 1, 3, 5, 7);
+
+        const __m256i K8_SHUFFLE_BGRA_TO_BGR = SIMD_MM256_SETR_EPI8(
+            0x0, 0x1, 0x2, 0x4, 0x5, 0x6, 0x8, 0x9, 0xA, 0xC, 0xD, 0xE, -1, -1, -1, -1,
+            0x0, 0x1, 0x2, 0x4, 0x5, 0x6, 0x8, 0x9, 0xA, 0xC, 0xD, 0xE, -1, -1, -1, -1);
+
+        const __m256i K32_PERMUTE_BGRA_TO_BGR = SIMD_MM256_SETR_EPI32(0x0, 0x1, 0x2, 0x4, 0x5, 0x6, -1, -1);
     }
 #endif// SIMD_AVX2_ENABLE
 
@@ -459,8 +433,10 @@ namespace Simd
         const uint32x4_t K32_000000FF = SIMD_VEC_SET1_EPI32(0x000000FF);
         const uint32x4_t K32_0000FFFF = SIMD_VEC_SET1_EPI32(0x0000FFFF);
         const uint32x4_t K32_00010000 = SIMD_VEC_SET1_EPI32(0x00010000);
+        const uint32x4_t K32_00FF0000 = SIMD_VEC_SET1_EPI32(0x00FF0000);
         const uint32x4_t K32_01000000 = SIMD_VEC_SET1_EPI32(0x01000000);
         const uint32x4_t K32_08080800 = SIMD_VEC_SET1_EPI32(0x08080800);
+        const uint32x4_t K32_FF000000 = SIMD_VEC_SET1_EPI32(0xFF000000);
         const uint32x4_t K32_FFFFFF00 = SIMD_VEC_SET1_EPI32(0xFFFFFF00);
         const uint32x4_t K32_FFFFFFFF = SIMD_VEC_SET1_EPI32(0xFFFFFFFF);
         const uint32x4_t K32_0123 = SIMD_VEC_SETR_EPI32(0, 1, 2, 3);

@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -42,7 +42,7 @@ namespace Simd
             float * pbx[2] = { _bx[0].data, _bx[1].data };
             int32_t prev = -2;
             size_t rsa = AlignLo(rs, Avx::F);
-            size_t rsh = AlignLo(rs, Sse::F);
+            size_t rsh = AlignLo(rs, Sse2::F);
             for (size_t dy = 0; dy < _param.dstH; dy++, dst += dstStride)
             {
                 float fy1 = _ay[dy];
@@ -78,10 +78,10 @@ namespace Simd
                             __m256 m1 = _mm256_mul_ps(fx1, _mm256_shuffle_ps(s0145, s2367, 0xDD));
                             _mm256_store_ps(pb + dx, _mm256_add_ps(m0, m1));
                         }
-                        for (; dx < rsh; dx += Sse::F)
+                        for (; dx < rsh; dx += Sse2::F)
                         {
-                            __m128 s01 = Sse::Load(ps + _ix[dx + 0], ps + _ix[dx + 1]);
-                            __m128 s23 = Sse::Load(ps + _ix[dx + 2], ps + _ix[dx + 3]);
+                            __m128 s01 = Sse2::Load(ps + _ix[dx + 0], ps + _ix[dx + 1]);
+                            __m128 s23 = Sse2::Load(ps + _ix[dx + 2], ps + _ix[dx + 3]);
                             __m128 fx1 = _mm_load_ps(_ax.data + dx);
                             __m128 fx0 = _mm_sub_ps(_mm256_castps256_ps128(_1), fx1);
                             __m128 m0 = _mm_mul_ps(fx0, _mm_shuffle_ps(s01, s23, 0x88));
@@ -128,7 +128,7 @@ namespace Simd
                     __m256 m1 = _mm256_mul_ps(_mm256_load_ps(pbx[1] + dx), _fy1);
                     _mm256_storeu_ps(dst + dx, _mm256_add_ps(m0, m1));
                 }
-                for (; dx < rsh; dx += Sse::F)
+                for (; dx < rsh; dx += Sse2::F)
                 {
                     __m128 m0 = _mm_mul_ps(_mm_load_ps(pbx[0] + dx), _mm256_castps256_ps128(_fy0));
                     __m128 m1 = _mm_mul_ps(_mm_load_ps(pbx[1] + dx), _mm256_castps256_ps128(_fy1));
@@ -144,7 +144,7 @@ namespace Simd
         void * ResizerInit(size_t srcX, size_t srcY, size_t dstX, size_t dstY, size_t channels, SimdResizeChannelType type, SimdResizeMethodType method)
         {
             ResParam param(srcX, srcY, dstX, dstY, channels, type, method, sizeof(__m256));
-            if (type == SimdResizeChannelFloat && (method == SimdResizeMethodBilinear || method == SimdResizeMethodCaffeInterp))
+            if (param.IsFloatBilinear())
                 return new ResizerFloatBilinear(param);
             else
                 return Sse41::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);

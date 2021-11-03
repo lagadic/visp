@@ -744,7 +744,7 @@ vpImageConvert::convert( const cv::Mat &src, vpImage< vpRGBa > &dest, bool flip 
   {
     if ( src.isContinuous() && !flip )
     {
-      SimdBgrToRgba( src.data, src.cols, src.rows, src.step[0], reinterpret_cast< uint8_t * >( dest.bitmap ),
+      SimdRgbToBgra( src.data, src.cols, src.rows, src.step[0], reinterpret_cast< uint8_t * >( dest.bitmap ),
                      dest.getWidth() * sizeof( vpRGBa ), vpRGBa::alpha_default );
     }
     else
@@ -3864,7 +3864,7 @@ vpImageConvert::BGRToRGBa( unsigned char *bgr, unsigned char *rgba, unsigned int
 {
   if ( !flip )
   {
-    SimdBgrToRgba( bgr, width, height, width * 3, rgba, width * sizeof( vpRGBa ), vpRGBa::alpha_default );
+    SimdRgbToBgra( bgr, width, height, width * 3, rgba, width * sizeof( vpRGBa ), vpRGBa::alpha_default );
   }
   else
   {

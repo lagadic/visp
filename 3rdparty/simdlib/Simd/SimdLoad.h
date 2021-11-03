@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,16 +28,8 @@
 
 namespace Simd
 {
-    enum PadType
-    {
-        PadNose1,
-        PadNone,
-        PadTail1,
-        PadTail2,
-    };
-
-#ifdef SIMD_SSE_ENABLE
-    namespace Sse
+#ifdef SIMD_SSE2_ENABLE
+    namespace Sse2
     {
         template <bool align> SIMD_INLINE __m128 Load(const float * p);
 
@@ -56,7 +48,7 @@ namespace Simd
             return _mm_loadh_pi(_mm_loadl_pi(_mm_setzero_ps(), (__m64*)p0), (__m64*)p1);
         }
 
-        SIMD_INLINE __m128 LoadPadZeroNose1(const float * p)
+        SIMD_INLINE __m128 LoadPadZeroNose1(const float* p)
         {
             SIMD_ALIGNED(16) const int32_t m[F] = { 0, -1, -1, -1 };
             __m128 a = _mm_loadu_ps(p + 1);
@@ -64,7 +56,7 @@ namespace Simd
             return _mm_and_ps(b, _mm_load_ps((float*)m));
         }
 
-        SIMD_INLINE __m128 LoadPadZeroTail1(const float * p)
+        SIMD_INLINE __m128 LoadPadZeroTail1(const float* p)
         {
             SIMD_ALIGNED(16) const int32_t m[F] = { -1, -1, -1, 0 };
             __m128 a = _mm_loadu_ps(p - 1);
@@ -72,20 +64,15 @@ namespace Simd
             return _mm_and_ps(b, _mm_load_ps((float*)m));
         }
 
-        SIMD_INLINE __m128 LoadPadZeroTail2(const float * p)
+        SIMD_INLINE __m128 LoadPadZeroTail2(const float* p)
         {
             SIMD_ALIGNED(16) const int32_t m[F] = { -1, -1, 0, 0 };
             __m128 a = _mm_loadu_ps(p - 2);
             __m128 b = _mm_shuffle_ps(a, a, 0xFE);
             return _mm_and_ps(b, _mm_load_ps((float*)m));
         }
-    }
-#endif//SIMD_SSE_ENABLE
 
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
-    {
-        using namespace Sse;
+        //---------------------------------------------------------------------
 
         template <bool align> SIMD_INLINE __m128i Load(const __m128i * p);
 
@@ -97,6 +84,11 @@ namespace Simd
         template <> SIMD_INLINE __m128i Load<true>(const __m128i * p)
         {
             return _mm_load_si128(p);
+        }
+
+        SIMD_INLINE __m128i Load(const __m128i* p0, const __m128i* p1)
+        {
+            return _mm_castps_si128(_mm_loadh_pi(_mm_loadl_pi(_mm_setzero_ps(), (__m64*)p0), (__m64*)p1));
         }
 
         template <bool align> SIMD_INLINE __m128i LoadMaskI8(const __m128i * p, __m128i index)
@@ -113,90 +105,13 @@ namespace Simd
         {
             return _mm_or_si128(_mm_srli_si128(last, count), _mm_and_si128(last, _mm_slli_si128(K_INV_ZERO, A - count)));
         }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadNose3(const uint8_t * p, __m128i a[3])
-        {
-            a[1] = Load<align>((__m128i*)p);
-            a[0] = LoadBeforeFirst<step>(a[1]);
-            a[2] = _mm_loadu_si128((__m128i*)(p + step));
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadBody3(const uint8_t * p, __m128i a[3])
-        {
-            a[0] = _mm_loadu_si128((__m128i*)(p - step));
-            a[1] = Load<align>((__m128i*)p);
-            a[2] = _mm_loadu_si128((__m128i*)(p + step));
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadTail3(const uint8_t * p, __m128i a[3])
-        {
-            a[0] = _mm_loadu_si128((__m128i*)(p - step));
-            a[1] = Load<align>((__m128i*)p);
-            a[2] = LoadAfterLast<step>(a[1]);
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadNose5(const uint8_t * p, __m128i a[5])
-        {
-            a[2] = Load<align>((__m128i*)p);
-            a[1] = LoadBeforeFirst<step>(a[2]);
-            a[0] = LoadBeforeFirst<step>(a[1]);
-            a[3] = _mm_loadu_si128((__m128i*)(p + step));
-            a[4] = _mm_loadu_si128((__m128i*)(p + 2 * step));
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadBody5(const uint8_t * p, __m128i a[5])
-        {
-            a[0] = _mm_loadu_si128((__m128i*)(p - 2 * step));
-            a[1] = _mm_loadu_si128((__m128i*)(p - step));
-            a[2] = Load<align>((__m128i*)p);
-            a[3] = _mm_loadu_si128((__m128i*)(p + step));
-            a[4] = _mm_loadu_si128((__m128i*)(p + 2 * step));
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadTail5(const uint8_t * p, __m128i a[5])
-        {
-            a[0] = _mm_loadu_si128((__m128i*)(p - 2 * step));
-            a[1] = _mm_loadu_si128((__m128i*)(p - step));
-            a[2] = Load<align>((__m128i*)p);
-            a[3] = LoadAfterLast<step>(a[2]);
-            a[4] = LoadAfterLast<step>(a[3]);
-        }
-
-        SIMD_INLINE void LoadNoseDx(const uint8_t * p, __m128i a[3])
-        {
-            a[0] = LoadBeforeFirst<1>(_mm_loadu_si128((__m128i*)p));
-            a[2] = _mm_loadu_si128((__m128i*)(p + 1));
-        }
-
-        SIMD_INLINE void LoadBodyDx(const uint8_t * p, __m128i a[3])
-        {
-            a[0] = _mm_loadu_si128((__m128i*)(p - 1));
-            a[2] = _mm_loadu_si128((__m128i*)(p + 1));
-        }
-
-        SIMD_INLINE void LoadTailDx(const uint8_t * p, __m128i a[3])
-        {
-            a[0] = _mm_loadu_si128((__m128i*)(p - 1));
-            a[2] = LoadAfterLast<1>(_mm_loadu_si128((__m128i*)p));
-        }
     }
 #endif//SIMD_SSE2_ENABLE
-
-#ifdef SIMD_SSE3_ENABLE
-    namespace Sse3
-    {
-#if defined(_MSC_VER) && _MSC_VER >= 1700  && _MSC_VER < 1900 // Visual Studio 2012/2013 compiler bug      
-        using Sse::Load;
-        using Sse2::Load;
-#endif
-    }
-#endif
 
 #ifdef SIMD_SSE41_ENABLE
     namespace Sse41
     {
 #if defined(_MSC_VER) && _MSC_VER >= 1700  && _MSC_VER < 1900 // Visual Studio 2012/2013 compiler bug      
-        using Sse::Load;
         using Sse2::Load;
 #endif
     }
@@ -219,12 +134,17 @@ namespace Simd
 
         template<bool align> SIMD_INLINE __m256 Load(const float * p0, const float * p1)
         {
-            return _mm256_insertf128_ps(_mm256_castps128_ps256(Sse::Load<align>(p0)), Sse::Load<align>(p1), 1);
+            return _mm256_insertf128_ps(_mm256_castps128_ps256(Sse2::Load<align>(p0)), Sse2::Load<align>(p1), 1);
         }
 
         SIMD_INLINE __m256 Load(const float * p0, const float * p1, const float * p2, const float * p3)
         {
-            return _mm256_insertf128_ps(_mm256_castps128_ps256(Sse::Load(p0, p1)), Sse::Load(p2, p3), 1);
+            return _mm256_insertf128_ps(_mm256_castps128_ps256(Sse2::Load(p0, p1)), Sse2::Load(p2, p3), 1);
+        }
+
+        SIMD_INLINE __m256 Load(const float * ptr, __m256i mask)
+        {
+            return _mm256_maskload_ps(ptr, mask);
         }
     }
 #endif//SIMD_AVX_ENABLE
@@ -333,86 +253,6 @@ namespace Simd
             __m128i secondHi = LoadHalfAfterLast<step>(firstHi);
             second = _mm256_inserti128_si256(_mm256_castsi128_si256(secondLo), secondHi, 0x1);
         }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadNose3(const uint8_t * p, __m256i a[3])
-        {
-            a[0] = LoadBeforeFirst<align, step>(p);
-            a[1] = Load<align>((__m256i*)p);
-            a[2] = _mm256_loadu_si256((__m256i*)(p + step));
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadBody3(const uint8_t * p, __m256i a[3])
-        {
-            a[0] = _mm256_loadu_si256((__m256i*)(p - step));
-            a[1] = Load<align>((__m256i*)p);
-            a[2] = _mm256_loadu_si256((__m256i*)(p + step));
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadTail3(const uint8_t * p, __m256i a[3])
-        {
-            a[0] = _mm256_loadu_si256((__m256i*)(p - step));
-            a[1] = Load<align>((__m256i*)p);
-            a[2] = LoadAfterLast<align, step>(p);
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadNose5(const uint8_t * p, __m256i a[5])
-        {
-            LoadBeforeFirst<align, step>(p, a[1], a[0]);
-            a[2] = Load<align>((__m256i*)p);
-            a[3] = _mm256_loadu_si256((__m256i*)(p + step));
-            a[4] = _mm256_loadu_si256((__m256i*)(p + 2 * step));
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadBody5(const uint8_t * p, __m256i a[5])
-        {
-            a[0] = _mm256_loadu_si256((__m256i*)(p - 2 * step));
-            a[1] = _mm256_loadu_si256((__m256i*)(p - step));
-            a[2] = Load<align>((__m256i*)p);
-            a[3] = _mm256_loadu_si256((__m256i*)(p + step));
-            a[4] = _mm256_loadu_si256((__m256i*)(p + 2 * step));
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadTail5(const uint8_t * p, __m256i a[5])
-        {
-            a[0] = _mm256_loadu_si256((__m256i*)(p - 2 * step));
-            a[1] = _mm256_loadu_si256((__m256i*)(p - step));
-            a[2] = Load<align>((__m256i*)p);
-            LoadAfterLast<align, step>(p, a[3], a[4]);
-        }
-
-        SIMD_INLINE void LoadNoseDx(const uint8_t * p, __m256i a[3])
-        {
-            a[0] = LoadBeforeFirst<false, 1>(p);
-            a[2] = _mm256_loadu_si256((__m256i*)(p + 1));
-        }
-
-        SIMD_INLINE void LoadBodyDx(const uint8_t * p, __m256i a[3])
-        {
-            a[0] = _mm256_loadu_si256((__m256i*)(p - 1));
-            a[2] = _mm256_loadu_si256((__m256i*)(p + 1));
-        }
-
-        SIMD_INLINE void LoadTailDx(const uint8_t * p, __m256i a[3])
-        {
-            a[0] = _mm256_loadu_si256((__m256i*)(p - 1));
-            a[2] = LoadAfterLast<false, 1>(p);
-        }
-
-        template <bool align> SIMD_INLINE __m256 Load(const float * p);
-
-        template <> SIMD_INLINE __m256 Load<false>(const float * p)
-        {
-            return _mm256_loadu_ps(p);
-        }
-
-        template <> SIMD_INLINE __m256 Load<true>(const float * p)
-        {
-#ifdef _MSC_VER
-            return _mm256_castsi256_ps(_mm256_load_si256((__m256i*)p));
-#else
-            return _mm256_load_ps(p);
-#endif
-        }
     }
 #endif//SIMD_AVX2_ENABLE
 
@@ -456,12 +296,12 @@ namespace Simd
 
         template <bool align> SIMD_INLINE int32x4_t Load(const int32_t * p)
         {
-            return (int32x4_t)Load<align>((const uint8_t*)p);
+            return vreinterpretq_s32_u8(Load<align>((const uint8_t*)p));
         }
 
         template <bool align> SIMD_INLINE uint32x4_t Load(const uint32_t * p)
         {
-            return (uint32x4_t)Load<align>((const uint8_t*)p);
+            return vreinterpretq_u32_u8(Load<align>((const uint8_t*)p));
         }
 
         template <bool align> SIMD_INLINE float32x4_t Load(const float * p);
@@ -827,81 +667,6 @@ namespace Simd
         template <size_t count> SIMD_INLINE uint8x16_t LoadAfterLast(uint8x16_t last)
         {
             return vextq_u8(last, vextq_u8(last, last, 16 - count), count);
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadNose3(const uint8_t * p, uint8x16_t a[3])
-        {
-            a[1] = Load<align>(p);
-            a[0] = LoadBeforeFirst<step>(a[1]);
-            a[2] = vld1q_u8(p + step);
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadBody3(const uint8_t * p, uint8x16_t a[3])
-        {
-#if defined(__GNUC__) && SIMD_NEON_PREFECH_SIZE
-            __builtin_prefetch(p + SIMD_NEON_PREFECH_SIZE);
-#endif
-            a[0] = vld1q_u8(p - step);
-            a[1] = Load<align>(p);
-            a[2] = vld1q_u8(p + step);
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadTail3(const uint8_t * p, uint8x16_t a[3])
-        {
-            a[0] = vld1q_u8(p - step);
-            a[1] = Load<align>(p);
-            a[2] = LoadAfterLast<step>(a[1]);
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadNose5(const uint8_t * p, uint8x16_t a[5])
-        {
-            a[2] = Load<align>(p);
-            a[1] = LoadBeforeFirst<step>(a[2]);
-            a[0] = LoadBeforeFirst<step>(a[1]);
-            a[3] = vld1q_u8(p + step);
-            a[4] = vld1q_u8(p + 2 * step);
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadBody5(const uint8_t * p, uint8x16_t a[5])
-        {
-#if defined(__GNUC__) && SIMD_NEON_PREFECH_SIZE
-            __builtin_prefetch(p + SIMD_NEON_PREFECH_SIZE);
-#endif
-            a[0] = vld1q_u8(p - 2 * step);
-            a[1] = vld1q_u8(p - step);
-            a[2] = Load<align>(p);
-            a[3] = vld1q_u8(p + step);
-            a[4] = vld1q_u8(p + 2 * step);
-        }
-
-        template <bool align, size_t step> SIMD_INLINE void LoadTail5(const uint8_t * p, uint8x16_t a[5])
-        {
-            a[0] = vld1q_u8(p - 2 * step);
-            a[1] = vld1q_u8(p - step);
-            a[2] = Load<align>(p);
-            a[3] = LoadAfterLast<step>(a[2]);
-            a[4] = LoadAfterLast<step>(a[3]);
-        }
-
-        SIMD_INLINE void LoadNoseDx(const uint8_t * p, uint8x16_t a[3])
-        {
-            a[0] = LoadBeforeFirst<1>(vld1q_u8(p));
-            a[2] = vld1q_u8(p + 1);
-        }
-
-        SIMD_INLINE void LoadBodyDx(const uint8_t * p, uint8x16_t a[3])
-        {
-#if defined(__GNUC__) && SIMD_NEON_PREFECH_SIZE
-            __builtin_prefetch(p + SIMD_NEON_PREFECH_SIZE);
-#endif
-            a[0] = vld1q_u8(p - 1);
-            a[2] = vld1q_u8(p + 1);
-        }
-
-        SIMD_INLINE void LoadTailDx(const uint8_t * p, uint8x16_t a[3])
-        {
-            a[0] = vld1q_u8(p - 1);
-            a[2] = LoadAfterLast<1>(vld1q_u8(p));
         }
 
         template <size_t count> SIMD_INLINE uint8x8_t LoadBeforeFirst(uint8x8_t first)

@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2017 Yermalayeu Ihar.
+* Copyright (c) 2011-2020 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -21,23 +21,44 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-#include "Simd/SimdConversion.h"
+#include "Simd/SimdEnable.h"
+#include "Simd/SimdCpu.h"
+
+#if defined(_MSC_VER)
+#include <windows.h>
+#endif
 
 namespace Simd
 {
-    namespace Base
+#ifdef SIMD_SSE2_ENABLE
+    namespace Sse2
     {
-        void RgbaToGray(const uint8_t * rgba, size_t width, size_t height, size_t rgbaStride, uint8_t * gray, size_t grayStride)
+        SIMD_INLINE bool SupportedByCPU()
         {
-            for (size_t row = 0; row < height; ++row)
+            return Base::CheckBit(Cpuid::Ordinary, Cpuid::Edx, Cpuid::SSE2);
+        }
+
+        SIMD_INLINE bool SupportedByOS()
+        {
+#if defined(_MSC_VER)
+            __try
             {
-                const uint8_t * pRgba = rgba + row*rgbaStride;
-                uint8_t * pGray = gray + row*grayStride;
-                for (const uint8_t *pGrayEnd = pGray + width; pGray < pGrayEnd; pGray += 1, pRgba += 4)
-                {
-                    *pGray = RgbToGray(pRgba[0], pRgba[1], pRgba[2]);
-                }
+                __m128d value = _mm_set1_pd(1.0);// try to execute of SSE2 instructions;
+                return true;
             }
+            __except (EXCEPTION_EXECUTE_HANDLER)
+            {
+                return false;
+            }
+#else
+            return true;
+#endif
+        }
+
+        bool GetEnable()
+        {
+            return SupportedByCPU() && SupportedByOS();
         }
     }
+#endif
 }
