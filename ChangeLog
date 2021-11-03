@@ -22,6 +22,7 @@ ViSP 3.4.1 (under development)
     . [#926] Packaging with CPack doesn't work with Ogre dependency
     . [#933] tutorial-apriltag-detector-live-rgbd-realsense.cpp doesn't work
     . [#937] Segfault in vpRobust when data to consider is a 2-dim vector
+    . [#939] SonarQube static analysis is no more working
 ----------------------------------------------
 ViSP 3.4.0 (released February 26, 2021)
   - Contributors:
