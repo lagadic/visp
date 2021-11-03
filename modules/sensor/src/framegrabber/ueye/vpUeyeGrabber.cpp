@@ -99,7 +99,7 @@ class vpUeyeGrabber::vpUeyeGrabberImpl
 public:
   vpUeyeGrabberImpl()
     : m_hCamera((HIDS)0), m_nMemoryId(0), m_nColorMode(0), m_nBitsPerPixel(0), m_activeCameraSelected(-1),
-      m_pLastBuffer(NULL), m_cameraList(NULL), m_bLive(true), m_bLiveStarted(false), m_verbose(false)
+      m_pLastBuffer(NULL), m_cameraList(NULL), m_bLive(true), m_bLiveStarted(false), m_verbose(false), m_I_temp()
   {
     ZeroMemory (&m_SensorInfo, sizeof(SENSORINFO));
     ZeroMemory (&m_CamInfo, sizeof(CAMINFO));
@@ -186,8 +186,16 @@ public:
           switch (colormode) {
           default:
           case IS_CM_MONO8:
-          case IS_CM_SENSOR_RAW8:
             memcpy(reinterpret_cast<unsigned char*>(I.bitmap), reinterpret_cast<unsigned char*>(m_pLastBuffer), m_BufferProps.width * m_BufferProps.height * m_BufferProps.bitspp / 8);
+            break;
+          case IS_CM_SENSOR_RAW8:
+            m_I_temp.resize( m_BufferProps.height, m_BufferProps.width ),
+                vpImageConvert::demosaicRGGBToRGBaBilinear( reinterpret_cast< unsigned char * >( m_pLastBuffer ),
+                                                            reinterpret_cast< unsigned char * >( m_I_temp.bitmap ),
+                                                            m_BufferProps.width, m_BufferProps.height );
+            vpImageConvert::RGBaToGrey( reinterpret_cast< unsigned char * >( m_I_temp.bitmap ),
+                                        reinterpret_cast< unsigned char * >( I.bitmap ), m_BufferProps.width,
+                                        m_BufferProps.height );
             break;
           case IS_CM_BGR565_PACKED:
             throw(vpException(vpException::fatalError, "vpUeyeGrabber doesn't support BGR565 format"));
@@ -277,9 +285,13 @@ public:
           switch (colormode) {
           default:
           case IS_CM_MONO8:
-          case IS_CM_SENSOR_RAW8:
             vpImageConvert::GreyToRGBa(reinterpret_cast<unsigned char*>(m_pLastBuffer), reinterpret_cast<unsigned char*>(I.bitmap),
                                        m_BufferProps.width, m_BufferProps.height);
+            break;
+          case IS_CM_SENSOR_RAW8:
+            vpImageConvert::demosaicRGGBToRGBaBilinear( reinterpret_cast< unsigned char * >( m_pLastBuffer ),
+                                                        reinterpret_cast< unsigned char * >( I.bitmap ),
+                                                        m_BufferProps.width, m_BufferProps.height );
             break;
           case IS_CM_BGR565_PACKED:
             throw(vpException(vpException::fatalError, "vpUeyeGrabber doesn't support BGR565 format"));
@@ -756,6 +768,9 @@ public:
     else if (color_mode_upper == "RGB32") {
       cm = IS_CM_RGBA8_PACKED;
     }
+    else if ( color_mode_upper == "BAYER8" ) {
+      cm = IS_CM_SENSOR_RAW8;
+    }
     else {
       throw(vpException(vpException::fatalError, "Unsupported color mode %s", color_mode.c_str()));
     }
@@ -1121,6 +1136,7 @@ private:
   /* on windows we need an Event handle member */
   HANDLE m_hEvent;
 #endif
+  vpImage< vpRGBa > m_I_temp; // Temp image used for Bayer conversion
 };
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -1341,7 +1357,7 @@ bool vpUeyeGrabber::setActiveCamera(unsigned int cam_index)
  *
  * \warning Before caling this function the connexion with the active camera should be opened.
  *
- * \param[in] color_mode : Desired color mode. Admissible values are "MONO8", "RGB8" or "RGB32".
+ * \param[in] color_mode : Desired color mode. Admissible values are "MONO8", "RGB8", "RGB32" or "BAYER8".
  * \note - When acquiring gray level images using acquire(vpImage<unsigned char> &) we strongly recommend to
  * set color mode to "MONO8".
  * \note - When acquiring color level images using acquire(vpImage<vpRGBa> &) we strongly recommend to

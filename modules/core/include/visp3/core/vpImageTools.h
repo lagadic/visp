@@ -829,10 +829,7 @@ void vpImageTools::undistort(const vpImage<Type> &I, vpArray2D<int> mapU, vpArra
 */
 template <class Type> void vpImageTools::flip(const vpImage<Type> &I, vpImage<Type> &newI)
 {
-  unsigned int height = 0, width = 0;
-
-  height = I.getHeight();
-  width = I.getWidth();
+  unsigned int height = I.getHeight(), width = I.getWidth();
   newI.resize(height, width);
 
   for (unsigned int i = 0; i < height; i++) {
@@ -873,15 +870,11 @@ int main()
 */
 template <class Type> void vpImageTools::flip(vpImage<Type> &I)
 {
-  unsigned int height = 0, width = 0;
-  unsigned int i = 0;
+  unsigned int height = I.getHeight(), width = I.getWidth();
   vpImage<Type> Ibuf;
-
-  height = I.getHeight();
-  width = I.getWidth();
   Ibuf.resize(1, width);
 
-  for (i = 0; i < height / 2; i++) {
+  for (unsigned int i = 0; i < height / 2; i++) {
     memcpy(Ibuf.bitmap, I.bitmap + i * width, width * sizeof(Type));
 
     memcpy(I.bitmap + i * width, I.bitmap + (height - 1 - i) * width, width * sizeof(Type));

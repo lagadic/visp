@@ -58,10 +58,8 @@ bool read_data(const std::string &input_directory, int cpt, const vpCameraParame
                vpImage<Type> &I, vpImage<uint16_t> &I_depth,
                std::vector<vpColVector> &pointcloud, vpHomogeneousMatrix &cMo)
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
                 "Template function supports only unsigned char and vpRGBa images!");
-#endif
   char buffer[256];
   sprintf(buffer, std::string(input_directory + "/Images/Image_%04d.pgm").c_str(), cpt);
   std::string image_filename = buffer;
