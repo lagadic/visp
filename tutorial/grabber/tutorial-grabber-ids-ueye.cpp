@@ -3,8 +3,8 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpUeyeGrabber.h>
 #include <visp3/io/vpImageStorageWorker.h>
+#include <visp3/sensor/vpUeyeGrabber.h>
 
 #define USE_COLOR // Comment to acquire gray level images
 
@@ -61,7 +61,7 @@ int main(int argc, const char *argv[])
                   << " [--shutter <auto | exposure value in ms> (default: empty)]"
                   << " [--subsample <1,2,3,4,5,6,8,16> (default: 1)]"
                   << " [--white-balance <0: disabled, 1: enabled> (default: -1)]"
-                  << " [--color-mode <mono8, rgb24, rgb32> (default: empty)]"
+                  << " [--color-mode <mono8, rgb24, rgb32, bayer8> (default: empty)]"
                   << " [--seqname <sequence name> (default: empty)]"
                   << " [--record <0: continuous | 1: single shot> (default: 0)]"
                   << " [--verbose] [-v]"
