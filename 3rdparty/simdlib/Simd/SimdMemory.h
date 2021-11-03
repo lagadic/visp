@@ -35,6 +35,18 @@
 
 namespace Simd
 {
+    SIMD_INLINE size_t DivHi(size_t value, size_t divider)
+    {
+        return (value + divider - 1) / divider;
+    }
+
+    SIMD_INLINE size_t Pow2Hi(size_t value)
+    {
+        size_t pow2 = 1;
+        for (; pow2 < value; pow2 *= 2);
+        return pow2;
+    }
+
     SIMD_INLINE size_t AlignHiAny(size_t size, size_t align)
     {
         return (size + align - 1) / align * align;
@@ -105,6 +117,13 @@ namespace Simd
         if (ptr)
             ptr = (char*)ptr + SIMD_NO_MANS_LAND;
 #endif
+        return ptr;
+    }
+
+    template<class T> T* Allocate(uint8_t*& buffer, size_t size, size_t align = SIMD_ALIGN)
+    {
+        T* ptr = (T*)buffer;
+        buffer = buffer + AlignHi(size * sizeof(T), align);
         return ptr;
     }
 

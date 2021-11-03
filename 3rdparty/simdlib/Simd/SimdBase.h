@@ -32,6 +32,10 @@ namespace Simd
 {
     namespace Base
     {
+        uint32_t Crc32(const void* src, size_t size);
+
+        uint32_t Crc32c(const void * src, size_t size);
+
         void BgraToBgr(const uint8_t * bgra, size_t size, uint8_t * bgr, bool lastRow);
 
         void BgraToBgr(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * bgr, size_t bgrStride);

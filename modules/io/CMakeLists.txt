@@ -57,10 +57,20 @@ if(USE_PNG)
   add_definitions(${PNG_DEFINITIONS})
 endif()
 
-if(WITH_STBIMAGE)
+# TODO:
+#if(WITH_STBIMAGE)
   # stb_image is private
   include_directories(${STBIMAGE_INCLUDE_DIRS})
+#endif()
+
+if(WITH_CATCH2)
+  # catch2 is private
+  include_directories(${CATCH2_INCLUDE_DIRS})
 endif()
+
+# simdlib is always enabled since it contains fallback code to plain C++ code
+# Simd lib is private
+include_directories(${SIMDLIB_INCLUDE_DIRS})
 
 # OpenCV
 if(USE_OPENCV)
@@ -178,7 +188,7 @@ endif()
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-vp_add_tests(DEPENDS_ON visp_features)
+vp_add_tests()
 
 vp_set_source_file_compile_flag(src/tools/vpParseArgv.cpp -Wno-strict-overflow)
 

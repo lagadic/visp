@@ -62,6 +62,15 @@
 #include <png.h>
 #endif
 
+//TODO:
+#include <Simd/SimdLib.hpp>
+//TODO:
+#define STB_IMAGE_IMPLEMENTATION
+#include <stb_image.h>
+
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include <stb_image_write.h>
+
 #if !defined(VISP_HAVE_OPENCV)
 #if !defined(VISP_HAVE_JPEG) || !defined(VISP_HAVE_PNG)
 
@@ -2057,6 +2066,60 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
   png_read_end(png_ptr, NULL);
   png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
   fclose(file);
+}
+
+//TODO:
+void vpImageIo::readSimdlib(vpImage<vpRGBa> &I, const std::string &filename)
+{
+  size_t stride = 0, width = 0, height = 0;
+  SimdPixelFormatType format = SimdPixelFormatRgba32;
+  uint8_t* data = SimdImageLoadFromFile(filename.c_str(), &stride, &width, &height, &format);
+  const bool copyData = false;
+  I.init((vpRGBa *)data, (unsigned int)height, (unsigned int)width, copyData);
+}
+
+void vpImageIo::readStb(vpImage<vpRGBa> &I, const std::string &filename)
+{
+  int width = 0, height = 0, channels = 0;
+  unsigned char *image = stbi_load(filename.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+  if (image == NULL) {
+    throw(vpImageException(vpImageException::ioError, "Can't read the image: %s", filename.c_str()));
+  }
+  I.init(reinterpret_cast<vpRGBa*>(image), static_cast<unsigned int>(height), static_cast<unsigned int>(width), true);
+  stbi_image_free(image);
+}
+
+inline bool ends_with(std::string const & value, std::string const & ending)
+{
+    if (ending.size() > value.size()) return false;
+    return std::equal(ending.rbegin(), ending.rend(), value.rbegin());
+}
+
+void vpImageIo::writeSimdlib(vpImage<vpRGBa> &I, const std::string &filename)
+{
+  if (ends_with(filename, ".png")) {
+    SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth()*4, I.getWidth(), I.getHeight(), SimdPixelFormatRgba32, SimdImageFilePng, 90, filename.c_str());
+  } else {
+    SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth()*4, I.getWidth(), I.getHeight(), SimdPixelFormatRgba32, SimdImageFileJpeg, 90, filename.c_str());
+  }
+}
+
+void vpImageIo::writeStb(vpImage<vpRGBa> &I, const std::string &filename)
+{
+  if (ends_with(filename, ".png")) {
+    const int stride_in_bytes = static_cast<int>(4 * I.getWidth());
+    int res = stbi_write_png(filename.c_str(), static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), STBI_rgb_alpha,
+                             reinterpret_cast<void*>(I.bitmap), stride_in_bytes);
+    if (res == 0) {
+      throw(vpImageException(vpImageException::ioError, "PNG write error: %s", filename.c_str()));
+    }
+  } else {
+    int res = stbi_write_jpg(filename.c_str(), static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), STBI_rgb_alpha,
+                             reinterpret_cast<void*>(I.bitmap), 90);
+    if (res == 0) {
+      throw(vpImageException(vpImageException::ioError, "JEPG write error"));
+    }
+  }
 }
 
 #elif defined(VISP_HAVE_OPENCV)

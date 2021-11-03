@@ -144,6 +144,10 @@ public:
   static void readPNG(vpImage<unsigned char> &I, const std::string &filename);
   static void readPNG(vpImage<vpRGBa> &I, const std::string &filename);
 
+  //TODO:
+  static void readSimdlib(vpImage<vpRGBa> &I, const std::string &filename);
+  static void readStb(vpImage<vpRGBa> &I, const std::string &filename);
+
   static void writePFM(const vpImage<float> &I, const std::string &filename);
 
   static void writePGM(const vpImage<unsigned char> &I, const std::string &filename);
@@ -158,5 +162,9 @@ public:
 
   static void writePNG(const vpImage<unsigned char> &I, const std::string &filename);
   static void writePNG(const vpImage<vpRGBa> &I, const std::string &filename);
+
+  //TODO:
+  static void writeSimdlib(vpImage<vpRGBa> &I, const std::string &filename);
+  static void writeStb(vpImage<vpRGBa> &I, const std::string &filename);
 };
 #endif

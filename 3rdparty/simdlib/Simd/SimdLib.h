@@ -117,6 +117,27 @@ typedef enum
 } SimdCpuInfoType;
 
 /*! @ingroup c_types
+    Describes formats of image file. It is used in functions ::SimdImageSaveToMemory and ::SimdImageSaveToFile.
+*/
+typedef enum
+{
+    /*! An undefined image file format (format auto choice). */
+    SimdImageFileUndefined = 0,
+    /*! A PGM (Portable Gray Map) text (P2) image file format. */
+    SimdImageFilePgmTxt,
+    /*! A PGM (Portable Gray Map) binary (P5) image file format. */
+    SimdImageFilePgmBin,
+    /*! A PGM (Portable Pixel Map) text (P3) image file format. */
+    SimdImageFilePpmTxt,
+    /*! A PGM (Portable Pixel Map) binary (P6) image file format. */
+    SimdImageFilePpmBin,
+    /*! A PNG (Portable Network Graphics) image file format. */
+    SimdImageFilePng,
+    /*! A JPEG (Joint Photographic Experts Group) image file format. */
+    SimdImageFileJpeg,
+} SimdImageFileType;
+
+/*! @ingroup c_types
     Describes types of binary operation between two images performed by function ::SimdOperationBinary8u.
     Images must have the same format (unsigned 8-bit integer for every channel).
 */
@@ -167,18 +188,6 @@ typedef enum
     SimdPixelFormatFloat,
     /*! A single channel 64-bit float point pixel format. */
     SimdPixelFormatDouble,
-    /*! A 8-bit Bayer pixel format (GRBG). */
-    SimdPixelFormatBayerGrbg,
-    /*! A 8-bit Bayer pixel format (GBRG). */
-    SimdPixelFormatBayerGbrg,
-    /*! A 8-bit Bayer pixel format (RGGB). */
-    SimdPixelFormatBayerRggb,
-    /*! A 8-bit Bayer pixel format (BGGR). */
-    SimdPixelFormatBayerBggr,
-    /*! A 24-bit (3 8-bit channels) HSV (Hue, Saturation, Value) pixel format. */
-    SimdPixelFormatHsv24,
-    /*! A 24-bit (3 8-bit channels) HSL (Hue, Saturation, Lightness) pixel format. */
-    SimdPixelFormatHsl24,
     /*! A 24-bit (3 8-bit channels) RGB (Red, Green, Blue) pixel format. */
     SimdPixelFormatRgb24,
     /*! A 32-bit (4 8-bit channels) RGBA (Red, Green, Blue, Alpha) pixel format. */
@@ -752,6 +761,82 @@ extern "C"
     */
     SIMD_API void SimdGrayToBgra(const uint8_t *gray, size_t width, size_t height, size_t grayStride,
         uint8_t *bgra, size_t bgraStride, uint8_t alpha);
+
+    /*! @ingroup image_io
+
+        \fn uint8_t* SimdImageSaveToMemory(const uint8_t* src, size_t stride, size_t width, size_t height, SimdPixelFormatType format, SimdImageFileType file, int quality, size_t * size);
+
+        \short Saves an image to memory in given image file format.
+
+        \param [in] src - a pointer to pixels data of input image. 
+        \param [in] stride - a row size of input image in bytes.
+        \param [in] width - a width of input image.
+        \param [in] height - a height of input image.
+        \param [in] format - a pixel format of input image. 
+            Supported pixel formats: ::SimdPixelFormatGray8, ::SimdPixelFormatBgr24, ::SimdPixelFormatBgra32, ::SimdPixelFormatRgb24, ::SimdPixelFormatRgba32.
+        \param [in] file - a format of output image file. To auto choise format of output file set this parameter to ::SimdImageFileUndefined.
+        \param [in] quality - a parameter of compression quality (if file format supports it).
+        \param [out] size - a pointer to the size of output image file in bytes.
+        \return a pointer to memory buffer with output image file. 
+            It has to be deleted after use by function ::SimdFree. On error it returns NULL.
+    */
+    SIMD_API uint8_t* SimdImageSaveToMemory(const uint8_t* src, size_t stride, size_t width, size_t height, SimdPixelFormatType format, SimdImageFileType file, int quality, size_t * size);
+
+    /*! @ingroup image_io
+
+        \fn SimdBool SimdImageSaveToFile(const uint8_t* src, size_t stride, size_t width, size_t height, SimdPixelFormatType format, SimdImageFileType file, int quality, const char * path);
+
+        \short Saves an image to memory in given image file format.
+
+        \param [in] src - a pointer to pixels data of input image.
+        \param [in] stride - a row size of input image in bytes.
+        \param [in] width - a width of input image.
+        \param [in] height - a height of input image.
+        \param [in] format - a pixel format of input image. 
+            Supported pixel formats: ::SimdPixelFormatGray8, ::SimdPixelFormatBgr24, ::SimdPixelFormatBgra32, ::SimdPixelFormatRgb24, ::SimdPixelFormatRgba32.
+        \param [in] file - a format of output image file. To auto choise format of output file set this parameter to ::SimdImageFileUndefined.
+        \param [in] quality - a parameter of compression quality (if file format supports it).
+        \param [in] path - a path to output image file.
+        \return result of the operation.
+    */
+    SIMD_API SimdBool SimdImageSaveToFile(const uint8_t* src, size_t stride, size_t width, size_t height, SimdPixelFormatType format, SimdImageFileType file, int quality, const char * path);
+
+    /*! @ingroup image_io
+
+        \fn uint8_t* SimdImageLoadFromMemory(const uint8_t* data, size_t size, size_t* stride, size_t* width, size_t* height, SimdPixelFormatType * format);
+
+        \short Loads an image from memory buffer.
+
+        \param [in] data - a pointer to memory buffer with input image file.
+        \param [in] size - a size of input image file in bytes.
+        \param [out] stride - a pointer to row size of output image in bytes.
+        \param [out] width - a pointer to width of output image.
+        \param [out] height - a pointer to height of output image.
+        \param [in, out] format - a pointer to pixel format of output image. 
+            Here you can set desired pixel format (it can be ::SimdPixelFormatGray8, ::SimdPixelFormatBgr24, ::SimdPixelFormatBgra32, ::SimdPixelFormatRgb24, ::SimdPixelFormatRgba32).
+            Or set ::SimdPixelFormatNone and use pixel format of input image file.
+        \return a pointer to pixels data of output image. 
+            It has to be deleted after use by function ::SimdFree. On error it returns NULL.
+    */
+    SIMD_API uint8_t* SimdImageLoadFromMemory(const uint8_t* data, size_t size, size_t* stride, size_t* width, size_t* height, SimdPixelFormatType * format);
+
+    /*! @ingroup image_io
+
+        \fn uint8_t* SimdImageLoadFromFile(const char* path, size_t* stride, size_t* width, size_t* height, SimdPixelFormatType * format);
+
+        \short Loads an image from file.
+
+        \param [in] path - a path to input image file.
+        \param [out] stride - a pointer to row size of output image in bytes.
+        \param [out] width - a pointer to width of output image.
+        \param [out] height - a pointer to height of output image.
+        \param [in, out] format - a pointer to pixel format of output image.
+            Here you can set desired pixel format (it can be ::SimdPixelFormatGray8, ::SimdPixelFormatBgr24, ::SimdPixelFormatBgra32, ::SimdPixelFormatRgb24, ::SimdPixelFormatRgba32).
+            Or set ::SimdPixelFormatNone and use pixel format of input image file.
+        \return a pointer to pixels data of output image.
+            It has to be deleted after use by function ::SimdFree. On error it returns NULL.
+    */
+    SIMD_API uint8_t* SimdImageLoadFromFile(const char* path, size_t* stride, size_t* width, size_t* height, SimdPixelFormatType * format);
 
     /*! @ingroup other_conversion
 
