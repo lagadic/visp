@@ -180,14 +180,14 @@ TEST_CASE("Benchmark big Jpeg image saving", "[benchmark]") {
     };
   }
 
-//  {
-//    const std::string filename = "/tmp/Big_images_Simd.jpg";
+  {
+    const std::string filename = "/tmp/Big_images_Simd.jpg";
 
-//    BENCHMARK("vpImageIo::writeSimdlib()") {
-//      vpImageIo::writeSimdlib(I, filename);
-//      return I;
-//    };
-//  }
+    BENCHMARK("vpImageIo::writeSimdlib()") {
+      vpImageIo::writeSimdlib(I, filename);
+      return I;
+    };
+  }
 
   {
     const std::string filename = "/tmp/Big_images_stb.jpg";
