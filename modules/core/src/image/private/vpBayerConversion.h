@@ -45,6 +45,10 @@
 
 #include <visp3/core/vpMath.h>
 
+// Workaround to avoid warning: "left operand of comma operator has no effect" when compiled in g++ with
+// "-Wunused-value"
+#define m_assert(msg, expr) assert( ( (void)( msg ), ( expr ) ) )
+
 // Bilinear
 template <typename T>
 T demosaicPhiBilinear(const T *bayer, unsigned int width, unsigned int i, unsigned int j)
@@ -105,10 +109,10 @@ T demosaicCrossMalvar(const T *bayer, unsigned int width, unsigned int i, unsign
 template <typename T>
 void demosaicBGGRToRGBaBilinearTpl(const T *bggr, T *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
-  assert(("width must be >= 4", width >= 4));
-  assert(("height must be >= 4", height >= 4));
-  assert(("width must be a multiple of 2", width % 2 == 0));
-  assert(("height must be a multiple of 2", height % 2 == 0));
+  m_assert("width must be >= 4", width >= 4);
+  m_assert("height must be >= 4", height >= 4);
+  m_assert("width must be a multiple of 2", width % 2 == 0);
+  m_assert("height must be a multiple of 2", height % 2 == 0);
 
   // (0,0)
   rgba[0] = bggr[width + 1];
@@ -214,10 +218,10 @@ void demosaicBGGRToRGBaBilinearTpl(const T *bggr, T *rgba, unsigned int width, u
 template<typename T>
 void demosaicGBRGToRGBaBilinearTpl(const T *gbrg, T *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
-  assert(("width must be >= 4", width >= 4));
-  assert(("height must be >= 4", height >= 4));
-  assert(("width must be a multiple of 2", width % 2 == 0));
-  assert(("height must be a multiple of 2", height % 2 == 0));
+  m_assert("width must be >= 4", width >= 4);
+  m_assert("height must be >= 4", height >= 4);
+  m_assert("width must be a multiple of 2", width % 2 == 0);
+  m_assert("height must be a multiple of 2", height % 2 == 0);
 
   // (0,0)
   rgba[0] = gbrg[width];
@@ -323,10 +327,10 @@ void demosaicGBRGToRGBaBilinearTpl(const T *gbrg, T *rgba, unsigned int width, u
 template<typename T>
 void demosaicGRBGToRGBaBilinearTpl(const T *grbg, T *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
-  assert(("width must be >= 4", width >= 4));
-  assert(("height must be >= 4", height >= 4));
-  assert(("width must be a multiple of 2", width % 2 == 0));
-  assert(("height must be a multiple of 2", height % 2 == 0));
+  m_assert("width must be >= 4", width >= 4);
+  m_assert("height must be >= 4", height >= 4);
+  m_assert("width must be a multiple of 2", width % 2 == 0);
+  m_assert("height must be a multiple of 2", height % 2 == 0);
 
   // (0,0)
   rgba[0] = grbg[1];
@@ -432,10 +436,10 @@ void demosaicGRBGToRGBaBilinearTpl(const T *grbg, T *rgba, unsigned int width, u
 template<typename T>
 void demosaicRGGBToRGBaBilinearTpl(const T *rggb, T *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
-  assert(("width must be >= 4", width >= 4));
-  assert(("height must be >= 4", height >= 4));
-  assert(("width must be a multiple of 2", width % 2 == 0));
-  assert(("height must be a multiple of 2", height % 2 == 0));
+  m_assert("width must be >= 4", width >= 4);
+  m_assert("height must be >= 4", height >= 4);
+  m_assert("width must be a multiple of 2", width % 2 == 0);
+  m_assert("height must be a multiple of 2", height % 2 == 0);
 
   // (0,0)
   rgba[0] = rggb[0];
@@ -543,10 +547,10 @@ void demosaicRGGBToRGBaBilinearTpl(const T *rggb, T *rgba, unsigned int width, u
 template<typename T>
 void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
-  assert(("width must be >= 4", width >= 4));
-  assert(("height must be >= 4", height >= 4));
-  assert(("width must be a multiple of 2", width % 2 == 0));
-  assert(("height must be a multiple of 2", height % 2 == 0));
+  m_assert("width must be >= 4", width >= 4);
+  m_assert("height must be >= 4", height >= 4);
+  m_assert("width must be a multiple of 2", width % 2 == 0);
+  m_assert("height must be a multiple of 2", height % 2 == 0);
 
   // (0,0)
   rgba[0] = bggr[width + 1];
@@ -706,10 +710,10 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
 template<typename T>
 void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
-  assert(("width must be >= 4", width >= 4));
-  assert(("height must be >= 4", height >= 4));
-  assert(("width must be a multiple of 2", width % 2 == 0));
-  assert(("height must be a multiple of 2", height % 2 == 0));
+  m_assert("width must be >= 4", width >= 4);
+  m_assert("height must be >= 4", height >= 4);
+  m_assert("width must be a multiple of 2", width % 2 == 0);
+  m_assert("height must be a multiple of 2", height % 2 == 0);
 
   // (0,0)
   rgba[0] = gbrg[width];
@@ -871,10 +875,10 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
 template<typename T>
 void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
-  assert(("width must be >= 4", width >= 4));
-  assert(("height must be >= 4", height >= 4));
-  assert(("width must be a multiple of 2", width % 2 == 0));
-  assert(("height must be a multiple of 2", height % 2 == 0));
+  m_assert("width must be >= 4", width >= 4);
+  m_assert("height must be >= 4", height >= 4);
+  m_assert("width must be a multiple of 2", width % 2 == 0);
+  m_assert("height must be a multiple of 2", height % 2 == 0);
 
   // (0,0)
   rgba[0] = grbg[1];
@@ -1034,10 +1038,10 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
 template<typename T>
 void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, unsigned int height, unsigned int nThreads)
 {
-  assert(("width must be >= 4", width >= 4));
-  assert(("height must be >= 4", height >= 4));
-  assert(("width must be a multiple of 2", width % 2 == 0));
-  assert(("height must be a multiple of 2", height % 2 == 0));
+  m_assert("width must be >= 4", width >= 4);
+  m_assert("height must be >= 4", height >= 4);
+  m_assert("width must be a multiple of 2", width % 2 == 0);
+  m_assert("height must be a multiple of 2", height % 2 == 0);
 
   // (0,0)
   rgba[0] = rggb[0];
