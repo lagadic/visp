@@ -191,6 +191,8 @@ void demosaicBGGRToRGBaBilinearTpl(const T *bggr, T *rgba, unsigned int width, u
     omp_set_num_threads(static_cast<int>(nThreads));
   }
   #pragma omp parallel for schedule(dynamic)
+#else
+  (void) nThreads;
 #endif
   for (unsigned int i = 1; i < height-1; i++) {
     for (unsigned int j = 1; j < width-1; j++) {
@@ -300,6 +302,8 @@ void demosaicGBRGToRGBaBilinearTpl(const T *gbrg, T *rgba, unsigned int width, u
     omp_set_num_threads(static_cast<int>(nThreads));
   }
   #pragma omp parallel for schedule(dynamic)
+#else
+  (void) nThreads;
 #endif
   for (unsigned int i = 1; i < height-1; i++) {
     for (unsigned int j = 1; j < width-1; j++) {
@@ -409,6 +413,8 @@ void demosaicGRBGToRGBaBilinearTpl(const T *grbg, T *rgba, unsigned int width, u
     omp_set_num_threads(static_cast<int>(nThreads));
   }
   #pragma omp parallel for schedule(dynamic)
+#else
+  (void) nThreads;
 #endif
   for (unsigned int i = 1; i < height-1; i++) {
     for (unsigned int j = 1; j < width-1; j++) {
@@ -518,6 +524,8 @@ void demosaicRGGBToRGBaBilinearTpl(const T *rggb, T *rgba, unsigned int width, u
     omp_set_num_threads(static_cast<int>(nThreads));
   }
   #pragma omp parallel for schedule(dynamic)
+#else
+  (void) nThreads;
 #endif
   for (unsigned int i = 1; i < height-1; i++) {
     for (unsigned int j = 1; j < width-1; j++) {
@@ -683,6 +691,8 @@ void demosaicBGGRToRGBaMalvarTpl(const T *bggr, T *rgba, unsigned int width, uns
     omp_set_num_threads(static_cast<int>(nThreads));
   }
   #pragma omp parallel for schedule(dynamic)
+#else
+  (void) nThreads;
 #endif
   for (unsigned int i = 2; i < height-2; i++) {
     for (unsigned int j = 2; j < width-2; j++) {
@@ -848,6 +858,8 @@ void demosaicGBRGToRGBaMalvarTpl(const T *gbrg, T *rgba, unsigned int width, uns
     omp_set_num_threads(static_cast<int>(nThreads));
   }
   #pragma omp parallel for schedule(dynamic)
+#else
+  (void) nThreads;
 #endif
   for (unsigned int i = 2; i < height-2; i++) {
     for (unsigned int j = 2; j < width-2; j++) {
@@ -1011,6 +1023,8 @@ void demosaicGRBGToRGBaMalvarTpl(const T *grbg, T *rgba, unsigned int width, uns
     omp_set_num_threads(static_cast<int>(nThreads));
   }
   #pragma omp parallel for schedule(dynamic)
+#else
+  (void) nThreads;
 #endif
   for (unsigned int i = 2; i < height-2; i++) {
     for (unsigned int j = 2; j < width-2; j++) {
@@ -1174,6 +1188,8 @@ void demosaicRGGBToRGBaMalvarTpl(const T *rggb, T *rgba, unsigned int width, uns
     omp_set_num_threads(static_cast<int>(nThreads));
   }
   #pragma omp parallel for schedule(dynamic)
+#else
+  (void) nThreads;
 #endif
   for (unsigned int i = 2; i < height-2; i++) {
     for (unsigned int j = 2; j < width-2; j++) {
