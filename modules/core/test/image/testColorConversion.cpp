@@ -293,6 +293,7 @@ void readBinaryFile(const std::string& filename, std::vector<uint16_t>& buffer)
     buffer[i] = vpEndian::swap16bits(tmp[i]);
   }
 #endif
+  std::fclose(f);
 }
 
 TEST_CASE("Bayer conversion", "[image_conversion]") {
@@ -456,6 +457,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
         std::cout << "8-bit - BGGR - Malvar - PSNR: " << PSNR << std::endl;
         CHECK(PSNR >= min_PSNR_Malvar);
       }
+      std::fclose(f);
     }
 
     SECTION("GBRG")
@@ -485,6 +487,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
         std::cout << "8-bit - GBRG - Malvar - PSNR: " << PSNR << std::endl;
         CHECK(PSNR >= min_PSNR_Malvar);
       }
+      std::fclose(f);
     }
 
     SECTION("GRBG")
@@ -514,6 +517,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
         std::cout << "8-bit - GRBG - Malvar - PSNR: " << PSNR << std::endl;
         CHECK(PSNR >= min_PSNR_Malvar);
       }
+      std::fclose(f);
     }
 
     SECTION("RGGB")
@@ -543,6 +547,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]") {
         std::cout << "8-bit - RGGB - Malvar - PSNR: " << PSNR << std::endl;
         CHECK(PSNR >= min_PSNR_Malvar);
       }
+      std::fclose(f);
     }
   }
 }
