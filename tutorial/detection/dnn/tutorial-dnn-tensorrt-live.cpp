@@ -17,16 +17,17 @@
 
 #if defined(VISP_HAVE_TENSORRT) && defined(VISP_HAVE_OPENCV)
 #include <opencv2/opencv_modules.hpp>
-#if defined(HAVE_OPENCV_CUDEV) && defined(HAVE_OPENCV_CUDAWARPING) && defined(HAVE_OPENCV_CUDAARITHM)
+#if defined(HAVE_OPENCV_CUDEV) && defined(HAVE_OPENCV_CUDAWARPING) && defined(HAVE_OPENCV_CUDAARITHM) &&               \
+    defined(VISP_HAVE_OPENCV_DNN)
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayX.h>
 
-#include <visp3/detection/vpDetectorDNN.h>
 //! [OpenCV CUDA header files]
 #include <opencv2/core/cuda.hpp>
-#include <opencv4/opencv2/cudaarithm.hpp>
-#include <opencv4/opencv2/cudawarping.hpp>
+#include <opencv2/cudaarithm.hpp>
+#include <opencv2/cudawarping.hpp>
+#include <opencv2/dnn.hpp>
 //! [OpenCV CUDA header files]
 
 //! [CUDA header files]
@@ -155,7 +156,7 @@ std::vector<cv::Rect> postprocessResults(std::vector<void *> buffers, const std:
 class Logger : public nvinfer1::ILogger
 {
 public:
-  void log(Severity severity, const char *msg) override
+  void log(Severity severity, const char *msg) noexcept // override
   {
     if ((severity == Severity::kERROR) || (severity == Severity::kINTERNAL_ERROR) || (severity == Severity::kVERBOSE))
       std::cout << msg << std::endl;
@@ -247,8 +248,9 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
     // allow TRT to use up to 1GB of GPU memory for tactic selection
     config->setMaxWorkspaceSize(32 << 20);
     // use FP16 mode if possible
-    if (builder->platformHasFastFp16())
+    if (builder->platformHasFastFp16()) {
       config->setFlag(nvinfer1::BuilderFlag::kFP16);
+    }
 
     builder->setMaxBatchSize(1);
 
@@ -290,14 +292,14 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
 int main(int argc, char **argv)
 {
   int opt_device = 0;
-  unsigned int opt_scale = 2;
+  unsigned int opt_scale = 1;
   std::string input = "";
-  std::string model = "ssd-mobilenet.onnx";
+  std::string modelFile = vpIoTools::getViSPImagesDataPath() + "/dnn/object_detection/ssd-mobilenet.onnx";
+  std::string labelFile = vpIoTools::getViSPImagesDataPath() + "/dnn/object_detection/pascal-voc-labels.txt";
   std::string config = "";
   float meanR = 127.5f, meanG = 127.5f, meanB = 127.5f;
   float confThresh = 0.5f;
   float nmsThresh = 0.4f;
-  std::string labelFile = "pascal-voc-labels.txt";
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--device" && i + 1 < argc) {
@@ -305,7 +307,7 @@ int main(int argc, char **argv)
     } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
       input = std::string(argv[i + 1]);
     } else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
-      model = std::string(argv[i + 1]);
+      modelFile = std::string(argv[i + 1]);
     } else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
       config = std::string(argv[i + 1]);
     } else if (std::string(argv[i]) == "--input-scale" && i + 1 < argc) {
@@ -322,18 +324,18 @@ int main(int argc, char **argv)
       labelFile = std::string(argv[i + 1]);
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0]
-                << " --device <camera device number> --input <path to image or video>"
-                   " (camera is used if input is empty) --model <path to net trained weights>"
-                   " --config <path to net config file>"
-                   " --input-scale <input scale factor> --mean <meanR meanG meanB>"
-                   " --confThresh <confidence threshold>"
-                   " --nmsThresh <NMS threshold> --labels <path to label file>"
+                << " [--device <camera device number>] [--input <path to image or video>"
+                   " (camera is used if input is empty)] [--model <path to net trained weights>]"
+                   " [--config <path to net config file>]"
+                   " [--input-scale <input scale factor>] [--mean <meanR meanG meanB>]"
+                   " [--confThresh <confidence threshold>]"
+                   " [--nmsThresh <NMS threshold>] [--labels <path to label file>]"
                 << std::endl;
       return EXIT_SUCCESS;
     }
   }
 
-  std::string model_path(model);
+  std::string model_path(modelFile);
   int batch_size = 1;
 
   std::vector<std::string> labels;
@@ -389,6 +391,11 @@ int main(int argc, char **argv)
     capture.open(input);
   }
 
+  if (!capture.isOpened()) { // check if we succeeded
+    std::cout << "Failed to open the camera" << std::endl;
+    return EXIT_FAILURE;
+  }
+
   int cap_width = (int)capture.get(cv::CAP_PROP_FRAME_WIDTH);
   int cap_height = (int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
   capture.set(cv::CAP_PROP_FRAME_WIDTH, cap_width / opt_scale);
@@ -399,8 +406,16 @@ int main(int argc, char **argv)
   cv::Mat frame;
   capture >> frame;
 
+  if (input.empty()) {
+    int i = 0;
+    while ((i++ < 20) && !capture.read(frame)) {
+    }; // warm up camera by skiping unread frames
+  }
+
   vpImageConvert::convert(frame, I);
   int height = I.getHeight(), width = I.getWidth();
+
+  std::cout << "Image size: " << width << " x " << height << std::endl;
 
   std::vector<cv::Rect> boxesNMS;
   std::vector<int> classIds;
@@ -424,16 +439,18 @@ int main(int argc, char **argv)
 
     // post-process
     boxesNMS = postprocessResults(buffers, output_dims, batch_size, width, height, confThresh, nmsThresh, classIds);
-    stop = vpTime::measureTimeMs();
 
+    stop = vpTime::measureTimeMs();
     // display.
     vpDisplay::display(I);
     vpDisplay::displayText(I, 10, 10, std::to_string(stop - start), vpColor::red);
+
     for (unsigned int i = 0; i < boxesNMS.size(); i++) {
       vpDisplay::displayRectangle(I, vpRect(boxesNMS[i].x, boxesNMS[i].y, boxesNMS[i].width, boxesNMS[i].height),
                                   vpColor::red, false, 2);
       vpDisplay::displayText(I, boxesNMS[i].y - 10, boxesNMS[i].x, labels[classIds[i]], vpColor::red);
     }
+
     vpDisplay::flush(I);
   }
   //! [Main loop]
@@ -441,7 +458,7 @@ int main(int argc, char **argv)
   for (void *buf : buffers)
     cudaFree(buf);
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
