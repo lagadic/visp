@@ -18,9 +18,9 @@
 #if defined(VISP_HAVE_TENSORRT) && defined(VISP_HAVE_OPENCV)
 #include <opencv2/opencv_modules.hpp>
 #if defined(HAVE_OPENCV_CUDEV) && defined(HAVE_OPENCV_CUDAWARPING) && defined(HAVE_OPENCV_CUDAARITHM)
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/gui/vpDisplayX.h>
 
 #include <visp3/detection/vpDetectorDNN.h>
 //! [OpenCV CUDA header files]
@@ -41,433 +41,422 @@
 #include <sys/stat.h>
 
 //! [Preprocess image]
-void preprocessImage(cv::Mat& img, float* gpu_input, const nvinfer1::Dims& dims, float meanR, float meanG, float meanB)
+void preprocessImage(cv::Mat &img, float *gpu_input, const nvinfer1::Dims &dims, float meanR, float meanG, float meanB)
 {
-	if(img.empty())
-	{
-		std::cerr << "Image is empty." << std::endl;
-		return;
-	}
+  if (img.empty()) {
+    std::cerr << "Image is empty." << std::endl;
+    return;
+  }
 
-	cv::cuda::GpuMat gpu_frame;
-	// Upload image to GPU
-	gpu_frame.upload(img);
+  cv::cuda::GpuMat gpu_frame;
+  // Upload image to GPU
+  gpu_frame.upload(img);
 
-	// input_dims is in NxCxHxW format.
-	auto input_width = dims.d[3];
-	auto input_height = dims.d[2];
-	auto channels = dims.d[1];
-	auto input_size = cv::Size(input_width, input_height);
+  // input_dims is in NxCxHxW format.
+  auto input_width = dims.d[3];
+  auto input_height = dims.d[2];
+  auto channels = dims.d[1];
+  auto input_size = cv::Size(input_width, input_height);
 
-	// Resize
-	cv::cuda::GpuMat resized;
-	cv::cuda::resize(gpu_frame, resized, input_size, 0, 0, cv::INTER_NEAREST);
+  // Resize
+  cv::cuda::GpuMat resized;
+  cv::cuda::resize(gpu_frame, resized, input_size, 0, 0, cv::INTER_NEAREST);
 
-	// Normalize
-	cv::cuda::GpuMat flt_image;
-	resized.convertTo(flt_image, CV_32FC3);
-	cv::cuda::subtract(flt_image, cv::Scalar(meanR, meanG, meanB), flt_image, cv::noArray(), -1);
-	cv::cuda::divide(flt_image, cv::Scalar(127.5f, 127.5f, 127.5f), flt_image, 1, -1);
+  // Normalize
+  cv::cuda::GpuMat flt_image;
+  resized.convertTo(flt_image, CV_32FC3);
+  cv::cuda::subtract(flt_image, cv::Scalar(meanR, meanG, meanB), flt_image, cv::noArray(), -1);
+  cv::cuda::divide(flt_image, cv::Scalar(127.5f, 127.5f, 127.5f), flt_image, 1, -1);
 
-	// To tensor
-	std::vector< cv::cuda::GpuMat > chw;
-	for(int i = 0; i < channels; ++i)
-		chw.emplace_back(cv::cuda::GpuMat(input_size, CV_32FC1, gpu_input + i * input_width * input_height));
-	cv::cuda::split(flt_image, chw);
+  // To tensor
+  std::vector<cv::cuda::GpuMat> chw;
+  for (int i = 0; i < channels; ++i)
+    chw.emplace_back(cv::cuda::GpuMat(input_size, CV_32FC1, gpu_input + i * input_width * input_height));
+  cv::cuda::split(flt_image, chw);
 }
 //! [Preprocess image]
 
 //! [getSizeByDim function]
-size_t getSizeByDim(const nvinfer1::Dims& dims)
+size_t getSizeByDim(const nvinfer1::Dims &dims)
 {
-	size_t size = 1;
-	for(int i = 0; i < dims.nbDims; ++i)
-		size *= dims.d[i];
-	return size;
+  size_t size = 1;
+  for (int i = 0; i < dims.nbDims; ++i)
+    size *= dims.d[i];
+  return size;
 }
 //! [getSizeByDim function]
 
 //! [PostProcess results]
-std::vector< cv::Rect> postprocessResults(std::vector< void* >buffers, const std::vector< nvinfer1::Dims >& output_dims, int batch_size, int image_width, int image_height, float confThresh, float nmsThresh, std::vector< int >& classIds)
+std::vector<cv::Rect> postprocessResults(std::vector<void *> buffers, const std::vector<nvinfer1::Dims> &output_dims,
+                                         int batch_size, int image_width, int image_height, float confThresh,
+                                         float nmsThresh, std::vector<int> &classIds)
 {
-	// private variables of vpDetectorDNN
-	std::vector< cv::Rect > m_boxes, m_boxesNMS;
-	std::vector< int > m_classIds;
-	std::vector< float > m_confidences;
-	std::vector<int> m_indices;
+  // private variables of vpDetectorDNN
+  std::vector<cv::Rect> m_boxes, m_boxesNMS;
+  std::vector<int> m_classIds;
+  std::vector<float> m_confidences;
+  std::vector<int> m_indices;
 
-	// copy results from GPU to CPU
-	std::vector< std::vector< float> > cpu_outputs;
-	for(size_t i = 0; i < output_dims.size(); i++)
-	{
-		cpu_outputs.push_back(std::vector< float >(getSizeByDim(output_dims[i]) * batch_size));
-		cudaMemcpy(cpu_outputs[i].data(), (float *)buffers[1+i], cpu_outputs[i].size() * sizeof(float), cudaMemcpyDeviceToHost);
-	}
+  // copy results from GPU to CPU
+  std::vector<std::vector<float> > cpu_outputs;
+  for (size_t i = 0; i < output_dims.size(); i++) {
+    cpu_outputs.push_back(std::vector<float>(getSizeByDim(output_dims[i]) * batch_size));
+    cudaMemcpy(cpu_outputs[i].data(), (float *)buffers[1 + i], cpu_outputs[i].size() * sizeof(float),
+               cudaMemcpyDeviceToHost);
+  }
 
-	// post process
-	int N = output_dims[0].d[1], C = output_dims[0].d[2]; // (1 x N x C format); N: Number of output detection boxes (fixed in the model), C: Number of classes.
-	for(int i = 0; i < N; i++) // for all N (boxes)
-	{
-		uint32_t maxClass = 0;
-		float maxScore = -1000.0f;
+  // post process
+  int N = output_dims[0].d[1], C = output_dims[0].d[2]; // (1 x N x C format); N: Number of output detection boxes
+                                                        // (fixed in the model), C: Number of classes.
+  for (int i = 0; i < N; i++)                           // for all N (boxes)
+  {
+    uint32_t maxClass = 0;
+    float maxScore = -1000.0f;
 
-		for(int j = 1; j < C; j++) // ignore background (classId = 0).
-		{
-		const float score = cpu_outputs[0][i * C + j];
+    for (int j = 1; j < C; j++) // ignore background (classId = 0).
+    {
+      const float score = cpu_outputs[0][i * C + j];
 
-		if(score < confThresh)
-			continue;
+      if (score < confThresh)
+        continue;
 
-		if(score > maxScore)
-		{
-			maxScore = score;
-			maxClass = j;
-		}
-		}
+      if (score > maxScore) {
+        maxScore = score;
+        maxClass = j;
+      }
+    }
 
-		if(maxScore > confThresh)
-		{
-		int left = (int)(cpu_outputs[1][4*i] * image_width);
-		int top = (int)(cpu_outputs[1][4*i + 1] * image_height);
-		int right = (int)(cpu_outputs[1][4*i + 2] * image_width);
-		int bottom = (int)(cpu_outputs[1][4*i + 3] * image_height);
-		int width = right - left + 1;
-		int height = bottom - top + 1;
+    if (maxScore > confThresh) {
+      int left = (int)(cpu_outputs[1][4 * i] * image_width);
+      int top = (int)(cpu_outputs[1][4 * i + 1] * image_height);
+      int right = (int)(cpu_outputs[1][4 * i + 2] * image_width);
+      int bottom = (int)(cpu_outputs[1][4 * i + 3] * image_height);
+      int width = right - left + 1;
+      int height = bottom - top + 1;
 
-		m_boxes.push_back(cv::Rect(left, top, width, height));
-		m_classIds.push_back(maxClass);
-		m_confidences.push_back(maxScore);
-		}
-	}
+      m_boxes.push_back(cv::Rect(left, top, width, height));
+      m_classIds.push_back(maxClass);
+      m_confidences.push_back(maxScore);
+    }
+  }
 
-	cv::dnn::NMSBoxes(m_boxes, m_confidences, confThresh, nmsThresh, m_indices);
-	m_boxesNMS.resize(m_indices.size());
-	for (size_t i = 0; i < m_indices.size(); ++i)
-	{
-			int idx = m_indices[i];
-			m_boxesNMS[i] = m_boxes[idx];
-	}
+  cv::dnn::NMSBoxes(m_boxes, m_confidences, confThresh, nmsThresh, m_indices);
+  m_boxesNMS.resize(m_indices.size());
+  for (size_t i = 0; i < m_indices.size(); ++i) {
+    int idx = m_indices[i];
+    m_boxesNMS[i] = m_boxes[idx];
+  }
 
-	classIds = m_classIds; // Returning detected objects class Ids.
-	return m_boxesNMS;
+  classIds = m_classIds; // Returning detected objects class Ids.
+  return m_boxesNMS;
 }
 //! [PostProcess results]
 
 class Logger : public nvinfer1::ILogger
 {
-	public:
-		void log(Severity severity, const char* msg) override
-		{
-			if((severity == Severity::kERROR) || (severity == Severity::kINTERNAL_ERROR) || (severity == Severity::kVERBOSE))
-				std::cout << msg << std::endl;
-		}
+public:
+  void log(Severity severity, const char *msg) override
+  {
+    if ((severity == Severity::kERROR) || (severity == Severity::kINTERNAL_ERROR) || (severity == Severity::kVERBOSE))
+      std::cout << msg << std::endl;
+  }
 } gLogger;
 
-
 // destroy TensoRT objects if something goes wrong
-struct TRTDestroy
-{
-	template< class T >
-	void operator()(T* obj) const
-	{
-		if(obj)
-			obj->destroy();
-	}
+struct TRTDestroy {
+  template <class T> void operator()(T *obj) const
+  {
+    if (obj)
+      obj->destroy();
+  }
 };
 
-template< class T >
-using TRTUniquePtr = std::unique_ptr< T, TRTDestroy >;
+template <class T> using TRTUniquePtr = std::unique_ptr<T, TRTDestroy>;
 
 //! [ParseOnnxModel]
-bool parseOnnxModel(const std::string& model_path, TRTUniquePtr< nvinfer1::ICudaEngine >& engine, TRTUniquePtr< nvinfer1::IExecutionContext >& context)
+bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaEngine> &engine,
+                    TRTUniquePtr<nvinfer1::IExecutionContext> &context)
 //! [ParseOnnxModel]
 {
-	// this section of code is from jetson-inference's `tensorNet`, to test if the GIE already exists.
-	char cache_prefix[FILENAME_MAX];
-	char cache_path[FILENAME_MAX];
+  // this section of code is from jetson-inference's `tensorNet`, to test if the GIE already exists.
+  char cache_prefix[FILENAME_MAX];
+  char cache_path[FILENAME_MAX];
 
-	sprintf(cache_prefix, "%s", model_path.c_str());
-	sprintf(cache_path, "%s.engine", cache_prefix);
+  sprintf(cache_prefix, "%s", model_path.c_str());
+  sprintf(cache_path, "%s.engine", cache_prefix);
 
-	std::cout << "attempting to open engine cache file " << cache_path << std::endl;
+  std::cout << "attempting to open engine cache file " << cache_path << std::endl;
 
-	//! [ParseOnnxModel engine exists]
-	if(vpIoTools::checkFilename(cache_path))
-	{
-		char* engineStream = NULL;
-		size_t engineSize = 0;
+  //! [ParseOnnxModel engine exists]
+  if (vpIoTools::checkFilename(cache_path)) {
+    char *engineStream = NULL;
+    size_t engineSize = 0;
 
-		// determine the file size of the engine
-		struct stat filestat;
-		stat(cache_path, &filestat);
-		engineSize = filestat.st_size;
+    // determine the file size of the engine
+    struct stat filestat;
+    stat(cache_path, &filestat);
+    engineSize = filestat.st_size;
 
-		// allocate memory to hold the engine
-		engineStream = (char*)malloc(engineSize);
+    // allocate memory to hold the engine
+    engineStream = (char *)malloc(engineSize);
 
-		// open the engine cache file from disk
-		FILE* cacheFile = NULL;
-		cacheFile = fopen(cache_path, "rb");
+    // open the engine cache file from disk
+    FILE *cacheFile = NULL;
+    cacheFile = fopen(cache_path, "rb");
 
-		// read the serialized engine into memory
-		const size_t bytesRead = fread(engineStream, 1, engineSize, cacheFile);
+    // read the serialized engine into memory
+    const size_t bytesRead = fread(engineStream, 1, engineSize, cacheFile);
 
-		if(bytesRead != engineSize) // Problem while deserializing.
-		{
-			std::cerr << "Error reading serialized engine into memory." << std::endl;
-			return false;
-		}
+    if (bytesRead != engineSize) // Problem while deserializing.
+    {
+      std::cerr << "Error reading serialized engine into memory." << std::endl;
+      return false;
+    }
 
-		// close the plan cache
-		fclose(cacheFile);
+    // close the plan cache
+    fclose(cacheFile);
 
-		// Recreate the inference runtime
-		TRTUniquePtr< nvinfer1::IRuntime > infer{nvinfer1::createInferRuntime(gLogger)};
-		engine.reset(infer->deserializeCudaEngine(engineStream, engineSize, NULL));
-		context.reset(engine->createExecutionContext());
+    // Recreate the inference runtime
+    TRTUniquePtr<nvinfer1::IRuntime> infer{nvinfer1::createInferRuntime(gLogger)};
+    engine.reset(infer->deserializeCudaEngine(engineStream, engineSize, NULL));
+    context.reset(engine->createExecutionContext());
 
-		return true;
-	}
-	//! [ParseOnnxModel engine exists]
+    return true;
+  }
+  //! [ParseOnnxModel engine exists]
 
-	//! [ParseOnnxModel engine does not exist]
-	else
-	{
-		if(!vpIoTools::checkFilename(model_path))
-		{
-			std::cerr << "Could not parse ONNX model. File not found" << std::endl;
-			return false;
-		}
+  //! [ParseOnnxModel engine does not exist]
+  else {
+    if (!vpIoTools::checkFilename(model_path)) {
+      std::cerr << "Could not parse ONNX model. File not found" << std::endl;
+      return false;
+    }
 
-		TRTUniquePtr< nvinfer1::IBuilder > builder{nvinfer1::createInferBuilder(gLogger)};
-		TRTUniquePtr< nvinfer1::INetworkDefinition > network{builder->createNetworkV2(1U << (uint32_t)nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH)};
-		TRTUniquePtr< nvonnxparser::IParser > parser{nvonnxparser::createParser(*network, gLogger)};
+    TRTUniquePtr<nvinfer1::IBuilder> builder{nvinfer1::createInferBuilder(gLogger)};
+    TRTUniquePtr<nvinfer1::INetworkDefinition> network{
+        builder->createNetworkV2(1U << (uint32_t)nvinfer1::NetworkDefinitionCreationFlag::kEXPLICIT_BATCH)};
+    TRTUniquePtr<nvonnxparser::IParser> parser{nvonnxparser::createParser(*network, gLogger)};
 
-		// parse ONNX
-		if(!parser->parseFromFile(model_path.c_str(), static_cast< int >(nvinfer1::ILogger::Severity::kINFO)))
-		{
-			std::cerr << "ERROR: could not parse the model." << std::endl;
-			return false;
-		}
+    // parse ONNX
+    if (!parser->parseFromFile(model_path.c_str(), static_cast<int>(nvinfer1::ILogger::Severity::kINFO))) {
+      std::cerr << "ERROR: could not parse the model." << std::endl;
+      return false;
+    }
 
-		TRTUniquePtr< nvinfer1::IBuilderConfig > config{builder->createBuilderConfig()};
-		// allow TRT to use up to 1GB of GPU memory for tactic selection
-		config->setMaxWorkspaceSize(32 << 20);
-		// use FP16 mode if possible
-		if(builder->platformHasFastFp16())
-			config->setFlag(nvinfer1::BuilderFlag::kFP16);
+    TRTUniquePtr<nvinfer1::IBuilderConfig> config{builder->createBuilderConfig()};
+    // allow TRT to use up to 1GB of GPU memory for tactic selection
+    config->setMaxWorkspaceSize(32 << 20);
+    // use FP16 mode if possible
+    if (builder->platformHasFastFp16())
+      config->setFlag(nvinfer1::BuilderFlag::kFP16);
 
-		builder->setMaxBatchSize(1);
+    builder->setMaxBatchSize(1);
 
-		engine.reset(builder->buildEngineWithConfig(*network, *config));
-		context.reset(engine->createExecutionContext());
+    engine.reset(builder->buildEngineWithConfig(*network, *config));
+    context.reset(engine->createExecutionContext());
 
-		TRTUniquePtr< nvinfer1::IHostMemory > serMem{engine->serialize()};
+    TRTUniquePtr<nvinfer1::IHostMemory> serMem{engine->serialize()};
 
-		if( !serMem )
-		{
-			std::cout << "Failed to serialize CUDA engine." << std::endl;
-			return false;
-		}
+    if (!serMem) {
+      std::cout << "Failed to serialize CUDA engine." << std::endl;
+      return false;
+    }
 
-		const char* serData = (char*)serMem->data();
-		const size_t serSize = serMem->size();
+    const char *serData = (char *)serMem->data();
+    const size_t serSize = serMem->size();
 
-		// allocate memory to store the bitstream
-		char* engineMemory = (char*)malloc(serSize);
+    // allocate memory to store the bitstream
+    char *engineMemory = (char *)malloc(serSize);
 
-		if( !engineMemory )
-		{
-			std::cout << "Failed to allocate memory to store CUDA engine." << std::endl;
-			return false;
-		}
+    if (!engineMemory) {
+      std::cout << "Failed to allocate memory to store CUDA engine." << std::endl;
+      return false;
+    }
 
-		memcpy(engineMemory, serData, serSize);
+    memcpy(engineMemory, serData, serSize);
 
-		// write the cache file
-		FILE* cacheFile = NULL;
-		cacheFile = fopen(cache_path, "wb");
+    // write the cache file
+    FILE *cacheFile = NULL;
+    cacheFile = fopen(cache_path, "wb");
 
-		fwrite(engineMemory,	1, serSize, cacheFile);
-		fclose(cacheFile);
+    fwrite(engineMemory, 1, serSize, cacheFile);
+    fclose(cacheFile);
 
-		return true;
-	}
-	//! [ParseOnnxModel engine does not exist]
+    return true;
+  }
+  //! [ParseOnnxModel engine does not exist]
 }
 
-int main(int argc, char** argv)
+int main(int argc, char **argv)
 {
-	int opt_device = 0;
-	unsigned int opt_scale = 2;
-	std::string input = "";
-	std::string model = "ssd-mobilenet.onnx";
-	std::string config = "";
-	float meanR = 127.5f, meanG = 127.5f, meanB = 127.5f;
-	float confThresh = 0.5f;
-	float nmsThresh = 0.4f;
-	std::string labelFile = "pascal-voc-labels.txt";
+  int opt_device = 0;
+  unsigned int opt_scale = 2;
+  std::string input = "";
+  std::string model = "ssd-mobilenet.onnx";
+  std::string config = "";
+  float meanR = 127.5f, meanG = 127.5f, meanB = 127.5f;
+  float confThresh = 0.5f;
+  float nmsThresh = 0.4f;
+  std::string labelFile = "pascal-voc-labels.txt";
 
-	for (int i = 1; i < argc; i++) {
-	  if (std::string(argv[i]) == "--device" && i+1 < argc) {
-			opt_device = atoi(argv[i+1]);
-		} else if (std::string(argv[i]) == "--input" && i+1 < argc) {
-			input = std::string(argv[i+1]);
-		} else if (std::string(argv[i]) == "--model" && i+1 < argc) {
-			model = std::string(argv[i+1]);
-		} else if (std::string(argv[i]) == "--config" && i+1 < argc) {
-			config = std::string(argv[i+1]);
-		} else if (std::string(argv[i]) == "--input-scale" && i+1 < argc) {
-			opt_scale = atoi(argv[i+1]);
-		} else if (std::string(argv[i]) == "--mean" && i+3 < argc) {
-			meanR = atof(argv[i+1]);
-			meanG = atof(argv[i+2]);
-			meanB = atof(argv[i+3]);
-		} else if (std::string(argv[i]) == "--confThresh" && i+1 < argc) {
-			confThresh = (float)atof(argv[i+1]);
-		} else if (std::string(argv[i]) == "--nmsThresh" && i+1 < argc) {
-			nmsThresh = (float)atof(argv[i+1]);
-		} else if (std::string(argv[i]) == "--labels" && i+1 < argc) {
-			labelFile = std::string(argv[i+1]);
-		} else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-			std::cout << argv[0] << " --device <camera device number> --input <path to image or video>"
-									" (camera is used if input is empty) --model <path to net trained weights>"
-									" --config <path to net config file>"
-									" --input-scale <input scale factor> --mean <meanR meanG meanB>"
-									" --confThresh <confidence threshold>"
-									" --nmsThresh <NMS threshold> --labels <path to label file>" << std::endl;
-		return EXIT_SUCCESS;
-		}
-	}
+  for (int i = 1; i < argc; i++) {
+    if (std::string(argv[i]) == "--device" && i + 1 < argc) {
+      opt_device = atoi(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
+      input = std::string(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
+      model = std::string(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
+      config = std::string(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--input-scale" && i + 1 < argc) {
+      opt_scale = atoi(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--mean" && i + 3 < argc) {
+      meanR = atof(argv[i + 1]);
+      meanG = atof(argv[i + 2]);
+      meanB = atof(argv[i + 3]);
+    } else if (std::string(argv[i]) == "--confThresh" && i + 1 < argc) {
+      confThresh = (float)atof(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--nmsThresh" && i + 1 < argc) {
+      nmsThresh = (float)atof(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--labels" && i + 1 < argc) {
+      labelFile = std::string(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout << argv[0]
+                << " --device <camera device number> --input <path to image or video>"
+                   " (camera is used if input is empty) --model <path to net trained weights>"
+                   " --config <path to net config file>"
+                   " --input-scale <input scale factor> --mean <meanR meanG meanB>"
+                   " --confThresh <confidence threshold>"
+                   " --nmsThresh <NMS threshold> --labels <path to label file>"
+                << std::endl;
+      return EXIT_SUCCESS;
+    }
+  }
 
-	std::string model_path(model);
-	int batch_size = 1;
+  std::string model_path(model);
+  int batch_size = 1;
 
-	std::vector<std::string> labels;
-	if (!labelFile.empty()) {
-		std::ifstream f_label(labelFile);
-		std::string line;
-		while (std::getline(f_label, line)) {
-			labels.push_back(line);
-		}
-	}
+  std::vector<std::string> labels;
+  if (!labelFile.empty()) {
+    std::ifstream f_label(labelFile);
+    std::string line;
+    while (std::getline(f_label, line)) {
+      labels.push_back(line);
+    }
+  }
 
-	//! [Create GIE]
-	// Parse the model and initialize the engine and the context.
-	TRTUniquePtr< nvinfer1::ICudaEngine > engine{nullptr};
-	TRTUniquePtr< nvinfer1::IExecutionContext > context{nullptr};
-	if(!parseOnnxModel(model_path, engine, context)) // Problem parsing Onnx model
-	{
-		std::cout << "Make sure the model file exists. To see available models, plese visit: \n\twww.github.com/lagadic/visp-images/dnn/object_detection/" << std::endl;
-		return 0;
-	}
-	//! [Create GIE]
+  //! [Create GIE]
+  // Parse the model and initialize the engine and the context.
+  TRTUniquePtr<nvinfer1::ICudaEngine> engine{nullptr};
+  TRTUniquePtr<nvinfer1::IExecutionContext> context{nullptr};
+  if (!parseOnnxModel(model_path, engine, context)) // Problem parsing Onnx model
+  {
+    std::cout << "Make sure the model file exists. To see available models, plese visit: "
+                 "\n\twww.github.com/lagadic/visp-images/dnn/object_detection/"
+              << std::endl;
+    return 0;
+  }
+  //! [Create GIE]
 
-	std::vector < nvinfer1::Dims > input_dims;
-	std::vector < nvinfer1::Dims > output_dims;
-	std::vector < void* > buffers(engine->getNbBindings()); // buffers for input and output data.
+  std::vector<nvinfer1::Dims> input_dims;
+  std::vector<nvinfer1::Dims> output_dims;
+  std::vector<void *> buffers(engine->getNbBindings()); // buffers for input and output data.
 
-	//! [Get I/O dimensions]
-	for(int i = 0; i < engine->getNbBindings(); ++i)
-	{
-		auto binding_size = getSizeByDim(engine->getBindingDimensions(i)) * batch_size * sizeof(float);
-		cudaMalloc(&buffers[i], binding_size);
+  //! [Get I/O dimensions]
+  for (int i = 0; i < engine->getNbBindings(); ++i) {
+    auto binding_size = getSizeByDim(engine->getBindingDimensions(i)) * batch_size * sizeof(float);
+    cudaMalloc(&buffers[i], binding_size);
 
-		if(engine->bindingIsInput(i))
-		{
-			input_dims.emplace_back(engine->getBindingDimensions(i));
-		}
-		else
-		{
-			output_dims.emplace_back(engine->getBindingDimensions(i));
-		}
-	}
+    if (engine->bindingIsInput(i)) {
+      input_dims.emplace_back(engine->getBindingDimensions(i));
+    } else {
+      output_dims.emplace_back(engine->getBindingDimensions(i));
+    }
+  }
 
-	if(input_dims.empty() || output_dims.empty())
-	{
-		std::cerr << "Expect at least one input and one output for network" << std::endl;
-		return -1;
-	}
-	//! [Get I/O dimensions]
+  if (input_dims.empty() || output_dims.empty()) {
+    std::cerr << "Expect at least one input and one output for network" << std::endl;
+    return -1;
+  }
+  //! [Get I/O dimensions]
 
-	//! [OpenCV VideoCapture]
-	cv::VideoCapture capture;
+  //! [OpenCV VideoCapture]
+  cv::VideoCapture capture;
 
-	if (input.empty()) {
-		capture.open(opt_device);
-	} else {
-		capture.open(input);
-	}
+  if (input.empty()) {
+    capture.open(opt_device);
+  } else {
+    capture.open(input);
+  }
 
-	int cap_width = (int)capture.get(cv::CAP_PROP_FRAME_WIDTH);
-	int cap_height = (int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
-	capture.set(cv::CAP_PROP_FRAME_WIDTH, cap_width / opt_scale);
-	capture.set(cv::CAP_PROP_FRAME_HEIGHT, cap_height / opt_scale);
-	//! [OpenCV VideoCapture]
+  int cap_width = (int)capture.get(cv::CAP_PROP_FRAME_WIDTH);
+  int cap_height = (int)capture.get(cv::CAP_PROP_FRAME_HEIGHT);
+  capture.set(cv::CAP_PROP_FRAME_WIDTH, cap_width / opt_scale);
+  capture.set(cv::CAP_PROP_FRAME_HEIGHT, cap_height / opt_scale);
+  //! [OpenCV VideoCapture]
 
-	vpImage<vpRGBa> I;
-	cv::Mat frame;
-	capture >> frame;
+  vpImage<vpRGBa> I;
+  cv::Mat frame;
+  capture >> frame;
 
-	vpImageConvert::convert(frame, I);
-	int height = I.getHeight(), width = I.getWidth();
+  vpImageConvert::convert(frame, I);
+  int height = I.getHeight(), width = I.getWidth();
 
-	std::vector< cv::Rect > boxesNMS;
-	std::vector< int > classIds;
+  std::vector<cv::Rect> boxesNMS;
+  std::vector<int> classIds;
 
-	vpDisplayX d(I);
+  vpDisplayX d(I);
 
-	double start, stop;
-	//! [Main loop]
-	while(!vpDisplay::getClick(I, false))
-	{
-		// get frame.
-		capture >> frame;
+  double start, stop;
+  //! [Main loop]
+  while (!vpDisplay::getClick(I, false)) {
+    // get frame.
+    capture >> frame;
 
-		vpImageConvert::convert(frame, I);
+    vpImageConvert::convert(frame, I);
 
-		start = vpTime::measureTimeMs();
-		// preprocess
-		preprocessImage(frame, (float*)buffers[0], input_dims[0], meanR, meanG, meanB);
+    start = vpTime::measureTimeMs();
+    // preprocess
+    preprocessImage(frame, (float *)buffers[0], input_dims[0], meanR, meanG, meanB);
 
-		// inference.
-		context->enqueue(batch_size, buffers.data(), 0, nullptr);
+    // inference.
+    context->enqueue(batch_size, buffers.data(), 0, nullptr);
 
-		// post-process
-		boxesNMS = postprocessResults(buffers, output_dims, batch_size, width, height, confThresh, nmsThresh, classIds);
-		stop = vpTime::measureTimeMs();
+    // post-process
+    boxesNMS = postprocessResults(buffers, output_dims, batch_size, width, height, confThresh, nmsThresh, classIds);
+    stop = vpTime::measureTimeMs();
 
-		// display.
-		vpDisplay::display(I);
-		vpDisplay::displayText(I, 10, 10, std::to_string(stop - start), vpColor::red);
-		for(unsigned int i = 0; i < boxesNMS.size(); i++)
-		{
-			vpDisplay::displayRectangle(I, vpRect(boxesNMS[i].x, boxesNMS[i].y, boxesNMS[i].width, boxesNMS[i].height), vpColor::red, false, 2);
-			vpDisplay::displayText(I, boxesNMS[i].y - 10, boxesNMS[i].x, labels[classIds[i]], vpColor::red);
-		}
-		vpDisplay::flush(I);
-	}
-	//! [Main loop]
+    // display.
+    vpDisplay::display(I);
+    vpDisplay::displayText(I, 10, 10, std::to_string(stop - start), vpColor::red);
+    for (unsigned int i = 0; i < boxesNMS.size(); i++) {
+      vpDisplay::displayRectangle(I, vpRect(boxesNMS[i].x, boxesNMS[i].y, boxesNMS[i].width, boxesNMS[i].height),
+                                  vpColor::red, false, 2);
+      vpDisplay::displayText(I, boxesNMS[i].y - 10, boxesNMS[i].x, labels[classIds[i]], vpColor::red);
+    }
+    vpDisplay::flush(I);
+  }
+  //! [Main loop]
 
-	for(void* buf : buffers)
-		cudaFree(buf);
+  for (void *buf : buffers)
+    cudaFree(buf);
 
-	return 0;
+  return 0;
 }
 #else
-	int main()
-	{
-		std::cout << "OpenCV is not built with CUDA." << std::endl;
+int main()
+{
+  std::cout << "OpenCV is not built with CUDA." << std::endl;
 
-		return EXIT_SUCCESS;
-	}
+  return EXIT_SUCCESS;
+}
 #endif
 
 #else
-	int main()
-	{
-		std::cout << "ViSP is not built with TensorRT." << std::endl;
+int main()
+{
+  std::cout << "ViSP is not built with TensorRT." << std::endl;
 
-		return EXIT_SUCCESS;
-	}
+  return EXIT_SUCCESS;
+}
 #endif
