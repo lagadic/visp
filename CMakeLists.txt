@@ -1557,6 +1557,7 @@ status("    Use pthread (built-in):" WITH_PTHREAD       THEN "yes (ver ${PTHREAD
 status("    Use cxx standard:"       CMAKE_CXX_STANDARD THEN "${CMAKE_CXX_STANDARD}" ELSE "no")
 status("")
 status("  DNN: ")
+status("    Use CUDA Toolkit:"       USE_TENSORRT AND CUDA_FOUND  THEN "yes (ver ${CUDA_VERSION})" ELSE "no")
 status("    Use TensorRT:"           USE_TENSORRT       THEN "yes" ELSE "no")
 
 # ========================== documentation ==========================
