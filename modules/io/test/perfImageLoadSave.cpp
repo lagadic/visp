@@ -64,7 +64,7 @@ TEST_CASE("Benchmark Jpeg image loading", "[benchmark]") {
     vpImage<vpRGBa> I;
 
     BENCHMARK("vpImageIo::readSimdlib()") {
-      vpImageIo::readSimdlib(I, imagePathJpeg);
+      vpImageIo::readJPEG(I, imagePathJpeg, vpImageIo::IO_SIMDLIB_BACKEND);
       return I;
     };
   }
@@ -73,7 +73,7 @@ TEST_CASE("Benchmark Jpeg image loading", "[benchmark]") {
     vpImage<vpRGBa> I;
 
     BENCHMARK("vpImageIo::readStb()") {
-      vpImageIo::readStb(I, imagePathJpeg);
+      vpImageIo::readJPEG(I, imagePathJpeg, vpImageIo::IO_STB_IMAGE_BACKEND);
       return I;
     };
   }
@@ -93,7 +93,7 @@ TEST_CASE("Benchmark Png image loading", "[benchmark]") {
     vpImage<vpRGBa> I;
 
     BENCHMARK("vpImageIo::readSimdlib()") {
-      vpImageIo::readSimdlib(I, imagePathPng);
+      vpImageIo::readPNG(I, imagePathPng, vpImageIo::IO_SIMDLIB_BACKEND);
       return I;
     };
   }
@@ -102,7 +102,7 @@ TEST_CASE("Benchmark Png image loading", "[benchmark]") {
     vpImage<vpRGBa> I;
 
     BENCHMARK("vpImageIo::readStb()") {
-      vpImageIo::readStb(I, imagePathPng);
+      vpImageIo::readPNG(I, imagePathPng, vpImageIo::IO_STB_IMAGE_BACKEND);
       return I;
     };
   }
@@ -122,7 +122,7 @@ TEST_CASE("Benchmark big Png image loading", "[benchmark]") {
     vpImage<vpRGBa> I;
 
     BENCHMARK("vpImageIo::readSimdlib()") {
-      vpImageIo::readSimdlib(I, imagePathPngBig);
+      vpImageIo::readPNG(I, imagePathPngBig, vpImageIo::IO_SIMDLIB_BACKEND);
       return I;
     };
   }
@@ -131,7 +131,7 @@ TEST_CASE("Benchmark big Png image loading", "[benchmark]") {
     vpImage<vpRGBa> I;
 
     BENCHMARK("vpImageIo::readStb()") {
-      vpImageIo::readStb(I, imagePathPngBig);
+      vpImageIo::readPNG(I, imagePathPngBig, vpImageIo::IO_STB_IMAGE_BACKEND);
       return I;
     };
   }
@@ -153,7 +153,7 @@ TEST_CASE("Benchmark Jpeg image saving", "[benchmark]") {
     const std::string filename = "/tmp/Klimt_Simd.jpg";
 
     BENCHMARK("vpImageIo::writeSimdlib()") {
-      vpImageIo::writeSimdlib(I, filename);
+      vpImageIo::writeJPEG(I, filename, vpImageIo::IO_SIMDLIB_BACKEND);
       return I;
     };
   }
@@ -162,7 +162,7 @@ TEST_CASE("Benchmark Jpeg image saving", "[benchmark]") {
     const std::string filename = "/tmp/Klimt_stb.jpg";
 
     BENCHMARK("vpImageIo::writeStb()") {
-      vpImageIo::writeStb(I, filename);
+      vpImageIo::writeJPEG(I, filename, vpImageIo::IO_STB_IMAGE_BACKEND);
       return I;
     };
   }
@@ -184,7 +184,7 @@ TEST_CASE("Benchmark big Jpeg image saving", "[benchmark]") {
     const std::string filename = "/tmp/Big_images_Simd.jpg";
 
     BENCHMARK("vpImageIo::writeSimdlib()") {
-      vpImageIo::writeSimdlib(I, filename);
+      vpImageIo::writeJPEG(I, filename, vpImageIo::IO_SIMDLIB_BACKEND);
       return I;
     };
   }
@@ -193,7 +193,7 @@ TEST_CASE("Benchmark big Jpeg image saving", "[benchmark]") {
     const std::string filename = "/tmp/Big_images_stb.jpg";
 
     BENCHMARK("vpImageIo::writeStb()") {
-      vpImageIo::writeStb(I, filename);
+      vpImageIo::writeJPEG(I, filename, vpImageIo::IO_STB_IMAGE_BACKEND);
       return I;
     };
   }
@@ -215,7 +215,7 @@ TEST_CASE("Benchmark Png image saving", "[benchmark]") {
     const std::string filename = "/tmp/Klimt_Simd.png";
 
     BENCHMARK("vpImageIo::writeSimdlib()") {
-      vpImageIo::writeSimdlib(I, filename);
+      vpImageIo::writePNG(I, filename, vpImageIo::IO_SIMDLIB_BACKEND);
       return I;
     };
   }
@@ -224,7 +224,7 @@ TEST_CASE("Benchmark Png image saving", "[benchmark]") {
     const std::string filename = "/tmp/Klimt_stb.png";
 
     BENCHMARK("vpImageIo::writeStb()") {
-      vpImageIo::writeStb(I, filename);
+      vpImageIo::writePNG(I, filename, vpImageIo::IO_STB_IMAGE_BACKEND);
       return I;
     };
   }
@@ -246,7 +246,7 @@ TEST_CASE("Benchmark big Png image saving", "[benchmark]") {
     const std::string filename = "/tmp/Big_images_Simd.png";
 
     BENCHMARK("vpImageIo::writeSimdlib()") {
-      vpImageIo::writeSimdlib(I, filename);
+      vpImageIo::writePNG(I, filename, vpImageIo::IO_SIMDLIB_BACKEND);
       return I;
     };
   }
@@ -255,154 +255,11 @@ TEST_CASE("Benchmark big Png image saving", "[benchmark]") {
     const std::string filename = "/tmp/Big_images_stb.png";
 
     BENCHMARK("vpImageIo::writeStb()") {
-      vpImageIo::writeStb(I, filename);
+      vpImageIo::writePNG(I, filename, vpImageIo::IO_STB_IMAGE_BACKEND);
       return I;
     };
   }
 }
-
-//TEST_CASE("Benchmark bgr to grayscale (ViSP)", "[benchmark]") {
-//  vpImage<vpRGBa> I;
-//  vpImageIo::read(I, imagePathColor);
-
-//  std::vector<unsigned char> bgr;
-//  common_tools::RGBaToBGR(I, bgr);
-
-//  vpImage<unsigned char> I_gray(I.getHeight(), I.getWidth());
-
-//  BENCHMARK("Benchmark bgr to grayscale (ViSP)") {
-//    vpImageConvert::BGRToGrey(bgr.data(),
-//                              I_gray.bitmap,
-//                              I.getWidth(), I.getHeight(),
-//                              false, nThreads);
-//    return I_gray;
-//  };
-
-//#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-//  SECTION("OpenCV Mat type")
-//  {
-//    cv::Mat img;
-//    vpImageConvert::convert(I, img);
-
-//    BENCHMARK("Benchmark bgr to grayscale (ViSP + OpenCV Mat type)") {
-//      vpImageConvert::convert(img, I_gray, false, nThreads);
-//      return I_gray;
-//    };
-//  }
-//#endif
-//}
-//#endif
-
-//#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-//TEST_CASE("Benchmark bgr to grayscale (OpenCV)", "[benchmark]") {
-//  cv::Mat img = cv::imread(imagePathColor);
-//  cv::Mat img_gray(img.size(), CV_8UC1);
-
-//  BENCHMARK("Benchmark bgr to grayscale (OpenCV)") {
-//    cv::cvtColor(img, img_gray, cv::COLOR_BGR2GRAY);
-//    return img_gray;
-//  };
-//}
-//#endif
-
-//// C++11 to be able to do bgr.data()
-//#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
-//TEST_CASE("Benchmark bgr to rgba (naive code)", "[benchmark]") {
-//  vpImage<vpRGBa> I;
-//  vpImageIo::read(I, imagePathColor);
-
-//  std::vector<unsigned char> bgr;
-//  common_tools::RGBaToBGR(I, bgr);
-
-//  vpImage<vpRGBa> I_bench(I.getHeight(), I.getWidth());
-//  BENCHMARK("Benchmark bgr to rgba (naive code)") {
-//    common_tools::BGRToRGBaRef(bgr.data(), reinterpret_cast<unsigned char*>(I_bench.bitmap),
-//                               I.getWidth(), I.getHeight(), false);
-//    return I_bench;
-//  };
-//}
-
-//TEST_CASE("Benchmark bgr to rgba (ViSP)", "[benchmark]") {
-//  vpImage<vpRGBa> I;
-//  vpImageIo::read(I, imagePathColor);
-
-//  std::vector<unsigned char> bgr;
-//  common_tools::RGBaToBGR(I, bgr);
-
-//  SECTION("Check BGR to RGBa conversion")
-//  {
-//    vpImage<vpRGBa> ref(I.getHeight(), I.getWidth());
-//    common_tools::BGRToRGBaRef(bgr.data(), reinterpret_cast<unsigned char*>(ref.bitmap),
-//                               I.getWidth(), I.getHeight(), false);
-//    vpImage<vpRGBa> rgba(I.getHeight(), I.getWidth());
-//    vpImageConvert::BGRToRGBa(bgr.data(), reinterpret_cast<unsigned char *>(rgba.bitmap),
-//                              I.getWidth(), I.getHeight(), false);
-
-//    CHECK((rgba == ref));
-//  }
-
-//  vpImage<vpRGBa> I_rgba(I.getHeight(), I.getWidth());
-//  BENCHMARK("Benchmark bgr to rgba (ViSP)") {
-//    vpImageConvert::BGRToRGBa(bgr.data(), reinterpret_cast<unsigned char *>(I_rgba.bitmap),
-//                              I.getWidth(), I.getHeight(), false);
-//    return I_rgba;
-//  };
-
-//#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-//  SECTION("OpenCV Mat type")
-//  {
-//    cv::Mat img;
-//    vpImageConvert::convert(I, img);
-
-//    BENCHMARK("Benchmark bgr to rgba (ViSP + OpenCV Mat type)") {
-//      vpImageConvert::convert(img, I_rgba);
-//      return I_rgba;
-//    };
-//  }
-//#endif
-//}
-
-//TEST_CASE("Benchmark bgra to rgba (naive code)", "[benchmark]") {
-//  vpImage<vpRGBa> I;
-//  vpImageIo::read(I, imagePathColor);
-
-//  std::vector<unsigned char> bgra;
-//  common_tools::RGBaToBGRa(I, bgra);
-
-//  vpImage<vpRGBa> I_bench(I.getHeight(), I.getWidth());
-//  BENCHMARK("Benchmark bgra to rgba (naive code)") {
-//    common_tools::BGRaToRGBaRef(bgra.data(), reinterpret_cast<unsigned char*>(I_bench.bitmap),
-//                                I.getWidth(), I.getHeight(), false);
-//    return I_bench;
-//  };
-//}
-
-//TEST_CASE("Benchmark bgra to rgba (ViSP)", "[benchmark]") {
-//  vpImage<vpRGBa> I;
-//  vpImageIo::read(I, imagePathColor);
-
-//  std::vector<unsigned char> bgra;
-//  common_tools::RGBaToBGRa(I, bgra);
-
-//  SECTION("Check BGRa to RGBa conversion")
-//  {
-//    vpImage<vpRGBa> ref(I.getHeight(), I.getWidth());
-//    common_tools::BGRaToRGBaRef(bgra.data(), reinterpret_cast<unsigned char*>(ref.bitmap),
-//                                I.getWidth(), I.getHeight(), false);
-//    vpImage<vpRGBa> rgba(I.getHeight(), I.getWidth());
-//    vpImageConvert::BGRaToRGBa(bgra.data(), reinterpret_cast<unsigned char *>(rgba.bitmap),
-//                               I.getWidth(), I.getHeight(), false);
-
-//    CHECK((rgba == ref));
-//  }
-//  vpImage<vpRGBa> I_rgba(I.getHeight(), I.getWidth());
-//  BENCHMARK("Benchmark bgra to rgba (ViSP)") {
-//    vpImageConvert::BGRaToRGBa(bgra.data(), reinterpret_cast<unsigned char *>(I_rgba.bitmap),
-//                               I.getWidth(), I.getHeight(), false);
-//    return I_rgba;
-//  };
-//}
-//#endif
 
 int main(int argc, char *argv[])
 {
