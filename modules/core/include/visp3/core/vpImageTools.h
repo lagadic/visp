@@ -1489,19 +1489,19 @@ void vpImageTools::warpLinear(const vpImage<Type> &src, const vpMatrix &T, vpIma
               const Type val01 = src[y_][x_ + 1];
               const Type val10 = src[y_ + 1][x_];
               const Type val11 = src[y_ + 1][x_ + 1];
-              const float col0 = lerp(val00, val01, s);
-              const float col1 = lerp(val10, val11, s);
+              const float col0 = lerp(static_cast<float>(val00), static_cast<float>(val01), s);
+              const float col1 = lerp(static_cast<float>(val10), static_cast<float>(val11), s);
               const float interp = lerp(col0, col1, t);
               dst[i][j] = vpMath::saturate<Type>(interp);
             } else if (y_ < static_cast<int>(src.getHeight()) - 1) {
               const Type val00 = src[y_][x_];
               const Type val10 = src[y_ + 1][x_];
-              const float interp = lerp(val00, val10, t);
+              const float interp = lerp(static_cast<float>(val00), static_cast<float>(val10), t);
               dst[i][j] = vpMath::saturate<Type>(interp);
             } else if (x_ < static_cast<int>(src.getWidth()) - 1) {
               const Type val00 = src[y_][x_];
               const Type val01 = src[y_][x_ + 1];
-              const float interp = lerp(val00, val01, s);
+              const float interp = lerp(static_cast<float>(val00), static_cast<float>(val01), s);
               dst[i][j] = vpMath::saturate<Type>(interp);
             } else {
               dst[i][j] = src[y_][x_];

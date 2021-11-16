@@ -124,6 +124,16 @@ private:
   static std::string getExtension(const std::string &filename);
 
 public:
+  //TODO:
+  // Image IO backend for only jpeg and png formats
+  enum vpImageIoBackendType {
+    IO_DEFAULT_BACKEND,
+    IO_LIB_BACKEND,
+    IO_OPENCV_BACKEND,
+    IO_SIMDLIB_BACKEND,
+    IO_STB_IMAGE_BACKEND
+  };
+
   static void read(vpImage<unsigned char> &I, const std::string &filename);
   static void read(vpImage<vpRGBa> &I, const std::string &filename);
 
@@ -138,15 +148,11 @@ public:
   static void readPPM(vpImage<unsigned char> &I, const std::string &filename);
   static void readPPM(vpImage<vpRGBa> &I, const std::string &filename);
 
-  static void readJPEG(vpImage<unsigned char> &I, const std::string &filename);
-  static void readJPEG(vpImage<vpRGBa> &I, const std::string &filename);
+  static void readJPEG(vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
+  static void readJPEG(vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
 
-  static void readPNG(vpImage<unsigned char> &I, const std::string &filename);
-  static void readPNG(vpImage<vpRGBa> &I, const std::string &filename);
-
-  //TODO:
-  static void readSimdlib(vpImage<vpRGBa> &I, const std::string &filename);
-  static void readStb(vpImage<vpRGBa> &I, const std::string &filename);
+  static void readPNG(vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
+  static void readPNG(vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
 
   static void writePFM(const vpImage<float> &I, const std::string &filename);
 
@@ -157,14 +163,10 @@ public:
   static void writePPM(const vpImage<unsigned char> &I, const std::string &filename);
   static void writePPM(const vpImage<vpRGBa> &I, const std::string &filename);
 
-  static void writeJPEG(const vpImage<unsigned char> &I, const std::string &filename);
-  static void writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename);
+  static void writeJPEG(const vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
+  static void writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
 
-  static void writePNG(const vpImage<unsigned char> &I, const std::string &filename);
-  static void writePNG(const vpImage<vpRGBa> &I, const std::string &filename);
-
-  //TODO:
-  static void writeSimdlib(vpImage<vpRGBa> &I, const std::string &filename);
-  static void writeStb(vpImage<vpRGBa> &I, const std::string &filename);
+  static void writePNG(const vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
+  static void writePNG(const vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
 };
 #endif
