@@ -94,11 +94,11 @@ void writeJPEGLibjpeg(const vpImage<unsigned char> &I, const std::string &filena
 
   jpeg_stdio_dest(&cinfo, file);
 
-  jpeg_set_defaults(&cinfo);
   cinfo.image_width = width;
   cinfo.image_height = height;
   cinfo.input_components = 1;
   cinfo.in_color_space = JCS_GRAYSCALE;
+  jpeg_set_defaults(&cinfo);
   //TODO:
   jpeg_set_quality(&cinfo, quality, TRUE);
 
@@ -154,11 +154,11 @@ void writeJPEGLibjpeg(const vpImage<vpRGBa> &I, const std::string &filename, int
 
   jpeg_stdio_dest(&cinfo, file);
 
-  jpeg_set_defaults(&cinfo);
   cinfo.image_width = width;
   cinfo.image_height = height;
   cinfo.input_components = 3;
   cinfo.in_color_space = JCS_RGB;
+  jpeg_set_defaults(&cinfo);
   //TODO:
   jpeg_set_quality(&cinfo, quality, TRUE);
 

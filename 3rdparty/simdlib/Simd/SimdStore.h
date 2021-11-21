@@ -62,6 +62,14 @@ namespace Simd
         {
             __m128 old = Load<align>(p);
             Store<align>(p, Combine(mask, value, old));
+        } 
+
+        SIMD_INLINE void Store(float* ptr, __m128 val, size_t size)
+        {
+            SIMD_ALIGNED(16) float buf[F];
+            _mm_store_ps(buf, val);
+            for (size_t i = 0; i < size; ++i)
+                ptr[i] = buf[i];
         }
 
         template <bool align> SIMD_INLINE void Store(__m128i * p, __m128i a);
@@ -113,6 +121,14 @@ namespace Simd
             _mm256_store_ps(p, a);
         }
 
+        SIMD_INLINE void Store(float* ptr, __m256 val, size_t size)
+        {
+            SIMD_ALIGNED(32) float buf[F];
+            _mm256_store_ps(buf, val);
+            for (size_t i = 0; i < size; ++i)
+                ptr[i] = buf[i];
+        }
+
         template <bool align> SIMD_INLINE void Store(float * p0, float * p1, __m256 a)
         {
             Sse2::Store<align>(p0, _mm256_extractf128_ps(a, 0));
@@ -142,6 +158,12 @@ namespace Simd
         template <> SIMD_INLINE void Store<true>(__m256i * p, __m256i a)
         {
             _mm256_store_si256(p, a);
+        }
+
+        template <bool align> SIMD_INLINE void Store(__m128i* p0, __m128i* p1, __m256i a)
+        {
+            Sse2::Store<align>(p0, _mm256_extractf128_si256(a, 0));
+            Sse2::Store<align>(p1, _mm256_extractf128_si256(a, 1));
         }
 
         template <bool align> SIMD_INLINE void StoreMasked(__m256i * p, __m256i value, __m256i mask)
@@ -205,6 +227,11 @@ namespace Simd
 #else
             vst1q_u8(p, a);
 #endif
+        }
+
+        template <bool align> SIMD_INLINE void Store(int8_t* p, int8x16_t a)
+        {
+            Store<align>((uint8_t*)p, vreinterpretq_u8_s8(a));
         }
 
         template <bool align> SIMD_INLINE void Store(uint8_t * p, uint8x8_t a);
@@ -401,6 +428,14 @@ namespace Simd
 #else
             vst1q_f32(p, a);
 #endif
+        }
+
+        SIMD_INLINE void Store(float* ptr, float32x4_t val, size_t size)
+        {
+            SIMD_ALIGNED(16) float buf[F];
+            Store<true>(buf, val);
+            for (size_t i = 0; i < size; ++i)
+                ptr[i] = buf[i];
         }
 
         template <bool align> SIMD_INLINE void Store(float * p, float32x2_t a);
