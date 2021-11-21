@@ -39,7 +39,7 @@
 */
 
 #include "vpImageIoBackend.h"
-#include <Simd/SimdLib.hpp>
+#include <Simd/SimdLib.h>
 
 
 //TODO:
@@ -48,8 +48,9 @@ void readSimdlib(vpImage<unsigned char> &I, const std::string &filename)
   size_t stride = 0, width = 0, height = 0;
   SimdPixelFormatType format = SimdPixelFormatGray8;
   uint8_t* data = SimdImageLoadFromFile(filename.c_str(), &stride, &width, &height, &format);
-  const bool copyData = false;
+  const bool copyData = true;
   I.init(data, (unsigned int)height, (unsigned int)width, copyData);
+  SimdFree(data);
 }
 
 void readSimdlib(vpImage<vpRGBa> &I, const std::string &filename)
@@ -57,8 +58,9 @@ void readSimdlib(vpImage<vpRGBa> &I, const std::string &filename)
   size_t stride = 0, width = 0, height = 0;
   SimdPixelFormatType format = SimdPixelFormatRgba32;
   uint8_t* data = SimdImageLoadFromFile(filename.c_str(), &stride, &width, &height, &format);
-  const bool copyData = false;
+  const bool copyData = true;
   I.init((vpRGBa *)data, (unsigned int)height, (unsigned int)width, copyData);
+  SimdFree(data);
 }
 
 void writeJPEGSimdlib(const vpImage<unsigned char> &I, const std::string &filename, int quality)
