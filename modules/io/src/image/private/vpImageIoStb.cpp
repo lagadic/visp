@@ -29,16 +29,13 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Read/write images.
- *
- * Authors:
- * Eric Marchand
+ * stb backend for JPEG and PNG image I/O operations.
  *
  *****************************************************************************/
 
 /*!
   \file vpImageIo.cpp
-  \brief Read/write images
+  \brief stb backend for JPEG and PNG image I/O operations.
 */
 
 #include "vpImageIoBackend.h"
@@ -82,19 +79,19 @@ void readStb(vpImage<vpRGBa> &I, const std::string &filename)
   stbi_image_free(image);
 }
 
-void writeJPEGStb(const vpImage<unsigned char> &I, const std::string &filename)
+void writeJPEGStb(const vpImage<unsigned char> &I, const std::string &filename, int quality)
 {
   int res = stbi_write_jpg(filename.c_str(), static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), STBI_grey,
-                           reinterpret_cast<void*>(I.bitmap), 90);
+                           reinterpret_cast<void*>(I.bitmap), quality);
   if (res == 0) {
     throw(vpImageException(vpImageException::ioError, "JEPG write error"));
   }
 }
 
-void writeJPEGStb(const vpImage<vpRGBa> &I, const std::string &filename)
+void writeJPEGStb(const vpImage<vpRGBa> &I, const std::string &filename, int quality)
 {
   int res = stbi_write_jpg(filename.c_str(), static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), STBI_rgb_alpha,
-                           reinterpret_cast<void*>(I.bitmap), 90);
+                           reinterpret_cast<void*>(I.bitmap), quality);
   if (res == 0) {
     throw(vpImageException(vpImageException::ioError, "JEPG write error"));
   }

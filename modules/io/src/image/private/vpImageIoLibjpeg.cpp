@@ -29,28 +29,25 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Read/write images.
- *
- * Authors:
- * Eric Marchand
+ * Libjpeg backend for JPEG image I/O operations.
  *
  *****************************************************************************/
 
 /*!
-  \file vpImageIo.cpp
-  \brief Read/write images
+  \file vpImageIoLibjpeg.cpp
+  \brief Libjpeg backend for JPEG image I/O operations.
 */
 
 #include "vpImageIoBackend.h"
 #include <visp3/core/vpImageConvert.h>
 
-//TODO:
-#if defined(_WIN32)
-// Include WinSock2.h before windows.h to ensure that winsock.h is not
-// included by windows.h since winsock.h and winsock2.h are incompatible
-#include <WinSock2.h>
-#include <windows.h>
-#endif
+//TODO: is it needed?
+//#if defined(_WIN32)
+//// Include WinSock2.h before windows.h to ensure that winsock.h is not
+//// included by windows.h since winsock.h and winsock2.h are incompatible
+//#include <WinSock2.h>
+//#include <windows.h>
+//#endif
 
 #if defined(VISP_HAVE_JPEG)
 #include <jerror.h>
@@ -70,8 +67,9 @@
 
   \param I : Image to save as a JPEG file.
   \param filename : Name of the file containing the image.
+  \param quality : JPEG quality for compression.
 */
-void writeJPEGLibjpeg(const vpImage<unsigned char> &I, const std::string &filename)
+void writeJPEGLibjpeg(const vpImage<unsigned char> &I, const std::string &filename, int quality)
 {
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
@@ -96,11 +94,13 @@ void writeJPEGLibjpeg(const vpImage<unsigned char> &I, const std::string &filena
 
   jpeg_stdio_dest(&cinfo, file);
 
+  jpeg_set_defaults(&cinfo);
   cinfo.image_width = width;
   cinfo.image_height = height;
   cinfo.input_components = 1;
   cinfo.in_color_space = JCS_GRAYSCALE;
-  jpeg_set_defaults(&cinfo);
+  //TODO:
+  jpeg_set_quality(&cinfo, quality, TRUE);
 
   jpeg_start_compress(&cinfo, TRUE);
 
@@ -127,8 +127,9 @@ void writeJPEGLibjpeg(const vpImage<unsigned char> &I, const std::string &filena
 
   \param I : Image to save as a JPEG file.
   \param filename : Name of the file containing the image.
+  \param quality : JPEG quality for compression.
 */
-void writeJPEGLibjpeg(const vpImage<vpRGBa> &I, const std::string &filename)
+void writeJPEGLibjpeg(const vpImage<vpRGBa> &I, const std::string &filename, int quality)
 {
   struct jpeg_compress_struct cinfo;
   struct jpeg_error_mgr jerr;
@@ -153,11 +154,13 @@ void writeJPEGLibjpeg(const vpImage<vpRGBa> &I, const std::string &filename)
 
   jpeg_stdio_dest(&cinfo, file);
 
+  jpeg_set_defaults(&cinfo);
   cinfo.image_width = width;
   cinfo.image_height = height;
   cinfo.input_components = 3;
   cinfo.in_color_space = JCS_RGB;
-  jpeg_set_defaults(&cinfo);
+  //TODO:
+  jpeg_set_quality(&cinfo, quality, TRUE);
 
   jpeg_start_compress(&cinfo, TRUE);
 

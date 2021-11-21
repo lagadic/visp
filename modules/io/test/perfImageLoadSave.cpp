@@ -45,221 +45,179 @@
 #include <visp3/io/vpImageIo.h>
 
 static std::string ipath = vpIoTools::getViSPImagesDataPath();
-static std::string imagePathJpeg = vpIoTools::createFilePath(ipath, "Klimt/Klimt.jpeg");
-static std::string imagePathPng = vpIoTools::createFilePath(ipath, "Klimt/Klimt.png");
-static std::string imagePathPngBig = vpIoTools::createFilePath(ipath, "Klimt/test_image_resize.png");
+static std::vector<std::string> paths {
+  ipath + "/Solvay/Solvay_conference_1927_Version2_640x440",
+  ipath + "/Solvay/Solvay_conference_1927_Version2_1024x705",
+  ipath + "/Solvay/Solvay_conference_1927_Version2_1280x881",
+  ipath + "/Solvay/Solvay_conference_1927_Version2_2126x1463",
+};
+static std::vector<std::string> names {
+  "Solvay (640x440)", "Solvay (1024x705)", "Solvay (1280x881)", "Solvay (2126x1463)"
+};
+static std::vector<vpImageIo::vpImageIoBackendType> backends {
+  vpImageIo::IO_LIB_BACKEND, vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND
+};
+static std::vector<std::string> backendNamesJpeg {
+  "libjpeg", "OpenCV", "simd", "stb"
+};
+static std::vector<std::string> backendNamesPng {
+  "libpng", "OpenCV", "simd", "stb"
+};
 static int nThreads = 0;
 
-TEST_CASE("Benchmark Jpeg image loading", "[benchmark]") {
-  {
-    vpImage<vpRGBa> I;
+TEST_CASE("Benchmark JPEG image loading", "[benchmark]") {
+  SECTION("Grayscale") {
+    for (size_t i = 0; i < paths.size(); i++) {
+      SECTION(names[i]) {
+        for (size_t j = 0; j < backends.size(); j++) {
+          vpImage<vpRGBa> I;
 
-    BENCHMARK("vpImageIo::read()") {
-      vpImageIo::read(I, imagePathJpeg);
-      return I;
-    };
+          BENCHMARK(backendNamesJpeg[j] + " backend") {
+            vpImageIo::read(I, paths[i] + ".jpg", backends[j]);
+            return I;
+          };
+        }
+      }
+    }
   }
 
-  {
-    vpImage<vpRGBa> I;
+  SECTION("vpRGBa") {
+    for (size_t i = 0; i < paths.size(); i++) {
+      SECTION(names[i]) {
+        for (size_t j = 0; j < backends.size(); j++) {
+          vpImage<unsigned char> I;
 
-    BENCHMARK("vpImageIo::readSimdlib()") {
-      vpImageIo::readJPEG(I, imagePathJpeg, vpImageIo::IO_SIMDLIB_BACKEND);
-      return I;
-    };
-  }
-
-  {
-    vpImage<vpRGBa> I;
-
-    BENCHMARK("vpImageIo::readStb()") {
-      vpImageIo::readJPEG(I, imagePathJpeg, vpImageIo::IO_STB_IMAGE_BACKEND);
-      return I;
-    };
-  }
-}
-
-TEST_CASE("Benchmark Png image loading", "[benchmark]") {
-  {
-    vpImage<vpRGBa> I;
-
-    BENCHMARK("vpImageIo::read()") {
-      vpImageIo::read(I, imagePathPng);
-      return I;
-    };
-  }
-
-  {
-    vpImage<vpRGBa> I;
-
-    BENCHMARK("vpImageIo::readSimdlib()") {
-      vpImageIo::readPNG(I, imagePathPng, vpImageIo::IO_SIMDLIB_BACKEND);
-      return I;
-    };
-  }
-
-  {
-    vpImage<vpRGBa> I;
-
-    BENCHMARK("vpImageIo::readStb()") {
-      vpImageIo::readPNG(I, imagePathPng, vpImageIo::IO_STB_IMAGE_BACKEND);
-      return I;
-    };
+          BENCHMARK(backendNamesJpeg[j] + " backend") {
+            vpImageIo::read(I, paths[i] + ".jpg", backends[j]);
+            return I;
+          };
+        }
+      }
+    }
   }
 }
 
-TEST_CASE("Benchmark big Png image loading", "[benchmark]") {
-  {
-    vpImage<vpRGBa> I;
+TEST_CASE("Benchmark PNG image loading", "[benchmark]") {
+  SECTION("Grayscale") {
+    for (size_t i = 0; i < paths.size(); i++) {
+      SECTION(names[i]) {
+        for (size_t j = 0; j < backends.size(); j++) {
+          vpImage<vpRGBa> I;
 
-    BENCHMARK("vpImageIo::read()") {
-      vpImageIo::read(I, imagePathPngBig);
-      return I;
-    };
+          BENCHMARK(backendNamesPng[j] + " backend") {
+            vpImageIo::read(I, paths[i] + ".png", backends[j]);
+            return I;
+          };
+        }
+      }
+    }
   }
 
-  {
-    vpImage<vpRGBa> I;
+  SECTION("vpRGBa") {
+    for (size_t i = 0; i < paths.size(); i++) {
+      SECTION(names[i]) {
+        for (size_t j = 0; j < backends.size(); j++) {
+          vpImage<unsigned char> I;
 
-    BENCHMARK("vpImageIo::readSimdlib()") {
-      vpImageIo::readPNG(I, imagePathPngBig, vpImageIo::IO_SIMDLIB_BACKEND);
-      return I;
-    };
-  }
-
-  {
-    vpImage<vpRGBa> I;
-
-    BENCHMARK("vpImageIo::readStb()") {
-      vpImageIo::readPNG(I, imagePathPngBig, vpImageIo::IO_STB_IMAGE_BACKEND);
-      return I;
-    };
-  }
-}
-
-TEST_CASE("Benchmark Jpeg image saving", "[benchmark]") {
-  vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePathJpeg);
-  {
-    const std::string filename = "/tmp/Klimt_ViSP.jpg";
-
-    BENCHMARK("vpImageIo::write()") {
-      vpImageIo::write(I, filename);
-      return I;
-    };
-  }
-
-  {
-    const std::string filename = "/tmp/Klimt_Simd.jpg";
-
-    BENCHMARK("vpImageIo::writeSimdlib()") {
-      vpImageIo::writeJPEG(I, filename, vpImageIo::IO_SIMDLIB_BACKEND);
-      return I;
-    };
-  }
-
-  {
-    const std::string filename = "/tmp/Klimt_stb.jpg";
-
-    BENCHMARK("vpImageIo::writeStb()") {
-      vpImageIo::writeJPEG(I, filename, vpImageIo::IO_STB_IMAGE_BACKEND);
-      return I;
-    };
+          BENCHMARK(backendNamesPng[j] + " backend") {
+            vpImageIo::read(I, paths[i] + ".png", backends[j]);
+            return I;
+          };
+        }
+      }
+    }
   }
 }
 
-TEST_CASE("Benchmark big Jpeg image saving", "[benchmark]") {
-  vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePathPngBig);
-  {
-    const std::string filename = "/tmp/Big_images_ViSP.jpg";
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+// makeTempDirectory is only implemented for Unix platform
 
-    BENCHMARK("vpImageIo::write()") {
-      vpImageIo::write(I, filename);
-      return I;
-    };
+std::string username, directory_filename_tmp;
+
+TEST_CASE("Benchmark JPEG image saving", "[benchmark]") {
+  vpIoTools::getUserName(username);
+  std::string tmp_dir = "/tmp/" + username;
+  vpIoTools::makeDirectory(tmp_dir);
+  directory_filename_tmp = tmp_dir + "/" + "vpIoTools_perfImageLoadSave_XXXXXX";
+  std::string converted_dirname_tmp = vpIoTools::makeTempDirectory(directory_filename_tmp);
+  REQUIRE(vpIoTools::checkDirectory(converted_dirname_tmp));
+
+  SECTION("Grayscale") {
+    for (size_t i = 0; i < paths.size(); i++) {
+      vpImage<unsigned char> I;
+      vpImageIo::read(I, paths[i] + ".png");
+
+      SECTION(names[i]) {
+        for (size_t j = 0; j < backends.size(); j++) {
+          BENCHMARK(backendNamesJpeg[j] + " backend") {
+            vpImageIo::write(I, converted_dirname_tmp + "/ViSP_tmp_perf_write.jpg", backends[j]);
+            return I;
+          };
+        }
+      }
+    }
   }
 
-  {
-    const std::string filename = "/tmp/Big_images_Simd.jpg";
+  SECTION("vpRGBa") {
+    for (size_t i = 0; i < paths.size(); i++) {
+      vpImage<vpRGBa> I;
+      vpImageIo::read(I, paths[i] + ".png");
 
-    BENCHMARK("vpImageIo::writeSimdlib()") {
-      vpImageIo::writeJPEG(I, filename, vpImageIo::IO_SIMDLIB_BACKEND);
-      return I;
-    };
+      SECTION(names[i]) {
+        for (size_t j = 0; j < backends.size(); j++) {
+          BENCHMARK(backendNamesJpeg[j] + " backend") {
+            vpImageIo::write(I, converted_dirname_tmp + "/ViSP_tmp_perf_write.jpg", backends[j]);
+            return I;
+          };
+        }
+      }
+    }
   }
 
-  {
-    const std::string filename = "/tmp/Big_images_stb.jpg";
-
-    BENCHMARK("vpImageIo::writeStb()") {
-      vpImageIo::writeJPEG(I, filename, vpImageIo::IO_STB_IMAGE_BACKEND);
-      return I;
-    };
-  }
+  REQUIRE(vpIoTools::remove(converted_dirname_tmp));
 }
 
-TEST_CASE("Benchmark Png image saving", "[benchmark]") {
-  vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePathPng);
-  {
-    const std::string filename = "/tmp/Klimt_ViSP.png";
+TEST_CASE("Benchmark PNG image saving", "[benchmark]") {
+  vpIoTools::getUserName(username);
+  std::string tmp_dir = "/tmp/" + username;
+  vpIoTools::makeDirectory(tmp_dir);
+  directory_filename_tmp = tmp_dir + "/" + "vpIoTools_perfImageLoadSave_XXXXXX";
+  std::string converted_dirname_tmp = vpIoTools::makeTempDirectory(directory_filename_tmp);
+  REQUIRE(vpIoTools::checkDirectory(converted_dirname_tmp));
 
-    BENCHMARK("vpImageIo::write()") {
-      vpImageIo::write(I, filename);
-      return I;
-    };
+  SECTION("Grayscale") {
+    for (size_t i = 0; i < paths.size(); i++) {
+      vpImage<unsigned char> I;
+      vpImageIo::read(I, paths[i] + ".png");
+
+      SECTION(names[i]) {
+        for (size_t j = 0; j < backends.size(); j++) {
+          BENCHMARK(backendNamesPng[j] + " backend") {
+            vpImageIo::write(I, converted_dirname_tmp + "/ViSP_tmp_perf_write.png", backends[j]);
+            return I;
+          };
+        }
+      }
+    }
   }
 
-  {
-    const std::string filename = "/tmp/Klimt_Simd.png";
+  SECTION("vpRGBa") {
+    for (size_t i = 0; i < paths.size(); i++) {
+      vpImage<vpRGBa> I;
+      vpImageIo::read(I, paths[i] + ".png");
 
-    BENCHMARK("vpImageIo::writeSimdlib()") {
-      vpImageIo::writePNG(I, filename, vpImageIo::IO_SIMDLIB_BACKEND);
-      return I;
-    };
-  }
-
-  {
-    const std::string filename = "/tmp/Klimt_stb.png";
-
-    BENCHMARK("vpImageIo::writeStb()") {
-      vpImageIo::writePNG(I, filename, vpImageIo::IO_STB_IMAGE_BACKEND);
-      return I;
-    };
-  }
-}
-
-TEST_CASE("Benchmark big Png image saving", "[benchmark]") {
-  vpImage<vpRGBa> I;
-  vpImageIo::read(I, imagePathPngBig);
-  {
-    const std::string filename = "/tmp/Big_images_ViSP.png";
-
-    BENCHMARK("vpImageIo::write()") {
-      vpImageIo::write(I, filename);
-      return I;
-    };
-  }
-
-  {
-    const std::string filename = "/tmp/Big_images_Simd.png";
-
-    BENCHMARK("vpImageIo::writeSimdlib()") {
-      vpImageIo::writePNG(I, filename, vpImageIo::IO_SIMDLIB_BACKEND);
-      return I;
-    };
-  }
-
-  {
-    const std::string filename = "/tmp/Big_images_stb.png";
-
-    BENCHMARK("vpImageIo::writeStb()") {
-      vpImageIo::writePNG(I, filename, vpImageIo::IO_STB_IMAGE_BACKEND);
-      return I;
-    };
+      SECTION(names[i]) {
+        for (size_t j = 0; j < backends.size(); j++) {
+          BENCHMARK(backendNamesPng[j] + " backend") {
+            vpImageIo::write(I, converted_dirname_tmp + "/ViSP_tmp_perf_write.png", backends[j]);
+            return I;
+          };
+        }
+      }
+    }
   }
 }
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -272,11 +230,6 @@ int main(int argc, char *argv[])
     | Opt(runBenchmark)    // bind variable to a new option, with a hint string
     ["--benchmark"]        // the option names it will respond to
     ("run benchmark?")     // description string for the help output
-    | Opt(imagePathJpeg, "imagePathColor")
-    ["--imagePathColor"]
-    ("Path to color image")
-    | Opt(imagePathPng, "imagePathColor")
-    ["--imagePathGray"]
     ("Path to gray image")
     | Opt(nThreads, "nThreads")
     ["--nThreads"]
@@ -289,13 +242,6 @@ int main(int argc, char *argv[])
   session.applyCommandLine(argc, argv);
 
   if (runBenchmark) {
-//    vpImage<vpRGBa> I_color;
-//    vpImageIo::read(I_color, imagePathColor);
-//    std::cout << "imagePathColor:\n\t" << imagePathColor << "\n\t" << I_color.getWidth() << "x" << I_color.getHeight() << std::endl;
-
-//    vpImage<unsigned char> I_gray;
-//    vpImageIo::read(I_gray, imagePathGray);
-//    std::cout << "imagePathGray:\n\t" << imagePathGray << "\n\t" << I_gray.getWidth() << "x" << I_gray.getHeight() << std::endl;
     std::cout << "nThreads: " << nThreads << " / available threads: " << std::thread::hardware_concurrency() << std::endl;
 
     int numFailed = session.run();
