@@ -29,16 +29,20 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
+<<<<<<< HEAD
  * Read/write images.
  *
  * Authors:
  * Eric Marchand
+=======
+ * OpenCV backend for image I/O operations.
+>>>>>>> 557f1beda01f36ca886ec039d0a1a80a7446ca59
  *
  *****************************************************************************/
 
 /*!
-  \file vpImageIo.cpp
-  \brief Read/write images
+  \file vpImageIoOpenCV.cpp
+  \brief OpenCV backend for image I/O operations.
 */
 
 #include "vpImageIoBackend.h"
@@ -163,12 +167,16 @@ void readOpenCV(vpImage<vpRGBa> &I, const std::string &filename)
   \param I : Image to save as a JPEG file.
   \param filename : Name of the file containing the image.
 */
-void writeOpenCV(const vpImage<unsigned char> &I, const std::string &filename)
+void writeOpenCV(const vpImage<unsigned char> &I, const std::string &filename, int quality)
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   cv::Mat Ip;
   vpImageConvert::convert(I, Ip);
-  cv::imwrite(filename.c_str(), Ip);
+
+  std::vector<int> compression_params;
+  compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+  compression_params.push_back(quality);
+  cv::imwrite(filename.c_str(), Ip, compression_params);
 #else
   IplImage *Ip = NULL;
   vpImageConvert::convert(I, Ip);
@@ -186,12 +194,16 @@ void writeOpenCV(const vpImage<unsigned char> &I, const std::string &filename)
   \param I : Image to save as a JPEG file.
   \param filename : Name of the file containing the image.
 */
-void writeOpenCV(const vpImage<vpRGBa> &I, const std::string &filename)
+void writeOpenCV(const vpImage<vpRGBa> &I, const std::string &filename, int quality)
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   cv::Mat Ip;
   vpImageConvert::convert(I, Ip);
-  cv::imwrite(filename.c_str(), Ip);
+
+  std::vector<int> compression_params;
+  compression_params.push_back(cv::IMWRITE_JPEG_QUALITY);
+  compression_params.push_back(quality);
+  cv::imwrite(filename.c_str(), Ip, compression_params);
 #else
   IplImage *Ip = NULL;
   vpImageConvert::convert(I, Ip);

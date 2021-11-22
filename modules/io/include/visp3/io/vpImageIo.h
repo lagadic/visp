@@ -134,11 +134,11 @@ public:
     IO_STB_IMAGE_BACKEND
   };
 
-  static void read(vpImage<unsigned char> &I, const std::string &filename);
-  static void read(vpImage<vpRGBa> &I, const std::string &filename);
+  static void read(vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
+  static void read(vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
 
-  static void write(const vpImage<unsigned char> &I, const std::string &filename);
-  static void write(const vpImage<vpRGBa> &I, const std::string &filename);
+  static void write(const vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
+  static void write(const vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
 
   static void readPFM(vpImage<float> &I, const std::string &filename);
 
@@ -163,8 +163,8 @@ public:
   static void writePPM(const vpImage<unsigned char> &I, const std::string &filename);
   static void writePPM(const vpImage<vpRGBa> &I, const std::string &filename);
 
-  static void writeJPEG(const vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
-  static void writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
+  static void writeJPEG(const vpImage<unsigned char> &I, const std::string &filename, int quality=90, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
+  static void writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename, int quality=90, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
 
   static void writePNG(const vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);
   static void writePNG(const vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend=IO_DEFAULT_BACKEND);

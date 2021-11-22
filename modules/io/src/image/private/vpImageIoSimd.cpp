@@ -29,22 +29,24 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
+<<<<<<< HEAD
  * Read/write images.
  *
  * Authors:
  * Eric Marchand
+=======
+ * Simd backend for JPEG and PNG image I/O operations.
+>>>>>>> 557f1beda01f36ca886ec039d0a1a80a7446ca59
  *
  *****************************************************************************/
 
 /*!
   \file vpImageIo.cpp
-  \brief Read/write images
+  \brief Simd backend for JPEG and PNG image I/O operations.
 */
 
 #include "vpImageIoBackend.h"
-
-//TODO:
-#include <Simd/SimdLib.hpp>
+#include <Simd/SimdLib.h>
 
 
 //TODO:
@@ -53,8 +55,9 @@ void readSimdlib(vpImage<unsigned char> &I, const std::string &filename)
   size_t stride = 0, width = 0, height = 0;
   SimdPixelFormatType format = SimdPixelFormatGray8;
   uint8_t* data = SimdImageLoadFromFile(filename.c_str(), &stride, &width, &height, &format);
-  const bool copyData = false;
+  const bool copyData = true;
   I.init(data, (unsigned int)height, (unsigned int)width, copyData);
+  SimdFree(data);
 }
 
 void readSimdlib(vpImage<vpRGBa> &I, const std::string &filename)
@@ -62,23 +65,24 @@ void readSimdlib(vpImage<vpRGBa> &I, const std::string &filename)
   size_t stride = 0, width = 0, height = 0;
   SimdPixelFormatType format = SimdPixelFormatRgba32;
   uint8_t* data = SimdImageLoadFromFile(filename.c_str(), &stride, &width, &height, &format);
-  const bool copyData = false;
+  const bool copyData = true;
   I.init((vpRGBa *)data, (unsigned int)height, (unsigned int)width, copyData);
+  SimdFree(data);
 }
 
-void writeJPEGSimdlib(const vpImage<unsigned char> &I, const std::string &filename)
+void writeJPEGSimdlib(const vpImage<unsigned char> &I, const std::string &filename, int quality)
 {
-  SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth()*4, I.getWidth(), I.getHeight(), SimdPixelFormatGray8, SimdImageFileJpeg, 90, filename.c_str());
+  SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth()*4, I.getWidth(), I.getHeight(), SimdPixelFormatGray8, SimdImageFileJpeg, quality, filename.c_str());
 }
 
-void writeJPEGSimdlib(const vpImage<vpRGBa> &I, const std::string &filename)
+void writeJPEGSimdlib(const vpImage<vpRGBa> &I, const std::string &filename, int quality)
 {
-  SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth()*4, I.getWidth(), I.getHeight(), SimdPixelFormatRgba32, SimdImageFileJpeg, 90, filename.c_str());
+  SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth()*4, I.getWidth(), I.getHeight(), SimdPixelFormatRgba32, SimdImageFileJpeg, quality, filename.c_str());
 }
 
 void writePNGSimdlib(const vpImage<unsigned char> &I, const std::string &filename)
 {
-  SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth()*4, I.getWidth(), I.getHeight(), SimdPixelFormatGray8, SimdImageFileJpeg, 90, filename.c_str());
+  SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth()*4, I.getWidth(), I.getHeight(), SimdPixelFormatGray8, SimdImageFilePng, 90, filename.c_str());
 }
 
 void writePNGSimdlib(const vpImage<vpRGBa> &I, const std::string &filename)

@@ -125,7 +125,6 @@ TEST_CASE("Benchmark merge to RGBa (ViSP)", "[benchmark]") {
   };
 }
 
-#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
 TEST_CASE("Benchmark bgr to grayscale (naive code)", "[benchmark]") {
   vpImage<vpRGBa> I;
   vpImageIo::read(I, imagePathColor);
@@ -173,7 +172,6 @@ TEST_CASE("Benchmark bgr to grayscale (ViSP)", "[benchmark]") {
   }
 #endif
 }
-#endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 TEST_CASE("Benchmark bgr to grayscale (OpenCV)", "[benchmark]") {
@@ -187,8 +185,6 @@ TEST_CASE("Benchmark bgr to grayscale (OpenCV)", "[benchmark]") {
 }
 #endif
 
-// C++11 to be able to do bgr.data()
-#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
 TEST_CASE("Benchmark bgr to rgba (naive code)", "[benchmark]") {
   vpImage<vpRGBa> I;
   vpImageIo::read(I, imagePathColor);
@@ -284,7 +280,6 @@ TEST_CASE("Benchmark bgra to rgba (ViSP)", "[benchmark]") {
     return I_rgba;
   };
 }
-#endif
 
 int main(int argc, char *argv[])
 {
