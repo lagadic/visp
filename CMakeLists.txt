@@ -1558,7 +1558,7 @@ status("    Use cxx standard:"       CMAKE_CXX_STANDARD THEN "${CMAKE_CXX_STANDA
 status("")
 status("  DNN: ")
 status("    Use CUDA Toolkit:"       USE_TENSORRT AND CUDA_FOUND  THEN "yes (ver ${CUDA_VERSION})" ELSE "no")
-status("    Use TensorRT:"           USE_TENSORRT       THEN "yes" ELSE "no")
+status("    Use TensorRT:"           USE_TENSORRT       THEN "yes (ver ${TENSORRT_VERSION})" ELSE "no")
 
 # ========================== documentation ==========================
 status("")
