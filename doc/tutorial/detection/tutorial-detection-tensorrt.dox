@@ -61,36 +61,36 @@ $ sudo dpkg -i libcudnn8_8.2.0.53-1+cuda11.3_amd64.deb
 TensorRT is a C++ library that facilitates high-performance inference on NVIDIA GPUs.
 To download and install TensorRT, please follow this step-by-step <a href="https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html#downloading">guide</a>.
 
-\note This tutorial was tested with `TensorRT 8.2 EA for x86_64 Architecture`. We downloaded "TensorRT 8.2 EA for Linux x86_64 and CUDA 11.0, CUDA 11.1, CUDA 11.2, 11.3 and 11.4" TAR Package and extracted its content in `VISP_WS`.
+\note This tutorial was tested with `TensorRT 8.0 GA Update 1 for x86_64 Architecture`. We downloaded "TensorRT 8.0 GA Update 1 for Linux x86_64 and CUDA 11.0, CUDA 11.1, CUDA 11.2, 11.3" TAR Package and extracted its content in `VISP_WS`.
 ```
 $ ls $VISP_WS
-TensorRT-8.2.0.6 ...
+TensorRT-8.0.3.4 ...
 ```
 and following the installation [instructions](https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html#installing-tar) we:
 - Add the absolute path to the TensorRTlib directory to the environment variable LD_LIBRARY_PATH:
 ```
-$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/TensorRT-8.2.0.6/lib
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/TensorRT-8.0.3.4/lib
 ```
 - Install the Python TensorRT wheel file.
 ```
 $ sudo apt-get install python3-pip
-$ cd $VISP_WS/TensorRT-8.2.0.6/python
-$ python3 -m pip install tensorrt-8.2.0.6-cp36-none-linux_x86_64.whl
+$ cd $VISP_WS/TensorRT-8.0.3.4/python
+$ python3 -m pip install tensorrt-8.0.3.4-cp36-none-linux_x86_64.whl
 ```
 - Install the Python UFF wheel file. This is only required if you plan to use TensorRT with TensorFlow.
 ```
-$ cd $VISP_WS/TensorRT-8.2.0.6/uff
+$ cd $VISP_WS/TensorRT-8.0.3.4/uff
 $ python3 -m pip install uff-0.6.9-py2.py3-none-any.whl
 ```
 - Install the Python graphsurgeon wheel file.
 ```
-$ cd $VISP_WS/TensorRT-8.2.0.6/graphsurgeon
+$ cd $VISP_WS/TensorRT-8.0.3.4/graphsurgeon
 $ python3 -m pip install graphsurgeon-0.4.5-py2.py3-none-any.whl
 ```
 - Install the Python onnx-graphsurgeon wheel file.
 ```
-$ cd $VISP_WS/TensorRT-8.2.0.6/onnx_graphsurgeon
-$ python3 -m pip install onnx_graphsurgeon-0.3.12-py2.py3-none-any.whl
+$ cd $VISP_WS/TensorRT-8.0.3.4/onnx_graphsurgeon
+$ python3 -m pip install onnx_graphsurgeon-0.3.10-py2.py3-none-any.whl
 ```
 
 \subsection dnn_trt_opencv_install Install OpenCV from source
@@ -155,14 +155,14 @@ If you follow \ref dnn_trt_prereq, you should also find TensorRT and OpenCV in t
 
 \code
 $ ls $VISP_WS
-visp opencv TensorRT-8.2.0.6
+visp opencv TensorRT-8.0.3.4
 \endcode
 
 Now to ensure that ViSP is build TensorRT, create and enter build folder before configuring ViSP with TensorRT and OpenCV path  
 \code
 $ mkdir visp-build; cd visp-build
 $ cmake ../visp \
-        -DTENSORRT_DIR=$VISP_WS/TensorRT-8.2.0.6 \
+        -DTENSORRT_DIR=$VISP_WS/TensorRT-8.0.3.4 \
         -DOpenCV_DIR=$VISP_WS/opencv/install/lib/cmake/opencv4
 \endcode
 
