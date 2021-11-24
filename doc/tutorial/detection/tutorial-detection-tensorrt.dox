@@ -7,7 +7,7 @@
 This tutorial shows how to run object detection inference using NVIDIA <a href="https://developer.nvidia.com/tensorrt">TensorRT</a> inference SDK.
 
 For this tutorial, you'll need `ssd_mobilenet.onnx` pre-trained model, and `pascal-voc-labels.txt` label's file containing the corresponding labels.
-These files can be found in <a href="https://github.com/lagadic/visp-images">ViSP Images</a>.
+These files can be found in <a href="https://github.com/lagadic/visp-images">visp-images</a> dataset.
 
 Note that the source code described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
@@ -20,6 +20,7 @@ Before running this tutorial, you need to install:
 - cuDNN (version compatible with your CUDA version)
 - TensorRT (version 7.1 or higher)
 - OpenCV built from source (version 4.5.2 or higher)
+
 Installation instructions are provided in \ref dnn_trt_prereq section.
 
 The tutorial was tested on multiple hardwares of NVIDIA. The following table details the versions of CUDA and TensorRT used for each GPU:
@@ -29,6 +30,8 @@ The tutorial was tested on multiple hardwares of NVIDIA. The following table det
 | Jetson TX2 | Ubuntu 18.04 (JetPack 4.4) | 10.2  | 7.1.3  | 8.0 |
 | GeForce GTX 1080 | Ubuntu 16.04 | 11.0 | 8.0 GA | 8.0 |
 | Quadro RTX 6000 | Ubuntu 18.04 | 11.3 | 8.0 GA Update 1 | 8.2 |
+
+\note Issues were encountered when using TensorRT 8.2 EA with CUDA 11.3 on NVIDIA Quadro RTX 6000, the tutorial didn't work as expected. There were plenty of bounding boxes in any given image.
 
 \section dnn_trt_prereq Prerequisites
 \subsection dnn_trt_cuda_install Install CUDA
@@ -54,13 +57,11 @@ Here it shows that CUDA toolkit 11.3 is installed.
 
 - To install NVidia CUDA Driver and Toolkit on your machine, please follow this step-by-step <a href="https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html">guide</a>.
 
-\note This tutorial was tested with `CUDA 11.3` on Ubuntu 18.04.
-
 \subsection dnn_trt_cudnn_install Install cuDNN
 
 Installation instructions are provided [here](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html).
 
-In our case, we downloaded "cuDNN Runtime Library for Ubuntu18.04 x86_64 (Deb)" and installed it running:
+For example, when downloading "cuDNN Runtime Library for Ubuntu18.04 x86_64 (Deb)", you can install it running:
 ```
 $ sudo dpkg -i libcudnn8_8.2.0.53-1+cuda11.3_amd64.deb
 ```
@@ -69,12 +70,12 @@ $ sudo dpkg -i libcudnn8_8.2.0.53-1+cuda11.3_amd64.deb
 TensorRT is a C++ library that facilitates high-performance inference on NVIDIA GPUs.
 To download and install TensorRT, please follow this step-by-step <a href="https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html#downloading">guide</a>.
 
-\note This tutorial was tested with `TensorRT 8.0 GA Update 1 for x86_64 Architecture`. We downloaded "TensorRT 8.0 GA Update 1 for Linux x86_64 and CUDA 11.0, CUDA 11.1, CUDA 11.2, 11.3" TAR Package and extracted its content in `VISP_WS`.
+Let us consider the installation of `TensorRT 8.0 GA Update 1 for x86_64 Architecture`. In that case you need to download "TensorRT 8.0 GA Update 1 for Linux x86_64 and CUDA 11.0, CUDA 11.1, CUDA 11.2, 11.3" TAR Package and extract its content in `VISP_WS`.
 ```
 $ ls $VISP_WS
 TensorRT-8.0.3.4 ...
 ```
-and following the installation [instructions](https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html#installing-tar) we:
+Following the installation [instructions](https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html#installing-tar):
 - Add the absolute path to the TensorRTlib directory to the environment variable LD_LIBRARY_PATH:
 ```
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/TensorRT-8.0.3.4/lib
@@ -249,8 +250,8 @@ Create a grabber to retrieve image from webcam (or external camera) or read imag
 \snippet tutorial-dnn-tensorrt-live.cpp Main loop
 
 \section tutorial_usage Usage
-To use this tutorial, you should have downloaded an **onnx** file of a model with its corresponding labels in *txt* file format.
-To start, you may find the **ssd_mobilenet.onnx** model <a href="https://github.com/lagadic/visp-images/dnn/">here</a> .
+To use this tutorial, you need an USB webcam and you should have downloaded an **onnx** file of a model with its corresponding labels in *txt* file format.
+To start, you may download the **ssd_mobilenet.onnx** model and **pascal-voc-labels.txt** file from <a href="https://github.com/lagadic/visp-images/dnn/">here</a> or install \ref install_ubuntu_dataset cloning Github repository.
 
 To see the options, run:
 \code
