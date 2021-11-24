@@ -76,4 +76,7 @@ Class ids and detection confidence scores can be retrieved with
 
 You can find more models in the <a href="https://github.com/opencv/opencv/tree/master/samples/dnn">OpenCV model zoo</a>.
 
+\section dnn_next Next tutorial
+
+You may continue following \ref tutorial-detection-tensorrt.
 */

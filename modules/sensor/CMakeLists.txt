@@ -351,6 +351,10 @@ endif()
 if(USE_LIBFREENECT)
   vp_set_source_file_compile_flag(src/rgb-depth/kinect/vpKinect.cpp -Wno-unused-parameter)
 endif()
+if(USE_UEYE)
+  vp_set_source_file_compile_flag(src/framegrabber/ueye/vpUeyeGrabber.cpp -Wno-deprecated-declarations)
+endif()
+
 vp_set_source_file_compile_flag(src/force-torque/vpForceTorqueAtiNetFTSensor.cpp -Wno-strict-aliasing)
 
 vp_module_include_directories(${opt_incs})

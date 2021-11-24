@@ -1,0 +1,271 @@
+/**
+
+\page tutorial-detection-tensorrt Tutorial: Deep learning object detection on NVIDIA GPU with TensorRT
+\tableofcontents
+
+\section dnn_trt_intro Introduction
+This tutorial shows how to run object detection inference using NVIDIA <a href="https://developer.nvidia.com/tensorrt">TensorRT</a> inference SDK.
+
+For this tutorial, you'll need `ssd_mobilenet.onnx` pre-trained model, and `pascal-voc-labels.txt` label's file containing the corresponding labels.
+These files can be found in <a href="https://github.com/lagadic/visp-images">visp-images</a> dataset.
+
+Note that the source code described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/dnn
+\endcode
+
+Before running this tutorial, you need to install:
+- CUDA (version 10.2 or higher)
+- cuDNN (version compatible with your CUDA version)
+- TensorRT (version 7.1 or higher)
+- OpenCV built from source (version 4.5.2 or higher)
+
+Installation instructions are provided in \ref dnn_trt_prereq section.
+
+The tutorial was tested on multiple hardwares of NVIDIA. The following table details the versions of CUDA and TensorRT used for each GPU:
+
+| NVIDIA hardware | OS | CUDA | TensorRT | CuDNN |
+| ------------- | ------------- | ------------- | ------------- | ------------- |
+| Jetson TX2 | Ubuntu 18.04 (JetPack 4.4) | 10.2  | 7.1.3  | 8.0 |
+| GeForce GTX 1080 | Ubuntu 16.04 | 11.0 | 8.0 GA | 8.0 |
+| Quadro RTX 6000 | Ubuntu 18.04 | 11.3 | 8.0 GA Update 1 | 8.2 |
+
+\note Issues were encountered when using TensorRT 8.2 EA with CUDA 11.3 on NVIDIA Quadro RTX 6000, the tutorial didn't work as expected. There were plenty of bounding boxes in any given image.
+
+\section dnn_trt_prereq Prerequisites
+\subsection dnn_trt_cuda_install Install CUDA
+CUDA is a parallel computing platform and programming model invented by <a href="https://nvidia.com">NVIDIA</a>.
+
+- To know if CUDA NVidia driver is already installed on your machine, on Ubuntu you can use `nvidia-smi`
+```
+$ nvidia-smi | grep CUDA
+| NVIDIA-SMI 465.27       Driver Version: 465.27       CUDA Version: 11.3     |
+```
+Here the output shows that CUDA NVidia driver version 11.3 is installed.
+
+- To know if CUDA toolkit is installed, run:
+\code
+$ cat /usr/local/cuda/version.{txt,json}
+   "cuda" : {
+      "name" : "CUDA SDK",
+      "version" : "11.3.20210326"
+   },
+\endcode
+Here it shows that CUDA toolkit 11.3 is installed. 
+\note We recommend that NVidia CUDA Driver and CUDA Toolkit have the same version.
+
+- To install NVidia CUDA Driver and Toolkit on your machine, please follow this step-by-step <a href="https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html">guide</a>.
+
+\subsection dnn_trt_cudnn_install Install cuDNN
+
+Installation instructions are provided [here](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html).
+
+For example, when downloading "cuDNN Runtime Library for Ubuntu18.04 x86_64 (Deb)", you can install it running:
+```
+$ sudo dpkg -i libcudnn8_8.2.0.53-1+cuda11.3_amd64.deb
+```
+
+\subsection dnn_trt_trt_install Install TensorRT
+TensorRT is a C++ library that facilitates high-performance inference on NVIDIA GPUs.
+To download and install TensorRT, please follow this step-by-step <a href="https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html#downloading">guide</a>.
+
+Let us consider the installation of `TensorRT 8.0 GA Update 1 for x86_64 Architecture`. In that case you need to download "TensorRT 8.0 GA Update 1 for Linux x86_64 and CUDA 11.0, CUDA 11.1, CUDA 11.2, 11.3" TAR Package and extract its content in `VISP_WS`.
+```
+$ ls $VISP_WS
+TensorRT-8.0.3.4 ...
+```
+Following the installation [instructions](https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html#installing-tar):
+- Add the absolute path to the TensorRTlib directory to the environment variable LD_LIBRARY_PATH:
+```
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/TensorRT-8.0.3.4/lib
+```
+- Install the Python TensorRT wheel file.
+```
+$ sudo apt-get install python3-pip
+$ cd $VISP_WS/TensorRT-8.0.3.4/python
+$ python3 -m pip install tensorrt-8.0.3.4-cp36-none-linux_x86_64.whl
+```
+- Install the Python UFF wheel file. This is only required if you plan to use TensorRT with TensorFlow.
+```
+$ cd $VISP_WS/TensorRT-8.0.3.4/uff
+$ python3 -m pip install uff-0.6.9-py2.py3-none-any.whl
+```
+- Install the Python graphsurgeon wheel file.
+```
+$ cd $VISP_WS/TensorRT-8.0.3.4/graphsurgeon
+$ python3 -m pip install graphsurgeon-0.4.5-py2.py3-none-any.whl
+```
+- Install the Python onnx-graphsurgeon wheel file.
+```
+$ cd $VISP_WS/TensorRT-8.0.3.4/onnx_graphsurgeon
+$ python3 -m pip install onnx_graphsurgeon-0.3.10-py2.py3-none-any.whl
+```
+
+\subsection dnn_trt_opencv_install Install OpenCV from source
+To be able to run the tutorial, you should install OpenCV from source, since some extra modules are required (`cudev`, `cudaarithm` and `cudawarping` are not included in `libopencv-contrib-dev` package).
+To do so, proceed as follows:
+
+- In `VISP_WS`, clone `opencv` and `opencv_contrib` repos:
+\code
+$ cd $VISP_WS
+$ git clone https://github.com/opencv/opencv
+$ git clone https://github.com/opencv/opencv_contrib
+\endcode
+
+- Create `build` directory in `opencv` directory
+\code
+$ cd opencv && mkdir build && cd build
+\endcode
+
+- To install opencv with extra modules, execute the following command:
+\code
+$ cmake -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
+        -DWITH_CUDA=ON \
+        -DBUILD_opencv_cudev=ON \
+        -DBUILD_opencv_cudaarithm=ON \
+        -DBUILD_opencv_cudawarping=ON \
+        -DCMAKE_INSTALL_PREFIX=$VISP_WS/opencv/install ../
+\endcode
+Note here that installation folder is set to `$VISP_WS/opencv/install` instead of the default `/usr/local`. This allows to preserve any other existing OpenCV installation on your machine. 
+
+- Note that if you want a more advanced way to configure the build process, you can use `ccmake`:
+\code
+$ ccmake -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules ../
+\endcode
+
+- At this point, you can check if `cudev`, `cudaarithm` and `cudawarping` extra modules are enabled as expected:
+\verbatim
+$ grep cudev version_string.tmp
+"    To be built:                 ... cudev ...
+$ grep cudaarithm version_string.tmp
+"    To be built:                 ... cudaarithm ...
+$ grep cudawarping version_string.tmp
+"    To be built:                 ... cudawarping ...
+\endverbatim
+If this is not the case, it means that something is wrong, either in CUDA installation, either in OpenCV configuration with `cmake`.
+
+- Launch build process:
+\code
+$ make -j$(nproc)
+$ sudo make install
+\endcode
+
+- Modify `LD_LIBRARY_PATH` to find OpenCV libraries
+\code
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/opencv/install/lib
+\endcode
+
+\section dnn_trt_visp Build ViSP with TensorRT support
+
+Next step is here to build ViSP from source enabling TensorRT support. 
+As described in \ref install_ubuntu_visp_get_source, we suppose here that you have ViSP source code in ViSP workspace folder: `$VISP_WS`.
+If you follow \ref dnn_trt_prereq, you should also find TensorRT and OpenCV in the same workspace.
+
+\code
+$ ls $VISP_WS
+visp opencv TensorRT-8.0.3.4
+\endcode
+
+Now to ensure that ViSP is build TensorRT, create and enter build folder before configuring ViSP with TensorRT and OpenCV path  
+\code
+$ mkdir visp-build; cd visp-build
+$ cmake ../visp \
+        -DTENSORRT_DIR=$VISP_WS/TensorRT-8.0.3.4 \
+        -DOpenCV_DIR=$VISP_WS/opencv/install/lib/cmake/opencv4
+\endcode
+
+\section dnn_trt_example Tutorial description
+In the following section is a detailed description of the tutorial. The complete source code is available in tutorial-dnn-tensorrt-live.cpp file.
+
+\subsection header_files Include header files
+Include header files for required extra modules to handle CUDA.
+\snippet tutorial-dnn-tensorrt-live.cpp OpenCV CUDA header files
+
+Include `cuda_runtime_api.h` header file that defines the public host functions and types for the CUDA runtime API.
+\snippet tutorial-dnn-tensorrt-live.cpp CUDA header files
+
+Include TensorRT header files.
+`NvInfer.h` is the top-level API file for TensorRT.
+`NvOnnxParser.h` is the API for the <a href="https://onnx.ai/">ONNX</a> Parser.
+\snippet tutorial-dnn-tensorrt-live.cpp TRT header files
+
+\subsection preprocessing Pre-processing
+Prepare input image for inference with OpenCV.
+First, upload image to GPU, resize it to match model's input dimensions, normalize with `meanR` `meanG` `meanB` being the values used for mean substraction.
+Transform data to tensor (copy data to channel by channel to `gpu_input`).
+In the case of `ssd_mobilenet.onnx`, the input dimension is 1x3x300x300.
+\snippet tutorial-dnn-tensorrt-live.cpp Preprocess image
+
+\subsection postprocessing Post-processing
+After running the inference, depending on the model used, you will get different results dimensions on the output.
+These results should be post processed.
+In the case of `ssd_mobilenet.onnx`, there is 2 outputs:
+- `scores` of dimension : 1x3000x21
+- `boxes` of dimension : 1x3000x4
+
+In fact, the model will output 3000 guesses of boxes (bounding boxes) with 21 scores each (1 score for each class).
+The result of the inference being on the GPU, we should first proceed by copying it to the CPU.
+Post processing consists of filtering the predictions where we're not sure about the class detected and then merging multiple detections that can occur approximately at the same locations.
+`confThresh` is the confidence threshold used to filter the detections after inference.
+`nmsThresh` is the Non-Maximum Threshold. It is used to merge multiple detections being in the same location approximately.
+\snippet tutorial-dnn-tensorrt-live.cpp PostProcess results
+
+\subsection parseOnnx Parse ONNX Model
+Parse ONNX model.
+\snippet tutorial-dnn-tensorrt-live.cpp ParseOnnxModel
+`model_path` is the path to **onnx** file.
+
+`engine` is used for executing inference on a built network.
+
+`context` is used for executing inference.
+
+To parse ONNX model, we should first proceed by initializing TensorRT **Context** and **Engine**.
+To do this, we should create an instance of **Builder**. With **Builder**, we can create **Network** that can create the **Parser**.
+
+If we already have the GPU inference engine loaded once, it will be serialized and saved in a cache file (with .engine extension). In this case,
+the engine file will be loaded, then inference runtime created, engine and context loaded.
+\snippet tutorial-dnn-tensorrt-live.cpp ParseOnnxModel engine exists
+
+Otherwise, we should parse the ONNX model (for the first time only), create an instance of builder. The builder can be configured to select the amount of GPU memory to be used for tactic selection or FP16/INT8 modes.
+Create **engine** and **context** to be used in the main pipeline, and serialize and save the engine for later use.
+\snippet tutorial-dnn-tensorrt-live.cpp ParseOnnxModel engine does not exist
+
+\subsection Main_pipeline Main pipeline
+Start by parsing the model and creating **engine** and **context**.
+\snippet tutorial-dnn-tensorrt-live.cpp Create GIE
+
+Using **engine**, we can get the dimensions of the input and outputs, and create buffers respectively.
+\snippet tutorial-dnn-tensorrt-live.cpp Get I/O dimensions
+
+Create a grabber to retrieve image from webcam (or external camera) or read images from image or video.
+\snippet tutorial-dnn-tensorrt-live.cpp OpenCV VideoCapture
+
+- Capture a new frame from the grabber,
+- Convert this frame to vpImage used for display,
+- Call **preprocessImage()** function to copy the `frame` to GPU and store in `input` buffer,
+- Perform inference with **context->enqueue()**,
+- Call **postprocessResults()** function to filter the outputs,
+- Display the image with the bounding boxes.
+\snippet tutorial-dnn-tensorrt-live.cpp Main loop
+
+\section tutorial_usage Usage
+To use this tutorial, you need an USB webcam and you should have downloaded an **onnx** file of a model with its corresponding labels in *txt* file format.
+To start, you may download the **ssd_mobilenet.onnx** model and **pascal-voc-labels.txt** file from <a href="https://github.com/lagadic/visp-images/dnn/">here</a> or install \ref install_ubuntu_dataset cloning Github repository.
+
+To see the options, run:
+\code
+$ ./tutorial-dnn-tensorrt-live --help
+\endcode
+
+Consider you downloaded the files (model and labels), to run object detection on images from webcam, run:
+\code
+$ ./tutorial-dnn-tensorrt-live --model ssd_mobilenet.onnx --labels pascal-voc-labels.txt
+\endcode
+
+Running the above example on an image will show results like the following:
+\image html img-detection-objects.jpeg
+
+An example of the object detection can be viewed in this <a href="">video</a>.
+
+*/

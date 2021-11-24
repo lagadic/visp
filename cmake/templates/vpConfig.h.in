@@ -514,6 +514,9 @@
 // Defined if xrandr program available
 #cmakedefine VISP_HAVE_XRANDR
 
+// Defined if TensorRT available
+#cmakedefine VISP_HAVE_TENSORRT
+
 // Handle portable symbol export.
 // Defining manually which symbol should be exported is required
 // under Windows whether MinGW or MSVC is used.
