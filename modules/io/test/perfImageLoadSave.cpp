@@ -55,7 +55,14 @@ static std::vector<std::string> names {
   "Solvay (640x440)", "Solvay (1024x705)", "Solvay (1280x881)", "Solvay (2126x1463)"
 };
 static std::vector<vpImageIo::vpImageIoBackendType> backends {
-  vpImageIo::IO_LIB_BACKEND, vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND
+#if defined(VISP_HAVE_JPEG) && defined(VISP_HAVE_PNG)
+  vpImageIo::IO_LIB_BACKEND,
+#endif
+#if defined(VISP_HAVE_OPENCV)
+  vpImageIo::IO_OPENCV_BACKEND,
+#endif
+  vpImageIo::IO_SIMDLIB_BACKEND,
+  vpImageIo::IO_STB_IMAGE_BACKEND
 };
 static std::vector<std::string> backendNamesJpeg {
   "libjpeg", "OpenCV", "simd", "stb"
@@ -129,18 +136,20 @@ TEST_CASE("Benchmark PNG image loading", "[benchmark]") {
   }
 }
 
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-// makeTempDirectory is only implemented for Unix platform
-
 std::string username, directory_filename_tmp;
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+std::string tmp_dir = "/tmp/";
+#else
+std::string tmp_dir = "C:/Temp/";
+#endif
 
 TEST_CASE("Benchmark JPEG image saving", "[benchmark]") {
   vpIoTools::getUserName(username);
-  std::string tmp_dir = "/tmp/" + username;
-  vpIoTools::makeDirectory(tmp_dir);
-  directory_filename_tmp = tmp_dir + "/" + "vpIoTools_perfImageLoadSave_XXXXXX";
-  std::string converted_dirname_tmp = vpIoTools::makeTempDirectory(directory_filename_tmp);
-  REQUIRE(vpIoTools::checkDirectory(converted_dirname_tmp));
+  vpIoTools::makeDirectory(tmp_dir + username);
+  directory_filename_tmp = tmp_dir + username + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+  vpIoTools::makeDirectory(directory_filename_tmp);
+  REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
   SECTION("Grayscale") {
     for (size_t i = 0; i < paths.size(); i++) {
@@ -150,7 +159,7 @@ TEST_CASE("Benchmark JPEG image saving", "[benchmark]") {
       SECTION(names[i]) {
         for (size_t j = 0; j < backends.size(); j++) {
           BENCHMARK(backendNamesJpeg[j] + " backend") {
-            vpImageIo::write(I, converted_dirname_tmp + "/ViSP_tmp_perf_write.jpg", backends[j]);
+            vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.jpg", backends[j]);
             return I;
           };
         }
@@ -166,7 +175,7 @@ TEST_CASE("Benchmark JPEG image saving", "[benchmark]") {
       SECTION(names[i]) {
         for (size_t j = 0; j < backends.size(); j++) {
           BENCHMARK(backendNamesJpeg[j] + " backend") {
-            vpImageIo::write(I, converted_dirname_tmp + "/ViSP_tmp_perf_write.jpg", backends[j]);
+            vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.jpg", backends[j]);
             return I;
           };
         }
@@ -174,16 +183,15 @@ TEST_CASE("Benchmark JPEG image saving", "[benchmark]") {
     }
   }
 
-  REQUIRE(vpIoTools::remove(converted_dirname_tmp));
+  REQUIRE(vpIoTools::remove(directory_filename_tmp));
 }
 
 TEST_CASE("Benchmark PNG image saving", "[benchmark]") {
   vpIoTools::getUserName(username);
-  std::string tmp_dir = "/tmp/" + username;
-  vpIoTools::makeDirectory(tmp_dir);
-  directory_filename_tmp = tmp_dir + "/" + "vpIoTools_perfImageLoadSave_XXXXXX";
-  std::string converted_dirname_tmp = vpIoTools::makeTempDirectory(directory_filename_tmp);
-  REQUIRE(vpIoTools::checkDirectory(converted_dirname_tmp));
+  vpIoTools::makeDirectory(tmp_dir + username);
+  directory_filename_tmp = tmp_dir + username + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+  vpIoTools::makeDirectory(directory_filename_tmp);
+  REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
   SECTION("Grayscale") {
     for (size_t i = 0; i < paths.size(); i++) {
@@ -193,7 +201,7 @@ TEST_CASE("Benchmark PNG image saving", "[benchmark]") {
       SECTION(names[i]) {
         for (size_t j = 0; j < backends.size(); j++) {
           BENCHMARK(backendNamesPng[j] + " backend") {
-            vpImageIo::write(I, converted_dirname_tmp + "/ViSP_tmp_perf_write.png", backends[j]);
+            vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.png", backends[j]);
             return I;
           };
         }
@@ -209,15 +217,16 @@ TEST_CASE("Benchmark PNG image saving", "[benchmark]") {
       SECTION(names[i]) {
         for (size_t j = 0; j < backends.size(); j++) {
           BENCHMARK(backendNamesPng[j] + " backend") {
-            vpImageIo::write(I, converted_dirname_tmp + "/ViSP_tmp_perf_write.png", backends[j]);
+            vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.png", backends[j]);
             return I;
           };
         }
       }
     }
   }
+
+  REQUIRE(vpIoTools::remove(directory_filename_tmp));
 }
-#endif
 
 int main(int argc, char *argv[])
 {
