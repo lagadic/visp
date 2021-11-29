@@ -14,15 +14,18 @@ ViSP 3.4.1 (under development)
     . Introduce Bayer demosaicing also called debayering in vpImageConvert
     . UEye grabber now support Bayer 8 color mode
   - Tutorials
-    . FrankaSim for Physical simulation of the Panda robot from Franka Emika, with a model
-      that has beenaccurately identified from a real Franka robot using ViSP, ROS and
-      CoppeliaSim. More info on http://wiki.ros.org/visp_ros
+    . New tutorial for FrankaSim that allows physical simulation of the Panda robot from
+      Franka Emika, with a model that has beenaccurately identified from a real Franka
+      robot using ViSP, ROS and CoppeliaSim.
+      More info on http://wiki.ros.org/visp_ros
+    . New tutorial: Deep learning object detection on NVIDIA GPU with TensorRT
   - Bug fixed
     . [#913] Cannot build tutorial with librealsense < 2.31.0
     . [#926] Packaging with CPack doesn't work with Ogre dependency
     . [#933] tutorial-apriltag-detector-live-rgbd-realsense.cpp doesn't work
     . [#937] Segfault in vpRobust when data to consider is a 2-dim vector
     . [#939] SonarQube static analysis is no more working
+    . [#950] Cannot build tutorial-grabber-multiple-realsense.cpp with Visual Studio 2017
 ----------------------------------------------
 ViSP 3.4.0 (released February 26, 2021)
   - Contributors:
