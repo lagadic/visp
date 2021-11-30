@@ -188,9 +188,9 @@ void sonarPrinter(void)
       if (isInitialized && std::fabs(range - sonar.getMaxRange()) > std::numeric_limits<double>::epsilon()) {
         vpDisplay::displayLine(I, si, sj, i, j, vpColor::blue, 2);
         vpDisplay::displayCross(I, si, sj, 7, vpColor::blue);
-        char legend[15];
-        sprintf(legend, "%d: %1.2fm", sensor, float(range) / 1000);
-        vpDisplay::displayCharString(I, i - 7, j + 7, legend, vpColor::blue);
+        std::stringstream legend;
+        legend << sensor << ": " << std::setprecision( 2 ) << float( range ) / 1000.;
+        vpDisplay::displayText( I, i - 7, j + 7, legend.str(), vpColor::blue );
       }
 #endif
     }

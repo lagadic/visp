@@ -41,15 +41,15 @@ int main(int argc, char **argv)
   }
 
   rs2::config T265_cfg, D435_cfg;
-  vpRealSense2 g[type_serial_nb.size()];
-  vpImage<unsigned char> I[type_serial_nb.size()];
+  std::vector< vpRealSense2 > g(type_serial_nb.size());
+  std::vector< vpImage<unsigned char> > I(type_serial_nb.size());
 
 #ifdef VISP_HAVE_X11
-  vpDisplayX d[type_serial_nb.size()];
+  std::vector< vpDisplayX > d(type_serial_nb.size());
 #elif defined(VISP_HAVE_GDI)
-  vpDisplayGDI d[type_serial_nb.size()];
+  std::vector< vpDisplayGDI > d(type_serial_nb.size());
 #elif defined(VISP_HAVE_OPENCV)
-  vpDisplayOpenCV d[type_serial_nb.size()];
+  std::vector< vpDisplayOpenCV > d(type_serial_nb.size());
 #else
   std::cout << "No image viewer is available..." << std::endl;
 #endif
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
         if (type_serial_nb[i].first == "T265") { // T265.
           g[i].acquire(&I[i], NULL, NULL);
           if (!d[i].isInitialised()) {
-            d[i].init(I[i], 100*i, 100*i, "T265 left image");
+            d[i].init(I[i], static_cast<int>(100*i), static_cast<int>(100*i), "T265 left image");
           }
         }
 
@@ -93,7 +93,7 @@ int main(int argc, char **argv)
           g[i].acquire(I[i]);
 
           if (!d[i].isInitialised()) {
-            d[i].init(I[i], 100*i, 100*i, type_serial_nb[i].first.c_str());
+            d[i].init(I[i], static_cast<int>(100*i), static_cast<int>(100*i), type_serial_nb[i].first.c_str());
           }
         }
 

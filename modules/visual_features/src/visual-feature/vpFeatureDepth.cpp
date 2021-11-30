@@ -211,8 +211,7 @@ void vpFeatureDepth::set_xyZLogZoverZstar(double x_, double y_, double Z_, doubl
   \code
   // Creation of the current feature s
   vpFeatureDepth s;
-  s.buildFrom(0, 0, 5, log(5/1)); //The current depth is 5 metters and the
-  desired is 1 metter.
+  s.buildFrom(0, 0, 5, log(5/1)); // The current depth is 5 meters and the desired is 1 meter.
 
   vpMatrix L_x = s.interaction();
   \endcode
