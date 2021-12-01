@@ -198,35 +198,51 @@ If you have an [IDS](https://en.ids-imaging.com/) camera you may install IDS Sof
 - in the `"Firmware"` tab, select `"uEye (IDS Software Suite)"` and press `"SHOW"` button
 - in the `"Operating system"` tab select `"Linux"` or `"Linux ARM"` and press the search button
 - in the `"Software package"` section you should see the last `"IDS Software Suite"` version you may download.
-  At the time this tutorial was written, we downloaded `"IDS Software Suite 4.93"` version.
+  At the time this tutorial was written, we downloaded `"IDS Software Suite 4.95 for Linux 64-bit - archive file"` version.
 
 Once downloaded, you may unzip the archive
 \verbatim
-$ tar xvzf ids-software-suite-linux-4.93.0-64.tgz
+$ unzip ids-software-suite-linux-64-4.95-archive.zip
 \endverbatim
 
-Open the README file `ueye-linux-readme-*.html` and check compatibility list
-\verbatim
-Below is a list of successfully tested distributions for the current IDS Software Suite:
-
-    Debian 10.2 (buster)
-    Debian 9.11 (stretch)
-    Ubuntu 19.10 (eoan)
-    Ubuntu 18.04.3 LTS (bionic)
-\endverbatim
-
-If the Software Suite is compatible with your OS, proceed to the installation:
+and proceed to the installation running:
 \verbatim
 $ sudo sh ./ueye_*.run
 \endverbatim
 
-After installation, you may start the uEye daemons separately with systemd by typing:
+\note At this point if the installer detects that a version of this driver is already installed:
 \verbatim
-$ sudo systemctl start ueyeethdrc
-$ sudo systemctl start ueyeusbdrc
+$ sudo sh ./ueye_*.run
+4.95.0.1134
+...
+Error: There is an old version of this driver installed. Please uninstall first.
+\endverbatim
+you need to uninstall the old version running:
+\verbatim
+$ sudo /usr/bin/ueyesetup -r all
+\endverbatim
+Now, you should be able to proceed to the installation running:
+\verbatim
+$ sudo sh ./ueye_*.run
 \endverbatim
 
+Documentation is available in `/opt/ids/ueye/manual/en/index.html`.
+
 To test the Sofware Suite installation, plug a camera and run `ueyedemo` binary.
+\verbatim
+$ ueyedemo
+\endverbatim
+
+\note If you get the following error that occured in our case with IDS Software Suite 4.95 and Ubuntu 18.04:
+\verbatim
+$ ueyedemo
+ueyedemo: error while loading shared libraries: libomp.so.5: cannot open shared object file: No such file or directory
+\endverbatim
+you may install libomp5 running:
+\verbatim
+$ sudo apt install libomp5
+\endverbatim
+Now you should be able to run `ueyedemo`:
 \verbatim
 $ ueyedemo
 \endverbatim

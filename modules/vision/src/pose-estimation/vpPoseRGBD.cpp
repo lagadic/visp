@@ -447,12 +447,12 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
     }
   }
 
-  unsigned int nb_points_3d = 0;
+  size_t nb_points_3d = 0;
 
   if (coplanar_points) {
-    nb_points_3d = static_cast<unsigned int>(tag_points_3d.size() / 3);
+    nb_points_3d = tag_points_3d.size() / 3;
   } else {
-    nb_points_3d = static_cast<unsigned int>(nb_points_3d_non_planar / 3);
+    nb_points_3d = nb_points_3d_non_planar / 3;
   }
 
   if (nb_points_3d > 4) {
@@ -485,7 +485,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
       }
     } else {
       // If the tags is not coplanar, estimate the plane for each tags
-      int count = 0;
+      size_t count = 0;
 
       for (size_t k = 0; k < tag_points_3d_nonplanar.size(); k++) {
         std::vector<double> rec_points_3d = tag_points_3d_nonplanar[k];
