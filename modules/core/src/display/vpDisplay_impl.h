@@ -306,29 +306,34 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
   z.track(cMo);
 
   vpImagePoint ipo, ip1;
+  vpRect bbox(0, 0, I.getWidth(), I.getHeight());
 
   if (color == vpColor::none) {
     vpMeterPixelConversion::convertPoint(cam, o.p[0], o.p[1], ipo);
+    if (bbox.isInside(ipo)) {
+      vpMeterPixelConversion::convertPoint(cam, x.p[0], x.p[1], ip1);
+      vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, vpColor::red, 4 * thickness, 2 * thickness, thickness);
 
-    vpMeterPixelConversion::convertPoint(cam, x.p[0], x.p[1], ip1);
-    vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, vpColor::red, 4 * thickness, 2 * thickness, thickness);
+      vpMeterPixelConversion::convertPoint(cam, y.p[0], y.p[1], ip1);
+      vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, vpColor::green, 4 * thickness, 2 * thickness, thickness);
 
-    vpMeterPixelConversion::convertPoint(cam, y.p[0], y.p[1], ip1);
-    vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, vpColor::green, 4 * thickness, 2 * thickness, thickness);
+      vpMeterPixelConversion::convertPoint(cam, z.p[0], z.p[1], ip1);
+      vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, vpColor::blue, 4 * thickness, 2 * thickness, thickness);
 
-    vpMeterPixelConversion::convertPoint(cam, z.p[0], z.p[1], ip1);
-    vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, vpColor::blue, 4 * thickness, 2 * thickness, thickness);
+    }
   } else {
     vpMeterPixelConversion::convertPoint(cam, o.p[0], o.p[1], ipo);
+    if (bbox.isInside(ipo)) {
+      vpMeterPixelConversion::convertPoint(cam, x.p[0], x.p[1], ip1);
+      vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, color, 4 * thickness, 2 * thickness, thickness);
 
-    vpMeterPixelConversion::convertPoint(cam, x.p[0], x.p[1], ip1);
-    vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, color, 4 * thickness, 2 * thickness, thickness);
+      vpMeterPixelConversion::convertPoint(cam, y.p[0], y.p[1], ip1);
+      vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, color, 4 * thickness, 2 * thickness, thickness);
 
-    vpMeterPixelConversion::convertPoint(cam, y.p[0], y.p[1], ip1);
-    vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, color, 4 * thickness, 2 * thickness, thickness);
+      vpMeterPixelConversion::convertPoint(cam, z.p[0], z.p[1], ip1);
+      vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, color, 4 * thickness, 2 * thickness, thickness);
 
-    vpMeterPixelConversion::convertPoint(cam, z.p[0], z.p[1], ip1);
-    vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, color, 4 * thickness, 2 * thickness, thickness);
+    }
   }
 }
 
