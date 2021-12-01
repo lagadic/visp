@@ -105,7 +105,7 @@ $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv
 
 \subsubsection install_ubuntu_3rdparty_realsense librealsense 2.x 3rd party
 
-I you have an Intel RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x in order to use vpRealSense2 class.
+If you have an Intel RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x in order to use vpRealSense2 class.
 Otherwise you can skip this section.
 
 Installation instructions are given in the <a href="https://github.com/IntelRealSense/librealsense/blob/master/doc/installation.md">tutorial</a>.
@@ -149,6 +149,43 @@ Following the <a href="https://github.com/IntelRealSense/librealsense/blob/maste
         $ ./examples/capture/rs-capture
 
 If you are able to visualize the images, it means that you succeed in librealsense installation.
+
+\subsubsection install_ubuntu_3rdparty_occipital_structure libStructure 3rd party
+
+If you have an Occipital Structure Core sensor (Monochrome or color), you may install libStructure in order to use vpOccipitalStructure class.
+Otherwise you can skip this section.
+
+Occipital Structure Core SDK contains libStructure. To install this SDK:
+- Go to https://developer.structure.io/sdk/
+- Join the Developper program to be able to download the SDK.
+- Retrieve your invitation from https://developer.structure.io/sdk/retrieve
+- You'll then receive an email containing the link to the download page,
+- Download `Structure SDK (Cross-Platform)`.
+- Extract the folder `StructureSDK-CrossPlatform-0.9` from the downloaded file to the already created directory in `$VISP_WS`.
+
+The SDK contains pre-built libraries for Linux, Windows and macOS.
+In order that ViSP detects Structure SDK header files and libraries, you have to set `OCCIPITAL_STRUCTURE_DIR` environment
+variable. Proceed as follows:
+\verbatim
+$ echo "export OCCIPITAL_STRUCTURE_DIR=$VISP_WS/StructureSDK-CrossPlatform-0.9" >> ~/.bashrc
+$ source ~/.bashrc
+\endverbatim
+
+If you don't want to rebuild the project, you can skip the next step.
+
+<b>2. Build Occipital Structure Core SDK samples</b>
+
+Follow these steps to build sample applications provided with the SDK:
+\verbatim
+$ sudo $OCCIPITAL_STRUCTURE_DIR/DriverAndFirmware/Linux/Install-CoreDriver-Udev-Linux.sh
+$ cd $OCCIPITAL_STRUCTURE_DIR
+$ mkdir build
+$ cd build
+$ cmake -G'Unix Makefiles' -DCMAKE_BUILD_TYPE=Release ..
+$ make Samples
+\endverbatim
+
+After completion, sample apps may be run from the Apps directory.
 
 \subsubsection install_ubuntu_3rdparty_flycapture FlyCapture 3rd party
 
