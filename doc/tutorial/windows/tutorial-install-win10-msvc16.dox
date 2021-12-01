@@ -119,6 +119,7 @@ ViSP is interfaced with several 3rd party libraries. The
 To use optimized matrix operations you may install \ref install_win10_msvc16_3rdparty_eigen.
 We recommend also to install \ref install_win10_msvc16_3rdparty_opencv in the workspace. If you have an
 Intel Realsense depth camera you may also install \ref install_win10_msvc16_3rdparty_realsense.
+If you have an Occipital Structure Core sensor, you may also install \ref install_win10_msvc16_3rdparty_occ_structure.
 If your camera is a PointGrey you may install \ref install_win10_msvc16_3rdparty_flycapture, while
 if your camera is a Basler, you may rather install \ref install_win10_msvc16_3rdparty_pylon. Other 3rd
 parties are optional and should be considered only by expert developers.
@@ -236,6 +237,52 @@ At the time this tutorial was written, we downloaded `Intel.RealSense.SDK-WIN10-
 To finalize the installation, add the location of `realsense2.dll` library in the `Path` environment variable. 
 Open the "Edit environment variable" UI, and modify `Path` to add a new line with
 `C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64`.
+
+\subsubsection install_win10_msvc16_3rdparty_occ_structure libStructure 3rd party
+
+If you have an Occipital Structure Core device (Monochrome or color), you may install the SDK provided by Occipital in
+order to use vpOccipitalStructure class. Otherwise you can skip this section.
+
+<b>1. Download Occipital Structure Core SDK</b>
+
+Occipital Structure Core SDK contains libStructure. To install this SDK:
+- Go to https://developer.structure.io/sdk/
+- Join the Developper program to be able to download the SDK.
+- Retrieve your invitation from https://developer.structure.io/sdk/retrieve
+- You'll then receive an email containing the link to the download page,
+- Download `Structure SDK (Cross-Platform)`.
+- Extract the folder `StructureSDK-CrossPlatform-0.9` from the downloaded file to the already created directory in `VISP_WS`.
+
+The SDK contains pre-built libraries for Linux, Windows and macOS.
+In order that ViSP detects Structure SDK header files and libraries, you have to set `OCCIPITAL_STRUCTURE_DIR` environment
+variable. Start up a `cmd` Command Prompt and enter:
+\verbatim
+C:\> setx OCCIPITAL_STRUCTURE_DIR "%VISP_WS%\StructureSDK-CrossPlatform-0.9"
+C:\> exit
+\endverbatim
+
+If you don't want to rebuild the project, you can skip the next step.
+
+<b>2. Build Occipital Structure Core SDK samples</b>
+
+Follow these steps to build sample applications provided with the SDK:
+- Run `DriverAndFirmware\Windows\OCDriverInstallere.exe` to install the Structure Core USB driver.
+- Generate the Visual Studio solution and build sample applications:
+\verbatim
+> cd %VISP_WS%\StructureSDK-CrossPlatform-0.9
+> mkdir build
+> cd build
+> cmake -G "Visual Studio 16 2019 Win64" ..
+> cmake --build . --target Samples --config Release
+\endverbatim
+
+After completion, sample apps may be run from the Apps directory.
+
+<b>3. Complete Occipital Structure SDK installation</b>
+
+To finalize the installation, add the location of `Structure.dll` library in the `Path` environment variable.
+Open the "Edit environment variable" UI, and modify `Path` to add a new line with
+`C:\visp-ws\StructureSDK-CrossPlatform-0.9\Libraries\Structure\Windows\x86_64\`.
 
 \subsubsection install_win10_msvc16_3rdparty_pcl PCL 3rd party
 
