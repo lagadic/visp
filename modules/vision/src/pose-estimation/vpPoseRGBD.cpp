@@ -404,7 +404,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
 
   // Otherwise the vector of planes will be used to compute each plane for each vector
   std::vector<std::vector<double> > tag_points_3d_nonplanar;
-  int nb_points_3d_non_planar = 0;
+  size_t nb_points_3d_non_planar = 0;
 
   // Loop through each object, compute 3d point cloud of each
   for (size_t i = 0; i < corners.size(); i++) {
@@ -490,7 +490,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
       for (size_t k = 0; k < tag_points_3d_nonplanar.size(); k++) {
         std::vector<double> rec_points_3d = tag_points_3d_nonplanar[k];
         double tag_normalized_weights = 0;
-      
+
         if (rec_points_3d.size() >= 9) {
           // The array must has at least 3 points for the function estimatePlaneEquationSVD not to crash
           estimatePlaneEquationSVD(rec_points_3d, plane_equation, centroid, tag_normalized_weights);
