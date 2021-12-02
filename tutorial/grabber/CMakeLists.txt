@@ -52,6 +52,7 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-parameter")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-pessimizing-move")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-copy")
 endif()
 
 if(CXX_FLAGS_MUTE_WARNINGS)
