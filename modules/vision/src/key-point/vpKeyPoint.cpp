@@ -4727,7 +4727,6 @@ public:
 
 private:
   const cv::Mat mask;
-  MaskPredicate &operator=(const MaskPredicate &);
 };
 
 void vpKeyPoint::KeyPointsFilter::runByPixelsMask(std::vector<cv::KeyPoint> &keypoints, const cv::Mat &mask)
