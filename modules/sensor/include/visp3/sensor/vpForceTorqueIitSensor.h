@@ -61,7 +61,7 @@
   \ingroup group_sensor_ft
 
   This class is a wrapper over six axis load measurement (forces and torques) from IIT (ISTITUTO ITALIANO DI TECNOLOGIA)
-  sell by [Alberobotics](https://alberobotics.it/sensors-data-sheet/file).
+  sell by [Alberobotics](https://alberobotics.it/).
 
   The following example shows how to use this class to stream force-torque data at 1kHz and print a measurement each
   second.
