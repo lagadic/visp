@@ -3,6 +3,8 @@
 # This test has to run on a Raspberry Pi connected throw a USB
 # to serial adapter to a laptop.
 
+from __future__ import print_function
+
 import time
 import serial
 
@@ -15,9 +17,9 @@ ser = serial.Serial(
 while True:
   data = ser.read(9)
   if len(data) > 0:
-    print 'Got:', len(data), 'data:', data
+    print('Got:', len(data), 'data:', data)
 
   time.sleep(0.5)
-  print 'not blocked'
+  print('not blocked')
 
 ser.close()
