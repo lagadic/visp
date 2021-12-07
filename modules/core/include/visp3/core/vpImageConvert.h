@@ -109,6 +109,9 @@ public:
   static void createDepthHistogram( const vpImage< uint16_t > &src_depth, vpImage< vpRGBa > &dest_rgba );
   static void createDepthHistogram( const vpImage< uint16_t > &src_depth, vpImage< unsigned char > &dest_depth );
 
+  static void createDepthHistogram( const vpImage< float > &src_depth, vpImage< vpRGBa > &dest_depth );
+  static void createDepthHistogram( const vpImage< float > &src_depth, vpImage< unsigned char > &dest_depth );
+
   static void convert( const vpImage< unsigned char > &src, vpImage< vpRGBa > &dest );
   static void convert( const vpImage< vpRGBa > &src, vpImage< unsigned char > &dest, unsigned int nThreads = 0 );
 
