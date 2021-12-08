@@ -18,6 +18,7 @@ set(tutorial_cpp
   tutorial-grabber-opencv-threaded.cpp
   tutorial-grabber-realsense.cpp
   tutorial-grabber-realsense-T265.cpp
+  tutorial-grabber-structure-core.cpp
   tutorial-grabber-v4l2.cpp
   tutorial-grabber-v4l2-threaded.cpp
   tutorial-video-reader.cpp
@@ -60,6 +61,10 @@ if(CXX_FLAGS_MUTE_WARNINGS)
   visp_set_source_file_compile_flag(tutorial-grabber-realsense.cpp ${CXX_FLAGS_MUTE_WARNINGS})
   visp_set_source_file_compile_flag(tutorial-grabber-realsense-T265.cpp ${CXX_FLAGS_MUTE_WARNINGS})
   visp_set_source_file_compile_flag(tutorial-grabber-multiple-realsense.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+endif()
+
+if(VISP_HAVE_OCCIPITAL_STRUCTURE)
+  visp_set_source_file_compile_flag(tutorial-grabber-structure-core.cpp -Wno-reorder -Wno-unused-function -Wno-unused-parameter -Wno-sign-compare -Wno-overloaded-virtual -Wno-ignored-qualifiers -Wno-maybe-uninitialized)
 endif()
 
 foreach(cpp ${tutorial_cpp})
