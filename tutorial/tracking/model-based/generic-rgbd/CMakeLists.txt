@@ -7,7 +7,8 @@ find_package(VISP REQUIRED visp_core visp_mbt visp_io visp_gui visp_sensor)
 # set the list of source files
 set(tutorial_cpp
   tutorial-mb-generic-tracker-rgbd.cpp
-  tutorial-mb-generic-tracker-rgbd-realsense.cpp)
+  tutorial-mb-generic-tracker-rgbd-realsense.cpp
+  tutorial-mb-generic-tracker-rgbd-structure-core.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
@@ -32,6 +33,11 @@ foreach(cpp ${tutorial_cpp})
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
   endif()
 
+  if(VISP_HAVE_OCCIPITAL_STRUCTURE)
+    # Add specific build flag to turn off warnings coming from librealsense 3rd party
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-maybe-uninitialized")
+  endif()
+
   if(VISP_HAVE_PCL)
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-missing-field-initializers")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-shadow")
@@ -50,3 +56,4 @@ endforeach()
 # Copy the data files
 visp_copy_dir(tutorial-mb-generic-tracker-rgbd.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data model)
 visp_copy_dir(tutorial-mb-generic-tracker-rgbd-realsense.cpp "${CMAKE_CURRENT_SOURCE_DIR}" model)
+visp_copy_dir(tutorial-mb-generic-tracker-rgbd-structure-core.cpp "${CMAKE_CURRENT_SOURCE_DIR}" model)
