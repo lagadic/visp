@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2021 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -38,40 +38,28 @@
 #
 #############################################################################
 
-set(OCCIPITAL_STRUCTURE_INC_SEARCH_PATH /usr/local/include)
-set(OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH /usr/local/lib)
+set(OCCIPITAL_STRUCTURE_INC_SEARCH_PATH)
+set(OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH)
 
 if(MSVC)
-#  list(APPEND OCCIPITAL_STRUCTURE_INC_SEARCH_PATH "C:/libST/Libraries/Structure/Headers/ST")
+  list(APPEND OCCIPITAL_STRUCTURE_INC_SEARCH_PATH "$ENV{OCCIPITAL_STRUCTURE_DIR}/Libraries/Structure/Headers/")
+  list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH "$ENV{OCCIPITAL_STRUCTURE_DIR}/Libraries/Structure/Windows/x86_64/")
 
-  list(APPEND OCCIPITAL_STRUCTURE_INC_SEARCH_PATH $ENV{OCCIPITAL_STRUCTURE_HOME}/Libraries/Structure/Headers/)
-  list(APPEND OCCIPITAL_STRUCTURE_INC_SEARCH_PATH $ENV{OCCIPITAL_STRUCTURE_DIR}/Libraries/Structure/Headers/)
   list(APPEND OCCIPITAL_STRUCTURE_INC_SEARCH_PATH "C:/Program Files (x86)/Structure SDK/Libraries/Structure/Headers/")
-
-  list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH $ENV{OCCIPITAL_STRUCTURE_HOME}/Libraries/Structure/Windows/x86_64/)
-  list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH $ENV{OCCIPITAL_STRUCTURE_DIR}/Libraries/Structure/Windows/x86_64/)
-
-#  if(CMAKE_CL_64)
-#    list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH "C:/Program Files (x86)/Structure SDK/Libraries/Structure/Libraries/Windows/x86_64")
-#  else()
-#    list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH "C:/Program Files (x86)/Structure SDK/Libraries/Structure/Libraries/Windows/x86")
-#  endif()
-else()
-  list(APPEND OCCIPITAL_STRUCTURE_INC_SEARCH_PATH /usr/include)
-  list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH /usr/lib)
-
-  list(APPEND OCCIPITAL_STRUCTURE_INC_SEARCH_PATH $ENV{OCCIPITAL_STRUCTURE_HOME}/Libraries/Structure/Headers/)
+  list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH "C:/Program Files (x86)/Libraries/Structure/Windows/x86_64/")
+elseif(APPLE)
+  list(APPEND OCCIPITAL_STRUCTURE_INC_SEARCH_PATH "$ENV{OCCIPITAL_STRUCTURE_DIR}/Libraries/Structure/Headers/")
+  list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH "$ENV{OCCIPITAL_STRUCTURE_DIR}/Libraries/Structure/macOS/x86_64/")
+elseif(UNIX)
+  list(APPEND OCCIPITAL_STRUCTURE_INC_SEARCH_PATH "$ENV{OCCIPITAL_STRUCTURE_DIR}/Libraries/Structure/Headers/")
   if(X86_64)
-    list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH $ENV{OCCIPITAL_STRUCTURE_HOME}/Libraries/Structure/Linux/x86_64/)
+    list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH "$ENV{OCCIPITAL_STRUCTURE_DIR}/Libraries/Structure/Linux/x86_64/")
   endif()
   if(ARM)
-    list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH $ENV{OCCIPITAL_STRUCTURE_HOME}/Libraries/Structure/Linux/arm64/)
+    list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH "$ENV{OCCIPITAL_STRUCTURE_DIR}/Libraries/Structure/Linux/arm64/")
   endif()
-
-  list(APPEND OCCIPITAL_STRUCTURE_INC_SEARCH_PATH $ENV{OCCIPITAL_STRUCTURE_DIR}/Libraries/Structure/Headers/)
-  list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH $ENV{OCCIPITAL_STRUCTURE_DIR}/Libraries/Structure/Linux/x86_64)
-  list(APPEND OCCIPITAL_STRUCTURE_INC_SEARCH_PATH ${OCCIPITAL_STRUCTURE_DIR}/Libraries/Structure/Headers/)
-  list(APPEND OCCIPITAL_STRUCTURE_LIB_SEARCH_PATH ${OCCIPITAL_STRUCTURE_DIR}/Libraries/Structure/Linux)
+else()
+  return()
 endif()
 
 find_path(OCCIPITAL_STRUCTURE_INCLUDE_DIRS
