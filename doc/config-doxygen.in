@@ -2179,6 +2179,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_LIBFREENECT \
                          VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES \
                          VISP_HAVE_LIBUSB_1 \
+                         VISP_HAVE_OCCIPITAL_STRUCTURE \
                          VISP_HAVE_OGRE \
                          VISP_HAVE_OGRE_PLUGINS_PATH \
                          VISP_HAVE_OGRE_RESOURCES_PATH \
@@ -2200,7 +2201,6 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_REALSENSE \
                          VISP_HAVE_REALSENSE_VERSION=0x020000 \
                          VISP_HAVE_REALSENSE2 \
-                         VISP_HAVE_OCCIPITAL_STRUCTURE \
                          VISP_HAVE_SOWIN \
                          VISP_HAVE_SOQT \
                          VISP_HAVE_SOXT \
