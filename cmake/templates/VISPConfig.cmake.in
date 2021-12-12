@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2021 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -230,6 +230,7 @@ set(VISP_HAVE_LIBFREENECT_OLD "@VISP_HAVE_LIBFREENECT_OLD@")
 set(VISP_HAVE_LIBUSB_1       "@VISP_HAVE_LIBUSB_1@")
 set(VISP_HAVE_MKL            "@VISP_HAVE_MKL@")
 set(VISP_HAVE_NETLIB         "@VISP_HAVE_NETLIB@")
+set(VISP_HAVE_OCCIPITAL_STRUCTURE "@VISP_HAVE_OCCIPITAL_STRUCTURE@")
 set(VISP_HAVE_OGRE           "@VISP_HAVE_OGRE@")
 set(VISP_HAVE_OIS            "@VISP_HAVE_OIS@")
 set(VISP_HAVE_OPENBLAS       "@VISP_HAVE_OPENBLAS@")
@@ -251,7 +252,6 @@ set(VISP_HAVE_QBDEVICE       "@VISP_HAVE_QBDEVICE@")
 set(VISP_HAVE_QT             "@VISP_HAVE_QT@")
 set(VISP_HAVE_REALSENSE      "@VISP_HAVE_REALSENSE@")
 set(VISP_HAVE_REALSENSE2     "@VISP_HAVE_REALSENSE2@")
-set(VISP_HAVE_OCCIPITAL_STRUCTURE      "@VISP_HAVE_OCCIPITAL_STRUCTURE@")
 set(VISP_HAVE_SOQT           "@VISP_HAVE_SOQT@")
 set(VISP_HAVE_SOWIN          "@VISP_HAVE_SOWIN@")
 set(VISP_HAVE_SOXT           "@VISP_HAVE_SOXT@")
