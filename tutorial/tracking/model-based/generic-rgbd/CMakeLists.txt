@@ -36,6 +36,7 @@ foreach(cpp ${tutorial_cpp})
   if(VISP_HAVE_OCCIPITAL_STRUCTURE)
     # Add specific build flag to turn off warnings coming from librealsense 3rd party
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-maybe-uninitialized")
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-parameter")
   endif()
 
   if(VISP_HAVE_PCL)
