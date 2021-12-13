@@ -51,6 +51,9 @@
 #include <pcl/common/common_headers.h>
 #endif
 
+#include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpImage.h>
+
 /*!
   \class vpOccipitalStructure
 
@@ -225,9 +228,9 @@ struct SessionDelegate : ST::CaptureSessionDelegate {
         m_cameraType = session->getCameraType();
         break;
       case ST::CaptureSessionEventId::Disconnected:
+        break;
       case ST::CaptureSessionEventId::Error:
-        printf("Capture session error\n");
-        exit(1);
+        throw vpException(vpException::fatalError, "Capture session error");
         break;
       default:
         printf("Capture session event unhandled\n");
