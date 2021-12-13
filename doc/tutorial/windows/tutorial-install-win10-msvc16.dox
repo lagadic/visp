@@ -233,12 +233,13 @@ Open the "Edit environment variable" UI, and modify `Path` to add a new line wit
 
 \subsubsection install_win10_msvc16_3rdparty_occ_structure libStructure 3rd party
 
-If you have an Occipital Structure Core device (Monochrome or color), you may install the SDK provided by Occipital in
+If you have an Occipital Structure Core device (monochrome or color), you may install the SDK provided by Occipital in
 order to use vpOccipitalStructure class. Otherwise you can skip this section.
 
-<b>1. Download Occipital Structure Core SDK</b>
+Occipital Structure SDK contains `libStructure` pre-built library.
 
-Occipital Structure Core SDK contains libStructure. To install this SDK:
+<b>1. To install this SDK</b>
+
 - Go to https://developer.structure.io/sdk/
 - Join the Developper program to be able to download the SDK.
 - Retrieve your invitation from https://developer.structure.io/sdk/retrieve
@@ -254,12 +255,11 @@ C:\> setx OCCIPITAL_STRUCTURE_DIR "%VISP_WS%\StructureSDK-CrossPlatform-0.9"
 C:\> exit
 \endverbatim
 
-If you don't want to rebuild the project, you can skip the next step.
+<b>2. Optionally build Occipital Structure SDK samples</b>
 
-<b>2. Build Occipital Structure Core SDK samples</b>
-
-Follow these steps to build sample applications provided with the SDK:
-- Run `DriverAndFirmware\Windows\OCDriverInstallere.exe` to install the Structure Core USB driver.
+As explained in `$VISP_WS/StructureSDK-CrossPlatform-0.9/Documentation/windows.html` you can optionally
+follow these steps to build sample applications provided with the SDK:
+- Run `DriverAndFirmware\Windows\OCDriverInstaller.exe` to install the Structure Core USB driver.
 - Generate the Visual Studio solution and build sample applications:
 \verbatim
 > cd %VISP_WS%\StructureSDK-CrossPlatform-0.9
@@ -275,7 +275,7 @@ After completion, sample apps may be run from the Apps directory.
 
 To finalize the installation, add the location of `Structure.dll` library in the `Path` environment variable.
 Open the "Edit environment variable" UI, and modify `Path` to add a new line with
-`C:\visp-ws\StructureSDK-CrossPlatform-0.9\Libraries\Structure\Windows\x86_64\`.
+`%VISP_WS%\StructureSDK-CrossPlatform-0.9\Libraries\Structure\Windows\x86_64\`.
 
 \subsubsection install_win10_msvc16_3rdparty_pcl PCL 3rd party
 
