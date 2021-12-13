@@ -43,14 +43,13 @@
 #include <condition_variable>
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpRowVector.h>
-#include <visp3/core/vpPoint.h>
+
+#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <ST/CaptureSession.h>
 
 #ifdef VISP_HAVE_PCL
 #include <pcl/common/common_headers.h>
 #endif
-
-#include <ST/CaptureSession.h>
 
 /*!
   \class vpOccipitalStructure
@@ -350,4 +349,5 @@ class VISP_EXPORT vpOccipitalStructure
     #endif
 };
 
+#endif
 #endif

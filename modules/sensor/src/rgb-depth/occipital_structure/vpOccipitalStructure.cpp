@@ -42,8 +42,12 @@
 #include <cstring>
 #include <thread>
 #include <functional>
+
+#include <ST/Utilities.h>
+
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/core/vpPoint.h>
 #include <visp3/sensor/vpOccipitalStructure.h>
 
 #define MANUAL_POINTCLOUD 1
