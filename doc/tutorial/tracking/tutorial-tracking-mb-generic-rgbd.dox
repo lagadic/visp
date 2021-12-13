@@ -5,7 +5,7 @@
 
 \section mb_rgbd_intro Introduction
 
-This tutorial describes how to use the generic markerless model-based tracker \cite Comport06b, \cite Trinh18a implemented in vpMbGenericTracker with data acquired by a RGB-D camera like the Intel RealSense devices (SR300 or D400 series). You are advised to have read the \ref tutorial-tracking-mb-generic to have an overview of the generic model-based tracker working on images acquired by a color camera that uses moving-edges and keypoints as visual features. We suggest also to follow \ref tutorial-tracking-mb-generic-stereo to learn how to consider stereo cameras, since a RGB-D camera is in a sense a stereo camera, with the left camera providing the color image and the right the depth image.
+This tutorial describes how to use the generic markerless model-based tracker \cite Comport06b, \cite Trinh18a implemented in vpMbGenericTracker with data acquired by a RGB-D camera like the Intel RealSense devices (SR300 or D400 series) or Occipital Structure devices (Structure Core color or monochrome cameras). You are advised to have read the \ref tutorial-tracking-mb-generic to have an overview of the generic model-based tracker working on images acquired by a color camera that uses moving-edges and keypoints as visual features. We suggest also to follow \ref tutorial-tracking-mb-generic-stereo to learn how to consider stereo cameras, since a RGB-D camera is in a sense a stereo camera, with the left camera providing the color image and the right the depth image.
 
 Note that all the material (source code, input video, CAD model or XML settings files) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
@@ -45,7 +45,13 @@ In this video, the same setup is used but with:
 
 \subsection mb_rgbd_intro_3rd_parties Considered third-parties
 
-Depending on your use case the following optional third-parties may be used by the tracker. Make sure ViSP was build with the appropriate 3rd parties:
+We recall that this tutorial is designed to work with either Intel Realsense or Occipital RGB-D cameras.
+If you want to run the use cases below, depending on your RGB-D device, you need to install the appropriate SDK as described in the following tutorials (see section "librealsense 3rd party" or "libStructure 3rd party" respectively):
+  - \ref tutorial-install-ubuntu
+  - \ref tutorial-install-win10-msvc16
+  - \ref tutorial-install-osx-homebrew
+
+Moreover, depending on your use case the following optional third-parties may be used by the tracker. Make sure ViSP was build with the appropriate 3rd parties:
 - \c OpenCV: Essential if you want to use the keypoints as visual features that are detected and tracked thanks to the KLT tracker. This 3rd party may be also useful to consider input videos (mpeg, png, jpeg...).
 - \c Point Cloud Library: This 3rd party is optional but could be used if your RGB-D sensor provides the depth data as a point cloud. Notice that the source code explained in this tutorial doesn't run if you don't have a version of ViSP build with PCL as 3rd party. Note also that you don't need to install PCL if you don't want to consider depth as visual feature.
 - \c Ogre \c 3D: This 3rd party is optional and could be difficult to install on OSX and Windows. To begin with the tracker we don't recommend to install it. \c Ogre \c 3D allows to enable \ref mb_generic_settings_visibility_ogre.
@@ -219,9 +225,9 @@ The following table sums up how to call the different methods based on the camer
 \note As the trackers are stored in an alphabetic order internally, you have to match the method parameters with the correct 
 tracker position in the map in the stereo cameras case.
 
-\section mb_rgbd_example Example code
+\section mb_rgbd_example Dataset use case
 
-\subsection mb_rgbd_example_code Tracking a cube with RGB-D data
+\subsection mb_rgbd_example_code Cube tracking on a RGB-D dataset
 
 We provide hereafter an example implemented in tutorial-mb-generic-tracker-rgbd.cpp that shows how to track a cube modeled in cao format using moving-eges, keypoints and dense depth as visual features. The input data (color image, depth map and point clould) were acquired by a RealSense RGB-D camera.
 
@@ -309,9 +315,12 @@ To display the model with the estimated pose and also the object frame:
 
 \snippet tutorial-mb-generic-tracker-rgbd.cpp Display
 
-\section mb_rgbd_use_case Use case with an Intel Realsense camera
+\section mb_rgbd_use_case Intel Realsense camera use case
 
-Hereafter we provide the information to test the tracker with different objects (cube, teabox, lego-square) with an Intel Realsense D435 or SR300 camera.
+Hereafter we provide the information to test the tracker with different objects (cube, teabox, lego-square) with an Intel Realsense D435 or SR300 RGB-D camera. Here we suppose that librealsense 3rd party is installed, and that ViSP is build with librealsense support as explained in the following tutorials:
+  - \ref tutorial-install-ubuntu
+  - \ref tutorial-install-win10-msvc16
+  - \ref tutorial-install-osx-homebrew
 
 Enter model-based tracker tutorial build folder:
 \code
@@ -325,7 +334,7 @@ To see the command line options that are available run:
 $ ./tutorial-mb-generic-tracker-rgbd-realsense --help
 \endcode
 
-\subsection mb_rgbd_use_case_cube Use Realsense camera on 4.2 cm cube object
+\subsection mb_rgbd_use_case_cube Tracking a 4.2 cm cube
 
 \note Here we consider a 4.2 cm cube. If your cube size differ, modify `model/cube/cube.cao` file replacing `0.042` with the appropriate value expressed in meters.
 
@@ -358,7 +367,7 @@ You can now use this learning to automize tracker initialization with `--auto_in
 $ ./tutorial-mb-generic-tracker-rgbd-realsense --model_color model/cube/cube.cao --auto_init
 \endcode
 
-\subsection mb_rgbd_use_case_teabox Use Realsense camera on teabox object
+\subsection mb_rgbd_use_case_teabox Tracking a teabox
 
 \note Here we consider a 16.5 x 6.8 x 8 cm box [length x width x height]. If your cube size differ, modify `model/cube/cube.cao` with the appropriate size values expressed in meters.
 
@@ -391,7 +400,7 @@ You can now use this learning to automize tracker initialization with `--auto_in
 $ ./tutorial-mb-generic-tracker-rgbd-realsense --model_color model/teabox/teabox.cao --auto_init
 \endcode
 
-\subsection mb_rgbd_use_case_lego_Square Use Realsense camera on a lego square
+\subsection mb_rgbd_use_case_lego_Square Tracking a lego square
 
 Here we consider an object made with four 2x4 lego bricks assembled as a square. To track this object with manual initialization, run:
 \code
@@ -420,6 +429,122 @@ Save learning from 2 images in file: learning/data-learned.bin
 You can now use this learning to automize tracker initialization with `--auto_init` option:
 \code
 $ ./tutorial-mb-generic-tracker-rgbd-realsense --model_color model/lego-square/lego-square.cao --auto_init
+\endcode
+
+\section mb_rgbd_use_case_occipital Occipital Structure Core camera use case
+
+Hereafter we provide the information to test the tracker with different objects (cube, teabox, lego-square) with an Occipital Structure Core color or monochrome RGB-D camera. Here we suppose that libStructure 3rd party is installed, and that ViSP is build with Occiptal Structure support as explained in the following tutorials:
+  - \ref tutorial-install-ubuntu
+  - \ref tutorial-install-win10-msvc16
+  - \ref tutorial-install-osx-homebrew
+
+Enter model-based tracker tutorial build folder:
+\code
+$ cd $VISP_WS/visp-build/tutorial/tracking/model-based/generic-rgbd
+\endcode
+
+There is `tutorial-mb-generic-tracker-rgbd-structure-core` binary that corresponds to the build of tutorial-mb-generic-tracker-rgbd-structure-core.cpp example. This example is an extension of tutorial-mb-generic-tracker-rgbd.cpp that was explained in \ref mb_rgbd_started section.
+
+To see the command line options that are available run:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-structure-core --help
+\endcode
+
+\subsection mb_rgbd_use_case_occipital_cube Tracking a 4.2 cm cube
+
+\note Here we consider a 4.2 cm cube. If your cube size differ, modify `model/cube/cube.cao` file replacing `0.042` with the appropriate value expressed in meters.
+
+To track a 4.2 cm cube with manual initialization, run:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-structure-core --model_color model/cube/cube.cao
+\endcode
+
+You should obtain similar results:
+
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/1pRp-7yO09E" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+
+Now if the tracker is working, you can learn the object adding `--learn` command line option:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-strcuture-core --model_color model/cube/cube.cao --learn
+\endcode
+
+Once initialized by 4 user clicks, use the left click to learn on one or two images and then the right click to quit. In the terminal you should see printings like:
+\code
+...
+Data learned
+Data learned
+Save learning from 2 images in file: learning/data-learned.bin
+\endcode
+
+You can now use this learning to automize tracker initialization with `--auto_init` option:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-rstructure-core --model_color model/cube/cube.cao --auto_init
+\endcode
+
+\subsection mb_rgbd_use_case_occipital_teabox Tracking a teabox
+
+\note Here we consider a 16.5 x 6.8 x 8 cm box [length x width x height]. If your cube size differ, modify `model/cube/cube.cao` with the appropriate size values expressed in meters.
+
+To track the 16.5 x 6.8 x 8 cm teabox with manual initialization, run:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-structure-core --model_color model/teabox/teabox.cao
+\endcode
+
+You should obtain similar results:
+
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/SwjWFM7srOA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+
+Now if the tracker is working, you can learn the object adding `--learn` command line option:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-structure-core --model_color model/teabox/teabox.cao --learn
+\endcode
+
+Once initialized by 4 user clicks, use the left click to learn on one or two images and then the right click to quit. In the terminal you should see printings like:
+\code
+...
+Data learned
+Data learned
+Save learning from 2 images in file: learning/data-learned.bin
+\endcode
+
+You can now use this learning to automize tracker initialization with `--auto_init` option:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-structure-core --model_color model/teabox/teabox.cao --auto_init
+\endcode
+
+\subsection mb_rgbd_use_case_occipital_lego_Square Tracking a lego square
+
+Here we consider an object made with four 2x4 lego bricks assembled as a square. To track this object with manual initialization, run:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-structure-core --model_color model/lego-square/lego-square.cao
+\endcode
+
+You should obtain similar results:
+
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/zD2nrl5yqxA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+
+Now if the tracker is working, you can learn the object adding `--learn` command line option:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-structure-core --model_color model/lego-square/lego-square.cao --learn
+\endcode
+
+Once initialized by 4 user clicks, use the left click to learn on one or two images and then the right click to quit. In the terminal you should see printings like:
+\code
+...
+Data learned
+Data learned
+Save learning from 2 images in file: learning/data-learned.bin
+\endcode
+
+You can now use this learning to automize tracker initialization with `--auto_init` option:
+\code
+$ ./tutorial-mb-generic-tracker-rgbd-structure-core --model_color model/lego-square/lego-square.cao --auto_init
 \endcode
 
 \section mb_rgbd_next Next tutorial

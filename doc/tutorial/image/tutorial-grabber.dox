@@ -225,6 +225,29 @@ Intel RealSense T265          11622110409         0.2.0.951
     Product Line                  : 	T200
 \endverbatim
 
+\section grabber-camera-structure Frame grabbing using Occipital Structure SDK
+
+If you have a Structure Core RGB-D camera, it is also possible to grab images using `libStructure` the cross-platform library that comes with Occipital Structure SDK. You may find an example in tutorial-grabber-structure-core.cpp. It allows to save visible and depth images.
+
+\subsection grabber-camera-structure-use How to acquire images
+
+Once tutorial-grabber-structure-core.cpp is built, the binary usage is given by:
+\code
+./tutorial-grabber-structure-core --help
+\endcode
+To just view images, run:
+\code
+./tutorial-grabber-structure-core
+\endcode
+To grab single shot images (for camera calibration for example), you may use:
+\code
+./tutorial-grabber-structure-core --record 1
+\endcode
+To grab a sequence of images, you may rather use:
+\code
+./tutorial-grabber-structure-core --record 0
+\endcode
+
 \section grabber-camera-opencv Frame grabbing using OpenCV
 
 It is also possible to grab images using OpenCV. You may find an example in tutorial-grabber-opencv.cpp.

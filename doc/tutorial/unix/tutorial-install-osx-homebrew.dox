@@ -1,9 +1,9 @@
 /**
 
-\page tutorial-install-osx-homebrew Tutorial: Installation from source for OSX with Homebrew
+\page tutorial-install-osx-homebrew Tutorial: Installation from source for macOS with Homebrew
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on OSX with Homebrew. These steps have been tested with macOS Catalina 10.15.3.
+In this tutorial you will learn how to install ViSP from source on macOS with Homebrew. These steps have been tested with macOS Catalina 10.15.3, Big Sur 11.6.1...
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -93,19 +93,61 @@ Installation of recommended 3rd parties could be performed running:
 $ brew install opencv glog lapack eigen libdc1394 zbar
 \endverbatim
 
-\subsubsection install_brew_3rdparty_other Other optional 3rd parties
+\subsubsection install_brew_3rdparty_realsense librealsense 3rd party
 
-- If you have an Intel Realsense RGB-D camera (R200, F200, SR300, LR200, RZ300, D435, T265...) you may install librealsense and PCL library using:
+If you have an Intel Realsense RGB-D camera (R200, F200, SR300, LR200, RZ300, D435, T265...) you may install librealsense and PCL library using:
 \verbatim
 $ brew install librealsense pcl pkg-config
 \endverbatim
 
-- If you have a rather a Basler camera you may donwload and install Pylon SDK following these <a href="https://visp.inria.fr/3rd_pylon/">instructions</a>.
+\subsubsection install_brew_3rdparty_pylon Pylon 3rd party
 
-- If lapack 3rd party is not detected during CMake configuration it may be useful to install the Gnu Scientific Library (GSL) to benefit from optimized mathematical capabilities. To this end run the following instruction:
+If you have a rather a Basler camera you may donwload and install Pylon SDK following these <a href="https://visp.inria.fr/3rd_pylon/">instructions</a>.
+
+\subsubsection install_brew_3rdparty_gsl GSL 3rd party
+
+If lapack 3rd party is not detected during CMake configuration it may be useful to install the Gnu Scientific Library (GSL) to benefit from optimized mathematical capabilities. To this end run the following instruction:
 \verbatim
 $ brew install gsl
 \endverbatim
+
+\subsubsection install_brew_3rdparty_occipital_structure libStructure 3rd party
+
+If you have an Occipital Structure Core sensor (monochrome or color), you may install Occipital Structure SDK in order to use vpOccipitalStructure class.
+Otherwise you can skip this section.
+
+Occipital Structure SDK contains `libStructure` pre-built library.
+
+<b>1. To install this SDK</b>
+- Go to https://developer.structure.io/sdk/
+- Join the Developper program to be able to download the SDK.
+- Retrieve your invitation from https://developer.structure.io/sdk/retrieve
+- You'll then receive an email containing the link to the download page,
+- Download `Structure SDK (Cross-Platform)`.
+- Extract the folder `StructureSDK-CrossPlatform-0.9` from the downloaded file to the already created directory in `$VISP_WS`.
+
+The SDK contains pre-built libraries for Linux, Windows and macOS.
+In order that ViSP detects Structure SDK header files and libraries, you have to set `OCCIPITAL_STRUCTURE_DIR` environment
+variable. Proceed as follows:
+\verbatim
+$ echo "export OCCIPITAL_STRUCTURE_DIR=$VISP_WS/StructureSDK-CrossPlatform-0.9" >> ~/.bashrc
+$ source ~/.bashrc
+\endverbatim
+
+<b>2. Optionally build Occipital Structure SDK samples</b>
+
+As explained in `$VISP_WS/StructureSDK-CrossPlatform-0.9/Documentation/macos.html` you can optionally
+follow these steps to build sample applications provided with the SDK:
+\verbatim
+$ sudo $OCCIPITAL_STRUCTURE_DIR/DriverAndFirmware/Linux/Install-CoreDriver-Udev-Linux.sh
+$ cd $OCCIPITAL_STRUCTURE_DIR
+$ mkdir build
+$ cd build
+$ cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
+$ make Samples
+\endverbatim
+
+After completion, sample apps may be run from the Apps directory.
 
 \subsection install_brew_get_source Get ViSP source code
 
@@ -542,7 +584,7 @@ General configuration information for ViSP 3.3.0
 
 \subsection install_brew_issues_pcl CMake Error in /usr/local/share/pcl-1.9/PCLConfig.cmake
 
-During CMake configuration if you install pcl using `brew install pcl` as explained in \ref install_brew_3rdparty_other installation section, you may encounter the following issue with PCL 1.9.1 on OSX Mojave:
+During CMake configuration if you install pcl using `brew install pcl` as explained in \ref install_brew_3rdparty_realsense installation section, you may encounter the following issue with PCL 1.9.1 on OSX Mojave:
 \verbatim
 CMake Error at /usr/local/share/pcl-1.9/PCLConfig.cmake:361 (pcl_report_not_found):
   cmake_policy POP without matching PUSH
