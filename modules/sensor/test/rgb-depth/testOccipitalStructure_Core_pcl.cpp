@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2021 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 
 /*!
   \example testOccipitalStructure_Core_pcl.cpp
-  This example visualize point cloud from a Occipital Structure Core sensor 
+  This example visualize point cloud from a Occipital Structure Core sensor
   with libStructure. If a color sensor is used, RGB pointcloud is visualized.
 */
 

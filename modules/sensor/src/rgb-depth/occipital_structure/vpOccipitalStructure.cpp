@@ -613,10 +613,10 @@ bool vpOccipitalStructure::open(const ST::CaptureSessionSettings &settings)
 /*!
   libStructure documentation:
   <blockquote>
-  Unlike the start functions, this function runs synchronously and will block 
-  until the device has successfully stopped streaming. Once successful, the 
+  Unlike the start functions, this function runs synchronously and will block
+  until the device has successfully stopped streaming. Once successful, the
   captureSessionEventDidOccur delegate will receive CaptureSessionEventId::Ready.
-  If an error occurs, the captureSessionEventDidOccur delegate will receive 
+  If an error occurs, the captureSessionEventDidOccur delegate will receive
   CaptureSessionEventId::Error or the specific error case enum.
   </blockquote>
  */
@@ -747,7 +747,7 @@ vpHomogeneousMatrix vpOccipitalStructure::getTransform(const vpOccipitalStructur
       {
         ST::Matrix4 v_M_d = m_delegate.m_depthFrame.visibleCameraPoseInDepthCoordinateFrame();
 
-        result[0][0] = v_M_d.m00; result[0][1] = v_M_d.m10; result[0][2] = v_M_d.m20; result[0][3] = v_M_d.m30; 
+        result[0][0] = v_M_d.m00; result[0][1] = v_M_d.m10; result[0][2] = v_M_d.m20; result[0][3] = v_M_d.m30;
         result[1][0] = v_M_d.m01; result[1][1] = v_M_d.m11; result[1][2] = v_M_d.m21; result[1][3] = v_M_d.m31;
         result[2][0] = v_M_d.m02; result[2][1] = v_M_d.m12; result[2][2] = v_M_d.m22; result[2][3] = v_M_d.m32;
       }
@@ -756,7 +756,7 @@ vpHomogeneousMatrix vpOccipitalStructure::getTransform(const vpOccipitalStructur
       {
         ST::Matrix4 imu_M_d = m_captureSession.getImuFromDepthExtrinsics().inversed();
 
-        result[0][0] = imu_M_d.m00; result[0][1] = imu_M_d.m10; result[0][2] = imu_M_d.m20; result[0][3] = imu_M_d.m30; 
+        result[0][0] = imu_M_d.m00; result[0][1] = imu_M_d.m10; result[0][2] = imu_M_d.m20; result[0][3] = imu_M_d.m30;
         result[1][0] = imu_M_d.m01; result[1][1] = imu_M_d.m11; result[1][2] = imu_M_d.m21; result[1][3] = imu_M_d.m31;
         result[2][0] = imu_M_d.m02; result[2][1] = imu_M_d.m12; result[2][2] = imu_M_d.m22; result[2][3] = imu_M_d.m32;
       }
@@ -767,7 +767,7 @@ vpHomogeneousMatrix vpOccipitalStructure::getTransform(const vpOccipitalStructur
       {
         ST::Matrix4 d_M_v = m_delegate.m_depthFrame.visibleCameraPoseInDepthCoordinateFrame().inversed();
 
-        result[0][0] = d_M_v.m00; result[0][1] = d_M_v.m10; result[0][2] = d_M_v.m20; result[0][3] = d_M_v.m30; 
+        result[0][0] = d_M_v.m00; result[0][1] = d_M_v.m10; result[0][2] = d_M_v.m20; result[0][3] = d_M_v.m30;
         result[1][0] = d_M_v.m01; result[1][1] = d_M_v.m11; result[1][2] = d_M_v.m21; result[1][3] = d_M_v.m31;
         result[2][0] = d_M_v.m02; result[2][1] = d_M_v.m12; result[2][2] = d_M_v.m22; result[2][3] = d_M_v.m32;
       }
@@ -776,7 +776,7 @@ vpHomogeneousMatrix vpOccipitalStructure::getTransform(const vpOccipitalStructur
       {
         ST::Matrix4 imu_M_v = m_captureSession.getImuFromVisibleExtrinsics().inversed();
 
-        result[0][0] = imu_M_v.m00; result[0][1] = imu_M_v.m10; result[0][2] = imu_M_v.m20; result[0][3] = imu_M_v.m30; 
+        result[0][0] = imu_M_v.m00; result[0][1] = imu_M_v.m10; result[0][2] = imu_M_v.m20; result[0][3] = imu_M_v.m30;
         result[1][0] = imu_M_v.m01; result[1][1] = imu_M_v.m11; result[1][2] = imu_M_v.m21; result[1][3] = imu_M_v.m31;
         result[2][0] = imu_M_v.m02; result[2][1] = imu_M_v.m12; result[2][2] = imu_M_v.m22; result[2][3] = imu_M_v.m32;
       }
@@ -790,7 +790,7 @@ vpHomogeneousMatrix vpOccipitalStructure::getTransform(const vpOccipitalStructur
       {
         ST::Matrix4 d_M_imu = m_captureSession.getImuFromDepthExtrinsics();
 
-        result[0][0] = d_M_imu.m00; result[0][1] = d_M_imu.m10; result[0][2] = d_M_imu.m20; result[0][3] = d_M_imu.m30; 
+        result[0][0] = d_M_imu.m00; result[0][1] = d_M_imu.m10; result[0][2] = d_M_imu.m20; result[0][3] = d_M_imu.m30;
         result[1][0] = d_M_imu.m01; result[1][1] = d_M_imu.m11; result[1][2] = d_M_imu.m21; result[1][3] = d_M_imu.m31;
         result[2][0] = d_M_imu.m02; result[2][1] = d_M_imu.m12; result[2][2] = d_M_imu.m22; result[2][3] = d_M_imu.m32;
       }
@@ -799,7 +799,7 @@ vpHomogeneousMatrix vpOccipitalStructure::getTransform(const vpOccipitalStructur
       {
         ST::Matrix4 v_M_imu = m_captureSession.getImuFromVisibleExtrinsics();
 
-        result[0][0] = v_M_imu.m00; result[0][1] = v_M_imu.m10; result[0][2] = v_M_imu.m20; result[0][3] = v_M_imu.m30; 
+        result[0][0] = v_M_imu.m00; result[0][1] = v_M_imu.m10; result[0][2] = v_M_imu.m20; result[0][3] = v_M_imu.m30;
         result[1][0] = v_M_imu.m01; result[1][1] = v_M_imu.m11; result[1][2] = v_M_imu.m21; result[1][3] = v_M_imu.m31;
         result[2][0] = v_M_imu.m02; result[2][1] = v_M_imu.m12; result[2][2] = v_M_imu.m22; result[2][3] = v_M_imu.m32;
       }
@@ -844,7 +844,7 @@ ST::Intrinsics vpOccipitalStructure::getIntrinsics(const vpOccipitalStructureStr
 
 
 /*!
-  Converts the depth frame into a 3D point cloud using intrinsic calibration 
+  Converts the depth frame into a 3D point cloud using intrinsic calibration
   then writes out the result as PLY mesh at the provided path.
   \param filename : PLY file name.
  */
@@ -856,6 +856,7 @@ void vpOccipitalStructure::saveDepthImageAsPointCloudMesh(std::string &filename)
 /*!
   Get intrinsic parameters of input stream type.
   \param stream_type : Type of stream (visible, depth).
+  \param proj_type : Perspective projection model type; with or without distorsion.
  */
 vpCameraParameters vpOccipitalStructure::getCameraParameters(const vpOccipitalStructureStream stream_type,
                                                              vpCameraParameters::vpCameraParametersProjType proj_type)
@@ -1099,18 +1100,18 @@ void vpOccipitalStructure::getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB
           pointcloud->points[(size_t)(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);
 #else
           if (swap_rb) {
-            pointcloud->points[(size_t)depth_pixel_index].b = 
+            pointcloud->points[(size_t)depth_pixel_index].b =
                p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel];
-            pointcloud->points[(size_t)depth_pixel_index].g = 
+            pointcloud->points[(size_t)depth_pixel_index].g =
                p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1];
-            pointcloud->points[(size_t)depth_pixel_index].r = 
+            pointcloud->points[(size_t)depth_pixel_index].r =
                p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2];
           } else {
-            pointcloud->points[(size_t)depth_pixel_index].r = 
+            pointcloud->points[(size_t)depth_pixel_index].r =
               p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel];
-            pointcloud->points[(size_t)depth_pixel_index].g = 
+            pointcloud->points[(size_t)depth_pixel_index].g =
               p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1];
-            pointcloud->points[(size_t)depth_pixel_index].b = 
+            pointcloud->points[(size_t)depth_pixel_index].b =
               p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2];
           }
 #endif

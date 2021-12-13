@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2021 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,10 +62,13 @@
   data from the Occipital Structure Core camera.
 
   \note Supported devices for Occipital Structure SDK 0.9:
-    - Occipital Structure Core.
+  - Occipital Structure Core.
 
   The usage of vpOccipitalStructure class is enabled when libStructure 3rd party is
-  successfully installed.
+  successfully installed. The following tutorials explain how to proceed:
+  - \ref tutorial-install-ubuntu
+  - \ref tutorial-install-win10-msvc16
+  - \ref tutorial-install-osx-homebrew
 
   Moreover, if Point Cloud Library (PCL) 3rd party is installed, we also
   propose interfaces to retrieve point cloud as pcl::PointCloud<pcl::PointXYZ>
@@ -74,12 +77,12 @@
   \warning Notice that the usage of this class requires compiler and library
   support for the ISO C++ 2011 standard. This support is enabled by default
   in ViSP when supported by the compiler. Hereafter we give an example of a
-  CMakeLists.txt file that allows to build sample-structure-core.cpp that
+  CMakeLists.txt file that allows to build `sample-structure-core.cpp` that
   uses vpOccipitalStructure class.
 
   \code
 project(sample)
-cmake_minimum_required(VERSION 2.8.12.2)
+cmake_minimum_required(VERSION 3.0)
 
 find_package(VISP REQUIRED)
 include_directories(${VISP_INCLUDE_DIRS})
@@ -90,7 +93,7 @@ target_link_libraries(sample-structure-core ${VISP_LIBRARIES})
 
   To acquire images from the Structure Core color camera and convert them into grey
   level images, a good starting is to use the following code that corresponds to
-  the content of sample-structure-core.cpp:
+  the content of ``sample-structure-core.cpp`:
 
   \code
 #include <visp3/gui/vpDisplayGDI.h>

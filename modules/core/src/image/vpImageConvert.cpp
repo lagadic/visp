@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2021 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -283,7 +283,7 @@ vpImageConvert::createDepthHistogram( const vpImage< uint16_t > &src_depth, vpIm
 
 /*!
   Convert the input float depth image to a color depth image. The input
-  depth value is assigned a color value proportional to its frequency. Tha
+  depth value is assigned a color value proportional to its frequency. The
   alpha component of the resulting image is set to vpRGBa::alpha_default.
   \param[in] src_depth : Input float depth image.
   \param[out] dest_rgba : Output color depth image.
@@ -296,7 +296,7 @@ vpImageConvert::createDepthHistogram( const vpImage< float > &src_depth, vpImage
   memset( histogram, 0, sizeof( histogram ) );
 
   for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
-    if(!isnan(src_depth.bitmap[i]))
+    if(!std::isnan(src_depth.bitmap[i]))
       ++histogram[(uint16_t)src_depth.bitmap[i]];
   for ( int i = 2; i < 0x10000; ++i )
     histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the
@@ -337,7 +337,7 @@ vpImageConvert::createDepthHistogram( const vpImage< float > &src_depth, vpImage
   memset( histogram2, 0, sizeof( histogram2 ) );
 
   for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
-    if(!isnan(src_depth.bitmap[i]))
+    if(!std::isnan(src_depth.bitmap[i]))
       ++histogram2[(int)src_depth.bitmap[i]];
 
   for ( int i = 2; i < 0x10000; ++i )

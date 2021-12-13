@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2021 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 
 /*!
   \example testOccipitalStructure_Core_images.cpp
-  This example shows how to retrieve images from a Occipital Structure Core sensor 
+  This example shows how to retrieve images from a Occipital Structure Core sensor
   with libStructure.
 */
 
@@ -84,7 +84,7 @@ int main()
     I_depth_raw = vpImage<float>(sc.getHeight(vpOccipitalStructure::depth), sc.getWidth(vpOccipitalStructure::depth), 0);
     I_depth = vpImage<unsigned char>(sc.getHeight(vpOccipitalStructure::depth), sc.getWidth(vpOccipitalStructure::depth), 0);
     display_depth.setDownScalingFactor(display_scale);
-    display_depth.init(I_depth, static_cast<int>(I_visible.getWidth()/display_scale) + 80, 10, "Depth image");
+    display_depth.init(I_depth, static_cast<int>(I_visible.getWidth()/display_scale) + 20, 10, "Depth image");
 #endif
 
     while (true) {

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2021 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,7 +35,7 @@
 
 /*!
   \example testOccipitalStructure_Core_imu.cpp
-  This example shows how to retrieve IMU data from a Occipital Structure Core sensor 
+  This example shows how to retrieve IMU data from a Occipital Structure Core sensor
   with libStructure.
 */
 
@@ -64,8 +64,8 @@ int main()
     sc.open(settings);
 
     // Create plotters
-    vpPlot acceleration_plotter(1, 700, 1400, 10, 10, "Accelerations");
-    vpPlot rotationRate_plotter(1, 700, 1400, 10, 20, "Rotation rates");
+    vpPlot acceleration_plotter(1, 400, 800, 10, 10, "Accelerations");
+    vpPlot rotationRate_plotter(1, 400, 800, 10, 450, "Rotation rates");
     acceleration_plotter.initGraph(0,3);
     rotationRate_plotter.initGraph(0,3);
 
@@ -92,11 +92,15 @@ int main()
 
     sc.getIMUData(&imu_vel, &imu_acc, &initial_ts);
 
-    while (true) {
+    bool quit = false;
+    while (!quit) {
       sc.getIMUData(&imu_vel, &imu_acc, &ts);
 
       acceleration_plotter.plot(0, ts - initial_ts, imu_acc);
       rotationRate_plotter.plot(0, ts - initial_ts, imu_vel);
+      if (vpDisplay::getClick(acceleration_plotter.I, false) || vpDisplay::getClick(rotationRate_plotter.I, false)) {
+        quit = true;
+      }
     }
 
   } catch (const vpException &e) {
