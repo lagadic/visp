@@ -1,4 +1,4 @@
-/*! \example tutorial-grabber-occipital-structure-core.cpp */
+/*! \example tutorial-grabber-structure-core.cpp */
 #include <visp3/core/vpImage.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
     vpDisplayX display_visible;  // Visible image
     display_visible.init(I_color, 10, 10, "Visible image");
     vpDisplayX display_depth; // Depth image
-    display_depth.init(I_depth, 10, 10, "Depth image");
+    display_depth.init(I_depth, 10+I_color.getWidth(), 10, "Depth image");
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display_visible;  // Visible image
     display_visible.init(I_color, 10, 10, "Visible image");
