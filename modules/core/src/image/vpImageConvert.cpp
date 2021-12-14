@@ -296,7 +296,7 @@ vpImageConvert::createDepthHistogram( const vpImage< float > &src_depth, vpImage
   memset( histogram, 0, sizeof( histogram ) );
 
   for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
-    if(!std::isnan(src_depth.bitmap[i]))
+    if(!vpMath::isNaN(src_depth.bitmap[i]))
       ++histogram[(uint16_t)src_depth.bitmap[i]];
   for ( int i = 2; i < 0x10000; ++i )
     histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the
@@ -337,7 +337,7 @@ vpImageConvert::createDepthHistogram( const vpImage< float > &src_depth, vpImage
   memset( histogram2, 0, sizeof( histogram2 ) );
 
   for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
-    if(!std::isnan(src_depth.bitmap[i]))
+    if(!vpMath::isNaN(src_depth.bitmap[i]))
       ++histogram2[(int)src_depth.bitmap[i]];
 
   for ( int i = 2; i < 0x10000; ++i )
