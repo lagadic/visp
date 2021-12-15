@@ -38,7 +38,7 @@ int main(int argc, const char **argv)
   std::cout << "Warning: There is no 3rd party (X11, GDI or openCV) to dislay images..." << std::endl;
 #else
   bool display_off = false;
-#endif  
+#endif
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--pose_method" && i + 1 < argc) {
@@ -217,7 +217,7 @@ int main(int argc, const char **argv)
   std::cout << "Realsense T265 device needs librealsense API > 2.31.0. ViSP is linked with librealsense API "
             << RS2_API_VERSION_STR << ". You need to upgrade librealsense to use this example." << std::endl;
 #else
-  std::cout << "Install librealsense, configure and build ViSP again to use this example." << std::endl;
+  std::cout << "Install librealsense 3rd party, configure and build ViSP again to use this example." << std::endl;
 #endif
 #endif
   return EXIT_SUCCESS;
