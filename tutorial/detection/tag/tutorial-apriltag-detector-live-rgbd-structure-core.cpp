@@ -1,4 +1,4 @@
-//! \example tutorial-apriltag-detector-live-occipital-structure-core.cpp
+//! \example tutorial-apriltag-detector-live-rgbd-structure-core.cpp
 #include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_MODULE_SENSOR
 #include <visp3/sensor/vpOccipitalStructure.h>
@@ -34,7 +34,7 @@ int main(int argc, const char **argv)
   std::cout << "Warning: There is no 3rd party (X11, GDI or openCV) to dislay images..." << std::endl;
 #else
   bool display_off = false;
-#endif  
+#endif
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--pose_method" && i + 1 < argc) {
@@ -252,7 +252,7 @@ int main(int argc, const char **argv)
 #ifndef VISP_HAVE_APRILTAG
   std::cout << "Enable Apriltag support, configure and build ViSP to run this tutorial" << std::endl;
 #else
-  std::cout << "Install a 3rd party dedicated to frame grabbing (dc1394, cmu1394, v4l2, OpenCV, FlyCapture, Realsense2), configure and build ViSP again to use this example" << std::endl;
+  std::cout << "Install Structure Core SDK, configure and build ViSP again to use this example" << std::endl;
 #endif
 #endif
   return EXIT_SUCCESS;
