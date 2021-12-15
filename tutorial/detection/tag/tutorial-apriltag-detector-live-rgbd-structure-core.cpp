@@ -93,7 +93,7 @@ int main(int argc, const char **argv)
     vpImage<float> I_depth_raw(height, width);
     vpImage<vpRGBa> I_depth;
 
-    bool is_open = g.open(settings);
+    g.open(settings);
 
     std::cout << "I_color: " << I_color.getWidth() << " " << I_color.getHeight() << std::endl;
     std::cout << "I_depth_raw: " << I_depth_raw.getWidth() << " " << I_depth_raw.getHeight() << std::endl;
