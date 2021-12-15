@@ -275,7 +275,7 @@ if(USE_EIGEN3)
   vp_set_source_file_compile_flag(src/math/matrix/vpEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context -Wno-shadow)
 endif()
 
-vp_set_source_file_compile_flag(src/image/vpImageConvert.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/image/vpImageConvert.cpp -Wno-strict-overflow -Wno-sign-compare)
 vp_set_source_file_compile_flag(src/image/vpImageFilter.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/image/vpImageTools.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/tools/network/vpServer.cpp -Wno-strict-overflow)
