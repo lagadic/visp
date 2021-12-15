@@ -94,10 +94,9 @@ int main(int argc, const char **argv)
     vpImage<vpRGBa> I_depth;
 
     g.open(config);
-std::cout << "debug 2" << std::endl;
     const float depth_scale = g.getDepthScale();
     std::cout << "I_color: " << I_color.getWidth() << " " << I_color.getHeight() << std::endl;
-std::cout << "I_depth_raw: " << I_depth_raw.getWidth() << " " << I_depth_raw.getHeight() << std::endl;
+    std::cout << "I_depth_raw: " << I_depth_raw.getWidth() << " " << I_depth_raw.getHeight() << std::endl;
 
     rs2::align align_to_color = RS2_STREAM_COLOR;
     g.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap), reinterpret_cast<unsigned char *>(I_depth_raw.bitmap),
@@ -156,17 +155,15 @@ std::cout << "I_depth_raw: " << I_depth_raw.getWidth() << " " << I_depth_raw.get
       g.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap), reinterpret_cast<unsigned char *>(I_depth_raw.bitmap),
                 NULL, NULL, &align_to_color);
       //! [Acquisition]
-      vpImageConvert::convert(I_color, I);
 
       I_color2 = I_color;
       vpImageConvert::convert(I_color, I);
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
-      vpDisplay::display(I_color);
-      vpDisplay::display(I_color2);
-      vpDisplay::display(I_depth);
-
       depthMap.resize(I_depth_raw.getHeight(), I_depth_raw.getWidth());
+      #ifdef VISP_HAVE_OPENMP
+      #pragma omp parallel for
+      #endif
       for (unsigned int i = 0; i < I_depth_raw.getHeight(); i++) {
           for (unsigned int j = 0; j < I_depth_raw.getWidth(); j++) {
               if (I_depth_raw[i][j]) {
