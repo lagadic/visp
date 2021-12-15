@@ -7,12 +7,13 @@
 
 ViSP 3.4.1 (under development)
   - Contributors:
-    . Fabien Spindler, Souriya Trinh, Olivier Kermorgant, Thuc Long Ha
+    . Fabien Spindler, Souriya Trinh, Joudy Nader, Olivier Kermorgant, Thuc Long Ha
   - New features and improvements
     . Camera calibration model can now consider px/py aspect ratio and estimate
       a model where px = py
     . Introduce Bayer demosaicing also called debayering in vpImageConvert
     . UEye grabber now support Bayer 8 color mode
+    . Update to use Catch2 2.13.7
   - Tutorials
     . New tutorial for FrankaSim that allows physical simulation of the Panda robot from
       Franka Emika, with a model that has beenaccurately identified from a real Franka
