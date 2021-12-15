@@ -270,7 +270,7 @@ if(MSVC)
 endif()
 
 if(USE_EIGEN3)
-  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_svd.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context -Wno-deprecated-copy -Wno-shadow)
+  vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_svd.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context -Wno-deprecated-copy -Wno-shadow -Wno-maybe-uninitialized)
   vp_set_source_file_compile_flag(src/math/matrix/vpMatrix_lu.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context -Wno-deprecated-copy -Wno-shadow)
   vp_set_source_file_compile_flag(src/math/matrix/vpEigenConversion.cpp -Wno-float-equal -Wno-strict-overflow -Wno-misleading-indentation -Wno-int-in-bool-context -Wno-shadow)
 endif()
