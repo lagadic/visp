@@ -27,6 +27,7 @@ ViSP 3.4.1 (under development)
     . [#937] Segfault in vpRobust when data to consider is a 2-dim vector
     . [#939] SonarQube static analysis is no more working
     . [#950] Cannot build tutorial-grabber-multiple-realsense.cpp with Visual Studio 2017
+    . [#961] Build error on Ubuntu 21.10 with glibc 2.34
 ----------------------------------------------
 ViSP 3.4.0 (released February 26, 2021)
   - Contributors:
