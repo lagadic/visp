@@ -52,6 +52,7 @@
 
 // image
 #include "private/vpBayerConversion.h"
+#include "private/vpImageConvert_impl.h"
 #include <Simd/SimdLib.hpp>
 #include <visp3/core/vpImageConvert.h>
 
@@ -215,35 +216,7 @@ vpImageConvert::convert( const vpImage< unsigned char > &src, vpImage< double > 
 void
 vpImageConvert::createDepthHistogram( const vpImage< uint16_t > &src_depth, vpImage< vpRGBa > &dest_rgba )
 {
-  dest_rgba.resize( src_depth.getHeight(), src_depth.getWidth() );
-  static uint32_t histogram[0x10000];
-  memset( histogram, 0, sizeof( histogram ) );
-
-  for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
-    ++histogram[src_depth.bitmap[i]];
-  for ( int i = 2; i < 0x10000; ++i )
-    histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the
-                                      // indices in [1,0xFFFF]
-
-  for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
-  {
-    uint16_t d = src_depth.bitmap[i];
-    if ( d )
-    {
-      unsigned char f = (unsigned char)( histogram[d] * 255 / histogram[0xFFFF] ); // 0-255 based on histogram location
-      dest_rgba.bitmap[i].R = 255 - f;
-      dest_rgba.bitmap[i].G = 0;
-      dest_rgba.bitmap[i].B = f;
-      dest_rgba.bitmap[i].A = vpRGBa::alpha_default;
-    }
-    else
-    {
-      dest_rgba.bitmap[i].R = 20;
-      dest_rgba.bitmap[i].G = 5;
-      dest_rgba.bitmap[i].B = 0;
-      dest_rgba.bitmap[i].A = vpRGBa::alpha_default;
-    }
-  }
+  vp_createDepthHistogram(src_depth, dest_rgba, false);
 }
 
 /*!
@@ -255,30 +228,7 @@ vpImageConvert::createDepthHistogram( const vpImage< uint16_t > &src_depth, vpIm
 void
 vpImageConvert::createDepthHistogram( const vpImage< uint16_t > &src_depth, vpImage< unsigned char > &dest_depth )
 {
-  dest_depth.resize( src_depth.getHeight(), src_depth.getWidth() );
-  static uint32_t histogram2[0x10000];
-  memset( histogram2, 0, sizeof( histogram2 ) );
-
-  for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
-    ++histogram2[src_depth.bitmap[i]];
-  for ( int i = 2; i < 0x10000; ++i )
-    histogram2[i] += histogram2[i - 1]; // Build a cumulative histogram for
-                                        // the indices in [1,0xFFFF]
-
-  for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
-  {
-    uint16_t d = src_depth.bitmap[i];
-    if ( d )
-    {
-      unsigned char f =
-          static_cast< unsigned char >( histogram2[d] * 255 / histogram2[0xFFFF] ); // 0-255 based on histogram location
-      dest_depth.bitmap[i] = f;
-    }
-    else
-    {
-      dest_depth.bitmap[i] = 0;
-    }
-  }
+  vp_createDepthHistogram(src_depth, dest_depth, false);
 }
 
 /*!
@@ -291,36 +241,7 @@ vpImageConvert::createDepthHistogram( const vpImage< uint16_t > &src_depth, vpIm
 void
 vpImageConvert::createDepthHistogram( const vpImage< float > &src_depth, vpImage< vpRGBa > &dest_rgba )
 {
-  dest_rgba.resize( src_depth.getHeight(), src_depth.getWidth() );
-  static uint32_t histogram[0x10000];
-  memset( histogram, 0, sizeof( histogram ) );
-
-  for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
-    if(!vpMath::isNaN(src_depth.bitmap[i]))
-      ++histogram[(uint16_t)src_depth.bitmap[i]];
-  for ( int i = 2; i < 0x10000; ++i )
-    histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the
-                                      // indices in [1,0xFFFF]
-
-  for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
-  {
-    uint16_t d = src_depth.bitmap[i];
-    if ( d )
-    {
-      unsigned char f = (unsigned char)( histogram[d] * 255 / histogram[0xFFFF] ); // 0-255 based on histogram location
-      dest_rgba.bitmap[i].R = 255 - f;
-      dest_rgba.bitmap[i].G = 0;
-      dest_rgba.bitmap[i].B = f;
-      dest_rgba.bitmap[i].A = vpRGBa::alpha_default;
-    }
-    else
-    {
-      dest_rgba.bitmap[i].R = 20;
-      dest_rgba.bitmap[i].G = 5;
-      dest_rgba.bitmap[i].B = 0;
-      dest_rgba.bitmap[i].A = vpRGBa::alpha_default;
-    }
-  }
+  vp_createDepthHistogram(src_depth, dest_rgba, true);
 }
 
 /*!
@@ -332,32 +253,7 @@ vpImageConvert::createDepthHistogram( const vpImage< float > &src_depth, vpImage
 void
 vpImageConvert::createDepthHistogram( const vpImage< float > &src_depth, vpImage< unsigned char > &dest_depth )
 {
-  dest_depth.resize( src_depth.getHeight(), src_depth.getWidth() );
-  static uint32_t histogram2[0x10000];
-  memset( histogram2, 0, sizeof( histogram2 ) );
-
-  for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
-    if(!vpMath::isNaN(src_depth.bitmap[i]))
-      ++histogram2[(int)src_depth.bitmap[i]];
-
-  for ( int i = 2; i < 0x10000; ++i )
-    histogram2[i] += histogram2[i - 1]; // Build a cumulative histogram for
-                                        // the indices in [1,0xFFFF]
-
-  for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
-  {
-    uint16_t d = src_depth.bitmap[i];
-    if ( d )
-    {
-      unsigned char f =
-          static_cast< unsigned char >( histogram2[d] * 255 / histogram2[0xFFFF] ); // 0-255 based on histogram location
-      dest_depth.bitmap[i] = f;
-    }
-    else
-    {
-      dest_depth.bitmap[i] = 0;
-    }
-  }
+  vp_createDepthHistogram(src_depth, dest_depth, true);
 }
 
 
