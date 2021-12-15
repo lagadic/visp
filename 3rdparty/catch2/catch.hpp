@@ -9808,58 +9808,58 @@ namespace Catch {
             = ExeName( config.processName )
             | Help( config.showHelp )
             | Opt( config.listTests )
-                ["-l"]["--list-tests"]
+                ["--list-tests"]
                 ( "list all/matching test cases" )
             | Opt( config.listTags )
-                ["-t"]["--list-tags"]
+                ["--list-tags"]
                 ( "list all/matching tags" )
             | Opt( config.showSuccessfulTests )
-                ["-s"]["--success"]
+                ["--success"]
                 ( "include successful tests in output" )
             | Opt( config.shouldDebugBreak )
-                ["-b"]["--break"]
+                ["--break"]
                 ( "break into debugger on failure" )
             | Opt( config.noThrow )
-                ["-e"]["--nothrow"]
+                ["--nothrow"]
                 ( "skip exception tests" )
             | Opt( config.showInvisibles )
-                ["-i"]["--invisibles"]
+                ["--invisibles"]
                 ( "show invisibles (tabs, newlines)" )
             | Opt( config.outputFilename, "filename" )
-                ["-o"]["--out"]
+                ["--out"]
                 ( "output filename" )
             | Opt( setReporter, "name" )
-                ["-r"]["--reporter"]
+                ["--reporter"]
                 ( "reporter to use (defaults to console)" )
             | Opt( config.name, "name" )
-                ["-n"]["--name"]
+                ["--name"]
                 ( "suite name" )
             | Opt( [&]( bool ){ config.abortAfter = 1; } )
-                ["-a"]["--abort"]
+                ["--abort"]
                 ( "abort at first failure" )
             | Opt( [&]( int x ){ config.abortAfter = x; }, "no. failures" )
-                ["-x"]["--abortx"]
+                ["--abortx"]
                 ( "abort after x failures" )
             | Opt( setWarning, "warning name" )
-                ["-w"]["--warn"]
+                ["--warn"]
                 ( "enable warnings" )
             | Opt( [&]( bool flag ) { config.showDurations = flag ? ShowDurations::Always : ShowDurations::Never; }, "yes|no" )
-                ["-d"]["--durations"]
+                ["--durations"]
                 ( "show test durations" )
             | Opt( config.minDuration, "seconds" )
-                ["-D"]["--min-duration"]
+                ["--min-duration"]
                 ( "show test durations for tests taking at least the given number of seconds" )
             | Opt( loadTestNamesFromFile, "filename" )
-                ["-f"]["--input-file"]
+                ["--input-file"]
                 ( "load test names to run from a file" )
             | Opt( config.filenamesAsTags )
-                ["-#"]["--filenames-as-tags"]
+                ["--filenames-as-tags"]
                 ( "adds a tag for the filename" )
             | Opt( config.sectionsToRun, "section name" )
-                ["-c"]["--section"]
+                ["--section"]
                 ( "specify section to run" )
             | Opt( setVerbosity, "quiet|normal|high" )
-                ["-v"]["--verbosity"]
+                ["--verbosity"]
                 ( "set output verbosity" )
             | Opt( config.listTestNamesOnly )
                 ["--list-test-names-only"]
