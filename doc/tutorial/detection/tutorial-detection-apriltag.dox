@@ -151,7 +151,7 @@ An example that shows how to use this function is given in tutorial-apriltag-det
 
 \snippet tutorial-apriltag-detector-live-rgbd-realsense.cpp Pose from depth map
 
-Another example using a Structure Core RGB-D sensor is given in tutorial-apriltag-detector-live-occipital-structure-core.cpp.
+Another example using a Structure Core RGB-D sensor is given in tutorial-apriltag-detector-live-rgbd-structure-core.cpp.
 
 \section apriltag_detection_next Next tutorial
 
