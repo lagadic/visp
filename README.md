@@ -1,5 +1,7 @@
 ### ViSP: Open source Visual Servoing Platform
 
+[![Github Releases](https://img.shields.io/github/release/lagadic/visp.svg)](https://github.com/lagadic/visp/releases)
+
 Platform | Build Status |
 -------- | ------------ |
 Linux and OS X | [![Build Status](https://app.travis-ci.com/lagadic/visp.svg?branch=master)](https://app.travis-ci.com/lagadic/visp) |

@@ -17,4 +17,5 @@ file LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
 CONTENT:
 --------
 
-The catch.hpp file is a copy of the latest version of the single header that was downloaded from https://github.com/catchorg/Catch2/releases/download/v2.9.2/catch.hpp
+The catch.hpp file is a copy of the latest version of the single header that was downloaded from https://github.com/catchorg/Catch2/releases/download/v2.13.7/catch.hpp
+
