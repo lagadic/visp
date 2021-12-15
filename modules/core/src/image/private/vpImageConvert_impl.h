@@ -64,7 +64,7 @@ vp_createDepthHistogram( const vpImage< Type > &src_depth, vpImage< unsigned cha
     #ifdef VISP_HAVE_OPENMP
     #pragma omp parallel for
     #endif
-    for ( unsigned int i = 0; i < src_depth.getSize(); ++i ) {
+    for ( int i = 0; i < src_depth.getSize(); ++i ) {
       if(!vpMath::isNaN(src_depth.bitmap[i])) {
         ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
       }
@@ -74,7 +74,7 @@ vp_createDepthHistogram( const vpImage< Type > &src_depth, vpImage< unsigned cha
     #ifdef VISP_HAVE_OPENMP
     #pragma omp parallel for
     #endif
-    for ( unsigned int i = 0; i < src_depth.getSize(); ++i ) {
+    for ( int i = 0; i < src_depth.getSize(); ++i ) {
       ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
     }
   }
@@ -85,7 +85,7 @@ vp_createDepthHistogram( const vpImage< Type > &src_depth, vpImage< unsigned cha
   #ifdef VISP_HAVE_OPENMP
   #pragma omp parallel for
   #endif
-  for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
+  for ( int i = 0; i < src_depth.getSize(); ++i )
   {
     uint16_t d = src_depth.bitmap[i];
     if ( d )
@@ -121,7 +121,7 @@ vp_createDepthHistogram( const vpImage< Type > &src_depth, vpImage< vpRGBa > &de
     #ifdef VISP_HAVE_OPENMP
     #pragma omp parallel for
     #endif
-    for ( unsigned int i = 0; i < src_depth.getSize(); ++i ) {
+    for ( int i = 0; i < src_depth.getSize(); ++i ) {
       if(!vpMath::isNaN(src_depth.bitmap[i])) {
         ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
       }
@@ -131,7 +131,7 @@ vp_createDepthHistogram( const vpImage< Type > &src_depth, vpImage< vpRGBa > &de
     #ifdef VISP_HAVE_OPENMP
     #pragma omp parallel for
     #endif
-    for ( unsigned int i = 0; i < src_depth.getSize(); ++i ) {
+    for ( int i = 0; i < src_depth.getSize(); ++i ) {
       ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
     }
   }
@@ -142,7 +142,7 @@ vp_createDepthHistogram( const vpImage< Type > &src_depth, vpImage< vpRGBa > &de
   #ifdef VISP_HAVE_OPENMP
   #pragma omp parallel for
   #endif
-  for ( unsigned int i = 0; i < src_depth.getSize(); ++i )
+  for ( int i = 0; i < src_depth.getSize(); ++i )
   {
     uint16_t d = src_depth.bitmap[i];
     if ( d )
