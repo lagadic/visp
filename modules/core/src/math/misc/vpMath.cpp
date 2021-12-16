@@ -80,7 +80,7 @@ const double vpMath::ang_min_mc = 2.5e-4;
 /*!
    Check whether a double number is not a number (NaN) or not.
    \param value : Double number to check.
-   \return Return true if value is not a number.
+   \return true if value is Not A Number (as defined by IEEE754 standard) and false otherwise.
  */
 bool vpMath::isNaN(double value)
 {
@@ -91,22 +91,40 @@ bool vpMath::isNaN(double value)
 #elif defined(VISP_HAVE_FUNC__ISNAN)
   return (_isnan(value) != 0);
 #else
-#if 0
-    //This trick should work for any compiler which claims to use IEEE floating point.
-    //Do not work with g++ and -ffast-math option.
-    return (value != value);
-#else
   // Taken from OpenCV source code CvIsNan()
   Cv64suf ieee754;
   ieee754.f = value;
   return (((unsigned)(ieee754.u >> 32) & 0x7fffffff) + ((unsigned)ieee754.u != 0) > 0x7ff00000) != 0;
 #endif
+}
+
+/*!
+   Check whether a float number is not a number (NaN) or not.
+   \param value : Float number to check.
+   \return true if value is Not A Number (as defined by IEEE754 standard) and false otherwise.
+ */
+bool vpMath::isNaN(float value)
+{
+#if defined(VISP_HAVE_FUNC_ISNAN)
+  return isnan(value);
+#elif defined(VISP_HAVE_FUNC_STD_ISNAN)
+  return std::isnan(value);
+#elif defined(VISP_HAVE_FUNC__ISNAN)
+  return (_isnan(value) != 0);
+#else
+  // Taken from OpenCV source code CvIsNan()
+  Cv32suf ieee754;
+  ieee754.f = value;
+  return ((unsigned)ieee754.u & 0x7fffffff) > 0x7f800000;
 #endif
 }
+
 /*!
    Returns whether a double is an infinity value (either positive infinity or
-   negative infinity). \param value : Double number to check. \return Return
-   true if value is infinity.
+   negative infinity).
+   \param value : Double number to check.
+   \return true if value is a plus or minus infinity (as defined by IEEE754 standard)
+   and false otherwise.
  */
 bool vpMath::isInf(double value)
 {
@@ -121,6 +139,29 @@ bool vpMath::isInf(double value)
   Cv64suf ieee754;
   ieee754.f = value;
   return ((unsigned)(ieee754.u >> 32) & 0x7fffffff) == 0x7ff00000 && (unsigned)ieee754.u == 0;
+#endif
+}
+
+/*!
+   Returns whether a float is an infinity value (either positive infinity or
+   negative infinity).
+   \param value : Double number to check.
+   \return true if value is a plus or minus infinity (as defined by IEEE754 standard)
+   and false otherwise.
+ */
+bool vpMath::isInf(float value)
+{
+#if defined(VISP_HAVE_FUNC_ISINF)
+  return isinf(value);
+#elif defined(VISP_HAVE_FUNC_STD_ISINF)
+  return std::isinf(value);
+#elif defined(VISP_HAVE_FUNC__FINITE)
+  return !_finite(value);
+#else
+  // Taken from OpenCV source code CvIsInf()
+  Cv32suf ieee754;
+  ieee754.f = value;
+  return ((unsigned)ieee754.u & 0x7fffffff) == 0x7f800000;
 #endif
 }
 

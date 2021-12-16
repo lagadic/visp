@@ -182,7 +182,9 @@ public:
   }
 
   static bool isNaN(double value);
+  static bool isNaN(float value);
   static bool isInf(double value);
+  static bool isInf(float value);
 
   static double lineFitting(const std::vector<vpImagePoint>& imPts, double& a, double& b, double& c);
 
