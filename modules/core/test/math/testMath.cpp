@@ -94,14 +94,32 @@ int main()
     return -1;
   }
 
+  if (!vpMath::isNaN(std::numeric_limits<float>::quiet_NaN())) {
+    std::cerr << "Fail: IsNaN(quiet_NaN)=" << vpMath::isNaN(std::numeric_limits<float>::quiet_NaN())
+              << " / should be true" << std::endl;
+    return -1;
+  }
+
   if (!vpMath::isNaN(std::numeric_limits<double>::signaling_NaN())) {
     std::cerr << "Fail: IsNaN(signaling_NaN)=" << vpMath::isNaN(std::numeric_limits<double>::signaling_NaN())
               << " / should be true" << std::endl;
     return -1;
   }
 
+  if (!vpMath::isNaN(std::numeric_limits<float>::signaling_NaN())) {
+    std::cerr << "Fail: IsNaN(signaling_NaN)=" << vpMath::isNaN(std::numeric_limits<float>::signaling_NaN())
+              << " / should be true" << std::endl;
+    return -1;
+  }
+
   if (vpMath::isNaN(std::numeric_limits<double>::infinity())) {
     std::cerr << "Fail: IsNaN(infinity)=" << vpMath::isNaN(std::numeric_limits<double>::infinity())
+              << " / should be false" << std::endl;
+    return -1;
+  }
+
+  if (vpMath::isNaN(std::numeric_limits<float>::infinity())) {
+    std::cerr << "Fail: IsNaN(infinity)=" << vpMath::isNaN(std::numeric_limits<float>::infinity())
               << " / should be false" << std::endl;
     return -1;
   }
