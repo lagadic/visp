@@ -1289,7 +1289,7 @@ void vpAfma6::getCameraParameters(vpCameraParameters &cam, const unsigned int &i
   case vpAfma6::TOOL_INTEL_D435_CAMERA: {
     std::cout << "Get camera parameters for camera \"" << vpAfma6::CONST_INTEL_D435_CAMERA_NAME << "\"" << std::endl
               << "from the XML file: \"" << vpAfma6::CONST_CAMERA_AFMA6_FILENAME << "\"" << std::endl;
-    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_VACUUM_CAMERA_NAME, projModel,
+    if (parser.parse(cam, vpAfma6::CONST_CAMERA_AFMA6_FILENAME, vpAfma6::CONST_INTEL_D435_CAMERA_NAME, projModel,
                      image_width, image_height) != vpXmlParserCamera::SEQUENCE_OK) {
       throw vpRobotException(vpRobotException::readingParametersError, "Impossible to read the camera parameters.");
     }
