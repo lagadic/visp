@@ -15,16 +15,28 @@ int main(int argc, char **argv)
   try {
     std::string opt_seqname_visible = "visible-%04d.png", opt_seqname_depth = "depth-%04d.png";
     int opt_record_mode = 0;
-    int opt_fps = 30;
+    int opt_depth_fps = 30, opt_visible_fps = opt_depth_fps; // frame synchronization by default.
+    bool sxga = false; // Used for high resolution depth array (true => 1280x960).
+    bool frame_sync = true; // Used to set/unset frame synchronization (default: true).
 
     for (int i = 0; i < argc; i++) {
       if (std::string(argv[i]) == "--record")
         opt_record_mode = std::atoi(argv[i + 1]);
-      else if (std::string(argv[i]) == "--fps")
-        opt_fps = std::atoi(argv[i + 1]);
+      else if (std::string(argv[i]) == "--depth_fps")
+        opt_depth_fps = std::atoi(argv[i + 1]);
+      else if (std::string(argv[i]) == "--visible_fps")
+        opt_visible_fps = std::atoi(argv[i + 1]);
+      else if (std::string(argv[i]) == "--sxga")
+        sxga = true;
+      else if (std::string(argv[i]) == "--no_frame_sync")
+        frame_sync = false;
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0]
                   << " [--record <0: continuous | 1: single shot (default: 0)>]"
+                     " [--depth_fps <depth_frames_per_seconds> (default: 30)]"
+                     " [--visible_fps <visible_frames_per_seconds> (default: 30)]"
+                     " [--sxga (if exists, output 1280x960 depth array)]"
+                     " [--no_frame_sync (if exists, disable frame synchronization)]"
                      " [--help] [-h]\n"
                   << "\nExample to visualize images:\n"
                   << "  " << argv[0] << "\n"
@@ -32,12 +44,15 @@ int main(int argc, char **argv)
                   << "  " << argv[0] << " --record 1\n"
                   << "\nExamples to record a sequence of images:\n"
                   << "  " << argv[0] << " --record 0\n"
+                  << "\nExamples to record a sequence of images at different frame rates:\n"
+                  << "  " << argv[0] << " --record 0 --depth_fps 15 --visible_fps 10 --no_frame_sync\n"
                   << std::endl;
         return 0;
       }
     }
 
-    std::cout << "Framerate  : " << opt_fps << std::endl;
+    std::cout << "Depth framerate  : " << opt_depth_fps << std::endl;
+    std::cout << "Visible framerate  : " << opt_visible_fps << std::endl;
 
     std::string text_record_mode = std::string("Record mode: ") + (opt_record_mode ? std::string("single") : std::string("continuous"));
 
@@ -50,14 +65,28 @@ int main(int argc, char **argv)
 
     vpOccipitalStructure g;
 
+    // There's an issue in the firmware when visible fps is set between 1 Hz and 2 Hz.
+    // The visible frame is damaged. The depth frame can be streamed at 1Hz without any problem.
+    if(opt_visible_fps < 2)
+    {
+      opt_visible_fps = 2;
+    }
+
     ST::CaptureSessionSettings settings;
     settings.source = ST::CaptureSessionSourceId::StructureCore;
     settings.structureCore.visibleEnabled = true;
+    settings.frameSyncEnabled = frame_sync;
+    settings.structureCore.depthFramerate = opt_depth_fps;
+    settings.structureCore.visibleFramerate = opt_visible_fps;
+    if(sxga)
+      settings.structureCore.depthResolution = ST::StructureCoreDepthResolution::SXGA;
     settings.applyExpensiveCorrection = true; // Apply a correction and clean filter to the depth before streaming.
 
     bool is_open = g.open(settings);
 
     if(is_open) {
+    // Wait some time to at least have 1 frame of each enabled stream (worst case scenario fps = 1Hz).
+    vpTime::wait(1000);
     I_color = vpImage<vpRGBa>(g.getHeight(vpOccipitalStructure::visible), g.getWidth(vpOccipitalStructure::visible));
     I_depth = vpImage<vpRGBa>(g.getHeight(vpOccipitalStructure::depth), g.getWidth(vpOccipitalStructure::depth));
     I_depth_raw = vpImage<float>(g.getHeight(vpOccipitalStructure::depth), g.getWidth(vpOccipitalStructure::depth));
