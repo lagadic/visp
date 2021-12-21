@@ -45,7 +45,6 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpOccipitalStructure.h>
-#include <visp3/io/vpImageIo.h>
 
 #if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
   (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
@@ -65,7 +64,7 @@ int main()
     sc.open(settings);
 
     vpImage<float> I_depth_raw;
-    vpImage<unsigned char> I_depth;
+    vpImage<vpRGBa> I_depth;
     vpImage<vpRGBa> I_visible;
 
 #if defined(VISP_HAVE_X11)
@@ -82,7 +81,7 @@ int main()
     display_visible.init(I_visible, 10, 10, "Visible image");
 
     I_depth_raw = vpImage<float>(sc.getHeight(vpOccipitalStructure::depth), sc.getWidth(vpOccipitalStructure::depth), 0);
-    I_depth = vpImage<unsigned char>(sc.getHeight(vpOccipitalStructure::depth), sc.getWidth(vpOccipitalStructure::depth), 0);
+    I_depth = vpImage<vpRGBa>(sc.getHeight(vpOccipitalStructure::depth), sc.getWidth(vpOccipitalStructure::depth));
     display_depth.setDownScalingFactor(display_scale);
     display_depth.init(I_depth, static_cast<int>(I_visible.getWidth()/display_scale) + 20, 10, "Depth image");
 #endif
