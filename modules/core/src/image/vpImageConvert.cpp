@@ -216,7 +216,7 @@ vpImageConvert::convert( const vpImage< unsigned char > &src, vpImage< double > 
 void
 vpImageConvert::createDepthHistogram( const vpImage< uint16_t > &src_depth, vpImage< vpRGBa > &dest_rgba )
 {
-  vp_createDepthHistogram(src_depth, dest_rgba, false);
+  vp_createDepthHistogram(src_depth, dest_rgba);
 }
 
 /*!
@@ -228,7 +228,7 @@ vpImageConvert::createDepthHistogram( const vpImage< uint16_t > &src_depth, vpIm
 void
 vpImageConvert::createDepthHistogram( const vpImage< uint16_t > &src_depth, vpImage< unsigned char > &dest_depth )
 {
-  vp_createDepthHistogram(src_depth, dest_depth, false);
+  vp_createDepthHistogram(src_depth, dest_depth);
 }
 
 /*!
@@ -241,7 +241,7 @@ vpImageConvert::createDepthHistogram( const vpImage< uint16_t > &src_depth, vpIm
 void
 vpImageConvert::createDepthHistogram( const vpImage< float > &src_depth, vpImage< vpRGBa > &dest_rgba )
 {
-  vp_createDepthHistogram(src_depth, dest_rgba, true);
+  vp_createDepthHistogram(src_depth, dest_rgba);
 }
 
 /*!
@@ -253,7 +253,7 @@ vpImageConvert::createDepthHistogram( const vpImage< float > &src_depth, vpImage
 void
 vpImageConvert::createDepthHistogram( const vpImage< float > &src_depth, vpImage< unsigned char > &dest_depth )
 {
-  vp_createDepthHistogram(src_depth, dest_depth, true);
+  vp_createDepthHistogram(src_depth, dest_depth);
 }
 
 

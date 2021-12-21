@@ -45,36 +45,23 @@
 #include <visp3/core/vpMath.h>
 
 /*!
-  Convert the input depth image to a 8-bits depth image. The input
+  Convert the input float depth image to a 8-bits depth image. The input
   depth value is assigned a value proportional to its frequency.
-  \param[in] src_depth : Input depth image.
+  \param[in] src_depth : Input float depth image.
   \param[out] dest_depth : Output grayscale depth image.
-  \param[in] check_isNaN : When true test if input depth image values are NaN.
-  If this is the case these pixels are set to 0 in the output image.
  */
-template <class Type>
 void
-vp_createDepthHistogram( const vpImage< Type > &src_depth, vpImage< unsigned char > &dest_depth, bool check_isNaN )
+vp_createDepthHistogram( const vpImage< float > &src_depth, vpImage< unsigned char > &dest_depth )
 {
   dest_depth.resize( src_depth.getHeight(), src_depth.getWidth() );
   uint32_t histogram[0x10000];
   memset( histogram, 0, sizeof( histogram ) );
 
-  if (check_isNaN) {
-    #ifdef VISP_HAVE_OPENMP
-    #pragma omp parallel for
-    #endif
-    for ( int i = 0; i < src_depth.getSize(); ++i ) {
-      if(!vpMath::isNaN(src_depth.bitmap[i])) {
-        ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
-      }
-    }
-  }
-  else {
-    #ifdef VISP_HAVE_OPENMP
-    #pragma omp parallel for
-    #endif
-    for ( int i = 0; i < src_depth.getSize(); ++i ) {
+  #ifdef VISP_HAVE_OPENMP
+  #pragma omp parallel for
+  #endif
+  for ( int i = 0; i < src_depth.getSize(); ++i ) {
+    if(!vpMath::isNaN(src_depth.bitmap[i])) {
       ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
     }
   }
@@ -102,38 +89,114 @@ vp_createDepthHistogram( const vpImage< Type > &src_depth, vpImage< unsigned cha
 }
 
 /*!
-  Convert the input depth image to a 3 channels 8-bits depth image. The input
+  Convert the input uint16_t depth image to a 8-bits depth image. The input
   depth value is assigned a value proportional to its frequency.
-  \param[in] src_depth : Input depth image.
-  \param[out] dest_depth : Output RGB depth image.
-  \param[in] check_isNaN : When true test if input depth image values are NaN.
-  If this is the case these pixels are set to 0 in the output image.
+  \param[in] src_depth : Input uint16_t depth image.
+  \param[out] dest_depth : Output grayscale depth image.
  */
-template <class Type>
 void
-vp_createDepthHistogram( const vpImage< Type > &src_depth, vpImage< vpRGBa > &dest_depth, bool check_isNaN )
+vp_createDepthHistogram( const vpImage< uint16_t > &src_depth, vpImage< unsigned char > &dest_depth )
 {
   dest_depth.resize( src_depth.getHeight(), src_depth.getWidth() );
   uint32_t histogram[0x10000];
   memset( histogram, 0, sizeof( histogram ) );
 
-  if (check_isNaN) {
-    #ifdef VISP_HAVE_OPENMP
-    #pragma omp parallel for
-    #endif
-    for ( int i = 0; i < src_depth.getSize(); ++i ) {
-      if(!vpMath::isNaN(src_depth.bitmap[i])) {
-        ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
-      }
+  #ifdef VISP_HAVE_OPENMP
+  #pragma omp parallel for
+  #endif
+  for ( int i = 0; i < src_depth.getSize(); ++i ) {
+    ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
+  }
+
+  for ( int i = 2; i < 0x10000; ++i )
+    histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
+
+  #ifdef VISP_HAVE_OPENMP
+  #pragma omp parallel for
+  #endif
+  for ( int i = 0; i < src_depth.getSize(); ++i )
+  {
+    uint16_t d = src_depth.bitmap[i];
+    if ( d )
+    {
+      unsigned char f =
+          static_cast< unsigned char >( histogram[d] * 255 / histogram[0xFFFF] ); // 0-255 based on histogram location
+      dest_depth.bitmap[i] = f;
+    }
+    else
+    {
+      dest_depth.bitmap[i] = 0;
     }
   }
-  else {
-    #ifdef VISP_HAVE_OPENMP
-    #pragma omp parallel for
-    #endif
-    for ( int i = 0; i < src_depth.getSize(); ++i ) {
+}
+
+/*!
+  Convert the input float depth image to a 3 channels 8-bits depth image. The input
+  depth value is assigned a value proportional to its frequency.
+  \param[in] src_depth : Input float depth image.
+  \param[out] dest_depth : Output RGB depth image.
+ */
+void
+vp_createDepthHistogram( const vpImage< float > &src_depth, vpImage< vpRGBa > &dest_depth )
+{
+  dest_depth.resize( src_depth.getHeight(), src_depth.getWidth() );
+  uint32_t histogram[0x10000];
+  memset( histogram, 0, sizeof( histogram ) );
+
+  #ifdef VISP_HAVE_OPENMP
+  #pragma omp parallel for
+  #endif
+  for ( int i = 0; i < src_depth.getSize(); ++i ) {
+    if(!vpMath::isNaN(src_depth.bitmap[i])) {
       ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
     }
+  }
+
+  for ( int i = 2; i < 0x10000; ++i )
+    histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
+
+  #ifdef VISP_HAVE_OPENMP
+  #pragma omp parallel for
+  #endif
+  for ( int i = 0; i < src_depth.getSize(); ++i )
+  {
+    uint16_t d = src_depth.bitmap[i];
+    if ( d )
+    {
+      unsigned char f = (unsigned char)( histogram[d] * 255 / histogram[0xFFFF] ); // 0-255 based on histogram location
+      dest_depth.bitmap[i].R = 255 - f;
+      dest_depth.bitmap[i].G = 0;
+      dest_depth.bitmap[i].B = f;
+      dest_depth.bitmap[i].A = vpRGBa::alpha_default;
+    }
+    else
+    {
+      dest_depth.bitmap[i].R = 20;
+      dest_depth.bitmap[i].G = 5;
+      dest_depth.bitmap[i].B = 0;
+      dest_depth.bitmap[i].A = vpRGBa::alpha_default;
+    }
+  }
+}
+
+/*!
+  Convert the input uint16_t depth image to a 3 channels 8-bits depth image. The input
+  depth value is assigned a value proportional to its frequency.
+  \param[in] src_depth : Input uint16_t depth image.
+  \param[out] dest_depth : Output RGB depth image.
+ */
+void
+vp_createDepthHistogram( const vpImage< uint16_t > &src_depth, vpImage< vpRGBa > &dest_depth )
+{
+  dest_depth.resize( src_depth.getHeight(), src_depth.getWidth() );
+  uint32_t histogram[0x10000];
+  memset( histogram, 0, sizeof( histogram ) );
+
+  #ifdef VISP_HAVE_OPENMP
+  #pragma omp parallel for
+  #endif
+  for ( int i = 0; i < src_depth.getSize(); ++i ) {
+    ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
   }
 
   for ( int i = 2; i < 0x10000; ++i )
