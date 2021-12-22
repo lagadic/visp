@@ -1375,6 +1375,67 @@ std::string vpIoTools::getNameWE(const std::string &pathname)
 }
 
 /*!
+  Checks file name format and extracts its index.
+
+  Format must contain substring "%0xd", defining the length of image index.
+  For example, format can be "img%04d.jpg". Then "img0001.jpg" and
+  "img0000.jpg" satisfy it, while "picture001.jpg" and "img001.jpg" don't.
+
+  \param filename : Name from which to extract the index.
+  \param format : Format of the filename.
+  \return Extracted index on success, -1 otherwise.
+
+  The following sample code shows how to use this function:
+  \code
+#include <visp3/core/vpIoTools.h>
+
+int main()
+{
+  std::cout << vpIoTools::getIndex("file-1.txt", "file-%d.txt") << std::endl;
+  std::cout << vpIoTools::getIndex("/tmp/file0040.txt", "/tmp/file%04d.txt") << std::endl;
+  std::cout << vpIoTools::getIndex("file.txt", "file%d.txt") << std::endl;
+  std::cout << vpIoTools::getIndex("file03.txt", "file%02d.txt") << std::endl;
+  std::cout << vpIoTools::getIndex("file-03.txt", "file%02d.txt") << std::endl;
+}
+  \endcode
+  It produces the following output:
+  \code
+1
+40
+-1
+3
+-1
+  \endcode
+*/
+long vpIoTools::getIndex(const std::string &filename, const std::string &format)
+{
+  size_t indexBegin = format.find_last_of('%');
+  size_t indexEnd = format.find_first_of('d', indexBegin);
+  size_t suffixLength = format.length() - indexEnd - 1;
+
+  // Extracting index
+  if (filename.length() <= suffixLength + indexBegin) {
+    return -1;
+  }
+  size_t indexLength = filename.length() - suffixLength - indexBegin;
+  std::string indexSubstr = filename.substr(indexBegin, indexLength);
+  std::istringstream ss(indexSubstr);
+  long index = 0;
+  ss >> index;
+  if (ss.fail() || index < 0 || !ss.eof()) {
+    return -1;
+  }
+
+  // Checking that format with inserted index equals filename
+  char nameByFormat[FILENAME_MAX];
+  sprintf(nameByFormat, format.c_str(), index);
+  if (std::string(nameByFormat) != filename) {
+    return -1;
+  }
+  return index;
+}
+
+/*!
    Returns the pathname string of this pathname's parent.
    \return The pathname string of this pathname's parent, or
    an empty string if this pathname does not name a parent directory.
