@@ -711,6 +711,20 @@ int main(int argc, const char **argv)
   }
 #endif
 
+  // Test getIndex()
+  if (vpIoTools::getIndex("file-1.txt", "file-%d.txt") != 1) {
+    std::cerr << "Failed test: vpIoTools::getIndex(\"file-1.txt\", \"file-%d.txt\")" << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (vpIoTools::getIndex("/tmp/file0040.txt", "/tmp/file%04d.txt") != 40) {
+    std::cerr << "Failed test: vpIoTools::getIndex(\"/tmp/file0040.txt\", \"/tmp/file%04d.txt\")" << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (vpIoTools::getIndex("file.txt", "file%d.txt") != -1) {
+    std::cerr << "Failed test: vpIoTools::getIndex(\"file.txt\", \"file%d.txt\")" << std::endl;
+    return EXIT_FAILURE;
+  }
+
   // Test checkFilename()
   vpIoTools::makeDirectory("/tmp/" + username + "/directory (1) with ' quote and spaces");
   path1 = "/tmp/" + username +
