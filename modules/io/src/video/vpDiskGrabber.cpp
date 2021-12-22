@@ -72,7 +72,7 @@ vpDiskGrabber::vpDiskGrabber(const std::string &generic_name)
 vpDiskGrabber::vpDiskGrabber(const std::string &dir, const std::string &basename, long number, int step,
                              unsigned int noz, const std::string &ext)
   : m_image_number(number), m_image_number_next(number), m_image_step(step), m_number_of_zero(noz), m_directory(dir),
-    m_base_name(basename), m_extension(ext), m_use_generic_name(false), m_generic_name("empty")
+    m_base_name(basename), m_extension(ext), m_use_generic_name(false), m_generic_name("empty"), m_image_name()
 {
   init = false;
 }
@@ -156,7 +156,8 @@ void vpDiskGrabber::acquire(vpImage<unsigned char> &I)
   }
 
   m_image_number_next += m_image_step;
-  vpImageIo::read(I, ss.str());
+  m_image_name = ss.str();
+  vpImageIo::read(I, m_image_name);
 
   width = I.getWidth();
   height = I.getHeight();
@@ -183,8 +184,8 @@ void vpDiskGrabber::acquire(vpImage<vpRGBa> &I)
   }
 
   m_image_number_next += m_image_step;
-
-  vpImageIo::read(I, ss.str());
+  m_image_name = ss.str();
+  vpImageIo::read(I, m_image_name);
 
   width = I.getWidth();
   height = I.getHeight();
