@@ -191,6 +191,7 @@ public:
 
   static std::string getAbsolutePathname(const std::string &pathname);
   static std::string getFileExtension(const std::string &pathname, bool checkFile = false);
+  static long getIndex(const std::string &filename, const std::string &format);
   static std::string getName(const std::string &pathname);
   static std::string getNameWE(const std::string &pathname);
   static std::string getParent(const std::string &pathname);
