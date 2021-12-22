@@ -66,7 +66,7 @@
   "/local/soft/ViSP/ViSP-images/cube". We want to acquire 10 images
   from the first named "image.0001.pgm" by steps of 2.
 
-\code
+  \code
 #include <visp3/core/vpImage.h>
 #include <visp3/io/vpDiskGrabber.h>
 
@@ -103,7 +103,7 @@ int main(){
     g.acquire(I) ;
   }
 }
-\endcode
+  \endcode
 */
 class VISP_EXPORT vpDiskGrabber : public vpFrameGrabber
 {
@@ -120,6 +120,7 @@ private:
 
   bool m_use_generic_name;
   std::string m_generic_name;
+  std::string m_image_name;
 
 public:
   vpDiskGrabber();
@@ -140,7 +141,11 @@ public:
   /*!
     Return the current image number.
   */
-  long getImageNumber() { return m_image_number; };
+  inline long getImageNumber() const { return m_image_number; };
+  /*!
+   * Return the name of the file in which the last frame was read.
+   */
+  inline std::string getImageName() const { return m_image_name; };
 
   void open(vpImage<unsigned char> &I);
   void open(vpImage<vpRGBa> &I);
