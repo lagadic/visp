@@ -19,9 +19,9 @@ The calibration process described in this tutorial consists in three stages:
 
 Note that all the material (source code) described in this tutorial is part of ViSP source code (in `tutorial/calibration` folder) and could be downloaded using the following command:
 
-\code
+\verbatim
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/calibration
-\endcode
+\endverbatim
 
 \section calib_ext_recommendation Recommendations
 
@@ -74,7 +74,7 @@ A right mouse click ends this step exiting the binary.
 
 This is the output when 8 different positions are considered:
 
-\code
+\verbatim
 $ ./tutorial-franka-acquire-calib-data 
 Image size: 640 x 480
 Found camera with name: "Camera"
@@ -86,7 +86,7 @@ Save: image-5.png and pose_fPe_5.yaml
 Save: image-6.png and pose_fPe_6.yaml
 Save: image-7.png and pose_fPe_7.yaml
 Save: image-8.png and pose_fPe_8.yaml
-\endcode
+\endverbatim
 
 The source code corresponding to the binary is available in tutorial-franka-acquire-calib-data.cpp. If your setup is different, it could be easily adapted to your robot or camera.
 
@@ -100,7 +100,7 @@ To this end run `camera_pose` binary to compute the pose of the chessboard with 
 
 It produces as output the corresponding poses `pose-cMo-<number>.yaml`.
 
-\code
+\verbatim
 $ ./tutorial-chessboard-pose --square_size 0.027 --input image-%d.png
 Parameters:
 chessboard_width=9
@@ -125,7 +125,7 @@ Save pose_cPo_5.yaml
 Save pose_cPo_6.yaml
 Save pose_cPo_7.yaml
 Save pose_cPo_8.yaml
-\endcode
+\endverbatim
 
 The source code corresponding to the binary is available in tutorial-chessboard-pose.cpp.
 
@@ -133,45 +133,43 @@ The source code corresponding to the binary is available in tutorial-chessboard-
 
 The final step 3. consists now to estimate the \f$^c{\bf M}_o\f$ transformation from the couples of \f$^f{\bf M}_e\f$ and \f$^c{\bf M}_o\f$ poses.
 
-Complete the calibration running `tutorial-hand-eye-calibration` binary with the number of poses to consider:
+Complete the calibration running `tutorial-hand-eye-calibration` binary. It will get the data from the pair of file, `pose_fPe_%d.yaml` and `pose_cPo_%d.yaml` located in `./` folder respectively.
 
-    $ ./tutorial-hand-eye-calibration --ndata <number of images or robot poses>
+    $ ./tutorial-hand-eye-calibration --data-path .
 
 It produces as output the end-effector to camera frame transformation in `eMc.yaml` and `eMc.txt` files.
 
-\code
-$ ./tutorial-hand-eye-calibration --ndata 8
-Use fPe=pose_fPe_1.yaml, cPo=pose_cPo_1.yaml
-Use fPe=pose_fPe_2.yaml, cPo=pose_cPo_2.yaml
-Use fPe=pose_fPe_3.yaml, cPo=pose_cPo_3.yaml
-Use fPe=pose_fPe_4.yaml, cPo=pose_cPo_4.yaml
-Use fPe=pose_fPe_5.yaml, cPo=pose_cPo_5.yaml
-Use fPe=pose_fPe_6.yaml, cPo=pose_cPo_6.yaml
-Use fPe=pose_fPe_7.yaml, cPo=pose_cPo_7.yaml
-Use fPe=pose_fPe_8.yaml, cPo=pose_cPo_8.yaml
-
-Save eMc.yaml
-
-Output: hand to eye calibration result: eMc estimated 
--0.005085455157  -0.9978663939  -0.0650906906  0.05336799539
-0.9993875258  -0.002817972976  -0.03488025544  -0.008241089806
-0.03462241091  -0.06522820621  0.9972695572  -0.04543907603
+\verbatim
+$ ./tutorial-hand-eye-calibration --data-path .
+vpIoTools::path(data_path + "/" + file_cPo)
+** Hand-eye (eMc) transformation estimated:
+-0.005742676471  -0.9978489581  -0.06530297456  0.05345567035
+0.9993569641  -0.003415469108  -0.03569303616  -0.009516983454
+0.03539321866  -0.06546595596  0.9972269194  -0.04510223842
 0  0  0  1
-\endcode
+** Corresponding pose vector: 0.05345567035  -0.009516983454  -0.04510223842  -0.0234728216  -0.07938837693  1.574587196
+
+** Translation [m]: 0.05345567035 -0.009516983454 -0.04510223842
+** Rotation (theta-u representation) [rad]: -0.0234728216  -0.07938837693  1.574587196
+** Rotation (theta-u representation) [deg]: -1.344893611 -4.548618941 90.21720083
+** Rotation (quaternion representation) [rad]: -0.01055785589  -0.03570815036  0.7082346124  0.7049944634
+
+Save transformation matrix eMc as a vpPoseVector in eMc.yaml
+\endverbatim
 
 The result of the calibration is available in `eMc.yaml` file that contains the \f$^e{\bf M}_c\f$ as a pose vector, with translation in meter and rotation as a \f$\theta_{\bf u} \f$ vector with values in radians.
-\code
+\verbatim
 $ more eMc.yaml 
 rows: 6
 cols: 1
 data: 
-  - [0.053368]
-  - [-0.00824109]
-  - [-0.0454391]
-  - [-0.0239162]
-  - [-0.0785807]
-  - [1.57397]
-\endcode
+  - [0.0535119]
+  - [-0.00910301]
+  - [-0.0460504]
+  - [-0.0232433]
+  - [-0.0802543]
+  - [1.57725]
+\endverbatim
 
 The source code corresponding to the binary is available in tutorial-hand-eye-calibration.cpp.
 
@@ -183,7 +181,7 @@ Since ViSP 3.3.1 we provide `hand_eye_calibration_show_extrinsics.py` python scr
 Prior to use that script, you need to install `scipy` and `pyyaml`:
 \verbatim
 $ sudo apt install python-pip
-$ pip install scipy pyyaml
+$ pip install scipy pyyaml matplotlib
 \endverbatim
 
 To visualize camera poses:

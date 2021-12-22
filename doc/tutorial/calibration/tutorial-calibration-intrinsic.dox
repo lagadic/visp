@@ -96,6 +96,11 @@ If you have a Realsense camera use rather:
 ./tutorial-grabber-realsense --seqname chessboard-%02d.jpg --record 1
 \endverbatim
 
+If you have an Occipital Structure Core camera use rather:
+\verbatim
+./tutorial-grabber-structure-core --seqname chessboard-%02d.jpg --record 1
+\endverbatim
+
 If you have a Parrot Bebop 2 drone camera use rather:
 \verbatim
 ./tutorial-grabber-bebop2 --seqname chessboard-%02d.jpg --record 1
