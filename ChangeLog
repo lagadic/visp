@@ -14,6 +14,9 @@ ViSP 3.4.1 (under development)
     . Introduce Bayer demosaicing also called debayering in vpImageConvert
     . UEye grabber now support Bayer 8 color mode
     . Update to use Catch2 2.13.7
+    . Improve video reader and writer classes to consider a sequence of non consecutive
+      images
+    . Improve camera intrinsic and extrinsic calibration tools 
   - Tutorials
     . New tutorial for FrankaSim that allows physical simulation of the Panda robot from
       Franka Emika, with a model that has beenaccurately identified from a real Franka
@@ -28,6 +31,7 @@ ViSP 3.4.1 (under development)
     . [#939] SonarQube static analysis is no more working
     . [#950] Cannot build tutorial-grabber-multiple-realsense.cpp with Visual Studio 2017
     . [#961] Build error on Ubuntu 21.10 with glibc 2.34
+    . [#963] Unable to read a sequence of non consecutive images
 ----------------------------------------------
 ViSP 3.4.0 (released February 26, 2021)
   - Contributors:
