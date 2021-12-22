@@ -169,6 +169,11 @@ if(USE_OPENCV)
   endif()
 endif(USE_OPENCV)
 
+if(WITH_CATCH2)
+  # catch2 is private
+  include_directories(${CATCH2_INCLUDE_DIRS})
+endif()
+
 if(ANDROID)
   vp_add_module(io visp_core)
 else()
@@ -178,7 +183,6 @@ endif()
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-vp_add_tests(DEPENDS_ON visp_features)
+vp_add_tests()
 
 vp_set_source_file_compile_flag(src/tools/vpParseArgv.cpp -Wno-strict-overflow)
-
