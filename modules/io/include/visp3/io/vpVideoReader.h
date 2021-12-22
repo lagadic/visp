@@ -209,7 +209,8 @@ private:
   vpVideoFormatType m_formatType;
 
   //! Path to the video
-  std::string m_fileName;
+  std::string m_videoName;
+  std::string m_frameName;
   //! Indicates if the path to the video is set.
   bool m_initFileName;
   //! Indicates if the video is "open".
@@ -295,6 +296,11 @@ public:
   inline long getFrameIndex() const { return m_frameCount; }
 
   /*!
+    Return the name of the file in which the last frame was read.
+  */
+  inline std::string getFrameName() const { return m_frameName; }
+
+  /*!
     Gets the first frame index.
 
     \return Returns the first frame index.
@@ -370,12 +376,12 @@ public:
 
   /*!
     Sets the frame step index.
-  The default frame step is 1
+    The default frame step is 1
 
-  \param frame_step : The frame index step.
+    \param frame_step : The frame index step.
 
-  \sa setFrameStep()
-*/
+    \sa setFrameStep()
+  */
   inline void setFrameStep(const long frame_step) { m_frameStep = frame_step; }
 
 private:
@@ -385,7 +391,6 @@ private:
   void findLastFrameIndex();
   bool isImageExtensionSupported() const;
   bool isVideoExtensionSupported() const;
-  long extractImageIndex(const std::string &imageName, const std::string &format) const;
   bool checkImageNameFormat(const std::string &format) const;
   void getProperties();
 };

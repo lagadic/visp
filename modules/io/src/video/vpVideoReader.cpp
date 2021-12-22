@@ -52,14 +52,14 @@
 #include <limits> // numeric_limits
 
 /*!
-Basic constructor.
+  Basic constructor.
 */
 vpVideoReader::vpVideoReader()
   : vpFrameGrabber(), m_imSequence(NULL),
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
     m_capture(), m_frame(), m_lastframe_unknown(false),
 #endif
-    m_formatType(FORMAT_UNKNOWN), m_fileName(), m_initFileName(false), m_isOpen(false), m_frameCount(0), m_firstFrame(0), m_lastFrame(0),
+    m_formatType(FORMAT_UNKNOWN), m_videoName(), m_frameName(), m_initFileName(false), m_isOpen(false), m_frameCount(0), m_firstFrame(0), m_lastFrame(0),
     m_firstFrameIndexIsSet(false), m_lastFrameIndexIsSet(false), m_frameStep(1), m_frameRate(0.)
 {
 }
@@ -75,19 +75,19 @@ vpVideoReader::~vpVideoReader()
 }
 
 /*!
-It enables to set the path and the name of the file(s) which as/have to be
-read.
+  It enables to set the path and the name of the video which has to be
+  read.
 
-If you want to read a video file, \f$ filename \f$ corresponds to the path to
-the file (example : /local/video.mpeg).
+  If you want to read a video file, `filename` corresponds to the path to
+  the file (e.g.: `/local/video.mpeg`).
 
-If you want to read a sequence of images, \f$ filename \f$ corresponds to the
-path followed by the image name template. For example, if you want to read
-different images named image0001.jpeg, image0002.jpg, ... and located in the
-folder /local/image, \f$ filename \f$ will be "/local/image/image%04d.jpg".
+  If you want to read a sequence of images, `filename` corresponds rather to the
+  path followed by the image name template. For example, if you want to read
+  different images named `image0001.jpeg`, `image0002.jpg`... and located in the
+  folder `/local/image`, `filename` will be `/local/image/image%04d.jpg`.
 
-\param filename : Path to a video file or file name template of a image
-sequence.
+  \param filename : Path to a video file or file name template of a image
+  sequence.
 */
 void vpVideoReader::setFileName(const std::string &filename)
 {
@@ -95,9 +95,10 @@ void vpVideoReader::setFileName(const std::string &filename)
     throw(vpImageException(vpImageException::noFileNameError, "filename empty "));
   }
 
-  m_fileName = filename;
+  m_videoName = filename;
+  m_frameName = filename;
 
-  m_formatType = getFormat(m_fileName);
+  m_formatType = getFormat(filename);
 
   if (m_formatType == FORMAT_UNKNOWN) {
     throw(vpException(vpException::badValue, "Filename extension not supported"));
@@ -105,7 +106,7 @@ void vpVideoReader::setFileName(const std::string &filename)
 
   // checking image name format
   if (isImageExtensionSupported()) {
-    std::string format = vpIoTools::getName(m_fileName);
+    std::string format = vpIoTools::getName(m_videoName);
     if (!checkImageNameFormat(format)) {
       throw(vpException(vpException::badValue, "Format of image name wasn't recognized: %s", format.c_str()));
     }
@@ -129,7 +130,7 @@ void vpVideoReader::getProperties()
 
   if (isImageExtensionSupported()) {
     m_imSequence = new vpDiskGrabber;
-    m_imSequence->setGenericName(m_fileName.c_str());
+    m_imSequence->setGenericName(m_videoName.c_str());
     m_imSequence->setStep(m_frameStep);
     if (m_firstFrameIndexIsSet) {
       m_imSequence->setImageNumber(m_firstFrame);
@@ -137,10 +138,10 @@ void vpVideoReader::getProperties()
     m_frameRate = -1.;
   } else if (isVideoExtensionSupported()) {
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-    m_capture.open(m_fileName.c_str());
+    m_capture.open(m_videoName.c_str());
 
     if (!m_capture.isOpened()) {
-      throw(vpException(vpException::ioError, "Could not open the video %s with OpenCV", m_fileName.c_str()));
+      throw(vpException(vpException::ioError, "Could not open the video %s with OpenCV", m_videoName.c_str()));
     }
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
     width = (unsigned int)m_capture.get(cv::CAP_PROP_FRAME_WIDTH);
@@ -170,11 +171,11 @@ void vpVideoReader::getProperties()
 }
 
 /*!
-Sets all the parameters needed to read the video or the image sequence.
+  Sets all the parameters needed to read the video or the image sequence.
 
-Grab the first frame and stores it in the image \f$ I \f$.
+  Grab the first frame and stores it in the image \f$ I \f$.
 
-\param I : The image where the frame is stored.
+  \param I : The image where the frame is stored.
 */
 void vpVideoReader::open(vpImage<vpRGBa> &I)
 {
@@ -203,11 +204,11 @@ void vpVideoReader::open(vpImage<vpRGBa> &I)
 }
 
 /*!
-Sets all the parameters needed to read the video or the image sequence.
+  Sets all the parameters needed to read the video or the image sequence.
 
-Grab the first frame and stores it in the image \f$ I \f$.
+  Grab the first frame and stores it in the image \f$ I \f$.
 
-\param I : The image where the frame is stored.
+  \param I : The image where the frame is stored.
 */
 void vpVideoReader::open(vpImage<unsigned char> &I)
 {
@@ -236,25 +237,33 @@ void vpVideoReader::open(vpImage<unsigned char> &I)
 }
 
 /*!
-Grabs the current (k) image in the stack of frames and increments the frame
-counter in order to grab the next image (k+1) during the next use of the
-method. If open() was not called previously, this method opens the video
-reader.
+  Grabs the current (k) image in the stack of frames and increments the frame
+  counter in order to grab the next image (k+1) during the next use of the
+  method. If open() was not called previously, this method opens the video
+  reader.
 
-This method enables to use the class as frame grabber.
+  This method enables to use the class as frame grabber.
 
-\param I : The image where the frame is stored.
+  \param I : The image where the frame is stored.
 */
 void vpVideoReader::acquire(vpImage<vpRGBa> &I)
 {
   if (!m_isOpen) {
     open(I);
   }
-  // getFrame(I,m_frameCount);
   if (m_imSequence != NULL) {
     m_imSequence->setStep(m_frameStep);
-    m_imSequence->acquire(I);
+    bool skip_frame = false;
+    do {
+      try {
+        m_imSequence->acquire(I);
+        skip_frame = false;
+      }  catch (...) {
+        skip_frame = true;
+      }
+    } while (skip_frame && m_imSequence->getImageNumber() < m_lastFrame);
     m_frameCount = m_imSequence->getImageNumber();
+    m_frameName = m_imSequence->getImageName();
     if (m_frameCount + m_frameStep > m_lastFrame) {
       m_imSequence->setImageNumber(m_frameCount);
     } else if (m_frameCount + m_frameStep < m_firstFrame) {
@@ -315,12 +324,12 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
 }
 
 /*!
-Grabs the kth image in the stack of frames and increments the frame counter in
-order to grab the next image (k+1) during the next use of the method.
+  Grabs the kth image in the stack of frames and increments the frame counter in
+  order to grab the next image (k+1) during the next use of the method.
 
-This method enables to use the class as frame grabber.
+  This method enables to use the class as frame grabber.
 
-\param I : The image where the frame is stored.
+  \param I : The image where the frame is stored.
 */
 void vpVideoReader::acquire(vpImage<unsigned char> &I)
 {
@@ -330,8 +339,17 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
 
   if (m_imSequence != NULL) {
     m_imSequence->setStep(m_frameStep);
-    m_imSequence->acquire(I);
+    bool skip_frame = false;
+    do {
+      try {
+        m_imSequence->acquire(I);
+        skip_frame = false;
+      }  catch (...) {
+        skip_frame = true;
+      }
+    } while (skip_frame && m_imSequence->getImageNumber() < m_lastFrame);
     m_frameCount = m_imSequence->getImageNumber();
+    m_frameName = m_imSequence->getImageName();
     if (m_frameCount + m_frameStep > m_lastFrame) {
       m_imSequence->setImageNumber(m_frameCount);
     } else if (m_frameCount + m_frameStep < m_firstFrame) {
@@ -388,17 +406,17 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
 }
 
 /*!
-Gets the \f$ frame \f$ th frame and stores it in the image  \f$ I \f$.
+  Gets the \f$ frame \f$ th frame and stores it in the image  \f$ I \f$.
 
-\warning For the video files this method is not precise, and returns the
-nearest key frame from the expected frame. But this method enables to position
-the reader where you want. Then, use the acquire method to grab the following
-images one after one.
+  \warning For the video files this method is not precise, and returns the
+  nearest key frame from the expected frame. But this method enables to position
+  the reader where you want. Then, use the acquire method to grab the following
+  images one after one.
 
-\param I : The vpImage used to stored the frame.
-\param frame_index : The index of the frame which has to be read.
+  \param I : The vpImage used to stored the frame.
+  \param frame_index : The index of the frame which has to be read.
 
-\return It returns true if the frame could be read. Else it returns false.
+  \return It returns true if the frame could be read. Else it returns false.
 */
 bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
 {
@@ -458,17 +476,17 @@ bool vpVideoReader::getFrame(vpImage<vpRGBa> &I, long frame_index)
 }
 
 /*!
-Gets the \f$ frame \f$ th frame and stores it in the image  \f$ I \f$.
+  Gets the \f$ frame \f$ th frame and stores it in the image  \f$ I \f$.
 
-\warning For the video files this method is not precise, and returns the
-nearest key frame from the expected frame. But this method enables to position
-the reader where you want. Then, use the acquire method to grab the following
-images one after one.
+  \warning For the video files this method is not precise, and returns the
+  nearest key frame from the expected frame. But this method enables to position
+  the reader where you want. Then, use the acquire method to grab the following
+  images one after one.
 
-\param I : The vpImage used to stored the frame.
-\param frame_index : The index of the frame which has to be read.
+  \param I : The vpImage used to stored the frame.
+  \param frame_index : The index of the frame which has to be read.
 
-\return It returns true if the frame could be read. Else it returns false.
+  \return It returns true if the frame could be read. Else it returns false.
 */
 bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
 {
@@ -532,9 +550,9 @@ bool vpVideoReader::getFrame(vpImage<unsigned char> &I, long frame_index)
 }
 
 /*!
-Gets the format of the file(s) which has/have to be read.
+  Gets the format of the file(s) which has/have to be read.
 
-\return Returns the format.
+  \return Returns the format.
 */
 vpVideoReader::vpVideoFormatType vpVideoReader::getFormat(const std::string &filename) const
 {
@@ -646,7 +664,7 @@ std::string vpVideoReader::getExtension(const std::string &filename)
 }
 
 /*!
-Get the last frame index (update the lastFrame attribute).
+  Get the last frame index (update the lastFrame attribute).
 */
 void vpVideoReader::findLastFrameIndex()
 {
@@ -657,8 +675,8 @@ void vpVideoReader::findLastFrameIndex()
 
   if (m_imSequence != NULL) {
     if (!m_lastFrameIndexIsSet) {
-      std::string imageNameFormat = vpIoTools::getName(m_fileName);
-      std::string dirName = vpIoTools::getParent(m_fileName);
+      std::string imageNameFormat = vpIoTools::getName(m_videoName);
+      std::string dirName = vpIoTools::getParent(m_videoName);
       if (dirName == "") {
         dirName = ".";
       }
@@ -667,7 +685,7 @@ void vpVideoReader::findLastFrameIndex()
       for (size_t i = 0; i < files.size(); i++) {
         // Checking that file name satisfies image format,
         // specified by imageNameFormat, and extracting imageIndex
-        long imageIndex = extractImageIndex(files[i], imageNameFormat);
+        long imageIndex = vpIoTools::getIndex(files[i], imageNameFormat);
         if ((imageIndex != -1) && (imageIndex > m_lastFrame)) {
           m_lastFrame = imageIndex;
         }
@@ -701,14 +719,14 @@ void vpVideoReader::findLastFrameIndex()
 }
 
 /*!
-Get the first frame index (update the firstFrame attribute).
+  Get the first frame index (update the firstFrame attribute).
 */
 void vpVideoReader::findFirstFrameIndex()
 {
   if (m_imSequence != NULL) {
     if (!m_firstFrameIndexIsSet) {
-      std::string imageNameFormat = vpIoTools::getName(m_fileName);
-      std::string dirName = vpIoTools::getParent(m_fileName);
+      std::string imageNameFormat = vpIoTools::getName(m_videoName);
+      std::string dirName = vpIoTools::getParent(m_videoName);
       if (dirName == "") {
         dirName = ".";
       }
@@ -717,7 +735,7 @@ void vpVideoReader::findFirstFrameIndex()
       for (size_t i = 0; i < files.size(); i++) {
         // Checking that file name satisfies image format, specified by
         // imageNameFormat, and extracting imageIndex
-        long imageIndex = extractImageIndex(files[i], imageNameFormat);
+        long imageIndex = vpIoTools::getIndex(files[i], imageNameFormat);
         if ((imageIndex != -1) && (imageIndex < m_firstFrame || m_firstFrame == -1)) {
           m_firstFrame = imageIndex;
         }
@@ -733,7 +751,7 @@ void vpVideoReader::findFirstFrameIndex()
 }
 
 /*!
-Return true if the image file extension is supported, false otherwise.
+  Return true if the image file extension is supported, false otherwise.
 */
 bool vpVideoReader::isImageExtensionSupported() const
 {
@@ -744,7 +762,7 @@ bool vpVideoReader::isImageExtensionSupported() const
 }
 
 /*!
-Return true if the video file extension is supported, false otherwise.
+  Return true if the video file extension is supported, false otherwise.
 */
 bool vpVideoReader::isVideoExtensionSupported() const
 {
@@ -754,11 +772,10 @@ bool vpVideoReader::isVideoExtensionSupported() const
 }
 
 /*!
+  Operator that allows to capture a grey level image.
+  \param I : The captured image.
 
-   Operator that allows to capture a grey level image.
-   \param I : The captured image.
-
-   \code
+  \code
 #include <visp3/io/vpVideoReader.h>
 
 int main()
@@ -775,7 +792,7 @@ int main()
   while (! reader.end() )
   reader >> I;
 }
-   \endcode
+  \endcode
  */
 vpVideoReader &vpVideoReader::operator>>(vpImage<unsigned char> &I)
 {
@@ -784,11 +801,10 @@ vpVideoReader &vpVideoReader::operator>>(vpImage<unsigned char> &I)
 }
 
 /*!
+  Operator that allows to capture a grey level image.
+  \param I : The captured image.
 
-   Operator that allows to capture a grey level image.
-   \param I : The captured image.
-
-   \code
+  \code
 #include <visp3/io/vpVideoReader.h>
 
 int main()
@@ -805,51 +821,12 @@ int main()
   while (! reader.end() )
   reader >> I;
 }
-   \endcode
+  \endcode
  */
 vpVideoReader &vpVideoReader::operator>>(vpImage<vpRGBa> &I)
 {
   this->acquire(I);
   return *this;
-}
-
-/*!
-  Checks imageName format and extracts its index.
-
-  Format must contain substring "%0xd", defining the length of image index.
-  For example, format can be "img%04d.jpg". Then "img0001.jpg" and
-  "img0000.jpg" satisfy it, while "picture001.jpg" and "img001.jpg" don't.
-
-  \param imageName : name from which to extract
-  \param format : format of image name
-  \return extracted index on success, -1 otherwise.
-*/
-long vpVideoReader::extractImageIndex(const std::string &imageName, const std::string &format) const
-{
-  size_t indexBegin = format.find_last_of('%');
-  size_t indexEnd = format.find_first_of('d', indexBegin);
-  size_t suffixLength = format.length() - indexEnd - 1;
-
-  // Extracting index
-  if (imageName.length() <= suffixLength + indexBegin) {
-    return -1;
-  }
-  size_t indexLength = imageName.length() - suffixLength - indexBegin;
-  std::string indexSubstr = imageName.substr(indexBegin, indexLength);
-  std::istringstream ss(indexSubstr);
-  long index = 0;
-  ss >> index;
-  if (ss.fail() || index < 0 || !ss.eof()) {
-    return -1;
-  }
-
-  // Checking that format with inserted index equals imageName
-  char nameByFormat[FILENAME_MAX];
-  sprintf(nameByFormat, format.c_str(), index);
-  if (std::string(nameByFormat) != imageName) {
-    return -1;
-  }
-  return index;
 }
 
 /*!
