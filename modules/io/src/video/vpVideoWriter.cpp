@@ -55,21 +55,16 @@
 vpVideoWriter::vpVideoWriter()
   :
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-    writer(), fourcc(0), framerate(0.),
+    m_writer(), m_framerate(25.0),
 #endif
-    formatType(FORMAT_UNKNOWN), initFileName(false), isOpen(false), frameCount(0), firstFrame(0), width(0), height(0)
+    m_formatType(FORMAT_UNKNOWN), m_videoName(), m_frameName(),
+    m_initFileName(false), m_isOpen(false), m_frameCount(0), m_firstFrame(0),
+    m_width(0), m_height(0), m_frameStep(1)
 {
-  initFileName = false;
-  firstFrame = 0;
-  frameCount = 0;
-  isOpen = false;
-  width = height = 0;
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
-  framerate = 25.0;
-  fourcc = cv::VideoWriter::fourcc('P', 'I', 'M', '1');
+  m_fourcc = cv::VideoWriter::fourcc('P', 'I', 'M', '1');
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-  framerate = 25.0;
-  fourcc = CV_FOURCC('P', 'I', 'M', '1'); // default is a MPEG-1 codec
+  m_fourcc = CV_FOURCC('P', 'I', 'M', '1'); // default is a MPEG-1 codec
 #endif
 }
 
@@ -78,6 +73,7 @@ vpVideoWriter::vpVideoWriter()
 */
 vpVideoWriter::~vpVideoWriter() {}
 
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
 /*!
   It enables to set the path and the name of the files which will be saved.
 
@@ -91,25 +87,9 @@ vpVideoWriter::~vpVideoWriter() {}
 */
 void vpVideoWriter::setFileName(const char *filename)
 {
-  if (!filename || *filename == '\0') {
-    vpERROR_TRACE("filename empty ");
-    throw(vpImageException(vpImageException::noFileNameError, "filename empty "));
-  }
-
-  if (strlen(filename) >= FILENAME_MAX) {
-    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the file name"));
-  }
-
-  strcpy(this->fileName, filename);
-
-  formatType = getFormat(fileName);
-
-  if (formatType == FORMAT_UNKNOWN) {
-    throw(vpException(vpException::badValue, "Filename extension not supported"));
-  }
-
-  initFileName = true;
+  setFileName(std::string(filename));
 }
+#endif
 
 /*!
   It enables to set the path and the name of the files which will be saved.
@@ -122,7 +102,23 @@ void vpVideoWriter::setFileName(const char *filename)
 
   \param filename : filename template of an image sequence.
 */
-void vpVideoWriter::setFileName(const std::string &filename) { setFileName(filename.c_str()); }
+void vpVideoWriter::setFileName(const std::string &filename)
+{
+  if (filename.empty()) {
+    throw(vpImageException(vpImageException::noFileNameError, "Filename empty in video writer"));
+  }
+
+  m_videoName = filename;
+  m_frameName = filename;
+
+  m_formatType = getFormat(filename);
+
+  if (m_formatType == FORMAT_UNKNOWN) {
+    throw(vpException(vpException::badValue, "Filename extension not supported in video writer"));
+  }
+
+  m_initFileName = true;
+}
 
 /*!
   Sets all the parameters needed to write the video or the image sequence.
@@ -131,32 +127,30 @@ void vpVideoWriter::setFileName(const std::string &filename) { setFileName(filen
 */
 void vpVideoWriter::open(vpImage<vpRGBa> &I)
 {
-  if (!initFileName) {
-    vpERROR_TRACE("The generic filename has to be set");
-    throw(vpImageException(vpImageException::noFileNameError, "filename empty"));
+  if (! m_initFileName) {
+    throw(vpImageException(vpImageException::noFileNameError, "The generic filename has to be set in video writer"));
   }
 
-  if (formatType == FORMAT_PGM || formatType == FORMAT_PPM || formatType == FORMAT_JPEG || formatType == FORMAT_PNG) {
-    width = I.getWidth();
-    height = I.getHeight();
-  } else if (formatType == FORMAT_AVI || formatType == FORMAT_MPEG || formatType == FORMAT_MPEG4 ||
-             formatType == FORMAT_MOV) {
+  if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG || m_formatType == FORMAT_PNG) {
+    m_width = I.getWidth();
+    m_height = I.getHeight();
+  } else if (m_formatType == FORMAT_AVI || m_formatType == FORMAT_MPEG || m_formatType == FORMAT_MPEG4 ||
+             m_formatType == FORMAT_MOV) {
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-    writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size((int)I.getWidth(), (int)I.getHeight()));
+    m_writer = cv::VideoWriter(m_videoName, m_fourcc, m_framerate,
+                               cv::Size(static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight())));
 
-    if (!writer.isOpened()) {
-      // vpERROR_TRACE("Could not open encode the video with opencv");
-      throw(vpException(vpException::fatalError, "Could not open encode the video with opencv"));
+    if (! m_writer.isOpened()) {
+      throw(vpException(vpException::fatalError, "Could not open encode the video with OpenCV"));
     }
 #else
-    throw(vpException(vpException::fatalError, "To encode video files ViSP should be build with "
-                                               "opencv 3rd >= 2.1.0 party libraries."));
+    throw(vpException(vpException::fatalError, "To encode video files ViSP should be build with OpenCV >= 2.1.0"));
 #endif
   }
 
-  frameCount = firstFrame;
+  m_frameCount = m_firstFrame;
 
-  isOpen = true;
+  m_isOpen = true;
 }
 
 /*!
@@ -166,32 +160,30 @@ void vpVideoWriter::open(vpImage<vpRGBa> &I)
 */
 void vpVideoWriter::open(vpImage<unsigned char> &I)
 {
-  if (!initFileName) {
-    vpERROR_TRACE("The generic filename has to be set");
-    throw(vpImageException(vpImageException::noFileNameError, "filename empty"));
+  if (! m_initFileName) {
+    throw(vpImageException(vpImageException::noFileNameError, "The generic filename has to be set in video writer"));
   }
 
-  if (formatType == FORMAT_PGM || formatType == FORMAT_PPM || formatType == FORMAT_JPEG || formatType == FORMAT_PNG) {
-    width = I.getWidth();
-    height = I.getHeight();
-  } else if (formatType == FORMAT_AVI || formatType == FORMAT_MPEG || formatType == FORMAT_MPEG4 ||
-             formatType == FORMAT_MOV) {
+  if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG || m_formatType == FORMAT_PNG) {
+    m_width = I.getWidth();
+    m_height = I.getHeight();
+  } else if (m_formatType == FORMAT_AVI || m_formatType == FORMAT_MPEG || m_formatType == FORMAT_MPEG4 ||
+             m_formatType == FORMAT_MOV) {
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-    writer = cv::VideoWriter(fileName, fourcc, framerate, cv::Size((int)I.getWidth(), (int)I.getHeight()));
+    m_writer = cv::VideoWriter(m_videoName, m_fourcc, m_framerate,
+                               cv::Size(static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight())));
 
-    if (!writer.isOpened()) {
-      vpERROR_TRACE("Could not encode the video with opencv");
-      throw(vpException(vpException::ioError, "Could not encode the video with opencv"));
+    if (! m_writer.isOpened()) {
+      throw(vpException(vpException::fatalError, "Could not open encode the video with OpenCV"));
     }
 #else
-    throw(vpException(vpException::fatalError, "To encode video files ViSP should be build with "
-                                               "opencv 3rd >= 2.1.0 party libraries."));
+    throw(vpException(vpException::fatalError, "To encode video files ViSP should be build with OpenCV >= 2.1.0"));
 #endif
   }
 
-  frameCount = firstFrame;
+  m_frameCount = m_firstFrame;
 
-  isOpen = true;
+  m_isOpen = true;
 }
 
 /*!
@@ -201,30 +193,28 @@ void vpVideoWriter::open(vpImage<unsigned char> &I)
   Each time this method is used, the frame counter is incremented and thus the
   file name change for the case of an image sequence.
 
-  \param I : The image which has to be saved
+  \param I : The image which has to be saved.
 */
 void vpVideoWriter::saveFrame(vpImage<vpRGBa> &I)
 {
-  if (!isOpen) {
-    vpERROR_TRACE("The video has to be open first with the open method");
-    throw(vpException(vpException::notInitialized, "file not yet opened"));
+  if (! m_isOpen) {
+    throw(vpException(vpException::notInitialized, "The video has to be open first with video writer open() method"));
   }
 
-  if (formatType == FORMAT_PGM || formatType == FORMAT_PPM || formatType == FORMAT_JPEG || formatType == FORMAT_PNG) {
+  if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG || m_formatType == FORMAT_PNG) {
     char name[FILENAME_MAX];
-
-    sprintf(name, fileName, frameCount);
-
+    sprintf(name, m_videoName.c_str(), m_frameCount);
     vpImageIo::write(I, name);
+    m_frameName = std::string(name);
   } else {
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
     cv::Mat matFrame;
     vpImageConvert::convert(I, matFrame);
-    writer << matFrame;
+    m_writer << matFrame;
 #endif
   }
 
-  frameCount++;
+  m_frameCount += m_frameStep;
 }
 
 /*!
@@ -234,36 +224,34 @@ void vpVideoWriter::saveFrame(vpImage<vpRGBa> &I)
   Each time this method is used, the frame counter is incremented and thus the
   file name change for the case of an image sequence.
 
-  \param I : The image which has to be saved
+  \param I : The image which has to be saved.
 */
 void vpVideoWriter::saveFrame(vpImage<unsigned char> &I)
 {
-  if (!isOpen) {
-    vpERROR_TRACE("The video has to be open first with the open method");
-    throw(vpException(vpException::notInitialized, "file not yet opened"));
+  if (! m_isOpen) {
+    throw(vpException(vpException::notInitialized, "The video has to be open first with video writer open() method"));
   }
 
-  if (formatType == FORMAT_PGM || formatType == FORMAT_PPM || formatType == FORMAT_JPEG || formatType == FORMAT_PNG) {
+  if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG || m_formatType == FORMAT_PNG) {
     char name[FILENAME_MAX];
-
-    sprintf(name, fileName, frameCount);
-
+    sprintf(name, m_videoName.c_str(), m_frameCount);
     vpImageIo::write(I, name);
+    m_frameName = std::string(name);
   } else {
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
     cv::Mat matFrame, rgbMatFrame;
     vpImageConvert::convert(I, matFrame);
     cv::cvtColor(matFrame, rgbMatFrame, cv::COLOR_GRAY2BGR);
-    writer << rgbMatFrame;
+    m_writer << rgbMatFrame;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
     cv::Mat matFrame, rgbMatFrame;
     vpImageConvert::convert(I, matFrame);
     cv::cvtColor(matFrame, rgbMatFrame, CV_GRAY2BGR);
-    writer << rgbMatFrame;
+    m_writer << rgbMatFrame;
 #endif
   }
 
-  frameCount++;
+  m_frameCount += m_frameStep;
 }
 
 /*!
@@ -271,9 +259,8 @@ void vpVideoWriter::saveFrame(vpImage<unsigned char> &I)
 */
 void vpVideoWriter::close()
 {
-  if (!isOpen) {
-    vpERROR_TRACE("The video has to be open first with the open method");
-    throw(vpException(vpException::notInitialized, "file not yet opened"));
+  if (! m_isOpen) {
+    throw(vpException(vpException::notInitialized, "Cannot close video writer: not yet opened"));
   }
 }
 
@@ -282,11 +269,9 @@ void vpVideoWriter::close()
 
   \return Returns the format.
 */
-vpVideoWriter::vpVideoFormatType vpVideoWriter::getFormat(const char *filename)
+vpVideoWriter::vpVideoFormatType vpVideoWriter::getFormat(const std::string &filename)
 {
-  std::string sfilename(filename);
-
-  std::string ext = vpVideoWriter::getExtension(sfilename);
+  std::string ext = vpVideoWriter::getExtension(filename);
 
   if (ext.compare(".PGM") == 0)
     return FORMAT_PGM;
@@ -343,4 +328,16 @@ std::string vpVideoWriter::getExtension(const std::string &filename)
   size_t dot = filename.find_last_of(".");
   std::string ext = filename.substr(dot, filename.size() - 1);
   return ext;
+}
+
+/*!
+  Enables to set the first frame index.
+
+  \param first_frame : The first frame index. Value should be positive.
+*/
+void vpVideoWriter::setFirstFrameIndex(int first_frame) {
+  if (first_frame < 0) {
+    throw(vpException(vpException::fatalError, "Video writer first frame index cannot be negative"));
+  }
+  m_firstFrame = first_frame;
 }

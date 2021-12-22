@@ -160,9 +160,9 @@ class VISP_EXPORT vpVideoWriter
 {
 private:
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-  cv::VideoWriter writer;
-  int fourcc;
-  double framerate;
+  cv::VideoWriter m_writer;
+  int m_fourcc;
+  double m_framerate;
 #endif
   //! Types of available formats
   typedef enum {
@@ -178,26 +178,29 @@ private:
   } vpVideoFormatType;
 
   //! Video's format which has to be writen
-  vpVideoFormatType formatType;
+  vpVideoFormatType m_formatType;
 
-  //! Path to the image sequence
-  char fileName[FILENAME_MAX];
+  //! Path to the video or image sequence
+  std::string m_videoName;
+  std::string m_frameName;
 
   //! Indicates if the path to the image sequence is set.
-  bool initFileName;
+  bool m_initFileName;
 
   //! Indicates if the video is "open".
-  bool isOpen;
+  bool m_isOpen;
 
   //! Count the frame number.
-  unsigned int frameCount;
+  int m_frameCount;
 
   //! The first frame index.
-  unsigned int firstFrame;
+  int m_firstFrame;
 
   //! Size of the frame
-  unsigned int width;
-  unsigned int height;
+  unsigned int m_width;
+  unsigned int m_height;
+
+  int m_frameStep;
 
 public:
   vpVideoWriter();
@@ -210,7 +213,11 @@ public:
 
     \return Returns the current frame index.
   */
-  inline unsigned int getCurrentFrameIndex() const { return frameCount; }
+  inline unsigned int getCurrentFrameIndex() const { return m_frameCount; }
+  /*!
+   * Return the name of the file in which the last frame was saved.
+   */
+  inline std::string getFrameName() const { return m_frameName; }
 
   void open(vpImage<vpRGBa> &I);
   void open(vpImage<unsigned char> &I);
@@ -219,36 +226,44 @@ public:
 
     By default the first frame index is set to 0.
   */
-  inline void resetFrameCounter() { frameCount = firstFrame; }
+  inline void resetFrameCounter() { m_frameCount = m_firstFrame; }
 
   void saveFrame(vpImage<vpRGBa> &I);
   void saveFrame(vpImage<unsigned char> &I);
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
-  inline void setCodec(const int fourcc_codec) { this->fourcc = fourcc_codec; }
+  inline void setCodec(const int fourcc_codec) { m_fourcc = fourcc_codec; }
 #endif
 
-  void setFileName(const char *filename);
-  void setFileName(const std::string &filename);
+#ifdef VISP_BUILD_DEPRECATED_FUNCTIONS
   /*!
-    Enables to set the first frame index.
-
-    \param first_frame : The first frame index.
+    @name Deprecated functions
   */
-  inline void setFirstFrameIndex(unsigned int first_frame) { this->firstFrame = first_frame; }
+  //@{
+  vp_deprecated void setFileName(const char *filename);
+  //@}
+#endif
+  void setFileName(const std::string &filename);
+  void setFirstFrameIndex(int first_frame);
+
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
   /*!
       Sets the framerate in Hz of the video when encoding.
 
-      \param frame_rate : the expected framerate.
+      \param framerate : The expected framerate.
 
       By default the framerate is set to 25Hz.
     */
-  inline void setFramerate(const double frame_rate) { this->framerate = frame_rate; }
+  inline void setFramerate(const double framerate) { m_framerate = framerate; }
 #endif
+  /*!
+   * Set frame step between 2 succesive images when a sequence of images is considered.
+   * \param frame_step : Step between 2 successive images. The default value is 1.
+   */
+  inline void setFrameStep(const double frame_step) { m_frameStep = frame_step; }
 
 private:
-  vpVideoFormatType getFormat(const char *filename);
+  vpVideoFormatType getFormat(const std::string &filename);
   static std::string getExtension(const std::string &filename);
 };
 
