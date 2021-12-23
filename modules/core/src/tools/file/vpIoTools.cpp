@@ -141,23 +141,51 @@ const std::string &vpIoTools::getBuildInformation()
 }
 
 /*!
+  Return path to the default temporary folder:
+    - on Windows it returns GetTempPath()
+    - on Unix it returns /tmp/<username>
+ */
+std::string vpIoTools::getTempPath()
+{
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  std::string username;
+  vpIoTools::getUserName(username);
+  return "/tmp/" + username;
+#elif defined(_WIN32)
+  // https://docs.microsoft.com/en-us/windows/win32/fileio/creating-and-using-a-temporary-file
+  //  Gets the temp path env string (no guarantee it's a valid path).
+  TCHAR lpTempPathBuffer[MAX_PATH];
+  DWORD dwRetVal = GetTempPath(MAX_PATH /* length of the buffer */, lpTempPathBuffer /* buffer for path */);
+  if (dwRetVal > MAX_PATH || (dwRetVal == 0)) {
+    throw vpIoException(vpIoException::cantGetenv, "Error with GetTempPath() call!");
+  }
+  return lpTempPathBuffer;
+#else
+  throw vpIoException(vpException::fatalError, "Not implemented on this platform!");
+#endif
+}
+
+/*!
   Sets the base name (prefix) of the experiment files.
 
   \param s : Prefix of the experiment files.
 */
 void vpIoTools::setBaseName(const std::string &s) { baseName = s; }
+
 /*!
   Sets the base directory of the experiment files.
 
   \param dir : Directory where the data will be saved.
 */
 void vpIoTools::setBaseDir(const std::string &dir) { baseDir = dir + "/"; }
+
 /*!
   Gets the base name (prefix) of the experiment files.
 
   \return the base name of the experiment files.
 */
 std::string vpIoTools::getBaseName() { return baseName; }
+
 /*!
   Gets the full path of the experiment files : baseDir/baseName
 
@@ -559,6 +587,23 @@ void vpIoTools::makeFifo(const std::string &fifoname)
 #endif
 }
 
+#if defined(_WIN32)
+std::string getUuid()
+{
+  UUID uuid;
+  if (UuidCreate(&uuid) != RPC_S_OK) {
+    throw(vpIoException(vpIoException::fatalError, "UuidCreate() failed!"));
+  }
+
+  RPC_CSTR stringUuid;
+  if (UuidToString(&uuid, &stringUuid) != RPC_S_OK) {
+    throw(vpIoException(vpIoException::fatalError, "UuidToString() failed!"));
+  }
+  
+  return reinterpret_cast<char *>(stringUuid);
+}
+#endif
+
 /*!
   Create a new temporary directory with a unique name based on dirname parameter.
 
@@ -580,10 +625,11 @@ void vpIoTools::makeFifo(const std::string &fifoname)
 */
 std::string vpIoTools::makeTempDirectory(const std::string &dirname)
 {
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if !defined(_WIN32) && !(defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // not UNIX and not Windows
+  throw(vpIoException(vpIoException::cantCreateDirectory, "makeTempDirectory() is not supported on this platform!"));
+#endif
 
   std::string dirname_cpy = std::string(dirname);
-
   std::string correctEnding = "XXXXXX";
 
   size_t endingLength = correctEnding.length();
@@ -601,13 +647,26 @@ std::string vpIoTools::makeTempDirectory(const std::string &dirname)
                           "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname_cpy.c_str()));
     }
 
-    // If dirname is an existing directory, we create a temp directory inside
+#if defined(_WIN32)
+    // Remove XXXXXX
+    dirname_cpy = dirname_cpy.substr(0, dirname_cpy.rfind(correctEnding));
+    // Append UUID
+    dirname_cpy = dirname_cpy + getUuid();
+#endif
+
   } else {
+    // If dirname is an existing directory, we create a temp directory inside
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
     if (dirname_cpy.at(dirname_cpy.length() - 1) != '/') {
       dirname_cpy = dirname_cpy + "/";
     }
     dirname_cpy = dirname_cpy + "XXXXXX";
+#elif defined(_WIN32)
+    dirname_cpy = createFilePath(dirname_cpy, getUuid());
+#endif
   }
+
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   char *dirname_char = new char[dirname_cpy.length() + 1];
   strcpy(dirname_char, dirname_cpy.c_str());
 
@@ -622,8 +681,8 @@ std::string vpIoTools::makeTempDirectory(const std::string &dirname)
   delete[] dirname_char;
   return res;
 #elif defined(_WIN32)
-  (void)dirname;
-  throw(vpIoException(vpIoException::cantCreateDirectory, "Unable to create temp directory. Not implemented yet."));
+  makeDirectory(dirname_cpy);
+  return dirname_cpy;
 #endif
 }
 

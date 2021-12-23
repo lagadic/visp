@@ -160,6 +160,7 @@ class VISP_EXPORT vpIoTools
 
 public:
   static const std::string &getBuildInformation();
+  static std::string getTempPath();
   static void getUserName(std::string &username);
   static std::string getUserName();
   static std::string getenv(const std::string &env);
