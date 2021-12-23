@@ -558,11 +558,10 @@ int main(int argc, const char **argv)
 #endif
 
   // Test makeTempDirectory()
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+#if defined(_WIN32) || (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX or Windows
   try {
-    std::string username, directory_filename_tmp;
-    vpIoTools::getUserName(username);
-    std::string tmp_dir = "/tmp/" + username;
+    std::string directory_filename_tmp;
+    std::string tmp_dir = vpIoTools::getTempPath();
 
     // Test 1
     directory_filename_tmp = tmp_dir + "/" + "vpIoTools_test_XXXXXX";

@@ -382,6 +382,12 @@ if(WIN32)
   if(HAVE_LIBWINMM)
     list(APPEND VISP_LINKER_LIBS "winmm.lib")
   endif()
+
+  # rpcrt4.lib for timeGetTime() under windows
+  check_library_exists("rpcrt4.lib" getch "" HAVE_LIBRPCRT4) # for UuidToString()
+  if(HAVE_LIBRPCRT4)
+    list(APPEND VISP_LINKER_LIBS "rpcrt4.lib")
+  endif()
 endif()
 
 # Add library ws2_32.a or ws2_32.lib for vpNetwork class
