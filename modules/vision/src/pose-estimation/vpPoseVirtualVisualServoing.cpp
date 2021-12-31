@@ -177,7 +177,6 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
     vpColVector sd(2 * nb), s(2 * nb);
     vpColVector v;
 
-    listP.front();
     vpPoint P;
     std::list<vpPoint> lP;
 
