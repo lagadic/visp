@@ -16,13 +16,15 @@ ViSP 3.4.1 (under development)
     . Update to use Catch2 2.13.7
     . Improve video reader and writer classes to consider a sequence of non consecutive
       images
-    . Improve camera intrinsic and extrinsic calibration tools 
+    . Improve camera intrinsic and extrinsic calibration tools
+    . Compatibility with Visual Studio 17 2022
   - Tutorials
     . New tutorial for FrankaSim that allows physical simulation of the Panda robot from
       Franka Emika, with a model that has beenaccurately identified from a real Franka
       robot using ViSP, ROS and CoppeliaSim.
       More info on http://wiki.ros.org/visp_ros
     . New tutorial: Deep learning object detection on NVIDIA GPU with TensorRT
+    . New tutorial: Installation from source for Windows with Visual C++ 2022 (vc17)
   - Bug fixed
     . [#913] Cannot build tutorial with librealsense < 2.31.0
     . [#926] Packaging with CPack doesn't work with Ogre dependency
