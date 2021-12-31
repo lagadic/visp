@@ -43,10 +43,10 @@ jobs:
         access_token: ${{ github.token }}
 
     - name: Checkout repository
-      uses: actions/checkout@v2.1.0
+      uses: actions/checkout@v2
 
     - name: Run on arch
-      uses: uraimo/run-on-arch-action@v2.0.5
+      uses: uraimo/run-on-arch-action@v2
       with:
         githubToken: ${{ github.token }}
         arch: ${{ matrix.arch }}
