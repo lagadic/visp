@@ -257,10 +257,10 @@ public:
   inline void setFramerate(const double framerate) { m_framerate = framerate; }
 #endif
   /*!
-   * Set frame step between 2 succesive images when a sequence of images is considered.
+   * Set frame step between 2 successive images when a sequence of images is considered.
    * \param frame_step : Step between 2 successive images. The default value is 1.
    */
-  inline void setFrameStep(const double frame_step) { m_frameStep = frame_step; }
+  inline void setFrameStep(const int frame_step) { m_frameStep = frame_step; }
 
 private:
   vpVideoFormatType getFormat(const std::string &filename);

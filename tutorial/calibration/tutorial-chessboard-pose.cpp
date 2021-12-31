@@ -53,7 +53,7 @@ namespace {
               << "  --square_size <square size in meter>  Chessboard square size in [m]." << std::endl
               << "    Default: 0.03." << std::endl << std::endl
               << "  --input <input images path>  Generic name of the images to process." << std::endl
-              << "    Example: \"image-\%02d.png\"." << std::endl << std::endl
+              << "    Example: \"image-%02d.png\"." << std::endl << std::endl
               << "  --intrinsic <Camera intrinsic parameters xml file>  XML file that contains" << std::endl
               << "    camera parameters. " << std::endl
               << "    Default: \"camera.xml\"." << std::endl << std::endl

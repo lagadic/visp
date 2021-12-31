@@ -10,7 +10,7 @@ void usage(const char *argv[], int error)
             << "  " << argv[0] << " [--data-path <path>] [--help] [-h]" << std::endl << std::endl;
   std::cout << "Description" << std::endl
             << "  --data-path <path>  Path to the folder containing" << std::endl
-            << "    pose_fPe_\%d.yaml and pose_cPo_\%d.yaml data files." << std::endl
+            << "    pose_fPe_%d.yaml and pose_cPo_%d.yaml data files." << std::endl
             << "    Default: \"./\"" << std::endl << std::endl
             << "  --help, -h  Print this helper message." << std::endl << std::endl;
   if (error) {
@@ -56,11 +56,11 @@ int main(int argc, const char *argv[])
   }
 
   if (map_fPe_files.size() == 0) {
-    std::cout << "No pose_fPe_\%d.yaml files found. Use --data-path <path> option to modify data path." << std::endl;
+    std::cout << "No pose_fPe_%d.yaml files found. Use --data-path <path> option to modify data path." << std::endl;
     return EXIT_FAILURE;
   }
   if (map_cPo_files.size() == 0) {
-    std::cout << "No pose_cPo_\%d.yaml files found. Use --data-path <path> option to modify data path." << std::endl;
+    std::cout << "No pose_cPo_%d.yaml files found. Use --data-path <path> option to modify data path." << std::endl;
     return EXIT_FAILURE;
   }
 
