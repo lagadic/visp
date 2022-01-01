@@ -416,7 +416,7 @@ void vpTemplateTracker::computeOptimalBrentGain(const vpImage<unsigned char> &I,
   talpha[1] = 1.;
   talpha[2] = alpha;
 
-  // Utilise trois estimees de paraboles succesive ...
+  // Utilise trois estimees de paraboles successive ...
   // A changer pour rendre adaptable
   for (unsigned int opt = 0; opt < nbIterBrent; opt++) {
     vpMatrix A(3, 3);

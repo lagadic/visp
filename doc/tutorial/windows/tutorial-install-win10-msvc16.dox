@@ -86,14 +86,7 @@ C:\> cmake --build . --config Release --target install
 \endverbatim
 - ViSP is now installed in `%%VISP_WS%\visp-build-vc16\install` folder
 - Modify the `Path` var to add `%%VISP_WS%\visp-build-vc16\install\x64\vc16\bin` corresponding to the
-path to ViSP libraries. To this end, in a `cmd` Command Prompt run:
-\verbatim
-C:\> setx Path "%Path%:%VISP_WS%\visp-build-vc16\install\x64\vc16\bin"
-C:\> exit
-\endverbatim
-\note Since `setx` command is not able to handle a var that has more than 1024 characters (which could
-be the case of `Path` var), it may happen that the previous command is not working as expected.
-In that case, to modify `Path` environment variable do the following:
+path to ViSP libraries. To modify `Path` environment variable do the following:
   - Open the Start Search, type in "env", and choose "Edit environment variables for your account"
   - Click the "Environment Variables..." button
   - Under the "User Variables" section (the upper half), find the row with "Path" in the first column, and click edit
@@ -251,8 +244,8 @@ PCL and third-parties easily.
 Be careful to use the version that match your compiler.
 For Visual Studio 16 2019:
 - Go to https://github.com/PointCloudLibrary/pcl/releases
-- From the Assets section, download `PCL-1.11.1-AllInOne-msvc2019-win64.exe`
-- Execute `PCL-1.11.1-AllInOne-msvc2019-win64.exe`, add PCL to the system path for all users and follow default
+- From the Assets section, download `PCL-1.12.1-AllInOne-msvc2019-win64.exe`
+- Execute `PCL-1.12.1-AllInOne-msvc2019-win64.exe`, add PCL to the system path for all users and follow default
 installation steps.
 \image html img-pcl-1.11.1-path.png
 
@@ -261,9 +254,9 @@ installation steps.
 To complete PCL installation, you need to add the location of `pcl_common_<debug|release>.dll` and `OpenNI2.dll`
 libraries in the `Path` environment variable.
 Open the "Edit environment variable" UI, and modify by hand `Path` to add respectively:
-- a new line with `C:\Program Files\PCL 1.11.1\bin`
+- a new line with `C:\Program Files\PCL 1.12.1\bin`
 - a new line with `C:\Program Files\OpenNI2\Redist`
-- a new line with `C:\Program Files\PCL 1.11.1\3rdParty\VTK\bin`
+- a new line with `C:\Program Files\PCL 1.12.1\3rdParty\VTK\bin`
 
 \subsubsection install_win10_msvc16_3rdparty_flycapture FlyCapture 3rd party
 
@@ -300,13 +293,13 @@ this tutorial was written, we downloaded "Pylon 6.1.1 Camera Software Suite Wind
 \note If during the SDK installation you retrieve an installation error like the following:
 \verbatim
 We're sorry, but the installation could not be completed.
-The following error has occured:
+The following error has occurred:
 Error code: 0x800700005, Refused Access
 \endverbatim 
 it means certainly that there is an application that needs access to Internet that is not closed. Typically,
-we encounter this issue with our Anti-Virus Kaspersky tool. Once Kaspersky was paused, installation succeed.
+we encounter this issue with our Anti-Virus Kaspersky tool. Once Kaspersky was paused, installation succeeded.
 - Double-click on downloaded file and follow the installation instructions.
-- Be carreful to select "Developer" profile during the installation in order to install Pylon SDK headers (.h)
+- Be careful to select "Developer" profile during the installation in order to install Pylon SDK headers (.h)
 besides the dll.
 \image html img-win10-pylon-developer.png
 - Click then on "Next" button.
@@ -319,11 +312,11 @@ on "Next" button.
 \subsubsection install_win10_msvc16_3rdparty_ueye IDS uEye 3rd party
 
 If you have an [IDS](https://en.ids-imaging.com/) camera you may install IDS Software Suite for uEye cameras. To this end:
-- enter the [download area](https://en.ids-imaging.com/downloads.html)
-- select `"uEye industrial cameras"`
-- in the `"Firmware"` tab, select `"uEye (IDS Software Suite)"` and press `"SHOW"` button
-- in the `"Operating system"` tab select `"Windows"` and press the search button
-- in the `"Software package"` section you should see the last `"IDS Software Suite - Full installer"` version you may download.
+- Enter the [download area](https://en.ids-imaging.com/downloads.html)
+- Select `"uEye industrial cameras"`
+- In the `"Firmware"` tab, select `"uEye (IDS Software Suite)"` and press `"SHOW"` button
+- In the `"Operating system"` tab select `"Windows"` and press the search button
+- In the `"Software package"` section you should see the last `"IDS Software Suite - Full installer"` version you may download.
   At the time this tutorial was written, we downloaded `"ids-software-suite-full-64-49400.zip"` file.
 
 Once downloaded, you may extract the archive.
@@ -337,11 +330,11 @@ IDS Software Suite has been tested with the following Windows 10 version:
 \endverbatim
 
 If the Software Suite is compatible with your OS, proceed to the installation:
-- Double-click on the extracted file (in our case `uEye64_49400_WHQL.exe` to start the installation.
+- Double-click on the extracted file (in our case `uEye64_49400_WHQL.exe`) to start the installation.
   The uEye driver installation is menu-driven.
 - Keep default configuration and proceed to the installation.
 
-To test the Sofware Suite installation, plug a camera, enter `"Start"` menu and run `"IDS > uEyeDirectShow Demo"` binary.
+To test the Software Suite installation, plug a camera, enter `"Start"` menu and run `"IDS > uEyeDirectShow Demo"` binary.
 
 IDS uEye Camera Software Suite installation enables vpUeyeGrabber class usage.
 
@@ -357,7 +350,7 @@ Gen2 4, 6 and 7 DoF [arm](https://www.kinovarobotics.com/en/resources/gen2-techn
 
 - [Download](https://www.kinovarobotics.com/en/resources/gen2-technical-resources) the SDK.
 At the time this tutorial was written, we downloaded SDK 1.5.1 that comes in `PS 0000 0009_1.5.1.zip` (254M).
-- Extract the zip content in a tempory folder like `C:\temp\kinova-jaco`
+- Extract the zip content in a temporary folder like `C:\temp\kinova-jaco`
 - At this step you should have the following
 \verbatim
 C:\> dir C:\temp\kinova-jaco\windows
@@ -377,11 +370,11 @@ There are different ways to get ViSP source code.
 
 - You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball.
 Once `visp-x.y.z.tar.gz` or `visp-x.y.z.zip` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
-using for axample <a href="http://www.win-rar.com">WinRAR</a>.
+using for example <a href="http://www.win-rar.com">WinRAR</a>.
 
 - You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>.
 Once `visp-snapshot-yyyy-mm-dd.tar.gz` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
-using for axample <a href="http://www.win-rar.com">WinRAR</a>.
+using for example <a href="http://www.win-rar.com">WinRAR</a>.
 
 - Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a>
 using the `git` command line tool:
@@ -467,7 +460,7 @@ subfolders respectively.
 \image html img-win10-msvc16-visp-explorer-install.png
 
 - Note that you can also build ViSP in `Debug` configuration. In that case, all the library names are suffixed
-by "d" character (`libvisp_core320d.dll`...).
+by "d" character (`libvisp_core330d.dll`...).
 
 \subsection install_win10_msvc16_build_visp_doc Build ViSP documentation
 
@@ -511,12 +504,6 @@ C:\> cmake --build . --config Release --target visp_doc
 
 Modify the `Path` var to add the path to ViSP dll libraries. To this end open the "Edit environment variable" UI,
 and modify `Path` to add a new line with `%%VISP_WS%\visp-build-vc16\install\x64\vc16\bin`.
-
-Modifying the `Path` could also be done in a `cmd` Command Prompt running:
-\verbatim
-C:\> setx Path "%Path%:%VISP_WS%\visp-build-vc16\install\x64\vc16\bin"
-C:\> exit
-\endverbatim
 
 \subsection install_win10_msvc16_visp_dir Set VISP_DIR environment var
 
@@ -572,7 +559,7 @@ From now, you can try to run ViSP examples and tests. For example, if you want t
 `%%VISP_WS%\visp-build-vc15\example\device\display\Release\displayGDI.exe`, open a `cmd` Command Prompt,
 enter in the right folder and run:
 \verbatim
-C:\> cd %VISP_WS%\visp-build-vc15\example\device\display\Release
+C:\> cd %VISP_WS%\visp-build-vc16\example\device\display\Release
 C:\> displayGDI.exe
 
 A click to close the windows...
@@ -593,8 +580,8 @@ installed a new third-party, or that you upgraded the version of this 3rd party.
 to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build
 again ViSP. This could be achieved with:
 \verbatim
-$ cd $VISP_WS/visp-build-msvc16
-$ cmake ../visp
+C:\> cd $VISP_WS/visp-build-msvc16
+C:\> cmake ../visp
 \endverbatim
 
 Here you can check the content of the `ViSP-third-party.txt` file and see if the newly installed 3rd party
@@ -602,46 +589,46 @@ is well detected.
 
 Finally, you need to rebuild and install ViSP with:
 \verbatim
-$ cmake --build . --config Release --target install
+C:\> cmake --build . --config Release --target install
 \endverbatim
 
 \subsection install_msvc16_tips_uninstall How to uninstall ViSP
 After ViSP installation, you can remove installed material using:
 \verbatim
-$ cd $VISP_WS/visp-build-msvc16
-$ cmake --build . --config Release --target uninstall
+C:\> cd $VISP_WS/visp-build-msvc16
+C:\> cmake --build . --config Release --target uninstall
 \endverbatim
 
 \subsection install_msvc16_tips_modules How to build only ViSP libraries
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \verbatim
-$ cd $VISP_WS/visp-build-msvc16
-$ cmake --build . --config Release --target visp_modules
+C:\> cd $VISP_WS/visp-build-msvc16
+C:\> cmake --build . --config Release --target visp_modules
 \endverbatim
 
 \subsection install_msvc16_tips_module_once How to build a ViSP specific module
 
 If you want to build a given module and all the dependencies:
 \verbatim
-$ cd $VISP_WS/visp-build-msvc16
-$ cmake --build . --config Release --target visp_<module_name>
+C:\> cd $VISP_WS/visp-build-msvc16
+C:\> cmake --build . --config Release --target visp_<module_name>
 \endverbatim
 
 For example to build the model-based tracker module named mbt, run:
 \verbatim
-$ cd $VISP_WS/visp-build-msvc16
-$ cmake --build . --config Release --target visp_mbt
+C:\> cd $VISP_WS/visp-build-msvc16
+C:\> cmake --build . --config Release --target visp_mbt
 \endverbatim
 
 \subsection install_msvc16_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
 
 To see which are the optional 3rd parties that are found during the configuration stage and that will
 be used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and
-located in `$VISP_WS/visp-build`. We provide hereafter an example of a possible content of this file
+located in `$VISP_WS/visp-build-vc16`. We provide hereafter an example of a possible content of this file
 that contains also build info.
 \verbatim
-$ type $VISP_WS/visp-build-vc16/ViSP-third-party.txt
+C:\> type $VISP_WS/visp-build-vc16/ViSP-third-party.txt
 ==========================================================
 General configuration information for ViSP 3.3.1
 
@@ -816,7 +803,7 @@ A quick fix is to comment the corresponding line 162 in
 
 \subsection install_win10_msvc16_issue_librealsense_cpu_too_old librealsense installer returns an unrecoverable SEH exception
 
-At the end of the `Intel Relasense SDK` installation process or when running `Intel Realsense Viewer`,
+At the end of the `Intel Realsense SDK` installation process or when running `Intel Realsense Viewer`,
 if you get the following error message:
 \verbatim
 Program terminated due to an unrecoverable SEH exception:

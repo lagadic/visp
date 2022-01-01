@@ -102,7 +102,7 @@ v4l2-ctl --overlay=0 # disable viewfinder
 - To load the graphical user interface, type `startx` and press Enter on your keyboard. This will later allow to use ViSP
 vpDisplayX or vpDisplayOpenCV classes useful to display images in a X11 window.
 
-\section install_raspberry_visp_prerequisities Install prerequisites
+\section install_raspberry_visp_prerequisites Install prerequisites
 
 - First you need to install the following packages (g++, CMake, Git) that are requested to get and build ViSP:
 \verbatim

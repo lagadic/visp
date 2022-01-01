@@ -506,7 +506,7 @@ void vpAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::vpCameraPa
 
   \param q : Articular position of the six joints: q[0], q[1], q[2]
   correspond to the first 3 translations expressed in meter, while
-  q[3], q[4] and q[5] correspond to the 3 succesives rotations expressed in
+  q[3], q[4] and q[5] correspond to the 3 successives rotations expressed in
   radians.
 
   \return The homogeneous matrix corresponding to the direct geometric
@@ -540,7 +540,7 @@ vpHomogeneousMatrix vpAfma6::getForwardKinematics(const vpColVector &q) const
   robot. In output, the solution of the inverse kinematics. Articular
   position of the six joints: q[0], q[1], q[2] correspond to the first
   3 translations expressed in meter, while q[3], q[4] and q[5]
-  correspond to the 3 succesives rotations expressed in radians.
+  correspond to the 3 successives rotations expressed in radians.
 
   \param nearest : true to return the nearest solution to q. false to
   return the farest.
@@ -763,7 +763,7 @@ int vpAfma6::getInverseKinematics(const vpHomogeneousMatrix &fMc, vpColVector &q
 
   \param q : Articular position of the six joints: q[0], q[1], q[2]
   correspond to the first 3 translations expressed in meter, while
-  q[3], q[4] and q[5] correspond to the 3 succesives rotations expressed in
+  q[3], q[4] and q[5] correspond to the 3 successives rotations expressed in
   radians.
 
   \return The homogeneous matrix corresponding to the direct geometric
@@ -791,7 +791,7 @@ vpHomogeneousMatrix vpAfma6::get_fMc(const vpColVector &q) const
 
   \param q : Articular joint position of the robot. q[0], q[1], q[2]
   correspond to the first 3 translations expressed in meter, while
-  q[3], q[4] and q[5] correspond to the 3 succesives rotations expressed in
+  q[3], q[4] and q[5] correspond to the 3 successives rotations expressed in
   radians.
 
   \param fMc The homogeneous matrix corresponding to the direct geometric
@@ -824,7 +824,7 @@ void vpAfma6::get_fMc(const vpColVector &q, vpHomogeneousMatrix &fMc) const
 
   \param q : Articular joint position of the robot. q[0], q[1], q[2]
   correspond to the first 3 translations expressed in meter, while
-  q[3], q[4] and q[5] correspond to the 3 succesives rotations expressed in
+  q[3], q[4] and q[5] correspond to the 3 successives rotations expressed in
   radians.
 
   \param fMe The homogeneous matrix corresponding to the direct geometric
@@ -923,7 +923,7 @@ void vpAfma6::get_cVe(vpVelocityTwistMatrix &cVe) const
 
   \param q : Articular joint position of the robot. q[0], q[1], q[2]
   correspond to the first 3 translations expressed in meter, while
-  q[3], q[4] and q[5] correspond to the 3 succesives rotations expressed in
+  q[3], q[4] and q[5] correspond to the 3 successives rotations expressed in
   radians.
 
   \param eJe : Robot jacobian expressed in the end-effector frame.
@@ -992,7 +992,7 @@ void vpAfma6::get_eJe(const vpColVector &q, vpMatrix &eJe) const
 
   \param q : Articular joint position of the robot. q[0], q[1], q[2]
   correspond to the first 3 translations expressed in meter, while
-  q[3], q[4] and q[5] correspond to the 3 succesives rotations expressed in
+  q[3], q[4] and q[5] correspond to the 3 successives rotations expressed in
   radians.
 
   \param fJe : Robot jacobian expressed in the robot reference frame.

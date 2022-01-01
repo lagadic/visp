@@ -265,7 +265,7 @@ void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &cent
       (I.display)->displayLine(center, iP11, color, thickness);
     }
 
-    // display the arc of the ellipse by succesive small segments
+    // display the arc of the ellipse by successive small segments
     for (unsigned int i = 0; i < nbpoints; i++) {
       angle += incr;
       // Two concentric circles method used

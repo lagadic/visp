@@ -54,9 +54,9 @@ C:\> exit
 
 There are different ways to get ViSP source code.
 
-- You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once `visp-x.y.z.tar.gz` or `visp-x.y.z.zip` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z` using for axample <a href="http://www.win-rar.com">WinRAR</a>.
+- You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball. Once `visp-x.y.z.tar.gz` or `visp-x.y.z.zip` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z` using for example <a href="http://www.win-rar.com">WinRAR</a>.
 
-- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once visp-snapshot-yyyy-mm-dd.tar.gz is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z` using for axample <a href="http://www.win-rar.com">WinRAR</a>.
+- You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once visp-snapshot-yyyy-mm-dd.tar.gz is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z` using for example <a href="http://www.win-rar.com">WinRAR</a>.
 
 - Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the `git` command line tool:
 \verbatim
@@ -70,7 +70,7 @@ We suppose now that ViSP source is in `%%VISP_WS%\visp`.
 
 \subsection install_msvc15_uwp_build_ws_10 Build for Windows Store 10.0
 
-\subsubsection install_msvc15_uwp_build_ws_10_x86 Targetting a x86 platform
+\subsubsection install_msvc15_uwp_build_ws_10_x86 Targeting a x86 platform
 
 With CMake configure ViSP specifying options for cross compiling for `"Windows Store"` operating system in version `"10"` targeting a `"x86"` platform, by opening a `cmd` Command Prompt and running:
 \verbatim
@@ -91,7 +91,7 @@ If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%
 - With Visual Studio to build and install the solution, select first `"Release"` configuration and build `"INSTALL"` project. To this end, in Visual Studio right panel apply a left click on `"INSTALL"` to select the project, then a right click to enter in the `"Build"` menu.
 \image html img-win10-msvc15-uwp-install.png
 
-\subsubsection install_msvc15_uwp_build_ws_10_x64 Targetting a x64 platform
+\subsubsection install_msvc15_uwp_build_ws_10_x64 Targeting a x64 platform
 
 The same process could be applied except that during cmake configuration you have to use `"Visual Studio 15 2017 Win64"` generator. Installation folder is the same to ensure a unique installation folder for all the targeted platforms:
 
@@ -108,7 +108,7 @@ C:\> cmake --build . --config Release --target install
 
 If everything goes right you will find ViSP libraries and headers in `%%VISP_WS%/visp-build-vc15-uwp-ws-10-install` folder. Libraries are located in `x64/vc15/bin` subfolder and headers in `include` subfolder.
 
-\subsubsection install_msvc15_uwp_build_ws_10_arm Targetting an ARM platform
+\subsubsection install_msvc15_uwp_build_ws_10_arm Targeting an ARM platform
 
 The same process could be applied except that during cmake configuration you have to use `"Visual Studio 15 2017 ARM"` generator. Installation folder is the same to ensure a unique installation folder for all the targeted platforms:
 

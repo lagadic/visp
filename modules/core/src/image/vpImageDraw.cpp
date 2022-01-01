@@ -575,7 +575,7 @@ void vpImageDraw::drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &cen
   vpImagePoint iP11;
   iP11.set_uv(u0 + cose * u - sine * v, v0 + sine * u + cose * v);
 
-  // display the arc of the ellipse by succesive small segments
+  // display the arc of the ellipse by successive small segments
   for (unsigned int i = 0; i < nbpoints; i++) {
     angle += incr;
     // Two concentric circles method used
@@ -689,7 +689,7 @@ void vpImageDraw::drawEllipse(vpImage<vpRGBa> &I, const vpImagePoint &center, do
   vpImagePoint iP11;
   iP11.set_uv(u0 + cose * u - sine * v, v0 + sine * u + cose * v);
 
-  // display the arc of the ellipse by succesive small segments
+  // display the arc of the ellipse by successive small segments
   for (unsigned int i = 0; i < nbpoints; i++) {
     angle += incr;
     // Two concentric circles method used

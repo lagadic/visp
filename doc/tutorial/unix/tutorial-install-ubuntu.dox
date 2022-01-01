@@ -233,7 +233,7 @@ To test the Sofware Suite installation, plug a camera and run `ueyedemo` binary.
 $ ueyedemo
 \endverbatim
 
-\note If you get the following error that occured in our case with IDS Software Suite 4.95 and Ubuntu 18.04:
+\note If you get the following error that occurred in our case with IDS Software Suite 4.95 and Ubuntu 18.04:
 \verbatim
 $ ueyedemo
 ueyedemo: error while loading shared libraries: libomp.so.5: cannot open shared object file: No such file or directory
@@ -268,7 +268,7 @@ To install Kinova Jaco SDK:
 
 - [Download](https://www.kinovarobotics.com/en/resources/gen2-technical-resources) the SDK.
 At the time this tutorial was written, we downloaded SDK 1.5.1 that comes in `PS 0000 0009_1.5.1.zip` (254M).
-- Extract the zip content in a tempory folder like `/tmp/kinova-jaco`
+- Extract the zip content in a temporary folder like `/tmp/kinova-jaco`
 - Enter `Ubuntu/<version>/64 bits` folder and run the installer:
 \verbatim
 $ cd /tmp/kinova-jaco
