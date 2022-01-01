@@ -7,7 +7,7 @@ In this tutorial you will learn how to install ViSP Homebrew package on OSX. The
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_osx_brew_package_required Install prerequisities
+\section install_osx_brew_package_required Install prerequisites
 
 First, go to http://brew.sh to install Homebrew.
 

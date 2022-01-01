@@ -144,7 +144,7 @@ int main()
   vpColVector sigma_measure(nsignal); // 2 velocity measures available
   sigma_measure[0] = 0.03; // Variance on the x velocity measure
   sigma_measure[1] = 0.06; // Variance on the y velocity measure
-  // - Thirdly, the correlation between succesive accelerations
+  // - Thirdly, the correlation between successive accelerations
   double rho = 0.9;
 
   double dummy = 0; // non used parameter for the selected state model
@@ -345,7 +345,7 @@ void vpLinearKalmanFilterInstantiation::initStateConstVel_MeasurePos(unsigned in
 
   This state model assume that there is some memory associated with
   noise measurements as acceleration terms. They can be represented as
-  remaining correlated (or colored) over succesive time intervals,
+  remaining correlated (or colored) over successive time intervals,
   leading to the following state model:
 
   \f[
@@ -467,7 +467,7 @@ int main()
   vpColVector sigma_measure(nsignal); // 2 velocity measures available
   sigma_measure[0] = 0.03; // Variance on the x velocity measure
   sigma_measure[1] = 0.06; // Variance on the y velocity measure
-  // - Thirdly, the correlation between succesive accelerations
+  // - Thirdly, the correlation between successive accelerations
   double rho = 0.9;
 
   // Initialize the filter
@@ -553,7 +553,7 @@ void vpLinearKalmanFilterInstantiation::initStateConstVelWithColoredNoise_Measur
 
   This state model assume that there is some memory associated with
   noise measurements as acceleration terms. They can be represented as
-  remaining correlated (or colored) over succesive time intervals,
+  remaining correlated (or colored) over successive time intervals,
   leading to the following state model:
 
   \f[
@@ -684,7 +684,7 @@ int main()
   vpColVector sigma_measure(nsignal); // 2 velocity measures available
   sigma_measure[0] = 0.03; // Variance on the x velocity measure
   sigma_measure[1] = 0.06; // Variance on the y velocity measure
-  // - Thirdly, the correlation between succesive accelerations
+  // - Thirdly, the correlation between successive accelerations
   double rho = 0.9;
   // - Lastly, the sampling time
   double dt = 0.020; // 20 ms

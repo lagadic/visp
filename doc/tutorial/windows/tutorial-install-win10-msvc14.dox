@@ -8,7 +8,7 @@ These steps have been tested on Windows 10 (64 bit), with CMake 3.19.4 and Visua
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_win10_msvc14_required Install prerequisities
+\section install_win10_msvc14_required Install prerequisites
 
 \subsection install_win10_msvc14_3rd_msvc Visual Studio
 
@@ -17,9 +17,9 @@ project to install the common tools for Visual C++ 2015.
 The next image shows which are the workloads that we enable:
 \image html img-win10-msvc14-workload.png
 
-\subsection install_win10_msvc14_3rd_win_sdk Windows Software Developement Kit
+\subsection install_win10_msvc14_3rd_win_sdk Windows Software Development Kit
 
-Then install Windows Software Developement Kit (SDK) for Windows 10. This SDK could be downloaded from
+Then install Windows Software Development Kit (SDK) for Windows 10. This SDK could be downloaded from
 https://dev.windows.com/en-US/downloads/windows-10-sdk. This SDK is requested by ViSP and allows also to get
 the Graphical Device Interface (GDI) capabilities. The GDI is used in ViSP to display images in a window
 thanks to vpDisplayGDI class.
@@ -74,14 +74,7 @@ C:\> cmake -G "Visual Studio 14 2015" -A "x64" %VISP_WS%\visp
 C:\> cmake --build . --config Release --target install
 \endverbatim
 - ViSP is now installed in `%%VISP_WS%\visp-build-vc14\install` folder
-- Modify the `Path` var to add `%%VISP_WS%\visp-build-vc14\install\x64\vc14\bin` corresponding to the path to ViSP libraries.
-  To this end, in a `cmd` Command Prompt run:
-\verbatim
-C:\> setx Path "%Path%:%VISP_WS%\visp-build-vc14\install\x64\vc14\bin"
-C:\> exit
-\endverbatim
-\note Since `setx` command is not able to handle a var that has more than 1024 characters (which could be the case of `Path` var),
-it may happen that the previous command is not working as expected. In that case, to modify `Path` environment variable do the following:
+- Modify the `Path` var to add `%%VISP_WS%\visp-build-vc14\install\x64\vc14\bin` corresponding to the path to ViSP libraries. To modify `Path` environment variable do the following:
   - Open the Start Search, type in "env", and choose "Edit environment variables for your account"
   - Click the "Environment Variables..." button
   - Under the "User Variables" section (the upper half), find the row with "Path" in the first column, and click edit
@@ -247,7 +240,7 @@ To install Pylon:
   to download and install the SDK corresponding to your platform. At the time this tutorial we written
   we selected "Pylon 5.0.11 Camera Software Suite Windows" to download `Basler_pylon_5.0.11.10913.exe` file.
 - Double-click on downloaded file and follow the installation instructions.
-- Be carreful to select "Developer" profile during the installation in order to install Pylon SDK headers (.h) besides the dll.
+- Be careful to select "Developer" profile during the installation in order to install Pylon SDK headers (.h) besides the dll.
 \image html img-win10-pylon-developer.png
 - Click then on "Next" button.
 - Select how your Basler camera is connected to the computer (USB, GigE, FireWire, Camera Link), then click on "Next" button.
@@ -280,7 +273,7 @@ If the Software Suite is compatible with your OS, proceed to the installation:
   The uEye driver installation is menu-driven.
 - Keep default configuration and proceed to the installation.
 
-To test the Sofware Suite installation, plug a camera, enter `"Start"` menu and run `"IDS > uEyeDirectShow Demo"` binary.
+To test the Software Suite installation, plug a camera, enter `"Start"` menu and run `"IDS > uEyeDirectShow Demo"` binary.
 
 IDS uEye Camera Software Suite installation enables vpUeyeGrabber class usage.
 
@@ -324,11 +317,11 @@ There are different ways to get ViSP source code.
 
 - You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball.
   Once `visp-x.y.z.tar.gz` or `visp-x.y.z.zip` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
-  using for axample <a href="http://www.win-rar.com">WinRAR</a>.
+  using for example <a href="http://www.win-rar.com">WinRAR</a>.
 
 - You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>.
   Once visp-snapshot-yyyy-mm-dd.tar.gz is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
-  using for axample <a href="http://www.win-rar.com">WinRAR</a>.
+  using for example <a href="http://www.win-rar.com">WinRAR</a>.
 
 - Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a>
   using the `git` command line tool:
@@ -453,12 +446,6 @@ C:\> cmake --build . --config Release --target visp_doc
 
 Modify the `Path` var to add the path to ViSP dll libraries. To this end open the "Edit environment variable" UI,
 and modify `Path` to add a new line with `%%VISP_WS%\visp-build-vc14\install\x64\vc14\bin`.
-
-Modifying the `Path` could also be done in a `cmd` Command Prompt running:
-\verbatim
-C:\> setx Path "%Path%:%VISP_WS%\visp-build-vc14\install\x64\vc14\bin"
-C:\> exit
-\endverbatim
 
 \subsection install_win10_msvc14_visp_dir Set VISP_DIR environment var
 
@@ -753,7 +740,7 @@ General configuration information for ViSP 3.3.1
 
 \subsection install_win10_msvc14_issue_librealsense_cpu_too_old librealsense installer returns an unrecoverable SEH exception
 
-At the end of the `Intel Relasense SDK` installation process or when running `Intel Realsense Viewer`,
+At the end of the `Intel Realsense SDK` installation process or when running `Intel Realsense Viewer`,
 if you get the following error message:
 \verbatim
 Program terminated due to an unrecoverable SEH exception:

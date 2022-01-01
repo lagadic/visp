@@ -48,8 +48,8 @@
 #include <visp3/core/vpLinearKalmanFilterInstantiation.h>
 
 typedef enum {
-  Position, // Considered measures are the succesive positions of the target
-  Velocity  // Considered measures are the succesive velocities of the target
+  Position, // Considered measures are the successive positions of the target
+  Velocity  // Considered measures are the successive velocities of the target
 } vpMeasureType;
 
 int main()

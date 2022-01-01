@@ -84,14 +84,7 @@ C:\> cmake --build . --config Release --target install
 \endverbatim
 - ViSP is now installed in `%%VISP_WS%\visp-build-vc15\install` folder
 - Modify the `Path` var to add `%%VISP_WS%\visp-build-vc15\install\x64\vc15\bin` corresponding to the path to
-ViSP libraries. To this end, in a `cmd` Command Prompt run:
-\verbatim
-C:\> setx Path "%Path%:%VISP_WS%\visp-build-vc15\install\x64\vc15\bin"
-C:\> exit
-\endverbatim
-\note Since `setx` command is not able to handle a var that has more than 1024 characters (which could be the
-case of `Path` var), it may happen that the previous command is not working as expected. In that case, to modify
-`Path` environment variable do the following:
+ViSP libraries. To modify `Path` environment variable do the following:
   - Open the Start Search, type in "env", and choose "Edit environment variables for your account"
   - Click the "Environment Variables..." button
   - Under the "User Variables" section (the upper half), find the row with "Path" in the first column, and click edit
@@ -214,7 +207,7 @@ To finalize the installation, add the location of `realsense2.dll` library in th
 Open the "Edit environment variable" UI, and modify `Path` to add a new line with
 `C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64`.
 
-<b>3. Known issue with a CPU that has an old achitecture</b>
+<b>3. Known issue with a CPU that has an old architecture</b>
 
 At the end of the installation process or when running `Intel Realsense Viewer`, if you get the following error message:
 \verbatim
@@ -289,12 +282,12 @@ this tutorial was written, we downloaded "Pylon 6.1.1 Camera Software Suite Wind
 \note If during the SDK installation you retrieve an installation error like the following:
 \verbatim
 We're sorry, but the installation could not be completed.
-The following error has occured:
+The following error has occurred:
 Error code: 0x800700005, Refused Access
 \endverbatim 
 it means certainly that there is an application that needs access to Internet that is not closed. Typically,
 we encounter this issue with our Anti-Virus Kaspersky tool. Once Kaspersky was paused, installation succeed.
-- Be carreful to select "Developer" profile during the installation in order to install Pylon SDK headers (.h)
+- Be careful to select "Developer" profile during the installation in order to install Pylon SDK headers (.h)
 besides the dll.
 \image html img-win10-pylon-developer.png
 - Click then on "Next" button.
@@ -329,7 +322,7 @@ If the Software Suite is compatible with your OS, proceed to the installation:
   The uEye driver installation is menu-driven.
 - Keep default configuration and proceed to the installation.
 
-To test the Sofware Suite installation, plug a camera, enter `"Start"` menu and run `"IDS > uEyeDirectShow Demo"` binary.
+To test the Software Suite installation, plug a camera, enter `"Start"` menu and run `"IDS > uEyeDirectShow Demo"` binary.
 
 IDS uEye Camera Software Suite installation enables vpUeyeGrabber class usage.
 
@@ -381,7 +374,7 @@ Gen2 4, 6 and 7 DoF [arm](https://www.kinovarobotics.com/en/resources/gen2-techn
 
 - [Download](https://www.kinovarobotics.com/en/resources/gen2-technical-resources) the SDK.
 At the time this tutorial was written, we downloaded SDK 1.5.1 that comes in `PS 0000 0009_1.5.1.zip` (254M).
-- Extract the zip content in a tempory folder like `C:\temp\kinova-jaco`
+- Extract the zip content in a temporary folder like `C:\temp\kinova-jaco`
 - At this step you should have the following
 \verbatim
 C:\> dir C:\temp\kinova-jaco\windows
@@ -401,11 +394,11 @@ There are different ways to get ViSP source code.
 
 - You can download the <a href="https://visp.inria.fr/download">latest release</a> as a zip or a tarball.
 Once `visp-x.y.z.tar.gz` or `visp-x.y.z.zip` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
-using for axample <a href="http://www.win-rar.com">WinRAR</a>.
+using for example <a href="http://www.win-rar.com">WinRAR</a>.
 
 - You can also download a <a href="https://visp.inria.fr/download#snapshot">daily snapshot</a>. Once 
 `visp-snapshot-yyyy-mm-dd.tar.gz` is downloaded, uncompress the file in `%%VISP_WS%\visp\visp-x.y.z`
-using for axample <a href="http://www.win-rar.com">WinRAR</a>.
+using for example <a href="http://www.win-rar.com">WinRAR</a>.
 
 - Or you get the cutting-edge ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a>
 using the `git` command line tool:
@@ -535,12 +528,6 @@ C:\> cmake --build . --config Release --target visp_doc
 
 Modify the `Path` var to add the path to ViSP dll libraries. To this end open the "Edit environment variable" UI,
 and modify `Path` to add a new line with `%%VISP_WS%\visp-build-vc15\install\x64\vc15\bin`.
-
-Modifying the `Path` could also be done in a `cmd` Command Prompt running:
-\verbatim
-C:\> setx Path "%Path%:%VISP_WS%\visp-build-vc15\install\x64\vc15\bin"
-C:\> exit
-\endverbatim
 
 \subsection install_win10_msvc15_visp_dir Set VISP_DIR environment var
 
@@ -843,7 +830,7 @@ policy push/pop as described in this PCL [PR #3431](https://github.com/PointClou
 
 \subsection install_win10_msvc15_issue_librealsense_cpu_too_old librealsense installer returns an unrecoverable SEH exception
 
-At the end of the `Intel Relasense SDK` installation process or when running `Intel Realsense Viewer`,
+At the end of the `Intel Realsense SDK` installation process or when running `Intel Realsense Viewer`,
 if you get the following error message:
 \verbatim
 Program terminated due to an unrecoverable SEH exception:

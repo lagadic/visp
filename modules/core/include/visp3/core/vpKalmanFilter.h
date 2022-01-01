@@ -187,7 +187,7 @@ public:
   vpMatrix R;
   //! Process noise covariance matrix \f${\bf Q}\f$.
   vpMatrix Q;
-  /*! Sampling time \f$\Delta t\f$ in second between two succesive
+  /*! Sampling time \f$\Delta t\f$ in second between two successive
       iterations. Only used in some specific state models implemented
       in vpLinearKalmanFilterInstantiation.*/
   double dt;

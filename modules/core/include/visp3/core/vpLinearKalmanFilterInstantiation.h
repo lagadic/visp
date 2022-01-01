@@ -63,7 +63,7 @@ public:
   */
   typedef enum {
     /*! Consider the state as a constant velocity model with white
-        noise. Measures available are the succesive positions of the
+        noise. Measures available are the successive positions of the
         target. To know more about this state model, see
         initStateConstVel_MeasurePos(). */
     stateConstVel_MeasurePos,
