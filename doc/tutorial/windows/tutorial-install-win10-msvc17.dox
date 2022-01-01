@@ -13,12 +13,10 @@ These steps have been tested on Windows 10 (64 bit), with CMake 3.22.1 and Visua
 \subsection install_win10_msvc17_3rd_msvc Visual Studio
 
 Visual Studio Community 2022 could be downloaded from https://www.visualstudio.com/downloads/. During
-a fresh installation enable "Desktop development with C++" workload and check box "Windows 10 SDK" to
-enable usage of the Graphical Device Interface (GDI) useful to display images in a window thanks to
-vpDisplayGDI class. 
+a fresh installation enable "Desktop development with C++" workload. 
 
 If you already have Visual Studio Community 2022, you can check if "Desktop Development with C++"
-workload is activated and if "Windows 10 SDK" is enabled following instructions given
+workload is activated following instructions given
 <a href="https://docs.microsoft.com/en-us/visualstudio/install/modify-visual-studio?view=vs-2022">here</a>
 that we resume:
 
@@ -121,14 +119,14 @@ parties are optional and should be considered only by expert developers.
 
 First you have to get OpenCV:
 - From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got
-`opencv-4.5.4-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the
+`opencv-4.5.5-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the
 previous OpenCV releases starting from 3.4.0 version.
 - Extract the content of the archive in your workspace `%%VISP_WS%`.
 \image html img-win10-extract-opencv.png
 - The installer extract all the material in `%%VISP_WS%\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.5.4`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.5.5`.
 
-\note OpenCV 4.5.4 win pack installer doesn't contain prebuild OpenCV libraries build with
+\note OpenCV 4.5.5 win pack installer doesn't contain prebuild OpenCV libraries build with
 Visual Studio 17 2022. It contains only prebuild libraries build with previous Visual Studio version
 (vc14 and vc15). That's why we need to build OpenCV from source.
 
@@ -136,13 +134,13 @@ Visual Studio 17 2022. It contains only prebuild libraries build with previous V
 
 - Create a build directory
 \verbatim
-C:\> mkdir %VISP_WS%\opencv-4.5.4\build-vc17
-C:\> cd %VISP_WS%\opencv-4.5.4\build-vc17
+C:\> mkdir %VISP_WS%\opencv-4.5.5\build-vc17
+C:\> cd %VISP_WS%\opencv-4.5.5\build-vc17
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 17 2022) and installation dir is set
-to the existing folder `%%VISP_WS%\opencv-4.5.4\build`:
+to the existing folder `%%VISP_WS%\opencv-4.5.5\build`:
 \verbatim
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\opencv-4.5.4\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.5.4\build
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\opencv-4.5.5\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.5.5\build
 \endverbatim
 - Build and install OpenCV using release and debug configuration respectively (installation doesn't need
 administrator privileges)
@@ -157,15 +155,15 @@ Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
 \verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.4\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.5\build"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\opencv-4.5.4\build` is where you have installed OpenCV. Inside this folder you should
+where `%%VISP_WS%\opencv-4.5.5\build` is where you have installed OpenCV. Inside this folder you should
 have a file named `OpenCVConfig.cmake`. 
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 17 2022 usage in
 the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new
-line with `%%VISP_WS%\opencv-4.5.4\build\x64\vc17\bin`.
+line with `%%VISP_WS%\opencv-4.5.5\build\x64\vc17\bin`.
 
 \subsubsection install_win10_msvc17_3rdparty_eigen Eigen3 3rd party
 
@@ -673,7 +671,7 @@ General configuration information for ViSP 3.4.1
     \- Use GSL:                  no
     \- Use Lapack (built-in):    yes (ver 3.2.1)
     Use Eigen3:                  yes (ver 3.4.0)
-    Use OpenCV:                  yes (ver 4.5.4)
+    Use OpenCV:                  yes (ver 4.5.5)
 
   Simulator: 
     Ogre simulator: 
@@ -692,7 +690,7 @@ General configuration information for ViSP 3.4.1
     Use JPEG:                    no
     Use PNG:                     no
     \- Use ZLIB:                 no
-    Use OpenCV:                  yes (ver 4.5.4)
+    Use OpenCV:                  yes (ver 4.5.5)
     Use stb_image (built-in):    no
 
   Real robots: 
@@ -715,7 +713,7 @@ General configuration information for ViSP 3.4.1
   GUI: 
     Use X11:                     no
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 4.5.4)
+    Use OpenCV:                  yes (ver 4.5.5)
     Use GDI:                     yes
     Use Direct3D:                no
 
@@ -724,7 +722,7 @@ General configuration information for ViSP 3.4.1
     Use CMU 1394:                no
     Use V4L2:                    no
     Use directshow:              no
-    Use OpenCV:                  yes (ver 4.5.4)
+    Use OpenCV:                  yes (ver 4.5.5)
     Use FLIR Flycapture:         yes
     Use Basler Pylon:            no
     Use IDS uEye:                yes (ver 4.95.0)
