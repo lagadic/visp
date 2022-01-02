@@ -201,9 +201,7 @@ elseif(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
   vp_update(VISP_JAR_INSTALL_PATH         java)
   vp_update(VISP_INC_INSTALL_PATH         "${CMAKE_INSTALL_INCLUDEDIR}")
   vp_update(VISP_BIN_INSTALL_PATH         "${VISP_INSTALL_BINARIES_PREFIX}bin")
-  vp_update(VISP_INSTALL_DATAROOTDIR       "")
-  # where to install the data (share for linux)
-  # set(VISP_INSTALL_DATAROOTDIR "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
+  vp_update(VISP_INSTALL_DATAROOTDIR      "${CMAKE_INSTALL_DATAROOTDIR}/visp-${VISP_VERSION}")
   vp_update(VISP_CONFIG_INSTALL_PATH      ".")
 
 else() # UNIX
