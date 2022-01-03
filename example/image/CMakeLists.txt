@@ -29,7 +29,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# ViSP overall configuration file. 
+# ViSP overall configuration file.
 #
 # Authors:
 # Fabien Spindler
@@ -38,7 +38,7 @@
 
 project(example-image)
 
-cmake_minimum_required(VERSION 2.8.12.2)
+cmake_minimum_required(VERSION 3.0)
 
 find_package(VISP REQUIRED visp_core visp_io)
 

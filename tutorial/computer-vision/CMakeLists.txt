@@ -1,6 +1,6 @@
 project(tutorial-computer-vision)
 
-cmake_minimum_required(VERSION 2.8.12.2)
+cmake_minimum_required(VERSION 3.0)
 
 find_package(VISP REQUIRED visp_core visp_blob visp_vision visp_io visp_gui visp_detection visp_sensor)
 

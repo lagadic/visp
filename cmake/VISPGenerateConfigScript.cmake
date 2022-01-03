@@ -242,7 +242,7 @@ set(TARGET_LOCATION_${item} \"${item}${VISP_VERSION_MAJOR}${VISP_VERSION_MINOR}$
 # =============================================================================
 else() # DEFINED CMAKE_HELPER_SCRIPT
 
-  cmake_minimum_required(VERSION 2.8.12.2)
+  cmake_minimum_required(VERSION 3.0)
   include("${CMAKE_HELPER_SCRIPT}")
   include("${VISP_SOURCE_DIR}/cmake/VISPUtils.cmake")
 
@@ -391,8 +391,8 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     #---------------------------------------------------------------------
     # Updates VISP_SCRIPT_CONFIG_SCRIPT_DEF
     #----------------------------------------------------------------------
-    set(VISP_SCRIPT_CONFIG_DEFS 
-	  "_SCL_SECURE_NO_DEPRECATE")
+    set(VISP_SCRIPT_CONFIG_DEFS
+    "_SCL_SECURE_NO_DEPRECATE")
 
     #---------------------------------------------------------------------
     # Updates VISP_SCRIPT_CONFIG_INC
@@ -414,19 +414,19 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     fix_suffix_win(_3rdparty 1 _3rdparty_dbg_libname _3rdparty_opt_libname)
     # We suppose that _modules_dbg_libname and _modules_opt_libname have the same libdir
     get_libdir_win(_extra_opt _extra_opt_libdir)
-	
+
     get_libname_win(_extra_opt _extra_opt_libname)
     get_libname_win(_extra_dbg _extra_dbg_libname)
-	
+
     vp_list_unique(_extra_opt_libdir)
-	
+
     if(BUILD_SHARED_LIBS)
       set(VISP_SCRIPT_CONFIG_LIBS_DEBUG
         "${_modules_dbg_libname}"
         "${_extra_dbg_libname}")
       set(VISP_SCRIPT_CONFIG_LIBS_OPTIMIZED
         "${_modules_opt_libname}"
-   	    "${_extra_opt_libname}")
+        "${_extra_opt_libname}")
     else()
       set(VISP_SCRIPT_CONFIG_LIBS_DEBUG
         "${_modules_dbg_libname}"
@@ -434,7 +434,7 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
         "${_extra_dbg_libname}")
       set(VISP_SCRIPT_CONFIG_LIBS_OPTIMIZED
         "${_modules_opt_libname}"
-   	    "${_3rdparty_opt_libname}"
+        "${_3rdparty_opt_libname}"
         "${_extra_opt_libname}")
     endif()
 
@@ -466,7 +466,7 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
 
     vp_list_replace_separator(VISP_SCRIPT_CONFIG_INC "; ")
     vp_list_replace_separator(VISP_SCRIPT_CONFIG_LIBDIR "; ")
-	
+
     configure_file("${VISP_SOURCE_DIR}/${FILE_VISP_SCRIPT_CONFIG_IN}"
       "${FILE_VISP_SCRIPT_CONFIG}" @ONLY)
 
@@ -474,7 +474,7 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
     set(VISP_SCRIPT_CONFIG_INC
       "%PREFIX%/${VISP_INC_INSTALL_PATH}"
       "${_includes_extra}")
-	  
+
     if(BUILD_SHARED_LIBS)
       set(VISP_SCRIPT_CONFIG_LIBDIR
         "%PREFIX%/${VISP_ARCH}/${VISP_RUNTIME}/lib"
@@ -484,12 +484,12 @@ else() # DEFINED CMAKE_HELPER_SCRIPT
         "%PREFIX%/${VISP_ARCH}/${VISP_RUNTIME}/staticlib"
         "${_extra_opt_libdir}")
     endif()
-	
+
     vp_list_replace_separator(VISP_SCRIPT_CONFIG_INC "; ")
     vp_list_replace_separator(VISP_SCRIPT_CONFIG_LIBDIR "; ")
-	
+
     configure_file("${VISP_SOURCE_DIR}/${FILE_VISP_SCRIPT_CONFIG_INSTALL_IN}"
       "${FILE_VISP_SCRIPT_CONFIG_INSTALL}" @ONLY)
   endif()
-	
+
 endif() # DEFINED CMAKE_HELPER_SCRIPT

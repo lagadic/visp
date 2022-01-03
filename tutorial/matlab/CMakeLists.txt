@@ -1,6 +1,6 @@
 project(visp-matlab)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 
 find_package(VISP REQUIRED visp_core)
 include_directories(${VISP_INCLUDE_DIRS})
