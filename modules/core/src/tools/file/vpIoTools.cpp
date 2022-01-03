@@ -142,8 +142,54 @@ const std::string &vpIoTools::getBuildInformation()
 
 /*!
   Return path to the default temporary folder:
-    - on Windows it returns GetTempPath()
-    - on Unix it returns /tmp/<username>
+    - on Windows it returns `GetTempPath()`
+    - on Unix it returns `/tmp/<username>`
+
+  \warning This function is not implemented on WINRT.
+
+  The following sample shows how to use this function to create unique temporary directories:
+  \code
+  include <visp3/core/vpIoTools.h>
+
+  int main()
+  {
+    std::string tmp_path = vpIoTools::getTempPath();
+    std::cout << "Temp path: " << tmp_path << std::endl;
+
+    std::string tmp_dir1 = vpIoTools::makeTempDirectory(tmp_path);
+    std::cout << "Created unique temp dir1: " << tmp_dir1 << std::endl;
+
+    std::string tmp_dir2_template = tmp_path + vpIoTools::path("/") + "dir_XXXXXX";
+    std::string tmp_dir2 = vpIoTools::makeTempDirectory(tmp_dir2_template);
+    std::cout << "Created unique temp dir2: " << tmp_dir2 << std::endl;
+
+    if (vpIoTools::remove(tmp_dir1)) {
+      std::cout << "Temp dir1 was deleted" << std::endl;
+    }
+    if (vpIoTools::remove(tmp_dir2)) {
+      std::cout << "Temp dir2 was deleted" << std::endl;
+    }
+  }
+  \endcode
+  On Windows it produces:
+  \verbatim
+  Temp path: C:\Users\<username>\AppData\Local\Temp
+  Created unique temp dir1: C:\Users\<username>\AppData\Local\Temp\ddaac8c3-7a95-447f-8a1c-fe31bb2426f9
+  Created unique temp dir2: C:\Users\<username>\AppData\Local\Temp\dir_8b9e6e9a-fe9b-4b44-8382-fc2368dfed68
+  Temp dir1 was deleted
+  Temp dir2 was deleted
+  \endverbatim
+
+  while on Unix it produces:
+  \verbatim
+  Temp path: /tmp/<username>
+  Created unique temp dir1: /tmp/<username>/AMIsXF
+  Created unique temp dir2: /tmp/<username>/dir_KP7119
+  Temp dir1 was deleted
+  Temp dir2 was deleted
+  \endverbatim
+
+  \sa makeTempDirectory(), remove()
  */
 std::string vpIoTools::getTempPath()
 {
@@ -151,7 +197,7 @@ std::string vpIoTools::getTempPath()
   std::string username;
   vpIoTools::getUserName(username);
   return "/tmp/" + username;
-#elif defined(_WIN32)
+#elif defined(_WIN32) && !defined(WINRT)
   // https://docs.microsoft.com/en-us/windows/win32/fileio/creating-and-using-a-temporary-file
   //  Gets the temp path env string (no guarantee it's a valid path).
   TCHAR lpTempPathBuffer[MAX_PATH];
@@ -159,7 +205,21 @@ std::string vpIoTools::getTempPath()
   if (dwRetVal > MAX_PATH || (dwRetVal == 0)) {
     throw vpIoException(vpIoException::cantGetenv, "Error with GetTempPath() call!");
   }
-  return lpTempPathBuffer;
+  std::string temp_path(lpTempPathBuffer);
+  if (!temp_path.empty()) {
+    if (temp_path.back() == '\\') {
+      temp_path.resize(temp_path.size() - 1);
+    }
+  }
+  else {
+    temp_path = "C:\temp";
+    try {
+      vpIoTools::makeDirectory(temp_path);
+    } catch (...) {
+      throw(vpException(vpException::fatalError, "Cannot set temp path to %s", temp_path.c_str()));
+    }
+  }
+  return temp_path;
 #else
   throw vpIoException(vpException::fatalError, "Not implemented on this platform!");
 #endif
@@ -505,7 +565,7 @@ int vpIoTools::mkdir_p(const char *path, int mode)
   \exception vpIoException::cantCreateDirectory : If the directory cannot be
   created.
 
-  \sa makeTempDirectory()
+  \sa makeTempDirectory(), remove()
 */
 void vpIoTools::makeDirectory(const std::string &dirname)
 {
@@ -587,7 +647,7 @@ void vpIoTools::makeFifo(const std::string &fifoname)
 #endif
 }
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(WINRT)
 std::string getUuid()
 {
   UUID uuid;
@@ -599,7 +659,7 @@ std::string getUuid()
   if (UuidToString(&uuid, &stringUuid) != RPC_S_OK) {
     throw(vpIoException(vpIoException::fatalError, "UuidToString() failed!"));
   }
-  
+
   return reinterpret_cast<char *>(stringUuid);
 }
 #endif
@@ -607,7 +667,7 @@ std::string getUuid()
 /*!
   Create a new temporary directory with a unique name based on dirname parameter.
 
-  \warning This function is only implemented on unix-like OS.
+  \warning This function is not implemented on WINRT.
 
   \param dirname : Name of the directory to create, or location of an existing directory.
   If \e dirname corresponds to an existing directory, \e dirname is considered as a parent directory.
@@ -621,11 +681,54 @@ std::string getUuid()
 
   \exception vpIoException::cantCreateDirectory : If the directory cannot be created.
 
-  \sa makeDirectory()
+  The following sample shows how to use this function to create unique temporary directories:
+  \code
+  include <visp3/core/vpIoTools.h>
+
+  int main()
+  {
+    std::string tmp_path = vpIoTools::getTempPath();
+    std::cout << "Temp path: " << tmp_path << std::endl;
+
+    std::string tmp_dir1 = vpIoTools::makeTempDirectory(tmp_path);
+    std::cout << "Created unique temp dir1: " << tmp_dir1 << std::endl;
+
+    std::string tmp_dir2_template = tmp_path + vpIoTools::path("/") + "dir_XXXXXX";
+    std::string tmp_dir2 = vpIoTools::makeTempDirectory(tmp_dir2_template);
+    std::cout << "Created unique temp dir2: " << tmp_dir2 << std::endl;
+
+    if (vpIoTools::remove(tmp_dir1)) {
+      std::cout << "Temp dir1 was deleted" << std::endl;
+    }
+    if (vpIoTools::remove(tmp_dir2)) {
+      std::cout << "Temp dir2 was deleted" << std::endl;
+    }
+  }
+  \endcode
+  On Windows it produces:
+  \verbatim
+  Temp path: C:\Users\<username>\AppData\Local\Temp
+  Created unique temp dir1: C:\Users\<username>\AppData\Local\Temp\ddaac8c3-7a95-447f-8a1c-fe31bb2426f9
+  Created unique temp dir2: C:\Users\<username>\AppData\Local\Temp\dir_8b9e6e9a-fe9b-4b44-8382-fc2368dfed68
+  Temp dir1 was deleted
+  Temp dir2 was deleted
+  \endverbatim
+
+  while on Unix it produces:
+  \verbatim
+  Temp path: /tmp/<username>
+  Created unique temp dir1: /tmp/<username>/AMIsXF
+  Created unique temp dir2: /tmp/<username>/dir_KP7119
+  Temp dir1 was deleted
+  Temp dir2 was deleted
+  \endverbatim
+
+  \sa makeDirectory(), getTempPath(), remove()
 */
 std::string vpIoTools::makeTempDirectory(const std::string &dirname)
 {
-#if !defined(_WIN32) && !(defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // not UNIX and not Windows
+#if defined(WINRT) || !defined(_WIN32) &&                                                                                      \
+    !(defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // not UNIX and not Windows
   throw(vpIoException(vpIoException::cantCreateDirectory, "makeTempDirectory() is not supported on this platform!"));
 #endif
 
@@ -647,7 +750,7 @@ std::string vpIoTools::makeTempDirectory(const std::string &dirname)
                           "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname_cpy.c_str()));
     }
 
-#if defined(_WIN32)
+#if defined(_WIN32) && !defined(WINRT)
     // Remove XXXXXX
     dirname_cpy = dirname_cpy.substr(0, dirname_cpy.rfind(correctEnding));
     // Append UUID
@@ -661,7 +764,7 @@ std::string vpIoTools::makeTempDirectory(const std::string &dirname)
       dirname_cpy = dirname_cpy + "/";
     }
     dirname_cpy = dirname_cpy + "XXXXXX";
-#elif defined(_WIN32)
+#elif defined(_WIN32) && !defined(WINRT)
     dirname_cpy = createFilePath(dirname_cpy, getUuid());
 #endif
   }
@@ -680,7 +783,7 @@ std::string vpIoTools::makeTempDirectory(const std::string &dirname)
   std::string res(computedDirname);
   delete[] dirname_char;
   return res;
-#elif defined(_WIN32)
+#elif defined(_WIN32) && !defined(WINRT)
   makeDirectory(dirname_cpy);
   return dirname_cpy;
 #endif
@@ -820,6 +923,8 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
   \param file_or_dir : File name or directory to remove.
 
   \return true if the file or the directory was removed, false otherwise.
+
+  \sa makeDirectory(), makeTempDirectory()
 */
 bool vpIoTools::remove(const std::string &file_or_dir)
 {
