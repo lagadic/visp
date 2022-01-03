@@ -84,17 +84,22 @@ int main(int argc, char **argv)
       if (cam_found[i]) {
         if (type_serial_nb[i].first == "T265") { // T265.
           g[i].acquire(&I[i], NULL, NULL);
+
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
           if (!d[i].isInitialised()) {
             d[i].init(I[i], static_cast<int>(100*i), static_cast<int>(100*i), "T265 left image");
           }
+#endif
         }
 
         else { // D435.
           g[i].acquire(I[i]);
 
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
           if (!d[i].isInitialised()) {
             d[i].init(I[i], static_cast<int>(100*i), static_cast<int>(100*i), type_serial_nb[i].first.c_str());
           }
+#endif
         }
 
         vpDisplay::display(I[i]);
