@@ -181,7 +181,6 @@ int main(int argc, char *argv[])
   pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
   //! [Point cloud]
   vpCameraParameters cam_color, cam_depth;
-  unsigned int _posx = 100, _posy = 50, _posdx = 10;
 
   read_data(frame_cpt, input_directory, I_color, I_depth_raw, pointcloud);
   vpImageConvert::convert(I_color, I_gray);
@@ -192,8 +191,13 @@ int main(int argc, char *argv[])
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d1, d2;
 #endif
+
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+  unsigned int _posx = 100, _posy = 50, _posdx = 10;
   d1.init(I_gray, _posx, _posy, "Color stream");
   d2.init(I_depth, _posx + I_gray.getWidth()+_posdx, _posy, "Depth stream");
+#endif
+
   vpDisplay::display(I_gray);
   vpDisplay::display(I_depth);
   vpDisplay::flush(I_gray);
