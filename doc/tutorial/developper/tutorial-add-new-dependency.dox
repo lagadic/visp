@@ -1,4 +1,4 @@
-/**\page tutorial-add-new-dependency Tutorial: Introduce a new class with 3rd-party dependencies 
+/**\page tutorial-add-new-dependency Tutorial: Introduce a new class with 3rd-party dependencies
 \tableofcontents
 
 \section add_new_dep_intro Introduction
@@ -22,16 +22,16 @@ To illustrate this tutorial, let us consider that `<dummy sdk root path>` is equ
 
 In order that ViSP remains cross-platform, here we should consider that this dummy SDK is used only if `VISP_HAVE_DUMMY_SDK` macro is defined. We suppose here that this macro is automatically defined (or not) in `visp3/core/vpConfig.h` file that is located in ViSP build tree, more precisely in `$VISP_WS/visp-build/include` folder.
 
-The class declaration is implemented in `vpDummyWrapper.h`. Since we want that the class belongs to `visp_robot` module, you have to put this file in `$VISP_WS/visp/modules/robot/include/visp3/robot/` folder. The content of this file looks like: 
+The class declaration is implemented in `vpDummyWrapper.h`. Since we want that the class belongs to `visp_robot` module, you have to put this file in `$VISP_WS/visp/modules/robot/include/visp3/robot/` folder. The content of this file looks like:
 \code
 #ifndef vpDummyWrapper_h
 #define vpDummyWrapper_h
 
 #include <visp3/core/vpConfig.h>
- 
+
 #ifdef VISP_HAVE_DUMMY_SDK
 
-#include <dummy_sdk_header.h> 
+#include <dummy_sdk_header.h>
 
 /*!
   \class vpDummyWrapper Dummy wrapper example.
@@ -109,7 +109,7 @@ $ ccmake ../visp
 \endcode
 Here you should see appearing a new line like the following that shows that your `DummySDK` package is found by CMake:
 \code
- USE_DUMMYSDK                *ON                                                                                                         
+ USE_DUMMYSDK                *ON
 \endcode
 Entering advanced mode by pressing `[t]` key, you should be also able to see the following lines that indicate the full path to `DummySDK` headers folder and library:
 \code
@@ -124,17 +124,17 @@ Now you should modify ViSP source code to define `VISP_HAVE_DUMMY_SDK` macro whe
 - Modify `$VISP_WS/visp/CMakeLists.txt` CMake root file to add a line like:
 \code
 VP_SET(VISP_HAVE_DUMMY_SDK TRUE IF (BUILD_MODULE_visp_robot AND USE_FTIITSDK))
-\endcode 
-- Modify `$VISP_WS/visp/cmake/templates/VISPConfig.cmake.in` to set `VISP_HAVE_DUMMY_SDK` as a CMake var that could be used later in all `CMakeFiles.txt` files that are using ViSP as 3rd-party: 
+\endcode
+- Modify `$VISP_WS/visp/cmake/templates/VISPConfig.cmake.in` to set `VISP_HAVE_DUMMY_SDK` as a CMake var that could be used later in all `CMakeFiles.txt` files that are using ViSP as 3rd-party:
 \code
 set(VISP_HAVE_DUMMY_SDK   "@VISP_HAVE_DUMMY_SDK@")
 \endcode
-- Modify `$VISP_WS/visp/cmake/templates/vpConfig.h.in` to set `VISP_HAVE_DUMMY_SDK` as a C++ compiler macro that could be used later in all `*.h` header and `*.cpp` source files: 
+- Modify `$VISP_WS/visp/cmake/templates/vpConfig.h.in` to set `VISP_HAVE_DUMMY_SDK` as a C++ compiler macro that could be used later in all `*.h` header and `*.cpp` source files:
 \code
 // Defined if Dummy SDK is available
 #cmakedefine VISP_HAVE_DUMMY_SDK
 \endcode
-- Modify `$VISP_WS/visp/doc/config-doxygen.in` to set `VISP_HAVE_DUMMY_SDK` as a predefined macro for Doxygen. It allows to see `vpDummySDK` class in generated Doxygen documentation: 
+- Modify `$VISP_WS/visp/doc/config-doxygen.in` to set `VISP_HAVE_DUMMY_SDK` as a predefined macro for Doxygen. It allows to see `vpDummySDK` class in generated Doxygen documentation:
 \code
 PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          ...
@@ -149,13 +149,13 @@ $ cmake ../visp
 \endcode
 Here you should see that `DummySDK` is well detected:
 \code
---   Real robots: 
+--   Real robots:
 --     ...
 --     Use Dummy SDK:               yes
 \endcode
 You should also find `VISP_HAVE_DUMMY_SDK` macro in `$VISP_WS/visp-build/include/visp3/core/vpConfig.h` generated file:
 \code
-$ grep VISP_HAVE_DUMMY_SDK include/visp3/core/vpConfig.h 
+$ grep VISP_HAVE_DUMMY_SDK include/visp3/core/vpConfig.h
 #define VISP_HAVE_DUMMY_SDK
 \endcode
 
@@ -163,16 +163,16 @@ $ grep VISP_HAVE_DUMMY_SDK include/visp3/core/vpConfig.h
 
 - You are now ready to introduce a new header file implemented in `$VISP_WS/visp/modules/robot/include/visp3/robot/vpDummyWrapper.h` that contains `vpDummyWrapper` class declaration.
 
-- As given in \ref add_new_dep_overview section we recall the content of this file: 
+- As given in \ref add_new_dep_overview section we recall the content of this file:
 \verbatim
 #ifndef vpDummyWrapper_h
 #define vpDummyWrapper_h
 
 #include <visp3/core/vpConfig.h>
- 
+
 #ifdef VISP_HAVE_DUMMY_SDK
 
-#include <dummy_sdk_header.h> 
+#include <dummy_sdk_header.h>
 
 /*!
   \class vpDummyWrapper Dummy wrapper example.
@@ -194,7 +194,7 @@ where `VISP_HAVE_DUMMY_SDK` macro is used to ensure that the build doesn't fail 
 
 - Similarly, introduce a new source file implemented in `$VISP_WS/visp/modules/robot/src/real-robot/dummy_sdk/vpDummyWrapper.cpp` that contains `vpDummyWrapper` class definition.
 
-- As given in \ref add_new_dep_overview section we recall the content of this file: 
+- As given in \ref add_new_dep_overview section we recall the content of this file:
 \verbatim
 #include <visp3/robot/vpDummyWrapper.h>
 
@@ -305,7 +305,7 @@ $ more CMakeLists.txt
 \code
 project(example-dummy)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 
 find_package(VISP REQUIRED visp_core visp_robot)
 
@@ -339,11 +339,11 @@ $ make exampleDummy
 
 \subsection add_new_dep_modif_doxy_tuto Add a new Doxygen tutorial
 
-This sections explains how to add a new Doxygen tutorial like this one, that may appear in [ViSP main page documentation](https://visp-doc.inria.fr/doxygen/visp-daily/index.html#tutorial) 
+This sections explains how to add a new Doxygen tutorial like this one, that may appear in [ViSP main page documentation](https://visp-doc.inria.fr/doxygen/visp-daily/index.html#tutorial)
 
 - The first step is to start to write the tutorial. To illustrate this section we will consider a new tutorial file in `$VISP_WS/visp/doc/tutorial/robot/dummy/tutorial-dummy-robot.doc` that may contain something like:
 \verbatim
-/**\page tutorial-dummy-robot Tutorial: How to start with dummy robot  
+/**\page tutorial-dummy-robot Tutorial: How to start with dummy robot
 \tableofcontents
 \section dummy_intro Introduction
 
@@ -362,7 +362,7 @@ Bla Bla...
 \verbatim
 /*! \page tutorial_mainpage Tutorials
 This page references all the tutorials.
-... 
+...
 \subpage tutorial_robot
 
 */
@@ -411,7 +411,7 @@ $ more CMakeLists.txt
 \code
 project(example-dummy)
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.0)
 
 find_package(VISP REQUIRED visp_core visp_robot)
 

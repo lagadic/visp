@@ -18,7 +18,7 @@
 #
 # This software was developed at:
 # Harbin Institute of Technology HIT
-# Harbin city, China 
+# Harbin city, China
 #
 #Inria Rennes - Bretagne Atlantique
 # Campus Universitaire de Beaulieu
@@ -32,7 +32,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# ViSP configuration file. 
+# ViSP configuration file.
 #
 # Authors:
 # Fabien Spindler
@@ -40,7 +40,7 @@
 
 project(example-servo-kinova)
 
-cmake_minimum_required(VERSION 2.8.12.2)
+cmake_minimum_required(VERSION 3.0)
 
 find_package(VISP REQUIRED visp_core visp_blob visp_vs visp_robot visp_sensor visp_gui)
 
