@@ -248,6 +248,25 @@ To grab a sequence of images, you may rather use:
 ./tutorial-grabber-structure-core --record 0
 \endcode
 
+\section grabber-rgbd-D435-structurecore RGBD frame grabbing from RealSense D435 and Structure Core
+
+If you have both Intel RealSense D435 and Occipital Structure Core, you can acquire color and depth frames simultaneously from both sensors.
+
+\subsection
+
+Once tutorial-grabber-rgbd-D435-structurecore.cpp is built, you just need to run:
+\code
+./tutorial-grabber-rgbd-D435-structurecore
+\endcode
+
+You should see something similar to the following:
+
+\htmlonly
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ddUNX-hkwqg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
+\endhtmlonly
+
 \section grabber-camera-opencv Frame grabbing using OpenCV
 
 It is also possible to grab images using OpenCV. You may find an example in tutorial-grabber-opencv.cpp.

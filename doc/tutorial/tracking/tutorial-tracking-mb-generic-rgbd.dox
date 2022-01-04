@@ -315,6 +315,16 @@ To display the model with the estimated pose and also the object frame:
 
 \snippet tutorial-mb-generic-tracker-rgbd.cpp Display
 
+\section mb_rgbd_use_case_comparison Comparison between RGB-D cameras
+
+This video shows a comparison between Intel Realsense D435 and Occipital Structure Core. In the left column we show data acquired using D435, while on the right column they are from the Structure Core color depth camera.
+
+\htmlonly
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ddUNX-hkwqg" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
+\endhtmlonly
+
 \section mb_rgbd_use_case Intel Realsense camera use case
 
 Hereafter we provide the information to test the tracker with different objects (cube, teabox, lego-square) with an Intel Realsense D435 or SR300 RGB-D camera. Here we suppose that librealsense 3rd party is installed, and that ViSP is build with librealsense support as explained in the following tutorials:
