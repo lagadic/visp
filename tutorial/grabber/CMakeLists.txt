@@ -16,6 +16,7 @@ set(tutorial_cpp
   tutorial-grabber-multiple-realsense.cpp
   tutorial-grabber-opencv.cpp
   tutorial-grabber-opencv-threaded.cpp
+  tutorial-grabber-rgbd-D435-structurecore.cpp
   tutorial-grabber-realsense.cpp
   tutorial-grabber-realsense-T265.cpp
   tutorial-grabber-structure-core.cpp
@@ -64,6 +65,7 @@ endif()
 
 if(VISP_HAVE_OCCIPITAL_STRUCTURE)
   visp_set_source_file_compile_flag(tutorial-grabber-structure-core.cpp -Wno-reorder -Wno-unused-function -Wno-unused-parameter -Wno-sign-compare -Wno-overloaded-virtual -Wno-ignored-qualifiers -Wno-maybe-uninitialized)
+  visp_set_source_file_compile_flag(tutorial-grabber-rgbd-D435-structurecore.cpp -Wno-reorder -Wno-unused-function -Wno-unused-parameter -Wno-sign-compare -Wno-overloaded-virtual -Wno-ignored-qualifiers -Wno-maybe-uninitialized)
 endif()
 
 foreach(cpp ${tutorial_cpp})
