@@ -60,7 +60,7 @@ vp_createDepthHistogram( const vpImage< float > &src_depth, vpImage< unsigned ch
   #ifdef VISP_HAVE_OPENMP
   #pragma omp parallel for
   #endif
-  for ( int i = 0; i < src_depth.getSize(); ++i ) {
+  for ( int i = 0; i < static_cast<int>(src_depth.getSize()); ++i ) {
     if(!vpMath::isNaN(src_depth.bitmap[i])) {
       ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
     }
@@ -72,7 +72,7 @@ vp_createDepthHistogram( const vpImage< float > &src_depth, vpImage< unsigned ch
   #ifdef VISP_HAVE_OPENMP
   #pragma omp parallel for
   #endif
-  for ( int i = 0; i < src_depth.getSize(); ++i )
+  for ( int i = 0; i < static_cast<int>(src_depth.getSize()); ++i )
   {
     uint16_t d = src_depth.bitmap[i];
     if ( d )
@@ -104,7 +104,7 @@ vp_createDepthHistogram( const vpImage< uint16_t > &src_depth, vpImage< unsigned
   #ifdef VISP_HAVE_OPENMP
   #pragma omp parallel for
   #endif
-  for ( int i = 0; i < src_depth.getSize(); ++i ) {
+  for ( int i = 0; i < static_cast<int>(src_depth.getSize()); ++i ) {
     ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
   }
 
@@ -114,7 +114,7 @@ vp_createDepthHistogram( const vpImage< uint16_t > &src_depth, vpImage< unsigned
   #ifdef VISP_HAVE_OPENMP
   #pragma omp parallel for
   #endif
-  for ( int i = 0; i < src_depth.getSize(); ++i )
+  for ( int i = 0; i < static_cast<int>(src_depth.getSize()); ++i )
   {
     uint16_t d = src_depth.bitmap[i];
     if ( d )
@@ -146,7 +146,7 @@ vp_createDepthHistogram( const vpImage< float > &src_depth, vpImage< vpRGBa > &d
   #ifdef VISP_HAVE_OPENMP
   #pragma omp parallel for
   #endif
-  for ( int i = 0; i < src_depth.getSize(); ++i ) {
+  for ( int i = 0; i < static_cast<int>(src_depth.getSize()); ++i ) {
     if(!vpMath::isNaN(src_depth.bitmap[i])) {
       ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
     }
@@ -158,7 +158,7 @@ vp_createDepthHistogram( const vpImage< float > &src_depth, vpImage< vpRGBa > &d
   #ifdef VISP_HAVE_OPENMP
   #pragma omp parallel for
   #endif
-  for ( int i = 0; i < src_depth.getSize(); ++i )
+  for ( int i = 0; i < static_cast<int>(src_depth.getSize()); ++i )
   {
     uint16_t d = src_depth.bitmap[i];
     if ( d )
@@ -195,17 +195,17 @@ vp_createDepthHistogram( const vpImage< uint16_t > &src_depth, vpImage< vpRGBa >
   #ifdef VISP_HAVE_OPENMP
   #pragma omp parallel for
   #endif
-  for ( int i = 0; i < src_depth.getSize(); ++i ) {
+  for ( int i = 0; i < static_cast<int>(src_depth.getSize()); ++i ) {
     ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
   }
 
-  for ( int i = 2; i < 0x10000; ++i )
+  for ( unsigned int i = 2; i < 0x10000; ++i )
     histogram[i] += histogram[i - 1]; // Build a cumulative histogram for the indices in [1,0xFFFF]
 
   #ifdef VISP_HAVE_OPENMP
   #pragma omp parallel for
   #endif
-  for ( int i = 0; i < src_depth.getSize(); ++i )
+  for ( int i = 0; i < static_cast<int>(src_depth.getSize()); ++i )
   {
     uint16_t d = src_depth.bitmap[i];
     if ( d )
