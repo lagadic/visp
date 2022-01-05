@@ -39,12 +39,12 @@
 #ifndef _vpOccipitalStructure_h_
 #define _vpOccipitalStructure_h_
 
-#include <mutex>
-#include <condition_variable>
-
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <mutex>
+#include <condition_variable>
+
 #include <ST/CaptureSession.h>
 
 #ifdef VISP_HAVE_PCL
