@@ -60,7 +60,11 @@ if(DOXYGEN_FOUND)
     COMMAND "${DOXYGEN_EXECUTABLE}" "${VISP_DOC_DIR}/config-doxygen"
     DEPENDS "${VISP_DOC_DIR}/config-doxygen"
   )
-  add_dependencies(visp_doc man developer_scripts)
+  if(UNIX AND NOT ANDROID) # man target available only on unix
+    add_dependencies(visp_doc man developer_scripts)
+  else()
+    add_dependencies(visp_doc developer_scripts)
+  endif()
   if(ENABLE_SOLUTION_FOLDERS)
     set_target_properties(visp_doc PROPERTIES FOLDER "extra")
     set_target_properties(html-doc PROPERTIES FOLDER "extra")
