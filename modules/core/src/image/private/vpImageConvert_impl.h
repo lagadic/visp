@@ -74,7 +74,7 @@ vp_createDepthHistogram( const vpImage< float > &src_depth, vpImage< unsigned ch
   #endif
   for ( int i = 0; i < static_cast<int>(src_depth.getSize()); ++i )
   {
-    uint16_t d = src_depth.bitmap[i];
+    uint16_t d = static_cast<uint16_t>(src_depth.bitmap[i]);
     if ( d )
     {
       unsigned char f =
@@ -160,7 +160,7 @@ vp_createDepthHistogram( const vpImage< float > &src_depth, vpImage< vpRGBa > &d
   #endif
   for ( int i = 0; i < static_cast<int>(src_depth.getSize()); ++i )
   {
-    uint16_t d = src_depth.bitmap[i];
+    uint16_t d = static_cast<uint16_t>(src_depth.bitmap[i]);
     if ( d )
     {
       unsigned char f = (unsigned char)( histogram[d] * 255 / histogram[0xFFFF] ); // 0-255 based on histogram location
