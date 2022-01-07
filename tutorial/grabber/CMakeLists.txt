@@ -75,8 +75,11 @@ if(CXX_FLAGS_MUTE_WARNINGS_RS)
   visp_set_source_file_compile_flag(tutorial-grabber-multiple-realsense.cpp ${CXX_FLAGS_MUTE_WARNINGS_RS})
 endif()
 
-if(VISP_HAVE_OCCIPITAL_STRUCTURE)
+if(CXX_FLAGS_MUTE_WARNINGS_SC)
   visp_set_source_file_compile_flag(tutorial-grabber-structure-core.cpp ${CXX_FLAGS_MUTE_WARNINGS_SC})
+endif()
+
+if(CXX_FLAGS_MUTE_WARNINGS_RS OR CXX_FLAGS_MUTE_WARNINGS_SC)
   visp_set_source_file_compile_flag(tutorial-grabber-rgbd-D435-structurecore.cpp ${CXX_FLAGS_MUTE_WARNINGS_RS} ${CXX_FLAGS_MUTE_WARNINGS_SC})
 endif()
 
