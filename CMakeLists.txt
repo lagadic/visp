@@ -113,6 +113,15 @@ if(POLICY CMP0075)
   cmake_policy(SET CMP0075 NEW) # For check_include_file and cmake 3.12.0
 endif()
 
+if(APPLE)
+  # Fix following errors for libpng and libjpeg detection:
+  # - Application built with libpng-1.4.12 but running with 1.6.37,
+  # - Wrong JPEG library version: library is 90, caller expects 80.
+  # The reason is that headers were found in /Library/Frameworks/Mono.framework/Headers
+  # while libraries in /usr/local/lib
+  set(CMAKE_FIND_FRAMEWORK LAST)
+endif()
+
 project(VISP C CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
