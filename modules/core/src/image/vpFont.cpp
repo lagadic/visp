@@ -154,6 +154,15 @@ public:
   }
 
   /*!
+    (For ViSP type compatibility) Measures a size of region is need to draw given text.
+  */
+  vpImagePoint Measure2(const String & text) const
+  {
+    Point mes = Measure(text);
+    return vpImagePoint(mes.y, mes.x);
+  }
+
+  /*!
     Draws a text at the image.
 
     \param [out] canvas - a canvas (image where we draw text).
@@ -2023,6 +2032,16 @@ bool vpFont::drawText(vpImage<vpRGBa> & I, const std::string & text, const vpIma
 unsigned int vpFont::getHeight() const
 {
   return static_cast<unsigned int>(m_impl->Height());
+}
+
+/*!
+  Gets text bounding box size.
+
+  \return The width (\e j) and height (\e i) of the text bounding box.
+*/
+vpImagePoint vpFont::getMeasure(const std::string & text) const
+{
+  return m_impl->Measure2(text);
 }
 
 /*!

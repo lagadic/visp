@@ -65,6 +65,7 @@ public:
   bool drawText(vpImage<vpRGBa> & I, const std::string & text, const vpImagePoint & position, const vpColor & color, const vpColor & background) const;
 
   unsigned int getHeight() const;
+  vpImagePoint getMeasure(const std::string & text) const;
   bool setHeight(unsigned int height);
 
 private:
