@@ -59,6 +59,8 @@ int main(int argc ,char *argv[])
   }
   std::cout << "Save: " << save << std::endl;
 
+  const std::string visp = "ViSP: Open source Visual Servoing Platform";
+
   //vpRGBa
   {
     vpImage<vpRGBa> I(480, 640, vpRGBa(255));
@@ -78,6 +80,12 @@ int main(int argc ,char *argv[])
     iP1.set_i(200);
     iP1.set_j(200);
     font.drawText(I, "Test...", iP1, vpColor::white, vpColor::black);
+
+    vpFont font2(20);
+    vpImagePoint textSize = font2.getMeasure(visp);
+    vpImagePoint textPos = vpImagePoint(24, 620 - textSize.get_j());
+    font2.drawText(I, visp, textPos, vpColor::darkGreen);
+    vpImageDraw::drawRectangle(I, vpRect(textPos.get_u(), textPos.get_v(), textSize.get_u(), textSize.get_v()), vpColor::darkRed);
 
     iP1.set_i(80);
     iP1.set_j(220);
@@ -197,6 +205,12 @@ int main(int argc ,char *argv[])
     iP1.set_i(200);
     iP1.set_j(200);
     font.drawText(I, "Test...", iP1, 0, 255);
+
+    vpFont font2(20);
+    vpImagePoint textSize = font2.getMeasure(visp);
+    vpImagePoint textPos = vpImagePoint(24, 620 - textSize.get_j());
+    font2.drawText(I, visp, textPos, 255);
+    vpImageDraw::drawRectangle(I, vpRect(textPos.get_u(), textPos.get_v(), textSize.get_u(), textSize.get_v()), 255);
 
     iP1.set_i(80);
     iP1.set_j(220);
