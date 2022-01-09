@@ -32,7 +32,7 @@ jobs:
       run: system_profiler SPSoftwareDataType
 
     - name: Install dependencies
-      run: brew install libpng libjpeg libdc1394 opencv
+      run: brew install libpng libjpeg libdc1394 opencv pcl
 
     - name: Clone ViSP-images
       run: |

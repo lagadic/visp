@@ -273,7 +273,7 @@ if(USE_PCL)
       endif()
     endforeach()
 
-    # On win10 + msvc 15 2017 with pcl 1.9.1 opengl32.lib needde by vtkRenderingOpenGL-8.1-gd.lib is not found
+    # On win10 + msvc 15 2017 with pcl 1.9.1 opengl32.lib needed by vtkRenderingOpenGL-8.1-gd.lib is not found
     # Here we explicitely add opengl
     if(OPENGL_LIBRARIES)
       list(APPEND opt_libs ${OPENGL_LIBRARIES})
