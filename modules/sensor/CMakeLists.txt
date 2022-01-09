@@ -101,6 +101,12 @@ if(USE_FTIITSDK)
   list(APPEND opt_libs ${FTIITSDK_LIBRARIES})
 endif()
 if(USE_PCL)
+message("PCL_INCLUDE_DIRS: ${PCL_INCLUDE_DIRS}")
+message("PCL_LIBRARY_DIRS: ${PCL_LIBRARY_DIRS}")
+message("PCL_LIBRARIES: ${PCL_LIBRARIES}")
+message("PCL_COMPONENTS: ${PCL_COMPONENTS}")
+message("PCL_VERSION: ${PCL_VERSION}")
+
   list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
 
   # list(APPEND opt_libs ${PCL_LIBRARIES})
@@ -264,7 +270,7 @@ if(USE_PCL)
       endif()
     endforeach()
 
-    # On win10 + msvc 15 2017 with pcl 1.9.1 opengl32.lib needde by vtkRenderingOpenGL-8.1-gd.lib is not found
+    # On win10 + msvc 15 2017 with pcl 1.9.1 opengl32.lib needed by vtkRenderingOpenGL-8.1-gd.lib is not found
     # Here we explicitely add opengl
     if(OPENGL_LIBRARIES)
       list(APPEND opt_libs ${OPENGL_LIBRARIES})
