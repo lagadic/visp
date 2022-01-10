@@ -3,7 +3,7 @@
 \page tutorial-install-osx-homebrew Tutorial: Installation from source for macOS with Homebrew
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on macOS with Homebrew. These steps have been tested with macOS Catalina 10.15.3, Big Sur 11.6.1...
+In this tutorial you will learn how to install ViSP from source on macOS with Homebrew. These steps have been tested with macOS Big Sur 11.6.2 and cmake 3.22.1.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -11,7 +11,7 @@ In this tutorial you will learn how to install ViSP from source on macOS with Ho
 
 - First, go to http://brew.sh to install Homebrew.
 
-- Next use homebrew to install additional software.
+- Next use Homebrew to install additional software.
 \verbatim
 $ brew update
 $ brew upgrade
@@ -57,7 +57,7 @@ $ git clone https://github.com/lagadic/visp.git
 $ mkdir -p $VISP_WS/visp-build
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
-$ make -j4
+$ make -j$(sysctl -n hw.logicalcpu)
 \endverbatim
 
 - Set `VISP_DIR` environment variable
@@ -99,6 +99,13 @@ If you have an Intel Realsense RGB-D camera (R200, F200, SR300, LR200, RZ300, D4
 \verbatim
 $ brew install librealsense pcl pkg-config
 \endverbatim
+
+\warning `pcl 1.12.1` has a dependency to `qt5` that is keg-only, which means it was not symlinked into `/usr/local`. As a consequence, ViSP will be not able to detect `pcl` leading to a build issue (see \ref install_brew_issues_pcl_1_12_1). The solution to build ViSP with `pcl 1.12.1` is here to run the additional commands:
+```
+$ brew link --force qt5
+$ sudo ln -s $(brew --prefix qt5)/mkspecs /usr/local/mkspecs
+$ sudo ln -s $(brew --prefix qt5)/plugins /usr/local/plugins
+```
 
 \subsubsection install_brew_3rdparty_pylon Pylon 3rd party
 
@@ -144,7 +151,7 @@ $ cd $OCCIPITAL_STRUCTURE_DIR
 $ mkdir build
 $ cd build
 $ cmake -G"Unix Makefiles" -DCMAKE_BUILD_TYPE=Release ..
-$ make Samples
+$ make -j$(sysctl -n hw.logicalcpu) Samples
 \endverbatim
 
 After completion, sample apps may be run from the Apps directory.
@@ -203,7 +210,7 @@ The following image shows that this command allows to configure (just by pressin
 To build ViSP proceed with:
 \verbatim
 $ cd $VISP_WS/visp-build
-$ make -j4
+$ make -j$(sysctl -n hw.logicalcpu)
 \endverbatim
 
 \subsection install_brew_visp_doc Build ViSP documentation
@@ -215,23 +222,24 @@ $ brew install doxygen
 Then you can proceed with:
 \verbatim
 $ cd $VISP_WS/visp-build
-$ cmake ../visp -DUSE_MATHJAX=ON
-$ make -j4 visp_doc
+$ cmake ../visp
+$ make -j$(sysctl -n hw.logicalcpu) visp_doc
 \endverbatim
 The generated documentation is then available in `$VISP_WS/visp-build/doc/html/index.html`
 
 \note
 - To speed up generating online doc, particularly around formula rendering, you can use [MatJax](https://www.mathjax.org). To this end, install MathJax and build doc using:
 \verbatim
+$ brew install node
 $ npm install mathjax
 $ cmake ../visp -DUSE_MATHJAX=ON
-$ make -j4 visp_doc
+$ make -j$(sysctl -n hw.logicalcpu) visp_doc
 \endverbatim
 \note
 - It is also possible to generate a more complete documentation that includes also all the internal classes. This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
 \verbatim
 $ cmake ../visp -DENABLE_FULL_DOC=ON
-$ make -j4 visp_doc
+$ make -j$(sysctl -n hw.logicalcpu) visp_doc
 \endverbatim
 
 \subsection install_brew_visp_dir Set VISP_DIR environment var
@@ -250,20 +258,21 @@ We give hereafter the two ways to get this data set:
 
 <b>1. Get data set release</b>
 
-- Download `visp-images-3.3.0.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
+- Download `visp-images-3.x.y.zip` from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`:
 \verbatim
-$ unzip ~/Downloads/visp-images-3.2.0.zip -d $VISP_WS
+$ unzip ~/Downloads/visp-images-3.5.0.zip -d $VISP_WS
 \endverbatim
-- We suppose now that the data are located in `$VISP_WS/visp-images-3.3.0`.
+- We suppose now that the data are located in `$VISP_WS/visp-images-3.5.0`.
 \verbatim
-$ ls $VISP_WS/visp-images-3.3.0
-3dmodel	   LICENSE.txt    circle     ellipse-1    iv      mbt-depth     video
-AprilTag   README.md      cube       endianness   line    mire          warp
-Klimt      calibration    ellipse    faces        mbt     mire-2        xml
+$ ls $VISP_WS/visp-images-3.5.0
+3dmodel          Klimt        calibration  ellipse     iv       mbt-depth  warp
+AprilTag         LICENSE.txt  circle       ellipse-1   line	     mire       xml
+Bayer            README.md    cube         endianness  mbt      mire-2
+Gaussian-filter  Solvay       dnn          faces       mbt-cao  video
 \endverbatim
-- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.3.0`. It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched:
+- Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples and tests to detect automatically the location of the requested data. In our case, this variable should be set to `$VISP_WS/visp-images-3.5.0`. It is more convenient if this environment variables is automatically added to your bash session every time a new shell is launched:
 \verbatim
-$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.3.0" >> ~/.bashrc
+$ echo "export VISP_INPUT_IMAGE_PATH=$VISP_WS/visp-images-3.5.0" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 
@@ -298,25 +307,6 @@ Bye
 
 \note Here if you encounter the following issue, \ref install_brew_known_issues_glog enter the corresponding section to see how to fix it.
 
-\section install_brew_known_issues Known issues
-
-\subsection install_brew_known_issues_glog dyld: Library not loaded: /usr/local/opt/glog/lib/libglog.0.3.5.dylib
-
-With OpenCV 4.0.0 installed using `brew install opencv` you may experience the following error trying to execute a binary linked with ViSP:
-\verbatim
-$ cd $VISP_WS/visp-build
-$ ./example/device/display/displayX
-dyld: Library not loaded: /usr/local/opt/glog/lib/libglog.0.3.5.dylib
-  Referenced from: /usr/local/opt/opencv/lib/libopencv_sfm.3.4.dylib
-  Reason: image not found
-Abort trap: 6
-\endverbatim
-
-A work around is to install glog library with:
-\verbatim
-$ brew install glog
-\endverbatim
-
 \section install_brew_tips Tips and tricks
 
 \subsection install_brew_tips_new_3rdparty How to take into account a newly installed 3rd party
@@ -331,7 +321,7 @@ Here you can check the content of the `ViSP-third-party.txt` file and see if the
 
 Finally, you need to rebuild ViSP with:
 \verbatim
-$ make -j4
+$ make -j$(sysctl -n hw.logicalcpu)
 \endverbatim
 
 \subsection install_brew_tips_install How to install ViSP
@@ -345,7 +335,7 @@ $ sudo make install
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DCMAKE_INSTALL_PREFIX=/usr
-$ make -j4
+$ make -j$(sysctl -n hw.logicalcpu)
 $ sudo make install
 \endverbatim
 
@@ -353,7 +343,7 @@ $ sudo make install
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DCMAKE_INSTALL_PREFIX=/my/install/folder
-$ make -j4
+$ make -j$(sysctl -n hw.logicalcpu)
 $ sudo make install
 $ echo "export VISP_DIR=/my/install/folder/lib/cmake/visp" >> ~/.bashrc
 $ source ~/.bashrc
@@ -372,7 +362,7 @@ $ sudo make uninstall
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \verbatim
 $ cd $VISP_WS/visp-build
-$ make -j4 visp_modules
+$ make -j$(sysctl -n hw.logicalcpu) visp_modules
 \endverbatim
 
 \subsection install_brew_tips_module_once How to build a ViSP specific module
@@ -380,13 +370,13 @@ $ make -j4 visp_modules
 If you want to build a given module and all the dependencies:
 \verbatim
 $ cd $VISP_WS/visp-build
-$ make -j4 visp_<module_name>
+$ make -j$(sysctl -n hw.logicalcpu) visp_<module_name>
 \endverbatim
 
 For example to build the model-based tracker module named mbt, run:
 \verbatim
 $ cd $VISP_WS/visp-build
-$ make -j4 visp_mbt
+$ make -j$(sysctl -n hw.logicalcpu) visp_mbt
 \endverbatim
 
 \subsection install_brew_tips_target Which are the targets that could be run with make ?
@@ -433,54 +423,55 @@ To see which are the optional 3rd parties that are found during the configuratio
 \verbatim
 $ cat $VISP_WS/visp-build/ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.3.0
+General configuration information for ViSP 3.4.1
 
-  Version control:               3.2.0-796-gc26c51bfe-dirty
+  Version control:               3.2.0-1645-gebddfcbb9
 
   Platform:
-    Timestamp:                   2020-02-11T08:44:25Z
-    Host:                        Darwin 19.3.0 x86_64
-    CMake:                       3.16.4
+    Timestamp:                   2022-01-10T13:21:46Z
+    Host:                        Darwin 20.6.0 x86_64
+    CMake:                       3.22.1
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/make
     Configuration:               Release
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  (ver 11.0.0.11000033)
-    C++ flags (Release):         -Wall -Wextra -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
-    C++ flags (Debug):           -Wall -Wextra -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C++ Compiler:                /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  (ver 13.0.0.13000029)
+    C++ flags (Release):         -Wall -Wextra -Xclang -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C++ flags (Debug):           -Wall -Wextra -Xclang -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
     C Compiler:                  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc
-    C flags (Release):           -Wall -Wextra -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
-    C flags (Debug):             -Wall -Wextra -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C flags (Release):           -Wall -Wextra -Xclang -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C flags (Debug):             -Wall -Wextra -Xclang -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
     Linker flags (Release):
     Linker flags (Debug):
 
   ViSP modules:
-    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi java
+    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
     Disabled:                    -
     Disabled by dependency:      -
-    Unavailable:                 -
+    Unavailable:                 java
 
-  Python (for build):            /usr/local/bin/python2.7
+  Python (for build):            /usr/bin/python
 
   Java:
-    ant:                         /usr/local/bin/ant (ver 1.10.5)
-    JNI:                         /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/JavaVM.framework/Headers /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/JavaVM.framework/Headers /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.15.sdk/System/Library/Frameworks/JavaVM.framework/Headers
+    ant:                         NO
+    JNI:                         NO
 
   Build options:
     Build deprecated:            yes
     Build with moment combine:   no
 
   Mathematics:
-    Use MKL:                     no
-    Use OpenBLAS:                yes
-    Use Atlas:                   no
-    Use Netlib Lapack:           no
-    Use Lapack (built-in):       no
-    Use Eigen3:                  yes (ver 3.3.7)
-    Use OpenCV:                  yes (ver 4.2.0)
-    Use GSL:                     yes (ver 2.6)
+    Blas/Lapack:                 yes
+    \- Use MKL:                  no
+    \- Use OpenBLAS:             yes (ver 0.3.19)
+    \- Use Atlas:                no
+    \- Use Netlib:               no
+    \- Use GSL:                  no
+    \- Use Lapack (built-in):    no
+    Use Eigen3:                  yes (ver 3.4.0)
+    Use OpenCV:                  yes (ver 4.5.4)
 
   Simulator:
     Ogre simulator:
@@ -499,7 +490,7 @@ General configuration information for ViSP 3.3.0
     Use JPEG:                    yes (ver 90)
     Use PNG:                     yes (ver 1.6.37)
     \- Use ZLIB:                 yes (ver 1.2.11)
-    Use OpenCV:                  yes (ver 4.2.0)
+    Use OpenCV:                  yes (ver 4.5.4)
     Use stb_image (built-in):    no
 
   Real robots:
@@ -508,6 +499,7 @@ General configuration information for ViSP 3.3.0
     Use Franka:                  no
     Use Viper650:                no
     Use Viper850:                no
+    Use Kinova Jaco:             no
     Use aria (Pioneer):          no
     Use PTU46:                   no
     Use Biclops PTU:             no
@@ -516,11 +508,12 @@ General configuration information for ViSP 3.3.0
     \-Use ffmpeg:                no
     Use Virtuose:                no
     Use qbdevice (built-in):     yes (ver 2.6.0)
+    Use takktile2 (built-in):    yes (ver 1.0.0)
 
   GUI:
     Use X11:                     yes
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 4.2.0)
+    Use OpenCV:                  yes (ver 4.5.4)
     Use GDI:                     no
     Use Direct3D:                no
 
@@ -529,19 +522,21 @@ General configuration information for ViSP 3.3.0
     Use CMU 1394:                no
     Use V4L2:                    no
     Use directshow:              no
-    Use OpenCV:                  yes (ver 4.2.0)
-    Use Flycapture:              no
-    Use Pylon:                   no
+    Use OpenCV:                  yes (ver 4.5.4)
+    Use FLIR Flycapture:         no
+    Use Basler Pylon:            yes (ver  6.1.2.18349)
+    Use IDS uEye:                no
 
   RGB-D sensors:
     Use Realsense:               no
-    Use Realsense2:              yes (ver 2.17.0)
+    Use Realsense2:              yes (ver 2.50.0)
+    Use Occipital Structure:     no
     Use Kinect:                  no
     \- Use libfreenect:          no
-    \- Use libusb-1:             yes (ver 1.0.23)
+    \- Use libusb-1:             yes (ver 1.0.24)
     \- Use pthread:              yes
-    Use PCL:                     yes (ver 1.9.1)
-    \- Use VTK:                  yes (ver 8.2.0)
+    Use PCL:                     yes (ver 1.12.1)
+    \- Use VTK:                  yes (ver 9.1.0)
 
   F/T sensors:
     Use atidaq (built-in):       no
@@ -549,7 +544,7 @@ General configuration information for ViSP 3.3.0
     Use IIT SDK:                 no
 
   Detection:
-    Use zbar:                    yes (ver 0.10)
+    Use zbar:                    yes (ver 0.23.91)
     Use dmtx:                    no
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
@@ -557,19 +552,23 @@ General configuration information for ViSP 3.3.0
   Misc:
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
-    Use libxml2:                 yes (ver 2.9.8)
+    Use libxml2:                 yes (ver 2.9.4)
 
   Optimization:
-    Use OpenMP:                  no
+    Use OpenMP:                  yes
     Use pthread:                 yes
     Use pthread (built-in):      no
-    Use cxx standard:            11
+    Use cxx standard:            14
+
+  DNN:
+    Use CUDA Toolkit:            no
+    Use TensorRT:                no
 
   Documentation:
-    Use doxygen:                 yes
+    Use doxygen:                 no
 
   Tests and samples:
-    Use catch2 (built-in):       yes (ver 2.9.2)
+    Use catch2 (built-in):       yes (ver 2.13.7)
     Tests:                       yes
     Demos:                       yes
     Examples:                    yes
@@ -581,6 +580,22 @@ General configuration information for ViSP 3.3.0
 \endverbatim
 
 \section install_brew_issues Known issues
+
+\subsection install_brew_issues_pcl_1_12_1 Unable to build with pcl 1.12.1
+
+The following issue is reproductible installing pcl with Homebrew that brings pcl 1.12.1 on macOS Big Sur 11.6.2:
+```
+$ brew install pcl
+```
+
+`pcl 1.12.1` has a dependency to `qt5` that is keg-only, which means it was not symlinked into `/usr/local`. As a consequence, ViSP will be not able to detect `pcl` leading to a build issue. The solution to build ViSP with `pcl 1.12.1` is here to run the additional commands:
+```
+$ brew link --force qt5
+$ sudo ln -s $(brew --prefix qt5)/mkspecs /usr/local/mkspecs
+$ sudo ln -s $(brew --prefix qt5)/plugins /usr/local/plugins
+```
+
+and then do a ViSP fresh build.
 
 \subsection install_brew_issues_pcl CMake Error in /usr/local/share/pcl-1.9/PCLConfig.cmake
 
@@ -649,12 +664,12 @@ It means that apparently there is a conflict between libpng version installed by
 A work arround is to turn off libpng usage in ViSP. To configure and build again ViSP without png support:
 \verbatim
 $ ccmake -DUSE_PNG=OFF ../ViSP
-$ make -j4
+$ make -j$(sysctl -n hw.logicalcpu)
 \endverbatim
 An other work arround option is to turn off X11 usage in ViSP. Display capabilities will be then the one from OpenCV. To this end, configure and build again ViSP without X11 support:
 \verbatim
 $ ccmake -DUSE_X11=OFF ../ViSP
-$ make -j4
+$ make -j$(sysctl -n hw.logicalcpu)
 \endverbatim
 
 \subsection install_brew_issues_numpy Importing the multiarray numpy extension module failed
@@ -701,6 +716,23 @@ Original error was: No module named _multiarray_umath
 use the following command to solve this issue:
 \verbatim
 $ pip install -U numpy
+\endverbatim
+
+\subsection install_brew_known_issues_glog dyld: Library not loaded: /usr/local/opt/glog/lib/libglog.0.3.5.dylib
+
+With OpenCV 4.0.0 installed using `brew install opencv` you may experience the following error trying to execute a binary linked with ViSP:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ ./example/device/display/displayX
+dyld: Library not loaded: /usr/local/opt/glog/lib/libglog.0.3.5.dylib
+  Referenced from: /usr/local/opt/opencv/lib/libopencv_sfm.3.4.dylib
+  Reason: image not found
+Abort trap: 6
+\endverbatim
+
+A work around is to install glog library with:
+\verbatim
+$ brew install glog
 \endverbatim
 
 \section install_brew_next Next tutorial
