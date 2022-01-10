@@ -12,9 +12,9 @@ Grabbing images from a real camera is only possible if you have installed the co
 
 All the material (source code and videos) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
-\code
+\verbatim
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/grabber
-\endcode
+\endverbatim
 
 \section grabber-camera-flycap Frame grabbing using FlyCapture SDK
 
@@ -251,8 +251,6 @@ To grab a sequence of images, you may rather use:
 \section grabber-rgbd-D435-structurecore RGBD frame grabbing from RealSense D435 and Structure Core
 
 If you have both Intel RealSense D435 and Occipital Structure Core, you can acquire color and depth frames simultaneously from both sensors.
-
-\subsection
 
 Once tutorial-grabber-rgbd-D435-structurecore.cpp is built, you just need to run:
 \code

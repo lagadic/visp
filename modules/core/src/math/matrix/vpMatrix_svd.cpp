@@ -100,7 +100,7 @@ such as
 
   \param V : Matrix \f$ V \f$.
 
-  \return Matrix \f$ U \f$.
+  The matrix object `(*this)` is updated with \f$ U \f$.
 
   \note The singular values are ordered in decreasing
   fashion in \e w. It means that the highest singular value is in \e w[0].
@@ -187,7 +187,7 @@ void vpMatrix::svdOpenCV(vpColVector &w, vpMatrix &V)
 
   \param V : Matrix \f$ V \f$.
 
-  \return Matrix \f$ U \f$.
+  The matrix object `(*this)` is updated with \f$ U \f$.
 
   \note The singular values are ordered in decreasing
   fashion in \e w. It means that the highest singular value is in \e w[0].
@@ -358,7 +358,7 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
 
   \param V : Matrix \f$ V \f$.
 
-  \return Matrix \f$ U \f$.
+  The matrix object `(*this)` is updated with \f$ U \f$.
 
   \note The singular values are ordered in decreasing
   fashion in \e w. It means that the highest singular value is in \e w[0].

@@ -1988,7 +1988,7 @@ vpColVector vpMatrix::solveBySVD(const vpColVector &B) const
 
   \param V : Matrix \f$ V \f$.
 
-  \return Matrix \f$ U \f$.
+  The matrix object `(*this) is updated with \f$ U \f$.
 
   \note The singular values are ordered in decreasing
   fashion in \e w. It means that the highest singular value is in \e w[0].
@@ -6114,7 +6114,6 @@ vpColVector vpMatrix::eigenValues() const
 /*!
   Compute the eigenvalues of a n-by-n real symmetric matrix using
   Lapack 3rd party.
-  \return The eigenvalues of a n-by-n real symmetric matrix.
 
   \param evalue : Eigenvalues of the matrix, sorted in ascending order.
 
