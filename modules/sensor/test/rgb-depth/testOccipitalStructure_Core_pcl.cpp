@@ -41,15 +41,17 @@
 
 #include <iostream>
 
-#include <visp3/core/vpImageConvert.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpOccipitalStructure.h>
+#include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_PCL
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
 #endif
+
+#include <visp3/core/vpImageConvert.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/sensor/vpOccipitalStructure.h>
 
 #if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
   (defined(VISP_HAVE_PCL))
