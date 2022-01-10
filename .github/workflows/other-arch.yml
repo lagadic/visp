@@ -19,18 +19,18 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - arch: armv6
-            distro: bullseye
-            target: ARMV6
-          - arch: armv7
-            distro: ubuntu20.04
-            target: ARMV7
+          # - arch: armv6
+          #   distro: bullseye
+          #   target: ARMV6
+          # - arch: armv7
+          #   distro: ubuntu20.04
+          #   target: ARMV7
           - arch: aarch64
             distro: ubuntu20.04 #fedora_latest
             target: ARMV8
-          - arch: ppc64le
-            distro: ubuntu20.04
-            target: POWER8
+          # - arch: ppc64le
+          #   distro: ubuntu20.04
+          #   target: POWER8
           - arch: s390x
             distro: ubuntu20.04
             target: Z13
