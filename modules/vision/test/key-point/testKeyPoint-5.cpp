@@ -210,9 +210,9 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
 #if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+#if (VISP_HAVE_OPENCV_VERSION != 0x040504) && (defined(__APPLE__) && defined(__MACH__))
   detectorNames.push_back("PyramidSIFT");
-#if (VISP_HAVE_OPENCV_VERSION != 0x040504)
-  detectorNames.push_back("SIFT"); // SIFT is known unstable with OpenCV 4.5.4
+  detectorNames.push_back("SIFT"); // SIFT is known unstable with OpenCV 4.5.4 on macOS
 #endif
 #endif
 #if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
@@ -255,6 +255,14 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
   std::map<vpKeyPoint::vpFeatureDetectorType, std::string> mapOfDetectorNames = keyPoints.getDetectorNames();
   for (int i = 0; i < vpKeyPoint::DETECTOR_TYPE_SIZE; i++) {
+#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
+    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+#if (VISP_HAVE_OPENCV_VERSION == 0x040504) && (defined(__APPLE__) && defined(__MACH__))
+    if (i == vpKeyPoint::DETECTOR_SIFT) { // SIFT is known unstable with OpenCV 4.5.4 on macOS
+      continue;
+    }
+#endif
+#endif
     keyPoints.setDetector((vpKeyPoint::vpFeatureDetectorType)i);
 
     std::vector<cv::KeyPoint> kpts;

@@ -441,11 +441,13 @@ void run_test(const std::string &env_ipath, const std::string &opath,  vpImage<T
     std::cout << "Saving / loading learning files with binary descriptor are ok !" << std::endl;
   }
 
+
 // Test with floating point descriptor
-#if defined(VISP_HAVE_OPENCV_NONFREE) ||                                                                               \
+#if defined(VISP_HAVE_OPENCV_NONFREE) || \
   ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
-   (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || ((VISP_HAVE_OPENCV_VERSION >= 0x040400) && (VISP_HAVE_OPENCV_VERSION != 0x040504)))
+   (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400))
   {
+#if !((VISP_HAVE_OPENCV_VERSION == 0x040504) && (defined(__APPLE__) && defined(__MACH__))) // OpenCV != 4.5.4 on macOS
     std::string keypointName = "SIFT"; // SIFT is known unstable with OpenCV 4.5.4
     keyPoints.setDetector(keypointName);
     keyPoints.setExtractor(keypointName);
@@ -623,6 +625,7 @@ void run_test(const std::string &env_ipath, const std::string &opath,  vpImage<T
     std::cout << "vpKeyPoint::reset() is ok with trainKeyPoints and "
                  "trainDescriptors !"
               << std::endl;
+#endif // OpenCV != 4.5.4 on macOS
   }
 #endif
 }
