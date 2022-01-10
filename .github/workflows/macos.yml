@@ -34,9 +34,17 @@ jobs:
     - name: Install dependencies
       run: brew install libpng libjpeg libdc1394 opencv pcl
 
-    - name: Clone ViSP-images
+    # qt@5 is as a requested dependency for vtk and thus for pcl 1.12.1
+    # qt@5 is keg-only, which means it was not symlinked into /usr/local
+    - name: Workaround to detect qt5
       run: |
-        git clone --depth 1 https://github.com/lagadic/ViSP-images ${HOME}/ViSP-images
+        brew link --force qt5
+        sudo ln -s $(brew --prefix qt5)/mkspecs /usr/local/mkspecs
+        sudo ln -s $(brew --prefix qt5)/plugins /usr/local/plugins
+
+    - name: Clone visp-images
+      run: |
+        git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
         echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
@@ -53,7 +61,7 @@ jobs:
 
     - name: Compile
       working-directory: build
-      run: make -j2
+      run: make -j$(sysctl -n hw.logicalcpu)
 
     - name: Run unit tests
       working-directory: build
