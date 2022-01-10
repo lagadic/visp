@@ -35,6 +35,7 @@ ViSP 3.4.1 (under development)
     . [#950] Cannot build tutorial-grabber-multiple-realsense.cpp with Visual Studio 2017
     . [#961] Build error on Ubuntu 21.10 with glibc 2.34
     . [#963] Unable to read a sequence of non consecutive images
+    . [#970] testKeyPoint-5 and testKeyPoint-7 are failing with OpenCV 4.5.4 on MacOS 11
     . [#972] Error running some examples: Application built with libpng-1.4.12
              but running with 1.6.37
     . [#973] Error running some examples: Wrong JPEG library version: library is 90,

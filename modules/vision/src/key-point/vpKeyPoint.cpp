@@ -1373,6 +1373,7 @@ void vpKeyPoint::detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoi
   for (std::map<std::string, cv::Ptr<cv::FeatureDetector> >::const_iterator it = m_detectors.begin();
        it != m_detectors.end(); ++it) {
     std::vector<cv::KeyPoint> kp;
+
     it->second->detect(matImg, kp, mask);
     keyPoints.insert(keyPoints.end(), kp.begin(), kp.end());
   }
@@ -2290,6 +2291,14 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
   }
 
   if (detectorNameTmp == "SIFT") {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040500) // OpenCV >= 4.5.0
+    cv::Ptr<cv::FeatureDetector> siftDetector = cv::SiftFeatureDetector::create();
+    if (!usePyramid) {
+      m_detectors[detectorNameTmp] = siftDetector;
+    } else {
+      m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(siftDetector);
+    }
+#else
 #if defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
     // SIFT is no more patented since 09/03/2020
@@ -2315,9 +2324,10 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
     }
 #else
     std::stringstream ss_msg;
-    ss_msg << "Fail to initialize the detector: SIFT. OpenCV version  " << std::hex << VISP_HAVE_OPENCV_VERSION
+    ss_msg << "Fail to initialize the detector: SIFT. OpenCV version " << std::hex << VISP_HAVE_OPENCV_VERSION
            << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
+#endif
 #endif
   } else if (detectorNameTmp == "SURF") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
@@ -2488,6 +2498,9 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
   m_extractors[extractorName] = cv::DescriptorExtractor::create(extractorName);
 #else
   if (extractorName == "SIFT") {
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040500) // OpenCV >= 4.5.0
+    m_extractors[extractorName] = cv::SIFT::create();
+#else
 #if defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
     // SIFT is no more patented since 09/03/2020
@@ -2501,6 +2514,7 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
     ss_msg << "Fail to initialize the extractor: SIFT. OpenCV version  " << std::hex << VISP_HAVE_OPENCV_VERSION
            << " was not build with xFeatures2d module.";
     throw vpException(vpException::fatalError, ss_msg.str());
+#endif
 #endif
   } else if (extractorName == "SURF") {
 #ifdef VISP_HAVE_OPENCV_XFEATURES2D
