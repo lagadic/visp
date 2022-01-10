@@ -32,7 +32,7 @@ jobs:
       run: system_profiler SPSoftwareDataType
 
     - name: Install dependencies
-      run: brew install libpng libjpeg libdc1394 opencv pcl
+      run: brew install libpng libjpeg libdc1394 opencv pcl librealsense zbar
 
     # qt@5 is as a requested dependency for vtk and thus for pcl 1.12.1
     # qt@5 is keg-only, which means it was not symlinked into /usr/local
@@ -56,7 +56,7 @@ jobs:
         export CPPFLAGS="-I/usr/local/opt/openblas/include"
         mkdir build
         cd build
-        cmake .. -DCMAKE_FIND_FRAMEWORK=LAST -DCMAKE_BUILD_TYPE=Release
+        cmake .. -DCMAKE_BUILD_TYPE=Release
         cat ViSP-third-party.txt
 
     - name: Compile
@@ -65,4 +65,4 @@ jobs:
 
     - name: Run unit tests
       working-directory: build
-      run: ctest --output-on-failure
+      run: ctest -j$(sysctl -n hw.logicalcpu) --output-on-failure
