@@ -177,8 +177,15 @@ if(USE_PCL)
         else()
           list(APPEND PCL_VTK_LIBS ${lib_})
         endif()
+
+        get_target_property(imported_incs_ ${lib_} INTERFACE_INCLUDE_DIRECTORIES)
+        if(imported_incs_)
+          list(APPEND PCL_VTK_IMPORTED_INCS ${imported_incs_})
+        endif()
       endforeach()
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
+      vp_list_unique(PCL_VTK_IMPORTED_INCS)
+      list(APPEND opt_incs ${PCL_VTK_IMPORTED_INCS})
 
       # Filter "\$<LINK_ONLY:vtkCommonMath>;\$<LINK_ONLY:opengl32>;\$<LINK_ONLY:glu32>" into "vtkCommonMath;opengl32;glu32"
       # Filter -lm into find_library(m) to get the full path of the library
@@ -213,8 +220,16 @@ if(USE_PCL)
         else()
           list(APPEND PCL_VTK_LIBS ${lib_})
         endif()
+
+        get_target_property(imported_incs_ ${lib_} INTERFACE_INCLUDE_DIRECTORIES)
+        if(imported_incs_)
+          list(APPEND PCL_VTK_IMPORTED_INCS ${imported_incs_})
+        endif()
       endforeach()
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
+      vp_list_unique(PCL_VTK_IMPORTED_INCS)
+      list(APPEND opt_incs ${PCL_VTK_IMPORTED_INCS})
+
       while(PCL_VTK_IMPORTED_LIBS)
         vp_list_pop_front(PCL_VTK_IMPORTED_LIBS elt)
         if(elt MATCHES "^vtk" OR elt MATCHES "^pcl") # to avoid precessing -framework ApplicationServices -framework CoreServices

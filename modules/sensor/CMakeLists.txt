@@ -101,12 +101,6 @@ if(USE_FTIITSDK)
   list(APPEND opt_libs ${FTIITSDK_LIBRARIES})
 endif()
 if(USE_PCL)
-message("PCL_INCLUDE_DIRS: ${PCL_INCLUDE_DIRS}")
-message("PCL_LIBRARY_DIRS: ${PCL_LIBRARY_DIRS}")
-message("PCL_LIBRARIES: ${PCL_LIBRARIES}")
-message("PCL_COMPONENTS: ${PCL_COMPONENTS}")
-message("PCL_VERSION: ${PCL_VERSION}")
-
   list(APPEND opt_incs ${PCL_INCLUDE_DIRS})
 
   # list(APPEND opt_libs ${PCL_LIBRARIES})
@@ -174,8 +168,16 @@ message("PCL_VERSION: ${PCL_VERSION}")
         else()
           list(APPEND PCL_VTK_LIBS ${lib_})
         endif()
+
+        get_target_property(imported_incs_ ${lib_} INTERFACE_INCLUDE_DIRECTORIES)
+        if(imported_incs_)
+          list(APPEND PCL_VTK_IMPORTED_INCS ${imported_incs_})
+        endif()
       endforeach()
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
+      vp_list_unique(PCL_VTK_IMPORTED_INCS)
+      list(APPEND opt_incs ${PCL_VTK_IMPORTED_INCS})
+
       # Filter "\$<LINK_ONLY:vtkCommonMath>;\$<LINK_ONLY:opengl32>;\$<LINK_ONLY:glu32>" into "vtkCommonMath;opengl32;glu32"
       # Filter -lm into find_library(m) to get the full path of the library
       foreach(lib_ ${PCL_VTK_IMPORTED_LIBS})
@@ -209,8 +211,16 @@ message("PCL_VERSION: ${PCL_VERSION}")
         else()
           list(APPEND PCL_VTK_LIBS ${lib_})
         endif()
+
+        get_target_property(imported_incs_ ${lib_} INTERFACE_INCLUDE_DIRECTORIES)
+        if(imported_incs_)
+          list(APPEND PCL_VTK_IMPORTED_INCS ${imported_incs_})
+        endif()
       endforeach()
       vp_list_unique(PCL_VTK_IMPORTED_LIBS)
+      vp_list_unique(PCL_VTK_IMPORTED_INCS)
+      list(APPEND opt_incs ${PCL_VTK_IMPORTED_INCS})
+
       while(PCL_VTK_IMPORTED_LIBS)
         vp_list_pop_front(PCL_VTK_IMPORTED_LIBS elt)
         if(elt MATCHES "^vtk" OR elt MATCHES "^pcl") # to avoid precessing -framework ApplicationServices -framework CoreServices
