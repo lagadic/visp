@@ -55,7 +55,7 @@ foreach(cpp ${example_cpp})
 
   # Add test
   get_filename_component(target ${cpp} NAME_WE)
-  add_test(${target} ${target} -c ${OPTION_TO_DESACTIVE_DISPLAY})
+  visp_add_test(${target} ${target} -c ${OPTION_TO_DESACTIVE_DISPLAY})
 endforeach()
 
 visp_set_source_file_compile_flag(imageSequenceReader.cpp -Wno-strict-overflow)

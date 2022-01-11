@@ -1644,7 +1644,7 @@ macro(vp_filter_libraries_with_imported_location libs)
   set(${libs} ${__libs})
 endmacro()
 
-function(find_visp_dataset found)
+function(vp_find_dataset found)
   set(file_to_test "mbt/cube.cao")
   set(_found FALSE)
 
@@ -1671,4 +1671,4 @@ function(find_visp_dataset found)
 
   # Export return values
   set(${found} "${_found}" CACHE INTERNAL "")
-endfunction(find_visp_dataset)
+endfunction(vp_find_dataset)

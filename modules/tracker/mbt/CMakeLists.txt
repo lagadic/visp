@@ -377,6 +377,8 @@ endif()
 
 vp_add_tests(DEPENDS_ON visp_core visp_gui visp_io)
 
+vp_find_dataset(VISP_DATASET_FOUND)
+if(VISP_DATASET_FOUND)
 #add_test(testGenericTracker-edge                            testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1) #already added by vp_add_tests
 add_test(testGenericTracker-edge-scanline                           testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 1 -l)
 add_test(testGenericTracker-KLT                                     testGenericTracker -c ${OPTION_TO_DESACTIVE_DISPLAY} -t 2)
@@ -394,3 +396,4 @@ add_test(testGenericTracker-edge-KLT-depth-dense-scanline-color     testGenericT
 #add_test(testGenericTrackerDepth            testGenericTrackerDepth -c ${OPTION_TO_DESACTIVE_DISPLAY}) #already added by vp_add_tests
 add_test(testGenericTrackerDepth-scanline           testGenericTrackerDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -l -e 20)
 add_test(testGenericTrackerDepth-scanline-color     testGenericTrackerDepth -c ${OPTION_TO_DESACTIVE_DISPLAY} -l -e 20 -C)
+endif()

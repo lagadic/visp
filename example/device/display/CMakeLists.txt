@@ -64,10 +64,12 @@ endforeach()
 # environment variable to the ViSP test sequences location.
 # To get these sequence download ViSP-images.tar.gz from
 # https://visp.inria.fr/download/
-add_test(displaySequence displaySequence ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(displayGDI displayGDI -c ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(displayD3D displayD3D -c ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(displayGTK displayGTK -c ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(displayX displayX -c ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(displayOpenCV displayOpenCV -c ${OPTION_TO_DESACTIVE_DISPLAY})
-add_test(displayXMulti displayXMulti -c ${OPTION_TO_DESACTIVE_DISPLAY})
+
+# Only if dataset found for isolated build
+visp_add_test(displaySequence displaySequence ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(displayGDI displayGDI -c ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(displayD3D displayD3D -c ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(displayGTK displayGTK -c ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(displayX displayX -c ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(displayOpenCV displayOpenCV -c ${OPTION_TO_DESACTIVE_DISPLAY})
+visp_add_test(displayXMulti displayXMulti -c ${OPTION_TO_DESACTIVE_DISPLAY})

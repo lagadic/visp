@@ -97,7 +97,10 @@ foreach(cpp ${example_cpp})
   endif()
 endforeach()
 
-# Add test
+# Add test only if dataset found for isolated build
+visp_find_dataset(DATASET_FOUND)
+if(DATASET_FOUND)
+
 add_test(mbtEdgeTracking    mbtEdgeTracking -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(mbtEdgeKltTracking mbtEdgeKltTracking -c ${OPTION_TO_DESACTIVE_DISPLAY})
 add_test(mbtKltTracking     mbtKltTracking -c ${OPTION_TO_DESACTIVE_DISPLAY})
@@ -242,3 +245,5 @@ if(BUILD_MODULE_visp_tt_mi)
   add_test(templateTrackerPyramidal-MIInverseCompositional-Translation   templateTracker -c -l 2 -t 9 -w 4 -p ${OPTION_TO_DESACTIVE_DISPLAY})
   add_test(templateTrackerPyramidal-MIInverseCompositional-RT            templateTracker -c -l 2 -t 9 -w 5 -p ${OPTION_TO_DESACTIVE_DISPLAY})
 endif()
+
+endif(DATASET_FOUND)

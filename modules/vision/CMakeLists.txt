@@ -182,5 +182,8 @@ vp_set_source_file_compile_flag(src/pose-estimation/vpLevenbergMarquartd.cpp -Wn
 vp_set_source_file_compile_flag(src/key-point/vpKeyPoint.cpp -Wno-strict-overflow)
 
 if(BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_gui AND BUILD_MODULE_visp_io)
-  add_test(testKeyPoint-2-multithreaded testKeyPoint-2 -c ${OPTION_TO_DESACTIVE_DISPLAY} -p)
+  vp_find_dataset(VISP_DATASET_FOUND)
+  if(VISP_DATASET_FOUND)
+    vp_add_test(testKeyPoint-2-multithreaded testKeyPoint-2 -c ${OPTION_TO_DESACTIVE_DISPLAY} -p)
+  endif()
 endif()
