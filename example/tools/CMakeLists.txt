@@ -57,4 +57,5 @@ foreach(cpp ${example_cpp})
   endif()
 endforeach()
 
-add_test(histogram histogram)
+# Only if dataset found for isolated build
+visp_add_test(histogram histogram)

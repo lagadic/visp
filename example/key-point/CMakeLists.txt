@@ -54,6 +54,3 @@ foreach(cpp ${example_cpp})
     visp_add_dependency(${cpp} "examples")
   endif()
 endforeach()
-
-# Add test
-#ADD_TEST(planarObjectDetector planarObjectDetector -l -c ${OPTION_TO_DESACTIVE_DISPLAY})

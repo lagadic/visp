@@ -54,5 +54,6 @@ foreach(cpp ${example_cpp})
 
   # Add test
   get_filename_component(target ${cpp} NAME_WE)
-  add_test(${target} ${target} -c ${OPTION_TO_DESACTIVE_DISPLAY})
+  # Only if dataset found for isolated build
+  visp_add_test(${target} ${target} -c ${OPTION_TO_DESACTIVE_DISPLAY})
 endforeach()
