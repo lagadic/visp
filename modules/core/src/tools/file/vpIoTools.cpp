@@ -1369,7 +1369,7 @@ std::string vpIoTools::getViSPImagesDataPath()
   std::string file_to_test("mbt/cube.cao");
   std::string filename;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  // Test if visp-images-data package is u-installed (Ubuntu and Debian)
+  // Test if visp-images-data package is installed (Ubuntu and Debian)
   data_path = "/usr/share/visp-images-data/ViSP-images";
   filename = data_path + "/" + file_to_test;
   if (vpIoTools::checkFilename(filename))
