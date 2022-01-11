@@ -75,11 +75,10 @@
   Print the program options.
 
   \param name : Program name.
-  \param ipath : Input image path.
   \param badparam : Bad parameter name.
 
 */
-void usage(const char *name, std::string ipath, const char *badparam)
+void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
 Demonstration of the wireframe simulator with a simple visual servoing.\n\
@@ -100,12 +99,6 @@ SYNOPSIS\n\
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
-  -i <input image path>                                %s\n\
-     Set mire.pgm image input path.\n\
-     From this path read \"mire/mire.pgm\" image.\n\
-     Setting the VISP_INPUT_IMAGE_PATH environment variable \n\
-     produces the same behaviour than using this option.\n\
-            \n\
   -d \n\
      Turn off the display.\n\
             \n\
@@ -113,7 +106,7 @@ OPTIONS:                                               Default\n\
      Turn off the plotter.\n\
                     \n\
   -h\n\
-     Print the help.\n", ipath.c_str());
+     Print the help.\n");
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -125,23 +118,19 @@ OPTIONS:                                               Default\n\
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
-  \param ipath : Input image path.
   \param display : Display activation.
   \param plot : Plotter activation.
 
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, bool &display, bool &plot)
+bool getOptions(int argc, const char **argv, bool &display, bool &plot)
 {
   const char *optarg_;
   int c;
   while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
     switch (c) {
-    case 'i':
-      ipath = optarg_;
-      break;
     case 'd':
       display = false;
       break;
@@ -149,18 +138,18 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &display, 
       plot = false;
       break;
     case 'h':
-      usage(argv[0], ipath, NULL);
+      usage(argv[0], NULL);
       return false;
 
     default:
-      usage(argv[0], ipath, optarg_);
+      usage(argv[0], optarg_);
       return false;
     }
   }
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], ipath, NULL);
+    usage(argv[0], NULL);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -174,13 +163,10 @@ int main(int argc, const char **argv)
   try {
     bool opt_display = true;
     bool opt_plot = true;
-    std::string opt_ipath;
-    std::string env_ipath;
-    std::string ipath;
-    std::string filename;
+    std::string filename = "mire.png";
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_display, opt_plot) == false) {
+    if (getOptions(argc, argv, opt_display, opt_plot) == false) {
       exit(-1);
     }
 
@@ -321,18 +307,6 @@ int main(int argc, const char **argv)
     X[3][0] = -0.2;
     X[3][1] = 0.2;
     X[3][2] = 0;
-
-    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
-    // environment variable value
-    env_ipath = vpIoTools::getViSPImagesDataPath();
-
-    if (!env_ipath.empty())
-      ipath = env_ipath;
-
-    if (!opt_ipath.empty())
-      ipath = opt_ipath;
-
-    filename = vpIoTools::createFilePath(ipath, "mire/mire.pgm");
 
     imsim.init(filename.c_str(), X);
 

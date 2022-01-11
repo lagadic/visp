@@ -53,11 +53,18 @@ set(demo_cpp
   servoSimuSphere.cpp
 )
 
+set(demo_data "${CMAKE_CURRENT_SOURCE_DIR}/mire.png")
+
 foreach(cpp ${demo_cpp})
   visp_add_target(${cpp})
   if(COMMAND visp_add_dependency)
     visp_add_dependency(${cpp} "demos")
   endif()
+endforeach()
+
+# Copy the data files to the same location than the target
+foreach(data ${demo_data})
+  visp_copy_data(servoSimu4Points.cpp ${data})
 endforeach()
 
 # Add test
