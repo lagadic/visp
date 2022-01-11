@@ -1,14 +1,21 @@
-### ViSP: Open source Visual Servoing Platform
+
+<h1>ViSP: Open source Visual Servoing Platform</h1>
 
 [![Github Releases](https://img.shields.io/github/release/lagadic/visp.svg)](https://github.com/lagadic/visp/releases)
+[![License](https://img.shields.io/badge/License-GPLv2-bright)](https://opensource.org/licenses/GPL-2.0)
+![macos workflow](https://github.com/lagadic/visp/actions/workflows/macos.yml/badge.svg)
+![other arch workflow](https://github.com/lagadic/visp/actions/workflows/other-arch.yml/badge.svg)
+![sanitizers workflow](https://github.com/lagadic/visp/actions/workflows/sanitizers.yml/badge.svg)
+![ubuntu dep apt workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-apt.yml/badge.svg)
+![ubuntu dep src workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-src.yml/badge.svg)
+![valgrind workflow](https://github.com/lagadic/visp/actions/workflows/valgrind.yml/badge.svg)
 
 Platform | Build Status |
 -------- | ------------ |
-Linux and OS X | [![Build Status](https://app.travis-ci.com/lagadic/visp.svg?branch=master)](https://app.travis-ci.com/lagadic/visp) |
 Windows | [![Build status](https://ci.appveyor.com/api/projects/status/121dscdkryf5dbn0/branch/master?svg=true)](https://ci.appveyor.com/project/fspindle/visp/branch/master) |
 ARM | [![Build Status](https://cloud.drone.io/api/badges/lagadic/visp/status.svg)](https://cloud.drone.io/lagadic/visp) |
 
-This project is a cross-platform library (Linux, Windows, Mac) that allows prototyping and developing applications using visual tracking and visual servoing technics at the heart of the researches done now by Inria <a href="http://team.inria.fr/rainbow">Rainbow team</a> and before 2018 by <a href="http://team.inria.fr/lagadic">Lagadic team</a>. ViSP is able to compute control laws that can be applied to robotic systems. It provides a set of visual features that can be tracked using real time image processing or computer vision algorithms. ViSP provides also simulation capabilities. ViSP can be useful in robotics, computer vision, augmented reality and computer animation. Our <a href="https://www.youtube.com/user/VispTeam">YouTube channel</a> gives an overview of the applications that could be tackled.
+ViSP is a cross-platform library (Linux, Windows, MacOS, iOS, Android) that allows prototyping and developing applications using visual tracking and visual servoing technics at the heart of the researches done now by Inria <a href="http://team.inria.fr/rainbow">Rainbow team</a> and before 2018 by <a href="http://team.inria.fr/lagadic">Lagadic team</a>. ViSP is able to compute control laws that can be applied to robotic systems. It provides a set of visual features that can be tracked using real time image processing or computer vision algorithms. ViSP provides also simulation capabilities. ViSP can be useful in robotics, computer vision, augmented reality and computer animation. Our <a href="https://www.youtube.com/user/VispTeam">YouTube channel</a> gives an overview of the applications that could be tackled.
 
 #### Citing ViSP
 Please cite ViSP in your publications if it helps your research:
