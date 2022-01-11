@@ -957,12 +957,18 @@ endmacro()
 #              [DEPENDS_ON] <list of extra dependencies>
 #              [CTEST_EXCLUDE_PATH] <list of folders to exclude from ctest>)
 #              [CTEST_EXCLUDE_FILE] <list of files to exclude from ctest>)
+#
+# When a test is located in a folder which name ends with "with-dataset" like
+# "test/core/image-with-dataset/test.cpp" the test is added only if the dataset is
+# found by cmake. This was introduced for isolated testing.
 macro(vp_add_tests)
   vp_debug_message("vp_add_tests(" ${ARGN} ")")
 
   set(test_path "${CMAKE_CURRENT_LIST_DIR}/test")
   if(BUILD_TESTS AND EXISTS "${test_path}")
     __vp_parse_test_sources(TEST ${ARGN})
+
+    find_visp_dataset(VISP_DATASET_FOUND)
 
     set(__exclude_ctest "")
     foreach(__folder ${VISP_TEST_${the_module}_CTEST_EXCLUDE_FOLDER} )
@@ -1001,7 +1007,7 @@ macro(vp_add_tests)
       endif()
 
       foreach(t ${VISP_TEST_${the_module}_SOURCES})
-        # check if source is not in exclude list
+        # Check if source is not in exclude list
         list(FIND __exclude_sources ${t} __to_exclude_from_sources)
         if(${__to_exclude_from_sources} EQUAL -1)
           # Compute the name of the binary to create
@@ -1011,8 +1017,17 @@ macro(vp_add_tests)
           vp_target_include_modules(${the_target} ${test_deps})
           vp_target_link_libraries(${the_target} ${test_deps} ${VISP_MODULE_${the_module}_DEPS} ${VISP_LINKER_LIBS})
 
-          # ctest only if not in the exclude list
+          # ctest only:
+          # - if required dataset available
+          if (NOT VISP_DATASET_FOUND)
+            get_filename_component(__path ${t} DIRECTORY)
+            if(__path MATCHES "with-dataset$") # dataset required
+              list(APPEND __exclude_ctest "${t}")
+            endif()
+          endif()
+          # - if not in the exclude list
           list(FIND __exclude_ctest ${t} __to_exclude_from_ctest)
+
           if(${__to_exclude_from_ctest} EQUAL -1)
             if(${t} MATCHES "perf*")
               add_test(${the_target} ${the_target})
