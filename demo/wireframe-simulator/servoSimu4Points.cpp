@@ -163,7 +163,8 @@ int main(int argc, const char **argv)
   try {
     bool opt_display = true;
     bool opt_plot = true;
-    std::string filename = "mire.png";
+    std::string filename = vpIoTools::getParent(argv[0]) + "/mire.png";
+    std::cout << "Read " << filename << std::endl;
 
     // Read the command line options
     if (getOptions(argc, argv, opt_display, opt_plot) == false) {
