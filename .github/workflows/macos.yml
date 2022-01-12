@@ -26,7 +26,9 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Print system information
-      run: sysctl -a | grep machdep.cpu
+      run: |
+        sysctl -a | grep machdep.cpu
+        sysctl -a | grep logical
 
     - name: Print OS information
       run: system_profiler SPSoftwareDataType

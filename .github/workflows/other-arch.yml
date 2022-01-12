@@ -61,7 +61,7 @@ jobs:
           apt-get update && apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev gfortran liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
           apt-get update && apt-get install -y libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
 
-          git clone --depth 1 https://github.com/lagadic/ViSP-images ${HOME}/ViSP-images
+          git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
           export VISP_INPUT_IMAGE_PATH=$HOME
           echo ${VISP_INPUT_IMAGE_PATH}
 
@@ -70,6 +70,6 @@ jobs:
           cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF
           cat ViSP-third-party.txt
 
-          make -j2
+          make -j$(nproc)
 
-          ctest --output-on-failure
+          ctest -j$(nproc) --output-on-failure
