@@ -32,7 +32,7 @@ jobs:
 
     - name: Clone ViSP-images
       run: |
-        git clone --depth 1 https://github.com/lagadic/ViSP-images ${HOME}/ViSP-images
+        git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
         echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
@@ -40,13 +40,13 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Debug
+        cmake .. -DCMAKE_BUILD_TYPE=RelWithDebInfo
         cat ViSP-third-party.txt
 
     - name: Compile
       working-directory: build
-      run: make -j2
+      run: make -j$(nproc)
 
     - name: Run unit tests with Valgrind
       working-directory: build
-      run: ctest -T memcheck
+      run: ctest -j$(nproc) -T memcheck

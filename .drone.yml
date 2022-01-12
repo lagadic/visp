@@ -29,16 +29,16 @@ steps:
     - git clone --depth 1 https://github.com/xianyi/OpenBLAS.git
     - cd OpenBLAS
     - mkdir install
-    - make
-    - make install PREFIX=$(pwd)/install
+    - make -j$(nproc)
+    - make -j$(nproc) install PREFIX=$(pwd)/install
     - export OpenBLAS_HOME=$(pwd)/install
     - cd ../src
     - mkdir build && cd build
     - export CC=/usr/bin/clang
     - export CXX=/usr/bin/clang++
     - cmake $CMAKE_FLAGS ..
-    - make -j
-    - ctest --output-on-failure
+    - make -j$(nproc)
+    - ctest -j$(nproc) --output-on-failure
 
 ---
 kind: pipeline
@@ -71,14 +71,14 @@ steps:
     - git clone --depth 1 https://github.com/xianyi/OpenBLAS.git
     - cd OpenBLAS
     - mkdir install
-    - make
-    - make install PREFIX=$(pwd)/install
+    - make -j$(nproc)
+    - make -j$(nproc) install PREFIX=$(pwd)/install
     - export OpenBLAS_HOME=$(pwd)/install
     - cd ../src
     - mkdir build && cd build
     - cmake $CMAKE_FLAGS ..
-    - make -j
-    - ctest --output-on-failure
+    - make -j$(nproc)
+    - ctest -j$(nproc) --output-on-failure
 
 ---
 kind: pipeline
@@ -111,14 +111,14 @@ steps:
     - git clone --depth 1 https://github.com/xianyi/OpenBLAS.git
     - cd OpenBLAS
     - mkdir install
-    - make
-    - make install PREFIX=$(pwd)/install
+    - make -j$(nproc)
+    - make -j$(nproc) install PREFIX=$(pwd)/install
     - export OpenBLAS_HOME=$(pwd)/install
     - cd ../src
     - mkdir build && cd build
     - cmake $CMAKE_FLAGS ..
-    - make -j
-    - ctest --output-on-failure
+    - make -j$(nproc)
+    - ctest -j$(nproc) --output-on-failure
 
 ---
 kind: pipeline
@@ -151,14 +151,14 @@ steps:
     - git clone --depth 1 https://github.com/xianyi/OpenBLAS.git
     - cd OpenBLAS
     - mkdir install
-    - make
-    - make install PREFIX=$(pwd)/install
+    - make -j$(nproc)
+    - make -j$(nproc) install PREFIX=$(pwd)/install
     - export OpenBLAS_HOME=$(pwd)/install
     - cd ../src
     - mkdir build && cd build
     - cmake $CMAKE_FLAGS ..
-    - make -j
-    - ctest --output-on-failure
+    - make -j$(nproc)
+    - ctest -j$(nproc) --output-on-failure
 
 ---
 kind: pipeline
@@ -191,11 +191,11 @@ steps:
     - git clone --depth 1 https://github.com/xianyi/OpenBLAS.git
     - cd OpenBLAS
     - mkdir install
-    - make
-    - make install PREFIX=$(pwd)/install
+    - make -j$(nproc)
+    - make -j$(nproc) install PREFIX=$(pwd)/install
     - export OpenBLAS_HOME=$(pwd)/install
     - cd ../src
     - mkdir build && cd build
     - cmake $CMAKE_FLAGS ..
-    - make -j
-    - ctest --output-on-failure
+    - make -j$(nproc)
+    - ctest -j$(nproc) --output-on-failure
