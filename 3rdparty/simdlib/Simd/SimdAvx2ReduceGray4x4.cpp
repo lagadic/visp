@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2017 Yermalayeu Ihar.
+* Copyright (c) 2011-2020 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -119,7 +119,7 @@ namespace Simd
         {
             __m256i lo = ReduceRow16<align>(buffer, offset);
             __m256i hi = ReduceRow16<align>(buffer, offset + HA);
-            return PackU16ToU8(lo, hi);
+            return PackI16ToU8(lo, hi);
         }
 
         template <bool even> void ReduceGray4x4(const uint8_t *src, size_t srcWidth, size_t srcHeight, size_t srcStride,

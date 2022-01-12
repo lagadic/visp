@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 #define __SimdArray_h__
 
 #include "Simd/SimdMemory.h"
+#include "Simd/SimdMath.h"
 
 namespace Simd
 {
@@ -57,15 +58,28 @@ namespace Simd
                 }
                 *(size_t*)&size = size_;
                 if (size_)
-                    *(T**)&data = (T*)Simd::Allocate(size * sizeof(T), align);
+                    *(T**)&data = (T*)Simd::Allocate(RawSize(), align);
             }
             if (clear)
                 Clear();
         }
 
+        SIMD_INLINE void Assign(const T * src, size_t size_)
+        {
+            Resize(size_, src == NULL);
+            if(src)
+                memcpy(data, src, RawSize());
+        }
+
         SIMD_INLINE void Clear()
         {
-            ::memset(data, 0, size * sizeof(T));
+            memset(data, 0, RawSize());
+        }
+
+        SIMD_INLINE void Swap(const Array & array)
+        {
+            Simd::Swap((T*&)data, (T*&)(array.data));
+            Simd::Swap((size_t&)size, (size_t&)(array.size));
         }
 
         SIMD_INLINE T & operator[] (size_t i)
@@ -77,21 +91,31 @@ namespace Simd
         {
             return data[i];
         }
+
+        SIMD_INLINE size_t RawSize() const
+        {
+            return size * sizeof(T);
+        }
     };
 
+    typedef Array<int8_t> Array8i;
     typedef Array<uint8_t> Array8u;
     typedef Array<int16_t> Array16i;
     typedef Array<uint16_t> Array16u;
     typedef Array<int32_t> Array32i;
+    typedef Array<uint32_t> Array32u;
     typedef Array<float> Array32f;
+
+    typedef Array<uint16_t*> Array16up;
+    typedef Array<const uint16_t*> Array16ucp;
 
 #if defined(__GNUC__) && __GNUC__ >= 6
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #endif
 
-#ifdef SIMD_SSE_ENABLE
-    namespace Sse
+#ifdef SIMD_SSE2_ENABLE
+    namespace Sse2
     {
         typedef Array<__m128> Array128f;
     }

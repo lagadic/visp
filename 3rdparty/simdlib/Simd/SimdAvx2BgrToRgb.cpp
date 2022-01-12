@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -64,7 +64,7 @@ namespace Simd
                 _mm256_shuffle_epi8(p1, K8_SHFL_2P1)), _mm256_shuffle_epi8(p2, K8_SHFL_2P2)));
         }
 
-        template <bool align> void BgrToRgb(const uint8_t * bgr, size_t bgrStride, size_t width, size_t height, uint8_t * rgb, size_t rgbStride)
+        template <bool align> void BgrToRgb(const uint8_t * bgr, size_t width, size_t height, size_t bgrStride, uint8_t * rgb, size_t rgbStride)
         {
             assert(width >= A);
             if (align)
@@ -85,12 +85,12 @@ namespace Simd
             }
         }
 
-        void BgrToRgb(const uint8_t * bgr, size_t bgrStride, size_t width, size_t height, uint8_t * rgb, size_t rgbStride)
+        void BgrToRgb(const uint8_t * bgr, size_t width, size_t height, size_t bgrStride, uint8_t * rgb, size_t rgbStride)
         {
             if (Aligned(bgr) && Aligned(bgrStride) && Aligned(rgb) && Aligned(rgbStride))
-                BgrToRgb<true>(bgr, bgrStride, width, height, rgb, rgbStride);
+                BgrToRgb<true>(bgr, width, height, bgrStride, rgb, rgbStride);
             else
-                BgrToRgb<false>(bgr, bgrStride, width, height, rgb, rgbStride);
+                BgrToRgb<false>(bgr, width, height, bgrStride, rgb, rgbStride);
         }
     }
 #else

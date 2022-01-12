@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2017 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -30,36 +30,31 @@ namespace Simd
 {
     const size_t STREAM_SIZE_MIN = 0x00100000;
 
-#ifdef SIMD_SSE_ENABLE
-    namespace Sse
+#ifdef SIMD_SSE2_ENABLE
+    namespace Sse2
     {
-        template <bool align, bool stream> SIMD_INLINE void Stream(float  * p, __m128 a);
+        template <bool align, bool stream> SIMD_INLINE void Stream(float* p, __m128 a);
 
-        template <> SIMD_INLINE void Stream<false, false>(float  * p, __m128 a)
+        template <> SIMD_INLINE void Stream<false, false>(float* p, __m128 a)
         {
             _mm_storeu_ps(p, a);
         }
 
-        template <> SIMD_INLINE void Stream<false, true>(float  * p, __m128 a)
+        template <> SIMD_INLINE void Stream<false, true>(float* p, __m128 a)
         {
             _mm_storeu_ps(p, a);
         }
 
-        template <> SIMD_INLINE void Stream<true, false>(float  * p, __m128 a)
+        template <> SIMD_INLINE void Stream<true, false>(float* p, __m128 a)
         {
             _mm_store_ps(p, a);
         }
 
-        template <> SIMD_INLINE void Stream<true, true>(float  * p, __m128 a)
+        template <> SIMD_INLINE void Stream<true, true>(float* p, __m128 a)
         {
             _mm_stream_ps(p, a);
         }
-    }
-#endif//SIMD_SSE_ENABLE
 
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
-    {
         template <bool align, bool stream> SIMD_INLINE void Stream(__m128i  * p, __m128i a);
 
         template <> SIMD_INLINE void Stream<false, false>(__m128i   * p, __m128i a)

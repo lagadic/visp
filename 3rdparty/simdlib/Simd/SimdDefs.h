@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -37,9 +37,23 @@
 #include <math.h>
 #include <cmath>
 
+#if defined(SIMD_SSE2_DISABLE) && !defined(SIMD_SSE41_DISABLE)
+#define SIMD_SSE41_DISABLE
+#endif
+
+#if defined(SIMD_SSE41_DISABLE) && !defined(SIMD_AVX_DISABLE)
+#define SIMD_AVX_DISABLE
+#endif
+
+#if defined(SIMD_AVX_DISABLE) && !defined(SIMD_AVX2_DISABLE)
+#define SIMD_AVX2_DISABLE
+#endif
+
 #if defined(_MSC_VER) && defined(_MSC_FULL_VER)
 
 #define SIMD_ALIGNED(x) __declspec(align(x))
+
+#define SIMD_NOINLINE __declspec(noinline)
 
 #ifdef _M_IX86
 #define SIMD_X86_ENABLE
@@ -55,28 +69,12 @@
 
 #if defined(SIMD_X64_ENABLE) || defined(SIMD_X86_ENABLE)
 
-#if !defined(SIMD_SSE_DISABLE) && _MSC_VER >= 1200
-#define SIMD_SSE_ENABLE
-#endif
-
 #if !defined(SIMD_SSE2_DISABLE) && _MSC_VER >= 1300
 #define SIMD_SSE2_ENABLE
 #endif
 
-#if !defined(SIMD_SSE3_DISABLE) && _MSC_VER >= 1500
-#define SIMD_SSE3_ENABLE
-#endif
-
-#if !defined(SIMD_SSSE3_DISABLE) && _MSC_VER >= 1500
-#define SIMD_SSSE3_ENABLE
-#endif
-
 #if !defined(SIMD_SSE41_DISABLE) && _MSC_VER >= 1500
 #define SIMD_SSE41_ENABLE
-#endif
-
-#if !defined(SIMD_SSE42_DISABLE) && _MSC_VER >= 1500
-#define SIMD_SSE42_ENABLE
 #endif
 
 #if !defined(SIMD_AVX_DISABLE) && _MSC_FULL_VER >= 160040219
@@ -88,7 +86,7 @@
 #endif
 
 #if defined(NDEBUG) && _MSC_VER >= 1700 && _MSC_VER < 1900
-#define SIMD_MADDUBS_ERROR // Visual Studio 2012/2013 release mode compiler bug in function _mm256_maddubs_epi16:
+#define SIMD_MADDUBS_ERROR // Visual Studio 2012/2013 release mode compiler bug in function _mm256_maddubs_epi16.
 #endif
 
 #if defined(NDEBUG) && _MSC_VER == 1914
@@ -122,6 +120,8 @@
 #elif defined(__GNUC__)
 
 #define SIMD_ALIGNED(x) __attribute__ ((aligned(x)))
+
+#define SIMD_NOINLINE __attribute__ ((noinline))
 
 #ifdef __i386__
 #define SIMD_X86_ENABLE
@@ -159,34 +159,14 @@
 #define SIMD_ARM64_ENABLE
 #endif
 
-#if defined __mips__
-#define SIMD_MIPS_ENABLE
-#endif
-
 #if defined(SIMD_X86_ENABLE) || defined(SIMD_X64_ENABLE)
 
-#if !defined(SIMD_SSE_DISABLE) && defined(__SSE__)
-#define SIMD_SSE_ENABLE
-#endif
-
-#if !defined(SIMD_SSE2_DISABLE) && defined(__SSE2__)
+#if !defined(SIMD_SSE2_DISABLE) && defined(__SSE__) && defined(__SSE2__)
 #define SIMD_SSE2_ENABLE
 #endif
 
-#if !defined(SIMD_SSE3_DISABLE) && defined(__SSE3__)
-#define SIMD_SSE3_ENABLE
-#endif
-
-#if !defined(SIMD_SSSE3_DISABLE) && defined(__SSSE3__)
-#define SIMD_SSSE3_ENABLE
-#endif
-
-#if !defined(SIMD_SSE41_DISABLE) && defined(__SSE4_1__)
+#if !defined(SIMD_SSE41_DISABLE) && defined(__SSE3__) && defined(__SSSE3__) && defined(__SSE4_1__) && defined(__SSE4_2__)
 #define SIMD_SSE41_ENABLE
-#endif
-
-#if !defined(SIMD_SSE42_DISABLE) && defined(__SSE4_2__)
-#define SIMD_SSE42_ENABLE
 #endif
 
 #if !defined(SIMD_AVX_DISABLE) && defined(__AVX__)
@@ -239,27 +219,11 @@
 
 #endif
 
-#ifdef SIMD_SSE_ENABLE
-#include <xmmintrin.h>
-#endif
-
 #ifdef SIMD_SSE2_ENABLE
 #include <emmintrin.h>
 #endif
 
-#ifdef SIMD_SSE3_ENABLE
-# include <pmmintrin.h>
-#endif
-
-#ifdef SIMD_SSSE3_ENABLE
-#include <tmmintrin.h>
-#endif
-
 #ifdef SIMD_SSE41_ENABLE
-#include <smmintrin.h>
-#endif
-
-#ifdef SIMD_SSE42_ENABLE
 #include <nmmintrin.h>
 #endif
 
@@ -273,10 +237,10 @@
 
 #if defined(SIMD_AVX_ENABLE) || defined(SIMD_AVX2_ENABLE)
 #define SIMD_ALIGN 32
-#elif defined(SIMD_SSE_ENABLE) || defined(SIMD_SSE2_ENABLE) || defined(SIMD_SSE3_ENABLE)  || defined(SIMD_SSSE3_ENABLE) || defined(SIMD_SSE41_ENABLE) || defined(SIMD_SSE42_ENABLE) \
+#elif defined(SIMD_SSE2_ENABLE) || defined(SIMD_SSE41_ENABLE) \
     || defined(SIMD_NEON_ENABLE)
 #define SIMD_ALIGN 16
-#elif defined (SIMD_X64_ENABLE) || defined(SIMD_ARM64_ENABLE)
+#elif defined (SIMD_X64_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM64_ENABLE)
 #define SIMD_ALIGN 8
 #else
 #define SIMD_ALIGN 4
