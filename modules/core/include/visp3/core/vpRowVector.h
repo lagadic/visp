@@ -299,7 +299,7 @@ public:
   double sum() const;
   double sumSquare() const;
   vpColVector t() const;
-  std::vector<double> toStdVector();
+  std::vector<double> toStdVector() const;
   vpColVector transpose() const;
   void transpose(vpColVector &v) const;
 

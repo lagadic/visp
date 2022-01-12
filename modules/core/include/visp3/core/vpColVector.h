@@ -335,7 +335,7 @@ public:
   double sum() const;
   double sumSquare() const;
   vpRowVector t() const;
-  std::vector<double> toStdVector();
+  std::vector<double> toStdVector() const;
   vpRowVector transpose() const;
   void transpose(vpRowVector &v) const;
 
