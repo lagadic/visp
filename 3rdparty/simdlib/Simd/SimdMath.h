@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar,
+* Copyright (c) 2011-2021 Yermalayeu Ihar,
 *               2018-2019 Radchenko Andrey.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -66,11 +66,21 @@ namespace Simd
 #define SIMD_ROUND
     SIMD_INLINE int Round(double value)
     {
-#if defined(SIMD_SSE2_ENABLE) && ((defined(_MSC_VER) && defined(_M_X64)) || (defined(__GNUC__) && defined(__x86_64__)))
-        __m128d t = _mm_set_sd(value);
-        return _mm_cvtsd_si32(t);
+#if defined(SIMD_X64_ENABLE) && !defined(SIMD_SSE2_DISABLE)
+        __m128d _value = _mm_set_sd(value);
+        return _mm_cvtsd_si32(_value);
 #else
-        return (int)(value + (value >= 0 ? 0.5 : -0.5));
+        return (int)(value + (value >= 0.0 ? 0.5 : -0.5));
+#endif
+    }
+
+    SIMD_INLINE int Round(float value)
+    {
+#if defined(SIMD_X64_ENABLE) && !defined(SIMD_SSE2_DISABLE)
+        __m128 _value = _mm_set_ss(value);
+        return _mm_cvtss_si32(_value);
+#else
+        return (int)(value + (value >= 0.0f ? 0.5f : -0.5f));
 #endif
     }
 #endif
@@ -153,11 +163,6 @@ namespace Simd
             return (d & m);
         }
 
-        SIMD_INLINE int DivideBy255(int value)
-        {
-            return (value + 1 + (value >> 8)) >> 8;
-        }
-
         template <bool compensation> SIMD_INLINE int DivideBy16(int value);
 
         template <> SIMD_INLINE int DivideBy16<true>(int value)
@@ -199,11 +204,6 @@ namespace Simd
                 (value & 0x00FF000000000000) >> 40 | (value & 0xFF00000000000000) >> 56;
         }
 
-        SIMD_INLINE float Sigmoid(float value)
-        {
-            return 1.0f / (1.0f + ::exp(-value));
-        }
-
         SIMD_INLINE float RoughSigmoid(float value) // maximal absolute error 0.002294
         {
             float x = ::fabs(value);
@@ -227,11 +227,6 @@ namespace Simd
         SIMD_INLINE float DerivativeSigmoid(float function)
         {
             return (1.0f - function)*function;
-        }
-
-        SIMD_INLINE float Tanh(float value)
-        {
-            return ::tanh(value);
         }
 
         SIMD_INLINE float RoughTanh(float value) // maximal absolute error 0.001514
@@ -263,8 +258,8 @@ namespace Simd
         }
     }
 
-#ifdef SIMD_SSE_ENABLE
-    namespace Sse
+#ifdef SIMD_SSE2_ENABLE
+    namespace Sse2
     {
         SIMD_INLINE __m128 Square(__m128 value)
         {
@@ -288,31 +283,19 @@ namespace Simd
             return _mm_or_ps(_mm_and_ps(mask, positive), _mm_andnot_ps(mask, negative));
         }
 
-        SIMD_INLINE __m128 RightNotZero(ptrdiff_t count)
-        {
-            const int32_t mask[DF] = { 0, 0, 0, 0, -1, -1, -1, -1 };
-            return _mm_loadu_ps((float*)(mask + Simd::RestrictRange<ptrdiff_t>(count, 0, F)));
-        }
+        template <bool condition> SIMD_INLINE __m128 Masked(const __m128& value, const __m128& mask);
 
-        SIMD_INLINE __m128 LeftNotZero(ptrdiff_t count)
-        {
-            const int32_t mask[DF] = { -1, -1, -1, -1, 0, 0, 0, 0 };
-            return _mm_loadu_ps((float*)(mask + F - Simd::RestrictRange<ptrdiff_t>(count, 0, F)));
-        }
-
-        template <bool condition> SIMD_INLINE __m128 Masked(const __m128 & value, const __m128 & mask);
-
-        template <> SIMD_INLINE __m128 Masked<false>(const __m128 & value, const __m128 & mask)
+        template <> SIMD_INLINE __m128 Masked<false>(const __m128& value, const __m128& mask)
         {
             return value;
         }
 
-        template <> SIMD_INLINE __m128 Masked<true>(const __m128 & value, const __m128 & mask)
+        template <> SIMD_INLINE __m128 Masked<true>(const __m128& value, const __m128& mask)
         {
             return _mm_and_ps(value, mask);
         }
 
-        SIMD_INLINE void Max2x3s(const float * src, size_t stride, float * dst)
+        SIMD_INLINE void Max2x3s(const float* src, size_t stride, float* dst)
         {
             __m128 z = _mm_setzero_ps();
             __m128 s0 = _mm_loadl_pi(z, (__m64*)src);
@@ -322,7 +305,7 @@ namespace Simd
             return _mm_store_ss(dst, _mm_max_ss(m, _mm_shuffle_ps(m, m, 1)));
         }
 
-        SIMD_INLINE void Max2x2s(const float * src, size_t stride, float * dst)
+        SIMD_INLINE void Max2x2s(const float* src, size_t stride, float* dst)
         {
             __m128 z = _mm_setzero_ps();
             __m128 s0 = _mm_loadl_pi(z, (__m64*)src);
@@ -330,12 +313,31 @@ namespace Simd
             __m128 m = _mm_max_ps(s0, s1);
             return _mm_store_ss(dst, _mm_max_ss(m, _mm_shuffle_ps(m, m, 1)));
         }
-    }
-#endif//SIMD_SSE_ENABLE
 
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
-    {
+        SIMD_INLINE __m128i RightNotZero8i(ptrdiff_t count)
+        {
+            static const int8_t mask[DA] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
+            return _mm_loadu_si128((__m128i*)(mask + Simd::RestrictRange<ptrdiff_t>(count, 0, A)));
+        }
+
+        SIMD_INLINE __m128i LeftNotZero8i(ptrdiff_t count)
+        {
+            static const int8_t mask[DA] = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            return _mm_loadu_si128((__m128i*)(mask + A - Simd::RestrictRange<ptrdiff_t>(count, 0, A)));
+        }
+
+        SIMD_INLINE __m128 RightNotZero32f(ptrdiff_t count)
+        {
+            const int32_t mask[DF] = { 0, 0, 0, 0, -1, -1, -1, -1 };
+            return _mm_loadu_ps((float*)(mask + Simd::RestrictRange<ptrdiff_t>(count, 0, F)));
+        }
+
+        SIMD_INLINE __m128 LeftNotZero32f(ptrdiff_t count)
+        {
+            const int32_t mask[DF] = { -1, -1, -1, -1, 0, 0, 0, 0 };
+            return _mm_loadu_ps((float*)(mask + F - Simd::RestrictRange<ptrdiff_t>(count, 0, F)));
+        }
+
         SIMD_INLINE __m128i SaturateI16ToU8(__m128i value)
         {
             return _mm_min_epi16(K16_00FF, _mm_max_epi16(value, K_ZERO));
@@ -406,11 +408,6 @@ namespace Simd
             __m128i lo = _mm_mullo_epi16(_mm_unpacklo_epi8(a, K_ZERO), _mm_unpacklo_epi8(b, K_ZERO));
             __m128i hi = _mm_mullo_epi16(_mm_unpackhi_epi8(a, K_ZERO), _mm_unpackhi_epi8(b, K_ZERO));
             return _mm_packus_epi16(lo, hi);
-        }
-
-        SIMD_INLINE __m128i DivideI16By255(__m128i value)
-        {
-            return _mm_srli_epi16(_mm_add_epi16(_mm_add_epi16(value, K16_0001), _mm_srli_epi16(value, 8)), 8);
         }
 
         SIMD_INLINE __m128i BinomialSum16(const __m128i & a, const __m128i & b, const __m128i & c)
@@ -508,19 +505,14 @@ namespace Simd
     }
 #endif// SIMD_SSE2_ENABLE
 
-#ifdef SIMD_SSE3_ENABLE
-    namespace Sse3
-    {
-#if defined(_MSC_VER) && _MSC_VER >= 1700  && _MSC_VER < 1900 // Visual Studio 2012/2013 compiler bug      
-        using Sse::RightNotZero;
-#endif
-    }
-#endif//SIMD_SSE3_ENABLE
-
-#ifdef SIMD_SSSE3_ENABLE
-    namespace Ssse3
+#ifdef SIMD_SSE41_ENABLE
+    namespace Sse41
     {
         using namespace Sse2;
+
+#if defined(_MSC_VER) && _MSC_VER >= 1700  && _MSC_VER < 1900 // Visual Studio 2012/2013 compiler bug     
+        using Sse2::RightNotZero32f;
+#endif
 
         template <bool abs> __m128i ConditionalAbs(__m128i a);
 
@@ -538,15 +530,18 @@ namespace Simd
         {
             return _mm_maddubs_epi16(UnpackU8<part>(a, b), K8_01_FF);
         }
-    }
-#endif// SIMD_SSSE3_ENABLE
 
-#ifdef SIMD_SSE41_ENABLE
-    namespace Sse41
-    {
-#if defined(_MSC_VER) && _MSC_VER >= 1700  && _MSC_VER < 1900 // Visual Studio 2012/2013 compiler bug     
-        using Sse::RightNotZero;
-#endif
+        template <int part> SIMD_INLINE __m128i UnpackI8(__m128i a);
+
+        template <> SIMD_INLINE __m128i UnpackI8<0>(__m128i a)
+        {
+            return _mm_cvtepi8_epi16(a);
+        }
+
+        template <> SIMD_INLINE __m128i UnpackI8<1>(__m128i a)
+        {
+            return _mm_cvtepi8_epi16(_mm_srli_si128(a, 8));
+        }
 
         template <int part> SIMD_INLINE __m128i UnpackI16(__m128i a);
 
@@ -597,16 +592,28 @@ namespace Simd
             return _mm256_mul_ps(_mm256_rsqrt_ps(_mm256_max_ps(value, _mm256_set1_ps(0.00000001f))), value);
         }
 
-        SIMD_INLINE __m256 RightNotZero(ptrdiff_t count)
+        SIMD_INLINE __m256 RightNotZero32f(ptrdiff_t count)
         {
             const int32_t mask[DF] = { 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1 };
             return _mm256_loadu_ps((float*)(mask + Simd::RestrictRange<ptrdiff_t>(count, 0, F)));
         }
 
-        SIMD_INLINE __m256 LeftNotZero(ptrdiff_t count)
+        SIMD_INLINE __m256 LeftNotZero32f(ptrdiff_t count)
         {
             const int32_t mask[DF] = { -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0 };
             return _mm256_loadu_ps((float*)(mask + F - Simd::RestrictRange<ptrdiff_t>(count, 0, F)));
+        }
+
+        SIMD_INLINE __m256i RightNotZero32i(ptrdiff_t count)
+        {
+            const int32_t mask[DF] = { 0, 0, 0, 0, 0, 0, 0, 0, -1, -1, -1, -1, -1, -1, -1, -1 };
+            return _mm256_loadu_si256((__m256i*)(mask + Simd::RestrictRange<ptrdiff_t>(count, 0, F)));
+        }
+
+        SIMD_INLINE __m256i LeftNotZero32i(ptrdiff_t count)
+        {
+            const int32_t mask[DF] = { -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0 };
+            return _mm256_loadu_si256((__m256i*)(mask + F - Simd::RestrictRange<ptrdiff_t>(count, 0, F)));
         }
 
         SIMD_INLINE __m256 PermutedHorizontalAdd(__m256 a, __m256 b)
@@ -639,7 +646,7 @@ namespace Simd
     namespace Avx2
     {
 #if defined(_MSC_VER) && _MSC_VER >= 1700  && _MSC_VER < 1900 // Visual Studio 2012/2013 compiler bug     
-        using Avx::RightNotZero;
+        using Avx::RightNotZero32f;
 #endif
 
         SIMD_INLINE __m256i SaturateI16ToU8(__m256i value)
@@ -684,11 +691,6 @@ namespace Simd
             __m256i lo = _mm256_mullo_epi16(_mm256_unpacklo_epi8(a, K_ZERO), _mm256_unpacklo_epi8(b, K_ZERO));
             __m256i hi = _mm256_mullo_epi16(_mm256_unpackhi_epi8(a, K_ZERO), _mm256_unpackhi_epi8(b, K_ZERO));
             return _mm256_packus_epi16(lo, hi);
-        }
-
-        SIMD_INLINE __m256i DivideI16By255(__m256i value)
-        {
-            return _mm256_srli_epi16(_mm256_add_epi16(_mm256_add_epi16(value, K16_0001), _mm256_srli_epi16(value, 8)), 8);
         }
 
         SIMD_INLINE __m256i BinomialSum16(const __m256i & a, const __m256i & b, const __m256i & c)
@@ -757,6 +759,11 @@ namespace Simd
         template<int imm> SIMD_INLINE __m256i Shuffle32i(__m256i lo, __m256i hi)
         {
             return _mm256_castps_si256(_mm256_shuffle_ps(_mm256_castsi256_ps(lo), _mm256_castsi256_ps(hi), imm));
+        }
+
+        template<int imm> SIMD_INLINE __m256i Shuffle64i(__m256i lo, __m256i hi)
+        {
+            return _mm256_castpd_si256(_mm256_shuffle_pd(_mm256_castsi256_pd(lo), _mm256_castsi256_pd(hi), imm));
         }
 
         template<int imm> SIMD_INLINE __m256 Permute4x64(__m256 a)
@@ -865,6 +872,18 @@ namespace Simd
             return vget_high_u8(a);
         }
 
+        template <int part> SIMD_INLINE int8x8_t Half(int8x16_t a);
+
+        template <> SIMD_INLINE int8x8_t Half<0>(int8x16_t a)
+        {
+            return vget_low_s8(a);
+        }
+
+        template <> SIMD_INLINE int8x8_t Half<1>(int8x16_t a)
+        {
+            return vget_high_s8(a);
+        }
+
         template <int part> SIMD_INLINE uint16x4_t Half(uint16x8_t a);
 
         template <> SIMD_INLINE uint16x4_t Half<0>(uint16x8_t a)
@@ -901,6 +920,18 @@ namespace Simd
             return vget_high_u32(a);
         }
 
+        template <int part> SIMD_INLINE int32x2_t Half(int32x4_t a);
+
+        template <> SIMD_INLINE int32x2_t Half<0>(int32x4_t a)
+        {
+            return vget_low_s32(a);
+        }
+
+        template <> SIMD_INLINE int32x2_t Half<1>(int32x4_t a)
+        {
+            return vget_high_s32(a);
+        }
+
         template <int part> SIMD_INLINE float32x2_t Half(float32x4_t a);
 
         template <> SIMD_INLINE float32x2_t Half<0>(float32x4_t a)
@@ -921,6 +952,11 @@ namespace Simd
         template <int part> SIMD_INLINE int16x8_t UnpackU8s(uint8x16_t a)
         {
             return (int16x8_t)vmovl_u8(Half<part>(a));
+        }
+
+        template <int part> SIMD_INLINE int16x8_t UnpackI8(int8x16_t a)
+        {
+            return vmovl_s8(Half<part>(a));
         }
 
         template <int part> SIMD_INLINE uint32x4_t UnpackU16(uint16x8_t a)
@@ -1085,13 +1121,13 @@ namespace Simd
             return vcvtq_f32_u32(UnpackU16<part>(a));
         }
 
-        SIMD_INLINE float32x4_t RightNotZero(size_t count)
+        SIMD_INLINE float32x4_t RightNotZero32f(size_t count)
         {
             const int32_t mask[DF] = { 0, 0, 0, 0, -1, -1, -1, -1 };
             return vld1q_f32((float*)(mask + Simd::RestrictRange<ptrdiff_t>(count, 0, F)));
         }
 
-        SIMD_INLINE float32x4_t LeftNotZero(ptrdiff_t count)
+        SIMD_INLINE float32x4_t LeftNotZero32f(ptrdiff_t count)
         {
             const int32_t mask[DF] = { -1, -1, -1, -1, 0, 0, 0, 0 };
             return vld1q_f32((float*)(mask + F - Simd::RestrictRange<ptrdiff_t>(count, 0, F)));
@@ -1137,6 +1173,25 @@ namespace Simd
         SIMD_INLINE bool TestZ(uint32x4_t a)
         {
             return !(vgetq_lane_u32(a, 0) | vgetq_lane_u32(a, 1) | vgetq_lane_u32(a, 2) | vgetq_lane_u32(a, 3));
+        }
+
+        SIMD_INLINE int32x4_t Round(float32x4_t value)
+        {
+            uint32x4_t sign = vcgtq_f32(value, vdupq_n_f32(0));
+            float32x4_t round = vbslq_f32(sign, vdupq_n_f32(0.5f), vdupq_n_f32(-0.5f));
+            return vcvtq_s32_f32(vaddq_f32(value, round));
+        }
+
+        template<bool nofma> float32x4_t Fmadd(float32x4_t a, float32x4_t b, float32x4_t c);
+
+        template <> SIMD_INLINE float32x4_t Fmadd<false>(float32x4_t a, float32x4_t b, float32x4_t c)
+        {
+            return vmlaq_f32(c, a, b);
+        }
+
+        template <> SIMD_INLINE float32x4_t Fmadd<true>(float32x4_t a, float32x4_t b, float32x4_t c)
+        {
+            return vaddq_f32(vmlaq_f32(vdupq_n_f32(0), a, b), c);
         }
     }
 #endif//SIMD_NEON_ENABLE

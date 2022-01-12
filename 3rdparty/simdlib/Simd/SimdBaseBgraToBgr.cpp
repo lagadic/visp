@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2017 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -50,6 +50,41 @@ namespace Simd
                 bgra += bgraStride;
             }
             BgraToBgr(bgra, width, bgr, true);
+        }
+
+        void BgraToRgb(const uint8_t* bgra, size_t width, size_t height, size_t bgraStride, uint8_t* rgb, size_t rgbStride)
+        {
+            size_t bgraGap = bgraStride - width * 4;
+            size_t rgbGap = rgbStride - width * 3;
+            for (size_t row = 0; row < height; ++row)
+            {
+                for (size_t col = 0; col < width; ++col, bgra += 4, rgb += 3)
+                {
+                    rgb[2] = bgra[0];
+                    rgb[1] = bgra[1];
+                    rgb[0] = bgra[2];
+                }
+                bgra += bgraGap;
+                rgb += rgbGap;
+            }
+        }
+
+        void BgraToRgba(const uint8_t* bgra, size_t width, size_t height, size_t bgraStride, uint8_t* rgba, size_t rgbaStride)
+        {
+            size_t bgraGap = bgraStride - width * 4;
+            size_t rgbaGap = rgbaStride - width * 4;
+            for (size_t row = 0; row < height; ++row)
+            {
+                for (size_t col = 0; col < width; ++col, bgra += 4, rgba += 4)
+                {
+                    rgba[2] = bgra[0];
+                    rgba[1] = bgra[1];
+                    rgba[0] = bgra[2];
+                    rgba[3] = bgra[3];
+                }
+                bgra += bgraGap;
+                rgba += rgbaGap;
+            }
         }
     }
 }

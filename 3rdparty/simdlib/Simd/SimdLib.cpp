@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar,
+* Copyright (c) 2011-2021 Yermalayeu Ihar,
 *               2014-2018 Antonenka Mikhail,
 *               2018-2018 Radchenko Andrey,
 *               2019-2019 Facundo Galan.
@@ -55,18 +55,20 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReasonForCall, LPVOID lpReserved)
 #include "Simd/SimdLib.h"
 
 #include "Simd/SimdMemory.h"
-#include "Simd/SimdEnable.h"
-#include "Simd/SimdConst.h"
 #include "Simd/SimdCpu.h"
+#include "Simd/SimdEnable.h"
+#include "Simd/SimdAlignment.h"
+#include "Simd/SimdConst.h"
 #include "Simd/SimdLog.h"
 
-#include "Simd/SimdResizer.h"
 #include "Simd/SimdGaussianBlur.h"
+#include "Simd/SimdImageLoad.h"
+#include "Simd/SimdImageSave.h"
+#include "Simd/SimdResizer.h"
 
 #include "Simd/SimdBase.h"
-#include "Simd/SimdSse1.h"
 #include "Simd/SimdSse2.h"
-#include "Simd/SimdSsse3.h"
+#include "Simd/SimdSse41.h"
 #include "Simd/SimdAvx1.h"
 #include "Simd/SimdAvx2.h"
 #include "Simd/SimdNeon.h"
@@ -74,6 +76,11 @@ BOOL APIENTRY DllMain(HMODULE hModule, DWORD dwReasonForCall, LPVOID lpReserved)
 #if !defined(SIMD_VERSION)
 #include "Simd/SimdVersion.h"
 #endif
+
+namespace Simd
+{
+    const size_t ALIGNMENT = GetAlignment();
+}
 
 SIMD_API const char * SimdVersion()
 {
@@ -118,9 +125,9 @@ SIMD_API void SimdRelease(void * context)
 
 SIMD_API SimdBool SimdGetFastMode()
 {
-#ifdef SIMD_SSE_ENABLE
-    if (Sse::Enable)
-        return Sse::GetFastMode();
+#ifdef SIMD_SSE2_ENABLE
+    if (Sse2::Enable)
+        return Sse2::GetFastMode();
     else
 #endif
 #ifdef SIMD_NEON_ENABLE
@@ -133,9 +140,9 @@ SIMD_API SimdBool SimdGetFastMode()
 
 SIMD_API void SimdSetFastMode(SimdBool value)
 {
-#ifdef SIMD_SSE_ENABLE
-    if (Sse::Enable)
-        Sse::SetFastMode(value);
+#ifdef SIMD_SSE2_ENABLE
+    if (Sse2::Enable)
+        Sse2::SetFastMode(value);
 #endif
 #ifdef SIMD_NEON_ENABLE
     if (Neon::Enable)
@@ -145,9 +152,9 @@ SIMD_API void SimdSetFastMode(SimdBool value)
 
 SIMD_API void SimdBgraToBgr(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * bgr, size_t bgrStride)
 {
-#ifdef SIMD_SSSE3_ENABLE
-    if(Ssse3::Enable && width >= Ssse3::A)
-        Ssse3::BgraToBgr(bgra, width, height, bgraStride, bgr, bgrStride);
+#ifdef SIMD_SSE41_ENABLE
+    if(Sse41::Enable && width >= Sse41::A)
+        Sse41::BgraToBgr(bgra, width, height, bgraStride, bgr, bgrStride);
     else
 #endif
 #ifdef SIMD_NEON_ENABLE
@@ -178,24 +185,44 @@ SIMD_API void SimdBgraToGray(const uint8_t *bgra, size_t width, size_t height, s
         Base::BgraToGray(bgra, width, height, bgraStride, gray, grayStride);
 }
 
-SIMD_API void SimdRgbaToGray(const uint8_t *rgba, size_t width, size_t height, size_t rgbaStride, uint8_t *gray, size_t grayStride)
+SIMD_API void SimdBgraToRgb(const uint8_t* bgra, size_t width, size_t height, size_t bgraStride, uint8_t* rgb, size_t rgbStride)
 {
 #ifdef SIMD_AVX2_ENABLE
-    if(Avx2::Enable && width >= Avx2::A)
-        Avx2::RgbaToGray(rgba, width, height, rgbaStride, gray, grayStride);
+    if (Avx2::Enable && width >= Avx2::A)
+        Avx2::BgraToRgb(bgra, width, height, bgraStride, rgb, rgbStride);
     else
 #endif
-#ifdef SIMD_SSE2_ENABLE
-    if(Sse2::Enable && width >= Sse2::A)
-        Sse2::RgbaToGray(rgba, width, height, rgbaStride, gray, grayStride);
+#ifdef SIMD_SSE41_ENABLE
+    if (Sse41::Enable && width >= Sse41::A)
+        Sse41::BgraToRgb(bgra, width, height, bgraStride, rgb, rgbStride);
     else
 #endif
 #ifdef SIMD_NEON_ENABLE
-    if (Neon::Enable && width >= Neon::HA)
-        Neon::RgbaToGray(rgba, width, height, rgbaStride, gray, grayStride);
+    if (Neon::Enable && width >= Neon::A)
+        Neon::BgraToRgb(bgra, width, height, bgraStride, rgb, rgbStride);
     else
 #endif
-        Base::RgbaToGray(rgba, width, height, rgbaStride, gray, grayStride);
+        Base::BgraToRgb(bgra, width, height, bgraStride, rgb, rgbStride);
+}
+
+SIMD_API void SimdBgraToRgba(const uint8_t* bgra, size_t width, size_t height, size_t bgraStride, uint8_t* rgba, size_t rgbaStride)
+{
+#ifdef SIMD_AVX2_ENABLE
+    if (Avx2::Enable && width >= Avx2::A)
+        Avx2::BgraToRgba(bgra, width, height, bgraStride, rgba, rgbaStride);
+    else
+#endif
+#ifdef SIMD_SSE41_ENABLE
+    if (Sse41::Enable && width >= Sse41::A)
+        Sse41::BgraToRgba(bgra, width, height, bgraStride, rgba, rgbaStride);
+    else
+#endif
+#ifdef SIMD_NEON_ENABLE
+    if (Neon::Enable && width >= Neon::A)
+        Neon::BgraToRgba(bgra, width, height, bgraStride, rgba, rgbaStride);
+    else
+#endif
+        Base::BgraToRgba(bgra, width, height, bgraStride, rgba, rgbaStride);
 }
 
 SIMD_API void SimdBgrToBgra(const uint8_t *bgr, size_t width, size_t height, size_t bgrStride, uint8_t *bgra, size_t bgraStride, uint8_t alpha)
@@ -205,9 +232,14 @@ SIMD_API void SimdBgrToBgra(const uint8_t *bgr, size_t width, size_t height, siz
         Avx2::BgrToBgra(bgr, width, height, bgrStride, bgra, bgraStride, alpha);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if(Ssse3::Enable && width >= Ssse3::A)
-        Ssse3::BgrToBgra(bgr, width, height, bgrStride, bgra, bgraStride, alpha);
+#ifdef SIMD_SSE41_ENABLE
+    if(Sse41::Enable && width >= Sse41::A)
+        Sse41::BgrToBgra(bgr, width, height, bgrStride, bgra, bgraStride, alpha);
+    else
+#endif
+#ifdef SIMD_VMX_ENABLE
+    if(Vmx::Enable && width >= Vmx::A)
+        Vmx::BgrToBgra(bgr, width, height, bgrStride, bgra, bgraStride, alpha);
     else
 #endif
 #ifdef SIMD_NEON_ENABLE
@@ -216,46 +248,6 @@ SIMD_API void SimdBgrToBgra(const uint8_t *bgr, size_t width, size_t height, siz
     else
 #endif
         Base::BgrToBgra(bgr, width, height, bgrStride, bgra, bgraStride, alpha);
-}
-
-SIMD_API void SimdBgrToRgba(const uint8_t *bgr, size_t width, size_t height, size_t bgrStride, uint8_t *rgba, size_t rgbaStride, uint8_t alpha)
-{
-#if defined(SIMD_AVX2_ENABLE) && !defined(SIMD_CLANG_AVX2_BGR_TO_BGRA_ERROR)
-    if(Avx2::Enable && width >= Avx2::A)
-        Avx2::BgrToRgba(bgr, width, height, bgrStride, rgba, rgbaStride, alpha);
-    else
-#endif
-#ifdef SIMD_SSSE3_ENABLE
-    if(Ssse3::Enable && width >= Ssse3::A)
-        Ssse3::BgrToRgba(bgr, width, height, bgrStride, rgba, rgbaStride, alpha);
-    else
-#endif
-#ifdef SIMD_NEON_ENABLE
-    if (Neon::Enable && width >= Neon::A)
-        Neon::BgrToRgba(bgr, width, height, bgrStride, rgba, rgbaStride, alpha);
-    else
-#endif
-        Base::BgrToRgba(bgr, width, height, bgrStride, rgba, rgbaStride, alpha);
-}
-
-SIMD_API void SimdBgraToRgba(const uint8_t *bgra, size_t width, size_t height, size_t bgraStride, uint8_t *rgba, size_t rgbaStride)
-{
-#if defined(SIMD_AVX2_ENABLE)
-    if(Avx2::Enable && width >= Avx2::A)
-        Avx2::BgraToRgba(bgra, width, height, bgraStride, rgba, rgbaStride);
-    else
-#endif
-#ifdef SIMD_SSSE3_ENABLE
-    if(Ssse3::Enable && width >= Ssse3::A)
-        Ssse3::BgraToRgba(bgra, width, height, bgraStride, rgba, rgbaStride);
-    else
-#endif
-#ifdef SIMD_NEON_ENABLE
-    if (Neon::Enable && width >= Neon::A)
-        Neon::BgraToRgba(bgra, width, height, bgraStride, rgba, rgbaStride);
-    else
-#endif
-        Base::BgraToRgba(bgra, width, height, bgraStride, rgba, rgbaStride);
 }
 
 SIMD_API void SimdBgr48pToBgra32(const uint8_t * blue, size_t blueStride, size_t width, size_t height,
@@ -286,9 +278,9 @@ SIMD_API void SimdBgrToGray(const uint8_t *bgr, size_t width, size_t height, siz
         Avx2::BgrToGray(bgr, width, height, bgrStride, gray, grayStride);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if(Ssse3::Enable && width >= Ssse3::A)
-        Ssse3::BgrToGray(bgr, width, height, bgrStride, gray, grayStride);
+#ifdef SIMD_SSE41_ENABLE
+    if(Sse41::Enable && width >= Sse41::A)
+        Sse41::BgrToGray(bgr, width, height, bgrStride, gray, grayStride);
     else
 #endif
 #ifdef SIMD_SSE2_ENABLE
@@ -304,49 +296,29 @@ SIMD_API void SimdBgrToGray(const uint8_t *bgr, size_t width, size_t height, siz
         Base::BgrToGray(bgr, width, height, bgrStride, gray, grayStride);
 }
 
-SIMD_API void SimdRgbToGray(const uint8_t *rgb, size_t width, size_t height, size_t rgbStride, uint8_t *gray, size_t grayStride)
+SIMD_API void SimdBgrToRgb(const uint8_t *bgr, size_t width, size_t height, size_t bgrStride, uint8_t * rgb, size_t rgbStride)
 {
-#if defined(SIMD_AVX2_ENABLE) && !defined(SIMD_CLANG_AVX2_BGR_TO_BGRA_ERROR)
-    if (Avx2::Enable && width >= Avx2::A)
-        Avx2::RgbToGray(rgb, width, height, rgbStride, gray, grayStride);
+#ifdef SIMD_AVX512BW_ENABLE
+    if (Avx512bw::Enable)
+        Avx512bw::BgrToRgb(bgr, width, height, bgrStride, rgb, rgbStride);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if (Ssse3::Enable && width >= Ssse3::A)
-        Ssse3::RgbToGray(rgb, width, height, rgbStride, gray, grayStride);
-    else
-#endif
-#ifdef SIMD_SSE2_ENABLE
-    if (Sse2::Enable && width >= Sse2::A)
-        Sse2::RgbToGray(rgb, width, height, rgbStride, gray, grayStride);
-    else
-#endif
-#ifdef SIMD_NEON_ENABLE
-    if (Neon::Enable && width >= Neon::A)
-      Neon::RgbToGray(rgb, width, height, rgbStride, gray, grayStride);
-    else
-#endif
-    Base::RgbToGray(rgb, width, height, rgbStride, gray, grayStride);
-}
-
-SIMD_API void SimdBgrToRgb(const uint8_t *bgr, size_t bgrStride, size_t width, size_t height, uint8_t * rgb, size_t rgbStride)
-{
 #ifdef SIMD_AVX2_ENABLE
     if (Avx2::Enable && width >= Avx2::A)
-        Avx2::BgrToRgb(bgr, bgrStride, width, height, rgb, rgbStride);
+        Avx2::BgrToRgb(bgr, width, height, bgrStride, rgb, rgbStride);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if (Ssse3::Enable && width >= Ssse3::A)
-        Ssse3::BgrToRgb(bgr, bgrStride, width, height, rgb, rgbStride);
+#ifdef SIMD_SSE41_ENABLE
+    if (Sse41::Enable && width >= Sse41::A)
+        Sse41::BgrToRgb(bgr, width, height, bgrStride, rgb, rgbStride);
     else
 #endif
 #ifdef SIMD_NEON_ENABLE
     if (Neon::Enable && width >= Neon::A)
-        Neon::BgrToRgb(bgr, bgrStride, width, height, rgb, rgbStride);
+        Neon::BgrToRgb(bgr, width, height, bgrStride, rgb, rgbStride);
     else
 #endif
-        Base::BgrToRgb(bgr, bgrStride, width, height, rgb, rgbStride);
+        Base::BgrToRgb(bgr, width, height, bgrStride, rgb, rgbStride);
 }
 
 SIMD_API void SimdCopy(const uint8_t * src, size_t srcStride, size_t width, size_t height, size_t pixelSize, uint8_t * dst, size_t dstStride)
@@ -368,9 +340,9 @@ SIMD_API void SimdDeinterleaveBgr(const uint8_t * bgr, size_t bgrStride, size_t 
         Avx2::DeinterleaveBgr(bgr, bgrStride, width, height, b, bStride, g, gStride, r, rStride);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if (Ssse3::Enable && width >= Ssse3::A)
-        Ssse3::DeinterleaveBgr(bgr, bgrStride, width, height, b, bStride, g, gStride, r, rStride);
+#ifdef SIMD_SSE41_ENABLE
+    if (Sse41::Enable && width >= Sse41::A)
+        Sse41::DeinterleaveBgr(bgr, bgrStride, width, height, b, bStride, g, gStride, r, rStride);
     else
 #endif
 #ifdef SIMD_NEON_ENABLE
@@ -389,9 +361,9 @@ SIMD_API void SimdDeinterleaveBgra(const uint8_t * bgra, size_t bgraStride, size
         Avx2::DeinterleaveBgra(bgra, bgraStride, width, height, b, bStride, g, gStride, r, rStride, a, aStride);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if (Ssse3::Enable && width >= Ssse3::A)
-        Ssse3::DeinterleaveBgra(bgra, bgraStride, width, height, b, bStride, g, gStride, r, rStride, a, aStride);
+#ifdef SIMD_SSE41_ENABLE
+    if (Sse41::Enable && width >= Sse41::A)
+        Sse41::DeinterleaveBgra(bgra, bgraStride, width, height, b, bStride, g, gStride, r, rStride, a, aStride);
     else
 #endif
 #ifdef SIMD_NEON_ENABLE
@@ -410,9 +382,9 @@ SIMD_API void SimdGaussianBlur3x3(const uint8_t * src, size_t srcStride, size_t 
         Avx2::GaussianBlur3x3(src, srcStride, width, height, channelCount, dst, dstStride);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if(Ssse3::Enable && (width - 1)*channelCount >= Ssse3::A)
-        Ssse3::GaussianBlur3x3(src, srcStride, width, height, channelCount, dst, dstStride);
+#ifdef SIMD_SSE41_ENABLE
+    if(Sse41::Enable && (width - 1)*channelCount >= Sse41::A)
+        Sse41::GaussianBlur3x3(src, srcStride, width, height, channelCount, dst, dstStride);
     else
 #endif
 #ifdef SIMD_SSE2_ENABLE
@@ -448,9 +420,9 @@ SIMD_API void SimdGrayToBgr(const uint8_t * gray, size_t width, size_t height, s
         Avx2::GrayToBgr(gray, width, height, grayStride, bgr, bgrStride);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if(Ssse3::Enable && width >= Ssse3::A)
-        Ssse3::GrayToBgr(gray, width, height, grayStride, bgr, bgrStride);
+#ifdef SIMD_SSE41_ENABLE
+    if(Sse41::Enable && width >= Sse41::A)
+        Sse41::GrayToBgr(gray, width, height, grayStride, bgr, bgrStride);
     else
 #endif
 #ifdef SIMD_NEON_ENABLE
@@ -481,6 +453,34 @@ SIMD_API void SimdGrayToBgra(const uint8_t * gray, size_t width, size_t height, 
         Base::GrayToBgra(gray, width, height, grayStride, bgra, bgraStride, alpha);
 }
 
+SIMD_API uint8_t* SimdImageSaveToMemory(const uint8_t* src, size_t stride, size_t width, size_t height, SimdPixelFormatType format, SimdImageFileType file, int quality, size_t* size)
+{
+    const static Simd::ImageSaveToMemoryPtr imageSaveToMemory = SIMD_FUNC3(ImageSaveToMemory, SIMD_AVX2_FUNC, SIMD_SSE41_FUNC, SIMD_NEON_FUNC);
+
+    return imageSaveToMemory(src, stride, width, height, format, file, quality, size);
+}
+
+SIMD_API SimdBool SimdImageSaveToFile(const uint8_t* src, size_t stride, size_t width, size_t height, SimdPixelFormatType format, SimdImageFileType file, int quality, const char* path)
+{
+    const static Simd::ImageSaveToMemoryPtr imageSaveToMemory = SIMD_FUNC3(ImageSaveToMemory, SIMD_AVX2_FUNC, SIMD_SSE41_FUNC, SIMD_NEON_FUNC);
+
+    return ImageSaveToFile(imageSaveToMemory, src, stride, width, height, format, file, quality, path);
+}
+
+SIMD_API uint8_t* SimdImageLoadFromMemory(const uint8_t* data, size_t size, size_t* stride, size_t* width, size_t* height, SimdPixelFormatType* format)
+{
+    const static Simd::ImageLoadFromMemoryPtr imageLoadFromMemory = SIMD_FUNC3(ImageLoadFromMemory, SIMD_AVX2_FUNC, SIMD_SSE41_FUNC, SIMD_NEON_FUNC);
+
+    return imageLoadFromMemory(data, size, stride, width, height, format);
+}
+
+SIMD_API uint8_t* SimdImageLoadFromFile(const char* path, size_t* stride, size_t* width, size_t* height, SimdPixelFormatType* format)
+{
+    const static Simd::ImageLoadFromMemoryPtr imageLoadFromMemory = SIMD_FUNC3(ImageLoadFromMemory, SIMD_AVX2_FUNC, SIMD_SSE41_FUNC, SIMD_NEON_FUNC);
+
+    return ImageLoadFromFile(imageLoadFromMemory, path, stride, width, height, format);
+}
+
 SIMD_API void SimdInterleaveBgr(const uint8_t * b, size_t bStride, const uint8_t * g, size_t gStride, const uint8_t * r, size_t rStride,
     size_t width, size_t height, uint8_t * bgr, size_t bgrStride)
 {
@@ -489,9 +489,9 @@ SIMD_API void SimdInterleaveBgr(const uint8_t * b, size_t bStride, const uint8_t
         Avx2::InterleaveBgr(b, bStride, g, gStride, r, rStride, width, height, bgr, bgrStride);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if (Ssse3::Enable && width >= Ssse3::A)
-        Ssse3::InterleaveBgr(b, bStride, g, gStride, r, rStride, width, height, bgr, bgrStride);
+#ifdef SIMD_SSE41_ENABLE
+    if (Sse41::Enable && width >= Sse41::A)
+        Sse41::InterleaveBgr(b, bStride, g, gStride, r, rStride, width, height, bgr, bgrStride);
     else
 #endif
 #ifdef SIMD_NEON_ENABLE
@@ -510,9 +510,9 @@ SIMD_API void SimdInterleaveBgra(const uint8_t * b, size_t bStride, const uint8_
         Avx2::InterleaveBgra(b, bStride, g, gStride, r, rStride, a, aStride, width, height, bgra, bgraStride);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if (Ssse3::Enable && width >= Ssse3::A)
-        Ssse3::InterleaveBgra(b, bStride, g, gStride, r, rStride, a, aStride, width, height, bgra, bgraStride);
+#ifdef SIMD_SSE41_ENABLE
+    if (Sse41::Enable && width >= Sse41::A)
+        Sse41::InterleaveBgra(b, bStride, g, gStride, r, rStride, a, aStride, width, height, bgra, bgraStride);
     else
 #endif
 #ifdef SIMD_NEON_ENABLE
@@ -552,9 +552,9 @@ SIMD_API void SimdReduceColor2x2(const uint8_t *src, size_t srcWidth, size_t src
         Avx2::ReduceColor2x2(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride, channelCount);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if (Ssse3::Enable && srcWidth >= Ssse3::DA)
-        Ssse3::ReduceColor2x2(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride, channelCount);
+#ifdef SIMD_SSE41_ENABLE
+    if (Sse41::Enable && srcWidth >= Sse41::DA)
+        Sse41::ReduceColor2x2(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride, channelCount);
     else
 #endif
 #ifdef SIMD_SSE2_ENABLE
@@ -578,9 +578,9 @@ SIMD_API void SimdReduceGray2x2(const uint8_t *src, size_t srcWidth, size_t srcH
         Avx2::ReduceGray2x2(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if(Ssse3::Enable && srcWidth >= Ssse3::DA)
-        Ssse3::ReduceGray2x2(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
+#ifdef SIMD_SSE41_ENABLE
+    if(Sse41::Enable && srcWidth >= Sse41::DA)
+        Sse41::ReduceGray2x2(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
     else
 #endif
 #ifdef SIMD_SSE2_ENABLE
@@ -625,9 +625,9 @@ SIMD_API void SimdReduceGray4x4(const uint8_t *src, size_t srcWidth, size_t srcH
         Avx2::ReduceGray4x4(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if(Ssse3::Enable && srcWidth > Ssse3::A)
-        Ssse3::ReduceGray4x4(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
+#ifdef SIMD_SSE41_ENABLE
+    if(Sse41::Enable && srcWidth > Sse41::A)
+        Sse41::ReduceGray4x4(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
     else
 #endif
 #ifdef SIMD_SSE2_ENABLE
@@ -672,9 +672,9 @@ SIMD_API void SimdResizeBilinear(const uint8_t *src, size_t srcWidth, size_t src
         Avx2::ResizeBilinear(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride, channelCount);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if(Ssse3::Enable && dstWidth >= Ssse3::A)
-        Ssse3::ResizeBilinear(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride, channelCount);
+#ifdef SIMD_SSE41_ENABLE
+    if(Sse41::Enable && dstWidth >= Sse41::A)
+        Sse41::ResizeBilinear(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride, channelCount);
     else
 #endif
 #ifdef SIMD_SSE2_ENABLE
@@ -707,19 +707,9 @@ SIMD_API void * SimdResizerInit(size_t srcX, size_t srcY, size_t dstX, size_t ds
         return Sse41::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);
     else
 #endif
-#ifdef SIMD_SSSE3_ENABLE
-    if (Ssse3::Enable)
-        return Ssse3::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);
-    else
-#endif
 #ifdef SIMD_SSE2_ENABLE
     if (Sse2::Enable)
         return Sse2::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);
-    else
-#endif
-#ifdef SIMD_SSE_ENABLE
-    if (Sse::Enable)
-        return Sse::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);
     else
 #endif
 #ifdef SIMD_NEON_ENABLE
@@ -733,6 +723,66 @@ SIMD_API void * SimdResizerInit(size_t srcX, size_t srcY, size_t dstX, size_t ds
 SIMD_API void SimdResizerRun(const void * resizer, const uint8_t * src, size_t srcStride, uint8_t * dst, size_t dstStride)
 {
     ((Resizer*)resizer)->Run(src, srcStride, dst, dstStride);
+}
+
+SIMD_API void SimdRgbToBgra(const uint8_t* rgb, size_t width, size_t height, size_t rgbStride, uint8_t* bgra, size_t bgraStride, uint8_t alpha)
+{
+#if defined(SIMD_AVX2_ENABLE) && !defined(SIMD_CLANG_AVX2_BGR_TO_BGRA_ERROR)
+    if (Avx2::Enable && width >= Avx2::A)
+        Avx2::RgbToBgra(rgb, width, height, rgbStride, bgra, bgraStride, alpha);
+    else
+#endif
+#ifdef SIMD_SSE41_ENABLE
+    if (Sse41::Enable && width >= Sse41::A)
+        Sse41::RgbToBgra(rgb, width, height, rgbStride, bgra, bgraStride, alpha);
+    else
+#endif
+#ifdef SIMD_NEON_ENABLE
+    if (Neon::Enable && width >= Neon::A)
+        Neon::RgbToBgra(rgb, width, height, rgbStride, bgra, bgraStride, alpha);
+    else
+#endif
+        Base::RgbToBgra(rgb, width, height, rgbStride, bgra, bgraStride, alpha);
+}
+
+SIMD_API void SimdRgbToGray(const uint8_t* rgb, size_t width, size_t height, size_t rgbStride, uint8_t* gray, size_t grayStride)
+{
+#if defined(SIMD_AVX2_ENABLE) && !defined(SIMD_CLANG_AVX2_BGR_TO_BGRA_ERROR)
+    if (Avx2::Enable && width >= Avx2::A)
+        Avx2::RgbToGray(rgb, width, height, rgbStride, gray, grayStride);
+    else
+#endif
+#ifdef SIMD_SSE41_ENABLE
+    if (Sse41::Enable && width >= Sse41::A)
+        Sse41::RgbToGray(rgb, width, height, rgbStride, gray, grayStride);
+    else
+#endif
+#ifdef SIMD_NEON_ENABLE
+    if (Neon::Enable && width >= Neon::A)
+        Neon::RgbToGray(rgb, width, height, rgbStride, gray, grayStride);
+    else
+#endif
+        Base::RgbToGray(rgb, width, height, rgbStride, gray, grayStride);
+}
+
+SIMD_API void SimdRgbaToGray(const uint8_t* rgba, size_t width, size_t height, size_t rgbaStride, uint8_t* gray, size_t grayStride)
+{
+#if defined(SIMD_AVX2_ENABLE)
+    if (Avx2::Enable && width >= Avx2::A)
+        Avx2::RgbaToGray(rgba, width, height, rgbaStride, gray, grayStride);
+    else
+#endif
+#ifdef SIMD_SSE2_ENABLE
+    if (Sse2::Enable && width >= Sse2::A)
+        Sse2::RgbaToGray(rgba, width, height, rgbaStride, gray, grayStride);
+    else
+#endif
+#ifdef SIMD_NEON_ENABLE
+    if (Neon::Enable && width >= Neon::A)
+        Neon::RgbaToGray(rgba, width, height, rgbaStride, gray, grayStride);
+    else
+#endif
+        Base::RgbaToGray(rgba, width, height, rgbaStride, gray, grayStride);
 }
 
 SIMD_API void SimdStretchGray2x2(const uint8_t *src, size_t srcWidth, size_t srcHeight, size_t srcStride,
@@ -842,9 +892,9 @@ SIMD_API void SimdMatTranspose(const double * mat, size_t rows, size_t cols, dou
 
 SIMD_API void SimdImageDifference(const unsigned char * img1, const unsigned char * img2, size_t size, unsigned char * imgDiff)
 {
-#ifdef SIMD_SSSE3_ENABLE
-    if (Ssse3::Enable && size >= Ssse3::A)
-        Ssse3::SimdImageDifference(img1,img2, size, imgDiff);
+#ifdef SIMD_SSE41_ENABLE
+    if (Sse41::Enable && size >= Sse41::A)
+        Sse41::SimdImageDifference(img1,img2, size, imgDiff);
     else
 #endif
         Base::SimdImageDifference(img1, img2, size, imgDiff);

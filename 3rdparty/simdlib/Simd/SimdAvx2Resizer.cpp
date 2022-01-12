@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,6 +23,7 @@
 */
 #include "Simd/SimdMemory.h"
 #include "Simd/SimdResizer.h"
+#include "Simd/SimdResizerCommon.h"
 #include "Simd/SimdStore.h"
 #include "Simd/SimdSet.h"
 #include "Simd/SimdUpdate.h"
@@ -33,7 +34,7 @@ namespace Simd
     namespace Avx2
     {
         ResizerByteBilinear::ResizerByteBilinear(const ResParam & param)
-            : Ssse3::ResizerByteBilinear(param)
+            : Sse41::ResizerByteBilinear(param)
         {
         }
 
@@ -223,7 +224,7 @@ namespace Simd
         {
             __m256i lo = ResizerByteBilinearInterpolateY<align>((__m256i*)bx0 + 0, (__m256i*)bx1 + 0, alpha);
             __m256i hi = ResizerByteBilinearInterpolateY<align>((__m256i*)bx0 + 1, (__m256i*)bx1 + 1, alpha);
-            Store<false>((__m256i*)dst, PackU16ToU8(lo, hi));
+            Store<false>((__m256i*)dst, PackI16ToU8(lo, hi));
         }
 
         template<size_t N> void ResizerByteBilinear::Run(const uint8_t * src, size_t srcStride, uint8_t * dst, size_t dstStride)
@@ -511,6 +512,403 @@ namespace Simd
 
         //---------------------------------------------------------------------
 
+        ResizerShortBilinear::ResizerShortBilinear(const ResParam& param)
+            : Sse41::ResizerShortBilinear(param)
+        {
+        }
+
+        const __m256i RSB_1_0 = SIMD_MM256_SETR_EPI8(
+            0x0, 0x1, -1, -1, 0x4, 0x5, -1, -1, 0x8, 0x9, -1, -1, 0xC, 0xD, -1, -1,
+            0x0, 0x1, -1, -1, 0x4, 0x5, -1, -1, 0x8, 0x9, -1, -1, 0xC, 0xD, -1, -1);
+        const __m256i RSB_1_1 = SIMD_MM256_SETR_EPI8(
+            0x2, 0x3, -1, -1, 0x6, 0x7, -1, -1, 0xA, 0xB, -1, -1, 0xE, 0xF, -1, -1,
+            0x2, 0x3, -1, -1, 0x6, 0x7, -1, -1, 0xA, 0xB, -1, -1, 0xE, 0xF, -1, -1);
+
+        SIMD_INLINE __m256 BilColS1(const uint16_t* src, const int32_t* idx, __m256 fx0, __m256 fx1)
+        {
+            __m256i s = _mm256_i32gather_epi32((int32_t*)src, _mm256_loadu_si256((__m256i*)idx), 2);
+            __m256 m0 = _mm256_mul_ps(fx0, _mm256_cvtepi32_ps(_mm256_shuffle_epi8(s, RSB_1_0)));
+            __m256 m1 = _mm256_mul_ps(fx1, _mm256_cvtepi32_ps(_mm256_shuffle_epi8(s, RSB_1_1)));
+            return _mm256_add_ps(m0, m1);
+        }
+
+        const __m256i RSB_2_0 = SIMD_MM256_SETR_EPI8(
+            0x0, 0x1, -1, -1, 0x2, 0x3, -1, -1, 0x8, 0x9, -1, -1, 0xA, 0xB, -1, -1,
+            0x0, 0x1, -1, -1, 0x2, 0x3, -1, -1, 0x8, 0x9, -1, -1, 0xA, 0xB, -1, -1);
+        const __m256i RSB_2_1 = SIMD_MM256_SETR_EPI8(
+            0x4, 0x5, -1, -1, 0x6, 0x7, -1, -1, 0xC, 0xD, -1, -1, 0xE, 0xF, -1, -1,
+            0x4, 0x5, -1, -1, 0x6, 0x7, -1, -1, 0xC, 0xD, -1, -1, 0xE, 0xF, -1, -1);
+
+        SIMD_INLINE __m256 BilColS2(const uint16_t* src, const int32_t* idx, __m256 fx0, __m256 fx1)
+        {
+            __m256i s = _mm256_setr_epi64x(
+                *(uint64_t*)(src + idx[0]), *(uint64_t*)(src + idx[2]),
+                *(uint64_t*)(src + idx[4]), *(uint64_t*)(src + idx[6]));
+            //__m256i s = _mm256_i64gather_epi64((long long*)src, _mm256_and_si256(_mm256_loadu_si256((__m256i*)idx), K64_00000000FFFFFFFF), 2);
+            __m256 m0 = _mm256_mul_ps(fx0, _mm256_cvtepi32_ps(_mm256_shuffle_epi8(s, RSB_2_0)));
+            __m256 m1 = _mm256_mul_ps(fx1, _mm256_cvtepi32_ps(_mm256_shuffle_epi8(s, RSB_2_1)));
+            return _mm256_add_ps(m0, m1);
+        }
+
+        const __m256i RSB_3_0 = SIMD_MM256_SETR_EPI8(
+            0x0, 0x1, -1, -1, 0x2, 0x3, -1, -1, 0x4, 0x5, -1, -1, -1, -1, -1, -1,
+            0x0, 0x1, -1, -1, 0x2, 0x3, -1, -1, 0x4, 0x5, -1, -1, -1, -1, -1, -1);
+        const __m256i RSB_3_1 = SIMD_MM256_SETR_EPI8(
+            0x6, 0x7, -1, -1, 0x8, 0x9, -1, -1, 0xA, 0xB, -1, -1, -1, -1, -1, -1,
+            0x6, 0x7, -1, -1, 0x8, 0x9, -1, -1, 0xA, 0xB, -1, -1, -1, -1, -1, -1);
+        const __m256i RSB_3_P1 = SIMD_MM256_SETR_EPI32(0, 1, 2, 4, 5, 6, 7, 7);
+
+        SIMD_INLINE __m256 BilColS3(const uint16_t* src, const int32_t* idx, __m256 fx0, __m256 fx1)
+        {
+            __m256i s = Load<false>((__m128i*)(src + idx[0]), (__m128i*)(src + idx[3]));
+            __m256 m0 = _mm256_mul_ps(fx0, _mm256_cvtepi32_ps(_mm256_shuffle_epi8(s, RSB_3_0)));
+            __m256 m1 = _mm256_mul_ps(fx1, _mm256_cvtepi32_ps(_mm256_shuffle_epi8(s, RSB_3_1)));
+            return _mm256_permutevar8x32_ps(_mm256_add_ps(m0, m1), RSB_3_P1);
+        }
+
+        const __m256i RSB_4_0 = SIMD_MM256_SETR_EPI8(
+            0x0, 0x1, -1, -1, 0x2, 0x3, -1, -1, 0x4, 0x5, -1, -1, 0x6, 0x7, -1, -1,
+            0x0, 0x1, -1, -1, 0x2, 0x3, -1, -1, 0x4, 0x5, -1, -1, 0x6, 0x7, -1, -1);
+        const __m256i RSB_4_1 = SIMD_MM256_SETR_EPI8(
+            0x8, 0x9, -1, -1, 0xA, 0xB, -1, -1, 0xC, 0xD, -1, -1, 0xE, 0xF, -1, -1,
+            0x8, 0x9, -1, -1, 0xA, 0xB, -1, -1, 0xC, 0xD, -1, -1, 0xE, 0xF, -1, -1);
+
+        SIMD_INLINE __m256 BilColS4(const uint16_t* src, const int32_t* idx, __m256 fx0, __m256 fx1)
+        {
+            __m256i s = Load<false>((__m128i*)(src + idx[0]), (__m128i*)(src + idx[4]));
+            __m256 m0 = _mm256_mul_ps(fx0, _mm256_cvtepi32_ps(_mm256_shuffle_epi8(s, RSB_4_0)));
+            __m256 m1 = _mm256_mul_ps(fx1, _mm256_cvtepi32_ps(_mm256_shuffle_epi8(s, RSB_4_1)));
+            return _mm256_add_ps(m0, m1);
+        }
+
+        template<size_t N> void ResizerShortBilinear::RunB(const uint16_t* src, size_t srcStride, uint16_t* dst, size_t dstStride)
+        {
+            size_t rs = _param.dstW * N;
+            float* pbx[2] = { _bx[0].data, _bx[1].data };
+            int32_t prev = -2;
+            size_t rs3 = AlignLoAny(rs - 1, 3);
+            size_t rs6 = AlignLoAny(rs - 1, 6);
+            size_t rs4 = AlignLo(rs, 4);
+            size_t rs8 = AlignLo(rs, 8);
+            size_t rs16 = AlignLo(rs, 16);
+            __m256 _1 = _mm256_set1_ps(1.0f);
+            for (size_t dy = 0; dy < _param.dstH; dy++, dst += dstStride)
+            {
+                float fy1 = _ay[dy];
+                float fy0 = 1.0f - fy1;
+                int32_t sy = _iy[dy];
+                int32_t k = 0;
+
+                if (sy == prev)
+                    k = 2;
+                else if (sy == prev + 1)
+                {
+                    Swap(pbx[0], pbx[1]);
+                    k = 1;
+                }
+
+                prev = sy;
+
+                for (; k < 2; k++)
+                {
+                    float* pb = pbx[k];
+                    const uint16_t* ps = src + (sy + k) * srcStride;
+                    size_t dx = 0;
+                    if (N == 1)
+                    {
+                        for (; dx < rs8; dx += 8)
+                        {
+                            __m256 fx1 = _mm256_loadu_ps(_ax.data + dx);
+                            __m256 fx0 = _mm256_sub_ps(_1, fx1);
+                            _mm256_storeu_ps(pb + dx, BilColS1(ps, _ix.data + dx, fx0, fx1));
+                        }
+                        for (; dx < rs4; dx += 4)
+                        {
+                            __m128 fx1 = _mm_loadu_ps(_ax.data + dx);
+                            __m128 fx0 = _mm_sub_ps(_mm256_castps256_ps128(_1), fx1);
+                            _mm_storeu_ps(pb + dx, Sse41::BilColS1(ps, _ix.data + dx, fx0, fx1));
+                        }
+                    }
+                    if (N == 2)
+                    {
+                        for (; dx < rs8; dx += 8)
+                        {
+                            __m256 fx1 = _mm256_loadu_ps(_ax.data + dx);
+                            __m256 fx0 = _mm256_sub_ps(_1, fx1);
+                            _mm256_storeu_ps(pb + dx, BilColS2(ps, _ix.data + dx, fx0, fx1));
+                        }
+                        for (; dx < rs4; dx += 4)
+                        {
+                            __m128 fx1 = _mm_loadu_ps(_ax.data + dx);
+                            __m128 fx0 = _mm_sub_ps(_mm256_castps256_ps128(_1), fx1);
+                            _mm_storeu_ps(pb + dx, Sse41::BilColS2(ps, _ix.data + dx, fx0, fx1));
+                        }
+                    }
+                    if (N == 3)
+                    {
+                        for (; dx < rs6; dx += 6)
+                        {
+                            __m256 fx1 = Avx::Load<false>(_ax.data + dx, _ax.data + dx + 3);
+                            __m256 fx0 = _mm256_sub_ps(_1, fx1);
+                            _mm256_storeu_ps(pb + dx, BilColS3(ps, _ix.data + dx, fx0, fx1));
+                        }
+                        for (; dx < rs3; dx += 3)
+                        {
+                            __m128 fx1 = _mm_loadu_ps(_ax.data + dx);
+                            __m128 fx0 = _mm_sub_ps(_mm256_castps256_ps128(_1), fx1);
+                            _mm_storeu_ps(pb + dx, Sse41::BilColS3(ps + _ix[dx], fx0, fx1));
+                        }
+                    }
+                    if (N == 4)
+                    {
+                        for (; dx < rs8; dx += 8)
+                        {
+                            __m256 fx1 = _mm256_loadu_ps(_ax.data + dx);
+                            __m256 fx0 = _mm256_sub_ps(_1, fx1);
+                            _mm256_storeu_ps(pb + dx, BilColS4(ps, _ix.data + dx, fx0, fx1));
+                        }
+                        for (; dx < rs4; dx += 4)
+                        {
+                            __m128 fx1 = _mm_loadu_ps(_ax.data + dx);
+                            __m128 fx0 = _mm_sub_ps(_mm256_castps256_ps128(_1), fx1);
+                            _mm_storeu_ps(pb + dx, Sse41::BilColS4(ps + _ix[dx], fx0, fx1));
+                        }
+                    }
+                    for (; dx < rs; dx++)
+                    {
+                        int32_t sx = _ix[dx];
+                        float fx = _ax[dx];
+                        pb[dx] = ps[sx] * (1.0f - fx) + ps[sx + N] * fx;
+                    }
+                }
+
+                size_t dx = 0;
+                __m256 _fy0 = _mm256_set1_ps(fy0);
+                __m256 _fy1 = _mm256_set1_ps(fy1);
+                for (; dx < rs16; dx += 16)
+                {
+                    __m256 m00 = _mm256_mul_ps(_mm256_loadu_ps(pbx[0] + dx + 0), _fy0);
+                    __m256 m01 = _mm256_mul_ps(_mm256_loadu_ps(pbx[1] + dx + 0), _fy1);
+                    __m256i i0 = _mm256_cvttps_epi32(_mm256_add_ps(m00, m01));
+                    __m256 m10 = _mm256_mul_ps(_mm256_loadu_ps(pbx[0] + dx + 8), _fy0);
+                    __m256 m11 = _mm256_mul_ps(_mm256_loadu_ps(pbx[1] + dx + 8), _fy1);
+                    __m256i i1 = _mm256_cvttps_epi32(_mm256_add_ps(m10, m11));
+                    _mm256_storeu_si256((__m256i*)(dst + dx), PackU32ToI16(i0, i1));
+                }
+                for (; dx < rs8; dx += 8)
+                {
+                    __m256 m0 = _mm256_mul_ps(_mm256_loadu_ps(pbx[0] + dx), _fy0);
+                    __m256 m1 = _mm256_mul_ps(_mm256_loadu_ps(pbx[1] + dx), _fy1);
+                    __m256i i0 = _mm256_cvttps_epi32(_mm256_add_ps(m0, m1));
+                    _mm_storeu_si128((__m128i*)(dst + dx), _mm256_castsi256_si128(PackU32ToI16(i0, K_ZERO)));
+                }
+                for (; dx < rs4; dx += 4)
+                {
+                    __m128 m0 = _mm_mul_ps(_mm_loadu_ps(pbx[0] + dx), _mm256_castps256_ps128(_fy0));
+                    __m128 m1 = _mm_mul_ps(_mm_loadu_ps(pbx[1] + dx), _mm256_castps256_ps128(_fy1));
+                    __m128i i0 = _mm_cvttps_epi32(_mm_add_ps(m0, m1));
+                    _mm_storel_epi64((__m128i*)(dst + dx), _mm_packus_epi32(i0, Sse2::K_ZERO));
+                }
+                for (; dx < rs; dx++)
+                    dst[dx] = Round(pbx[0][dx] * fy0 + pbx[1][dx] * fy1);
+            }
+        }
+
+        const __m256i RSB_3_P2 = SIMD_MM256_SETR_EPI32(0, 1, 4, 2, 3, 6, 5, 7);
+
+        SIMD_INLINE __m256i PackU32ToI16Rsb3(__m256i lo, __m256i hi)
+        {
+            return _mm256_permutevar8x32_epi32(_mm256_packus_epi32(lo, hi), RSB_3_P2);
+        }
+
+        template<size_t N> void ResizerShortBilinear::RunS(const uint16_t* src, size_t srcStride, uint16_t* dst, size_t dstStride)
+        {
+            size_t rs = _param.dstW * N;
+            size_t rs3 = AlignLoAny(rs - 1, 3);
+            size_t rs6 = AlignLoAny(rs - 1, 6);
+            size_t rs12 = AlignLoAny(rs - 1, 12);
+            size_t rs4 = AlignLo(rs, 4);
+            size_t rs8 = AlignLo(rs, 8);
+            size_t rs16 = AlignLo(rs, 16);
+            __m256 _1 = _mm256_set1_ps(1.0f);
+            for (size_t dy = 0; dy < _param.dstH; dy++, dst += dstStride)
+            {
+                float fy1 = _ay[dy];
+                float fy0 = 1.0f - fy1;
+                int32_t sy = _iy[dy];
+                const uint16_t* ps0 = src + (sy + 0) * srcStride;
+                const uint16_t* ps1 = src + (sy + 1) * srcStride;
+                size_t dx = 0;
+                __m256 _fy0 = _mm256_set1_ps(fy0);
+                __m256 _fy1 = _mm256_set1_ps(fy1);
+                if (N == 1)
+                {
+                    for (; dx < rs16; dx += 16)
+                    {
+                        __m256 fx01 = _mm256_loadu_ps(_ax.data + dx + 0);
+                        __m256 fx00 = _mm256_sub_ps(_1, fx01);
+                        __m256 m00 = _mm256_mul_ps(BilColS1(ps0, _ix.data + dx + 0, fx00, fx01), _fy0);
+                        __m256 m01 = _mm256_mul_ps(BilColS1(ps1, _ix.data + dx + 0, fx00, fx01), _fy1);
+                        __m256i i0 = _mm256_cvttps_epi32(_mm256_add_ps(m00, m01));
+                        __m256 fx11 = _mm256_loadu_ps(_ax.data + dx + 8);
+                        __m256 fx10 = _mm256_sub_ps(_1, fx11);
+                        __m256 m10 = _mm256_mul_ps(BilColS1(ps0, _ix.data + dx + 8, fx10, fx11), _fy0);
+                        __m256 m11 = _mm256_mul_ps(BilColS1(ps1, _ix.data + dx + 8, fx10, fx11), _fy1);
+                        __m256i i1 = _mm256_cvttps_epi32(_mm256_add_ps(m10, m11));
+                        _mm256_storeu_si256((__m256i*)(dst + dx), PackU32ToI16(i0, i1));
+                    }
+                    for (; dx < rs8; dx += 8)
+                    {
+                        __m256 fx1 = _mm256_loadu_ps(_ax.data + dx);
+                        __m256 fx0 = _mm256_sub_ps(_1, fx1);
+                        __m256 m0 = _mm256_mul_ps(BilColS1(ps0, _ix.data + dx, fx0, fx1), _fy0);
+                        __m256 m1 = _mm256_mul_ps(BilColS1(ps1, _ix.data + dx, fx0, fx1), _fy1);
+                        __m256i i0 = _mm256_cvttps_epi32(_mm256_add_ps(m0, m1));
+                        _mm_storeu_si128((__m128i*)(dst + dx), _mm256_castsi256_si128(PackU32ToI16(i0, K_ZERO)));
+                    }                    
+                    for (; dx < rs4; dx += 4)
+                    {
+                        __m128 fx1 = _mm_loadu_ps(_ax.data + dx);
+                        __m128 fx0 = _mm_sub_ps(_mm256_castps256_ps128(_1), fx1);
+                        __m128 m0 = _mm_mul_ps(Sse41::BilColS1(ps0, _ix.data + dx, fx0, fx1), _mm256_castps256_ps128(_fy0));
+                        __m128 m1 = _mm_mul_ps(Sse41::BilColS1(ps1, _ix.data + dx, fx0, fx1), _mm256_castps256_ps128(_fy1));
+                        __m128i i0 = _mm_cvttps_epi32(_mm_add_ps(m0, m1));
+                        _mm_storel_epi64((__m128i*)(dst + dx), _mm_packus_epi32(i0, Sse2::K_ZERO));
+                    }
+                }
+                if (N == 2)
+                {
+                    for (; dx < rs16; dx += 16)
+                    {
+                        __m256 fx01 = _mm256_loadu_ps(_ax.data + dx + 0);
+                        __m256 fx00 = _mm256_sub_ps(_1, fx01);
+                        __m256 m00 = _mm256_mul_ps(BilColS2(ps0, _ix.data + dx + 0, fx00, fx01), _fy0);
+                        __m256 m01 = _mm256_mul_ps(BilColS2(ps1, _ix.data + dx + 0, fx00, fx01), _fy1);
+                        __m256i i0 = _mm256_cvttps_epi32(_mm256_add_ps(m00, m01));
+                        __m256 fx11 = _mm256_loadu_ps(_ax.data + dx + 8);
+                        __m256 fx10 = _mm256_sub_ps(_1, fx11);
+                        __m256 m10 = _mm256_mul_ps(BilColS2(ps0, _ix.data + dx + 8, fx10, fx11), _fy0);
+                        __m256 m11 = _mm256_mul_ps(BilColS2(ps1, _ix.data + dx + 8, fx10, fx11), _fy1);
+                        __m256i i1 = _mm256_cvttps_epi32(_mm256_add_ps(m10, m11));
+                        _mm256_storeu_si256((__m256i*)(dst + dx), PackU32ToI16(i0, i1));
+                    }
+                    for (; dx < rs8; dx += 8)
+                    {
+                        __m256 fx1 = _mm256_loadu_ps(_ax.data + dx);
+                        __m256 fx0 = _mm256_sub_ps(_1, fx1);
+                        __m256 m0 = _mm256_mul_ps(BilColS2(ps0, _ix.data + dx, fx0, fx1), _fy0);
+                        __m256 m1 = _mm256_mul_ps(BilColS2(ps1, _ix.data + dx, fx0, fx1), _fy1);
+                        __m256i i0 = _mm256_cvttps_epi32(_mm256_add_ps(m0, m1));
+                        _mm_storeu_si128((__m128i*)(dst + dx), _mm256_castsi256_si128(PackU32ToI16(i0, K_ZERO)));
+                    }
+                    for (; dx < rs4; dx += 4)
+                    {
+                        __m128 fx1 = _mm_loadu_ps(_ax.data + dx);
+                        __m128 fx0 = _mm_sub_ps(_mm256_castps256_ps128(_1), fx1);
+                        __m128 m0 = _mm_mul_ps(Sse41::BilColS2(ps0, _ix.data + dx, fx0, fx1), _mm256_castps256_ps128(_fy0));
+                        __m128 m1 = _mm_mul_ps(Sse41::BilColS2(ps1, _ix.data + dx, fx0, fx1), _mm256_castps256_ps128(_fy1));
+                        __m128i i0 = _mm_cvttps_epi32(_mm_add_ps(m0, m1));
+                        _mm_storel_epi64((__m128i*)(dst + dx), _mm_packus_epi32(i0, Sse2::K_ZERO));
+                    }
+                }
+                if (N == 3)
+                {
+                    for (; dx < rs12; dx += 12)
+                    {
+                        __m256 fx01 = Avx::Load<false>(_ax.data + dx + 0, _ax.data + dx + 3);
+                        __m256 fx00 = _mm256_sub_ps(_1, fx01);
+                        __m256 m00 = _mm256_mul_ps(BilColS3(ps0, _ix.data + dx, fx00, fx01), _fy0);
+                        __m256 m01 = _mm256_mul_ps(BilColS3(ps1, _ix.data + dx, fx00, fx01), _fy1);
+                        __m256i i0 = _mm256_cvttps_epi32(_mm256_add_ps(m00, m01));
+                        __m256 fx11 = Avx::Load<false>(_ax.data + dx + 6, _ax.data + dx + 9);
+                        __m256 fx10 = _mm256_sub_ps(_1, fx11);
+                        __m256 m10 = _mm256_mul_ps(BilColS3(ps0, _ix.data + dx + 6, fx10, fx11), _fy0);
+                        __m256 m11 = _mm256_mul_ps(BilColS3(ps1, _ix.data + dx + 6, fx10, fx11), _fy1);
+                        __m256i i1 = _mm256_cvttps_epi32(_mm256_add_ps(m10, m11));
+                        _mm256_storeu_si256((__m256i*)(dst + dx), PackU32ToI16Rsb3(i0, i1));
+                    }
+                    for (; dx < rs6; dx += 6)
+                    {
+                        __m256 fx1 = Avx::Load<false>(_ax.data + dx, _ax.data + dx + 3);
+                        __m256 fx0 = _mm256_sub_ps(_1, fx1);
+                        __m256 m0 = _mm256_mul_ps(BilColS3(ps0, _ix.data + dx, fx0, fx1), _fy0);
+                        __m256 m1 = _mm256_mul_ps(BilColS3(ps1, _ix.data + dx, fx0, fx1), _fy1);
+                        __m256i i0 = _mm256_cvttps_epi32(_mm256_add_ps(m0, m1));
+                        _mm_storeu_si128((__m128i*)(dst + dx), _mm256_castsi256_si128(PackU32ToI16(i0, K_ZERO)));
+                    }
+                    for (; dx < rs3; dx += 3)
+                    {
+                        __m128 fx1 = _mm_loadu_ps(_ax.data + dx);
+                        __m128 fx0 = _mm_sub_ps(_mm256_castps256_ps128(_1), fx1);
+                        __m128 m0 = _mm_mul_ps(Sse41::BilColS3(ps0 + _ix[dx], fx0, fx1), _mm256_castps256_ps128(_fy0));
+                        __m128 m1 = _mm_mul_ps(Sse41::BilColS3(ps1 + _ix[dx], fx0, fx1), _mm256_castps256_ps128(_fy1));
+                        __m128i i0 = _mm_cvttps_epi32(_mm_add_ps(m0, m1));
+                        _mm_storel_epi64((__m128i*)(dst + dx), _mm_packus_epi32(i0, Sse2::K_ZERO));
+                    }
+                }
+                if (N == 4)
+                {
+                    for (; dx < rs16; dx += 16)
+                    {
+                        __m256 fx01 = _mm256_loadu_ps(_ax.data + dx + 0);
+                        __m256 fx00 = _mm256_sub_ps(_1, fx01);
+                        __m256 m00 = _mm256_mul_ps(BilColS4(ps0, _ix.data + dx + 0, fx00, fx01), _fy0);
+                        __m256 m01 = _mm256_mul_ps(BilColS4(ps1, _ix.data + dx + 0, fx00, fx01), _fy1);
+                        __m256i i0 = _mm256_cvttps_epi32(_mm256_add_ps(m00, m01));
+                        __m256 fx11 = _mm256_loadu_ps(_ax.data + dx + 8);
+                        __m256 fx10 = _mm256_sub_ps(_1, fx11);
+                        __m256 m10 = _mm256_mul_ps(BilColS4(ps0, _ix.data + dx + 8, fx10, fx11), _fy0);
+                        __m256 m11 = _mm256_mul_ps(BilColS4(ps1, _ix.data + dx + 8, fx10, fx11), _fy1);
+                        __m256i i1 = _mm256_cvttps_epi32(_mm256_add_ps(m10, m11));
+                        _mm256_storeu_si256((__m256i*)(dst + dx), PackU32ToI16(i0, i1));
+                    }
+                    for (; dx < rs8; dx += 8)
+                    {
+                        __m256 fx1 = _mm256_loadu_ps(_ax.data + dx);
+                        __m256 fx0 = _mm256_sub_ps(_1, fx1);
+                        __m256 m0 = _mm256_mul_ps(BilColS4(ps0, _ix.data + dx, fx0, fx1), _fy0);
+                        __m256 m1 = _mm256_mul_ps(BilColS4(ps1, _ix.data + dx, fx0, fx1), _fy1);
+                        __m256i i0 = _mm256_cvttps_epi32(_mm256_add_ps(m0, m1));
+                        _mm_storeu_si128((__m128i*)(dst + dx), _mm256_castsi256_si128(PackU32ToI16(i0, K_ZERO)));
+                    }
+                    for (; dx < rs4; dx += 4)
+                    {
+                        __m128 fx1 = _mm_loadu_ps(_ax.data + dx);
+                        __m128 fx0 = _mm_sub_ps(_mm256_castps256_ps128(_1), fx1);
+                        __m128 m0 = _mm_mul_ps(Sse41::BilColS4(ps0 + _ix[dx], fx0, fx1), _mm256_castps256_ps128(_fy0));
+                        __m128 m1 = _mm_mul_ps(Sse41::BilColS4(ps1 + _ix[dx], fx0, fx1), _mm256_castps256_ps128(_fy1));
+                        __m128i i0 = _mm_cvttps_epi32(_mm_add_ps(m0, m1));
+                        _mm_storel_epi64((__m128i*)(dst + dx), _mm_packus_epi32(i0, Sse2::K_ZERO));
+                    }
+                }
+                for (; dx < rs; dx++)
+                {
+                    int32_t sx = _ix[dx];
+                    float fx1 = _ax[dx];
+                    float fx0 = 1.0f - fx1;
+                    float r0 = ps0[sx] * fx0 + ps0[sx + N] * fx1;
+                    float r1 = ps1[sx] * fx0 + ps1[sx + N] * fx1;
+                    dst[dx] = Round(r0 * fy0 + r1 * fy1);
+                }
+            }
+        }
+
+        void ResizerShortBilinear::Run(const uint16_t* src, size_t srcStride, uint16_t* dst, size_t dstStride)
+        {
+            bool sparse = _param.dstH * 2.0 <= _param.srcH;
+            switch (_param.channels)
+            {
+            case 1: sparse ? RunS<1>(src, srcStride, dst, dstStride) : RunB<1>(src, srcStride, dst, dstStride); return;
+            case 2: sparse ? RunS<2>(src, srcStride, dst, dstStride) : RunB<2>(src, srcStride, dst, dstStride); return;
+            case 3: sparse ? RunS<3>(src, srcStride, dst, dstStride) : RunB<3>(src, srcStride, dst, dstStride); return;
+            case 4: sparse ? RunS<4>(src, srcStride, dst, dstStride) : RunB<4>(src, srcStride, dst, dstStride); return;
+            default:
+                assert(0);
+            }
+        }
+
+        //---------------------------------------------------------------------
+
         ResizerFloatBilinear::ResizerFloatBilinear(const ResParam & param)
             : Base::ResizerFloatBilinear(param)
         {
@@ -523,7 +921,7 @@ namespace Simd
             float * pbx[2] = { _bx[0].data, _bx[1].data };
             int32_t prev = -2;
             size_t rsa = AlignLo(rs, Avx::F);
-            size_t rsh = AlignLo(rs, Sse::F);
+            size_t rsh = AlignLo(rs, Sse2::F);
             for (size_t dy = 0; dy < _param.dstH; dy++, dst += dstStride)
             {
                 float fy1 = _ay[dy];
@@ -560,10 +958,10 @@ namespace Simd
                             __m256 s1 = _mm256_shuffle_ps(s0145, s2367, 0xDD);
                             _mm256_store_ps(pb + dx, _mm256_fmadd_ps(s0, fx0, _mm256_mul_ps(s1, fx1)));
                         }
-                        for (; dx < rsh; dx += Sse::F)
+                        for (; dx < rsh; dx += Sse2::F)
                         {
-                            __m128 s01 = Sse::Load(ps + _ix[dx + 0], ps + _ix[dx + 1]);
-                            __m128 s23 = Sse::Load(ps + _ix[dx + 2], ps + _ix[dx + 3]);
+                            __m128 s01 = Sse2::Load(ps + _ix[dx + 0], ps + _ix[dx + 1]);
+                            __m128 s23 = Sse2::Load(ps + _ix[dx + 2], ps + _ix[dx + 3]);
                             __m128 fx1 = _mm_load_ps(_ax.data + dx);
                             __m128 fx0 = _mm_sub_ps(_mm256_castps256_ps128(_1), fx1);
                             __m128 m0 = _mm_mul_ps(fx0, _mm_shuffle_ps(s01, s23, 0x88));
@@ -625,7 +1023,7 @@ namespace Simd
                     __m256 b1 = _mm256_load_ps(pbx[1] + dx);
                     _mm256_storeu_ps(dst + dx, _mm256_fmadd_ps(b0, _fy0, _mm256_mul_ps(b1, _fy1)));
                 }
-                for (; dx < rsh; dx += Sse::F)
+                for (; dx < rsh; dx += Sse2::F)
                 {
                     __m128 m0 = _mm_mul_ps(_mm_load_ps(pbx[0] + dx), _mm256_castps256_ps128(_fy0));
                     __m128 m1 = _mm_mul_ps(_mm_load_ps(pbx[1] + dx), _mm256_castps256_ps128(_fy1));
@@ -638,15 +1036,144 @@ namespace Simd
 
         //---------------------------------------------------------------------
 
+        ResizerNearest::ResizerNearest(const ResParam& param)
+            : Sse41::ResizerNearest(param)
+        {
+        }
+
+        void ResizerNearest::EstimateParams()
+        {
+            if (_pixelSize)
+                return;
+            size_t pixelSize = _param.PixelSize();
+            if (pixelSize == 4 || pixelSize == 8 || 
+                (pixelSize == 3 && _param.dstW <= _param.srcW) ||
+                (pixelSize == 2 && _param.dstW * 2 <= _param.srcW))
+                Base::ResizerNearest::EstimateParams();
+        }
+
+        const __m256i K8_SHUFFLE_UVXX_TO_UV = SIMD_MM256_SETR_EPI8(
+            0x0, 0x1, 0x4, 0x5, 0x8, 0x9, 0xC, 0xD, -1, -1, -1, -1, -1, -1, -1, -1,
+            0x0, 0x1, 0x4, 0x5, 0x8, 0x9, 0xC, 0xD, -1, -1, -1, -1, -1, -1, -1, -1);
+
+        const __m256i K32_PERMUTE_UVXX_TO_UV = SIMD_MM256_SETR_EPI32(0x0, 0x1, 0x4, 0x5, -1, -1, -1, -1);
+
+        SIMD_INLINE void Gather8x2(const uint8_t* src, const int32_t* idx, uint8_t* dst)
+        {
+            __m256i _idx = _mm256_loadu_si256((__m256i*)idx);
+            __m256i uvxx = _mm256_i32gather_epi32((int32_t*)src, _idx, 1);
+            __m256i uv = _mm256_permutevar8x32_epi32(_mm256_shuffle_epi8(uvxx, K8_SHUFFLE_UVXX_TO_UV), K32_PERMUTE_UVXX_TO_UV);
+            _mm_storeu_si128((__m128i*)dst, _mm256_castsi256_si128(uv));
+        }
+
+        void ResizerNearest::Gather2(const uint8_t* src, size_t srcStride, uint8_t* dst, size_t dstStride)
+        {
+            size_t body = AlignLo(_param.dstW, 8);
+            size_t tail = _param.dstW - 8;
+            for (size_t dy = 0; dy < _param.dstH; dy++)
+            {
+                const uint8_t* srcRow = src + _iy[dy] * srcStride;
+                for (size_t dx = 0, offs = 0; dx < body; dx += 8, offs += 16)
+                    Avx2::Gather8x2(srcRow, _ix.data + dx, dst + offs);
+                Avx2::Gather8x2(srcRow, _ix.data + tail, dst + tail * 2);
+                dst += dstStride;
+            }
+        }
+
+        SIMD_INLINE __m256i Gather8x3(const uint8_t* src, const int32_t* idx)
+        {
+            __m256i _idx = _mm256_loadu_si256((__m256i*)idx);
+            __m256i bgrx = _mm256_i32gather_epi32((int32_t*)src, _idx, 1);
+            return _mm256_permutevar8x32_epi32(_mm256_shuffle_epi8(bgrx, K8_SHUFFLE_BGRA_TO_BGR), K32_PERMUTE_BGRA_TO_BGR);
+        }
+
+        void ResizerNearest::Gather3(const uint8_t* src, size_t srcStride, uint8_t* dst, size_t dstStride)
+        {
+            size_t body = AlignLo(_param.dstW, 8);
+            size_t tail = _param.dstW - 8;
+            for (size_t dy = 0; dy < _param.dstH; dy++)
+            {
+                const uint8_t* srcRow = src + _iy[dy] * srcStride;
+                for (size_t dx = 0, offs = 0; dx < body; dx +=8, offs += 24)
+                    _mm256_storeu_si256((__m256i*)(dst + offs), Gather8x3(srcRow, _ix.data + dx));
+                Store24<false>(dst + tail * 3, Gather8x3(srcRow, _ix.data + tail));
+                dst += dstStride;
+            }
+        }
+
+        SIMD_INLINE void Gather8x4(const int32_t * src, const int32_t* idx, int32_t* dst)
+        {
+            __m256i _idx = _mm256_loadu_si256((__m256i*)idx);
+            __m256i val = _mm256_i32gather_epi32(src, _idx, 1);
+            _mm256_storeu_si256((__m256i*)dst, val);
+        }
+
+        void ResizerNearest::Gather4(const uint8_t* src, size_t srcStride, uint8_t* dst, size_t dstStride)
+        {
+            size_t body = AlignLo(_param.dstW, 8);
+            size_t tail = _param.dstW - 8;
+            for (size_t dy = 0; dy < _param.dstH; dy++)
+            {
+                const int32_t* srcRow = (int32_t*)(src + _iy[dy] * srcStride);
+                for (size_t dx = 0; dx < body; dx += 8)
+                    Avx2::Gather8x4(srcRow, _ix.data + dx, (int32_t*)dst + dx);
+                Avx2::Gather8x4(srcRow, _ix.data + tail, (int32_t*)dst + tail);
+                dst += dstStride;
+            }
+        }
+
+        SIMD_INLINE void Gather4x8(const int64_t* src, const int32_t* idx, int64_t* dst)
+        {
+            __m128i _idx = _mm_loadu_si128((__m128i*)idx);
+            __m256i val = _mm256_i32gather_epi64((long long*)src, _idx, 1);
+            _mm256_storeu_si256((__m256i*)dst, val);
+        }
+
+        void ResizerNearest::Gather8(const uint8_t* src, size_t srcStride, uint8_t* dst, size_t dstStride)
+        {
+            size_t body = AlignLo(_param.dstW, 4);
+            size_t tail = _param.dstW - 4;
+            for (size_t dy = 0; dy < _param.dstH; dy++)
+            {
+                const int64_t* srcRow = (int64_t*)(src + _iy[dy] * srcStride);
+                for (size_t dx = 0; dx < body; dx += 4)
+                    Avx2::Gather4x8(srcRow, _ix.data + dx, (int64_t*)dst + dx);
+                Avx2::Gather4x8(srcRow, _ix.data + tail, (int64_t*)dst + tail);
+                dst += dstStride;
+            }
+        }
+
+        void ResizerNearest::Run(const uint8_t* src, size_t srcStride, uint8_t* dst, size_t dstStride)
+        {
+            EstimateParams();
+            if (_pixelSize == 2 && _param.dstW * 2 <= _param.srcW)
+                Gather2(src, srcStride, dst, dstStride);
+            else if (_pixelSize == 3 && _param.dstW <= _param.srcW)
+                Gather3(src, srcStride, dst, dstStride);
+            else if (_pixelSize == 4)
+                Gather4(src, srcStride, dst, dstStride);
+            else if (_pixelSize == 8)
+                Gather8(src, srcStride, dst, dstStride);
+            else 
+                Sse41::ResizerNearest::Run(src, srcStride, dst, dstStride);
+        }
+
+       //---------------------------------------------------------------------
+
+
         void * ResizerInit(size_t srcX, size_t srcY, size_t dstX, size_t dstY, size_t channels, SimdResizeChannelType type, SimdResizeMethodType method)
         {
             ResParam param(srcX, srcY, dstX, dstY, channels, type, method, sizeof(__m256i));
-            if (type == SimdResizeChannelByte && method == SimdResizeMethodBilinear && dstX >= A)
+            if (param.IsByteBilinear() && dstX >= A)
                 return new ResizerByteBilinear(param);
-            else if (type == SimdResizeChannelByte && method == SimdResizeMethodArea)
+            else if (param.IsByteArea())
                 return new ResizerByteArea(param);
-            else if (type == SimdResizeChannelFloat && (method == SimdResizeMethodBilinear || method == SimdResizeMethodCaffeInterp))
+            else if (param.IsShortBilinear() && dstX >= F)
+                return new ResizerShortBilinear(param);
+            else if (param.IsFloatBilinear())
                 return new ResizerFloatBilinear(param);
+            else if (param.IsNearest() && dstX >= F)
+                return new ResizerNearest(param);
             else
                 return Avx::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);
         }

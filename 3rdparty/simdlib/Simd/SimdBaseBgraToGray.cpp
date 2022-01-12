@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2017 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -36,6 +36,19 @@ namespace Simd
                 for (const uint8_t *pGrayEnd = pGray + width; pGray < pGrayEnd; pGray += 1, pBgra += 4)
                 {
                     *pGray = BgrToGray(pBgra[0], pBgra[1], pBgra[2]);
+                }
+            }
+        }
+
+        void RgbaToGray(const uint8_t* rgba, size_t width, size_t height, size_t rgbaStride, uint8_t* gray, size_t grayStride)
+        {
+            for (size_t row = 0; row < height; ++row)
+            {
+                const uint8_t* pRgba = rgba + row * rgbaStride;
+                uint8_t* pGray = gray + row * grayStride;
+                for (const uint8_t* pGrayEnd = pGray + width; pGray < pGrayEnd; pGray += 1, pRgba += 4)
+                {
+                    *pGray = BgrToGray(pRgba[2], pRgba[1], pRgba[0]);
                 }
             }
         }

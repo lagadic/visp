@@ -1,8 +1,8 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar,
-*               2014-2016 Antonenka Mikhail,
+* Copyright (c) 2011-2021 Yermalayeu Ihar,
+*               2014-2019 Antonenka Mikhail,
 *               2019-2019 Facundo Galan.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,8 +26,6 @@
 
 #ifndef __SimdLib_h__
 #define __SimdLib_h__
-
-#include "Simd/SimdConfig.h"
 
 #include <stddef.h>
 
@@ -107,12 +105,8 @@ typedef enum
     SimdCpuInfoCacheL1, /*!< A size of level 1 data cache. */
     SimdCpuInfoCacheL2, /*!< A size of level 2 cache. */
     SimdCpuInfoCacheL3, /*!< A size of level 3 cache. */
-    SimdCpuInfoSse, /*!< Availability of SSE (x86). */
     SimdCpuInfoSse2, /*!< Availability of SSE2 (x86). */
-    SimdCpuInfoSse3, /*!< Availability of SSE3 (x86). */
-    SimdCpuInfoSsse3, /*!< Availability of SSSE3 (x86). */
     SimdCpuInfoSse41, /*!< Availability of SSE4.1 (x86). */
-    SimdCpuInfoSse42, /*!< Availability of SSE4.2 (x86). */
     SimdCpuInfoAvx, /*!< Availability of AVX (x86). */
     SimdCpuInfoAvx2, /*!< Availability of AVX2 (x86). */
     SimdCpuInfoAvx512f, /*!< Availability of AVX-512F (x86). */
@@ -120,8 +114,28 @@ typedef enum
     SimdCpuInfoVmx, /*!< Availability of VMX or Altivec (PowerPC). */
     SimdCpuInfoVsx, /*!< Availability of VSX (PowerPC). */
     SimdCpuInfoNeon, /*!< Availability of NEON (ARM). */
-    SimdCpuInfoMsa, /*!< Availability of MSA (MIPS). */
 } SimdCpuInfoType;
+
+/*! @ingroup c_types
+    Describes formats of image file. It is used in functions ::SimdImageSaveToMemory and ::SimdImageSaveToFile.
+*/
+typedef enum
+{
+    /*! An undefined image file format (format auto choice). */
+    SimdImageFileUndefined = 0,
+    /*! A PGM (Portable Gray Map) text (P2) image file format. */
+    SimdImageFilePgmTxt,
+    /*! A PGM (Portable Gray Map) binary (P5) image file format. */
+    SimdImageFilePgmBin,
+    /*! A PGM (Portable Pixel Map) text (P3) image file format. */
+    SimdImageFilePpmTxt,
+    /*! A PGM (Portable Pixel Map) binary (P6) image file format. */
+    SimdImageFilePpmBin,
+    /*! A PNG (Portable Network Graphics) image file format. */
+    SimdImageFilePng,
+    /*! A JPEG (Joint Photographic Experts Group) image file format. */
+    SimdImageFileJpeg,
+} SimdImageFileType;
 
 /*! @ingroup c_types
     Describes types of binary operation between two images performed by function ::SimdOperationBinary8u.
@@ -174,20 +188,10 @@ typedef enum
     SimdPixelFormatFloat,
     /*! A single channel 64-bit float point pixel format. */
     SimdPixelFormatDouble,
-    /*! A 8-bit Bayer pixel format (GRBG). */
-    SimdPixelFormatBayerGrbg,
-    /*! A 8-bit Bayer pixel format (GBRG). */
-    SimdPixelFormatBayerGbrg,
-    /*! A 8-bit Bayer pixel format (RGGB). */
-    SimdPixelFormatBayerRggb,
-    /*! A 8-bit Bayer pixel format (BGGR). */
-    SimdPixelFormatBayerBggr,
-    /*! A 24-bit (3 8-bit channels) HSV (Hue, Saturation, Value) pixel format. */
-    SimdPixelFormatHsv24,
-    /*! A 24-bit (3 8-bit channels) HSL (Hue, Saturation, Lightness) pixel format. */
-    SimdPixelFormatHsl24,
     /*! A 24-bit (3 8-bit channels) RGB (Red, Green, Blue) pixel format. */
     SimdPixelFormatRgb24,
+    /*! A 32-bit (4 8-bit channels) RGBA (Red, Green, Blue, Alpha) pixel format. */
+    SimdPixelFormatRgba32,
 } SimdPixelFormatType;
 
 /*! @ingroup c_types
@@ -208,19 +212,29 @@ typedef enum
 {
     /*! 8-bit integer channel type.  */
     SimdResizeChannelByte,
+    /*! 16-bit integer channel type.  */
+    SimdResizeChannelShort,
     /*! 32-bit float channel type.  */
     SimdResizeChannelFloat,
 } SimdResizeChannelType;
 
 /*! @ingroup resizing
-    Describes methods used in oreder to resize image.
+    Describes methods used in order to resize image.
 */
 typedef enum
 {
+    /*! Nearest method. */
+    SimdResizeMethodNearest,
+    /*! Nearest Pytorch compatible method. */
+    SimdResizeMethodNearestPytorch,
     /*! Bilinear method. */
     SimdResizeMethodBilinear,
-    /*! caffe::interp compatible method. */
-    SimdResizeMethodCaffeInterp,
+    /*! Bilinear Caffe compatible method. It is relevant only for ::SimdResizeChannelFloat (32-bit float channel type).*/
+    SimdResizeMethodBilinearCaffe,
+    /*! Bilinear Pytorch compatible method. It is relevant only for ::SimdResizeChannelFloat (32-bit float channel type).*/
+    SimdResizeMethodBilinearPytorch,
+    /*! Bicubic method. */
+    SimdResizeMethodBicubic,
     /*! Area method. */
     SimdResizeMethodArea,
 } SimdResizeMethodType;
@@ -317,7 +331,7 @@ extern "C"
 
         \fn size_t SimdAlignment();
 
-        \short Gets alignment required for the most productive work of the Simd Library.
+        \short Gets alignment required for the most productive work of Simd Library.
 
         \return a required alignment.
     */
@@ -359,17 +373,18 @@ extern "C"
 
         \fn void SimdBgraToBgr(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * bgr, size_t bgrStride);
 
-        \short Converts 32-bit BGRA image to 24-bit BGR image.
+        \short Converts 32-bit BGRA image to 24-bit BGR image. Also it can be used for 32-bit RGBA to 24-bit RGB conversion.
 
         All images must have the same width and height.
 
-        \note This function has a C++ wrapper Simd::BgraToBgr(const View<A>& bgra, View<A>& bgr).
+        \note This function has C++ wrappers: Simd::BgraToBgr(const View<A>& bgra, View<A>& bgr)
+            and Simd::RgbaToRgb(const View<A>& rgba, View<A>& rgb).
 
-        \param [in] bgra - a pointer to pixels data of input 32-bit BGRA image.
+        \param [in] bgra - a pointer to pixels data of input 32-bit BGRA (or 32-bit RGBA) image.
         \param [in] width - an image width.
         \param [in] height - an image height.
         \param [in] bgraStride - a row size of the bgra image.
-        \param [out] bgr - a pointer to pixels data of output 24-bit BGR image.
+        \param [out] bgr - a pointer to pixels data of output 24-bit BGR (or 24-bit RGB) image.
         \param [in] bgrStride - a row size of the bgr image.
     */
     SIMD_API void SimdBgraToBgr(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * bgr, size_t bgrStride);
@@ -395,20 +410,43 @@ extern "C"
 
     /*! @ingroup bgra_conversion
 
-        \fn void SimdRgbaToGray(const uint8_t * rgba, size_t width, size_t height, size_t rgbaStride, uint8_t * gray, size_t grayStride);
+        \fn void SimdBgraToRgb(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * rgb, size_t rgbStride);
 
-        \short Converts 32-bit RGBA image to 8-bit gray image.
+        \short Converts 32-bit BGRA image to 24-bit RGB image. Also it can be used for 32-bit RGBA to 24-bit BGR conversion.
 
         All images must have the same width and height.
 
-        \param [in] rgba - a pointer to pixels data of input 32-bit RGBA image.
+        \note This function has C++ wrappers: Simd::BgraToRgb(const View<A>& bgra, View<A>& rgb)
+            and Simd::RgbaToBgr(const View<A>& rgba, View<A>& bgr).
+
+        \param [in] bgra - a pointer to pixels data of input 32-bit BGRA (or 32-bit RGBA) image.
         \param [in] width - an image width.
         \param [in] height - an image height.
-        \param [in] rgbaStride - a row size of the rgba image.
-        \param [out] gray - a pointer to pixels data of output 8-bit gray image.
-        \param [in] grayStride - a row size of the gray image.
+        \param [in] bgraStride - a row size of the bgra image.
+        \param [out] rgb - a pointer to pixels data of output 24-bit RGB (or 24-bit BGR) image.
+        \param [in] rgbStride - a row size of the rgb image.
     */
-    SIMD_API void SimdRgbaToGray(const uint8_t * rgba, size_t width, size_t height, size_t rgbaStride, uint8_t * gray, size_t grayStride);
+    SIMD_API void SimdBgraToRgb(const uint8_t* bgra, size_t width, size_t height, size_t bgraStride, uint8_t* rgb, size_t rgbStride);
+
+    /*! @ingroup bgra_conversion
+
+        \fn void SimdBgraToRgba(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * rgba, size_t rgbaStride);
+
+        \short Converts 32-bit BGRA image to 32-bit RGBA image. Also it can be used for 32-bit RGBA to 32-bit BGRA conversion.
+
+        All images must have the same width and height.
+
+        \note This function has C++ wrappers: Simd::BgraToRgba(const View<A>& bgra, View<A>& rgba)
+            and Simd::RgbaToBgra(const View<A>& rgba, View<A>& bgra).
+
+        \param [in] bgra - a pointer to pixels data of input 32-bit BGRA (or 32-bit RGBA) image.
+        \param [in] width - an image width.
+        \param [in] height - an image height.
+        \param [in] bgraStride - a row size of the bgra image.
+        \param [out] rgba - a pointer to pixels data of output 32-bit RGBA (or 32-bit BGRA) image.
+        \param [in] rgbaStride - a row size of the rgb image.
+    */
+    SIMD_API void SimdBgraToRgba(const uint8_t* bgra, size_t width, size_t height, size_t bgraStride, uint8_t* rgba, size_t rgbaStride);
 
     /*! @ingroup bgr_conversion
 
@@ -429,42 +467,6 @@ extern "C"
         \param [in] alpha - a value of alpha channel.
     */
     SIMD_API void SimdBgrToBgra(const uint8_t * bgr, size_t width, size_t height, size_t bgrStride, uint8_t * bgra, size_t bgraStride, uint8_t alpha);
-
-    /*! @ingroup bgr_conversion
-
-        \fn void SimdBgrToRgba(const uint8_t * bgr, size_t width, size_t height, size_t bgrStride, uint8_t * rgba, size_t rgbaStride, uint8_t alpha);
-
-        \short Converts 24-bit BGR image to 32-bit RGBA image.
-
-        All images must have the same width and height.
-
-        \param [in] bgr - a pointer to pixels data of input 24-bit BGR image.
-        \param [in] width - an image width.
-        \param [in] height - an image height.
-        \param [in] bgrStride - a row size of the bgr image.
-        \param [out] rgba - a pointer to pixels data of output 32-bit BGRA image.
-        \param [in] rgbaStride - a row size of the bgra image.
-        \param [in] alpha - a value of alpha channel.
-    */
-    SIMD_API void SimdBgrToRgba(const uint8_t * bgr, size_t width, size_t height, size_t bgrStride, uint8_t * rgba, size_t rgbaStride, uint8_t alpha);
-
-    /*! @ingroup bgr_conversion
-
-        \fn void SimdBgraToRgba(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * rgba, size_t rgbaStride);
-
-        \short Converts 32-bit BGRA image to 32-bit RGBA image.
-
-        All images must have the same width and height.
-
-        \param [in] bgra - a pointer to pixels data of input 32-bit BGRA image.
-        \param [in] width - an image width.
-        \param [in] height - an image height.
-        \param [in] bgraStride - a row size of the bgra image.
-        \param [out] rgba - a pointer to pixels data of output 32-bit RGBA image.
-        \param [in] rgbaStride - a row size of the rgba image.
-        \param [in] alpha - a value of alpha channel.
-    */
-    SIMD_API void SimdBgraToRgba(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * rgba, size_t rgbaStride);
 
     /*! @ingroup other_conversion
 
@@ -512,39 +514,23 @@ extern "C"
 
     /*! @ingroup bgr_conversion
 
-        \fn void SimdRgbToGray(const uint8_t * rgb, size_t width, size_t height, size_t rgbStride, uint8_t * gray, size_t grayStride);
+        \fn void SimdBgrToRgb(const uint8_t * bgr, size_t width, size_t height, size_t bgrStride, uint8_t * rgb, size_t rgbStride);
 
-        \short Converts 24-bit RGB image to 8-bit gray image.
+        \short Converts 24-bit BGR image to 24-bit RGB image. Also it can be used for 24-bit RGB to 24-bit BGR conversion.
 
         All images must have the same width and height.
 
-        \param [in] rgb - a pointer to pixels data of input 24-bit BGR image.
+        \note This function has C++ wrappers: Simd::BgrToRgb(const View<A> & bgr, View<A> & rgb) 
+            and Simd::RgbToBgr(const View<A>& rgb, View<A>& bgr).
+
+        \param [in] bgr - a pointer to pixels data of input 24-bit BGR image (or 24-bit RGB image).
         \param [in] width - an image width.
         \param [in] height - an image height.
-        \param [in] rgbStride - a row size of the bgr image.
-        \param [out] gray - a pointer to pixels data of output 8-bit gray image.
-        \param [in] grayStride - a row size of the gray image.
-    */
-    SIMD_API void SimdRgbToGray(const uint8_t * rgb, size_t width, size_t height, size_t rgbStride, uint8_t * gray, size_t grayStride);
-
-    /*! @ingroup bgr_conversion
-
-        \fn void SimdBgrToRgb(const uint8_t * bgr, size_t bgrStride, size_t width, size_t height, uint8_t * rgb, size_t rgbStride);
-
-        \short Converts 24-bit BGR image to 24-bit RGB image (also it performs backward conversion).
-
-        All images must have the same width and height.
-
-        \note This function has a C++ wrapper Simd::BgrToRgb(const View<A> & bgr, View<A> & rgb).
-
-        \param [in] bgr - a pointer to pixels data of input 24-bit BGR image.
         \param [in] bgrStride - a row size of the bgr image.
-        \param [in] width - an image width.
-        \param [in] height - an image height.
-        \param [out] rgb - a pointer to pixels data of output 24-bit RGB image.
+        \param [out] rgb - a pointer to pixels data of output 24-bit RGB image (or 24-bit BGR image).
         \param [in] rgbStride - a row size of the rgb image.
     */
-    SIMD_API void SimdBgrToRgb(const uint8_t * bgr, size_t bgrStride, size_t width, size_t height, uint8_t * rgb, size_t rgbStride);
+    SIMD_API void SimdBgrToRgb(const uint8_t * bgr, size_t width, size_t height, size_t bgrStride, uint8_t * rgb, size_t rgbStride);
 
     /*! @ingroup copying
 
@@ -591,7 +577,7 @@ extern "C"
     SIMD_API void SimdCopyFrame(const uint8_t * src, size_t srcStride, size_t width, size_t height, size_t pixelSize,
         size_t frameLeft, size_t frameTop, size_t frameRight, size_t frameBottom, uint8_t * dst, size_t dstStride);
 
-    /*! @ingroup other_conversion
+    /*! @ingroup deinterleave_conversion
 
         \fn void SimdDeinterleaveBgr(const uint8_t * bgr, size_t bgrStride, size_t width, size_t height, uint8_t * b, size_t bStride, uint8_t * g, size_t gStride, uint8_t * r, size_t rStride);
 
@@ -599,7 +585,9 @@ extern "C"
 
         All images must have the same width and height.
 
-        \note This function has a C++ wrapper Simd::DeinterleaveBgr(const View<A>& bgr, View<A>& b, View<A>& g, View<A>& r).
+        \note This function has C++ wrappers:
+            Simd::DeinterleaveBgr(const View<A>& bgr, View<A>& b, View<A>& g, View<A>& r),
+            Simd::DeinterleaveRgb(const View<A>& rgb, View<A>& r, View<A>& g, View<A>& b).
 
         \param [in] bgr - a pointer to pixels data of input 24-bit BGR interleaved image.
         \param [in] bgrStride - a row size of the bgr image.
@@ -615,7 +603,7 @@ extern "C"
     SIMD_API void SimdDeinterleaveBgr(const uint8_t * bgr, size_t bgrStride, size_t width, size_t height,
         uint8_t * b, size_t bStride, uint8_t * g, size_t gStride, uint8_t * r, size_t rStride);
 
-    /*! @ingroup other_conversion
+    /*! @ingroup deinterleave_conversion
 
         \fn void SimdDeinterleaveBgra(const uint8_t * bgra, size_t bgraStride, size_t width, size_t height, uint8_t * b, size_t bStride, uint8_t * g, size_t gStride, uint8_t * r, size_t rStride, uint8_t * a, size_t aStride);
 
@@ -623,7 +611,11 @@ extern "C"
 
         All images must have the same width and height.
 
-        \note This function has a C++ wrapper Simd::DeinterleaveBgra(const View<A>& bgra, View<A>& b, View<A>& g, View<A>& r, View<A>& a).
+        \note This function has C++ wrappers:
+            Simd::DeinterleaveBgra(const View<A>& bgra, View<A>& b, View<A>& g, View<A>& r, View<A>& a),
+            Simd::DeinterleaveBgra(const View<A>& bgra, View<A>& b, View<A>& g, View<A>& r),
+            Simd::DeinterleaveRgba(const View<A>& rgba, View<A>& r, View<A>& g, View<A>& b, View<A>& a),
+            Simd::DeinterleaveRgba(const View<A>& rgba, View<A>& r, View<A>& g, View<A>& b).
 
         \param [in] bgra - a pointer to pixels data of input 32-bit BGRA interleaved image.
         \param [in] bgraStride - a row size of the bgra image.
@@ -635,7 +627,7 @@ extern "C"
         \param [in] gStride - a row size of the g image.
         \param [out] r - a pointer to pixels data of 8-bit Red planar image.
         \param [in] rStride - a row size of the r image.
-        \param [out] a - a pointer to pixels data of 8-bit Alpha planar image.
+        \param [out] a - a pointer to pixels data of 8-bit Alpha planar image. It can be NULL.
         \param [in] aStride - a row size of the a image.
     */
     SIMD_API void SimdDeinterleaveBgra(const uint8_t * bgra, size_t bgraStride, size_t width, size_t height,
@@ -670,20 +662,27 @@ extern "C"
         size_t channelCount, uint8_t * dst, size_t dstStride);
 
     /*! @ingroup gaussian_filter
+
         \fn void * SimdGaussianBlurInit(size_t width, size_t height, size_t channels, const float * sigma, const float* epsilon);
+
         \short Creates Gaussian blur filter context.
+
         In particular calculates Gaussian blur coefficients:
         \verbatim
         half = floor(sqrt(log(1/epsilon)) * sigma);
         weight[2*half + 1];
+
         for(x = -half; x <= half; ++x)
             weight[x + half] = exp(-sqr(x / sigma) / 2);
+
         sum = 0;
         for (x = -half; x <= half; ++x)
             sum += weight[x + half];
+
         for (x = -half; x <= half; ++x)
             weight[x + half] /= sum;
         \endverbatim
+
         \param [in] width - a width of input and output image.
         \param [in] height - a height of input and output image.
         \param [in] channels - a channel number of input and output image. Its value must be in range [1..4].
@@ -697,8 +696,11 @@ extern "C"
     SIMD_API void* SimdGaussianBlurInit(size_t width, size_t height, size_t channels, const float * sigma, const float* epsilon);
 
     /*! @ingroup gaussian_filter
+
         \fn void SimdGaussianBlurRun(const void* filter, const uint8_t* src, size_t srcStride, uint8_t* dst, size_t dstStride);
+
         \short Performs image Gaussian bluring.
+
         Bluring algorithm for every point:
         \verbatim
         sum = 0;
@@ -713,6 +715,7 @@ extern "C"
         }
         dst[dx, dy] = sum;
         \endverbatim
+
         \param [in] filter - a filter context. It must be created by function ::SimdGaussianBlurInit and released by function ::SimdRelease.
         \param [in] src - a pointer to pixels data of the original input image.
         \param [in] srcStride - a row size (in bytes) of the input image.
@@ -725,17 +728,18 @@ extern "C"
 
         \fn void SimdGrayToBgr(const uint8_t * gray, size_t width, size_t height, size_t grayStride, uint8_t * bgr, size_t bgrStride);
 
-        \short Converts 8-bit gray image to 24-bit BGR image.
+        \short Converts 8-bit gray image to 24-bit BGR image. Also it can be used for 8-bit gray to 24-bit RGB conversion.
 
         All images must have the same width and height.
 
-        \note This function has a C++ wrapper Simd::GrayToBgr(const View<A>& gray, View<A>& bgr).
+        \note This function has C++ wrappers: Simd::GrayToBgr(const View<A>& gray, View<A>& bgr) 
+            and Simd::GrayToRgb(const View<A>& gray, View<A>& rgb).
 
         \param [in] gray - a pointer to pixels data of input 8-bit gray image.
         \param [in] width - an image width.
         \param [in] height - an image height.
         \param [in] grayStride - a row size of the gray image.
-        \param [out] bgr - a pointer to pixels data of output 24-bit BGR image.
+        \param [out] bgr - a pointer to pixels data of output 24-bit BGR (or 24-bit RGB) image.
         \param [in] bgrStride - a row size of the bgr image.
     */
     SIMD_API void SimdGrayToBgr(const uint8_t *gray, size_t width, size_t height, size_t grayStride, uint8_t *bgr, size_t bgrStride);
@@ -744,22 +748,99 @@ extern "C"
 
         \fn void SimdGrayToBgra(const uint8_t * gray, size_t width, size_t height, size_t grayStride, uint8_t * bgra, size_t bgraStride, uint8_t alpha);
 
-        \short Converts 8-bit gray image to 32-bit BGRA image.
+        \short Converts 8-bit gray image to 32-bit BGRA image. Also it can be used for 8-bit gray to 32-bit RGBA conversion.
 
         All images must have the same width and height.
 
-        \note This function has a C++ wrapper Simd::GrayToBgra(const View<A>& gray, View<A>& bgra, uint8_t alpha).
+        \note This function has C++ wrappers: Simd::GrayToBgra(const View<A>& gray, View<A>& bgra, uint8_t alpha) 
+            and Simd::GrayToRgba(const View<A>& gray, View<A>& rgba, uint8_t alpha).
 
         \param [in] gray - a pointer to pixels data of input 8-bit gray image.
         \param [in] width - an image width.
         \param [in] height - an image height.
         \param [in] grayStride - a row size of the gray image.
-        \param [out] bgra - a pointer to pixels data of output 32-bit BGRA image.
+        \param [out] bgra - a pointer to pixels data of output 32-bit BGRA (or 32-bit RGBA) image.
         \param [in] bgraStride - a row size of the bgra image.
         \param [in] alpha - a value of alpha channel.
     */
     SIMD_API void SimdGrayToBgra(const uint8_t *gray, size_t width, size_t height, size_t grayStride,
         uint8_t *bgra, size_t bgraStride, uint8_t alpha);
+
+    /*! @ingroup image_io
+
+        \fn uint8_t* SimdImageSaveToMemory(const uint8_t* src, size_t stride, size_t width, size_t height, SimdPixelFormatType format, SimdImageFileType file, int quality, size_t * size);
+
+        \short Saves an image to memory in given image file format.
+
+        \param [in] src - a pointer to pixels data of input image. 
+        \param [in] stride - a row size of input image in bytes.
+        \param [in] width - a width of input image.
+        \param [in] height - a height of input image.
+        \param [in] format - a pixel format of input image. 
+            Supported pixel formats: ::SimdPixelFormatGray8, ::SimdPixelFormatBgr24, ::SimdPixelFormatBgra32, ::SimdPixelFormatRgb24, ::SimdPixelFormatRgba32.
+        \param [in] file - a format of output image file. To auto choise format of output file set this parameter to ::SimdImageFileUndefined.
+        \param [in] quality - a parameter of compression quality (if file format supports it).
+        \param [out] size - a pointer to the size of output image file in bytes.
+        \return a pointer to memory buffer with output image file. 
+            It has to be deleted after use by function ::SimdFree. On error it returns NULL.
+    */
+    SIMD_API uint8_t* SimdImageSaveToMemory(const uint8_t* src, size_t stride, size_t width, size_t height, SimdPixelFormatType format, SimdImageFileType file, int quality, size_t * size);
+
+    /*! @ingroup image_io
+
+        \fn SimdBool SimdImageSaveToFile(const uint8_t* src, size_t stride, size_t width, size_t height, SimdPixelFormatType format, SimdImageFileType file, int quality, const char * path);
+
+        \short Saves an image to memory in given image file format.
+
+        \param [in] src - a pointer to pixels data of input image.
+        \param [in] stride - a row size of input image in bytes.
+        \param [in] width - a width of input image.
+        \param [in] height - a height of input image.
+        \param [in] format - a pixel format of input image. 
+            Supported pixel formats: ::SimdPixelFormatGray8, ::SimdPixelFormatBgr24, ::SimdPixelFormatBgra32, ::SimdPixelFormatRgb24, ::SimdPixelFormatRgba32.
+        \param [in] file - a format of output image file. To auto choise format of output file set this parameter to ::SimdImageFileUndefined.
+        \param [in] quality - a parameter of compression quality (if file format supports it).
+        \param [in] path - a path to output image file.
+        \return result of the operation.
+    */
+    SIMD_API SimdBool SimdImageSaveToFile(const uint8_t* src, size_t stride, size_t width, size_t height, SimdPixelFormatType format, SimdImageFileType file, int quality, const char * path);
+
+    /*! @ingroup image_io
+
+        \fn uint8_t* SimdImageLoadFromMemory(const uint8_t* data, size_t size, size_t* stride, size_t* width, size_t* height, SimdPixelFormatType * format);
+
+        \short Loads an image from memory buffer.
+
+        \param [in] data - a pointer to memory buffer with input image file.
+        \param [in] size - a size of input image file in bytes.
+        \param [out] stride - a pointer to row size of output image in bytes.
+        \param [out] width - a pointer to width of output image.
+        \param [out] height - a pointer to height of output image.
+        \param [in, out] format - a pointer to pixel format of output image. 
+            Here you can set desired pixel format (it can be ::SimdPixelFormatGray8, ::SimdPixelFormatBgr24, ::SimdPixelFormatBgra32, ::SimdPixelFormatRgb24, ::SimdPixelFormatRgba32).
+            Or set ::SimdPixelFormatNone and use pixel format of input image file.
+        \return a pointer to pixels data of output image. 
+            It has to be deleted after use by function ::SimdFree. On error it returns NULL.
+    */
+    SIMD_API uint8_t* SimdImageLoadFromMemory(const uint8_t* data, size_t size, size_t* stride, size_t* width, size_t* height, SimdPixelFormatType * format);
+
+    /*! @ingroup image_io
+
+        \fn uint8_t* SimdImageLoadFromFile(const char* path, size_t* stride, size_t* width, size_t* height, SimdPixelFormatType * format);
+
+        \short Loads an image from file.
+
+        \param [in] path - a path to input image file.
+        \param [out] stride - a pointer to row size of output image in bytes.
+        \param [out] width - a pointer to width of output image.
+        \param [out] height - a pointer to height of output image.
+        \param [in, out] format - a pointer to pixel format of output image.
+            Here you can set desired pixel format (it can be ::SimdPixelFormatGray8, ::SimdPixelFormatBgr24, ::SimdPixelFormatBgra32, ::SimdPixelFormatRgb24, ::SimdPixelFormatRgba32).
+            Or set ::SimdPixelFormatNone and use pixel format of input image file.
+        \return a pointer to pixels data of output image.
+            It has to be deleted after use by function ::SimdFree. On error it returns NULL.
+    */
+    SIMD_API uint8_t* SimdImageLoadFromFile(const char* path, size_t* stride, size_t* width, size_t* height, SimdPixelFormatType * format);
 
     /*! @ingroup other_conversion
 
@@ -785,7 +866,7 @@ extern "C"
     SIMD_API void SimdInterleaveBgr(const uint8_t * b, size_t bStride, const uint8_t * g, size_t gStride, const uint8_t * r, size_t rStride,
         size_t width, size_t height, uint8_t * bgr, size_t bgrStride);
 
-    /*! @ingroup other_conversion
+    /*! @ingroup interleave_conversion
 
         \fn void SimdInterleaveBgra(const uint8_t * b, size_t bStride, const uint8_t * g, size_t gStride, const uint8_t * r, size_t rStride, const uint8_t * a, size_t aStride, size_t width, size_t height, uint8_t * bgra, size_t bgraStride);
 
@@ -1125,6 +1206,16 @@ extern "C"
 
         \short Creates resize context.
 
+        An using example (resize of RGBA64 image):
+        \verbatim
+        void * resizer = SimdResizerInit(srcX, srcY, dstX, dstY, 4, SimdResizeChannelShort, SimdResizeMethodBilinear);
+        if (resizer)
+        {
+             SimdResizerRun(resizer, (uint8_t*)src, srcStride, (uint8_t*)dst, dstStride);
+             SimdRelease(resizer);
+        }
+        \endverbatim
+
         \param [in] srcX - a width of the input image.
         \param [in] srcY - a height of the input image.
         \param [in] dstX - a width of the output image.
@@ -1151,6 +1242,65 @@ extern "C"
         \param [in] dstStride - a row size (in bytes) of the output image.
     */
     SIMD_API void SimdResizerRun(const void * resizer, const uint8_t * src, size_t srcStride, uint8_t * dst, size_t dstStride);
+
+    /*! @ingroup rgb_conversion
+
+        \fn void SimdRgbToBgra(const uint8_t * rgb, size_t width, size_t height, size_t rgbStride, uint8_t * bgra, size_t bgraStride, uint8_t alpha);
+
+        \short Converts 24-bit RGB image to 32-bit BGRA image. Also it can be used for 24-bit BGR to 32-bit RGBA conversion.
+
+        All images must have the same width and height.
+
+        \note This function has C++ wrappers: Simd::RgbToBgra(const View<A>& rgb, View<A>& bgra, uint8_t alpha)
+            and Simd::BgrToRgba(const View<A>& bgr, View<A>& rgba, uint8_t alpha).
+
+        \param [in] rgb - a pointer to pixels data of input 24-bit RGB (or 24-bit BGR) image.
+        \param [in] width - an image width.
+        \param [in] height - an image height.
+        \param [in] rgbStride - a row size of the rgb image.
+        \param [out] bgra - a pointer to pixels data of output 32-bit BGRA (or 32-bit RGBA) image.
+        \param [in] bgraStride - a row size of the bgra image.
+        \param [in] alpha - a value of alpha channel.
+    */
+    SIMD_API void SimdRgbToBgra(const uint8_t* rgb, size_t width, size_t height, size_t rgbStride, uint8_t* bgra, size_t bgraStride, uint8_t alpha);
+
+    /*! @ingroup rgb_conversion
+
+        \fn void SimdRgbToGray(const uint8_t * rgb, size_t width, size_t height, size_t rgbStride, uint8_t * gray, size_t grayStride);
+
+        \short Converts 24-bit RGB image to 8-bit gray image.
+
+        All images must have the same width and height.
+
+        \note This function has a C++ wrapper Simd::RgbToGray(const View<A>& rgb, View<A>& gray).
+
+        \param [in] rgb - a pointer to pixels data of input 24-bit RGB image.
+        \param [in] width - an image width.
+        \param [in] height - an image height.
+        \param [in] rgbStride - a row size of the rgb image.
+        \param [out] gray - a pointer to pixels data of output 8-bit gray image.
+        \param [in] grayStride - a row size of the gray image.
+    */
+    SIMD_API void SimdRgbToGray(const uint8_t* rgb, size_t width, size_t height, size_t rgbStride, uint8_t* gray, size_t grayStride);
+
+    /*! @ingroup rgba_conversion
+
+        \fn void SimdRgbaToGray(const uint8_t * rgba, size_t width, size_t height, size_t rgbaStride, uint8_t * gray, size_t grayStride);
+
+        \short Converts 32-bit RGBA image to 8-bit gray image.
+
+        All images must have the same width and height.
+
+        \note This function has a C++ wrapper Simd::RgbaToGray(const View<A>& rgba, View<A>& gray).
+
+        \param [in] rgba - a pointer to pixels data of input 32-bit RGBA image.
+        \param [in] width - an image width.
+        \param [in] height - an image height.
+        \param [in] rgbaStride - a row size of the rgba image.
+        \param [out] gray - a pointer to pixels data of output 8-bit gray image.
+        \param [in] grayStride - a row size of the gray image.
+    */
+    SIMD_API void SimdRgbaToGray(const uint8_t* rgba, size_t width, size_t height, size_t rgbaStride, uint8_t* gray, size_t grayStride);
 
     /*! @ingroup resizing
 

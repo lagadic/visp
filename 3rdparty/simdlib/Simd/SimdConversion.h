@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar,
+* Copyright (c) 2011-2021 Yermalayeu Ihar,
 *               2014-2015 Antonenka Mikhail.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -38,16 +38,10 @@ namespace Simd
             return (BLUE_TO_GRAY_WEIGHT*blue + GREEN_TO_GRAY_WEIGHT * green +
                 RED_TO_GRAY_WEIGHT * red + BGR_TO_GRAY_ROUND_TERM) >> BGR_TO_GRAY_AVERAGING_SHIFT;
         }
-
-        SIMD_INLINE int RgbToGray(int red, int green, int blue)
-        {
-            return (BLUE_TO_GRAY_WEIGHT*blue + GREEN_TO_GRAY_WEIGHT * green +
-                RED_TO_GRAY_WEIGHT * red + BGR_TO_GRAY_ROUND_TERM) >> BGR_TO_GRAY_AVERAGING_SHIFT;
-        }
     }
 
-#ifdef SIMD_SSSE3_ENABLE    
-    namespace Ssse3
+#ifdef SIMD_SSE41_ENABLE
+    namespace Sse41
     {
         template <int index> __m128i InterleaveBgr(__m128i blue, __m128i green, __m128i red);
 
@@ -99,7 +93,7 @@ namespace Simd
                         _mm_shuffle_epi8(bgr[2], K8_SHUFFLE_BGR2_TO_RED)));
         }
     }
-#endif//SIMD_SSSE3_ENABLE
+#endif
 
 #ifdef SIMD_AVX2_ENABLE    
     namespace Avx2
@@ -181,41 +175,24 @@ namespace Simd
 
         template<> SIMD_INLINE __m256i BgrToBgra<false>(const __m256i & bgr, const __m256i & alpha)
         {
-            return _mm256_or_si256(_mm256_shuffle_epi8(_mm256_permute4x64_epi64(bgr, 0x94), K8_BGRA_TO_BGR_SHUFFLE), alpha);
+            return _mm256_or_si256(_mm256_shuffle_epi8(_mm256_permute4x64_epi64(bgr, 0x94), K8_BGR_TO_BGRA_SHUFFLE), alpha);
         }
 
         template<> SIMD_INLINE __m256i BgrToBgra<true>(const __m256i & bgr, const __m256i & alpha)
         {
-            return _mm256_or_si256(_mm256_shuffle_epi8(_mm256_permute4x64_epi64(bgr, 0xE9), K8_BGRA_TO_BGR_SHUFFLE), alpha);
-        }
-
-        template<bool tail> __m256i BgrToRgba(const __m256i & bgr, const __m256i & alpha);
-
-        template<> SIMD_INLINE __m256i BgrToRgba<false>(const __m256i & bgr, const __m256i & alpha)
-        {
-            return _mm256_or_si256(_mm256_shuffle_epi8(_mm256_permute4x64_epi64(bgr, 0x94), K8_BGRA_TO_RGB_SHUFFLE), alpha);
-        }
-
-        template<> SIMD_INLINE __m256i BgrToRgba<true>(const __m256i & bgr, const __m256i & alpha)
-        {
-            return _mm256_or_si256(_mm256_shuffle_epi8(_mm256_permute4x64_epi64(bgr, 0xE9), K8_BGRA_TO_RGB_SHUFFLE), alpha);
-        }
-
-        SIMD_INLINE __m256i BgraToRgba(const __m256i & bgra)
-        {
-            return _mm256_shuffle_epi8(bgra, K8_BGRA_TO_RGBA_SHUFFLE);
+            return _mm256_or_si256(_mm256_shuffle_epi8(_mm256_permute4x64_epi64(bgr, 0xE9), K8_BGR_TO_BGRA_SHUFFLE), alpha);
         }
 
         template<bool tail> __m256i RgbToBgra(const __m256i & rgb, const __m256i & alpha);
 
         template<> SIMD_INLINE __m256i RgbToBgra<false>(const __m256i & rgb, const __m256i & alpha)
         {
-            return _mm256_or_si256(_mm256_shuffle_epi8(_mm256_permute4x64_epi64(rgb, 0x94), K8_BGRA_TO_RGB_SHUFFLE), alpha);
+            return _mm256_or_si256(_mm256_shuffle_epi8(_mm256_permute4x64_epi64(rgb, 0x94), K8_RGB_TO_BGRA_SHUFFLE), alpha);
         }
 
         template<> SIMD_INLINE __m256i RgbToBgra<true>(const __m256i & rgb, const __m256i & alpha)
         {
-            return _mm256_or_si256(_mm256_shuffle_epi8(_mm256_permute4x64_epi64(rgb, 0xE9), K8_BGRA_TO_RGB_SHUFFLE), alpha);
+            return _mm256_or_si256(_mm256_shuffle_epi8(_mm256_permute4x64_epi64(rgb, 0xE9), K8_RGB_TO_BGRA_SHUFFLE), alpha);
         }
     }
 #endif// SIMD_AVX2_ENABLE
@@ -236,8 +213,20 @@ namespace Simd
 
         template <int part> SIMD_INLINE int32x4_t BgrToU(uint16x8_t blue, uint16x8_t green, uint16x8_t red)
         {
-            return vshrq_n_s32(vmlal_s16(vmlal_s16(vmlal_s16(K32_BGR_TO_YUV_ROUND_TERM, (int16x4_t)Half<part>(blue), K16_BLUE_TO_U_WEIGHT),
-                (int16x4_t)Half<part>(green), K16_GREEN_TO_U_WEIGHT), (int16x4_t)Half<part>(red), K16_RED_TO_U_WEIGHT), Base::BGR_TO_YUV_AVERAGING_SHIFT);
+            return vshrq_n_s32(vmlal_s16(vmlal_s16(vmlal_s16(K32_BGR_TO_YUV_ROUND_TERM, vreinterpret_s16_u16(Half<part>(blue)), K16_BLUE_TO_U_WEIGHT),
+                vreinterpret_s16_u16(Half<part>(green)), K16_GREEN_TO_U_WEIGHT), vreinterpret_s16_u16(Half<part>(red)), K16_RED_TO_U_WEIGHT), Base::BGR_TO_YUV_AVERAGING_SHIFT);
+        }
+
+        SIMD_INLINE int16x8_t BgrToU(uint16x8_t blue, uint16x8_t green, uint16x8_t red)
+        {
+            return vaddq_s16(K16_UV_ADJUST, PackI32(BgrToU<0>(blue, green, red), BgrToU<1>(blue, green, red)));
+        }
+
+        SIMD_INLINE uint8x16_t BgrToU(uint8x16_t blue, uint8x16_t green, uint8x16_t red)
+        {
+            return PackSaturatedI16(
+                BgrToU(UnpackU8<0>(blue), UnpackU8<0>(green), UnpackU8<0>(red)),
+                BgrToU(UnpackU8<1>(blue), UnpackU8<1>(green), UnpackU8<1>(red)));
         }
     }
 #endif// SIMD_NEON_ENABLE

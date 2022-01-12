@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2017 Yermalayeu Ihar.
+* Copyright (c) 2011-2020 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -78,7 +78,7 @@ namespace Simd
 
         template <bool compensation> SIMD_INLINE __m256i ReduceRow(const __m256i lo[3], const __m256i hi[3])
         {
-            return PackU16ToU8(
+            return PackI16ToU8(
                 DivideBy16<compensation>(BinomialSum16(lo[0], lo[1], lo[2])),
                 DivideBy16<compensation>(BinomialSum16(hi[0], hi[1], hi[2])));
         }

@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2018 Yermalayeu Ihar.
+* Copyright (c) 2011-2021 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -108,6 +108,12 @@ namespace Simd
         {
             const float a[4] = { a0, a1, a2, a3 };
             return vld1q_f32(a);
+        }
+
+        SIMD_INLINE int32x4_t SetI32(int32_t a0, int32_t a1, int32_t a2, int32_t a3)
+        {
+            const int32_t a[4] = { a0, a1, a2, a3 };
+            return vld1q_s32(a);
         }
     }
 #endif// SIMD_NEON_ENABLE
