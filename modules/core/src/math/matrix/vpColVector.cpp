@@ -690,7 +690,7 @@ vpColVector &vpColVector::operator=(double x)
  * Converts the vpColVector to a std::vector.
  * \return The corresponding std::vector<double>.
  */
-std::vector<double> vpColVector::toStdVector()
+std::vector<double> vpColVector::toStdVector() const
 {
   std::vector<double> v(this->size());
 

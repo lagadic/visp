@@ -153,7 +153,7 @@ public:
   // Transpose of the rotation vector.
   vpRowVector t() const;
 
-  std::vector<double> toStdVector();
+  std::vector<double> toStdVector() const;
 
   //@}
 
