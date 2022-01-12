@@ -43,6 +43,9 @@
 
 #include <visp3/core/vpConfig.h>
 
+#if defined( VISP_HAVE_OCCIPITAL_STRUCTURE ) && ( VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11 ) &&                       \
+    ( defined( VISP_HAVE_PCL ) )
+
 #ifdef VISP_HAVE_PCL
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
@@ -53,93 +56,103 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpOccipitalStructure.h>
 
-#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
-  (defined(VISP_HAVE_PCL))
-
-int main()
+int
+main()
 {
-  try {
+  try
+  {
     unsigned int display_scale = 1;
     vpOccipitalStructure sc;
 
     ST::CaptureSessionSettings settings;
-    settings.source = ST::CaptureSessionSourceId::StructureCore;
+    settings.source                       = ST::CaptureSessionSourceId::StructureCore;
     settings.structureCore.visibleEnabled = true;
-    settings.applyExpensiveCorrection = true; // Apply a correction and clean filter to the depth before streaming.
+    settings.applyExpensiveCorrection     = true; // Apply a correction and clean filter to the depth before streaming.
 
-    sc.open(settings);
+    sc.open( settings );
 
     // Calling these 2 functions to set internal variables.
-    sc.getCameraParameters(vpOccipitalStructure::visible);
-    sc.getCameraParameters(vpOccipitalStructure::depth);
+    sc.getCameraParameters( vpOccipitalStructure::visible );
+    sc.getCameraParameters( vpOccipitalStructure::depth );
 
-#if defined(VISP_HAVE_X11)
-    vpDisplayX display_visible;  // Visible image
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display_visible;  // Visible image
+#if defined( VISP_HAVE_X11 )
+    vpDisplayX display_visible; // Visible image
+#elif defined( VISP_HAVE_GDI )
+    vpDisplayGDI display_visible; // Visible image
 #endif
-    vpImage<vpRGBa> I_visible(sc.getHeight(vpOccipitalStructure::visible), sc.getWidth(vpOccipitalStructure::visible), 0);;
-    display_visible.setDownScalingFactor(display_scale);
-    display_visible.init(I_visible, static_cast<int>(I_visible.getWidth()/display_scale) + 80, 10, "Color image");
+    vpImage< vpRGBa > I_visible( sc.getHeight( vpOccipitalStructure::visible ),
+                                 sc.getWidth( vpOccipitalStructure::visible ), 0 );
+    ;
+    display_visible.setDownScalingFactor( display_scale );
+    display_visible.init( I_visible, static_cast< int >( I_visible.getWidth() / display_scale ) + 80, 10,
+                          "Color image" );
 
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+    pcl::PointCloud< pcl::PointXYZRGB >::Ptr pointcloud( new pcl::PointCloud< pcl::PointXYZRGB > );
 
-    sc.acquire((unsigned char *)I_visible.bitmap, NULL, NULL, pointcloud);
+    sc.acquire( (unsigned char *)I_visible.bitmap, NULL, NULL, pointcloud );
 
-    pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
-    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb(pointcloud);
+    pcl::visualization::PCLVisualizer::Ptr viewer( new pcl::visualization::PCLVisualizer( "3D Viewer" ) );
+    pcl::visualization::PointCloudColorHandlerRGBField< pcl::PointXYZRGB > rgb( pointcloud );
 
-    viewer->setBackgroundColor(0, 0, 0);
+    viewer->setBackgroundColor( 0, 0, 0 );
     viewer->initCameraParameters();
-    viewer->setCameraPosition(0, 0, -0.5, 0, -1, 0);
+    viewer->setCameraPosition( 0, 0, -0.5, 0, -1, 0 );
 
-    while (true) {
+    while ( true )
+    {
       double t = vpTime::measureTimeMs();
 
       // Acquire depth as point cloud.
-      sc.acquire((unsigned char *)I_visible.bitmap, NULL, NULL, pointcloud);
-      vpDisplay::display(I_visible);
-      vpDisplay::displayText(I_visible, 15*display_scale, 15*display_scale, "Click to quit", vpColor::red);
-      vpDisplay::flush(I_visible);
+      sc.acquire( (unsigned char *)I_visible.bitmap, NULL, NULL, pointcloud );
+      vpDisplay::display( I_visible );
+      vpDisplay::displayText( I_visible, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red );
+      vpDisplay::flush( I_visible );
 
-      if(vpDisplay::getClick(I_visible, false))
+      if ( vpDisplay::getClick( I_visible, false ) )
         break;
 
       static bool update = false;
-      if (!update) {
-        viewer->addPointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
-        viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+      if ( !update )
+      {
+        viewer->addPointCloud< pcl::PointXYZRGB >( pointcloud, rgb, "sample cloud" );
+        viewer->setPointCloudRenderingProperties( pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud" );
         update = true;
-      } else {
-        viewer->updatePointCloud<pcl::PointXYZRGB> (pointcloud, rgb, "sample cloud");
+      }
+      else
+      {
+        viewer->updatePointCloud< pcl::PointXYZRGB >( pointcloud, rgb, "sample cloud" );
       }
 
-      viewer->spinOnce(30);
+      viewer->spinOnce( 30 );
 
       std::cout << "Loop time: " << vpTime::measureTimeMs() - t << std::endl;
     }
-
-  } catch (const vpException &e) {
+  }
+  catch ( const vpException &e )
+  {
     std::cerr << "Structure SDK error " << e.what() << std::endl;
-  } catch (const std::exception &e) {
+  }
+  catch ( const std::exception &e )
+  {
     std::cerr << e.what() << std::endl;
   }
 
   return EXIT_SUCCESS;
 }
 #else
-int main()
+int
+main()
 {
-#if !defined(VISP_HAVE_OCCIPITAL_STRUCTURE)
+#if !defined( VISP_HAVE_OCCIPITAL_STRUCTURE )
   std::cout << "You do not have Occipital Structure SDK functionality enabled..." << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install libStructure, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-#elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+#elif ( VISP_CXX_STANDARD < VISP_CXX_STANDARD_11 )
   std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
-#elif !defined(VISP_HAVE_PCL)
+#elif !defined( VISP_HAVE_PCL )
   std::cout << "You do not have PCL 3rd party installed." << std::endl;
 #endif
   return EXIT_SUCCESS;
