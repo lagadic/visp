@@ -160,26 +160,18 @@ vp_add_module(vision visp_core OPTIONAL visp_visual_features visp_io PRIVATE_OPT
 vp_glob_module_sources()
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
+vp_add_tests(DEPENDS_ON visp_mbt visp_gui visp_io)
 
-if (CMAKE_VERSION VERSION_LESS 2.8.12)
-  vp_add_tests(
-    SOURCES_EXCLUDE
-      key-point/testKeyPoint-2.cpp
-      key-point/testKeyPoint-4.cpp
-    DEPENDS_ON visp_mbt visp_gui visp_io)
-else()
-  vp_add_tests(DEPENDS_ON visp_mbt visp_gui visp_io)
-  if(USE_OGRE)
-    # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
-    vp_set_source_file_compile_flag(test/key-point/testKeyPoint-2.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy)
-    vp_set_source_file_compile_flag(test/key-point/testKeyPoint-4.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy)
- endif()
+if(USE_OGRE)
+  # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
+  vp_set_source_file_compile_flag(test/keypoint-with-dataset/testKeyPoint-2.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy)
+  vp_set_source_file_compile_flag(test/keypoint-with-dataset/testKeyPoint-4.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy)
 endif()
 
 vp_set_source_file_compile_flag(src/pose-estimation/vpPoseFeatures.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/pose-estimation/vpPoseRansac.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/pose-estimation/vpLevenbergMarquartd.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/key-point/vpKeyPoint.cpp -Wno-strict-overflow)
+vp_set_source_file_compile_flag(src/keypoint/vpKeyPoint.cpp -Wno-strict-overflow)
 
 if(BUILD_MODULE_visp_mbt AND BUILD_MODULE_visp_gui AND BUILD_MODULE_visp_io)
   vp_find_dataset(VISP_DATASET_FOUND)
