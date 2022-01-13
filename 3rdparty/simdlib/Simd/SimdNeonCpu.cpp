@@ -26,8 +26,10 @@
 
 #if defined(__GNUC__) && (defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE))
 #include <fcntl.h>
+#if !defined(__APPLE__) // Line added for Modification for iOS
 #include <sys/auxv.h>
 #include <asm/hwcap.h>
+#endif // Line added for Modification for iOS
 #endif
 
 namespace Simd
@@ -40,7 +42,7 @@ namespace Simd
 #if defined(_MSC_VER)
             return true;
 #elif defined(__GNUC__)
-#if defined(SIMD_ARM64_ENABLE)
+#if defined(SIMD_ARM64_ENABLE) || (TARGET_OS_IOS != 0) // Modification for iOS
             return true;
 #else
             return Base::CheckBit(AT_HWCAP, HWCAP_NEON);

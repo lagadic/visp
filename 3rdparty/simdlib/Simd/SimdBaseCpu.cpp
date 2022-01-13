@@ -47,9 +47,11 @@
 
 #if defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)
 #include <fcntl.h>
+#if !defined(__APPLE__) // Line added for Modification for iOS
 #include <sys/auxv.h>
 #if defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)
 #include <asm/hwcap.h>
+#endif // Line added for Modification for iOS
 #endif
 #endif
 
@@ -70,10 +72,10 @@ namespace Simd
 #elif (defined __GNUC__)
             if (__get_cpuid_max(0, NULL) < level)
                 return false;
-            __cpuid_count(level, 0, 
-                registers[Cpuid::Eax], 
-                registers[Cpuid::Ebx], 
-                registers[Cpuid::Ecx], 
+            __cpuid_count(level, 0,
+                registers[Cpuid::Eax],
+                registers[Cpuid::Ebx],
+                registers[Cpuid::Ecx],
                 registers[Cpuid::Edx]);
 #else
 #error Do not know how to detect CPU info!
@@ -82,6 +84,7 @@ namespace Simd
         }
 #endif//defined(SIMD_X86_ENABLE) || defined(SIMD_X64_ENABLE)
 
+#if !defined(__APPLE__) // Line added Modified for iOS
 #if defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE))
         bool CheckBit(int at, int bit)
         {
@@ -109,6 +112,7 @@ namespace Simd
             return result;
         }
 #endif//defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE))
+#endif // Line added Modified for iOS
 
         size_t CpuThreadNumber()
         {
@@ -121,7 +125,7 @@ namespace Simd
         void GetLogicalProcessorInformation(std::vector<Info> & info)
         {
             DWORD size = 0;
-            ::GetLogicalProcessorInformation(0, &size); 
+            ::GetLogicalProcessorInformation(0, &size);
             info.resize(size / sizeof(Info));
             ::GetLogicalProcessorInformation(info.data(), &size);
         }
@@ -135,7 +139,7 @@ namespace Simd
                 if (info[i].Relationship == ::RelationNumaNode)
                     number++;
             return number;
-        }            
+        }
 
         size_t CpuCoreNumber()
         {
