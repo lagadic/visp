@@ -128,18 +128,18 @@ namespace Simd
             int i, j;
             uint8_t* good;
 
-            if (req_comp == img_n) 
+            if (req_comp == img_n)
                 return data;
             assert(req_comp >= 1 && req_comp <= 4);
 
             good = (uint8_t*)png__malloc_mad3(req_comp, x, y, 0);
-            if (good == NULL) 
+            if (good == NULL)
             {
                 PNG_FREE(data);
                 return PngErrorPtr("outofmem", "Out of memory");
             }
 
-            for (j = 0; j < (int)y; ++j) 
+            for (j = 0; j < (int)y; ++j)
             {
                 uint8_t* src = data + j * x * img_n;
                 uint8_t* dest = good + j * x * req_comp;
@@ -148,7 +148,7 @@ namespace Simd
 #define PNG__CASE(a,b)   case PNG__COMBO(a,b): for(i=x-1; i >= 0; --i, src += a, dest += b)
                 // convert source image with img_n components to one with req_comp components;
                 // avoid switch per pixel, so use switch per scanline and massive macros
-                switch (PNG__COMBO(img_n, req_comp)) 
+                switch (PNG__COMBO(img_n, req_comp))
                 {
                     PNG__CASE(1, 2) { dest[0] = src[0]; dest[1] = 255; } break;
                     PNG__CASE(1, 3) { dest[0] = dest[1] = dest[2] = src[0]; } break;
@@ -181,18 +181,18 @@ namespace Simd
             int i, j;
             uint16_t* good;
 
-            if (req_comp == img_n) 
+            if (req_comp == img_n)
                 return data;
             assert(req_comp >= 1 && req_comp <= 4);
 
             good = (uint16_t*)png__malloc(req_comp * x * y * 2);
-            if (good == NULL) 
+            if (good == NULL)
             {
                 PNG_FREE(data);
                 return (uint16_t*)PngErrorPtr("outofmem", "Out of memory");
             }
 
-            for (j = 0; j < (int)y; ++j) 
+            for (j = 0; j < (int)y; ++j)
             {
                 uint16_t* src = data + j * x * img_n;
                 uint16_t* dest = good + j * x * req_comp;
@@ -552,7 +552,7 @@ namespace Simd
             uint8_t depth;
         } png__png;
 
-        enum 
+        enum
         {
             PNG__F_none = 0,
             PNG__F_sub = 1,
@@ -611,10 +611,10 @@ namespace Simd
             // we used to check for exact match between raw_len and img_len on non-interlaced PNGs,
             // but issue #276 reported a PNG in the wild that had extra data at the end (all zeros),
             // so just check for raw_len < img_len always.
-            if (raw_len < img_len) 
+            if (raw_len < img_len)
                 return PngError("not enough pixels", "Corrupt PNG");
 
-            for (j = 0; j < y; ++j) 
+            for (j = 0; j < y; ++j)
             {
                 uint8_t* cur = a->out + stride * j;
                 uint8_t* prior;
@@ -623,9 +623,9 @@ namespace Simd
                 if (filter > 4)
                     return PngError("invalid filter", "Corrupt PNG");
 
-                if (depth < 8) 
+                if (depth < 8)
                 {
-                    if (img_width_bytes > x) 
+                    if (img_width_bytes > x)
                         return PngError("invalid width", "Corrupt PNG");
                     cur += x * out_n - img_width_bytes; // store output to the rightmost img_len bytes, so we can decode in place
                     filter_bytes = 1;
@@ -637,7 +637,7 @@ namespace Simd
                 if (j == 0) filter = first_row_filter[filter];
 
                 // handle first byte explicitly
-                for (k = 0; k < filter_bytes; ++k) 
+                for (k = 0; k < filter_bytes; ++k)
                 {
                     switch (filter) {
                     case PNG__F_none: cur[k] = raw[k]; break;
@@ -650,7 +650,7 @@ namespace Simd
                     }
                 }
 
-                if (depth == 8) 
+                if (depth == 8)
                 {
                     if (img_n != out_n)
                         cur[img_n] = 255; // first pixel
@@ -658,9 +658,9 @@ namespace Simd
                     cur += out_n;
                     prior += out_n;
                 }
-                else if (depth == 16) 
+                else if (depth == 16)
                 {
-                    if (img_n != out_n) 
+                    if (img_n != out_n)
                     {
                         cur[filter_bytes] = 255; // first pixel top byte
                         cur[filter_bytes + 1] = 255; // first pixel bottom byte
@@ -669,7 +669,7 @@ namespace Simd
                     cur += output_bytes;
                     prior += output_bytes;
                 }
-                else 
+                else
                 {
                     raw += 1;
                     cur += 1;
@@ -677,7 +677,7 @@ namespace Simd
                 }
 
                 // this is a little gross, so that we don't switch per-pixel or per-component
-                if (depth < 8 || img_n == out_n) 
+                if (depth < 8 || img_n == out_n)
                 {
                     int nk = (width - 1) * filter_bytes;
 #define PNG__CASE(f) \
@@ -696,7 +696,7 @@ namespace Simd
 #undef PNG__CASE
                     raw += nk;
                 }
-                else 
+                else
                 {
                     assert(img_n + 1 == out_n);
 #define PNG__CASE(f) \
@@ -716,10 +716,10 @@ namespace Simd
 
                     // the loop above sets the high byte of the pixels' alpha, but for
                     // 16 bit png files we also need the low byte set. we'll do that here.
-                    if (depth == 16) 
+                    if (depth == 16)
                     {
                         cur = a->out + stride * j; // start at the beginning of the row again
-                        for (i = 0; i < x; ++i, cur += output_bytes) 
+                        for (i = 0; i < x; ++i, cur += output_bytes)
                             cur[filter_bytes + 1] = 255;
                     }
                 }
@@ -744,35 +744,35 @@ namespace Simd
                     // on the next scanline? yes, consider 1-pixel-wide scanlines with 1-bit-per-pixel.
                     // so we need to explicitly clamp the final ones
 
-                    if (depth == 4) 
+                    if (depth == 4)
                     {
-                        for (k = x * img_n; k >= 2; k -= 2, ++in) 
+                        for (k = x * img_n; k >= 2; k -= 2, ++in)
                         {
                             *cur++ = scale * ((*in >> 4));
                             *cur++ = scale * ((*in) & 0x0f);
                         }
-                        if (k > 0) 
+                        if (k > 0)
                             *cur++ = scale * ((*in >> 4));
                     }
-                    else if (depth == 2) 
+                    else if (depth == 2)
                     {
-                        for (k = x * img_n; k >= 4; k -= 4, ++in) 
+                        for (k = x * img_n; k >= 4; k -= 4, ++in)
                         {
                             *cur++ = scale * ((*in >> 6));
                             *cur++ = scale * ((*in >> 4) & 0x03);
                             *cur++ = scale * ((*in >> 2) & 0x03);
                             *cur++ = scale * ((*in) & 0x03);
                         }
-                        if (k > 0) 
+                        if (k > 0)
                             *cur++ = scale * ((*in >> 6));
-                        if (k > 1) 
+                        if (k > 1)
                             *cur++ = scale * ((*in >> 4) & 0x03);
-                        if (k > 2) 
+                        if (k > 2)
                             *cur++ = scale * ((*in >> 2) & 0x03);
                     }
                     else if (depth == 1)
                     {
-                        for (k = x * img_n; k >= 8; k -= 8, ++in) 
+                        for (k = x * img_n; k >= 8; k -= 8, ++in)
                         {
                             *cur++ = scale * ((*in >> 7));
                             *cur++ = scale * ((*in >> 6) & 0x01);
@@ -791,12 +791,12 @@ namespace Simd
                         if (k > 5) *cur++ = scale * ((*in >> 2) & 0x01);
                         if (k > 6) *cur++ = scale * ((*in >> 1) & 0x01);
                     }
-                    if (img_n != out_n) 
+                    if (img_n != out_n)
                     {
                         int q;
                         // insert alpha = 255
                         cur = a->out + stride * j;
-                        if (img_n == 1) 
+                        if (img_n == 1)
                         {
                             for (q = x - 1; q >= 0; --q)
                             {
@@ -807,7 +807,7 @@ namespace Simd
                         else
                         {
                             assert(img_n == 3);
-                            for (q = x - 1; q >= 0; --q) 
+                            for (q = x - 1; q >= 0; --q)
                             {
                                 cur[q * 4 + 3] = 255;
                                 cur[q * 4 + 2] = cur[q * 3 + 2];
@@ -818,7 +818,7 @@ namespace Simd
                     }
                 }
             }
-            else if (depth == 16) 
+            else if (depth == 16)
             {
                 // force the image data from big-endian to platform-native.
                 // this is done in a separate pass due to the decoding relying
@@ -845,7 +845,7 @@ namespace Simd
 
             // de-interlacing
             final = (uint8_t*)png__malloc_mad3(a->s->img_x, a->s->img_y, out_bytes, 0);
-            for (p = 0; p < 7; ++p) 
+            for (p = 0; p < 7; ++p)
             {
                 int xorig[] = { 0,4,0,2,0,1,0 };
                 int yorig[] = { 0,0,4,0,2,0,1 };
@@ -855,7 +855,7 @@ namespace Simd
                 // pass1_x[4] = 0, pass1_x[5] = 1, pass1_x[12] = 1
                 x = (a->s->img_x - xorig[p] + xspc[p] - 1) / xspc[p];
                 y = (a->s->img_y - yorig[p] + yspc[p] - 1) / yspc[p];
-                if (x && y) 
+                if (x && y)
                 {
                     uint32_t img_len = ((((a->s->img_n * x * depth) + 7) >> 3) + 1) * y;
                     if (!png__create_png_image_raw(a, image_data, image_data_len, out_n, x, y, depth, color))
@@ -863,9 +863,9 @@ namespace Simd
                         PNG_FREE(final);
                         return 0;
                     }
-                    for (j = 0; j < y; ++j) 
+                    for (j = 0; j < y; ++j)
                     {
-                        for (i = 0; i < x; ++i) 
+                        for (i = 0; i < x; ++i)
                         {
                             int out_y = j * yspc[p] + yorig[p];
                             int out_x = i * xspc[p] + xorig[p];
@@ -893,17 +893,17 @@ namespace Simd
             // already got 255 as the alpha value in the output
             assert(out_n == 2 || out_n == 4);
 
-            if (out_n == 2) 
+            if (out_n == 2)
             {
-                for (i = 0; i < pixel_count; ++i) 
+                for (i = 0; i < pixel_count; ++i)
                 {
                     p[1] = (p[0] == tc[0] ? 0 : 255);
                     p += 2;
                 }
             }
-            else 
+            else
             {
-                for (i = 0; i < pixel_count; ++i) 
+                for (i = 0; i < pixel_count; ++i)
                 {
                     if (p[0] == tc[0] && p[1] == tc[1] && p[2] == tc[2])
                         p[3] = 0;
@@ -923,7 +923,7 @@ namespace Simd
             // already got 65535 as the alpha value in the output
             assert(out_n == 2 || out_n == 4);
 
-            if (out_n == 2) 
+            if (out_n == 2)
             {
                 for (i = 0; i < pixel_count; ++i)
                 {
@@ -931,7 +931,7 @@ namespace Simd
                     p += 2;
                 }
             }
-            else 
+            else
             {
                 for (i = 0; i < pixel_count; ++i)
                 {
@@ -949,15 +949,15 @@ namespace Simd
             uint8_t* p, * temp_out, * orig = a->out;
 
             p = (uint8_t*)png__malloc_mad2(pixel_count, pal_img_n, 0);
-            if (p == NULL) 
+            if (p == NULL)
                 return PngError("outofmem", "Out of memory");
 
             // between here and free(out) below, exitting would leak
             temp_out = p;
 
-            if (pal_img_n == 3) 
+            if (pal_img_n == 3)
             {
-                for (i = 0; i < pixel_count; ++i) 
+                for (i = 0; i < pixel_count; ++i)
                 {
                     int n = orig[i] * 4;
                     p[0] = palette[n];
@@ -966,9 +966,9 @@ namespace Simd
                     p += 3;
                 }
             }
-            else 
+            else
             {
-                for (i = 0; i < pixel_count; ++i) 
+                for (i = 0; i < pixel_count; ++i)
                 {
                     int n = orig[i] * 4;
                     p[0] = palette[n];
@@ -1002,7 +1002,11 @@ namespace Simd
             _bgrToBgra = Base::BgrToBgra;
         }
 
+#ifdef SIMD_CPP_2011_ENABLE
         SIMD_INLINE constexpr uint32_t ChunkType(char a, char b, char c, char d)
+#else
+        SIMD_INLINE uint32_t ChunkType(char a, char b, char c, char d)
+#endif
         {
             return ((uint32_t(a) << 24) + (uint32_t(b) << 16) + (uint32_t(c) << 8) + uint32_t(d));
         }
@@ -1038,7 +1042,7 @@ namespace Simd
                 s->img_out_n = s->img_n;
             if (!png__create_png_image(z, zDst.Data(), zDst.Size(), s->img_out_n, z->depth, _color, _interlace))
                 return 0;
-            if (_hasTrans) 
+            if (_hasTrans)
             {
                 if (z->depth == 16)
                 {
@@ -1055,7 +1059,7 @@ namespace Simd
             {
                 s->img_n = _paletteChannels; // record the actual colors we had
                 s->img_out_n = _paletteChannels;
-                if (req_comp >= 3) 
+                if (req_comp >= 3)
                     s->img_out_n = req_comp;
                 if (!png__expand_png_palette(z, _palette.data, (int)_palette.size, s->img_out_n))
                     return false;
@@ -1109,7 +1113,7 @@ namespace Simd
                 case SimdPixelFormatRgba32:
                     Base::Copy(data, stride, context.img_x, context.img_y, 4, _image.data, _image.stride);
                     break;
-                default: 
+                default:
                     break;
                 }
                 PNG_FREE(data);

@@ -30,7 +30,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE41_ENABLE    
+#ifdef SIMD_SSE41_ENABLE
     namespace Sse41
     {
         ImagePgmTxtSaver::ImagePgmTxtSaver(const ImageSaverParam& param)
@@ -125,7 +125,7 @@ namespace Simd
             ImageSaverParam param(width, height, format, file, quality);
             if (param.Validate())
             {
-                std::unique_ptr<ImageSaver> saver(CreateImageSaver(param));
+                Holder<ImageSaver> saver(CreateImageSaver(param)); // Modified for c++ 98
                 if (saver)
                 {
                     if (saver->ToStream(src, stride))

@@ -255,7 +255,7 @@ namespace Simd
 #endif
 
         /*!
-            Creates reference to itself. 
+            Creates reference to itself.
             It may be useful if we need to create reference to the temporary object:
             \verbatim
             #include "Simd/SimdLib.hpp"
@@ -491,13 +491,13 @@ namespace Simd
 
         /*!
             Loads image from file.
-            
+
             Supported formats are described by ::SimdImageFileType enumeration.
 
             \note PGM and PPM files with comments are not supported.
 
             \param [in] path - a path to image file.
-            \param [in] format - a desired format of loaded image. 
+            \param [in] format - a desired format of loaded image.
                 Supported values are View::Gray8, View::Bgr24, View::Bgra32, View::Rgb24, View::Rgba32 and View::None.
                 Default value is View::None (loads image in native pixel format of image file).
             \return - a result of loading.
@@ -522,7 +522,7 @@ namespace Simd
 
         /*!
             Saves image to file.
- 
+
             \param [in] path - a path to file.
             \param [in] type - a image file format. By default is equal to ::SimdImageFileUndefined (format auto choice).
             \param [in] quality - a parameter of compression quality (if file format supports it).
@@ -1194,7 +1194,7 @@ namespace Simd
 #ifdef SIMD_CPP_2011_ENABLE
         *(Format*)&format = Format::None;
 #else
-        *(Format*)&format = 0;
+        *(Format*)&format = (Format)(0); // Modified for c++ 98
 #endif
     }
 

@@ -99,11 +99,13 @@ namespace Simd
         bool CheckBit(int at, int bit);
 #endif
 
+#ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
         size_t CpuSocketNumber();
 
         size_t CpuCoreNumber();
 
         size_t CpuThreadNumber();
+#endif // Modified for c++ 98
 
         size_t CpuCacheSize(size_t level);
 
