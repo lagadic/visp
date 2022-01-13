@@ -93,7 +93,7 @@ namespace Simd
         {
             return _pos + size <= _size;
         }
-        
+
         SIMD_INLINE size_t Read(size_t size, void* data)
         {
             size = Min(_size - _pos, size);
@@ -212,8 +212,8 @@ namespace Simd
             while (!IsGap(_data[_pos]) && _pos < _size)
                 _pos++;
             return _pos < _size;
-        }        
-        
+        }
+
         SIMD_INLINE bool SkipGap()
         {
             while (IsGap(_data[_pos]) && _pos < _size)
@@ -287,7 +287,11 @@ namespace Simd
 
     class OutputMemoryStream
     {
-        const size_t CAPACITY_MIN = 64;
+#ifdef SIMD_CPP_2011_ENABLE // Modified to build with c++ 98
+      const size_t CAPACITY_MIN = 64;
+#else
+      const size_t CAPACITY_MIN;
+#endif
 
         uint8_t * _data;
         size_t _pos, _size, _capacity, _bitCount;
@@ -311,6 +315,9 @@ namespace Simd
 
     public:
         SIMD_INLINE OutputMemoryStream(size_t capacity = 0)
+#ifndef SIMD_CPP_2011_ENABLE // Modified to build with c++ 98
+          : CAPACITY_MIN(64)
+#endif
         {
             Reset(false);
             if (capacity)
@@ -428,9 +435,9 @@ namespace Simd
             Write<uint32_t>(value);
 #else
             Write<uint32_t>(
-                (value & 0x000000FF) << 24 | 
+                (value & 0x000000FF) << 24 |
                 (value & 0x0000FF00) << 8 |
-                (value & 0x00FF0000) >> 8 | 
+                (value & 0x00FF0000) >> 8 |
                 (value & 0xFF000000) >> 24);
 #endif
         }

@@ -24,7 +24,9 @@
 #include "Simd/SimdCpu.h"
 
 #include <vector>
+#ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
 #include <thread>
+#endif
 #include <sstream>
 #include <iostream>
 
@@ -114,10 +116,12 @@ namespace Simd
 #endif//defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE))
 #endif // Line added Modified for iOS
 
+#ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
         size_t CpuThreadNumber()
         {
             return std::thread::hardware_concurrency();
         }
+#endif
 
 #if defined(_MSC_VER)
         typedef SYSTEM_LOGICAL_PROCESSOR_INFORMATION Info;
@@ -130,6 +134,7 @@ namespace Simd
             ::GetLogicalProcessorInformation(info.data(), &size);
         }
 
+#ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
         size_t CpuSocketNumber()
         {
             std::vector<Info> info;
@@ -151,6 +156,7 @@ namespace Simd
                     number++;
             return number;
         }
+#endif // Modified for c++ 98
 
         size_t CpuCacheSize(size_t level)
         {
@@ -162,6 +168,7 @@ namespace Simd
             return 0;
         }
 #elif defined(__GNUC__)
+#ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
         size_t CpuSocketNumber()
         {
             uint32_t number = 0;
@@ -189,6 +196,7 @@ namespace Simd
             }
             return number;
         }
+#endif // Modified for c++ 98
 
         SIMD_INLINE size_t CorrectIfZero(size_t value, size_t otherwise)
         {
@@ -228,9 +236,11 @@ namespace Simd
 
     namespace Cpu
     {
+#ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
         const size_t SOCKET_NUMBER = Base::CpuSocketNumber();
         const size_t CORE_NUMBER = Base::CpuCoreNumber();
         const size_t THREAD_NUMBER = Base::CpuThreadNumber();
+#endif
         const size_t L1_CACHE_SIZE = Base::CpuCacheSize(1);
         const size_t L2_CACHE_SIZE = Base::CpuCacheSize(2);
         const size_t L3_CACHE_SIZE = Base::CpuCacheSize(3);
