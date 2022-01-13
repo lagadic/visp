@@ -1,5 +1,16 @@
 Here we give the list of the main changes introduced in Simdlib for ViSP
 
+- 2022.01.13: Fix compat with iOS
+
+  Modified files (search "Modified for iOS"):
+
+    3rdparty/simdlib/Simd/SimdBaseCpu.cpp
+    3rdparty/simdlib/Simd/SimdNeonCpu.cpp
+
+- 2022.01.12: Update Simd to v4.9.109
+
+    See PR #982
+
 - 2021.02.16: Fix compat with UWP
 
   Modified files:
