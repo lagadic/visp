@@ -29,7 +29,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_AVX2_ENABLE    
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
         ImagePgmTxtSaver::ImagePgmTxtSaver(const ImageSaverParam& param)
@@ -134,5 +134,8 @@ namespace Simd
             return NULL;
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2ImageSave.cpp.o) has no symbols
+    void dummy_SimdAvx2ImageSave(){};
 #endif// SIMD_AVX2_ENABLE
 }
