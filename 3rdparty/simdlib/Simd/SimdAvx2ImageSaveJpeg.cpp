@@ -29,7 +29,7 @@
 
 namespace Simd
 {
-#ifdef SIMD_AVX2_ENABLE    
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
         const uint32_t JpegZigZagTi32[64] = {
@@ -107,7 +107,7 @@ namespace Simd
                     end0pos += 7 - _lzcnt_u32(mask) / 4;
                     break;
                 }
-            } 
+            }
             while (end0pos > 0);
             if (end0pos == 0)
             {
@@ -152,7 +152,7 @@ namespace Simd
             k[9] = _mm256_set1_ps(-0.08131f);
         }
 
-        SIMD_INLINE void RgbToYuv(const uint8_t* r, const uint8_t* g, const uint8_t* b, int stride, int height, 
+        SIMD_INLINE void RgbToYuv(const uint8_t* r, const uint8_t* g, const uint8_t* b, int stride, int height,
             const __m256 k[10], float* y, float* u, float* v, int size)
         {
             for (int row = 0; row < size;)
@@ -340,12 +340,15 @@ namespace Simd
                 case SimdPixelFormatRgba32:
                     _deintBgra = Avx2::DeinterleaveBgra;
                     break;
-                default: 
+                default:
                     break;
                 }
             }
             _writeBlock = _subSample ? JpegWriteBlockSubs : JpegWriteBlockFull;
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2ImageSaveJpeg.cpp.o) has no symbols
+    void dummy_SimdAvx2ImageSaveJpeg(){};
 #endif// SIMD_AVX2_ENABLE
 }

@@ -28,8 +28,8 @@
 #include "Simd/SimdExtract.h"
 
 namespace Simd
-{        
-#ifdef SIMD_AVX2_ENABLE    
+{
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
         static uint32_t ZlibAdler32(uint8_t* data, int size)
@@ -365,5 +365,8 @@ namespace Simd
             _compress = Avx2::ZlibCompress;
         }
     }
+#else
+    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2ImageSavePng.cpp.o) has no symbols
+    void dummy_SimdAvx2ImageSavePng(){};
 #endif// SIMD_AVX2_ENABLE
 }
