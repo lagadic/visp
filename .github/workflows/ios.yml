@@ -40,4 +40,4 @@ jobs:
       run: |
         mkdir build
         cd build
-        python ../visp/platforms/ios/build_framework.py ios
+        python ../platforms/ios/build_framework.py ios
