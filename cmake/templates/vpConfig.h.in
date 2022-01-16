@@ -235,6 +235,9 @@
 // Defined if clapack built-in
 #cmakedefine VISP_HAVE_LAPACK_BUILT_IN
 
+// Defined the path to the Rubik-Regular.ttf used by vpFont
+#cmakedefine VISP_RUBIK_FONT_RESOURCES_PATH "${VISP_RUBIK_FONT_RESOURCES_PATH}"
+
 // Defined the path to the basic scenes used by the simulator
 #cmakedefine VISP_SCENES_DIR "${VISP_SCENES_DIR}"
 

@@ -53,6 +53,8 @@ endif()
 if(VISP_INSTALL_DIR_OGRE_RESOURCES)
   list(APPEND VISP_HAVE_OGRE_PLUGINS_PATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}/visp/data/ogre-simulator")
 endif()
+# Rubik-Regular.ttf font for vpFont
+set(VISP_RUBIK_FONT_RESOURCES_PATH "${VISP_SOURCE_DIR}/modules/core/src/image/private/Rubik-Regular.ttf")
 
 configure_file("${VISP_SOURCE_DIR}/cmake/templates/vpConfig.h.in" "${VISP_INCLUDE_DIR}/visp3/core/vpConfig.h")
 
