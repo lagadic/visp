@@ -77,6 +77,14 @@ int main(int argc ,char *argv[])
     vpFont font(32);
     font.drawText(I, "Test...", iP1, vpColor::blue);
 
+    iP1.set_i(60);
+    iP1.set_j(60);
+    font.drawText(I, "...tse", iP1, vpColor::red);
+
+    iP1.set_i(60);
+    iP1.set_j(260);
+    font.drawText(I, "&é(-è_çà)", iP1, vpColor::red);
+
     iP1.set_i(200);
     iP1.set_j(200);
     font.drawText(I, "Test...", iP1, vpColor::white, vpColor::black);
@@ -201,6 +209,14 @@ int main(int argc ,char *argv[])
     iP1.set_j(60);
     vpFont font(32);
     font.drawText(I, "Test...", iP1, color);
+
+    iP1.set_i(60);
+    iP1.set_j(60);
+    font.drawText(I, "...tse", iP1, color);
+
+    iP1.set_i(60);
+    iP1.set_j(260);
+    font.drawText(I, "&é(-è_çà)", iP1, color);
 
     iP1.set_i(200);
     iP1.set_j(200);

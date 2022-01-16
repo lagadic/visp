@@ -55,7 +55,13 @@
 class VISP_EXPORT vpFont
 {
 public:
-  vpFont(unsigned int height = 16);
+  enum vpFontFamily
+  {
+    GENERIC_MONOSPACE,
+    TRUETYPE_FILE
+  };
+
+  vpFont(unsigned int height = 16, const vpFontFamily & fontFamily = TRUETYPE_FILE, const std::string & ttfFilename = std::string(VISP_RUBIK_FONT_RESOURCES_PATH));
   ~vpFont();
 
   bool drawText(vpImage<unsigned char> & I, const std::string & text, const vpImagePoint & position, unsigned char color) const;
