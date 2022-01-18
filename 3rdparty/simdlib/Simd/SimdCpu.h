@@ -81,12 +81,8 @@ namespace Simd
 
     namespace Cpu
     {
-        extern const size_t SOCKET_NUMBER;
-        extern const size_t CORE_NUMBER;
         extern const size_t THREAD_NUMBER;
         extern const size_t L1_CACHE_SIZE;
-        extern const size_t L2_CACHE_SIZE;
-        extern const size_t L3_CACHE_SIZE;
     }
 
     namespace Base
@@ -100,10 +96,6 @@ namespace Simd
 #endif
 
 #ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
-        size_t CpuSocketNumber();
-
-        size_t CpuCoreNumber();
-
         size_t CpuThreadNumber();
 #endif // Modified for c++ 98
 
@@ -112,16 +104,6 @@ namespace Simd
         SIMD_INLINE size_t AlgCacheL1()
         {
             return Cpu::L1_CACHE_SIZE;
-        }
-
-        SIMD_INLINE size_t AlgCacheL2()
-        {
-            return Cpu::L3_CACHE_SIZE ? Cpu::L2_CACHE_SIZE : Cpu::L2_CACHE_SIZE * Cpu::SOCKET_NUMBER / Cpu::CORE_NUMBER;
-        }
-
-        SIMD_INLINE size_t AlgCacheL3()
-        {
-            return Cpu::L3_CACHE_SIZE ? Cpu::L3_CACHE_SIZE * Cpu::SOCKET_NUMBER / Cpu::CORE_NUMBER : Cpu::L2_CACHE_SIZE;
         }
     }
 
