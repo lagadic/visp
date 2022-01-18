@@ -107,8 +107,8 @@ extern "C" {
   - \f$ {\cal F}_c \f$: the camera or tool frame, with \f$^f{\bf M}_c = ^f{\bf
     M}_e \; ^e{\bf M}_c \f$ where \f$ ^e{\bf M}_c \f$ is the result of
     a calibration stage. We can also consider a custom tool
-vpViper650::TOOL_CUSTOM and set this during robot initialisation or using
-set_eMc().
+    vpViper650::TOOL_CUSTOM and set this during robot initialisation or using
+    set_eMc().
 
   - \f$ {\cal F}_s \f$: the force/torque sensor frame, with \f$d7=0.0666\f$.
 
@@ -116,11 +116,11 @@ set_eMc().
   and velocity:
   - in the joint space (vpRobot::ARTICULAR_FRAME),
   - in the fixed reference frame \f$ {\cal F}_f \f$
-(vpRobot::REFERENCE_FRAME),
+    (vpRobot::REFERENCE_FRAME),
   - in the camera or tool frame \f$ {\cal F}_c \f$ (vpRobot::CAMERA_FRAME),
   - or in a mixed frame (vpRobot::MIXT_FRAME) where translations are expressed
-  in the reference frame \f$ {\cal F}_f \f$ and rotations in the camera or
-tool frame \f$ {\cal F}_c \f$ .
+    in the reference frame \f$ {\cal F}_f \f$ and rotations in the camera or
+    tool frame \f$ {\cal F}_c \f$ .
 
   End-effector frame (vpRobot::END_EFFECTOR_FRAME) is not implemented.
 
@@ -302,11 +302,12 @@ int main()
   \endcode
 
   It is also possible to specify the position of a custom tool cartesian
-frame. To this end this frame is to specify with respect of the end effector
-frame in \f$^e {\bf M}_c\f$ transformation. This could be done by initializing
-the robot thanks to init(vpViper650::vpToolType, const vpHomogeneousMatrix &)
-or init(vpViper650::vpToolType, const std::string &) or using set_eMc(). The
-following example illustrates this usecase:
+  frame. To this end this frame is to specify with respect of the end effector
+  frame in \f$^e {\bf M}_c\f$ transformation. This could be done by initializing
+  the robot thanks to init(vpViper650::vpToolType, const vpHomogeneousMatrix &)
+  or init(vpViper650::vpToolType, const std::string &) or using set_eMc(). The
+  following example illustrates this usecase:
+
 \code
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/robot/vpRobotViper650.h>
@@ -345,12 +346,10 @@ public: /* Constantes */
     ESTOP   //!< Emergency stop activated.
   } vpControlModeType;
 
-  /* Vitesse maximale par default lors du positionnement du robot.
-   * C'est la valeur a la construction de l'attribut prive \a
-   * positioningVelocity. Cette valeur peut etre changee par la fonction
-   * #setPositioningVelocity.
+  /* Max velocity used during robot control in position.
+   * this value could be changed using setPositioningVelocity().
    */
-  static const double defaultPositioningVelocity; // = 20.0;
+  static const double m_defaultPositioningVelocity; // = 20.0;
 
 private: /* Not allowed functions. */
   /*!
@@ -368,21 +367,21 @@ private: /* Attributs prives. */
    * a VRAI. Seul le destructeur repositionne le champ a FAUX, ce qui
    * alors la creation d'un nouvel objet.
    */
-  static bool robotAlreadyCreated;
+  static bool m_robotAlreadyCreated;
 
-  double positioningVelocity;
+  double m_positioningVelocity;
 
   // Variables used to compute the measured velocities (see getVelocity() )
-  vpColVector q_prev_getvel;
-  vpHomogeneousMatrix fMc_prev_getvel;
-  double time_prev_getvel;
-  bool first_time_getvel;
+  vpColVector m_q_prev_getvel;
+  vpHomogeneousMatrix m_fMc_prev_getvel;
+  vpHomogeneousMatrix m_fMe_prev_getvel;
+  double m_time_prev_getvel;
+  bool m_first_time_getvel;
 
-  // Variables used to compute the measured displacement (see
-  // getDisplacement() )
-  vpColVector q_prev_getdis;
-  bool first_time_getdis;
-  vpControlModeType controlMode;
+  // Variables used to compute the measured displacement (see getDisplacement() )
+  vpColVector m_q_prev_getdis;
+  bool m_first_time_getdis;
+  vpControlModeType m_controlMode;
 
 public: /* Methode publiques */
   explicit vpRobotViper650(bool verbose = true);
@@ -400,7 +399,7 @@ public: /* Methode publiques */
     \return The control mode indicating if the robot is in automatic,
     manual (usage of the dead man switch) or emergnecy stop mode.
   */
-  vpControlModeType getControlMode() const { return controlMode; }
+  vpControlModeType getControlMode() const { return m_controlMode; }
 
   void getDisplacement(vpRobot::vpControlFrameType frame, vpColVector &displacement);
   void getForceTorque(vpColVector &H) const;
@@ -429,8 +428,7 @@ public: /* Methode publiques */
   void get_fJe(vpMatrix &fJe);
 
   void init(void);
-  void
-  init(vpViper650::vpToolType tool,
+  void init(vpViper650::vpToolType tool,
        vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
   void init(vpViper650::vpToolType tool, const std::string &filename);
   void init(vpViper650::vpToolType tool, const vpHomogeneousMatrix &eMc_);
@@ -466,7 +464,7 @@ public: /* Methode publiques */
   void stopMotion();
 
 private:
-  double maxRotationVelocity_joint6;
+  double m_maxRotationVelocity_joint6;
 };
 
 #endif
