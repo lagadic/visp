@@ -152,6 +152,11 @@ SIMD_API void SimdSetFastMode(SimdBool value)
 
 SIMD_API void SimdBgraToBgr(const uint8_t * bgra, size_t width, size_t height, size_t bgraStride, uint8_t * bgr, size_t bgrStride)
 {
+#ifdef SIMD_AVX2_ENABLE
+    if (Avx2::Enable && width >= Avx2::A)
+        Avx2::BgraToBgr(bgra, width, height, bgraStride, bgr, bgrStride);
+    else
+#endif
 #ifdef SIMD_SSE41_ENABLE
     if(Sse41::Enable && width >= Sse41::A)
         Sse41::BgraToBgr(bgra, width, height, bgraStride, bgr, bgrStride);
