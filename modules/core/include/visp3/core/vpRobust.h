@@ -232,11 +232,11 @@ private:
   //---------------------------------
   /** @name Some math function  */
   //@{
-  vp_deprecated double erf(double x);
-  vp_deprecated double gammp(double a, double x);
-  vp_deprecated void gser(double *gamser, double a, double x, double *gln);
-  vp_deprecated void gcf(double *gammcf, double a, double x, double *gln);
-  vp_deprecated double gammln(double xx);
+  double erf(double x);
+  double gammp(double a, double x);
+  void gser(double *gamser, double a, double x, double *gln);
+  void gcf(double *gammcf, double a, double x, double *gln);
+  double gammln(double xx);
   //@}
 #endif
 #endif
