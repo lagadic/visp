@@ -61,7 +61,7 @@ public:
     TRUETYPE_FILE
   };
 
-  vpFont(unsigned int height = 16, const vpFontFamily & fontFamily = TRUETYPE_FILE, const std::string & ttfFilename = std::string(VISP_RUBIK_FONT_RESOURCES_PATH));
+  vpFont(unsigned int height = 16, const vpFontFamily & fontFamily = TRUETYPE_FILE, const std::string & ttfFilename = std::string(VISP_RUBIK_REGULAR_FONT_RESOURCES));
   ~vpFont();
 
   bool drawText(vpImage<unsigned char> & I, const std::string & text, const vpImagePoint & position, unsigned char color) const;

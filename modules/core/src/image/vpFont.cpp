@@ -59,6 +59,7 @@
 
 #include <visp3/core/vpFont.h>
 #include <visp3/core/vpIoException.h>
+#include <visp3/core/vpIoTools.h>
 #include "private/Font.hpp"
 #include <cstdint>
 #include <iterator>
@@ -84,19 +85,32 @@ public:
     \param [in] height - initial height value. By default it is equal to 16.
   */
   Impl(unsigned int height = 16, const vpFontFamily & fontFamily = TRUETYPE_FILE,
-       const std::string & ttfFilename = std::string(VISP_RUBIK_FONT_RESOURCES_PATH))
+       const std::string & ttfFilename = std::string(VISP_RUBIK_REGULAR_FONT_RESOURCES))
   {
     _fontHeight = height;
     _ttfFamily = fontFamily;
 
     switch (_ttfFamily) {
-    case GENERIC_MONOSPACE:
+    case GENERIC_MONOSPACE: {
       LoadDefault();
       Resize(height);
       break;
+    }
+    case TRUETYPE_FILE: {
+      std::vector<std::string> ttfs = vpIoTools::splitChain(ttfFilename, ";");
+      std::string ttf_file = "";
+      for (size_t i=0; i < ttfs.size(); i++) {
+        if (vpIoTools::checkFilename(ttfs[i])) {
+          ttf_file = ttfs[i];
+          break;
+        }
+      }
+      if (ttf_file.empty()) {
+        throw(vpException(vpException::fatalError, "True type font file doesn't exist in %s", ttfFilename.c_str()));
+      }
 
-    case TRUETYPE_FILE:
-      LoadTTF(ttfFilename);
+      std::cout << "Load font from file: " << ttf_file << std::endl;
+      LoadTTF(ttf_file);
 
       /* calculate font scaling */
       _fontScale = stbtt_ScaleForPixelHeight(&_info, _fontHeight);
@@ -108,6 +122,7 @@ public:
       _fontDescent = std::roundf(_fontDescent * _fontScale);
 
       break;
+    }
     }
   }
 
@@ -2211,13 +2226,13 @@ private:
 
 
 /*!
-  Creates a new Font class with given height.
+  Creates a new font class with given height.
 
-  \note The GENERIC_MONOSPACE font supports ASCII characters only. It was generated on the base of the generic monospace font from Gdiplus.
+  \note The vpFontFamily::GENERIC_MONOSPACE font supports ASCII characters only. It was generated on the base of the generic monospace font from Gdiplus.
 
   \param [in] height : Initial font height value in pixels. By default it is equal to 16 pixels.
   \param [in] fontFamily : Font family in TTF format.
-  \param [in] ttfFilename : Path to the TTF file if needed.
+  \param [in] ttfFilename : Path to the TTF file if needed. Can contain multiple paths separated by `;`character. The first valid path that is found is used.
 */
 vpFont::vpFont(unsigned int height, const vpFontFamily & fontFamily, const std::string & ttfFilename)
   : m_impl(new Impl(height, fontFamily, ttfFilename))

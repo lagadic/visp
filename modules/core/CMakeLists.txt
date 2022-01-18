@@ -313,5 +313,7 @@ vp_create_module(${opt_libs})
 vp_create_compat_headers("include/visp3/core/vpConfig.h")
 vp_add_tests(CTEST_EXCLUDE_PATH network DEPENDS_ON visp_io visp_gui)
 
-# copy robot and wireframe simulator data
+# copy data for testing
 vp_glob_module_copy_data("test/math/data/*.pgm" "modules/core" NO_INSTALL)
+# copy font
+vp_glob_module_copy_data("src/image/private/Rubik-Regular.ttf" "data/font")
