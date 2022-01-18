@@ -41,10 +41,13 @@
 set(data_location_ ${VISP_BINARY_DIR})
 set(VISP_SCENES_DIR ${data_location_}/data/wireframe-simulator)
 set(VISP_ROBOT_ARMS_DIR ${data_location_}/data/robot-simulator)
+# Rubik-Regular.ttf font for vpFont
+set(VISP_RUBIK_REGULAR_FONT_RESOURCES "${data_location_}/data/font/Rubik-Regular.ttf")
 # Note that VISP_HAVE_OGRE_RESOURCES_PATH and VISP_HAVE_OGRE_PLUGINS_PATH are set in OgreTools.cmake
 set(data_location_ "${CMAKE_INSTALL_PREFIX}/${VISP_INSTALL_DATAROOTDIR}")
 list(APPEND VISP_SCENES_DIR ${data_location_}/data/wireframe-simulator)
 list(APPEND VISP_ROBOT_ARMS_DIR ${data_location_}/data/robot-simulator)
+list(APPEND VISP_RUBIK_REGULAR_FONT_RESOURCES "${data_location_}/data/font/Rubik-Regular.ttf")
 if(VISP_INSTALL_DIR_OGRE_RESOURCES)
   list(APPEND VISP_HAVE_OGRE_RESOURCES_PATH "${data_location_}/data/ogre-simulator")
 endif()
@@ -53,8 +56,6 @@ endif()
 if(VISP_INSTALL_DIR_OGRE_RESOURCES)
   list(APPEND VISP_HAVE_OGRE_PLUGINS_PATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}/visp/data/ogre-simulator")
 endif()
-# Rubik-Regular.ttf font for vpFont
-set(VISP_RUBIK_FONT_RESOURCES_PATH "${VISP_SOURCE_DIR}/modules/core/src/image/private/Rubik-Regular.ttf")
 
 configure_file("${VISP_SOURCE_DIR}/cmake/templates/vpConfig.h.in" "${VISP_INCLUDE_DIR}/visp3/core/vpConfig.h")
 
@@ -66,6 +67,8 @@ else()
 endif()
 set(VISP_SCENES_DIR ${data_location_}/data/wireframe-simulator)
 set(VISP_ROBOT_ARMS_DIR ${data_location_}/data/robot-simulator)
+# Rubik-Regular.ttf font for vpFont
+set(VISP_RUBIK_REGULAR_FONT_RESOURCES "${data_location_}/data/font/Rubik-Regular.ttf")
 if(VISP_INSTALL_DIR_OGRE_RESOURCES)
   set(VISP_HAVE_OGRE_RESOURCES_PATH "${data_location_}/data/ogre-simulator")
 endif()
