@@ -128,10 +128,10 @@ namespace Simd
 
             for (size_t row = 0; row < height; ++row)
             {
-                for (size_t i = 0; i < size; i += A)
+                for (size_t i = 0; i < sizeA; i += A) // Modif FS Fix memleak
                     BgraToRgba<align>(bgra + i, rgba + i);
                 if (size != sizeA)
-                    BgraToRgba<false>(bgra + size - sizeA, rgba + size - sizeA);
+                    BgraToRgba<false>(bgra + size - A, rgba + size - A); // Modif FS Fix memleak
                 bgra += bgraStride;
                 rgba += rgbaStride;
             }
