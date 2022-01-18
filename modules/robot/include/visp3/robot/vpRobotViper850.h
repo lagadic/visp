@@ -237,7 +237,7 @@ int main()
   \endcode
 
   The robot moves to the specified position with the default
-  positioning velocity vpRobotViper850::defaultPositioningVelocity. The
+  positioning velocity vpRobotViper850::m_defaultPositioningVelocity. The
   setPositioningVelocity() method allows to change the maximal
   velocity used to reach the desired position.
 
@@ -352,12 +352,10 @@ public: /* Constantes */
     ESTOP   //!< Emergency stop activated.
   } vpControlModeType;
 
-  /* Vitesse maximale par default lors du positionnement du robot.
-   * C'est la valeur a la construction de l'attribut prive \a
-   * positioningVelocity. Cette valeur peut etre changee par la fonction
-   * #setPositioningVelocity.
+  /* Max velocity used during robot control in position.
+   * this value could be changed using setPositioningVelocity().
    */
-  static const double defaultPositioningVelocity; // = 20.0;
+  static const double m_defaultPositioningVelocity; // = 20.0;
 
 private: /* Not allowed functions. */
   /*!
@@ -375,24 +373,25 @@ private: /* Attributs prives. */
    * a VRAI. Seul le destructeur repositionne le champ a FAUX, ce qui
    * alors la creation d'un nouvel objet.
    */
-  static bool robotAlreadyCreated;
+  static bool m_robotAlreadyCreated;
 
-  double positioningVelocity;
+  double m_positioningVelocity;
 
   // Variables used to compute the measured velocities (see getVelocity() )
-  vpColVector q_prev_getvel;
-  vpHomogeneousMatrix fMc_prev_getvel;
-  double time_prev_getvel;
-  bool first_time_getvel;
+  vpColVector m_q_prev_getvel;
+  vpHomogeneousMatrix m_fMc_prev_getvel;
+  vpHomogeneousMatrix m_fMe_prev_getvel;
+  double m_time_prev_getvel;
+  bool m_first_time_getvel;
 
   // Variables used to compute the measured displacement (see
   // getDisplacement() )
-  vpColVector q_prev_getdis;
-  bool first_time_getdis;
-  vpControlModeType controlMode;
+  vpColVector m_q_prev_getdis;
+  bool m_first_time_getdis;
+  vpControlModeType m_controlMode;
 
 #if defined(USE_ATI_DAQ) && defined(VISP_HAVE_COMEDI)
-  vpForceTorqueAtiSensor ati;
+  vpForceTorqueAtiSensor m_ati;
 #endif
 
 public: /* Methode publiques */
@@ -412,7 +411,7 @@ public: /* Methode publiques */
     \return The control mode indicating if the robot is in automatic,
     manual (usage of the dead man switch) or emergnecy stop mode.
   */
-  vpControlModeType getControlMode() const { return controlMode; }
+  vpControlModeType getControlMode() const { return m_controlMode; }
 
   void getForceTorque(vpColVector &H) const;
   vpColVector getForceTorque() const;

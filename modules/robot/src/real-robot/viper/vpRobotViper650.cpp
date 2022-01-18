@@ -58,7 +58,7 @@
 /* --- STATIC ----------------------------------------------------------- */
 /* ---------------------------------------------------------------------- */
 
-bool vpRobotViper650::robotAlreadyCreated = false;
+bool vpRobotViper650::m_robotAlreadyCreated = false;
 
 /*!
 
@@ -67,7 +67,7 @@ bool vpRobotViper650::robotAlreadyCreated = false;
   setPositioningVelocity() allows to change this value.
 
 */
-const double vpRobotViper650::defaultPositioningVelocity = 15.0;
+const double vpRobotViper650::m_defaultPositioningVelocity = 15.0;
 
 /* ---------------------------------------------------------------------- */
 /* --- EMERGENCY STOP --------------------------------------------------- */
@@ -212,11 +212,11 @@ vpRobotViper650::vpRobotViper650(bool verbose) : vpViper650(), vpRobot()
     //  vpERROR_TRACE("Error caught") ;
     throw;
   }
-  positioningVelocity = defaultPositioningVelocity;
+  m_positioningVelocity = m_defaultPositioningVelocity;
 
-  maxRotationVelocity_joint6 = maxRotationVelocity;
+  m_maxRotationVelocity_joint6 = maxRotationVelocity;
 
-  vpRobotViper650::robotAlreadyCreated = true;
+  vpRobotViper650::m_robotAlreadyCreated = true;
 
   return;
 }
@@ -252,15 +252,15 @@ void vpRobotViper650::init(void)
   InitTry;
 
   // Initialise private variables used to compute the measured velocities
-  q_prev_getvel.resize(6);
-  q_prev_getvel = 0;
-  time_prev_getvel = 0;
-  first_time_getvel = true;
+  m_q_prev_getvel.resize(6);
+  m_q_prev_getvel = 0;
+  m_time_prev_getvel = 0;
+  m_first_time_getvel = true;
 
   // Initialise private variables used to compute the measured displacement
-  q_prev_getdis.resize(6);
-  q_prev_getdis = 0;
-  first_time_getdis = true;
+  m_q_prev_getdis.resize(6);
+  m_q_prev_getdis = 0;
+  m_first_time_getdis = true;
 
   // Initialize the firewire connection
   Try(InitializeConnection(verbose_));
@@ -287,7 +287,7 @@ void vpRobotViper650::init(void)
     std::cout << "Robot status: ";
     switch (EStopStatus) {
     case ESTOP_AUTO:
-      controlMode = AUTO;
+      m_controlMode = AUTO;
       if (HIPowerStatus == 0)
         std::cout << "Power is OFF" << std::endl;
       else
@@ -295,14 +295,14 @@ void vpRobotViper650::init(void)
       break;
 
     case ESTOP_MANUAL:
-      controlMode = MANUAL;
+      m_controlMode = MANUAL;
       if (HIPowerStatus == 0)
         std::cout << "Power is OFF" << std::endl;
       else
         std::cout << "Power is ON" << std::endl;
       break;
     case ESTOP_ACTIVATED:
-      controlMode = ESTOP;
+      m_controlMode = ESTOP;
       std::cout << "Emergency stop is activated" << std::endl;
       break;
     default:
@@ -676,7 +676,7 @@ vpRobotViper650::~vpRobotViper650(void)
   // Free allocated resources
   ShutDownConnection();
 
-  vpRobotViper650::robotAlreadyCreated = false;
+  vpRobotViper650::m_robotAlreadyCreated = false;
 
   CatchPrint();
   return;
@@ -777,13 +777,13 @@ void vpRobotViper650::powerOn(void)
   for (unsigned int i = 0; i < nitermax; i++) {
     Try(PrimitiveSTATUS_Viper650(NULL, NULL, &EStopStatus, NULL, NULL, NULL, &HIPowerStatus));
     if (EStopStatus == ESTOP_AUTO) {
-      controlMode = AUTO;
+      m_controlMode = AUTO;
       break; // exit for loop
     } else if (EStopStatus == ESTOP_MANUAL) {
-      controlMode = MANUAL;
+      m_controlMode = MANUAL;
       break; // exit for loop
     } else if (EStopStatus == ESTOP_ACTIVATED) {
-      controlMode = ESTOP;
+      m_controlMode = ESTOP;
       if (firsttime) {
         std::cout << "Emergency stop is activated! \n"
                   << "Check the emergency stop button and push the yellow "
@@ -990,7 +990,7 @@ void vpRobotViper650::get_fJe(vpMatrix &fJe)
   Set the maximal velocity percentage to use for a position control.
 
   The default positioning velocity is defined by
-  vpRobotViper650::defaultPositioningVelocity. This method allows to
+  vpRobotViper650::m_defaultPositioningVelocity. This method allows to
   change this default positioning velocity
 
   \param velocity : Percentage of the maximal velocity. Values should
@@ -1021,14 +1021,14 @@ int main()
 
   \sa getPositioningVelocity()
 */
-void vpRobotViper650::setPositioningVelocity(double velocity) { positioningVelocity = velocity; }
+void vpRobotViper650::setPositioningVelocity(double velocity) { m_positioningVelocity = velocity; }
 
 /*!
   Get the maximal velocity percentage used for a position control.
 
   \sa setPositioningVelocity()
 */
-double vpRobotViper650::getPositioningVelocity(void) const { return positioningVelocity; }
+double vpRobotViper650::getPositioningVelocity(void) const { return m_positioningVelocity; }
 
 /*!
 
@@ -1154,7 +1154,7 @@ void vpRobotViper650::setPosition(const vpRobot::vpControlFrameType frame, const
       destination = q;
       // convert rad to deg requested for the low level controller
       destination.rad2deg();
-      Try(PrimitiveMOVE_J_Viper650(destination.data, positioningVelocity));
+      Try(PrimitiveMOVE_J_Viper650(destination.data, m_positioningVelocity));
       Try(WaitState_Viper650(ETAT_ATTENTE_VIPER650, 1000));
     } else {
       // Cartesian position is out of range
@@ -1170,7 +1170,7 @@ void vpRobotViper650::setPosition(const vpRobot::vpControlFrameType frame, const
 
     // std::cout << "Joint destination (deg): " << destination.t() <<
     // std::endl;
-    Try(PrimitiveMOVE_J_Viper650(destination.data, positioningVelocity));
+    Try(PrimitiveMOVE_J_Viper650(destination.data, m_positioningVelocity));
     Try(WaitState_Viper650(ETAT_ATTENTE_VIPER650, 1000));
     break;
   }
@@ -1188,7 +1188,7 @@ void vpRobotViper650::setPosition(const vpRobot::vpControlFrameType frame, const
 
     // std::cout << "Base frame destination Rzyz (deg): " << destination.t()
     // << std::endl;
-    Try(PrimitiveMOVE_C_Viper650(destination.data, configuration, positioningVelocity));
+    Try(PrimitiveMOVE_C_Viper650(destination.data, configuration, m_positioningVelocity));
     Try(WaitState_Viper650(ETAT_ATTENTE_VIPER650, 1000));
 
     break;
@@ -1768,10 +1768,10 @@ void vpRobotViper650::setVelocity(const vpRobot::vpControlFrameType frame, const
 
   \param timestamp : Time in second since last robot power on.
 
-  \warning In camera frame, reference frame and mixt frame, the representation
-  of the rotation is \f$ \theta {\bf u}\f$. In that cases, \f$velocity = [\dot
-x, \dot y, \dot z, \dot {\theta u}_x, \dot {\theta u}_y, \dot {\theta
-u}_z]\f$.
+  \warning In camera frame, end-effector frame, reference frame and mixt frame,
+  the representation of the rotation is \f$ \theta {\bf u}\f$. In that cases,
+  \f$velocity = [\dot x, \dot y, \dot z, \dot {\theta u}_x, \dot {\theta u}_y, \dot {\theta
+  u}_z]\f$.
 
   \warning The first time this method is called, \e velocity is set to 0. The
   first call is used to intialise the velocity computation for the next call.
@@ -1819,8 +1819,8 @@ void vpRobotViper650::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
   velocity = 0;
 
   vpColVector q_cur(6);
-  vpHomogeneousMatrix fMc_cur;
-  vpHomogeneousMatrix cMc; // camera displacement
+  vpHomogeneousMatrix fMe_cur, fMc_cur;
+  vpHomogeneousMatrix eMe, cMc; // camera displacement
   double time_cur;
 
   InitTry;
@@ -1830,34 +1830,46 @@ void vpRobotViper650::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
   time_cur = timestamp;
   q_cur.deg2rad();
 
+  // Get the end-effector pose from the direct kinematics
+  vpViper650::get_fMe(q_cur, fMe_cur);
   // Get the camera pose from the direct kinematics
   vpViper650::get_fMc(q_cur, fMc_cur);
 
-  if (!first_time_getvel) {
+  if (!m_first_time_getvel) {
 
     switch (frame) {
+    case vpRobot::END_EFFECTOR_FRAME: {
+      // Compute the displacement of the end-effector since the previous call
+      eMe = m_fMe_prev_getvel.inverse() * fMe_cur;
+
+      // Compute the velocity of the end-effector from this displacement
+      velocity = vpExponentialMap::inverse(eMe, time_cur - m_time_prev_getvel);
+
+      break;
+    }
+
     case vpRobot::CAMERA_FRAME: {
       // Compute the displacement of the camera since the previous call
-      cMc = fMc_prev_getvel.inverse() * fMc_cur;
+      cMc = m_fMc_prev_getvel.inverse() * fMc_cur;
 
       // Compute the velocity of the camera from this displacement
-      velocity = vpExponentialMap::inverse(cMc, time_cur - time_prev_getvel);
+      velocity = vpExponentialMap::inverse(cMc, time_cur - m_time_prev_getvel);
 
       break;
     }
 
     case vpRobot::ARTICULAR_FRAME: {
-      velocity = (q_cur - q_prev_getvel) / (time_cur - time_prev_getvel);
+      velocity = (q_cur - m_q_prev_getvel) / (time_cur - m_time_prev_getvel);
       break;
     }
 
     case vpRobot::REFERENCE_FRAME: {
       // Compute the displacement of the camera since the previous call
-      cMc = fMc_prev_getvel.inverse() * fMc_cur;
+      cMc = m_fMc_prev_getvel.inverse() * fMc_cur;
 
       // Compute the velocity of the camera from this displacement
       vpColVector v;
-      v = vpExponentialMap::inverse(cMc, time_cur - time_prev_getvel);
+      v = vpExponentialMap::inverse(cMc, time_cur - m_time_prev_getvel);
 
       // Express this velocity in the reference frame
       vpVelocityTwistMatrix fVc(fMc_cur);
@@ -1868,7 +1880,7 @@ void vpRobotViper650::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
 
     case vpRobot::MIXT_FRAME: {
       // Compute the displacement of the camera since the previous call
-      cMc = fMc_prev_getvel.inverse() * fMc_cur;
+      cMc = m_fMc_prev_getvel.inverse() * fMc_cur;
 
       // Compute the ThetaU representation for the rotation
       vpRotationMatrix cRc;
@@ -1878,13 +1890,13 @@ void vpRobotViper650::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
 
       for (unsigned int i = 0; i < 3; i++) {
         // Compute the translation displacement in the reference frame
-        velocity[i] = fMc_prev_getvel[i][3] - fMc_cur[i][3];
+        velocity[i] = m_fMc_prev_getvel[i][3] - fMc_cur[i][3];
         // Update the rotation displacement in the camera frame
         velocity[i + 3] = thetaU[i];
       }
 
       // Compute the velocity
-      velocity /= (time_cur - time_prev_getvel);
+      velocity /= (time_cur - m_time_prev_getvel);
       break;
     }
     default: {
@@ -1893,17 +1905,19 @@ void vpRobotViper650::getVelocity(const vpRobot::vpControlFrameType frame, vpCol
     }
     }
   } else {
-    first_time_getvel = false;
+    m_first_time_getvel = false;
   }
 
+  // Memorize the end-effector pose for the next call
+  m_fMe_prev_getvel = fMe_cur;
   // Memorize the camera pose for the next call
-  fMc_prev_getvel = fMc_cur;
+  m_fMc_prev_getvel = fMc_cur;
 
   // Memorize the joint position for the next call
-  q_prev_getvel = q_cur;
+  m_q_prev_getvel = q_cur;
 
   // Memorize the time associated to the joint position for the next call
-  time_prev_getvel = time_cur;
+  m_time_prev_getvel = time_cur;
 
   CatchPrint();
   if (TryStt < 0) {
@@ -2229,7 +2243,7 @@ void vpRobotViper650::getDisplacement(vpRobot::vpControlFrameType frame, vpColVe
     q_cur[i] = q[i];
   }
 
-  if (!first_time_getdis) {
+  if (!m_first_time_getdis) {
     switch (frame) {
     case vpRobot::CAMERA_FRAME: {
       std::cout << "getDisplacement() CAMERA_FRAME not implemented\n";
@@ -2237,7 +2251,7 @@ void vpRobotViper650::getDisplacement(vpRobot::vpControlFrameType frame, vpColVe
     }
 
     case vpRobot::ARTICULAR_FRAME: {
-      displacement = q_cur - q_prev_getdis;
+      displacement = q_cur - m_q_prev_getdis;
       break;
     }
 
@@ -2256,11 +2270,11 @@ void vpRobotViper650::getDisplacement(vpRobot::vpControlFrameType frame, vpColVe
     }
     }
   } else {
-    first_time_getdis = false;
+    m_first_time_getdis = false;
   }
 
   // Memorize the joint position for the next call
-  q_prev_getdis = q_cur;
+  m_q_prev_getdis = q_cur;
 
   CatchPrint();
   if (TryStt < 0) {
@@ -2483,7 +2497,7 @@ void vpRobotViper650::setMaxRotationVelocity(double w_max)
 
 void vpRobotViper650::setMaxRotationVelocityJoint6(double w6_max)
 {
-  maxRotationVelocity_joint6 = w6_max;
+  m_maxRotationVelocity_joint6 = w6_max;
   return;
 }
 
@@ -2494,7 +2508,7 @@ void vpRobotViper650::setMaxRotationVelocityJoint6(double w6_max)
 
   \return Maximum rotation velocity on joint 6 expressed in rad/s.
 */
-double vpRobotViper650::getMaxRotationVelocityJoint6() const { return maxRotationVelocity_joint6; }
+double vpRobotViper650::getMaxRotationVelocityJoint6() const { return m_maxRotationVelocity_joint6; }
 
 /*!
 
