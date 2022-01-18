@@ -79,6 +79,8 @@ int main()
       if ((task.getError()).sumSquare() < 0.0001)
         break;
 
+      vpTime::wait(100);
+
       iter++;
     }
     std::cout << "Convergence in " << iter << " iterations" << std::endl;
