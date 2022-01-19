@@ -81,11 +81,9 @@ int main(int argc ,char *argv[])
     iP1.set_j(60);
     font.drawText(I, "...tse", iP1, vpColor::red);
 
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     iP1.set_i(60);
     iP1.set_j(260);
-    font.drawText(I, "&é(-è_çà)", iP1, vpColor::red); // True type font only supported with cxx11 or more recent
-#endif
+    font.drawText(I, "&é(-è_çà)", iP1, vpColor::red);
 
     iP1.set_i(200);
     iP1.set_j(200);
@@ -216,11 +214,9 @@ int main(int argc ,char *argv[])
     iP1.set_j(60);
     font.drawText(I, "...tse", iP1, color);
 
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     iP1.set_i(60);
     iP1.set_j(260);
     font.drawText(I, "&é(-è_çà)", iP1, color);
-#endif
 
     iP1.set_i(200);
     iP1.set_j(200);
