@@ -1,4 +1,4 @@
-name: MacOS
+name: iOS
 
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
 on:
