@@ -363,21 +363,20 @@ TEST_CASE("RGB <==> RGBa conversion", "[image_conversion]") {
 
     CHECK((rgba == rgba_ref));
   }
-//  SECTION("Image 1x17 (SSE41 aligned=false)")
-//  {
-//    // Memory leak
-//    unsigned int h = 1, w = 17;
-//    vpImage<vpRGBa> rgba_ref(h, w);
-//    common_tools::fill(rgba_ref);
+  SECTION("Image 1x17 (SSE41 aligned=false)")
+  {
+    unsigned int h = 1, w = 17;
+    vpImage<vpRGBa> rgba_ref(h, w);
+    common_tools::fill(rgba_ref);
 
-//    std::vector<unsigned char> rgb(h*w*3);
-//    vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char*>(rgba_ref.bitmap), rgb.data(), rgba_ref.getSize());
+    std::vector<unsigned char> rgb(h*w*3);
+    vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char*>(rgba_ref.bitmap), rgb.data(), rgba_ref.getSize());
 
-//    vpImage<vpRGBa> rgba(h, w);
-//    vpImageConvert::RGBToRGBa(rgb.data(), reinterpret_cast<unsigned char*>(rgba.bitmap), rgba_ref.getSize());
+    vpImage<vpRGBa> rgba(h, w);
+    vpImageConvert::RGBToRGBa(rgb.data(), reinterpret_cast<unsigned char*>(rgba.bitmap), rgba_ref.getSize());
 
-//    CHECK((rgba == rgba_ref));
-//  }
+    CHECK((rgba == rgba_ref));
+  }
   SECTION("Image 1x32 (AVX2 aligned=true)")
   {
     unsigned int h = 1, w = 32;
@@ -392,21 +391,20 @@ TEST_CASE("RGB <==> RGBa conversion", "[image_conversion]") {
 
     CHECK((rgba == rgba_ref));
   }
-//  SECTION("Image 1x33 (AVX2 aligned=false)")
-//  {
-//    // Memory leak
-//    unsigned int h = 1, w = 33;
-//    vpImage<vpRGBa> rgba_ref(h, w);
-//    common_tools::fill(rgba_ref);
+  SECTION("Image 1x33 (AVX2 aligned=false)")
+  {
+    unsigned int h = 1, w = 33;
+    vpImage<vpRGBa> rgba_ref(h, w);
+    common_tools::fill(rgba_ref);
 
-//    std::vector<unsigned char> rgb(h*w*3);
-//    vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char*>(rgba_ref.bitmap), rgb.data(), rgba_ref.getSize());
+    std::vector<unsigned char> rgb(h*w*3);
+    vpImageConvert::RGBaToRGB(reinterpret_cast<unsigned char*>(rgba_ref.bitmap), rgb.data(), rgba_ref.getSize());
 
-//    vpImage<vpRGBa> rgba(h, w);
-//    vpImageConvert::RGBToRGBa(rgb.data(), reinterpret_cast<unsigned char*>(rgba.bitmap), rgba_ref.getSize());
+    vpImage<vpRGBa> rgba(h, w);
+    vpImageConvert::RGBToRGBa(rgb.data(), reinterpret_cast<unsigned char*>(rgba.bitmap), rgba_ref.getSize());
 
-//    CHECK((rgba == rgba_ref));
-//  }
+    CHECK((rgba == rgba_ref));
+  }
   SECTION("Image 4x64 (general aligned = true")
   {
     unsigned int h = 4, w = 64;
@@ -457,26 +455,25 @@ TEST_CASE("BGR to Gray conversion", "[image_conversion]") {
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
     std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
   }
-//  SECTION("Image 1x17 (SSE41 aligned=false)")
-//  {
-//    // Memory leak
-//    unsigned int h = 1, w = 17;
-//    vpImage<vpRGBa> rgba_ref(h, w);
-//    common_tools::fill(rgba_ref);
+  SECTION("Image 1x17 (SSE41 aligned=false)")
+  {
+    unsigned int h = 1, w = 17;
+    vpImage<vpRGBa> rgba_ref(h, w);
+    common_tools::fill(rgba_ref);
 
-//    vpImage<unsigned char> gray_ref;
-//    vpImageConvert::convert(rgba_ref, gray_ref);
+    vpImage<unsigned char> gray_ref;
+    vpImageConvert::convert(rgba_ref, gray_ref);
 
-//    std::vector<unsigned char> bgr;
-//    common_tools::RGBaToBGR(rgba_ref, bgr);
+    std::vector<unsigned char> bgr;
+    common_tools::RGBaToBGR(rgba_ref, bgr);
 
-//    vpImage<unsigned char> gray(gray_ref.getHeight(), gray_ref.getWidth());
-//    vpImageConvert::BGRToGrey(bgr.data(), gray.bitmap, gray.getWidth(), gray.getHeight());
+    vpImage<unsigned char> gray(gray_ref.getHeight(), gray_ref.getWidth());
+    vpImageConvert::BGRToGrey(bgr.data(), gray.bitmap, gray.getWidth(), gray.getHeight());
 
-//    double error = 0;
-//    CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-//    std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
-//  }
+    double error = 0;
+    CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
+    std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
+  }
   SECTION("Image 1x32 (AVX2 aligned=true)")
   {
     unsigned int h = 1, w = 32;
@@ -496,26 +493,25 @@ TEST_CASE("BGR to Gray conversion", "[image_conversion]") {
     CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
     std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
   }
-//  SECTION("Image 1x33 (AVX2 aligned=false)")
-//  {
-//    // Memory leak
-//    unsigned int h = 1, w = 33;
-//    vpImage<vpRGBa> rgba_ref(h, w);
-//    common_tools::fill(rgba_ref);
+  SECTION("Image 1x33 (AVX2 aligned=false)")
+  {
+    unsigned int h = 1, w = 33;
+    vpImage<vpRGBa> rgba_ref(h, w);
+    common_tools::fill(rgba_ref);
 
-//    vpImage<unsigned char> gray_ref;
-//    vpImageConvert::convert(rgba_ref, gray_ref);
+    vpImage<unsigned char> gray_ref;
+    vpImageConvert::convert(rgba_ref, gray_ref);
 
-//    std::vector<unsigned char> bgr;
-//    common_tools::RGBaToBGR(rgba_ref, bgr);
+    std::vector<unsigned char> bgr;
+    common_tools::RGBaToBGR(rgba_ref, bgr);
 
-//    vpImage<unsigned char> gray(gray_ref.getHeight(), gray_ref.getWidth());
-//    vpImageConvert::BGRToGrey(bgr.data(), gray.bitmap, gray.getWidth(), gray.getHeight());
+    vpImage<unsigned char> gray(gray_ref.getHeight(), gray_ref.getWidth());
+    vpImageConvert::BGRToGrey(bgr.data(), gray.bitmap, gray.getWidth(), gray.getHeight());
 
-//    double error = 0;
-//    CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
-//    std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
-//  }
+    double error = 0;
+    CHECK(common_tools::almostEqual(gray_ref, gray, maxMeanPixelError, error));
+    std::cout << "BGR to Gray conversion, mean error: " << error << std::endl;
+  }
   SECTION("Image 4x64 (general aligned = true")
   {
     unsigned int h = 4, w = 64;
