@@ -63,6 +63,10 @@
 #include <visp3/core/vpMath.h>
 #include "private/Font.hpp"
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+#include <iterator>
+#endif
+
 #define STB_TRUETYPE_IMPLEMENTATION
 #include "private/stb_truetype.h"
 
@@ -84,11 +88,18 @@ public:
 
     \param [in] height - initial height value. By default it is equal to 16.
   */
-  Impl(unsigned int height = 16, const vpFontFamily & fontFamily = TRUETYPE_FILE,
+  Impl(unsigned int height = 16,
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+       const vpFontFamily & fontFamily = TRUETYPE_FILE,
        const std::string & ttfFilename = std::string(VISP_RUBIK_REGULAR_FONT_RESOURCES))
+#else
+       const vpFontFamily & fontFamily = GENERIC_MONOSPACE,
+       const std::string & ttfFilename = "")
+#endif
   {
     _fontHeight = height;
     _ttfFamily = fontFamily;
+    (void)ttfFilename;
 
     switch (_ttfFamily) {
     case GENERIC_MONOSPACE: {
@@ -96,6 +107,7 @@ public:
       Resize(height);
       break;
     }
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     case TRUETYPE_FILE: {
       std::vector<std::string> ttfs = vpIoTools::splitChain(ttfFilename, ";");
       std::string ttf_file = "";
@@ -122,6 +134,7 @@ public:
 
       break;
     }
+#endif
     }
   }
 
@@ -165,8 +178,10 @@ public:
       break;
     }
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     case TRUETYPE_FILE:
       break;
+#endif
     }
 
     return true;
@@ -208,6 +223,7 @@ public:
       return size.x ? size + 2 * _currentIndent : Point();
     }
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     case TRUETYPE_FILE:
     {
       ToUTF32(text, _wordUTF32);
@@ -263,6 +279,7 @@ public:
 
       return bb;
     }
+#endif
     }
 
     return Point();
@@ -312,6 +329,7 @@ public:
       break;
     }
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     case TRUETYPE_FILE:
     {
       Measure(text);
@@ -354,6 +372,7 @@ public:
 
       break;
     }
+#endif
     }
 
     return true;
@@ -418,6 +437,7 @@ public:
       break;
     }
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     case TRUETYPE_FILE:
     {
       Measure(text);
@@ -463,6 +483,7 @@ public:
 
       break;
     }
+#endif
     }
 
     return true;
@@ -506,11 +527,15 @@ private:
   // For font drawing using stb_truetype interface
   std::vector<unsigned char> fontBuffer;
   unsigned int _fontHeight;
+
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   float _fontScale;
   int _fontAscent;
   int _fontDescent;
-  vpFontFamily _ttfFamily;
   stbtt_fontinfo _info;
+#endif
+  vpFontFamily _ttfFamily;
+
   vpImage<unsigned char> _fontBuffer;
   std::vector<unsigned int> _wordUTF32;
   vpRect _bb;
@@ -2169,6 +2194,7 @@ private:
     return Load(data, sizeof(data));
   }
 
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   void LoadTTF(const std::string & filename)
   {
     std::ifstream fontFile(filename.c_str(), std::ios::binary |std::ios::ate);
@@ -2188,6 +2214,7 @@ private:
       throw vpIoException(vpIoException::ioError, "Error when initializing the font data.");
     }
   }
+#endif
 
   void ToUTF32(const std::string & str, std::vector<unsigned int> & utf32)
   {
@@ -2228,6 +2255,7 @@ private:
   Creates a new font class with given height.
 
   \note The vpFontFamily::GENERIC_MONOSPACE font supports ASCII characters only. It was generated on the base of the generic monospace font from Gdiplus.
+  \note The vpFontFamily::TRUETYPE_FILE is only supported with cxx11 or more recent.
 
   \param [in] height : Initial font height value in pixels. By default it is equal to 16 pixels.
   \param [in] fontFamily : Font family in TTF format.
