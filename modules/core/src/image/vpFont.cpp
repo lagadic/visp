@@ -60,7 +60,6 @@
 #include <visp3/core/vpFont.h>
 #include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpMath.h>
 #include "private/Font.hpp"
 
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
@@ -129,8 +128,8 @@ public:
       int lineGap = 0;
       stbtt_GetFontVMetrics(&_info, &_fontAscent, &_fontDescent, &lineGap);
 
-      _fontAscent = vpMath::round(_fontAscent * _fontScale);
-      _fontDescent = vpMath::round(_fontDescent * _fontScale);
+      _fontAscent = std::roundf(_fontAscent * _fontScale);
+      _fontDescent = std::roundf(_fontDescent * _fontScale);
 
       break;
     }
@@ -252,7 +251,7 @@ public:
         int y = _fontAscent + c_y1;
         _y_vec.push_back(y);
 
-        int d_x = x + vpMath::round(lsb * _fontScale);
+        int d_x = x + std::roundf(lsb * _fontScale);
         int d_y = y;
         int d_w = (c_x2 - c_x1);
         int d_h = (c_y2 - c_y1);
@@ -263,13 +262,13 @@ public:
         _bb.setBottom(_bb.getBottom() < d_y+d_h ? d_y+d_h : _bb.getBottom());
 
         /* advance x */
-        x += vpMath::round(ax * _fontScale);
+        x += std::roundf(ax * _fontScale);
 
         /* add kerning */
         int kern = 0;
         if (i < _wordUTF32.size()-1) {
           kern = stbtt_GetCodepointKernAdvance(&_info, _wordUTF32[i], _wordUTF32[i + 1]);
-          x += vpMath::round(kern * _fontScale);
+          x += std::roundf(kern * _fontScale);
         }
       }
 
@@ -339,11 +338,11 @@ public:
 
       for (size_t i = 0, x = 0; i < _wordUTF32.size(); i++) {
         /* render character (stride and offset is important here) */
-        int byteOffset = x + vpMath::round(_lsb_vec[i] * _fontScale) + (_y_vec[i] * _fontBuffer.getWidth());
+        int byteOffset = x + std::roundf(_lsb_vec[i] * _fontScale) + (_y_vec[i] * _fontBuffer.getWidth());
         stbtt_MakeCodepointBitmap(&_info, _fontBuffer.bitmap + byteOffset, _bb_vec[i].getWidth(), _bb_vec[i].getHeight(),
                                   _fontBuffer.getWidth(), _fontScale, _fontScale, _wordUTF32[i]);
 
-        int d_x = x + vpMath::round(_lsb_vec[i] * _fontScale);
+        int d_x = x + std::roundf(_lsb_vec[i] * _fontScale);
         int d_y = _y_vec[i];
         int d_w = _bb_vec[i].getWidth();
         int d_h = _bb_vec[i].getHeight();
@@ -361,12 +360,12 @@ public:
         }
 
         /* advance x */
-        x += vpMath::round(_ax_vec[i] * _fontScale);
+        x += std::roundf(_ax_vec[i] * _fontScale);
 
         /* add kerning */
         if (i < _wordUTF32.size()-1) {
           int kern = stbtt_GetCodepointKernAdvance(&_info, _wordUTF32[i], _wordUTF32[i + 1]);
-          x += vpMath::round(kern * _fontScale);
+          x += std::roundf(kern * _fontScale);
         }
       }
 
@@ -447,11 +446,11 @@ public:
 
       for (size_t i = 0, x = 0; i < _wordUTF32.size(); i++) {
         /* render character (stride and offset is important here) */
-        int byteOffset = x + vpMath::round(_lsb_vec[i] * _fontScale) + (_y_vec[i] * _fontBuffer.getWidth());
+        int byteOffset = x + std::roundf(_lsb_vec[i] * _fontScale) + (_y_vec[i] * _fontBuffer.getWidth());
         stbtt_MakeCodepointBitmap(&_info, _fontBuffer.bitmap + byteOffset, _bb_vec[i].getWidth(), _bb_vec[i].getHeight(),
                                   _fontBuffer.getWidth(), _fontScale, _fontScale, _wordUTF32[i]);
 
-        int d_x = x + vpMath::round(_lsb_vec[i] * _fontScale);
+        int d_x = x + std::roundf(_lsb_vec[i] * _fontScale);
         int d_y = _y_vec[i];
         int d_w = _bb_vec[i].getWidth();
         int d_h = _bb_vec[i].getHeight();
@@ -472,12 +471,12 @@ public:
         }
 
         /* advance x */
-        x += vpMath::round(_ax_vec[i] * _fontScale);
+        x += std::roundf(_ax_vec[i] * _fontScale);
 
         /* add kerning */
         if (i < _wordUTF32.size()-1) {
           int kern = stbtt_GetCodepointKernAdvance(&_info, _wordUTF32[i], _wordUTF32[i + 1]);
-          x += vpMath::round(kern * _fontScale);
+          x += std::roundf(kern * _fontScale);
         }
       }
 
