@@ -42,7 +42,6 @@
   \brief Draw text in an image.
 */
 
-#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpColor.h>
 
@@ -58,17 +57,11 @@ class VISP_EXPORT vpFont
 public:
   enum vpFontFamily
   {
-    GENERIC_MONOSPACE
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-    , TRUETYPE_FILE
-#endif
+    GENERIC_MONOSPACE,
+    TRUETYPE_FILE
   };
 
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   vpFont(unsigned int height = 16, const vpFontFamily & fontFamily = TRUETYPE_FILE, const std::string & ttfFilename = std::string(VISP_RUBIK_REGULAR_FONT_RESOURCES));
-#else
-  vpFont(unsigned int height = 16, const vpFontFamily & fontFamily = GENERIC_MONOSPACE, const std::string & ttfFilename = "");
-#endif
   ~vpFont();
 
   bool drawText(vpImage<unsigned char> & I, const std::string & text, const vpImagePoint & position, unsigned char color) const;
