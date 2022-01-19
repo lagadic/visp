@@ -126,14 +126,14 @@ int main() {
   \endcode
 
   If you want to send a complex data type, you can either send the ASCII
-representation or send directly the byte data. In the last case, you should
-have to handle that both the server and the client have the same data type
-representation. Be careful also with the endianness of the network / host.
+  representation or send directly the byte data. In the last case, you should
+  have to handle that both the server and the client have the same data type
+  representation. Be careful also with the endianness of the network / host.
 
   Here an example using a structure of data, assuming that both the server and
-the client have the same architecture (probably you should write your own
-serialization / deserialization functions for the data you want to send /
-receive):
+  the client have the same architecture (probably you should write your own
+  serialization / deserialization functions for the data you want to send /
+  receive):
 
   \code
 #include <cstdlib>
@@ -161,11 +161,9 @@ int main() {
     int res = server.receive(msg, hostInfo);
     if (res) {
       DataType data_type;
-      memcpy(&data_type.double_val, msg.c_str(),
-sizeof(data_type.double_val)); memcpy(&data_type.int_val,
-msg.c_str()+sizeof(data_type.double_val), sizeof(data_type.int_val));
-      std::cout << "Server received double_val: " << data_type.double_val << "
-; int_val: " << data_type.int_val << " from: " << hostInfo << std::endl;
+      memcpy(&data_type.double_val, msg.c_str(), sizeof(data_type.double_val));
+      memcpy(&data_type.int_val, msg.c_str()+sizeof(data_type.double_val), sizeof(data_type.int_val));
+      std::cout << "Server received double_val: " << data_type.double_val << "; int_val: " << data_type.int_val << " from: " << hostInfo << std::endl;
 
       //Get address and port
       std::istringstream iss(hostInfo);
@@ -177,9 +175,8 @@ msg.c_str()+sizeof(data_type.double_val), sizeof(data_type.int_val));
       data_type.int_val += 2;
       char data[sizeof(data_type.double_val)+sizeof(data_type.int_val)];
       memcpy(data, &data_type.double_val, sizeof(data_type.double_val));
-      memcpy(data+sizeof(data_type.double_val), &data_type.int_val,
-sizeof(data_type.int_val)); msg = std::string(data,
-sizeof(data_type.double_val)+sizeof(data_type.int_val));
+      memcpy(data+sizeof(data_type.double_val), &data_type.int_val, sizeof(data_type.int_val));
+      msg = std::string(data, sizeof(data_type.double_val)+sizeof(data_type.int_val));
 
       server.send(msg, tokens[1], atoi(tokens[2].c_str()));
     }
