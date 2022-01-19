@@ -57,6 +57,7 @@
 * SOFTWARE.
 */
 
+#include <stdio.h>
 #include <visp3/core/vpFont.h>
 #include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
@@ -2171,6 +2172,7 @@ private:
 
   void LoadTTF(const std::string & filename)
   {
+#if 0 // disable for compatibility with old platform (Ubuntu 12.04)
     std::ifstream fontFile(filename.c_str(), std::ios::binary |std::ios::ate);
     fontFile >> std::noskipws;
 
@@ -2182,6 +2184,24 @@ private:
     std::copy(std::istream_iterator<unsigned char>(fontFile),
               std::istream_iterator<unsigned char>(),
               std::back_inserter(fontBuffer));
+#else
+    FILE* fontFile = fopen(filename.c_str(), "rb");
+    if (!fontFile) {
+      fclose(fontFile);
+      throw vpIoException(vpIoException::ioError, "Cannot open TTF file: %s", filename.c_str());
+    }
+
+    fseek(fontFile, 0, SEEK_END);
+    size_t size = ftell(fontFile);  /* how long is the file ? */
+    fseek(fontFile, 0, SEEK_SET);   /* reset */
+
+    std::vector<unsigned char> fontBuffer(size);
+    if (fread(&fontBuffer[0], sizeof(unsigned char), fontBuffer.size(), fontFile) != fontBuffer.size()) {
+      fclose(fontFile);
+      throw vpIoException(vpIoException::ioError, "Error when reading the font file.");
+    }
+    fclose(fontFile);
+#endif
 
     /* prepare font */
     if (!stbtt_InitFont(&_info, fontBuffer.data(), 0)) {
