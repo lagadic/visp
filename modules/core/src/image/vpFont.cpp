@@ -57,11 +57,15 @@
 * SOFTWARE.
 */
 
-#include <stdio.h>
 #include <visp3/core/vpFont.h>
 #include <visp3/core/vpIoException.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+#include <iterator>
+#else
+#include <stdio.h>
+#endif
 #include "private/Font.hpp"
 
 #define STB_TRUETYPE_IMPLEMENTATION
@@ -2172,19 +2176,21 @@ private:
 
   void LoadTTF(const std::string & filename)
   {
-#if 0 // disable for compatibility with old platform (Ubuntu 12.04)
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     std::ifstream fontFile(filename.c_str(), std::ios::binary |std::ios::ate);
     fontFile >> std::noskipws;
 
     std::streampos fileSize = fontFile.tellg();
     fontFile.seekg(0, std::ios::beg);
 
+    fontBuffer.clear();
     fontBuffer.reserve(fileSize);
 
     std::copy(std::istream_iterator<unsigned char>(fontFile),
               std::istream_iterator<unsigned char>(),
               std::back_inserter(fontBuffer));
 #else
+    // for compatibility with old platform (e.g. Ubuntu 12.04)
     FILE* fontFile = fopen(filename.c_str(), "rb");
     if (!fontFile) {
       fclose(fontFile);
@@ -2192,10 +2198,10 @@ private:
     }
 
     fseek(fontFile, 0, SEEK_END);
-    size_t size = ftell(fontFile);  /* how long is the file ? */
-    fseek(fontFile, 0, SEEK_SET);   /* reset */
+    size_t fileSize = ftell(fontFile);  /* how long is the file? */
+    fseek(fontFile, 0, SEEK_SET);       /* reset */
 
-    std::vector<unsigned char> fontBuffer(size);
+    fontBuffer.resize(fileSize);
     if (fread(&fontBuffer[0], sizeof(unsigned char), fontBuffer.size(), fontFile) != fontBuffer.size()) {
       fclose(fontFile);
       throw vpIoException(vpIoException::ioError, "Error when reading the font file.");
