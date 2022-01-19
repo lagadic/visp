@@ -161,6 +161,12 @@ else()
 endif()
 
 #----------------------------------------------------------------------
+# Tool specific
+#----------------------------------------------------------------------
+# PCL tools
+include(cmake/PCLTools.cmake)
+
+#----------------------------------------------------------------------
 # Platform specific
 #----------------------------------------------------------------------
 include(cmake/VISPDetectPlatform.cmake)
@@ -1203,10 +1209,6 @@ endif()
 if(Coin_FOUND)
   mark_as_advanced(Coin_DIR Coin_LIBRARY Qt5OpenGL_DIR)
 endif()
-# PCL and 3rd party advanced vars
-if(USE_PCL)
-  include(cmake/PCLTools.cmake)
-endif()
 
 # ----------------------------------------------------------------------------
 #  Update version of 3rd party for which info is missing
@@ -1259,7 +1261,7 @@ endif()
 find_host_package(Git QUIET)
 
 if(NOT DEFINED VISP_VCSVERSION AND GIT_FOUND)
-  execute_process(COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty --match "[0-9].[0-9].[0-9]*"
+  execute_process(COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty --match "v[0-9].[0-9].[0-9]*"
     WORKING_DIRECTORY "${VISP_SOURCE_DIR}"
     OUTPUT_VARIABLE VISP_VCSVERSION
     RESULT_VARIABLE GIT_RESULT
