@@ -117,7 +117,7 @@ public:
       LoadTTF(ttf_file);
 
       /* calculate font scaling */
-      _fontScale = stbtt_ScaleForPixelHeight(&_info, _fontHeight);
+      _fontScale = stbtt_ScaleForPixelHeight(&_info, static_cast<float>(_fontHeight));
 
       int lineGap = 0;
       stbtt_GetFontVMetrics(&_info, &_fontAscent, &_fontDescent, &lineGap);
