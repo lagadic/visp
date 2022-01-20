@@ -62,7 +62,7 @@ if(DOXYGEN_FOUND)
   )
   if(UNIX AND NOT ANDROID) # man target available only on unix
     add_dependencies(visp_doc man developer_scripts)
-  else()
+  elseif(NOT (MINGW OR IOS))
     add_dependencies(visp_doc developer_scripts)
   endif()
   if(ENABLE_SOLUTION_FOLDERS)
