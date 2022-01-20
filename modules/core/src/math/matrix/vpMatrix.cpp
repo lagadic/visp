@@ -6093,7 +6093,7 @@ vpColVector vpMatrix::eigenValues() const
     vpMatrix A = (*this);
     vpColVector WORK;
     int lwork = -1;
-    int info;
+    int info = 0;
     double wkopt;
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, &wkopt, lwork, info);
     lwork = static_cast<int>(wkopt);
@@ -6225,7 +6225,7 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
     vpMatrix A = (*this);
     vpColVector WORK;
     int lwork = -1;
-    int info;
+    int info = 0;
     double wkopt;
     vpMatrix::blas_dsyev(jobz, uplo, rowNum, A.data, colNum, evalue.data, &wkopt, lwork, info);
     lwork = static_cast<int>(wkopt);
