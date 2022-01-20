@@ -21,8 +21,8 @@ environment:
 
   matrix:
     - TARGET: mingw
-    - TARGET: msvc15
-    - TARGET: uwp-msvc15
+    - TARGET: msvc
+    - TARGET: uwp
 
 # Scripts that are called at very beginning, before repo cloning
 init:
@@ -43,13 +43,13 @@ install:
 
   # opencv
   - ps: >-
-      if (${env:TARGET} -imatch "mingw" -and !(Test-Path ${env:VISP_OPENCV_VS2015_2017_FILE})) {
+      if (${env:TARGET} -imatch "msvc" -and !(Test-Path ${env:VISP_OPENCV_VS2015_2017_FILE})) {
         echo "Downloading OpenCV Visual Studio from ${env:VISP_OPENCV_VS2015_2017_PKG} ..."
         appveyor DownloadFile "${env:VISP_OPENCV_VS2015_2017_PKG}" -FileName ${env:VISP_OPENCV_VS2015_2017_FILE} -Timeout 1200000
       }
 
   - ps: >-
-      if (${env:TARGET} -imatch "msvc15") {
+      if (${env:TARGET} -imatch "msvc") {
         echo "Extracting OpenCV Visual Studio to C:\projects\deps ..."
         7z x ${env:VISP_OPENCV_VS2015_2017_FILE} -y "-o${env:VISP_OPENCV_VS2015_2017_DIR}"
       }
@@ -84,15 +84,15 @@ before_build:
   - if "%TARGET%"=="mingw" mingw32-make --version
 
   # Setup path for ViSP
-  - if "%TARGET%"=="msvc15" set VISP_DLL_DIR=C:\projects\visp\build\install\%platform%\vc15\bin
-  - if "%TARGET%"=="msvc15" set PATH=%VISP_DLL_DIR%;%PATH%
+  - if "%TARGET%"=="msvc" set VISP_DLL_DIR=C:\projects\visp\build\install\%platform%\vc15\bin
+  - if "%TARGET%"=="msvc" set PATH=%VISP_DLL_DIR%;%PATH%
   - if "%TARGET%"=="mingw" set VISP_DLL_DIR=C:\projects\visp\build\install\%platform%\mingw\bin
   - if "%TARGET%"=="mingw" set PATH=%VISP_DLL_DIR%;%PATH%
 
   # Setup path for OpenCV
-  - if "%TARGET%"=="msvc15" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_VS2015_2017_DIR%\opencv\build
-  - if "%TARGET%"=="msvc15" set OpenCV_DLL_DIR=%OpenCV_DIR%\%platform%\vc15\bin
-  - if "%TARGET%"=="msvc15" set PATH=%OPENCV_DLL_DIR%;%PATH%
+  - if "%TARGET%"=="msvc" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_VS2015_2017_DIR%\opencv\build
+  - if "%TARGET%"=="msvc" set OpenCV_DLL_DIR=%OpenCV_DIR%\%platform%\vc15\bin
+  - if "%TARGET%"=="msvc" set PATH=%OPENCV_DLL_DIR%;%PATH%
   - if "%TARGET%"=="mingw" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_MINGW_DIR%\install
   - if "%TARGET%"=="mingw" set OpenCV_DLL_DIR=%OpenCV_DIR%\x64\mingw\bin
   - if "%TARGET%"=="mingw" set PATH=%OPENCV_DLL_DIR%;%PATH%
@@ -107,19 +107,19 @@ build_script:
   # mingw case
   - if "%TARGET%"=="mingw" dir %OpenCV_DLL_DIR%
   - if "%TARGET%"=="mingw" cmake -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=%configuration% ..\visp
-  - if "%TARGET%"=="mingw" cmake --build . --config %configuration% -- -j2
+  - if "%TARGET%"=="mingw" cmake --build . --config %configuration% --target install -- -j2
   - if "%TARGET%"=="mingw" dir C:\projects\visp\build\install
   - if "%TARGET%"=="mingw" dir %VISP_DLL_DIR%
   - if "%TARGET%"=="mingw" ctest --output-on-failure
 
-  # msvc15 case
-  - if "%TARGET%"=="msvc15" dir %OpenCV_DLL_DIR%
-  - if "%TARGET%"=="msvc15" cmake -G "Visual Studio 15 2017" -A %platform% ..\visp
-  - if "%TARGET%"=="msvc15" cmake --build . --config %configuration% -- /m:2
-  - if "%TARGET%"=="msvc15" dir C:\projects\visp\build\install
-  - if "%TARGET%"=="msvc15" dir %VISP_DLL_DIR%
-  - if "%TARGET%"=="msvc15" ctest --output-on-failure
+  # msvc case
+  - if "%TARGET%"=="msvc" dir %OpenCV_DLL_DIR%
+  - if "%TARGET%"=="msvc" cmake -G "Visual Studio 15 2017" -A %platform% ..\visp
+  - if "%TARGET%"=="msvc" cmake --build . --config %configuration% --target install -- /m:2
+  - if "%TARGET%"=="msvc" dir C:\projects\visp\build\install
+  - if "%TARGET%"=="msvc" dir %VISP_DLL_DIR%
+  - if "%TARGET%"=="msvc" ctest --output-on-failure
 
-  # uwp-msvc15 case
-  - if "%TARGET%"=="uwp-msvc15" cmake -G "Visual Studio 15 2017" -A %platform% -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF ..\test-ci
-  - if "%TARGET%"=="uwp-msvc15" cmake --build . --config %configuration% -- /m:2
+  # uwp case
+  - if "%TARGET%"=="uwp" cmake -G "Visual Studio 15 2017" -A %platform% -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF ..\visp
+  - if "%TARGET%"=="uwp" cmake --build . --config %configuration% -- /m:2
