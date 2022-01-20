@@ -48,10 +48,10 @@
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/io/vpVideoWriter.h>
 
-static unsigned int first_frame = 100;
+static long first_frame = 100;
 static int frame_step = 2;
 static unsigned int nframes = 3;
-static unsigned int last_frame = first_frame + static_cast<unsigned int>(frame_step) * (nframes - 1);
+static long last_frame = first_frame + static_cast<long>(frame_step) * (nframes - 1);
 static std::string tmp;
 static std::string videoname_grey;
 static std::string videoname_color;
@@ -62,7 +62,7 @@ bool test_createSequence(vpImage<Type> &I, const std::string &videoname, unsigne
   try {
     vpVideoWriter writer;
     writer.setFileName(videoname);
-    writer.setFirstFrameIndex(first_frame);
+    writer.setFirstFrameIndex(static_cast<int>(first_frame));
     writer.setFrameStep(frame_step);
     writer.open(I);
 
@@ -77,7 +77,7 @@ bool test_createSequence(vpImage<Type> &I, const std::string &videoname, unsigne
 }
 
 template <class Type>
-bool test_readSequence(vpImage<Type> &I, const std::string &videoname, unsigned int first_frame, int frame_step, int step, unsigned int last_frame)
+bool test_readSequence(vpImage<Type> &I, const std::string &videoname, long first_frame, int frame_step, int step, long last_frame)
 {
   vpVideoReader reader;
   reader.setFileName(videoname);
