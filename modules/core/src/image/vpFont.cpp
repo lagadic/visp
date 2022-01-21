@@ -223,7 +223,7 @@ public:
       _bb_vec.clear();
       _y_vec.clear();
 
-      for (size_t i = 0, x = 0; i < _wordUTF32.size(); i++) {
+      for (int i = 0, x = 0; i < _wordUTF32.size(); i++) {
         /* how wide is this character */
         int ax = 0;
         int lsb = 0;
@@ -324,16 +324,16 @@ public:
       _fontBuffer.resize(std::max(_fontBuffer.getHeight(), static_cast<unsigned int>(_bb.getBottom()+1)),
                          std::max(_fontBuffer.getWidth(), static_cast<unsigned int>(_bb.getRight()+1)));
 
-      for (size_t i = 0, x = 0; i < _wordUTF32.size(); i++) {
+      for (int i = 0, x = 0; i < _wordUTF32.size(); i++) {
         /* render character (stride and offset is important here) */
         int byteOffset = x + vpMath::round(_lsb_vec[i] * _fontScale) + (_y_vec[i] * _fontBuffer.getWidth());
-        stbtt_MakeCodepointBitmap(&_info, _fontBuffer.bitmap + byteOffset, _bb_vec[i].getWidth(), _bb_vec[i].getHeight(),
+        stbtt_MakeCodepointBitmap(&_info, _fontBuffer.bitmap + byteOffset, static_cast<int>(_bb_vec[i].getWidth()), static_cast<int>(_bb_vec[i].getHeight()),
                                   _fontBuffer.getWidth(), _fontScale, _fontScale, _wordUTF32[i]);
 
         int d_x = x + vpMath::round(_lsb_vec[i] * _fontScale);
         int d_y = _y_vec[i];
-        int d_w = _bb_vec[i].getWidth();
-        int d_h = _bb_vec[i].getHeight();
+        int d_w = static_cast<int>(_bb_vec[i].getWidth());
+        int d_h = static_cast<int>(_bb_vec[i].getHeight());
 
         for (int y = d_y; y < d_y+d_h; y++) {
           int dstY = static_cast<int>(position.get_v() + y - _bb.getTop());
@@ -430,16 +430,16 @@ public:
       _fontBuffer.resize(std::max(_fontBuffer.getHeight(), static_cast<unsigned int>(_bb.getBottom()+1)),
                          std::max(_fontBuffer.getWidth(), static_cast<unsigned int>(_bb.getRight()+1)));
 
-      for (size_t i = 0, x = 0; i < _wordUTF32.size(); i++) {
+      for (int i = 0, x = 0; i < _wordUTF32.size(); i++) {
         /* render character (stride and offset is important here) */
         int byteOffset = x + vpMath::round(_lsb_vec[i] * _fontScale) + (_y_vec[i] * _fontBuffer.getWidth());
-        stbtt_MakeCodepointBitmap(&_info, _fontBuffer.bitmap + byteOffset, _bb_vec[i].getWidth(), _bb_vec[i].getHeight(),
+        stbtt_MakeCodepointBitmap(&_info, _fontBuffer.bitmap + byteOffset, static_cast<int>(_bb_vec[i].getWidth()), static_cast<int>(_bb_vec[i].getHeight()),
                                   _fontBuffer.getWidth(), _fontScale, _fontScale, _wordUTF32[i]);
 
         int d_x = x + vpMath::round(_lsb_vec[i] * _fontScale);
         int d_y = _y_vec[i];
-        int d_w = _bb_vec[i].getWidth();
-        int d_h = _bb_vec[i].getHeight();
+        int d_w = static_cast<int>(_bb_vec[i].getWidth());
+        int d_h = static_cast<int>(_bb_vec[i].getHeight());
 
         for (int y = d_y; y < d_y+d_h; y++) {
           int dstY = static_cast<int>(position.get_v() + y - _bb.getTop());
