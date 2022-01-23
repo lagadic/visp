@@ -57,10 +57,20 @@ if(USE_PNG)
   add_definitions(${PNG_DEFINITIONS})
 endif()
 
-if(WITH_STBIMAGE)
+# TODO:
+#if(WITH_STBIMAGE)
   # stb_image is private
   include_directories(${STBIMAGE_INCLUDE_DIRS})
+#endif()
+
+if(WITH_CATCH2)
+  # catch2 is private
+  include_directories(${CATCH2_INCLUDE_DIRS})
 endif()
+
+# simdlib is always enabled since it contains fallback code to plain C++ code
+# Simd lib is private
+include_directories(${SIMDLIB_INCLUDE_DIRS})
 
 # OpenCV
 if(USE_OPENCV)
@@ -168,11 +178,6 @@ if(USE_OPENCV)
     list(APPEND opt_incs ${OpenCV_INCLUDE_DIRS})
   endif()
 endif(USE_OPENCV)
-
-if(WITH_CATCH2)
-  # catch2 is private
-  include_directories(${CATCH2_INCLUDE_DIRS})
-endif()
 
 if(ANDROID)
   vp_add_module(io visp_core)

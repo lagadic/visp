@@ -41,115 +41,18 @@
   \brief Read/write images
 */
 
-#include <visp3/core/vpImage.h>
-#include <visp3/core/vpImageConvert.h> //image  conversion
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 
-#if defined(_WIN32)
-// Include WinSock2.h before windows.h to ensure that winsock.h is not
-// included by windows.h since winsock.h and winsock2.h are incompatible
-#include <WinSock2.h>
-#include <windows.h>
-#endif
+//TODO:
+#include "private/vpImageIoBackend.h"
 
-#if defined(VISP_HAVE_JPEG)
-#include <jerror.h>
-#include <jpeglib.h>
-#endif
-
-#if defined(VISP_HAVE_PNG)
-#include <png.h>
-#endif
-
-#if !defined(VISP_HAVE_OPENCV)
-#if !defined(VISP_HAVE_JPEG) || !defined(VISP_HAVE_PNG)
-
-#if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
-#  define VISP_HAVE_SSE2 1
-#endif
-
-#ifndef VISP_HAVE_SSE2
-#  define STBI_NO_SIMD
-#endif
-
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
-
-#define STB_IMAGE_WRITE_IMPLEMENTATION
-#include <stb_image_write.h>
-#endif
-#endif
-
-void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
-                        unsigned int &h, unsigned int &maxval);
-
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-/*!
- * Decode the PNM image header.
- * \param filename[in] : File name.
- * \param fd[in] : File desdcriptor.
- * \param magic[in] : Magic number for identifying the file type.
- * \param w[out] : Image width.
- * \param h[out] : Image height.
- * \param maxval[out] : Maximum pixel value.
- */
-void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
-                        unsigned int &h, unsigned int &maxval)
-{
-  std::string line;
-  unsigned int nb_elt = 4, cpt_elt = 0;
-  while (cpt_elt != nb_elt) {
-    // Skip empty lines or lines starting with # (comment)
-    while (std::getline(fd, line) && (line.compare(0, 1, "#") == 0 || line.size() == 0)) {
-    };
-
-    if (fd.eof()) {
-      fd.close();
-      throw(vpImageException(vpImageException::ioError, "Cannot read header of file \"%s\"", filename.c_str()));
-    }
-
-    std::vector<std::string> header = vpIoTools::splitChain(line, std::string(" "));
-
-    if (header.size() == 0) {
-      fd.close();
-      throw(vpImageException(vpImageException::ioError, "Cannot read header of file \"%s\"", filename.c_str()));
-    }
-
-    if (cpt_elt == 0) { // decode magic
-      if (header[0].compare(0, magic.size(), magic) != 0) {
-        fd.close();
-        throw(vpImageException(vpImageException::ioError, "\"%s\" is not a PNM file with magic number %s",
-                               filename.c_str(), magic.c_str()));
-      }
-      cpt_elt++;
-      header.erase(header.begin(),
-                   header.begin() + 1); // erase first element that is processed
-    }
-    while (header.size()) {
-      if (cpt_elt == 1) { // decode width
-        std::istringstream ss(header[0]);
-        ss >> w;
-        cpt_elt++;
-        header.erase(header.begin(),
-                     header.begin() + 1); // erase first element that is processed
-      } else if (cpt_elt == 2) {          // decode height
-        std::istringstream ss(header[0]);
-        ss >> h;
-        cpt_elt++;
-        header.erase(header.begin(),
-                     header.begin() + 1); // erase first element that is processed
-      } else if (cpt_elt == 3) {          // decode maxval
-        std::istringstream ss(header[0]);
-        ss >> maxval;
-        cpt_elt++;
-        header.erase(header.begin(),
-                     header.begin() + 1); // erase first element that is processed
-      }
-    }
-  }
-}
-#endif
+//TODO:
+// priority order for backend selection is:
+//  - libjpeg / libpng if available
+//  - OpenCV if available
+//  - stb backend for image reading / Simd backend for image writing
+//  - Simd backend for image reading / stb backend for image writing
 
 vpImageIo::vpImageFormatType vpImageIo::getFormat(const std::string &filename)
 {
@@ -241,7 +144,7 @@ std::string vpImageIo::getExtension(const std::string &filename)
   \param I : Image to set with the \e filename content.
   \param filename : Name of the file containing the image.
  */
-void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename)
+void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend)
 {
   bool exist = vpIoTools::checkFilename(filename);
   if (!exist) {
@@ -262,18 +165,10 @@ void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename)
     readPPM(I, final_filename);
     break;
   case FORMAT_JPEG:
-#ifdef VISP_HAVE_JPEG
-    readJPEG(I, final_filename);
-#else
-    try_opencv_reader = true;
-#endif
+    readJPEG(I, final_filename, backend);
     break;
   case FORMAT_PNG:
-#if defined(VISP_HAVE_PNG)
-    readPNG(I, final_filename);
-#else
-    try_opencv_reader = true;
-#endif
+    readPNG(I, final_filename, backend);
     break;
   case FORMAT_TIFF:
   case FORMAT_BMP:
@@ -288,39 +183,10 @@ void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename)
 
   if (try_opencv_reader) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
-#if VISP_HAVE_OPENCV_VERSION >= 0x030200
-    int flags = cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
-    int flags = cv::IMREAD_GRAYSCALE;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    int flags = CV_LOAD_IMAGE_GRAYSCALE;
-#endif
-    // std::cout << "Use opencv to read the image" << std::endl;
-    cv::Mat cvI = cv::imread(final_filename, flags);
-    if (cvI.cols == 0 && cvI.rows == 0) {
-      std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
-      throw(vpImageException(vpImageException::ioError, message));
-    }
-    vpImageConvert::convert(cvI, I);
+    readOpenCV(I, filename);
 #else
-    switch (getFormat(final_filename)) {
-    case FORMAT_JPEG:
-      readJPEG(I, final_filename);
-      break;
-    case FORMAT_PNG:
-      readPNG(I, final_filename);
-      break;
-    case FORMAT_BMP:
-    case FORMAT_TIFF:
-    case FORMAT_DIB:
-    case FORMAT_PBM:
-    case FORMAT_RASTER:
-    case FORMAT_JPEG2000:
-    case FORMAT_UNKNOWN:
-    default:
-      std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
-      throw(vpImageException(vpImageException::ioError, message));
-    }
+    std::string message = "Cannot read file \"" + filename + "\": No backend able to support this image format";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 }
@@ -345,7 +211,7 @@ void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename)
   \param I : Image to set with the \e filename content.
   \param filename : Name of the file containing the image.
  */
-void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename)
+void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend)
 {
   bool exist = vpIoTools::checkFilename(filename);
   if (!exist) {
@@ -365,18 +231,10 @@ void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename)
     readPPM(I, final_filename);
     break;
   case FORMAT_JPEG:
-#ifdef VISP_HAVE_JPEG
-    readJPEG(I, final_filename);
-#else
-    try_opencv_reader = true;
-#endif
+    readJPEG(I, final_filename, backend);
     break;
   case FORMAT_PNG:
-#if defined(VISP_HAVE_PNG)
-    readPNG(I, final_filename);
-#else
-    try_opencv_reader = true;
-#endif
+    readPNG(I, final_filename, backend);
     break;
   case FORMAT_TIFF:
   case FORMAT_BMP:
@@ -391,39 +249,10 @@ void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename)
 
   if (try_opencv_reader) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
-#if VISP_HAVE_OPENCV_VERSION >= 0x030200
-    int flags = cv::IMREAD_COLOR | cv::IMREAD_IGNORE_ORIENTATION;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
-    int flags = cv::IMREAD_COLOR;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    int flags = CV_LOAD_IMAGE_COLOR;
-#endif
-    // std::cout << "Use opencv to read the image" << std::endl;
-    cv::Mat cvI = cv::imread(final_filename, flags);
-    if (cvI.cols == 0 && cvI.rows == 0) {
-      std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
-      throw(vpImageException(vpImageException::ioError, message));
-    }
-    vpImageConvert::convert(cvI, I);
+    readOpenCV(I, filename);
 #else
-    switch (getFormat(final_filename)) {
-    case FORMAT_JPEG:
-      readJPEG(I, final_filename);
-      break;
-    case FORMAT_PNG:
-      readPNG(I, final_filename);
-      break;
-    case FORMAT_BMP:
-    case FORMAT_TIFF:
-    case FORMAT_DIB:
-    case FORMAT_PBM:
-    case FORMAT_RASTER:
-    case FORMAT_JPEG2000:
-    case FORMAT_UNKNOWN:
-    default:
-      std::string message = "Cannot read file \"" + std::string(final_filename) + "\": Image format not supported";
-      throw(vpImageException(vpImageException::ioError, message));
-    }
+    std::string message = "Cannot read file \"" + filename + "\": No backend able to support this image format";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 }
@@ -442,7 +271,7 @@ void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename)
   \param I : Image to write.
   \param filename : Name of the file containing the image.
  */
-void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filename)
+void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend)
 {
   bool try_opencv_writer = false;
 
@@ -454,18 +283,10 @@ void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filena
     writePPM(I, filename);
     break;
   case FORMAT_JPEG:
-#ifdef VISP_HAVE_JPEG
-    writeJPEG(I, filename);
-#else
-    try_opencv_writer = true;
-#endif
+    writeJPEG(I, filename, backend);
     break;
   case FORMAT_PNG:
-#ifdef VISP_HAVE_PNG
-    writePNG(I, filename);
-#else
-    try_opencv_writer = true;
-#endif
+    writePNG(I, filename, backend);
     break;
   case FORMAT_TIFF:
   case FORMAT_BMP:
@@ -479,30 +300,11 @@ void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filena
   }
 
   if (try_opencv_writer) {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
-    // std::cout << "Use opencv to write the image" << std::endl;
-    cv::Mat cvI;
-    vpImageConvert::convert(I, cvI);
-    cv::imwrite(filename, cvI);
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    writeOpenCV(I, filename, 90);
 #else
-    switch (getFormat(filename)) {
-    case FORMAT_JPEG:
-      writeJPEG(I, filename);
-      break;
-    case FORMAT_PNG:
-      writePNG(I, filename);
-      break;
-    case FORMAT_BMP:
-    case FORMAT_TIFF:
-    case FORMAT_DIB:
-    case FORMAT_PBM:
-    case FORMAT_RASTER:
-    case FORMAT_JPEG2000:
-    case FORMAT_UNKNOWN:
-    default:
-      vpCERROR << "Cannot write file: Image format not supported..." << std::endl;
-      throw(vpImageException(vpImageException::ioError, "Cannot write file: Image format not supported"));
-    }
+    std::string message = "Cannot write file \"" + filename + "\": No backend able to support this image format";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 }
@@ -521,7 +323,7 @@ void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filena
   \param I : Image to write.
   \param filename : Name of the file containing the image.
  */
-void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename)
+void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend)
 {
   bool try_opencv_writer = false;
 
@@ -533,18 +335,10 @@ void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename)
     writePPM(I, filename);
     break;
   case FORMAT_JPEG:
-#ifdef VISP_HAVE_JPEG
-    writeJPEG(I, filename);
-#else
-    try_opencv_writer = true;
-#endif
+    writeJPEG(I, filename, backend);
     break;
   case FORMAT_PNG:
-#ifdef VISP_HAVE_PNG
-    writePNG(I, filename);
-#else
-    try_opencv_writer = true;
-#endif
+    writePNG(I, filename, backend);
     break;
   case FORMAT_TIFF:
   case FORMAT_BMP:
@@ -558,1681 +352,250 @@ void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename)
   }
 
   if (try_opencv_writer) {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
-    // std::cout << "Use opencv to write the image" << std::endl;
-    cv::Mat cvI;
-    vpImageConvert::convert(I, cvI);
-    cv::imwrite(filename, cvI);
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    writeOpenCV(I, filename, 90);
 #else
-    switch (getFormat(filename)) {
-    case FORMAT_JPEG:
-      writeJPEG(I, filename);
-      break;
-    case FORMAT_PNG:
-      writePNG(I, filename);
-      break;
-    case FORMAT_BMP:
-    case FORMAT_TIFF:
-    case FORMAT_DIB:
-    case FORMAT_PBM:
-    case FORMAT_RASTER:
-    case FORMAT_JPEG2000:
-    case FORMAT_UNKNOWN:
-    default:
-      vpCERROR << "Cannot write file: Image format not supported..." << std::endl;
-      throw(vpImageException(vpImageException::ioError, "Cannot write file: Image format not supported"));
-  }
+    std::string message = "Cannot write file \"" + filename + "\": No backend able to support this image format";
+    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 }
 
-//--------------------------------------------------------------------------
-// PFM
-//--------------------------------------------------------------------------
+void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend)
+{
+  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_JPEG)
+    readJPEGLibjpeg(I, filename);
+#else
+    std::string message = "Cannot read file \"" + filename + "\": Libjpeg backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    readOpenCV(I, filename);
+#else
+    std::string message = "Cannot read file \"" + filename + "\": OpenCV backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_STB_IMAGE_BACKEND || backend == IO_DEFAULT_BACKEND) {
+    readStb(I, filename);
+  } else if (backend == IO_SIMDLIB_BACKEND) {
+    readSimdlib(I, filename);
+  }
+}
 
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function is built like portable gray pixmap (eg PGM P5) file.
-  but considers float image data.
+void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend)
+{
+  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_JPEG)
+    readJPEGLibjpeg(I, filename);
+#else
+    std::string message = "Cannot read file \"" + filename + "\": Libjpeg backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    readOpenCV(I, filename);
+#else
+    std::string message = "Cannot read file \"" + filename + "\": OpenCV backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_STB_IMAGE_BACKEND || backend == IO_DEFAULT_BACKEND) {
+    readStb(I, filename);
+  } else if (backend == IO_SIMDLIB_BACKEND) {
+    readSimdlib(I, filename);
+  }
+}
 
-  \param I : Image to save as a (PFM P8) file.
-  \param filename : Name of the file containing the image.
-*/
+void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend)
+{
+  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_PNG)
+    readPNGLibpng(I, filename);
+#else
+    std::string message = "Cannot read file \"" + filename + "\": Libpng backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    readOpenCV(I, filename);
+#else
+    std::string message = "Cannot read file \"" + filename + "\": OpenCV backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_STB_IMAGE_BACKEND || backend == IO_DEFAULT_BACKEND) {
+    readStb(I, filename);
+  } else if (backend == IO_SIMDLIB_BACKEND) {
+    readSimdlib(I, filename);
+  }
+}
+
+void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend)
+{
+  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_PNG)
+    readPNGLibpng(I, filename);
+#else
+    std::string message = "Cannot read file \"" + filename + "\": Libpng backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    readOpenCV(I, filename);
+#else
+    std::string message = "Cannot read file \"" + filename + "\": OpenCV backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_STB_IMAGE_BACKEND || backend == IO_DEFAULT_BACKEND) {
+    readStb(I, filename);
+  } else if (backend == IO_SIMDLIB_BACKEND) {
+    readSimdlib(I, filename);
+  }
+}
+
+void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename, int quality, const vpImageIoBackendType& backend)
+{
+  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_JPEG)
+    writeJPEGLibjpeg(I, filename, quality);
+#else
+    std::string message = "Cannot write file \"" + filename + "\": Libjpeg backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    writeOpenCV(I, filename, quality);
+#else
+    std::string message = "Cannot write file \"" + filename + "\": OpenCV backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_SIMDLIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+    writeJPEGSimdlib(I, filename, quality);
+  } else if (backend == IO_STB_IMAGE_BACKEND) {
+    writeJPEGStb(I, filename, quality);
+  }
+}
+
+void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename, int quality, const vpImageIoBackendType& backend)
+{
+  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_JPEG)
+    writeJPEGLibjpeg(I, filename, quality);
+#else
+    std::string message = "Cannot write file \"" + filename + "\": Libjpeg backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    writeOpenCV(I, filename, quality);
+#else
+    std::string message = "Cannot write file \"" + filename + "\": OpenCV backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_SIMDLIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+    writeJPEGSimdlib(I, filename, quality);
+  } else if (backend == IO_STB_IMAGE_BACKEND) {
+    writeJPEGStb(I, filename, quality);
+  }
+}
+
+void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend)
+{
+  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_PNG)
+    writePNGLibpng(I, filename);
+#else
+    std::string message = "Cannot write file \"" + filename + "\": Libpng backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    writeOpenCV(I, filename, 90);
+#else
+    std::string message = "Cannot write file \"" + filename + "\": OpenCV backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_SIMDLIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+    writePNGSimdlib(I, filename);
+  } else if (backend == IO_STB_IMAGE_BACKEND) {
+    writePNGStb(I, filename);
+  }
+}
+
+void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend)
+{
+  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_PNG)
+    writePNGLibpng(I, filename);
+#else
+    std::string message = "Cannot write file \"" + filename + "\": Libpng backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    writeOpenCV(I, filename, 90);
+#else
+    std::string message = "Cannot write file \"" + filename + "\": OpenCV backend is not available";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_SIMDLIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+    writePNGSimdlib(I, filename);
+  } else if (backend == IO_STB_IMAGE_BACKEND) {
+    writePNGStb(I, filename);
+  }
+}
 
 void vpImageIo::writePFM(const vpImage<float> &I, const std::string &filename)
 {
-  FILE *fd;
-
-  // Test the filename
-  if (filename.empty()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot write PFM image: filename empty"));
-  }
-
-  fd = fopen(filename.c_str(), "wb");
-
-  if (fd == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create PFM file \"%s\"", filename.c_str()));
-  }
-
-  // Write the head
-  fprintf(fd, "P8\n");                                 // Magic number
-  fprintf(fd, "%u %u\n", I.getWidth(), I.getHeight()); // Image size
-  fprintf(fd, "255\n");                                // Max level
-
-  // Write the bitmap
-  size_t ierr;
-  size_t nbyte = I.getWidth() * I.getHeight();
-
-  ierr = fwrite(I.bitmap, sizeof(float), nbyte, fd);
-  if (ierr != nbyte) {
-    fclose(fd);
-    throw(vpImageException(vpImageException::ioError, "Cannot save PFM file \"%s\": only %d bytes over %d saved ",
-                           filename.c_str(), ierr, nbyte));
-  }
-
-  fflush(fd);
-  fclose(fd);
+  vp_writePFM(I, filename);
 }
-//--------------------------------------------------------------------------
-// PGM
-//--------------------------------------------------------------------------
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a portable gray pixmap (PGM P5) file.
-
-  \param I : Image to save as a (PGM P5) file.
-  \param filename : Name of the file containing the image.
-*/
 
 void vpImageIo::writePGM(const vpImage<unsigned char> &I, const std::string &filename)
 {
-
-  FILE *fd;
-
-  // Test the filename
-  if (filename.empty()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create PGM file: filename empty"));
-  }
-
-  fd = fopen(filename.c_str(), "wb");
-
-  if (fd == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create PGM file \"%s\"", filename.c_str()));
-  }
-
-  // Write the head
-  fprintf(fd, "P5\n");                                 // Magic number
-  fprintf(fd, "%u %u\n", I.getWidth(), I.getHeight()); // Image size
-  fprintf(fd, "255\n");                                // Max level
-
-  // Write the bitmap
-  size_t ierr;
-  size_t nbyte = I.getWidth() * I.getHeight();
-
-  ierr = fwrite(I.bitmap, sizeof(unsigned char), nbyte, fd);
-  if (ierr != nbyte) {
-    fclose(fd);
-    throw(vpImageException(vpImageException::ioError, "Cannot save PGM file \"%s\": only %d over %d bytes saved",
-                           filename.c_str(), ierr, nbyte));
-  }
-
-  fflush(fd);
-  fclose(fd);
+  vp_writePGM(I, filename);
 }
 
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a portable gray pixmap (PGM P5) file.
-
-  \param I : Image to save as a (PGM P5) file.
-  \param filename : Name of the file containing the image.
-*/
 void vpImageIo::writePGM(const vpImage<short> &I, const std::string &filename)
 {
-  vpImage<unsigned char> Iuc;
-  unsigned int nrows = I.getHeight();
-  unsigned int ncols = I.getWidth();
-
-  Iuc.resize(nrows, ncols);
-
-  for (unsigned int i = 0; i < nrows * ncols; i++)
-    Iuc.bitmap[i] = (unsigned char)I.bitmap[i];
-
-  vpImageIo::writePGM(Iuc, filename);
+  vp_writePGM(I, filename);
 }
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a portable gray pixmap (PGM P5) file.
-  Color image is converted into a grayscale image.
-
-  \param I : Image to save as a (PGM P5) file.
-  \param filename : Name of the file containing the image.
-*/
 
 void vpImageIo::writePGM(const vpImage<vpRGBa> &I, const std::string &filename)
 {
-
-  FILE *fd;
-
-  // Test the filename
-  if (filename.empty()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create PGM file: filename empty"));
-  }
-
-  fd = fopen(filename.c_str(), "wb");
-
-  if (fd == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create PGM file \"%s\"", filename.c_str()));
-  }
-
-  // Write the head
-  fprintf(fd, "P5\n");                                 // Magic number
-  fprintf(fd, "%u %u\n", I.getWidth(), I.getHeight()); // Image size
-  fprintf(fd, "255\n");                                // Max level
-
-  // Write the bitmap
-  size_t ierr;
-  size_t nbyte = I.getWidth() * I.getHeight();
-
-  vpImage<unsigned char> Itmp;
-  vpImageConvert::convert(I, Itmp);
-
-  ierr = fwrite(Itmp.bitmap, sizeof(unsigned char), nbyte, fd);
-  if (ierr != nbyte) {
-    fclose(fd);
-    throw(vpImageException(vpImageException::ioError, "Cannot save PGM file \"%s\": only %d over %d bytes saved",
-                           filename.c_str(), ierr, nbyte));
-  }
-
-  fflush(fd);
-  fclose(fd);
+  vp_writePGM(I, filename);
 }
-
-/*!
-  Read a PFM P8 file and initialize a float image.
-
-  Read the contents of the portable gray pixmap (PFM P8) filename, allocate
-  memory for the corresponding image, and set the bitmap whith the content of
-  the file.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-
-*/
 
 void vpImageIo::readPFM(vpImage<float> &I, const std::string &filename)
 {
-  unsigned int w = 0, h = 0, maxval = 0;
-  unsigned int w_max = 100000, h_max = 100000, maxval_max = 255;
-  std::string magic("P8");
-
-  std::ifstream fd(filename.c_str(), std::ios::binary);
-
-  // Open the filename
-  if (!fd.is_open()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot open file \"%s\"", filename.c_str()));
-  }
-
-  vp_decodeHeaderPNM(filename, fd, magic, w, h, maxval);
-
-  if (w > w_max || h > h_max) {
-    fd.close();
-    throw(vpException(vpException::badValue, "Bad image size in \"%s\"", filename.c_str()));
-  }
-  if (maxval > maxval_max) {
-    fd.close();
-    throw(vpImageException(vpImageException::ioError, "Bad maxval in \"%s\"", filename.c_str()));
-  }
-
-  if ((h != I.getHeight()) || (w != I.getWidth())) {
-    I.resize(h, w);
-  }
-
-  unsigned int nbyte = I.getHeight() * I.getWidth();
-  fd.read((char *)I.bitmap, sizeof(float) * nbyte);
-  if (!fd) {
-    fd.close();
-    throw(vpImageException(vpImageException::ioError, "Read only %d of %d bytes in file \"%s\"", fd.gcount(), nbyte,
-                           filename.c_str()));
-  }
-
-  fd.close();
+  vp_readPFM(I, filename);
 }
-
-/*!
-  Read a PGM P5 file and initialize a scalar image.
-
-  Read the contents of the portable gray pixmap (PGM P5) filename, allocate
-  memory for the corresponding image, and set the bitmap whith the content of
-  the file.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
 
 void vpImageIo::readPGM(vpImage<unsigned char> &I, const std::string &filename)
 {
-  unsigned int w = 0, h = 0, maxval = 0;
-  unsigned int w_max = 100000, h_max = 100000, maxval_max = 255;
-  std::string magic("P5");
-
-  std::ifstream fd(filename.c_str(), std::ios::binary);
-
-  // Open the filename
-  if (!fd.is_open()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot open file \"%s\"", filename.c_str()));
-  }
-
-  vp_decodeHeaderPNM(filename, fd, magic, w, h, maxval);
-
-  if (w > w_max || h > h_max) {
-    fd.close();
-    throw(vpException(vpException::badValue, "Bad image size in \"%s\"", filename.c_str()));
-  }
-  if (maxval > maxval_max) {
-    fd.close();
-    throw(vpImageException(vpImageException::ioError, "Bad maxval in \"%s\"", filename.c_str()));
-  }
-
-  if ((h != I.getHeight()) || (w != I.getWidth())) {
-    I.resize(h, w);
-  }
-
-  unsigned int nbyte = I.getHeight() * I.getWidth();
-  fd.read((char *)I.bitmap, nbyte);
-  if (!fd) {
-    fd.close();
-    throw(vpImageException(vpImageException::ioError, "Read only %d of %d bytes in file \"%s\"", fd.gcount(), nbyte,
-                           filename.c_str()));
-  }
-
-  fd.close();
+  vp_readPGM(I, filename);
 }
-
-/*!
-  Read a PGM P5 file and initialize a scalar image.
-
-  Read the contents of the portable gray pixmap (PGM P5) filename, allocate
-  memory for the corresponding image, and set the bitmap whith the content of
-  the file.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  The gray level image contained in the \e filename is converted in a
-  color image in \e I.
-
-  \param I : Color image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
 
 void vpImageIo::readPGM(vpImage<vpRGBa> &I, const std::string &filename)
 {
-  vpImage<unsigned char> Itmp;
-
-  vpImageIo::readPGM(Itmp, filename);
-
-  vpImageConvert::convert(Itmp, I);
+  vp_readPGM(I, filename);
 }
 
-//--------------------------------------------------------------------------
-// PPM
-//--------------------------------------------------------------------------
-
-/*!
-  Read the contents of the portable pixmap (PPM P6) filename, allocate memory
-  for the corresponding gray level image, convert the data in gray level, and
-  set the bitmap whith the gray level data. That means that the image \e I is
-  a "black and white" rendering of the original image in \e filename, as in a
-  black and white photograph. The quantization formula used is \f$0,299 r +
-  0,587 g + 0,114 b\f$.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-
-*/
 void vpImageIo::readPPM(vpImage<unsigned char> &I, const std::string &filename)
 {
-  vpImage<vpRGBa> Itmp;
-
-  vpImageIo::readPPM(Itmp, filename);
-
-  vpImageConvert::convert(Itmp, I);
+  vp_readPPM(I, filename);
 }
 
-/*!
-  Read the contents of the portable pixmap (PPM P6) filename,
-  allocate memory for the corresponding vpRGBa image.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
 void vpImageIo::readPPM(vpImage<vpRGBa> &I, const std::string &filename)
 {
-  unsigned int w = 0, h = 0, maxval = 0;
-  unsigned int w_max = 100000, h_max = 100000, maxval_max = 255;
-  std::string magic("P6");
-
-  std::ifstream fd(filename.c_str(), std::ios::binary);
-
-  // Open the filename
-  if (!fd.is_open()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot open file \"%s\"", filename.c_str()));
-  }
-
-  vp_decodeHeaderPNM(filename, fd, magic, w, h, maxval);
-
-  if (w > w_max || h > h_max) {
-    fd.close();
-    throw(vpException(vpException::badValue, "Bad image size in \"%s\"", filename.c_str()));
-  }
-  if (maxval > maxval_max) {
-    fd.close();
-    throw(vpImageException(vpImageException::ioError, "Bad maxval in \"%s\"", filename.c_str()));
-  }
-
-  if ((h != I.getHeight()) || (w != I.getWidth())) {
-    I.resize(h, w);
-  }
-
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
-      unsigned char rgb[3];
-      fd.read((char *)&rgb, 3);
-
-      if (!fd) {
-        fd.close();
-        throw(vpImageException(vpImageException::ioError, "Read only %d of %d bytes in file \"%s\"",
-                               (i * I.getWidth() + j) * 3 + fd.gcount(), I.getSize() * 3, filename.c_str()));
-      }
-
-      I[i][j].R = rgb[0];
-      I[i][j].G = rgb[1];
-      I[i][j].B = rgb[2];
-      I[i][j].A = vpRGBa::alpha_default;
-    }
-  }
-
-  fd.close();
+  vp_readPPM(I, filename);
 }
-
-/*!
-  Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a portable gray pixmap (PPM P6) file.
-  grayscale image is converted into a color image vpRGBa.
-
-  \param I : Image to save as a (PPM P6) file.
-  \param filename : Name of the file containing the image.
-
-*/
 
 void vpImageIo::writePPM(const vpImage<unsigned char> &I, const std::string &filename)
 {
-  vpImage<vpRGBa> Itmp;
-
-  vpImageConvert::convert(I, Itmp);
-
-  vpImageIo::writePPM(Itmp, filename);
+  vp_writePPM(I, filename);
 }
 
-/*!
-  Write the content of the bitmap in the file which name is given by \e
-  filename. This function writes a portable gray pixmap (PPM P6) file.
-
-  \param I : Image to save as a (PPM P6) file.
-  \param filename : Name of the file containing the image.
-*/
 void vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string &filename)
 {
-  FILE *f;
-
-  // Test the filename
-  if (filename.empty()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create PPM file: filename empty"));
-  }
-
-  f = fopen(filename.c_str(), "wb");
-
-  if (f == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create PPM file \"%s\"", filename.c_str()));
-  }
-
-  fprintf(f, "P6\n");                                 // Magic number
-  fprintf(f, "%u %u\n", I.getWidth(), I.getHeight()); // Image size
-  fprintf(f, "%d\n", 255);                            // Max level
-
-  for (unsigned int i = 0; i < I.getHeight(); i++) {
-    for (unsigned int j = 0; j < I.getWidth(); j++) {
-      vpRGBa v = I[i][j];
-      unsigned char rgb[3];
-      rgb[0] = v.R;
-      rgb[1] = v.G;
-      rgb[2] = v.B;
-
-      size_t res = fwrite(&rgb, 1, 3, f);
-      if (res != 3) {
-        fclose(f);
-        throw(vpImageException(vpImageException::ioError, "cannot write file \"%s\"", filename.c_str()));
-      }
-    }
-  }
-
-  fflush(f);
-  fclose(f);
+  vp_writePPM(I, filename);
 }
-
-//--------------------------------------------------------------------------
-// JPEG
-//--------------------------------------------------------------------------
-
-#if defined(VISP_HAVE_JPEG)
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a JPEG file.
-
-  \param I : Image to save as a JPEG file.
-  \param filename : Name of the file containing the image.
-*/
-void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename)
-{
-  struct jpeg_compress_struct cinfo;
-  struct jpeg_error_mgr jerr;
-  FILE *file;
-
-  cinfo.err = jpeg_std_error(&jerr);
-  jpeg_create_compress(&cinfo);
-
-  // Test the filename
-  if (filename.empty()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create JPEG file: filename empty"));
-  }
-
-  file = fopen(filename.c_str(), "wb");
-
-  if (file == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create JPEG file \"%s\"", filename.c_str()));
-  }
-
-  unsigned int width = I.getWidth();
-  unsigned int height = I.getHeight();
-
-  jpeg_stdio_dest(&cinfo, file);
-
-  cinfo.image_width = width;
-  cinfo.image_height = height;
-  cinfo.input_components = 1;
-  cinfo.in_color_space = JCS_GRAYSCALE;
-  jpeg_set_defaults(&cinfo);
-
-  jpeg_start_compress(&cinfo, TRUE);
-
-  unsigned char *line;
-  line = new unsigned char[width];
-  unsigned char *input = (unsigned char *)I.bitmap;
-  while (cinfo.next_scanline < cinfo.image_height) {
-    for (unsigned int i = 0; i < width; i++) {
-      line[i] = *(input);
-      input++;
-    }
-    jpeg_write_scanlines(&cinfo, &line, 1);
-  }
-
-  jpeg_finish_compress(&cinfo);
-  jpeg_destroy_compress(&cinfo);
-  delete[] line;
-  fclose(file);
-}
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a JPEG file.
-
-  \param I : Image to save as a JPEG file.
-  \param filename : Name of the file containing the image.
-*/
-void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename)
-{
-  struct jpeg_compress_struct cinfo;
-  struct jpeg_error_mgr jerr;
-  FILE *file;
-
-  cinfo.err = jpeg_std_error(&jerr);
-  jpeg_create_compress(&cinfo);
-
-  // Test the filename
-  if (filename.empty()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create JPEG file: filename empty"));
-  }
-
-  file = fopen(filename.c_str(), "wb");
-
-  if (file == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create JPEG file \"%s\"", filename.c_str()));
-  }
-
-  unsigned int width = I.getWidth();
-  unsigned int height = I.getHeight();
-
-  jpeg_stdio_dest(&cinfo, file);
-
-  cinfo.image_width = width;
-  cinfo.image_height = height;
-  cinfo.input_components = 3;
-  cinfo.in_color_space = JCS_RGB;
-  jpeg_set_defaults(&cinfo);
-
-  jpeg_start_compress(&cinfo, TRUE);
-
-  unsigned char *line;
-  line = new unsigned char[3 * width];
-  unsigned char *input = (unsigned char *)I.bitmap;
-  while (cinfo.next_scanline < cinfo.image_height) {
-    for (unsigned int i = 0; i < width; i++) {
-      line[i * 3] = *(input);
-      input++;
-      line[i * 3 + 1] = *(input);
-      input++;
-      line[i * 3 + 2] = *(input);
-      input++;
-      input++;
-    }
-    jpeg_write_scanlines(&cinfo, &line, 1);
-  }
-
-  jpeg_finish_compress(&cinfo);
-  jpeg_destroy_compress(&cinfo);
-  delete[] line;
-  fclose(file);
-}
-
-/*!
-  Read the contents of the JPEG file, allocate memory
-  for the corresponding gray level image, if necessary convert the data in
-  gray level, and set the bitmap whith the gray level data. That means that
-  the image \e I is a "black and white" rendering of the original image in \e
-  filename, as in a black and white photograph. If necessary, the quantization
-  formula used is \f$0,299 r + 0,587 g + 0,114 b\f$.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-
-*/
-void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename)
-{
-  struct jpeg_decompress_struct cinfo;
-  struct jpeg_error_mgr jerr;
-  FILE *file;
-
-  cinfo.err = jpeg_std_error(&jerr);
-  jpeg_create_decompress(&cinfo);
-
-  // Test the filename
-  if (filename.empty()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot read JPEG image: filename empty"));
-  }
-
-  file = fopen(filename.c_str(), "rb");
-
-  if (file == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Cannot read JPEG file \"%s\"", filename.c_str()));
-  }
-
-  jpeg_stdio_src(&cinfo, file);
-  jpeg_read_header(&cinfo, TRUE);
-
-  unsigned int width = cinfo.image_width;
-  unsigned int height = cinfo.image_height;
-
-  if ((width != I.getWidth()) || (height != I.getHeight()))
-    I.resize(height, width);
-
-  jpeg_start_decompress(&cinfo);
-
-  unsigned int rowbytes = cinfo.output_width * (unsigned int)(cinfo.output_components);
-  JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr)&cinfo, JPOOL_IMAGE, rowbytes, 1);
-
-  if (cinfo.out_color_space == JCS_RGB) {
-    vpImage<vpRGBa> Ic(height, width);
-    unsigned char *output = (unsigned char *)Ic.bitmap;
-    while (cinfo.output_scanline < cinfo.output_height) {
-      jpeg_read_scanlines(&cinfo, buffer, 1);
-      for (unsigned int i = 0; i < width; i++) {
-        *(output++) = buffer[0][i * 3];
-        *(output++) = buffer[0][i * 3 + 1];
-        *(output++) = buffer[0][i * 3 + 2];
-        *(output++) = vpRGBa::alpha_default;
-      }
-    }
-    vpImageConvert::convert(Ic, I);
-  }
-
-  else if (cinfo.out_color_space == JCS_GRAYSCALE) {
-    while (cinfo.output_scanline < cinfo.output_height) {
-      unsigned int row = cinfo.output_scanline;
-      jpeg_read_scanlines(&cinfo, buffer, 1);
-      memcpy(I[row], buffer[0], rowbytes);
-    }
-  }
-
-  jpeg_finish_decompress(&cinfo);
-  jpeg_destroy_decompress(&cinfo);
-  fclose(file);
-}
-
-/*!
-  Read a JPEG file and initialize a scalar image.
-
-  Read the contents of the JPEG file, allocate
-  memory for the corresponding image, and set
-  the bitmap whith the content of
-  the file.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  If the file corresponds to a grayscaled image, a conversion is done to deal
-  with \e I which is a color image.
-
-  \param I : Color image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
-void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename)
-{
-  struct jpeg_decompress_struct cinfo;
-  struct jpeg_error_mgr jerr;
-  FILE *file;
-
-  cinfo.err = jpeg_std_error(&jerr);
-  jpeg_create_decompress(&cinfo);
-
-  // Test the filename
-  if (filename.empty()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot read JPEG image: filename empty"));
-  }
-
-  file = fopen(filename.c_str(), "rb");
-
-  if (file == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Cannot read JPEG file \"%s\"", filename.c_str()));
-  }
-
-  jpeg_stdio_src(&cinfo, file);
-
-  jpeg_read_header(&cinfo, TRUE);
-
-  unsigned int width = cinfo.image_width;
-  unsigned int height = cinfo.image_height;
-
-  if ((width != I.getWidth()) || (height != I.getHeight()))
-    I.resize(height, width);
-
-  jpeg_start_decompress(&cinfo);
-
-  unsigned int rowbytes = cinfo.output_width * (unsigned int)(cinfo.output_components);
-  JSAMPARRAY buffer = (*cinfo.mem->alloc_sarray)((j_common_ptr)&cinfo, JPOOL_IMAGE, rowbytes, 1);
-
-  if (cinfo.out_color_space == JCS_RGB) {
-    unsigned char *output = (unsigned char *)I.bitmap;
-    while (cinfo.output_scanline < cinfo.output_height) {
-      jpeg_read_scanlines(&cinfo, buffer, 1);
-      for (unsigned int i = 0; i < width; i++) {
-        *(output++) = buffer[0][i * 3];
-        *(output++) = buffer[0][i * 3 + 1];
-        *(output++) = buffer[0][i * 3 + 2];
-        *(output++) = vpRGBa::alpha_default;
-      }
-    }
-  }
-
-  else if (cinfo.out_color_space == JCS_GRAYSCALE) {
-    vpImage<unsigned char> Ig(height, width);
-
-    while (cinfo.output_scanline < cinfo.output_height) {
-      unsigned int row = cinfo.output_scanline;
-      jpeg_read_scanlines(&cinfo, buffer, 1);
-      memcpy(Ig[row], buffer[0], rowbytes);
-    }
-
-    vpImageConvert::convert(Ig, I);
-  }
-
-  jpeg_finish_decompress(&cinfo);
-  jpeg_destroy_decompress(&cinfo);
-  fclose(file);
-}
-
-#elif defined(VISP_HAVE_OPENCV)
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a JPEG file.
-
-  \param I : Image to save as a JPEG file.
-  \param filename : Name of the file containing the image.
-*/
-void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename)
-{
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  cv::Mat Ip;
-  vpImageConvert::convert(I, Ip);
-  cv::imwrite(filename.c_str(), Ip);
-#else
-  IplImage *Ip = NULL;
-  vpImageConvert::convert(I, Ip);
-
-  cvSaveImage(filename.c_str(), Ip);
-
-  cvReleaseImage(&Ip);
-#endif
-}
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a JPEG file.
-
-  \param I : Image to save as a JPEG file.
-  \param filename : Name of the file containing the image.
-*/
-void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename)
-{
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  cv::Mat Ip;
-  vpImageConvert::convert(I, Ip);
-  cv::imwrite(filename.c_str(), Ip);
-#else
-  IplImage *Ip = NULL;
-  vpImageConvert::convert(I, Ip);
-
-  cvSaveImage(filename.c_str(), Ip);
-
-  cvReleaseImage(&Ip);
-#endif
-}
-
-/*!
-  Read the contents of the JPEG file, allocate memory
-  for the corresponding gray level image, if necessary convert the data in
-  gray level, and set the bitmap whith the gray level data. That means that
-  the image \e I is a "black and white" rendering of the original image in \e
-  filename, as in a black and white photograph. If necessary, the quantization
-  formula used is \f$0,299 r + 0,587 g + 0,114 b\f$.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  If EXIF information is embedded in the image file, the EXIF orientation is ignored.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-
-*/
-void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename)
-{
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
-#if VISP_HAVE_OPENCV_VERSION >= 0x030200
-    int flags = cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
-    int flags = cv::IMREAD_GRAYSCALE;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    int flags = CV_LOAD_IMAGE_GRAYSCALE;
-#endif
-  cv::Mat Ip = cv::imread(filename.c_str(), flags);
-  if (!Ip.empty())
-    vpImageConvert::convert(Ip, I);
-  else
-    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
-#else
-  IplImage *Ip = NULL;
-  Ip = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
-  if (Ip != NULL)
-    vpImageConvert::convert(Ip, I);
-  else
-    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
-  cvReleaseImage(&Ip);
-#endif
-}
-
-/*!
-  Read a JPEG file and initialize a scalar image.
-
-  Read the contents of the JPEG file, allocate
-  memory for the corresponding image, and set
-  the bitmap whith the content of
-  the file.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  If the file corresponds to a grayscaled image, a conversion is done to deal
-  with \e I which is a color image.
-
-  If EXIF information is embedded in the image file, the EXIF orientation is ignored.
-
-  \param I : Color image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
-void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename)
-{
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
-#if VISP_HAVE_OPENCV_VERSION >= 0x030200
-    int flags = cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
-    int flags = cv::IMREAD_GRAYSCALE;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    int flags = CV_LOAD_IMAGE_GRAYSCALE;
-#endif
-  cv::Mat Ip = cv::imread(filename.c_str(), flags);
-  if (!Ip.empty())
-    vpImageConvert::convert(Ip, I);
-  else
-    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
-#else
-  IplImage *Ip = NULL;
-  Ip = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_COLOR);
-  if (Ip != NULL)
-    vpImageConvert::convert(Ip, I);
-  else
-    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
-  cvReleaseImage(&Ip);
-#endif
-}
-#else
-void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename)
-{
-  int width = 0, height = 0, channels = 0;
-  unsigned char *image = stbi_load(filename.c_str(), &width, &height, &channels, STBI_grey);
-  if (image == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Can't read the image: %s", filename.c_str()));
-  }
-  I.init(image, static_cast<unsigned int>(height), static_cast<unsigned int>(width), true);
-  stbi_image_free(image);
-}
-void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename)
-{
-  int width = 0, height = 0, channels = 0;
-  unsigned char *image = stbi_load(filename.c_str(), &width, &height, &channels, STBI_rgb_alpha);
-  if (image == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Can't read the image: %s", filename.c_str()));
-  }
-  I.init(reinterpret_cast<vpRGBa*>(image), static_cast<unsigned int>(height), static_cast<unsigned int>(width), true);
-  stbi_image_free(image);
-}
-void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename)
-{
-  int res = stbi_write_jpg(filename.c_str(), static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), STBI_grey,
-                           reinterpret_cast<void*>(I.bitmap), 90);
-  if (res == 0) {
-    throw(vpImageException(vpImageException::ioError, "JPEG write error"));
-  }
-}
-void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename)
-{
-  int res = stbi_write_jpg(filename.c_str(), static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), STBI_rgb_alpha,
-                           reinterpret_cast<void*>(I.bitmap), 90);
-  if (res == 0) {
-    throw(vpImageException(vpImageException::ioError, "JEPG write error"));
-  }
-}
-#endif
-
-//--------------------------------------------------------------------------
-// PNG
-//--------------------------------------------------------------------------
-
-#if defined(VISP_HAVE_PNG)
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a PNG file.
-
-  \param I : Image to save as a PNG file.
-  \param filename : Name of the file containing the image.
-*/
-void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &filename)
-{
-  FILE *file;
-
-  // Test the filename
-  if (filename.empty()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create PNG file: filename empty"));
-  }
-
-  file = fopen(filename.c_str(), "wb");
-
-  if (file == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create PNG file \"%s\"", filename.c_str()));
-  }
-
-  /* create a png info struct */
-  png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  if (!png_ptr) {
-    fclose(file);
-    vpERROR_TRACE("Error during png_create_write_struct()\n");
-    throw(vpImageException(vpImageException::ioError, "PNG write error"));
-  }
-
-  png_infop info_ptr = png_create_info_struct(png_ptr);
-  if (!info_ptr) {
-    fclose(file);
-    png_destroy_write_struct(&png_ptr, NULL);
-    vpERROR_TRACE("Error during png_create_info_struct()\n");
-    throw(vpImageException(vpImageException::ioError, "PNG write error"));
-  }
-
-  /* initialize the setjmp for returning properly after a libpng error occured
-   */
-  if (setjmp(png_jmpbuf(png_ptr))) {
-    fclose(file);
-    png_destroy_write_struct(&png_ptr, &info_ptr);
-    vpERROR_TRACE("Error during init_io\n");
-    throw(vpImageException(vpImageException::ioError, "PNG write error"));
-  }
-
-  /* setup libpng for using standard C fwrite() function with our FILE pointer
-   */
-  png_init_io(png_ptr, file);
-
-  unsigned int width = I.getWidth();
-  unsigned int height = I.getHeight();
-  int bit_depth = 8;
-  int color_type = PNG_COLOR_TYPE_GRAY;
-  /* set some useful information from header */
-
-  if (setjmp(png_jmpbuf(png_ptr))) {
-    fclose(file);
-    png_destroy_write_struct(&png_ptr, &info_ptr);
-    vpERROR_TRACE("Error during write header\n");
-    throw(vpImageException(vpImageException::ioError, "PNG write error"));
-  }
-
-  png_set_IHDR(png_ptr, info_ptr, width, height, bit_depth, color_type, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE,
-               PNG_FILTER_TYPE_BASE);
-
-  png_write_info(png_ptr, info_ptr);
-
-  png_bytep *row_ptrs = new png_bytep[height];
-  for (unsigned int i = 0; i < height; i++)
-    row_ptrs[i] = new png_byte[width];
-
-  unsigned char *input = (unsigned char *)I.bitmap;
-
-  for (unsigned int i = 0; i < height; i++) {
-    png_byte *row = row_ptrs[i];
-    for (unsigned int j = 0; j < width; j++) {
-      row[j] = *(input);
-      input++;
-    }
-  }
-
-  png_write_image(png_ptr, row_ptrs);
-
-  png_write_end(png_ptr, NULL);
-
-  for (unsigned int j = 0; j < height; j++)
-    delete[] row_ptrs[j];
-
-  delete[] row_ptrs;
-
-  png_destroy_write_struct(&png_ptr, &info_ptr);
-
-  fclose(file);
-}
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a PNG file.
-
-  \param I : Image to save as a PNG file.
-  \param filename : Name of the file containing the image.
-*/
-void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename)
-{
-  FILE *file;
-
-  // Test the filename
-  if (filename.empty()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create PNG file: filename empty"));
-  }
-
-  file = fopen(filename.c_str(), "wb");
-
-  if (file == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Cannot create PNG file \"%s\"", filename.c_str()));
-  }
-
-  /* create a png info struct */
-  png_structp png_ptr = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  if (!png_ptr) {
-    fclose(file);
-    vpERROR_TRACE("Error during png_create_write_struct()\n");
-    throw(vpImageException(vpImageException::ioError, "PNG write error"));
-  }
-
-  png_infop info_ptr = png_create_info_struct(png_ptr);
-  if (!info_ptr) {
-    fclose(file);
-    png_destroy_write_struct(&png_ptr, NULL);
-    vpERROR_TRACE("Error during png_create_info_struct()\n");
-    throw(vpImageException(vpImageException::ioError, "PNG write error"));
-  }
-
-  /* initialize the setjmp for returning properly after a libpng error occured
-   */
-  if (setjmp(png_jmpbuf(png_ptr))) {
-    fclose(file);
-    png_destroy_write_struct(&png_ptr, &info_ptr);
-    vpERROR_TRACE("Error during init_io\n");
-    throw(vpImageException(vpImageException::ioError, "PNG write error"));
-  }
-
-  /* setup libpng for using standard C fwrite() function with our FILE pointer
-   */
-  png_init_io(png_ptr, file);
-
-  unsigned int width = I.getWidth();
-  unsigned int height = I.getHeight();
-  int bit_depth = 8;
-  int color_type = PNG_COLOR_TYPE_RGB;
-  /* set some useful information from header */
-
-  if (setjmp(png_jmpbuf(png_ptr))) {
-    fclose(file);
-    png_destroy_write_struct(&png_ptr, &info_ptr);
-    vpERROR_TRACE("Error during write header\n");
-    throw(vpImageException(vpImageException::ioError, "PNG write error"));
-  }
-
-  png_set_IHDR(png_ptr, info_ptr, width, height, bit_depth, color_type, PNG_INTERLACE_NONE, PNG_COMPRESSION_TYPE_BASE,
-               PNG_FILTER_TYPE_BASE);
-
-  png_write_info(png_ptr, info_ptr);
-
-  png_bytep *row_ptrs = new png_bytep[height];
-  for (unsigned int i = 0; i < height; i++)
-    row_ptrs[i] = new png_byte[3 * width];
-
-  unsigned char *input = (unsigned char *)I.bitmap;
-  ;
-
-  for (unsigned int i = 0; i < height; i++) {
-    png_byte *row = row_ptrs[i];
-    for (unsigned int j = 0; j < width; j++) {
-      row[3 * j] = *(input);
-      input++;
-      row[3 * j + 1] = *(input);
-      input++;
-      row[3 * j + 2] = *(input);
-      input++;
-      input++;
-    }
-  }
-
-  png_write_image(png_ptr, row_ptrs);
-
-  png_write_end(png_ptr, NULL);
-
-  for (unsigned int j = 0; j < height; j++)
-    delete[] row_ptrs[j];
-
-  delete[] row_ptrs;
-
-  png_destroy_write_struct(&png_ptr, &info_ptr);
-
-  fclose(file);
-}
-
-/*!
-  Read the contents of the PNG file, allocate memory
-  for the corresponding gray level image, if necessary convert the data in
-  gray level, and set the bitmap whith the gray level data. That means that
-  the image \e I is a "black and white" rendering of the original image in \e
-  filename, as in a black and white photograph. If necessary, the quantization
-  formula used is \f$0,299 r + 0,587 g + 0,114 b\f$.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-
-*/
-void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename)
-{
-  FILE *file;
-  png_byte magic[8];
-  // Test the filename
-  if (filename.empty()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot read PNG image: filename empty"));
-  }
-
-  file = fopen(filename.c_str(), "rb");
-
-  if (file == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Cannot read file \"%s\"", filename.c_str()));
-  }
-
-  /* read magic number */
-  if (fread(magic, 1, sizeof(magic), file) != sizeof(magic)) {
-    fclose(file);
-    throw(vpImageException(vpImageException::ioError, "Cannot read magic number in file \"%s\"", filename.c_str()));
-  }
-
-  /* check for valid magic number */
-  if (png_sig_cmp(magic, 0, sizeof(magic))) {
-    fclose(file);
-    throw(vpImageException(vpImageException::ioError, "Cannot read PNG file: \"%s\" is not a valid PNG image",
-                           filename.c_str()));
-  }
-
-  /* create a png read struct */
-  // printf("version %s\n", PNG_LIBPNG_VER_STRING);
-  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  if (png_ptr == NULL) {
-    fprintf(stderr, "error: can't create a png read structure!\n");
-    fclose(file);
-    throw(vpImageException(vpImageException::ioError, "error reading png file"));
-  }
-
-  /* create a png info struct */
-  png_infop info_ptr = png_create_info_struct(png_ptr);
-  if (info_ptr == NULL) {
-    fprintf(stderr, "error: can't create a png info structure!\n");
-    fclose(file);
-    png_destroy_read_struct(&png_ptr, NULL, NULL);
-    throw(vpImageException(vpImageException::ioError, "error reading png file"));
-  }
-
-  /* initialize the setjmp for returning properly after a libpng error occured
-   */
-  if (setjmp(png_jmpbuf(png_ptr))) {
-    fclose(file);
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-    vpERROR_TRACE("Error during init io\n");
-    throw(vpImageException(vpImageException::ioError, "PNG read error"));
-  }
-
-  /* setup libpng for using standard C fread() function with our FILE pointer
-   */
-  png_init_io(png_ptr, file);
-
-  /* tell libpng that we have already read the magic number */
-  png_set_sig_bytes(png_ptr, sizeof(magic));
-
-  /* read png info */
-  png_read_info(png_ptr, info_ptr);
-
-  unsigned int width = png_get_image_width(png_ptr, info_ptr);
-  unsigned int height = png_get_image_height(png_ptr, info_ptr);
-
-  unsigned int bit_depth, channels, color_type;
-  /* get some useful information from header */
-  bit_depth = png_get_bit_depth(png_ptr, info_ptr);
-  channels = png_get_channels(png_ptr, info_ptr);
-  color_type = png_get_color_type(png_ptr, info_ptr);
-
-  /* convert index color images to RGB images */
-  if (color_type == PNG_COLOR_TYPE_PALETTE)
-    png_set_palette_to_rgb(png_ptr);
-
-  /* convert 1-2-4 bits grayscale images to 8 bits grayscale. */
-  if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
-    png_set_expand(png_ptr);
-
-  //  if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS))
-  //    png_set_tRNS_to_alpha (png_ptr);
-
-  if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
-    png_set_strip_alpha(png_ptr);
-
-  if (bit_depth == 16)
-    png_set_strip_16(png_ptr);
-  else if (bit_depth < 8)
-    png_set_packing(png_ptr);
-
-  /* update info structure to apply transformations */
-  png_read_update_info(png_ptr, info_ptr);
-
-  channels = png_get_channels(png_ptr, info_ptr);
-
-  if ((width != I.getWidth()) || (height != I.getHeight()))
-    I.resize(height, width);
-
-  png_bytep *rowPtrs = new png_bytep[height];
-
-  unsigned int stride = png_get_rowbytes(png_ptr, info_ptr);
-  unsigned char *data = new unsigned char[stride * height];
-
-  for (unsigned int i = 0; i < height; i++)
-    rowPtrs[i] = (png_bytep)data + (i * stride);
-
-  png_read_image(png_ptr, rowPtrs);
-
-  vpImage<vpRGBa> Ic(height, width);
-  unsigned char *output;
-
-  switch (channels) {
-  case 1:
-    output = (unsigned char *)I.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i];
-    }
-    break;
-
-  case 2:
-    output = (unsigned char *)I.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i * 2];
-    }
-    break;
-
-  case 3:
-    output = (unsigned char *)Ic.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i * 3];
-      *(output++) = data[i * 3 + 1];
-      *(output++) = data[i * 3 + 2];
-      *(output++) = vpRGBa::alpha_default;
-    }
-    vpImageConvert::convert(Ic, I);
-    break;
-
-  case 4:
-    output = (unsigned char *)Ic.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i * 4];
-      *(output++) = data[i * 4 + 1];
-      *(output++) = data[i * 4 + 2];
-      *(output++) = data[i * 4 + 3];
-    }
-    vpImageConvert::convert(Ic, I);
-    break;
-  }
-
-  delete[](png_bytep) rowPtrs;
-  delete[] data;
-  png_read_end(png_ptr, NULL);
-  png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-  fclose(file);
-}
-
-/*!
-  Read a PNG file and initialize a scalar image.
-
-  Read the contents of the PNG file, allocate
-  memory for the corresponding image, and set
-  the bitmap whith the content of
-  the file.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  If the file corresponds to a grayscaled image, a conversion is done to deal
-  with \e I which is a color image.
-
-  \param I : Color image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
-void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
-{
-  FILE *file;
-  png_byte magic[8];
-
-  // Test the filename
-  if (filename.empty()) {
-    throw(vpImageException(vpImageException::ioError, "Cannot read PNG image: filename empty"));
-  }
-
-  file = fopen(filename.c_str(), "rb");
-
-  if (file == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Cannot read file \"%s\"", filename.c_str()));
-  }
-
-  /* read magic number */
-  if (fread(magic, 1, sizeof(magic), file) != sizeof(magic)) {
-    fclose(file);
-    throw(vpImageException(vpImageException::ioError, "Cannot read magic number in file \"%s\"", filename.c_str()));
-  }
-
-  /* check for valid magic number */
-  if (png_sig_cmp(magic, 0, sizeof(magic))) {
-    fclose(file);
-    throw(vpImageException(vpImageException::ioError, "Cannot read PNG file: \"%s\" is not a valid PNG image",
-                           filename.c_str()));
-  }
-
-  /* create a png read struct */
-  png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
-  if (!png_ptr) {
-    fclose(file);
-    vpERROR_TRACE("Error during png_create_read_struct()\n");
-    throw(vpImageException(vpImageException::ioError, "PNG read error"));
-  }
-
-  /* create a png info struct */
-  png_infop info_ptr = png_create_info_struct(png_ptr);
-  if (!info_ptr) {
-    fclose(file);
-    png_destroy_read_struct(&png_ptr, NULL, NULL);
-    vpERROR_TRACE("Error during png_create_info_struct()\n");
-    throw(vpImageException(vpImageException::ioError, "PNG read error"));
-  }
-
-  /* initialize the setjmp for returning properly after a libpng error occured
-   */
-  if (setjmp(png_jmpbuf(png_ptr))) {
-    fclose(file);
-    png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-    vpERROR_TRACE("Error during init io\n");
-    throw(vpImageException(vpImageException::ioError, "PNG read error"));
-  }
-
-  /* setup libpng for using standard C fread() function with our FILE pointer
-   */
-  png_init_io(png_ptr, file);
-
-  /* tell libpng that we have already read the magic number */
-  png_set_sig_bytes(png_ptr, sizeof(magic));
-
-  /* read png info */
-  png_read_info(png_ptr, info_ptr);
-
-  unsigned int width = png_get_image_width(png_ptr, info_ptr);
-  unsigned int height = png_get_image_height(png_ptr, info_ptr);
-
-  unsigned int bit_depth, channels, color_type;
-  /* get some useful information from header */
-  bit_depth = png_get_bit_depth(png_ptr, info_ptr);
-  channels = png_get_channels(png_ptr, info_ptr);
-  color_type = png_get_color_type(png_ptr, info_ptr);
-
-  /* convert index color images to RGB images */
-  if (color_type == PNG_COLOR_TYPE_PALETTE)
-    png_set_palette_to_rgb(png_ptr);
-
-  /* convert 1-2-4 bits grayscale images to 8 bits grayscale. */
-  if (color_type == PNG_COLOR_TYPE_GRAY && bit_depth < 8)
-    png_set_expand(png_ptr);
-
-  //  if (png_get_valid (png_ptr, info_ptr, PNG_INFO_tRNS))
-  //    png_set_tRNS_to_alpha (png_ptr);
-
-  if (color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
-    png_set_strip_alpha(png_ptr);
-
-  if (bit_depth == 16)
-    png_set_strip_16(png_ptr);
-  else if (bit_depth < 8)
-    png_set_packing(png_ptr);
-
-  /* update info structure to apply transformations */
-  png_read_update_info(png_ptr, info_ptr);
-
-  channels = png_get_channels(png_ptr, info_ptr);
-
-  if ((width != I.getWidth()) || (height != I.getHeight()))
-    I.resize(height, width);
-
-  png_bytep *rowPtrs = new png_bytep[height];
-
-  unsigned int stride = png_get_rowbytes(png_ptr, info_ptr);
-  unsigned char *data = new unsigned char[stride * height];
-
-  for (unsigned int i = 0; i < height; i++)
-    rowPtrs[i] = (png_bytep)data + (i * stride);
-
-  png_read_image(png_ptr, rowPtrs);
-
-  vpImage<unsigned char> Ig(height, width);
-  unsigned char *output;
-
-  switch (channels) {
-  case 1:
-    output = (unsigned char *)Ig.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i];
-    }
-    vpImageConvert::convert(Ig, I);
-    break;
-
-  case 2:
-    output = (unsigned char *)Ig.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i * 2];
-    }
-    vpImageConvert::convert(Ig, I);
-    break;
-
-  case 3:
-    output = (unsigned char *)I.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i * 3];
-      *(output++) = data[i * 3 + 1];
-      *(output++) = data[i * 3 + 2];
-      *(output++) = vpRGBa::alpha_default;
-    }
-    break;
-
-  case 4:
-    output = (unsigned char *)I.bitmap;
-    for (unsigned int i = 0; i < width * height; i++) {
-      *(output++) = data[i * 4];
-      *(output++) = data[i * 4 + 1];
-      *(output++) = data[i * 4 + 2];
-      *(output++) = data[i * 4 + 3];
-    }
-    break;
-  }
-
-  delete[](png_bytep) rowPtrs;
-  delete[] data;
-  png_read_end(png_ptr, NULL);
-  png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
-  fclose(file);
-}
-
-#elif defined(VISP_HAVE_OPENCV)
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a PNG file.
-
-  \param I : Image to save as a PNG file.
-  \param filename : Name of the file containing the image.
-*/
-void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &filename)
-{
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  cv::Mat Ip;
-  vpImageConvert::convert(I, Ip);
-  cv::imwrite(filename.c_str(), Ip);
-#else
-  IplImage *Ip = NULL;
-  vpImageConvert::convert(I, Ip);
-
-  cvSaveImage(filename.c_str(), Ip);
-
-  cvReleaseImage(&Ip);
-#endif
-}
-
-/*!
-  Write the content of the image bitmap in the file which name is given by \e
-  filename. This function writes a PNG file.
-
-  \param I : Image to save as a PNG file.
-  \param filename : Name of the file containing the image.
-*/
-void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename)
-{
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-  cv::Mat Ip;
-  vpImageConvert::convert(I, Ip);
-  cv::imwrite(filename.c_str(), Ip);
-#else
-  IplImage *Ip = NULL;
-  vpImageConvert::convert(I, Ip);
-
-  cvSaveImage(filename.c_str(), Ip);
-
-  cvReleaseImage(&Ip);
-#endif
-}
-
-/*!
-  Read the contents of the PNG file, allocate memory
-  for the corresponding gray level image, if necessary convert the data in
-  gray level, and set the bitmap whith the gray level data. That means that
-  the image \e I is a "black and white" rendering of the original image in \e
-  filename, as in a black and white photograph. If necessary, the quantization
-  formula used is \f$0,299 r + 0,587 g + 0,114 b\f$.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  If EXIF information is embedded in the image file, the EXIF orientation is ignored.
-
-  \param I : Image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-
-*/
-void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename)
-{
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
-#if VISP_HAVE_OPENCV_VERSION >= 0x030200
-    int flags = cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
-    int flags = cv::IMREAD_GRAYSCALE;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    int flags = CV_LOAD_IMAGE_GRAYSCALE;
-#endif
-  cv::Mat Ip = cv::imread(filename.c_str(), flags);
-  if (!Ip.empty())
-    vpImageConvert::convert(Ip, I);
-  else
-    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
-#else
-  IplImage *Ip = NULL;
-  Ip = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE);
-  if (Ip != NULL)
-    vpImageConvert::convert(Ip, I);
-  else
-    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
-  cvReleaseImage(&Ip);
-#endif
-}
-
-/*!
-  Read a PNG file and initialize a scalar image.
-
-  Read the contents of the PNG file, allocate
-  memory for the corresponding image, and set
-  the bitmap whith the content of
-  the file.
-
-  If the image has been already initialized, memory allocation is done
-  only if the new image size is different, else we re-use the same
-  memory space.
-
-  If the file corresponds to a grayscaled image, a conversion is done to deal
-  with \e I which is a color image.
-
-  If EXIF information is embedded in the image file, the EXIF orientation is ignored.
-
-  \param I : Color image to set with the \e filename content.
-  \param filename : Name of the file containing the image.
-*/
-void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
-{
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
-#if VISP_HAVE_OPENCV_VERSION >= 0x030200
-    int flags = cv::IMREAD_COLOR | cv::IMREAD_IGNORE_ORIENTATION;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
-    int flags = cv::IMREAD_COLOR;
-#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    int flags = CV_LOAD_IMAGE_COLOR;
-#endif
-  cv::Mat Ip = cv::imread(filename.c_str(), flags);
-  if (!Ip.empty())
-    vpImageConvert::convert(Ip, I);
-  else
-    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
-#else
-  IplImage *Ip = NULL;
-  Ip = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_COLOR);
-  if (Ip != NULL)
-    vpImageConvert::convert(Ip, I);
-  else
-    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
-  cvReleaseImage(&Ip);
-#endif
-}
-#else
-void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename)
-{
-  int width = 0, height = 0, channels = 0;
-  unsigned char *image = stbi_load(filename.c_str(), &width, &height, &channels, STBI_grey);
-  if (image == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Can't read the image: %s", filename.c_str()));
-  }
-  I.init(image, static_cast<unsigned int>(height), static_cast<unsigned int>(width), true);
-  stbi_image_free(image);
-}
-void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename)
-{
-  int width = 0, height = 0, channels = 0;
-  unsigned char *image = stbi_load(filename.c_str(), &width, &height, &channels, STBI_rgb_alpha);
-  if (image == NULL) {
-    throw(vpImageException(vpImageException::ioError, "Can't read the image: %s", filename.c_str()));
-  }
-  I.init(reinterpret_cast<vpRGBa*>(image), static_cast<unsigned int>(height), static_cast<unsigned int>(width), true);
-  stbi_image_free(image);
-}
-void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &filename)
-{
-  const int stride_in_bytes = static_cast<int>(I.getWidth());
-  int res = stbi_write_png(filename.c_str(), static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), STBI_grey,
-                           reinterpret_cast<void*>(I.bitmap), stride_in_bytes);
-  if (res == 0) {
-    throw(vpImageException(vpImageException::ioError, "PNG write error: %s", filename.c_str()));
-  }
-}
-void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename)
-{
-  const int stride_in_bytes = static_cast<int>(4 * I.getWidth());
-  int res = stbi_write_png(filename.c_str(), static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight()), STBI_rgb_alpha,
-                           reinterpret_cast<void*>(I.bitmap), stride_in_bytes);
-  if (res == 0) {
-    throw(vpImageException(vpImageException::ioError, "PNG write error: %s", filename.c_str()));
-  }
-}
-#endif
