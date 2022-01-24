@@ -56,7 +56,7 @@ static std::vector<std::string> names {
 };
 static std::vector<vpImageIo::vpImageIoBackendType> backends {
 #if defined(VISP_HAVE_JPEG) && defined(VISP_HAVE_PNG)
-  vpImageIo::IO_LIB_BACKEND,
+  vpImageIo::IO_SYSTEM_LIB_BACKEND,
 #endif
 #if defined(VISP_HAVE_OPENCV)
   vpImageIo::IO_OPENCV_BACKEND,
@@ -72,65 +72,61 @@ static std::vector<std::string> backendNamesPng {
 };
 static int nThreads = 0;
 
-TEST_CASE("Benchmark JPEG image loading", "[benchmark]") {
-  SECTION("Grayscale") {
-    for (size_t i = 0; i < paths.size(); i++) {
-      SECTION(names[i]) {
-        for (size_t j = 0; j < backends.size(); j++) {
-          vpImage<vpRGBa> I;
+TEST_CASE("Benchmark grayscale JPEG image loading", "[benchmark]") {
+  for (size_t i = 0; i < paths.size(); i++) {
+    SECTION(names[i]) {
+      for (size_t j = 0; j < backends.size(); j++) {
+        vpImage<vpRGBa> I;
 
-          BENCHMARK(backendNamesJpeg[j] + " backend") {
-            vpImageIo::read(I, paths[i] + ".jpg", backends[j]);
-            return I;
-          };
-        }
-      }
-    }
-  }
-
-  SECTION("vpRGBa") {
-    for (size_t i = 0; i < paths.size(); i++) {
-      SECTION(names[i]) {
-        for (size_t j = 0; j < backends.size(); j++) {
-          vpImage<unsigned char> I;
-
-          BENCHMARK(backendNamesJpeg[j] + " backend") {
-            vpImageIo::read(I, paths[i] + ".jpg", backends[j]);
-            return I;
-          };
-        }
+        BENCHMARK(backendNamesJpeg[j] + " backend") {
+          vpImageIo::read(I, paths[i] + ".jpg", backends[j]);
+          return I;
+        };
       }
     }
   }
 }
 
-TEST_CASE("Benchmark PNG image loading", "[benchmark]") {
-  SECTION("Grayscale") {
-    for (size_t i = 0; i < paths.size(); i++) {
-      SECTION(names[i]) {
-        for (size_t j = 0; j < backends.size(); j++) {
-          vpImage<vpRGBa> I;
+TEST_CASE("Benchmark RGBA JPEG image loading", "[benchmark]") {
+  for (size_t i = 0; i < paths.size(); i++) {
+    SECTION(names[i]) {
+      for (size_t j = 0; j < backends.size(); j++) {
+        vpImage<unsigned char> I;
 
-          BENCHMARK(backendNamesPng[j] + " backend") {
-            vpImageIo::read(I, paths[i] + ".png", backends[j]);
-            return I;
-          };
-        }
+        BENCHMARK(backendNamesJpeg[j] + " backend") {
+          vpImageIo::read(I, paths[i] + ".jpg", backends[j]);
+          return I;
+        };
       }
     }
   }
+}
 
-  SECTION("vpRGBa") {
-    for (size_t i = 0; i < paths.size(); i++) {
-      SECTION(names[i]) {
-        for (size_t j = 0; j < backends.size(); j++) {
-          vpImage<unsigned char> I;
+TEST_CASE("Benchmark grayscale PNG image loading", "[benchmark]") {
+  for (size_t i = 0; i < paths.size(); i++) {
+    SECTION(names[i]) {
+      for (size_t j = 0; j < backends.size(); j++) {
+        vpImage<vpRGBa> I;
 
-          BENCHMARK(backendNamesPng[j] + " backend") {
-            vpImageIo::read(I, paths[i] + ".png", backends[j]);
-            return I;
-          };
-        }
+        BENCHMARK(backendNamesPng[j] + " backend") {
+          vpImageIo::read(I, paths[i] + ".png", backends[j]);
+          return I;
+        };
+      }
+    }
+  }
+}
+
+TEST_CASE("Benchmark RGBA PNG image loading", "[benchmark]") {
+  for (size_t i = 0; i < paths.size(); i++) {
+    SECTION(names[i]) {
+      for (size_t j = 0; j < backends.size(); j++) {
+        vpImage<unsigned char> I;
+
+        BENCHMARK(backendNamesPng[j] + " backend") {
+          vpImageIo::read(I, paths[i] + ".png", backends[j]);
+          return I;
+        };
       }
     }
   }
@@ -144,41 +140,23 @@ std::string tmp_dir = "/tmp/";
 std::string tmp_dir = "C:/Temp/";
 #endif
 
-TEST_CASE("Benchmark JPEG image saving", "[benchmark]") {
+TEST_CASE("Benchmark grayscale JPEG image saving", "[benchmark]") {
   vpIoTools::getUserName(username);
   vpIoTools::makeDirectory(tmp_dir + username);
   directory_filename_tmp = tmp_dir + username + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
-  SECTION("Grayscale") {
-    for (size_t i = 0; i < paths.size(); i++) {
-      vpImage<unsigned char> I;
-      vpImageIo::read(I, paths[i] + ".png");
+  for (size_t i = 0; i < paths.size(); i++) {
+    vpImage<unsigned char> I;
+    vpImageIo::read(I, paths[i] + ".png");
 
-      SECTION(names[i]) {
-        for (size_t j = 0; j < backends.size(); j++) {
-          BENCHMARK(backendNamesJpeg[j] + " backend") {
-            vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.jpg", backends[j]);
-            return I;
-          };
-        }
-      }
-    }
-  }
-
-  SECTION("vpRGBa") {
-    for (size_t i = 0; i < paths.size(); i++) {
-      vpImage<vpRGBa> I;
-      vpImageIo::read(I, paths[i] + ".png");
-
-      SECTION(names[i]) {
-        for (size_t j = 0; j < backends.size(); j++) {
-          BENCHMARK(backendNamesJpeg[j] + " backend") {
-            vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.jpg", backends[j]);
-            return I;
-          };
-        }
+    SECTION(names[i]) {
+      for (size_t j = 0; j < backends.size(); j++) {
+        BENCHMARK(backendNamesJpeg[j] + " backend") {
+          vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.jpg", backends[j]);
+          return I;
+        };
       }
     }
   }
@@ -186,41 +164,71 @@ TEST_CASE("Benchmark JPEG image saving", "[benchmark]") {
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
 }
 
-TEST_CASE("Benchmark PNG image saving", "[benchmark]") {
+TEST_CASE("Benchmark RGBA JPEG image saving", "[benchmark]") {
   vpIoTools::getUserName(username);
   vpIoTools::makeDirectory(tmp_dir + username);
   directory_filename_tmp = tmp_dir + username + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
-  SECTION("Grayscale") {
-    for (size_t i = 0; i < paths.size(); i++) {
-      vpImage<unsigned char> I;
-      vpImageIo::read(I, paths[i] + ".png");
+  for (size_t i = 0; i < paths.size(); i++) {
+    vpImage<vpRGBa> I;
+    vpImageIo::read(I, paths[i] + ".png");
 
-      SECTION(names[i]) {
-        for (size_t j = 0; j < backends.size(); j++) {
-          BENCHMARK(backendNamesPng[j] + " backend") {
-            vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.png", backends[j]);
-            return I;
-          };
-        }
+    SECTION(names[i]) {
+      for (size_t j = 0; j < backends.size(); j++) {
+        BENCHMARK(backendNamesJpeg[j] + " backend") {
+          vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.jpg", backends[j]);
+          return I;
+        };
       }
     }
   }
 
-  SECTION("vpRGBa") {
-    for (size_t i = 0; i < paths.size(); i++) {
-      vpImage<vpRGBa> I;
-      vpImageIo::read(I, paths[i] + ".png");
+  REQUIRE(vpIoTools::remove(directory_filename_tmp));
+}
 
-      SECTION(names[i]) {
-        for (size_t j = 0; j < backends.size(); j++) {
-          BENCHMARK(backendNamesPng[j] + " backend") {
-            vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.png", backends[j]);
-            return I;
-          };
-        }
+TEST_CASE("Benchmark grayscale PNG image saving", "[benchmark]") {
+  vpIoTools::getUserName(username);
+  vpIoTools::makeDirectory(tmp_dir + username);
+  directory_filename_tmp = tmp_dir + username + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+  vpIoTools::makeDirectory(directory_filename_tmp);
+  REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
+
+  for (size_t i = 0; i < paths.size(); i++) {
+    vpImage<unsigned char> I;
+    vpImageIo::read(I, paths[i] + ".png");
+
+    SECTION(names[i]) {
+      for (size_t j = 0; j < backends.size(); j++) {
+        BENCHMARK(backendNamesPng[j] + " backend") {
+          vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.png", backends[j]);
+          return I;
+        };
+      }
+    }
+  }
+
+  REQUIRE(vpIoTools::remove(directory_filename_tmp));
+}
+
+TEST_CASE("Benchmark RGBA PNG image saving", "[benchmark]") {
+  vpIoTools::getUserName(username);
+  vpIoTools::makeDirectory(tmp_dir + username);
+  directory_filename_tmp = tmp_dir + username + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+  vpIoTools::makeDirectory(directory_filename_tmp);
+  REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
+
+  for (size_t i = 0; i < paths.size(); i++) {
+    vpImage<vpRGBa> I;
+    vpImageIo::read(I, paths[i] + ".png");
+
+    SECTION(names[i]) {
+      for (size_t j = 0; j < backends.size(); j++) {
+        BENCHMARK(backendNamesPng[j] + " backend") {
+          vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.png", backends[j]);
+          return I;
+        };
       }
     }
   }

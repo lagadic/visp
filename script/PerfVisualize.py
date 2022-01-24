@@ -5,6 +5,8 @@ import argparse
 from enum import Enum
 import xml.etree.ElementTree as ET
 from collections import OrderedDict
+import matplotlib
+import matplotlib.pyplot as plt
 
 class BenchmarkResult:
     """BenchmarkResult class to hold perf numbers"""
@@ -34,6 +36,16 @@ class TestCase:
     def __str__(self):
         return "TestCase %s\nBenchmark result:\n%s" % (self.name, self.results)
 
+class SectionCase:
+    """SectionCase class to hold the section list of benchmark results"""
+
+    def __init__(self, name):
+        self.name = name
+        self.results = OrderedDict()
+
+    def __str__(self):
+        return "SectionCase %s\nBenchmark result:\n%s" % (self.name, self.results)
+
 class Metric(Enum):
     mean = 'mean'
     lowMean = 'low_mean'
@@ -59,8 +71,8 @@ def nanoToMicro(nano):
     return nano / 1000
 
 def nanoToMilli(nano):
-    # return nano / (1000*1000)
-    return nano
+    return nano / (1000*1000)
+    # return nano
 
 def nanoToSec(nano):
     return nano / (1000*1000*1000)
@@ -79,14 +91,18 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--xml-file", help="Path to XML perf log.", required=True)
 parser.add_argument("--label", help="Label for before column.", default='Before')
 parser.add_argument("--metric", help="Benchmark metric (mean, low_mean, high_mean).", type=Metric, choices=list(Metric), default=Metric.mean)
-parser.add_argument("--unit", help="Benchmark unit (nano, micro, milli, sec).", type=Unit, choices=list(Unit), default=Unit.micro)
+parser.add_argument("--unit", help="Benchmark unit (nano, micro, milli, sec).", type=Unit, choices=list(Unit), default=Unit.milli)
 
 args = parser.parse_args()
 
 xml_file = args.xml_file
-unit = args.unit
+metric = args.metric
+time_unit = args.unit
+
+print("Matplotlib: {}".format(matplotlib.__version__))
 print('Path to XML log file for perf comparison:', xml_file)
-print('Time unit:', unit)
+print('Perf metric:', metric)
+print('Time unit:', time_unit)
 print()
 
 tree_perf_data = ET.parse(xml_file)
@@ -98,23 +114,28 @@ def loadResults(root):
 
     for test_case in root.iter('TestCase'):
         test_name = test_case.attrib['name']
-
         current_test = TestCase(test_name)
 
-        for bench_res in test_case.iter('BenchmarkResults'):
-            bench_name = bench_res.attrib['name']
+        for section_case in test_case.iter('Section'):
+            case_name = section_case.attrib['name']
+            current_section = SectionCase(case_name)
 
-            mean_node = bench_res.find('mean')
-            mean = float(mean_node.attrib['value'])
-            mean_lower = float(mean_node.attrib['lowerBound'])
-            mean_upper = float(mean_node.attrib['upperBound'])
+            for bench_res in section_case.iter('BenchmarkResults'):
+                bench_name = bench_res.attrib['name']
 
-            std_node = bench_res.find('standardDeviation')
-            std = float(std_node.attrib['value'])
-            std_lower = float(std_node.attrib['lowerBound'])
-            std_upper = float(std_node.attrib['upperBound'])
+                mean_node = bench_res.find('mean')
+                mean = float(mean_node.attrib['value'])
+                mean_lower = float(mean_node.attrib['lowerBound'])
+                mean_upper = float(mean_node.attrib['upperBound'])
 
-            current_test.results[bench_name] = BenchmarkResult(bench_name, mean, mean_lower, mean_upper, std, std_lower, std_upper)
+                std_node = bench_res.find('standardDeviation')
+                std = float(std_node.attrib['value'])
+                std_lower = float(std_node.attrib['lowerBound'])
+                std_upper = float(std_node.attrib['upperBound'])
+
+                current_section.results[bench_name] = BenchmarkResult(bench_name, mean, mean_lower, mean_upper, std, std_lower, std_upper)
+
+            current_test.results[case_name] = current_section
 
         results[test_name] = current_test
 
@@ -122,32 +143,37 @@ def loadResults(root):
 
 results_perf_data = loadResults(root_perf_data)
 
-print("results_perf_data:\n", results_perf_data)
+for r_name, r_test in results_perf_data.items():
+    fig, axs = plt.subplots(ncols=len(r_test.results.items()))
+    idx1 = 0
 
-# for r_before_name, r_before in results_before.items():
-#     title = '{} - time unit: {}'.format(r_before_name, displayUnit(unit))
-#     print('| {} | {} | {} | Speed-up |'.format(title, args.before_label, args.after_label))
-#     print('| --- | --- | --- | --- |')
-#     if r_before_name in results_after:
-#         r_after = results_after[r_before_name]
+    for r_section_name, r_section in r_test.results.items():
+        x_list = []
+        y_list = []
+        std_list = []
+        idx2 = 0
+        backend_list = []
 
-#         for b_before_name, b_before in r_before.results.items():
-#             if b_before_name in r_after.results:
-#                 b_after = r_after.results[b_before_name]
+        for r_result_name, r_result in r_section.results.items():
+            x_list.append(idx2)
+            if metric == Metric.lowMean:
+                y_list.append(convertUnit(r_result.mean_lower_bound, time_unit))
+            elif metric == Metric.highMean:
+                y_list.append(convertUnit(r_result.mean_higher_bound, time_unit))
+            else:
+                y_list.append(convertUnit(r_result.mean_value, time_unit))
+            std_list.append(convertUnit(r_result.std_val, time_unit))
+            backend_list.append(r_result_name.replace(" backend", ""))
+            idx2 += 1
 
-#                 if args.metric == Metric.lowMean:
-#                     metric_before = b_before.mean_lower_bound
-#                     metric_after = b_after.mean_lower_bound
-#                 elif args.metric == Metric.highMean:
-#                     metric_before = b_before.mean_upper_bound
-#                     metric_after = b_after.mean_upper_bound
-#                 else:
-#                     metric_before = b_before.mean_value
-#                     metric_after = b_after.mean_value
+        axs[idx1].bar(x_list, y_list, yerr=std_list, align='center', capsize=10, tick_label=backend_list)
+        axs[idx1].grid(True)
+        axs[idx1].xaxis.set_tick_params(labelsize=14)
+        axs[idx1].set_xlabel(r_section_name, fontsize=16)
+        axs[0].set_ylabel("Computation time (ms)", fontsize=16)
 
-#                 metric_before = convertUnit(metric_before, unit)
-#                 metric_after = convertUnit(metric_after, unit)
+        plt.setp(axs[idx1].get_xticklabels(), rotation=45)
+        idx1 += 1
 
-#                 speed_up = metric_before / metric_after
-#                 print('| {} | {:.2f} | {:.2f} | {:.2f} |'.format(b_before_name, metric_before, metric_after, speed_up))
-#         print()
+    plt.suptitle(r_name, fontsize=24)
+    plt.show()
