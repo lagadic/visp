@@ -609,7 +609,8 @@ else()
   VP_OPTION(USE_OPENCV      "OpenCV;MyOpenCV" QUIET "Include OpenCV support" "OpenCV_DIR;OpenCV_FOUND;OPENCV_FOUND" ON)
 endif()
 VP_OPTION(USE_ZLIB        "ZLIB;MyZLIB" ""  "Include zlib support"         "" ON IF NOT WINRT AND NOT IOS)
-VP_OPTION(USE_X11         X11         ""    "Include X11 support"          "" ON IF NOT WINRT AND NOT IOS)
+set(X11_ADVANCED "X11_xcb_util_LIB;X11_xcb_util_INCLUDE_PATH;X11_xcb_xfixes_INCLUDE_PATH;X11_xcb_xfixes_LIB")
+VP_OPTION(USE_X11         X11         ""    "Include X11 support"          "${X11_ADVANCED}" ON IF NOT WINRT AND NOT IOS)
 # The native FindGTK2.cmake doesn't consider libgobject-2.0 that is
 # requested by ViSP. That's why we use our FindMyGTK2.cmake
 VP_OPTION(USE_GTK2        MyGTK2       ""    "Include gtk2 support"         "" OFF IF NOT WINRT AND NOT IOS)
