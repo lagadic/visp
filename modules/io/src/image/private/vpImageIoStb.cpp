@@ -29,14 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
-<<<<<<< HEAD
- * Read/write images.
- *
- * Authors:
- * Eric Marchand
-=======
  * stb backend for JPEG and PNG image I/O operations.
->>>>>>> 557f1beda01f36ca886ec039d0a1a80a7446ca59
  *
  *****************************************************************************/
 
@@ -47,7 +40,6 @@
 
 #include "vpImageIoBackend.h"
 
-//TODO:
 #if defined __SSE2__ || defined _M_X64 || (defined _M_IX86_FP && _M_IX86_FP >= 2)
 #  define VISP_HAVE_SSE2 1
 #endif
@@ -63,7 +55,6 @@
 #include <stb_image_write.h>
 
 
-//TODO:
 void readStb(vpImage<unsigned char> &I, const std::string &filename)
 {
   int width = 0, height = 0, channels = 0;

@@ -694,17 +694,7 @@ VP_OPTION(WITH_CLIPPER    ""           ""    "Build clipper as built-in library"
 VP_OPTION(WITH_LAPACK     ""           ""    "Build lapack as built-in library"    "" ON IF NOT USE_LAPACK)
 VP_OPTION(WITH_QBDEVICE   ""           ""    "Build qbdevice-api as built-in library" "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND (NOT WINRT) AND (NOT IOS))
 VP_OPTION(WITH_TAKKTILE2  ""           ""    "Build Right Hand takktile2 driver as built-in library"   "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98) AND (NOT WIN32) AND (NOT WINRT) AND (NOT IOS) AND (NOT ANDROID))
-
-# Use stb_image as built-in library only when OpenCV, libjpeg and libpng not available
-if(NOT USE_OPENCV AND (NOT USE_PNG OR NOT USE_JPEG))
-  set(WITH_STBIMAGE ON)
-else()
-  set(WITH_STBIMAGE OFF)
-endif()
-# TODO:
-set(WITH_STBIMAGE ON)
-
-VP_OPTION(WITH_CATCH2   ""           ""    "Use catch2" "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98))
+VP_OPTION(WITH_CATCH2     ""           ""    "Use catch2" "" ON IF (VISP_CXX_STANDARD GREATER VISP_CXX_STANDARD_98))
 
 # ----------------------------------------------------------------------------
 # Check for specific functions. Should be after cxx standard detection in VISPDetectCXXStandard.cmake and potential modification depending on pcl, realsense2, libfranka

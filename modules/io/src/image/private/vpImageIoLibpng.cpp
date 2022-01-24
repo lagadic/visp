@@ -29,14 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
-<<<<<<< HEAD
- * Read/write images.
- *
- * Authors:
- * Eric Marchand
-=======
  * Libpng backend for PNG image I/O operations.
->>>>>>> 557f1beda01f36ca886ec039d0a1a80a7446ca59
  *
  *****************************************************************************/
 
@@ -47,14 +40,6 @@
 
 #include "vpImageIoBackend.h"
 #include <visp3/core/vpImageConvert.h>
-
-//TODO: is it needed?
-//#if defined(_WIN32)
-//// Include WinSock2.h before windows.h to ensure that winsock.h is not
-//// included by windows.h since winsock.h and winsock2.h are incompatible
-//#include <WinSock2.h>
-//#include <windows.h>
-//#endif
 
 #if defined(VISP_HAVE_PNG)
 #include <png.h>

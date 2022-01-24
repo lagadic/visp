@@ -44,15 +44,8 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 
-//TODO:
 #include "private/vpImageIoBackend.h"
 
-//TODO:
-// priority order for backend selection is:
-//  - libjpeg / libpng if available
-//  - OpenCV if available
-//  - stb backend for image reading / Simd backend for image writing
-//  - Simd backend for image reading / stb backend for image writing
 
 vpImageIo::vpImageFormatType vpImageIo::getFormat(const std::string &filename)
 {
@@ -143,8 +136,9 @@ std::string vpImageIo::getExtension(const std::string &filename)
 
   \param I : Image to set with the \e filename content.
   \param filename : Name of the file containing the image.
+  \param backend : Library backend type (see vpImageIoBackendType) for image reading (only for JPEG and PNG).
  */
-void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend)
+void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename, int backend)
 {
   bool exist = vpIoTools::checkFilename(filename);
   if (!exist) {
@@ -210,8 +204,9 @@ void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename, con
 
   \param I : Image to set with the \e filename content.
   \param filename : Name of the file containing the image.
+  \param backend : Library backend type (see vpImageIoBackendType) for image reading (only for JPEG and PNG).
  */
-void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend)
+void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename, int backend)
 {
   bool exist = vpIoTools::checkFilename(filename);
   if (!exist) {
@@ -270,8 +265,9 @@ void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename, const vpIm
 
   \param I : Image to write.
   \param filename : Name of the file containing the image.
+  \param backend : Library backend type (see vpImageIoBackendType) for image writing (only for JPEG and PNG).
  */
-void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend)
+void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filename, int backend)
 {
   bool try_opencv_writer = false;
 
@@ -322,8 +318,9 @@ void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filena
 
   \param I : Image to write.
   \param filename : Name of the file containing the image.
+  \param backend : Library backend type (see vpImageIoBackendType) for image writing (only for JPEG and PNG).
  */
-void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend)
+void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename, int backend)
 {
   bool try_opencv_writer = false;
 
@@ -361,9 +358,9 @@ void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename, con
   }
 }
 
-void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend)
+void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename, int backend)
 {
-  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     readJPEGLibjpeg(I, filename);
 #else
@@ -384,9 +381,9 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename,
   }
 }
 
-void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend)
+void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int backend)
 {
-  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     readJPEGLibjpeg(I, filename);
 #else
@@ -407,9 +404,9 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, const 
   }
 }
 
-void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend)
+void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, int backend)
 {
-  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     readPNGLibpng(I, filename);
 #else
@@ -430,9 +427,9 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
   }
 }
 
-void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend)
+void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int backend)
 {
-  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     readPNGLibpng(I, filename);
 #else
@@ -453,9 +450,9 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, const v
   }
 }
 
-void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename, int quality, const vpImageIoBackendType& backend)
+void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename, int quality, int backend)
 {
-  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     writeJPEGLibjpeg(I, filename, quality);
 #else
@@ -476,9 +473,9 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
   }
 }
 
-void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename, int quality, const vpImageIoBackendType& backend)
+void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename, int quality, int backend)
 {
-  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     writeJPEGLibjpeg(I, filename, quality);
 #else
@@ -499,49 +496,49 @@ void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename,
   }
 }
 
-void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &filename, const vpImageIoBackendType& backend)
+void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &filename, int backend)
 {
-  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+      writeOpenCV(I, filename, 90);
+#else
+      std::string message = "Cannot write file \"" + filename + "\": OpenCV backend is not available";
+      throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_SIMDLIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+    writePNGSimdlib(I, filename);
+  } else if (backend == IO_STB_IMAGE_BACKEND) {
+    writePNGStb(I, filename);
+  } else if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     writePNGLibpng(I, filename);
 #else
     std::string message = "Cannot write file \"" + filename + "\": Libpng backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
-    writeOpenCV(I, filename, 90);
-#else
-    std::string message = "Cannot write file \"" + filename + "\": OpenCV backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
-#endif
-  } else if (backend == IO_SIMDLIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
-    writePNGSimdlib(I, filename);
-  } else if (backend == IO_STB_IMAGE_BACKEND) {
-    writePNGStb(I, filename);
   }
 }
 
-void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, const vpImageIoBackendType& backend)
+void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, int backend)
 {
-  if (backend == IO_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+      writeOpenCV(I, filename, 90);
+#else
+      std::string message = "Cannot write file \"" + filename + "\": OpenCV backend is not available";
+      throw(vpImageException(vpImageException::ioError, message));
+#endif
+  } else if (backend == IO_SIMDLIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+    writePNGSimdlib(I, filename);
+  } else if (backend == IO_STB_IMAGE_BACKEND) {
+    writePNGStb(I, filename);
+  } else if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     writePNGLibpng(I, filename);
 #else
     std::string message = "Cannot write file \"" + filename + "\": Libpng backend is not available";
     throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
-#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
-    writeOpenCV(I, filename, 90);
-#else
-    std::string message = "Cannot write file \"" + filename + "\": OpenCV backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
-#endif
-  } else if (backend == IO_SIMDLIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
-    writePNGSimdlib(I, filename);
-  } else if (backend == IO_STB_IMAGE_BACKEND) {
-    writePNGStb(I, filename);
   }
 }
 

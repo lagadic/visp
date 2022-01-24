@@ -29,14 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
-<<<<<<< HEAD
- * Read/write images.
- *
- * Authors:
- * Eric Marchand
-=======
  * OpenCV backend for image I/O operations.
->>>>>>> 557f1beda01f36ca886ec039d0a1a80a7446ca59
  *
  *****************************************************************************/
 
@@ -47,7 +40,6 @@
 
 #include "vpImageIoBackend.h"
 
-//TODO:
 #ifdef VISP_HAVE_OPENCV
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
 #  include <opencv2/imgcodecs.hpp>

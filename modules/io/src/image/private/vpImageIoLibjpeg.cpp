@@ -29,14 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
-<<<<<<< HEAD
- * Read/write images.
- *
- * Authors:
- * Eric Marchand
-=======
  * Libjpeg backend for JPEG image I/O operations.
->>>>>>> 557f1beda01f36ca886ec039d0a1a80a7446ca59
  *
  *****************************************************************************/
 
@@ -47,14 +40,6 @@
 
 #include "vpImageIoBackend.h"
 #include <visp3/core/vpImageConvert.h>
-
-//TODO: is it needed?
-//#if defined(_WIN32)
-//// Include WinSock2.h before windows.h to ensure that winsock.h is not
-//// included by windows.h since winsock.h and winsock2.h are incompatible
-//#include <WinSock2.h>
-//#include <windows.h>
-//#endif
 
 #if defined(VISP_HAVE_JPEG)
 #include <jerror.h>
@@ -106,7 +91,6 @@ void writeJPEGLibjpeg(const vpImage<unsigned char> &I, const std::string &filena
   cinfo.input_components = 1;
   cinfo.in_color_space = JCS_GRAYSCALE;
   jpeg_set_defaults(&cinfo);
-  //TODO:
   jpeg_set_quality(&cinfo, quality, TRUE);
 
   jpeg_start_compress(&cinfo, TRUE);
@@ -166,7 +150,6 @@ void writeJPEGLibjpeg(const vpImage<vpRGBa> &I, const std::string &filename, int
   cinfo.input_components = 3;
   cinfo.in_color_space = JCS_RGB;
   jpeg_set_defaults(&cinfo);
-  //TODO:
   jpeg_set_quality(&cinfo, quality, TRUE);
 
   jpeg_start_compress(&cinfo, TRUE);

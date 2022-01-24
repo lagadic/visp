@@ -70,12 +70,11 @@ add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/simdlib")
 set(SIMDLIB_INCLUDE_DIRS "${VISP_SOURCE_DIR}/3rdparty/simdlib")
 set(SIMDLIB_LIBRARIES ${SIMD_LIBRARY})
 
-if(WITH_STBIMAGE)
-  set(STBIMAGE_LIBRARY visp_stbimage)
-  add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/stb_image")
-  set(STBIMAGE_INCLUDE_DIRS "${VISP_SOURCE_DIR}/3rdparty/stb_image")
-  set(STBIMAGE_VERSION ${STBIMAGE_MAJOR_VERSION}.${STBIMAGE_MINOR_VERSION}.${STBIMAGE_PATCH_VERSION})
-endif()
+# stb is always enabled
+set(STBIMAGE_LIBRARY visp_stbimage)
+add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/stb_image")
+set(STBIMAGE_INCLUDE_DIRS "${VISP_SOURCE_DIR}/3rdparty/stb_image")
+set(STBIMAGE_VERSION ${STBIMAGE_MAJOR_VERSION}.${STBIMAGE_MINOR_VERSION}.${STBIMAGE_PATCH_VERSION})
 
 if(WITH_CATCH2)
   set(CATCH2_LIBRARY visp_catch2)

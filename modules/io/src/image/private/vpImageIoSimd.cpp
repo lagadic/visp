@@ -29,14 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
-<<<<<<< HEAD
- * Read/write images.
- *
- * Authors:
- * Eric Marchand
-=======
  * Simd backend for JPEG and PNG image I/O operations.
->>>>>>> 557f1beda01f36ca886ec039d0a1a80a7446ca59
  *
  *****************************************************************************/
 
@@ -49,7 +42,6 @@
 #include <Simd/SimdLib.h>
 
 
-//TODO:
 void readSimdlib(vpImage<unsigned char> &I, const std::string &filename)
 {
   size_t stride = 0, width = 0, height = 0;
