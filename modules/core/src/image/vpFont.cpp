@@ -223,7 +223,9 @@ public:
       _bb_vec.clear();
       _y_vec.clear();
 
-      for (int i = 0, x = 0; i < _wordUTF32.size(); i++) {
+      int wordUTF32_size = static_cast<int>(_wordUTF32.size());
+
+      for (int i = 0, x = 0; i < wordUTF32_size; i++) {
         /* how wide is this character */
         int ax = 0;
         int lsb = 0;
@@ -256,7 +258,7 @@ public:
 
         /* add kerning */
         int kern = 0;
-        if (i < _wordUTF32.size()-1) {
+        if (i < wordUTF32_size - 1) {
           kern = stbtt_GetCodepointKernAdvance(&_info, _wordUTF32[i], _wordUTF32[i + 1]);
           x += vpMath::round(kern * _fontScale);
         }
@@ -324,7 +326,9 @@ public:
       _fontBuffer.resize(std::max(_fontBuffer.getHeight(), static_cast<unsigned int>(_bb.getBottom()+1)),
                          std::max(_fontBuffer.getWidth(), static_cast<unsigned int>(_bb.getRight()+1)));
 
-      for (int i = 0, x = 0; i < _wordUTF32.size(); i++) {
+      int wordUTF32_size = static_cast<int>(_wordUTF32.size());
+
+      for (int i = 0, x = 0; i < wordUTF32_size; i++) {
         /* render character (stride and offset is important here) */
         int byteOffset = x + vpMath::round(_lsb_vec[i] * _fontScale) + (_y_vec[i] * _fontBuffer.getWidth());
         stbtt_MakeCodepointBitmap(&_info, _fontBuffer.bitmap + byteOffset, static_cast<int>(_bb_vec[i].getWidth()), static_cast<int>(_bb_vec[i].getHeight()),
@@ -351,7 +355,7 @@ public:
         x += vpMath::round(_ax_vec[i] * _fontScale);
 
         /* add kerning */
-        if (i < _wordUTF32.size()-1) {
+        if (i < wordUTF32_size - 1) {
           int kern = stbtt_GetCodepointKernAdvance(&_info, _wordUTF32[i], _wordUTF32[i + 1]);
           x += vpMath::round(kern * _fontScale);
         }
@@ -430,7 +434,9 @@ public:
       _fontBuffer.resize(std::max(_fontBuffer.getHeight(), static_cast<unsigned int>(_bb.getBottom()+1)),
                          std::max(_fontBuffer.getWidth(), static_cast<unsigned int>(_bb.getRight()+1)));
 
-      for (int i = 0, x = 0; i < _wordUTF32.size(); i++) {
+      int wordUTF32_size = static_cast<int>(_wordUTF32.size());
+
+      for (int i = 0, x = 0; i < wordUTF32_size; i++) {
         /* render character (stride and offset is important here) */
         int byteOffset = x + vpMath::round(_lsb_vec[i] * _fontScale) + (_y_vec[i] * _fontBuffer.getWidth());
         stbtt_MakeCodepointBitmap(&_info, _fontBuffer.bitmap + byteOffset, static_cast<int>(_bb_vec[i].getWidth()), static_cast<int>(_bb_vec[i].getHeight()),
@@ -460,7 +466,7 @@ public:
         x += vpMath::round(_ax_vec[i] * _fontScale);
 
         /* add kerning */
-        if (i < _wordUTF32.size()-1) {
+        if (i < wordUTF32_size - 1) {
           int kern = stbtt_GetCodepointKernAdvance(&_info, _wordUTF32[i], _wordUTF32[i + 1]);
           x += vpMath::round(kern * _fontScale);
         }

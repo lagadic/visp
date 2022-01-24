@@ -282,7 +282,7 @@ vp_set_source_file_compile_flag(src/tools/network/vpServer.cpp -Wno-strict-overf
 vp_set_source_file_compile_flag(src/tools/optimization/vpQuadProg.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/tools/optimization/vpLinProg.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/tools/histogram/vpHistogram.cpp -Wno-strict-overflow)
-vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-float-equal)
+vp_set_source_file_compile_flag(src/image/vpFont.cpp -Wno-float-equal -Wno-strict-overflow)
 vp_set_source_file_compile_flag(test/image/testImageBinarise.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(test/image/testImageOwnership.cpp -Wno-pessimizing-move)
 vp_set_source_file_compile_flag(test/network/testClient.cpp -Wno-strict-overflow)
