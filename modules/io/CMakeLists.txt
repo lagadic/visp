@@ -57,11 +57,8 @@ if(USE_PNG)
   add_definitions(${PNG_DEFINITIONS})
 endif()
 
-# TODO:
-#if(WITH_STBIMAGE)
-  # stb_image is private
-  include_directories(${STBIMAGE_INCLUDE_DIRS})
-#endif()
+# stb_image is private
+include_directories(${STBIMAGE_INCLUDE_DIRS})
 
 if(WITH_CATCH2)
   # catch2 is private
