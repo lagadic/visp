@@ -29,14 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
-<<<<<<< HEAD
- * Read/write images.
- *
- * Authors:
- * Eric Marchand
-=======
  * Backend functions implementation for image I/O operations.
->>>>>>> 557f1beda01f36ca886ec039d0a1a80a7446ca59
  *
  *****************************************************************************/
 
