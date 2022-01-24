@@ -40,24 +40,8 @@
 #define vpDisplayX_h
 
 #include <visp3/core/vpConfig.h>
-#include <visp3/core/vpDisplay.h>
 #ifdef VISP_HAVE_X11
-
-// namespace X11name
-//{
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-//#include <X11/Xatom.h>
-//#include <X11/cursorfont.h>
-//} ;
-
-// using namespace X11name ;
-
-// Work arround to use this class with Eigen3
-#ifdef Success
-#undef Success // See http://eigen.tuxfamily.org/bz/show_bug.cgi?id=253
-#endif
-
+#include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRect.h>
 
@@ -149,24 +133,6 @@ int main()
 
 class VISP_EXPORT vpDisplayX : public vpDisplay
 {
-private:
-  Display *display;
-  Window window;
-  XImage *Ximage;
-  Colormap lut;
-  GC context;
-  int screen;
-  XEvent event;
-  Pixmap pixmap;
-  unsigned long *x_color; // Array of predefined colors
-  unsigned int screen_depth;
-  unsigned short colortable[256];
-  XColor xcolor;
-  XGCValues values;
-  bool ximage_data_init;
-  unsigned int RMask, GMask, BMask;
-  int RShift, GShift, BShift;
-
   // private:
   //#ifndef DOXYGEN_SHOULD_SKIP_THIS
   //  vpDisplayX(const vpDisplayX &)
@@ -203,9 +169,9 @@ public:
   void getScreenSize(unsigned int &width, unsigned int &height);
   unsigned int getScreenWidth();
 
-  void init(vpImage<unsigned char> &I, int winx = -1, int winy = -1, const std::string &title = "");
-  void init(vpImage<vpRGBa> &I, int winx = -1, int winy = -1, const std::string &title = "");
-  void init(unsigned int width, unsigned int height, int winx = -1, int winy = -1, const std::string &title = "");
+  void init(vpImage<unsigned char> &I, int win_x = -1, int win_y = -1, const std::string &win_title = "");
+  void init(vpImage<vpRGBa> &I, int win_x = -1, int win_y = -1, const std::string &win_title = "");
+  void init(unsigned int win_width, unsigned int win_height, int win_x = -1, int win_y = -1, const std::string &win_title = "");
 
 protected:
   void clearDisplay(const vpColor &color = vpColor::white);
@@ -252,13 +218,17 @@ protected:
   bool getKeyboardEvent(bool blocking = true);
   bool getKeyboardEvent(std::string &key, bool blocking = true);
 
-  int getMsb(unsigned int u32val);
   bool getPointerMotionEvent(vpImagePoint &ip);
   bool getPointerPosition(vpImagePoint &ip);
 
   void setFont(const std::string &font);
   void setTitle(const std::string &title);
-  void setWindowPosition(int winx, int winy);
+  void setWindowPosition(int win_x, int win_y);
+
+private:
+  // Implementation
+  class Impl;
+  Impl *m_impl;
 };
 
 #endif
