@@ -7,7 +7,7 @@ In this tutorial you will learn how to install ViSP from source on Jetson TX2 eq
 
 \image html img-jetson-tx2.jpg
 
-\note ViSP is already packaged for linux jetson. To know which version is available
+\note ViSP is already packaged for linux Jetson. To know which version is available
 \verbatim
 $ apt-cache search libvisp
 \endverbatim
