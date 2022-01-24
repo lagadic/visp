@@ -65,16 +65,19 @@ int main (int argc, char **argv)
   const int o = 16;   // cost function
 #ifdef VISP_HAVE_DISPLAY
   bool opt_display = true;
+  bool opt_click_allowed = true;
 #endif
 
   for (int i = 0; i < argc; i++) {
 #ifdef VISP_HAVE_DISPLAY
     if (std::string(argv[i]) == "-d")
       opt_display = false;
+    else if (std::string(argv[i]) == "-c")
+      opt_click_allowed = false;
     else
 #endif
-    if (std::string(argv[i]) == "-h") {
-      std::cout << "\nUsage: " << argv[0] << " [-d] [-h]" << std::endl;
+    if (std::string(argv[i]) == "-h" || std::string(argv[i]) == "--help") {
+      std::cout << "\nUsage: " << argv[0] << " [-d] [-c] [-h] [--help]" << std::endl;
       std::cout << "\nOptions: \n"
 #ifdef VISP_HAVE_DISPLAY
                    "  -d \n"
@@ -82,8 +85,12 @@ int main (int argc, char **argv)
                    "     for automatic tests using crontab under Unix or \n"
                    "     using the task manager under Windows.\n"
                    "\n"
+                   "  -c \n"
+                   "     Disable the mouse click. Useful to automate the \n"
+                   "     execution of this program without humain intervention.\n"
+                   "\n"
 #endif
-                   "  -h\n"
+                   "  -h, --help\n"
                    "     Print the help.\n"<< std::endl;
 
       return EXIT_SUCCESS;
@@ -164,7 +171,10 @@ int main (int argc, char **argv)
 
 #ifdef VISP_HAVE_DISPLAY
   if (opt_display) {
-    plot->wait();
+    if (opt_click_allowed) {
+      std::cout << "Click in the graph to exit..." << std::endl;
+      plot->wait();
+    }
     delete plot;
   }
 #endif
