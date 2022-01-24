@@ -431,13 +431,13 @@ To see which are the optional 3rd parties that are found during the configuratio
 \verbatim
 $ cat $VISP_WS/visp-build/ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.3.0
+General configuration information for ViSP 3.4.1
 
-  Version control:               3.2.0-822-gf511da75d
+  Version control:               v3.4.0-306-g318d05132-dirty
 
   Platform:
-    Timestamp:                   2020-02-12T14:38:30Z
-    Host:                        Linux 4.9.140-tegra aarch64
+    Timestamp:                   2022-01-24T16:17:00Z
+    Host:                        Linux 4.9.253-tegra aarch64
     CMake:                       3.10.2
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/make
@@ -445,7 +445,7 @@ General configuration information for ViSP 3.3.0
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                /usr/bin/c++  (ver 7.4.0)
+    C++ Compiler:                /usr/bin/c++  (ver 7.5.0)
     C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -fPIC -O3 -DNDEBUG
     C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -fPIC -g
     C Compiler:                  /usr/bin/cc
@@ -460,7 +460,7 @@ General configuration information for ViSP 3.3.0
     Disabled by dependency:      -
     Unavailable:                 java
 
-  Python (for build):            /usr/bin/python2.7
+  Python (for build):            /usr/bin/python
 
   Java:
     ant:                         NO
@@ -471,18 +471,19 @@ General configuration information for ViSP 3.3.0
     Build with moment combine:   no
 
   Mathematics:
-    Use MKL:                     no
-    Use OpenBLAS:                no
-    Use Atlas:                   no
-    Use Netlib Lapack:           no
-    Use Lapack (built-in):       yes (ver 3.2.1)
-    Use Eigen3:                  yes (ver 3.3.4)
-    Use OpenCV:                  yes (ver 3.2.0)
-    Use GSL:                     no
+    Blas/Lapack:                 yes
+    \- Use MKL:                  no
+    \- Use OpenBLAS:             no
+    \- Use Atlas:                no
+    \- Use Netlib:               yes (ver 3.7.1)
+    \- Use GSL:                  no
+    \- Use Lapack (built-in):    no
+    Use Eigen3:                  yes (ver 3.4.0)
+    Use OpenCV:                  yes (ver 4.5.5)
 
   Simulator:
     Ogre simulator:
-    \- Use Ogre3D:               no
+    \- Use Ogre3D:               yes (ver 1.9.0)
     \- Use OIS:                  no
     Coin simulator:
     \- Use Coin3D:               no
@@ -497,7 +498,7 @@ General configuration information for ViSP 3.3.0
     Use JPEG:                    yes (ver 80)
     Use PNG:                     yes (ver 1.6.34)
     \- Use ZLIB:                 yes (ver 1.2.11)
-    Use OpenCV:                  yes (ver 3.2.0)
+    Use OpenCV:                  yes (ver 4.5.5)
     Use stb_image (built-in):    no
 
   Real robots:
@@ -506,6 +507,7 @@ General configuration information for ViSP 3.3.0
     Use Franka:                  no
     Use Viper650:                no
     Use Viper850:                no
+    Use Kinova Jaco:             no
     Use aria (Pioneer):          no
     Use PTU46:                   no
     Use Biclops PTU:             no
@@ -514,26 +516,29 @@ General configuration information for ViSP 3.3.0
     \-Use ffmpeg:                no
     Use Virtuose:                no
     Use qbdevice (built-in):     yes (ver 2.6.0)
+    Use takktile2 (built-in):    yes (ver 1.0.0)
 
   GUI:
     Use X11:                     yes
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 3.2.0)
+    Use OpenCV:                  yes (ver 4.5.5)
     Use GDI:                     no
     Use Direct3D:                no
 
   Cameras:
     Use DC1394-2.x:              yes (ver 2.2.5)
     Use CMU 1394:                no
-    Use V4L2:                    no
+    Use V4L2:                    yes (ver 1.14.2)
     Use directshow:              no
-    Use OpenCV:                  yes (ver 3.2.0)
-    Use Flycapture:              no
-    Use Pylon:                   no
+    Use OpenCV:                  yes (ver 4.5.5)
+    Use FLIR Flycapture:         no
+    Use Basler Pylon:            no
+    Use IDS uEye:                no
 
   RGB-D sensors:
     Use Realsense:               no
-    Use Realsense2:              no
+    Use Realsense2:              yes (ver 2.50.0)
+    Use Occipital Structure:     yes
     Use Kinect:                  no
     \- Use libfreenect:          no
     \- Use libusb-1:             yes (ver 1.0.21)
@@ -547,7 +552,7 @@ General configuration information for ViSP 3.3.0
     Use IIT SDK:                 no
 
   Detection:
-    Use zbar:                    no
+    Use zbar:                    yes (ver 0.10)
     Use dmtx:                    no
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
@@ -563,11 +568,15 @@ General configuration information for ViSP 3.3.0
     Use pthread (built-in):      no
     Use cxx standard:            11
 
+  DNN:
+    Use CUDA Toolkit:            yes (ver 10.2)
+    Use TensorRT:                yes (ver 8.0.1.6)
+
   Documentation:
     Use doxygen:                 no
 
   Tests and samples:
-    Use catch2 (built-in):       yes (ver 2.9.2)
+    Use catch2 (built-in):       yes (ver 2.13.7)
     Tests:                       yes
     Demos:                       yes
     Examples:                    yes
