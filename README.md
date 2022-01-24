@@ -3,17 +3,20 @@
 
 [![Github Releases](https://img.shields.io/github/release/lagadic/visp.svg)](https://github.com/lagadic/visp/releases)
 [![License](https://img.shields.io/badge/License-GPLv2-bright)](https://opensource.org/licenses/GPL-2.0)
-![macos workflow](https://github.com/lagadic/visp/actions/workflows/macos.yml/badge.svg)
-![other arch workflow](https://github.com/lagadic/visp/actions/workflows/other-arch.yml/badge.svg)
-![sanitizers workflow](https://github.com/lagadic/visp/actions/workflows/sanitizers.yml/badge.svg)
-![ubuntu dep apt workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-apt.yml/badge.svg)
-![ubuntu dep src workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-src.yml/badge.svg)
-![valgrind workflow](https://github.com/lagadic/visp/actions/workflows/valgrind.yml/badge.svg)
 
 Platform | Build Status |
 -------- | ------------ |
+Ubuntu | ![ubuntu dep apt workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-apt.yml/badge.svg) ![ubuntu dep src workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-src.yml/badge.svg)
+macOS | ![macos workflow](https://github.com/lagadic/visp/actions/workflows/macos.yml/badge.svg) |
+iOS | ![ios workflow](https://github.com/lagadic/visp/actions/workflows/ios.yml/badge.svg) |
 Windows | [![Build status](https://ci.appveyor.com/api/projects/status/121dscdkryf5dbn0/branch/master?svg=true)](https://ci.appveyor.com/project/fspindle/visp/branch/master) |
 ARM | [![Build Status](https://cloud.drone.io/api/badges/lagadic/visp/status.svg)](https://cloud.drone.io/lagadic/visp) |
+Other arch | ![other arch workflow](https://github.com/lagadic/visp/actions/workflows/other-arch.yml/badge.svg) |
+ROS2 Foxy | [![Build Status](https://build.ros2.org/buildStatus/icon?job=Fdev__visp__ubuntu_focal_amd64)](https://build.ros2.org/job/Fdev__visp__ubuntu_focal_amd64/) |
+ROS2 Galactic | [![Build Status](https://build.ros2.org/buildStatus/icon?job=Gdev__visp__ubuntu_focal_amd64)](https://build.ros2.org/job/Gdev__visp__ubuntu_focal_amd64/) |
+ROS2 Rolling | [![Build Status](https://build.ros2.org/buildStatus/icon?job=Rdev__visp__ubuntu_focal_amd64)](https://build.ros2.org/job/Rdev__visp__ubuntu_focal_amd64) |
+Valgrind | ![valgrind workflow](https://github.com/lagadic/visp/actions/workflows/valgrind.yml/badge.svg) |
+Sanitizer | ![sanitizers workflow](https://github.com/lagadic/visp/actions/workflows/sanitizers.yml/badge.svg) |
 
 ViSP is a cross-platform library (Linux, Windows, MacOS, iOS, Android) that allows prototyping and developing applications using visual tracking and visual servoing technics at the heart of the researches done now by Inria <a href="http://team.inria.fr/rainbow">Rainbow team</a> and before 2018 by <a href="http://team.inria.fr/lagadic">Lagadic team</a>. ViSP is able to compute control laws that can be applied to robotic systems. It provides a set of visual features that can be tracked using real time image processing or computer vision algorithms. ViSP provides also simulation capabilities. ViSP can be useful in robotics, computer vision, augmented reality and computer animation. Our <a href="https://www.youtube.com/user/VispTeam">YouTube channel</a> gives an overview of the applications that could be tackled.
 
