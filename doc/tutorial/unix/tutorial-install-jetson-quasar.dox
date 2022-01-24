@@ -14,7 +14,7 @@ $ apt-cache search libvisp
 Installation instructions are provided in \ref tutorial-install-ubuntu-package
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_jetson_required Install prerequisites
+\section install_jetson_quasar_required Install prerequisites
 
 This tutorial was tested with NVIDIA Jetson TX2 flashed with `JetPack 4.6(rev3)`.
 - The first step is to setup and flash your Jetson for a Connect Tech Carrier Board following this <a href="https://connecttech.com/resource-center/kdb373/">tutorial</a>. This could be achieved from a laptop running ubuntu `16.04` or `18.04`.
@@ -26,7 +26,7 @@ This tutorial was tested with NVIDIA Jetson TX2 flashed with `JetPack 4.6(rev3)`
 $ sudo apt-get install build-essential cmake-curses-gui git subversion wget
 \endverbatim
 
-\section install_jetson_ws Create a workspace
+\section install_jetson_quasar_ws Create a workspace
 
 First create a workspace that will contain all ViSP source, build, data set and optional 3rd parties. This workspace is here set to `$HOME/visp-ws` folder, but it could be set to any other location.
 
@@ -37,7 +37,7 @@ $ source ~/.bashrc
 $ mkdir -p $VISP_WS
 \endverbatim
 
-\section install_jetson_quick Quick ViSP installation
+\section install_jetson_quasar_quick Quick ViSP installation
 
 In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering in \ref install_jetson_advanced.
 
@@ -68,15 +68,15 @@ $ source ~/.bashrc
 
 To have a trial, just jump to \ref install_jetson_dataset before running some binaries that you just build or jump to \ref install_jetson_next. You can later come back to the \ref install_jetson_advanced.
 
-\section install_jetson_advanced Advanced ViSP installation
+\section install_jetson_quasar_advanced Advanced ViSP installation
 
-\subsection install_jetson_3rdparty Install 3rd parties
+\subsection install_jetson_quasar_3rdparty Install 3rd parties
 
 ViSP is interfaced with several optional 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
 
 \note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do not want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP. It is therefore possible to skip in a first time this section and start directly to \ref install_jetson_quick. Later, if you realize that a third-party library is missing, you can still install it, go back to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build ViSP again as explained in \ref install_jetson_tips_new_3rdparty.
 
-\subsubsection install_jetson_3rdparty_recommended Recommended 3rd parties
+\subsubsection install_jetson_quasar_3rdparty_recommended Recommended 3rd parties
 
 We recommend to install the following 3rd parties:
 
@@ -92,7 +92,7 @@ Installation of the other recommended 3rd parties could be performed running:
 $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev libzbar-dev libpthread-stubs0-dev libdc1394-22-dev
 \endverbatim
 
-\subsubsection install_jetson_3rdparty_opencv Install OpenCV from source
+\subsubsection install_jetson_quasar_3rdparty_opencv Install OpenCV from source
 
 To be able to run the tutorial, you should install OpenCV from source, since some extra modules are required (`cudev`, `cudaarithm` and `cudawarping` are not included in `libopencv-contrib-dev` package).
 To do so, proceed as follows:
@@ -140,7 +140,7 @@ $ make -j$(nproc)
 $ sudo make install
 \endcode
 
-\subsubsection install_jetson_3rdparty_realsense librealsense 2.x 3rd party
+\subsubsection install_jetson_quasar_3rdparty_realsense librealsense 2.x 3rd party
 
 If you have an Intel RealSense Depth camera (SR300 or D400 series), you may install librealsense 2.x in order to use vpRealSense2 class.
 Otherwise you can skip this section.
@@ -187,7 +187,7 @@ Following the <a href="https://github.com/IntelRealSense/librealsense/blob/maste
 
 If you are able to visualize the images, it means that you succeed in librealsense installation.
 
-\subsubsection install_jetson_3rdparty_occipital_structure libStructure 3rd party
+\subsubsection install_jetson_quasar_3rdparty_occipital_structure libStructure 3rd party
 
 If you have an Occipital Structure Core sensor (monochrome or color), you may install Occipital Structure SDK in order to use vpOccipitalStructure class.
 Otherwise you can skip this section.
@@ -210,7 +210,7 @@ $ echo "export OCCIPITAL_STRUCTURE_DIR=$VISP_WS/StructureSDK-CrossPlatform-0.9" 
 $ source ~/.bashrc
 \endverbatim
 
-\subsection install_jetson_visp_get_source Get ViSP source code
+\subsection install_jetson_quasar_visp_get_source Get ViSP source code
 
 Get ViSP from <a href="https://github.com/lagadic/visp">GitHub repository</a> using the following command
 \verbatim
@@ -220,7 +220,7 @@ $ git clone https://github.com/lagadic/visp.git
 
 We suppose now that ViSP source is in the directory `$VISP_WS/visp`.
 
-\subsection install_jetson_visp_config Configure ViSP from source
+\subsection install_jetson_quasar_visp_config Configure ViSP from source
 
 These are the steps to configure ViSP from source with CMake:
 
@@ -241,7 +241,7 @@ $ ccmake ../visp
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
 \image html img-cmake-jetson.png Snapshot of the `ccmake ../visp` command used to configure ViSP.
 
-\subsection install_jetson_visp_build Build and install ViSP libraries
+\subsection install_jetson_quasar_visp_build Build and install ViSP libraries
 
 To build ViSP libraries proceed with:
 \verbatim
@@ -250,7 +250,7 @@ $ make -j4
 $ sudo make install
 \endverbatim
 
-\subsection install_jetson_visp_doc Build ViSP documentation
+\subsection install_jetson_quasar_visp_doc Build ViSP documentation
 
 To build ViSP documentation, you have first to install Doxygen package:
 \verbatim
@@ -278,7 +278,7 @@ $ cmake ../visp -DENABLE_FULL_DOC=ON
 $ make -j4 visp_doc
 \endverbatim
 
-\subsection install_jetson_visp_dir Set VISP_DIR environment var
+\subsection install_jetson_quasar_visp_dir Set VISP_DIR environment var
 
 In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the one described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the path to the `VISPConfig.cmake` file:
 \verbatim
@@ -286,7 +286,7 @@ $ echo "export VISP_DIR=$VISP_WS/visp-build" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 
-\section install_jetson_dataset Install ViSP dataset
+\section install_jetson_quasar_dataset Install ViSP dataset
 
 Some ViSP examples and tests require a data set that contains images, video, models that is not part of ViSP source code. This data set is available in Github (https://github.com/lagadic/visp-images) or as a release in a separate archive named `visp-images-x.y.z.zip`. This archive could be downloaded from http://visp.inria.fr/download page. Note that ViSP tutorials are not using ViSP data set.
 
@@ -321,9 +321,9 @@ A click to exit the program...
 Bye
 \endverbatim
 
-\section install_jetson_tips Tips and tricks
+\section install_jetson_quasar_tips Tips and tricks
 
-\subsection install_jetson_tips_new_3rdparty How to take into account a newly installed 3rd party
+\subsection install_jetson_quasar_tips_new_3rdparty How to take into account a newly installed 3rd party
 
 Since all 3rd parties are optional you may have started to install only some of them. Imagine that you just installed a new third-party, or that you upgraded the version of this 3rd party. The next step is to go back to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build again ViSP. This could be achieved with:
 \verbatim
@@ -338,7 +338,7 @@ Finally, you need to rebuild ViSP with:
 $ make -j4
 \endverbatim
 
-\subsection install_jetson_tips_install How to install ViSP
+\subsection install_jetson_quasar_tips_install How to install ViSP
 
 Installing ViSP is optional and not recommended, since ViSP could be used as a 3rd party without installation. If you still want to proceed with the installation run:
 \verbatim
@@ -363,7 +363,7 @@ $ echo "export VISP_DIR=/my/install/folder/lib/cmake/visp" >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
 
-\subsection install_jetson_tips_uninstall How to uninstall ViSP
+\subsection install_jetson_quasar_tips_uninstall How to uninstall ViSP
 
 After ViSP installation, you can remove installed material using:
 \verbatim
@@ -371,7 +371,7 @@ $ cd $VISP_WS/visp-build
 $ sudo make uninstall
 \endverbatim
 
-\subsection install_jetson_tips_modules How to build only ViSP libraries
+\subsection install_jetson_quasar_tips_modules How to build only ViSP libraries
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \verbatim
@@ -379,7 +379,7 @@ $ cd $VISP_WS/visp-build
 $ make -j4 visp_modules
 \endverbatim
 
-\subsection install_jetson_tips_module_once How to build a ViSP specific module
+\subsection install_jetson_quasar_tips_module_once How to build a ViSP specific module
 
 If you want to build a given module and all the dependencies:
 \verbatim
@@ -393,7 +393,7 @@ $ cd $VISP_WS/visp-build
 $ make -j4 visp_mbt
 \endverbatim
 
-\subsection install_jetson_tips_target Which are the targets that could be run with make ?
+\subsection install_jetson_quasar_tips_target Which are the targets that could be run with make ?
 
 To know which are the target available with `make`:
 \verbatim
@@ -425,7 +425,7 @@ $ make help | grep visp
 ... visp_tt_mi
 \endverbatim
 
-\subsection install_jetson_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
+\subsection install_jetson_quasar_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
 
 To see which are the optional 3rd parties that are found during the configuration stage and that will be used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and located in `$VISP_WS/visp-build`. We provide hereafter an example of a possible content of this file that contains also build info.
 \verbatim
@@ -578,7 +578,7 @@ General configuration information for ViSP 3.3.0
 ==========================================================
 \endverbatim
 
-\section install_jetson_next Next tutorial
+\section install_jetson_quasar_next Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a 3rd party to build your own project.
 
