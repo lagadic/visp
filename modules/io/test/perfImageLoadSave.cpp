@@ -234,8 +234,7 @@ int main(int argc, char *argv[])
   auto cli = session.cli() // Get Catch's composite command line parser
     | Opt(runBenchmark)    // bind variable to a new option, with a hint string
     ["--benchmark"]        // the option names it will respond to
-    ("run benchmark?")     // description string for the help output
-    ("Path to gray image")
+    ("Run benchmark")
     | Opt(nThreads, "nThreads")
     ["--nThreads"]
     ("Number of threads");
