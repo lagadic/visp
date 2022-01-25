@@ -189,3 +189,4 @@ vp_add_tests()
 
 vp_set_source_file_compile_flag(src/tools/vpParseArgv.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/image/vpImageIo.cpp -Wno-missing-field-initializers) # since stb_image_write.h update from v1.13 to v1.16
+vp_set_source_file_compile_flag(src/image/private/vpImageIoStb.cpp -Wno-missing-field-initializers)
