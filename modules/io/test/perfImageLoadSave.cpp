@@ -132,18 +132,9 @@ TEST_CASE("Benchmark RGBA PNG image loading", "[benchmark]") {
   }
 }
 
-std::string username, directory_filename_tmp;
-
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-std::string tmp_dir = "/tmp/";
-#else
-std::string tmp_dir = "C:/Temp/";
-#endif
-
 TEST_CASE("Benchmark grayscale JPEG image saving", "[benchmark]") {
-  vpIoTools::getUserName(username);
-  vpIoTools::makeDirectory(tmp_dir + username);
-  directory_filename_tmp = tmp_dir + username + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+  std::string tmp_dir = vpIoTools::makeTempDirectory( vpIoTools::getTempPath() );
+  std::string directory_filename_tmp = tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -165,9 +156,8 @@ TEST_CASE("Benchmark grayscale JPEG image saving", "[benchmark]") {
 }
 
 TEST_CASE("Benchmark RGBA JPEG image saving", "[benchmark]") {
-  vpIoTools::getUserName(username);
-  vpIoTools::makeDirectory(tmp_dir + username);
-  directory_filename_tmp = tmp_dir + username + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+  std::string tmp_dir = vpIoTools::makeTempDirectory( vpIoTools::getTempPath() );
+  std::string directory_filename_tmp = tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -189,9 +179,8 @@ TEST_CASE("Benchmark RGBA JPEG image saving", "[benchmark]") {
 }
 
 TEST_CASE("Benchmark grayscale PNG image saving", "[benchmark]") {
-  vpIoTools::getUserName(username);
-  vpIoTools::makeDirectory(tmp_dir + username);
-  directory_filename_tmp = tmp_dir + username + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+  std::string tmp_dir = vpIoTools::makeTempDirectory( vpIoTools::getTempPath() );
+  std::string directory_filename_tmp = tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -213,9 +202,8 @@ TEST_CASE("Benchmark grayscale PNG image saving", "[benchmark]") {
 }
 
 TEST_CASE("Benchmark RGBA PNG image saving", "[benchmark]") {
-  vpIoTools::getUserName(username);
-  vpIoTools::makeDirectory(tmp_dir + username);
-  directory_filename_tmp = tmp_dir + username + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+  std::string tmp_dir = vpIoTools::makeTempDirectory( vpIoTools::getTempPath() );
+  std::string directory_filename_tmp = tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
