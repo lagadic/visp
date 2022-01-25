@@ -358,186 +358,324 @@ void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename, int
   }
 }
 
+// Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
+// Default: 1. opencv, 2. system, 3. stb_image
 void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename, int backend)
 {
-  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
+#if !defined(VISP_HAVE_JPEG)
+    std::string message = "Libjpeg backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    backend = IO_STB_IMAGE_BACKEND;
+#endif
+  }
+  else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    std::string message = "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    backend = IO_STB_IMAGE_BACKEND;
+#endif
+  }
+  else if (backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    backend = IO_OPENCV_BACKEND;
+#elif defined(VISP_HAVE_JPEG)
+    backend = IO_SYSTEM_LIB_BACKEND;
+#else
+    backend = IO_STB_IMAGE_BACKEND;
+#endif
+  }
+
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     readJPEGLibjpeg(I, filename);
-#else
-    std::string message = "Cannot read file \"" + filename + "\": Libjpeg backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
     readOpenCV(I, filename);
-#else
-    std::string message = "Cannot read file \"" + filename + "\": OpenCV backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_STB_IMAGE_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_STB_IMAGE_BACKEND) {
     readStb(I, filename);
   } else if (backend == IO_SIMDLIB_BACKEND) {
     readSimdlib(I, filename);
   }
 }
 
+// Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
+// Default: 1. opencv, 2. system, 3. stb_image
 void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int backend)
 {
-  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
+#if !defined(VISP_HAVE_JPEG)
+    std::string message = "Libjpeg backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    backend = IO_STB_IMAGE_BACKEND;
+#endif
+  }
+  else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    std::string message = "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    backend = IO_STB_IMAGE_BACKEND;
+#endif
+  }
+  else if (backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    backend = IO_OPENCV_BACKEND;
+#elif defined(VISP_HAVE_JPEG)
+    backend = IO_SYSTEM_LIB_BACKEND;
+#else
+    backend = IO_STB_IMAGE_BACKEND;
+#endif
+  }
+
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     readJPEGLibjpeg(I, filename);
-#else
-    std::string message = "Cannot read file \"" + filename + "\": Libjpeg backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
     readOpenCV(I, filename);
-#else
-    std::string message = "Cannot read file \"" + filename + "\": OpenCV backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_STB_IMAGE_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_STB_IMAGE_BACKEND) {
     readStb(I, filename);
   } else if (backend == IO_SIMDLIB_BACKEND) {
     readSimdlib(I, filename);
   }
 }
 
+// Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
+// Default: 1. system, 2. opencv, 3. stb_image
 void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, int backend)
 {
-  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
+#if !defined(VISP_HAVE_PNG)
+    std::string message = "Libpng backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    backend = IO_STB_IMAGE_BACKEND;
+#endif
+  }
+  else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    std::string message = "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    backend = IO_STB_IMAGE_BACKEND;
+#endif
+  }
+  else if (backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_PNG)
+    backend = IO_SYSTEM_LIB_BACKEND;
+#elif defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    backend = IO_OPENCV_BACKEND;
+#else
+    backend = IO_STB_IMAGE_BACKEND;
+#endif
+  }
+
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     readPNGLibpng(I, filename);
-#else
-    std::string message = "Cannot read file \"" + filename + "\": Libpng backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
     readOpenCV(I, filename);
-#else
-    std::string message = "Cannot read file \"" + filename + "\": OpenCV backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_STB_IMAGE_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_STB_IMAGE_BACKEND) {
     readStb(I, filename);
   } else if (backend == IO_SIMDLIB_BACKEND) {
     readSimdlib(I, filename);
   }
 }
 
+// Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
+// Default: 1. opencv, 2. stb_image
 void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int backend)
 {
-  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
+#if !defined(VISP_HAVE_PNG)
+    std::string message = "Libpng backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    backend = IO_STB_IMAGE_BACKEND;
+#endif
+  }
+  else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    std::string message = "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    backend = IO_STB_IMAGE_BACKEND;
+#endif
+  }
+  else if (backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    backend = IO_OPENCV_BACKEND;
+#else
+    backend = IO_STB_IMAGE_BACKEND;
+#endif
+  }
+
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     readPNGLibpng(I, filename);
-#else
-    std::string message = "Cannot read file \"" + filename + "\": Libpng backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
     readOpenCV(I, filename);
-#else
-    std::string message = "Cannot read file \"" + filename + "\": OpenCV backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_STB_IMAGE_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_STB_IMAGE_BACKEND) {
     readStb(I, filename);
   } else if (backend == IO_SIMDLIB_BACKEND) {
     readSimdlib(I, filename);
   }
 }
 
+// Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
+// Default: 1. system, 2. opencv, 3. simd
 void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename, int backend, int quality)
 {
-  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
+#if !defined(VISP_HAVE_JPEG)
+    std::string message = "Libjpeg backend is not available to save file \"" + filename + "\": switch to simd backend";
+    backend = IO_SIMDLIB_BACKEND;
+#endif
+  }
+  else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    std::string message = "OpenCV backend is not available to save file \"" + filename + "\": switch to simd backend";
+    backend = IO_SIMDLIB_BACKEND;
+#endif
+  }
+  else if (backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_JPEG)
+    backend = IO_SYSTEM_LIB_BACKEND;
+#elif defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    backend = IO_OPENCV_BACKEND;
+#else
+    backend = IO_SIMDLIB_BACKEND;
+#endif
+  }
+
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     writeJPEGLibjpeg(I, filename, quality);
-#else
-    std::string message = "Cannot write file \"" + filename + "\": Libjpeg backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
     writeOpenCV(I, filename, quality);
-#else
-    std::string message = "Cannot write file \"" + filename + "\": OpenCV backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_SIMDLIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_SIMDLIB_BACKEND) {
     writeJPEGSimdlib(I, filename, quality);
   } else if (backend == IO_STB_IMAGE_BACKEND) {
     writeJPEGStb(I, filename, quality);
   }
 }
 
+// Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
+// Default: 1. system, 2. opencv, , 3. simd
 void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename, int backend, int quality)
 {
-  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
+#if !defined(VISP_HAVE_JPEG)
+    std::string message = "Libjpeg backend is not available to save file \"" + filename + "\": switch to simd backend";
+    backend = IO_SIMDLIB_BACKEND;
+#endif
+  }
+  else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    std::string message = "OpenCV backend is not available to save file \"" + filename + "\": switch to simd backend";
+    backend = IO_SIMDLIB_BACKEND;
+#endif
+  }
+  else if (backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_JPEG)
+    backend = IO_SYSTEM_LIB_BACKEND;
+#elif defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    backend = IO_OPENCV_BACKEND;
+#else
+    backend = IO_SIMDLIB_BACKEND;
+#endif
+  }
+
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     writeJPEGLibjpeg(I, filename, quality);
-#else
-    std::string message = "Cannot write file \"" + filename + "\": Libjpeg backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
     writeOpenCV(I, filename, quality);
-#else
-    std::string message = "Cannot write file \"" + filename + "\": OpenCV backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_SIMDLIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_SIMDLIB_BACKEND) {
     writeJPEGSimdlib(I, filename, quality);
   } else if (backend == IO_STB_IMAGE_BACKEND) {
     writeJPEGStb(I, filename, quality);
   }
 }
 
+// Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
+// Default: 1. opencv, 2. simd
 void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &filename, int backend)
 {
-  if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
+#if !defined(VISP_HAVE_PNG)
+    std::string message = "Libpng backend is not available to save file \"" + filename + "\": switch to simd backend";
+    backend = IO_SIMDLIB_BACKEND;
+#endif
+  }
+  else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    std::string message = "OpenCV backend is not available to save file \"" + filename + "\": switch to simd backend";
+    backend = IO_SIMDLIB_BACKEND;
+#endif
+  }
+  else if (backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    backend = IO_OPENCV_BACKEND;
+#else
+    backend = IO_SIMDLIB_BACKEND;
+#endif
+  }
+
+  if (backend == IO_OPENCV_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
       writeOpenCV(I, filename, 90);
-#else
-      std::string message = "Cannot write file \"" + filename + "\": OpenCV backend is not available";
-      throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_SIMDLIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_SIMDLIB_BACKEND) {
     writePNGSimdlib(I, filename);
   } else if (backend == IO_STB_IMAGE_BACKEND) {
     writePNGStb(I, filename);
-  } else if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     writePNGLibpng(I, filename);
-#else
-    std::string message = "Cannot write file \"" + filename + "\": Libpng backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 }
 
+// Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
+// Default: 1. opencv, 2. system, 3. simd
 void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, int backend)
 {
-  if (backend == IO_OPENCV_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  if (backend == IO_SYSTEM_LIB_BACKEND) {
+#if !defined(VISP_HAVE_PNG)
+    std::string message = "Libpng backend is not available to save file \"" + filename + "\": switch to simd backend";
+    backend = IO_SIMDLIB_BACKEND;
+#endif
+  }
+  else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    std::string message = "OpenCV backend is not available to save file \"" + filename + "\": switch to simd backend";
+    backend = IO_SIMDLIB_BACKEND;
+#endif
+  }
+  else if (backend == IO_DEFAULT_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    backend = IO_OPENCV_BACKEND;
+#else
+    backend = IO_SIMDLIB_BACKEND;
+#endif
+  }
+
+  if (backend == IO_OPENCV_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
       writeOpenCV(I, filename, 90);
-#else
-      std::string message = "Cannot write file \"" + filename + "\": OpenCV backend is not available";
-      throw(vpImageException(vpImageException::ioError, message));
 #endif
-  } else if (backend == IO_SIMDLIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_SIMDLIB_BACKEND) {
     writePNGSimdlib(I, filename);
   } else if (backend == IO_STB_IMAGE_BACKEND) {
     writePNGStb(I, filename);
-  } else if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     writePNGLibpng(I, filename);
-#else
-    std::string message = "Cannot write file \"" + filename + "\": Libpng backend is not available";
-    throw(vpImageException(vpImageException::ioError, message));
 #endif
   }
 }
