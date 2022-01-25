@@ -3,7 +3,7 @@
 \page tutorial-install-fedora Tutorial: Installation from source for Linux Fedora
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Linux Fedora. These steps have been tested for Fedora 21, Fedora 26 (64 bit), Fedora 28 (64 bits), Fedora 29 (64 bits) and Fedora 30 (64 bits) distributions, but should work with any other distribution as well.
+In this tutorial you will learn how to install ViSP from source on Linux Fedora. These steps have been tested on Fedora 35 (64 bits) distribution, but should work with any other distribution as well.
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
@@ -366,26 +366,26 @@ To see which are the optional 3rd parties that are found during the configuratio
 \verbatim
 $ cat $VISP_WS/visp-build/ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.3.0
+General configuration information for ViSP 3.4.1
 
-  Version control:               3.2.0-799-ge98496a15
+  Version control:               v3.4.0-306-g318d05132
 
   Platform:
-    Timestamp:                   2020-02-11T14:49:44Z
-    Host:                        Linux 5.3.7-301.fc31.x86_64 x86_64
-    CMake:                       3.16.3
+    Timestamp:                   2022-01-24T17:53:54Z
+    Host:                        Linux 5.15.16-200.fc35.x86_64 x86_64
+    CMake:                       3.22.1
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/gmake
     Configuration:               Release
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                /usr/bin/c++  (ver 9.2.1)
-    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O2 -DNDEBUG
-    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
-    C Compiler:                  /usr/bin/cc
-    C flags (Release):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O2 -DNDEBUG
-    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C++ Compiler:                /usr/lib64/ccache/c++  (ver 11.2.1)
+    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C Compiler:                  /usr/lib64/ccache/cc
+    C flags (Release):           -Wall -Wextra -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
     Linker flags (Release):
     Linker flags (Debug):
 
@@ -395,32 +395,33 @@ General configuration information for ViSP 3.3.0
     Disabled by dependency:      -
     Unavailable:                 java
 
-  Python (for build):            /usr/bin/python3
+  Python (for build):            /usr/bin/python
 
-  Java:
+  Java:                          
     ant:                         NO
-    JNI:                         NO
+    JNI:                         /usr/lib/jvm/java/include /usr/lib/jvm/java/include/linux /usr/lib/jvm/java/include
 
-  Build options:
+  Build options: 
     Build deprecated:            yes
     Build with moment combine:   no
 
-  Mathematics:
-    Use MKL:                     no
-    Use OpenBLAS:                no
-    Use Atlas:                   no
-    Use Netlib Lapack:           yes (ver 3.8.0)
-    Use Lapack (built-in):       no
-    Use Eigen3:                  yes (ver 3.3.7)
-    Use OpenCV:                  yes (ver 3.4.8)
-    Use GSL:                     no
+  Mathematics: 
+    Blas/Lapack:                 yes
+    \- Use MKL:                  no
+    \- Use OpenBLAS:             no
+    \- Use Atlas:                no
+    \- Use Netlib:               no
+    \- Use GSL:                  yes (ver 2.6)
+    \- Use Lapack (built-in):    no
+    Use Eigen3:                  yes (ver 3.3.9)
+    Use OpenCV:                  yes (ver 4.5.3)
 
-  Simulator:
-    Ogre simulator:
-    \- Use Ogre3D:               no
-    \- Use OIS:                  no
-    Coin simulator:
-    \- Use Coin3D:               no
+  Simulator: 
+    Ogre simulator: 
+    \- Use Ogre3D:               yes (ver 1.9.0)
+    \- Use OIS:                  yes (ver 1.3.0)
+    Coin simulator: 
+    \- Use Coin3D:               yes (ver 3.1.3)
     \- Use SoWin:                no
     \- Use SoXt:                 no
     \- Use SoQt:                 no
@@ -428,19 +429,20 @@ General configuration information for ViSP 3.3.0
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
-  Media I/O:
-    Use JPEG:                    no
-    Use PNG:                     no
-    \- Use ZLIB:                 no
-    Use OpenCV:                  yes (ver 3.4.8)
+  Media I/O: 
+    Use JPEG:                    yes (ver 62)
+    Use PNG:                     yes (ver 1.6.37)
+    \- Use ZLIB:                 yes (ver 1.2.11)
+    Use OpenCV:                  yes (ver 4.5.3)
     Use stb_image (built-in):    no
 
-  Real robots:
+  Real robots: 
     Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
     Use Viper650:                no
     Use Viper850:                no
+    Use Kinova Jaco:             no
     Use aria (Pioneer):          no
     Use PTU46:                   no
     Use Biclops PTU:             no
@@ -449,60 +451,67 @@ General configuration information for ViSP 3.3.0
     \-Use ffmpeg:                no
     Use Virtuose:                no
     Use qbdevice (built-in):     yes (ver 2.6.0)
+    Use takktile2 (built-in):    yes (ver 1.0.0)
 
-  GUI:
+  GUI: 
     Use X11:                     yes
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 3.4.8)
+    Use OpenCV:                  yes (ver 4.5.3)
     Use GDI:                     no
     Use Direct3D:                no
 
-  Cameras:
-    Use DC1394-2.x:              yes (ver 2.2.2)
+  Cameras: 
+    Use DC1394-2.x:              yes (ver 2.2.6)
     Use CMU 1394:                no
-    Use V4L2:                    yes (ver 1.18.0)
+    Use V4L2:                    yes (ver 1.22.1)
     Use directshow:              no
-    Use OpenCV:                  yes (ver 3.4.8)
-    Use Flycapture:              no
-    Use Pylon:                   no
+    Use OpenCV:                  yes (ver 4.5.3)
+    Use FLIR Flycapture:         no
+    Use Basler Pylon:            no
+    Use IDS uEye:                no
 
-  RGB-D sensors:
+  RGB-D sensors: 
     Use Realsense:               no
     Use Realsense2:              no
+    Use Occipital Structure:     no
     Use Kinect:                  no
     \- Use libfreenect:          no
     \- Use libusb-1:             no
     \- Use pthread:              yes
-    Use PCL:                     no
-    \- Use VTK:                  no
+    Use PCL:                     yes (ver 1.12.0)
+    \- Use VTK:                  yes (ver 9.0.3)
 
-  F/T sensors:
+  F/T sensors: 
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
 
-  Detection:
+  Detection: 
     Use zbar:                    yes (ver 0.23)
-    Use dmtx:                    no
+    Use dmtx:                    yes (ver 0.7.5)
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
 
-  Misc:
+  Misc: 
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
-    Use libxml2:                 no
+    Use libxml2:                 yes (ver 2.9.12)
 
-  Optimization:
+  Optimization: 
     Use OpenMP:                  yes
     Use pthread:                 yes
     Use pthread (built-in):      no
-    Use cxx standard:            11
+    Use cxx standard:            14
 
-  Documentation:
-    Use doxygen:                 no
+  DNN: 
+    Use CUDA Toolkit:            no
+    Use TensorRT:                no
+
+  Documentation: 
+    Use doxygen:                 yes
 
   Tests and samples:
-    Use catch2 (built-in):       yes (ver 2.9.2)
+    Use catch2 (built-in):       yes (ver 2.13.7)
     Tests:                       yes
     Demos:                       yes
     Examples:                    yes

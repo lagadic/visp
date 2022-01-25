@@ -192,7 +192,7 @@ endif()
 if(USE_COIN3D)
   # Add specific build flag to turn off warnings coming from libcoin 3rd party
   vp_set_source_file_compile_flag(src/wireframe-simulator/vpWireFrameSimulator.cpp -Wno-unused-parameter)
-  vp_set_source_file_compile_flag(src/wireframe-simulator/vpScene.cpp -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(src/wireframe-simulator/vpScene.cpp -Wno-unused-parameter -Wno-deprecated-copy)
   vp_set_source_file_compile_flag(src/image-simulator/vpImageSimulator.cpp -Wno-unused-parameter)
   vp_set_source_file_compile_flag(src/robot-simulator/vpRobotCamera.cpp -Wno-unused-parameter)
   vp_set_source_file_compile_flag(src/robot-simulator/vpSimulatorCamera.cpp -Wno-unused-parameter)
