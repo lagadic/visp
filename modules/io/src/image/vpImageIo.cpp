@@ -126,17 +126,25 @@ std::string vpImageIo::getExtension(const std::string &filename)
   only if the new image size is different, else we re-use the same
   memory space.
 
-  Always supported formats are `*.pgm` and `*.ppm`.
-  JPEG and PNG formats are supported through the stb_image public domain image loader.
-  - If libjpeg 3rd party is used, we support also `*.jpg` and `*.jpeg` files.
-  - If libpng 3rd party is used, we support also `*.png` files.
-  - If OpenCV 3rd party is used, we support `*.jpg`, `*.jpeg`, `*.jp2`, `*.rs`, `*.ras`,
-  `*.tiff`, `*.tif`, `*.png`, `*.bmp`, `*.pbm` files.
-  - If EXIF information is embedded in the image file, the EXIF orientation is ignored.
+  Supported formats are:
+  - portable gray map: `*.pgm` file
+  - portable pix map: `*.ppm` file
+  - portable float map: `*.pfm` file
+  - jpeg: `*.jpg`, `*.jpeg` files
+  - png: `*.png` file
+  
+  If ViSP is build with OpenCV support, additional formats are considered:
+  - `*.jp2`, `*.rs`, `*.ras`, `*.tiff`, `*.tif`, `*.png`, `*.bmp`, `*.pbm` files.
+  
+  If EXIF information is embedded in the image file, the EXIF orientation is ignored.
 
   \param I : Image to set with the \e filename content.
   \param filename : Name of the file containing the image.
-  \param backend : Library backend type (see vpImageIoBackendType) for image reading (only for JPEG and PNG).
+  \param backend : Library backend type (see vpImageIo::vpImageIoBackendType) for image reading.
+  This parameter is only used when the image need to be loaded in jpeg or png format. To know
+  which is the default backend see respectively
+  void vpImageIo::readJPEG(const vpImage<unsigned char> &, const std::string &, int) and
+  void vpImageIo::readPNG(const vpImage<unsigned char> &, const std::string &, int).
  */
 void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename, int backend)
 {
@@ -187,24 +195,32 @@ void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename, int
 
 /*!
   Read the contents of the image filename, allocate memory for the
-  corresponding color image, update its content, and return a reference to the
-  image.
+  corresponding greyscale image, update its content, and return a reference to
+  the image.
 
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
   memory space.
 
-  Always supported formats are `*.pgm` and `*.ppm`.
-  JPEG and PNG formats are supported through the stb_image public domain image loader.
-  - If libjpeg 3rd party is used, we support also `*.jpg` and `*.jpeg` files.
-  - If libpng 3rd party is used, we support also `*.png` files.
-  - If OpenCV 3rd party is used, we support `*.jpg`, `*.jpeg`, `*.jp2`, `*.rs`, `*.ras`,
-  `*.tiff`, `*.tif`, `*.png`, `*.bmp`, `*.pbm` files.
-  - If EXIF information is embedded in the image file, the EXIF orientation is ignored.
+  Supported formats are:
+  - portable gray map: `*.pgm` file
+  - portable pix map: `*.ppm` file
+  - portable float map: `*.pfm` file
+  - jpeg: `*.jpg`, `*.jpeg` files
+  - png: `*.png` file
+  
+  If ViSP is build with OpenCV support, additional formats are considered:
+  - `*.jp2`, `*.rs`, `*.ras`, `*.tiff`, `*.tif`, `*.png`, `*.bmp`, `*.pbm` files.
+  
+  If EXIF information is embedded in the image file, the EXIF orientation is ignored.
 
   \param I : Image to set with the \e filename content.
   \param filename : Name of the file containing the image.
-  \param backend : Library backend type (see vpImageIoBackendType) for image reading (only for JPEG and PNG).
+  \param backend : Library backend type (see vpImageIo::vpImageIoBackendType) for image reading.
+  This parameter is only used when the image need to be loaded in jpeg or png format. To know
+  which is the default backend see respectively
+  void vpImageIo::readJPEG(const vpImage<unsigned char> &, const std::string &, int) and
+  void vpImageIo::readPNG(const vpImage<unsigned char> &, const std::string &, int).
  */
 void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename, int backend)
 {
@@ -256,17 +272,24 @@ void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename, int backen
   Write the content of the image in the file which name is given by \e
   filename.
 
-  Always supported formats are *.pgm and *.ppm.
-  JPEG and PNG formats are supported through the stb_image_write public domain image writer.
-  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
-  If \c libpng 3rd party is used, we support also *.png files.
-  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras,
-  *.tiff, *.tif, *.png, *.bmp, *.pbm files.
+  Supported formats are:
+  - portable gray map: `*.pgm` file
+  - portable pix map: `*.ppm` file
+  - portable float map: `*.pfm` file
+  - jpeg: `*.jpg`, `*.jpeg` files
+  - png: `*.png` file
+  
+  If ViSP is build with OpenCV support, additional formats are considered:
+  - `*.jp2`, `*.rs`, `*.ras`, `*.tiff`, `*.tif`, `*.png`, `*.bmp`, `*.pbm` files.
 
   \param I : Image to write.
   \param filename : Name of the file containing the image.
-  \param backend : Library backend type (see vpImageIoBackendType) for image writing (only for JPEG and PNG).
- */
+  \param backend : Library backend type (see vpImageIo::vpImageIoBackendType) for image writing.
+  This parameter is only used when the image need to be saved in jpeg or png format. To know
+  which is the default backend see respectively
+  void vpImageIo::writeJPEG(const vpImage<unsigned char> &, const std::string &, int, int) and
+  void vpImageIo::writePNG(const vpImage<unsigned char> &, const std::string &, int).
+*/
 void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filename, int backend)
 {
   bool try_opencv_writer = false;
@@ -309,16 +332,23 @@ void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filena
   Write the content of the image in the file which name is given by \e
   filename.
 
-  Always supported formats are *.pgm and *.ppm.
-  JPEG and PNG formats are supported through the stb_image_write public domain image writer.
-  If \c libjpeg 3rd party is used, we support also *.jpg and *.jpeg files.
-  If \c libpng 3rd party is used, we support also *.png files.
-  If OpenCV 3rd party is used, we support *.jpg, *.jpeg, *.jp2, *.rs, *.ras,
-  *.tiff, *.tif, *.png, *.bmp, *.pbm files.
+  Supported formats are:
+  - portable gray map: `*.pgm` file
+  - portable pix map: `*.ppm` file
+  - portable float map: `*.pfm` file
+  - jpeg: `*.jpg`, `*.jpeg` files
+  - png: `*.png` file
+  
+  If ViSP is build with OpenCV support, additional formats are considered:
+  - `*.jp2`, `*.rs`, `*.ras`, `*.tiff`, `*.tif`, `*.png`, `*.bmp`, `*.pbm` files.
 
   \param I : Image to write.
   \param filename : Name of the file containing the image.
-  \param backend : Library backend type (see vpImageIoBackendType) for image writing (only for JPEG and PNG).
+  \param backend : Library backend type (see vpImageIo::vpImageIoBackendType) for image writing.
+  This parameter is only used when the image need to be saved in jpeg or png format. To know
+  which is the default backend see respectively
+  void vpImageIo::writeJPEG(const vpImage<vpRGBa> &, const std::string &, int, int) and
+  void vpImageIo::writePNG(const vpImage<vpRGBa> &, const std::string &, int).
  */
 void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename, int backend)
 {
@@ -358,6 +388,14 @@ void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename, int
   }
 }
 
+/*!
+  Load a jpeg image. If it is a color image it is converted in gray.
+  \param[out] I : Gray level image.
+  \param[in] filename : Image location.
+  \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
+  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND. 
+ */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. opencv, 2. system, 3. stb_image
 void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename, int backend)
@@ -399,6 +437,14 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename,
   }
 }
 
+/*!
+  Load a jpeg image. If it is a gray image it is converted in color.
+  \param[out] I : Color image.
+  \param[in] filename : Image location.
+  \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
+  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND. 
+ */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. opencv, 2. system, 3. stb_image
 void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int backend)
@@ -440,6 +486,14 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int ba
   }
 }
 
+/*!
+  Load an image in png format. If it is a color image it is converted in gray.
+  \param[out] I : Gray level image.
+  \param[in] filename : Image location.
+  \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
+  vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND. 
+ */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. system, 2. opencv, 3. stb_image
 void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, int backend)
@@ -481,6 +535,14 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
   }
 }
 
+/*!
+  Load an image in png format. If it is a gray level image it is converted in color.
+  \param[out] I : Color image.
+  \param[in] filename : Image location.
+  \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
+  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND. 
+ */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. opencv, 2. stb_image
 void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int backend)
@@ -520,6 +582,15 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
   }
 }
 
+/*!
+  Save an image in jpeg format.
+  \param[in] I : Gray level image.
+  \param[in] filename : Image location.
+  \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
+  vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND. 
+  \param[in] quality : Image quality percentage in range 0-100.
+ */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. system, 2. opencv, 3. simd
 void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename, int backend, int quality)
@@ -561,6 +632,15 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
   }
 }
 
+/*!
+  Save an image in jpeg format.
+  \param[in] I : Color image.
+  \param[in] filename : Image location.
+  \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
+  vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND. 
+  \param[in] quality : Image quality percentage in range 0-100.
+ */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. system, 2. opencv, , 3. simd
 void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename, int backend, int quality)
@@ -602,6 +682,14 @@ void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename,
   }
 }
 
+/*!
+  Save an image in png format.
+  \param[in] I : Gray level image.
+  \param[in] filename : Image location.
+  \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
+  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND. 
+ */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. opencv, 2. simd
 void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &filename, int backend)
@@ -641,6 +729,14 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
   }
 }
 
+/*!
+  Save an image in png format.
+  \param[in] I : Color image.
+  \param[in] filename : Image location.
+  \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
+  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND. 
+ */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. opencv, 2. system, 3. simd
 void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, int backend)
@@ -680,56 +776,111 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
   }
 }
 
+/*!
+  Save an image in portable float map format.
+  \param[in] I : Image to save.
+  \param[in] filename : Image location.
+ */
 void vpImageIo::writePFM(const vpImage<float> &I, const std::string &filename)
 {
   vp_writePFM(I, filename);
 }
 
+/*!
+  Save an image in portable gray map format.
+  \param[in] I : Image to save.
+  \param[in] filename : Image location.
+ */
 void vpImageIo::writePGM(const vpImage<unsigned char> &I, const std::string &filename)
 {
   vp_writePGM(I, filename);
 }
 
+/*!
+  Save a gray level image in portable gray map format.
+  \param[in] I : Image to save.
+  \param[in] filename : Image location.
+ */
 void vpImageIo::writePGM(const vpImage<short> &I, const std::string &filename)
 {
   vp_writePGM(I, filename);
 }
 
+/*!
+  Save a color image in portable gray map format.
+  \param[in] I : Image to save.
+  \param[in] filename : Image location.
+ */
 void vpImageIo::writePGM(const vpImage<vpRGBa> &I, const std::string &filename)
 {
   vp_writePGM(I, filename);
 }
 
+/*!
+  Load an image in portable float map format.
+  \param[out] I : Image read from filename.
+  \param[in] filename : Image location.
+ */
 void vpImageIo::readPFM(vpImage<float> &I, const std::string &filename)
 {
   vp_readPFM(I, filename);
 }
 
+/*!
+  Load an image in portable gray map format. If the image is in color, it is converted in gray level.
+  \param[out] I : Image read from filename.
+  \param[in] filename : Image location.
+ */
 void vpImageIo::readPGM(vpImage<unsigned char> &I, const std::string &filename)
 {
   vp_readPGM(I, filename);
 }
 
+/*!
+  Load an image in portable float map format. If the image is in gray, it is converted in color.
+  \param[out] I : Image read from filename.
+  \param[in] filename : Image location.
+ */
 void vpImageIo::readPGM(vpImage<vpRGBa> &I, const std::string &filename)
 {
   vp_readPGM(I, filename);
 }
 
+/*!
+  Load an image in portable pixmap format. If the image is in color, it is converted in gray level.
+  \param[out] I : Image read from filename.
+  \param[in] filename : Image location.
+ */
 void vpImageIo::readPPM(vpImage<unsigned char> &I, const std::string &filename)
 {
   vp_readPPM(I, filename);
 }
 
+/*!
+  Load an image in portable pixmap format. If the image is in gray, it is converted in color.
+  \param[out] I : Image read from filename.
+  \param[in] filename : Image location.
+ */
 void vpImageIo::readPPM(vpImage<vpRGBa> &I, const std::string &filename)
 {
   vp_readPPM(I, filename);
 }
 
+/*!
+  Save a gray level image in portable pixmap format.
+  \param[in] I : Image to save.
+  \param[in] filename : Image location.
+ */
 void vpImageIo::writePPM(const vpImage<unsigned char> &I, const std::string &filename)
 {
   vp_writePPM(I, filename);
 }
 
+/*!
+  Save a color level image in portable pixmap format.
+  \param[in] I : Image to save.
+  \param[in] filename : Image location.
+ */
 void vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string &filename)
 {
   vp_writePPM(I, filename);

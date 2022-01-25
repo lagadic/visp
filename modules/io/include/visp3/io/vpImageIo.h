@@ -103,7 +103,6 @@ int main()
 
 class VISP_EXPORT vpImageIo
 {
-
 private:
   typedef enum {
     FORMAT_PGM,
@@ -124,13 +123,13 @@ private:
   static std::string getExtension(const std::string &filename);
 
 public:
-  // Image IO backend for only jpeg and png formats
+  //! Image IO backend for only jpeg and png formats image loading and saving
   enum vpImageIoBackendType {
-    IO_DEFAULT_BACKEND,
-    IO_SYSTEM_LIB_BACKEND,
-    IO_OPENCV_BACKEND,
-    IO_SIMDLIB_BACKEND,
-    IO_STB_IMAGE_BACKEND
+    IO_DEFAULT_BACKEND,    //!< Default backend
+    IO_SYSTEM_LIB_BACKEND, //!< Use system libraries like libpng or libjpeg
+    IO_OPENCV_BACKEND,     //!< Use OpenCV
+    IO_SIMDLIB_BACKEND,    //!< Use embedded simd library
+    IO_STB_IMAGE_BACKEND   //!< Use embedded stb_image library
   };
 
   static void read(vpImage<unsigned char> &I, const std::string &filename, int backend=IO_DEFAULT_BACKEND);
