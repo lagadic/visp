@@ -63,12 +63,9 @@
 #if defined(VISP_HAVE_OPENCV)
 
 /*!
-  Read the contents of the JPEG file, allocate memory
+  Read the contents of the image file, allocate memory
   for the corresponding gray level image, if necessary convert the data in
-  gray level, and set the bitmap whith the gray level data. That means that
-  the image \e I is a "black and white" rendering of the original image in \e
-  filename, as in a black and white photograph. If necessary, the quantization
-  formula used is \f$0,299 r + 0,587 g + 0,114 b\f$.
+  gray level, and set the bitmap with the gray level data.
 
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
@@ -107,12 +104,9 @@ void readOpenCV(vpImage<unsigned char> &I, const std::string &filename)
 }
 
 /*!
-  Read a JPEG file and initialize a scalar image.
-
-  Read the contents of the JPEG file, allocate
-  memory for the corresponding image, and set
-  the bitmap whith the content of
-  the file.
+  Read the contents of an image file, allocate
+  memory for the corresponding color image, and set
+  the bitmap whith the content of the file.
 
   If the image has been already initialized, memory allocation is done
   only if the new image size is different, else we re-use the same
@@ -130,11 +124,11 @@ void readOpenCV(vpImage<vpRGBa> &I, const std::string &filename)
 {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
 #if VISP_HAVE_OPENCV_VERSION >= 0x030200
-    int flags = cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION;
+    int flags = cv::IMREAD_COLOR | cv::IMREAD_IGNORE_ORIENTATION;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x030000
-    int flags = cv::IMREAD_GRAYSCALE;
+    int flags = cv::IMREAD_COLOR;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    int flags = CV_LOAD_IMAGE_GRAYSCALE;
+    int flags = CV_LOAD_IMAGE_COLOR;
 #endif
   cv::Mat Ip = cv::imread(filename.c_str(), flags);
   if (!Ip.empty())
