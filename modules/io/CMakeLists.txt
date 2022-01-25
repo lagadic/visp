@@ -177,9 +177,9 @@ if(USE_OPENCV)
 endif(USE_OPENCV)
 
 if(ANDROID)
-  vp_add_module(io visp_core)
+  vp_add_module(io visp_core PRIVATE_OPTIONAL ${SIMDLIB_LIBRARIES})
 else()
-  vp_add_module(io visp_core WRAP java)
+  vp_add_module(io visp_core PRIVATE_OPTIONAL ${SIMDLIB_LIBRARIES} WRAP java)
 endif()
 
 vp_glob_module_sources()
