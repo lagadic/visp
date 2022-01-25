@@ -47,8 +47,11 @@ void readSimdlib(vpImage<unsigned char> &I, const std::string &filename)
   size_t stride = 0, width = 0, height = 0;
   SimdPixelFormatType format = SimdPixelFormatGray8;
   uint8_t* data = SimdImageLoadFromFile(filename.c_str(), &stride, &width, &height, &format);
-  const bool copyData = true;
-  I.init(data, (unsigned int)height, (unsigned int)width, copyData);
+  // Since the Simd lib use aligned data, some padding are introduced and we need to take care of it when copying
+  I.init(static_cast<unsigned int>(height), static_cast<unsigned int>(width));
+  for (size_t i = 0; i < height; i++) {
+    memcpy(reinterpret_cast<uint8_t *>(I.bitmap) + i*width, data + i*stride, width);
+  }
   SimdFree(data);
 }
 
@@ -57,8 +60,11 @@ void readSimdlib(vpImage<vpRGBa> &I, const std::string &filename)
   size_t stride = 0, width = 0, height = 0;
   SimdPixelFormatType format = SimdPixelFormatRgba32;
   uint8_t* data = SimdImageLoadFromFile(filename.c_str(), &stride, &width, &height, &format);
-  const bool copyData = true;
-  I.init((vpRGBa *)data, (unsigned int)height, (unsigned int)width, copyData);
+  // Since the Simd lib use aligned data, some padding are introduced and we need to take care of it when copying
+  I.init(static_cast<unsigned int>(height), static_cast<unsigned int>(width));
+  for (size_t i = 0; i < height; i++) {
+    memcpy(reinterpret_cast<uint8_t *>(I.bitmap) + i*width*4, data + i*stride, 4*width);
+  }
   SimdFree(data);
 }
 
