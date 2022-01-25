@@ -450,7 +450,7 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
   }
 }
 
-void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename, int quality, int backend)
+void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &filename, int backend, int quality)
 {
   if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
@@ -473,7 +473,7 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
   }
 }
 
-void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename, int quality, int backend)
+void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename, int backend, int quality)
 {
   if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_JPEG)

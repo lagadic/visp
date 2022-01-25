@@ -162,8 +162,8 @@ public:
   static void writePPM(const vpImage<unsigned char> &I, const std::string &filename);
   static void writePPM(const vpImage<vpRGBa> &I, const std::string &filename);
 
-  static void writeJPEG(const vpImage<unsigned char> &I, const std::string &filename, int quality=90, int backend=IO_DEFAULT_BACKEND);
-  static void writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename, int quality=90, int backend=IO_DEFAULT_BACKEND);
+  static void writeJPEG(const vpImage<unsigned char> &I, const std::string &filename, int backend=IO_DEFAULT_BACKEND, int quality=90);
+  static void writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename, int backend=IO_DEFAULT_BACKEND, int quality=90);
 
   static void writePNG(const vpImage<unsigned char> &I, const std::string &filename, int backend=IO_DEFAULT_BACKEND);
   static void writePNG(const vpImage<vpRGBa> &I, const std::string &filename, int backend=IO_DEFAULT_BACKEND);
