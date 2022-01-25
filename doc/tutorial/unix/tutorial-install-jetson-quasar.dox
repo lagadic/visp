@@ -115,7 +115,7 @@ $ cmake -DOPENCV_EXTRA_MODULES_PATH=../../opencv_contrib/modules \
         -DWITH_CUDA=ON \
         -DBUILD_opencv_cudev=ON \
         -DBUILD_opencv_cudaarithm=ON \
-        -DBUILD_opencv_cudawarping=ON \
+        -DBUILD_opencv_cudawarping=ON ../
 \endcode
 
 - Note that if you want a more advanced way to configure the build process, you can use `ccmake`:
