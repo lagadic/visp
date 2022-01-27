@@ -1773,7 +1773,11 @@ vpDisplayX::vpDisplayX()
 /*!
   Destructor.
 */
-vpDisplayX::~vpDisplayX() { closeDisplay(); }
+vpDisplayX::~vpDisplayX()
+{
+  closeDisplay();
+  delete m_impl;
+}
 
 /*!
   Initialize the display (size, position and title) of a gray level image.
