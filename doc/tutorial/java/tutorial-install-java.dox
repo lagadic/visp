@@ -19,14 +19,15 @@ $ mkdir -p $VISP_WS
 
 \section java_install_jdk Install Java Development Kit (JDK)
 
-\note At the time this tutorial was updated, the lastest Java SE Development Kit (JDK) is version 15. There is also JDK 11 LTS that could be used. Here we recall \ref java_install_tips_uninstall_jdk if you need to upgrade or downgrade JDK version.
+\note At the time this tutorial was updated, the lastest Java SE Development Kit (JDK) is version 17. There is also JDK 15 LTS that could be used. Here we recall \ref java_install_tips_uninstall_jdk if you need to upgrade or downgrade JDK version.
 
 \subsection java_install_jdk_unix On Ubuntu or Debian platform
 
-From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-15.0.2_linux-x64_bin.tar.gz`. After JDK download and extraction of the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK.
+From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-17_linux-x64_bin.tar.gz`. After JDK download and extraction of the files from the archive, you may set `JAVA_HOME` environment var to help `cmake` to detect JDK.
 \verbatim
-$ tar xvzf jdk-15.0.2_linux-x64_bin.tar.gz -C $VISP_WS
-$ echo 'export JAVA_HOME=$VISP_VS/jdk-11.0.10' >> ~/.bashrc
+$ cd Downloads
+$ tar xvzf jdk-17_linux-x64_bin.tar.gz -C $VISP_WS
+$ echo 'export JAVA_HOME=$VISP_VS/jdk-17.0.2' >> ~/.bashrc
 $ echo 'export PATH=${JAVA_HOME}/bin:${PATH}' >> ~/.bashrc
 $ source ~/.bashrc
 \endverbatim
@@ -34,7 +35,7 @@ $ source ~/.bashrc
 After installation check JDK version:
 \verbatim
 $ java --version
-java 15.0.2 2021-01-19
+java 17.0.2 2022-01-18 LTS
 \endverbatim
 
 \subsection java_install_jdk_osx On Mac OSX platform
@@ -166,13 +167,13 @@ In `$VISP_WS/visp-build/ViSP-third-party.txt` you should find something similar 
 \verbatim
 $ more ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.3.1
+General configuration information for ViSP 3.4.1
 
-  Version control:               3.2.0-1408-g4d4323805-dirty
+  Version control:               v3.4.0-327-g4f1a80bfa-dirty
 
   Platform:
-    Timestamp:                   2021-02-17T14:23:18Z
-    Host:                        Linux 5.4.0-56-generic x86_64
+    Timestamp:                   2022-01-27T17:32:54Z
+    Host:                        Linux 5.4.0-96-generic x86_64
     CMake:                       3.16.3
     CMake generator:             Unix Makefiles
     CMake build tool:            /usr/bin/make
@@ -195,12 +196,11 @@ General configuration information for ViSP 3.3.1
     Disabled by dependency:      -
     Unavailable:                 -
 
-  Python (for build):            /usr/bin/python3
+  Python (for build):            /usr/bin/python3.8
 
   Java:
     ant:                         /usr/bin/ant (ver 1.10.7)
-    JNI:                         $VISP_WS/jdk-15.0.2/include $VISP_WS/jdk-15.0.2/include/linux $VISP_WS/jdk-15.0.2/include
-
+    JNI:                         $VISP_WS/jdk-17.0.2/include /home/rainbow/soft/java/jdk-17.0.2/include/linux /home/rainbow/soft/java/jdk-17.0.2/include
 \endverbatim
 
 \subsection install_java_visp_build Building ViSP libraries
@@ -240,7 +240,7 @@ In the Preferences panel navigate under `"Java > Build Path > User Libraries"` a
 
 \image html img-tutorial-java-eclipse2.jpeg Create a new User Library
 
-Press `"Add External JARs"` button, browse to select <b>`$VISP_WS/visp-build/bin/visp-340.jar`</b> from your computer. After adding the jar, select `"Native library location"`, press first `"Edit"`, press `"External Folder"`, browse to select the folder <b>`$VISP-WS/visp_build/lib`</b> containing ViSP libraries and finally press **OK** button. We recall that the libraries have the extension <b>.so</b> in linux, <b>.dylib</b> in MacOS and <b>.dll</b> in Windows.
+Press `"Add External JARs"` button, browse to select <b>`$VISP_WS/visp-build/bin/visp-350.jar`</b> from your computer. After adding the jar, select `"Native library location"`, press first `"Edit"`, press `"External Folder"`, browse to select the folder <b>`$VISP-WS/visp_build/lib`</b> containing ViSP libraries and finally press **OK** button. We recall that the libraries have the extension <b>.so</b> in linux, <b>.dylib</b> in MacOS and <b>.dll</b> in Windows.
 
 \image html img-tutorial-java-eclipse3.jpeg Add jar and native libraries to User Library
 

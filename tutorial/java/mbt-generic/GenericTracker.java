@@ -37,7 +37,7 @@ import org.visp.mbt.VpMbGenericTracker;
 
 public class GenericTracker extends JFrame {
     static {
-        System.loadLibrary("visp_java340");
+        System.loadLibrary("visp_java350");
     }
 
     private static final long serialVersionUID = 1L;

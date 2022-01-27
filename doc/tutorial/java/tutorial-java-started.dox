@@ -15,7 +15,7 @@ Open Eclipse and create a new Java project entering `"File > New > Java Project"
 
 \image html img-tutorial-java-eclipse-create-new-project.jpeg
 
-In the `"New Java Project"` dialog write the name of your project (let say `visp-java-started`). In JRE section, select the appropriate execution environment (JavaSE-11 if you install JDK 11, or JavaSE-15 if you install JDK 15). Then press `"Finish"` button.
+In the `"New Java Project"` dialog write the name of your project (let say `visp-java-started`). In JRE section, select the appropriate execution environment (JavaSE-17 if you install JDK 17, or JavaSE-15 if you install JDK 15 or JavaSE-11 if you install JDK 11). Then press `"Finish"` button.
 
 \image html img-tutorial-java-eclipse-java-started.jpeg
 

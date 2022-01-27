@@ -17,7 +17,7 @@ To create the project corresponding to this tutorial:
 
 \image html img-tutorial-java-eclipse-create-new-project.jpeg
 
-- In the `"New Java Project"` dialog write the name of your project (let say `visp-java-mbt-generic`). In JRE section, select the appropriate execution environment (JavaSE-11 if you install JDK 11, or JavaSE-13 if you install JDK 13). Then press `"Finish"` button.
+- In the `"New Java Project"` dialog write the name of your project (let say `visp-java-mbt-generic`). In JRE section, select the appropriate execution environment (JavaSE-17 if you install JDK 17, or JavaSE-15 if you install JDK 15 or JavaSE-11 if you install JDK 11). Then press `"Finish"` button.
 
 \image html img-java-mbt-generic-project.jpg
 
