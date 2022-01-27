@@ -170,6 +170,7 @@ void writeOpenCV(const vpImage<unsigned char> &I, const std::string &filename, i
   cvSaveImage(filename.c_str(), Ip);
 
   cvReleaseImage(&Ip);
+  (void)quality;
 #endif
 }
 
@@ -197,6 +198,7 @@ void writeOpenCV(const vpImage<vpRGBa> &I, const std::string &filename, int qual
   cvSaveImage(filename.c_str(), Ip);
 
   cvReleaseImage(&Ip);
+  (void)quality;
 #endif
 }
 
