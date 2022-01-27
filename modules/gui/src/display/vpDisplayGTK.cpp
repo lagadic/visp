@@ -736,7 +736,11 @@ vpDisplayGTK::vpDisplayGTK()
 /*!
   Destructor.
 */
-vpDisplayGTK::~vpDisplayGTK() { closeDisplay(); }
+vpDisplayGTK::~vpDisplayGTK()
+{
+  closeDisplay();
+  delete m_impl;
+}
 
 /*!
   Initialize the display (size, position and title) of a gray level image.
@@ -999,9 +1003,11 @@ void vpDisplayGTK::displayImage(const unsigned char * /* I */) { vpTRACE(" not i
 */
 void vpDisplayGTK::closeDisplay()
 {
-  m_impl->closeDisplay();
+  if (m_displayHasBeenInitialized) {
+    m_impl->closeDisplay();
 
-  m_displayHasBeenInitialized = false;
+    m_displayHasBeenInitialized = false;
+  }
 }
 
 /*!
