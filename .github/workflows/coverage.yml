@@ -62,9 +62,7 @@ jobs:
 
     - name: Upload report to Codecov
       uses: codecov/codecov-action@v2
-      working-directory: build
       with:
-        token: ${{ secrets.CODECOV_TOKEN }}
-        files: ./visp-coverage.cleaned
+        files: ./build/visp-coverage.cleaned
         fail_ci_if_error: true
         verbose: true
