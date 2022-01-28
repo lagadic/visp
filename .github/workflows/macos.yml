@@ -36,6 +36,13 @@ jobs:
     - name: Install dependencies
       run: brew install libpng libjpeg libdc1394 opencv pcl librealsense zbar
 
+    - name: Install java dependencies
+      run: |
+        brew install openjdk ant
+        sudo ln -sfn /usr/local/opt/openjdk/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk.jdk
+        echo "JAVA_HOME=$(/usr/libexec/java_home)" >> $GITHUB_ENV
+        echo ${JAVA_HOME}
+
     # qt@5 is as a requested dependency for vtk and thus for pcl 1.12.1
     # qt@5 is keg-only, which means it was not symlinked into /usr/local
     - name: Workaround to detect qt5
