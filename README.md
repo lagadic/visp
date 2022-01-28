@@ -17,6 +17,7 @@ ROS2 Galactic | [![Build Status](https://build.ros2.org/buildStatus/icon?job=Gde
 ROS2 Rolling | [![Build Status](https://build.ros2.org/buildStatus/icon?job=Rdev__visp__ubuntu_focal_amd64)](https://build.ros2.org/job/Rdev__visp__ubuntu_focal_amd64) |
 Valgrind | ![valgrind workflow](https://github.com/lagadic/visp/actions/workflows/valgrind.yml/badge.svg) |
 Sanitizer | ![sanitizers workflow](https://github.com/lagadic/visp/actions/workflows/sanitizers.yml/badge.svg) |
+Code coverage | [![Code coverage](https://codecov.io/gh/lagadic/visp/branch/master/graph/badge.svg?token=GQIiKbA3BC)](https://codecov.io/gh/lagadic/visp) |
 
 ViSP is a cross-platform library (Linux, Windows, MacOS, iOS, Android) that allows prototyping and developing applications using visual tracking and visual servoing technics at the heart of the researches done now by Inria <a href="http://team.inria.fr/rainbow">Rainbow team</a> and before 2018 by <a href="http://team.inria.fr/lagadic">Lagadic team</a>. ViSP is able to compute control laws that can be applied to robotic systems. It provides a set of visual features that can be tracked using real time image processing or computer vision algorithms. ViSP provides also simulation capabilities. ViSP can be useful in robotics, computer vision, augmented reality and computer animation. Our <a href="https://www.youtube.com/user/VispTeam">YouTube channel</a> gives an overview of the applications that could be tackled.
 
