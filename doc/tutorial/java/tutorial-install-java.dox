@@ -66,7 +66,7 @@ $ brew install openjdk
 - To know which version is installed:
 \verbatim
 $ brew info openjdk
-openjdk: stable 15.0.1 (bottled) [keg-only]
+openjdk: stable 17.0.1 (bottled) [keg-only]
 \endverbatim
 
 - Now for the system Java wrappers to find this JDK, symlink it with:
@@ -83,7 +83,7 @@ $ source ~/.bashrc
 - After installation check JDK version:
 \verbatim
 $ java --version
-openjdk 15.0.1 2020-10-20
+openjdk 17.0.1 2021-10-19
 \endverbatim
 
 \subsection java_install_jdk_win On Windows platform
@@ -112,7 +112,6 @@ $ sudo yum install gcc-c++ cmake ant
 
 - On MacOS/OSX you may run:
 \verbatim
-$ brew cask install java
 $ brew install cmake ant
 \endverbatim
 
@@ -163,7 +162,8 @@ $ ccmake ../visp
 The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
 \image html img-ccmake-ubuntu-all.png Snapshot of the `"ccmake ../visp"` command used to configure ViSP.
 
-In `$VISP_WS/visp-build/ViSP-third-party.txt` you should find something similar to the following snapshot that shows that `python`, `ant` and `JNI` are found:
+- At this point, in `$VISP_WS/visp-build/ViSP-third-party.txt` you should find something similar to the following snapshot that shows that `python`, `ant` and `JNI` are found:
+  - **On Ubuntu like**
 \verbatim
 $ more ViSP-third-party.txt
 ==========================================================
@@ -203,6 +203,47 @@ General configuration information for ViSP 3.4.1
     JNI:                         $VISP_WS/jdk-17.0.2/include /home/rainbow/soft/java/jdk-17.0.2/include/linux /home/rainbow/soft/java/jdk-17.0.2/include
 \endverbatim
 
+  - **On macOS**
+\verbatim
+$ more ViSP-third-party.txt
+==========================================================
+General configuration information for ViSP 3.4.1
+
+  Version control:               v3.4.0-328-g011e5bc43-dirty
+
+  Platform:
+    Timestamp:                   2022-01-28T07:18:34Z
+    Host:                        Darwin 20.6.0 x86_64
+    CMake:                       3.22.2
+    CMake generator:             Unix Makefiles
+    CMake build tool:            /usr/bin/make
+    Configuration:               Release
+
+  C/C++:
+    Built as dynamic libs?:      yes
+    C++ Compiler:                /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  (ver 13.0.0.13000029)
+    C++ flags (Release):         -Wall -Wextra -Xclang -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C++ flags (Debug):           -Wall -Wextra -Xclang -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    C Compiler:                  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc
+    C flags (Release):           -Wall -Wextra -Xclang -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -O3 -DNDEBUG
+    C flags (Debug):             -Wall -Wextra -Xclang -fopenmp -std=c++14 -fvisibility=hidden -msse2 -msse3 -mssse3 -fPIC -g
+    Linker flags (Release):
+    Linker flags (Debug):
+
+  ViSP modules:
+    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi java
+    Disabled:                    -
+    Disabled by dependency:      -
+    Unavailable:                 -
+
+  Python (for build):            /usr/bin/python
+
+  Java:                          
+    ant:                         /usr/local/bin/ant (ver 1.10.12)
+    JNI:                         /usr/local/Cellar/openjdk/17.0.1_1/libexec/openjdk.jdk/Contents/Home/include /usr/local/Cellar/openjdk/17.0.1_1/libexec/openjdk.jdk/Contents/Home/include/darwin /usr/local/Cellar/openjdk/17.0.1_1/libexec/openjdk.jdk/Contents/Home/include
+\endverbatim
+
+  \note If JNI is not found (ie. the line starting with `JNI:` is empty), we recommend to do a fresh build removing all the files in the build folder and configuring again from scratch with cmake. 
 \subsection install_java_visp_build Building ViSP libraries
 
 - To build ViSP modules and java libraries on Linux, proceed with:
