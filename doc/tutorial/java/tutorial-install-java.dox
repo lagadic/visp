@@ -44,7 +44,7 @@ java 17.0.2 2022-01-18 LTS
 \verbatim
 $ more ViSP-third-party.txt
   ...
-  Java:                          
+  Java:
     ant:                         /usr/local/bin/ant (ver 1.10.9)
     JNI:                         no
 \endverbatim
@@ -88,32 +88,50 @@ openjdk 17.0.1 2021-10-19
 
 \subsection java_install_jdk_win On Windows platform
 
-From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-15.0.2_windows-x64_bin.exe` and run the binary. In order to make `java.exe` available, we had also to add its location `C:\Program Files\Java\jdk-15.0.2\bin` to the `%%PATH%` environment variable.
+From the [Oracle](http://www.oracle.com/technetwork/java/javase/downloads/index.html) website, download `jdk-17_windows-x64_bin.exe` and run the binary. In order to make `java.exe` available, we had also to add its location `C:\Program Files\Java\jdk-17.0.2\bin` to the `%%PATH%` environment variable.
 
 After installation check JDK version:
 \verbatim
-$ java -version
-java version 15.0.2 2021-01-19
+C:\> java -version
+java version 17.0.2 2022-01-18
 \endverbatim
 
-\section java_linux Install Prerequisites
+\section java_eclipse Install the latest Eclipse version
 
-As a prerequisite, download and install first [CMake](http://www.cmake.org/download/) and [Apache Ant](http://ant.apache.org/), if you don’t have any of these.
+Download the latest Eclipse version at the [Eclipse Download page](https://www.eclipse.org/downloads/eclipse-packages/) choosing the <b> Eclipse IDE for Java Developers </b> version. You don’t need to install anything. Extract the downloaded compressed file and put the resulting folder wherever you want to, for example in `$VISP_WS/eclipse`.
+
+\section java_prereq Install Prerequisites
+
+To build ViSP for java you have also to install [CMake](http://www.cmake.org/download/), [Apache Ant](http://ant.apache.org/), and [Python 3](https://www.python.org/downloads/). If you don’t have any of these do the following:
 
 - On Ubuntu/Debian you may run:
 \verbatim
-$ sudo apt-get install cmake-curses-gui ant
+$ sudo apt-get install cmake-curses-gui ant python3
 \endverbatim
 
 - On Fedora/CentOS you may run:
 \verbatim
-$ sudo yum install gcc-c++ cmake ant
+$ sudo dnf install gcc-c++ cmake ant python3
 \endverbatim
 
 - On MacOS/OSX you may run:
 \verbatim
-$ brew install cmake ant
+$ brew install cmake ant python3
 \endverbatim
+
+- On Windows,
+  - Download the latest CMake release for Windows win64-x64 platform from http://www.cmake.org. At the time this tutorial was written it was the file cmake-3.22.1-windows-x86_64.msi. To install just double click on the msi file.
+  - Download the latest Python 3 release for Windows from https://www.python.org/downloads/. At the time this tutorial was written, it was Python 3.10.2.
+  - There is also Apache Ant that is needed. It comes with Eclipse installation, thus here we need to set `ANT_DIR` environment variable to help `ant.bat` file detection by ViSP. You can determine the location easely entering Eclipse installation folder:
+  \verbatim
+  C:\> cd %VISP_WS%\eclipse
+  C:\> dir /s /b | findstr /i ant.bat
+  C:\visp-ws\eclipse\plugins\org.apache.ant_1.10.12.v20211102-1452\bin\ant.bat
+  \endverbatim
+  and then set `ANT_DIR` accordingly like:
+  \verbatim
+  C:\> setx ANT_DIR "%VISP_WS%\eclipse\plugins\org.apache.ant_1.10.12.v20211102-1452\bin"
+  \endverbatim
 
 \section install_java_visp Install ViSP from source code
 
@@ -238,12 +256,54 @@ General configuration information for ViSP 3.4.1
 
   Python (for build):            /usr/bin/python
 
-  Java:                          
+  Java:
     ant:                         /usr/local/bin/ant (ver 1.10.12)
     JNI:                         /usr/local/Cellar/openjdk/17.0.1_1/libexec/openjdk.jdk/Contents/Home/include /usr/local/Cellar/openjdk/17.0.1_1/libexec/openjdk.jdk/Contents/Home/include/darwin /usr/local/Cellar/openjdk/17.0.1_1/libexec/openjdk.jdk/Contents/Home/include
 \endverbatim
 
-  \note If JNI is not found (ie. the line starting with `JNI:` is empty), we recommend to do a fresh build removing all the files in the build folder and configuring again from scratch with cmake. 
+  - **On Windows**
+\verbatim
+C:\> type ViSP-third-party.txt
+==========================================================
+General configuration information for ViSP 3.4.1
+
+  Version control:               v3.4.0-334-g43ca93e97
+
+  Platform:
+    Timestamp:                   2022-01-29T16:07:10Z
+    Host:                        Windows 10.0.17763 AMD64
+    CMake:                       3.22.1
+    CMake generator:             Visual Studio 17 2022
+    CMake build tool:            C:/Program Files/Microsoft Visual Studio/2022/Community/MSBuild/Current/Bin/amd64/MSBuild.exe
+    MSVC:                        1930
+
+  C/C++:
+    Built as dynamic libs?:      yes
+    C++ Compiler:                C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.30.30705/bin/Hostx64/x64/cl.exe  (ver 19.30.30706.0)
+    C++ flags (Release):         /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MP3   /EHa -openmp /Gy /bigobj /MD /O2 /Ob2 /DNDEBUG
+    C++ flags (Debug):           /DWIN32 /D_WINDOWS /W3 /GR /EHsc /MP3   /EHa -openmp /Gy /bigobj /MDd /Zi /Ob0 /Od /RTC1
+    C Compiler:                  C:/Program Files/Microsoft Visual Studio/2022/Community/VC/Tools/MSVC/14.30.30705/bin/Hostx64/x64/cl.exe
+    C flags (Release):           /DWIN32 /D_WINDOWS /W3   /MP3   /EHa -openmp /MD /O2 /Ob2 /DNDEBUG
+    C flags (Debug):             /DWIN32 /D_WINDOWS /W3   /MP3   /EHa -openmp /MDd /Zi /Ob0 /Od /RTC1
+    Linker flags (Release):      /machine:x64 /INCREMENTAL:NO
+    Linker flags (Debug):        /machine:x64 /debug /INCREMENTAL /ignore:4099
+
+  ViSP modules:
+    To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi java
+    Disabled:                    -
+    Disabled by dependency:      -
+    Unavailable:                 -
+
+  Windows RT support:            no
+
+  Python (for build):            C:/Users/chercheur/AppData/Local/Programs/Python/Python310/python.exe
+
+  Java:
+    ant:                         C:/visp-ws/eclipse/plugins/org.apache.ant_1.10.12.v20211102-1452/bin/ant.bat (ver 1.10.12)
+    JNI:                         C:/Program Files/Java/jdk-17.0.2/include C:/Program Files/Java/jdk-17.0.2/include/win32 C:/Program Files/Java/jdk-17.0.2/include
+\endverbatim
+
+  \note If JNI is not found (ie. the line starting with `JNI:` is empty), we recommend to do a fresh build removing all the files in the build folder and configuring again from scratch with CMake.
 \subsection install_java_visp_build Building ViSP libraries
 
 - To build ViSP modules and java libraries on Linux, proceed with:
@@ -258,13 +318,15 @@ $ cd $VISP_WS/visp-build
 $ make -j$(sysctl -n hw.ncpu) visp_java
 \endverbatim
 
+- To build ViSP modules and java libraries on Windows, proceed with:
+\verbatim
+C:\> cd $VISP_WS/visp-build
+C:\> cmake --build . --config Release --target visp_java
+\endverbatim
+
 Note that ViSP Java ARchive is now available in `$VISP_WS/visp-build/bin/visp-340.jar`.
 
 \section set_up_visp_java_eclipse Setting Up ViSP Java in Eclipse
-
-\subsection install_eclipse Install the latest Eclipse version
-
-Download the latest Eclipse version at the [Eclipse Download page](https://www.eclipse.org/downloads/eclipse-packages/) choosing the <b> Eclipse IDE for Java Developers </b> version. You don’t need to install anything. Extract the downloaded compressed file and put the resulting folder wherever you want to, for example in `$VISP_WS/eclipse`.
 
 \subsection create_user_library Creating a user library
 
@@ -272,7 +334,7 @@ Open Eclipse and select a workspace location of your choice, for example in `$VI
 
 \image html img-tutorial-java-eclipse-workspace.jpg
 
-Now we propose to create a ViSP user library ready to be used on all your next Java projects. To this end, 
+Now we propose to create a ViSP user library ready to be used on all your next Java projects. To this end,
 - if you are on OS X enter `"Eclipse > Preferences..."` menu
 - otherwise enter `"Window > Preferences"` menu:
 \image html img-tutorial-java-eclipse1.jpeg Open Preferences panel in Eclipse
