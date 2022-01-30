@@ -133,7 +133,7 @@ $ brew install cmake ant python3
   C:\> setx ANT_DIR "%VISP_WS%\eclipse\plugins\org.apache.ant_1.10.12.v20211102-1452\bin"
   \endverbatim
 
-\section install_java_visp Install ViSP from source code
+\section install_java_visp Build ViSP from source code
 
 \subsection install_java_visp_get_source Getting ViSP source code
 
@@ -163,25 +163,22 @@ We suppose now that ViSP source is in the directory `$VISP_WS/visp`. The followi
 
 \subsection install_java_visp_config Configuring ViSP from source
 
-- In the workspace, create first a directory named `visp-build` that will contain all the build material; generated Makefiles, object files, output libraries and binaries.
+- In the workspace, create first a directory named `visp-build` that will contain all the build material; generated Makefiles or Visual Studio Solution files, object files, output libraries and binaries once build is done, and in a second stage configure ViSP using CMake.
+  - **On Ubuntu/Debian like and on macOS**
 \verbatim
 $ mkdir $VISP_WS/visp-build
-\endverbatim
-
-- Enter the `visp-build` folder and configure the build:
-\verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
 \endverbatim
-A more versatile way to configure the build is to use `ccmake`, the CMake GUI:
+  - **On Windows**
 \verbatim
-$ ccmake ../visp
+C:\> mkdir %VISP_WS%\visp-build
+C:\> cd %VISP_WS%\visp-build
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\visp
 \endverbatim
-The following image shows that this command allows to configure (just by pressing [c] key) the build in a more advanced way where some options could be easily turned ON/OFF. It allows also to see which are the 3rd parties that will be used. To generate the makefiles, just press [g] key in the ccmake gui.
-\image html img-ccmake-ubuntu-all.png Snapshot of the `"ccmake ../visp"` command used to configure ViSP.
 
 - At this point, in `$VISP_WS/visp-build/ViSP-third-party.txt` you should find something similar to the following snapshot that shows that `python`, `ant` and `JNI` are found:
-  - **On Ubuntu like**
+  - **On Ubuntu/Debian like**
 \verbatim
 $ more ViSP-third-party.txt
 ==========================================================
@@ -304,23 +301,26 @@ General configuration information for ViSP 3.4.1
 \endverbatim
 
   \note If JNI is not found (ie. the line starting with `JNI:` is empty), we recommend to do a fresh build removing all the files in the build folder and configuring again from scratch with CMake.
+
 \subsection install_java_visp_build Building ViSP libraries
 
-- To build ViSP modules and java libraries on Linux, proceed with:
+Depending on you platform, you can now build `visp_java` module:
+
+- **On Ubuntu/Debian like, proceed with:**
 \verbatim
 $ cd $VISP_WS/visp-build
 $ make -j$(nproc) visp_java
 \endverbatim
 
-- To build ViSP modules and java libraries on MacOS/OSX, proceed with:
+- **On macOS, proceed with:**
 \verbatim
 $ cd $VISP_WS/visp-build
 $ make -j$(sysctl -n hw.ncpu) visp_java
 \endverbatim
 
-- To build ViSP modules and java libraries on Windows, proceed with:
+- **On Windows, proceed with:**
 \verbatim
-C:\> cd $VISP_WS/visp-build
+C:\> cd %VISP_WS%\visp-build
 C:\> cmake --build . --config Release --target visp_java
 \endverbatim
 
@@ -355,27 +355,24 @@ Once done, press `"Apply and Close"` button.
 
 Here we give here some tips to uninstall JDK to be able to downgrade or upgrade JDK version.
 
-<b>On Ubuntu or Debian platform</b>
-
-On Ubuntu or Debian platform there is nothing more to do than removing the folder containing JDK.
+- <b>On Ubuntu or Debian platform</b>
+  On Ubuntu or Debian platform there is nothing more to do than removing the folder containing JDK.
 \verbatim
 $ rm -rf $VISP_VS/jdk-11.0.6
 \endverbatim
 
-<b>On Mac OSX platform</b>
-
-To uninstall JDK on Mac OSX, you must have administrator privileges and remove the directory whose name matches the following format: `/Library/Java/JavaVirtualMachines/jdkmajor.minor.macro[_update].jdk`. You can proceed using:
+- <b>On macOS platform</b>
+  To uninstall JDK on Mac OSX, you must have administrator privileges and remove the directory whose name matches the following format: `/Library/Java/JavaVirtualMachines/jdkmajor.minor.macro[_update].jdk`. You can proceed using:
 \verbatim
 $ sudo mv /Library/Java/JavaVirtualMachines/jdk-13.jdk/ /tmp
 \endverbatim
-and/or:
+  and/or:
 \verbatim
 $ sudo mv /Library/Java/JavaVirtualMachines/jdk-12.0.2.jdk/ /tmp
 \endverbatim
 
-<b>On Windows platform</b>
-
-To uninstall JDK on Windows, click Start menu, select `"Settings > System > Apps & features"`. Select the program to unsinstall like `Java(TM) SE Development Kit 13.0 (64-bit)`, then click its Uninstall button. Respond to the prompts to complete the uninstall.
+- <b>On Windows platform</b>
+  To uninstall JDK on Windows, click Start menu, select `"Settings > System > Apps & features"`. Select the program to unsinstall like `Java(TM) SE Development Kit 13.0 (64-bit)`, then click its Uninstall button. Respond to the prompts to complete the uninstall.
 
 \subsection java_install_tips_rm_workspace How to delete an Eclipse workspace
 
