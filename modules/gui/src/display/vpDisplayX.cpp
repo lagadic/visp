@@ -2334,7 +2334,7 @@ void vpDisplayX::displayRectangle(const vpRect &rectangle, const vpColor &color,
       thickness = 0;
     vpImagePoint topLeft = rectangle.getTopLeft();
     unsigned int w = static_cast<unsigned int>(vpMath::round(rectangle.getWidth()));
-    unsigned int h = static_cast<unsigned int>(vpMath::round(rectangle.getRight()));
+    unsigned int h = static_cast<unsigned int>(vpMath::round(rectangle.getHeight()));
     m_impl->displayRectangle(topLeft, w, h, color, fill, thickness, m_scale);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
