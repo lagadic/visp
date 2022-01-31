@@ -58,7 +58,7 @@ jobs:
         cmake --build . --target all
         cmake --build . --target test
         lcov --directory . --capture --output-file visp-coverage.info
-        lcov --remove visp-coverage.info '/usr/*' --output-file visp-coverage.cleaned
+        lcov --remove visp-coverage.info '/usr/*' '/home/runner/work/visp/visp/3rdparty/*' --output-file visp-coverage.cleaned
 
     - name: Upload report to Codecov
       uses: codecov/codecov-action@v2
