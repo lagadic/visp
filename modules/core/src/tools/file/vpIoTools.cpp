@@ -1352,33 +1352,21 @@ void vpIoTools::saveConfigFile(const bool &actuallySave)
 /*!
  Get ViSP images data path. ViSP images data can be installed from Debian or
  Ubuntu \e visp-images-data package. It can be also installed from
- ViSP-images.zip that can be found on http://visp.inria.fr/download page.
+ visp-images-3.x.y.zip that can be found on https://visp.inria.fr/download page.
 
  This function returns the path to the folder that contains the data.
- - It checks first if \e visp-images-data package is installed. In that case
- returns then \e /usr/share/visp-images-data".
- - Then it checks if VISP_INPUT_IMAGE_PATH environment variable that gives the
+ - It checks first if VISP_INPUT_IMAGE_PATH environment variable that gives the
  location of the data is set. In that case returns the content of this
  environment var.
-
- If the path is not found, returns an empty string.
+ - Otherwise it checks if \e visp-images-data binary package (Ubuntu, Debian) is installed.
+ In that case returns then \e /usr/share/visp-images-data".
+ - If the path is not found, returns an empty string.
  */
 std::string vpIoTools::getViSPImagesDataPath()
 {
   std::string data_path;
   std::string file_to_test("mbt/cube.cao");
   std::string filename;
-#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  // Test if visp-images-data package is installed (Ubuntu and Debian)
-  data_path = "/usr/share/visp-images-data/ViSP-images";
-  filename = data_path + "/" + file_to_test;
-  if (vpIoTools::checkFilename(filename))
-    return data_path;
-  data_path = "/usr/share/visp-images-data/visp-images";
-  filename = data_path + "/" + file_to_test;
-  if (vpIoTools::checkFilename(filename))
-    return data_path;
-#endif
   // Test if VISP_INPUT_IMAGE_PATH env var is set
   try {
     data_path = vpIoTools::getenv("VISP_INPUT_IMAGE_PATH");
@@ -1395,6 +1383,17 @@ std::string vpIoTools::getViSPImagesDataPath()
       return data_path;
   } catch (...) {
   }
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+  // Test if visp-images-data package is installed (Ubuntu and Debian)
+  data_path = "/usr/share/visp-images-data/ViSP-images";
+  filename = data_path + "/" + file_to_test;
+  if (vpIoTools::checkFilename(filename))
+    return data_path;
+  data_path = "/usr/share/visp-images-data/visp-images";
+  filename = data_path + "/" + file_to_test;
+  if (vpIoTools::checkFilename(filename))
+    return data_path;
+#endif
   data_path = "";
   return data_path;
 }
