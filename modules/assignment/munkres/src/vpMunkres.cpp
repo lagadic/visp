@@ -68,11 +68,11 @@ template <typename Type> void vpMunkres::padCostMatrix(std::vector<std::vector<T
 
   if (row_input_size > col_input_size) {
     for (auto &vec : costs)
-      vec.resize(row_input_size, std::numeric_limits<Type>::max());
+      vec.resize(row_input_size, 0);
   }
 
   while (costs.size() < col_input_size) {
-    costs.emplace_back(col_input_size, std::numeric_limits<Type>::max());
+    costs.emplace_back(col_input_size, 0);
   }
 }
 
