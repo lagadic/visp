@@ -38,11 +38,10 @@
 
 // System
 #include <algorithm>
-#include <iostream>
 
-// Visp
-#include <visp/vpMath.h>
-#include <visp/vpMunkres.hpp>
+// Internal
+#include <visp3/core/vpMath.h>
+#include <visp3/munkres/vpMunkres.hpp>
 
 // Local helper
 namespace

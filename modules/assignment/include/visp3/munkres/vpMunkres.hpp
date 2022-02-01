@@ -37,8 +37,8 @@
  *****************************************************************************/
 
 // System
-#include <algorithm>
-#include <iostream>
+#include <optional>
+#include <vector>
 
 namespace munkres
 {
