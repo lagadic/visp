@@ -292,7 +292,7 @@ vpMunkres::STEP_T vpMunkres::stepThree(const std::vector<std::vector<vpMunkres::
     }
   }
 
-  const auto col_count = std::count(begin(col_cover), end(col_cover), true);
+  const unsigned int col_count = std::count(begin(col_cover), end(col_cover), true);
   return col_count >= mask.size() ? vpMunkres::STEP_T::DONE : vpMunkres::STEP_T(4);
 }
 
@@ -441,6 +441,9 @@ std::vector<std::pair<unsigned int, unsigned int> > vpMunkres::run(std::vector<s
     case 6:
       step = stepSix(costs, row_cover, col_cover);
       break;
+    case vpMunkres::STEP_T::DONE:
+    default:
+      break;
     }
   }
 
@@ -449,7 +452,7 @@ std::vector<std::pair<unsigned int, unsigned int> > vpMunkres::run(std::vector<s
   for (auto i = 0u; i < original_row_size; i++) {
     if (const auto it = std::find(begin(mask.at(i)), end(mask.at(i)), vpMunkres::ZERO_T::STARRED);
         it != end(mask.at(i))) {
-      if (const auto j = std::distance(begin(mask.at(i)), it); j < original_col_size) {
+      if (const unsigned int j = std::distance(begin(mask.at(i)), it); j < original_col_size) {
         ret.emplace_back(i, j);
       }
     }
