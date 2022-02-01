@@ -35,3 +35,11 @@
 # Fabien Spindler
 #
 #############################################################################
+
+if(VISP_CXX_STANDARD GREATER_EQUAL VISP_CXX_STANDARD_17)
+    vp_add_module(assignment visp_core)
+    vp_glob_module_sources()
+    vp_module_include_directories()
+    vp_create_module()
+    vp_add_tests()
+endif()
