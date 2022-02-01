@@ -40,10 +40,13 @@
 #include <optional>
 #include <vector>
 
+// Internal
+#include <visp3/core/vpConfig.h>
+
 namespace munkres
 {
 
-class vpMunkres
+class VISP_EXPORT vpMunkres
 {
 public:
   template <typename Type>

@@ -41,7 +41,7 @@
 
 // Internal
 #include <visp3/core/vpMath.h>
-#include <visp3/munkres/vpMunkres.hpp>
+#include <visp3/munkres/vpMunkres.h>
 
 // Local helper
 namespace
