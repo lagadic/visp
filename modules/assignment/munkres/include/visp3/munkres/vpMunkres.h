@@ -35,6 +35,7 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+#pragma once
 
 // System
 #include <optional>
