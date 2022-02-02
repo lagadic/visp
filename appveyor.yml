@@ -23,6 +23,7 @@ environment:
     - TARGET: mingw
     - TARGET: msvc
     - TARGET: uwp
+    - TARGET: visp_sample
 
 # Scripts that are called at very beginning, before repo cloning
 init:
@@ -41,15 +42,18 @@ install:
   - git clone --depth 1 https://github.com/lagadic/visp-images
   - set VISP_INPUT_IMAGE_PATH=C:\projects\deps\visp-images
 
+  # visp_sample
+  - git clone --depth 1 https://github.com/lagadic/visp_sample
+
   # opencv
   - ps: >-
-      if (${env:TARGET} -imatch "msvc" -and !(Test-Path ${env:VISP_OPENCV_VS2015_2017_FILE})) {
+      if ((${env:TARGET} -imatch "msvc" -or ${env:TARGET} -imatch "visp_sample") -and !(Test-Path ${env:VISP_OPENCV_VS2015_2017_FILE})) {
         echo "Downloading OpenCV Visual Studio from ${env:VISP_OPENCV_VS2015_2017_PKG} ..."
         appveyor DownloadFile "${env:VISP_OPENCV_VS2015_2017_PKG}" -FileName ${env:VISP_OPENCV_VS2015_2017_FILE} -Timeout 1200000
       }
 
   - ps: >-
-      if (${env:TARGET} -imatch "msvc") {
+      if (${env:TARGET} -imatch "msvc" -or ${env:TARGET} -imatch "visp_sample") {
         echo "Extracting OpenCV Visual Studio to C:\projects\deps ..."
         7z x ${env:VISP_OPENCV_VS2015_2017_FILE} -y "-o${env:VISP_OPENCV_VS2015_2017_DIR}"
       }
@@ -88,6 +92,8 @@ before_build:
   - if "%TARGET%"=="msvc" set PATH=%VISP_DLL_DIR%;%PATH%
   - if "%TARGET%"=="mingw" set VISP_DLL_DIR=C:\projects\visp\build\install\%platform%\mingw\bin
   - if "%TARGET%"=="mingw" set PATH=%VISP_DLL_DIR%;%PATH%
+  - if "%TARGET%"=="visp_sample" set VISP_DLL_DIR=C:\projects\visp\build\install\%platform%\vc15\bin
+  - if "%TARGET%"=="visp_sample" set PATH=%VISP_DLL_DIR%;%PATH%
 
   # Setup path for OpenCV
   - if "%TARGET%"=="msvc" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_VS2015_2017_DIR%\opencv\build
@@ -96,6 +102,9 @@ before_build:
   - if "%TARGET%"=="mingw" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_MINGW_DIR%\install
   - if "%TARGET%"=="mingw" set OpenCV_DLL_DIR=%OpenCV_DIR%\x64\mingw\bin
   - if "%TARGET%"=="mingw" set PATH=%OPENCV_DLL_DIR%;%PATH%
+  - if "%TARGET%"=="visp_sample" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_VS2015_2017_DIR%\opencv\build
+  - if "%TARGET%"=="visp_sample" set OpenCV_DLL_DIR=%OpenCV_DIR%\%platform%\vc15\bin
+  - if "%TARGET%"=="visp_sample" set PATH=%OPENCV_DLL_DIR%;%PATH%
 
 build_script:
   - echo %PATH%
@@ -123,3 +132,13 @@ build_script:
   # uwp case
   - if "%TARGET%"=="uwp" cmake -G "Visual Studio 15 2017" -A %platform% -DCMAKE_SYSTEM_NAME:String=WindowsStore -DCMAKE_SYSTEM_VERSION:String="10.0" -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF ..\visp
   - if "%TARGET%"=="uwp" cmake --build . --config %configuration% -- /m:2
+
+  # visp_sample case: ViSP as 3rdparty with cmake
+  - if "%TARGET%"=="visp_sample" dir %OpenCV_DLL_DIR%
+  - if "%TARGET%"=="visp_sample" cmake -G "Visual Studio 15 2017" -A %platform% -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TESTS=OFF -DBUILD_TUTORIALS=OFF ..\visp
+  - if "%TARGET%"=="visp_sample" cmake --build . --config %configuration% --target install -- /m:2
+  - if "%TARGET%"=="visp_sample" cd C:\projects\deps\visp_sample
+  - if "%TARGET%"=="visp_sample" mkdir build
+  - if "%TARGET%"=="visp_sample" cd build
+  - if "%TARGET%"=="visp_sample" cmake -G "Visual Studio 15 2017" -A %platform% .. -DVISP_DIR=C:\projects\visp\build\install
+  - if "%TARGET%"=="visp_sample" cmake --build . --config %configuration% -- /m:2
