@@ -57,6 +57,10 @@ jobs:
         echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
+    - name: Clone visp_sample
+      run: |
+        git clone --depth 1 https://github.com/lagadic/visp_sample ${HOME}/visp_sample
+
     # Openblas location is exported explicitly because openblas is keg-only,
     # which means it was not symlinked into /usr/local/.
     - name: Configure CMake
@@ -65,13 +69,39 @@ jobs:
         export CPPFLAGS="-I/usr/local/opt/openblas/include"
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON
         cat ViSP-third-party.txt
 
     - name: Compile
       working-directory: build
-      run: make -j$(sysctl -n hw.logicalcpu)
+      run: make -j$(sysctl -n hw.logicalcpu) install
 
     - name: Run unit tests
       working-directory: build
       run: ctest -j$(sysctl -n hw.logicalcpu) --output-on-failure
+
+    - name: ViSP as 3rdparty with cmake
+      run: |
+        cd ${HOME}/visp_sample
+        mkdir visp_sample-build
+        cd visp_sample-build
+        cmake ../ -DVISP_DIR=/tmp/usr/local/lib/cmake/visp -DCMAKE_VERBOSE_MAKEFILE=ON
+        make -j$(sysctl -n hw.logicalcpu)
+
+    - name: ViSP as 3rdparty with visp.pc and pkg-config
+      run: |
+        cd ${HOME}/visp_sample
+        export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/tmp/usr/local/lib/pkgconfig
+        pkg-config --cflags visp
+        pkg-config --libs visp
+        make -j$(sysctl -n hw.logicalcpu) -f Makefile.visp.pc
+        make -j$(sysctl -n hw.logicalcpu) -f Makefile.visp.pc clean
+
+    - name: ViSP as 3rdparty with visp-config
+      run: |
+        cd ${HOME}/visp_sample
+        export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/tmp/usr/local/lib/pkgconfig
+        /tmp/usr/local/bin/visp-config --cflags
+        /tmp/usr/local/bin/visp-config --libs
+        make -j$(sysctl -n hw.logicalcpu) -f Makefile.visp-config
+        make -j$(sysctl -n hw.logicalcpu) -f Makefile.visp-config clean
