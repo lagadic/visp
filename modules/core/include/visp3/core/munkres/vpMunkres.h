@@ -35,14 +35,16 @@
  * Fabien Spindler
  *
  *****************************************************************************/
+
 #pragma once
+
+#include <visp3/core/vpConfig.h>
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 
 // System
 #include <optional>
 #include <vector>
-
-// Internal
-#include <visp3/core/vpConfig.h>
 
 namespace munkres
 {
@@ -99,3 +101,5 @@ private:
 };
 
 } // namespace munkres
+
+#endif

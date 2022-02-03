@@ -38,7 +38,9 @@
   \brief Test Munkres assignment algorithm.
 */
 
-#include <visp3/munkres/vpMunkres.h>
+#include <visp3/core/munkres/vpMunkres.h>
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 
 // System
 #include <iostream>
@@ -229,4 +231,8 @@ int main()
 
   return EXIT_SUCCESS;
 }
+#endif
+
+#else
+int main() { return EXIT_SUCCESS; }
 #endif
