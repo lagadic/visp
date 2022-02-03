@@ -36,12 +36,15 @@
  *
  *****************************************************************************/
 
+#include <visp3/core/munkres/vpMunkres.h>
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+
 // System
 #include <algorithm>
 
 // Internal
 #include <visp3/core/vpMath.h>
-#include <visp3/munkres/vpMunkres.h>
 
 // Local helper
 namespace
@@ -484,3 +487,5 @@ template vpMunkres::STEP_T vpMunkres::stepSix<input_data_type>(std::vector<std::
                                                                const std::vector<bool> &, const std::vector<bool> &);
 
 } // namespace munkres
+
+#endif
