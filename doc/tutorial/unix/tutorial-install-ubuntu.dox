@@ -35,11 +35,7 @@ In this section, we give minimal instructions to build ViSP from source just to 
 
 - Install a small number of recommended 3rd parties
 
-  - Since Ubuntu 20.04 or Debian 11
-  \verbatim
-  $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev libzbar-dev libpthread-stubs0-dev libjpeg-dev libpng-dev libdc1394-dev
-  \endverbatim
-  - On older Ubuntu or Debian distros
+  - On Ubuntu or Debian distros
   \verbatim
   $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev libzbar-dev libpthread-stubs0-dev libjpeg-dev libpng-dev libdc1394-22-dev
   \endverbatim
