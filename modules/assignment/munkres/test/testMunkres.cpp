@@ -40,6 +40,19 @@
 
 #include <visp3/munkres/vpMunkres.h>
 
+// System
+#include <iostream>
+
+namespace std
+{
+// Helper to output a Munkres pair
+ostream &operator<<(ostream &os, const pair<uint, uint> &val)
+{
+  os << "[" << val.first << "," << val.second << "]";
+  return os;
+}
+} // namespace std
+
 #ifdef VISP_HAVE_CATCH2
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
@@ -48,10 +61,10 @@ TEST_CASE("Check Munkres-based assignment", "[visp_munkres]")
 {
   auto testMunkres = [](const std::vector<std::vector<double> > &cost_matrix,
                         const std::vector<std::pair<uint, uint> > &expected_pairs) {
-    const auto pairs = munkres::vpMunkres::run(cost_matrix);
-    CHECK(pairs.size() == expected_pairs.size());
-    for (auto i = 0u; i < pairs.size(); ++i) {
-      CHECK(expected_pairs.at(i) == pairs.at(i));
+    const auto munkres_pairs = munkres::vpMunkres::run(cost_matrix);
+    REQUIRE(expected_pairs.size() == munkres_pairs.size());
+    for (auto i = 0u; i < munkres_pairs.size(); i++) {
+      REQUIRE(expected_pairs.at(i) == munkres_pairs.at(i));
     }
   };
 
@@ -62,12 +75,12 @@ TEST_CASE("Check Munkres-based assignment", "[visp_munkres]")
     costs.push_back(std::vector<double>{2, 3, 1});
     costs.push_back(std::vector<double>{1, 2, 3});
 
-    std::vector<std::pair<uint, uint> > pairs{};
-    pairs.emplace_back(0, 1);
-    pairs.emplace_back(1, 2);
-    pairs.emplace_back(2, 0);
+    std::vector<std::pair<uint, uint> > expected_pairs{};
+    expected_pairs.emplace_back(0, 1);
+    expected_pairs.emplace_back(1, 2);
+    expected_pairs.emplace_back(2, 0);
 
-    testMunkres(costs, pairs);
+    testMunkres(costs, expected_pairs);
   }
 
   SECTION("Horizontal cost matrix")
@@ -77,12 +90,12 @@ TEST_CASE("Check Munkres-based assignment", "[visp_munkres]")
     costs.push_back(std::vector<double>{3, 4, 1, 2});
     costs.push_back(std::vector<double>{2, 3, 4, 1});
 
-    std::vector<std::pair<uint, uint> > pairs{};
-    pairs.emplace_back(0, 1);
-    pairs.emplace_back(1, 2);
-    pairs.emplace_back(2, 3);
+    std::vector<std::pair<uint, uint> > expected_pairs{};
+    expected_pairs.emplace_back(0, 1);
+    expected_pairs.emplace_back(1, 2);
+    expected_pairs.emplace_back(2, 3);
 
-    testMunkres(costs, pairs);
+    testMunkres(costs, expected_pairs);
   }
 
   SECTION("Vertical cost matrix")
@@ -93,33 +106,24 @@ TEST_CASE("Check Munkres-based assignment", "[visp_munkres]")
     costs.push_back(std::vector<double>{2, 3, 4});
     costs.push_back(std::vector<double>{1, 2, 3});
 
-    std::vector<std::pair<uint, uint> > pairs{};
-    pairs.emplace_back(0, 1);
-    pairs.emplace_back(1, 2);
-    pairs.emplace_back(3, 0);
+    std::vector<std::pair<uint, uint> > expected_pairs{};
+    expected_pairs.emplace_back(0, 1);
+    expected_pairs.emplace_back(1, 2);
+    expected_pairs.emplace_back(3, 0);
 
-    testMunkres(costs, pairs);
+    testMunkres(costs, expected_pairs);
   }
 }
 
 int main(int argc, char *argv[])
 {
-  Catch::Session session; // There must be exactly one instance
-
-  // Let Catch (using Clara) parse the command line
+  Catch::Session session;
   session.applyCommandLine(argc, argv);
 
-  int numFailed = session.run();
-
-  // numFailed is clamped to 255 as some unices only use the lower 8 bits.
-  // This clamping has already been applied, so just return it here
-  // You can also do any post run clean-up here
-  return numFailed;
+  return session.run();
 }
-
 #else
 // Fallback to classic tests
-#include <iostream>
 
 bool testMunkres(const std::vector<std::vector<double> > &costs_matrix,
                  const std::vector<std::pair<uint, uint> > &expected_pairs)
@@ -135,10 +139,10 @@ bool testMunkres(const std::vector<std::vector<double> > &costs_matrix,
     return false;
   }
 
-  for (auto i = 0u; i < pairs.size(); ++i) {
+  for (auto i = 0u; i < pairs.size(); i++) {
     if (expected_pairs.at(i) != pairs.at(i)) {
 
-      // Output current cost matrix
+      // Output the cost matrix
       std::cout << "Cost matrix:" << std::endl;
       for (const auto &cost_row : costs_matrix) {
         std::cout << "| ";
@@ -150,16 +154,9 @@ bool testMunkres(const std::vector<std::vector<double> > &costs_matrix,
       std::cout << std::endl;
 
       // Output the pair which fails
-      const auto [expected_i, expected_j] = expected_pairs.at(i);
-      const auto [munkres_i, munkres_j] = pairs.at(i);
-      // clang-format off
       std::cerr << "FAIL: "
-                << "Expected association | Munkres association: "
-                << "[" << expected_i << "," << expected_j << "]"
-                << " | "
-                << "[" << munkres_i << "," << munkres_j << "]"
+                << "Expected association | Munkres association: " << expected_pairs.at(i) << " | " << pairs.at(i)
                 << std::endl;
-      // clang-format on
 
       return false;
     }
