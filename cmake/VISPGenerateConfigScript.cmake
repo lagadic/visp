@@ -146,14 +146,6 @@ if(NOT DEFINED CMAKE_HELPER_SCRIPT)
     if(CMAKE_OSX_DEPLOYMENT_TARGET)
       list(APPEND _cxx_flags "-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
     endif()
-    # To avoid build issues like
-    #   /Applications/Xcode_12.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/cmath:320:9:
-    #   error: no member named 'isinf' in the global namespace
-    #   using ::isinf;
-    # we add -isysroot build flag
-    execute_process(COMMAND xcrun --show-sdk-path
-                    OUTPUT_VARIABLE SDK_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-    list(APPEND _cxx_flags "-isysroot ${SDK_PATH}")
   endif()
   # build the list of includes for all modules and dependencies
   vp_get_all_includes(_includes_modules _includes_extra _system_include_dirs)

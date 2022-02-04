@@ -89,7 +89,18 @@ jobs:
         make -j$(sysctl -n hw.logicalcpu)
 
     - name: ViSP as 3rdparty with visp.pc and pkg-config
+      if: matrix.os != 'macOS-10.15'
       run: |
+        # With macOS 10.15 there is the following build error:
+        # /Applications/Xcode_12.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/cmath:317:9:
+        #   error: no member named 'signbit' in the global namespace
+        #   using ::signbit;
+        # also reported here https://stackoverflow.com/questions/58313047/cannot-compile-r-packages-with-c-code-after-updating-to-macos-catalina
+        # As suggested adding -isysroot build flag in VISPGenerateConfigScript.cmake around line 149 with
+        #   execute_process(COMMAND xcrun --show-sdk-path
+        #                   OUTPUT_VARIABLE SDK_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
+        #   list(APPEND _cxx_flags "-isysroot ${SDK_PATH}")
+        # doesn't fix the build issue. That's why here the test is only done for macOS 11.0
         cd ${HOME}/visp_sample
         export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/tmp/usr/local/lib/pkgconfig
         pkg-config --cflags visp
@@ -98,6 +109,7 @@ jobs:
         make -j$(sysctl -n hw.logicalcpu) -f Makefile.visp.pc clean
 
     - name: ViSP as 3rdparty with visp-config
+      if: matrix.os != 'macos-10.15'
       run: |
         cd ${HOME}/visp_sample
         export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/tmp/usr/local/lib/pkgconfig
