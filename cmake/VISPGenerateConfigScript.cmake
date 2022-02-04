@@ -140,6 +140,21 @@ endmacro()
 if(NOT DEFINED CMAKE_HELPER_SCRIPT)
   # build the list of cxxflags for all modules
   vp_get_all_cflags(_cxx_flags)
+  if (APPLE)
+    # Needed on macOS Big Sur 11.6.2 to avoid the following warning
+    # ld: warning: dylib (/usr/local/lib/libvisp_core.3.4.1.dylib) was built for newer macOS version (11.6) than being linked (11.0)
+    if(CMAKE_OSX_DEPLOYMENT_TARGET)
+      list(APPEND _cxx_flags "-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET}")
+    endif()
+    # To avoid build issues like
+    #   /Applications/Xcode_12.4.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1/cmath:320:9:
+    #   error: no member named 'isinf' in the global namespace
+    #   using ::isinf;
+    # we add -isysroot build flag
+    execute_process(COMMAND xcrun --show-sdk-path
+                    OUTPUT_VARIABLE SDK_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
+    list(APPEND _cxx_flags "-isysroot ${SDK_PATH}")
+  endif()
   # build the list of includes for all modules and dependencies
   vp_get_all_includes(_includes_modules _includes_extra _system_include_dirs)
   # build the list of libs and dependencies for all modules
