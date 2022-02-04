@@ -1420,10 +1420,18 @@ macro(vp_get_libname var_name)
 endmacro()
 
 # Extract framework name to use with -framework name or path to use with -F path
-# MacOSX: /usr/local/opt/python/Frameworks/Python.framework/Versions/3.7/Python NAME -> Python
-# MacOSX: /usr/local/opt/python/Frameworks/Python.framework/Versions/3.7/Python PATH -> /usr/local/opt/python/Frameworks
-# MacOSX: /usr/local/opt/qt/lib/QtWidgets.framework/QtWidgets NAME -> QtWidgets
-# MacOSX: /usr/local/opt/qt/lib/QtWidgets.framework/QtWidgets PATH -> /usr/local/opt/qt/lib
+# /usr/local/opt/python/Frameworks/Python.framework/Versions/3.7/Python
+#   NAME: Python
+#   PATH: /usr/local/opt/python/Frameworks
+# /usr/local/opt/qt/lib/QtWidgets.framework/QtWidgets
+#   NAME: QtWidgets
+#   PATH: /usr/local/opt/qt/lib
+# /Library/Frameworks/pylon.framework
+#   NAME: pylon
+#   PATH: /Library/Frameworks
+# /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks/OpenGL.framework
+#   NAME: OpenGL
+#   PATH: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/System/Library/Frameworks
 macro(vp_get_framework var_name)
   set(__option)
   foreach(d ${ARGN})
@@ -1437,11 +1445,53 @@ macro(vp_get_framework var_name)
   endforeach()
 
   if (__option MATCHES "PATH")
-    string(REGEX REPLACE "(.+)?/(.+).framework/(.+)$" "\\1" __framework "${__framework1}")
+    if (__framework1 MATCHES ".framework/")
+      string(REGEX REPLACE "(.+)?/(.+).framework/(.+)$" "\\1" __framework "${__framework1}")
+    elseif(__framework1 MATCHES "/([^/]+)\\.framework$")
+      string(REGEX REPLACE "(.+)?/(.+)\\.framework$" "\\1" __framework "${__framework1}")
+    endif()
   elseif(__option MATCHES "NAME") # Default NAME
-    string(REGEX REPLACE "(.+)?/(.+).framework/(.+)$" "\\2" __framework "${__framework1}")
+    if (__framework1 MATCHES ".framework/")
+      string(REGEX REPLACE "(.+)?/(.+).framework/(.+)$" "\\2" __framework "${__framework1}")
+    elseif(__framework1 MATCHES "/([^/]+)\\.framework$")
+      string(REGEX REPLACE "(.+)?/(.+)\\.framework$" "\\2" __framework "${__framework1}")
+    endif()
+  else()
+    set(__framework1 "${d}")
   endif()
   set(${var_name} "${__framework}")
+endmacro()
+
+# Extract tbd name to use with -lname or path to use with -Lpath
+# /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/libz.tbd
+#   NAME: z
+#   PATH: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib
+# /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/libpthread.tbd
+#   NAME: pthread
+#   PATH: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib
+# /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib/libxml2.tbd
+#   NAME: xml2
+#   PATH: /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.1.sdk/usr/lib
+macro(vp_get_tbd var_name)
+  set(__option)
+  foreach(d ${ARGN})
+    if(d MATCHES "PATH")
+      set(__option "PATH")
+    elseif(d MATCHES "NAME")
+      set(__option "NAME")
+    else()
+      set(__tbd1 "${d}")
+    endif()
+  endforeach()
+
+  if (__option MATCHES "PATH")
+    string(REGEX REPLACE "(.+)?/lib(.+)\\.tbd$" "\\1" __tbd "${__tbd1}")
+  elseif(__option MATCHES "NAME") # Default NAME
+    string(REGEX REPLACE "(.+)?/lib(.+)\\.tbd$" "\\2" __tbd "${__tbd1}")
+  else()
+    set(__tbd1 "${d}")
+  endif()
+  set(${var_name} "${__tbd}")
 endmacro()
 
 # build the list of visp cxx flags to propagate (OpenMP, CXX11) in scripts
