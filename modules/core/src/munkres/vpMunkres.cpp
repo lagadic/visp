@@ -307,7 +307,7 @@ vpMunkres::STEP_T vpMunkres::stepThree(const std::vector<std::vector<vpMunkres::
  * \param[in,out] mask: Mask matrix.
  * \param[in,out] row_cover: Row coverage array.
  * \param[in,out] col_cover: Col coverage array.
- * \return \<Next step, \<path_row_0 path_col_0\>\>.
+ * \return Tuple(Next step, pair(path_row_0 path_col_0)).
  */
 template <typename Type>
 std::tuple<vpMunkres::STEP_T, std::optional<std::pair<unsigned int, unsigned int> > >
