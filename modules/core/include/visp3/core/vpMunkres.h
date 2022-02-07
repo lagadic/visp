@@ -47,14 +47,6 @@
 #include <optional>
 #include <vector>
 
-
-/*!
-  \ingroup group_core_munkres
-  \brief Munkres Assignment Algorithm
-*/
-namespace munkres
-{
-
 /*!
   \class vpMunkres
   \ingroup group_core_munkres
@@ -113,7 +105,5 @@ private:
   static STEP_T stepSix(std::vector<std::vector<Type> > &costs, const std::vector<bool> &row_cover,
                         const std::vector<bool> &col_cover);
 };
-
-} // namespace munkres
 
 #endif
