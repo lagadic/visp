@@ -2156,7 +2156,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_CXX_STANDARD_11=@VISP_CXX_STANDARD_11@ \
                          VISP_CXX_STANDARD_14=@VISP_CXX_STANDARD_14@ \
                          VISP_CXX_STANDARD_17=@VISP_CXX_STANDARD_17@ \
-                         VISP_CXX_STANDARD=@VISP_CXX_STANDARD_11@ \
+                         VISP_CXX_STANDARD=@VISP_CXX_STANDARD_17@ \
                          VISP_HAVE_D3D9 \
                          VISP_HAVE_DC1394 \
                          VISP_HAVE_DIRECTSHOW \
