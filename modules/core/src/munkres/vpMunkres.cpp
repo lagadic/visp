@@ -462,6 +462,8 @@ std::vector<std::pair<unsigned int, unsigned int> > vpMunkres::run(std::vector<s
   return ret;
 }
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 // Quick fix link issue
 using input_data_type = double;
 
@@ -484,4 +486,5 @@ vpMunkres::stepFour<input_data_type>(const std::vector<std::vector<input_data_ty
 template vpMunkres::STEP_T vpMunkres::stepSix<input_data_type>(std::vector<std::vector<input_data_type> > &,
                                                                const std::vector<bool> &, const std::vector<bool> &);
 
-#endif
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+#endif // (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
