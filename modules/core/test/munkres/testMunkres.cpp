@@ -63,7 +63,7 @@ TEST_CASE("Check Munkres-based assignment", "[visp_munkres]")
 {
   auto testMunkres = [](const std::vector<std::vector<double> > &cost_matrix,
                         const std::vector<std::pair<uint, uint> > &expected_pairs) {
-    const auto munkres_pairs = munkres::vpMunkres::run(cost_matrix);
+    const auto munkres_pairs = vpMunkres::run(cost_matrix);
     REQUIRE(expected_pairs.size() == munkres_pairs.size());
     for (auto i = 0u; i < munkres_pairs.size(); i++) {
       REQUIRE(expected_pairs.at(i) == munkres_pairs.at(i));
@@ -130,7 +130,7 @@ int main(int argc, char *argv[])
 bool testMunkres(const std::vector<std::vector<double> > &costs_matrix,
                  const std::vector<std::pair<uint, uint> > &expected_pairs)
 {
-  const auto pairs = munkres::vpMunkres::run(costs_matrix);
+  const auto pairs = vpMunkres::run(costs_matrix);
 
   if (pairs.size() != expected_pairs.size()) {
     // clang-format off

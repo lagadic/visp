@@ -53,20 +53,21 @@ int main()
       I.display->displayCircle(ip, 5, color, true, 1);
     };
 
+    vpDisplay::display(I);
+
+    auto disp_lane{0};
+    vpDisplay::displayText(I, 15 * ++disp_lane, 15, "Left click to add a point", vpColor::black);
+    vpDisplay::displayText(I, 15 * ++disp_lane, 15, "Middle click to continue (run Munkres)", vpColor::black);
+    vpDisplay::displayText(I, 15 * ++disp_lane, 15, "Right click to quit", vpColor::black);
+    
+    std::for_each(begin(rand_ips), end(rand_ips), std::bind(display_point, std::placeholders::_1, vpColor::red));
+    vpDisplay::flush(I);
+
     // Ask user to clic on point
     //! [User_Img_Pts]
     std::vector<vpImagePoint> user_ips{};
     vpMouseButton::vpMouseButtonType button{};
     while (button != vpMouseButton::button2) {
-      vpDisplay::display(I);
-
-      auto disp_lane{0};
-      vpDisplay::displayText(I, 15 * ++disp_lane, 15, "Left click to add a point", vpColor::black);
-      vpDisplay::displayText(I, 15 * ++disp_lane, 15, "Middle click to continue (run Munkres)", vpColor::black);
-      vpDisplay::displayText(I, 15 * ++disp_lane, 15, "Right click to quit", vpColor::black);
-
-      std::for_each(begin(rand_ips), end(rand_ips), std::bind(display_point, std::placeholders::_1, vpColor::red));
-
       vpImagePoint ip{};
       vpDisplay::getClick(I, ip, button, true);
       if (button == vpMouseButton::button1) {
@@ -97,7 +98,7 @@ int main()
     std::for_each(begin(user_ips), end(user_ips), std::bind(display_point, std::placeholders::_1, vpColor::green));
 
     //! [Run]
-    for (const auto &[i, j] : munkres::vpMunkres::run(cost_matrix)) {
+    for (const auto &[i, j] : vpMunkres::run(cost_matrix)) {
       I.display->displayLine(rand_ips.at(i), user_ips.at(j), vpColor::blue, 1);
     }
     //! [Run]

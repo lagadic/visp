@@ -53,9 +53,6 @@ namespace
 constexpr auto ZeroEpsilon{1e-6};
 } // namespace
 
-namespace munkres
-{
-
 enum vpMunkres::ZERO_T : unsigned int { NA = 0, STARRED = 1, PRIMED = 2 };
 
 enum vpMunkres::STEP_T : unsigned int { ENTRY = 0, ONE = 1, TWO = 2, THREE = 3, FOUR = 4, FIVE = 5, SIX = 6, DONE };
@@ -310,7 +307,7 @@ vpMunkres::STEP_T vpMunkres::stepThree(const std::vector<std::vector<vpMunkres::
  * \param[in,out] mask: Mask matrix.
  * \param[in,out] row_cover: Row coverage array.
  * \param[in,out] col_cover: Col coverage array.
- * \return <Next step, <path_row_0 path_col_0>>.
+ * \return \<Next step, \<path_row_0 path_col_0\>\>.
  */
 template <typename Type>
 std::tuple<vpMunkres::STEP_T, std::optional<std::pair<unsigned int, unsigned int> > >
@@ -486,7 +483,5 @@ vpMunkres::stepFour<input_data_type>(const std::vector<std::vector<input_data_ty
                                      std::vector<bool> &);
 template vpMunkres::STEP_T vpMunkres::stepSix<input_data_type>(std::vector<std::vector<input_data_type> > &,
                                                                const std::vector<bool> &, const std::vector<bool> &);
-
-} // namespace munkres
 
 #endif
