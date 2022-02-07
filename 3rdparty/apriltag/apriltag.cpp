@@ -94,12 +94,12 @@ struct graymodel
     double C[3];
 };
 
-void graymodel_init(struct graymodel *gm)
+static void graymodel_init(struct graymodel *gm)
 {
     memset(gm, 0, sizeof(struct graymodel));
 }
 
-void graymodel_add(struct graymodel *gm, double x, double y, double gray)
+static void graymodel_add(struct graymodel *gm, double x, double y, double gray)
 {
     // update upper right entries of A = J'J
     gm->A[0][0] += x*x;
@@ -115,12 +115,12 @@ void graymodel_add(struct graymodel *gm, double x, double y, double gray)
     gm->B[2] += gray;
 }
 
-void graymodel_solve(struct graymodel *gm)
+static void graymodel_solve(struct graymodel *gm)
 {
     mat33_sym_solve((double*) gm->A, gm->B, gm->C);
 }
 
-double graymodel_interpolate(struct graymodel *gm, double x, double y)
+static double graymodel_interpolate(struct graymodel *gm, double x, double y)
 {
     return gm->C[0]*x + gm->C[1]*y + gm->C[2];
 }
@@ -156,7 +156,7 @@ static uint64_t rotate90(uint64_t w, int numBits)
     return w;
 }
 
-void quad_destroy(struct quad *quad)
+static void quad_destroy(struct quad *quad)
 {
     if (!quad)
         return;
@@ -166,7 +166,7 @@ void quad_destroy(struct quad *quad)
     free(quad);
 }
 
-struct quad *quad_copy(struct quad *quad)
+static struct quad *quad_copy(struct quad *quad)
 {
     struct quad *q = (struct quad *)calloc(1, sizeof(struct quad));
     memcpy(q, quad, sizeof(struct quad));
@@ -177,7 +177,7 @@ struct quad *quad_copy(struct quad *quad)
     return q;
 }
 
-void quick_decode_add(struct quick_decode *qd, uint64_t code, int id, int hamming)
+static void quick_decode_add(struct quick_decode *qd, uint64_t code, int id, int hamming)
 {
     uint32_t bucket = code % qd->nentries;
 
@@ -190,7 +190,7 @@ void quick_decode_add(struct quick_decode *qd, uint64_t code, int id, int hammin
     qd->entries[bucket].hamming = hamming;
 }
 
-void quick_decode_uninit(apriltag_family_t *fam)
+static void quick_decode_uninit(apriltag_family_t *fam)
 {
     if (!fam->impl)
         return;
@@ -201,7 +201,7 @@ void quick_decode_uninit(apriltag_family_t *fam)
     fam->impl = NULL;
 }
 
-void quick_decode_init(apriltag_family_t *family, int maxhamming)
+static void quick_decode_init(apriltag_family_t *family, int maxhamming)
 {
     assert(family->impl == NULL);
     assert(family->ncodes < 65536);
@@ -420,7 +420,7 @@ struct evaluate_quad_ret
     struct quick_decode_entry e;
 };
 
-matd_t* homography_compute2(double c[4][4]) {
+static matd_t* homography_compute2(double c[4][4]) {
     double A[] =  {
             c[0][0], c[0][1], 1,       0,       0, 0, -c[0][0]*c[0][2], -c[0][1]*c[0][2], c[0][2],
                   0,       0, 0, c[0][0], c[0][1], 1, -c[0][0]*c[0][3], -c[0][1]*c[0][3], c[0][3],
@@ -483,7 +483,7 @@ matd_t* homography_compute2(double c[4][4]) {
 }
 
 // returns non-zero if an error occurs (i.e., H has no inverse)
-int quad_update_homographies(struct quad *quad)
+static int quad_update_homographies(struct quad *quad)
 {
     //zarray_t *correspondences = zarray_create(sizeof(float[4]));
 
@@ -512,7 +512,7 @@ int quad_update_homographies(struct quad *quad)
     return -1;
 }
 
-double value_for_pixel(image_u8_t *im, double px, double py) {
+static double value_for_pixel(image_u8_t *im, double px, double py) {
     int x1 = floor(px - 0.5);
     int x2 = ceil(px - 0.5);
     double x = px - 0.5 - x1;
@@ -528,7 +528,7 @@ double value_for_pixel(image_u8_t *im, double px, double py) {
             im->buf[y2*im->stride + x2]*x*y;
 }
 
-void sharpen(apriltag_detector_t* td, double* values, int size) {
+static void sharpen(apriltag_detector_t* td, double* values, int size) {
     double *sharpened = (double *)malloc(sizeof(double)*size*size);
     double kernel[9] = {
         0, -1, 0,
@@ -561,7 +561,7 @@ void sharpen(apriltag_detector_t* td, double* values, int size) {
 }
 
 // returns the decision margin. Return < 0 if the detection should be rejected.
-float quad_decode(apriltag_detector_t* td, apriltag_family_t *family, image_u8_t *im, struct quad *quad, struct quick_decode_entry *entry, image_u8_t *im_samples)
+static float quad_decode(apriltag_detector_t* td, apriltag_family_t *family, image_u8_t *im, struct quad *quad, struct quick_decode_entry *entry, image_u8_t *im_samples)
 {
     // decode the tag binary contents by sampling the pixel
     // closest to the center of each bit cell.
@@ -654,8 +654,15 @@ float quad_decode(apriltag_detector_t* td, apriltag_family_t *family, image_u8_t
         }
     }
 
-    graymodel_solve(&whitemodel);
-    graymodel_solve(&blackmodel);
+    if (family->width_at_border > 1) {
+        graymodel_solve(&whitemodel);
+        graymodel_solve(&blackmodel);
+    } else {
+        graymodel_solve(&whitemodel);
+        blackmodel.C[0] = 0;
+        blackmodel.C[1] = 0;
+        blackmodel.C[2] = blackmodel.B[2]/4;
+    }
 
     // XXX Tunable
     if ((graymodel_interpolate(&whitemodel, 0, 0) - graymodel_interpolate(&blackmodel, 0, 0) < 0) != family->reversed_border) {
@@ -973,7 +980,7 @@ void apriltag_detection_destroy(apriltag_detection_t *det)
     free(det);
 }
 
-int prefer_smaller(int pref, double q0, double q1)
+static int prefer_smaller(int pref, double q0, double q1)
 {
     if (pref)     // already prefer something? exit.
         return pref;
@@ -1072,13 +1079,13 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
             struct quad *q;
             zarray_get_volatile(quads, i, &q);
 
-            for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++) {
                 if (td->quad_decimate == 1.5) {
-                    q->p[i][0] *= td->quad_decimate;
-                    q->p[i][1] *= td->quad_decimate;
+                    q->p[j][0] *= td->quad_decimate;
+                    q->p[j][1] *= td->quad_decimate;
                 } else {
-                    q->p[i][0] = (q->p[i][0] - 0.5)*td->quad_decimate + 0.5;
-                    q->p[i][1] = (q->p[i][1] - 0.5)*td->quad_decimate + 0.5;
+                    q->p[j][0] = (q->p[j][0] - 0.5)*td->quad_decimate + 0.5;
+                    q->p[j][1] = (q->p[j][1] - 0.5)*td->quad_decimate + 0.5;
                 }
             }
         }
@@ -1277,8 +1284,9 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
             float rgb[3];
             int bias = 100;
 
-            for (int i = 0; i < 3; i++)
-                rgb[i] = bias + (random() % (255-bias));
+            for (int j = 0; j < 3; j++) {
+                rgb[j] = bias + (random() % (255-bias));
+            }
 
             fprintf(f, "%f %f %f setrgbcolor\n", rgb[0]/255.0f, rgb[1]/255.0f, rgb[2]/255.0f);
             fprintf(f, "%f %f moveto %f %f lineto %f %f lineto %f %f lineto %f %f lineto stroke\n",
@@ -1316,8 +1324,9 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
             float rgb[3];
             int bias = 100;
 
-            for (int i = 0; i < 3; i++)
-                rgb[i] = bias + (random() % (255-bias));
+            for (int j = 0; j < 3; j++) {
+                rgb[j] = bias + (random() % (255-bias));
+            }
 
             for (int j = 0; j < 4; j++) {
                 int k = (j + 1) & 3;
@@ -1359,8 +1368,9 @@ zarray_t *apriltag_detector_detect(apriltag_detector_t *td, image_u8_t *im_orig)
             float rgb[3];
             int bias = 100;
 
-            for (int i = 0; i < 3; i++)
-                rgb[i] = bias + (random() % (255-bias));
+            for (int j = 0; j < 3; j++) {
+                rgb[j] = bias + (random() % (255-bias));
+            }
 
             fprintf(f, "%f %f %f setrgbcolor\n", rgb[0]/255.0f, rgb[1]/255.0f, rgb[2]/255.0f);
             fprintf(f, "%f %f moveto %f %f lineto %f %f lineto %f %f lineto %f %f lineto stroke\n",
@@ -1455,7 +1465,7 @@ image_u8_t *apriltag_to_image(apriltag_family_t *fam, int idx)
     image_u8_t *im = image_u8_create(fam->total_width, fam->total_width);
 
     int white_border_width = fam->width_at_border + (fam->reversed_border ? 0 : 2);
-    int white_border_start = (fam->total_width - fam->width_at_border)/2;
+    int white_border_start = (fam->total_width - white_border_width)/2;
     // Make 1px white border
     for (int i = 0; i < white_border_width - 1; i += 1) {
         im->buf[white_border_start*im->stride + white_border_start + i] = 255;
