@@ -35,11 +35,11 @@ This page references all the tutorials in user zone.
 
 - \subpage tutorial_vs
 
+- \subpage tutorial_munkres
+
 - \subpage tutorial_bridge
 
 - \subpage tutorial_tools
-
-- \subpage tutorial_munkres
 
 */
 
@@ -272,7 +272,7 @@ in one thread and display these images in an other thread.
 /*! \page tutorial_munkres Munkres Assignment Algorithm
 This page introduces the user to the way to assign track points and detected points.
 
-- \subpage tutorial-munkres <br>This tutorial explains how to use Munkres to assign traked and detected image points.
+- \subpage tutorial-munkres <br>This tutorial explains how to use Munkres to assign tracked and detected image points.
 
 */
 

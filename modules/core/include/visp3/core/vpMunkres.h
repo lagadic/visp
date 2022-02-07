@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,8 @@
  * Class for Munkres Assignment Algorithm.
  *
  * Authors:
- * Fabien Spindler
+ * Souriya Trinh
+ * Julien Dufour
  *
  *****************************************************************************/
 
@@ -46,9 +47,22 @@
 #include <optional>
 #include <vector>
 
+
+/*!
+  \ingroup group_core_munkres
+  \brief Munkres Assignment Algorithm
+*/
 namespace munkres
 {
 
+/*!
+  \class vpMunkres
+  \ingroup group_core_munkres
+
+  Implements the Munkres Assignment Algorithm described [here](https://en.wikipedia.org/wiki/Hungarian_algorithm).
+
+  \note This class is only available with c++17 enabled.
+ */
 class VISP_EXPORT vpMunkres
 {
 public:

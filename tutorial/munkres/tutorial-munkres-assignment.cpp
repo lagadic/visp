@@ -1,4 +1,4 @@
-//! \example tutorial-munkres-assignement.cpp
+//! \example tutorial-munkres-assignment.cpp
 
 // Display
 #include <visp3/gui/vpDisplayD3D.h>
@@ -10,13 +10,14 @@
 #include <visp3/core/vpColor.h>
 
 // Munkres
-#include <visp3/core/munkres/vpMunkres.h>
+#include <visp3/core/vpMunkres.h>
 
 // Math
 #include <visp3/core/vpUniRand.h>
 
 int main()
 {
+#ifdef VISP_HAVE_DISPLAY
   // Create base img
   vpImage<unsigned char> I(480, 640, 255);
 
@@ -108,6 +109,6 @@ int main()
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
-
+#endif
   return EXIT_SUCCESS;
 }

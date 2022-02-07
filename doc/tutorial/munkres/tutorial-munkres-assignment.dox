@@ -5,7 +5,7 @@
 
 \section munkres-intro Introduction
 
-The **Munkres algorithm** aims to find an optimal solution which **minimizes the total cost of the assignments**.
+The **Munkres algorithm** described [here](https://en.wikipedia.org/wiki/Hungarian_algorithm) aims to find an optimal solution which **minimizes the total cost of the assignments**.
 
 For example, it can be used to match tracked (red) and detected (green) image points:
 \image html img-munkres-assignment.png
@@ -18,6 +18,8 @@ For example, it can be used to match tracked (red) and detected (green) image po
 \image html img-munkres-total-cost.png
 
 \section munkres-assignment Assignment
+
+The following example also available in tutorial-munkres-assignment.cpp shows how to use Munkres algorithm:
 
 \include tutorial-munkres-assignment.cpp
 
