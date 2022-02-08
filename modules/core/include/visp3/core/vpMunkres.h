@@ -46,6 +46,7 @@
 // System
 #include <optional>
 #include <vector>
+#include <tuple>
 
 /*!
   \class vpMunkres
