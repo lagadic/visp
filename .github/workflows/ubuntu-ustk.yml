@@ -1,4 +1,4 @@
-name: Ubuntu-dep-apt
+name: Ubuntu-ustk
 
 # https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
 on:
@@ -35,13 +35,19 @@ jobs:
       run: dpkg --list | grep compiler
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev libpcl-dev
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev libpcl-dev libfftw3-dev libarmadillo-dev
 
     - name: Clone visp-images
       run: |
         git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
         echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
+
+    - name: Clone ustk-dataset
+      run: |
+        git clone --depth 1 https://github.com/lagadic/ustk-dataset ${HOME}/ustk-dataset
+        echo "USTK_DATASET_PATH=$HOME/ustk-dataset" >> $GITHUB_ENV
+        echo ${USTK_DATASET_PATH}
 
     - name: Clone ustk
       run: |
