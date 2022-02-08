@@ -60,8 +60,8 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
 - \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
 - \ref tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices.
-- \ref tutorial-detection-apriltag-ios <br>This tutorial shows how to do detect an AprilTag marker in an image on iOS devices. 
-- \ref tutorial-detection-apriltag-ios-realtime <br>This tutorial shows how to do detect in realtime an AprilTag marker on iOS devices. 
+- \ref tutorial-detection-apriltag-ios <br>This tutorial shows how to do detect an AprilTag marker in an image on iOS devices.
+- \ref tutorial-detection-apriltag-ios-realtime <br>This tutorial shows how to do detect in realtime an AprilTag marker on iOS devices.
 
 \subsection tuto_java ViSP for Java
 
@@ -198,6 +198,10 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - \ref tutorial-mbot-vs <br>This tutorial explains how to do a visual-servoing with the mBot Ranger educational robot kit equipped with a Raspberry Pi and a camera.
 - \ref tutorial-bebop2-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Parrot Bebop 2 drone.
 - \ref tutorial-flir-ptu-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Flir pan-tilt unit and camera.
+
+\subsection tuto_munkres Assignment algorithm
+
+- \ref tutorial-munkres <br>This tutorial explains how to use Munkres to assign tracked and detected image points.
 
 \subsection tuto_bridge Bridges over other frameworks (OpenCV, MATLAB, ROS-1)
 
@@ -420,9 +424,14 @@ scheme, ...</p>
   Time management.
 */
 /*!
-\ingroup group_core_tools
-\defgroup group_core_optim Optimization
+  \ingroup group_core_tools
+  \defgroup group_core_optim Optimization
   Optimization solvers for Linear Programs (simplex) and Quadratic Programs (active sets).
+*/
+/*!
+  \ingroup group_core_tools
+  \defgroup group_core_munkres Munkres Assignment Algorithm
+  Munkres Assignment Algorithm.
 */
 
 /*******************************************

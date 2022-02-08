@@ -1,0 +1,41 @@
+/**
+
+\page tutorial-munkres Tutorial: Munkres Assignment Algorithm
+\tableofcontents
+
+\section munkres-intro Introduction
+
+The **Munkres algorithm** described [here](https://en.wikipedia.org/wiki/Hungarian_algorithm) aims to find an optimal solution which **minimizes the total cost of the assignments**.
+
+For example, it can be used to match tracked (red) and detected (green) image points:
+\image html img-munkres-assignment.png
+
+\note It can also work with less (or more) detection than tracked points:
+\image html img-munkres-assignment1.png
+\image html img-munkres-assignment2.png
+
+\warning Keep in mind that Munkres minimizes the **total** cost of the assignments. As shown by the image below, minimizing the total cost can leads to, locally, not consider the closest points:
+\image html img-munkres-total-cost.png
+
+\section munkres-assignment Assignment
+
+The following example also available in tutorial-munkres-assignment.cpp shows how to use Munkres algorithm:
+
+\include tutorial-munkres-assignment.cpp
+
+The tutorial starts with 10 random image points (red) which represent our tracked points:
+\image html img-munkres-tracked.png
+\snippet tutorial-munkres-assignment.cpp Rand_Img_Pts
+
+Then, by clicking on the image, the user is able to simulate the detected points (green):
+\image html img-munkres-detected.png
+\snippet tutorial-munkres-assignment.cpp User_Img_Pts
+
+Once the "fake" detection are selected, a cost matrix is built by defining the cost of assigning a track to a detection point as the Euclidean distance between them:
+\snippet tutorial-munkres-assignment.cpp Cost_Matrix
+
+Finally, Munkres is ran to assign tracked points with the detected points (blue lines):
+\image html img-munkres-assigned.png
+\snippet tutorial-munkres-assignment.cpp Run
+
+*/
