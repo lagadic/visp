@@ -30,6 +30,7 @@ foreach(cpp ${tutorial_cpp})
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-float-equal")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-copy")
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-register")
   endif()
 
   if(CXX_FLAGS_MUTE_WARNINGS)
