@@ -6,9 +6,7 @@ find_package(VISP REQUIRED visp_core visp_gui)
 
 set(tutorial_cpp)
 
-if(VISP_CXX_STANDARD GREATER_EQUAL VISP_CXX_STANDARD_17)
-  list(APPEND tutorial_cpp tutorial-munkres-assignment.cpp)
-endif()
+list(APPEND tutorial_cpp tutorial-munkres-assignment.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

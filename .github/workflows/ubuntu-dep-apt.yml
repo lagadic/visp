@@ -15,6 +15,8 @@ jobs:
       matrix:
         os: [ubuntu-18.04, ubuntu-20.04]
         compiler: [ {CC: /usr/bin/gcc-9, CXX: /usr/bin/g++-9}, {CC: /usr/bin/gcc-10, CXX: /usr/bin/g++-10}, {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
+        standard: [ 98, 11, 14, 17 ]
+
 
     steps:
     # https://github.com/marketplace/actions/cancel-workflow-action
@@ -54,9 +56,11 @@ jobs:
         cd build
         CC=${{ matrix.compiler.CC }}
         CXX=${{ matrix.compiler.CXX }}
+        CXX_STANDARD=${{ matrix.standard }}
         echo "CC: $CC"
         echo "CXX: $CXX"
-        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON
+        echo "Standard: $CXX_STANDARD"
+        cmake .. -DCMAKE_C_COMPILER="${CC}" -DCMAKE_CXX_COMPILER="${CXX}" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DUSE_CXX_STANDARD=$CXX_STANDARD
         cat ViSP-third-party.txt
 
     - name: Compile
@@ -99,4 +103,3 @@ jobs:
         /tmp/usr/local/bin/visp-config --libs
         make CXX=${{ matrix.compiler.CXX }} -j$(nproc) -f Makefile.visp-config
         make CXX=${{ matrix.compiler.CXX }} -j$(nproc) -f Makefile.visp-config clean
-

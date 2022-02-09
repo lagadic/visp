@@ -17,7 +17,7 @@
 
 int main()
 {
-#ifdef VISP_HAVE_DISPLAY
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && defined(VISP_HAVE_DISPLAY)
   // Create base img
   vpImage<unsigned char> I(480, 640, 255);
 

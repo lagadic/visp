@@ -268,6 +268,59 @@ void vpDetectorDNN::postProcess() {
       }
     }
   }
+  else if(outLayerType == "Identity" || outLayerType == "Softmax")
+  {
+    // In OpenCV 4.5.2, the output of ssd-mobilenet.onnx is parsed as `Softmax`, whereas
+    // in OpenCV 4.5.5, the output is of type `Identity`, and the output order is permuted.
+
+    // Network produces 2 outputs blob:
+    // - `scores` with dimensions 1xNxC
+    // - 'boxes'  with dimensions 1xNx4
+    // where `N` is a number of detections and `C` is the number of classes (with `BACKGROUND` as classId = 0).
+
+    int scores_index = m_outNames[0]=="scores" ? 0 : 1; // scores output index.
+    int boxes_index = m_outNames[0]=="boxes" ? 0 : 1; // boxes output index.
+
+    int N = m_outs[scores_index].size[1], C = m_outs[scores_index].size[2];
+
+    float* confidence = (float*)m_outs[scores_index].data;
+    float* bbox = (float*)m_outs[boxes_index].data;
+
+    // Loop over all guesses on the output of the network.
+    for(int i = 0; i < N; i++)
+    {
+      uint32_t maxClass = 0;
+      float maxScore = -1000.0f;
+
+      for(int j = 1; j < C; j++) // ignore background (classId = 0).
+      {
+        const float score = confidence[i * C + j];
+
+				if(score < m_confidenceThreshold)
+					continue;
+
+				if(score > maxScore)
+				{
+					maxScore = score;
+					maxClass = j;
+				}
+      }
+
+      if(maxScore > m_confidenceThreshold)
+      {
+        int left = (int)(bbox[4*i] * m_img.cols);
+        int top = (int)(bbox[4*i + 1] * m_img.rows);
+        int right = (int)(bbox[4*i + 2] * m_img.cols);
+        int bottom = (int)(bbox[4*i + 3] * m_img.rows);
+        int width = right - left + 1;
+        int height = bottom - top + 1;
+
+        m_boxes.push_back(cv::Rect(left, top, width, height));
+        m_classIds.push_back(maxClass);
+        m_confidences.push_back(maxScore);
+      }
+    }
+  }
   else
     CV_Error(cv::Error::StsNotImplemented, "Unknown output layer type: " + outLayerType);
 
@@ -290,6 +343,7 @@ void vpDetectorDNN::postProcess() {
     - `*.t7` | `*.net` (Torch, http://torch.ch/)
     - `*.weights` (Darknet, https://pjreddie.com/darknet/)
     - `*.bin` (DLDT, https://software.intel.com/openvino-toolkit)
+    - `*.onnx` (ONNX, https://onnx.ai/)
   \param config Path to a text file of model containing network configuration.
   It could be a file with the following extensions:
     - `*.prototxt` (Caffe, http://caffe.berkeleyvision.org/)
