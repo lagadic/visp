@@ -50,12 +50,6 @@
 // Internal
 #include <visp3/core/vpMath.h>
 
-// Local helper
-namespace
-{
-constexpr auto ZeroEpsilon{1e-6};
-} // namespace
-
 /*!
   \class vpMunkres
   \ingroup group_core_munkres
@@ -114,8 +108,8 @@ private:
   static STEP_T stepSix(std::vector<std::vector<Type> > &costs, const std::vector<bool> &row_cover,
                         const std::vector<bool> &col_cover);
 
-  // private:
-  // static constexpr auto ZeroEpsilon{1e-6};
+private:
+  static constexpr auto ZeroEpsilon{1e-6};
 };
 
 enum vpMunkres::ZERO_T : unsigned int { NA = 0, STARRED = 1, PRIMED = 2 };
@@ -157,7 +151,7 @@ vpMunkres::findAZero(const std::vector<std::vector<Type> > &costs, const std::ve
 {
   for (auto row = 0u; row < costs.size(); row++)
     for (auto col = 0u; col < costs.size(); col++)
-      if (vpMath::equal(costs.at(row).at(col), static_cast<Type>(ZeroEpsilon)) && !row_cover.at(row) &&
+      if (vpMath::equal(costs.at(row).at(col), static_cast<Type>(vpMunkres::ZeroEpsilon)) && !row_cover.at(row) &&
           !col_cover.at(col)) {
         return std::make_optional<std::pair<unsigned int, unsigned int> >(row, col);
       }
@@ -237,7 +231,7 @@ inline vpMunkres::STEP_T vpMunkres::stepTwo(std::vector<std::vector<Type> > &cos
 {
   for (auto row = 0u; row < costs.size(); row++) {
     for (auto col = 0u; col < costs.size(); col++) {
-      if (vpMath::equal(costs.at(row).at(col), static_cast<Type>(ZeroEpsilon)) && !row_cover.at(row) &&
+      if (vpMath::equal(costs.at(row).at(col), static_cast<Type>(vpMunkres::ZeroEpsilon)) && !row_cover.at(row) &&
           !col_cover.at(col)) {
         mask.at(row).at(col) = vpMunkres::ZERO_T::STARRED;
         row_cover.at(row) = true;
