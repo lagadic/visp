@@ -238,15 +238,19 @@ public:
   void setFileName(const std::string &filename);
   void setFirstFrameIndex(int first_frame);
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100
   /*!
-      Sets the framerate in Hz of the video when encoding.
-
-      \param framerate : The expected framerate.
-
-      By default the framerate is set to 25Hz.
-    */
+   * Sets the framerate in Hz of the video when encoding.
+   *
+   * \param framerate : The expected framerate.
+   *
+   * By default the framerate is set to 25Hz.
+   *
+   * \note Framerate can only be set when OpenCV > 2.1.0.
+   */
+#if VISP_HAVE_OPENCV_VERSION >= 0x020100
   inline void setFramerate(const double framerate) { m_framerate = framerate; }
+#else
+  inline void setFramerate(const double dummy) { (void)dummy; }
 #endif
   /*!
    * Set frame step between 2 successive images when a sequence of images is considered.

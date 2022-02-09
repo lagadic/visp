@@ -79,8 +79,8 @@ private:
 
 #include <visp3/core/vpCPUFeatures.h>
 
-#define USE_TRANSFORM 1
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && USE_TRANSFORM
+#define USE_TRANSFORM 1 //std::binary_function is not available with c++17
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (VISP_CXX_STANDARD < VISP_CXX_STANDARD_17) && USE_TRANSFORM
 #define HAVE_TRANSFORM 1
 #endif
 
