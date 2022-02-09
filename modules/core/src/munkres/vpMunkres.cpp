@@ -197,29 +197,4 @@ vpMunkres::STEP_T vpMunkres::stepFive(std::vector<std::vector<vpMunkres::ZERO_T>
   }
 }
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
-// Quick fix link issue
-using input_data_type = double;
-
-template std::vector<std::pair<unsigned int, unsigned int> >
-    vpMunkres::run<input_data_type>(std::vector<std::vector<input_data_type> >);
-template void vpMunkres::padCostMatrix<input_data_type>(std::vector<std::vector<input_data_type> > &);
-template std::optional<std::pair<unsigned int, unsigned int> >
-vpMunkres::findAZero<input_data_type>(const std::vector<std::vector<input_data_type> > &, const std::vector<bool> &,
-                                      const std::vector<bool> &);
-template input_data_type vpMunkres::findSmallest<input_data_type>(const std::vector<std::vector<input_data_type> > &,
-                                                                  const std::vector<bool> &, const std::vector<bool> &);
-template vpMunkres::STEP_T vpMunkres::stepOne<input_data_type>(std::vector<std::vector<input_data_type> > &);
-template vpMunkres::STEP_T vpMunkres::stepTwo<input_data_type>(std::vector<std::vector<input_data_type> > &,
-                                                               std::vector<std::vector<vpMunkres::ZERO_T> > &,
-                                                               std::vector<bool> &, std::vector<bool> &);
-template std::tuple<vpMunkres::STEP_T, std::optional<std::pair<unsigned int, unsigned int> > >
-vpMunkres::stepFour<input_data_type>(const std::vector<std::vector<input_data_type> > &,
-                                     std::vector<std::vector<vpMunkres::ZERO_T> > &, std::vector<bool> &,
-                                     std::vector<bool> &);
-template vpMunkres::STEP_T vpMunkres::stepSix<input_data_type>(std::vector<std::vector<input_data_type> > &,
-                                                               const std::vector<bool> &, const std::vector<bool> &);
-
-#endif // DOXYGEN_SHOULD_SKIP_THIS
 #endif // (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
