@@ -35,7 +35,7 @@ jobs:
       run: dpkg --list | grep compiler
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev libpcl-dev libfftw3-dev libarmadillo-dev
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev libpcl-dev libxml2-dev libfftw3-dev libarmadillo-dev
 
     - name: Clone visp-images
       run: |
@@ -51,7 +51,8 @@ jobs:
 
     - name: Clone ustk
       run: |
-        git clone --depth 1 https://github.com/lagadic/ustk ${HOME}/ustk
+        #git clone --depth 1 https://github.com/lagadic/ustk ${HOME}/ustk
+        git clone --depth 1 --branch fix_macos https://github.com/fspindle/ustk ${HOME}/ustk
 
     - name: Clone ustk-sample
       run: |
@@ -61,7 +62,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DVISP_CONTRIB_MODULES_PATH=${HOME}/ustk/modules
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DVISP_CONTRIB_MODULES_PATH=${HOME}/ustk/modules
         cat ViSP-third-party.txt
 
     - name: Compile
@@ -78,6 +79,6 @@ jobs:
         cd ${HOME}/ustk-sample
         mkdir ustk-sample-build
         cd ustk-sample-build
-        cmake .. -DVISP_DIR=/tmp/usr/local/lib/cmake/visp -DCMAKE_VERBOSE_MAKEFILE=ON
+        cmake .. -DVISP_DIR=/tmp/usr/local/lib/cmake/visp
         make -j$(nproc)
 
