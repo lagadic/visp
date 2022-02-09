@@ -41,10 +41,6 @@
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 
-#if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
-#include <TargetConditionals.h>             // To detect iOS TARGET_OS_IOS macro
-#endif
-
 /*!
  * Find a starred zero in a specific mask matrix row.
  *

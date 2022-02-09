@@ -262,12 +262,7 @@ vpMunkres::stepFour(const std::vector<std::vector<Type> > &costs, std::vector<st
                     std::vector<bool> &row_cover, std::vector<bool> &col_cover)
 {
   if (const auto zero = findAZero(costs, row_cover, col_cover)) {
-#if TARGET_OS_IOS == 1 // Workaround for ios. Here we should rather test iOS version, but how ?
-    // Workaround for error: 'value' is unavailable: introduced in iOS 11.0
-    const auto [row, col] = *zero;
-#else // The following code is not working on iOS
-    const auto [row, col] = zero.value();
-#endif
+    const auto [row, col] = *zero; // convenient zero.value() is not working on iOS
     mask.at(row).at(col) = vpMunkres::ZERO_T::PRIMED;
 
     if (const auto star_in_row = findStarInRow(mask, row)) {
