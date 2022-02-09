@@ -113,6 +113,9 @@ private:
   template <typename Type>
   static STEP_T stepSix(std::vector<std::vector<Type> > &costs, const std::vector<bool> &row_cover,
                         const std::vector<bool> &col_cover);
+
+  // private:
+  // static constexpr auto ZeroEpsilon{1e-6};
 };
 
 enum vpMunkres::ZERO_T : unsigned int { NA = 0, STARRED = 1, PRIMED = 2 };
@@ -124,7 +127,7 @@ enum vpMunkres::STEP_T : unsigned int { ENTRY = 0, ONE = 1, TWO = 2, THREE = 3, 
  *
  * \param[in,out] costs: Cost matrix.
  */
-template <typename Type> void vpMunkres::padCostMatrix(std::vector<std::vector<Type> > &costs)
+template <typename Type> inline void vpMunkres::padCostMatrix(std::vector<std::vector<Type> > &costs)
 {
   const auto row_input_size = costs.size();
   const auto col_input_size = costs.at(0).size();
@@ -148,9 +151,9 @@ template <typename Type> void vpMunkres::padCostMatrix(std::vector<std::vector<T
  * \return Index of the Zero [<row,col>] or std::nullopt if the cost matrix does not contain a zero.
  */
 template <typename Type>
-std::optional<std::pair<unsigned int, unsigned int> > vpMunkres::findAZero(const std::vector<std::vector<Type> > &costs,
-                                                                           const std::vector<bool> &row_cover,
-                                                                           const std::vector<bool> &col_cover)
+inline std::optional<std::pair<unsigned int, unsigned int> >
+vpMunkres::findAZero(const std::vector<std::vector<Type> > &costs, const std::vector<bool> &row_cover,
+                     const std::vector<bool> &col_cover)
 {
   for (auto row = 0u; row < costs.size(); row++)
     for (auto col = 0u; col < costs.size(); col++)
@@ -171,8 +174,8 @@ std::optional<std::pair<unsigned int, unsigned int> > vpMunkres::findAZero(const
  * \return Smallest value of the cost matrix.
  */
 template <typename Type>
-Type vpMunkres::findSmallest(const std::vector<std::vector<Type> > &costs, const std::vector<bool> &row_cover,
-                             const std::vector<bool> &col_cover)
+inline Type vpMunkres::findSmallest(const std::vector<std::vector<Type> > &costs, const std::vector<bool> &row_cover,
+                                    const std::vector<bool> &col_cover)
 {
   auto minval = std::numeric_limits<Type>::max();
   for (auto row = 0u; row < costs.size(); row++)
@@ -192,7 +195,7 @@ Type vpMunkres::findSmallest(const std::vector<std::vector<Type> > &costs, const
  * \param[in,out] costs: Cost matrix.
  * \return Next step.
  */
-template <typename Type> vpMunkres::STEP_T vpMunkres::stepOne(std::vector<std::vector<Type> > &costs)
+template <typename Type> inline vpMunkres::STEP_T vpMunkres::stepOne(std::vector<std::vector<Type> > &costs)
 {
   // process rows
   std::for_each(begin(costs), end(costs), [](auto &cost_row) {
@@ -228,9 +231,9 @@ template <typename Type> vpMunkres::STEP_T vpMunkres::stepOne(std::vector<std::v
  * \return Next step.
  */
 template <typename Type>
-vpMunkres::STEP_T vpMunkres::stepTwo(std::vector<std::vector<Type> > &costs,
-                                     std::vector<std::vector<vpMunkres::ZERO_T> > &mask, std::vector<bool> &row_cover,
-                                     std::vector<bool> &col_cover)
+inline vpMunkres::STEP_T vpMunkres::stepTwo(std::vector<std::vector<Type> > &costs,
+                                            std::vector<std::vector<vpMunkres::ZERO_T> > &mask,
+                                            std::vector<bool> &row_cover, std::vector<bool> &col_cover)
 {
   for (auto row = 0u; row < costs.size(); row++) {
     for (auto col = 0u; col < costs.size(); col++) {
@@ -261,7 +264,7 @@ vpMunkres::STEP_T vpMunkres::stepTwo(std::vector<std::vector<Type> > &costs,
  * \return Tuple(Next step, pair(path_row_0 path_col_0)).
  */
 template <typename Type>
-std::tuple<vpMunkres::STEP_T, std::optional<std::pair<unsigned int, unsigned int> > >
+inline std::tuple<vpMunkres::STEP_T, std::optional<std::pair<unsigned int, unsigned int> > >
 vpMunkres::stepFour(const std::vector<std::vector<Type> > &costs, std::vector<std::vector<vpMunkres::ZERO_T> > &mask,
                     std::vector<bool> &row_cover, std::vector<bool> &col_cover)
 {
@@ -296,8 +299,8 @@ vpMunkres::stepFour(const std::vector<std::vector<Type> > &costs, std::vector<st
  * \return Next step.
  */
 template <typename Type>
-vpMunkres::STEP_T vpMunkres::stepSix(std::vector<std::vector<Type> > &costs, const std::vector<bool> &row_cover,
-                                     const std::vector<bool> &col_cover)
+inline vpMunkres::STEP_T vpMunkres::stepSix(std::vector<std::vector<Type> > &costs, const std::vector<bool> &row_cover,
+                                            const std::vector<bool> &col_cover)
 {
   const auto minval = findSmallest(costs, row_cover, col_cover);
   for (auto row = 0u; row < costs.size(); row++) {
@@ -322,7 +325,7 @@ vpMunkres::STEP_T vpMunkres::stepSix(std::vector<std::vector<Type> > &costs, con
  * \return List of associated pairs [<row_idx,col_idx>].
  */
 template <typename Type>
-std::vector<std::pair<unsigned int, unsigned int> > vpMunkres::run(std::vector<std::vector<Type> > costs)
+inline std::vector<std::pair<unsigned int, unsigned int> > vpMunkres::run(std::vector<std::vector<Type> > costs)
 {
   const auto original_row_size = costs.size();
   const auto original_col_size = costs.front().size();
