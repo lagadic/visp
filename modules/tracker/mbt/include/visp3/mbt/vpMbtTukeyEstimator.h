@@ -59,7 +59,6 @@ private:
 };
 #endif //#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-
 /*
  * The code bellow previously in vpMbtTuckeyEstimator.cpp produced
  * a link issue with MinGW-W64 x86_64-8.1.0-posix-seh-rt_v6-rev0 (g++ 8.1.0)
@@ -79,12 +78,9 @@ private:
 
 #include <visp3/core/vpCPUFeatures.h>
 
-#define USE_TRANSFORM 1 //std::binary_function is not available with c++17
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (VISP_CXX_STANDARD < VISP_CXX_STANDARD_17) && USE_TRANSFORM
+#define USE_TRANSFORM 1
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && USE_TRANSFORM
 #define HAVE_TRANSFORM 1
-#endif
-
-#if HAVE_TRANSFORM
 #include <functional>
 #endif
 
@@ -107,10 +103,8 @@ private:
 #if HAVE_TRANSFORM
 namespace
 {
-template <typename T> struct AbsDiff : public std::binary_function<T, T, T> {
-  T operator()(const T a, const T b) const { return std::fabs(a - b); }
-};
-}
+auto AbsDiff = [](const auto &a, const auto &b) { return abs(a - b); };
+} // namespace
 #endif
 
 template class vpMbtTukeyEstimator<float>;
@@ -124,7 +118,7 @@ inline __m128 abs_ps(__m128 x)
   static const __m128 sign_mask = _mm_set1_ps(-0.f); // -0.f = 1 << 31
   return _mm_andnot_ps(sign_mask, x);
 }
-}
+} // namespace
 #endif
 
 template <typename T> T vpMbtTukeyEstimator<T>::getMedian(std::vector<T> &vec)
@@ -155,8 +149,7 @@ void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std
   m_normres.resize(residues.size());
 
 #if HAVE_TRANSFORM
-  std::transform(residues.begin(), residues.end(), m_normres.begin(),
-                 std::bind(AbsDiff<T>(), std::placeholders::_1, med));
+  std::transform(residues.begin(), residues.end(), m_normres.begin(), std::bind(AbsDiff, std::placeholders::_1, med));
 #else
   for (size_t i = 0; i < m_residues.size(); i++) {
     m_normres[i] = (std::fabs(residues[i] - med));
@@ -179,8 +172,8 @@ void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std
 }
 
 template <>
-inline void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<float> &residues, std::vector<float> &weights,
-                                                              const float NoiseThreshold)
+inline void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<float> &residues,
+                                                              std::vector<float> &weights, const float NoiseThreshold)
 {
 #if VISP_HAVE_SSSE3
   if (residues.empty()) {
@@ -231,7 +224,8 @@ inline void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<
  */
 template <>
 inline void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector<double> &residues,
-                                                               std::vector<double> &weights, const double NoiseThreshold)
+                                                               std::vector<double> &weights,
+                                                               const double NoiseThreshold)
 {
 #if VISP_HAVE_SSSE3
   if (residues.empty()) {
@@ -244,8 +238,7 @@ inline void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector
   m_normres.resize(residues.size());
 
 #if HAVE_TRANSFORM
-  std::transform(residues.begin(), residues.end(), m_normres.begin(),
-                 std::bind(AbsDiff<double>(), std::placeholders::_1, med));
+  std::transform(residues.begin(), residues.end(), m_normres.begin(), std::bind(AbsDiff, std::placeholders::_1, med));
 #else
   for (size_t i = 0; i < m_residues.size(); i++) {
     m_normres[i] = (std::fabs(residues[i] - med));
