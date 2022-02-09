@@ -45,6 +45,7 @@
 
 // System
 #include <optional>
+#include <tuple>
 
 // Internal
 #include "vpMath.h"
