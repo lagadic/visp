@@ -212,13 +212,13 @@ zarray_t *str_split_spaces(const char *str)
       // yes!
       size_t off0 = pos;
       while (pos < len && str[pos] != ' ')
-  pos++;
+	pos++;
       size_t off1 = pos;
 
-      size_t len = off1 - off0;
-      char *tok = (char *)malloc(len + 1);
-      memcpy(tok, &str[off0], len);
-      tok[len] = 0;
+      size_t len_off = off1 - off0;
+      char *tok = (char *)malloc(len_off + 1);
+      memcpy(tok, &str[off0], len_off);
+      tok[len_off] = 0;
       zarray_add(parts, &tok);
     }
   }
@@ -266,8 +266,8 @@ char *str_rstrip(char *str)
 
 int str_indexof(const char *haystack, const char *needle)
 {
-  assert(haystack != NULL);
-  assert(needle != NULL);
+    assert(haystack != NULL);
+    assert(needle != NULL);
 
     // use signed types for hlen/nlen because hlen - nlen can be negative.
     int hlen = (int) strlen(haystack);
@@ -285,8 +285,8 @@ int str_indexof(const char *haystack, const char *needle)
 
 int str_last_indexof(const char *haystack, const char *needle)
 {
-  assert(haystack != NULL);
-  assert(needle != NULL);
+    assert(haystack != NULL);
+    assert(needle != NULL);
 
     // use signed types for hlen/nlen because hlen - nlen can be negative.
     int hlen = (int) strlen(haystack);
@@ -304,7 +304,7 @@ int str_last_indexof(const char *haystack, const char *needle)
 // in-place modification.
 char *str_tolowercase(char *s)
 {
-  assert(s != NULL);
+    assert(s != NULL);
 
     size_t slen = strlen(s);
     for (int i = 0; i < slen; i++) {
