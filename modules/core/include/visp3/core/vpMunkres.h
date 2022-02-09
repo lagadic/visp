@@ -45,10 +45,9 @@
 
 // System
 #include <optional>
-#include <vector>
 
 // Internal
-#include <visp3/core/vpMath.h>
+#include "vpMath.h"
 
 /*!
   \class vpMunkres
