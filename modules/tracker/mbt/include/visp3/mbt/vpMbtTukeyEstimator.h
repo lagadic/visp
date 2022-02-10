@@ -103,7 +103,13 @@ private:
 #if HAVE_TRANSFORM
 namespace
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
 auto AbsDiff = [](const auto &a, const auto &b) { return abs(a - b); };
+#else
+template <typename T> struct AbsDiff : public std::binary_function<T, T, T> {
+  T operator()(const T a, const T b) const { return std::fabs(a - b); }
+};
+#endif
 } // namespace
 #endif
 
@@ -149,7 +155,12 @@ void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std
   m_normres.resize(residues.size());
 
 #if HAVE_TRANSFORM
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
   std::transform(residues.begin(), residues.end(), m_normres.begin(), std::bind(AbsDiff, std::placeholders::_1, med));
+#else
+  std::transform(residues.begin(), residues.end(), m_normres.begin(),
+                 std::bind(AbsDiff<T>(), std::placeholders::_1, med));
+#endif
 #else
   for (size_t i = 0; i < m_residues.size(); i++) {
     m_normres[i] = (std::fabs(residues[i] - med));
@@ -238,7 +249,12 @@ inline void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector
   m_normres.resize(residues.size());
 
 #if HAVE_TRANSFORM
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
   std::transform(residues.begin(), residues.end(), m_normres.begin(), std::bind(AbsDiff, std::placeholders::_1, med));
+#else
+  std::transform(residues.begin(), residues.end(), m_normres.begin(),
+                 std::bind(AbsDiff<double>(), std::placeholders::_1, med));
+#endif
 #else
   for (size_t i = 0; i < m_residues.size(); i++) {
     m_normres[i] = (std::fabs(residues[i] - med));

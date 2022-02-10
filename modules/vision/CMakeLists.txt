@@ -164,8 +164,8 @@ vp_add_tests(DEPENDS_ON visp_mbt visp_gui visp_io)
 
 if(USE_OGRE)
   # Add specific build flag to turn off warnings coming from libogre and libois 3rd party
-  vp_set_source_file_compile_flag(test/keypoint-with-dataset/testKeyPoint-2.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy)
-  vp_set_source_file_compile_flag(test/keypoint-with-dataset/testKeyPoint-4.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy)
+  vp_set_source_file_compile_flag(test/keypoint-with-dataset/testKeyPoint-2.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
+  vp_set_source_file_compile_flag(test/keypoint-with-dataset/testKeyPoint-4.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
 endif()
 
 vp_set_source_file_compile_flag(src/pose-estimation/vpPoseFeatures.cpp -Wno-strict-overflow)
