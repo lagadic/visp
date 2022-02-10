@@ -62,8 +62,7 @@ jobs:
 
     - name: Clone ustk
       run: |
-        #git clone --depth 1 https://github.com/lagadic/ustk ${HOME}/ustk
-        git clone --depth 1 --branch fix_macos https://github.com/fspindle/ustk ${HOME}/ustk
+        git clone --depth 1 https://github.com/lagadic/ustk ${HOME}/ustk
 
     - name: Clone ustk-sample
       run: |
