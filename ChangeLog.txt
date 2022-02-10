@@ -7,8 +7,14 @@
 
 ViSP 3.4.1 (under development)
   - Contributors:
-    . Fabien Spindler, Souriya Trinh, Joudy Nader, Olivier Kermorgant, Thuc Long Ha
+    . Fabien Spindler, Joudy Nader, Souriya Trinh, Julien Dufour, Ha Thuc Long,
+      Christian Clauss, Olivier Kermorgant
   - New features and improvements
+    . Bump default cxx standard to cxx17
+    . Update 3rdparty/apriltag detector
+    . Update 3rdparty/simdlib used for optimization
+    . Update 3rdparty/stb_image used for image io
+    . Update 3rdparty/catch for testing
     . Camera calibration model can now consider px/py aspect ratio and estimate
       a model where px = py
     . Introduce Bayer demosaicing also called debayering in vpImageConvert
@@ -18,6 +24,7 @@ ViSP 3.4.1 (under development)
       images
     . Improve camera intrinsic and extrinsic calibration tools
     . Compatibility with Visual Studio 17 2022
+    . Capability to display TrueType font in display
   - Tutorials
     . New tutorial for FrankaSim that allows physical simulation of the Panda robot from
       Franka Emika, with a model that has beenaccurately identified from a real Franka
@@ -42,6 +49,12 @@ ViSP 3.4.1 (under development)
     . [#973] Error running some examples: Wrong JPEG library version: library is 90,
              caller expects 80
     . [#977] Unable to build with pcl 1.12.1 on macOS
+    . [#986] AprilTag Memory Leak ViSP 3.4.0
+    . [#993] simdlib memory leaks bug
+    . [#1013] ViSP installation instructions with libdc1394 and OpenCV 3rdparties
+              in Ubuntu 20.04 are wrong
+    . [#1017] visp-config and visp.pc files error with macOS frameworks and tbd files
+    . [#1023] tutorial-dnn-object-detection-live issue when running it on SSD-Mobilenet.onnx
 ----------------------------------------------
 ViSP 3.4.0 (released February 26, 2021)
   - Contributors:

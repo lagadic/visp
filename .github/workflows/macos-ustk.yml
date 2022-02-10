@@ -56,10 +56,6 @@ jobs:
         echo "USTK_DATASET_PATH=$HOME/ustk-dataset" >> $GITHUB_ENV
         echo ${USTK_DATASET_PATH}
 
-    - name: Clone visp_sample
-      run: |
-        git clone --depth 1 https://github.com/lagadic/visp_sample ${HOME}/visp_sample
-
     - name: Clone ustk
       run: |
         git clone --depth 1 https://github.com/lagadic/ustk ${HOME}/ustk
@@ -86,14 +82,6 @@ jobs:
     - name: Run unit tests
       working-directory: build
       run: ctest -j$(sysctl -n hw.logicalcpu) --output-on-failure
-
-    - name: ViSP as 3rdparty with cmake
-      run: |
-        cd ${HOME}/visp_sample
-        mkdir visp_sample-build
-        cd visp_sample-build
-        cmake ../ -DVISP_DIR=/tmp/usr/local/lib/cmake/visp
-        make -j$(sysctl -n hw.logicalcpu)
 
     - name: ViSP + UsTK as 3rdparty with cmake
       run: |

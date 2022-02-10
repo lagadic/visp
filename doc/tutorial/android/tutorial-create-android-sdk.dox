@@ -14,6 +14,9 @@ This tutorial assumes you have the following software installed and configured: 
 
 - Install <a href="http://www.oracle.com/technetwork/java/javase/downloads/index.html">Java Development Kit (JDK)</a>
   following \ref java_install_jdk tutorial.
+  \note At the time this tutorial was written `Java SE Development Kit 17` was incompatible with `gradle`.
+  If you encounter build issues running `python3 build_sdk.py ...` as described in \ref android_sdk_build section,
+  you may install `Java SE Development Kit 16`.
 - To install <a href="https://developer.android.com/studio/">Android SDK and NDK</a> follow the link to
   <a href="https://developer.android.com/studio/">Android Studio</a>, download and install Android Studio.
   Once installed start Android Studio using default settings. This allows to download Android SDK that will be installed
@@ -29,16 +32,17 @@ This tutorial assumes you have the following software installed and configured: 
 $ sudo apt-get install python3 ant cmake-curses-gui ninja-build ccache
 \endcode
 
-- At the time this tutorial was written, on Ubuntu 20.04 LTS we got Android Studio 4.1.2, NDK 22.0 (see \ref android_sdk_ndk_version) and the following other tools versions:
+- At the time this tutorial was written, on Ubuntu 20.04 LTS we got Android Studio BumbleBee 2021.1.1 Patch 1,
+  NDK 23.1 (see \ref android_sdk_ndk_version) and the following other tools versions:
 \code
 $ java --version
-java 15.0.2 2021-01-19
+java 16.0.2 2021-07-20
 $ python3 --version
-Python 3.8.5
+Python 3.8.10
 $ ant -version
 Apache Ant(TM) version 1.10.7 compiled on October 24 2019
 $ cmake -version
-cmake version 3.16.3
+cmake version 3.23.0-rc1
 $ ninja --version
 1.10.0
 $ ccache --version
@@ -175,7 +179,7 @@ In `$VISP_WS/visp/platforms/android` folder we provide different NDK config file
 \code
 $ ls ndk-*.config.py
 ndk-10.config.py  ndk-17.config.py               ndk-18.config.py  ndk-22.config.py
-ndk-16.config.py  ndk-18-api-level-21.config.py  ndk-20.config.py
+ndk-16.config.py  ndk-18-api-level-21.config.py  ndk-20.config.py  ndk-23.config.py
 \endcode
 The file that should be used after `--config` option should match your NDK version (see \ref android_sdk_ndk_version).
 
@@ -228,7 +232,7 @@ For example, on Ubuntu 20.04 the command might look like
 \code
 $ mkdir $VISP_WS/visp-build-android-sdk
 $ cd $VISP_WS/visp/platforms/android
-$ python3 build_sdk.py --config ndk-22.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk/22.0.7026061 $VISP_WS/visp-build-android-sdk $VISP_WS/visp
+$ python3 build_sdk.py --config ndk-23.config.py --sdk_path $HOME/Android/Sdk --ndk_path $HOME/Android/Sdk/ndk/23.1.7779620 $VISP_WS/visp-build-android-sdk $VISP_WS/visp
 \endcode
 
 \subsection android_sdk_build_osx On Mac OSX
@@ -237,7 +241,7 @@ For example, on OSX the command might rather look like
 \code
 $ mkdir $VISP_WS/visp-build-android-sdk
 $ cd $VISP_WS/visp/platforms/android
-$ python3 build_sdk.py --config ndk-22.config.py --sdk_path $HOME/Library/Android/sdk --ndk_path $HOME/Library/Android/sdk/ndk-bundle $VISP_WS/visp-build-android-sdk $VISP_WS/visp
+$ python3 build_sdk.py --config ndk-23.config.py --sdk_path $HOME/Library/Android/sdk --ndk_path $HOME/Library/Android/sdk/ndk-bundle $VISP_WS/visp-build-android-sdk $VISP_WS/visp
 \endcode
 
 \subsection android_sdk_build_win On Windows
@@ -246,7 +250,7 @@ For example, on Windows the command might rather look like
 \code
 C:\> mkdir %VISP_WS%\visp-build-android-sdk
 C:\> cd %VISP_WS%\visp\platforms\android
-C:\> python3 build_sdk.py --config ndk-22.config.py --sdk_path %USERPROFILE%\AppData\Local\Android\Sdk --ndk_path %USERPROFILE%\AppData\Local\Android\Sdk\ndk\20.0.5594570 %VISP_WS%\visp-build-android-sdk %VISP_WS%\visp
+C:\> python3 build_sdk.py --config ndk-23.config.py --sdk_path %USERPROFILE%\AppData\Local\Android\Sdk --ndk_path %USERPROFILE%\AppData\Local\Android\Sdk\ndk\23.1.7779620 %VISP_WS%\visp-build-android-sdk %VISP_WS%\visp
 \endcode
 
 \subsection android_sdk_build_issue Known issue

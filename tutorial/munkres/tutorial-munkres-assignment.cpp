@@ -17,7 +17,7 @@
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && defined(VISP_HAVE_DISPLAY)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && defined(VISP_HAVE_DISPLAY) && (defined(_MSC_VER) && _MSC_VER > 1900)
   // Create base img
   vpImage<unsigned char> I(480, 640, 255);
 
@@ -59,7 +59,7 @@ int main()
     vpDisplay::displayText(I, 15 * ++disp_lane, 15, "Left click to add a point", vpColor::black);
     vpDisplay::displayText(I, 15 * ++disp_lane, 15, "Middle click to continue (run Munkres)", vpColor::black);
     vpDisplay::displayText(I, 15 * ++disp_lane, 15, "Right click to quit", vpColor::black);
-    
+
     std::for_each(begin(rand_ips), end(rand_ips), std::bind(display_point, std::placeholders::_1, vpColor::red));
     vpDisplay::flush(I);
 

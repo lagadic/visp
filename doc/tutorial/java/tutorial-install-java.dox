@@ -356,9 +356,14 @@ Once done, press `"Apply and Close"` button.
 Here we give here some tips to uninstall JDK to be able to downgrade or upgrade JDK version.
 
 - <b>On Ubuntu or Debian platform</b>
-  On Ubuntu or Debian platform there is nothing more to do than removing the folder containing JDK.
+  On Ubuntu or Debian platform remove first the folder containing JDK.
 \verbatim
 $ rm -rf $VISP_VS/jdk-11.0.6
+\endverbatim
+  Then in `~/.bashrc` remove any reference to `JAVA_HOME` env var deleting the lines similar to:
+\verbatim
+export JAVA_HOME=$VISP_VS/jdk-11.0.6
+export PATH=${JAVA_HOME}/bin:${PATH}
 \endverbatim
 
 - <b>On macOS platform</b>
