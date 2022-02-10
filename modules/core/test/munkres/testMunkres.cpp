@@ -40,7 +40,7 @@
 
 #include <visp3/core/vpMunkres.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (defined(_MSC_VER) && _MSC_VER > 1900)
 
 // System
 #include <iostream>
