@@ -104,7 +104,7 @@ private:
 namespace
 {
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
-auto AbsDiff = [](const auto &a, const auto &b) { return abs(a - b); };
+auto AbsDiff = [](const auto &a, const auto &b) { return std::fabs(a - b); };
 #else
 template <typename T> struct AbsDiff : public std::binary_function<T, T, T> {
   T operator()(const T a, const T b) const { return std::fabs(a - b); }
