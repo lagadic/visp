@@ -17,8 +17,8 @@
 
 int main()
 {
-#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17 && !defined(_MSC_VER) ||                                                 \
-    VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17 && _MSC_VER >= 1911
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && \
+    (!defined(_MSC_VER) || ( (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911) ) )
 
 #if defined(VISP_HAVE_DISPLAY)
   // Create base img
