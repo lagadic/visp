@@ -17,7 +17,10 @@
 
 int main()
 {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && defined(VISP_HAVE_DISPLAY) && (defined(_MSC_VER) && _MSC_VER > 1900)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && \
+    (!defined(_MSC_VER) || ( (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911) ) )
+
+#if defined(VISP_HAVE_DISPLAY)
   // Create base img
   vpImage<unsigned char> I(480, 640, 255);
 
@@ -110,6 +113,7 @@ int main()
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
+#endif // defined(VISP_HAVE_DISPLAY)
 #endif
   return EXIT_SUCCESS;
 }
