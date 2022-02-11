@@ -39,7 +39,8 @@
 
 #include <visp3/core/vpMunkres.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (defined(_MSC_VER) && _MSC_VER > 1900)
+#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17 && !defined(_MSC_VER) ||                                                 \
+    VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17 && _MSC_VER >= 1911
 
 /*!
  * Find a starred zero in a specific mask matrix row.
