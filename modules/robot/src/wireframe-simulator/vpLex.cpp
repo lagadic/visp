@@ -39,6 +39,9 @@
  *
  *****************************************************************************/
 
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
+
 #include "vpKeyword.h"
 #include "vpMy.h"
 #include "vpToken.h"
@@ -158,7 +161,7 @@ void open_lex(void)
       (scantbl = (Byte *)malloc(CHAR_NBR * sizeof(Byte))) == NULL) {
     static char proc_name[] = "open_lex";
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in open_lex");
   }
   chtbl += 2; /* 2 sentinelles non affichables	*/
   scantbl += 2;
@@ -676,13 +679,13 @@ void open_source(FILE *fd, const char *str)
   if ((source = (char *)malloc((strlen(str) + 1) * sizeof(char))) == NULL) {
     static char proc_name[] = "open_source";
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in open_source");
   }
   strcpy(source, str);
   if ((botbuf = (char *)malloc(TEXTSIZE * sizeof(char))) == NULL) {
     static char proc_name[] = "open_source";
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in open_source");
   }
   fds = fd;
   buf = botbuf + 1 + LINESIZE;
@@ -797,7 +800,7 @@ void lexerr(const char *path, ...)
   fprintf(stderr, "\n");
   va_end(ap);
 
-  exit(1);
+  throw vpException(vpException::fatalError, "Error in lexerr");
 }
 
 /*
@@ -808,7 +811,7 @@ void poperr(void)
   if (--size_stack < 0) {
     static char proc_name[] = "poperr";
     fprintf(stderr, "%s: error stack underflow\n", proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in poperr");
   }
 }
 
@@ -820,7 +823,7 @@ void popuperr(const char *str)
   if (size_stack <= 0) {
     static const char proc_name[] = "popuerr";
     fprintf(stderr, "%s: error stack underflow\n", proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in popuperr");
   }
   err_stack[size_stack - 1] = str;
 }
@@ -833,7 +836,7 @@ void pusherr(const char *str)
   if (size_stack >= ERR_STACK_MAX) {
     static const char proc_name[] = "pusherr";
     fprintf(stderr, "%s: error stack overflow\n", proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in pusherr");
   }
   err_stack[size_stack++] = str;
 }

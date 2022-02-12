@@ -43,6 +43,7 @@
  *****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "vpClipping.h"
@@ -115,13 +116,13 @@ void open_clipping(void)
       (poly1 = (Index *)malloc(VERTEX_NBR * sizeof(Index))) == NULL) {
     static char proc_name[] = "open_clipping";
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in open_clipping");
   }
 #else
       || (poly_tmp = (Index *)malloc(VERTEX_NBR * sizeof(Index))) == NULL) {
     static char proc_name[] = "open_clipping";
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in open_clipping");
   }
 #endif /* clip_opt	*/
 }

@@ -424,7 +424,7 @@ void vpRobotAfma4::powerOn(void)
       std::cout << "You have to call Adept for maintenance..." << std::endl;
       // Free allocated resources
       ShutDownConnection();
-      exit(0);
+      throw(vpException(vpException::fatalError, "Error in the emergency chain"));
     }
   }
 

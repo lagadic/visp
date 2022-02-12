@@ -693,8 +693,7 @@ void vpRobotAfma6::powerOn(void)
       std::cout << "You have to call Adept for maintenance..." << std::endl;
       // Free allocated resources
       ShutDownConnection();
-      exit(0);
-    }
+      throw vpRobotException(vpRobotException::constructionError, "Error on the emergency chain");    }
   }
 
   if (EStopStatus == ESTOP_ACTIVATED)

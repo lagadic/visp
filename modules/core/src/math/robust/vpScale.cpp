@@ -228,8 +228,7 @@ double vpScale::KernelDensity_EPANECHNIKOV(vpColVector &X)
     c = 4 * M_PI / 3;
     break;
   default:
-    std::cout << "ERROR in vpScale::Kernel_EPANECHNIKOV : wrong dimension" << std::endl;
-    exit(1);
+    throw(vpException(vpException::fatalError, "Error in vpScale::KernelDensityGradient_EPANECHNIKOV: wrong dimension"));
   }
 
   if (XtX < 1)
@@ -255,8 +254,7 @@ double vpScale::KernelDensityGradient_EPANECHNIKOV(double sumX, unsigned int n)
     c = 4 * M_PI / 3;
     break;
   default:
-    std::cout << "ERROR in vpScale::Kernel_EPANECHNIKOV : wrong dimension" << std::endl;
-    exit(1);
+    throw(vpException(vpException::fatalError, "Error in vpScale::KernelDensityGradient_EPANECHNIKOV: wrong dimension"));
   }
 
   // return sumX*(dimension+2)/(n*pow(bandwidth,

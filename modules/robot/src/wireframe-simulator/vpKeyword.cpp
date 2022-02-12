@@ -37,6 +37,9 @@
  *
  *****************************************************************************/
 
+#include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
+
 #include "vpKeyword.h"
 #include "vpMy.h"
 #include "vpToken.h"
@@ -97,7 +100,7 @@ static void open_hash(void)
   if ((hash_tbl = (Bucket **)malloc(sizeof(Bucket *) * PRIME)) == NULL) {
     static char proc_name[] = "open_hash";
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in open_hash");
   }
   head = hash_tbl;
   bend = head + PRIME;
@@ -169,7 +172,7 @@ static void insert_keyword(const char *str, Index token)
   if ((bp = (Bucket *)malloc(sizeof(Bucket) + length + 1)) == NULL) {
     static const char proc_name[] = "insert_keyword";
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in insert_keyword");
   }
   bp->length = length;
   bp->token = token;
