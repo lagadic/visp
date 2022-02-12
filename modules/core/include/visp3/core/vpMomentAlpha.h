@@ -58,7 +58,7 @@
   interval by the formula \f$ \alpha = \frac{1}{2}
   \mathrm{atan2}(2\mu_{11}, \mu_{20}-\mu_{02}) \f$.
 
-  To obtain a \f$ [-\pi ; \pi] \f$ precision for non symetric object, you
+  To obtain a \f$ [-\pi ; \pi] \f$ precision for non symmetric object, you
   have to specify a reference information. This reference information is an
   alpha computed using the previous formula in \f$ [-\pi/2 ; \pi/2] \f$.
   Obtaining this precision comes from third-order centered moments and this
@@ -155,7 +155,7 @@ int main()
 
   vpMomentDatabase db;                           // Database
   vpMomentGravityCenter g;                       // Declaration of gravity center
-  vpMomentCentered mc;                           // mc containts centered moments
+  vpMomentCentered mc;                           // mc contains centered moments
   vpMomentAlpha alpha(mu3ref, alphaRef.get());   // Declare alpha as relative to a reference
 
   g.linkTo(db);                                  // Add gravity center to database

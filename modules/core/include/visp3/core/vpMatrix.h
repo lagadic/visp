@@ -383,7 +383,7 @@ vpMatrix M(R);
 
   //! Add x to all the element of the matrix : Aij = Aij + x
   vpMatrix &operator+=(double x);
-  //! Substract x to all the element of the matrix : Aij = Aij - x
+  //! subtract x to all the element of the matrix : Aij = Aij - x
   vpMatrix &operator-=(double x);
   //! Multiply  all the element of the matrix by x : Aij = Aij * x
   vpMatrix &operator*=(double x);

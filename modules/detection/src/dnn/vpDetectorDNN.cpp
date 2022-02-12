@@ -322,7 +322,7 @@ void vpDetectorDNN::postProcess() {
     }
   }
   else
-    CV_Error(cv::Error::StsNotImplemented, "Unknown output layer type: " + outLayerType);
+    CV_Error(cv::Error::StsNotImplemented, "Unknownn output layer type: " + outLayerType);
 
   cv::dnn::NMSBoxes(m_boxes, m_confidences, m_confidenceThreshold, m_nmsThreshold, m_indices);
   m_boxesNMS.resize(m_indices.size());

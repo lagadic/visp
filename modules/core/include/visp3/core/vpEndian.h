@@ -66,7 +66,7 @@ typedef unsigned short uint16_t;
 #define VISP_PDP_ENDIAN
 //#error PDP endian is not supported. //Uncomment if needed/happens
 #else
-#error Unknown machine endianness detected.
+#error Unknownn machine endianness detected.
 #endif
 #elif defined(_BIG_ENDIAN) && !defined(_LITTLE_ENDIAN) || defined(__BIG_ENDIAN__) && !defined(__LITTLE_ENDIAN__)
 #define VISP_BIG_ENDIAN

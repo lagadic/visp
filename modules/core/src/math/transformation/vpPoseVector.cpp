@@ -361,7 +361,7 @@ void vpPoseVector::save(std::ofstream &f) const
   if (!f.fail()) {
     f << *this;
   } else {
-    throw(vpException(vpException::ioError, "Cannot save the pose vector: ofstream not openned"));
+    throw(vpException(vpException::ioError, "Cannot save the pose vector: ofstream not opened"));
   }
 }
 
@@ -382,7 +382,7 @@ void vpPoseVector::load(std::ifstream &f)
       f >> (*this)[i];
     }
   } else {
-    throw(vpException(vpException::ioError, "Cannot read pose vector: ifstream not openned"));
+    throw(vpException(vpException::ioError, "Cannot read pose vector: ifstream not opened"));
   }
 }
 

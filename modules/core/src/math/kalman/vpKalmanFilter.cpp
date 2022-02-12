@@ -199,7 +199,7 @@ void vpKalmanFilter::prediction()
   and where the updated covariance of the state is given by
   \f[
   {\bf P}_{k \mid k} = \left({\bf I} - {\bf W}_k {\bf H} \right)  {\bf P}_{k
-  \mid k-1} \f] or in a symetric form \f[
+  \mid k-1} \f] or in a symmetric form \f[
   {\bf P}_{k \mid k} = {\bf P}_{k \mid k-1} - {\bf W}_k {\bf S}_k {\bf W}^T_k
   \f]
   with

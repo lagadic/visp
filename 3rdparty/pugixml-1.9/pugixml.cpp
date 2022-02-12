@@ -6830,7 +6830,7 @@ namespace pugi
 
 		case status_no_document_element: return "No document element found";
 
-		default: return "Unknown error";
+		default: return "Unknownn error";
 		}
 	}
 
@@ -9783,7 +9783,7 @@ PUGI__NS_BEGIN
 				break;
 
 			default:
-				assert(false && "Unknown axis"); // unreachable
+				assert(false && "Unknownn axis"); // unreachable
 			}
 
 			return false;
@@ -10809,7 +10809,7 @@ PUGI__NS_BEGIN
 					return step_do(c, stack, eval, axis_to_type<axis_self>());
 
 				default:
-					assert(false && "Unknown axis"); // unreachable
+					assert(false && "Unknownn axis"); // unreachable
 					return xpath_node_set_raw();
 				}
 			}
@@ -11296,14 +11296,14 @@ PUGI__NS_BEGIN
 				xpath_lexer_string name = _lexer.contents();
 
 				if (!_variables)
-					return error("Unknown variable: variable set is not provided");
+					return error("Unknownn variable: variable set is not provided");
 
 				xpath_variable* var = 0;
 				if (!get_variable_scratch(_scratch, _variables, name.begin, name.end, &var))
 					return error_oom();
 
 				if (!var)
-					return error("Unknown variable: variable set does not contain the given name");
+					return error("Unknownn variable: variable set does not contain the given name");
 
 				_lexer.next();
 
@@ -11478,7 +11478,7 @@ PUGI__NS_BEGIN
 					axis = parse_axis_name(nt_name, axis_specified);
 
 					if (!axis_specified)
-						return error("Unknown axis");
+						return error("Unknownn axis");
 
 					// read actual node test
 					_lexer.next();

@@ -668,7 +668,7 @@ class JavaWrapperGenerator(object):
                 if a.defval:
                     a.ctype = ''
                     continue
-                msg = "// Unknown type '%s' (%s), skipping the function\n\n" % (a.ctype, a.out or "I")
+                msg = "// Unknownn type '%s' (%s), skipping the function\n\n" % (a.ctype, a.out or "I")
                 self.skipped_func_list.append(c_decl + "\n" + msg)
                 j_code.write(" " * 4 + msg)
                 logging.warning("SKIP:" + c_decl.strip() + "\t due to ARG type" + a.ctype + "/" + (a.out or "I"))

@@ -76,7 +76,7 @@ int main()
 
   vpMomentDatabase db;
   vpMomentGravityCenter G; // declaration of gravity center
-  vpMomentCentered mc; // mc containts centered moments
+  vpMomentCentered mc; // mc contains centered moments
 
   G.linkTo(db); //add gravity center to database
   mc.linkTo(db); //centered moments depend on gravity, add them to the
@@ -98,7 +98,7 @@ int main()
 void vpMoment::linkTo(vpMomentDatabase &data_base)
 {
   if (strlen(name()) >= 255) {
-    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the moment name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to initialize the moment name"));
   }
 
   std::strcpy(_name, name());

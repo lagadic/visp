@@ -342,7 +342,7 @@ vpMatrix vpFeatureSegment::interaction(unsigned int select)
 
   For the angular component \f$\alpha\f$, we define the error as
   \f$\alpha \ominus \alpha^*\f$, where \f$\ominus\f$ is modulo \f$2\pi\f$
-  substraction.
+  subtraction.
 
   \param s_star : Desired 2D segment feature.
 

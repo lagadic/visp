@@ -266,7 +266,7 @@ VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, const vpImagePoint &
 /*!
   \relates vpImagePoint
 
-  Returns a vpImagePoint with an offset substracted to the two coordinates.
+  Returns a vpImagePoint with an offset subtracted to the two coordinates.
 
   \code
 #include <iostream>
@@ -290,7 +290,7 @@ VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, int offset)
 /*!
   \relates vpImagePoint
 
-  Returns a vpImagePoint with an offset substracted to the two coordinates.
+  Returns a vpImagePoint with an offset subtracted to the two coordinates.
 
   \code
 #include <iostream>
@@ -314,7 +314,7 @@ VISP_EXPORT vpImagePoint operator-(const vpImagePoint &ip1, unsigned int offset)
 /*!
   \relates vpImagePoint
 
-  Returns a vpImagePoint with an offset substracted to the two coordinates.
+  Returns a vpImagePoint with an offset subtracted to the two coordinates.
 
   \code
 #include <iostream>

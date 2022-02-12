@@ -221,7 +221,7 @@ void vpSerial::close()
 
 /*!
    Open the serial port.
-   If the serial port name is empty, or if the serial port is already openned an exception
+   If the serial port name is empty, or if the serial port is already opened an exception
    vpException::fatalError is thrown.
 
    The following example shows how to open the serial port `/dev/ttyUSB0` without using the constructor:

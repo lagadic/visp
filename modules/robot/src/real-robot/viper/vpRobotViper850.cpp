@@ -1233,7 +1233,7 @@ void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, const
       std::cout << " : Cartesian position leads to a joint position out of "
                    "range.\n";
   } else if (TryStt < 0)
-    std::cout << " : Unknown error (see Fabien).\n";
+    std::cout << " : Unknownn error (see Fabien).\n";
   else if (error == -1)
     std::cout << "Position out of range.\n";
 

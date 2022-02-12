@@ -143,7 +143,7 @@ public:
   // translation vectors additions  c = a + b (a, b  unchanged)
   vpTranslationVector operator+(const vpTranslationVector &tv) const;
   vpTranslationVector operator+(const vpColVector &v) const;
-  // translation vectors substraction  c = a - b (a, b  unchanged)
+  // translation vectors subtraction  c = a - b (a, b  unchanged)
   vpTranslationVector operator-(const vpTranslationVector &tv) const;
   // negate t = -a  (t is unchanged)
   vpTranslationVector operator-() const;

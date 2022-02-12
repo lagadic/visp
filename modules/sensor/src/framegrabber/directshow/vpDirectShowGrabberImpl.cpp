@@ -56,7 +56,7 @@ void vpDirectShowGrabberImpl::HRtoStr(std::string str)
   DWORD res = AMGetErrorText(hr, szErr, MAX_ERROR_TEXT_LEN);
 
   if (res == 0)
-    str = "Unknown Error: 0x%2x";
+    str = "Unknownn Error: 0x%2x";
 
   char msg[MAX_ERROR_TEXT_LEN];
   sprintf(msg, "%s", szErr);
@@ -464,7 +464,7 @@ bool vpDirectShowGrabberImpl::checkSourceType(CComPtr<IPin> &pCapSourcePin)
     // see fourcc.org to know which format is bottom-up oriented and thus
     // needs invertedSource sets to true
     else {
-      std::cout << "Unknown FourCC compression type, assuming top-down "
+      std::cout << "Unknownn FourCC compression type, assuming top-down "
                    "orientation. Image may be inverted."
                 << std::endl;
       sgCB.invertedSource = false; // consider that the image is topdown oriented by default

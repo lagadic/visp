@@ -391,13 +391,13 @@ vpRowVector vpRowVector::operator-() const
 }
 
 /*!
-   Operator that allows to substract to row vectors that have the same size.
+   Operator that allows to subtract to row vectors that have the same size.
    \exception vpException::dimensionError If the vectors size differ.
  */
 vpRowVector vpRowVector::operator-(const vpRowVector &m) const
 {
   if (getCols() != m.getCols()) {
-    throw(vpException(vpException::dimensionError, "Cannot substract (1x%d) row vector to (1x%d) row vector", getCols(),
+    throw(vpException(vpException::dimensionError, "Cannot subtract (1x%d) row vector to (1x%d) row vector", getCols(),
                       m.getCols()));
   }
 
@@ -444,14 +444,14 @@ vpRowVector &vpRowVector::operator+=(vpRowVector v)
 }
 
 /*!
-   Operator that allows to substract two row vectors that have the same size.
+   Operator that allows to subtract two row vectors that have the same size.
    \exception vpException::dimensionError If the size of the two vectors
    differ.
  */
 vpRowVector &vpRowVector::operator-=(vpRowVector v)
 {
   if (getCols() != v.getCols()) {
-    throw(vpException(vpException::dimensionError, "Cannot substract (1x%d) row vector to (1x%d) row vector", getCols(),
+    throw(vpException(vpException::dimensionError, "Cannot subtract (1x%d) row vector to (1x%d) row vector", getCols(),
                       v.getCols()));
   }
 
