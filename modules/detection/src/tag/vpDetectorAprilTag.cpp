@@ -121,7 +121,7 @@ public:
       break;
 
     default:
-      throw vpException(vpException::fatalError, "Unknow Tag family!");
+      throw vpException(vpException::fatalError, "Unknown Tag family!");
     }
 
     if (m_tagFamily != TAG_36ARTOOLKIT && m_tf) {
@@ -190,7 +190,7 @@ public:
       break;
 
     default:
-      throw vpException(vpException::fatalError, "Unknow Tag family!");
+      throw vpException(vpException::fatalError, "Unknown Tag family!");
     }
 
     if (m_tagFamily != TAG_36ARTOOLKIT && m_tf) {

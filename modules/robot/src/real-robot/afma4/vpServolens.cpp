@@ -99,7 +99,7 @@ vpServolens::~vpServolens() { this->close(); }
   \param port : Serial device like /dev/ttyS0 or /dev/ttya.
 
   \exception vpRobotException::communicationError : If cannot open
-  Servolens serial port or intialize the serial link.
+  Servolens serial port or initialize the serial link.
 
   \sa close()
 */

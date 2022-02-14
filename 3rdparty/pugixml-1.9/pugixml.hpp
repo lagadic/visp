@@ -1072,7 +1072,7 @@ namespace pugi
 	// XPath query return type
 	enum xpath_value_type
 	{
-		xpath_type_none,	  // Unknown type (query failed to compile)
+		xpath_type_none,	  // Unknownn type (query failed to compile)
 		xpath_type_node_set,  // Node set (xpath_node_set)
 		xpath_type_number,	  // Number
 		xpath_type_string,	  // String

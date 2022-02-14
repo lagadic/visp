@@ -66,7 +66,7 @@ namespace Simd
             bool _entered, _paused;
 
         public:
-            PerformanceMeasurer(const String& name = "Unknown", int64_t flop = 0);
+            PerformanceMeasurer(const String& name = "Unknownn", int64_t flop = 0);
 
             PerformanceMeasurer(const PerformanceMeasurer& pm);
 

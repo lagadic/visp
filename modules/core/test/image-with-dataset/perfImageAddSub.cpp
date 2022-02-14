@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Test image addition / substraction.
+ * Test image addition / subtraction.
  *
  *****************************************************************************/
 
@@ -38,7 +38,7 @@
 /*!
   \example perfImageAddSub.cpp
 
-  \brief Test images addition / substraction performances.
+  \brief Test images addition / subtraction performances.
 */
 
 #if defined(VISP_HAVE_CATCH2)

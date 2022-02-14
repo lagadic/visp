@@ -175,11 +175,11 @@ vpQuaternionVector vpQuaternionVector::operator+(const vpQuaternionVector &q) co
   return vpQuaternionVector(x() + q.x(), y() + q.y(), z() + q.z(), w() + q.w());
 }
 /*!
-  Quaternion substraction.
+  Quaternion subtraction.
 
-  Substracts a quaternion from another. Substraction is component-wise.
+  subtracts a quaternion from another. subtraction is component-wise.
 
-  \param q : quaternion to substract.
+  \param q : quaternion to subtract.
 */
 vpQuaternionVector vpQuaternionVector::operator-(const vpQuaternionVector &q) const
 {

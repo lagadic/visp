@@ -136,8 +136,8 @@ bool vpRGBa::operator==(const vpRGBa &v)
 bool vpRGBa::operator!=(const vpRGBa &v) { return (R != v.R || G != v.G || B != v.B || A != v.A); }
 
 /*!
-  Substraction operator : "this" - v.
-  \param v : Color to substract to the current object "this".
+  subtraction operator : "this" - v.
+  \param v : Color to subtract to the current object "this".
   \return "this" - v
 */
 vpColVector vpRGBa::operator-(const vpRGBa &v) const
@@ -167,8 +167,8 @@ vpRGBa vpRGBa::operator+(const vpRGBa &v) const
 }
 
 /*!
-  Substraction operator : "this" - v.
-  \param v : Color to substract to the current object "this".
+  subtraction operator : "this" - v.
+  \param v : Color to subtract to the current object "this".
   \return "this" - v
 */
 vpColVector vpRGBa::operator-(const vpColVector &v) const

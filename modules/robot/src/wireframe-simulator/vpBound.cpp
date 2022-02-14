@@ -38,6 +38,7 @@
  *****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "vpArit.h"
@@ -134,14 +135,14 @@ void malloc_Bound(Bound *bp, Type type, int polygonal, Index fn, Index pn)
     bp->face.ptr = NULL;
   else if ((bp->face.ptr = (Face *)malloc(fn * sizeof(Face))) == NULL) {
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in malloc_Bound");
   }
 
   if ((bp->point.nbr = pn) == 0) /* points	*/
     bp->point.ptr = NULL;
   else if ((bp->point.ptr = (Point3f *)malloc(pn * sizeof(Point3f))) == NULL) {
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in malloc_Bound");
   }
 
 #ifdef face_normal
@@ -150,7 +151,7 @@ void malloc_Bound(Bound *bp, Type type, int polygonal, Index fn, Index pn)
     bp->normal.ptr = NULL;
   else if ((bp->normal.ptr = (Vector *)malloc(pn * sizeof(Vector))) == NULL) {
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in malloc_Bound");
   }
 #endif /* face_normal */
 
@@ -186,7 +187,7 @@ void malloc_huge_Bound(Bound *bp)
   if ((bp->face.ptr->vertex.ptr = (Index *)malloc(FACE_NBR * VERTEX_NBR * sizeof(Index))) == NULL) {
     static char proc_name[] = "malloc_Huge_Bound";
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in malloc_huge_Bound");
   }
 }
 
@@ -211,7 +212,7 @@ void malloc_Bound_scene(Bound_scene *bsp, const char *name, Index bn)
     bsp->bound.ptr = NULL;
   else if ((bsp->bound.ptr = (Bound *)malloc(bn * sizeof(Bound))) == NULL) {
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in malloc_Bound_scene");
   }
   strcpy(bsp->name, name);
   bsp->bound.nbr = 0;

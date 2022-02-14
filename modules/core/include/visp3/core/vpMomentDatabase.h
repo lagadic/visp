@@ -94,7 +94,7 @@ int main()
 
   vpMomentDatabase db;
   vpMomentGravityCenter g; // declaration of gravity center
-  vpMomentCentered mc; // mc containts centered moments
+  vpMomentCentered mc; // mc contains centered moments
 
   g.linkTo(db); //add gravity center to database
   mc.linkTo(db); //centered moments depend on gravity, add them to the

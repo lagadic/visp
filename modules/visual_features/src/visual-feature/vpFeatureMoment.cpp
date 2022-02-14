@@ -244,7 +244,7 @@ vpBasicFeature *vpFeatureMoment::duplicate() const
 void vpFeatureMoment::linkTo(vpFeatureMomentDatabase &featureMoments)
 {
   if (strlen(name()) >= 255) {
-    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the moment name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to initialize the moment name"));
   }
 
   std::strcpy(_name, name());

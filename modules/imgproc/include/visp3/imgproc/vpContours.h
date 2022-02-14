@@ -207,7 +207,7 @@ struct vpContour {
     m_contourType = other.m_contourType;
 
     if (m_parent == NULL) {
-      // We are a root or an unintialized contour so delete everything
+      // We are a root or an uninitialized contour so delete everything
       for (std::vector<vpContour *>::iterator it = m_children.begin(); it != m_children.end(); ++it) {
         (*it)->m_parent = NULL;
         if (*it != NULL) {

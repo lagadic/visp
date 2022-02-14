@@ -73,7 +73,7 @@
   It also defines common operations on a quaternion such as:
   - multiplication (scalar and quaternion)
   - addition
-  - substraction.
+  - subtraction.
 
   You can set values accessing each element:
   \code

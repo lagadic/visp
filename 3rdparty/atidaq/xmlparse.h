@@ -224,7 +224,7 @@ typedef int (*XML_ExternalEntityRefHandler)(XML_Parser parser,
 					    const XML_Char *systemId,
 					    const XML_Char *publicId);
 
-/* This structure is filled in by the XML_UnknownEncodingHandler
+/* This structure is filled in by the XML_UnknownnEncodingHandler
 to provide information to the parser about encodings that are unknown
 to the parser.
 The map[b] member gives information about byte sequences
@@ -274,7 +274,7 @@ typedef struct {
 
 /* This is called for an encoding that is unknown to the parser.
 The encodingHandlerData argument is that which was passed as the
-second argument to XML_SetUnknownEncodingHandler.
+second argument to XML_SetUnknownnEncodingHandler.
 The name argument gives the name of the encoding as specified in
 the encoding declaration.
 If the callback can provide information about the encoding,
@@ -283,7 +283,7 @@ Otherwise it must return 0.
 If info does not describe a suitable encoding,
 then the parser will return an XML_UNKNOWN_ENCODING error. */
 
-typedef int (*XML_UnknownEncodingHandler)(void *encodingHandlerData,
+typedef int (*XML_UnknownnEncodingHandler)(void *encodingHandlerData,
 					  const XML_Char *name,
 					  XML_Encoding *info);
 
@@ -363,8 +363,8 @@ void XMLPARSEAPI
 XML_SetExternalEntityRefHandlerArg(XML_Parser, void *arg);
 
 void XMLPARSEAPI
-XML_SetUnknownEncodingHandler(XML_Parser parser,
-			      XML_UnknownEncodingHandler handler,
+XML_SetUnknownnEncodingHandler(XML_Parser parser,
+			      XML_UnknownnEncodingHandler handler,
 			      void *encodingHandlerData);
 
 /* This can be called within a handler for a start element, end element,

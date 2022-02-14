@@ -38,6 +38,7 @@
  *****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include <stdio.h>
@@ -73,7 +74,7 @@ void open_display(void)
       (rename_jlc = (int *)malloc(POINT_NBR * sizeof(int))) == NULL) {
     static char proc_name[] = "open_display";
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in open_display");
   }
 }
 

@@ -191,7 +191,6 @@ $ cmake-gui ../visp
 \image html img-contrib-module-6.png
 
 - press "Generate" button. 
-\image html img-contrib-module-7.png
 
 - This ends the CMake configuration stage. Start now Visual Studio and open the \c C:/ViSP/visp_contrib-build/VISP.sln solution file. As described in \ref tutorial-install-win10-msvc14 you have now to build ViSP from source.
 

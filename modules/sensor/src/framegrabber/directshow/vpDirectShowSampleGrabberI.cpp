@@ -67,8 +67,8 @@ STDMETHODIMP vpDirectShowSampleGrabberI::QueryInterface(REFIID riid, void **ppvO
 {
   if (NULL == ppvObject)
     return E_POINTER;
-  if (riid == __uuidof(IUnknown)) {
-    *ppvObject = static_cast<IUnknown *>(this);
+  if (riid == __uuidof(IUnknownn)) {
+    *ppvObject = static_cast<IUnknownn *>(this);
     return S_OK;
   }
   if (riid == __uuidof(ISampleGrabberCB)) {

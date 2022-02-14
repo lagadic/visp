@@ -147,16 +147,8 @@ vpKalmanFilter::vpKalmanFilter(unsigned int size_state_vector, unsigned int size
 void vpKalmanFilter::prediction()
 {
   if (Xest.getRows() != size_state * nsignal) {
-    std::cout << " in vpKalmanFilter::prediction()" << Xest.getRows() << " " << size_state * nsignal << std::endl;
-    std::cout << " Error : Filter non initialized " << std::endl;
-    exit(1);
+    throw(vpException(vpException::fatalError, "Error in vpKalmanFilter::prediction() %d != %d: Filter not initialized", Xest.getRows(), size_state * nsignal));
   }
-
-  //   if (!init_done) {
-  //     std::cout << " in vpKalmanFilter::prediction()" << Xest.getRows()<<"
-  //     " << size_state<<  std::endl ; std::cout << " Error : Filter non
-  //     initialized " << std::endl; exit(1) ; return;
-  //   }
 
   if (verbose_mode) {
     std::cout << "F = " << std::endl << F << std::endl;
@@ -199,7 +191,7 @@ void vpKalmanFilter::prediction()
   and where the updated covariance of the state is given by
   \f[
   {\bf P}_{k \mid k} = \left({\bf I} - {\bf W}_k {\bf H} \right)  {\bf P}_{k
-  \mid k-1} \f] or in a symetric form \f[
+  \mid k-1} \f] or in a symmetric form \f[
   {\bf P}_{k \mid k} = {\bf P}_{k \mid k-1} - {\bf W}_k {\bf S}_k {\bf W}^T_k
   \f]
   with
@@ -293,11 +285,11 @@ void vpKalmanFilter::filtering(const vpColVector &z)
 */
 void
 vpKalmanFilter::initFilterCteAcceleration(double dt,
-					  vpColVector &Z0,
-					  vpColVector &Z1,
-					  vpColVector &Z2,
-					  vpColVector  &sigma_noise,
-					  vpColVector &sigma_state )
+            vpColVector &Z0,
+            vpColVector &Z1,
+            vpColVector &Z2,
+            vpColVector  &sigma_noise,
+            vpColVector &sigma_state )
 {
   this->dt = dt ;
 
@@ -377,11 +369,11 @@ vpKalmanFilter::initFilterCteAcceleration(double dt,
 
 void
 vpKalmanFilter::initFilterSinger(double dt,
-				 double a,
-				 vpColVector &Z0,
-				 vpColVector &Z1,
-				 vpColVector  &sigma_noise,
-				 vpColVector &sigma_state )
+         double a,
+         vpColVector &Z0,
+         vpColVector &Z1,
+         vpColVector  &sigma_noise,
+         vpColVector &sigma_state )
 {
   this->dt = dt ;
 

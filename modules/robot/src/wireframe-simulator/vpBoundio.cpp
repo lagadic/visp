@@ -41,6 +41,7 @@
  *****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpException.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 #include "vpArit.h"
@@ -106,7 +107,7 @@ void fscanf_Face_list(Face_list *lp)
   else if ((lp->ptr = (Face *)malloc(lp->nbr * sizeof(Face))) == NULL) {
     static char proc_name[] = "fscanf_Face_list";
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in fscanf_Face_list");
   }
 
   /* Lecture des faces de la liste une a une.	*/
@@ -137,7 +138,7 @@ void fscanf_Face_list(Face_list *lp)
     else if ((vlp->ptr = (Index *)malloc(vlp->nbr * sizeof(Index))) == NULL) {
       static char proc_name[] = "fscanf_Face_list";
       perror(proc_name);
-      exit(1);
+      throw vpException(vpException::fatalError, "Error in fscanf_Face_list");
     }
 
     /* Lecture des sommets de la face un a un.	*/
@@ -174,7 +175,7 @@ void fscanf_Point3f_list(Point3f_list *lp)
   else if ((lp->ptr = (Point3f *)malloc(lp->nbr * sizeof(Point3f))) == NULL) {
     static const char proc_name[] = "fscanf_Point3f_list";
     perror(proc_name);
-    exit(1);
+    throw vpException(vpException::fatalError, "Error in fscanf_Point3f_list");
   }
 
   /* Lecture des points de la liste un a un.	*/

@@ -90,7 +90,7 @@ void vpSubColVector::init(vpColVector &v, const unsigned int &offset, const unsi
     dsize = rowNum;
   } else {
     throw(vpException(vpException::dimensionError, "Cannot create a sub-column vector that is not "
-                                                   "completely containt in the parrent column vector"));
+                                                   "completely contained in the parrent column vector"));
   }
 }
 

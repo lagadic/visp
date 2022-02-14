@@ -786,7 +786,7 @@ static matd_t *matd_op_recurse(const char *expr, int *pos, matd_t *acc, matd_t *
             }
 
             default: {
-                fprintf(stderr, "matd_op(): Unknown character: '%c'\n", expr[*pos]);
+                fprintf(stderr, "matd_op(): Unknownn character: '%c'\n", expr[*pos]);
                 assert(expr[*pos] != expr[*pos]);
             }
         }

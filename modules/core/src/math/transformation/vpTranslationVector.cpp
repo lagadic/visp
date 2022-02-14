@@ -266,12 +266,12 @@ vpTranslationVector vpTranslationVector::operator+(const vpColVector &v) const
 }
 
 /*!
-  Operator that allows to substract two translation vectors.
+  Operator that allows to subtract two translation vectors.
 
-  \param tv : Translation  vector to substract.
+  \param tv : Translation  vector to subtract.
 
-  \return The substraction of the current translation vector (*this) and the
-  one to substract.
+  \return The subtraction of the current translation vector (*this) and the
+  one to subtract.
   \code
   vpTranslationVector t1(1,2,3);
   vpTranslationVector t2(4,5,6);

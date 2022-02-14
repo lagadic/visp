@@ -289,9 +289,9 @@ const ENCODING XMLTOKAPI *XmlGetUtf16InternalEncoding(void);
 int XMLTOKAPI XmlUtf8Encode(int charNumber, char *buf);
 int XMLTOKAPI XmlUtf16Encode(int charNumber, unsigned short *buf);
 
-int XMLTOKAPI XmlSizeOfUnknownEncoding(void);
+int XMLTOKAPI XmlSizeOfUnknownnEncoding(void);
 ENCODING XMLTOKAPI *
-XmlInitUnknownEncoding(void *mem,
+XmlInitUnknownnEncoding(void *mem,
 		       int *table,
 		       int (*conv)(void *userData, const char *p),
 		       void *userData);
@@ -309,7 +309,7 @@ int XMLTOKAPI XmlInitEncodingNS(INIT_ENCODING *, const ENCODING **, const char *
 const ENCODING XMLTOKAPI *XmlGetUtf8InternalEncodingNS(void);
 const ENCODING XMLTOKAPI *XmlGetUtf16InternalEncodingNS(void);
 ENCODING XMLTOKAPI *
-XmlInitUnknownEncodingNS(void *mem,
+XmlInitUnknownnEncodingNS(void *mem,
 		         int *table,
 		         int (*conv)(void *userData, const char *p),
 		         void *userData);

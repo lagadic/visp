@@ -846,7 +846,7 @@ macro(_vp_create_module)
     # As result we should not set version properties for Android
     set_target_properties(${the_module} PROPERTIES
       VERSION ${VISP_VERSION}
-      SOVERSION ${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}
+      SOVERSION ${VISP_SOVERSION}
     )
   endif()
 

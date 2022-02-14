@@ -424,7 +424,7 @@ void vpRobotAfma4::powerOn(void)
       std::cout << "You have to call Adept for maintenance..." << std::endl;
       // Free allocated resources
       ShutDownConnection();
-      exit(0);
+      throw(vpRobotException(vpRobotException::lowLevelError, "Error in the emergency chain"));
     }
   }
 
@@ -433,7 +433,7 @@ void vpRobotAfma4::powerOn(void)
 
   if (EStopStatus == ESTOP_ACTIVATED) {
     std::cout << "Sorry, cannot power on the robot." << std::endl;
-    throw vpRobotException(vpRobotException::lowLevelError, "Cannot power on the robot.");
+    throw(vpRobotException(vpRobotException::lowLevelError, "Cannot power on the robot."));
   }
 
   if (HIPowerStatus == 0) {
@@ -446,7 +446,7 @@ void vpRobotAfma4::powerOn(void)
   CatchPrint();
   if (TryStt < 0) {
     vpERROR_TRACE("Cannot power on the robot");
-    throw vpRobotException(vpRobotException::lowLevelError, "Cannot power off the robot.");
+    throw(vpRobotException(vpRobotException::lowLevelError, "Cannot power off the robot."));
   }
 }
 
@@ -478,7 +478,7 @@ void vpRobotAfma4::powerOff(void)
   CatchPrint();
   if (TryStt < 0) {
     vpERROR_TRACE("Cannot power off the robot");
-    throw vpRobotException(vpRobotException::lowLevelError, "Cannot power off the robot.");
+    throw vpRobotException(vpRobotException::communicationError, "Cannot power off the robot.");
   }
 }
 
@@ -797,7 +797,7 @@ void vpRobotAfma4::setPosition(const vpRobot::vpControlFrameType frame, const vp
   if (TryStt == InvalidPosition || TryStt == -1023)
     std::cout << " : Position out of range.\n";
   else if (TryStt < 0)
-    std::cout << " : Unknown error (see Fabien).\n";
+    std::cout << " : Unknownn error (see Fabien).\n";
   else if (error == -1)
     std::cout << "Position out of range.\n";
 

@@ -1435,7 +1435,7 @@ void vpMatrix::sub2Matrices(const vpColVector &A, const vpColVector &B, vpColVec
     C.resize(A.rowNum);
 
   if ((A.colNum != B.getCols()) || (A.rowNum != B.getRows())) {
-    throw(vpException(vpException::dimensionError, "Cannot substract (%dx%d) matrix to (%dx%d) matrix", A.getRows(),
+    throw(vpException(vpException::dimensionError, "Cannot subtract (%dx%d) matrix to (%dx%d) matrix", A.getRows(),
                       A.getCols(), B.getRows(), B.getCols()));
   }
 
@@ -1468,7 +1468,7 @@ void vpMatrix::sub2Matrices(const vpMatrix &A, const vpMatrix &B, vpMatrix &C)
     C.resize(A.rowNum, A.colNum, false, false);
 
   if ((A.colNum != B.getCols()) || (A.rowNum != B.getRows())) {
-    throw(vpException(vpException::dimensionError, "Cannot substract (%dx%d) matrix to (%dx%d) matrix", A.getRows(),
+    throw(vpException(vpException::dimensionError, "Cannot subtract (%dx%d) matrix to (%dx%d) matrix", A.getRows(),
                       A.getCols(), B.getRows(), B.getCols()));
   }
 
@@ -1516,7 +1516,7 @@ vpMatrix &vpMatrix::operator+=(const vpMatrix &B)
 vpMatrix &vpMatrix::operator-=(const vpMatrix &B)
 {
   if ((colNum != B.getCols()) || (rowNum != B.getRows())) {
-    throw(vpException(vpException::dimensionError, "Cannot substract (%dx%d) matrix to (%dx%d) matrix", rowNum, colNum,
+    throw(vpException(vpException::dimensionError, "Cannot subtract (%dx%d) matrix to (%dx%d) matrix", rowNum, colNum,
                       B.getRows(), B.getCols()));
   }
 
@@ -1658,7 +1658,7 @@ vpMatrix &vpMatrix::operator+=(double x)
   return *this;
 }
 
-//! Substract x to all the element of the matrix : Aij = Aij - x
+//! subtract x to all the element of the matrix : Aij = Aij - x
 vpMatrix &vpMatrix::operator-=(double x)
 {
   for (unsigned int i = 0; i < rowNum; i++)
@@ -6047,13 +6047,13 @@ vpColVector vpMatrix::eigenValues() const
                       rowNum, colNum));
   }
 
-  // Check if the matrix is symetric: At - A = 0
+  // Check if the matrix is symmetric: At - A = 0
   vpMatrix At_A = (*this).t() - (*this);
   for (unsigned int i = 0; i < rowNum; i++) {
     for (unsigned int j = 0; j < rowNum; j++) {
       // if (At_A[i][j] != 0) {
       if (std::fabs(At_A[i][j]) > std::numeric_limits<double>::epsilon()) {
-        throw(vpException(vpException::fatalError, "Cannot compute eigen values on a non symetric matrix"));
+        throw(vpException(vpException::fatalError, "Cannot compute eigen values on a non symmetric matrix"));
       }
     }
   }
@@ -6168,13 +6168,13 @@ void vpMatrix::eigenValues(vpColVector &evalue, vpMatrix &evector) const
                       rowNum, colNum));
   }
 
-  // Check if the matrix is symetric: At - A = 0
+  // Check if the matrix is symmetric: At - A = 0
   vpMatrix At_A = (*this).t() - (*this);
   for (unsigned int i = 0; i < rowNum; i++) {
     for (unsigned int j = 0; j < rowNum; j++) {
       // if (At_A[i][j] != 0) {
       if (std::fabs(At_A[i][j]) > std::numeric_limits<double>::epsilon()) {
-        throw(vpException(vpException::fatalError, "Cannot compute eigen values on a non symetric matrix"));
+        throw(vpException(vpException::fatalError, "Cannot compute eigen values on a non symmetric matrix"));
       }
     }
   }

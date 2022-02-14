@@ -2989,7 +2989,7 @@ void vp1394TwoGrabber::resetBus()
       dc1394_camera_free(cameras[i]);
   }
 
-  printf("Reseting bus...\n");
+  printf("Resetting bus...\n");
   dc1394_reset_bus(camera);
 
   dc1394_camera_free(camera);

@@ -268,7 +268,7 @@ void vpWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesi
 
   const char *scene_dir_ = scene_dir.c_str();
   if (strlen(scene_dir_) >= FILENAME_MAX) {
-    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the camera name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to initialize the camera name"));
   }
 
   strcpy(name_cam, scene_dir_);
@@ -355,7 +355,7 @@ void vpWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesi
 
   scene_dir_ = scene_dir.c_str();
   if (strlen(scene_dir_) >= FILENAME_MAX) {
-    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the desired object name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to initialize the desired object name"));
   }
 
   switch (desiredObject) {
@@ -439,7 +439,7 @@ void vpWireFrameSimulator::initScene(const char *obj, const char *desired_object
 
   const char *scene_dir_ = scene_dir.c_str();
   if (strlen(scene_dir_) >= FILENAME_MAX) {
-    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the camera name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to initialize the camera name"));
   }
 
   strcpy(name_cam, scene_dir_);
@@ -447,7 +447,7 @@ void vpWireFrameSimulator::initScene(const char *obj, const char *desired_object
   set_scene(name_cam, &camera, cameraFactor);
 
   if (strlen(obj) >= FILENAME_MAX) {
-    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to initialize the name"));
   }
 
   strcpy(name, obj);
@@ -458,11 +458,11 @@ void vpWireFrameSimulator::initScene(const char *obj, const char *desired_object
   else if (model == WRL_MODEL)
     set_scene_wrl(name, &(this->scene), 1.0);
   else if (model == UNKNOWN_MODEL) {
-    vpERROR_TRACE("Unknown file extension for the 3D model");
+    vpERROR_TRACE("Unknownn file extension for the 3D model");
   }
 
   if (strlen(desired_object) >= FILENAME_MAX) {
-    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the camera name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to initialize the camera name"));
   }
 
   strcpy(name, desired_object);
@@ -472,7 +472,7 @@ void vpWireFrameSimulator::initScene(const char *obj, const char *desired_object
   else if (model == WRL_MODEL)
     set_scene_wrl(name, &(this->desiredScene), 1.0);
   else if (model == UNKNOWN_MODEL) {
-    vpERROR_TRACE("Unknown file extension for the 3D model");
+    vpERROR_TRACE("Unknownn file extension for the 3D model");
   }
 
   add_rfstack(IS_BACK);
@@ -532,7 +532,7 @@ void vpWireFrameSimulator::initScene(const vpSceneObject &obj)
 
   const char *scene_dir_ = scene_dir.c_str();
   if (strlen(scene_dir_) >= FILENAME_MAX) {
-    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the camera name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to initialize the camera name"));
   }
 
   strcpy(name_cam, scene_dir_);
@@ -671,7 +671,7 @@ void vpWireFrameSimulator::initScene(const char *obj)
 
   const char *scene_dir_ = scene_dir.c_str();
   if (strlen(scene_dir_) >= FILENAME_MAX) {
-    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the camera name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to initialize the camera name"));
   }
 
   strcpy(name_cam, scene_dir_);
@@ -679,7 +679,7 @@ void vpWireFrameSimulator::initScene(const char *obj)
   set_scene(name_cam, &camera, cameraFactor);
 
   if (strlen(obj) >= FILENAME_MAX) {
-    throw(vpException(vpException::memoryAllocationError, "Not enough memory to intialize the name"));
+    throw(vpException(vpException::memoryAllocationError, "Not enough memory to initialize the name"));
   }
 
   strcpy(name, obj);
@@ -690,7 +690,7 @@ void vpWireFrameSimulator::initScene(const char *obj)
   else if (model == WRL_MODEL)
     set_scene_wrl(name, &(this->scene), 1.0);
   else if (model == UNKNOWN_MODEL) {
-    vpERROR_TRACE("Unknown file extension for the 3D model");
+    vpERROR_TRACE("Unknownn file extension for the 3D model");
   }
 
   add_rfstack(IS_BACK);

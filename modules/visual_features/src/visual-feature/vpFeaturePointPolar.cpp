@@ -346,7 +346,7 @@ vpMatrix vpFeaturePointPolar::interaction(unsigned int select)
 
   For the angular component \f$\theta\f$, we define the error as
   \f$\theta \ominus \theta^*\f$, where \f$\ominus\f$ is modulo \f$2\pi\f$
-  substraction.
+  subtraction.
 
   \param s_star : Desired 2D image point visual feature with
   polar coordinates.

@@ -1629,7 +1629,7 @@ template <class Type> void vpImage<Type>::sub(const vpImage<Type> &B, vpImage<Ty
   }
 
   if ((this->getWidth() != B.getWidth()) || (this->getHeight() != B.getHeight())) {
-    throw(vpException(vpException::memoryAllocationError, "vpImage mismatch in vpImage/vpImage substraction "));
+    throw(vpException(vpException::memoryAllocationError, "vpImage mismatch in vpImage/vpImage subtraction"));
   }
 
   for (unsigned int i = 0; i < this->getWidth() * this->getHeight(); i++) {
@@ -1660,7 +1660,7 @@ template <class Type> void vpImage<Type>::sub(const vpImage<Type> &A, const vpIm
   }
 
   if ((A.getWidth() != B.getWidth()) || (A.getHeight() != B.getHeight())) {
-    throw(vpException(vpException::memoryAllocationError, "vpImage mismatch in vpImage/vpImage substraction "));
+    throw(vpException(vpException::memoryAllocationError, "vpImage mismatch in vpImage/vpImage subtraction "));
   }
 
   for (unsigned int i = 0; i < A.getWidth() * A.getHeight(); i++) {

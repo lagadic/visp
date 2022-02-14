@@ -56,7 +56,7 @@ void ReflexDriver::open(const std::string &network_interface_,
   load_params();
   populate_tactile_thresholds(DEFAULT_CONTACT_THRESHOLD);
 
-  // Intialize the reflex_hand object
+  // initialize the reflex_hand object
   printf("Starting reflex_hand_driver on network interface %s.\n",
            network_interface_.c_str());
   rh = &reflex_hand;

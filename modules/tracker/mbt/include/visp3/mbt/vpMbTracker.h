@@ -424,7 +424,7 @@ public:
 
   virtual inline double getStopCriteriaEpsilon() const { return m_stopCriteriaEpsilon; }
 
-// Intializer
+// initializer
 
 #ifdef VISP_HAVE_MODULE_GUI
   virtual void initClick(const vpImage<unsigned char> &I, const std::string &initFile, bool displayHelp = false,

@@ -604,7 +604,7 @@ void vpMeEllipse::leastSquare(const vpImage<unsigned char> &I, const std::vector
   unsigned int dim = A.nullSpace(KerA, 1);
   if (dim > 1) { // case with less than 5 independent points
     // FC : should create a rankError exception
-    throw(vpException(vpException::fatalError, "Linear sytem for computing the ellipse equation ill conditionned"));
+    throw(vpException(vpException::fatalError, "Linear system for computing the ellipse equation ill conditionned"));
   }
   // the term um*vm is for counterbalancing the bad conditioning of the
   // inverse normalization below
@@ -699,7 +699,7 @@ void vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
     unsigned int dim = DA.nullSpace(KerDA, 1);
     if (dim > 1) { // case with less than 5 independent points
       // FC : should create a rankError exception
-      throw(vpException(vpException::fatalError, "Linear sytem for computing the ellipse equation ill conditionned"));
+      throw(vpException(vpException::fatalError, "Linear system for computing the ellipse equation ill conditionned"));
     }
 
     for (unsigned int i=0; i<6 ; i++) K[i] = KerDA[i][0]; // norm(K) = 1

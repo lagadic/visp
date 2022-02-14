@@ -103,6 +103,9 @@ endif()
 if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW) # To turn off a warning in native FindOpenMP with cmake 3.9.2
 endif()
+if(POLICY CMP0068)
+  cmake_policy(SET CMP0068 NEW)  # CMake 3.9+: `RPATH` settings on macOS do not affect `install_name`.
+endif()
 if(POLICY CMP0072)
   cmake_policy(SET CMP0072 NEW) # To use legacy GL library with FindOpenGL and cmake 3.12.0
 endif()
@@ -139,6 +142,7 @@ set(VISP_VERSION_MAJOR "3")
 set(VISP_VERSION_MINOR "4")
 set(VISP_VERSION_PATCH "1")
 set(VISP_VERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}.${VISP_VERSION_PATCH}")
+set(VISP_SOVERSION "${VISP_VERSION_MAJOR}.${VISP_VERSION_MINOR}")
 # Package revision number
 set(VISP_REVISION "1")
 
@@ -291,33 +295,10 @@ if(NOT WINRT AND NOT IOS)
 endif()
 
 # ----------------------------------------------------------------------------
-# Handle always full RPATH
-# http://www.cmake.org/Wiki/CMake_RPATH_handling
+# Handle RPATH
 # ----------------------------------------------------------------------------
-
-# avoid CMP0042 warning
-if(APPLE)
-  set(CMAKE_MACOSX_RPATH ON)
-endif()
-
-# use, i.e. don't skip the full RPATH for the build tree
-set(CMAKE_SKIP_BUILD_RPATH  FALSE)
-
-# when building, don't use the install RPATH already
-# (but later on when installing)
-set(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
-
 set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}")
-
-# add the automatically determined parts of the RPATH
-# which point to directories outside the build tree to the install RPATH
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-
-# the RPATH to be used when installing, but only if it's not a system directory
-list(FIND CMAKE_PLATFORM_IMPLICIT_LINK_DIRECTORIES "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}" isSystemDir)
-if("${isSystemDir}" STREQUAL "-1")
-  set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${VISP_LIB_INSTALL_PATH}")
-endif("${isSystemDir}" STREQUAL "-1")
 
 if(ANDROID)
   vp_update(VISP_JNI_INSTALL_PATH "${VISP_LIB_INSTALL_PATH}")

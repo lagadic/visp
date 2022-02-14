@@ -120,11 +120,11 @@ vpColVector &vpColVector::operator+=(vpColVector v)
     (*this)[i] += v[i];
   return (*this);
 }
-//! Operator that allows to substract two column vectors.
+//! Operator that allows to subtract two column vectors.
 vpColVector &vpColVector::operator-=(vpColVector v)
 {
   if (getRows() != v.getRows()) {
-    throw(vpException(vpException::dimensionError, "Cannot substract (%dx1) column vector to (%dx1) column vector",
+    throw(vpException(vpException::dimensionError, "Cannot subtract (%dx1) column vector to (%dx1) column vector",
                       getRows(), v.getRows()));
   }
 
@@ -175,13 +175,13 @@ vpMatrix vpColVector::operator*(const vpRowVector &v) const
   return M;
 }
 
-//! operator substraction of two vectors V = A-v
+//! operator subtraction of two vectors V = A-v
 vpColVector vpColVector::operator-(const vpColVector &m) const
 {
   if (getRows() != m.getRows()) {
     throw(vpException(vpException::dimensionError,
                       "Bad size during vpColVector (%dx1) and vpColVector "
-                      "(%dx1) substraction",
+                      "(%dx1) subtraction",
                       getRows(), m.getRows()));
   }
   vpColVector v(rowNum);
