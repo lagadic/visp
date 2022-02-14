@@ -799,7 +799,7 @@ void vpRobotViper650::powerOn(void)
       std::cout << "You have to call Adept for maintenance..." << std::endl;
       // Free allocated resources
       ShutDownConnection();
-      throw vpRobotException(vpRobotException::constructionError, "Error on the emergency chain");    }
+      throw(vpRobotException(vpRobotException::lowLevelError, "Error on the emergency chain"));
     }
   }
 
@@ -808,7 +808,7 @@ void vpRobotViper650::powerOn(void)
 
   if (EStopStatus == ESTOP_ACTIVATED) {
     std::cout << "Sorry, cannot power on the robot." << std::endl;
-    throw vpRobotException(vpRobotException::lowLevelError, "Cannot power on the robot.");
+    throw(vpRobotException(vpRobotException::lowLevelError, "Cannot power on the robot."));
   }
 
   if (HIPowerStatus == 0) {
@@ -821,7 +821,7 @@ void vpRobotViper650::powerOn(void)
   CatchPrint();
   if (TryStt < 0) {
     vpERROR_TRACE("Cannot power on the robot");
-    throw vpRobotException(vpRobotException::lowLevelError, "Cannot power off the robot.");
+    throw(vpRobotException(vpRobotException::lowLevelError, "Cannot power off the robot."));
   }
 }
 
