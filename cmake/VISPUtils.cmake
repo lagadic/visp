@@ -789,6 +789,33 @@ endfunction()
 function(vp_add_library target)
   add_library(${target} ${ARGN})
 
+  if(APPLE_FRAMEWORK AND BUILD_SHARED_LIBS)
+    message(STATUS "Setting Apple target properties for ${target}")
+
+    set(CMAKE_SHARED_LIBRARY_RUNTIME_C_FLAG 1)
+
+    if(IOS AND NOT MAC_CATALYST)
+      set(VISP_APPLE_INFO_PLIST "${CMAKE_BINARY_DIR}/ios/Info.plist")
+    else()
+      set(VISP_APPLE_INFO_PLIST "${CMAKE_BINARY_DIR}/osx/Info.plist")
+    endif()
+
+    set_target_properties(${target} PROPERTIES
+      FRAMEWORK TRUE
+      MACOSX_FRAMEWORK_IDENTIFIER org.visp
+      MACOSX_FRAMEWORK_INFO_PLIST ${VISP_APPLE_INFO_PLIST}
+      # "current version" in semantic format in Mach-O binary file
+      VERSION ${VISP_VERSION}
+      # "compatibility version" in semantic format in Mach-O binary file
+      SOVERSION ${VISP_VERSION}
+      INSTALL_RPATH ""
+      INSTALL_NAME_DIR "@rpath"
+      BUILD_WITH_INSTALL_RPATH 1
+      LIBRARY_OUTPUT_NAME "visp"
+      XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2"
+    )
+  endif()
+
   _vp_append_target_includes(${target})
 endfunction()
 
