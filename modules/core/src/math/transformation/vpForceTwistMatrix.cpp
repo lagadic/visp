@@ -334,7 +334,7 @@ int main()
 {
 #ifdef VISP_HAVE_VIPER850
   vpRobotViper850 robot;
-  vpColVector sH = robot.getForceTorque(sH); // Get the force/torque measures
+  vpColVector sH = robot.getForceTorque(); // Get the force/torque measures
 
   // Set the transformation from sensor frame to the probe frame
   vpHomogeneousMatrix pMs;
