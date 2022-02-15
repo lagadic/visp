@@ -2,10 +2,10 @@
                      Visual Servoing Platform
                      Resume of the change log
 
-     Copyright (C) 2005 - 2021 by Inria. All rights reserved.
+     Copyright (C) 2005 - 2022 by Inria. All rights reserved.
                       https://visp.inria.fr
 
-ViSP 3.4.1 (under development)
+ViSP 3.5.0 (released February 15, 2022)
   - Contributors:
     . Fabien Spindler, Joudy Nader, Souriya Trinh, Julien Dufour, Ha Thuc Long,
       Christian Clauss, Olivier Kermorgant
