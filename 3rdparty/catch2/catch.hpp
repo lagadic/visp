@@ -1349,7 +1349,7 @@ namespace Catch {
 
     // ResultWas::OfType enum
     struct ResultWas { enum OfType {
-        Unknownn = -1,
+        Unknown = -1,
         Ok = 0,
         Info = 1,
         Warning = 2,
@@ -1572,7 +1572,7 @@ namespace Catch {
         };
 
         template<typename E>
-        std::string convertUnknownnEnumToString( E e );
+        std::string convertUnknownEnumToString( E e );
 
         template<typename T>
         typename std::enable_if<
@@ -1591,7 +1591,7 @@ namespace Catch {
         typename std::enable_if<
             std::is_enum<T>::value
         , std::string>::type convertUnstreamable( T const& value ) {
-            return convertUnknownnEnumToString( value );
+            return convertUnknownEnumToString( value );
         }
 
 #if defined(_MANAGED)
@@ -1644,7 +1644,7 @@ namespace Catch {
         }
 
         template<typename E>
-        std::string convertUnknownnEnumToString( E e ) {
+        std::string convertUnknownEnumToString( E e ) {
             return ::Catch::Detail::stringify(static_cast<typename std::underlying_type<E>::type>(e));
         }
 
@@ -10134,7 +10134,7 @@ namespace {
                 case Colour::Bright: CATCH_INTERNAL_ERROR( "not a colour" );
 
                 default:
-                    CATCH_ERROR( "Unknownn colour requested" );
+                    CATCH_ERROR( "Unknown colour requested" );
             }
         }
 
@@ -10195,7 +10195,7 @@ namespace {
                 case Colour::BrightYellow:  return setColour( "[1;33m" );
 
                 case Colour::Bright: CATCH_INTERNAL_ERROR( "not a colour" );
-                default: CATCH_INTERNAL_ERROR( "Unknownn colour requested" );
+                default: CATCH_INTERNAL_ERROR( "Unknown colour requested" );
             }
         }
         static IColourImpl* instance() {
@@ -10721,7 +10721,7 @@ namespace Catch {
             return msg;
         }
         catch(...) {
-            return "Unknownn exception";
+            return "Unknown exception";
         }
     }
 
@@ -11596,7 +11596,7 @@ namespace Floating {
         case FloatingPointKind::Double:
             return almostEqualUlps<double>(matchee, m_target, m_ulps);
         default:
-            CATCH_INTERNAL_ERROR( "Unknownn FloatingPointKind value" );
+            CATCH_INTERNAL_ERROR( "Unknown FloatingPointKind value" );
         }
     }
 
@@ -12809,7 +12809,7 @@ namespace Catch {
     }
     void RunContext::resetAssertionInfo() {
         m_lastAssertionInfo.macroName = StringRef();
-        m_lastAssertionInfo.capturedExpression = "{Unknownn expression after the reported line}"_sr;
+        m_lastAssertionInfo.capturedExpression = "{Unknown expression after the reported line}"_sr;
     }
 
     bool RunContext::sectionStarted(SectionInfo const & sectionInfo, Counts & assertions) {
@@ -14471,7 +14471,7 @@ namespace TestCaseTracking {
                 CATCH_INTERNAL_ERROR( "Illogical state: " << m_runState );
 
             default:
-                CATCH_INTERNAL_ERROR( "Unknownn state: " << m_runState );
+                CATCH_INTERNAL_ERROR( "Unknown state: " << m_runState );
         }
         moveToParent();
         m_ctx.completeCycle();
@@ -15416,7 +15416,7 @@ namespace Catch {
             case WildcardAtBothEnds:
                 return contains( normaliseString( str ), m_pattern );
             default:
-                CATCH_INTERNAL_ERROR( "Unknownn enum" );
+                CATCH_INTERNAL_ERROR( "Unknown enum" );
         }
     }
 
@@ -15957,7 +15957,7 @@ public:
             printRemainingMessages(Colour::None);
             break;
             // These cases are here to prevent compiler warnings
-        case ResultWas::Unknownn:
+        case ResultWas::Unknown:
         case ResultWas::FailureBit:
         case ResultWas::Exception:
             printResultType(Colour::Error, "** internal error **");
@@ -16194,7 +16194,7 @@ public:
                 messageLabel = "explicitly with messages";
             break;
             // These cases are here to prevent compiler warnings
-        case ResultWas::Unknownn:
+        case ResultWas::Unknown:
         case ResultWas::FailureBit:
         case ResultWas::Exception:
             passOrFail = "** internal error **";
@@ -17030,7 +17030,7 @@ namespace Catch {
                 case ResultWas::Info:
                 case ResultWas::Warning:
                 case ResultWas::Ok:
-                case ResultWas::Unknownn:
+                case ResultWas::Unknown:
                 case ResultWas::FailureBit:
                 case ResultWas::Exception:
                     elementName = "internalError";

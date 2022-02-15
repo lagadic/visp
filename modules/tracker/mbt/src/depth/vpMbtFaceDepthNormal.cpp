@@ -297,7 +297,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
     computeDesiredFeaturesRobustFeatures(point_cloud_face_custom, point_cloud_face_vec, cMo, desired_features,
                                          desired_normal, centroid_point);
   } else {
-    throw vpException(vpException::badValue, "Unknownn feature estimation method!");
+    throw vpException(vpException::badValue, "Unknown feature estimation method!");
   }
 
   computeDesiredNormalAndCentroid(cMo, desired_normal, centroid_point);
@@ -456,7 +456,7 @@ bool vpMbtFaceDepthNormal::computeDesiredFeatures(const vpHomogeneousMatrix &cMo
     computeDesiredFeaturesRobustFeatures(point_cloud_face_custom, point_cloud_face, cMo, desired_features,
                                          desired_normal, centroid_point);
   } else {
-    throw vpException(vpException::badValue, "Unknownn feature estimation method!");
+    throw vpException(vpException::badValue, "Unknown feature estimation method!");
   }
 
   computeDesiredNormalAndCentroid(cMo, desired_normal, centroid_point);
