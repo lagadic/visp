@@ -458,7 +458,7 @@ void vpWireFrameSimulator::initScene(const char *obj, const char *desired_object
   else if (model == WRL_MODEL)
     set_scene_wrl(name, &(this->scene), 1.0);
   else if (model == UNKNOWN_MODEL) {
-    vpERROR_TRACE("Unknownn file extension for the 3D model");
+    vpERROR_TRACE("Unknown file extension for the 3D model");
   }
 
   if (strlen(desired_object) >= FILENAME_MAX) {
@@ -472,7 +472,7 @@ void vpWireFrameSimulator::initScene(const char *obj, const char *desired_object
   else if (model == WRL_MODEL)
     set_scene_wrl(name, &(this->desiredScene), 1.0);
   else if (model == UNKNOWN_MODEL) {
-    vpERROR_TRACE("Unknownn file extension for the 3D model");
+    vpERROR_TRACE("Unknown file extension for the 3D model");
   }
 
   add_rfstack(IS_BACK);
@@ -690,7 +690,7 @@ void vpWireFrameSimulator::initScene(const char *obj)
   else if (model == WRL_MODEL)
     set_scene_wrl(name, &(this->scene), 1.0);
   else if (model == UNKNOWN_MODEL) {
-    vpERROR_TRACE("Unknownn file extension for the 3D model");
+    vpERROR_TRACE("Unknown file extension for the 3D model");
   }
 
   add_rfstack(IS_BACK);
