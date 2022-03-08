@@ -169,6 +169,7 @@ This page introduces the user to the way to get, to filter or to render images.
 - \subpage tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
 - \subpage tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
 - \subpage tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position.
+- \subpage tutorial-video-manipulation <br>In this tutorial you will learn how to manipulate a video or a sequence of successives images in order to rename the images, convert images format, or select some images that will constitute a dataset typically for deep learning purpose.
 
 */
 

@@ -1,0 +1,217 @@
+/**
+  \page tutorial-video-manipulation Tutorial: How to manipulate a video or a sequence of images
+  \tableofcontents
+
+\section img_manip_seq_intro Introduction
+
+In this tutorial you will learn how to manipulate a video or a sequence of successives images in order to rename the images, convert images format, or select some images that will constitute a dataset typically for deep learning purpose.
+
+Note that all the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
+\endcode
+
+\section img_manip_seq_prereq Prerequisites
+
+\subsection img_manip_seq_create Sequence of images acquisition reminder
+
+In ViSP you will find \ref tutorial-grabber that shows how to acquire a sequence of images.
+
+- For example, if you are running Ubuntu on a laptop, you can acquire a sequence running:
+\verbatim
+$ cd $VISP_WS/visp-build/tutorial/grabber
+$ ./tutorial-grabber-v4l2 --seqname /tmp/myseq/png/I%04d.png
+Use device : 0
+Recording  : enabled
+Display    : enabled
+Record mode: continuous
+Record name: /tmp/myseq/png/I%04d.png
+Warning: cannot set input channel to 2
+Image size : 640 480
+\endverbatim
+- At this point you have to click to start saving the images
+\verbatim
+Create directory "/tmp/myseq/png"
+Started sequence saving: /tmp/myseq/png/I%04d.png
+\endverbatim
+- A right click allows to quit
+\verbatim
+Wait to finish saving images...
+Receive cancel during gray image saving.
+\endverbatim
+- Here we have all the images saved in `/tmp/myseq/png` folder
+\verbatim
+$ ls -1 /tmp/myseq/png
+I0001.png
+I0002.png
+I0003.png
+I0004.png
+I0005.png
+I0006.png
+I0007.png
+I0008.png
+I0009.png
+I0010.png
+I0011.png
+I0012.png
+I0013.png
+I0014.png
+I0015.png
+I0016.png
+I0017.png
+I0018.png
+I0019.png
+I0020.png
+I0021.png
+...
+\endverbatim
+
+
+
+\section img_manip_seq_main Video or image sequence manipulation
+\subsection img_manip_seq_show Visualization
+
+The tutorial tutorial-image-manipulation.cpp allows to visualize a video or a sequence of images.
+
+- To visualize an `mpeg` video part of ViSP data set, you may run:
+\verbatim
+$ cd $VISP_WS/visp-build/tutorial/image
+./tutorial-video-manipulation --in ${VISP_INPUT_IMAGE_PATH}/video/cube.mpeg
+\endverbatim
+
+- To visualize a sequence of successive images, like the one acquired in \ref img_manip_seq_create section, you may rather run:
+\verbatim
+$ cd $VISP_WS/visp-build/tutorial/image
+./tutorial-video-manipulation --in /tmp/myseq/png/I%04d.png
+\endverbatim
+
+\subsection img_manip_seq_convert Renaming and/or image format conversion
+
+The tutorial tutorial-image-manipulation.cpp allows also to rename and convert the images format.
+
+- The following example shows how to convert all the images from `png` to `jpeg` and also rename the images:
+\verbatim
+$ cd $VISP_WS/visp-build/tutorial/image
+$ ./tutorial-video-manipulation --in /tmp/myseq/png/I%04d.png --out /tmp/myseq/jpeg/image-%04d.jpeg
+Input video
+  Video name     : /tmp/myseq/png/I%04d.png
+  Video dimension: 640 480
+  First image    : 1
+  Last image     : 49
+  Framerate (fps): 30
+Output video
+  Video name     : /tmp/myseq/jpeg/image-%04d.jpeg
+  First image    : 1
+Other settings
+  verbatim        : disabled
+  Select frames  : disabled
+\endverbatim
+- Renamed and converted images are now available in `/tmp/myseq/jpeg` folder
+\verbatim
+$ ls -1 /tmp/myseq/jpeg/
+image-0001.jpeg
+image-0002.jpeg
+image-0003.jpeg
+image-0004.jpeg
+image-0005.jpeg
+image-0006.jpeg
+image-0007.jpeg
+image-0008.jpeg
+image-0009.jpeg
+image-0010.jpeg
+image-0011.jpeg
+image-0012.jpeg
+image-0013.jpeg
+image-0014.jpeg
+image-0015.jpeg
+image-0016.jpeg
+image-0017.jpeg
+image-0018.jpeg
+image-0019.jpeg
+image-0020.jpeg
+image-0021.jpeg
+...
+\endverbatim
+
+There is also an extra option `--out-first-frame <index>` that allows to modify the index of the output video first frame
+
+- For example, to set start numbering at 100, you may run
+\verbatim
+$ ./tutorial-video-manipulation --in /tmp/myseq/png/I%04d.png --out /tmp/myseq/jpeg/image-%04d.jpeg --out-first-frame 100
+\endverbatim
+- The index of the images becomes:
+\verbatim
+$ ls -1 /tmp/myseq/jpeg
+image-0100.jpeg
+image-0101.jpeg
+image-0102.jpeg
+image-0103.jpeg
+image-0104.jpeg
+image-0105.jpeg
+image-0106.jpeg
+image-0107.jpeg
+image-0108.jpeg
+image-0109.jpeg
+image-0110.jpeg
+image-0111.jpeg
+image-0112.jpeg
+image-0113.jpeg
+image-0114.jpeg
+image-0115.jpeg
+image-0116.jpeg
+image-0117.jpeg
+image-0118.jpeg
+image-0119.jpeg
+image-0120.jpeg
+\endverbatim
+
+\subsection img_manip_seq_extract Images extraction from a video
+
+The tutorial tutorial-image-manipulation.cpp allows also to extract images from a video file.
+
+- For example to extract the images from an `mpeg` video part of ViSP data set and create a sequence of successive images, you may run:
+\verbatim
+$ ./tutorial-video-manipulation --in ${VISP_INPUT_IMAGE_PATH}/video/cube.mpeg --out /tmp/cube/jpeg/image-%04d.jpeg
+\endverbatim
+- Images are available in `/tmp/cube/jpeg` folder:
+\verbatim
+image-0001.jpeg
+image-0002.jpeg
+image-0003.jpeg
+image-0004.jpeg
+image-0005.jpeg
+image-0006.jpeg
+image-0007.jpeg
+image-0008.jpeg
+image-0009.jpeg
+image-0010.jpeg
+...
+\endverbatim 
+- You can then replay the image sequence using:
+\verbatim
+./tutorial-video-manipulation --in /tmp/cube/jpeg/image-%04d.jpeg
+\endverbatim
+
+\subsection img_manip_seq_select Images selection to create a new video or sequence
+
+The tutorial tutorial-image-manipulation.cpp allows also to extract some images selected by the user during visualisation by user click. This feature could be useful to extract the images that will be part of a deep leaning data set.
+
+- To create a new video from selected images you may add `--select` option, like:
+\verbatim
+$ ./tutorial-video-manipulation --in ${VISP_INPUT_IMAGE_PATH}/video/cube.mpeg --out /tmp/cube/jpeg/image-%04d.jpeg --select
+\endverbatim
+- Here if the user click four times in the video, you will get a new sequence with 4 successive images 
+\verbatim
+$ ls -1 /tmp/cube/jpeg 
+image-0001.jpeg
+image-0002.jpeg
+image-0003.jpeg
+image-0004.jpeg
+\endverbatim
+
+\section img_manip_seq_next Next tutorial
+
+You are now ready to see how to continue with \ref tutorial-basic-drawings.
+
+*/
