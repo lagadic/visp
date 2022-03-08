@@ -74,13 +74,16 @@ vpVideoWriter::vpVideoWriter()
 vpVideoWriter::~vpVideoWriter() {}
 
 /*!
-  It enables to set the path and the name of the files which will be saved.
+  It enables to set the path and the name of the video or sequence of images
+  which will be saved.
 
-  If you want to write a sequence of images, \f$ filename \f$ corresponds to
+  If you want to write a sequence of images, `filename` corresponds to
   the path followed by the image name template. For exemple, if you want to
-  write different images named image0001.jpeg, image0002.jpg, ... and located
-  in the folder /local/image, \f$ filename \f$ will be
-  "/local/image/image%04d.jpg".
+  write different images named `image0001.jpeg`, `image0002.jpg`, ... and located
+  in the folder `/local/image`, `filename` will be `/local/image/image%04d.jpg`.
+
+  \Note The function open() will create recursively the folders to host the
+  video or the sequence of images.
 
   \param filename : filename template of an image sequence.
 */
@@ -105,6 +108,9 @@ void vpVideoWriter::setFileName(const std::string &filename)
 /*!
   Sets all the parameters needed to write the video or the image sequence.
 
+  This function will also create recursively the folders to host the
+  video or the sequence of images.
+
   \param I : One image with the right dimensions.
 */
 void vpVideoWriter::open(vpImage<vpRGBa> &I)
@@ -112,6 +118,8 @@ void vpVideoWriter::open(vpImage<vpRGBa> &I)
   if (! m_initFileName) {
     throw(vpImageException(vpImageException::noFileNameError, "The generic filename has to be set in video writer"));
   }
+
+  vpIoTools::makeDirectory(vpIoTools::getParent(m_videoName));
 
   if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG || m_formatType == FORMAT_PNG) {
     m_width = I.getWidth();
@@ -123,7 +131,7 @@ void vpVideoWriter::open(vpImage<vpRGBa> &I)
                                cv::Size(static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight())));
 
     if (! m_writer.isOpened()) {
-      throw(vpException(vpException::fatalError, "Could not open encode the video with OpenCV"));
+      throw(vpException(vpException::fatalError, "Could not encode the video with OpenCV"));
     }
 #else
     throw(vpException(vpException::fatalError, "To encode video files ViSP should be build with OpenCV >= 2.1.0"));
@@ -138,6 +146,9 @@ void vpVideoWriter::open(vpImage<vpRGBa> &I)
 /*!
   Sets all the parameters needed to write the video or the image sequence.
 
+  This function will also create recursively the folders to host the
+  video or the sequence of images.
+
   \param I : One image with the right dimensions.
 */
 void vpVideoWriter::open(vpImage<unsigned char> &I)
@@ -145,6 +156,8 @@ void vpVideoWriter::open(vpImage<unsigned char> &I)
   if (! m_initFileName) {
     throw(vpImageException(vpImageException::noFileNameError, "The generic filename has to be set in video writer"));
   }
+
+  vpIoTools::makeDirectory(vpIoTools::getParent(m_videoName));
 
   if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG || m_formatType == FORMAT_PNG) {
     m_width = I.getWidth();
@@ -156,7 +169,7 @@ void vpVideoWriter::open(vpImage<unsigned char> &I)
                                cv::Size(static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight())));
 
     if (! m_writer.isOpened()) {
-      throw(vpException(vpException::fatalError, "Could not open encode the video with OpenCV"));
+      throw(vpException(vpException::fatalError, "Could not encode the video with OpenCV"));
     }
 #else
     throw(vpException(vpException::fatalError, "To encode video files ViSP should be build with OpenCV >= 2.1.0"));
