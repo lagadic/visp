@@ -401,4 +401,5 @@ To read an other video, let say my-video.mpg, you may use:
 You are now ready to see how to continue with:
 - \ref tutorial-multi-threading if you want to see how to extend these examples with one thread for capture and an other one for display
 - or with a simple image processing that shows how to track blobs explained in \ref tutorial-tracking-blob.
+- There is also the \ref tutorial-video-manipulation that could be useful when you need to visualize, rename or change the format of a captured video or sequence of successive images, typically for deep learning purpose.
 */
