@@ -373,7 +373,7 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 */
 bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))
 {
-  if (npt < 4) {
+  if (npt < 4 && (npt != 3 || (method != VIRTUAL_VS && method != LOWE))) {
     throw(vpPoseException(vpPoseException::notEnoughPointError,
                           "Not enough point (%d) to compute the pose  ", npt));
   }
