@@ -6,38 +6,82 @@
 #include <visp3/sensor/vpRealSense2.h>
 #include <visp3/io/vpImageStorageWorker.h>
 
+void usage(const char *argv[], int error)
+{
+  std::cout << "SYNOPSIS" << std::endl
+            << "  " << argv[0]
+            << " [--fps <6|15|30|60>]"
+            << " [--record <mode>]"
+            << " [--no-display]"
+            << " [--help] [-h]" << std::endl << std::endl;
+  std::cout << "DESCRIPTION" << std::endl
+            << "  --fps <6|15|30|60>" << std::endl
+            << "    Frames per second." << std::endl
+            << "    Default: 30." << std::endl << std::endl
+            << "  --record <mode>" << std::endl
+            << "    Allowed values for mode are:" << std::endl
+            << "      0: record all the captures images (continuous mode)," << std::endl
+            << "      1: record only images selected by a user click (single shot mode)." << std::endl
+            << "    Default mode: 0" << std::endl << std::endl
+            << "  --no-display" << std::endl
+            << "    Disable displaying captured images." << std::endl
+            << "    When used and sequence name specified, record mode is internaly set to 1 (continuous mode)." << std::endl << std::endl
+            << "  --help, -h" << std::endl
+            << "    Print this helper message." << std::endl << std::endl;
+  std::cout << "USAGE" << std::endl
+            << "  Example to visualize images:" << std::endl
+            << "    " << argv[0] << std::endl << std::endl
+            << "  Example to record a sequence of images:" << std::endl
+            << "    " << argv[0] << " --record 0" << std::endl << std::endl
+            << "  Example to record single shot images:\n"
+            << "    " << argv[0] << " --record 1" << std::endl << std::endl;
+
+  if (error) {
+    std::cout << "Error" << std::endl
+              << "  " << "Unsupported parameter " << argv[error] << std::endl;
+  }
+}
+
 /*!
   Grab images from an Intel realsense camera
  */
-int main(int argc, char **argv)
+int main(int argc, const char *argv[])
 {
 #if defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0)) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   try {
     std::string opt_seqname_left = "left-%04d.png", opt_seqname_right = "right-%04d.png";
     int opt_record_mode = 0;
     int opt_fps = 30;
+    bool opt_display = true;
 
-    for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--record")
-        opt_record_mode = std::atoi(argv[i + 1]);
-      else if (std::string(argv[i]) == "--fps")
+    for (int i = 1; i < argc; i++) {
+      if (std::string(argv[i]) == "--fps") {
         opt_fps = std::atoi(argv[i + 1]);
+        i ++;
+      }
+      else if (std::string(argv[i]) == "--record") {
+        opt_record_mode = std::atoi(argv[i + 1]);
+        i ++;
+      }
+      else if (std::string(argv[i]) == "--no-display") {
+        opt_display = false;
+      }
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0]
-                  << " [--record <0: continuous | 1: single shot (default: 0)>]"
-                     " [--help] [-h]\n"
-                  << "\nExample to visualize images:\n"
-                  << "  " << argv[0] << "\n"
-                  << "\nExamples to record single shot images:\n"
-                  << "  " << argv[0] << " --record 1\n"
-                  << "\nExamples to record a sequence of images:\n"
-                  << "  " << argv[0] << " --record 0\n"
-                  << std::endl;
-        return 0;
+        usage(argv, 0);
+        return EXIT_SUCCESS;
+      }
+      else {
+        usage(argv, i);
+        return EXIT_FAILURE;
       }
     }
 
+    if (! opt_display) {
+      opt_record_mode = 0;
+    }
+
     std::cout << "Framerate  : " << opt_fps << std::endl;
+    std::cout << "Display    : " << (opt_display ? "enabled" : "disabled") << std::endl;
 
     std::string text_record_mode = std::string("Record mode: ") + (opt_record_mode ? std::string("single") : std::string("continuous"));
 
@@ -57,18 +101,25 @@ int main(int argc, char **argv)
 
     std::cout << "Image size : " << I_left.getWidth() << " " << I_right.getHeight() << std::endl;
 
-#ifdef VISP_HAVE_X11
-    vpDisplayX display_left(I_left, 10, 10, "Left image");
-    vpDisplayX display_right(I_right, I_left.getWidth(), 10, "Right image");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI display_left(I_left);
-    vpDisplayGDI display_right(I_right);
-#elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV display_left(I_left);
-    vpDisplayOpenCV display_right(I_right);
-#else
-    std::cout << "No image viewer is available..." << std::endl;
+    vpDisplay *display_left = NULL, *display_right = NULL;
+    if (opt_display) {
+#if ! (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+      std::cout << "No image viewer is available..." << std::endl;
+      opt_display = false;
 #endif
+    }
+    if (opt_display) {
+#ifdef VISP_HAVE_X11
+      display_left = new vpDisplayX(I_left, 10, 10, "Left image");
+      display_right = new vpDisplayX(I_right, I_left.getWidth(), 10, "Right image");
+#elif defined(VISP_HAVE_GDI)
+      display_left = new vpDisplayGDI(I_left, 10, 10, "Left image");
+      display_right = new vpDisplayGDI(I_right, I_left.getWidth(), 10, "Right image");
+#elif defined(VISP_HAVE_OPENCV)
+      display_left = new vpDisplayOpenCV(I_left, 10, 10, "Left image");
+      display_right = new vpDisplayOpenCV(I_right, I_left.getWidth(), 10, "Right image");
+#endif
+    }
 
     vpImageQueue<unsigned char> image_queue_left(opt_seqname_left, opt_record_mode);
     vpImageQueue<unsigned char> image_queue_right(opt_seqname_right, opt_record_mode);
@@ -99,6 +150,13 @@ int main(int argc, char **argv)
     image_queue_right.cancel();
     image_left_storage_thread.join();
     image_right_storage_thread.join();
+
+    if (display_left) {
+      delete display_left;
+    }
+    if (display_right) {
+      delete display_right;
+    }
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
