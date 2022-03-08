@@ -190,42 +190,47 @@ public:
    */
   bool record(const vpImage<Type> &I, std::string *data = NULL, bool trigger_recording = false, bool disable_left_click = false)
   {
-    if (! m_seqname.empty()) {
-      if (! disable_left_click) {
-        if (! m_recording_mode) { // continuous
-          if (m_start_recording) {
-            vpDisplay::displayText(I, 20*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Left  click: stop recording", vpColor::red);
+    if (I.display) {
+      if (! m_seqname.empty()) {
+        if (! disable_left_click) {
+          if (! m_recording_mode) { // continuous
+            if (m_start_recording) {
+              vpDisplay::displayText(I, 20*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Left  click: stop recording", vpColor::red);
+            }
+            else {
+              vpDisplay::displayText(I, 20*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Left  click: start recording", vpColor::red);
+            }
           }
           else {
-            vpDisplay::displayText(I, 20*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Left  click: start recording", vpColor::red);
+            vpDisplay::displayText(I, 20*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Left  click: record image", vpColor::red);
           }
         }
-        else {
-          vpDisplay::displayText(I, 20*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Left  click: record image", vpColor::red);
-        }
+        vpDisplay::displayText(I, 40*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Right click: quit", vpColor::red);
       }
-      vpDisplay::displayText(I, 40*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Right click: quit", vpColor::red);
-    }
-    else {
-      vpDisplay::displayText(I, 20*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Click to quit", vpColor::red);
-    }
+      else {
+        vpDisplay::displayText(I, 20*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Click to quit", vpColor::red);
+      }
 
-    if (! m_seqname.empty()) {
-      vpDisplay::displayText(I, 60*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), m_text_record_mode, vpColor::red);
-    }
-    vpMouseButton::vpMouseButtonType button;
-    if (vpDisplay::getClick(I, button, false)) {
-      if (! m_seqname.empty()) { // Recording requested
-        if (button == vpMouseButton::button1 && ! disable_left_click) { // enable/disable recording
-          m_start_recording = !m_start_recording;
+      if (! m_seqname.empty()) {
+        vpDisplay::displayText(I, 60*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), m_text_record_mode, vpColor::red);
+      }
+      vpMouseButton::vpMouseButtonType button;
+      if (vpDisplay::getClick(I, button, false)) {
+        if (! m_seqname.empty()) { // Recording requested
+          if (button == vpMouseButton::button1 && ! disable_left_click) { // enable/disable recording
+            m_start_recording = !m_start_recording;
+          }
+          else if (button == vpMouseButton::button3) { // quit
+            return true;
+          }
         }
-        else if (button == vpMouseButton::button3) { // quit
+        else { // any button to quit
           return true;
         }
       }
-      else { // any button to quit
-        return true;
-      }
+    }
+    else if (! m_seqname.empty()) {
+      m_start_recording = true;
     }
 
     if (trigger_recording) {
