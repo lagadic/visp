@@ -5,6 +5,17 @@
      Copyright (C) 2005 - 2022 by Inria. All rights reserved.
                       https://visp.inria.fr
 
+ViSP 3.5.1 (under development)
+  - Contributors:
+    . Fabien Spindler
+  - New features and improvements
+    . Video writer is now able to create the output folder recursively (see vpVideoWriter)
+    . Tutorials in tutorial/grabber folder have now a new --no-display command line option
+      that allows to grab a video remotely
+  - Tutorials
+    . New tutorial: How to manipulate a video or a sequence of images
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-video-manipulation.html
+----------------------------------------------
 ViSP 3.5.0 (released February 15, 2022)
   - Contributors:
     . Fabien Spindler, Joudy Nader, Souriya Trinh, Julien Dufour, Ha Thuc Long,
