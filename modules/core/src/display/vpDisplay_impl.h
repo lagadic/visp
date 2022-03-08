@@ -655,6 +655,6 @@ template <class Type> unsigned int vp_display_get_down_scaling_factor(const vpIm
   if (I.display != NULL) {
     return (I.display)->getDownScalingFactor();
   } else {
-    throw(vpException(vpException::fatalError, "Cannot get the down scaling factor: Display is not initialized"));
+    return 1;
   }
 }
