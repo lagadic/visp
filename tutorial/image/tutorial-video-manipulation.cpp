@@ -1,5 +1,6 @@
 //! \example tutorial-video-manipulation.cpp
 #include <visp3/core/vpTime.h>
+#include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
@@ -16,6 +17,7 @@ void usage(const char *argv[], int error)
             << " [--fps <framerate>]"
             << " [--out <video name>]"
             << " [--out-first-frame <index>]"
+            << " [--out-gray]"
             << " [--verbose] [-v]"
             << " [--help] [-h]" << std::endl << std::endl;
   std::cout << "Description" << std::endl
@@ -33,6 +35,8 @@ void usage(const char *argv[], int error)
             << "    Renamed video first image index." << std::endl
             << "    When set to -1, use same image numbering as input video." << std::endl
             << "    Default: -1" << std::endl << std::endl
+            << "  --out-gray" << std::endl
+            << "    Associated to --out option, convert input images to Y8 gray level image." << std::endl << std::endl
             << "  --select, -s" << std::endl
             << "    Associated to --out option, allows the user to select by mouse" << std::endl
             << "    click which images will be saved in the output video." << std::endl << std::endl
@@ -57,6 +61,7 @@ int main(int argc, const char *argv[])
   double opt_fps = 30;
   std::string opt_video_out = "";
   int opt_video_out_first_frame = -1;
+  bool opt_out_gray = false;
 
   bool opt_verbose = false;
   bool opt_select_frame = false;
@@ -77,6 +82,9 @@ int main(int argc, const char *argv[])
     else if (std::string(argv[i]) == "--out-first-frame" && i+1 < argc) {
       opt_video_out_first_frame = std::atoi(argv[i + 1]);
       i ++;
+    }
+    else if (std::string(argv[i]) == "--out-gray") {
+      opt_out_gray = true;
     }
     else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
       opt_verbose = true;
@@ -107,8 +115,15 @@ int main(int argc, const char *argv[])
               << "  --select option is enabled but no output video name is specified using --out <video> option." << std::endl;
     return EXIT_FAILURE;
   }
+  if (opt_out_gray && opt_video_out.empty()) {
+    usage(argv, 0);
+    std::cout << "Error: " << std::endl
+              << "  --out-gray option is enabled but no output video name is specified using --out <video> option." << std::endl;
+    return EXIT_FAILURE;
+  }
 
   vpImage<vpRGBa> I;
+  vpImage<unsigned char> Igray;
   vpVideoReader g;
   g.setFileName(opt_video_in);
   g.open(I);
@@ -124,10 +139,17 @@ int main(int argc, const char *argv[])
     writer.setFileName(opt_video_out);
     int first_frame = (opt_video_out_first_frame < 0 ? static_cast<int>(g.getFirstFrameIndex()) : opt_video_out_first_frame) ;
     writer.setFirstFrameIndex(first_frame);
-    writer.open(I);
+    if (opt_out_gray) {
+      vpImageConvert::convert(I, Igray);
+      writer.open(Igray);
+    }
+    else {
+      writer.open(I);
+    }
     std::cout << "Output video" << std::endl;
     std::cout << "  Video name     : " << opt_video_out << std::endl;
     std::cout << "  First image    : " << first_frame << std::endl;
+    std::cout << "  Y8 gray images : " << (opt_out_gray ? "yes" : "no (same as input)") << std::endl;
   }
 
   std::cout << "Other settings" << std::endl;
@@ -177,7 +199,13 @@ int main(int argc, const char *argv[])
       }
 
       if (! opt_video_out.empty() && selected_frame) {
-        writer.saveFrame(I);
+        if (opt_out_gray) {
+          vpImageConvert::convert(I, Igray);
+          writer.saveFrame(Igray);
+        }
+        else {
+          writer.saveFrame(I);
+        }
         if (opt_verbose) {
           std::cout << "Save " << writer.getFrameName() << std::endl;
         }
