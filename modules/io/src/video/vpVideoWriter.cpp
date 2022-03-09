@@ -83,7 +83,7 @@ vpVideoWriter::~vpVideoWriter() {}
   write different images named `image0001.jpeg`, `image0002.jpg`, ... and located
   in the folder `/local/image`, `filename` will be `/local/image/image%04d.jpg`.
 
-  \Note The function open() will create recursively the folders to host the
+  \note The function open() will create recursively the folders to host the
   video or the sequence of images.
 
   \param filename : filename template of an image sequence.
