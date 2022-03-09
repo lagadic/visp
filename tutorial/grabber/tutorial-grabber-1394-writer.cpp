@@ -13,7 +13,7 @@ int main(int argc, char **)
       save = true;
     }
 
-    vpImage<unsigned char> I;  // Create a gray level image container
+    vpImage<vpRGBa> I;         // Create a color image container
     bool reset = true;         // Enable bus reset during construction (default)
     vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
 
