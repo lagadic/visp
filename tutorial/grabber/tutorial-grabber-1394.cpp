@@ -95,7 +95,7 @@ int main(int argc, const char *argv[])
       std::cout << "Record name: " << opt_seqname << std::endl;
     }
 
-    vpImage<unsigned char> I;  // Create a gray level image container
+    vpImage<vpRGBa> I;  // Create a color image container
     bool reset = false;        // Disable bus reset during construction (default)
     //! [vp1394TwoGrabber construction]
     vp1394TwoGrabber g(reset); // Create a grabber based on libdc1394-2.x third party lib
@@ -134,9 +134,9 @@ int main(int argc, const char *argv[])
 #endif
     }
 
-    vpImageQueue<unsigned char> image_queue(opt_seqname, opt_record_mode);
-    vpImageStorageWorker<unsigned char> image_storage_worker(std::ref(image_queue));
-    std::thread image_storage_thread(&vpImageStorageWorker<unsigned char>::run, &image_storage_worker);
+    vpImageQueue<vpRGBa> image_queue(opt_seqname, opt_record_mode);
+    vpImageStorageWorker<vpRGBa> image_storage_worker(std::ref(image_queue));
+    std::thread image_storage_thread(&vpImageStorageWorker<vpRGBa>::run, &image_storage_worker);
 
     bool quit = false;
     while (! quit) {

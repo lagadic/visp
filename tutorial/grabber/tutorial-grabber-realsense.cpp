@@ -104,7 +104,7 @@ int main(int argc, const char *argv[])
       std::cout << text_record_mode << std::endl;
       std::cout << "Record name: " << opt_seqname << std::endl;
     }
-    vpImage<unsigned char> I;
+    vpImage<vpRGBa> I;
 
 #ifdef VISP_HAVE_REALSENSE2
     std::cout << "SDK        : Realsense 2" << std::endl;
@@ -142,9 +142,9 @@ int main(int argc, const char *argv[])
 #endif
     }
 
-    vpImageQueue<unsigned char> image_queue(opt_seqname, opt_record_mode);
-    vpImageStorageWorker<unsigned char> image_storage_worker(std::ref(image_queue));
-    std::thread image_storage_thread(&vpImageStorageWorker<unsigned char>::run, &image_storage_worker);
+    vpImageQueue<vpRGBa> image_queue(opt_seqname, opt_record_mode);
+    vpImageStorageWorker<vpRGBa> image_storage_worker(std::ref(image_queue));
+    std::thread image_storage_thread(&vpImageStorageWorker<vpRGBa>::run, &image_storage_worker);
 
     bool quit = false;
     while (! quit) {

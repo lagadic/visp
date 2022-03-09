@@ -4,7 +4,7 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/io/vpImageStorageWorker.h>
 
-//#define USE_COLOR // Comment to acquire gray level images
+#define USE_COLOR // Comment to acquire gray level images
 
 void usage(const char *argv[], int error)
 {

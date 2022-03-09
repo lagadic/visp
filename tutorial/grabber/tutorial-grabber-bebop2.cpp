@@ -111,7 +111,7 @@ int main(int argc, const char **argv)
     }
     std::cout << "Image resolution : " << (image_res == 0 ? "480p." : "720p.") << std::endl << std::endl;
 
-    vpImage<unsigned char> I(1, 1, 0);
+    vpImage<vpRGBa> I(1, 1, 0);
 
     vpRobotBebop2 drone(false, true, ip_address);
 
@@ -121,7 +121,7 @@ int main(int argc, const char **argv)
 
       drone.startStreaming();
       drone.setExposure(1.5f);
-      drone.getGrayscaleImage(I);
+      drone.getRGBaImage(I);
     } else {
       std::cout << "Error : failed to setup drone control" << std::endl;
       return 1;
@@ -146,14 +146,14 @@ int main(int argc, const char **argv)
 #endif
     }
 
-    vpImageQueue<unsigned char> image_queue(opt_seqname, opt_record_mode);
-    vpImageStorageWorker<unsigned char> image_storage_worker(std::ref(image_queue));
-    std::thread image_storage_thread(&vpImageStorageWorker<unsigned char>::run, &image_storage_worker);
+    vpImageQueue<vpRGBa> image_queue(opt_seqname, opt_record_mode);
+    vpImageStorageWorker<vpRGBa> image_storage_worker(std::ref(image_queue));
+    std::thread image_storage_thread(&vpImageStorageWorker<vpRGBa>::run, &image_storage_worker);
 
     bool quit = false;
     while (!quit) {
       double t = vpTime::measureTimeMs();
-      drone.getGrayscaleImage(I);
+      drone.getRGBaImage(I);
 
       vpDisplay::display(I);
 
