@@ -110,6 +110,8 @@ Input video
 Output video
   Video name     : /tmp/myseq/jpeg/image-%04d.jpeg
   First image    : 1
+  Stride         : 1
+  Y8 gray images : no (same as input)
 Other settings
   verbatim        : disabled
   Select frames  : disabled
@@ -180,6 +182,14 @@ Moreover, there is also an other extra option `--out-gray` that allows to save o
 $ ./tutorial-video-manipulation --in /tmp/myseq/png/I%04d.png --out /tmp/myseq/gray-jpeg/gray-image-%04d.jpg --out-gray
 \endverbatim
 
+- Finally, there is also the `--out-stride` option that allows to keep one image over n in the resulting output video. 
+  For example, if your input image sequence has 40 images and you want to create a new image sequence temporally subsampled 
+  with only 20 images, you can use this option like:
+\verbatim
+$ ./tutorial-video-manipulation --in /tmp/myseq/png/I%04d.png --out /tmp/myseq/png-stride-2/I%04d.png --out-stride 2
+\endverbatim
+  
+  
 \subsection img_manip_seq_extract Images extraction from a video
 
 The tutorial tutorial-image-manipulation.cpp allows also to extract images from a video file.
