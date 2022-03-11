@@ -1556,6 +1556,7 @@ status("    Use TensorRT:"           USE_TENSORRT       THEN "yes (ver ${TENSORR
 status("")
 status("  Documentation: ")
 status("    Use doxygen:"            DOXYGEN_FOUND    THEN "yes" ELSE "no")
+status("    \\- Use mathjax:"        USE_MATHJAX      THEN "yes" ELSE "no")
 
 # ========================== samples and tests ==========================
 status("")
