@@ -272,6 +272,38 @@ public:
   */
   inline double get_v() const { return i; }
 
+  /*!
+   * Test if the image point is in a line represented by two image points.
+   *
+   * \param[in] start : Line start image point.
+   * \param[in] end : Line end image point.
+   * \return True if current image point is in the line. False otherwise.
+   */
+  inline bool isInLine(const vpImagePoint &start, const vpImagePoint &end) const
+  {
+    return ((end.get_j() >= start.get_j() && end.get_j() >= this->j && this->j >= start.get_j()) ||
+            (end.get_j() <= start.get_j() && end.get_j() <= this->j && this->j <= start.get_j())) &&
+           ((end.get_i() >= start.get_i() && end.get_i() >= this->i && this->i >= start.get_i()) ||
+            (end.get_i() <= start.get_i() && end.get_i() <= this->i && this->i <= start.get_i()));
+  }
+
+  /*!
+   * Return next image point of the current image point in the line [start,end].
+   *
+   * \param[in] start : Line start image point.
+   * \param[in] end : Line end image point.
+   * \return Next image point regarding current image point in the line [start,end].
+   */
+  inline vpImagePoint nextInLine(const vpImagePoint &start, const vpImagePoint &end) const
+  {
+    const auto line_slope = (end.get_i() - start.get_i()) / (end.get_j() - start.get_j());
+    if (fabs(end.get_j() - this->j) > fabs(end.get_i() - this->i)) {
+      return {end.get_i() - line_slope * (end.get_j() - this->j), end.get_j() > this->j ? this->j + 1 : this->j - 1};
+    } else {
+      return {end.get_i() > this->i ? this->i + 1 : this->i - 1, end.get_j() - ((end.get_i() + this->i) / line_slope)};
+    }
+  }
+
   static vpRect getBBox(const std::vector<vpImagePoint> &ipVec);
 
   static double distance(const vpImagePoint &iP1, const vpImagePoint &iP2);
