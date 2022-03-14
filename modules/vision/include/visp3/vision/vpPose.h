@@ -62,6 +62,11 @@
 #include <atomic>
 #endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
+    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+#include <map>
+#endif
+
 #include <visp3/core/vpUniRand.h>
 
 /*!
@@ -355,6 +360,17 @@ public:
                                               const std::vector<std::vector<vpPoint> > &point3d,
                                               vpHomogeneousMatrix &cMo, double *confidence_index = NULL,
                                               bool coplanar_points = true);
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
+    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+
+  template <typename DataId>
+  static std::optional<vpHomogeneousMatrix> computePlanarObjectPoseFrom3Points(
+      const vpPlane &plane_in_camera_frame, const std::map<DataId, vpPoint> &pts,
+      const std::map<DataId, vpImagePoint> &ips, const vpCameraParameters &camera_intrinsics,
+      std::optional<vpHomogeneousMatrix> cMo_init = std::nullopt, bool enable_vvs = true);
+
+#endif
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
