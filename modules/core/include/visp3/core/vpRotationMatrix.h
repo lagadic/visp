@@ -183,6 +183,7 @@ public:
   vpRotationMatrix& operator<<(double val);
   vpRotationMatrix& operator,(double val);
 
+  void orthogonalize();
 
   void printVector();
 
