@@ -126,8 +126,12 @@ vpRotationMatrix& vpRotationMatrix::operator=(const std::initializer_list<double
 
   std::copy(list.begin(), list.end(), data);
 
-  if (! isARotationMatrix() ) {
-    throw(vpException(vpException::fatalError, "Rotation matrix initialization fails since it's elements doesn't represent a rotation matrix"));
+  if (!isARotationMatrix()) {
+    if (isARotationMatrix(1e-3)) {
+      orthogonalize();
+    } else {
+      throw(vpException(vpException::fatalError, "Rotation matrix initialization fails since its elements do not represent a valid rotation matrix"));
+    }
   }
 
   return *this;
@@ -527,8 +531,12 @@ R:
  */
 vpRotationMatrix::vpRotationMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(3, 3, list), m_index(0)
 {
-  if (! isARotationMatrix() ) {
-    throw(vpException(vpException::fatalError, "Rotation matrix initialization fails since it's elements doesn't represent a rotation matrix"));
+  if (!isARotationMatrix()) {
+    if (isARotationMatrix(1e-3)) {
+      orthogonalize();
+    } else {
+      throw(vpException(vpException::fatalError, "Rotation matrix initialization fails since its elements do not represent a valid rotation matrix"));
+    }
   }
 }
 #endif
@@ -922,6 +930,32 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpRotationMatrix> &vec
 
   R = meanR;
   return R;
+}
+
+/*!
+  Perform rotation matrix orthogonalization.
+ */
+void vpRotationMatrix::orthogonalize()
+{
+  vpMatrix U  = *this;
+  vpColVector w;
+  vpMatrix V;
+  U.svd(w, V);
+  vpMatrix Vt = V.t();
+  vpMatrix R = U * Vt;
+
+  double det = R.det();
+  if (det < 0) {
+    Vt[2][0] *= -1;
+    Vt[2][1] *= -1;
+    Vt[2][2] *= -1;
+
+    R = U * Vt;
+  }
+
+  data[0] = R[0][0]; data[1] = R[0][1]; data[2] = R[0][2];
+  data[3] = R[1][0]; data[4] = R[1][1]; data[5] = R[1][2];
+  data[6] = R[2][0]; data[7] = R[2][1]; data[8] = R[2][2];
 }
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

@@ -216,21 +216,14 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
   if (!isAnHomogeneousMatrix()) {
     if (isAnHomogeneousMatrix(1e-3)) {
       // re-orthogonalize rotation matrix since the input is close to a valid rotation matrix
-      vpMatrix U {
-        {data[0], data[1], data[2]},
-        {data[4], data[5], data[6]},
-        {data[8], data[9], data[10]}
-      };
-      vpColVector w;
-      vpMatrix V;
-      U.svd(w, V);
-      vpMatrix R = U * V.t();
+      vpRotationMatrix R(*this);
+      R.orthogonalize();
 
       data[0] = R[0][0]; data[1] = R[0][1]; data[2] = R[0][2];
       data[4] = R[1][0]; data[5] = R[1][1]; data[6] = R[1][2];
       data[8] = R[2][0]; data[9] = R[2][1]; data[10] = R[2][2];
     } else {
-      throw(vpException(vpException::fatalError, "Rotation matrix initialization fails since it's elements doesn't represent a rotation matrix"));
+      throw(vpException(vpException::fatalError, "Homogeneous matrix initialization fails since its elements are not valid (rotation part or last row)"));
     }
   }
 }
@@ -722,15 +715,18 @@ vpHomogeneousMatrix& vpHomogeneousMatrix::operator,(double val)
 /*********************************************************************/
 
 /*!
-  Test if the 3x3 rotational part of the homogeneous matrix is really
-  a rotation matrix.
+  Test if the 3x3 rotational part of the homogeneous matrix is a valid
+  rotation matrix and the last row is equal to [0, 0, 0, 1].
 */
 bool vpHomogeneousMatrix::isAnHomogeneousMatrix(double threshold) const
 {
   vpRotationMatrix R;
   extract(R);
 
-  return R.isARotationMatrix(threshold);
+  const double epsilon = std::numeric_limits<double>::epsilon();
+  return R.isARotationMatrix(threshold)
+    && vpMath::nul((*this)[3][0], epsilon) && vpMath::nul((*this)[3][1], epsilon)
+    && vpMath::nul((*this)[3][2], epsilon) && vpMath::equal((*this)[3][3], 1.0, epsilon);
 }
 
 /*!
