@@ -229,6 +229,8 @@ public:
   vpHomogeneousMatrix& operator<<(double val);
   vpHomogeneousMatrix& operator,(double val);
 
+  void orthogonalizeRotation();
+
   void print() const;
 
   /*!

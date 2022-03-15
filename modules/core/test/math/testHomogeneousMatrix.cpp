@@ -53,6 +53,27 @@ TEST_CASE("vpHomogeneousMatrix re-orthogonalize rotation matrix", "[vpHomogeneou
     };
   }());
 
+  SECTION("check re-orthogonalize rotation part")
+  {
+    vpHomogeneousMatrix M1 {
+      0.9835, -0.0581,  0.1716, 0.0072,
+      -0.0489, -0.9972, -0.0571, 0.0352,
+      0.1744,  0.0478, -0.9835, 0.9470
+    };
+
+    vpHomogeneousMatrix M2;
+    M2[0][0] = 0.9835;   M2[0][1] = -0.0581;  M2[0][2] = 0.1716;   M2[0][3] = 0.0072;
+    M2[1][0] = -0.0489;  M2[1][1] = -0.9972;  M2[1][2] = -0.0571;  M2[1][3] = 0.0352;
+    M2[2][0] = 0.1744;   M2[2][1] = 0.0478;   M2[2][2] = -0.9835;  M2[2][3] = 0.9470;
+    M2.orthogonalizeRotation();
+
+    for (unsigned int i = 0; i < 4; i++) {
+      for (unsigned int j = 0; j < 4; j++) {
+        CHECK(M1[i][j] == Approx(M2[i][j]).margin(std::numeric_limits<double>::epsilon()));
+      }
+    }
+  }
+
   CHECK_NOTHROW([](){
     vpHomogeneousMatrix M {
       0.9835, -0.0581,  0.1716, 0.0072,
