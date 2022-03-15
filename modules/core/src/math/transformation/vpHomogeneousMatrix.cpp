@@ -935,6 +935,19 @@ void vpHomogeneousMatrix::load(std::ifstream &f)
   }
 }
 
+/*!
+  Perform orthogonalization of the rotation part of the homogeneous transformation.
+ */
+void vpHomogeneousMatrix::orthogonalizeRotation()
+{
+  vpRotationMatrix R(*this);
+  R.orthogonalize();
+
+  data[0] = R[0][0]; data[1] = R[0][1]; data[2] = R[0][2];
+  data[4] = R[1][0]; data[5] = R[1][1]; data[6] = R[1][2];
+  data[8] = R[2][0]; data[9] = R[2][1]; data[10] = R[2][2];
+}
+
 //! Print the matrix as a pose vector \f$({\bf t}^T \theta {\bf u}^T)\f$
 void vpHomogeneousMatrix::print() const
 {
