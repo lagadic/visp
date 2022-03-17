@@ -717,6 +717,8 @@ vpHomogeneousMatrix& vpHomogeneousMatrix::operator,(double val)
 /*!
   Test if the 3x3 rotational part of the homogeneous matrix is a valid
   rotation matrix and the last row is equal to [0, 0, 0, 1].
+
+  \return true if the matrix is a homogeneous matrix, false otherwise.
 */
 bool vpHomogeneousMatrix::isAnHomogeneousMatrix(double threshold) const
 {

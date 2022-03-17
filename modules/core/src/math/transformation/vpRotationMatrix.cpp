@@ -398,6 +398,9 @@ vpRotationMatrix &vpRotationMatrix::operator*=(double x)
 
 /*!
   Test if the rotation matrix is really a rotation matrix.
+
+  \return true if the matrix is a rotation matrix, false otherwise.
+
 */
 bool vpRotationMatrix::isARotationMatrix(double threshold) const
 {
