@@ -131,9 +131,10 @@ public:
 
   vpPolygon &operator=(const vpPolygon &poly);
 
-  void buildFrom(const std::vector<vpImagePoint> &corners);
-  void buildFrom(const std::list<vpImagePoint> &corners);
-  void buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam);
+  void buildFrom(const std::vector<vpImagePoint> &corners, const bool create_convex_hull = false);
+  void buildFrom(const std::list<vpImagePoint> &corners, const bool create_convex_hull = false);
+  void buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
+                 const bool create_convex_hull = false);
 
   unsigned int getSize() const;
   void initClick(const vpImage<unsigned char> &I, unsigned int size = 5, const vpColor &color = vpColor::red,
