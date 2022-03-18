@@ -1,0 +1,18 @@
+# Bounds
+# - Contains a list of 3D points (X Y Z) corresponding to the bounds of the plane to consider
+Bounds
+data:
+  - [0,          0, 0]    # pt 0: top left point
+  - [0,      0.143, 0]    # pt 1: top right point
+  - [0.091,  0.143, 0]
+  - [0.091,      0, 0]
+
+# Keypoints
+# - Contains a list of 3D points (X Y Z) corresponding to the keypoints
+# - These points are defined in origin frame and represent the white sticker corners
+Keypoints
+data:
+  - [0.008, 0.086, 0]
+  - [0.008, 0.130, 0]
+  - [0.033, 0.130, 0]
+  - [0.033, 0.086, 0]
