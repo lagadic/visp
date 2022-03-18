@@ -38,13 +38,55 @@
  *
  *****************************************************************************/
 
+// System
 #include <limits>
 #include <set>
+
+// Core
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpUniRand.h>
+
+// Local helper
+#ifdef VISP_HAVE_OPENCV
+#include "opencv2/imgproc.hpp"
+
+/*!
+ * Compute convex hull corners.
+ *
+ * \param[in] ips : List of 2D points.
+ */
+template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpContainer &ips)
+{
+  if (ips.size() == 0) {
+    throw vpException(vpException::badValue,
+                      "Convex Hull can not be computed as the input does not contain any image point.");
+  }
+
+  // Visp -> CV
+  std::vector<cv::Point> cv_pts{};
+  std::transform(cbegin(ips), cend(ips), std::back_inserter(cv_pts), [](const vpImagePoint &ip) {
+    return cv::Point{static_cast<int>(ip.get_u()), static_cast<int>(ip.get_v())};
+  });
+
+  // Get convex hull from OpenCV
+  std::vector<cv::Point> cv_conv_hull_corners{};
+  cv::convexHull(cv_pts, cv_conv_hull_corners);
+
+  // CV -> Visp
+  std::vector<vpImagePoint> conv_hull_corners{};
+  std::transform(cbegin(cv_conv_hull_corners), cend(cv_conv_hull_corners), std::back_inserter(conv_hull_corners),
+                 [](const cv::Point &pt) {
+                   return vpImagePoint{static_cast<double>(pt.y), static_cast<double>(pt.x)};
+                 });
+
+  return conv_hull_corners;
+}
+
+#endif
+
 /*!
    Default constructor that creates an empty polygon.
 */
@@ -127,8 +169,19 @@ vpPolygon &vpPolygon::operator=(const vpPolygon &poly)
   clockwise).
 
   \param corners : The corners of the polyon.
+  \param create_convex_hull: Create a convex hull from the given corners.
 */
-void vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners) { init(corners); }
+void vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners, const bool create_convex_hull)
+{
+  if (create_convex_hull) {
+#ifndef VISP_HAVE_OPENCV
+    vpException(vpException::notImplementedError, "Cannot build a convex hull without OPENCV");
+#endif
+    init(convexHull(corners));
+  } else {
+    init(corners);
+  }
+}
 
 /*!
   Initialises the polygon thanks to the collection of 2D points (in pixel).
@@ -137,8 +190,19 @@ void vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners) { init(corne
   clockwise).
 
   \param corners : The corners of the polyon.
+  \param create_convex_hull: Create a convex hull from the given corners.
 */
-void vpPolygon::buildFrom(const std::list<vpImagePoint> &corners) { init(corners); }
+void vpPolygon::buildFrom(const std::list<vpImagePoint> &corners, const bool create_convex_hull)
+{
+  if (create_convex_hull) {
+#ifndef VISP_HAVE_OPENCV
+    vpException(vpException::notImplementedError, "Cannot build a convex hull without OPENCV");
+#endif
+    init(convexHull(corners));
+  } else {
+    init(corners);
+  }
+}
 
 /*!
   Initialises the triangle thanks to the collection of 2D points (in meter).
@@ -151,14 +215,16 @@ void vpPolygon::buildFrom(const std::list<vpImagePoint> &corners) { init(corners
   \param corners : The corners of the polyon.
   \param cam : The camera parameters used to convert the coordinates from
   meter to pixel.
+  \param create_convex_hull: Create a convex hull from the given corners.
 */
-void vpPolygon::buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam)
+void vpPolygon::buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
+                          const bool create_convex_hull)
 {
   std::vector<vpImagePoint> ipCorners(corners.size());
   for (unsigned int i = 0; i < corners.size(); ++i) {
     vpMeterPixelConversion::convertPoint(cam, corners[i].get_x(), corners[i].get_y(), ipCorners[i]);
   }
-  buildFrom(ipCorners);
+  buildFrom(ipCorners, create_convex_hull);
 }
 
 /*!
