@@ -244,7 +244,7 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
 
   // Reduce computation time by using subsample factor
   unsigned int subsample_factor = sqrt(((roi_right - roi_left) * (roi_bottom - roi_top)) / avg_nb_of_pts_to_estimate);
-  subsample_factor = std::clamp(subsample_factor, 1u, MaxSubSampFactorToEstimatePlane);
+  subsample_factor = vpMath::clamp(subsample_factor, 1u, MaxSubSampFactorToEstimatePlane);
 
   // Create the point cloud which will be used for plane estimation
   std::vector<double> pt_cloud{};
