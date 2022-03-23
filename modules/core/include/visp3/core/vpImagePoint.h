@@ -296,11 +296,21 @@ public:
    */
   inline vpImagePoint nextInLine(const vpImagePoint &start, const vpImagePoint &end) const
   {
-    const auto line_slope = (end.get_i() - start.get_i()) / (end.get_j() - start.get_j());
+    const double line_slope = (end.get_i() - start.get_i()) / (end.get_j() - start.get_j());
     if (fabs(end.get_j() - this->j) > fabs(end.get_i() - this->i)) {
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
       return {end.get_i() - line_slope * (end.get_j() - this->j), end.get_j() > this->j ? this->j + 1 : this->j - 1};
+#else
+      return vpImagePoint(end.get_i() - line_slope * (end.get_j() - this->j),
+                          end.get_j() > this->j ? this->j + 1 : this->j - 1);
+#endif
     } else {
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
       return {end.get_i() > this->i ? this->i + 1 : this->i - 1, end.get_j() - ((end.get_i() + this->i) / line_slope)};
+#else
+      return vpImagePoint(end.get_i() > this->i ? this->i + 1 : this->i - 1,
+                          end.get_j() - ((end.get_i() + this->i) / line_slope));
+#endif
     }
   }
 

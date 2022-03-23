@@ -556,13 +556,30 @@ int main()
 
   // Test clamp
   {
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
     const double lower{-10.}, upper{+10.};
     std::vector<double> testing_values{5., -15., 15.};
     std::vector<double> expected_values{5., -10., 10.};
+#else
+    const double lower = -10., upper = +10.;
+    std::vector<double> testing_values;
+    testing_values.push_back(5.);
+    testing_values.push_back(-15.);
+    testing_values.push_back(15.);
+    std::vector<double> expected_values;
+    expected_values.push_back(5.);
+    expected_values.push_back(-10.);
+    expected_values.push_back(10.);
+#endif
 
-    for (auto i = 0u; i < testing_values.size(); i++) {
+    for (size_t i = 0u; i < testing_values.size(); i++) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
       if (const auto clamp_val = vpMath::clamp(testing_values.at(i), lower, upper);
           !vpMath::equal(clamp_val, expected_values.at(i), 0.001)) {
+#else
+      const double clamp_val = vpMath::clamp(testing_values.at(i), lower, upper);
+      if (!vpMath::equal(clamp_val, expected_values.at(i), 0.001)) {
+#endif
         std::cerr << "Problem with vpMath::clamp()=" << clamp_val << std::endl;
         return -1;
       }

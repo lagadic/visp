@@ -63,7 +63,11 @@ namespace
  */
 vpImagePoint adjust2DPointToBoundary(const vpImagePoint &ip, double width, double height)
 {
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   return {vpMath::clamp(ip.get_i(), 0., height), vpMath::clamp(ip.get_j(), 0., width)};
+#else
+  vpImagePoint(vpMath::clamp(ip.get_i(), 0., height), vpMath::clamp(ip.get_j(), 0., width));
+#endif
 }
 
 /*!
@@ -75,9 +79,15 @@ vpImagePoint adjust2DPointToBoundary(const vpImagePoint &ip, double width, doubl
  */
 vpColVector transform(const vpHomogeneousMatrix &extrinsics_params, vpColVector from_point)
 {
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   from_point = {from_point, 0, 3};
   from_point.stack(1.);
   return {extrinsics_params * from_point, 0, 3};
+#else
+  from_point = vpColVector(from_point, 0, 3);
+  from_point.stack(1.);
+  return vpColVector(extrinsics_params * from_point, 0, 3);
+#endif
 }
 
 /*!
@@ -89,7 +99,11 @@ vpColVector transform(const vpHomogeneousMatrix &extrinsics_params, vpColVector 
  */
 vpImagePoint project(const vpCameraParameters &intrinsic_cam_params, const vpColVector &point)
 {
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   vpImagePoint iP{};
+#else
+  vpImagePoint iP;
+#endif
   vpMeterPixelConversion::convertPoint(intrinsic_cam_params, point[0] / point[2], point[1] / point[2], iP);
 
   return iP;
@@ -105,10 +119,20 @@ vpImagePoint project(const vpCameraParameters &intrinsic_cam_params, const vpCol
  */
 vpColVector deproject(const vpCameraParameters &intrinsic_cam_params, const vpImagePoint &pixel, double depth)
 {
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   double x{0.}, y{0.};
   vpPixelMeterConversion::convertPoint(intrinsic_cam_params, pixel, x, y);
-
   return {x * depth, y * depth, depth};
+#else
+  double x = 0., y = 0.;
+  vpPixelMeterConversion::convertPoint(intrinsic_cam_params, pixel, x, y);
+
+  vpColVector p(3);
+  p[0] = x * depth;
+  p[1] = y * depth;
+  p[2] = depth;
+  return p;
+#endif
 }
 
 } // namespace
@@ -157,6 +181,7 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
     double depth_height, const vpCameraParameters &depth_intrinsics, const vpCameraParameters &color_intrinsics,
     const vpHomogeneousMatrix &color_M_depth, const vpHomogeneousMatrix &depth_M_color, const vpImagePoint &from_pixel)
 {
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   vpImagePoint depth_pixel{};
 
   // Find line start pixel
@@ -190,6 +215,41 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
       depth_pixel = curr_pixel;
     }
   }
+
+#else
+  vpImagePoint depth_pixel;
+
+  // Find line start pixel
+  const vpColVector min_point = deproject(color_intrinsics, from_pixel, depth_min);
+  const vpColVector min_transformed_point = transform(depth_M_color, min_point);
+  vpImagePoint start_pixel = project(depth_intrinsics, min_transformed_point);
+  start_pixel = adjust2DPointToBoundary(start_pixel, depth_width, depth_height);
+
+  // Find line end depth pixel
+  const vpColVector max_point = deproject(color_intrinsics, from_pixel, depth_max);
+  const vpColVector max_transformed_point = transform(depth_M_color, max_point);
+  vpImagePoint end_pixel = project(depth_intrinsics, max_transformed_point);
+  end_pixel = adjust2DPointToBoundary(end_pixel, depth_width, depth_height);
+
+  // search along line for the depth pixel that it's projected pixel is the closest to the input pixel
+  double min_dist = -1.;
+  for (vpImagePoint curr_pixel = start_pixel; curr_pixel.isInLine(start_pixel, end_pixel);
+       curr_pixel = curr_pixel.nextInLine(start_pixel, end_pixel)) {
+    const double depth = depth_scale * data[static_cast<int>(curr_pixel.get_v() * depth_width + curr_pixel.get_u())];
+    if (depth == 0)
+      continue;
+
+    const vpColVector point = deproject(depth_intrinsics, curr_pixel, depth);
+    const vpColVector transformed_point = transform(color_M_depth, point);
+    const vpImagePoint projected_pixel = project(color_intrinsics, transformed_point);
+
+    const double new_dist = vpMath::sqr(projected_pixel.get_v() - from_pixel.get_v()) +
+                            vpMath::sqr(projected_pixel.get_u() - from_pixel.get_u());
+    if (new_dist < min_dist || min_dist < 0) {
+      min_dist = new_dist;
+      depth_pixel = curr_pixel;
+    }
+#endif
 
   return depth_pixel;
 }

@@ -45,7 +45,7 @@
 #include <omp.h>
 #endif
 
-// Internal
+// Core
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpRobust.h>
@@ -192,6 +192,7 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
  * \param[in] depth_scale : Depth scale (used to convert depth value into meters).
  * \param[in] depth_intrinsics : Depth camera parameters.
  * \param[in] roi : Region of interest.
+ * \param[in] avg_nb_of_pts_to_estimate : Average number of points to use to estimate the plane (default: 500).
  * \param[out] heat_map : Plane estimation heat map (optional).
  * \return Plane equation.
  */
