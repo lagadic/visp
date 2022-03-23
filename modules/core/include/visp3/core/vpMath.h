@@ -80,6 +80,7 @@
 
 #endif
 
+#include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 
 /*!
@@ -120,6 +121,25 @@ public:
 
   // combinaison
   static inline long double comb(unsigned int n, unsigned int p);
+
+  /*!
+    Clamp a value to boundaries.
+    \param v : The value to clamp.
+    \param lower, upper : The boundaries to clamp `v` to.
+
+    Throw a vpException if the value of `lower` is greater than `upper`.
+  */
+  template <typename T> static inline T clamp(const T &v, const T &lower, const T &upper)
+  {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+    return std::clamp(v, lower, upper);
+#else
+    if (upper < lower) {
+      throw vpException(vpException::badValue, "clamp: lower bound is greater than upper bound");
+    }
+    return (v < lower) ? lower : (upper < v) ? upper : v;
+#endif
+  }
 
   //   round x to the nearest integer
   static inline int round(double x);

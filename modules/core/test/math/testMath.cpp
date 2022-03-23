@@ -554,6 +554,21 @@ int main()
   }
   std::cout << "vpMath::getMedian() is Ok !" << std::endl;
 
+  // Test clamp
+  {
+    const double lower{-10.}, upper{+10.};
+    std::vector<double> testing_values{5., -15., 15.};
+    std::vector<double> expected_values{5., -10., 10.};
+
+    for (auto i = 0u; i < testing_values.size(); i++) {
+      if (const auto clamp_val = vpMath::clamp(testing_values.at(i), lower, upper);
+          !vpMath::equal(clamp_val, expected_values.at(i), 0.001)) {
+        std::cerr << "Problem with vpMath::clamp()=" << clamp_val << std::endl;
+        return -1;
+      }
+    }
+  }
+
   std::cout << "OK !" << std::endl;
   return 0;
 }

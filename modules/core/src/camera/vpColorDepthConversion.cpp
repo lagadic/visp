@@ -45,7 +45,8 @@
 // System
 #include <algorithm>
 
-// Internal
+// Core
+#include <visp3/core/vpMath.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 
@@ -62,7 +63,7 @@ namespace
  */
 vpImagePoint adjust2DPointToBoundary(const vpImagePoint &ip, double width, double height)
 {
-  return {std::clamp(ip.get_i(), 0., height), std::clamp(ip.get_j(), 0., width)};
+  return {vpMath::clamp(ip.get_i(), 0., height), vpMath::clamp(ip.get_j(), 0., width)};
 }
 
 /*!
