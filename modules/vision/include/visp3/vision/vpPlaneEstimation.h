@@ -45,14 +45,16 @@
 #include <visp3/core/vpConfig.h>
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
-    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1910)))
+    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
 
 // Visual Studio: Optionals are available from Visual Studio 2017 RTW (15.0)	[1910]
+// Visual Studio: Structured bindings are available from Visual Studio 2017 version 15.3 [1911] (cf .cpp)
 
 // System
+#include <functional>
 #include <optional>
 
-// Internal
+// Core
 #include <visp3/core/vpPlane.h>
 #include <visp3/core/vpPolygon.h>
 

@@ -51,7 +51,7 @@
 
 // Local helper
 #ifdef VISP_HAVE_OPENCV
-#include "opencv2/imgproc.hpp"
+#include <opencv2/imgproc/imgproc.hpp>
 
 /*!
  * Compute convex hull corners.
@@ -66,21 +66,43 @@ template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpCon
   }
 
   // Visp -> CV
-  std::vector<cv::Point> cv_pts{};
+  std::vector<cv::Point> cv_pts;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
   std::transform(cbegin(ips), cend(ips), std::back_inserter(cv_pts), [](const vpImagePoint &ip) {
-    return cv::Point{static_cast<int>(ip.get_u()), static_cast<int>(ip.get_v())};
+    return cv::Point(static_cast<int>(ip.get_u()), static_cast<int>(ip.get_v()));
   });
+#elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::transform(begin(ips), end(ips), std::back_inserter(cv_pts), [](const vpImagePoint &ip) {
+    return cv::Point(static_cast<int>(ip.get_u()), static_cast<int>(ip.get_v()));
+  });
+#else
+  for (typename IpContainer::const_iterator it = ips.begin(); it != ips.end(); ++it) {
+    cv_pts.push_back(cv::Point(static_cast<int>(it->get_u()), static_cast<int>(it->get_v())));
+  }
+#endif
 
   // Get convex hull from OpenCV
-  std::vector<cv::Point> cv_conv_hull_corners{};
+  std::vector<cv::Point> cv_conv_hull_corners;
   cv::convexHull(cv_pts, cv_conv_hull_corners);
 
   // CV -> Visp
-  std::vector<vpImagePoint> conv_hull_corners{};
+  std::vector<vpImagePoint> conv_hull_corners;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
   std::transform(cbegin(cv_conv_hull_corners), cend(cv_conv_hull_corners), std::back_inserter(conv_hull_corners),
                  [](const cv::Point &pt) {
                    return vpImagePoint{static_cast<double>(pt.y), static_cast<double>(pt.x)};
                  });
+#elif (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::transform(begin(cv_conv_hull_corners), end(cv_conv_hull_corners), std::back_inserter(conv_hull_corners),
+                 [](const cv::Point &pt) {
+                   return vpImagePoint{static_cast<double>(pt.y), static_cast<double>(pt.x)};
+                 });
+#else
+  for (std::vector<cv::Point>::const_iterator it = cv_conv_hull_corners.begin(); it != cv_conv_hull_corners.end();
+       ++it) {
+    conv_hull_corners.push_back(vpImagePoint(static_cast<double>(it->y), static_cast<double>(it->x)));
+  }
+#endif
 
   return conv_hull_corners;
 }
@@ -174,10 +196,11 @@ vpPolygon &vpPolygon::operator=(const vpPolygon &poly)
 void vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners, const bool create_convex_hull)
 {
   if (create_convex_hull) {
-#ifndef VISP_HAVE_OPENCV
+#ifdef VISP_HAVE_OPENCV
+    init(convexHull(corners));
+#else
     vpException(vpException::notImplementedError, "Cannot build a convex hull without OPENCV");
 #endif
-    init(convexHull(corners));
   } else {
     init(corners);
   }
@@ -195,10 +218,11 @@ void vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners, const bool c
 void vpPolygon::buildFrom(const std::list<vpImagePoint> &corners, const bool create_convex_hull)
 {
   if (create_convex_hull) {
-#ifndef VISP_HAVE_OPENCV
+#ifdef VISP_HAVE_OPENCV
+    init(convexHull(corners));
+#else
     vpException(vpException::notImplementedError, "Cannot build a convex hull without OPENCV");
 #endif
-    init(convexHull(corners));
   } else {
     init(corners);
   }

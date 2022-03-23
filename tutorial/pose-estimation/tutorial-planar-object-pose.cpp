@@ -1,14 +1,9 @@
 //! \example tutorial-planar-object-pose.cpp
 
-// System
-#include <map>
-
 // Core
 #include <visp3/core/vpColorDepthConversion.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpXmlParserCamera.h>
 
 // Vision
@@ -24,6 +19,9 @@
 #include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
+    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
 
 // Local helper
 namespace
@@ -320,9 +318,16 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
 
   return keypoints;
 }
+#endif // #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >=
+       // VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
 
 int main()
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
+    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+
+#if defined(VISP_HAVE_DISPLAY)
+
   // Get prior data
   //! [Prior_Data]
   auto [color_img, depth_raw, color_param, depth_param, depth_M_color] = readData("data/d435_not_align_depth", 0);
@@ -425,6 +430,10 @@ int main()
   vpDisplay::flush(color_img);
 
   vpDisplay::getClick(color_img);
+
+#endif // defined(VISP_HAVE_DISPLAY)
+#endif // (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >=
+       // VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
 
   return EXIT_SUCCESS;
 }
