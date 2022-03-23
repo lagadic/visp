@@ -324,8 +324,10 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
 int main()
 {
   // Get prior data
+  //! [Prior_Data]
   auto [color_img, depth_raw, color_param, depth_param, depth_M_color] = readData("data/d435_not_align_depth", 0);
   const auto model = Model("data/d435_box.model");
+  //! [Prior_Data]
 
   std::cout << "color_param:" << std::endl << color_param << std::endl;
   std::cout << "depth_param:" << std::endl << depth_param << std::endl;
@@ -345,6 +347,7 @@ int main()
   display_depth.flush(depth_img);
 
   // Ask roi for plane estimation
+  //! [Roi_Plane_Estimation]
   vpPolygon roi_color_img{};
   roi_color_img.buildFrom(getRoiFromUser(color_img), true);
 
@@ -358,17 +361,24 @@ int main()
                 depth_raw, DepthScale, 0.1, 0.6, depth_param, color_param, depth_M_color.inverse(), depth_M_color,
                 std::placeholders::_1));
   const vpPolygon roi_depth_img{roi_corners_depth_img};
+  //! [Roi_Plane_Estimation]
 
   vpDisplay::displayPolygon(depth_img, roi_depth_img.getCorners(), vpColor::green);
   display_depth.flush(depth_img);
 
   // Estimate the plane
   vpImage<vpRGBa> heat_map{};
+  //! [Plane_Estimation]
   const auto obj_plane_in_depth =
       vpPlaneEstimation::estimatePlane(depth_raw, DepthScale, depth_param, roi_depth_img, 1000, heat_map);
   if (not obj_plane_in_depth) {
     return EXIT_FAILURE;
   }
+
+  // Get the plane in color frame
+  auto obj_plane_in_color = *obj_plane_in_depth;
+  obj_plane_in_color.changeFrame(depth_M_color.inverse());
+  //! [Plane_Estimation]
 
   Display display_heat_map(heat_map, display_depth.getWindowXPosition(),
                            display_depth.getWindowYPosition() + display_depth.getHeight(), "Plane Estimation Heat map",
@@ -376,18 +386,16 @@ int main()
   display_heat_map.display(heat_map);
   display_heat_map.flush(heat_map);
 
-  // Get the plane in color frame
-  auto obj_plane_in_color = *obj_plane_in_depth;
-  obj_plane_in_color.changeFrame(depth_M_color.inverse());
-
   // Ask user to click on keypoints
   const auto keypoint_color_img = getKeypointsFromUser(color_img, model);
 
+  //! [Pose_Estimation]
   const auto cMo = vpPose::computePlanarObjectPoseFrom3Points(obj_plane_in_color, model.keypoints(), keypoint_color_img,
                                                               color_param);
   if (not cMo) {
     return EXIT_FAILURE;
   }
+  //! [Pose_Estimation]
 
   // Display the model
   std::vector<vpImagePoint> d435_box_bound{};

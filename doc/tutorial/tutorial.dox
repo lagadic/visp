@@ -41,6 +41,8 @@ This page references all the tutorials in user zone.
 
 - \subpage tutorial_tools
 
+- \subpage tutorial_planar_object_pose
+
 */
 
 /*! \page tutorial_mainpage_dev Tutorials for ViSP developers
@@ -274,6 +276,13 @@ in one thread and display these images in an other thread.
 This page introduces the user to the way to assign track points and detected points.
 
 - \subpage tutorial-munkres <br>This tutorial explains how to use Munkres to assign tracked and detected image points.
+
+*/
+
+/*! \page tutorial_planar_object_pose Planar object pose estimation
+This page introduces the user to the way to estimate the pose of a planar object thanks to a RGB-D camera.
+
+- \subpage tutorial-planar-object-pose
 
 */
 
