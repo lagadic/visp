@@ -231,7 +231,7 @@ vpPose::computePlanarObjectPoseFrom3Points(const vpPlane &plane_in_camera_frame,
   }
 
   // Check if detection and model fit
-  for (const auto &[ip_id, _] : ips) {
+  for ([[maybe_unused]] const auto &[ip_id, _] : ips) {
     if (pts.find(ip_id) == end(pts)) {
       throw(vpException(vpException::fatalError,
                         "Cannot compute pose with points and image points which do not have the same IDs"));

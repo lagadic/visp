@@ -293,7 +293,7 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
   disp_help.flush(I_help);
 
   std::map<Model::Id, vpImagePoint> keypoints{};
-  for (const auto &[id, _] : model.keypoints()) {
+  for ([[maybe_unused]] const auto &[id, _] : model.keypoints()) {
 
     // Prepare display
     disp_color.display(color_img);
@@ -404,7 +404,7 @@ int main()
 
   // Display the model
   std::vector<vpImagePoint> d435_box_bound{};
-  for (const auto &[id, bound] : model.bounds(*cMo)) {
+  for ([[maybe_unused]] const auto &[_, bound] : model.bounds(*cMo)) {
     vpImagePoint ip{};
     vpMeterPixelConversion::convertPoint(color_param, bound.get_x(), bound.get_y(), ip);
     d435_box_bound.push_back(ip);
