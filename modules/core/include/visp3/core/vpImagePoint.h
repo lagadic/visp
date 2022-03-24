@@ -273,11 +273,11 @@ public:
   inline double get_v() const { return i; }
 
   /*!
-   * Test if the image point is in a line represented by two image points.
+   * Test if the image point belongs to a line represented by two image points.
    *
    * \param[in] start : Line start image point.
    * \param[in] end : Line end image point.
-   * \return True if current image point is in the line. False otherwise.
+   * \return True if current image point belongs to the line. False otherwise.
    */
   inline bool isInLine(const vpImagePoint &start, const vpImagePoint &end) const
   {
@@ -288,11 +288,11 @@ public:
   }
 
   /*!
-   * Return next image point of the current image point in the line [start,end].
+   * Considering current image point, returns the next image point that belongs to the line [start,end].
    *
    * \param[in] start : Line start image point.
    * \param[in] end : Line end image point.
-   * \return Next image point regarding current image point in the line [start,end].
+   * \return Regarding current image point, next image point that belongs to the line [start,end].
    */
   inline vpImagePoint nextInLine(const vpImagePoint &start, const vpImagePoint &end) const
   {
