@@ -114,7 +114,7 @@ bool testConvexHull()
   }
 #else
   for (std::vector<vpImagePoint>::const_iterator it = poly.getCorners().begin(); it != poly.getCorners().end(); ++it) {
-    if (std::find(rect_corners.begin(), rect_corners.end(), *it) != rect_corners.end()) {
+    if (std::find(rect_corners.begin(), rect_corners.end(), *it) == rect_corners.end()) {
       return false;
     }
   }
