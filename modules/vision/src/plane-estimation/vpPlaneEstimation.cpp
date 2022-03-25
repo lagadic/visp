@@ -112,7 +112,17 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
     }
 
     // Compute centroid
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_17)
     auto [centroid, total_w] = compute_centroid(point_cloud, weights);
+#else
+    // C++17 structured binding are not fully supported by clang 13.0 on macOS
+    // See
+    // https://stackoverflow.com/questions/46114214/lambda-implicit-capture-fails-with-variable-declared-from-structured-binding
+    vpColVector centroid;
+    double total_w;
+    std::tie(centroid, total_w) = compute_centroid(point_cloud, weights);
+#endif
+
     centroid /= total_w;
 
 // Minimization
