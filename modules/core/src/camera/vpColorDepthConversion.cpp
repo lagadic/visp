@@ -66,7 +66,7 @@ vpImagePoint adjust2DPointToBoundary(const vpImagePoint &ip, double width, doubl
 #if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   return {vpMath::clamp(ip.get_i(), 0., height), vpMath::clamp(ip.get_j(), 0., width)};
 #else
-  vpImagePoint(vpMath::clamp(ip.get_i(), 0., height), vpMath::clamp(ip.get_j(), 0., width));
+  return vpImagePoint(vpMath::clamp(ip.get_i(), 0., height), vpMath::clamp(ip.get_j(), 0., width));
 #endif
 }
 
@@ -249,6 +249,7 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
       min_dist = new_dist;
       depth_pixel = curr_pixel;
     }
+  }
 #endif
 
   return depth_pixel;
