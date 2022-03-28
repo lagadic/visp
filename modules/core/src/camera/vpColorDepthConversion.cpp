@@ -199,8 +199,8 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
 
   // search along line for the depth pixel that it's projected pixel is the closest to the input pixel
   auto min_dist{-1.};
-  for (auto curr_pixel = start_pixel; curr_pixel.isInLine(start_pixel, end_pixel);
-       curr_pixel = curr_pixel.nextInLine(start_pixel, end_pixel)) {
+  for (auto curr_pixel = start_pixel; curr_pixel.isInSegment(start_pixel, end_pixel);
+       curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel)) {
     const auto depth = depth_scale * data[static_cast<int>(curr_pixel.get_v() * depth_width + curr_pixel.get_u())];
     if (depth == 0)
       continue;
@@ -234,8 +234,8 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
 
   // search along line for the depth pixel that it's projected pixel is the closest to the input pixel
   double min_dist = -1.;
-  for (vpImagePoint curr_pixel = start_pixel; curr_pixel.isInLine(start_pixel, end_pixel);
-       curr_pixel = curr_pixel.nextInLine(start_pixel, end_pixel)) {
+  for (vpImagePoint curr_pixel = start_pixel; curr_pixel.isInSegment(start_pixel, end_pixel);
+       curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel)) {
     const double depth = depth_scale * data[static_cast<int>(curr_pixel.get_v() * depth_width + curr_pixel.get_u())];
     if (depth == 0)
       continue;
