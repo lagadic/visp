@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,6 +34,7 @@
  * Authors:
  * Nicolas Melchior
  * Fabien Spindler
+ * Julien Dufour
  *
  *****************************************************************************/
 
@@ -108,6 +109,93 @@ public:
   //! Destructor.
   inline virtual ~vpImagePoint() {}
 
+
+  /*!
+
+    Gets the point coordinate corresponding to the \f$ i \f$ axes in
+    the frame (i,j).
+
+    \return The value of the coordinate along the \f$ i \f$ axes.
+
+    \sa get_j(), get_u(), get_v()
+  */
+  inline double get_i() const { return i; }
+
+  /*!
+
+    Gets the point coordinate corresponding to the \f$ j \f$ axes in
+    the frame (i,j).
+
+    \return The value of the coordinate along the \f$ j \f$ axes.
+
+    \sa get_i(), get_u(), get_v()
+  */
+  inline double get_j() const { return j; }
+
+  /*!
+
+    Gets the point coordinate corresponding to the \f$ u \f$ axes in
+    the frame (u,v).
+
+    \return The value of the coordinate along the \f$ u \f$ axes.
+
+    \sa get_i(), get_j(), get_v()
+  */
+  inline double get_u() const { return j; }
+
+  /*!
+
+    Gets the point coordinate corresponding to the \f$ v \f$ axes in
+    the frame (u,v).
+
+    \return The value of the coordinate along the \f$ v \f$ axes.
+
+    \sa get_i(), get_j(), get_u()
+  */
+  inline double get_v() const { return i; }
+
+  bool inRectangle(const vpRect &rect) const;
+
+  /*!
+   * Test if the image point belongs to a line represented by two image points.
+   *
+   * \param[in] start : Line start image point.
+   * \param[in] end : Line end image point.
+   * \return True if current image point belongs to the line. False otherwise.
+   */
+  inline bool isInLine(const vpImagePoint &start, const vpImagePoint &end) const
+  {
+    return ((end.get_j() >= start.get_j() && end.get_j() >= this->j && this->j >= start.get_j()) ||
+            (end.get_j() <= start.get_j() && end.get_j() <= this->j && this->j <= start.get_j())) &&
+           ((end.get_i() >= start.get_i() && end.get_i() >= this->i && this->i >= start.get_i()) ||
+            (end.get_i() <= start.get_i() && end.get_i() <= this->i && this->i <= start.get_i()));
+  }
+
+  /*!
+   * Considering current image point, returns the next image point that belongs to the line [start,end].
+   *
+   * \param[in] start : Line start image point.
+   * \param[in] end : Line end image point.
+   * \return Regarding current image point, next image point that belongs to the line [start,end].
+   */
+  inline vpImagePoint nextInLine(const vpImagePoint &start, const vpImagePoint &end) const
+  {
+    const double line_slope = (end.get_i() - start.get_i()) / (end.get_j() - start.get_j());
+    if (fabs(end.get_j() - this->j) > fabs(end.get_i() - this->i)) {
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+      return {end.get_i() - line_slope * (end.get_j() - this->j), end.get_j() > this->j ? this->j + 1 : this->j - 1};
+#else
+      return vpImagePoint(end.get_i() - line_slope * (end.get_j() - this->j), end.get_j() > this->j ? this->j + 1 : this->j - 1);
+#endif
+    } else {
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
+      return {end.get_i() > this->i ? this->i + 1 : this->i - 1, end.get_j() - ((end.get_i() - this->i) / line_slope)};
+#else
+      return vpImagePoint(end.get_i() > this->i ? this->i + 1 : this->i - 1, end.get_j() - ((end.get_i() - this->i) / line_slope));
+#endif
+    }
+  }
+
   /*!
     Copy operator.
   */
@@ -143,6 +231,7 @@ public:
     return *this;
   }
   vpImagePoint &operator/=(double scale);
+
   /*!
 
     Operator *=.
@@ -193,28 +282,6 @@ public:
 
   /*!
 
-    Gets the point coordinate corresponding to the \f$ i \f$ axes in
-    the frame (i,j).
-
-    \return The value of the coordinate along the \f$ i \f$ axes.
-
-    \sa get_j(), get_u(), get_v()
-  */
-  inline double get_i() const { return i; }
-
-  /*!
-
-    Gets the point coordinate corresponding to the \f$ j \f$ axes in
-    the frame (i,j).
-
-    \return The value of the coordinate along the \f$ j \f$ axes.
-
-    \sa get_i(), get_u(), get_v()
-  */
-  inline double get_j() const { return j; }
-
-  /*!
-
     Sets the point coordinate corresponding to the \f$ u \f$ axes in
     the frame (u,v).
 
@@ -250,76 +317,9 @@ public:
     this->j = u;
   }
 
-  /*!
-
-    Gets the point coordinate corresponding to the \f$ u \f$ axes in
-    the frame (u,v).
-
-    \return The value of the coordinate along the \f$ u \f$ axes.
-
-    \sa get_i(), get_j(), get_v()
-  */
-  inline double get_u() const { return j; }
-
-  /*!
-
-    Gets the point coordinate corresponding to the \f$ v \f$ axes in
-    the frame (u,v).
-
-    \return The value of the coordinate along the \f$ v \f$ axes.
-
-    \sa get_i(), get_j(), get_u()
-  */
-  inline double get_v() const { return i; }
-
-  /*!
-   * Test if the image point belongs to a line represented by two image points.
-   *
-   * \param[in] start : Line start image point.
-   * \param[in] end : Line end image point.
-   * \return True if current image point belongs to the line. False otherwise.
-   */
-  inline bool isInLine(const vpImagePoint &start, const vpImagePoint &end) const
-  {
-    return ((end.get_j() >= start.get_j() && end.get_j() >= this->j && this->j >= start.get_j()) ||
-            (end.get_j() <= start.get_j() && end.get_j() <= this->j && this->j <= start.get_j())) &&
-           ((end.get_i() >= start.get_i() && end.get_i() >= this->i && this->i >= start.get_i()) ||
-            (end.get_i() <= start.get_i() && end.get_i() <= this->i && this->i <= start.get_i()));
-  }
-
-  /*!
-   * Considering current image point, returns the next image point that belongs to the line [start,end].
-   *
-   * \param[in] start : Line start image point.
-   * \param[in] end : Line end image point.
-   * \return Regarding current image point, next image point that belongs to the line [start,end].
-   */
-  inline vpImagePoint nextInLine(const vpImagePoint &start, const vpImagePoint &end) const
-  {
-    const double line_slope = (end.get_i() - start.get_i()) / (end.get_j() - start.get_j());
-    if (fabs(end.get_j() - this->j) > fabs(end.get_i() - this->i)) {
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-      return {end.get_i() - line_slope * (end.get_j() - this->j), end.get_j() > this->j ? this->j + 1 : this->j - 1};
-#else
-      return vpImagePoint(end.get_i() - line_slope * (end.get_j() - this->j),
-                          end.get_j() > this->j ? this->j + 1 : this->j - 1);
-#endif
-    } else {
-#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
-      return {end.get_i() > this->i ? this->i + 1 : this->i - 1, end.get_j() - ((end.get_i() + this->i) / line_slope)};
-#else
-      return vpImagePoint(end.get_i() > this->i ? this->i + 1 : this->i - 1,
-                          end.get_j() - ((end.get_i() + this->i) / line_slope));
-#endif
-    }
-  }
-
-  static vpRect getBBox(const std::vector<vpImagePoint> &ipVec);
-
   static double distance(const vpImagePoint &iP1, const vpImagePoint &iP2);
+  static vpRect getBBox(const std::vector<vpImagePoint> &ipVec);
   static double sqrDistance(const vpImagePoint &iP1, const vpImagePoint &iP2);
-
-  bool inRectangle(const vpRect &rect) const;
 
   friend VISP_EXPORT bool operator==(const vpImagePoint &ip1, const vpImagePoint &ip2);
   friend VISP_EXPORT bool operator!=(const vpImagePoint &ip1, const vpImagePoint &ip2);

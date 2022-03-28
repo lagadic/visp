@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +32,7 @@
  * Color to depth conversion.
  *
  * Authors:
+ * Julien Dufour
  *
  *****************************************************************************/
 
@@ -140,8 +141,8 @@ vpColVector deproject(const vpCameraParameters &intrinsic_cam_params, const vpIm
 /*!
  * Project color image point to depth frame.
  *
- * \param[in] I_depth : depth raw image.
- * \param[in] depth_scale : Depth scale of the depth values (if values are in mm, depth scale should be 0.001).
+ * \param[in] I_depth : Depth raw image.
+ * \param[in] depth_scale : Depth scale to convert depth raw values in [m]. If depth raw values in `I_depth` are in [mm], depth scale should be 0.001.
  * \param[in] depth_min : Minimal depth value for correspondance [m].
  * \param[in] depth_max : Maximal depth value for correspondance [m].
  * \param[in] depth_intrinsics : Intrinsic depth camera parameters.
@@ -163,8 +164,8 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
 /*!
  * Project color image point to depth frame.
  *
- * \param[in] data : depth raw values.
- * \param[in] depth_scale : Depth scale of the depth values (if values are in mm, depth scale should be 0.001).
+ * \param[in] data : Depth raw values.
+ * \param[in] depth_scale : Depth scale to convert depth raw values in [m]. If depth raw values in `data` are in [mm], depth scale should be 0.001.
  * \param[in] depth_min : Minimal depth value for correspondance [m].
  * \param[in] depth_max : Maximal depth value for correspondance [m].
  * \param[in] depth_width : Depth image width [pixel].

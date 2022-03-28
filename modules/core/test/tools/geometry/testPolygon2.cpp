@@ -31,6 +31,9 @@
  * Description:
  * Test vpPolygon class.
  *
+ * Authors:
+ * Julien Dufour
+ *
  *****************************************************************************/
 /*!
   \example testPolygon2.cpp
