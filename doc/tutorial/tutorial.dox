@@ -41,8 +41,6 @@ This page references all the tutorials in user zone.
 
 - \subpage tutorial_tools
 
-- \subpage tutorial_planar_object_pose
-
 */
 
 /*! \page tutorial_mainpage_dev Tutorials for ViSP developers
@@ -233,6 +231,7 @@ This page introduces the user to the way to estimate a pose or an homography.
 - <a href="https://visp-doc.inria.fr/doxygen/camera_localization/">Pose estimation for augmented reality</a> <br>This tutorial is a self contented introduction to the most important approaches dedicated to camera localization along with a survey of the extension that have been proposed in the recent years. We also try to link these methodological concepts to the main libraries and SDK available on the market.
 - \subpage tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
 - \subpage tutorial-pose-estimation-qrcode <br>This tutorial focuses on pose estimation of a QRcode using it's four corners location.
+- \subpage tutorial-planar-object-pose <br>This tutorial shows how to estimate the pose of a planar object exploiting data (color and depth images) from a RGB-D sensor.
 - \subpage tutorial-homography <br>Here we explain how to estimate an homography from couples of matched points.
 - \subpage tutorial-homography-deprecated <br>Here we explain how to estimate an homography from couples of matched points. It will be deprecated if you use an OpenCV version equal to 2.8.0 or a more recent version.
 
@@ -276,13 +275,6 @@ in one thread and display these images in an other thread.
 This page introduces the user to the way to assign track points and detected points.
 
 - \subpage tutorial-munkres <br>This tutorial explains how to use Munkres to assign tracked and detected image points.
-
-*/
-
-/*! \page tutorial_planar_object_pose Planar object pose estimation
-This page introduces the user to the way to estimate the pose of a planar object thanks to a RGB-D camera.
-
-- \subpage tutorial-planar-object-pose
 
 */
 

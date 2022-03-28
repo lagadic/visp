@@ -1,4 +1,4 @@
-//! \example tutorial-planar-object-pose.cpp
+//! \example tutorial-pose-from-planar-object.cpp
 
 // Core
 #include <visp3/core/vpColorDepthConversion.h>
@@ -278,7 +278,8 @@ std::vector<vpImagePoint> getRoiFromUser(vpImage<vpRGBa> color_img)
   } while (1);
 }
 
-std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img, const Model &model)
+std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img, const Model &model,
+                                                       const std::string &parent_data)
 {
   // Init displays
   Display disp_color(color_img, 0, 0, "Keypoints", DispScaleType);
@@ -286,7 +287,7 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
   disp_color.flush(color_img);
 
   vpImage<vpRGBa> I_help{};
-  vpImageIo::read(I_help, "data/d435_box_keypoints_user_helper.png");
+  vpImageIo::read(I_help, parent_data + "/data/d435_box_keypoints_user_helper.png");
   Display disp_help(I_help, disp_color.getWindowXPosition() + color_img.getWidth(), disp_color.getWindowYPosition(),
                     "Keypoints [help]", DispScaleType);
   disp_help.display(I_help);
@@ -321,7 +322,7 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
 #endif // #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >=
        // VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
 
-int main()
+int main(int, char *argv[])
 {
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
     (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
@@ -330,8 +331,9 @@ int main()
 
   // Get prior data
   //! [Prior_Data]
-  auto [color_img, depth_raw, color_param, depth_param, depth_M_color] = readData("data/d435_not_align_depth", 0);
-  const auto model = Model("data/d435_box.model");
+  auto [color_img, depth_raw, color_param, depth_param, depth_M_color] =
+      readData(vpIoTools::getParent(argv[0]) + "/data/d435_not_align_depth", 0);
+  const auto model = Model(vpIoTools::getParent(argv[0]) + "/data/d435_box.model");
   //! [Prior_Data]
 
   std::cout << "color_param:" << std::endl << color_param << std::endl;
@@ -392,7 +394,7 @@ int main()
   display_heat_map.flush(heat_map);
 
   // Ask user to click on keypoints
-  const auto keypoint_color_img = getKeypointsFromUser(color_img, model);
+  const auto keypoint_color_img = getKeypointsFromUser(color_img, model, vpIoTools::getParent(argv[0]));
 
   //! [Pose_Estimation]
   const auto cMo = vpPose::computePlanarObjectPoseFrom3Points(obj_plane_in_color, model.keypoints(), keypoint_color_img,
