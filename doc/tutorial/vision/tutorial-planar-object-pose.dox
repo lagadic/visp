@@ -1,0 +1,85 @@
+/**
+
+\page tutorial-planar-object-pose Tutorial: Planar object pose estimation.
+\tableofcontents
+
+\section tutorial-planar-object-pose-intro Introduction
+
+Note that all the material (source code and data) described in this tutorial is part of ViSP source code
+and could be downloaded using the following command:
+
+\verbatim
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/computer-vision
+\endverbatim
+
+This tutorial which source code is available in tutorial-pose-from-planar-object.cpp shows a way to estimate
+the pose (**cMo**) of a planar object pose exploiting color and depth images using a RGB-D camera and the object 3D model.
+
+To illustrate this capability, we will use the next image to estimate the pose of the white object delimited
+by the orange crosses from 1 to 4. The coordinates of these four crosses define the CAD model of our object. They are expressed in
+the frame visible in the following image. This object is lying on a larger plane delimited by the blue rectangle that
+corresponds to the realsense cover box. The coordinates of the plane bounds are expressed in the same frame.
+\image html img-d435-box-pose-estimation.png
+HeTo resume:
+- The origin of the object frame is located at the top left corner of the D435 box.
+- The blue lines represent the box boundary that define the plane to which the object belongs.
+- The orange crosses represent some keypoints thta define the object for which pose will be estimated.
+
+In this tutorial, an Intel D435 was used to capture the data. Furthermore, we created a 3D CAD model file
+available in `data/d435_box.model` that contains the coordinates of the plane bounds and the coordinates of the object corners.
+\verbatim
+# Bounds
+# - Contains a list of 3D points (X Y Z) corresponding to the bounds of the plane to consider
+Bounds
+data:
+  - [0,          0, 0]    # pt 0: top left point
+  - [0,      0.143, 0]    # pt 1: top right point
+  - [0.091,  0.143, 0]
+  - [0.091,      0, 0]
+
+# Keypoints
+# - Contains a list of 3D points (X Y Z) corresponding to the keypoints
+# - These points are defined in origin frame and represent the white sticker corners
+Keypoints
+data:
+  - [0.008, 0.086, 0]
+  - [0.008, 0.130, 0]
+  - [0.033, 0.130, 0]
+  - [0.033, 0.086, 0]
+\endverbatim
+
+Those data are loaded such as:
+\snippet tutorial-pose-from-planar-object.cpp Prior_Data
+\note This example works with color image aligned to depth image or with color image not aligned with depth image.
+
+Finally, in order to compute the object pose, we need:
+- The object plane defined into the color frame **[Step 1]**
+- Some color image point [pixel] matched with 3D model point [meter] **[Step 2]**
+- Compute pose estimation **[Step 3]**
+
+\section tutorial-planar-object-pose-plane-estimation Step 1: Depth-based plane estimation
+
+The first step is to estimate the object plane thanks to the depth data. In this tutorial, the user has to delimitate this area such as:
+\image html img-d435-box-plane-roi-definition.png
+
+Then, based on the user selected points, a convex hull is created and projected to the depth frame.
+\snippet tutorial-pose-from-planar-object.cpp Roi_Plane_Estimation
+
+Once, the plane ROI is defined on the depth frame, the plane is estimated. Firstly in the depth frame. Then, the depth-frame-located plane is projected to the color frame.
+\image html img-d435-box-plane-estimation.png
+\snippet tutorial-pose-from-planar-object.cpp Plane_Estimation
+
+\section tutorial-planar-object-pose-matching Step 2: Image point and model point matching
+
+\image html img-d435-box-keypoint-selection.png
+
+Here, the user is simulating an automatic corner detection and the detection/model matching.
+
+\section tutorial-planar-object-pose-pose-estimation Step 3: Pose estimation
+
+\image html img-d435-box-pose-estimation.png
+
+Finally, the object pose (i.e., the relation ship between the object and the color optical frame) is computed thanks to:
+\snippet tutorial-pose-from-planar-object.cpp Pose_Estimation
+
+*/
