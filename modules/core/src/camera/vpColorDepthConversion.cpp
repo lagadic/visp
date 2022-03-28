@@ -142,15 +142,13 @@ vpColVector deproject(const vpCameraParameters &intrinsic_cam_params, const vpIm
  * Project color image point to depth frame.
  *
  * \param[in] I_depth : Depth raw image.
- * \param[in] depth_scale : Depth scale to convert depth raw values in [m]. If depth raw values in `I_depth` are in [mm], depth scale should be 0.001.
- * \param[in] depth_min : Minimal depth value for correspondance [m].
- * \param[in] depth_max : Maximal depth value for correspondance [m].
- * \param[in] depth_intrinsics : Intrinsic depth camera parameters.
- * \param[in] color_intrinsics : Intrinsic color camera parameters.
- * \param[in] color_M_depth : Relationship between color and depth cameras (ie, extrinsic rgbd camera parameters).
- * \param[in] depth_M_color : Relationship between depth and color cameras (ie, extrinsic rgbd camera parameters).
- * \param[in] from_pixel : Image point expressed into the color camera frame.
- * \return Image point expressed into the depth camera frame.
+ * \param[in] depth_scale : Depth scale to convert depth raw values in [m]. If depth raw values in `I_depth` are in
+ * [mm], depth scale should be 0.001. \param[in] depth_min : Minimal depth value for correspondance [m]. \param[in]
+ * depth_max : Maximal depth value for correspondance [m]. \param[in] depth_intrinsics : Intrinsic depth camera
+ * parameters. \param[in] color_intrinsics : Intrinsic color camera parameters. \param[in] color_M_depth : Relationship
+ * between color and depth cameras (ie, extrinsic rgbd camera parameters). \param[in] depth_M_color : Relationship
+ * between depth and color cameras (ie, extrinsic rgbd camera parameters). \param[in] from_pixel : Image point expressed
+ * into the color camera frame. \return Image point expressed into the depth camera frame.
  */
 vpImagePoint vpColorDepthConversion::projectColorToDepth(
     const vpImage<uint16_t> &I_depth, double depth_scale, double depth_min, double depth_max,
@@ -165,12 +163,10 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
  * Project color image point to depth frame.
  *
  * \param[in] data : Depth raw values.
- * \param[in] depth_scale : Depth scale to convert depth raw values in [m]. If depth raw values in `data` are in [mm], depth scale should be 0.001.
- * \param[in] depth_min : Minimal depth value for correspondance [m].
- * \param[in] depth_max : Maximal depth value for correspondance [m].
- * \param[in] depth_width : Depth image width [pixel].
- * \param[in] depth_height : Depth image height [pixel].
- * \param[in] depth_intrinsics : Intrinsic depth camera parameters.
+ * \param[in] depth_scale : Depth scale to convert depth raw values in [m]. If depth raw values in `data` are in [mm],
+ * depth scale should be 0.001. \param[in] depth_min : Minimal depth value for correspondance [m]. \param[in] depth_max
+ * : Maximal depth value for correspondance [m]. \param[in] depth_width : Depth image width [pixel]. \param[in]
+ * depth_height : Depth image height [pixel]. \param[in] depth_intrinsics : Intrinsic depth camera parameters.
  * \param[in] color_intrinsics : Intrinsic color camera parameters.
  * \param[in] color_M_depth : Relationship between color and depth cameras (ie, extrinsic rgbd camera parameters).
  * \param[in] depth_M_color : Relationship between depth and color cameras (ie, extrinsic rgbd camera parameters).
@@ -199,7 +195,7 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
 
   // search along line for the depth pixel that it's projected pixel is the closest to the input pixel
   auto min_dist{-1.};
-  for (auto curr_pixel = start_pixel; curr_pixel.isInSegment(start_pixel, end_pixel);
+  for (auto curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel) && curr_pixel != end_pixel;
        curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel)) {
     const auto depth = depth_scale * data[static_cast<int>(curr_pixel.get_v() * depth_width + curr_pixel.get_u())];
     if (depth == 0)
@@ -234,7 +230,7 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
 
   // search along line for the depth pixel that it's projected pixel is the closest to the input pixel
   double min_dist = -1.;
-  for (vpImagePoint curr_pixel = start_pixel; curr_pixel.isInSegment(start_pixel, end_pixel);
+  for (vpImagePoint curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel) && curr_pixel != end_pixel;
        curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel)) {
     const double depth = depth_scale * data[static_cast<int>(curr_pixel.get_v() * depth_width + curr_pixel.get_u())];
     if (depth == 0)
