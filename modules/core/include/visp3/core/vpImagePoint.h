@@ -157,13 +157,13 @@ public:
   bool inRectangle(const vpRect &rect) const;
 
   /*!
-   * Test if the image point belongs to a line represented by two image points.
+   * Test if the image point belongs to a segment represented by two image points.
    *
-   * \param[in] start : Line start image point.
-   * \param[in] end : Line end image point.
-   * \return True if current image point belongs to the line. False otherwise.
+   * \param[in] start : Segment start image point.
+   * \param[in] end : Segment end image point.
+   * \return True if current image point belongs to the segment. False otherwise.
    */
-  inline bool isInLine(const vpImagePoint &start, const vpImagePoint &end) const
+  inline bool isInSegment(const vpImagePoint &start, const vpImagePoint &end) const
   {
     return ((end.get_j() >= start.get_j() && end.get_j() >= this->j && this->j >= start.get_j()) ||
             (end.get_j() <= start.get_j() && end.get_j() <= this->j && this->j <= start.get_j())) &&
@@ -172,13 +172,13 @@ public:
   }
 
   /*!
-   * Considering current image point, returns the next image point that belongs to the line [start,end].
+   * Considering current image point, returns the next image point that belongs to the segment [start,end].
    *
-   * \param[in] start : Line start image point.
-   * \param[in] end : Line end image point.
-   * \return Regarding current image point, next image point that belongs to the line [start,end].
+   * \param[in] start : Segment start image point.
+   * \param[in] end : Segment end image point.
+   * \return Regarding current image point, next image point that belongs to the liSegmentne [start,end].
    */
-  inline vpImagePoint nextInLine(const vpImagePoint &start, const vpImagePoint &end) const
+  inline vpImagePoint nextInSegment(const vpImagePoint &start, const vpImagePoint &end) const
   {
     const double line_slope = (end.get_i() - start.get_i()) / (end.get_j() - start.get_j());
     if (fabs(end.get_j() - this->j) > fabs(end.get_i() - this->i)) {
