@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -225,6 +225,16 @@ void vpPlane::init(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlane
 vpPlane::vpPlane(const vpPoint &P, const vpPoint &Q, const vpPoint &R, vpPlaneFrame frame) : A(0), B(0), C(0), D(0)
 {
   init(P, Q, R, frame);
+}
+
+/*!
+ * Compute Z value of a 3D point located on the plane from its perspective projection coordinates.
+ * \param[in] x, y : Coordinates of a point in the image plane. These coordinates are the one obtained by perspective projection of a 3D point.
+ * \return Z coordinate in [m] of the corresponding 3D point.
+ */
+double vpPlane::computeZ(double x, double y) const
+{
+  return -getD() / (getA() * x + getB() * y + getC());
 }
 
 /*!
