@@ -46,6 +46,7 @@
 #include <functional>
 #include <numeric>
 #include <stdint.h>
+#include <cassert>
 
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
@@ -379,3 +380,113 @@ double vpMath::lineFitting(const std::vector<vpImagePoint> &imPts, double &a, do
   \return The modified modulo of a mod n.
 */
 int vpMath::modulo(int a, int n) { return ((a % n) + n) % n; }
+
+/*!
+  Compute from a given longitude, latitude and a sphere radius the homogeneous transformation
+  from the NED frame to the ECEF frame.
+
+  \param lonDeg : The longitude in degree.
+  \param lonDeg : The latitude in degree.
+  \param lonDeg : The sphere radius.
+
+  \return The homogeneous transformation from NED to ECEF frame.
+*/
+vpHomogeneousMatrix vpMath::ned2ecef(double lonDeg, double latDeg, double radius)
+{
+  double lon = vpMath::rad(lonDeg);
+  double lat = vpMath::rad(latDeg);
+
+  vpHomogeneousMatrix ecef_M_ned;
+  ecef_M_ned[0][0] = -sin(lat)*cos(lon); ecef_M_ned[0][1] = -sin(lon); ecef_M_ned[0][2] = -cos(lat)*cos(lon); ecef_M_ned[0][3] = radius*cos(lon)*cos(lat);
+  ecef_M_ned[1][0] = -sin(lat)*sin(lon); ecef_M_ned[1][1] =  cos(lon); ecef_M_ned[1][2] = -cos(lat)*sin(lon); ecef_M_ned[1][3] = radius*sin(lon)*cos(lat);
+  ecef_M_ned[2][0] =  cos(lat);          ecef_M_ned[2][1] = 0;         ecef_M_ned[2][2] = -sin(lat);          ecef_M_ned[2][3] = radius*sin(lat);
+
+  return ecef_M_ned;
+}
+
+/*!
+  Compute from a given longitude, latitude and a sphere radius the homogeneous transformation
+  from the ENU frame to the ECEF frame.
+
+  \param lonDeg : The longitude in degree.
+  \param lonDeg : The latitude in degree.
+  \param lonDeg : The sphere radius.
+
+  \return The homogeneous transformation from ENU to ECEF frame.
+*/
+vpHomogeneousMatrix vpMath::enu2ecef(double lonDeg, double latDeg, double radius)
+{
+  double lon = vpMath::rad(lonDeg);
+  double lat = vpMath::rad(latDeg);
+
+  vpHomogeneousMatrix ecef_M_enu;
+  ecef_M_enu[0][0] = -sin(lon); ecef_M_enu[0][1] = -sin(lat)*cos(lon); ecef_M_enu[0][2] = cos(lat)*cos(lon); ecef_M_enu[0][3] = radius*cos(lon)*cos(lat);
+  ecef_M_enu[1][0] =  cos(lon); ecef_M_enu[1][1] = -sin(lat)*sin(lon); ecef_M_enu[1][2] = cos(lat)*sin(lon); ecef_M_enu[1][3] = radius*sin(lon)*cos(lat);
+  ecef_M_enu[2][0] =  0;        ecef_M_enu[2][1] =  cos(lat);          ecef_M_enu[2][2] = sin(lat);          ecef_M_enu[2][3] = radius*sin(lat);
+
+  return ecef_M_enu;
+}
+
+/*!
+  Compute the vector of longitude / latitude couples for \e maxPoints regularly spaced on a sphere,
+  using the following paper:
+    - "How to generate equidistributed points on the surface of a sphere", Markus Deserno
+    - https://www.cmu.edu/biolphys/deserno/pdf/sphere_equi.pdf
+
+  \param maxPoints : The number of point coordinates to be sampled on a sphere.
+
+  \return The vector of longitude / latitude couples for the \e maxPoints on a sphare.
+*/
+std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(unsigned int maxPoints)
+{
+  assert(maxPoints > 0);
+
+  double a = 4.0 * M_PI / maxPoints;
+  double d = sqrt(a);
+  int m_theta = int(round(M_PI / d));
+  double d_theta = M_PI / m_theta;
+  double d_phi = a / d_theta;
+
+  std::vector<std::pair<double, double> > points;
+  for (int m = 0; m < m_theta/2; m++) {
+    double theta = M_PI * (m + 0.5) / m_theta;
+    int m_phi = static_cast<int>(round(2.0 * M_PI * sin(theta) / d_phi));
+
+    for (int n = 0; n < m_phi; n++) {
+      double phi = 2.0 * M_PI * n / m_phi;
+      double lon = phi;
+      double lat = M_PI_2 - theta;
+      points.push_back(std::make_pair(lon, lat));
+    }
+  }
+
+  return points;
+}
+
+/*!
+  Compute transformations from the local tangent plane (e.g. NED, ECU, ...) to the ECEF frame.
+
+  \param longitudes : Vector of longitude coordinates.
+  \param latitudes : Vector of latitude coordinates.
+  \param radius : Sphere radius.
+  \param toECEF : Pointer to the function computing from a longitude / latitude in degree
+  and a radius the corresponding transformation from the local frame (e.g. NED or ENU) to the ECEF frame.
+
+  \return The vector of ecef_M_local homogeneous transformations.
+*/
+std::vector<vpHomogeneousMatrix> vpMath::getLocalTangentPlaneTransformations(const std::vector<double> &longitudes, const std::vector<double> &latitudes, double radius,
+                                                                             vpHomogeneousMatrix (*toECEF)(double lonDeg, double latDeg, double radius))
+{
+  // https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates
+  std::vector<vpHomogeneousMatrix> vec_ecef_M_local;
+  for (size_t i = 0; i < longitudes.size(); i++) {
+    double lonDeg = longitudes[i];
+
+    for (size_t j = 0; j < latitudes.size(); j++) {
+      double latDeg = latitudes[j];
+      vpHomogeneousMatrix ecef_M_local = toECEF(lonDeg, latDeg, radius);
+      vec_ecef_M_local.push_back(ecef_M_local);
+    }
+  }
+  return vec_ecef_M_local;
+}

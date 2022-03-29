@@ -85,6 +85,9 @@
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 
+class vpPoint;
+class vpHomogeneousMatrix;
+
 /*!
   \class vpMath
   \ingroup group_core_math_tools
@@ -224,6 +227,49 @@ public:
   static double getStdev(const std::vector<double> &v, bool useBesselCorrection = false);
 
   static int modulo(int a, int n);
+
+  static vpHomogeneousMatrix ned2ecef(double lonDeg, double latDeg, double radius);
+  static vpHomogeneousMatrix enu2ecef(double lonDeg, double latDeg, double radius);
+
+  /*!
+    Similar to the NumPy linspace function: "Return evenly spaced numbers over a specified interval."
+    Code from: https://stackoverflow.com/a/27030598
+
+    \param start_in : The starting value of the sequence.
+    \param end_in : The end value of the sequence.
+    \param num_in : Number of samples to generate.
+
+    \return Returns \e num_in evenly spaced samples, calculated over the interval [\e start_in, \e end_in].
+  */
+  template<typename T> static std::vector<double> linspace(T start_in, T end_in, unsigned int num_in)
+  {
+    std::vector<double> linspaced;
+
+    double start = static_cast<double>(start_in);
+    double end = static_cast<double>(end_in);
+    double num = static_cast<double>(num_in);
+
+    if (num == 0) {
+      return linspaced;
+    }
+    if (num == 1) {
+      linspaced.push_back(start);
+      return linspaced;
+    }
+
+    double delta = (end - start) / (num - 1);
+
+    for (int i = 0; i < num-1; i++) {
+      linspaced.push_back(start + delta * i);
+    }
+    linspaced.push_back(end); // I want to ensure that start and end
+                              // are exactly the same as the input
+    return linspaced;
+  }
+
+  static std::vector<std::pair<double, double> > computeRegularPointsOnSphere(unsigned int maxPoints);
+  static std::vector<vpHomogeneousMatrix> getLocalTangentPlaneTransformations(const std::vector<double> &longitudes, const std::vector<double> &latitudes, double radius,
+    vpHomogeneousMatrix (*toECEF)(double lonDeg, double latDeg, double radius));
 
 private:
   static const double ang_min_sinc;
