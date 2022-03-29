@@ -1604,8 +1604,18 @@ long vpIoTools::getIndex(const std::string &filename, const std::string &format)
 
 /*!
    Returns the pathname string of this pathname's parent.
-   \return The pathname string of this pathname's parent, or
-   an empty string if this pathname does not name a parent directory.
+   
+   \param[in] pathname : Pathname from which parent name is extracted using vpIoTools::separator.
+   When the separator is not found, it returns "." as the current parent folder.
+
+   \return The parent of the `pathname`, or an empty string if the `pathname` is empty.
+
+   For example
+   - when pathname is set to "./executable" it returns "."
+   - When pathname is set to "folder/executable" it returns "folder"
+   - When pathname is set to "folder\subfolder\file.cpp" it returns "folder\subfolder"
+   - When pathname is set to "executable" it returns "."
+
  */
 std::string vpIoTools::getParent(const std::string &pathname)
 {
@@ -1616,9 +1626,12 @@ std::string vpIoTools::getParent(const std::string &pathname)
     if (index != std::string::npos) {
       return convertedPathname.substr(0, index);
     }
+    
+    return ".";
+  } 
+  else {
+    return "";
   }
-
-  return "";
 }
 
 /*!
