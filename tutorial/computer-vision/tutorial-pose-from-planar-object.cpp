@@ -378,7 +378,7 @@ int main(int, char *argv[])
   //! [Plane_Estimation]
   const auto obj_plane_in_depth =
       vpPlaneEstimation::estimatePlane(depth_raw, DepthScale, depth_param, roi_depth_img, 1000, heat_map);
-  if (not obj_plane_in_depth) {
+  if (! obj_plane_in_depth) {
     return EXIT_FAILURE;
   }
 
@@ -397,9 +397,9 @@ int main(int, char *argv[])
   const auto keypoint_color_img = getKeypointsFromUser(color_img, model, vpIoTools::getParent(argv[0]));
 
   //! [Pose_Estimation]
-  const auto cMo = vpPose::computePlanarObjectPoseFrom3Points(obj_plane_in_color, model.keypoints(), keypoint_color_img,
-                                                              color_param);
-  if (not cMo) {
+  const auto cMo = vpPose::computePlanarObjectPoseWithAtLeast3Points(obj_plane_in_color, model.keypoints(),
+                                                                     keypoint_color_img, color_param);
+  if (! cMo) {
     return EXIT_FAILURE;
   }
   //! [Pose_Estimation]
