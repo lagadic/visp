@@ -79,10 +79,11 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
   auto compute_centroid = [=](const std::vector<double> &point_cloud, const vpColVector &weights) {
     double cent_x{0.}, cent_y{0.}, cent_z{0.}, total_w{0.};
 
+    int i = 0;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs) reduction(+ : total_w, cent_x, cent_y, cent_z)
 #endif
-    for (auto i = 0u; i < weights.size(); i++) {
+    for (i = 0; i < static_cast<int>(weights.size()); i++) {
       const auto pt_cloud_start_idx = 3 * i;
 
       cent_x += weights[i] * point_cloud[pt_cloud_start_idx + 0];
@@ -98,7 +99,7 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
   //
   auto prev_error = 1e3;
   auto error = prev_error - 1;
-  const auto nPoints = point_cloud.size() / 3;
+  const unsigned int nPoints = static_cast<unsigned int>(point_cloud.size() / 3);
 
   vpColVector residues(nPoints);
   weights = vpColVector(nPoints, 1.0);
@@ -126,11 +127,12 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 
     centroid /= total_w;
 
-// Minimization
+    // Minimization
+    int i;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs)
 #endif
-    for (auto i = 0u; i < nPoints; i++) {
+    for (i = 0; i < static_cast<int>(nPoints); i++) {
       const auto pt_cloud_start_idx = 3 * i;
 
       M[i][0] = weights[i] * (point_cloud[pt_cloud_start_idx + 0] - centroid[0]);
@@ -166,7 +168,7 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs) reduction(+ : error)
 #endif
-    for (auto i = 0u; i < nPoints; i++) {
+    for (i = 0; i < static_cast<int>(nPoints); i++) {
       const auto pt_cloud_start_idx = 3 * i;
 
       residues[i] = std::fabs(A * point_cloud[pt_cloud_start_idx + 0] + B * point_cloud[pt_cloud_start_idx + 1] +
@@ -237,10 +239,10 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
 
     // If at least one img corner is outside the ROI
     // clang-format off
-    if ( not roi.isInside( img_bound.getTopLeft() ) ||
-         not roi.isInside( img_bound.getTopRight() ) ||
-         not roi.isInside( img_bound.getBottomLeft() ) ||
-         not roi.isInside( img_bound.getBottomRight() ) )
+    if ( ! roi.isInside( img_bound.getTopLeft() ) ||
+         ! roi.isInside( img_bound.getTopRight() ) ||
+         ! roi.isInside( img_bound.getBottomLeft() ) ||
+         ! roi.isInside( img_bound.getBottomRight() ) )
     // clang-format on
     {
       isInside = [&roi](const vpImagePoint &ip) { return roi.isInside(ip); };
@@ -249,19 +251,21 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
 
   // Limit research area
   const auto roi_bb = roi.getBoundingBox();
-  const int roi_top = std::max(0., roi_bb.getTop());
-  const int roi_bottom = std::min(static_cast<double>(I_depth_raw.getHeight()), roi_bb.getBottom());
-  const int roi_left = std::max(0., roi_bb.getLeft());
-  const int roi_right = std::min(static_cast<double>(I_depth_raw.getWidth()), roi_bb.getRight());
+  const int roi_top = static_cast<int>(std::max(0., roi_bb.getTop()));
+  const int roi_bottom = static_cast<int>(std::min(static_cast<double>(I_depth_raw.getHeight()), roi_bb.getBottom()));
+  const int roi_left = static_cast<int>(std::max(0., roi_bb.getLeft()));
+  const int roi_right = static_cast<int>(std::min(static_cast<double>(I_depth_raw.getWidth()), roi_bb.getRight()));
 
   // Reduce computation time by using subsample factor
-  unsigned int subsample_factor = sqrt(((roi_right - roi_left) * (roi_bottom - roi_top)) / avg_nb_of_pts_to_estimate);
+  unsigned int subsample_factor = static_cast<int>(sqrt(((roi_right - roi_left) * (roi_bottom - roi_top)) / avg_nb_of_pts_to_estimate));
   subsample_factor = vpMath::clamp(subsample_factor, 1u, MaxSubSampFactorToEstimatePlane);
 
   // Create the point cloud which will be used for plane estimation
   std::vector<double> pt_cloud{};
 
-#ifdef VISP_HAVE_OPENMP
+#if defined(VISP_HAVE_OPENMP) && !(_WIN32)
+// The following OpenMP 4.0 directive is not supported by Visual C++ compiler that allows only OpenMP 2.0 support
+// https://docs.microsoft.com/en-us/cpp/parallel/openmp/openmp-in-visual-cpp?redirectedfrom=MSDN&view=msvc-170
 #pragma omp declare reduction (merge : std::vector<double> : omp_out.insert( end( omp_out ), std::make_move_iterator( begin( omp_in ) ), std::make_move_iterator( end( omp_in ) ) ))
 #pragma omp parallel for num_threads(num_procs) collapse(2) reduction(merge : pt_cloud)
 #endif
@@ -297,8 +301,8 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
       vpImagePoint ip{};
       vpMeterPixelConversion::convertPoint(depth_intrinsics, X / Z, Y / Z, ip);
 
-      const int b = std::max(0., 255 * (1 - 2 * weights[i]));
-      const int r = std::max(0., 255 * (2 * weights[i] - 1));
+      const int b = static_cast<int>(std::max(0., 255 * (1 - 2 * weights[i])));
+      const int r = static_cast<int>(std::max(0., 255 * (2 * weights[i] - 1)));
       const int g = 255 - b - r;
 
       heat_map->get()[static_cast<int>(ip.get_i())][static_cast<int>(ip.get_j())] = vpColor(r, g, b);
