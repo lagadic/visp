@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -750,6 +750,20 @@ bool vpHomogeneousMatrix::isAnHomogeneousMatrix(double threshold) const
 }
 
 /*!
+ * Check if the homogeneous transformation matrix doesn't have a value NaN.
+ * \return true when no NaN found, false otherwise.
+ */
+bool vpHomogeneousMatrix::isValid() const
+{
+  for (unsigned int i = 0; i < size(); i++) {
+    if (vpMath::isNaN(data[i])) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/*!
   Extract the rotational matrix from the homogeneous matrix.
   \param R : rotational component as a rotation matrix.
 */
@@ -1071,6 +1085,60 @@ vpColVector vpHomogeneousMatrix::getCol(unsigned int j) const
   for (unsigned int i = 0; i < nb_rows; i++)
     c[i] = (*this)[i][j];
   return c;
+}
+
+/*!
+ * Compute the transformation between two point clouds.
+ * \param[in] p : First point cloud.
+ * \param[in] q : Second point cloud.
+ * \return The homogeneous transformation \f${^p}{\bf M}_q\f$.
+ */
+vpHomogeneousMatrix vpHomogeneousMatrix::compute3d3dTransformation(const std::vector<vpPoint> &p, const std::vector<vpPoint> &q)
+{
+  const double N = static_cast<double>(p.size());
+
+  vpColVector p_bar(3, 0.0);
+  vpColVector q_bar(3, 0.0);
+  for (size_t i = 0; i < p.size(); i++) {
+    for (unsigned int j = 0; j < 3; j++) {
+      p_bar[j] += p.at(i).oP[j];
+      q_bar[j] += q.at(i).oP[j];
+    }
+  }
+
+  for (unsigned int j = 0; j < 3; j++) {
+    p_bar[j] /= N;
+    q_bar[j] /= N;
+  }
+
+  vpMatrix pc(static_cast<unsigned int>(p.size()), 3);
+  vpMatrix qc(static_cast<unsigned int>(q.size()), 3);
+
+  for (unsigned int i = 0; i < static_cast<unsigned int>(p.size()); i++) {
+    for (unsigned int j = 0; j < 3; j++) {
+      pc[i][j] = p.at(i).oP[j] - p_bar[j];
+      qc[i][j] = q.at(i).oP[j] - q_bar[j];
+    }
+  }
+
+  const vpMatrix pct_qc = pc.t() * qc;
+  vpMatrix U = pct_qc, V;
+  vpColVector W;
+  U.svd(W, V);
+
+  vpMatrix Vt = V.t();
+  vpMatrix R = U * Vt;
+  if (R.det() < 0) {
+    Vt[2][0] *= -1;
+    Vt[2][1] *= -1;
+    Vt[2][2] *= -1;
+
+    R = U * Vt;
+  }
+
+  const vpColVector t = p_bar - R * q_bar;
+
+  return vpHomogeneousMatrix(vpTranslationVector(t), vpRotationMatrix(R));
 }
 
 /*!
