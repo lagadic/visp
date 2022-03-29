@@ -67,6 +67,7 @@
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
     (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
 #include <map>
+#include <optional>
 #endif
 
 #include <visp3/core/vpUniRand.h>
