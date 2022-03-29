@@ -19,6 +19,7 @@ ViSP 3.5.1 (under development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-planar-object-pose.html
   - Bug fixed
     . [#1042] testColorConversion.cpp segfault randomly
+    . [#1045] CXX standard not propagated when using pkg-config or visp-config
 ----------------------------------------------
 ViSP 3.5.0 (released February 15, 2022)
   - Contributors:
