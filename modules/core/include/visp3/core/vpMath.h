@@ -82,6 +82,9 @@
 
 #include <visp3/core/vpImagePoint.h>
 
+class vpPoint;
+class vpHomogeneousMatrix;
+
 /*!
   \class vpMath
   \ingroup group_core_math_tools
@@ -202,6 +205,42 @@ public:
   static double getStdev(const std::vector<double> &v, bool useBesselCorrection = false);
 
   static int modulo(int a, int n);
+
+  //TODO:
+  static vpHomogeneousMatrix ned2ecef(double lonDeg, double latDeg, double radius);
+  static vpHomogeneousMatrix enu2ecef(double lonDeg, double latDeg, double radius);
+
+  // https://stackoverflow.com/a/27030598
+  template<typename T> static std::vector<double> linspace(T start_in, T end_in, unsigned int num_in)
+  {
+    std::vector<double> linspaced;
+
+    double start = static_cast<double>(start_in);
+    double end = static_cast<double>(end_in);
+    double num = static_cast<double>(num_in);
+
+    if (num == 0) { return linspaced; }
+    if (num == 1)
+    {
+      linspaced.push_back(start);
+      return linspaced;
+    }
+
+    double delta = (end - start) / (num - 1);
+
+    for (int i = 0; i < num-1; i++)
+    {
+      linspaced.push_back(start + delta * i);
+    }
+    linspaced.push_back(end); // I want to ensure that start and end
+                              // are exactly the same as the input
+    return linspaced;
+  }
+
+
+  static std::vector<std::pair<double, double> > computeRegularPointsOnSphere(unsigned int maxPoints);
+  static std::vector<vpHomogeneousMatrix> getLocalTangentPlaneTransformations(const std::vector<double> &longitudes, const std::vector<double> &latitudes, double radius,
+    vpHomogeneousMatrix (*toECEF)(double lonDeg, double latDeg, double radius));
 
 private:
   static const double ang_min_sinc;
