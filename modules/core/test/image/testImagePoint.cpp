@@ -45,12 +45,11 @@
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpImagePoint.h>
 
 #if defined(VISP_HAVE_CATCH2)
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
-
-#include <visp3/core/vpImagePoint.h>
 
 TEST_CASE("Test comparison operator", "[operator]")
 {
