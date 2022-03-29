@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -200,6 +200,7 @@ public:
 
   // Test if the rotational part of the matrix is a rotation matrix.
   bool isAnHomogeneousMatrix(double threshold = 1e-6) const;
+  bool isValid() const;
 
   void insert(const vpRotationMatrix &R);
   void insert(const vpThetaUVector &tu);
@@ -245,6 +246,8 @@ public:
     (void)flagNullify;
     throw(vpException(vpException::fatalError, "Cannot resize an homogeneous matrix"));
   }
+
+  static vpHomogeneousMatrix compute3d3dTransformation(const std::vector<vpPoint> &p, const std::vector<vpPoint> &q);
 
   static vpHomogeneousMatrix mean(const std::vector<vpHomogeneousMatrix> &vec_M);
 
