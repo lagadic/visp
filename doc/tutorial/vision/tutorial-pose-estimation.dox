@@ -5,7 +5,7 @@
 
 \section tutorial_pose_intro Introduction
 
-This tutorial focuses on pose estimation from planar or non planar points. From their 2D coordinates in the image plane, and their corresponding 3D coordinates specified in an object frame, ViSP is able to estimate the relative pose between the camera and the object frame. This pose is returned as an homogeneous matrix cMo. Note that to estimate a pose at least four points need to be considered. 
+This tutorial focuses on pose estimation from planar or non planar points. From their 2D coordinates in the image plane, and their corresponding 3D coordinates specified in an object frame, ViSP is able to estimate the relative pose between the camera and the object frame. This pose is returned as an homogeneous matrix cMo. Note that to estimate a pose at least four points need to be considered.
 
 In this tutorial we assume that you are familiar with ViSP blob tracking. If not, see \ref tutorial-tracking-blob.
 
@@ -41,7 +41,7 @@ If we have a look in pose_helper.cpp we will find the `computePose()` function t
 \snippet pose_helper.cpp Compute pose
 
 In the `computePose() function, we create first an instance of the vpPose class. Then we convert each coordinates of the blob center of gravity `ip` in 2D coordinates \c (x,y) in meter in the image plane using vpPixelMeterConversion::convertPoint(). We update then the \c point instance with the corresponding 2D coordinates and add this point to the vpPose class.
-Once all the points are added, we can estimate the pose. If \c init is \c true, we estimate a first pose using vpPose::DEMENTHON and vpPose::LAGRANGE linear approaches that don't require an initialization. We then compute the residual and select the linear pose estimation result that is the best regarding the residual. The retained pose is used as initialization for the vpPose::VIRTUAL_VS (virtual visual servoing) non linear approach that will converge to the solution with a lower residue than on of the linear approaches. If \c init is \c false, we consider that the previous pose \c cMo is near the solution so that it can be uses as initialization for the non linear visual servoing minimization. 
+Once all the points are added, we can estimate the pose. If \c init is \c true, we estimate a first pose using vpPose::DEMENTHON and vpPose::LAGRANGE linear approaches that don't require an initialization. We then compute the residual and select the linear pose estimation result that is the best regarding the residual. The retained pose is used as initialization for the vpPose::VIRTUAL_VS (virtual visual servoing) non linear approach that will converge to the solution with a lower residue than on of the linear approaches. If \c init is \c false, we consider that the previous pose \c cMo is near the solution so that it can be uses as initialization for the non linear visual servoing minimization.
 
 If we come back in tutorial-pose-from-points-image.cpp in the `main()` function, instead of using an image sequence of the object, we consider always the same image `square.pgm`. In this image we consider a 12cm by 12 cm square. The corners are represented by a blob. Their center of gravity correspond to a corner position. This gray level image is read thanks to:
 \snippet tutorial-pose-from-points-image.cpp Read image
@@ -57,8 +57,8 @@ We also define the 3D model of our 12cm by 12cm square by setting the 3D coordin
 
 Next, we created an homogeneous matrix \c cMo that will contain the estimated pose.
 \snippet tutorial-pose-from-points-image.cpp Homogeneous matrix
- 
-In the infinite loop, at each iteration we read a new image (in this example it remains the same), display its content in the window, track each blob and update the coordinates of the center of gravity in `ip` vector.  
+
+In the infinite loop, at each iteration we read a new image (in this example it remains the same), display its content in the window, track each blob and update the coordinates of the center of gravity in `ip` vector.
 \snippet tutorial-pose-from-points-image.cpp Tracking
 
 Then we call the pose estimation function `computePose() presented previously. It uses the 3D coordinates of the points defined as our model in the object frame, and their corresponding 2D positions in the image obtained by the blob tracker to estimate the pose \c cMo. This homogeneous transformation gives the position of the object frame in the camera frame.
@@ -73,7 +73,7 @@ At the end of the first iteration, we turn off the \c init flag that indicates t
 Finally, we interrupt the infinite loop by a user mouse click in the window.
 \snippet tutorial-pose-from-points-image.cpp The end
 
-We also introduce a 40 milliseconds sleep to slow down the loop and relax the CPU. 
+We also introduce a 40 milliseconds sleep to slow down the loop and relax the CPU.
 \snippet tutorial-pose-from-points-image.cpp Slow down
 
 \subsection tutorial_pose_est_live Using a camera
@@ -127,5 +127,7 @@ After modification, build and run again this binary.
 \section tutorial_pose_next Next tutorial
 
 You are now ready to see the next \ref tutorial-pose-estimation-qrcode that gives a use case.
+
+If you have an RGB-D camera, you may also continue with \ref tutorial-planar-object-pose.
 
 */

@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-planar-object-pose Tutorial: Planar object pose estimation.
+\page tutorial-planar-object-pose Tutorial: Planar object pose estimation using RGB-D data.
 \tableofcontents
 
 \section tutorial-planar-object-pose-intro Introduction
@@ -18,12 +18,12 @@ the pose (**cMo**) of a planar object pose exploiting color and depth images usi
 To illustrate this capability, we will use the next image to estimate the pose of the white object delimited
 by the orange crosses from 1 to 4. The coordinates of these four crosses define the CAD model of our object. They are expressed in
 the frame visible in the following image. This object is lying on a larger plane delimited by the blue rectangle that
-corresponds to the realsense cover box. The coordinates of the plane bounds are expressed in the same frame.
+corresponds to the Realsense cover box. The coordinates of the plane bounds are expressed in the same frame.
 \image html img-d435-box-pose-estimation.png
 HeTo resume:
 - The origin of the object frame is located at the top left corner of the D435 box.
 - The blue lines represent the box boundary that define the plane to which the object belongs.
-- The orange crosses represent some keypoints thta define the object for which pose will be estimated.
+- The orange crosses represent some keypoints that define the object for which pose will be estimated.
 
 In this tutorial, an Intel D435 was used to capture the data. Furthermore, we created a 3D CAD model file
 available in `data/d435_box.model` that contains the coordinates of the plane bounds and the coordinates of the object corners.
@@ -82,4 +82,7 @@ Here, the user is simulating an automatic corner detection and the detection/mod
 Finally, the object pose (i.e., the relation ship between the object and the color optical frame) is computed thanks to:
 \snippet tutorial-pose-from-planar-object.cpp Pose_Estimation
 
+\section utorial-planar-object-pose-next Next tutorial
+
+You can continue with the \ref tutorial-pose-estimation or with the \ref tutorial-homography.
 */
