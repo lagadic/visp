@@ -423,14 +423,15 @@ public:
     }
 
     auto cMo = cMo_init.value_or(vpHomogeneousMatrix::compute3d3dTransformation(P, Q));
-    if (! cMo.isValid()) {
+    if (!cMo.isValid()) {
       return std::nullopt;
     }
 
     return enable_vvs ? vpPose::poseVirtualVSWithDepth(Q, cMo).value_or(cMo) : cMo;
   }
 
-  static std::optional<vpHomogeneousMatrix> vpPose::poseVirtualVSWithDepth(std::vector<vpPoint> points, vpHomogeneousMatrix cMo);
+  static std::optional<vpHomogeneousMatrix> poseVirtualVSWithDepth(std::vector<vpPoint> points,
+                                                                   vpHomogeneousMatrix cMo);
 
 #endif
 
