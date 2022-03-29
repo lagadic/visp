@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,71 +34,15 @@
  *****************************************************************************/
 
 #include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/core/vpPlane.h>
 #include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpRobust.h>
 #include <visp3/vision/vpPose.h>
 
 namespace
 {
-vpHomogeneousMatrix compute3d3dTransformation(const std::vector<vpPoint> &p, const std::vector<vpPoint> &q)
-{
-  double N = static_cast<double>(p.size());
-
-  vpColVector p_bar(3, 0.0);
-  vpColVector q_bar(3, 0.0);
-  for (size_t i = 0; i < p.size(); i++) {
-    for (unsigned int j = 0; j < 3; j++) {
-      p_bar[j] += p[i].oP[j];
-      q_bar[j] += q[i].oP[j];
-    }
-  }
-
-  for (unsigned int j = 0; j < 3; j++) {
-    p_bar[j] /= N;
-    q_bar[j] /= N;
-  }
-
-  vpMatrix pc(static_cast<unsigned int>(p.size()), 3);
-  vpMatrix qc(static_cast<unsigned int>(q.size()), 3);
-
-  for (unsigned int i = 0; i < static_cast<unsigned int>(p.size()); i++) {
-    for (unsigned int j = 0; j < 3; j++) {
-      pc[i][j] = p[i].oP[j] - p_bar[j];
-      qc[i][j] = q[i].oP[j] - q_bar[j];
-    }
-  }
-
-  vpMatrix pct_qc = pc.t() * qc;
-  vpMatrix U = pct_qc, V;
-  vpColVector W;
-  U.svd(W, V);
-
-  vpMatrix Vt = V.t();
-  vpMatrix R = U * Vt;
-
-  double det = R.det();
-  if (det < 0) {
-    Vt[2][0] *= -1;
-    Vt[2][1] *= -1;
-    Vt[2][2] *= -1;
-
-    R = U * Vt;
-  }
-
-  vpColVector t = p_bar - R * q_bar;
-
-  vpHomogeneousMatrix cMo;
-  for (unsigned int i = 0; i < 3; i++) {
-    for (unsigned int j = 0; j < 3; j++) {
-      cMo[i][j] = R[i][j];
-    }
-    cMo[i][3] = t[i];
-  }
-
-  return cMo;
-}
-
-void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpColVector &plane_equation_estimated,
+  // See also vpPlaneEstimation.cpp that implements the same functionaly in c++17
+void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpPlane &plane_equation_estimated,
                               vpColVector &centroid, double &normalized_weights)
 {
   unsigned int max_iter = 10;
@@ -113,7 +57,6 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpCol
   tukey.setMinMedianAbsoluteDeviation(1e-4);
   vpColVector normal;
 
-  plane_equation_estimated.resize(4, false);
   for (unsigned int iter = 0; iter < max_iter && std::fabs(error - prev_error) > 1e-6; iter++) {
     if (iter != 0) {
       tukey.MEstimator(vpRobust::TUKEY, residues, weights);
@@ -161,12 +104,6 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpCol
     double A = normal[0], B = normal[1], C = normal[2];
     double D = -(A * centroid_x + B * centroid_y + C * centroid_z);
 
-    // Update plane equation
-    plane_equation_estimated[0] = A;
-    plane_equation_estimated[1] = B;
-    plane_equation_estimated[2] = C;
-    plane_equation_estimated[3] = D;
-
     // Compute error points to estimated plane
     prev_error = error;
     error = 0.0;
@@ -202,33 +139,11 @@ void estimatePlaneEquationSVD(const std::vector<double> &point_cloud_face, vpCol
   double D = -(A * centroid[0] + B * centroid[1] + C * centroid[2]);
 
   // Update final plane equation
-  plane_equation_estimated[0] = A;
-  plane_equation_estimated[1] = B;
-  plane_equation_estimated[2] = C;
-  plane_equation_estimated[3] = D;
+  plane_equation_estimated.setABCD(A, B, C, D);
 
   normalized_weights = total_w / nPoints;
 }
 
-double computeZMethod1(const vpColVector &plane_equation, double x, double y)
-{
-  return -plane_equation[3] / (plane_equation[0] * x + plane_equation[1] * y + plane_equation[2]);
-}
-
-bool validPose(const vpHomogeneousMatrix &cMo)
-{
-  bool valid = true;
-
-  for (unsigned int i = 0; i < cMo.getRows() && valid; i++) {
-    for (unsigned int j = 0; j < cMo.getCols() && valid; j++) {
-      if (vpMath::isNaN(cMo[i][j])) {
-        valid = false;
-      }
-    }
-  }
-
-  return valid;
-}
 } // namespace
 
 /*!
@@ -301,7 +216,8 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
     std::vector<vpPoint> p, q;
 
     // Plane equation
-    vpColVector plane_equation, centroid;
+    vpPlane plane_equation;
+    vpColVector centroid;
     double normalized_weights = 0;
     estimatePlaneEquationSVD(points_3d, plane_equation, centroid, normalized_weights);
 
@@ -309,7 +225,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
       const vpImagePoint &imPt = corners[j];
       double x = 0, y = 0;
       vpPixelMeterConversion::convertPoint(colorIntrinsics, imPt.get_u(), imPt.get_v(), x, y);
-      double Z = computeZMethod1(plane_equation, x, y);
+      double Z = plane_equation.computeZ(x, y);
       if (Z < 0) {
         Z = -Z;
       }
@@ -323,9 +239,9 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, con
       q.push_back(point3d[i]);
     }
 
-    cMo = compute3d3dTransformation(p, q);
+    cMo = vpHomogeneousMatrix::compute3d3dTransformation(p, q);
 
-    if (validPose(cMo)) {
+    if (cMo.isValid()) {
       vpPose pose;
       pose.addPoints(pose_points);
       if (pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
@@ -459,7 +375,8 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
     std::vector<vpPoint> p, q;
 
     // Plane equation
-    vpColVector plane_equation, centroid;
+    vpPlane plane_equation;
+    vpColVector centroid;
     double normalized_weights = 0;
 
     if (coplanar_points) {
@@ -472,7 +389,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
           const vpImagePoint &imPt = tag_corner[i];
           double x = 0, y = 0;
           vpPixelMeterConversion::convertPoint(colorIntrinsics, imPt.get_u(), imPt.get_v(), x, y);
-          double Z = computeZMethod1(plane_equation, x, y);
+          double Z = plane_equation.computeZ(x, y);
           std::cout << Z;
           if (Z < 0) {
             Z = -Z;
@@ -503,7 +420,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
             const vpImagePoint &imPt = tag_corner[i];
             double x = 0, y = 0;
             vpPixelMeterConversion::convertPoint(colorIntrinsics, imPt.get_u(), imPt.get_v(), x, y);
-            double Z = computeZMethod1(plane_equation, x, y);
+            double Z = plane_equation.computeZ(x, y);
 
             if (Z < 0) {
               Z = -Z;
@@ -544,9 +461,9 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
 
     // Due to the possibility of q's size might less than p's, check their size should be identical
     if (p.size() == q.size()) {
-      cMo = compute3d3dTransformation(p, q);
+      cMo = vpHomogeneousMatrix::compute3d3dTransformation(p, q);
 
-      if (validPose(cMo)) {
+      if (cMo.isValid()) {
         vpPose pose;
         pose.addPoints(pose_points);
         if (pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
