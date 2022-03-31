@@ -5,69 +5,80 @@
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
 
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/core/vpXmlParserCamera.h>
+#include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayD3D.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpXmlParserCamera.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpVideoReader.h>
 #include <visp3/vision/vpPose.h>
 
-namespace {
-  void calcChessboardCorners(int width, int height, double squareSize, std::vector<vpPoint> &corners) {
-    corners.resize(0);
+namespace
+{
+void calcChessboardCorners(int width, int height, double squareSize, std::vector<vpPoint> &corners)
+{
+  corners.resize(0);
 
-    for (int i = 0; i < height; i++) {
-      for (int j = 0; j < width; j++) {
-        vpPoint pt;
-        pt.set_oX(j*squareSize);
-        pt.set_oY(i*squareSize);
-        pt.set_oZ(0.0);
-        corners.push_back(pt);
-      }
+  for (int i = 0; i < height; i++) {
+    for (int j = 0; j < width; j++) {
+      vpPoint pt;
+      pt.set_oX(j * squareSize);
+      pt.set_oY(i * squareSize);
+      pt.set_oZ(0.0);
+      corners.push_back(pt);
     }
   }
+}
 
-  void usage(const char **argv, int error)
-  {
-    std::cout << "Synopsis" << std::endl
-              << "  " << argv[0]
-              << " [-w <chessboard width>] [-h <chessboard height>]"
-              << " [--square_size <square size in meter>]"
-              << " [--input <input images path>]"
-              << " [--intrinsic <Camera intrinsic parameters xml file>]"
-              << " [--camera_name <Camera name in the xml intrinsic file>]" << std::endl << std::endl;
-    std::cout << "Description" << std::endl
-              << "  -w <chessboard width>  Chessboard width." << std::endl
-              << "    Default: 9." << std::endl << std::endl
-              << "  -h <chessboard height>  Chessboard height." << std::endl
-              << "    Default: 6." << std::endl << std::endl
-              << "  --square_size <square size in meter>  Chessboard square size in [m]." << std::endl
-              << "    Default: 0.03." << std::endl << std::endl
-              << "  --input <input images path>  Generic name of the images to process." << std::endl
-              << "    Example: \"image-%02d.png\"." << std::endl << std::endl
-              << "  --intrinsic <Camera intrinsic parameters xml file>  XML file that contains" << std::endl
-              << "    camera parameters. " << std::endl
-              << "    Default: \"camera.xml\"." << std::endl << std::endl
-              << "  --camera_name <Camera name in the xml intrinsic file>  Camera name in the XML file." << std::endl
-              << "    Default: \"Camera\"." << std::endl << std::endl
-              << "  --help, -h  Print this helper message." << std::endl << std::endl;
-    if (error) {
-      std::cout << "Error" << std::endl
-                << "  " << "Unsupported parameter " << argv[error] << std::endl;
-    }
+void usage(const char **argv, int error)
+{
+  std::cout << "Synopsis" << std::endl
+            << "  " << argv[0] << " [-w <chessboard width>] [-h <chessboard height>]"
+            << " [--square_size <square size in meter>]"
+            << " [--input <input images path>]"
+            << " [--intrinsic <Camera intrinsic parameters xml file>]"
+            << " [--camera_name <Camera name in the xml intrinsic file>]" << std::endl
+            << std::endl;
+  std::cout << "Description" << std::endl
+            << "  -w <chessboard width>  Chessboard width." << std::endl
+            << "    Default: 9." << std::endl
+            << std::endl
+            << "  -h <chessboard height>  Chessboard height." << std::endl
+            << "    Default: 6." << std::endl
+            << std::endl
+            << "  --square_size <square size in meter>  Chessboard square size in [m]." << std::endl
+            << "    Default: 0.03." << std::endl
+            << std::endl
+            << "  --input <input images path>  Generic name of the images to process." << std::endl
+            << "    Example: \"image-%02d.png\"." << std::endl
+            << std::endl
+            << "  --intrinsic <Camera intrinsic parameters xml file>  XML file that contains" << std::endl
+            << "    camera parameters. " << std::endl
+            << "    Default: \"camera.xml\"." << std::endl
+            << std::endl
+            << "  --camera_name <Camera name in the xml intrinsic file>  Camera name in the XML file." << std::endl
+            << "    Default: \"Camera\"." << std::endl
+            << std::endl
+            << "  --help, -h  Print this helper message." << std::endl
+            << std::endl;
+  if (error) {
+    std::cout << "Error" << std::endl
+              << "  "
+              << "Unsupported parameter " << argv[error] << std::endl;
   }
-} //namespace
+}
+} // namespace
 
-int main(int argc, const char **argv) {
+int main(int argc, const char **argv)
+{
   int chessboard_width = 9, chessboard_height = 6;
   double chessboard_square_size = 0.03;
   std::string input_filename = "";
@@ -75,36 +86,34 @@ int main(int argc, const char **argv) {
   std::string camera_name = "Camera";
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "-w" && i+1 < argc) {
-      chessboard_width = atoi(argv[i+1]);
-      i ++;
-    } else if (std::string(argv[i]) == "-h" && i+1 < argc) {
-      chessboard_height = atoi(argv[i+1]);
-      i ++;
-    } else if (std::string(argv[i]) == "--square_size" && i+1 < argc) {
-      chessboard_square_size = atof(argv[i+1]);
-      i ++;
-    } else if (std::string(argv[i]) == "--input" && i+1 < argc) {
-      input_filename = std::string(argv[i+1]);
-      i ++;
-    } else if (std::string(argv[i]) == "--intrinsic" && i+1 < argc) {
-      intrinsic_file = std::string(argv[i+1]);
-      i ++;
-    } else if (std::string(argv[i]) == "--camera_name" && i+1 < argc) {
-      camera_name = std::string(argv[i+1]);
-      i ++;
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    if (std::string(argv[i]) == "-w" && i + 1 < argc) {
+      chessboard_width = atoi(argv[i + 1]);
+      i++;
+    } else if (std::string(argv[i]) == "-h" && i + 1 < argc) {
+      chessboard_height = atoi(argv[i + 1]);
+      i++;
+    } else if (std::string(argv[i]) == "--square_size" && i + 1 < argc) {
+      chessboard_square_size = atof(argv[i + 1]);
+      i++;
+    } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
+      input_filename = std::string(argv[i + 1]);
+      i++;
+    } else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
+      intrinsic_file = std::string(argv[i + 1]);
+      i++;
+    } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
+      camera_name = std::string(argv[i + 1]);
+      i++;
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       usage(argv, 0);
       return EXIT_SUCCESS;
-    }
-    else {
+    } else {
       usage(argv, i);
       return EXIT_FAILURE;
     }
   }
 
-  if (! vpIoTools::checkFilename(intrinsic_file)) {
+  if (!vpIoTools::checkFilename(intrinsic_file)) {
     std::cout << "Camera parameters file " << intrinsic_file << " doesn't exist." << std::endl;
     std::cout << "Use --help option to see how to set its location..." << std::endl;
     return EXIT_SUCCESS;
@@ -144,12 +153,16 @@ int main(int argc, const char **argv) {
     vpCameraParameters cam;
     vpXmlParserCamera parser;
     if (!intrinsic_file.empty() && !camera_name.empty()) {
-      if (parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithDistortion) != vpXmlParserCamera::SEQUENCE_OK) {
-        std::cout << "Unable to parse parameters with distorsion for camera \"" <<  camera_name << "\" from " << intrinsic_file << " file" << std::endl;
+      if (parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithDistortion) !=
+          vpXmlParserCamera::SEQUENCE_OK) {
+        std::cout << "Unable to parse parameters with distorsion for camera \"" << camera_name << "\" from "
+                  << intrinsic_file << " file" << std::endl;
         std::cout << "Attempt to find parameters without distorsion" << std::endl;
 
-        if (parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion) != vpXmlParserCamera::SEQUENCE_OK) {
-          std::cout << "Unable to parse parameters without distorsion for camera \"" <<  camera_name << "\" from " << intrinsic_file << " file" << std::endl;
+        if (parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion) !=
+            vpXmlParserCamera::SEQUENCE_OK) {
+          std::cout << "Unable to parse parameters without distorsion for camera \"" << camera_name << "\" from "
+                    << intrinsic_file << " file" << std::endl;
           return EXIT_FAILURE;
         }
       }
@@ -169,22 +182,23 @@ int main(int argc, const char **argv) {
       cv::Size chessboardSize(chessboard_width, chessboard_height);
       std::vector<cv::Point2f> corners2D;
       bool found = cv::findChessboardCorners(matImg, chessboardSize, corners2D,
-                                       #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-                                             cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FAST_CHECK | cv::CALIB_CB_NORMALIZE_IMAGE);
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+                                             cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FAST_CHECK |
+                                                 cv::CALIB_CB_NORMALIZE_IMAGE);
 #else
-                                             CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
+                                             CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK |
+                                                 CV_CALIB_CB_NORMALIZE_IMAGE);
 #endif
 
       vpHomogeneousMatrix cMo;
       if (found) {
         cv::Mat matImg_gray;
         cv::cvtColor(matImg, matImg_gray, cv::COLOR_BGR2GRAY);
-        cv::cornerSubPix(matImg_gray, corners2D, cv::Size(11,11),
-                         cv::Size(-1,-1),
-                 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-                         cv::TermCriteria( cv::TermCriteria::EPS+cv::TermCriteria::COUNT, 30, 0.1 ));
+        cv::cornerSubPix(matImg_gray, corners2D, cv::Size(11, 11), cv::Size(-1, -1),
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+                         cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 30, 0.1));
 #else
-                         cv::TermCriteria( CV_TERMCRIT_EPS+CV_TERMCRIT_ITER, 30, 0.1 ));
+                         cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
 #endif
 
         for (size_t i = 0; i < corners_pts.size(); i++) {
@@ -245,17 +259,16 @@ int main(int argc, const char **argv) {
         }
       }
     } while (!quit && !reader.end());
-  }
-  catch (const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
 
   return EXIT_SUCCESS;
 }
 #else
-int main() {
+int main()
+{
   std::cerr << "OpenCV 2.3.0 or higher is requested to run the calibration." << std::endl;
   return EXIT_SUCCESS;
 }
 #endif
-

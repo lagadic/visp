@@ -218,7 +218,9 @@ int main()
 #else
 int main()
 {
-  std::cout << "You do not have X11, GTK, or OpenCV, or GDI (Graphical Device Interface) functionalities to display images..." << std::endl;
+  std::cout
+      << "You do not have X11, GTK, or OpenCV, or GDI (Graphical Device Interface) functionalities to display images..."
+      << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

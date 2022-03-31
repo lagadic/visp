@@ -70,12 +70,12 @@ also verify if a moment is present in the database or not. Here is a example
 of a dependency between two moments using a vpMomentDatabase:
 
 \code
+#include <iostream>
+#include <visp3/core/vpMomentCentered.h>
+#include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <iostream>
 
 int main()
 {

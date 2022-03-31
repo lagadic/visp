@@ -177,7 +177,7 @@ int main()
     task.setInteractionMatrixType(vpServo::DESIRED, vpServo::PSEUDO_INVERSE);
 
     vpTRACE("Set the position of the end-effector frame in the camera frame");
-     vpHomogeneousMatrix cMe;
+    vpHomogeneousMatrix cMe;
     //  robot.get_cMe(cMe) ;
 
     vpVelocityTwistMatrix cVe;
@@ -281,8 +281,7 @@ int main()
     std::cout << "Display task information: " << std::endl;
     task.print();
     return EXIT_SUCCESS;
-  }
-  catch (const vpException &e) {
+  } catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;

@@ -352,14 +352,14 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
   double c = x1 * y2 - x1 * y3 - x2 * y1 + x2 * y3 + x3 * y1 - x3 * y2;
   double d = -x1 * y2 * z3 + x1 * y3 * z2 + x2 * y1 * z3 - x2 * y3 * z1 - x3 * y1 * z2 + x3 * y2 * z1;
 
-  if (c < 0.0) {  // imposing c >= 0
+  if (c < 0.0) { // imposing c >= 0
     a = -a;
     b = -b;
     c = -c;
     d = -d;
   }
   // to have (a,b,c) as a unit vector if it was not the case
-  double n = 1.0/sqrt(a*a+ b*b + c*c);  // Not possible to have a NaN...
+  double n = 1.0 / sqrt(a * a + b * b + c * c); // Not possible to have a NaN...
   a *= n;
   b *= n;
   c *= n;
@@ -372,17 +372,16 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
   r3[1] = b;
   r3[2] = c;
   // build r1 as a unit vector orthogonal to r3
-  double n1 = sqrt(1.0-a*a);
-  double n2 = sqrt(1.0-b*b);
-  if (n1 >= n2){
+  double n1 = sqrt(1.0 - a * a);
+  double n2 = sqrt(1.0 - b * b);
+  if (n1 >= n2) {
     r1[0] = n1;
-    r1[1] = -a*b/n1;
-    r1[2] = -a*c/n1;
-  }
-  else{
-    r1[0] = -a*b/n2;
+    r1[1] = -a * b / n1;
+    r1[2] = -a * c / n1;
+  } else {
+    r1[0] = -a * b / n2;
     r1[1] = n2;
-    r1[2] = -b*c/n2;
+    r1[2] = -b * c / n2;
   }
   // double norm = r1[0]*r1[0] + r1[1]*r1[1] + r1[2]*r1[2];
   // double crossprod = r1[0]*r3[0] + r1[1]*r3[1] + r1[2]*r3[2];
@@ -391,7 +390,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
   r2 = vpColVector::crossProd(r3, r1);
 
   vpHomogeneousMatrix fMo;
-  for (unsigned int i=0;i<3;i++){
+  for (unsigned int i = 0; i < 3; i++) {
     fMo[0][i] = r1[i];
     fMo[1][i] = r2[i];
     fMo[2][i] = r3[i];
@@ -519,7 +518,7 @@ void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
     cMf[i][1] = X2[i];
     cMf[i][3] = X2[i + 3];
   }
-  //std::cout << "cMf : "  << std::endl << cMf  << std::endl;
+  // std::cout << "cMf : "  << std::endl << cMf  << std::endl;
 
   // Apply the transform to go back to object frame
   cMo = cMf * fMo;
@@ -603,9 +602,9 @@ void vpPose::poseLagrangeNonPlan(vpHomogeneousMatrix &cMo)
     lagrange(a, b, X1, X2);
     //  if (err != OK)
     {
-      //      std::cout << "in (CLagrange.cc)Lagrange returns " ;
-      //    PrintError(err) ;
-      //    return err ;
+        //      std::cout << "in (CLagrange.cc)Lagrange returns " ;
+        //    PrintError(err) ;
+        //    return err ;
     }
 
 #if (DEBUG_LEVEL2)

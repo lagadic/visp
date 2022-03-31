@@ -45,8 +45,7 @@
 
 namespace
 {
-template <typename T>
-void checkReadBinaryValue(std::ifstream &file, const T checkValue)
+template <typename T> void checkReadBinaryValue(std::ifstream &file, const T checkValue)
 {
   T value = (T)10;
   vpIoTools::readBinaryValueLE(file, value);
@@ -57,8 +56,7 @@ void checkReadBinaryValue(std::ifstream &file, const T checkValue)
   }
 }
 
-template <>
-void checkReadBinaryValue<float>(std::ifstream &file, const float checkValue)
+template <> void checkReadBinaryValue<float>(std::ifstream &file, const float checkValue)
 {
   float value = 10.0f;
   vpIoTools::readBinaryValueLE(file, value);
@@ -69,8 +67,7 @@ void checkReadBinaryValue<float>(std::ifstream &file, const float checkValue)
   }
 }
 
-template <>
-void checkReadBinaryValue<double>(std::ifstream &file, const double checkValue)
+template <> void checkReadBinaryValue<double>(std::ifstream &file, const double checkValue)
 {
   double value = 10.0;
   vpIoTools::readBinaryValueLE(file, value);
@@ -80,7 +77,7 @@ void checkReadBinaryValue<double>(std::ifstream &file, const double checkValue)
     throw vpException(vpException::badValue, ss.str());
   }
 }
-}
+} // namespace
 
 int main(int argc, const char **argv)
 {
@@ -464,7 +461,7 @@ int main(int argc, const char **argv)
     vpIoTools::makeDirectory(directory_filename);
     std::cout << "Create directories: " << directory_filename << std::endl;
 
-    if (! vpIoTools::checkDirectory(directory_filename)) {
+    if (!vpIoTools::checkDirectory(directory_filename)) {
       std::cerr << "Error: " << directory_filename << " is not a directory" << std::endl;
       return EXIT_FAILURE;
     }
@@ -477,7 +474,7 @@ int main(int argc, const char **argv)
     vpIoTools::makeDirectory(directory_filename);
     std::cout << "Create directories: " << directory_filename << std::endl;
 
-    if (! vpIoTools::checkDirectory(directory_filename)) {
+    if (!vpIoTools::checkDirectory(directory_filename)) {
       std::cerr << "Error: " << directory_filename << " is not a directory" << std::endl;
       return EXIT_FAILURE;
     }
@@ -491,7 +488,7 @@ int main(int argc, const char **argv)
     vpIoTools::makeDirectory(directory_filename);
     std::cout << "Create directories: " << directory_filename << std::endl;
 
-    if (! vpIoTools::checkDirectory(directory_filename)) {
+    if (!vpIoTools::checkDirectory(directory_filename)) {
       std::cerr << "Error: " << directory_filename << " is not a directory" << std::endl;
       return EXIT_FAILURE;
     }
@@ -504,12 +501,12 @@ int main(int argc, const char **argv)
     vpIoTools::makeDirectory(directory_filename);
     std::cout << "Create directories: " << directory_filename << std::endl;
 
-    if (! vpIoTools::checkDirectory(directory_filename)) {
+    if (!vpIoTools::checkDirectory(directory_filename)) {
       std::cerr << "Error: " << directory_filename << " is not a directory" << std::endl;
       return EXIT_FAILURE;
     }
 
-    //Delete test directory
+    // Delete test directory
     if (!vpIoTools::remove(tmp_dir + "/test_directory1")) {
       std::cerr << "Error: cannot remove directory: " << tmp_dir << "/test_directory1" << std::endl;
       return EXIT_FAILURE;
@@ -536,7 +533,7 @@ int main(int argc, const char **argv)
     vpIoTools::makeFifo(fifo_file);
     std::cout << "Create fifo file: " << fifo_file << std::endl;
 
-    if (! vpIoTools::checkFifo(fifo_file)) {
+    if (!vpIoTools::checkFifo(fifo_file)) {
       std::cerr << "Error: file " << fifo_file << " is not a fifo file as expected" << std::endl;
       return EXIT_FAILURE;
     }
@@ -558,7 +555,8 @@ int main(int argc, const char **argv)
 #endif
 
   // Test makeTempDirectory()
-#if defined(_WIN32) || (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX or Windows
+#if defined(_WIN32) ||                                                                                                 \
+    (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX or Windows
   try {
     std::string directory_filename_tmp;
     std::string tmp_dir = vpIoTools::getTempPath();
@@ -570,7 +568,7 @@ int main(int argc, const char **argv)
 
     std::cout << "Create temp directory: " << converted_dirname_tmp << std::endl;
 
-    if (! vpIoTools::checkDirectory(converted_dirname_tmp)) {
+    if (!vpIoTools::checkDirectory(converted_dirname_tmp)) {
       std::cerr << "Error: " << converted_dirname_tmp << " is not a tmp directory" << std::endl;
       return EXIT_FAILURE;
     }
@@ -587,7 +585,7 @@ int main(int argc, const char **argv)
 
     std::cout << "Create temp directory: " << converted_dirname_tmp << std::endl;
 
-    if (! vpIoTools::checkDirectory(converted_dirname_tmp)) {
+    if (!vpIoTools::checkDirectory(converted_dirname_tmp)) {
       std::cerr << "Error: " << converted_dirname_tmp << " is not a temp directory" << std::endl;
       return EXIT_FAILURE;
     }
@@ -696,12 +694,14 @@ int main(int argc, const char **argv)
   std::cout << "Test vpIoTools::isSamePathname (Unix platform) - passed: " << nbOk << "/" << (nbOk + nbFail)
             << std::endl;
 
-  //Delete test directory
+  // Delete test directory
   if (!vpIoTools::remove("/tmp/" + username + "/test")) {
-    std::cerr << "Cannot remove directory: " << "/tmp/" << username << "/test" << std::endl;
+    std::cerr << "Cannot remove directory: "
+              << "/tmp/" << username << "/test" << std::endl;
   }
   if (!vpIoTools::remove("/tmp/" + username + "/dummy dir")) {
-    std::cerr << "Cannot remove directory: " << "/tmp/" << username << "/dummy dir" << std::endl;
+    std::cerr << "Cannot remove directory: "
+              << "/tmp/" << username << "/dummy dir" << std::endl;
   }
 
   if (nbFail) {
@@ -741,14 +741,16 @@ int main(int argc, const char **argv)
   }
   std::cout << "Test vpIoTools::checkFilename() is ok." << std::endl;
 
-  //Delete test directory
+  // Delete test directory
   if (!vpIoTools::remove("/tmp/" + username + "/directory (1) with ' quote and spaces")) {
-    std::cerr << "Cannot remove directory: " << "/tmp/" << username << "/directory (1) with ' quote and spaces" << std::endl;
+    std::cerr << "Cannot remove directory: "
+              << "/tmp/" << username << "/directory (1) with ' quote and spaces" << std::endl;
   }
 
   // Test endianness
   {
-    std::string filename_endianness =  vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "endianness/test_endianness_little_endian.bin");
+    std::string filename_endianness =
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "endianness/test_endianness_little_endian.bin");
     std::ifstream file_endianness(filename_endianness.c_str(), std::ios::in | std::ios::binary);
     if (file_endianness.is_open()) {
       checkReadBinaryValue<short>(file_endianness, std::numeric_limits<short>::min());

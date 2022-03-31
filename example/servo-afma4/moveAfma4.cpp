@@ -82,7 +82,8 @@ of the Afma4 robot.\n						   \
 \n\
 SYNOPSIS\n\
   %s [-m] [-h]\n						      \
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\

@@ -44,8 +44,8 @@
 
 #include <iostream>
 
-#include <visp3/robot/vpQbSoftHand.h>
 #include <visp3/core/vpTime.h>
+#include <visp3/robot/vpQbSoftHand.h>
 
 int main()
 {
@@ -75,30 +75,29 @@ int main()
       double max_current = qbsofthand.getCurrentMax();
       int i_max = 0;
       std::cout << "** Close the hand with non-blocking positioning function" << std::endl;
-      for(int i=1; i <= 10; i++) {
+      for (int i = 1; i <= 10; i++) {
         qbsofthand.getPosition(q_mes);
         qbsofthand.getCurrent(current);
-        if (std::fabs(current[0]) > max_current/2) {
-          std::cout << "Stop closure, current > " << max_current/2 << std::endl;
+        if (std::fabs(current[0]) > max_current / 2) {
+          std::cout << "Stop closure, current > " << max_current / 2 << std::endl;
           i_max = i;
           break;
         }
-        q[0] = i/10.0;
+        q[0] = i / 10.0;
         qbsofthand.setPosition(q);
         vpTime::sleepMs(500);
       }
       std::cout << "** Open the hand with non-blocking positioning function" << std::endl;
-      for(int i=i_max; i >= 0; i--) {
+      for (int i = i_max; i >= 0; i--) {
         qbsofthand.getPosition(q_mes);
         qbsofthand.getCurrent(current);
-        q[0] = i/10.0;
+        q[0] = i / 10.0;
         qbsofthand.setPosition(q);
         vpTime::sleepMs(500);
       }
     }
     std::cout << "The end" << std::endl;
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch exception: " << e.getStringMessage() << std::endl;
   }
 #else
@@ -106,4 +105,3 @@ int main()
 #endif
   return EXIT_SUCCESS;
 }
-

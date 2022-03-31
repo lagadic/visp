@@ -2,12 +2,12 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (defined (VISP_HAVE_X11) || defined (VISP_HAVE_GDI))
-#include <fstream>
-#include <queue>
-#include <mutex>
-#include <thread>
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 #include <condition_variable>
+#include <fstream>
+#include <mutex>
+#include <queue>
+#include <thread>
 
 #ifdef VISP_HAVE_PCL
 #include <pcl/common/common.h>
@@ -15,24 +15,26 @@
 #include <pcl/visualization/cloud_viewer.h>
 #endif
 
-#if defined (VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#if defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #define USE_PCL_VIEWER
 #endif
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/io/vpParseArgv.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/io/vpVideoWriter.h>
 
-#define GETOPTARGS  "ci:bodh"
+#define GETOPTARGS "ci:bodh"
 
-namespace {
+namespace
+{
 
-  void usage(const char *name, const char *badparam) {
-    fprintf(stdout, "\n\
+void usage(const char *name, const char *badparam)
+{
+  fprintf(stdout, "\n\
             Read RealSense data.\n\
             \n\
             %s\
@@ -54,67 +56,78 @@ namespace {
             \n\
             -h \n\
             Print the help.\n\n",
-            name);
+          name);
 
-            if (badparam)
-            fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
-  }
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+}
 
-  bool getOptions(int argc, char **argv,
-                  std::string &input_directory,
-                  bool &click,
-                  bool &pointcloud_binary_format,
-                  bool &save_video,
-                  bool &color_depth
-                  ) {
-    const char *optarg;
-    const char **argv1=(const char**)argv;
-    int c;
-    while ((c = vpParseArgv::parse(argc, argv1, GETOPTARGS, &optarg)) > 1) {
+bool getOptions(int argc, char **argv, std::string &input_directory, bool &click, bool &pointcloud_binary_format,
+                bool &save_video, bool &color_depth)
+{
+  const char *optarg;
+  const char **argv1 = (const char **)argv;
+  int c;
+  while ((c = vpParseArgv::parse(argc, argv1, GETOPTARGS, &optarg)) > 1) {
 
-      switch (c) {
-      case 'i': input_directory = optarg; break;
-      case 'c': click = true; break;
-      case 'b': pointcloud_binary_format = true; break;
-      case 'o': save_video = true; break;
-      case 'd': color_depth = true; break;
+    switch (c) {
+    case 'i':
+      input_directory = optarg;
+      break;
+    case 'c':
+      click = true;
+      break;
+    case 'b':
+      pointcloud_binary_format = true;
+      break;
+    case 'o':
+      save_video = true;
+      break;
+    case 'd':
+      color_depth = true;
+      break;
 
-      case 'h': usage(argv[0], NULL); return false; break;
-
-      default:
-        usage(argv[0], optarg);
-        return false; break;
-      }
-    }
-
-    if ((c == 1) || (c == -1)) {
-      // standalone param or error
+    case 'h':
       usage(argv[0], NULL);
-      std::cerr << "ERROR: " << std::endl;
-      std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
       return false;
-    }
+      break;
 
-    return true;
+    default:
+      usage(argv[0], optarg);
+      return false;
+      break;
+    }
   }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg << std::endl << std::endl;
+    return false;
+  }
+
+  return true;
+}
 
 #ifdef USE_PCL_VIEWER
 pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
 bool cancelled = false, update_pointcloud = false;
 
-class ViewerWorker {
+class ViewerWorker
+{
 public:
-  explicit ViewerWorker(std::mutex &mutex) :
-    m_mutex(mutex) { }
+  explicit ViewerWorker(std::mutex &mutex) : m_mutex(mutex) {}
 
-  void run() {
+  void run()
+  {
     pcl::PointCloud<pcl::PointXYZ>::Ptr local_pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
 
     bool local_update = false, local_cancelled = false;
-    pcl::visualization::PCLVisualizer::Ptr viewer (new pcl::visualization::PCLVisualizer ("3D Viewer"));
-    viewer->setBackgroundColor (0, 0, 0);
-    viewer->initCameraParameters ();
-    viewer->setPosition(640+80, 480+80);
+    pcl::visualization::PCLVisualizer::Ptr viewer(new pcl::visualization::PCLVisualizer("3D Viewer"));
+    viewer->setBackgroundColor(0, 0, 0);
+    viewer->initCameraParameters();
+    viewer->setPosition(640 + 80, 480 + 80);
     viewer->setCameraPosition(0, 0, -0.25, 0, -1, 0);
     viewer->setSize(640, 480);
 
@@ -136,7 +149,7 @@ public:
 
         if (first_init) {
           viewer->addPointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
-          viewer->setPointCloudRenderingProperties (pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
+          viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "sample cloud");
           first_init = false;
         } else {
           viewer->updatePointCloud<pcl::PointXYZ>(local_pointcloud, "sample cloud");
@@ -157,9 +170,11 @@ private:
 bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_color, vpImage<uint16_t> &I_depth_raw,
               bool pointcloud_binary_format
 #ifdef USE_PCL_VIEWER
-              , pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud
+              ,
+              pcl::PointCloud<pcl::PointXYZ>::Ptr point_cloud
 #endif
-              ) {
+)
+{
   char buffer[256];
   std::stringstream ss;
   ss << input_directory << "/color_image_%04d.jpg";
@@ -176,18 +191,18 @@ bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_co
   sprintf(buffer, ss.str().c_str(), cpt);
   std::string filename_pointcloud = buffer;
 
-  if (!vpIoTools::checkFilename(filename_color) && !vpIoTools::checkFilename(filename_depth)
-      && !vpIoTools::checkFilename(filename_pointcloud)) {
+  if (!vpIoTools::checkFilename(filename_color) && !vpIoTools::checkFilename(filename_depth) &&
+      !vpIoTools::checkFilename(filename_pointcloud)) {
     std::cerr << "End of sequence." << std::endl;
     return false;
   }
 
-  //Read color
+  // Read color
   if (vpIoTools::checkFilename(filename_color))
     vpImageIo::read(I_color, filename_color);
 
-  //Read raw depth
-  std::ifstream file_depth(filename_depth.c_str(),  std::ios::in | std::ios::binary);
+  // Read raw depth
+  std::ifstream file_depth(filename_depth.c_str(), std::ios::in | std::ios::binary);
   if (file_depth.is_open()) {
     unsigned int height = 0, width = 0;
     vpIoTools::readBinaryValueLE(file_depth, height);
@@ -203,10 +218,10 @@ bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_co
     }
   }
 
-  //Read pointcloud
+  // Read pointcloud
 #ifdef USE_PCL_VIEWER
   if (pointcloud_binary_format) {
-    std::ifstream file_pointcloud(filename_pointcloud.c_str(),  std::ios::in | std::ios::binary);
+    std::ifstream file_pointcloud(filename_pointcloud.c_str(), std::ios::in | std::ios::binary);
     if (!file_pointcloud.is_open()) {
       std::cerr << "Cannot read pointcloud file: " << filename_pointcloud << std::endl;
     }
@@ -215,12 +230,12 @@ bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_co
     char is_dense = 1;
     vpIoTools::readBinaryValueLE(file_pointcloud, height);
     vpIoTools::readBinaryValueLE(file_pointcloud, width);
-    file_pointcloud.read( (char *)(&is_dense), sizeof(is_dense) );
+    file_pointcloud.read((char *)(&is_dense), sizeof(is_dense));
 
     point_cloud->width = width;
     point_cloud->height = height;
     point_cloud->is_dense = (is_dense != 0);
-    point_cloud->resize((size_t) width*height);
+    point_cloud->resize((size_t)width * height);
 
     float x = 0.0f, y = 0.0f, z = 0.0f;
     for (uint32_t i = 0; i < height; i++) {
@@ -229,13 +244,13 @@ bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_co
         vpIoTools::readBinaryValueLE(file_pointcloud, y);
         vpIoTools::readBinaryValueLE(file_pointcloud, z);
 
-        point_cloud->points[(size_t) (i*width + j)].x = x;
-        point_cloud->points[(size_t) (i*width + j)].y = y;
-        point_cloud->points[(size_t) (i*width + j)].z = z;
+        point_cloud->points[(size_t)(i * width + j)].x = x;
+        point_cloud->points[(size_t)(i * width + j)].y = y;
+        point_cloud->points[(size_t)(i * width + j)].z = z;
       }
     }
   } else {
-    if (pcl::io::loadPCDFile<pcl::PointXYZ> (filename_pointcloud, *point_cloud) == -1) {
+    if (pcl::io::loadPCDFile<pcl::PointXYZ>(filename_pointcloud, *point_cloud) == -1) {
       std::cerr << "Cannot read PCD: " << filename_pointcloud << std::endl;
     }
   }
@@ -243,9 +258,10 @@ bool readData(int cpt, const std::string &input_directory, vpImage<vpRGBa> &I_co
 
   return true;
 }
-} //Namespace
+} // Namespace
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   std::string input_directory = "";
   bool click = false;
   bool pointcloud_binary_format = false;
@@ -253,13 +269,12 @@ int main(int argc, char *argv[]) {
   bool color_depth = false;
 
   // Read the command line options
-  if (!getOptions(argc, argv, input_directory, click, pointcloud_binary_format,
-                  save_video, color_depth)) {
+  if (!getOptions(argc, argv, input_directory, click, pointcloud_binary_format, save_video, color_depth)) {
     return EXIT_FAILURE;
   }
 
   vpImage<vpRGBa> I_color(480, 640), I_depth_color(480, 640);
-  vpImage<uint16_t> I_depth_raw(480,640);
+  vpImage<uint16_t> I_depth_raw(480, 640);
   vpImage<unsigned char> I_depth(480, 640);
 
 #ifdef VISP_HAVE_X11
@@ -306,9 +321,9 @@ int main(int argc, char *argv[]) {
       init_display = true;
       d1.init(I_color, 0, 0, "Color image");
       if (color_depth)
-        d2.init(I_depth_color, I_color.getWidth()+10, 0, "Depth image");
+        d2.init(I_depth_color, I_color.getWidth() + 10, 0, "Depth image");
       else
-        d2.init(I_depth, I_color.getWidth()+10, 0, "Depth image");
+        d2.init(I_depth, I_color.getWidth() + 10, 0, "Depth image");
     }
 
     vpDisplay::display(I_color);
@@ -333,7 +348,7 @@ int main(int argc, char *argv[]) {
 
     if (save_video) {
       if (O.getSize() == 0) {
-        O.resize(I_color.getHeight(), I_color.getWidth()+I_depth_color.getWidth());
+        O.resize(I_color.getHeight(), I_color.getWidth() + I_depth_color.getWidth());
         writer.open(O);
       }
 
@@ -347,17 +362,17 @@ int main(int argc, char *argv[]) {
     vpMouseButton::vpMouseButtonType button;
     if (vpDisplay::getClick(I_color, button, click)) {
       switch (button) {
-        case vpMouseButton::button1:
-          if (!quit)
-            quit = !click;
-          break;
+      case vpMouseButton::button1:
+        if (!quit)
+          quit = !click;
+        break;
 
-        case vpMouseButton::button3:
-          click = !click;
-          break;
+      case vpMouseButton::button3:
+        click = !click;
+        break;
 
-        default:
-          break;
+      default:
+        break;
       }
     }
 
@@ -376,7 +391,8 @@ int main(int argc, char *argv[]) {
   return EXIT_SUCCESS;
 }
 #else
-int main() {
+int main()
+{
   std::cerr << "Enable C++11 or higher (cmake -DUSE_CXX_STANDARD=11) and install X11 or GDI!" << std::endl;
   return 0;
 }

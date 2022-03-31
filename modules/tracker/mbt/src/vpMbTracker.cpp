@@ -134,7 +134,7 @@ struct PolygonFaceInfo {
       fileId.getline(buffer, 256);
   This should take care of the different line ending styles.
  */
-std::istream& safeGetline(std::istream& is, std::string& t)
+std::istream &safeGetline(std::istream &is, std::string &t)
 {
   t.clear();
 
@@ -145,30 +145,27 @@ std::istream& safeGetline(std::istream& is, std::string& t)
   // such as thread synchronization and updating the stream state.
 
   std::istream::sentry se(is, true);
-  std::streambuf* sb = is.rdbuf();
+  std::streambuf *sb = is.rdbuf();
 
-  for(;;) {
+  for (;;) {
     int c = sb->sbumpc();
     if (c == '\n') {
       return is;
-    }
-    else if (c == '\r') {
-      if(sb->sgetc() == '\n')
+    } else if (c == '\r') {
+      if (sb->sgetc() == '\n')
         sb->sbumpc();
       return is;
-    }
-    else if (c == std::streambuf::traits_type::eof()) {
+    } else if (c == std::streambuf::traits_type::eof()) {
       // Also handle the case when the last line has no line ending
-      if(t.empty())
+      if (t.empty())
         is.setstate(std::ios::eofbit);
       return is;
-    }
-    else { // default case
+    } else { // default case
       t += (char)c;
     }
   }
 }
-}
+} // namespace
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 /*!
@@ -185,11 +182,11 @@ vpMbTracker::vpMbTracker()
     nbPolygonPoints(0), nbCylinders(0), nbCircles(0), useLodGeneral(false), applyLodSettingInConfig(false),
     minLineLengthThresholdGeneral(50.0), minPolygonAreaThresholdGeneral(2500.0), mapOfParameterNames(),
     m_computeInteraction(true), m_lambda(1.0), m_maxIter(30), m_stopCriteriaEpsilon(1e-8), m_initialMu(0.01),
-    m_projectionErrorLines(), m_projectionErrorCylinders(), m_projectionErrorCircles(),
-    m_projectionErrorFaces(), m_projectionErrorOgreShowConfigDialog(false),
-    m_projectionErrorMe(), m_projectionErrorKernelSize(2), m_SobelX(5,5), m_SobelY(5,5),
-    m_projectionErrorDisplay(false), m_projectionErrorDisplayLength(20), m_projectionErrorDisplayThickness(1),
-    m_projectionErrorCam(), m_mask(NULL), m_I(), m_sodb_init_called(false), m_rand()
+    m_projectionErrorLines(), m_projectionErrorCylinders(), m_projectionErrorCircles(), m_projectionErrorFaces(),
+    m_projectionErrorOgreShowConfigDialog(false), m_projectionErrorMe(), m_projectionErrorKernelSize(2), m_SobelX(5, 5),
+    m_SobelY(5, 5), m_projectionErrorDisplay(false), m_projectionErrorDisplayLength(20),
+    m_projectionErrorDisplayThickness(1), m_projectionErrorCam(), m_mask(NULL), m_I(), m_sodb_init_called(false),
+    m_rand()
 {
   oJo.eye();
   // Map used to parse additional information in CAO model files,
@@ -203,22 +200,26 @@ vpMbTracker::vpMbTracker()
   vpImageFilter::getSobelKernelY(m_SobelY.data, m_projectionErrorKernelSize);
 }
 
-vpMbTracker::~vpMbTracker() {
-  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin(); it != m_projectionErrorLines.end(); ++it) {
+vpMbTracker::~vpMbTracker()
+{
+  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin();
+       it != m_projectionErrorLines.end(); ++it) {
     vpMbtDistanceLine *l = *it;
     if (l != NULL)
       delete l;
     l = NULL;
   }
 
-  for (std::vector<vpMbtDistanceCylinder *>::const_iterator it = m_projectionErrorCylinders.begin(); it != m_projectionErrorCylinders.end(); ++it) {
+  for (std::vector<vpMbtDistanceCylinder *>::const_iterator it = m_projectionErrorCylinders.begin();
+       it != m_projectionErrorCylinders.end(); ++it) {
     vpMbtDistanceCylinder *cy = *it;
     if (cy != NULL)
       delete cy;
     cy = NULL;
   }
 
-  for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin(); it != m_projectionErrorCircles.end(); ++it) {
+  for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin();
+       it != m_projectionErrorCircles.end(); ++it) {
     vpMbtDistanceCircle *ci = *it;
     if (ci != NULL)
       delete ci;
@@ -233,7 +234,7 @@ vpMbTracker::~vpMbTracker() {
 }
 
 #ifdef VISP_HAVE_MODULE_GUI
-void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
                             const std::string &initFile, bool displayHelp, const vpHomogeneousMatrix &T)
 {
   vpHomogeneousMatrix last_cMo;
@@ -292,19 +293,19 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
     if (I) {
       vpDisplay::displayText(*I, 15, 10, "left click to validate, right click to modify initial pose", vpColor::red);
 
-      vpDisplay::flush(*I );
+      vpDisplay::flush(*I);
 
       while (!vpDisplay::getClick(*I, ip, button))
         ;
     } else {
-      vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to modify initial pose", vpColor::red);
+      vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to modify initial pose",
+                             vpColor::red);
 
       vpDisplay::flush(*I_color);
 
       while (!vpDisplay::getClick(*I_color, ip, button))
         ;
     }
-
   }
 
   if (!finitpos.fail() && button == vpMouseButton::button1) {
@@ -315,8 +316,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
     if (I) {
       vpDisplay::display(*I);
       vpDisplay::flush(*I);
-    }
-    else {
+    } else {
       vpDisplay::display(*I_color);
       vpDisplay::flush(*I_color);
     }
@@ -376,8 +376,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
           const int winXPos = I != NULL ? I->display->getWindowXPosition() : I_color->display->getWindowXPosition();
           const int winYPos = I != NULL ? I->display->getWindowYPosition() : I_color->display->getWindowYPosition();
           unsigned int width = I != NULL ? I->getWidth() : I_color->getWidth();
-          d_help->init(Iref, winXPos + (int)width + 80, winYPos,
-                       "Where to initialize...");
+          d_help->init(Iref, winXPos + (int)width + 80, winYPos, "Where to initialize...");
           vpDisplay::display(Iref);
           vpDisplay::flush(Iref);
 #endif
@@ -414,8 +413,9 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
       finit >> pt_3d[2];
       finit.ignore(256, '\n'); // skip the rest of the line
 
-      vpColVector pt_3d_tf = T*pt_3d;
-      std::cout << "Point " << i + 1 << " with 3D coordinates: " << pt_3d_tf[0] << " " << pt_3d_tf[1] << " " << pt_3d_tf[2] << std::endl;
+      vpColVector pt_3d_tf = T * pt_3d;
+      std::cout << "Point " << i + 1 << " with 3D coordinates: " << pt_3d_tf[0] << " " << pt_3d_tf[1] << " "
+                << pt_3d_tf[2] << std::endl;
 
       P[i].setWorldCoordinates(pt_3d_tf[0], pt_3d_tf[1], pt_3d_tf[2]); // (X,Y,Z)
     }
@@ -477,15 +477,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
       try {
         pose.computePose(vpPose::LAGRANGE, cMo1);
         d1 = pose.computeResidual(cMo1);
-      }
-      catch(...) {
+      } catch (...) {
         // Lagrange non-planar cannot work with less than 6 points
       }
       try {
         pose.computePose(vpPose::DEMENTHON, cMo2);
         d2 = pose.computeResidual(cMo2);
-      }
-      catch(...) {
+      } catch (...) {
         // Should not occur
       }
 
@@ -515,7 +513,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
         }
       } else {
         display(*I_color, m_cMo, m_cam, vpColor::green, 1, true);
-        vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
+        vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to re initialize object",
+                               vpColor::red);
 
         vpDisplay::flush(*I_color);
 
@@ -633,7 +632,7 @@ void vpMbTracker::initClick(const vpImage<vpRGBa> &I_color, const std::string &i
   initClick(NULL, &I_color, initFile, displayHelp, T);
 }
 
-void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
                             const std::vector<vpPoint> &points3D_list, const std::string &displayFile)
 {
   if (I) {
@@ -671,8 +670,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
         d_help->init(Iref, I->display->getWindowXPosition() + (int)I->getWidth() + 80, I->display->getWindowYPosition(),
                      "Where to initialize...");
       } else {
-        d_help->init(Iref, I_color->display->getWindowXPosition() + (int)I_color->getWidth() + 80, I_color->display->getWindowYPosition(),
-                     "Where to initialize...");
+        d_help->init(Iref, I_color->display->getWindowXPosition() + (int)I_color->getWidth() + 80,
+                     I_color->display->getWindowYPosition(), "Where to initialize...");
       }
       vpDisplay::display(Iref);
       vpDisplay::flush(Iref);
@@ -714,7 +713,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
       } else {
         vpDisplay::displayPoint(*I_color, ip, vpColor::green); // display target point
       }
-      pose.addPoint(P[i]);                            // and added to the pose computation point list
+      pose.addPoint(P[i]); // and added to the pose computation point list
     }
     if (I) {
       vpDisplay::flush(*I);
@@ -728,15 +727,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
     try {
       pose.computePose(vpPose::LAGRANGE, cMo1);
       d1 = pose.computeResidual(cMo1);
-    }
-    catch(...) {
+    } catch (...) {
       // Lagrange non-planar cannot work with less than 6 points
     }
     try {
       pose.computePose(vpPose::DEMENTHON, cMo2);
       d2 = pose.computeResidual(cMo2);
-    }
-    catch(...) {
+    } catch (...) {
       // Should not occur
     }
 
@@ -766,7 +763,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> * const I, const vpImag
       }
     } else {
       display(*I_color, m_cMo, m_cam, vpColor::green, 1, true);
-      vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to re initialize object", vpColor::red);
+      vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to re initialize object",
+                             vpColor::red);
 
       vpDisplay::flush(*I_color);
 
@@ -838,7 +836,7 @@ void vpMbTracker::initClick(const vpImage<vpRGBa> &I_color, const std::vector<vp
 }
 #endif //#ifdef VISP_HAVE_MODULE_GUI
 
-void vpMbTracker::initFromPoints(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
                                  const std::string &initFile)
 {
   char s[FILENAME_MAX];
@@ -956,15 +954,13 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> * const I, const v
   try {
     pose.computePose(vpPose::LAGRANGE, cMo1);
     d1 = pose.computeResidual(cMo1);
-  }
-  catch(...) {
+  } catch (...) {
     // Lagrange non-planar cannot work with less than 6 points
   }
   try {
     pose.computePose(vpPose::DEMENTHON, cMo2);
     d2 = pose.computeResidual(cMo2);
-  }
-  catch(...) {
+  } catch (...) {
     // Should not occur
   }
 
@@ -1043,8 +1039,9 @@ void vpMbTracker::initFromPoints(const vpImage<vpRGBa> &I_color, const std::stri
   initFromPoints(NULL, &I_color, initFile);
 }
 
-void vpMbTracker::initFromPoints(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
-                                 const std::vector<vpImagePoint> &points2D_list, const std::vector<vpPoint> &points3D_list)
+void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
+                                 const std::vector<vpImagePoint> &points2D_list,
+                                 const std::vector<vpPoint> &points3D_list)
 {
   if (points2D_list.size() != points3D_list.size())
     vpERROR_TRACE("vpMbTracker::initFromPoints(), Number of 2D points "
@@ -1069,15 +1066,13 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> * const I, const v
   try {
     pose.computePose(vpPose::LAGRANGE, cMo1);
     d1 = pose.computeResidual(cMo1);
-  }
-  catch(...) {
+  } catch (...) {
     // Lagrange non-planar cannot work with less than 6 points
   }
   try {
     pose.computePose(vpPose::DEMENTHON, cMo2);
     d2 = pose.computeResidual(cMo2);
-  }
-  catch(...) {
+  } catch (...) {
     // Should not occur
   }
 
@@ -1124,7 +1119,7 @@ void vpMbTracker::initFromPoints(const vpImage<vpRGBa> &I_color, const std::vect
   initFromPoints(NULL, &I_color, points2D_list, points3D_list);
 }
 
-void vpMbTracker::initFromPose(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+void vpMbTracker::initFromPose(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
                                const std::string &initFile)
 {
   char s[FILENAME_MAX];
@@ -1275,8 +1270,7 @@ void vpMbTracker::savePose(const std::string &filename) const
 }
 
 void vpMbTracker::addPolygon(const std::vector<vpPoint> &corners, int idFace, const std::string &polygonName,
-                             bool useLod, double minPolygonAreaThreshold,
-                             double minLineLengthThreshold)
+                             bool useLod, double minPolygonAreaThreshold, double minLineLengthThreshold)
 {
   std::vector<vpPoint> corners_without_duplicates;
   corners_without_duplicates.push_back(corners[0]);
@@ -1330,9 +1324,8 @@ void vpMbTracker::addPolygon(const std::vector<vpPoint> &corners, int idFace, co
     faces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
-void vpMbTracker::addPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
-                             int idFace, const std::string &polygonName, bool useLod,
-                             double minPolygonAreaThreshold)
+void vpMbTracker::addPolygon(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace,
+                             const std::string &polygonName, bool useLod, double minPolygonAreaThreshold)
 {
   vpMbtPolygon polygon;
   polygon.setNbPoint(4);
@@ -1691,8 +1684,8 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string &end
   4 1 3 5 7 3 1 5 6
   # Number of cylinder
   1
-  6 7 0.05 // Index of the limits points on the axis (used to know the 'height' of the cylinder) and radius of the cyclinder (in m.)
-  # Number of circle
+  6 7 0.05 // Index of the limits points on the axis (used to know the 'height' of the cylinder) and radius of the
+  cyclinder (in m.) # Number of circle
   1
   0.5 0 1 2 // radius, index center point, index 2 other points on the plane containing the circle
   \endcode
@@ -1709,8 +1702,7 @@ std::map<std::string, std::string> vpMbTracker::parseParameters(std::string &end
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::string> &vectorOfModelFilename,
-                               int &startIdFace, bool verbose, bool parent,
-                               const vpHomogeneousMatrix &odTo)
+                               int &startIdFace, bool verbose, bool parent, const vpHomogeneousMatrix &odTo)
 {
   std::ifstream fileId;
   fileId.exceptions(std::ifstream::failbit | std::ifstream::eofbit);
@@ -1737,7 +1729,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     fileId.get(c);
     if (c == 'V') {
       fileId >> caoVersion;
-      fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n'));  // skip the rest of the line
+      fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n')); // skip the rest of the line
     } else {
       std::cout << "in vpMbTracker::loadCAOModel() -> Bad parameter header "
                    "file : use V0, V1, ...";
@@ -1758,13 +1750,13 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       getline(fileId, line);
 
       if (!line.compare(0, prefix_load.size(), prefix_load)) {
-        //remove "load("
+        // remove "load("
         std::string paramsStr = line.substr(5);
-        //get parameters inside load()
+        // get parameters inside load()
         paramsStr = paramsStr.substr(0, paramsStr.find_first_of(")"));
-        //split by comma
+        // split by comma
         std::vector<std::string> params = vpIoTools::splitChain(paramsStr, ",");
-        //remove whitespaces
+        // remove whitespaces
         for (size_t i = 0; i < params.size(); i++) {
           params[i] = vpIoTools::trim(params[i]);
         }
@@ -1846,7 +1838,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
           if (!cyclic) {
             if (vpIoTools::checkFilename(headerPath)) {
               header = true;
-              loadCAOModel(headerPath, vectorOfModelFilename, startIdFace, verbose, false, odTo*oTo_local);
+              loadCAOModel(headerPath, vectorOfModelFilename, startIdFace, verbose, false, odTo * oTo_local);
             } else {
               throw vpException(vpException::ioError, "file cannot be open");
             }
@@ -1899,7 +1891,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n')); // skip the rest of the line
 
-      vpColVector pt_3d_tf = odTo*pt_3d;
+      vpColVector pt_3d_tf = odTo * pt_3d;
       caoPoints[k].setWorldCoordinates(pt_3d_tf[0], pt_3d_tf[1], pt_3d_tf[2]);
     }
 
@@ -2048,7 +2040,8 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         addPolygon(corners, idFace, polygonName, useLod, minPolygonAreaThreshold, minLineLengthThresholdGeneral);
         initFaceFromLines(*(faces.getPolygon().back())); // Init from the last polygon that was added
 
-        addProjectionErrorPolygon(corners, idFace++, polygonName, useLod, minPolygonAreaThreshold, minLineLengthThresholdGeneral);
+        addProjectionErrorPolygon(corners, idFace++, polygonName, useLod, minPolygonAreaThreshold,
+                                  minLineLengthThresholdGeneral);
         initProjectionErrorFaceFromLines(*(m_projectionErrorFaces.getPolygon().back()));
       }
     }
@@ -2062,8 +2055,8 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
                    it->second.minLineLengthThresh);
         initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
 
-        addProjectionErrorPolygon(it->second.extremities, idFace++, it->second.name, it->second.useLod, minPolygonAreaThresholdGeneral,
-                                  it->second.minLineLengthThresh);
+        addProjectionErrorPolygon(it->second.extremities, idFace++, it->second.name, it->second.useLod,
+                                  minPolygonAreaThresholdGeneral, it->second.minLineLengthThresh);
         initProjectionErrorFaceFromCorners(*(m_projectionErrorFaces.getPolygon().back()));
       }
     }
@@ -2124,7 +2117,8 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         addPolygon(corners, idFace, polygonName, useLod, minPolygonAreaThreshold, minLineLengthThresholdGeneral);
         initFaceFromCorners(*(faces.getPolygon().back())); // Init from the last polygon that was added
 
-        addProjectionErrorPolygon(corners, idFace++, polygonName, useLod, minPolygonAreaThreshold, minLineLengthThresholdGeneral);
+        addProjectionErrorPolygon(corners, idFace++, polygonName, useLod, minPolygonAreaThreshold,
+                                  minLineLengthThresholdGeneral);
         initProjectionErrorFaceFromCorners(*(m_projectionErrorFaces.getPolygon().back()));
       }
     }
@@ -2185,7 +2179,8 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
           int idRevolutionAxis = idFace;
           addPolygon(caoPoints[indexP1], caoPoints[indexP2], idFace, polygonName, useLod, minLineLengthThreshold);
 
-          addProjectionErrorPolygon(caoPoints[indexP1], caoPoints[indexP2], idFace++, polygonName, useLod, minLineLengthThreshold);
+          addProjectionErrorPolygon(caoPoints[indexP1], caoPoints[indexP2], idFace++, polygonName, useLod,
+                                    minLineLengthThreshold);
 
           std::vector<std::vector<vpPoint> > listFaces;
           createCylinderBBox(caoPoints[indexP1], caoPoints[indexP2], radius, listFaces);
@@ -2200,7 +2195,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         }
       }
 
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
       std::cerr << "Cannot get the number of cylinders. Defaulting to zero." << std::endl;
       std::cerr << "Exception: " << e.what() << std::endl;
       caoNbCylinder = 0;
@@ -2220,7 +2215,7 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       /* Extract the circles */
       fileId >> caoNbCircle;
-      fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n'));  // skip the rest of the line
+      fileId.ignore(std::numeric_limits<std::streamsize>::max(), fileId.widen('\n')); // skip the rest of the line
 
       nbCircles += caoNbCircle;
       if (verbose || (parent && !header)) {
@@ -2265,13 +2260,14 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
           initCircle(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace, polygonName);
 
-          addProjectionErrorPolygon(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace, polygonName, useLod,
-                                    minPolygonAreaThreshold);
-          initProjectionErrorCircle(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace++, polygonName);
+          addProjectionErrorPolygon(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace,
+                                    polygonName, useLod, minPolygonAreaThreshold);
+          initProjectionErrorCircle(caoPoints[indexP1], caoPoints[indexP2], caoPoints[indexP3], radius, idFace++,
+                                    polygonName);
         }
       }
 
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
       std::cerr << "Cannot get the number of circles. Defaulting to zero." << std::endl;
       std::cerr << "Exception: " << e.what() << std::endl;
       caoNbCircle = 0;
@@ -2301,9 +2297,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
       }
     }
 
-    //Go up: remove current model
+    // Go up: remove current model
     vectorOfModelFilename.pop_back();
-  } catch (const std::exception& e) {
+  } catch (const std::exception &e) {
     std::cerr << "Cannot read line!" << std::endl;
     std::cerr << "Exception: " << e.what() << std::endl;
     throw vpException(vpException::ioError, "cannot read line");
@@ -2909,10 +2905,10 @@ void vpMbTracker::computeVVSCheckLevenbergMarquardt(unsigned int iter, vpColVect
   }
 }
 
-void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity_, unsigned int iter, vpMatrix &L,
-                                           vpMatrix &LTL, vpColVector &R, const vpColVector &error,
-                                           vpColVector &error_prev, vpColVector &LTR, double &mu, vpColVector &v,
-                                           const vpColVector *const w, vpColVector *const m_w_prev)
+void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity_, unsigned int iter, vpMatrix &L, vpMatrix &LTL,
+                                           vpColVector &R, const vpColVector &error, vpColVector &error_prev,
+                                           vpColVector &LTR, double &mu, vpColVector &v, const vpColVector *const w,
+                                           vpColVector *const m_w_prev)
 {
   if (isoJoIdentity_) {
     LTL = L.AtA();
@@ -3140,8 +3136,8 @@ bool vpMbTracker::samePoint(const vpPoint &P1, const vpPoint &P2) const
     return false;
 }
 
-void vpMbTracker::addProjectionErrorPolygon(const std::vector<vpPoint> &corners, int idFace, const std::string &polygonName,
-                                            bool useLod, double minPolygonAreaThreshold,
+void vpMbTracker::addProjectionErrorPolygon(const std::vector<vpPoint> &corners, int idFace,
+                                            const std::string &polygonName, bool useLod, double minPolygonAreaThreshold,
                                             double minLineLengthThreshold)
 {
   std::vector<vpPoint> corners_without_duplicates;
@@ -3257,8 +3253,8 @@ void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2
     m_projectionErrorFaces.getPolygon().back()->setFarClippingDistance(distFarClip);
 }
 
-void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, int idFace, const std::string &polygonName,
-                                            bool useLod, double minLineLengthThreshold)
+void vpMbTracker::addProjectionErrorPolygon(const vpPoint &p1, const vpPoint &p2, int idFace,
+                                            const std::string &polygonName, bool useLod, double minLineLengthThreshold)
 {
   // A polygon as a single line that corresponds to the revolution axis of the
   // cylinder
@@ -3327,10 +3323,10 @@ void vpMbTracker::addProjectionErrorLine(vpPoint &P1, vpPoint &P2, int polygon, 
   bool already_here = false;
   vpMbtDistanceLine *l;
 
-  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin(); it != m_projectionErrorLines.end(); ++it) {
+  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin();
+       it != m_projectionErrorLines.end(); ++it) {
     l = *it;
-    if ((samePoint(*(l->p1), P1) && samePoint(*(l->p2), P2)) ||
-        (samePoint(*(l->p1), P2) && samePoint(*(l->p2), P1))) {
+    if ((samePoint(*(l->p1), P1) && samePoint(*(l->p2), P2)) || (samePoint(*(l->p1), P2) && samePoint(*(l->p2), P1))) {
       already_here = true;
       l->addPolygon(polygon);
       l->hiddenface = &m_projectionErrorFaces;
@@ -3363,13 +3359,14 @@ void vpMbTracker::addProjectionErrorLine(vpPoint &P1, vpPoint &P2, int polygon, 
   }
 }
 
-void vpMbTracker::addProjectionErrorCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, double r, int idFace,
-                                           const std::string &name)
+void vpMbTracker::addProjectionErrorCircle(const vpPoint &P1, const vpPoint &P2, const vpPoint &P3, double r,
+                                           int idFace, const std::string &name)
 {
   bool already_here = false;
   vpMbtDistanceCircle *ci;
 
-  for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin(); it != m_projectionErrorCircles.end(); ++it) {
+  for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin();
+       it != m_projectionErrorCircles.end(); ++it) {
     ci = *it;
     if ((samePoint(*(ci->p1), P1) && samePoint(*(ci->p2), P2) && samePoint(*(ci->p3), P3)) ||
         (samePoint(*(ci->p1), P1) && samePoint(*(ci->p2), P3) && samePoint(*(ci->p3), P2))) {
@@ -3399,8 +3396,8 @@ void vpMbTracker::addProjectionErrorCylinder(const vpPoint &P1, const vpPoint &P
   bool already_here = false;
   vpMbtDistanceCylinder *cy;
 
-  for (std::vector<vpMbtDistanceCylinder *>::const_iterator it = m_projectionErrorCylinders.begin(); it != m_projectionErrorCylinders.end();
-       ++it) {
+  for (std::vector<vpMbtDistanceCylinder *>::const_iterator it = m_projectionErrorCylinders.begin();
+       it != m_projectionErrorCylinders.end(); ++it) {
     cy = *it;
     if ((samePoint(*(cy->p1), P1) && samePoint(*(cy->p2), P2)) ||
         (samePoint(*(cy->p1), P2) && samePoint(*(cy->p2), P1))) {
@@ -3423,14 +3420,14 @@ void vpMbTracker::addProjectionErrorCylinder(const vpPoint &P1, const vpPoint &P
   }
 }
 
-void vpMbTracker::initProjectionErrorCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3,
-                                            double radius, int idFace, const std::string &name)
+void vpMbTracker::initProjectionErrorCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
+                                            int idFace, const std::string &name)
 {
   addProjectionErrorCircle(p1, p2, p3, radius, idFace, name);
 }
 
-void vpMbTracker::initProjectionErrorCylinder(const vpPoint &p1, const vpPoint &p2, double radius,
-                                              int idFace, const std::string &name)
+void vpMbTracker::initProjectionErrorCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace,
+                                              const std::string &name)
 {
   addProjectionErrorCylinder(p1, p2, radius, idFace, name);
 }
@@ -3463,8 +3460,8 @@ void vpMbTracker::initProjectionErrorFaceFromLines(vpMbtPolygon &polygon)
   to get a projection error computed at the ME locations after a call to track().
   It works similarly to vpMbTracker::getProjectionError function:
   <blockquote>
-  Get the error angle between the gradient direction of the model features projected at the resulting pose and their normal.
-  The error is expressed in degree between 0 and 90.
+  Get the error angle between the gradient direction of the model features projected at the resulting pose and their
+  normal. The error is expressed in degree between 0 and 90.
   </blockquote>
 
   \param I : Input grayscale image.
@@ -3546,8 +3543,8 @@ double vpMbTracker::computeProjectionErrorImpl(const vpImage<unsigned char> &I, 
   projectionErrorInitMovingEdge(I, _cMo);
 
   double totalProjectionError = 0.0;
-  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin(); it != m_projectionErrorLines.end();
-       ++it) {
+  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin();
+       it != m_projectionErrorLines.end(); ++it) {
     vpMbtDistanceLine *l = *it;
     if (l->isVisible() && l->isTracked()) {
       for (size_t a = 0; a < l->meline.size(); a++) {
@@ -3612,19 +3609,23 @@ void vpMbTracker::projectionErrorVisibleFace(unsigned int width, unsigned int he
   bool changed = false;
 
   if (!useOgre) {
-    m_projectionErrorFaces.setVisible(width, height, m_projectionErrorCam, _cMo, angleAppears, angleDisappears, changed);
+    m_projectionErrorFaces.setVisible(width, height, m_projectionErrorCam, _cMo, angleAppears, angleDisappears,
+                                      changed);
   } else {
 #ifdef VISP_HAVE_OGRE
-     m_projectionErrorFaces.setVisibleOgre(width, height, m_projectionErrorCam, _cMo, angleAppears, angleDisappears, changed);
+    m_projectionErrorFaces.setVisibleOgre(width, height, m_projectionErrorCam, _cMo, angleAppears, angleDisappears,
+                                          changed);
 #else
-    m_projectionErrorFaces.setVisible(width, height, m_projectionErrorCam, _cMo, angleAppears, angleDisappears, changed);
+    m_projectionErrorFaces.setVisible(width, height, m_projectionErrorCam, _cMo, angleAppears, angleDisappears,
+                                      changed);
 #endif
   }
 }
 
 void vpMbTracker::projectionErrorResetMovingEdges()
 {
-  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin(); it != m_projectionErrorLines.end(); ++it) {
+  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin();
+       it != m_projectionErrorLines.end(); ++it) {
     for (size_t a = 0; a < (*it)->meline.size(); a++) {
       if ((*it)->meline[a] != NULL) {
         delete (*it)->meline[a];
@@ -3637,8 +3638,8 @@ void vpMbTracker::projectionErrorResetMovingEdges()
     (*it)->nbFeatureTotal = 0;
   }
 
-  for (std::vector<vpMbtDistanceCylinder *>::const_iterator it = m_projectionErrorCylinders.begin(); it != m_projectionErrorCylinders.end();
-       ++it) {
+  for (std::vector<vpMbtDistanceCylinder *>::const_iterator it = m_projectionErrorCylinders.begin();
+       it != m_projectionErrorCylinders.end(); ++it) {
     if ((*it)->meline1 != NULL) {
       delete (*it)->meline1;
       (*it)->meline1 = NULL;
@@ -3653,7 +3654,8 @@ void vpMbTracker::projectionErrorResetMovingEdges()
     (*it)->nbFeaturel2 = 0;
   }
 
-  for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin(); it != m_projectionErrorCircles.end(); ++it) {
+  for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin();
+       it != m_projectionErrorCircles.end(); ++it) {
     if ((*it)->meEllipse != NULL) {
       delete (*it)->meEllipse;
       (*it)->meEllipse = NULL;
@@ -3801,18 +3803,20 @@ void vpMbTracker::setProjectionErrorMovingEdge(const vpMe &me)
 {
   m_projectionErrorMe = me;
 
-  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin(); it != m_projectionErrorLines.end(); ++it) {
+  for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_projectionErrorLines.begin();
+       it != m_projectionErrorLines.end(); ++it) {
     vpMbtDistanceLine *l = *it;
     l->setMovingEdge(&m_projectionErrorMe);
   }
 
-  for (std::vector<vpMbtDistanceCylinder *>::const_iterator it = m_projectionErrorCylinders.begin(); it != m_projectionErrorCylinders.end();
-       ++it) {
+  for (std::vector<vpMbtDistanceCylinder *>::const_iterator it = m_projectionErrorCylinders.begin();
+       it != m_projectionErrorCylinders.end(); ++it) {
     vpMbtDistanceCylinder *cy = *it;
     cy->setMovingEdge(&m_projectionErrorMe);
   }
 
-  for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin(); it != m_projectionErrorCircles.end(); ++it) {
+  for (std::vector<vpMbtDistanceCircle *>::const_iterator it = m_projectionErrorCircles.begin();
+       it != m_projectionErrorCircles.end(); ++it) {
     vpMbtDistanceCircle *ci = *it;
     ci->setMovingEdge(&m_projectionErrorMe);
   }
@@ -3827,10 +3831,9 @@ void vpMbTracker::setProjectionErrorKernelSize(const unsigned int &size)
 {
   m_projectionErrorKernelSize = size;
 
-  m_SobelX.resize(size*2+1, size*2+1, false, false);
+  m_SobelX.resize(size * 2 + 1, size * 2 + 1, false, false);
   vpImageFilter::getSobelKernelX(m_SobelX.data, size);
 
-  m_SobelY.resize(size*2+1, size*2+1, false, false);
+  m_SobelY.resize(size * 2 + 1, size * 2 + 1, false, false);
   vpImageFilter::getSobelKernelY(m_SobelY.data, size);
 }
-

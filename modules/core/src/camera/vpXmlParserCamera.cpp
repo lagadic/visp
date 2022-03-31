@@ -114,14 +114,15 @@ private:
   };
 
 public:
-  Impl() : camera(), camera_name(), image_width(0), image_height(0), subsampling_width(0),
-           subsampling_height(0), full_width(0), full_height(0)
+  Impl()
+    : camera(), camera_name(), image_width(0), image_height(0), subsampling_width(0), subsampling_height(0),
+      full_width(0), full_height(0)
   {
   }
 
   int parse(vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
-            const vpCameraParameters::vpCameraParametersProjType &projModel,
-            unsigned int im_width, unsigned int im_height)
+            const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int im_width,
+            unsigned int im_height)
   {
     pugi::xml_document doc;
     if (!doc.load_file(filename.c_str())) {
@@ -157,9 +158,8 @@ public:
     \return vpXmlParserCamera::SEQUENCE_OK if success and vpXmlParserCamera::SEQUENCE_ERROR otherwise.
    */
   int read(const pugi::xml_node &node_, const std::string &cam_name,
-           const vpCameraParameters::vpCameraParametersProjType &projModel,
-           unsigned int im_width, unsigned int im_height,
-           unsigned int subsampl_width=0, unsigned int subsampl_height=0)
+           const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int im_width,
+           unsigned int im_height, unsigned int subsampl_width = 0, unsigned int subsampl_height = 0)
   {
     vpXmlCodeType prop;
 
@@ -175,8 +175,7 @@ public:
         back = SEQUENCE_ERROR;
       }
       if (prop == CODE_XML_CAMERA) {
-        if (SEQUENCE_OK ==
-            read_camera(node, cam_name, projModel, im_width, im_height, subsampl_width, subsampl_height))
+        if (SEQUENCE_OK == read_camera(node, cam_name, projModel, im_width, im_height, subsampl_width, subsampl_height))
           nbCamera++;
       } else
         back = SEQUENCE_ERROR;
@@ -212,9 +211,8 @@ public:
     \return error code.
    */
   int read_camera(const pugi::xml_node &node_, const std::string &cam_name,
-                  const vpCameraParameters::vpCameraParametersProjType &projModel,
-                  unsigned int im_width, unsigned int im_height,
-                  unsigned int subsampl_width, unsigned int subsampl_height)
+                  const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int im_width,
+                  unsigned int im_height, unsigned int subsampl_width, unsigned int subsampl_height)
   {
     vpXmlCodeType prop;
     /* read value in the XML file. */
@@ -327,8 +325,7 @@ public:
     \param cam_tmp : camera parameters to fill with read data (output).
     \return error code.
    */
-  vpXmlCodeSequenceType read_camera_model(const pugi::xml_node &node_,
-                                          vpCameraParameters &cam_tmp)
+  vpXmlCodeSequenceType read_camera_model(const pugi::xml_node &node_, vpCameraParameters &cam_tmp)
   {
     // counter of the number of read parameters
     int nb = 0;
@@ -470,10 +467,9 @@ public:
         int check = validation / 32;
         int j = 0;
 
-        for(int i = 0; i < 5; i++)
-        {
+        for (int i = 0; i < 5; i++) {
           int bit = check % 2; // if bit == 1 => the corresponding distortion coefficient is present.
-          if(!bit)
+          if (!bit)
             fixed_distortion_coeffs.push_back(0.);
           else
             fixed_distortion_coeffs.push_back(distortion_coeffs[j++]);
@@ -493,8 +489,7 @@ public:
   }
 
   int save(const vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
-           unsigned int im_width, unsigned int im_height,
-           const std::string &additionalInfo)
+           unsigned int im_width, unsigned int im_height, const std::string &additionalInfo)
   {
     pugi::xml_document doc;
     pugi::xml_node node;
@@ -579,9 +574,8 @@ public:
     \return number of available camera parameters corresponding with inputs.
    */
   int count(const pugi::xml_node &node_, const std::string &cam_name,
-            const vpCameraParameters::vpCameraParametersProjType &projModel,
-            unsigned int im_width, unsigned int im_height,
-            unsigned int subsampl_width=0, unsigned int subsampl_height=0)
+            const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int im_width,
+            unsigned int im_height, unsigned int subsampl_width = 0, unsigned int subsampl_height = 0)
   {
     vpXmlCodeType prop;
     int nbCamera = 0;
@@ -595,8 +589,7 @@ public:
       }
 
       if (prop == CODE_XML_CAMERA) {
-        if (SEQUENCE_OK ==
-            read_camera(node, cam_name, projModel, im_width, im_height, subsampl_width, subsampl_height))
+        if (SEQUENCE_OK == read_camera(node, cam_name, projModel, im_width, im_height, subsampl_width, subsampl_height))
           nbCamera++;
       }
     }
@@ -620,9 +613,8 @@ public:
       Set as 0 if not ambiguous.
     \return number of available camera parameters corresponding with inputs.
    */
-  pugi::xml_node find_camera(const pugi::xml_node &node_, const std::string &cam_name,
-                             unsigned int im_width, unsigned int im_height,
-                             unsigned int subsampl_width=0, unsigned int subsampl_height=0)
+  pugi::xml_node find_camera(const pugi::xml_node &node_, const std::string &cam_name, unsigned int im_width,
+                             unsigned int im_height, unsigned int subsampl_width = 0, unsigned int subsampl_height = 0)
   {
     vpXmlCodeType prop;
 
@@ -657,9 +649,8 @@ public:
       Set as 0 if not ambiguous.
     \return error code.
    */
-  int read_camera_header(const pugi::xml_node &node_, const std::string &cam_name,
-                         unsigned int im_width, unsigned int im_height,
-                         unsigned int subsampl_width=0, unsigned int subsampl_height=0)
+  int read_camera_header(const pugi::xml_node &node_, const std::string &cam_name, unsigned int im_width,
+                         unsigned int im_height, unsigned int subsampl_width = 0, unsigned int subsampl_height = 0)
   {
     vpXmlCodeType prop;
     /* read value in the XML file. */
@@ -746,9 +737,8 @@ public:
       Set as 0 if not ambiguous.
     \return error code.
    */
-  int write(pugi::xml_node &node, const std::string &cam_name, unsigned int im_width,
-            unsigned int im_height, unsigned int subsampl_width=0,
-            unsigned int subsampl_height=0)
+  int write(pugi::xml_node &node, const std::string &cam_name, unsigned int im_width, unsigned int im_height,
+            unsigned int subsampl_width = 0, unsigned int subsampl_height = 0)
   {
     int back = SEQUENCE_OK;
 
@@ -896,7 +886,7 @@ public:
         node_tmp.append_child(pugi::node_pcdata).text() = camera.get_kdu();
       }
       break;
-    
+
     case vpCameraParameters::ProjWithKannalaBrandtDistortion:
       //<model>
       node_model = node_camera.append_child(LABEL_XML_MODEL);
@@ -928,21 +918,26 @@ public:
         //<k1>, <k2>, <k3>, <k4>, <k5>
         std::vector<double> distortion_coefs = camera.getKannalaBrandtDistortionCoefficients();
 
-        if(distortion_coefs.size() != 5)
+        if (distortion_coefs.size() != 5)
           std::cout << "Make sure to have 5 distortion coefficients for Kannala-Brandt distortions." << std::endl;
 
         node_tmp = node_model.append_child(pugi::node_comment);
         node_tmp.set_value("Distortion coefficients");
         node_tmp = node_model.append_child(LABEL_XML_K1);
-        distortion_coefs.size() == 0 ? node_tmp.append_child(pugi::node_pcdata).text() = 0 : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[0];
+        distortion_coefs.size() == 0 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
+                                     : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[0];
         node_tmp = node_model.append_child(LABEL_XML_K2);
-        distortion_coefs.size() <= 1 ? node_tmp.append_child(pugi::node_pcdata).text() = 0 : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[1];
+        distortion_coefs.size() <= 1 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
+                                     : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[1];
         node_tmp = node_model.append_child(LABEL_XML_K3);
-        distortion_coefs.size() <= 2 ? node_tmp.append_child(pugi::node_pcdata).text() = 0 : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[2];
+        distortion_coefs.size() <= 2 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
+                                     : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[2];
         node_tmp = node_model.append_child(LABEL_XML_K4);
-        distortion_coefs.size() <= 3 ? node_tmp.append_child(pugi::node_pcdata).text() = 0 : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[3];
+        distortion_coefs.size() <= 3 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
+                                     : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[3];
         node_tmp = node_model.append_child(LABEL_XML_K5);
-        distortion_coefs.size() <= 4 ? node_tmp.append_child(pugi::node_pcdata).text() = 0 : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[4];
+        distortion_coefs.size() <= 4 ? node_tmp.append_child(pugi::node_pcdata).text() = 0
+                                     : node_tmp.append_child(pugi::node_pcdata).text() = distortion_coefs[4];
       }
       break;
     }
@@ -976,7 +971,6 @@ public:
 
     return pugi::xml_node();
   }
-
 
   /*!
     Translate a string (label) to a xml code.
@@ -1070,14 +1064,9 @@ private:
 };
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-vpXmlParserCamera::vpXmlParserCamera() : m_impl(new Impl())
-{
-}
+vpXmlParserCamera::vpXmlParserCamera() : m_impl(new Impl()) {}
 
-vpXmlParserCamera::~vpXmlParserCamera()
-{
-  delete m_impl;
-}
+vpXmlParserCamera::~vpXmlParserCamera() { delete m_impl; }
 
 /*!
   Parse an xml file to load camera parameters.
@@ -1094,8 +1083,8 @@ vpXmlParserCamera::~vpXmlParserCamera()
   \return vpXmlParserCamera::SEQUENCE_OK if success and vpXmlParserCamera::SEQUENCE_ERROR otherwise.
 */
 int vpXmlParserCamera::parse(vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
-                             const vpCameraParameters::vpCameraParametersProjType &projModel,
-                             unsigned int im_width, unsigned int im_height)
+                             const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int im_width,
+                             unsigned int im_height)
 {
   return m_impl->parse(cam, filename, cam_name, projModel, im_width, im_height);
 }
@@ -1144,63 +1133,29 @@ int main()
   \endcode
 */
 int vpXmlParserCamera::save(const vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
-                            unsigned int im_width, unsigned int im_height,
-                            const std::string &additionalInfo)
+                            unsigned int im_width, unsigned int im_height, const std::string &additionalInfo)
 {
   return m_impl->save(cam, filename, cam_name, im_width, im_height, additionalInfo);
 }
 
-std::string vpXmlParserCamera::getCameraName() const
-{
-  return m_impl->getCameraName();
-}
+std::string vpXmlParserCamera::getCameraName() const { return m_impl->getCameraName(); }
 
-vpCameraParameters vpXmlParserCamera::getCameraParameters() const
-{
-  return m_impl->getCameraParameters();
-}
+vpCameraParameters vpXmlParserCamera::getCameraParameters() const { return m_impl->getCameraParameters(); }
 
-unsigned int vpXmlParserCamera::getHeight() const
-{
-  return m_impl->getHeight();
-}
+unsigned int vpXmlParserCamera::getHeight() const { return m_impl->getHeight(); }
 
-unsigned int vpXmlParserCamera::getSubsampling_width() const
-{
-  return m_impl->getSubsampling_width();
-}
+unsigned int vpXmlParserCamera::getSubsampling_width() const { return m_impl->getSubsampling_width(); }
 
-unsigned int vpXmlParserCamera::getSubsampling_height() const
-{
-  return m_impl->getSubsampling_height();
-}
+unsigned int vpXmlParserCamera::getSubsampling_height() const { return m_impl->getSubsampling_height(); }
 
-unsigned int vpXmlParserCamera::getWidth() const
-{
-  return m_impl->getWidth();
-}
+unsigned int vpXmlParserCamera::getWidth() const { return m_impl->getWidth(); }
 
-void vpXmlParserCamera::setCameraName(const std::string &name)
-{
-  m_impl->setCameraName(name);
-}
+void vpXmlParserCamera::setCameraName(const std::string &name) { m_impl->setCameraName(name); }
 
-void vpXmlParserCamera::setHeight(unsigned int height)
-{
-  m_impl->setHeight(height);
-}
+void vpXmlParserCamera::setHeight(unsigned int height) { m_impl->setHeight(height); }
 
-void vpXmlParserCamera::setSubsampling_width(unsigned int subsampling)
-{
-  m_impl->setSubsampling_width(subsampling);
-}
+void vpXmlParserCamera::setSubsampling_width(unsigned int subsampling) { m_impl->setSubsampling_width(subsampling); }
 
-void vpXmlParserCamera::setSubsampling_height(unsigned int subsampling)
-{
-  m_impl->setSubsampling_height(subsampling);
-}
+void vpXmlParserCamera::setSubsampling_height(unsigned int subsampling) { m_impl->setSubsampling_height(subsampling); }
 
-void vpXmlParserCamera::setWidth(unsigned int width)
-{
-  m_impl->setWidth(width);
-}
+void vpXmlParserCamera::setWidth(unsigned int width) { m_impl->setWidth(width); }

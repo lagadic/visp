@@ -208,10 +208,7 @@ void vpPlotGraph::computeGraphParameters()
   yorg = dTopLeft.get_i() + (ymax * zoomy);
 }
 
-void vpPlotGraph::setCurveColor(unsigned int curveNum, const vpColor &color)
-{
-  (curveList + curveNum)->color = color;
-}
+void vpPlotGraph::setCurveColor(unsigned int curveNum, const vpColor &color) { (curveList + curveNum)->color = color; }
 
 void vpPlotGraph::setTitle(const std::string &title_)
 {
@@ -440,8 +437,8 @@ void vpPlotGraph::rescaley(unsigned int side, double extremity)
   ydelt = (ymax - ymin) / (double)nbDivisiony;
 }
 
-void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, int nbDivx,
-                            double y_min, double y_max, int nbDivy, bool gx, bool gy)
+void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, int nbDivx, double y_min,
+                            double y_max, int nbDivy, bool gx, bool gy)
 {
   this->xmin = x_min;
   this->xmax = x_max;
@@ -458,9 +455,8 @@ void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_ma
   scaleInitialized = true;
 }
 
-void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, int nbDivx,
-                            double y_min, double y_max, int nbDivy, double z_min,
-                            double z_max, int nbDivz, bool gx, bool gy)
+void vpPlotGraph::initScale(vpImage<unsigned char> &I, double x_min, double x_max, int nbDivx, double y_min,
+                            double y_max, int nbDivy, double z_min, double z_max, int nbDivz, bool gx, bool gy)
 {
   this->xmin = x_min;
   this->xmax = x_max;
@@ -1042,8 +1038,8 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
     displayLegend(I);
 }
 
-vpMouseButton::vpMouseButtonType vpPlotGraph::plot(vpImage<unsigned char> &I, unsigned int curveNb,
-                                                   double x, double y, double z)
+vpMouseButton::vpMouseButtonType vpPlotGraph::plot(vpImage<unsigned char> &I, unsigned int curveNb, double x, double y,
+                                                   double z)
 {
   if (!scaleInitialized) {
     if (x < 0) {

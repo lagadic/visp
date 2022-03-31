@@ -42,10 +42,7 @@
 /*!
  * Construct a model with 2 parameters for translation initialized to zero.
  */
-vpTemplateTrackerWarpTranslation::vpTemplateTrackerWarpTranslation()
-{
-  nbParam = 2;
-}
+vpTemplateTrackerWarpTranslation::vpTemplateTrackerWarpTranslation() { nbParam = 2; }
 
 /*!
  * Get the parameters of the warping function one level down
@@ -77,7 +74,8 @@ void vpTemplateTrackerWarpTranslation::getParamPyramidUp(const vpColVector &p, v
  * \param du : Derivative on the u-axis (along the columns) of the point (u,v).
  * \param dIdW : Resulting derivative matrix (image according to the warping function).
  */
-void vpTemplateTrackerWarpTranslation::getdW0(const int &, const int &, const double &dv, const double &du, double *dIdW)
+void vpTemplateTrackerWarpTranslation::getdW0(const int &, const int &, const double &dv, const double &du,
+                                              double *dIdW)
 {
   dIdW[0] = du;
   dIdW[1] = dv;
@@ -150,8 +148,8 @@ void vpTemplateTrackerWarpTranslation::dWarp(const vpColVector &, const vpColVec
  * the initial warping function parameters (p=0).
  * \param dM : Resulting warping model compositionnal derivative returned as a 2-by-2 matrix.
  */
-void vpTemplateTrackerWarpTranslation::dWarpCompo(const vpColVector &, const vpColVector &,
-                                                  const vpColVector &, const double *dwdp0, vpMatrix &dM)
+void vpTemplateTrackerWarpTranslation::dWarpCompo(const vpColVector &, const vpColVector &, const vpColVector &,
+                                                  const double *dwdp0, vpMatrix &dM)
 {
   for (unsigned int i = 0; i < nbParam; i++) {
     dM[0][i] = dwdp0[i];

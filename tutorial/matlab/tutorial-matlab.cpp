@@ -3,12 +3,12 @@
  *	Tutorial using ViSP and MATLAB
  *	Determine column-wise sum of ViSP matrix using MATLAB Engine
  */
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 //! [Include]
-#include <matrix.h>
 #include <engine.h>
+#include <matrix.h>
 #include <visp3/core/vpMatrix.h>
 //! [Include]
 
@@ -17,9 +17,15 @@ int main()
   // ViSP matrix containing input data
   //! [InputData]
   vpMatrix x(3, 3, 0);
-  x[0][0] = 1; x[0][1] = 2; x[0][2] = 3;
-  x[1][0] = 4; x[1][1] = 5; x[1][2] = 6;
-  x[2][0] = 7; x[2][1] = 8; x[2][2] = 9;
+  x[0][0] = 1;
+  x[0][1] = 2;
+  x[0][2] = 3;
+  x[1][0] = 4;
+  x[1][1] = 5;
+  x[1][2] = 6;
+  x[2][0] = 7;
+  x[2][1] = 8;
+  x[2][2] = 9;
   //! [InputData]
   int xCols = x.getCols();
   int xRows = x.getRows();
@@ -57,7 +63,7 @@ int main()
 
   // Copy the contents of ViSP matrix to the MATLAB matrix variable T
   //! [CopyToVariable]
-  memcpy((void *)mxGetPr(T), (void *)x.data, xRows * xCols *sizeof(double));
+  memcpy((void *)mxGetPr(T), (void *)x.data, xRows * xCols * sizeof(double));
   //! [CopyToVariable]
 
   // Place the variable T into the MATLAB workspace

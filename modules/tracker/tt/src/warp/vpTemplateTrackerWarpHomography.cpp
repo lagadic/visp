@@ -43,10 +43,7 @@
 /*!
  * Construct an homography model with 8 parameters initialized to zero.
  */
-vpTemplateTrackerWarpHomography::vpTemplateTrackerWarpHomography()
-{
-  nbParam = 8;
-}
+vpTemplateTrackerWarpHomography::vpTemplateTrackerWarpHomography() { nbParam = 8; }
 
 /*!
  * Get the parameters of the warping function one level down
@@ -92,7 +89,8 @@ void vpTemplateTrackerWarpHomography::getParamPyramidUp(const vpColVector &p, vp
  * \param du : Derivative on the u-axis (along the columns) of the point (u,v).
  * \param dIdW : Resulting derivative matrix (image according to the warping function).
  */
-void vpTemplateTrackerWarpHomography::getdW0(const int &v, const int &u, const double &dv, const double &du, double *dIdW)
+void vpTemplateTrackerWarpHomography::getdW0(const int &v, const int &u, const double &dv, const double &du,
+                                             double *dIdW)
 {
   double u_du_ = u * du;
   double v_dv_ = v * dv;
@@ -125,13 +123,13 @@ void vpTemplateTrackerWarpHomography::getdWdp0(const int &v, const int &u, doubl
   dIdW[2] = -u * u;
   dIdW[3] = v;
   dIdW[4] = 0;
-  dIdW[5] = - uv_;
+  dIdW[5] = -uv_;
   dIdW[6] = 1.;
   dIdW[7] = 0;
 
   dIdW[8] = 0;
   dIdW[9] = u;
-  dIdW[10] = - uv_;
+  dIdW[10] = -uv_;
   dIdW[11] = 0;
   dIdW[12] = v;
   dIdW[13] = -v * v;
@@ -232,8 +230,8 @@ void vpTemplateTrackerWarpHomography::dWarp(const vpColVector &X, const vpColVec
  *
  * \sa computeDenom()
  */
-void vpTemplateTrackerWarpHomography::dWarpCompo(const vpColVector &, const vpColVector &X,
-                                                 const vpColVector &p, const double *dwdp0, vpMatrix &dM)
+void vpTemplateTrackerWarpHomography::dWarpCompo(const vpColVector &, const vpColVector &X, const vpColVector &p,
+                                                 const double *dwdp0, vpMatrix &dM)
 {
   double dwdx0, dwdx1;
   double dwdy0, dwdy1;

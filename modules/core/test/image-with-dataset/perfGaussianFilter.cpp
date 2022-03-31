@@ -40,15 +40,16 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
-#include <visp3/io/vpImageIo.h>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpGaussianFilter.h>
+#include <visp3/core/vpImageFilter.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/io/vpImageIo.h>
 
 static const std::string ipath = vpIoTools::getViSPImagesDataPath();
 static std::string imagePath = vpIoTools::createFilePath(ipath, "faces/1280px-Solvay_conference_1927.png");
 
-TEST_CASE("vpGaussianFilter", "[benchmark]") {
+TEST_CASE("vpGaussianFilter", "[benchmark]")
+{
   SECTION("unsigned char")
   {
     vpImage<unsigned char> I, I_blur;
@@ -56,7 +57,8 @@ TEST_CASE("vpGaussianFilter", "[benchmark]") {
 
     const float sigma = 5.0f;
     vpGaussianFilter gaussianFilter(I.getWidth(), I.getHeight(), sigma);
-    BENCHMARK("Benchmark vpGaussianFilter uchar") {
+    BENCHMARK("Benchmark vpGaussianFilter uchar")
+    {
       gaussianFilter.apply(I, I_blur);
       return I_blur;
     };
@@ -69,7 +71,8 @@ TEST_CASE("vpGaussianFilter", "[benchmark]") {
 
     const float sigma = 5.0f;
     vpGaussianFilter gaussianFilter(I.getWidth(), I.getHeight(), sigma);
-    BENCHMARK("Benchmark vpGaussianFilter vpRGBa") {
+    BENCHMARK("Benchmark vpGaussianFilter vpRGBa")
+    {
       gaussianFilter.apply(I, I_blur);
       return I_blur;
     };
@@ -83,14 +86,16 @@ TEST_CASE("vpGaussianFilter", "[benchmark]") {
     const float sigma = 5.0f;
     const bool deinterleave = true;
     vpGaussianFilter gaussianFilter(I.getWidth(), I.getHeight(), sigma, deinterleave);
-    BENCHMARK("Benchmark vpGaussianFilter vpRGBa") {
+    BENCHMARK("Benchmark vpGaussianFilter vpRGBa")
+    {
       gaussianFilter.apply(I, I_blur);
       return I_blur;
     };
   }
 }
 
-TEST_CASE("vpImageFilter::gaussianBlur", "[benchmark]") {
+TEST_CASE("vpImageFilter::gaussianBlur", "[benchmark]")
+{
   SECTION("unsigned char")
   {
     vpImage<unsigned char> I;
@@ -99,7 +104,8 @@ TEST_CASE("vpImageFilter::gaussianBlur", "[benchmark]") {
     vpImage<double> I_blur;
     const unsigned int kernelSize = 7;
     const double sigma = 5.0;
-    BENCHMARK("Benchmark vpImageFilter::gaussianBlur uchar") {
+    BENCHMARK("Benchmark vpImageFilter::gaussianBlur uchar")
+    {
       vpImageFilter::gaussianBlur(I, I_blur, kernelSize, sigma);
       return I_blur;
     };
@@ -112,7 +118,8 @@ TEST_CASE("vpImageFilter::gaussianBlur", "[benchmark]") {
 
     const unsigned int kernelSize = 7;
     const double sigma = 5.0;
-    BENCHMARK("Benchmark vpImageFilter::gaussianBlur vpRGBa") {
+    BENCHMARK("Benchmark vpImageFilter::gaussianBlur vpRGBa")
+    {
       vpImageFilter::gaussianBlur(I, I_blur, kernelSize, sigma);
       return I_blur;
     };
@@ -120,14 +127,16 @@ TEST_CASE("vpImageFilter::gaussianBlur", "[benchmark]") {
 }
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-TEST_CASE("Gaussian filter (OpenCV)", "[benchmark]") {
+TEST_CASE("Gaussian filter (OpenCV)", "[benchmark]")
+{
   SECTION("unsigned char")
   {
     cv::Mat img, img_blur;
     img = cv::imread(imagePath, cv::IMREAD_GRAYSCALE);
 
     const double sigma = 5.0;
-    BENCHMARK("Benchmark Gaussian filter uchar (OpenCV)") {
+    BENCHMARK("Benchmark Gaussian filter uchar (OpenCV)")
+    {
       cv::GaussianBlur(img, img_blur, cv::Size(), sigma);
       return img_blur;
     };
@@ -139,7 +148,8 @@ TEST_CASE("Gaussian filter (OpenCV)", "[benchmark]") {
     img = cv::imread(imagePath, cv::IMREAD_COLOR);
 
     const double sigma = 5.0;
-    BENCHMARK("Benchmark Gaussian filter BGR (OpenCV)") {
+    BENCHMARK("Benchmark Gaussian filter BGR (OpenCV)")
+    {
       cv::GaussianBlur(img, img_blur, cv::Size(), sigma);
       return img_blur;
     };
@@ -154,11 +164,11 @@ int main(int argc, char *argv[])
   bool runBenchmark = false;
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
-  auto cli = session.cli() // Get Catch's composite command line parser
-    | Opt(runBenchmark)    // bind variable to a new option, with a hint string
-    ["--benchmark"]        // the option names it will respond to
-    ("run benchmark?")     // description string for the help output
-  ;
+  auto cli = session.cli()         // Get Catch's composite command line parser
+             | Opt(runBenchmark)   // bind variable to a new option, with a hint string
+                   ["--benchmark"] // the option names it will respond to
+             ("run benchmark?")    // description string for the help output
+      ;
 
   // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
@@ -180,8 +190,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

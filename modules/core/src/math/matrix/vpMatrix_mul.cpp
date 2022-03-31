@@ -44,13 +44,13 @@
 // or vector content in a gsl_matrix or gsl_vector. This is not acceptable here.
 // that's why we prefer use naive code when VISP_HAVE_GSL is defined.
 #if defined(VISP_HAVE_LAPACK)
-#  ifdef VISP_HAVE_MKL
+#ifdef VISP_HAVE_MKL
 #include <mkl.h>
 typedef MKL_INT integer;
 
 void vpMatrix::blas_dgemm(char trans_a, char trans_b, unsigned int M_, unsigned int N_, unsigned int K_, double alpha,
-                          double *a_data, unsigned int lda_, double *b_data, unsigned int ldb_, double beta, double *c_data,
-                          unsigned int ldc_)
+                          double *a_data, unsigned int lda_, double *b_data, unsigned int ldb_, double beta,
+                          double *c_data, unsigned int ldc_)
 {
   MKL_INT M = static_cast<MKL_INT>(M_);
   MKL_INT N = static_cast<MKL_INT>(N_);
@@ -73,12 +73,12 @@ void vpMatrix::blas_dgemv(char trans, unsigned int M_, unsigned int N_, double a
 
   dgemv(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data, &incy);
 }
-#  elif !defined(VISP_HAVE_GSL)
-#    ifdef VISP_HAVE_LAPACK_BUILT_IN
+#elif !defined(VISP_HAVE_GSL)
+#ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
-#    else
+#else
 typedef int integer;
-#    endif
+#endif
 
 extern "C" void dgemm_(char *transa, char *transb, integer *M, integer *N, integer *K, double *alpha, double *a,
                        integer *lda, double *b, integer *ldb, double *beta, double *c, integer *ldc);
@@ -87,8 +87,8 @@ extern "C" void dgemv_(char *trans, integer *M, integer *N, double *alpha, doubl
                        integer *incx, double *beta, double *y, integer *incy);
 
 void vpMatrix::blas_dgemm(char trans_a, char trans_b, unsigned int M_, unsigned int N_, unsigned int K_, double alpha,
-                          double *a_data, unsigned int lda_, double *b_data, unsigned int ldb_, double beta, double *c_data,
-                          unsigned int ldc_)
+                          double *a_data, unsigned int lda_, double *b_data, unsigned int ldb_, double beta,
+                          double *c_data, unsigned int ldc_)
 {
   integer M = static_cast<integer>(M_);
   integer K = static_cast<integer>(K_);
@@ -111,11 +111,11 @@ void vpMatrix::blas_dgemv(char trans, unsigned int M_, unsigned int N_, double a
 
   dgemv_(&trans, &M, &N, &alpha, a_data, &lda, x_data, &incx, &beta, y_data, &incy);
 }
-#  endif
+#endif
 #else
 // Work arround to avoid warning LNK4221: This object file does not define any
 // previously undefined public symbols
-void dummy_vpMatrix_blas() {};
+void dummy_vpMatrix_blas(){};
 #endif
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

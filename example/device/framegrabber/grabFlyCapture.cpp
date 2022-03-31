@@ -76,7 +76,8 @@ void usage(const char *name, const char *badparam, unsigned int icamera, std::st
 Acquire and display images using PointGrey FlyCapture SDK.\n\
 \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-i <camera index>] [-o <output image filename>] [-h] \n", name);
+  %s [-c] [-d] [-i <camera index>] [-o <output image filename>] [-h] \n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -96,7 +97,8 @@ OPTIONS:                                               Default\n\
 \n\
   -h \n\
      Print the help.\n\
-\n", icamera, opath.c_str());
+\n",
+          icamera, opath.c_str());
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
@@ -240,7 +242,8 @@ int main(int argc, const char **argv)
 }
 
 #else
-int main() {
+int main()
+{
   std::cout << "You do not have PointGrey FlyCapture SDK enabled..." << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install FlyCapture SDK, configure again ViSP using cmake and build again this example" << std::endl;

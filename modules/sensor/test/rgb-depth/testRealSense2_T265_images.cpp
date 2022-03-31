@@ -46,9 +46,8 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
-  (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && \
-  (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 
 int main()
 {
@@ -88,7 +87,7 @@ int main()
     display_left.setDownScalingFactor(display_scale);
     display_right.setDownScalingFactor(display_scale);
     display_left.init(I_left, 10, 10, "Left image");
-    display_right.init(I_right, static_cast<int>(I_left.getWidth()/display_scale) + 80, 10, "Right image"); // Right
+    display_right.init(I_right, static_cast<int>(I_left.getWidth() / display_scale) + 80, 10, "Right image"); // Right
 #endif
 
     while (true) {
@@ -100,8 +99,8 @@ int main()
       vpDisplay::display(I_left);
       vpDisplay::display(I_right);
 
-      vpDisplay::displayText(I_left, 15*display_scale, 15*display_scale, "Click to quit", vpColor::red);
-      vpDisplay::displayText(I_right, 15*display_scale, 15*display_scale, "Click to quit", vpColor::red);
+      vpDisplay::displayText(I_left, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
+      vpDisplay::displayText(I_right, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
 
       if (vpDisplay::getClick(I_left, false) || vpDisplay::getClick(I_right, false)) {
         break;

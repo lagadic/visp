@@ -179,7 +179,7 @@ int main()
 
   //! [Create bitmap]
   vpImage<vpRGBa> I(480, 640, vpRGBa());
-//! [Create bitmap]
+  //! [Create bitmap]
 
 #ifdef VISP_HAVE_X11
   vpDisplayX d;

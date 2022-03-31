@@ -84,7 +84,8 @@ Read an image sequence on the disk.\n\
 SYNOPSIS\n\
   %s [-i <input images path>] [-p <personal image sequence path>]\n\
      [-c][-d][-h]\n						      \
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -113,7 +114,8 @@ OPTIONS:                                               Default\n\
      Turn off the display.\n\
 \n\
   -h\n\
-     Print the help.\n\n", ipath.c_str(), ppath.c_str());
+     Print the help.\n\n",
+          ipath.c_str(), ppath.c_str());
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");

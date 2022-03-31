@@ -80,12 +80,14 @@ Move the biclops robot\n\
 \n\
 SYNOPSIS\n\
   %s [-c <Biclops configuration file>] [-h]\n						      \
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -c <Biclops configuration file>                      %s\n\
-     Sets the biclops robot configuration file.\n\n", conf.c_str());
+     Sets the biclops robot configuration file.\n\n",
+          conf.c_str());
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
@@ -274,8 +276,7 @@ int main(int argc, const char **argv)
     std::cout << "Velocity in the articular frame: "
               << " pan: " << vpMath::deg(qm[0]) << " tilt: " << vpMath::deg(qm[1]) << std::endl;
     return EXIT_SUCCESS;
-  }
-  catch (const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

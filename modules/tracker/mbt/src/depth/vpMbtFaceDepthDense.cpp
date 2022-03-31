@@ -82,8 +82,8 @@ vpMbtFaceDepthDense::~vpMbtFaceDepthDense()
   \param polygon : The index of the polygon to which the line belongs.
   \param name : the optional name of the line
 */
-void vpMbtFaceDepthDense::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpMbtPolygon> *const faces, vpUniRand& rand_gen, int polygon,
-                                  std::string name)
+void vpMbtFaceDepthDense::addLine(vpPoint &P1, vpPoint &P2, vpMbHiddenFaces<vpMbtPolygon> *const faces,
+                                  vpUniRand &rand_gen, int polygon, std::string name)
 {
   // Build a PolygonLine to be able to easily display the lines model
   PolygonLine polygon_line;
@@ -151,8 +151,8 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
                                                  vpImage<unsigned char> &debugImage,
                                                  std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
-                                                 , const vpImage<bool> *mask
-)
+                                                 ,
+                                                 const vpImage<bool> *mask)
 {
   unsigned int width = point_cloud->width, height = point_cloud->height;
   m_pointCloudFace.clear();
@@ -279,8 +279,8 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
                                                  vpImage<unsigned char> &debugImage,
                                                  std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
-                                                 , const vpImage<bool> *mask
-)
+                                                 ,
+                                                 const vpImage<bool> *mask)
 {
   m_pointCloudFace.clear();
 
@@ -580,8 +580,8 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
   }
 }
 
-void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, unsigned int width,
-                                     unsigned int height, std::vector<vpImagePoint> &roiPts
+void vpMbtFaceDepthDense::computeROI(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
+                                     std::vector<vpImagePoint> &roiPts
 #if DEBUG_DISPLAY_DEPTH_DENSE
                                      ,
                                      std::vector<std::vector<vpImagePoint> > &roiPts_vec
@@ -691,7 +691,8 @@ void vpMbtFaceDepthDense::display(const vpImage<unsigned char> &I, const vpHomog
                                   const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                   bool displayFullModel)
 {
-  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+  std::vector<std::vector<double> > models =
+      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     vpImagePoint ip1(models[i][1], models[i][2]);
@@ -704,7 +705,8 @@ void vpMbtFaceDepthDense::display(const vpImage<vpRGBa> &I, const vpHomogeneousM
                                   const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                   bool displayFullModel)
 {
-  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+  std::vector<std::vector<double> > models =
+      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     vpImagePoint ip1(models[i][1], models[i][2]);
@@ -749,7 +751,8 @@ std::vector<std::vector<double> > vpMbtFaceDepthDense::getModelForDisplay(unsign
     for (std::vector<vpMbtDistanceLine *>::const_iterator it = m_listOfFaceLines.begin(); it != m_listOfFaceLines.end();
          ++it) {
       vpMbtDistanceLine *line = *it;
-      std::vector<std::vector<double> > lineModels = line->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+      std::vector<std::vector<double> > lineModels =
+          line->getModelForDisplay(width, height, cMo, cam, displayFullModel);
       models.insert(models.end(), lineModels.begin(), lineModels.end());
     }
   }

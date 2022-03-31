@@ -3,19 +3,20 @@
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/io/vpImageIo.h>
 #include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 //! [Include]
 #include <visp3/mbt/vpMbGenericTracker.h>
 //! [Include]
 
-#if defined (VISP_HAVE_PCL)
+#if defined(VISP_HAVE_PCL)
 #include <pcl/common/common.h>
 #include <pcl/io/pcd_io.h>
 
-namespace {
+namespace
+{
 struct rs_intrinsics {
   float ppx;       /**< Horizontal coordinate of the principal point of the image,
                       as a pixel offset from the left edge */
@@ -28,7 +29,8 @@ struct rs_intrinsics {
   float coeffs[5]; /**< Distortion coefficients */
 };
 
-void rs_deproject_pixel_to_point(float point[3], const rs_intrinsics &intrin, const float pixel[2], float depth) {
+void rs_deproject_pixel_to_point(float point[3], const rs_intrinsics &intrin, const float pixel[2], float depth)
+{
   float x = (pixel[0] - intrin.ppx) / intrin.fx;
   float y = (pixel[1] - intrin.ppy) / intrin.fy;
 
@@ -111,15 +113,15 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
       float point[3];
       float pixel[2] = {(float)j, (float)i};
       rs_deproject_pixel_to_point(point, depth_intrinsic, pixel, scaled_depth);
-      pointcloud->points[(size_t) (i*width + j)].x = point[0];
-      pointcloud->points[(size_t) (i*width + j)].y = point[1];
-      pointcloud->points[(size_t) (i*width + j)].z = point[2];
+      pointcloud->points[(size_t)(i * width + j)].x = point[0];
+      pointcloud->points[(size_t)(i * width + j)].y = point[1];
+      pointcloud->points[(size_t)(i * width + j)].z = point[2];
     }
   }
 
   return true;
 }
-}
+} // namespace
 
 int main(int argc, char *argv[])
 {
@@ -131,25 +133,32 @@ int main(int argc, char *argv[])
   bool disable_depth = false;
 
   for (int i = 1; i < argc; i++) {
-    if (std::string(argv[i]) == "--input_directory" && i+1 < argc) {
-      input_directory = std::string(argv[i+1]);
-    } else if (std::string(argv[i]) == "--config_color" && i+1 < argc) {
-      config_color = std::string(argv[i+1]);
-    } else if (std::string(argv[i]) == "--config_depth" && i+1 < argc) {
-      config_depth = std::string(argv[i+1]);
-    } else if (std::string(argv[i]) == "--model_color" && i+1 < argc) {
-      model_color = std::string(argv[i+1]);
-    } else if (std::string(argv[i]) == "--model_depth" && i+1 < argc) {
-      model_depth = std::string(argv[i+1]);
-    } else if (std::string(argv[i]) == "--init_file" && i+1 < argc) {
-      init_file = std::string(argv[i+1]);
+    if (std::string(argv[i]) == "--input_directory" && i + 1 < argc) {
+      input_directory = std::string(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--config_color" && i + 1 < argc) {
+      config_color = std::string(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--config_depth" && i + 1 < argc) {
+      config_depth = std::string(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--model_color" && i + 1 < argc) {
+      model_color = std::string(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--model_depth" && i + 1 < argc) {
+      model_depth = std::string(argv[i + 1]);
+    } else if (std::string(argv[i]) == "--init_file" && i + 1 < argc) {
+      init_file = std::string(argv[i + 1]);
     } else if (std::string(argv[i]) == "--disable_depth") {
       disable_depth = true;
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "Usage: \n" << argv[0] << " --input_directory <data directory> --config_color <object.xml> --config_depth <object.xml>"
-                                             " --model_color <object.cao> --model_depth <object.cao> --init_file <object.init> --disable_depth" << std::endl;
-      std::cout << "\nExample:\n" << argv[0] << " --config_color model/cube/cube.xml --config_depth model/cube/cube.xml"
-                                                " --model_color model/cube/cube.cao --model_depth model/cube/cube.cao --init_file model/cube/cube.init\n" << std::endl;
+      std::cout << "Usage: \n"
+                << argv[0]
+                << " --input_directory <data directory> --config_color <object.xml> --config_depth <object.xml>"
+                   " --model_color <object.cao> --model_depth <object.cao> --init_file <object.init> --disable_depth"
+                << std::endl;
+      std::cout
+          << "\nExample:\n"
+          << argv[0]
+          << " --config_color model/cube/cube.xml --config_depth model/cube/cube.xml"
+             " --model_color model/cube/cube.cao --model_depth model/cube/cube.cao --init_file model/cube/cube.init\n"
+          << std::endl;
       return 0;
     }
   }
@@ -158,19 +167,25 @@ int main(int argc, char *argv[])
 #ifdef VISP_HAVE_OPENCV
   std::cout << "  Use edges   : 1" << std::endl;
   std::cout << "  Use klt     : 1" << std::endl;
-  std::cout << "  Use depth   : " << ! disable_depth << std::endl;
+  std::cout << "  Use depth   : " << !disable_depth << std::endl;
 #else
   std::cout << "  Use edges   : 1" << std::endl;
   std::cout << "  Use klt     : 0" << std::endl;
   std::cout << "  Use depth   : 0" << std::endl;
 #endif
   std::cout << "Config files: " << std::endl;
-  std::cout << "  Input directory: " << "\"" << input_directory << "\"" << std::endl;
-  std::cout << "  Config color: " << "\"" << config_color << "\"" << std::endl;
-  std::cout << "  Config depth: " << "\"" << config_depth << "\"" << std::endl;
-  std::cout << "  Model color : " << "\"" << model_color << "\"" << std::endl;
-  std::cout << "  Model depth : " << "\"" << model_depth << "\"" << std::endl;
-  std::cout << "  Init file   : " << "\"" << init_file << "\"" << std::endl;
+  std::cout << "  Input directory: "
+            << "\"" << input_directory << "\"" << std::endl;
+  std::cout << "  Config color: "
+            << "\"" << config_color << "\"" << std::endl;
+  std::cout << "  Config depth: "
+            << "\"" << config_depth << "\"" << std::endl;
+  std::cout << "  Model color : "
+            << "\"" << model_color << "\"" << std::endl;
+  std::cout << "  Model depth : "
+            << "\"" << model_depth << "\"" << std::endl;
+  std::cout << "  Init file   : "
+            << "\"" << init_file << "\"" << std::endl;
 
   vpImage<vpRGBa> I_color;
   //! [Images]
@@ -195,7 +210,7 @@ int main(int argc, char *argv[])
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
   unsigned int _posx = 100, _posy = 50, _posdx = 10;
   d1.init(I_gray, _posx, _posy, "Color stream");
-  d2.init(I_depth, _posx + I_gray.getWidth()+_posdx, _posy, "Depth stream");
+  d2.init(I_depth, _posx + I_gray.getWidth() + _posdx, _posy, "Depth stream");
 #endif
 
   vpDisplay::display(I_gray);
@@ -232,7 +247,7 @@ int main(int argc, char *argv[])
   //! [Map transformations]
   vpHomogeneousMatrix depth_M_color;
   {
-    std::ifstream file( (std::string(input_directory + "/depth_M_color.txt")).c_str() );
+    std::ifstream file((std::string(input_directory + "/depth_M_color.txt")).c_str());
     depth_M_color.load(file);
     file.close();
   }
@@ -261,9 +276,9 @@ int main(int argc, char *argv[])
 
   try {
     bool quit = false;
-    while (! quit) {
+    while (!quit) {
       double t = vpTime::measureTimeMs();
-      quit = ! read_data(frame_cpt, input_directory, I_color, I_depth_raw, pointcloud);
+      quit = !read_data(frame_cpt, input_directory, I_color, I_depth_raw, pointcloud);
       vpImageConvert::convert(I_color, I_gray);
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
@@ -271,7 +286,7 @@ int main(int argc, char *argv[])
       vpDisplay::display(I_depth);
 
       mapOfImages["Camera1"] = &I_gray;
-      std::map<std::string, pcl::PointCloud< pcl::PointXYZ >::ConstPtr> mapOfPointclouds;
+      std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> mapOfPointclouds;
       if (disable_depth)
         mapOfPointclouds["Camera2"] = empty_pointcloud;
       else
@@ -288,9 +303,9 @@ int main(int argc, char *argv[])
       std::cout << "iter: " << frame_cpt << " cMo:\n" << cMo << std::endl;
 
       //! [Display]
-      tracker.display(I_gray, I_depth, cMo, depth_M_color*cMo, cam_color, cam_depth, vpColor::red, 3);
+      tracker.display(I_gray, I_depth, cMo, depth_M_color * cMo, cam_color, cam_depth, vpColor::red, 3);
       vpDisplay::displayFrame(I_gray, cMo, cam_color, 0.05, vpColor::none, 3);
-      vpDisplay::displayFrame(I_depth, depth_M_color*cMo, cam_depth, 0.05, vpColor::none, 3);
+      vpDisplay::displayFrame(I_depth, depth_M_color * cMo, cam_depth, 0.05, vpColor::none, 3);
       //! [Display]
 
       t = vpTime::measureTimeMs() - t;
@@ -306,9 +321,8 @@ int main(int argc, char *argv[])
       }
       {
         std::stringstream ss;
-        ss << "Features: edges " << tracker.getNbFeaturesEdge()
-           << ", klt " << tracker.getNbFeaturesKlt()
-           << ", depth " << tracker.getNbFeaturesDepthDense();
+        ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt() << ", depth "
+           << tracker.getNbFeaturesDepthDense();
         vpDisplay::displayText(I_gray, I_gray.getHeight() - 30, 20, ss.str(), vpColor::red);
       }
 
@@ -320,14 +334,15 @@ int main(int argc, char *argv[])
         quit = true;
       }
 
-      frame_cpt ++;
+      frame_cpt++;
     }
   } catch (const vpException &e) {
     std::cout << "Catch exception: " << e.getStringMessage() << std::endl;
   }
 
-  std::cout << "\nProcessing time, Mean: " << vpMath::getMean(times_vec) << " ms ; Median: " << vpMath::getMedian(times_vec)
-            << " ; Std: " << vpMath::getStdev(times_vec) << " ms" << std::endl;
+  std::cout << "\nProcessing time, Mean: " << vpMath::getMean(times_vec)
+            << " ms ; Median: " << vpMath::getMedian(times_vec) << " ; Std: " << vpMath::getStdev(times_vec) << " ms"
+            << std::endl;
 
   vpDisplay::displayText(I_gray, 60, 20, "Click to quit", vpColor::red);
   vpDisplay::flush(I_gray);
@@ -339,7 +354,8 @@ int main(int argc, char *argv[])
 int main()
 {
   std::cout << "To run this tutorial, ViSP should be build with PCL library."
-               " Install libpcl, configure and build again ViSP..." << std::endl;
+               " Install libpcl, configure and build again ViSP..."
+            << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

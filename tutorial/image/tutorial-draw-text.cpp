@@ -13,10 +13,11 @@ int main()
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I, vpDisplay::SCALE_AUTO);
 #endif
-    
+
     vpDisplay::setTitle(I, "My image");
     vpDisplay::display(I);
-    vpDisplay::displayRectangle(I, I.getHeight() / 4, I.getWidth() / 4, I.getWidth() / 2, I.getHeight() / 2, vpColor::red, true);
+    vpDisplay::displayRectangle(I, I.getHeight() / 4, I.getWidth() / 4, I.getWidth() / 2, I.getHeight() / 2,
+                                vpColor::red, true);
     //! [text]
     vpDisplay::displayText(I, I.getHeight() / 2, I.getWidth() / 2, "Hello World!", vpColor::yellow);
     //! [text]

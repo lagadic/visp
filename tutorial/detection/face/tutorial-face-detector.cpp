@@ -24,10 +24,8 @@ int main(int argc, const char *argv[])
       else if (std::string(argv[i]) == "--video")
         opt_video = std::string(argv[i + 1]);
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "Usage: " << argv[0]
-                  << " [--haar <haarcascade xml filename>] [--video <input video file>]"
-                  << " [--help] [-h]"
-                  << std::endl;
+        std::cout << "Usage: " << argv[0] << " [--haar <haarcascade xml filename>] [--video <input video file>]"
+                  << " [--help] [-h]" << std::endl;
         return 0;
       }
     }

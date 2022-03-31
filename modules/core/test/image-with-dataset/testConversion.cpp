@@ -76,7 +76,8 @@ Test image conversions.\n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>] [-n <nb benchmark iterations>]\n\
      [-h]\n						      \
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -99,7 +100,8 @@ OPTIONS:                                               Default\n\
      Set the number of benchmark iterations.\n\
 \n\
   -h\n\
-     Print the help.\n\n", ipath.c_str(), opath.c_str(), user.c_str(), nbiter);
+     Print the help.\n\n",
+          ipath.c_str(), opath.c_str(), user.c_str(), nbiter);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -416,9 +418,9 @@ int main(int argc, const char **argv)
     std::cout << "== Conversion c interface : " << t1 - t0 << " ms" << std::endl;
 #endif
 
-/* ------------------------------------------------------------------------ */
-/*                  conversion for the new c++ interface                    */
-/* ------------------------------------------------------------------------ */
+    /* ------------------------------------------------------------------------ */
+    /*                  conversion for the new c++ interface                    */
+    /* ------------------------------------------------------------------------ */
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
     chrono.start();
@@ -661,7 +663,7 @@ int main(int argc, const char **argv)
     // Test construction of a vpImage from an array with copyData==true
     ////////////////////////////////////
     std::cout << "** Construction of a vpImage from an array with copyData==true" << std::endl;
-    std::vector<unsigned char> rgba2(size*4);
+    std::vector<unsigned char> rgba2(size * 4);
     std::fill(rgba2.begin(), rgba2.end(), 127);
     vpImage<vpRGBa> I_copyData(reinterpret_cast<vpRGBa *>(&rgba2.front()), h, w, true);
 
@@ -682,7 +684,7 @@ int main(int argc, const char **argv)
       vpImageIo::read(I_color, filename);
 
       // RGB to Grayscale conversion
-      std::vector<unsigned char> rgb_array(I_color.getSize()*3);
+      std::vector<unsigned char> rgb_array(I_color.getSize() * 3);
       vpImageConvert::RGBaToRGB((unsigned char *)I_color.bitmap, &rgb_array.front(), I_color.getSize());
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
@@ -695,8 +697,10 @@ int main(int argc, const char **argv)
       // Test RGB to Grayscale + Flip
       std::cout << "\n   RGB to Grayscale + Flip" << std::endl;
       std::vector<unsigned char> rgb2gray_flip_array_sse(I_color.getSize());
-      vpImageConvert::RGBToGrey(&rgb_array.front(), &rgb2gray_flip_array_sse.front(), I_color.getWidth(), I_color.getHeight(), true);
-      vpImage<unsigned char> I_rgb2gray_flip_sse(&rgb2gray_flip_array_sse.front(), I_color.getHeight(), I_color.getWidth());
+      vpImageConvert::RGBToGrey(&rgb_array.front(), &rgb2gray_flip_array_sse.front(), I_color.getWidth(),
+                                I_color.getHeight(), true);
+      vpImage<unsigned char> I_rgb2gray_flip_sse(&rgb2gray_flip_array_sse.front(), I_color.getHeight(),
+                                                 I_color.getWidth());
 
       filename = vpIoTools::createFilePath(opath, "I_rgb2gray_flip_sse.pgm");
       std::cout << "   Resulting image saved in: " << filename << std::endl;
@@ -705,7 +709,8 @@ int main(int argc, const char **argv)
       // Test BGR to Grayscale + Flip
       std::cout << "\n   Conversion BGR to Grayscale + Flip" << std::endl;
       std::vector<unsigned char> bgr2gray_flip_array_sse(I_color.getSize());
-      vpImage<unsigned char> I_bgr2gray_flip_sse(&bgr2gray_flip_array_sse.front(), I_color.getHeight(), I_color.getWidth());
+      vpImage<unsigned char> I_bgr2gray_flip_sse(&bgr2gray_flip_array_sse.front(), I_color.getHeight(),
+                                                 I_color.getWidth());
       vpImageConvert::convert(colorMat, I_bgr2gray_flip_sse, true);
 
       filename = vpIoTools::createFilePath(opath, "I_bgr2gray_flip_sse.pgm");

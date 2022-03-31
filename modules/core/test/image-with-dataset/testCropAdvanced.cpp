@@ -72,7 +72,8 @@ Read an image from the disk (Klimt.pgm and klimp.ppm), crop a rectangular area\n
 and check the resultings images.\n\
 \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] [-o <output image path>] [-h]\n", name);
+  %s [-i <input image path>] [-o <output image path>] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -91,7 +92,8 @@ OPTIONS:                                               Default\n\
      resulting images are written.\n\
         \n\
   -h\n\
-     Print the help.\n\n", ipath.c_str(), opath.c_str(), user.c_str());
+     Print the help.\n\n",
+          ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);

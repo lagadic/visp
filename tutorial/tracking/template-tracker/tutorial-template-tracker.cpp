@@ -20,7 +20,8 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--subsample")
       opt_subsample = static_cast<unsigned int>(std::atoi(argv[i + 1]));
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "\nUsage: " << argv[0] << " [--videoname <video name>] [--subsample <scale factor>] [--help] [-h]\n" << std::endl;
+      std::cout << "\nUsage: " << argv[0] << " [--videoname <video name>] [--subsample <scale factor>] [--help] [-h]\n"
+                << std::endl;
       return 0;
     }
   }
@@ -82,13 +83,13 @@ int main(int argc, char **argv)
     tracker.display(I, vpColor::red);
     //! [Display]
 
-    vpDisplay::displayText(I, 10*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I),
+    vpDisplay::displayText(I, 10 * vpDisplay::getDownScalingFactor(I), 10 * vpDisplay::getDownScalingFactor(I),
                            "Click to quit", vpColor::red);
     if (vpDisplay::getClick(I, false))
       break;
 
     vpDisplay::flush(I);
-    if (! g.isVideoFormat()) {
+    if (!g.isVideoFormat()) {
       vpTime::wait(t, 40);
     }
   }

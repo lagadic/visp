@@ -68,20 +68,19 @@ public:
   virtual ~vpMbtMeEllipse();
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
-                              const vpMatrix &SobelX, const vpMatrix &SobelY, bool display,
-                              unsigned int length, unsigned int thickness);
+                              const vpMatrix &SobelX, const vpMatrix &SobelY, bool display, unsigned int length,
+                              unsigned int thickness);
 
-  void initTracking(const vpImage<unsigned char> &I,
-                    const vpImagePoint &ic, double n20_p, double n11_p, double n02_p, bool doNotTrack,
-                    vpImagePoint *pt1 = NULL, const vpImagePoint *pt2 = NULL);
+  void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ic, double n20_p, double n11_p, double n02_p,
+                    bool doNotTrack, vpImagePoint *pt1 = NULL, const vpImagePoint *pt2 = NULL);
 
   void track(const vpImage<unsigned char> &I);
-  void updateParameters(const vpImage<unsigned char> &I,
-                        const vpImagePoint &center_p, double n20_p, double n11_p, double n02_p);
+  void updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &center_p, double n20_p, double n11_p,
+                        double n02_p);
 
 private:
   void reSample(const vpImage<unsigned char> &I);
-  void sample(const vpImage<unsigned char> &I, bool doNotTrack=false);
+  void sample(const vpImage<unsigned char> &I, bool doNotTrack = false);
   void suppressPoints();
 };
 

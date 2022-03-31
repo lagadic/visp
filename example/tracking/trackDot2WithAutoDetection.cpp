@@ -107,7 +107,8 @@ SYNOPSIS\n\
   %s [-i <input image path>] [-p <personal image path>]\n\
      [-f <first image>] [-n <number of images>] [-s <step>] \n\
      [-S <size precision>] [-G <gray level precision>]\n\
-     [-E <ellipsoid shape precision>] [-c] [-d] [-h]\n", name);
+     [-E <ellipsoid shape precision>] [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -158,7 +159,8 @@ OPTIONS:                                               Default\n\
      1 means full precision, the shape should be a perfect ellipsoid,\n\
      whereas values close to 0 show a very bad precision.\n\
      0 means the shape of dots is not tested \n\
-\n", ipath.c_str(), ppath.c_str(), first, nimages, step, sizePrecision, grayLevelPrecision,
+\n",
+          ipath.c_str(), ppath.c_str(), first, nimages, step, sizePrecision, grayLevelPrecision,
           ellipsoidShapePrecision);
 
   fprintf(stdout, "\

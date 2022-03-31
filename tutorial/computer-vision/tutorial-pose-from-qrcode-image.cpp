@@ -30,9 +30,9 @@ int main()
     // 3D model of the QRcode: here we consider a 12cm by 12cm QRcode
     std::vector<vpPoint> point;
     point.push_back(vpPoint(-0.06, -0.06, 0)); // QRcode point 0 3D coordinates in plane Z=0
-    point.push_back(vpPoint( 0.06, -0.06, 0)); // QRcode point 1 3D coordinates in plane Z=0
-    point.push_back(vpPoint( 0.06,  0.06, 0)); // QRcode point 2 3D coordinates in plane Z=0
-    point.push_back(vpPoint(-0.06,  0.06, 0)); // QRcode point 3 3D coordinates in plane Z=0
+    point.push_back(vpPoint(0.06, -0.06, 0));  // QRcode point 1 3D coordinates in plane Z=0
+    point.push_back(vpPoint(0.06, 0.06, 0));   // QRcode point 2 3D coordinates in plane Z=0
+    point.push_back(vpPoint(-0.06, 0.06, 0));  // QRcode point 3 3D coordinates in plane Z=0
 
     vpHomogeneousMatrix cMo;
     bool init = true;

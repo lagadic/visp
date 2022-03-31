@@ -48,11 +48,11 @@
 
 #include <iostream>
 #include <sstream>
+#include <stdint.h> //for uint32_t related types ; works also with >= VS2010 / _MSC_VER >= 1600
 #include <stdlib.h>
 #include <string>
 #include <vector>
 #include <visp3/core/vpColor.h>
-#include <stdint.h> //for uint32_t related types ; works also with >= VS2010 / _MSC_VER >= 1600
 
 /*!
   \class vpIoTools
@@ -64,9 +64,9 @@
   name and then create a file in this directory.
 
   \code
+#include <fstream>
 #include <iostream>
 #include <string>
-#include <fstream>
 #include <visp3/core/vpIoTools.h>
 
 int main()

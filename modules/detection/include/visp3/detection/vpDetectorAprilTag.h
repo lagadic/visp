@@ -41,9 +41,9 @@
 
 #ifdef VISP_HAVE_APRILTAG
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpColor.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpColor.h>
 #include <visp3/detection/vpDetectorBase.h>
 
 /*!
@@ -231,17 +231,17 @@ public:
   };
 
   enum vpPoseEstimationMethod {
-    HOMOGRAPHY,                       /*!< Pose from homography */
-    HOMOGRAPHY_VIRTUAL_VS,            /*!< Non linear virtual visual servoing approach
-                                        initialized by the homography approach */
-    DEMENTHON_VIRTUAL_VS,             /*!< Non linear virtual visual servoing approach
-                                        initialized by the Dementhon approach */
-    LAGRANGE_VIRTUAL_VS,              /*!< Non linear virtual visual servoing approach
-                                        initialized by the Lagrange approach */
-    BEST_RESIDUAL_VIRTUAL_VS,         /*!< Non linear virtual visual servoing approach
-                                        initialized by the approach that gives the
-                                        lowest residual */
-    HOMOGRAPHY_ORTHOGONAL_ITERATION   /*!< Pose from homography followed by a refine by Orthogonal Iteration */
+    HOMOGRAPHY,                     /*!< Pose from homography */
+    HOMOGRAPHY_VIRTUAL_VS,          /*!< Non linear virtual visual servoing approach
+                                      initialized by the homography approach */
+    DEMENTHON_VIRTUAL_VS,           /*!< Non linear virtual visual servoing approach
+                                      initialized by the Dementhon approach */
+    LAGRANGE_VIRTUAL_VS,            /*!< Non linear virtual visual servoing approach
+                                      initialized by the Lagrange approach */
+    BEST_RESIDUAL_VIRTUAL_VS,       /*!< Non linear virtual visual servoing approach
+                                      initialized by the approach that gives the
+                                      lowest residual */
+    HOMOGRAPHY_ORTHOGONAL_ITERATION /*!< Pose from homography followed by a refine by Orthogonal Iteration */
   };
 
   vpDetectorAprilTag(const vpAprilTagFamily &tagFamily = TAG_36h11,
@@ -252,12 +252,11 @@ public:
 
   bool detect(const vpImage<unsigned char> &I);
   bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
-              std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2=NULL,
-              std::vector<double> *projErrors=NULL, std::vector<double> *projErrors2=NULL);
+              std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2 = NULL,
+              std::vector<double> *projErrors = NULL, std::vector<double> *projErrors2 = NULL);
 
-  bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam,
-               vpHomogeneousMatrix &cMo, vpHomogeneousMatrix *cMo2=NULL,
-               double *projError=NULL, double *projError2=NULL);
+  bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
+               vpHomogeneousMatrix *cMo2 = NULL, double *projError = NULL, double *projError2 = NULL);
 
   /*!
     Return the pose estimation method.
@@ -266,7 +265,8 @@ public:
 
   std::vector<std::vector<vpImagePoint> > getTagsCorners() const;
   std::vector<int> getTagsId() const;
-  std::vector<std::vector<vpPoint> > getTagsPoints3D(const std::vector<int>& tagsId, const std::map<int, double>& tagsSize) const;
+  std::vector<std::vector<vpPoint> > getTagsPoints3D(const std::vector<int> &tagsId,
+                                                     const std::map<int, double> &tagsSize) const;
 
   void setAprilTagDecodeSharpening(double decodeSharpening);
   void setAprilTagFamily(const vpAprilTagFamily &tagFamily);
@@ -280,8 +280,8 @@ public:
 
   /*! Allow to enable the display of overlay tag information in the windows
    * (vpDisplay) associated to the input image. */
-  inline void setDisplayTag(bool display, const vpColor &color=vpColor::none,
-                            unsigned int thickness=2) {
+  inline void setDisplayTag(bool display, const vpColor &color = vpColor::none, unsigned int thickness = 2)
+  {
     m_displayTag = display;
     m_displayTagColor = color;
     m_displayTagThickness = thickness;
@@ -334,7 +334,7 @@ inline std::ostream &operator<<(std::ostream &os, const vpDetectorAprilTag::vpPo
     break;
 
   default:
-      os << "ERROR_UNKNOWN_POSE_METHOD!";
+    os << "ERROR_UNKNOWN_POSE_METHOD!";
     break;
   }
 

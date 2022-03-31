@@ -36,35 +36,34 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <cstring>
 #include <iomanip>
 #include <map>
 #include <set>
-#include <cstring>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/sensor/vpRealSense2.h>
 
 #define MANUAL_POINTCLOUD 1
 
-namespace {
+namespace
+{
 bool operator==(const rs2_extrinsics &lhs, const rs2_extrinsics &rhs)
 {
   for (int i = 0; i < 3; i++) {
     for (int j = 0; j < 3; j++) {
-      if (std::fabs(lhs.rotation[i*3 + j] - rhs.rotation[i*3 + j]) >
-          std::numeric_limits<float>::epsilon()) {
+      if (std::fabs(lhs.rotation[i * 3 + j] - rhs.rotation[i * 3 + j]) > std::numeric_limits<float>::epsilon()) {
         return false;
       }
     }
 
-    if (std::fabs(lhs.translation[i] - rhs.translation[i]) >
-        std::numeric_limits<float>::epsilon()) {
+    if (std::fabs(lhs.translation[i] - rhs.translation[i]) > std::numeric_limits<float>::epsilon()) {
       return false;
     }
   }
 
   return true;
 }
-}
+} // namespace
 
 /*!
  * Default constructor.
@@ -256,15 +255,15 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
 {
   auto data = m_pipe.wait_for_frames();
 
-  if(left != NULL) {
-    auto left_fisheye_frame  = data.get_fisheye_frame(1);
+  if (left != NULL) {
+    auto left_fisheye_frame = data.get_fisheye_frame(1);
     unsigned int width = static_cast<unsigned int>(left_fisheye_frame.get_width());
     unsigned int height = static_cast<unsigned int>(left_fisheye_frame.get_height());
     left->resize(height, width);
     getNativeFrameData(left_fisheye_frame, (*left).bitmap);
   }
 
-  if(right != NULL) {
+  if (right != NULL) {
     auto right_fisheye_frame = data.get_fisheye_frame(2);
     unsigned int width = static_cast<unsigned int>(right_fisheye_frame.get_width());
     unsigned int height = static_cast<unsigned int>(right_fisheye_frame.get_height());
@@ -272,7 +271,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     getNativeFrameData(right_fisheye_frame, (*right).bitmap);
   }
 
-  if(ts != NULL) {
+  if (ts != NULL) {
     *ts = data.get_timestamp();
   }
 }
@@ -310,15 +309,15 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
 {
   auto data = m_pipe.wait_for_frames();
 
-  if(left != NULL) {
-    auto left_fisheye_frame  = data.get_fisheye_frame(1);
+  if (left != NULL) {
+    auto left_fisheye_frame = data.get_fisheye_frame(1);
     unsigned int width = static_cast<unsigned int>(left_fisheye_frame.get_width());
     unsigned int height = static_cast<unsigned int>(left_fisheye_frame.get_height());
     left->resize(height, width);
     getNativeFrameData(left_fisheye_frame, (*left).bitmap);
   }
 
-  if(right != NULL) {
+  if (right != NULL) {
     auto right_fisheye_frame = data.get_fisheye_frame(2);
     unsigned int width = static_cast<unsigned int>(right_fisheye_frame.get_width());
     unsigned int height = static_cast<unsigned int>(right_fisheye_frame.get_height());
@@ -327,13 +326,13 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   }
 
   auto pose_frame = data.first_or_default(RS2_STREAM_POSE);
-  auto pose_data  = pose_frame.as<rs2::pose_frame>().get_pose_data();
+  auto pose_data = pose_frame.as<rs2::pose_frame>().get_pose_data();
 
-  if(ts != NULL) {
+  if (ts != NULL) {
     *ts = data.get_timestamp();
   }
 
-  if(cMw != NULL) {
+  if (cMw != NULL) {
     m_pos[0] = static_cast<double>(pose_data.translation.x);
     m_pos[1] = static_cast<double>(pose_data.translation.y);
     m_pos[2] = static_cast<double>(pose_data.translation.z);
@@ -346,7 +345,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     *cMw = vpHomogeneousMatrix(m_pos, m_quat);
   }
 
-  if(odo_vel != NULL) {
+  if (odo_vel != NULL) {
     odo_vel->resize(6, false);
     (*odo_vel)[0] = static_cast<double>(pose_data.velocity.x);
     (*odo_vel)[1] = static_cast<double>(pose_data.velocity.y);
@@ -356,7 +355,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     (*odo_vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
   }
 
-  if(odo_acc != NULL) {
+  if (odo_acc != NULL) {
     odo_acc->resize(6, false);
     (*odo_acc)[0] = static_cast<double>(pose_data.acceleration.x);
     (*odo_acc)[1] = static_cast<double>(pose_data.acceleration.y);
@@ -366,7 +365,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     (*odo_acc)[5] = static_cast<double>(pose_data.angular_acceleration.z);
   }
 
-  if(confidence != NULL) {
+  if (confidence != NULL) {
     *confidence = pose_data.tracker_confidence;
   }
 }
@@ -390,15 +389,15 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
 {
   auto data = m_pipe.wait_for_frames();
 
-  if(left != NULL) {
-    auto left_fisheye_frame  = data.get_fisheye_frame(1);
+  if (left != NULL) {
+    auto left_fisheye_frame = data.get_fisheye_frame(1);
     unsigned int width = static_cast<unsigned int>(left_fisheye_frame.get_width());
     unsigned int height = static_cast<unsigned int>(left_fisheye_frame.get_height());
     left->resize(height, width);
     getNativeFrameData(left_fisheye_frame, (*left).bitmap);
   }
 
-  if(right != NULL) {
+  if (right != NULL) {
     auto right_fisheye_frame = data.get_fisheye_frame(2);
     unsigned int width = static_cast<unsigned int>(right_fisheye_frame.get_width());
     unsigned int height = static_cast<unsigned int>(right_fisheye_frame.get_height());
@@ -407,13 +406,13 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   }
 
   auto pose_frame = data.first_or_default(RS2_STREAM_POSE);
-  auto pose_data  = pose_frame.as<rs2::pose_frame>().get_pose_data();
+  auto pose_data = pose_frame.as<rs2::pose_frame>().get_pose_data();
 
-  if(ts != NULL) {
+  if (ts != NULL) {
     *ts = data.get_timestamp();
   }
 
-  if(cMw != NULL) {
+  if (cMw != NULL) {
     m_pos[0] = static_cast<double>(pose_data.translation.x);
     m_pos[1] = static_cast<double>(pose_data.translation.y);
     m_pos[2] = static_cast<double>(pose_data.translation.z);
@@ -426,7 +425,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     *cMw = vpHomogeneousMatrix(m_pos, m_quat);
   }
 
-  if(odo_vel != NULL) {
+  if (odo_vel != NULL) {
     odo_vel->resize(6, false);
     (*odo_vel)[0] = static_cast<double>(pose_data.velocity.x);
     (*odo_vel)[1] = static_cast<double>(pose_data.velocity.y);
@@ -436,7 +435,7 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
     (*odo_vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
   }
 
-  if(odo_acc != NULL) {
+  if (odo_acc != NULL) {
     odo_acc->resize(6, false);
     (*odo_acc)[0] = static_cast<double>(pose_data.acceleration.x);
     (*odo_acc)[1] = static_cast<double>(pose_data.acceleration.y);
@@ -447,9 +446,9 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   }
 
   auto accel_frame = data.first_or_default(RS2_STREAM_ACCEL);
-  auto accel_data  = accel_frame.as<rs2::motion_frame>().get_motion_data();
+  auto accel_data = accel_frame.as<rs2::motion_frame>().get_motion_data();
 
-  if(imu_acc != NULL) {
+  if (imu_acc != NULL) {
     imu_acc->resize(3, false);
     (*imu_acc)[0] = static_cast<double>(accel_data.x);
     (*imu_acc)[1] = static_cast<double>(accel_data.y);
@@ -457,9 +456,9 @@ void vpRealSense2::acquire(vpImage<unsigned char> *left, vpImage<unsigned char> 
   }
 
   auto gyro_frame = data.first_or_default(RS2_STREAM_GYRO);
-  auto gyro_data  = gyro_frame.as<rs2::motion_frame>().get_motion_data();
+  auto gyro_data = gyro_frame.as<rs2::motion_frame>().get_motion_data();
 
-  if(imu_vel != NULL) {
+  if (imu_vel != NULL) {
     imu_vel->resize(3, false);
     (*imu_vel)[0] = static_cast<double>(gyro_data.x);
     (*imu_vel)[1] = static_cast<double>(gyro_data.y);
@@ -673,7 +672,8 @@ void vpRealSense2::close()
    \sa getIntrinsics()
  */
 vpCameraParameters vpRealSense2::getCameraParameters(const rs2_stream &stream,
-                                                     vpCameraParameters::vpCameraParametersProjType type, int index) const
+                                                     vpCameraParameters::vpCameraParametersProjType type,
+                                                     int index) const
 {
   auto rs_stream = m_pipelineProfile.get_stream(stream, index).as<rs2::video_stream_profile>();
   auto intrinsics = rs_stream.get_intrinsics();
@@ -684,27 +684,22 @@ vpCameraParameters vpRealSense2::getCameraParameters(const rs2_stream &stream,
   double px = intrinsics.fx;
   double py = intrinsics.fy;
 
-  switch (type)
-  {
-  case vpCameraParameters::perspectiveProjWithDistortion:
-    {
-      double kdu = intrinsics.coeffs[0];
-      cam.initPersProjWithDistortion(px, py, u0, v0, -kdu, kdu);
-    }
-    break;
+  switch (type) {
+  case vpCameraParameters::perspectiveProjWithDistortion: {
+    double kdu = intrinsics.coeffs[0];
+    cam.initPersProjWithDistortion(px, py, u0, v0, -kdu, kdu);
+  } break;
 
-  case vpCameraParameters::ProjWithKannalaBrandtDistortion:
-    {
-      std::vector<double> tmp_coefs;
-      tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[0]));
-      tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[1]));
-      tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[2]));
-      tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[3]));
-      tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[4]));
+  case vpCameraParameters::ProjWithKannalaBrandtDistortion: {
+    std::vector<double> tmp_coefs;
+    tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[0]));
+    tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[1]));
+    tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[2]));
+    tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[3]));
+    tmp_coefs.push_back(static_cast<double>(intrinsics.coeffs[4]));
 
-      cam.initProjWithKannalaBrandtDistortion(px, py, u0, v0, tmp_coefs);
-    }
-    break;
+    cam.initProjWithKannalaBrandtDistortion(px, py, u0, v0, tmp_coefs);
+  } break;
 
   case vpCameraParameters::perspectiveProjWithoutDistortion:
   default:
@@ -757,7 +752,7 @@ void vpRealSense2::getColorFrame(const rs2::frame &frame, vpImage<vpRGBa> &color
   */
 float vpRealSense2::getDepthScale()
 {
-  if (! m_init) { // If pipe is not yet created, create it. Otherwise, we already know depth scale.
+  if (!m_init) { // If pipe is not yet created, create it. Otherwise, we already know depth scale.
     rs2::pipeline *pipe = new rs2::pipeline;
     rs2::pipeline_profile *pipelineProfile = new rs2::pipeline_profile;
     *pipelineProfile = pipe->start();
@@ -847,9 +842,9 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
   const uint16_t *p_depth_frame = reinterpret_cast<const uint16_t *>(depth_frame.get_data());
   const rs2_intrinsics depth_intrinsics = depth_frame.get_profile().as<rs2::video_stream_profile>().get_intrinsics();
 
-  // Multi-threading if OpenMP
-  // Concurrent writes at different locations are safe
-  #pragma omp parallel for schedule(dynamic)
+// Multi-threading if OpenMP
+// Concurrent writes at different locations are safe
+#pragma omp parallel for schedule(dynamic)
   for (int i = 0; i < height; i++) {
     auto depth_pixel_index = i * width;
 
@@ -881,7 +876,6 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, std::vecto
     }
   }
 }
-
 
 #ifdef VISP_HAVE_PCL
 void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud)
@@ -969,8 +963,9 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
   const int color_height = vf.get_height();
 
   const uint16_t *p_depth_frame = reinterpret_cast<const uint16_t *>(depth_frame.get_data());
-  const rs2_extrinsics depth2ColorExtrinsics = depth_frame.get_profile().as<rs2::video_stream_profile>().
-      get_extrinsics_to(color_frame.get_profile().as<rs2::video_stream_profile>());
+  const rs2_extrinsics depth2ColorExtrinsics =
+      depth_frame.get_profile().as<rs2::video_stream_profile>().get_extrinsics_to(
+          color_frame.get_profile().as<rs2::video_stream_profile>());
   const rs2_intrinsics depth_intrinsics = depth_frame.get_profile().as<rs2::video_stream_profile>().get_intrinsics();
   const rs2_intrinsics color_intrinsics = color_frame.get_profile().as<rs2::video_stream_profile>().get_intrinsics();
 
@@ -982,10 +977,10 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
   memset(identity.rotation, 0, sizeof(identity.rotation));
   memset(identity.translation, 0, sizeof(identity.translation));
   for (int i = 0; i < 3; i++) {
-    identity.rotation[i*3 + i] = 1;
+    identity.rotation[i * 3 + i] = 1;
   }
-  const bool registered_streams = (depth2ColorExtrinsics == identity) &&
-                                  (color_width == depth_width) && (color_height == depth_height);
+  const bool registered_streams =
+      (depth2ColorExtrinsics == identity) && (color_width == depth_width) && (color_height == depth_height);
 
   // Multi-threading if OpenMP
   // Concurrent writes at different locations are safe
@@ -1036,7 +1031,8 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
         float color_pixel[2];
         rs2_project_point_to_pixel(color_pixel, &color_intrinsics, color_point);
 
-        if (color_pixel[1] < 0 || color_pixel[1] >= color_height || color_pixel[0] < 0 || color_pixel[0] >= color_width) {
+        if (color_pixel[1] < 0 || color_pixel[1] >= color_height || color_pixel[0] < 0 ||
+            color_pixel[0] >= color_width) {
           // For out of bounds color data, default to a shade of blue in order to
           // visually distinguish holes. This color value is same as the librealsense
           // out of bounds color value.
@@ -1060,11 +1056,13 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
             rgb =
                 (static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel]) |
                  static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1]) << 8 |
-                 static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2]) << 16);
+                 static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2])
+                     << 16);
           } else {
-            rgb = (static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel]) << 16 |
-                   static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1]) << 8 |
-                   static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2]));
+            rgb =
+                (static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel]) << 16 |
+                 static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 1]) << 8 |
+                 static_cast<uint32_t>(p_color_frame[(i_ * (unsigned int)color_width + j_) * nb_color_pixel + 2]));
           }
 
           pointcloud->points[(size_t)(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);
@@ -1088,35 +1086,34 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
         }
       } else {
 #if PCL_VERSION_COMPARE(<, 1, 1, 0)
-          uint32_t rgb = 0;
-          if (swap_rb) {
-            rgb =
-                (static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel]) |
+        uint32_t rgb = 0;
+        if (swap_rb) {
+          rgb = (static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel]) |
                  static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1]) << 8 |
                  static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2]) << 16);
-          } else {
-            rgb = (static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel]) << 16 |
-                   static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1]) << 8 |
-                   static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2]));
-          }
+        } else {
+          rgb = (static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel]) << 16 |
+                 static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1]) << 8 |
+                 static_cast<uint32_t>(p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2]));
+        }
 
-          pointcloud->points[(size_t)(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);
+        pointcloud->points[(size_t)(i * depth_width + j)].rgb = *reinterpret_cast<float *>(&rgb);
 #else
-          if (swap_rb) {
-            pointcloud->points[(size_t)depth_pixel_index].b =
-                p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel];
-            pointcloud->points[(size_t)depth_pixel_index].g =
-                p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1];
-            pointcloud->points[(size_t)depth_pixel_index].r =
-                p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2];
-          } else {
-            pointcloud->points[(size_t)depth_pixel_index].r =
-                p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel];
-            pointcloud->points[(size_t)depth_pixel_index].g =
-                p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1];
-            pointcloud->points[(size_t)depth_pixel_index].b =
-                p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2];
-          }
+        if (swap_rb) {
+          pointcloud->points[(size_t)depth_pixel_index].b =
+              p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel];
+          pointcloud->points[(size_t)depth_pixel_index].g =
+              p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1];
+          pointcloud->points[(size_t)depth_pixel_index].r =
+              p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2];
+        } else {
+          pointcloud->points[(size_t)depth_pixel_index].r =
+              p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel];
+          pointcloud->points[(size_t)depth_pixel_index].g =
+              p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 1];
+          pointcloud->points[(size_t)depth_pixel_index].b =
+              p_color_frame[(i * (unsigned int)color_width + j) * nb_color_pixel + 2];
+        }
 #endif
       }
     }
@@ -1129,19 +1126,19 @@ void vpRealSense2::getPointcloud(const rs2::depth_frame &depth_frame, const rs2:
    Get the extrinsic transformation from one stream to another. This function
    has to be called after open().
    \param from, to   : Streams for which the camera extrinsic parameters are returned.
-   \param from_index : Index of the stream from which we will calculate the transformation, 1: From left to right, 2: From right to left. Otherwise: -1(default)
+   \param from_index : Index of the stream from which we will calculate the transformation, 1: From left to right, 2:
+   From right to left. Otherwise: -1(default)
   */
 vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, const rs2_stream &to, int from_index) const
 {
   int to_index = -1;
 
-  if(from_index != -1) // If we have to specify indices for streams. (Ex.: T265 device having 2 fisheyes)
+  if (from_index != -1) // If we have to specify indices for streams. (Ex.: T265 device having 2 fisheyes)
   {
-    if(from_index == 1) // From left => To right.
+    if (from_index == 1) // From left => To right.
       to_index = 2;
-    else
-      if(from_index == 2) // From right => To left.
-        to_index = 1;
+    else if (from_index == 2) // From right => To left.
+      to_index = 1;
   }
 
   auto from_stream = m_pipelineProfile.get_stream(from, from_index);
@@ -1154,7 +1151,7 @@ vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, cons
   for (unsigned int i = 0; i < 3; i++) {
     t[i] = extrinsics.translation[i];
     for (unsigned int j = 0; j < 3; j++)
-      R[i][j] = extrinsics.rotation[j * 3 + i]; //rotation is column-major order
+      R[i][j] = extrinsics.rotation[j * 3 + i]; // rotation is column-major order
   }
 
   vpHomogeneousMatrix to_M_from(t, R);
@@ -1171,17 +1168,17 @@ vpHomogeneousMatrix vpRealSense2::getTransformation(const rs2_stream &from, cons
 
   \return Pose estimation confidence (1: Low, 2: Medium, 3: High).
  */
-unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *cMw, vpColVector *odo_vel, vpColVector *odo_acc, double *ts)
+unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *cMw, vpColVector *odo_vel, vpColVector *odo_acc,
+                                           double *ts)
 {
   auto frame = m_pipe.wait_for_frames();
   auto f = frame.first_or_default(RS2_STREAM_POSE);
   auto pose_data = f.as<rs2::pose_frame>().get_pose_data();
 
-  if(ts != NULL)
+  if (ts != NULL)
     *ts = frame.get_timestamp();
 
-  if(cMw != NULL)
-  {
+  if (cMw != NULL) {
     m_pos[0] = static_cast<double>(pose_data.translation.x);
     m_pos[1] = static_cast<double>(pose_data.translation.y);
     m_pos[2] = static_cast<double>(pose_data.translation.z);
@@ -1194,8 +1191,7 @@ unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *cMw, vpColVector
     *cMw = vpHomogeneousMatrix(m_pos, m_quat);
   }
 
-  if(odo_vel != NULL)
-  {
+  if (odo_vel != NULL) {
     odo_vel->resize(6, false);
     (*odo_vel)[0] = static_cast<double>(pose_data.velocity.x);
     (*odo_vel)[1] = static_cast<double>(pose_data.velocity.y);
@@ -1205,8 +1201,7 @@ unsigned int vpRealSense2::getOdometryData(vpHomogeneousMatrix *cMw, vpColVector
     (*odo_vel)[5] = static_cast<double>(pose_data.angular_velocity.z);
   }
 
-  if(odo_acc != NULL)
-  {
+  if (odo_acc != NULL) {
     odo_acc->resize(6, false);
     (*odo_acc)[0] = static_cast<double>(pose_data.acceleration.x);
     (*odo_acc)[1] = static_cast<double>(pose_data.acceleration.y);
@@ -1245,11 +1240,10 @@ void vpRealSense2::getIMUAcceleration(vpColVector *imu_acc, double *ts)
   auto f = frame.first_or_default(RS2_STREAM_ACCEL);
   auto imu_acc_data = f.as<rs2::motion_frame>().get_motion_data();
 
-  if(ts != NULL)
+  if (ts != NULL)
     *ts = f.get_timestamp();
 
-  if(imu_acc != NULL)
-  {
+  if (imu_acc != NULL) {
     imu_acc->resize(3, false);
     (*imu_acc)[0] = static_cast<double>(imu_acc_data.x);
     (*imu_acc)[1] = static_cast<double>(imu_acc_data.y);
@@ -1283,11 +1277,10 @@ void vpRealSense2::getIMUVelocity(vpColVector *imu_vel, double *ts)
   auto f = frame.first_or_default(RS2_STREAM_GYRO);
   auto imu_vel_data = f.as<rs2::motion_frame>().get_motion_data();
 
-  if(ts != NULL)
+  if (ts != NULL)
     *ts = f.get_timestamp();
 
-  if(imu_vel != NULL)
-  {
+  if (imu_vel != NULL) {
     imu_vel->resize(3, false);
     (*imu_vel)[0] = static_cast<double>(imu_vel_data.x);
     (*imu_vel)[1] = static_cast<double>(imu_vel_data.x);
@@ -1319,11 +1312,10 @@ void vpRealSense2::getIMUData(vpColVector *imu_acc, vpColVector *imu_vel, double
 {
   auto data = m_pipe.wait_for_frames();
 
-  if(ts != NULL)
+  if (ts != NULL)
     *ts = data.get_timestamp();
 
-  if(imu_acc != NULL)
-  {
+  if (imu_acc != NULL) {
     auto acc_data = data.first_or_default(RS2_STREAM_ACCEL);
     auto imu_acc_data = acc_data.as<rs2::motion_frame>().get_motion_data();
 
@@ -1333,8 +1325,7 @@ void vpRealSense2::getIMUData(vpColVector *imu_acc, vpColVector *imu_vel, double
     (*imu_acc)[2] = static_cast<double>(imu_acc_data.z);
   }
 
-  if(imu_vel != NULL)
-  {
+  if (imu_vel != NULL) {
     auto vel_data = data.first_or_default(RS2_STREAM_GYRO);
     auto imu_vel_data = vel_data.as<rs2::motion_frame>().get_motion_data();
 
@@ -1378,8 +1369,9 @@ bool vpRealSense2::open(const rs2::config &cfg)
 
 /*!
   Open access to the RealSense device and start the streaming.
-  \param cfg      : A rs2::config with requested filters on the pipeline configuration. By default no filters are applied.
-  \param callback : Stream callback, can be any callable object accepting rs2::frame. The callback is invoked immediately once a frame is ready.
+  \param cfg      : A rs2::config with requested filters on the pipeline configuration. By default no filters are
+  applied. \param callback : Stream callback, can be any callable object accepting rs2::frame. The callback is invoked
+  immediately once a frame is ready.
  */
 bool vpRealSense2::open(const rs2::config &cfg, std::function<void(rs2::frame)> &callback)
 {
@@ -1409,12 +1401,13 @@ bool vpRealSense2::open(const rs2::config &cfg, std::function<void(rs2::frame)> 
 }
 
 /*!
- * Get the product line of the device being used. This function need librealsense > 2.31.0. Otherwise it returns "unknown".
+ * Get the product line of the device being used. This function need librealsense > 2.31.0. Otherwise it returns
+ * "unknown".
  */
 std::string vpRealSense2::getProductLine()
 {
 #if (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
-  if (! m_init) { // If pipe is not already created, create it. Otherwise, we have already determined the product line
+  if (!m_init) { // If pipe is not already created, create it. Otherwise, we have already determined the product line
     rs2::pipeline *pipe = new rs2::pipeline;
     rs2::pipeline_profile *pipelineProfile = new rs2::pipeline_profile;
     *pipelineProfile = pipe->start();

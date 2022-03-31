@@ -48,18 +48,18 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 vpMatrix randM(int n, int m)
 {
-  vpMatrix M(n,m);
-  for(int i = 0; i < n; ++i)
-    for(int j = 0; j < m; ++j)
-      M[i][j] = (2.*rand())/RAND_MAX -1;
+  vpMatrix M(n, m);
+  for (int i = 0; i < n; ++i)
+    for (int j = 0; j < m; ++j)
+      M[i][j] = (2. * rand()) / RAND_MAX - 1;
   return M;
 }
 
 vpColVector randV(int n)
 {
   vpColVector M(n);
-  for(int i = 0; i < n; ++i)
-    M[i] = (2.*rand())/RAND_MAX -1;
+  for (int i = 0; i < n; ++i)
+    M[i] = (2. * rand()) / RAND_MAX - 1;
   return M;
 }
 
@@ -67,35 +67,28 @@ vpColVector randV(int n)
 class QPlot
 {
 public:
-  virtual ~QPlot()  { delete P; }
+  virtual ~QPlot() { delete P; }
   QPlot(int graphNum, int total, std::vector<std::string> legend)
   {
     P = new vpPlot(graphNum, 700, 700, 100, 200, "Resolution time");
 
-    for(int i = 0; i < graphNum; ++i)
-    {
-      P->initGraph(i,2);
-      P->setColor(i,0,vpColor::red);
-      P->setColor(i,1,vpColor::blue);
-      P->setGraphThickness(i,2);
+    for (int i = 0; i < graphNum; ++i) {
+      P->initGraph(i, 2);
+      P->setColor(i, 0, vpColor::red);
+      P->setColor(i, 1, vpColor::blue);
+      P->setGraphThickness(i, 2);
       P->initRange(i, 0, total, 0, 0.1);
-      P->setUnitY(i,"ms");
-      P->setTitle(i, legend[2*i]);
-      P->setLegend(i, 0, "without " + legend[2*i+1]);
-      P->setLegend(i, 1, legend[2*i+1]);
+      P->setUnitY(i, "ms");
+      P->setTitle(i, legend[2 * i]);
+      P->setLegend(i, 0, "without " + legend[2 * i + 1]);
+      P->setLegend(i, 1, legend[2 * i + 1]);
     }
   }
 
-  void plot(int g, int c, int i, double t)
-  {
-    P->plot(g,c,i,vpTime::measureTimeMs() - t);
-  }
+  void plot(int g, int c, int i, double t) { P->plot(g, c, i, vpTime::measureTimeMs() - t); }
 
-  void wait()
-  {
-    P->I.display->getClick();
-  }
-  vpPlot* P;
+  void wait() { P->I.display->getClick(); }
+  vpPlot *P;
 
 private:
   // Copy constructor not allowed.
@@ -105,8 +98,8 @@ private:
 class VISP_EXPORT QPPlot
 {
 public:
-  QPPlot(int, int , std::vector<std::string> ) {}
-  void plot(int , int , int , double ) {}
+  QPPlot(int, int, std::vector<std::string>) {}
+  void plot(int, int, int, double) {}
   void wait() {}
 };
 #endif

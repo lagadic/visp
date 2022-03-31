@@ -262,8 +262,7 @@ protected:
 
   void displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
                        unsigned int height);
-  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
-                       unsigned int height);
+  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
 
   void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness = 1);
   void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness = 1);
@@ -290,7 +289,7 @@ protected:
   static void on_mouse(int event, int x, int y, int flags, void *param);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  void overlay(std::function<void(cv::Mat&)> overlay_function, double opacity);
+  void overlay(std::function<void(cv::Mat &)> overlay_function, double opacity);
 #endif
 };
 

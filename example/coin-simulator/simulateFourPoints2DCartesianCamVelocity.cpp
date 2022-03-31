@@ -85,7 +85,8 @@ void usage(const char *name, const char *badparam, std::string ipath)
 Simulation Servo 4points.\n\
           \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] [-d] [-h]\n", name);
+  %s [-i <input image path>] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -103,7 +104,8 @@ OPTIONS:                                               Default\n\
      using the task manager under Windows.\n\
                   \n\
   -h\n\
-     Print the help.\n\n", ipath.c_str());
+     Print the help.\n\n",
+          ipath.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -381,7 +383,9 @@ int main()
 {
   std::cout << "You do not have Coin3D and SoQT or SoWin or SoXt functionalities enabled..." << std::endl;
   std::cout << "Tip:" << std::endl;
-  std::cout << "- Install Coin3D and SoQT or SoWin or SoXt, configure ViSP again using cmake and build again this example" << std::endl;
+  std::cout
+      << "- Install Coin3D and SoQT or SoWin or SoXt, configure ViSP again using cmake and build again this example"
+      << std::endl;
   return EXIT_SUCCESS;
 }
 #endif

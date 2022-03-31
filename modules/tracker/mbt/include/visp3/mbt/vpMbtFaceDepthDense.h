@@ -84,8 +84,8 @@ public:
   vpMbtFaceDepthDense();
   virtual ~vpMbtFaceDepthDense();
 
-  void addLine(vpPoint &p1, vpPoint &p2, vpMbHiddenFaces<vpMbtPolygon> *const faces, vpUniRand& rand_gen, int polygon = -1,
-               std::string name = "");
+  void addLine(vpPoint &p1, vpPoint &p2, vpMbHiddenFaces<vpMbtPolygon> *const faces, vpUniRand &rand_gen,
+               int polygon = -1, std::string name = "");
 
 #ifdef VISP_HAVE_PCL
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
@@ -95,18 +95,17 @@ public:
                               ,
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
-                              , const vpImage<bool> *mask = NULL
-  );
+                              ,
+                              const vpImage<bool> *mask = NULL);
 #endif
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
-                              const std::vector<vpColVector> &point_cloud, unsigned int stepX,
-                              unsigned int stepY
+                              const std::vector<vpColVector> &point_cloud, unsigned int stepX, unsigned int stepY
 #if DEBUG_DISPLAY_DEPTH_DENSE
                               ,
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
-                              , const vpImage<bool> *mask = NULL
-  );
+                              ,
+                              const vpImage<bool> *mask = NULL);
 
   void computeInteractionMatrixAndResidu(const vpHomogeneousMatrix &cMo, vpMatrix &L, vpColVector &error);
 
@@ -124,8 +123,7 @@ public:
                       double scale = 0.05, unsigned int thickness = 1);
 
   std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
-                                                       const vpHomogeneousMatrix &cMo,
-                                                       const vpCameraParameters &cam,
+                                                       const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                                                        bool displayFullModel = false);
 
   inline unsigned int getNbFeatures() const { return (unsigned int)(m_pointCloudFace.size() / 3); }
@@ -138,17 +136,11 @@ public:
 
   void setScanLineVisibilityTest(bool v);
 
-  inline void setDepthDenseFilteringMaxDistance(double maxDistance)
-  {
-    m_depthDenseFilteringMaxDist = maxDistance;
-  }
+  inline void setDepthDenseFilteringMaxDistance(double maxDistance) { m_depthDenseFilteringMaxDist = maxDistance; }
 
   inline void setDepthDenseFilteringMethod(int method) { m_depthDenseFilteringMethod = method; }
 
-  inline void setDepthDenseFilteringMinDistance(double minDistance)
-  {
-    m_depthDenseFilteringMinDist = minDistance;
-  }
+  inline void setDepthDenseFilteringMinDistance(double minDistance) { m_depthDenseFilteringMinDist = minDistance; }
 
   inline void setDepthDenseFilteringOccupancyRatio(double occupancyRatio)
   {

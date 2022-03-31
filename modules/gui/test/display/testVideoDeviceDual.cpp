@@ -81,7 +81,8 @@ Test to open video devices or display.\n\
 \n\
 SYNOPSIS\n\
   %s [-t <type of video device>] [-l] [-c] [-d] [-h]\n\
-", name);
+",
+          name);
 
   std::string display;
   switch (dtype) {
@@ -124,7 +125,8 @@ OPTIONS:                                               Default\n\
      Print the list of video-devices available and exit.\n\
 \n\
   -h\n\
-     Print the help.\n\n", display.c_str());
+     Print the help.\n\n",
+          display.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);

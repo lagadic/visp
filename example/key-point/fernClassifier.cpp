@@ -90,7 +90,8 @@ object needs first to be learned (-l option). This learning process will create\
 a file used to detect the object.\n\
 \n\
 SYNOPSIS\n\
-  %s [-l] [-h] [-b] [-c] [-d] [-p] [-i]\n", name);
+  %s [-l] [-h] [-b] [-c] [-d] [-p] [-i]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               \n\
@@ -441,7 +442,8 @@ int main(int argc, const char **argv)
 int main()
 {
 #if (!(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)))
-  std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..." << std::endl;
+  std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..."
+            << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

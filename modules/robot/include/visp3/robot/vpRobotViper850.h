@@ -463,8 +463,8 @@ public: /* Methode publiques */
 
   // Position control
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
-  void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3,
-                   double pos4, double pos5, double pos6);
+  void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3, double pos4,
+                   double pos5, double pos6);
   void setPosition(const std::string &filename);
   void setPositioningVelocity(double velocity);
 

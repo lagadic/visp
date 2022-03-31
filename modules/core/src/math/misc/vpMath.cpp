@@ -325,7 +325,7 @@ double vpMath::getStdev(const std::vector<double> &v, bool useBesselCorrection)
 
   \return The mean distance error (point-to-line distance) between the points and the fitted line.
 */
-double vpMath::lineFitting(const std::vector<vpImagePoint>& imPts, double& a, double& b, double& c)
+double vpMath::lineFitting(const std::vector<vpImagePoint> &imPts, double &a, double &b, double &c)
 {
   if (imPts.size() < 3) {
     throw vpException(vpException::dimensionError, "Number of image points must be greater or equal to 3.");
@@ -333,7 +333,7 @@ double vpMath::lineFitting(const std::vector<vpImagePoint>& imPts, double& a, do
 
   double x_mean = 0, y_mean = 0;
   for (size_t i = 0; i < imPts.size(); i++) {
-    const vpImagePoint& imPt = imPts[i];
+    const vpImagePoint &imPt = imPts[i];
     x_mean += imPt.get_u();
     y_mean += imPt.get_v();
   }
@@ -342,10 +342,10 @@ double vpMath::lineFitting(const std::vector<vpImagePoint>& imPts, double& a, do
 
   vpMatrix AtA(2, 2, 0.0);
   for (size_t i = 0; i < imPts.size(); i++) {
-    const vpImagePoint& imPt = imPts[i];
-    AtA[0][0] += (imPt.get_u() - x_mean)*(imPt.get_u() - x_mean);
-    AtA[0][1] += (imPt.get_u() - x_mean)*(imPt.get_v() - y_mean);
-    AtA[1][1] += (imPt.get_v() - y_mean)*(imPt.get_v() - y_mean);
+    const vpImagePoint &imPt = imPts[i];
+    AtA[0][0] += (imPt.get_u() - x_mean) * (imPt.get_u() - x_mean);
+    AtA[0][1] += (imPt.get_u() - x_mean) * (imPt.get_v() - y_mean);
+    AtA[1][1] += (imPt.get_v() - y_mean) * (imPt.get_v() - y_mean);
   }
   AtA[1][0] = AtA[0][1];
 
@@ -355,14 +355,14 @@ double vpMath::lineFitting(const std::vector<vpImagePoint>& imPts, double& a, do
 
   a = eigenvectors[0][0];
   b = eigenvectors[1][0];
-  c = a*x_mean + b*y_mean;
+  c = a * x_mean + b * y_mean;
 
   double error = 0;
   for (size_t i = 0; i < imPts.size(); i++) {
     double x0 = imPts[i].get_u();
     double y0 = imPts[i].get_v();
 
-    error += std::fabs(a*x0 + b*y0 - c);
+    error += std::fabs(a * x0 + b * y0 - c);
   }
 
   return error / imPts.size();

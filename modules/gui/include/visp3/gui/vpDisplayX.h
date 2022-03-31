@@ -171,7 +171,8 @@ public:
 
   void init(vpImage<unsigned char> &I, int win_x = -1, int win_y = -1, const std::string &win_title = "");
   void init(vpImage<vpRGBa> &I, int win_x = -1, int win_y = -1, const std::string &win_title = "");
-  void init(unsigned int win_width, unsigned int win_height, int win_x = -1, int win_y = -1, const std::string &win_title = "");
+  void init(unsigned int win_width, unsigned int win_height, int win_x = -1, int win_y = -1,
+            const std::string &win_title = "");
 
 protected:
   void clearDisplay(const vpColor &color = vpColor::white);
@@ -195,8 +196,7 @@ protected:
 
   void displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
                        unsigned int height);
-  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
-                       unsigned int height);
+  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
 
   void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness = 1);
   void displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness = 1);

@@ -57,7 +57,8 @@ static std::string videoname_grey;
 static std::string videoname_color;
 
 template <class Type>
-bool test_createSequence(vpImage<Type> &I, const std::string &videoname, unsigned int first_frame, int frame_step, unsigned int nframes)
+bool test_createSequence(vpImage<Type> &I, const std::string &videoname, unsigned int first_frame, int frame_step,
+                         unsigned int nframes)
 {
   try {
     vpVideoWriter writer;
@@ -66,18 +67,19 @@ bool test_createSequence(vpImage<Type> &I, const std::string &videoname, unsigne
     writer.setFrameStep(frame_step);
     writer.open(I);
 
-    for (unsigned int i = 0; i < nframes; i ++) {
+    for (unsigned int i = 0; i < nframes; i++) {
       writer.saveFrame(I);
       std::cout << "Frame saved in: " << writer.getFrameName() << std::endl;
     }
     return true;
-  }  catch (...) {
+  } catch (...) {
     return false;
   }
 }
 
 template <class Type>
-bool test_readSequence(vpImage<Type> &I, const std::string &videoname, long first_frame, int frame_step, int step, long last_frame)
+bool test_readSequence(vpImage<Type> &I, const std::string &videoname, long first_frame, int frame_step, int step,
+                       long last_frame)
 {
   vpVideoReader reader;
   reader.setFileName(videoname);
@@ -98,7 +100,7 @@ bool test_readSequence(vpImage<Type> &I, const std::string &videoname, long firs
   }
 
   long cpt = 0;
-  while (! reader.end()) {
+  while (!reader.end()) {
     reader.acquire(I);
     long index = reader.getFrameIndex();
     std::cout << "Read frame with index " << index << " from: " << reader.getFrameName() << std::endl;
@@ -106,19 +108,20 @@ bool test_readSequence(vpImage<Type> &I, const std::string &videoname, long firs
       std::cout << "Read wrong frame index" << std::endl;
       return false;
     }
-    cpt ++;
+    cpt++;
   }
   return true;
 }
 
 TEST_CASE("Test saving sequence of uchar images with step 2", "[grey]")
 {
-    std::cout << "** Create sequence of uchar images with step " << frame_step << std::endl;
-    vpImage<unsigned char> I(2, 4, 0);
-    CHECK(test_createSequence(I, videoname_grey, first_frame, frame_step, nframes));
+  std::cout << "** Create sequence of uchar images with step " << frame_step << std::endl;
+  vpImage<unsigned char> I(2, 4, 0);
+  CHECK(test_createSequence(I, videoname_grey, first_frame, frame_step, nframes));
 }
 
-TEST_CASE("Test reading a sequence of grey images", "[grey]") {
+TEST_CASE("Test reading a sequence of grey images", "[grey]")
+{
   SECTION("Read sequence of uchar images with step 1")
   {
     int step = 1;
@@ -136,12 +139,13 @@ TEST_CASE("Test reading a sequence of grey images", "[grey]") {
 
 TEST_CASE("Test saving sequence of color images with step 2", "[color]")
 {
-    std::cout << "** Create sequence of color images with step " << frame_step << std::endl;
-    vpImage<vpRGBa> I(2, 4);
-    CHECK(test_createSequence(I, videoname_color, first_frame, frame_step, nframes));
+  std::cout << "** Create sequence of color images with step " << frame_step << std::endl;
+  vpImage<vpRGBa> I(2, 4);
+  CHECK(test_createSequence(I, videoname_color, first_frame, frame_step, nframes));
 }
 
-TEST_CASE("Test reading a sequence of color images", "[color]") {
+TEST_CASE("Test reading a sequence of color images", "[color]")
+{
   SECTION("Read sequence of color images with step 1")
   {
     int step = 1;
@@ -199,8 +203,5 @@ int main(int argc, char *argv[])
   return numFailed;
 }
 #else
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

@@ -78,8 +78,7 @@ vpPlot::vpPlot() : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30),
   \param x,y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 */
-vpPlot::vpPlot(unsigned int graph_nbr, unsigned int height, unsigned int width, int x,
-               int y, const std::string &title)
+vpPlot::vpPlot(unsigned int graph_nbr, unsigned int height, unsigned int width, int x, int y, const std::string &title)
   : I(), display(NULL), graphNbr(1), graphList(NULL), margei(30), margej(40), factori(1.f), factorj(1.)
 {
   init(graph_nbr, height, width, x, y, title);
@@ -97,8 +96,8 @@ vpPlot::vpPlot(unsigned int graph_nbr, unsigned int height, unsigned int width, 
   \param x,y : The window is set at position x,y (column index, row index).
   \param title : Window title.
 */
-void vpPlot::init(unsigned int graph_nbr, unsigned int height, unsigned int width, int x,
-                  int y, const std::string &title)
+void vpPlot::init(unsigned int graph_nbr, unsigned int height, unsigned int width, int x, int y,
+                  const std::string &title)
 {
   I.init(height, width, 255);
 
@@ -399,8 +398,8 @@ void vpPlot::plot(unsigned int graphNum, double x, const vpRotationVector &v_y)
   The coordinate of the new point along the z axis and given in the user unit
   system.
 */
-vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, unsigned int curveNum, double x,
-                                              double y, double z)
+vpMouseButton::vpMouseButtonType vpPlot::plot(unsigned int graphNum, unsigned int curveNum, double x, double y,
+                                              double z)
 {
   return (graphList + graphNum)->plot(I, curveNum, x, y, z);
 }
@@ -495,10 +494,7 @@ void vpPlot::getPixelValue(bool block)
   graphic in a window is less or equal to 4, this parameter is between 0
   and 3. \param title : The graphic title.
 */
-void vpPlot::setTitle(unsigned int graphNum, const std::string &title)
-{
-  (graphList + graphNum)->setTitle(title);
-}
+void vpPlot::setTitle(unsigned int graphNum, const std::string &title) { (graphList + graphNum)->setTitle(title); }
 
 /*!
   Sets the unit system of the x axis.
@@ -507,10 +503,7 @@ void vpPlot::setTitle(unsigned int graphNum, const std::string &title)
   graphic in a window is less or equal to 4, this parameter is between 0
   and 3. \param unitx : The name of the unit of the x axis.
 */
-void vpPlot::setUnitX(unsigned int graphNum, const std::string &unitx)
-{
-  (graphList + graphNum)->setUnitX(unitx);
-}
+void vpPlot::setUnitX(unsigned int graphNum, const std::string &unitx) { (graphList + graphNum)->setUnitX(unitx); }
 
 /*!
   Sets the unit system of the y axis.
@@ -519,10 +512,7 @@ void vpPlot::setUnitX(unsigned int graphNum, const std::string &unitx)
   graphic in a window is less or equal to 4, this parameter is between 0
   and 3. \param unity : The name of the unit of the y axis.
 */
-void vpPlot::setUnitY(unsigned int graphNum, const std::string &unity)
-{
-  (graphList + graphNum)->setUnitY(unity);
-}
+void vpPlot::setUnitY(unsigned int graphNum, const std::string &unity) { (graphList + graphNum)->setUnitY(unity); }
 
 /*!
   Sets the unit system of the z axis.
@@ -531,10 +521,7 @@ void vpPlot::setUnitY(unsigned int graphNum, const std::string &unity)
   graphic in a window is less or equal to 4, this parameter is between 0
   and 3. \param unitz : The name of the unit of the z axis.
 */
-void vpPlot::setUnitZ(unsigned int graphNum, const std::string &unitz)
-{
-  (graphList + graphNum)->setUnitZ(unitz);
-}
+void vpPlot::setUnitZ(unsigned int graphNum, const std::string &unitz) { (graphList + graphNum)->setUnitZ(unitz); }
 
 /*!
   Sets the legend of a curve.

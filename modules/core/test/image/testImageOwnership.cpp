@@ -104,14 +104,14 @@ int main(int /* argc */, const char ** /* argv */)
       std::cout << "I:\n" << I << std::endl;
     }
     {
-      unsigned char* bitmap = new unsigned char[12];
+      unsigned char *bitmap = new unsigned char[12];
       {
         vpImage<unsigned char> I(bitmap, 3, 4, true);
       }
       delete[] bitmap;
     }
     {
-      unsigned char* bitmap = new unsigned char[12];
+      unsigned char *bitmap = new unsigned char[12];
       {
         vpImage<unsigned char> I(bitmap, 3, 4, false);
       }
@@ -125,7 +125,7 @@ int main(int /* argc */, const char ** /* argv */)
       delete[] bitmap;
     }
     {
-      unsigned char* bitmap = new unsigned char[12];
+      unsigned char *bitmap = new unsigned char[12];
       vpImage<unsigned char> I(bitmap, 3, 4, false);
       I.destroy();
       I.init(bitmap, 3, 4, false);
@@ -140,7 +140,7 @@ int main(int /* argc */, const char ** /* argv */)
     }
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     {
-      unsigned char* bitmap = new unsigned char[12];
+      unsigned char *bitmap = new unsigned char[12];
       vpImage<unsigned char> I = std::move(vpImage<unsigned char>(bitmap, 3, 4, false));
       if (bitmap != I.bitmap) {
         std::cout << "std::move(vpImage) failed" << std::endl;
@@ -149,7 +149,7 @@ int main(int /* argc */, const char ** /* argv */)
       delete[] bitmap;
     }
     {
-      unsigned char* bitmap = new unsigned char[12];
+      unsigned char *bitmap = new unsigned char[12];
       vpImage<unsigned char> I(std::move(vpImage<unsigned char>(bitmap, 3, 4, false)));
       if (bitmap != I.bitmap) {
         std::cout << "vpImage(td::move(vpImage)) failed" << std::endl;
@@ -158,7 +158,7 @@ int main(int /* argc */, const char ** /* argv */)
       delete[] bitmap;
     }
 #endif
-  } catch (const std::exception& e) {
+  } catch (const std::exception &e) {
     std::cerr << "Exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }

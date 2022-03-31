@@ -109,7 +109,7 @@ typedef struct vpBasisFunction {
 
 class VISP_EXPORT vpBSpline
 {
-public /*protected*/:
+  public /*protected*/:
   //! Vector wich contains the control points
   std::vector<vpImagePoint> controlPoints;
   //! Vector which contain the knots \f$ {u0, ..., um} \f$

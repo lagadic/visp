@@ -644,7 +644,7 @@ v: -1  -2.1  -3
   \endcode
   \sa operator,()
 */
-vpColVector& vpColVector::operator<<(double val)
+vpColVector &vpColVector::operator<<(double val)
 {
   resize(1, false);
   data[0] = val;
@@ -669,7 +669,7 @@ v: -1  -2.1  -3
   \endcode
   \sa operator<<()
 */
-vpColVector& vpColVector::operator,(double val)
+vpColVector &vpColVector::operator,(double val)
 {
   resize(rowNum + 1, false);
   data[rowNum - 1] = val;
@@ -748,7 +748,7 @@ c:
   \endcode
   \sa operator<<()
  */
-vpColVector& vpColVector::operator=(const std::initializer_list<double> &list)
+vpColVector &vpColVector::operator=(const std::initializer_list<double> &list)
 {
   resize(static_cast<unsigned int>(list.size()), false);
   std::copy(list.begin(), list.end(), data);
@@ -756,9 +756,9 @@ vpColVector& vpColVector::operator=(const std::initializer_list<double> &list)
 }
 #endif
 
-bool vpColVector::operator==(const vpColVector &v) const {
-  if (rowNum != v.rowNum ||
-      colNum != v.colNum /* should not happen */)
+bool vpColVector::operator==(const vpColVector &v) const
+{
+  if (rowNum != v.rowNum || colNum != v.colNum /* should not happen */)
     return false;
 
   for (unsigned int i = 0; i < rowNum; i++) {
@@ -769,9 +769,7 @@ bool vpColVector::operator==(const vpColVector &v) const {
   return true;
 }
 
-bool vpColVector::operator!=(const vpColVector &v) const {
-  return !(*this == v);
-}
+bool vpColVector::operator!=(const vpColVector &v) const { return !(*this == v); }
 
 /*!
   Transpose the column vector. The resulting vector becomes a row vector.
@@ -1432,10 +1430,7 @@ int vpColVector::print(std::ostream &s, unsigned int length, char const *intro) 
 
   \return The value \f[\sum{i=0}^{m} v_i\f].
   */
-double vpColVector::sum() const
-{
-  return SimdVectorSum(data, rowNum);
-}
+double vpColVector::sum() const { return SimdVectorSum(data, rowNum); }
 
 /*!
   Return the sum square of all the elements \f$v_{i}\f$ of the column vector
@@ -1443,10 +1438,7 @@ double vpColVector::sum() const
 
   \return The value \f[\sum{i=0}^{m} v_i^{2}\f].
   */
-double vpColVector::sumSquare() const
-{
-  return SimdVectorSumSquare(data, rowNum);
-}
+double vpColVector::sumSquare() const { return SimdVectorSumSquare(data, rowNum); }
 
 /*!
   \deprecated This function is deprecated. You should rather use frobeniusNorm().
@@ -1458,10 +1450,7 @@ double vpColVector::sumSquare() const
   \sa frobeniusNorm(), infinityNorm()
 
 */
-double vpColVector::euclideanNorm() const
-{
-  return frobeniusNorm();
-}
+double vpColVector::euclideanNorm() const { return frobeniusNorm(); }
 
 /*!
   Compute and return the Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.

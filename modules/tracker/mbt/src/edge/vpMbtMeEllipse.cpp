@@ -53,24 +53,16 @@
 /*!
   Basic constructor that calls the constructor of the class vpMeTracker.
 */
-vpMbtMeEllipse::vpMbtMeEllipse()
-  : vpMeEllipse()
-{
-}
+vpMbtMeEllipse::vpMbtMeEllipse() : vpMeEllipse() {}
 
 /*!
   Copy constructor.
 */
-vpMbtMeEllipse::vpMbtMeEllipse(const vpMbtMeEllipse &me_ellipse)
-  : vpMeEllipse(me_ellipse)
-{
-}
+vpMbtMeEllipse::vpMbtMeEllipse(const vpMbtMeEllipse &me_ellipse) : vpMeEllipse(me_ellipse) {}
 /*!
   Destructor.
 */
-vpMbtMeEllipse::~vpMbtMeEllipse()
-{
-}
+vpMbtMeEllipse::~vpMbtMeEllipse() {}
 
 /*!
   Compute the projection error of the ellipse.
@@ -88,10 +80,8 @@ vpMbtMeEllipse::~vpMbtMeEllipse()
   \param thickness : Thickness of arrows used to show gradient and model orientation.
 */
 void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &I, double &sumErrorRad,
-                                            unsigned int &nbFeatures,
-                                            const vpMatrix &SobelX, const vpMatrix &SobelY,
-                                            bool display, unsigned int length,
-                                            unsigned int thickness)
+                                            unsigned int &nbFeatures, const vpMatrix &SobelX, const vpMatrix &SobelY,
+                                            bool display, unsigned int length, unsigned int thickness)
 {
   sumErrorRad = 0;
   nbFeatures = 0;
@@ -173,17 +163,18 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &I, dou
       double angle2 = acos(vecSite * (-vecGrad));
 
       if (display) {
-        vpDisplay::displayArrow(I, it->get_i(), it->get_j(), static_cast<int>(it->get_i() + length*cos(theta)),
-                                static_cast<int>(it->get_j() + length*sin(theta)), vpColor::blue,
-                                length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
+        vpDisplay::displayArrow(I, it->get_i(), it->get_j(), static_cast<int>(it->get_i() + length * cos(theta)),
+                                static_cast<int>(it->get_j() + length * sin(theta)), vpColor::blue,
+                                length >= 20 ? length / 5 : 4, length >= 20 ? length / 10 : 2, thickness);
         if (angle1 < angle2) {
-          vpDisplay::displayArrow(I, it->get_i(), it->get_j(), static_cast<int>(it->get_i() + length*cos(angle)),
-                                  static_cast<int>(it->get_j() + length*sin(angle)), vpColor::red,
-                                  length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
+          vpDisplay::displayArrow(I, it->get_i(), it->get_j(), static_cast<int>(it->get_i() + length * cos(angle)),
+                                  static_cast<int>(it->get_j() + length * sin(angle)), vpColor::red,
+                                  length >= 20 ? length / 5 : 4, length >= 20 ? length / 10 : 2, thickness);
         } else {
-          vpDisplay::displayArrow(I, it->get_i(), it->get_j(), static_cast<int>(it->get_i() + length*cos(angle+M_PI)),
-                                  static_cast<int>(it->get_j() + length*sin(angle+M_PI)), vpColor::red,
-                                  length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
+          vpDisplay::displayArrow(I, it->get_i(), it->get_j(),
+                                  static_cast<int>(it->get_i() + length * cos(angle + M_PI)),
+                                  static_cast<int>(it->get_j() + length * sin(angle + M_PI)), vpColor::red,
+                                  length >= 20 ? length / 5 : 4, length >= 20 ? length / 10 : 2, thickness);
         }
       }
 
@@ -194,9 +185,9 @@ void vpMbtMeEllipse::computeProjectionError(const vpImage<unsigned char> &I, dou
   }
 }
 
-void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &center_p,
-                                  double n20_p, double n11_p, double n02_p, bool doNotTrack,
-                                  vpImagePoint *pt1, const vpImagePoint *pt2)
+void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &center_p, double n20_p,
+                                  double n11_p, double n02_p, bool doNotTrack, vpImagePoint *pt1,
+                                  const vpImagePoint *pt2)
 {
   if (pt1 != NULL && pt2 != NULL) {
     m_trackArc = true;
@@ -221,8 +212,7 @@ void vpMbtMeEllipse::initTracking(const vpImage<unsigned char> &I, const vpImage
     // useful for track(I)
     iP1 = *pt1;
     iP2 = *pt2;
-  }
-  else {
+  } else {
     alpha1 = 0.0;
     alpha2 = 2.0 * M_PI;
     // useful for track(I)
@@ -264,8 +254,8 @@ void vpMbtMeEllipse::track(const vpImage<unsigned char> &I)
 /*!
  * Update ellipse parameters.
  */
-void vpMbtMeEllipse::updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &center_p,
-                                      double n20_p, double n11_p, double n02_p)
+void vpMbtMeEllipse::updateParameters(const vpImage<unsigned char> &I, const vpImagePoint &center_p, double n20_p,
+                                      double n11_p, double n02_p)
 {
   m_uc = center_p.get_u();
   m_vc = center_p.get_v();
@@ -348,11 +338,11 @@ void vpMbtMeEllipse::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 #endif
 
   // starting angle for sampling
-  double ang = alpha1 + ((alpha2 - alpha1) - static_cast<double>(m_expectedDensity) * incr)/2.0;
+  double ang = alpha1 + ((alpha2 - alpha1) - static_cast<double>(m_expectedDensity) * incr) / 2.0;
   // sample positions
   for (unsigned int i = 0; i < m_expectedDensity; i++) {
     vpImagePoint iP;
-    computePointOnEllipse(ang,iP);
+    computePointOnEllipse(ang, iP);
     // If point is in the image, add to the sample list
     // Check done in (i,j) frame)
     if (!outOfImage(vpMath::round(iP.get_i()), vpMath::round(iP.get_j()), 0, nbrows, nbcols)) {

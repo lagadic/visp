@@ -120,8 +120,8 @@ void clipHistogram(const std::vector<int> &hist, std::vector<int> &clippedHist, 
   } while (clippedEntries != clippedEntriesBefore);
 }
 
-void createHistogram(int blockRadius, int bins, int blockXCenter, int blockYCenter,
-                     const vpImage<unsigned char> &I, std::vector<int> &hist)
+void createHistogram(int blockRadius, int bins, int blockXCenter, int blockYCenter, const vpImage<unsigned char> &I,
+                     std::vector<int> &hist)
 {
   std::fill(hist.begin(), hist.end(), 0);
 
@@ -194,7 +194,7 @@ float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clipp
 
   return transferValue(v, clippedHist);
 }
-}
+} // namespace
 
 /*!
   \ingroup group_imgproc_brightness
@@ -225,8 +225,8 @@ float transferValue(int v, const std::vector<int> &hist, std::vector<int> &clipp
   boxes of the given block size only and interpolates for locations in
   between.
 */
-void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius, int bins,
-               float slope, bool fast)
+void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius, int bins, float slope,
+               bool fast)
 {
   if (blockRadius < 0) {
     std::cerr << "Error: blockRadius < 0!" << std::endl;
@@ -490,8 +490,7 @@ void vp::clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int
   boxes of the given block size only and interpolates for locations in
   between.
 */
-void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int bins, float slope,
-               bool fast)
+void vp::clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius, int bins, float slope, bool fast)
 {
   // Split
   vpImage<unsigned char> pR(I1.getHeight(), I1.getWidth());

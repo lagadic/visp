@@ -57,7 +57,7 @@
 #include <visp3/vision/vpBasicKeyPoint.h>
 #include <visp3/vision/vpPose.h>
 #ifdef VISP_HAVE_MODULE_IO
-#  include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpImageIo.h>
 #endif
 #include <visp3/core/vpConvert.h>
 #include <visp3/core/vpCylinder.h>
@@ -68,21 +68,21 @@
 // Require at least OpenCV >= 2.1.1
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
 
-#  include <opencv2/calib3d/calib3d.hpp>
-#  include <opencv2/features2d/features2d.hpp>
-#  include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/features2d/features2d.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 
-#  if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // Require opencv >= 4.0.0
-#    include <opencv2/imgproc/imgproc_c.h>
-#    include <opencv2/imgproc.hpp>
-#  endif
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // Require opencv >= 4.0.0
+#include <opencv2/imgproc.hpp>
+#include <opencv2/imgproc/imgproc_c.h>
+#endif
 
-#  if defined(VISP_HAVE_OPENCV_XFEATURES2D) // OpenCV >= 3.0.0
-#    include <opencv2/xfeatures2d.hpp>
-#  elif defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) && \
-     (VISP_HAVE_OPENCV_VERSION < 0x030000)
-#    include <opencv2/nonfree/nonfree.hpp>
-#  endif
+#if defined(VISP_HAVE_OPENCV_XFEATURES2D) // OpenCV >= 3.0.0
+#include <opencv2/xfeatures2d.hpp>
+#elif defined(VISP_HAVE_OPENCV_NONFREE) && (VISP_HAVE_OPENCV_VERSION >= 0x020400) &&                                   \
+    (VISP_HAVE_OPENCV_VERSION < 0x030000)
+#include <opencv2/nonfree/nonfree.hpp>
+#endif
 
 /*!
   \class vpKeyPoint
@@ -266,7 +266,7 @@ public:
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))
     DETECTOR_STAR,
 #endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
+#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                      \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
     DETECTOR_SIFT,
 #endif
@@ -294,7 +294,7 @@ public:
     DESCRIPTOR_FREAK,
     DESCRIPTOR_BRIEF,
 #endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
+#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                      \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
     DESCRIPTOR_SIFT,
 #endif
@@ -393,14 +393,12 @@ public:
                            vpImage<unsigned char> &IMatching);
   void createImageMatching(vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching);
 
-  void createImageMatching(vpImage<unsigned char> &IRef, vpImage<vpRGBa> &ICurrent,
-                           vpImage<vpRGBa> &IMatching);
+  void createImageMatching(vpImage<unsigned char> &IRef, vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> &IMatching);
   void createImageMatching(vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> &IMatching);
 
   void detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints,
               const vpRect &rectangle = vpRect());
-  void detect(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints,
-              const vpRect &rectangle = vpRect());
+  void detect(const vpImage<vpRGBa> &I_color, std::vector<cv::KeyPoint> &keyPoints, const vpRect &rectangle = vpRect());
   void detect(const cv::Mat &matImg, std::vector<cv::KeyPoint> &keyPoints, const cv::Mat &mask = cv::Mat());
   void detect(const vpImage<unsigned char> &I, std::vector<cv::KeyPoint> &keyPoints, double &elapsedTime,
               const vpRect &rectangle = vpRect());
@@ -640,9 +638,7 @@ public:
 
     \return The number of train images.
   */
-  inline unsigned int getNbImages() const {
-    return static_cast<unsigned int>(m_mapOfImages.size());
-  }
+  inline unsigned int getNbImages() const { return static_cast<unsigned int>(m_mapOfImages.size()); }
 
   void getObjectPoints(std::vector<cv::Point3f> &objectPoints) const;
   void getObjectPoints(std::vector<vpPoint> &objectPoints) const;
@@ -699,8 +695,7 @@ public:
                            vpImage<unsigned char> &IMatching);
   void insertImageMatching(const vpImage<unsigned char> &ICurrent, vpImage<unsigned char> &IMatching);
 
-  void insertImageMatching(const vpImage<vpRGBa> &IRef, const vpImage<vpRGBa> &ICurrent,
-                           vpImage<vpRGBa> &IMatching);
+  void insertImageMatching(const vpImage<vpRGBa> &IRef, const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> &IMatching);
   void insertImageMatching(const vpImage<vpRGBa> &ICurrent, vpImage<vpRGBa> &IMatching);
 
   void loadConfigFile(const std::string &configFile);
@@ -744,8 +739,7 @@ public:
 
   void reset();
 
-  void saveLearningData(const std::string &filename, bool binaryMode = false,
-                        bool saveTrainingImages = true);
+  void saveLearningData(const std::string &filename, bool binaryMode = false, bool saveTrainingImages = true);
 
   /*!
     Set if the covariance matrix has to be computed in the Virtual Visual
@@ -924,10 +918,7 @@ public:
    * \warning This functionality is only available for ORB and SIFT extactors.
    * \param maxFeatures : Maximum number of keypoints to extract. Set -1 to use default values.
    */
-  void setMaxFeatures(int maxFeatures)
-  {
-    m_maxFeatures = maxFeatures;
-  }
+  void setMaxFeatures(int maxFeatures) { m_maxFeatures = maxFeatures; }
 
   /*!
     Set the filtering method to eliminate false matching.
@@ -1021,10 +1012,7 @@ public:
   /*!
     Set filter flag for RANSAC pose estimation.
   */
-  inline void setRansacFilterFlag(const vpPose::RANSAC_FILTER_FLAGS &flag)
-  {
-    m_ransacFilterFlag = flag;
-  }
+  inline void setRansacFilterFlag(const vpPose::RANSAC_FILTER_FLAGS &flag) { m_ransacFilterFlag = flag; }
 
   /*!
     Set the maximum number of iterations for the Ransac pose estimation
@@ -1046,10 +1034,7 @@ public:
 
     \note Needs C++11 or higher.
   */
-  inline void setRansacParallel(bool parallel)
-  {
-    m_ransacParallel = parallel;
-  }
+  inline void setRansacParallel(bool parallel) { m_ransacParallel = parallel; }
 
   /*!
     Set the number of threads to use if multithreaded RANSAC pose.
@@ -1057,10 +1042,7 @@ public:
     \param nthreads : Number of threads, if 0 the number of CPU threads will be determined
     \sa setRansacParallel
   */
-  inline void setRansacParallelNbThreads(unsigned int nthreads)
-  {
-    m_ransacParallelNbThreads = nthreads;
-  }
+  inline void setRansacParallelNbThreads(unsigned int nthreads) { m_ransacParallelNbThreads = nthreads; }
 
   /*!
     Set the maximum reprojection error (in pixel) to determine if a point is
@@ -1145,10 +1127,7 @@ public:
     \param useMatchTrainToQuery : True to match the train keypoints to the
     query keypoints
    */
-  inline void setUseMatchTrainToQuery(bool useMatchTrainToQuery)
-  {
-    m_useMatchTrainToQuery = useMatchTrainToQuery;
-  }
+  inline void setUseMatchTrainToQuery(bool useMatchTrainToQuery) { m_useMatchTrainToQuery = useMatchTrainToQuery; }
 
   /*!
     Set the flag to choose between a percentage value of inliers for the
@@ -1261,7 +1240,7 @@ private:
   //! Percentage value to determine the number of inliers for the Ransac
   //! method.
   double m_ransacConsensusPercentage;
-  //!Filtering flag for RANSAC and degenerate configuration check
+  //! Filtering flag for RANSAC and degenerate configuration check
   vpPose::RANSAC_FILTER_FLAGS m_ransacFilterFlag;
   //! List of inliers.
   std::vector<vpImagePoint> m_ransacInliers;

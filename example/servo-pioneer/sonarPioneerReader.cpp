@@ -38,7 +38,6 @@
 
 #include <iostream>
 
-#include <visp3/robot/vpRobotPioneer.h> // Include first to avoid build issues with Status, None, isfinite
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpImage.h>
@@ -47,6 +46,7 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
+#include <visp3/robot/vpRobotPioneer.h> // Include first to avoid build issues with Status, None, isfinite
 
 #ifndef VISP_HAVE_PIONEER
 int main()
@@ -178,10 +178,10 @@ void sonarPrinter(void)
       double j = -y * scale + half_size; // obstacle position
       double i = -x * scale + half_size;
 
-//      printf("%d x: %.1f y: %.1f th: %.1f d: %d\n", sensor,
-//      reading->getSensorX(),
-//             reading->getSensorY(), reading->getSensorTh(),
-//             reading->getRange());
+      //      printf("%d x: %.1f y: %.1f th: %.1f d: %d\n", sensor,
+      //      reading->getSensorX(),
+      //             reading->getSensorY(), reading->getSensorTh(),
+      //             reading->getRange());
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
       // if (isInitialized && range != sonar.getMaxRange())
@@ -189,8 +189,8 @@ void sonarPrinter(void)
         vpDisplay::displayLine(I, si, sj, i, j, vpColor::blue, 2);
         vpDisplay::displayCross(I, si, sj, 7, vpColor::blue);
         std::stringstream legend;
-        legend << sensor << ": " << std::setprecision( 2 ) << float( range ) / 1000.;
-        vpDisplay::displayText( I, i - 7, j + 7, legend.str(), vpColor::blue );
+        legend << sensor << ": " << std::setprecision(2) << float(range) / 1000.;
+        vpDisplay::displayText(I, i - 7, j + 7, legend.str(), vpColor::blue);
       }
 #endif
     }

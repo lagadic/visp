@@ -42,11 +42,11 @@
   \brief Drawing functions for image.
 */
 
-#include <visp3/core/vpImage.h>
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpColor.h>
+#include <visp3/core/vpImage.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpRect.h>
-#include <visp3/core/vpCameraParameters.h>
 
 /*!
   \class vpImageDraw
@@ -58,57 +58,58 @@
 class VISP_EXPORT vpImageDraw
 {
 public:
-  static void drawArrow(vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, unsigned char color,
-                        unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1);
+  static void drawArrow(vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
+                        unsigned char color, unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1);
   static void drawArrow(vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                         unsigned int w = 4, unsigned int h = 2, unsigned int thickness = 1);
 
   static void drawCircle(vpImage<unsigned char> &I, const vpImagePoint &center, unsigned int radius,
                          unsigned char color, unsigned int thickness = 1);
-  static void drawCircle(vpImage<vpRGBa> &I, const vpImagePoint &center, unsigned int radius,
-                         const vpColor &color, unsigned int thickness = 1);
+  static void drawCircle(vpImage<vpRGBa> &I, const vpImagePoint &center, unsigned int radius, const vpColor &color,
+                         unsigned int thickness = 1);
 
   static void drawCross(vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned int size, unsigned char color,
                         unsigned int thickness = 1);
   static void drawCross(vpImage<vpRGBa> &I, const vpImagePoint &ip, unsigned int size, const vpColor &color,
                         unsigned int thickness = 1);
 
-  static void drawDottedLine(vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, unsigned char color,
-                             unsigned int thickness = 1);
+  static void drawDottedLine(vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
+                             unsigned char color, unsigned int thickness = 1);
   static void drawDottedLine(vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                              unsigned int thickness = 1);
 
-  static void drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &center, double coef1,
-                          double coef2, double coef3, bool use_normalized_centered_moments, unsigned char color,
+  static void drawEllipse(vpImage<unsigned char> &I, const vpImagePoint &center, double coef1, double coef2,
+                          double coef3, bool use_normalized_centered_moments, unsigned char color,
                           double smallalpha = 0, double highalpha = 2 * M_PI, unsigned int thickness = 1);
-  static void drawEllipse(vpImage<vpRGBa> &I, const vpImagePoint &center, double coef1,
-                          double coef2, double coef3, bool use_normalized_centered_moments, const vpColor &color,
-                          double smallalpha = 0, double highalpha = 2 * M_PI, unsigned int thickness = 1);
+  static void drawEllipse(vpImage<vpRGBa> &I, const vpImagePoint &center, double coef1, double coef2, double coef3,
+                          bool use_normalized_centered_moments, const vpColor &color, double smallalpha = 0,
+                          double highalpha = 2 * M_PI, unsigned int thickness = 1);
 
-  static void drawFrame(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                        const vpCameraParameters &cam, double size, unsigned char color,
-                        unsigned int thickness = 1, const vpImagePoint &offset = vpImagePoint(0, 0));
-  static void drawFrame(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                        const vpCameraParameters &cam, double size, const vpColor &color = vpColor::none,
-                        unsigned int thickness = 1, const vpImagePoint &offset = vpImagePoint(0, 0));
+  static void drawFrame(vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                        double size, unsigned char color, unsigned int thickness = 1,
+                        const vpImagePoint &offset = vpImagePoint(0, 0));
+  static void drawFrame(vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, double size,
+                        const vpColor &color = vpColor::none, unsigned int thickness = 1,
+                        const vpImagePoint &offset = vpImagePoint(0, 0));
 
   static void drawLine(vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, unsigned char color,
                        unsigned int thickness = 1);
   static void drawLine(vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
                        unsigned int thickness = 1);
 
-  static void drawPoint(vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned char color, unsigned int thickness = 1);
+  static void drawPoint(vpImage<unsigned char> &I, const vpImagePoint &ip, unsigned char color,
+                        unsigned int thickness = 1);
   static void drawPoint(vpImage<vpRGBa> &I, const vpImagePoint &ip, const vpColor &color, unsigned int thickness = 1);
 
-  static void drawPolygon(vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
-                          unsigned char color, unsigned int thickness = 1, bool closed = true);
-  static void drawPolygon(vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &vip,
-                          const vpColor &color, unsigned int thickness = 1, bool closed = true);
+  static void drawPolygon(vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip, unsigned char color,
+                          unsigned int thickness = 1, bool closed = true);
+  static void drawPolygon(vpImage<vpRGBa> &I, const std::vector<vpImagePoint> &vip, const vpColor &color,
+                          unsigned int thickness = 1, bool closed = true);
 
-  static void drawRectangle(vpImage<unsigned char> &I, const vpRect &rectangle, unsigned char color,
-                            bool fill = false, unsigned int thickness = 1);
-  static void drawRectangle(vpImage<vpRGBa> &I, const vpRect &rectangle, const vpColor &color,
-                            bool fill = false, unsigned int thickness = 1);
+  static void drawRectangle(vpImage<unsigned char> &I, const vpRect &rectangle, unsigned char color, bool fill = false,
+                            unsigned int thickness = 1);
+  static void drawRectangle(vpImage<vpRGBa> &I, const vpRect &rectangle, const vpColor &color, bool fill = false,
+                            unsigned int thickness = 1);
 };
 
 #endif

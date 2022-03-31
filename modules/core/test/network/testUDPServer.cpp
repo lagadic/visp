@@ -56,7 +56,7 @@ struct DataType {
   DataType() : double_val(0.0), int_val(0) {}
   DataType(double dbl, int i) : double_val(dbl), int_val(i) {}
 };
-}
+} // namespace
 
 int main()
 {

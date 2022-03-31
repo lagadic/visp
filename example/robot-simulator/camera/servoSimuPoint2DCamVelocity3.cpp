@@ -86,7 +86,8 @@ Simulation of a 2D visual servoing on a point:\n\
 - only the X coordinate of the point is selected.\n\
           \n\
 SYNOPSIS\n\
-  %s [-h]\n", name);
+  %s [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\

@@ -58,9 +58,8 @@ vpVideoWriter::vpVideoWriter()
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
     m_writer(), m_framerate(25.0),
 #endif
-    m_formatType(FORMAT_UNKNOWN), m_videoName(), m_frameName(),
-    m_initFileName(false), m_isOpen(false), m_frameCount(0), m_firstFrame(0),
-    m_width(0), m_height(0), m_frameStep(1)
+    m_formatType(FORMAT_UNKNOWN), m_videoName(), m_frameName(), m_initFileName(false), m_isOpen(false), m_frameCount(0),
+    m_firstFrame(0), m_width(0), m_height(0), m_frameStep(1)
 {
 #if VISP_HAVE_OPENCV_VERSION >= 0x030000
   m_fourcc = cv::VideoWriter::fourcc('P', 'I', 'M', '1');
@@ -116,13 +115,14 @@ void vpVideoWriter::setFileName(const std::string &filename)
 */
 void vpVideoWriter::open(vpImage<vpRGBa> &I)
 {
-  if (! m_initFileName) {
+  if (!m_initFileName) {
     throw(vpImageException(vpImageException::noFileNameError, "The generic filename has to be set in video writer"));
   }
 
   vpIoTools::makeDirectory(vpIoTools::getParent(m_videoName));
 
-  if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG || m_formatType == FORMAT_PNG) {
+  if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG ||
+      m_formatType == FORMAT_PNG) {
     m_width = I.getWidth();
     m_height = I.getHeight();
   } else if (m_formatType == FORMAT_AVI || m_formatType == FORMAT_MPEG || m_formatType == FORMAT_MPEG4 ||
@@ -131,7 +131,7 @@ void vpVideoWriter::open(vpImage<vpRGBa> &I)
     m_writer = cv::VideoWriter(m_videoName, m_fourcc, m_framerate,
                                cv::Size(static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight())));
 
-    if (! m_writer.isOpened()) {
+    if (!m_writer.isOpened()) {
       throw(vpException(vpException::fatalError, "Could not encode the video with OpenCV"));
     }
 #else
@@ -154,13 +154,14 @@ void vpVideoWriter::open(vpImage<vpRGBa> &I)
 */
 void vpVideoWriter::open(vpImage<unsigned char> &I)
 {
-  if (! m_initFileName) {
+  if (!m_initFileName) {
     throw(vpImageException(vpImageException::noFileNameError, "The generic filename has to be set in video writer"));
   }
 
   vpIoTools::makeDirectory(vpIoTools::getParent(m_videoName));
 
-  if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG || m_formatType == FORMAT_PNG) {
+  if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG ||
+      m_formatType == FORMAT_PNG) {
     m_width = I.getWidth();
     m_height = I.getHeight();
   } else if (m_formatType == FORMAT_AVI || m_formatType == FORMAT_MPEG || m_formatType == FORMAT_MPEG4 ||
@@ -169,7 +170,7 @@ void vpVideoWriter::open(vpImage<unsigned char> &I)
     m_writer = cv::VideoWriter(m_videoName, m_fourcc, m_framerate,
                                cv::Size(static_cast<int>(I.getWidth()), static_cast<int>(I.getHeight())));
 
-    if (! m_writer.isOpened()) {
+    if (!m_writer.isOpened()) {
       throw(vpException(vpException::fatalError, "Could not encode the video with OpenCV"));
     }
 #else
@@ -193,11 +194,12 @@ void vpVideoWriter::open(vpImage<unsigned char> &I)
 */
 void vpVideoWriter::saveFrame(vpImage<vpRGBa> &I)
 {
-  if (! m_isOpen) {
+  if (!m_isOpen) {
     throw(vpException(vpException::notInitialized, "The video has to be open first with video writer open() method"));
   }
 
-  if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG || m_formatType == FORMAT_PNG) {
+  if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG ||
+      m_formatType == FORMAT_PNG) {
     char name[FILENAME_MAX];
     sprintf(name, m_videoName.c_str(), m_frameCount);
     vpImageIo::write(I, name);
@@ -224,11 +226,12 @@ void vpVideoWriter::saveFrame(vpImage<vpRGBa> &I)
 */
 void vpVideoWriter::saveFrame(vpImage<unsigned char> &I)
 {
-  if (! m_isOpen) {
+  if (!m_isOpen) {
     throw(vpException(vpException::notInitialized, "The video has to be open first with video writer open() method"));
   }
 
-  if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG || m_formatType == FORMAT_PNG) {
+  if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG ||
+      m_formatType == FORMAT_PNG) {
     char name[FILENAME_MAX];
     sprintf(name, m_videoName.c_str(), m_frameCount);
     vpImageIo::write(I, name);
@@ -255,7 +258,7 @@ void vpVideoWriter::saveFrame(vpImage<unsigned char> &I)
 */
 void vpVideoWriter::close()
 {
-  if (! m_isOpen) {
+  if (!m_isOpen) {
     throw(vpException(vpException::notInitialized, "Cannot close video writer: not yet opened"));
   }
 }
@@ -331,7 +334,8 @@ std::string vpVideoWriter::getExtension(const std::string &filename)
 
   \param first_frame : The first frame index. Value should be positive.
 */
-void vpVideoWriter::setFirstFrameIndex(int first_frame) {
+void vpVideoWriter::setFirstFrameIndex(int first_frame)
+{
   if (first_frame < 0) {
     throw(vpException(vpException::fatalError, "Video writer first frame index cannot be negative"));
   }

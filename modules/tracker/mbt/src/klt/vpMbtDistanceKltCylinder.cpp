@@ -573,8 +573,8 @@ void vpMbtDistanceKltCylinder::displayPrimitive(const vpImage<vpRGBa> &_I)
 }
 
 void vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                       const vpCameraParameters &camera, const vpColor &col,
-                                       unsigned int thickness, const bool /*displayFullModel*/)
+                                       const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
+                                       const bool /*displayFullModel*/)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(cMo, camera);
 
@@ -586,8 +586,8 @@ void vpMbtDistanceKltCylinder::display(const vpImage<unsigned char> &I, const vp
 }
 
 void vpMbtDistanceKltCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                                       const vpCameraParameters &camera, const vpColor &col,
-                                       unsigned int thickness, const bool /*displayFullModel*/)
+                                       const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
+                                       const bool /*displayFullModel*/)
 {
   std::vector<std::vector<double> > models = getModelForDisplay(cMo, camera);
 
@@ -620,15 +620,11 @@ std::vector<std::vector<double> > vpMbtDistanceKltCylinder::getFeaturesForDispla
     iP2.set_j(vpMath::round(iP.get_j() + 7));
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    std::vector<double> params = {1, //KLT
-                                  iP.get_i(),
-                                  iP.get_j(),
-                                  iP2.get_i(),
-                                  iP2.get_j(),
-                                  static_cast<double>(id)};
+    std::vector<double> params = {1, // KLT
+                                  iP.get_i(), iP.get_j(), iP2.get_i(), iP2.get_j(), static_cast<double>(id)};
 #else
     std::vector<double> params;
-    params.push_back(1); //KLT
+    params.push_back(1); // KLT
     params.push_back(iP.get_i());
     params.push_back(iP.get_j());
     params.push_back(iP2.get_i());
@@ -698,27 +694,21 @@ std::vector<std::vector<double> > vpMbtDistanceKltCylinder::getModelForDisplay(c
     ip22.set_ij(i22, j22);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    std::vector<double> params1 = {0, //line parameters
-                                   ip11.get_i(),
-                                   ip11.get_j(),
-                                   ip12.get_i(),
-                                   ip12.get_j()};
+    std::vector<double> params1 = {0, // line parameters
+                                   ip11.get_i(), ip11.get_j(), ip12.get_i(), ip12.get_j()};
     models.push_back(params1);
 
-    std::vector<double> params2 = {0, //line parameters
-                                   ip21.get_i(),
-                                   ip21.get_j(),
-                                   ip22.get_i(),
-                                   ip22.get_j()};
+    std::vector<double> params2 = {0, // line parameters
+                                   ip21.get_i(), ip21.get_j(), ip22.get_i(), ip22.get_j()};
 #else
     std::vector<double> params1, params2;
-    params1.push_back(0); //line parameters
+    params1.push_back(0); // line parameters
     params1.push_back(ip11.get_i());
     params1.push_back(ip11.get_j());
     params1.push_back(ip12.get_i());
     params1.push_back(ip12.get_j());
 
-    params2.push_back(0); //line parameters
+    params2.push_back(0); // line parameters
     params2.push_back(ip21.get_i());
     params2.push_back(ip21.get_j());
     params2.push_back(ip22.get_i());

@@ -39,16 +39,16 @@
 */
 
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpImageTools.h>
-#include <visp3/io/vpVideoReader.h>
-#include <visp3/io/vpParseArgv.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpParseArgv.h>
+#include <visp3/io/vpVideoReader.h>
 
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x040000)
-#  include <opencv2/imgproc.hpp>
+#include <opencv2/imgproc.hpp>
 #endif
 
 // List of allowed command line options
@@ -56,18 +56,19 @@
 
 namespace
 {
-  void usage(const char *name, const char *badparam, std::string ipath)
-  {
-    fprintf(stdout, "\n\
+void usage(const char *name, const char *badparam, std::string ipath)
+{
+  fprintf(stdout, "\n\
   Test vpImageTools::templateMatching().\n\
   \n\
   SYNOPSIS\n\
     %s [-i <VISP_IMAGES directory>]                           \n\
        [-c] [-t]                                              \n\
        [-h]\n            \
-  ", name);
+  ",
+          name);
 
-    fprintf(stdout, "\n\
+  fprintf(stdout, "\n\
   OPTIONS:                                               Default\n\
     -i <VISP_IMAGES directory>                                %s\n\
        Set VISP_IMAGES input path.\n\
@@ -80,55 +81,55 @@ namespace
     -t \n\
        Perform template matching on cube sequence.\n\
     -h\n\
-       Print the help.\n\n", ipath.c_str());
+       Print the help.\n\n",
+          ipath.c_str());
 
-    if (badparam)
-      fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
-  }
-
-  bool getOptions(int argc, const char **argv, std::string &ipath, bool &click,
-                  bool &doTemplateMatching)
-  {
-    const char *optarg_;
-    int c;
-    while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
-
-      switch (c) {
-      case 'i':
-        ipath = optarg_;
-        break;
-      case 'h':
-        usage(argv[0], NULL, ipath);
-        return false;
-        break;
-      case 't':
-        doTemplateMatching = true;
-        break;
-
-      case 'c':
-          click = true;
-          break;
-      case 'd':
-        break;
-
-      default:
-        usage(argv[0], optarg_, ipath);
-        return false;
-        break;
-      }
-    }
-
-    if ((c == 1) || (c == -1)) {
-      // standalone param or error
-      usage(argv[0], NULL, ipath);
-      std::cerr << "ERROR: " << std::endl;
-      std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
-      return false;
-    }
-
-    return true;
-  }
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
+
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click, bool &doTemplateMatching)
+{
+  const char *optarg_;
+  int c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
+
+    switch (c) {
+    case 'i':
+      ipath = optarg_;
+      break;
+    case 'h':
+      usage(argv[0], NULL, ipath);
+      return false;
+      break;
+    case 't':
+      doTemplateMatching = true;
+      break;
+
+    case 'c':
+      click = true;
+      break;
+    case 'd':
+      break;
+
+    default:
+      usage(argv[0], optarg_, ipath);
+      return false;
+      break;
+    }
+  }
+
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL, ipath);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
+    return false;
+  }
+
+  return true;
+}
+} // namespace
 
 int main(int argc, const char **argv)
 {
@@ -136,11 +137,31 @@ int main(int argc, const char **argv)
   {
     const int h = 5, w = 5;
     vpImage<unsigned char> I(h, w);
-    I[0][0] = 1;  I[0][1] = 2;  I[0][2] = 2;  I[0][3] = 4;  I[0][4] = 1;
-    I[1][0] = 3;  I[1][1] = 4;  I[1][2] = 1;  I[1][3] = 5;  I[1][4] = 2;
-    I[2][0] = 2;  I[2][1] = 3;  I[2][2] = 3;  I[2][3] = 2;  I[2][4] = 4;
-    I[3][0] = 4;  I[3][1] = 1;  I[3][2] = 5;  I[3][3] = 4;  I[3][4] = 6;
-    I[4][0] = 6;  I[4][1] = 3;  I[4][2] = 2;  I[4][3] = 1;  I[4][4] = 3;
+    I[0][0] = 1;
+    I[0][1] = 2;
+    I[0][2] = 2;
+    I[0][3] = 4;
+    I[0][4] = 1;
+    I[1][0] = 3;
+    I[1][1] = 4;
+    I[1][2] = 1;
+    I[1][3] = 5;
+    I[1][4] = 2;
+    I[2][0] = 2;
+    I[2][1] = 3;
+    I[2][2] = 3;
+    I[2][3] = 2;
+    I[2][4] = 4;
+    I[3][0] = 4;
+    I[3][1] = 1;
+    I[3][2] = 5;
+    I[3][3] = 4;
+    I[3][4] = 6;
+    I[4][0] = 6;
+    I[4][1] = 3;
+    I[4][2] = 2;
+    I[4][3] = 1;
+    I[4][4] = 3;
 
     vpImage<double> II, IIsq;
     vpImageTools::integralImage(I, II, IIsq);
@@ -151,7 +172,7 @@ int main(int argc, const char **argv)
     cv::Mat mat(h, w, CV_64F);
     for (int i = 0; i < h; i++) {
       for (int j = 0; j < w; j++) {
-        mat.at<double>(i,j) = I[i][j];
+        mat.at<double>(i, j) = I[i][j];
       }
     }
 
@@ -163,15 +184,15 @@ int main(int argc, const char **argv)
 
     for (int i = 0; i < h; i++) {
       for (int j = 0; j < w; j++) {
-        if ( !vpMath::equal(II[i][j], sum.at<double>(i,j), std::numeric_limits<double>::epsilon()) ) {
+        if (!vpMath::equal(II[i][j], sum.at<double>(i, j), std::numeric_limits<double>::epsilon())) {
           std::cerr << "Error vpImageTools::integralImage(II), reference: " << std::setprecision(17)
-                    << sum.at<double>(i,j) << " ; compute: " << II[i][j] << std::endl;
+                    << sum.at<double>(i, j) << " ; compute: " << II[i][j] << std::endl;
           return EXIT_FAILURE;
         }
 
-        if ( !vpMath::equal(IIsq[i][j], sqsum.at<double>(i,j), std::numeric_limits<double>::epsilon()) ) {
+        if (!vpMath::equal(IIsq[i][j], sqsum.at<double>(i, j), std::numeric_limits<double>::epsilon())) {
           std::cerr << "Error vpImageTools::integralImage(IIsq), reference: " << std::setprecision(17)
-                    << sqsum.at<double>(i,j) << " ; compute: " << IIsq[i][j] << std::endl;
+                    << sqsum.at<double>(i, j) << " ; compute: " << IIsq[i][j] << std::endl;
           return EXIT_FAILURE;
         }
       }
@@ -239,60 +260,60 @@ int main(int argc, const char **argv)
     reader.setFileName(filename);
     vpImage<unsigned char> I, I_template;
     reader.open(I);
-    vpRect template_roi( vpImagePoint(201, 310), vpImagePoint(201+152-1, 310+138-1) );
+    vpRect template_roi(vpImagePoint(201, 310), vpImagePoint(201 + 152 - 1, 310 + 138 - 1));
     vpImageTools::crop(I, template_roi, I_template);
 
     if (doTemplateMatching) {
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)
 
 #if defined(VISP_HAVE_X11)
-    vpDisplayX d;
+      vpDisplayX d;
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d;
+      vpDisplayGDI d;
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV d;
+      vpDisplayOpenCV d;
 #endif
 
-    d.init(I, 0, 0, "Image");
+      d.init(I, 0, 0, "Image");
 
-    vpImage<double> I_score;
-    std::vector<double> benchmark_vec;
-    bool quit = false;
-    while (!reader.end() && !quit) {
-      reader.acquire(I);
+      vpImage<double> I_score;
+      std::vector<double> benchmark_vec;
+      bool quit = false;
+      while (!reader.end() && !quit) {
+        reader.acquire(I);
 
-      vpDisplay::display(I);
+        vpDisplay::display(I);
 
-      std::stringstream ss;
-      ss << "Frame: " << reader.getFrameIndex();
-      vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
+        std::stringstream ss;
+        ss << "Frame: " << reader.getFrameIndex();
+        vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
 
-      //Basic template matching
-      double t_proc = vpTime::measureTimeMs();
-      const unsigned int step_u = 5, step_v = 5;
-      vpImageTools::templateMatching(I, I_template, I_score, step_u, step_v);
+        // Basic template matching
+        double t_proc = vpTime::measureTimeMs();
+        const unsigned int step_u = 5, step_v = 5;
+        vpImageTools::templateMatching(I, I_template, I_score, step_u, step_v);
 
-      vpImagePoint max_loc;
-      double max_correlation = -1.0;
-      I_score.getMinMaxLoc(NULL, &max_loc, NULL, &max_correlation);
-      t_proc = vpTime::measureTimeMs() - t_proc;
-      benchmark_vec.push_back(t_proc);
+        vpImagePoint max_loc;
+        double max_correlation = -1.0;
+        I_score.getMinMaxLoc(NULL, &max_loc, NULL, &max_correlation);
+        t_proc = vpTime::measureTimeMs() - t_proc;
+        benchmark_vec.push_back(t_proc);
 
-      ss.str("");
-      ss << "Template matching: " << t_proc << " ms";
-      vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
+        ss.str("");
+        ss << "Template matching: " << t_proc << " ms";
+        vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
 
-      ss.str("");
-      ss << "Max correlation: " << max_correlation;
-      vpDisplay::displayText(I, 60, 20, ss.str(), vpColor::red);
+        ss.str("");
+        ss << "Max correlation: " << max_correlation;
+        vpDisplay::displayText(I, 60, 20, ss.str(), vpColor::red);
 
-      vpDisplay::displayRectangle(I, max_loc, I_template.getWidth(), I_template.getHeight(), vpColor::red, false, 1);
+        vpDisplay::displayRectangle(I, max_loc, I_template.getWidth(), I_template.getHeight(), vpColor::red, false, 1);
 
-      vpDisplay::flush(I);
+        vpDisplay::flush(I);
 
-      vpMouseButton::vpMouseButtonType button;
-      if (vpDisplay::getClick(I, button, click)) {
-        switch (button) {
+        vpMouseButton::vpMouseButtonType button;
+        if (vpDisplay::getClick(I, button, click)) {
+          switch (button) {
           case vpMouseButton::button1:
             quit = !click;
             break;
@@ -303,19 +324,19 @@ int main(int argc, const char **argv)
 
           default:
             break;
+          }
         }
       }
-    }
 
-    if (!benchmark_vec.empty()) {
-      std::cout << "Processing time, Mean: " << vpMath::getMean(benchmark_vec) << " ms ; Median: "
-                << vpMath::getMedian(benchmark_vec) << " ms ; Std: "
-                << vpMath::getStdev(benchmark_vec) << " ms" << std::endl;
-    }
+      if (!benchmark_vec.empty()) {
+        std::cout << "Processing time, Mean: " << vpMath::getMean(benchmark_vec)
+                  << " ms ; Median: " << vpMath::getMedian(benchmark_vec)
+                  << " ms ; Std: " << vpMath::getStdev(benchmark_vec) << " ms" << std::endl;
+      }
 #endif
     } else {
-      //ctest case
-      //Basic template matching
+      // ctest case
+      // Basic template matching
       const unsigned int step_u = 5, step_v = 5;
       vpImage<double> I_score, I_score_gold;
 
@@ -332,7 +353,7 @@ int main(int argc, const char **argv)
 
       for (unsigned int i = 0; i < I_score.getHeight(); i++) {
         for (unsigned int j = 0; j < I_score.getWidth(); j++) {
-          if ( !vpMath::equal(I_score[i][j], I_score_gold[i][j], 1e-9) ) {
+          if (!vpMath::equal(I_score[i][j], I_score_gold[i][j], 1e-9)) {
             std::cerr << "Issue with template matching, gold: " << std::setprecision(17) << I_score_gold[i][j]
                       << " ; compute: " << I_score[i][j] << std::endl;
             return EXIT_FAILURE;

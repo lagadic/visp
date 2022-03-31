@@ -109,8 +109,7 @@ public:
 
 template <class vpTransformation>
 bool vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x, unsigned int s, double t, vpColVector &M,
-                                        vpColVector &inliers, int consensus, double not_used,
-                                        int maxNbumbersOfTrials)
+                                        vpColVector &inliers, int consensus, double not_used, int maxNbumbersOfTrials)
 {
   /*   bool isplanar; */
   /*   if (s == 4) isplanar = true; */

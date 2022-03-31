@@ -48,13 +48,13 @@
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpCircle.h>
-#include <visp3/core/vpSphere.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpSphere.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
-#  include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
 #endif
 
 /*!
@@ -78,9 +78,8 @@ public:
                              double &n20_p, double &n11_p, double &n02_p);
   static void convertEllipse(const vpCameraParameters &cam, const vpCircle &circle, vpImagePoint &center_p,
                              double &n20_p, double &n11_p, double &n02_p);
-  static void convertEllipse(const vpCameraParameters &cam,
-                             double xc_m, double yc_m, double n20_m, double n11_m, double n02_m,
-                             vpImagePoint &center_p, double &n20_p, double &n11_p, double &n02_p);
+  static void convertEllipse(const vpCameraParameters &cam, double xc_m, double yc_m, double n20_m, double n11_m,
+                             double n02_m, vpImagePoint &center_p, double &n20_p, double &n11_p, double &n02_p);
   static void convertLine(const vpCameraParameters &cam, const double &rho_m, const double &theta_m, double &rho_p,
                           double &theta_p);
 
@@ -109,8 +108,7 @@ public:
     In the case of a projection with Kannala-Brandt distortion, refer to
     \cite KannalaBrandt.
   */
-  inline static void convertPoint(const vpCameraParameters &cam,
-                                  const double &x, const double &y, double &u, double &v)
+  inline static void convertPoint(const vpCameraParameters &cam, const double &x, const double &y, double &u, double &v)
   {
     switch (cam.projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
@@ -271,18 +269,18 @@ public:
     \f$ v = y_d*p_y+v_0 \f$
     with \f$ r^2 = x^2+y^2 \f$
   */
-  inline static void convertPointWithKannalaBrandtDistortion(const vpCameraParameters &cam, const double &x, const double &y,
-                                                             double &u, double &v)
+  inline static void convertPointWithKannalaBrandtDistortion(const vpCameraParameters &cam, const double &x,
+                                                             const double &y, double &u, double &v)
   {
     double r = sqrt(vpMath::sqr(x) + vpMath::sqr(y));
     double theta = atan(r);
 
     std::vector<double> k = cam.getKannalaBrandtDistortionCoefficients();
 
-    double theta2 = theta*theta, theta3 = theta2*theta, theta4 = theta2*theta2, theta5 = theta4*theta,
-          theta6 = theta3*theta3, theta7 = theta6*theta, theta8 = theta4*theta4, theta9 = theta8*theta;
+    double theta2 = theta * theta, theta3 = theta2 * theta, theta4 = theta2 * theta2, theta5 = theta4 * theta,
+           theta6 = theta3 * theta3, theta7 = theta6 * theta, theta8 = theta4 * theta4, theta9 = theta8 * theta;
 
-    double r_d = theta + k[0]*theta3 + k[1]*theta5 + k[2]*theta7 + k[3]*theta9;
+    double r_d = theta + k[0] * theta3 + k[1] * theta5 + k[2] * theta7 + k[3] * theta9;
 
     double scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : r_d / r;
 
@@ -314,18 +312,18 @@ public:
     \f$ v = y_d*p_y+v_0 \f$
     with \f$ r^2 = x^2+y^2 \f$
   */
-  inline static void convertPointWithKannalaBrandtDistortion(const vpCameraParameters &cam, const double &x, const double &y,
-                                                             vpImagePoint &iP)
+  inline static void convertPointWithKannalaBrandtDistortion(const vpCameraParameters &cam, const double &x,
+                                                             const double &y, vpImagePoint &iP)
   {
     double r = sqrt(vpMath::sqr(x) + vpMath::sqr(y));
     double theta = atan(r);
 
     std::vector<double> k = cam.getKannalaBrandtDistortionCoefficients();
 
-    double theta2 = theta*theta, theta3 = theta2*theta, theta4 = theta2*theta2, theta5 = theta4*theta,
-          theta6 = theta3*theta3, theta7 = theta6*theta, theta8 = theta4*theta4, theta9 = theta8*theta;
+    double theta2 = theta * theta, theta3 = theta2 * theta, theta4 = theta2 * theta2, theta5 = theta4 * theta,
+           theta6 = theta3 * theta3, theta7 = theta6 * theta, theta8 = theta4 * theta4, theta9 = theta8 * theta;
 
-    double r_d = theta + k[0]*theta3 + k[1]*theta5 + k[2]*theta7 + k[3]*theta9;
+    double r_d = theta + k[0] * theta3 + k[1] * theta5 + k[2] * theta7 + k[3] * theta9;
 
     double scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : r_d / r;
 
@@ -342,22 +340,18 @@ public:
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
   /** @name Using OpenCV camera parameters  */
   //@{
-  static void convertEllipse(const cv::Mat &cameraMatrix,
-                             const vpCircle &circle, vpImagePoint &center,
-                             double &n20_p, double &n11_p, double &n02_p);
-  static void convertEllipse(const cv::Mat &cameraMatrix,
-                             const vpSphere &sphere, vpImagePoint &center,
-                             double &n20_p, double &n11_p, double &n02_p);
-  static void convertEllipse(const cv::Mat &cameraMatrix,
-                             double xc_m, double yc_m, double n20_m, double n11_m, double n02_m,
-                             vpImagePoint &center_p, double &n20_p, double &n11_p, double &n02_p);
-  static void convertLine(const cv::Mat &cameraMatrix,
-                          const double &rho_m, const double &theta_m,
-                          double &rho_p, double &theta_p);
-  static void convertPoint(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs,
-                           const double &x, const double &y, double &u, double &v);
-  static void convertPoint(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs,
-                           const double &x, const double &y, vpImagePoint &iP);
+  static void convertEllipse(const cv::Mat &cameraMatrix, const vpCircle &circle, vpImagePoint &center, double &n20_p,
+                             double &n11_p, double &n02_p);
+  static void convertEllipse(const cv::Mat &cameraMatrix, const vpSphere &sphere, vpImagePoint &center, double &n20_p,
+                             double &n11_p, double &n02_p);
+  static void convertEllipse(const cv::Mat &cameraMatrix, double xc_m, double yc_m, double n20_m, double n11_m,
+                             double n02_m, vpImagePoint &center_p, double &n20_p, double &n11_p, double &n02_p);
+  static void convertLine(const cv::Mat &cameraMatrix, const double &rho_m, const double &theta_m, double &rho_p,
+                          double &theta_p);
+  static void convertPoint(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs, const double &x, const double &y,
+                           double &u, double &v);
+  static void convertPoint(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs, const double &x, const double &y,
+                           vpImagePoint &iP);
   //@}
 #endif
 };

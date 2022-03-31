@@ -92,7 +92,8 @@ the image and the overlayed features in an image on the disk.\n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>]\n\
      [-c] [-d] [-h]\n						      \
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -120,7 +121,8 @@ OPTIONS:                                               Default\n\
      using the task manager under Windows.\n\
 \n\
   -h\n\
-     Print the help.\n\n", ipath.c_str(), opath.c_str(), user.c_str());
+     Print the help.\n\n",
+          ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
@@ -329,8 +331,8 @@ int main(int argc, const char **argv)
 
       // Display a transparent circle onto the image
       vpColor transparent_red(vpColor::red, 127);
-      vpDisplay::displayCircle(I, vpImagePoint(I.getHeight() / 3, I.getWidth() / 2), I.getHeight() / 4,
-                               transparent_red, true);
+      vpDisplay::displayCircle(I, vpImagePoint(I.getHeight() / 3, I.getWidth() / 2), I.getHeight() / 4, transparent_red,
+                               true);
 
       // Display a second transparent circle
       vpColor very_transparent_blue(0, 0, 255, 63);

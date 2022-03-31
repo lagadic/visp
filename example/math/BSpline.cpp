@@ -91,7 +91,8 @@ void usage(const char *name, const char *badparam)
 Describe a curve thanks to a BSpline.\n\
 \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+  %s [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -173,7 +174,7 @@ int main(int argc, const char **argv)
     // read on the disk
     vpImage<unsigned char> I(540, 480);
 
-// We open a window using either X11, GTK or GDI.
+    // We open a window using either X11, GTK or GDI.
 
 #ifdef VISP_HAVE_MODULE_GUI
 #if defined VISP_HAVE_X11
@@ -303,7 +304,9 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  std::cout << "You do not have X11, GTK, or OpenCV, or GDI (Graphical Device Interface) functionalities to display images..." << std::endl;
+  std::cout
+      << "You do not have X11, GTK, or OpenCV, or GDI (Graphical Device Interface) functionalities to display images..."
+      << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

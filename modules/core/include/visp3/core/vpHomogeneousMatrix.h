@@ -172,7 +172,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpHomogeneousMatrix(){}
+  virtual ~vpHomogeneousMatrix() {}
 
   void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
   void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
@@ -199,7 +199,7 @@ public:
   void inverse(vpHomogeneousMatrix &Mi) const;
 
   // Test if the rotational part of the matrix is a rotation matrix.
-  bool isAnHomogeneousMatrix(double threshold=1e-6) const;
+  bool isAnHomogeneousMatrix(double threshold = 1e-6) const;
 
   void insert(const vpRotationMatrix &R);
   void insert(const vpThetaUVector &tu);
@@ -226,8 +226,8 @@ public:
   // Multiply by a point
   vpPoint operator*(const vpPoint &bP) const;
 
-  vpHomogeneousMatrix& operator<<(double val);
-  vpHomogeneousMatrix& operator,(double val);
+  vpHomogeneousMatrix &operator<<(double val);
+  vpHomogeneousMatrix &operator,(double val);
 
   void orthogonalizeRotation();
 
@@ -257,7 +257,7 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init(){}
+  vp_deprecated void init() {}
   /*!
      \deprecated You should rather use eye().
    */

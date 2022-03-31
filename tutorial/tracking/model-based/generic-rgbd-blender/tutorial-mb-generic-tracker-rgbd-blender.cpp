@@ -3,14 +3,15 @@
 
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020403)
-namespace {
+namespace
+{
 bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I,
                vpImage<uint16_t> &I_depth_raw, unsigned int &depth_width, unsigned int &depth_height,
                std::vector<vpColVector> &pointcloud, const vpCameraParameters &cam,
@@ -44,7 +45,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
   depth_width = static_cast<unsigned int>(depth_raw.cols);
   depth_height = static_cast<unsigned int>(depth_raw.rows);
   I_depth_raw.resize(depth_height, depth_width);
-  pointcloud.resize(depth_width*depth_height);
+  pointcloud.resize(depth_width * depth_height);
 
   for (int i = 0; i < depth_raw.rows; i++) {
     for (int j = 0; j < depth_raw.cols; j++) {
@@ -53,10 +54,10 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
       // Manually limit the field of view of the depth camera
       double Z = depth_raw.at<cv::Vec3f>(i, j)[0] > 2.0f ? 0.0 : static_cast<double>(depth_raw.at<cv::Vec3f>(i, j)[0]);
       vpPixelMeterConversion::convertPoint(cam, j, i, x, y);
-      size_t idx = static_cast<size_t>(i*depth_raw.cols + j);
+      size_t idx = static_cast<size_t>(i * depth_raw.cols + j);
       pointcloud[idx].resize(3);
-      pointcloud[idx][0] = x*Z;
-      pointcloud[idx][1] = y*Z;
+      pointcloud[idx][0] = x * Z;
+      pointcloud[idx][1] = y * Z;
       pointcloud[idx][2] = Z;
     }
   }
@@ -78,7 +79,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
 
   return true;
 }
-}
+} // namespace
 
 int main(int argc, char *argv[])
 {
@@ -113,16 +114,20 @@ int main(int argc, char *argv[])
       display_ground_truth = true;
     } else if (std::string(argv[i]) == "--click") {
       click = true;
-    } else if (std::string(argv[i]) == "--first_frame_index" && i+1 < argc) {
-      first_frame_index = static_cast<unsigned int>(atoi(argv[i+1]));
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "Usage: \n" << argv[0] << " [--input_directory <data directory> (default: .)]"
-                   " [--config_color <object.xml> (default: teabox.xml)] [--config_depth <object.xml> (default: teabox_depth.xml)]"
-                   " [--model_color <object.cao> (default: teabox.cao)] [--model_depth <object.cao> (default: teabox.cao)]"
-                   " [--init_file <object.init> (default: teabox.init)]"
-                   " [--extrinsics <depth to color transformation> (default: depth_M_color.txt)] [--disable_depth]"
-                   " [--display_ground_truth] [--click] [--first_frame_index <index> (default: 1)]" << std::endl;
+    } else if (std::string(argv[i]) == "--first_frame_index" && i + 1 < argc) {
+      first_frame_index = static_cast<unsigned int>(atoi(argv[i + 1]));
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout
+          << "Usage: \n"
+          << argv[0]
+          << " [--input_directory <data directory> (default: .)]"
+             " [--config_color <object.xml> (default: teabox.xml)] [--config_depth <object.xml> (default: "
+             "teabox_depth.xml)]"
+             " [--model_color <object.cao> (default: teabox.cao)] [--model_depth <object.cao> (default: teabox.cao)]"
+             " [--init_file <object.init> (default: teabox.init)]"
+             " [--extrinsics <depth to color transformation> (default: depth_M_color.txt)] [--disable_depth]"
+             " [--display_ground_truth] [--click] [--first_frame_index <index> (default: 1)]"
+          << std::endl;
       return EXIT_SUCCESS;
     }
   }
@@ -166,7 +171,8 @@ int main(int argc, char *argv[])
   vpHomogeneousMatrix cMo_ground_truth;
 
   unsigned int frame_cpt = first_frame_index;
-  read_data(frame_cpt, input_directory, I, I_depth_raw, depth_width, depth_height, pointcloud, cam_depth, cMo_ground_truth);
+  read_data(frame_cpt, input_directory, I, I_depth_raw, depth_width, depth_height, pointcloud, cam_depth,
+            cMo_ground_truth);
   vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
 #if defined(VISP_HAVE_X11)
@@ -191,19 +197,20 @@ int main(int argc, char *argv[])
   }
 
   if (display_ground_truth) {
-    tracker.initFromPose(I, cMo_ground_truth); //I and I_depth must be the same size when using depth features!
+    tracker.initFromPose(I, cMo_ground_truth); // I and I_depth must be the same size when using depth features!
   } else
-    tracker.initClick(I, init_file, true); //I and I_depth must be the same size when using depth features!
+    tracker.initClick(I, init_file, true); // I and I_depth must be the same size when using depth features!
 
   try {
     bool quit = false;
-    while (!quit && read_data(frame_cpt, input_directory, I, I_depth_raw, depth_width, depth_height, pointcloud, cam_depth, cMo_ground_truth)) {
+    while (!quit && read_data(frame_cpt, input_directory, I, I_depth_raw, depth_width, depth_height, pointcloud,
+                              cam_depth, cMo_ground_truth)) {
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
       vpDisplay::display(I);
       vpDisplay::display(I_depth);
 
       if (display_ground_truth) {
-        tracker.initFromPose(I, cMo_ground_truth); //I and I_depth must be the same size when using depth features!
+        tracker.initFromPose(I, cMo_ground_truth); // I and I_depth must be the same size when using depth features!
       } else {
         if (!disable_depth) {
           std::map<std::string, const vpImage<unsigned char> *> mapOfImages;
@@ -227,10 +234,9 @@ int main(int argc, char *argv[])
         std::cout << "cMo:\n" << cMo << std::endl;
       std::cout << "cMo ground truth:\n" << cMo_ground_truth << std::endl;
       if (!disable_depth) {
-        tracker.display(I, I_depth, cMo, depthMcolor*cMo, cam_color, cam_depth, vpColor::red, 2);
-        vpDisplay::displayFrame(I_depth, depthMcolor*cMo, cam_depth, 0.05, vpColor::none, 2);
-      }
-      else {
+        tracker.display(I, I_depth, cMo, depthMcolor * cMo, cam_color, cam_depth, vpColor::red, 2);
+        vpDisplay::displayFrame(I_depth, depthMcolor * cMo, cam_depth, 0.05, vpColor::none, 2);
+      } else {
         tracker.display(I, cMo, cam_color, vpColor::red, 2);
       }
 
@@ -247,8 +253,7 @@ int main(int argc, char *argv[])
         }
         {
           std::stringstream ss;
-          ss << "Features: edges " << tracker.getNbFeaturesEdge()
-             << ", klt " << tracker.getNbFeaturesKlt()
+          ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt()
              << ", depth " << tracker.getNbFeaturesDepthDense();
           vpDisplay::displayText(I, I.getHeight() - 30, 20, ss.str(), vpColor::red);
         }
@@ -278,7 +283,7 @@ int main(int argc, char *argv[])
     vpDisplay::displayText(I, 40, 20, "Click to quit.", vpColor::red);
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
-  } catch (std::exception& e) {
+  } catch (std::exception &e) {
     std::cerr << "Catch exception: " << e.what() << std::endl;
   }
 

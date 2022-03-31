@@ -32,35 +32,35 @@
  * Pseudo random number generator.
  *
  *****************************************************************************/
- /*
-  * PCG Random Number Generation for C.
-  *
-  * Copyright 2014 Melissa O'Neill <oneill@pcg-random.org>
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  * For additional information about the PCG random number generation scheme,
-  * including its license and other licensing options, visit
-  *
-  *     http://www.pcg-random.org
-  */
+/*
+ * PCG Random Number Generation for C.
+ *
+ * Copyright 2014 Melissa O'Neill <oneill@pcg-random.org>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * For additional information about the PCG random number generation scheme,
+ * including its license and other licensing options, visit
+ *
+ *     http://www.pcg-random.org
+ */
 
-  /*
-   * This code is derived from the full C implementation, which is in turn
-   * derived from the canonical C++ PCG implementation. The C++ version
-   * has many additional features and is preferable if you can use C++ in
-   * your project.
-   */
+/*
+ * This code is derived from the full C implementation, which is in turn
+ * derived from the canonical C++ PCG implementation. The C++ version
+ * has many additional features and is preferable if you can use C++ in
+ * your project.
+ */
 
 #ifndef _vpUniRand_h_
 #define _vpUniRand_h_
@@ -71,7 +71,7 @@
 typedef unsigned __int64 uint64_t;
 typedef unsigned __int32 uint32_t;
 #else
-#  include <inttypes.h>
+#include <inttypes.h>
 #endif
 
 /*!
@@ -100,13 +100,13 @@ int main()
 class VISP_EXPORT vpUniRand
 {
 private:
-  struct pcg_state_setseq_64 {  // Internals are *Private*.
-    uint64_t state;             // RNG state.  All values are possible.
-    uint64_t inc;               // Controls which RNG sequence (stream) is
-                                // selected. Must *always* be odd.
+  struct pcg_state_setseq_64 { // Internals are *Private*.
+    uint64_t state;            // RNG state.  All values are possible.
+    uint64_t inc;              // Controls which RNG sequence (stream) is
+                               // selected. Must *always* be odd.
 
-    pcg_state_setseq_64(uint64_t state_ = 0x853c49e6748fea9bULL, uint64_t inc_ = 0xda3e39cb94b95bdbULL) :
-      state(state_), inc(inc_)
+    pcg_state_setseq_64(uint64_t state_ = 0x853c49e6748fea9bULL, uint64_t inc_ = 0xda3e39cb94b95bdbULL)
+      : state(state_), inc(inc_)
     {
     }
   };
@@ -114,7 +114,7 @@ private:
 
 public:
   vpUniRand();
-  vpUniRand(uint64_t seed, uint64_t seq=0x123465789ULL);
+  vpUniRand(uint64_t seed, uint64_t seq = 0x123465789ULL);
 
   double operator()();
 

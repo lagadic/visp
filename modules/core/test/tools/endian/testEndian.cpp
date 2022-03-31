@@ -41,7 +41,8 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
-TEST_CASE("Test reinterpret_cast_uchar_to_uint16_LE", "[vpEndian_test]") {
+TEST_CASE("Test reinterpret_cast_uchar_to_uint16_LE", "[vpEndian_test]")
+{
   unsigned char bitmap[] = {100, 110, 120, 130};
   uint16_t val01 = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap);
   uint16_t val12 = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + 2);
@@ -52,12 +53,13 @@ TEST_CASE("Test reinterpret_cast_uchar_to_uint16_LE", "[vpEndian_test]") {
 
   CHECK((val12 & 0x00FF) == bitmap[2]);
   CHECK(((val12 & 0xFF00) >> 8) == bitmap[3]);
-  CHECK((val12 >> 8)== bitmap[3]);
+  CHECK((val12 >> 8) == bitmap[3]);
 }
 
-TEST_CASE("Test bitwise shift operators and zero fill", "[vpEndian_test]") {
-  //https://docs.microsoft.com/en-us/cpp/cpp/left-shift-and-right-shift-operators-input-and-output?view=vs-2019
-  //https://devblogs.microsoft.com/cppblog/hello-arm-exploring-undefined-unspecified-and-implementation-defined-behavior-in-c/
+TEST_CASE("Test bitwise shift operators and zero fill", "[vpEndian_test]")
+{
+  // https://docs.microsoft.com/en-us/cpp/cpp/left-shift-and-right-shift-operators-input-and-output?view=vs-2019
+  // https://devblogs.microsoft.com/cppblog/hello-arm-exploring-undefined-unspecified-and-implementation-defined-behavior-in-c/
   for (uint16_t i = 0; i < 60000; i += 500) {
     REQUIRE(((i >> 8) & 0x00FF) == (i >> 8));
   }
@@ -88,8 +90,5 @@ int main(int argc, char *argv[])
   return numFailed;
 }
 #else
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

@@ -80,8 +80,7 @@ public:
 
   // void buildFrom(const vpEllipse &p) ;
   void buildFrom(double x, double y, double n20, double n11, double n02);
-  void buildFrom(double x, double y, double n20, double n11, double n02,
-                 double A, double B, double C);
+  void buildFrom(double x, double y, double n20, double n11, double n02, double A, double B, double C);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
                unsigned int thickness = 1) const;
@@ -178,7 +177,6 @@ public:
 
   //@}
 #endif
-
 };
 
 #endif

@@ -354,11 +354,11 @@ void vpServolens::setPosition(vpServoType servo, unsigned int position) const
   }
   std::stringstream command;
 
-/* attente du prompt pour envoyer une commande */
-/*
-printf("attente prompt\n");
-this->wait();
-*/
+  /* attente du prompt pour envoyer une commande */
+  /*
+  printf("attente prompt\n");
+  this->wait();
+  */
 
 #ifdef FINSERVO
   /* envoie des commandes pour qu'en fin de mouvement servolens renvoie */

@@ -110,8 +110,8 @@ public:
   inline bool isAppearing() const { return isappearing; }
   inline bool isPolygonOriented() { return hasOrientation; }
   virtual bool isVisible(const vpHomogeneousMatrix &cMo, double alpha, const bool &modulo = false,
-                         const vpCameraParameters &cam = vpCameraParameters(),
-                         unsigned int width=0, unsigned int height=0);
+                         const vpCameraParameters &cam = vpCameraParameters(), unsigned int width = 0,
+                         unsigned int height = 0);
   bool isVisible() const { return isvisible; }
 
   vpMbtPolygon &operator=(const vpMbtPolygon &mbtp);

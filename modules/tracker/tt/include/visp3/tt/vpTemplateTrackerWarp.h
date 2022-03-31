@@ -119,8 +119,8 @@ public:
    * \frac{\partial M}{\partial p}(X, p_0)
    * \f]
    *
- * \param v : Coordinate (along the image rows axis) of the point X(u,v) to consider in the image.
- * \param u : Coordinate (along the image columns axis) of the point X(u,v) to consider in the image.
+   * \param v : Coordinate (along the image rows axis) of the point X(u,v) to consider in the image.
+   * \param u : Coordinate (along the image columns axis) of the point X(u,v) to consider in the image.
    * \param dIdW : Resulting 2-by-3 derivative matrix.
    */
   virtual void getdWdp0(const int &v, const int &u, double *dIdW) = 0;
@@ -195,7 +195,6 @@ public:
    */
   virtual void warpXInv(const vpColVector &X1, vpColVector &X2, const vpColVector &p) = 0;
 
-
   /** @name Inherited functionalities from vpTemplateTrackerWarp */
   //@{
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -221,10 +220,7 @@ public:
 
     \param nb : New number of parameters.
   */
-  void setNbParam(unsigned int nb)
-  {
-    nbParam = nb;
-  }
+  void setNbParam(unsigned int nb) { nbParam = nb; }
 
   /*!
     Warp a list of points.

@@ -44,27 +44,31 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
-TEST_CASE("vpHomogeneousMatrix re-orthogonalize rotation matrix", "[vpHomogeneousMatrix]") {
-  CHECK_NOTHROW([](){
-    vpHomogeneousMatrix M {
-      0.9835, -0.0581,  0.1716, 0.0072,
-      -0.0489, -0.9972, -0.0571, 0.0352,
-      0.1744,  0.0478, -0.9835, 0.9470
-    };
+TEST_CASE("vpHomogeneousMatrix re-orthogonalize rotation matrix", "[vpHomogeneousMatrix]")
+{
+  CHECK_NOTHROW([]() {
+    vpHomogeneousMatrix M{0.9835,  -0.0581, 0.1716, 0.0072, -0.0489, -0.9972,
+                          -0.0571, 0.0352,  0.1744, 0.0478, -0.9835, 0.9470};
   }());
 
   SECTION("check re-orthogonalize rotation part")
   {
-    vpHomogeneousMatrix M1 {
-      0.9835, -0.0581,  0.1716, 0.0072,
-      -0.0489, -0.9972, -0.0571, 0.0352,
-      0.1744,  0.0478, -0.9835, 0.9470
-    };
+    vpHomogeneousMatrix M1{0.9835,  -0.0581, 0.1716, 0.0072, -0.0489, -0.9972,
+                           -0.0571, 0.0352,  0.1744, 0.0478, -0.9835, 0.9470};
 
     vpHomogeneousMatrix M2;
-    M2[0][0] = 0.9835;   M2[0][1] = -0.0581;  M2[0][2] = 0.1716;   M2[0][3] = 0.0072;
-    M2[1][0] = -0.0489;  M2[1][1] = -0.9972;  M2[1][2] = -0.0571;  M2[1][3] = 0.0352;
-    M2[2][0] = 0.1744;   M2[2][1] = 0.0478;   M2[2][2] = -0.9835;  M2[2][3] = 0.9470;
+    M2[0][0] = 0.9835;
+    M2[0][1] = -0.0581;
+    M2[0][2] = 0.1716;
+    M2[0][3] = 0.0072;
+    M2[1][0] = -0.0489;
+    M2[1][1] = -0.9972;
+    M2[1][2] = -0.0571;
+    M2[1][3] = 0.0352;
+    M2[2][0] = 0.1744;
+    M2[2][1] = 0.0478;
+    M2[2][2] = -0.9835;
+    M2[2][3] = 0.9470;
     M2.orthogonalizeRotation();
 
     for (unsigned int i = 0; i < 4; i++) {
@@ -74,12 +78,9 @@ TEST_CASE("vpHomogeneousMatrix re-orthogonalize rotation matrix", "[vpHomogeneou
     }
   }
 
-  CHECK_NOTHROW([](){
-    vpHomogeneousMatrix M {
-      0.9835, -0.0581,  0.1716, 0.0072,
-      -0.0937, -0.9738,  0.2072, 0.0481,
-      0.1551, -0.2199, -0.9631, 0.9583
-    };
+  CHECK_NOTHROW([]() {
+    vpHomogeneousMatrix M{0.9835, -0.0581, 0.1716, 0.0072,  -0.0937, -0.9738,
+                          0.2072, 0.0481,  0.1551, -0.2199, -0.9631, 0.9583};
 
     std::cout << "Original data:" << std::endl;
     std::cout << "0.9835 -0.0581  0.1716 0.0072" << std::endl;
@@ -89,45 +90,26 @@ TEST_CASE("vpHomogeneousMatrix re-orthogonalize rotation matrix", "[vpHomogeneou
     std::cout << "M after rotation re-orthogonalization:\n" << M << std::endl;
   }());
 
-  CHECK_NOTHROW([](){
-    vpHomogeneousMatrix M1 {
-      0.9835, -0.0581,  0.1716, 0.0072,
-      -0.0937, -0.9738,  0.2072, 0.0481,
-      0.1551, -0.2199, -0.9631, 0.9583
-    };
+  CHECK_NOTHROW([]() {
+    vpHomogeneousMatrix M1{0.9835, -0.0581, 0.1716, 0.0072,  -0.0937, -0.9738,
+                           0.2072, 0.0481,  0.1551, -0.2199, -0.9631, 0.9583};
 
     // following R init should not throw an exception
-    vpRotationMatrix R {
-      M1[0][0], M1[0][1], M1[0][2],
-      M1[1][0], M1[1][1], M1[1][2],
-      M1[2][0], M1[2][1], M1[2][2]
-    };
+    vpRotationMatrix R{M1[0][0], M1[0][1], M1[0][2], M1[1][0], M1[1][1], M1[1][2], M1[2][0], M1[2][1], M1[2][2]};
   }());
 
-  CHECK_THROWS([](){
-    vpHomogeneousMatrix M {
-      0.983, -0.058,  0.171, 0.0072,
-      -0.093, -0.973,  0.207, 0.0481,
-      0.155, -0.219, -0.963, 0.9583
-    };
+  CHECK_THROWS([]() {
+    vpHomogeneousMatrix M{0.983, -0.058, 0.171, 0.0072, -0.093, -0.973, 0.207, 0.0481, 0.155, -0.219, -0.963, 0.9583};
   }());
 }
 
-TEST_CASE("vpRotationMatrix re-orthogonalize rotation matrix", "[vpRotationMatrix]") {
-  CHECK_NOTHROW([](){
-    vpRotationMatrix R {
-      0.9835, -0.0581,  0.1716,
-      -0.0489, -0.9972, -0.0571,
-      0.1744,  0.0478, -0.9835
-    };
-  }());
+TEST_CASE("vpRotationMatrix re-orthogonalize rotation matrix", "[vpRotationMatrix]")
+{
+  CHECK_NOTHROW(
+      []() { vpRotationMatrix R{0.9835, -0.0581, 0.1716, -0.0489, -0.9972, -0.0571, 0.1744, 0.0478, -0.9835}; }());
 
-  CHECK_NOTHROW([](){
-    vpRotationMatrix R {
-      0.9835, -0.0581,  0.1716,
-      -0.0937, -0.9738,  0.2072,
-      0.1551, -0.2199, -0.9631
-    };
+  CHECK_NOTHROW([]() {
+    vpRotationMatrix R{0.9835, -0.0581, 0.1716, -0.0937, -0.9738, 0.2072, 0.1551, -0.2199, -0.9631};
 
     std::cout << "Original data:" << std::endl;
     std::cout << "0.9835 -0.0581  0.1716" << std::endl;
@@ -136,11 +118,9 @@ TEST_CASE("vpRotationMatrix re-orthogonalize rotation matrix", "[vpRotationMatri
     std::cout << "R after rotation re-orthogonalization:\n" << R << std::endl;
   }());
 
-  CHECK_NOTHROW([](){
-    vpRotationMatrix R {
-      0.46682, -0.74434,  0.47754,
-      -0.83228, -0.55233, -0.04733,
-      0.29899, -0.37535, -0.87734,
+  CHECK_NOTHROW([]() {
+    vpRotationMatrix R{
+        0.46682, -0.74434, 0.47754, -0.83228, -0.55233, -0.04733, 0.29899, -0.37535, -0.87734,
     };
 
     std::cout << "Original data:" << std::endl;
@@ -150,12 +130,10 @@ TEST_CASE("vpRotationMatrix re-orthogonalize rotation matrix", "[vpRotationMatri
     std::cout << "R after rotation re-orthogonalization:\n" << R << std::endl;
   }());
 
-  CHECK_NOTHROW([](){
+  CHECK_NOTHROW([]() {
     vpRotationMatrix R;
     R = {
-      0.46682, -0.74434,  0.47754,
-      -0.83228, -0.55233, -0.04733,
-      0.29899, -0.37535, -0.87734,
+        0.46682, -0.74434, 0.47754, -0.83228, -0.55233, -0.04733, 0.29899, -0.37535, -0.87734,
     };
 
     std::cout << "Original data:" << std::endl;
@@ -165,13 +143,7 @@ TEST_CASE("vpRotationMatrix re-orthogonalize rotation matrix", "[vpRotationMatri
     std::cout << "R after rotation re-orthogonalization:\n" << R << std::endl;
   }());
 
-  CHECK_THROWS([](){
-    vpRotationMatrix R {
-      0.983, -0.058,  0.171,
-      -0.093, -0.973,  0.207,
-      0.155, -0.219, -0.963
-    };
-  }());
+  CHECK_THROWS([]() { vpRotationMatrix R{0.983, -0.058, 0.171, -0.093, -0.973, 0.207, 0.155, -0.219, -0.963}; }());
 }
 
 int main(int argc, char *argv[])
@@ -191,8 +163,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

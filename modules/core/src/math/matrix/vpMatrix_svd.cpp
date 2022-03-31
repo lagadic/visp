@@ -57,24 +57,24 @@
 #endif
 
 #ifdef VISP_HAVE_LAPACK
-#  ifdef VISP_HAVE_GSL
-#    include <gsl/gsl_linalg.h>
-#  endif
-#  ifdef VISP_HAVE_MKL
+#ifdef VISP_HAVE_GSL
+#include <gsl/gsl_linalg.h>
+#endif
+#ifdef VISP_HAVE_MKL
 #include <mkl.h>
 typedef MKL_INT integer;
-#  else
-#    if defined(VISP_HAVE_LAPACK_BUILT_IN)
+#else
+#if defined(VISP_HAVE_LAPACK_BUILT_IN)
 typedef long int integer;
-#    else
+#else
 typedef int integer;
-#    endif
+#endif
 extern "C" int dgesdd_(char *jobz, integer *m, integer *n, double *a, integer *lda, double *s, double *u, integer *ldu,
                        double *vt, integer *ldvt, double *work, integer *lwork, integer *iwork, integer *info);
 
 #include <stdio.h>
 #include <string.h>
-#  endif
+#endif
 #endif
 /*---------------------------------------------------------------------
 
@@ -246,12 +246,11 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
     unsigned int nc = getCols();
     unsigned int nr = getRows();
 
-    if(rowNum < colNum) {
+    if (rowNum < colNum) {
       U = this->transpose();
       nc = getRows();
       nr = getCols();
-    }
-    else {
+    } else {
       nc = getCols();
       nr = getRows();
     }
@@ -265,10 +264,9 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
     A.size1 = nr;
     A.size2 = nc;
     A.tda = A.size2;
-    if(rowNum < colNum) {
+    if (rowNum < colNum) {
       A.data = U.data;
-    }
-    else {
+    } else {
       A.data = this->data;
     }
     A.owner = 0;
@@ -291,7 +289,7 @@ void vpMatrix::svdLapack(vpColVector &w, vpMatrix &V)
 
     gsl_linalg_SV_decomp(&A, &V_, &S, work);
 
-    if(rowNum < colNum) {
+    if (rowNum < colNum) {
       (*this) = V.transpose();
       V = U;
     }

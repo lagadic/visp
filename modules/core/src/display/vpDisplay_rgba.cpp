@@ -363,9 +363,9 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &cen
   \endcode
 */
 void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &coef1,
-                               const double &coef2, const double &coef3, const double &smallalpha, const double &highalpha,
-                               bool use_normalized_centered_moments, const vpColor &color, unsigned int thickness,
-                               bool display_center, bool display_arc)
+                               const double &coef2, const double &coef3, const double &smallalpha,
+                               const double &highalpha, bool use_normalized_centered_moments, const vpColor &color,
+                               unsigned int thickness, bool display_center, bool display_arc)
 {
   vp_display_display_ellipse(I, center, coef1, coef2, coef3, smallalpha, highalpha, use_normalized_centered_moments,
                              color, thickness, display_center, display_arc);
@@ -404,7 +404,8 @@ void vpDisplay::displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix
 void vpDisplay::displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                             const vpColor &color, unsigned int thickness, bool segment)
 {
-  displayLine(I, static_cast<int>(ip1.get_i()), static_cast<int>(ip1.get_j()), static_cast<int>(ip2.get_i()), static_cast<int>(ip2.get_j()), color, thickness, segment);
+  displayLine(I, static_cast<int>(ip1.get_i()), static_cast<int>(ip1.get_j()), static_cast<int>(ip2.get_i()),
+              static_cast<int>(ip2.get_j()), color, thickness, segment);
 }
 
 /*!
@@ -422,31 +423,29 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, in
 {
   if (segment) {
     vp_display_display_line(I, i1, j1, i2, j2, color, thickness);
-  }
-  else {
+  } else {
     // line equation in image: i = a * j + b
     double delta_j = static_cast<double>(j2) - static_cast<double>(j1);
     double delta_i = static_cast<double>(i2) - static_cast<double>(i1);
     // Test if horizontal line
     if (std::fabs(delta_i) <= std::numeric_limits<double>::epsilon()) {
-      vp_display_display_line(I, i1, 0, i1, (I.getWidth()-1), color, thickness);
+      vp_display_display_line(I, i1, 0, i1, (I.getWidth() - 1), color, thickness);
     }
     // Test if vertical line
     else if (std::fabs(delta_j) <= std::numeric_limits<double>::epsilon()) {
-      vp_display_display_line(I, 0, j1, (I.getHeight()-1), j1, color, thickness);
-    }
-    else {
+      vp_display_display_line(I, 0, j1, (I.getHeight() - 1), j1, color, thickness);
+    } else {
       double a = delta_i / delta_j;
       double b = static_cast<double>(i1) - a * static_cast<double>(j1);
       std::vector<vpImagePoint> vip; // Image points that intersect image borders
       // Test intersection with vertical line j=0
       vpImagePoint ip_left(b, 0);
-      if (ip_left.get_i() >= 0. && ip_left.get_i() <= (I.getHeight()-1.)) {
+      if (ip_left.get_i() >= 0. && ip_left.get_i() <= (I.getHeight() - 1.)) {
         vip.push_back(ip_left);
       }
       // Test intersection with vertical line j=width-1
-      vpImagePoint ip_right(a*(I.getWidth()-1)+b, I.getWidth()-1.);
-      if (ip_right.get_i() >= 0. && ip_right.get_i() <= (I.getHeight()-1.)) {
+      vpImagePoint ip_right(a * (I.getWidth() - 1) + b, I.getWidth() - 1.);
+      if (ip_right.get_i() >= 0. && ip_right.get_i() <= (I.getHeight() - 1.)) {
         vip.push_back(ip_right);
       }
       if (vip.size() == 2) {
@@ -454,8 +453,8 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, in
         return;
       }
       // Test intersection with horizontal line i=0
-      vpImagePoint ip_top(0, -b/a);
-      if (ip_top.get_j() >= 0. && ip_top.get_j() <= (I.getWidth()-1.)) {
+      vpImagePoint ip_top(0, -b / a);
+      if (ip_top.get_j() >= 0. && ip_top.get_j() <= (I.getWidth() - 1.)) {
         vip.push_back(ip_top);
       }
       if (vip.size() == 2) {
@@ -463,8 +462,8 @@ void vpDisplay::displayLine(const vpImage<vpRGBa> &I, int i1, int j1, int i2, in
         return;
       }
       // Test intersection with horizontal line i=height-1
-      vpImagePoint ip_bottom(I.getHeight()-1., (I.getHeight()-1. - b)/a);
-      if (ip_bottom.get_j() >= 0. && ip_bottom.get_j() <= (I.getWidth()-1.)) {
+      vpImagePoint ip_bottom(I.getHeight() - 1., (I.getHeight() - 1. - b) / a);
+      if (ip_bottom.get_j() >= 0. && ip_bottom.get_j() <= (I.getWidth() - 1.)) {
         vip.push_back(ip_bottom);
       }
       if (vip.size() == 2) {

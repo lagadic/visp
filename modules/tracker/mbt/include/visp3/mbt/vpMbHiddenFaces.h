@@ -88,7 +88,7 @@ private:
 
   unsigned int setVisiblePrivate(const vpHomogeneousMatrix &cMo, const double &angleAppears,
                                  const double &angleDisappears, bool &changed, bool useOgre = false,
-                                 bool not_used = false, unsigned int width=0, unsigned int height=0,
+                                 bool not_used = false, unsigned int width = 0, unsigned int height = 0,
                                  const vpCameraParameters &cam = vpCameraParameters());
 
 public:
@@ -541,7 +541,8 @@ unsigned int vpMbHiddenFaces<PolygonType>::setVisiblePrivate(const vpHomogeneous
 
   for (unsigned int i = 0; i < Lpol.size(); i++) {
     // std::cout << "Calling poly: " << i << std::endl;
-    if (computeVisibility(cMo, angleAppears, angleDisappears, changed, useOgre, not_used, width, height, cam, cameraPos, i))
+    if (computeVisibility(cMo, angleAppears, angleDisappears, changed, useOgre, not_used, width, height, cam, cameraPos,
+                          i))
       nbVisiblePolygon++;
   }
   return nbVisiblePolygon;
@@ -583,7 +584,8 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
   {
       Lpol[i]->isvisible = true;
   }
-  else*/ {
+  else*/
+  {
     if (Lpol[i]->isVisible()) {
       bool testDisappear = false;
       // unsigned int nbCornerInsidePrev = 0;
@@ -591,7 +593,8 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
       if (!testDisappear) {
         if (useOgre)
 #ifdef VISP_HAVE_OGRE
-          testDisappear = ((!Lpol[i]->isVisible(cMo, angleDisappears, true, cam, width, height)) || !isVisibleOgre(cameraPos, i));
+          testDisappear =
+              ((!Lpol[i]->isVisible(cMo, angleDisappears, true, cam, width, height)) || !isVisibleOgre(cameraPos, i));
 #else
         {
           (void)cameraPos; // Avoid warning
@@ -621,7 +624,8 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
       if (testAppear) {
         if (useOgre)
 #ifdef VISP_HAVE_OGRE
-          testAppear = ((Lpol[i]->isVisible(cMo, angleAppears, true, cam, width, height)) && isVisibleOgre(cameraPos, i));
+          testAppear =
+              ((Lpol[i]->isVisible(cMo, angleAppears, true, cam, width, height)) && isVisibleOgre(cameraPos, i));
 #else
           testAppear = (Lpol[i]->isVisible(cMo, angleAppears, false, cam, width, height));
 #endif
@@ -659,9 +663,9 @@ bool vpMbHiddenFaces<PolygonType>::computeVisibility(const vpHomogeneousMatrix &
   \return Return the number of visible polygons
 */
 template <class PolygonType>
-unsigned int vpMbHiddenFaces<PolygonType>::setVisible(unsigned int width, unsigned int height, const vpCameraParameters &cam,
-                                                      const vpHomogeneousMatrix &cMo, const double &angle,
-                                                      bool &changed)
+unsigned int vpMbHiddenFaces<PolygonType>::setVisible(unsigned int width, unsigned int height,
+                                                      const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo,
+                                                      const double &angle, bool &changed)
 {
   return setVisible(width, height, cam, cMo, angle, angle, changed);
 }
@@ -681,9 +685,10 @@ unsigned int vpMbHiddenFaces<PolygonType>::setVisible(unsigned int width, unsign
   \return Return the number of visible polygons
 */
 template <class PolygonType>
-unsigned int vpMbHiddenFaces<PolygonType>::setVisible(unsigned int width, unsigned int height, const vpCameraParameters &cam,
-                                                      const vpHomogeneousMatrix &cMo, const double &angleAppears,
-                                                      const double &angleDisappears, bool &changed)
+unsigned int vpMbHiddenFaces<PolygonType>::setVisible(unsigned int width, unsigned int height,
+                                                      const vpCameraParameters &cam, const vpHomogeneousMatrix &cMo,
+                                                      const double &angleAppears, const double &angleDisappears,
+                                                      bool &changed)
 {
   return setVisiblePrivate(cMo, angleAppears, angleDisappears, changed, false, true, width, height, cam);
 }
@@ -861,9 +866,8 @@ bool vpMbHiddenFaces<PolygonType>::isVisibleOgre(const vpTranslationVector &came
     //    it = result.begin();
 
     if (it != result.end())
-      if (it->movable->getName().find("SimpleRenderable") !=
-          Ogre::String::npos) // Test if the ogreBackground is intersect in
-                              // first
+      if (it->movable->getName().find("SimpleRenderable") != Ogre::String::npos) // Test if the ogreBackground is
+                                                                                 // intersect in first
         ++it;
 
     double distance;

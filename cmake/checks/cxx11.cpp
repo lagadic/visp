@@ -8,6 +8,6 @@ static int test() { return 0; }
 
 int main()
 {
-    auto res = test();
-    return res;
+  auto res = test();
+  return res;
 }

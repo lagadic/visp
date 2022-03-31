@@ -57,23 +57,16 @@ vpQuaternionVector::vpQuaternionVector() : vpRotationVector(4) {}
 vpQuaternionVector::vpQuaternionVector(const vpQuaternionVector &q) : vpRotationVector(q) {}
 
 //! Constructor from doubles.
-vpQuaternionVector::vpQuaternionVector(double x_, double y_, double z_, double w_)
-  : vpRotationVector(4)
+vpQuaternionVector::vpQuaternionVector(double x_, double y_, double z_, double w_) : vpRotationVector(4)
 {
   set(x_, y_, z_, w_);
 }
 
 //! Constructor from a 4-dimension vector of doubles.
-vpQuaternionVector::vpQuaternionVector(const vpColVector &q) : vpRotationVector(4)
-{
-  buildFrom(q);
-}
+vpQuaternionVector::vpQuaternionVector(const vpColVector &q) : vpRotationVector(4) { buildFrom(q); }
 
 //! Constructor from a 4-dimension vector of doubles.
-vpQuaternionVector::vpQuaternionVector(const std::vector<double> &q) : vpRotationVector(4)
-{
-  buildFrom(q);
-}
+vpQuaternionVector::vpQuaternionVector(const std::vector<double> &q) : vpRotationVector(4) { buildFrom(q); }
 
 /*!
   Constructs a quaternion from a rotation matrix.
@@ -342,7 +335,10 @@ q: 0  0  0  1
 vpQuaternionVector &vpQuaternionVector::operator=(const std::initializer_list<double> &list)
 {
   if (list.size() > size()) {
-    throw(vpException(vpException::dimensionError, "Cannot set quaternion vector out of bounds. It has only %d values while you try to initialize with %d values", size(), list.size()));
+    throw(vpException(
+        vpException::dimensionError,
+        "Cannot set quaternion vector out of bounds. It has only %d values while you try to initialize with %d values",
+        size(), list.size()));
   }
   std::copy(list.begin(), list.end(), data);
   return *this;

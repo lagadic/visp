@@ -58,10 +58,7 @@ vpRzyzVector::vpRzyzVector(const vpRzyzVector &rzyz) : vpRotationVector(rzyz) {}
   \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
   \param psi : \f$\psi\f$ angle around the \f$z\f$ axis.
 */
-vpRzyzVector::vpRzyzVector(double phi, double theta, double psi) : vpRotationVector(3)
-{
-  buildFrom(phi, theta, psi);
-}
+vpRzyzVector::vpRzyzVector(double phi, double theta, double psi) : vpRotationVector(3) { buildFrom(phi, theta, psi); }
 
 /*!
   Constructor that initialize \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler
@@ -79,16 +76,10 @@ vpRzyzVector::vpRzyzVector(const vpRotationMatrix &R) : vpRotationVector(3) { bu
 vpRzyzVector::vpRzyzVector(const vpThetaUVector &tu) : vpRotationVector(3) { buildFrom(tu); }
 
 /*! Copy constructor from a 3-dimension vector. */
-vpRzyzVector::vpRzyzVector(const vpColVector &rzyz) : vpRotationVector(3)
-{
-  buildFrom(rzyz);
-}
+vpRzyzVector::vpRzyzVector(const vpColVector &rzyz) : vpRotationVector(3) { buildFrom(rzyz); }
 
 /*! Copy constructor from a 3-dimension vector. */
-vpRzyzVector::vpRzyzVector(const std::vector<double> &rzyz) : vpRotationVector(3)
-{
-  buildFrom(rzyz);
-}
+vpRzyzVector::vpRzyzVector(const std::vector<double> &rzyz) : vpRotationVector(3) { buildFrom(rzyz); }
 
 /*!
   Convert a rotation matrix into a \f$R_{zyz}=(\varphi,\theta,\psi)\f$ Euler
@@ -142,7 +133,6 @@ vpRzyzVector vpRzyzVector::buildFrom(const vpColVector &rzyz)
   }
   for (unsigned int i = 0; i < 3; i++)
     data[i] = rzyz[i];
-
 
   return *this;
 }
@@ -258,7 +248,10 @@ rzyz: 3.141592654  0  1.570796327
 vpRzyzVector &vpRzyzVector::operator=(const std::initializer_list<double> &list)
 {
   if (list.size() > size()) {
-    throw(vpException(vpException::dimensionError, "Cannot set Euler x-y-z vector out of bounds. It has only %d values while you try to initialize with %d values", size(), list.size()));
+    throw(vpException(
+        vpException::dimensionError,
+        "Cannot set Euler x-y-z vector out of bounds. It has only %d values while you try to initialize with %d values",
+        size(), list.size()));
   }
   std::copy(list.begin(), list.end(), data);
   return *this;

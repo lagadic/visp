@@ -290,8 +290,7 @@ void vpFeatureEllipse::buildFrom(double x, double y, double n20, double n11, dou
     flags[i] = true;
 }
 
-void vpFeatureEllipse::buildFrom(double x, double y, double n20, double n11,
-                                 double n02, double a, double b, double c)
+void vpFeatureEllipse::buildFrom(double x, double y, double n20, double n11, double n02, double a, double b, double c)
 {
   s[0] = x;
   s[1] = y;
@@ -358,10 +357,7 @@ void vpFeatureEllipse::setMoments(double n20, double n11, double n02)
  * is waiting for second order centered moments of the ellipse normalized
  * by its area that corresponds to \f$n_{ij} = \mu_{ij}/a\f$.
  */
-void vpFeatureEllipse::setMu(double mu20, double mu11, double mu02)
-{
-  setMoments(mu20, mu11, mu02);
-}
+void vpFeatureEllipse::setMu(double mu20, double mu11, double mu02) { setMoments(mu20, mu11, mu02); }
 #endif
 
 /*!
@@ -398,14 +394,14 @@ void vpFeatureEllipse::display(const vpCameraParameters &cam, const vpImage<unsi
 void vpFeatureEllipse::display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color,
                                unsigned int thickness) const
 {
-    double x = s[0];
-    double y = s[1];
+  double x = s[0];
+  double y = s[1];
 
-    double n20 = s[2];
-    double n11 = s[3];
-    double n02 = s[4];
+  double n20 = s[2];
+  double n11 = s[3];
+  double n02 = s[4];
 
-    vpFeatureDisplay::displayEllipse(x, y, n20, n11, n02, cam, I, color, thickness);
+  vpFeatureDisplay::displayEllipse(x, y, n20, n11, n02, cam, I, color, thickness);
 }
 
 //! For memory issue (used by the vpServo class only).

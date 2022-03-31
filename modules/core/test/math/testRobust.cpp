@@ -79,7 +79,8 @@ plot '%s' title \"Tukey Estimator\" lw 2, 1 title \"Least-Squares\" lw 2\n\
 \n\
 \n\
 SYNOPSIS\n\
-  %s [-o <output filename>] [-h]\n", ofilename.c_str(), name);
+  %s [-o <output filename>] [-h]\n",
+          ofilename.c_str(), name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                              Default\n\
@@ -88,7 +89,8 @@ OPTIONS:                                              Default\n\
      weights.\n\
 \n\
   -h\n\
-     Print the help.\n", ofilename.c_str());
+     Print the help.\n",
+          ofilename.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);

@@ -59,8 +59,9 @@ vpVideoReader::vpVideoReader()
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
     m_capture(), m_frame(), m_lastframe_unknown(false),
 #endif
-    m_formatType(FORMAT_UNKNOWN), m_videoName(), m_frameName(), m_initFileName(false), m_isOpen(false), m_frameCount(0), m_firstFrame(0), m_lastFrame(0),
-    m_firstFrameIndexIsSet(false), m_lastFrameIndexIsSet(false), m_frameStep(1), m_frameRate(0.)
+    m_formatType(FORMAT_UNKNOWN), m_videoName(), m_frameName(), m_initFileName(false), m_isOpen(false), m_frameCount(0),
+    m_firstFrame(0), m_lastFrame(0), m_firstFrameIndexIsSet(false), m_lastFrameIndexIsSet(false), m_frameStep(1),
+    m_frameRate(0.)
 {
 }
 
@@ -258,7 +259,7 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
       try {
         m_imSequence->acquire(I);
         skip_frame = false;
-      }  catch (...) {
+      } catch (...) {
         skip_frame = true;
       }
     } while (skip_frame && m_imSequence->getImageNumber() < m_lastFrame);
@@ -315,8 +316,7 @@ void vpVideoReader::acquire(vpImage<vpRGBa> &I)
         // Set last frame to this image index
         setLastFrameIndex(m_frameCount - m_frameStep);
       }
-    }
-    else {
+    } else {
       vpImageConvert::convert(m_frame, I);
     }
   }
@@ -344,7 +344,7 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
       try {
         m_imSequence->acquire(I);
         skip_frame = false;
-      }  catch (...) {
+      } catch (...) {
         skip_frame = true;
       }
     } while (skip_frame && m_imSequence->getImageNumber() < m_lastFrame);
@@ -397,8 +397,7 @@ void vpVideoReader::acquire(vpImage<unsigned char> &I)
 
     if (m_frame.empty()) {
       std::cout << "Warning: Unable to decode image " << m_frameCount - m_frameStep << std::endl;
-    }
-    else {
+    } else {
       vpImageConvert::convert(m_frame, I);
     }
   }

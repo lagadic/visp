@@ -1,10 +1,10 @@
 //! \example tutorial-export-image.cpp
-#include <visp3/io/vpImageIo.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 
 int main()
 {
@@ -36,11 +36,11 @@ int main()
   // Flush the foreground and background display
   vpDisplay::flush(I);
   // Updates the color image with the original loaded image and the overlay
-  vpDisplay::getImage(I, Ioverlay) ;
+  vpDisplay::getImage(I, Ioverlay);
   // Write the color image on the disk
   std::cout << "Save image in overlay.ppm" << std::endl;
   std::string ofilename("overlay.png");
-  vpImageIo::write(Ioverlay, ofilename) ;
+  vpImageIo::write(Ioverlay, ofilename);
   // Wait for a click in the display window
   std::cout << "A click to quit..." << std::endl;
   vpDisplay::getClick(I);

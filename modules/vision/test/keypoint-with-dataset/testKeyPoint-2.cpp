@@ -74,7 +74,8 @@ void usage(const char *name, const char *badparam)
 Test keypoints matching.\n\
 \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-p] [-h]\n", name);
+  %s [-c] [-d] [-p] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               \n\
@@ -107,8 +108,7 @@ OPTIONS:                                               \n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display,
-                bool &use_parallel_ransac)
+bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display, bool &use_parallel_ransac)
 {
   const char *optarg_;
   int c;
@@ -147,7 +147,7 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display,
   return true;
 }
 
-template<typename Type>
+template <typename Type>
 void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display, bool use_parallel_ransac,
               vpImage<Type> &I, vpImage<Type> &IMatching)
 {
@@ -363,8 +363,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
           vpDisplay::displayCircle(IMatching, imPt, 4, vpColor::green);
         }
 
-        for (std::vector<vpImagePoint>::const_iterator it = ransacOutliers.begin(); it != ransacOutliers.end();
-             ++it) {
+        for (std::vector<vpImagePoint>::const_iterator it = ransacOutliers.begin(); it != ransacOutliers.end(); ++it) {
           vpDisplay::displayCircle(I, *it, 4, vpColor::red);
           vpImagePoint imPt(*it);
           imPt.set_u(imPt.get_u() + I.getWidth());
@@ -412,8 +411,8 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
   if (!times_vec.empty()) {
     std::cout << "Computation time, Mean: " << vpMath::getMean(times_vec)
-              << " ms ; Median: " << vpMath::getMedian(times_vec)
-              << " ms ; Std: " << vpMath::getStdev(times_vec) << std::endl;
+              << " ms ; Median: " << vpMath::getMedian(times_vec) << " ms ; Std: " << vpMath::getStdev(times_vec)
+              << std::endl;
   }
 }
 

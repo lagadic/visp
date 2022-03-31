@@ -342,7 +342,7 @@ public:
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               bool displayFullModel=false);
+                                                               bool displayFullModel = false);
 
   /*!
     Get the moving edge parameters.
@@ -381,11 +381,10 @@ public:
 
   virtual inline vpColVector getRobustWeights() const { return m_w_edge; }
 
-  virtual void loadConfigFile(const std::string &configFile, bool verbose=true);
+  virtual void loadConfigFile(const std::string &configFile, bool verbose = true);
 
-  virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo, bool verbose = false,
-                           const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
+  virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
+                           bool verbose = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
   void resetTracker();
 
   /*!
@@ -496,8 +495,7 @@ protected:
   void computeProjectionError(const vpImage<unsigned char> &_I);
 
   void computeVVS(const vpImage<unsigned char> &_I, unsigned int lvl);
-  void computeVVSFirstPhase(const vpImage<unsigned char> &I, unsigned int iter, double &count,
-                            unsigned int lvl = 0);
+  void computeVVSFirstPhase(const vpImage<unsigned char> &I, unsigned int iter, double &count, unsigned int lvl = 0);
   void computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I, unsigned int lvl = 0);
   void computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity_);
   virtual void computeVVSInit();
@@ -511,8 +509,8 @@ protected:
   void downScale(const unsigned int _scale);
   virtual std::vector<std::vector<double> > getFeaturesForDisplayEdge();
   virtual void init(const vpImage<unsigned char> &I);
-  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
-                          int idFace = 0, const std::string &name = "");
+  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace = 0,
+                          const std::string &name = "");
   virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace = 0,
                             const std::string &name = "");
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);

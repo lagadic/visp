@@ -106,7 +106,7 @@ public:
   */
   inline vpImagePoint(const vpImagePoint &ip) : i(ip.i), j(ip.j) {}
   //! Destructor.
-  inline virtual ~vpImagePoint() { }
+  inline virtual ~vpImagePoint() {}
 
   /*!
     Copy operator.

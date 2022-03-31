@@ -48,23 +48,21 @@
 
 namespace
 {
-template<typename Type>
-std::ostream &operator<<(std::ostream &os, const Eigen::Quaternion<Type> &q) {
-  return os << "qw: " << q.w() << " ; qx: " << q.x() << " ; qy: "
-            << q.y() << " ; qz: " << q.z();
+template <typename Type> std::ostream &operator<<(std::ostream &os, const Eigen::Quaternion<Type> &q)
+{
+  return os << "qw: " << q.w() << " ; qx: " << q.x() << " ; qy: " << q.y() << " ; qz: " << q.z();
 }
 
-template<typename Type>
-std::ostream &operator<<(std::ostream &os, const Eigen::AngleAxis<Type> &aa) {
-  return os << "angle: " << aa.angle() << " ; axis: " << aa.axis()(0)
-            << " ; " << aa.axis()(1) << " ; " << aa.axis()(2)
-            << " ; thetau: " << aa.angle()*aa.axis()(0)
-            << " ; " << aa.angle()*aa.axis()(1)
-            << " ; " << aa.angle()*aa.axis()(2);
+template <typename Type> std::ostream &operator<<(std::ostream &os, const Eigen::AngleAxis<Type> &aa)
+{
+  return os << "angle: " << aa.angle() << " ; axis: " << aa.axis()(0) << " ; " << aa.axis()(1) << " ; " << aa.axis()(2)
+            << " ; thetau: " << aa.angle() * aa.axis()(0) << " ; " << aa.angle() * aa.axis()(1) << " ; "
+            << aa.angle() * aa.axis()(2);
 }
-}
+} // namespace
 
-TEST_CASE("vpMatrix <--> Eigen::MatrixXd/Matrix3Xd conversion", "[eigen_conversion]") {
+TEST_CASE("vpMatrix <--> Eigen::MatrixXd/Matrix3Xd conversion", "[eigen_conversion]")
+{
   vpMatrix visp_m(3, 4);
   for (unsigned int i = 0; i < visp_m.size(); i++) {
     visp_m.data[i] = i;
@@ -96,7 +94,8 @@ TEST_CASE("vpMatrix <--> Eigen::MatrixXd/Matrix3Xd conversion", "[eigen_conversi
   }
 }
 
-TEST_CASE("Eigen::MatrixXd <--> vpMatrix conversion", "[eigen_conversion]") {
+TEST_CASE("Eigen::MatrixXd <--> vpMatrix conversion", "[eigen_conversion]")
+{
   Eigen::MatrixXd eigen_m(3, 5);
 #if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
   for (Eigen::DenseIndex i = 0; i < eigen_m.rows(); i++) {
@@ -124,7 +123,8 @@ TEST_CASE("Eigen::MatrixXd <--> vpMatrix conversion", "[eigen_conversion]") {
   std::cout << std::endl;
 }
 
-TEST_CASE("Eigen::MatrixX4d <--> vpMatrix conversion", "[eigen_conversion]") {
+TEST_CASE("Eigen::MatrixX4d <--> vpMatrix conversion", "[eigen_conversion]")
+{
   Eigen::MatrixX4d eigen_m(2, 4);
 #if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
   for (Eigen::DenseIndex i = 0; i < eigen_m.rows(); i++) {
@@ -152,7 +152,8 @@ TEST_CASE("Eigen::MatrixX4d <--> vpMatrix conversion", "[eigen_conversion]") {
   std::cout << std::endl;
 }
 
-TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, RowMajor> <--> vpMatrix conversion", "[eigen_conversion]") {
+TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, RowMajor> <--> vpMatrix conversion", "[eigen_conversion]")
+{
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> eigen_m(3, 5);
 #if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
   for (Eigen::DenseIndex i = 0; i < eigen_m.rows(); i++) {
@@ -180,7 +181,8 @@ TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, RowMajor> <--> vpMatrix conve
   std::cout << std::endl;
 }
 
-TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, ColMajor> <--> vpMatrix conversion", "[eigen_conversion]") {
+TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, ColMajor> <--> vpMatrix conversion", "[eigen_conversion]")
+{
   Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor> eigen_m(3, 5);
 #if (VP_VERSION_INT(EIGEN_WORLD_VERSION, EIGEN_MAJOR_VERSION, EIGEN_MINOR_VERSION) < 0x030300)
   for (Eigen::DenseIndex i = 0; i < eigen_m.rows(); i++) {
@@ -208,7 +210,8 @@ TEST_CASE("Eigen::Matrix<double, Dynamic, Dynamic, ColMajor> <--> vpMatrix conve
   std::cout << std::endl;
 }
 
-TEST_CASE("vpHomogeneousMatrix <--> Eigen::Matrix4d conversion", "[eigen_conversion]") {
+TEST_CASE("vpHomogeneousMatrix <--> Eigen::Matrix4d conversion", "[eigen_conversion]")
+{
   vpHomogeneousMatrix visp_cMo(0.1, 0.2, 0.3, 0.1, 0.2, 0.3);
   Eigen::Matrix4d eigen_cMo;
   vp::visp2eigen(visp_cMo, eigen_cMo);
@@ -221,8 +224,9 @@ TEST_CASE("vpHomogeneousMatrix <--> Eigen::Matrix4d conversion", "[eigen_convers
   std::cout << std::endl;
 }
 
-TEST_CASE("vpHomogeneousMatrix <--> Eigen::Matrix4f + double casting conversion", "[eigen_conversion]") {
-  vpHomogeneousMatrix visp_cMo; //identity for float to double casting
+TEST_CASE("vpHomogeneousMatrix <--> Eigen::Matrix4f + double casting conversion", "[eigen_conversion]")
+{
+  vpHomogeneousMatrix visp_cMo; // identity for float to double casting
   Eigen::Matrix4d eigen_cMo_tmp;
   vp::visp2eigen(visp_cMo, eigen_cMo_tmp);
   Eigen::Matrix4f eigen_cMo = eigen_cMo_tmp.cast<float>();
@@ -235,7 +239,8 @@ TEST_CASE("vpHomogeneousMatrix <--> Eigen::Matrix4f + double casting conversion"
   std::cout << std::endl;
 }
 
-TEST_CASE("vpQuaternionVector <--> Eigen::Quaternionf conversion", "[eigen_conversion]") {
+TEST_CASE("vpQuaternionVector <--> Eigen::Quaternionf conversion", "[eigen_conversion]")
+{
   vpQuaternionVector visp_quaternion(0, 1, 2, 3);
   Eigen::Quaternionf eigen_quaternion;
   vp::visp2eigen(visp_quaternion, eigen_quaternion);
@@ -248,7 +253,8 @@ TEST_CASE("vpQuaternionVector <--> Eigen::Quaternionf conversion", "[eigen_conve
   std::cout << std::endl;
 }
 
-TEST_CASE("vpThetaUVector <--> Eigen::AngleAxisf conversion", "[eigen_conversion]") {
+TEST_CASE("vpThetaUVector <--> Eigen::AngleAxisf conversion", "[eigen_conversion]")
+{
   vpThetaUVector visp_thetau(0, 1, 2);
   Eigen::AngleAxisf eigen_angle_axis;
   vp::visp2eigen(visp_thetau, eigen_angle_axis);
@@ -261,7 +267,8 @@ TEST_CASE("vpThetaUVector <--> Eigen::AngleAxisf conversion", "[eigen_conversion
   std::cout << std::endl;
 }
 
-TEST_CASE("vpColVector <--> Eigen::VectorXd conversion", "[eigen_conversion]") {
+TEST_CASE("vpColVector <--> Eigen::VectorXd conversion", "[eigen_conversion]")
+{
   vpColVector visp_col(4, 4);
   visp_col = 10;
   Eigen::VectorXd eigen_col;
@@ -275,7 +282,8 @@ TEST_CASE("vpColVector <--> Eigen::VectorXd conversion", "[eigen_conversion]") {
   std::cout << std::endl;
 }
 
-TEST_CASE("vpRowVector <--> Eigen::RowVectorXd conversion", "[eigen_conversion]") {
+TEST_CASE("vpRowVector <--> Eigen::RowVectorXd conversion", "[eigen_conversion]")
+{
   vpRowVector visp_row(4, 10);
   visp_row = 10;
   Eigen::RowVectorXd eigen_row;
@@ -289,7 +297,8 @@ TEST_CASE("vpRowVector <--> Eigen::RowVectorXd conversion", "[eigen_conversion]"
   std::cout << std::endl;
 }
 
-TEST_CASE("Eigen::RowVector4d <--> vpRowVector conversion", "[eigen_conversion]") {
+TEST_CASE("Eigen::RowVector4d <--> vpRowVector conversion", "[eigen_conversion]")
+{
   Eigen::RowVector4d eigen_row;
   eigen_row << 9, 8, 7, 6;
   vpRowVector visp_row;
@@ -306,7 +315,8 @@ TEST_CASE("Eigen::RowVector4d <--> vpRowVector conversion", "[eigen_conversion]"
   std::cout << std::endl;
 }
 
-TEST_CASE("vpRowVector <--> Eigen::RowVector4d conversion", "[eigen_conversion]") {
+TEST_CASE("vpRowVector <--> Eigen::RowVector4d conversion", "[eigen_conversion]")
+{
   vpRowVector visp_row(4, 10);
   visp_row = 10;
   Eigen::RowVector4d eigen_row;
@@ -335,8 +345,5 @@ int main(int argc, char *argv[])
   return numFailed;
 }
 #else
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

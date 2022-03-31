@@ -77,8 +77,8 @@ public:
   virtual ~vpMbtMeLine();
 
   void computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad, unsigned int &_nbFeatures,
-                              const vpMatrix &SobelX, const vpMatrix &SobelY, bool display,
-                              unsigned int length, unsigned int thickness);
+                              const vpMatrix &SobelX, const vpMatrix &SobelY, bool display, unsigned int length,
+                              unsigned int thickness);
 
   void display(const vpImage<unsigned char> & /*I*/, vpColor /*col*/) { ; }
   using vpMeTracker::display;

@@ -43,8 +43,8 @@
 
 */
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include <visp3/robot/vpReflexTakktile2.h>
 

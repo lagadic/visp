@@ -71,6 +71,6 @@ VISP_EXPORT bool checkSSE42();
 VISP_EXPORT bool checkAVX();
 VISP_EXPORT bool checkAVX2();
 VISP_EXPORT void printCPUInfo();
-}
+} // namespace vpCPUFeatures
 
 #endif

@@ -70,7 +70,8 @@ void usage(const char *name, const char *badparam)
 Test keypoint descriptor extraction.\n\
 \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+  %s [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               \n\
@@ -185,9 +186,9 @@ std::string getOpenCVType(int type)
   return type_string;
 }
 
-template<typename Type>
-void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display,
-              vpImage<Type> &Iinput, vpImage<Type> &I)
+template <typename Type>
+void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display, vpImage<Type> &Iinput,
+              vpImage<Type> &I)
 {
   // Set the path location of the image sequence
   std::string dirname = vpIoTools::createFilePath(env_ipath, "Klimt");
@@ -214,7 +215,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   vpKeyPoint keyPoints;
 
   std::vector<std::string> descriptorNames;
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
+#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                      \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
   descriptorNames.push_back("SIFT");
 #endif
@@ -297,7 +298,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
               << " ms." << std::endl;
     if (descriptor.empty()) {
       std::stringstream ss;
-      ss << "No descriptor extracted with " << *itd << " and image:" << filename << "."  << std::endl;
+      ss << "No descriptor extracted with " << *itd << " and image:" << filename << "." << std::endl;
       throw(vpException(vpException::fatalError, ss.str()));
     }
 

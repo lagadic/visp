@@ -47,8 +47,7 @@ vpTemplateTrackerSSDESM::vpTemplateTrackerSSDESM(vpTemplateTrackerWarp *warp)
   useInverse = false;
 
   if (!Warp->isESMcompatible()) {
-    throw(vpException(vpException::badValue,
-                      "The selected warp function is not appropriate for the ESM algorithm..."));
+    throw(vpException(vpException::badValue, "The selected warp function is not appropriate for the ESM algorithm..."));
   }
 
   HInv.resize(nbParam, nbParam);
@@ -196,7 +195,7 @@ void vpTemplateTrackerSSDESM::trackNoPyr(const vpImage<unsigned char> &I)
     evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
     evolRMS_prec = evolRMS;
 
-  } while ( (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) );
+  } while ((iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init) * evolRMS_eps));
   delete[] tempt;
 
   nbIteration = iteration;

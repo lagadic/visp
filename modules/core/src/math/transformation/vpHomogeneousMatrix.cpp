@@ -69,7 +69,10 @@ vpHomogeneousMatrix::vpHomogeneousMatrix() : vpArray2D<double>(4, 4), m_index(0)
   Copy constructor that initialize an homogeneous matrix from another
   homogeneous matrix.
 */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(4, 4), m_index(0) { *this = M; }
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(4, 4), m_index(0)
+{
+  *this = M;
+}
 
 /*!
   Construct an homogeneous matrix from a translation vector and \f$\theta {\bf
@@ -187,7 +190,8 @@ N:
 0  0  0  1
   \endcode
  */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(4, 4), m_index(0)
+vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &list)
+  : vpArray2D<double>(4, 4), m_index(0)
 {
   if (list.size() == 12) {
     std::copy(list.begin(), list.end(), data);
@@ -195,22 +199,26 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
     data[13] = 0.;
     data[14] = 0.;
     data[15] = 1.;
-  }
-  else if (list.size() == 16) {
+  } else if (list.size() == 16) {
     std::copy(list.begin(), list.end(), data);
     for (size_t i = 12; i < 15; i++) {
       if (std::fabs(data[i]) > std::numeric_limits<double>::epsilon()) {
-        throw(vpException(vpException::fatalError, "Cannot initialize homogeneous matrix. "
-                          "List element %d (%f) should be 0.", i, data[i]));
+        throw(vpException(vpException::fatalError,
+                          "Cannot initialize homogeneous matrix. "
+                          "List element %d (%f) should be 0.",
+                          i, data[i]));
       }
     }
     if (std::fabs(data[15] - 1.) > std::numeric_limits<double>::epsilon()) {
-      throw(vpException(vpException::fatalError, "Cannot initialize homogeneous matrix. "
-                        "List element 15 (%f) should be 1.", data[15]));
+      throw(vpException(vpException::fatalError,
+                        "Cannot initialize homogeneous matrix. "
+                        "List element 15 (%f) should be 1.",
+                        data[15]));
     }
-  }
-  else {
-    throw(vpException(vpException::fatalError, "Cannot initialize homogeneous matrix from a list (%d elements) that has not 12 or 16 elements", list.size()));
+  } else {
+    throw(vpException(vpException::fatalError,
+                      "Cannot initialize homogeneous matrix from a list (%d elements) that has not 12 or 16 elements",
+                      list.size()));
   }
 
   if (!isAnHomogeneousMatrix()) {
@@ -219,11 +227,19 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
       vpRotationMatrix R(*this);
       R.orthogonalize();
 
-      data[0] = R[0][0]; data[1] = R[0][1]; data[2] = R[0][2];
-      data[4] = R[1][0]; data[5] = R[1][1]; data[6] = R[1][2];
-      data[8] = R[2][0]; data[9] = R[2][1]; data[10] = R[2][2];
+      data[0] = R[0][0];
+      data[1] = R[0][1];
+      data[2] = R[0][2];
+      data[4] = R[1][0];
+      data[5] = R[1][1];
+      data[6] = R[1][2];
+      data[8] = R[2][0];
+      data[9] = R[2][1];
+      data[10] = R[2][2];
     } else {
-      throw(vpException(vpException::fatalError, "Homogeneous matrix initialization fails since its elements are not valid (rotation part or last row)"));
+      throw(vpException(
+          vpException::fatalError,
+          "Homogeneous matrix initialization fails since its elements are not valid (rotation part or last row)"));
     }
   }
 }
@@ -653,7 +669,7 @@ N:
 
   \sa operator,()
  */
-vpHomogeneousMatrix& vpHomogeneousMatrix::operator<<(double val)
+vpHomogeneousMatrix &vpHomogeneousMatrix::operator<<(double val)
 {
   m_index = 0;
   data[m_index] = val;
@@ -702,11 +718,14 @@ N:
 
   \sa operator<<()
  */
-vpHomogeneousMatrix& vpHomogeneousMatrix::operator,(double val)
+vpHomogeneousMatrix &vpHomogeneousMatrix::operator,(double val)
 {
-  m_index ++;
+  m_index++;
   if (m_index >= size()) {
-    throw(vpException(vpException::dimensionError, "Cannot set homogenous matrix out of bounds. It has only %d elements while you try to initialize with %d elements", size(), m_index+1));
+    throw(vpException(vpException::dimensionError,
+                      "Cannot set homogenous matrix out of bounds. It has only %d elements while you try to initialize "
+                      "with %d elements",
+                      size(), m_index + 1));
   }
   data[m_index] = val;
   return *this;
@@ -726,9 +745,8 @@ bool vpHomogeneousMatrix::isAnHomogeneousMatrix(double threshold) const
   extract(R);
 
   const double epsilon = std::numeric_limits<double>::epsilon();
-  return R.isARotationMatrix(threshold)
-    && vpMath::nul((*this)[3][0], epsilon) && vpMath::nul((*this)[3][1], epsilon)
-    && vpMath::nul((*this)[3][2], epsilon) && vpMath::equal((*this)[3][3], 1.0, epsilon);
+  return R.isARotationMatrix(threshold) && vpMath::nul((*this)[3][0], epsilon) && vpMath::nul((*this)[3][1], epsilon) &&
+         vpMath::nul((*this)[3][2], epsilon) && vpMath::equal((*this)[3][3], 1.0, epsilon);
 }
 
 /*!
@@ -945,9 +963,15 @@ void vpHomogeneousMatrix::orthogonalizeRotation()
   vpRotationMatrix R(*this);
   R.orthogonalize();
 
-  data[0] = R[0][0]; data[1] = R[0][1]; data[2] = R[0][2];
-  data[4] = R[1][0]; data[5] = R[1][1]; data[6] = R[1][2];
-  data[8] = R[2][0]; data[9] = R[2][1]; data[10] = R[2][2];
+  data[0] = R[0][0];
+  data[1] = R[0][1];
+  data[2] = R[0][2];
+  data[4] = R[1][0];
+  data[5] = R[1][1];
+  data[6] = R[1][2];
+  data[8] = R[2][0];
+  data[9] = R[2][1];
+  data[10] = R[2][2];
 }
 
 //! Print the matrix as a pose vector \f$({\bf t}^T \theta {\bf u}^T)\f$
@@ -1065,8 +1089,8 @@ vpHomogeneousMatrix vpHomogeneousMatrix::mean(const std::vector<vpHomogeneousMat
   vpRotationMatrix R;
   for (size_t i = 0; i < vec_M.size(); i++) {
     R = vec_M[i].getRotationMatrix();
-    meanR += (vpMatrix) R;
-    meanT += (vpColVector) vec_M[i].getTranslationVector();
+    meanR += (vpMatrix)R;
+    meanT += (vpColVector)vec_M[i].getTranslationVector();
   }
   meanR /= static_cast<double>(vec_M.size());
   meanT /= static_cast<double>(vec_M.size());
@@ -1075,14 +1099,14 @@ vpHomogeneousMatrix vpHomogeneousMatrix::mean(const std::vector<vpHomogeneousMat
   vpMatrix M, U, V;
   vpColVector sv;
   meanR.pseudoInverse(M, sv, 1e-6, U, V);
-  double det = sv[0]*sv[1]*sv[2];
+  double det = sv[0] * sv[1] * sv[2];
   if (det > 0) {
     meanR = U * V.t();
-  }
-  else {
-    vpMatrix D(3,3);
+  } else {
+    vpMatrix D(3, 3);
     D = 0.0;
-    D[0][0] = D[1][1] = 1.0; D[2][2] = -1;
+    D[0][0] = D[1][1] = 1.0;
+    D[2][2] = -1;
     meanR = U * D * V.t();
   }
 

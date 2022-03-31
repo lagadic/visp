@@ -50,8 +50,8 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) \
-  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&       \
+    (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -95,7 +95,8 @@ Simulation of a 2D visual servoing on a circle:\n\
 - display the camera view.\n\
           \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+  %s [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -170,7 +171,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-      return(EXIT_FAILURE);
+      return (EXIT_FAILURE);
     }
 
     vpImage<unsigned char> I(512, 512, 0);
@@ -199,7 +200,7 @@ int main(int argc, const char **argv)
     }
 
     double px = 600, py = 600;
-    double u0 = I.getWidth()/2., v0 = I.getHeight() / 2.;
+    double u0 = I.getWidth() / 2., v0 = I.getHeight() / 2.;
 
     vpCameraParameters cam(px, py, u0, v0);
 
@@ -298,7 +299,9 @@ int main()
 #else
 int main()
 {
-  std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) or OpenCV functionalities to display images..." << std::endl;
+  std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) or OpenCV functionalities to display "
+               "images..."
+            << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

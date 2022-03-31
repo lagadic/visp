@@ -42,8 +42,8 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-#include <mutex>
 #include <condition_variable>
+#include <mutex>
 
 #include <ST/CaptureSession.h>
 
@@ -143,9 +143,9 @@ int main()
   visualize the point cloud
 
   \code
-#include <visp3/sensor/vpOccipitalStructure.h>
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
+#include <visp3/sensor/vpOccipitalStructure.h>
 
 int main()
 {
@@ -212,49 +212,52 @@ struct SessionDelegate : ST::CaptureSessionDelegate {
 
   ~SessionDelegate() {}
 
-  void captureSessionEventDidOccur(ST::CaptureSession *session, ST::CaptureSessionEventId event) override {
+  void captureSessionEventDidOccur(ST::CaptureSession *session, ST::CaptureSessionEventId event) override
+  {
     switch (event) {
-      case ST::CaptureSessionEventId::Booting: break;
-      case ST::CaptureSessionEventId::Connected:
-        printf("Starting streams...\n");
-        session->startStreaming();
-        // The following wait function will let the capture session load correctly.
-        vpTime::wait(1000);
+    case ST::CaptureSessionEventId::Booting:
+      break;
+    case ST::CaptureSessionEventId::Connected:
+      printf("Starting streams...\n");
+      session->startStreaming();
+      // The following wait function will let the capture session load correctly.
+      vpTime::wait(1000);
 
-        // Getting details about capture session.
-        // (USB Version, Serial Number of the camera connected, Camera Monochorme/Color)
-        m_USBVersion = session->USBVersion();
-        m_serialNumber = session->sensorInfo().serialNumber;
-        m_cameraType = session->getCameraType();
-        break;
-      case ST::CaptureSessionEventId::Disconnected:
-        break;
-      case ST::CaptureSessionEventId::Error:
-        throw vpException(vpException::fatalError, "Capture session error");
-        break;
-      default:
-        printf("Capture session event unhandled\n");
+      // Getting details about capture session.
+      // (USB Version, Serial Number of the camera connected, Camera Monochorme/Color)
+      m_USBVersion = session->USBVersion();
+      m_serialNumber = session->sensorInfo().serialNumber;
+      m_cameraType = session->getCameraType();
+      break;
+    case ST::CaptureSessionEventId::Disconnected:
+      break;
+    case ST::CaptureSessionEventId::Error:
+      throw vpException(vpException::fatalError, "Capture session error");
+      break;
+    default:
+      printf("Capture session event unhandled\n");
     }
   }
 
-  void captureSessionDidOutputSample(ST::CaptureSession *, const ST::CaptureSessionSample& sample) override {
+  void captureSessionDidOutputSample(ST::CaptureSession *, const ST::CaptureSessionSample &sample) override
+  {
     // acquire sampleLock mutex.
     std::lock_guard<std::mutex> u(m_sampleLock);
 
     // Perform the modification needed on the shared variables.
-    if(sample.visibleFrame.isValid())
+    if (sample.visibleFrame.isValid())
       m_visibleFrame = sample.visibleFrame;
 
-    if(sample.depthFrame.isValid())
+    if (sample.depthFrame.isValid())
       m_depthFrame = sample.depthFrame;
 
-    if(sample.infraredFrame.isValid())
+    if (sample.infraredFrame.isValid())
       m_infraredFrame = sample.infraredFrame;
 
-    if(sample.type == ST::CaptureSessionSample::Type::AccelerometerEvent)
+    if (sample.type == ST::CaptureSessionSample::Type::AccelerometerEvent)
       m_accelerometerEvent = sample.accelerometerEvent;
 
-    if(sample.type == ST::CaptureSessionSample::Type::GyroscopeEvent)
+    if (sample.type == ST::CaptureSessionSample::Type::GyroscopeEvent)
       m_gyroscopeEvent = sample.gyroscopeEvent;
 
     // If any thread is waiting on `cv_sampleLock`, the following instruction will unblock it.
@@ -265,91 +268,91 @@ struct SessionDelegate : ST::CaptureSessionDelegate {
 
 class VISP_EXPORT vpOccipitalStructure
 {
-  public:
-    typedef enum
-    {
-      visible,       //!< Visible stream
-      depth,         //!< Depth stream
-      infrared,      //!< Infrared stream
-      imu            //!< IMU stream
-    } vpOccipitalStructureStream;
+public:
+  typedef enum {
+    visible,  //!< Visible stream
+    depth,    //!< Depth stream
+    infrared, //!< Infrared stream
+    imu       //!< IMU stream
+  } vpOccipitalStructureStream;
 
-    vpOccipitalStructure();
-    ~vpOccipitalStructure();
+  vpOccipitalStructure();
+  ~vpOccipitalStructure();
 
-    void acquire(vpImage<unsigned char> &gray, bool undistorted=false, double *ts=NULL);
-    void acquire(vpImage<vpRGBa> &rgb, bool undistorted=false, double *ts=NULL);
+  void acquire(vpImage<unsigned char> &gray, bool undistorted = false, double *ts = NULL);
+  void acquire(vpImage<vpRGBa> &rgb, bool undistorted = false, double *ts = NULL);
 
-    void acquire(vpImage<vpRGBa> *rgb, vpImage<vpRGBa> *depth, vpColVector *acceleration_data=NULL, vpColVector *gyroscope_data=NULL,
-                 bool undistorted=false, double *ts=NULL);
-    void acquire(vpImage<unsigned char> *gray, vpImage<vpRGBa> *depth, vpColVector *acceleration_data=NULL, vpColVector *gyroscope_data=NULL,
-                 bool undistorted=false, double *ts=NULL);
+  void acquire(vpImage<vpRGBa> *rgb, vpImage<vpRGBa> *depth, vpColVector *acceleration_data = NULL,
+               vpColVector *gyroscope_data = NULL, bool undistorted = false, double *ts = NULL);
+  void acquire(vpImage<unsigned char> *gray, vpImage<vpRGBa> *depth, vpColVector *acceleration_data = NULL,
+               vpColVector *gyroscope_data = NULL, bool undistorted = false, double *ts = NULL);
 
-    void acquire(unsigned char *const data_image, unsigned char *const data_depth,
-                 std::vector<vpColVector> *const data_pointCloud=NULL, unsigned char *const data_infrared=NULL,
-                 vpColVector *acceleration_data=NULL, vpColVector *gyroscope_data=NULL,
-                 bool undistorted=true, double *ts=NULL);
+  void acquire(unsigned char *const data_image, unsigned char *const data_depth,
+               std::vector<vpColVector> *const data_pointCloud = NULL, unsigned char *const data_infrared = NULL,
+               vpColVector *acceleration_data = NULL, vpColVector *gyroscope_data = NULL, bool undistorted = true,
+               double *ts = NULL);
 
-    #ifdef VISP_HAVE_PCL
-    void acquire(unsigned char *const data_image, unsigned char *const data_depth,
-                 std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
-                 unsigned char *const data_infrared=NULL, vpColVector *acceleration_data=NULL, vpColVector *gyroscope_data=NULL,
-                 bool undistorted=true,double *ts=NULL);
-    void acquire(unsigned char *const data_image, unsigned char *const data_depth,
-                 std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
-                 unsigned char *const data_infrared=NULL, vpColVector *acceleration_data=NULL, vpColVector *gyroscope_data=NULL,
-                 bool undistorted=true,double *ts=NULL);
-    #endif
+#ifdef VISP_HAVE_PCL
+  void acquire(unsigned char *const data_image, unsigned char *const data_depth,
+               std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
+               unsigned char *const data_infrared = NULL, vpColVector *acceleration_data = NULL,
+               vpColVector *gyroscope_data = NULL, bool undistorted = true, double *ts = NULL);
+  void acquire(unsigned char *const data_image, unsigned char *const data_depth,
+               std::vector<vpColVector> *const data_pointCloud, pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud,
+               unsigned char *const data_infrared = NULL, vpColVector *acceleration_data = NULL,
+               vpColVector *gyroscope_data = NULL, bool undistorted = true, double *ts = NULL);
+#endif
 
-    void getIMUVelocity(vpColVector *imu_vel, double *ts);
-    void getIMUAcceleration(vpColVector *imu_acc, double *ts);
-    void getIMUData(vpColVector *imu_vel, vpColVector *imu_acc, double *ts=NULL);
+  void getIMUVelocity(vpColVector *imu_vel, double *ts);
+  void getIMUAcceleration(vpColVector *imu_acc, double *ts);
+  void getIMUData(vpColVector *imu_vel, vpColVector *imu_acc, double *ts = NULL);
 
-    bool open(const ST::CaptureSessionSettings &settings);
-    void close();
+  bool open(const ST::CaptureSessionSettings &settings);
+  void close();
 
-    /*!
-      Get camera type: Color or Monochrome.
-     */
-    ST::StructureCoreCameraType getCameraType() const { return m_delegate.m_cameraType; }
+  /*!
+    Get camera type: Color or Monochrome.
+   */
+  ST::StructureCoreCameraType getCameraType() const { return m_delegate.m_cameraType; }
 
-    ST::CaptureSessionUSBVersion getUSBVersion() const { return m_delegate.m_USBVersion; }
-    std::string getSerialNumber() const { return m_delegate.m_serialNumber; }
-    ST::CaptureSession &getCaptureSession() { return m_captureSession; }
-    ST::CaptureSessionSettings &getCaptureSessionSettings() { return m_captureSessionSettings; }
+  ST::CaptureSessionUSBVersion getUSBVersion() const { return m_delegate.m_USBVersion; }
+  std::string getSerialNumber() const { return m_delegate.m_serialNumber; }
+  ST::CaptureSession &getCaptureSession() { return m_captureSession; }
+  ST::CaptureSessionSettings &getCaptureSessionSettings() { return m_captureSessionSettings; }
 
-    unsigned int getWidth(vpOccipitalStructureStream stream_type);
-    unsigned int getHeight(vpOccipitalStructureStream stream_type);
+  unsigned int getWidth(vpOccipitalStructureStream stream_type);
+  unsigned int getHeight(vpOccipitalStructureStream stream_type);
 
-    // Returns depth in millimeters at (x,y) if it exists, NAN otherwise.
-    float getDepth(int x, int y);
+  // Returns depth in millimeters at (x,y) if it exists, NAN otherwise.
+  float getDepth(int x, int y);
 
-    vpPoint unprojectPoint(int row, int col);
+  vpPoint unprojectPoint(int row, int col);
 
-    vpHomogeneousMatrix getTransform(const vpOccipitalStructureStream from, const vpOccipitalStructureStream to);
+  vpHomogeneousMatrix getTransform(const vpOccipitalStructureStream from, const vpOccipitalStructureStream to);
 
-    ST::Intrinsics getIntrinsics(const vpOccipitalStructureStream stream_type) const;
+  ST::Intrinsics getIntrinsics(const vpOccipitalStructureStream stream_type) const;
 
-    vpCameraParameters getCameraParameters(const vpOccipitalStructureStream stream_type,
-                                           vpCameraParameters::vpCameraParametersProjType type = vpCameraParameters::perspectiveProjWithoutDistortion);
+  vpCameraParameters getCameraParameters(
+      const vpOccipitalStructureStream stream_type,
+      vpCameraParameters::vpCameraParametersProjType type = vpCameraParameters::perspectiveProjWithoutDistortion);
 
-    void saveDepthImageAsPointCloudMesh(std::string &filename);
+  void saveDepthImageAsPointCloudMesh(std::string &filename);
 
-  protected:
-    bool m_init;
-    float m_invalidDepthValue;
-    float m_maxZ;
+protected:
+  bool m_init;
+  float m_invalidDepthValue;
+  float m_maxZ;
 
-    ST::CaptureSession m_captureSession;
-    ST::CaptureSessionSettings m_captureSessionSettings;
-    SessionDelegate m_delegate;
-    vpCameraParameters m_visible_camera_parameters, m_depth_camera_parameters;
+  ST::CaptureSession m_captureSession;
+  ST::CaptureSessionSettings m_captureSessionSettings;
+  SessionDelegate m_delegate;
+  vpCameraParameters m_visible_camera_parameters, m_depth_camera_parameters;
 
-    void getPointcloud(std::vector<vpColVector> &pointcloud);
-    #ifdef VISP_HAVE_PCL
-    void getPointcloud(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
-    void getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
-    #endif
+  void getPointcloud(std::vector<vpColVector> &pointcloud);
+#ifdef VISP_HAVE_PCL
+  void getPointcloud(pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud);
+  void getColoredPointcloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &pointcloud);
+#endif
 };
 
 #endif

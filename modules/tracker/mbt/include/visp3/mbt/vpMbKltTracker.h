@@ -328,13 +328,12 @@ public:
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               bool displayFullModel=false);
+                                                               bool displayFullModel = false);
 
-  virtual void loadConfigFile(const std::string &configFile, bool verbose=true);
+  virtual void loadConfigFile(const std::string &configFile, bool verbose = true);
 
-  virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                           const vpHomogeneousMatrix &cMo, bool verbose = false,
-                           const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
+  virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
+                           bool verbose = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
   void resetTracker();
 
   void setCameraParameters(const vpCameraParameters &cam);
@@ -474,14 +473,13 @@ protected:
   virtual void init(const vpImage<unsigned char> &I);
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
-  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, double, int,
-                          const std::string &name = "");
+  virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, double, int, const std::string &name = "");
   virtual void initCylinder(const vpPoint &, const vpPoint &, double, int, const std::string &name = "");
 
   void preTracking(const vpImage<unsigned char> &I);
   bool postTracking(const vpImage<unsigned char> &I, vpColVector &w);
   virtual void reinit(const vpImage<unsigned char> &I);
-  virtual void setPose(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+  virtual void setPose(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
                        const vpHomogeneousMatrix &cdMo);
   //@}
 };

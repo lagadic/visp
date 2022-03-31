@@ -39,21 +39,18 @@
 */
 
 #include <iostream>
-#include <visp3/core/vpImageDraw.h>
 #include <visp3/core/vpFont.h>
+#include <visp3/core/vpImageDraw.h>
 #include <visp3/io/vpImageIo.h>
 
-int main(int argc ,char *argv[])
+int main(int argc, char *argv[])
 {
   bool save = false;
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--save") {
       save = true;
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "\nUsage: " << argv[0]
-                << " [--save] [--help] [-h]\n"
-                << std::endl;
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout << "\nUsage: " << argv[0] << " [--save] [--help] [-h]\n" << std::endl;
       return 0;
     }
   }
@@ -61,7 +58,7 @@ int main(int argc ,char *argv[])
 
   const std::string visp = "ViSP: Open source Visual Servoing Platform";
 
-  //vpRGBa
+  // vpRGBa
   {
     vpImage<vpRGBa> I(480, 640, vpRGBa(255));
     vpImagePoint iP1, iP2;
@@ -93,7 +90,8 @@ int main(int argc ,char *argv[])
     vpImagePoint textSize = font2.getMeasure(visp);
     vpImagePoint textPos = vpImagePoint(24, 620 - textSize.get_j());
     font2.drawText(I, visp, textPos, vpColor::darkGreen);
-    vpImageDraw::drawRectangle(I, vpRect(textPos.get_u(), textPos.get_v(), textSize.get_u(), textSize.get_v()), vpColor::darkRed);
+    vpImageDraw::drawRectangle(I, vpRect(textPos.get_u(), textPos.get_v(), textSize.get_u(), textSize.get_v()),
+                               vpColor::darkRed);
 
     iP1.set_i(80);
     iP1.set_j(220);
@@ -193,7 +191,7 @@ int main(int argc ,char *argv[])
     }
   }
 
-  //unsigned char
+  // unsigned char
   {
     vpImage<unsigned char> I(480, 640, 0);
     vpImagePoint iP1, iP2;

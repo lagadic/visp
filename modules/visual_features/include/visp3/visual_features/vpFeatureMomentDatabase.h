@@ -78,20 +78,19 @@ between moment primitives and moment features:
 \code
 #include <visp3/core/vpPoint.h>
 
-#include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpMomentBasic.h>
 #include <visp3/core/vpMomentCInvariant.h>
 #include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentCInvariant.h>
-#include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentGravityCenter.h>
+#include <visp3/core/vpMomentObject.h>
 
-#include <visp3/visual_features/vpFeatureMomentCInvariant.h>
-#include <visp3/visual_features/vpFeatureMomentBasic.h>
-#include <visp3/visual_features/vpFeatureMomentCentered.h>
-#include <visp3/visual_features/vpFeatureMomentDatabase.h>
 #include <iostream>
 #include <vector>
+#include <visp3/visual_features/vpFeatureMomentBasic.h>
+#include <visp3/visual_features/vpFeatureMomentCInvariant.h>
+#include <visp3/visual_features/vpFeatureMomentCentered.h>
+#include <visp3/visual_features/vpFeatureMomentDatabase.h>
 
 int main()
 {

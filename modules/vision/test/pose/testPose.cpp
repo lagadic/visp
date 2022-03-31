@@ -76,9 +76,9 @@ void print_pose(const vpHomogeneousMatrix &cMo, const std::string &legend)
             << "ty  = " << cpo[1] << "\n "
             << "tz  = " << cpo[2] << "\n "
             << "tux = vpMath::rad(" << vpMath::deg(cpo[3]) << ")\n "
-                                                           << "tuy = vpMath::rad(" << vpMath::deg(cpo[4]) << ")\n "
-                                                                                                          << "tuz = vpMath::rad(" << vpMath::deg(cpo[5]) << ")\n"
-                                                                                                                                                         << std::endl;
+            << "tuy = vpMath::rad(" << vpMath::deg(cpo[4]) << ")\n "
+            << "tuz = vpMath::rad(" << vpMath::deg(cpo[5]) << ")\n"
+            << std::endl;
 }
 
 // test if pose is well estimated
@@ -129,18 +129,18 @@ int main()
       std::cout << "Start test considering planar case with 4 points..." << std::endl;
       std::cout << "===================================================" << std::endl;
 
-      //vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(5), 0, vpMath::rad(10));
-      vpPoseVector cpo_ref = vpPoseVector(-0.01, -0.02, 0.3, vpMath::rad(20),  vpMath::rad(-20), vpMath::rad(10));
+      // vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(5), 0, vpMath::rad(10));
+      vpPoseVector cpo_ref = vpPoseVector(-0.01, -0.02, 0.3, vpMath::rad(20), vpMath::rad(-20), vpMath::rad(10));
       vpHomogeneousMatrix cMo_ref(cpo_ref);
 
       int npt = 4;
       std::vector<vpPoint> P(npt); //  Point to be tracked
-      double Z = 0.05; // FS: Dementhon estimation is not good when Z=0.3
+      double Z = 0.05;             // FS: Dementhon estimation is not good when Z=0.3
 
       P[0].setWorldCoordinates(-L, -L, Z);
-      P[1].setWorldCoordinates( L, -L, Z);
-      P[2].setWorldCoordinates( L,  L, Z);
-      P[3].setWorldCoordinates(-L,  L, Z);
+      P[1].setWorldCoordinates(L, -L, Z);
+      P[2].setWorldCoordinates(L, L, Z);
+      P[3].setWorldCoordinates(-L, L, Z);
 
       vpPose pose;
 
@@ -213,7 +213,6 @@ int main()
       print_pose(cMo, std::string("Pose estimated by Lagrange then by VVS"));
       fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange then by VVS");
       test_planar_fail |= fail;
-
     }
 
     {
@@ -228,14 +227,14 @@ int main()
       vpHomogeneousMatrix cMo_ref(cpo_ref);
 
       int npt = 6;
-      std::vector<vpPoint> P(npt); //  Point to be tracked
-      P[0].setWorldCoordinates(-L, -L,    0); // Lagrange not accurate...
-      P[0].setWorldCoordinates(-L, -L,   -0.02);
-      P[1].setWorldCoordinates( L, -L,    0);
-      P[2].setWorldCoordinates( L,  L,    0);
-      P[3].setWorldCoordinates(-2 * L,    3 * L, 0);
-      P[4].setWorldCoordinates(-L,  L,    0.01);
-      P[5].setWorldCoordinates( L,  L/2., 0.03);
+      std::vector<vpPoint> P(npt);         //  Point to be tracked
+      P[0].setWorldCoordinates(-L, -L, 0); // Lagrange not accurate...
+      P[0].setWorldCoordinates(-L, -L, -0.02);
+      P[1].setWorldCoordinates(L, -L, 0);
+      P[2].setWorldCoordinates(L, L, 0);
+      P[3].setWorldCoordinates(-2 * L, 3 * L, 0);
+      P[4].setWorldCoordinates(-L, L, 0.01);
+      P[5].setWorldCoordinates(L, L / 2., 0.03);
 
       vpPose pose;
 
@@ -319,10 +318,10 @@ int main()
     {
       int npt = 4;
       std::vector<vpPoint> P(npt); //  Point to be tracked
-      P[0].setWorldCoordinates(-L2, -L2,  0);
-      P[1].setWorldCoordinates( L2, -L2,  0.2);
-      P[2].setWorldCoordinates( L2,  L2, -0.1);
-      P[3].setWorldCoordinates(-L2,  L2,  0);
+      P[0].setWorldCoordinates(-L2, -L2, 0);
+      P[1].setWorldCoordinates(L2, -L2, 0.2);
+      P[2].setWorldCoordinates(L2, L2, -0.1);
+      P[3].setWorldCoordinates(-L2, L2, 0);
 
       vpPose pose;
 
@@ -381,10 +380,12 @@ int main()
 
     std::cout << "=======================================================" << std::endl;
     std::cout << "Pose estimation test from planar points: " << (test_planar_fail ? "fail" : "is ok") << std::endl;
-    std::cout << "Pose estimation test from non-planar points: " << (test_non_planar_fail ? "fail" : "is ok") << std::endl;
-    std::cout << "Global pose estimation test: " << ((test_planar_fail | test_non_planar_fail)  ? "fail" : "is ok") << std::endl;
+    std::cout << "Pose estimation test from non-planar points: " << (test_non_planar_fail ? "fail" : "is ok")
+              << std::endl;
+    std::cout << "Global pose estimation test: " << ((test_planar_fail | test_non_planar_fail) ? "fail" : "is ok")
+              << std::endl;
 
-    return ((test_planar_fail | test_non_planar_fail)  ? EXIT_FAILURE : EXIT_SUCCESS);
+    return ((test_planar_fail | test_non_planar_fail) ? EXIT_FAILURE : EXIT_SUCCESS);
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;

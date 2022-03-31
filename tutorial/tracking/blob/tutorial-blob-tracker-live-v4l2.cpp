@@ -30,7 +30,7 @@ int main(int argc, char **argv)
   g.open(I);
 #elif defined(VISP_HAVE_OPENCV)
   cv::VideoCapture g(device); // open the default camera
-  if (!g.isOpened()) {   // check if we succeeded
+  if (!g.isOpened()) {        // check if we succeeded
     std::cout << "Failed to open the camera" << std::endl;
     return -1;
   }

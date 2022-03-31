@@ -49,12 +49,12 @@
 #include <sstream>
 #include <vector>
 
-#include <visp3/robot/vpVirtuose.h>
-#include <visp3/core/vpImage.h>
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/core/vpImage.h>
 #include <visp3/core/vpMeterPixelConversion.h>
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/robot/vpVirtuose.h>
 
 #if defined(VISP_HAVE_VIRTUOSE) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
@@ -70,8 +70,8 @@ int main()
   vpHomogeneousMatrix wMc(0.3, 0, 1.2, vpMath::rad(180), 0, 0);
 
   // Open device
-  for (size_t device=0; device < virtuose.size(); device ++) {
-    std::cout << "Try to connect to " << ip << " port " << (port  + device) << std::endl;
+  for (size_t device = 0; device < virtuose.size(); device++) {
+    std::cout << "Try to connect to " << ip << " port " << (port + device) << std::endl;
     virtuose[device].setIpAddressAndPort(ip, port + static_cast<int>(device));
     virtuose[device].init();
   }
@@ -96,10 +96,10 @@ int main()
   vpDisplayGDI d(I);
 #endif
 
-  while(!end) {
+  while (!end) {
     vpDisplay::display(I);
     // Get joint position
-    for (size_t device=0; device < virtuose.size(); device ++) {
+    for (size_t device = 0; device < virtuose.size(); device++) {
       vpPoseVector wpd = virtuose[device].getAvatarPosition();
       std::cout << "Device #" << device << " has position: " << wpd.t() << std::endl;
       wMd[device].buildFrom(wpd);
@@ -113,19 +113,18 @@ int main()
       double Y = cMd[1][3];
       double Z = cMd[2][3];
       vpImagePoint pos;
-      vpMeterPixelConversion::convertPoint(cam, X/Z, Y/Z, pos);
+      vpMeterPixelConversion::convertPoint(cam, X / Z, Y / Z, pos);
       vpDisplay::displayText(I, pos + vpImagePoint(10, 10), ss.str(), vpColor::white);
       vpDisplay::displayText(I, 10, 10, "Click to quit...", vpColor::red);
     }
-    if(vpDisplay::getClick(I, false)) {
+    if (vpDisplay::getClick(I, false)) {
       end = true;
     }
     vpDisplay::flush(I);
-
   }
 
   // Close device
-  for (size_t device=0; device < virtuose.size(); device ++) {
+  for (size_t device = 0; device < virtuose.size(); device++) {
     virtuose[device].close();
   }
   std::cout << "The end" << std::endl;

@@ -70,8 +70,7 @@ public:
   void computeDenom(vpColVector &X, const vpColVector &);
 
   void dWarp(const vpColVector &X1, const vpColVector &X2, const vpColVector &, vpMatrix &dW);
-  void dWarpCompo(const vpColVector &, const vpColVector &X, const vpColVector &, const double *dwdp0,
-                  vpMatrix &dW);
+  void dWarpCompo(const vpColVector &, const vpColVector &X, const vpColVector &, const double *dwdp0, vpMatrix &dW);
 
   void findWarp(const double *ut0, const double *vt0, const double *u, const double *v, int nb_pt, vpColVector &p);
 

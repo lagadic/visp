@@ -11,8 +11,7 @@
 void usage(const char *argv[], int error)
 {
   std::cout << "SYNOPSIS" << std::endl
-            << "  " << argv[0]
-            << " [--device <index>]"
+            << "  " << argv[0] << " [--device <index>]"
             << " [--config-file <filename.ini>]"
             << " [--fps <auto|fps value like 6|15|30|60>]"
             << " [--gain <auto|value in 0 - 100>]"
@@ -24,61 +23,80 @@ void usage(const char *argv[], int error)
             << " [--record <mode>]"
             << " [--no-display]"
             << " [--verbose] [-v]"
-            << " [--help] [-h]" << std::endl << std::endl;
+            << " [--help] [-h]" << std::endl
+            << std::endl;
   std::cout << "DESCRIPTION" << std::endl
             << "  --device <index>" << std::endl
             << "    Camera device index. Set 0 to dial with the first camera," << std::endl
             << "    and 1 to dial with the second camera attached to the computer." << std::endl
-            << "    Default: 0" << std::endl << std::endl
+            << "    Default: 0" << std::endl
+            << std::endl
             << "  --config-file <filename.ini>" << std::endl
             << "    Camera config file." << std::endl
-            << "    Default: empty." << std::endl << std::endl
+            << "    Default: empty." << std::endl
+            << std::endl
             << "  --fps <auto|fps value like 6|15|30|60>" << std::endl
             << "    \"Auto\" or a frames per second value." << std::endl
-            << "    Default: current setting." << std::endl << std::endl
+            << "    Default: current setting." << std::endl
+            << std::endl
             << "  --gain <auto|value in 0 - 100>" << std::endl
             << "    \"Auto\" or manual gain with a value in 0 - 100." << std::endl
-            << "    Default: current setting." << std::endl << std::endl
+            << "    Default: current setting." << std::endl
+            << std::endl
             << "  --shutter <auto|manu>" << std::endl
             << "    \"Auto\" or manual shutter." << std::endl
-            << "    Default: current setting." << std::endl << std::endl
+            << "    Default: current setting." << std::endl
+            << std::endl
             << "  --subsample <factor>" << std::endl
             << "    Subsample factor to reduce image size alog rows and columns." << std::endl
-            << "    Default: 1." << std::endl << std::endl
+            << "    Default: 1." << std::endl
+            << std::endl
             << "  --white-balance <value>" << std::endl
             << "    Possible values are 0 (disabled) or 1 (enabled)." << std::endl
-            << "    Default: current setting." << std::endl << std::endl
+            << "    Default: current setting." << std::endl
+            << std::endl
             << "  --color-mode <mode>" << std::endl
             << "    Possible modes are: mono8, rgb24, rgb32, bayer8." << std::endl
-            << "    Default: current setting." << std::endl << std::endl
+            << "    Default: current setting." << std::endl
+            << std::endl
             << "  --seqname <sequence name>" << std::endl
             << "    Name of the sequence of image to create (ie: /tmp/image%04d.jpg)." << std::endl
-            << "    Default: empty." << std::endl << std::endl
+            << "    Default: empty." << std::endl
+            << std::endl
             << "  --record <mode>" << std::endl
             << "    Allowed values for mode are:" << std::endl
             << "      0: record all the captures images (continuous mode)," << std::endl
             << "      1: record only images selected by a user click (single shot mode)." << std::endl
-            << "    Default mode: 0" << std::endl << std::endl
+            << "    Default mode: 0" << std::endl
+            << std::endl
             << "  --no-display" << std::endl
             << "    Disable displaying captured images." << std::endl
-            << "    When used and sequence name specified, record mode is internaly set to 1 (continuous mode)." << std::endl << std::endl
+            << "    When used and sequence name specified, record mode is internaly set to 1 (continuous mode)."
+            << std::endl
+            << std::endl
             << "  --verbose, -v" << std::endl
-            << "    Enable extra printings." << std::endl << std::endl
+            << "    Enable extra printings." << std::endl
+            << std::endl
             << "  --help, -h" << std::endl
-            << "    Print this helper message." << std::endl << std::endl;
+            << "    Print this helper message." << std::endl
+            << std::endl;
   std::cout << "USAGE" << std::endl
             << "  Example to visualize images:" << std::endl
-            << "    " << argv[0] << std::endl << std::endl
+            << "    " << argv[0] << std::endl
+            << std::endl
             << "  Examples to record a sequence of images:" << std::endl
             << "    " << argv[0] << " --seqname I%04d.png" << std::endl
-            << "    " << argv[0] << " --seqname folder/I%04d.png --record 0" << std::endl << std::endl
+            << "    " << argv[0] << " --seqname folder/I%04d.png --record 0" << std::endl
+            << std::endl
             << "  Examples to record single shot images:\n"
             << "    " << argv[0] << " --seqname I%04d.png --record 1\n"
-            << "    " << argv[0] << " --seqname folder/I%04d.png --record 1" << std::endl << std::endl;
+            << "    " << argv[0] << " --seqname folder/I%04d.png --record 1" << std::endl
+            << std::endl;
 
   if (error) {
     std::cout << "Error" << std::endl
-              << "  " << "Unsupported parameter " << argv[error] << std::endl;
+              << "  "
+              << "Unsupported parameter " << argv[error] << std::endl;
   }
 }
 
@@ -107,64 +125,52 @@ int main(int argc, const char *argv[])
     for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--device") {
         opt_device = static_cast<unsigned int>(std::atoi(argv[i + 1]));
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--config-file") {
+        i++;
+      } else if (std::string(argv[i]) == "--config-file") {
         opt_config_file = std::string(argv[i + 1]);
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--fps") {
+        i++;
+      } else if (std::string(argv[i]) == "--fps") {
         opt_fps = std::string(argv[i + 1]);
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--gain") {
+        i++;
+      } else if (std::string(argv[i]) == "--gain") {
         opt_gain = std::string(argv[i + 1]);
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--shutter") {
+        i++;
+      } else if (std::string(argv[i]) == "--shutter") {
         opt_shutter = std::string(argv[i + 1]);
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--subsample") {
+        i++;
+      } else if (std::string(argv[i]) == "--subsample") {
         opt_subsample = std::atoi(argv[i + 1]);
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--white-balance") {
+        i++;
+      } else if (std::string(argv[i]) == "--white-balance") {
         opt_white_balance = std::atoi(argv[i + 1]);
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--color-mode") {
+        i++;
+      } else if (std::string(argv[i]) == "--color-mode") {
         opt_color_mode = std::string(argv[i + 1]);
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--seqname") {
+        i++;
+      } else if (std::string(argv[i]) == "--seqname") {
         opt_seqname = std::string(argv[i + 1]);
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--record") {
+        i++;
+      } else if (std::string(argv[i]) == "--record") {
         opt_record_mode = std::atoi(argv[i + 1]);
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
+        i++;
+      } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
         opt_verbose = true;
-      }
-      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         usage(argv, 0);
         return EXIT_SUCCESS;
-      }
-      else {
+      } else {
         usage(argv, i);
         return EXIT_FAILURE;
       }
     }
 
-    if ((! opt_display) && (! opt_seqname.empty())) {
+    if ((!opt_display) && (!opt_seqname.empty())) {
       opt_record_mode = 0;
     }
 
     //! [Create image]
 #ifdef USE_COLOR
-    vpImage<vpRGBa> I;        // To acquire color images
+    vpImage<vpRGBa> I; // To acquire color images
 #else
     vpImage<unsigned char> I; // To acquire gray images
 #endif
@@ -178,31 +184,32 @@ int main(int argc, const char *argv[])
     std::vector<std::string> cam_models = g.getCameraModelList();
     std::vector<std::string> cam_serials = g.getCameraSerialNumberList();
 
-    if (! cam_ids.size()) {
+    if (!cam_ids.size()) {
       std::cout << "No camera detected. Plug a camera and try again..." << std::endl;
       return EXIT_FAILURE;
     }
-    std::cout << "Found " << cam_ids.size() << " cameras :"<< std::endl;
+    std::cout << "Found " << cam_ids.size() << " cameras :" << std::endl;
     for (unsigned int i = 0; i < cam_ids.size(); i++) {
-      std::cout << (opt_device == i ? " * Camera " : "   Camera ") << i
-                << " - ID: " << cam_ids[i]  << " Model: " << cam_models[i] << " S/N: " << cam_serials[i] << std::endl;
+      std::cout << (opt_device == i ? " * Camera " : "   Camera ") << i << " - ID: " << cam_ids[i]
+                << " Model: " << cam_models[i] << " S/N: " << cam_serials[i] << std::endl;
     }
     //! [List camera info]
 
     //! [Active camera info]
-    if (! g.setActiveCamera(opt_device)) {
+    if (!g.setActiveCamera(opt_device)) {
       std::cout << "Unable to select camera " << opt_device << std::endl;
       return EXIT_FAILURE;
     };
     //! [Active camera info]
 
-    std::cout << "Active camera is Model " << g.getActiveCameraModel() << " with S/N: " << g.getActiveCameraSerialNumber() << std::endl;
+    std::cout << "Active camera is Model " << g.getActiveCameraModel()
+              << " with S/N: " << g.getActiveCameraSerialNumber() << std::endl;
 
     //! [Open connection]
     g.open(I);
     //! [Open connection]
 
-    if (! opt_config_file.empty()) {
+    if (!opt_config_file.empty()) {
       //! [Load settings from file]
       g.loadParameters(opt_config_file);
       //! [Load settings from file]
@@ -219,20 +226,22 @@ int main(int argc, const char *argv[])
       I.resize(g.getFrameHeight(), g.getFrameWidth());
     }
 
-    if (! opt_gain.empty()) {
+    if (!opt_gain.empty()) {
       if (opt_gain == "auto") {
         std::cout << "Auto gain         : " << (g.setGain(true) ? "enabled" : "N/A") << std::endl;
-      }
-      else {
-        std::cout << "Manual gain       : " << (g.setGain(false, std::atoi(opt_gain.c_str())) ? (std::string(opt_gain) + " %") : "N/A") << std::endl;
+      } else {
+        std::cout << "Manual gain       : "
+                  << (g.setGain(false, std::atoi(opt_gain.c_str())) ? (std::string(opt_gain) + " %") : "N/A")
+                  << std::endl;
       }
     }
-    if (! opt_shutter.empty()) {
+    if (!opt_shutter.empty()) {
       if (opt_shutter == "auto") {
         std::cout << "Auto shutter      : " << (g.setExposure(true) ? "enabled" : "N/A") << std::endl;
-      }
-      else {
-        std::cout << "Manual shutter    : " << (g.setExposure(false, std::atof(opt_shutter.c_str())) ? (std::string(opt_shutter) + " ms") : "N/A") << std::endl;
+      } else {
+        std::cout << "Manual shutter    : "
+                  << (g.setExposure(false, std::atof(opt_shutter.c_str())) ? (std::string(opt_shutter) + " ms") : "N/A")
+                  << std::endl;
       }
     }
 
@@ -243,27 +252,29 @@ int main(int argc, const char *argv[])
       g.setWhiteBalance(wb);
     }
 
-    if (! opt_color_mode.empty()) {
+    if (!opt_color_mode.empty()) {
       if (g.setColorMode(opt_color_mode)) {
         std::cout << "Color mode        : " << opt_color_mode << std::endl;
       }
     }
 
-    if (! opt_fps.empty()) {
+    if (!opt_fps.empty()) {
       if (opt_fps == "auto") {
         std::cout << "Auto framerate    : " << (g.setFrameRate(true) ? "enabled" : "N/A") << std::endl;
-      }
-      else {
-        std::cout << "Manual framerate  : " << (g.setFrameRate(false, std::atof(opt_fps.c_str())) ? (std::string(opt_fps) + " Hz") : "N/A") << std::endl;
+      } else {
+        std::cout << "Manual framerate  : "
+                  << (g.setFrameRate(false, std::atof(opt_fps.c_str())) ? (std::string(opt_fps) + " Hz") : "N/A")
+                  << std::endl;
       }
     }
 
     std::cout << "Recording         : " << (opt_seqname.empty() ? "disabled" : "enabled") << std::endl;
     std::cout << "Display           : " << (opt_display ? "enabled" : "disabled") << std::endl;
 
-    std::string text_record_mode = std::string("Record mode       : ") + (opt_record_mode ? std::string("single") : std::string("continuous"));
+    std::string text_record_mode =
+        std::string("Record mode       : ") + (opt_record_mode ? std::string("single") : std::string("continuous"));
 
-    if (! opt_seqname.empty()) {
+    if (!opt_seqname.empty()) {
       std::cout << text_record_mode << std::endl;
       std::cout << "Record name       : " << opt_seqname << std::endl;
     }
@@ -273,7 +284,7 @@ int main(int argc, const char *argv[])
 
     vpDisplay *d = NULL;
     if (opt_display) {
-#if ! (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << "No image viewer is available..." << std::endl;
       opt_display = false;
 #endif
@@ -303,7 +314,7 @@ int main(int argc, const char *argv[])
     bool quit = false;
     double timestamp_camera = 0, timestamp_camera_prev = 0;
     std::string timestamp_system;
-    while (! quit) {
+    while (!quit) {
       g.acquire(I, &timestamp_camera, &timestamp_system);
       double fps = g.getFramerate();
 
@@ -337,8 +348,8 @@ int main(int argc, const char *argv[])
     std::cout << "Catch an exception: " << e << std::endl;
   }
 #else
-  (void) argc;
-  (void) argv;
+  (void)argc;
+  (void)argv;
 #ifndef VISP_HAVE_UEYE
   std::cout << "Install IDS uEye SDK, configure and build ViSP again to use this example" << std::endl;
 #endif

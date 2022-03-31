@@ -46,10 +46,7 @@ namespace vpEndian
   Swap 16 bits by shifting to the right the first byte and by shifting to the
   left the second byte.
 */
-uint16_t swap16bits(uint16_t val)
-{
-  return (((val >> 8) & 0x00FF) | ((val << 8) & 0xFF00));
-}
+uint16_t swap16bits(uint16_t val) { return (((val >> 8) & 0x00FF) | ((val << 8) & 0xFF00)); }
 
 /*!
   Swap 32 bits by shifting to the right the first 2 bytes and by shifting to
@@ -108,14 +105,14 @@ double swapDouble(double d)
 
   \warning Pointer must be valid and 16-bit must be correctly readable.
 */
-uint16_t reinterpret_cast_uchar_to_uint16_LE(unsigned char * const ptr)
+uint16_t reinterpret_cast_uchar_to_uint16_LE(unsigned char *const ptr)
 {
 #ifdef VISP_LITTLE_ENDIAN
-    return *reinterpret_cast<uint16_t *>(ptr);
+  return *reinterpret_cast<uint16_t *>(ptr);
 #elif defined(VISP_BIG_ENDIAN)
-    return swap16bits(*reinterpret_cast<uint16_t *>(ptr));
+  return swap16bits(*reinterpret_cast<uint16_t *>(ptr));
 #else
-    throw std::runtime_error("Not supported endianness for correct  custom reinterpret_cast() function.");
+  throw std::runtime_error("Not supported endianness for correct  custom reinterpret_cast() function.");
 #endif
 }
-}
+} // namespace vpEndian

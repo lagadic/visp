@@ -1,16 +1,16 @@
 //! \example mbot-apriltag-2D-half-vs.cpp
-#include <visp3/core/vpXmlParserCamera.h>
+#include <visp3/core/vpPolygon.h>
 #include <visp3/core/vpSerial.h>
+#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/io/vpImageIo.h>
+#include <visp3/robot/vpUnicycle.h>
+#include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureDepth.h>
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
-#include <visp3/robot/vpUnicycle.h>
-#include <visp3/core/vpPolygon.h>
 
 int main(int argc, const char **argv)
 {
@@ -54,7 +54,7 @@ int main(int argc, const char **argv)
 #endif
     } else if (std::string(argv[i]) == "--serial_off") {
       serial_off = true;
-   } else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
+    } else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
@@ -80,7 +80,7 @@ int main(int argc, const char **argv)
   // if motor right: led 4 blue
 
   vpSerial *serial = NULL;
-  if (! serial_off) {
+  if (!serial_off) {
     serial = new vpSerial("/dev/ttyAMA0", 115200);
 
     serial->write("LED_RING=0,0,0,0\n");  // Switch off all led
@@ -128,16 +128,22 @@ int main(int argc, const char **argv)
     if (display_on)
       lambda.initStandard(2.5, 0.4, 30); // lambda(0)=2.5, lambda(oo)=0.4 and lambda'(0)=30
     else
-      lambda.initStandard(4, 0.4, 30);   // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
+      lambda.initStandard(4, 0.4, 30); // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
 
     vpUnicycle robot;
     task.setServo(vpServo::EYEINHAND_L_cVe_eJe);
     task.setInteractionMatrixType(vpServo::CURRENT, vpServo::PSEUDO_INVERSE);
     task.setLambda(lambda);
     vpRotationMatrix cRe;
-    cRe[0][0] = 0; cRe[0][1] = -1; cRe[0][2] =  0;
-    cRe[1][0] = 0; cRe[1][1] =  0; cRe[1][2] = -1;
-    cRe[2][0] = 1; cRe[2][1] =  0; cRe[2][2] =  0;
+    cRe[0][0] = 0;
+    cRe[0][1] = -1;
+    cRe[0][2] = 0;
+    cRe[1][0] = 0;
+    cRe[1][1] = 0;
+    cRe[1][2] = -1;
+    cRe[2][0] = 1;
+    cRe[2][1] = 0;
+    cRe[2][2] = 0;
 
     vpHomogeneousMatrix cMe(vpTranslationVector(), cRe);
     vpVelocityTwistMatrix cVe(cMe);
@@ -199,21 +205,22 @@ int main(int argc, const char **argv)
         // Display visual features
         vpHomogeneousMatrix cdMo(0, 0, Z_d, 0, 0, 0);
         vpDisplay::displayFrame(I, cdMo, cam, tagSize / 3, vpColor::red, 3);
-        vpDisplay::displayCross(I, detector.getCog(0), 15, vpColor::green, 3); // Current polygon used to compure an moment
-        vpDisplay::displayLine(I, 0, cam.get_u0(), I.getHeight()-1, cam.get_u0(), vpColor::red, 3); // Vertical line as desired x position
+        vpDisplay::displayCross(I, detector.getCog(0), 15, vpColor::green,
+                                3); // Current polygon used to compure an moment
+        vpDisplay::displayLine(I, 0, cam.get_u0(), I.getHeight() - 1, cam.get_u0(), vpColor::red,
+                               3); // Vertical line as desired x position
         if (use_pose) {
           // Display visual features
           vpDisplay::displayFrame(I, cMo_vec[0], cam, tagSize / 2, vpColor::none, 3);
         }
 
-        if (! serial_off) {
+        if (!serial_off) {
           serial->write("LED_RING=2,0,10,0\n"); // Switch on led 2 to green: tag detected
         }
 
         if (use_pose) {
           Z = cMo_vec[0][2][3];
-        }
-        else {
+        } else {
           vpPolygon polygon(detector.getPolygon(0));
           double surface = polygon.getArea();
           std::cout << "Surface: " << surface << std::endl;
@@ -241,29 +248,28 @@ int main(int argc, const char **argv)
         task.print();
         double radius = 0.0325;
         double L = 0.0725;
-        double motor_left  = (-v[0] - L * v[1]) / radius;
-        double motor_right = ( v[0] - L * v[1]) / radius;
+        double motor_left = (-v[0] - L * v[1]) / radius;
+        double motor_right = (v[0] - L * v[1]) / radius;
         std::cout << "motor left vel: " << motor_left << " motor right vel: " << motor_right << std::endl;
-        if (! serial_off) {
-//          serial->write("LED_RING=3,0,0,10\n"); // Switch on led 3 to blue: motor left servoed
-//          serial->write("LED_RING=4,0,0,10\n"); // Switch on led 4 to blue: motor right servoed
+        if (!serial_off) {
+          //          serial->write("LED_RING=3,0,0,10\n"); // Switch on led 3 to blue: motor left servoed
+          //          serial->write("LED_RING=4,0,0,10\n"); // Switch on led 4 to blue: motor right servoed
         }
         std::stringstream ss;
-        double rpm_left  = motor_left  * 30. / M_PI;
+        double rpm_left = motor_left * 30. / M_PI;
         double rpm_right = motor_right * 30. / M_PI;
         ss << "MOTOR_RPM=" << vpMath::round(rpm_left) << "," << vpMath::round(rpm_right) << "\n";
         std::cout << "Send: " << ss.str() << std::endl;
-        if (! serial_off) {
+        if (!serial_off) {
           serial->write(ss.str());
         }
-      }
-      else {
+      } else {
         // stop the robot
-        if (! serial_off) {
+        if (!serial_off) {
           serial->write("LED_RING=2,10,0,0\n"); // Switch on led 2 to red: tag not detected
-//          serial->write("LED_RING=3,0,0,0\n");  // Switch on led 3 to blue: motor left not servoed
-//          serial->write("LED_RING=4,0,0,0\n");  // Switch on led 4 to blue: motor right not servoed
-          serial->write("MOTOR_RPM=0,-0\n");    // Stop the robot
+          //          serial->write("LED_RING=3,0,0,0\n");  // Switch on led 3 to blue: motor left not servoed
+          //          serial->write("LED_RING=4,0,0,0\n");  // Switch on led 4 to blue: motor right not servoed
+          serial->write("MOTOR_RPM=0,-0\n"); // Stop the robot
         }
       }
 
@@ -277,7 +283,7 @@ int main(int argc, const char **argv)
         break;
     }
 
-    if (! serial_off) {
+    if (!serial_off) {
       serial->write("LED_RING=0,0,0,0\n"); // Switch off all led
     }
 
@@ -288,12 +294,12 @@ int main(int argc, const char **argv)
 
     if (display_on)
       delete d;
-    if (! serial_off) {
+    if (!serial_off) {
       delete serial;
     }
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
-    if (! serial_off) {
+    if (!serial_off) {
       serial->write("LED_RING=1,10,0,0\n"); // Switch on led 1 to red
     }
   }

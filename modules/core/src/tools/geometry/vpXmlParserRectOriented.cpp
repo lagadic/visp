@@ -166,16 +166,11 @@ private:
   double m_theta;
   std::map<std::string, int> m_nodeMap;
 };
-#endif //DOXYGEN_SHOULD_SKIP_THIS
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
-vpXmlParserRectOriented::vpXmlParserRectOriented() : m_impl(new Impl())
-{
-}
+vpXmlParserRectOriented::vpXmlParserRectOriented() : m_impl(new Impl()) {}
 
-vpXmlParserRectOriented::~vpXmlParserRectOriented()
-{
-  delete m_impl;
-}
+vpXmlParserRectOriented::~vpXmlParserRectOriented() { delete m_impl; }
 
 /*!
   Parse the document.
@@ -185,10 +180,7 @@ vpXmlParserRectOriented::~vpXmlParserRectOriented()
 
   \param filename : name of the file to parse
 */
-void vpXmlParserRectOriented::parse(const std::string &filename)
-{
-  m_impl->parse(filename);
-}
+void vpXmlParserRectOriented::parse(const std::string &filename) { m_impl->parse(filename); }
 
 /*!
   Save the content of the class in the file given in parameters.
@@ -200,17 +192,8 @@ void vpXmlParserRectOriented::parse(const std::string &filename)
   \param append : if true and if the file exists, the data will be added to
   the data already in the file
 */
-void vpXmlParserRectOriented::save(const std::string &filename, bool append)
-{
-  m_impl->save(filename, append);
-}
+void vpXmlParserRectOriented::save(const std::string &filename, bool append) { m_impl->save(filename, append); }
 
-vpRectOriented vpXmlParserRectOriented::getRectangle() const
-{
-  return m_impl->getRectangle();
-}
+vpRectOriented vpXmlParserRectOriented::getRectangle() const { return m_impl->getRectangle(); }
 
-void vpXmlParserRectOriented::setRectangle(const vpRectOriented &rectangle)
-{
-  m_impl->setRectangle(rectangle);
-}
+void vpXmlParserRectOriented::setRectangle(const vpRectOriented &rectangle) { m_impl->setRectangle(rectangle); }

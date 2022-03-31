@@ -24,8 +24,7 @@ int main(int argc, char **argv)
       else if (std::string(argv[i]) == "--tracker" && i + 1 < argc)
         opt_tracker = atoi(argv[i + 1]);
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0]
-                  << " [--name <video name>] [--tracker <1=egde|2=keypoint|3=hybrid>]"
+        std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--tracker <1=egde|2=keypoint|3=hybrid>]"
                   << " [--help] [-h]\n"
                   << std::endl;
         return EXIT_SUCCESS;
@@ -69,7 +68,7 @@ int main(int argc, char **argv)
 
     //! [Constructor]
     vpMbGenericTracker tracker(1, opt_tracker);
-//! [Constructor]
+    //! [Constructor]
 
 #if !defined(VISP_HAVE_MODULE_KLT)
     if (opt_tracker >= 2) {
@@ -80,7 +79,7 @@ int main(int argc, char **argv)
     }
 #endif
 
-//! [Set parameters]
+    //! [Set parameters]
     //! [Load config file]
     tracker.loadConfigFile(objectname + ".xml");
 //! [Load config file]

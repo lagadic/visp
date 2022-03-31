@@ -147,7 +147,8 @@ vpKalmanFilter::vpKalmanFilter(unsigned int size_state_vector, unsigned int size
 void vpKalmanFilter::prediction()
 {
   if (Xest.getRows() != size_state * nsignal) {
-    throw(vpException(vpException::fatalError, "Error in vpKalmanFilter::prediction() %d != %d: Filter not initialized", Xest.getRows(), size_state * nsignal));
+    throw(vpException(vpException::fatalError, "Error in vpKalmanFilter::prediction() %d != %d: Filter not initialized",
+                      Xest.getRows(), size_state * nsignal));
   }
 
   if (verbose_mode) {

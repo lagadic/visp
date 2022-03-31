@@ -184,7 +184,7 @@ public:
 
   void track(const vpImage<unsigned char> &Im);
 
-  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack=false);
+  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack = false);
   void reSample(const vpImage<unsigned char> &I);
   void leastSquare();
   void updateDelta();

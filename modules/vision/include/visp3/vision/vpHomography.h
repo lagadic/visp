@@ -235,7 +235,7 @@ public:
   vpHomography homography2collineation(const vpCameraParameters &cam) const;
 
   //! invert the homography
-  vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank=NULL) const;
+  vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank = NULL) const;
   //! invert the homography
   void inverse(vpHomography &Hi) const;
 
@@ -300,9 +300,8 @@ public:
   static void computeDisplacement(const vpHomography &aHb, vpRotationMatrix &aRb, vpTranslationVector &atb,
                                   vpColVector &n);
 
-  static void computeDisplacement(const vpHomography &H, double x, double y,
-                                  std::list<vpRotationMatrix> &vR, std::list<vpTranslationVector> &vT,
-                                  std::list<vpColVector> &vN);
+  static void computeDisplacement(const vpHomography &H, double x, double y, std::list<vpRotationMatrix> &vR,
+                                  std::list<vpTranslationVector> &vT, std::list<vpColVector> &vN);
   static double computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpPlane &oN,
                                     vpHomogeneousMatrix &c2Mc1, vpHomogeneousMatrix &c1Mo, int userobust);
   static double computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpPlane *oN,

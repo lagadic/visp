@@ -96,7 +96,8 @@ Simulation of a 2D visual servoing on a cylinder:\n\
 - display the camera view.\n\
           \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-o] [-h]\n", name);
+  %s [-c] [-d] [-o] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -185,19 +186,19 @@ int main(int argc, const char **argv)
 
 // We open a window if a display is available
 #ifdef VISP_HAVE_DISPLAY
-#  if defined VISP_HAVE_X11
+#if defined VISP_HAVE_X11
     vpDisplayX displayInt;
     vpDisplayX displayExt;
-#  elif defined VISP_HAVE_GTK
+#elif defined VISP_HAVE_GTK
     vpDisplayGTK displayInt;
     vpDisplayGTK displayExt;
-#  elif defined VISP_HAVE_GDI
+#elif defined VISP_HAVE_GDI
     vpDisplayGDI displayInt;
     vpDisplayGDI displayExt;
-#  elif defined VISP_HAVE_OPENCV
+#elif defined VISP_HAVE_OPENCV
     vpDisplayOpenCV displayInt;
     vpDisplayOpenCV displayExt;
-#  elif defined VISP_HAVE_D3D9
+#elif defined VISP_HAVE_D3D9
     vpDisplayD3D displayInt;
     vpDisplayD3D displayExt;
 #endif
@@ -423,14 +424,14 @@ int main(int argc, const char **argv)
 
         if (opt_display && opt_click_allowed) {
           std::stringstream ss;
-          ss << std::string("New projection operator: ") + (opt_new_proj_operator ? std::string("yes (use option -o to use old one)") : std::string("no"));
+          ss << std::string("New projection operator: ") +
+                    (opt_new_proj_operator ? std::string("yes (use option -o to use old one)") : std::string("no"));
           vpDisplay::displayText(Iint, 20, 20, "Secondary task enabled: yes", vpColor::white);
           vpDisplay::displayText(Iint, 40, 20, ss.str(), vpColor::white);
         }
 
-        iter_sec ++;
-      }
-      else {
+        iter_sec++;
+      } else {
         if (opt_display && opt_click_allowed) {
           vpDisplay::displayText(Iint, 20, 20, "Secondary task: no", vpColor::white);
         }

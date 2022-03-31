@@ -53,9 +53,8 @@
   \class vpTemplateTrackerWarpHomography
   \ingroup group_tt_warp
 
-  This class consider the homography warping model \f$M\f$ with parameters \f$p=(h_1, h_2, h_3, h_4, h_5, h_6, h_7, h_8)\f$ such as
-  \f[M(p) = \left[
-  \begin{array}{ccc}
+  This class consider the homography warping model \f$M\f$ with parameters \f$p=(h_1, h_2, h_3, h_4, h_5, h_6, h_7,
+  h_8)\f$ such as \f[M(p) = \left[ \begin{array}{ccc}
   h_1 + 1 & h_4 & h_7 \\
   h_2 & h_5 + 1 & h_8 \\
   h_3 & h_6 & 1
@@ -63,8 +62,8 @@
   \right]
   \f]
 
-  We recall that u axis is the image horizontal axis, and v axis is the image vertical axis. A point (u,v) with coordinates
-  (0,0) is located in the top left image corner.
+  We recall that u axis is the image horizontal axis, and v axis is the image vertical axis. A point (u,v) with
+  coordinates (0,0) is located in the top left image corner.
 
 */
 class VISP_EXPORT vpTemplateTrackerWarpHomography : public vpTemplateTrackerWarp
@@ -79,8 +78,7 @@ public:
   void computeDenom(vpColVector &X, const vpColVector &p);
 
   void dWarp(const vpColVector &, const vpColVector &X, const vpColVector &, vpMatrix &dW);
-  void dWarpCompo(const vpColVector &X, const vpColVector &, const vpColVector &p, const double *dwdp0,
-                  vpMatrix &dW);
+  void dWarpCompo(const vpColVector &X, const vpColVector &, const vpColVector &p, const double *dwdp0, vpMatrix &dW);
 
   void getdW0(const int &v, const int &u, const double &dv, const double &du, double *dIdW);
   void getdWdp0(const int &v, const int &u, double *dIdW);

@@ -133,8 +133,7 @@ public:
 
   void displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int width,
                        unsigned int height);
-  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
-                       unsigned int height);
+  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height);
 
   void flushDisplay();
   void flushDisplayROI(const vpImagePoint &iP, unsigned int width, unsigned int height);

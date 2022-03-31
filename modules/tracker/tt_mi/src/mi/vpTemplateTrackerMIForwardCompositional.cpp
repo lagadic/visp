@@ -260,8 +260,8 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
 
     if (ApproxHessian == HESSIAN_NONSECOND)
       dp = -0.04 * dp;
-//    else
-//      dp = 1. * dp;
+    //    else
+    //      dp = 1. * dp;
 
     if (useBrent) {
       alpha = 2.;
@@ -281,7 +281,7 @@ void vpTemplateTrackerMIForwardCompositional::trackNoPyr(const vpImage<unsigned 
     evolRMS_prec = evolRMS;
 
   } while ((std::fabs(MI - MIprec) > std::fabs(MI) * std::numeric_limits<double>::epsilon()) &&
-           (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) );
+           (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init) * evolRMS_eps));
 
   nbIteration = iteration;
 

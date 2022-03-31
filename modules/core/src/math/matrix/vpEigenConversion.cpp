@@ -33,16 +33,17 @@
  *
  *****************************************************************************/
 
-
 #include <visp3/core/vpEigenConversion.h>
 
-namespace vp {
+namespace vp
+{
 #ifdef VISP_HAVE_EIGEN3
 /* Eigen to ViSP */
 void eigen2visp(const Eigen::MatrixXd &src, vpMatrix &dst)
 {
   dst.resize(static_cast<unsigned int>(src.rows()), static_cast<unsigned int>(src.cols()), false, false);
-  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(&dst.data[0], src.rows(), src.cols()) = src;
+  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(&dst.data[0], src.rows(),
+                                                                                      src.cols()) = src;
 }
 
 void eigen2visp(const Eigen::MatrixXd &src, vpHomogeneousMatrix &dst)
@@ -51,7 +52,8 @@ void eigen2visp(const Eigen::MatrixXd &src, vpHomogeneousMatrix &dst)
     throw vpException(vpException::dimensionError, "Input Eigen Matrix must be of size (4,4)!");
   }
 
-  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(&dst.data[0], src.rows(), src.cols()) = src;
+  Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor> >(&dst.data[0], src.rows(),
+                                                                                      src.cols()) = src;
 }
 
 void eigen2visp(const Eigen::VectorXd &src, vpColVector &dst)
@@ -78,14 +80,11 @@ void eigen2visp(const Eigen::RowVectorXd &src, vpRowVector &dst)
   }
 }
 
-void visp2eigen(const vpColVector &src, Eigen::VectorXd &dst)
-{
-  dst = Eigen::VectorXd::Map(src.data, src.size());
-}
+void visp2eigen(const vpColVector &src, Eigen::VectorXd &dst) { dst = Eigen::VectorXd::Map(src.data, src.size()); }
 
 void visp2eigen(const vpRowVector &src, Eigen::RowVectorXd &dst)
 {
   dst = Eigen::RowVectorXd::Map(src.data, src.size());
 }
 #endif
-}
+} // namespace vp

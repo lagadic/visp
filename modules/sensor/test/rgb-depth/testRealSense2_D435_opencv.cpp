@@ -41,7 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                         \
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
 
 #include <visp3/core/vpImage.h>
@@ -54,14 +54,13 @@
 
 namespace
 {
-struct float3
-{
+struct float3 {
   float x, y, z;
   float3() : x(0), y(0), z(0) {}
   float3(float x_, float y_, float z_) : x(x_), y(y_), z(z_) {}
 };
 
-void getPointcloud(const rs2::depth_frame& depth_frame, std::vector<float3>& pointcloud)
+void getPointcloud(const rs2::depth_frame &depth_frame, std::vector<float3> &pointcloud)
 {
   auto vf = depth_frame.as<rs2::video_frame>();
   const int width = vf.get_width();
@@ -83,12 +82,12 @@ void getPointcloud(const rs2::depth_frame& depth_frame, std::vector<float3>& poi
   }
 }
 
-void createDepthHist(std::vector<uint32_t>& histogram, const std::vector<float3>& pointcloud, float depth_scale)
+void createDepthHist(std::vector<uint32_t> &histogram, const std::vector<float3> &pointcloud, float depth_scale)
 {
   std::fill(histogram.begin(), histogram.end(), 0);
 
   for (size_t i = 0; i < pointcloud.size(); i++) {
-    const float3& pt = pointcloud[i];
+    const float3 &pt = pointcloud[i];
     ++histogram[static_cast<uint32_t>(pt.z * depth_scale)];
   }
 
@@ -97,13 +96,13 @@ void createDepthHist(std::vector<uint32_t>& histogram, const std::vector<float3>
                                       // the indices in [1,0xFFFF]
 }
 
-unsigned char getDepthColor(const std::vector<uint32_t>& histogram, float z, float depth_scale)
+unsigned char getDepthColor(const std::vector<uint32_t> &histogram, float z, float depth_scale)
 {
   // 0-255 based on histogram location
-  return static_cast<unsigned char>(histogram[static_cast<uint32_t>(z*depth_scale)] * 255 / histogram[0xFFFF]);
+  return static_cast<unsigned char>(histogram[static_cast<uint32_t>(z * depth_scale)] * 255 / histogram[0xFFFF]);
 }
 
-void getNativeFrame(const rs2::frame& frame, unsigned char *const data)
+void getNativeFrame(const rs2::frame &frame, unsigned char *const data)
 {
   auto vf = frame.as<rs2::video_frame>();
   int size = vf.get_width() * vf.get_height();
@@ -141,7 +140,7 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
   const int size = w * h;
 
   if (f.get_profile().format() == RS2_FORMAT_BGR8) {
-    memcpy(static_cast<void*>(img.ptr<cv::Vec3b>()), f.get_data(), size * 3);
+    memcpy(static_cast<void *>(img.ptr<cv::Vec3b>()), f.get_data(), size * 3);
   } else if (f.get_profile().format() == RS2_FORMAT_RGB8) {
     cv::Mat tmp(h, w, CV_8UC3, const_cast<void *>(f.get_data()), cv::Mat::AUTO_STEP);
     cv::cvtColor(tmp, img, cv::COLOR_RGB2BGR);
@@ -149,7 +148,7 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
     memcpy(img.ptr<uchar>(), f.get_data(), size);
   }
 }
-}
+} // namespace
 
 int main()
 {
@@ -162,8 +161,8 @@ int main()
   config.enable_stream(RS2_STREAM_INFRARED, 2, width, height, RS2_FORMAT_Y8, fps);
   rs.open(config);
 
-  rs2::pipeline_profile& profile = rs.getPipelineProfile();
-  rs2::pipeline& pipe = rs.getPipeline();
+  rs2::pipeline_profile &profile = rs.getPipelineProfile();
+  rs2::pipeline &pipe = rs.getPipeline();
   float depth_scale = 1 / rs.getDepthScale();
 
   // initialize the image sizes
@@ -215,7 +214,7 @@ int main()
 
     mat_pointcloud = 0;
     for (size_t i = 0; i < pointcloud.size(); i++) {
-      const float3& pt = pointcloud[i];
+      const float3 &pt = pointcloud[i];
       float Z = pt.z;
       if (Z > 1e-2) {
         double x = pt.x / Z;
@@ -223,12 +222,10 @@ int main()
 
         vpImagePoint imPt;
         vpMeterPixelConversion::convertPoint(cam_projection, x, y, imPt);
-        int u = std::min(static_cast<int>(width-1),
-                         static_cast<int>(std::max(0.0, imPt.get_u())));
-        int v = std::min(static_cast<int>(height-1),
-                         static_cast<int>(std::max(0.0, imPt.get_v())));
+        int u = std::min(static_cast<int>(width - 1), static_cast<int>(std::max(0.0, imPt.get_u())));
+        int v = std::min(static_cast<int>(height - 1), static_cast<int>(std::max(0.0, imPt.get_v())));
         unsigned char depth_viz = getDepthColor(histogram, Z, depth_scale);
-        mat_pointcloud.at<uchar>(v,u) = depth_viz;
+        mat_pointcloud.at<uchar>(v, u) = depth_viz;
       }
     }
     cv::imshow("OpenCV projected pointcloud", mat_pointcloud);

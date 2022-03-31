@@ -60,10 +60,7 @@ vpRxyzVector::vpRxyzVector(const vpRxyzVector &rxyz) : vpRotationVector(rxyz) {}
   \param theta : \f$\theta\f$ angle around the \f$y\f$ axis.
   \param psi : \f$\psi\f$ angle around the \f$z\f$ axis.
 */
-vpRxyzVector::vpRxyzVector(double phi, double theta, double psi) : vpRotationVector(3)
-{
-  buildFrom(phi, theta, psi);
-}
+vpRxyzVector::vpRxyzVector(double phi, double theta, double psi) : vpRotationVector(3) { buildFrom(phi, theta, psi); }
 
 /*!
   Constructor that initialize \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler
@@ -81,16 +78,10 @@ vpRxyzVector::vpRxyzVector(const vpRotationMatrix &R) : vpRotationVector(3) { bu
 vpRxyzVector::vpRxyzVector(const vpThetaUVector &tu) : vpRotationVector(3) { buildFrom(tu); }
 
 /*! Copy constructor from a 3-dimension vector. */
-vpRxyzVector::vpRxyzVector(const vpColVector &rxyz) : vpRotationVector(3)
-{
-  buildFrom(rxyz);
-}
+vpRxyzVector::vpRxyzVector(const vpColVector &rxyz) : vpRotationVector(3) { buildFrom(rxyz); }
 
 /*! Copy constructor from a 3-dimension vector. */
-vpRxyzVector::vpRxyzVector(const std::vector<double> &rxyz) : vpRotationVector(3)
-{
-  buildFrom(rxyz);
-}
+vpRxyzVector::vpRxyzVector(const std::vector<double> &rxyz) : vpRotationVector(3) { buildFrom(rxyz); }
 
 /*!
   Convert a rotation matrix into a \f$R_{xyz}=(\varphi,\theta,\psi)\f$ Euler
@@ -260,7 +251,10 @@ rxyz: 3.141592654  0  1.570796327
 vpRxyzVector &vpRxyzVector::operator=(const std::initializer_list<double> &list)
 {
   if (list.size() > size()) {
-    throw(vpException(vpException::dimensionError, "Cannot set Euler x-y-z vector out of bounds. It has only %d values while you try to initialize with %d values", size(), list.size()));
+    throw(vpException(
+        vpException::dimensionError,
+        "Cannot set Euler x-y-z vector out of bounds. It has only %d values while you try to initialize with %d values",
+        size(), list.size()));
   }
   std::copy(list.begin(), list.end(), data);
   return *this;

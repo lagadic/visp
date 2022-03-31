@@ -48,9 +48,8 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
-  (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && \
-  (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 
 int main()
 {
@@ -72,14 +71,14 @@ int main()
     config.enable_stream(RS2_STREAM_FISHEYE, 1, RS2_FORMAT_Y8);
     config.enable_stream(RS2_STREAM_FISHEYE, 2, RS2_FORMAT_Y8);
     rs.open(config);
-    cam_left = rs.getCameraParameters(RS2_STREAM_FISHEYE, vpCameraParameters::ProjWithKannalaBrandtDistortion, cam_index);
+    cam_left =
+        rs.getCameraParameters(RS2_STREAM_FISHEYE, vpCameraParameters::ProjWithKannalaBrandtDistortion, cam_index);
 
     vpImage<unsigned char> I((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
                              (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
 
     vpImage<unsigned char> I_undist((unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).height,
                                     (unsigned int)rs.getIntrinsics(RS2_STREAM_FISHEYE).width);
-
 
     std::cout << "Left fisheye camera parameters: " << cam_left << std::endl;
 
@@ -95,7 +94,7 @@ int main()
     d.setDownScalingFactor(display_scale);
     d_undist.setDownScalingFactor(display_scale);
     d.init(I, 10, 10, "Left image");
-    d_undist.init(I_undist, I.getWidth()/display_scale + 80, 10, "Undistorted image");
+    d_undist.init(I_undist, I.getWidth() / display_scale + 80, 10, "Undistorted image");
 #endif
 
     vpArray2D<int> mapU, mapV;
@@ -113,8 +112,8 @@ int main()
       vpImageTools::undistort(I, mapU, mapV, mapDu, mapDv, I_undist);
       vpDisplay::display(I_undist);
 
-      vpDisplay::displayText(I, 15*display_scale, 15*display_scale, "Click to quit", vpColor::red);
-      vpDisplay::displayText(I_undist, 15*display_scale, 15*display_scale, "Click to quit", vpColor::red);
+      vpDisplay::displayText(I, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
+      vpDisplay::displayText(I_undist, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
 
       if (vpDisplay::getClick(I, false) || vpDisplay::getClick(I_undist, false))
         break;

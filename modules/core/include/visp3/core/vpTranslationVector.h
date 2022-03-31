@@ -123,7 +123,7 @@ public:
       Default constructor.
       The translation vector is initialized to zero.
     */
-  vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0) {};
+  vpTranslationVector() : vpArray2D<double>(3, 1), m_index(0){};
   vpTranslationVector(double tx, double ty, double tz);
   vpTranslationVector(const vpTranslationVector &tv);
   explicit vpTranslationVector(const vpHomogeneousMatrix &M);
@@ -168,7 +168,6 @@ public:
 
   vpTranslationVector &operator<<(double val);
   vpTranslationVector &operator,(double val);
-
 
   /*!
     This function is not applicable to a translation vector that is always a

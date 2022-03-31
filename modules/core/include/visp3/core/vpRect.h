@@ -70,9 +70,9 @@
 
 */
 
+#include <algorithm>
 #include <cassert>
 #include <vector>
-#include <algorithm>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 
@@ -241,7 +241,7 @@ public:
     \return Intersection rectangle or null rectangle if the two rectangles do not
     intersect.
    */
-  inline vpRect & operator &=(const vpRect &r)
+  inline vpRect &operator&=(const vpRect &r)
   {
     double x1 = (std::max)(left, r.left);
     double y1 = (std::max)(top, r.top);
@@ -264,7 +264,7 @@ public:
     \return Intersection rectangle or null rectangle if the two rectangles do not
     intersect.
    */
-  inline vpRect operator &(const vpRect &r) const
+  inline vpRect operator&(const vpRect &r) const
   {
     vpRect a = *this;
     return a &= r;

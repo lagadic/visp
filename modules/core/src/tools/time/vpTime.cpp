@@ -42,8 +42,9 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpTime.h>
 
-//https://devblogs.microsoft.com/cppblog/c14-stl-features-fixes-and-breaking-changes-in-visual-studio-14-ctp1/
-#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11 && (defined(_MSC_VER) && _MSC_VER >= 1900 /* VS2015 */ || !defined(_MSC_VER))
+// https://devblogs.microsoft.com/cppblog/c14-stl-features-fixes-and-breaking-changes-in-visual-studio-14-ctp1/
+#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11 &&                                                                       \
+    (defined(_MSC_VER) && _MSC_VER >= 1900 /* VS2015 */ || !defined(_MSC_VER))
 #define USE_CXX11_CHRONO 1
 #else
 #define USE_CXX11_CHRONO 0
@@ -324,9 +325,9 @@ void sleepMs(double t)
    | %%X       | Time representation *                                | 14:55:02                 |
    | %%y       | Year, last two digits (00-99)                        | 01                       |
    | %%Y       | Year                                                 | 2001                     |
-   | %%z       | ISO 8601 offset from UTC in timezone (1 minute=1, 1 hour=100) \n If timezone cannot be determined, no characters	| +100 |
-   | %%Z       | Timezone name or abbreviation * \n If timezone cannot be determined, no characters| CDT |
-   | %%        | A % sign                                             |	%                        |
+   | %%z       | ISO 8601 offset from UTC in timezone (1 minute=1, 1 hour=100) \n If timezone cannot be determined, no
+characters	| +100 | | %%Z       | Timezone name or abbreviation * \n If timezone cannot be determined, no
+characters| CDT | | %%        | A % sign                                             |	%                        |
    * The specifiers marked with an asterisk (*) are locale-dependent.
 
    \return A formated date and time string. When default format is used, the
@@ -374,33 +375,22 @@ std::string getDateTime(const std::string &format)
 };
 #endif
 
-vpChrono::vpChrono() : m_durationMs(), m_lastTimePoint()
-{
-}
+vpChrono::vpChrono() : m_durationMs(), m_lastTimePoint() {}
 
 /*!
   Get chrono duration in microsecond.
 */
-double vpChrono::getDurationMicros()
-{
-  return m_durationMs * 1e3;
-}
+double vpChrono::getDurationMicros() { return m_durationMs * 1e3; }
 
 /*!
   Get chrono duration in millisecond.
 */
-double vpChrono::getDurationMs()
-{
-  return m_durationMs;
-}
+double vpChrono::getDurationMs() { return m_durationMs; }
 
 /*!
   Get chrono duration in second.
 */
-double vpChrono::getDurationSeconds()
-{
-  return m_durationMs * 1e-3;
-}
+double vpChrono::getDurationSeconds() { return m_durationMs * 1e-3; }
 
 /*!
   Start the chrono.

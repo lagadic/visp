@@ -6,15 +6,15 @@
 //! [Include]
 #include <visp3/detection/vpDetectorAprilTag.h>
 //! [Include]
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/core/vpImageConvert.h>
-#include <visp3/vision/vpPose.h>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/core/vpXmlParserCamera.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/vision/vpPose.h>
 
 int main(int argc, const char **argv)
 {
@@ -54,15 +54,14 @@ int main(int argc, const char **argv)
     } else if (std::string(argv[i]) == "--display_off") {
       display_off = true;
     } else if (std::string(argv[i]) == "--color" && i + 1 < argc) {
-      color_id = atoi(argv[i+1]);
+      color_id = atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
-      thickness = (unsigned int) atoi(argv[i+1]);
+      thickness = (unsigned int)atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--z_aligned") {
       align_frame = true;
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
                 << " [--tag_size <tag_size in m> (default: 0.053)]"
                    " [--quad_decimate <quad_decimate> (default: 1)]"
@@ -88,10 +87,10 @@ int main(int argc, const char **argv)
     vpRealSense2 g;
     rs2::config config;
     unsigned int width = 848, height = 800;
-    config.disable_stream(RS2_STREAM_FISHEYE,1);
-    config.disable_stream(RS2_STREAM_FISHEYE,2);
-    config.enable_stream(RS2_STREAM_FISHEYE,1,RS2_FORMAT_Y8);
-    config.enable_stream(RS2_STREAM_FISHEYE,2,RS2_FORMAT_Y8);
+    config.disable_stream(RS2_STREAM_FISHEYE, 1);
+    config.disable_stream(RS2_STREAM_FISHEYE, 2);
+    config.enable_stream(RS2_STREAM_FISHEYE, 1, RS2_FORMAT_Y8);
+    config.enable_stream(RS2_STREAM_FISHEYE, 2, RS2_FORMAT_Y8);
 
     vpImage<unsigned char> I_left(height, width);
     vpImage<unsigned char> I_undist(height, width);
@@ -102,7 +101,8 @@ int main(int argc, const char **argv)
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     vpCameraParameters cam_left, cam_undistort;
     cam_left = g.getCameraParameters(RS2_STREAM_FISHEYE, vpCameraParameters::ProjWithKannalaBrandtDistortion, 1);
-    cam_undistort.initPersProjWithoutDistortion(cam_left.get_px(), cam_left.get_py(), cam_left.get_u0(), cam_left.get_v0());
+    cam_undistort.initPersProjWithoutDistortion(cam_left.get_px(), cam_left.get_py(), cam_left.get_u0(),
+                                                cam_left.get_v0());
     //! [Construct grabber]
 
     std::cout << cam_left << std::endl;
@@ -111,9 +111,9 @@ int main(int argc, const char **argv)
     std::cout << "nThreads : " << nThreads << std::endl;
     std::cout << "Z aligned: " << align_frame << std::endl;
 
-    vpDisplay *display_left      = NULL;
+    vpDisplay *display_left = NULL;
     vpDisplay *display_undistort = NULL;
-    if (! display_off) {
+    if (!display_off) {
 #ifdef VISP_HAVE_X11
       display_left = new vpDisplayX(I_left, 100, 30, "Left image");
       display_undistort = new vpDisplayX(I_undist, I_left.getWidth(), 30, "Undistorted image");
@@ -144,7 +144,7 @@ int main(int argc, const char **argv)
 
     std::vector<double> time_vec;
 
-    std::vector<std::vector<vpImagePoint>> tag_corners;
+    std::vector<std::vector<vpImagePoint> > tag_corners;
 
     for (;;) {
       double t = vpTime::measureTimeMs();
@@ -169,8 +169,7 @@ int main(int argc, const char **argv)
       // Display tag corners, bounding box and pose
       for (size_t i = 0; i < cMo_vec.size(); i++) {
         tag_corners = detector.getTagsCorners();
-        for(size_t j = 0; j < 4; j++)
-        {
+        for (size_t j = 0; j < 4; j++) {
           vpDisplay::displayCross(I_undist, tag_corners[i][j], 20, vpColor::green, 2);
         }
 
@@ -198,7 +197,7 @@ int main(int argc, const char **argv)
               << " ; " << vpMath::getMedian(time_vec) << " ms"
               << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
 
-    if (! display_off) {
+    if (!display_off) {
       delete display_left;
       delete display_undistort;
     }
@@ -222,4 +221,3 @@ int main(int argc, const char **argv)
 #endif
   return EXIT_SUCCESS;
 }
-

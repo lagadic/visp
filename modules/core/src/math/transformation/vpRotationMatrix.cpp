@@ -118,10 +118,11 @@ R:
   \endcode
   \sa operator<<()
  */
-vpRotationMatrix& vpRotationMatrix::operator=(const std::initializer_list<double> &list)
+vpRotationMatrix &vpRotationMatrix::operator=(const std::initializer_list<double> &list)
 {
   if (dsize != static_cast<unsigned int>(list.size())) {
-    throw(vpException(vpException::dimensionError, "Cannot set a 3-by-3 rotation matrix from a %d-elements list of doubles."));
+    throw(vpException(vpException::dimensionError,
+                      "Cannot set a 3-by-3 rotation matrix from a %d-elements list of doubles."));
   }
 
   std::copy(list.begin(), list.end(), data);
@@ -130,7 +131,9 @@ vpRotationMatrix& vpRotationMatrix::operator=(const std::initializer_list<double
     if (isARotationMatrix(1e-3)) {
       orthogonalize();
     } else {
-      throw(vpException(vpException::fatalError, "Rotation matrix initialization fails since its elements do not represent a valid rotation matrix"));
+      throw(vpException(
+          vpException::fatalError,
+          "Rotation matrix initialization fails since its elements do not represent a valid rotation matrix"));
     }
   }
 
@@ -203,7 +206,7 @@ R:
 
   \sa operator,()
  */
-vpRotationMatrix& vpRotationMatrix::operator<<(double val)
+vpRotationMatrix &vpRotationMatrix::operator<<(double val)
 {
   m_index = 0;
   data[m_index] = val;
@@ -237,11 +240,14 @@ R:
 
   \sa operator<<()
  */
-vpRotationMatrix& vpRotationMatrix::operator,(double val)
+vpRotationMatrix &vpRotationMatrix::operator,(double val)
 {
-  m_index ++;
+  m_index++;
   if (m_index >= size()) {
-    throw(vpException(vpException::dimensionError, "Cannot set rotation matrix out of bounds. It has only %d elements while you try to initialize with %d elements", size(), m_index+1));
+    throw(vpException(vpException::dimensionError,
+                      "Cannot set rotation matrix out of bounds. It has only %d elements while you try to initialize "
+                      "with %d elements",
+                      size(), m_index + 1));
   }
   data[m_index] = val;
   return *this;
@@ -475,7 +481,10 @@ vpRotationMatrix::vpRotationMatrix(const vpPoseVector &p) : vpArray2D<double>(3,
   Construct a 3-by-3 rotation matrix from \f$ R(z,y,z) \f$ Euler angle
   representation.
  */
-vpRotationMatrix::vpRotationMatrix(const vpRzyzVector &euler) : vpArray2D<double>(3, 3), m_index(0) { buildFrom(euler); }
+vpRotationMatrix::vpRotationMatrix(const vpRzyzVector &euler) : vpArray2D<double>(3, 3), m_index(0)
+{
+  buildFrom(euler);
+}
 
 /*!
   Construct a 3-by-3 rotation matrix from \f$ R(x,y,z) \f$ Euler angle
@@ -532,13 +541,16 @@ R:
 -1  0  0
   \endcode
  */
-vpRotationMatrix::vpRotationMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(3, 3, list), m_index(0)
+vpRotationMatrix::vpRotationMatrix(const std::initializer_list<double> &list)
+  : vpArray2D<double>(3, 3, list), m_index(0)
 {
   if (!isARotationMatrix()) {
     if (isARotationMatrix(1e-3)) {
       orthogonalize();
     } else {
-      throw(vpException(vpException::fatalError, "Rotation matrix initialization fails since its elements do not represent a valid rotation matrix"));
+      throw(vpException(
+          vpException::fatalError,
+          "Rotation matrix initialization fails since its elements do not represent a valid rotation matrix"));
     }
   }
 }
@@ -863,7 +875,8 @@ vpColVector vpRotationMatrix::getCol(unsigned int j) const
 }
 
 /*!
-  Compute the Euclidean mean of the rotation matrices extracted from a vector of homogeneous matrices following Moakher's method (SIAM 2002).
+  Compute the Euclidean mean of the rotation matrices extracted from a vector of homogeneous matrices following
+  Moakher's method (SIAM 2002).
 
   \param[in] vec_M : Set of homogeneous matrices.
   \return The Euclidian mean of the rotation matrices.
@@ -876,7 +889,7 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpHomogeneousMatrix> &
   vpRotationMatrix R;
   for (size_t i = 0; i < vec_M.size(); i++) {
     R = vec_M[i].getRotationMatrix();
-    meanR += (vpMatrix) R;
+    meanR += (vpMatrix)R;
   }
   meanR /= static_cast<double>(vec_M.size());
 
@@ -884,14 +897,14 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpHomogeneousMatrix> &
   vpMatrix M, U, V;
   vpColVector sv;
   meanR.pseudoInverse(M, sv, 1e-6, U, V);
-  double det = sv[0]*sv[1]*sv[2];
+  double det = sv[0] * sv[1] * sv[2];
   if (det > 0) {
     meanR = U * V.t();
-  }
-  else {
-    vpMatrix D(3,3);
+  } else {
+    vpMatrix D(3, 3);
     D = 0.0;
-    D[0][0] = D[1][1] = 1.0; D[2][2] = -1;
+    D[0][0] = D[1][1] = 1.0;
+    D[2][2] = -1;
     meanR = U * D * V.t();
   }
 
@@ -912,7 +925,7 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpRotationMatrix> &vec
   vpMatrix meanR(3, 3);
   vpRotationMatrix R;
   for (size_t i = 0; i < vec_R.size(); i++) {
-    meanR += (vpMatrix) vec_R[i];
+    meanR += (vpMatrix)vec_R[i];
   }
   meanR /= static_cast<double>(vec_R.size());
 
@@ -920,14 +933,14 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpRotationMatrix> &vec
   vpMatrix M, U, V;
   vpColVector sv;
   meanR.pseudoInverse(M, sv, 1e-6, U, V);
-  double det = sv[0]*sv[1]*sv[2];
+  double det = sv[0] * sv[1] * sv[2];
   if (det > 0) {
     meanR = U * V.t();
-  }
-  else {
-    vpMatrix D(3,3);
+  } else {
+    vpMatrix D(3, 3);
     D = 0.0;
-    D[0][0] = D[1][1] = 1.0; D[2][2] = -1;
+    D[0][0] = D[1][1] = 1.0;
+    D[2][2] = -1;
     meanR = U * D * V.t();
   }
 
@@ -940,7 +953,7 @@ vpRotationMatrix vpRotationMatrix::mean(const std::vector<vpRotationMatrix> &vec
  */
 void vpRotationMatrix::orthogonalize()
 {
-  vpMatrix U  = *this;
+  vpMatrix U = *this;
   vpColVector w;
   vpMatrix V;
   U.svd(w, V);
@@ -956,9 +969,15 @@ void vpRotationMatrix::orthogonalize()
     R = U * Vt;
   }
 
-  data[0] = R[0][0]; data[1] = R[0][1]; data[2] = R[0][2];
-  data[3] = R[1][0]; data[4] = R[1][1]; data[5] = R[1][2];
-  data[6] = R[2][0]; data[7] = R[2][1]; data[8] = R[2][2];
+  data[0] = R[0][0];
+  data[1] = R[0][1];
+  data[2] = R[0][2];
+  data[3] = R[1][0];
+  data[4] = R[1][1];
+  data[5] = R[1][2];
+  data[6] = R[2][0];
+  data[7] = R[2][1];
+  data[8] = R[2][2];
 }
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

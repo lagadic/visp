@@ -68,11 +68,13 @@ namespace
 struct CompareObjectPointDegenerate {
   bool operator()(const vpPoint &point1, const vpPoint &point2) const
   {
-    const double dist1 = point1.get_oX()*point1.get_oX() + point1.get_oY()*point1.get_oY() + point1.get_oZ()*point1.get_oZ();
-    const double dist2 = point2.get_oX()*point2.get_oX() + point2.get_oY()*point2.get_oY() + point2.get_oZ()*point2.get_oZ();
-    if (dist1 - dist2 < -3*eps*eps)
+    const double dist1 =
+        point1.get_oX() * point1.get_oX() + point1.get_oY() * point1.get_oY() + point1.get_oZ() * point1.get_oZ();
+    const double dist2 =
+        point2.get_oX() * point2.get_oX() + point2.get_oY() * point2.get_oY() + point2.get_oZ() * point2.get_oZ();
+    if (dist1 - dist2 < -3 * eps * eps)
       return true;
-    if (dist1 - dist2 > 3*eps*eps)
+    if (dist1 - dist2 > 3 * eps * eps)
       return false;
 
     if (point1.oP[0] - point2.oP[0] < -eps)
@@ -98,11 +100,11 @@ struct CompareObjectPointDegenerate {
 struct CompareImagePointDegenerate {
   bool operator()(const vpPoint &point1, const vpPoint &point2) const
   {
-    const double dist1 = point1.get_x()*point1.get_x() + point1.get_y()*point1.get_y();
-    const double dist2 = point2.get_x()*point2.get_x() + point2.get_y()*point2.get_y();
-    if (dist1 - dist2 < -2*eps*eps)
+    const double dist1 = point1.get_x() * point1.get_x() + point1.get_y() * point1.get_y();
+    const double dist2 = point2.get_x() * point2.get_x() + point2.get_y() * point2.get_y();
+    if (dist1 - dist2 < -2 * eps * eps)
       return true;
-    if (dist1 - dist2 > 2*eps*eps)
+    if (dist1 - dist2 > 2 * eps * eps)
       return false;
 
     if (point1.p[0] - point2.p[0] < -eps)
@@ -132,7 +134,7 @@ struct FindDegeneratePoint {
 
   vpPoint m_pt;
 };
-}
+} // namespace
 
 bool vpPose::RansacFunctor::poseRansacImpl()
 {
@@ -216,13 +218,15 @@ bool vpPose::RansacFunctor::poseRansacImpl()
       poseMin.computePose(vpPose::LAGRANGE, cMo_lagrange);
       r_lagrange = poseMin.computeResidual(cMo_lagrange);
       is_valid_lagrange = true;
-    } catch (...) { }
+    } catch (...) {
+    }
 
     try {
       poseMin.computePose(vpPose::DEMENTHON, cMo_dementhon);
       r_dementhon = poseMin.computeResidual(cMo_dementhon);
       is_valid_dementhon = true;
-    } catch (...) { }
+    } catch (...) {
+    }
 
     // If residual returned is not a number (NAN), set valid to false
     if (vpMath::isNaN(r_lagrange)) {
@@ -432,11 +436,11 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
       }
     }
 
-    for (auto& worker : ransacWorkers) {
+    for (auto &worker : ransacWorkers) {
       threadpool.emplace_back(&RansacFunctor::operator(), &worker);
     }
 
-    for (auto& th : threadpool) {
+    for (auto &th : threadpool) {
       th.join();
     }
 
@@ -524,13 +528,15 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
         pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
         r_lagrange = pose.computeResidual(cMo_lagrange);
         is_valid_lagrange = true;
-      } catch (...) { }
+      } catch (...) {
+      }
 
       try {
         pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
         r_dementhon = pose.computeResidual(cMo_dementhon);
         is_valid_dementhon = true;
-      } catch (...) { }
+      } catch (...) {
+      }
 
       // If residual returned is not a number (NAN), set valid to false
       if (vpMath::isNaN(r_lagrange)) {
@@ -662,8 +668,7 @@ int vpPose::computeRansacIterations(double probability, double epsilon, const in
 void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
                        const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
                        unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
-                       const int &maxNbTrials,
-                       bool useParallelRansac, unsigned int nthreads,
+                       const int &maxNbTrials, bool useParallelRansac, unsigned int nthreads,
                        bool (*func)(const vpHomogeneousMatrix &))
 {
   vpPose pose;
@@ -688,7 +693,7 @@ void vpPose::findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
   } else {
     pose.setUseParallelRansac(useParallelRansac);
     pose.setNbParallelRansacThreads(nthreads);
-    //Since we add duplicate points, we need to check for degenerate configuration
+    // Since we add duplicate points, we need to check for degenerate configuration
     pose.setRansacFilterFlag(vpPose::CHECK_DEGENERATE_POINTS);
     pose.setRansacMaxTrials(maxNbTrials);
     pose.setRansacNbInliersToReachConsensus(numberOfInlierToReachAConsensus);

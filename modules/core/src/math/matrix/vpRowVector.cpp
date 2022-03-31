@@ -147,7 +147,6 @@ vpRowVector &vpRowVector::operator=(vpRowVector &&other)
   return *this;
 }
 
-
 /*!
   Set vector elements from a list of double.
   \code
@@ -174,9 +173,9 @@ vpRowVector &vpRowVector::operator=(const std::initializer_list<double> &list)
 }
 #endif
 
-bool vpRowVector::operator==(const vpRowVector &v) const {
-  if (colNum != v.colNum ||
-      rowNum != v.rowNum /* should not happen */)
+bool vpRowVector::operator==(const vpRowVector &v) const
+{
+  if (colNum != v.colNum || rowNum != v.rowNum /* should not happen */)
     return false;
 
   for (unsigned int i = 0; i < colNum; i++) {
@@ -187,9 +186,7 @@ bool vpRowVector::operator==(const vpRowVector &v) const {
   return true;
 }
 
-bool vpRowVector::operator!=(const vpRowVector &v) const {
-  return !(*this == v);
-}
+bool vpRowVector::operator!=(const vpRowVector &v) const { return !(*this == v); }
 
 /*!
 
@@ -487,14 +484,14 @@ vpRowVector &vpRowVector::operator<<(const vpRowVector &v)
   return *this;
 }
 
-vpRowVector& vpRowVector::operator<<(double val)
+vpRowVector &vpRowVector::operator<<(double val)
 {
   resize(1, false);
   data[0] = val;
   return *this;
 }
 
-vpRowVector& vpRowVector::operator,(double val)
+vpRowVector &vpRowVector::operator,(double val)
 {
   resize(colNum + 1, false);
   data[colNum - 1] = val;
@@ -1097,10 +1094,7 @@ double vpRowVector::sumSquare() const
 
   \sa frobeniusNorm()
 */
-double vpRowVector::euclideanNorm() const
-{
-  return frobeniusNorm();
-}
+double vpRowVector::euclideanNorm() const { return frobeniusNorm(); }
 
 /*!
   Compute and return the Fronebius norm \f$ ||v|| = \sqrt{ \sum{v_{i}^2}} \f$.

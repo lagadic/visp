@@ -66,10 +66,11 @@
  * From here you can modify camera default settings,
  * - either by loading camera parameters from a config file created by `ueyedemo` binary:
  * \snippet tutorial-grabber-ids-ueye.cpp Load settings from file
- * - either using setter like setColorMode(), setExposure(), setFrameRate(), setGain(), setSubsampling(), setWhiteBalance()
+ * - either using setter like setColorMode(), setExposure(), setFrameRate(), setGain(), setSubsampling(),
+ * setWhiteBalance()
  *
- * Depending on the settings, you may update image container size, especially if you want to create a window to display the image:
- * \snippet tutorial-grabber-ids-ueye.cpp Update image size
+ * Depending on the settings, you may update image container size, especially if you want to create a window to display
+ * the image: \snippet tutorial-grabber-ids-ueye.cpp Update image size
  *
  * Now you can create an infinite loop to grab images:
  * \code

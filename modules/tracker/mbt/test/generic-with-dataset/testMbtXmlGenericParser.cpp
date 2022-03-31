@@ -39,8 +39,8 @@
   Test vpMbtXmlGenericParser parse / save.
 */
 
-#include <visp3/mbt/vpMbtXmlGenericParser.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/mbt/vpMbtXmlGenericParser.h>
 
 int main()
 {
@@ -64,24 +64,17 @@ int main()
 
       vpMe me;
       xml.getEdgeMe(me);
-      if (me.getMaskSize() != me_ref.getMaskSize() ||
-          me.getMaskNumber() != me_ref.getMaskNumber() ||
-          me.getRange() != me_ref.getRange() ||
-          !vpMath::equal(me.getThreshold(), me_ref.getThreshold(), eps) ||
-          !vpMath::equal(me.getMu1(), me_ref.getMu1(), eps) ||
-          !vpMath::equal(me.getMu2(), me_ref.getMu2(), eps) ||
+      if (me.getMaskSize() != me_ref.getMaskSize() || me.getMaskNumber() != me_ref.getMaskNumber() ||
+          me.getRange() != me_ref.getRange() || !vpMath::equal(me.getThreshold(), me_ref.getThreshold(), eps) ||
+          !vpMath::equal(me.getMu1(), me_ref.getMu1(), eps) || !vpMath::equal(me.getMu2(), me_ref.getMu2(), eps) ||
           !vpMath::equal(me.getSampleStep(), me_ref.getSampleStep(), eps)) {
         std::cerr << "Issue when parsing xml: " << filename << " (ME)" << std::endl;
         return EXIT_FAILURE;
       }
 
-      if (xml.getKltMaskBorder() != 5 ||
-          xml.getKltMaxFeatures() != 10000 ||
-          xml.getKltWindowSize() != 5 ||
-          !vpMath::equal(xml.getKltQuality(), 0.01, eps) ||
-          !vpMath::equal(xml.getKltMinDistance(), 5.0, eps) ||
-          !vpMath::equal(xml.getKltHarrisParam(), 0.02, eps) ||
-          xml.getKltBlockSize() != 3 ||
+      if (xml.getKltMaskBorder() != 5 || xml.getKltMaxFeatures() != 10000 || xml.getKltWindowSize() != 5 ||
+          !vpMath::equal(xml.getKltQuality(), 0.01, eps) || !vpMath::equal(xml.getKltMinDistance(), 5.0, eps) ||
+          !vpMath::equal(xml.getKltHarrisParam(), 0.02, eps) || xml.getKltBlockSize() != 3 ||
           xml.getKltPyramidLevels() != 3) {
         std::cerr << "Issue when parsing xml: " << filename << " (KLT)" << std::endl;
         return EXIT_FAILURE;
@@ -96,11 +89,9 @@ int main()
         return EXIT_FAILURE;
       }
 
-      if (!vpMath::equal(xml.getAngleAppear(), 70.0, eps) ||
-          !vpMath::equal(xml.getAngleDisappear(), 80.0, eps) ||
+      if (!vpMath::equal(xml.getAngleAppear(), 70.0, eps) || !vpMath::equal(xml.getAngleDisappear(), 80.0, eps) ||
           !vpMath::equal(xml.getNearClippingDistance(), 0.01, eps) ||
-          !vpMath::equal(xml.getFarClippingDistance(), 2, eps) ||
-          !xml.getFovClipping()) {
+          !vpMath::equal(xml.getFarClippingDistance(), 2, eps) || !xml.getFovClipping()) {
         std::cerr << "Issue when parsing xml: " << filename << " (visibility)" << std::endl;
         return EXIT_FAILURE;
       }
@@ -112,8 +103,7 @@ int main()
       xml.parse(filename);
       vpMe me_proj;
       xml.getProjectionErrorMe(me_proj);
-      if (!vpMath::equal(me_proj.getSampleStep(), 12.0, eps) ||
-          xml.getProjectionErrorKernelSize() != 3) {
+      if (!vpMath::equal(me_proj.getSampleStep(), 12.0, eps) || xml.getProjectionErrorKernelSize() != 3) {
         std::cerr << "Issue when parsing xml: " << filename << " (projection error)" << std::endl;
         return EXIT_FAILURE;
       }
@@ -124,18 +114,15 @@ int main()
       vpMbtXmlGenericParser xml(vpMbtXmlGenericParser::DEPTH_NORMAL_PARSER | vpMbtXmlGenericParser::DEPTH_DENSE_PARSER);
       xml.parse(filename);
 
-      if (xml.getDepthNormalFeatureEstimationMethod() != 0 ||
-          xml.getDepthNormalPclPlaneEstimationMethod() != 2 ||
+      if (xml.getDepthNormalFeatureEstimationMethod() != 0 || xml.getDepthNormalPclPlaneEstimationMethod() != 2 ||
           xml.getDepthNormalPclPlaneEstimationRansacMaxIter() != 200 ||
           !vpMath::equal(xml.getDepthNormalPclPlaneEstimationRansacThreshold(), 0.001, eps) ||
-          xml.getDepthNormalSamplingStepX() != 2 ||
-          xml.getDepthNormalSamplingStepY() != 2) {
+          xml.getDepthNormalSamplingStepX() != 2 || xml.getDepthNormalSamplingStepY() != 2) {
         std::cerr << "Issue when parsing xml: " << filename << " (depth normal)" << std::endl;
         return EXIT_FAILURE;
       }
 
-      if (xml.getDepthDenseSamplingStepX() != 4 ||
-          xml.getDepthDenseSamplingStepY() != 4) {
+      if (xml.getDepthDenseSamplingStepX() != 4 || xml.getDepthDenseSamplingStepY() != 4) {
         std::cerr << "Issue when parsing xml: " << filename << " (depth dense)" << std::endl;
         return EXIT_FAILURE;
       }
@@ -149,11 +136,9 @@ int main()
         return EXIT_FAILURE;
       }
 
-      if (!vpMath::equal(xml.getAngleAppear(), 70.0, eps) ||
-          !vpMath::equal(xml.getAngleDisappear(), 80.0, eps) ||
+      if (!vpMath::equal(xml.getAngleAppear(), 70.0, eps) || !vpMath::equal(xml.getAngleDisappear(), 80.0, eps) ||
           !vpMath::equal(xml.getNearClippingDistance(), 0.01, eps) ||
-          !vpMath::equal(xml.getFarClippingDistance(), 2, eps) ||
-          !xml.getFovClipping()) {
+          !vpMath::equal(xml.getFarClippingDistance(), 2, eps) || !xml.getFovClipping()) {
         std::cerr << "Issue when parsing xml: " << filename << " (visibility)" << std::endl;
         return EXIT_FAILURE;
       }
