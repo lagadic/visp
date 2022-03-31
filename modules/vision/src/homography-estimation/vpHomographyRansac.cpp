@@ -74,7 +74,7 @@ bool isColinear(vpColVector &p1, vpColVector &p2, vpColVector &p3)
   return ((vpColVector::cross(p2 - p1, p3 - p1).sumSquare()) < vpEps);
 }
 
-bool vpHomography::degenerateConfiguration(vpColVector &x, unsigned int *ind, double threshold_area)
+bool vpHomography::degenerateConfiguration(const vpColVector &x, unsigned int *ind, double threshold_area)
 {
 
   unsigned int i, j, k;
@@ -137,7 +137,7 @@ x1b,y1b, x2b, y2b, ... xnb, ynb
 x1a,y1a, x2a, y2a, ... xna, yna
 leading to 2*2*n
 */
-bool vpHomography::degenerateConfiguration(vpColVector &x, unsigned int *ind)
+bool vpHomography::degenerateConfiguration(const vpColVector &x, unsigned int *ind)
 {
   for (unsigned int i = 1; i < 4; i++)
     for (unsigned int j = 0; j < i; j++)
