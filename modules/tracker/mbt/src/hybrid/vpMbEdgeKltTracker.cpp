@@ -628,15 +628,17 @@ void vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, unsigned int lvl)
 }
 
 /*!
-  Realize the VVS loop for the tracking
+  Achieve the VVS loop for the tracking using edges and KLT keypoints as visual features.
 
-  \param I : current image.
-  \param nbInfos : Size of the features (KLT).
-  \param nbrow : Size of the features (Edge).
-  \param lvl : level of the pyramid.
+  \param[in] I : current image.
+  \param[in] nbInfos : Size of the features (KLT).
+  \param[out] nbrow : Size of the features (Edge).
+  \param[in] lvl : Level of the pyramid.
+  \param[out] edge_residual : Residual considering edges as visual features.
+  \param[out] klt_residual : Residual considering KLT keypoints as visual features.
 */
 void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsigned int &nbInfos, unsigned int &nbrow,
-                                    unsigned int lvl)
+                                    unsigned int lvl, double *edge_residual, double *klt_residual)
 {
   vpColVector factor;
   nbrow = trackFirstLoop(I, factor, lvl);
@@ -689,8 +691,10 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
   if (nbInfos < 4)
     factorMBT = 1.;
 
-  double residuMBT = 0;
-  double residuKLT = 0;
+  if (edge_residual != NULL)
+    *edge_residual = 0;
+  if (klt_residual != NULL)
+    *klt_residual = 0;
 
   vpHomogeneousMatrix cMoPrev;
   vpHomogeneousMatrix ctTc0_Prev;
@@ -779,10 +783,12 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
     if (!reStartFromLastIncrement) {
       /* robust */
       if (nbrow > 3) {
-        residuMBT = 0;
-        for (unsigned int i = 0; i < R_mbt.getRows(); i++)
-          residuMBT += fabs(R_mbt[i]);
-        residuMBT /= R_mbt.getRows();
+        if (edge_residual != NULL) {
+          *edge_residual = 0;
+          for (unsigned int i = 0; i < R_mbt.getRows(); i++)
+            *edge_residual += fabs(R_mbt[i]);
+          *edge_residual /= R_mbt.getRows();
+        }
 
         robust_mbt.setMinMedianAbsoluteDeviation(m_thresholdMBT / m_cam.get_px());
         robust_mbt.MEstimator(vpRobust::TUKEY, R_mbt, m_w_mbt);
@@ -791,10 +797,12 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
       }
 
       if (nbInfos > 3) {
-        residuKLT = 0;
-        for (unsigned int i = 0; i < R_klt.getRows(); i++)
-          residuKLT += fabs(R_klt[i]);
-        residuKLT /= R_klt.getRows();
+        if (klt_residual != NULL) {
+          *klt_residual = 0;
+          for (unsigned int i = 0; i < R_klt.getRows(); i++)
+            *klt_residual += fabs(R_klt[i]);
+          *klt_residual /= R_klt.getRows();
+        }
 
         robust_klt.setMinMedianAbsoluteDeviation(m_thresholdKLT / m_cam.get_px());
         robust_klt.MEstimator(vpRobust::TUKEY, R_klt, m_w_klt);
