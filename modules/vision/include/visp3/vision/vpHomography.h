@@ -311,8 +311,8 @@ public:
   static double computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpHomogeneousMatrix &c2Mc1,
                                 int userobust);
   static void computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M);
-  static bool degenerateConfiguration(vpColVector &x, unsigned int *ind);
-  static bool degenerateConfiguration(vpColVector &x, unsigned int *ind, double threshold_area);
+  static bool degenerateConfiguration(const vpColVector &x, unsigned int *ind);
+  static bool degenerateConfiguration(const vpColVector &x, unsigned int *ind, double threshold_area);
   static bool degenerateConfiguration(const std::vector<double> &xb, const std::vector<double> &yb,
                                       const std::vector<double> &xa, const std::vector<double> &ya);
   static void HartleyNormalization(unsigned int n, const double *x, const double *y, double *xn, double *yn, double &xg,
