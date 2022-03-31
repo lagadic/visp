@@ -293,13 +293,11 @@ bool vpSerial::read(char *c, long timeout_s)
 std::string vpSerial::readline(const std::string &eol)
 {
   char c;
-  size_t read_so_far = 0;
   size_t eol_len = eol.length();
   std::string line;
 
   while (true) {
     size_t bytes_read = this->read(&c, 1);
-    read_so_far += bytes_read;
     if (bytes_read == 0) {
       break; // Timeout occured on reading 1 byte
     }
