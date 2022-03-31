@@ -91,7 +91,7 @@ vpRectOriented::vpRectOriented(const vpRect &rect)
 /** Copy constructor.
  * @param rectOriented Oriented rectangle to copy.
  */
-vpRectOriented::opervpRectOriented(const vpRectOriented &rectOriented) { *this = rectOriented; }
+vpRectOriented::vpRectOriented(const vpRectOriented &rectOriented) { *this = rectOriented; }
 
 /** Assignement operator.
  * @param rectOriented Oriented rectangle to copy.
