@@ -88,6 +88,11 @@ vpRectOriented::vpRectOriented(const vpRect &rect)
 }
 
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+/** Copy constructor.
+ * @param rectOriented Oriented rectangle to copy.
+ */
+vpRectOriented::opervpRectOriented(const vpRectOriented &rectOriented) { *this = rectOriented; }
+
 /** Assignement operator.
  * @param rectOriented Oriented rectangle to copy.
  */
