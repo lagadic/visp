@@ -95,8 +95,8 @@ class vpUeyeGrabber::vpUeyeGrabberImpl
 {
 public:
   vpUeyeGrabberImpl()
-    : m_hCamera((HIDS)0), m_nMemoryId(0), m_nColorMode(0), m_nBitsPerPixel(0), m_activeCameraSelected(-1),
-      m_pLastBuffer(NULL), m_cameraList(NULL), m_bLive(true), m_bLiveStarted(false), m_verbose(false), m_I_temp()
+    : m_hCamera((HIDS)0), m_activeCameraSelected(-1), m_pLastBuffer(NULL), m_cameraList(NULL), m_bLive(true),
+      m_bLiveStarted(false), m_verbose(false), m_I_temp()
   {
     ZeroMemory(&m_SensorInfo, sizeof(SENSORINFO));
     ZeroMemory(&m_CamInfo, sizeof(CAMINFO));
@@ -1081,10 +1081,7 @@ public:
   void setVerbose(bool verbose) { m_verbose = verbose; }
 
 private:
-  HIDS m_hCamera;      // handle to camera
-  INT m_nMemoryId;     // grabber memory - buffer ID
-  INT m_nColorMode;    // Y8/RGB16/RGB24/REG32
-  INT m_nBitsPerPixel; // number of bits needed store one pixel
+  HIDS m_hCamera; // handle to camera
   int m_activeCameraSelected;
   SENSORINFO m_SensorInfo; // sensor information struct
   CAMINFO m_CamInfo;       // Camera (Board)info
