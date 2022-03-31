@@ -167,10 +167,9 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   }
 
   // Here, we want to test feature detection on a pyramid of images even for
-  // features that  are scale invariant to detect potential problem in ViSP.
+  // features that are scale invariant to detect potential problem in ViSP.
   std::cout << "INFORMATION: " << std::endl;
-  std::cout << "Here, we want to test feature detection on a pyramid of images "
-               "even for features "
+  std::cout << "Here, we want to test feature detection on a pyramid of images  even for features "
                "that are scale invariant to detect potential problem in ViSP."
             << std::endl
             << std::endl;
@@ -211,9 +210,10 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
 #if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                      \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
-#if (VISP_HAVE_OPENCV_VERSION != 0x040504) && (defined(__APPLE__) && defined(__MACH__))
+#if (VISP_HAVE_OPENCV_VERSION != 0x040504) && (VISP_HAVE_OPENCV_VERSION != 0x040505) &&                                \
+    (defined(__APPLE__) && defined(__MACH__))
   detectorNames.push_back("PyramidSIFT");
-  detectorNames.push_back("SIFT"); // SIFT is known unstable with OpenCV 4.5.4 on macOS
+  detectorNames.push_back("SIFT"); // SIFT is known unstable with OpenCV 4.5.4 and 4.5.5 on macOS (see #1048)
 #endif
 #endif
 #if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
@@ -258,8 +258,9 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   for (int i = 0; i < vpKeyPoint::DETECTOR_TYPE_SIZE; i++) {
 #if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                      \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
-#if (VISP_HAVE_OPENCV_VERSION == 0x040504) && (defined(__APPLE__) && defined(__MACH__))
-    if (i == vpKeyPoint::DETECTOR_SIFT) { // SIFT is known unstable with OpenCV 4.5.4 on macOS
+#if (VISP_HAVE_OPENCV_VERSION == 0x040504 || VISP_HAVE_OPENCV_VERSION == 0x040505) &&                                  \
+    (defined(__APPLE__) && defined(__MACH__))
+    if (i == vpKeyPoint::DETECTOR_SIFT) { // SIFT is known unstable with OpenCV 4.5.4 and 4.5.5 on macOS (see #1048)
       continue;
     }
 #endif

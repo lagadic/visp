@@ -447,8 +447,9 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
     ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                \
      (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400))
   {
-#if !((VISP_HAVE_OPENCV_VERSION == 0x040504) && (defined(__APPLE__) && defined(__MACH__))) // OpenCV != 4.5.4 on macOS
-    std::string keypointName = "SIFT"; // SIFT is known unstable with OpenCV 4.5.4
+#if !((VISP_HAVE_OPENCV_VERSION == 0x040504 || VISP_HAVE_OPENCV_VERSION == 0x040505) &&                                \
+      (defined(__APPLE__) && defined(__MACH__))) // OpenCV != 4.5.4 and 4.5.5 on macOS
+    std::string keypointName = "SIFT"; // SIFT is known unstable with OpenCV 4.5.4 and 4.5.5 on macOS (see #1048)
     keyPoints.setDetector(keypointName);
     keyPoints.setExtractor(keypointName);
 
