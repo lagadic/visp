@@ -39,12 +39,12 @@
 #ifndef vpQuadProgh
 #define vpQuadProgh
 
-#include <vector>
 #include <stdlib.h>
+#include <vector>
 #include <visp3/core/vpConfig.h>
+#include <visp3/core/vpLinProg.h>
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpMatrixException.h>
-#include <visp3/core/vpLinProg.h>
 
 /*!
   \file vpQuadProg.h
@@ -58,8 +58,8 @@
 
   The cost function is written under the form \f$ \min ||\mathbf{Q}\mathbf{x} - \mathbf{r}||^2\f$.
 
-  If a cost function is written under the canonical form \f$\min \frac{1}{2}\mathbf{x}^T\mathbf{H}\mathbf{x} + \mathbf{c}^T\mathbf{x}\f$
-  then fromCanonicalCost() can be used to retrieve Q and r from H and c.
+  If a cost function is written under the canonical form \f$\min \frac{1}{2}\mathbf{x}^T\mathbf{H}\mathbf{x} +
+  \mathbf{c}^T\mathbf{x}\f$ then fromCanonicalCost() can be used to retrieve Q and r from H and c.
 
   Equality constraints are solved through projection into the kernel.
 
@@ -77,19 +77,13 @@ public:
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   /** @name Instanciated solvers  */
   //@{
-  bool solveQPe(const vpMatrix &Q, const vpColVector &r,
-                vpColVector &x, const double &tol = 1e-6) const;
+  bool solveQPe(const vpMatrix &Q, const vpColVector &r, vpColVector &x, const double &tol = 1e-6) const;
 
-  bool solveQPi(const vpMatrix &Q, const vpColVector &r,
-                const vpMatrix &C, const vpColVector &d,
-                vpColVector &x,
-                bool use_equality = false,
-                const double &tol = 1e-6);
+  bool solveQPi(const vpMatrix &Q, const vpColVector &r, const vpMatrix &C, const vpColVector &d, vpColVector &x,
+                bool use_equality = false, const double &tol = 1e-6);
 
-  bool solveQP(const vpMatrix &Q, const vpColVector &r,
-               vpMatrix A, vpColVector b,
-               const vpMatrix &C, const vpColVector &d,
-               vpColVector &x, const double &tol = 1e-6);
+  bool solveQP(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vpColVector b, const vpMatrix &C,
+               const vpColVector &d, vpColVector &x, const double &tol = 1e-6);
   //@}
 
   /** @name Managing sequential calls to solvers  */
@@ -98,16 +92,13 @@ public:
   /*!
     Resets the active set that was found by a previous call to solveQP() or solveQPi(), if any.
   */
-  void resetActiveSet()
-  {
-    active.clear();
-  }
+  void resetActiveSet() { active.clear(); }
   //@}
 
-  static void fromCanonicalCost(const vpMatrix &H, const vpColVector &c, vpMatrix &Q, vpColVector &r, const double &tol = 1e-6);
-  static bool solveQPe(const vpMatrix &Q, const vpColVector &r,
-                vpMatrix A, vpColVector b,
-                vpColVector &x, const double &tol = 1e-6);
+  static void fromCanonicalCost(const vpMatrix &H, const vpColVector &c, vpMatrix &Q, vpColVector &r,
+                                const double &tol = 1e-6);
+  static bool solveQPe(const vpMatrix &Q, const vpColVector &r, vpMatrix A, vpColVector b, vpColVector &x,
+                       const double &tol = 1e-6);
 
 protected:
   /*!
@@ -129,9 +120,8 @@ protected:
 
   static vpColVector solveSVDorQR(const vpMatrix &A, const vpColVector &b);
 
-  static bool solveByProjection(const vpMatrix &Q, const vpColVector &r,
-                                vpMatrix &A, vpColVector &b,
-                                vpColVector &x, const double &tol = 1e-6);
+  static bool solveByProjection(const vpMatrix &Q, const vpColVector &r, vpMatrix &A, vpColVector &b, vpColVector &x,
+                                const double &tol = 1e-6);
 
   /*!
     Performs a dimension check of passed QP matrices and vectors.
@@ -148,27 +138,21 @@ protected:
 
   \return the dimension of the search space.
   */
-  static unsigned int checkDimensions(const vpMatrix &Q, const vpColVector &r,
-                                      const vpMatrix* A, const vpColVector* b,
-                                      const vpMatrix* C, const vpColVector* d,
-                                      const std::string fct)
+  static unsigned int checkDimensions(const vpMatrix &Q, const vpColVector &r, const vpMatrix *A, const vpColVector *b,
+                                      const vpMatrix *C, const vpColVector *d, const std::string fct)
   {
     // check data consistency
     unsigned int n = Q.getCols();
     const bool Ab = (A != nullptr && b != nullptr && A->getRows());
     const bool Cd = (C != nullptr && d != nullptr && C->getRows());
 
-    if (  (Ab && n != A->getCols()) ||
-          (Cd && n != C->getCols()) ||
-          (Ab && A->getRows() != b->getRows()) ||
-          (Cd && C->getRows() != d->getRows()) ||
-          Q.getRows() != r.getRows())
-    {
-      std::cout << "vpQuadProg::" << fct << ": wrong dimension\n" <<
-                   "Q: " << Q.getRows() << "x" << Q.getCols() << " - r: " << r.getRows() << std::endl;
-      if(Ab)
+    if ((Ab && n != A->getCols()) || (Cd && n != C->getCols()) || (Ab && A->getRows() != b->getRows()) ||
+        (Cd && C->getRows() != d->getRows()) || Q.getRows() != r.getRows()) {
+      std::cout << "vpQuadProg::" << fct << ": wrong dimension\n"
+                << "Q: " << Q.getRows() << "x" << Q.getCols() << " - r: " << r.getRows() << std::endl;
+      if (Ab)
         std::cout << "A: " << A->getRows() << "x" << A->getCols() << " - b: " << b->getRows() << std::endl;
-      if(Cd)
+      if (Cd)
         std::cout << "C: " << C->getRows() << "x" << C->getCols() << " - d: " << d->getRows() << std::endl;
       throw vpMatrixException::dimensionError;
     }

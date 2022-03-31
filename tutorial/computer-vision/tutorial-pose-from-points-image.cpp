@@ -1,8 +1,8 @@
 /*! \example tutorial-pose-from-points-image.cpp */
-#include <visp3/io/vpImageIo.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
 
 //! [Include]
 #include "pose_helper.h"
@@ -38,9 +38,9 @@ int main()
     //! [3D model]
     std::vector<vpPoint> point;
     point.push_back(vpPoint(-0.06, -0.06, 0));
-    point.push_back(vpPoint( 0.06, -0.06, 0));
-    point.push_back(vpPoint( 0.06,  0.06, 0));
-    point.push_back(vpPoint(-0.06,  0.06, 0));
+    point.push_back(vpPoint(0.06, -0.06, 0));
+    point.push_back(vpPoint(0.06, 0.06, 0));
+    point.push_back(vpPoint(-0.06, 0.06, 0));
     //! [3D model]
 
     //! [Homogeneous matrix]

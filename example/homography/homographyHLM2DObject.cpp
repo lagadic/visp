@@ -87,7 +87,8 @@ void usage(const char *name, const char *badparam)
 Test the HLM (Malis) homography estimation algorithm with a planar object.\n\
 \n\
 SYNOPSIS\n\
-  %s [-h]\n", name);
+  %s [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\

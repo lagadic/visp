@@ -143,11 +143,17 @@ public:
   static void create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpMeEllipse &ellipse);
 #endif
 
-  // To keep compat with previous releases, we set cartesian coordinates as default initialising select var to selectX() or selectY()
-  static void create(vpFeatureVanishingPoint &s, const vpPoint &p, unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY()));
-  static void create(vpFeatureVanishingPoint &s, const vpFeatureLine &l1, const vpFeatureLine &l2, unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY()));
-  static void create(vpFeatureVanishingPoint &s, const vpLine &l1, const vpLine &l2, unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY()));
+  // To keep compat with previous releases, we set cartesian coordinates as default initialising select var to selectX()
+  // or selectY()
+  static void create(vpFeatureVanishingPoint &s, const vpPoint &p,
+                     unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY()));
+  static void create(vpFeatureVanishingPoint &s, const vpFeatureLine &l1, const vpFeatureLine &l2,
+                     unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY()));
+  static void create(vpFeatureVanishingPoint &s, const vpLine &l1, const vpLine &l2,
+                     unsigned int select = (vpFeatureVanishingPoint::selectX() | vpFeatureVanishingPoint::selectY()));
   // This function is new that's why select is not initialized
-  static void create(vpFeatureVanishingPoint &s, const vpCameraParameters &cam, const vpImagePoint &line1_ip1, const vpImagePoint &line1_ip2, const vpImagePoint &line2_ip1, const vpImagePoint &line2_ip2, unsigned int select);
+  static void create(vpFeatureVanishingPoint &s, const vpCameraParameters &cam, const vpImagePoint &line1_ip1,
+                     const vpImagePoint &line1_ip2, const vpImagePoint &line2_ip1, const vpImagePoint &line2_ip2,
+                     unsigned int select);
 };
 #endif

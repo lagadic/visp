@@ -142,7 +142,7 @@ public:
   vpQuaternionVector operator-() const;
   vpQuaternionVector operator*(double l) const;
   vpQuaternionVector operator*(const vpQuaternionVector &rq) const;
-  vpQuaternionVector operator/( double l) const;
+  vpQuaternionVector operator/(double l) const;
   vpQuaternionVector &operator=(const vpColVector &q);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpQuaternionVector &operator=(const vpQuaternionVector &q) = default;

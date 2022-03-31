@@ -44,7 +44,8 @@
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/io/vpImageIo.h>
 
-TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
+TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]")
+{
   const double tagSize = 0.25;
   const vpCameraParameters cam(2100, 2100, 960, 540);
   const size_t nbTags = 5;
@@ -58,7 +59,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_16h5);
-    BENCHMARK("Benchmark Apriltag detection: tag16_05 1920x1080") {
+    BENCHMARK("Benchmark Apriltag detection: tag16_05 1920x1080")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -66,7 +68,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(2);
-    BENCHMARK("Benchmark Apriltag detection: tag16_05 1920x1080 decimate=2") {
+    BENCHMARK("Benchmark Apriltag detection: tag16_05 1920x1080 decimate=2")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -74,7 +77,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(3);
-    BENCHMARK("Benchmark Apriltag detection: tag16_05 1920x1080 decimate=3") {
+    BENCHMARK("Benchmark Apriltag detection: tag16_05 1920x1080 decimate=3")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -91,7 +95,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_25h9);
-    BENCHMARK("Benchmark Apriltag detection: tag25_09 1920x1080") {
+    BENCHMARK("Benchmark Apriltag detection: tag25_09 1920x1080")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -99,7 +104,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(2);
-    BENCHMARK("Benchmark Apriltag detection: tag25_09 1920x1080 decimate=2") {
+    BENCHMARK("Benchmark Apriltag detection: tag25_09 1920x1080 decimate=2")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -107,7 +113,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(3);
-    BENCHMARK("Benchmark Apriltag detection: tag25_09 1920x1080 decimate=3") {
+    BENCHMARK("Benchmark Apriltag detection: tag25_09 1920x1080 decimate=3")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -124,7 +131,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_36h11);
-    BENCHMARK("Benchmark Apriltag detection: tag36_11 1920x1080") {
+    BENCHMARK("Benchmark Apriltag detection: tag36_11 1920x1080")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -132,7 +140,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(2);
-    BENCHMARK("Benchmark Apriltag detection: tag36_11 1920x1080 decimate=2") {
+    BENCHMARK("Benchmark Apriltag detection: tag36_11 1920x1080 decimate=2")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -140,7 +149,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(3);
-    BENCHMARK("Benchmark Apriltag detection: tag36_11 1920x1080 decimate=3") {
+    BENCHMARK("Benchmark Apriltag detection: tag36_11 1920x1080 decimate=3")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -157,7 +167,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_CIRCLE21h7);
-    BENCHMARK("Benchmark Apriltag detection: tag21_07 1920x1080") {
+    BENCHMARK("Benchmark Apriltag detection: tag21_07 1920x1080")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -165,7 +176,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(2);
-    BENCHMARK("Benchmark Apriltag detection: tag21_07 1920x1080 decimate=2") {
+    BENCHMARK("Benchmark Apriltag detection: tag21_07 1920x1080 decimate=2")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -173,7 +185,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(3);
-    BENCHMARK("Benchmark Apriltag detection: tag21_07 1920x1080 decimate=3") {
+    BENCHMARK("Benchmark Apriltag detection: tag21_07 1920x1080 decimate=3")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -191,7 +204,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_CIRCLE49h12);
-    BENCHMARK("Benchmark Apriltag detection: tag49_12 1920x1080") {
+    BENCHMARK("Benchmark Apriltag detection: tag49_12 1920x1080")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -199,7 +213,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(2);
-    BENCHMARK("Benchmark Apriltag detection: tag49_12 1920x1080 decimate=2") {
+    BENCHMARK("Benchmark Apriltag detection: tag49_12 1920x1080 decimate=2")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -207,7 +222,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(3);
-    BENCHMARK("Benchmark Apriltag detection: tag49_12 1920x1080 decimate=3") {
+    BENCHMARK("Benchmark Apriltag detection: tag49_12 1920x1080 decimate=3")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -224,7 +240,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_CUSTOM48h12);
-    BENCHMARK("Benchmark Apriltag detection: tag48_12 1920x1080") {
+    BENCHMARK("Benchmark Apriltag detection: tag48_12 1920x1080")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -232,7 +249,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(2);
-    BENCHMARK("Benchmark Apriltag detection: tag48_12 1920x1080 decimate=2") {
+    BENCHMARK("Benchmark Apriltag detection: tag48_12 1920x1080 decimate=2")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -240,7 +258,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(3);
-    BENCHMARK("Benchmark Apriltag detection: tag48_12 1920x1080 decimate=3") {
+    BENCHMARK("Benchmark Apriltag detection: tag48_12 1920x1080 decimate=3")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -257,7 +276,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_STANDARD41h12);
-    BENCHMARK("Benchmark Apriltag detection: tag41_12 1920x1080") {
+    BENCHMARK("Benchmark Apriltag detection: tag41_12 1920x1080")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -265,7 +285,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(2);
-    BENCHMARK("Benchmark Apriltag detection: tag41_12 1920x1080 decimate=2") {
+    BENCHMARK("Benchmark Apriltag detection: tag41_12 1920x1080 decimate=2")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -273,7 +294,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(3);
-    BENCHMARK("Benchmark Apriltag detection: tag41_12 1920x1080 decimate=3") {
+    BENCHMARK("Benchmark Apriltag detection: tag41_12 1920x1080 decimate=3")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -290,7 +312,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_STANDARD52h13);
-    BENCHMARK("Benchmark Apriltag detection: tag52_13 1920x1080") {
+    BENCHMARK("Benchmark Apriltag detection: tag52_13 1920x1080")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -298,7 +321,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(2);
-    BENCHMARK("Benchmark Apriltag detection: tag52_13 1920x1080 decimate=2") {
+    BENCHMARK("Benchmark Apriltag detection: tag52_13 1920x1080 decimate=2")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -306,7 +330,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
     };
 
     apriltag_detector.setAprilTagQuadDecimate(3);
-    BENCHMARK("Benchmark Apriltag detection: tag52_13 1920x1080 decimate=3") {
+    BENCHMARK("Benchmark Apriltag detection: tag52_13 1920x1080 decimate=3")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -316,7 +341,8 @@ TEST_CASE("Benchmark Apriltag detection 1920x1080", "[benchmark]") {
 #endif
 }
 
-TEST_CASE("Benchmark Apriltag detection 640x480", "[benchmark]") {
+TEST_CASE("Benchmark Apriltag detection 640x480", "[benchmark]")
+{
   const double tagSize = 0.25;
   const vpCameraParameters cam(700, 700, 320, 240);
   const size_t nbTags = 5;
@@ -330,7 +356,8 @@ TEST_CASE("Benchmark Apriltag detection 640x480", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_16h5);
-    BENCHMARK("Benchmark Apriltag detection: tag16_05 640x480") {
+    BENCHMARK("Benchmark Apriltag detection: tag16_05 640x480")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -347,7 +374,8 @@ TEST_CASE("Benchmark Apriltag detection 640x480", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_25h9);
-    BENCHMARK("Benchmark Apriltag detection: tag25_09 640x480") {
+    BENCHMARK("Benchmark Apriltag detection: tag25_09 640x480")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -364,7 +392,8 @@ TEST_CASE("Benchmark Apriltag detection 640x480", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_36h11);
-    BENCHMARK("Benchmark Apriltag detection: tag36_11 640x480") {
+    BENCHMARK("Benchmark Apriltag detection: tag36_11 640x480")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -381,7 +410,8 @@ TEST_CASE("Benchmark Apriltag detection 640x480", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_CIRCLE21h7);
-    BENCHMARK("Benchmark Apriltag detection: tag21_07 640x480") {
+    BENCHMARK("Benchmark Apriltag detection: tag21_07 640x480")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -399,7 +429,8 @@ TEST_CASE("Benchmark Apriltag detection 640x480", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_CIRCLE49h12);
-    BENCHMARK("Benchmark Apriltag detection: tag49_12 640x480") {
+    BENCHMARK("Benchmark Apriltag detection: tag49_12 640x480")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -416,7 +447,8 @@ TEST_CASE("Benchmark Apriltag detection 640x480", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_CUSTOM48h12);
-    BENCHMARK("Benchmark Apriltag detection: tag48_12 640x480") {
+    BENCHMARK("Benchmark Apriltag detection: tag48_12 640x480")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -433,7 +465,8 @@ TEST_CASE("Benchmark Apriltag detection 640x480", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_STANDARD41h12);
-    BENCHMARK("Benchmark Apriltag detection: tag41_12 640x480") {
+    BENCHMARK("Benchmark Apriltag detection: tag41_12 640x480")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -450,7 +483,8 @@ TEST_CASE("Benchmark Apriltag detection 640x480", "[benchmark]") {
     vpImageIo::read(I, filename);
 
     vpDetectorAprilTag apriltag_detector(vpDetectorAprilTag::TAG_STANDARD52h13);
-    BENCHMARK("Benchmark Apriltag detection: tag52_13 640x480") {
+    BENCHMARK("Benchmark Apriltag detection: tag52_13 640x480")
+    {
       std::vector<vpHomogeneousMatrix> cMo_vec;
       apriltag_detector.detect(I, tagSize, cam, cMo_vec);
       CHECK(cMo_vec.size() == nbTags);
@@ -467,10 +501,10 @@ int main(int argc, char *argv[])
   bool runBenchmark = false;
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
-  auto cli = session.cli() // Get Catch's composite command line parser
-    | Opt(runBenchmark)    // bind variable to a new option, with a hint string
-    ["--benchmark"]        // the option names it will respond to
-    ("run benchmark?");    // description string for the help output
+  auto cli = session.cli()         // Get Catch's composite command line parser
+             | Opt(runBenchmark)   // bind variable to a new option, with a hint string
+                   ["--benchmark"] // the option names it will respond to
+             ("run benchmark?");   // description string for the help output
 
   // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
@@ -490,8 +524,5 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

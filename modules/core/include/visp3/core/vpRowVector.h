@@ -132,7 +132,7 @@ public:
   vpRowVector(const std::vector<float> &v);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpRowVector(vpRowVector &&v);
-  vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) { }
+  vpRowVector(const std::initializer_list<double> &list) : vpArray2D<double>(list) {}
 #endif
   /*!
     Destructor.
@@ -245,8 +245,8 @@ public:
   vpRowVector operator-() const;
 
   vpRowVector &operator<<(const vpRowVector &v);
-  vpRowVector& operator<<(double val);
-  vpRowVector& operator,(double val);
+  vpRowVector &operator<<(double val);
+  vpRowVector &operator,(double val);
 
   int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
   /*!
@@ -268,10 +268,7 @@ public:
     of columns.
     \param flagNullify : If true, set the data to zero.
    */
-  inline void resize(unsigned int i, bool flagNullify = true)
-  {
-    vpArray2D<double>::resize(1, i, flagNullify);
-  }
+  inline void resize(unsigned int i, bool flagNullify = true) { vpArray2D<double>::resize(1, i, flagNullify); }
 
   /*!
     Resize the row vector to a \e ncols-dimension vector.

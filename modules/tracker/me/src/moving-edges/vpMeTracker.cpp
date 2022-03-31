@@ -141,8 +141,7 @@ bool vpMeTracker::inMask(const vpImage<bool> *mask, unsigned int i, unsigned int
 {
   try {
     return (mask == NULL || mask->getValue(i, j));
-  }
-  catch (vpException &) {
+  } catch (vpException &) {
     return false;
   }
 }
@@ -274,7 +273,7 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
       } catch (...) {
         s.setState(vpMeSite::THRESHOLD);
       }
-      
+
       if (vpMeTracker::inMask(m_mask, s.i, s.j)) {
         if (s.getState() != vpMeSite::THRESHOLD) {
           nGoodElement++;
@@ -296,13 +295,11 @@ void vpMeTracker::track(const vpImage<unsigned char> &I)
         }
         *it = s;
         ++it;
-      }
-      else {
+      } else {
         // Site outside mask: it is no more tracked.
         it = list.erase(it);
       }
-    }
-    else {
+    } else {
       ++it;
     }
   }

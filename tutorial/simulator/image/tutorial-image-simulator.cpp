@@ -63,7 +63,7 @@ int main()
     } catch (...) {
       std::cout << "Unsupported image format" << std::endl;
     }
-//! [Write image]
+    //! [Write image]
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I);

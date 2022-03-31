@@ -42,8 +42,8 @@
   \brief Draw text in an image.
 */
 
-#include <visp3/core/vpImage.h>
 #include <visp3/core/vpColor.h>
+#include <visp3/core/vpImage.h>
 
 /*!
   \class vpFont
@@ -55,23 +55,23 @@
 class VISP_EXPORT vpFont
 {
 public:
-  enum vpFontFamily
-  {
-    GENERIC_MONOSPACE,
-    TRUETYPE_FILE
-  };
+  enum vpFontFamily { GENERIC_MONOSPACE, TRUETYPE_FILE };
 
-  vpFont(unsigned int height = 16, const vpFontFamily & fontFamily = TRUETYPE_FILE, const std::string & ttfFilename = std::string(VISP_RUBIK_REGULAR_FONT_RESOURCES));
+  vpFont(unsigned int height = 16, const vpFontFamily &fontFamily = TRUETYPE_FILE,
+         const std::string &ttfFilename = std::string(VISP_RUBIK_REGULAR_FONT_RESOURCES));
   ~vpFont();
 
-  bool drawText(vpImage<unsigned char> & I, const std::string & text, const vpImagePoint & position, unsigned char color) const;
-  bool drawText(vpImage<unsigned char> & I, const std::string & text, const vpImagePoint & position, unsigned char color, unsigned char background) const;
+  bool drawText(vpImage<unsigned char> &I, const std::string &text, const vpImagePoint &position,
+                unsigned char color) const;
+  bool drawText(vpImage<unsigned char> &I, const std::string &text, const vpImagePoint &position, unsigned char color,
+                unsigned char background) const;
 
-  bool drawText(vpImage<vpRGBa> & I, const std::string & text, const vpImagePoint & position, const vpColor & color) const;
-  bool drawText(vpImage<vpRGBa> & I, const std::string & text, const vpImagePoint & position, const vpColor & color, const vpColor & background) const;
+  bool drawText(vpImage<vpRGBa> &I, const std::string &text, const vpImagePoint &position, const vpColor &color) const;
+  bool drawText(vpImage<vpRGBa> &I, const std::string &text, const vpImagePoint &position, const vpColor &color,
+                const vpColor &background) const;
 
   unsigned int getHeight() const;
-  vpImagePoint getMeasure(const std::string & text) const;
+  vpImagePoint getMeasure(const std::string &text) const;
   bool setHeight(unsigned int height);
 
 private:

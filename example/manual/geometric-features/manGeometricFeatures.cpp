@@ -92,9 +92,8 @@ int main()
 #elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display;
 #else
-  std::cout << "Please install X11, GDI, OpenCV or GTK to see the result of this example" << std::endl;
+    std::cout << "Please install X11, GDI, OpenCV or GTK to see the result of this example" << std::endl;
 #endif
-
 
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GTK)
     // initialize a display attached to image I

@@ -73,7 +73,8 @@ Example of tracking based on the 3D model.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>] [-e <last frame index>]\n\
-  [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l] [-v] [-p]\n", name);
+  [-t] [-c] [-d] [-h] [-f] [-C] [-o] [-w] [-l] [-v] [-p]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               \n\
@@ -376,7 +377,7 @@ int main(int argc, const char **argv)
     vpHomogeneousMatrix cMo;
     vpCameraParameters cam;
 
-  // Initialise the tracker: camera parameters, moving edge and KLT settings
+    // Initialise the tracker: camera parameters, moving edge and KLT settings
     // From the xml file
     tracker.loadConfigFile(configFile);
 

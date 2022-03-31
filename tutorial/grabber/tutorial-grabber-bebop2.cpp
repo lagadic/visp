@@ -11,46 +11,59 @@
 void usage(const char *argv[], int error)
 {
   std::cout << "SYNOPSIS" << std::endl
-            << "  " << argv[0]
-            << " [--ip <address>]"
+            << "  " << argv[0] << " [--ip <address>]"
             << " [--hd-resolution]"
             << " [--seqname <sequence name>]"
             << " [--record <mode>]"
             << " [--no-display]"
-            << " [--help] [-h]" << std::endl << std::endl;
+            << " [--help] [-h]" << std::endl
+            << std::endl;
   std::cout << "DESCRIPTION" << std::endl
             << "  --ip <address>" << std::endl
             << "    IP address of the drone to which you want to connect." << std::endl
-            << "    Default: 192.168.42.1" << std::endl << std::endl
+            << "    Default: 192.168.42.1" << std::endl
+            << std::endl
             << "  --hd-resolution" << std::endl
             << "    Enables HD 720p images instead of default 480p." << std::endl
-            << "    Caution : The camera settings are different depending on whether the resolution is 720p or 480p." << std::endl << std::endl
+            << "    Caution : The camera settings are different depending on whether the resolution is 720p or 480p."
+            << std::endl
+            << std::endl
             << "  --seqname <sequence name>" << std::endl
             << "    Name of the sequence of image to create (ie: /tmp/image%04d.jpg)." << std::endl
-            << "    Default: empty." << std::endl << std::endl
+            << "    Default: empty." << std::endl
+            << std::endl
             << "  --record <mode>" << std::endl
             << "    Allowed values for mode are:" << std::endl
             << "      0: record all the captures images (continuous mode)," << std::endl
             << "      1: record only images selected by a user click (single shot mode)." << std::endl
-            << "    Default mode: 0" << std::endl << std::endl
+            << "    Default mode: 0" << std::endl
+            << std::endl
             << "  --no-display" << std::endl
             << "    Disable displaying captured images." << std::endl
-            << "    When used and sequence name specified, record mode is internaly set to 1 (continuous mode)." << std::endl << std::endl
+            << "    When used and sequence name specified, record mode is internaly set to 1 (continuous mode)."
+            << std::endl
+            << std::endl
             << "  --help, -h" << std::endl
-            << "    Print this helper message." << std::endl << std::endl;
+            << "    Print this helper message." << std::endl
+            << std::endl;
   std::cout << "USAGE" << std::endl
             << "  Example to visualize images:" << std::endl
-            << "    " << argv[0] << std::endl << std::endl
+            << "    " << argv[0] << std::endl
+            << std::endl
             << "  Examples to record a sequence of 720p images from drone with ip different from default:" << std::endl
             << "    " << argv[0] << " --seqname I%04d.png --ip 192.168.42.3 --hd_resolution" << std::endl
-            << "    " << argv[0] << " --seqname folder/I%04d.png --record 0 --ip 192.168.42.3 --hd-resolution" << std::endl << std::endl
+            << "    " << argv[0] << " --seqname folder/I%04d.png --record 0 --ip 192.168.42.3 --hd-resolution"
+            << std::endl
+            << std::endl
             << "  Examples to record single shot images:" << std::endl
             << "    " << argv[0] << " --seqname I%04d.png --record 1" << std::endl
-            << "    " << argv[0] << " --seqname folder/I%04d.png --record 1" << std::endl << std::endl;
+            << "    " << argv[0] << " --seqname folder/I%04d.png --record 1" << std::endl
+            << std::endl;
 
   if (error) {
     std::cout << "Error" << std::endl
-              << "  " << "Unsupported parameter " << argv[error] << std::endl;
+              << "  "
+              << "Unsupported parameter " << argv[error] << std::endl;
   }
 }
 
@@ -71,31 +84,26 @@ int main(int argc, const char **argv)
       if (std::string(argv[i]) == "--seqname") {
         opt_seqname = std::string(argv[i + 1]);
         i++;
-      }
-      else if (std::string(argv[i]) == "--record") {
+      } else if (std::string(argv[i]) == "--record") {
         opt_record_mode = std::atoi(argv[i + 1]);
         i++;
-      }
-      else if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
+      } else if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
         ip_address = std::string(argv[i + 1]);
         i++;
       } else if (std::string(argv[i]) == "--hd-resolution") {
         image_res = 1;
-      }
-      else if (std::string(argv[i]) == "--no-display") {
+      } else if (std::string(argv[i]) == "--no-display") {
         opt_display = false;
-      }
-      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         usage(argv, 0);
         return EXIT_SUCCESS;
-      }
-      else {
+      } else {
         usage(argv, i);
         return EXIT_FAILURE;
       }
     }
 
-    if ((! opt_display) && (! opt_seqname.empty())) {
+    if ((!opt_display) && (!opt_seqname.empty())) {
       opt_record_mode = 0;
     }
 
@@ -131,7 +139,7 @@ int main(int argc, const char **argv)
 
     vpDisplay *d = NULL;
     if (opt_display) {
-#if ! (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
+#if !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << "No image viewer is available..." << std::endl;
       opt_display = false;
 #endif
@@ -188,8 +196,5 @@ int main(int argc, const char **argv)
 #endif // #if defined(VISP_HAVE_ARSDK) && defined(VISP_HAVE_FFMPEG)
 }
 #else
-int main()
-{
-  std::cout << "This tutorial needs visp_robot module that is not built." << std::endl;
-}
+int main() { std::cout << "This tutorial needs visp_robot module that is not built." << std::endl; }
 #endif

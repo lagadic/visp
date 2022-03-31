@@ -56,9 +56,9 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpDebug.h>
 
-#if ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD)) \
-  && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI)) \
-  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if ((defined(_WIN32) && !defined(WINRT_8_0)) || defined(VISP_HAVE_PTHREAD)) &&                                        \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_GDI)) &&                                 \
+    (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 // We need to use threading capabilities. Thus on Unix-like
 // platforms, the libpthread third-party library need to be
@@ -107,7 +107,8 @@ Tests a control law with the following characteristics:\n\
 - internal and external camera view displays.\n\
           \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+  %s [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -232,7 +233,7 @@ int main(int argc, const char **argv)
     for (unsigned int i = 0; i < 4; i++)
       vpFeatureBuilder::create(p[i], point[i]); // retrieve x,y and Z of the vpPoint structure
 
-                                                // sets the desired position of the feature point s*
+    // sets the desired position of the feature point s*
     vpFeaturePoint pd[4];
 
     // Desired pose
@@ -350,8 +351,7 @@ int main(int argc, const char **argv)
       vpDisplay::getClick(Iint);
     }
     return EXIT_SUCCESS;
-  }
-  catch (const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
@@ -359,7 +359,8 @@ int main(int argc, const char **argv)
 #elif !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 int main()
 {
-  std::cout << "You do not have X11, or GDI (Graphical Device Interface) of OpenCV functionalities to display images..." << std::endl;
+  std::cout << "You do not have X11, or GDI (Graphical Device Interface) of OpenCV functionalities to display images..."
+            << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

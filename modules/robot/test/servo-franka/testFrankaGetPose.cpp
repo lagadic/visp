@@ -42,7 +42,6 @@
   Test Panda robot from Franka Emika getting robot state implemented in vpRobotFranka.
 */
 
-
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
@@ -51,7 +50,6 @@
 
 #include <visp3/robot/vpRobotFranka.h>
 
-
 int main(int argc, char **argv)
 {
   std::string robot_ip = "192.168.1.1";
@@ -59,10 +57,9 @@ int main(int argc, char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
       robot_ip = std::string(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0] << " [--ip 192.168.1.1] [--help] [-h]"
-                           << "\n";
+                << "\n";
       return EXIT_SUCCESS;
     }
   }
@@ -84,19 +81,16 @@ int main(int argc, char **argv)
     robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
     std::cout << "fMe pose vector: " << fPe.t() << std::endl;
     std::cout << "fMe pose matrix: \n" << vpHomogeneousMatrix(fPe) << std::endl;
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const franka::NetworkException &e) {
+  } catch (const franka::NetworkException &e) {
     std::cout << "Franka network exception: " << e.what() << std::endl;
     std::cout << "Check if you are connected to the Franka robot"
               << " or if you specified the right IP using --ip command"
               << " line option set by default to 192.168.1.1. " << std::endl;
-     return EXIT_FAILURE;
-  }
-  catch(const std::exception &e) {
+    return EXIT_FAILURE;
+  } catch (const std::exception &e) {
     std::cout << "Franka exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
@@ -110,9 +104,9 @@ int main(int argc, char **argv)
     // Get end-effector cartesian position
     std::array<double, 16> pose = handler->readOnce().O_T_EE;
     vpHomogeneousMatrix oMee;
-    for (unsigned int i=0; i< 4; i++) {
-      for (unsigned int j=0; j< 4; j++) {
-        oMee[i][j] = pose[j*4 + i];
+    for (unsigned int i = 0; i < 4; i++) {
+      for (unsigned int j = 0; j < 4; j++) {
+        oMee[i][j] = pose[j * 4 + i];
       }
     }
     std::cout << "oMee: \n" << oMee << std::endl;
@@ -120,9 +114,9 @@ int main(int argc, char **argv)
     // Get flange to end-effector frame transformation
     pose = handler->readOnce().F_T_EE;
     vpHomogeneousMatrix fMee;
-    for (unsigned int i=0; i< 4; i++) {
-      for (unsigned int j=0; j< 4; j++) {
-        fMee[i][j] = pose[j*4 + i];
+    for (unsigned int i = 0; i < 4; i++) {
+      for (unsigned int j = 0; j < 4; j++) {
+        fMee[i][j] = pose[j * 4 + i];
       }
     }
     std::cout << "fMee: \n" << fMee << std::endl;
@@ -130,24 +124,22 @@ int main(int argc, char **argv)
     // Get end-effector to K frame transformation
     pose = handler->readOnce().EE_T_K;
     vpHomogeneousMatrix eeMk;
-    for (unsigned int i=0; i< 4; i++) {
-      for (unsigned int j=0; j< 4; j++) {
-        eeMk[i][j] = pose[j*4 + i];
+    for (unsigned int i = 0; i < 4; i++) {
+      for (unsigned int j = 0; j < 4; j++) {
+        eeMk[i][j] = pose[j * 4 + i];
       }
     }
     std::cout << "eeMk: \n" << eeMk << std::endl;
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const franka::NetworkException &e) {
+  } catch (const franka::NetworkException &e) {
     std::cout << "Franka network exception: " << e.what() << std::endl;
     std::cout << "Check if you are connected to the Franka robot"
-              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. " << std::endl;
+              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. "
+              << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const std::exception &e) {
+  } catch (const std::exception &e) {
     std::cout << "Franka exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
@@ -168,18 +160,16 @@ int main(int argc, char **argv)
     vpColVector coriolis;
     robot.getCoriolis(coriolis);
     std::cout << "Coriolis vector: " << coriolis.t() << std::endl;
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const franka::NetworkException &e) {
+  } catch (const franka::NetworkException &e) {
     std::cout << "Franka network exception: " << e.what() << std::endl;
     std::cout << "Check if you are connected to the Franka robot"
-              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. " << std::endl;
+              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. "
+              << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const std::exception &e) {
+  } catch (const std::exception &e) {
     std::cout << "Franka exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
@@ -206,18 +196,16 @@ int main(int argc, char **argv)
 
     robot.get_eJe(q, eJe);
     std::cout << "Jacobian eJe:\n" << eJe << std::endl;
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const franka::NetworkException &e) {
+  } catch (const franka::NetworkException &e) {
     std::cout << "Franka network exception: " << e.what() << std::endl;
     std::cout << "Check if you are connected to the Franka robot"
-              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. " << std::endl;
+              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. "
+              << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const std::exception &e) {
+  } catch (const std::exception &e) {
     std::cout << "Franka exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
@@ -227,8 +215,5 @@ int main(int argc, char **argv)
 }
 
 #else
-int main()
-{
-  std::cout << "ViSP is not build with libfranka..." << std::endl;
-}
+int main() { std::cout << "ViSP is not build with libfranka..." << std::endl; }
 #endif

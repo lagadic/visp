@@ -65,30 +65,33 @@ int main(int argc, char **argv)
   for (int i = 1; i < argc; i++) {
     if ((std::string(argv[i]) == "--portname" || std::string(argv[i]) == "-p") && (i + 1 < argc)) {
       opt_portname = std::string(argv[i + 1]);
-    }
-    else if ((std::string(argv[i]) == "--baudrate" || std::string(argv[i]) == "-b") && (i + 1 < argc)) {
+    } else if ((std::string(argv[i]) == "--baudrate" || std::string(argv[i]) == "-b") && (i + 1 < argc)) {
       opt_baudrate = std::atoi(argv[i + 1]);
-    }
-    else if ((std::string(argv[i]) == "--network" || std::string(argv[i]) == "-n")) {
+    } else if ((std::string(argv[i]) == "--network" || std::string(argv[i]) == "-n")) {
       opt_network = true;
-    }
-    else if ((std::string(argv[i]) == "--reset" || std::string(argv[i]) == "-r")) {
+    } else if ((std::string(argv[i]) == "--reset" || std::string(argv[i]) == "-r")) {
       opt_reset = true;
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "SYNOPSIS" << std::endl
-                << "  " << argv[0] << " [--portname <portname>] [--baudrate <rate>] [--network] [--reset] [--help] [-h]" << std::endl << std::endl
+                << "  " << argv[0] << " [--portname <portname>] [--baudrate <rate>] [--network] [--reset] [--help] [-h]"
+                << std::endl
+                << std::endl
                 << "DESCRIPTION" << std::endl
                 << "  --portname, -p <portname>" << std::endl
-                << "    Set serial or tcp port name." << std::endl << std::endl
+                << "    Set serial or tcp port name." << std::endl
+                << std::endl
                 << "  --baudrate, -b <rate>" << std::endl
-                << "    Set serial communication baud rate. Default: " << opt_baudrate << "." << std::endl << std::endl
+                << "    Set serial communication baud rate. Default: " << opt_baudrate << "." << std::endl
+                << std::endl
                 << "  --network, -n" << std::endl
-                << "    Get PTU network information (Hostname, IP, Gateway) and exit. " << std::endl << std::endl
+                << "    Get PTU network information (Hostname, IP, Gateway) and exit. " << std::endl
+                << std::endl
                 << "  --reset, -r" << std::endl
-                << "    Reset PTU axis and exit. " << std::endl << std::endl
+                << "    Reset PTU axis and exit. " << std::endl
+                << std::endl
                 << "  --help, -h" << std::endl
-                << "    Print this helper message. " << std::endl << std::endl
+                << "    Print this helper message. " << std::endl
+                << std::endl
                 << "EXAMPLE" << std::endl
                 << "  - How to get network IP" << std::endl
 #ifdef _WIN32
@@ -127,15 +130,15 @@ int main(int argc, char **argv)
     std::cout << "Try to connect FLIR PTU to port: " << opt_portname << " with baudrate: " << opt_baudrate << std::endl;
     robot.connect(opt_portname, opt_baudrate);
 
-    if(opt_network) {
-      std::cout << "PTU HostName: " << robot.getNetworkHostName() <<std::endl;
-      std::cout << "PTU IP      : " << robot.getNetworkIP() <<std::endl;
-      std::cout << "PTU Gateway : " << robot.getNetworkGateway() <<std::endl;
+    if (opt_network) {
+      std::cout << "PTU HostName: " << robot.getNetworkHostName() << std::endl;
+      std::cout << "PTU IP      : " << robot.getNetworkIP() << std::endl;
+      std::cout << "PTU Gateway : " << robot.getNetworkGateway() << std::endl;
       return EXIT_SUCCESS;
     }
 
-    if(opt_reset) {
-      std::cout << "Reset PTU axis" <<std::endl;
+    if (opt_reset) {
+      std::cout << "Reset PTU axis" << std::endl;
       robot.reset();
       return EXIT_SUCCESS;
     }
@@ -143,9 +146,13 @@ int main(int argc, char **argv)
     {
       std::cout << "** Test limits getter" << std::endl;
 
-      std::cout << "Pan  pos min/max [deg]: " << vpMath::deg(robot.getPanPosLimits()[0]) << " " << vpMath::deg(robot.getPanPosLimits()[1]) << std::endl;
-      std::cout << "Tilt pos min/max [deg]: " << vpMath::deg(robot.getTiltPosLimits()[0]) << " " << vpMath::deg(robot.getTiltPosLimits()[1]) << std::endl;
-      std::cout << "Pan/tilt vel max [deg/s]: " << vpMath::deg(robot.getPanTiltVelMax()[0]) << " " << vpMath::deg(robot.getPanTiltVelMax()[1]) << std::endl << std::endl;
+      std::cout << "Pan  pos min/max [deg]: " << vpMath::deg(robot.getPanPosLimits()[0]) << " "
+                << vpMath::deg(robot.getPanPosLimits()[1]) << std::endl;
+      std::cout << "Tilt pos min/max [deg]: " << vpMath::deg(robot.getTiltPosLimits()[0]) << " "
+                << vpMath::deg(robot.getTiltPosLimits()[1]) << std::endl;
+      std::cout << "Pan/tilt vel max [deg/s]: " << vpMath::deg(robot.getPanTiltVelMax()[0]) << " "
+                << vpMath::deg(robot.getPanTiltVelMax()[1]) << std::endl
+                << std::endl;
     }
 
     {
@@ -161,9 +168,13 @@ int main(int argc, char **argv)
       robot.setTiltPosLimits(tilt_pos_limits);
 
       std::cout << "Modified user min/max limits: " << std::endl;
-      std::cout << "Pan  pos min/max [deg]: " << vpMath::deg(robot.getPanPosLimits()[0]) << " " << vpMath::deg(robot.getPanPosLimits()[1]) << std::endl;
-      std::cout << "Tilt pos min/max [deg]: " << vpMath::deg(robot.getTiltPosLimits()[0]) << " " << vpMath::deg(robot.getTiltPosLimits()[1]) << std::endl;
-      std::cout << "Pan/tilt vel max [deg/s]: " << vpMath::deg(robot.getPanTiltVelMax()[0]) << " " << vpMath::deg(robot.getPanTiltVelMax()[1]) << std::endl << std::endl;
+      std::cout << "Pan  pos min/max [deg]: " << vpMath::deg(robot.getPanPosLimits()[0]) << " "
+                << vpMath::deg(robot.getPanPosLimits()[1]) << std::endl;
+      std::cout << "Tilt pos min/max [deg]: " << vpMath::deg(robot.getTiltPosLimits()[0]) << " "
+                << vpMath::deg(robot.getTiltPosLimits()[1]) << std::endl;
+      std::cout << "Pan/tilt vel max [deg/s]: " << vpMath::deg(robot.getPanTiltVelMax()[0]) << " "
+                << vpMath::deg(robot.getPanTiltVelMax()[1]) << std::endl
+                << std::endl;
     }
 
     {
@@ -177,7 +188,8 @@ int main(int argc, char **argv)
     {
       std::cout << "** Test joint positioning" << std::endl;
       robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
-      robot.setMaxRotationVelocity(std::min(robot.getPanTiltVelMax()[0], robot.getPanTiltVelMax()[1]) / 2.); // 50% of the slowest axis
+      robot.setMaxRotationVelocity(std::min(robot.getPanTiltVelMax()[0], robot.getPanTiltVelMax()[1]) /
+                                   2.); // 50% of the slowest axis
 
       q = 0;
       std::cout << "Set joint position [deg]: " << vpMath::deg(q[0]) << " " << vpMath::deg(q[1]) << std::endl;
@@ -188,7 +200,8 @@ int main(int argc, char **argv)
       robot.setPosition(vpRobot::JOINT_STATE, q);
       robot.getPosition(vpRobot::JOINT_STATE, q_mes);
 
-      std::cout << "Position reached [deg]: " << vpMath::deg(q_mes[0]) << " " << vpMath::deg(q_mes[1]) << std::endl << std::endl;
+      std::cout << "Position reached [deg]: " << vpMath::deg(q_mes[0]) << " " << vpMath::deg(q_mes[1]) << std::endl
+                << std::endl;
     }
 
     {
@@ -203,7 +216,8 @@ int main(int argc, char **argv)
       robot.setPosition(vpRobot::ARTICULAR_FRAME, q);
       robot.getPosition(vpRobot::ARTICULAR_FRAME, q_mes);
 
-      std::cout << "Position reached [deg]: " << vpMath::deg(q_mes[0]) << " " << vpMath::deg(q_mes[1]) << std::endl << std::endl;
+      std::cout << "Position reached [deg]: " << vpMath::deg(q_mes[0]) << " " << vpMath::deg(q_mes[1]) << std::endl
+                << std::endl;
     }
 
     {
@@ -213,7 +227,8 @@ int main(int argc, char **argv)
       qdot[0] = vpMath::rad(-10); // Pan  velocity in rad/s
       qdot[1] = vpMath::rad(0);   // Tilt velocity in rad/s
 
-      std::cout << "Set velocity for 4s: " << vpMath::deg(qdot[0]) << " " << vpMath::deg(qdot[1]) << " [deg/s]" << std::endl;
+      std::cout << "Set velocity for 4s: " << vpMath::deg(qdot[0]) << " " << vpMath::deg(qdot[1]) << " [deg/s]"
+                << std::endl;
       std::cout << "Enter a caracter to apply" << std::endl;
       scanf("%d", &answer);
 
@@ -227,18 +242,21 @@ int main(int argc, char **argv)
 
       robot.setRobotState(vpRobot::STATE_STOP);
       robot.getPosition(vpRobot::ARTICULAR_FRAME, q_mes);
-      std::cout << "Position reached: " << vpMath::deg(q_mes[0]) << " " << vpMath::deg(q_mes[1]) << " [deg]" << std::endl << std::endl;
+      std::cout << "Position reached: " << vpMath::deg(q_mes[0]) << " " << vpMath::deg(q_mes[1]) << " [deg]"
+                << std::endl
+                << std::endl;
     }
 
     {
       std::cout << "** Test cartesian velocity with robot Jacobien eJe" << std::endl;
 
       vpColVector v_e(6, 0);
-      v_e[4] = vpMath::rad(5); //wy_e
-      v_e[5] = vpMath::rad(5); //wz_e
+      v_e[4] = vpMath::rad(5); // wy_e
+      v_e[5] = vpMath::rad(5); // wz_e
 
-      std::cout << "Set cartesian velocity in end-effector frame for 4s: " << v_e[0] << " " << v_e[1] << " " << v_e[2] << " [m/s] "
-                << vpMath::deg(v_e[3]) << " " << vpMath::deg(v_e[4]) << " " << vpMath::deg(v_e[5]) << " [deg/s]" << std::endl;
+      std::cout << "Set cartesian velocity in end-effector frame for 4s: " << v_e[0] << " " << v_e[1] << " " << v_e[2]
+                << " [m/s] " << vpMath::deg(v_e[3]) << " " << vpMath::deg(v_e[4]) << " " << vpMath::deg(v_e[5])
+                << " [deg/s]" << std::endl;
       std::cout << "Enter a caracter to apply" << std::endl;
       scanf("%d", &answer);
 
@@ -253,7 +271,9 @@ int main(int argc, char **argv)
 
       robot.setRobotState(vpRobot::STATE_STOP);
       robot.getPosition(vpRobot::ARTICULAR_FRAME, q_mes);
-      std::cout << "Position reached: " << vpMath::deg(q_mes[0]) << " " << vpMath::deg(q_mes[1]) << " [deg]" << std::endl << std::endl;
+      std::cout << "Position reached: " << vpMath::deg(q_mes[0]) << " " << vpMath::deg(q_mes[1]) << " [deg]"
+                << std::endl
+                << std::endl;
     }
 
     std::cout << "** The end" << std::endl;
@@ -274,4 +294,3 @@ int main()
 }
 
 #endif
-

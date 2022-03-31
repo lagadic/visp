@@ -117,8 +117,7 @@ int main()
     vpCTRACE << "Set articular frame velocity " << qdot.t();
     robot.setVelocity(vpRobot::ARTICULAR_FRAME, qdot);
     sleep(2);
-  }
-  catch (const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Sorry PtU46 not available. Got exception: " << e << std::endl;
     return EXIT_FAILURE
   }

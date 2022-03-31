@@ -135,7 +135,8 @@ object file: No such file or directory \endcode
   - it means that you need to add the location of the library in `LD_LIBRARY_PATH` environment variable. This could be
     achieved running:
   \code
-$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/3rdparty/FT_SDK_01_4/linux/ubuntu16.04/ftSensorLibReleaseExamples/library/bin/lin-x86_64/release
+$ export
+LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$VISP_WS/3rdparty/FT_SDK_01_4/linux/ubuntu16.04/ftSensorLibReleaseExamples/library/bin/lin-x86_64/release
   \endcode
   where `$VISP_WS/3rdparty/FT_SDK_01_4` contains IIT SDK.
 

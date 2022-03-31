@@ -90,7 +90,8 @@ Simulation of a 3D visual servoing:\n\
 - without display.\n\
           \n\
 SYNOPSIS\n\
-  %s [-h]\n", name);
+  %s [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\

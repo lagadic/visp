@@ -255,7 +255,7 @@ int main()
   std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
-            << std::endl;
+  << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

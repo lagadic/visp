@@ -45,7 +45,8 @@
 
 static std::string ipath = vpIoTools::getViSPImagesDataPath();
 
-TEST_CASE("vpMbGenericTracker load CAO model Linux line ending", "[vpMbGenericTracker CAO parsing]") {
+TEST_CASE("vpMbGenericTracker load CAO model Linux line ending", "[vpMbGenericTracker CAO parsing]")
+{
   const std::string cao_filename = vpIoTools::createFilePath(ipath, "mbt-cao/cylinder_cao_model_linux_line_ending.cao");
   vpMbGenericTracker tracker;
   const bool verbose = true;
@@ -60,8 +61,10 @@ TEST_CASE("vpMbGenericTracker load CAO model Linux line ending", "[vpMbGenericTr
   CHECK(circles.size() == 1);
 }
 
-TEST_CASE("vpMbGenericTracker load CAO model Windows line ending", "[vpMbGenericTracker CAO parsing]") {
-  const std::string cao_filename = vpIoTools::createFilePath(ipath, "mbt-cao/cylinder_cao_model_windows_line_ending.cao");
+TEST_CASE("vpMbGenericTracker load CAO model Windows line ending", "[vpMbGenericTracker CAO parsing]")
+{
+  const std::string cao_filename =
+      vpIoTools::createFilePath(ipath, "mbt-cao/cylinder_cao_model_windows_line_ending.cao");
   vpMbGenericTracker tracker;
   const bool verbose = true;
   REQUIRE_NOTHROW(tracker.loadModel(cao_filename, verbose));
@@ -92,8 +95,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

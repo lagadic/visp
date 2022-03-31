@@ -65,17 +65,17 @@ following methods: vpFeatureMomentGravityCenter::selectXg for \f$ L_{x_{g}}
 following code demonstrates a selection of \f$ L_{y_{g}} \f$:
 
   \code
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/core/vpMomentBasic.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpPoint.h>
-#include <visp3/visual_features/vpFeatureMoment.h>
-#include <visp3/visual_features/vpFeatureMomentDatabase.h>
-#include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
-#include <visp3/visual_features/vpFeatureMomentBasic.h>
 #include <iostream>
 #include <vector>
+#include <visp3/core/vpMomentBasic.h>
+#include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentGravityCenter.h>
+#include <visp3/core/vpMomentObject.h>
+#include <visp3/core/vpPoint.h>
+#include <visp3/visual_features/vpFeatureMoment.h>
+#include <visp3/visual_features/vpFeatureMomentBasic.h>
+#include <visp3/visual_features/vpFeatureMomentDatabase.h>
+#include <visp3/visual_features/vpFeatureMomentGravityCenter.h>
 
 int main()
 {

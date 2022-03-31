@@ -94,7 +94,7 @@ int main(int argc, char **argv)
 //! [MBT code]
 
 //! [Keypoint selection]
-#if (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)) || \
+#if (defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)) ||                                    \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
     std::string detectorName = "SIFT";
     std::string extractorName = "SIFT";
@@ -112,7 +112,7 @@ int main(int argc, char **argv)
     vpKeyPoint keypoint_learning;
     //! [Keypoint declaration]
     if (usexml) {
-//! [Keypoint xml config]
+      //! [Keypoint xml config]
       keypoint_learning.loadConfigFile(configurationFile);
       //! [Keypoint xml config]
     } else {

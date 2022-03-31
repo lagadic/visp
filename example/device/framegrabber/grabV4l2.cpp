@@ -95,7 +95,8 @@ Display these images using X11 or GTK.\n\
 SYNOPSIS\n\
   %s [-v <video device>] [-f <fps=25|50>] \n\
      [-i <input=0|1|2|3> [-s <scale=1|2|4>] [-p <pixel format>]\n\
-     [-n <niter>] [-t <image type>] [-o <filename>] [-x] [-d] [-h]\n", name);
+     [-n <niter>] [-t <image type>] [-o <filename>] [-x] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                                  Default\n\
@@ -144,8 +145,8 @@ OPTIONS:                                                  Default\n\
      by the extension of the file (ex .png, .pgm, ...) \n\
                     \n\
   -h \n\
-     Print the help.\n\n", device, fps, input, pixelformat, vpV4l2Grabber::V4L2_MAX_FORMAT - 1, image_type, scale, niter,
-          opath.c_str());
+     Print the help.\n\n",
+          device, fps, input, pixelformat, vpV4l2Grabber::V4L2_MAX_FORMAT - 1, image_type, scale, niter, opath.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);

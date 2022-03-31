@@ -86,8 +86,8 @@ public:
   vpMbtFaceDepthNormal();
   virtual ~vpMbtFaceDepthNormal();
 
-  void addLine(vpPoint &p1, vpPoint &p2, vpMbHiddenFaces<vpMbtPolygon> *const faces, vpUniRand& rand_gen, int polygon = -1,
-               std::string name = "");
+  void addLine(vpPoint &p1, vpPoint &p2, vpMbHiddenFaces<vpMbtPolygon> *const faces, vpUniRand &rand_gen,
+               int polygon = -1, std::string name = "");
 
 #ifdef VISP_HAVE_PCL
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
@@ -97,8 +97,8 @@ public:
                               ,
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
-                              , const vpImage<bool> *mask = NULL
-  );
+                              ,
+                              const vpImage<bool> *mask = NULL);
 #endif
   bool computeDesiredFeatures(const vpHomogeneousMatrix &cMo, unsigned int width, unsigned int height,
                               const std::vector<vpColVector> &point_cloud, vpColVector &desired_features,
@@ -107,8 +107,8 @@ public:
                               ,
                               vpImage<unsigned char> &debugImage, std::vector<std::vector<vpImagePoint> > &roiPts_vec
 #endif
-                              , const vpImage<bool> *mask = NULL
-  );
+                              ,
+                              const vpImage<bool> *mask = NULL);
 
   void computeInteractionMatrix(const vpHomogeneousMatrix &cMo, vpMatrix &L, vpColVector &features);
 
@@ -138,8 +138,7 @@ public:
                                                           double scale = 0.05);
 
   std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
-                                                       const vpHomogeneousMatrix &cMo,
-                                                       const vpCameraParameters &cam,
+                                                       const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                                                        bool displayFullModel = false);
 
   inline bool isTracked() const { return m_isTrackedDepthNormalFace; }

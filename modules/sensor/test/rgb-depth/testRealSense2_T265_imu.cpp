@@ -42,13 +42,12 @@
 
 #include <iostream>
 
-#include <visp3/gui/vpDisplayX.h>
 #include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
-  (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && \
-  (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
 
 int main()
 {
@@ -72,8 +71,10 @@ int main()
 
       rs.getIMUData(&imu_acc, &imu_vel, NULL);
 
-      std::cout << "Gyro vel: x = " << std::setw(12) << imu_vel[0] << " y = " << std::setw(12) << imu_vel[1] << " z = " << std::setw(12) << imu_vel[2];
-      std::cout << " Accel: x = " << std::setw(12) << imu_acc[0] << " y = " << std::setw(12) << imu_acc[1] << " z = " << std::setw(12) << imu_acc[2];
+      std::cout << "Gyro vel: x = " << std::setw(12) << imu_vel[0] << " y = " << std::setw(12) << imu_vel[1]
+                << " z = " << std::setw(12) << imu_vel[2];
+      std::cout << " Accel: x = " << std::setw(12) << imu_acc[0] << " y = " << std::setw(12) << imu_acc[1]
+                << " z = " << std::setw(12) << imu_acc[2];
       std::cout << std::endl;
     }
   } catch (const vpException &e) {

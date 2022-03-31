@@ -84,15 +84,14 @@ typedef enum {
 } vpAutoThresholdMethod;
 
 VISP_EXPORT void adjust(vpImage<unsigned char> &I, double alpha, double beta);
-VISP_EXPORT void adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double alpha,
-                        double beta);
+VISP_EXPORT void adjust(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, double alpha, double beta);
 VISP_EXPORT void adjust(vpImage<vpRGBa> &I, const double alpha, double beta);
 VISP_EXPORT void adjust(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double alpha, double beta);
 
 VISP_EXPORT void clahe(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, int blockRadius = 150,
                        int bins = 256, float slope = 3.0f, bool fast = true);
-VISP_EXPORT void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius = 150,
-                       int bins = 256, float slope = 3.0f, bool fast = true);
+VISP_EXPORT void clahe(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int blockRadius = 150, int bins = 256,
+                       float slope = 3.0f, bool fast = true);
 
 VISP_EXPORT void equalizeHistogram(vpImage<unsigned char> &I);
 VISP_EXPORT void equalizeHistogram(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2);
@@ -104,8 +103,8 @@ VISP_EXPORT void gammaCorrection(const vpImage<unsigned char> &I1, vpImage<unsig
 VISP_EXPORT void gammaCorrection(vpImage<vpRGBa> &I, double gamma);
 VISP_EXPORT void gammaCorrection(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, double gamma);
 
-VISP_EXPORT void retinex(vpImage<vpRGBa> &I, int scale = 240, int scaleDiv = 3,
-                         int level = RETINEX_UNIFORM, double dynamic = 1.2, int kernelSize = -1);
+VISP_EXPORT void retinex(vpImage<vpRGBa> &I, int scale = 240, int scaleDiv = 3, int level = RETINEX_UNIFORM,
+                         double dynamic = 1.2, int kernelSize = -1);
 VISP_EXPORT void retinex(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, int scale = 240, int scaleDiv = 3,
                          int level = RETINEX_UNIFORM, double dynamic = 1.2, int kernelSize = -1);
 
@@ -123,8 +122,8 @@ VISP_EXPORT void stretchContrastHSV(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &
 */
 //@{
 vp_deprecated VISP_EXPORT void unsharpMask(vpImage<unsigned char> &I, unsigned int size = 7, double weight = 0.6);
-vp_deprecated VISP_EXPORT void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires, unsigned int size = 7,
-                                           double weight = 0.6);
+vp_deprecated VISP_EXPORT void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires,
+                                           unsigned int size = 7, double weight = 0.6);
 vp_deprecated VISP_EXPORT void unsharpMask(vpImage<vpRGBa> &I, unsigned int size = 7, double weight = 0.6);
 vp_deprecated VISP_EXPORT void unsharpMask(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, unsigned int size = 7,
                                            double weight = 0.6);
@@ -135,8 +134,7 @@ VISP_EXPORT void unsharpMask(vpImage<unsigned char> &I, float sigma, double weig
 VISP_EXPORT void unsharpMask(const vpImage<unsigned char> &I, vpImage<unsigned char> &Ires, float sigma,
                              double weight = 0.6);
 VISP_EXPORT void unsharpMask(vpImage<vpRGBa> &I, float sigma, double weight = 0.6);
-VISP_EXPORT void unsharpMask(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, float sigma,
-                             double weight = 0.6);
+VISP_EXPORT void unsharpMask(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Ires, float sigma, double weight = 0.6);
 
 VISP_EXPORT void
 connectedComponents(const vpImage<unsigned char> &I, vpImage<int> &labels, int &nbComponents,
@@ -160,6 +158,6 @@ VISP_EXPORT void reconstruct(const vpImage<unsigned char> &marker, const vpImage
 VISP_EXPORT unsigned char autoThreshold(vpImage<unsigned char> &I, const vp::vpAutoThresholdMethod &method,
                                         const unsigned char backgroundValue = 0,
                                         const unsigned char foregroundValue = 255);
-}
+} // namespace vp
 
 #endif

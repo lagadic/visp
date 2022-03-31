@@ -56,11 +56,12 @@
 class vpXmlConfigParserKeyPoint::Impl
 {
 public:
-  Impl() :
-    m_detectorName("ORB"), m_extractorName("ORB"), m_matcherName("BruteForce-Hamming"), m_matchingFactorThreshold(2.0),
-    m_matchingMethod(ratioDistanceThreshold), m_matchingRatioThreshold(0.85), m_nbRansacIterations(200),
-    m_nbRansacMinInlierCount(100), m_ransacConsensusPercentage(20.0), m_ransacReprojectionError(6.0),
-    m_ransacThreshold(0.01), m_useRansacConsensusPercentage(false), m_useRansacVVS(true)
+  Impl()
+    : m_detectorName("ORB"), m_extractorName("ORB"), m_matcherName("BruteForce-Hamming"),
+      m_matchingFactorThreshold(2.0), m_matchingMethod(ratioDistanceThreshold), m_matchingRatioThreshold(0.85),
+      m_nbRansacIterations(200), m_nbRansacMinInlierCount(100), m_ransacConsensusPercentage(20.0),
+      m_ransacReprojectionError(6.0), m_ransacThreshold(0.01), m_useRansacConsensusPercentage(false),
+      m_useRansacVVS(true)
   {
     init();
   }
@@ -505,53 +506,36 @@ protected:
 };
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-vpXmlConfigParserKeyPoint::vpXmlConfigParserKeyPoint() : m_impl(new Impl())
-{
-}
+vpXmlConfigParserKeyPoint::vpXmlConfigParserKeyPoint() : m_impl(new Impl()) {}
 
-vpXmlConfigParserKeyPoint::~vpXmlConfigParserKeyPoint()
-{
-  delete m_impl;
-}
+vpXmlConfigParserKeyPoint::~vpXmlConfigParserKeyPoint() { delete m_impl; }
 
 /*!
   Parse an XML file to load configuration for vpKeyPoint class.
   \param filename : filename of the XML file to parse.
 */
-void vpXmlConfigParserKeyPoint::parse(const std::string &filename)
-{
-  m_impl->parse(filename);
-}
+void vpXmlConfigParserKeyPoint::parse(const std::string &filename) { m_impl->parse(filename); }
 
 /*!
   Get the detector name.
 
   \return The detector name.
 */
-std::string vpXmlConfigParserKeyPoint::getDetectorName() const
-{
-  return m_impl->getDetectorName();
-}
+std::string vpXmlConfigParserKeyPoint::getDetectorName() const { return m_impl->getDetectorName(); }
 
 /*!
   Get the extractor name.
 
   \return The extractor name.
 */
-std::string vpXmlConfigParserKeyPoint::getExtractorName() const
-{
-  return m_impl->getExtractorName();
-}
+std::string vpXmlConfigParserKeyPoint::getExtractorName() const { return m_impl->getExtractorName(); }
 
 /*!
   Get the matcher name.
 
   \return The detector name.
 */
-std::string vpXmlConfigParserKeyPoint::getMatcherName() const
-{
-  return m_impl->getMatcherName();
-}
+std::string vpXmlConfigParserKeyPoint::getMatcherName() const { return m_impl->getMatcherName(); }
 
 /*!
   Get the factor value.
@@ -559,10 +543,7 @@ std::string vpXmlConfigParserKeyPoint::getMatcherName() const
   \return The factor value for the filtering method:
   constantFactorDistanceThreshold.
 */
-double vpXmlConfigParserKeyPoint::getMatchingFactorThreshold() const
-{
-  return m_impl->getMatchingFactorThreshold();
-}
+double vpXmlConfigParserKeyPoint::getMatchingFactorThreshold() const { return m_impl->getMatchingFactorThreshold(); }
 
 /*!
   Get the filtering method.
@@ -579,30 +560,21 @@ vpXmlConfigParserKeyPoint::vpMatchingMethodEnum vpXmlConfigParserKeyPoint::getMa
 
   \return The factor value for the filtering method: ratioDistanceThreshold.
 */
-double vpXmlConfigParserKeyPoint::getMatchingRatioThreshold() const
-{
-  return m_impl->getMatchingRatioThreshold();
-}
+double vpXmlConfigParserKeyPoint::getMatchingRatioThreshold() const { return m_impl->getMatchingRatioThreshold(); }
 
 /*!
   Get the maximum number of iterations for the Ransac method.
 
   \return The maximum number of iterations for the Ransac method.
 */
-int vpXmlConfigParserKeyPoint::getNbRansacIterations() const
-{
-  return m_impl->getNbRansacIterations();
-}
+int vpXmlConfigParserKeyPoint::getNbRansacIterations() const { return m_impl->getNbRansacIterations(); }
 
 /*!
   Get the minimum number of inliers for the Ransac method.
 
   \return The minimum number of inliers for the Ransac method.
 */
-int vpXmlConfigParserKeyPoint::getNbRansacMinInlierCount() const
-{
-  return m_impl->getNbRansacMinInlierCount();
-}
+int vpXmlConfigParserKeyPoint::getNbRansacMinInlierCount() const { return m_impl->getNbRansacMinInlierCount(); }
 
 /*!
   Get the percentage value of inliers for the Ransac method.
@@ -620,20 +592,14 @@ double vpXmlConfigParserKeyPoint::getRansacConsensusPercentage() const
 
   \return The maximum reprojection error for the Ransac method.
 */
-double vpXmlConfigParserKeyPoint::getRansacReprojectionError() const
-{
-  return m_impl->getRansacReprojectionError();
-}
+double vpXmlConfigParserKeyPoint::getRansacReprojectionError() const { return m_impl->getRansacReprojectionError(); }
 
 /*!
   Get the maximum error for a candidate inlier for the Ransac method.
 
   \return The maximum error for the Ransac method.
 */
-double vpXmlConfigParserKeyPoint::getRansacThreshold() const
-{
-  return m_impl->getRansacThreshold();
-}
+double vpXmlConfigParserKeyPoint::getRansacThreshold() const { return m_impl->getRansacThreshold(); }
 
 /*!
   Get the flag state to choose between a percentage of inliers or a fixed

@@ -686,9 +686,8 @@ void vpHomography::computeDisplacement(const vpHomography &aHb, vpRotationMatrix
 #endif
 }
 
-void vpHomography::computeDisplacement(const vpHomography &H, double x, double y,
-                                       std::list<vpRotationMatrix> &vR, std::list<vpTranslationVector> &vT,
-                                       std::list<vpColVector> &vN)
+void vpHomography::computeDisplacement(const vpHomography &H, double x, double y, std::list<vpRotationMatrix> &vR,
+                                       std::list<vpTranslationVector> &vT, std::list<vpColVector> &vN)
 {
 
 #ifdef DEBUG_Homographie
@@ -1263,21 +1262,21 @@ void vpHomography::computeDisplacement(const vpHomography &H, double x, double y
               << std::endl;
   }
 
-// on peut ensuite afficher les resultats...
-/* std::cout << "Analyse des resultats : "<< std::endl; */
-/* if (cas==cas1) */
-/* std::cout << "On est dans le cas 1" << std::endl; */
-/* if (cas==cas2) */
-/* std::cout << "On est dans le cas 2" << std::endl; */
-/* if (cas==cas3) */
-/* std::cout << "On est dans le cas 3" << std::endl; */
-/* if (cas==cas4) */
-/* std::cout << "On est dans le cas 4" << std::endl; */
+  // on peut ensuite afficher les resultats...
+  /* std::cout << "Analyse des resultats : "<< std::endl; */
+  /* if (cas==cas1) */
+  /* std::cout << "On est dans le cas 1" << std::endl; */
+  /* if (cas==cas2) */
+  /* std::cout << "On est dans le cas 2" << std::endl; */
+  /* if (cas==cas3) */
+  /* std::cout << "On est dans le cas 3" << std::endl; */
+  /* if (cas==cas4) */
+  /* std::cout << "On est dans le cas 4" << std::endl; */
 
-/* if (distanceFictive < 0) */
-/* std::cout << "d'<0" << std::endl; */
-/* else */
-/* std::cout << "d'>0" << std::endl; */
+  /* if (distanceFictive < 0) */
+  /* std::cout << "d'<0" << std::endl; */
+  /* else */
+  /* std::cout << "d'>0" << std::endl; */
 
 #ifdef DEBUG_Homographie
   printf("fin : Homographie_EstimationDeplacementCamera\n");

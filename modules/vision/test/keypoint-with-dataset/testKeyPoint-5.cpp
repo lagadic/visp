@@ -73,7 +73,8 @@ void usage(const char *name, const char *badparam)
 Test keypoints detection.\n\
 \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+  %s [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               \n\
@@ -139,9 +140,9 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
   return true;
 }
 
-template<typename Type>
-void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display,
-              vpImage<Type> &Iinput, vpImage<Type> &I)
+template <typename Type>
+void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display, vpImage<Type> &Iinput,
+              vpImage<Type> &I)
 {
   // Set the path location of the image sequence
   std::string dirname = vpIoTools::createFilePath(env_ipath, "Klimt");
@@ -208,7 +209,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   detectorNames.push_back("AKAZE");
 #endif
 
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
+#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                      \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
 #if (VISP_HAVE_OPENCV_VERSION != 0x040504) && (defined(__APPLE__) && defined(__MACH__))
   detectorNames.push_back("PyramidSIFT");
@@ -255,7 +256,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 
   std::map<vpKeyPoint::vpFeatureDetectorType, std::string> mapOfDetectorNames = keyPoints.getDetectorNames();
   for (int i = 0; i < vpKeyPoint::DETECTOR_TYPE_SIZE; i++) {
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
+#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                      \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
 #if (VISP_HAVE_OPENCV_VERSION == 0x040504) && (defined(__APPLE__) && defined(__MACH__))
     if (i == vpKeyPoint::DETECTOR_SIFT) { // SIFT is known unstable with OpenCV 4.5.4 on macOS
@@ -273,7 +274,7 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
     if (kpts.empty()) {
       std::stringstream ss;
       ss << "No keypoints detected with " << mapOfDetectorNames[(vpKeyPoint::vpFeatureDetectorType)i]
-                << " method  and image: " << filename << "." << std::endl;
+         << " method  and image: " << filename << "." << std::endl;
       throw(vpException(vpException::fatalError, ss.str()));
     }
 

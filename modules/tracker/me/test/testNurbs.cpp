@@ -59,8 +59,7 @@
 #include <cstdlib>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpParseArgv.h>
-#if defined(VISP_HAVE_DISPLAY) \
-  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_DISPLAY) && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 // List of allowed command line options
 #define GETOPTARGS "cdh"
@@ -82,7 +81,8 @@ void usage(const char *name, const char *badparam)
 Describe a curve thanks to a Nurbs.\n\
 \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+  %s [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\

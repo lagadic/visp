@@ -187,16 +187,16 @@ vpMbGenericTracker::~vpMbGenericTracker()
   to get a projection error computed at the ME locations after a call to track().
   It works similarly to vpMbTracker::getProjectionError function:
   <blockquote>
-  Get the error angle between the gradient direction of the model features projected at the resulting pose and their normal.
-  The error is expressed in degree between 0 and 90.
+  Get the error angle between the gradient direction of the model features projected at the resulting pose and their
+  normal. The error is expressed in degree between 0 and 90.
   </blockquote>
 
   \param I : Input grayscale image.
   \param cMo : Camera pose.
   \param cam : Camera parameters.
 */
-double vpMbGenericTracker::computeCurrentProjectionError(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                                         const vpCameraParameters &cam)
+double vpMbGenericTracker::computeCurrentProjectionError(const vpImage<unsigned char> &I,
+                                                         const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam)
 {
   double rawTotalProjectionError = 0.0;
   unsigned int nbTotalFeaturesUsed = 0;
@@ -230,15 +230,16 @@ double vpMbGenericTracker::computeCurrentProjectionError(const vpImage<unsigned 
   to get a projection error computed at the ME locations after a call to track().
   It works similarly to vpMbTracker::getProjectionError function:
   <blockquote>
-  Get the error angle between the gradient direction of the model features projected at the resulting pose and their normal.
-  The error is expressed in degree between 0 and 90.
+  Get the error angle between the gradient direction of the model features projected at the resulting pose and their
+  normal. The error is expressed in degree between 0 and 90.
   </blockquote>
 
   \param I_color : Input color image.
   \param _cMo : Camera pose.
   \param _cam : Camera parameters.
 */
-double vpMbGenericTracker::computeCurrentProjectionError(const vpImage<vpRGBa> &I_color, const vpHomogeneousMatrix &_cMo,
+double vpMbGenericTracker::computeCurrentProjectionError(const vpImage<vpRGBa> &I_color,
+                                                         const vpHomogeneousMatrix &_cMo,
                                                          const vpCameraParameters &_cam)
 {
   vpImage<unsigned char> I;
@@ -569,7 +570,8 @@ void vpMbGenericTracker::computeVVSInteractionMatrixAndResidu(
 
     tracker->m_cMo = m_mapOfCameraTransformationMatrix[it->first] * m_cMo;
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-    vpHomogeneousMatrix c_curr_tTc_curr0 = m_mapOfCameraTransformationMatrix[it->first] * m_cMo * tracker->c0Mo.inverse();
+    vpHomogeneousMatrix c_curr_tTc_curr0 =
+        m_mapOfCameraTransformationMatrix[it->first] * m_cMo * tracker->c0Mo.inverse();
     tracker->ctTc0 = c_curr_tTc_curr0;
 #endif
 
@@ -985,8 +987,9 @@ std::list<vpMbtDistanceKltPoints *> &vpMbGenericTracker::getFeaturesKlt()
   value is 0, or a keypoint (KLT) when value is 1.
   Then behind, the second element of the vector gives the corresponding feature
   parameters.
-  - Moving-edges parameters are: `<feature id (here 0 for ME)>`, `<pt.i()>`, `<pt.j()>`, `<state>` where `pt.i(), pt.j()`
-    are the coordinates of the moving-edge point feature, and `state` with values in range [0,4] indicates the state of the ME
+  - Moving-edges parameters are: `<feature id (here 0 for ME)>`, `<pt.i()>`, `<pt.j()>`, `<state>` where `pt.i(),
+  pt.j()` are the coordinates of the moving-edge point feature, and `state` with values in range [0,4] indicates the
+  state of the ME
     - 0 for vpMeSite::NO_SUPPRESSION
     - 1 for vpMeSite::CONSTRAST
     - 2 for vpMeSite::THRESHOLD
@@ -1018,14 +1021,14 @@ std::vector<std::vector<double> > vpMbGenericTracker::getFeaturesForDisplay()
 }
 
 /*!
-  Get a list of visual features parameters for multiple cameras. The considered camera name is the first element of the map.
-  The second element of the map contains the visual features parameters where
-  the first element of the vector indicates the feature type that is either a moving-edge (ME) when
-  value is 0, or a keypoint (KLT) when value is 1.
+  Get a list of visual features parameters for multiple cameras. The considered camera name is the first element of the
+  map. The second element of the map contains the visual features parameters where the first element of the vector
+  indicates the feature type that is either a moving-edge (ME) when value is 0, or a keypoint (KLT) when value is 1.
   Then behind, the second element of the vector gives the corresponding feature
   parameters.
-  - Moving-edges parameters are: `<feature id (here 0 for ME)>`, `<pt.i()>`, `<pt.j()>`, `<state>` where `pt.i(), pt.j()`
-    are the coordinates of the moving-edge point feature, and `state` with values in range [0,4] indicates the state of the ME
+  - Moving-edges parameters are: `<feature id (here 0 for ME)>`, `<pt.i()>`, `<pt.j()>`, `<state>` where `pt.i(),
+  pt.j()` are the coordinates of the moving-edge point feature, and `state` with values in range [0,4] indicates the
+  state of the ME
     - 0 for vpMeSite::NO_SUPPRESSION
     - 1 for vpMeSite::CONSTRAST
     - 2 for vpMeSite::THRESHOLD
@@ -1038,7 +1041,9 @@ std::vector<std::vector<double> > vpMbGenericTracker::getFeaturesForDisplay()
   When the tracking is achieved with features from a single camera you can use rather
   getFeaturesForDisplay().
 
-  \sa getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &, const std::map<std::string, unsigned int> &, const std::map<std::string, unsigned int> &, const std::map<std::string, vpHomogeneousMatrix> &, const std::map<std::string, vpCameraParameters> &, bool)
+  \sa getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &, const std::map<std::string,
+  unsigned int> &, const std::map<std::string, unsigned int> &, const std::map<std::string, vpHomogeneousMatrix> &,
+  const std::map<std::string, vpCameraParameters> &, bool)
 */
 void vpMbGenericTracker::getFeaturesForDisplay(std::map<std::string, std::vector<std::vector<double> > > &mapOfFeatures)
 {
@@ -1240,8 +1245,7 @@ double vpMbGenericTracker::getKltThresholdAcceptation() const { return m_thresho
 
   \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
 */
-void vpMbGenericTracker::getLcircle(std::list<vpMbtDistanceCircle *> &circlesList,
-                                    unsigned int level) const
+void vpMbGenericTracker::getLcircle(std::list<vpMbtDistanceCircle *> &circlesList, unsigned int level) const
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
   if (it != m_mapOfTrackers.end()) {
@@ -1287,8 +1291,7 @@ void vpMbGenericTracker::getLcircle(const std::string &cameraName, std::list<vpM
 
   \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
 */
-void vpMbGenericTracker::getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList,
-                                      unsigned int level) const
+void vpMbGenericTracker::getLcylinder(std::list<vpMbtDistanceCylinder *> &cylindersList, unsigned int level) const
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
   if (it != m_mapOfTrackers.end()) {
@@ -1334,8 +1337,7 @@ void vpMbGenericTracker::getLcylinder(const std::string &cameraName, std::list<v
 
   \note Multi-scale moving edge tracking is not possible, scale level=0 must be used.
 */
-void vpMbGenericTracker::getLline(std::list<vpMbtDistanceLine *> &linesList,
-                                  unsigned int level) const
+void vpMbGenericTracker::getLline(std::list<vpMbtDistanceLine *> &linesList, unsigned int level) const
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.find(m_referenceCameraName);
 
@@ -1389,10 +1391,13 @@ void vpMbGenericTracker::getLline(const std::string &cameraName, std::list<vpMbt
   `<pt_end.i()>`, `<pt_end.j()>`.
   - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
   `<n_20>`, `<n_11>`, `<n_02>` where `<n_ij>` are the second order centered moments of the ellipse
-  normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area).
+  normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a
+  the area).
 
   When tracking is performed using multiple cameras, you should rather use
-  getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &, const std::map<std::string, unsigned int> &, const std::map<std::string, unsigned int> &, const std::map<std::string, vpHomogeneousMatrix> &, const std::map<std::string, vpCameraParameters> &, bool)
+  getModelForDisplay(std::map<std::string, std::vector<std::vector<double> > > &, const std::map<std::string, unsigned
+  int> &, const std::map<std::string, unsigned int> &, const std::map<std::string, vpHomogeneousMatrix> &, const
+  std::map<std::string, vpCameraParameters> &, bool)
 
   \sa getFeaturesForDisplay()
 */
@@ -1427,12 +1432,10 @@ std::vector<std::vector<double> > vpMbGenericTracker::getModelForDisplay(unsigne
   `<pt_end.i()>`, `<pt_end.j()>`.
   - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
   `<n_20>`, `<n_11>`, `<n_02>` where `<n_ij>` are the second order centered moments of the ellipse
-  normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area).
-  \param mapOfwidths : Map of images width.
-  \param mapOfheights : Map of images height.
-  \param mapOfcMos : Map of poses used to project the 3D model into the images.
-  \param mapOfCams : The camera parameters.
-  \param displayFullModel : If true, the line is displayed even if it is not
+  normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a
+  the area). \param mapOfwidths : Map of images width. \param mapOfheights : Map of images height. \param mapOfcMos :
+  Map of poses used to project the 3D model into the images. \param mapOfCams : The camera parameters. \param
+  displayFullModel : If true, the line is displayed even if it is not
 
   If you are using a single camera you should rather use
   getModelForDisplay(unsigned int, unsigned int, const vpHomogeneousMatrix &, const vpCameraParameters &, bool)
@@ -1456,12 +1459,10 @@ void vpMbGenericTracker::getModelForDisplay(std::map<std::string, std::vector<st
     std::map<std::string, vpHomogeneousMatrix>::const_iterator findcMo = mapOfcMos.find(it->first);
     std::map<std::string, vpCameraParameters>::const_iterator findCam = mapOfCams.find(it->first);
 
-    if (findWidth != mapOfwidths.end() &&
-        findHeight != mapOfheights.end() &&
-        findcMo != mapOfcMos.end() &&
+    if (findWidth != mapOfwidths.end() && findHeight != mapOfheights.end() && findcMo != mapOfcMos.end() &&
         findCam != mapOfCams.end()) {
-      mapOfModels[it->first] = it->second->getModelForDisplay(findWidth->second, findHeight->second,
-                                                              findcMo->second, findCam->second, displayFullModel);
+      mapOfModels[it->first] = it->second->getModelForDisplay(findWidth->second, findHeight->second, findcMo->second,
+                                                              findCam->second, displayFullModel);
     }
   }
 }
@@ -1720,10 +1721,7 @@ void vpMbGenericTracker::getPolygonFaces(std::map<std::string, std::vector<vpPol
   }
 }
 
-void vpMbGenericTracker::getPose(vpHomogeneousMatrix &cMo) const
-{
-  vpMbTracker::getPose(cMo);
-}
+void vpMbGenericTracker::getPose(vpHomogeneousMatrix &cMo) const { vpMbTracker::getPose(cMo); }
 
 /*!
   Get the current pose between the object and the cameras.
@@ -1767,10 +1765,7 @@ void vpMbGenericTracker::getPose(std::map<std::string, vpHomogeneousMatrix> &map
 /*!
   Get name of the reference camera.
 */
-std::string vpMbGenericTracker::getReferenceCameraName() const
-{
-  return  m_referenceCameraName;
-}
+std::string vpMbGenericTracker::getReferenceCameraName() const { return m_referenceCameraName; }
 
 /*!
   The tracker type for the reference camera.
@@ -2092,8 +2087,7 @@ void vpMbGenericTracker::initClick(const std::map<std::string, const vpImage<vpR
                                    const std::map<std::string, vpHomogeneousMatrix> &mapOfT)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(m_referenceCameraName);
-  std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img =
-      mapOfColorImages.find(m_referenceCameraName);
+  std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img = mapOfColorImages.find(m_referenceCameraName);
   std::map<std::string, std::string>::const_iterator it_initFile = mapOfInitFiles.find(m_referenceCameraName);
 
   if (it_tracker != m_mapOfTrackers.end() && it_img != mapOfColorImages.end() && it_initFile != mapOfInitFiles.end()) {
@@ -2341,11 +2335,11 @@ void vpMbGenericTracker::initFromPoints(const std::map<std::string, const vpImag
 {
   // Set the reference cMo
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(m_referenceCameraName);
-  std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img =
-      mapOfColorImages.find(m_referenceCameraName);
+  std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img = mapOfColorImages.find(m_referenceCameraName);
   std::map<std::string, std::string>::const_iterator it_initPoints = mapOfInitPoints.find(m_referenceCameraName);
 
-  if (it_tracker != m_mapOfTrackers.end() && it_img != mapOfColorImages.end() && it_initPoints != mapOfInitPoints.end()) {
+  if (it_tracker != m_mapOfTrackers.end() && it_img != mapOfColorImages.end() &&
+      it_initPoints != mapOfInitPoints.end()) {
     TrackerWrapper *tracker = it_tracker->second;
     tracker->initFromPoints(*it_img->second, it_initPoints->second);
     tracker->getPose(m_cMo);
@@ -2560,8 +2554,7 @@ void vpMbGenericTracker::initFromPose(const std::map<std::string, const vpImage<
 {
   // Set the reference cMo
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(m_referenceCameraName);
-  std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img =
-      mapOfColorImages.find(m_referenceCameraName);
+  std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img = mapOfColorImages.find(m_referenceCameraName);
   std::map<std::string, std::string>::const_iterator it_initPose = mapOfInitPoses.find(m_referenceCameraName);
 
   if (it_tracker != m_mapOfTrackers.end() && it_img != mapOfColorImages.end() && it_initPose != mapOfInitPoses.end()) {
@@ -2744,8 +2737,7 @@ void vpMbGenericTracker::initFromPose(const std::map<std::string, const vpImage<
 {
   // Set the reference cMo
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(m_referenceCameraName);
-  std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img =
-      mapOfColorImages.find(m_referenceCameraName);
+  std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img = mapOfColorImages.find(m_referenceCameraName);
   std::map<std::string, vpHomogeneousMatrix>::const_iterator it_camPose = mapOfCameraPoses.find(m_referenceCameraName);
 
   if (it_tracker != m_mapOfTrackers.end() && it_img != mapOfColorImages.end() && it_camPose != mapOfCameraPoses.end()) {
@@ -3044,8 +3036,7 @@ void vpMbGenericTracker::preTracking(std::map<std::string, const vpImage<unsigne
   \param T : optional transformation matrix (currently only for .cao).
 */
 void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                     const vpHomogeneousMatrix &cMo, bool verbose,
-                                     const vpHomogeneousMatrix &T)
+                                     const vpHomogeneousMatrix &cMo, bool verbose, const vpHomogeneousMatrix &T)
 {
   if (m_mapOfTrackers.size() != 1) {
     throw vpException(vpTrackingException::fatalError, "This method requires exactly one camera, there are %d cameras!",
@@ -3078,8 +3069,7 @@ void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I, const std:
   \param T : optional transformation matrix (currently only for .cao).
 */
 void vpMbGenericTracker::reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name,
-                                     const vpHomogeneousMatrix &cMo, bool verbose,
-                                     const vpHomogeneousMatrix &T)
+                                     const vpHomogeneousMatrix &cMo, bool verbose, const vpHomogeneousMatrix &T)
 {
   if (m_mapOfTrackers.size() != 1) {
     throw vpException(vpTrackingException::fatalError, "This method requires exactly one camera, there are %d cameras!",
@@ -3122,8 +3112,7 @@ void vpMbGenericTracker::reInitModel(const vpImage<vpRGBa> &I_color, const std::
 */
 void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
                                      const std::string &cad_name1, const std::string &cad_name2,
-                                     const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                     bool verbose,
+                                     const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo, bool verbose,
                                      const vpHomogeneousMatrix &T1, const vpHomogeneousMatrix &T2)
 {
   if (m_mapOfTrackers.size() == 2) {
@@ -3169,8 +3158,7 @@ void vpMbGenericTracker::reInitModel(const vpImage<unsigned char> &I1, const vpI
 */
 void vpMbGenericTracker::reInitModel(const vpImage<vpRGBa> &I_color1, const vpImage<vpRGBa> &I_color2,
                                      const std::string &cad_name1, const std::string &cad_name2,
-                                     const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo,
-                                     bool verbose,
+                                     const vpHomogeneousMatrix &c1Mo, const vpHomogeneousMatrix &c2Mo, bool verbose,
                                      const vpHomogeneousMatrix &T1, const vpHomogeneousMatrix &T2)
 {
   if (m_mapOfTrackers.size() == 2) {
@@ -3210,8 +3198,7 @@ void vpMbGenericTracker::reInitModel(const vpImage<vpRGBa> &I_color1, const vpIm
 */
 void vpMbGenericTracker::reInitModel(const std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                                      const std::map<std::string, std::string> &mapOfModelFiles,
-                                     const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                                     bool verbose,
+                                     const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses, bool verbose,
                                      const std::map<std::string, vpHomogeneousMatrix> &mapOfT)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(m_referenceCameraName);
@@ -3284,13 +3271,11 @@ void vpMbGenericTracker::reInitModel(const std::map<std::string, const vpImage<u
 */
 void vpMbGenericTracker::reInitModel(const std::map<std::string, const vpImage<vpRGBa> *> &mapOfColorImages,
                                      const std::map<std::string, std::string> &mapOfModelFiles,
-                                     const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses,
-                                     bool verbose,
+                                     const std::map<std::string, vpHomogeneousMatrix> &mapOfCameraPoses, bool verbose,
                                      const std::map<std::string, vpHomogeneousMatrix> &mapOfT)
 {
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(m_referenceCameraName);
-  std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img =
-      mapOfColorImages.find(m_referenceCameraName);
+  std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img = mapOfColorImages.find(m_referenceCameraName);
   std::map<std::string, std::string>::const_iterator it_model = mapOfModelFiles.find(m_referenceCameraName);
   std::map<std::string, vpHomogeneousMatrix>::const_iterator it_camPose = mapOfCameraPoses.find(m_referenceCameraName);
 
@@ -3316,7 +3301,8 @@ void vpMbGenericTracker::reInitModel(const std::map<std::string, const vpImage<v
       it_model = mapOfModelFiles.find(it_tracker->first);
       it_camPose = mapOfCameraPoses.find(it_tracker->first);
 
-      if (it_img != mapOfColorImages.end() && it_model != mapOfModelFiles.end() && it_camPose != mapOfCameraPoses.end()) {
+      if (it_img != mapOfColorImages.end() && it_model != mapOfModelFiles.end() &&
+          it_camPose != mapOfCameraPoses.end()) {
         TrackerWrapper *tracker = it_tracker->second;
         tracker->reInitModel(*it_img->second, it_model->second, it_camPose->second, verbose);
       } else {
@@ -4270,12 +4256,11 @@ void vpMbGenericTracker::setMask(const vpImage<bool> &mask)
   vpMbTracker::setMask(mask);
 
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
-    it != m_mapOfTrackers.end(); ++it) {
+       it != m_mapOfTrackers.end(); ++it) {
     TrackerWrapper *tracker = it->second;
     tracker->setMask(mask);
   }
 }
-
 
 /*!
   Set the threshold for the minimum line length to be considered as visible in
@@ -4736,8 +4721,7 @@ void vpMbGenericTracker::setPose(const std::map<std::string, const vpImage<vpRGB
 {
   // Set the reference cMo
   std::map<std::string, TrackerWrapper *>::const_iterator it_tracker = m_mapOfTrackers.find(m_referenceCameraName);
-  std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img =
-      mapOfColorImages.find(m_referenceCameraName);
+  std::map<std::string, const vpImage<vpRGBa> *>::const_iterator it_img = mapOfColorImages.find(m_referenceCameraName);
   std::map<std::string, vpHomogeneousMatrix>::const_iterator it_camPose = mapOfCameraPoses.find(m_referenceCameraName);
 
   if (it_tracker != m_mapOfTrackers.end() && it_img != mapOfColorImages.end() && it_camPose != mapOfCameraPoses.end()) {
@@ -5178,7 +5162,7 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<unsigned char
     }
 
     if (tracker->m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) &&
-        ! mapOfPointClouds[it->first]) { // mapOfPointClouds[it->first] == nullptr
+        !mapOfPointClouds[it->first]) { // mapOfPointClouds[it->first] == nullptr
       throw vpException(vpException::fatalError, "Pointcloud smart pointer is NULL!");
     }
   }
@@ -5248,19 +5232,21 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
                                   | KLT_TRACKER
 #endif
-                                  ) && mapOfImages[it->first] == NULL) {
+                                  ) &&
+        mapOfImages[it->first] == NULL) {
       throw vpException(vpException::fatalError, "Image pointer is NULL!");
     } else if (tracker->m_trackerType & (EDGE_TRACKER
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-                                  | KLT_TRACKER
+                                         | KLT_TRACKER
 #endif
-                                  ) && mapOfImages[it->first] != NULL) {
+                                         ) &&
+               mapOfImages[it->first] != NULL) {
       vpImageConvert::convert(*mapOfColorImages[it->first], tracker->m_I);
-      mapOfImages[it->first] = &tracker->m_I; //update grayscale image buffer
+      mapOfImages[it->first] = &tracker->m_I; // update grayscale image buffer
     }
 
     if (tracker->m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) &&
-        ! mapOfPointClouds[it->first]) { // mapOfPointClouds[it->first] == nullptr
+        !mapOfPointClouds[it->first]) { // mapOfPointClouds[it->first] == nullptr
       throw vpException(vpException::fatalError, "Pointcloud smart pointer is NULL!");
     }
   }
@@ -5414,15 +5400,17 @@ void vpMbGenericTracker::track(std::map<std::string, const vpImage<vpRGBa> *> &m
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
                                   | KLT_TRACKER
 #endif
-                                  ) && mapOfColorImages[it->first] == NULL) {
+                                  ) &&
+        mapOfColorImages[it->first] == NULL) {
       throw vpException(vpException::fatalError, "Image pointer is NULL!");
     } else if (tracker->m_trackerType & (EDGE_TRACKER
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-                                  | KLT_TRACKER
+                                         | KLT_TRACKER
 #endif
-                                  ) && mapOfColorImages[it->first] != NULL) {
+                                         ) &&
+               mapOfColorImages[it->first] != NULL) {
       vpImageConvert::convert(*mapOfColorImages[it->first], tracker->m_I);
-      mapOfImages[it->first] = &tracker->m_I; //update grayscale image buffer
+      mapOfImages[it->first] = &tracker->m_I; // update grayscale image buffer
     }
 
     if (tracker->m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) &&
@@ -5503,7 +5491,7 @@ vpMbGenericTracker::TrackerWrapper::TrackerWrapper(int trackerType)
 #endif
 }
 
-vpMbGenericTracker::TrackerWrapper::~TrackerWrapper() { }
+vpMbGenericTracker::TrackerWrapper::~TrackerWrapper() {}
 
 // Implemented only for debugging purposes: use TrackerWrapper as a standalone tracker
 void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char> *const ptr_I)
@@ -5919,7 +5907,8 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<unsigned char> &I
     }
   }
 
-  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+  std::vector<std::vector<double> > models =
+      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
       vpImagePoint ip1(models[i][1], models[i][2]);
@@ -5936,10 +5925,10 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<unsigned char> &I
 
 #ifdef VISP_HAVE_OGRE
   if ((m_trackerType & EDGE_TRACKER)
-    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
       || (m_trackerType & KLT_TRACKER)
-    #endif
-      ) {
+#endif
+  ) {
     if (useOgre)
       faces.displayOgre(cMo);
   }
@@ -5999,7 +5988,8 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<vpRGBa> &I, const
     }
   }
 
-  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+  std::vector<std::vector<double> > models =
+      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
       vpImagePoint ip1(models[i][1], models[i][2]);
@@ -6016,10 +6006,10 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<vpRGBa> &I, const
 
 #ifdef VISP_HAVE_OGRE
   if ((m_trackerType & EDGE_TRACKER)
-    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
       || (m_trackerType & KLT_TRACKER)
-    #endif
-      ) {
+#endif
+  ) {
     if (useOgre)
       faces.displayOgre(cMo);
   }
@@ -6031,33 +6021,35 @@ std::vector<std::vector<double> > vpMbGenericTracker::TrackerWrapper::getFeature
   std::vector<std::vector<double> > features;
 
   if (m_trackerType & EDGE_TRACKER) {
-    //m_featuresToBeDisplayedEdge updated after computeVVS()
+    // m_featuresToBeDisplayedEdge updated after computeVVS()
     features.insert(features.end(), m_featuresToBeDisplayedEdge.begin(), m_featuresToBeDisplayedEdge.end());
   }
 
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   if (m_trackerType & KLT_TRACKER) {
-    //m_featuresToBeDisplayedKlt updated after postTracking()
+    // m_featuresToBeDisplayedKlt updated after postTracking()
     features.insert(features.end(), m_featuresToBeDisplayedKlt.begin(), m_featuresToBeDisplayedKlt.end());
   }
 #endif
 
   if (m_trackerType & DEPTH_NORMAL_TRACKER) {
-    //m_featuresToBeDisplayedDepthNormal updated after postTracking()
-    features.insert(features.end(), m_featuresToBeDisplayedDepthNormal.begin(), m_featuresToBeDisplayedDepthNormal.end());
+    // m_featuresToBeDisplayedDepthNormal updated after postTracking()
+    features.insert(features.end(), m_featuresToBeDisplayedDepthNormal.begin(),
+                    m_featuresToBeDisplayedDepthNormal.end());
   }
 
   return features;
 }
 
-std::vector<std::vector<double> > vpMbGenericTracker::TrackerWrapper::getModelForDisplay(unsigned int width, unsigned int height,
+std::vector<std::vector<double> > vpMbGenericTracker::TrackerWrapper::getModelForDisplay(unsigned int width,
+                                                                                         unsigned int height,
                                                                                          const vpHomogeneousMatrix &cMo,
                                                                                          const vpCameraParameters &cam,
                                                                                          bool displayFullModel)
 {
   std::vector<std::vector<double> > models;
 
-  //Do not add multiple times the same models
+  // Do not add multiple times the same models
   if (m_trackerType == EDGE_TRACKER) {
     models = vpMbEdgeTracker::getModelForDisplay(width, height, cMo, cam, displayFullModel);
   }
@@ -6071,15 +6063,17 @@ std::vector<std::vector<double> > vpMbGenericTracker::TrackerWrapper::getModelFo
   } else if (m_trackerType == DEPTH_DENSE_TRACKER) {
     models = vpMbDepthDenseTracker::getModelForDisplay(width, height, cMo, cam, displayFullModel);
   } else {
-    //Edge and KLT trackers use the same primitives
+    // Edge and KLT trackers use the same primitives
     if (m_trackerType & EDGE_TRACKER) {
-      std::vector<std::vector<double> > edgeModels = vpMbEdgeTracker::getModelForDisplay(width, height, cMo, cam, displayFullModel);
+      std::vector<std::vector<double> > edgeModels =
+          vpMbEdgeTracker::getModelForDisplay(width, height, cMo, cam, displayFullModel);
       models.insert(models.end(), edgeModels.begin(), edgeModels.end());
     }
 
-    //Depth dense and depth normal trackers use the same primitives
+    // Depth dense and depth normal trackers use the same primitives
     if (m_trackerType & DEPTH_DENSE_TRACKER) {
-      std::vector<std::vector<double> > depthDenseModels = vpMbDepthDenseTracker::getModelForDisplay(width, height, cMo, cam, displayFullModel);
+      std::vector<std::vector<double> > depthDenseModels =
+          vpMbDepthDenseTracker::getModelForDisplay(width, height, cMo, cam, displayFullModel);
       models.insert(models.end(), depthDenseModels.begin(), depthDenseModels.end());
     }
   }
@@ -6156,8 +6150,8 @@ void vpMbGenericTracker::TrackerWrapper::initCircle(const vpPoint &p1, const vpP
 #endif
 }
 
-void vpMbGenericTracker::TrackerWrapper::initCylinder(const vpPoint &p1, const vpPoint &p2, double radius,
-                                                      int idFace, const std::string &name)
+void vpMbGenericTracker::TrackerWrapper::initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace,
+                                                      const std::string &name)
 {
   if (m_trackerType & EDGE_TRACKER)
     vpMbEdgeTracker::initCylinder(p1, p2, radius, idFace, name);
@@ -6476,8 +6470,8 @@ void vpMbGenericTracker::TrackerWrapper::postTracking(const vpImage<unsigned cha
   }
 }
 
-void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char> * const ptr_I,
-                                                     const std::vector<vpColVector> * const point_cloud,
+void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char> *const ptr_I,
+                                                     const std::vector<vpColVector> *const point_cloud,
                                                      const unsigned int pointcloud_width,
                                                      const unsigned int pointcloud_height)
 {
@@ -6520,8 +6514,9 @@ void vpMbGenericTracker::TrackerWrapper::preTracking(const vpImage<unsigned char
   }
 }
 
-void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
-                                                     const std::string &cad_name, const vpHomogeneousMatrix &cMo, bool verbose,
+void vpMbGenericTracker::TrackerWrapper::reInitModel(const vpImage<unsigned char> *const I,
+                                                     const vpImage<vpRGBa> *const I_color, const std::string &cad_name,
+                                                     const vpHomogeneousMatrix &cMo, bool verbose,
                                                      const vpHomogeneousMatrix &T)
 {
   m_cMo.eye();
@@ -6669,10 +6664,7 @@ void vpMbGenericTracker::TrackerWrapper::setCameraParameters(const vpCameraParam
   vpMbDepthDenseTracker::setCameraParameters(m_cam);
 }
 
-void vpMbGenericTracker::TrackerWrapper::setClipping(const unsigned int &flags)
-{
-  vpMbEdgeTracker::setClipping(flags);
-}
+void vpMbGenericTracker::TrackerWrapper::setClipping(const unsigned int &flags) { vpMbEdgeTracker::setClipping(flags); }
 
 void vpMbGenericTracker::TrackerWrapper::setFarClippingDistance(const double &dist)
 {
@@ -6692,8 +6684,8 @@ void vpMbGenericTracker::TrackerWrapper::setOgreVisibilityTest(const bool &v)
 #endif
 }
 
-void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
-                                                 const vpHomogeneousMatrix &cdMo)
+void vpMbGenericTracker::TrackerWrapper::setPose(const vpImage<unsigned char> *const I,
+                                                 const vpImage<vpRGBa> *const I_color, const vpHomogeneousMatrix &cdMo)
 {
   bool performKltSetPose = false;
   if (I_color) {
@@ -6823,7 +6815,7 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> &
 
 void vpMbGenericTracker::TrackerWrapper::track(const vpImage<vpRGBa> &)
 {
-  //not exposed to the public API, only for debug
+  // not exposed to the public API, only for debug
 }
 
 #ifdef VISP_HAVE_PCL
@@ -6848,7 +6840,7 @@ void vpMbGenericTracker::TrackerWrapper::track(const vpImage<unsigned char> *con
     throw vpException(vpException::fatalError, "Image pointer is NULL!");
   }
 
-  if (m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) && ! point_cloud) { // point_cloud == nullptr
+  if (m_trackerType & (DEPTH_NORMAL_TRACKER | DEPTH_DENSE_TRACKER) && !point_cloud) { // point_cloud == nullptr
     throw vpException(vpException::fatalError, "Pointcloud smart pointer is NULL!");
   }
 

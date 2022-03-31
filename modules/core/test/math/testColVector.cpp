@@ -70,11 +70,8 @@ bool test(const std::string &s, const vpColVector &v, const std::vector<double> 
   return true;
 }
 
-double getRandomValues(double min, double max)
-{
-  return (max - min) * ((double)rand() / (double)RAND_MAX) + min;
-}
-}
+double getRandomValues(double min, double max) { return (max - min) * ((double)rand() / (double)RAND_MAX) + min; }
+} // namespace
 
 int main()
 {
@@ -364,7 +361,7 @@ int main()
     std::cout << "** Test conversion to/from std::vector" << std::endl;
     std::vector<double> std_vector(5);
     for (size_t i = 0; i < std_vector.size(); i++) {
-      std_vector[i] = (double) i;
+      std_vector[i] = (double)i;
     }
     vpColVector v(std_vector);
     if (test("v", v, std_vector) == false)

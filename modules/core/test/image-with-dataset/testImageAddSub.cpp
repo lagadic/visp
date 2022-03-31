@@ -43,15 +43,15 @@
 
 #if defined(VISP_HAVE_CATCH2)
 #define CATCH_CONFIG_RUNNER
+#include "common.hpp"
 #include <catch.hpp>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
-#include "common.hpp"
 
-TEST_CASE("Test vpImageTools::imageAdd()", "[image_add]") {
-  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                         "Klimt/Klimt.pgm");
+TEST_CASE("Test vpImageTools::imageAdd()", "[image_add]")
+{
+  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Klimt/Klimt.pgm");
   vpImage<unsigned char> I;
   vpImageIo::read(I, filepath);
 
@@ -86,9 +86,9 @@ TEST_CASE("Test vpImageTools::imageAdd()", "[image_add]") {
   }
 }
 
-TEST_CASE("Test vpImageTools::imageDifference()", "[image_difference]") {
-  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                         "Klimt/Klimt.pgm");
+TEST_CASE("Test vpImageTools::imageDifference()", "[image_difference]")
+{
+  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Klimt/Klimt.pgm");
   vpImage<unsigned char> I;
   vpImageIo::read(I, filepath);
 
@@ -144,8 +144,5 @@ int main(int argc, char *argv[])
   return numFailed;
 }
 #else
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

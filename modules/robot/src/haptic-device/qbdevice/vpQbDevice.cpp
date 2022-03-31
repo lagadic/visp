@@ -43,21 +43,17 @@
 
 #include <qb_device_driver.h>
 
-#include <visp3/robot/vpQbDevice.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/robot/vpQbDevice.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpQbDevice::Impl
 {
 public:
-  Impl()
-    : Impl(std::make_shared<qb_device_driver::qbDeviceAPI>())
-  {
-  }
+  Impl() : Impl(std::make_shared<qb_device_driver::qbDeviceAPI>()) {}
   Impl(std::shared_ptr<qb_device_driver::qbDeviceAPI> device_api)
-    : m_serial_protectors(), m_connected_devices(),
-      m_position_limits(2), m_device_api(device_api), m_file_descriptors(),
-      m_max_repeats(1), m_current_max(750.)
+    : m_serial_protectors(), m_connected_devices(), m_position_limits(2), m_device_api(device_api),
+      m_file_descriptors(), m_max_repeats(1), m_current_max(750.)
   {
     // Default values updated after a call to init()
     m_position_limits[0] = 0;
@@ -66,42 +62,31 @@ public:
 
   virtual ~Impl()
   {
-    for (auto it = m_file_descriptors.begin(); it != m_file_descriptors.end(); ) {
+    for (auto it = m_file_descriptors.begin(); it != m_file_descriptors.end();) {
       if (close(it->first)) {
         it = m_file_descriptors.erase(it);
-      }
-      else {
-        ++ it;
+      } else {
+        ++it;
       }
     }
   }
 
   virtual int activate(const int &id, const bool &command, const int &max_repeats);
-  virtual int activate(const int &id, const int &max_repeats)
-  {
-    return activate(id, true, max_repeats);
-  }
+  virtual int activate(const int &id, const int &max_repeats) { return activate(id, true, max_repeats); }
 
   virtual bool close(const std::string &serial_port);
 
-  virtual int deactivate(const int &id, const int &max_repeats)
-  {
-    return activate(id, false, max_repeats);
-  }
+  virtual int deactivate(const int &id, const int &max_repeats) { return activate(id, false, max_repeats); }
 
-  inline double getCurrentMax() const {
-    return m_current_max;
-  }
+  inline double getCurrentMax() const { return m_current_max; }
 
   virtual int getCurrents(const int &id, const int &max_repeats, std::vector<short int> &currents);
   virtual int getInfo(const int &id, const int &max_repeats, std::string &info);
-  virtual int getMeasurements(const int &id, const int &max_repeats, std::vector<short int> &currents, std::vector<short int> &positions);
+  virtual int getMeasurements(const int &id, const int &max_repeats, std::vector<short int> &currents,
+                              std::vector<short int> &positions);
   virtual int getParameters(const int &id, std::vector<int> &limits, std::vector<int> &resolutions);
 
-  std::vector<short int> getPositionLimits() const
-  {
-    return m_position_limits;
-  }
+  std::vector<short int> getPositionLimits() const { return m_position_limits; }
 
   virtual int getPositions(const int &id, const int &max_repeats, std::vector<short int> &positions);
   virtual int getSerialPortsAndDevices(const int &max_repeats);
@@ -110,32 +95,31 @@ public:
 
   virtual int isConnected(const int &id, const int &max_repeats);
 
-  virtual bool isInConnectedSet(const int &id)
-  {
-    return (m_connected_devices.count(id) ? true : false);
-  }
+  virtual bool isInConnectedSet(const int &id) { return (m_connected_devices.count(id) ? true : false); }
 
   virtual bool isInOpenMap(const std::string &serial_port)
   {
     return (m_file_descriptors.count(serial_port) ? true : false);
   }
 
-  inline bool isReliable(int const &failures, int const &max_repeats) { return failures >= 0 && failures <= max_repeats; }
+  inline bool isReliable(int const &failures, int const &max_repeats)
+  {
+    return failures >= 0 && failures <= max_repeats;
+  }
   virtual int open(const std::string &serial_port);
 
   virtual int setCommandsAndWait(const int &id, const int &max_repeats, std::vector<short int> &commands);
   virtual int setCommandsAsync(const int &id, std::vector<short int> &commands);
 
-  void setMaxRepeats(const int &max_repeats) {
-    m_max_repeats = max_repeats;
-  }
+  void setMaxRepeats(const int &max_repeats) { m_max_repeats = max_repeats; }
 
 public:
-  std::map<std::string, std::unique_ptr<std::mutex>> m_serial_protectors;  // only callbacks must lock the serial resources
+  std::map<std::string, std::unique_ptr<std::mutex> >
+      m_serial_protectors; // only callbacks must lock the serial resources
   std::map<int, std::string> m_connected_devices;
 
 protected:
-#if (defined(_WIN32) || defined (_WIN64))
+#if (defined(_WIN32) || defined(_WIN64))
   std::unique_ptr<std::mutex> m_mutex_dummy; // FS: cannot build without this line with msvc
 #endif
   std::vector<short int> m_position_limits; // min and max position values in ticks
@@ -156,7 +140,8 @@ int vpQbDevice::Impl::activate(const int &id, const bool &command, const int &ma
     m_device_api->activate(&m_file_descriptors.at(m_connected_devices.at(id)), id, command);
     failures = std::max(failures, isActive(id, max_repeats, status));
     if (status != command) {
-      std::cout << "Device [" << id << "] fails on " << command_prefix << "activation." << std::endl;;
+      std::cout << "Device [" << id << "] fails on " << command_prefix << "activation." << std::endl;
+      ;
       return -1;
     }
     std::cout << "Device [" << id << "] motors have been " << command_prefix << "activated!" << std::endl;
@@ -170,7 +155,7 @@ bool vpQbDevice::Impl::close(const std::string &serial_port)
 {
   if (!isInOpenMap(serial_port)) {
     std::cout << "has not handled [" << serial_port << "]." << std::endl;
-    return false;  // no error: the communication is close anyway
+    return false; // no error: the communication is close anyway
   }
 
   for (auto const &device : m_connected_devices) {
@@ -192,9 +177,10 @@ bool vpQbDevice::Impl::close(const std::string &serial_port)
 
 int vpQbDevice::Impl::getCurrents(const int &id, const int &max_repeats, std::vector<short int> &currents)
 {
-  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
+  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification
+  // of a real fault in the communication
   int failures = 0;
-  currents.resize(2);  // required by 'getCurrents()'
+  currents.resize(2); // required by 'getCurrents()'
   std::lock_guard<std::mutex> serial_lock(*m_serial_protectors.at(m_connected_devices.at(id)));
   while (failures <= max_repeats) {
     if (m_device_api->getCurrents(&m_file_descriptors.at(m_connected_devices.at(id)), id, currents) < 0) {
@@ -208,7 +194,8 @@ int vpQbDevice::Impl::getCurrents(const int &id, const int &max_repeats, std::ve
 
 int vpQbDevice::Impl::getInfo(const int &id, const int &max_repeats, std::string &info)
 {
-  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
+  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification
+  // of a real fault in the communication
   int failures = 0;
   while (failures <= max_repeats) {
     info = m_device_api->getInfo(&m_file_descriptors.at(m_connected_devices.at(id)), id);
@@ -221,20 +208,22 @@ int vpQbDevice::Impl::getInfo(const int &id, const int &max_repeats, std::string
   return failures;
 }
 
-int vpQbDevice::Impl::getMeasurements(const int &id, const int &max_repeats, std::vector<short int> &currents, std::vector<short int> &positions)
+int vpQbDevice::Impl::getMeasurements(const int &id, const int &max_repeats, std::vector<short int> &currents,
+                                      std::vector<short int> &positions)
 {
-  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
+  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification
+  // of a real fault in the communication
   int failures = 0;
   currents.resize(2);
   positions.resize(3);
-  std::vector<short int> measurements(5, 0);  // required by 'getMeasurements()'
+  std::vector<short int> measurements(5, 0); // required by 'getMeasurements()'
   while (failures <= max_repeats) {
     if (m_device_api->getMeasurements(&m_file_descriptors.at(m_connected_devices.at(id)), id, measurements) < 0) {
       failures++;
       continue;
     }
-    std::copy(measurements.begin(), measurements.begin()+2, currents.begin());
-    std::copy(measurements.begin()+2, measurements.end(), positions.begin());
+    std::copy(measurements.begin(), measurements.begin() + 2, currents.begin());
+    std::copy(measurements.begin() + 2, measurements.end(), positions.begin());
     break;
   }
   return failures;
@@ -244,8 +233,10 @@ int vpQbDevice::Impl::getParameters(const int &id, std::vector<int> &limits, std
 {
   std::vector<int> input_mode = {-1};
   std::vector<int> control_mode = {-1};
-  m_device_api->getParameters(&m_file_descriptors.at(m_connected_devices.at(id)), id, input_mode, control_mode, resolutions, limits);
-  if (!input_mode.front() && !control_mode.front()) {  // both input and control modes equals 0 are required, i.e. respectively USB connected and position controlled
+  m_device_api->getParameters(&m_file_descriptors.at(m_connected_devices.at(id)), id, input_mode, control_mode,
+                              resolutions, limits);
+  if (!input_mode.front() && !control_mode.front()) { // both input and control modes equals 0 are required, i.e.
+                                                      // respectively USB connected and position controlled
     return 0;
   }
   return -1;
@@ -253,9 +244,10 @@ int vpQbDevice::Impl::getParameters(const int &id, std::vector<int> &limits, std
 
 int vpQbDevice::Impl::getPositions(const int &id, const int &max_repeats, std::vector<short int> &positions)
 {
-  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
+  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification
+  // of a real fault in the communication
   int failures = 0;
-  positions.resize(3);  // required by 'getPositions()'
+  positions.resize(3); // required by 'getPositions()'
   std::lock_guard<std::mutex> serial_lock(*m_serial_protectors.at(m_connected_devices.at(id)));
   while (failures <= max_repeats) {
     if (m_device_api->getPositions(&m_file_descriptors.at(m_connected_devices.at(id)), id, positions) < 0) {
@@ -273,7 +265,7 @@ int vpQbDevice::Impl::getSerialPortsAndDevices(const int &max_repeats)
   std::array<char[255], 10> serial_ports;
   int serial_ports_number = m_device_api->getSerialPorts(serial_ports);
 
-  for (size_t i=0; i< static_cast<size_t>(serial_ports_number); i++) {
+  for (size_t i = 0; i < static_cast<size_t>(serial_ports_number); i++) {
     int failures = 0;
     while (failures <= max_repeats) {
       if (open(serial_ports.at(i)) != 0) {
@@ -288,20 +280,22 @@ int vpQbDevice::Impl::getSerialPortsAndDevices(const int &max_repeats)
 
     // 'serial_protectors_' is not cleared because of the previously acquired lock, do not do it!
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_14)
-    m_serial_protectors.insert(std::make_pair(serial_ports.at(i), std::make_unique<std::mutex>()));  // never override
+    m_serial_protectors.insert(std::make_pair(serial_ports.at(i), std::make_unique<std::mutex>())); // never override
 #else
-    m_serial_protectors.insert(std::make_pair(serial_ports.at(i), std::unique_ptr<std::mutex>(new std::mutex())));  // never override
+    m_serial_protectors.insert(
+        std::make_pair(serial_ports.at(i), std::unique_ptr<std::mutex>(new std::mutex()))); // never override
 #endif
 
     std::array<char, 255> devices;
     int devices_number = m_device_api->getDeviceIds(&m_file_descriptors.at(serial_ports.at(i)), devices);
-    for (size_t j=0; j < static_cast<size_t>(devices_number); j++) {
+    for (size_t j = 0; j < static_cast<size_t>(devices_number); j++) {
 
       if (devices.at(j) == 120) {
-        continue;  // ID 120 is reserved for dummy board which should not be considered as a connected device
+        continue; // ID 120 is reserved for dummy board which should not be considered as a connected device
       }
       // actually a std::map does not let same-id devices on distinct serial ports
-      connected_devices.insert(std::make_pair(static_cast<int>(devices.at(j)), static_cast<std::string>(serial_ports.at(i))));
+      connected_devices.insert(
+          std::make_pair(static_cast<int>(devices.at(j)), static_cast<std::string>(serial_ports.at(i))));
     }
   }
 
@@ -317,7 +311,8 @@ int vpQbDevice::Impl::getSerialPortsAndDevices(const int &max_repeats)
 bool vpQbDevice::Impl::init(const int &id)
 {
   std::vector<int> encoder_resolutions;
-  std::vector<std::unique_lock<std::mutex>> serial_locks;  // need to lock on all the serial resources to scan for new ports/devices
+  std::vector<std::unique_lock<std::mutex> >
+      serial_locks; // need to lock on all the serial resources to scan for new ports/devices
   for (auto const &mutex : m_serial_protectors) {
     serial_locks.push_back(std::unique_lock<std::mutex>(*mutex.second));
   }
@@ -333,11 +328,12 @@ bool vpQbDevice::Impl::init(const int &id)
   std::vector<int> position_limits;
 
   if (getParameters(id, position_limits, encoder_resolutions)) {
-    std::cout << "fails while initializing device [" << id << "] because it requires 'USB' input mode and 'Position' control mode." << std::endl;
+    std::cout << "fails while initializing device [" << id
+              << "] because it requires 'USB' input mode and 'Position' control mode." << std::endl;
     return false;
   }
 
-  m_position_limits.resize( position_limits.size() );
+  m_position_limits.resize(position_limits.size());
   for (size_t i = 0; i < position_limits.size(); i++) {
     m_position_limits[i] = static_cast<short int>(position_limits[i]);
   }
@@ -353,7 +349,7 @@ bool vpQbDevice::Impl::init(const int &id)
   std::string current_limit = "Current limit:";
   std::vector<std::string> subChain = vpIoTools::splitChain(info, sep);
   bool current_max_found = false;
-  for (size_t i=0; i < subChain.size(); i++) {
+  for (size_t i = 0; i < subChain.size(); i++) {
     if (subChain[i].compare(0, current_limit.size(), current_limit) == 0) {
       sep = ":";
       std::vector<std::string> subChainLimit = vpIoTools::splitChain(subChain[i], sep);
@@ -362,26 +358,29 @@ bool vpQbDevice::Impl::init(const int &id)
       break;
     }
   }
-  if (! current_max_found) {
+  if (!current_max_found) {
     std::cout << "has not initialized device [" << id << "] because it cannot get the max current." << std::endl;
     return false;
   }
 
   failures = activate(id, m_max_repeats);
   if (!isReliable(failures, m_max_repeats)) {
-    std::cout << "has not initialized device [" << id << "] because it cannot activate its motors (please, check the motor positions)." << std::endl;
+    std::cout << "has not initialized device [" << id
+              << "] because it cannot activate its motors (please, check the motor positions)." << std::endl;
     return false;
   }
 
   std::string serial_port = m_connected_devices.at(id);
-  std::cout << "Device [" + std::to_string(id) + "] connected on port [" << serial_port << "] initialization succeeds." << std::endl;
+  std::cout << "Device [" + std::to_string(id) + "] connected on port [" << serial_port << "] initialization succeeds."
+            << std::endl;
 
   return true;
 }
 
 int vpQbDevice::Impl::isActive(const int &id, const int &max_repeats, bool &status)
 {
-  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
+  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification
+  // of a real fault in the communication
   int failures = 0;
   status = false;
   while (failures <= max_repeats) {
@@ -396,7 +395,8 @@ int vpQbDevice::Impl::isActive(const int &id, const int &max_repeats, bool &stat
 
 int vpQbDevice::Impl::isConnected(const int &id, const int &max_repeats)
 {
-  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
+  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification
+  // of a real fault in the communication
   int failures = 0;
   while (failures <= max_repeats) {
     if (!m_device_api->getStatus(&m_file_descriptors.at(m_connected_devices.at(id)), id)) {
@@ -412,29 +412,33 @@ int vpQbDevice::Impl::open(const std::string &serial_port)
 {
 #if (defined(__APPLE__) && defined(__MACH__))
   if (!std::regex_match(serial_port, std::regex("/dev/tty.usbserial-[[:digit:]]+"))) {
-    std::cout << "vpQbDevice fails while opening [" << serial_port << "] because it does not match the expected pattern [/dev/tty.usbserial-*]." << std::endl;
+    std::cout << "vpQbDevice fails while opening [" << serial_port
+              << "] because it does not match the expected pattern [/dev/tty.usbserial-*]." << std::endl;
     return -1;
   }
 #elif defined(__unix__) || defined(__unix)
   if (!std::regex_match(serial_port, std::regex("/dev/ttyUSB[[:digit:]]+"))) {
-    std::cout << "vpQbDevice fails while opening [" << serial_port << "] because it does not match the expected pattern [/dev/ttyUSB*]." << std::endl;
+    std::cout << "vpQbDevice fails while opening [" << serial_port
+              << "] because it does not match the expected pattern [/dev/ttyUSB*]." << std::endl;
     return -1;
   }
 #elif defined(_WIN32)
   if (!std::regex_match(serial_port, std::regex("COM[[:digit:]]+"))) {
-    std::cout << "vpQbDevice fails while opening [" << serial_port << "] because it does not match the expected pattern [COM*]." << std::endl;
+    std::cout << "vpQbDevice fails while opening [" << serial_port
+              << "] because it does not match the expected pattern [COM*]." << std::endl;
     return -1;
   }
 #endif
 
   if (isInOpenMap(serial_port)) {
     std::cout << "vpQbDevice already handles [" << serial_port << "]." << std::endl;
-    return 0;  // no error: the communication is open anyway
+    return 0; // no error: the communication is open anyway
   }
 
-  m_device_api->open(&m_file_descriptors[serial_port], serial_port);  // also create a pair in the map
-  if(m_file_descriptors.at(serial_port).file_handle == INVALID_HANDLE_VALUE) {
-    std::cout << "vpQbDevice fails while opening [" << serial_port << "] and sets errno [" << strerror(errno) << "]." << std::endl;
+  m_device_api->open(&m_file_descriptors[serial_port], serial_port); // also create a pair in the map
+  if (m_file_descriptors.at(serial_port).file_handle == INVALID_HANDLE_VALUE) {
+    std::cout << "vpQbDevice fails while opening [" << serial_port << "] and sets errno [" << strerror(errno) << "]."
+              << std::endl;
     // remove file descriptor entry
     m_file_descriptors.erase(serial_port);
     return -1;
@@ -446,9 +450,10 @@ int vpQbDevice::Impl::open(const std::string &serial_port)
 
 int vpQbDevice::Impl::setCommandsAndWait(const int &id, const int &max_repeats, std::vector<short int> &commands)
 {
-  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification of a real fault in the communication
+  // the API methods are called at most (i.e. very unlikely) 'max_repeats' times to guarantee the correct identification
+  // of a real fault in the communication
   int failures = 0;
-  commands.resize(2);  // required by 'setCommandsAndWait()'
+  commands.resize(2); // required by 'setCommandsAndWait()'
   while (failures <= max_repeats) {
     if (m_device_api->setCommandsAndWait(&m_file_descriptors.at(m_connected_devices.at(id)), id, commands) < 0) {
       failures++;
@@ -462,10 +467,10 @@ int vpQbDevice::Impl::setCommandsAndWait(const int &id, const int &max_repeats, 
 int vpQbDevice::Impl::setCommandsAsync(const int &id, std::vector<short int> &commands)
 {
   // qbhand sets only inputs.at(0), but setCommandsAsync expects two-element vector (ok for both qbhand and qbmove)
-  commands.resize(2);  // required by 'setCommandsAsync()'
+  commands.resize(2); // required by 'setCommandsAsync()'
   std::lock_guard<std::mutex> serial_lock(*m_serial_protectors.at(m_connected_devices.at(id)));
   m_device_api->setCommandsAsync(&m_file_descriptors.at(m_connected_devices.at(id)), id, commands);
-  return 0;  // note that this is a non reliable method
+  return 0; // note that this is a non reliable method
 }
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
@@ -473,20 +478,13 @@ int vpQbDevice::Impl::setCommandsAsync(const int &id, std::vector<short int> &co
  * Default constructor that does nothing.
  * To connect to a device call init().
  */
-vpQbDevice::vpQbDevice()
-  : m_impl(new Impl()), m_max_repeats(1), m_init_done(false)
-{
-  setMaxRepeats(2);
-}
+vpQbDevice::vpQbDevice() : m_impl(new Impl()), m_max_repeats(1), m_init_done(false) { setMaxRepeats(2); }
 
 /**
  * Close all the still open serial ports.
  * \sa close()
  */
-vpQbDevice::~vpQbDevice()
-{
-  delete m_impl;
-}
+vpQbDevice::~vpQbDevice() { delete m_impl; }
 
 /**
  * Activate (or deactivate, according to the given command) the motors of the given device. Do nothing if the device
@@ -507,10 +505,7 @@ int vpQbDevice::activate(const int &id, const bool &command, const int &max_repe
  * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
  * \sa isActive()
  */
-int vpQbDevice::activate(const int &id, const int &max_repeats)
-{
-  return m_impl->activate(id, max_repeats);
-}
+int vpQbDevice::activate(const int &id, const int &max_repeats) { return m_impl->activate(id, max_repeats); }
 
 /**
  * Close the communication with all the devices connected to the given serial port.
@@ -518,10 +513,7 @@ int vpQbDevice::activate(const int &id, const int &max_repeats)
  * \p /dev/tty.usbserial-* (MacOS) or \p COM* (Windows).
  * \sa isInOpenMap(), open()
  */
-bool vpQbDevice::close(const std::string &serial_port)
-{
-  return m_impl->close(serial_port);
-}
+bool vpQbDevice::close(const std::string &serial_port) { return m_impl->close(serial_port); }
 
 /**
  * Deactivate the motors of the given device. Do nothing if the device is not connected in the Communication Handler.
@@ -529,18 +521,12 @@ bool vpQbDevice::close(const std::string &serial_port)
  * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
  * \sa activate(const int &, const bool &, const int &), isActive()
  */
-int vpQbDevice::deactivate(const int &id, const int &max_repeats)
-{
-  return m_impl->deactivate(id, max_repeats);
-}
+int vpQbDevice::deactivate(const int &id, const int &max_repeats) { return m_impl->deactivate(id, max_repeats); }
 
 /**
  * Return the maximum current supported by the device.
  */
-double vpQbDevice::getCurrentMax() const
-{
-  return m_impl->getCurrentMax();
-}
+double vpQbDevice::getCurrentMax() const { return m_impl->getCurrentMax(); }
 
 /**
  * Retrieve the motor currents of the given device.
@@ -584,7 +570,8 @@ int vpQbDevice::getInfo(const int &id, const int &max_repeats, std::string &info
  * \return The number of failure reads between \p 0 and \p max_repeats.
  * \sa getCurrents(), getPositions()
  */
-int vpQbDevice::getMeasurements(const int &id, const int &max_repeats, std::vector<short int> &currents, std::vector<short int> &positions)
+int vpQbDevice::getMeasurements(const int &id, const int &max_repeats, std::vector<short int> &currents,
+                                std::vector<short int> &positions)
 {
   return m_impl->getMeasurements(id, max_repeats, currents, positions);
 }
@@ -609,10 +596,7 @@ int vpQbDevice::getParameters(const int &id, std::vector<int> &limits, std::vect
 /**
  * @return Position limits as a 2-dim vector with min and max values.
  */
-std::vector<short int> vpQbDevice::getPositionLimits() const
-{
-  return m_impl->getPositionLimits();
-}
+std::vector<short int> vpQbDevice::getPositionLimits() const { return m_impl->getPositionLimits(); }
 
 /**
  * Retrieve the motor positions of the given device.
@@ -680,10 +664,7 @@ int vpQbDevice::isActive(const int &id, const int &max_repeats, bool &status)
  * \param max_repeats The maximum number of consecutive repetitions to mark retrieved data as corrupted.
  * \return The number of failure reads between \p 0 and \p max_repeats.
  */
-int vpQbDevice::isConnected(const int &id, const int &max_repeats)
-{
-  return m_impl->isConnected(id, max_repeats);
-}
+int vpQbDevice::isConnected(const int &id, const int &max_repeats) { return m_impl->isConnected(id, max_repeats); }
 
 /**
  * Check whether the physical device specified by the given ID is connected to the Communication Handler.
@@ -691,10 +672,7 @@ int vpQbDevice::isConnected(const int &id, const int &max_repeats)
  * \return \p true if the given device belongs to the connected device vector, i.e. \p m_connected_devices.
  * \sa getSerialPortsAndDevices()
  */
-bool vpQbDevice::isInConnectedSet(const int &id)
-{
-  return m_impl->isInConnectedSet(id);
-}
+bool vpQbDevice::isInConnectedSet(const int &id) { return m_impl->isInConnectedSet(id); }
 
 /**
  * Check whether the given serial port is managed by the communication handler, i.e. is open.
@@ -702,10 +680,7 @@ bool vpQbDevice::isInConnectedSet(const int &id)
  * \return \p true if the given serial port belongs to the open file descriptor map, i.e. \p m_file_descriptors.
  * \sa open(), close()
  */
-bool vpQbDevice::isInOpenMap(const std::string &serial_port)
-{
-  return m_impl->isInOpenMap(serial_port);
-}
+bool vpQbDevice::isInOpenMap(const std::string &serial_port) { return m_impl->isInOpenMap(serial_port); }
 
 /**
  * Check whether the reading failures are in the given range.
@@ -725,10 +700,7 @@ bool vpQbDevice::isReliable(int const &failures, int const &max_repeats)
  * \return \p 0 on success.
  * \sa close(), isInOpenMap()
  */
-int vpQbDevice::open(const std::string &serial_port)
-{
-  return m_impl->open(serial_port);
-}
+int vpQbDevice::open(const std::string &serial_port) { return m_impl->open(serial_port); }
 
 /**
  * Send the reference command to the motors of the given device and wait for acknowledge.
@@ -758,9 +730,11 @@ int vpQbDevice::setCommandsAsync(const int &id, std::vector<short int> &commands
 }
 
 /**
- * Set the maximum number of consecutive repetitions to mark retrieved data as corrupted. This value is set by default to 1.
+ * Set the maximum number of consecutive repetitions to mark retrieved data as corrupted. This value is set by default
+ * to 1.
  */
-void vpQbDevice::setMaxRepeats(const int &max_repeats) {
+void vpQbDevice::setMaxRepeats(const int &max_repeats)
+{
   m_max_repeats = max_repeats;
   m_impl->setMaxRepeats(m_max_repeats);
 }

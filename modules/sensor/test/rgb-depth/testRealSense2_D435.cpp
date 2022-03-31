@@ -41,7 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                         \
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #include <visp3/core/vpImage.h>
@@ -99,12 +99,9 @@ int main(int argc, char *argv[])
   while (vpTime::measureTimeMs() - t_begin < 10000) {
     double t = vpTime::measureTimeMs();
 
-    rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap),
-               reinterpret_cast<unsigned char *>(depth_raw.bitmap),
-               &pointcloud_colvector,
-               reinterpret_cast<unsigned char *>(infrared1.bitmap),
-               reinterpret_cast<unsigned char *>(infrared2.bitmap),
-               NULL);
+    rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
+               &pointcloud_colvector, reinterpret_cast<unsigned char *>(infrared1.bitmap),
+               reinterpret_cast<unsigned char *>(infrared2.bitmap), NULL);
 
     vpImageConvert::createDepthHistogram(depth_raw, depth_color);
 
@@ -124,10 +121,8 @@ int main(int argc, char *argv[])
     vpDisplay::flush(infrared2);
 
     time_vector.push_back(vpTime::measureTimeMs() - t);
-    if (vpDisplay::getClick(color, false) ||
-        vpDisplay::getClick(depth_color, false) ||
-        vpDisplay::getClick(infrared1, false) ||
-        vpDisplay::getClick(infrared2, false)) {
+    if (vpDisplay::getClick(color, false) || vpDisplay::getClick(depth_color, false) ||
+        vpDisplay::getClick(infrared1, false) || vpDisplay::getClick(infrared2, false)) {
       break;
     }
   }
@@ -165,10 +160,8 @@ int main(int argc, char *argv[])
   while (vpTime::measureTimeMs() - t_begin < 10000) {
     double t = vpTime::measureTimeMs();
 
-    rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap),
-               reinterpret_cast<unsigned char *>(depth_raw.bitmap),
-               NULL,
-               reinterpret_cast<unsigned char *>(infrared1.bitmap));
+    rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
+               NULL, reinterpret_cast<unsigned char *>(infrared1.bitmap));
 
     vpImageConvert::createDepthHistogram(depth_raw, depth_color);
 
@@ -185,8 +178,7 @@ int main(int argc, char *argv[])
     vpDisplay::flush(infrared1);
 
     time_vector.push_back(vpTime::measureTimeMs() - t);
-    if (vpDisplay::getClick(color, false) ||
-        vpDisplay::getClick(depth_color, false) ||
+    if (vpDisplay::getClick(color, false) || vpDisplay::getClick(depth_color, false) ||
         vpDisplay::getClick(infrared1, false)) {
       break;
     }

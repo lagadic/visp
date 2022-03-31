@@ -41,8 +41,8 @@
 #include <iostream>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
-#include <visp3/core/vpRGBa.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpRGBa.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 
@@ -70,7 +70,8 @@ void usage(const char *name, const char *badparam, std::string ipath)
   SYNOPSIS\n\
     %s [-i <input image path>] [-p <personal image path>]\n\
        [-h]\n            \
-  ", name);
+  ",
+          name);
 
   fprintf(stdout, "\n\
   OPTIONS:                                               Default\n\
@@ -87,7 +88,8 @@ void usage(const char *name, const char *badparam, std::string ipath)
        Example: -p /my_path_to/image.png\n\
   \n\
     -h\n\
-       Print the help.\n\n", ipath.c_str());
+       Print the help.\n\n",
+          ipath.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -143,12 +145,12 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 }
 
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-bool check_results(const cv::Mat &mat, const vpImage<double> &I, unsigned int half_size_y,
-                   unsigned int half_size_x)
+bool check_results(const cv::Mat &mat, const vpImage<double> &I, unsigned int half_size_y, unsigned int half_size_x)
 {
   for (unsigned int i = half_size_y; i < I.getHeight() - half_size_y; i++) {
     for (unsigned int j = half_size_x; j < I.getWidth() - half_size_x; j++) {
-      if (!vpMath::equal(mat.at<double>(static_cast<int>(i), static_cast<int>(j)), I[i][j], std::numeric_limits<double>::epsilon())) {
+      if (!vpMath::equal(mat.at<double>(static_cast<int>(i), static_cast<int>(j)), I[i][j],
+                         std::numeric_limits<double>::epsilon())) {
         return false;
       }
     }
@@ -174,13 +176,16 @@ bool check_results(const cv::Mat &mat, const vpImage<vpRGBa> &I, unsigned int ma
 {
   for (unsigned int i = margin; i < I.getHeight() - margin; i++) {
     for (unsigned int j = margin; j < I.getWidth() - margin; j++) {
-      if (!vpMath::equal(static_cast<double>(mat.at<cv::Vec3b>(static_cast<int>(i), static_cast<int>(j))[2]), I[i][j].R, threshold)) {
+      if (!vpMath::equal(static_cast<double>(mat.at<cv::Vec3b>(static_cast<int>(i), static_cast<int>(j))[2]), I[i][j].R,
+                         threshold)) {
         return false;
       }
-      if (!vpMath::equal(static_cast<double>(mat.at<cv::Vec3b>(static_cast<int>(i), static_cast<int>(j))[1]), I[i][j].G, threshold)) {
+      if (!vpMath::equal(static_cast<double>(mat.at<cv::Vec3b>(static_cast<int>(i), static_cast<int>(j))[1]), I[i][j].G,
+                         threshold)) {
         return false;
       }
-      if (!vpMath::equal(static_cast<double>(mat.at<cv::Vec3b>(static_cast<int>(i), static_cast<int>(j))[0]), I[i][j].B, threshold)) {
+      if (!vpMath::equal(static_cast<double>(mat.at<cv::Vec3b>(static_cast<int>(i), static_cast<int>(j))[0]), I[i][j].B,
+                         threshold)) {
         return false;
       }
     }
@@ -189,7 +194,7 @@ bool check_results(const cv::Mat &mat, const vpImage<vpRGBa> &I, unsigned int ma
   return true;
 }
 #endif
-}
+} // namespace
 
 int main(int argc, const char *argv[])
 {
@@ -452,7 +457,7 @@ int main(int argc, const char *argv[])
       vpMatrix kernel_sobel_x(5, 5);
       for (unsigned int i = 0; i < kernel_sobel_x.getRows(); i++) {
         for (unsigned int j = 0; j < kernel_sobel_x.getCols(); j++) {
-          kernel_sobel_x[i][j] = kernel_sobel_x_flip[i][kernel_sobel_x.getCols()-1-j];
+          kernel_sobel_x[i][j] = kernel_sobel_x_flip[i][kernel_sobel_x.getCols() - 1 - j];
         }
       }
 

@@ -304,8 +304,8 @@ void vpMeLine::leastSquare()
     }
 
     while (iter < 4 && distance > 0.05) {
-      for (unsigned int i = 0; i < k ; i++) {
-        for (unsigned int j = 0; j < 2 ; j++) {
+      for (unsigned int i = 0; i < k; i++) {
+        for (unsigned int j = 0; j < 2; j++) {
           DA[i][j] = w[i] * A[i][j];
         }
       }

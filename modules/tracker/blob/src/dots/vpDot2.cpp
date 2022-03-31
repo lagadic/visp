@@ -252,7 +252,8 @@ void vpDot2::display(const vpImage<unsigned char> &I, vpColor color, unsigned in
 */
 void vpDot2::initTracking(const vpImage<unsigned char> &I, unsigned int size)
 {
-  while (vpDisplay::getClick(I, cog) != true) {}
+  while (vpDisplay::getClick(I, cog) != true) {
+  }
 
   unsigned int i = (unsigned int)cog.get_i();
   unsigned int j = (unsigned int)cog.get_j();

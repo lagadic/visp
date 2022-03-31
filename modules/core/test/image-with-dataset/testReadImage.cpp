@@ -74,7 +74,8 @@ Read images on the disk.\n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-p <personal image path>]\n\
      [-h]\n						      \
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -91,7 +92,8 @@ OPTIONS:                                               Default\n\
      Example: -p /my_path_to/image.png\n\
 \n\
   -h\n\
-     Print the help.\n\n", ipath.c_str());
+     Print the help.\n\n",
+          ipath.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);

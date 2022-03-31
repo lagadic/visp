@@ -53,17 +53,17 @@
 class VISP_EXPORT vpGaussianFilter
 {
 public:
-  vpGaussianFilter(unsigned int width, unsigned int height, float sigma, bool deinterleave=false);
+  vpGaussianFilter(unsigned int width, unsigned int height, float sigma, bool deinterleave = false);
 
-  void apply(const vpImage<unsigned char>& I, vpImage<unsigned char>& I_blur);
+  void apply(const vpImage<unsigned char> &I, vpImage<unsigned char> &I_blur);
 
-  void apply(const vpImage<vpRGBa>& I, vpImage<vpRGBa>& I_blur);
+  void apply(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &I_blur);
 
   virtual ~vpGaussianFilter();
 
 private:
-  vpGaussianFilter(const vpGaussianFilter&);
-  vpGaussianFilter& operator=(const vpGaussianFilter&);
+  vpGaussianFilter(const vpGaussianFilter &);
+  vpGaussianFilter &operator=(const vpGaussianFilter &);
 
   // PIMPL idiom
   class Impl;

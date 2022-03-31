@@ -44,12 +44,12 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpTime.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #ifdef VISP_HAVE_PCL
-#include <thread>
 #include <mutex>
+#include <thread>
 
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
@@ -133,7 +133,7 @@ private:
   bool m_colorMode;
   std::mutex &m_mutex;
 };
-}
+} // namespace
 #endif
 
 #include <visp3/core/vpImageConvert.h>

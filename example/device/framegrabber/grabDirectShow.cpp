@@ -79,7 +79,8 @@ Acquire images using DirectShow (under Windows only) and display\n\
 it using GTK or the windows GDI if GTK is not available.\n\
 \n\
 SYNOPSIS\n\
-  %s [-d] [-n] [-o] [-h] \n", name);
+  %s [-d] [-n] [-o] [-h] \n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -96,7 +97,8 @@ OPTIONS:                                               Default\n\
 \n\
   -h \n\
      Print the help.\n\
-\n", nframes, opath.c_str());
+\n",
+          nframes, opath.c_str());
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);
@@ -265,7 +267,8 @@ int main(int argc, const char **argv)
 
 int main()
 {
-  std::cout << "You do not have GDI (Graphical Device Interface), or GTK functionalities to display images..." << std::endl;
+  std::cout << "You do not have GDI (Graphical Device Interface), or GTK functionalities to display images..."
+            << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;

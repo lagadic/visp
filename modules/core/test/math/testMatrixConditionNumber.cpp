@@ -74,12 +74,12 @@ int test_condition_number(const std::string &test_name, const vpMatrix &M)
   }
   std::cout << "  Condition number such as cond(M)=||M||_L2 * ||M^+||_L2: " << cond_pinv << std::endl;
   std::cout << "  Condition number cond(M): " << cond << std::endl;
-  if (! vpMath::equal(cond, cond_pinv, precision)) {
+  if (!vpMath::equal(cond, cond_pinv, precision)) {
     std::cout << "  Condition number differ from the one computed with the pseudo inverse" << std::endl;
     return EXIT_FAILURE;
   }
   if (is_square) {
-    if (! vpMath::equal(cond, cond_inv, precision)) {
+    if (!vpMath::equal(cond, cond_inv, precision)) {
       std::cout << "  Condition number differ from the one computed with the inverse" << std::endl;
       return EXIT_FAILURE;
     }
@@ -97,20 +97,22 @@ int main()
   if (test_condition_number("* Test square matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  }
-  else {
+  } else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
 
   M.resize(2, 3);
-  M[0][0] = 1; M[0][1] = 2; M[0][2] = 3;
-  M[1][0] = 4; M[1][1] = 5; M[1][2] = 6;
+  M[0][0] = 1;
+  M[0][1] = 2;
+  M[0][2] = 3;
+  M[1][0] = 4;
+  M[1][1] = 5;
+  M[1][2] = 6;
 
   if (test_condition_number("* Test rect matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  }
-  else {
+  } else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
 
@@ -119,21 +121,28 @@ int main()
   if (test_condition_number("* Test rect matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  }
-  else {
+  } else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
 
   M.resize(3, 4);
-  M[0][0] = 1; M[0][1] = 2; M[0][2] = 3; M[0][3] = 0;
-  M[1][0] = 4; M[1][1] = 5; M[1][2] = 6; M[1][3] = 0;
-  M[2][0] = 0; M[2][1] = 0; M[2][2] = 0; M[2][3] = 0;
+  M[0][0] = 1;
+  M[0][1] = 2;
+  M[0][2] = 3;
+  M[0][3] = 0;
+  M[1][0] = 4;
+  M[1][1] = 5;
+  M[1][2] = 6;
+  M[1][3] = 0;
+  M[2][0] = 0;
+  M[2][1] = 0;
+  M[2][2] = 0;
+  M[2][3] = 0;
 
   if (test_condition_number("* Test rect matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  }
-  else {
+  } else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
 
@@ -142,8 +151,7 @@ int main()
   if (test_condition_number("* Test rect matrix M", M)) {
     std::cout << "  - Condition number computation fails" << std::endl;
     return EXIT_FAILURE;
-  }
-  else {
+  } else {
     std::cout << "  + Condition number computation succeed" << std::endl;
   }
   std::cout << "Test succeed" << std::endl;

@@ -6,11 +6,11 @@
 //! [Include]
 #include <visp3/detection/vpDetectorAprilTag.h>
 //! [Include]
+#include <visp3/core/vpImageConvert.h>
+#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/core/vpImageConvert.h>
 #include <visp3/vision/vpPose.h>
 
 int main(int argc, const char **argv)
@@ -50,15 +50,14 @@ int main(int argc, const char **argv)
     } else if (std::string(argv[i]) == "--display_off") {
       display_off = true;
     } else if (std::string(argv[i]) == "--color" && i + 1 < argc) {
-      color_id = atoi(argv[i+1]);
+      color_id = atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--thickness" && i + 1 < argc) {
-      thickness = (unsigned int) atoi(argv[i+1]);
+      thickness = (unsigned int)atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--tag_family" && i + 1 < argc) {
       tagFamily = (vpDetectorAprilTag::vpAprilTagFamily)atoi(argv[i + 1]);
     } else if (std::string(argv[i]) == "--z_aligned") {
       align_frame = true;
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: " << argv[0]
                 << " [--tag_size <tag_size in m> (default: 0.053)]"
                    " [--quad_decimate <quad_decimate> (default: 1)]"
@@ -120,19 +119,19 @@ int main(int argc, const char **argv)
     vpDisplay *d1 = NULL;
     vpDisplay *d2 = NULL;
     vpDisplay *d3 = NULL;
-    if (! display_off) {
+    if (!display_off) {
 #ifdef VISP_HAVE_X11
       d1 = new vpDisplayX(I_color, 100, 30, "Pose from Homography");
-      d2 = new vpDisplayX(I_color2, I_color.getWidth()+120, 30, "Pose from RGBD fusion");
-      d3 = new vpDisplayX(I_depth, 100, I_color.getHeight()+70, "Depth");
+      d2 = new vpDisplayX(I_color2, I_color.getWidth() + 120, 30, "Pose from RGBD fusion");
+      d3 = new vpDisplayX(I_depth, 100, I_color.getHeight() + 70, "Depth");
 #elif defined(VISP_HAVE_GDI)
       d1 = new vpDisplayGDI(I_color, 100, 30, "Pose from Homography");
-      d2 = new vpDisplayGDI(I_color2, I_color.getWidth()+120, 30, "Pose from RGBD fusion");
-      d3 = new vpDisplayGDI(I_depth, 100, I_color.getHeight()+70, "Depth");
+      d2 = new vpDisplayGDI(I_color2, I_color.getWidth() + 120, 30, "Pose from RGBD fusion");
+      d3 = new vpDisplayGDI(I_depth, 100, I_color.getHeight() + 70, "Depth");
 #elif defined(VISP_HAVE_OPENCV)
       d1 = new vpDisplayOpenCV(I_color, 100, 30, "Pose from Homography");
-      d2 = new vpDisplayOpenCV(I_color2, I_color.getWidth()+120, 30, "Pose from RGBD fusion");
-      d3 = new vpDisplayOpenCV(I_depth, 100, I_color.getHeight()+70, "Depth");
+      d2 = new vpDisplayOpenCV(I_color2, I_color.getWidth() + 120, 30, "Pose from RGBD fusion");
+      d3 = new vpDisplayOpenCV(I_depth, 100, I_color.getHeight() + 70, "Depth");
 #endif
     }
 
@@ -152,8 +151,8 @@ int main(int argc, const char **argv)
       double t = vpTime::measureTimeMs();
 
       //! [Acquisition]
-      g.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap), reinterpret_cast<unsigned char *>(I_depth_raw.bitmap),
-                NULL, NULL, &align_to_color);
+      g.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap),
+                reinterpret_cast<unsigned char *>(I_depth_raw.bitmap), NULL, NULL, &align_to_color);
       //! [Acquisition]
 
       I_color2 = I_color;
@@ -161,18 +160,18 @@ int main(int argc, const char **argv)
       vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
       depthMap.resize(I_depth_raw.getHeight(), I_depth_raw.getWidth());
-      #ifdef VISP_HAVE_OPENMP
-      #pragma omp parallel for
-      #endif
+#ifdef VISP_HAVE_OPENMP
+#pragma omp parallel for
+#endif
       for (int i = 0; i < static_cast<int>(I_depth_raw.getHeight()); i++) {
-          for (int j = 0; j < static_cast<int>(I_depth_raw.getWidth()); j++) {
-              if (I_depth_raw[i][j]) {
-                  float Z = I_depth_raw[i][j] * depth_scale;
-                  depthMap[i][j] = Z;
-              } else {
-                  depthMap[i][j] = 0;
-              }
+        for (int j = 0; j < static_cast<int>(I_depth_raw.getWidth()); j++) {
+          if (I_depth_raw[i][j]) {
+            float Z = I_depth_raw[i][j] * depth_scale;
+            depthMap[i][j] = Z;
+          } else {
+            depthMap[i][j] = 0;
           }
+        }
       }
 
       vpDisplay::display(I_color);
@@ -196,19 +195,18 @@ int main(int argc, const char **argv)
       for (size_t i = 0; i < tags_corners.size(); i++) {
         vpHomogeneousMatrix cMo;
         double confidence_index;
-        if (vpPose::computePlanarObjectPoseFromRGBD(depthMap, tags_corners[i], cam, tags_points3d[i], cMo, &confidence_index)) {
+        if (vpPose::computePlanarObjectPoseFromRGBD(depthMap, tags_corners[i], cam, tags_points3d[i], cMo,
+                                                    &confidence_index)) {
           if (confidence_index > 0.5) {
-            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::none, 3);
-          }
-          else if (confidence_index > 0.25) {
-            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::orange, 3);
-          }
-          else {
-            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize/2, vpColor::red, 3);
+            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize / 2, vpColor::none, 3);
+          } else if (confidence_index > 0.25) {
+            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize / 2, vpColor::orange, 3);
+          } else {
+            vpDisplay::displayFrame(I_color2, cMo, cam, tagSize / 2, vpColor::red, 3);
           }
           std::stringstream ss;
           ss << "Tag id " << tags_id[i] << " confidence: " << confidence_index;
-          vpDisplay::displayText(I_color2, 35 + i*15, 20, ss.str(), vpColor::red);
+          vpDisplay::displayText(I_color2, 35 + i * 15, 20, ss.str(), vpColor::red);
         }
       }
       //! [Pose from depth map]
@@ -236,7 +234,7 @@ int main(int argc, const char **argv)
               << " ; " << vpMath::getMedian(time_vec) << " ms"
               << " ; " << vpMath::getStdev(time_vec) << " ms" << std::endl;
 
-    if (! display_off) {
+    if (!display_off) {
       delete d1;
       delete d2;
       delete d3;

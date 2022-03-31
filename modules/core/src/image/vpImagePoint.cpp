@@ -39,8 +39,8 @@
 
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImagePoint.h>
-#include <visp3/core/vpRect.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpRect.h>
 
 /*!
   Check if an image point belongs to a rectangle.

@@ -39,30 +39,31 @@
 */
 
 #include <visp3/core/vpImage.h>
-#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpImageTools.h>
-#include <visp3/io/vpVideoReader.h>
-#include <visp3/io/vpParseArgv.h>
-#include <visp3/gui/vpDisplayX.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpParseArgv.h>
+#include <visp3/io/vpVideoReader.h>
 
 // List of allowed command line options
 #define GETOPTARGS "cdi:h"
 
 namespace
 {
-  void usage(const char *name, const char *badparam, std::string ipath)
-  {
-    fprintf(stdout, "\n\
+void usage(const char *name, const char *badparam, std::string ipath)
+{
+  fprintf(stdout, "\n\
   Test vpImageTools::normalizedCorrelation().\n\
   \n\
   SYNOPSIS\n\
     %s [-i <VISP_IMAGES directory>]                           \n\
        [-h]\n            \
-  ", name);
+  ",
+          name);
 
-    fprintf(stdout, "\n\
+  fprintf(stdout, "\n\
   OPTIONS:                                               Default\n\
     -i <VISP_IMAGES directory>                                %s\n\
        Set VISP_IMAGES input path.\n\
@@ -70,69 +71,69 @@ namespace
        variable produces the same behaviour than using\n\
        this option.\n\
     -h\n\
-       Print the help.\n\n", ipath.c_str());
+       Print the help.\n\n",
+          ipath.c_str());
 
-    if (badparam)
-      fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
-  }
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+}
 
-  bool getOptions(int argc, const char **argv, std::string &ipath)
-  {
-    const char *optarg_;
-    int c;
-    while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
+bool getOptions(int argc, const char **argv, std::string &ipath)
+{
+  const char *optarg_;
+  int c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
-      switch (c) {
-      case 'i':
-        ipath = optarg_;
-        break;
-      case 'h':
-        usage(argv[0], NULL, ipath);
-        return false;
-        break;
-
-      case 'c':
-      case 'd':
-        break;
-
-      default:
-        usage(argv[0], optarg_, ipath);
-        return false;
-        break;
-      }
-    }
-
-    if ((c == 1) || (c == -1)) {
-      // standalone param or error
+    switch (c) {
+    case 'i':
+      ipath = optarg_;
+      break;
+    case 'h':
       usage(argv[0], NULL, ipath);
-      std::cerr << "ERROR: " << std::endl;
-      std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
       return false;
-    }
+      break;
 
-    return true;
+    case 'c':
+    case 'd':
+      break;
+
+    default:
+      usage(argv[0], optarg_, ipath);
+      return false;
+      break;
+    }
   }
 
-  void templateMatching(const vpImage<unsigned char> &I, const vpImage<unsigned char> &I_tpl,
-                        vpImage<double> &I_score, unsigned int step_u,
-                        unsigned int step_v, bool useOptimized)
-  {
-    unsigned int height_tpl = I_tpl.getHeight(), width_tpl = I_tpl.getWidth();
-    vpImage<double> I_double, I_tpl_double, I_cur;
-    vpImageConvert::convert(I, I_double);
-    vpImageConvert::convert(I_tpl, I_tpl_double);
-    I_score.resize(I.getHeight() - height_tpl, I.getWidth() - width_tpl, 0.0);
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL, ipath);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
+    return false;
+  }
 
-    for (unsigned int i = 0; i < I.getHeight()-height_tpl; i += step_v) {
-      for (unsigned int j = 0; j < I.getWidth()-width_tpl; j += step_u) {
-        vpRect roi( vpImagePoint(i, j), vpImagePoint(i+height_tpl-1, j+width_tpl-1) );
-        vpImageTools::crop(I_double, roi, I_cur);
+  return true;
+}
 
-        I_score[i][j] = vpImageTools::normalizedCorrelation(I_cur, I_tpl_double, useOptimized);
-      }
+void templateMatching(const vpImage<unsigned char> &I, const vpImage<unsigned char> &I_tpl, vpImage<double> &I_score,
+                      unsigned int step_u, unsigned int step_v, bool useOptimized)
+{
+  unsigned int height_tpl = I_tpl.getHeight(), width_tpl = I_tpl.getWidth();
+  vpImage<double> I_double, I_tpl_double, I_cur;
+  vpImageConvert::convert(I, I_double);
+  vpImageConvert::convert(I_tpl, I_tpl_double);
+  I_score.resize(I.getHeight() - height_tpl, I.getWidth() - width_tpl, 0.0);
+
+  for (unsigned int i = 0; i < I.getHeight() - height_tpl; i += step_v) {
+    for (unsigned int j = 0; j < I.getWidth() - width_tpl; j += step_u) {
+      vpRect roi(vpImagePoint(i, j), vpImagePoint(i + height_tpl - 1, j + width_tpl - 1));
+      vpImageTools::crop(I_double, roi, I_cur);
+
+      I_score[i][j] = vpImageTools::normalizedCorrelation(I_cur, I_tpl_double, useOptimized);
     }
   }
 }
+} // namespace
 
 int main(int argc, const char **argv)
 {
@@ -194,7 +195,7 @@ int main(int argc, const char **argv)
     reader.setFileName(filename);
     vpImage<unsigned char> I, I_template;
     reader.open(I);
-    vpRect template_roi( vpImagePoint(201, 310), vpImagePoint(201+152-1, 310+138-1) );
+    vpRect template_roi(vpImagePoint(201, 310), vpImagePoint(201 + 152 - 1, 310 + 138 - 1));
     vpImageTools::crop(I, template_roi, I_template);
 
     vpImage<double> I_score, I_score_gold;
@@ -207,11 +208,11 @@ int main(int argc, const char **argv)
     templateMatching(I, I_template, I_score_gold, step_i, step_j, false);
     t_gold = vpTime::measureTimeMs() - t_gold;
 
-    for (unsigned int  i = 0; i < I_score.getHeight(); i++) {
-      for (unsigned int  j = 0; j < I_score.getWidth(); j++) {
-        if ( !vpMath::equal(I_score[i][j], I_score_gold[i][j], 1e-9) ) {
-          std::cerr << "Issue with normalizedCorrelation, gold: " << std::setprecision(17)
-                    << I_score_gold[i][j] << " ; compute: " << I_score[i][j] << std::endl;
+    for (unsigned int i = 0; i < I_score.getHeight(); i++) {
+      for (unsigned int j = 0; j < I_score.getWidth(); j++) {
+        if (!vpMath::equal(I_score[i][j], I_score_gold[i][j], 1e-9)) {
+          std::cerr << "Issue with normalizedCorrelation, gold: " << std::setprecision(17) << I_score_gold[i][j]
+                    << " ; compute: " << I_score[i][j] << std::endl;
           return EXIT_FAILURE;
         }
       }
@@ -228,7 +229,7 @@ int main(int argc, const char **argv)
 
     std::cerr << "\nTrue template position: " << template_roi.getTopLeft() << std::endl;
     std::cerr << "Found template position: " << max_loc << std::endl;
-    if ( vpImagePoint::distance(max_loc, template_roi.getTopLeft()) > step_i ) {
+    if (vpImagePoint::distance(max_loc, template_roi.getTopLeft()) > step_i) {
       std::cerr << "Issue with vpImageTools::normalizedCorrelation:" << std::endl;
       return EXIT_FAILURE;
     }

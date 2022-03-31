@@ -52,8 +52,9 @@
   Establish communication with sensor(-s) and start data acquisition thread.
 */
 vpForceTorqueIitSensor::vpForceTorqueIitSensor()
-  : m_ftLib(), m_numSensorsInLib(0), m_ft(6, 0), m_ft_filt(6, 0), m_ftSensorsData(), m_acquisitionEnabled(false), m_dataValid(false),
-    m_connected(false), m_acquisitionThread(), m_timeCur(), m_timePrev(), m_mutex(), m_warmupMilliseconds(500)
+  : m_ftLib(), m_numSensorsInLib(0), m_ft(6, 0), m_ft_filt(6, 0), m_ftSensorsData(), m_acquisitionEnabled(false),
+    m_dataValid(false), m_connected(false), m_acquisitionThread(), m_timeCur(), m_timePrev(), m_mutex(),
+    m_warmupMilliseconds(500)
 {
   // Get number of connected in library sensors
   m_numSensorsInLib = m_ftLib._getNumberOfConnectedSensors();
@@ -207,12 +208,10 @@ vpColVector vpForceTorqueIitSensor::getForceTorque(bool filtered)
   const std::lock_guard<std::mutex> lock(m_mutex);
   if (filtered) {
     return m_ft_filt;
-  }
-  else {
+  } else {
     return m_ft;
   }
 }
-
 
 /*!
    Start acquisition thread and wait until data are available.

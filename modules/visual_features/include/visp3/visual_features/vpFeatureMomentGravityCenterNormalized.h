@@ -69,8 +69,8 @@ class vpMomentDatabase;
 
   \code
   task.addFeature(db_src.getFeatureGravityNormalized(), db_dst.getFeatureGravityNormalized(),
-                  vpFeatureMomentGravityCenterNormalized::selectXn() | vpFeatureMomentGravityCenterNormalized::selectYn());
-  \endcode
+                  vpFeatureMomentGravityCenterNormalized::selectXn() |
+  vpFeatureMomentGravityCenterNormalized::selectYn()); \endcode
 
   The behaviour of this feature is very similar to
   vpFeatureMomentGravityCenter which also contains a sample code demonstrating

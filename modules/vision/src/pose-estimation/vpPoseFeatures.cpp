@@ -461,7 +461,7 @@ void vpPoseFeatures::computePoseVVS(vpHomogeneousMatrix &cMo)
 
       // compute the pseudo inverse of the interaction matrix
       vpMatrix Lp;
-      unsigned int rank = L.pseudoInverse(Lp, 1e-6);  // modif FC 1e-16
+      unsigned int rank = L.pseudoInverse(Lp, 1e-6); // modif FC 1e-16
 
       if (rank_max < rank)
         rank_max = rank;

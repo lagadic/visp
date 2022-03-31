@@ -40,7 +40,7 @@ int main(int argc, const char **argv)
   //! [Read]
   vpImage<unsigned char> I;
   vpImageIo::read(I, input_filename);
-//! [Read]
+  //! [Read]
 
 #ifdef VISP_HAVE_X11
   vpDisplayX d, d2;

@@ -52,8 +52,8 @@
 #include <visp3/core/vpMath.h>
 
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
-#  include <opencv2/imgproc/imgproc.hpp>
-#  include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/calib3d/calib3d.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #endif
 
 /*!
@@ -73,9 +73,8 @@ class VISP_EXPORT vpPixelMeterConversion
 public:
   /** @name Using ViSP camera parameters  */
   //@{
-  static void convertEllipse(const vpCameraParameters &cam,
-                             const vpImagePoint &center_p, double n20_p, double n11_p, double n02_p,
-                             double &xc_m, double &yc_m, double &n20_m, double &n11_m, double &n02_m);
+  static void convertEllipse(const vpCameraParameters &cam, const vpImagePoint &center_p, double n20_p, double n11_p,
+                             double n02_p, double &xc_m, double &yc_m, double &n20_m, double &n11_m, double &n02_m);
   static void convertLine(const vpCameraParameters &cam, const double &rho_p, const double &theta_p, double &rho_m,
                           double &theta_m);
 
@@ -106,8 +105,7 @@ public:
     In the case of a projection with Kannala-Brandt distortion, refer to
     \cite KannalaBrandt.
   */
-  inline static void convertPoint(const vpCameraParameters &cam,
-                                  const double &u, const double &v, double &x, double &y)
+  inline static void convertPoint(const vpCameraParameters &cam, const double &u, const double &v, double &x, double &y)
   {
     switch (cam.projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
@@ -149,8 +147,7 @@ public:
     In the case of a projection with Kannala-Brandt distortion, refer to
     \cite KannalaBrandt.
   */
-  inline static void convertPoint(const vpCameraParameters &cam,
-                                  const vpImagePoint &iP, double &x, double &y)
+  inline static void convertPoint(const vpCameraParameters &cam, const vpImagePoint &iP, double &x, double &y)
   {
     switch (cam.projModel) {
     case vpCameraParameters::perspectiveProjWithoutDistortion:
@@ -178,8 +175,8 @@ public:
 
     \f$ x = (u-u_0)/p_x \f$ and  \f$ y = (v-v_0)/p_y  \f$
   */
-  inline static void convertPointWithoutDistortion(const vpCameraParameters &cam,
-                                                   const double &u, const double &v, double &x, double &y)
+  inline static void convertPointWithoutDistortion(const vpCameraParameters &cam, const double &u, const double &v,
+                                                   double &x, double &y)
   {
     x = (u - cam.u0) * cam.inv_px;
     y = (v - cam.v0) * cam.inv_py;
@@ -200,8 +197,8 @@ public:
 
     \f$ x = (u-u_0)/p_x \f$ and  \f$ y = (v-v_0)/p_y  \f$
   */
-  inline static void convertPointWithoutDistortion(const vpCameraParameters &cam,
-                                                   const vpImagePoint &iP, double &x, double &y)
+  inline static void convertPointWithoutDistortion(const vpCameraParameters &cam, const vpImagePoint &iP, double &x,
+                                                   double &y)
   {
     x = (iP.get_u() - cam.u0) * cam.inv_px;
     y = (iP.get_v() - cam.v0) * cam.inv_py;
@@ -221,8 +218,8 @@ public:
     \f$ y = (v-v_0)*(1+k_{du}*r^2)/p_y \f$
     with \f$ r^2=((u - u_0)/p_x)^2 + ((v-v_0)/p_y)^2 \f$
   */
-  inline static void convertPointWithDistortion(const vpCameraParameters &cam,
-                                                const double &u, const double &v, double &x, double &y)
+  inline static void convertPointWithDistortion(const vpCameraParameters &cam, const double &u, const double &v,
+                                                double &x, double &y)
   {
     double r2 = 1. + cam.kdu * (vpMath::sqr((u - cam.u0) * cam.inv_px) + vpMath::sqr((v - cam.v0) * cam.inv_py));
     x = (u - cam.u0) * r2 * cam.inv_px;
@@ -245,8 +242,8 @@ public:
     \f$ y = (v-v_0)*(1+k_{du}*r^2)/p_y \f$
     with \f$ r^2=((u - u_0)/p_x)^2 + ((v-v_0)/p_y)^2 \f$
   */
-  inline static void convertPointWithDistortion(const vpCameraParameters &cam,
-                                                const vpImagePoint &iP, double &x, double &y)
+  inline static void convertPointWithDistortion(const vpCameraParameters &cam, const vpImagePoint &iP, double &x,
+                                                double &y)
   {
     double r2 = 1. + cam.kdu * (vpMath::sqr((iP.get_u() - cam.u0) * cam.inv_px) +
                                 vpMath::sqr((iP.get_v() - cam.v0) * cam.inv_py));
@@ -287,21 +284,20 @@ public:
 
     const double EPS = 1e-8;
     // Use Newton-Raphson method to solve for the angle theta
-    if (r_d > EPS)
-    {
+    if (r_d > EPS) {
       // compensate distortion iteratively
       double theta = r_d;
 
-      for (int j = 0; j < 10; j++)
-      {
-        double theta2 = theta*theta, theta4 = theta2*theta2, theta6 = theta4*theta2, theta8 = theta6*theta2;
-        double k0_theta2 = k[0] * theta2, k1_theta4 = k[1] * theta4, k2_theta6 = k[2] * theta6, k3_theta8 = k[3] * theta8;
+      for (int j = 0; j < 10; j++) {
+        double theta2 = theta * theta, theta4 = theta2 * theta2, theta6 = theta4 * theta2, theta8 = theta6 * theta2;
+        double k0_theta2 = k[0] * theta2, k1_theta4 = k[1] * theta4, k2_theta6 = k[2] * theta6,
+               k3_theta8 = k[3] * theta8;
         /* new_theta = theta - theta_fix, theta_fix = f0(theta) / f0'(theta) */
         double theta_fix = (theta * (1 + k0_theta2 + k1_theta4 + k2_theta6 + k3_theta8) - r_d) /
-                            (1 + 3*k0_theta2 + 5*k1_theta4 + 7*k2_theta6 + 9*k3_theta8);
+                           (1 + 3 * k0_theta2 + 5 * k1_theta4 + 7 * k2_theta6 + 9 * k3_theta8);
         theta = theta - theta_fix;
         if (fabs(theta_fix) < EPS)
-            break;
+          break;
       }
 
       scale = std::tan(theta) / r_d; // Scale of norm of (x,y) and (x_d, y_d)
@@ -343,21 +339,20 @@ public:
 
     const double EPS = 1e-8;
     // Use Newton-Raphson method to solve for the angle theta
-    if (r_d > EPS)
-    {
+    if (r_d > EPS) {
       // compensate distortion iteratively
       double theta = r_d;
 
-      for (int j = 0; j < 10; j++)
-      {
-        double theta2 = theta*theta, theta4 = theta2*theta2, theta6 = theta4*theta2, theta8 = theta6*theta2;
-        double k0_theta2 = k[0] * theta2, k1_theta4 = k[1] * theta4, k2_theta6 = k[2] * theta6, k3_theta8 = k[3] * theta8;
+      for (int j = 0; j < 10; j++) {
+        double theta2 = theta * theta, theta4 = theta2 * theta2, theta6 = theta4 * theta2, theta8 = theta6 * theta2;
+        double k0_theta2 = k[0] * theta2, k1_theta4 = k[1] * theta4, k2_theta6 = k[2] * theta6,
+               k3_theta8 = k[3] * theta8;
         /* new_theta = theta - theta_fix, theta_fix = f0(theta) / f0'(theta) */
         double theta_fix = (theta * (1 + k0_theta2 + k1_theta4 + k2_theta6 + k3_theta8) - r_d) /
-                            (1 + 3*k0_theta2 + 5*k1_theta4 + 7*k2_theta6 + 9*k3_theta8);
+                           (1 + 3 * k0_theta2 + 5 * k1_theta4 + 7 * k2_theta6 + 9 * k3_theta8);
         theta = theta - theta_fix;
         if (fabs(theta_fix) < EPS)
-            break;
+          break;
       }
 
       scale = std::tan(theta) / r_d; // Scale of norm of (x,y) and (x_d, y_d)
@@ -372,19 +367,17 @@ public:
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
   /** @name Using OpenCV camera parameters  */
   //@{
-  static void convertEllipse(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs,
-                             const vpImagePoint &center_p, double n20_p, double n11_p, double n02_p,
-                             double &xc_m, double &yc_m, double &n20_m, double &n11_m, double &n02_m);
-  static void convertLine(const cv::Mat &cameraMatrix,
-                          const double &rho_p, const double &theta_p,
-                          double &rho_m, double &theta_m);
-  static void convertMoment(const cv::Mat &cameraMatrix,
-                            unsigned int order, const vpMatrix &moment_pixel,
+  static void convertEllipse(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs, const vpImagePoint &center_p,
+                             double n20_p, double n11_p, double n02_p, double &xc_m, double &yc_m, double &n20_m,
+                             double &n11_m, double &n02_m);
+  static void convertLine(const cv::Mat &cameraMatrix, const double &rho_p, const double &theta_p, double &rho_m,
+                          double &theta_m);
+  static void convertMoment(const cv::Mat &cameraMatrix, unsigned int order, const vpMatrix &moment_pixel,
                             vpMatrix &moment_meter);
-  static void convertPoint(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs,
-                           const double &u, const double &v, double &x, double &y);
-  static void convertPoint(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs,
-                           const vpImagePoint &iP, double &x, double &y);
+  static void convertPoint(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs, const double &u, const double &v,
+                           double &x, double &y);
+  static void convertPoint(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs, const vpImagePoint &iP, double &x,
+                           double &y);
   //@}
 #endif
 };

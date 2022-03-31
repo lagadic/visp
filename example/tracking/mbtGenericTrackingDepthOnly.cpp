@@ -43,8 +43,8 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if (defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)) \
-  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)) &&                                                   \
+    (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -77,7 +77,8 @@ void usage(const char *name, const char *badparam)
     [-M <model name depth>] [-n <initialisation file base name>]\n\
     [-f] [-c] [-d] [-h] [-o] [-w] [-l] [-v] [-p]\n\
     [-T <tracker type>] [-e <last frame index>]\n\
-    [-u <disable face>]\n", name);
+    [-u <disable face>]\n",
+          name);
 
   fprintf(stdout, "\n\
   OPTIONS:                                               \n\
@@ -251,8 +252,9 @@ void rs_deproject_pixel_to_point(float point[3], const rs_intrinsics &intrin, co
   point[2] = depth;
 }
 
-bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I, vpImage<uint16_t> &I_depth_raw,
-               std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width, unsigned int &pointcloud_height)
+bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<unsigned char> &I,
+               vpImage<uint16_t> &I_depth_raw, std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width,
+               unsigned int &pointcloud_height)
 {
   char buffer[256];
 
@@ -332,7 +334,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
 
 void loadConfiguration(vpMbTracker *const tracker, const std::string &
 #if USE_XML
-                       configFile_depth
+                                                       configFile_depth
 #endif
 )
 {
@@ -389,7 +391,7 @@ std::vector<std::string> getCastleElementNames(const int element)
 
   return element_names;
 }
-}
+} // namespace
 
 int main(int argc, const char **argv)
 {
@@ -518,7 +520,7 @@ int main(int argc, const char **argv)
       display.setDownScalingFactor(vpDisplay::SCALE_AUTO);
       display.init(I_depth, 100, 100, "Depth");
       display2.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-      display2.init(I, I_depth.getWidth()+100, 100, "Image");
+      display2.init(I, I_depth.getWidth() + 100, 100, "Image");
 #endif
       vpDisplay::display(I_depth);
       vpDisplay::display(I);
@@ -707,7 +709,7 @@ int main(int argc, const char **argv)
           vpDisplay::displayText(I_depth, 80, 20, ss.str(), vpColor::red);
 
           // generic projection error computed on image from the RGB camera
-          double projection_error = tracker->computeCurrentProjectionError(I, depth_M_color.inverse()*cMo, cam_color);
+          double projection_error = tracker->computeCurrentProjectionError(I, depth_M_color.inverse() * cMo, cam_color);
           ss.str("");
           ss << "Projection error: " << projection_error;
           vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
@@ -771,8 +773,7 @@ int main(int argc, const char **argv)
 #elif !(defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY))
 int main()
 {
-  std::cout << "Cannot run this example: visp_mbt, visp_gui modules are required."
-            << std::endl;
+  std::cout << "Cannot run this example: visp_mbt, visp_gui modules are required." << std::endl;
   return EXIT_SUCCESS;
 }
 #else

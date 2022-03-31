@@ -296,10 +296,10 @@ bool vpParseArgv::parse(int *argcPtr, const char **argv, vpArgvInfo *argTable, i
     }
   }
 
-/*
- * If we broke out of the loop because of an OPT_REST argument,
- * copy the remaining arguments down.
- */
+  /*
+   * If we broke out of the loop because of an OPT_REST argument,
+   * copy the remaining arguments down.
+   */
 
 argsDone:
   while (argc) {

@@ -39,8 +39,8 @@
   Test vpXmlConfigParserKeyPoint parse / save.
 */
 
-#include <visp3/vision/vpXmlConfigParserKeyPoint.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/vision/vpXmlConfigParserKeyPoint.h>
 
 int main()
 {
@@ -52,16 +52,12 @@ int main()
       vpXmlConfigParserKeyPoint xml;
       xml.parse(filename);
 
-      if (xml.getDetectorName() != "FAST" ||
-          xml.getExtractorName() != "ORB" ||
+      if (xml.getDetectorName() != "FAST" || xml.getExtractorName() != "ORB" ||
           xml.getMatcherName() != "BruteForce-Hamming" ||
           xml.getMatchingMethod() != vpXmlConfigParserKeyPoint::ratioDistanceThreshold ||
-          !vpMath::equal(xml.getMatchingRatioThreshold(), 0.8, eps) ||
-          !xml.getUseRansacVVSPoseEstimation() ||
-          !xml.getUseRansacConsensusPercentage() ||
-          !vpMath::equal(xml.getRansacConsensusPercentage(), 20.0, eps) ||
-          xml.getNbRansacIterations() != 200 ||
-          !vpMath::equal(xml.getRansacThreshold(), 0.005, eps)) {
+          !vpMath::equal(xml.getMatchingRatioThreshold(), 0.8, eps) || !xml.getUseRansacVVSPoseEstimation() ||
+          !xml.getUseRansacConsensusPercentage() || !vpMath::equal(xml.getRansacConsensusPercentage(), 20.0, eps) ||
+          xml.getNbRansacIterations() != 200 || !vpMath::equal(xml.getRansacThreshold(), 0.005, eps)) {
         std::cerr << "Issue when parsing xml: " << filename << std::endl;
         return EXIT_FAILURE;
       }
@@ -72,16 +68,11 @@ int main()
       vpXmlConfigParserKeyPoint xml;
       xml.parse(filename);
 
-      if (xml.getDetectorName() != "SIFT" ||
-          xml.getExtractorName() != "SIFT" ||
-          xml.getMatcherName() != "BruteForce" ||
+      if (xml.getDetectorName() != "SIFT" || xml.getExtractorName() != "SIFT" || xml.getMatcherName() != "BruteForce" ||
           xml.getMatchingMethod() != vpXmlConfigParserKeyPoint::ratioDistanceThreshold ||
-          !vpMath::equal(xml.getMatchingRatioThreshold(), 0.8, eps) ||
-          !xml.getUseRansacVVSPoseEstimation() ||
-          !xml.getUseRansacConsensusPercentage() ||
-          !vpMath::equal(xml.getRansacConsensusPercentage(), 20.0, eps) ||
-          xml.getNbRansacIterations() != 200 ||
-          !vpMath::equal(xml.getRansacThreshold(), 0.005, eps)) {
+          !vpMath::equal(xml.getMatchingRatioThreshold(), 0.8, eps) || !xml.getUseRansacVVSPoseEstimation() ||
+          !xml.getUseRansacConsensusPercentage() || !vpMath::equal(xml.getRansacConsensusPercentage(), 20.0, eps) ||
+          xml.getNbRansacIterations() != 200 || !vpMath::equal(xml.getRansacThreshold(), 0.005, eps)) {
         std::cerr << "Issue when parsing xml: " << filename << std::endl;
         return EXIT_FAILURE;
       }

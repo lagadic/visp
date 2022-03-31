@@ -151,8 +151,7 @@ public:
 
   std::vector<std::vector<double> > getFeaturesForDisplay();
 
-  std::vector<std::vector<double> > getModelForDisplay(const vpCameraParameters &cam,
-                                                       bool displayFullModel = false);
+  std::vector<std::vector<double> > getModelForDisplay(const vpCameraParameters &cam, bool displayFullModel = false);
 
   /*!
     Get the camera parameters of the face.

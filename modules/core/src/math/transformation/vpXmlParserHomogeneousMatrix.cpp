@@ -79,12 +79,10 @@ private:
     CODE_XML_TUX,
     CODE_XML_TUY,
     CODE_XML_TUZ
-  } ;
+  };
 
 public:
-  Impl() : m_M(), m_name()
-  {
-  }
+  Impl() : m_M(), m_name() {}
 
   int parse(vpHomogeneousMatrix &M, const std::string &filename, const std::string &name)
   {
@@ -309,8 +307,7 @@ public:
     return back;
   }
 
-  int save(const vpHomogeneousMatrix &M, const std::string &filename,
-           const std::string &name)
+  int save(const vpHomogeneousMatrix &M, const std::string &filename, const std::string &name)
   {
     pugi::xml_document doc;
     pugi::xml_node node;
@@ -495,16 +492,11 @@ private:
   vpHomogeneousMatrix m_M;
   std::string m_name;
 };
-#endif //DOXYGEN_SHOULD_SKIP_THIS
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
-vpXmlParserHomogeneousMatrix::vpXmlParserHomogeneousMatrix() : m_impl(new Impl())
-{
-}
+vpXmlParserHomogeneousMatrix::vpXmlParserHomogeneousMatrix() : m_impl(new Impl()) {}
 
-vpXmlParserHomogeneousMatrix::~vpXmlParserHomogeneousMatrix()
-{
-  delete m_impl;
-}
+vpXmlParserHomogeneousMatrix::~vpXmlParserHomogeneousMatrix() { delete m_impl; }
 
 /*!
   Parse an xml file to load an homogeneous matrix

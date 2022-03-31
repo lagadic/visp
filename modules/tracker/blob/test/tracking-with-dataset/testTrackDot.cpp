@@ -86,7 +86,8 @@ void usage(const char *name, const char *badparam, std::string ipath)
 Test dot tracking.\n\
 \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] [-c] [-d] [-h]\n", name);
+  %s [-i <input image path>] [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -106,7 +107,8 @@ OPTIONS:                                               Default\n\
      Turn off the display.\n\
 \n\
   -h\n\
-     Print the help.\n", ipath.c_str());
+     Print the help.\n",
+          ipath.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);

@@ -87,7 +87,8 @@ Simulation of a 2D visual servoing on a point:\n\
 - without display.\n\
 \n\
 SYNOPSIS\n\
-  %s [-h]\n", name);
+  %s [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\

@@ -57,12 +57,12 @@
 
 #include "qp_plot.h"
 
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
-  const int n = 20;   // x dim
-  const int m = 10;   // equality m < n
-  const int p = 30;   // inequality
-  const int o = 16;   // cost function
+  const int n = 20; // x dim
+  const int m = 10; // equality m < n
+  const int p = 30; // inequality
+  const int o = 16; // cost function
 #ifdef VISP_HAVE_DISPLAY
   bool opt_display = true;
   bool opt_click_allowed = true;
@@ -76,7 +76,7 @@ int main (int argc, char **argv)
       opt_click_allowed = false;
     else
 #endif
-    if (std::string(argv[i]) == "-h" || std::string(argv[i]) == "--help") {
+        if (std::string(argv[i]) == "-h" || std::string(argv[i]) == "--help") {
       std::cout << "\nUsage: " << argv[0] << " [-d] [-c] [-h] [--help]" << std::endl;
       std::cout << "\nOptions: \n"
 #ifdef VISP_HAVE_DISPLAY
@@ -91,27 +91,28 @@ int main (int argc, char **argv)
                    "\n"
 #endif
                    "  -h, --help\n"
-                   "     Print the help.\n"<< std::endl;
+                   "     Print the help.\n"
+                << std::endl;
 
       return EXIT_SUCCESS;
     }
   }
-  std::srand((long) vpTime::measureTimeMs());
+  std::srand((long)vpTime::measureTimeMs());
 
   vpMatrix A, Q, C;
   vpColVector b, d, r;
 
-  A = randM(m,n)*5;
-  b = randV(m)*5;
-  Q = randM(o,n)*5;
-  r = randV(o)*5;
-  C = randM(p,n)*5;
+  A = randM(m, n) * 5;
+  b = randV(m) * 5;
+  Q = randM(o, n) * 5;
+  r = randV(o) * 5;
+  C = randM(p, n) * 5;
 
   // make sure Cx <= d has a solution within Ax = b
   vpColVector x = A.solveBySVD(b);
-  d = C*x;
-  for(int i = 0; i < p; ++i)
-    d[i] += (5.*rand())/RAND_MAX;
+  d = C * x;
+  for (int i = 0; i < p; ++i)
+    d[i] += (5. * rand()) / RAND_MAX;
 
   // solver with warm start
   vpQuadProg qp_WS;
@@ -127,18 +128,17 @@ int main (int argc, char **argv)
     plot = new QPlot(1, total, {"time to solveQP", "warm start"});
 #endif
 
-  for(int k = 0; k < total; ++k)
-  {
+  for (int k = 0; k < total; ++k) {
     // reset active set at some point
-    if(k == total/2)
+    if (k == total / 2)
       qp_WS.resetActiveSet();
 
     // small change on QP data
-    Q += eps * randM(o,n);
+    Q += eps * randM(o, n);
     r += eps * randV(o);
-    A += eps * randM(m,n);
+    A += eps * randM(m, n);
     b += eps * randV(m);
-    C += eps * randM(p,n);
+    C += eps * randM(p, n);
     d += eps * randV(p);
 
     // solver without warm start
@@ -150,7 +150,7 @@ int main (int argc, char **argv)
     t_noWS += vpTime::measureTimeMs() - t;
 #ifdef VISP_HAVE_DISPLAY
     if (opt_display)
-      plot->plot(0,0,k,t);
+      plot->plot(0, 0, k, t);
 #endif
 
     // with warm start
@@ -166,8 +166,8 @@ int main (int argc, char **argv)
   }
 
   std::cout.precision(3);
-  std::cout << "Warm start: t = " << t_WS << " ms (for 1 QP = " << t_WS/total << " ms)\n";
-  std::cout << "No warm start: t = " << t_noWS << " ms (for 1 QP = " << t_noWS/total << " ms)" << std::endl;
+  std::cout << "Warm start: t = " << t_WS << " ms (for 1 QP = " << t_WS / total << " ms)\n";
+  std::cout << "No warm start: t = " << t_noWS << " ms (for 1 QP = " << t_noWS / total << " ms)" << std::endl;
 
 #ifdef VISP_HAVE_DISPLAY
   if (opt_display) {

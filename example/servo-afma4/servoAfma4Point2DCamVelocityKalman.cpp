@@ -104,7 +104,8 @@ Tests a control law with the following characteristics:\n\
 - Kalman filtering\n\
           \n\
 SYNOPSIS\n\
-  %s [-K <0|1|2|3>] [-h]\n", name);
+  %s [-K <0|1|2|3>] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -118,7 +119,8 @@ OPTIONS:                                               Default\n\
        2: acceleration model\n\
                   \n\
   -h\n\
-     Print the help.\n", (int)kalman);
+     Print the help.\n",
+          (int)kalman);
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");

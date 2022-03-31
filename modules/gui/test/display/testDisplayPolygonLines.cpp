@@ -71,7 +71,8 @@ void usage(const char *name, const char *badparam)
 Display polygon lines.\n\
 \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+  %s [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\

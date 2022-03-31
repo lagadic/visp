@@ -75,9 +75,9 @@ void vpTemplateTrackerSSDInverseCompositional::initCompInverse(const vpImage<uns
     if ((!useTemplateSelect) || (ptTemplateSelect[point])) {
       ptTemplate[point].HiG = new double[nbParam];
 
-      for (unsigned int i = 0; i < HCompInverse.getRows(); i ++) {
+      for (unsigned int i = 0; i < HCompInverse.getRows(); i++) {
         ptTemplate[point].HiG[i] = 0;
-        for (unsigned int j = 0; j < HCompInverse.getCols(); j ++) {
+        for (unsigned int j = 0; j < HCompInverse.getCols(); j++) {
           ptTemplate[point].HiG[i] -= HCompInverse[i][j] * ptTemplate[point].dW[j];
         }
       }
@@ -165,6 +165,6 @@ void vpTemplateTrackerSSDInverseCompositional::trackNoPyr(const vpImage<unsigned
     evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
     evolRMS_prec = evolRMS;
 
-  } while ( (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) );
+  } while ((iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init) * evolRMS_eps));
   nbIteration = iteration;
 }

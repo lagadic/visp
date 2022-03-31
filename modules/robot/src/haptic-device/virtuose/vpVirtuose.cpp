@@ -74,10 +74,7 @@ void vpVirtuose::close()
 /*!
  * Default destructor that delete the VirtContext object.
  */
-vpVirtuose::~vpVirtuose()
-{
-  close();
-}
+vpVirtuose::~vpVirtuose() { close(); }
 
 /*!
  * Set haptic device ip address and communication port.
@@ -143,8 +140,7 @@ vpColVector vpVirtuose::getArticularPosition() const
     throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
-
-  float articular_position_[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  float articular_position_[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   if (virtGetArticularPosition(m_virtContext, articular_position_)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -167,7 +163,7 @@ vpColVector vpVirtuose::getArticularVelocity() const
     throw(vpException(vpException::fatalError, "Device not initialized. Call init()."));
   }
 
-  float articular_velocity_[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+  float articular_velocity_[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
   if (virtGetArticularSpeed(m_virtContext, articular_velocity_)) {
     int err = virtGetErrorCode(m_virtContext);
@@ -376,7 +372,6 @@ unsigned int vpVirtuose::getJointsNumber() const
   return m_njoints;
 }
 
-
 /*!
  * Return the cartesian current position of the observation reference frame
  * with respect to the environment reference frame.
@@ -548,7 +543,8 @@ void vpVirtuose::init()
 
     if (m_virtContext == NULL) {
       int err = virtGetErrorCode(m_virtContext);
-      throw(vpException(vpException::fatalError, "Cannot open communication with haptic device using %s: %s. Check ip and port values",
+      throw(vpException(vpException::fatalError,
+                        "Cannot open communication with haptic device using %s: %s. Check ip and port values",
                         m_ip_port.c_str(), virtGetErrorMessage(err)));
     }
 
@@ -574,15 +570,16 @@ void vpVirtuose::init()
     }
 
     // Update number of joints
-    float articular_position_[20] = {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    float articular_position_[20] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
     if (virtGetArticularPosition(m_virtContext, articular_position_)) {
       int err = virtGetErrorCode(m_virtContext);
-      throw(vpException(vpException::fatalError, "Error calling virtGetArticularPosition() in int(): error code %d", err));
+      throw(vpException(vpException::fatalError, "Error calling virtGetArticularPosition() in int(): error code %d",
+                        err));
     }
 
     m_njoints = 6; // At least 6 joints
-    for (unsigned int i=m_njoints; i < 20; i++) {
+    for (unsigned int i = m_njoints; i < 20; i++) {
       m_njoints = i;
       if (std::fabs(articular_position_[i]) <= std::numeric_limits<float>::epsilon()) {
         break;
@@ -611,7 +608,7 @@ void vpVirtuose::setArticularForce(const vpColVector &articularForce)
                       articularForce.size()));
   }
 
-  float *articular_force = new float [m_njoints];
+  float *articular_force = new float[m_njoints];
   for (unsigned int i = 0; i < m_njoints; i++)
     articular_force[i] = (float)articularForce[i];
 
@@ -621,7 +618,7 @@ void vpVirtuose::setArticularForce(const vpColVector &articularForce)
     throw(vpException(vpException::fatalError, "Error calling virtSetArticularForce: error code %d", err));
   }
 
-  delete [] articular_force;
+  delete[] articular_force;
 }
 
 /*!
@@ -648,7 +645,7 @@ void vpVirtuose::setArticularPosition(const vpColVector &articularPosition)
 
   if (virtSetArticularPosition(m_virtContext, articular_position)) {
     int err = virtGetErrorCode(m_virtContext);
-    delete [] articular_position;
+    delete[] articular_position;
     throw(vpException(vpException::fatalError, "Error calling virtSetArticularPosition: error code %d", err));
   }
   delete[] articular_position;
@@ -672,13 +669,13 @@ void vpVirtuose::setArticularVelocity(const vpColVector &articularVelocity)
                       m_njoints, articularVelocity.size()));
   }
 
-  float *articular_velocity = new float [m_njoints];
+  float *articular_velocity = new float[m_njoints];
   for (unsigned int i = 0; i < m_njoints; i++)
     articular_velocity[i] = (float)articularVelocity[i];
 
   if (virtSetArticularSpeed(m_virtContext, articular_velocity)) {
     int err = virtGetErrorCode(m_virtContext);
-    delete [] articular_velocity;
+    delete[] articular_velocity;
     throw(vpException(vpException::fatalError, "Error calling virtSetArticularVelocity: error code %d", err));
   }
   delete[] articular_velocity;

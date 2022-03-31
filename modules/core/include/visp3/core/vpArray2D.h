@@ -154,12 +154,13 @@ public:
   /*!
   Copy constructor of a 2D array.
   */
-  vpArray2D<Type>(const vpArray2D<Type> &A) :
-  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    vpArray2D<Type>()
-  #else
-    rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
-  #endif
+  vpArray2D<Type>(const vpArray2D<Type> &A)
+    :
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      vpArray2D<Type>()
+#else
+      rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
+#endif
   {
     resize(A.rowNum, A.colNum, false, false);
     memcpy(data, A.data, (size_t)rowNum * (size_t)colNum * sizeof(Type));
@@ -171,12 +172,13 @@ public:
   \param r : Array number of rows.
   \param c : Array number of columns.
   */
-  vpArray2D<Type>(unsigned int r, unsigned int c) :
-  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpArray2D<Type>(unsigned int r, unsigned int c)
+    :
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
       vpArray2D<Type>()
-  #else
+#else
       rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
-  #endif
+#endif
   {
     resize(r, c);
   }
@@ -188,12 +190,13 @@ public:
   \param c : Array number of columns.
   \param val : Each element of the array is set to \e val.
   */
-  vpArray2D<Type>(unsigned int r, unsigned int c, Type val) :
-  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  vpArray2D<Type>(unsigned int r, unsigned int c, Type val)
+    :
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
       vpArray2D<Type>()
-  #else
+#else
       rowNum(0), colNum(0), rowPtrs(NULL), dsize(0), data(NULL)
-  #endif
+#endif
   {
     resize(r, c, false, false);
     *this = val;
@@ -226,8 +229,7 @@ public:
   {
     if (nrows * ncols != static_cast<unsigned int>(list.size())) {
       std::ostringstream oss;
-      oss << "Cannot create a vpArray2D of size (" << nrows << ", " << ncols
-          << ") with a list of size " << list.size();
+      oss << "Cannot create a vpArray2D of size (" << nrows << ", " << ncols << ") with a list of size " << list.size();
       throw vpException(vpException::dimensionError, oss.str());
     }
 
@@ -238,7 +240,7 @@ public:
   explicit vpArray2D<Type>(const std::initializer_list<std::initializer_list<Type> > &lists) : vpArray2D<Type>()
   {
     unsigned int nrows = static_cast<unsigned int>(lists.size()), ncols = 0;
-    for (auto& l : lists) {
+    for (auto &l : lists) {
       if (static_cast<unsigned int>(l.size()) > ncols) {
         ncols = static_cast<unsigned int>(l.size());
       }
@@ -385,8 +387,7 @@ public:
 
     if (nrows * ncols != dsize) {
       std::ostringstream oss;
-      oss << "Cannot reshape array of total size " << dsize
-          << " into shape (" << nrows << ", " << ncols << ")";
+      oss << "Cannot reshape array of total size " << dsize << " into shape (" << nrows << ", " << ncols << ")";
       throw vpException(vpException::dimensionError, oss.str());
     }
 
@@ -403,11 +404,11 @@ public:
   /*!
     Equal to comparison operator of a 2D array.
   */
-  bool operator==(const vpArray2D<Type>& A) const;
+  bool operator==(const vpArray2D<Type> &A) const;
   /*!
     Not equal to comparison operator of a 2D array.
   */
-  bool operator!=(const vpArray2D<Type>& A) const;
+  bool operator!=(const vpArray2D<Type> &A) const;
 
   //! Set all the elements of the array to \e x.
   vpArray2D<Type> &operator=(Type x)
@@ -464,7 +465,7 @@ public:
   vpArray2D<Type> &operator=(const std::initializer_list<std::initializer_list<Type> > &lists)
   {
     unsigned int nrows = static_cast<unsigned int>(lists.size()), ncols = 0;
-    for (auto& l : lists) {
+    for (auto &l : lists) {
       if (static_cast<unsigned int>(l.size()) > ncols) {
         ncols = static_cast<unsigned int>(l.size());
       }
@@ -543,8 +544,7 @@ public:
 
     if (!binary) {
       file.open(filename.c_str(), std::fstream::in);
-    }
-    else {
+    } else {
       file.open(filename.c_str(), std::fstream::in | std::fstream::binary);
     }
 
@@ -679,8 +679,7 @@ public:
           ss >> cols;
         } else if (line.compare(0, 5, "data:") == 0) {
           inheader = false;
-        }
-        else {
+        } else {
           h += line + "\n";
         }
       } else {
@@ -734,15 +733,13 @@ public:
 
     \sa load()
   */
-  static bool save(const std::string &filename, const vpArray2D<Type> &A, bool binary = false,
-                   const char *header = "")
+  static bool save(const std::string &filename, const vpArray2D<Type> &A, bool binary = false, const char *header = "")
   {
     std::fstream file;
 
     if (!binary) {
       file.open(filename.c_str(), std::fstream::out);
-    }
-    else {
+    } else {
       file.open(filename.c_str(), std::fstream::out | std::fstream::binary);
     }
 
@@ -848,15 +845,13 @@ public:
         if (inIndent) {
           if (header[i] == ' ') {
             indent += " ";
-          }
-          else if (indent.length() > 0) {
+          } else if (indent.length() > 0) {
             checkIndent = false;
           }
         }
         if (header[i] == '\n' || (inIndent && header[i] == ' ')) {
           inIndent = true;
-        }
-        else {
+        } else {
           inIndent = false;
         }
       }
@@ -945,7 +940,7 @@ template <class Type> vpArray2D<Type> vpArray2D<Type>::hadamard(const vpArray2D<
   return out;
 }
 
-template <class Type> bool vpArray2D<Type>::operator==(const vpArray2D<Type>& A) const
+template <class Type> bool vpArray2D<Type>::operator==(const vpArray2D<Type> &A) const
 {
   if (A.rowNum != rowNum || A.colNum != colNum) {
     return false;
@@ -963,7 +958,7 @@ template <class Type> bool vpArray2D<Type>::operator==(const vpArray2D<Type>& A)
 /*!
  * \relates vpArray2D
  */
-template <> inline bool vpArray2D<double>::operator==(const vpArray2D<double>& A) const
+template <> inline bool vpArray2D<double>::operator==(const vpArray2D<double> &A) const
 {
   if (A.rowNum != rowNum || A.colNum != colNum) {
     return false;
@@ -978,7 +973,7 @@ template <> inline bool vpArray2D<double>::operator==(const vpArray2D<double>& A
   return true;
 }
 
-template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float>& A) const
+template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float> &A) const
 {
   if (A.rowNum != rowNum || A.colNum != colNum) {
     return false;
@@ -993,9 +988,6 @@ template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float>& A) 
   return true;
 }
 
-template <class Type> bool vpArray2D<Type>::operator!=(const vpArray2D<Type>& A) const
-{
-  return !(*this == A);
-}
+template <class Type> bool vpArray2D<Type>::operator!=(const vpArray2D<Type> &A) const { return !(*this == A); }
 
 #endif

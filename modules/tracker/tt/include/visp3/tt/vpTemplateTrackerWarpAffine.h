@@ -61,8 +61,8 @@
   \right]
   \f]
 
-  We recall that u axis is the image horizontal axis, and v axis is the image vertical axis. A point (u,v) with coordinates
-  (0,0) is located in the top left image corner.
+  We recall that u axis is the image horizontal axis, and v axis is the image vertical axis. A point (u,v) with
+  coordinates (0,0) is located in the top left image corner.
 
 */
 class VISP_EXPORT vpTemplateTrackerWarpAffine : public vpTemplateTrackerWarp

@@ -50,6 +50,7 @@
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpTime.h>
+#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/gui/vpPlot.h>
@@ -60,7 +61,6 @@
 #include <visp3/visual_features/vpFeatureVanishingPoint.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
-#include <visp3/core/vpXmlParserCamera.h>
 
 #if !defined(VISP_HAVE_ARSDK)
 int main()
@@ -77,7 +77,8 @@ int main()
 #elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
 int main()
 {
-  std::cout << "\nThis example requires cxx11 standard or higher. Turn it on using cmake -DUSE_CXX_STANDARD=11.\n" << std::endl;
+  std::cout << "\nThis example requires cxx11 standard or higher. Turn it on using cmake -DUSE_CXX_STANDARD=11.\n"
+            << std::endl;
   return EXIT_SUCCESS;
 }
 #else
@@ -328,7 +329,7 @@ int main(int argc, char **argv)
       vpMomentGravityCenter mg, mg_d;
       vpMomentCentered mc, mc_d;
       vpMomentAreaNormalized man(0, Z_d), man_d(0, Z_d); // Declare normalized area updated below with m00
-      vpMomentGravityCenterNormalized mgn, mgn_d; // Declare normalized gravity center
+      vpMomentGravityCenterNormalized mgn, mgn_d;        // Declare normalized gravity center
 
       // Desired moments
       m_obj_d.setType(vpMomentObject::DENSE_POLYGON); // Consider the AprilTag as a polygon
@@ -426,13 +427,13 @@ int main(int argc, char **argv)
           m_obj.setType(vpMomentObject::DENSE_POLYGON); // Consider the AprilTag as a polygon
           m_obj.fromVector(vec_P);                      // Initialize the object with the points coordinates
 
-          mg.linkTo(mdb);       // Add gravity center to database
-          mc.linkTo(mdb);       // Add centered moments to database
-          man.linkTo(mdb);      // Add area normalized to database
-          mgn.linkTo(mdb);      // Add gravity center normalized to database
-          mdb.updateAll(m_obj); // All of the moments must be updated, not just an_d
-          mg.compute();         // Compute gravity center moment
-          mc.compute();         // Compute centered moments AFTER gravity center
+          mg.linkTo(mdb);           // Add gravity center to database
+          mc.linkTo(mdb);           // Add centered moments to database
+          man.linkTo(mdb);          // Add area normalized to database
+          mgn.linkTo(mdb);          // Add gravity center normalized to database
+          mdb.updateAll(m_obj);     // All of the moments must be updated, not just an_d
+          mg.compute();             // Compute gravity center moment
+          mc.compute();             // Compute centered moments AFTER gravity center
           man.setDesiredArea(area); // Desired area was init at 0 (unknow at contruction), need to be updated here
           man.compute();            // Compute area normalized moment AFTER centered moment
           mgn.compute();            // Compute gravity center normalized moment AFTER area normalized moment

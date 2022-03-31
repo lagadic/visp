@@ -176,7 +176,7 @@ double vpTemplateTrackerMI::getCost(const vpImage<unsigned char> &I, const vpCol
       else
         IW = BI.getValue(i2, j2);
 
-      double Nc_1 = (Nc - 1.)/255.;
+      double Nc_1 = (Nc - 1.) / 255.;
       double IW_Nc = IW * Nc_1;
       double Tij_Nc = Tij * Nc_1;
       int cr = static_cast<int>(IW_Nc);
@@ -273,8 +273,7 @@ double vpTemplateTrackerMI::getNormalizedCost(const vpImage<unsigned char> &I, c
       int Tij_ = static_cast<int>(Tij);
       if (!blur) {
         IW = I[(int)i2][(int)j2];
-      }
-      else {
+      } else {
         IW = BI.getValue(i2, j2);
       }
       int IW_ = static_cast<int>(IW);
@@ -391,7 +390,7 @@ void vpTemplateTrackerMI::computeMI(double &MI)
     unsigned int r_Nbc_ = r * Ncb_;
     for (unsigned int t = 0; t < Ncb_; t++) {
       Pr[r] += Prt[r_Nbc_ + t];
-      Pt[r] += Prt[r + Ncb_* t];
+      Pt[r] += Prt[r + Ncb_ * t];
     }
   }
 
@@ -426,7 +425,7 @@ void vpTemplateTrackerMI::computeHessien(vpMatrix &Hessian)
       for (unsigned int r = 0; r < Ncb_; r++) {
         if (Prt[r * Ncb_ + t] > seuilevitinf) {
           unsigned int r_Ncb_t_ = r * Ncb_ + t;
-          unsigned int r_Ncb_t_nbParam_ = r_Ncb_t_ * nbParam ;
+          unsigned int r_Ncb_t_nbParam_ = r_Ncb_t_ * nbParam;
           for (unsigned int it = 0; it < nbParam; it++) {
             dprtemp[it] = dPrt[r_Ncb_t_nbParam_ + it];
           }
@@ -439,8 +438,8 @@ void vpTemplateTrackerMI::computeHessien(vpMatrix &Hessian)
             unsigned int r_Ncb_t_nbParam2_it_nbParam_ = r_Ncb_t_nbParam2_ + it * nbParam;
             for (unsigned int jt = 0; jt < nbParam; jt++) {
               if (ApproxHessian != HESSIAN_NONSECOND && ApproxHessian != HESSIAN_NEW)
-                Hessian[it][jt] += dprtemp[it] * dprtemp[jt] * Prt_Pt_ +
-                                   d2Prt[r_Ncb_t_nbParam2_it_nbParam_ + jt] * dtemp;
+                Hessian[it][jt] +=
+                    dprtemp[it] * dprtemp[jt] * Prt_Pt_ + d2Prt[r_Ncb_t_nbParam2_it_nbParam_ + jt] * dtemp;
               else if (ApproxHessian == HESSIAN_NEW)
                 Hessian[it][jt] += d2Prt[r_Ncb_t_nbParam2_it_nbParam_ + jt] * dtemp;
               else
@@ -514,7 +513,7 @@ void vpTemplateTrackerMI::computeHessienNormalized(vpMatrix &Hessian)
           unsigned int r_Ncb_t_nbParam2_ = r_Ncb_t_ * nbParam2;
           for (unsigned int it = 0; it < nbParam; it++) {
             double dprtemp_it2_ = Prt_ * dprtemp[it] * dprtemp[it];
-            unsigned int r_Ncb_t_nbParam2_it_nbParam_ = r_Ncb_t_nbParam2_  + it * nbParam;
+            unsigned int r_Ncb_t_nbParam2_it_nbParam_ = r_Ncb_t_nbParam2_ + it * nbParam;
             for (unsigned int jt = 0; jt < nbParam; jt++) {
               unsigned int r_Ncb_t_nbParam2_it_nbParam_jt_ = r_Ncb_t_nbParam2_it_nbParam_ + jt;
               m_d2u[it][jt] += d2Prt[r_Ncb_t_nbParam2_it_nbParam_jt_] * log_Pt_Pr_ + dprtemp_it2_;
@@ -617,7 +616,7 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc, cons
     double j2 = X2[0];
     double i2 = X2[1];
 
-     if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth()) - 1) {
+    if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth()) - 1) {
       Nbpoint++;
 
       double Tij = ptTemplate[point].val;
@@ -680,12 +679,12 @@ double vpTemplateTrackerMI::getMI(const vpImage<unsigned char> &I, int &nc, cons
         MI -= tPr[r] * log(tPr[r]);
 
     for (unsigned int t = 0; t < tNcb; t++)
-       if (std::fabs(tPt[t]) > std::numeric_limits<double>::epsilon())
+      if (std::fabs(tPt[t]) > std::numeric_limits<double>::epsilon())
         MI -= tPt[t] * log(tPt[t]);
 
     for (unsigned int r = 0; r < tNcb; r++)
       for (unsigned int t = 0; t < tNcb; t++)
-         if (std::fabs(tPrt[r * tNcb + t]) > std::numeric_limits<double>::epsilon())
+        if (std::fabs(tPrt[r * tNcb + t]) > std::numeric_limits<double>::epsilon())
           MI += tPrt[r * tNcb + t] * log(tPrt[r * tNcb + t]);
   }
   delete[] tPrtD;

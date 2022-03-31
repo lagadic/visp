@@ -105,10 +105,8 @@ public:
 
   void setImg(const vpImage<vpRGBa> &im);
   void setImg(const vpImage<unsigned char> &im);
-  void setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP, unsigned int width,
-                 unsigned int height);
-  void setImgROI(const vpImage<unsigned char> &im, const vpImagePoint &iP, unsigned int width,
-                 unsigned int height);
+  void setImgROI(const vpImage<vpRGBa> &im, const vpImagePoint &iP, unsigned int width, unsigned int height);
+  void setImgROI(const vpImage<unsigned char> &im, const vpImagePoint &iP, unsigned int width, unsigned int height);
 
   void setPixel(const vpImagePoint &iP, const vpColor &color);
 

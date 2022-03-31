@@ -65,8 +65,9 @@
   vpQbDevice fails while opening [/dev/ttyUSB0] and sets errno [Permission denied].
   \endcode
 
-  The following example shows how to close and open the SoftHand with a given speed factor and stiffness used to stop the command applied to
-  the motors when the measured current is larger than the stiffness multiplied by the maximum allowed current that can be applied to the motors.
+  The following example shows how to close and open the SoftHand with a given speed factor and stiffness used to stop
+the command applied to the motors when the measured current is larger than the stiffness multiplied by the maximum
+allowed current that can be applied to the motors.
 
   \code
 #include <visp3/robot/vpQbSoftHand.h>
@@ -90,19 +91,18 @@ int main()
   \endcode
 
 */
-class VISP_EXPORT vpQbSoftHand: public vpQbDevice
+class VISP_EXPORT vpQbSoftHand : public vpQbDevice
 {
 public:
   vpQbSoftHand();
   virtual ~vpQbSoftHand();
 
-  void getCurrent(vpColVector &current, const int &id=1);
-  void getPosition(vpColVector &position, const int &id=1);
+  void getCurrent(vpColVector &current, const int &id = 1);
+  void getPosition(vpColVector &position, const int &id = 1);
 
-  void setPosition(const vpColVector &position, const int &id=1);
-  void setPosition(const vpColVector &position, double speed_factor, double stiffness, const int &id=1);
+  void setPosition(const vpColVector &position, const int &id = 1);
+  void setPosition(const vpColVector &position, double speed_factor, double stiffness, const int &id = 1);
 };
-
 
 #endif
 #endif

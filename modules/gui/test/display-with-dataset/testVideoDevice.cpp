@@ -90,7 +90,8 @@ Test video devices or display.\n\
 SYNOPSIS\n\
   %s [-i <input image path>] \n\
      [-t <type of video device>] [-l] [-c] [-d] [-h]\n\
-", name);
+",
+          name);
 
   std::string display;
   switch (dtype) {
@@ -141,7 +142,8 @@ OPTIONS:                                               Default\n\
      Print the list of video-devices available and exit.\n\
 \n\
   -h\n\
-     Print the help.\n\n", ipath.c_str(), display.c_str());
+     Print the help.\n\n",
+          ipath.c_str(), display.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);

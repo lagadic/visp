@@ -296,8 +296,7 @@ int main()
   \param apertureSobel : Size of the mask for the Sobel operator (odd number).
 */
 void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
-                          unsigned int gaussianFilterSize, double thresholdCanny,
-                          unsigned int apertureSobel)
+                          unsigned int gaussianFilterSize, double thresholdCanny, unsigned int apertureSobel)
 {
 #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
   IplImage *img_ipl = NULL;
@@ -362,8 +361,7 @@ void vpImageFilter::filterX(const vpImage<unsigned char> &I, vpImage<double> &dI
     }
   }
 }
-void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter,
-                            unsigned int size)
+void vpImageFilter::filterX(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIx, const double *filter, unsigned int size)
 {
   dIx.resize(I.getHeight(), I.getWidth());
   for (unsigned int i = 0; i < I.getHeight(); i++) {
@@ -421,8 +419,7 @@ void vpImageFilter::filterY(const vpImage<unsigned char> &I, vpImage<double> &dI
     }
   }
 }
-void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const double *filter,
-                            unsigned int size)
+void vpImageFilter::filterY(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &dIy, const double *filter, unsigned int size)
 {
   dIy.resize(I.getHeight(), I.getWidth());
   for (unsigned int i = 0; i < (size - 1) / 2; i++) {
@@ -547,7 +544,8 @@ void vpImageFilter::gaussianBlur(const vpImage<double> &I, vpImage<double> &GI, 
   \param[in] size : Filter size. This value should be odd and positive.
   \param[in] sigma : Gaussian standard deviation \f$ \sigma \f$. If it is equal to zero or negative, it is
   computed from filter size as sigma = (size-1)/6.
-  \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not. In that case \f$\Sigma G_i = 1 \f$.
+  \param[in] normalize : Flag indicating whether to normalize the filter coefficients or not. In that case \f$\Sigma G_i
+  = 1 \f$.
 
   The function computes the \e (size+1)/2 values of the Gaussian filter cooefficients \f$ G_i \f$ as:
   \f[ G_i = \frac{1}{\sigma  \sqrt{2 \pi}} \exp{(-i^2 / (2. * \sigma^2))}\f]
@@ -797,7 +795,7 @@ void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<u
 
   cvReleaseImage(&imgsrc);
   cvReleaseImage(&imgdest);
-// vpImage<unsigned char> sGI;sGI=GI;
+  // vpImage<unsigned char> sGI;sGI=GI;
 
 #else
   vpImageFilter::getGaussXPyramidal(I, GIx);
@@ -873,9 +871,9 @@ double vpImageFilter::getSobelKernelX(double *filter, unsigned int size)
   if (size > 20)
     throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size > 20!");
 
-  vpMatrix SobelY(size*2+1, size*2+1);
+  vpMatrix SobelY(size * 2 + 1, size * 2 + 1);
   double norm = getSobelKernelY(SobelY.data, size);
-  memcpy(filter, SobelY.t().data, SobelY.getRows()*SobelY.getCols()*sizeof(double));
+  memcpy(filter, SobelY.t().data, SobelY.getRows() * SobelY.getCols() * sizeof(double));
   return norm;
 }
 
@@ -888,53 +886,50 @@ double vpImageFilter::getSobelKernelX(double *filter, unsigned int size)
  */
 double vpImageFilter::getSobelKernelY(double *filter, unsigned int size)
 {
-  //Sobel kernel pre-computed for the usual size
-  static const double SobelY3x3[9] = {-1.0, -2.0, -1.0,
-                                      0.0, 0.0, 0.0,
-                                      1.0, 2.0, 1.0};
-  static const double SobelY5x5[25] = {-1.0, -4.0, -6.0, -4.0, -1.0,
-                                       -2.0, -8.0, -12.0, -8.0, -2.0,
-                                       0.0, 0.0, 0.0, 0.0, 0.0,
-                                       2.0, 8.0, 12.0, 8.0, 2.0,
-                                       1.0, 4.0, 6.0, 4.0, 1.0};
-  static const double SobelY7x7[49] = {-1, -6, -15, -20, -15, -6, -1,
-                                       -4, -24, -60, -80, -60, -24, -4,
-                                       -5, -30, -75, -100, -75, -30, -5,
-                                        0, 0, 0, 0, 0, 0, 0,
-                                        5, 30, 75, 100, 75, 30, 5,
-                                        4, 24, 60, 80, 60, 24, 4,
-                                        1, 6, 15, 20, 15, 6, 1};
-  static const vpMatrix smoothingKernel(3,3);
-  smoothingKernel[0][0] = 1.0;  smoothingKernel[0][1] = 2.0;  smoothingKernel[0][2] = 1.0;
-  smoothingKernel[1][0] = 2.0;  smoothingKernel[1][1] = 4.0;  smoothingKernel[1][2] = 2.0;
-  smoothingKernel[2][0] = 1.0;  smoothingKernel[2][1] = 2.0;  smoothingKernel[2][2] = 1.0;
+  // Sobel kernel pre-computed for the usual size
+  static const double SobelY3x3[9] = {-1.0, -2.0, -1.0, 0.0, 0.0, 0.0, 1.0, 2.0, 1.0};
+  static const double SobelY5x5[25] = {-1.0, -4.0, -6.0, -4.0, -1.0, -2.0, -8.0, -12.0, -8.0, -2.0, 0.0, 0.0, 0.0,
+                                       0.0,  0.0,  2.0,  8.0,  12.0, 8.0,  2.0,  1.0,   4.0,  6.0,  4.0, 1.0};
+  static const double SobelY7x7[49] = {-1,   -6,  -15, -20, -15, -6, -1, -4, -24, -60, -80, -60, -24, -4, -5,  -30, -75,
+                                       -100, -75, -30, -5,  0,   0,  0,  0,  0,   0,   0,   5,   30,  75, 100, 75,  30,
+                                       5,    4,   24,  60,  80,  60, 24, 4,  1,   6,   15,  20,  15,  6,  1};
+  static const vpMatrix smoothingKernel(3, 3);
+  smoothingKernel[0][0] = 1.0;
+  smoothingKernel[0][1] = 2.0;
+  smoothingKernel[0][2] = 1.0;
+  smoothingKernel[1][0] = 2.0;
+  smoothingKernel[1][1] = 4.0;
+  smoothingKernel[1][2] = 2.0;
+  smoothingKernel[2][0] = 1.0;
+  smoothingKernel[2][1] = 2.0;
+  smoothingKernel[2][2] = 1.0;
 
   if (size == 0)
     throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size 0!");
   if (size > 20)
     throw vpException(vpException::dimensionError, "Cannot get Sobel kernel of size > 20!");
 
-  const unsigned int kernel_size = size*2+1;
+  const unsigned int kernel_size = size * 2 + 1;
   if (kernel_size == 3) {
-    memcpy(filter, SobelY3x3, kernel_size*kernel_size*sizeof(double));
-    return 1/8.0;
+    memcpy(filter, SobelY3x3, kernel_size * kernel_size * sizeof(double));
+    return 1 / 8.0;
   }
   if (kernel_size == 5) {
-    memcpy(filter, SobelY5x5, kernel_size*kernel_size*sizeof(double));
-    return 1/16.0;
+    memcpy(filter, SobelY5x5, kernel_size * kernel_size * sizeof(double));
+    return 1 / 16.0;
   }
   if (kernel_size == 7) {
-    memcpy(filter, SobelY7x7, kernel_size*kernel_size*sizeof(double));
-    return 1/16.0;
+    memcpy(filter, SobelY7x7, kernel_size * kernel_size * sizeof(double));
+    return 1 / 16.0;
   }
 
-  vpMatrix sobelY(7,7);
-  memcpy(sobelY.data, SobelY7x7, sobelY.getRows()*sobelY.getCols()*sizeof(double));
+  vpMatrix sobelY(7, 7);
+  memcpy(sobelY.data, SobelY7x7, sobelY.getRows() * sobelY.getCols() * sizeof(double));
   for (unsigned int i = 4; i <= size; i++) {
     sobelY = vpMatrix::conv2(sobelY, smoothingKernel, "full");
   }
 
-  memcpy(filter, sobelY.data, sobelY.getRows()*sobelY.getCols()*sizeof(double));
+  memcpy(filter, sobelY.data, sobelY.getRows() * sobelY.getCols() * sizeof(double));
 
-  return 1/16.0;
+  return 1 / 16.0;
 }

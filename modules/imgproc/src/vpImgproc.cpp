@@ -61,11 +61,11 @@
   \brief Basic image processing functions.
 */
 
+#include <visp3/core/vpGaussianFilter.h>
 #include <visp3/core/vpHistogram.h>
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpMath.h>
-#include <visp3/core/vpGaussianFilter.h>
 #include <visp3/imgproc/vpImgproc.h>
 
 /*!
@@ -648,8 +648,7 @@ void vp::unsharpMask(vpImage<unsigned char> &I, float sigma, double weight)
   \param sigma : Standard deviation for Gaussian kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
 */
-void vp::unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, float sigma,
-                     double weight)
+void vp::unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, float sigma, double weight)
 {
   // Copy I1 to I2
   I2 = I1;
@@ -744,16 +743,16 @@ void vp::unsharpMask(vpImage<unsigned char> &I, unsigned int size, double weight
   \param size : Size (must be odd) of the Gaussian blur kernel.
   \param weight : Weight (between [0 - 1[) for the sharpening process.
 */
-void vp::unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, unsigned int size,
-                     double weight)
+void vp::unsharpMask(const vpImage<unsigned char> &I1, vpImage<unsigned char> &I2, unsigned int size, double weight)
 {
   // Copy I1 to I2
   I2 = I1;
 #if 0
   vp::unsharpMask(I2, size, weight);
 #else
-  //To avoid:
-  //warning: ‘void vp::unsharpMask(vpImage<unsigned char>&, unsigned int, double)’ is deprecated [-Wdeprecated-declarations]
+  // To avoid:
+  // warning: ‘void vp::unsharpMask(vpImage<unsigned char>&, unsigned int, double)’ is deprecated
+  // [-Wdeprecated-declarations]
   if (weight < 1.0 && weight >= 0.0) {
     // Gaussian blurred image
     vpImage<double> I_blurred;
@@ -825,8 +824,8 @@ void vp::unsharpMask(const vpImage<vpRGBa> &I1, vpImage<vpRGBa> &I2, unsigned in
 #if 0
   vp::unsharpMask(I2, size, weight);
 #else
-  //To avoid:
-  //warning: ‘void vp::unsharpMask(vpImage<vpRGBa>&, unsigned int, double)’ is deprecated [-Wdeprecated-declarations]
+  // To avoid:
+  // warning: ‘void vp::unsharpMask(vpImage<vpRGBa>&, unsigned int, double)’ is deprecated [-Wdeprecated-declarations]
   if (weight < 1.0 && weight >= 0.0) {
     // Gaussian blurred image
     vpImage<double> I_blurred_R, I_blurred_G, I_blurred_B;

@@ -61,10 +61,10 @@ class vpMomentObject;
   These coordinates are defined as follows: \f$x_g = \frac{m_{01}}{m_{00}}
   \f$,\f$y_g = \frac{m_{10}}{m_{00}} \f$
 \code
+#include <iostream>
+#include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <iostream>
 
 int main()
 {

@@ -100,7 +100,7 @@ public:
   vpRectOriented getRectangle() const;
 
   void parse(const std::string &filename);
-  void save(const std::string &filename, bool append=false);
+  void save(const std::string &filename, bool append = false);
 
   void setRectangle(const vpRectOriented &rectangle);
 
@@ -112,4 +112,4 @@ private:
   class Impl;
   Impl *m_impl;
 };
-#endif //vpXmlParserRectOriented_h
+#endif // vpXmlParserRectOriented_h

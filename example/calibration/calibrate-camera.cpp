@@ -71,25 +71,33 @@ void usage(const char *argv[], int error)
 {
   std::cout << "Synopsis" << std::endl
             << "  " << argv[0] << " <configuration file>.cfg [--init-from-xml <camera-init.xml>]"
-            << " [--camera-name <name>] [--aspect-ratio <ratio>] [--output <file.xml>] [--help] [-h]" << std::endl << std::endl;
+            << " [--camera-name <name>] [--aspect-ratio <ratio>] [--output <file.xml>] [--help] [-h]" << std::endl
+            << std::endl;
   std::cout << "Description" << std::endl
             << "  <configuration file>.cfg  Configuration file. See example in" << std::endl
             << "    \"default-chessboard.cfg\" or in \"default-circles.cfg\"." << std::endl
-            << "    Default: \"default.cfg\"." << std::endl << std::endl
+            << "    Default: \"default.cfg\"." << std::endl
+            << std::endl
             << "  --init-from-xml <camera-init.xml>  XML file that contains camera parameters" << std::endl
-            << "    used to initialize the calibration process." << std::endl << std::endl
+            << "    used to initialize the calibration process." << std::endl
+            << std::endl
             << "  --camera-name <name>  Camera name in the XML file set using \"--init-from-xml\" option." << std::endl
-            << "    Default: \"Camera\"." << std::endl << std::endl
+            << "    Default: \"Camera\"." << std::endl
+            << std::endl
             << "  --aspect-ratio <ratio>  Pixel aspect ratio. " << std::endl
             << "    To estimate px = py, use \"--aspect-ratio 1\" option. Set to -1" << std::endl
             << "    to unset any constraint for px and py parameters. " << std::endl
-            << "    Default: -1." << std::endl << std::endl
+            << "    Default: -1." << std::endl
+            << std::endl
             << "  --output <file.xml>  XML file containing estimated camera parameters." << std::endl
-            << "    Default: \"camera.xml\"." << std::endl << std::endl
-            << "  --help, -h  Print this helper message." << std::endl << std::endl;
+            << "    Default: \"camera.xml\"." << std::endl
+            << std::endl
+            << "  --help, -h  Print this helper message." << std::endl
+            << std::endl;
   if (error) {
     std::cout << "Error" << std::endl
-              << "  " << "Unsupported parameter " << argv[error] << std::endl;
+              << "  "
+              << "Unsupported parameter " << argv[error] << std::endl;
   }
 }
 
@@ -108,27 +116,22 @@ int main(int argc, const char *argv[])
     double opt_aspect_ratio = -1; // Not used
 
     for (int i = 2; i < argc; i++) {
-      if (std::string(argv[i]) == "--init-from-xml" && i+1 < argc) {
+      if (std::string(argv[i]) == "--init-from-xml" && i + 1 < argc) {
         opt_init_camera_xml_file = std::string(argv[i + 1]);
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--camera-name" && i+1 < argc) {
+        i++;
+      } else if (std::string(argv[i]) == "--camera-name" && i + 1 < argc) {
         opt_camera_name = std::string(argv[i + 1]);
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--output" && i+1 < argc) {
+        i++;
+      } else if (std::string(argv[i]) == "--output" && i + 1 < argc) {
         opt_output_file_name = std::string(argv[i + 1]);
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--aspect-ratio" && i+1 < argc) {
+        i++;
+      } else if (std::string(argv[i]) == "--aspect-ratio" && i + 1 < argc) {
         opt_aspect_ratio = std::atof(argv[i + 1]);
-        i ++;
-      }
-      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+        i++;
+      } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         usage(argv, 0);
         return EXIT_SUCCESS;
-      }
-      else {
+      } else {
         usage(argv, i);
         return EXIT_FAILURE;
       }

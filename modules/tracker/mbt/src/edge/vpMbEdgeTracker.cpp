@@ -294,7 +294,7 @@ void vpMbEdgeTracker::computeVVSFirstPhase(const vpImage<unsigned char> &_I, uns
   vpMbtDistanceCylinder *cy;
   vpMbtDistanceCircle *ci;
 
-  double limite = 3;              // Une limite de 3 pixels
+  double limite = 3;                // Une limite de 3 pixels
   limite = limite / m_cam.get_px(); // Transformation limite pixel en limite metre.
 
   unsigned int n = 0;
@@ -1287,12 +1287,13 @@ void vpMbEdgeTracker::display(const vpImage<unsigned char> &I, const vpHomogeneo
                               const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                               bool displayFullModel)
 {
-  //Display first the Moving-Edges
+  // Display first the Moving-Edges
   if (displayFeatures) {
     displayFeaturesOnImage(I);
   }
 
-  std::vector<std::vector<double> > models = vpMbEdgeTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+  std::vector<std::vector<double> > models =
+      vpMbEdgeTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
@@ -1325,16 +1326,16 @@ void vpMbEdgeTracker::display(const vpImage<unsigned char> &I, const vpHomogeneo
   \param displayFullModel : If true, the full model is displayed (even the non
   visible surfaces).
 */
-void vpMbEdgeTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                              const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
-                              bool displayFullModel)
+void vpMbEdgeTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                              const vpColor &col, unsigned int thickness, bool displayFullModel)
 {
-  //Display first the Moving-Edges
+  // Display first the Moving-Edges
   if (displayFeatures) {
     displayFeaturesOnImage(I);
   }
 
-  std::vector<std::vector<double> > models = vpMbEdgeTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+  std::vector<std::vector<double> > models =
+      vpMbEdgeTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
@@ -1395,7 +1396,8 @@ std::vector<std::vector<double> > vpMbEdgeTracker::getFeaturesForDisplayEdge()
   `<pt_end.i()>`, `<pt_end.j()>`
   - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
   `<n_20>`, `<n_11>`, `<n_02>` where `<n_ij>` are the second order centered moments of the ellipse
-  normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area).
+  normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a
+  the area).
 
   \param width : Image width.
   \param height : Image height.
@@ -1415,14 +1417,14 @@ std::vector<std::vector<double> > vpMbEdgeTracker::getModelForDisplay(unsigned i
       for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
            ++it) {
         std::vector<std::vector<double> > currentModel =
-          (*it)->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+            (*it)->getModelForDisplay(width, height, cMo, cam, displayFullModel);
         models.insert(models.end(), currentModel.begin(), currentModel.end());
       }
 
       for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
            it != cylinders[scaleLevel].end(); ++it) {
         std::vector<std::vector<double> > currentModel =
-          (*it)->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+            (*it)->getModelForDisplay(width, height, cMo, cam, displayFullModel);
         models.insert(models.end(), currentModel.begin(), currentModel.end());
       }
 
@@ -2108,8 +2110,7 @@ void vpMbEdgeTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPo
   \param idFace : The index of the face.
   \param name : the optional name of the cylinder
 */
-void vpMbEdgeTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, double r, int idFace,
-                                  const std::string &name)
+void vpMbEdgeTracker::addCylinder(const vpPoint &P1, const vpPoint &P2, double r, int idFace, const std::string &name)
 {
   {
     bool already_here = false;
@@ -2217,8 +2218,7 @@ void vpMbEdgeTracker::addPolygon(vpMbtPolygon &p)
   image. \param newvisibleline : This parameter is set to true if a new face
   appeared.
 */
-void vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
-                                  bool &newvisibleline)
+void vpMbEdgeTracker::visibleFace(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool &newvisibleline)
 {
   unsigned int n;
   bool changed = false;
@@ -2348,8 +2348,8 @@ unsigned int vpMbEdgeTracker::initMbtTracking(unsigned int &nberrors_lines, unsi
   face associated to the circle to handle visibility test. \param name : The
   optional name of the circle.
 */
-void vpMbEdgeTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
-                                 int idFace, const std::string &name)
+void vpMbEdgeTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace,
+                                 const std::string &name)
 {
   addCircle(p1, p2, p3, radius, (int)idFace, name);
 }
@@ -2449,8 +2449,7 @@ void vpMbEdgeTracker::resetTracker()
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                  const vpHomogeneousMatrix &cMo, bool verbose,
-                                  const vpHomogeneousMatrix &T)
+                                  const vpHomogeneousMatrix &cMo, bool verbose, const vpHomogeneousMatrix &T)
 {
   m_cMo.eye();
   vpMbtDistanceLine *l;

@@ -13,11 +13,12 @@ int main()
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I, vpDisplay::SCALE_AUTO);
 #endif
-    
+
     vpDisplay::setTitle(I, "My image");
     vpDisplay::display(I);
     //! [Rectangle]
-    vpDisplay::displayRectangle(I, I.getHeight() / 4, I.getWidth() / 4, I.getWidth() / 2, I.getHeight() / 2, vpColor::red, true);
+    vpDisplay::displayRectangle(I, I.getHeight() / 4, I.getWidth() / 4, I.getWidth() / 2, I.getHeight() / 2,
+                                vpColor::red, true);
     //! [Rectangle]
     vpDisplay::flush(I);
     std::cout << "A click to quit..." << std::endl;

@@ -78,11 +78,11 @@ get shortcuts.
 
   The example below shows how to retrieve the \f$C_2\f$ invariant:
   \code
-#include <visp3/core/vpMomentObject.h>
-#include <visp3/core/vpPoint.h>
+#include <iostream>
 #include <visp3/core/vpMomentCInvariant.h>
 #include <visp3/core/vpMomentCommon.h>
-#include <iostream>
+#include <visp3/core/vpMomentObject.h>
+#include <visp3/core/vpPoint.h>
 
 int main()
 {

@@ -43,37 +43,38 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_MODULE_MBT) \
-  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_MODULE_MBT) &&                                                                                   \
+    (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <type_traits>
 #endif
 
 #include <visp3/core/vpIoTools.h>
-#include <visp3/io/vpParseArgv.h>
-#include <visp3/io/vpImageIo.h>
-#include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
+#include <visp3/gui/vpDisplayOpenCV.h>
+#include <visp3/gui/vpDisplayX.h>
+#include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpParseArgv.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
 #define GETOPTARGS "i:dcle:mCh"
 
 namespace
 {
-  void usage(const char *name, const char *badparam)
-  {
-    fprintf(stdout, "\n\
+void usage(const char *name, const char *badparam)
+{
+  fprintf(stdout, "\n\
     Regression test for vpGenericTracker and depth.\n\
     \n\
     SYNOPSIS\n\
       %s [-i <test image path>] [-c] [-d] [-h] [-l] \n\
-     [-e <last frame index>] [-m] [-C]\n", name);
+     [-e <last frame index>] [-m] [-C]\n",
+          name);
 
-    fprintf(stdout, "\n\
+  fprintf(stdout, "\n\
     OPTIONS:                                               \n\
       -i <input image path>                                \n\
          Set image input path.\n\
@@ -105,151 +106,151 @@ namespace
       -h \n\
          Print the help.\n\n");
 
-    if (badparam)
-      fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
-  }
+  if (badparam)
+    fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
+}
 
-  bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display,
-                  bool &useScanline, int &lastFrame, bool &use_mask, bool &use_color_image)
-  {
-    const char *optarg_;
-    int c;
-    while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
+bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, bool &useScanline,
+                int &lastFrame, bool &use_mask, bool &use_color_image)
+{
+  const char *optarg_;
+  int c;
+  while ((c = vpParseArgv::parse(argc, argv, GETOPTARGS, &optarg_)) > 1) {
 
-      switch (c) {
-      case 'i':
-        ipath = optarg_;
-        break;
-      case 'c':
-        click_allowed = false;
-        break;
-      case 'd':
-        display = false;
-        break;
-      case 'l':
-        useScanline = true;
-        break;
-      case 'e':
-        lastFrame = atoi(optarg_);
-        break;
-      case 'm':
-        use_mask = true;
-        break;
-      case 'C':
-        use_color_image = true;
-        break;
-      case 'h':
-        usage(argv[0], NULL);
-        return false;
-        break;
-
-      default:
-        usage(argv[0], optarg_);
-        return false;
-        break;
-      }
-    }
-
-    if ((c == 1) || (c == -1)) {
-      // standalone param or error
+    switch (c) {
+    case 'i':
+      ipath = optarg_;
+      break;
+    case 'c':
+      click_allowed = false;
+      break;
+    case 'd':
+      display = false;
+      break;
+    case 'l':
+      useScanline = true;
+      break;
+    case 'e':
+      lastFrame = atoi(optarg_);
+      break;
+    case 'm':
+      use_mask = true;
+      break;
+    case 'C':
+      use_color_image = true;
+      break;
+    case 'h':
       usage(argv[0], NULL);
-      std::cerr << "ERROR: " << std::endl;
-      std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
       return false;
-    }
+      break;
 
-    return true;
+    default:
+      usage(argv[0], optarg_);
+      return false;
+      break;
+    }
   }
 
-  template <typename Type>
-  bool read_data(const std::string &input_directory, int cpt, const vpCameraParameters &cam_depth,
-                 vpImage<Type> &I, vpImage<uint16_t> &I_depth,
-                 std::vector<vpColVector> &pointcloud, vpHomogeneousMatrix &cMo)
-  {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
-                  "Template function supports only unsigned char and vpRGBa images!");
-#endif
-    char buffer[256];
-    sprintf(buffer, std::string(input_directory + "/Images/Image_%04d.pgm").c_str(), cpt);
-    std::string image_filename = buffer;
-
-    sprintf(buffer, std::string(input_directory + "/Depth/Depth_%04d.bin").c_str(), cpt);
-    std::string depth_filename = buffer;
-
-    sprintf(buffer, std::string(input_directory + "/CameraPose/Camera_%03d.txt").c_str(), cpt);
-    std::string pose_filename = buffer;
-
-    if (!vpIoTools::checkFilename(image_filename) || !vpIoTools::checkFilename(depth_filename)
-        || !vpIoTools::checkFilename(pose_filename))
-      return false;
-
-    vpImageIo::read(I, image_filename);
-
-    unsigned int depth_width = 0, depth_height = 0;
-    std::ifstream file_depth(depth_filename.c_str(), std::ios::in | std::ios::binary);
-    if (!file_depth.is_open())
-      return false;
-
-    vpIoTools::readBinaryValueLE(file_depth, depth_height);
-    vpIoTools::readBinaryValueLE(file_depth, depth_width);
-    I_depth.resize(depth_height, depth_width);
-    pointcloud.resize(depth_height*depth_width);
-
-    const float depth_scale = 0.000030518f;
-    for (unsigned int i = 0; i < I_depth.getHeight(); i++) {
-      for (unsigned int j = 0; j < I_depth.getWidth(); j++) {
-        vpIoTools::readBinaryValueLE(file_depth, I_depth[i][j]);
-        double x = 0.0, y = 0.0, Z = I_depth[i][j] * depth_scale;
-        vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
-        vpColVector pt3d(4, 1.0);
-        pt3d[0] = x*Z;
-        pt3d[1] = y*Z;
-        pt3d[2] = Z;
-        pointcloud[i*I_depth.getWidth()+j] = pt3d;
-      }
-    }
-
-    std::ifstream file_pose(pose_filename.c_str());
-    if (!file_pose.is_open()) {
-      return false;
-    }
-
-    for (unsigned int i = 0; i < 4; i++) {
-      for (unsigned int j = 0; j < 4; j++) {
-        file_pose >> cMo[i][j];
-      }
-    }
-
-    return true;
+  if ((c == 1) || (c == -1)) {
+    // standalone param or error
+    usage(argv[0], NULL);
+    std::cerr << "ERROR: " << std::endl;
+    std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
+    return false;
   }
 
-  template <typename Type>
-  bool run(vpImage<Type> &I, const std::string &input_directory, bool opt_click_allowed,
-           bool opt_display, bool useScanline, int opt_lastFrame, bool use_mask) {
+  return true;
+}
+
+template <typename Type>
+bool read_data(const std::string &input_directory, int cpt, const vpCameraParameters &cam_depth, vpImage<Type> &I,
+               vpImage<uint16_t> &I_depth, std::vector<vpColVector> &pointcloud, vpHomogeneousMatrix &cMo)
+{
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
-                  "Template function supports only unsigned char and vpRGBa images!");
+  static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
+                "Template function supports only unsigned char and vpRGBa images!");
 #endif
-    // Initialise a  display
+  char buffer[256];
+  sprintf(buffer, std::string(input_directory + "/Images/Image_%04d.pgm").c_str(), cpt);
+  std::string image_filename = buffer;
+
+  sprintf(buffer, std::string(input_directory + "/Depth/Depth_%04d.bin").c_str(), cpt);
+  std::string depth_filename = buffer;
+
+  sprintf(buffer, std::string(input_directory + "/CameraPose/Camera_%03d.txt").c_str(), cpt);
+  std::string pose_filename = buffer;
+
+  if (!vpIoTools::checkFilename(image_filename) || !vpIoTools::checkFilename(depth_filename) ||
+      !vpIoTools::checkFilename(pose_filename))
+    return false;
+
+  vpImageIo::read(I, image_filename);
+
+  unsigned int depth_width = 0, depth_height = 0;
+  std::ifstream file_depth(depth_filename.c_str(), std::ios::in | std::ios::binary);
+  if (!file_depth.is_open())
+    return false;
+
+  vpIoTools::readBinaryValueLE(file_depth, depth_height);
+  vpIoTools::readBinaryValueLE(file_depth, depth_width);
+  I_depth.resize(depth_height, depth_width);
+  pointcloud.resize(depth_height * depth_width);
+
+  const float depth_scale = 0.000030518f;
+  for (unsigned int i = 0; i < I_depth.getHeight(); i++) {
+    for (unsigned int j = 0; j < I_depth.getWidth(); j++) {
+      vpIoTools::readBinaryValueLE(file_depth, I_depth[i][j]);
+      double x = 0.0, y = 0.0, Z = I_depth[i][j] * depth_scale;
+      vpPixelMeterConversion::convertPoint(cam_depth, j, i, x, y);
+      vpColVector pt3d(4, 1.0);
+      pt3d[0] = x * Z;
+      pt3d[1] = y * Z;
+      pt3d[2] = Z;
+      pointcloud[i * I_depth.getWidth() + j] = pt3d;
+    }
+  }
+
+  std::ifstream file_pose(pose_filename.c_str());
+  if (!file_pose.is_open()) {
+    return false;
+  }
+
+  for (unsigned int i = 0; i < 4; i++) {
+    for (unsigned int j = 0; j < 4; j++) {
+      file_pose >> cMo[i][j];
+    }
+  }
+
+  return true;
+}
+
+template <typename Type>
+bool run(vpImage<Type> &I, const std::string &input_directory, bool opt_click_allowed, bool opt_display,
+         bool useScanline, int opt_lastFrame, bool use_mask)
+{
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
+                "Template function supports only unsigned char and vpRGBa images!");
+#endif
+  // Initialise a  display
 #if defined VISP_HAVE_X11
-    vpDisplayX display1, display2;
+  vpDisplayX display1, display2;
 #elif defined VISP_HAVE_GDI
-    vpDisplayGDI display1, display2;
+  vpDisplayGDI display1, display2;
 #elif defined VISP_HAVE_OPENCV
-    vpDisplayOpenCV display1, display2;
+  vpDisplayOpenCV display1, display2;
 #elif defined VISP_HAVE_D3D9
-    vpDisplayD3D display1, display2;
+  vpDisplayD3D display1, display2;
 #elif defined VISP_HAVE_GTK
-    vpDisplayGTK display1, display2;
+  vpDisplayGTK display1, display2;
 #else
-    opt_display = false;
+  opt_display = false;
 #endif
 
-    std::vector<int> tracker_type;
-    tracker_type.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
-    vpMbGenericTracker tracker(tracker_type);
-    tracker.loadConfigFile(input_directory + "/Config/chateau_depth.xml");
+  std::vector<int> tracker_type;
+  tracker_type.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER);
+  vpMbGenericTracker tracker(tracker_type);
+  tracker.loadConfigFile(input_directory + "/Config/chateau_depth.xml");
 #if 0
     // Corresponding parameters manually set to have an example code
     {
@@ -276,162 +277,166 @@ namespace
     tracker.setFarClippingDistance(2.0);
     tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
 #endif
-    tracker.loadModel(input_directory + "/Models/chateau.cao");
-    vpHomogeneousMatrix T;
-    T[0][0] = -1;
-    T[0][3] = -0.2;
-    T[1][1] = 0;
-    T[1][2] = 1;
-    T[1][3] = 0.12;
-    T[2][1] = 1;
-    T[2][2] = 0;
-    T[2][3] = -0.15;
-    tracker.loadModel(input_directory + "/Models/cube.cao", false, T);
-    vpCameraParameters cam_depth;
-    tracker.getCameraParameters(cam_depth);
-    tracker.setDisplayFeatures(true);
-    tracker.setScanLineVisibilityTest(useScanline);
+  tracker.loadModel(input_directory + "/Models/chateau.cao");
+  vpHomogeneousMatrix T;
+  T[0][0] = -1;
+  T[0][3] = -0.2;
+  T[1][1] = 0;
+  T[1][2] = 1;
+  T[1][3] = 0.12;
+  T[2][1] = 1;
+  T[2][2] = 0;
+  T[2][3] = -0.15;
+  tracker.loadModel(input_directory + "/Models/cube.cao", false, T);
+  vpCameraParameters cam_depth;
+  tracker.getCameraParameters(cam_depth);
+  tracker.setDisplayFeatures(true);
+  tracker.setScanLineVisibilityTest(useScanline);
 
-    vpImage<uint16_t> I_depth_raw;
-    vpImage<vpRGBa> I_depth;
-    vpHomogeneousMatrix cMo_truth;
-    std::vector<vpColVector> pointcloud;
-    int cpt_frame = 1;
-    if (!read_data(input_directory, cpt_frame, cam_depth, I, I_depth_raw, pointcloud, cMo_truth)) {
-      std::cerr << "Cannot read first frame!" << std::endl;
-      return EXIT_FAILURE;
-    }
-
-    vpImage<bool> mask(I.getHeight(), I.getWidth());
-    const double roi_step = 7.0;
-    const double roi_step2 = 6.0;
-    if (use_mask) {
-      mask = false;
-      for (unsigned int i = (unsigned int) (I.getRows()/roi_step); i < (unsigned int) (I.getRows()*roi_step2/roi_step); i++) {
-        for (unsigned int j = (unsigned int) (I.getCols()/roi_step); j < (unsigned int) (I.getCols()*roi_step2/roi_step); j++) {
-          mask[i][j] = true;
-        }
-      }
-      tracker.setMask(mask);
-    }
-
-    vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
-    if (opt_display) {
-#ifdef VISP_HAVE_DISPLAY
-      display1.init(I, 0, 0, "Image");
-      display2.init(I_depth, (int)I.getWidth(), 0, "Depth");
-#endif
-    }
-
-    vpHomogeneousMatrix depth_M_color;
-    depth_M_color[0][3] = -0.05;
-    tracker.initFromPose(I, depth_M_color*cMo_truth);
-
-    bool click = false, quit = false, correct_accuracy = true;
-    std::vector<double> vec_err_t, vec_err_tu;
-    std::vector<double> time_vec;
-    while (read_data(input_directory, cpt_frame, cam_depth, I, I_depth_raw, pointcloud, cMo_truth) && !quit
-           && (opt_lastFrame > 0 ? (int)cpt_frame <= opt_lastFrame : true)) {
-      vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
-
-      if (opt_display) {
-        vpDisplay::display(I);
-        vpDisplay::display(I_depth);
-      }
-
-      double t = vpTime::measureTimeMs();
-      std::map<std::string, const vpImage<Type> *> mapOfImages;
-      std::map<std::string, const std::vector<vpColVector> *> mapOfPointclouds;
-      mapOfPointclouds["Camera"] = &pointcloud;
-      std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
-      mapOfWidths["Camera"] = I_depth.getWidth();
-      mapOfHeights["Camera"] = I_depth.getHeight();
-
-      tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
-      vpHomogeneousMatrix cMo = tracker.getPose();
-      t = vpTime::measureTimeMs() - t;
-      time_vec.push_back(t);
-
-      if (opt_display) {
-        tracker.display(I_depth, cMo, cam_depth, vpColor::red, 3);
-        vpDisplay::displayFrame(I_depth, cMo, cam_depth, 0.05, vpColor::none, 3);
-
-        std::stringstream ss;
-        ss << "Frame: " << cpt_frame;
-        vpDisplay::displayText(I_depth, 20, 20, ss.str(), vpColor::red);
-        ss.str("");
-        ss << "Nb features: " << tracker.getError().getRows();
-        vpDisplay::displayText(I_depth, 40, 20, ss.str(), vpColor::red);
-      }
-
-      vpPoseVector pose_est(cMo);
-      vpPoseVector pose_truth(depth_M_color*cMo_truth);
-      vpColVector t_est(3), t_truth(3);
-      vpColVector tu_est(3), tu_truth(3);
-      for (unsigned int i = 0; i < 3; i++) {
-        t_est[i] = pose_est[i];
-        t_truth[i] = pose_truth[i];
-        tu_est[i] = pose_est[i+3];
-        tu_truth[i] = pose_truth[i+3];
-      }
-
-      vpColVector t_err = t_truth-t_est, tu_err = tu_truth-tu_est;
-      double t_err2 = sqrt(t_err.sumSquare()), tu_err2 = vpMath::deg(sqrt(tu_err.sumSquare()));
-      vec_err_t.push_back( t_err2 );
-      vec_err_tu.push_back( tu_err2 );
-      const double t_thresh = useScanline ? 0.003 : 0.002;
-      const double tu_thresh = useScanline ? 0.5 : 0.4;
-      if ( !use_mask && (t_err2 > t_thresh || tu_err2 > tu_thresh) ) { //no accuracy test with mask
-        std::cerr << "Pose estimated exceeds the threshold (t_thresh = " << t_thresh << ", tu_thresh = " << tu_thresh << ")!" << std::endl;
-        std::cout << "t_err: " << t_err2 << " ; tu_err: " << tu_err2 << std::endl;
-        correct_accuracy = false;
-      }
-
-      if (opt_display) {
-        if (use_mask) {
-          vpRect roi(vpImagePoint(I.getRows()/roi_step, I.getCols()/roi_step),
-                     vpImagePoint(I.getRows()*roi_step2/roi_step, I.getCols()*roi_step2/roi_step));
-          vpDisplay::displayRectangle(I_depth, roi, vpColor::yellow);
-        }
-
-        vpDisplay::flush(I);
-        vpDisplay::flush(I_depth);
-      }
-
-      if (opt_display && opt_click_allowed) {
-        vpMouseButton::vpMouseButtonType button;
-        if (vpDisplay::getClick(I, button, click)) {
-          switch (button) {
-            case vpMouseButton::button1:
-              quit = !click;
-              break;
-
-            case vpMouseButton::button3:
-              click = !click;
-              break;
-
-            default:
-              break;
-          }
-        }
-      }
-
-      cpt_frame++;
-    }
-
-    if (!time_vec.empty())
-      std::cout << "Computation time, Mean: " << vpMath::getMean(time_vec) << " ms ; Median: " << vpMath::getMedian(time_vec)
-                << " ms ; Std: " << vpMath::getStdev(time_vec) << " ms" << std::endl;
-
-    if (!vec_err_t.empty())
-      std::cout << "Max translation error: " << *std::max_element(vec_err_t.begin(), vec_err_t.end()) << std::endl;
-
-    if (!vec_err_tu.empty())
-      std::cout << "Max thetau error: " << *std::max_element(vec_err_tu.begin(), vec_err_tu.end()) << std::endl;
-
-    return correct_accuracy ? EXIT_SUCCESS : EXIT_FAILURE;
+  vpImage<uint16_t> I_depth_raw;
+  vpImage<vpRGBa> I_depth;
+  vpHomogeneousMatrix cMo_truth;
+  std::vector<vpColVector> pointcloud;
+  int cpt_frame = 1;
+  if (!read_data(input_directory, cpt_frame, cam_depth, I, I_depth_raw, pointcloud, cMo_truth)) {
+    std::cerr << "Cannot read first frame!" << std::endl;
+    return EXIT_FAILURE;
   }
+
+  vpImage<bool> mask(I.getHeight(), I.getWidth());
+  const double roi_step = 7.0;
+  const double roi_step2 = 6.0;
+  if (use_mask) {
+    mask = false;
+    for (unsigned int i = (unsigned int)(I.getRows() / roi_step);
+         i < (unsigned int)(I.getRows() * roi_step2 / roi_step); i++) {
+      for (unsigned int j = (unsigned int)(I.getCols() / roi_step);
+           j < (unsigned int)(I.getCols() * roi_step2 / roi_step); j++) {
+        mask[i][j] = true;
+      }
+    }
+    tracker.setMask(mask);
+  }
+
+  vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
+  if (opt_display) {
+#ifdef VISP_HAVE_DISPLAY
+    display1.init(I, 0, 0, "Image");
+    display2.init(I_depth, (int)I.getWidth(), 0, "Depth");
+#endif
+  }
+
+  vpHomogeneousMatrix depth_M_color;
+  depth_M_color[0][3] = -0.05;
+  tracker.initFromPose(I, depth_M_color * cMo_truth);
+
+  bool click = false, quit = false, correct_accuracy = true;
+  std::vector<double> vec_err_t, vec_err_tu;
+  std::vector<double> time_vec;
+  while (read_data(input_directory, cpt_frame, cam_depth, I, I_depth_raw, pointcloud, cMo_truth) && !quit &&
+         (opt_lastFrame > 0 ? (int)cpt_frame <= opt_lastFrame : true)) {
+    vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
+
+    if (opt_display) {
+      vpDisplay::display(I);
+      vpDisplay::display(I_depth);
+    }
+
+    double t = vpTime::measureTimeMs();
+    std::map<std::string, const vpImage<Type> *> mapOfImages;
+    std::map<std::string, const std::vector<vpColVector> *> mapOfPointclouds;
+    mapOfPointclouds["Camera"] = &pointcloud;
+    std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
+    mapOfWidths["Camera"] = I_depth.getWidth();
+    mapOfHeights["Camera"] = I_depth.getHeight();
+
+    tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
+    vpHomogeneousMatrix cMo = tracker.getPose();
+    t = vpTime::measureTimeMs() - t;
+    time_vec.push_back(t);
+
+    if (opt_display) {
+      tracker.display(I_depth, cMo, cam_depth, vpColor::red, 3);
+      vpDisplay::displayFrame(I_depth, cMo, cam_depth, 0.05, vpColor::none, 3);
+
+      std::stringstream ss;
+      ss << "Frame: " << cpt_frame;
+      vpDisplay::displayText(I_depth, 20, 20, ss.str(), vpColor::red);
+      ss.str("");
+      ss << "Nb features: " << tracker.getError().getRows();
+      vpDisplay::displayText(I_depth, 40, 20, ss.str(), vpColor::red);
+    }
+
+    vpPoseVector pose_est(cMo);
+    vpPoseVector pose_truth(depth_M_color * cMo_truth);
+    vpColVector t_est(3), t_truth(3);
+    vpColVector tu_est(3), tu_truth(3);
+    for (unsigned int i = 0; i < 3; i++) {
+      t_est[i] = pose_est[i];
+      t_truth[i] = pose_truth[i];
+      tu_est[i] = pose_est[i + 3];
+      tu_truth[i] = pose_truth[i + 3];
+    }
+
+    vpColVector t_err = t_truth - t_est, tu_err = tu_truth - tu_est;
+    double t_err2 = sqrt(t_err.sumSquare()), tu_err2 = vpMath::deg(sqrt(tu_err.sumSquare()));
+    vec_err_t.push_back(t_err2);
+    vec_err_tu.push_back(tu_err2);
+    const double t_thresh = useScanline ? 0.003 : 0.002;
+    const double tu_thresh = useScanline ? 0.5 : 0.4;
+    if (!use_mask && (t_err2 > t_thresh || tu_err2 > tu_thresh)) { // no accuracy test with mask
+      std::cerr << "Pose estimated exceeds the threshold (t_thresh = " << t_thresh << ", tu_thresh = " << tu_thresh
+                << ")!" << std::endl;
+      std::cout << "t_err: " << t_err2 << " ; tu_err: " << tu_err2 << std::endl;
+      correct_accuracy = false;
+    }
+
+    if (opt_display) {
+      if (use_mask) {
+        vpRect roi(vpImagePoint(I.getRows() / roi_step, I.getCols() / roi_step),
+                   vpImagePoint(I.getRows() * roi_step2 / roi_step, I.getCols() * roi_step2 / roi_step));
+        vpDisplay::displayRectangle(I_depth, roi, vpColor::yellow);
+      }
+
+      vpDisplay::flush(I);
+      vpDisplay::flush(I_depth);
+    }
+
+    if (opt_display && opt_click_allowed) {
+      vpMouseButton::vpMouseButtonType button;
+      if (vpDisplay::getClick(I, button, click)) {
+        switch (button) {
+        case vpMouseButton::button1:
+          quit = !click;
+          break;
+
+        case vpMouseButton::button3:
+          click = !click;
+          break;
+
+        default:
+          break;
+        }
+      }
+    }
+
+    cpt_frame++;
+  }
+
+  if (!time_vec.empty())
+    std::cout << "Computation time, Mean: " << vpMath::getMean(time_vec)
+              << " ms ; Median: " << vpMath::getMedian(time_vec) << " ms ; Std: " << vpMath::getStdev(time_vec) << " ms"
+              << std::endl;
+
+  if (!vec_err_t.empty())
+    std::cout << "Max translation error: " << *std::max_element(vec_err_t.begin(), vec_err_t.end()) << std::endl;
+
+  if (!vec_err_tu.empty())
+    std::cout << "Max thetau error: " << *std::max_element(vec_err_tu.begin(), vec_err_tu.end()) << std::endl;
+
+  return correct_accuracy ? EXIT_SUCCESS : EXIT_FAILURE;
 }
+} // namespace
 
 int main(int argc, const char *argv[])
 {
@@ -455,8 +460,8 @@ int main(int argc, const char *argv[])
     env_ipath = vpIoTools::getViSPImagesDataPath();
 
     // Read the command line options
-    if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display,
-                    useScanline, opt_lastFrame, use_mask, use_color_image)) {
+    if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display, useScanline, opt_lastFrame, use_mask,
+                    use_color_image)) {
       return EXIT_FAILURE;
     }
 
@@ -476,7 +481,8 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 
-    std::string input_directory = vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/Castle-simu");
+    std::string input_directory =
+        vpIoTools::createFilePath(!opt_ipath.empty() ? opt_ipath : env_ipath, "mbt-depth/Castle-simu");
     if (!vpIoTools::checkDirectory(input_directory)) {
       std::cerr << "ViSP-images does not contain the folder: " << input_directory << "!" << std::endl;
       return EXIT_SUCCESS;
@@ -495,12 +501,14 @@ int main(int argc, const char *argv[])
   }
 }
 #elif !(defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
-int main() {
+int main()
+{
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
   return EXIT_SUCCESS;
 }
 #else
-int main() {
+int main()
+{
   std::cout << "Enable MBT module (VISP_HAVE_MODULE_MBT) to launch this test." << std::endl;
   return EXIT_SUCCESS;
 }

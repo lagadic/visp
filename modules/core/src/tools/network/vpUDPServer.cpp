@@ -42,25 +42,25 @@
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#  include <arpa/inet.h>
-#  include <errno.h>
-#  include <netdb.h>
-#  include <unistd.h>
-#  define DWORD int
-#  define WSAGetLastError() strerror(errno)
+#include <arpa/inet.h>
+#include <errno.h>
+#include <netdb.h>
+#include <unistd.h>
+#define DWORD int
+#define WSAGetLastError() strerror(errno)
 #else
-#  if defined(__MINGW32__)
-#    ifdef _WIN32_WINNT
+#if defined(__MINGW32__)
+#ifdef _WIN32_WINNT
 // Undef  _WIN32_WINNT to avoid a warning (_WIN32_WINNT redefinition) with mingw
-#      undef _WIN32_WINNT
-#      define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
+#undef _WIN32_WINNT
+#define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
 // Without re-defining _WIN32_WINNT = _WIN32_WINNT_VISTA there is a build issue with mingw:
 // vpUDPServer.cpp:254:23: error: 'inet_ntop' was not declared in this scope
 // const char *ptr = inet_ntop(AF_INET, (void *)&m_clientAddress.sin_addr, result, sizeof(result));
 // vpUDPServer.cpp:254:23: note: suggested alternative: 'inet_ntoa'
-#    endif
-#  endif
-#  include <Ws2tcpip.h>
+#endif
+#endif
+#include <Ws2tcpip.h>
 #endif
 
 #include <visp3/core/vpUDPServer.h>
@@ -230,8 +230,8 @@ int vpUDPServer::receive(std::string &msg, std::string &hostInfo, int timeoutMs)
   if (retval > 0) {
 /* recvfrom: receive a UDP datagram from a client */
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0, (struct sockaddr *)&m_clientAddress,
-                                           (socklen_t *)&m_clientLength));
+    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0,
+                                           (struct sockaddr *)&m_clientAddress, (socklen_t *)&m_clientLength));
 #else
     int length =
         recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0, (struct sockaddr *)&m_clientAddress, &m_clientLength);
@@ -323,8 +323,8 @@ int vpUDPServer::send(const std::string &msg, const std::string &hostname, int p
 
 /* send the message to the client */
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  return static_cast<int>(sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_clientAddress,
-                                 m_clientLength));
+  return static_cast<int>(
+      sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_clientAddress, m_clientLength));
 #else
   return sendto(m_socketFileDescriptor, msg.c_str(), (int)msg.size(), 0, (struct sockaddr *)&m_clientAddress,
                 m_clientLength);

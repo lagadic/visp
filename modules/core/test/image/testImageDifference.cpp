@@ -45,8 +45,10 @@
 
   \brief Test vpImageTools::imageDifference()
 */
-namespace {
-void regularImageDifference(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2, vpImage<unsigned char> &Idiff)
+namespace
+{
+void regularImageDifference(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2,
+                            vpImage<unsigned char> &Idiff)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
     throw(vpException(vpException::dimensionError, "The two images have not the same size"));
@@ -65,8 +67,9 @@ void regularImageDifference(const vpImage<unsigned char> &I1, const vpImage<unsi
 void regularImageDifference(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2, vpImage<vpRGBa> &Idiff)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
-    throw(vpException(vpException::dimensionError, "Cannot compute image difference. The two images "
-                                                   "(%ux%u) and (%ux%u) have not the same size",
+    throw(vpException(vpException::dimensionError,
+                      "Cannot compute image difference. The two images "
+                      "(%ux%u) and (%ux%u) have not the same size",
                       I1.getWidth(), I1.getHeight(), I2.getWidth(), I2.getHeight()));
   }
 
@@ -85,17 +88,18 @@ void regularImageDifference(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2
     Idiff.bitmap[b].A = static_cast<unsigned char>(vpMath::maximum(vpMath::minimum(diffA, 255), 0));
   }
 }
-}
+} // namespace
 
 int main()
 {
   unsigned int width = 501, height = 447;
-  vpImage<unsigned char> I1(height,width), I2(height,width), Idiff_regular(height,width), Idiff_sse(height,width);
-  vpImage<vpRGBa> I1_color(height, width), I2_color(height, width), Idiff_regular_color(height, width), Idiff_sse_color(height, width);
+  vpImage<unsigned char> I1(height, width), I2(height, width), Idiff_regular(height, width), Idiff_sse(height, width);
+  vpImage<vpRGBa> I1_color(height, width), I2_color(height, width), Idiff_regular_color(height, width),
+      Idiff_sse_color(height, width);
   for (unsigned int i = 0; i < I1.getRows(); i++) {
     for (unsigned int j = 0; j < I1.getCols(); j++) {
-      I1[i][j] = static_cast<unsigned char>(i*I1.getCols() + j);
-      I1_color[i][j] = vpRGBa(static_cast<unsigned char>(i*I1.getCols() + j));
+      I1[i][j] = static_cast<unsigned char>(i * I1.getCols() + j);
+      I1_color[i][j] = vpRGBa(static_cast<unsigned char>(i * I1.getCols() + j));
     }
   }
 
@@ -106,7 +110,7 @@ int main()
     for (unsigned int cpt = 0; cpt < 256; cpt++) {
       for (unsigned int i = 0; i < I2.getRows(); i++) {
         for (unsigned int j = 0; j < I2.getCols(); j++) {
-          I2[i][j] = static_cast<unsigned char>(i*I2.getCols() + j + cpt);
+          I2[i][j] = static_cast<unsigned char>(i * I2.getCols() + j + cpt);
         }
       }
 
@@ -125,8 +129,8 @@ int main()
     }
 
     std::cout << "(Idiff_regular == Idiff_sse)" << std::endl;
-    std::cout << "t_regular: " << t_regular << " ms ; mean t_regular: " << t_regular/256 << " ms" << std::endl;
-    std::cout << "t_sse: " << t_sse << " ms ; mean t_sse: " << t_sse/256 << " ms" << std::endl;
+    std::cout << "t_regular: " << t_regular << " ms ; mean t_regular: " << t_regular / 256 << " ms" << std::endl;
+    std::cout << "t_sse: " << t_sse << " ms ; mean t_sse: " << t_sse / 256 << " ms" << std::endl;
     std::cout << "speed-up: " << t_regular / t_sse << " X" << std::endl;
   }
 
@@ -137,7 +141,7 @@ int main()
     for (unsigned int cpt = 0; cpt < 256; cpt++) {
       for (unsigned int i = 0; i < I2.getRows(); i++) {
         for (unsigned int j = 0; j < I2.getCols(); j++) {
-          I2_color[i][j] = vpRGBa(static_cast<unsigned char>(i*I2.getCols() + j + cpt));
+          I2_color[i][j] = vpRGBa(static_cast<unsigned char>(i * I2.getCols() + j + cpt));
         }
       }
 
@@ -156,8 +160,8 @@ int main()
     }
 
     std::cout << "(Idiff_regular_color == Idiff_sse_color)" << std::endl;
-    std::cout << "t_regular: " << t_regular << " ms ; mean t_regular: " << t_regular/256 << " ms" << std::endl;
-    std::cout << "t_sse: " << t_sse << " ms ; mean t_sse: " << t_sse/256 << " ms" << std::endl;
+    std::cout << "t_regular: " << t_regular << " ms ; mean t_regular: " << t_regular / 256 << " ms" << std::endl;
+    std::cout << "t_sse: " << t_sse << " ms ; mean t_sse: " << t_sse / 256 << " ms" << std::endl;
     std::cout << "speed-up: " << t_regular / t_sse << " X" << std::endl;
   }
 

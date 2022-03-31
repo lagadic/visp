@@ -243,9 +243,7 @@ vpMatrix M(R);
    *
    * \sa setLapackMatrixMinSize()
    */
-  static unsigned int getLapackMatrixMinSize() {
-    return m_lapack_min_size;
-  }
+  static unsigned int getLapackMatrixMinSize() { return m_lapack_min_size; }
 
   /*!
    * Modify default size used to determine if Blas/Lapack basic linear algebra operations are enabled.
@@ -259,9 +257,7 @@ vpMatrix M(R);
    *
    * \sa getLapackMatrixMinSize()
    */
-  static void setLapackMatrixMinSize(unsigned int min_size) {
-    m_lapack_min_size = min_size;
-  }
+  static void setLapackMatrixMinSize(unsigned int min_size) { m_lapack_min_size = min_size; }
   //@}
 
   //-------------------------------------------------
@@ -284,15 +280,15 @@ vpMatrix M(R);
   /** @name Assignment operators */
   //@{
   vpMatrix &operator<<(double *);
-  vpMatrix& operator<<(double val);
-  vpMatrix& operator,(double val);
+  vpMatrix &operator<<(double val);
+  vpMatrix &operator,(double val);
   vpMatrix &operator=(const vpArray2D<double> &A);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpMatrix &operator=(const vpMatrix &A);
   vpMatrix &operator=(vpMatrix &&A);
 
-  vpMatrix& operator=(const std::initializer_list<double> &list);
-  vpMatrix& operator=(const std::initializer_list<std::initializer_list<double> > &lists);
+  vpMatrix &operator=(const std::initializer_list<double> &list);
+  vpMatrix &operator=(const std::initializer_list<std::initializer_list<double> > &lists);
 #endif
   vpMatrix &operator=(double x);
   //@}
@@ -482,7 +478,8 @@ vpMatrix M(R);
   unsigned int pseudoInverse(vpMatrix &Ap, double svThreshold = 1e-6) const;
   unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
   unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt) const;
-  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
+  unsigned int pseudoInverse(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
+                             vpMatrix &kerAt) const;
   vpMatrix pseudoInverse(int rank_in) const;
   int pseudoInverse(vpMatrix &Ap, int rank_in) const;
   int pseudoInverse(vpMatrix &Ap, vpColVector &sv, int rank_in) const;
@@ -493,31 +490,37 @@ vpMatrix M(R);
   vpMatrix pseudoInverseLapack(double svThreshold = 1e-6) const;
   unsigned int pseudoInverseLapack(vpMatrix &Ap, double svThreshold = 1e-6) const;
   unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
-  unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
+  unsigned int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
+                                   vpMatrix &kerAt) const;
   vpMatrix pseudoInverseLapack(int rank_in) const;
   int pseudoInverseLapack(vpMatrix &Ap, int rank_in) const;
   int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in) const;
-  int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
+  int pseudoInverseLapack(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt,
+                          vpMatrix &kerAt) const;
 #endif
 #if defined(VISP_HAVE_EIGEN3)
   vpMatrix pseudoInverseEigen3(double svThreshold = 1e-6) const;
   unsigned int pseudoInverseEigen3(vpMatrix &Ap, double svThreshold = 1e-6) const;
   unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
-  unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
+  unsigned int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
+                                   vpMatrix &kerAt) const;
   vpMatrix pseudoInverseEigen3(int rank_in) const;
   int pseudoInverseEigen3(vpMatrix &Ap, int rank_in) const;
   int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in) const;
-  int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
+  int pseudoInverseEigen3(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt,
+                          vpMatrix &kerAt) const;
 #endif
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
   vpMatrix pseudoInverseOpenCV(double svThreshold = 1e-6) const;
   unsigned int pseudoInverseOpenCV(vpMatrix &Ap, double svThreshold = 1e-6) const;
   unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const;
-  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
+  unsigned int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
+                                   vpMatrix &kerAt) const;
   vpMatrix pseudoInverseOpenCV(int rank_in) const;
   int pseudoInverseOpenCV(vpMatrix &Ap, int rank_in) const;
   int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in) const;
-  int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt, vpMatrix &kerAt) const;
+  int pseudoInverseOpenCV(vpMatrix &Ap, vpColVector &sv, int rank_in, vpMatrix &imA, vpMatrix &imAt,
+                          vpMatrix &kerAt) const;
 #endif
   //@}
 
@@ -557,7 +560,8 @@ vpMatrix M(R);
   /** @name QR decomposition  */
   //@{
   unsigned int qr(vpMatrix &Q, vpMatrix &R, bool full = false, bool squareR = false, double tol = 1e-6) const;
-  unsigned int qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full = false, bool squareR = false, double tol = 1e-6) const;
+  unsigned int qrPivot(vpMatrix &Q, vpMatrix &R, vpMatrix &P, bool full = false, bool squareR = false,
+                       double tol = 1e-6) const;
   void solveByQR(const vpColVector &b, vpColVector &x) const;
   vpColVector solveByQR(const vpColVector &b) const;
   //@}
@@ -677,8 +681,8 @@ vpMatrix M(R);
   // 2D Convolution Static Public Member Functions
   //-------------------------------------------------
   /** @name 2D Convolution with Static Public Member Functions  */
-  static vpMatrix conv2(const vpMatrix &M, const vpMatrix &kernel, const std::string &mode="full");
-  static void conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, const std::string &mode="full");
+  static vpMatrix conv2(const vpMatrix &M, const vpMatrix &kernel, const std::string &mode = "full");
+  static void conv2(const vpMatrix &M, const vpMatrix &kernel, vpMatrix &res, const std::string &mode = "full");
 
   //---------------------------------
   // Covariance computation Static Public Member Functions
@@ -828,90 +832,90 @@ vpMatrix M(R);
   /*!
      \deprecated You should rather use detByLULapack() or detByLU().
    */
-  vp_deprecated double detByLUGsl() const {
+  vp_deprecated double detByLUGsl() const
+  {
 #if defined(VISP_HAVE_LAPACK)
     return detByLULapack();
 #else
-    throw(vpException(vpException::fatalError,
-                      "Undefined detByLULapack(). Install Lapack 3rd party"));
+    throw(vpException(vpException::fatalError, "Undefined detByLULapack(). Install Lapack 3rd party"));
 #endif
   }
 
   /*!
      \deprecated You should rather use inverseByLULapack() or inverseByLU().
    */
-  vp_deprecated vpMatrix inverseByLUGsl() const {
+  vp_deprecated vpMatrix inverseByLUGsl() const
+  {
 #if defined(VISP_HAVE_LAPACK)
     return inverseByLULapack();
 #else
-    throw(vpException(vpException::fatalError,
-                      "Undefined inverseByLULapack(). Install Lapack 3rd party"));
+    throw(vpException(vpException::fatalError, "Undefined inverseByLULapack(). Install Lapack 3rd party"));
 #endif
   }
 
   /*!
      \deprecated You should rather use inverseByCholeskyLapack() or inverseByCholesky().
    */
-  vpMatrix inverseByCholeskyGsl() const {
+  vpMatrix inverseByCholeskyGsl() const
+  {
 #if defined(VISP_HAVE_LAPACK)
     return inverseByCholeskyLapack();
 #else
-    throw(vpException(vpException::fatalError,
-                      "Undefined inverseByCholeskyLapack(). Install Lapack 3rd party"));
+    throw(vpException(vpException::fatalError, "Undefined inverseByCholeskyLapack(). Install Lapack 3rd party"));
 #endif
   }
 
   /*!
      \deprecated You should rather use inverseByQRLapack() or inverseByQR().
    */
-  vpMatrix inverseByQRGsl() const {
+  vpMatrix inverseByQRGsl() const
+  {
 #if defined(VISP_HAVE_LAPACK)
     return inverseByQRLapack();
 #else
-    throw(vpException(vpException::fatalError,
-                      "Undefined inverseByQRLapack(). Install Lapack 3rd party"));
+    throw(vpException(vpException::fatalError, "Undefined inverseByQRLapack(). Install Lapack 3rd party"));
 #endif
   }
 
   /*!
      \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
    */
-  vpMatrix pseudoInverseGsl(double svThreshold = 1e-6) const {
+  vpMatrix pseudoInverseGsl(double svThreshold = 1e-6) const
+  {
 #if defined(VISP_HAVE_LAPACK)
     return pseudoInverseLapack(svThreshold);
 #else
     (void)svThreshold;
-    throw(vpException(vpException::fatalError,
-                      "Undefined pseudoInverseLapack(). Install Lapack 3rd party"));
+    throw(vpException(vpException::fatalError, "Undefined pseudoInverseLapack(). Install Lapack 3rd party"));
 #endif
   }
 
   /*!
      \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
    */
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, double svThreshold = 1e-6) const {
+  unsigned int pseudoInverseGsl(vpMatrix &Ap, double svThreshold = 1e-6) const
+  {
 #if defined(VISP_HAVE_LAPACK)
     return pseudoInverseLapack(Ap, svThreshold);
 #else
     (void)Ap;
     (void)svThreshold;
-    throw(vpException(vpException::fatalError,
-                      "Undefined pseudoInverseLapack(). Install Lapack 3rd party"));
+    throw(vpException(vpException::fatalError, "Undefined pseudoInverseLapack(). Install Lapack 3rd party"));
 #endif
   }
 
   /*!
      \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
    */
-  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const {
+  unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold = 1e-6) const
+  {
 #if defined(VISP_HAVE_LAPACK)
     return pseudoInverseLapack(Ap, sv, svThreshold);
 #else
     (void)Ap;
     (void)sv;
     (void)svThreshold;
-    throw(vpException(vpException::fatalError,
-                      "Undefined pseudoInverseLapack(). Install Lapack 3rd party"));
+    throw(vpException(vpException::fatalError, "Undefined pseudoInverseLapack(). Install Lapack 3rd party"));
 #endif
   }
 
@@ -919,7 +923,8 @@ vpMatrix M(R);
      \deprecated You should rather use pseudoInverseLapack() or pseudoInverse().
    */
   unsigned int pseudoInverseGsl(vpMatrix &Ap, vpColVector &sv, double svThreshold, vpMatrix &imA, vpMatrix &imAt,
-                                vpMatrix &kerAt) const {
+                                vpMatrix &kerAt) const
+  {
 #if defined(VISP_HAVE_LAPACK)
     return pseudoInverseLapack(Ap, sv, svThreshold, imA, imAt, kerAt);
 #else
@@ -929,22 +934,21 @@ vpMatrix M(R);
     (void)imA;
     (void)imAt;
     (void)kerAt;
-    throw(vpException(vpException::fatalError,
-                      "Undefined pseudoInverseLapack(). Install Lapack 3rd party"));
+    throw(vpException(vpException::fatalError, "Undefined pseudoInverseLapack(). Install Lapack 3rd party"));
 #endif
   }
 
   /*!
      \deprecated You should rather use svdLapack() or svd().
    */
-  void svdGsl(vpColVector &w, vpMatrix &V) {
+  void svdGsl(vpColVector &w, vpMatrix &V)
+  {
 #if defined(VISP_HAVE_LAPACK)
     svdLapack(w, V);
 #else
     (void)w;
     (void)V;
-    throw(vpException(vpException::fatalError,
-                      "Undefined svdLapack(). Install Lapack 3rd party"));
+    throw(vpException(vpException::fatalError, "Undefined svdLapack(). Install Lapack 3rd party"));
 #endif
   }
 
@@ -958,12 +962,12 @@ private:
 
 #if defined(VISP_HAVE_LAPACK)
   static void blas_dgemm(char trans_a, char trans_b, unsigned int M_, unsigned int N_, unsigned int K_, double alpha,
-                         double *a_data, unsigned int lda_, double *b_data, unsigned int ldb_, double beta, double *c_data,
-                         unsigned int ldc_);
+                         double *a_data, unsigned int lda_, double *b_data, unsigned int ldb_, double beta,
+                         double *c_data, unsigned int ldc_);
   static void blas_dgemv(char trans, unsigned int M_, unsigned int N_, double alpha, double *a_data, unsigned int lda_,
                          double *x_data, int incx_, double beta, double *y_data, int incy_);
-  static void blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data, unsigned int lda_,
-                         double *w_data, double *work_data, int lwork_, int &info_);
+  static void blas_dsyev(char jobz, char uplo, unsigned int n_, double *a_data, unsigned int lda_, double *w_data,
+                         double *work_data, int lwork_, int &info_);
 #endif
 
   static void computeCovarianceMatrixVVS(const vpHomogeneousMatrix &cMo, const vpColVector &deltaS, const vpMatrix &Ls,

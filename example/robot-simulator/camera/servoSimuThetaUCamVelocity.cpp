@@ -81,7 +81,8 @@ Simulation of avisual servoing using theta U visual feature:\n\
 - without display.\n\
           \n\
 SYNOPSIS\n\
-  %s [-h]\n", name);
+  %s [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\

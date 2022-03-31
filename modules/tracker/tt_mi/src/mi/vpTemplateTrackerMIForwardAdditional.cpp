@@ -279,7 +279,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
         if (std::fabs(s_scal_y) > std::numeric_limits<double>::epsilon()) {
           KQuasiNewton = KQuasiNewton + 0.001 * (s_quasi * s_quasi.t() / s_scal_y -
                                                  KQuasiNewton * y_quasi * y_quasi.t() * KQuasiNewton /
-                                                 (y_quasi.t() * KQuasiNewton * y_quasi));
+                                                     (y_quasi.t() * KQuasiNewton * y_quasi));
         }
       }
       dp = -KQuasiNewton * G;
@@ -314,7 +314,7 @@ void vpTemplateTrackerMIForwardAdditional::trackNoPyr(const vpImage<unsigned cha
     evolRMS_prec = evolRMS;
 
   } while ((std::fabs(MI - MIprec) > std::fabs(MI) * std::numeric_limits<double>::epsilon()) &&
-           (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps));
+           (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init) * evolRMS_eps));
 
   if (Nbpoint == 0) {
     throw(vpTrackingException(vpTrackingException::notEnoughPointError, "No points in the template"));

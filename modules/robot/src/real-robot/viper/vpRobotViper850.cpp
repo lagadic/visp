@@ -1309,8 +1309,8 @@ int main()
 
   \sa setPosition()
 */
-void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2,
-                                  double pos3, double pos4, double pos5, double pos6)
+void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3,
+                                  double pos4, double pos5, double pos6)
 {
   try {
     vpColVector position(6);
@@ -1746,7 +1746,7 @@ void vpRobotViper850::setVelocity(const vpRobot::vpControlFrameType frame, const
   }
   case vpRobot::REFERENCE_FRAME: {
     // Send velocities in m/s and rad/s
-    //std::cout << "Vitesse ref appliquee: " << vel_sat.t();
+    // std::cout << "Vitesse ref appliquee: " << vel_sat.t();
     Try(PrimitiveMOVESPEED_CART_Viper850(vel_sat.data, REPFIX_VIPER850));
     break;
   }

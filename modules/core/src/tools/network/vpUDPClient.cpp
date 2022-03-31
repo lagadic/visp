@@ -49,9 +49,9 @@
 #define DWORD int
 #else
 #if defined(__MINGW32__)
-#  ifndef _WIN32_WINNT
-#    define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
-#  endif
+#ifndef _WIN32_WINNT
+#define _WIN32_WINNT _WIN32_WINNT_VISTA // 0x0600
+#endif
 #endif
 #include <Ws2tcpip.h>
 #endif
@@ -66,7 +66,8 @@
 vpUDPClient::vpUDPClient()
   : m_is_init(false), m_serverAddress(), m_serverLength(0), m_socketFileDescriptor()
 #if defined(_WIN32)
-    , m_wsa()
+    ,
+    m_wsa()
 #endif
 {
 }
@@ -80,7 +81,8 @@ vpUDPClient::vpUDPClient()
 vpUDPClient::vpUDPClient(const std::string &hostname, int port)
   : m_is_init(false), m_serverAddress(), m_serverLength(0), m_socketFileDescriptor()
 #if defined(_WIN32)
-    , m_wsa()
+    ,
+    m_wsa()
 #endif
 {
   init(hostname, port);
@@ -212,8 +214,8 @@ int vpUDPClient::receive(std::string &msg, int timeoutMs)
 
   if (retval > 0) {
     /* recvfrom: receive a UDP datagram from the server */
-    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0, (struct sockaddr *)&m_serverAddress,
-                                           (socklen_t *)&m_serverLength));
+    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, m_buf, sizeof(m_buf), 0,
+                                           (struct sockaddr *)&m_serverAddress, (socklen_t *)&m_serverLength));
     if (length <= 0) {
       return length < 0 ? -1 : 0;
     }
@@ -258,8 +260,8 @@ int vpUDPClient::receive(void *msg, size_t len, int timeoutMs)
 
   if (retval > 0) {
     /* recvfrom: receive a UDP datagram from the server */
-    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, (char *)msg, (int)len, 0, (struct sockaddr *)&m_serverAddress,
-                                           (socklen_t *)&m_serverLength));
+    int length = static_cast<int>(recvfrom(m_socketFileDescriptor, (char *)msg, (int)len, 0,
+                                           (struct sockaddr *)&m_serverAddress, (socklen_t *)&m_serverLength));
     if (length <= 0) {
       return length < 0 ? -1 : 0;
     }
@@ -270,7 +272,6 @@ int vpUDPClient::receive(void *msg, size_t len, int timeoutMs)
   // Timeout
   return 0;
 }
-
 
 /*!
   Send data to the server.
@@ -309,8 +310,8 @@ int vpUDPClient::send(const std::string &msg)
 
 /* send the message to the server */
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  return static_cast<int>(sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_serverAddress,
-                                 m_serverLength));
+  return static_cast<int>(
+      sendto(m_socketFileDescriptor, msg.c_str(), msg.size(), 0, (struct sockaddr *)&m_serverAddress, m_serverLength));
 #else
   return sendto(m_socketFileDescriptor, msg.c_str(), (int)msg.size(), 0, (struct sockaddr *)&m_serverAddress,
                 m_serverLength);
@@ -338,11 +339,10 @@ int vpUDPClient::send(const void *msg, size_t len)
 
 /* send the message to the server */
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-  return static_cast<int>(sendto(m_socketFileDescriptor, msg, len, 0, (struct sockaddr *)&m_serverAddress,
-                                 m_serverLength));
+  return static_cast<int>(
+      sendto(m_socketFileDescriptor, msg, len, 0, (struct sockaddr *)&m_serverAddress, m_serverLength));
 #else
-  return sendto(m_socketFileDescriptor, (char *)msg, (int)len, 0, (struct sockaddr *)&m_serverAddress,
-                m_serverLength);
+  return sendto(m_socketFileDescriptor, (char *)msg, (int)len, 0, (struct sockaddr *)&m_serverAddress, m_serverLength);
 #endif
 }
 

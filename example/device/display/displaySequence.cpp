@@ -109,7 +109,8 @@ SYNOPSIS\n\
   %s [-i <test image path>] [-p <personal image path>]\n\
      [-f <first image>] [-n <number of images>] [-s <step>] \n\
      [-w] [-d] [-h]\n						      \
- ", name);
+ ",
+          name);
 
   fprintf(stdout, "\n\
  OPTIONS:                                               Default\n\
@@ -152,7 +153,8 @@ SYNOPSIS\n\
      this option is without effect.\n\
 \n\
   -h\n\
-     Print the help.\n\n", ipath.c_str(), ppath.c_str(), first, nimages, step);
+     Print the help.\n\n",
+          ipath.c_str(), ppath.c_str(), first, nimages, step);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -417,8 +419,10 @@ int main(int argc, const char **argv)
   }
 }
 #else
-int main() {
-  std::cout << "You do not have X11, or GDI (Graphical Device Interface), or GTK functionalities to display images..." << std::endl;
+int main()
+{
+  std::cout << "You do not have X11, or GDI (Graphical Device Interface), or GTK functionalities to display images..."
+            << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

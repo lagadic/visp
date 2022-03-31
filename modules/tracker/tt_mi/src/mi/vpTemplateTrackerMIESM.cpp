@@ -51,8 +51,7 @@ vpTemplateTrackerMIESM::vpTemplateTrackerMIESM(vpTemplateTrackerWarp *_warp)
   useCompositionnal = false;
   useInverse = false;
   if (!Warp->isESMcompatible()) {
-    throw(vpException(vpException::badValue,
-                      "The selected warp function is not appropriate for the ESM algorithm..."));
+    throw(vpException(vpException::badValue, "The selected warp function is not appropriate for the ESM algorithm..."));
   }
 }
 
@@ -96,16 +95,17 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
       Nbpoint++;
 
       if (blur)
-        IW = BI.getValue(i2,j2);
+        IW = BI.getValue(i2, j2);
       else
-        IW = I.getValue(i2,j2);
+        IW = I.getValue(i2, j2);
 
       ct = ptTemplateSupp[point].ct;
       et = ptTemplateSupp[point].et;
-      cr = static_cast<int>((IW*(Nc-1))/255.);
-      er = (IW*(Nc-1))/255.-cr;
+      cr = static_cast<int>((IW * (Nc - 1)) / 255.);
+      er = (IW * (Nc - 1)) / 255. - cr;
 
-      vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam, bspline, ApproxHessian, false);
+      vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam,
+                                                       bspline, ApproxHessian, false);
     }
   }
 
@@ -142,25 +142,26 @@ void vpTemplateTrackerMIESM::initHessienDesired(const vpImage<unsigned char> &I)
     if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight()) && (j2 < I.getWidth())) {
       Nbpoint++;
 
-      if(!blur)
-        IW=I.getValue(i2,j2);
+      if (!blur)
+        IW = I.getValue(i2, j2);
       else
-        IW=BI.getValue(i2,j2);
+        IW = BI.getValue(i2, j2);
 
       dx = dIx.getValue(i2, j2) * (Nc - 1) / 255.;
       dy = dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
       cr = ptTemplateSupp[point].ct;
       er = ptTemplateSupp[point].et;
-      ct = static_cast<int>((IW*(Nc-1))/255.);
-      et = (IW*(Nc-1))/255.-ct;
+      ct = static_cast<int>((IW * (Nc - 1)) / 255.);
+      et = (IW * (Nc - 1)) / 255. - ct;
 
       Warp->dWarpCompo(X1, X2, p, ptTemplateCompo[point].dW, dW);
 
       for (unsigned int it = 0; it < nbParam; it++)
         tptemp[it] = dW[0][it] * dx + dW[1][it] * dy;
 
-      vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout, cr, er, ct, et, Nc, tptemp.data, nbParam, bspline, ApproxHessian, false);
+      vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout, cr, er, ct, et, Nc, tptemp.data, nbParam, bspline,
+                                                       ApproxHessian, false);
     }
   }
 
@@ -221,7 +222,7 @@ void vpTemplateTrackerMIESM::initCompInverse()
 void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
 {
   if (!CompoInitialised) {
-    std::cout << "Compositionnal tracking not initialised.\nUse initCompInverse() function."  << std::endl;
+    std::cout << "Compositionnal tracking not initialised.\nUse initCompInverse() function." << std::endl;
   }
   dW = 0;
 
@@ -273,17 +274,19 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
       if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
         Nbpoint++;
 
-        if(!blur)
-          IW=I.getValue(i2,j2);
+        if (!blur)
+          IW = I.getValue(i2, j2);
         else
-          IW=BI.getValue(i2,j2);
+          IW = BI.getValue(i2, j2);
 
         ct = ptTemplateSupp[point].ct;
         et = ptTemplateSupp[point].et;
-        cr = static_cast<int>((IW*(Nc-1))/255.);
-        er = (IW*(Nc-1))/255.-cr;
+        cr = static_cast<int>((IW * (Nc - 1)) / 255.);
+        er = (IW * (Nc - 1)) / 255. - cr;
 
-        vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam, bspline, ApproxHessian, hessianComputation==USE_HESSIEN_DESIRE);
+        vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout, cr, er, ct, et, Nc, ptTemplate[point].dW, nbParam,
+                                                         bspline, ApproxHessian,
+                                                         hessianComputation == USE_HESSIEN_DESIRE);
       }
     }
 
@@ -329,16 +332,16 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
         if ((i2 >= 0) && (j2 >= 0) && (i2 < I.getHeight() - 1) && (j2 < I.getWidth() - 1)) {
           Nbpoint++;
 
-          if(!blur)
-            IW=I.getValue(i2,j2);
+          if (!blur)
+            IW = I.getValue(i2, j2);
           else
-            IW=BI.getValue(i2,j2);
+            IW = BI.getValue(i2, j2);
 
           double dx = dIx.getValue(i2, j2) * (Nc - 1) / 255.;
           double dy = dIy.getValue(i2, j2) * (Nc - 1) / 255.;
 
-          ct = static_cast<int>((IW*(Nc-1))/255.);
-          et = (IW*(Nc-1))/255.-ct;
+          ct = static_cast<int>((IW * (Nc - 1)) / 255.);
+          et = (IW * (Nc - 1)) / 255. - ct;
           cr = ptTemplateSupp[point].ct;
           er = ptTemplateSupp[point].et;
           Warp->dWarpCompo(X1, X2, p, ptTemplateCompo[point].dW, dW);
@@ -346,7 +349,8 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
           for (unsigned int it = 0; it < nbParam; it++)
             tptemp[it] = dW[0][it] * dx + dW[1][it] * dy;
 
-          vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout,cr, er, ct, et, Nc, tptemp.data, nbParam, bspline, ApproxHessian, hessianComputation==USE_HESSIEN_DESIRE);
+          vpTemplateTrackerMIBSpline::computeProbabilities(PrtTout, cr, er, ct, et, Nc, tptemp.data, nbParam, bspline,
+                                                           ApproxHessian, hessianComputation == USE_HESSIEN_DESIRE);
         }
       }
 
@@ -374,8 +378,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
           case vpTemplateTrackerMI::USE_HESSIEN_BEST_COND:
             if (HLM.cond() > HLMdesire.cond()) {
               dp = gain * HLMdesireInverse * G;
-            }
-            else {
+            } else {
               dp = gain * 0.3 * HLM.inverseByLU() * G;
             }
             break;
@@ -389,7 +392,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
       }
 
       if (ApproxHessian == HESSIAN_NONSECOND)
-        dp = - dp;
+        dp = -dp;
 
       if (useBrent) {
         alpha = 2.;

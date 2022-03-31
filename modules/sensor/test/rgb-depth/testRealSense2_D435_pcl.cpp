@@ -41,11 +41,11 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                         \
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_PCL)
 
-#include <thread>
 #include <mutex>
+#include <thread>
 
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
@@ -135,7 +135,7 @@ private:
   bool m_colorMode;
   std::mutex &m_mutex;
 };
-}
+} // namespace
 
 int main(int argc, char *argv[])
 {
@@ -188,19 +188,13 @@ int main(int argc, char *argv[])
       std::lock_guard<std::mutex> lock(mutex);
 
       if (pcl_color) {
-        rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap),
-                   reinterpret_cast<unsigned char *>(depth_raw.bitmap),
-                   NULL, pointcloud_color,
-                   reinterpret_cast<unsigned char *>(infrared1.bitmap),
-                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : NULL,
-                   NULL);
+        rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
+                   NULL, pointcloud_color, reinterpret_cast<unsigned char *>(infrared1.bitmap),
+                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : NULL, NULL);
       } else {
-        rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap),
-                   reinterpret_cast<unsigned char *>(depth_raw.bitmap),
-                   NULL, pointcloud,
-                   reinterpret_cast<unsigned char *>(infrared1.bitmap),
-                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : NULL,
-                   NULL);
+        rs.acquire(reinterpret_cast<unsigned char *>(color.bitmap), reinterpret_cast<unsigned char *>(depth_raw.bitmap),
+                   NULL, pointcloud, reinterpret_cast<unsigned char *>(infrared1.bitmap),
+                   show_infrared2 ? reinterpret_cast<unsigned char *>(infrared2.bitmap) : NULL, NULL);
       }
 
       update_pointcloud = true;
@@ -225,10 +219,8 @@ int main(int argc, char *argv[])
 
     chrono.stop();
     time_vector.push_back(chrono.getDurationMs());
-    if (vpDisplay::getClick(color, false) ||
-        vpDisplay::getClick(depth_color, false) ||
-        vpDisplay::getClick(infrared1, false) ||
-        vpDisplay::getClick(infrared2, false)) {
+    if (vpDisplay::getClick(color, false) || vpDisplay::getClick(depth_color, false) ||
+        vpDisplay::getClick(infrared1, false) || vpDisplay::getClick(infrared2, false)) {
       break;
     }
   }

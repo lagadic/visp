@@ -54,7 +54,7 @@
 // Define _USE_MATH_DEFINES before including <math.h> to expose these macro
 // definitions for common math constants.  These are placed under an #ifdef
 // since these commonly-defined names are not part of the C or C++ standards
-#  define _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
 #endif
 #include <math.h>
 #include <vector>
@@ -186,7 +186,7 @@ public:
   static bool isInf(double value);
   static bool isInf(float value);
 
-  static double lineFitting(const std::vector<vpImagePoint>& imPts, double& a, double& b, double& c);
+  static double lineFitting(const std::vector<vpImagePoint> &imPts, double &a, double &b, double &c);
 
   template <typename _Tp> static inline _Tp saturate(unsigned char v) { return _Tp(v); }
   template <typename _Tp> static inline _Tp saturate(char v) { return _Tp(v); }
@@ -264,7 +264,7 @@ int vpMath::round(double x)
   \return -1 if x is negative, +1 if positive and 0 if zero.
 
 */
-int ( vpMath::sign ) (double x)
+int(vpMath::sign)(double x)
 {
   if (fabs(x) < std::numeric_limits<double>::epsilon())
     return 0;

@@ -136,7 +136,7 @@ public:
 
   void addPolygon(const int &index);
 
-  void buildFrom(vpPoint &_p1, vpPoint &_p2, vpUniRand& rand_gen);
+  void buildFrom(vpPoint &_p1, vpPoint &_p2, vpUniRand &rand_gen);
 
   bool closeToImageBorder(const vpImage<unsigned char> &I, const unsigned int threshold);
   void computeInteractionMatrixError(const vpHomogeneousMatrix &cMo);
@@ -174,8 +174,7 @@ public:
   std::vector<std::vector<double> > getFeaturesForDisplay();
 
   std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
-                                                       const vpHomogeneousMatrix &cMo,
-                                                       const vpCameraParameters &cam,
+                                                       const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                                                        bool displayFullModel = false);
 
   /*!

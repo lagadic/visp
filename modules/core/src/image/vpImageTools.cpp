@@ -165,8 +165,9 @@ void vpImageTools::imageDifference(const vpImage<unsigned char> &I1, const vpIma
 void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2, vpImage<vpRGBa> &Idiff)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
-    throw(vpException(vpException::dimensionError, "Cannot compute image difference. The two images "
-                                                   "(%ux%u) and (%ux%u) have not the same size",
+    throw(vpException(vpException::dimensionError,
+                      "Cannot compute image difference. The two images "
+                      "(%ux%u) and (%ux%u) have not the same size",
                       I1.getWidth(), I1.getHeight(), I2.getWidth(), I2.getHeight()));
   }
 
@@ -175,7 +176,7 @@ void vpImageTools::imageDifference(const vpImage<vpRGBa> &I1, const vpImage<vpRG
   }
 
   SimdImageDifference(reinterpret_cast<unsigned char *>(I1.bitmap), reinterpret_cast<unsigned char *>(I2.bitmap),
-                      I1.getSize()*4, reinterpret_cast<unsigned char *>(Idiff.bitmap));
+                      I1.getSize() * 4, reinterpret_cast<unsigned char *>(Idiff.bitmap));
 }
 
 /*!
@@ -295,7 +296,8 @@ void vpImageTools::imageAdd(const vpImage<unsigned char> &I1, const vpImage<unsi
   View img2(I2.getWidth(), I2.getHeight(), I2.getWidth(), View::Gray8, I2.bitmap);
   View imgAdd(Ires.getWidth(), Ires.getHeight(), Ires.getWidth(), View::Gray8, Ires.bitmap);
 
-  Simd::OperationBinary8u(img1, img2, imgAdd, saturate ? SimdOperationBinary8uSaturatedAddition : SimdOperationBinary8uAddition);
+  Simd::OperationBinary8u(img1, img2, imgAdd,
+                          saturate ? SimdOperationBinary8uSaturatedAddition : SimdOperationBinary8uAddition);
 }
 
 /*!
@@ -327,7 +329,8 @@ void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage
   View img2(I2.getWidth(), I2.getHeight(), I2.getWidth(), View::Gray8, I2.bitmap);
   View imgAdd(Ires.getWidth(), Ires.getHeight(), Ires.getWidth(), View::Gray8, Ires.bitmap);
 
-  Simd::OperationBinary8u(img1, img2, imgAdd, saturate ? SimdOperationBinary8uSaturatedSubtraction : SimdOperationBinary8uSubtraction);
+  Simd::OperationBinary8u(img1, img2, imgAdd,
+                          saturate ? SimdOperationBinary8uSaturatedSubtraction : SimdOperationBinary8uSubtraction);
 }
 
 /*!
@@ -342,8 +345,8 @@ void vpImageTools::imageSubtract(const vpImage<unsigned char> &I1, const vpImage
   \param mapDv : 2D array that contains at each coordinate the \f$ \Delta v \f$ for the interpolation.
 */
 void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int width, unsigned int height,
-                                    vpArray2D<int> &mapU, vpArray2D<int> &mapV,
-                                    vpArray2D<float> &mapDu, vpArray2D<float> &mapDv)
+                                    vpArray2D<int> &mapU, vpArray2D<int> &mapV, vpArray2D<float> &mapDu,
+                                    vpArray2D<float> &mapDv)
 {
   mapU.resize(height, width, false, false);
   mapV.resize(height, width, false, false);
@@ -351,7 +354,8 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   mapDv.resize(height, width, false, false);
 
   vpCameraParameters::vpCameraParametersProjType projModel = cam.get_projModel();
-  bool is_KannalaBrandt = (projModel==vpCameraParameters::ProjWithKannalaBrandtDistortion); // Check the projection model used
+  bool is_KannalaBrandt =
+      (projModel == vpCameraParameters::ProjWithKannalaBrandtDistortion); // Check the projection model used
 
   float u0 = static_cast<float>(cam.get_u0());
   float v0 = static_cast<float>(cam.get_v0());
@@ -360,7 +364,7 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   float kud;
   std::vector<double> dist_coefs;
 
-  if(!is_KannalaBrandt)
+  if (!is_KannalaBrandt)
     kud = static_cast<float>(cam.get_kud());
 
   else
@@ -393,8 +397,7 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   invpx = 1.0f / px;
   invpy = 1.0f / py;
 
-  if(!is_KannalaBrandt)
-  {
+  if (!is_KannalaBrandt) {
     kud_px2 = kud * invpx * invpx;
     kud_py2 = kud * invpy * invpy;
   }
@@ -402,7 +405,7 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
   for (unsigned int v = 0; v < height; v++) {
     deltav = v - v0;
 
-    if(!is_KannalaBrandt)
+    if (!is_KannalaBrandt)
       fr1 = 1.0f + kud_py2 * deltav * deltav;
     else
       deltav_py = deltav * invpy;
@@ -410,16 +413,14 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
     for (unsigned int u = 0; u < width; u++) {
       // computation of u,v : corresponding pixel coordinates in I.
       deltau = u - u0;
-      if(!is_KannalaBrandt)
-      {
+      if (!is_KannalaBrandt) {
         fr2 = fr1 + kud_px2 * deltau * deltau;
 
         u_float = deltau * fr2 + u0;
         v_float = deltav * fr2 + v0;
       }
 
-      else
-      {
+      else {
         deltau_px = deltau * invpx;
         r = sqrt(vpMath::sqr(deltau_px) + vpMath::sqr(deltav_py));
         theta = atan(r);
@@ -429,13 +430,13 @@ void vpImageTools::initUndistortMap(const vpCameraParameters &cam, unsigned int 
         theta6 = theta2 * theta4;
         theta8 = vpMath::sqr(theta4);
 
-        theta_d = theta * (1 + dist_coefs[0]*theta2 + dist_coefs[1]*theta4 +
-                           dist_coefs[2]*theta6 + dist_coefs[3]*theta8);
+        theta_d = theta * (1 + dist_coefs[0] * theta2 + dist_coefs[1] * theta4 + dist_coefs[2] * theta6 +
+                           dist_coefs[3] * theta8);
 
-        //scale = (r == 0) ? 1.0 : theta_d / r;
+        // scale = (r == 0) ? 1.0 : theta_d / r;
         scale = (std::fabs(r) < std::numeric_limits<double>::epsilon()) ? 1.0 : theta_d / r;
-        u_float = static_cast<float>(deltau*scale + u0);
-        v_float = static_cast<float>(deltav*scale + v0);
+        u_float = static_cast<float>(deltau * scale + u0);
+        v_float = static_cast<float>(deltav * scale + v0);
       }
 
       u_round = static_cast<int>(u_float);
@@ -489,8 +490,9 @@ void vpImageTools::integralImage(const vpImage<unsigned char> &I, vpImage<double
 double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2, bool useOptimized)
 {
   if ((I1.getHeight() != I2.getHeight()) || (I1.getWidth() != I2.getWidth())) {
-    throw vpException(vpException::dimensionError, "Error: in vpImageTools::normalizedCorrelation(): "
-                                                   "image dimension mismatch between I1=%ux%u and I2=%ux%u",
+    throw vpException(vpException::dimensionError,
+                      "Error: in vpImageTools::normalizedCorrelation(): "
+                      "image dimension mismatch between I1=%ux%u and I2=%ux%u",
                       I1.getHeight(), I1.getWidth(), I2.getHeight(), I2.getWidth());
   }
 
@@ -615,8 +617,9 @@ void vpImageTools::extract(const vpImage<unsigned char> &Src, vpImage<double> &D
   Dst.resize(x_d, y_d);
   for (unsigned int x = 0; x < x_d; ++x) {
     for (unsigned int y = 0; y < y_d; ++y) {
-      Dst(x, y, interpolate(Src, vpImagePoint(x1 + x * cos(t) + y * sin(t), y1 - x * sin(t) + y * cos(t)),
-                            vpImageTools::INTERPOLATION_LINEAR));
+      Dst(x, y,
+          interpolate(Src, vpImagePoint(x1 + x * cos(t) + y * sin(t), y1 - x * sin(t) + y * cos(t)),
+                      vpImageTools::INTERPOLATION_LINEAR));
     }
   }
 }
@@ -730,22 +733,13 @@ float vpImageTools::cubicHermite(const float A, const float B, const float C, co
   return a * t * t * t + b * t * t + c * t + d;
 }
 
-int vpImageTools::coordCast(double x)
-{
-  return x < 0 ? -1 : static_cast<int>(x);
-}
+int vpImageTools::coordCast(double x) { return x < 0 ? -1 : static_cast<int>(x); }
 
-double vpImageTools::lerp(double A, double B, double t) {
-  return A * (1.0 - t) + B * t;
-}
+double vpImageTools::lerp(double A, double B, double t) { return A * (1.0 - t) + B * t; }
 
-float vpImageTools::lerp(float A, float B, float t) {
-  return A * (1.0f - t) + B * t;
-}
+float vpImageTools::lerp(float A, float B, float t) { return A * (1.0f - t) + B * t; }
 
-int64_t vpImageTools::lerp2(int64_t A, int64_t B, int64_t t, int64_t t_1) {
-  return A * t_1 + B * t;
-}
+int64_t vpImageTools::lerp2(int64_t A, int64_t B, int64_t t, int64_t t_1) { return A * t_1 + B * t; }
 
 double vpImageTools::normalizedCorrelation(const vpImage<double> &I1, const vpImage<double> &I2,
                                            const vpImage<double> &II, const vpImage<double> &IIsq,
@@ -798,8 +792,8 @@ void vpImageTools::remap(const vpImage<unsigned char> &I, const vpArray2D<int> &
       float du = mapDu[i][j];
       float dv = mapDv[i][j];
 
-      if (0 <= u_round && 0 <= v_round && u_round < static_cast<int>(I.getWidth()) - 1
-          && v_round < static_cast<int>(I.getHeight()) - 1) {
+      if (0 <= u_round && 0 <= v_round && u_round < static_cast<int>(I.getWidth()) - 1 &&
+          v_round < static_cast<int>(I.getHeight()) - 1) {
         // process interpolation
         float col0 = lerp(I[v_round][u_round], I[v_round][u_round + 1], du);
         float col1 = lerp(I[v_round + 1][u_round], I[v_round + 1][u_round + 1], du);
@@ -832,14 +826,13 @@ void vpImageTools::remap(const vpImage<vpRGBa> &I, const vpArray2D<int> &mapU, c
 #pragma omp parallel for schedule(dynamic)
 #endif
   for (int i = 0; i < static_cast<int>(I.getHeight()); i++) {
-    SimdRemap(reinterpret_cast<unsigned char *>(I.bitmap), 4, I.getWidth(), I.getHeight(), i*I.getWidth(), mapU.data, mapV.data,
-              mapDu.data, mapDv.data, reinterpret_cast<unsigned char *>(Iundist.bitmap));
+    SimdRemap(reinterpret_cast<unsigned char *>(I.bitmap), 4, I.getWidth(), I.getHeight(), i * I.getWidth(), mapU.data,
+              mapV.data, mapDu.data, mapDv.data, reinterpret_cast<unsigned char *>(Iundist.bitmap));
   }
 }
 
-void vpImageTools::resizeSimdlib(const vpImage<vpRGBa> &Isrc, unsigned int resizeWidth,
-                                 unsigned int resizeHeight, vpImage<vpRGBa> &Idst,
-                                 int method)
+void vpImageTools::resizeSimdlib(const vpImage<vpRGBa> &Isrc, unsigned int resizeWidth, unsigned int resizeHeight,
+                                 vpImage<vpRGBa> &Idst, int method)
 {
   Idst.resize(resizeHeight, resizeWidth);
 
@@ -851,8 +844,7 @@ void vpImageTools::resizeSimdlib(const vpImage<vpRGBa> &Isrc, unsigned int resiz
 }
 
 void vpImageTools::resizeSimdlib(const vpImage<unsigned char> &Isrc, unsigned int resizeWidth,
-                                 unsigned int resizeHeight, vpImage<unsigned char> &Idst,
-                                 int method)
+                                 unsigned int resizeHeight, vpImage<unsigned char> &Idst, int method)
 {
   Idst.resize(resizeHeight, resizeWidth);
 
@@ -865,13 +857,17 @@ void vpImageTools::resizeSimdlib(const vpImage<unsigned char> &Isrc, unsigned in
 
 bool vpImageTools::checkFixedPoint(unsigned int x, unsigned int y, const vpMatrix &T, bool affine)
 {
-  double a0 = T[0][0];  double a1 = T[0][1];  double a2 = T[0][2];
-  double a3 = T[1][0];  double a4 = T[1][1];  double a5 = T[1][2];
+  double a0 = T[0][0];
+  double a1 = T[0][1];
+  double a2 = T[0][2];
+  double a3 = T[1][0];
+  double a4 = T[1][1];
+  double a5 = T[1][2];
   double a6 = affine ? 0.0 : T[2][0];
   double a7 = affine ? 0.0 : T[2][1];
   double a8 = affine ? 1.0 : T[2][2];
 
-  double w  = a6 * x + a7 * y + a8;
+  double w = a6 * x + a7 * y + a8;
   double x2 = (a0 * x + a1 * y + a2) / w;
   double y2 = (a3 * x + a4 * y + a5) / w;
 

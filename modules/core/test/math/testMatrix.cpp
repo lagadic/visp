@@ -75,10 +75,7 @@ bool test(const std::string &s, const vpMatrix &M, const std::vector<double> &be
   return true;
 }
 
-double getRandomValues(double min, double max)
-{
-  return (max - min) * ((double)rand() / (double)RAND_MAX) + min;
-}
+double getRandomValues(double min, double max) { return (max - min) * ((double)rand() / (double)RAND_MAX) + min; }
 
 bool equalMatrix(const vpMatrix &A, const vpMatrix &B, double tol = std::numeric_limits<double>::epsilon())
 {
@@ -110,11 +107,10 @@ vpMatrix generateRandomMatrix(unsigned int rows, unsigned int cols, double min, 
   return M;
 }
 
-std::vector<double> computeHadamard(const std::vector<double>& v1, const std::vector<double>& v2)
+std::vector<double> computeHadamard(const std::vector<double> &v1, const std::vector<double> &v2)
 {
   std::vector<double> result;
-  std::transform(v1.begin(), v1.end(), v2.begin(),
-                 std::back_inserter(result), std::multiplies<double>());
+  std::transform(v1.begin(), v1.end(), v2.begin(), std::back_inserter(result), std::multiplies<double>());
   return result;
 }
 } // namespace
@@ -542,7 +538,8 @@ int main(int argc, char *argv[])
       std::cout << "------------------------" << std::endl;
 
       vpMatrix m_big_stack_static = generateRandomMatrix(ctest ? 100 : 1000, ctest ? 10 : 100, -1000.0, 1000.0);
-      std::cout << "m_big_stack_static: " << m_big_stack_static.getRows() << "x" << m_big_stack_static.getCols() << std::endl;
+      std::cout << "m_big_stack_static: " << m_big_stack_static.getRows() << "x" << m_big_stack_static.getCols()
+                << std::endl;
 
       vpMatrix m_big_stack_static_row, m_big_stack_static_row_tmp;
       t = vpTime::measureTimeMs();
@@ -699,7 +696,7 @@ int main(int argc, char *argv[])
       vpMatrix M(3, 5);
       for (unsigned int j = 0; j < M.getCols(); j++) {
         for (unsigned int i = 0; i < M.getRows(); i++) {
-          M[i][j] = i + j*M.getRows();
+          M[i][j] = i + j * M.getRows();
         }
       }
       std::cout << "M:\n" << M << std::endl;
@@ -709,8 +706,8 @@ int main(int argc, char *argv[])
         std::cerr << "Problem in vpMatrix::stackColumns(): size differ" << std::endl;
         return EXIT_FAILURE;
       }
-      for (unsigned int i=0; i < v.size(); i++) {
-        if (std::fabs(v[i]-static_cast<double>(i)) > std::numeric_limits<double>::epsilon()) {
+      for (unsigned int i = 0; i < v.size(); i++) {
+        if (std::fabs(v[i] - static_cast<double>(i)) > std::numeric_limits<double>::epsilon()) {
           std::cerr << "Problem in vpMatrix::stackColumns(): content differ" << std::endl;
           return EXIT_FAILURE;
         }
@@ -724,7 +721,7 @@ int main(int argc, char *argv[])
       vpMatrix M(3, 5);
       for (unsigned int i = 0; i < M.getRows(); i++) {
         for (unsigned int j = 0; j < M.getCols(); j++) {
-          M[i][j] = i*M.getCols() + j;
+          M[i][j] = i * M.getCols() + j;
         }
       }
       std::cout << "M:\n" << M << std::endl;
@@ -734,8 +731,8 @@ int main(int argc, char *argv[])
         std::cerr << "Problem in vpMatrix::stackRows(): size differ" << std::endl;
         return EXIT_FAILURE;
       }
-      for (unsigned int i=0; i < v.size(); i++) {
-        if (std::fabs(v[i]-static_cast<double>(i)) > std::numeric_limits<double>::epsilon()) {
+      for (unsigned int i = 0; i < v.size(); i++) {
+        if (std::fabs(v[i] - static_cast<double>(i)) > std::numeric_limits<double>::epsilon()) {
           std::cerr << "Problem in vpMatrix::stackRows(): content differ" << std::endl;
           return EXIT_FAILURE;
         }
@@ -746,10 +743,10 @@ int main(int argc, char *argv[])
       std::cout << "\n------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix::getCol()" << std::endl;
       std::cout << "------------------------" << std::endl;
-      vpMatrix A(4,4);
-      for(unsigned int i=0; i < A.getRows(); i++)
-        for(unsigned int j=0; j < A.getCols(); j++)
-          A[i][j] = i*A.getCols()+j;
+      vpMatrix A(4, 4);
+      for (unsigned int i = 0; i < A.getRows(); i++)
+        for (unsigned int j = 0; j < A.getCols(); j++)
+          A[i][j] = i * A.getCols() + j;
 
       {
         vpColVector cv = A.getCol(1, 1, 3);
@@ -775,10 +772,10 @@ int main(int argc, char *argv[])
       std::cout << "\n------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix::getRow()" << std::endl;
       std::cout << "------------------------" << std::endl;
-      vpMatrix A(4,4);
-      for(unsigned int i=0; i < A.getRows(); i++)
-        for(unsigned int j=0; j < A.getCols(); j++)
-          A[i][j] = i*A.getCols()+j;
+      vpMatrix A(4, 4);
+      for (unsigned int i = 0; i < A.getRows(); i++)
+        for (unsigned int j = 0; j < A.getCols(); j++)
+          A[i][j] = i * A.getCols() + j;
 
       {
         vpRowVector rv = A.getRow(1, 1, 3);
@@ -804,10 +801,10 @@ int main(int argc, char *argv[])
       std::cout << "\n------------------------" << std::endl;
       std::cout << "--- TEST vpMatrix::getDiag()" << std::endl;
       std::cout << "------------------------" << std::endl;
-      vpMatrix A(3,4);
-      for(unsigned int i=0; i < A.getRows(); i++)
-        for(unsigned int j=0; j < A.getCols(); j++)
-          A[i][j] = i*A.getCols()+j;
+      vpMatrix A(3, 4);
+      for (unsigned int i = 0; i < A.getRows(); i++)
+        for (unsigned int j = 0; j < A.getCols(); j++)
+          A[i][j] = i * A.getCols() + j;
 
       vpColVector diag = A.getDiag();
       vpColVector ref;

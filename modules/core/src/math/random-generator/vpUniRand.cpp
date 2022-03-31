@@ -32,35 +32,35 @@
  * Pseudo random number generator.
  *
  *****************************************************************************/
- /*
-  * PCG Random Number Generation for C.
-  *
-  * Copyright 2014 Melissa O'Neill <oneill@pcg-random.org>
-  *
-  * Licensed under the Apache License, Version 2.0 (the "License");
-  * you may not use this file except in compliance with the License.
-  * You may obtain a copy of the License at
-  *
-  *     http://www.apache.org/licenses/LICENSE-2.0
-  *
-  * Unless required by applicable law or agreed to in writing, software
-  * distributed under the License is distributed on an "AS IS" BASIS,
-  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-  * See the License for the specific language governing permissions and
-  * limitations under the License.
-  *
-  * For additional information about the PCG random number generation scheme,
-  * including its license and other licensing options, visit
-  *
-  *     http://www.pcg-random.org
-  */
+/*
+ * PCG Random Number Generation for C.
+ *
+ * Copyright 2014 Melissa O'Neill <oneill@pcg-random.org>
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * For additional information about the PCG random number generation scheme,
+ * including its license and other licensing options, visit
+ *
+ *     http://www.pcg-random.org
+ */
 
-  /*
-   * This code is derived from the full C implementation, which is in turn
-   * derived from the canonical C++ PCG implementation. The C++ version
-   * has many additional features and is preferable if you can use C++ in
-   * your project.
-   */
+/*
+ * This code is derived from the full C implementation, which is in turn
+ * derived from the canonical C++ PCG implementation. The C++ version
+ * has many additional features and is preferable if you can use C++ in
+ * your project.
+ */
 
 // To ensure UINT32_MAX, INT32_MX are defined on centos, ubuntu 12.04 we define __STDC_LIMIT_MACROS
 
@@ -69,8 +69,8 @@
 #include <stdint.h>
 #include <visp3/core/vpUniRand.h>
 
-vpUniRand::vpUniRand() :
-  m_maxInvDbl(1.0 / static_cast<double>(UINT32_MAX)), m_maxInvFlt(1.0f / static_cast<float>(UINT32_MAX)), m_rng()
+vpUniRand::vpUniRand()
+  : m_maxInvDbl(1.0 / static_cast<double>(UINT32_MAX)), m_maxInvFlt(1.0f / static_cast<float>(UINT32_MAX)), m_rng()
 {
 }
 
@@ -82,8 +82,8 @@ vpUniRand::vpUniRand() :
 
   \sa setSeed
 */
-vpUniRand::vpUniRand(uint64_t seed, uint64_t seq) :
-  m_maxInvDbl(1.0 / static_cast<double>(UINT32_MAX)), m_maxInvFlt(1.0f / static_cast<float>(UINT32_MAX)), m_rng()
+vpUniRand::vpUniRand(uint64_t seed, uint64_t seq)
+  : m_maxInvDbl(1.0 / static_cast<double>(UINT32_MAX)), m_maxInvFlt(1.0f / static_cast<float>(UINT32_MAX)), m_rng()
 {
   setSeed(seed, seq);
 }
@@ -92,10 +92,7 @@ vpUniRand::vpUniRand(uint64_t seed, uint64_t seq) :
   Generates a pseudorandom uniformly distributed double number between [0, 1) range.
   This is equivalent to call uniform(0.0, 1.0);
 */
-double vpUniRand::operator()()
-{
-  return uniform(0.0, 1.0);
-}
+double vpUniRand::operator()() { return uniform(0.0, 1.0); }
 
 /*!
   Generates a uniformly distributed 32-bit unsigned integer less than bound
@@ -173,20 +170,14 @@ int vpUniRand::uniform(int a, int b)
   \param a : lower inclusive boundary of the returned random number.
   \param b : upper non-inclusive boundary of the returned random number.
 */
-float vpUniRand::uniform(float a, float b)
-{
-  return next()*m_maxInvFlt*(b - a) + a;
-}
+float vpUniRand::uniform(float a, float b) { return next() * m_maxInvFlt * (b - a) + a; }
 
 /*!
   Generates a pseudorandom uniformly distributed double number between [a, b) range.
   \param a : lower inclusive boundary of the returned random number.
   \param b : upper non-inclusive boundary of the returned random number.
 */
-double vpUniRand::uniform(double a, double b)
-{
-  return next()*m_maxInvDbl*(b - a) + a;
-}
+double vpUniRand::uniform(double a, double b) { return next() * m_maxInvDbl * (b - a) + a; }
 
 /*!
   Initialize the random number generator.

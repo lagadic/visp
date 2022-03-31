@@ -1288,8 +1288,8 @@ int main()
 
   \sa setPosition()
 */
-void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2,
-                               double pos3, double pos4, double pos5, double pos6)
+void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3,
+                               double pos4, double pos5, double pos6)
 {
   try {
     vpColVector position(6);

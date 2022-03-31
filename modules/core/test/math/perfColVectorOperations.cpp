@@ -47,12 +47,9 @@ namespace
 static bool g_runBenchmark = false;
 static const std::vector<unsigned int> g_sizes = {23, 127, 233, 419, 1153, 2749};
 
-double getRandomValues(double min, double max)
-{
-  return (max - min) * ((double)rand() / (double)RAND_MAX) + min;
-}
+double getRandomValues(double min, double max) { return (max - min) * ((double)rand() / (double)RAND_MAX) + min; }
 
-vpColVector generateRandomVector(unsigned int rows, double min=-100, double max=100)
+vpColVector generateRandomVector(unsigned int rows, double min = -100, double max = 100)
 {
   vpColVector v(rows);
 
@@ -63,7 +60,7 @@ vpColVector generateRandomVector(unsigned int rows, double min=-100, double max=
   return v;
 }
 
-double stddev(const std::vector<double>& vec)
+double stddev(const std::vector<double> &vec)
 {
   double sum = std::accumulate(vec.begin(), vec.end(), 0.0);
   double mean = sum / vec.size();
@@ -110,15 +107,14 @@ double computeRegularStdev(const vpColVector &v)
   return std::sqrt(sum_squared_diff / divisor);
 }
 
-std::vector<double> computeHadamard(const std::vector<double>& v1, const std::vector<double>& v2)
+std::vector<double> computeHadamard(const std::vector<double> &v1, const std::vector<double> &v2)
 {
   std::vector<double> result;
-  std::transform(v1.begin(), v1.end(), v2.begin(),
-                 std::back_inserter(result), std::multiplies<double>());
+  std::transform(v1.begin(), v1.end(), v2.begin(), std::back_inserter(result), std::multiplies<double>());
   return result;
 }
 
-bool almostEqual(const vpColVector& v1, const vpColVector& v2, double tol=1e-9)
+bool almostEqual(const vpColVector &v1, const vpColVector &v2, double tol = 1e-9)
 {
   if (v1.getRows() != v2.getRows()) {
     return false;
@@ -134,7 +130,8 @@ bool almostEqual(const vpColVector& v1, const vpColVector& v2, double tol=1e-9)
 }
 } // namespace
 
-TEST_CASE("Benchmark vpColVector::sum()", "[benchmark]") {
+TEST_CASE("Benchmark vpColVector::sum()", "[benchmark]")
+{
   // Sanity checks
   {
     const double val = 11;
@@ -146,10 +143,11 @@ TEST_CASE("Benchmark vpColVector::sum()", "[benchmark]") {
     std::vector<double> vec(size);
     vpColVector v(size);
     for (size_t i = 0; i < 11; i++) {
-      vec[i] = 2.*i;
+      vec[i] = 2. * i;
       v[static_cast<unsigned int>(i)] = vec[i];
     }
-    CHECK(v.sum() == Approx(std::accumulate(vec.begin(), vec.end(), 0.0)).epsilon(std::numeric_limits<double>::epsilon()));
+    CHECK(v.sum() ==
+          Approx(std::accumulate(vec.begin(), vec.end(), 0.0)).epsilon(std::numeric_limits<double>::epsilon()));
   }
 
   if (g_runBenchmark) {
@@ -160,7 +158,8 @@ TEST_CASE("Benchmark vpColVector::sum()", "[benchmark]") {
       std::ostringstream oss;
       oss << "Benchmark vpColVector::sum() with size: " << size << " (ViSP)";
       double vp_sum = 0;
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         vp_sum = v.sum();
         return vp_sum;
       };
@@ -168,7 +167,8 @@ TEST_CASE("Benchmark vpColVector::sum()", "[benchmark]") {
       oss.str("");
       oss << "Benchmark std::accumulate() with size: " << size << " (C++)";
       double std_sum = 0;
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         std_sum = std::accumulate(vec.begin(), vec.end(), 0.0);
         return std_sum;
       };
@@ -177,7 +177,8 @@ TEST_CASE("Benchmark vpColVector::sum()", "[benchmark]") {
       oss.str("");
       oss << "Benchmark naive sum() with size: " << size;
       double naive_sum = 0;
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         naive_sum = computeRegularSum(v);
         return naive_sum;
       };
@@ -186,22 +187,24 @@ TEST_CASE("Benchmark vpColVector::sum()", "[benchmark]") {
   }
 }
 
-TEST_CASE("Benchmark vpColVector::sumSquare()", "[benchmark]") {
+TEST_CASE("Benchmark vpColVector::sumSquare()", "[benchmark]")
+{
   // Sanity checks
   {
     const double val = 11;
     vpColVector v(1, val);
-    CHECK(v.sumSquare() == Approx(val*val).epsilon(std::numeric_limits<double>::epsilon()));
+    CHECK(v.sumSquare() == Approx(val * val).epsilon(std::numeric_limits<double>::epsilon()));
   }
   {
     const unsigned int size = 11;
     std::vector<double> vec(size);
     vpColVector v(size);
     for (size_t i = 0; i < 11; i++) {
-      vec[i] = 2.*i;
+      vec[i] = 2. * i;
       v[static_cast<unsigned int>(i)] = vec[i];
     }
-    CHECK(v.sumSquare() == Approx(std::inner_product(vec.begin(), vec.end(), vec.begin(), 0.0)).epsilon(std::numeric_limits<double>::epsilon()));
+    CHECK(v.sumSquare() == Approx(std::inner_product(vec.begin(), vec.end(), vec.begin(), 0.0))
+                               .epsilon(std::numeric_limits<double>::epsilon()));
   }
 
   if (g_runBenchmark) {
@@ -212,7 +215,8 @@ TEST_CASE("Benchmark vpColVector::sumSquare()", "[benchmark]") {
       std::ostringstream oss;
       oss << "Benchmark vpColVector::sumSquare() with size: " << size << " (ViSP)";
       double vp_sq_sum = 0;
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         vp_sq_sum = v.sumSquare();
         return vp_sq_sum;
       };
@@ -220,7 +224,8 @@ TEST_CASE("Benchmark vpColVector::sumSquare()", "[benchmark]") {
       oss.str("");
       oss << "Benchmark std::inner_product with size: " << size << " (C++)";
       double std_sq_sum = 0;
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         std_sq_sum = std::inner_product(vec.begin(), vec.end(), vec.begin(), 0.0);
         return std_sq_sum;
       };
@@ -229,7 +234,8 @@ TEST_CASE("Benchmark vpColVector::sumSquare()", "[benchmark]") {
       oss.str("");
       oss << "Benchmark naive sumSquare() with size: " << size;
       double naive_sq_sum = 0;
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         naive_sq_sum = computeRegularSumSquare(v);
         return naive_sq_sum;
       };
@@ -238,7 +244,8 @@ TEST_CASE("Benchmark vpColVector::sumSquare()", "[benchmark]") {
   }
 }
 
-TEST_CASE("Benchmark vpColVector::stdev()", "[benchmark]") {
+TEST_CASE("Benchmark vpColVector::stdev()", "[benchmark]")
+{
   // Sanity checks
   {
     vpColVector v(2);
@@ -252,7 +259,7 @@ TEST_CASE("Benchmark vpColVector::stdev()", "[benchmark]") {
     std::vector<double> vec(size);
     vpColVector v(size);
     for (size_t i = 0; i < 11; i++) {
-      vec[i] = 2.*i;
+      vec[i] = 2. * i;
       v[static_cast<unsigned int>(i)] = vec[i];
     }
     CHECK(vpColVector::stdev(v) == Approx(stddev(vec)).epsilon(std::numeric_limits<double>::epsilon()));
@@ -266,7 +273,8 @@ TEST_CASE("Benchmark vpColVector::stdev()", "[benchmark]") {
       std::ostringstream oss;
       oss << "Benchmark vpColVector::stdev() with size: " << size << " (ViSP)";
       double vp_stddev = 0;
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         vp_stddev = vpColVector::stdev(v);
         return vp_stddev;
       };
@@ -274,7 +282,8 @@ TEST_CASE("Benchmark vpColVector::stdev()", "[benchmark]") {
       oss.str("");
       oss << "Benchmark C++ stddev impl with size: " << size << " (C++)";
       double std_stddev = 0;
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         std_stddev = stddev(vec);
         return std_stddev;
       };
@@ -283,7 +292,8 @@ TEST_CASE("Benchmark vpColVector::stdev()", "[benchmark]") {
       oss.str("");
       oss << "Benchmark naive stdev() with size: " << size;
       double naive_stddev = 0;
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         naive_stddev = computeRegularStdev(v);
         return naive_stddev;
       };
@@ -292,7 +302,8 @@ TEST_CASE("Benchmark vpColVector::stdev()", "[benchmark]") {
   }
 }
 
-TEST_CASE("Benchmark vpColVector::hadamard()", "[benchmark]") {
+TEST_CASE("Benchmark vpColVector::hadamard()", "[benchmark]")
+{
   // Sanity checks
   {
     vpColVector v1(2), v2(2);
@@ -308,8 +319,8 @@ TEST_CASE("Benchmark vpColVector::hadamard()", "[benchmark]") {
     const unsigned int size = 11;
     std::vector<double> vec1(size), vec2(size);
     for (size_t i = 0; i < 11; i++) {
-      vec1[i] = 2.*i;
-      vec2[i] = 3.*i + 5.;
+      vec1[i] = 2. * i;
+      vec2[i] = 3. * i + 5.;
     }
     vpColVector v1(vec1), v2(vec2);
     vpColVector res1 = v1.hadamard(v2);
@@ -327,7 +338,8 @@ TEST_CASE("Benchmark vpColVector::hadamard()", "[benchmark]") {
       std::ostringstream oss;
       oss << "Benchmark vpColVector::hadamard() with size: " << size << " (ViSP)";
       vpColVector vp_res;
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         vp_res = v1.hadamard(v2);
         return vp_res;
       };
@@ -335,7 +347,8 @@ TEST_CASE("Benchmark vpColVector::hadamard()", "[benchmark]") {
       oss.str("");
       oss << "Benchmark C++ element wise multiplication with size: " << size << " (C++)";
       std::vector<double> std_res;
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         std_res = computeHadamard(vec1, vec2);
         return std_res;
       };
@@ -355,10 +368,10 @@ int main(int argc, char *argv[])
 
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
-  auto cli = session.cli()   // Get Catch's composite command line parser
-      | Opt(g_runBenchmark)  // bind variable to a new option, with a hint string
-      ["--benchmark"]        // the option names it will respond to
-      ("run benchmark?");    // description string for the help output
+  auto cli = session.cli()         // Get Catch's composite command line parser
+             | Opt(g_runBenchmark) // bind variable to a new option, with a hint string
+                   ["--benchmark"] // the option names it will respond to
+             ("run benchmark?");   // description string for the help output
 
   // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
@@ -376,8 +389,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

@@ -193,8 +193,9 @@ void vp_display_display_dot_line(const vpImage<Type> &I, int i1, int j1, int i2,
 
 template <class Type>
 void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &center, const double &coef1,
-                                const double &coef2, const double &coef3, const double &smallalpha, const double &highalpha,
-                                bool use_normalized_centered_moments, const vpColor &color, unsigned int thickness, bool display_center, bool display_arc)
+                                const double &coef2, const double &coef3, const double &smallalpha,
+                                const double &highalpha, bool use_normalized_centered_moments, const vpColor &color,
+                                unsigned int thickness, bool display_center, bool display_arc)
 {
   if (I.display != NULL) {
     double a = 0., b = 0., e = 0.;
@@ -206,18 +207,17 @@ void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &cent
       double n11_p = coef2;
       double n02_p = coef3;
       double num = n20_p - n02_p;
-      double d = num * num + 4.0 * n11_p * n11_p;   // always >= 0
+      double d = num * num + 4.0 * n11_p * n11_p; // always >= 0
 
       if (d <= std::numeric_limits<double>::epsilon()) { // circle
-        e = 0.0;  // case n20 = n02 and n11 = 0 : circle, e undefined
-        a = b = 2.0*sqrt(n20_p);
-      }
-      else { // real ellipse
-        e = atan2(2.0*n11_p, num)/2.0;  // e in [-Pi/2 ; Pi/2]
-        d = sqrt(d); // d in sqrt always >= 0
+        e = 0.0;                                         // case n20 = n02 and n11 = 0 : circle, e undefined
+        a = b = 2.0 * sqrt(n20_p);
+      } else {                             // real ellipse
+        e = atan2(2.0 * n11_p, num) / 2.0; // e in [-Pi/2 ; Pi/2]
+        d = sqrt(d);                       // d in sqrt always >= 0
         num = n20_p + n02_p;
-        a = sqrt(2.0*(num + d)); // term in sqrt always > 0
-        b = sqrt(2.0*(num - d)); // term in sqrt always > 0
+        a = sqrt(2.0 * (num + d)); // term in sqrt always > 0
+        b = sqrt(2.0 * (num - d)); // term in sqrt always > 0
       }
     } else {
       a = coef1;
@@ -233,13 +233,13 @@ void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &cent
     double angle = highalpha - smallalpha;
 
     // Disable arc drawing when the ellipse is complete
-    if (std::fabs(angle - 2* M_PI) <= std::numeric_limits<double>::epsilon()) {
+    if (std::fabs(angle - 2 * M_PI) <= std::numeric_limits<double>::epsilon()) {
       display_arc = false;
     }
 
     double t = (a - b) / (a + b);
-    t *= t;  // t^2
-    double circumference = (angle/2.0) * (a + b) * (1.0 + 3.0 * t / (10.0 + sqrt(4.0 - 3.0 * t)));
+    t *= t; // t^2
+    double circumference = (angle / 2.0) * (a + b) * (1.0 + 3.0 * t / (10.0 + sqrt(4.0 - 3.0 * t)));
     unsigned int nbpoints = (unsigned int)(floor(circumference / 20));
     if (nbpoints < 10) {
       nbpoints = 10;
@@ -319,7 +319,6 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
 
       vpMeterPixelConversion::convertPoint(cam, z.p[0], z.p[1], ip1);
       vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, vpColor::blue, 4 * thickness, 2 * thickness, thickness);
-
     }
   } else {
     vpMeterPixelConversion::convertPoint(cam, o.p[0], o.p[1], ipo);
@@ -332,7 +331,6 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
 
       vpMeterPixelConversion::convertPoint(cam, z.p[0], z.p[1], ip1);
       vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, color, 4 * thickness, 2 * thickness, thickness);
-
     }
   }
 }
@@ -382,17 +380,16 @@ void vp_display_display_point(const vpImage<Type> &I, int i, int j, const vpColo
 
 template <class Type>
 void vp_display_display_polygon(const vpImage<Type> &I, const std::vector<vpImagePoint> &vip, const vpColor &color,
-                                unsigned int thickness, bool closed=true)
+                                unsigned int thickness, bool closed = true)
 {
   if (I.display != NULL) {
     if (closed) {
       for (unsigned int i = 0; i < vip.size(); i++) {
         (I.display)->displayLine(vip[i], vip[(i + 1) % vip.size()], color, thickness);
       }
-    }
-    else {
+    } else {
       for (unsigned int i = 1; i < vip.size(); i++) {
-        (I.display)->displayLine(vip[i-1], vip[i], color, thickness);
+        (I.display)->displayLine(vip[i - 1], vip[i], color, thickness);
       }
     }
   }

@@ -139,7 +139,7 @@ bool check(const vpColVector &v1, const vpColVector &v2, const vpColVector &res_
 
   return true;
 }
-}
+} // namespace
 
 int main()
 {
@@ -160,8 +160,7 @@ int main()
   for (unsigned int i = 0; i < nb_threads; i++) {
     if (i < nb_threads - 1) {
       functors[i] = ArithmFunctor(v1, v2, i * split, (i + 1) * split);
-    }
-    else {
+    } else {
       functors[i] = ArithmFunctor(v1, v2, i * split, size);
     }
 

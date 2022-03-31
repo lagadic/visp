@@ -119,7 +119,8 @@ SYNOPSIS\n\
   %s [-i <test image path>] [-p <personal image path>]\n\
      [-f <first image>] [-n <number of images>] [-s <step>] \n\
      [-t <type of video device>] [-l] [-w] [-c] [-d] [-h]\n						      \
- ", name);
+ ",
+          name);
 
   std::string display;
   switch (dtype) {
@@ -192,7 +193,8 @@ SYNOPSIS\n\
      this option is without effect.\n\
 \n\
   -h\n\
-     Print the help.\n\n", ipath.c_str(), ppath.c_str(), first, nimages, step, display.c_str());
+     Print the help.\n\n",
+          ipath.c_str(), ppath.c_str(), first, nimages, step, display.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);

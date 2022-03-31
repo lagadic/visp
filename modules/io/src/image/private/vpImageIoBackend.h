@@ -43,7 +43,6 @@
 
 #include <visp3/core/vpImage.h>
 
-
 // Portable FloatMap format (PFM)
 // Portable Graymap format (PGM)
 // Portable Pixmap format (PPM)

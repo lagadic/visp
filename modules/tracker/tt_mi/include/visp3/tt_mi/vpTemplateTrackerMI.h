@@ -110,9 +110,9 @@ protected:
   std::vector<double> m_dv;
   std::vector<double> m_A;
   std::vector<double> m_dB;
-  std::vector< std::vector<double> > m_d2u;
-  std::vector< std::vector<double> > m_d2v;
-  std::vector< std::vector<double> > m_dA;
+  std::vector<std::vector<double> > m_d2u;
+  std::vector<std::vector<double> > m_d2v;
+  std::vector<std::vector<double> > m_dA;
 
 protected:
   void computeGradient();
@@ -156,8 +156,8 @@ public:
     : vpTemplateTracker(), hessianComputation(USE_HESSIEN_NORMAL), ApproxHessian(HESSIAN_0), lambda(0), temp(NULL),
       Prt(NULL), dPrt(NULL), Pt(NULL), Pr(NULL), d2Prt(NULL), PrtTout(NULL), dprtemp(NULL), PrtD(NULL), dPrtD(NULL),
       influBspline(0), bspline(0), Nc(0), Ncb(0), d2Ix(), d2Iy(), d2Ixy(), MI_preEstimation(0), MI_postEstimation(0),
-      NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false),
-      m_du(), m_dv(), m_A(), m_dB(), m_d2u(), m_d2v(), m_dA()
+      NMI_preEstimation(0), NMI_postEstimation(0), covarianceMatrix(), computeCovariance(false), m_du(), m_dv(), m_A(),
+      m_dB(), m_d2u(), m_d2v(), m_dA()
   {
   }
   explicit vpTemplateTrackerMI(vpTemplateTrackerWarp *_warp);

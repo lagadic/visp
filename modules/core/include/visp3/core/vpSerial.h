@@ -41,8 +41,8 @@
 
 #if !defined(_WIN32)
 
-#include <string>
 #include <stdint.h>
+#include <string>
 
 #include <visp3/core/vpConfig.h>
 
@@ -74,8 +74,8 @@ public:
    * Defines the possible byte sizes for the serial port.
    */
   typedef enum {
-    fivebits  = 5, //!< Data is encoded with 5 bits
-    sixbits   = 6, //!< Data is encoded with 6 bits
+    fivebits = 5,  //!< Data is encoded with 5 bits
+    sixbits = 6,   //!< Data is encoded with 6 bits
     sevenbits = 7, //!< Data is encoded with 7 bits
     eightbits = 8  //!< Data is encoded with 8 bits
   } bytesize_t;
@@ -85,7 +85,7 @@ public:
    */
   typedef enum {
     parity_none = 0, //!< No parity check
-    parity_odd  = 1, //!< Check for odd parity
+    parity_odd = 1,  //!< Check for odd parity
     parity_even = 2  //!< Check for even parity
   } parity_t;
 
@@ -106,8 +106,8 @@ public:
     flowcontrol_hardware  //!< Hardware flow control
   } flowcontrol_t;
 
-  vpSerial(const std::string &port="", unsigned long baudrate = 9600,
-           bytesize_t bytesize = eightbits, parity_t parity = parity_none, stopbits_t stopbits = stopbits_one,
+  vpSerial(const std::string &port = "", unsigned long baudrate = 9600, bytesize_t bytesize = eightbits,
+           parity_t parity = parity_none, stopbits_t stopbits = stopbits_one,
            flowcontrol_t flowcontrol = flowcontrol_none);
   virtual ~vpSerial();
 
@@ -118,49 +118,37 @@ public:
     Return the baud rate; 9600, 115200...
     \sa setBaudrate()
    */
-  unsigned long getBaudrate() {
-    return m_baudrate;
-  }
+  unsigned long getBaudrate() { return m_baudrate; }
 
   /*!
     Return the byte size.
     \sa setBytesize()
    */
-  bytesize_t getBytesize() {
-    return m_bytesize;
-  }
+  bytesize_t getBytesize() { return m_bytesize; }
 
   /*!
     Return the flow control type.
     \sa setFlowcontrol()
    */
-  flowcontrol_t getFlowcontrol() {
-    return m_flowcontrol;
-  }
+  flowcontrol_t getFlowcontrol() { return m_flowcontrol; }
 
   /*!
     Return parity.
     \sa setParity()
    */
-  parity_t getParity() {
-    return m_parity;
-  }
+  parity_t getParity() { return m_parity; }
 
   /*!
     Return the serial port name like `/dev/ttyUSB0`, `/dev/ttySO`, `/dev/ttyAMA0`...
     \sa setPort()
    */
-  std::string getPort() {
-    return m_port;
-  }
+  std::string getPort() { return m_port; }
 
   /*!
     Return number of stop bits used.
     \sa setStopbits()
    */
-  stopbits_t getStopbits() {
-    return m_stopbits;
-  }
+  stopbits_t getStopbits() { return m_stopbits; }
 
   void open();
   bool read(char *c, long timeout_s);
@@ -189,7 +177,6 @@ private:
   bytesize_t m_bytesize;
   stopbits_t m_stopbits;
   flowcontrol_t m_flowcontrol;
-
 };
 
 #endif

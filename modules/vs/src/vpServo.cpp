@@ -113,10 +113,7 @@ vpServo::vpServo(vpServoType servo_type)
 
   \sa kill()
 */
-vpServo::~vpServo()
-{
-  kill();
-}
+vpServo::~vpServo() { kill(); }
 
 /*!
   Initialize the servo with the following settings:
@@ -1341,7 +1338,8 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
   return e;
 }
 
-void vpServo::computeProjectionOperators(const vpMatrix &J1_, const vpMatrix &I_, const vpMatrix &I_WpW_, const vpColVector &error_, vpMatrix &P_) const
+void vpServo::computeProjectionOperators(const vpMatrix &J1_, const vpMatrix &I_, const vpMatrix &I_WpW_,
+                                         const vpColVector &error_, vpMatrix &P_) const
 {
   // Initialization
   unsigned int n = J1_.getCols();
@@ -1629,8 +1627,7 @@ vpColVector vpServo::secondaryTask(const vpColVector &e2, const vpColVector &de2
  */
 vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq,
                                                       const vpColVector &qmin, const vpColVector &qmax,
-                                                      const double &rho, const double &rho1,
-                                                      const double &lambda_tune)
+                                                      const double &rho, const double &rho1, const double &lambda_tune)
 {
   unsigned int const n = J1.getCols();
 
@@ -1809,10 +1806,7 @@ vpMatrix vpServo::getWpW() const { return WpW; }
  *
  * \sa setPseudoInverseThreshold()
  */
-double vpServo::getPseudoInverseThreshold() const
-{
-  return m_pseudo_inverse_threshold;
-}
+double vpServo::getPseudoInverseThreshold() const { return m_pseudo_inverse_threshold; }
 
 /*!
  * Set the pseudo-inverse threshold used to test the singular values. If

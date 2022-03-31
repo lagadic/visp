@@ -118,7 +118,7 @@ protected:
 
 public:
   vpDetectorQRCode();
-  virtual ~vpDetectorQRCode(){}
+  virtual ~vpDetectorQRCode() {}
   bool detect(const vpImage<unsigned char> &I);
 };
 

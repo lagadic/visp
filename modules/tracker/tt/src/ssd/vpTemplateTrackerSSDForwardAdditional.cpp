@@ -195,7 +195,7 @@ void vpTemplateTrackerSSDForwardAdditional::trackNoPyr(const vpImage<unsigned ch
     evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
     evolRMS_prec = evolRMS;
 
-  } while ( (iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) );
+  } while ((iteration < iterationMax) && (evolRMS_delta > std::fabs(evolRMS_init) * evolRMS_eps));
   delete[] tempt;
 
   nbIteration = iteration;

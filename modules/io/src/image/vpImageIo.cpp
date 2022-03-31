@@ -46,7 +46,6 @@
 
 #include "private/vpImageIoBackend.h"
 
-
 vpImageIo::vpImageFormatType vpImageIo::getFormat(const std::string &filename)
 {
   std::string ext = vpImageIo::getExtension(filename);
@@ -132,10 +131,10 @@ std::string vpImageIo::getExtension(const std::string &filename)
   - portable float map: `*.pfm` file
   - jpeg: `*.jpg`, `*.jpeg` files
   - png: `*.png` file
-  
+
   If ViSP is build with OpenCV support, additional formats are considered:
   - `*.jp2`, `*.rs`, `*.ras`, `*.tiff`, `*.tif`, `*.png`, `*.bmp`, `*.pbm` files.
-  
+
   If EXIF information is embedded in the image file, the EXIF orientation is ignored.
 
   \param I : Image to set with the \e filename content.
@@ -208,10 +207,10 @@ void vpImageIo::read(vpImage<unsigned char> &I, const std::string &filename, int
   - portable float map: `*.pfm` file
   - jpeg: `*.jpg`, `*.jpeg` files
   - png: `*.png` file
-  
+
   If ViSP is build with OpenCV support, additional formats are considered:
   - `*.jp2`, `*.rs`, `*.ras`, `*.tiff`, `*.tif`, `*.png`, `*.bmp`, `*.pbm` files.
-  
+
   If EXIF information is embedded in the image file, the EXIF orientation is ignored.
 
   \param I : Image to set with the \e filename content.
@@ -278,7 +277,7 @@ void vpImageIo::read(vpImage<vpRGBa> &I, const std::string &filename, int backen
   - portable float map: `*.pfm` file
   - jpeg: `*.jpg`, `*.jpeg` files
   - png: `*.png` file
-  
+
   If ViSP is build with OpenCV support, additional formats are considered:
   - `*.jp2`, `*.rs`, `*.ras`, `*.tiff`, `*.tif`, `*.png`, `*.bmp`, `*.pbm` files.
 
@@ -338,7 +337,7 @@ void vpImageIo::write(const vpImage<unsigned char> &I, const std::string &filena
   - portable float map: `*.pfm` file
   - jpeg: `*.jpg`, `*.jpeg` files
   - png: `*.png` file
-  
+
   If ViSP is build with OpenCV support, additional formats are considered:
   - `*.jp2`, `*.rs`, `*.ras`, `*.tiff`, `*.tif`, `*.png`, `*.bmp`, `*.pbm` files.
 
@@ -393,8 +392,8 @@ void vpImageIo::write(const vpImage<vpRGBa> &I, const std::string &filename, int
   \param[out] I : Gray level image.
   \param[in] filename : Image location.
   \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
-  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
-  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND. 
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order:
+  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND.
  */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. opencv, 2. system, 3. stb_image
@@ -402,17 +401,17 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename,
 {
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if !defined(VISP_HAVE_JPEG)
-    std::string message = "Libjpeg backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    std::string message =
+        "Libjpeg backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
-  }
-  else if (backend == IO_OPENCV_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
-    std::string message = "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    std::string message =
+        "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
-  }
-  else if (backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
     backend = IO_OPENCV_BACKEND;
 #elif defined(VISP_HAVE_JPEG)
@@ -442,8 +441,8 @@ void vpImageIo::readJPEG(vpImage<unsigned char> &I, const std::string &filename,
   \param[out] I : Color image.
   \param[in] filename : Image location.
   \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
-  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
-  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND. 
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order:
+  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND.
  */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. opencv, 2. system, 3. stb_image
@@ -451,17 +450,17 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int ba
 {
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if !defined(VISP_HAVE_JPEG)
-    std::string message = "Libjpeg backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    std::string message =
+        "Libjpeg backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
-  }
-  else if (backend == IO_OPENCV_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
-    std::string message = "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    std::string message =
+        "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
-  }
-  else if (backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
     backend = IO_OPENCV_BACKEND;
 #elif defined(VISP_HAVE_JPEG)
@@ -491,8 +490,8 @@ void vpImageIo::readJPEG(vpImage<vpRGBa> &I, const std::string &filename, int ba
   \param[out] I : Gray level image.
   \param[in] filename : Image location.
   \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
-  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
-  vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND. 
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order:
+  vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND.
  */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. system, 2. opencv, 3. stb_image
@@ -500,17 +499,17 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
 {
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if !defined(VISP_HAVE_PNG)
-    std::string message = "Libpng backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    std::string message =
+        "Libpng backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
-  }
-  else if (backend == IO_OPENCV_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
-    std::string message = "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    std::string message =
+        "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
-  }
-  else if (backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_PNG)
     backend = IO_SYSTEM_LIB_BACKEND;
 #elif defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
@@ -540,8 +539,8 @@ void vpImageIo::readPNG(vpImage<unsigned char> &I, const std::string &filename, 
   \param[out] I : Color image.
   \param[in] filename : Image location.
   \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
-  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
-  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND. 
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order:
+  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND.
  */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. opencv, 2. stb_image
@@ -549,17 +548,17 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
 {
   if (backend == IO_SYSTEM_LIB_BACKEND) {
 #if !defined(VISP_HAVE_PNG)
-    std::string message = "Libpng backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    std::string message =
+        "Libpng backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
-  }
-  else if (backend == IO_OPENCV_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
-    std::string message = "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
+    std::string message =
+        "OpenCV backend is not available to read file \"" + filename + "\": switch to stb_image backend";
     backend = IO_STB_IMAGE_BACKEND;
 #endif
-  }
-  else if (backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
     backend = IO_OPENCV_BACKEND;
 #else
@@ -587,8 +586,8 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
   \param[in] I : Gray level image.
   \param[in] filename : Image location.
   \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
-  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
-  vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND. 
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order:
+  vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND.
   \param[in] quality : Image quality percentage in range 0-100.
  */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
@@ -600,14 +599,12 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
     std::string message = "Libjpeg backend is not available to save file \"" + filename + "\": switch to simd backend";
     backend = IO_SIMDLIB_BACKEND;
 #endif
-  }
-  else if (backend == IO_OPENCV_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
     std::string message = "OpenCV backend is not available to save file \"" + filename + "\": switch to simd backend";
     backend = IO_SIMDLIB_BACKEND;
 #endif
-  }
-  else if (backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     backend = IO_SYSTEM_LIB_BACKEND;
 #elif defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
@@ -637,8 +634,8 @@ void vpImageIo::writeJPEG(const vpImage<unsigned char> &I, const std::string &fi
   \param[in] I : Color image.
   \param[in] filename : Image location.
   \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
-  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
-  vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND. 
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order:
+  vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND.
   \param[in] quality : Image quality percentage in range 0-100.
  */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
@@ -650,14 +647,12 @@ void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename,
     std::string message = "Libjpeg backend is not available to save file \"" + filename + "\": switch to simd backend";
     backend = IO_SIMDLIB_BACKEND;
 #endif
-  }
-  else if (backend == IO_OPENCV_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
     std::string message = "OpenCV backend is not available to save file \"" + filename + "\": switch to simd backend";
     backend = IO_SIMDLIB_BACKEND;
 #endif
-  }
-  else if (backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_JPEG)
     backend = IO_SYSTEM_LIB_BACKEND;
 #elif defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
@@ -687,8 +682,8 @@ void vpImageIo::writeJPEG(const vpImage<vpRGBa> &I, const std::string &filename,
   \param[in] I : Gray level image.
   \param[in] filename : Image location.
   \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
-  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
-  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND. 
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order:
+  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND.
  */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. opencv, 2. simd
@@ -699,14 +694,12 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
     std::string message = "Libpng backend is not available to save file \"" + filename + "\": switch to simd backend";
     backend = IO_SIMDLIB_BACKEND;
 #endif
-  }
-  else if (backend == IO_OPENCV_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
     std::string message = "OpenCV backend is not available to save file \"" + filename + "\": switch to simd backend";
     backend = IO_SIMDLIB_BACKEND;
 #endif
-  }
-  else if (backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
     backend = IO_OPENCV_BACKEND;
 #else
@@ -716,7 +709,7 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
 
   if (backend == IO_OPENCV_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
-      writeOpenCV(I, filename, 90);
+    writeOpenCV(I, filename, 90);
 #endif
   } else if (backend == IO_SIMDLIB_BACKEND) {
     writePNGSimdlib(I, filename);
@@ -734,8 +727,8 @@ void vpImageIo::writePNG(const vpImage<unsigned char> &I, const std::string &fil
   \param[in] I : Color image.
   \param[in] filename : Image location.
   \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
-  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order: 
-  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND. 
+  Depending on its availability, the default backend vpImageIo::IO_DEFAULT_BACKEND is chosen in the following order:
+  vpImageIo::IO_OPENCV_BACKEND, vpImageIo::IO_SYSTEM_LIB_BACKEND, vpImageIo::IO_SIMDLIB_BACKEND.
  */
 // Strategy based on benchmark: see https://github.com/lagadic/visp/pull/1004
 // Default: 1. opencv, 2. system, 3. simd
@@ -746,14 +739,12 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
     std::string message = "Libpng backend is not available to save file \"" + filename + "\": switch to simd backend";
     backend = IO_SIMDLIB_BACKEND;
 #endif
-  }
-  else if (backend == IO_OPENCV_BACKEND) {
+  } else if (backend == IO_OPENCV_BACKEND) {
 #if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
     std::string message = "OpenCV backend is not available to save file \"" + filename + "\": switch to simd backend";
     backend = IO_SIMDLIB_BACKEND;
 #endif
-  }
-  else if (backend == IO_DEFAULT_BACKEND) {
+  } else if (backend == IO_DEFAULT_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
     backend = IO_OPENCV_BACKEND;
 #else
@@ -763,7 +754,7 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
 
   if (backend == IO_OPENCV_BACKEND) {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
-      writeOpenCV(I, filename, 90);
+    writeOpenCV(I, filename, 90);
 #endif
   } else if (backend == IO_SIMDLIB_BACKEND) {
     writePNGSimdlib(I, filename);
@@ -781,107 +772,74 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
   \param[in] I : Image to save.
   \param[in] filename : Image location.
  */
-void vpImageIo::writePFM(const vpImage<float> &I, const std::string &filename)
-{
-  vp_writePFM(I, filename);
-}
+void vpImageIo::writePFM(const vpImage<float> &I, const std::string &filename) { vp_writePFM(I, filename); }
 
 /*!
   Save an image in portable gray map format.
   \param[in] I : Image to save.
   \param[in] filename : Image location.
  */
-void vpImageIo::writePGM(const vpImage<unsigned char> &I, const std::string &filename)
-{
-  vp_writePGM(I, filename);
-}
+void vpImageIo::writePGM(const vpImage<unsigned char> &I, const std::string &filename) { vp_writePGM(I, filename); }
 
 /*!
   Save a gray level image in portable gray map format.
   \param[in] I : Image to save.
   \param[in] filename : Image location.
  */
-void vpImageIo::writePGM(const vpImage<short> &I, const std::string &filename)
-{
-  vp_writePGM(I, filename);
-}
+void vpImageIo::writePGM(const vpImage<short> &I, const std::string &filename) { vp_writePGM(I, filename); }
 
 /*!
   Save a color image in portable gray map format.
   \param[in] I : Image to save.
   \param[in] filename : Image location.
  */
-void vpImageIo::writePGM(const vpImage<vpRGBa> &I, const std::string &filename)
-{
-  vp_writePGM(I, filename);
-}
+void vpImageIo::writePGM(const vpImage<vpRGBa> &I, const std::string &filename) { vp_writePGM(I, filename); }
 
 /*!
   Load an image in portable float map format.
   \param[out] I : Image read from filename.
   \param[in] filename : Image location.
  */
-void vpImageIo::readPFM(vpImage<float> &I, const std::string &filename)
-{
-  vp_readPFM(I, filename);
-}
+void vpImageIo::readPFM(vpImage<float> &I, const std::string &filename) { vp_readPFM(I, filename); }
 
 /*!
   Load an image in portable gray map format. If the image is in color, it is converted in gray level.
   \param[out] I : Image read from filename.
   \param[in] filename : Image location.
  */
-void vpImageIo::readPGM(vpImage<unsigned char> &I, const std::string &filename)
-{
-  vp_readPGM(I, filename);
-}
+void vpImageIo::readPGM(vpImage<unsigned char> &I, const std::string &filename) { vp_readPGM(I, filename); }
 
 /*!
   Load an image in portable float map format. If the image is in gray, it is converted in color.
   \param[out] I : Image read from filename.
   \param[in] filename : Image location.
  */
-void vpImageIo::readPGM(vpImage<vpRGBa> &I, const std::string &filename)
-{
-  vp_readPGM(I, filename);
-}
+void vpImageIo::readPGM(vpImage<vpRGBa> &I, const std::string &filename) { vp_readPGM(I, filename); }
 
 /*!
   Load an image in portable pixmap format. If the image is in color, it is converted in gray level.
   \param[out] I : Image read from filename.
   \param[in] filename : Image location.
  */
-void vpImageIo::readPPM(vpImage<unsigned char> &I, const std::string &filename)
-{
-  vp_readPPM(I, filename);
-}
+void vpImageIo::readPPM(vpImage<unsigned char> &I, const std::string &filename) { vp_readPPM(I, filename); }
 
 /*!
   Load an image in portable pixmap format. If the image is in gray, it is converted in color.
   \param[out] I : Image read from filename.
   \param[in] filename : Image location.
  */
-void vpImageIo::readPPM(vpImage<vpRGBa> &I, const std::string &filename)
-{
-  vp_readPPM(I, filename);
-}
+void vpImageIo::readPPM(vpImage<vpRGBa> &I, const std::string &filename) { vp_readPPM(I, filename); }
 
 /*!
   Save a gray level image in portable pixmap format.
   \param[in] I : Image to save.
   \param[in] filename : Image location.
  */
-void vpImageIo::writePPM(const vpImage<unsigned char> &I, const std::string &filename)
-{
-  vp_writePPM(I, filename);
-}
+void vpImageIo::writePPM(const vpImage<unsigned char> &I, const std::string &filename) { vp_writePPM(I, filename); }
 
 /*!
   Save a color level image in portable pixmap format.
   \param[in] I : Image to save.
   \param[in] filename : Image location.
  */
-void vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string &filename)
-{
-  vp_writePPM(I, filename);
-}
+void vpImageIo::writePPM(const vpImage<vpRGBa> &I, const std::string &filename) { vp_writePPM(I, filename); }

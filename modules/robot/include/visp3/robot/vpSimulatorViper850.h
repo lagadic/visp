@@ -257,8 +257,8 @@ public:
   void setCameraParameters(const vpCameraParameters &cam);
   void setJointLimit(const vpColVector &limitMin, const vpColVector &limitMax);
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &q);
-  void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3,
-                   double pos4, double pos5, double pos6);
+  void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3, double pos4,
+                   double pos5, double pos6);
   void setPosition(const char *filename);
   void setPositioningVelocity(double vel) { positioningVelocity = vel; }
   vpRobot::vpRobotStateType setRobotState(const vpRobot::vpRobotStateType newState);

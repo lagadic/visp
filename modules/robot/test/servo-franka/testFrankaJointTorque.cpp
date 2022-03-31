@@ -58,13 +58,11 @@ int main(int argc, char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
       robot_ip = std::string(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--log_folder" && i + 1 < argc) {
+    } else if (std::string(argv[i]) == "--log_folder" && i + 1 < argc) {
       log_folder = std::string(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0] << " [--ip 192.168.1.1] [--log_folder <folder>] [--help] [-h]"
-                           << "\n";
+                << "\n";
       return EXIT_SUCCESS;
     }
   }
@@ -76,7 +74,8 @@ int main(int argc, char **argv)
 
     std::cout << "WARNING: This example will move the robot! " << std::endl
               << "- Please make sure to have the user stop button at hand!" << std::endl
-              << "- Please make also sure the end-effector is in contact with a flat surface such as a foam board!" << std::endl
+              << "- Please make also sure the end-effector is in contact with a flat surface such as a foam board!"
+              << std::endl
               << "Press Enter to continue..." << std::endl;
     std::cin.ignore();
 
@@ -99,19 +98,16 @@ int main(int argc, char **argv)
 
     robot.setRobotState(vpRobot::STATE_STOP);
     vpTime::wait(100);
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const franka::NetworkException &e) {
+  } catch (const franka::NetworkException &e) {
     std::cout << "Franka network exception: " << e.what() << std::endl;
     std::cout << "Check if you are connected to the Franka robot"
               << " or if you specified the right IP using --ip command"
               << " line option set by default to 192.168.1.1. " << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const std::exception &e) {
+  } catch (const std::exception &e) {
     std::cout << "Franka exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
@@ -121,8 +117,5 @@ int main(int argc, char **argv)
 }
 
 #else
-int main()
-{
-  std::cout << "ViSP is not build with libfranka..." << std::endl;
-}
+int main() { std::cout << "ViSP is not build with libfranka..." << std::endl; }
 #endif

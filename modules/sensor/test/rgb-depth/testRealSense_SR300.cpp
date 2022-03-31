@@ -46,7 +46,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vpRealSense.h>
 
-#if defined(VISP_HAVE_REALSENSE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                          \
+#if defined(VISP_HAVE_REALSENSE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                     \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 #include <mutex>
 #include <thread>

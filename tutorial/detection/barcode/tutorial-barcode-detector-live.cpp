@@ -52,7 +52,7 @@ int main(int argc, const char **argv)
     cap >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #endif
-//! [Construct grabber]
+    //! [Construct grabber]
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I);

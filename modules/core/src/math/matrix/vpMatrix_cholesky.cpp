@@ -54,21 +54,21 @@
 #endif
 
 #ifdef VISP_HAVE_LAPACK
-#  ifdef VISP_HAVE_GSL
-#    include <gsl/gsl_linalg.h>
-#  endif
-#  ifdef VISP_HAVE_MKL
-#    include <mkl.h>
+#ifdef VISP_HAVE_GSL
+#include <gsl/gsl_linalg.h>
+#endif
+#ifdef VISP_HAVE_MKL
+#include <mkl.h>
 typedef MKL_INT integer;
-#  elif !defined(VISP_HAVE_GSL)
-#    ifdef VISP_HAVE_LAPACK_BUILT_IN
+#elif !defined(VISP_HAVE_GSL)
+#ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
-#    else
+#else
 typedef int integer;
-#    endif
+#endif
 extern "C" void dpotrf_(char *uplo, integer *n, double *a, integer *lda, integer *info);
 extern "C" int dpotri_(char *uplo, integer *n, double *a, integer *lda, integer *info);
-#  endif
+#endif
 #endif
 
 /*!

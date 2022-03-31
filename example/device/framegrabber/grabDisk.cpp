@@ -95,7 +95,8 @@ to a PGM file.\n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-b <base name>] [-e <extension>] \n\
    [-f <first frame>] [-n <number of images> [-s <step>] \n\
-   [-z <number of zero>] [-d] [-h]\n", name);
+   [-z <number of zero>] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -136,7 +137,8 @@ OPTIONS:                                               Default\n\
      Turn off the display.\n\
 \n\
   -h \n\
-     Print the help.\n\n", ipath.c_str(), basename.c_str(), ext.c_str(), first, nimages, step, nzero);
+     Print the help.\n\n",
+          ipath.c_str(), basename.c_str(), ext.c_str(), first, nimages, step, nzero);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -355,7 +357,8 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  std::cout << "You do not have X11, or GDI (Graphical Device Interface) functionalities to display images..." << std::endl;
+  std::cout << "You do not have X11, or GDI (Graphical Device Interface) functionalities to display images..."
+            << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

@@ -62,13 +62,13 @@ public:
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               bool displayFullModel=false);
+                                                               bool displayFullModel = false);
 
   virtual inline vpColVector getRobustWeights() const { return m_w_depthDense; }
 
   virtual void init(const vpImage<unsigned char> &I);
 
-  virtual void loadConfigFile(const std::string &configFile, bool verbose=true);
+  virtual void loadConfigFile(const std::string &configFile, bool verbose = true);
 
   void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
                    bool verbose = false);
@@ -156,8 +156,8 @@ protected:
   virtual void computeVVSWeights();
   using vpMbTracker::computeVVSWeights;
 
-  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
-                          int idFace = 0, const std::string &name = "");
+  virtual void initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace = 0,
+                          const std::string &name = "");
 
   virtual void initCylinder(const vpPoint &p1, const vpPoint &p2, double radius, int idFace = 0,
                             const std::string &name = "");
@@ -169,7 +169,6 @@ protected:
 #ifdef VISP_HAVE_PCL
   void segmentPointCloud(const pcl::PointCloud<pcl::PointXYZ>::ConstPtr &point_cloud);
 #endif
-  void segmentPointCloud(const std::vector<vpColVector> &point_cloud, unsigned int width,
-                         unsigned int height);
+  void segmentPointCloud(const std::vector<vpColVector> &point_cloud, unsigned int width, unsigned int height);
 };
 #endif

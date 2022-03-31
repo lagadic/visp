@@ -52,24 +52,26 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
-namespace {
-  void checkSize(const vpPoseVector& pose, const std::vector<double>& ref)
-  {
-    REQUIRE(pose.size() == 6);
-    REQUIRE(pose.getRows() == 6);
-    REQUIRE(pose.getCols() == 1);
-    REQUIRE(pose.size() == ref.size());
-  }
-
-  void checkData(const vpPoseVector& pose, const std::vector<double>& ref)
-  {
-    for (unsigned int i = 0; i < pose.size(); i++) {
-      REQUIRE(pose[i] == Approx(ref[i]).epsilon(std::numeric_limits<double>::epsilon()));
-    }
-  }
+namespace
+{
+void checkSize(const vpPoseVector &pose, const std::vector<double> &ref)
+{
+  REQUIRE(pose.size() == 6);
+  REQUIRE(pose.getRows() == 6);
+  REQUIRE(pose.getCols() == 1);
+  REQUIRE(pose.size() == ref.size());
 }
 
-TEST_CASE("vpPoseVector size", "[vpColVector]") {
+void checkData(const vpPoseVector &pose, const std::vector<double> &ref)
+{
+  for (unsigned int i = 0; i < pose.size(); i++) {
+    REQUIRE(pose[i] == Approx(ref[i]).epsilon(std::numeric_limits<double>::epsilon()));
+  }
+}
+} // namespace
+
+TEST_CASE("vpPoseVector size", "[vpColVector]")
+{
   vpPoseVector pose;
   REQUIRE(pose.size() == 6);
   REQUIRE(pose.getRows() == 6);
@@ -80,7 +82,8 @@ TEST_CASE("vpPoseVector size", "[vpColVector]") {
   }
 }
 
-TEST_CASE("vpPoseVector value assignment", "[vpColVector]") {
+TEST_CASE("vpPoseVector value assignment", "[vpColVector]")
+{
   vpPoseVector pose;
   std::vector<double> ref(6);
   pose[0] = ref[0] = 0.1;
@@ -94,7 +97,8 @@ TEST_CASE("vpPoseVector value assignment", "[vpColVector]") {
   checkData(pose, ref);
 }
 
-TEST_CASE("vpPoseVector constructor", "[vpColVector]") {
+TEST_CASE("vpPoseVector constructor", "[vpColVector]")
+{
   std::vector<double> ref(6);
   ref[0] = 0.1;
   ref[1] = 0.2;
@@ -109,9 +113,9 @@ TEST_CASE("vpPoseVector constructor", "[vpColVector]") {
   checkData(pose, ref);
 }
 
-TEST_CASE("vpPoseVector copy constructor", "[vpColVector]") {
-  std::vector<double> ref = { 0.1, 0.2, 0.3,
-                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+TEST_CASE("vpPoseVector copy constructor", "[vpColVector]")
+{
+  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
 
   vpPoseVector pose1(ref[0], ref[1], ref[2], ref[3], ref[4], ref[5]);
   vpPoseVector pose2(pose1);
@@ -120,9 +124,9 @@ TEST_CASE("vpPoseVector copy constructor", "[vpColVector]") {
   checkData(pose2, ref);
 }
 
-TEST_CASE("vpPoseVector object assignment", "[vpColVector]") {
-  std::vector<double> ref = { 0.1, 0.2, 0.3,
-                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+TEST_CASE("vpPoseVector object assignment", "[vpColVector]")
+{
+  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
 
   vpPoseVector pose1(ref[0], ref[1], ref[2], ref[3], ref[4], ref[5]);
   vpPoseVector pose2 = pose1;
@@ -131,9 +135,9 @@ TEST_CASE("vpPoseVector object assignment", "[vpColVector]") {
   checkData(pose2, ref);
 }
 
-TEST_CASE("vpPoseVector set", "[vpColVector]") {
-  std::vector<double> ref = { 0.1, 0.2, 0.3,
-                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+TEST_CASE("vpPoseVector set", "[vpColVector]")
+{
+  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
 
   vpPoseVector pose1(ref[0], ref[1], ref[2], ref[3], ref[4], ref[5]);
   vpPoseVector pose2;
@@ -143,9 +147,9 @@ TEST_CASE("vpPoseVector set", "[vpColVector]") {
   checkData(pose2, ref);
 }
 
-TEST_CASE("vpPoseVector constructor t, tu", "[vpColVector]") {
-  std::vector<double> ref = { 0.1, 0.2, 0.3,
-                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+TEST_CASE("vpPoseVector constructor t, tu", "[vpColVector]")
+{
+  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
   vpTranslationVector t(ref[0], ref[1], ref[2]);
   vpThetaUVector tu(ref[3], ref[4], ref[5]);
 
@@ -155,9 +159,9 @@ TEST_CASE("vpPoseVector constructor t, tu", "[vpColVector]") {
   checkData(pose, ref);
 }
 
-TEST_CASE("vpPoseVector buildFrom t, tu", "[vpColVector]") {
-  std::vector<double> ref = { 0.1, 0.2, 0.3,
-                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+TEST_CASE("vpPoseVector buildFrom t, tu", "[vpColVector]")
+{
+  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
   vpTranslationVector t(ref[0], ref[1], ref[2]);
   vpThetaUVector tu(ref[3], ref[4], ref[5]);
 
@@ -168,9 +172,9 @@ TEST_CASE("vpPoseVector buildFrom t, tu", "[vpColVector]") {
   checkData(pose, ref);
 }
 
-TEST_CASE("vpPoseVector constructor vpHomogeneousMatrix", "[vpColVector]") {
-  std::vector<double> ref = { 0.1, 0.2, 0.3,
-                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+TEST_CASE("vpPoseVector constructor vpHomogeneousMatrix", "[vpColVector]")
+{
+  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
   vpTranslationVector t(ref[0], ref[1], ref[2]);
   vpThetaUVector tu(ref[3], ref[4], ref[5]);
   vpHomogeneousMatrix M(t, tu);
@@ -181,9 +185,9 @@ TEST_CASE("vpPoseVector constructor vpHomogeneousMatrix", "[vpColVector]") {
   checkData(pose, ref);
 }
 
-TEST_CASE("vpPoseVector buildFrom vpHomogeneousMatrix", "[vpColVector]") {
-  std::vector<double> ref = { 0.1, 0.2, 0.3,
-                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+TEST_CASE("vpPoseVector buildFrom vpHomogeneousMatrix", "[vpColVector]")
+{
+  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
   vpTranslationVector t(ref[0], ref[1], ref[2]);
   vpThetaUVector tu(ref[3], ref[4], ref[5]);
   vpHomogeneousMatrix M(t, tu);
@@ -195,9 +199,9 @@ TEST_CASE("vpPoseVector buildFrom vpHomogeneousMatrix", "[vpColVector]") {
   checkData(pose, ref);
 }
 
-TEST_CASE("vpPoseVector constructor t, R", "[vpColVector]") {
-  std::vector<double> ref = { 0.1, 0.2, 0.3,
-                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+TEST_CASE("vpPoseVector constructor t, R", "[vpColVector]")
+{
+  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
   vpTranslationVector t(ref[0], ref[1], ref[2]);
   vpThetaUVector tu(ref[3], ref[4], ref[5]);
   vpRotationMatrix R(tu);
@@ -208,9 +212,9 @@ TEST_CASE("vpPoseVector constructor t, R", "[vpColVector]") {
   checkData(pose, ref);
 }
 
-TEST_CASE("vpPoseVector buildFrom t, R", "[vpColVector]") {
-  std::vector<double> ref = { 0.1, 0.2, 0.3,
-                             vpMath::rad(10), vpMath::rad(20), vpMath::rad(30) };
+TEST_CASE("vpPoseVector buildFrom t, R", "[vpColVector]")
+{
+  std::vector<double> ref = {0.1, 0.2, 0.3, vpMath::rad(10), vpMath::rad(20), vpMath::rad(30)};
   vpTranslationVector t(ref[0], ref[1], ref[2]);
   vpThetaUVector tu(ref[3], ref[4], ref[5]);
   vpRotationMatrix R(tu);
@@ -239,8 +243,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

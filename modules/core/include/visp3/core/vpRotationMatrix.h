@@ -141,7 +141,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpRotationMatrix(){}
+  virtual ~vpRotationMatrix() {}
 
   vpRotationMatrix buildFrom(const vpHomogeneousMatrix &M);
   vpRotationMatrix buildFrom(const vpThetaUVector &v);
@@ -160,14 +160,14 @@ public:
   vpRotationMatrix inverse() const;
   void inverse(vpRotationMatrix &R) const;
 
-  bool isARotationMatrix(double threshold=1e-6) const;
+  bool isARotationMatrix(double threshold = 1e-6) const;
 
   // copy operator from vpRotationMatrix
   vpRotationMatrix &operator=(const vpRotationMatrix &R);
   // copy operator from vpMatrix (handle with care)
   vpRotationMatrix &operator=(const vpMatrix &M);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpRotationMatrix& operator=(const std::initializer_list<double> &list);
+  vpRotationMatrix &operator=(const std::initializer_list<double> &list);
 #endif
   // operation c = A * b (A is unchanged)
   vpTranslationVector operator*(const vpTranslationVector &tv) const;
@@ -180,8 +180,8 @@ public:
   vpRotationMatrix operator*(double x) const;
   vpRotationMatrix &operator*=(double x);
 
-  vpRotationMatrix& operator<<(double val);
-  vpRotationMatrix& operator,(double val);
+  vpRotationMatrix &operator<<(double val);
+  vpRotationMatrix &operator,(double val);
 
   void orthogonalize();
 
@@ -215,7 +215,7 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init(){}
+  vp_deprecated void init() {}
   /*!
      \deprecated You should rather use eye().
    */

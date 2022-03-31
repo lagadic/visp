@@ -28,7 +28,7 @@ int main(int argc, const char **argv)
 
     //! [Create base detector]
     vpDetectorBase *detector = NULL;
-//! [Create base detector]
+    //! [Create base detector]
 
 #if (defined(VISP_HAVE_ZBAR) && defined(VISP_HAVE_DMTX))
     int opt_barcode = 0; // 0=QRCode, 1=DataMatrix

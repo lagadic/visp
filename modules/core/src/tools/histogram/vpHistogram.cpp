@@ -131,7 +131,7 @@ vpThread::Return computeHistogramThread(vpThread::Args args)
 
   return 0;
 }
-}
+} // namespace
 #endif
 
 bool compare_vpHistogramPeak(vpHistogramPeak first, vpHistogramPeak second);

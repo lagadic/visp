@@ -361,8 +361,7 @@ int main()
     robot.setVelocity(vpRobot::CAMERA_FRAME, v);
     vpDisplay::getClick(I);
     return EXIT_SUCCESS;
-  }
-  catch (const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Test failed with exception: " << e << std::endl;
     return EXIT_FAILURE;
   }

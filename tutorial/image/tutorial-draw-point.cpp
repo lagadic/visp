@@ -13,7 +13,7 @@ int main()
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I, vpDisplay::SCALE_AUTO);
 #endif
-    
+
     vpDisplay::setTitle(I, "My image");
     vpDisplay::display(I);
     //! [Point]

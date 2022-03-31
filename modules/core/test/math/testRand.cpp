@@ -40,8 +40,8 @@
 #include <catch.hpp>
 
 #include <visp3/core/vpGaussRand.h>
-#include <visp3/core/vpTime.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpTime.h>
 
 namespace
 {
@@ -52,7 +52,7 @@ class vpUniRandOld
   long q;            // integer part of m/a
   long r;            // r=m mod a
   double normalizer; // we use a normalizer > m to ensure ans will never be 1
-                      // (it is the case if x = 739806647)
+                     // (it is the case if x = 739806647)
 
 private:
   inline void draw0()
@@ -68,7 +68,7 @@ protected:
   double draw1()
   {
     const long ntab = 33; // we work on a 32 elements array.
-                        // the 33rd one is actually the first value of y.
+                          // the 33rd one is actually the first value of y.
     const long modulo = ntab - 2;
 
     static long y = 0;
@@ -110,14 +110,15 @@ public:
   }
 
   //! Default destructor.
-  virtual ~vpUniRandOld() {};
+  virtual ~vpUniRandOld(){};
 
   //! Operator that allows to get a random value.
   double operator()() { return draw1(); }
 };
-}
+} // namespace
 
-TEST_CASE("Check Gaussian draw", "[visp_rand]") {
+TEST_CASE("Check Gaussian draw", "[visp_rand]")
+{
   std::vector<double> vec(100000);
   const double sigma = 5.0, mean = -7.5;
   vpGaussRand rng(sigma, mean);
@@ -139,7 +140,8 @@ TEST_CASE("Check Gaussian draw", "[visp_rand]") {
   CHECK(calculated_mean == Approx(mean).epsilon(0.01));
 }
 
-TEST_CASE("Check Gaussian draw independance", "[visp_rand]") {
+TEST_CASE("Check Gaussian draw independance", "[visp_rand]")
+{
   const double sigma = 5.0, mean = -7.5;
 
   SECTION("Two simultaneous vpGaussRand instances with the same seed should produce the same results")
@@ -173,7 +175,8 @@ TEST_CASE("Check Gaussian draw independance", "[visp_rand]") {
   }
 }
 
-TEST_CASE("Check uniform draw", "[visp_rand]") {
+TEST_CASE("Check uniform draw", "[visp_rand]")
+{
   const int niters = 500000;
 
   SECTION("vpUniRand")
@@ -187,7 +190,7 @@ TEST_CASE("Check uniform draw", "[visp_rand]") {
       double x = rng();
       double y = rng();
 
-      if (sqrt(x*x + y * y) <= 1.0) {
+      if (sqrt(x * x + y * y) <= 1.0) {
         inside++;
       }
     }
@@ -212,7 +215,7 @@ TEST_CASE("Check uniform draw", "[visp_rand]") {
       double x = static_cast<double>(rand()) / RAND_MAX;
       double y = static_cast<double>(rand()) / RAND_MAX;
 
-      if (sqrt(x*x + y * y) <= 1.0) {
+      if (sqrt(x * x + y * y) <= 1.0) {
         inside++;
       }
     }
@@ -237,7 +240,7 @@ TEST_CASE("Check uniform draw", "[visp_rand]") {
       double x = rng();
       double y = rng();
 
-      if (sqrt(x*x + y * y) <= 1.0) {
+      if (sqrt(x * x + y * y) <= 1.0) {
         inside++;
       }
     }
@@ -245,15 +248,16 @@ TEST_CASE("Check uniform draw", "[visp_rand]") {
     chrono.stop();
 
     double pi_error = pi - M_PI;
-    std::cout << "Old ViSP vpUniRand implementation calculated pi: " << pi << " in "
-              << chrono.getDurationMs() << " ms" << std::endl;
+    std::cout << "Old ViSP vpUniRand implementation calculated pi: " << pi << " in " << chrono.getDurationMs() << " ms"
+              << std::endl;
     std::cout << "pi error: " << pi_error << std::endl;
 
     CHECK(pi == Approx(M_PI).margin(0.005));
   }
 }
 
-TEST_CASE("Check uniform draw range", "[visp_rand]") {
+TEST_CASE("Check uniform draw range", "[visp_rand]")
+{
   const int niters = 1000;
   vpUniRand rng;
 
@@ -297,7 +301,8 @@ TEST_CASE("Check uniform draw range", "[visp_rand]") {
   }
 }
 
-TEST_CASE("Check uniform draw independance", "[visp_rand]") {
+TEST_CASE("Check uniform draw independance", "[visp_rand]")
+{
   SECTION("Two simultaneous vpUniRand instances with the same seed should produce the same results")
   {
     {
@@ -360,7 +365,7 @@ TEST_CASE("Check uniform draw independance", "[visp_rand]") {
   }
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
 
@@ -375,8 +380,5 @@ int main(int argc, char* argv[])
   return numFailed;
 }
 #else
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

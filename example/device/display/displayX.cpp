@@ -58,7 +58,6 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
 
-
 /*!
   \example displayX.cpp
 
@@ -92,7 +91,8 @@ the image and the overlayed features in an image on the disk.\n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>]\n\
      [-c] [-d] [-h]\n						      \
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -120,7 +120,8 @@ OPTIONS:                                               Default\n\
      using the task manager under Windows.\n\
 \n\
   -h\n\
-     Print the help.\n\n", ipath.c_str(), opath.c_str(), user.c_str());
+     Print the help.\n\n",
+          ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
@@ -441,7 +442,8 @@ int main(int argc, const char **argv)
   }
 }
 #else
-int main() {
+int main()
+{
   std::cout << "You do not have X11 functionalities to display images..." << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;

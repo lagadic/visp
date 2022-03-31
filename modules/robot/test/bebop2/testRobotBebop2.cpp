@@ -142,8 +142,8 @@ int main(int argc, char **argv)
     std::cout << "Caught an exception: " << e << std::endl;
   }
 #else
-  (void) argc;
-  (void) argv;
+  (void)argc;
+  (void)argv;
   std::cout << "Install Parrot ARSDK, configure and build ViSP to use this example..." << std::endl;
 #endif
 }

@@ -327,8 +327,7 @@ int main()
     // Display task information
     task.print();
     return EXIT_SUCCESS;
-  }
-  catch (const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

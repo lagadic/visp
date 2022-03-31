@@ -67,7 +67,7 @@
 typedef long long int64_t;
 typedef unsigned short uint16_t;
 #else
-#  include <inttypes.h>
+#include <inttypes.h>
 #endif
 
 class vpDisplay;
@@ -622,7 +622,7 @@ vpThread::Return performLutRGBaThread(vpThread::Args args)
 
   return 0;
 }
-}
+} // namespace
 #endif
 
 /*!
@@ -687,8 +687,7 @@ template <class Type> void vpImage<Type>::init(unsigned int h, unsigned int w)
 /*!
   \relates vpImage
 */
-template <class Type>
-void vpImage<Type>::init(Type *const array, unsigned int h, unsigned int w, bool copyData)
+template <class Type> void vpImage<Type>::init(Type *const array, unsigned int h, unsigned int w, bool copyData)
 {
   if (h != this->height) {
     if (row != NULL) {
@@ -722,7 +721,7 @@ void vpImage<Type>::init(Type *const array, unsigned int h, unsigned int w, bool
     }
 
     // Copy the image data
-    memcpy(static_cast<void*>(bitmap), static_cast<void*>(array), (size_t)(npixels * sizeof(Type)));
+    memcpy(static_cast<void *>(bitmap), static_cast<void *>(array), (size_t)(npixels * sizeof(Type)));
   } else {
     // Copy the address of the array in the bitmap
     bitmap = array;
@@ -772,8 +771,8 @@ vpImage<Type>::vpImage(Type *const array, unsigned int h, unsigned int w, bool c
 /*!
   \relates vpImage
 */
-template <class Type> vpImage<Type>::vpImage() :
-  bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
+template <class Type>
+vpImage<Type>::vpImage() : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
 }
 
@@ -863,7 +862,7 @@ vpImage<Type>::vpImage(const vpImage<Type> &I)
   : bitmap(NULL), display(NULL), npixels(0), width(0), height(0), row(NULL), hasOwnership(true)
 {
   resize(I.getHeight(), I.getWidth());
-  memcpy(static_cast<void*>(bitmap), static_cast<void*>(I.bitmap), I.npixels * sizeof(Type));
+  memcpy(static_cast<void *>(bitmap), static_cast<void *>(I.bitmap), I.npixels * sizeof(Type));
 }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
@@ -872,7 +871,8 @@ vpImage<Type>::vpImage(const vpImage<Type> &I)
 */
 template <class Type>
 vpImage<Type>::vpImage(vpImage<Type> &&I)
-  : bitmap(I.bitmap), display(I.display), npixels(I.npixels), width(I.width), height(I.height), row(I.row), hasOwnership(I.hasOwnership)
+  : bitmap(I.bitmap), display(I.display), npixels(I.npixels), width(I.width), height(I.height), row(I.row),
+    hasOwnership(I.hasOwnership)
 {
   I.bitmap = NULL;
   I.display = NULL;
@@ -1064,10 +1064,7 @@ template <class Type> bool vpImage<Type>::operator==(const vpImage<Type> &I)
 
   \return true if the images are different, false if they are the same.
 */
-template <class Type> bool vpImage<Type>::operator!=(const vpImage<Type> &I)
-{
-  return !(*this == I);
-}
+template <class Type> bool vpImage<Type>::operator!=(const vpImage<Type> &I) { return !(*this == I); }
 
 /*!
   Operation  A - B (A is unchanged).
@@ -1155,7 +1152,7 @@ template <class Type> void vpImage<Type>::insert(const vpImage<Type> &src, const
     Type *srcBitmap = src.bitmap + ((src_ibegin + i) * src_w + src_jbegin);
     Type *destBitmap = this->bitmap + ((dest_ibegin + i) * dest_w + dest_jbegin);
 
-    memcpy(static_cast<void*>(destBitmap), static_cast<void*>(srcBitmap), (size_t)wsize * sizeof(Type));
+    memcpy(static_cast<void *>(destBitmap), static_cast<void *>(srcBitmap), (size_t)wsize * sizeof(Type));
   }
 }
 
@@ -1370,7 +1367,7 @@ template <class Type> inline Type vpImage<Type>::getValue(unsigned int i, unsign
 */
 template <class Type> Type vpImage<Type>::getValue(double i, double j) const
 {
-  if (i < 0 || j < 0 || i+1 > height || j+1 > width) {
+  if (i < 0 || j < 0 || i + 1 > height || j + 1 > width) {
     throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
   }
   if (height * width == 0) {
@@ -1389,8 +1386,10 @@ template <class Type> Type vpImage<Type>::getValue(double i, double j) const
   unsigned int iround_1 = (std::min)(height - 1, iround + 1);
   unsigned int jround_1 = (std::min)(width - 1, jround + 1);
 
-  double value = (static_cast<double>(row[iround][jround]) * rfrac + static_cast<double>(row[iround_1][jround]) * rratio) * cfrac +
-                 (static_cast<double>(row[iround][jround_1]) * rfrac + static_cast<double>(row[iround_1][jround_1]) * rratio) * cratio;
+  double value =
+      (static_cast<double>(row[iround][jround]) * rfrac + static_cast<double>(row[iround_1][jround]) * rratio) * cfrac +
+      (static_cast<double>(row[iround][jround_1]) * rfrac + static_cast<double>(row[iround_1][jround_1]) * rratio) *
+          cratio;
 
   return static_cast<Type>(vpMath::round(value));
 }
@@ -1400,7 +1399,7 @@ template <class Type> Type vpImage<Type>::getValue(double i, double j) const
 */
 template <> inline double vpImage<double>::getValue(double i, double j) const
 {
-  if (i < 0 || j < 0 || i+1 > height || j+1 > width) {
+  if (i < 0 || j < 0 || i + 1 > height || j + 1 > width) {
     throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
   }
   if (height * width == 0) {
@@ -1426,8 +1425,9 @@ template <> inline double vpImage<double>::getValue(double i, double j) const
 /*!
   \relates vpImage
  */
-template <> inline unsigned char vpImage<unsigned char>::getValue(double i, double j) const {
-  if (i < 0 || j < 0 || i+1 > height || j+1 > width) {
+template <> inline unsigned char vpImage<unsigned char>::getValue(double i, double j) const
+{
+  if (i < 0 || j < 0 || i + 1 > height || j + 1 > width) {
     throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
   }
   if (height * width == 0) {
@@ -1436,7 +1436,7 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
 
   // alpha architecture is bi-endianness. The following optimization makes testImageGetValue failing
 #if (defined(VISP_LITTLE_ENDIAN) || defined(VISP_BIG_ENDIAN)) && !(defined(__alpha__) || defined(_M_ALPHA))
-  //Fixed-point arithmetic
+  // Fixed-point arithmetic
   const int32_t precision = 1 << 16;
   int64_t y = static_cast<int64_t>(i * precision);
   int64_t x = static_cast<int64_t>(j * precision);
@@ -1458,7 +1458,8 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
     uint16_t down = vpEndian::reinterpret_cast_uchar_to_uint16_LE(bitmap + (y_ + 1) * width + x_);
 
     return static_cast<unsigned char>((((up & 0x00FF) * rfrac + (down & 0x00FF) * rratio) * cfrac +
-                                       ((up >> 8) * rfrac + (down >> 8) * rratio) * cratio) >> 32);
+                                       ((up >> 8) * rfrac + (down >> 8) * rratio) * cratio) >>
+                                      32);
   } else if (y_ + 1 < height) {
     return static_cast<unsigned char>(((row[y_][x_] * rfrac + row[y_ + 1][x_] * rratio)) >> 16);
   } else if (x_ + 1 < width) {
@@ -1472,9 +1473,8 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
   unsigned int jround = static_cast<unsigned int>(floor(j));
 
   if (iround >= height || jround >= width) {
-    vpERROR_TRACE("Pixel outside the image") ;
-    throw(vpException(vpImageException::notInTheImage,
-          "Pixel outside the image"));
+    vpERROR_TRACE("Pixel outside the image");
+    throw(vpException(vpImageException::notInTheImage, "Pixel outside the image"));
   }
 
   double rratio = i - static_cast<double>(iround);
@@ -1486,8 +1486,10 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
   unsigned int iround_1 = (std::min)(height - 1, iround + 1);
   unsigned int jround_1 = (std::min)(width - 1, jround + 1);
 
-  double value = (static_cast<double>(row[iround][jround])   * rfrac + static_cast<double>(row[iround_1][jround]) * rratio) * cfrac +
-                 (static_cast<double>(row[iround][jround_1]) * rfrac + static_cast<double>(row[iround_1][jround_1]) * rratio) * cratio;
+  double value =
+      (static_cast<double>(row[iround][jround]) * rfrac + static_cast<double>(row[iround_1][jround]) * rratio) * cfrac +
+      (static_cast<double>(row[iround][jround_1]) * rfrac + static_cast<double>(row[iround_1][jround_1]) * rratio) *
+          cratio;
   return static_cast<unsigned char>(vpMath::round(value));
 #endif
 }
@@ -1497,7 +1499,7 @@ template <> inline unsigned char vpImage<unsigned char>::getValue(double i, doub
  */
 template <> inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
 {
-  if (i < 0 || j < 0 || i+1 > height || j+1 > width) {
+  if (i < 0 || j < 0 || i + 1 > height || j + 1 > width) {
     throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
   }
   if (height * width == 0) {
@@ -1516,15 +1518,23 @@ template <> inline vpRGBa vpImage<vpRGBa>::getValue(double i, double j) const
   unsigned int iround_1 = (std::min)(height - 1, iround + 1);
   unsigned int jround_1 = (std::min)(width - 1, jround + 1);
 
-  double valueR = (static_cast<double>(row[iround][jround].R) * rfrac + static_cast<double>(row[iround_1][jround].R) * rratio) * cfrac +
-                  (static_cast<double>(row[iround][jround_1].R) * rfrac + static_cast<double>(row[iround_1][jround_1].R) * rratio) * cratio;
-  double valueG = (static_cast<double>(row[iround][jround].G) * rfrac + static_cast<double>(row[iround_1][jround].G) * rratio) * cfrac +
-                  (static_cast<double>(row[iround][jround_1].G) * rfrac + static_cast<double>(row[iround_1][jround_1].G) * rratio) * cratio;
-  double valueB = (static_cast<double>(row[iround][jround].B) * rfrac + static_cast<double>(row[iround_1][jround].B) * rratio) * cfrac +
-                  (static_cast<double>(row[iround][jround_1].B) * rfrac + static_cast<double>(row[iround_1][jround_1].B) * rratio) * cratio;
+  double valueR =
+      (static_cast<double>(row[iround][jround].R) * rfrac + static_cast<double>(row[iround_1][jround].R) * rratio) *
+          cfrac +
+      (static_cast<double>(row[iround][jround_1].R) * rfrac + static_cast<double>(row[iround_1][jround_1].R) * rratio) *
+          cratio;
+  double valueG =
+      (static_cast<double>(row[iround][jround].G) * rfrac + static_cast<double>(row[iround_1][jround].G) * rratio) *
+          cfrac +
+      (static_cast<double>(row[iround][jround_1].G) * rfrac + static_cast<double>(row[iround_1][jround_1].G) * rratio) *
+          cratio;
+  double valueB =
+      (static_cast<double>(row[iround][jround].B) * rfrac + static_cast<double>(row[iround_1][jround].B) * rratio) *
+          cfrac +
+      (static_cast<double>(row[iround][jround_1].B) * rfrac + static_cast<double>(row[iround_1][jround_1].B) * rratio) *
+          cratio;
 
-  return vpRGBa(static_cast<unsigned char>(vpMath::round(valueR)),
-                static_cast<unsigned char>(vpMath::round(valueG)),
+  return vpRGBa(static_cast<unsigned char>(vpMath::round(valueR)), static_cast<unsigned char>(vpMath::round(valueG)),
                 static_cast<unsigned char>(vpMath::round(valueB)));
 }
 
@@ -1574,8 +1584,8 @@ template <> inline vpRGBa vpImage<vpRGBa>::getValue(const vpImagePoint &ip) cons
 }
 
 /**
-* Compute the sum of image intensities.
-*/
+ * Compute the sum of image intensities.
+ */
 template <class Type> inline double vpImage<Type>::getSum() const
 {
   if ((height == 0) || (width == 0))
@@ -1820,7 +1830,7 @@ template <> inline void vpImage<vpRGBa>::performLut(const vpRGBa (&lut)[256], un
       }
 
       ImageLutRGBa_Param_t *imageLut_param = new ImageLutRGBa_Param_t(start_index, end_index, (unsigned char *)bitmap);
-      memcpy(static_cast<void*>(imageLut_param->m_lut), lut, 256 * sizeof(vpRGBa));
+      memcpy(static_cast<void *>(imageLut_param->m_lut), lut, 256 * sizeof(vpRGBa));
 
       imageLutParams.push_back(imageLut_param);
 

@@ -47,23 +47,23 @@
 #endif
 
 #ifdef VISP_HAVE_LAPACK
-#  ifdef VISP_HAVE_GSL
-#    include <gsl/gsl_linalg.h>
-#    include <gsl/gsl_permutation.h>
-#  endif
-#  ifdef VISP_HAVE_MKL
-#    include <mkl.h>
+#ifdef VISP_HAVE_GSL
+#include <gsl/gsl_linalg.h>
+#include <gsl/gsl_permutation.h>
+#endif
+#ifdef VISP_HAVE_MKL
+#include <mkl.h>
 typedef MKL_INT integer;
-#  else
-#    ifdef VISP_HAVE_LAPACK_BUILT_IN
+#else
+#ifdef VISP_HAVE_LAPACK_BUILT_IN
 typedef long int integer;
-#    else
+#else
 typedef int integer;
-#    endif
+#endif
 extern "C" int dgetrf_(integer *m, integer *n, double *a, integer *lda, integer *ipiv, integer *info);
 extern "C" void dgetri_(integer *n, double *a, integer *lda, integer *ipiv, double *work, integer *lwork,
                         integer *info);
-#  endif
+#endif
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
@@ -134,31 +134,32 @@ vpMatrix vpMatrix::inverseByLU() const
     inv.resize(1, 1, false);
     double d = det();
     if (std::fabs(d) < std::numeric_limits<double>::epsilon()) {
-      throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.", rowNum, colNum));
+      throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.",
+                        rowNum, colNum));
     }
     inv[0][0] = 1. / d;
     return inv;
-  }
-  else if (colNum == 2 && rowNum == 2) {
+  } else if (colNum == 2 && rowNum == 2) {
     vpMatrix inv;
     inv.resize(2, 2, false);
     double d = det();
     if (std::fabs(d) < std::numeric_limits<double>::epsilon()) {
-      throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.", rowNum, colNum));
+      throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.",
+                        rowNum, colNum));
     }
     d = 1. / d;
-    inv[1][1] =  (*this)[0][0]*d;
-    inv[0][0] =  (*this)[1][1]*d;
-    inv[0][1] = -(*this)[0][1]*d;
-    inv[1][0] = -(*this)[1][0]*d;
+    inv[1][1] = (*this)[0][0] * d;
+    inv[0][0] = (*this)[1][1] * d;
+    inv[0][1] = -(*this)[0][1] * d;
+    inv[1][0] = -(*this)[1][0] * d;
     return inv;
-  }
-  else if (colNum == 3 && rowNum == 3) {
+  } else if (colNum == 3 && rowNum == 3) {
     vpMatrix inv;
     inv.resize(3, 3, false);
     double d = det();
     if (std::fabs(d) < std::numeric_limits<double>::epsilon()) {
-      throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.", rowNum, colNum));
+      throw(vpException(vpException::fatalError, "Cannot inverse matrix %d by %d by LU. Matrix determinant is 0.",
+                        rowNum, colNum));
     }
     d = 1. / d;
     inv[0][0] = ((*this)[1][1] * (*this)[2][2] - (*this)[1][2] * (*this)[2][1]) * d;
@@ -173,8 +174,7 @@ vpMatrix vpMatrix::inverseByLU() const
     inv[2][1] = ((*this)[0][1] * (*this)[2][0] - (*this)[0][0] * (*this)[2][1]) * d;
     inv[2][2] = ((*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0]) * d;
     return inv;
-  }
-  else {
+  } else {
 #if defined(VISP_HAVE_LAPACK)
     return inverseByLULapack();
 #elif defined(VISP_HAVE_EIGEN3)
@@ -225,11 +225,9 @@ double vpMatrix::detByLU() const
 {
   if (rowNum == 1 && colNum == 1) {
     return (*this)[0][0];
-  }
-  else if (rowNum == 2 && colNum == 2) {
+  } else if (rowNum == 2 && colNum == 2) {
     return ((*this)[0][0] * (*this)[1][1] - (*this)[0][1] * (*this)[1][0]);
-  }
-  else if (rowNum == 3 && colNum == 3) {
+  } else if (rowNum == 3 && colNum == 3) {
     return ((*this)[0][0] * ((*this)[1][1] * (*this)[2][2] - (*this)[1][2] * (*this)[2][1]) -
             (*this)[0][1] * ((*this)[1][0] * (*this)[2][2] - (*this)[1][2] * (*this)[2][0]) +
             (*this)[0][2] * ((*this)[1][0] * (*this)[2][1] - (*this)[1][1] * (*this)[2][0]));

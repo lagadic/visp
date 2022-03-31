@@ -103,8 +103,4 @@ void vpForwardProjection::project(const vpHomogeneousMatrix &cMo)
   between the camera frame and the object frame.
 
 */
-void vpForwardProjection::track(const vpHomogeneousMatrix &cMo)
-{
-  project(cMo);
-}
-
+void vpForwardProjection::track(const vpHomogeneousMatrix &cMo) { project(cMo); }

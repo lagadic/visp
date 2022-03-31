@@ -150,8 +150,7 @@ void vpGDIRenderer::setImg(const vpImage<vpRGBa> &I)
   \param iP : Top left coordinates of the ROI.
   \param width, height : ROI width and height.
 */
-void vpGDIRenderer::setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width,
-                              unsigned int height)
+void vpGDIRenderer::setImgROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int width, unsigned int height)
 {
   // converts the image into a HBITMAP
   convertROI(I, iP, width, height);

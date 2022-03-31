@@ -50,7 +50,8 @@
 #include <Eigen/Dense>
 #endif
 
-namespace {
+namespace
+{
 
 bool g_runBenchmark = false;
 int g_tileSize = 16;
@@ -81,7 +82,7 @@ vpMatrix generateMatrixTranspose(unsigned int sz1, unsigned int sz2)
   return M;
 }
 
-vpMatrix transposeIterateSrc(const vpMatrix& A)
+vpMatrix transposeIterateSrc(const vpMatrix &A)
 {
   vpMatrix At;
 
@@ -97,7 +98,7 @@ vpMatrix transposeIterateSrc(const vpMatrix& A)
   return At;
 }
 
-vpMatrix transposeIterateDst(const vpMatrix& A)
+vpMatrix transposeIterateDst(const vpMatrix &A)
 {
   vpMatrix At;
 
@@ -113,7 +114,7 @@ vpMatrix transposeIterateDst(const vpMatrix& A)
   return At;
 }
 
-vpMatrix transposeTilingSO(const vpMatrix& A, unsigned int tileSize=16)
+vpMatrix transposeTilingSO(const vpMatrix &A, unsigned int tileSize = 16)
 {
   vpMatrix At;
 
@@ -130,7 +131,7 @@ vpMatrix transposeTilingSO(const vpMatrix& A, unsigned int tileSize=16)
   return At;
 }
 
-vpMatrix transposeTiling(const vpMatrix& A, int tileSize = 16)
+vpMatrix transposeTiling(const vpMatrix &A, int tileSize = 16)
 {
   vpMatrix At;
 
@@ -167,15 +168,15 @@ vpMatrix transposeTiling(const vpMatrix& A, int tileSize = 16)
   return At;
 }
 
-}
+} // namespace
 
-TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]") {
+TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]")
+{
   if (g_runBenchmark) {
-    const std::vector<std::pair<int, int>> sizes = { {701, 1503}, {1791, 837}, {1201, 1201}, {1024, 1024}, {2000, 2000},
-                                                 {10, 6}, {25, 6}, {100, 6}, {200, 6}, {500, 6}, {1000, 6}, {1500, 6}, {2000, 6},
-                                                 {6, 10}, {6, 25}, {6, 100}, {6, 200}, {6, 500}, {6, 1000}, {6, 1500}, {6, 2000},
-                                                 {640, 1000}, {800, 640}, {640, 500}, {500, 640}, {640, 837}
-    };
+    const std::vector<std::pair<int, int> > sizes = {
+        {701, 1503}, {1791, 837}, {1201, 1201}, {1024, 1024}, {2000, 2000}, {10, 6},    {25, 6},    {100, 6},  {200, 6},
+        {500, 6},    {1000, 6},   {1500, 6},    {2000, 6},    {6, 10},      {6, 25},    {6, 100},   {6, 200},  {6, 500},
+        {6, 1000},   {6, 1500},   {6, 2000},    {640, 1000},  {800, 640},   {640, 500}, {500, 640}, {640, 837}};
 
     for (auto sz : sizes) {
       vpMatrix M = generateMatrix(sz.first, sz.second);
@@ -184,7 +185,8 @@ TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]") {
       std::ostringstream oss;
       oss << sz.first << "x" << sz.second;
       oss << " - M.t()";
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         vpMatrix Mt = M.t();
         REQUIRE(Mt == Mt_true);
         return Mt;
@@ -193,7 +195,8 @@ TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]") {
       oss.str("");
       oss << sz.first << "x" << sz.second;
       oss << " - transposeIterateSrc(M)";
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         vpMatrix Mt = transposeIterateSrc(M);
         REQUIRE(Mt == Mt_true);
         return Mt;
@@ -202,7 +205,8 @@ TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]") {
       oss.str("");
       oss << sz.first << "x" << sz.second;
       oss << " - transposeIterateDst(M)";
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         vpMatrix Mt = transposeIterateDst(M);
         REQUIRE(Mt == Mt_true);
         return Mt;
@@ -211,7 +215,8 @@ TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]") {
       oss.str("");
       oss << sz.first << "x" << sz.second;
       oss << " - transposeTilingSO(M, tileSize=" << g_tileSize << ")";
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         vpMatrix Mt = transposeTilingSO(M, g_tileSize);
         REQUIRE(Mt == Mt_true);
         return Mt;
@@ -220,7 +225,8 @@ TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]") {
       oss.str("");
       oss << sz.first << "x" << sz.second;
       oss << " - transposeTiling(M, tileSize=" << g_tileSize << ")";
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         vpMatrix Mt = transposeTiling(M, g_tileSize);
         REQUIRE(Mt == Mt_true);
         return Mt;
@@ -238,7 +244,8 @@ TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]") {
       oss.str("");
       oss << sz.first << "x" << sz.second;
       oss << " - OpenCV";
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         cv::Mat matMt = matM.t();
         return matMt;
       };
@@ -256,7 +263,8 @@ TEST_CASE("Benchmark vpMatrix transpose", "[benchmark]") {
       oss.str("");
       oss << sz.first << "x" << sz.second;
       oss << " - Eigen";
-      BENCHMARK(oss.str().c_str()) {
+      BENCHMARK(oss.str().c_str())
+      {
         Eigen::MatrixXd eigenMt = eigenM.transpose();
         return eigenMt;
       };
@@ -277,13 +285,11 @@ int main(int argc, char *argv[])
 
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
-  auto cli = session.cli() // Get Catch's composite command line parser
-    | Opt(g_runBenchmark)  // bind variable to a new option, with a hint string
-    ["--benchmark"]        // the option names it will respond to
-    ("run benchmark?")     // description string for the help output
-    | Opt(g_tileSize, "tileSize")
-    ["--tileSize"]
-    ("Tile size?");
+  auto cli = session.cli()         // Get Catch's composite command line parser
+             | Opt(g_runBenchmark) // bind variable to a new option, with a hint string
+                   ["--benchmark"] // the option names it will respond to
+             ("run benchmark?")    // description string for the help output
+             | Opt(g_tileSize, "tileSize")["--tileSize"]("Tile size?");
 
   // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
@@ -301,8 +307,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

@@ -42,10 +42,7 @@
 /*!
  * Construct a model with 3 parameters for rotation and translation initialized to zero.
  */
-vpTemplateTrackerWarpRT::vpTemplateTrackerWarpRT()
-{
-  nbParam = 3;
-}
+vpTemplateTrackerWarpRT::vpTemplateTrackerWarpRT() { nbParam = 3; }
 
 /*!
  * Get the parameters of the warping function one level down
@@ -154,15 +151,14 @@ void vpTemplateTrackerWarpRT::warpX(const vpColVector &X1, vpColVector &X2, cons
  * \param p : 3-dim vector that contains the parameters of the warping function.
  * \param dM : Resulting warping model derivative returned as a 2-by-3 matrix.
  */
-void vpTemplateTrackerWarpRT::dWarp(const vpColVector &X, const vpColVector &, const vpColVector &p,
-                                    vpMatrix &dM)
+void vpTemplateTrackerWarpRT::dWarp(const vpColVector &X, const vpColVector &, const vpColVector &p, vpMatrix &dM)
 {
   double u = X[0];
   double v = X[1];
   double c = cos(p[0]);
   double s = sin(p[0]);
 
-  dM[0][0] = - s * u - c * v;
+  dM[0][0] = -s * u - c * v;
   dM[0][1] = 1;
   dM[0][2] = 0;
 
@@ -178,8 +174,8 @@ void vpTemplateTrackerWarpRT::dWarp(const vpColVector &X, const vpColVector &, c
  * the initial warping function parameters (p=0).
  * \param dM : Resulting warping model compositionnal derivative returned as a 2-by-3 matrix.
  */
-void vpTemplateTrackerWarpRT::dWarpCompo(const vpColVector &, const vpColVector &,
-                                         const vpColVector &p, const double *dwdp0, vpMatrix &dM)
+void vpTemplateTrackerWarpRT::dWarpCompo(const vpColVector &, const vpColVector &, const vpColVector &p,
+                                         const double *dwdp0, vpMatrix &dM)
 {
   double c = cos(p[0]);
   double s = sin(p[0]);
@@ -221,7 +217,7 @@ void vpTemplateTrackerWarpRT::getParamInverse(const vpColVector &p, vpColVector 
 
   p_inv[0] = atan2(-s, c);
   p_inv[1] = -(c * u + s * v);
-  p_inv[2] =  s * u - c * v;
+  p_inv[2] = s * u - c * v;
 }
 
 /*!

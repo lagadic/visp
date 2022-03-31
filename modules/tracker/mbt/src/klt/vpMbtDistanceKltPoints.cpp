@@ -75,7 +75,8 @@ vpMbtDistanceKltPoints::~vpMbtDistanceKltPoints() {}
   points that are indeed in the face.
 
   \param _tracker : ViSP OpenCV KLT Tracker.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  disable a pixel, set false.
 */
 void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<bool> *mask)
 {
@@ -96,15 +97,14 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<boo
     bool add = false;
 
     // Add points inside visibility mask only
-    if (vpMeTracker::inMask(mask, (unsigned int) y_tmp, (unsigned int) x_tmp)) {
+    if (vpMeTracker::inMask(mask, (unsigned int)y_tmp, (unsigned int)x_tmp)) {
       if (useScanLine) {
         if ((unsigned int)y_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getHeight() &&
-          (unsigned int)x_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
-          hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[(unsigned int)y_tmp][(unsigned int)x_tmp] ==
-          polygon->getIndex())
+            (unsigned int)x_tmp < hiddenface->getMbScanLineRenderer().getPrimitiveIDs().getWidth() &&
+            hiddenface->getMbScanLineRenderer().getPrimitiveIDs()[(unsigned int)y_tmp][(unsigned int)x_tmp] ==
+                polygon->getIndex())
           add = true;
-      }
-      else if (vpPolygon::isInside(roi, y_tmp, x_tmp)) {
+      } else if (vpPolygon::isInside(roi, y_tmp, x_tmp)) {
         add = true;
       }
     }
@@ -148,7 +148,8 @@ void vpMbtDistanceKltPoints::init(const vpKltOpencv &_tracker, const vpImage<boo
   \param _tracker : the KLT tracker
   \return the number of points that are tracked in this face and in this
   instanciation of the tracker
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  disable a pixel, set false.
 */
 unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv &_tracker, const vpImage<bool> *mask)
 {
@@ -160,7 +161,7 @@ unsigned int vpMbtDistanceKltPoints::computeNbDetectedCurrent(const vpKltOpencv 
 
   for (unsigned int i = 0; i < static_cast<unsigned int>(_tracker.getNbFeatures()); i++) {
     _tracker.getFeature((int)i, id, x, y);
-    if (isTrackedFeature((int)id) && vpMeTracker::inMask(mask, (unsigned int) y, (unsigned int) x)) {
+    if (isTrackedFeature((int)id) && vpMeTracker::inMask(mask, (unsigned int)y, (unsigned int)x)) {
 #if TARGET_OS_IPHONE
       curPoints[(int)id] = vpImagePoint(static_cast<double>(y), static_cast<double>(x));
       curPointsInd[(int)id] = (int)i;
@@ -634,15 +635,11 @@ std::vector<std::vector<double> > vpMbtDistanceKltPoints::getFeaturesForDisplay(
     iP2.set_j(vpMath::round(iP.get_j() + 7));
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    std::vector<double> params = {1, //KLT
-                                  iP.get_i(),
-                                  iP.get_j(),
-                                  iP2.get_i(),
-                                  iP2.get_j(),
-                                  static_cast<double>(id)};
+    std::vector<double> params = {1, // KLT
+                                  iP.get_i(), iP.get_j(), iP2.get_i(), iP2.get_j(), static_cast<double>(id)};
 #else
     std::vector<double> params;
-    params.push_back(1); //KLT
+    params.push_back(1); // KLT
     params.push_back(iP.get_i());
     params.push_back(iP.get_j());
     params.push_back(iP2.get_i());
@@ -695,14 +692,11 @@ std::vector<std::vector<double> > vpMbtDistanceKltPoints::getModelForDisplay(con
           vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-          std::vector<double> params = {0, //0 for line parameters
-                                        ip1.get_i(),
-                                        ip1.get_j(),
-                                        ip2.get_i(),
-                                        ip2.get_j()};
+          std::vector<double> params = {0, // 0 for line parameters
+                                        ip1.get_i(), ip1.get_j(), ip2.get_i(), ip2.get_j()};
 #else
           std::vector<double> params;
-          params.push_back(0); //0 for line parameters
+          params.push_back(0); // 0 for line parameters
           params.push_back(ip1.get_i());
           params.push_back(ip1.get_j());
           params.push_back(ip2.get_i());

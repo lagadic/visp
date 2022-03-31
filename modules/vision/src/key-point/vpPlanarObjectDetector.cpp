@@ -301,8 +301,8 @@ bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I)
 
   \return true if the surface has been found.
 */
-bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                                        unsigned int height, unsigned int width)
+bool vpPlanarObjectDetector::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                                        unsigned int width)
 {
   if ((iP.get_i() + height) >= I.getHeight() || (iP.get_j() + width) >= I.getWidth()) {
     vpTRACE("Bad size for the subimage");

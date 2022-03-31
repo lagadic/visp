@@ -64,7 +64,7 @@ int main(int argc, char **argv)
     vpMbEdgeTracker tracker;
     //! [Constructor]
     bool usexml = false;
-//! [Load xml]
+    //! [Load xml]
     if (vpIoTools::checkFilename(objectname + ".xml")) {
       tracker.loadConfigFile(objectname + ".xml");
       usexml = true;

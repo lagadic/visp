@@ -49,9 +49,9 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 
-TEST_CASE("Test vpGaussianFilter (unsigned char)") {
-  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                         "Klimt/Klimt.pgm");
+TEST_CASE("Test vpGaussianFilter (unsigned char)")
+{
+  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Klimt/Klimt.pgm");
   vpImage<unsigned char> I;
   vpImageIo::read(I, filepath);
 
@@ -63,8 +63,8 @@ TEST_CASE("Test vpGaussianFilter (unsigned char)") {
     gaussianFilter.apply(I, I_blurred);
 
     vpImage<unsigned char> I_blurred_ref;
-    const std::string filepath_ref = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                               "Gaussian-filter/Klimt_gray_Gaussian_blur_sigma=%.1f.png");
+    const std::string filepath_ref = vpIoTools::createFilePath(
+        vpIoTools::getViSPImagesDataPath(), "Gaussian-filter/Klimt_gray_Gaussian_blur_sigma=%.1f.png");
     char buffer[256];
     sprintf(buffer, filepath_ref.c_str(), sigma);
     const std::string filename = buffer;
@@ -80,9 +80,9 @@ TEST_CASE("Test vpGaussianFilter (unsigned char)") {
   }
 }
 
-TEST_CASE("Test vpGaussianFilter (vpRGBa)") {
-  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                         "Klimt/Klimt.ppm");
+TEST_CASE("Test vpGaussianFilter (vpRGBa)")
+{
+  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Klimt/Klimt.ppm");
   vpImage<vpRGBa> I;
   vpImageIo::read(I, filepath);
 
@@ -94,8 +94,8 @@ TEST_CASE("Test vpGaussianFilter (vpRGBa)") {
     gaussianFilter.apply(I, I_blurred);
 
     vpImage<vpRGBa> I_blurred_ref;
-    const std::string filepath_ref = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                               "Gaussian-filter/Klimt_RGB_Gaussian_blur_sigma=%.1f.png");
+    const std::string filepath_ref = vpIoTools::createFilePath(
+        vpIoTools::getViSPImagesDataPath(), "Gaussian-filter/Klimt_RGB_Gaussian_blur_sigma=%.1f.png");
     char buffer[256];
     sprintf(buffer, filepath_ref.c_str(), sigma);
     const std::string filename = buffer;
@@ -111,8 +111,9 @@ TEST_CASE("Test vpGaussianFilter (vpRGBa)") {
     vpImageConvert::convert(I_diff_G, I_diff_G_dbl);
     vpImageConvert::convert(I_diff_B, I_diff_B_dbl);
 
-    std::cout << "sigma: " << sigma << " ; I_diff_R_dbl: " << I_diff_R_dbl.getMeanValue() << " ; I_diff_G_dbl: "
-              << I_diff_G_dbl.getMeanValue() << " ; I_diff_B_dbl: " << I_diff_B_dbl.getMeanValue() << std::endl;
+    std::cout << "sigma: " << sigma << " ; I_diff_R_dbl: " << I_diff_R_dbl.getMeanValue()
+              << " ; I_diff_G_dbl: " << I_diff_G_dbl.getMeanValue()
+              << " ; I_diff_B_dbl: " << I_diff_B_dbl.getMeanValue() << std::endl;
     const double threshold = 1.5;
     CHECK(I_diff_R_dbl.getMeanValue() < threshold);
     CHECK(I_diff_G_dbl.getMeanValue() < threshold);
@@ -120,9 +121,9 @@ TEST_CASE("Test vpGaussianFilter (vpRGBa)") {
   }
 }
 
-TEST_CASE("Test vpGaussianFilter (vpRGBa + deinterleave)") {
-  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                         "Klimt/Klimt.ppm");
+TEST_CASE("Test vpGaussianFilter (vpRGBa + deinterleave)")
+{
+  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Klimt/Klimt.ppm");
   vpImage<vpRGBa> I;
   vpImageIo::read(I, filepath);
 
@@ -135,8 +136,8 @@ TEST_CASE("Test vpGaussianFilter (vpRGBa + deinterleave)") {
     gaussianFilter.apply(I, I_blurred);
 
     vpImage<vpRGBa> I_blurred_ref;
-    const std::string filepath_ref = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                               "Gaussian-filter/Klimt_RGB_Gaussian_blur_sigma=%.1f.png");
+    const std::string filepath_ref = vpIoTools::createFilePath(
+        vpIoTools::getViSPImagesDataPath(), "Gaussian-filter/Klimt_RGB_Gaussian_blur_sigma=%.1f.png");
     char buffer[256];
     sprintf(buffer, filepath_ref.c_str(), sigma);
     const std::string filename = buffer;
@@ -152,8 +153,9 @@ TEST_CASE("Test vpGaussianFilter (vpRGBa + deinterleave)") {
     vpImageConvert::convert(I_diff_G, I_diff_G_dbl);
     vpImageConvert::convert(I_diff_B, I_diff_B_dbl);
 
-    std::cout << "sigma: " << sigma << " ; I_diff_R_dbl: " << I_diff_R_dbl.getMeanValue() << " ; I_diff_G_dbl: "
-              << I_diff_G_dbl.getMeanValue() << " ; I_diff_B_dbl: " << I_diff_B_dbl.getMeanValue() << std::endl;
+    std::cout << "sigma: " << sigma << " ; I_diff_R_dbl: " << I_diff_R_dbl.getMeanValue()
+              << " ; I_diff_G_dbl: " << I_diff_G_dbl.getMeanValue()
+              << " ; I_diff_B_dbl: " << I_diff_B_dbl.getMeanValue() << std::endl;
     const double threshold = 1.5;
     CHECK(I_diff_R_dbl.getMeanValue() < threshold);
     CHECK(I_diff_G_dbl.getMeanValue() < threshold);
@@ -176,8 +178,5 @@ int main(int argc, char *argv[])
   return numFailed;
 }
 #else
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

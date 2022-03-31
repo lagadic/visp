@@ -208,7 +208,7 @@ int main(int argc, char **argv)
 
 #ifdef VISP_HAVE_FFMPEG
       drone.setVideoResolution(stream_res); // Setting desired stream video resolution
-      drone.setStreamingMode(0); // Set streaming mode 0 : lowest latency
+      drone.setStreamingMode(0);            // Set streaming mode 0 : lowest latency
       std::cout << "\nWaiting for streaming to start ...\n" << std::endl;
       drone.startStreaming();
 

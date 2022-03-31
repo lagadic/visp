@@ -65,20 +65,20 @@
 #include <iostream>
 
 #include <visp3/core/vpCameraParameters.h>
+#include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
+#include <visp3/gui/vpPlot.h>
 #include <visp3/io/vpImageIo.h>
-#include <visp3/sensor/vpRealSense2.h>
 #include <visp3/robot/vpRobotFranka.h>
-#include <visp3/detection/vpDetectorAprilTag.h>
+#include <visp3/sensor/vpRealSense2.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
-#include <visp3/gui/vpPlot.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && \
-(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA)
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA)
 
 void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &vip,
                               std::vector<vpImagePoint> *traj_vip)
@@ -89,8 +89,7 @@ void display_point_trajectory(const vpImage<unsigned char> &I, const std::vector
       if (vpImagePoint::distance(vip[i], traj_vip[i].back()) > 1.) {
         traj_vip[i].push_back(vip[i]);
       }
-    }
-    else {
+    } else {
       traj_vip[i].push_back(vip[i]);
     }
   }
@@ -117,35 +116,29 @@ int main(int argc, char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {
       opt_tagSize = std::stod(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
+    } else if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
       opt_robot_ip = std::string(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--eMc" && i + 1 < argc) {
+    } else if (std::string(argv[i]) == "--eMc" && i + 1 < argc) {
       opt_eMc_filename = std::string(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--verbose") {
+    } else if (std::string(argv[i]) == "--verbose") {
       opt_verbose = true;
-    }
-    else if (std::string(argv[i]) == "--plot") {
+    } else if (std::string(argv[i]) == "--plot") {
       opt_plot = true;
-    }
-    else if (std::string(argv[i]) == "--adaptive_gain") {
+    } else if (std::string(argv[i]) == "--adaptive_gain") {
       opt_adaptive_gain = true;
-    }
-    else if (std::string(argv[i]) == "--task_sequencing") {
+    } else if (std::string(argv[i]) == "--task_sequencing") {
       opt_task_sequencing = true;
-    }
-    else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
+    } else if (std::string(argv[i]) == "--quad_decimate" && i + 1 < argc) {
       opt_quad_decimate = std::stoi(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--no-convergence-threshold") {
+    } else if (std::string(argv[i]) == "--no-convergence-threshold") {
       convergence_threshold = 0.;
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << argv[0] << " [--ip <default " << opt_robot_ip << ">] [--tag_size <marker size in meter; default " << opt_tagSize << ">] [--eMc <eMc extrinsic file>] "
-                           << "[--quad_decimate <decimation; default " << opt_quad_decimate << ">] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]"
-                           << "\n";
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      std::cout
+          << argv[0] << " [--ip <default " << opt_robot_ip << ">] [--tag_size <marker size in meter; default "
+          << opt_tagSize << ">] [--eMc <eMc extrinsic file>] "
+          << "[--quad_decimate <decimation; default " << opt_quad_decimate
+          << ">] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]"
+          << "\n";
       return EXIT_SUCCESS;
     }
   }
@@ -166,21 +159,26 @@ int main(int argc, char **argv)
     // Get camera extrinsics
     vpPoseVector ePc;
     // Set camera extrinsics default values
-    ePc[0] = 0.0337731; ePc[1] = -0.00535012; ePc[2] = -0.0523339;
-    ePc[3] = -0.247294; ePc[4] = -0.306729; ePc[5] = 1.53055;
+    ePc[0] = 0.0337731;
+    ePc[1] = -0.00535012;
+    ePc[2] = -0.0523339;
+    ePc[3] = -0.247294;
+    ePc[4] = -0.306729;
+    ePc[5] = 1.53055;
 
     // If provided, read camera extrinsics from --eMc <file>
     if (!opt_eMc_filename.empty()) {
       ePc.loadYAML(opt_eMc_filename, ePc);
-    }
-    else {
-      std::cout << "Warning, opt_eMc_filename is empty! Use hard coded values." << "\n";
+    } else {
+      std::cout << "Warning, opt_eMc_filename is empty! Use hard coded values."
+                << "\n";
     }
     vpHomogeneousMatrix eMc(ePc);
     std::cout << "eMc:\n" << eMc << "\n";
 
     // Get camera intrinsics
-    vpCameraParameters cam = rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
+    vpCameraParameters cam =
+        rs.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
     std::cout << "cam:\n" << cam << "\n";
 
     vpImage<unsigned char> I(height, width);
@@ -193,7 +191,7 @@ int main(int argc, char **argv)
 
     vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
     vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
-    //vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
+    // vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
     vpDetectorAprilTag detector(tagFamily);
     detector.setAprilTagPoseEstimationMethod(poseEstimationMethod);
     detector.setDisplayTag(display_tag);
@@ -203,18 +201,18 @@ int main(int argc, char **argv)
     vpHomogeneousMatrix cdMc, cMo, oMo;
 
     // Desired pose used to compute the desired features
-    vpHomogeneousMatrix cdMo( vpTranslationVector(0, 0, opt_tagSize * 3), // 3 times tag with along camera z axis
-                              vpRotationMatrix( {1, 0, 0, 0, -1, 0, 0, 0, -1} ) );
+    vpHomogeneousMatrix cdMo(vpTranslationVector(0, 0, opt_tagSize * 3), // 3 times tag with along camera z axis
+                             vpRotationMatrix({1, 0, 0, 0, -1, 0, 0, 0, -1}));
 
     // Create visual features
     std::vector<vpFeaturePoint> p(4), pd(4); // We use 4 points
 
     // Define 4 3D points corresponding to the CAD model of the Apriltag
     std::vector<vpPoint> point(4);
-    point[0].setWorldCoordinates(-opt_tagSize/2., -opt_tagSize/2., 0);
-    point[1].setWorldCoordinates( opt_tagSize/2., -opt_tagSize/2., 0);
-    point[2].setWorldCoordinates( opt_tagSize/2.,  opt_tagSize/2., 0);
-    point[3].setWorldCoordinates(-opt_tagSize/2.,  opt_tagSize/2., 0);
+    point[0].setWorldCoordinates(-opt_tagSize / 2., -opt_tagSize / 2., 0);
+    point[1].setWorldCoordinates(opt_tagSize / 2., -opt_tagSize / 2., 0);
+    point[2].setWorldCoordinates(opt_tagSize / 2., opt_tagSize / 2., 0);
+    point[3].setWorldCoordinates(-opt_tagSize / 2., opt_tagSize / 2., 0);
 
     vpServo task;
     // Add the 4 visual feature points
@@ -227,8 +225,7 @@ int main(int argc, char **argv)
     if (opt_adaptive_gain) {
       vpAdaptiveGain lambda(1.5, 0.4, 30); // lambda(0)=4, lambda(oo)=0.4 and lambda'(0)=30
       task.setLambda(lambda);
-    }
-    else {
+    } else {
       task.setLambda(0.5);
     }
 
@@ -236,7 +233,8 @@ int main(int argc, char **argv)
     int iter_plot = 0;
 
     if (opt_plot) {
-      plotter = new vpPlot(2, static_cast<int>(250 * 2), 500, static_cast<int>(I.getWidth()) + 80, 10, "Real time curves plotter");
+      plotter = new vpPlot(2, static_cast<int>(250 * 2), 500, static_cast<int>(I.getWidth()) + 80, 10,
+                           "Real time curves plotter");
       plotter->setTitle(0, "Visual features error");
       plotter->setTitle(1, "Camera velocities");
       plotter->initGraph(0, 8);
@@ -300,10 +298,9 @@ int main(int argc, char **argv)
           }
           if (std::fabs(v_cdMc[0].getThetaUVector().getTheta()) < std::fabs(v_cdMc[1].getThetaUVector().getTheta())) {
             oMo = v_oMo[0];
-          }
-          else {
+          } else {
             std::cout << "Desired frame modified to avoid PI rotation of the camera" << std::endl;
-            oMo = v_oMo[1];   // Introduce PI rotation
+            oMo = v_oMo[1]; // Introduce PI rotation
           }
 
           // Compute the desired position of the features from the desired pose
@@ -333,15 +330,14 @@ int main(int argc, char **argv)
         }
 
         if (opt_task_sequencing) {
-          if (! servo_started) {
+          if (!servo_started) {
             if (send_velocities) {
               servo_started = true;
             }
             t_init_servo = vpTime::measureTimeMs();
           }
-          v_c = task.computeControlLaw((vpTime::measureTimeMs() - t_init_servo)/1000.);
-        }
-        else {
+          v_c = task.computeControlLaw((vpTime::measureTimeMs() - t_init_servo) / 1000.);
+        } else {
           v_c = task.computeControlLaw();
         }
 
@@ -351,14 +347,14 @@ int main(int argc, char **argv)
           std::stringstream ss;
           ss << i;
           // Display current point indexes
-          vpDisplay::displayText(I, corners[i]+vpImagePoint(15, 15), ss.str(), vpColor::red);
+          vpDisplay::displayText(I, corners[i] + vpImagePoint(15, 15), ss.str(), vpColor::red);
           // Display desired point indexes
           vpImagePoint ip;
           vpMeterPixelConversion::convertPoint(cam, pd[i].get_x(), pd[i].get_y(), ip);
-          vpDisplay::displayText(I, ip+vpImagePoint(15, 15), ss.str(), vpColor::red);
+          vpDisplay::displayText(I, ip + vpImagePoint(15, 15), ss.str(), vpColor::red);
         }
         if (first_time) {
-           traj_corners = new std::vector<vpImagePoint> [corners.size()];
+          traj_corners = new std::vector<vpImagePoint>[corners.size()];
         }
         // Display the trajectory of the points used as features
         display_point_trajectory(I, corners, traj_corners);
@@ -383,7 +379,8 @@ int main(int argc, char **argv)
 
         if (error < convergence_threshold) {
           has_converged = true;
-          std::cout << "Servo task has converged" << "\n";
+          std::cout << "Servo task has converged"
+                    << "\n";
           vpDisplay::displayText(I, 100, 20, "Servo task has converged", vpColor::red);
         }
         if (first_time) {
@@ -449,22 +446,20 @@ int main(int argc, char **argv)
       }
     }
     if (traj_corners) {
-      delete [] traj_corners;
+      delete[] traj_corners;
     }
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
     return EXIT_FAILURE;
-  }
-  catch(const franka::NetworkException &e) {
+  } catch (const franka::NetworkException &e) {
     std::cout << "Franka network exception: " << e.what() << std::endl;
     std::cout << "Check if you are connected to the Franka robot"
-              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. " << std::endl;
+              << " or if you specified the right IP using --ip command line option set by default to 192.168.1.1. "
+              << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const std::exception &e) {
+  } catch (const std::exception &e) {
     std::cout << "Franka exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }

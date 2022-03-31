@@ -128,8 +128,7 @@ int main(int argc, const char *argv[])
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "--h") {
       std::cout << "Usage: " << argv[0]
                 << " [--camera_device <camera device (default: 0)>] [--scale <subsampling factor>]"
-                << " [--help] [-h]"
-                << std::endl;
+                << " [--help] [-h]" << std::endl;
       return 0;
     }
   }

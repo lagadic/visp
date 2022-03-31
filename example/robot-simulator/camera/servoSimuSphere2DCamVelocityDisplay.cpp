@@ -86,7 +86,8 @@ Simulation of a 2D visual servoing on a sphere:\n\
 - display the camera view.\n\
           \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+  %s [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -160,7 +161,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-      return(EXIT_FAILURE);
+      return (EXIT_FAILURE);
     }
 
     vpImage<unsigned char> I(512, 512, 0);
@@ -191,7 +192,7 @@ int main(int argc, const char **argv)
     }
 
     double px = 600, py = 600;
-    double u0 = I.getWidth()/2., v0 = I.getHeight() / 2.;
+    double u0 = I.getWidth() / 2., v0 = I.getHeight() / 2.;
 
     vpCameraParameters cam(px, py, u0, v0);
 

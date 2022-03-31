@@ -80,7 +80,8 @@ Acquire images using CMU 1394 Digital Camera SDK (available under Windows only) 
 it using GDI or OpenCV if GDI is not available.\n\
 \n\
 SYNOPSIS\n\
-  %s [-d] [-n] [-o] [-h] \n", name);
+  %s [-d] [-n] [-o] [-h] \n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -97,7 +98,8 @@ OPTIONS:                                               Default\n\
 \n\
   -h \n\
      Print the help.\n\
-\n", nframes, opath.c_str());
+\n",
+          nframes, opath.c_str());
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
     fprintf(stderr, "\nBad parameter [%s]\n", badparam);

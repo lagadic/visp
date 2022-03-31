@@ -67,7 +67,7 @@ inline vpImagePoint matchRansacToVpImage(const std::pair<cv::KeyPoint, cv::Point
   return vpImagePoint(pair.first.pt.y, pair.first.pt.x);
 }
 
-}
+} // namespace
 
 /*!
   Constructor to initialize the specified detector, descriptor, matcher and
@@ -88,9 +88,8 @@ vpKeyPoint::vpKeyPoint(const vpFeatureDetectorType &detectorType, const vpFeatur
     m_matchingTime(0.), m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200), m_nbRansacMinInlierCount(100),
     m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
     m_ransacConsensusPercentage(20.0), m_ransacFilterFlag(vpPose::NO_FILTER), m_ransacInliers(), m_ransacOutliers(),
-    m_ransacParallel(false), m_ransacParallelNbThreads(0), m_ransacReprojectionError(6.0),
-    m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(),
-    m_useAffineDetection(false),
+    m_ransacParallel(false), m_ransacParallelNbThreads(0), m_ransacReprojectionError(6.0), m_ransacThreshold(0.01),
+    m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(), m_useAffineDetection(false),
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
     m_useBruteForceCrossCheck(true),
 #endif
@@ -124,9 +123,8 @@ vpKeyPoint::vpKeyPoint(const std::string &detectorName, const std::string &extra
     m_matchingTime(0.), m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200), m_nbRansacMinInlierCount(100),
     m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(), m_queryFilteredKeyPoints(), m_queryKeyPoints(),
     m_ransacConsensusPercentage(20.0), m_ransacFilterFlag(vpPose::NO_FILTER), m_ransacInliers(), m_ransacOutliers(),
-    m_ransacParallel(false), m_ransacParallelNbThreads(0), m_ransacReprojectionError(6.0),
-    m_ransacThreshold(0.01), m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(),
-    m_useAffineDetection(false),
+    m_ransacParallel(false), m_ransacParallelNbThreads(0), m_ransacReprojectionError(6.0), m_ransacThreshold(0.01),
+    m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(), m_useAffineDetection(false),
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
     m_useBruteForceCrossCheck(true),
 #endif
@@ -159,9 +157,10 @@ vpKeyPoint::vpKeyPoint(const std::vector<std::string> &detectorNames, const std:
     m_matcher(), m_matcherName(matcherName), m_matches(), m_matchingFactorThreshold(2.0),
     m_matchingRatioThreshold(0.85), m_matchingTime(0.), m_matchRansacKeyPointsToPoints(), m_nbRansacIterations(200),
     m_nbRansacMinInlierCount(100), m_objectFilteredPoints(), m_poseTime(0.), m_queryDescriptors(),
-    m_queryFilteredKeyPoints(), m_queryKeyPoints(), m_ransacConsensusPercentage(20.0), m_ransacFilterFlag(vpPose::NO_FILTER), m_ransacInliers(),
-    m_ransacOutliers(), m_ransacParallel(false), m_ransacParallelNbThreads(0), m_ransacReprojectionError(6.0), m_ransacThreshold(0.01),
-    m_trainDescriptors(), m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(), m_useAffineDetection(false),
+    m_queryFilteredKeyPoints(), m_queryKeyPoints(), m_ransacConsensusPercentage(20.0),
+    m_ransacFilterFlag(vpPose::NO_FILTER), m_ransacInliers(), m_ransacOutliers(), m_ransacParallel(false),
+    m_ransacParallelNbThreads(0), m_ransacReprojectionError(6.0), m_ransacThreshold(0.01), m_trainDescriptors(),
+    m_trainKeyPoints(), m_trainPoints(), m_trainVpPoints(), m_useAffineDetection(false),
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020400 && VISP_HAVE_OPENCV_VERSION < 0x030000)
     m_useBruteForceCrossCheck(true),
 #endif
@@ -254,8 +253,8 @@ unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color) { return
    \param width : Width of the region of interest.
    \return The number of detected keypoints in the current image I.
  */
-unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                                        unsigned int height, unsigned int width)
+unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                                        unsigned int width)
 {
   return buildReference(I, vpRect(iP, width, height));
 }
@@ -269,8 +268,8 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const v
    \param width : Width of the region of interest.
    \return The number of detected keypoints in the current image I.
  */
-unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP,
-                                        unsigned int height, unsigned int width)
+unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, const vpImagePoint &iP, unsigned int height,
+                                        unsigned int width)
 {
   return buildReference(I_color, vpRect(iP, width, height));
 }
@@ -306,7 +305,8 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const v
     }
 
     bool first = true;
-    for (std::vector<cv::Mat>::const_iterator it = listOfTrainDescriptors.begin(); it != listOfTrainDescriptors.end(); ++it) {
+    for (std::vector<cv::Mat>::const_iterator it = listOfTrainDescriptors.begin(); it != listOfTrainDescriptors.end();
+         ++it) {
       if (first) {
         first = false;
         it->copyTo(m_trainDescriptors);
@@ -456,7 +456,8 @@ unsigned int vpKeyPoint::buildReference(const vpImage<vpRGBa> &I_color, std::vec
 
    \return The number of keypoints in the current image I.
  */
-unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const std::vector<cv::KeyPoint> &trainKeyPoints,
+unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I,
+                                        const std::vector<cv::KeyPoint> &trainKeyPoints,
                                         const cv::Mat &trainDescriptors, const std::vector<cv::Point3f> &points3f,
                                         bool append, int class_id)
 {
@@ -480,7 +481,8 @@ unsigned int vpKeyPoint::buildReference(const vpImage<unsigned char> &I, const s
 
   // Save the correspondence keypoint class_id with the training image_id in a map.
   // Used to display the matching with all the training images.
-  for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints_tmp.begin(); it != trainKeyPoints_tmp.end(); ++it) {
+  for (std::vector<cv::KeyPoint>::const_iterator it = trainKeyPoints_tmp.begin(); it != trainKeyPoints_tmp.end();
+       ++it) {
     m_mapOfImageId[it->class_id] = m_currentImageId;
   }
 
@@ -993,7 +995,8 @@ bool vpKeyPoint::computePose(const std::vector<cv::Point2f> &imagePoints, const 
    \return True if the pose has been computed, false otherwise (not enough points, or size list mismatch).
  */
 bool vpKeyPoint::computePose(const std::vector<vpPoint> &objectVpPoints, vpHomogeneousMatrix &cMo,
-                             std::vector<vpPoint> &inliers, double &elapsedTime, bool (*func)(const vpHomogeneousMatrix &))
+                             std::vector<vpPoint> &inliers, double &elapsedTime,
+                             bool (*func)(const vpHomogeneousMatrix &))
 {
   std::vector<unsigned int> inlierIndex;
   return computePose(objectVpPoints, cMo, inliers, inlierIndex, elapsedTime, func);
@@ -1504,8 +1507,8 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<uns
   \param color : Color to use, if none, we pick randomly a color for each pair
   of matching.
  */
-void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<vpRGBa> &IMatching,
-                                 unsigned int crossSize, unsigned int lineThickness, const vpColor &color)
+void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<vpRGBa> &IMatching, unsigned int crossSize,
+                                 unsigned int lineThickness, const vpColor &color)
 {
   bool randomColor = (color == vpColor::none);
   srand((unsigned int)time(NULL));
@@ -1542,8 +1545,8 @@ void vpKeyPoint::displayMatching(const vpImage<unsigned char> &IRef, vpImage<vpR
   \param color : Color to use, if none, we pick randomly a color for each pair
   of matching.
  */
-void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &IRef, vpImage<vpRGBa> &IMatching,
-                                 unsigned int crossSize, unsigned int lineThickness, const vpColor &color)
+void vpKeyPoint::displayMatching(const vpImage<vpRGBa> &IRef, vpImage<vpRGBa> &IMatching, unsigned int crossSize,
+                                 unsigned int lineThickness, const vpColor &color)
 {
   bool randomColor = (color == vpColor::none);
   srand((unsigned int)time(NULL));
@@ -2185,8 +2188,7 @@ void vpKeyPoint::getQueryKeyPoints(std::vector<cv::KeyPoint> &keyPoints, bool ma
 {
   if (matches) {
     keyPoints = m_queryFilteredKeyPoints;
-  }
-  else {
+  } else {
     keyPoints = m_queryKeyPoints;
   }
 }
@@ -2203,8 +2205,7 @@ void vpKeyPoint::getQueryKeyPoints(std::vector<vpImagePoint> &keyPoints, bool ma
 {
   if (matches) {
     keyPoints = currentImagePointsList;
-  }
-  else {
+  } else {
     vpConvert::convertFromOpenCV(m_queryKeyPoints, keyPoints);
   }
 }
@@ -2299,8 +2300,8 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
       m_detectors[detectorName] = cv::makePtr<PyramidAdaptedFeatureDetector>(siftDetector);
     }
 #else
-#if defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
-    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+#if defined(VISP_HAVE_OPENCV_XFEATURES2D) || (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) ||         \
+    (VISP_HAVE_OPENCV_VERSION >= 0x040400)
     // SIFT is no more patented since 09/03/2020
     cv::Ptr<cv::FeatureDetector> siftDetector;
     if (m_maxFeatures > 0) {
@@ -2362,8 +2363,7 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
     cv::Ptr<cv::FeatureDetector> orbDetector;
     if (m_maxFeatures > 0) {
       orbDetector = cv::ORB::create(m_maxFeatures);
-    }
-    else {
+    } else {
       orbDetector = cv::ORB::create();
     }
     if (!usePyramid) {
@@ -2458,10 +2458,10 @@ void vpKeyPoint::initDetector(const std::string &detectorName)
 
   bool detectorInitialized = false;
   if (!usePyramid) {
-    //if not null and to avoid warning C4800: forcing value to bool 'true' or 'false' (performance warning)
+    // if not null and to avoid warning C4800: forcing value to bool 'true' or 'false' (performance warning)
     detectorInitialized = !m_detectors[detectorNameTmp].empty();
   } else {
-    //if not null and to avoid warning C4800: forcing value to bool 'true' or 'false' (performance warning)
+    // if not null and to avoid warning C4800: forcing value to bool 'true' or 'false' (performance warning)
     detectorInitialized = !m_detectors[detectorName].empty();
   }
 
@@ -2501,8 +2501,8 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
 #if (VISP_HAVE_OPENCV_VERSION >= 0x040500) // OpenCV >= 4.5.0
     m_extractors[extractorName] = cv::SIFT::create();
 #else
-#if defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
-    (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
+#if defined(VISP_HAVE_OPENCV_XFEATURES2D) || (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) ||         \
+    (VISP_HAVE_OPENCV_VERSION >= 0x040400)
     // SIFT is no more patented since 09/03/2020
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
     m_extractors[extractorName] = cv::SIFT::create();
@@ -2618,7 +2618,7 @@ void vpKeyPoint::initExtractor(const std::string &extractorName)
   }
 #endif
 
-  if (!m_extractors[extractorName]) { //if null
+  if (!m_extractors[extractorName]) { // if null
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the extractor: " << extractorName
            << " or it is not available in OpenCV version: " << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
@@ -2673,7 +2673,7 @@ void vpKeyPoint::initFeatureNames()
 #if (VISP_HAVE_OPENCV_VERSION < 0x030000) || (defined(VISP_HAVE_OPENCV_XFEATURES2D))
   m_mapOfDetectorNames[DETECTOR_STAR] = "STAR";
 #endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
+#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                      \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
   m_mapOfDetectorNames[DETECTOR_SIFT] = "SIFT";
 #endif
@@ -2697,7 +2697,7 @@ void vpKeyPoint::initFeatureNames()
   m_mapOfDescriptorNames[DESCRIPTOR_FREAK] = "FREAK";
   m_mapOfDescriptorNames[DESCRIPTOR_BRIEF] = "BRIEF";
 #endif
-#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
+#if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                      \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
   m_mapOfDescriptorNames[DESCRIPTOR_SIFT] = "SIFT";
 #endif
@@ -2771,7 +2771,7 @@ void vpKeyPoint::initMatcher(const std::string &matcherName)
   }
 #endif
 
-  if (!m_matcher) { //if null
+  if (!m_matcher) { // if null
     std::stringstream ss_msg;
     ss_msg << "Fail to initialize the matcher: " << matcherName
            << " or it is not available in OpenCV version: " << std::hex << VISP_HAVE_OPENCV_VERSION << ".";
@@ -3248,12 +3248,14 @@ void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, 
 
     cv::Mat trainDescriptorsTmp;
 
-    for (pugi::xml_node first_level_node = root_element.first_child(); first_level_node; first_level_node = first_level_node.next_sibling()) {
+    for (pugi::xml_node first_level_node = root_element.first_child(); first_level_node;
+         first_level_node = first_level_node.next_sibling()) {
 
       std::string name(first_level_node.name());
       if (first_level_node.type() == pugi::node_element && name == "TrainingImageInfo") {
 
-        for (pugi::xml_node image_info_node = first_level_node.first_child(); image_info_node; image_info_node = image_info_node.next_sibling()) {
+        for (pugi::xml_node image_info_node = first_level_node.first_child(); image_info_node;
+             image_info_node = image_info_node.next_sibling()) {
           name = std::string(image_info_node.name());
 
           if (name == "trainImg") {
@@ -3299,7 +3301,8 @@ void vpKeyPoint::loadLearningData(const std::string &filename, bool binaryMode, 
 
         std::stringstream ss;
 
-        for (pugi::xml_node point_node = first_level_node.first_child(); point_node; point_node = point_node.next_sibling()) {
+        for (pugi::xml_node point_node = first_level_node.first_child(); point_node;
+             point_node = point_node.next_sibling()) {
           if (point_node.type() == pugi::node_element) {
             name = std::string(point_node.name());
 
@@ -3901,7 +3904,6 @@ bool vpKeyPoint::matchPoint(const vpImage<vpRGBa> &I_color, const vpCameraParame
   vpImageConvert::convert(I_color, m_I);
   return (matchPoint(m_I, cam, cMo, error, elapsedTime, func, rectangle));
 }
-
 
 /*!
    Match keypoints detected in the image with those built in the reference
@@ -4618,23 +4620,19 @@ void vpKeyPoint::saveLearningData(const std::string &filename, bool binaryMode, 
           break;
 
         case CV_16S:
-          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
-              m_trainDescriptors.at<short int>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() = m_trainDescriptors.at<short int>(i, j);
           break;
 
         case CV_32S:
-          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
-              m_trainDescriptors.at<int>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() = m_trainDescriptors.at<int>(i, j);
           break;
 
         case CV_32F:
-          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
-              m_trainDescriptors.at<float>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() = m_trainDescriptors.at<float>(i, j);
           break;
 
         case CV_64F:
-          desc_node.append_child("val").append_child(pugi::node_pcdata).text() =
-              m_trainDescriptors.at<double>(i, j);
+          desc_node.append_child("val").append_child(pugi::node_pcdata).text() = m_trainDescriptors.at<double>(i, j);
           break;
 
         default:

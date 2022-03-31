@@ -73,19 +73,19 @@ public:
     Robot control frames.
   */
   typedef enum {
-    REFERENCE_FRAME, /*!< Corresponds to a fixed reference frame
-  attached to the robot structure. */
-    ARTICULAR_FRAME, /*!< Corresponds to the joint state. This value is deprecated.
-  You should rather use vpRobot::JOINT_STATE. */
+    REFERENCE_FRAME,               /*!< Corresponds to a fixed reference frame
+                attached to the robot structure. */
+    ARTICULAR_FRAME,               /*!< Corresponds to the joint state. This value is deprecated.
+                You should rather use vpRobot::JOINT_STATE. */
     JOINT_STATE = ARTICULAR_FRAME, /*!< Corresponds to the joint state. */
-    END_EFFECTOR_FRAME,    /*!< Corresponds to robot end-effector frame. */
-    CAMERA_FRAME,    /*!< Corresponds to a frame attached to the
-  camera mounted on the robot end-effector. */
-    TOOL_FRAME = CAMERA_FRAME,    /*!< Corresponds to a frame attached to the
-  tool (camera, gripper...) mounted on the robot end-effector. This value is equal to vpRobot::CAMERA_FRAME. */
-    MIXT_FRAME       /*!< Corresponds to a "virtual" frame where
-        translations are expressed in the reference frame, and
-        rotations in the camera frame.*/
+    END_EFFECTOR_FRAME,            /*!< Corresponds to robot end-effector frame. */
+    CAMERA_FRAME,                  /*!< Corresponds to a frame attached to the
+                camera mounted on the robot end-effector. */
+    TOOL_FRAME = CAMERA_FRAME,     /*!< Corresponds to a frame attached to the
+   tool (camera, gripper...) mounted on the robot end-effector. This value is equal to vpRobot::CAMERA_FRAME. */
+    MIXT_FRAME                     /*!< Corresponds to a "virtual" frame where
+                      translations are expressed in the reference frame, and
+                      rotations in the camera frame.*/
   } vpControlFrameType;
 
 private: /* Membres privees */

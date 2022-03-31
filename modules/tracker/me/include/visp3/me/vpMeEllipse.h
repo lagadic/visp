@@ -197,7 +197,8 @@ public:
 
   void initTracking(const vpImage<unsigned char> &I, bool trackArc = false);
   void initTracking(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP, bool trackArc = false);
-  void initTracking(const vpImage<unsigned char> &I, const vpColVector &param, vpImagePoint *pt1 = NULL, const vpImagePoint *pt2 = NULL);
+  void initTracking(const vpImage<unsigned char> &I, const vpColVector &param, vpImagePoint *pt1 = NULL,
+                    const vpImagePoint *pt2 = NULL);
   void printParameters() const;
 
   /*!
@@ -343,8 +344,8 @@ public:
     B = b;
     E = e;
   }
-  vp_deprecated void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &center_p, double a_p, double b_p, double e_p,
-                                  double low_alpha, double high_alpha);
+  vp_deprecated void initTracking(const vpImage<unsigned char> &I, const vpImagePoint &center_p, double a_p, double b_p,
+                                  double e_p, double low_alpha, double high_alpha);
   vp_deprecated void initTracking(const vpImage<unsigned char> &I, unsigned int n, vpImagePoint *iP);
   vp_deprecated void initTracking(const vpImage<unsigned char> &I, unsigned int n, unsigned *i, unsigned *j);
   //@}
@@ -445,10 +446,10 @@ protected:
   double computeTheta(const vpImagePoint &iP) const;
   double computeTheta(double u, double v) const;
   void getParameters();
-  void leastSquare(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP);  // FC : new
+  void leastSquare(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &iP); // FC : new
   void leastSquareRobust(const vpImage<unsigned char> &I);
   unsigned int plugHoles(const vpImage<unsigned char> &I);
-  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack=false);
+  virtual void sample(const vpImage<unsigned char> &I, bool doNotTrack = false);
   void updateTheta();
 
 private:
@@ -458,13 +459,11 @@ private:
 
   // Static Function
 public:
-  static void display(const vpImage<unsigned char> &I, const vpImagePoint &center,
-                      const double &A, const double &B, const double &E,
-                      const double &smallalpha, const double &highalpha,
+  static void display(const vpImage<unsigned char> &I, const vpImagePoint &center, const double &A, const double &B,
+                      const double &E, const double &smallalpha, const double &highalpha,
                       const vpColor &color = vpColor::green, unsigned int thickness = 1);
-  static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center,
-                      const double &A, const double &B, const double &E,
-                      const double &smallalpha, const double &highalpha,
+  static void display(const vpImage<vpRGBa> &I, const vpImagePoint &center, const double &A, const double &B,
+                      const double &E, const double &smallalpha, const double &highalpha,
                       const vpColor &color = vpColor::green, unsigned int thickness = 1);
 };
 

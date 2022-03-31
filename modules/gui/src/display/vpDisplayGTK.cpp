@@ -66,19 +66,19 @@
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-#include <gtk/gtk.h>
 #include <gdk/gdk.h>
 #include <gdk/gdkrgb.h>
+#include <gtk/gtk.h>
 
 class vpDisplayGTK::Impl
 {
 public:
   Impl()
     : m_widget(NULL), m_background(NULL), m_gc(NULL), m_blue(), m_red(), m_yellow(), m_green(), m_cyan(), m_orange(),
-      m_white(), m_black(), m_gdkcolor(), m_lightBlue(), m_darkBlue(), m_lightRed(), m_darkRed(), m_lightGreen(), m_darkGreen(),
-      m_purple(), m_lightGray(), m_gray(), m_darkGray(), m_colormap(NULL), m_font(NULL), m_vectgtk(NULL), m_col(NULL)
+      m_white(), m_black(), m_gdkcolor(), m_lightBlue(), m_darkBlue(), m_lightRed(), m_darkRed(), m_lightGreen(),
+      m_darkGreen(), m_purple(), m_lightGray(), m_gray(), m_darkGray(), m_colormap(NULL), m_font(NULL), m_vectgtk(NULL),
+      m_col(NULL)
   {
-
   }
 
   ~Impl() {}
@@ -202,20 +202,11 @@ public:
       gdk_window_set_title(m_widget->window, title.c_str());
   }
 
-  void setFont(const std::string &fontname)
-  {
-    m_font = gdk_font_load((const gchar *)fontname.c_str());
-  }
+  void setFont(const std::string &fontname) { m_font = gdk_font_load((const gchar *)fontname.c_str()); }
 
-  void setTitle(const std::string &title)
-  {
-    gdk_window_set_title(m_widget->window, title.c_str());
-  }
+  void setTitle(const std::string &title) { gdk_window_set_title(m_widget->window, title.c_str()); }
 
-  void setWindowPosition(int win_x, int win_y)
-  {
-    gtk_window_move(GTK_WINDOW(m_widget), win_x, win_y);
-  }
+  void setWindowPosition(int win_x, int win_y) { gtk_window_move(GTK_WINDOW(m_widget), win_x, win_y); }
 
   void displayImage(const vpImage<unsigned char> &I, unsigned int scale, gint width, gint height)
   {
@@ -236,11 +227,13 @@ public:
   {
     if (scale == 1) {
       /* Copie de l'image dans le pixmap fond */
-      gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, width, height, GDK_RGB_DITHER_NONE, (unsigned char *)I.bitmap, 4 * width);
+      gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, width, height, GDK_RGB_DITHER_NONE, (unsigned char *)I.bitmap,
+                            4 * width);
     } else {
       vpImage<vpRGBa> sampled;
       I.subsample(scale, scale, sampled);
-      gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, width, height, GDK_RGB_DITHER_NONE, (unsigned char *)sampled.bitmap, 4 * width);
+      gdk_draw_rgb_32_image(m_background, m_gc, 0, 0, width, height, GDK_RGB_DITHER_NONE,
+                            (unsigned char *)sampled.bitmap, 4 * width);
     }
 
     /* Le pixmap background devient le fond de la zone de dessin */
@@ -249,8 +242,7 @@ public:
 
   void displayImageROI(const vpImage<unsigned char> &I, gint j_min, gint i_min, gint width, gint height)
   {
-    gdk_draw_gray_image(m_background, m_gc, j_min, i_min,
-                        width, height, GDK_RGB_DITHER_NONE, I.bitmap, width);
+    gdk_draw_gray_image(m_background, m_gc, j_min, i_min, width, height, GDK_RGB_DITHER_NONE, I.bitmap, width);
     /* Le pixmap background devient le fond de la zone de dessin */
     gdk_window_set_back_pixmap(m_widget->window, m_background, FALSE);
   }
@@ -297,8 +289,8 @@ public:
       gdk_gc_set_foreground(m_gc, &m_gdkcolor);
     }
     if (m_font != NULL)
-      gdk_draw_string(m_background, m_font, m_gc, vpMath::round(ip.get_u() / scale),
-                      vpMath::round(ip.get_v() / scale), (const gchar *)text);
+      gdk_draw_string(m_background, m_font, m_gc, vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale),
+                      (const gchar *)text);
     else
       std::cout << "Cannot draw string: no font is selected" << std::endl;
   }
@@ -328,7 +320,8 @@ public:
                    static_cast<gint>(2. * radius / scale), 23040, 23040); /* 23040 = 360*64 */
   }
 
-  void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness, unsigned int scale)
+  void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness,
+                      unsigned int scale)
   {
     if (color.id < vpColor::id_unknown)
       gdk_gc_set_foreground(m_gc, m_col[color.id]);
@@ -346,7 +339,8 @@ public:
     gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
   }
 
-  void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness, unsigned int scale)
+  void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness,
+                   unsigned int scale)
   {
     if (color.id < vpColor::id_unknown)
       gdk_gc_set_foreground(m_gc, m_col[color.id]);
@@ -378,13 +372,13 @@ public:
     if (thickness == 1) {
       gdk_draw_point(m_background, m_gc, vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale));
     } else {
-      gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(ip.get_u() / scale),
-                         vpMath::round(ip.get_v() / scale), static_cast<gint>(thickness), static_cast<gint>(thickness));
+      gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(ip.get_u() / scale), vpMath::round(ip.get_v() / scale),
+                         static_cast<gint>(thickness), static_cast<gint>(thickness));
     }
   }
 
-  void displayRectangle(const vpImagePoint &topLeft, unsigned int w, unsigned int h, const vpColor &color,
-                        bool fill, unsigned int thickness, unsigned int scale)
+  void displayRectangle(const vpImagePoint &topLeft, unsigned int w, unsigned int h, const vpColor &color, bool fill,
+                        unsigned int thickness, unsigned int scale)
   {
     if (color.id < vpColor::id_unknown)
       gdk_gc_set_foreground(m_gc, m_col[color.id]);
@@ -399,16 +393,19 @@ public:
 
     if (fill == false)
       gdk_draw_rectangle(m_background, m_gc, FALSE, vpMath::round(topLeft.get_u() / scale),
-                         vpMath::round(topLeft.get_v() / scale), static_cast<gint>(w / scale), static_cast<gint>(h / scale));
+                         vpMath::round(topLeft.get_v() / scale), static_cast<gint>(w / scale),
+                         static_cast<gint>(h / scale));
     else
       gdk_draw_rectangle(m_background, m_gc, TRUE, vpMath::round(topLeft.get_u() / scale),
-                         vpMath::round(topLeft.get_v() / scale), static_cast<gint>(w / scale), static_cast<gint>(h / scale));
+                         vpMath::round(topLeft.get_v() / scale), static_cast<gint>(w / scale),
+                         static_cast<gint>(h / scale));
 
     if (thickness > 1)
       gdk_gc_set_line_attributes(m_gc, 0, GDK_LINE_SOLID, GDK_CAP_BUTT, GDK_JOIN_BEVEL);
   }
 
-  bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking, unsigned int scale, const GdkEventType	&event_type)
+  bool getClick(vpImagePoint &ip, vpMouseButton::vpMouseButtonType &button, bool blocking, unsigned int scale,
+                const GdkEventType &event_type)
   {
     bool ret = false;
     do {
@@ -469,10 +466,7 @@ public:
     }
   }
 
-  unsigned int getScreenDepth()
-  {
-    return static_cast<unsigned int>(gdk_window_get_visual(m_widget->window)->depth);
-  }
+  unsigned int getScreenDepth() { return static_cast<unsigned int>(gdk_window_get_visual(m_widget->window)->depth); }
 
   bool getKeyboardEvent(std::string &key, bool blocking)
   {
@@ -588,8 +582,7 @@ private:
   and the columns.
 
 */
-vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, vpScaleType scaleType)
-  : vpDisplay(), m_impl(new Impl())
+vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, vpScaleType scaleType) : vpDisplay(), m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -618,7 +611,8 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, vpScaleType scaleType)
   and the columns.
 
 */
-vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, int win_x, int win_y, const std::string &win_title, vpScaleType scaleType)
+vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, int win_x, int win_y, const std::string &win_title,
+                           vpScaleType scaleType)
   : vpDisplay(), m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
@@ -644,8 +638,7 @@ vpDisplayGTK::vpDisplayGTK(vpImage<unsigned char> &I, int win_x, int win_y, cons
   - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
   and the columns.
 */
-vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, vpScaleType scaleType)
-  : vpDisplay(), m_impl(new Impl())
+vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, vpScaleType scaleType) : vpDisplay(), m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -672,7 +665,8 @@ vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, vpScaleType scaleType)
   - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
   and the columns.
 */
-vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, int win_x, int win_y, const std::string &win_title, vpScaleType scaleType)
+vpDisplayGTK::vpDisplayGTK(vpImage<vpRGBa> &I, int win_x, int win_y, const std::string &win_title,
+                           vpScaleType scaleType)
   : vpDisplay(), m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
@@ -701,8 +695,7 @@ int main()
 }
   \endcode
 */
-vpDisplayGTK::vpDisplayGTK(int win_x, int win_y, const std::string &win_title)
-  : vpDisplay(), m_impl(new Impl())
+vpDisplayGTK::vpDisplayGTK(int win_x, int win_y, const std::string &win_title) : vpDisplay(), m_impl(new Impl())
 {
   m_windowXPosition = win_x;
   m_windowYPosition = win_y;
@@ -728,10 +721,7 @@ int main()
 }
   \endcode
 */
-vpDisplayGTK::vpDisplayGTK()
-  : vpDisplay(), m_impl(new Impl())
-{
-}
+vpDisplayGTK::vpDisplayGTK() : vpDisplay(), m_impl(new Impl()) {}
 
 /*!
   Destructor.
@@ -809,7 +799,8 @@ void vpDisplayGTK::init(vpImage<vpRGBa> &I, int win_x, int win_y, const std::str
   \param win_title : Window title.
 
 */
-void vpDisplayGTK::init(unsigned int win_width, unsigned int win_height, int win_x, int win_y, const std::string &win_title)
+void vpDisplayGTK::init(unsigned int win_width, unsigned int win_height, int win_x, int win_y,
+                        const std::string &win_title)
 {
   setScale(m_scaleType, win_width, win_height);
 
@@ -840,10 +831,7 @@ void vpDisplayGTK::init(unsigned int win_width, unsigned int win_height, int win
 
   \sa displayCharString()
 */
-void vpDisplayGTK::setFont(const std::string &fontname)
-{
-  m_impl->setFont(fontname);
-}
+void vpDisplayGTK::setFont(const std::string &fontname) { m_impl->setFont(fontname); }
 
 /*!
   Set the window title.
@@ -971,8 +959,7 @@ void vpDisplayGTK::displayImage(const vpImage<vpRGBa> &I)
 
   \sa init(), closeDisplay()
 */
-void vpDisplayGTK::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int w,
-                                   unsigned int h)
+void vpDisplayGTK::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int w, unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
     vpImage<vpRGBa> Itemp;
