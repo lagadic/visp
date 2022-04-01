@@ -395,7 +395,16 @@ public:
     }
 
     // Check if detection and model fit
-    for ([[maybe_unused]] const auto &[ip_id, _] : ips) {
+    // - The next line produces an internal compiler error with Visual Studio 2017:
+    //   modules\vision\include\visp3/vision/vpPose.h(404): fatal error C1001: An internal error has occurred in the
+    //   compiler.
+    //    To work around this problem, try simplifying or changing the program near the locations listed above.
+    //   Please choose the Technical Support command on the Visual C++
+    //    Help menu, or open the Technical Support help file for more information
+    // - Note that the next line builds with Visual Studio 2022.
+    // for ([[maybe_unused]] const auto &[ip_id, _] : ips) {
+    for (const auto &[ip_id, ip_unused] : ips) {
+      (void)ip_unused;
       if (pts.find(ip_id) == end(pts)) {
         throw(vpException(vpException::fatalError,
                           "Cannot compute pose with points and image points which do not have the same IDs"));
@@ -403,10 +412,14 @@ public:
     }
 
     std::vector<vpPoint> P{}, Q{};
-    for (auto [pt_id, pt] : pts) {
-      if (ips.find(pt_id) != end(ips)) {
+    // The next line in C++17 produces a build error with Visual Studio 2017, that's why we
+    // use rather C++11 to loop through std::map
+    // for (auto [pt_id, pt] : pts) {
+    for (const auto &pt_map : pts) {
+      if (ips.find(pt_map.first) != end(ips)) {
         double x = 0, y = 0;
-        vpPixelMeterConversion::convertPoint(camera_intrinsics, ips.at(pt_id), x, y);
+        vpPoint pt = pt_map.second;
+        vpPixelMeterConversion::convertPoint(camera_intrinsics, ips.at(pt_map.first), x, y);
         const auto Z = plane_in_camera_frame.computeZ(x, y);
 
         pt.set_x(x);
@@ -432,7 +445,6 @@ public:
 
   static std::optional<vpHomogeneousMatrix> poseVirtualVSWithDepth(std::vector<vpPoint> points,
                                                                    vpHomogeneousMatrix cMo);
-
 #endif
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)

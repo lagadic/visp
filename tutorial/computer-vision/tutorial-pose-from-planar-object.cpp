@@ -21,7 +21,8 @@
 #include <visp3/gui/vpDisplayX.h>
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
-    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911))) &&                     \
+    defined(VISP_HAVE_DISPLAY)
 
 // Local helper
 namespace
@@ -294,8 +295,17 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
   disp_help.flush(I_help);
 
   std::map<Model::Id, vpImagePoint> keypoints{};
-  for ([[maybe_unused]] const auto &[id, _] : model.keypoints()) {
-
+  // - The next line produces an internal compiler error with Visual Studio 2017:
+  //   tutorial-pose-from-planar-object.cpp(304): fatal error C1001: An internal error has occurred in the compiler.
+  //   [C:\projects\visp\build\tutorial\computer-vision\tutorial-pose-from-planar-object.vcxproj] (compiler file
+  //   'd:\agent\_work\8\s\src\vctools\compiler\cxxfe\sl\p1\cxx\grammar.y', line 12721)
+  //    To work around this problem, try simplifying or changing the program near the locations listed above.
+  //   Please choose the Technical Support command on the Visual C++
+  //    Help menu, or open the Technical Support help file for more information
+  // - Note that the next line builds with Visual Studio 2022.
+  // for ([[maybe_unused]] const auto &[id, _] : model.keypoints()) {
+  for (const auto &[id, ip_unused] : model.keypoints()) {
+    (void)ip_unused;
     // Prepare display
     disp_color.display(color_img);
     auto disp_lane{0};
@@ -320,7 +330,7 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
   return keypoints;
 }
 #endif // #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >=
-       // VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+// VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911))) && defined(VISP_HAVE_DISPLAY)
 
 int main(int, char *argv[])
 {
@@ -378,7 +388,7 @@ int main(int, char *argv[])
   //! [Plane_Estimation]
   const auto obj_plane_in_depth =
       vpPlaneEstimation::estimatePlane(depth_raw, DepthScale, depth_param, roi_depth_img, 1000, heat_map);
-  if (! obj_plane_in_depth) {
+  if (!obj_plane_in_depth) {
     return EXIT_FAILURE;
   }
 
@@ -399,14 +409,25 @@ int main(int, char *argv[])
   //! [Pose_Estimation]
   const auto cMo = vpPose::computePlanarObjectPoseWithAtLeast3Points(obj_plane_in_color, model.keypoints(),
                                                                      keypoint_color_img, color_param);
-  if (! cMo) {
+  if (!cMo) {
     return EXIT_FAILURE;
   }
   //! [Pose_Estimation]
 
   // Display the model
   std::vector<vpImagePoint> d435_box_bound{};
-  for ([[maybe_unused]] const auto &[_, bound] : model.bounds(*cMo)) {
+  // - The next line produces an internal compiler error with Visual Studio 2017:
+  //   tutorial-pose-from-planar-object.cpp(428): fatal error C1001: An internal error has occurred in the compiler.
+  //   [C:\projects\visp\build\tutorial\computer-vision\tutorial-pose-from-planar-object.vcxproj] (compiler file
+  //   'd:\agent\_work\8\s\src\vctools\compiler\cxxfe\sl\p1\cxx\grammar.y', line 12721)
+  //    To work around this problem, try simplifying or changing the program near the locations listed above.
+  //   Please choose the Technical Support command on the Visual C++
+  //    Help menu, or open the Technical Support help file for more information
+  // - Note that the next line builds with Visual Studio 2022.
+  //
+  // for ([[maybe_unused]] const auto &[_, bound] : model.bounds(*cMo)) {
+  for (const auto &[id_unused, bound] : model.bounds(*cMo)) {
+    (void)id_unused;
     vpImagePoint ip{};
     vpMeterPixelConversion::convertPoint(color_param, bound.get_x(), bound.get_y(), ip);
     d435_box_bound.push_back(ip);
@@ -433,7 +454,13 @@ int main(int, char *argv[])
 
   vpDisplay::getClick(color_img);
 
+#else
+  (void)argv;
+  std::cout << "There is no display available to run this tutorial." << std::endl;
 #endif // defined(VISP_HAVE_DISPLAY)
+#else
+  (void)argv;
+  std::cout << "c++17 should be enabled to run this tutorial." << std::endl;
 #endif // (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >=
        // VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
 
