@@ -574,13 +574,8 @@ int main()
 #endif
 
     for (size_t i = 0u; i < testing_values.size(); i++) {
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
-      if (const auto clamp_val = vpMath::clamp(testing_values.at(i), lower, upper);
-          !vpMath::equal(clamp_val, expected_values.at(i), 0.001)) {
-#else
       const double clamp_val = vpMath::clamp(testing_values.at(i), lower, upper);
       if (!vpMath::equal(clamp_val, expected_values.at(i), 0.001)) {
-#endif
         std::cerr << "Problem with vpMath::clamp()=" << clamp_val << std::endl;
         return -1;
       }
