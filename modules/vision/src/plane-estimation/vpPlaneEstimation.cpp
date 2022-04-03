@@ -128,7 +128,7 @@ vpPlane estimatePlaneEquationSVD(const std::vector<double> &point_cloud, vpColVe
     centroid /= total_w;
 
     // Minimization
-    int i;
+    int i = 0;
 #ifdef VISP_HAVE_OPENMP
 #pragma omp parallel for num_threads(num_procs)
 #endif
@@ -257,7 +257,8 @@ vpPlaneEstimation::estimatePlane(const vpImage<uint16_t> &I_depth_raw, double de
   const int roi_right = static_cast<int>(std::min(static_cast<double>(I_depth_raw.getWidth()), roi_bb.getRight()));
 
   // Reduce computation time by using subsample factor
-  unsigned int subsample_factor = static_cast<int>(sqrt(((roi_right - roi_left) * (roi_bottom - roi_top)) / avg_nb_of_pts_to_estimate));
+  unsigned int subsample_factor =
+      static_cast<int>(sqrt(((roi_right - roi_left) * (roi_bottom - roi_top)) / avg_nb_of_pts_to_estimate));
   subsample_factor = vpMath::clamp(subsample_factor, 1u, MaxSubSampFactorToEstimatePlane);
 
   // Create the point cloud which will be used for plane estimation
