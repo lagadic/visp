@@ -78,7 +78,8 @@ Parsing command line arguments example.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <integer>] [-f <float>] [-d <double> [-h]\n\
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -92,7 +93,8 @@ OPTIONS:                                               Default\n\
      A double value.\n\
 \n\
   -h\n\
-     Print the help.\n\n", i_val, f_val, d_val);
+     Print the help.\n\n",
+          i_val, f_val, d_val);
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");

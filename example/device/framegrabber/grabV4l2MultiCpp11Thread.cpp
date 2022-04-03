@@ -48,7 +48,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_V4L2) && \
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && defined(VISP_HAVE_V4L2) &&                                          \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK))
 
 #include <condition_variable>
@@ -90,7 +90,8 @@ OPTIONS:                                               \n\
      Save each stream in a dedicated folder.\n\
     \n\
   -h \n\
-     Print the help.\n\n", name);
+     Print the help.\n\n",
+          name);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -341,8 +342,8 @@ void capture(vpV4l2Grabber *const pGrabber, ShareImage &share_image)
   }
 }
 
-void display(unsigned int width, unsigned int height, int win_x, int win_y,
-             unsigned int deviceId, ShareImage &share_image, FrameQueue &queue, bool save)
+void display(unsigned int width, unsigned int height, int win_x, int win_y, unsigned int deviceId,
+             ShareImage &share_image, FrameQueue &queue, bool save)
 {
   vpImage<vpRGBa> local_img(height, width);
 
@@ -559,4 +560,3 @@ int main()
 }
 #endif
 #endif
-

@@ -72,7 +72,8 @@ Example of tracking based on the 3D model.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-x <config file>]\n\
   [-m <model name>] [-n <initialisation file base name>] [-e <last frame index>]\n\
-  [-t] [-c] [-d] [-h] [-f] [-o] [-w] [-l] [-v]\n", name);
+  [-t] [-c] [-d] [-h] [-f] [-o] [-w] [-l] [-v]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               \n\

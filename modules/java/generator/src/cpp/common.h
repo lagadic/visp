@@ -10,17 +10,17 @@ extern "C" {
 
 #if !defined(__ppc__)
 // to suppress warning from jni.h on OS X
-# define TARGET_RT_MAC_CFM 0
+#define TARGET_RT_MAC_CFM 0
 #endif
 #include <jni.h>
 
 } // extern "C"
 
-#include "visp_java.hpp"
 #include "listconverters.hpp"
+#include "visp_java.hpp"
 
 #ifdef _MSC_VER
-#  pragma warning(disable:4800 4244)
+#pragma warning(disable : 4800 4244)
 #endif
 
 #endif //_VISP_JAVA_COMMON_H_

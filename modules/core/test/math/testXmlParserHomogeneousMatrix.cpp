@@ -39,8 +39,8 @@
   Test vpXmlParserHomogeneousMatrix parse / save.
 */
 
-#include <visp3/core/vpXmlParserHomogeneousMatrix.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpXmlParserHomogeneousMatrix.h>
 
 int main()
 {

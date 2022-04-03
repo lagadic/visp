@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@
  * Eric Marchand
  * Francois Chaumette
  * Aurelien Yol
+ * Fabien Spindler
+ * Julien Dufour
  *
  *****************************************************************************/
 
@@ -47,6 +49,7 @@
 #define _vpPose_h_
 
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpRGBa.h>
 #include <visp3/vision/vpHomography.h>
@@ -60,6 +63,12 @@
 #include <vector>
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <atomic>
+#endif
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
+    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+#include <map>
+#include <optional>
 #endif
 
 #include <visp3/core/vpUniRand.h>
@@ -328,22 +337,6 @@ public:
     return vectorOfPoints;
   }
 
-  static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size,
-                      vpColor col = vpColor::none);
-  static void display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size,
-                      vpColor col = vpColor::none);
-  static double poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint &p4, double lx,
-                                  vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
-
-  static int computeRansacIterations(double probability, double epsilon, const int sampleSize = 4,
-                                     int maxIterations = 2000);
-
-  static void findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
-                        const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
-                        unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
-                        const int &maxNbTrials = 10000, bool useParallelRansac = true, unsigned int nthreads = 0,
-                        bool (*func)(const vpHomogeneousMatrix &) = NULL);
-
   static bool computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap, const std::vector<vpImagePoint> &corners,
                                               const vpCameraParameters &colorIntrinsics,
                                               const std::vector<vpPoint> &point3d, vpHomogeneousMatrix &cMo,
@@ -355,6 +348,104 @@ public:
                                               const std::vector<std::vector<vpPoint> > &point3d,
                                               vpHomogeneousMatrix &cMo, double *confidence_index = NULL,
                                               bool coplanar_points = true);
+  static int computeRansacIterations(double probability, double epsilon, const int sampleSize = 4,
+                                     int maxIterations = 2000);
+
+  static void display(vpImage<unsigned char> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size,
+                      vpColor col = vpColor::none);
+  static void display(vpImage<vpRGBa> &I, vpHomogeneousMatrix &cMo, vpCameraParameters &cam, double size,
+                      vpColor col = vpColor::none);
+
+  static void findMatch(std::vector<vpPoint> &p2D, std::vector<vpPoint> &p3D,
+                        const unsigned int &numberOfInlierToReachAConsensus, const double &threshold,
+                        unsigned int &ninliers, std::vector<vpPoint> &listInliers, vpHomogeneousMatrix &cMo,
+                        const int &maxNbTrials = 10000, bool useParallelRansac = true, unsigned int nthreads = 0,
+                        bool (*func)(const vpHomogeneousMatrix &) = NULL);
+
+  static double poseFromRectangle(vpPoint &p1, vpPoint &p2, vpPoint &p3, vpPoint &p4, double lx,
+                                  vpCameraParameters &cam, vpHomogeneousMatrix &cMo);
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) &&                                                                     \
+    (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911)))
+
+  /*!
+   * Compute the pose of a planar object from corresponding 2D-3D point coordinates and plane equation.
+   * Here at least 3 points are required.
+   *
+   * \param[in] plane_in_camera_frame : Plane in camera frame.
+   * \param[in] pts : Object points.
+   * \param[in] ips : Points in the image.
+   * \param[in] camera_intrinsics : Camera parameters.
+   * \param[in] cMo_init : Camera to object frame transformation used as initialization. When set to `std::nullopt`,
+   * this transformation is computed internally.
+   * \param[in] enable_vvs : When true, refine estimated pose using a virtual visual servoing scheme.
+   * \return Homogeneous matrix \f${^c}{\bf M}_o\f$ between camera frame and object frame when estimation succeed,
+   * nullopt otherwise.
+   */
+  template <typename DataId>
+  static std::optional<vpHomogeneousMatrix> computePlanarObjectPoseWithAtLeast3Points(
+      const vpPlane &plane_in_camera_frame, const std::map<DataId, vpPoint> &pts,
+      const std::map<DataId, vpImagePoint> &ips, const vpCameraParameters &camera_intrinsics,
+      std::optional<vpHomogeneousMatrix> cMo_init = std::nullopt, bool enable_vvs = true)
+  {
+    if (cMo_init && !enable_vvs) {
+      throw(vpException(
+          vpException::fatalError,
+          "It doesn't make sense to use an initialized pose without enabling VVS to compute the pose from 4 points"));
+    }
+
+    // Check if detection and model fit
+    // - The next line produces an internal compiler error with Visual Studio 2017:
+    //   modules\vision\include\visp3/vision/vpPose.h(404): fatal error C1001: An internal error has occurred in the
+    //   compiler.
+    //    To work around this problem, try simplifying or changing the program near the locations listed above.
+    //   Please choose the Technical Support command on the Visual C++
+    //    Help menu, or open the Technical Support help file for more information
+    // - Note that the next line builds with Visual Studio 2022.
+    // for ([[maybe_unused]] const auto &[ip_id, _] : ips) {
+    for (const auto &[ip_id, ip_unused] : ips) {
+      (void)ip_unused;
+      if (pts.find(ip_id) == end(pts)) {
+        throw(vpException(vpException::fatalError,
+                          "Cannot compute pose with points and image points which do not have the same IDs"));
+      }
+    }
+
+    std::vector<vpPoint> P{}, Q{};
+    // The next line in C++17 produces a build error with Visual Studio 2017, that's why we
+    // use rather C++11 to loop through std::map
+    // for (auto [pt_id, pt] : pts) {
+    for (const auto &pt_map : pts) {
+      if (ips.find(pt_map.first) != end(ips)) {
+        double x = 0, y = 0;
+        vpPoint pt = pt_map.second;
+        vpPixelMeterConversion::convertPoint(camera_intrinsics, ips.at(pt_map.first), x, y);
+        const auto Z = plane_in_camera_frame.computeZ(x, y);
+
+        pt.set_x(x);
+        pt.set_y(y);
+        pt.set_Z(Z);
+
+        Q.push_back(pt);
+        P.emplace_back(x * Z, y * Z, Z);
+      }
+    }
+
+    if (Q.size() < 3) {
+      return std::nullopt;
+    }
+
+    auto cMo = cMo_init.value_or(vpHomogeneousMatrix::compute3d3dTransformation(P, Q));
+    if (!cMo.isValid()) {
+      return std::nullopt;
+    }
+
+    return enable_vvs ? vpPose::poseVirtualVSWithDepth(Q, cMo).value_or(cMo) : cMo;
+  }
+
+  static std::optional<vpHomogeneousMatrix> poseVirtualVSWithDepth(std::vector<vpPoint> points,
+                                                                   vpHomogeneousMatrix cMo);
+#endif
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!

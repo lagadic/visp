@@ -80,7 +80,8 @@ Test video devices or display.\n\
 \n\
 SYNOPSIS\n\
   %s [-l] [-c] [-d] [-h]\n\
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\

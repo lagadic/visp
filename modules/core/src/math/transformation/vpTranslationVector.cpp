@@ -68,7 +68,10 @@ vpTranslationVector::vpTranslationVector(double tx, double ty, double tz) : vpAr
   \param M : Homogeneous matrix where translations are in meters.
 
 */
-vpTranslationVector::vpTranslationVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(3, 1), m_index(0) { M.extract(*this); }
+vpTranslationVector::vpTranslationVector(const vpHomogeneousMatrix &M) : vpArray2D<double>(3, 1), m_index(0)
+{
+  M.extract(*this);
+}
 
 /*!
   Construct a translation vector \f$ \bf t \f$ from the translation contained
@@ -526,7 +529,10 @@ t: 0  0.1  0.5
 vpTranslationVector &vpTranslationVector::operator=(const std::initializer_list<double> &list)
 {
   if (list.size() > size()) {
-    throw(vpException(vpException::dimensionError, "Cannot set translation vector out of bounds. It has only %d values while you try to initialize with %d values", size(), list.size()));
+    throw(vpException(
+        vpException::dimensionError,
+        "Cannot set translation vector out of bounds. It has only %d values while you try to initialize with %d values",
+        size(), list.size()));
   }
   std::copy(list.begin(), list.end(), data);
   return *this;
@@ -556,7 +562,7 @@ t: 0  0.1  0.5
 
   \sa operator,()
  */
-vpTranslationVector& vpTranslationVector::operator<<(double val)
+vpTranslationVector &vpTranslationVector::operator<<(double val)
 {
   m_index = 0;
   data[m_index] = val;
@@ -586,11 +592,14 @@ t: 0  0.1  0.5
 
   \sa operator<<()
  */
-vpTranslationVector& vpTranslationVector::operator,(double val)
+vpTranslationVector &vpTranslationVector::operator,(double val)
 {
-  m_index ++;
+  m_index++;
   if (m_index >= size()) {
-    throw(vpException(vpException::dimensionError, "Cannot set translation vector out of bounds. It has only %d values while you try to initialize with %d values", size(), m_index+1));
+    throw(vpException(
+        vpException::dimensionError,
+        "Cannot set translation vector out of bounds. It has only %d values while you try to initialize with %d values",
+        size(), m_index + 1));
   }
   data[m_index] = val;
   return *this;
@@ -712,10 +721,7 @@ vpRowVector vpTranslationVector::t() const
 
   \sa frobeniusNorm()
 */
-double vpTranslationVector::euclideanNorm() const
-{
-  return frobeniusNorm();
-}
+double vpTranslationVector::euclideanNorm() const { return frobeniusNorm(); }
 
 /*!
   Compute and return the Fronebius norm \f$ ||t|| = \sqrt{ \sum{t_{i}^2}} \f$.
@@ -759,7 +765,7 @@ vpTranslationVector vpTranslationVector::mean(const std::vector<vpHomogeneousMat
 {
   vpColVector meanT(3);
   for (size_t i = 0; i < vec_M.size(); i++) {
-    meanT += (vpColVector) vec_M[i].getTranslationVector();
+    meanT += (vpColVector)vec_M[i].getTranslationVector();
   }
   meanT /= static_cast<double>(vec_M.size());
 
@@ -779,7 +785,7 @@ vpTranslationVector vpTranslationVector::mean(const std::vector<vpTranslationVec
 {
   vpColVector meanT(3);
   for (size_t i = 0; i < vec_t.size(); i++) {
-    meanT += (vpColVector) vec_t[i];
+    meanT += (vpColVector)vec_t[i];
   }
   meanT /= static_cast<double>(vec_t.size());
 

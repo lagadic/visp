@@ -42,16 +42,15 @@
 #include <visp3/tt/vpTemplateTrackerBSpline.h>
 
 vpTemplateTracker::vpTemplateTracker(vpTemplateTrackerWarp *_warp)
-  : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), evolRMS(0), x_pos(), y_pos(),
-    evolRMS_eps(1e-4), ptTemplate(NULL), ptTemplatePyr(NULL), ptTemplateInit(false),
-    templateSize(0), templateSizePyr(NULL), ptTemplateSelect(NULL), ptTemplateSelectPyr(NULL),
-    ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(NULL), ptTemplateSuppPyr(NULL),
-    ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL), zoneTracked(NULL), zoneTrackedPyr(NULL), pyr_IDes(NULL), H(),
-    Hdesire(), HdesirePyr(), HLM(), HLMdesire(), HLMdesirePyr(), HLMdesireInverse(), HLMdesireInversePyr(), G(),
-    gain(1.), thresholdGradient(40), costFunctionVerification(false), blur(true), useBrent(false), nbIterBrent(3),
-    taillef(7), fgG(NULL), fgdG(NULL), ratioPixelIn(0), mod_i(1), mod_j(1), nbParam(0), lambdaDep(0.001),
-    iterationMax(30), iterationGlobale(0), diverge(false), nbIteration(0), useCompositionnal(true), useInverse(false),
-    Warp(_warp), p(0), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(), zoneRef_()
+  : nbLvlPyr(1), l0Pyr(0), pyrInitialised(false), evolRMS(0), x_pos(), y_pos(), evolRMS_eps(1e-4), ptTemplate(NULL),
+    ptTemplatePyr(NULL), ptTemplateInit(false), templateSize(0), templateSizePyr(NULL), ptTemplateSelect(NULL),
+    ptTemplateSelectPyr(NULL), ptTemplateSelectInit(false), templateSelectSize(0), ptTemplateSupp(NULL),
+    ptTemplateSuppPyr(NULL), ptTemplateCompo(NULL), ptTemplateCompoPyr(NULL), zoneTracked(NULL), zoneTrackedPyr(NULL),
+    pyr_IDes(NULL), H(), Hdesire(), HdesirePyr(), HLM(), HLMdesire(), HLMdesirePyr(), HLMdesireInverse(),
+    HLMdesireInversePyr(), G(), gain(1.), thresholdGradient(40), costFunctionVerification(false), blur(true),
+    useBrent(false), nbIterBrent(3), taillef(7), fgG(NULL), fgdG(NULL), ratioPixelIn(0), mod_i(1), mod_j(1), nbParam(0),
+    lambdaDep(0.001), iterationMax(30), iterationGlobale(0), diverge(false), nbIteration(0), useCompositionnal(true),
+    useInverse(false), Warp(_warp), p(0), dp(), X1(), X2(), dW(), BI(), dIx(), dIy(), zoneRef_()
 {
   nbParam = Warp->getNbParam();
   p.resize(nbParam);
@@ -97,7 +96,6 @@ void vpTemplateTracker::initTracking(const vpImage<unsigned char> &I, vpTemplate
       }
     }
   }
-
 
   templateSize = NbPointDsZone;
   ptTemplate = new vpTemplateTrackerPoint[templateSize];

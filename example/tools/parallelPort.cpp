@@ -73,7 +73,8 @@ Send a data to the parallel port.\n\
 \n\
 SYNOPSIS\n\
   %s [-d <data>] [-h]\n\
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -82,7 +83,8 @@ OPTIONS:                                               Default\n\
      Value should be in [0:255].\n\
 \n\
   -h\n\
-     Print the help.\n\n", data);
+     Print the help.\n\n",
+          data);
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");

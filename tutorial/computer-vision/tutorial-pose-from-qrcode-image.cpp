@@ -1,4 +1,5 @@
 /*! \example tutorial-pose-from-qrcode-image.cpp */
+#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/detection/vpDetectorQRCode.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -9,12 +10,12 @@
 
 #include "pose_helper.h"
 
-int main()
+int main(int, char *argv[])
 {
 #if defined(VISP_HAVE_ZBAR)
   try {
     vpImage<unsigned char> I;
-    vpImageIo::read(I, "bar-code.pgm");
+    vpImageIo::read(I, vpIoTools::getParent(argv[0]) + "/data/bar-code.pgm");
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I);
@@ -30,9 +31,9 @@ int main()
     // 3D model of the QRcode: here we consider a 12cm by 12cm QRcode
     std::vector<vpPoint> point;
     point.push_back(vpPoint(-0.06, -0.06, 0)); // QRcode point 0 3D coordinates in plane Z=0
-    point.push_back(vpPoint( 0.06, -0.06, 0)); // QRcode point 1 3D coordinates in plane Z=0
-    point.push_back(vpPoint( 0.06,  0.06, 0)); // QRcode point 2 3D coordinates in plane Z=0
-    point.push_back(vpPoint(-0.06,  0.06, 0)); // QRcode point 3 3D coordinates in plane Z=0
+    point.push_back(vpPoint(0.06, -0.06, 0));  // QRcode point 1 3D coordinates in plane Z=0
+    point.push_back(vpPoint(0.06, 0.06, 0));   // QRcode point 2 3D coordinates in plane Z=0
+    point.push_back(vpPoint(-0.06, 0.06, 0));  // QRcode point 3 3D coordinates in plane Z=0
 
     vpHomogeneousMatrix cMo;
     bool init = true;
@@ -40,7 +41,7 @@ int main()
     vpDetectorQRCode detector;
 
     while (1) {
-      vpImageIo::read(I, "bar-code.pgm");
+      vpImageIo::read(I, vpIoTools::getParent(argv[0]) + "/data/bar-code.pgm");
       vpDisplay::display(I);
 
       bool status = detector.detect(I);

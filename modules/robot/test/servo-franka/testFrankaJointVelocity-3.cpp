@@ -57,10 +57,9 @@ int main(int argc, char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
       robot_ip = std::string(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0] << " [--ip 192.168.1.1] [--help] [-h]"
-                           << "\n";
+                << "\n";
       return EXIT_SUCCESS;
     }
   }
@@ -106,14 +105,13 @@ int main(int argc, char **argv)
     do {
       vpColVector dq_d_(7, 0);
 
-      for (int inc=0; inc < n_increment; inc ++) {
-        if (vpTime::measureTimeSecond() - t0 < (1+inc) * delta_t / n_increment ) {
-          for (size_t i=0; i < 7; i++) {
+      for (int inc = 0; inc < n_increment; inc++) {
+        if (vpTime::measureTimeSecond() - t0 < (1 + inc) * delta_t / n_increment) {
+          for (size_t i = 0; i < 7; i++) {
             if (dq_d[i] < 0)
-              dq_d_[i] = dq_d[i] - inc * delta_dq_d_max/(n_increment);
+              dq_d_[i] = dq_d[i] - inc * delta_dq_d_max / (n_increment);
             else
-              dq_d_[i] = dq_d[i] + inc * delta_dq_d_max/(n_increment);
-
+              dq_d_[i] = dq_d[i] + inc * delta_dq_d_max / (n_increment);
           }
           break;
         }
@@ -123,28 +121,25 @@ int main(int argc, char **argv)
       vpTime::wait(10);
     } while (vpTime::measureTimeSecond() - t0 < delta_t);
 
-    for (size_t i=0; i < 7; i++)
+    for (size_t i = 0; i < 7; i++)
       dq_d[i] = -dq_d[i];
 
     std::cout << "Apply new joint vel for " << delta_t << " sec : " << dq_d.t() << std::endl;
     robot.setVelocity(vpRobot::JOINT_STATE, dq_d);
-    vpTime::wait(4*1000);
+    vpTime::wait(4 * 1000);
 
     std::cout << "Ask to stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const franka::NetworkException &e) {
+  } catch (const franka::NetworkException &e) {
     std::cout << "Franka network exception: " << e.what() << std::endl;
     std::cout << "Check if you are connected to the Franka robot"
               << " or if you specified the right IP using --ip command"
               << " line option set by default to 192.168.1.1. " << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const std::exception &e) {
+  } catch (const std::exception &e) {
     std::cout << "Franka exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
@@ -154,8 +149,5 @@ int main(int argc, char **argv)
 }
 
 #else
-int main()
-{
-  std::cout << "ViSP is not build with libfranka..." << std::endl;
-}
+int main() { std::cout << "ViSP is not build with libfranka..." << std::endl; }
 #endif

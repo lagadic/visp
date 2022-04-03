@@ -147,7 +147,7 @@ public:
   void reset();
 
   //! Sample pixels at a given interval
-  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack=false) = 0;
+  virtual void sample(const vpImage<unsigned char> &image, bool doNotTrack = false) = 0;
 
   void setDisplay(vpMeSite::vpMeSiteDisplayType select) { selectDisplay = select; }
 

@@ -164,7 +164,7 @@ void buildLine(vpPoint &P1, vpPoint &P2, vpPoint &P3, vpPoint &P4, vpLine &L)
   \param _p2      : The second extremity.
   \param rand_gen : Random number generator.
 */
-void vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2, vpUniRand& rand_gen)
+void vpMbtDistanceLine::buildFrom(vpPoint &_p1, vpPoint &_p2, vpUniRand &rand_gen)
 {
   if (line == NULL) {
     line = new vpLine;
@@ -302,8 +302,8 @@ void vpMbtDistanceLine::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
-  \return false if an error occur, true otherwise.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  disable a pixel, set false. \return false if an error occur, true otherwise.
 */
 bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
                                        const vpImage<bool> *mask)
@@ -343,8 +343,7 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
       line->changeFrame(cMo);
       try {
         line->projection();
-      }
-      catch(...) {
+      } catch (...) {
         isvisible = false;
         return false;
       }
@@ -398,7 +397,7 @@ bool vpMbtDistanceLine::initMovingEdge(const vpImage<unsigned char> &I, const vp
         try {
           melinePt->initTracking(I, ip1, ip2, rho, theta, doNotTrack);
           meline.push_back(melinePt);
-          nbFeature.push_back((unsigned int) melinePt->getMeList().size());
+          nbFeature.push_back((unsigned int)melinePt->getMeList().size());
           nbFeatureTotal += nbFeature.back();
         } catch (...) {
           delete melinePt;
@@ -487,8 +486,7 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
         line->changeFrame(cMo);
         try {
           line->projection();
-        }
-        catch(...) {
+        } catch (...) {
           for (size_t j = 0; j < meline.size(); j++) {
             if (meline[j] != NULL)
               delete meline[j];
@@ -581,9 +579,11 @@ void vpMbtDistanceLine::updateMovingEdge(const vpImage<unsigned char> &I, const 
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  disable a pixel, set false.
 */
-void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
+void vpMbtDistanceLine::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                                         const vpImage<bool> *mask)
 {
   for (size_t i = 0; i < meline.size(); i++) {
     if (meline[i] != NULL)
@@ -696,10 +696,8 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getFeaturesForDisplay()
       for (std::list<vpMeSite>::const_iterator it = me_l->getMeList().begin(); it != me_l->getMeList().end(); ++it) {
         vpMeSite p_me_l = *it;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-        std::vector<double> params = {0, //ME
-                                      p_me_l.get_ifloat(),
-                                      p_me_l.get_jfloat(),
-                                      static_cast<double>(p_me_l.getState())};
+        std::vector<double> params = {0, // ME
+                                      p_me_l.get_ifloat(), p_me_l.get_jfloat(), static_cast<double>(p_me_l.getState())};
 #else
         std::vector<double> params;
         params.push_back(0); // ME
@@ -767,14 +765,11 @@ std::vector<std::vector<double> > vpMbtDistanceLine::getModelForDisplay(unsigned
         vpMeterPixelConversion::convertPoint(camera, linesLst[i].second.get_x(), linesLst[i].second.get_y(), ip2);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-        std::vector<double> params = {0, //0 for line parameters
-                                      ip1.get_i(),
-                                      ip1.get_j(),
-                                      ip2.get_i(),
-                                      ip2.get_j()};
+        std::vector<double> params = {0, // 0 for line parameters
+                                      ip1.get_i(), ip1.get_j(), ip2.get_i(), ip2.get_j()};
 #else
         std::vector<double> params;
-        params.push_back(0); //0 for line parameters
+        params.push_back(0); // 0 for line parameters
         params.push_back(ip1.get_i());
         params.push_back(ip1.get_j());
         params.push_back(ip2.get_i());

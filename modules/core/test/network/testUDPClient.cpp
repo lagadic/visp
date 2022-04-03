@@ -53,7 +53,7 @@ struct DataType {
   DataType() : double_val(0.0), int_val(0) {}
   DataType(double dbl, int i) : double_val(dbl), int_val(i) {}
 };
-}
+} // namespace
 
 int main(int argc, char **argv)
 {
@@ -65,10 +65,9 @@ int main(int argc, char **argv)
     for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
         servername = std::string(argv[i + 1]);
-      }
-      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << argv[0] << " [--ip <address> (default: 127.0.0.1)] [--help] [-h]"
-                             << "\n";
+                  << "\n";
         return EXIT_SUCCESS;
       }
     }

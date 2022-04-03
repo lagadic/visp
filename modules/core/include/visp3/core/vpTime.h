@@ -44,9 +44,9 @@
   \file vpTime.h
   \brief Time management and measurement
 */
-#include <visp3/core/vpConfig.h>
 #include <iostream>
 #include <string>
+#include <visp3/core/vpConfig.h>
 #if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11
 #include <chrono>
 #endif
@@ -85,7 +85,7 @@ VISP_EXPORT double measureTimeMicros();
 VISP_EXPORT void sleepMs(double t);
 VISP_EXPORT int wait(double t0, double t);
 VISP_EXPORT void wait(double t);
-};
+}; // namespace vpTime
 
 class VISP_EXPORT vpChrono
 {
@@ -95,12 +95,13 @@ public:
   double getDurationMicros();
   double getDurationMs();
   double getDurationSeconds();
-  void start(bool reset=true);
+  void start(bool reset = true);
   void stop();
 
 private:
   double m_durationMs;
-#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11 && (defined(_MSC_VER) && _MSC_VER >= 1900 /* VS2015 */ || !defined(_MSC_VER))
+#if VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11 &&                                                                       \
+    (defined(_MSC_VER) && _MSC_VER >= 1900 /* VS2015 */ || !defined(_MSC_VER))
   std::chrono::steady_clock::time_point m_lastTimePoint;
 #else
   double m_lastTimePoint;

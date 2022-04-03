@@ -178,11 +178,11 @@ void vpMbtDistanceCylinder::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
-  \return false if an error occur, true otherwise.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  disable a pixel, set false. \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
-                                           const vpImage<bool> *mask)
+bool vpMbtDistanceCylinder::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                                           bool doNotTrack, const vpImage<bool> *mask)
 {
   if (isvisible) {
     // Perspective projection
@@ -484,7 +484,8 @@ void vpMbtDistanceCylinder::updateMovingEdge(const vpImage<unsigned char> &I, co
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  disable a pixel, set false.
 */
 void vpMbtDistanceCylinder::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                                              const vpImage<bool> *mask)
@@ -517,8 +518,8 @@ void vpMbtDistanceCylinder::display(const vpImage<unsigned char> &I, const vpHom
                                     const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
                                     bool displayFullModel)
 {
-  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(),
-                                                                cMo, camera, displayFullModel);
+  std::vector<std::vector<double> > models =
+      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     vpImagePoint ip1(models[i][1], models[i][2]);
@@ -542,8 +543,8 @@ void vpMbtDistanceCylinder::display(const vpImage<vpRGBa> &I, const vpHomogeneou
                                     const vpCameraParameters &camera, const vpColor &col, unsigned int thickness,
                                     bool displayFullModel)
 {
-  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(),
-                                                                cMo, camera, displayFullModel);
+  std::vector<std::vector<double> > models =
+      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, camera, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     vpImagePoint ip1(models[i][1], models[i][2]);
@@ -562,16 +563,15 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
   std::vector<std::vector<double> > features;
 
   if (meline1 != NULL) {
-    for (std::list<vpMeSite>::const_iterator it = meline1->getMeList().begin(); it != meline1->getMeList().end(); ++it) {
+    for (std::list<vpMeSite>::const_iterator it = meline1->getMeList().begin(); it != meline1->getMeList().end();
+         ++it) {
       vpMeSite p_me = *it;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      std::vector<double> params = {0, //ME
-                                    p_me.get_ifloat(),
-                                    p_me.get_jfloat(),
-                                    static_cast<double>(p_me.getState())};
+      std::vector<double> params = {0, // ME
+                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState())};
 #else
       std::vector<double> params;
-      params.push_back(0); //ME
+      params.push_back(0); // ME
       params.push_back(p_me.get_ifloat());
       params.push_back(p_me.get_jfloat());
       params.push_back(static_cast<double>(p_me.getState()));
@@ -581,16 +581,15 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getFeaturesForDisplay()
   }
 
   if (meline2 != NULL) {
-    for (std::list<vpMeSite>::const_iterator it = meline2->getMeList().begin(); it != meline2->getMeList().end(); ++it) {
+    for (std::list<vpMeSite>::const_iterator it = meline2->getMeList().begin(); it != meline2->getMeList().end();
+         ++it) {
       vpMeSite p_me = *it;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      std::vector<double> params = {0, //ME
-                                    p_me.get_ifloat(),
-                                    p_me.get_jfloat(),
-                                    static_cast<double>(p_me.getState())};
+      std::vector<double> params = {0, // ME
+                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState())};
 #else
       std::vector<double> params;
-      params.push_back(0); //ME
+      params.push_back(0); // ME
       params.push_back(p_me.get_ifloat());
       params.push_back(p_me.get_jfloat());
       params.push_back(static_cast<double>(p_me.getState()));
@@ -665,17 +664,9 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getModelForDisplay(unsi
     ip22.set_ij(i22, j22);
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-    std::vector<double> params1 = {0,
-                                   ip11.get_i(),
-                                   ip11.get_j(),
-                                   ip12.get_i(),
-                                   ip12.get_j()};
+    std::vector<double> params1 = {0, ip11.get_i(), ip11.get_j(), ip12.get_i(), ip12.get_j()};
 
-    std::vector<double> params2 = {0,
-                                   ip21.get_i(),
-                                   ip21.get_j(),
-                                   ip22.get_i(),
-                                   ip22.get_j()};
+    std::vector<double> params2 = {0, ip21.get_i(), ip21.get_j(), ip22.get_i(), ip22.get_j()};
 #else
     std::vector<double> params1, params2;
     params1.push_back(0);
@@ -684,7 +675,7 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getModelForDisplay(unsi
     params1.push_back(ip12.get_i());
     params1.push_back(ip12.get_j());
 
-    params2.push_back(0); 
+    params2.push_back(0);
     params2.push_back(ip11.get_i());
     params2.push_back(ip11.get_j());
     params2.push_back(ip12.get_i());

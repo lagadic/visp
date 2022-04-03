@@ -152,7 +152,7 @@ struct vpDirection {
     return pixel != 0 ? vpImagePoint(yy, xx) : vpImagePoint(-1, -1);
   }
 };
-}
+} // namespace
 
 namespace vp
 {
@@ -249,6 +249,6 @@ VISP_EXPORT void drawContours(vpImage<vpRGBa> &I, const std::vector<std::vector<
 VISP_EXPORT void findContours(const vpImage<unsigned char> &I_original, vpContour &contours,
                               std::vector<std::vector<vpImagePoint> > &contourPts,
                               const vpContourRetrievalType &retrievalMode = vp::CONTOUR_RETR_TREE);
-}
+} // namespace vp
 
 #endif

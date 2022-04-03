@@ -40,27 +40,28 @@
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
-#include <string>
-#include <queue>
-#include <mutex>
-#include <thread>
 #include <condition_variable>
+#include <mutex>
+#include <queue>
+#include <string>
+#include <thread>
 
-#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpDisplay.h>
+#include <visp3/core/vpIoTools.h>
 
 /*!
   \class vpImageQueue
 
   \ingroup group_io_image
 
-  Create a queue containing images and optional additional strings that could be useful to save additional information like the timestamp.
+  Create a queue containing images and optional additional strings that could be useful to save additional information
+  like the timestamp.
 
   This call is to use with vpImageStorageWorker.
 
 */
-template <class Type>
-class vpImageQueue {
+template <class Type> class vpImageQueue
+{
 public:
   struct cancelled {
   };
@@ -68,27 +69,29 @@ public:
   /*!
    * Queue (FIFO) constructor. By default the max queue size is set to 1024*8.
    *
-   * \param[in] seqname : Generic sequence name like `"folder/I%04d.png"`. If this name contains a parent folder, it will be created.
-   * \param[in] record_mode : 0 to record a sequence of images, 1 to record single images.
+   * \param[in] seqname : Generic sequence name like `"folder/I%04d.png"`. If this name contains a parent folder, it
+   * will be created. \param[in] record_mode : 0 to record a sequence of images, 1 to record single images.
    */
   vpImageQueue(const std::string &seqname, int record_mode)
-    : m_cancelled(false), m_cond(), m_queue_image(), m_queue_data(), m_maxQueueSize(1024*8), m_mutex(),
+    : m_cancelled(false), m_cond(), m_queue_image(), m_queue_data(), m_maxQueueSize(1024 * 8), m_mutex(),
       m_seqname(seqname), m_recording_mode(record_mode), m_start_recording(false), m_directory_to_create(false),
       m_recording_trigger(false)
   {
     m_directory = vpIoTools::getParent(seqname);
-    if (! m_directory.empty()) {
-      if (! vpIoTools::checkDirectory(m_directory)) {
+    if (!m_directory.empty()) {
+      if (!vpIoTools::checkDirectory(m_directory)) {
         m_directory_to_create = true;
       }
     }
-    m_text_record_mode = std::string("Record mode: ") + (m_recording_mode ? std::string("single") : std::string("continuous"));
+    m_text_record_mode =
+        std::string("Record mode: ") + (m_recording_mode ? std::string("single") : std::string("continuous"));
   }
 
   /*!
    * Emit cancel signal.
    */
-  void cancel() {
+  void cancel()
+  {
     std::lock_guard<std::mutex> lock(m_mutex);
     std::cout << "Wait to finish saving images..." << std::endl;
     m_cancelled = true;
@@ -98,26 +101,17 @@ public:
   /*!
    * Return record mode; 0 when recording a sequence of images, 1 when recording recording single imagess.
    */
-  int getRecordingMode() const
-  {
-    return m_recording_mode;
-  }
+  int getRecordingMode() const { return m_recording_mode; }
 
   /*!
    * Return recording trigger indicating if recording is started.
    */
-  bool getRecordingTrigger() const
-  {
-    return m_recording_trigger;
-  }
+  bool getRecordingTrigger() const { return m_recording_trigger; }
 
   /*!
    * Return generic name of the sequence of images.
    */
-  std::string getSeqName() const
-  {
-    return m_seqname;
-  }
+  std::string getSeqName() const { return m_seqname; }
 
   /*!
    * Pop the image to save from the queue (FIFO).
@@ -126,7 +120,8 @@ public:
    * \param[out] data : Data to record.
    *
    */
-  void pop(vpImage<Type> &I, std::string &data) {
+  void pop(vpImage<Type> &I, std::string &data)
+  {
     std::unique_lock<std::mutex> lock(m_mutex);
 
     while (m_queue_image.empty()) {
@@ -145,7 +140,7 @@ public:
 
     m_queue_image.pop();
 
-    if (! m_queue_data.empty()) {
+    if (!m_queue_data.empty()) {
       data = m_queue_data.front();
       m_queue_data.pop();
     }
@@ -157,7 +152,8 @@ public:
    * \param[in] I : Image to record.
    * \param[in] data : Data to record.
    */
-  void push(const vpImage<Type> &I, std::string *data) {
+  void push(const vpImage<Type> &I, std::string *data)
+  {
     std::lock_guard<std::mutex> lock(m_mutex);
 
     m_queue_image.push(I);
@@ -166,13 +162,13 @@ public:
       m_queue_data.push(*data);
     }
 
-    //Pop extra data in the queue
+    // Pop extra data in the queue
     while (m_queue_image.size() > m_maxQueueSize) {
       m_queue_image.pop();
     }
 
     if (data != NULL) {
-      while(m_queue_data.size() > m_maxQueueSize) {
+      while (m_queue_data.size() > m_maxQueueSize) {
         m_queue_data.pop();
       }
     }
@@ -181,55 +177,57 @@ public:
   }
 
   /*!
-   * Record helper that display information in the windows associated to the image, pop current image and additional data in the queue.
-   * \param[in] I : Image to record.
-   * \param[in] data : Data to record. Set to NULL when no additional data have to be considered.
-   * \param[in] trigger_recording : External trigger to start data saving.
-   * \param[in] disable_left_click : Disable left click usage to trigger data saving.
-   * \return true when the used asked to quit using a right click in the display window.
+   * Record helper that display information in the windows associated to the image, pop current image and additional
+   * data in the queue. \param[in] I : Image to record. \param[in] data : Data to record. Set to NULL when no additional
+   * data have to be considered. \param[in] trigger_recording : External trigger to start data saving. \param[in]
+   * disable_left_click : Disable left click usage to trigger data saving. \return true when the used asked to quit
+   * using a right click in the display window.
    */
-  bool record(const vpImage<Type> &I, std::string *data = NULL, bool trigger_recording = false, bool disable_left_click = false)
+  bool record(const vpImage<Type> &I, std::string *data = NULL, bool trigger_recording = false,
+              bool disable_left_click = false)
   {
     if (I.display) {
-      if (! m_seqname.empty()) {
-        if (! disable_left_click) {
-          if (! m_recording_mode) { // continuous
+      if (!m_seqname.empty()) {
+        if (!disable_left_click) {
+          if (!m_recording_mode) { // continuous
             if (m_start_recording) {
-              vpDisplay::displayText(I, 20*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Left  click: stop recording", vpColor::red);
+              vpDisplay::displayText(I, 20 * vpDisplay::getDownScalingFactor(I),
+                                     10 * vpDisplay::getDownScalingFactor(I), "Left  click: stop recording",
+                                     vpColor::red);
+            } else {
+              vpDisplay::displayText(I, 20 * vpDisplay::getDownScalingFactor(I),
+                                     10 * vpDisplay::getDownScalingFactor(I), "Left  click: start recording",
+                                     vpColor::red);
             }
-            else {
-              vpDisplay::displayText(I, 20*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Left  click: start recording", vpColor::red);
-            }
-          }
-          else {
-            vpDisplay::displayText(I, 20*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Left  click: record image", vpColor::red);
+          } else {
+            vpDisplay::displayText(I, 20 * vpDisplay::getDownScalingFactor(I), 10 * vpDisplay::getDownScalingFactor(I),
+                                   "Left  click: record image", vpColor::red);
           }
         }
-        vpDisplay::displayText(I, 40*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Right click: quit", vpColor::red);
-      }
-      else {
-        vpDisplay::displayText(I, 20*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), "Click to quit", vpColor::red);
+        vpDisplay::displayText(I, 40 * vpDisplay::getDownScalingFactor(I), 10 * vpDisplay::getDownScalingFactor(I),
+                               "Right click: quit", vpColor::red);
+      } else {
+        vpDisplay::displayText(I, 20 * vpDisplay::getDownScalingFactor(I), 10 * vpDisplay::getDownScalingFactor(I),
+                               "Click to quit", vpColor::red);
       }
 
-      if (! m_seqname.empty()) {
-        vpDisplay::displayText(I, 60*vpDisplay::getDownScalingFactor(I), 10*vpDisplay::getDownScalingFactor(I), m_text_record_mode, vpColor::red);
+      if (!m_seqname.empty()) {
+        vpDisplay::displayText(I, 60 * vpDisplay::getDownScalingFactor(I), 10 * vpDisplay::getDownScalingFactor(I),
+                               m_text_record_mode, vpColor::red);
       }
       vpMouseButton::vpMouseButtonType button;
       if (vpDisplay::getClick(I, button, false)) {
-        if (! m_seqname.empty()) { // Recording requested
-          if (button == vpMouseButton::button1 && ! disable_left_click) { // enable/disable recording
+        if (!m_seqname.empty()) {                                        // Recording requested
+          if (button == vpMouseButton::button1 && !disable_left_click) { // enable/disable recording
             m_start_recording = !m_start_recording;
-          }
-          else if (button == vpMouseButton::button3) { // quit
+          } else if (button == vpMouseButton::button3) { // quit
             return true;
           }
-        }
-        else { // any button to quit
+        } else { // any button to quit
           return true;
         }
       }
-    }
-    else if (! m_seqname.empty()) {
+    } else if (!m_seqname.empty()) {
       m_start_recording = true;
     }
 
@@ -260,15 +258,13 @@ public:
    * Set queue size.
    * \param[in] max_queue_size : Queue size.
    */
-  void setMaxQueueSize(const size_t max_queue_size) {
-    m_maxQueueSize = max_queue_size;
-  }
+  void setMaxQueueSize(const size_t max_queue_size) { m_maxQueueSize = max_queue_size; }
 
 private:
   bool m_cancelled;
   std::condition_variable m_cond;
   std::queue<vpImage<Type> > m_queue_image;
-  std::queue<std::string > m_queue_data;
+  std::queue<std::string> m_queue_data;
   size_t m_maxQueueSize;
   std::mutex m_mutex;
   std::string m_seqname;

@@ -142,11 +142,11 @@ void vpMbtDistanceCircle::setMovingEdge(vpMe *_me)
   \param I : The image.
   \param cMo : The pose of the camera used to initialize the moving edges.
   \param doNotTrack : If true, ME are not tracked.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
-  \return false if an error occur, true otherwise.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  disable a pixel, set false. \return false if an error occur, true otherwise.
 */
-bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,
-                                         const vpImage<bool> *mask)
+bool vpMbtDistanceCircle::initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                                         bool doNotTrack, const vpImage<bool> *mask)
 {
   if (isvisible) {
     // Perspective projection
@@ -243,9 +243,11 @@ void vpMbtDistanceCircle::updateMovingEdge(const vpImage<unsigned char> &I, cons
 
   \param I : the image.
   \param cMo : The pose of the camera.
-  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To disable a pixel, set false.
+  \param mask: Mask image or NULL if not wanted. Mask values that are set to true are considered in the tracking. To
+  disable a pixel, set false.
 */
-void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, const vpImage<bool> *mask)
+void vpMbtDistanceCircle::reinitMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
+                                           const vpImage<bool> *mask)
 {
   if (meEllipse != NULL)
     delete meEllipse;
@@ -315,16 +317,15 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
   std::vector<std::vector<double> > features;
 
   if (meEllipse != NULL) {
-    for (std::list<vpMeSite>::const_iterator it = meEllipse->getMeList().begin(); it != meEllipse->getMeList().end(); ++it) {
+    for (std::list<vpMeSite>::const_iterator it = meEllipse->getMeList().begin(); it != meEllipse->getMeList().end();
+         ++it) {
       vpMeSite p_me = *it;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-      std::vector<double> params = {0, //ME
-                                    p_me.get_ifloat(),
-                                    p_me.get_jfloat(),
-                                    static_cast<double>(p_me.getState())};
+      std::vector<double> params = {0, // ME
+                                    p_me.get_ifloat(), p_me.get_jfloat(), static_cast<double>(p_me.getState())};
 #else
       std::vector<double> params;
-      params.push_back(0); //ME
+      params.push_back(0); // ME
       params.push_back(p_me.get_ifloat());
       params.push_back(p_me.get_jfloat());
       params.push_back(static_cast<double>(p_me.getState()));
@@ -348,8 +349,7 @@ std::vector<std::vector<double> > vpMbtDistanceCircle::getFeaturesForDisplay()
   \param displayFullModel : If true, the line is displayed even if it is not
 */
 std::vector<double> vpMbtDistanceCircle::getModelForDisplay(const vpHomogeneousMatrix &cMo,
-                                                            const vpCameraParameters &camera,
-                                                            bool displayFullModel)
+                                                            const vpCameraParameters &camera, bool displayFullModel)
 {
   std::vector<double> params;
 
@@ -366,7 +366,7 @@ std::vector<double> vpMbtDistanceCircle::getModelForDisplay(const vpHomogeneousM
     vpImagePoint center;
     double n20_p, n11_p, n02_p;
     vpMeterPixelConversion::convertEllipse(camera, *circle, center, n20_p, n11_p, n02_p);
-    params.push_back(1); //1 for ellipse parameters
+    params.push_back(1); // 1 for ellipse parameters
     params.push_back(center.get_i());
     params.push_back(center.get_j());
     params.push_back(n20_p);
@@ -463,8 +463,8 @@ void vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatri
         L[j][k] = H[0] * H1[0][k] + H[1] * H1[1][k] + H[2] * H1[2][k] + H[3] * H1[3][k] + H[4] * H1[4][k];
 
       error[j] = n02 * vpMath::sqr(x) + n20 * vpMath::sqr(y) - 2 * n11 * x * y + 2 * (n11 * yg - n02 * xg) * x +
-                 2 * (n11 * xg - n20 * yg) * y + n02 * vpMath::sqr(xg) + n20 * vpMath::sqr(yg) -
-                 2 * n11 * xg * yg + vpMath::sqr(n11) - n20 * n02;
+                 2 * (n11 * xg - n20 * yg) * y + n02 * vpMath::sqr(xg) + n20 * vpMath::sqr(yg) - 2 * n11 * xg * yg +
+                 vpMath::sqr(n11) - n20 * n02;
 
       j++;
     }

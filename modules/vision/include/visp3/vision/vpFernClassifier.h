@@ -246,8 +246,8 @@ public:
 
   /* build reference */
   virtual unsigned int buildReference(const vpImage<unsigned char> &I);
-  virtual unsigned int buildReference(const vpImage<unsigned char> &_I, const vpImagePoint &_iP,
-                                      unsigned int _height, unsigned int _width);
+  virtual unsigned int buildReference(const vpImage<unsigned char> &_I, const vpImagePoint &_iP, unsigned int _height,
+                                      unsigned int _width);
   virtual unsigned int buildReference(const vpImage<unsigned char> &I, const vpRect &rectangle);
 
   /* matching */

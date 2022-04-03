@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
   //! [Read]
   vpImage<unsigned char> I;
   vpImageIo::read(I, input_filename);
-//! [Read]
+  //! [Read]
 
 #ifdef VISP_HAVE_X11
   vpDisplayX d, d2, d3, d4, d5;

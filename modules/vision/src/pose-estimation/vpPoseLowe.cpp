@@ -320,8 +320,8 @@ void vpPose::poseLowe(vpHomogeneousMatrix &cMo)
 
   vpRotationMatrix rd(u);
   cMo.insert(rd);
-//  rot_mat(u,rd);
-//  for (i=0;i<3;i++) for (j=0;j<3;j++) cMo[i][j] = rd[i][j];
+  //  rot_mat(u,rd);
+  //  for (i=0;i<3;i++) for (j=0;j<3;j++) cMo[i][j] = rd[i][j];
 
 #if (DEBUG_LEVEL1)
   std::cout << "end CCalculPose::PoseLowe(...) " << std::endl;

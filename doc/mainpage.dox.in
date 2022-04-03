@@ -185,6 +185,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 - <a href="https://visp-doc.inria.fr/doxygen/camera_localization/">Pose estimation for augmented reality</a> <br>This tutorial is a self contented introduction to the most important approaches dedicated to camera localization along with a survey of the extension that have been proposed in the recent years. We also try to link these methodological concepts to the main libraries and SDK available on the market.
 - \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
 - \ref tutorial-pose-estimation-qrcode <br>This tutorial focuses on pose estimation of a QRcode using it's four corners location.
+- \ref tutorial-planar-object-pose <br>This tutorial shows how to estimate the pose of a planar object exploiting data (color and depth images) from a RGB-D sensor.
 - \ref tutorial-homography <br>Here we explain how to estimate an homography from couples of matched points.
 - \ref tutorial-homography-deprecated <br>Here we explain how to estimate an homography from couples of matched points. It will be deprecated if you use an OpenCV version equal to 2.8.0 or a more recent version.
 

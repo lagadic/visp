@@ -47,8 +47,8 @@
 #include <iostream>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpPoint.h>
 #include <visp3/core/vpPixelMeterConversion.h>
+#include <visp3/core/vpPoint.h>
 #include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/vision/vpPose.h>
@@ -85,16 +85,15 @@ struct TagGroundTruth {
 
     if (m_corners.size() == c.size()) {
       for (size_t i = 0; i < m_corners.size(); i++) {
-        const vpImagePoint& a = m_corners[i];
-        const vpImagePoint& b = c[i];
-        error += (a.get_i()-b.get_i())*(a.get_i()-b.get_i()) +
-                 (a.get_j()-b.get_j())*(a.get_j()-b.get_j());
+        const vpImagePoint &a = m_corners[i];
+        const vpImagePoint &b = c[i];
+        error += (a.get_i() - b.get_i()) * (a.get_i() - b.get_i()) + (a.get_j() - b.get_j()) * (a.get_j() - b.get_j());
       }
     } else {
       return -1;
     }
 
-    return sqrt(error / (2*m_corners.size()));
+    return sqrt(error / (2 * m_corners.size()));
   }
 };
 
@@ -116,9 +115,10 @@ struct FailedTestCase {
   int m_tagId;
 
   FailedTestCase(const vpDetectorAprilTag::vpAprilTagFamily &family,
-                 const vpDetectorAprilTag::vpPoseEstimationMethod &method,
-                 int tagId)
-    : m_family(family), m_method(method), m_tagId(tagId) {}
+                 const vpDetectorAprilTag::vpPoseEstimationMethod &method, int tagId)
+    : m_family(family), m_method(method), m_tagId(tagId)
+  {
+  }
 
   bool operator==(const FailedTestCase &b) const
   {
@@ -127,44 +127,48 @@ struct FailedTestCase {
 
   bool operator!=(const FailedTestCase &b) const { return !(*this == b); }
 };
-}
+} // namespace
 
-TEST_CASE("Apriltag pose estimation test", "[apriltag_pose_estimation_test]") {
+TEST_CASE("Apriltag pose estimation test", "[apriltag_pose_estimation_test]")
+{
   std::map<vpDetectorAprilTag::vpAprilTagFamily, std::string> apriltagMap = {
-    {vpDetectorAprilTag::TAG_16h5, "tag16_05"},
-    {vpDetectorAprilTag::TAG_25h9, "tag25_09"},
-    {vpDetectorAprilTag::TAG_36h11, "tag36_11"},
-    {vpDetectorAprilTag::TAG_CIRCLE21h7, "tag21_07"}
-  #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
-    , {vpDetectorAprilTag::TAG_CIRCLE49h12, "tag49_12"},
-    {vpDetectorAprilTag::TAG_CUSTOM48h12, "tag48_12"},
-    {vpDetectorAprilTag::TAG_STANDARD41h12, "tag41_12"},
-    {vpDetectorAprilTag::TAG_STANDARD52h13, "tag52_13"},
-  #endif
+      {vpDetectorAprilTag::TAG_16h5, "tag16_05"},
+      {vpDetectorAprilTag::TAG_25h9, "tag25_09"},
+      {vpDetectorAprilTag::TAG_36h11, "tag36_11"},
+      {vpDetectorAprilTag::TAG_CIRCLE21h7, "tag21_07"}
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+      ,
+      {vpDetectorAprilTag::TAG_CIRCLE49h12, "tag49_12"},
+      {vpDetectorAprilTag::TAG_CUSTOM48h12, "tag48_12"},
+      {vpDetectorAprilTag::TAG_STANDARD41h12, "tag41_12"},
+      {vpDetectorAprilTag::TAG_STANDARD52h13, "tag52_13"},
+#endif
   };
 
   std::map<vpDetectorAprilTag::vpAprilTagFamily, double> tagSizeScales = {
-    {vpDetectorAprilTag::TAG_16h5, 6.0/8},
-    {vpDetectorAprilTag::TAG_25h9, 7.0/9},
-    {vpDetectorAprilTag::TAG_36h11, 8.0/10},
-    {vpDetectorAprilTag::TAG_CIRCLE21h7, 5.0/9}
-  #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
-    , {vpDetectorAprilTag::TAG_CIRCLE49h12, 5.0/11},
-    {vpDetectorAprilTag::TAG_CUSTOM48h12, 6.0/10},
-    {vpDetectorAprilTag::TAG_STANDARD41h12, 5.0/9},
-    {vpDetectorAprilTag::TAG_STANDARD52h13, 6.0/10},
-  #endif
+      {vpDetectorAprilTag::TAG_16h5, 6.0 / 8},
+      {vpDetectorAprilTag::TAG_25h9, 7.0 / 9},
+      {vpDetectorAprilTag::TAG_36h11, 8.0 / 10},
+      {vpDetectorAprilTag::TAG_CIRCLE21h7, 5.0 / 9}
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+      ,
+      {vpDetectorAprilTag::TAG_CIRCLE49h12, 5.0 / 11},
+      {vpDetectorAprilTag::TAG_CUSTOM48h12, 6.0 / 10},
+      {vpDetectorAprilTag::TAG_STANDARD41h12, 5.0 / 9},
+      {vpDetectorAprilTag::TAG_STANDARD52h13, 6.0 / 10},
+#endif
   };
 
-  std::vector<vpDetectorAprilTag::vpPoseEstimationMethod> poseMethods = {vpDetectorAprilTag::HOMOGRAPHY,
-                                                                         vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION,
+  std::vector<vpDetectorAprilTag::vpPoseEstimationMethod> poseMethods = {
+    vpDetectorAprilTag::HOMOGRAPHY,
+    vpDetectorAprilTag::HOMOGRAPHY_ORTHOGONAL_ITERATION,
 #if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_EIGEN3)
-                                                                         vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS,
-                                                                         vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS,
-                                                                         vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS,
-                                                                         vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS
+    vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS,
+    vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS,
+    vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS,
+    vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS
 #endif
-                                                                        };
+  };
   std::map<vpDetectorAprilTag::vpPoseEstimationMethod, std::string> methodNames = {
     {vpDetectorAprilTag::HOMOGRAPHY, "HOMOGRAPHY"},
     {vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS, "HOMOGRAPHY_VIRTUAL_VS"},
@@ -179,57 +183,44 @@ TEST_CASE("Apriltag pose estimation test", "[apriltag_pose_estimation_test]") {
   const size_t nbTags = 5;
   const double tagSize_ = 0.25;
   std::map<int, double> tagsSize = {
-    {0, tagSize_},
-    {1, tagSize_},
-    {2, tagSize_},
-    {3, tagSize_/2},
-    {4, tagSize_/2},
+      {0, tagSize_}, {1, tagSize_}, {2, tagSize_}, {3, tagSize_ / 2}, {4, tagSize_ / 2},
   };
 
   std::map<int, double> errorTranslationThresh = {
-    {0, 0.025},
-    {1, 0.09},
-    {2, 0.05},
-    {3, 0.13},
-    {4, 0.09},
+      {0, 0.025}, {1, 0.09}, {2, 0.05}, {3, 0.13}, {4, 0.09},
   };
   std::map<int, double> errorRotationThresh = {
-    {0, 0.04},
-    {1, 0.075},
-    {2, 0.07},
-    {3, 0.18},
-    {4, 0.13},
+      {0, 0.04}, {1, 0.075}, {2, 0.07}, {3, 0.18}, {4, 0.13},
   };
   std::vector<FailedTestCase> ignoreTests = {
-    FailedTestCase(vpDetectorAprilTag::TAG_STANDARD41h12, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 3),
-    FailedTestCase(vpDetectorAprilTag::TAG_STANDARD41h12, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 4),
-    FailedTestCase(vpDetectorAprilTag::TAG_CIRCLE21h7, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 3)
-  };
+      FailedTestCase(vpDetectorAprilTag::TAG_STANDARD41h12, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 3),
+      FailedTestCase(vpDetectorAprilTag::TAG_STANDARD41h12, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 4),
+      FailedTestCase(vpDetectorAprilTag::TAG_CIRCLE21h7, vpDetectorAprilTag::LAGRANGE_VIRTUAL_VS, 3)};
 
   vpCameraParameters cam;
   cam.initPersProjWithoutDistortion(700.0, 700.0, 320.0, 240.0);
 
   std::map<int, vpHomogeneousMatrix> groundTruthPoses;
   for (size_t i = 0; i < nbTags; i++) {
-    std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                     std::string("AprilTag/benchmark/640x480/cMo_") +
-                                                     std::to_string(i) + std::string(".txt"));
+    std::string filename =
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), std::string("AprilTag/benchmark/640x480/cMo_") +
+                                                                          std::to_string(i) + std::string(".txt"));
     std::ifstream file(filename);
     groundTruthPoses[static_cast<int>(i)].load(file);
   }
 
-  for (const auto& kv : apriltagMap) {
+  for (const auto &kv : apriltagMap) {
     auto family = kv.first;
     std::cout << "\nApriltag family: " << family << std::endl;
-    std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                     std::string("AprilTag/benchmark/640x480/") +
-                                                     kv.second + std::string("_640x480.png"));
+    std::string filename =
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
+                                  std::string("AprilTag/benchmark/640x480/") + kv.second + std::string("_640x480.png"));
     const double tagSize = tagSize_ * tagSizeScales[family];
     REQUIRE(vpIoTools::checkFilename(filename));
 
     vpImage<unsigned char> I;
     vpImageIo::read(I, filename);
-    REQUIRE(I.getSize() == 640*480);
+    REQUIRE(I.getSize() == 640 * 480);
 
     vpDetectorAprilTag apriltag_detector(family);
 
@@ -237,13 +228,13 @@ TEST_CASE("Apriltag pose estimation test", "[apriltag_pose_estimation_test]") {
       std::cout << "\tPose estimation method: " << method << std::endl;
       apriltag_detector.setAprilTagPoseEstimationMethod(method);
 
-      //Same tags size
+      // Same tags size
       {
         std::vector<vpHomogeneousMatrix> cMo_vec;
         apriltag_detector.detect(I, tagSize, cam, cMo_vec);
         CHECK(cMo_vec.size() == nbTags);
 
-        std::vector<std::vector<vpImagePoint>> tagsCorners = apriltag_detector.getPolygon();
+        std::vector<std::vector<vpImagePoint> > tagsCorners = apriltag_detector.getPolygon();
         CHECK(tagsCorners.size() == nbTags);
 
         std::vector<std::string> messages = apriltag_detector.getMessage();
@@ -259,31 +250,31 @@ TEST_CASE("Apriltag pose estimation test", "[apriltag_pose_estimation_test]") {
         CHECK(idsCount.size() == nbTags);
 
         for (size_t i = 0; i < cMo_vec.size(); i++) {
-          const vpHomogeneousMatrix& cMo = cMo_vec[i];
+          const vpHomogeneousMatrix &cMo = cMo_vec[i];
           const vpPoseVector pose(cMo);
           int id = tagsId[i];
           if (id >= 3) {
             continue;
           }
           std::cout << "\t\tSame size, Tag: " << i << std::endl;
-          const vpHomogeneousMatrix& cMo_truth = groundTruthPoses[id];
+          const vpHomogeneousMatrix &cMo_truth = groundTruthPoses[id];
           const vpPoseVector pose_truth(cMo_truth);
 
           vpColVector error_translation = pose.getTranslationVector() - pose_truth.getTranslationVector();
           vpColVector error_thetau = vpColVector(pose.getThetaUVector()) - vpColVector(pose_truth.getThetaUVector());
-          double error_trans = sqrt(error_translation.sumSquare()/3);
+          double error_trans = sqrt(error_translation.sumSquare() / 3);
           double error_orientation = sqrt(error_thetau.sumSquare() / 3);
-          std::cout << "\t\t\tTranslation error: " << error_trans << " / Rotation error: " << error_orientation << std::endl;
-          CHECK((error_trans < errorTranslationThresh[id] &&
-                 error_orientation < errorRotationThresh[id]));
+          std::cout << "\t\t\tTranslation error: " << error_trans << " / Rotation error: " << error_orientation
+                    << std::endl;
+          CHECK((error_trans < errorTranslationThresh[id] && error_orientation < errorRotationThresh[id]));
         }
       }
 
-      //Custom tags size
+      // Custom tags size
       {
         apriltag_detector.detect(I);
 
-        std::vector<std::vector<vpImagePoint>> tagsCorners = apriltag_detector.getPolygon();
+        std::vector<std::vector<vpImagePoint> > tagsCorners = apriltag_detector.getPolygon();
         CHECK(tagsCorners.size() == nbTags);
 
         std::vector<std::string> messages = apriltag_detector.getMessage();
@@ -305,26 +296,27 @@ TEST_CASE("Apriltag pose estimation test", "[apriltag_pose_estimation_test]") {
           apriltag_detector.getPose(idx, tagsSize[id] * tagSizeScales[family], cam, cMo);
 
           const vpPoseVector pose(cMo);
-          const vpHomogeneousMatrix& cMo_truth = groundTruthPoses[id];
+          const vpHomogeneousMatrix &cMo_truth = groundTruthPoses[id];
           const vpPoseVector pose_truth(cMo_truth);
 
           vpColVector error_translation = pose.getTranslationVector() - pose_truth.getTranslationVector();
           vpColVector error_thetau = vpColVector(pose.getThetaUVector()) - vpColVector(pose_truth.getThetaUVector());
-          double error_trans = sqrt(error_translation.sumSquare()/3);
+          double error_trans = sqrt(error_translation.sumSquare() / 3);
           double error_orientation = sqrt(error_thetau.sumSquare() / 3);
-          std::cout << "\t\t\tTranslation error: " << error_trans << " / Rotation error: " << error_orientation << std::endl;
-          if (std::find(ignoreTests.begin(), ignoreTests.end(), FailedTestCase(family, method, static_cast<int>(idx))) == ignoreTests.end()) {
-            CHECK((error_trans < errorTranslationThresh[id] &&
-                   error_orientation < errorRotationThresh[id]));
+          std::cout << "\t\t\tTranslation error: " << error_trans << " / Rotation error: " << error_orientation
+                    << std::endl;
+          if (std::find(ignoreTests.begin(), ignoreTests.end(),
+                        FailedTestCase(family, method, static_cast<int>(idx))) == ignoreTests.end()) {
+            CHECK((error_trans < errorTranslationThresh[id] && error_orientation < errorRotationThresh[id]));
           }
         }
       }
 
-      //Custom tags size + aligned Z-axis
+      // Custom tags size + aligned Z-axis
       {
         apriltag_detector.detect(I);
 
-        std::vector<std::vector<vpImagePoint>> tagsCorners = apriltag_detector.getPolygon();
+        std::vector<std::vector<vpImagePoint> > tagsCorners = apriltag_detector.getPolygon();
         CHECK(tagsCorners.size() == nbTags);
 
         std::vector<std::string> messages = apriltag_detector.getMessage();
@@ -354,12 +346,13 @@ TEST_CASE("Apriltag pose estimation test", "[apriltag_pose_estimation_test]") {
 
           vpColVector error_translation = pose.getTranslationVector() - pose_truth.getTranslationVector();
           vpColVector error_thetau = vpColVector(pose.getThetaUVector()) - vpColVector(pose_truth.getThetaUVector());
-          double error_trans = sqrt(error_translation.sumSquare()/3);
+          double error_trans = sqrt(error_translation.sumSquare() / 3);
           double error_orientation = sqrt(error_thetau.sumSquare() / 3);
-          std::cout << "\t\t\tTranslation error: " << error_trans << " / Rotation error: " << error_orientation << std::endl;
-          if (std::find(ignoreTests.begin(), ignoreTests.end(), FailedTestCase(family, method, static_cast<int>(idx))) == ignoreTests.end()) {
-            CHECK((error_trans < errorTranslationThresh[id] &&
-                   error_orientation < errorRotationThresh[id]));
+          std::cout << "\t\t\tTranslation error: " << error_trans << " / Rotation error: " << error_orientation
+                    << std::endl;
+          if (std::find(ignoreTests.begin(), ignoreTests.end(),
+                        FailedTestCase(family, method, static_cast<int>(idx))) == ignoreTests.end()) {
+            CHECK((error_trans < errorTranslationThresh[id] && error_orientation < errorRotationThresh[id]));
           }
         }
       }
@@ -367,26 +360,28 @@ TEST_CASE("Apriltag pose estimation test", "[apriltag_pose_estimation_test]") {
   }
 }
 
-TEST_CASE("Apriltag corners accuracy test", "[apriltag_corners_accuracy_test]") {
+TEST_CASE("Apriltag corners accuracy test", "[apriltag_corners_accuracy_test]")
+{
   std::map<vpDetectorAprilTag::vpAprilTagFamily, std::string> apriltagMap = {
-    {vpDetectorAprilTag::TAG_16h5, "tag16_05"},
-    {vpDetectorAprilTag::TAG_25h9, "tag25_09"},
-    {vpDetectorAprilTag::TAG_36h11, "tag36_11"},
-    {vpDetectorAprilTag::TAG_CIRCLE21h7, "tag21_07"}
-  #if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
-    , {vpDetectorAprilTag::TAG_CIRCLE49h12, "tag49_12"},
-    {vpDetectorAprilTag::TAG_CUSTOM48h12, "tag48_12"},
-    {vpDetectorAprilTag::TAG_STANDARD41h12, "tag41_12"},
-    {vpDetectorAprilTag::TAG_STANDARD52h13, "tag52_13"},
-  #endif
+      {vpDetectorAprilTag::TAG_16h5, "tag16_05"},
+      {vpDetectorAprilTag::TAG_25h9, "tag25_09"},
+      {vpDetectorAprilTag::TAG_36h11, "tag36_11"},
+      {vpDetectorAprilTag::TAG_CIRCLE21h7, "tag21_07"}
+#if defined(VISP_HAVE_APRILTAG_BIG_FAMILY)
+      ,
+      {vpDetectorAprilTag::TAG_CIRCLE49h12, "tag49_12"},
+      {vpDetectorAprilTag::TAG_CUSTOM48h12, "tag48_12"},
+      {vpDetectorAprilTag::TAG_STANDARD41h12, "tag41_12"},
+      {vpDetectorAprilTag::TAG_STANDARD52h13, "tag52_13"},
+#endif
   };
 
   const size_t nbTags = 5;
-  std::map<vpDetectorAprilTag::vpAprilTagFamily, std::map<int, std::vector<vpImagePoint>>> groundTruthCorners;
-  for (const auto& kv : apriltagMap) {
-    std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                     std::string("AprilTag/benchmark/640x480/corners_") +
-                                                     kv.second + std::string(".txt"));
+  std::map<vpDetectorAprilTag::vpAprilTagFamily, std::map<int, std::vector<vpImagePoint> > > groundTruthCorners;
+  for (const auto &kv : apriltagMap) {
+    std::string filename =
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
+                                  std::string("AprilTag/benchmark/640x480/corners_") + kv.second + std::string(".txt"));
     std::ifstream file(filename);
     REQUIRE(file.is_open());
 
@@ -395,8 +390,7 @@ TEST_CASE("Apriltag corners accuracy test", "[apriltag_corners_accuracy_test]") 
     double p1x = 0, p1y = 0;
     double p2x = 0, p2y = 0;
     double p3x = 0, p3y = 0;
-    while (file >> id >> p0x >> p0y >> p1x >> p1y >>
-           p2x >> p2y >> p3x >> p3y) {
+    while (file >> id >> p0x >> p0y >> p1x >> p1y >> p2x >> p2y >> p3x >> p3y) {
       groundTruthCorners[kv.first][id].push_back(vpImagePoint(p0y, p0x));
       groundTruthCorners[kv.first][id].push_back(vpImagePoint(p1y, p1x));
       groundTruthCorners[kv.first][id].push_back(vpImagePoint(p2y, p2x));
@@ -405,22 +399,22 @@ TEST_CASE("Apriltag corners accuracy test", "[apriltag_corners_accuracy_test]") 
     }
   }
 
-  for (const auto& kv : apriltagMap) {
+  for (const auto &kv : apriltagMap) {
     auto family = kv.first;
     std::cout << "\nApriltag family: " << family << std::endl;
-    std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                     std::string("AprilTag/benchmark/640x480/") +
-                                                     kv.second + std::string("_640x480.png"));
+    std::string filename =
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
+                                  std::string("AprilTag/benchmark/640x480/") + kv.second + std::string("_640x480.png"));
     REQUIRE(vpIoTools::checkFilename(filename));
 
     vpImage<unsigned char> I;
     vpImageIo::read(I, filename);
-    REQUIRE(I.getSize() == 640*480);
+    REQUIRE(I.getSize() == 640 * 480);
 
     vpDetectorAprilTag apriltag_detector(family);
     apriltag_detector.detect(I);
     std::vector<int> tagsId = apriltag_detector.getTagsId();
-    std::vector<std::vector<vpImagePoint>> tagsCorners = apriltag_detector.getTagsCorners();
+    std::vector<std::vector<vpImagePoint> > tagsCorners = apriltag_detector.getTagsCorners();
 
     REQUIRE(tagsCorners.size() == nbTags);
     REQUIRE(tagsId.size() == nbTags);
@@ -438,13 +432,14 @@ TEST_CASE("Apriltag corners accuracy test", "[apriltag_corners_accuracy_test]") 
 }
 
 #if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_EIGEN3)
-TEST_CASE("Apriltag regression test", "[apriltag_regression_test]") {
+TEST_CASE("Apriltag regression test", "[apriltag_regression_test]")
+{
   const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "AprilTag/AprilTag.pgm");
   REQUIRE(vpIoTools::checkFilename(filename));
 
   vpImage<unsigned char> I;
   vpImageIo::read(I, filename);
-  REQUIRE(I.getSize() == 640*480);
+  REQUIRE(I.getSize() == 640 * 480);
 
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
   vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::HOMOGRAPHY_VIRTUAL_VS;
@@ -463,8 +458,8 @@ TEST_CASE("Apriltag regression test", "[apriltag_regression_test]") {
   // Ground truth
   std::map<std::string, TagGroundTruth> mapOfTagsGroundTruth;
   {
-    std::string filename_ground_truth = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                                  "AprilTag/ground_truth_detection.txt");
+    std::string filename_ground_truth =
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "AprilTag/ground_truth_detection.txt");
     std::ifstream file_ground_truth(filename_ground_truth.c_str());
     REQUIRE(file_ground_truth.is_open());
     std::string message = "";
@@ -482,8 +477,8 @@ TEST_CASE("Apriltag regression test", "[apriltag_regression_test]") {
 
   std::map<std::string, vpPoseVector> mapOfPosesGroundTruth;
   {
-    std::string filename_ground_truth = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                                  "AprilTag/ground_truth_pose.txt");
+    std::string filename_ground_truth =
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "AprilTag/ground_truth_pose.txt");
     std::ifstream file_ground_truth(filename_ground_truth.c_str());
     REQUIRE(file_ground_truth.is_open());
     std::string message = "";
@@ -525,30 +520,30 @@ TEST_CASE("Apriltag regression test", "[apriltag_regression_test]") {
     std::cout << "\tReference pose: " << it->second.t() << std::endl;
     for (unsigned int cpt = 0; cpt < 3; cpt++) {
       if (!vpMath::equal(it->second[cpt], pose_vec[cpt], 0.005) ||
-          !vpMath::equal(it->second[cpt+3], pose_vec[cpt+3], 0.005)) {
-        std::cerr << "Problem, current pose: " << pose_vec.t() << "\nReference pose: " << it->second.t()
-                  << std::endl;
+          !vpMath::equal(it->second[cpt + 3], pose_vec[cpt + 3], 0.005)) {
+        std::cerr << "Problem, current pose: " << pose_vec.t() << "\nReference pose: " << it->second.t() << std::endl;
       }
       CHECK((vpMath::equal(it->second[cpt], pose_vec[cpt], 0.005) &&
-             vpMath::equal(it->second[cpt+3], pose_vec[cpt+3], 0.005)));
+             vpMath::equal(it->second[cpt + 3], pose_vec[cpt + 3], 0.005)));
     }
   }
 
   delete detector;
 }
 
-TEST_CASE("Apriltag copy constructor test", "[apriltag_copy_constructor_test]") {
-  const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                         "AprilTag/benchmark/640x480/tag21_07_640x480.png");
+TEST_CASE("Apriltag copy constructor test", "[apriltag_copy_constructor_test]")
+{
+  const std::string filename =
+      vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "AprilTag/benchmark/640x480/tag21_07_640x480.png");
   REQUIRE(vpIoTools::checkFilename(filename));
 
   vpImage<unsigned char> I;
   vpImageIo::read(I, filename);
-  REQUIRE(I.getSize() == 640*480);
+  REQUIRE(I.getSize() == 640 * 480);
 
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_CIRCLE21h7;
   vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
-  const double tagSize = 0.25 * 5/9;
+  const double tagSize = 0.25 * 5 / 9;
   const float quad_decimate = 1.0;
   vpDetectorAprilTag *detector = new vpDetectorAprilTag(tagFamily, poseEstimationMethod);
   detector->setAprilTagQuadDecimate(quad_decimate);
@@ -561,9 +556,9 @@ TEST_CASE("Apriltag copy constructor test", "[apriltag_copy_constructor_test]") 
   std::vector<std::vector<vpImagePoint> > tagsCorners = detector->getTagsCorners();
   std::vector<int> tagsId = detector->getTagsId();
 
-  //Copy
+  // Copy
   vpDetectorAprilTag detector_copy(*detector);
-  //Delete old detector
+  // Delete old detector
   delete detector;
 
   std::vector<std::vector<vpImagePoint> > tagsCorners_copy = detector_copy.getTagsCorners();
@@ -573,13 +568,13 @@ TEST_CASE("Apriltag copy constructor test", "[apriltag_copy_constructor_test]") 
   REQUIRE(tagsCorners_copy.size() == tagsId_copy.size());
 
   for (size_t i = 0; i < tagsCorners.size(); i++) {
-    const std::vector<vpImagePoint>& corners_ref = tagsCorners[i];
-    const std::vector<vpImagePoint>& corners_copy = tagsCorners_copy[i];
+    const std::vector<vpImagePoint> &corners_ref = tagsCorners[i];
+    const std::vector<vpImagePoint> &corners_copy = tagsCorners_copy[i];
     REQUIRE(corners_ref.size() == corners_copy.size());
 
     for (size_t j = 0; j < corners_ref.size(); j++) {
-      const vpImagePoint& corner_ref = corners_ref[j];
-      const vpImagePoint& corner_copy = corners_copy[j];
+      const vpImagePoint &corner_ref = corners_ref[j];
+      const vpImagePoint &corner_copy = corners_copy[j];
       CHECK(corner_ref == corner_copy);
     }
 
@@ -592,29 +587,29 @@ TEST_CASE("Apriltag copy constructor test", "[apriltag_copy_constructor_test]") 
   detector_copy.detect(I, tagSize, cam, cMo_vec_copy);
   REQUIRE(cMo_vec.size() == cMo_vec_copy.size());
   for (size_t idx = 0; idx < cMo_vec_copy.size(); idx++) {
-    const vpHomogeneousMatrix& cMo = cMo_vec[idx];
-    const vpHomogeneousMatrix& cMo_copy = cMo_vec_copy[idx];
+    const vpHomogeneousMatrix &cMo = cMo_vec[idx];
+    const vpHomogeneousMatrix &cMo_copy = cMo_vec_copy[idx];
     for (unsigned int i = 0; i < 3; i++) {
       for (unsigned int j = 0; j < 4; j++) {
-        CHECK(vpMath::equal(cMo[i][j], cMo_copy[i][j],
-                            std::numeric_limits<double>::epsilon()));
+        CHECK(vpMath::equal(cMo[i][j], cMo_copy[i][j], std::numeric_limits<double>::epsilon()));
       }
     }
   }
 }
 
-TEST_CASE("Apriltag assignment operator test", "[apriltag_assignment_operator_test]") {
-  const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                         "AprilTag/benchmark/640x480/tag21_07_640x480.png");
+TEST_CASE("Apriltag assignment operator test", "[apriltag_assignment_operator_test]")
+{
+  const std::string filename =
+      vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "AprilTag/benchmark/640x480/tag21_07_640x480.png");
   REQUIRE(vpIoTools::checkFilename(filename));
 
   vpImage<unsigned char> I;
   vpImageIo::read(I, filename);
-  REQUIRE(I.getSize() == 640*480);
+  REQUIRE(I.getSize() == 640 * 480);
 
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_CIRCLE21h7;
   vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::BEST_RESIDUAL_VIRTUAL_VS;
-  const double tagSize = 0.25 * 5/9;
+  const double tagSize = 0.25 * 5 / 9;
   const float quad_decimate = 1.0;
   vpDetectorAprilTag *detector = new vpDetectorAprilTag(tagFamily, poseEstimationMethod);
   detector->setAprilTagQuadDecimate(quad_decimate);
@@ -627,9 +622,9 @@ TEST_CASE("Apriltag assignment operator test", "[apriltag_assignment_operator_te
   std::vector<std::vector<vpImagePoint> > tagsCorners = detector->getTagsCorners();
   std::vector<int> tagsId = detector->getTagsId();
 
-  //Copy
+  // Copy
   vpDetectorAprilTag detector_copy = *detector;
-  //Delete old detector
+  // Delete old detector
   delete detector;
 
   std::vector<std::vector<vpImagePoint> > tagsCorners_copy = detector_copy.getTagsCorners();
@@ -639,13 +634,13 @@ TEST_CASE("Apriltag assignment operator test", "[apriltag_assignment_operator_te
   REQUIRE(tagsCorners_copy.size() == tagsId_copy.size());
 
   for (size_t i = 0; i < tagsCorners.size(); i++) {
-    const std::vector<vpImagePoint>& corners_ref = tagsCorners[i];
-    const std::vector<vpImagePoint>& corners_copy = tagsCorners_copy[i];
+    const std::vector<vpImagePoint> &corners_ref = tagsCorners[i];
+    const std::vector<vpImagePoint> &corners_copy = tagsCorners_copy[i];
     REQUIRE(corners_ref.size() == corners_copy.size());
 
     for (size_t j = 0; j < corners_ref.size(); j++) {
-      const vpImagePoint& corner_ref = corners_ref[j];
-      const vpImagePoint& corner_copy = corners_copy[j];
+      const vpImagePoint &corner_ref = corners_ref[j];
+      const vpImagePoint &corner_copy = corners_copy[j];
       CHECK(corner_ref == corner_copy);
     }
 
@@ -658,35 +653,32 @@ TEST_CASE("Apriltag assignment operator test", "[apriltag_assignment_operator_te
   detector_copy.detect(I, tagSize, cam, cMo_vec_copy);
   REQUIRE(cMo_vec.size() == cMo_vec_copy.size());
   for (size_t idx = 0; idx < cMo_vec_copy.size(); idx++) {
-    const vpHomogeneousMatrix& cMo = cMo_vec[idx];
-    const vpHomogeneousMatrix& cMo_copy = cMo_vec_copy[idx];
+    const vpHomogeneousMatrix &cMo = cMo_vec[idx];
+    const vpHomogeneousMatrix &cMo_copy = cMo_vec_copy[idx];
     for (unsigned int i = 0; i < 3; i++) {
       for (unsigned int j = 0; j < 4; j++) {
-        CHECK(vpMath::equal(cMo[i][j], cMo_copy[i][j],
-                            std::numeric_limits<double>::epsilon()));
+        CHECK(vpMath::equal(cMo[i][j], cMo_copy[i][j], std::numeric_limits<double>::epsilon()));
       }
     }
   }
 }
 
-TEST_CASE("Apriltag getTagsPoints3D test", "[apriltag_get_tags_points3D_test]") {
-  const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                         "AprilTag/benchmark/640x480/tag21_07_640x480.png");
+TEST_CASE("Apriltag getTagsPoints3D test", "[apriltag_get_tags_points3D_test]")
+{
+  const std::string filename =
+      vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "AprilTag/benchmark/640x480/tag21_07_640x480.png");
   REQUIRE(vpIoTools::checkFilename(filename));
 
   vpImage<unsigned char> I;
   vpImageIo::read(I, filename);
-  REQUIRE(I.getSize() == 640*480);
+  REQUIRE(I.getSize() == 640 * 480);
 
   vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_CIRCLE21h7;
   vpDetectorAprilTag::vpPoseEstimationMethod poseEstimationMethod = vpDetectorAprilTag::DEMENTHON_VIRTUAL_VS;
-  const double familyScale = 5.0/9;
+  const double familyScale = 5.0 / 9;
   const double tagSize = 0.25;
   std::map<int, double> tagsSize = {
-    {-1, tagSize * familyScale},
-    {3, tagSize / 2 * familyScale},
-    {4, tagSize / 2 * familyScale}
-  };
+      {-1, tagSize * familyScale}, {3, tagSize / 2 * familyScale}, {4, tagSize / 2 * familyScale}};
 
   vpDetectorAprilTag detector(tagFamily, poseEstimationMethod);
 
@@ -696,7 +688,7 @@ TEST_CASE("Apriltag getTagsPoints3D test", "[apriltag_get_tags_points3D_test]") 
   std::vector<vpHomogeneousMatrix> cMo_vec;
   REQUIRE(detector.detect(I));
 
-  //Compute pose with getPose
+  // Compute pose with getPose
   std::vector<int> tagsId = detector.getTagsId();
   for (size_t i = 0; i < tagsId.size(); i++) {
     int id = tagsId[i];
@@ -710,17 +702,17 @@ TEST_CASE("Apriltag getTagsPoints3D test", "[apriltag_get_tags_points3D_test]") 
     cMo_vec.push_back(cMo);
   }
 
-  //Compute pose manually
-  std::vector<std::vector<vpPoint>> tagsPoints = detector.getTagsPoints3D(tagsId, tagsSize);
-  std::vector<std::vector<vpImagePoint>> tagsCorners = detector.getTagsCorners();
+  // Compute pose manually
+  std::vector<std::vector<vpPoint> > tagsPoints = detector.getTagsPoints3D(tagsId, tagsSize);
+  std::vector<std::vector<vpImagePoint> > tagsCorners = detector.getTagsCorners();
   REQUIRE(tagsPoints.size() == tagsCorners.size());
 
   for (size_t i = 0; i < tagsPoints.size(); i++) {
     REQUIRE(tagsPoints[i].size() == tagsCorners[i].size());
 
     for (size_t j = 0; j < tagsPoints[i].size(); j++) {
-      vpPoint& pt = tagsPoints[i][j];
-      const vpImagePoint& imPt = tagsCorners[i][j];
+      vpPoint &pt = tagsPoints[i][j];
+      const vpImagePoint &imPt = tagsCorners[i][j];
       double x = 0, y = 0;
       vpPixelMeterConversion::convertPoint(cam, imPt, x, y);
       pt.set_x(x);
@@ -731,7 +723,7 @@ TEST_CASE("Apriltag getTagsPoints3D test", "[apriltag_get_tags_points3D_test]") 
     vpHomogeneousMatrix cMo_manual;
     pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo_manual);
 
-    const vpHomogeneousMatrix& cMo = cMo_vec[i];
+    const vpHomogeneousMatrix &cMo = cMo_vec[i];
     // Note that using epsilon = std::numeric_limits<double>::epsilon() makes this test
     // failing on Ubuntu 18.04 when none of the Lapack 3rd party libraries, nor the built-in are used.
     // Admissible espilon value is 1e-14. Using 1e-15 makes the test failing.
@@ -763,8 +755,5 @@ int main(int argc, const char *argv[])
   return numFailed;
 }
 #else
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

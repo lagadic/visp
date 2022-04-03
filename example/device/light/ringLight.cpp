@@ -81,7 +81,8 @@ use \"-o -n <on duration in second>]\"\n			       \
 \n\
 SYNOPSIS\n\
   %s [-o] [-n <on duration in second>] [-t <pulse width in ms>] [-h]\n\
-", nsec, name);
+",
+          nsec, name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -102,7 +103,8 @@ OPTIONS:                                               Default\n\
      This option is to make into realtion with option \"-o\".\n\
 \n\
   -h\n\
-     Print the help.\n\n", nsec, nmsec, nsec);
+     Print the help.\n\n",
+          nsec, nmsec, nsec);
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");

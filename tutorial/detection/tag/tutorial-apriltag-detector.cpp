@@ -2,11 +2,11 @@
 //! [Include]
 #include <visp3/detection/vpDetectorAprilTag.h>
 //! [Include]
+#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
-#include <visp3/core/vpXmlParserCamera.h>
 
 int main(int argc, const char **argv)
 {

@@ -1,4 +1,4 @@
-                               ViSP
+﻿                               ViSP
                      Visual Servoing Platform
                      Resume of the change log
 
@@ -15,6 +15,12 @@ ViSP 3.5.1 (under development)
   - Tutorials
     . New tutorial: How to manipulate a video or a sequence of images
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-video-manipulation.html
+    . New tutorial: Planar object pose estimation using RGB-D data
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-planar-object-pose.html
+  - Bug fixed
+    . [#1042] testColorConversion.cpp segfault randomly
+    . [#1045] CXX standard not propagated when using pkg-config or visp-config
+    . [#1046] vpIoTools::getParent() returns an empty string when folder separator is not found
 ----------------------------------------------
 ViSP 3.5.0 (released February 15, 2022)
   - Contributors:
@@ -95,7 +101,7 @@ ViSP 3.4.0 (released February 26, 2021)
     . Introduce analysis tools for camera calibration / hand-eye calibration
       (see tutorials)
     . New cmake option to use MathJax to speed up online doc build
-    . Docker images available on Docker Hub: 
+    . Docker images available on Docker Hub:
       https://hub.docker.com/repository/docker/vispci/vispci
     . Support of Kinova Jaco assistive robotic arm that could be controlled
       using vpRobotKinova
@@ -156,7 +162,7 @@ ViSP 3.3.0 (released February 14, 2020)
       TAG_36ARTOOLKIT are deprecated and that new families: TAG_CIRCLE21h7,
       TAG_CIRCLE49h12, TAG_CUSTOM48h12, TAG_STANDARD41h12, TAG_STANDARD52h13
       are supported. AprilTag detection time is reduced
-    . Remove libxml2 3rd party dependency to use pugixml built-in 
+    . Remove libxml2 3rd party dependency to use pugixml built-in
     . Replace pthreads-win32 for POSIX threads for windows 3rd party with
       pthreads4w implementation
     . New matrix and vector initialization methods to ease setting elements
@@ -407,7 +413,7 @@ ViSP 3.1.0 (released December 22nd, 2017)
     . New tutorial: Practical example: count the number of coins in an image
     . New tutorial: Markerless generic model-based tracking
     . New tutorial: AprilTag marker detection
-    . New tutorial: Markerless model-based tracker CAD model editor - GSoC 2017 project 
+    . New tutorial: Markerless model-based tracker CAD model editor - GSoC 2017 project
   - Bug fixed
     . [#137] Fix bug in extration of vpRotationMatrix from vpPoseVector using
              vpPoseVector::getRotationMatrix()
@@ -423,7 +429,7 @@ ViSP 3.1.0 (released December 22nd, 2017)
     . [#187] Integer division by zero in vpDisplayWin32.cpp
     . [#200] Issue when reading PNG images with 16bits depth with libpng
     . [#201] Fix read PNG images with 16 bits depth with libpng
-    . [#207] CMake option 'ACTIVATE_DEBUG_TRACE' has never been used 
+    . [#207] CMake option 'ACTIVATE_DEBUG_TRACE' has never been used
     . [#226] Planar pose Lagrange computation returns a left handed frame
 
 ----------------------------------------------
@@ -539,7 +545,7 @@ ViSP 3.0.1 (released February 3rd, 2017)
     . [#112] vpPose: Possible ambiguity or misunderstanding in doxygen message
     . [#114] vpMomentAlpha: wrong abs() function using
     . [#116] Link errors related to openmp
-    . [#117] vpMomentAlpha: out of range of [-Pi, Pi] in relative mode 
+    . [#117] vpMomentAlpha: out of range of [-Pi, Pi] in relative mode
     . [#118] vpKeyPoint: perhaps misleading in document
     . [#120] Build failed with clang/llvm
     . [#126] vpPolygon::operator=() does not copy everything.

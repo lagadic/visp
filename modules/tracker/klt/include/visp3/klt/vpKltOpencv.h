@@ -177,7 +177,7 @@ protected:
 
 #elif defined(VISP_HAVE_OPENCV)
 #ifdef _CH_
-#pragma package < opencv >
+#pragma package < opencv>
 #endif
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1

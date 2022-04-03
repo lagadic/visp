@@ -428,7 +428,8 @@ public: /* Methode publiques */
   void get_fJe(vpMatrix &fJe);
 
   void init(void);
-  void init(vpViper650::vpToolType tool,
+  void
+  init(vpViper650::vpToolType tool,
        vpCameraParameters::vpCameraParametersProjType projModel = vpCameraParameters::perspectiveProjWithoutDistortion);
   void init(vpViper650::vpToolType tool, const std::string &filename);
   void init(vpViper650::vpToolType tool, const vpHomogeneousMatrix &eMc_);
@@ -451,8 +452,8 @@ public: /* Methode publiques */
 
   // Position control
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
-  void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3,
-                   double pos4, double pos5, double pos6);
+  void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3, double pos4,
+                   double pos5, double pos6);
   void setPosition(const std::string &filename);
   void setPositioningVelocity(double velocity);
 

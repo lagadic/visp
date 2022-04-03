@@ -41,31 +41,26 @@
 #include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_FRANKA
+#include <algorithm>
 #include <cmath>
 #include <iomanip>
-#include <algorithm>
 
 #include <franka/exception.h>
-#include <franka/robot.h>
 #include <franka/model.h>
+#include <franka/robot.h>
 
 #include <visp3/core/vpException.h>
-#include <visp3/core/vpTime.h>
 #include <visp3/core/vpMatrix.h>
+#include <visp3/core/vpTime.h>
 
-void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
-                                             std::atomic_bool &stop,
-                                             const std::string &log_folder,
-                                             const vpRobot::vpControlFrameType &frame,
+void vpJointVelTrajGenerator::control_thread(franka::Robot *robot, std::atomic_bool &stop,
+                                             const std::string &log_folder, const vpRobot::vpControlFrameType &frame,
                                              const vpHomogeneousMatrix &eMc,
-                                             const vpColVector &v_cart_des, // end-effector velocity
+                                             const vpColVector &v_cart_des,       // end-effector velocity
                                              const std::array<double, 7> &dq_des, // joint velocity
-                                             const std::array<double, 7> &q_min,
-                                             const std::array<double, 7> &q_max,
-                                             const std::array<double, 7> &dq_max,
-                                             const std::array<double, 7> &ddq_max,
-                                             franka::RobotState &robot_state,
-                                             std::mutex &mutex)
+                                             const std::array<double, 7> &q_min, const std::array<double, 7> &q_max,
+                                             const std::array<double, 7> &dq_max, const std::array<double, 7> &ddq_max,
+                                             franka::RobotState &robot_state, std::mutex &mutex)
 {
   double time = 0.0;
   double delta_t = 0.001;
@@ -81,7 +76,7 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
   std::ofstream log_dq_cmd;
   std::ofstream log_v_des;
 
-  if (! log_folder.empty()) {
+  if (!log_folder.empty()) {
     std::cout << "Save franka logs in \"" << log_folder << "\" folder" << std::endl;
     std::cout << "Use gnuplot tool to visualize logs:" << std::endl;
     std::cout << "$ cd " << log_folder << std::endl;
@@ -95,36 +90,36 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     if (frame == vpRobot::CAMERA_FRAME || frame == vpRobot::REFERENCE_FRAME || frame == vpRobot::END_EFFECTOR_FRAME) {
       gnuplot << "plot ";
       for (size_t i = 0; i < 7; i++) {
-        gnuplot << "'v-des.log' u " << i+1 << " title \"d-des" << i+1 << "\", ";
+        gnuplot << "'v-des.log' u " << i + 1 << " title \"d-des" << i + 1 << "\", ";
       }
       gnuplot << "\npause -1\n" << std::endl;
     }
 
     gnuplot << "plot ";
     for (size_t i = 0; i < 7; i++) {
-      gnuplot << "'q-mes.log' u " << i+1 << " title \"q-mes" << i+1 << "\", ";
+      gnuplot << "'q-mes.log' u " << i + 1 << " title \"q-mes" << i + 1 << "\", ";
     }
     gnuplot << "\npause -1\n" << std::endl;
 
     for (size_t i = 0; i < 7; i++) {
-      gnuplot << "plot 'dq-mes.log' u " << i+1 << " title \"dq-mes" << i+1
-              << "\", 'dq-des.log' u " << i+1 << " title \"dq-des" << i+1
-              << "\", 'dq-cmd.log' u " << i+1 << " title \"dq-cmd" << i+1 << "\"" << std::endl;
+      gnuplot << "plot 'dq-mes.log' u " << i + 1 << " title \"dq-mes" << i + 1 << "\", 'dq-des.log' u " << i + 1
+              << " title \"dq-des" << i + 1 << "\", 'dq-cmd.log' u " << i + 1 << " title \"dq-cmd" << i + 1 << "\""
+              << std::endl;
       gnuplot << "\npause -1\n" << std::endl;
     }
 
     gnuplot.close();
   }
 
-  auto joint_velocity_callback = [=, &log_time, &log_q_mes, &log_dq_mes, &log_dq_des, &log_dq_cmd, &time, &q_prev, &dq_des, &stop, &robot_state, &mutex]
-      (const franka::RobotState& state, franka::Duration period) -> franka::JointVelocities {
-
+  auto joint_velocity_callback =
+      [=, &log_time, &log_q_mes, &log_dq_mes, &log_dq_des, &log_dq_cmd, &time, &q_prev, &dq_des, &stop, &robot_state,
+       &mutex](const franka::RobotState &state, franka::Duration period) -> franka::JointVelocities {
     time += period.toSec();
 
     static vpJointVelTrajGenerator joint_vel_traj_generator;
 
     if (time == 0.0) {
-      if (! log_folder.empty()) {
+      if (!log_folder.empty()) {
         log_time.open(log_folder + "/time.log");
         log_q_mes.open(log_folder + "/q-mes.log");
         log_dq_mes.open(log_folder + "/dq-mes.log");
@@ -145,19 +140,25 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     auto dq_des_ = dq_des;
     if (stop) { // Stop asked
-      for (auto & dq_ : dq_des_) {
+      for (auto &dq_ : dq_des_) {
         dq_ = 0.0;
       }
     }
 
     joint_vel_traj_generator.applyVel(dq_des_, q_cmd, dq_cmd);
 
-    if (! log_folder.empty()) {
+    if (!log_folder.empty()) {
       log_time << time << std::endl;
-      log_q_mes << std::fixed << std::setprecision(8) << state.q_d[0] << " " << state.q_d[1] << " " << state.q_d[2] << " " << state.q_d[3] << " " << state.q_d[4] << " " << state.q_d[5] << " " << state.q_d[6] << std::endl;
-      log_dq_mes << std::fixed << std::setprecision(8) << state.dq_d[0] << " " << state.dq_d[1] << " " << state.dq_d[2] << " " << state.dq_d[3] << " " << state.dq_d[4] << " " << state.dq_d[5] << " " << state.dq_d[6] << std::endl;
-      log_dq_cmd << std::fixed << std::setprecision(8) << dq_cmd[0] << " " << dq_cmd[1] << " " << dq_cmd[2] << " " << dq_cmd[3] << " " << dq_cmd[4] << " " << dq_cmd[5] << " " << dq_cmd[6] << std::endl;
-      log_dq_des << std::fixed << std::setprecision(8) << dq_des_[0] << " " << dq_des_[1] << " " << dq_des_[2] << " " << dq_des_[3] << " " << dq_des_[4] << " " << dq_des_[5] << " " << dq_des_[6] << std::endl;
+      log_q_mes << std::fixed << std::setprecision(8) << state.q_d[0] << " " << state.q_d[1] << " " << state.q_d[2]
+                << " " << state.q_d[3] << " " << state.q_d[4] << " " << state.q_d[5] << " " << state.q_d[6]
+                << std::endl;
+      log_dq_mes << std::fixed << std::setprecision(8) << state.dq_d[0] << " " << state.dq_d[1] << " " << state.dq_d[2]
+                 << " " << state.dq_d[3] << " " << state.dq_d[4] << " " << state.dq_d[5] << " " << state.dq_d[6]
+                 << std::endl;
+      log_dq_cmd << std::fixed << std::setprecision(8) << dq_cmd[0] << " " << dq_cmd[1] << " " << dq_cmd[2] << " "
+                 << dq_cmd[3] << " " << dq_cmd[4] << " " << dq_cmd[5] << " " << dq_cmd[6] << std::endl;
+      log_dq_des << std::fixed << std::setprecision(8) << dq_des_[0] << " " << dq_des_[1] << " " << dq_des_[2] << " "
+                 << dq_des_[3] << " " << dq_des_[4] << " " << dq_des_[5] << " " << dq_des_[6] << std::endl;
     }
 
     franka::JointVelocities velocities = {dq_cmd[0], dq_cmd[1], dq_cmd[2], dq_cmd[3], dq_cmd[4], dq_cmd[5], dq_cmd[6]};
@@ -165,14 +166,14 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     if (stop) {
       unsigned int nb_joint_stop = 0;
       const double q_eps = 1e-6; // Motion finished
-      for(size_t i=0; i < 7; i++) {
+      for (size_t i = 0; i < 7; i++) {
         if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
-          nb_joint_stop ++;
+          nb_joint_stop++;
         }
       }
 
       if (nb_joint_stop == 7) {
-        if (! log_folder.empty()) {
+        if (!log_folder.empty()) {
           log_time.close();
           log_q_mes.close();
           log_dq_mes.close();
@@ -201,15 +202,16 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 #endif
   };
 
-  auto cartesian_velocity_callback = [=, &log_time, &log_q_mes, &log_dq_mes, &log_dq_des,  &log_dq_cmd, &log_v_des, &time, &model, &q_prev, &v_cart_des, &stop, &robot_state, &mutex]
-      (const franka::RobotState& state, franka::Duration period) -> franka::JointVelocities {
-
+  auto cartesian_velocity_callback = [=, &log_time, &log_q_mes, &log_dq_mes, &log_dq_des, &log_dq_cmd, &log_v_des,
+                                      &time, &model, &q_prev, &v_cart_des, &stop, &robot_state,
+                                      &mutex](const franka::RobotState &state,
+                                              franka::Duration period) -> franka::JointVelocities {
     time += period.toSec();
 
     static vpJointVelTrajGenerator joint_vel_traj_generator;
 
     if (time == 0.0) {
-      if (! log_folder.empty()) {
+      if (!log_folder.empty()) {
         log_time.open(log_folder + "/time.log");
         log_q_mes.open(log_folder + "/q-mes.log");
         log_dq_mes.open(log_folder + "/dq-mes.log");
@@ -230,18 +232,17 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     if (frame == vpRobot::END_EFFECTOR_FRAME || frame == vpRobot::TOOL_FRAME) {
       std::array<double, 42> jacobian = model.bodyJacobian(franka::Frame::kEndEffector, state);
       // Convert row-major to col-major
-      for (size_t i = 0; i < 6; i ++) { // TODO make a function
-        for (size_t j = 0; j < 7; j ++) {
-          eJe[i][j] = jacobian[j*6 + i];
+      for (size_t i = 0; i < 6; i++) { // TODO make a function
+        for (size_t j = 0; j < 7; j++) {
+          eJe[i][j] = jacobian[j * 6 + i];
         }
       }
-    }
-    else if (frame == vpRobot::REFERENCE_FRAME) {
+    } else if (frame == vpRobot::REFERENCE_FRAME) {
       std::array<double, 42> jacobian = model.zeroJacobian(franka::Frame::kEndEffector, state);
       // Convert row-major to col-major
-      for (size_t i = 0; i < 6; i ++) { // TODO make a function
-        for (size_t j = 0; j < 7; j ++) {
-          fJe[i][j] = jacobian[j*6 + i];
+      for (size_t i = 0; i < 6; i++) { // TODO make a function
+        for (size_t j = 0; j < 7; j++) {
+          fJe[i][j] = jacobian[j * 6 + i];
         }
       }
     }
@@ -250,11 +251,9 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     vpColVector q_dot;
     if (frame == vpRobot::END_EFFECTOR_FRAME) {
       q_dot = eJe.pseudoInverse() * v_cart_des; // TODO introduce try catch
-    }
-    else if (frame == vpRobot::TOOL_FRAME) {
+    } else if (frame == vpRobot::TOOL_FRAME) {
       q_dot = (cVe * eJe).pseudoInverse() * v_cart_des; // TODO introduce try catch
-    }
-    else if (frame == vpRobot::REFERENCE_FRAME) {
+    } else if (frame == vpRobot::REFERENCE_FRAME) {
       q_dot = (cVe * fJe).pseudoInverse() * v_cart_des; // TODO introduce try catch
     }
 
@@ -267,20 +266,27 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
 
     auto dq_des_ = dq_des_eigen;
     if (stop) { // Stop asked
-      for (auto & dq_ : dq_des_) {
+      for (auto &dq_ : dq_des_) {
         dq_ = 0.0;
       }
     }
 
     joint_vel_traj_generator.applyVel(dq_des_, q_cmd, dq_cmd);
 
-    if (! log_folder.empty()) {
+    if (!log_folder.empty()) {
       log_time << time << std::endl;
-      log_q_mes << std::fixed << std::setprecision(8) << state.q_d[0] << " " << state.q_d[1] << " " << state.q_d[2] << " " << state.q_d[3] << " " << state.q_d[4] << " " << state.q_d[5] << " " << state.q_d[6] << std::endl;
-      log_dq_mes << std::fixed << std::setprecision(8) << state.dq_d[0] << " " << state.dq_d[1] << " " << state.dq_d[2] << " " << state.dq_d[3] << " " << state.dq_d[4] << " " << state.dq_d[5] << " " << state.dq_d[6] << std::endl;
-      log_dq_cmd << std::fixed << std::setprecision(8) << dq_cmd[0] << " " << dq_cmd[1] << " " << dq_cmd[2] << " " << dq_cmd[3] << " " << dq_cmd[4] << " " << dq_cmd[5] << " " << dq_cmd[6] << std::endl;
-      log_dq_des << std::fixed << std::setprecision(8) << dq_des_[0] << " " << dq_des_[1] << " " << dq_des_[2] << " " << dq_des_[3] << " " << dq_des_[4] << " " << dq_des_[5] << " " << dq_des_[6] << std::endl;
-      log_v_des << std::fixed << std::setprecision(8) << v_cart_des[0] << " " << v_cart_des[1] << " " << v_cart_des[2] << " " << v_cart_des[3] << " " << v_cart_des[4] << " " << v_cart_des[5] << std::endl;
+      log_q_mes << std::fixed << std::setprecision(8) << state.q_d[0] << " " << state.q_d[1] << " " << state.q_d[2]
+                << " " << state.q_d[3] << " " << state.q_d[4] << " " << state.q_d[5] << " " << state.q_d[6]
+                << std::endl;
+      log_dq_mes << std::fixed << std::setprecision(8) << state.dq_d[0] << " " << state.dq_d[1] << " " << state.dq_d[2]
+                 << " " << state.dq_d[3] << " " << state.dq_d[4] << " " << state.dq_d[5] << " " << state.dq_d[6]
+                 << std::endl;
+      log_dq_cmd << std::fixed << std::setprecision(8) << dq_cmd[0] << " " << dq_cmd[1] << " " << dq_cmd[2] << " "
+                 << dq_cmd[3] << " " << dq_cmd[4] << " " << dq_cmd[5] << " " << dq_cmd[6] << std::endl;
+      log_dq_des << std::fixed << std::setprecision(8) << dq_des_[0] << " " << dq_des_[1] << " " << dq_des_[2] << " "
+                 << dq_des_[3] << " " << dq_des_[4] << " " << dq_des_[5] << " " << dq_des_[6] << std::endl;
+      log_v_des << std::fixed << std::setprecision(8) << v_cart_des[0] << " " << v_cart_des[1] << " " << v_cart_des[2]
+                << " " << v_cart_des[3] << " " << v_cart_des[4] << " " << v_cart_des[5] << std::endl;
     }
 
     franka::JointVelocities velocities = {dq_cmd[0], dq_cmd[1], dq_cmd[2], dq_cmd[3], dq_cmd[4], dq_cmd[5], dq_cmd[6]};
@@ -288,13 +294,13 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
     if (stop) {
       unsigned int nb_joint_stop = 0;
       const double q_eps = 1e-6; // Motion finished
-      for(size_t i=0; i < 7; i++) {
+      for (size_t i = 0; i < 7; i++) {
         if (std::abs(state.q_d[i] - q_prev[i]) < q_eps) {
-          nb_joint_stop ++;
+          nb_joint_stop++;
         }
       }
       if (nb_joint_stop == 7) {
-        if (! log_folder.empty()) {
+        if (!log_folder.empty()) {
           log_time.close();
           log_q_mes.close();
           log_dq_mes.close();
@@ -374,15 +380,12 @@ void vpJointVelTrajGenerator::control_thread(franka::Robot *robot,
   }
 }
 
-void vpJointVelTrajGenerator::init(const std::array<double, 7> &q,
-                                   const std::array<double, 7> &q_min,
-                                   const std::array<double, 7> &q_max,
-                                   const std::array<double, 7> &dq_max,
-                                   const std::array<double, 7> &ddq_max,
-                                   double delta_t)
+void vpJointVelTrajGenerator::init(const std::array<double, 7> &q, const std::array<double, 7> &q_min,
+                                   const std::array<double, 7> &q_max, const std::array<double, 7> &dq_max,
+                                   const std::array<double, 7> &ddq_max, double delta_t)
 {
-  if (m_njoints != q_min.size() || m_njoints != q_max.size()
-      || m_njoints != dq_max.size() || m_njoints != ddq_max.size()) {
+  if (m_njoints != q_min.size() || m_njoints != q_max.size() || m_njoints != dq_max.size() ||
+      m_njoints != ddq_max.size()) {
     throw(vpException(vpException::dimensionError, "Inconsistent number of joints"));
   }
   m_q_min = q_min;
@@ -395,21 +398,20 @@ void vpJointVelTrajGenerator::init(const std::array<double, 7> &q,
   m_q_final = m_q_cmd = q;
   m_q_cmd_prev = m_q_cmd;
 
-  m_dq_des        = {0, 0, 0, 0, 0, 0, 0};
-  m_dq_des_prev   = {0, 0, 0, 0, 0, 0, 0};
-  m_delta_q       = {0, 0, 0, 0, 0, 0, 0};
-  m_delta_q_max   = {0, 0, 0, 0, 0, 0, 0};
-  m_sign          = {0, 0, 0, 0, 0, 0, 0};
+  m_dq_des = {0, 0, 0, 0, 0, 0, 0};
+  m_dq_des_prev = {0, 0, 0, 0, 0, 0, 0};
+  m_delta_q = {0, 0, 0, 0, 0, 0, 0};
+  m_delta_q_max = {0, 0, 0, 0, 0, 0, 0};
+  m_sign = {0, 0, 0, 0, 0, 0, 0};
   m_dist_to_final = {0, 0, 0, 0, 0, 0, 0};
-  m_dist_AD       = {0, 0, 0, 0, 0, 0, 0};
-  m_flagSpeed     = {false, false, false, false, false, false, false};
-  m_status        = {FLAGSTO, FLAGSTO, FLAGSTO, FLAGSTO, FLAGSTO, FLAGSTO, FLAGSTO};
+  m_dist_AD = {0, 0, 0, 0, 0, 0, 0};
+  m_flagSpeed = {false, false, false, false, false, false, false};
+  m_status = {FLAGSTO, FLAGSTO, FLAGSTO, FLAGSTO, FLAGSTO, FLAGSTO, FLAGSTO};
 
-  for (size_t i=0; i<m_njoints; i++) {
+  for (size_t i = 0; i < m_njoints; i++) {
     m_delta_q_acc[i] = m_ddq_max[i] * m_delta_t * m_delta_t;
   }
 }
-
 
 /*!
  * Compute the joint position and velocity to reach desired joint velocity.
@@ -417,11 +419,10 @@ void vpJointVelTrajGenerator::init(const std::array<double, 7> &q,
  * \param q_cmd : Position to apply.
  * \param dq_cmd : Velocity to apply.
  */
-void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des,
-                                       std::array<double, 7> &q_cmd,
+void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des, std::array<double, 7> &q_cmd,
                                        std::array<double, 7> &dq_cmd)
 {
-  for (size_t i=0; i < m_njoints; i++) {
+  for (size_t i = 0; i < m_njoints; i++) {
     m_dq_des[i] = dq_des[i];
 
     if (m_dq_des[i] != m_dq_des_prev[i]) {
@@ -430,26 +431,22 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des,
 
       if (m_dq_des[i] > m_dq_max[i]) {
         m_dq_des[i] = m_dq_max[i];
-      }
-      else if (m_dq_des[i] < (-m_dq_max[i])) {
+      } else if (m_dq_des[i] < (-m_dq_max[i])) {
         m_dq_des[i] = -m_dq_max[i];
       }
 
       if (m_flagSpeed[i] == false) {
         // Change from stop to new vel with acc control
-        if ( m_status[i] == FLAGSTO) // If stop
+        if (m_status[i] == FLAGSTO) // If stop
         {
-          if (m_dq_des[i] > 0)
-          {
-            m_delta_q_max[i] = m_dq_des[i]*m_delta_t;
+          if (m_dq_des[i] > 0) {
+            m_delta_q_max[i] = m_dq_des[i] * m_delta_t;
             m_sign[i] = 1;
             m_q_final[i] = m_q_max[i] - m_offset_joint_limit;
             m_delta_q[i] = 0;
             m_status[i] = FLAGACC;
-          }
-          else if (m_dq_des[i] < 0)
-          {
-            m_delta_q_max[i] = - m_dq_des[i]*m_delta_t;
+          } else if (m_dq_des[i] < 0) {
+            m_delta_q_max[i] = -m_dq_des[i] * m_delta_t;
             m_sign[i] = -1;
             m_q_final[i] = m_q_min[i] + m_offset_joint_limit;
             m_delta_q[i] = 0;
@@ -458,32 +455,30 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des,
         }
 
         // Change of direction
-        else if ( (m_dq_des[i] * m_sign[i]) < 0) {
+        else if ((m_dq_des[i] * m_sign[i]) < 0) {
           m_flagSpeed[i] = true;
           m_status[i] = FLAGDEC;
           m_delta_q_max[i] = 0;
-        }
-        else {
+        } else {
           // Acceleration or deceleration
-          if ( m_sign[i] == 1) {
-            if ( m_dq_des[i] > m_dq_des_prev[i])
+          if (m_sign[i] == 1) {
+            if (m_dq_des[i] > m_dq_des_prev[i])
               m_status[i] = FLAGACC;
             else
               m_status[i] = FLAGDEC;
-            m_delta_q_max[i] = m_dq_des[i]*m_delta_t;
-          }
-          else {
-            if ( m_dq_des[i] > m_dq_des_prev[i])
+            m_delta_q_max[i] = m_dq_des[i] * m_delta_t;
+          } else {
+            if (m_dq_des[i] > m_dq_des_prev[i])
               m_status[i] = FLAGDEC;
             else
               m_status[i] = FLAGACC;
-            m_delta_q_max[i] = - m_dq_des[i]*m_delta_t;
+            m_delta_q_max[i] = -m_dq_des[i] * m_delta_t;
           }
         }
 
         // Update distance to accelerate or decelerate
-        int n = (int) (m_delta_q_max[i] / m_delta_q_acc[i]);
-        m_dist_AD[i]=n*(m_delta_q_max[i]-(n+1)*m_delta_q_acc[i]/2);
+        int n = (int)(m_delta_q_max[i] / m_delta_q_acc[i]);
+        m_dist_AD[i] = n * (m_delta_q_max[i] - (n + 1) * m_delta_q_acc[i] / 2);
       }
       m_dq_des_prev[i] = m_dq_des[i];
     }
@@ -495,16 +490,17 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des,
    *		- deceleration
    *		- stop
    */
-  for (size_t i=0; i < m_njoints; i++) {
+  for (size_t i = 0; i < m_njoints; i++) {
     // Security joint limit
-    m_dist_to_final[i] = ( m_q_final[i] - m_q_cmd[i]) * m_sign[i];
-    if ((m_dist_to_final[i] - m_delta_q_max[i]) <=  m_dist_AD[i]) {
+    m_dist_to_final[i] = (m_q_final[i] - m_q_cmd[i]) * m_sign[i];
+    if ((m_dist_to_final[i] - m_delta_q_max[i]) <= m_dist_AD[i]) {
       if (m_dist_AD[i] > 0) {
-        if (!m_flagJointLimit) printf("Joint limit flag axis %lu\n", (unsigned long)i);
+        if (!m_flagJointLimit)
+          printf("Joint limit flag axis %lu\n", (unsigned long)i);
         m_flagJointLimit = true;
-        for(size_t k=0; k < m_njoints; k++)
-        {
-          if (m_status[k] != FLAGSTO) m_status[k] = FLAGDEC;
+        for (size_t k = 0; k < m_njoints; k++) {
+          if (m_status[k] != FLAGSTO)
+            m_status[k] = FLAGDEC;
           m_delta_q_max[k] = 0;
         }
       }
@@ -512,39 +508,36 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des,
     /*
      * Deceleration.
      */
-    if ( m_status[i] == FLAGDEC) {
-      m_delta_q[i] -=  m_delta_q_acc[i];
-      if (m_delta_q[i] <=  m_delta_q_max[i]) {
-        if (m_delta_q_max[i] < m_delta_q_min)  {
+    if (m_status[i] == FLAGDEC) {
+      m_delta_q[i] -= m_delta_q_acc[i];
+      if (m_delta_q[i] <= m_delta_q_max[i]) {
+        if (m_delta_q_max[i] < m_delta_q_min) {
           m_status[i] = FLAGSTO;
           m_delta_q[i] = 0.0;
           // Test if change of direction
           if (m_flagSpeed[i] == true) {
             if (m_dq_des[i] > 0) {
-              m_delta_q_max[i] = m_dq_des[i]*m_delta_t;
+              m_delta_q_max[i] = m_dq_des[i] * m_delta_t;
               m_sign[i] = 1;
               m_q_final[i] = m_q_max[i] - m_offset_joint_limit;
-            }
-            else if (m_dq_des[i] < 0) {
-              m_delta_q_max[i] = -m_dq_des[i]*m_delta_t;
+            } else if (m_dq_des[i] < 0) {
+              m_delta_q_max[i] = -m_dq_des[i] * m_delta_t;
               m_sign[i] = -1;
               m_q_final[i] = m_q_min[i] + m_offset_joint_limit;
             }
             m_status[i] = FLAGACC;
             m_flagSpeed[i] = false;
 
-            int n = (int) (m_delta_q_max[i] / m_delta_q_acc[i]);
-            m_dist_AD[i]=n*(m_delta_q_max[i]-(n+1)*m_delta_q_acc[i]/2);
+            int n = (int)(m_delta_q_max[i] / m_delta_q_acc[i]);
+            m_dist_AD[i] = n * (m_delta_q_max[i] - (n + 1) * m_delta_q_acc[i] / 2);
           }
-        }
-        else if ((m_delta_q_max[i] > 0) && !m_flagJointLimit)  {
-          if (m_delta_q_max[i] < (m_delta_q[i] + 2*m_delta_q_acc[i])) {
+        } else if ((m_delta_q_max[i] > 0) && !m_flagJointLimit) {
+          if (m_delta_q_max[i] < (m_delta_q[i] + 2 * m_delta_q_acc[i])) {
             m_delta_q[i] = m_delta_q_max[i];
             m_status[i] = FLAGCTE;
-          }
-          else if (!m_flagJointLimit) {
+          } else if (!m_flagJointLimit) {
             /* acceleration moins rapide*/
-            m_delta_q[i] += (2*m_delta_q_acc[i]);
+            m_delta_q[i] += (2 * m_delta_q_acc[i]);
             m_status[i] = FLAGACC;
           }
         }
@@ -568,20 +561,20 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des,
   }
 
   // Test si un axe arrive pres des butees. Si oui, arret de tous les axes
-  for (size_t i=0; i < m_njoints;i++) {
+  for (size_t i = 0; i < m_njoints; i++) {
     double butee = m_q_min[i] + m_offset_joint_limit;
     if (m_q_cmd[i] < butee) {
-      for (size_t j=0; j < m_njoints;j++) {
-        m_q_cmd[j] -= m_sign[j]*m_delta_q[j];
+      for (size_t j = 0; j < m_njoints; j++) {
+        m_q_cmd[j] -= m_sign[j] * m_delta_q[j];
       }
       m_q_cmd[i] = butee;
       printf("Joint limit axis %lu\n", (unsigned long)i);
       break;
     }
-    butee = (float) (m_q_max[i] - m_offset_joint_limit);
+    butee = (float)(m_q_max[i] - m_offset_joint_limit);
     if (m_q_cmd[i] > butee) {
-      for (size_t j=0; j < m_njoints; j++) {
-        m_q_cmd[j] -= m_sign[j]*m_delta_q[j];
+      for (size_t j = 0; j < m_njoints; j++) {
+        m_q_cmd[j] -= m_sign[j] * m_delta_q[j];
       }
       m_q_cmd[i] = butee;
       printf("Joint limit axis %lu\n", (unsigned long)i);
@@ -609,15 +602,15 @@ void vpJointVelTrajGenerator::applyVel(const std::array<double, 7> &dq_des,
  *
  * @return Rate-limited vector of desired values.
  */
-std::array<double, 7> vpJointVelTrajGenerator::limitRate(const std::array<double, 7>& max_derivatives,
-                                                         const std::array<double, 7>& desired_values,
-                                                         const std::array<double, 7>& last_desired_values) {
+std::array<double, 7> vpJointVelTrajGenerator::limitRate(const std::array<double, 7> &max_derivatives,
+                                                         const std::array<double, 7> &desired_values,
+                                                         const std::array<double, 7> &last_desired_values)
+{
   std::array<double, 7> limited_values{};
   for (size_t i = 0; i < 7; i++) {
     double desired_difference = (desired_values[i] - last_desired_values[i]) / 1e-3;
     limited_values[i] =
-        last_desired_values[i] +
-        std::max(std::min(desired_difference, max_derivatives[i]), -max_derivatives[i]) * 1e-3;
+        last_desired_values[i] + std::max(std::min(desired_difference, max_derivatives[i]), -max_derivatives[i]) * 1e-3;
   }
   return limited_values;
 }
@@ -626,4 +619,3 @@ std::array<double, 7> vpJointVelTrajGenerator::limitRate(const std::array<double
 // Work arround to avoid warning: libvisp_robot.a(vpJointVelTrajGenerator.cpp.o) has no symbols
 void dummy_vpJointVelTrajGenerator(){};
 #endif // VISP_HAVE_FRANKA
-

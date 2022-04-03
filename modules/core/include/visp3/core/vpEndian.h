@@ -48,14 +48,15 @@
 #if defined(_MSC_VER) && (_MSC_VER < 1700)
 typedef unsigned short uint16_t;
 #else
-#  include <inttypes.h>
+#include <inttypes.h>
 #endif
 #include <stdint.h> //for uint32_t related types ; works also with >= VS2010 / _MSC_VER >= 1600
 #include <visp3/core/vpConfig.h>
 
 // Detect endianness of the host machine
 // Reference: http://www.boost.org/doc/libs/1_36_0/boost/detail/endian.hpp
-#if defined(__GLIBC__) || (defined(__GNUC__) && !defined(__llvm__) && !defined(__MINGW32__) && !defined(__FreeBSD__) && defined(__BYTE_ORDER__))
+#if defined(__GLIBC__) || (defined(__GNUC__) && !defined(__llvm__) && !defined(__MINGW32__) &&                         \
+                           !defined(__FreeBSD__) && defined(__BYTE_ORDER__))
 #include <endian.h>
 #if (__BYTE_ORDER == __LITTLE_ENDIAN)
 #define VISP_LITTLE_ENDIAN
@@ -79,11 +80,12 @@ typedef unsigned short uint16_t;
 #elif defined(__i386__) || defined(__alpha__) || defined(__ia64) || defined(__ia64__) || defined(_M_IX86) ||           \
     defined(_M_IA64) || defined(_M_ALPHA) || defined(__amd64) || defined(__amd64__) || defined(_M_AMD64) ||            \
     defined(__x86_64) || defined(__x86_64__) || defined(_M_X64) || defined(__ANDROID__)
-    // It appears that all Android systems are little endian.
-    // Refer https://stackoverflow.com/questions/6212951/endianness-of-android-ndk
+// It appears that all Android systems are little endian.
+// Refer https://stackoverflow.com/questions/6212951/endianness-of-android-ndk
 #define VISP_LITTLE_ENDIAN
 #elif defined(WINRT) // For UWP
-// Refer https://social.msdn.microsoft.com/Forums/en-US/04c92ef9-e38e-415f-8958-ec9f7c196fd3/arm-endianess-under-windows-mobile?forum=windowsmobiledev
+// Refer
+// https://social.msdn.microsoft.com/Forums/en-US/04c92ef9-e38e-415f-8958-ec9f7c196fd3/arm-endianess-under-windows-mobile?forum=windowsmobiledev
 #define VISP_LITTLE_ENDIAN
 #else
 #error Cannot detect host machine endianness.
@@ -99,8 +101,7 @@ VISP_EXPORT float swapFloat(float f);
 
 VISP_EXPORT double swapDouble(double d);
 
-VISP_EXPORT uint16_t reinterpret_cast_uchar_to_uint16_LE(unsigned char * const ptr);
-}
+VISP_EXPORT uint16_t reinterpret_cast_uchar_to_uint16_LE(unsigned char *const ptr);
+} // namespace vpEndian
 
 #endif
-

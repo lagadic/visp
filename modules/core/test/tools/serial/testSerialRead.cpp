@@ -58,8 +58,7 @@ int main(int argc, char **argv)
       port = std::string(argv[i + 1]);
     else if (std::string(argv[i]) == "--baud") {
       baud = (unsigned long)atol(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--help") {
+    } else if (std::string(argv[i]) == "--help") {
       std::cout << "\nUsage: " << argv[0] << " [--port <serial name>] [--baud <baud rate>] [--help]\n" << std::endl;
       return 0;
     }
@@ -77,14 +76,14 @@ int main(int argc, char **argv)
   double t = vpTime::measureTimeSecond();
   do {
     std::string line = serial.readline("\n");
-    if (! line.empty()) {
+    if (!line.empty()) {
       std::cout << "Read line: " << line << std::endl;
     }
     vpTime::wait(100);
-  } while(vpTime::measureTimeSecond() - t < 30);
+  } while (vpTime::measureTimeSecond() - t < 30);
 #else
-  (void) argc;
-  (void) argv;
+  (void)argc;
+  (void)argv;
   std::cout << "Serial test is only working on unix-like OS." << std::endl;
 #endif
   return EXIT_SUCCESS;

@@ -96,18 +96,17 @@ void vpPose::init()
 vpPose::vpPose()
   : npt(0), listP(), residual(0), lambda(0.9), vvsIterMax(200), c3d(), computeCovariance(false), covarianceMatrix(),
     ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
-    distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER), listOfPoints(),
-    useParallelRansac(false),
+    distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER), listOfPoints(), useParallelRansac(false),
     nbParallelRansacThreads(0), // 0 means that we use C++11 (if available) to get the number of threads
     vvsEpsilon(1e-8)
 {
 }
 
-vpPose::vpPose(const std::vector<vpPoint>& lP)
-  : npt(static_cast<unsigned int>(lP.size())), listP(lP.begin(), lP.end()), residual(0), lambda(0.9), vvsIterMax(200), c3d(),
-    computeCovariance(false), covarianceMatrix(), ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(),
-    ransacInlierIndex(), ransacThreshold(0.0001), distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER),
-    listOfPoints(lP), useParallelRansac(false),
+vpPose::vpPose(const std::vector<vpPoint> &lP)
+  : npt(static_cast<unsigned int>(lP.size())), listP(lP.begin(), lP.end()), residual(0), lambda(0.9), vvsIterMax(200),
+    c3d(), computeCovariance(false), covarianceMatrix(), ransacNbInlierConsensus(4), ransacMaxTrials(1000),
+    ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001), distanceToPlaneForCoplanarityTest(0.001),
+    ransacFlag(vpPose::NO_FILTER), listOfPoints(lP), useParallelRansac(false),
     nbParallelRansacThreads(0), // 0 means that we use C++11 (if available) to get the number of threads
     vvsEpsilon(1e-8)
 {
@@ -374,8 +373,7 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &))
 {
   if (npt < 4) {
-    throw(vpPoseException(vpPoseException::notEnoughPointError,
-                          "Not enough point (%d) to compute the pose  ", npt));
+    throw(vpPoseException(vpPoseException::notEnoughPointError, "Not enough point (%d) to compute the pose  ", npt));
   }
 
   switch (method) {
@@ -386,7 +384,8 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
       throw(vpPoseException(vpPoseException::notEnoughPointError,
                             "Dementhon method cannot be used in that case "
                             "(at least 4 points are required)"
-                            "Not enough point (%d) to compute the pose  ", npt));
+                            "Not enough point (%d) to compute the pose  ",
+                            npt));
     }
 
     // test si les point 3D sont coplanaires
@@ -405,19 +404,18 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
     int coplanar_plane_type;
     bool plan = coplanar(coplanar_plane_type);
 
-    if (plan == true)
-    {
+    if (plan == true) {
 
       if (coplanar_plane_type == 4) {
-        throw(vpPoseException(vpPoseException::notEnoughPointError,
-                              "Lagrange method cannot be used in that case "
-                              "(points are collinear)"));
+        throw(vpPoseException(vpPoseException::notEnoughPointError, "Lagrange method cannot be used in that case "
+                                                                    "(points are collinear)"));
       }
       if (npt < 4) {
         throw(vpPoseException(vpPoseException::notEnoughPointError,
                               "Lagrange method cannot be used in that case "
                               "(at least 4 points are required). "
-                              "Not enough point (%d) to compute the pose  ", npt));
+                              "Not enough point (%d) to compute the pose  ",
+                              npt));
       }
       poseLagrangePlan(cMo);
     } else {
@@ -425,7 +423,8 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
         throw(vpPoseException(vpPoseException::notEnoughPointError,
                               "Lagrange method cannot be used in that case "
                               "(at least 6 points are required when 3D points are non coplanar). "
-                              "Not enough point (%d) to compute the pose  ", npt));
+                              "Not enough point (%d) to compute the pose  ",
+                              npt));
       }
       poseLagrangeNonPlan(cMo);
     }
@@ -435,9 +434,10 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
       throw(vpPoseException(vpPoseException::notEnoughPointError,
                             "Ransac method cannot be used in that case "
                             "(at least 4 points are required). "
-                            "Not enough point (%d) to compute the pose  ", npt));
+                            "Not enough point (%d) to compute the pose  ",
+                            npt));
     }
-      return poseRansac(cMo, func);
+    return poseRansac(cMo, func);
     break;
   case LOWE:
   case VIRTUAL_VS:

@@ -73,7 +73,8 @@ Outputs a comparison of these methods.\n\
 SYNOPSIS\n\
   %s [-n <number of matrices>] [-f <plot filename>]\n\
      [-R <number of rows>] [-C <number of columns>]\n\
-     [-i <number of iterations>] [-p] [-h]\n", name);
+     [-i <number of iterations>] [-p] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -194,8 +195,8 @@ vpMatrix make_random_symmetric_matrix(unsigned int nbrows)
   vpMatrix A;
   A.resize(nbrows, nbrows);
 
-  for(unsigned int i=0; i < A.getRows(); i++) {
-    for(unsigned int j=i; j<A.getCols(); j++) {
+  for (unsigned int i = 0; i < A.getRows(); i++) {
+    for (unsigned int j = i; j < A.getCols(); j++) {
       A[i][j] = static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
       if (i != j) {
         A[j][i] = A[i][j];
@@ -238,7 +239,8 @@ void create_bench_random_symmetric_matrix(unsigned int nb_matrices, unsigned int
                                           std::vector<vpMatrix> &bench)
 {
   if (verbose)
-    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows << " by " << nb_rows << " symmetric matrices" << std::endl;
+    std::cout << "Create a bench of " << nb_matrices << " " << nb_rows << " by " << nb_rows << " symmetric matrices"
+              << std::endl;
   bench.clear();
   for (unsigned int i = 0; i < nb_matrices; i++) {
     vpMatrix M;
@@ -277,7 +279,8 @@ int test_svd(std::vector<vpMatrix> M, std::vector<vpMatrix> U, std::vector<vpCol
   return EXIT_SUCCESS;
 }
 
-int test_eigen_values(std::vector<vpMatrix> M, std::vector<vpColVector> e, std::vector<vpMatrix> V, std::vector<vpColVector> e2)
+int test_eigen_values(std::vector<vpMatrix> M, std::vector<vpColVector> e, std::vector<vpMatrix> V,
+                      std::vector<vpColVector> e2)
 {
   for (unsigned int i = 0; i < M.size(); i++) {
     vpColVector error_e = e[i] - e2[i];
@@ -487,8 +490,7 @@ int main(int argc, const char *argv[])
 #else
     (void)argc;
     (void)argv;
-    std::cout << "Test does nothing since you dont't have Lapack, Eigen3 or OpenCV 3rd party"
-              << std::endl;
+    std::cout << "Test does nothing since you dont't have Lapack, Eigen3 or OpenCV 3rd party" << std::endl;
     return EXIT_SUCCESS;
 #endif
   } catch (const vpException &e) {

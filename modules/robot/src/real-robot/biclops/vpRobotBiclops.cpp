@@ -46,9 +46,9 @@
 
 #ifdef VISP_HAVE_BICLOPS
 
-#include <visp3/core/vpTime.h>
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpTime.h>
 #include <visp3/robot/vpBiclops.h>
 #include <visp3/robot/vpRobotBiclops.h>
 #include <visp3/robot/vpRobotException.h>

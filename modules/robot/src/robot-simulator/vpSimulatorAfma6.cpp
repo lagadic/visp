@@ -388,7 +388,7 @@ void vpSimulatorAfma6::init(vpAfma6::vpAfma6ToolType tool, vpCameraParameters::v
     }
     break;
   }
-  case vpAfma6::TOOL_CUSTOM:  {
+  case vpAfma6::TOOL_CUSTOM: {
     std::cout << "The custom tool is not handled in vpSimulatorAfma6.cpp" << std::endl;
     break;
   }
@@ -1521,8 +1521,8 @@ int main()
 
   \sa setPosition()
 */
-void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2,
-                                   double pos3, double pos4, double pos5, double pos6)
+void vpSimulatorAfma6::setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3,
+                                   double pos4, double pos5, double pos6)
 {
   try {
     vpColVector position(6);

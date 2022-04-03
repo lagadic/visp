@@ -67,7 +67,8 @@ void usage(const char *name, const char *badparam, const std::string &opath, con
 Test save / load learning files for vpKeyPoint class.\n\
 \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+  %s [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               \n\
@@ -79,7 +80,8 @@ OPTIONS:                                               \n\
      learning files will be written.\n\
 \n\
   -h\n\
-     Print the help.\n", opath.c_str(), user.c_str());
+     Print the help.\n",
+          opath.c_str(), user.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -284,8 +286,7 @@ bool compareDescriptors(const cv::Mat &descriptors1, const cv::Mat &descriptors2
   return true;
 }
 
-template<typename Type>
-void run_test(const std::string &env_ipath, const std::string &opath,  vpImage<Type> &I)
+template <typename Type> void run_test(const std::string &env_ipath, const std::string &opath, vpImage<Type> &I)
 {
   std::string filename;
   // Set the path location of the image sequence
@@ -441,14 +442,14 @@ void run_test(const std::string &env_ipath, const std::string &opath,  vpImage<T
     std::cout << "Saving / loading learning files with binary descriptor are ok !" << std::endl;
   }
 
-
 // Test with floating point descriptor
-#if defined(VISP_HAVE_OPENCV_NONFREE) || \
-  ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(VISP_HAVE_OPENCV_XFEATURES2D) || \
-   (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400))
+#if defined(VISP_HAVE_OPENCV_NONFREE) ||                                                                               \
+    ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                \
+     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400))
   {
-#if !((VISP_HAVE_OPENCV_VERSION == 0x040504) && (defined(__APPLE__) && defined(__MACH__))) // OpenCV != 4.5.4 on macOS
-    std::string keypointName = "SIFT"; // SIFT is known unstable with OpenCV 4.5.4
+#if !((VISP_HAVE_OPENCV_VERSION == 0x040504 || VISP_HAVE_OPENCV_VERSION == 0x040505) &&                                \
+      (defined(__APPLE__) && defined(__MACH__))) // OpenCV != 4.5.4 and 4.5.5 on macOS
+    std::string keypointName = "SIFT"; // SIFT is known unstable with OpenCV 4.5.4 and 4.5.5 on macOS (see #1048)
     keyPoints.setDetector(keypointName);
     keyPoints.setExtractor(keypointName);
 

@@ -98,14 +98,14 @@ pre-filled database.
   The following code demonstrates the construction of a 6x6 interaction matrix
 as described in [1].
 \code
-#include <visp3/core/vpMomentObject.h>
+#include <iostream>
+#include <vector>
 #include <visp3/core/vpMomentCommon.h>
+#include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/visual_features/vpFeatureMoment.h>
 #include <visp3/visual_features/vpFeatureMomentCommon.h>
 #include <visp3/vs/vpServo.h>
-#include <iostream>
-#include <vector>
 
 int main()
 {

@@ -82,7 +82,7 @@ int main()
     std::cout << "Simulated hand-eye transformation: eMc " << std::endl;
     std::cout << eMc << std::endl;
     std::cout << "Theta U rotation: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2])
-        << std::endl;
+              << std::endl;
 
     vpColVector v_c(6); // camera velocity used to produce 6 simulated poses
     for (unsigned int i = 0; i < N; i++) {
@@ -92,11 +92,11 @@ int main()
         cMo[0].buildFrom(0, 0, 0.5, 0, 0, 0); // z=0.5 m
         wMe[0].buildFrom(0, 0, 0, 0, 0, 0);   // Id
       } else if (i == 1)
-        v_c[3] = M_PI/8 ;
+        v_c[3] = M_PI / 8;
       else if (i == 2)
-        v_c[4] = M_PI/8 ;
+        v_c[4] = M_PI / 8;
       else if (i == 3)
-        v_c[5] = M_PI/10 ;
+        v_c[5] = M_PI / 10;
       else if (i == 4)
         v_c[0] = 0.5;
       else if (i == 5)
@@ -142,16 +142,20 @@ int main()
       std::cout << eMc << std::endl;
       std::cout << "** Corresponding pose vector: " << vpPoseVector(eMc).t() << std::endl;
       eMc.extract(erc);
-      std::cout << std::endl << "** Translation [m]: " << eMc[0][3] << " " << eMc[1][3] << " " << eMc[2][3] << std::endl;
+      std::cout << std::endl
+                << "** Translation [m]: " << eMc[0][3] << " " << eMc[1][3] << " " << eMc[2][3] << std::endl;
       std::cout << "** Rotation (theta-u representation) [rad]: " << erc.t() << std::endl;
-      std::cout << "** Rotation (theta-u representation) [deg]: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1]) << " " << vpMath::deg(erc[2]) << std::endl;
+      std::cout << "** Rotation (theta-u representation) [deg]: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1])
+                << " " << vpMath::deg(erc[2]) << std::endl;
       vpQuaternionVector quaternion(eMc.getRotationMatrix());
       std::cout << "** Rotation (quaternion representation) [rad]: " << quaternion.t() << std::endl;
-    }
-    else {
+    } else {
       std::cout << std::endl << "** Hand-eye calibration failed" << std::endl;
-      std::cout << std::endl << "Check your input data and ensure they are covering the half sphere over the chessboard." << std::endl;
-      std::cout << std::endl << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html" << std::endl;
+      std::cout << std::endl
+                << "Check your input data and ensure they are covering the half sphere over the chessboard."
+                << std::endl;
+      std::cout << std::endl
+                << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html" << std::endl;
     }
 
     return EXIT_SUCCESS;

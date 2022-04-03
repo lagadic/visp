@@ -248,8 +248,7 @@ void vpAROgre::init(bool
 
   if (Ogre::Root::getSingletonPtr() == NULL) {
     mRoot = new Ogre::Root(pluginFile, "ogre.cfg", "Ogre.log");
-  }
-  else {
+  } else {
     mRoot = Ogre::Root::getSingletonPtr();
   }
 
@@ -469,7 +468,8 @@ vpAROgre::~vpAROgre(void)
   }
 
   // Delete root
-  if (Ogre::Root::getSingletonPtr() && !Ogre::Root::getSingletonPtr()->getSceneManagerIterator().hasMoreElements() && mRoot) {
+  if (Ogre::Root::getSingletonPtr() && !Ogre::Root::getSingletonPtr()->getSceneManagerIterator().hasMoreElements() &&
+      mRoot) {
     delete mRoot;
   }
   mRoot = 0;
@@ -485,8 +485,7 @@ bool vpAROgre::stopTest(const Ogre::FrameEvent &evt)
   // Always keep this part
   if (keepOn) {
     return updateScene(evt);
-  }
-  else {
+  } else {
     return keepOn;
   }
 }

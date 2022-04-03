@@ -57,9 +57,9 @@
  * \param[out] xc_m, yc_m : Center of the ellipse with coordinates in meters in the image plane.
  * \param[out] n20_m, n11_m, n02_m : Normalized second order moments of the ellipse in meters in the image plane.
  */
-void vpPixelMeterConversion::convertEllipse(const vpCameraParameters &cam,
-                                            const vpImagePoint &center_p, double n20_p, double n11_p, double n02_p,
-                                            double &xc_m, double &yc_m, double &n20_m, double &n11_m, double &n02_m)
+void vpPixelMeterConversion::convertEllipse(const vpCameraParameters &cam, const vpImagePoint &center_p, double n20_p,
+                                            double n11_p, double n02_p, double &xc_m, double &yc_m, double &n20_m,
+                                            double &n11_m, double &n02_m)
 {
   vpPixelMeterConversion::convertPoint(cam, center_p, xc_m, yc_m);
   double px = cam.get_px();
@@ -79,8 +79,7 @@ void vpPixelMeterConversion::convertEllipse(const vpCameraParameters &cam,
    \param[out] rho_m, theta_m : Line parameters expressed in meters in the image plane.
 
 */
-void vpPixelMeterConversion::convertLine(const vpCameraParameters &cam,
-                                         const double &rho_p, const double &theta_p,
+void vpPixelMeterConversion::convertLine(const vpCameraParameters &cam, const double &rho_p, const double &theta_p,
                                          double &rho_m, double &theta_m)
 {
   double co = cos(theta_p);
@@ -132,9 +131,8 @@ void vpPixelMeterConversion::convertLine(const vpCameraParameters &cam,
    \endcode
 
 */
-void vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
-                                           unsigned int order, const vpMatrix &moment_pixel,
-                                           vpMatrix &moment_meter)
+void vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam, unsigned int order,
+                                           const vpMatrix &moment_pixel, vpMatrix &moment_meter)
 {
   vpMatrix m(order, order);
   double yc = -cam.v0;
@@ -176,22 +174,21 @@ void vpPixelMeterConversion::convertMoment(const vpCameraParameters &cam,
  * Convert ellipse parameters (ie ellipse center and normalized centered moments)
  * from pixels \f$(u_c, v_c, n_{{20}_p}, n_{{11}_p}, n_{{02}_p})\f$
  * to meters \f$(x_c, y_c, n_{{20}_m}, n_{{11}_m}, n_{{02}_m})\f$ in the image plane.
- * \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
- * \param[in] distCoeffs : Input vector of distortion coefficients
- * \f$(k_1, k_2, p_1, p_2[, k_3[, k_4, k_5, k_6 [, s_1, s_2, s_3, s_4[, \tau_x, \tau_y]]]])\f$ of
- * 4, 5, 8, 12 or 14 elements. If the vector is NULL/empty, the zero distortion coefficients are assumed.
- * \param[in] center_p : Center of the ellipse (uc, vc) with pixel coordinates.
- * \param[in] n20_p, n11_p, n02_p : Normalized second order moments of the ellipse in pixels.
- * \param[out] xc_m, yc_m : Center of the ellipse with coordinates in meters in the image plane.
- * \param[out] n20_m, n11_m, n02_m : Normalized second order moments of the ellipse in meters in the image plane.
+ * \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 &
+ * 1\end{bmatrix}\f$ \param[in] distCoeffs : Input vector of distortion coefficients \f$(k_1, k_2, p_1, p_2[, k_3[, k_4,
+ * k_5, k_6 [, s_1, s_2, s_3, s_4[, \tau_x, \tau_y]]]])\f$ of 4, 5, 8, 12 or 14 elements. If the vector is NULL/empty,
+ * the zero distortion coefficients are assumed. \param[in] center_p : Center of the ellipse (uc, vc) with pixel
+ * coordinates. \param[in] n20_p, n11_p, n02_p : Normalized second order moments of the ellipse in pixels. \param[out]
+ * xc_m, yc_m : Center of the ellipse with coordinates in meters in the image plane. \param[out] n20_m, n11_m, n02_m :
+ * Normalized second order moments of the ellipse in meters in the image plane.
  */
 void vpPixelMeterConversion::convertEllipse(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs,
                                             const vpImagePoint &center_p, double n20_p, double n11_p, double n02_p,
                                             double &xc_m, double &yc_m, double &n20_m, double &n11_m, double &n02_m)
 {
   vpPixelMeterConversion::convertPoint(cameraMatrix, distCoeffs, center_p, xc_m, yc_m);
-  double px = cameraMatrix.at<double>(0,0);
-  double py = cameraMatrix.at<double>(1,1);
+  double px = cameraMatrix.at<double>(0, 0);
+  double py = cameraMatrix.at<double>(1, 1);
 
   n20_m = n20_p / (px * px);
   n11_m = n11_p / (px * py);
@@ -207,16 +204,15 @@ void vpPixelMeterConversion::convertEllipse(const cv::Mat &cameraMatrix, const c
   \param[out] rho_m, theta_m : Line parameters expressed in meters in the image plane.
 
 */
-void vpPixelMeterConversion::convertLine(const cv::Mat &cameraMatrix,
-                                         const double &rho_p, const double &theta_p,
+void vpPixelMeterConversion::convertLine(const cv::Mat &cameraMatrix, const double &rho_p, const double &theta_p,
                                          double &rho_m, double &theta_m)
 {
   double co = cos(theta_p);
   double si = sin(theta_p);
-  double px = cameraMatrix.at<double>(0,0);
-  double py = cameraMatrix.at<double>(1,1);
-  double u0 = cameraMatrix.at<double>(0,2);
-  double v0 = cameraMatrix.at<double>(1,2);
+  double px = cameraMatrix.at<double>(0, 0);
+  double py = cameraMatrix.at<double>(1, 1);
+  double u0 = cameraMatrix.at<double>(0, 2);
+  double v0 = cameraMatrix.at<double>(1, 2);
 
   double d = vpMath::sqr(px * co) + vpMath::sqr(py * si);
 
@@ -232,20 +228,18 @@ void vpPixelMeterConversion::convertLine(const cv::Mat &cameraMatrix,
    Moments conversion from pixel to normalized coordinates in meter using OpenCV camera parameters.
    This function doesn't use distorsion coefficients.
 
-   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
-   \param[in] order : Moment order.
-   \param[in] moment_pixel : Moment values in pixels.
-   \param[out] moment_meter : Moment values in meters in the image plane.
+   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 &
+   1\end{bmatrix}\f$ \param[in] order : Moment order. \param[in] moment_pixel : Moment values in pixels. \param[out]
+   moment_meter : Moment values in meters in the image plane.
 
 */
-void vpPixelMeterConversion::convertMoment(const cv::Mat &cameraMatrix,
-                                           unsigned int order, const vpMatrix &moment_pixel,
-                                           vpMatrix &moment_meter)
+void vpPixelMeterConversion::convertMoment(const cv::Mat &cameraMatrix, unsigned int order,
+                                           const vpMatrix &moment_pixel, vpMatrix &moment_meter)
 {
-  double inv_px = 1. / cameraMatrix.at<double>(0,0);
-  double inv_py = 1. / cameraMatrix.at<double>(1,1);
-  double u0 = cameraMatrix.at<double>(0,2);
-  double v0 = cameraMatrix.at<double>(1,2);
+  double inv_px = 1. / cameraMatrix.at<double>(0, 0);
+  double inv_py = 1. / cameraMatrix.at<double>(1, 1);
+  double u0 = cameraMatrix.at<double>(0, 2);
+  double v0 = cameraMatrix.at<double>(1, 2);
 
   vpMatrix m(order, order);
   double yc = -v0;
@@ -296,8 +290,8 @@ void vpPixelMeterConversion::convertMoment(const cv::Mat &cameraMatrix,
   \param[out] y : output coordinate in meter along image plane y-axis.
 
 */
-void vpPixelMeterConversion::convertPoint(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs,
-                                          const double &u, const double &v, double &x, double &y)
+void vpPixelMeterConversion::convertPoint(const cv::Mat &cameraMatrix, const cv::Mat &distCoeffs, const double &u,
+                                          const double &v, double &x, double &y)
 {
   std::vector<cv::Point2d> imagePoints_vec;
   imagePoints_vec.push_back(cv::Point2d(u, v));

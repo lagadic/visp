@@ -101,7 +101,8 @@ Test dot tracking using vpDot2 class.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-p <personal image path>]\n\
      [-f <first image>] [-n <number of images>] [-s <step>]\n\
-     [-c] [-d] [-h]\n", name);
+     [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -142,7 +143,8 @@ OPTIONS:                                               Default\n\
      Turn off the display.\n\
 \n\
   -h\n\
-     Print the help.\n", ipath.c_str(), ppath.c_str(), first, nimages, step);
+     Print the help.\n",
+          ipath.c_str(), ppath.c_str(), first, nimages, step);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);

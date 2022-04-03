@@ -120,7 +120,7 @@ int main(int argc, char **argv)
       orb_learning->setNLevels(1);
     }
 #endif
-//! [Keypoint declaration]
+    //! [Keypoint declaration]
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX display;

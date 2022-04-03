@@ -86,19 +86,12 @@ bool checkInlierPoints(const std::vector<vpPoint> &vectorOfFoundInlierPoints,
                    "inlier point!"
                 << std::endl;
       std::cerr << "Returned inliers: oX=" << std::setprecision(std::numeric_limits<double>::max_digits10)
-                << vectorOfFoundInlierPoints[i].get_oX()
-                << ", oY=" << vectorOfFoundInlierPoints[i].get_oY()
-                << ", oZ=" << vectorOfFoundInlierPoints[i].get_oZ()
-                << " ; x=" << vectorOfFoundInlierPoints[i].get_x()
-                << ", y=" << vectorOfFoundInlierPoints[i].get_y()
-                << std::endl;
-      const vpPoint& pt = bunnyModelPoints_noisy[vectorOfFoundInlierIndex[i]];
-      std::cerr << "Object points: oX=" << std::setprecision(std::numeric_limits<double>::max_digits10)
-                << pt.get_oX()
-                << ", oY=" << pt.get_oY()
-                << ", oZ=" << pt.get_oZ()
-                << " ; x=" << pt.get_x()
-                << ", y=" << pt.get_y()
+                << vectorOfFoundInlierPoints[i].get_oX() << ", oY=" << vectorOfFoundInlierPoints[i].get_oY()
+                << ", oZ=" << vectorOfFoundInlierPoints[i].get_oZ() << " ; x=" << vectorOfFoundInlierPoints[i].get_x()
+                << ", y=" << vectorOfFoundInlierPoints[i].get_y() << std::endl;
+      const vpPoint &pt = bunnyModelPoints_noisy[vectorOfFoundInlierIndex[i]];
+      std::cerr << "Object points: oX=" << std::setprecision(std::numeric_limits<double>::max_digits10) << pt.get_oX()
+                << ", oY=" << pt.get_oY() << ", oZ=" << pt.get_oZ() << " ; x=" << pt.get_x() << ", y=" << pt.get_y()
                 << std::endl;
       return false;
     }
@@ -141,8 +134,8 @@ void readBunnyModelPoints(const std::string &filename, std::vector<vpPoint> &bun
 }
 
 bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
-                const std::vector<vpPoint> &bunnyModelPoints_noisy_original,
-                size_t nb_model_points, bool test_duplicate, bool test_degenerate)
+                const std::vector<vpPoint> &bunnyModelPoints_noisy_original, size_t nb_model_points,
+                bool test_duplicate, bool test_degenerate)
 {
   std::vector<vpPoint> bunnyModelPoints = bunnyModelPoints_original;
   std::vector<vpPoint> bunnyModelPoints_noisy = bunnyModelPoints_noisy_original;
@@ -239,7 +232,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
     vectorOfIndex[i] = i;
   }
 
-  //std::random_shuffle(vectorOfIndex.begin(), vectorOfIndex.end()); // std::random_shuffle is deprecated in C++14
+  // std::random_shuffle(vectorOfIndex.begin(), vectorOfIndex.end()); // std::random_shuffle is deprecated in C++14
   std::random_device rng;
   std::mt19937 urng(rng());
   std::shuffle(vectorOfIndex.begin(), vectorOfIndex.end(), urng);
@@ -265,7 +258,8 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   pose_ransac_parallel2.setRansacFilterFlag(vpPose::PREFILTER_DEGENERATE_POINTS);
   pose_ransac.setRansacFilterFlag(vpPose::PREFILTER_DEGENERATE_POINTS);
   pose_ransac2.setRansacFilterFlag(vpPose::PREFILTER_DEGENERATE_POINTS);
-  for (std::vector<vpPoint>::const_iterator it = bunnyModelPoints_noisy.begin(); it != bunnyModelPoints_noisy.end(); ++it) {
+  for (std::vector<vpPoint>::const_iterator it = bunnyModelPoints_noisy.begin(); it != bunnyModelPoints_noisy.end();
+       ++it) {
     pose.addPoint(*it);
   }
   // Test addPoints
@@ -475,16 +469,18 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
 
   return true;
 }
-} //namespace
+} // namespace
 
-TEST_CASE("Print RANSAC number of iterations", "[ransac_pose]") {
+TEST_CASE("Print RANSAC number of iterations", "[ransac_pose]")
+{
   const int sample_sizes[] = {2, 3, 4, 5, 6, 7, 8};
   const double epsilon[] = {0.05, 0.1, 0.2, 0.25, 0.3, 0.4, 0.5};
 
   // Format output
   const std::string spacing = "       ";
 
-  std::cout << spacing << " outliers percentage\n" << "nb pts\\";
+  std::cout << spacing << " outliers percentage\n"
+            << "nb pts\\";
   for (int cpt2 = 0; cpt2 < 7; cpt2++) {
     std::cout << std::setfill(' ') << std::setw(5) << epsilon[cpt2] << " ";
   }
@@ -508,7 +504,8 @@ TEST_CASE("Print RANSAC number of iterations", "[ransac_pose]") {
   std::cout << std::endl;
 }
 
-TEST_CASE("RANSAC pose estimation tests", "[ransac_pose]") {
+TEST_CASE("RANSAC pose estimation tests", "[ransac_pose]")
+{
   const std::vector<size_t> model_sizes = {10, 20, 50, 100, 200, 500, 1000, 0, 0};
   const std::vector<bool> duplicates = {false, false, false, false, false, false, false, false, true};
   const std::vector<bool> degenerates = {false, false, false, false, false, false, true, true, true};
@@ -522,8 +519,7 @@ TEST_CASE("RANSAC pose estimation tests", "[ransac_pose]") {
   CHECK(bunnyModelPoints.size() == bunnyModelPoints_noisy_original.size());
 
   for (size_t i = 0; i < model_sizes.size(); i++) {
-    std::cout << "\n\n==============================================================================="
-              << std::endl;
+    std::cout << "\n\n===============================================================================" << std::endl;
     if (model_sizes[i] == 0) {
       std::cout << "Test on " << bunnyModelPoints_noisy_original.size() << " model points." << std::endl;
     } else {
@@ -535,7 +531,7 @@ TEST_CASE("RANSAC pose estimation tests", "[ransac_pose]") {
   }
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
 #if defined(__mips__) || defined(__mips) || defined(mips) || defined(__MIPS__)
   // To avoid Debian test timeout
@@ -561,8 +557,5 @@ int main(int argc, char* argv[])
 #endif
 }
 #else
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

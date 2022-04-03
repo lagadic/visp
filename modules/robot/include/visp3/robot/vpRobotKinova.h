@@ -53,19 +53,19 @@
 
 #include <KinovaTypes.h>
 
-#ifdef __linux__ 
-#include <dlfcn.h>
-#include <vector>
-#include <stdio.h>
-#include <unistd.h>
+#ifdef __linux__
 #include <Kinova.API.CommLayerUbuntu.h>
 #include <Kinova.API.UsbCommandLayerUbuntu.h>
+#include <dlfcn.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <vector>
 #elif _WIN32
+#include <CommandLayer.h>
+#include <CommunicationLayer.h>
 #include <Windows.h>
 #include <conio.h>
 #include <iostream>
-#include <CommunicationLayer.h>
-#include <CommandLayer.h>
 #endif
 
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -91,11 +91,7 @@
 class VISP_EXPORT vpRobotKinova : public vpRobot
 {
 public:
-  typedef enum {
-    CMD_LAYER_USB,
-    CMD_LAYER_ETHERNET,
-    CMD_LAYER_UNSET
-  } CommandLayer;
+  typedef enum { CMD_LAYER_USB, CMD_LAYER_ETHERNET, CMD_LAYER_UNSET } CommandLayer;
 
   vpRobotKinova();
   virtual ~vpRobotKinova();
@@ -138,13 +134,13 @@ public:
    * meaning that we suppose that the plugins are located in the same folder as the binary that want to use
    * them.
    */
-  void setPluginLocation(const std::string &plugin_location) { m_plugin_location = plugin_location;  }
+  void setPluginLocation(const std::string &plugin_location) { m_plugin_location = plugin_location; }
   void setVelocity(const vpRobot::vpControlFrameType frame, const vpColVector &vel);
   /*!
    * Enable or disable verbose mode to print to stdout additional information.
    * \param[in] verbose : true to enable verbose, false to disable. By default verbose
    * mode is disabled.
-  */
+   */
   void setVerbose(bool verbose) { m_verbose = verbose; }
 
 protected:
@@ -165,8 +161,8 @@ protected:
   int m_active_device;
   CommandLayer m_command_layer;
 
-#ifdef __linux__ 
-  void * m_command_layer_handle;    //!< A handle to the API.
+#ifdef __linux__
+  void *m_command_layer_handle; //!< A handle to the API.
 #elif _WIN32
   HINSTANCE m_command_layer_handle; //!< A handle to the API.
 #endif

@@ -96,8 +96,8 @@ int main(int argc, const char ** argv)
   \code
 #include <stdio.h>
 #include <stdlib.h>
-#include <visp3/io/vpParseArgv.h>
 #include <visp3/core/vpMath.h>
+#include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
 #define GETOPTARGS	"bi:l:f:d:h" // double point mean here that the preceding option request an argument
@@ -158,21 +158,22 @@ public:
     ARGV_LONG,          ///< Argument is associated to a long.
     ARGV_STRING,        ///< Argument is associated to a char * string.
     ARGV_REST,
-    ARGV_FLOAT,         ///< Argument is associated to a float.
-    ARGV_DOUBLE,        ///< Argument is associated to a double.
+    ARGV_FLOAT,  ///< Argument is associated to a float.
+    ARGV_DOUBLE, ///< Argument is associated to a double.
     ARGV_FUNC,
     ARGV_GENFUNC,
-    ARGV_HELP,          ///< Argument is for help displaying.
-    ARGV_END            ///< End of the argument list.
+    ARGV_HELP, ///< Argument is for help displaying.
+    ARGV_END   ///< End of the argument list.
   } vpArgvType;
 
   /*!
     Flag bits.
    */
   typedef enum {
-    ARGV_NO_DEFAULTS = 0x1,         ///< No default options like -help.
-    ARGV_NO_LEFTOVERS = 0x2,        ///< Print an error message if an option is not in the argument list.
-    ARGV_NO_ABBREV = 0x4,           ///< No abrevation. Print an error message if an option is abrevated (ie "-i" in place of "-int" which is requested).
+    ARGV_NO_DEFAULTS = 0x1,  ///< No default options like -help.
+    ARGV_NO_LEFTOVERS = 0x2, ///< Print an error message if an option is not in the argument list.
+    ARGV_NO_ABBREV = 0x4,    ///< No abrevation. Print an error message if an option is abrevated (ie "-i" in place of
+                             ///< "-int" which is requested).
     ARGV_DONT_SKIP_FIRST_ARG = 0x8, ///< Don't skip first argument.
     ARGV_NO_PRINT = 0x10            ///< No printings.
   } vpArgvFlags;

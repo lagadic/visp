@@ -37,8 +37,7 @@ int main(int argc, const char *argv[])
     else if (std::string(argv[i]) == "--name")
       opt_videoname = std::string(argv[i + 1]);
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "\nUsage: " << argv[0]
-                << " [--device <device number>] [--name <video name>] [--help][-h]\n"
+      std::cout << "\nUsage: " << argv[0] << " [--device <device number>] [--name <video name>] [--help][-h]\n"
                 << std::endl;
       return 0;
     }

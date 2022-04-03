@@ -42,27 +42,29 @@
 
 #ifdef VISP_HAVE_CATCH2
 
-#include <visp3/core/vpMath.h>
 #include <visp3/core/vpGaussRand.h>
+#include <visp3/core/vpMath.h>
 
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
-namespace {
-void convertLineEquation(double A, double B, double C, double& a, double& b)
+namespace
 {
-  a = -A/B;
-  b = C/B;
+void convertLineEquation(double A, double B, double C, double &a, double &b)
+{
+  a = -A / B;
+  b = C / B;
 }
-}
+} // namespace
 
-TEST_CASE("Line fitting - Horizontal", "[line_fitting]") {
+TEST_CASE("Line fitting - Horizontal", "[line_fitting]")
+{
   std::cout << "\nLine fitting - Horizontal" << std::endl;
   double a = 0, b = 10;
   std::vector<vpImagePoint> imPts;
   for (int i = 0; i < 3; i++) {
-    double x = i*10;
-    imPts.push_back(vpImagePoint(a*x + b, x));
+    double x = i * 10;
+    imPts.push_back(vpImagePoint(a * x + b, x));
     std::cout << "imPts: (" << imPts.back().get_u() << ", " << imPts.back().get_v() << ")" << std::endl;
   }
 
@@ -79,14 +81,15 @@ TEST_CASE("Line fitting - Horizontal", "[line_fitting]") {
   CHECK(b == Approx(b_est).epsilon(1e-6));
 }
 
-TEST_CASE("Line fitting", "[line_fitting]") {
+TEST_CASE("Line fitting", "[line_fitting]")
+{
   std::cout << "\nLine fitting" << std::endl;
   double a = -4.68, b = 21.456;
   std::vector<vpImagePoint> imPts;
   const int nbPoints = 10;
   for (int i = 0; i < nbPoints; i++) {
-    double x = i*10;
-    double y = a*x + b;
+    double x = i * 10;
+    double y = a * x + b;
     imPts.push_back(vpImagePoint(y, x));
     std::cout << "imPts: (" << imPts.back().get_u() << ", " << imPts.back().get_v() << ")" << std::endl;
   }
@@ -104,7 +107,8 @@ TEST_CASE("Line fitting", "[line_fitting]") {
   CHECK(b == Approx(b_est).epsilon(1e-6));
 }
 
-TEST_CASE("Line fitting - Gaussian noise", "[line_fitting]") {
+TEST_CASE("Line fitting - Gaussian noise", "[line_fitting]")
+{
   std::cout << "\nLine fitting - Gaussian noise" << std::endl;
   const double sigma = 3, mean = 0;
   vpGaussRand gauss(sigma, mean);
@@ -113,11 +117,11 @@ TEST_CASE("Line fitting - Gaussian noise", "[line_fitting]") {
   std::vector<vpImagePoint> imPts;
   const int nbPoints = 10;
   for (int i = 0; i < nbPoints; i++) {
-    double x = i*10;
-    double y = a*x + b;
+    double x = i * 10;
+    double y = a * x + b;
     imPts.push_back(vpImagePoint(y + gauss(), x + gauss()));
-    std::cout << "x: " << x << " ; y: " << y
-              << " ; imPts: (" << imPts.back().get_u() << ", " << imPts.back().get_v() << ")" << std::endl;
+    std::cout << "x: " << x << " ; y: " << y << " ; imPts: (" << imPts.back().get_u() << ", " << imPts.back().get_v()
+              << ")" << std::endl;
   }
 
   double A = 0, B = 0, C = 0;
@@ -149,8 +153,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

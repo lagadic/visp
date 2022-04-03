@@ -42,11 +42,11 @@
 */
 #include <algorithm>
 #include <cctype>
-#include <functional>
 #include <cmath>
 #include <errno.h>
 #include <fcntl.h>
 #include <fstream>
+#include <functional>
 #include <limits>
 #include <stdio.h>
 #include <stdlib.h>
@@ -65,11 +65,11 @@
 #include <windows.h>
 #endif
 #if !defined(_WIN32)
-  #ifdef __ANDROID__
-  // Like IOS, wordexp.cpp is not defined for Android
-  #else
-  #include <wordexp.h>
-  #endif
+#ifdef __ANDROID__
+// Like IOS, wordexp.cpp is not defined for Android
+#else
+#include <wordexp.h>
+#endif
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__) // Apple OSX and iOS (Darwin)
@@ -77,11 +77,11 @@
 #endif
 
 #ifndef PATH_MAX
-#  ifdef _MAX_PATH
-#    define PATH_MAX _MAX_PATH
-#  else
-#    define PATH_MAX 1024
-#  endif
+#ifdef _MAX_PATH
+#define PATH_MAX _MAX_PATH
+#else
+#define PATH_MAX 1024
+#endif
 #endif
 
 std::string vpIoTools::baseName = "";
@@ -127,7 +127,7 @@ std::string &rtrim(std::string &s)
 #endif
   return s;
 }
-}
+} // namespace
 
 /*!
   Return build informations (OS, compiler, build flags, used 3rd parties...).
@@ -210,8 +210,7 @@ std::string vpIoTools::getTempPath()
     if (temp_path.back() == '\\') {
       temp_path.resize(temp_path.size() - 1);
     }
-  }
-  else {
+  } else {
     temp_path = "C:\temp";
     try {
       vpIoTools::makeDirectory(temp_path);
@@ -274,8 +273,7 @@ void vpIoTools::getUserName(std::string &username)
   char *_username = ::getenv("LOGNAME");
   if (!_username) {
     username = "unknown";
-  }
-  else {
+  } else {
     username = _username;
   }
 #elif defined(_WIN32)
@@ -359,7 +357,7 @@ std::string vpIoTools::getenv(const std::string &env)
   std::string value;
   // Get the environment variable value.
   char *_value = ::getenv(env.c_str());
-  if (! _value) {
+  if (!_value) {
     throw(vpIoException(vpIoException::cantGetenv, "Cannot get the environment variable value"));
   }
   value = _value;
@@ -727,8 +725,8 @@ std::string getUuid()
 */
 std::string vpIoTools::makeTempDirectory(const std::string &dirname)
 {
-#if defined(WINRT) || !defined(_WIN32) &&                                                                                      \
-    !(defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // not UNIX and not Windows
+#if defined(WINRT) || !defined(_WIN32) && !(defined(__unix__) || defined(__unix) ||                                    \
+                                            (defined(__APPLE__) && defined(__MACH__))) // not UNIX and not Windows
   throw(vpIoException(vpIoException::cantCreateDirectory, "makeTempDirectory() is not supported on this platform!"));
 #endif
 
@@ -858,7 +856,8 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(), dst.c_str()));
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(),
+                        dst.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -891,7 +890,8 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(), dst.c_str()));
+    throw(vpIoException(vpException::fatalError, "Cannot copy %s in %s: not implemented on iOS Platform", src.c_str(),
+                        dst.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -931,9 +931,9 @@ bool vpIoTools::remove(const std::string &file_or_dir)
   // Check if we have to consider a file or a directory
   if (vpIoTools::checkFilename(file_or_dir)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-    || vpIoTools::checkFifo(std::string(file_or_dir))
+      || vpIoTools::checkFifo(std::string(file_or_dir))
 #endif
-    ) {
+  ) {
     // std::cout << "remove file: " << file_or_dir << std::endl;
     if (::remove(file_or_dir.c_str()) != 0)
       return false;
@@ -952,7 +952,8 @@ bool vpIoTools::remove(const std::string &file_or_dir)
     // std::cout << cmd << " return value: " << ret << std::endl;
     return true;
 #else
-    throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on iOS Platform", file_or_dir.c_str()));
+    throw(vpIoException(vpException::fatalError, "Cannot remove %s: not implemented on iOS Platform",
+                        file_or_dir.c_str()));
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
@@ -1016,18 +1017,18 @@ std::string vpIoTools::path(const std::string &pathname)
       path[i] = '/';
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS and android since
                        // wordexp() is not available
-  #ifdef __ANDROID__
-  // Do nothing
-  #else
-    wordexp_t exp_result;
+#ifdef __ANDROID__
+// Do nothing
+#else
+  wordexp_t exp_result;
 
-    // escape quote character
-    replaceAll(path, "'", "'\\''");
-    // add quotes to handle special characters like parentheses and spaces
-    wordexp(std::string("'" + path + "'").c_str(), &exp_result, 0);
-    path = exp_result.we_wordc == 1 ? exp_result.we_wordv[0] : "";
-    wordfree(&exp_result);
-  #endif
+  // escape quote character
+  replaceAll(path, "'", "'\\''");
+  // add quotes to handle special characters like parentheses and spaces
+  wordexp(std::string("'" + path + "'").c_str(), &exp_result, 0);
+  path = exp_result.we_wordc == 1 ? exp_result.we_wordv[0] : "";
+  wordfree(&exp_result);
+#endif
 #endif
 #endif
 
@@ -1063,11 +1064,13 @@ bool vpIoTools::loadConfigFile(const std::string &confFile)
           // look for the end of the actual value
           c = 200;
           for (unsigned i = 0; i < 3; ++i)
-            c = vpMath::minimum(c, static_cast<int>(line.find(stop[i], static_cast<size_t>(k) + static_cast<size_t>(1))));
+            c = vpMath::minimum(c,
+                                static_cast<int>(line.find(stop[i], static_cast<size_t>(k) + static_cast<size_t>(1))));
           if (c == -1)
             c = static_cast<int>(line.size());
           long unsigned int c_ = static_cast<long unsigned int>(c);
-          val = line.substr(static_cast<size_t>(k) + static_cast<size_t>(1), static_cast<size_t>(c_) - static_cast<size_t>(k) - static_cast<size_t>(1));
+          val = line.substr(static_cast<size_t>(k) + static_cast<size_t>(1),
+                            static_cast<size_t>(c_) - static_cast<size_t>(k) - static_cast<size_t>(1));
           configVars.push_back(var);
           configValues.push_back(val);
         } catch (...) {
@@ -1407,8 +1410,8 @@ std::string vpIoTools::getViSPImagesDataPath()
 
    \param pathname : The pathname of the file we want to get the extension.
    \param checkFile : If true, the file must exist otherwise an empty string will be returned.
-   \return The extension of the file including the dot "." or an empty string if the file has no extension or if the pathname is
-   empty.
+   \return The extension of the file including the dot "." or an empty string if the file has no extension or if the
+pathname is empty.
 
    The following code shows how to use this function:
    \code
@@ -1476,7 +1479,7 @@ std::string vpIoTools::getFileExtension(const std::string &pathname, bool checkF
 
   int sepIndex = static_cast<int>(pathname.rfind(sep));
   if (!altsep.empty()) {
-  int altsepIndex = static_cast<int>(pathname.rfind(altsep));
+    int altsepIndex = static_cast<int>(pathname.rfind(altsep));
     sepIndex = ((std::max))(sepIndex, altsepIndex);
   }
 
@@ -1484,7 +1487,8 @@ std::string vpIoTools::getFileExtension(const std::string &pathname, bool checkF
   if (dotIndex != std::string::npos) {
     // The extsep character exists
     size_t npos = std::string::npos;
-    if ((sepIndex != static_cast<int>(npos) && static_cast<int>(dotIndex) > sepIndex) || sepIndex == static_cast<int>(npos)) {
+    if ((sepIndex != static_cast<int>(npos) && static_cast<int>(dotIndex) > sepIndex) ||
+        sepIndex == static_cast<int>(npos)) {
       if (sepIndex == static_cast<int>(npos)) {
         sepIndex = 0;
       }
@@ -1600,8 +1604,18 @@ long vpIoTools::getIndex(const std::string &filename, const std::string &format)
 
 /*!
    Returns the pathname string of this pathname's parent.
-   \return The pathname string of this pathname's parent, or
-   an empty string if this pathname does not name a parent directory.
+   
+   \param[in] pathname : Pathname from which parent name is extracted using vpIoTools::separator.
+   When the separator is not found, it returns "." as the current parent folder.
+
+   \return The parent of the `pathname`, or an empty string if the `pathname` is empty.
+
+   For example
+   - when pathname is set to "./executable" it returns "."
+   - When pathname is set to "folder/executable" it returns "folder"
+   - When pathname is set to "folder\subfolder\file.cpp" it returns "folder\subfolder"
+   - When pathname is set to "executable" it returns "."
+
  */
 std::string vpIoTools::getParent(const std::string &pathname)
 {
@@ -1612,9 +1626,12 @@ std::string vpIoTools::getParent(const std::string &pathname)
     if (index != std::string::npos) {
       return convertedPathname.substr(0, index);
     }
+    
+    return ".";
+  } 
+  else {
+    return "";
   }
-
-  return "";
 }
 
 /*!
@@ -2163,7 +2180,4 @@ bool vpIoTools::parseBoolean(std::string input)
 /*!
    Remove leading and trailing whitespaces from a string.
  */
-std::string vpIoTools::trim(std::string s)
-{
-  return ltrim(rtrim(s));
-}
+std::string vpIoTools::trim(std::string s) { return ltrim(rtrim(s)); }

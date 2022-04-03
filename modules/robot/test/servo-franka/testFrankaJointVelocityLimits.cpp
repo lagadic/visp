@@ -57,10 +57,9 @@ int main(int argc, char **argv)
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
       robot_ip = std::string(argv[i + 1]);
-    }
-    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0] << " [--ip 192.168.1.1] [--help] [-h]"
-                           << "\n";
+                << "\n";
       return EXIT_SUCCESS;
     }
   }
@@ -95,49 +94,47 @@ int main(int argc, char **argv)
     dq_d[4] = vel;
     double delta_t = 10.0; // Time in second
 
-    std::cout << "Modify the maximum allowed joint velocity to: " << vel << " rad/s or " << vpMath::deg(vel) << " deg/s" << std::endl;
+    std::cout << "Modify the maximum allowed joint velocity to: " << vel << " rad/s or " << vpMath::deg(vel) << " deg/s"
+              << std::endl;
     robot.setMaxRotationVelocity(vel);
-    std::cout << "Apply joint vel " << dq_d.t() << " for " << delta_t << " sec "  << std::endl;
+    std::cout << "Apply joint vel " << dq_d.t() << " for " << delta_t << " sec " << std::endl;
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
     robot.setVelocity(vpRobot::JOINT_STATE, dq_d);
-    vpTime::wait(delta_t*1000);
+    vpTime::wait(delta_t * 1000);
 
     robot.getPosition(vpRobot::JOINT_STATE, q);
     std::cout << "After " << delta_t << " sec reached joint position: " << q.t() << std::endl;
 
     // Move in the other direction
     dq_d = -dq_d;
-    std::cout << "Apply joint vel " << dq_d.t() << " for " << delta_t << " sec "  << std::endl;
+    std::cout << "Apply joint vel " << dq_d.t() << " for " << delta_t << " sec " << std::endl;
     robot.setVelocity(vpRobot::JOINT_STATE, dq_d);
-    vpTime::wait(delta_t*1000);
+    vpTime::wait(delta_t * 1000);
 
     robot.getPosition(vpRobot::JOINT_STATE, q);
     std::cout << "After " << delta_t << " sec reached joint position: " << q.t() << std::endl;
 
     // Move in the other direction
     dq_d = -dq_d;
-    std::cout << "Apply joint vel " << dq_d.t() << " for " << delta_t << " sec "  << std::endl;
+    std::cout << "Apply joint vel " << dq_d.t() << " for " << delta_t << " sec " << std::endl;
     robot.setVelocity(vpRobot::JOINT_STATE, dq_d);
-    vpTime::wait(delta_t*1000/2.);
+    vpTime::wait(delta_t * 1000 / 2.);
 
     robot.getPosition(vpRobot::JOINT_STATE, q);
     std::cout << "After " << delta_t << " sec reached joint position: " << q.t() << std::endl;
 
     std::cout << "Stop the robot " << std::endl;
     robot.setRobotState(vpRobot::STATE_STOP);
-  }
-  catch(const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "ViSP exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const franka::NetworkException &e) {
+  } catch (const franka::NetworkException &e) {
     std::cout << "Franka network exception: " << e.what() << std::endl;
     std::cout << "Check if you are connected to the Franka robot"
               << " or if you specified the right IP using --ip command"
               << " line option set by default to 192.168.1.1. " << std::endl;
     return EXIT_FAILURE;
-  }
-  catch(const std::exception &e) {
+  } catch (const std::exception &e) {
     std::cout << "Franka exception: " << e.what() << std::endl;
     return EXIT_FAILURE;
   }
@@ -147,8 +144,5 @@ int main(int argc, char **argv)
 }
 
 #else
-int main()
-{
-  std::cout << "ViSP is not build with libfranka..." << std::endl;
-}
+int main() { std::cout << "ViSP is not build with libfranka..." << std::endl; }
 #endif

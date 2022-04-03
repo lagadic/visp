@@ -39,9 +39,8 @@
 */
 
 #include "vpImageIoBackend.h"
-#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpImageConvert.h>
-
+#include <visp3/core/vpIoTools.h>
 
 void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
                         unsigned int &h, unsigned int &maxval);

@@ -71,7 +71,8 @@ Outputs a comparison of the results obtained by supported 3rd parties.\n\
 SYNOPSIS\n\
   %s [-n <number of matrices>] [-f <plot filename>]\n\
      [-R <number of rows>] [-C <number of columns>]\n\
-     [-i <number of iterations>] [-p] [-h]\n", name);
+     [-i <number of iterations>] [-p] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -635,8 +636,7 @@ int main(int argc, const char *argv[])
 #else
     (void)argc;
     (void)argv;
-    std::cout << "Test does nothing since you dont't have Lapack, Eigen3 or OpenCV 3rd party"
-              << std::endl;
+    std::cout << "Test does nothing since you dont't have Lapack, Eigen3 or OpenCV 3rd party" << std::endl;
     return EXIT_SUCCESS;
 #endif
   } catch (const vpException &e) {

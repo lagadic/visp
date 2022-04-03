@@ -72,7 +72,8 @@ test the generic 2D polygons.\n\
 \n\
 SYNOPSIS\n\
   %s [-c] [-d] [-h]\n						      \
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS: \n\

@@ -70,8 +70,7 @@
 
 #define GETOPTARGS "dhp"
 
-#if defined(VISP_HAVE_DISPLAY) \
-  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if defined(VISP_HAVE_DISPLAY) && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 /*!
 
@@ -91,7 +90,8 @@ The visual servoing consists in bringing the camera at a desired position from t
 The visual features used to compute the pose of the camera and thus the control law are special moments computed with the sphere's parameters.\n\
           \n\
 SYNOPSIS\n\
-  %s [-d]  [-p] [-h]\n", name);
+  %s [-d]  [-p] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -506,7 +506,8 @@ int main()
 #else
 int main()
 {
-  std::cout << "You do not have X11, or GDI (Graphical Device Interface), or GTK functionalities to display images..." << std::endl;
+  std::cout << "You do not have X11, or GDI (Graphical Device Interface), or GTK functionalities to display images..."
+            << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

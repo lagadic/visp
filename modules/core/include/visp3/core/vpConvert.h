@@ -87,10 +87,8 @@ public:
 
   static void convertToOpenCV(const std::vector<vpImagePoint> &from, std::vector<cv::Point2f> &to);
   static void convertToOpenCV(const std::vector<vpImagePoint> &from, std::vector<cv::Point2d> &to);
-  static void convertToOpenCV(const std::vector<vpPoint> &from, std::vector<cv::Point3f> &to,
-                              bool cameraFrame = false);
-  static void convertToOpenCV(const std::vector<vpPoint> &from, std::vector<cv::Point3d> &to,
-                              bool cameraFrame = false);
+  static void convertToOpenCV(const std::vector<vpPoint> &from, std::vector<cv::Point3f> &to, bool cameraFrame = false);
+  static void convertToOpenCV(const std::vector<vpPoint> &from, std::vector<cv::Point3d> &to, bool cameraFrame = false);
 
 private:
   static vpImagePoint keyPointToVpImagePoint(const cv::KeyPoint &keypoint);

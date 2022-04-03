@@ -5,7 +5,7 @@
 
 \section tutorial_pose_qrcode_intro Introduction
 
-This tutorial shows how to use \ref tutorial-detection-barcode and \ref tutorial-pose-estimation in order to estimate the pose of a QRcode. After a first step that enables QRcode detection, the pose estimation process is achieved from the location of the four QRcode corners. The 3D coordinates of the corners are set knowing the size of the QRcode while their 2D coordinates are extracted from the image and transformed in the image plane thanks to camera intrinsic parameters. 
+This tutorial shows how to use \ref tutorial-detection-barcode and \ref tutorial-pose-estimation in order to estimate the pose of a QRcode. After a first step that enables QRcode detection, the pose estimation process is achieved from the location of the four QRcode corners. The 3D coordinates of the corners are set knowing the size of the QRcode while their 2D coordinates are extracted from the image and transformed in the image plane thanks to camera intrinsic parameters.
 
 Note that all the material (source code and image) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
@@ -39,10 +39,10 @@ g.aquire(I);
 \endcode
 where \c g is nothing more than a grabber instantiated as a vp1394TwoGrabber, vpFlyCaptureGrabber, vpV4l2Grabber or vpRealSense. How to implement framegrabbing is explained in \ref tutorial-grabber.
 
-
 \section tutorial_pose_qrcode_next Next tutorial
 
 You are now ready to see the next \ref tutorial-homography that shows how to estimate an homography from points.
 
+If you have an RGB-D camera, you may also continue with \ref tutorial-planar-object-pose.
 
 */

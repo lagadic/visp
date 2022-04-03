@@ -109,7 +109,8 @@ OPTIONS                                                    Default\n\
 \n\
   -f [%%d] \n\
      Framerate to set for the active camera.\n\
-     You can select the active camera using -c option.\n", name);
+     You can select the active camera using -c option.\n",
+          name);
 
   fprintf(stdout, "\n\
   -c [%%u]                                                    %u\n\
@@ -141,7 +142,8 @@ OPTIONS                                                    Default\n\
 \n\
   -h \n\
      Print the help.\n\
-\n", camera, nframes, opath.c_str());
+\n",
+          camera, nframes, opath.c_str());
 
   exit(0);
 }
@@ -455,7 +457,8 @@ int main(int argc, const char **argv)
 #else  // (defined (VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
 int main()
 {
-  std::cout << "You do not have GDI (Graphical Device Interface), or GTK functionalities to display images..." << std::endl;
+  std::cout << "You do not have GDI (Graphical Device Interface), or GTK functionalities to display images..."
+            << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
   std::cout << "- Install GDI, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;

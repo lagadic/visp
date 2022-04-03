@@ -44,15 +44,15 @@
 #if defined(VISP_HAVE_CATCH2)
 #define CATCH_CONFIG_ENABLE_BENCHMARKING
 #define CATCH_CONFIG_RUNNER
+#include "common.hpp"
 #include <catch.hpp>
 #include <visp3/core/vpImageTools.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
-#include "common.hpp"
 
-TEST_CASE("Benchmark vpImageTools::imageAdd()", "[benchmark]") {
-  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                         "Klimt/Klimt.pgm");
+TEST_CASE("Benchmark vpImageTools::imageAdd()", "[benchmark]")
+{
+  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Klimt/Klimt.pgm");
   vpImage<unsigned char> I;
   vpImageIo::read(I, filepath);
 
@@ -64,12 +64,14 @@ TEST_CASE("Benchmark vpImageTools::imageAdd()", "[benchmark]") {
   {
     const bool saturation = false;
 
-    BENCHMARK("Benchmark naive imageAdd() code without saturation") {
+    BENCHMARK("Benchmark naive imageAdd() code without saturation")
+    {
       common_tools::imageAddRef(I, I2, Iadd, saturation);
       return I;
     };
 
-    BENCHMARK("Benchmark ViSP imageAdd() code without saturation") {
+    BENCHMARK("Benchmark ViSP imageAdd() code without saturation")
+    {
       vpImageTools::imageAdd(I, I2, Iadd, saturation);
       return I;
     };
@@ -78,21 +80,23 @@ TEST_CASE("Benchmark vpImageTools::imageAdd()", "[benchmark]") {
   {
     const bool saturation = true;
 
-    BENCHMARK("Benchmark naive imageAdd() code with saturation") {
+    BENCHMARK("Benchmark naive imageAdd() code with saturation")
+    {
       common_tools::imageAddRef(I, I2, Iadd, saturation);
       return I;
     };
 
-    BENCHMARK("Benchmark ViSP imageAdd() code with saturation") {
+    BENCHMARK("Benchmark ViSP imageAdd() code with saturation")
+    {
       vpImageTools::imageAdd(I, I2, Iadd, saturation);
       return I;
     };
   }
 }
 
-TEST_CASE("Benchmark vpImageTools::imageSubtract()", "[benchmark]") {
-  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(),
-                                                         "Klimt/Klimt.pgm");
+TEST_CASE("Benchmark vpImageTools::imageSubtract()", "[benchmark]")
+{
+  const std::string filepath = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "Klimt/Klimt.pgm");
   vpImage<unsigned char> I;
   vpImageIo::read(I, filepath);
 
@@ -104,12 +108,14 @@ TEST_CASE("Benchmark vpImageTools::imageSubtract()", "[benchmark]") {
   {
     const bool saturation = false;
 
-    BENCHMARK("Benchmark naive imageSub() code without saturation") {
+    BENCHMARK("Benchmark naive imageSub() code without saturation")
+    {
       common_tools::imageSubtractRef(I, I2, Isub, saturation);
       return I;
     };
 
-    BENCHMARK("Benchmark ViSP imageSub() code without saturation") {
+    BENCHMARK("Benchmark ViSP imageSub() code without saturation")
+    {
       vpImageTools::imageSubtract(I, I2, Isub, saturation);
       return I;
     };
@@ -118,12 +124,14 @@ TEST_CASE("Benchmark vpImageTools::imageSubtract()", "[benchmark]") {
   {
     const bool saturation = true;
 
-    BENCHMARK("Benchmark naive imageSub() code with saturation") {
+    BENCHMARK("Benchmark naive imageSub() code with saturation")
+    {
       common_tools::imageSubtractRef(I, I2, Isub, saturation);
       return I;
     };
 
-    BENCHMARK("Benchmark ViSP imageSub() code with saturation") {
+    BENCHMARK("Benchmark ViSP imageSub() code with saturation")
+    {
       vpImageTools::imageSubtract(I, I2, Isub, saturation);
       return I;
     };
@@ -137,10 +145,10 @@ int main(int argc, char *argv[])
   bool runBenchmark = false;
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
-  auto cli = session.cli() // Get Catch's composite command line parser
-    | Opt(runBenchmark)    // bind variable to a new option, with a hint string
-    ["--benchmark"]        // the option names it will respond to
-    ("run benchmark?");    // description string for the help output
+  auto cli = session.cli()         // Get Catch's composite command line parser
+             | Opt(runBenchmark)   // bind variable to a new option, with a hint string
+                   ["--benchmark"] // the option names it will respond to
+             ("run benchmark?");   // description string for the help output
 
   // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
@@ -160,8 +168,5 @@ int main(int argc, char *argv[])
   return EXIT_SUCCESS;
 }
 #else
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

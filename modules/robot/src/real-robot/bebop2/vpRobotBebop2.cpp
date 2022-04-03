@@ -1147,22 +1147,21 @@ eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE vpRobotBebop2::getFl
       ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
       ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
 
-      HASH_FIND_STR (elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
+      HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
 
-      if (element != NULL)
-      {
-        //Suppress warnings
-        // Get the value
-        HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE, arg);
+      if (element != NULL) {
+        // Suppress warnings
+        //  Get the value
+        HASH_FIND_STR(element->arguments, ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE,
+                      arg);
 
-        if (arg != NULL)
-        {
+        if (arg != NULL) {
           // Enums are stored as I32
           flyingState = static_cast<eARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE>(arg->value.I32);
         }
       }
     }
-  return flyingState;
+    return flyingState;
   } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error when checking flying state : drone isn't connected.");
     return ARCOMMANDS_ARDRONE3_PILOTINGSTATE_FLYINGSTATECHANGED_STATE_MAX;
@@ -1188,21 +1187,21 @@ eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED vpRobotBebop
       ARCONTROLLER_DICTIONARY_ARG_t *arg = NULL;
       ARCONTROLLER_DICTIONARY_ELEMENT_t *element = NULL;
 
-    HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
+      HASH_FIND_STR(elementDictionary, ARCONTROLLER_DICTIONARY_SINGLE_KEY, element);
 
-    if (element != NULL) {
-      // Get the value
-      HASH_FIND_STR(element->arguments,
-                    ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED, arg);
+      if (element != NULL) {
+        // Get the value
+        HASH_FIND_STR(element->arguments,
+                      ARCONTROLLER_DICTIONARY_KEY_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED, arg);
 
-      if (arg != NULL) {
-        // Enums are stored as I32
-        streamingState =
-            static_cast<eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED>(arg->value.I32);
-      }
+        if (arg != NULL) {
+          // Enums are stored as I32
+          streamingState =
+              static_cast<eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED>(arg->value.I32);
+        }
       }
     }
-  return streamingState;
+    return streamingState;
   } else {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Error when checking streaming state : drone isn't connected.");
     return ARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED_MAX;
@@ -1213,18 +1212,18 @@ eARCOMMANDS_ARDRONE3_MEDIASTREAMINGSTATE_VIDEOENABLECHANGED_ENABLED vpRobotBebop
 
   Discovers the drone on the wifi network and returns the detected device.
 */
-ARDISCOVERY_Device_t * vpRobotBebop2::discoverDrone()
+ARDISCOVERY_Device_t *vpRobotBebop2::discoverDrone()
 {
   eARDISCOVERY_ERROR errorDiscovery = ARDISCOVERY_OK;
 
-  ARDISCOVERY_Device_t * device = ARDISCOVERY_Device_New(&errorDiscovery);
+  ARDISCOVERY_Device_t *device = ARDISCOVERY_Device_New(&errorDiscovery);
 
   ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "    - Starting drone Wifi discovery ...");
-  const char * charIpAddress = m_ipAddress.c_str();
-  errorDiscovery = ARDISCOVERY_Device_InitWifi(device, ARDISCOVERY_PRODUCT_BEBOP_2, "bebop2", charIpAddress, m_discoveryPort);
+  const char *charIpAddress = m_ipAddress.c_str();
+  errorDiscovery =
+      ARDISCOVERY_Device_InitWifi(device, ARDISCOVERY_PRODUCT_BEBOP_2, "bebop2", charIpAddress, m_discoveryPort);
 
-  if (errorDiscovery != ARDISCOVERY_OK)
-  {
+  if (errorDiscovery != ARDISCOVERY_OK) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Discovery error :%s", ARDISCOVERY_Error_ToString(errorDiscovery));
   }
   ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Drone controller created.");
@@ -1237,14 +1236,13 @@ Create a drone controller based on a discovered device.
 
 \param[in] discoveredDrone : discovered drone to control with the controller. Deleted at the end of this function.
 */
-void vpRobotBebop2::createDroneController(ARDISCOVERY_Device_t * discoveredDrone)
+void vpRobotBebop2::createDroneController(ARDISCOVERY_Device_t *discoveredDrone)
 {
-  m_deviceController = ARCONTROLLER_Device_New (discoveredDrone, &m_errorController);
-  if (m_errorController != ARCONTROLLER_OK)
-  {
-      ARSAL_PRINT (ARSAL_PRINT_ERROR, TAG, "Creation of deviceController failed.");
+  m_deviceController = ARCONTROLLER_Device_New(discoveredDrone, &m_errorController);
+  if (m_errorController != ARCONTROLLER_OK) {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "Creation of deviceController failed.");
   }
-  ARDISCOVERY_Device_Delete (&discoveredDrone);
+  ARDISCOVERY_Device_Delete(&discoveredDrone);
   ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "- Device created.");
 }
 
@@ -1254,27 +1252,25 @@ void vpRobotBebop2::createDroneController(ARDISCOVERY_Device_t * discoveredDrone
 */
 void vpRobotBebop2::setupCallbacks()
 {
-  //Adding stateChanged callback, called when the state of the controller has changed
+  // Adding stateChanged callback, called when the state of the controller has changed
   m_errorController = ARCONTROLLER_Device_AddStateChangedCallback(m_deviceController, stateChangedCallback, this);
-  if(m_errorController != ARCONTROLLER_OK)
-  {
-    ARSAL_PRINT (ARSAL_PRINT_ERROR, TAG, "add State callback failed.");
+  if (m_errorController != ARCONTROLLER_OK) {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "add State callback failed.");
   }
 
-  //Adding commendReceived callback, called when the a command has been received from the device
+  // Adding commendReceived callback, called when the a command has been received from the device
   m_errorController = ARCONTROLLER_Device_AddCommandReceivedCallback(m_deviceController, commandReceivedCallback, this);
 
-  if(m_errorController != ARCONTROLLER_OK)
-  {
-    ARSAL_PRINT (ARSAL_PRINT_ERROR, TAG, "add Command callback failed.");
+  if (m_errorController != ARCONTROLLER_OK) {
+    ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "add Command callback failed.");
   }
 
 #ifdef VISP_HAVE_FFMPEG
-  //Adding frame received callback, called when a streaming frame has been received from the device
-  m_errorController = ARCONTROLLER_Device_SetVideoStreamCallbacks (m_deviceController, decoderConfigCallback, didReceiveFrameCallback, NULL , this);
+  // Adding frame received callback, called when a streaming frame has been received from the device
+  m_errorController = ARCONTROLLER_Device_SetVideoStreamCallbacks(m_deviceController, decoderConfigCallback,
+                                                                  didReceiveFrameCallback, NULL, this);
 
-  if(m_errorController != ARCONTROLLER_OK)
-  {
+  if (m_errorController != ARCONTROLLER_OK) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error: %s", ARCONTROLLER_Error_ToString(m_errorController));
   }
 #endif
@@ -1287,23 +1283,21 @@ void vpRobotBebop2::setupCallbacks()
 */
 void vpRobotBebop2::startController()
 {
-  //Starts the controller
+  // Starts the controller
   ARSAL_PRINT(ARSAL_PRINT_INFO, TAG, "Connecting ...");
-  m_errorController = ARCONTROLLER_Device_Start (m_deviceController);
+  m_errorController = ARCONTROLLER_Device_Start(m_deviceController);
 
-  if(m_errorController != ARCONTROLLER_OK)
-  {
+  if (m_errorController != ARCONTROLLER_OK) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error :%s", ARCONTROLLER_Error_ToString(m_errorController));
   }
 
   // Waits for the stateChangedCallback to unclock the semaphore
-  ARSAL_Sem_Wait (&(m_stateSem));
+  ARSAL_Sem_Wait(&(m_stateSem));
 
-  //Checks the device state
-  m_deviceState = ARCONTROLLER_Device_GetState (m_deviceController, &m_errorController);
+  // Checks the device state
+  m_deviceState = ARCONTROLLER_Device_GetState(m_deviceController, &m_errorController);
 
-  if((m_errorController != ARCONTROLLER_OK) || (m_deviceState != ARCONTROLLER_DEVICE_STATE_RUNNING))
-  {
+  if ((m_errorController != ARCONTROLLER_OK) || (m_deviceState != ARCONTROLLER_DEVICE_STATE_RUNNING)) {
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- deviceState :%d", m_deviceState);
     ARSAL_PRINT(ARSAL_PRINT_ERROR, TAG, "- error :%s", ARCONTROLLER_Error_ToString(m_errorController));
   }
@@ -1364,8 +1358,8 @@ void vpRobotBebop2::initCodec()
   int numBytes = av_image_get_buffer_size(pFormat, m_codecContext->width, m_codecContext->height, 1);
   m_buffer = static_cast<uint8_t *>(av_malloc(static_cast<unsigned long>(numBytes) * sizeof(uint8_t)));
 
-  av_init_packet(&m_packet);        // Packed used to send data to the decoder
-  m_picture = av_frame_alloc();     // Frame used to receive data from the decoder
+  av_init_packet(&m_packet);    // Packed used to send data to the decoder
+  m_picture = av_frame_alloc(); // Frame used to receive data from the decoder
 
   m_bgr_picture_mutex.lock();
   m_bgr_picture = av_frame_alloc(); // Frame used to store rescaled frame received from the decoder
@@ -1585,8 +1579,7 @@ void vpRobotBebop2::stateChangedCallback(eARCONTROLLER_DEVICE_STATE newState, eA
   (void)error;
 
   vpRobotBebop2 *drone = static_cast<vpRobotBebop2 *>(customData);
-  switch (newState)
-  {
+  switch (newState) {
   case ARCONTROLLER_DEVICE_STATE_STOPPED:
     // Stopping the programm
     drone->m_running = false;
@@ -1608,12 +1601,13 @@ void vpRobotBebop2::stateChangedCallback(eARCONTROLLER_DEVICE_STATE newState, eA
 /*!
 
   Callback. Called when streaming is started, allows to get codec parameters for the H264 video streammed by the drone.
-  Currently not used, as the codec parameter are currently manually set up. Function only available when ffmpeg available.
+  Currently not used, as the codec parameter are currently manually set up. Function only available when ffmpeg
+  available.
 
   \param[in] codec : codec used to stream the drone camera video.
   \param[in] customData : pointer to custom data.
 */
-eARCONTROLLER_ERROR vpRobotBebop2::decoderConfigCallback(ARCONTROLLER_Stream_Codec_t codec, void * customData)
+eARCONTROLLER_ERROR vpRobotBebop2::decoderConfigCallback(ARCONTROLLER_Stream_Codec_t codec, void *customData)
 {
   vpRobotBebop2 *drone = static_cast<vpRobotBebop2 *>(customData);
 
@@ -1659,7 +1653,6 @@ eARCONTROLLER_ERROR vpRobotBebop2::didReceiveFrameCallback(ARCONTROLLER_Frame_t 
       drone->computeFrame(frame);
     }
 
-
   } else {
     ARSAL_PRINT(ARSAL_PRINT_WARNING, TAG, "frame is NULL.");
   }
@@ -1667,7 +1660,6 @@ eARCONTROLLER_ERROR vpRobotBebop2::didReceiveFrameCallback(ARCONTROLLER_Frame_t 
   return ARCONTROLLER_OK;
 }
 #endif // #ifdef VISP_HAVE_FFMPEG
-
 
 /*!
 

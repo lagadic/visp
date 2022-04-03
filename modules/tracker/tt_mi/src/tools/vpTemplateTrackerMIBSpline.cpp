@@ -73,8 +73,7 @@ void vpTemplateTrackerMIBSpline::PutPVBsplineD3(double *Prt, int cr, double er, 
         *pt++ += Bspline3_diff_r_ * Bspline3(it - et) * val;
       }
     }
-  }
-  else {
+  } else {
     for (int ir = -1; ir <= 1; ir++) {
       double Bspline3_diff_r_ = Bspline3(ir - er);
       for (int it = -1; it <= 1; it++) {
@@ -102,8 +101,7 @@ void vpTemplateTrackerMIBSpline::PutPVBsplineD4(double *Prt, int cr, double er, 
         *pt++ += Br * (*ptBti++) * val;
       }
     }
-  }
-  else {
+  } else {
     for (int ir = -1; ir <= 2; ir++) {
       double Br = Bspline4i(ir - er, ir);
       ptBti = &Bti[0];
@@ -167,18 +165,14 @@ double vpTemplateTrackerMIBSpline::dBspline4(double diff)
   if ((diff > -2.) && (diff <= -1.)) {
     double diff_2_ = diff + 2.;
     return (diff_2_ * diff_2_ * 0.5);
-  }
-  else if ((diff > -1.) && (diff <= 0.)) {
+  } else if ((diff > -1.) && (diff <= 0.)) {
     return -1.5 * diff * diff - 2. * diff;
-  }
-  else if ((diff > 0.) && (diff <= 1.)) {
+  } else if ((diff > 0.) && (diff <= 1.)) {
     return 1.5 * diff * diff - 2. * diff;
-  }
-  else if ((diff > 1.) && (diff <= 2.)) {
+  } else if ((diff > 1.) && (diff <= 2.)) {
     double diff_2_ = diff - 2.;
-    return (- 0.5 * diff_2_ * diff_2_);
-  }
-  else {
+    return (-0.5 * diff_2_ * diff_2_);
+  } else {
     return 0;
   }
 }
@@ -796,17 +790,18 @@ void vpTemplateTrackerMIBSpline::PutTotPVBspline4Prt(double *Prt, int &cr, doubl
   }
 }
 
-void vpTemplateTrackerMIBSpline::computeProbabilities(double *Prt, int &cr, double &er, int &ct, double &et,int &Nc, double *dW,
-                                               unsigned int &NbParam, int &bspline, vpTemplateTrackerMI::vpHessienApproximationType &approx, bool use_hessien_des)
+void vpTemplateTrackerMIBSpline::computeProbabilities(double *Prt, int &cr, double &er, int &ct, double &et, int &Nc,
+                                                      double *dW, unsigned int &NbParam, int &bspline,
+                                                      vpTemplateTrackerMI::vpHessienApproximationType &approx,
+                                                      bool use_hessien_des)
 {
   if (approx == vpTemplateTrackerMI::HESSIAN_NONSECOND || use_hessien_des) {
-    if (bspline==3)
+    if (bspline == 3)
       PutTotPVBspline3NoSecond(Prt, cr, er, ct, et, Nc, dW, NbParam);
     else
       PutTotPVBspline4NoSecond(Prt, cr, er, ct, et, Nc, dW, NbParam);
-  }
-  else {
-    if(bspline==3)
+  } else {
+    if (bspline == 3)
       PutTotPVBspline3(Prt, cr, er, ct, et, Nc, dW, NbParam);
     else
       PutTotPVBspline4(Prt, cr, er, ct, et, Nc, dW, NbParam);

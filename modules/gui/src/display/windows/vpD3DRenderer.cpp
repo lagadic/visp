@@ -613,7 +613,7 @@ bool vpD3DRenderer::render()
   // memory texture
   pd3dDevice->UpdateTexture(pd3dText, pd3dVideoText);
 
-// Displays this texture as a sprite
+  // Displays this texture as a sprite
 
 #if (D3DX_SDK_VERSION <= 9)
   pSprite->Begin(); //

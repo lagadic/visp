@@ -23,40 +23,42 @@ int main(int argc, const char *argv[])
     float nmsThresh = 0.4f;
     std::string labelFile = "";
     for (int i = 1; i < argc; i++) {
-      if (std::string(argv[i]) == "--device" && i+1 < argc) {
-        opt_device = atoi(argv[i+1]);
-      } else if (std::string(argv[i]) == "--input" && i+1 < argc) {
-        input = std::string(argv[i+1]);
-      } else if (std::string(argv[i]) == "--model" && i+1 < argc) {
-        model = std::string(argv[i+1]);
-      } else if (std::string(argv[i]) == "--config" && i+1 < argc) {
-        config = std::string(argv[i+1]);
-      } else if (std::string(argv[i]) == "--width" && i+1 < argc) {
-        inputWidth = atoi(argv[i+1]);
-      } else if (std::string(argv[i]) == "--height" && i+1 < argc) {
-        inputHeight = atoi(argv[i+1]);
-      } else if (std::string(argv[i]) == "--mean" && i+3 < argc) {
-        meanR = atof(argv[i+1]);
-        meanG = atof(argv[i+2]);
-        meanB = atof(argv[i+3]);
-      } else if (std::string(argv[i]) == "--scale" && i+1 < argc) {
-        scaleFactor = atof(argv[i+1]);
+      if (std::string(argv[i]) == "--device" && i + 1 < argc) {
+        opt_device = atoi(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
+        input = std::string(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
+        model = std::string(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
+        config = std::string(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--width" && i + 1 < argc) {
+        inputWidth = atoi(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--height" && i + 1 < argc) {
+        inputHeight = atoi(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--mean" && i + 3 < argc) {
+        meanR = atof(argv[i + 1]);
+        meanG = atof(argv[i + 2]);
+        meanB = atof(argv[i + 3]);
+      } else if (std::string(argv[i]) == "--scale" && i + 1 < argc) {
+        scaleFactor = atof(argv[i + 1]);
       } else if (std::string(argv[i]) == "--swapRB") {
         swapRB = true;
-      } else if (std::string(argv[i]) == "--confThresh" && i+1 < argc) {
-        confThresh = (float)atof(argv[i+1]);
-      } else if (std::string(argv[i]) == "--nmsThresh" && i+1 < argc) {
-        nmsThresh = (float)atof(argv[i+1]);
-      } else if (std::string(argv[i]) == "--labels" && i+1 < argc) {
-        labelFile = std::string(argv[i+1]);
+      } else if (std::string(argv[i]) == "--confThresh" && i + 1 < argc) {
+        confThresh = (float)atof(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--nmsThresh" && i + 1 < argc) {
+        nmsThresh = (float)atof(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--labels" && i + 1 < argc) {
+        labelFile = std::string(argv[i + 1]);
       } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << argv[0] << " --device <camera device number> --input <path to image or video>"
-                                " (camera is used if input is empty) --model <path to net trained weights>"
-                                " --config <path to net config file>"
-                                " --width <blob width> --height <blob height>"
-                                " -- mean <meanR meanG meanB> --scale <scale factor>"
-                                " --swapRB --confThresh <confidence threshold>"
-                                " --nmsThresh <NMS threshold> --labels <path to label file>" << std::endl;
+        std::cout << argv[0]
+                  << " --device <camera device number> --input <path to image or video>"
+                     " (camera is used if input is empty) --model <path to net trained weights>"
+                     " --config <path to net config file>"
+                     " --width <blob width> --height <blob height>"
+                     " -- mean <meanR meanG meanB> --scale <scale factor>"
+                     " --swapRB --confThresh <confidence threshold>"
+                     " --nmsThresh <NMS threshold> --labels <path to label file>"
+                  << std::endl;
         return EXIT_SUCCESS;
       }
     }
@@ -144,8 +146,8 @@ int main(int argc, const char *argv[])
           oss << labels[classIds[i]];
         oss << " - conf: " << confidences[i];
 
-        vpDisplay::displayText(I, (int)boundingBoxes[i].getTop()-10, (int)boundingBoxes[i].getLeft()+10,
-                               oss.str(), vpColor::red);
+        vpDisplay::displayText(I, (int)boundingBoxes[i].getTop() - 10, (int)boundingBoxes[i].getLeft() + 10, oss.str(),
+                               vpColor::red);
       }
       std::ostringstream oss;
       oss << "Detection time: " << t << " ms";

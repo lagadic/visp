@@ -42,10 +42,7 @@
 /*!
  * Construct a model with 6 affine parameters initialized to zero.
  */
-vpTemplateTrackerWarpAffine::vpTemplateTrackerWarpAffine()
-{
-  nbParam = 6;
-}
+vpTemplateTrackerWarpAffine::vpTemplateTrackerWarpAffine() { nbParam = 6; }
 
 /*!
  * Get the parameters of the warping function one level down
@@ -188,8 +185,8 @@ void vpTemplateTrackerWarpAffine::dWarp(const vpColVector &X, const vpColVector 
  * the initial warping function parameters (p=0).
  * \param dM : Resulting warping model compositionnal derivative returned as a 2-by-6 matrix.
  */
-void vpTemplateTrackerWarpAffine::dWarpCompo(const vpColVector &, const vpColVector &,
-                                             const vpColVector &p, const double *dwdp0, vpMatrix &dM)
+void vpTemplateTrackerWarpAffine::dWarpCompo(const vpColVector &, const vpColVector &, const vpColVector &p,
+                                             const double *dwdp0, vpMatrix &dM)
 {
   for (unsigned int i = 0; i < nbParam; i++) {
     dM[0][i] = (1. + p[0]) * dwdp0[i] + p[2] * dwdp0[i + nbParam];
@@ -221,16 +218,15 @@ void vpTemplateTrackerWarpAffine::getParamInverse(const vpColVector &p, vpColVec
   double u = p[4];
   double v = p[5];
   double r_00 = 1 + p[0], r_01 = p[2];
-  double r_10 = p[1],     r_11 = 1 + p[3];
+  double r_10 = p[1], r_11 = 1 + p[3];
   double det = r_00 * r_11 - r_01 * r_10;
   if (std::fabs(det) < std::numeric_limits<double>::epsilon()) {
-    throw(vpException(vpException::fatalError,
-                      "In vpTemplateTrackerWarpAffine::getParamInverse() "
-                      "cannot inverse 2-by-2 matrix. Matrix determinant is 0."));
+    throw(vpException(vpException::fatalError, "In vpTemplateTrackerWarpAffine::getParamInverse() "
+                                               "cannot inverse 2-by-2 matrix. Matrix determinant is 0."));
   }
 
-  double ri_11 =  r_00 / det;
-  double ri_00 =  r_11 / det;
+  double ri_11 = r_00 / det;
+  double ri_00 = r_11 / det;
   double ri_01 = -r_01 / det;
   double ri_10 = -r_10 / det;
 
@@ -253,9 +249,9 @@ void vpTemplateTrackerWarpAffine::getParamInverse(const vpColVector &p, vpColVec
 void vpTemplateTrackerWarpAffine::pRondp(const vpColVector &p1, const vpColVector &p2, vpColVector &p12) const
 {
   double r1_00 = 1 + p1[0], r1_01 = p1[2];
-  double r1_10 = p1[1],     r1_11 = 1 + p1[3];
+  double r1_10 = p1[1], r1_11 = 1 + p1[3];
   double r2_00 = 1 + p2[0], r2_01 = p2[2];
-  double r2_10 = p2[1],     r2_11 = 1 + p2[3];
+  double r2_10 = p2[1], r2_11 = 1 + p2[3];
   double u1 = p1[4];
   double v1 = p1[5];
   double u2 = p2[4];

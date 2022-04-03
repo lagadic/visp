@@ -211,8 +211,9 @@ OPTIONS                                                    Default\n\
      program was not properly stopped by a CTRL-C.\n\
             \n\
   -h      : Print this help.\n\
-            \n", name, name, name, name, name, name, name, name, name, roi_left, roi_top, roi_width, roi_height,
-          camera, nframes, ringbuffersize, panControl, opath.c_str());
+            \n",
+          name, name, name, name, name, name, name, name, name, roi_left, roi_top, roi_width, roi_height, camera,
+          nframes, ringbuffersize, panControl, opath.c_str());
 }
 
 /*!

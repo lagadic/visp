@@ -69,11 +69,11 @@ void vpFeatureMomentArea::compute_interaction()
   if (mobj.getType() == vpMomentObject::DISCRETE) {
     // Get centered moments
     bool found_centered;
-    const vpFeatureMomentCentered &momentCentered =
-        static_cast<const vpFeatureMomentCentered &>(featureMomentsDataBase->get("vpFeatureMomentCentered", found_centered));
+    const vpFeatureMomentCentered &momentCentered = static_cast<const vpFeatureMomentCentered &>(
+        featureMomentsDataBase->get("vpFeatureMomentCentered", found_centered));
     if (!found_centered)
       throw vpException(vpException::notInitialized, "vpFeatureMomentCentered not found");
-    interaction_matrices[0] = momentCentered.interaction(2,0) + momentCentered.interaction(0,2);
+    interaction_matrices[0] = momentCentered.interaction(2, 0) + momentCentered.interaction(0, 2);
   } else {
     // Get Xg and Yg
     bool found_xgyg;

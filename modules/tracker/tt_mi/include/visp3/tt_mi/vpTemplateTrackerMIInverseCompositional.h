@@ -84,8 +84,8 @@ protected:
 public:
   //! Default constructor.
   vpTemplateTrackerMIInverseCompositional()
-    : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false),
-      p_prec(), G_prec(), KQuasiNewton()
+    : vpTemplateTrackerMI(), minimizationMethod(USE_LMA), CompoInitialised(false), useTemplateSelect(false), p_prec(),
+      G_prec(), KQuasiNewton()
   {
   }
   explicit vpTemplateTrackerMIInverseCompositional(vpTemplateTrackerWarp *_warp);

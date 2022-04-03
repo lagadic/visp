@@ -61,10 +61,7 @@ vpException::vpException(int id, const char *format, ...) : code(id), message()
   va_end(args);
 }
 
-vpException::vpException(int id, const char *format, va_list args) : code(id), message()
-{
-  setMessage(format, args);
-}
+vpException::vpException(int id, const char *format, va_list args) : code(id), message() { setMessage(format, args); }
 /* ------------------------------------------------------------------------ */
 /* --- DESTRUCTORS -------------------------------------------------------- */
 /* ------------------------------------------------------------------------ */

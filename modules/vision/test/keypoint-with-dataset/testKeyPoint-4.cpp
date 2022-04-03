@@ -78,7 +78,8 @@ void usage(const char *name, const char *badparam)
 Test keypoints matching.\n\
 \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+  %s [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               \n\
@@ -144,9 +145,9 @@ bool getOptions(int argc, const char **argv, bool &click_allowed, bool &display)
   return true;
 }
 
-template<typename Type>
-void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display,
-              vpImage<Type> &I, vpImage<Type> &Imatch, vpImage<Type> &Iref)
+template <typename Type>
+void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display, vpImage<Type> &I,
+              vpImage<Type> &Imatch, vpImage<Type> &Iref)
 {
   // Set the path location of the image sequence
   std::string dirname = vpIoTools::createFilePath(env_ipath, "mbt/cube");
@@ -398,7 +399,6 @@ int main(int argc, const char **argv)
 
     {
       vpImage<unsigned char> I, Imatch, Iref;
-
 
       std::cout << "-- Test on gray level images" << std::endl;
       run_test(env_ipath, opt_click_allowed, opt_display, I, Imatch, Iref);

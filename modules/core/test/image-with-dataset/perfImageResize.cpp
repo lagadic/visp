@@ -40,11 +40,11 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
-#include <thread>
-#include <visp3/core/vpIoTools.h>
-#include <visp3/core/vpImageTools.h>
-#include <visp3/io/vpImageIo.h>
 #include "common.hpp"
+#include <thread>
+#include <visp3/core/vpImageTools.h>
+#include <visp3/core/vpIoTools.h>
+#include <visp3/io/vpImageIo.h>
 
 static const std::string ipath = vpIoTools::getViSPImagesDataPath();
 static std::string imagePathColor = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
@@ -52,13 +52,15 @@ static std::string imagePathGray = vpIoTools::createFilePath(ipath, "Klimt/Klimt
 static unsigned int g_resize_width = 293;
 static unsigned int g_resize_height = 137;
 
-TEST_CASE("Nearest Neighbor image resize (naive code)", "[benchmark]") {
+TEST_CASE("Nearest Neighbor image resize (naive code)", "[benchmark]")
+{
   SECTION("unsigned char")
   {
     vpImage<unsigned char> I, Iresize(g_resize_height, g_resize_width);
     vpImageIo::read(I, imagePathGray);
 
-    BENCHMARK("Benchmark Nearest Neighbor uchar image resize (naive code)") {
+    BENCHMARK("Benchmark Nearest Neighbor uchar image resize (naive code)")
+    {
       common_tools::resizeRef(I, Iresize, common_tools::g_nearest_neighbor);
       return Iresize;
     };
@@ -69,20 +71,23 @@ TEST_CASE("Nearest Neighbor image resize (naive code)", "[benchmark]") {
     vpImage<vpRGBa> I, Iresize(g_resize_height, g_resize_width);
     vpImageIo::read(I, imagePathColor);
 
-    BENCHMARK("Benchmark Nearest Neighbor RGBa image resize (naive code)") {
+    BENCHMARK("Benchmark Nearest Neighbor RGBa image resize (naive code)")
+    {
       common_tools::resizeRef(I, Iresize, common_tools::g_nearest_neighbor);
       return Iresize;
     };
   }
 }
 
-TEST_CASE("Nearest Neighbor image resize (ViSP)", "[benchmark]") {
+TEST_CASE("Nearest Neighbor image resize (ViSP)", "[benchmark]")
+{
   SECTION("unsigned char")
   {
     vpImage<unsigned char> I, Iresize(g_resize_height, g_resize_width);
     vpImageIo::read(I, imagePathGray);
 
-    BENCHMARK("Benchmark Nearest Neighbor uchar image resize (ViSP) (1 thread)") {
+    BENCHMARK("Benchmark Nearest Neighbor uchar image resize (ViSP) (1 thread)")
+    {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_NEAREST, 1);
       return Iresize;
     };
@@ -90,7 +95,8 @@ TEST_CASE("Nearest Neighbor image resize (ViSP)", "[benchmark]") {
     const unsigned int nThreads = std::thread::hardware_concurrency();
     char buffer[256];
     sprintf(buffer, "Benchmark Nearest Neighbor uchar image resize (ViSP) (%d threads)", nThreads);
-    BENCHMARK(buffer) {
+    BENCHMARK(buffer)
+    {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_NEAREST, nThreads);
       return Iresize;
     };
@@ -101,7 +107,8 @@ TEST_CASE("Nearest Neighbor image resize (ViSP)", "[benchmark]") {
     vpImage<vpRGBa> I, Iresize(g_resize_height, g_resize_width);
     vpImageIo::read(I, imagePathColor);
 
-    BENCHMARK("Benchmark Nearest Neighbor RGBa image resize (ViSP) (1 thread)") {
+    BENCHMARK("Benchmark Nearest Neighbor RGBa image resize (ViSP) (1 thread)")
+    {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_NEAREST, 1);
       return Iresize;
     };
@@ -109,20 +116,23 @@ TEST_CASE("Nearest Neighbor image resize (ViSP)", "[benchmark]") {
     const unsigned int nThreads = std::thread::hardware_concurrency();
     char buffer[256];
     sprintf(buffer, "Benchmark Nearest Neighbor RGBa image resize (ViSP) (%d threads)", nThreads);
-    BENCHMARK(buffer) {
+    BENCHMARK(buffer)
+    {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_NEAREST, nThreads);
       return Iresize;
     };
   }
 }
 
-TEST_CASE("Bilinear image resize (naive code)", "[benchmark]") {
+TEST_CASE("Bilinear image resize (naive code)", "[benchmark]")
+{
   SECTION("unsigned char")
   {
     vpImage<unsigned char> I, Iresize(g_resize_height, g_resize_width);
     vpImageIo::read(I, imagePathGray);
 
-    BENCHMARK("Benchmark Bilinear uchar image resize (naive code)") {
+    BENCHMARK("Benchmark Bilinear uchar image resize (naive code)")
+    {
       common_tools::resizeRef(I, Iresize, common_tools::g_bilinear);
       return Iresize;
     };
@@ -133,20 +143,23 @@ TEST_CASE("Bilinear image resize (naive code)", "[benchmark]") {
     vpImage<vpRGBa> I, Iresize(g_resize_height, g_resize_width);
     vpImageIo::read(I, imagePathColor);
 
-    BENCHMARK("Benchmark Bilinear RGBa image resize (naive code)") {
+    BENCHMARK("Benchmark Bilinear RGBa image resize (naive code)")
+    {
       common_tools::resizeRef(I, Iresize, common_tools::g_bilinear);
       return Iresize;
     };
   }
 }
 
-TEST_CASE("Bilinear image resize (ViSP)", "[benchmark]") {
+TEST_CASE("Bilinear image resize (ViSP)", "[benchmark]")
+{
   SECTION("unsigned char")
   {
     vpImage<unsigned char> I, Iresize(g_resize_height, g_resize_width);
     vpImageIo::read(I, imagePathGray);
 
-    BENCHMARK("Benchmark Bilinear uchar image resize (ViSP)") {
+    BENCHMARK("Benchmark Bilinear uchar image resize (ViSP)")
+    {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_LINEAR);
       return Iresize;
     };
@@ -157,20 +170,23 @@ TEST_CASE("Bilinear image resize (ViSP)", "[benchmark]") {
     vpImage<vpRGBa> I, Iresize(g_resize_height, g_resize_width);
     vpImageIo::read(I, imagePathColor);
 
-    BENCHMARK("Benchmark Bilinear RGBa image resize (ViSP)") {
+    BENCHMARK("Benchmark Bilinear RGBa image resize (ViSP)")
+    {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_LINEAR);
       return Iresize;
     };
   }
 }
 
-TEST_CASE("Area image resize (ViSP)", "[benchmark]") {
+TEST_CASE("Area image resize (ViSP)", "[benchmark]")
+{
   SECTION("unsigned char")
   {
     vpImage<unsigned char> I, Iresize(g_resize_height, g_resize_width);
     vpImageIo::read(I, imagePathGray);
 
-    BENCHMARK("Benchmark Area uchar image resize (ViSP)") {
+    BENCHMARK("Benchmark Area uchar image resize (ViSP)")
+    {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_AREA);
       return Iresize;
     };
@@ -181,20 +197,23 @@ TEST_CASE("Area image resize (ViSP)", "[benchmark]") {
     vpImage<vpRGBa> I, Iresize(g_resize_height, g_resize_width);
     vpImageIo::read(I, imagePathColor);
 
-    BENCHMARK("Benchmark Area RGBa image resize (ViSP)") {
+    BENCHMARK("Benchmark Area RGBa image resize (ViSP)")
+    {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_AREA);
       return Iresize;
     };
   }
 }
 
-TEST_CASE("Bicubic image resize (ViSP)", "[benchmark]") {
+TEST_CASE("Bicubic image resize (ViSP)", "[benchmark]")
+{
   SECTION("unsigned char")
   {
     vpImage<unsigned char> I, Iresize(g_resize_height, g_resize_width);
     vpImageIo::read(I, imagePathGray);
 
-    BENCHMARK("Benchmark Bicubic uchar image resize (ViSP) (1 thread)") {
+    BENCHMARK("Benchmark Bicubic uchar image resize (ViSP) (1 thread)")
+    {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_CUBIC, 1);
       return Iresize;
     };
@@ -202,7 +221,8 @@ TEST_CASE("Bicubic image resize (ViSP)", "[benchmark]") {
     const unsigned int nThreads = std::thread::hardware_concurrency();
     char buffer[256];
     sprintf(buffer, "Benchmark Bicubic uchar image resize (ViSP) (%d threads)", nThreads);
-    BENCHMARK(buffer) {
+    BENCHMARK(buffer)
+    {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_CUBIC, nThreads);
       return Iresize;
     };
@@ -213,7 +233,8 @@ TEST_CASE("Bicubic image resize (ViSP)", "[benchmark]") {
     vpImage<vpRGBa> I, Iresize(g_resize_height, g_resize_width);
     vpImageIo::read(I, imagePathColor);
 
-    BENCHMARK("Benchmark Bicubic RGBa image resize (ViSP) (1 thread)") {
+    BENCHMARK("Benchmark Bicubic RGBa image resize (ViSP) (1 thread)")
+    {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_CUBIC, 1);
       return Iresize;
     };
@@ -221,7 +242,8 @@ TEST_CASE("Bicubic image resize (ViSP)", "[benchmark]") {
     const unsigned int nThreads = std::thread::hardware_concurrency();
     char buffer[256];
     sprintf(buffer, "Benchmark Bicubic RGBa image resize (ViSP) (%d threads)", nThreads);
-    BENCHMARK(buffer) {
+    BENCHMARK(buffer)
+    {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_CUBIC, nThreads);
       return Iresize;
     };
@@ -229,13 +251,15 @@ TEST_CASE("Bicubic image resize (ViSP)", "[benchmark]") {
 }
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-TEST_CASE("Nearest Neighbor image resize (OpenCV)", "[benchmark]") {
+TEST_CASE("Nearest Neighbor image resize (OpenCV)", "[benchmark]")
+{
   SECTION("unsigned char")
   {
     cv::Mat img, img_resize;
     img = cv::imread(imagePathGray, cv::IMREAD_GRAYSCALE);
 
-    BENCHMARK("Benchmark Nearest Neighbor uchar image resize (OpenCV)") {
+    BENCHMARK("Benchmark Nearest Neighbor uchar image resize (OpenCV)")
+    {
       cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_NEAREST);
       return img_resize;
     };
@@ -246,20 +270,23 @@ TEST_CASE("Nearest Neighbor image resize (OpenCV)", "[benchmark]") {
     cv::Mat img, img_resize;
     img = cv::imread(imagePathColor, cv::IMREAD_COLOR);
 
-    BENCHMARK("Benchmark Nearest Neighbor BGR image resize (OpenCV)") {
+    BENCHMARK("Benchmark Nearest Neighbor BGR image resize (OpenCV)")
+    {
       cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_NEAREST);
       return img_resize;
     };
   }
 }
 
-TEST_CASE("Bilinear image resize (OpenCV)", "[benchmark]") {
+TEST_CASE("Bilinear image resize (OpenCV)", "[benchmark]")
+{
   SECTION("unsigned char")
   {
     cv::Mat img, img_resize;
     img = cv::imread(imagePathGray, cv::IMREAD_GRAYSCALE);
 
-    BENCHMARK("Benchmark Bilinear uchar image resize (OpenCV)") {
+    BENCHMARK("Benchmark Bilinear uchar image resize (OpenCV)")
+    {
       cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_LINEAR);
       return img_resize;
     };
@@ -270,20 +297,23 @@ TEST_CASE("Bilinear image resize (OpenCV)", "[benchmark]") {
     cv::Mat img, img_resize;
     img = cv::imread(imagePathColor, cv::IMREAD_COLOR);
 
-    BENCHMARK("Benchmark Bilinear BGR image resize (OpenCV)") {
+    BENCHMARK("Benchmark Bilinear BGR image resize (OpenCV)")
+    {
       cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_LINEAR);
       return img_resize;
     };
   }
 }
 
-TEST_CASE("Area image resize (OpenCV)", "[benchmark]") {
+TEST_CASE("Area image resize (OpenCV)", "[benchmark]")
+{
   SECTION("unsigned char")
   {
     cv::Mat img, img_resize;
     img = cv::imread(imagePathGray, cv::IMREAD_GRAYSCALE);
 
-    BENCHMARK("Benchmark Area uchar image resize (OpenCV)") {
+    BENCHMARK("Benchmark Area uchar image resize (OpenCV)")
+    {
       cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_AREA);
       return img_resize;
     };
@@ -294,20 +324,23 @@ TEST_CASE("Area image resize (OpenCV)", "[benchmark]") {
     cv::Mat img, img_resize;
     img = cv::imread(imagePathColor, cv::IMREAD_COLOR);
 
-    BENCHMARK("Benchmark Area BGR image resize (OpenCV)") {
+    BENCHMARK("Benchmark Area BGR image resize (OpenCV)")
+    {
       cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_AREA);
       return img_resize;
     };
   }
 }
 
-TEST_CASE("Bicubic image resize (OpenCV)", "[benchmark]") {
+TEST_CASE("Bicubic image resize (OpenCV)", "[benchmark]")
+{
   SECTION("unsigned char")
   {
     cv::Mat img, img_resize;
     img = cv::imread(imagePathGray, cv::IMREAD_GRAYSCALE);
 
-    BENCHMARK("Benchmark Bicubic uchar image resize (OpenCV)") {
+    BENCHMARK("Benchmark Bicubic uchar image resize (OpenCV)")
+    {
       cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_CUBIC);
       return img_resize;
     };
@@ -318,7 +351,8 @@ TEST_CASE("Bicubic image resize (OpenCV)", "[benchmark]") {
     cv::Mat img, img_resize;
     img = cv::imread(imagePathColor, cv::IMREAD_COLOR);
 
-    BENCHMARK("Benchmark Bicubic BGR image resize (OpenCV)") {
+    BENCHMARK("Benchmark Bicubic BGR image resize (OpenCV)")
+    {
       cv::resize(img, img_resize, cv::Size(g_resize_width, g_resize_height), 0, 0, cv::INTER_CUBIC);
       return img_resize;
     };
@@ -333,21 +367,14 @@ int main(int argc, char *argv[])
   bool runBenchmark = false;
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
-  auto cli = session.cli() // Get Catch's composite command line parser
-    | Opt(runBenchmark)    // bind variable to a new option, with a hint string
-    ["--benchmark"]        // the option names it will respond to
-    ("run benchmark?")     // description string for the help output
-    | Opt(imagePathColor, "imagePathColor")
-    ["--imagePathColor"]
-    ("Path to color image")
-    | Opt(imagePathGray, "imagePathColor")
-    ["--imagePathGray"]
-    | Opt(g_resize_width, "g_resize_width")
-    ["--width"]
-    ("Resize width")
-    | Opt(g_resize_height, "g_resize_height")
-    ["--height"]
-    ("Resize height");
+  auto cli = session.cli()         // Get Catch's composite command line parser
+             | Opt(runBenchmark)   // bind variable to a new option, with a hint string
+                   ["--benchmark"] // the option names it will respond to
+             ("run benchmark?")    // description string for the help output
+             | Opt(imagePathColor, "imagePathColor")["--imagePathColor"]("Path to color image") |
+             Opt(imagePathGray, "imagePathColor")["--imagePathGray"] |
+             Opt(g_resize_width, "g_resize_width")["--width"]("Resize width") |
+             Opt(g_resize_height, "g_resize_height")["--height"]("Resize height");
 
   // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
@@ -358,11 +385,13 @@ int main(int argc, char *argv[])
   if (runBenchmark) {
     vpImage<vpRGBa> I_color;
     vpImageIo::read(I_color, imagePathColor);
-    std::cout << "imagePathColor:\n\t" << imagePathColor << "\n\t" << I_color.getWidth() << "x" << I_color.getHeight() << std::endl;
+    std::cout << "imagePathColor:\n\t" << imagePathColor << "\n\t" << I_color.getWidth() << "x" << I_color.getHeight()
+              << std::endl;
 
     vpImage<unsigned char> I_gray;
     vpImageIo::read(I_gray, imagePathGray);
-    std::cout << "imagePathGray:\n\t" << imagePathGray << "\n\t" << I_gray.getWidth() << "x" << I_gray.getHeight() << std::endl;
+    std::cout << "imagePathGray:\n\t" << imagePathGray << "\n\t" << I_gray.getWidth() << "x" << I_gray.getHeight()
+              << std::endl;
     std::cout << "Resize to: " << g_resize_width << "x" << g_resize_height << std::endl;
 
     int numFailed = session.run();
@@ -378,8 +407,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

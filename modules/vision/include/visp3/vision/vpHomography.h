@@ -235,7 +235,7 @@ public:
   vpHomography homography2collineation(const vpCameraParameters &cam) const;
 
   //! invert the homography
-  vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank=NULL) const;
+  vpHomography inverse(double sv_threshold = 1e-16, unsigned int *rank = NULL) const;
   //! invert the homography
   void inverse(vpHomography &Hi) const;
 
@@ -300,9 +300,8 @@ public:
   static void computeDisplacement(const vpHomography &aHb, vpRotationMatrix &aRb, vpTranslationVector &atb,
                                   vpColVector &n);
 
-  static void computeDisplacement(const vpHomography &H, double x, double y,
-                                  std::list<vpRotationMatrix> &vR, std::list<vpTranslationVector> &vT,
-                                  std::list<vpColVector> &vN);
+  static void computeDisplacement(const vpHomography &H, double x, double y, std::list<vpRotationMatrix> &vR,
+                                  std::list<vpTranslationVector> &vT, std::list<vpColVector> &vN);
   static double computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpPlane &oN,
                                     vpHomogeneousMatrix &c2Mc1, vpHomogeneousMatrix &c1Mo, int userobust);
   static double computeDisplacement(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpPlane *oN,
@@ -312,8 +311,8 @@ public:
   static double computeRotation(unsigned int nbpoint, vpPoint *c1P, vpPoint *c2P, vpHomogeneousMatrix &c2Mc1,
                                 int userobust);
   static void computeTransformation(vpColVector &x, unsigned int *ind, vpColVector &M);
-  static bool degenerateConfiguration(vpColVector &x, unsigned int *ind);
-  static bool degenerateConfiguration(vpColVector &x, unsigned int *ind, double threshold_area);
+  static bool degenerateConfiguration(const vpColVector &x, unsigned int *ind);
+  static bool degenerateConfiguration(const vpColVector &x, unsigned int *ind, double threshold_area);
   static bool degenerateConfiguration(const std::vector<double> &xb, const std::vector<double> &yb,
                                       const std::vector<double> &xa, const std::vector<double> &ya);
   static void HartleyNormalization(unsigned int n, const double *x, const double *y, double *xn, double *yn, double &xg,

@@ -32,18 +32,19 @@
  * Test for vpImagePoint::getValue().
  *
  *****************************************************************************/
- /*!
-   \example testImageGetValue.cpp
+/*!
+  \example testImageGetValue.cpp
 
-   \brief Test for vpImagePoint::getValue().
- */
+  \brief Test for vpImagePoint::getValue().
+*/
 
 #include <iostream>
 #include <visp3/core/vpImage.h>
 
 namespace
 {
-template<typename PixelType> PixelType checkPixelAccess(unsigned int height, unsigned int width, double v, double u) {
+template <typename PixelType> PixelType checkPixelAccess(unsigned int height, unsigned int width, double v, double u)
+{
   vpImage<PixelType> I(height, width);
   for (unsigned int i = 0; i < I.getHeight(); i++) {
     for (unsigned int j = 0; j < I.getWidth(); j++) {
@@ -51,36 +52,40 @@ template<typename PixelType> PixelType checkPixelAccess(unsigned int height, uns
     }
   }
 
-  return I.getValue(v,u);
+  return I.getValue(v, u);
 }
 
-template<> vpRGBa checkPixelAccess(unsigned int height, unsigned int width, double v, double u) {
+template <> vpRGBa checkPixelAccess(unsigned int height, unsigned int width, double v, double u)
+{
   vpImage<vpRGBa> I(height, width);
   for (unsigned int i = 0; i < I.getHeight(); i++) {
     for (unsigned int j = 0; j < I.getWidth(); j++) {
-      I[i][j] = vpRGBa(static_cast<unsigned char>(i * I.getWidth() + j),
-                       static_cast<unsigned char>(i * I.getWidth() + j),
-                       static_cast<unsigned char>(i * I.getWidth() + j));
+      I[i][j] =
+          vpRGBa(static_cast<unsigned char>(i * I.getWidth() + j), static_cast<unsigned char>(i * I.getWidth() + j),
+                 static_cast<unsigned char>(i * I.getWidth() + j));
     }
   }
 
-  return I.getValue(v,u);
+  return I.getValue(v, u);
 }
 
-double randomDouble(double a, double b) {
+double randomDouble(double a, double b)
+{
   double random = (static_cast<double>(rand())) / static_cast<double>(RAND_MAX);
   double diff = b - a;
   double r = random * diff;
   return a + r;
 }
 
-unsigned char randomPixelValue() {
+unsigned char randomPixelValue()
+{
   const int min = 0, max = 255;
   return static_cast<unsigned char>((rand() % (max - min + 1) + min));
 }
 
-template <class PixelType> PixelType getValue(const vpImage<PixelType> &I, double i, double j, bool roundValue) {
-  if (i < 0 || j < 0 || i+1 > I.getHeight() || j+1 > I.getWidth()) {
+template <class PixelType> PixelType getValue(const vpImage<PixelType> &I, double i, double j, bool roundValue)
+{
+  if (i < 0 || j < 0 || i + 1 > I.getHeight() || j + 1 > I.getWidth()) {
     throw(vpException(vpImageException::notInTheImage, "Pixel outside of the image"));
   }
   if (I.getHeight() * I.getWidth() == 0) {
@@ -99,18 +104,20 @@ template <class PixelType> PixelType getValue(const vpImage<PixelType> &I, doubl
   unsigned int iround_1 = (std::min)(I.getHeight() - 1, iround + 1);
   unsigned int jround_1 = (std::min)(I.getWidth() - 1, jround + 1);
 
-  double value = (static_cast<double>(I[iround][jround]) * rfrac + static_cast<double>(I[iround_1][jround]) * rratio) * cfrac +
-                 (static_cast<double>(I[iround][jround_1]) * rfrac + static_cast<double>(I[iround_1][jround_1]) * rratio) * cratio;
+  double value =
+      (static_cast<double>(I[iround][jround]) * rfrac + static_cast<double>(I[iround_1][jround]) * rratio) * cfrac +
+      (static_cast<double>(I[iround][jround_1]) * rfrac + static_cast<double>(I[iround_1][jround_1]) * rratio) * cratio;
 
   return static_cast<PixelType>(roundValue ? vpMath::round(value) : value);
 }
 } // namespace
 
-int main() {
-  //Test out of image memory access
-  //vpImage::getValue(double, double)
+int main()
+{
+  // Test out of image memory access
+  // vpImage::getValue(double, double)
   {
-    //unsigned char
+    // unsigned char
     std::cout << "checkPixelAccess<unsigned char>(3, 4, 2, 3): "
               << static_cast<unsigned int>(checkPixelAccess<unsigned char>(3, 4, 2, 3)) << std::endl;
     try {
@@ -118,55 +125,71 @@ int main() {
                 << static_cast<unsigned int>(checkPixelAccess<unsigned char>(3, 4, -2, -3)) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) { std::cout << "\n"; }
+    } catch (...) {
+      std::cout << "\n";
+    }
     try {
       std::cout << "checkPixelAccess<unsigned char>(3, 4, 3, 4): "
                 << static_cast<unsigned int>(checkPixelAccess<unsigned char>(3, 4, 3, 4)) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) { std::cout << "\n"; }
+    } catch (...) {
+      std::cout << "\n";
+    }
 
-    //vpRGBa
+    // vpRGBa
     std::cout << "checkPixelAccess<vpRGBa>(3, 4, 2, 3): " << checkPixelAccess<vpRGBa>(3, 4, 2, 3) << std::endl;
     try {
       std::cout << "checkPixelAccess<vpRGBa>(3, 4, -2, -3): " << checkPixelAccess<vpRGBa>(3, 4, -2, -3) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) { std::cout << "\n"; }
+    } catch (...) {
+      std::cout << "\n";
+    }
     try {
       std::cout << "checkPixelAccess<vpRGBa>(3, 4, 3, 4): " << checkPixelAccess<vpRGBa>(3, 4, 3, 4) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) { std::cout << "\n"; }
+    } catch (...) {
+      std::cout << "\n";
+    }
 
-    //int
+    // int
     std::cout << "checkPixelAccess<int>(3, 4, 2, 3): " << checkPixelAccess<int>(3, 4, 2, 3) << std::endl;
     try {
       std::cout << "checkPixelAccess<int>(3, 4, -2, -3): " << checkPixelAccess<int>(3, 4, -2, -3) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) { std::cout << "\n"; }
+    } catch (...) {
+      std::cout << "\n";
+    }
     try {
       std::cout << "checkPixelAccess<int>(3, 4, 3, 4): " << checkPixelAccess<int>(3, 4, 3, 4) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) { std::cout << "\n"; }
+    } catch (...) {
+      std::cout << "\n";
+    }
 
-    //double
+    // double
     std::cout << "checkPixelAccess<double>(3, 4, 2, 3): " << checkPixelAccess<double>(3, 4, 2, 3) << std::endl;
     try {
       std::cout << "checkPixelAccess<double>(3, 4, -2, -3): " << checkPixelAccess<double>(3, 4, -2, -3) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) { std::cout << "\n"; }
+    } catch (...) {
+      std::cout << "\n";
+    }
     try {
       std::cout << "checkPixelAccess<double>(3, 4, 3, 4): " << checkPixelAccess<double>(3, 4, 3, 4) << std::endl;
       std::cerr << "Out of image access exception should have been thrown" << std::endl;
       return EXIT_FAILURE;
-    } catch (...) { std::cout << "\n"; }
+    } catch (...) {
+      std::cout << "\n";
+    }
   }
 
-  //Test difference between double bilinear interpolation and fixed-point interpolation
+  // Test difference between double bilinear interpolation and fixed-point interpolation
   srand(0);
 
   {
@@ -204,7 +227,7 @@ int main() {
     }
   }
 
-  //Test performance double bilinear interpolation + round vs fixed-point interpolation
+  // Test performance double bilinear interpolation + round vs fixed-point interpolation
   {
     vpImage<unsigned char> I(1080, 1920);
     for (unsigned int i = 0; i < I.getHeight(); i++) {
@@ -228,7 +251,8 @@ int main() {
       sum1 += I.getValue(idx1, idx2);
     }
     t_optim = vpTime::measureTimeMs() - t_optim;
-    std::cout << "\nFixed-point vpImage::getValue(double, double), sum1: " << sum1 << " in " << t_optim << " ms" << std::endl;
+    std::cout << "\nFixed-point vpImage::getValue(double, double), sum1: " << sum1 << " in " << t_optim << " ms"
+              << std::endl;
 
     int sum2 = 0;
     double t_old = vpTime::measureTimeMs();
@@ -242,7 +266,7 @@ int main() {
     std::cout << "Speed-up: " << t_old / t_optim << "X" << std::endl;
   }
 
-  //Test performance double bilinear interpolation + round vs fixed-point interpolation
+  // Test performance double bilinear interpolation + round vs fixed-point interpolation
   {
     vpImage<unsigned char> I(1080, 1920);
     for (unsigned int i = 0; i < I.getHeight(); i++) {
@@ -266,7 +290,8 @@ int main() {
       sum1 += I.getValue(idx1, idx2);
     }
     t_optim = vpTime::measureTimeMs() - t_optim;
-    std::cout << "\nFixed-point vpImage::getValue(double, double), sum1: " << sum1 << " in " << t_optim << " ms" << std::endl;
+    std::cout << "\nFixed-point vpImage::getValue(double, double), sum1: " << sum1 << " in " << t_optim << " ms"
+              << std::endl;
 
     int sum2 = 0;
     double t_old = vpTime::measureTimeMs();
@@ -280,7 +305,7 @@ int main() {
     std::cout << "Speed-up: " << t_old / t_optim << "X" << std::endl;
   }
 
-  //Check that getValue() still returns correct values
+  // Check that getValue() still returns correct values
   {
     vpImage<unsigned char> I(480, 640);
     for (unsigned int i = 0; i < I.getHeight(); i++) {
@@ -301,7 +326,8 @@ int main() {
     }
 
     bool same = (I == I_copy);
-    std::cout << "\nCheck that getValue returns correct results for integer coordinates\n(I == I_copy)? " << same << std::endl;
+    std::cout << "\nCheck that getValue returns correct results for integer coordinates\n(I == I_copy)? " << same
+              << std::endl;
     if (!same) {
       std::cerr << "Issue with vpImage::getValue(double, double)!" << std::endl;
       return EXIT_FAILURE;

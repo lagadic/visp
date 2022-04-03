@@ -42,14 +42,14 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                         \
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
     (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #ifdef VISP_HAVE_PCL
+#include <mutex>
 #include <pcl/visualization/cloud_viewer.h>
 #include <pcl/visualization/pcl_visualizer.h>
 #include <thread>
-#include <mutex>
 #endif
 
 #include <visp3/core/vpImage.h>
@@ -212,7 +212,7 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
   const int size = w * h;
 
   if (f.get_profile().format() == RS2_FORMAT_BGR8) {
-    memcpy(static_cast<void*>(img.ptr<cv::Vec3b>()), f.get_data(), size * 3);
+    memcpy(static_cast<void *>(img.ptr<cv::Vec3b>()), f.get_data(), size * 3);
   } else if (f.get_profile().format() == RS2_FORMAT_RGB8) {
     cv::Mat tmp(h, w, CV_8UC3, (void *)f.get_data(), cv::Mat::AUTO_STEP);
     cv::cvtColor(tmp, img, cv::COLOR_RGB2BGR);
@@ -221,7 +221,7 @@ void frame_to_mat(const rs2::frame &f, cv::Mat &img)
   }
 }
 #endif
-}
+} // namespace
 
 int main(int argc, char *argv[])
 {
@@ -242,10 +242,10 @@ int main(int argc, char *argv[])
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << argv[0] << " [--show_info]"
 #ifdef VISP_HAVE_PCL
-                           << " [--pcl_color]"
+                << " [--pcl_color]"
 #endif
-                           << " [--help] [-h]"
-                           << "\n";
+                << " [--help] [-h]"
+                << "\n";
       return EXIT_SUCCESS;
     }
   }
@@ -535,8 +535,8 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef VISP_HAVE_PCL
-  //Pointcloud acquisition using std::vector<vpColVector> + visualization
-  //See issue #355
+  // Pointcloud acquisition using std::vector<vpColVector> + visualization
+  // See issue #355
   ViewerWorker viewer_colvector2(false, mutex);
   std::thread viewer_colvector_thread2(&ViewerWorker::run, &viewer_colvector2);
   cancelled = false;

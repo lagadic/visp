@@ -158,8 +158,8 @@ public:
   vpColVector(const std::vector<float> &v);
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpColVector(vpColVector &&v);
-  vpColVector(const std::initializer_list<double> &list)
-    : vpArray2D<double>(static_cast<unsigned int>(list.size()), 1) {
+  vpColVector(const std::initializer_list<double> &list) : vpArray2D<double>(static_cast<unsigned int>(list.size()), 1)
+  {
     std::copy(list.begin(), list.end(), data);
   }
 #endif
@@ -282,8 +282,8 @@ public:
 
   vpColVector &operator<<(const vpColVector &v);
   vpColVector &operator<<(double *);
-  vpColVector& operator<<(double val);
-  vpColVector& operator,(double val);
+  vpColVector &operator<<(double val);
+  vpColVector &operator,(double val);
 
   int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
 

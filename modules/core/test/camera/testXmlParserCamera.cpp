@@ -39,8 +39,8 @@
   Test vpXmlParserCamera parse / save.
 */
 
-#include <visp3/core/vpXmlParserCamera.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpXmlParserCamera.h>
 
 int main()
 {
@@ -88,7 +88,8 @@ int main()
   {
     std::cout << std::endl;
     vpCameraParameters cam;
-    cam.initPersProjWithDistortion(276.2969237503, 271.9362132652, 162.3242102636, 113.4435399636, 0.0272549570, -0.0270531436);
+    cam.initPersProjWithDistortion(276.2969237503, 271.9362132652, 162.3242102636, 113.4435399636, 0.0272549570,
+                                   -0.0270531436);
     std::string filename = tmp_dir + "test_write_cam_with_distortion.xml";
     {
       vpXmlParserCamera xml;
@@ -121,7 +122,8 @@ int main()
     distortion_coeffs.push_back(-0.032205019146204);
     distortion_coeffs.push_back(0.004446716979146);
     distortion_coeffs.push_back(0);
-    cam.initProjWithKannalaBrandtDistortion(285.523895263672, 286.6708984375, 420.874114990234, 381.085388183594, distortion_coeffs);
+    cam.initProjWithKannalaBrandtDistortion(285.523895263672, 286.6708984375, 420.874114990234, 381.085388183594,
+                                            distortion_coeffs);
     std::string filename = tmp_dir + "test_write_cam_with_KannalaBrandt_distortion.xml";
     {
       vpXmlParserCamera xml;

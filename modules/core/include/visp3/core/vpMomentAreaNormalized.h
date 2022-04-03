@@ -81,12 +81,12 @@ continous cases.
 
   This example shows a computation in the discrete case.
   \code
+#include <visp3/core/vpMomentAreaNormalized.h>
+#include <visp3/core/vpMomentCentered.h>
+#include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentAreaNormalized.h>
 
 int main()
 {

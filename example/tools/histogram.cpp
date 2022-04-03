@@ -85,7 +85,8 @@ the image and the overlayed features in an image on the disk.\n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-o <output histogram path>]\n\
      [-h]\n\
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -103,7 +104,8 @@ OPTIONS:                                               Default\n\
      \"histogram.txt\" is saved.\n\
 \n\
   -h\n\
-     Print the help.\n\n", ipath.c_str(), opath.c_str(), user.c_str());
+     Print the help.\n\n",
+          ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");

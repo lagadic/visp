@@ -39,15 +39,16 @@
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
 #include <opencv2/core/core.hpp>
 
-#include <visp3/core/vpPixelMeterConversion.h>
-#include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpPolygon.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
-namespace calib_helper {
+namespace calib_helper
+{
 class Settings
 {
 public:
@@ -127,44 +128,45 @@ private:
   std::string patternToUse;
 };
 
-struct CalibInfo
-{
-    CalibInfo(const vpImage<unsigned char> &img, const std::vector<vpPoint> &points, const std::vector<vpImagePoint> &imPts,
-              const std::string &frame_name)
-        : m_img(img), m_points(points), m_imPts(imPts), m_frame_name(frame_name) {}
+struct CalibInfo {
+  CalibInfo(const vpImage<unsigned char> &img, const std::vector<vpPoint> &points,
+            const std::vector<vpImagePoint> &imPts, const std::string &frame_name)
+    : m_img(img), m_points(points), m_imPts(imPts), m_frame_name(frame_name)
+  {
+  }
 
-    vpImage<unsigned char> m_img;
-    std::vector<vpPoint> m_points;
-    std::vector<vpImagePoint> m_imPts;
-    std::string m_frame_name;
+  vpImage<unsigned char> m_img;
+  std::vector<vpPoint> m_points;
+  std::vector<vpImagePoint> m_imPts;
+  std::string m_frame_name;
 };
 
 void drawCalibrationOccupancy(vpImage<unsigned char> &I, const std::vector<CalibInfo> &calib_info,
                               unsigned int patternW)
 {
-    I = 0;
-    unsigned char pixel_value = static_cast<unsigned char>(255.0 / calib_info.size());
-    for (size_t idx = 0; idx < calib_info.size(); idx++) {
-        const CalibInfo& calib = calib_info[idx];
+  I = 0;
+  unsigned char pixel_value = static_cast<unsigned char>(255.0 / calib_info.size());
+  for (size_t idx = 0; idx < calib_info.size(); idx++) {
+    const CalibInfo &calib = calib_info[idx];
 
-        std::vector<vpImagePoint> corners;
-        corners.push_back(calib.m_imPts.front());
-        corners.push_back(*(calib.m_imPts.begin() + patternW-1));
-        corners.push_back(calib.m_imPts.back());
-        corners.push_back(*(calib.m_imPts.end() - patternW));
-        vpPolygon poly(corners);
+    std::vector<vpImagePoint> corners;
+    corners.push_back(calib.m_imPts.front());
+    corners.push_back(*(calib.m_imPts.begin() + patternW - 1));
+    corners.push_back(calib.m_imPts.back());
+    corners.push_back(*(calib.m_imPts.end() - patternW));
+    vpPolygon poly(corners);
 
-        for (unsigned int i = 0; i < I.getHeight(); i++) {
-            for (unsigned int j = 0; j < I.getWidth(); j++) {
-                if (poly.isInside(vpImagePoint(i,j))) {
-                    I[i][j] += pixel_value;
-                }
-            }
+    for (unsigned int i = 0; i < I.getHeight(); i++) {
+      for (unsigned int j = 0; j < I.getWidth(); j++) {
+        if (poly.isInside(vpImagePoint(i, j))) {
+          I[i][j] += pixel_value;
         }
+      }
     }
+  }
 }
 
-std::vector<vpImagePoint> undistort(const vpCameraParameters& cam_dist, const std::vector<vpImagePoint>& imPts)
+std::vector<vpImagePoint> undistort(const vpCameraParameters &cam_dist, const std::vector<vpImagePoint> &imPts)
 {
   std::vector<vpImagePoint> imPts_undist;
 
@@ -183,46 +185,45 @@ std::vector<vpImagePoint> undistort(const vpCameraParameters& cam_dist, const st
 
 bool extractCalibrationPoints(const Settings &s, const cv::Mat &cvI, std::vector<cv::Point2f> &pointBuf)
 {
-    bool found = false;
-    switch (s.calibrationPattern) // Find feature points on the input format
-    {
-    case Settings::CHESSBOARD:
-      found = findChessboardCorners(cvI, s.boardSize, pointBuf,
+  bool found = false;
+  switch (s.calibrationPattern) // Find feature points on the input format
+  {
+  case Settings::CHESSBOARD:
+    found =
+        findChessboardCorners(cvI, s.boardSize, pointBuf,
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-                                    cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FAST_CHECK |
-                                        cv::CALIB_CB_NORMALIZE_IMAGE);
+                              cv::CALIB_CB_ADAPTIVE_THRESH | cv::CALIB_CB_FAST_CHECK | cv::CALIB_CB_NORMALIZE_IMAGE);
 #else
-                                    CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK |
-                                        CV_CALIB_CB_NORMALIZE_IMAGE);
+                              CV_CALIB_CB_ADAPTIVE_THRESH | CV_CALIB_CB_FAST_CHECK | CV_CALIB_CB_NORMALIZE_IMAGE);
 #endif
-      break;
-    case Settings::CIRCLES_GRID:
-      found = findCirclesGrid(cvI, s.boardSize, pointBuf, cv::CALIB_CB_SYMMETRIC_GRID);
-      break;
-    case Settings::UNDEFINED:
-    default:
-      break;
-    }
+    break;
+  case Settings::CIRCLES_GRID:
+    found = findCirclesGrid(cvI, s.boardSize, pointBuf, cv::CALIB_CB_SYMMETRIC_GRID);
+    break;
+  case Settings::UNDEFINED:
+  default:
+    break;
+  }
 
-    if (found) // If done with success,
-    {
-      std::vector<vpImagePoint> data;
+  if (found) // If done with success,
+  {
+    std::vector<vpImagePoint> data;
 
-      if (s.calibrationPattern == Settings::CHESSBOARD) {
-        // improve the found corners' coordinate accuracy for chessboard
-        cornerSubPix(cvI, pointBuf, cv::Size(11, 11), cv::Size(-1, -1),
+    if (s.calibrationPattern == Settings::CHESSBOARD) {
+      // improve the found corners' coordinate accuracy for chessboard
+      cornerSubPix(cvI, pointBuf, cv::Size(11, 11), cv::Size(-1, -1),
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
-                     cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 30, 0.1));
+                   cv::TermCriteria(cv::TermCriteria::EPS + cv::TermCriteria::COUNT, 30, 0.1));
 #else
-                     cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
+                   cv::TermCriteria(CV_TERMCRIT_EPS + CV_TERMCRIT_ITER, 30, 0.1));
 #endif
-      }
     }
+  }
 
-    return found;
+  return found;
 }
 
-} //calib_helper
+} // namespace calib_helper
 
-#endif //DOXYGEN_SHOULD_SKIP_THIS
-#endif //VISP_HAVE_OPENCV_VERSION >= 0x020300
+#endif // DOXYGEN_SHOULD_SKIP_THIS
+#endif // VISP_HAVE_OPENCV_VERSION >= 0x020300

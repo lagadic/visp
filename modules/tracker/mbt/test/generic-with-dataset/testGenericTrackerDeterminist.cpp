@@ -40,8 +40,8 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
-#include <thread>
 #include <future>
+#include <thread>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
@@ -53,7 +53,7 @@
 
 namespace
 {
-bool read_data(int cpt, vpImage<unsigned char>& I)
+bool read_data(int cpt, vpImage<unsigned char> &I)
 {
   const std::string env_ipath = vpIoTools::getViSPImagesDataPath();
   const std::string ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.pgm");
@@ -70,7 +70,7 @@ bool read_data(int cpt, vpImage<unsigned char>& I)
   return true;
 }
 
-void checkPoses(const vpHomogeneousMatrix& cMo1, const vpHomogeneousMatrix& cMo2)
+void checkPoses(const vpHomogeneousMatrix &cMo1, const vpHomogeneousMatrix &cMo2)
 {
   for (unsigned int i = 0; i < 3; i++) {
     for (unsigned int j = 0; j < 4; j++) {
@@ -79,7 +79,7 @@ void checkPoses(const vpHomogeneousMatrix& cMo1, const vpHomogeneousMatrix& cMo2
   }
 }
 
-void configureTracker(vpMbGenericTracker& tracker, vpCameraParameters& cam)
+void configureTracker(vpMbGenericTracker &tracker, vpCameraParameters &cam)
 {
   const std::string env_ipath = vpIoTools::getViSPImagesDataPath();
   const std::string configFile = vpIoTools::createFilePath(env_ipath, "mbt/cube.xml");
@@ -95,9 +95,10 @@ void configureTracker(vpMbGenericTracker& tracker, vpCameraParameters& cam)
   read_data(0, I);
   tracker.initFromPose(I, vpHomogeneousMatrix(initPose));
 }
-} //anonymous namespace
+} // anonymous namespace
 
-TEST_CASE("Check MBT determinism sequential", "[MBT_determinism]") {
+TEST_CASE("Check MBT determinism sequential", "[MBT_determinism]")
+{
   // First tracker
   vpMbGenericTracker tracker1;
   vpCameraParameters cam;
@@ -144,7 +145,8 @@ TEST_CASE("Check MBT determinism sequential", "[MBT_determinism]") {
   checkPoses(cMo1, cMo2);
 }
 
-TEST_CASE("Check MBT determinism parallel", "[MBT_determinism]") {
+TEST_CASE("Check MBT determinism parallel", "[MBT_determinism]")
+{
   // First tracker
   std::future<vpHomogeneousMatrix> res_cMo1 = std::async(std::launch::async, []() {
     vpMbGenericTracker tracker1;
@@ -185,7 +187,8 @@ TEST_CASE("Check MBT determinism parallel", "[MBT_determinism]") {
   checkPoses(cMo1, cMo2);
 }
 
-TEST_CASE("Check Stereo MBT determinism parallel", "[MBT_determinism]") {
+TEST_CASE("Check Stereo MBT determinism parallel", "[MBT_determinism]")
+{
   // First tracker
   std::future<vpHomogeneousMatrix> res_cMo1 = std::async(std::launch::async, []() {
     vpMbGenericTracker tracker1(2);
@@ -200,7 +203,6 @@ TEST_CASE("Check Stereo MBT determinism parallel", "[MBT_determinism]") {
     }
     return cMo1;
   });
-
 
   // Second tracker
   std::future<vpHomogeneousMatrix> res_cMo2 = std::async(std::launch::async, []() {
@@ -244,8 +246,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

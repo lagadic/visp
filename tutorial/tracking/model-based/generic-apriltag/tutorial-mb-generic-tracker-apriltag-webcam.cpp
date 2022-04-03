@@ -3,19 +3,15 @@
 #include <ios>
 #include <iostream>
 
+#include <visp3/core/vpXmlParserCamera.h>
+#include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/core/vpXmlParserCamera.h>
-#include <visp3/sensor/vpV4l2Grabber.h>
-#include <visp3/detection/vpDetectorAprilTag.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
+#include <visp3/sensor/vpV4l2Grabber.h>
 
-typedef enum {
-  state_detection,
-  state_tracking,
-  state_quit
-} state_t;
+typedef enum { state_detection, state_tracking, state_quit } state_t;
 
 // Creates a cube.cao file in your current directory
 // cubeEdgeSize : size of cube edges in meters
@@ -26,14 +22,14 @@ void createCaoFile(double cubeEdgeSize)
   fileStream << "V1\n";
   fileStream << "# 3D Points\n";
   fileStream << "8                  # Number of points\n";
-  fileStream <<  cubeEdgeSize / 2 << " " <<  cubeEdgeSize / 2 << " " << 0 << "    # Point 0: (X, Y, Z)\n";
-  fileStream <<  cubeEdgeSize / 2 << " " << -cubeEdgeSize / 2 << " " << 0 << "    # Point 1\n";
+  fileStream << cubeEdgeSize / 2 << " " << cubeEdgeSize / 2 << " " << 0 << "    # Point 0: (X, Y, Z)\n";
+  fileStream << cubeEdgeSize / 2 << " " << -cubeEdgeSize / 2 << " " << 0 << "    # Point 1\n";
   fileStream << -cubeEdgeSize / 2 << " " << -cubeEdgeSize / 2 << " " << 0 << "    # Point 2\n";
-  fileStream << -cubeEdgeSize / 2 << " " <<  cubeEdgeSize / 2 << " " << 0 << "    # Point 3\n";
-  fileStream << -cubeEdgeSize / 2 << " " <<  cubeEdgeSize / 2 << " " << -cubeEdgeSize << "    # Point 4\n";
+  fileStream << -cubeEdgeSize / 2 << " " << cubeEdgeSize / 2 << " " << 0 << "    # Point 3\n";
+  fileStream << -cubeEdgeSize / 2 << " " << cubeEdgeSize / 2 << " " << -cubeEdgeSize << "    # Point 4\n";
   fileStream << -cubeEdgeSize / 2 << " " << -cubeEdgeSize / 2 << " " << -cubeEdgeSize << "    # Point 5\n";
-  fileStream <<  cubeEdgeSize / 2 << " " << -cubeEdgeSize / 2 << " " << -cubeEdgeSize << "    # Point 6\n";
-  fileStream <<  cubeEdgeSize / 2 << " " <<  cubeEdgeSize / 2 << " " << -cubeEdgeSize << "    # Point 7\n";
+  fileStream << cubeEdgeSize / 2 << " " << -cubeEdgeSize / 2 << " " << -cubeEdgeSize << "    # Point 6\n";
+  fileStream << cubeEdgeSize / 2 << " " << cubeEdgeSize / 2 << " " << -cubeEdgeSize << "    # Point 7\n";
   fileStream << "# 3D Lines\n";
   fileStream << "0                  # Number of lines\n";
   fileStream << "# Faces from 3D lines\n";
@@ -54,8 +50,8 @@ void createCaoFile(double cubeEdgeSize)
 }
 
 #if defined(VISP_HAVE_APRILTAG)
-state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &detector,
-                       double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
+state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &detector, double tagSize,
+                       const vpCameraParameters &cam, vpHomogeneousMatrix &cMo)
 {
   std::vector<vpHomogeneousMatrix> cMo_vec;
 
@@ -78,8 +74,8 @@ state_t detectAprilTag(const vpImage<unsigned char> &I, vpDetectorAprilTag &dete
 }
 #endif // #if defined(VISP_HAVE_APRILTAG)
 
-state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker,
-              double projection_error_threshold, vpHomogeneousMatrix &cMo)
+state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker, double projection_error_threshold,
+              vpHomogeneousMatrix &cMo)
 {
   vpCameraParameters cam;
   tracker.getCameraParameters(cam);
@@ -87,8 +83,7 @@ state_t track(const vpImage<unsigned char> &I, vpMbGenericTracker &tracker,
   // Track the object
   try {
     tracker.track(I);
-  }
-  catch (...) {
+  } catch (...) {
     return state_detection;
   }
 
@@ -165,11 +160,12 @@ int main(int argc, const char **argv)
     } else if (std::string(argv[i]) == "--projection_error" && i + 1 < argc) {
       opt_projection_error_threshold = atof(argv[i + 1]);
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-      std::cout << "Usage: " << argv[0] << " [--input <camera id>] [--cube_size <size in m>] [--tag_size <size in m>]"
-                                           " [--quad_decimate <decimation>] [--nthreads <nb>]"
-                                           " [--intrinsic <xml intrinsic file>] [--camera_name <camera name in xml file>]"
-                                           " [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, "
-                                           " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>]";
+      std::cout << "Usage: " << argv[0]
+                << " [--input <camera id>] [--cube_size <size in m>] [--tag_size <size in m>]"
+                   " [--quad_decimate <decimation>] [--nthreads <nb>]"
+                   " [--intrinsic <xml intrinsic file>] [--camera_name <camera name in xml file>]"
+                   " [--tag_family <0: TAG_36h11, 1: TAG_36h10, 2: TAG_36ARTOOLKIT, "
+                   " 3: TAG_25h9, 4: TAG_25h7, 5: TAG_16h5>]";
 #if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
       std::cout << " [--display_off]";
 #endif
@@ -223,7 +219,7 @@ int main(int argc, const char **argv)
     std::cout << "  Quad decimate: " << opt_quad_decimate << std::endl;
     std::cout << "  Threads number: " << opt_nthreads << std::endl;
     std::cout << "Tracker: " << std::endl;
-    std::cout << "  Use edges  : 1"<< std::endl;
+    std::cout << "  Use edges  : 1" << std::endl;
     std::cout << "  Use texture: "
 #ifdef VISP_HAVE_OPENCV
               << opt_use_texture << std::endl;

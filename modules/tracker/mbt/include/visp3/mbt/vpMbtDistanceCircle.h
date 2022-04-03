@@ -162,8 +162,7 @@ public:
 
   std::vector<std::vector<double> > getFeaturesForDisplay();
 
-  std::vector<double> getModelForDisplay(const vpHomogeneousMatrix &cMo,
-                                         const vpCameraParameters &cam,
+  std::vector<double> getModelForDisplay(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                                          bool displayFullModel = false);
 
   /*!

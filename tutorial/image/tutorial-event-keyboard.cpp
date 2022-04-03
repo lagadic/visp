@@ -1,9 +1,9 @@
 //! \example tutorial-event-keyboard.cpp
+#include <visp3/gui/vpDisplayD3D.h>
+#include <visp3/gui/vpDisplayGDI.h>
+#include <visp3/gui/vpDisplayGTK.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
-#include <visp3/gui/vpDisplayGTK.h>
-#include <visp3/gui/vpDisplayGDI.h>
-#include <visp3/gui/vpDisplayD3D.h>
 
 int main()
 {
@@ -43,10 +43,10 @@ int main()
     bool event = vpDisplay::getKeyboardEvent(I, &key[0], false);
     if (event) {
       std::cout << "Key detected: " << key << std::endl;
-      cpt_event ++;
+      cpt_event++;
     }
     vpTime::wait(5); // wait 5 ms
-  } while(cpt_event < 5);
+  } while (cpt_event < 5);
 #ifdef VISP_HAVE_DISPLAY
   delete d;
 #endif

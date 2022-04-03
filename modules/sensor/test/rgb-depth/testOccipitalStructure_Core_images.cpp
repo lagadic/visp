@@ -43,102 +43,93 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined( VISP_HAVE_OCCIPITAL_STRUCTURE ) && ( VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11 ) &&                       \
-    ( defined( VISP_HAVE_X11 ) || defined( VISP_HAVE_GDI ) )
+#if defined(VISP_HAVE_OCCIPITAL_STRUCTURE) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                           \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpOccipitalStructure.h>
 
-int
-main()
+int main()
 {
-  try
-  {
+  try {
     double t;
     unsigned int display_scale = 1;
     vpOccipitalStructure sc;
 
     ST::CaptureSessionSettings settings;
-    settings.source                       = ST::CaptureSessionSourceId::StructureCore;
+    settings.source = ST::CaptureSessionSourceId::StructureCore;
     settings.structureCore.visibleEnabled = true;
-    settings.applyExpensiveCorrection     = true; // Apply a correction and clean filter to the depth before streaming.
+    settings.applyExpensiveCorrection = true; // Apply a correction and clean filter to the depth before streaming.
 
-    sc.open( settings );
+    sc.open(settings);
 
-    vpImage< float > I_depth_raw;
-    vpImage< vpRGBa > I_depth;
-    vpImage< vpRGBa > I_visible;
+    vpImage<float> I_depth_raw;
+    vpImage<vpRGBa> I_depth;
+    vpImage<vpRGBa> I_visible;
 
-#if defined( VISP_HAVE_X11 )
+#if defined(VISP_HAVE_X11)
     vpDisplayX display_visible; // Visible image
     vpDisplayX display_depth;   // Depth image
-#elif defined( VISP_HAVE_GDI )
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display_visible; // Visible image
     vpDisplayGDI display_depth;   // Depth image
 #endif
 
-#if defined( VISP_HAVE_X11 ) || defined( VISP_HAVE_GDI )
-    I_visible = vpImage< vpRGBa >( sc.getHeight( vpOccipitalStructure::visible ),
-                                   sc.getWidth( vpOccipitalStructure::visible ), 0 );
-    display_visible.setDownScalingFactor( display_scale );
-    display_visible.init( I_visible, 10, 10, "Visible image" );
+#if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
+    I_visible =
+        vpImage<vpRGBa>(sc.getHeight(vpOccipitalStructure::visible), sc.getWidth(vpOccipitalStructure::visible), 0);
+    display_visible.setDownScalingFactor(display_scale);
+    display_visible.init(I_visible, 10, 10, "Visible image");
 
     I_depth_raw =
-        vpImage< float >( sc.getHeight( vpOccipitalStructure::depth ), sc.getWidth( vpOccipitalStructure::depth ), 0 );
-    I_depth =
-        vpImage< vpRGBa >( sc.getHeight( vpOccipitalStructure::depth ), sc.getWidth( vpOccipitalStructure::depth ) );
-    display_depth.setDownScalingFactor( display_scale );
-    display_depth.init( I_depth, static_cast< int >( I_visible.getWidth() / display_scale ) + 20, 10, "Depth image" );
+        vpImage<float>(sc.getHeight(vpOccipitalStructure::depth), sc.getWidth(vpOccipitalStructure::depth), 0);
+    I_depth = vpImage<vpRGBa>(sc.getHeight(vpOccipitalStructure::depth), sc.getWidth(vpOccipitalStructure::depth));
+    display_depth.setDownScalingFactor(display_scale);
+    display_depth.init(I_depth, static_cast<int>(I_visible.getWidth() / display_scale) + 20, 10, "Depth image");
 #endif
 
-    while ( true )
-    {
+    while (true) {
       t = vpTime::measureTimeMs();
 
-      sc.acquire( (unsigned char *)I_visible.bitmap, (unsigned char *)I_depth_raw.bitmap );
+      sc.acquire((unsigned char *)I_visible.bitmap, (unsigned char *)I_depth_raw.bitmap);
 
-      vpDisplay::display( I_visible );
-      vpDisplay::displayText( I_visible, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red );
-      vpDisplay::flush( I_visible );
+      vpDisplay::display(I_visible);
+      vpDisplay::displayText(I_visible, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
+      vpDisplay::flush(I_visible);
 
-      vpImageConvert::createDepthHistogram( I_depth_raw, I_depth );
-      vpDisplay::display( I_depth );
-      vpDisplay::displayText( I_depth, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red );
-      vpDisplay::flush( I_depth );
+      vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
+      vpDisplay::display(I_depth);
+      vpDisplay::displayText(I_depth, 15 * display_scale, 15 * display_scale, "Click to quit", vpColor::red);
+      vpDisplay::flush(I_depth);
 
-      if ( vpDisplay::getClick( I_visible, false ) || vpDisplay::getClick( I_depth, false ) )
+      if (vpDisplay::getClick(I_visible, false) || vpDisplay::getClick(I_depth, false))
         break;
 
       std::cout << "Loop time: " << vpTime::measureTimeMs() - t << std::endl;
     }
-  }
-  catch ( const vpException &e )
-  {
+  } catch (const vpException &e) {
     std::cerr << "Structure SDK error " << e.what() << std::endl;
-  }
-  catch ( const std::exception &e )
-  {
+  } catch (const std::exception &e) {
     std::cerr << e.what() << std::endl;
   }
 
   return EXIT_SUCCESS;
 }
 #else
-int
-main()
+int main()
 {
-#if !defined( VISP_HAVE_OCCIPITAL_STRUCTURE )
+#if !defined(VISP_HAVE_OCCIPITAL_STRUCTURE)
   std::cout << "You do not have Occipital Structure SDK functionality enabled..." << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install libStructure, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
-#elif ( VISP_CXX_STANDARD < VISP_CXX_STANDARD_11 )
+#elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
-#elif !( defined( VISP_HAVE_X11 ) || defined( VISP_HAVE_GDI ) )
+#elif !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
   std::cout << "You don't have X11 or GDI display capabilities" << std::endl;
 #endif
   return EXIT_SUCCESS;

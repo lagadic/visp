@@ -80,7 +80,6 @@ public:
       screen_depth(8), xcolor(), values(), ximage_data_init(false), RMask(0), GMask(0), BMask(0), RShift(0), GShift(0),
       BShift(0)
   {
-
   }
 
   ~Impl() {}
@@ -168,8 +167,8 @@ public:
     }
   }
 
-  void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
-                      unsigned int thickness, unsigned int scale)
+  void displayDotLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness,
+                      unsigned int scale)
   {
     if (color.id < vpColor::id_unknown)
       XSetForeground(display, context, x_color[color.id]);
@@ -363,8 +362,8 @@ public:
     case 24:
     case 32: {
       /*
-           * 32-bit source, 24/32-bit destination
-           */
+       * 32-bit source, 24/32-bit destination
+       */
       unsigned char *dst_32 = NULL;
       dst_32 = (unsigned char *)Ximage->data;
       if (scale == 1) {
@@ -442,8 +441,7 @@ public:
     XSetWindowBackgroundPixmap(display, window, pixmap);
   }
 
-  void displayImageROI(const vpImage<unsigned char> &I,
-                       const vpImagePoint &iP, unsigned int w, unsigned int h,
+  void displayImageROI(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int w, unsigned int h,
                        unsigned int scale, unsigned int width, unsigned int height)
   {
     switch (screen_depth) {
@@ -637,8 +635,7 @@ public:
     }
   }
 
-  void displayImageROI(const vpImage<vpRGBa> &I,
-                       const vpImagePoint &iP, unsigned int w, unsigned int h,
+  void displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int w, unsigned int h,
                        unsigned int scale, unsigned int width, unsigned int height)
   {
     switch (screen_depth) {
@@ -792,8 +789,8 @@ public:
     }
   }
 
-  void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color,
-                   unsigned int thickness, unsigned int scale)
+  void displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, const vpColor &color, unsigned int thickness,
+                   unsigned int scale)
   {
     if (color.id < vpColor::id_unknown)
       XSetForeground(display, context, x_color[color.id]);
@@ -833,8 +830,8 @@ public:
     }
   }
 
-  void displayRectangle(const vpImagePoint &topLeft, unsigned int w, unsigned int h, const vpColor &color,
-                                    bool fill, unsigned int thickness, unsigned int scale)
+  void displayRectangle(const vpImagePoint &topLeft, unsigned int w, unsigned int h, const vpColor &color, bool fill,
+                        unsigned int thickness, unsigned int scale)
   {
     if (color.id < vpColor::id_unknown)
       XSetForeground(display, context, x_color[color.id]);
@@ -1162,10 +1159,8 @@ public:
 
     vpTRACE("Screen depth: %d\n", screen_depth);
 
-    if ((window = XCreateSimpleWindow(display, RootWindow(display, screen),
-                                      win_x, win_y,
-                                      win_width, win_height,
-                                      1, BlackPixel(display, screen), WhitePixel(display, screen))) == 0) {
+    if ((window = XCreateSimpleWindow(display, RootWindow(display, screen), win_x, win_y, win_width, win_height, 1,
+                                      BlackPixel(display, screen), WhitePixel(display, screen))) == 0) {
       vpERROR_TRACE("Can't create window.");
       throw(vpDisplayException(vpDisplayException::cannotOpenWindowError, "Can't create window."));
     }
@@ -1553,9 +1548,8 @@ public:
     //  while ( event.xany.type != Expose );
 
     {
-      Ximage = XCreateImage(display, DefaultVisual(display, screen), screen_depth, ZPixmap, 0, NULL,
-                            win_width, win_height,
-                            XBitmapPad(display), 0);
+      Ximage = XCreateImage(display, DefaultVisual(display, screen), screen_depth, ZPixmap, 0, NULL, win_width,
+                            win_height, XBitmapPad(display), 0);
 
       Ximage->data = (char *)malloc(win_height * (unsigned int)Ximage->bytes_per_line);
       ximage_data_init = true;
@@ -1577,15 +1571,9 @@ public:
     }
   }
 
-  void setTitle(const std::string &title)
-  {
-    XStoreName(display, window, title.c_str());
-  }
+  void setTitle(const std::string &title) { XStoreName(display, window, title.c_str()); }
 
-  void setWindowPosition(int win_x, int win_y)
-  {
-    XMoveWindow(display, window, win_x, win_y);
-  }
+  void setWindowPosition(int win_x, int win_y) { XMoveWindow(display, window, win_x, win_y); }
 
 private:
   Display *display;
@@ -1626,8 +1614,7 @@ private:
   - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
   and the columns.
 */
-vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, vpScaleType scaleType)
-  : vpDisplay(), m_impl(new Impl())
+vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, vpScaleType scaleType) : vpDisplay(), m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
 
@@ -1681,8 +1668,7 @@ vpDisplayX::vpDisplayX(vpImage<unsigned char> &I, int x, int y, const std::strin
   - vpDisplay::SCALE_5, the display size is downscaled by 5 along the lines
   and the columns.
 */
-vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I, vpScaleType scaleType)
-  : vpDisplay(), m_impl(new Impl())
+vpDisplayX::vpDisplayX(vpImage<vpRGBa> &I, vpScaleType scaleType) : vpDisplay(), m_impl(new Impl())
 {
   setScale(scaleType, I.getWidth(), I.getHeight());
   init(I);
@@ -1737,8 +1723,7 @@ int main()
 }
   \endcode
 */
-vpDisplayX::vpDisplayX(int x, int y, const std::string &title)
-  : vpDisplay(), m_impl(new Impl())
+vpDisplayX::vpDisplayX(int x, int y, const std::string &title) : vpDisplay(), m_impl(new Impl())
 {
   m_windowXPosition = x;
   m_windowYPosition = y;
@@ -1765,10 +1750,7 @@ int main()
 }
   \endcode
 */
-vpDisplayX::vpDisplayX()
-  : vpDisplay(), m_impl(new Impl())
-{
-}
+vpDisplayX::vpDisplayX() : vpDisplay(), m_impl(new Impl()) {}
 
 /*!
   Destructor.
@@ -1843,7 +1825,8 @@ void vpDisplayX::init(vpImage<vpRGBa> &I, int win_x, int win_y, const std::strin
   \param win_x, win_y : The window is set at position (win_x,win_y) with column index and row index respectively.
   \param win_title : Window title.
 */
-void vpDisplayX::init(unsigned int win_width, unsigned int win_height, int win_x, int win_y, const std::string &win_title)
+void vpDisplayX::init(unsigned int win_width, unsigned int win_height, int win_x, int win_y,
+                      const std::string &win_title)
 {
   setScale(m_scaleType, win_width, win_height);
 
@@ -2020,8 +2003,7 @@ void vpDisplayX::displayImageROI(const vpImage<unsigned char> &I, const vpImageP
 
   \sa init(), closeDisplay()
 */
-void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int w,
-                                 unsigned int h)
+void vpDisplayX::displayImageROI(const vpImage<vpRGBa> &I, const vpImagePoint &iP, unsigned int w, unsigned int h)
 {
   if (m_displayHasBeenInitialized) {
     m_impl->displayImageROI(I, iP, w, h, m_scale, m_width, m_height);
@@ -2154,7 +2136,7 @@ void vpDisplayX::displayCharString(const vpImagePoint &ip, const char *text, con
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
-  }
+}
 
 /*!
   Display a circle.
@@ -2255,7 +2237,7 @@ void vpDisplayX::displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
 void vpDisplayX::displayPoint(const vpImagePoint &ip, const vpColor &color, unsigned int thickness)
 {
   if (m_displayHasBeenInitialized) {
-     m_impl->displayPoint(ip, color, thickness, m_scale);
+    m_impl->displayPoint(ip, color, thickness, m_scale);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));
   }
@@ -2483,19 +2465,13 @@ void vpDisplayX::getImage(vpImage<vpRGBa> &I)
 /*!
   Gets the window depth (8, 16, 24, 32).
 */
-unsigned int vpDisplayX::getScreenDepth()
-{
-  return m_impl->getScreenDepth();
-}
+unsigned int vpDisplayX::getScreenDepth() { return m_impl->getScreenDepth(); }
 
 /*!
   Gets screen resolution in pixels.
   \param w, h : Horizontal and vertical screen resolution.
  */
-void vpDisplayX::getScreenSize(unsigned int &w, unsigned int &h)
-{
-  m_impl->getScreenSize(w, h);
-}
+void vpDisplayX::getScreenSize(unsigned int &w, unsigned int &h) { m_impl->getScreenSize(w, h); }
 
 /*!
   Gets the screen horizontal resolution in pixels.

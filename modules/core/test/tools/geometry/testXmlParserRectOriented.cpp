@@ -39,8 +39,8 @@
   Test vpXmlParserRectOriented parse / save.
 */
 
-#include <visp3/core/vpXmlParserRectOriented.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpXmlParserRectOriented.h>
 
 int main()
 {
@@ -80,7 +80,7 @@ int main()
         !vpMath::equal(rect_oriented.getHeight(), rect_oriented_read.getHeight(), eps) ||
         !vpMath::equal(rect_oriented.getOrientation(), rect_oriented_read.getOrientation(), eps)) {
       std::cerr << "Issue when parsing XML file: " << filename << std::endl;
-      return  EXIT_FAILURE;
+      return EXIT_FAILURE;
     }
   }
 

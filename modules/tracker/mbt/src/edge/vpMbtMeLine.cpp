@@ -93,8 +93,7 @@ vpMbtMeLine::~vpMbtMeLine() { list.clear(); }
   \param doNoTrack : If true, ME are not tracked
 */
 void vpMbtMeLine::initTracking(const vpImage<unsigned char> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
-                               double rho_, double theta_,
-                               bool doNoTrack)
+                               double rho_, double theta_, bool doNoTrack)
 {
   vpCDEBUG(1) << " begin vpMeLine::initTracking()" << std::endl;
 
@@ -174,7 +173,8 @@ void vpMbtMeLine::sample(const vpImage<unsigned char> &I, bool doNoTrack)
   for (int i = 0; i <= vpMath::round(n_sample); i++) {
     // If point is in the image, add to the sample list
     if (!outOfImage(vpMath::round(is), vpMath::round(js), (int)(me->getRange() + me->getMaskSize() + 1), (int)rows,
-      (int)cols) && vpMeTracker::inMask(m_mask, vpMath::round(is), vpMath::round(js))) {
+                    (int)cols) &&
+        vpMeTracker::inMask(m_mask, vpMath::round(is), vpMath::round(js))) {
       vpMeSite pix; //= list.value();
       pix.init((int)is, (int)js, delta, 0, sign);
 
@@ -348,10 +348,8 @@ void vpMbtMeLine::seekExtremities(const vpImage<unsigned char> &I)
   \param thickness : Thickness of arrows used to show gradient and model orientation.
 */
 void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, double &_sumErrorRad,
-                                         unsigned int &_nbFeatures,
-                                         const vpMatrix &SobelX, const vpMatrix &SobelY,
-                                         bool display, unsigned int length,
-                                         unsigned int thickness)
+                                         unsigned int &_nbFeatures, const vpMatrix &SobelX, const vpMatrix &SobelY,
+                                         bool display, unsigned int length, unsigned int thickness)
 {
   _sumErrorRad = 0;
   _nbFeatures = 0;
@@ -431,17 +429,17 @@ void vpMbtMeLine::computeProjectionError(const vpImage<unsigned char> &_I, doubl
       double angle2 = acos(vecLine * (-vecGrad));
 
       if (display) {
-        vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(deltaNormalized)),
-                                (int)(it->get_j() + length*sin(deltaNormalized)), vpColor::blue,
-                                length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
+        vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length * cos(deltaNormalized)),
+                                (int)(it->get_j() + length * sin(deltaNormalized)), vpColor::blue,
+                                length >= 20 ? length / 5 : 4, length >= 20 ? length / 10 : 2, thickness);
         if (angle1 < angle2) {
-          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(angle)),
-                                  (int)(it->get_j() + length*sin(angle)), vpColor::red,
-                                  length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
+          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length * cos(angle)),
+                                  (int)(it->get_j() + length * sin(angle)), vpColor::red, length >= 20 ? length / 5 : 4,
+                                  length >= 20 ? length / 10 : 2, thickness);
         } else {
-          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length*cos(angle+M_PI)),
-                                  (int)(it->get_j() + length*sin(angle+M_PI)), vpColor::red,
-                                  length >= 20 ? length/5 : 4, length >= 20 ? length/10 : 2, thickness);
+          vpDisplay::displayArrow(_I, it->get_i(), it->get_j(), (int)(it->get_i() + length * cos(angle + M_PI)),
+                                  (int)(it->get_j() + length * sin(angle + M_PI)), vpColor::red,
+                                  length >= 20 ? length / 5 : 4, length >= 20 ? length / 10 : 2, thickness);
         }
       }
 

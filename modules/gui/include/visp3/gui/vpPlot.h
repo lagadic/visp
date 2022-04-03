@@ -147,17 +147,16 @@ private:
 
 public:
   vpPlot();
-  vpPlot(unsigned int nbGraph, unsigned int height = 700, unsigned int width = 700, int x = -1,
-         int y = -1, const std::string &title = "");
+  vpPlot(unsigned int nbGraph, unsigned int height = 700, unsigned int width = 700, int x = -1, int y = -1,
+         const std::string &title = "");
   virtual ~vpPlot();
   void getPixelValue(bool block);
-  void init(unsigned int nbGraph, unsigned int height = 700, unsigned int width = 700,
-            int x = -1, int y = -1, const std::string &title = "");
+  void init(unsigned int nbGraph, unsigned int height = 700, unsigned int width = 700, int x = -1, int y = -1,
+            const std::string &title = "");
   void initGraph(unsigned int graphNum, unsigned int curveNbr);
 
   void initRange(unsigned int graphNum, double xmin, double xmax, double ymin, double ymax);
-  void initRange(unsigned int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin,
-                 double zmax);
+  void initRange(unsigned int graphNum, double xmin, double xmax, double ymin, double ymax, double zmin, double zmax);
   void navigate(void);
 
   void plot(unsigned int graphNum, unsigned int curveNum, double x, double y);
@@ -166,8 +165,7 @@ public:
   void plot(unsigned int graphNum, double x, const vpPoseVector &v_y);
   void plot(unsigned int graphNum, double x, const vpTranslationVector &v_y);
   void plot(unsigned int graphNum, double x, const vpRotationVector &v_y);
-  vpMouseButton::vpMouseButtonType plot(unsigned int graphNum, unsigned int curveNum, double x,
-                                        double y, double z);
+  vpMouseButton::vpMouseButtonType plot(unsigned int graphNum, unsigned int curveNum, double x, double y, double z);
   vpMouseButton::vpMouseButtonType plot(unsigned int graphNum, double x, const vpColVector &v_y,
                                         const vpColVector &v_z);
 

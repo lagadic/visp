@@ -211,7 +211,8 @@ void usage(const char *name, const char *badparam, const std::string &opath, con
 Write and read data in a xml file.\n\
           \n\
 SYNOPSIS\n\
-  %s [-o <output image path>] [-h]\n", name);
+  %s [-o <output image path>] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -222,7 +223,8 @@ OPTIONS:                                               Default\n\
      dataTestXml.xml file is written.\n\
                   \n\
   -h\n\
-     Print the help.\n\n", opath.c_str(), user.c_str());
+     Print the help.\n\n",
+          opath.c_str(), user.c_str());
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");

@@ -78,7 +78,8 @@ and save the undistorted image on the disk.\n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>] [-t <nThreads>] [-s <scale>]\n\
      [-h]\n\
-          ", name);
+          ",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -103,7 +104,8 @@ OPTIONS:                                               Default\n\
      Resize the image by the specified scale factor.\n\
 \n\
   -h\n\
-     Print the help.\n\n", ipath.c_str(), opath.c_str(), user.c_str());
+     Print the help.\n\n",
+          ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -121,8 +123,8 @@ OPTIONS:                                               Default\n\
   \param scale : Scale factor to resize the image.
   \return false if the program has to be stopped, true otherwise.
  */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath,
-                const std::string &user, unsigned int &nThreads, unsigned int &scale)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &opath, const std::string &user,
+                unsigned int &nThreads, unsigned int &scale)
 {
   const char *optarg_;
   int c;
@@ -252,9 +254,9 @@ int main(int argc, const char **argv)
     //
     vpImage<vpRGBa> I, I_; // Input image
     vpImage<unsigned char> I_gray;
-    vpImage<vpRGBa> U; // undistorted output image
-    vpImage<unsigned char> U_gray; // undistorted output image
-    vpImage<vpRGBa> U_remap; // undistorted output image
+    vpImage<vpRGBa> U;                   // undistorted output image
+    vpImage<unsigned char> U_gray;       // undistorted output image
+    vpImage<vpRGBa> U_remap;             // undistorted output image
     vpImage<unsigned char> U_remap_gray; // undistorted output image
 
     vpCameraParameters cam;
@@ -265,7 +267,7 @@ int main(int argc, const char **argv)
     vpImageIo::read(I_, filename);
     if (scale > 1) {
       std::cout << "Scale the image by a factor of " << scale << std::endl;
-      vpImageTools::resize(I_, I, I_.getWidth()*scale, I_.getHeight()*scale);
+      vpImageTools::resize(I_, I, I_.getWidth() * scale, I_.getHeight() * scale);
     } else {
       I = I_;
     }
@@ -386,7 +388,7 @@ int main(int argc, const char **argv)
         mean_diff += U_diff_abs[i][j].A;
       }
     }
-    double remap_mean_error = mean_diff / (4*U_diff_abs.getSize());
+    double remap_mean_error = mean_diff / (4 * U_diff_abs.getSize());
     std::cout << "U_diff_abs mean value: " << remap_mean_error << std::endl;
     const double remap_error_threshold = 0.5;
     if (remap_mean_error > remap_error_threshold) {

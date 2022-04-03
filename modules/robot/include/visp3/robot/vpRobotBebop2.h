@@ -48,7 +48,7 @@
 
 extern "C" {
 #include <libARController/ARController.h> // For drone control
-#include <libARSAL/ARSAL.h> // For semaphore
+#include <libARSAL/ARSAL.h>               // For semaphore
 
 #ifdef VISP_HAVE_FFMPEG
 #include <libavcodec/avcodec.h> // For H264 video decoding
@@ -154,7 +154,7 @@ public:
 private:
   //*** Attributes ***//
   std::string m_ipAddress; ///< Ip address of the drone to discover on the network
-  int m_discoveryPort; ///< Port of the drone to discover on the network
+  int m_discoveryPort;     ///< Port of the drone to discover on the network
 
   ARSAL_Sem_t m_stateSem;    ///< Semaphore
   struct sigaction m_sigAct; ///< Signal handler
@@ -177,9 +177,9 @@ private:
   static bool m_running; ///< Used for checking if the drone is running ie if successfully connected and ready to
                          ///< receive commands
 
-  bool m_exposureSet;       ///< Used to know if exposure compensation has been set
-  bool m_flatTrimFinished;  ///< Used to know when the drone has finished a flat trim
-  bool m_relativeMoveEnded; ///< Used to know when the drone has ended a relative move
+  bool m_exposureSet;        ///< Used to know if exposure compensation has been set
+  bool m_flatTrimFinished;   ///< Used to know when the drone has finished a flat trim
+  bool m_relativeMoveEnded;  ///< Used to know when the drone has ended a relative move
   bool m_videoResolutionSet; ///< Used to know if video resolution has been set
   bool m_streamingStarted;   ///< Used to know if the streaming has been started
   bool m_streamingModeSet;   ///< Used to know if the streaming mode has been set

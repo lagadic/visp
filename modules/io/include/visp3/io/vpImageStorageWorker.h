@@ -40,8 +40,8 @@
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
-#include <visp3/io/vpImageQueue.h>
 #include <visp3/io/vpImageIo.h>
+#include <visp3/io/vpImageQueue.h>
 
 /*!
   \class vpImageStorageWorker
@@ -51,8 +51,8 @@
   Save data contained in an vpImageQueue.
 
 */
-template <class Type>
-class vpImageStorageWorker {
+template <class Type> class vpImageStorageWorker
+{
 public:
   /*!
    * Constructor.
@@ -83,22 +83,21 @@ public:
 
         if (m_record_mode > 0) { // Single image
           std::cout << "Save image: " << filename << std::endl;
-        }
-        else if (m_cpt == 1) {
+        } else if (m_cpt == 1) {
           std::cout << "Started sequence saving: " << m_seqname << std::endl;
         }
         vpImageIo::write(I, filename);
 
-        if (! data.empty()) {
-          if (! m_data_file_created) {
+        if (!data.empty()) {
+          if (!m_data_file_created) {
             std::string parent = vpIoTools::getParent(m_seqname);
-            if (! parent.empty()) {
+            if (!parent.empty()) {
               m_dataname = vpIoTools::getParent(m_seqname) + "/";
             }
             m_dataname += vpIoTools::getNameWE(m_seqname);
             m_dataname += ".txt";
 
-            std::cout << "Create data file: " << m_dataname<< std::endl;
+            std::cout << "Create data file: " << m_dataname << std::endl;
             m_ofs_data.open(m_dataname);
 
             m_data_file_created = true;
@@ -106,7 +105,7 @@ public:
           m_ofs_data << vpIoTools::getName(filename) << " " << data << std::endl;
         }
 
-        m_cpt ++;
+        m_cpt++;
       }
     } catch (const vpImageQueue<vpRGBa>::cancelled &) {
       std::cout << "Receive cancel during color image saving." << std::endl;

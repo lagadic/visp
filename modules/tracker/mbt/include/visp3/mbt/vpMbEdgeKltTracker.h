@@ -241,7 +241,7 @@ public:
   virtual std::vector<std::vector<double> > getModelForDisplay(unsigned int width, unsigned int height,
                                                                const vpHomogeneousMatrix &cMo,
                                                                const vpCameraParameters &cam,
-                                                               bool displayFullModel=false);
+                                                               bool displayFullModel = false);
 
   virtual inline vpColVector getRobustWeights() const { return m_w_hybrid; }
 
@@ -252,10 +252,10 @@ public:
    */
   virtual inline double getNearClippingDistance() const { return vpMbKltTracker::getNearClippingDistance(); }
 
-  virtual void loadConfigFile(const std::string &configFile, bool verbose=true);
+  virtual void loadConfigFile(const std::string &configFile, bool verbose = true);
 
   void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
-                   bool verbose = false, const vpHomogeneousMatrix &T=vpHomogeneousMatrix());
+                   bool verbose = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
   void resetTracker();
 
   virtual void setCameraParameters(const vpCameraParameters &cam);
@@ -326,7 +326,7 @@ public:
 
 protected:
   virtual void computeVVS(const vpImage<unsigned char> &I, const unsigned int &nbInfos, unsigned int &nbrow,
-                          unsigned int lvl = 0);
+                          unsigned int lvl = 0, double *edge_residual = NULL, double *klt_residual = NULL);
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
   using vpMbTracker::computeCovarianceMatrixVVS;
@@ -335,21 +335,18 @@ protected:
   virtual void init(const vpImage<unsigned char> &I);
   virtual void initCircle(const vpPoint &, const vpPoint &, const vpPoint &, double r, int idFace = 0,
                           const std::string &name = "");
-  virtual void initCylinder(const vpPoint &, const vpPoint &, double r, int idFace,
-                            const std::string &name = "");
+  virtual void initCylinder(const vpPoint &, const vpPoint &, double r, int idFace, const std::string &name = "");
   virtual void initFaceFromCorners(vpMbtPolygon &polygon);
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
   unsigned int initMbtTracking(unsigned int level = 0);
 
-  bool postTracking(const vpImage<unsigned char> &I, vpColVector &w_mbt, vpColVector &w_klt,
-                    unsigned int lvl = 0);
-  bool postTracking(const vpImage<vpRGBa> &I_color, vpColVector &w_mbt, vpColVector &w_klt,
-                    unsigned int lvl = 0);
+  bool postTracking(const vpImage<unsigned char> &I, vpColVector &w_mbt, vpColVector &w_klt, unsigned int lvl = 0);
+  bool postTracking(const vpImage<vpRGBa> &I_color, vpColVector &w_mbt, vpColVector &w_klt, unsigned int lvl = 0);
   void postTrackingMbt(vpColVector &w, unsigned int level = 0);
 
   unsigned int trackFirstLoop(const vpImage<unsigned char> &I, vpColVector &factor, unsigned int lvl = 0);
-  void trackSecondLoop(const vpImage<unsigned char> &I, vpMatrix &L, vpColVector &_error, const vpHomogeneousMatrix &cMo,
-                       unsigned int lvl = 0);
+  void trackSecondLoop(const vpImage<unsigned char> &I, vpMatrix &L, vpColVector &_error,
+                       const vpHomogeneousMatrix &cMo, unsigned int lvl = 0);
 };
 
 #endif

@@ -42,8 +42,8 @@
 #define _vpJointPosTrajGenerator_impl_h_
 
 #include <array>
-#include <iostream>
 #include <atomic>
+#include <iostream>
 
 #include <visp3/core/vpConfig.h>
 
@@ -62,8 +62,9 @@
  * Wisama Khalil and Etienne Dombre. 2002. Modeling, Identification and Control of Robots
  * (Kogan Page Science Paper edition).
  */
-class vpJointPosTrajGenerator {
- public:
+class vpJointPosTrajGenerator
+{
+public:
   /**
    * Creates a new MotionGenerator instance for a target q.
    *
@@ -80,9 +81,9 @@ class vpJointPosTrajGenerator {
    *
    * @return Joint positions for use inside a control loop.
    */
-  franka::JointPositions operator()(const franka::RobotState& robot_state, franka::Duration period);
+  franka::JointPositions operator()(const franka::RobotState &robot_state, franka::Duration period);
 
- private:
+private:
   bool calculateDesiredValues(double t, vpColVector &delta_q_d) const;
   void calculateSynchronizedValues();
 

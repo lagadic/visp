@@ -81,12 +81,12 @@
   have opposite values.
 
   \code
+#include <visp3/core/vpMomentAlpha.h>
+#include <visp3/core/vpMomentCentered.h>
+#include <visp3/core/vpMomentDatabase.h>
+#include <visp3/core/vpMomentGravityCenter.h>
 #include <visp3/core/vpMomentObject.h>
 #include <visp3/core/vpPoint.h>
-#include <visp3/core/vpMomentGravityCenter.h>
-#include <visp3/core/vpMomentDatabase.h>
-#include <visp3/core/vpMomentCentered.h>
-#include <visp3/core/vpMomentAlpha.h>
 
 //generic function for printing
 void print (double i) { std::cout << i << "\t";}
@@ -229,7 +229,8 @@ public:
   const char *name() const { return "vpMomentAlpha"; }
 
   /*!
-     Returns true if the alpha moment was constructed as a reference with values in \f$ [-\pi/2 ; \pi/2] \f$, false otherwise.
+     Returns true if the alpha moment was constructed as a reference with values in \f$ [-\pi/2 ; \pi/2] \f$, false
+     otherwise.
    */
   inline bool is_ref() const
   {

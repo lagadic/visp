@@ -311,8 +311,7 @@ void vpConvert::convertFromOpenCV(const std::vector<cv::Point2d> &from, std::vec
    \param cameraFrame : If true, convert into the camera frame, otherwise in
    the object frame.
  */
-void vpConvert::convertFromOpenCV(const std::vector<cv::Point3f> &from, std::vector<vpPoint> &to,
-                                  bool cameraFrame)
+void vpConvert::convertFromOpenCV(const std::vector<cv::Point3f> &from, std::vector<vpPoint> &to, bool cameraFrame)
 {
   to.resize(from.size());
   if (cameraFrame) {
@@ -329,8 +328,7 @@ void vpConvert::convertFromOpenCV(const std::vector<cv::Point3f> &from, std::vec
    \param cameraFrame : If true, convert into the camera frame, otherwise in
    the object frame.
  */
-void vpConvert::convertFromOpenCV(const std::vector<cv::Point3d> &from, std::vector<vpPoint> &to,
-                                  bool cameraFrame)
+void vpConvert::convertFromOpenCV(const std::vector<cv::Point3d> &from, std::vector<vpPoint> &to, bool cameraFrame)
 {
   to.resize(from.size());
   if (cameraFrame) {

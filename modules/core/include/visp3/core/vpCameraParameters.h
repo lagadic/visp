@@ -288,7 +288,8 @@ public:
   void initFromFov(const unsigned int &w, const unsigned int &h, const double &hfov, const double &vfov);
   void initPersProjWithoutDistortion(double px, double py, double u0, double v0);
   void initPersProjWithDistortion(double px, double py, double u0, double v0, double kud, double kdu);
-  void initProjWithKannalaBrandtDistortion(double px, double py, double u0, double v0, const std::vector<double> &distortion_coefficients);
+  void initProjWithKannalaBrandtDistortion(double px, double py, double u0, double v0,
+                                           const std::vector<double> &distortion_coefficients);
 
   /*!
     Specify if the fov has been computed.
@@ -381,11 +382,11 @@ private:
   static const double DEFAULT_KDU_PARAMETER;
   static const vpCameraParametersProjType DEFAULT_PROJ_TYPE;
 
-  double px, py;                       //!< Pixel size
-  double u0, v0;                       //!< Principal point
-  double kud;                          //!< Radial distortion (from undistorted to distorted)
-  double kdu;                          //!< Radial distortion (from distorted to undistorted)
-  std::vector<double> m_dist_coefs;    //!< Coefficients for Kannala-Brandt distorsion model
+  double px, py;                    //!< Pixel size
+  double u0, v0;                    //!< Principal point
+  double kud;                       //!< Radial distortion (from undistorted to distorted)
+  double kdu;                       //!< Radial distortion (from distorted to undistorted)
+  std::vector<double> m_dist_coefs; //!< Coefficients for Kannala-Brandt distorsion model
 
   unsigned int width;                  //!< Width of the image used for the fov computation
   unsigned int height;                 //!< Height of the image used for the fov computation

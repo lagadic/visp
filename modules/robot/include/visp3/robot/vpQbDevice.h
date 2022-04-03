@@ -42,10 +42,10 @@
 #include <visp3/core/vpConfig.h>
 #ifdef VISP_HAVE_QBDEVICE
 
-#include <vector>
 #include <map>
-#include <mutex>
 #include <memory>
+#include <mutex>
+#include <vector>
 
 /*!
 
@@ -83,7 +83,8 @@ protected:
   virtual int getCurrents(const int &id, const int &max_repeats, std::vector<short int> &currents);
 
   virtual int getInfo(const int &id, const int &max_repeats, std::string &info);
-  virtual int getMeasurements(const int &id, const int &max_repeats, std::vector<short int> &currents, std::vector<short int> &positions);
+  virtual int getMeasurements(const int &id, const int &max_repeats, std::vector<short int> &currents,
+                              std::vector<short int> &positions);
 
   virtual int getParameters(const int &id, std::vector<int> &limits, std::vector<int> &resolutions);
   virtual int getPositions(const int &id, const int &max_repeats, std::vector<short int> &positions);
@@ -114,7 +115,6 @@ protected:
   int m_max_repeats; //!< Max number of trials to send a command.
   bool m_init_done;  //!< Flag used to indicate if the device is initialized.
 };
-
 
 #endif
 #endif

@@ -138,7 +138,6 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
           moyd2Iref[it][jt] += (dW[0][it] * (dW[0][jt] * d_Ixx + dW[1][jt] * d_Ixy) +
                                 dW[1][it] * (dW[0][jt] * d_Ixy + dW[1][jt] * d_Iyy));
         }
-
     }
   }
 
@@ -199,7 +198,6 @@ void vpTemplateTrackerZNCCInverseCompositional::initHessienDesired(const vpImage
               (ptTemplate[point].dW[it] - moydIrefdp[it]) * (ptTemplate[point].dW[jt] - moydIrefdp[jt]);
         }
       }
-
 
       for (unsigned int it = 0; it < nbParam; it++)
         sIcdIref[it] += prodIc * (ptTemplate[point].dW[it] - moydIrefdp[it]);
@@ -333,9 +331,8 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
         G = (sIcdIref / denom - NCC * dcovarIref / covarIref);
 
         try {
-          dp = - HLMdesireInverse * G;
-        }
-        catch (const vpException &e) {
+          dp = -HLMdesireInverse * G;
+        } catch (const vpException &e) {
           throw(e);
         }
 
@@ -355,7 +352,7 @@ void vpTemplateTrackerZNCCInverseCompositional::trackNoPyr(const vpImage<unsigne
     evolRMS_delta = std::fabs(evolRMS - evolRMS_prec);
     evolRMS_prec = evolRMS;
 
-  } while ( (!diverge && (evolRMS_delta > std::fabs(evolRMS_init)*evolRMS_eps) && (iteration < iterationMax)) );
+  } while ((!diverge && (evolRMS_delta > std::fabs(evolRMS_init) * evolRMS_eps) && (iteration < iterationMax)));
 
   nbIteration = iteration;
 }

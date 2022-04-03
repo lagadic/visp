@@ -628,15 +628,17 @@ void vpMbEdgeKltTracker::postTrackingMbt(vpColVector &w, unsigned int lvl)
 }
 
 /*!
-  Realize the VVS loop for the tracking
+  Achieve the VVS loop for the tracking using edges and KLT keypoints as visual features.
 
-  \param I : current image.
-  \param nbInfos : Size of the features (KLT).
-  \param nbrow : Size of the features (Edge).
-  \param lvl : level of the pyramid.
+  \param[in] I : current image.
+  \param[in] nbInfos : Size of the features (KLT).
+  \param[out] nbrow : Size of the features (Edge).
+  \param[in] lvl : Level of the pyramid.
+  \param[out] edge_residual : Residual considering edges as visual features.
+  \param[out] klt_residual : Residual considering KLT keypoints as visual features.
 */
 void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsigned int &nbInfos, unsigned int &nbrow,
-                                    unsigned int lvl)
+                                    unsigned int lvl, double *edge_residual, double *klt_residual)
 {
   vpColVector factor;
   nbrow = trackFirstLoop(I, factor, lvl);
@@ -689,8 +691,10 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
   if (nbInfos < 4)
     factorMBT = 1.;
 
-  double residuMBT = 0;
-  double residuKLT = 0;
+  if (edge_residual != NULL)
+    *edge_residual = 0;
+  if (klt_residual != NULL)
+    *klt_residual = 0;
 
   vpHomogeneousMatrix cMoPrev;
   vpHomogeneousMatrix ctTc0_Prev;
@@ -779,10 +783,12 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
     if (!reStartFromLastIncrement) {
       /* robust */
       if (nbrow > 3) {
-        residuMBT = 0;
-        for (unsigned int i = 0; i < R_mbt.getRows(); i++)
-          residuMBT += fabs(R_mbt[i]);
-        residuMBT /= R_mbt.getRows();
+        if (edge_residual != NULL) {
+          *edge_residual = 0;
+          for (unsigned int i = 0; i < R_mbt.getRows(); i++)
+            *edge_residual += fabs(R_mbt[i]);
+          *edge_residual /= R_mbt.getRows();
+        }
 
         robust_mbt.setMinMedianAbsoluteDeviation(m_thresholdMBT / m_cam.get_px());
         robust_mbt.MEstimator(vpRobust::TUKEY, R_mbt, m_w_mbt);
@@ -791,10 +797,12 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
       }
 
       if (nbInfos > 3) {
-        residuKLT = 0;
-        for (unsigned int i = 0; i < R_klt.getRows(); i++)
-          residuKLT += fabs(R_klt[i]);
-        residuKLT /= R_klt.getRows();
+        if (klt_residual != NULL) {
+          *klt_residual = 0;
+          for (unsigned int i = 0; i < R_klt.getRows(); i++)
+            *klt_residual += fabs(R_klt[i]);
+          *klt_residual /= R_klt.getRows();
+        }
 
         robust_klt.setMinMedianAbsoluteDeviation(m_thresholdKLT / m_cam.get_px());
         robust_klt.MEstimator(vpRobust::TUKEY, R_klt, m_w_klt);
@@ -978,8 +986,7 @@ void vpMbEdgeKltTracker::track(const vpImage<vpRGBa> &I_color)
   }
 }
 
-unsigned int vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char> &I, vpColVector &factor,
-                                                unsigned int lvl)
+unsigned int vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char> &I, vpColVector &factor, unsigned int lvl)
 {
   vpMbtDistanceLine *l;
   vpMbtDistanceCylinder *cy;
@@ -1196,8 +1203,8 @@ void vpMbEdgeKltTracker::initFaceFromLines(vpMbtPolygon &polygon)
   circle. \param radius : Radius of the circle. \param idFace : Id of the face
   associated to the circle. \param name : The optional name of the circle.
 */
-void vpMbEdgeKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
-                                    int idFace, const std::string &name)
+void vpMbEdgeKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int idFace,
+                                    const std::string &name)
 {
   vpMbEdgeTracker::initCircle(p1, p2, p3, radius, idFace, name);
 }
@@ -1234,7 +1241,8 @@ void vpMbEdgeKltTracker::display(const vpImage<unsigned char> &I, const vpHomoge
                                  const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                  bool displayFullModel)
 {
-  std::vector<std::vector<double> > models = vpMbEdgeKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+  std::vector<std::vector<double> > models =
+      vpMbEdgeKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
@@ -1286,7 +1294,8 @@ void vpMbEdgeKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMa
                                  const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                                  bool displayFullModel)
 {
-  std::vector<std::vector<double> > models = getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+  std::vector<std::vector<double> > models =
+      getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
@@ -1335,14 +1344,14 @@ std::vector<std::vector<double> > vpMbEdgeKltTracker::getModelForDisplay(unsigne
       for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[scaleLevel].begin(); it != lines[scaleLevel].end();
            ++it) {
         std::vector<std::vector<double> > currentModel =
-          (*it)->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+            (*it)->getModelForDisplay(width, height, cMo, cam, displayFullModel);
         models.insert(models.end(), currentModel.begin(), currentModel.end());
       }
 
       for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[scaleLevel].begin();
            it != cylinders[scaleLevel].end(); ++it) {
         std::vector<std::vector<double> > currentModel =
-          (*it)->getModelForDisplay(width, height, cMo, cam, displayFullModel);
+            (*it)->getModelForDisplay(width, height, cMo, cam, displayFullModel);
         models.insert(models.end(), currentModel.begin(), currentModel.end());
       }
 
@@ -1377,99 +1386,98 @@ std::vector<std::vector<double> > vpMbEdgeKltTracker::getModelForDisplay(unsigne
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                     const vpHomogeneousMatrix &cMo, bool verbose,
-                                     const vpHomogeneousMatrix &T)
+                                     const vpHomogeneousMatrix &cMo, bool verbose, const vpHomogeneousMatrix &T)
 {
-  // Reinit klt
-  #if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-    if (cur != NULL) {
-      cvReleaseImage(&cur);
-      cur = NULL;
-    }
-  #endif
+// Reinit klt
+#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
+  if (cur != NULL) {
+    cvReleaseImage(&cur);
+    cur = NULL;
+  }
+#endif
 
-    // delete the Klt Polygon features
-    for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
-      vpMbtDistanceKltPoints *kltpoly = *it;
-      if (kltpoly != NULL) {
-        delete kltpoly;
+  // delete the Klt Polygon features
+  for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
+    vpMbtDistanceKltPoints *kltpoly = *it;
+    if (kltpoly != NULL) {
+      delete kltpoly;
+    }
+    kltpoly = NULL;
+  }
+  kltPolygons.clear();
+
+  for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
+       ++it) {
+    vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
+    if (kltPolyCylinder != NULL) {
+      delete kltPolyCylinder;
+    }
+    kltPolyCylinder = NULL;
+  }
+  kltCylinders.clear();
+
+  // delete the structures used to display circles
+  vpMbtDistanceCircle *ci;
+  for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles_disp.begin(); it != circles_disp.end(); ++it) {
+    ci = *it;
+    if (ci != NULL) {
+      delete ci;
+    }
+    ci = NULL;
+  }
+
+  circles_disp.clear();
+
+  firstInitialisation = true;
+
+  // Reinit edge
+  vpMbtDistanceLine *l;
+  vpMbtDistanceCylinder *cy;
+
+  for (unsigned int i = 0; i < scales.size(); i += 1) {
+    if (scales[i]) {
+      for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[i].begin(); it != lines[i].end(); ++it) {
+        l = *it;
+        if (l != NULL)
+          delete l;
+        l = NULL;
       }
-      kltpoly = NULL;
-    }
-    kltPolygons.clear();
 
-    for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
-         ++it) {
-      vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
-      if (kltPolyCylinder != NULL) {
-        delete kltPolyCylinder;
+      for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[i].begin(); it != cylinders[i].end();
+           ++it) {
+        cy = *it;
+        if (cy != NULL)
+          delete cy;
+        cy = NULL;
       }
-      kltPolyCylinder = NULL;
-    }
-    kltCylinders.clear();
 
-    // delete the structures used to display circles
-    vpMbtDistanceCircle *ci;
-    for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles_disp.begin(); it != circles_disp.end(); ++it) {
-      ci = *it;
-      if (ci != NULL) {
-        delete ci;
+      for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[i].begin(); it != circles[i].end(); ++it) {
+        ci = *it;
+        if (ci != NULL)
+          delete ci;
+        ci = NULL;
       }
-      ci = NULL;
+
+      lines[i].clear();
+      cylinders[i].clear();
+      circles[i].clear();
     }
+  }
 
-    circles_disp.clear();
+  // compute_interaction=1;
+  nline = 0;
+  ncylinder = 0;
+  ncircle = 0;
+  // lambda = 1;
+  nbvisiblepolygone = 0;
 
-    firstInitialisation = true;
+  // Reinit common parts
+  faces.reset();
 
-    // Reinit edge
-    vpMbtDistanceLine *l;
-    vpMbtDistanceCylinder *cy;
+  loadModel(cad_name, verbose, T);
 
-    for (unsigned int i = 0; i < scales.size(); i += 1) {
-      if (scales[i]) {
-        for (std::list<vpMbtDistanceLine *>::const_iterator it = lines[i].begin(); it != lines[i].end(); ++it) {
-          l = *it;
-          if (l != NULL)
-            delete l;
-          l = NULL;
-        }
-
-        for (std::list<vpMbtDistanceCylinder *>::const_iterator it = cylinders[i].begin(); it != cylinders[i].end();
-             ++it) {
-          cy = *it;
-          if (cy != NULL)
-            delete cy;
-          cy = NULL;
-        }
-
-        for (std::list<vpMbtDistanceCircle *>::const_iterator it = circles[i].begin(); it != circles[i].end(); ++it) {
-          ci = *it;
-          if (ci != NULL)
-            delete ci;
-          ci = NULL;
-        }
-
-        lines[i].clear();
-        cylinders[i].clear();
-        circles[i].clear();
-      }
-    }
-
-    // compute_interaction=1;
-    nline = 0;
-    ncylinder = 0;
-    ncircle = 0;
-    // lambda = 1;
-    nbvisiblepolygone = 0;
-
-    // Reinit common parts
-    faces.reset();
-
-    loadModel(cad_name, verbose, T);
-
-    m_cMo = cMo;
-    init(I);
+  m_cMo = cMo;
+  init(I);
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

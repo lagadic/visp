@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,10 @@ vpHomogeneousMatrix::vpHomogeneousMatrix() : vpArray2D<double>(4, 4), m_index(0)
   Copy constructor that initialize an homogeneous matrix from another
   homogeneous matrix.
 */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(4, 4), m_index(0) { *this = M; }
+vpHomogeneousMatrix::vpHomogeneousMatrix(const vpHomogeneousMatrix &M) : vpArray2D<double>(4, 4), m_index(0)
+{
+  *this = M;
+}
 
 /*!
   Construct an homogeneous matrix from a translation vector and \f$\theta {\bf
@@ -187,7 +190,8 @@ N:
 0  0  0  1
   \endcode
  */
-vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &list) : vpArray2D<double>(4, 4), m_index(0)
+vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &list)
+  : vpArray2D<double>(4, 4), m_index(0)
 {
   if (list.size() == 12) {
     std::copy(list.begin(), list.end(), data);
@@ -195,22 +199,26 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
     data[13] = 0.;
     data[14] = 0.;
     data[15] = 1.;
-  }
-  else if (list.size() == 16) {
+  } else if (list.size() == 16) {
     std::copy(list.begin(), list.end(), data);
     for (size_t i = 12; i < 15; i++) {
       if (std::fabs(data[i]) > std::numeric_limits<double>::epsilon()) {
-        throw(vpException(vpException::fatalError, "Cannot initialize homogeneous matrix. "
-                          "List element %d (%f) should be 0.", i, data[i]));
+        throw(vpException(vpException::fatalError,
+                          "Cannot initialize homogeneous matrix. "
+                          "List element %d (%f) should be 0.",
+                          i, data[i]));
       }
     }
     if (std::fabs(data[15] - 1.) > std::numeric_limits<double>::epsilon()) {
-      throw(vpException(vpException::fatalError, "Cannot initialize homogeneous matrix. "
-                        "List element 15 (%f) should be 1.", data[15]));
+      throw(vpException(vpException::fatalError,
+                        "Cannot initialize homogeneous matrix. "
+                        "List element 15 (%f) should be 1.",
+                        data[15]));
     }
-  }
-  else {
-    throw(vpException(vpException::fatalError, "Cannot initialize homogeneous matrix from a list (%d elements) that has not 12 or 16 elements", list.size()));
+  } else {
+    throw(vpException(vpException::fatalError,
+                      "Cannot initialize homogeneous matrix from a list (%d elements) that has not 12 or 16 elements",
+                      list.size()));
   }
 
   if (!isAnHomogeneousMatrix()) {
@@ -219,11 +227,19 @@ vpHomogeneousMatrix::vpHomogeneousMatrix(const std::initializer_list<double> &li
       vpRotationMatrix R(*this);
       R.orthogonalize();
 
-      data[0] = R[0][0]; data[1] = R[0][1]; data[2] = R[0][2];
-      data[4] = R[1][0]; data[5] = R[1][1]; data[6] = R[1][2];
-      data[8] = R[2][0]; data[9] = R[2][1]; data[10] = R[2][2];
+      data[0] = R[0][0];
+      data[1] = R[0][1];
+      data[2] = R[0][2];
+      data[4] = R[1][0];
+      data[5] = R[1][1];
+      data[6] = R[1][2];
+      data[8] = R[2][0];
+      data[9] = R[2][1];
+      data[10] = R[2][2];
     } else {
-      throw(vpException(vpException::fatalError, "Homogeneous matrix initialization fails since its elements are not valid (rotation part or last row)"));
+      throw(vpException(
+          vpException::fatalError,
+          "Homogeneous matrix initialization fails since its elements are not valid (rotation part or last row)"));
     }
   }
 }
@@ -653,7 +669,7 @@ N:
 
   \sa operator,()
  */
-vpHomogeneousMatrix& vpHomogeneousMatrix::operator<<(double val)
+vpHomogeneousMatrix &vpHomogeneousMatrix::operator<<(double val)
 {
   m_index = 0;
   data[m_index] = val;
@@ -702,11 +718,14 @@ N:
 
   \sa operator<<()
  */
-vpHomogeneousMatrix& vpHomogeneousMatrix::operator,(double val)
+vpHomogeneousMatrix &vpHomogeneousMatrix::operator,(double val)
 {
-  m_index ++;
+  m_index++;
   if (m_index >= size()) {
-    throw(vpException(vpException::dimensionError, "Cannot set homogenous matrix out of bounds. It has only %d elements while you try to initialize with %d elements", size(), m_index+1));
+    throw(vpException(vpException::dimensionError,
+                      "Cannot set homogenous matrix out of bounds. It has only %d elements while you try to initialize "
+                      "with %d elements",
+                      size(), m_index + 1));
   }
   data[m_index] = val;
   return *this;
@@ -726,9 +745,22 @@ bool vpHomogeneousMatrix::isAnHomogeneousMatrix(double threshold) const
   extract(R);
 
   const double epsilon = std::numeric_limits<double>::epsilon();
-  return R.isARotationMatrix(threshold)
-    && vpMath::nul((*this)[3][0], epsilon) && vpMath::nul((*this)[3][1], epsilon)
-    && vpMath::nul((*this)[3][2], epsilon) && vpMath::equal((*this)[3][3], 1.0, epsilon);
+  return R.isARotationMatrix(threshold) && vpMath::nul((*this)[3][0], epsilon) && vpMath::nul((*this)[3][1], epsilon) &&
+         vpMath::nul((*this)[3][2], epsilon) && vpMath::equal((*this)[3][3], 1.0, epsilon);
+}
+
+/*!
+ * Check if the homogeneous transformation matrix doesn't have a value NaN.
+ * \return true when no NaN found, false otherwise.
+ */
+bool vpHomogeneousMatrix::isValid() const
+{
+  for (unsigned int i = 0; i < size(); i++) {
+    if (vpMath::isNaN(data[i])) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /*!
@@ -945,9 +977,15 @@ void vpHomogeneousMatrix::orthogonalizeRotation()
   vpRotationMatrix R(*this);
   R.orthogonalize();
 
-  data[0] = R[0][0]; data[1] = R[0][1]; data[2] = R[0][2];
-  data[4] = R[1][0]; data[5] = R[1][1]; data[6] = R[1][2];
-  data[8] = R[2][0]; data[9] = R[2][1]; data[10] = R[2][2];
+  data[0] = R[0][0];
+  data[1] = R[0][1];
+  data[2] = R[0][2];
+  data[4] = R[1][0];
+  data[5] = R[1][1];
+  data[6] = R[1][2];
+  data[8] = R[2][0];
+  data[9] = R[2][1];
+  data[10] = R[2][2];
 }
 
 //! Print the matrix as a pose vector \f$({\bf t}^T \theta {\bf u}^T)\f$
@@ -1050,6 +1088,60 @@ vpColVector vpHomogeneousMatrix::getCol(unsigned int j) const
 }
 
 /*!
+ * Compute the transformation between two point clouds.
+ * \param[in] p : First point cloud.
+ * \param[in] q : Second point cloud.
+ * \return The homogeneous transformation \f${^p}{\bf M}_q\f$.
+ */
+vpHomogeneousMatrix vpHomogeneousMatrix::compute3d3dTransformation(const std::vector<vpPoint> &p, const std::vector<vpPoint> &q)
+{
+  const double N = static_cast<double>(p.size());
+
+  vpColVector p_bar(3, 0.0);
+  vpColVector q_bar(3, 0.0);
+  for (size_t i = 0; i < p.size(); i++) {
+    for (unsigned int j = 0; j < 3; j++) {
+      p_bar[j] += p.at(i).oP[j];
+      q_bar[j] += q.at(i).oP[j];
+    }
+  }
+
+  for (unsigned int j = 0; j < 3; j++) {
+    p_bar[j] /= N;
+    q_bar[j] /= N;
+  }
+
+  vpMatrix pc(static_cast<unsigned int>(p.size()), 3);
+  vpMatrix qc(static_cast<unsigned int>(q.size()), 3);
+
+  for (unsigned int i = 0; i < static_cast<unsigned int>(p.size()); i++) {
+    for (unsigned int j = 0; j < 3; j++) {
+      pc[i][j] = p.at(i).oP[j] - p_bar[j];
+      qc[i][j] = q.at(i).oP[j] - q_bar[j];
+    }
+  }
+
+  const vpMatrix pct_qc = pc.t() * qc;
+  vpMatrix U = pct_qc, V;
+  vpColVector W;
+  U.svd(W, V);
+
+  vpMatrix Vt = V.t();
+  vpMatrix R = U * Vt;
+  if (R.det() < 0) {
+    Vt[2][0] *= -1;
+    Vt[2][1] *= -1;
+    Vt[2][2] *= -1;
+
+    R = U * Vt;
+  }
+
+  const vpColVector t = p_bar - R * q_bar;
+
+  return vpHomogeneousMatrix(vpTranslationVector(t), vpRotationMatrix(R));
+}
+
+/*!
   Compute the Euclidean mean of the homogeneous matrices.
   The Euclidean mean of the rotation matrices is computed following Moakher's method (SIAM 2002).
 
@@ -1065,8 +1157,8 @@ vpHomogeneousMatrix vpHomogeneousMatrix::mean(const std::vector<vpHomogeneousMat
   vpRotationMatrix R;
   for (size_t i = 0; i < vec_M.size(); i++) {
     R = vec_M[i].getRotationMatrix();
-    meanR += (vpMatrix) R;
-    meanT += (vpColVector) vec_M[i].getTranslationVector();
+    meanR += (vpMatrix)R;
+    meanT += (vpColVector)vec_M[i].getTranslationVector();
   }
   meanR /= static_cast<double>(vec_M.size());
   meanT /= static_cast<double>(vec_M.size());
@@ -1075,14 +1167,14 @@ vpHomogeneousMatrix vpHomogeneousMatrix::mean(const std::vector<vpHomogeneousMat
   vpMatrix M, U, V;
   vpColVector sv;
   meanR.pseudoInverse(M, sv, 1e-6, U, V);
-  double det = sv[0]*sv[1]*sv[2];
+  double det = sv[0] * sv[1] * sv[2];
   if (det > 0) {
     meanR = U * V.t();
-  }
-  else {
-    vpMatrix D(3,3);
+  } else {
+    vpMatrix D(3, 3);
     D = 0.0;
-    D[0][0] = D[1][1] = 1.0; D[2][2] = -1;
+    D[0][0] = D[1][1] = 1.0;
+    D[2][2] = -1;
     meanR = U * D * V.t();
   }
 

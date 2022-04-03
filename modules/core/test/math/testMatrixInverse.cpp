@@ -74,7 +74,8 @@ Outputs a comparison of these methods.\n\
 SYNOPSIS\n\
   %s [-n <number of matrices>] [-f <plot filename>]\n\
      [-R <number of rows>] [-C <number of columns>]\n\
-     [-i <number of iterations>] [-p] [-h]\n", name);
+     [-i <number of iterations>] [-p] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -208,8 +209,8 @@ vpMatrix make_random_triangular_matrix(unsigned int nbrows)
   vpMatrix A;
   A.resize(nbrows, nbrows);
 
-  for(unsigned int i=0; i < A.getRows(); i++) {
-    for(unsigned int j=i; j<A.getCols(); j++) {
+  for (unsigned int i = 0; i < A.getRows(); i++) {
+    for (unsigned int j = i; j < A.getCols(); j++) {
       A[i][j] = static_cast<double>(rand()) / static_cast<double>(RAND_MAX);
       if (i != j) {
         A[j][i] = 0;
@@ -284,8 +285,7 @@ void create_bench_random_triangular_matrix(unsigned int nb_matrices, unsigned in
 #if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
     double det = 0.;
     // don't put singular matrices in the benchmark
-    for (M = make_random_triangular_matrix(n); std::fabs(det = M.det()) < .01;
-         M = make_random_triangular_matrix(n)) {
+    for (M = make_random_triangular_matrix(n); std::fabs(det = M.det()) < .01; M = make_random_triangular_matrix(n)) {
       if (verbose) {
         std::cout << "  Generated random symmetric positive matrix A=" << std::endl << M << std::endl;
         std::cout << "  Generated random symmetric positive matrix not "
@@ -320,8 +320,7 @@ int test_inverse_lu_small(bool verbose, const std::vector<vpMatrix> &bench, doub
     std::cout << "Test inverse by LU on small matrices" << std::endl;
   // Compute inverse
   if (verbose)
-    std::cout << "  Inverting " << bench[0].getRows() << "x" << bench[0].getCols()
-              << " small matrix." << std::endl;
+    std::cout << "  Inverting " << bench[0].getRows() << "x" << bench[0].getCols() << " small matrix." << std::endl;
   std::vector<vpMatrix> result(bench.size());
   double t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {
@@ -458,8 +457,7 @@ int test_inverse_cholesky_opencv(bool verbose, const std::vector<vpMatrix> &benc
 int test_pseudo_inverse(bool verbose, const std::vector<vpMatrix> &bench, double &time)
 {
   if (verbose)
-    std::cout << "Test pseudo inverse using either Lapack, Eigen3 or OpenCV 3rd party"
-              << std::endl;
+    std::cout << "Test pseudo inverse using either Lapack, Eigen3 or OpenCV 3rd party" << std::endl;
   // Compute inverse
   if (verbose)
     std::cout << "  Pseudo inverting " << bench[0].AtA().getRows() << "x" << bench[0].AtA().getCols() << " matrix"
@@ -481,8 +479,7 @@ int test_inverse_triangular(bool verbose, const std::vector<vpMatrix> &bench, do
     std::cout << "Test inverse triangular using Lapack" << std::endl;
   // Compute inverse
   if (verbose)
-    std::cout << "  Triangular inverse " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix"
-              << std::endl;
+    std::cout << "  Triangular inverse " << bench[0].getRows() << "x" << bench[0].getCols() << " matrix" << std::endl;
   std::vector<vpMatrix> result(bench.size());
   double t = vpTime::measureTimeMs();
   for (unsigned int i = 0; i < bench.size(); i++) {

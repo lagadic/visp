@@ -295,8 +295,7 @@ void vpTemplateTrackerWarpHomographySL3::computeCoeff(const vpColVector &p)
  *
  * \sa computeDenom()
  */
-void vpTemplateTrackerWarpHomographySL3::warpX(const vpColVector &X1, vpColVector &X2,
-                                               const vpColVector &)
+void vpTemplateTrackerWarpHomographySL3::warpX(const vpColVector &X1, vpColVector &X2, const vpColVector &)
 {
   double u = X1[0], v = X1[1];
   X2[0] = (u * G[0][0] + v * G[0][1] + G[0][2]) / denom;
@@ -313,7 +312,8 @@ void vpTemplateTrackerWarpHomographySL3::warpX(const vpColVector &X1, vpColVecto
  *
  * \sa computeDenom()
  */
-void vpTemplateTrackerWarpHomographySL3::warpX(const int &v1, const int &u1, double &v2, double &u2, const vpColVector &)
+void vpTemplateTrackerWarpHomographySL3::warpX(const int &v1, const int &u1, double &v2, double &u2,
+                                               const vpColVector &)
 {
   u2 = (u1 * G[0][0] + v1 * G[0][1] + G[0][2]) / denom;
   v2 = (u1 * G[1][0] + v1 * G[1][1] + G[1][2]) / denom;
@@ -345,8 +345,8 @@ vpHomography vpTemplateTrackerWarpHomographySL3::getHomography() const
  *
  * \sa computeDenom()
  */
-void vpTemplateTrackerWarpHomographySL3::dWarp(const vpColVector &X1, const vpColVector &X2,
-                                               const vpColVector &, vpMatrix &dM)
+void vpTemplateTrackerWarpHomographySL3::dWarp(const vpColVector &X1, const vpColVector &X2, const vpColVector &,
+                                               vpMatrix &dM)
 {
   vpMatrix dhdx(2, 3);
   dhdx = 0;
@@ -376,7 +376,8 @@ void vpTemplateTrackerWarpHomographySL3::dWarp(const vpColVector &X1, const vpCo
  * \param du : Derivative on the u-axis (along the columns) of the point (u,v).
  * \param dIdW : Resulting derivative matrix (image according to the warping function).
  */
-void vpTemplateTrackerWarpHomographySL3::getdW0(const int &v, const int &u, const double &dv, const double &du, double *dIdW)
+void vpTemplateTrackerWarpHomographySL3::getdW0(const int &v, const int &u, const double &dv, const double &du,
+                                                double *dIdW)
 {
   vpMatrix dhdx(1, 3);
   dhdx = 0;
@@ -497,8 +498,8 @@ void vpTemplateTrackerWarpHomographySL3::getdWdp0(const double &v, const double 
  * \sa computeDenom()
  */
 
-void vpTemplateTrackerWarpHomographySL3::dWarpCompo(const vpColVector &, const vpColVector &X,
-                                                    const vpColVector &, const double *dwdp0, vpMatrix &dM)
+void vpTemplateTrackerWarpHomographySL3::dWarpCompo(const vpColVector &, const vpColVector &X, const vpColVector &,
+                                                    const double *dwdp0, vpMatrix &dM)
 {
   for (unsigned int i = 0; i < nbParam; i++) {
     dM[0][i] = denom * ((G[0][0] - X[0] * G[2][0]) * dwdp0[i] + (G[0][1] - X[0] * G[2][1]) * dwdp0[i + nbParam]);
@@ -512,10 +513,7 @@ void vpTemplateTrackerWarpHomographySL3::dWarpCompo(const vpColVector &, const v
  * to the transformation to inverse.
  * \param p_inv : 8-dim vector that contains the parameters of the inverse transformation \f$ {M(p)}^{-1}\f$.
  */
-void vpTemplateTrackerWarpHomographySL3::getParamInverse(const vpColVector &p, vpColVector &p_inv) const
-{
-  p_inv = -p;
-}
+void vpTemplateTrackerWarpHomographySL3::getParamInverse(const vpColVector &p, vpColVector &p_inv) const { p_inv = -p; }
 
 /*!
  * Compute the transformation resulting from the composition of two other transformations.

@@ -13,7 +13,7 @@ int main()
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I, vpDisplay::SCALE_AUTO);
 #endif
-    
+
     vpDisplay::setTitle(I, "My image");
     vpDisplay::display(I);
     //! [Cross]
@@ -25,5 +25,5 @@ int main()
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
-  std::cout<<std::endl;
+  std::cout << std::endl;
 }

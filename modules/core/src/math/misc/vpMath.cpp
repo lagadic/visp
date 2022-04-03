@@ -326,7 +326,7 @@ double vpMath::getStdev(const std::vector<double> &v, bool useBesselCorrection)
 
   \return The mean distance error (point-to-line distance) between the points and the fitted line.
 */
-double vpMath::lineFitting(const std::vector<vpImagePoint>& imPts, double& a, double& b, double& c)
+double vpMath::lineFitting(const std::vector<vpImagePoint> &imPts, double &a, double &b, double &c)
 {
   if (imPts.size() < 3) {
     throw vpException(vpException::dimensionError, "Number of image points must be greater or equal to 3.");
@@ -334,7 +334,7 @@ double vpMath::lineFitting(const std::vector<vpImagePoint>& imPts, double& a, do
 
   double x_mean = 0, y_mean = 0;
   for (size_t i = 0; i < imPts.size(); i++) {
-    const vpImagePoint& imPt = imPts[i];
+    const vpImagePoint &imPt = imPts[i];
     x_mean += imPt.get_u();
     y_mean += imPt.get_v();
   }
@@ -343,10 +343,10 @@ double vpMath::lineFitting(const std::vector<vpImagePoint>& imPts, double& a, do
 
   vpMatrix AtA(2, 2, 0.0);
   for (size_t i = 0; i < imPts.size(); i++) {
-    const vpImagePoint& imPt = imPts[i];
-    AtA[0][0] += (imPt.get_u() - x_mean)*(imPt.get_u() - x_mean);
-    AtA[0][1] += (imPt.get_u() - x_mean)*(imPt.get_v() - y_mean);
-    AtA[1][1] += (imPt.get_v() - y_mean)*(imPt.get_v() - y_mean);
+    const vpImagePoint &imPt = imPts[i];
+    AtA[0][0] += (imPt.get_u() - x_mean) * (imPt.get_u() - x_mean);
+    AtA[0][1] += (imPt.get_u() - x_mean) * (imPt.get_v() - y_mean);
+    AtA[1][1] += (imPt.get_v() - y_mean) * (imPt.get_v() - y_mean);
   }
   AtA[1][0] = AtA[0][1];
 
@@ -356,14 +356,14 @@ double vpMath::lineFitting(const std::vector<vpImagePoint>& imPts, double& a, do
 
   a = eigenvectors[0][0];
   b = eigenvectors[1][0];
-  c = a*x_mean + b*y_mean;
+  c = a * x_mean + b * y_mean;
 
   double error = 0;
   for (size_t i = 0; i < imPts.size(); i++) {
     double x0 = imPts[i].get_u();
     double y0 = imPts[i].get_v();
 
-    error += std::fabs(a*x0 + b*y0 - c);
+    error += std::fabs(a * x0 + b * y0 - c);
   }
 
   return error / imPts.size();
@@ -381,7 +381,16 @@ double vpMath::lineFitting(const std::vector<vpImagePoint>& imPts, double& a, do
 */
 int vpMath::modulo(int a, int n) { return ((a % n) + n) % n; }
 
-//TODO:
+/*!
+  Compute from a given longitude, latitude and a sphere radius the homogeneous transformation
+  from the NED frame to the ECEF frame.
+
+  \param lonDeg : The longitude in degree.
+  \param lonDeg : The latitude in degree.
+  \param lonDeg : The sphere radius.
+
+  \return The homogeneous transformation from NED to ECEF frame.
+*/
 vpHomogeneousMatrix vpMath::ned2ecef(double lonDeg, double latDeg, double radius)
 {
   double lon = vpMath::rad(lonDeg);
@@ -395,6 +404,16 @@ vpHomogeneousMatrix vpMath::ned2ecef(double lonDeg, double latDeg, double radius
   return ecef_M_ned;
 }
 
+/*!
+  Compute from a given longitude, latitude and a sphere radius the homogeneous transformation
+  from the ENU frame to the ECEF frame.
+
+  \param lonDeg : The longitude in degree.
+  \param lonDeg : The latitude in degree.
+  \param lonDeg : The sphere radius.
+
+  \return The homogeneous transformation from ENU to ECEF frame.
+*/
 vpHomogeneousMatrix vpMath::enu2ecef(double lonDeg, double latDeg, double radius)
 {
   double lon = vpMath::rad(lonDeg);
@@ -408,6 +427,16 @@ vpHomogeneousMatrix vpMath::enu2ecef(double lonDeg, double latDeg, double radius
   return ecef_M_enu;
 }
 
+/*!
+  Compute the vector of longitude / latitude couples for \e maxPoints regularly spaced on a sphere,
+  using the following paper:
+    - "How to generate equidistributed points on the surface of a sphere", Markus Deserno
+    - https://www.cmu.edu/biolphys/deserno/pdf/sphere_equi.pdf
+
+  \param maxPoints : The number of point coordinates to be sampled on a sphere.
+
+  \return The vector of longitude / latitude couples for the \e maxPoints on a sphare.
+*/
 std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(unsigned int maxPoints)
 {
   assert(maxPoints > 0);
@@ -434,6 +463,17 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
   return points;
 }
 
+/*!
+  Compute transformations from the local tangent plane (e.g. NED, ECU, ...) to the ECEF frame.
+
+  \param longitudes : Vector of longitude coordinates.
+  \param latitudes : Vector of latitude coordinates.
+  \param radius : Sphere radius.
+  \param toECEF : Pointer to the function computing from a longitude / latitude in degree
+  and a radius the corresponding transformation from the local frame (e.g. NED or ENU) to the ECEF frame.
+
+  \return The vector of ecef_M_local homogeneous transformations.
+*/
 std::vector<vpHomogeneousMatrix> vpMath::getLocalTangentPlaneTransformations(const std::vector<double> &longitudes, const std::vector<double> &latitudes, double radius,
                                                                              vpHomogeneousMatrix (*toECEF)(double lonDeg, double latDeg, double radius))
 {

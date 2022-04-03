@@ -72,45 +72,47 @@
 template <class vpTransformation> class vpRansac
 {
 public:
-  static bool ransac(unsigned int npts, vpColVector &x, unsigned int s, double t, vpColVector &model,
-                     vpColVector &inliers, int consensus = 1000, double not_used = 0.0,
-                     int maxNbumbersOfTrials = 10000);
+  static bool ransac(unsigned int npts, const vpColVector &x, unsigned int s, double t, vpColVector &model,
+                     vpColVector &inliers, int consensus = 1000, double not_used = 0.0, int maxNbumbersOfTrials = 10000,
+                     double *residual = NULL);
 };
 
 /*!
   \brief
-  RANSAC - Robustly fits a model to data with the RANSAC algorithm
+  RANSAC - Robustly fits a model to data with the RANSAC algorithm.
 
-  \param npts : The number of data points.
+  \param[in] npts : The number of data points.
 
-  \param x : Data sets to which we are seeking to fit a model M It is assumed
+  \param[in] x : Data sets to which we are seeking to fit a model M. It is assumed
   that x is of size [d x Npts] where d is the dimensionality of the data and
   npts is the number of data points.
 
-  \param s : The minimum number of samples from x required by fitting fn to
+  \param[in] s : The minimum number of samples from x required by fitting fn to
   fit a model. Value should be greater or equal to 4.
 
-  \param t : The distance threshold between data point and the model used to
+  \param[in] t : The distance threshold between data point and the model used to
   decide whether a point is an inlier or not.
 
-  \param M : The model having the greatest number of inliers.
+  \param[out] M : The model having the greatest number of inliers.
 
-  \param inliers :  An array of indices of the elements of x that were the
+  \param[out] inliers :  An array of indices of the elements of x that were the
   inliers for the best model.
 
-  \param consensus :  Consensus
+  \param[in] consensus :  Consensus
 
-  \param not_used : Unused parameter.
+  \param[in] not_used : Unused parameter.
 
-  \param maxNbumbersOfTrials : Maximum number of trials. Even if a solution is
+  \param[in] maxNbumbersOfTrials : Maximum number of trials. Even if a solution is
   not found, the method is stopped.
+
+  \param[out] residual : Residual
 
 */
 
 template <class vpTransformation>
-bool vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x, unsigned int s, double t, vpColVector &M,
-                                        vpColVector &inliers, int consensus, double not_used,
-                                        int maxNbumbersOfTrials)
+bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x, unsigned int s, double t,
+                                        vpColVector &M, vpColVector &inliers, int consensus, double not_used,
+                                        int maxNbumbersOfTrials, double *residual)
 {
   /*   bool isplanar; */
   /*   if (s == 4) isplanar = true; */
@@ -139,7 +141,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x, unsig
   unsigned int *ind = new unsigned int[s];
   int numiter = 0;
   int ninliers = 0;
-  double residual = 0.0;
+
   while ((N > trialcount) && (consensus > bestscore)) {
     // Select at random s datapoints to form a trial model, M.
     // In selecting these points we have to check that they are not in
@@ -175,14 +177,17 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x, unsig
     vpTransformation::computeResidual(x, M, d);
 
     // Find the indices of points that are inliers to this model.
-    residual = 0.0;
+    if (residual != NULL)
+      *residual = 0.0;
     ninliers = 0;
     for (unsigned int i = 0; i < npts; i++) {
       double resid = fabs(d[i]);
       if (resid < t) {
         inliers[i] = 1;
         ninliers++;
-        residual += fabs(d[i]);
+        if (residual != NULL) {
+          *residual += fabs(d[i]);
+        }
       } else
         inliers[i] = 0;
     }
@@ -224,8 +229,12 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, vpColVector &x, unsig
     M = 0;
   }
 
-  if (ninliers > 0)
-    residual /= ninliers;
+  if (residual != NULL) {
+    if (ninliers > 0) {
+      *residual /= ninliers;
+    }
+  }
+
   delete[] ind;
 
   return true;

@@ -79,7 +79,7 @@
 template <unsigned int N> struct vpDesiredFeatureBuilderWithTuple {
   template <typename featureType, typename RetType, typename... ArgsF, typename... ArgsT, typename... Args>
   static void buildDesiredFeatureWithTuple(featureType &feature, RetType (*f)(ArgsF...), const std::tuple<ArgsT...> &t,
-                                           Args &&... args)
+                                           Args &&...args)
   {
     vpDesiredFeatureBuilderWithTuple<N - 1>::buildDesiredFeatureWithTuple(feature, f, t, std::get<N - 1>(t), args...);
   }
@@ -88,7 +88,7 @@ template <unsigned int N> struct vpDesiredFeatureBuilderWithTuple {
 template <> struct vpDesiredFeatureBuilderWithTuple<0> {
   template <typename featureType, typename RetType, typename... ArgsF, typename... ArgsT, typename... Args>
   static void buildDesiredFeatureWithTuple(featureType & /* feature */, RetType (*f)(ArgsF...),
-                                           const std::tuple<ArgsT...> & /* t */, Args &&... args)
+                                           const std::tuple<ArgsT...> & /* t */, Args &&...args)
   {
     f(args...);
   }
@@ -97,7 +97,7 @@ template <> struct vpDesiredFeatureBuilderWithTuple<0> {
 template <> struct vpDesiredFeatureBuilderWithTuple<1> {
   template <typename featureType, typename RetType, typename... ArgsF, typename... ArgsT, typename... Args>
   static void buildDesiredFeatureWithTuple(featureType &feature, RetType (*f)(ArgsF...), const std::tuple<ArgsT...> &t,
-                                           Args &&... args)
+                                           Args &&...args)
   {
     vpDesiredFeatureBuilderWithTuple<0>::buildDesiredFeatureWithTuple(feature, f, t, feature, args...);
   }
@@ -118,7 +118,7 @@ template <unsigned int N> struct vpDesiredFeatureBuilderObjectWithTuple {
   template <typename objType, typename featureType, typename RetType, typename... ArgsF, typename... ArgsT,
             typename... Args>
   static void buildDesiredFeatureObjectWithTuple(objType *obj, featureType &feature, RetType (objType::*f)(ArgsF...),
-                                                 const std::tuple<ArgsT...> &t, Args &&... args)
+                                                 const std::tuple<ArgsT...> &t, Args &&...args)
   {
     vpDesiredFeatureBuilderObjectWithTuple<N - 1>::buildDesiredFeatureObjectWithTuple(obj, feature, f, t,
                                                                                       std::get<N - 1>(t), args...);
@@ -130,7 +130,7 @@ template <> struct vpDesiredFeatureBuilderObjectWithTuple<0> {
             typename... Args>
   static void buildDesiredFeatureObjectWithTuple(objType *obj, featureType & /*feature*/,
                                                  RetType (objType::*f)(ArgsF...), const std::tuple<ArgsT...> & /* t */,
-                                                 Args &&... args)
+                                                 Args &&...args)
   {
     (obj->*f)(args...);
   }
@@ -140,7 +140,7 @@ template <> struct vpDesiredFeatureBuilderObjectWithTuple<1> {
   template <typename objType, typename featureType, typename RetType, typename... ArgsF, typename... ArgsT,
             typename... Args>
   static void buildDesiredFeatureObjectWithTuple(objType *obj, featureType &feature, RetType (objType::*f)(ArgsF...),
-                                                 const std::tuple<ArgsT...> &t, Args &&... args)
+                                                 const std::tuple<ArgsT...> &t, Args &&...args)
   {
     vpDesiredFeatureBuilderObjectWithTuple<0>::buildDesiredFeatureObjectWithTuple(obj, feature, f, t, feature, args...);
   }
@@ -163,7 +163,7 @@ template <unsigned int N> struct vpCurrentFeatureBuilderWithTuple {
   template <typename featureType, typename RetType, typename... ArgsTuple, typename... ArgsDecomposed,
             typename... ArgsF>
   static void buildCurrentFeatureWithTuple(featureType &feature, const vpHomogeneousMatrix &cMo, RetType (*f)(ArgsF...),
-                                           std::tuple<ArgsTuple...> &t, ArgsDecomposed &&... args)
+                                           std::tuple<ArgsTuple...> &t, ArgsDecomposed &&...args)
   {
     auto proj = std::get<N - 1>(t);
     proj.track(cMo);
@@ -175,8 +175,7 @@ template <> struct vpCurrentFeatureBuilderWithTuple<0> {
   template <typename featureType, typename RetType, typename... ArgsTuple, typename... ArgsDecomposed,
             typename... ArgsF>
   static void buildCurrentFeatureWithTuple(featureType & /*feature*/, const vpHomogeneousMatrix & /*cMo*/,
-                                           RetType (*f)(ArgsF...), std::tuple<ArgsTuple...> &,
-                                           ArgsDecomposed &&... args)
+                                           RetType (*f)(ArgsF...), std::tuple<ArgsTuple...> &, ArgsDecomposed &&...args)
   {
     f(args...);
   }
@@ -186,7 +185,7 @@ template <> struct vpCurrentFeatureBuilderWithTuple<1> {
   template <typename featureType, typename RetType, typename... ArgsTuple, typename... ArgsDecomposed,
             typename... ArgsF>
   static void buildCurrentFeatureWithTuple(featureType &feature, const vpHomogeneousMatrix &cMo, RetType (*f)(ArgsF...),
-                                           std::tuple<ArgsTuple...> &t, ArgsDecomposed &&... args)
+                                           std::tuple<ArgsTuple...> &t, ArgsDecomposed &&...args)
   {
     vpCurrentFeatureBuilderWithTuple<0>::buildCurrentFeatureWithTuple(feature, cMo, f, t, feature, args...);
   }
@@ -211,7 +210,7 @@ template <unsigned int N> struct vpCurrentFeatureBuilderObjectWithTuple {
             typename... ArgsF>
   static void buildCurrentFeatureObjectWithTuple(objType *obj, featureType &feature, const vpHomogeneousMatrix &cMo,
                                                  RetType (objType::*f)(ArgsF...), std::tuple<ArgsTuple...> &t,
-                                                 ArgsDecomposed &&... args)
+                                                 ArgsDecomposed &&...args)
   {
     auto proj = std::get<N - 1>(t);
     proj.track(cMo);
@@ -225,7 +224,7 @@ template <> struct vpCurrentFeatureBuilderObjectWithTuple<0> {
             typename... ArgsF>
   static void buildCurrentFeatureObjectWithTuple(objType *obj, featureType & /*feature*/,
                                                  const vpHomogeneousMatrix & /*cMo*/, RetType (objType::*f)(ArgsF...),
-                                                 std::tuple<ArgsTuple...> &, ArgsDecomposed &&... args)
+                                                 std::tuple<ArgsTuple...> &, ArgsDecomposed &&...args)
   {
     (obj->*f)(args...);
   }
@@ -236,7 +235,7 @@ template <> struct vpCurrentFeatureBuilderObjectWithTuple<1> {
             typename... ArgsF>
   static void buildCurrentFeatureObjectWithTuple(objType *obj, featureType &feature, const vpHomogeneousMatrix &cMo,
                                                  RetType (objType::*f)(ArgsF...), std::tuple<ArgsTuple...> &t,
-                                                 ArgsDecomposed &&... args)
+                                                 ArgsDecomposed &&...args)
   {
     vpCurrentFeatureBuilderObjectWithTuple<0>::buildCurrentFeatureObjectWithTuple(obj, feature, cMo, f, t, feature,
                                                                                   args...);
@@ -293,7 +292,7 @@ private:
   RetType (*func_ptr)(Args...);
 
 public:
-  vpPoseSpecificFeatureTemplate(RetType (*f_ptr)(Args...), Args &&... args)
+  vpPoseSpecificFeatureTemplate(RetType (*f_ptr)(Args...), Args &&...args)
   {
     func_ptr = f_ptr; // std::move(f_ptr);
     tuple = new std::tuple<Args...>(args...);
@@ -340,7 +339,7 @@ private:
   ObjectType *obj;
 
 public:
-  vpPoseSpecificFeatureTemplateObject(ObjectType *o, RetType (ObjectType::*f_ptr)(Args...), Args &&... args)
+  vpPoseSpecificFeatureTemplateObject(ObjectType *o, RetType (ObjectType::*f_ptr)(Args...), Args &&...args)
   {
     func_ptr = f_ptr; // std::move(f_ptr);
     tuple = new std::tuple<Args...>(args...);
@@ -454,10 +453,10 @@ public:
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   template <typename RetType, typename... ArgsFunc, typename... Args>
-  void addSpecificFeature(RetType (*fct_ptr)(ArgsFunc...), Args &&... args);
+  void addSpecificFeature(RetType (*fct_ptr)(ArgsFunc...), Args &&...args);
 
   template <typename ObjType, typename RetType, typename... ArgsFunc, typename... Args>
-  void addSpecificFeature(ObjType *obj, RetType (ObjType::*fct_ptr)(ArgsFunc...), Args &&... args);
+  void addSpecificFeature(ObjType *obj, RetType (ObjType::*fct_ptr)(ArgsFunc...), Args &&...args);
 #endif
 
   void clear();
@@ -589,7 +588,7 @@ int main()
   \endcode
 */
 template <typename RetType, typename... ArgsFunc, typename... Args>
-void vpPoseFeatures::addSpecificFeature(RetType (*fct_ptr)(ArgsFunc...), Args &&... args)
+void vpPoseFeatures::addSpecificFeature(RetType (*fct_ptr)(ArgsFunc...), Args &&...args)
 {
   typedef typename std::tuple_element<0, std::tuple<Args...> >::type featureTypeReference;
   typedef typename std::remove_reference<featureTypeReference>::type featureType;
@@ -670,7 +669,7 @@ int main()
   \endcode
 */
 template <typename ObjType, typename RetType, typename... ArgsFunc, typename... Args>
-void vpPoseFeatures::addSpecificFeature(ObjType *obj, RetType (ObjType::*fct_ptr)(ArgsFunc...), Args &&... args)
+void vpPoseFeatures::addSpecificFeature(ObjType *obj, RetType (ObjType::*fct_ptr)(ArgsFunc...), Args &&...args)
 {
   typedef typename std::tuple_element<0, std::tuple<Args...> >::type featureTypeReference;
   typedef typename std::remove_reference<featureTypeReference>::type featureType;

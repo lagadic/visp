@@ -43,8 +43,8 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if (defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)) \
-  && (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
+#if (defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY)) &&                                                   \
+    (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
 
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
@@ -76,7 +76,8 @@ void usage(const char *name, const char *badparam)
     %s [-i <test image path>] [-x <config file>] [-X <config file depth>]\n\
     [-m <model name>] [-M <model name depth>] [-n <initialisation file base name>]\n\
     [-f] [-c] [-d] [-h] [-o] [-w] [-l] [-v] [-p]\n\
-    [-t <tracker type>] [-T <tracker type>] [-e <last frame index>]\n", name);
+    [-t <tracker type>] [-T <tracker type>] [-e <last frame index>]\n",
+          name);
 
   fprintf(stdout, "\n\
   OPTIONS:                                               \n\
@@ -415,7 +416,7 @@ void loadConfiguration(vpMbTracker *const tracker,
 //   vpMbtPolygon::DOWN_CLIPPING); // Equivalent to FOV_CLIPPING
 #endif
 }
-}
+} // namespace
 
 int main(int argc, const char **argv)
 {
@@ -761,9 +762,9 @@ int main(int argc, const char **argv)
           vpDisplay::displayText(I_depth, 80, 20, ss.str(), vpColor::red);
           {
             std::stringstream ss;
-            ss << "Features: edges " << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesEdge()
-               << ", klt " << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesKlt()
-               << ", depth " << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesDepthDense();
+            ss << "Features: edges " << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesEdge() << ", klt "
+               << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesKlt() << ", depth "
+               << dynamic_cast<vpMbGenericTracker *>(tracker)->getNbFeaturesDepthDense();
             vpDisplay::displayText(I, I.getHeight() - 30, 20, ss.str(), vpColor::red);
           }
         }
@@ -826,8 +827,7 @@ int main(int argc, const char **argv)
 #elif !(defined(VISP_HAVE_MODULE_MBT) && defined(VISP_HAVE_DISPLAY))
 int main()
 {
-  std::cout << "Cannot run this example: visp_mbt, visp_gui modules are required."
-            << std::endl;
+  std::cout << "Cannot run this example: visp_mbt, visp_gui modules are required." << std::endl;
   return EXIT_SUCCESS;
 }
 #else
@@ -837,4 +837,3 @@ int main()
   return EXIT_SUCCESS;
 }
 #endif
-

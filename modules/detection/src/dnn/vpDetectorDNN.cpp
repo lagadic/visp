@@ -35,12 +35,15 @@
 #include <visp3/core/vpConfig.h>
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN)
-#include <visp3/detection/vpDetectorDNN.h>
 #include <visp3/core/vpImageConvert.h>
+#include <visp3/detection/vpDetectorDNN.h>
 
-vpDetectorDNN::vpDetectorDNN() : m_blob(), m_boxes(), m_classIds(), m_confidences(),
-    m_confidenceThreshold(0.5), m_I_color(), m_img(), m_inputSize(300,300), m_mean(127.5, 127.5, 127.5),
-    m_net(), m_nmsThreshold(0.4f), m_outNames(), m_outs(), m_scaleFactor(2.0/255.0), m_swapRB(true) {}
+vpDetectorDNN::vpDetectorDNN()
+  : m_blob(), m_boxes(), m_classIds(), m_confidences(), m_confidenceThreshold(0.5), m_I_color(), m_img(),
+    m_inputSize(300, 300), m_mean(127.5, 127.5, 127.5), m_net(), m_nmsThreshold(0.4f), m_outNames(), m_outs(),
+    m_scaleFactor(2.0 / 255.0), m_swapRB(true)
+{
+}
 
 vpDetectorDNN::~vpDetectorDNN() {}
 
@@ -52,7 +55,8 @@ vpDetectorDNN::~vpDetectorDNN() {}
   \param I : Input image.
   \return false if there is no detection.
 */
-bool vpDetectorDNN::detect(const vpImage<unsigned char> &I) {
+bool vpDetectorDNN::detect(const vpImage<unsigned char> &I)
+{
   vpImageConvert::convert(I, m_I_color);
 
   std::vector<vpRect> boundingBoxes;
@@ -66,7 +70,8 @@ bool vpDetectorDNN::detect(const vpImage<unsigned char> &I) {
   \param boundingBoxes : Vector of detection bounding boxes.
   \return false if there is no detection.
 */
-bool vpDetectorDNN::detect(const vpImage<vpRGBa> &I, std::vector<vpRect> &boundingBoxes) {
+bool vpDetectorDNN::detect(const vpImage<vpRGBa> &I, std::vector<vpRect> &boundingBoxes)
+{
   vpImageConvert::convert(I, m_img);
 
   cv::Size inputSize(m_inputSize.width > 0 ? m_inputSize.width : m_img.cols,
@@ -115,7 +120,8 @@ bool vpDetectorDNN::detect(const vpImage<vpRGBa> &I, std::vector<vpRect> &boundi
 
   \param afterNMS If true, return detection bounding boxes after NMS
 */
-std::vector<vpRect> vpDetectorDNN::getDetectionBBs(bool afterNMS) const {
+std::vector<vpRect> vpDetectorDNN::getDetectionBBs(bool afterNMS) const
+{
   std::vector<vpRect> bbs;
   if (afterNMS) {
     bbs.reserve(m_boxesNMS.size());
@@ -139,7 +145,8 @@ std::vector<vpRect> vpDetectorDNN::getDetectionBBs(bool afterNMS) const {
 
   \param afterNMS If true, returns class ids after NMS
 */
-std::vector<int> vpDetectorDNN::getDetectionClassIds(bool afterNMS) const {
+std::vector<int> vpDetectorDNN::getDetectionClassIds(bool afterNMS) const
+{
   if (afterNMS) {
     std::vector<int> classIds;
     for (size_t i = 0; i < m_indices.size(); i++) {
@@ -155,7 +162,8 @@ std::vector<int> vpDetectorDNN::getDetectionClassIds(bool afterNMS) const {
 /*!
   Get detection confidences.
 */
-std::vector<float> vpDetectorDNN::getDetectionConfidence(bool afterNMS) const {
+std::vector<float> vpDetectorDNN::getDetectionConfidence(bool afterNMS) const
+{
   if (afterNMS) {
     std::vector<float> confidences;
     for (size_t i = 0; i < m_indices.size(); i++) {
@@ -169,7 +177,8 @@ std::vector<float> vpDetectorDNN::getDetectionConfidence(bool afterNMS) const {
 }
 
 #if (VISP_HAVE_OPENCV_VERSION == 0x030403)
-std::vector<cv::String> vpDetectorDNN::getOutputsNames() {
+std::vector<cv::String> vpDetectorDNN::getOutputsNames()
+{
   static std::vector<cv::String> names;
   if (names.empty()) {
     std::vector<int> outLayers = m_net.getUnconnectedOutLayers();
@@ -182,78 +191,68 @@ std::vector<cv::String> vpDetectorDNN::getOutputsNames() {
 }
 #endif
 
-void vpDetectorDNN::postProcess() {
-  //Direct copy from object_detection.cpp OpenCV sample
+void vpDetectorDNN::postProcess()
+{
+  // Direct copy from object_detection.cpp OpenCV sample
   static std::vector<int> outLayers = m_net.getUnconnectedOutLayers();
   static std::string outLayerType = m_net.getLayer(outLayers[0])->type;
 
   m_classIds.clear();
   m_confidences.clear();
   m_boxes.clear();
-  if (m_net.getLayer(0)->outputNameToIndex("im_info") != -1)  // Faster-RCNN or R-FCN
+  if (m_net.getLayer(0)->outputNameToIndex("im_info") != -1) // Faster-RCNN or R-FCN
   {
     // Network produces output blob with a shape 1x1xNx7 where N is a number of
     // detections and an every detection is a vector of values
     // [batchId, classId, confidence, left, top, right, bottom]
     CV_Assert(m_outs.size() == 1);
-    float* data = (float*)m_outs[0].data;
-    for (size_t i = 0; i < m_outs[0].total(); i += 7)
-    {
+    float *data = (float *)m_outs[0].data;
+    for (size_t i = 0; i < m_outs[0].total(); i += 7) {
       float confidence = data[i + 2];
-      if (confidence > m_confidenceThreshold)
-      {
+      if (confidence > m_confidenceThreshold) {
         int left = (int)data[i + 3];
         int top = (int)data[i + 4];
         int right = (int)data[i + 5];
         int bottom = (int)data[i + 6];
         int width = right - left + 1;
         int height = bottom - top + 1;
-        m_classIds.push_back((int)(data[i + 1]) - 1);  // Skip 0th background class id.
+        m_classIds.push_back((int)(data[i + 1]) - 1); // Skip 0th background class id.
         m_boxes.push_back(cv::Rect(left, top, width, height));
         m_confidences.push_back(confidence);
       }
     }
-  }
-  else if (outLayerType == "DetectionOutput")
-  {
+  } else if (outLayerType == "DetectionOutput") {
     // Network produces output blob with a shape 1x1xNx7 where N is a number of
     // detections and an every detection is a vector of values
     // [batchId, classId, confidence, left, top, right, bottom]
     CV_Assert(m_outs.size() == 1);
-    float* data = (float*)m_outs[0].data;
-    for (size_t i = 0; i < m_outs[0].total(); i += 7)
-    {
+    float *data = (float *)m_outs[0].data;
+    for (size_t i = 0; i < m_outs[0].total(); i += 7) {
       float confidence = data[i + 2];
-      if (confidence > m_confidenceThreshold)
-      {
+      if (confidence > m_confidenceThreshold) {
         int left = (int)(data[i + 3] * m_img.cols);
         int top = (int)(data[i + 4] * m_img.rows);
         int right = (int)(data[i + 5] * m_img.cols);
         int bottom = (int)(data[i + 6] * m_img.rows);
         int width = right - left + 1;
         int height = bottom - top + 1;
-        m_classIds.push_back((int)(data[i + 1]) - 1);  // Skip 0th background class id.
+        m_classIds.push_back((int)(data[i + 1]) - 1); // Skip 0th background class id.
         m_boxes.push_back(cv::Rect(left, top, width, height));
         m_confidences.push_back(confidence);
       }
     }
-  }
-  else if (outLayerType == "Region")
-  {
-    for (size_t i = 0; i < m_outs.size(); ++i)
-    {
+  } else if (outLayerType == "Region") {
+    for (size_t i = 0; i < m_outs.size(); ++i) {
       // Network produces output blob with a shape NxC where N is a number of
       // detected objects and C is a number of classes + 4 where the first 4
       // numbers are [center_x, center_y, width, height]
-      float* data = (float*)m_outs[i].data;
-      for (int j = 0; j < m_outs[i].rows; ++j, data += m_outs[i].cols)
-      {
+      float *data = (float *)m_outs[i].data;
+      for (int j = 0; j < m_outs[i].rows; ++j, data += m_outs[i].cols) {
         cv::Mat scores = m_outs[i].row(j).colRange(5, m_outs[i].cols);
         cv::Point classIdPoint;
         double confidence;
         cv::minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-        if (confidence > m_confidenceThreshold)
-        {
+        if (confidence > m_confidenceThreshold) {
           int centerX = (int)(data[0] * m_img.cols);
           int centerY = (int)(data[1] * m_img.rows);
           int width = (int)(data[2] * m_img.cols);
@@ -267,9 +266,7 @@ void vpDetectorDNN::postProcess() {
         }
       }
     }
-  }
-  else if(outLayerType == "Identity" || outLayerType == "Softmax")
-  {
+  } else if (outLayerType == "Identity" || outLayerType == "Softmax") {
     // In OpenCV 4.5.2, the output of ssd-mobilenet.onnx is parsed as `Softmax`, whereas
     // in OpenCV 4.5.5, the output is of type `Identity`, and the output order is permuted.
 
@@ -278,40 +275,37 @@ void vpDetectorDNN::postProcess() {
     // - 'boxes'  with dimensions 1xNx4
     // where `N` is a number of detections and `C` is the number of classes (with `BACKGROUND` as classId = 0).
 
-    int scores_index = m_outNames[0]=="scores" ? 0 : 1; // scores output index.
-    int boxes_index = m_outNames[0]=="boxes" ? 0 : 1; // boxes output index.
+    int scores_index = m_outNames[0] == "scores" ? 0 : 1; // scores output index.
+    int boxes_index = m_outNames[0] == "boxes" ? 0 : 1;   // boxes output index.
 
     int N = m_outs[scores_index].size[1], C = m_outs[scores_index].size[2];
 
-    float* confidence = (float*)m_outs[scores_index].data;
-    float* bbox = (float*)m_outs[boxes_index].data;
+    float *confidence = (float *)m_outs[scores_index].data;
+    float *bbox = (float *)m_outs[boxes_index].data;
 
     // Loop over all guesses on the output of the network.
-    for(int i = 0; i < N; i++)
-    {
+    for (int i = 0; i < N; i++) {
       uint32_t maxClass = 0;
       float maxScore = -1000.0f;
 
-      for(int j = 1; j < C; j++) // ignore background (classId = 0).
+      for (int j = 1; j < C; j++) // ignore background (classId = 0).
       {
         const float score = confidence[i * C + j];
 
-				if(score < m_confidenceThreshold)
-					continue;
+        if (score < m_confidenceThreshold)
+          continue;
 
-				if(score > maxScore)
-				{
-					maxScore = score;
-					maxClass = j;
-				}
+        if (score > maxScore) {
+          maxScore = score;
+          maxClass = j;
+        }
       }
 
-      if(maxScore > m_confidenceThreshold)
-      {
-        int left = (int)(bbox[4*i] * m_img.cols);
-        int top = (int)(bbox[4*i + 1] * m_img.rows);
-        int right = (int)(bbox[4*i + 2] * m_img.cols);
-        int bottom = (int)(bbox[4*i + 3] * m_img.rows);
+      if (maxScore > m_confidenceThreshold) {
+        int left = (int)(bbox[4 * i] * m_img.cols);
+        int top = (int)(bbox[4 * i + 1] * m_img.rows);
+        int right = (int)(bbox[4 * i + 2] * m_img.cols);
+        int bottom = (int)(bbox[4 * i + 3] * m_img.rows);
         int width = right - left + 1;
         int height = bottom - top + 1;
 
@@ -320,16 +314,14 @@ void vpDetectorDNN::postProcess() {
         m_confidences.push_back(maxScore);
       }
     }
-  }
-  else
+  } else
     CV_Error(cv::Error::StsNotImplemented, "Unknown output layer type: " + outLayerType);
 
   cv::dnn::NMSBoxes(m_boxes, m_confidences, m_confidenceThreshold, m_nmsThreshold, m_indices);
   m_boxesNMS.resize(m_indices.size());
-  for (size_t i = 0; i < m_indices.size(); ++i)
-  {
-      int idx = m_indices[i];
-      m_boxesNMS[i] = m_boxes[idx];
+  for (size_t i = 0; i < m_indices.size(); ++i) {
+    int idx = m_indices[i];
+    m_boxesNMS[i] = m_boxes[idx];
   }
 }
 
@@ -352,7 +344,8 @@ void vpDetectorDNN::postProcess() {
     - `*.xml` (DLDT, https://software.intel.com/openvino-toolkit)
   \param framework Optional name of an origin framework of the model. Automatically detected if it is not set.
 */
-void vpDetectorDNN::readNet(const std::string &model, const std::string &config, const std::string &framework) {
+void vpDetectorDNN::readNet(const std::string &model, const std::string &config, const std::string &framework)
+{
   m_net = cv::dnn::readNet(model, config, framework);
 #if (VISP_HAVE_OPENCV_VERSION == 0x030403)
   m_outNames = getOutputsNames();
@@ -366,9 +359,7 @@ void vpDetectorDNN::readNet(const std::string &model, const std::string &config,
 
   \param confThreshold Confidence threshold between [0, 1]
 */
-void vpDetectorDNN::setConfidenceThreshold(float confThreshold) {
-  m_confidenceThreshold = confThreshold;
-}
+void vpDetectorDNN::setConfidenceThreshold(float confThreshold) { m_confidenceThreshold = confThreshold; }
 
 /*!
   Set dimension to resize the image to the input blob.
@@ -376,7 +367,8 @@ void vpDetectorDNN::setConfidenceThreshold(float confThreshold) {
   \param width If <= 0, blob width is set to image width
   \param height If <= 0, blob height is set to image height
 */
-void vpDetectorDNN::setInputSize(int width, int height) {
+void vpDetectorDNN::setInputSize(int width, int height)
+{
   m_inputSize.width = width;
   m_inputSize.height = height;
 }
@@ -388,9 +380,7 @@ void vpDetectorDNN::setInputSize(int width, int height) {
   \param meanG Mean value for G-channel
   \param meanB Mean value for R-channel
 */
-void vpDetectorDNN::setMean(double meanR, double meanG, double meanB) {
-  m_mean = cv::Scalar(meanR, meanG, meanB);
-}
+void vpDetectorDNN::setMean(double meanR, double meanG, double meanB) { m_mean = cv::Scalar(meanR, meanG, meanB); }
 
 /*!
   Set Non-Maximum Suppression threshold, used to filter multiple detections at approximatively
@@ -398,9 +388,7 @@ void vpDetectorDNN::setMean(double meanR, double meanG, double meanB) {
 
   \param nmsThreshold Non-Maximum Suppression threshold between [0, 1]
 */
-void vpDetectorDNN::setNMSThreshold(float nmsThreshold) {
-  m_nmsThreshold = nmsThreshold;
-}
+void vpDetectorDNN::setNMSThreshold(float nmsThreshold) { m_nmsThreshold = nmsThreshold; }
 
 /*!
   Set preferable backend for inference computation.
@@ -408,9 +396,7 @@ void vpDetectorDNN::setNMSThreshold(float nmsThreshold) {
 
   \param backendId Backend identifier
 */
-void vpDetectorDNN::setPreferableBackend(int backendId) {
-  m_net.setPreferableBackend(backendId);
-}
+void vpDetectorDNN::setPreferableBackend(int backendId) { m_net.setPreferableBackend(backendId); }
 
 /*!
   Set preferable target for inference computation.
@@ -418,25 +404,19 @@ void vpDetectorDNN::setPreferableBackend(int backendId) {
 
   \param targetId Target identifier
 */
-void vpDetectorDNN::setPreferableTarget(int targetId) {
-  m_net.setPreferableTarget(targetId);
-}
+void vpDetectorDNN::setPreferableTarget(int targetId) { m_net.setPreferableTarget(targetId); }
 
 /*!
   Set scale factor to normalize the range of pixel values.
 */
-void vpDetectorDNN::setScaleFactor(double scaleFactor) {
-  m_scaleFactor = scaleFactor;
-}
+void vpDetectorDNN::setScaleFactor(double scaleFactor) { m_scaleFactor = scaleFactor; }
 
 /*!
   If true, swap R and B channel for mean subtraction. For instance
   when the network has been trained on RGB image format (OpenCV uses
   BGR convention).
 */
-void vpDetectorDNN::setSwapRB(bool swapRB) {
-  m_swapRB = swapRB;
-}
+void vpDetectorDNN::setSwapRB(bool swapRB) { m_swapRB = swapRB; }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work arround to avoid warning: libvisp_core.a(vpDetectorDNN.cpp.o) has no

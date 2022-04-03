@@ -45,40 +45,38 @@
 #include <visp3/io/vpImageIo.h>
 
 static std::string ipath = vpIoTools::getViSPImagesDataPath();
-static std::vector<std::string> paths {
-  ipath + "/Solvay/Solvay_conference_1927_Version2_640x440",
-  ipath + "/Solvay/Solvay_conference_1927_Version2_1024x705",
-  ipath + "/Solvay/Solvay_conference_1927_Version2_1280x881",
-  ipath + "/Solvay/Solvay_conference_1927_Version2_2126x1463",
+static std::vector<std::string> paths{
+    ipath + "/Solvay/Solvay_conference_1927_Version2_640x440",
+    ipath + "/Solvay/Solvay_conference_1927_Version2_1024x705",
+    ipath + "/Solvay/Solvay_conference_1927_Version2_1280x881",
+    ipath + "/Solvay/Solvay_conference_1927_Version2_2126x1463",
 };
-static std::vector<std::string> names {
-  "Solvay (640x440)", "Solvay (1024x705)", "Solvay (1280x881)", "Solvay (2126x1463)"
-};
-static std::vector<vpImageIo::vpImageIoBackendType> backends {
+static std::vector<std::string> names{"Solvay (640x440)", "Solvay (1024x705)", "Solvay (1280x881)",
+                                      "Solvay (2126x1463)"};
+static std::vector<vpImageIo::vpImageIoBackendType> backends
+{
 #if defined(VISP_HAVE_JPEG) && defined(VISP_HAVE_PNG)
   vpImageIo::IO_SYSTEM_LIB_BACKEND,
 #endif
 #if defined(VISP_HAVE_OPENCV)
-  vpImageIo::IO_OPENCV_BACKEND,
+      vpImageIo::IO_OPENCV_BACKEND,
 #endif
-  vpImageIo::IO_SIMDLIB_BACKEND,
-  vpImageIo::IO_STB_IMAGE_BACKEND
+      vpImageIo::IO_SIMDLIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND
 };
-static std::vector<std::string> backendNamesJpeg {
-  "libjpeg", "OpenCV", "simd", "stb"
-};
-static std::vector<std::string> backendNamesPng {
-  "libpng", "OpenCV", "simd", "stb"
-};
+static std::vector<std::string> backendNamesJpeg{"libjpeg", "OpenCV", "simd", "stb"};
+static std::vector<std::string> backendNamesPng{"libpng", "OpenCV", "simd", "stb"};
 static int nThreads = 0;
 
-TEST_CASE("Benchmark grayscale JPEG image loading", "[benchmark]") {
+TEST_CASE("Benchmark grayscale JPEG image loading", "[benchmark]")
+{
   for (size_t i = 0; i < paths.size(); i++) {
-    SECTION(names[i]) {
+    SECTION(names[i])
+    {
       for (size_t j = 0; j < backends.size(); j++) {
         vpImage<vpRGBa> I;
 
-        BENCHMARK(backendNamesJpeg[j] + " backend") {
+        BENCHMARK(backendNamesJpeg[j] + " backend")
+        {
           vpImageIo::read(I, paths[i] + ".jpg", backends[j]);
           return I;
         };
@@ -87,13 +85,16 @@ TEST_CASE("Benchmark grayscale JPEG image loading", "[benchmark]") {
   }
 }
 
-TEST_CASE("Benchmark RGBA JPEG image loading", "[benchmark]") {
+TEST_CASE("Benchmark RGBA JPEG image loading", "[benchmark]")
+{
   for (size_t i = 0; i < paths.size(); i++) {
-    SECTION(names[i]) {
+    SECTION(names[i])
+    {
       for (size_t j = 0; j < backends.size(); j++) {
         vpImage<unsigned char> I;
 
-        BENCHMARK(backendNamesJpeg[j] + " backend") {
+        BENCHMARK(backendNamesJpeg[j] + " backend")
+        {
           vpImageIo::read(I, paths[i] + ".jpg", backends[j]);
           return I;
         };
@@ -102,13 +103,16 @@ TEST_CASE("Benchmark RGBA JPEG image loading", "[benchmark]") {
   }
 }
 
-TEST_CASE("Benchmark grayscale PNG image loading", "[benchmark]") {
+TEST_CASE("Benchmark grayscale PNG image loading", "[benchmark]")
+{
   for (size_t i = 0; i < paths.size(); i++) {
-    SECTION(names[i]) {
+    SECTION(names[i])
+    {
       for (size_t j = 0; j < backends.size(); j++) {
         vpImage<vpRGBa> I;
 
-        BENCHMARK(backendNamesPng[j] + " backend") {
+        BENCHMARK(backendNamesPng[j] + " backend")
+        {
           vpImageIo::read(I, paths[i] + ".png", backends[j]);
           return I;
         };
@@ -117,13 +121,16 @@ TEST_CASE("Benchmark grayscale PNG image loading", "[benchmark]") {
   }
 }
 
-TEST_CASE("Benchmark RGBA PNG image loading", "[benchmark]") {
+TEST_CASE("Benchmark RGBA PNG image loading", "[benchmark]")
+{
   for (size_t i = 0; i < paths.size(); i++) {
-    SECTION(names[i]) {
+    SECTION(names[i])
+    {
       for (size_t j = 0; j < backends.size(); j++) {
         vpImage<unsigned char> I;
 
-        BENCHMARK(backendNamesPng[j] + " backend") {
+        BENCHMARK(backendNamesPng[j] + " backend")
+        {
           vpImageIo::read(I, paths[i] + ".png", backends[j]);
           return I;
         };
@@ -132,9 +139,11 @@ TEST_CASE("Benchmark RGBA PNG image loading", "[benchmark]") {
   }
 }
 
-TEST_CASE("Benchmark grayscale JPEG image saving", "[benchmark]") {
-  std::string tmp_dir = vpIoTools::makeTempDirectory( vpIoTools::getTempPath() );
-  std::string directory_filename_tmp = tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+TEST_CASE("Benchmark grayscale JPEG image saving", "[benchmark]")
+{
+  std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
+  std::string directory_filename_tmp =
+      tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -142,9 +151,11 @@ TEST_CASE("Benchmark grayscale JPEG image saving", "[benchmark]") {
     vpImage<unsigned char> I;
     vpImageIo::read(I, paths[i] + ".png");
 
-    SECTION(names[i]) {
+    SECTION(names[i])
+    {
       for (size_t j = 0; j < backends.size(); j++) {
-        BENCHMARK(backendNamesJpeg[j] + " backend") {
+        BENCHMARK(backendNamesJpeg[j] + " backend")
+        {
           vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.jpg", backends[j]);
           return I;
         };
@@ -155,9 +166,11 @@ TEST_CASE("Benchmark grayscale JPEG image saving", "[benchmark]") {
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
 }
 
-TEST_CASE("Benchmark RGBA JPEG image saving", "[benchmark]") {
-  std::string tmp_dir = vpIoTools::makeTempDirectory( vpIoTools::getTempPath() );
-  std::string directory_filename_tmp = tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+TEST_CASE("Benchmark RGBA JPEG image saving", "[benchmark]")
+{
+  std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
+  std::string directory_filename_tmp =
+      tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -165,9 +178,11 @@ TEST_CASE("Benchmark RGBA JPEG image saving", "[benchmark]") {
     vpImage<vpRGBa> I;
     vpImageIo::read(I, paths[i] + ".png");
 
-    SECTION(names[i]) {
+    SECTION(names[i])
+    {
       for (size_t j = 0; j < backends.size(); j++) {
-        BENCHMARK(backendNamesJpeg[j] + " backend") {
+        BENCHMARK(backendNamesJpeg[j] + " backend")
+        {
           vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.jpg", backends[j]);
           return I;
         };
@@ -178,9 +193,11 @@ TEST_CASE("Benchmark RGBA JPEG image saving", "[benchmark]") {
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
 }
 
-TEST_CASE("Benchmark grayscale PNG image saving", "[benchmark]") {
-  std::string tmp_dir = vpIoTools::makeTempDirectory( vpIoTools::getTempPath() );
-  std::string directory_filename_tmp = tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+TEST_CASE("Benchmark grayscale PNG image saving", "[benchmark]")
+{
+  std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
+  std::string directory_filename_tmp =
+      tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -188,9 +205,11 @@ TEST_CASE("Benchmark grayscale PNG image saving", "[benchmark]") {
     vpImage<unsigned char> I;
     vpImageIo::read(I, paths[i] + ".png");
 
-    SECTION(names[i]) {
+    SECTION(names[i])
+    {
       for (size_t j = 0; j < backends.size(); j++) {
-        BENCHMARK(backendNamesPng[j] + " backend") {
+        BENCHMARK(backendNamesPng[j] + " backend")
+        {
           vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.png", backends[j]);
           return I;
         };
@@ -201,9 +220,11 @@ TEST_CASE("Benchmark grayscale PNG image saving", "[benchmark]") {
   REQUIRE(vpIoTools::remove(directory_filename_tmp));
 }
 
-TEST_CASE("Benchmark RGBA PNG image saving", "[benchmark]") {
-  std::string tmp_dir = vpIoTools::makeTempDirectory( vpIoTools::getTempPath() );
-  std::string directory_filename_tmp = tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+TEST_CASE("Benchmark RGBA PNG image saving", "[benchmark]")
+{
+  std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
+  std::string directory_filename_tmp =
+      tmp_dir + "/vpIoTools_perfImageLoadSave_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
   vpIoTools::makeDirectory(directory_filename_tmp);
   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
@@ -211,9 +232,11 @@ TEST_CASE("Benchmark RGBA PNG image saving", "[benchmark]") {
     vpImage<vpRGBa> I;
     vpImageIo::read(I, paths[i] + ".png");
 
-    SECTION(names[i]) {
+    SECTION(names[i])
+    {
       for (size_t j = 0; j < backends.size(); j++) {
-        BENCHMARK(backendNamesPng[j] + " backend") {
+        BENCHMARK(backendNamesPng[j] + " backend")
+        {
           vpImageIo::write(I, directory_filename_tmp + "/ViSP_tmp_perf_write.png", backends[j]);
           return I;
         };
@@ -231,13 +254,11 @@ int main(int argc, char *argv[])
   bool runBenchmark = false;
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
-  auto cli = session.cli() // Get Catch's composite command line parser
-    | Opt(runBenchmark)    // bind variable to a new option, with a hint string
-    ["--benchmark"]        // the option names it will respond to
-    ("Run benchmark")
-    | Opt(nThreads, "nThreads")
-    ["--nThreads"]
-    ("Number of threads");
+  auto cli = session.cli()         // Get Catch's composite command line parser
+             | Opt(runBenchmark)   // bind variable to a new option, with a hint string
+                   ["--benchmark"] // the option names it will respond to
+             ("Run benchmark") |
+             Opt(nThreads, "nThreads")["--nThreads"]("Number of threads");
 
   // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
@@ -246,7 +267,8 @@ int main(int argc, char *argv[])
   session.applyCommandLine(argc, argv);
 
   if (runBenchmark) {
-    std::cout << "nThreads: " << nThreads << " / available threads: " << std::thread::hardware_concurrency() << std::endl;
+    std::cout << "nThreads: " << nThreads << " / available threads: " << std::thread::hardware_concurrency()
+              << std::endl;
 
     int numFailed = session.run();
 
@@ -261,8 +283,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

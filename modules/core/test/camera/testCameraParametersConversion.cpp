@@ -124,15 +124,13 @@ int main()
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
     {
       std::cout << "* Compare ViSP and OpenCV point pixel meter conversion without distorsion" << std::endl;
-      cv::Mat cameraMatrix = (cv::Mat_<double>(3,3) << px,  0, u0,
-                                                        0, py, v0,
-                                                        0,  0,  1);
-      cv::Mat distCoeffs = cv::Mat::zeros(5,1,CV_64FC1);
+      cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);
+      cv::Mat distCoeffs = cv::Mat::zeros(5, 1, CV_64FC1);
       double x2, y2;
 
       vpPixelMeterConversion::convertPoint(cam, u1, v1, x1, y1);
       vpPixelMeterConversion::convertPoint(cameraMatrix, distCoeffs, u1, v1, x2, y2);
-      if ( !vpMath::equal(x1, x2, 1e-6) || !vpMath::equal(y1, y2, 1e-6)) {
+      if (!vpMath::equal(x1, x2, 1e-6) || !vpMath::equal(y1, y2, 1e-6)) {
         std::cerr << "Error in point pixel meter conversion: visp result (" << x1 << ", " << y1 << ") "
                   << "differ from OpenCV result (" << x2 << ", " << y2 << ")" << std::endl;
         return EXIT_FAILURE;
@@ -141,17 +139,16 @@ int main()
       vpImagePoint ip(v1, u1);
       vpPixelMeterConversion::convertPoint(cam, ip, x1, y1);
       vpPixelMeterConversion::convertPoint(cameraMatrix, distCoeffs, ip, x2, y2);
-      if ( !vpMath::equal(x1, x2, 1e-6) || !vpMath::equal(y1, y2, 1e-6)) {
+      if (!vpMath::equal(x1, x2, 1e-6) || !vpMath::equal(y1, y2, 1e-6)) {
         std::cerr << "Error in point pixel meter conversion: visp result (" << x1 << ", " << y1 << ") "
                   << "differ from OpenCV result (" << x2 << ", " << y2 << ")" << std::endl;
         return EXIT_FAILURE;
       }
 
-
       std::cout << "* Compare ViSP and OpenCV point meter pixel conversion without distorsion" << std::endl;
       vpMeterPixelConversion::convertPoint(cam, x1, y1, u1, v1);
       vpMeterPixelConversion::convertPoint(cameraMatrix, distCoeffs, x1, y1, u2, v2);
-      if ( !vpMath::equal(u1, u2, 1e-6) || !vpMath::equal(v1, v2, 1e-6)) {
+      if (!vpMath::equal(u1, u2, 1e-6) || !vpMath::equal(v1, v2, 1e-6)) {
         std::cerr << "Error in point meter pixel conversion: visp result (" << u1 << ", " << v1 << ") "
                   << "differ from OpenCV result (" << u2 << ", " << v2 << ")" << std::endl;
         return EXIT_FAILURE;
@@ -160,7 +157,7 @@ int main()
       vpImagePoint iP1, iP2;
       vpMeterPixelConversion::convertPoint(cam, x1, y1, iP1);
       vpMeterPixelConversion::convertPoint(cameraMatrix, distCoeffs, x1, y1, iP2);
-      if ( vpImagePoint::distance(iP1, iP2) > 1e-6) {
+      if (vpImagePoint::distance(iP1, iP2) > 1e-6) {
         std::cerr << "Error in point meter pixel conversion: visp result (" << u1 << ", " << v1 << ") "
                   << "differ from OpenCV result (" << u2 << ", " << v2 << ")" << std::endl;
         return EXIT_FAILURE;
@@ -169,26 +166,24 @@ int main()
 
     {
       std::cout << "* Compare ViSP and OpenCV point pixel meter conversion with distorsion" << std::endl;
-      cv::Mat cameraMatrix = (cv::Mat_<double>(3,3) << px_dist,       0, u0_dist,
-                                                             0, py_dist, v0_dist,
-                                                             0,       0,       1);
-      cv::Mat distCoeffs = cv::Mat::zeros(5,1,CV_64FC1);
-      distCoeffs.at<double>(0,0) = kdu_dist;
+      cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px_dist, 0, u0_dist, 0, py_dist, v0_dist, 0, 0, 1);
+      cv::Mat distCoeffs = cv::Mat::zeros(5, 1, CV_64FC1);
+      distCoeffs.at<double>(0, 0) = kdu_dist;
       double x2, y2;
 
       vpPixelMeterConversion::convertPoint(camDist, u1, v1, x1, y1);
       vpPixelMeterConversion::convertPoint(cameraMatrix, distCoeffs, u1, v1, x2, y2);
-      if ( !vpMath::equal(x1, x2, 1e-6) || !vpMath::equal(y1, y2, 1e-6)) {
+      if (!vpMath::equal(x1, x2, 1e-6) || !vpMath::equal(y1, y2, 1e-6)) {
         std::cerr << "Error in point conversion: visp result (" << x1 << ", " << y1 << ") "
                   << "differ from OpenCV result (" << x2 << ", " << y2 << ")" << std::endl;
         return EXIT_FAILURE;
       }
 
       std::cout << "* Compare ViSP and OpenCV point meter pixel conversion with distorsion" << std::endl;
-      distCoeffs.at<double>(0,0) = kud_dist;
+      distCoeffs.at<double>(0, 0) = kud_dist;
       vpMeterPixelConversion::convertPoint(camDist, x1, y1, u1, v1);
       vpMeterPixelConversion::convertPoint(cameraMatrix, distCoeffs, x1, y1, u2, v2);
-      if ( !vpMath::equal(u1, u2, 1e-6) || !vpMath::equal(v1, v2, 1e-6)) {
+      if (!vpMath::equal(u1, u2, 1e-6) || !vpMath::equal(v1, v2, 1e-6)) {
         std::cerr << "Error in point meter pixel conversion: visp result (" << u1 << ", " << v1 << ") "
                   << "differ from OpenCV result (" << u2 << ", " << v2 << ")" << std::endl;
         return EXIT_FAILURE;
@@ -197,15 +192,13 @@ int main()
 
     {
       std::cout << "* Compare ViSP and OpenCV line pixel meter conversion without distorsion" << std::endl;
-      cv::Mat cameraMatrix = (cv::Mat_<double>(3,3) << px,  0, u0,
-                                                        0, py, v0,
-                                                        0,  0,  1);
+      cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);
       double rho_p = 100, theta_p = vpMath::rad(45);
       double rho_m1, theta_m1, rho_m2, theta_m2;
 
       vpPixelMeterConversion::convertLine(cam, rho_p, theta_p, rho_m1, theta_m1);
       vpPixelMeterConversion::convertLine(cameraMatrix, rho_p, theta_p, rho_m2, theta_m2);
-      if ( !vpMath::equal(rho_m1, rho_m2, 1e-6) || !vpMath::equal(theta_m1, theta_m2, 1e-6)) {
+      if (!vpMath::equal(rho_m1, rho_m2, 1e-6) || !vpMath::equal(theta_m1, theta_m2, 1e-6)) {
         std::cerr << "Error in line pixel meter conversion: visp result (" << rho_m1 << ", " << theta_m1 << ") "
                   << "differ from OpenCV result (" << rho_m2 << ", " << theta_m1 << ")" << std::endl;
         return EXIT_FAILURE;
@@ -215,7 +208,7 @@ int main()
       double rho_p1, theta_p1, rho_p2, theta_p2;
       vpMeterPixelConversion::convertLine(cam, rho_m1, theta_m1, rho_p1, theta_p1);
       vpMeterPixelConversion::convertLine(cameraMatrix, rho_m1, theta_m1, rho_p2, theta_p2);
-      if ( !vpMath::equal(rho_p1, rho_p2, 1e-6) || !vpMath::equal(theta_p1, theta_p2, 1e-6)) {
+      if (!vpMath::equal(rho_p1, rho_p2, 1e-6) || !vpMath::equal(theta_p1, theta_p2, 1e-6)) {
         std::cerr << "Error in line meter pixel conversion: visp result (" << rho_p1 << ", " << theta_p1 << ") "
                   << "differ from OpenCV result (" << rho_p2 << ", " << theta_p1 << ")" << std::endl;
         return EXIT_FAILURE;
@@ -224,9 +217,7 @@ int main()
 
     {
       std::cout << "* Compare ViSP and OpenCV moments pixel meter conversion without distorsion" << std::endl;
-      cv::Mat cameraMatrix = (cv::Mat_<double>(3,3) << px,  0, u0,
-                                                        0, py, v0,
-                                                        0,  0,  1);
+      cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);
       unsigned int order = 3;
       double m00 = 2442, m10 = 414992, m01 = 470311, m11 = 7.99558e+07, m02 = 9.09603e+07, m20 = 7.11158e+07;
 
@@ -242,10 +233,11 @@ int main()
 
       vpPixelMeterConversion::convertMoment(cam, order, mp, m1);
       vpPixelMeterConversion::convertMoment(cameraMatrix, order, mp, m2);
-      for (unsigned int i = 0; i < m1.getRows(); i ++) {
-        for (unsigned int j = 0; j < m1.getCols(); j ++) {
-          if ( !vpMath::equal(m1[i][j], m1[i][j], 1e-6) ) {
-            std::cerr << "Error in moments pixel meter conversion: visp result for ["<< i << "]["<< j << "] (" << m1[i][j] << ") "
+      for (unsigned int i = 0; i < m1.getRows(); i++) {
+        for (unsigned int j = 0; j < m1.getCols(); j++) {
+          if (!vpMath::equal(m1[i][j], m1[i][j], 1e-6)) {
+            std::cerr << "Error in moments pixel meter conversion: visp result for [" << i << "][" << j << "] ("
+                      << m1[i][j] << ") "
                       << "differ from OpenCV result (" << m2[i][j] << ")" << std::endl;
             return EXIT_FAILURE;
           }
@@ -254,10 +246,9 @@ int main()
     }
 
     {
-      std::cout << "* Compare ViSP and OpenCV ellipse from circle meter pixel conversion without distorsion" << std::endl;
-      cv::Mat cameraMatrix = (cv::Mat_<double>(3,3) << px,  0, u0,
-                                                        0, py, v0,
-                                                        0,  0,  1);
+      std::cout << "* Compare ViSP and OpenCV ellipse from circle meter pixel conversion without distorsion"
+                << std::endl;
+      cv::Mat cameraMatrix = (cv::Mat_<double>(3, 3) << px, 0, u0, 0, py, v0, 0, 0, 1);
       vpCircle circle;
       circle.setWorldCoordinates(0, 0, 1, 0, 0, 0, 0.1); // plane:(Z=0),X0=0,Y0=0,Z=0,R=0.1
       vpHomogeneousMatrix cMo(0.1, 0.2, 0.5, vpMath::rad(10), vpMath::rad(5), vpMath::rad(45));
@@ -269,18 +260,21 @@ int main()
       vpMeterPixelConversion::convertEllipse(cam, circle, center_p1, n20_p1, n11_p1, n02_p1);
       vpMeterPixelConversion::convertEllipse(cameraMatrix, circle, center_p2, n20_p2, n11_p2, n02_p2);
 
-      if ( !vpMath::equal(n20_p1, n20_p2, 1e-6) || !vpMath::equal(n11_p1, n11_p2, 1e-6) || !vpMath::equal(n02_p1, n02_p2, 1e-6)) {
-        std::cerr << "Error in ellipse from circle meter pixel conversion: visp result (" << n20_p1 << ", " << n11_p1 << ", " << n02_p1 << ") "
+      if (!vpMath::equal(n20_p1, n20_p2, 1e-6) || !vpMath::equal(n11_p1, n11_p2, 1e-6) ||
+          !vpMath::equal(n02_p1, n02_p2, 1e-6)) {
+        std::cerr << "Error in ellipse from circle meter pixel conversion: visp result (" << n20_p1 << ", " << n11_p1
+                  << ", " << n02_p1 << ") "
                   << "differ from OpenCV result (" << n20_p2 << ", " << n11_p2 << ", " << n02_p2 << ")" << std::endl;
         return EXIT_FAILURE;
       }
-      if ( vpImagePoint::distance(center_p1, center_p2) > 1e-6) {
+      if (vpImagePoint::distance(center_p1, center_p2) > 1e-6) {
         std::cerr << "Error in ellipse from circle meter pixel conversion: visp result (" << center_p1 << ") "
                   << "differ from OpenCV result (" << center_p2 << ")" << std::endl;
         return EXIT_FAILURE;
       }
 
-      std::cout << "* Compare ViSP and OpenCV ellipse from sphere meter pixel conversion without distorsion" << std::endl;
+      std::cout << "* Compare ViSP and OpenCV ellipse from sphere meter pixel conversion without distorsion"
+                << std::endl;
       vpSphere sphere;
       sphere.setWorldCoordinates(0, 0, 0, 0.1); // X0=0,Y0=0,Z0=0,R=0.1
       circle.changeFrame(cMo);
@@ -288,12 +282,14 @@ int main()
       vpMeterPixelConversion::convertEllipse(cam, sphere, center_p1, n20_p1, n11_p1, n02_p1);
       vpMeterPixelConversion::convertEllipse(cameraMatrix, sphere, center_p2, n20_p2, n11_p2, n02_p2);
 
-      if ( !vpMath::equal(n20_p1, n20_p2, 1e-6) || !vpMath::equal(n11_p1, n11_p2, 1e-6) || !vpMath::equal(n02_p1, n02_p2, 1e-6)) {
-        std::cerr << "Error in ellipse from sphere meter pixel conversion: visp result (" << n20_p1 << ", " << n11_p1 << ", " << n02_p1 << ") "
+      if (!vpMath::equal(n20_p1, n20_p2, 1e-6) || !vpMath::equal(n11_p1, n11_p2, 1e-6) ||
+          !vpMath::equal(n02_p1, n02_p2, 1e-6)) {
+        std::cerr << "Error in ellipse from sphere meter pixel conversion: visp result (" << n20_p1 << ", " << n11_p1
+                  << ", " << n02_p1 << ") "
                   << "differ from OpenCV result (" << n20_p2 << ", " << n11_p2 << ", " << n02_p2 << ")" << std::endl;
         return EXIT_FAILURE;
       }
-      if ( vpImagePoint::distance(center_p1, center_p2) > 1e-6) {
+      if (vpImagePoint::distance(center_p1, center_p2) > 1e-6) {
         std::cerr << "Error in ellipse from sphere meter pixel conversion: visp result (" << center_p1 << ") "
                   << "differ from OpenCV result (" << center_p2 << ")" << std::endl;
         return EXIT_FAILURE;

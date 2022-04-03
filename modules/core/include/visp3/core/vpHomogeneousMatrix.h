@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -172,7 +172,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpHomogeneousMatrix(){}
+  virtual ~vpHomogeneousMatrix() {}
 
   void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
   void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
@@ -199,7 +199,8 @@ public:
   void inverse(vpHomogeneousMatrix &Mi) const;
 
   // Test if the rotational part of the matrix is a rotation matrix.
-  bool isAnHomogeneousMatrix(double threshold=1e-6) const;
+  bool isAnHomogeneousMatrix(double threshold = 1e-6) const;
+  bool isValid() const;
 
   void insert(const vpRotationMatrix &R);
   void insert(const vpThetaUVector &tu);
@@ -226,8 +227,8 @@ public:
   // Multiply by a point
   vpPoint operator*(const vpPoint &bP) const;
 
-  vpHomogeneousMatrix& operator<<(double val);
-  vpHomogeneousMatrix& operator,(double val);
+  vpHomogeneousMatrix &operator<<(double val);
+  vpHomogeneousMatrix &operator,(double val);
 
   void orthogonalizeRotation();
 
@@ -246,6 +247,8 @@ public:
     throw(vpException(vpException::fatalError, "Cannot resize an homogeneous matrix"));
   }
 
+  static vpHomogeneousMatrix compute3d3dTransformation(const std::vector<vpPoint> &p, const std::vector<vpPoint> &q);
+
   static vpHomogeneousMatrix mean(const std::vector<vpHomogeneousMatrix> &vec_M);
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -257,7 +260,7 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init(){}
+  vp_deprecated void init() {}
   /*!
      \deprecated You should rather use eye().
    */

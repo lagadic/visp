@@ -90,7 +90,8 @@ void usage(const char *name, const char *badparam, std::string ipath)
 Tracking of Surf key-points.\n\
 \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] [-c] [-d] [-h]\n", name);
+  %s [-i <input image path>] [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -110,7 +111,8 @@ OPTIONS:                                               Default\n\
      Turn off the display.\n\
 \n\
   -h\n\
-     Print the help.\n", ipath.c_str());
+     Print the help.\n",
+          ipath.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -362,7 +364,8 @@ int main(int argc, const char **argv)
 int main()
 {
 #if (!(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI)))
-  std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..." << std::endl;
+  std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..."
+            << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;
@@ -370,7 +373,8 @@ int main()
 #else
   std::cout << "You do not have OpenCV with non free module functionalities" << std::endl;
   std::cout << "Tip:" << std::endl;
-  std::cout << "- Install OpenCV with non free module, configure again ViSP using cmake and build again this example" << std::endl;
+  std::cout << "- Install OpenCV with non free module, configure again ViSP using cmake and build again this example"
+            << std::endl;
 #endif
   return EXIT_SUCCESS;
 }

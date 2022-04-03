@@ -40,8 +40,8 @@
 #include <iostream>
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_PCL) && \
-    (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
+#if defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&          \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI))
 
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
@@ -50,14 +50,16 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/sensor/vpRealSense2.h>
 
-namespace {
-void createDepthHist(std::vector<uint32_t>& histogram2, const pcl::PointCloud<pcl::PointXYZ>::Ptr& pointcloud, double depth_scale)
+namespace
+{
+void createDepthHist(std::vector<uint32_t> &histogram2, const pcl::PointCloud<pcl::PointXYZ>::Ptr &pointcloud,
+                     double depth_scale)
 {
   std::fill(histogram2.begin(), histogram2.end(), 0);
 
   for (uint32_t i = 0; i < pointcloud->height; i++) {
     for (uint32_t j = 0; j < pointcloud->width; j++) {
-      const pcl::PointXYZ& pcl_pt = pointcloud->at(j, i);
+      const pcl::PointXYZ &pcl_pt = pointcloud->at(j, i);
       ++histogram2[static_cast<uint32_t>(pcl_pt.z * depth_scale)];
     }
   }
@@ -67,12 +69,12 @@ void createDepthHist(std::vector<uint32_t>& histogram2, const pcl::PointCloud<pc
                                         // the indices in [1,0xFFFF]
 }
 
-void createDepthHist(std::vector<uint32_t>& histogram2, const std::vector<vpColVector>& pointcloud, double depth_scale)
+void createDepthHist(std::vector<uint32_t> &histogram2, const std::vector<vpColVector> &pointcloud, double depth_scale)
 {
   std::fill(histogram2.begin(), histogram2.end(), 0);
 
   for (size_t i = 0; i < pointcloud.size(); i++) {
-    const vpColVector& pt = pointcloud[i];
+    const vpColVector &pt = pointcloud[i];
     ++histogram2[static_cast<uint32_t>(pt[2] * depth_scale)];
   }
 
@@ -81,12 +83,12 @@ void createDepthHist(std::vector<uint32_t>& histogram2, const std::vector<vpColV
                                         // the indices in [1,0xFFFF]
 }
 
-unsigned char getDepthColor(const std::vector<uint32_t>& histogram2, double z, double depth_scale)
+unsigned char getDepthColor(const std::vector<uint32_t> &histogram2, double z, double depth_scale)
 {
   // 0-255 based on histogram location
-  return static_cast<unsigned char>(histogram2[static_cast<uint32_t>(z*depth_scale)] * 255 / histogram2[0xFFFF]);
+  return static_cast<unsigned char>(histogram2[static_cast<uint32_t>(z * depth_scale)] * 255 / histogram2[0xFFFF]);
 }
-}
+} // namespace
 
 int main(int argc, char *argv[])
 {
@@ -121,7 +123,7 @@ int main(int argc, char *argv[])
   const double depth_scale = 1.0 / rs.getDepthScale();
 
   vpImage<vpRGBa> I_color(height, width), I_depth(height, width), I_pcl(height, width), I_pcl2(height, width);
-  vpImage<vpRGBa> I_display(height*2, width), I_display2(height*2, width), I_display3(height*2, width);
+  vpImage<vpRGBa> I_display(height * 2, width), I_display2(height * 2, width), I_display3(height * 2, width);
   vpImage<uint16_t> I_depth_raw(height, width);
 
 #ifdef VISP_HAVE_X11
@@ -131,7 +133,7 @@ int main(int argc, char *argv[])
 #endif
   d1.init(I_display, 0, 0, "Color + depth");
   d2.init(I_display2, width, 0, "Color + ROS pointcloud");
-  d3.init(I_display3, 2*width, 0, "Color + pointcloud");
+  d3.init(I_display3, 2 * width, 0, "Color + pointcloud");
 
   pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud(new pcl::PointCloud<pcl::PointXYZ>());
   pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_color(new pcl::PointCloud<pcl::PointXYZRGB>());
@@ -139,32 +141,27 @@ int main(int argc, char *argv[])
   std::vector<uint32_t> histogram(0x10000), histogram2(0x10000);
 
   rs2::align align_to(align_to_depth ? RS2_STREAM_DEPTH : RS2_STREAM_COLOR);
-  vpCameraParameters cam_projection = align_to_depth ? rs.getCameraParameters(RS2_STREAM_DEPTH) : rs.getCameraParameters(RS2_STREAM_COLOR);
+  vpCameraParameters cam_projection =
+      align_to_depth ? rs.getCameraParameters(RS2_STREAM_DEPTH) : rs.getCameraParameters(RS2_STREAM_COLOR);
 
-  while(true) {
+  while (true) {
     if (color_pointcloud) {
       rs.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap),
-                 reinterpret_cast<unsigned char *>(I_depth_raw.bitmap),
-                 &vp_pointcloud,
-                 pointcloud_color,
-                 NULL,
+                 reinterpret_cast<unsigned char *>(I_depth_raw.bitmap), &vp_pointcloud, pointcloud_color, NULL,
                  no_align ? NULL : &align_to);
     } else {
       rs.acquire(reinterpret_cast<unsigned char *>(I_color.bitmap),
-                 reinterpret_cast<unsigned char *>(I_depth_raw.bitmap),
-                 &vp_pointcloud,
-                 pointcloud,
-                 NULL,
+                 reinterpret_cast<unsigned char *>(I_depth_raw.bitmap), &vp_pointcloud, pointcloud, NULL,
                  no_align ? NULL : &align_to);
     }
 
     vpImageConvert::createDepthHistogram(I_depth_raw, I_depth);
 
-    I_pcl = vpRGBa(0,0,0);
+    I_pcl = vpRGBa(0, 0, 0);
     if (color_pointcloud) {
       for (uint32_t i = 0; i < pointcloud_color->height; i++) {
         for (uint32_t j = 0; j < pointcloud_color->width; j++) {
-          const pcl::PointXYZRGB& pcl_pt = pointcloud_color->at(j, i);
+          const pcl::PointXYZRGB &pcl_pt = pointcloud_color->at(j, i);
           double Z = pcl_pt.z;
           if (Z > 1e-2) {
             double x = pcl_pt.x / Z;
@@ -172,10 +169,10 @@ int main(int argc, char *argv[])
 
             vpImagePoint imPt;
             vpMeterPixelConversion::convertPoint(cam_projection, x, y, imPt);
-            unsigned int u = std::min(static_cast<unsigned int>(width-1),
-                                      static_cast<unsigned int>(std::max(0.0, imPt.get_u())));
-            unsigned int v = std::min(static_cast<unsigned int>(height-1),
-                                      static_cast<unsigned int>(std::max(0.0, imPt.get_v())));
+            unsigned int u =
+                std::min(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_u())));
+            unsigned int v =
+                std::min(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_v())));
             I_pcl[v][u] = vpRGBa(pcl_pt.r, pcl_pt.g, pcl_pt.b);
           }
         }
@@ -185,7 +182,7 @@ int main(int argc, char *argv[])
 
       for (uint32_t i = 0; i < pointcloud->height; i++) {
         for (uint32_t j = 0; j < pointcloud->width; j++) {
-          const pcl::PointXYZ& pcl_pt = pointcloud->at(j, i);
+          const pcl::PointXYZ &pcl_pt = pointcloud->at(j, i);
           double Z = pcl_pt.z;
           if (Z > 1e-2) {
             double x = pcl_pt.x / Z;
@@ -193,10 +190,10 @@ int main(int argc, char *argv[])
 
             vpImagePoint imPt;
             vpMeterPixelConversion::convertPoint(cam_projection, x, y, imPt);
-            unsigned int u = std::min(static_cast<unsigned int>(width-1),
-                                      static_cast<unsigned int>(std::max(0.0, imPt.get_u())));
-            unsigned int v = std::min(static_cast<unsigned int>(height-1),
-                                      static_cast<unsigned int>(std::max(0.0, imPt.get_v())));
+            unsigned int u =
+                std::min(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_u())));
+            unsigned int v =
+                std::min(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_v())));
             unsigned char depth_viz = getDepthColor(histogram, pcl_pt.z, depth_scale);
             I_pcl[v][u] = vpRGBa(depth_viz, depth_viz, depth_viz);
           }
@@ -204,10 +201,10 @@ int main(int argc, char *argv[])
       }
     }
 
-    I_pcl2 = vpRGBa(0,0,0);
+    I_pcl2 = vpRGBa(0, 0, 0);
     createDepthHist(histogram2, vp_pointcloud, depth_scale);
     for (size_t i = 0; i < vp_pointcloud.size(); i++) {
-      const vpColVector& pt = vp_pointcloud[i];
+      const vpColVector &pt = vp_pointcloud[i];
       double Z = pt[2];
       if (Z > 1e-2) {
         double x = pt[0] / Z;
@@ -215,23 +212,23 @@ int main(int argc, char *argv[])
 
         vpImagePoint imPt;
         vpMeterPixelConversion::convertPoint(cam_projection, x, y, imPt);
-        unsigned int u = std::min(static_cast<unsigned int>(width-1),
-                                  static_cast<unsigned int>(std::max(0.0, imPt.get_u())));
-        unsigned int v = std::min(static_cast<unsigned int>(height-1),
-                                  static_cast<unsigned int>(std::max(0.0, imPt.get_v())));
+        unsigned int u =
+            std::min(static_cast<unsigned int>(width - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_u())));
+        unsigned int v =
+            std::min(static_cast<unsigned int>(height - 1), static_cast<unsigned int>(std::max(0.0, imPt.get_v())));
         unsigned char depth_viz = getDepthColor(histogram2, Z, depth_scale);
         I_pcl2[v][u] = vpRGBa(depth_viz, depth_viz, depth_viz);
       }
     }
 
-    I_display.insert(I_color, vpImagePoint(0,0));
-    I_display.insert(I_depth, vpImagePoint(I_color.getHeight(),0));
+    I_display.insert(I_color, vpImagePoint(0, 0));
+    I_display.insert(I_depth, vpImagePoint(I_color.getHeight(), 0));
 
-    I_display2.insert(I_color, vpImagePoint(0,0));
-    I_display2.insert(I_pcl, vpImagePoint(I_color.getHeight(),0));
+    I_display2.insert(I_color, vpImagePoint(0, 0));
+    I_display2.insert(I_pcl, vpImagePoint(I_color.getHeight(), 0));
 
-    I_display3.insert(I_color, vpImagePoint(0,0));
-    I_display3.insert(I_pcl2, vpImagePoint(I_color.getHeight(),0));
+    I_display3.insert(I_color, vpImagePoint(0, 0));
+    I_display3.insert(I_pcl2, vpImagePoint(I_color.getHeight(), 0));
 
     vpDisplay::display(I_display);
     vpDisplay::display(I_display2);
@@ -239,18 +236,17 @@ int main(int argc, char *argv[])
 
     const int nb_lines = 5;
     for (int i = 1; i < nb_lines; i++) {
-      const int col_idx = i*(width/nb_lines);
-      vpDisplay::displayLine(I_display, 0, col_idx, I_display.getRows()-1, col_idx, vpColor::green, 2);
-      vpDisplay::displayLine(I_display2, 0, col_idx, I_display.getRows()-1, col_idx, vpColor::green, 2);
-      vpDisplay::displayLine(I_display3, 0, col_idx, I_display.getRows()-1, col_idx, vpColor::green, 2);
+      const int col_idx = i * (width / nb_lines);
+      vpDisplay::displayLine(I_display, 0, col_idx, I_display.getRows() - 1, col_idx, vpColor::green, 2);
+      vpDisplay::displayLine(I_display2, 0, col_idx, I_display.getRows() - 1, col_idx, vpColor::green, 2);
+      vpDisplay::displayLine(I_display3, 0, col_idx, I_display.getRows() - 1, col_idx, vpColor::green, 2);
     }
 
     vpDisplay::flush(I_display);
     vpDisplay::flush(I_display2);
     vpDisplay::flush(I_display3);
 
-    if (vpDisplay::getClick(I_display, false) ||
-        vpDisplay::getClick(I_display2, false) ||
+    if (vpDisplay::getClick(I_display, false) || vpDisplay::getClick(I_display2, false) ||
         vpDisplay::getClick(I_display3, false)) {
       break;
     }
@@ -260,8 +256,5 @@ int main(int argc, char *argv[])
 }
 
 #else
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

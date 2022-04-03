@@ -76,7 +76,8 @@ Read and write PPM images on the disk. Also test exceptions.\n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-o <output image path>]\n\
      [-h]\n						      \
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -96,7 +97,8 @@ OPTIONS:                                               Default\n\
      are written.\n\
 \n\
   -h\n\
-     Print the help.\n\n", ipath.c_str(), opath.c_str(), user.c_str());
+     Print the help.\n\n",
+          ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);

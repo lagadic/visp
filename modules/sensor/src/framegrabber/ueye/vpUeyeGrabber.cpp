@@ -51,31 +51,29 @@
 /*!
  * \brief Number of image buffer to alloc
  */
-#define IMAGE_COUNT     5
+#define IMAGE_COUNT 5
 
-#define CAMINFO    BOARDINFO
-#define EVENTTHREAD_WAIT_TIMEOUT    1000
+#define CAMINFO BOARDINFO
+#define EVENTTHREAD_WAIT_TIMEOUT 1000
 
-#define CAP(val, min, max) \
-{ \
-  if (val < min) { \
-    val = min; \
-  } else if (val > max) { \
-    val = max; \
-  } \
-}
+#define CAP(val, min, max)                                                                                             \
+  {                                                                                                                    \
+    if (val < min) {                                                                                                   \
+      val = min;                                                                                                       \
+    } else if (val > max) {                                                                                            \
+      val = max;                                                                                                       \
+    }                                                                                                                  \
+  }
 
 /*! \brief image buffer properties structure */
-struct sBufferProps
-{
+struct sBufferProps {
   int width;
   int height;
   int bitspp;
 };
 
 /*! \brief camera feature properties structure */
-struct sCameraProps
-{
+struct sCameraProps {
   bool bUsesImageFormats;
   int nImgFmtNormal;
   int nImgFmtDefaultNormal;
@@ -86,8 +84,7 @@ struct sCameraProps
 /*!
  * \brief uEye Image parameter structure
  */
-typedef struct _UEYE_IMAGE
-{
+typedef struct _UEYE_IMAGE {
   char *pBuf;
   INT nImageID;
   INT nImageSeqNum;
@@ -98,13 +95,13 @@ class vpUeyeGrabber::vpUeyeGrabberImpl
 {
 public:
   vpUeyeGrabberImpl()
-    : m_hCamera((HIDS)0), m_nMemoryId(0), m_nColorMode(0), m_nBitsPerPixel(0), m_activeCameraSelected(-1),
-      m_pLastBuffer(NULL), m_cameraList(NULL), m_bLive(true), m_bLiveStarted(false), m_verbose(false), m_I_temp()
+    : m_hCamera((HIDS)0), m_activeCameraSelected(-1), m_pLastBuffer(NULL), m_cameraList(NULL), m_bLive(true),
+      m_bLiveStarted(false), m_verbose(false), m_I_temp()
   {
-    ZeroMemory (&m_SensorInfo, sizeof(SENSORINFO));
-    ZeroMemory (&m_CamInfo, sizeof(CAMINFO));
-    ZeroMemory (&m_CamListInfo, sizeof(UEYE_CAMERA_INFO));
-    ZeroMemory (m_Images, sizeof(m_Images));
+    ZeroMemory(&m_SensorInfo, sizeof(SENSORINFO));
+    ZeroMemory(&m_CamInfo, sizeof(CAMINFO));
+    ZeroMemory(&m_CamListInfo, sizeof(UEYE_CAMERA_INFO));
+    ZeroMemory(m_Images, sizeof(m_Images));
 
     m_BufferProps.width = 0;
     m_BufferProps.height = 0;
@@ -119,25 +116,21 @@ public:
     m_activeCameraSelected = setActiveCamera(0);
   }
 
-  ~vpUeyeGrabberImpl()
-  {
-    close();
-  }
+  ~vpUeyeGrabberImpl() { close(); }
 
   void acquire(vpImage<unsigned char> &I, double *timestamp_camera, std::string *timestamp_system)
   {
     INT ret = IS_SUCCESS;
 
-    if (! m_hCamera) {
+    if (!m_hCamera) {
       open(I);
     }
 
     if (m_hCamera) {
-      if (! m_bLive) {
+      if (!m_bLive) {
         ret = is_FreezeVideo(m_hCamera, IS_WAIT);
-      }
-      else {
-        if (! m_bLiveStarted) {
+      } else {
+        if (!m_bLiveStarted) {
           ret = is_CaptureVideo(m_hCamera, IS_DONT_WAIT);
           m_bLiveStarted = true;
         }
@@ -149,29 +142,29 @@ public:
         INT dummy = 0;
         char *pLast = NULL, *pMem = NULL;
 
-        is_GetActSeqBuf (m_hCamera, &dummy, &pMem, &pLast);
+        is_GetActSeqBuf(m_hCamera, &dummy, &pMem, &pLast);
         m_pLastBuffer = pLast;
 
         if (!m_pLastBuffer || m_BufferProps.width < 1 || m_BufferProps.height < 1)
           return;
 
-        int nNum = getImageNum (m_pLastBuffer);
+        int nNum = getImageNum(m_pLastBuffer);
         if (timestamp_camera != NULL || timestamp_system != NULL) {
           int nImageID = getImageID(m_pLastBuffer);
           UEYEIMAGEINFO ImageInfo;
-          if (is_GetImageInfo(m_hCamera, nImageID, &ImageInfo, sizeof (ImageInfo)) == IS_SUCCESS) {
+          if (is_GetImageInfo(m_hCamera, nImageID, &ImageInfo, sizeof(ImageInfo)) == IS_SUCCESS) {
             if (timestamp_camera != NULL) {
               *timestamp_camera = static_cast<double>(ImageInfo.u64TimestampDevice) / 10000.;
             }
             if (timestamp_system != NULL) {
               std::stringstream ss;
-              ss << ImageInfo.TimestampSystem.wYear << ":"
-                 << std::setfill('0') << std::setw(2) << ImageInfo.TimestampSystem.wMonth << ":"
-                 << std::setfill('0') << std::setw(2) << ImageInfo.TimestampSystem.wDay << ":"
-                 << std::setfill('0') << std::setw(2) << ImageInfo.TimestampSystem.wHour << ":"
-                 << std::setfill('0') << std::setw(2) << ImageInfo.TimestampSystem.wMinute << ":"
-                 << std::setfill('0') << std::setw(2) << ImageInfo.TimestampSystem.wSecond << ":"
-                 << std::setfill('0') << std::setw(3) << ImageInfo.TimestampSystem.wMilliseconds;
+              ss << ImageInfo.TimestampSystem.wYear << ":" << std::setfill('0') << std::setw(2)
+                 << ImageInfo.TimestampSystem.wMonth << ":" << std::setfill('0') << std::setw(2)
+                 << ImageInfo.TimestampSystem.wDay << ":" << std::setfill('0') << std::setw(2)
+                 << ImageInfo.TimestampSystem.wHour << ":" << std::setfill('0') << std::setw(2)
+                 << ImageInfo.TimestampSystem.wMinute << ":" << std::setfill('0') << std::setw(2)
+                 << ImageInfo.TimestampSystem.wSecond << ":" << std::setfill('0') << std::setw(3)
+                 << ImageInfo.TimestampSystem.wMilliseconds;
               *timestamp_system = ss.str();
             }
           }
@@ -186,35 +179,40 @@ public:
           switch (colormode) {
           default:
           case IS_CM_MONO8:
-            memcpy(reinterpret_cast<unsigned char*>(I.bitmap), reinterpret_cast<unsigned char*>(m_pLastBuffer), m_BufferProps.width * m_BufferProps.height * m_BufferProps.bitspp / 8);
+            memcpy(reinterpret_cast<unsigned char *>(I.bitmap), reinterpret_cast<unsigned char *>(m_pLastBuffer),
+                   m_BufferProps.width * m_BufferProps.height * m_BufferProps.bitspp / 8);
             break;
           case IS_CM_SENSOR_RAW8:
-            m_I_temp.resize( m_BufferProps.height, m_BufferProps.width ),
-                vpImageConvert::demosaicRGGBToRGBaBilinear( reinterpret_cast< unsigned char * >( m_pLastBuffer ),
-                                                            reinterpret_cast< unsigned char * >( m_I_temp.bitmap ),
-                                                            m_BufferProps.width, m_BufferProps.height );
-            vpImageConvert::RGBaToGrey( reinterpret_cast< unsigned char * >( m_I_temp.bitmap ),
-                                        reinterpret_cast< unsigned char * >( I.bitmap ), m_BufferProps.width,
-                                        m_BufferProps.height );
+            m_I_temp.resize(m_BufferProps.height, m_BufferProps.width),
+                vpImageConvert::demosaicRGGBToRGBaBilinear(reinterpret_cast<unsigned char *>(m_pLastBuffer),
+                                                           reinterpret_cast<unsigned char *>(m_I_temp.bitmap),
+                                                           m_BufferProps.width, m_BufferProps.height);
+            vpImageConvert::RGBaToGrey(reinterpret_cast<unsigned char *>(m_I_temp.bitmap),
+                                       reinterpret_cast<unsigned char *>(I.bitmap), m_BufferProps.width,
+                                       m_BufferProps.height);
             break;
           case IS_CM_BGR565_PACKED:
             throw(vpException(vpException::fatalError, "vpUeyeGrabber doesn't support BGR565 format"));
 
           case IS_CM_RGB8_PACKED:
-            vpImageConvert::RGBToGrey(reinterpret_cast<unsigned char*>(m_pLastBuffer), reinterpret_cast<unsigned char*>(I.bitmap),
-                                      m_BufferProps.width, m_BufferProps.height);
+            vpImageConvert::RGBToGrey(reinterpret_cast<unsigned char *>(m_pLastBuffer),
+                                      reinterpret_cast<unsigned char *>(I.bitmap), m_BufferProps.width,
+                                      m_BufferProps.height);
             break;
           case IS_CM_BGR8_PACKED:
-            vpImageConvert::BGRToGrey(reinterpret_cast<unsigned char*>(m_pLastBuffer), reinterpret_cast<unsigned char*>(I.bitmap),
-                                      m_BufferProps.width, m_BufferProps.height);
+            vpImageConvert::BGRToGrey(reinterpret_cast<unsigned char *>(m_pLastBuffer),
+                                      reinterpret_cast<unsigned char *>(I.bitmap), m_BufferProps.width,
+                                      m_BufferProps.height);
             break;
           case IS_CM_RGBA8_PACKED:
-            vpImageConvert::RGBaToGrey(reinterpret_cast<unsigned char*>(m_pLastBuffer), reinterpret_cast<unsigned char*>(I.bitmap),
-                                       m_BufferProps.width, m_BufferProps.height);
+            vpImageConvert::RGBaToGrey(reinterpret_cast<unsigned char *>(m_pLastBuffer),
+                                       reinterpret_cast<unsigned char *>(I.bitmap), m_BufferProps.width,
+                                       m_BufferProps.height);
             break;
           case IS_CM_BGRA8_PACKED:
-            vpImageConvert::BGRaToGrey(reinterpret_cast<unsigned char*>(m_pLastBuffer), reinterpret_cast<unsigned char*>(I.bitmap),
-                                       m_BufferProps.width, m_BufferProps.height);
+            vpImageConvert::BGRaToGrey(reinterpret_cast<unsigned char *>(m_pLastBuffer),
+                                       reinterpret_cast<unsigned char *>(I.bitmap), m_BufferProps.width,
+                                       m_BufferProps.height);
             break;
           }
         }
@@ -222,20 +220,19 @@ public:
     }
   }
 
-  void acquire(vpImage<vpRGBa>  &I, double *timestamp_camera, std::string *timestamp_system)
+  void acquire(vpImage<vpRGBa> &I, double *timestamp_camera, std::string *timestamp_system)
   {
     INT ret = IS_SUCCESS;
 
-    if (! m_hCamera) {
+    if (!m_hCamera) {
       open(I);
     }
 
     if (m_hCamera) {
-      if (! m_bLive) {
+      if (!m_bLive) {
         ret = is_FreezeVideo(m_hCamera, IS_WAIT);
-      }
-      else {
-        if (! m_bLiveStarted) {
+      } else {
+        if (!m_bLiveStarted) {
           //          ret = is_CaptureVideo(m_hCamera, IS_DONT_WAIT);
           ret = is_CaptureVideo(m_hCamera, IS_WAIT);
           m_bLiveStarted = true;
@@ -248,29 +245,29 @@ public:
         INT dummy = 0;
         char *pLast = NULL, *pMem = NULL;
 
-        is_GetActSeqBuf (m_hCamera, &dummy, &pMem, &pLast);
+        is_GetActSeqBuf(m_hCamera, &dummy, &pMem, &pLast);
         m_pLastBuffer = pLast;
 
         if (!m_pLastBuffer || m_BufferProps.width < 1 || m_BufferProps.height < 1)
           return;
 
-        int nNum = getImageNum (m_pLastBuffer);
+        int nNum = getImageNum(m_pLastBuffer);
         if (timestamp_camera != NULL || timestamp_system != NULL) {
           int nImageID = getImageID(m_pLastBuffer);
           UEYEIMAGEINFO ImageInfo;
-          if (is_GetImageInfo(m_hCamera, nImageID, &ImageInfo, sizeof (ImageInfo)) == IS_SUCCESS) {
+          if (is_GetImageInfo(m_hCamera, nImageID, &ImageInfo, sizeof(ImageInfo)) == IS_SUCCESS) {
             if (timestamp_camera != NULL) {
               *timestamp_camera = static_cast<double>(ImageInfo.u64TimestampDevice) / 10000.;
             }
             if (timestamp_system != NULL) {
               std::stringstream ss;
-              ss << ImageInfo.TimestampSystem.wYear << ":"
-                 << std::setfill('0') << std::setw(2) << ImageInfo.TimestampSystem.wMonth << ":"
-                 << std::setfill('0') << std::setw(2) << ImageInfo.TimestampSystem.wDay << ":"
-                 << std::setfill('0') << std::setw(2) << ImageInfo.TimestampSystem.wHour << ":"
-                 << std::setfill('0') << std::setw(2) << ImageInfo.TimestampSystem.wMinute << ":"
-                 << std::setfill('0') << std::setw(2) << ImageInfo.TimestampSystem.wSecond << ":"
-                 << std::setfill('0') << std::setw(3) << ImageInfo.TimestampSystem.wMilliseconds;
+              ss << ImageInfo.TimestampSystem.wYear << ":" << std::setfill('0') << std::setw(2)
+                 << ImageInfo.TimestampSystem.wMonth << ":" << std::setfill('0') << std::setw(2)
+                 << ImageInfo.TimestampSystem.wDay << ":" << std::setfill('0') << std::setw(2)
+                 << ImageInfo.TimestampSystem.wHour << ":" << std::setfill('0') << std::setw(2)
+                 << ImageInfo.TimestampSystem.wMinute << ":" << std::setfill('0') << std::setw(2)
+                 << ImageInfo.TimestampSystem.wSecond << ":" << std::setfill('0') << std::setw(3)
+                 << ImageInfo.TimestampSystem.wMilliseconds;
               *timestamp_system = ss.str();
             }
           }
@@ -285,31 +282,36 @@ public:
           switch (colormode) {
           default:
           case IS_CM_MONO8:
-            vpImageConvert::GreyToRGBa(reinterpret_cast<unsigned char*>(m_pLastBuffer), reinterpret_cast<unsigned char*>(I.bitmap),
-                                       m_BufferProps.width, m_BufferProps.height);
+            vpImageConvert::GreyToRGBa(reinterpret_cast<unsigned char *>(m_pLastBuffer),
+                                       reinterpret_cast<unsigned char *>(I.bitmap), m_BufferProps.width,
+                                       m_BufferProps.height);
             break;
           case IS_CM_SENSOR_RAW8:
-            vpImageConvert::demosaicRGGBToRGBaBilinear( reinterpret_cast< unsigned char * >( m_pLastBuffer ),
-                                                        reinterpret_cast< unsigned char * >( I.bitmap ),
-                                                        m_BufferProps.width, m_BufferProps.height );
+            vpImageConvert::demosaicRGGBToRGBaBilinear(reinterpret_cast<unsigned char *>(m_pLastBuffer),
+                                                       reinterpret_cast<unsigned char *>(I.bitmap), m_BufferProps.width,
+                                                       m_BufferProps.height);
             break;
           case IS_CM_BGR565_PACKED:
             throw(vpException(vpException::fatalError, "vpUeyeGrabber doesn't support BGR565 format"));
 
           case IS_CM_RGB8_PACKED:
-            vpImageConvert::RGBToRGBa(reinterpret_cast<unsigned char*>(m_pLastBuffer), reinterpret_cast<unsigned char*>(I.bitmap),
-                                      m_BufferProps.width, m_BufferProps.height);
+            vpImageConvert::RGBToRGBa(reinterpret_cast<unsigned char *>(m_pLastBuffer),
+                                      reinterpret_cast<unsigned char *>(I.bitmap), m_BufferProps.width,
+                                      m_BufferProps.height);
             break;
           case IS_CM_BGR8_PACKED:
-            vpImageConvert::BGRToRGBa(reinterpret_cast<unsigned char*>(m_pLastBuffer), reinterpret_cast<unsigned char*>(I.bitmap),
-                                      m_BufferProps.width, m_BufferProps.height);
+            vpImageConvert::BGRToRGBa(reinterpret_cast<unsigned char *>(m_pLastBuffer),
+                                      reinterpret_cast<unsigned char *>(I.bitmap), m_BufferProps.width,
+                                      m_BufferProps.height);
             break;
           case IS_CM_RGBA8_PACKED:
-            memcpy(reinterpret_cast<unsigned char*>(I.bitmap), reinterpret_cast<unsigned char*>(m_pLastBuffer), m_BufferProps.width * m_BufferProps.height * m_BufferProps.bitspp / 8);
+            memcpy(reinterpret_cast<unsigned char *>(I.bitmap), reinterpret_cast<unsigned char *>(m_pLastBuffer),
+                   m_BufferProps.width * m_BufferProps.height * m_BufferProps.bitspp / 8);
             break;
           case IS_CM_BGRA8_PACKED:
-            vpImageConvert::BGRaToRGBa(reinterpret_cast<unsigned char*>(m_pLastBuffer), reinterpret_cast<unsigned char*>(I.bitmap),
-                                       m_BufferProps.width, m_BufferProps.height);
+            vpImageConvert::BGRaToRGBa(reinterpret_cast<unsigned char *>(m_pLastBuffer),
+                                       reinterpret_cast<unsigned char *>(I.bitmap), m_BufferProps.width,
+                                       m_BufferProps.height);
             break;
           }
         }
@@ -326,8 +328,8 @@ public:
     UINT nAbsPosX;
     UINT nAbsPosY;
 
-    is_AOI(m_hCamera, IS_AOI_IMAGE_GET_POS_X_ABS, (void*)&nAbsPosX , sizeof(nAbsPosX));
-    is_AOI(m_hCamera, IS_AOI_IMAGE_GET_POS_Y_ABS, (void*)&nAbsPosY , sizeof(nAbsPosY));
+    is_AOI(m_hCamera, IS_AOI_IMAGE_GET_POS_X_ABS, (void *)&nAbsPosX, sizeof(nAbsPosX));
+    is_AOI(m_hCamera, IS_AOI_IMAGE_GET_POS_Y_ABS, (void *)&nAbsPosY, sizeof(nAbsPosY));
 
     is_ClearSequence(m_hCamera);
     freeImages();
@@ -343,10 +345,10 @@ public:
         m_BufferProps.height = nHeight = m_SensorInfo.nMaxHeight;
       }
 
-      if (is_AllocImageMem (m_hCamera, nWidth, nHeight, m_BufferProps.bitspp, &m_Images[i].pBuf,
-                            &m_Images[i].nImageID) != IS_SUCCESS)
+      if (is_AllocImageMem(m_hCamera, nWidth, nHeight, m_BufferProps.bitspp, &m_Images[i].pBuf,
+                           &m_Images[i].nImageID) != IS_SUCCESS)
         return false;
-      if (is_AddToSequence (m_hCamera, m_Images[i].pBuf, m_Images[i].nImageID) != IS_SUCCESS)
+      if (is_AddToSequence(m_hCamera, m_Images[i].pBuf, m_Images[i].nImageID) != IS_SUCCESS)
         return false;
 
       m_Images[i].nImageSeqNum = i + 1;
@@ -361,47 +363,42 @@ public:
     int ret = 0;
     unsigned int uInitialParameterSet = IS_CONFIG_INITIAL_PARAMETERSET_NONE;
 
-    if ((ret=is_GetCameraInfo (m_hCamera, &m_CamInfo)) != IS_SUCCESS) {
+    if ((ret = is_GetCameraInfo(m_hCamera, &m_CamInfo)) != IS_SUCCESS) {
       throw(vpException(vpException::fatalError, "uEye error: GetCameraInfo failed"));
-    }
-    else if ((ret=is_GetSensorInfo (m_hCamera, &m_SensorInfo)) != IS_SUCCESS)  {
+    } else if ((ret = is_GetSensorInfo(m_hCamera, &m_SensorInfo)) != IS_SUCCESS) {
       throw(vpException(vpException::fatalError, "uEye error: GetSensorInfo failed"));
-    }
-    else if ((ret = is_Configuration(IS_CONFIG_INITIAL_PARAMETERSET_CMD_GET, &uInitialParameterSet, sizeof(unsigned int))) != IS_SUCCESS) {
+    } else if ((ret = is_Configuration(IS_CONFIG_INITIAL_PARAMETERSET_CMD_GET, &uInitialParameterSet,
+                                       sizeof(unsigned int))) != IS_SUCCESS) {
       throw(vpException(vpException::fatalError, "uEye error: querying 'initial parameter set' failed"));
-    }
-    else
-    {
-      //m_nWidth = m_SensorInfo.nMaxWidth;
-      //m_nHeight = m_SensorInfo.nMaxHeight;
+    } else {
+      // m_nWidth = m_SensorInfo.nMaxWidth;
+      // m_nHeight = m_SensorInfo.nMaxHeight;
 
       // restore all defaults
       // do this only if there is no 'initial parameter set' installed.
       // if an 'initial parameter set' is installed we must not overwrite this setup!
-      if (uInitialParameterSet == IS_CONFIG_INITIAL_PARAMETERSET_NONE)
-      {
-        ret = is_ResetToDefault (m_hCamera);
+      if (uInitialParameterSet == IS_CONFIG_INITIAL_PARAMETERSET_NONE) {
+        ret = is_ResetToDefault(m_hCamera);
       }
 
       int colormode = 0;
       if (m_SensorInfo.nColorMode >= IS_COLORMODE_BAYER) {
         colormode = IS_CM_BGRA8_PACKED;
-      }
-      else {
+      } else {
         colormode = IS_CM_MONO8;
       }
 
-      if (is_SetColorMode (m_hCamera, colormode) != IS_SUCCESS) {
+      if (is_SetColorMode(m_hCamera, colormode) != IS_SUCCESS) {
         throw(vpException(vpException::fatalError, "uEye error: SetColorMode failed"));
       }
 
       /* get some special camera properties */
-      ZeroMemory (&m_CameraProps, sizeof(m_CameraProps));
+      ZeroMemory(&m_CameraProps, sizeof(m_CameraProps));
 
       // If the camera does not support a continuous AOI -> it uses special image formats
       m_CameraProps.bUsesImageFormats = false;
       INT nAOISupported = 0;
-      if (is_ImageFormat(m_hCamera, IMGFRMT_CMD_GET_ARBITRARY_AOI_SUPPORTED, (void*)&nAOISupported,
+      if (is_ImageFormat(m_hCamera, IMGFRMT_CMD_GET_ARBITRARY_AOI_SUPPORTED, (void *)&nAOISupported,
                          sizeof(nAOISupported)) == IS_SUCCESS) {
         m_CameraProps.bUsesImageFormats = (nAOISupported == 0);
       }
@@ -414,10 +411,10 @@ public:
         m_CameraProps.nImgFmtTrigger = searchDefImageFormats(CAPTMODE_TRIGGER_SOFT_SINGLE);
         m_CameraProps.nImgFmtDefaultTrigger = m_CameraProps.nImgFmtTrigger;
         // set the default formats
-        if ((ret=is_ImageFormat(m_hCamera, IMGFRMT_CMD_SET_FORMAT, (void*)&m_CameraProps.nImgFmtNormal,
-                                sizeof(m_CameraProps.nImgFmtNormal))) == IS_SUCCESS) {
-          //m_nImageFormat = nFormat;
-          //bRet = TRUE;
+        if ((ret = is_ImageFormat(m_hCamera, IMGFRMT_CMD_SET_FORMAT, (void *)&m_CameraProps.nImgFmtNormal,
+                                  sizeof(m_CameraProps.nImgFmtNormal))) == IS_SUCCESS) {
+          // m_nImageFormat = nFormat;
+          // bRet = TRUE;
         }
       }
 
@@ -441,7 +438,7 @@ public:
       if (m_bLive && m_bLiveStarted) {
         INT nRet = 1;
         double t = vpTime::measureTimeSecond();
-        while (nRet != IS_SUCCESS && (vpTime::measureTimeSecond() - t) <= 2. ) {
+        while (nRet != IS_SUCCESS && (vpTime::measureTimeSecond() - t) <= 2.) {
           nRet = is_StopLiveVideo(m_hCamera, IS_WAIT);
         }
         m_bLiveStarted = false;
@@ -462,13 +459,12 @@ public:
 
   void disableEvent()
   {
-    is_DisableEvent (m_hCamera, m_event);
+    is_DisableEvent(m_hCamera, m_event);
 #ifndef __linux__
     is_ExitEvent(m_hCamera, m_event);
     CloseHandle(m_hEvent);
 #endif
   }
-
 
   int enableEvent(int event)
   {
@@ -481,7 +477,7 @@ public:
     }
     ret = is_InitEvent(m_hCamera, m_hEvent, m_event);
 #endif
-    ret = is_EnableEvent (m_hCamera, m_event);
+    ret = is_EnableEvent(m_hCamera, m_event);
 
     return ret;
   }
@@ -489,13 +485,12 @@ public:
   int waitEvent()
   {
 #ifdef __linux__
-    if (is_WaitEvent (m_hCamera, m_event, EVENTTHREAD_WAIT_TIMEOUT) == IS_SUCCESS) {
+    if (is_WaitEvent(m_hCamera, m_event, EVENTTHREAD_WAIT_TIMEOUT) == IS_SUCCESS) {
 #else
     if (WaitForSingleObject(m_hEvent, EVENTTHREAD_WAIT_TIMEOUT) == WAIT_OBJECT_0) {
 #endif
       return IS_SUCCESS;
-    }
-    else {
+    } else {
       return IS_TIMED_OUT;
     }
   }
@@ -503,10 +498,10 @@ public:
   void freeImages()
   {
     m_pLastBuffer = NULL;
-    //printf ("freeing image buffers\n");
+    // printf ("freeing image buffers\n");
     for (unsigned int i = 0; i < sizeof(m_Images) / sizeof(m_Images[0]); i++) {
       if (NULL != m_Images[i].pBuf) {
-        is_FreeImageMem (m_hCamera, m_Images[i].pBuf, m_Images[i].nImageID);
+        is_FreeImageMem(m_hCamera, m_Images[i].pBuf, m_Images[i].nImageID);
       }
 
       m_Images[i].pBuf = NULL;
@@ -515,24 +510,17 @@ public:
     }
   }
 
-  std::string getActiveCameraModel() const
-  {
-    return m_CamListInfo.Model;
-  }
+  std::string getActiveCameraModel() const { return m_CamListInfo.Model; }
 
-  std::string getActiveCameraSerialNumber() const
-  {
-    return m_CamListInfo.SerNo;
-  }
+  std::string getActiveCameraSerialNumber() const { return m_CamListInfo.SerNo; }
 
   int getBitsPerPixel(int colormode)
   {
-    switch (colormode)
-    {
+    switch (colormode) {
     default:
     case IS_CM_MONO8:
     case IS_CM_SENSOR_RAW8:
-      return 8;   // occupies 8 Bit
+      return 8; // occupies 8 Bit
     case IS_CM_MONO12:
     case IS_CM_MONO16:
     case IS_CM_SENSOR_RAW12:
@@ -541,7 +529,7 @@ public:
     case IS_CM_BGR565_PACKED:
     case IS_CM_UYVY_PACKED:
     case IS_CM_CBYCRY_PACKED:
-      return 16;  // occupies 16 Bit
+      return 16; // occupies 16 Bit
     case IS_CM_RGB8_PACKED:
     case IS_CM_BGR8_PACKED:
       return 24;
@@ -591,13 +579,13 @@ public:
 
   double getFramerate() const
   {
-    if (! m_hCamera) {
+    if (!m_hCamera) {
       return 0;
     }
     double fps;
 
     // Get framerate
-    if (is_GetFramesPerSecond (m_hCamera, &fps) != IS_SUCCESS) {
+    if (is_GetFramesPerSecond(m_hCamera, &fps) != IS_SUCCESS) {
       if (m_verbose) {
         std::cout << "Unable to get acquisition frame rate" << std::endl;
       }
@@ -605,7 +593,7 @@ public:
     return fps;
   }
 
-  INT getImageID (char* pbuf)
+  INT getImageID(char *pbuf)
   {
     if (!pbuf)
       return 0;
@@ -617,7 +605,7 @@ public:
     return 0;
   }
 
-  INT getImageNum(char* pbuf)
+  INT getImageNum(char *pbuf)
   {
     if (!pbuf)
       return 0;
@@ -629,30 +617,26 @@ public:
     return 0;
   }
 
-  bool isConnected() const
-  {
-    return (m_hCamera != (HIDS) 0);
-  }
+  bool isConnected() const { return (m_hCamera != (HIDS)0); }
 
   void loadParameters(const std::string &filename)
   {
-    if (! vpIoTools::checkFilename(filename)) {
+    if (!vpIoTools::checkFilename(filename)) {
       throw(vpException(vpException::fatalError, "Camera parameters file doesn't exist: %s", filename.c_str()));
     }
 
     const std::wstring filename_(filename.begin(), filename.end());
-    int ret = is_ParameterSet(m_hCamera, IS_PARAMETERSET_CMD_LOAD_FILE, (void*) filename_.c_str(), 0);
+    int ret = is_ParameterSet(m_hCamera, IS_PARAMETERSET_CMD_LOAD_FILE, (void *)filename_.c_str(), 0);
 
     if (ret == IS_INVALID_CAMERA_TYPE) {
-      throw(vpException(vpException::fatalError, "The camera parameters file %s belong to a different camera", filename.c_str()));
-    }
-    else if (ret == IS_INCOMPATIBLE_SETTING) {
-      throw(vpException(vpException::fatalError, "Because of incompatible settings, cannot load parameters from file %s", filename.c_str()));
-    }
-    else if (ret != IS_SUCCESS) {
+      throw(vpException(vpException::fatalError, "The camera parameters file %s belong to a different camera",
+                        filename.c_str()));
+    } else if (ret == IS_INCOMPATIBLE_SETTING) {
+      throw(vpException(vpException::fatalError,
+                        "Because of incompatible settings, cannot load parameters from file %s", filename.c_str()));
+    } else if (ret != IS_SUCCESS) {
       throw(vpException(vpException::fatalError, "Cannot load parameters from file %s", filename.c_str()));
-    }
-    else {
+    } else {
       std::cout << "Parameters loaded sucessfully" << std::endl;
     }
 
@@ -668,7 +652,7 @@ public:
     }
 
     // open the selected camera
-    m_hCamera = (HIDS) (m_CamListInfo.dwDeviceID | IS_USE_DEVICE_ID); // open camera
+    m_hCamera = (HIDS)(m_CamListInfo.dwDeviceID | IS_USE_DEVICE_ID); // open camera
 
     if (is_InitCamera(&m_hCamera, 0) != IS_SUCCESS) { // init camera - no window handle required
       throw(vpException(vpException::fatalError, "Cannot open connexion with IDS uEye camera"));
@@ -680,8 +664,7 @@ public:
     }
   }
 
-  template <class Type>
-  void open(vpImage<Type> &I)
+  template <class Type> void open(vpImage<Type> &I)
   {
     open();
     I.resize(m_SensorInfo.nMaxHeight, m_SensorInfo.nMaxWidth);
@@ -700,32 +683,30 @@ public:
     IMAGE_FORMAT_LIST *pFormatList;
     IS_RECT rectAOI;
 
-    if ((ret=is_ImageFormat(m_hCamera, IMGFRMT_CMD_GET_NUM_ENTRIES, (void*)&nNumber, sizeof(nNumber))) == IS_SUCCESS &&
-        (ret=is_AOI(m_hCamera, IS_AOI_IMAGE_GET_AOI, (void*)&rectAOI, sizeof(rectAOI))) == IS_SUCCESS) {
+    if ((ret = is_ImageFormat(m_hCamera, IMGFRMT_CMD_GET_NUM_ENTRIES, (void *)&nNumber, sizeof(nNumber))) ==
+            IS_SUCCESS &&
+        (ret = is_AOI(m_hCamera, IS_AOI_IMAGE_GET_AOI, (void *)&rectAOI, sizeof(rectAOI))) == IS_SUCCESS) {
       int i = 0;
       int nSize = sizeof(IMAGE_FORMAT_LIST) + (nNumber - 1) * sizeof(IMAGE_FORMAT_LIST);
-      pFormatList = (IMAGE_FORMAT_LIST*)(new char[nSize]);
+      pFormatList = (IMAGE_FORMAT_LIST *)(new char[nSize]);
       pFormatList->nNumListElements = nNumber;
       pFormatList->nSizeOfListEntry = sizeof(IMAGE_FORMAT_INFO);
 
-      if((ret=is_ImageFormat(m_hCamera, IMGFRMT_CMD_GET_LIST, (void*)pFormatList, nSize)) == IS_SUCCESS) {
-        for(i=0; i<nNumber; i++) {
+      if ((ret = is_ImageFormat(m_hCamera, IMGFRMT_CMD_GET_LIST, (void *)pFormatList, nSize)) == IS_SUCCESS) {
+        for (i = 0; i < nNumber; i++) {
           if ((pFormatList->FormatInfo[i].nSupportedCaptureModes & suppportMask) &&
               pFormatList->FormatInfo[i].nHeight == (UINT)rectAOI.s32Height &&
-              pFormatList->FormatInfo[i].nWidth  == (UINT)rectAOI.s32Width) {
+              pFormatList->FormatInfo[i].nWidth == (UINT)rectAOI.s32Width) {
             format = pFormatList->FormatInfo[i].nFormatID;
             break;
           }
         }
-      }
-      else  {
+      } else {
         throw(vpException(vpException::fatalError, "uEye error: is_ImageFormat returned %d", ret));
       }
 
       delete (pFormatList);
-    }
-    else
-    {
+    } else {
       throw(vpException(vpException::fatalError, "uEye error: is_ImageFormat returned %d", ret));
     }
     return format;
@@ -735,14 +716,14 @@ public:
   {
     m_cameraList = new CameraList;
     m_activeCameraSelected = m_cameraList->setActiveCamera(cam_index);
-    if (! m_activeCameraSelected) {
+    if (!m_activeCameraSelected) {
       m_CamListInfo = m_cameraList->getCameraInfo();
     }
     delete m_cameraList;
     return m_activeCameraSelected;
   }
 
-  std::string toUpper(const std::basic_string<char>& s)
+  std::string toUpper(const std::basic_string<char> &s)
   {
     std::string s_upper = s;
     for (std::basic_string<char>::iterator p = s_upper.begin(); p != s_upper.end(); ++p) {
@@ -753,33 +734,29 @@ public:
 
   int setColorMode(const std::string &color_mode)
   {
-    if (! isConnected()) {
-      throw(vpException(vpException::fatalError, "Cannot set color mode. Connection to active uEye camera is not opened"));
+    if (!isConnected()) {
+      throw(vpException(vpException::fatalError,
+                        "Cannot set color mode. Connection to active uEye camera is not opened"));
     }
 
     std::string color_mode_upper = toUpper(color_mode);
     int cm = IS_CM_MONO8;
     if (color_mode_upper == "MONO8") {
       cm = IS_CM_MONO8;
-    }
-    else if (color_mode_upper == "RGB24") {
+    } else if (color_mode_upper == "RGB24") {
       cm = IS_CM_BGR8_PACKED;
-    }
-    else if (color_mode_upper == "RGB32") {
+    } else if (color_mode_upper == "RGB32") {
       cm = IS_CM_RGBA8_PACKED;
-    }
-    else if ( color_mode_upper == "BAYER8" ) {
+    } else if (color_mode_upper == "BAYER8") {
       cm = IS_CM_SENSOR_RAW8;
-    }
-    else {
+    } else {
       throw(vpException(vpException::fatalError, "Unsupported color mode %s", color_mode.c_str()));
     }
 
     INT ret = IS_SUCCESS;
     if ((ret = is_SetColorMode(m_hCamera, cm)) != IS_SUCCESS) {
       std::cout << "Could not set color mode of " << m_CamListInfo.Model << " to " << color_mode << std::endl;
-    }
-    else {
+    } else {
       setupCapture();
     }
     return ret;
@@ -787,8 +764,9 @@ public:
 
   int setFrameRate(bool auto_frame_rate, double frame_rate_hz)
   {
-    if (! isConnected()) {
-      throw(vpException(vpException::fatalError, "Cannot set frame rate. Connection to active uEye camera is not opened"));
+    if (!isConnected()) {
+      throw(vpException(vpException::fatalError,
+                        "Cannot set frame rate. Connection to active uEye camera is not opened"));
     }
 
     INT ret = IS_SUCCESS;
@@ -812,34 +790,30 @@ public:
 
       // Set frame rate / auto
       pval1 = auto_frame_rate;
-      if ((ret = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_SENSOR_FRAMERATE,
-                                     &pval1, &pval2)) != IS_SUCCESS) {
-        if ((ret = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_FRAMERATE,
-                                       &pval1, &pval2)) != IS_SUCCESS) {
+      if ((ret = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_SENSOR_FRAMERATE, &pval1, &pval2)) != IS_SUCCESS) {
+        if ((ret = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_FRAMERATE, &pval1, &pval2)) != IS_SUCCESS) {
           if (m_verbose) {
             std::cout << "Auto frame rate mode is not supported for " << m_CamListInfo.Model << std::endl;
           }
           return IS_NO_SUCCESS;
         }
       }
-    }
-    else { // Manual
+    } else { // Manual
       double minFrameTime, maxFrameTime, intervalFrameTime, newFrameRate;
       // Make sure that user-requested frame rate is achievable
-      if ((ret = is_GetFrameTimeRange(m_hCamera, &minFrameTime,
-                                      &maxFrameTime, &intervalFrameTime)) != IS_SUCCESS) {
+      if ((ret = is_GetFrameTimeRange(m_hCamera, &minFrameTime, &maxFrameTime, &intervalFrameTime)) != IS_SUCCESS) {
         if (m_verbose) {
           std::cout << "Failed to query valid frame rate range from " << m_CamListInfo.Model << std::endl;
         }
         return ret;
       }
-      CAP(frame_rate_hz, 1.0/maxFrameTime, 1.0/minFrameTime);
+      CAP(frame_rate_hz, 1.0 / maxFrameTime, 1.0 / minFrameTime);
 
       // Update frame rate
       if ((ret = is_SetFrameRate(m_hCamera, frame_rate_hz, &newFrameRate)) != IS_SUCCESS) {
         if (m_verbose) {
-          std::cout << "Failed to set frame rate to " << frame_rate_hz <<
-                       " MHz for " << m_CamListInfo.Model << std::endl;
+          std::cout << "Failed to set frame rate to " << frame_rate_hz << " MHz for " << m_CamListInfo.Model
+                    << std::endl;
         }
         return ret;
       } else if (frame_rate_hz != newFrameRate) {
@@ -848,8 +822,8 @@ public:
     }
 
     if (m_verbose) {
-      std::cout << "Updated frame rate for " << m_CamListInfo.Model << ": " <<
-                   ((auto_frame_rate) ? "auto" : std::to_string(frame_rate_hz)) << " Hz" << std::endl;
+      std::cout << "Updated frame rate for " << m_CamListInfo.Model << ": "
+                << ((auto_frame_rate) ? "auto" : std::to_string(frame_rate_hz)) << " Hz" << std::endl;
     }
 
     return ret;
@@ -857,8 +831,9 @@ public:
 
   int setExposure(bool auto_exposure, double exposure_ms)
   {
-    if (! isConnected()) {
-      throw(vpException(vpException::fatalError, "Cannot set exposure. Connection to active uEye camera is not opened"));
+    if (!isConnected()) {
+      throw(
+          vpException(vpException::fatalError, "Cannot set exposure. Connection to active uEye camera is not opened"));
     }
 
     INT err = IS_SUCCESS;
@@ -868,10 +843,8 @@ public:
     // Set auto exposure
     if (auto_exposure) {
       double pval1 = auto_exposure, pval2 = 0;
-      if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_SENSOR_SHUTTER,
-                                     &pval1, &pval2)) != IS_SUCCESS) {
-        if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_SHUTTER,
-                                       &pval1, &pval2)) != IS_SUCCESS) {
+      if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_SENSOR_SHUTTER, &pval1, &pval2)) != IS_SUCCESS) {
+        if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_SHUTTER, &pval1, &pval2)) != IS_SUCCESS) {
           std::cout << "Auto exposure mode is not supported for " << m_CamListInfo.Model << std::endl;
           return IS_NO_SUCCESS;
         }
@@ -880,27 +853,26 @@ public:
 
     else { // Set manual exposure timing
       // Make sure that user-requested exposure rate is achievable
-      if (((err = is_Exposure(m_hCamera, IS_EXPOSURE_CMD_GET_EXPOSURE_RANGE_MIN,
-                              (void*) &minExposure, sizeof(minExposure))) != IS_SUCCESS) ||
-          ((err = is_Exposure(m_hCamera, IS_EXPOSURE_CMD_GET_EXPOSURE_RANGE_MAX,
-                              (void*) &maxExposure, sizeof(maxExposure))) != IS_SUCCESS)) {
+      if (((err = is_Exposure(m_hCamera, IS_EXPOSURE_CMD_GET_EXPOSURE_RANGE_MIN, (void *)&minExposure,
+                              sizeof(minExposure))) != IS_SUCCESS) ||
+          ((err = is_Exposure(m_hCamera, IS_EXPOSURE_CMD_GET_EXPOSURE_RANGE_MAX, (void *)&maxExposure,
+                              sizeof(maxExposure))) != IS_SUCCESS)) {
         std::cout << "Failed to query valid exposure range from " << m_CamListInfo.Model << std::endl;
         return err;
       }
       CAP(exposure_ms, minExposure, maxExposure);
 
       // Update exposure
-      if ((err = is_Exposure(m_hCamera, IS_EXPOSURE_CMD_SET_EXPOSURE,
-                             (void*) &(exposure_ms), sizeof(exposure_ms))) != IS_SUCCESS) {
-        std::cout << "Failed to set exposure to " << exposure_ms <<
-                     " ms for " << m_CamListInfo.Model << std::endl;
+      if ((err = is_Exposure(m_hCamera, IS_EXPOSURE_CMD_SET_EXPOSURE, (void *)&(exposure_ms), sizeof(exposure_ms))) !=
+          IS_SUCCESS) {
+        std::cout << "Failed to set exposure to " << exposure_ms << " ms for " << m_CamListInfo.Model << std::endl;
         return err;
       }
     }
 
     if (m_verbose) {
-      std::cout << "Updated exposure: " << ((auto_exposure) ? "auto" : std::to_string(exposure_ms) + " ms") <<
-                   " for " << m_CamListInfo.Model << std::endl;
+      std::cout << "Updated exposure: " << ((auto_exposure) ? "auto" : std::to_string(exposure_ms) + " ms") << " for "
+                << m_CamListInfo.Model << std::endl;
     }
 
     return err;
@@ -908,7 +880,7 @@ public:
 
   int setGain(bool auto_gain, int master_gain, bool gain_boost)
   {
-    if (! isConnected()) {
+    if (!isConnected()) {
       throw(vpException(vpException::fatalError, "Cannot set gain. Connection to active uEye camera is not opened"));
     }
 
@@ -922,10 +894,8 @@ public:
     if (auto_gain) {
       // Set auto gain
       pval1 = 1;
-      if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_SENSOR_GAIN,
-                                     &pval1, &pval2)) != IS_SUCCESS) {
-        if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_GAIN,
-                                       &pval1, &pval2)) != IS_SUCCESS) {
+      if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_SENSOR_GAIN, &pval1, &pval2)) != IS_SUCCESS) {
+        if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_GAIN, &pval1, &pval2)) != IS_SUCCESS) {
           if (m_verbose) {
             std::cout << m_CamListInfo.Model << " does not support auto gain mode" << std::endl;
           }
@@ -934,10 +904,8 @@ public:
       }
     } else {
       // Disable auto gain
-      if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_SENSOR_GAIN,
-                                     &pval1, &pval2)) != IS_SUCCESS) {
-        if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_GAIN,
-                                       &pval1, &pval2)) != IS_SUCCESS) {
+      if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_SENSOR_GAIN, &pval1, &pval2)) != IS_SUCCESS) {
+        if ((err = is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_GAIN, &pval1, &pval2)) != IS_SUCCESS) {
           std::cout << m_CamListInfo.Model << " does not support auto gain mode" << std::endl;
         }
       }
@@ -946,17 +914,16 @@ public:
       if (is_SetGainBoost(m_hCamera, IS_GET_SUPPORTED_GAINBOOST) != IS_SET_GAINBOOST_ON) {
         gain_boost = false;
       } else {
-        if ((err = is_SetGainBoost(m_hCamera,
-                                   (gain_boost) ? IS_SET_GAINBOOST_ON : IS_SET_GAINBOOST_OFF))
-            != IS_SUCCESS) {
-          std::cout << "Failed to " << ((gain_boost) ? "enable" : "disable") <<
-                       " gain boost for " << m_CamListInfo.Model << std::endl;
+        if ((err = is_SetGainBoost(m_hCamera, (gain_boost) ? IS_SET_GAINBOOST_ON : IS_SET_GAINBOOST_OFF)) !=
+            IS_SUCCESS) {
+          std::cout << "Failed to " << ((gain_boost) ? "enable" : "disable") << " gain boost for "
+                    << m_CamListInfo.Model << std::endl;
         }
       }
 
       // Set manual gain parameters
-      if ((err = is_SetHardwareGain(m_hCamera, master_gain,
-                                    IS_IGNORE_PARAMETER, IS_IGNORE_PARAMETER, IS_IGNORE_PARAMETER)) != IS_SUCCESS) {
+      if ((err = is_SetHardwareGain(m_hCamera, master_gain, IS_IGNORE_PARAMETER, IS_IGNORE_PARAMETER,
+                                    IS_IGNORE_PARAMETER)) != IS_SUCCESS) {
         std::cout << "Failed to set manual master gain: " << master_gain << " for " << m_CamListInfo.Model << std::endl;
         return IS_NO_SUCCESS;
       }
@@ -967,9 +934,9 @@ public:
         std::cout << "Updated gain for " << m_CamListInfo.Model << ": auto" << std::endl;
       } else {
         std::cout << "Updated gain for " << m_CamListInfo.Model << ": manual master gain " << master_gain << std::endl;
-
       }
-      std::cout << "\n  gain boost: " << (gain_boost ? "enabled" : "disabled") << std::endl;;
+      std::cout << "\n  gain boost: " << (gain_boost ? "enabled" : "disabled") << std::endl;
+      ;
     }
 
     return err;
@@ -979,15 +946,15 @@ public:
   {
     INT ret = IS_SUCCESS;
     int currentSubsampling = is_SetSubSampling(m_hCamera, IS_GET_SUBSAMPLING);
-    if ((ret = is_SetSubSampling (m_hCamera, subsamplingMode | nMode)) != IS_SUCCESS) {
+    if ((ret = is_SetSubSampling(m_hCamera, subsamplingMode | nMode)) != IS_SUCCESS) {
       throw(vpException(vpException::fatalError, "Unable to apply subsampling factor"));
     }
 
     int newSubsampling = is_SetSubSampling(m_hCamera, IS_GET_SUBSAMPLING);
-    if((nMode == IS_SUBSAMPLING_DISABLE) && (currentSubsampling == newSubsampling)) {
+    if ((nMode == IS_SUBSAMPLING_DISABLE) && (currentSubsampling == newSubsampling)) {
       // the subsampling nMode IS_SUBSAMPLING_DISABLE was expected, but the device
       // did not changed the format, disable subsampling.
-      if ((ret = is_SetSubSampling (m_hCamera, IS_SUBSAMPLING_DISABLE)) != IS_SUCCESS) {
+      if ((ret = is_SetSubSampling(m_hCamera, IS_SUBSAMPLING_DISABLE)) != IS_SUCCESS) {
         throw(vpException(vpException::fatalError, "Unable to apply subsampling factor"));
       }
     }
@@ -995,13 +962,14 @@ public:
 
   void setSubsampling(int factor)
   {
-    if (! isConnected()) {
-      throw(vpException(vpException::fatalError, "Cannot set sub sampling factor. Connection to active uEye camera is not opened"));
+    if (!isConnected()) {
+      throw(vpException(vpException::fatalError,
+                        "Cannot set sub sampling factor. Connection to active uEye camera is not opened"));
     }
 
     INT hMode = IS_SUBSAMPLING_DISABLE, vMode = IS_SUBSAMPLING_DISABLE;
 
-    switch(factor) {
+    switch (factor) {
     case 2:
       hMode = IS_SUBSAMPLING_2X_HORIZONTAL;
       vMode = IS_SUBSAMPLING_2X_VERTICAL;
@@ -1036,13 +1004,13 @@ public:
     }
 
     if (m_bLive && m_bLiveStarted) {
-      is_StopLiveVideo (m_hCamera, IS_WAIT);
+      is_StopLiveVideo(m_hCamera, IS_WAIT);
     }
 
-    INT subsamplingModeH = is_SetSubSampling (m_hCamera, IS_GET_SUBSAMPLING) & IS_SUBSAMPLING_MASK_VERTICAL;
+    INT subsamplingModeH = is_SetSubSampling(m_hCamera, IS_GET_SUBSAMPLING) & IS_SUBSAMPLING_MASK_VERTICAL;
     applySubsamplingSettings(subsamplingModeH, hMode);
 
-    INT subsamplingModeV = is_SetSubSampling (m_hCamera, IS_GET_SUBSAMPLING) & IS_SUBSAMPLING_MASK_HORIZONTAL;
+    INT subsamplingModeV = is_SetSubSampling(m_hCamera, IS_GET_SUBSAMPLING) & IS_SUBSAMPLING_MASK_HORIZONTAL;
     applySubsamplingSettings(subsamplingModeV, vMode);
 
     setupCapture();
@@ -1050,23 +1018,23 @@ public:
 
   void setWhiteBalance(bool auto_wb)
   {
-    if (! isConnected()) {
-      throw(vpException(vpException::fatalError, "Cannot set white balance. Connection to active uEye camera is not opened"));
+    if (!isConnected()) {
+      throw(vpException(vpException::fatalError,
+                        "Cannot set white balance. Connection to active uEye camera is not opened"));
     }
 
     double dblAutoWb = 0.0;
 
     if (auto_wb) {
       dblAutoWb = 0.0;
-      is_SetAutoParameter (m_hCamera, IS_SET_AUTO_WB_ONCE, &dblAutoWb, NULL);
+      is_SetAutoParameter(m_hCamera, IS_SET_AUTO_WB_ONCE, &dblAutoWb, NULL);
 
       dblAutoWb = 1.0;
-      is_SetAutoParameter (m_hCamera, IS_SET_ENABLE_AUTO_WHITEBALANCE, &dblAutoWb, NULL);
-    }
-    else {
+      is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_WHITEBALANCE, &dblAutoWb, NULL);
+    } else {
       dblAutoWb = 0.0;
-      is_SetAutoParameter (m_hCamera, IS_SET_AUTO_WB_ONCE, &dblAutoWb, NULL);
-      is_SetAutoParameter (m_hCamera, IS_SET_ENABLE_AUTO_WHITEBALANCE, &dblAutoWb, NULL);
+      is_SetAutoParameter(m_hCamera, IS_SET_AUTO_WB_ONCE, &dblAutoWb, NULL);
+      is_SetAutoParameter(m_hCamera, IS_SET_ENABLE_AUTO_WHITEBALANCE, &dblAutoWb, NULL);
     }
   }
 
@@ -1077,24 +1045,26 @@ public:
     ZeroMemory(&m_BufferProps, sizeof(m_BufferProps));
 
     IS_RECT rectAOI;
-    INT nRet = is_AOI(m_hCamera, IS_AOI_IMAGE_GET_AOI, (void*)&rectAOI, sizeof(rectAOI));
+    INT nRet = is_AOI(m_hCamera, IS_AOI_IMAGE_GET_AOI, (void *)&rectAOI, sizeof(rectAOI));
 
     if (nRet == IS_SUCCESS) {
-      width  = rectAOI.s32Width;
+      width = rectAOI.s32Width;
       height = rectAOI.s32Height;
 
       // get current colormode
       int colormode = is_SetColorMode(m_hCamera, IS_GET_COLOR_MODE);
 
-      if(colormode == IS_CM_BGR5_PACKED) {
+      if (colormode == IS_CM_BGR5_PACKED) {
         is_SetColorMode(m_hCamera, IS_CM_BGR565_PACKED);
         colormode = IS_CM_BGR565_PACKED;
-        std::cout << "uEye color format 'IS_CM_BGR5_PACKED' actually not supported by vpUeyeGrabber, patched to 'IS_CM_BGR565_PACKED'" << std::endl;
+        std::cout << "uEye color format 'IS_CM_BGR5_PACKED' actually not supported by vpUeyeGrabber, patched to "
+                     "'IS_CM_BGR565_PACKED'"
+                  << std::endl;
       }
 
       // fill memorybuffer properties
-      ZeroMemory (&m_BufferProps, sizeof(m_BufferProps));
-      m_BufferProps.width  = width;
+      ZeroMemory(&m_BufferProps, sizeof(m_BufferProps));
+      m_BufferProps.width = width;
       m_BufferProps.height = height;
       m_BufferProps.bitspp = getBitsPerPixel(colormode);
 
@@ -1108,16 +1078,10 @@ public:
     return 0;
   }
 
-  void setVerbose(bool verbose)
-  {
-    m_verbose = verbose;
-  }
+  void setVerbose(bool verbose) { m_verbose = verbose; }
 
 private:
-  HIDS m_hCamera;			     // handle to camera
-  INT m_nMemoryId;	       // grabber memory - buffer ID
-  INT	m_nColorMode;	       // Y8/RGB16/RGB24/REG32
-  INT	m_nBitsPerPixel;     // number of bits needed store one pixel
+  HIDS m_hCamera; // handle to camera
   int m_activeCameraSelected;
   SENSORINFO m_SensorInfo; // sensor information struct
   CAMINFO m_CamInfo;       // Camera (Board)info
@@ -1127,8 +1091,8 @@ private:
   struct sBufferProps m_BufferProps;
   struct sCameraProps m_CameraProps;
   UEYE_IMAGE m_Images[IMAGE_COUNT]; // uEye frame buffer array
-  bool m_bLive;            // live or snapshot indicator
-  bool m_bLiveStarted;     // live mode is started
+  bool m_bLive;                     // live or snapshot indicator
+  bool m_bLiveStarted;              // live mode is started
   bool m_verbose;
   /* event waiting for */
   int m_event;
@@ -1136,7 +1100,7 @@ private:
   /* on windows we need an Event handle member */
   HANDLE m_hEvent;
 #endif
-  vpImage< vpRGBa > m_I_temp; // Temp image used for Bayer conversion
+  vpImage<vpRGBa> m_I_temp; // Temp image used for Bayer conversion
 };
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -1149,26 +1113,19 @@ private:
  * By default, the active camera is the first one that is found.
  * To select a specific camera use setActiveCamera().
  */
-vpUeyeGrabber::vpUeyeGrabber()
-  : m_impl(new vpUeyeGrabberImpl())
-{
-
-}
+vpUeyeGrabber::vpUeyeGrabber() : m_impl(new vpUeyeGrabberImpl()) {}
 
 /*!
  * Destructor.
  */
-vpUeyeGrabber::~vpUeyeGrabber()
-{
-  delete m_impl;
-}
+vpUeyeGrabber::~vpUeyeGrabber() { delete m_impl; }
 
 /*!
  * Capture a new grayscale image.
  *
  * \param[out] I : Captured image.
- * \param[out] timestamp_camera : Time of image capture in milli-seconds with a resolution of 0.1 μs, or NULL if not wanted.
- * The time of image capture is defined as:
+ * \param[out] timestamp_camera : Time of image capture in milli-seconds with a resolution of 0.1 μs, or NULL if not
+ * wanted. The time of image capture is defined as:
  * - The time when a (hardware or software) trigger event is received by the camera in trigger mode.
  *   The delay between the receipt of the trigger signal and the start of exposure depends on the sensor.
  * - The time when the sensor starts to output image data in freerun mode. A rolling shutter sensors
@@ -1192,8 +1149,8 @@ void vpUeyeGrabber::acquire(vpImage<unsigned char> &I, double *timestamp_camera,
 /*!
  * Capture a new color image.
  * \param[out] I : Captured image.
- * \param[out] timestamp_camera : Time of image capture in milli-seconds with a resolution of 0.1 μs, or NULL if not wanted.
- * The time of image capture is defined as:
+ * \param[out] timestamp_camera : Time of image capture in milli-seconds with a resolution of 0.1 μs, or NULL if not
+ * wanted. The time of image capture is defined as:
  * - The time when a (hardware or software) trigger event is received by the camera in trigger mode.
  *   The delay between the receipt of the trigger signal and the start of exposure depends on the sensor.
  * - The time when the sensor starts to output image data in freerun mode. A rolling shutter sensors
@@ -1219,20 +1176,14 @@ void vpUeyeGrabber::acquire(vpImage<vpRGBa> &I, double *timestamp_camera, std::s
  *
  * \sa setActiveCamera(), getActiveCameraSerialNumber()
  */
-std::string vpUeyeGrabber::getActiveCameraModel() const
-{
-  return m_impl->getActiveCameraModel();
-}
+std::string vpUeyeGrabber::getActiveCameraModel() const { return m_impl->getActiveCameraModel(); }
 
 /*!
  * Get active camera serial number.
  *
  * \sa setActiveCamera(), getActiveCameraModel()
  */
-std::string vpUeyeGrabber::getActiveCameraSerialNumber() const
-{
-  return m_impl->getActiveCameraSerialNumber();
-}
+std::string vpUeyeGrabber::getActiveCameraSerialNumber() const { return m_impl->getActiveCameraSerialNumber(); }
 
 /*!
  * Get camera ID list.
@@ -1241,10 +1192,7 @@ std::string vpUeyeGrabber::getActiveCameraSerialNumber() const
  *
  * \sa getCameraModelList(), getCameraSerialNumberList()
  */
-std::vector<unsigned int> vpUeyeGrabber::getCameraIDList() const
-{
-  return m_impl->getCameraIDList();
-}
+std::vector<unsigned int> vpUeyeGrabber::getCameraIDList() const { return m_impl->getCameraIDList(); }
 
 /*!
  * Get camera model list.
@@ -1253,10 +1201,7 @@ std::vector<unsigned int> vpUeyeGrabber::getCameraIDList() const
  *
  * \sa getCameraIDList(), getCameraSerialNumberList()
  */
-std::vector<std::string> vpUeyeGrabber::getCameraModelList() const
-{
-  return m_impl->getCameraModelList();
-}
+std::vector<std::string> vpUeyeGrabber::getCameraModelList() const { return m_impl->getCameraModelList(); }
 
 /*!
  * Get camera serial number list.
@@ -1276,10 +1221,7 @@ std::vector<std::string> vpUeyeGrabber::getCameraSerialNumberList() const
  *
  * \sa acquire()
  */
-double vpUeyeGrabber::getFramerate() const
-{
-  return m_impl->getFramerate();
-}
+double vpUeyeGrabber::getFramerate() const { return m_impl->getFramerate(); }
 
 /*!
  * Return image width captured by the active camera.
@@ -1288,10 +1230,7 @@ double vpUeyeGrabber::getFramerate() const
  *
  * \sa open(), getFrameWidth()
  */
-unsigned int vpUeyeGrabber::getFrameHeight() const
-{
-  return m_impl->getFrameHeight();
-}
+unsigned int vpUeyeGrabber::getFrameHeight() const { return m_impl->getFrameHeight(); }
 
 /*!
  * Return image height captured by the active camera.
@@ -1300,47 +1239,31 @@ unsigned int vpUeyeGrabber::getFrameHeight() const
  *
  * \sa open(), getFrameHeight()
  */
-unsigned int vpUeyeGrabber::getFrameWidth() const
-{
-  return m_impl->getFrameWidth();
-}
-
+unsigned int vpUeyeGrabber::getFrameWidth() const { return m_impl->getFrameWidth(); }
 
 /*!
  * Return true if a camera is connected, false otherwise.
  */
-bool vpUeyeGrabber::isConnected() const
-{
-  return m_impl->isConnected();
-}
+bool vpUeyeGrabber::isConnected() const { return m_impl->isConnected(); }
 
 /*!
  * Load camera parameters from an `.ini` file.
- * \param[in] filename : Camera parameters file that contains camera settings. Such a file could be produced using `ueyedemo` binary
- * provided with IDS uEye Software Suite
+ * \param[in] filename : Camera parameters file that contains camera settings. Such a file could be produced using
+ * `ueyedemo` binary provided with IDS uEye Software Suite
  */
-void vpUeyeGrabber::loadParameters(const std::string &filename)
-{
-  m_impl->loadParameters(filename);
-}
+void vpUeyeGrabber::loadParameters(const std::string &filename) { m_impl->loadParameters(filename); }
 
 /*!
  * Starts the driver and establishes the connection to the camera.
  * \param[out] I : Grayscale image that is resized to match the capture settings.
  */
-void vpUeyeGrabber::open(vpImage<unsigned char> &I)
-{
-  m_impl->open(I);
-}
+void vpUeyeGrabber::open(vpImage<unsigned char> &I) { m_impl->open(I); }
 
 /*!
  * Starts the driver and establishes the connection to the camera.
  * \param[out] I : Color image that is resized to match the capture settings.
  */
-void vpUeyeGrabber::open(vpImage<vpRGBa> &I)
-{
-  m_impl->open(I);
-}
+void vpUeyeGrabber::open(vpImage<vpRGBa> &I) { m_impl->open(I); }
 
 /*!
  * Select a camera from the camera list.
@@ -1378,9 +1301,9 @@ bool vpUeyeGrabber::setColorMode(const std::string &color_mode)
  * \warning Before caling this function the connexion with the active camera should be opened.
  *
  * \param[in] auto_exposure : When true enable camera's hardware auto exposure / shutter.
- * This function returns false if the camera does not support auto exposure mode. When set to false, set manual exposure time.
- * \param[in] exposure_ms : Manual exposure setting time in ms. Valid value range depends on active camera pixel clock rate.
- * \return True if successful, false otherwise.
+ * This function returns false if the camera does not support auto exposure mode. When set to false, set manual exposure
+ * time. \param[in] exposure_ms : Manual exposure setting time in ms. Valid value range depends on active camera pixel
+ * clock rate. \return True if successful, false otherwise.
  *
  * \sa open(), setColorMode(), setFrameRate(), setGain(), setSubsampling(), setWhiteBalance()
  *
@@ -1400,9 +1323,9 @@ bool vpUeyeGrabber::setExposure(bool auto_exposure, double exposure_ms)
  *
  * \param[in] auto_frame_rate : Updates camera's hardware auto frame rate mode. When true enable auto frame rate mode.
  * When set to false, enables manual frame rate mode.
- * \param[in] manual_frame_rate_hz : Desired manual frame rate in Hz. Valid value range depends on current camera pixel clock rate.
- * This parameter is only used when auto frame rate is disabled.
- * \return True if successful, false otherwise.
+ * \param[in] manual_frame_rate_hz : Desired manual frame rate in Hz. Valid value range depends on current camera pixel
+ * clock rate. This parameter is only used when auto frame rate is disabled. \return True if successful, false
+ * otherwise.
  *
  * A typical usage is the following:
  * \code
@@ -1456,10 +1379,7 @@ bool vpUeyeGrabber::setGain(bool auto_gain, int master_gain, bool gain_boost)
  *
  * \sa open(), setColorMode(), setExposure(), setFrameRate(), setGain(), setWhiteBalance()
  */
-void vpUeyeGrabber::setSubsampling(int factor)
-{
-  m_impl->setSubsampling(factor);
-}
+void vpUeyeGrabber::setSubsampling(int factor) { m_impl->setSubsampling(factor); }
 
 /*!
  * Enables or disables the active camera auto white balance mode.
@@ -1471,20 +1391,14 @@ void vpUeyeGrabber::setSubsampling(int factor)
  * \sa open(), setColorMode(), setExposure(), setFrameRate(), setGain(), setSubsampling()
  *
  */
-void vpUeyeGrabber::setWhiteBalance(bool auto_wb)
-{
-  m_impl->setWhiteBalance(auto_wb);
-}
+void vpUeyeGrabber::setWhiteBalance(bool auto_wb) { m_impl->setWhiteBalance(auto_wb); }
 
 /*!
  * Enable/disable verbose mode.
  *
  * \param[in] verbose : true to enable, false to disable verbose mode.
  */
-void vpUeyeGrabber::setVerbose(bool verbose)
-{
-  m_impl->setVerbose(verbose);
-}
+void vpUeyeGrabber::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
 // Work arround to avoid warning: libvisp_sensor.a(vpUeyeGrabber.cpp.o) has no symbols

@@ -55,7 +55,7 @@ int main(int argc, const char **argv)
   //! [Read]
   vpImage<vpRGBa> I_color;
   vpImageIo::read(I_color, input_filename);
-//! [Read]
+  //! [Read]
 
 #ifdef VISP_HAVE_X11
   vpDisplayX d, d2, d3, d4, d5, d6;

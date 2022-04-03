@@ -34,9 +34,9 @@
  *****************************************************************************/
 #include <visp3/core/vpConfig.h>
 
+#include <clocale>
 #include <iostream>
 #include <map>
-#include <clocale>
 
 #include <visp3/mbt/vpMbtXmlGenericParser.h>
 
@@ -46,30 +46,30 @@
 class vpMbtXmlGenericParser::Impl
 {
 public:
-  Impl(int type = EDGE_PARSER) :
-        m_parserType(type),
-        //<camera>
-        m_cam(),
-        //<face>
-        m_angleAppear(70), m_angleDisappear(80), m_hasNearClipping(false), m_nearClipping(false), m_hasFarClipping(false),
-        m_farClipping(false), m_fovClipping(false),
-        //<lod>
-        m_useLod(false), m_minLineLengthThreshold(50.0), m_minPolygonAreaThreshold(2500.0),
-        //<ecm>
-        m_ecm(),
-        //<klt>
-        m_kltMaskBorder(0), m_kltMaxFeatures(0), m_kltWinSize(0), m_kltQualityValue(0.), m_kltMinDist(0.),
-        m_kltHarrisParam(0.), m_kltBlockSize(0), m_kltPyramidLevels(0),
-        //<depth_normal>
-        m_depthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION),
-        m_depthNormalPclPlaneEstimationMethod(2), m_depthNormalPclPlaneEstimationRansacMaxIter(200),
-        m_depthNormalPclPlaneEstimationRansacThreshold(0.001), m_depthNormalSamplingStepX(2), m_depthNormalSamplingStepY(2),
-        //<depth_dense>
-        m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2),
-        //<projection_error>
-        m_projectionErrorMe(), m_projectionErrorKernelSize(2), //5x5
-        m_nodeMap(),
-        m_verbose(true)
+  Impl(int type = EDGE_PARSER)
+    : m_parserType(type),
+      //<camera>
+      m_cam(),
+      //<face>
+      m_angleAppear(70), m_angleDisappear(80), m_hasNearClipping(false), m_nearClipping(false), m_hasFarClipping(false),
+      m_farClipping(false), m_fovClipping(false),
+      //<lod>
+      m_useLod(false), m_minLineLengthThreshold(50.0), m_minPolygonAreaThreshold(2500.0),
+      //<ecm>
+      m_ecm(),
+      //<klt>
+      m_kltMaskBorder(0), m_kltMaxFeatures(0), m_kltWinSize(0), m_kltQualityValue(0.), m_kltMinDist(0.),
+      m_kltHarrisParam(0.), m_kltBlockSize(0), m_kltPyramidLevels(0),
+      //<depth_normal>
+      m_depthNormalFeatureEstimationMethod(vpMbtFaceDepthNormal::ROBUST_FEATURE_ESTIMATION),
+      m_depthNormalPclPlaneEstimationMethod(2), m_depthNormalPclPlaneEstimationRansacMaxIter(200),
+      m_depthNormalPclPlaneEstimationRansacThreshold(0.001), m_depthNormalSamplingStepX(2),
+      m_depthNormalSamplingStepY(2),
+      //<depth_dense>
+      m_depthDenseSamplingStepX(2), m_depthDenseSamplingStepY(2),
+      //<projection_error>
+      m_projectionErrorMe(), m_projectionErrorKernelSize(2), // 5x5
+      m_nodeMap(), m_verbose(true)
   {
     init();
   }
@@ -167,9 +167,10 @@ public:
     if (m_verbose) {
       if (m_parserType == PROJECTION_ERROR_PARSER) {
         if (!projection_error_node) {
-          std::cout << "projection_error : sample_step : " << m_projectionErrorMe.getSampleStep() << " (default)" << std::endl;
-          std::cout << "projection_error : kernel_size : " << m_projectionErrorKernelSize*2+1 << "x"
-                    << m_projectionErrorKernelSize*2+1 << " (default)" << std::endl;
+          std::cout << "projection_error : sample_step : " << m_projectionErrorMe.getSampleStep() << " (default)"
+                    << std::endl;
+          std::cout << "projection_error : kernel_size : " << m_projectionErrorKernelSize * 2 + 1 << "x"
+                    << m_projectionErrorKernelSize * 2 + 1 << " (default)" << std::endl;
         }
       } else {
         if (!camera_node) {
@@ -212,21 +213,25 @@ public:
         }
 
         if (!depth_normal_node && (m_parserType & DEPTH_NORMAL_PARSER)) {
-          std::cout << "depth normal : feature_estimation_method : " << m_depthNormalFeatureEstimationMethod << " (default)"
-                    << std::endl;
+          std::cout << "depth normal : feature_estimation_method : " << m_depthNormalFeatureEstimationMethod
+                    << " (default)" << std::endl;
           std::cout << "depth normal : PCL_plane_estimation : method : " << m_depthNormalPclPlaneEstimationMethod
                     << " (default)" << std::endl;
-          std::cout << "depth normal : PCL_plane_estimation : max_iter : " << m_depthNormalPclPlaneEstimationRansacMaxIter
-                    << " (default)" << std::endl;
+          std::cout << "depth normal : PCL_plane_estimation : max_iter : "
+                    << m_depthNormalPclPlaneEstimationRansacMaxIter << " (default)" << std::endl;
           std::cout << "depth normal : PCL_plane_estimation : ransac_threshold : "
                     << m_depthNormalPclPlaneEstimationRansacThreshold << " (default)" << std::endl;
-          std::cout << "depth normal : sampling_step : step_X " << m_depthNormalSamplingStepX << " (default)" << std::endl;
-          std::cout << "depth normal : sampling_step : step_Y " << m_depthNormalSamplingStepY << " (default)" << std::endl;
+          std::cout << "depth normal : sampling_step : step_X " << m_depthNormalSamplingStepX << " (default)"
+                    << std::endl;
+          std::cout << "depth normal : sampling_step : step_Y " << m_depthNormalSamplingStepY << " (default)"
+                    << std::endl;
         }
 
         if (!depth_dense_node && (m_parserType & DEPTH_DENSE_PARSER)) {
-          std::cout << "depth dense : sampling_step : step_X " << m_depthDenseSamplingStepX << " (default)" << std::endl;
-          std::cout << "depth dense : sampling_step : step_Y " << m_depthDenseSamplingStepY << " (default)" << std::endl;
+          std::cout << "depth dense : sampling_step : step_X " << m_depthDenseSamplingStepX << " (default)"
+                    << std::endl;
+          std::cout << "depth dense : sampling_step : step_Y " << m_depthDenseSamplingStepY << " (default)"
+                    << std::endl;
         }
       }
     }
@@ -348,8 +353,8 @@ public:
 
     if (m_verbose) {
       if (!feature_estimation_method_node)
-        std::cout << "depth normal : feature_estimation_method : " << m_depthNormalFeatureEstimationMethod << " (default)"
-                  << std::endl;
+        std::cout << "depth normal : feature_estimation_method : " << m_depthNormalFeatureEstimationMethod
+                  << " (default)" << std::endl;
       else
         std::cout << "depth normal : feature_estimation_method : " << m_depthNormalFeatureEstimationMethod << std::endl;
 
@@ -363,8 +368,10 @@ public:
       }
 
       if (!sampling_step_node) {
-        std::cout << "depth normal : sampling_step : step_X " << m_depthNormalSamplingStepX << " (default)" << std::endl;
-        std::cout << "depth normal : sampling_step : step_Y " << m_depthNormalSamplingStepY << " (default)" << std::endl;
+        std::cout << "depth normal : sampling_step : step_X " << m_depthNormalSamplingStepX << " (default)"
+                  << std::endl;
+        std::cout << "depth normal : sampling_step : step_Y " << m_depthNormalSamplingStepY << " (default)"
+                  << std::endl;
       }
     }
   }
@@ -465,12 +472,14 @@ public:
 
     if (m_verbose) {
       if (!sampling_step_X_node)
-        std::cout << "depth normal : sampling_step : step_X : " << m_depthNormalSamplingStepX << " (default)" << std::endl;
+        std::cout << "depth normal : sampling_step : step_X : " << m_depthNormalSamplingStepX << " (default)"
+                  << std::endl;
       else
         std::cout << "depth normal : sampling_step : step_X : " << m_depthNormalSamplingStepX << std::endl;
 
       if (!sampling_step_Y_node)
-        std::cout << "depth normal : sampling_step : step_Y : " << m_depthNormalSamplingStepY << " (default)" << std::endl;
+        std::cout << "depth normal : sampling_step : step_Y : " << m_depthNormalSamplingStepY << " (default)"
+                  << std::endl;
       else
         std::cout << "depth normal : sampling_step : step_Y : " << m_depthNormalSamplingStepY << std::endl;
     }
@@ -542,12 +551,14 @@ public:
 
     if (m_verbose) {
       if (!sampling_step_X_node)
-        std::cout << "depth dense : sampling_step : step_X : " << m_depthDenseSamplingStepX << " (default)" << std::endl;
+        std::cout << "depth dense : sampling_step : step_X : " << m_depthDenseSamplingStepX << " (default)"
+                  << std::endl;
       else
         std::cout << "depth dense : sampling_step : step_X : " << m_depthDenseSamplingStepX << std::endl;
 
       if (!sampling_step_Y_node)
-        std::cout << "depth dense : sampling_step : step_Y : " << m_depthDenseSamplingStepY << " (default)" << std::endl;
+        std::cout << "depth dense : sampling_step : step_Y : " << m_depthDenseSamplingStepY << " (default)"
+                  << std::endl;
       else
         std::cout << "depth dense : sampling_step : step_Y : " << m_depthDenseSamplingStepY << std::endl;
     }
@@ -1118,13 +1129,14 @@ public:
 
     if (m_verbose) {
       if (!step_node)
-        std::cout << "projection_error : sample_step : " << m_projectionErrorMe.getSampleStep() << " (default)" << std::endl;
+        std::cout << "projection_error : sample_step : " << m_projectionErrorMe.getSampleStep() << " (default)"
+                  << std::endl;
       else
         std::cout << "projection_error : sample_step : " << m_projectionErrorMe.getSampleStep() << std::endl;
 
       if (!kernel_size_node)
-        std::cout << "projection_error : kernel_size : " << m_projectionErrorKernelSize*2+1 << "x"
-                  << m_projectionErrorKernelSize*2+1 << " (default)" << std::endl;
+        std::cout << "projection_error : kernel_size : " << m_projectionErrorKernelSize * 2 + 1 << "x"
+                  << m_projectionErrorKernelSize * 2 + 1 << " (default)" << std::endl;
       else
         std::cout << "projection_error : kernel_size : " << kernel_size_str << std::endl;
     }
@@ -1188,10 +1200,7 @@ public:
     return m_depthNormalFeatureEstimationMethod;
   }
   int getDepthNormalPclPlaneEstimationMethod() const { return m_depthNormalPclPlaneEstimationMethod; }
-  int getDepthNormalPclPlaneEstimationRansacMaxIter() const
-  {
-    return m_depthNormalPclPlaneEstimationRansacMaxIter;
-  }
+  int getDepthNormalPclPlaneEstimationRansacMaxIter() const { return m_depthNormalPclPlaneEstimationRansacMaxIter; }
   double getDepthNormalPclPlaneEstimationRansacThreshold() const
   {
     return m_depthNormalPclPlaneEstimationRansacThreshold;
@@ -1234,10 +1243,7 @@ public:
   {
     m_depthNormalFeatureEstimationMethod = method;
   }
-  void setDepthNormalPclPlaneEstimationMethod(int method)
-  {
-    m_depthNormalPclPlaneEstimationMethod = method;
-  }
+  void setDepthNormalPclPlaneEstimationMethod(int method) { m_depthNormalPclPlaneEstimationMethod = method; }
   void setDepthNormalPclPlaneEstimationRansacMaxIter(int maxIter)
   {
     m_depthNormalPclPlaneEstimationRansacMaxIter = maxIter;
@@ -1481,76 +1487,52 @@ protected:
 };
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
-vpMbtXmlGenericParser::vpMbtXmlGenericParser(int type) :  m_impl(new Impl(type))
+vpMbtXmlGenericParser::vpMbtXmlGenericParser(int type) : m_impl(new Impl(type))
 {
-  //https://pugixml.org/docs/manual.html#access.attrdata
-  //https://en.cppreference.com/w/cpp/locale/setlocale
-  //When called from Java binding, the locale seems to be changed to the default system locale
-  //It thus mess with the parsing of numbers with pugixml and comma decimal separator environment
+  // https://pugixml.org/docs/manual.html#access.attrdata
+  // https://en.cppreference.com/w/cpp/locale/setlocale
+  // When called from Java binding, the locale seems to be changed to the default system locale
+  // It thus mess with the parsing of numbers with pugixml and comma decimal separator environment
   if (std::setlocale(LC_ALL, "C") == NULL) {
     std::cerr << "Cannot set locale to C" << std::endl;
   }
 }
 
-vpMbtXmlGenericParser::~vpMbtXmlGenericParser()
-{
-  delete m_impl;
-}
+vpMbtXmlGenericParser::~vpMbtXmlGenericParser() { delete m_impl; }
 
 /*!
   Parse an XML config file that contains parameters for the Generic Model-Based Tracker.
 
   \param filename : Document to parse.
 */
-void vpMbtXmlGenericParser::parse(const std::string &filename)
-{
-  m_impl->parse(filename);
-}
+void vpMbtXmlGenericParser::parse(const std::string &filename) { m_impl->parse(filename); }
 
 /*!
   Get the angle to determine if a face appeared.
 */
-double vpMbtXmlGenericParser::getAngleAppear() const
-{
-  return m_impl->getAngleAppear();
-}
+double vpMbtXmlGenericParser::getAngleAppear() const { return m_impl->getAngleAppear(); }
 
 /*!
   Get the angle to determine if a face disappeared.
 */
-double vpMbtXmlGenericParser::getAngleDisappear() const
-{
-  return m_impl->getAngleDisappear();
-}
+double vpMbtXmlGenericParser::getAngleDisappear() const { return m_impl->getAngleDisappear(); }
 
-void vpMbtXmlGenericParser::getCameraParameters(vpCameraParameters &cam) const
-{
-  m_impl->getCameraParameters(cam);
-}
+void vpMbtXmlGenericParser::getCameraParameters(vpCameraParameters &cam) const { m_impl->getCameraParameters(cam); }
 
 /*!
   Get moving edge parameters.
 */
-void vpMbtXmlGenericParser::getEdgeMe(vpMe &ecm) const
-{
-  m_impl->getEdgeMe(ecm);
-}
+void vpMbtXmlGenericParser::getEdgeMe(vpMe &ecm) const { m_impl->getEdgeMe(ecm); }
 
 /*!
   Get depth dense sampling step in X.
 */
-unsigned int vpMbtXmlGenericParser::getDepthDenseSamplingStepX() const
-{
-  return m_impl->getDepthDenseSamplingStepX();
-}
+unsigned int vpMbtXmlGenericParser::getDepthDenseSamplingStepX() const { return m_impl->getDepthDenseSamplingStepX(); }
 
 /*!
   Get depth dense sampling step in Y.
 */
-unsigned int vpMbtXmlGenericParser::getDepthDenseSamplingStepY() const
-{
-  return m_impl->getDepthDenseSamplingStepY();
-}
+unsigned int vpMbtXmlGenericParser::getDepthDenseSamplingStepY() const { return m_impl->getDepthDenseSamplingStepY(); }
 
 /*!
   Get depth normal feature estimation method.
@@ -1603,122 +1585,77 @@ unsigned int vpMbtXmlGenericParser::getDepthNormalSamplingStepY() const
 /*!
   Get the far clipping distance.
 */
-double vpMbtXmlGenericParser::getFarClippingDistance() const
-{
-  return m_impl->getFarClippingDistance();
-}
+double vpMbtXmlGenericParser::getFarClippingDistance() const { return m_impl->getFarClippingDistance(); }
 
 /*!
   Get if FOV clipping should be used or not.
 */
-bool vpMbtXmlGenericParser::getFovClipping() const
-{
-  return m_impl->getFovClipping();
-}
+bool vpMbtXmlGenericParser::getFovClipping() const { return m_impl->getFovClipping(); }
 
 /*!
   Get the size of a block.
 */
-unsigned int vpMbtXmlGenericParser::getKltBlockSize() const
-{
-  return m_impl->getKltBlockSize();
-}
+unsigned int vpMbtXmlGenericParser::getKltBlockSize() const { return m_impl->getKltBlockSize(); }
 
 /*!
   Get the Harris free parameter.
 */
-double vpMbtXmlGenericParser::getKltHarrisParam() const
-{
-  return m_impl->getKltHarrisParam();
-}
+double vpMbtXmlGenericParser::getKltHarrisParam() const { return m_impl->getKltHarrisParam(); }
 
 /*!
   Get the Border of the mask.
 */
-unsigned int vpMbtXmlGenericParser::getKltMaskBorder() const
-{
-  return m_impl->getKltMaskBorder();
-}
+unsigned int vpMbtXmlGenericParser::getKltMaskBorder() const { return m_impl->getKltMaskBorder(); }
 
 /*!
   Get the maximum number of features for the KLT.
 */
-unsigned int vpMbtXmlGenericParser::getKltMaxFeatures() const
-{
-  return m_impl->getKltMaxFeatures();
-}
+unsigned int vpMbtXmlGenericParser::getKltMaxFeatures() const { return m_impl->getKltMaxFeatures(); }
 
 /*!
   Get the minimum distance between KLT points.
 */
-double vpMbtXmlGenericParser::getKltMinDistance() const
-{
-  return m_impl->getKltMinDistance();
-}
+double vpMbtXmlGenericParser::getKltMinDistance() const { return m_impl->getKltMinDistance(); }
 
 /*!
   Get the number of pyramid levels
 */
-unsigned int vpMbtXmlGenericParser::getKltPyramidLevels() const
-{
-  return m_impl->getKltPyramidLevels();
-}
+unsigned int vpMbtXmlGenericParser::getKltPyramidLevels() const { return m_impl->getKltPyramidLevels(); }
 
 /*!
   Get the quality of the KLT.
 */
-double vpMbtXmlGenericParser::getKltQuality() const
-{
-  return m_impl->getKltQuality();
-}
+double vpMbtXmlGenericParser::getKltQuality() const { return m_impl->getKltQuality(); }
 
 /*!
   Get the size of the window used in the KLT tracker.
 */
-unsigned int vpMbtXmlGenericParser::getKltWindowSize() const
-{
-  return m_impl->getKltWindowSize();
-}
+unsigned int vpMbtXmlGenericParser::getKltWindowSize() const { return m_impl->getKltWindowSize(); }
 
 /*!
   Get the state of LOD setting.
 */
-bool vpMbtXmlGenericParser::getLodState() const
-{
-  return m_impl->getLodState();
-}
+bool vpMbtXmlGenericParser::getLodState() const { return m_impl->getLodState(); }
 
 /*!
   Get the minimum line length to track a segment when LOD is enabled.
 */
-double vpMbtXmlGenericParser::getLodMinLineLengthThreshold() const
-{
-  return m_impl->getLodMinLineLengthThreshold();
-}
+double vpMbtXmlGenericParser::getLodMinLineLengthThreshold() const { return m_impl->getLodMinLineLengthThreshold(); }
 
 /*!
   Get the minimum polygon area to track a face when LOD is enabled.
 */
-double vpMbtXmlGenericParser::getLodMinPolygonAreaThreshold() const
-{
-  return m_impl->getLodMinPolygonAreaThreshold();
-}
+double vpMbtXmlGenericParser::getLodMinPolygonAreaThreshold() const { return m_impl->getLodMinPolygonAreaThreshold(); }
 
 /*!
   Get the near clipping distance.
 */
-double vpMbtXmlGenericParser::getNearClippingDistance() const
-{
-  return m_impl->getNearClippingDistance();
-}
+double vpMbtXmlGenericParser::getNearClippingDistance() const { return m_impl->getNearClippingDistance(); }
 
 /*!
   Get ME parameters for projection error computation.
 */
-void vpMbtXmlGenericParser::getProjectionErrorMe(vpMe &me) const
-{
-  m_impl->getProjectionErrorMe(me);
-}
+void vpMbtXmlGenericParser::getProjectionErrorMe(vpMe &me) const { m_impl->getProjectionErrorMe(me); }
 
 unsigned int vpMbtXmlGenericParser::getProjectionErrorKernelSize() const
 {
@@ -1730,50 +1667,35 @@ unsigned int vpMbtXmlGenericParser::getProjectionErrorKernelSize() const
 
   \return True if yes, False otherwise.
 */
-bool vpMbtXmlGenericParser::hasFarClippingDistance() const
-{
-  return m_impl->hasFarClippingDistance();
-}
+bool vpMbtXmlGenericParser::hasFarClippingDistance() const { return m_impl->hasFarClippingDistance(); }
 
 /*!
   Has Near clipping been specified?
 
   \return True if yes, False otherwise.
 */
-bool vpMbtXmlGenericParser::hasNearClippingDistance() const
-{
-  return m_impl->hasNearClippingDistance();
-}
+bool vpMbtXmlGenericParser::hasNearClippingDistance() const { return m_impl->hasNearClippingDistance(); }
 
 /*!
   Set the angle to determine if a face appeared.
 
   \param aappear : New angleAppear
 */
-void vpMbtXmlGenericParser::setAngleAppear(const double &aappear)
-{
-  m_impl->setAngleAppear(aappear);
-}
+void vpMbtXmlGenericParser::setAngleAppear(const double &aappear) { m_impl->setAngleAppear(aappear); }
 
 /*!
   Set the angle to determine if a face disappeared.
 
   \param adisappear : New angleDisappear
 */
-void vpMbtXmlGenericParser::setAngleDisappear(const double &adisappear)
-{
-  m_impl->setAngleDisappear(adisappear);
-}
+void vpMbtXmlGenericParser::setAngleDisappear(const double &adisappear) { m_impl->setAngleDisappear(adisappear); }
 
 /*!
   Set camera parameters.
 
   \param cam : New camera parameters
 */
-void vpMbtXmlGenericParser::setCameraParameters(const vpCameraParameters &cam)
-{
-  m_impl->setCameraParameters(cam);
-}
+void vpMbtXmlGenericParser::setCameraParameters(const vpCameraParameters &cam) { m_impl->setCameraParameters(cam); }
 
 /*!
   Set depth dense sampling step in X.
@@ -1800,7 +1722,8 @@ void vpMbtXmlGenericParser::setDepthDenseSamplingStepY(unsigned int stepY)
 
   \param method : New feature estimation method
 */
-void vpMbtXmlGenericParser::setDepthNormalFeatureEstimationMethod(const vpMbtFaceDepthNormal::vpFeatureEstimationType &method)
+void vpMbtXmlGenericParser::setDepthNormalFeatureEstimationMethod(
+    const vpMbtFaceDepthNormal::vpFeatureEstimationType &method)
 {
   m_impl->setDepthNormalFeatureEstimationMethod(method);
 }
@@ -1860,120 +1783,84 @@ void vpMbtXmlGenericParser::setDepthNormalSamplingStepY(unsigned int stepY)
 
   \param ecm : New moving edge parameters
 */
-void vpMbtXmlGenericParser::setEdgeMe(const vpMe &ecm)
-{
-  m_impl->setEdgeMe(ecm);
-}
+void vpMbtXmlGenericParser::setEdgeMe(const vpMe &ecm) { m_impl->setEdgeMe(ecm); }
 
 /*!
   Set the far clipping distance.
 
   \param fclip : New farClipping
 */
-void vpMbtXmlGenericParser::setFarClippingDistance(const double &fclip)
-{
-  m_impl->setFarClippingDistance(fclip);
-}
+void vpMbtXmlGenericParser::setFarClippingDistance(const double &fclip) { m_impl->setFarClippingDistance(fclip); }
 
 /*!
   Set the size of a block.
 
   \param bs : New blockSize
 */
-void vpMbtXmlGenericParser::setKltBlockSize(const unsigned int &bs)
-{
-  m_impl->setKltBlockSize(bs);
-}
+void vpMbtXmlGenericParser::setKltBlockSize(const unsigned int &bs) { m_impl->setKltBlockSize(bs); }
 
 /*!
   Set the Harris free parameter.
 
   \param hp : New harrisParam
 */
-void vpMbtXmlGenericParser::setKltHarrisParam(const double &hp)
-{
-  m_impl->setKltHarrisParam(hp);
-}
+void vpMbtXmlGenericParser::setKltHarrisParam(const double &hp) { m_impl->setKltHarrisParam(hp); }
 
 /*!
   Set the Border of the mask.
 
   \param mb = new maskBorder
 */
-void vpMbtXmlGenericParser::setKltMaskBorder(const unsigned int &mb)
-{
-  m_impl->setKltMaskBorder(mb);
-}
+void vpMbtXmlGenericParser::setKltMaskBorder(const unsigned int &mb) { m_impl->setKltMaskBorder(mb); }
 
 /*!
   Set the maximum number of features for the KLT.
 
   \param mF : New maxFeatures
 */
-void vpMbtXmlGenericParser::setKltMaxFeatures(const unsigned int &mF)
-{
-  m_impl->setKltMaxFeatures(mF);
-}
+void vpMbtXmlGenericParser::setKltMaxFeatures(const unsigned int &mF) { m_impl->setKltMaxFeatures(mF); }
 
 /*!
   Set the minimum distance between KLT points.
 
   \param mD : New minDist
 */
-void vpMbtXmlGenericParser::setKltMinDistance(const double &mD)
-{
-  m_impl->setKltMinDistance(mD);
-}
+void vpMbtXmlGenericParser::setKltMinDistance(const double &mD) { m_impl->setKltMinDistance(mD); }
 
 /*!
   Set the number of pyramid levels
 
   \param pL : New pyramidLevels
 */
-void vpMbtXmlGenericParser::setKltPyramidLevels(const unsigned int &pL)
-{
-  m_impl->setKltPyramidLevels(pL);
-}
+void vpMbtXmlGenericParser::setKltPyramidLevels(const unsigned int &pL) { m_impl->setKltPyramidLevels(pL); }
 
 /*!
   Set the quality of the KLT.
 
   \param q : New quality
 */
-void vpMbtXmlGenericParser::setKltQuality(const double &q)
-{
-  m_impl->setKltQuality(q);
-}
+void vpMbtXmlGenericParser::setKltQuality(const double &q) { m_impl->setKltQuality(q); }
 
 /*!
   Set the size of the window used in the KLT tracker.
 
   \param w : New winSize
 */
-void vpMbtXmlGenericParser::setKltWindowSize(const unsigned int &w)
-{
-  m_impl->setKltWindowSize(w);
-}
+void vpMbtXmlGenericParser::setKltWindowSize(const unsigned int &w) { m_impl->setKltWindowSize(w); }
 
 /*!
   Set the near clipping distance.
 
   \param nclip : New nearClipping
 */
-void vpMbtXmlGenericParser::setNearClippingDistance(const double &nclip)
-{
-  m_impl->setNearClippingDistance(nclip);
-}
+void vpMbtXmlGenericParser::setNearClippingDistance(const double &nclip) { m_impl->setNearClippingDistance(nclip); }
 
 /*!
   Set ME parameters for projection error computation.
 
   \param me : ME parameters
 */
-void vpMbtXmlGenericParser::setProjectionErrorMe(const vpMe &me)
-{
-  m_impl->setProjectionErrorMe(me);
-}
+void vpMbtXmlGenericParser::setProjectionErrorMe(const vpMe &me) { m_impl->setProjectionErrorMe(me); }
 
 /*!
   Set kernel size used for projection error computation.
@@ -1990,7 +1877,4 @@ void vpMbtXmlGenericParser::setProjectionErrorKernelSize(const unsigned int &siz
 
   \param verbose : verbose flag
 */
-void vpMbtXmlGenericParser::setVerbose(bool verbose)
-{
-  m_impl->setVerbose(verbose);
-}
+void vpMbtXmlGenericParser::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }

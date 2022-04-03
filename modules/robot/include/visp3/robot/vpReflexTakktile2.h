@@ -87,7 +87,7 @@ public:
     std::vector<std::string> error_state;
 
     HandInfo();
-    ~HandInfo(){}
+    ~HandInfo() {}
 
     friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const HandInfo &hand);
   };

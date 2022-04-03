@@ -23,9 +23,9 @@ int main(int argc, char **argv)
       if (std::string(argv[i]) == "--name")
         videoname = std::string(argv[i + 1]);
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0]
-                  << " [--name <video name> (default: " << videoname << ")]"
-                  << " [--help] [-h]\n" << std::endl;
+        std::cout << "\nUsage: " << argv[0] << " [--name <video name> (default: " << videoname << ")]"
+                  << " [--help] [-h]\n"
+                  << std::endl;
         return 0;
       }
     }
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
       vpDisplay::display(I);
       vpDisplay::displayText(I, 20, 20, "Click to quit", vpColor::red);
       std::stringstream ss;
-      ss << "Frame: " << cpt ++;
+      ss << "Frame: " << cpt++;
       vpDisplay::displayText(I, 40, 20, ss.str(), vpColor::red);
       vpDisplay::flush(I);
       if (vpDisplay::getClick(I, false))

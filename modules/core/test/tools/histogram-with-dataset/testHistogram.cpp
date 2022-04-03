@@ -70,7 +70,8 @@ Test histogram.\n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-t <nb threads>]\n\
      [-h]\n                 \
-", name);
+",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -85,7 +86,8 @@ OPTIONS:                                               Default\n\
   -t <nb threads>\n\
      Set the number of threads to use for the computation.\n\
   -h\n\
-     Print the help.\n\n", ipath.c_str());
+     Print the help.\n\n",
+          ipath.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);

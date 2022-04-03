@@ -126,7 +126,8 @@ void usage(const char *name, const char *badparam, std::string &conf, std::strin
   point.\n\
 \n\
 SYNOPSIS\n\
-  %s [-c <Biclops configuration file>] [-d <debug file directory>] [-h]\n", name);
+  %s [-c <Biclops configuration file>] [-d <debug file directory>] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -136,7 +137,8 @@ OPTIONS:                                               Default\n\
      Sets the debug file directory.\n\
      From this directory, creates the\"%s\"\n\
      subdirectory depending on the username, where\n\
-     it writes biclops.txt file.\n", conf.c_str(), debugdir.c_str(), user.c_str());
+     it writes biclops.txt file.\n",
+          conf.c_str(), debugdir.c_str(), user.c_str());
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
@@ -413,8 +415,7 @@ int main(int argc, const char **argv)
     fclose(fd);
 
     return EXIT_SUCCESS;
-  }
-  catch (const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
     return EXIT_FAILURE;
   }

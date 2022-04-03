@@ -11,9 +11,8 @@
 
 int main(int argc, char **argv)
 {
-#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) && \
-  defined(VISP_HAVE_REALSENSE2) && \
-  (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
+#if (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV)) &&                                 \
+    defined(VISP_HAVE_REALSENSE2) && (RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
   try {
     double opt_square_width = 0.12;
     int opt_camera_index = 1; // camera index: 1. Left, 2.Right
@@ -21,11 +20,10 @@ int main(int argc, char **argv)
     for (int i = 0; i < argc; i++) {
       if (std::string(argv[i]) == "--camera_index" && i + 1 < argc) {
         opt_camera_index = atoi(argv[i + 1]);
-      } else if(std::string(argv[i]) == "--square_width" && i + 1 < argc) {
+      } else if (std::string(argv[i]) == "--square_width" && i + 1 < argc) {
         opt_square_width = atoi(argv[i + 1]);
       } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0]
-                  << " [--camera_index <1.Left | 2.Right> (default: 1)]"
+        std::cout << "\nUsage: " << argv[0] << " [--camera_index <1.Left | 2.Right> (default: 1)]"
                   << " [--square_width <square width in meter (default: 0.12)] [--help] [-h]\n"
                   << "\nExample using right camera and square size 0.1:\n"
                   << "  " << argv[0] << "--camera_index 2 --square_width 0.1\n"
@@ -44,14 +42,15 @@ int main(int argc, char **argv)
     config.enable_stream(RS2_STREAM_FISHEYE, 2);
 
     g.open(config);
-    if(opt_camera_index == 1) // Left camera
-        g.acquire(&I, NULL, NULL);
+    if (opt_camera_index == 1) // Left camera
+      g.acquire(&I, NULL, NULL);
     else
-        g.acquire(NULL, &I, NULL);
+      g.acquire(NULL, &I, NULL);
 
     std::cout << "Read camera parameters from Realsense device" << std::endl;
     // Parameters of our camera
-    vpCameraParameters cam = g.getCameraParameters(RS2_STREAM_FISHEYE, vpCameraParameters::ProjWithKannalaBrandtDistortion, opt_camera_index);
+    vpCameraParameters cam = g.getCameraParameters(
+        RS2_STREAM_FISHEYE, vpCameraParameters::ProjWithKannalaBrandtDistortion, opt_camera_index);
     //! [Grabber]
 
     std::cout << "Square width  : " << opt_square_width << std::endl;
@@ -65,9 +64,9 @@ int main(int argc, char **argv)
     std::vector<vpImagePoint> ip; // 2D coordinates of the points in pixels
     double L = opt_square_width / 2.;
     point.push_back(vpPoint(-L, -L, 0));
-    point.push_back(vpPoint( L, -L, 0));
-    point.push_back(vpPoint( L,  L, 0));
-    point.push_back(vpPoint(-L,  L, 0));
+    point.push_back(vpPoint(L, -L, 0));
+    point.push_back(vpPoint(L, L, 0));
+    point.push_back(vpPoint(-L, L, 0));
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX d(I);
@@ -81,10 +80,10 @@ int main(int argc, char **argv)
     bool apply_cv = false; // apply computer vision
     bool init_cv = true;   // initialize tracking and pose computation
 
-    while (! quit) {
+    while (!quit) {
       double t_begin = vpTime::measureTimeMs();
 
-      if(opt_camera_index == 1)
+      if (opt_camera_index == 1)
         g.acquire(&I, NULL, NULL);
       else
         g.acquire(NULL, &I, NULL);
@@ -92,7 +91,7 @@ int main(int argc, char **argv)
       vpDisplay::display(I);
       if (apply_cv) {
         try {
-          ip  = track(I, dot, init_cv);
+          ip = track(I, dot, init_cv);
           computePose(point, ip, cam, init_cv, cMo);
           vpDisplay::displayFrame(I, cMo, cam, opt_square_width, vpColor::none, 3);
           if (init_cv)
@@ -104,11 +103,11 @@ int main(int argc, char **argv)
             ss << "Translation: " << std::setprecision(5) << pose[0] << " " << pose[1] << " " << pose[2] << " [m]";
             vpDisplay::displayText(I, 60, 20, ss.str(), vpColor::red);
             ss.str(""); // erase ss
-            ss << "Rotation tu: " << std::setprecision(4) << vpMath::deg(pose[3]) << " " << vpMath::deg(pose[4]) << " " << vpMath::deg(pose[5]) << " [deg]";
+            ss << "Rotation tu: " << std::setprecision(4) << vpMath::deg(pose[3]) << " " << vpMath::deg(pose[4]) << " "
+               << vpMath::deg(pose[5]) << " [deg]";
             vpDisplay::displayText(I, 80, 20, ss.str(), vpColor::red);
           }
-        }
-        catch(...) {
+        } catch (...) {
           std::cout << "Computer vision failure." << std::endl;
           apply_cv = false;
           init_cv = true;
@@ -124,15 +123,14 @@ int main(int argc, char **argv)
       if (vpDisplay::getClick(I, button, false)) {
         if (button == vpMouseButton::button3) {
           quit = true;
-        }
-        else if (button == vpMouseButton::button1) {
+        } else if (button == vpMouseButton::button1) {
           apply_cv = true;
         }
       }
       {
         std::stringstream ss;
         ss << "Time: " << vpTime::measureTimeMs() - t_begin << " ms";
-        vpDisplay::displayText(I, 20, I.getWidth()-100, ss.str(), vpColor::red);
+        vpDisplay::displayText(I, 20, I.getWidth() - 100, ss.str(), vpColor::red);
       }
       vpDisplay::flush(I);
     }
@@ -140,21 +138,27 @@ int main(int argc, char **argv)
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
 #elif !defined(VISP_HAVE_REALSENSE2)
-  (void)argc; (void)argv;
+  (void)argc;
+  (void)argv;
   std::cout << "You do not realsense2 SDK functionality enabled..." << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout << "- Install librealsense2, configure again ViSP using cmake and build again this example" << std::endl;
   return EXIT_SUCCESS;
 #elif (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  (void)argc; (void)argv;
+  (void)argc;
+  (void)argv;
   std::cout << "You do not build ViSP with c++11 or higher compiler flag" << std::endl;
   std::cout << "Tip:" << std::endl;
   std::cout << "- Configure ViSP again using cmake -DUSE_CXX_STANDARD=11, and build again this example" << std::endl;
 #elif !(defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV))
-  (void)argc; (void)argv;
-  std::cout << "Install a 3rd party dedicated to image display (X11, GDI, OpenCV), configure and build ViSP again to use this example" << std::endl;
+  (void)argc;
+  (void)argv;
+  std::cout << "Install a 3rd party dedicated to image display (X11, GDI, OpenCV), configure and build ViSP again to "
+               "use this example"
+            << std::endl;
 #elif !(RS2_API_VERSION > ((2 * 10000) + (31 * 100) + 0))
-  (void)argc; (void)argv;
+  (void)argc;
+  (void)argv;
   std::cout << "Install librealsense version > 2.31.0" << std::endl;
 #endif
 }

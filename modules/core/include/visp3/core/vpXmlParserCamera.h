@@ -182,8 +182,7 @@ public:
             unsigned int image_height = 0);
 
   int save(const vpCameraParameters &cam, const std::string &filename, const std::string &camera_name,
-           unsigned int image_width = 0, unsigned int image_height = 0,
-           const std::string &additionalInfo = "");
+           unsigned int image_width = 0, unsigned int image_height = 0, const std::string &additionalInfo = "");
 
   void setCameraName(const std::string &name);
   void setHeight(unsigned int height);

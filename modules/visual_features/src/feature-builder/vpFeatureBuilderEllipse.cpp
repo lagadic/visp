@@ -192,9 +192,8 @@ void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam
 void vpFeatureBuilder::create(vpFeatureEllipse &s, const vpCameraParameters &cam, const vpMeEllipse &ellipse)
 {
   double xg, yg, n20, n11, n02;
-  vpPixelMeterConversion::convertEllipse(cam, ellipse.getCenter(),
-                                         ellipse.get_nij()[0], ellipse.get_nij()[1], ellipse.get_nij()[2],
-                                         xg, yg, n20, n11, n02);
+  vpPixelMeterConversion::convertEllipse(cam, ellipse.getCenter(), ellipse.get_nij()[0], ellipse.get_nij()[1],
+                                         ellipse.get_nij()[2], xg, yg, n20, n11, n02);
 
   s.buildFrom(xg, yg, n20, n11, n02);
 }

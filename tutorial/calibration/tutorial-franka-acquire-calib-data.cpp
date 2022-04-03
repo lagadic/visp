@@ -6,10 +6,11 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
-#include <visp3/sensor/vpRealSense2.h>
 #include <visp3/robot/vpRobotFranka.h>
+#include <visp3/sensor/vpRealSense2.h>
 
-#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) && (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA)
+#if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA)
 
 int main(int argc, char **argv)
 {
@@ -19,10 +20,9 @@ int main(int argc, char **argv)
     for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
         robot_ip = std::string(argv[i + 1]);
-      }
-      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << argv[0] << " [--ip 192.168.1.1] [--help] [-h]"
-                             << "\n";
+                  << "\n";
         return EXIT_SUCCESS;
       }
     }
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 
     bool end = false;
     unsigned cpt = 0;
-    while (! end) {
+    while (!end) {
       g.acquire(I);
 
       vpDisplay::display(I);
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
       vpMouseButton::vpMouseButtonType button;
       if (vpDisplay::getClick(I, button, false)) {
         if (button == vpMouseButton::button1) {
-          cpt ++;
+          cpt++;
 
           vpPoseVector fPe;
           robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
@@ -80,13 +80,11 @@ int main(int argc, char **argv)
           std::cout << "Save: " << ss_img.str() << " and " << ss_pos.str() << std::endl;
           vpImageIo::write(I, ss_img.str());
           fPe.saveYAML(ss_pos.str(), fPe);
-        }
-        else if (button == vpMouseButton::button3) {
+        } else if (button == vpMouseButton::button3) {
           end = true;
         }
       }
       vpDisplay::flush(I);
-
     }
   } catch (const vpException &e) {
     std::cerr << "RealSense error " << e.what() << std::endl;

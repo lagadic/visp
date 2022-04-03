@@ -43,16 +43,17 @@
 
 #if defined(VISP_HAVE_CATCH2)
 #define CATCH_CONFIG_RUNNER
+#include "common.hpp"
 #include <catch.hpp>
 #include <visp3/core/vpImageTools.h>
-#include "common.hpp"
 
 static unsigned int g_input_width = 7;
 static unsigned int g_input_height = 5;
 static unsigned int g_output_width = 4;
 static unsigned int g_output_height = 3;
 
-TEST_CASE("Nearest neighbor interpolation", "[image_resize]") {
+TEST_CASE("Nearest neighbor interpolation", "[image_resize]")
+{
   SECTION("unsigned char")
   {
     vpImage<unsigned char> I(g_input_height, g_input_width);
@@ -88,7 +89,8 @@ TEST_CASE("Nearest neighbor interpolation", "[image_resize]") {
   }
 }
 
-TEST_CASE("Bilinear interpolation", "[image_resize]") {
+TEST_CASE("Bilinear interpolation", "[image_resize]")
+{
   SECTION("unsigned char")
   {
     vpImage<unsigned char> I(g_input_height, g_input_width);
@@ -133,19 +135,19 @@ int main(int argc, char *argv[])
 
   // Build a new parser on top of Catch's
   using namespace Catch::clara;
-  auto cli = session.cli() // Get Catch's composite command line parser
-    | Opt(g_input_width, "g_input_width")    // bind variable to a new option, with a hint string
-    ["--iw"]                                  // the option names it will respond to
-    ("Input image width.")                   // description string for the help output
-    | Opt(g_input_height, "g_input_height")  // bind variable to a new option, with a hint string
-    ["--ih"]                                  // the option names it will respond to
-    ("Input image height.")
-    | Opt(g_output_width, "g_output_width")  // bind variable to a new option, with a hint string
-    ["--ow"]                                  // the option names it will respond to
-    ("Output image width.")
-    | Opt(g_output_height, "g_output_height")// bind variable to a new option, with a hint string
-    ["--oh"]                                  // the option names it will respond to
-    ("Output image height.");
+  auto cli = session.cli()                           // Get Catch's composite command line parser
+             | Opt(g_input_width, "g_input_width")   // bind variable to a new option, with a hint string
+                   ["--iw"]                          // the option names it will respond to
+             ("Input image width.")                  // description string for the help output
+             | Opt(g_input_height, "g_input_height") // bind variable to a new option, with a hint string
+                   ["--ih"]                          // the option names it will respond to
+             ("Input image height.") |
+             Opt(g_output_width, "g_output_width") // bind variable to a new option, with a hint string
+                 ["--ow"]                          // the option names it will respond to
+             ("Output image width.") |
+             Opt(g_output_height, "g_output_height") // bind variable to a new option, with a hint string
+                 ["--oh"]                            // the option names it will respond to
+             ("Output image height.");
 
   // Now pass the new composite back to Catch so it uses that
   session.cli(cli);
@@ -164,8 +166,5 @@ int main(int argc, char *argv[])
   return numFailed;
 }
 #else
-int main()
-{
-  return 0;
-}
+int main() { return 0; }
 #endif

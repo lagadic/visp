@@ -203,7 +203,8 @@ int main() {
   rs.open();
 
   vpImage<vpRGBa> Ic(rs.getIntrinsics(rs::stream::color).height, rs.getIntrinsics(rs::stream::color).width);
-  vpImage<unsigned char> Ii(rs.getIntrinsics(rs::stream::infrared).height, rs.getIntrinsics(rs::stream::infrared).width);
+  vpImage<unsigned char> Ii(rs.getIntrinsics(rs::stream::infrared).height,
+rs.getIntrinsics(rs::stream::infrared).width);
 
 #ifdef VISP_HAVE_X11
   vpDisplayX dc(Ic, 0, 0, "Color");

@@ -40,13 +40,13 @@
 
 #ifdef VISP_HAVE_FRANKA
 
+#include <visp3/core/vpIoTools.h>
 #include <visp3/robot/vpRobotException.h>
 #include <visp3/robot/vpRobotFranka.h>
-#include <visp3/core/vpIoTools.h>
 
+#include "vpForceTorqueGenerator_impl.h"
 #include "vpJointPosTrajGenerator_impl.h"
 #include "vpJointVelTrajGenerator_impl.h"
-#include "vpForceTorqueGenerator_impl.h"
 
 /*!
 
@@ -54,13 +54,11 @@
 
 */
 vpRobotFranka::vpRobotFranka()
-  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positionningVelocity(20.),
-    m_velControlThread(), m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false),
-    m_dq_des(), m_v_cart_des(),
-    m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false),
-    m_tau_J_des(), m_ft_cart_des(),
-    m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(),
-    m_mutex(), m_eMc(), m_log_folder(), m_franka_address()
+  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positionningVelocity(20.), m_velControlThread(),
+    m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
+    m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
+    m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
+    m_franka_address()
 {
   init();
 }
@@ -72,13 +70,11 @@ vpRobotFranka::vpRobotFranka()
  * be set when required. Setting realtime_config to kIgnore disables this behavior.
  */
 vpRobotFranka::vpRobotFranka(const std::string &franka_address, franka::RealtimeConfig realtime_config)
-  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positionningVelocity(20.),
-    m_velControlThread(), m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false),
-    m_dq_des(), m_v_cart_des(),
-    m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false),
-    m_tau_J_des(), m_ft_cart_des(),
-    m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(),
-    m_mutex(), m_eMc(),m_log_folder(), m_franka_address()
+  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positionningVelocity(20.), m_velControlThread(),
+    m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
+    m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
+    m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
+    m_franka_address()
 {
   init();
   connect(franka_address, realtime_config);
@@ -91,10 +87,10 @@ void vpRobotFranka::init()
 {
   nDof = 7;
 
-  m_q_min   = std::array<double, 7> {-2.8973, -1.7628, -2.8973, -3.0718, -2.8973, -0.0175, -2.8973};
-  m_q_max   = std::array<double, 7> {2.8973, 1.7628, 2.8973, -0.0698, 2.8973, 3.7525, 2.8973};
-  m_dq_max  = std::array<double, 7> {2.1750, 2.1750, 2.1750, 2.1750, 2.6100, 2.6100, 2.6100};
-  m_ddq_max = std::array<double, 7> {15.0, 7.5, 10.0, 12.5, 15.0, 20.0, 20.0};
+  m_q_min = std::array<double, 7>{-2.8973, -1.7628, -2.8973, -3.0718, -2.8973, -0.0175, -2.8973};
+  m_q_max = std::array<double, 7>{2.8973, 1.7628, 2.8973, -0.0698, 2.8973, 3.7525, 2.8973};
+  m_dq_max = std::array<double, 7>{2.1750, 2.1750, 2.1750, 2.1750, 2.6100, 2.6100, 2.6100};
+  m_ddq_max = std::array<double, 7>{15.0, 7.5, 10.0, 12.5, 15.0, 20.0, 20.0};
 }
 
 /*!
@@ -129,7 +125,7 @@ vpRobotFranka::~vpRobotFranka()
 void vpRobotFranka::connect(const std::string &franka_address, franka::RealtimeConfig realtime_config)
 {
   init();
-  if(franka_address.empty()) {
+  if (franka_address.empty()) {
     throw(vpException(vpException::fatalError, "Cannot connect Franka robot: IP/hostname is not set"));
   }
   if (m_handler)
@@ -138,23 +134,18 @@ void vpRobotFranka::connect(const std::string &franka_address, franka::RealtimeC
   m_franka_address = franka_address;
   m_handler = new franka::Robot(franka_address, realtime_config);
 
-  std::array<double, 7> lower_torque_thresholds_nominal{
-      {25.0, 25.0, 22.0, 20.0, 19.0, 17.0, 14.}};
-  std::array<double, 7> upper_torque_thresholds_nominal{
-      {35.0, 35.0, 32.0, 30.0, 29.0, 27.0, 24.0}};
-  std::array<double, 7> lower_torque_thresholds_acceleration{
-      {25.0, 25.0, 22.0, 20.0, 19.0, 17.0, 14.0}};
-  std::array<double, 7> upper_torque_thresholds_acceleration{
-      {35.0, 35.0, 32.0, 30.0, 29.0, 27.0, 24.0}};
+  std::array<double, 7> lower_torque_thresholds_nominal{{25.0, 25.0, 22.0, 20.0, 19.0, 17.0, 14.}};
+  std::array<double, 7> upper_torque_thresholds_nominal{{35.0, 35.0, 32.0, 30.0, 29.0, 27.0, 24.0}};
+  std::array<double, 7> lower_torque_thresholds_acceleration{{25.0, 25.0, 22.0, 20.0, 19.0, 17.0, 14.0}};
+  std::array<double, 7> upper_torque_thresholds_acceleration{{35.0, 35.0, 32.0, 30.0, 29.0, 27.0, 24.0}};
   std::array<double, 6> lower_force_thresholds_nominal{{30.0, 30.0, 30.0, 25.0, 25.0, 25.0}};
   std::array<double, 6> upper_force_thresholds_nominal{{40.0, 40.0, 40.0, 35.0, 35.0, 35.0}};
   std::array<double, 6> lower_force_thresholds_acceleration{{30.0, 30.0, 30.0, 25.0, 25.0, 25.0}};
   std::array<double, 6> upper_force_thresholds_acceleration{{40.0, 40.0, 40.0, 35.0, 35.0, 35.0}};
-  m_handler->setCollisionBehavior(
-        lower_torque_thresholds_acceleration, upper_torque_thresholds_acceleration,
-        lower_torque_thresholds_nominal, upper_torque_thresholds_nominal,
-        lower_force_thresholds_acceleration, upper_force_thresholds_acceleration,
-        lower_force_thresholds_nominal, upper_force_thresholds_nominal);
+  m_handler->setCollisionBehavior(lower_torque_thresholds_acceleration, upper_torque_thresholds_acceleration,
+                                  lower_torque_thresholds_nominal, upper_torque_thresholds_nominal,
+                                  lower_force_thresholds_acceleration, upper_force_thresholds_acceleration,
+                                  lower_force_thresholds_nominal, upper_force_thresholds_nominal);
 
   m_handler->setJointImpedance({{3000, 3000, 3000, 2500, 2500, 2000, 2000}});
   m_handler->setCartesianImpedance({{3000, 3000, 3000, 300, 300, 300}});
@@ -192,11 +183,11 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
 
   franka::RobotState robot_state = getRobotInternalState();
   vpColVector q(7);
-  for (int i=0; i < 7; i++) {
+  for (int i = 0; i < 7; i++) {
     q[i] = robot_state.q[i];
   }
 
-  switch(frame) {
+  switch (frame) {
   case JOINT_STATE: {
     position = q;
     break;
@@ -205,7 +196,7 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
     position.resize(6);
     vpHomogeneousMatrix fMe = get_fMe(q);
     vpPoseVector fPe(fMe);
-    for (size_t i=0; i < 6; i++) {
+    for (size_t i = 0; i < 6; i++) {
       position[i] = fPe[i];
     }
     break;
@@ -214,7 +205,7 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
     position.resize(6);
     vpHomogeneousMatrix fMc = get_fMc(q);
     vpPoseVector fPc(fMc);
-    for (size_t i=0; i < 6; i++) {
+    for (size_t i = 0; i < 6; i++) {
       position[i] = fPc[i];
     }
     break;
@@ -229,11 +220,10 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
  * Get robot force torque.
  * \param[in] frame : Type of forces and torques to retrieve. Admissible values are:
  * - vpRobot::JOINT_STATE to get the 7-dim measured link-side joint torque sensor signals. Unit: \f$[Nm]\f$.
- * - vpRobot::END_EFFECTOR_FRAME to retrieve the external wrench (force, torque) acting on stiffness frame, expressed relative to the stiffness
- *   frame. Unit: \f$[N,N,N,Nm,Nm,Nm]\f$.
- * - vpRobot::CAMERA_FRAME or more generally a tool frame vpRobot::TOOL_FRAME to retrieve the external wrench (force, torque) applied on the tool frame.
- *   Unit: \f$[N,N,N,Nm,Nm,Nm]\f$.
- * \param[out] force : Measured forced and torques.
+ * - vpRobot::END_EFFECTOR_FRAME to retrieve the external wrench (force, torque) acting on stiffness frame, expressed
+ * relative to the stiffness frame. Unit: \f$[N,N,N,Nm,Nm,Nm]\f$.
+ * - vpRobot::CAMERA_FRAME or more generally a tool frame vpRobot::TOOL_FRAME to retrieve the external wrench (force,
+ * torque) applied on the tool frame. Unit: \f$[N,N,N,Nm,Nm,Nm]\f$. \param[out] force : Measured forced and torques.
  *
  * If you want to get a cartesian position, use rather
  * getPosition(const vpRobot::vpControlFrameType, vpPoseVector &)
@@ -246,29 +236,29 @@ void vpRobotFranka::getForceTorque(const vpRobot::vpControlFrameType frame, vpCo
 
   franka::RobotState robot_state = getRobotInternalState();
 
-  switch(frame) {
+  switch (frame) {
   case JOINT_STATE: {
     force.resize(7);
-    for (int i=0; i < 7; i++)
+    for (int i = 0; i < 7; i++)
       force[i] = robot_state.tau_J[i];
 
     break;
   }
   case END_EFFECTOR_FRAME: {
     force.resize(6);
-    for (int i=0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
       force[i] = robot_state.K_F_ext_hat_K[i];
     break;
   }
   case TOOL_FRAME: {
     // end-effector frame
     vpColVector eFe(6);
-    for (int i=0; i < 6; i++)
+    for (int i = 0; i < 6; i++)
       eFe[i] = robot_state.K_F_ext_hat_K[i];
 
     // Transform in tool frame
     vpHomogeneousMatrix cMe = get_eMc().inverse();
-    vpForceTwistMatrix cWe( cMe  );
+    vpForceTwistMatrix cWe(cMe);
     force = cWe * eFe;
     break;
   }
@@ -285,12 +275,12 @@ void vpRobotFranka::getForceTorque(const vpRobot::vpControlFrameType frame, vpCo
  * - vpRobot::END_EFFECTOR_FRAME to retrieve the cartesian velocity of the end-effector frame wrt the robot base frame.
  * - vpRobot::CAMERA_FRAME to retrieve the cartesian velocity of the camera frame (or more generally a tool frame
  *   vpRobot::TOOL_FRAME) wrt the robot base frame.
- * \param[out] d_position : Robot velocity. When joints velocity is asked this vector is 7-dim. Otherwise for a cartesian
- * velocity this vector is 6-dim. Its content is similar to a vpPoseVector, with first the 3 tranlations in meter
- * and then the 3 orientations in radian as a \f$\theta {\bf u}\f$ vector (see vpThetaUVector).
+ * \param[out] d_position : Robot velocity. When joints velocity is asked this vector is 7-dim. Otherwise for a
+ * cartesian velocity this vector is 6-dim. Its content is similar to a vpPoseVector, with first the 3 tranlations in
+ * meter and then the 3 orientations in radian as a \f$\theta {\bf u}\f$ vector (see vpThetaUVector).
  *
- * \warning For the moment, cartesian velocities measurement in vpRobot::END_EFFECTOR_FRAME, vpRobot::CAMERA_FRAME, vpRobot::TOOL_FRAME
- * are not implemented.
+ * \warning For the moment, cartesian velocities measurement in vpRobot::END_EFFECTOR_FRAME, vpRobot::CAMERA_FRAME,
+ * vpRobot::TOOL_FRAME are not implemented.
  */
 void vpRobotFranka::getVelocity(const vpRobot::vpControlFrameType frame, vpColVector &d_position)
 {
@@ -300,12 +290,12 @@ void vpRobotFranka::getVelocity(const vpRobot::vpControlFrameType frame, vpColVe
 
   franka::RobotState robot_state = getRobotInternalState();
 
-  switch(frame) {
+  switch (frame) {
 
   case JOINT_STATE: {
     d_position.resize(7);
-    for (int i=0; i < 7; i++) {
-      d_position[i]=robot_state.dq[i];
+    for (int i = 0; i < 7; i++) {
+      d_position[i] = robot_state.dq[i];
     }
     break;
   }
@@ -334,7 +324,7 @@ void vpRobotFranka::getCoriolis(vpColVector &coriolis)
   coriolis_ = m_model->coriolis(robot_state);
 
   coriolis.resize(7);
-  for (int i=0; i < 7; i++) {
+  for (int i = 0; i < 7; i++) {
     coriolis[i] = coriolis_[i];
   }
 }
@@ -356,7 +346,7 @@ void vpRobotFranka::getGravity(vpColVector &gravity)
   gravity_ = m_model->gravity(robot_state);
 
   gravity.resize(7);
-  for (int i=0; i < 7; i++) {
+  for (int i = 0; i < 7; i++) {
     gravity[i] = gravity_[i];
   }
 }
@@ -378,9 +368,9 @@ void vpRobotFranka::getMass(vpMatrix &mass)
   mass_ = m_model->mass(robot_state); // column-major
 
   mass.resize(7, 7); // row-major
-  for (size_t i = 0; i < 7; i ++) {
-    for (size_t j = 0; j < 7; j ++) {
-      mass[i][j] = mass_[j*7 + i];
+  for (size_t i = 0; i < 7; i++) {
+    for (size_t j = 0; j < 7; j++) {
+      mass[i][j] = mass_[j * 7 + i];
     }
   }
 }
@@ -401,17 +391,18 @@ vpHomogeneousMatrix vpRobotFranka::get_fMe(const vpColVector &q)
     throw(vpException(vpException::fatalError, "Joint position vector [%u] is not a 7-dim vector", q.size()));
   }
 
-  std::array< double, 7 > q_array;
+  std::array<double, 7> q_array;
   for (size_t i = 0; i < 7; i++)
     q_array[i] = q[i];
 
   franka::RobotState robot_state = getRobotInternalState();
 
-  std::array<double, 16> pose_array = m_model->pose(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K);
+  std::array<double, 16> pose_array =
+      m_model->pose(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K);
   vpHomogeneousMatrix fMe;
-  for (unsigned int i=0; i< 4; i++) {
-    for (unsigned int j=0; j< 4; j++) {
-      fMe[i][j] = pose_array[j*4 + i];
+  for (unsigned int i = 0; i < 4; i++) {
+    for (unsigned int j = 0; j < 4; j++) {
+      fMe[i][j] = pose_array[j * 4 + i];
     }
   }
 
@@ -461,13 +452,13 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpPoseV
 
   std::array<double, 16> pose_array = robot_state.O_T_EE;
   vpHomogeneousMatrix fMe;
-  for (unsigned int i=0; i< 4; i++) {
-    for (unsigned int j=0; j< 4; j++) {
-      fMe[i][j] = pose_array[j*4 + i];
+  for (unsigned int i = 0; i < 4; i++) {
+    for (unsigned int j = 0; j < 4; j++) {
+      fMe[i][j] = pose_array[j * 4 + i];
     }
   }
 
-  switch(frame) {
+  switch (frame) {
   case END_EFFECTOR_FRAME: {
     pose.buildFrom(fMe);
     break;
@@ -483,9 +474,9 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpPoseV
 }
 
 /*!
- * Gets the robot Jacobian in the end-effector frame relative to the end-effector frame represented as a 6x7 matrix in row-major
- * format and computed from the robot current joint position.
- * \param[out] eJe_ : Body Jacobian expressed in the end-effector frame.
+ * Gets the robot Jacobian in the end-effector frame relative to the end-effector frame represented as a 6x7 matrix in
+ * row-major format and computed from the robot current joint position. \param[out] eJe_ : Body Jacobian expressed in
+ * the end-effector frame.
  */
 void vpRobotFranka::get_eJe(vpMatrix &eJe_)
 {
@@ -496,20 +487,19 @@ void vpRobotFranka::get_eJe(vpMatrix &eJe_)
   franka::RobotState robot_state = getRobotInternalState();
 
   std::array<double, 42> jacobian = m_model->bodyJacobian(franka::Frame::kEndEffector, robot_state); // column-major
-  eJe_.resize(6, 7); // row-major
-  for (size_t i = 0; i < 6; i ++) {
-    for (size_t j = 0; j < 7; j ++) {
-      eJe_[i][j] = jacobian[j*6 + i];
+  eJe_.resize(6, 7);                                                                                 // row-major
+  for (size_t i = 0; i < 6; i++) {
+    for (size_t j = 0; j < 7; j++) {
+      eJe_[i][j] = jacobian[j * 6 + i];
     }
   }
   // TODO check from vpRobot fJe and fJeAvailable
 }
 
 /*!
- * Gets the robot Jacobian in the end-effector frame relative to the end-effector frame represented as a 6x7 matrix in row-major
- * format and computed from the robot current joint position.
- * \param[in] q : 7-dim vector corresponding to the robot joint position [rad].
- * \param[out] eJe_ : Body Jacobian expressed in the end-effector frame.
+ * Gets the robot Jacobian in the end-effector frame relative to the end-effector frame represented as a 6x7 matrix in
+ * row-major format and computed from the robot current joint position. \param[in] q : 7-dim vector corresponding to the
+ * robot joint position [rad]. \param[out] eJe_ : Body Jacobian expressed in the end-effector frame.
  */
 void vpRobotFranka::get_eJe(const vpColVector &q, vpMatrix &eJe_)
 {
@@ -519,25 +509,25 @@ void vpRobotFranka::get_eJe(const vpColVector &q, vpMatrix &eJe_)
 
   franka::RobotState robot_state = getRobotInternalState();
 
-  std::array< double, 7 > q_array;
+  std::array<double, 7> q_array;
   for (size_t i = 0; i < 7; i++)
     q_array[i] = q[i];
 
-  std::array<double, 42> jacobian = m_model->bodyJacobian(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K); // column-major
-  eJe_.resize(6, 7); // row-major
-  for (size_t i = 0; i < 6; i ++) {
-    for (size_t j = 0; j < 7; j ++) {
-      eJe_[i][j] = jacobian[j*6 + i];
+  std::array<double, 42> jacobian = m_model->bodyJacobian(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE,
+                                                          robot_state.EE_T_K); // column-major
+  eJe_.resize(6, 7);                                                           // row-major
+  for (size_t i = 0; i < 6; i++) {
+    for (size_t j = 0; j < 7; j++) {
+      eJe_[i][j] = jacobian[j * 6 + i];
     }
   }
   // TODO check from vpRobot fJe and fJeAvailable
-
 }
 
 /*!
- * Gets the robot Jacobian in the end-effector frame relative to the base frame represented as a 6x7 matrix in row-major format and computed
- * from the robot current joint position.
- * \param[out] fJe_ : Zero Jacobian expressed in the base frame.
+ * Gets the robot Jacobian in the end-effector frame relative to the base frame represented as a 6x7 matrix in row-major
+ * format and computed from the robot current joint position. \param[out] fJe_ : Zero Jacobian expressed in the base
+ * frame.
  */
 void vpRobotFranka::get_fJe(vpMatrix &fJe_)
 {
@@ -548,20 +538,19 @@ void vpRobotFranka::get_fJe(vpMatrix &fJe_)
   franka::RobotState robot_state = getRobotInternalState();
 
   std::array<double, 42> jacobian = m_model->zeroJacobian(franka::Frame::kEndEffector, robot_state); // column-major
-  fJe_.resize(6, 7); // row-major
-  for (size_t i = 0; i < 6; i ++) {
-    for (size_t j = 0; j < 7; j ++) {
-      fJe_[i][j] = jacobian[j*6 + i];
+  fJe_.resize(6, 7);                                                                                 // row-major
+  for (size_t i = 0; i < 6; i++) {
+    for (size_t j = 0; j < 7; j++) {
+      fJe_[i][j] = jacobian[j * 6 + i];
     }
   }
   // TODO check from vpRobot fJe and fJeAvailable
 }
 
 /*!
- * Gets the robot Jacobian in the end-effector frame relative to the base frame represented as a 6x7 matrix in row-major format and computed
- * from the robot joint position given as input.
- * \param[in] q : 7-dim vector corresponding to the robot joint position [rad].
- * \param[out] fJe_ : Zero Jacobian expressed in the base frame.
+ * Gets the robot Jacobian in the end-effector frame relative to the base frame represented as a 6x7 matrix in row-major
+ * format and computed from the robot joint position given as input. \param[in] q : 7-dim vector corresponding to the
+ * robot joint position [rad]. \param[out] fJe_ : Zero Jacobian expressed in the base frame.
  */
 void vpRobotFranka::get_fJe(const vpColVector &q, vpMatrix &fJe_)
 {
@@ -569,20 +558,24 @@ void vpRobotFranka::get_fJe(const vpColVector &q, vpMatrix &fJe_)
     throw(vpException(vpException::fatalError, "Cannot get Franka robot fJe jacobian: robot is not connected"));
   }
   if (q.size() != 7) {
-    throw(vpException(vpException::fatalError, "Cannot get Franka robot fJe jacobian with an input joint position vector [%u] that is not a 7-dim vector", q.size()));
+    throw(vpException(
+        vpException::fatalError,
+        "Cannot get Franka robot fJe jacobian with an input joint position vector [%u] that is not a 7-dim vector",
+        q.size()));
   }
 
   franka::RobotState robot_state = getRobotInternalState();
 
-  std::array< double, 7 > q_array;
+  std::array<double, 7> q_array;
   for (size_t i = 0; i < 7; i++)
     q_array[i] = q[i];
 
-  std::array<double, 42> jacobian = m_model->zeroJacobian(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE, robot_state.EE_T_K); // column-major
-  fJe_.resize(6, 7); // row-major
-  for (size_t i = 0; i < 6; i ++) {
-    for (size_t j = 0; j < 7; j ++) {
-      fJe_[i][j] = jacobian[j*6 + i];
+  std::array<double, 42> jacobian = m_model->zeroJacobian(franka::Frame::kEndEffector, q_array, robot_state.F_T_EE,
+                                                          robot_state.EE_T_K); // column-major
+  fJe_.resize(6, 7);                                                           // row-major
+  for (size_t i = 0; i < 6; i++) {
+    for (size_t j = 0; j < 7; j++) {
+      fJe_[i][j] = jacobian[j * 6 + i];
     }
   }
   // TODO check from vpRobot fJe and fJeAvailable
@@ -604,15 +597,13 @@ void vpRobotFranka::setLogFolder(const std::string &folder)
       try {
         vpIoTools::makeDirectory(folder);
         m_log_folder = folder;
-      }
-      catch(const vpException &e) {
+      } catch (const vpException &e) {
         std::string error;
         error = "Unable to create Franka log folder: " + folder;
         throw(vpException(vpException::fatalError, error));
       }
-    }
-    else {
-       m_log_folder = folder;
+    } else {
+      m_log_folder = folder;
     }
   }
 }
@@ -629,7 +620,8 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
   }
   if (vpRobot::STATE_POSITION_CONTROL != getRobotState()) {
     std::cout << "Robot was not in position-based control. "
-                 "Modification of the robot state" << std::endl;
+                 "Modification of the robot state"
+              << std::endl;
     setRobotState(vpRobot::STATE_POSITION_CONTROL);
   }
 
@@ -655,10 +647,9 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
           throw;
       }
     }
-  }
-  else {
-    throw (vpException(vpRobotException::functionNotImplementedError,
-        "Cannot move the robot to a cartesian position. Only joint positionning is implemented"));
+  } else {
+    throw(vpException(vpRobotException::functionNotImplementedError,
+                      "Cannot move the robot to a cartesian position. Only joint positionning is implemented"));
   }
 }
 
@@ -670,10 +661,7 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
   be in ]0:100].
 
 */
-void vpRobotFranka::setPositioningVelocity(double velocity)
-{
-  m_positionningVelocity = velocity;
-}
+void vpRobotFranka::setPositioningVelocity(double velocity) { m_positionningVelocity = velocity; }
 
 /*!
 
@@ -689,16 +677,15 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
     if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
       // Stop the robot
       m_velControlThreadStopAsked = true;
-      if(m_velControlThread.joinable()) {
+      if (m_velControlThread.joinable()) {
         m_velControlThread.join();
         m_velControlThreadStopAsked = false;
         m_velControlThreadIsRunning = false;
       }
-    }
-    else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
+    } else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
       // Stop the robot
       m_ftControlThreadStopAsked = true;
-      if(m_ftControlThread.joinable()) {
+      if (m_ftControlThread.joinable()) {
         m_ftControlThread.join();
         m_ftControlThreadStopAsked = false;
         m_ftControlThreadIsRunning = false;
@@ -711,17 +698,16 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
       std::cout << "Change the control mode from velocity to position control.\n";
       // Stop the robot
       m_velControlThreadStopAsked = true;
-      if(m_velControlThread.joinable()) {
+      if (m_velControlThread.joinable()) {
         m_velControlThread.join();
         m_velControlThreadStopAsked = false;
         m_velControlThreadIsRunning = false;
       }
-    }
-    else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
+    } else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from force/torque to position control.\n";
       // Stop the robot
       m_ftControlThreadStopAsked = true;
-      if(m_ftControlThread.joinable()) {
+      if (m_ftControlThread.joinable()) {
         m_ftControlThread.join();
         m_ftControlThreadStopAsked = false;
         m_ftControlThreadIsRunning = false;
@@ -732,15 +718,13 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
   case vpRobot::STATE_VELOCITY_CONTROL: {
     if (vpRobot::STATE_STOP == getRobotState()) {
       std::cout << "Change the control mode from stop to velocity control.\n";
-    }
-    else if (vpRobot::STATE_POSITION_CONTROL == getRobotState()) {
+    } else if (vpRobot::STATE_POSITION_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from position to velocity control.\n";
-    }
-    else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
+    } else if (vpRobot::STATE_FORCE_TORQUE_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from force/torque to velocity control.\n";
       // Stop the robot
       m_ftControlThreadStopAsked = true;
-      if(m_ftControlThread.joinable()) {
+      if (m_ftControlThread.joinable()) {
         m_ftControlThread.join();
         m_ftControlThreadStopAsked = false;
         m_ftControlThreadIsRunning = false;
@@ -751,15 +735,13 @@ vpRobot::vpRobotStateType vpRobotFranka::setRobotState(vpRobot::vpRobotStateType
   case vpRobot::STATE_FORCE_TORQUE_CONTROL: {
     if (vpRobot::STATE_STOP == getRobotState()) {
       std::cout << "Change the control mode from stop to force/torque control.\n";
-    }
-    else if (vpRobot::STATE_POSITION_CONTROL == getRobotState()) {
+    } else if (vpRobot::STATE_POSITION_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from position to force/torque control.\n";
-    }
-    else if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
+    } else if (vpRobot::STATE_VELOCITY_CONTROL == getRobotState()) {
       std::cout << "Change the control mode from velocity to force/torque control.\n";
       // Stop the robot
       m_velControlThreadStopAsked = true;
-      if(m_velControlThread.joinable()) {
+      if (m_velControlThread.joinable()) {
         m_velControlThread.join();
         m_velControlThreadStopAsked = false;
         m_velControlThreadIsRunning = false;
@@ -840,8 +822,8 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
   // Saturation in joint space
   case JOINT_STATE: {
     if (vel.size() != 7) {
-      throw vpRobotException(vpRobotException::wrongStateError,
-                             "Joint velocity vector (%d) is not of size 7", vel.size());
+      throw vpRobotException(vpRobotException::wrongStateError, "Joint velocity vector (%d) is not of size 7",
+                             vel.size());
     }
 
     vpColVector vel_max(7, getMaxRotationVelocity());
@@ -860,8 +842,8 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
   case vpRobot::REFERENCE_FRAME:
   case vpRobot::END_EFFECTOR_FRAME: {
     if (vel.size() != 6) {
-      throw vpRobotException(vpRobotException::wrongStateError,
-                             "Cartesian velocity vector (%d) is not of size 6", vel.size());
+      throw vpRobotException(vpRobotException::wrongStateError, "Cartesian velocity vector (%d) is not of size 6",
+                             vel.size());
     }
     vpColVector vel_max(6);
 
@@ -876,18 +858,17 @@ void vpRobotFranka::setVelocity(const vpRobot::vpControlFrameType frame, const v
   }
 
   case vpRobot::MIXT_FRAME: {
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Velocity controller not supported");
+    throw vpRobotException(vpRobotException::wrongStateError, "Velocity controller not supported");
   }
   }
 
-  if(! m_velControlThreadIsRunning) {
+  if (!m_velControlThreadIsRunning) {
     m_velControlThreadIsRunning = true;
-    m_velControlThread = std::thread(&vpJointVelTrajGenerator::control_thread, vpJointVelTrajGenerator(),
-                                  std::ref(m_handler), std::ref(m_velControlThreadStopAsked), m_log_folder,
-                                  frame, m_eMc, std::ref(m_v_cart_des), std::ref(m_dq_des),
-                                  std::cref(m_q_min), std::cref(m_q_max), std::cref(m_dq_max), std::cref(m_ddq_max),
-                                  std::ref(m_robot_state), std::ref(m_mutex));
+    m_velControlThread =
+        std::thread(&vpJointVelTrajGenerator::control_thread, vpJointVelTrajGenerator(), std::ref(m_handler),
+                    std::ref(m_velControlThreadStopAsked), m_log_folder, frame, m_eMc, std::ref(m_v_cart_des),
+                    std::ref(m_dq_des), std::cref(m_q_min), std::cref(m_q_max), std::cref(m_dq_max),
+                    std::cref(m_ddq_max), std::ref(m_robot_state), std::ref(m_mutex));
   }
 }
 
@@ -910,8 +891,8 @@ void vpRobotFranka::setForceTorque(const vpRobot::vpControlFrameType frame, cons
   // Saturation in joint space
   case JOINT_STATE: {
     if (ft.size() != 7) {
-      throw vpRobotException(vpRobotException::wrongStateError,
-                             "Joint torques vector (%d) is not of size 7", ft.size());
+      throw vpRobotException(vpRobotException::wrongStateError, "Joint torques vector (%d) is not of size 7",
+                             ft.size());
     }
 
     for (size_t i = 0; i < m_tau_J_des.size(); i++) { // TODO create a function to convert
@@ -927,8 +908,8 @@ void vpRobotFranka::setForceTorque(const vpRobot::vpControlFrameType frame, cons
   case vpRobot::REFERENCE_FRAME:
   case vpRobot::END_EFFECTOR_FRAME: {
     if (ft.size() != 6) {
-      throw vpRobotException(vpRobotException::wrongStateError,
-                             "Cartesian force/torque vector (%d) is not of size 6", ft.size());
+      throw vpRobotException(vpRobotException::wrongStateError, "Cartesian force/torque vector (%d) is not of size 6",
+                             ft.size());
     }
 
     m_ft_cart_des = ft;
@@ -938,17 +919,16 @@ void vpRobotFranka::setForceTorque(const vpRobot::vpControlFrameType frame, cons
   }
 
   case vpRobot::MIXT_FRAME: {
-    throw vpRobotException(vpRobotException::wrongStateError,
-                           "Velocity controller not supported");
+    throw vpRobotException(vpRobotException::wrongStateError, "Velocity controller not supported");
   }
   }
 
-  if(! m_ftControlThreadIsRunning) {
+  if (!m_ftControlThreadIsRunning) {
     getRobotInternalState(); // Update m_robot_state internally
     m_ftControlThreadIsRunning = true;
     m_ftControlThread = std::thread(&vpForceTorqueGenerator::control_thread, vpForceTorqueGenerator(),
-                                    std::ref(m_handler), std::ref(m_ftControlThreadStopAsked), m_log_folder,
-                                    frame, std::ref(m_tau_J_des), std::ref(m_ft_cart_des), std::ref(m_robot_state),
+                                    std::ref(m_handler), std::ref(m_ftControlThreadStopAsked), m_log_folder, frame,
+                                    std::ref(m_tau_J_des), std::ref(m_ft_cart_des), std::ref(m_robot_state),
                                     std::ref(m_mutex), filter_gain, activate_pi_controller);
   }
 }
@@ -960,13 +940,12 @@ franka::RobotState vpRobotFranka::getRobotInternalState()
   }
   franka::RobotState robot_state;
 
-  if (! m_velControlThreadIsRunning && ! m_ftControlThreadIsRunning) {
+  if (!m_velControlThreadIsRunning && !m_ftControlThreadIsRunning) {
     robot_state = m_handler->readOnce();
 
     std::lock_guard<std::mutex> lock(m_mutex);
     m_robot_state = robot_state;
-  }
-  else { // robot_state is updated in the velocity control thread
+  } else { // robot_state is updated in the velocity control thread
     std::lock_guard<std::mutex> lock(m_mutex);
     robot_state = m_robot_state;
   }
@@ -982,7 +961,7 @@ franka::RobotState vpRobotFranka::getRobotInternalState()
 vpColVector vpRobotFranka::getJointMin() const
 {
   vpColVector q_min(m_q_min.size());
-  for (size_t i = 0; i < m_q_min.size(); i ++)
+  for (size_t i = 0; i < m_q_min.size(); i++)
     q_min[i] = m_q_min[i];
 
   return q_min;
@@ -995,7 +974,7 @@ vpColVector vpRobotFranka::getJointMin() const
 vpColVector vpRobotFranka::getJointMax() const
 {
   vpColVector q_max(m_q_max.size());
-  for (size_t i = 0; i < m_q_max.size(); i ++)
+  for (size_t i = 0; i < m_q_max.size(); i++)
     q_max[i] = m_q_max[i];
 
   return q_max;
@@ -1011,10 +990,7 @@ vpColVector vpRobotFranka::getJointMax() const
  * To change the position of the camera (or tool) frame on the end-effector frame, use set_eMc().
 
  */
-vpHomogeneousMatrix vpRobotFranka::get_eMc() const
-{
-  return m_eMc;
-}
+vpHomogeneousMatrix vpRobotFranka::get_eMc() const { return m_eMc; }
 
 /*!
  * Set the \f$ ^{e}{\bf M}_c\f$ homogeneous transformation that gives the position
@@ -1028,10 +1004,7 @@ vpHomogeneousMatrix vpRobotFranka::get_eMc() const
  *
  * \param[in] eMc : End-effector to camera frame transformation.
  */
-void vpRobotFranka::set_eMc(const vpHomogeneousMatrix &eMc)
-{
-  m_eMc = eMc;
-}
+void vpRobotFranka::set_eMc(const vpHomogeneousMatrix &eMc) { m_eMc = eMc; }
 
 /*!
 
@@ -1187,16 +1160,15 @@ bool vpRobotFranka::savePosFile(const std::string &filename, const vpColVector &
   if (fd == NULL)
     return false;
 
-  fprintf(fd,
-        "#PANDA - Joint position file\n"
-        "#\n"
-        "# R: q1 q2 q3 q4 q5 q6 q7\n"
-        "# with joint positions q1 to q7 expressed in degrees\n"
-        "#\n");
+  fprintf(fd, "#PANDA - Joint position file\n"
+              "#\n"
+              "# R: q1 q2 q3 q4 q5 q6 q7\n"
+              "# with joint positions q1 to q7 expressed in degrees\n"
+              "#\n");
 
   // Save positions in mm and deg
-  fprintf(fd, "R: %lf %lf %lf %lf %lf %lf %lf\n",  vpMath::deg(q[0]), vpMath::deg(q[1]), vpMath::deg(q[2]),
-      vpMath::deg(q[3]), vpMath::deg(q[4]), vpMath::deg(q[5]), vpMath::deg(q[6]));
+  fprintf(fd, "R: %lf %lf %lf %lf %lf %lf %lf\n", vpMath::deg(q[0]), vpMath::deg(q[1]), vpMath::deg(q[2]),
+          vpMath::deg(q[3]), vpMath::deg(q[4]), vpMath::deg(q[5]), vpMath::deg(q[6]));
 
   fclose(fd);
   return (true);
@@ -1227,7 +1199,7 @@ void vpRobotFranka::stopMotion()
 void vpRobotFranka::gripperHoming()
 {
   if (m_franka_address.empty()) {
-    throw (vpException(vpException::fatalError, "Cannot perform franka gripper homing without ip address"));
+    throw(vpException(vpException::fatalError, "Cannot perform franka gripper homing without ip address"));
   }
   if (m_gripper == NULL)
     m_gripper = new franka::Gripper(m_franka_address);
@@ -1247,7 +1219,7 @@ void vpRobotFranka::gripperHoming()
 int vpRobotFranka::gripperMove(double width)
 {
   if (m_franka_address.empty()) {
-    throw (vpException(vpException::fatalError, "Cannot open franka gripper without ip address"));
+    throw(vpException(vpException::fatalError, "Cannot open franka gripper without ip address"));
   }
   if (m_gripper == NULL)
     m_gripper = new franka::Gripper(m_franka_address);
@@ -1273,10 +1245,7 @@ int vpRobotFranka::gripperMove(double width)
 
   \sa gripperHoming(), gripperGrasp(), gripperRelease(), gripperOpen()
 */
-int vpRobotFranka::gripperClose()
-{
-  return gripperMove(0);
-}
+int vpRobotFranka::gripperClose() { return gripperMove(0); }
 
 /*!
 
@@ -1289,7 +1258,7 @@ int vpRobotFranka::gripperClose()
 int vpRobotFranka::gripperOpen()
 {
   if (m_franka_address.empty()) {
-    throw (vpException(vpException::fatalError, "Cannot open franka gripper without ip address"));
+    throw(vpException(vpException::fatalError, "Cannot open franka gripper without ip address"));
   }
   if (m_gripper == NULL)
     m_gripper = new franka::Gripper(m_franka_address);
@@ -1310,7 +1279,7 @@ int vpRobotFranka::gripperOpen()
 void vpRobotFranka::gripperRelease()
 {
   if (m_franka_address.empty()) {
-    throw (vpException(vpException::fatalError, "Cannot release franka gripper without ip address"));
+    throw(vpException(vpException::fatalError, "Cannot release franka gripper without ip address"));
   }
   if (m_gripper == NULL)
     m_gripper = new franka::Gripper(m_franka_address);
@@ -1360,4 +1329,3 @@ int vpRobotFranka::gripperGrasp(double grasping_width, double force)
 // no symbols
 void dummy_vpRobotFranka(){};
 #endif
-

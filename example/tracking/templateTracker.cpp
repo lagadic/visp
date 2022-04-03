@@ -126,7 +126,8 @@ Example of template tracking.\n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-c] [-d] [-p] \n\
      [-w <warp type>] [-t <tracker type>] \n\
-     [-l <last frame number>] [-r] [-L] [-h]\n", name);
+     [-l <last frame number>] [-r] [-L] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                                            Default\n\
@@ -149,7 +150,8 @@ OPTIONS:                                                            Default\n\
   -c\n\
      Disable the mouse click. Useful to automaze the \n\
      execution of this program without humain intervention.\n\
-          \n", last_frame);
+          \n",
+          last_frame);
 
 #ifdef VISP_HAVE_MODULE_TT_MI
   fprintf(stdout, "\n\
@@ -161,7 +163,8 @@ OPTIONS:                                                            Default\n\
      %d : Homography in SL3\n\
      %d : SRT (scale, rotation, translation)\n\
      %d : Translation\n\
-     %d : RT (rotation, translation)\n\n", (int)warp_type, (int)WARP_AFFINE, (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT,
+     %d : RT (rotation, translation)\n\n",
+          (int)warp_type, (int)WARP_AFFINE, (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT,
           (int)WARP_TRANSLATION, (int)WARP_RT);
 #else
   fprintf(stdout, "\n\
@@ -172,7 +175,8 @@ OPTIONS:                                                            Default\n\
      %d : Homography\n\
      %d : Homography in SL3\n\
      %d : SRT (scale, rotation, translation)\n\
-     %d : Translation\n\n", (int)warp_type, (int)WARP_AFFINE, (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT,
+     %d : Translation\n\n",
+          (int)warp_type, (int)WARP_AFFINE, (int)WARP_HOMOGRAPHY, (int)WARP_HOMOGRAPHY_SL3, (int)WARP_SRT,
           (int)WARP_TRANSLATION);
 #endif
 
@@ -190,7 +194,8 @@ OPTIONS:                                                            Default\n\
      %d : MI ESM\n\
      %d : MI forward additional\n\
      %d : MI forward compositional\n\
-     %d : MI inverse compositional\n", (int)tracker_type, (int)TRACKER_SSD_ESM, (int)TRACKER_SSD_FORWARD_ADDITIONAL,
+     %d : MI inverse compositional\n",
+          (int)tracker_type, (int)TRACKER_SSD_ESM, (int)TRACKER_SSD_FORWARD_ADDITIONAL,
           (int)TRACKER_SSD_FORWARD_COMPOSITIONAL, (int)TRACKER_SSD_INVERSE_COMPOSITIONAL,
           (int)TRACKER_ZNCC_FORWARD_ADDITIONEL, (int)TRACKER_ZNCC_INVERSE_COMPOSITIONAL, (int)TRACKER_MI_ESM,
           (int)TRACKER_MI_FORWARD_ADDITIONAL, (int)TRACKER_MI_FORWARD_COMPOSITIONAL,
@@ -205,7 +210,8 @@ OPTIONS:                                                            Default\n\
      %d : SSD forward compositional\n\
      %d : SSD inverse compositional\n\
      %d : ZNCC forward additional\n\
-     %d : ZNCC inverse compositional\n", (int)tracker_type, (int)TRACKER_SSD_ESM, (int)TRACKER_SSD_FORWARD_ADDITIONAL,
+     %d : ZNCC inverse compositional\n",
+          (int)tracker_type, (int)TRACKER_SSD_ESM, (int)TRACKER_SSD_FORWARD_ADDITIONAL,
           (int)TRACKER_SSD_FORWARD_COMPOSITIONAL, (int)TRACKER_SSD_INVERSE_COMPOSITIONAL,
           (int)TRACKER_ZNCC_FORWARD_ADDITIONEL, (int)TRACKER_ZNCC_INVERSE_COMPOSITIONAL);
 
@@ -226,15 +232,16 @@ OPTIONS:                                                            Default\n\
      Create log file.\n\
                                   \n\
   -h \n\
-     Print the help.\n\n", residual_threhold);
+     Print the help.\n\n",
+          residual_threhold);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 
 bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_allowed, bool &display, bool &pyramidal,
-                WarpType &warp_type, TrackerType &tracker_type, long &last_frame, bool &reinit, double &threshold_residual,
-                bool &log)
+                WarpType &warp_type, TrackerType &tracker_type, long &last_frame, bool &reinit,
+                double &threshold_residual, bool &log)
 {
   const char *optarg_;
   int c;
@@ -373,7 +380,7 @@ int main(int argc, const char **argv)
       ipath = vpIoTools::createFilePath(env_ipath, "mire-2/image.%04d.pgm");
 
     if (opt_log) {
-      ofs.open( logfilename.c_str() );
+      ofs.open(logfilename.c_str());
     }
 
     vpImage<unsigned char> I;
@@ -569,11 +576,11 @@ int main(int argc, const char **argv)
 
       vpDisplay::flush(I);
 
-      niter ++;
+      niter++;
     }
     double t_end = vpTime::measureTimeMs();
     std::cout << "Total time: " << t_end - t_init << " ms" << std::endl;
-    std::cout << "Total mean: " << (t_end - t_init)/niter << " ms" << std::endl;
+    std::cout << "Total mean: " << (t_end - t_init) / niter << " ms" << std::endl;
 
     if (opt_log) {
       std::cout << "Log are saved in: " << logfilename << std::endl;

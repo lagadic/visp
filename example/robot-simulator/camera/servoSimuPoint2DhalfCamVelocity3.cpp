@@ -83,7 +83,8 @@ Simulation of a 2 1/2 D visual servoing (x,y,logZ, theta U):\n\
 - without display.\n\
           \n\
 SYNOPSIS\n\
-  %s [-h]\n", name);
+  %s [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\

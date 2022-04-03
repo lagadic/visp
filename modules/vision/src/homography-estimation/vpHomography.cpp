@@ -872,7 +872,7 @@ vpHomography vpHomography::homography2collineation(const vpCameraParameters &cam
 
   H[0][2] = -A * u0_one_over_px - B * v0_one_over_py + C;
   H[1][2] = -D * u0_one_over_px - E * v0_one_over_py + F;
-  H[2][2] = - h20 * u0_one_over_px - h21 * v0_one_over_py + h22;
+  H[2][2] = -h20 * u0_one_over_px - h21 * v0_one_over_py + h22;
 
   return H;
 }

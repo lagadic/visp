@@ -149,7 +149,7 @@ int main(int argc, const char *argv[])
         break;
 
       vpDisplay::flush(I);
-      if (! reader.isVideoFormat()) {
+      if (!reader.isVideoFormat()) {
         vpTime::wait(t, 40);
       }
     }

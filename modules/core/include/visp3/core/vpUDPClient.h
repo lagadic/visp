@@ -42,11 +42,11 @@
 #ifdef VISP_HAVE_FUNC_INET_NTOP
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-#  include <netinet/in.h>
-#  include <sys/socket.h>
-#  include <sys/types.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+#include <sys/types.h>
 #else
-#  include <winsock2.h>
+#include <winsock2.h>
 #endif
 
 #include <visp3/core/vpException.h>
@@ -123,8 +123,8 @@ int main() {
 
   \code
 #include <cstdlib>
-#include <iostream>
 #include <cstring>
+#include <iostream>
 #include <visp3/core/vpUDPClient.h>
 
 struct DataType {

@@ -43,8 +43,97 @@
 */
 
 #include <iostream>
+
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpImagePoint.h>
 
+#if defined(VISP_HAVE_CATCH2)
+#define CATCH_CONFIG_RUNNER
+#include <catch.hpp>
+
+TEST_CASE("Test comparison operator", "[operator]")
+{
+  vpImagePoint ip1, ip2, ip3;
+
+  ip1.set_u(-11.1);
+  ip1.set_v(10);
+
+  ip2.set_j(-11.1);
+  ip2.set_i(10);
+
+  ip3.set_j(11.10001);
+  ip3.set_i(10.1);
+  CHECK(ip1 == ip2);
+  CHECK_FALSE(ip1 != ip2);
+  CHECK_FALSE(ip1 == ip3);
+  CHECK(ip1 != ip3);
+}
+
+TEST_CASE("Test pixel belongs to segment", "[operator]")
+{
+  vpImagePoint start_pixel(10, 10);
+  SECTION("Segment horizontal right")
+  {
+    vpImagePoint end_pixel = start_pixel + vpImagePoint(0, 5);
+    auto j = start_pixel.get_j();
+    for (auto curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel);
+         curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel), j++) {
+      CHECK(curr_pixel == vpImagePoint(start_pixel.get_i(), j));
+      if (curr_pixel == end_pixel)
+        break;
+    }
+  }
+  SECTION("Segment horizontal left")
+  {
+    vpImagePoint end_pixel = start_pixel - vpImagePoint(0, 5);
+    auto j = start_pixel.get_j();
+    for (auto curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel);
+         curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel), j--) {
+      CHECK(curr_pixel == vpImagePoint(start_pixel.get_i(), j));
+      if (curr_pixel == end_pixel)
+        break;
+    }
+  }
+  SECTION("Segment vertical bottom")
+  {
+    vpImagePoint end_pixel = start_pixel + vpImagePoint(5, 0);
+    auto i = start_pixel.get_i();
+    for (auto curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel);
+         curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel), i++) {
+      CHECK(curr_pixel == vpImagePoint(i, start_pixel.get_j()));
+      if (curr_pixel == end_pixel)
+        break;
+    }
+  }
+  SECTION("Segment vertical top")
+  {
+    vpImagePoint end_pixel = start_pixel - vpImagePoint(5, 0);
+    auto i = start_pixel.get_i();
+    for (auto curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel);
+         curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel), i--) {
+      CHECK(curr_pixel == vpImagePoint(i, start_pixel.get_j()));
+      if (curr_pixel == end_pixel)
+        break;
+    }
+  }
+}
+
+int main(int argc, char *argv[])
+{
+  Catch::Session session; // There must be exactly one instance
+
+  // Let Catch (using Clara) parse the command line
+  session.applyCommandLine(argc, argv);
+
+  int numFailed = session.run();
+
+  // numFailed is clamped to 255 as some unices only use the lower 8 bits.
+  // This clamping has already been applied, so just return it here
+  // You can also do any post run clean-up here
+  return numFailed;
+}
+
+#else
 int main()
 {
   vpImagePoint ip1, ip2, ip3;
@@ -68,19 +157,19 @@ int main()
     std::cout << "ip1 == ip2" << std::endl;
   } else {
     std::cout << "ip1 != ip2 (bad result)" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (ip1 != ip2) {
     std::cout << "ip1 != ip2 (bad result)" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   } else {
     std::cout << "ip1 == ip2" << std::endl;
   }
 
   if (ip1 == ip3) {
     std::cout << "ip1 == ip3 (bad result)" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   } else {
     std::cout << "ip1 != ip3" << std::endl;
   }
@@ -89,8 +178,9 @@ int main()
     std::cout << "ip1 != ip3" << std::endl;
   } else {
     std::cout << "ip1 == ip3 (bad result)" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
+#endif

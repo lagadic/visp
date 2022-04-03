@@ -63,25 +63,27 @@
 class VISP_EXPORT vpHandEyeCalibration
 {
 public:
-
   static int calibrate(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
                        vpHomogeneousMatrix &eMc);
 
 private:
-  static void calibrationVerifrMo(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
-                                  const vpHomogeneousMatrix &eMc);
-  static int calibrationRotationTsai(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
-                                     vpRotationMatrix &eRc);
-  static int calibrationRotationTsaiOld(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
-                                        vpRotationMatrix &eRc);
-  static int calibrationRotationProcrustes(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
-                                           vpRotationMatrix &eRc);
-  static int calibrationTranslation(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
-                                    vpRotationMatrix &eRc, vpTranslationVector &eTc);
-  static int calibrationTranslationOld(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
-                                       vpRotationMatrix &eRc, vpTranslationVector &eTc);
-  static double calibrationErrVVS(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
-                                  const vpHomogeneousMatrix &eMc, vpColVector &errVVS);
+  static void calibrationVerifrMo(const std::vector<vpHomogeneousMatrix> &cMo,
+                                  const std::vector<vpHomogeneousMatrix> &rMe, const vpHomogeneousMatrix &eMc);
+  static int calibrationRotationTsai(const std::vector<vpHomogeneousMatrix> &cMo,
+                                     const std::vector<vpHomogeneousMatrix> &rMe, vpRotationMatrix &eRc);
+  static int calibrationRotationTsaiOld(const std::vector<vpHomogeneousMatrix> &cMo,
+                                        const std::vector<vpHomogeneousMatrix> &rMe, vpRotationMatrix &eRc);
+  static int calibrationRotationProcrustes(const std::vector<vpHomogeneousMatrix> &cMo,
+                                           const std::vector<vpHomogeneousMatrix> &rMe, vpRotationMatrix &eRc);
+  static int calibrationTranslation(const std::vector<vpHomogeneousMatrix> &cMo,
+                                    const std::vector<vpHomogeneousMatrix> &rMe, vpRotationMatrix &eRc,
+                                    vpTranslationVector &eTc);
+  static int calibrationTranslationOld(const std::vector<vpHomogeneousMatrix> &cMo,
+                                       const std::vector<vpHomogeneousMatrix> &rMe, vpRotationMatrix &eRc,
+                                       vpTranslationVector &eTc);
+  static double calibrationErrVVS(const std::vector<vpHomogeneousMatrix> &cMo,
+                                  const std::vector<vpHomogeneousMatrix> &rMe, const vpHomogeneousMatrix &eMc,
+                                  vpColVector &errVVS);
   static int calibrationVVS(const std::vector<vpHomogeneousMatrix> &cMo, const std::vector<vpHomogeneousMatrix> &rMe,
                             vpHomogeneousMatrix &eMc);
 };

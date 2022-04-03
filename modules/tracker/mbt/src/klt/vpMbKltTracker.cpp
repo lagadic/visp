@@ -49,7 +49,8 @@
 #include <TargetConditionals.h>             // To detect OSX or IOS using TARGET_OS_IPHONE or TARGET_OS_IOS macro
 #endif
 
-namespace {
+namespace
+{
 /*!
  * Transform an homography from calibrated domain to pixel space.
  *
@@ -102,11 +103,11 @@ vpMatrix homography2collineation(const vpMatrix &H, const vpCameraParameters &ca
 
   G[0][2] = -A * u0_one_over_px - B * v0_one_over_py + C;
   G[1][2] = -D * u0_one_over_px - E * v0_one_over_py + F;
-  G[2][2] = - h20 * u0_one_over_px - h21 * v0_one_over_py + h22;
+  G[2][2] = -h20 * u0_one_over_px - h21 * v0_one_over_py + h22;
 
   return G;
 }
-}
+} // namespace
 
 vpMbKltTracker::vpMbKltTracker()
   :
@@ -465,7 +466,7 @@ void vpMbKltTracker::setCameraParameters(const vpCameraParameters &cam)
   m_cam = cam;
 }
 
-void vpMbKltTracker::setPose(const vpImage<unsigned char> * const I, const vpImage<vpRGBa> * const I_color,
+void vpMbKltTracker::setPose(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
                              const vpHomogeneousMatrix &cdMo)
 {
   if (I_color) {
@@ -636,9 +637,11 @@ void vpMbKltTracker::setPose(const vpImage<unsigned char> * const I, const vpIma
     } else {
 #ifdef VISP_HAVE_OGRE
       if (I) {
-        faces.setVisibleOgre(I->getWidth(), I->getHeight(), m_cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+        faces.setVisibleOgre(I->getWidth(), I->getHeight(), m_cam, cdMo, angleAppears, angleDisappears,
+                             reInitialisation);
       } else {
-        faces.setVisibleOgre(m_I.getWidth(), m_I.getHeight(), m_cam, cdMo, angleAppears, angleDisappears, reInitialisation);
+        faces.setVisibleOgre(m_I.getWidth(), m_I.getHeight(), m_cam, cdMo, angleAppears, angleDisappears,
+                             reInitialisation);
       }
 #else
       if (I) {
@@ -1145,7 +1148,8 @@ void vpMbKltTracker::display(const vpImage<unsigned char> &I, const vpHomogeneou
                              const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
                              bool displayFullModel)
 {
-  std::vector<std::vector<double> > models = vpMbKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+  std::vector<std::vector<double> > models =
+      vpMbKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
@@ -1193,11 +1197,11 @@ void vpMbKltTracker::display(const vpImage<unsigned char> &I, const vpHomogeneou
   \param displayFullModel : Boolean to say if all the model has to be
   displayed, even the faces that are not visible.
 */
-void vpMbKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo,
-                             const vpCameraParameters &cam, const vpColor &col, unsigned int thickness,
-                             bool displayFullModel)
+void vpMbKltTracker::display(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
+                             const vpColor &col, unsigned int thickness, bool displayFullModel)
 {
-  std::vector<std::vector<double> > models = vpMbKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
+  std::vector<std::vector<double> > models =
+      vpMbKltTracker::getModelForDisplay(I.getWidth(), I.getHeight(), cMo, cam, displayFullModel);
 
   for (size_t i = 0; i < models.size(); i++) {
     if (vpMath::equal(models[i][0], 0)) {
@@ -1266,7 +1270,8 @@ std::vector<std::vector<double> > vpMbKltTracker::getFeaturesForDisplayKlt()
   `<pt_end.i()>`, `<pt_end.j()>`
   - Ellipse parameters are: `<primitive id (here 1 for ellipse)>`, `<pt_center.i()>`, `<pt_center.j()>`,
   `<n_20>`, `<n_11>`, `<n_02>` where `<n_ij>` are the second order centered moments of the ellipse
-  normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a the area).
+  normalized by its area (i.e., such that \f$n_{ij} = \mu_{ij}/a\f$ where \f$\mu_{ij}\f$ are the centered moments and a
+  the area).
 
   \param width : Image width.
   \param height : Image height.
@@ -1303,14 +1308,14 @@ std::vector<std::vector<double> > vpMbKltTracker::getModelForDisplay(unsigned in
 
   for (std::list<vpMbtDistanceKltPoints *>::const_iterator it = kltPolygons.begin(); it != kltPolygons.end(); ++it) {
     vpMbtDistanceKltPoints *kltpoly = *it;
-    std::vector<std::vector<double> > modelLines =  kltpoly->getModelForDisplay(cam, displayFullModel);
+    std::vector<std::vector<double> > modelLines = kltpoly->getModelForDisplay(cam, displayFullModel);
     models.insert(models.end(), modelLines.begin(), modelLines.end());
   }
 
   for (std::list<vpMbtDistanceKltCylinder *>::const_iterator it = kltCylinders.begin(); it != kltCylinders.end();
        ++it) {
     vpMbtDistanceKltCylinder *kltPolyCylinder = *it;
-    std::vector<std::vector<double> > modelLines =  kltPolyCylinder->getModelForDisplay(cMo, cam);
+    std::vector<std::vector<double> > modelLines = kltPolyCylinder->getModelForDisplay(cMo, cam);
     models.insert(models.end(), modelLines.begin(), modelLines.end());
   }
 
@@ -1397,8 +1402,8 @@ void vpMbKltTracker::initCylinder(const vpPoint &p1, const vpPoint &p2, double r
   circle. \param radius : Radius of the circle. \param name : The optional
   name of the circle.
 */
-void vpMbKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius,
-                                int /*idFace*/, const std::string &name)
+void vpMbKltTracker::initCircle(const vpPoint &p1, const vpPoint &p2, const vpPoint &p3, double radius, int /*idFace*/,
+                                const std::string &name)
 {
   addCircle(p1, p2, p3, radius, name);
 }
@@ -1452,8 +1457,7 @@ void vpMbKltTracker::addCircle(const vpPoint &P1, const vpPoint &P2, const vpPoi
   3D points expressed in the original object frame to the desired object frame.
 */
 void vpMbKltTracker::reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
-                                 const vpHomogeneousMatrix &cMo, bool verbose,
-                                 const vpHomogeneousMatrix &T)
+                                 const vpHomogeneousMatrix &cMo, bool verbose, const vpHomogeneousMatrix &T)
 {
   m_cMo.eye();
 

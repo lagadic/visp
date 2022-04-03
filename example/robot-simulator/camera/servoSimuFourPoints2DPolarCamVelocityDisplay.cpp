@@ -104,7 +104,8 @@ Tests a control law with the following characteristics:\n\
 - internal and external camera view displays.\n\
 \n\
 SYNOPSIS\n\
-  %s [-c] [-d] [-h]\n", name);
+  %s [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -262,7 +263,7 @@ int main(int argc, const char **argv)
 // #define ROT_Z_PURE
 // #define ROT_X_PURE
 #define COMPLEX
-//#define PROBLEM
+    //#define PROBLEM
 
 #if defined(TRANS_Z_PURE)
     // sets the initial camera location
@@ -478,7 +479,8 @@ int main(int argc, const char **argv)
 #else
 int main()
 {
-  std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..." << std::endl;
+  std::cout << "You do not have X11, or GTK, or GDI (Graphical Device Interface) functionalities to display images..."
+            << std::endl;
   std::cout << "Tip if you are on a unix-like system:" << std::endl;
   std::cout << "- Install X11, configure again ViSP using cmake and build again this example" << std::endl;
   std::cout << "Tip if you are on a windows-like system:" << std::endl;

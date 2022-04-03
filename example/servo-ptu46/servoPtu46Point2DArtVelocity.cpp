@@ -255,8 +255,7 @@ int main()
 
     vpTRACE("Display task information ");
     task.print();
-  }
-  catch (const vpException &e) {
+  } catch (const vpException &e) {
     std::cout << "Sorry PtU46 not available. Got exception: " << e << std::endl;
     return EXIT_FAILURE
   }
@@ -264,8 +263,5 @@ int main()
 }
 
 #else
-int main()
-{
-  std::cout << "You do not have an PTU46 PT robot connected to your computer..." << std::endl;
-}
+int main() { std::cout << "You do not have an PTU46 PT robot connected to your computer..." << std::endl; }
 #endif

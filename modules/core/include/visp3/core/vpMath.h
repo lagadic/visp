@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,8 @@
  *
  * Authors:
  * Eric Marchand
+ * Fabien Spindler
+ * Julien Dufour
  *
  *****************************************************************************/
 
@@ -54,7 +56,7 @@
 // Define _USE_MATH_DEFINES before including <math.h> to expose these macro
 // definitions for common math constants.  These are placed under an #ifdef
 // since these commonly-defined names are not part of the C or C++ standards
-#  define _USE_MATH_DEFINES
+#define _USE_MATH_DEFINES
 #endif
 #include <math.h>
 #include <vector>
@@ -80,6 +82,7 @@
 
 #endif
 
+#include <visp3/core/vpException.h>
 #include <visp3/core/vpImagePoint.h>
 
 class vpPoint;
@@ -123,6 +126,25 @@ public:
 
   // combinaison
   static inline long double comb(unsigned int n, unsigned int p);
+
+  /*!
+    Clamp a value to boundaries.
+    \param v : The value to clamp.
+    \param lower, upper : The boundaries to clamp `v` to.
+
+    Throw a vpException if the value of `lower` is greater than `upper`.
+  */
+  template <typename T> static inline T clamp(const T &v, const T &lower, const T &upper)
+  {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+    return std::clamp(v, lower, upper);
+#else
+    if (upper < lower) {
+      throw vpException(vpException::badValue, "clamp: lower bound is greater than upper bound");
+    }
+    return (v < lower) ? lower : (upper < v) ? upper : v;
+#endif
+  }
 
   //   round x to the nearest integer
   static inline int round(double x);
@@ -189,7 +211,7 @@ public:
   static bool isInf(double value);
   static bool isInf(float value);
 
-  static double lineFitting(const std::vector<vpImagePoint>& imPts, double& a, double& b, double& c);
+  static double lineFitting(const std::vector<vpImagePoint> &imPts, double &a, double &b, double &c);
 
   template <typename _Tp> static inline _Tp saturate(unsigned char v) { return _Tp(v); }
   template <typename _Tp> static inline _Tp saturate(char v) { return _Tp(v); }
@@ -206,11 +228,19 @@ public:
 
   static int modulo(int a, int n);
 
-  //TODO:
   static vpHomogeneousMatrix ned2ecef(double lonDeg, double latDeg, double radius);
   static vpHomogeneousMatrix enu2ecef(double lonDeg, double latDeg, double radius);
 
-  // https://stackoverflow.com/a/27030598
+  /*!
+    Similar to the NumPy linspace function: "Return evenly spaced numbers over a specified interval."
+    Code from: https://stackoverflow.com/a/27030598
+
+    \param start_in : The starting value of the sequence.
+    \param end_in : The end value of the sequence.
+    \param num_in : Number of samples to generate.
+
+    \return Returns \e num_in evenly spaced samples, calculated over the interval [\e start_in, \e end_in].
+  */
   template<typename T> static std::vector<double> linspace(T start_in, T end_in, unsigned int num_in)
   {
     std::vector<double> linspaced;
@@ -219,24 +249,23 @@ public:
     double end = static_cast<double>(end_in);
     double num = static_cast<double>(num_in);
 
-    if (num == 0) { return linspaced; }
-    if (num == 1)
-    {
+    if (num == 0) {
+      return linspaced;
+    }
+    if (num == 1) {
       linspaced.push_back(start);
       return linspaced;
     }
 
     double delta = (end - start) / (num - 1);
 
-    for (int i = 0; i < num-1; i++)
-    {
+    for (int i = 0; i < num-1; i++) {
       linspaced.push_back(start + delta * i);
     }
     linspaced.push_back(end); // I want to ensure that start and end
                               // are exactly the same as the input
     return linspaced;
   }
-
 
   static std::vector<std::pair<double, double> > computeRegularPointsOnSphere(unsigned int maxPoints);
   static std::vector<vpHomogeneousMatrix> getLocalTangentPlaneTransformations(const std::vector<double> &longitudes, const std::vector<double> &latitudes, double radius,
@@ -303,7 +332,7 @@ int vpMath::round(double x)
   \return -1 if x is negative, +1 if positive and 0 if zero.
 
 */
-int ( vpMath::sign ) (double x)
+int(vpMath::sign)(double x)
 {
   if (fabs(x) < std::numeric_limits<double>::epsilon())
     return 0;

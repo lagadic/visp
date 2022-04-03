@@ -51,9 +51,8 @@
   \class vpTemplateTrackerWarpSRT
   \ingroup group_tt_warp
 
-  This class consider the SRT (scale, rotation, translation) warping model \f$M\f$ with parameters \f$p=(s, \theta, t_u, t_v)\f$ such as
-  \f[M(p) = \left[
-  \begin{array}{ccc}
+  This class consider the SRT (scale, rotation, translation) warping model \f$M\f$ with parameters \f$p=(s, \theta, t_u,
+  t_v)\f$ such as \f[M(p) = \left[ \begin{array}{ccc}
   s * \cos(\theta) & - s * \sin(\theta) & t_u \\
   s * \sin(\theta) & s * \cos(\theta) & t_v
   \end{array}
@@ -61,8 +60,8 @@
   \f]
   with \f$s\f$ the scale, \f$\theta\f$ the rotation, and \f$t_u, t_v\f$ the translation along u and v axis in the image.
 
-  We recall that u axis is the image horizontal axis, and v axis is the image vertical axis. A point (u,v) with coordinates
-  (0,0) is located in the top left image corner.
+  We recall that u axis is the image horizontal axis, and v axis is the image vertical axis. A point (u,v) with
+  coordinates (0,0) is located in the top left image corner.
 
 */
 class VISP_EXPORT vpTemplateTrackerWarpSRT : public vpTemplateTrackerWarp

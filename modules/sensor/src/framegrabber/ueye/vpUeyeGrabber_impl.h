@@ -38,8 +38,7 @@
 class CameraList
 {
 public:
-  CameraList()
-    : m_pCamList(NULL), m_CamInfo()
+  CameraList() : m_pCamList(NULL), m_CamInfo()
   {
     // init the internal camera info structure
     ZeroMemory(&m_CamInfo, sizeof(UEYE_CAMERA_INFO));
@@ -49,10 +48,7 @@ public:
     m_CamInfo.dwDeviceID = -1;
   }
 
-  ~CameraList()
-  {
-    deleteCameraList();
-  }
+  ~CameraList() { deleteCameraList(); }
 
   bool initCameraList()
   {
@@ -69,35 +65,32 @@ public:
      * given in member m_pCamList->dwCount of the first array element.
      */
     bool ret;
-    deleteCameraList ();
+    deleteCameraList();
     m_pCamList = new UEYE_CAMERA_LIST;
 
     m_pCamList->dwCount = 0;
 
-    if (is_GetCameraList (m_pCamList) == IS_SUCCESS) {
+    if (is_GetCameraList(m_pCamList) == IS_SUCCESS) {
       DWORD dw = m_pCamList->dwCount;
       delete m_pCamList;
       m_pCamList = NULL;
 
       if (dw) {
         // Reallocate the required camera list size
-        m_pCamList = (PUEYE_CAMERA_LIST)new char[sizeof(DWORD) + dw * sizeof(UEYE_CAMERA_INFO)];
+        m_pCamList = (PUEYE_CAMERA_LIST) new char[sizeof(DWORD) + dw * sizeof(UEYE_CAMERA_INFO)];
         m_pCamList->dwCount = dw;
 
         // Get CameraList and store it ...
-        if (is_GetCameraList (m_pCamList) == IS_SUCCESS) {
-          //SelectCamera (0);
+        if (is_GetCameraList(m_pCamList) == IS_SUCCESS) {
+          // SelectCamera (0);
           ret = true;
-        }
-        else {
+        } else {
           ret = false;
         }
-      }
-      else {
+      } else {
         ret = false;
       }
-    }
-    else {
+    } else {
       ret = false;
     }
 
@@ -110,13 +103,13 @@ public:
       delete m_pCamList;
     m_pCamList = NULL;
 
-    ZeroMemory (&m_CamInfo, sizeof(UEYE_CAMERA_INFO));
+    ZeroMemory(&m_CamInfo, sizeof(UEYE_CAMERA_INFO));
   }
 
   std::vector<unsigned int> getCameraIDList()
   {
     std::vector<unsigned int> ids;
-    for (unsigned int i = 0; i < size(); i ++) {
+    for (unsigned int i = 0; i < size(); i++) {
       ids.push_back(m_pCamList->uci[i].dwDeviceID);
     }
     return ids;
@@ -125,7 +118,7 @@ public:
   std::vector<std::string> getCameraModelList()
   {
     std::vector<std::string> models;
-    for (unsigned int i = 0; i < size(); i ++) {
+    for (unsigned int i = 0; i < size(); i++) {
       models.push_back(m_pCamList->uci[i].Model);
     }
     return models;
@@ -134,16 +127,13 @@ public:
   std::vector<std::string> getCameraSerialNumberList()
   {
     std::vector<std::string> serials;
-    for (unsigned int i = 0; i < size(); i ++) {
+    for (unsigned int i = 0; i < size(); i++) {
       serials.push_back(m_pCamList->uci[i].SerNo);
     }
     return serials;
   }
 
-  UEYE_CAMERA_INFO getCameraInfo()
-  {
-    return m_CamInfo;
-  }
+  UEYE_CAMERA_INFO getCameraInfo() { return m_CamInfo; }
 
   /*!
    * Select a camera from the camera list.
@@ -169,8 +159,8 @@ public:
    */
   int selectCameraByID(unsigned int cam_id)
   {
-    for(unsigned int i=0; i < size(); i++) {
-      if(m_pCamList->uci[i].dwDeviceID == cam_id) {
+    for (unsigned int i = 0; i < size(); i++) {
+      if (m_pCamList->uci[i].dwDeviceID == cam_id) {
         // copy current camera info
         memcpy(&m_CamInfo, &m_pCamList->uci[i], sizeof(UEYE_CAMERA_INFO));
         return 0;
@@ -183,8 +173,7 @@ public:
   {
     if (m_pCamList) {
       return (unsigned int)m_pCamList->dwCount;
-    }
-    else {
+    } else {
       return 0;
     }
   }
@@ -200,51 +189,44 @@ private:
 
 namespace helper
 {
-  class LockUnlockSeqBuffer
-  {
-  public:
-    LockUnlockSeqBuffer(HIDS hCam, INT nSeqNum, char* pcMem);
-    ~LockUnlockSeqBuffer(void);
+class LockUnlockSeqBuffer
+{
+public:
+  LockUnlockSeqBuffer(HIDS hCam, INT nSeqNum, char *pcMem);
+  ~LockUnlockSeqBuffer(void);
 
-    bool OwnsLock(void) const   { return m_bOwnsLock; }
-    void Unlock(void);
+  bool OwnsLock(void) const { return m_bOwnsLock; }
+  void Unlock(void);
 
-  private:
-    LockUnlockSeqBuffer(void);
-    LockUnlockSeqBuffer(const LockUnlockSeqBuffer&);
-    void operator=(LockUnlockSeqBuffer);
+private:
+  LockUnlockSeqBuffer(void);
+  LockUnlockSeqBuffer(const LockUnlockSeqBuffer &);
+  void operator=(LockUnlockSeqBuffer);
 
-  private:
-    HIDS m_hCam;
-    INT m_nSeqNum;
-    char* m_pcMem;
-    bool m_bOwnsLock;
-  };
+private:
+  HIDS m_hCam;
+  INT m_nSeqNum;
+  char *m_pcMem;
+  bool m_bOwnsLock;
+};
 
-  LockUnlockSeqBuffer::LockUnlockSeqBuffer(HIDS hCam, INT nSeqNum, char* pcMem)
-    : m_hCam(hCam)
-    , m_nSeqNum(nSeqNum)
-    , m_pcMem(pcMem)
-    , m_bOwnsLock(false)
-  {
-    INT nRet = is_LockSeqBuf(m_hCam, m_nSeqNum, m_pcMem);
+LockUnlockSeqBuffer::LockUnlockSeqBuffer(HIDS hCam, INT nSeqNum, char *pcMem)
+  : m_hCam(hCam), m_nSeqNum(nSeqNum), m_pcMem(pcMem), m_bOwnsLock(false)
+{
+  INT nRet = is_LockSeqBuf(m_hCam, m_nSeqNum, m_pcMem);
 
-    m_bOwnsLock = (IS_SUCCESS == nRet);
-  }
+  m_bOwnsLock = (IS_SUCCESS == nRet);
+}
 
-  LockUnlockSeqBuffer::~LockUnlockSeqBuffer(void)
-  {
-    Unlock();
-  }
+LockUnlockSeqBuffer::~LockUnlockSeqBuffer(void) { Unlock(); }
 
-  void LockUnlockSeqBuffer::Unlock(void)
-  {
-    if (m_bOwnsLock)
-    {
-      is_UnlockSeqBuf(m_hCam, m_nSeqNum, m_pcMem);
-      m_bOwnsLock = false;
-    }
+void LockUnlockSeqBuffer::Unlock(void)
+{
+  if (m_bOwnsLock) {
+    is_UnlockSeqBuf(m_hCam, m_nSeqNum, m_pcMem);
+    m_bOwnsLock = false;
   }
 }
+} // namespace helper
 
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

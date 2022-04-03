@@ -58,11 +58,11 @@ public:
   virtual bool detect(const vpImage<unsigned char> &I);
   virtual bool detect(const vpImage<vpRGBa> &I, std::vector<vpRect> &boundingBoxes);
 
-  std::vector<vpRect> getDetectionBBs(bool afterNMS=true) const;
-  std::vector<int> getDetectionClassIds(bool afterNMS=true) const;
-  std::vector<float> getDetectionConfidence(bool afterNMS=true) const;
+  std::vector<vpRect> getDetectionBBs(bool afterNMS = true) const;
+  std::vector<int> getDetectionClassIds(bool afterNMS = true) const;
+  std::vector<float> getDetectionConfidence(bool afterNMS = true) const;
 
-  void readNet(const std::string &model, const std::string &config="", const std::string &framework="");
+  void readNet(const std::string &model, const std::string &config = "", const std::string &framework = "");
   void setConfidenceThreshold(float confThreshold);
   void setInputSize(int width, int height);
   void setMean(double meanR, double meanG, double meanB);

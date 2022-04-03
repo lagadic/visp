@@ -42,23 +42,22 @@
 
 #ifdef VISP_HAVE_OPENCV
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000) // Require opencv >= 3.0.0
-#  include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgcodecs.hpp>
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020408) // Require opencv >= 2.4.8
-#  include <opencv2/core/core.hpp>
-#  include <opencv2/highgui/highgui.hpp>
-#  include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #elif (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
-#  include <opencv2/core/core.hpp>
-#  include <opencv2/highgui/highgui.hpp>
-#  include <opencv2/highgui/highgui_c.h>
-#  include <opencv2/legacy/legacy.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/highgui/highgui_c.h>
+#include <opencv2/legacy/legacy.hpp>
 #else
-#  include <highgui.h>
+#include <highgui.h>
 #endif
 #endif
 
 #include <visp3/core/vpImageConvert.h>
-
 
 #if defined(VISP_HAVE_OPENCV)
 
@@ -81,11 +80,11 @@ void readOpenCV(vpImage<unsigned char> &I, const std::string &filename)
 {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
 #if VISP_HAVE_OPENCV_VERSION >= 0x030200
-    int flags = cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION;
+  int flags = cv::IMREAD_GRAYSCALE | cv::IMREAD_IGNORE_ORIENTATION;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x030000
-    int flags = cv::IMREAD_GRAYSCALE;
+  int flags = cv::IMREAD_GRAYSCALE;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    int flags = CV_LOAD_IMAGE_GRAYSCALE;
+  int flags = CV_LOAD_IMAGE_GRAYSCALE;
 #endif
   cv::Mat Ip = cv::imread(filename.c_str(), flags);
   if (!Ip.empty())
@@ -124,11 +123,11 @@ void readOpenCV(vpImage<vpRGBa> &I, const std::string &filename)
 {
 #if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
 #if VISP_HAVE_OPENCV_VERSION >= 0x030200
-    int flags = cv::IMREAD_COLOR | cv::IMREAD_IGNORE_ORIENTATION;
+  int flags = cv::IMREAD_COLOR | cv::IMREAD_IGNORE_ORIENTATION;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x030000
-    int flags = cv::IMREAD_COLOR;
+  int flags = cv::IMREAD_COLOR;
 #elif VISP_HAVE_OPENCV_VERSION >= 0x020100
-    int flags = CV_LOAD_IMAGE_COLOR;
+  int flags = CV_LOAD_IMAGE_COLOR;
 #endif
   cv::Mat Ip = cv::imread(filename.c_str(), flags);
   if (!Ip.empty())

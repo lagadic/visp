@@ -238,7 +238,7 @@ public:
     that this color is not a predefined one.
 
   */
-  inline vpColor() : vpRGBa(), id(id_unknown){}
+  inline vpColor() : vpRGBa(), id(id_unknown) {}
   /*!
     Construct a color from its RGB values.
 
@@ -251,7 +251,9 @@ public:
   */
   inline vpColor(unsigned char r, unsigned char g, unsigned char b,
                  vpColor::vpColorIdentifier cid = vpColor::id_unknown)
-    : vpRGBa(r, g, b), id(cid){}
+    : vpRGBa(r, g, b), id(cid)
+  {
+  }
   /*!
     Construct a color from its RGB values and alpha channel.
 
@@ -265,18 +267,19 @@ public:
   */
   inline vpColor(unsigned char r, unsigned char g, unsigned char b, unsigned char alpha,
                  vpColor::vpColorIdentifier cid = vpColor::id_unknown)
-    : vpRGBa(r, g, b, alpha), id(cid){}
+    : vpRGBa(r, g, b, alpha), id(cid)
+  {
+  }
   /*!
     Construct a color with an alpha channel.
 
     \param color : RGB color.
     \param alpha : Alpha channel for transparency.
   */
-  inline vpColor(const vpColor &color, unsigned char alpha)
-    : vpRGBa(color.R, color.G, color.B, alpha), id(color.id) {}
+  inline vpColor(const vpColor &color, unsigned char alpha) : vpRGBa(color.R, color.G, color.B, alpha), id(color.id) {}
 
   /*! Default destructor. */
-  inline virtual ~vpColor(){}
+  inline virtual ~vpColor() {}
 
   friend VISP_EXPORT bool operator==(const vpColor &c1, const vpColor &c2);
   friend VISP_EXPORT bool operator!=(const vpColor &c1, const vpColor &c2);
@@ -292,7 +295,7 @@ public:
     that this color is not a predefined one.
 
   */
-  inline void setColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a=vpRGBa::alpha_default)
+  inline void setColor(unsigned char r, unsigned char g, unsigned char b, unsigned char a = vpRGBa::alpha_default)
   {
     this->R = r;
     this->G = g;

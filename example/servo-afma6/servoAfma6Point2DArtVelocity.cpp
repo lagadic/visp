@@ -293,8 +293,7 @@ int main()
     vpTRACE("Display task information ");
     task.print();
     return EXIT_SUCCESS;
-  }
-  catch (const vpException &e) {
+  } catch (const vpException &e) {
     flog.close(); // Close the log file
     std::cout << "Test failed with exception: " << e << std::endl;
     return EXIT_FAILURE;

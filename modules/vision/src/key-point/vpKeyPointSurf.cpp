@@ -411,8 +411,8 @@ unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I)
 
   \return the number of point which have been matched.
 */
-unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP,
-                                        unsigned int height, unsigned int width)
+unsigned int vpKeyPointSurf::matchPoint(const vpImage<unsigned char> &I, const vpImagePoint &iP, unsigned int height,
+                                        unsigned int width)
 {
   if ((iP.get_i() + height) >= I.getHeight() || (iP.get_j() + width) >= I.getWidth()) {
     vpTRACE("Bad size for the subimage");

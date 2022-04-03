@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@
  * Amaury Dame
  * Nicolas Melchior
  * Romain Tallonneau
+ * Fabien Spindler
+ * Julien Dufour
  *
  *****************************************************************************/
 
@@ -60,7 +62,7 @@
 
   By default three coordinates in the \f$ (i,j) \f$ frame (see vpImagePoint
   class documentation for more details about the frame) are used \f$ (0,0)
-\f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
+  \f$, \f$ (1,0) \f$ and \f$ (0,1) \f$.
 
   The code bellow shows how to manipulate a polygon.
 \code
@@ -131,9 +133,10 @@ public:
 
   vpPolygon &operator=(const vpPolygon &poly);
 
-  void buildFrom(const std::vector<vpImagePoint> &corners);
-  void buildFrom(const std::list<vpImagePoint> &corners);
-  void buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam);
+  void buildFrom(const std::vector<vpImagePoint> &corners, const bool create_convex_hull = false);
+  void buildFrom(const std::list<vpImagePoint> &corners, const bool create_convex_hull = false);
+  void buildFrom(const std::vector<vpPoint> &corners, const vpCameraParameters &cam,
+                 const bool create_convex_hull = false);
 
   unsigned int getSize() const;
   void initClick(const vpImage<unsigned char> &I, unsigned int size = 5, const vpColor &color = vpColor::red,

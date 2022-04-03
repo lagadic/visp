@@ -302,8 +302,8 @@ public: /* Methode publiques */
   /* --- POSITIONNEMENT --------------------------------------------------- */
   void setPosition(const vpRobot::vpControlFrameType frame, const vpPoseVector &pose);
   void setPosition(const vpRobot::vpControlFrameType frame, const vpColVector &position);
-  void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3,
-                   double pos4, double pos5, double pos6);
+  void setPosition(const vpRobot::vpControlFrameType frame, double pos1, double pos2, double pos3, double pos4,
+                   double pos5, double pos6);
   void setPosition(const std::string &filename);
   void setPositioningVelocity(double velocity);
   void set_eMc(const vpHomogeneousMatrix &eMc);
