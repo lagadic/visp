@@ -194,7 +194,7 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
   end_pixel = adjust2DPointToBoundary(end_pixel, depth_width, depth_height);
 
   // search along line for the depth pixel that it's projected pixel is the closest to the input pixel
-  auto min_dist{-1.};
+  auto min_dis = -1.;
   for (auto curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel) && curr_pixel != end_pixel;
        curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel)) {
     const auto depth = depth_scale * data[static_cast<int>(curr_pixel.get_v() * depth_width + curr_pixel.get_u())];
