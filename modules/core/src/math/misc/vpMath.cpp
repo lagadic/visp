@@ -437,7 +437,7 @@ vpHomogeneousMatrix vpMath::enu2ecef(double lonDeg, double latDeg, double radius
 
   \return The vector of longitude / latitude couples for the \e maxPoints on a sphare.
 */
-std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(unsigned int maxPoints)
+std::pair<std::vector<double>, std::vector<double> >  vpMath::computeRegularPointsOnSphere(unsigned int maxPoints)
 {
   assert(maxPoints > 0);
 
@@ -447,7 +447,9 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
   double d_theta = M_PI / m_theta;
   double d_phi = a / d_theta;
 
-  std::vector<std::pair<double, double> > points;
+  std::vector<double> longitudes, latitudes;
+  longitudes.reserve(maxPoints);
+  latitudes.reserve(maxPoints);
   for (int m = 0; m < m_theta/2; m++) {
     double theta = M_PI * (m + 0.5) / m_theta;
     int m_phi = static_cast<int>(round(2.0 * M_PI * sin(theta) / d_phi));
@@ -456,11 +458,12 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
       double phi = 2.0 * M_PI * n / m_phi;
       double lon = phi;
       double lat = M_PI_2 - theta;
-      points.push_back(std::make_pair(lon, lat));
+      longitudes.push_back(lon);
+      latitudes.push_back(lat);
     }
   }
 
-  return points;
+  return std::make_pair(longitudes, latitudes);
 }
 
 /*!

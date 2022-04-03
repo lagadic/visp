@@ -267,7 +267,7 @@ public:
     return linspaced;
   }
 
-  static std::vector<std::pair<double, double> > computeRegularPointsOnSphere(unsigned int maxPoints);
+  static std::pair<std::vector<double>, std::vector<double> > computeRegularPointsOnSphere(unsigned int maxPoints);
   static std::vector<vpHomogeneousMatrix> getLocalTangentPlaneTransformations(const std::vector<double> &longitudes, const std::vector<double> &latitudes, double radius,
     vpHomogeneousMatrix (*toECEF)(double lonDeg, double latDeg, double radius));
 
