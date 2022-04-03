@@ -80,6 +80,7 @@ int main(int, char *argv[])
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
   }
 #else
+  (void)argv;
   std::cout << "ViSP is not build with zbar 3rd party." << std::endl;
 #endif
 }
