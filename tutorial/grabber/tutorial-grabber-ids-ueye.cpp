@@ -293,7 +293,7 @@ int main(int argc, const char *argv[])
 #ifdef VISP_HAVE_X11
       d = new vpDisplayX;
 #elif defined(VISP_HAVE_GDI)
-      d = new vpDisplayGDI d;
+      d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_OPENCV)
       d = new vpDisplayOpenCV;
 #endif
