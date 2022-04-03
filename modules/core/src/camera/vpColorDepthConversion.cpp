@@ -198,7 +198,7 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
   for (auto curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel) && curr_pixel != end_pixel;
        curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel)) {
     const auto depth = depth_scale * data[static_cast<int>(curr_pixel.get_v() * depth_width + curr_pixel.get_u())];
-    if (depth == 0)
+    if (std::fabs(depth) <= std::numeric_limits<double>::epsilon())
       continue;
 
     const auto point = deproject(depth_intrinsics, curr_pixel, depth);
@@ -233,7 +233,7 @@ vpImagePoint vpColorDepthConversion::projectColorToDepth(
   for (vpImagePoint curr_pixel = start_pixel; curr_pixel.inSegment(start_pixel, end_pixel) && curr_pixel != end_pixel;
        curr_pixel = curr_pixel.nextInSegment(start_pixel, end_pixel)) {
     const double depth = depth_scale * data[static_cast<int>(curr_pixel.get_v() * depth_width + curr_pixel.get_u())];
-    if (depth == 0)
+    if (std::fabs(depth) <= std::numeric_limits<double>::epsilon())
       continue;
 
     const vpColVector point = deproject(depth_intrinsics, curr_pixel, depth);
