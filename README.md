@@ -16,7 +16,7 @@ ROS Noetic Ubuntu Focal | [![Build Status](https://build.ros.org/buildStatus/ico
 ROS Noetic Ubuntu Buster: | [![Build Status](https://build.ros.org/buildStatus/icon?job=Ndev_db__visp__debian_buster_amd64)](https://build.ros.org/job/Ndev_db__visp__debian_buster_amd64)
 ROS2 Foxy Ubuntu Focal| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Fdev__visp__ubuntu_focal_amd64)](https://build.ros2.org/job/Fdev__visp__ubuntu_focal_amd64/)
 ROS2 Galactic Ubuntu Focal| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Gdev__visp__ubuntu_focal_amd64)](https://build.ros2.org/job/Gdev__visp__ubuntu_focal_amd64/)
-ROS2 Rolling Ubuntu Jammy| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Rdev__visp__ubuntu_focal_amd64)](https://build.ros2.org/job/Rdev__visp__ubuntu_focal_amd64)
+ROS2 Rolling Ubuntu Jammy| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Rdev__visp__ubuntu_jammy_amd64)](https://build.ros2.org/job/Rdev__visp__ubuntu_jammy_amd64)
 Valgrind | [![valgrind workflow](https://github.com/lagadic/visp/actions/workflows/valgrind.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/valgrind.yml)
 Sanitizer | [![sanitizers workflow](https://github.com/lagadic/visp/actions/workflows/sanitizers.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/sanitizers.yml)
 Code coverage | [![Code coverage](https://codecov.io/gh/lagadic/visp/branch/master/graph/badge.svg?token=GQIiKbA3BC)](https://codecov.io/gh/lagadic/visp)
