@@ -48,33 +48,96 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+// #define VERBOSE
+// #define DEBUG
+
+#ifdef DEBUG
+#include <visp3/core/vpIoTools.h>
+#endif
+
 TEST_CASE("Lon-Lat generator", "[math_lonlat]")
 {
-  const int lonStart = 0, lonEnd = 180, nlon = 180/10;
-  const int latStart = 0, latEnd = 90, nLat = 90/10;
+  const int lonStart = 0, lonEnd = 360, nlon = 20;
+  const int latStart = 0, latEnd = 90, nLat = 10;
   std::vector<double> longitudes = vpMath::linspace(lonStart, lonEnd, nlon);
   std::vector<double> latitudes = vpMath::linspace(latStart, latEnd, nLat);
-  const double radius = 2;
+  const double radius = 5;
+
+  std::vector<std::pair<double, double> > lonlatVec;
+  lonlatVec.reserve(longitudes.size()*latitudes.size());
+  for (auto lon : longitudes) {
+    for (auto lat : latitudes) {
+      lonlatVec.emplace_back(lon, lat);
+    }
+  }
 
   SECTION("NED")
   {
     std::vector<vpHomogeneousMatrix> ecef_M_ned_vec =
-      vpMath::getLocalTangentPlaneTransformations(longitudes, latitudes, radius, vpMath::ned2ecef);
+      vpMath::getLocalTangentPlaneTransformations(lonlatVec, radius, vpMath::ned2ecef);
     for (const auto &ecef_M_ned : ecef_M_ned_vec) {
+#ifdef VERBOSE
+      std::cout << "Lon-Lat ecef_M_ned:\n" << ecef_M_ned << std::endl;
+#endif
       CHECK(ecef_M_ned.isValid());
       CHECK(ecef_M_ned.getRotationMatrix().isARotationMatrix());
       CHECK(vpMath::equal(ecef_M_ned.getTranslationVector().sumSquare(), radius*radius));
     }
+
+#ifdef DEBUG
+    vpHomogeneousMatrix ned_M_cv;
+    ned_M_cv[0][0] = 0;
+    ned_M_cv[0][1] = -1;
+    ned_M_cv[1][0] = 1;
+    ned_M_cv[1][1] = 0;
+    const std::string folder = "NED/lon-lat/";
+    vpIoTools::makeDirectory(folder);
+    int i = 0;
+    for (const auto &ecef_M_ned : ecef_M_ned_vec)
+    {
+      char buffer[80];
+      sprintf(buffer, std::string(folder + "ecef_M_cv_%04d.txt").c_str(), i++);
+      std::string filename = buffer;
+      std::ofstream file(filename);
+      if (file.is_open())
+      {
+        (ecef_M_ned * ned_M_cv).save(file);
+      }
+    }
+#endif
   }
 
   SECTION("ENU")
   {
     std::vector<vpHomogeneousMatrix> ecef_M_enu_vec =
-      vpMath::getLocalTangentPlaneTransformations(longitudes, latitudes, radius, vpMath::enu2ecef);
+      vpMath::getLocalTangentPlaneTransformations(lonlatVec, radius, vpMath::enu2ecef);
     for (const auto &ecef_M_enu : ecef_M_enu_vec) {
+#ifdef VERBOSE
+      std::cout << "Lon-Lat ecef_M_enu:\n" << ecef_M_enu << std::endl;
+#endif
       CHECK(ecef_M_enu.isValid());
       CHECK(ecef_M_enu.getRotationMatrix().isARotationMatrix());
       CHECK(vpMath::equal(ecef_M_enu.getTranslationVector().sumSquare(), radius*radius));
+
+#ifdef DEBUG
+    vpHomogeneousMatrix enu_M_cv;
+    enu_M_cv[1][1] = -1;
+    enu_M_cv[2][2] = -1;
+    const std::string folder = "ENU/lon-lat/";
+    vpIoTools::makeDirectory(folder);
+    int i = 0;
+    for (const auto &ecef_M_enu : ecef_M_enu_vec)
+    {
+      char buffer[80];
+      sprintf(buffer, std::string(folder + "ecef_M_cv_%04d.txt").c_str(), i++);
+      std::string filename = buffer;
+      std::ofstream file(filename);
+      if (file.is_open())
+      {
+        (ecef_M_enu * enu_M_cv).save(file);
+      }
+    }
+#endif
     }
   }
 }
@@ -82,31 +145,79 @@ TEST_CASE("Lon-Lat generator", "[math_lonlat]")
 TEST_CASE("Equidistributed sphere point", "[math_equi_sphere_pts]")
 {
   const unsigned int maxPoints = 200;
-  std::pair<std::vector<double>, std::vector<double> > lonlat_vec = vpMath::computeRegularPointsOnSphere(maxPoints);
-  const double radius = 2;
+  std::vector<std::pair<double, double> > lonlatVec = vpMath::computeRegularPointsOnSphere(maxPoints);
+  const double radius = 5;
 
   SECTION("NED")
   {
     std::vector<vpHomogeneousMatrix> ecef_M_ned_vec =
-      vpMath::getLocalTangentPlaneTransformations(lonlat_vec.first, lonlat_vec.second, radius, vpMath::ned2ecef);
+      vpMath::getLocalTangentPlaneTransformations(lonlatVec, radius, vpMath::ned2ecef);
     CHECK(!ecef_M_ned_vec.empty());
     for (const auto &ecef_M_ned : ecef_M_ned_vec) {
+#ifdef VERBOSE
+      std::cout << "Equidistributed ecef_M_ned:\n" << ecef_M_ned << std::endl;
+#endif
       CHECK(ecef_M_ned.isValid());
       CHECK(ecef_M_ned.getRotationMatrix().isARotationMatrix());
       CHECK(vpMath::equal(ecef_M_ned.getTranslationVector().sumSquare(), radius*radius));
     }
+
+#ifdef DEBUG
+    vpHomogeneousMatrix ned_M_cv;
+    ned_M_cv[0][0] = 0;
+    ned_M_cv[0][1] = -1;
+    ned_M_cv[1][0] = 1;
+    ned_M_cv[1][1] = 0;
+    const std::string folder = "NED/equi/";
+    vpIoTools::makeDirectory(folder);
+    int i = 0;
+    for (const auto &ecef_M_ned : ecef_M_ned_vec)
+    {
+      char buffer[80];
+      sprintf(buffer, std::string(folder + "ecef_M_cv_%04d.txt").c_str(), i++);
+      std::string filename = buffer;
+      std::ofstream file(filename);
+      if (file.is_open())
+      {
+        (ecef_M_ned * ned_M_cv).save(file);
+      }
+    }
+#endif
   }
 
   SECTION("ENU")
   {
     std::vector<vpHomogeneousMatrix> ecef_M_enu_vec =
-      vpMath::getLocalTangentPlaneTransformations(lonlat_vec.first, lonlat_vec.second, radius, vpMath::enu2ecef);
+      vpMath::getLocalTangentPlaneTransformations(lonlatVec, radius, vpMath::enu2ecef);
     CHECK(!ecef_M_enu_vec.empty());
     for (const auto &ecef_M_enu : ecef_M_enu_vec) {
+#ifdef VERBOSE
+      std::cout << "Equidistributed ecef_M_enu:\n" << ecef_M_enu << std::endl;
+#endif
       CHECK(ecef_M_enu.isValid());
       CHECK(ecef_M_enu.getRotationMatrix().isARotationMatrix());
       CHECK(vpMath::equal(ecef_M_enu.getTranslationVector().sumSquare(), radius*radius));
     }
+
+#ifdef DEBUG
+    vpHomogeneousMatrix enu_M_cv;
+    enu_M_cv[1][1] = -1;
+    enu_M_cv[2][2] = -1;
+    const std::string folder = "ENU/equi/";
+    vpIoTools::makeDirectory(folder);
+    int i = 0;
+    for (const auto &ecef_M_enu : ecef_M_enu_vec)
+    {
+      char buffer[80];
+      sprintf(buffer, std::string(folder + "ecef_M_cv_%04d.txt").c_str(), i++);
+      std::string filename = buffer;
+      std::ofstream file(filename);
+      if (file.is_open())
+      {
+        (ecef_M_enu * enu_M_cv).save(file);
+      }
+    }
+#endif
   }
 }
 
