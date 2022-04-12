@@ -271,6 +271,8 @@ public:
   static std::vector<vpHomogeneousMatrix> getLocalTangentPlaneTransformations(const std::vector<std::pair<double, double> > &lonlatVec, double radius,
     vpHomogeneousMatrix (*toECEF)(double lonDeg, double latDeg, double radius));
 
+  static vpHomogeneousMatrix lookAt(const vpColVector &from, const vpColVector &to, const vpColVector &tmp);
+
 private:
   static const double ang_min_sinc;
   static const double ang_min_mc;

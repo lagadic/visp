@@ -872,6 +872,27 @@ vpColVector &vpColVector::normalize()
 }
 
 /*!
+  Normalise the vector:
+
+  \f[
+  {\bf x}_i = \frac{{\bf x}_i}{\sqrt{\sum_{i=1}^{n}x^2_i}}
+  \f]
+*/
+const vpColVector &vpColVector::normalize() const
+{
+
+  double sum_square = sumSquare();
+
+  // if (sum != 0.0)
+  if (std::fabs(sum_square) > std::numeric_limits<double>::epsilon()) {
+    return *this / sqrt(sum_square);
+  }
+
+  // If sum = 0, we have a nul vector. So we return just.
+  return *this;
+}
+
+/*!
    Return a column vector with elements of \e v that are reverse sorted with
    values going from greatest to lowest.
 
@@ -1194,6 +1215,11 @@ vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
   }
 
   return vpColVector::skew(a) * b;
+}
+
+const vpColVector &vpColVector::crossProd(const vpColVector &b) const
+{
+  return vpColVector::crossProd(*this, b);
 }
 
 /*!

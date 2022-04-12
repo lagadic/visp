@@ -241,6 +241,7 @@ public:
   std::ostream &matlabPrint(std::ostream &os) const;
 
   vpColVector &normalize();
+  const vpColVector &normalize() const;
   vpColVector &normalize(vpColVector &x) const;
 
   //! Operator that allows to set a value of an element \f$v_i\f$: v[i] = x
@@ -350,6 +351,7 @@ public:
    */
   inline static vpColVector cross(const vpColVector &a, const vpColVector &b) { return crossProd(a, b); }
   static vpColVector crossProd(const vpColVector &a, const vpColVector &b);
+  const vpColVector &crossProd(const vpColVector &b) const;
 
   static double dotProd(const vpColVector &a, const vpColVector &b);
   static vpColVector invSort(const vpColVector &v);

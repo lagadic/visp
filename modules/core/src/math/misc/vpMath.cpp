@@ -490,3 +490,20 @@ std::vector<vpHomogeneousMatrix> vpMath::getLocalTangentPlaneTransformations(con
   }
   return ecef_M_local_vec;
 }
+
+vpHomogeneousMatrix lookAt(const vpColVector &from, const vpColVector &to, const vpColVector &tmp)
+{
+  // https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/lookat-function
+  // https://github.com/g-truc/glm/blob/6ad79aae3eb5bf809c30bf1168171e9e55857e45/glm/ext/matrix_transform.inl#L98-L119
+  // https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluLookAt.xml
+  vpColVector forward = (to - from).normalize();
+  vpColVector right = tmp.normalize().crossProd(forward);
+  vpColVector down = forward.crossProd(right);
+
+  vpHomogeneousMatrix wMc;
+  wMc[0][0] = right[0]; wMc[0][1] = down[0]; wMc[0][2] = forward[0]; wMc[0][3] = from[0];
+  wMc[1][0] = right[1]; wMc[1][1] = down[1]; wMc[1][2] = forward[1]; wMc[1][3] = from[1];
+  wMc[2][0] = right[2]; wMc[2][1] = down[2]; wMc[2][2] = forward[2]; wMc[2][3] = from[2];
+
+  return wMc;
+}
