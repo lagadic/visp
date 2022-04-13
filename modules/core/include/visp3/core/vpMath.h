@@ -87,6 +87,7 @@
 
 class vpPoint;
 class vpHomogeneousMatrix;
+class vpColVector;
 
 /*!
   \class vpMath
@@ -241,7 +242,7 @@ public:
 
     \return Returns \e num_in evenly spaced samples, calculated over the interval [\e start_in, \e end_in].
   */
-  template<typename T> static std::vector<double> linspace(T start_in, T end_in, unsigned int num_in)
+  template <typename T> static std::vector<double> linspace(T start_in, T end_in, unsigned int num_in)
   {
     std::vector<double> linspaced;
 
@@ -259,7 +260,7 @@ public:
 
     double delta = (end - start) / (num - 1);
 
-    for (int i = 0; i < num-1; i++) {
+    for (int i = 0; i < num - 1; i++) {
       linspaced.push_back(start + delta * i);
     }
     linspaced.push_back(end); // I want to ensure that start and end
@@ -268,8 +269,9 @@ public:
   }
 
   static std::vector<std::pair<double, double> > computeRegularPointsOnSphere(unsigned int maxPoints);
-  static std::vector<vpHomogeneousMatrix> getLocalTangentPlaneTransformations(const std::vector<std::pair<double, double> > &lonlatVec, double radius,
-    vpHomogeneousMatrix (*toECEF)(double lonDeg, double latDeg, double radius));
+  static std::vector<vpHomogeneousMatrix>
+  getLocalTangentPlaneTransformations(const std::vector<std::pair<double, double> > &lonlatVec, double radius,
+                                      vpHomogeneousMatrix (*toECEF)(double lonDeg, double latDeg, double radius));
 
   static vpHomogeneousMatrix lookAt(const vpColVector &from, const vpColVector &to, const vpColVector &tmp);
 
