@@ -40,7 +40,7 @@ set(CTEST_PROJECT_NAME "ViSP")
 set(CTEST_NIGHTLY_START_TIME "00:00:00 GMT")
 
 set(CTEST_DROP_METHOD "https")
-set(CTEST_DROP_SITE "cdash-ci.inria.fr")
+set(CTEST_DROP_SITE "cdash-ci-qualif.inria.fr")
 set(CTEST_DROP_LOCATION "/submit.php?project=ViSP")
 set(CTEST_DROP_SITE_CDASH TRUE)
 
