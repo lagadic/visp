@@ -29,14 +29,14 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Test additional math functions such as lon-lat generator.
+ * Test additional math functions such as lon-lat generator or look-at function.
  *
  *****************************************************************************/
 
 /*!
-  \example testMathLonLat.cpp
+  \example testMathUtils.cpp
 
-  Test additional math functions such as lon-lat generator.
+  Test additional math functions such as lon-lat generator or look-at function.
 */
 #include <visp3/core/vpConfig.h>
 
@@ -218,6 +218,54 @@ TEST_CASE("Equidistributed sphere point", "[math_equi_sphere_pts]")
       }
     }
 #endif
+  }
+}
+
+TEST_CASE("Look-at", "[math_look_at]")
+{
+  // Set camera to an arbitrary pose (only translation)
+  vpColVector from_blender = {8.867762565612793, -1.1965436935424805, 2.1211400032043457};
+  // Transformation from OpenGL to Blender frame
+  vpHomogeneousMatrix blender_M_gl;
+  blender_M_gl[0][0] = 0;
+  blender_M_gl[0][2] = 1;
+  blender_M_gl[1][0] = 1;
+  blender_M_gl[1][1] = 0;
+  blender_M_gl[2][1] = 1;
+  blender_M_gl[2][2] = 0;
+
+  // From is the current camera pose expressed in the OpenGL coordinate system
+  vpColVector from = (blender_M_gl.getRotationMatrix().t() * from_blender);
+  // To is the desired point toward the camera must look
+  vpColVector to = {0, 0, 0};
+  // Up is an arbitrary vector
+  vpColVector up = {0, 1, 0};
+
+  // Compute the look-at transformation
+  vpHomogeneousMatrix gl_M_cam = vpMath::lookAt(from, to, up);
+  std::cout << "\ngl_M_cam:\n" << gl_M_cam << std::endl;
+
+  // Transformation from the computer vision frame to the Blender camera frame
+  vpHomogeneousMatrix cam_M_cv;
+  cam_M_cv[1][1] = -1;
+  cam_M_cv[2][2] = -1;
+  // Transformation from the computer vision frame to the Blender frame
+  vpHomogeneousMatrix bl_M_cv = blender_M_gl * gl_M_cam * cam_M_cv;
+  std::cout << "\nbl_M_cv:\n" << bl_M_cv << std::endl;
+
+  // Ground truth using Blender look-at
+  vpHomogeneousMatrix bl_M_cv_gt = {
+  0.13372008502483368, 0.22858507931232452, -0.9642965197563171, 8.867762565612793,
+  0.9910191297531128, -0.030843468382954597, 0.13011434674263, -1.1965436935424805,
+  -5.4016709327697754e-08, -0.9730352163314819, -0.23065657913684845, 2.121140241622925
+  };
+  std::cout << "\nbl_M_cv_gt:\n" << bl_M_cv_gt << std::endl;
+
+  const double tolerance = 1e-6;
+  for (unsigned int i = 0; i < 3; i++) {
+    for (unsigned int j = 0; j < 4; j++) {
+      CHECK(vpMath::equal(bl_M_cv[i][j], bl_M_cv_gt[i][j], tolerance));
+    }
   }
 }
 

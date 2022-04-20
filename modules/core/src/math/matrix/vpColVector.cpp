@@ -879,29 +879,6 @@ vpColVector &vpColVector::normalize()
 }
 
 /*!
-  Normalize the column vector.
-
-  Considering the n-dim column vector \f$ {\bf x} = (x_0, x_1, \ldots, n_{n-1})\f$ normalize each vector element \f$ i
-  \f$: \f[
-  x_i = \frac{x_i}{\sqrt{\sum_{i=0}^{n-1}x^2_i}}
-  \f]
-
-  \return A const reference to the normalized vector.
-*/
-const vpColVector &vpColVector::normalize() const
-{
-  double sum_square = sumSquare();
-
-  // if (sum != 0.0)
-  if (std::fabs(sum_square) > std::numeric_limits<double>::epsilon()) {
-    return *this / sqrt(sum_square);
-  }
-
-  // If sum = 0, we have a nul vector. So we return just.
-  return *this;
-}
-
-/*!
    Return a column vector with elements of \e v that are reverse sorted with
    values going from greatest to lowest.
 
@@ -1224,16 +1201,6 @@ vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
 
   return vpColVector::skew(a) * b;
 }
-
-/*!
-  Compute and return the cross product between the current vector `*this` and vector `b`.
-
-  \param[in] b : 3-dimension column vector.
-  \return The cross product \f$*this \times b\f$.
-
-  \exception vpException::dimensionError If the vector dimension is not equal to 3.
-*/
-const vpColVector &vpColVector::crossProd(const vpColVector &b) const { return vpColVector::crossProd(*this, b); }
 
 /*!
   Reshape the column vector in a matrix.
