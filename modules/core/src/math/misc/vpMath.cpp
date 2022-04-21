@@ -387,7 +387,7 @@ int vpMath::modulo(int a, int n) { return ((a % n) + n) % n; }
 
   \param lonDeg : The longitude in degree.
   \param latDeg : The latitude in degree.
-  \param radius : The sphere radius.
+  \param radius : The sphere radius in meter.
 
   \return The homogeneous transformation from NED to ECEF frame.
 */
@@ -410,7 +410,7 @@ vpHomogeneousMatrix vpMath::ned2ecef(double lonDeg, double latDeg, double radius
 
   \param lonDeg : The longitude in degree.
   \param latDeg : The latitude in degree.
-  \param radius : The sphere radius.
+  \param radius : The sphere radius in meter.
 
   \return The homogeneous transformation from ENU to ECEF frame.
 */
@@ -470,7 +470,7 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
     - https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates
 
   \param lonlatVec : Vector of longitude/latitude coordinates in degree.
-  \param radius : Sphere radius.
+  \param radius : Sphere radius in meter.
   \param toECEF : Pointer to the function computing from a longitude / latitude coordinates in degree
   and a radius the corresponding transformation from the local frame (e.g. NED or ENU) to the ECEF frame.
 
@@ -505,14 +505,17 @@ std::vector<vpHomogeneousMatrix> vpMath::getLocalTangentPlaneTransformations(con
     - https://github.com/g-truc/glm/blob/6ad79aae3eb5bf809c30bf1168171e9e55857e45/glm/ext/matrix_transform.inl#L98-L119
     - https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluLookAt.xml
 
-  \param from : Current camera position.
-  \param to : Where the camera must point toward.
-  \param tmp : Arbitrary up-vector.
+  \param from : Current camera position as a 3-dim vector with 3D coordinates (X,Y,Z) in meter..
+  \param to : Where the camera must point toward as a 3-dim vector with 3D coordinates (X,Y,Z) in meter.
+  \param tmp : Arbitrary up-vector as a 3-dim vector with coordinates along (X,Y,Z) in meter.
 
   \return The homogeneous transformation from the camera frame to the OpenGL frame.
 */
 vpHomogeneousMatrix vpMath::lookAt(const vpColVector &from, const vpColVector &to, vpColVector tmp)
 {
+  assert(from.size() == 3);
+  assert(to.size() == 3);
+  assert(tmp.size() == 3);
   vpColVector forward = (from - to).normalize();
   vpColVector right = vpColVector::crossProd(tmp.normalize(), forward).normalize();
   vpColVector up = vpColVector::crossProd(forward, right).normalize();
