@@ -385,6 +385,10 @@ int vpMath::modulo(int a, int n) { return ((a % n) + n) % n; }
   Compute from a given longitude, latitude and a sphere radius the homogeneous transformation
   from the NED frame to the ECEF frame.
 
+  See also:
+    - https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates#Local_north,_east,_down_(NED)_coordinates
+    - https://gssc.esa.int/navipedia/index.php/Cartesian_and_ellipsoidal_coordinates
+
   \param lonDeg : The longitude in degree.
   \param latDeg : The latitude in degree.
   \param radius : The sphere radius in meter.
@@ -407,6 +411,11 @@ vpHomogeneousMatrix vpMath::ned2ecef(double lonDeg, double latDeg, double radius
 /*!
   Compute from a given longitude, latitude and a sphere radius the homogeneous transformation
   from the ENU frame to the ECEF frame.
+
+  See also:
+    - https://en.wikipedia.org/wiki/Geographic_coordinate_conversion#From_ENU_to_ECEF
+    - https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates
+    - https://gssc.esa.int/navipedia/index.php/Cartesian_and_ellipsoidal_coordinates
 
   \param lonDeg : The longitude in degree.
   \param latDeg : The latitude in degree.
@@ -432,6 +441,10 @@ vpHomogeneousMatrix vpMath::enu2ecef(double lonDeg, double latDeg, double radius
   using the following paper:
     - "How to generate equidistributed points on the surface of a sphere", Markus Deserno
     - https://www.cmu.edu/biolphys/deserno/pdf/sphere_equi.pdf
+
+  Following image illustrates the camera poses regularly spaced on a sphere:
+
+  \image html vpMath_regular_points_on_sphere.png
 
   \param maxPoints : The number of point coordinates to be sampled on a sphere.
 
@@ -466,8 +479,13 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
 
 /*!
   Compute transformations from the local tangent plane (e.g. NED, ECU, ...) to the ECEF frame.
+
   See also:
     - https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates
+
+  Following image illustrates the camera poses sampled using longitude / latitude coordinates:
+
+  \image html vpMath_lon_lat.png
 
   \param lonlatVec : Vector of longitude/latitude coordinates in degree.
   \param radius : Sphere radius in meter.
