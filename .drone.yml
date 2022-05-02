@@ -20,7 +20,8 @@ steps:
     - echo "CMAKE_FLAGS:= $CMAKE_FLAGS"
     - export DEBIAN_FRONTEND=noninteractive
     - apt-get update -y
-    - apt-get install -y make $CC cmake git-core libopencv-dev libx11-dev libv4l-dev liblapack-dev libeigen3-dev
+    # To overcome link error "cannot find -lgfortran", gfortran package needs to be installed
+    - apt-get install -y make $CC cmake git-core libopencv-dev libx11-dev libv4l-dev liblapack-dev libeigen3-dev gfortran
     - $CC --version
     - gfortran --version
     - cd ..
@@ -63,6 +64,7 @@ steps:
     - echo "CMAKE_FLAGS:= $CMAKE_FLAGS"
     - export DEBIAN_FRONTEND=noninteractive
     - apt-get update -y
+    # To overcome link error "cannot find -lgfortran", gfortran package needs to be installed
     - apt-get install -y make $CC g++ cmake git-core libopencv-dev libx11-dev libv4l-dev liblapack-dev libeigen3-dev gfortran
     - $CC --version
     - gfortran --version
@@ -104,8 +106,10 @@ steps:
     - echo "CMAKE_FLAGS:= $CMAKE_FLAGS"
     - export DEBIAN_FRONTEND=noninteractive
     - apt-get update -y
-    - apt-get install -y make $CC g++ cmake git-core libx11-dev libv4l-dev liblapack-dev libeigen3-dev
+    # To overcome link error "cannot find -lgfortran", gfortran package needs to be installed
+    - apt-get install -y make $CC g++ cmake git-core libx11-dev libv4l-dev liblapack-dev libeigen3-dev gfortran
     - $CC --version
+    - gfortran --version
     - cd ..
     - git clone --depth 1 https://github.com/lagadic/visp-images
     - export VISP_INPUT_IMAGE_PATH=$(pwd)/visp-images
@@ -144,10 +148,10 @@ steps:
     - echo "CMAKE_FLAGS:= $CMAKE_FLAGS"
     - export DEBIAN_FRONTEND=noninteractive
     - apt-get update -y
-    - apt-get install -y make $CC g++ cmake git-core libopencv-dev libx11-dev libv4l-dev liblapack-dev libeigen3-dev
+    # To overcome link error "cannot find -lgfortran", gfortran package needs to be installed
+    - apt-get install -y make $CC g++ cmake git-core libopencv-dev libx11-dev libv4l-dev liblapack-dev libeigen3-dev gfortran
     - $CC --version
-    - find /usr/lib/gcc/x86_64-linux-gnu/ -name libgfortran.a
-    - find /usr/lib/gcc/x86_64-linux-gnu/ -name libgfortran.so
+    - gfortran --version
     - cd ..
     - git clone --depth 1 https://github.com/lagadic/visp-images
     - export VISP_INPUT_IMAGE_PATH=$(pwd)/visp-images
@@ -186,6 +190,7 @@ steps:
     - echo "CMAKE_FLAGS:= $CMAKE_FLAGS"
     - export DEBIAN_FRONTEND=noninteractive
     - apt-get update -y
+    # Here we don't have the link error "cannot find -lgfortran"
     - apt-get install -y make $CC g++ cmake git-core libx11-dev libv4l-dev liblapack-dev libeigen3-dev
     - $CC --version
     - cd ..
