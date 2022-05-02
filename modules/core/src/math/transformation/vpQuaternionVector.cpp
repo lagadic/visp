@@ -37,6 +37,7 @@
  *****************************************************************************/
 
 #include <algorithm>
+#include <cassert>
 #include <stdio.h>
 #include <string.h>
 #include <visp3/core/vpMath.h>
@@ -305,14 +306,36 @@ void vpQuaternionVector::normalize()
   }
 }
 
-//! Returns x-component of the quaternion.
-double vpQuaternionVector::x() const { return data[0]; }
-//! Returns y-component of the quaternion.
-double vpQuaternionVector::y() const { return data[1]; }
-//! Returns z-component of the quaternion.
-double vpQuaternionVector::z() const { return data[2]; }
-//! Returns w-component of the quaternion.
-double vpQuaternionVector::w() const { return data[3]; }
+/*!
+  Compute dot product between two quaternions.
+
+  \param q0 : First quaternion.
+  \param q1 : Second quaternion.
+
+  \return The dot product between q0 and q1.
+*/
+double vpQuaternionVector::dot(const vpQuaternionVector& q0, const vpQuaternionVector& q1)
+{
+  return q0.x() * q1.x() + q0.y() * q1.y() + q0.z() * q1.z() + q0.w() * q1.w();
+}
+
+//! Returns the x-component of the quaternion.
+const double& vpQuaternionVector::x() const { return data[0]; }
+//! Returns the y-component of the quaternion.
+const double& vpQuaternionVector::y() const { return data[1]; }
+//! Returns the z-component of the quaternion.
+const double& vpQuaternionVector::z() const { return data[2]; }
+//! Returns the w-component of the quaternion.
+const double& vpQuaternionVector::w() const { return data[3]; }
+
+//! Returns a reference to the x-component of the quaternion.
+double& vpQuaternionVector::x() { return data[0]; }
+//! Returns a reference to the y-component of the quaternion.
+double& vpQuaternionVector::y() { return data[1]; }
+//! Returns a reference to the z-component of the quaternion.
+double& vpQuaternionVector::z() { return data[2]; }
+//! Returns a reference to the w-component of the quaternion.
+double& vpQuaternionVector::w() { return data[3]; }
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
@@ -344,3 +367,115 @@ vpQuaternionVector &vpQuaternionVector::operator=(const std::initializer_list<do
   return *this;
 }
 #endif
+
+/*!
+  Compute Quaternion Linear intERPolation (LERP).
+  See the following references:
+    - https://github.com/Rajawali/Rajawali/blob/3dd6e09af22de1889241083c1e82ec72ba85bd40/rajawali/src/main/java/org/rajawali3d/math/Quaternion.java#L898-L931
+    - https://stackoverflow.com/a/46187052
+
+  \note Shortest path will be use.
+
+  \param q0 : Start quaternion.
+  \param q1 : End quaternion.
+  \param t : Interpolation value between [0, 1].
+
+  \return The interpolated quaternion using the LERP method.
+*/
+vpQuaternionVector vpQuaternionVector::lerp(const vpQuaternionVector &q0, const vpQuaternionVector &q1, double t)
+{
+  assert(t >= 0 && t <= 1);
+
+  double cosHalfTheta = dot(q0, q1);
+  vpQuaternionVector q1_ = q1;
+  if (cosHalfTheta < 0) {
+    cosHalfTheta = -cosHalfTheta;
+    q1_ = -q1;
+  }
+
+  vpQuaternionVector qLerp;
+  qLerp.x() = q0.x() - t * (q0.x() - q1.x());
+  qLerp.y() = q0.y() - t * (q0.y() - q1.y());
+  qLerp.z() = q0.z() - t * (q0.z() - q1.z());
+  qLerp.w() = q0.w() - t * (q0.w() - q1.w());
+
+  return qLerp;
+}
+
+/*!
+  Compute Quaternion Normalized Linear intERPolation (NLERP).
+  See the following references:
+    - https://github.com/Rajawali/Rajawali/blob/3dd6e09af22de1889241083c1e82ec72ba85bd40/rajawali/src/main/java/org/rajawali3d/math/Quaternion.java#L898-L931
+    - https://stackoverflow.com/a/46187052
+
+  \note Shortest path will be use.
+
+  \param q0 : Start quaternion.
+  \param q1 : End quaternion.
+  \param t : Interpolation value between [0, 1].
+
+  \return The interpolated quaternion using the NLERP method.
+*/
+vpQuaternionVector vpQuaternionVector::nlerp(const vpQuaternionVector &q0, const vpQuaternionVector &q1, double t)
+{
+  assert(t >= 0 && t <= 1);
+
+  vpQuaternionVector qLerp = lerp(q0, q1, t);
+  qLerp.normalize();
+
+  return qLerp;
+}
+
+/*!
+  Compute Quaternion Spherical Linear intERPolation (SLERP).
+  See the following references:
+    - https://en.wikipedia.org/wiki/Slerp#Quaternion_Slerp
+    - https://github.com/Rajawali/Rajawali/blob/3dd6e09af22de1889241083c1e82ec72ba85bd40/rajawali/src/main/java/org/rajawali3d/math/Quaternion.java#L850-L896
+
+  \note Shortest path will be use.
+
+  \param q0 : Start quaternion.
+  \param q1 : End quaternion.
+  \param t : Interpolation value between [0, 1].
+
+  \return The interpolated quaternion using the SLERP method.
+*/
+vpQuaternionVector vpQuaternionVector::slerp(const vpQuaternionVector& q0, const vpQuaternionVector& q1, double t)
+{
+  assert(t >= 0 && t <= 1);
+  // Some additional references:
+  // https://splines.readthedocs.io/en/latest/rotation/slerp.html
+  // https://zeux.io/2015/07/23/approximating-slerp/
+  // https://github.com/eigenteam/eigen-git-mirror/blob/36b95962756c1fce8e29b1f8bc45967f30773c00/Eigen/src/Geometry/Quaternion.h#L753-L790
+  // https://www.euclideanspace.com/maths/algebra/realNormedAlgebra/quaternions/slerp/index.htm
+  // http://number-none.com/product/Understanding%20Slerp,%20Then%20Not%20Using%20It/
+  // https://www.3dgep.com/understanding-quaternions/
+  // https://blog.magnum.graphics/backstage/the-unnecessarily-short-ways-to-do-a-quaternion-slerp/
+
+  double cosHalfTheta = dot(q0, q1);
+  vpQuaternionVector q1_ = q1;
+  if (cosHalfTheta < 0) {
+    cosHalfTheta = -cosHalfTheta;
+    q1_ = -q1;
+  }
+
+  double scale0 = 1 - t;
+  double scale1 = t;
+
+  if (1 - cosHalfTheta > 0.1) {
+    double theta = std::acos(cosHalfTheta);
+    double invSinTheta = 1 / std::sin(theta);
+
+    scale0 = std::sin((1 - t) * theta) * invSinTheta;
+    scale1 = std::sin((t * theta)) * invSinTheta;
+  }
+
+  vpQuaternionVector qSlerp;
+  qSlerp.x() = (scale0 * q0.x()) + (scale1 * q1_.x());
+  qSlerp.y() = (scale0 * q0.y()) + (scale1 * q1_.y());
+  qSlerp.z() = (scale0 * q0.z()) + (scale1 * q1_.z());
+  qSlerp.w() = (scale0 * q0.w()) + (scale1 * q1_.w());
+  qSlerp.normalize();
+
+  return qSlerp;
+}

@@ -346,7 +346,6 @@ public:
 
      \exception vpException::dimensionError If the vectors dimension is not
      equal to 3.
-
    */
   inline static vpColVector cross(const vpColVector &a, const vpColVector &b) { return crossProd(a, b); }
   static vpColVector crossProd(const vpColVector &a, const vpColVector &b);

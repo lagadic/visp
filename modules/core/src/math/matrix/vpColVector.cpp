@@ -838,25 +838,32 @@ double vpColVector::dotProd(const vpColVector &a, const vpColVector &b)
 }
 
 /*!
-  Normalise the vector:
+  Normalize a column vector.
 
-  \f[
-  {\bf x}_i = \frac{{\bf x}_i}{\sqrt{\sum_{i=1}^{n}x^2_i}}
+  Considering the n-dim column vector \f$ {\bf x} = (x_0, x_1, \ldots, n_{n-1})\f$ normalize each vector element \f$ i
+  \f$: \f[
+  x_i = \frac{x_i}{\sqrt{\sum_{i=0}^{n-1}x^2_i}}
   \f]
+
+  \param[inout] x : As input, the vector to normalize, as output the normalized vector.
+  \return A reference to the normalized vector.
 */
 vpColVector &vpColVector::normalize(vpColVector &x) const
 {
-  x = x / sqrt(x.sumSquare());
+  x /= sqrt(x.sumSquare());
 
   return x;
 }
 
 /*!
-  Normalise the vector:
+  Normalize the column vector.
 
-  \f[
-  {\bf x}_i = \frac{{\bf x}_i}{\sqrt{\sum_{i=1}^{n}x^2_i}}
+  Considering the n-dim column vector \f$ {\bf x} = (x_0, x_1, \ldots, n_{n-1})\f$ normalize each vector element \f$ i
+  \f$: \f[
+  x_i = \frac{x_i}{\sqrt{\sum_{i=0}^{n-1}x^2_i}}
   \f]
+
+  \return A reference to the normalized vector.
 */
 vpColVector &vpColVector::normalize()
 {
@@ -1177,12 +1184,11 @@ vpMatrix vpColVector::skew(const vpColVector &v)
 /*!
   Compute and return the cross product of two vectors \f$a \times b\f$.
 
-  \param a : 3-dimension column vector.
-  \param b : 3-dimension column vector.
+  \param[in] a : 3-dimension column vector.
+  \param[in] b : 3-dimension column vector.
   \return The cross product \f$a \times b\f$.
 
-  \exception vpException::dimensionError If the vectors dimension is not equal
-  to 3.
+  \exception vpException::dimensionError If the vectors dimension is not equal to 3.
 */
 vpColVector vpColVector::crossProd(const vpColVector &a, const vpColVector &b)
 {

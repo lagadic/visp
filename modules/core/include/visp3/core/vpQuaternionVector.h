@@ -132,10 +132,15 @@ public:
   vpQuaternionVector buildFrom(const std::vector<double> &q);
   void set(double x, double y, double z, double w);
 
-  double x() const;
-  double y() const;
-  double z() const;
-  double w() const;
+  const double& x() const;
+  const double& y() const;
+  const double& z() const;
+  const double& w() const;
+
+  double& x();
+  double& y();
+  double& z();
+  double& w();
 
   vpQuaternionVector operator+(const vpQuaternionVector &q) const;
   vpQuaternionVector operator-(const vpQuaternionVector &q) const;
@@ -153,6 +158,12 @@ public:
   vpQuaternionVector inverse() const;
   double magnitude() const;
   void normalize();
+
+  static double dot(const vpQuaternionVector& q0, const vpQuaternionVector& q1);
+
+  static vpQuaternionVector lerp(const vpQuaternionVector& q0, const vpQuaternionVector& q1, double t);
+  static vpQuaternionVector nlerp(const vpQuaternionVector& q0, const vpQuaternionVector& q1, double t);
+  static vpQuaternionVector slerp(const vpQuaternionVector& q0, const vpQuaternionVector& q1, double t);
 };
 
 #endif

@@ -46,6 +46,7 @@
 #include <functional>
 #include <numeric>
 #include <stdint.h>
+#include <cassert>
 
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
@@ -379,3 +380,168 @@ double vpMath::lineFitting(const std::vector<vpImagePoint> &imPts, double &a, do
   \return The modified modulo of a mod n.
 */
 int vpMath::modulo(int a, int n) { return ((a % n) + n) % n; }
+
+/*!
+  Compute from a given longitude, latitude and a sphere radius the homogeneous transformation
+  from the NED frame to the ECEF frame.
+
+  See also:
+    - https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates#Local_north,_east,_down_(NED)_coordinates
+    - https://gssc.esa.int/navipedia/index.php/Cartesian_and_ellipsoidal_coordinates
+
+  \param lonDeg : The longitude in degree.
+  \param latDeg : The latitude in degree.
+  \param radius : The sphere radius in meter.
+
+  \return The homogeneous transformation from NED to ECEF frame.
+*/
+vpHomogeneousMatrix vpMath::ned2ecef(double lonDeg, double latDeg, double radius)
+{
+  double lon = vpMath::rad(lonDeg);
+  double lat = vpMath::rad(latDeg);
+
+  vpHomogeneousMatrix ecef_M_ned;
+  ecef_M_ned[0][0] = -sin(lat)*cos(lon); ecef_M_ned[0][1] = -sin(lon); ecef_M_ned[0][2] = -cos(lat)*cos(lon); ecef_M_ned[0][3] = radius*cos(lon)*cos(lat);
+  ecef_M_ned[1][0] = -sin(lat)*sin(lon); ecef_M_ned[1][1] =  cos(lon); ecef_M_ned[1][2] = -cos(lat)*sin(lon); ecef_M_ned[1][3] = radius*sin(lon)*cos(lat);
+  ecef_M_ned[2][0] =  cos(lat);          ecef_M_ned[2][1] = 0;         ecef_M_ned[2][2] = -sin(lat);          ecef_M_ned[2][3] = radius*sin(lat);
+
+  return ecef_M_ned;
+}
+
+/*!
+  Compute from a given longitude, latitude and a sphere radius the homogeneous transformation
+  from the ENU frame to the ECEF frame.
+
+  See also:
+    - https://en.wikipedia.org/wiki/Geographic_coordinate_conversion#From_ENU_to_ECEF
+    - https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates
+    - https://gssc.esa.int/navipedia/index.php/Cartesian_and_ellipsoidal_coordinates
+
+  \param lonDeg : The longitude in degree.
+  \param latDeg : The latitude in degree.
+  \param radius : The sphere radius in meter.
+
+  \return The homogeneous transformation from ENU to ECEF frame.
+*/
+vpHomogeneousMatrix vpMath::enu2ecef(double lonDeg, double latDeg, double radius)
+{
+  double lon = vpMath::rad(lonDeg);
+  double lat = vpMath::rad(latDeg);
+
+  vpHomogeneousMatrix ecef_M_enu;
+  ecef_M_enu[0][0] = -sin(lon); ecef_M_enu[0][1] = -sin(lat)*cos(lon); ecef_M_enu[0][2] = cos(lat)*cos(lon); ecef_M_enu[0][3] = radius*cos(lon)*cos(lat);
+  ecef_M_enu[1][0] =  cos(lon); ecef_M_enu[1][1] = -sin(lat)*sin(lon); ecef_M_enu[1][2] = cos(lat)*sin(lon); ecef_M_enu[1][3] = radius*sin(lon)*cos(lat);
+  ecef_M_enu[2][0] =  0;        ecef_M_enu[2][1] =  cos(lat);          ecef_M_enu[2][2] = sin(lat);          ecef_M_enu[2][3] = radius*sin(lat);
+
+  return ecef_M_enu;
+}
+
+/*!
+  Compute the vector of longitude / latitude (in degree) couples for \e maxPoints regularly spaced on a sphere,
+  using the following paper:
+    - "How to generate equidistributed points on the surface of a sphere", Markus Deserno
+    - https://www.cmu.edu/biolphys/deserno/pdf/sphere_equi.pdf
+
+  Following image illustrates the camera poses regularly spaced on a sphere:
+
+  \image html vpMath_regular_points_on_sphere.png
+
+  \param maxPoints : The number of point coordinates to be sampled on a sphere.
+
+  \return The vector of longitude / latitude (in degree) pairs for the \e maxPoints on a sphare.
+*/
+std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(unsigned int maxPoints)
+{
+  assert(maxPoints > 0);
+
+  double a = 4.0 * M_PI / maxPoints;
+  double d = sqrt(a);
+  int m_theta = int(round(M_PI / d));
+  double d_theta = M_PI / m_theta;
+  double d_phi = a / d_theta;
+
+  std::vector<std::pair<double, double> > lonlat_vec;
+  lonlat_vec.reserve(std::sqrt(maxPoints));
+  for (int m = 0; m < m_theta; m++) {
+    double theta = M_PI * (m + 0.5) / m_theta;
+    int m_phi = static_cast<int>(round(2.0 * M_PI * sin(theta) / d_phi));
+
+    for (int n = 0; n < m_phi; n++) {
+      double phi = 2.0 * M_PI * n / m_phi;
+      double lon = phi;
+      double lat = M_PI_2 - theta;
+      lonlat_vec.push_back(std::make_pair(deg(lon), deg(lat)));
+    }
+  }
+
+  return lonlat_vec;
+}
+
+/*!
+  Compute transformations from the local tangent plane (e.g. NED, ECU, ...) to the ECEF frame.
+
+  See also:
+    - https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates
+
+  Following image illustrates the camera poses sampled using longitude / latitude coordinates:
+
+  \image html vpMath_lon_lat.png
+
+  \param lonlatVec : Vector of longitude/latitude coordinates in degree.
+  \param radius : Sphere radius in meter.
+  \param toECEF : Pointer to the function computing from a longitude / latitude coordinates in degree
+  and a radius the corresponding transformation from the local frame (e.g. NED or ENU) to the ECEF frame.
+
+  \return The vector of ecef_M_local homogeneous transformations.
+*/
+std::vector<vpHomogeneousMatrix> vpMath::getLocalTangentPlaneTransformations(const std::vector<std::pair<double, double> > &lonlatVec, double radius,
+                                                                             vpHomogeneousMatrix (*toECEF)(double lonDeg_, double latDeg_, double radius_))
+{
+  std::vector<vpHomogeneousMatrix> ecef_M_local_vec;
+  ecef_M_local_vec.reserve(lonlatVec.size());
+  for (size_t i = 0; i < lonlatVec.size(); i++) {
+    double lonDeg = lonlatVec[i].first;
+    double latDeg = lonlatVec[i].second;
+
+    vpHomogeneousMatrix ecef_M_local = toECEF(lonDeg, latDeg, radius);
+    ecef_M_local_vec.push_back(ecef_M_local);
+  }
+  return ecef_M_local_vec;
+}
+
+/*!
+  Compute the transformation such that the camera located at \e from position looks toward \e to position.
+
+  \image html vpMath_look-at.png
+
+  Right-handed coordinate system for OpenGL (figure from https://learnopengl.com/Getting-started/Coordinate-Systems):
+
+  \image html vpMath_coordinate_systems_right_handed.png
+
+  See also:
+    - https://www.scratchapixel.com/lessons/mathematics-physics-for-computer-graphics/lookat-function
+    - https://github.com/g-truc/glm/blob/6ad79aae3eb5bf809c30bf1168171e9e55857e45/glm/ext/matrix_transform.inl#L98-L119
+    - https://www.khronos.org/registry/OpenGL-Refpages/gl2.1/xhtml/gluLookAt.xml
+
+  \param from : Current camera position as a 3-dim vector with 3D coordinates (X,Y,Z) in meter..
+  \param to : Where the camera must point toward as a 3-dim vector with 3D coordinates (X,Y,Z) in meter.
+  \param tmp : Arbitrary up-vector as a 3-dim vector with coordinates along (X,Y,Z) in meter.
+
+  \return The homogeneous transformation from the camera frame to the OpenGL frame.
+*/
+vpHomogeneousMatrix vpMath::lookAt(const vpColVector &from, const vpColVector &to, vpColVector tmp)
+{
+  assert(from.size() == 3);
+  assert(to.size() == 3);
+  assert(tmp.size() == 3);
+  vpColVector forward = (from - to).normalize();
+  vpColVector right = vpColVector::crossProd(tmp.normalize(), forward).normalize();
+  vpColVector up = vpColVector::crossProd(forward, right).normalize();
+
+  vpHomogeneousMatrix wMc;
+  wMc[0][0] = right[0]; wMc[0][1] = up[0]; wMc[0][2] = forward[0]; wMc[0][3] = from[0];
+  wMc[1][0] = right[1]; wMc[1][1] = up[1]; wMc[1][2] = forward[1]; wMc[1][3] = from[1];
+  wMc[2][0] = right[2]; wMc[2][1] = up[2]; wMc[2][2] = forward[2]; wMc[2][3] = from[2];
+
+  return wMc;
+}
