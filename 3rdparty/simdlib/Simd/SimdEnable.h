@@ -51,7 +51,9 @@
 #include <fcntl.h>
 #include <sys/auxv.h>
 #if defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)
+#if !defined(__FreeBSD__)
 #include <asm/hwcap.h>
+#endif
 #endif
 #endif
 #endif

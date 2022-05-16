@@ -52,7 +52,9 @@
 #if !defined(__APPLE__) // Line added for Modification for iOS
 #include <sys/auxv.h>
 #if defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)
+#if !defined(__FreeBSD__)
 #include <asm/hwcap.h>
+#endif
 #endif // Line added for Modification for iOS
 #endif
 #endif
