@@ -250,10 +250,10 @@ public:
     double end = static_cast<double>(end_in);
     double num = static_cast<double>(num_in);
 
-    if (num == 0) {
+    if (std::fabs(num) < std::numeric_limits<double>::epsilon()) {
       return linspaced;
     }
-    if (num == 1) {
+    if (std::fabs(num - 1) < std::numeric_limits<double>::epsilon()) {
       linspaced.push_back(start);
       return linspaced;
     }
