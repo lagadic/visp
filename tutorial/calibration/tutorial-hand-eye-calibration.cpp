@@ -14,6 +14,22 @@ void usage(const char *argv[], int error)
             << "    pose_fPe_%d.yaml and pose_cPo_%d.yaml data files." << std::endl
             << "    Default: \"./\"" << std::endl
             << std::endl
+            << "  --fPe <generic name>  Generic name of the yaml files" << std::endl
+            << "    containing the pose of the end-effector expressed in the robot base" << std::endl
+            << "    frame and located in the data path folder." << std::endl
+            << "    Default: pose_fPe_%d.yaml" << std::endl
+            << std::endl
+            << "  --cPo <generic name>  Generic name of the yaml files" << std::endl
+            << "    containing the pose of the calibration grid expressed in the camera" << std::endl
+            << "    frame and located in the data path folder." << std::endl
+            << "    Default: pose_cPo_%d.yaml" << std::endl
+            << std::endl
+            << "  --output <filename>  File in yaml format containing the pose of the camera" << std::endl
+            << "    in the end-effector frame. Data are saved as a pose vector" << std::endl
+            << "    with first the 3 translations along X,Y,Z in [m]" << std::endl
+            << "    and then the 3 rotations in axis-angle representation (thetaU) in [rad]." << std::endl
+            << "    Default: eMc.yaml" << std::endl
+            << std::endl
             << "  --help, -h  Print this helper message." << std::endl
             << std::endl;
   if (error) {
@@ -25,10 +41,23 @@ void usage(const char *argv[], int error)
 
 int main(int argc, const char *argv[])
 {
-  std::string data_path = "./";
+  std::string opt_data_path = "./";
+  std::string opt_fPe_files = "pose_fPe_%d.yaml";
+  std::string opt_cPo_files = "pose_cPo_%d.yaml";
+  std::string opt_eMc_file = "eMc.yaml";
+
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--data-path" && i + 1 < argc) {
-      data_path = std::string(argv[i + 1]);
+      opt_data_path = std::string(argv[i + 1]);
+      i++;
+    } else if (std::string(argv[i]) == "--fPe" && i + 1 < argc) {
+      opt_fPe_files = std::string(argv[i + 1]);
+      i++;
+    } else if (std::string(argv[i]) == "--cPo" && i + 1 < argc) {
+      opt_cPo_files = std::string(argv[i + 1]);
+      i++;
+    } else if (std::string(argv[i]) == "--output" && i + 1 < argc) {
+      opt_eMc_file = std::string(argv[i + 1]);
       i++;
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       usage(argv, 0);
@@ -45,10 +74,10 @@ int main(int argc, const char *argv[])
 
   std::map<long, std::string> map_fPe_files;
   std::map<long, std::string> map_cPo_files;
-  std::vector<std::string> files = vpIoTools::getDirFiles(data_path);
+  std::vector<std::string> files = vpIoTools::getDirFiles(opt_data_path);
   for (unsigned int i = 0; i < files.size(); i++) {
-    long index_fPe = vpIoTools::getIndex(files[i], "pose_fPe_%d.yaml");
-    long index_cPo = vpIoTools::getIndex(files[i], "pose_cPo_%d.yaml");
+    long index_fPe = vpIoTools::getIndex(files[i], opt_fPe_files);
+    long index_cPo = vpIoTools::getIndex(files[i], opt_cPo_files);
     if (index_fPe != -1) {
       map_fPe_files[index_fPe] = files[i];
     }
@@ -58,11 +87,13 @@ int main(int argc, const char *argv[])
   }
 
   if (map_fPe_files.size() == 0) {
-    std::cout << "No pose_fPe_%d.yaml files found. Use --data-path <path> option to modify data path." << std::endl;
+    std::cout << "No " << opt_fPe_files
+              << " files found. Use --data-path <path> or --fPe <generic name> be able to read your data." << std::endl;
     return EXIT_FAILURE;
   }
   if (map_cPo_files.size() == 0) {
-    std::cout << "No pose_cPo_%d.yaml files found. Use --data-path <path> option to modify data path." << std::endl;
+    std::cout << "No " << opt_cPo_files
+              << " files found. Use --data-path <path> or --cPo <generic name> be able to read your data." << std::endl;
     return EXIT_FAILURE;
   }
 
@@ -74,17 +105,17 @@ int main(int argc, const char *argv[])
       std::string file_cPo = it_cPo->second;
       vpPoseVector wPe;
       if (wPe.loadYAML(file_fPe, wPe) == false) {
-        std::cout << "Unable to read data from " << data_path << "/" << file_fPe << ". Skip data" << std::endl;
+        std::cout << "Unable to read data from " << opt_data_path << "/" << file_fPe << ". Skip data" << std::endl;
         continue;
       }
 
       vpPoseVector cPo;
       if (cPo.loadYAML(file_cPo, cPo) == false) {
-        std::cout << "Unable to read data from " << data_path << "/" << file_cPo << ". Skip data" << std::endl;
+        std::cout << "Unable to read data from " << opt_data_path << "/" << file_cPo << ". Skip data" << std::endl;
         continue;
       }
-      std::cout << "Use data from " << data_path << "/" << file_fPe << " and from " << data_path << "/" << file_cPo
-                << std::endl;
+      std::cout << "Use data from " << opt_data_path << "/" << file_fPe << " and from " << opt_data_path << "/"
+                << file_cPo << std::endl;
       wMe.push_back(vpHomogeneousMatrix(wPe));
       cMo.push_back(vpHomogeneousMatrix(cPo));
     }
@@ -112,13 +143,14 @@ int main(int argc, const char *argv[])
     std::cout << "** Rotation (quaternion representation) [rad]: " << quaternion.t() << std::endl;
 
     // save eMc
-    std::ofstream file_eMc("eMc.txt");
+    std::string name_we = vpIoTools::getNameWE(opt_eMc_file);
+    std::ofstream file_eMc(name_we + ".txt");
     eMc.save(file_eMc);
 
     vpPoseVector pose_vec(eMc);
-    std::string output_filename("eMc.yaml");
-    std::cout << std::endl << "Save transformation matrix eMc as a vpPoseVector in " << output_filename << std::endl;
-    pose_vec.saveYAML(output_filename, pose_vec);
+    std::string output_filename(opt_eMc_file);
+    std::cout << std::endl << "Save transformation matrix eMc as a vpPoseVector in " << opt_eMc_file << std::endl;
+    pose_vec.saveYAML(opt_eMc_file, pose_vec);
   } else {
     std::cout << std::endl << "** Hand-eye calibration failed" << std::endl;
     std::cout << std::endl

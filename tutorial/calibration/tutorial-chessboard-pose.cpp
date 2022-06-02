@@ -45,7 +45,9 @@ void usage(const char **argv, int error)
             << " [--square_size <square size in meter>]"
             << " [--input <input images path>]"
             << " [--intrinsic <Camera intrinsic parameters xml file>]"
-            << " [--camera_name <Camera name in the xml intrinsic file>]" << std::endl
+            << " [--camera_name <Camera name in the xml intrinsic file>]"
+            << " [--output <camera pose files>]"
+            << " [--help] [-h]" << std::endl
             << std::endl;
   std::cout << "Description" << std::endl
             << "  -w <chessboard width>  Chessboard width." << std::endl
@@ -67,6 +69,10 @@ void usage(const char **argv, int error)
             << "  --camera_name <Camera name in the xml intrinsic file>  Camera name in the XML file." << std::endl
             << "    Default: \"Camera\"." << std::endl
             << std::endl
+            << "  --output <camera pose files>  Generic name of the yaml files that contains the camera poses."
+            << std::endl
+            << "    Example: \"pose_cMo-%d.yaml\"." << std::endl
+            << std::endl
             << "  --help, -h  Print this helper message." << std::endl
             << std::endl;
   if (error) {
@@ -79,30 +85,34 @@ void usage(const char **argv, int error)
 
 int main(int argc, const char **argv)
 {
-  int chessboard_width = 9, chessboard_height = 6;
-  double chessboard_square_size = 0.03;
-  std::string input_filename = "";
-  std::string intrinsic_file = "camera.xml";
-  std::string camera_name = "Camera";
+  int opt_chessboard_width = 9, opt_chessboard_height = 6;
+  double opt_chessboard_square_size = 0.03;
+  std::string opt_input_img_files = "";
+  std::string opt_intrinsic_file = "camera.xml";
+  std::string opt_camera_name = "Camera";
+  std::string opt_output_pose_files = "pose_cPo_%d.yaml";
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "-w" && i + 1 < argc) {
-      chessboard_width = atoi(argv[i + 1]);
+      opt_chessboard_width = atoi(argv[i + 1]);
       i++;
     } else if (std::string(argv[i]) == "-h" && i + 1 < argc) {
-      chessboard_height = atoi(argv[i + 1]);
+      opt_chessboard_height = atoi(argv[i + 1]);
       i++;
     } else if (std::string(argv[i]) == "--square_size" && i + 1 < argc) {
-      chessboard_square_size = atof(argv[i + 1]);
+      opt_chessboard_square_size = atof(argv[i + 1]);
       i++;
     } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
-      input_filename = std::string(argv[i + 1]);
+      opt_input_img_files = std::string(argv[i + 1]);
       i++;
     } else if (std::string(argv[i]) == "--intrinsic" && i + 1 < argc) {
-      intrinsic_file = std::string(argv[i + 1]);
+      opt_intrinsic_file = std::string(argv[i + 1]);
+      i++;
+    } else if (std::string(argv[i]) == "--output" && i + 1 < argc) {
+      opt_output_pose_files = std::string(argv[i + 1]);
       i++;
     } else if (std::string(argv[i]) == "--camera_name" && i + 1 < argc) {
-      camera_name = std::string(argv[i + 1]);
+      opt_camera_name = std::string(argv[i + 1]);
       i++;
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       usage(argv, 0);
@@ -113,20 +123,21 @@ int main(int argc, const char **argv)
     }
   }
 
-  if (!vpIoTools::checkFilename(intrinsic_file)) {
-    std::cout << "Camera parameters file " << intrinsic_file << " doesn't exist." << std::endl;
+  if (!vpIoTools::checkFilename(opt_intrinsic_file)) {
+    std::cout << "Camera parameters file " << opt_intrinsic_file << " doesn't exist." << std::endl;
     std::cout << "Use --help option to see how to set its location..." << std::endl;
     return EXIT_SUCCESS;
   }
   std::cout << "Parameters:" << std::endl;
-  std::cout << "  chessboard width             : " << chessboard_width << std::endl;
-  std::cout << "  chessboard height            : " << chessboard_height << std::endl;
-  std::cout << "  chessboard square size [m]   : " << chessboard_square_size << std::endl;
-  std::cout << "  input images location        : " << input_filename << std::endl;
-  std::cout << "  camera param file name [.xml]: " << intrinsic_file << std::endl;
-  std::cout << "  camera name                  : " << camera_name << std::endl << std::endl;
+  std::cout << "  chessboard width             : " << opt_chessboard_width << std::endl;
+  std::cout << "  chessboard height            : " << opt_chessboard_height << std::endl;
+  std::cout << "  chessboard square size [m]   : " << opt_chessboard_square_size << std::endl;
+  std::cout << "  input images location        : " << opt_input_img_files << std::endl;
+  std::cout << "  camera param file name [.xml]: " << opt_intrinsic_file << std::endl;
+  std::cout << "  camera name                  : " << opt_camera_name << std::endl;
+  std::cout << "  output camera poses          : " << opt_output_pose_files << std::endl << std::endl;
 
-  if (input_filename.empty()) {
+  if (opt_input_img_files.empty()) {
     std::cout << "Input images location empty." << std::endl;
     std::cout << "Use --help option to see how to set input image location..." << std::endl;
     return EXIT_FAILURE;
@@ -134,7 +145,7 @@ int main(int argc, const char **argv)
 
   try {
     vpVideoReader reader;
-    reader.setFileName(input_filename);
+    reader.setFileName(opt_input_img_files);
 
     vpImage<vpRGBa> I;
     reader.open(I);
@@ -148,21 +159,21 @@ int main(int argc, const char **argv)
 #endif
 
     std::vector<vpPoint> corners_pts;
-    calcChessboardCorners(chessboard_width, chessboard_height, chessboard_square_size, corners_pts);
+    calcChessboardCorners(opt_chessboard_width, opt_chessboard_height, opt_chessboard_square_size, corners_pts);
 
     vpCameraParameters cam;
     vpXmlParserCamera parser;
-    if (!intrinsic_file.empty() && !camera_name.empty()) {
-      if (parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithDistortion) !=
+    if (!opt_intrinsic_file.empty() && !opt_camera_name.empty()) {
+      if (parser.parse(cam, opt_intrinsic_file, opt_camera_name, vpCameraParameters::perspectiveProjWithDistortion) !=
           vpXmlParserCamera::SEQUENCE_OK) {
-        std::cout << "Unable to parse parameters with distorsion for camera \"" << camera_name << "\" from "
-                  << intrinsic_file << " file" << std::endl;
+        std::cout << "Unable to parse parameters with distorsion for camera \"" << opt_camera_name << "\" from "
+                  << opt_intrinsic_file << " file" << std::endl;
         std::cout << "Attempt to find parameters without distorsion" << std::endl;
 
-        if (parser.parse(cam, intrinsic_file, camera_name, vpCameraParameters::perspectiveProjWithoutDistortion) !=
-            vpXmlParserCamera::SEQUENCE_OK) {
-          std::cout << "Unable to parse parameters without distorsion for camera \"" << camera_name << "\" from "
-                    << intrinsic_file << " file" << std::endl;
+        if (parser.parse(cam, opt_intrinsic_file, opt_camera_name,
+                         vpCameraParameters::perspectiveProjWithoutDistortion) != vpXmlParserCamera::SEQUENCE_OK) {
+          std::cout << "Unable to parse parameters without distorsion for camera \"" << opt_camera_name << "\" from "
+                    << opt_intrinsic_file << " file" << std::endl;
           return EXIT_FAILURE;
         }
       }
@@ -179,7 +190,7 @@ int main(int argc, const char **argv)
 
       vpDisplay::displayText(I, 20, 20, "Right click to quit.", vpColor::red);
 
-      cv::Size chessboardSize(chessboard_width, chessboard_height);
+      cv::Size chessboardSize(opt_chessboard_width, opt_chessboard_height);
       std::vector<cv::Point2f> corners2D;
       bool found = cv::findChessboardCorners(matImg, chessboardSize, corners2D,
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
@@ -241,10 +252,11 @@ int main(int argc, const char **argv)
 
       if (found) {
         vpPoseVector pose_vec(cMo);
-        std::stringstream ss;
-        ss << "pose_cPo_" << reader.getFrameIndex() << ".yaml";
-        std::cout << "Save " << ss.str() << std::endl;
-        pose_vec.saveYAML(ss.str(), pose_vec);
+        char name[FILENAME_MAX];
+        sprintf(name, opt_output_pose_files.c_str(), reader.getFrameIndex());
+        std::string s = name;
+        std::cout << "Save " << s << std::endl;
+        pose_vec.saveYAML(s, pose_vec);
       }
 
       vpMouseButton::vpMouseButtonType button;
