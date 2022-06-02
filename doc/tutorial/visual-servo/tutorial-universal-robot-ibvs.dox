@@ -1,0 +1,169 @@
+/**
+
+\page tutorial-universal-robot-ibvs Tutorial: IBVS with a robot from Universal Robots
+\tableofcontents
+
+This tutorial provides information on controlling robots from Universal Robots using vpRobotUniversalRobots class implemented in ViSP.
+This class is a wrapper over [ur_rtde](https://sdurobotics.gitlab.io/ur_rtde/) 3rd party.
+
+This tutorial explains also how to implement an image-based visual-servoing with an UR robot equipped with an Intel Realsense camera.
+
+\section ur_prereq Prerequisites
+\subsection ur_prereq_ur_rtde Install ur_rtde 3rd party
+
+To use vpRobotUniversalRobots class you need first to install [ur_rtde](https://gitlab.com/sdurobotics/ur_rtde.git) on your remote host that will be used to control the robot.
+- You can either install `ur_rtde` from existing Ubuntu package
+\verbatim
+$ sudo add-apt-repository ppa:sdurobotics/ur-rtde
+$ sudo apt-get update
+$ sudo apt install librtde librtde-dev
+\endverbatim
+- or build `ur_rtde` from source
+\verbatim
+$ cd $VISP_WS/3rdparty
+$ git clone https://gitlab.com/sdurobotics/ur_rtde.git
+$ mkdir ur_rtde/build
+$ cd ur_rtde/build
+$ cmake .. -DCMAKE_BUILD_TYPE=Release
+$ make -j4
+\endverbatim
+
+\subsection ur_prereq_visp Build ViSP with ur_rtde support
+
+Once `ur_rtde` is installed, you need to rebuild ViSP to enable `ur_rtde` support.
+\verbatim
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -Dur_rtde_DIR=$VISP_WS/3rdparty/ur_rtde/build/ur_rtde
+\endverbatim
+
+At this point, check if `ur_rtde` is detected by ViSP:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ grep ur_rtde ViSP-third-party.txt
+    Use ur_rtde:                 yes (ver 1.5.0)
+\endverbatim
+If you see `Use ur_rtde: no` it means that the 3rd party is not detected. You need than to set `ur_rtde_DIR`,
+- either by setting an environment var like
+\verbatim
+$ export ur_rtde_DIR=$VISP_WS/3rdparty/ur_rtde/build/ur_rtde
+$ cmake ../visp
+\endverbatim
+- or setting a cmake var
+\verbatim
+$ cmake ../visp -Dur_rtde_DIR=$VISP_WS/3rdparty/ur_rtde/build/ur_rtde
+\endverbatim
+
+\subsection ur_setup_robot Setting up UR robot
+
+For using `ur_rtde` you need to prepare the robot.
+
+Install the `externalcontrol-1.0.5.urcap` which can be found [here](https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/tree/master/ur_robot_driver/resources).
+\note For installing this URCap a minimal PolyScope version of 3.7 or 5.1 (in case of e-Series) is necessary.
+
+For installing the necessary URCap and creating a program, please see the individual tutorials on how to <a href="https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/master/ur_robot_driver/doc/install_urcap_cb3.md">setup a CB3 robot</a> or how to <a href="https://github.com/UniversalRobots/Universal_Robots_ROS_Driver/blob/master/ur_robot_driver/doc/install_urcap_e_series.md">setup an e-Series robot</a>.
+
+On our UR5, using the PolyScope Robot User Interface
+- entering "Robot Setup > URCaps" menu we have the following settings
+\image html img-ur-setup-urcaps.jpg UR5 URCaps external control settings
+- and entering "Robot Setup > Network" menu we configured the network with static address 192.168.0.100
+\image html img-ur-setup-network.jpg UR5 network settings
+
+\subsection ur_setup_remote Setting up remote host
+
+- Connect an Ethernet cable between your UR robot and your remote host
+- Enter network settings interface and create a new wired profile named for example "Universal Robot" and set a static IP like 192.168.0.77
+
+\image html img-ur-remote-network-setup.png Remote host network settings
+
+\subsection ur_setup_test Testing connexion
+
+To test communication between UR robot and your remote host, you can use testUniversalRobotsGetData.cpp
+
+\verbatim
+$ cd $VISP_WS/visp-build/modules/robot
+$ ./testUniversalRobotsGetData --ip 192.168.0.100
+-- Start test 1/3
+Robot connected  : yes
+Robot mode       : 3
+Robot model      : UR5
+PolyScope version: 3.15.7.106331
+End test 1/3
+-- Start test 2/3
+To proceed with this test you need to power on the robot
+-- Start test 3/3
+...
+\endverbatim
+
+If you can see a similar output it means that all the prerequisites have been successfully fulfilled.
+
+You can now continue powering the robot on. To this end using PolyScope and entering "Initialize Robot" menu, press "ON" button
+
+\image html img-ur-setup-power-on.jpg PolyScope powering robot on
+
+and then run again the test to get robot joint positions:
+
+\verbatim
+$ cd $VISP_WS/visp-build/modules/robot
+$ ./testUniversalRobotsGetData --ip 192.168.0.100
+-- Start test 1/3
+Robot connected  : yes
+Robot mode       : 5
+Robot model      : UR5
+PolyScope version: 3.15.7.106331
+-- Start test 2/3
+Joint position [deg]: -0.05700840128  -89.63515793  91.56270198  -88.23354847  -89.88700067  -0.02810304071
+...
+\endverbatim
+
+\section ur_ibvs Image-based visual servoing
+
+Here we consider that you have an UR robot equipped with a Reasense camera. Our model is a Realsense D435 camera, but the tutorial should work with any other Realsense device.
+
+\image html img-ur-setup-visual-servo.jpg Our UR5 equipped with a D435 Realsense device
+
+An example of image-based visual servoing using a robot from Universal Robots equipped with a Realsense camera is available in servoUniversalRobotsIBVS.cpp.
+
+- Attach your Realsense camera to the robot end-effector. To this end, we provide a CAD model of a support that could be 3D printed. The FreeCAD model is available [here](https://github.com/lagadic/visp/tree/master/example/servo-universal-robots).
+- Put an Apriltag in the camera field of view
+- If not already done, follow \ref tutorial-calibration-extrinsic to estimate \f$^e{\bf M}_c\f$, the homogeneous transformation between robot end-effector and camera frame. We suppose here that the file is located in `tutorial/calibration/ur_eMc.yaml`.
+
+Now enter in `example/servo-universal-robots folder` and run `servoUniversalRobotsIBVS` binary using `--eMc` to locate the file containing the \f$^e{\bf M}_c\f$ transformation. Other options are available. Using `--help` show them:
+
+    $ cd example/servo-universal-robots
+    $ ./servoUniversalRobotsIBVS --help
+    ./servoUniversalRobotsIBVS [--ip <default 192.168.0.100>] [--tag_size <marker size in meter; default 0.12>] [--eMc <eMc extrinsic file>] [--quad_decimate <decimation; default 2>] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]
+
+Run the binary activating the plot and using a constant gain:
+
+    $ ./servoUniversalRobotsIBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot
+
+Use the left mouse click to enable the robot controller, and the right click to quit the binary.
+
+At this point the behaviour that you should observe is the following:
+
+\image html img-franka-ibvs-start.png Legend: Example of initial position. The goal is here to center the 4 tag corners in the image.
+
+\image html img-franka-ibvs-converge.png Legend: Example of final position reached after position-based visual servoing. In green, you can see the trajectories in the image of the tag corners. When the camera extrinsic parameters are well estimated these trajectories are straight lines.
+
+\image html img-franka-ibvs-converge-curves.png  Legend: Corresponding visual-features (x and y coordinates of the corner points in the image plane) and velocities applied to the robot in the camera frame. You can observe an exponential decrease of the visual features.
+
+You can also activate an adaptive gain that will make the convergence faster:
+
+    $ ./servoUniversalRobotsIBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --adaptive_gain
+
+You can also start the robot with a zero velocity at the beginning introducing task sequencing option:
+
+    $ ./servoUniversalRobotsIBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --task_sequencing
+
+And finally you can activate the adaptive gain and task sequencing:
+
+    $ ./servoUniversalRobotsIBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --adaptive_gain --task_sequencing
+
+
+\section ur_ibvs_next Next tutorial
+
+To learn more about adaptive gain and task sequencing see \ref tutorial-boost-vs.
+
+To see the differences with a position-based visual-servoing you may also follow \ref tutorial-universal-robot-pbvs.
+
+*/
