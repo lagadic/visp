@@ -1067,8 +1067,7 @@ double vpRobotViper850::getPositioningVelocity(void) const { return m_positionin
 
   \param frame : Frame in which the position is expressed.
 
-  - In the joint space, positions are the six joint rotations starting
-    from the base to the end-effector.
+  - In the joint space, positions are the six joint positions.
 
   - In the camera and the reference frame, positions are respectively
   X,Y,Z translations and 3 rotations arround the X, Y and Z
@@ -1652,7 +1651,7 @@ int main()
   qvel[4] = 0;               // Joint 5 velocity in rad/s
   qvel[5] = 0;               // Joint 6 velocity in rad/s
 
-  // Initialize the controller to position control
+  // Initialize the controller to velocity control
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
   while (1) {

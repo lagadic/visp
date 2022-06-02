@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@
   controller. Visual features correspond to the 3D pose of the target (an AprilTag)
   in the camera frame.
 
-  The device used to acquire images is a Realsense SR300 device.
+  The device used to acquire images is a Realsense D435 device.
 
   Camera extrinsic (eMc) parameters are set by default to a value that will not match
   Your configuration. Use --eMc command line option to read the values from a file.
@@ -434,7 +434,7 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
@@ -448,6 +448,6 @@ int main()
 #if !defined(VISP_HAVE_FRANKA)
   std::cout << "Install libfranka." << std::endl;
 #endif
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

@@ -52,8 +52,9 @@
 /*!
   \class vpRobot
   \ingroup group_robot_real_gantry group_robot_real_cylindrical
-  group_robot_real_arm \ingroup group_robot_real_ptu group_robot_real_unicycle
-  group_robot_real_template \brief Class that defines a generic virtual robot.
+  group_robot_real_arm group_robot_real_ptu group_robot_real_unicycle
+  group_robot_real_template
+  \brief Class that defines a generic virtual robot.
 */
 class VISP_EXPORT vpRobot
 {
@@ -137,7 +138,7 @@ public:
   double getMaxTranslationVelocity(void) const;
   double getMaxRotationVelocity(void) const;
   //! Get the robot position (frame has to be specified).
-  virtual void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &q) = 0;
+  virtual void getPosition(const vpRobot::vpControlFrameType frame, vpColVector &position) = 0;
 
   // Return the robot position (frame has to be specified).
   vpColVector getPosition(const vpRobot::vpControlFrameType frame);

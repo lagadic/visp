@@ -88,6 +88,12 @@ if(USE_AFMA4 OR USE_AFMA6 OR USE_VIPER650 OR USE_VIPER850)
   list(APPEND opt_libs ${RT_LIBRARIES})
 endif()
 
+if(USE_UR_RTDE)
+  vp_get_external_target(ur_rtde::rtde UR_RTDE_INCLUDE_DIRS UR_RTDE_LIBRARIES)
+  list(APPEND opt_incs ${UR_RTDE_INCLUDE_DIRS})
+  list(APPEND opt_libs ${UR_RTDE_LIBRARIES})
+endif()
+
 if(USE_BICLOPS)
   list(APPEND opt_incs ${BICLOPS_INCLUDE_DIRS})
   list(APPEND opt_libs ${BICLOPS_LIBRARIES})
@@ -122,20 +128,9 @@ elseif(USE_ARIA AND NOT UNIX)
 endif()
 
 if(USE_FRANKA)
-  get_target_property(Franka_inc_dirs_ ${Franka_LIBRARIES} INTERFACE_INCLUDE_DIRECTORIES)
-  list(APPEND opt_incs ${Franka_inc_dirs_})
-  message("Franka_inc_dirs_: ${Franka_inc_dirs_}")
-
-  set(config_ "release" "debug" "releasewithdebinfo" "relwithdebinfo" "none" "noconfig")
-  foreach(imp_config_ ${config_})
-    string(TOUPPER "${imp_config_}" imp_config_up_)
-    get_target_property(Franka_lib ${Franka_LIBRARIES} IMPORTED_LOCATION_${imp_config_up_})
-    message("Franka_lib: ${Franka_lib}")
-    if(Franka_lib)
-       list(APPEND opt_libs ${Franka_lib})
-       break()
-    endif()
-  endforeach()
+  vp_get_external_target(${Franka_LIBRARIES} FRANKA_INCLUDE_DIRS FRANKA_LIBRARIES)
+  list(APPEND opt_incs ${FRANKA_INCLUDE_DIRS})
+  list(APPEND opt_libs ${FRANKA_LIBRARIES})
 endif()
 
 if(USE_ARSDK)
@@ -207,6 +202,10 @@ else()
   vp_set_source_file_compile_flag(src/wireframe-simulator/vpWireFrameSimulator.cpp -Wno-strict-overflow)
 endif()
 
+if(USE_UR_RTDE)
+  vp_set_source_file_compile_flag(src/real-robot/universal-robots/vpRobotUniversalRobots.cpp -Wno-unused-parameter)
+endif()
+
 vp_set_source_file_compile_flag(src/light/vpRingLight.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/wireframe-simulator/vpClipping.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/wireframe-simulator/vpBoundio.cpp -Wno-strict-overflow)
@@ -224,7 +223,7 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(
   DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui
-  CTEST_EXCLUDE_PATH qbdevice servo-franka virtuose bebop2
+  CTEST_EXCLUDE_PATH qbdevice servo-franka virtuose bebop2 servo-ur
   CTEST_EXCLUDE_FILE servo-afma6/testRobotAfma6Pose.cpp servo-viper/testRobotViper850Pose.cpp servo-flir-ptu/testRobotFlirPtu.cpp)
 
 if(USE_VIRTUOSE)
@@ -241,10 +240,19 @@ endif()
 if(USE_ARSDK)
   vp_set_source_file_compile_flag(src/real-robot/bebop2/vpRobotBebop2.cpp -Wno-old-style-cast -Wno-implicit-fallthrough -Wno-cast-qual -Wno-deprecated-declarations)
 endif()
+
 if(USE_FRANKA)
   vp_set_source_file_compile_flag(src/real-robot/franka/vpForceTorqueGenerator_impl.cpp -Wno-shadow -Wno-deprecated-copy)
 endif()
 
 if(USE_FLIRPTUSDK)
   vp_set_source_file_compile_flag(test/servo-flir-ptu/testRobotFlirPtu.cpp -Wno-unused-result)
+endif()
+
+if(USE_UR_RTDE)
+  vp_set_source_file_compile_flag(test/servo-universal-robots/testUniversalRobotsCartPosition.cpp -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(test/servo-universal-robots/testUniversalRobotsCartVelocity.cpp -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(test/servo-universal-robots/testUniversalRobotsGetData.cpp -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(test/servo-universal-robots/testUniversalRobotsJointPosition.cpp -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(test/servo-universal-robots/testUniversalRobotsJointVelocity.cpp -Wno-unused-parameter)
 endif()
