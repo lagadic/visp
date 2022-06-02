@@ -37,8 +37,8 @@
  *
  *****************************************************************************/
 
-#ifndef vpVelocityRwistMatrix_h
-#define vpVelocityRwistMatrix_h
+#ifndef vpVelocityTwistMatrix_h
+#define vpVelocityTwistMatrix_h
 
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpColVector.h>
