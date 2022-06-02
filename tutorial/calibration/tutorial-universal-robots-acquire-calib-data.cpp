@@ -1,4 +1,4 @@
-//! \example tutorial-franka-acquire-calib-data.cpp
+//! \example tutorial-universal-robots-acquire-calib-data.cpp
 #include <iostream>
 
 #include <visp3/core/vpCameraParameters.h>
@@ -6,16 +6,16 @@
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
-#include <visp3/robot/vpRobotFranka.h>
+#include <visp3/robot/vpRobotUniversalRobots.h>
 #include <visp3/sensor/vpRealSense2.h>
 
 #if defined(VISP_HAVE_REALSENSE2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11) &&                                    \
-    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_FRANKA)
+    (defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)) && defined(VISP_HAVE_UR_RTDE)
 
 int main(int argc, char **argv)
 {
   try {
-    std::string opt_robot_ip = "192.168.1.1";
+    std::string opt_robot_ip = "192.168.0.100";
 
     for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
@@ -28,8 +28,7 @@ int main(int argc, char **argv)
 
     vpImage<unsigned char> I;
 
-    vpRobotFranka robot;
-    robot.connect(opt_robot_ip);
+    vpRobotUniversalRobots robot;
 
     vpRealSense2 g;
     rs2::config config;
@@ -47,7 +46,7 @@ int main(int argc, char **argv)
     vpCameraParameters cam;
     vpXmlParserCamera xml_camera;
     cam = g.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithDistortion);
-    xml_camera.save(cam, "franka_camera.xml", "Camera", width, height);
+    xml_camera.save(cam, "ur_camera.xml", "Camera", width, height);
 
 #if defined(VISP_HAVE_X11)
     vpDisplayX dc(I, 10, 10, "Color image");
@@ -70,12 +69,15 @@ int main(int argc, char **argv)
           cpt++;
 
           vpPoseVector fPe;
+          std::cout << "Connect to robot to get its position..." << std::endl;
+          robot.connect(opt_robot_ip);
           robot.getPosition(vpRobot::END_EFFECTOR_FRAME, fPe);
+          robot.disconnect();
 
           std::stringstream ss_img, ss_pos;
 
-          ss_img << "franka_image-" << cpt << ".png";
-          ss_pos << "franka_pose_fPe_" << cpt << ".yaml";
+          ss_img << "ur_image-" << cpt << ".png";
+          ss_pos << "ur_pose_fPe_" << cpt << ".yaml";
           std::cout << "Save: " << ss_img.str() << " and " << ss_pos.str() << std::endl;
           vpImageIo::write(I, ss_img.str());
           fPe.saveYAML(ss_pos.str(), fPe);
@@ -102,8 +104,9 @@ int main()
 #if !(VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11)." << std::endl;
 #endif
-#if !defined(VISP_HAVE_FRANKA)
-  std::cout << "Install libfranka." << std::endl;
+#if !defined(VISP_HAVE_UR_RTDE)
+  std::cout << "ViSP is not build with libur_rtde 3rd party used to control a robot from Universal Robots..."
+            << std::endl;
 #endif
 
   std::cout << "After installation of the missing 3rd parties, configure ViSP with cmake"
