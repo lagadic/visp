@@ -249,6 +249,8 @@ This page introduces the user to the way to achieve a visual servoing.
 - \subpage tutorial-mbot-vs <br>This tutorial explains how to do a visual-servoing with the mBot Ranger educational robot kit equipped with a Raspberry Pi and a camera.
 - \subpage tutorial-bebop2-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Parrot Bebop 2 drone.
 - \subpage tutorial-flir-ptu-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Flir pan-tilt unit and camera.
+- \subpage tutorial-universal-robot-ibvs <br> Provides information on controlling robots from Universal Robots using vpRobotUniversalRobots class implemented in ViSP and shows how to implement an image-based visual-servoing with such a robot.
+- \subpage tutorial-universal-robot-pbvs <br> Explains how to implement a position-based visual-servoing with a robot from Universal Robots.
 
 */
 
