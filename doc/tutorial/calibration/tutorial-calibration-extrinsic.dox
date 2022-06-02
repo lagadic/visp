@@ -288,7 +288,7 @@ $ ./tutorial-chessboard-pose --square_size 0.0262 --input franka_image-%d.png --
 
 <b>Step 3: Estimate end-effector to camera transformation</b>
 
-Finally you can estimage the extrinsic transformation between end-effector and you camera, running:
+Finally you can estimate the extrinsic transformation between end-effector and you camera, running:
 
 \verbatim
 $ ./tutorial-hand-eye-calibration --data-path . --fPe franka_pose_fPe_%d.yaml --cPo franka_pose_cPo_%d.yaml --output franka_eMc.yaml
@@ -314,7 +314,7 @@ $ more franka_eMc.txt
 0  0  0  1
 \endverbatim
 
-<b>Cameta poses visualization</b>
+<b>Camera poses visualization</b>
 
 To visualize camera poses:
 \verbatim
