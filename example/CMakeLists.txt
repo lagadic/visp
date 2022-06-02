@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -95,6 +95,7 @@ visp_add_subdirectory(servo-franka             REQUIRED_DEPS visp_core visp_robo
 visp_add_subdirectory(servo-kinova             REQUIRED_DEPS visp_core visp_robot visp_vision visp_io visp_gui visp_vs visp_visual_features visp_detection)
 visp_add_subdirectory(servo-pioneer            REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_gui)
 visp_add_subdirectory(servo-ptu46              REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_gui)
+visp_add_subdirectory(servo-universal-robots   REQUIRED_DEPS visp_core visp_robot visp_io)
 visp_add_subdirectory(servo-viper650           REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_vision visp_gui)
 visp_add_subdirectory(servo-viper850           REQUIRED_DEPS visp_core visp_blob visp_vs visp_robot visp_sensor visp_vision visp_gui)
 visp_add_subdirectory(tools                    REQUIRED_DEPS visp_core visp_robot visp_io visp_gui)

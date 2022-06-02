@@ -223,10 +223,8 @@ void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpColVe
  * - vpRobot::END_EFFECTOR_FRAME to retrieve the external wrench (force, torque) acting on stiffness frame, expressed
  * relative to the stiffness frame. Unit: \f$[N,N,N,Nm,Nm,Nm]\f$.
  * - vpRobot::CAMERA_FRAME or more generally a tool frame vpRobot::TOOL_FRAME to retrieve the external wrench (force,
- * torque) applied on the tool frame. Unit: \f$[N,N,N,Nm,Nm,Nm]\f$. \param[out] force : Measured forced and torques.
- *
- * If you want to get a cartesian position, use rather
- * getPosition(const vpRobot::vpControlFrameType, vpPoseVector &)
+ * torque) applied on the tool frame. Unit: \f$[N,N,N,Nm,Nm,Nm]\f$.
+ * \param[out] force : Measured forced and torques.
  */
 void vpRobotFranka::getForceTorque(const vpRobot::vpControlFrameType frame, vpColVector &force)
 {
@@ -263,7 +261,7 @@ void vpRobotFranka::getForceTorque(const vpRobot::vpControlFrameType frame, vpCo
     break;
   }
   default: {
-    throw(vpException(vpException::fatalError, "Cannot get Franka cartesian position: wrong method"));
+    throw(vpException(vpException::fatalError, "Cannot get Franka force/torque: frame not supported"));
   }
   }
 }
@@ -418,7 +416,7 @@ vpHomogeneousMatrix vpRobotFranka::get_fMe(const vpColVector &q)
  * the end-effector and the camera (or tool) frame is set to identity, meaning that the camera (or tool)
  * frame is located on the end-effector.
  *
- * To change the position of the camera (or tool) frame , use set_eMc().
+ * To change the position of the camera (or tool) frame, use set_eMc().
  *
  * \param[in] q : Joint position as a 7-dim vector.
  * \return Position of the camera frame (or tool frame) in the robot base frame.
@@ -435,9 +433,8 @@ vpHomogeneousMatrix vpRobotFranka::get_fMc(const vpColVector &q)
  * - vpRobot::END_EFFECTOR_FRAME to retrieve the cartesian position of the end-effector frame wrt the robot base frame.
  * - vpRobot::CAMERA_FRAME to retrieve the cartesian position of the camera frame (or more generally a tool frame
  *   vpRobot::TOOL_FRAME) wrt the robot base frame.
- * \param[out] pose : Robot cartesian position. This vector is 6-dim. Its content is similar to a
- * vpPoseVector, with first the 3 tranlations in meter and then the 3 orientations in radian as a
- *  \f$\theta {\bf u}\f$ vector (see vpThetaUVector).
+ * \param[out] pose : Robot cartesian position. This vector is 6-dim with first the 3 tranlations in meter and then the
+ * 3 orientations in radian as a \f$\theta {\bf u}\f$ vector (see vpThetaUVector).
  */
 void vpRobotFranka::getPosition(const vpRobot::vpControlFrameType frame, vpPoseVector &pose)
 {
@@ -988,7 +985,7 @@ vpColVector vpRobotFranka::getJointMax() const
  * frame is located on the end-effector.
  *
  * To change the position of the camera (or tool) frame on the end-effector frame, use set_eMc().
-
+ *
  */
 vpHomogeneousMatrix vpRobotFranka::get_eMc() const { return m_eMc; }
 

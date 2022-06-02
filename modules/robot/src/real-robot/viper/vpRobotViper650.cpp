@@ -1622,7 +1622,7 @@ int main()
   qvel[4] = 0;               // Joint 5 velocity in rad/s
   qvel[5] = 0;               // Joint 6 velocity in rad/s
 
-  // Initialize the controller to position control
+  // Initialize the controller to velocity control
   robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
   while (1) {
