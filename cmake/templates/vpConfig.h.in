@@ -412,6 +412,9 @@
 #cmakedefine VISP_HAVE_VIPER850_DATA
 #define VISP_VIPER850_DATA_PATH "${VISP_VIPER850_DATA_PATH}"
 
+// Defined if Universal Robot RTDE C++ interface is available
+#cmakedefine VISP_HAVE_UR_RTDE
+
 // Defined if libfranka from Franka Emika available to control Panda robot.
 #cmakedefine VISP_HAVE_FRANKA
 
@@ -582,5 +585,3 @@
 #endif
 
 #endif
-
-

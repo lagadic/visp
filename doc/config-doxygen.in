@@ -2207,6 +2207,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_TAKKTILE2 \
                          VISP_HAVE_TENSORRT \
                          VISP_HAVE_UEYE \
+                         VISP_HAVE_UR_RTDE \
                          VISP_HAVE_V4L2 \
                          VISP_HAVE_VIPER650 \
                          VISP_HAVE_VIPER650_DATA \
