@@ -499,3 +499,16 @@ int vpPoseVector::print(std::ostream &s, unsigned int length, char const *intro)
 
   return (int)(maxBefore + maxAfter);
 }
+
+/*!
+ * Converts the vpPoseVector to a 6-dim std::vector.
+ * \return The corresponding std::vector<double>.
+ */
+std::vector<double> vpPoseVector::toStdVector() const
+{
+  std::vector<double> v(this->size());
+
+  for (unsigned int i = 0; i < this->size(); i++)
+    v[i] = data[i];
+  return v;
+}

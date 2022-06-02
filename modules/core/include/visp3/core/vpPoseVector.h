@@ -253,6 +253,8 @@ public:
   void set(double tx, double ty, double tz, double tux, double tuy, double tuz);
   vpRowVector t() const;
 
+  std::vector<double> toStdVector() const;
+
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions
