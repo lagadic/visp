@@ -46,6 +46,7 @@
 // System
 #include <iostream>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace std
 {
 
@@ -56,6 +57,7 @@ ostream &operator<<(ostream &os, const pair<unsigned int, unsigned int> &val)
   return os;
 }
 } // namespace std
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef VISP_HAVE_CATCH2
 #define CATCH_CONFIG_RUNNER
