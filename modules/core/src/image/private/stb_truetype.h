@@ -420,6 +420,7 @@ int main(int arg, char **argv)
 ////   The following sections allow you to supply alternate definitions
 ////   of C library functions used by stb_truetype, e.g. if you don't
 ////   link with the C runtime library.
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #ifdef STB_TRUETYPE_IMPLEMENTATION
 // #define your own (u)stbtt_int8/16/32 before including to override this
@@ -5191,6 +5192,7 @@ STBTT_DEF int stbtt_CompareUTF8toUTF16_bigendian(const char *s1, int len1, const
 #pragma GCC diagnostic pop
 #endif
 
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 #endif // STB_TRUETYPE_IMPLEMENTATION
 
 // FULL VERSION HISTORY

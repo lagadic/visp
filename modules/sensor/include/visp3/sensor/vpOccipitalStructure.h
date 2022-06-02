@@ -197,6 +197,7 @@ int main()
 
 */
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 struct SessionDelegate : ST::CaptureSessionDelegate {
   std::mutex m_sampleLock;
   std::condition_variable cv_sampleLock;
@@ -265,6 +266,7 @@ struct SessionDelegate : ST::CaptureSessionDelegate {
     cv_sampleLock.notify_one();
   }
 };
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
 class VISP_EXPORT vpOccipitalStructure
 {

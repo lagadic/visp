@@ -62,6 +62,7 @@
 
 #include <visp3/core/vpImageTools.h>
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 namespace Font
 {
 template <typename T> struct Point {
@@ -514,4 +515,5 @@ template <typename T> template <typename TR> inline Rectangle<T> &Rectangle<T>::
 }
 } // namespace Font
 
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 #endif

@@ -52,6 +52,7 @@ constexpr auto ModelDataHeader{"data:"};
 constexpr auto DepthScale{0.001};
 } // namespace
 
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 class Model
 {
 public:
@@ -329,6 +330,7 @@ std::map<Model::Id, vpImagePoint> getKeypointsFromUser(vpImage<vpRGBa> color_img
 
   return keypoints;
 }
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 #endif // #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && (!defined(_MSC_VER) || ((VISP_CXX_STANDARD >=
 // VISP_CXX_STANDARD_17) && (_MSC_VER >= 1911))) && defined(VISP_HAVE_DISPLAY)
 
