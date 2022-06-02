@@ -190,14 +190,16 @@ public:
   std::ostream &csvPrint(std::ostream &os) const;
 
   /*!
-    Convert a column vector containing angles in degrees into radians.
+    Converts a column vector containing angles in degrees into radians and returns a reference to the vector.
+    \return A reference to the vector with values expressed in [rad].
     \sa rad2deg()
   */
-  inline void deg2rad()
+  inline vpColVector &deg2rad()
   {
     double d2r = M_PI / 180.0;
 
     (*this) *= d2r;
+    return (*this);
   }
 
   vp_deprecated double euclideanNorm() const;
@@ -288,14 +290,16 @@ public:
   int print(std::ostream &s, unsigned int length, char const *intro = 0) const;
 
   /*!
-    Convert a column vector containing angles in radians into degrees.
+    Converts a column vector containing angles in radians into degrees and returns a reference to the vector.
+    \return A reference to the vector with values expressed in [deg].
     \sa deg2rad()
   */
-  inline void rad2deg()
+  inline vpColVector &rad2deg()
   {
     double r2d = 180.0 / M_PI;
 
     (*this) *= r2d;
+    return (*this);
   }
 
   void reshape(vpMatrix &M, const unsigned int &nrows, const unsigned int &ncols);
