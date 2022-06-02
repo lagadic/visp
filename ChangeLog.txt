@@ -10,6 +10,9 @@ ViSP 3.5.1 (under development)
     . Fabien Spindler
   - New features and improvements
     . Video writer is now able to create the output folder recursively (see vpVideoWriter)
+    . New vpRobotUniversalRobots class that allows to control an UR robot
+    . Image-based and position-based examples with UR robot
+    . Tutorial for extrinsic calibration improved with UR robot and Panda robot use cases 
     . Tutorials in tutorial/grabber folder have now a new --no-display command line option
       that allows to grab a video remotely
   - Tutorials
@@ -17,6 +20,10 @@ ViSP 3.5.1 (under development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-video-manipulation.html
     . New tutorial: Planar object pose estimation using RGB-D data
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-planar-object-pose.html
+    . New tutorial: IBVS with a robot from Universal Robots
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-universal-robot-ibvs.html
+    . New tutorial: PBVS with a robot from Universal Robots
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-universal-robot-pbvs.html
   - Bug fixed
     . [#1042] testColorConversion.cpp segfault randomly
     . [#1045] CXX standard not propagated when using pkg-config or visp-config
