@@ -527,7 +527,7 @@ VP_OPTION(USE_AFMA4       ""          ""    "Include Afma4 robot support"      "
 VP_OPTION(USE_AFMA6       ""          ""    "Include Afma6 robot support"      "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_VIPER650    ""          ""    "Include Viper s650 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
 VP_OPTION(USE_VIPER850    ""          ""    "Include Viper s850 robot support" "" ON IF (RAW1394_FOUND AND RT_FOUND AND CALINUX_FOUND AND IRISA_FOUND AND NOT WINRT AND NOT IOS))
-VP_OPTION(USE_UR_RTDE     ur_rtde     ""    "Include Universal Robot RTDE C++ interface support for UR robots" "" ON IF NOT WINRT AND NOT IOS)
+VP_OPTION(USE_UR_RTDE     ur_rtde     QUIET "Include Universal Robot RTDE C++ interface support for UR robots" "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_VIRTUOSE    Virtuose    ""    "Include Virtuose SDK support for Haption devices" "" ON IF NOT WINRT)
 VP_OPTION(USE_ARSDK       ARSDK       QUIET "Include Parrot ARSDK support"     "" ON IF NOT WINRT AND NOT IOS)
 if(USE_ARSDK)
