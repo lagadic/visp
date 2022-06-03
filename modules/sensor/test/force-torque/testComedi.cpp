@@ -61,8 +61,9 @@ int main()
   vpPlot scope(1, 700, 700, 100, 200,
                std::string("ATI physical sensor data (") + comedi.getPhyDataUnits() + std::string(")"));
   scope.initGraph(0, comedi.getNChannel());
-  for (unsigned int i = 0; i < comedi.getNChannel(); i++)
-    scope.setLegend(0, i, "G" + dynamic_cast<std::ostringstream &>((std::ostringstream() << i)).str());
+  for (unsigned int i = 0; i < comedi.getNChannel(); i++) {
+    scope.setLegend(0, i, "G" + ((std::ostringstream() << i)).str());
+  }
 #endif
 
   std::string file("recorded-physical-data-sync.txt");
