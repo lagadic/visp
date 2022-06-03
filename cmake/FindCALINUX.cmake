@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find Cerebellum CA linux library material 
+# Try to find Cerebellum CA linux library material
 #
 # CALINUX_FOUND
 # CALINUX_INCLUDE_DIRS
@@ -40,50 +40,52 @@
 #
 #############################################################################
 
-IF(NOT UNIX)
-  # MESSAGE("FindCALINUX.cmake: only available for Unix.")
-  SET(CALINUX_FOUND FALSE)
-ELSE(NOT UNIX)
-  
-  FIND_PATH(CALINUX_INCLUDE_DIR calinux.h
+if(NOT UNIX)
+  # message("FindCALINUX.cmake: only available for Unix.")
+  set(CALINUX_FOUND FALSE)
+else()
+
+  find_path(CALINUX_INCLUDE_DIR calinux.h
     $ENV{CALINUX_HOME}/include
     /local/soft/Cerebellum/CALinux/current/include
     /home/soft/Cerebellum/CALinux/current/include
-    )
-  #MESSAGE("DBG CALINUX_INCLUDE_DIR=${CALINUX_INCLUDE_DIR}")  
-  
-  FIND_LIBRARY(CALINUX_LIBRARY
-    NAMES calinux
-    PATHS 
-    $ENV{CALINUX_HOME}/lib
-    /local/soft/Cerebellum/CALinux/current/lib
-    /home/soft/Cerebellum/CALinux/current/lib
-    )
+    /home/soft/cerebellum/CALinux/include
+  )
+  #message("DBG CALINUX_INCLUDE_DIR=${CALINUX_INCLUDE_DIR}")
 
-  #MESSAGE("DBG CALINUX_LIBRARY=${CALINUX_LIBRARY}")
-  
+  find_library(CALINUX_LIBRARY
+    NAMES calinux
+    PATHS
+      $ENV{CALINUX_HOME}/lib
+      /local/soft/Cerebellum/CALinux/current/lib
+      /home/soft/Cerebellum/CALinux/current/lib
+      /home/soft/cerebellum/CALinux/lib
+  )
+
+  #message("DBG CALINUX_LIBRARY=${CALINUX_LIBRARY}")
+
   ## --------------------------------
-  
-  IF(CALINUX_LIBRARY)
-    SET(CALINUX_LIBRARIES ${CALINUX_LIBRARY})
-  ELSE(CALINUX_LIBRARY)
-#     MESSAGE(SEND_ERROR "Calinux library not found.")
-  ENDIF(CALINUX_LIBRARY)
-  
-  IF(NOT CALINUX_INCLUDE_DIR)
-#     MESSAGE(SEND_ERROR "Calinux include dir not found.")
-  ENDIF(NOT CALINUX_INCLUDE_DIR)
-  
-  IF(CALINUX_LIBRARIES AND CALINUX_INCLUDE_DIR)
-    SET(CALINUX_INCLUDE_DIRS ${CALINUX_INCLUDE_DIR})
-    SET(CALINUX_FOUND TRUE)
-  ELSE(CALINUX_LIBRARIES AND CALINUX_INCLUDE_DIR)
-    SET(CALINUX_FOUND FALSE)
-  ENDIF(CALINUX_LIBRARIES AND CALINUX_INCLUDE_DIR)
-  
-  MARK_AS_ADVANCED(
+
+  if(CALINUX_LIBRARY)
+    set(CALINUX_LIBRARIES ${CALINUX_LIBRARY})
+  else()
+#   message(SEND_ERROR "Calinux library not found.")
+  endif()
+
+  if(NOT CALINUX_INCLUDE_DIR)
+#    message(SEND_ERROR "Calinux include dir not found.")
+  endif()
+
+  if(CALINUX_LIBRARIES AND CALINUX_INCLUDE_DIR)
+    set(CALINUX_INCLUDE_DIRS ${CALINUX_INCLUDE_DIR})
+    set(CALINUX_FOUND TRUE)
+  else()
+    set(CALINUX_FOUND FALSE)
+  endif()
+
+  mark_as_advanced(
     CALINUX_INCLUDE_DIR
     CALINUX_LIBRARIES
     CALINUX_LIBRARY
-    )
-ENDIF(NOT UNIX)
+  )
+endif()
