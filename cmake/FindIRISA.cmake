@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -40,50 +40,52 @@
 #
 #############################################################################
 
-IF(NOT UNIX)
-  # MESSAGE("FindIRISA.cmake: only available for Unix.")
-  SET(IRISA_FOUND FALSE)
-ELSE(NOT UNIX)
-  
-  FIND_PATH(IRISA_INCLUDE_DIR irisa_Afma6.h
-    $ENV{IRISA_HOME}/src
-    /local/soft/Cerebellum/Irisa/current/src
-    /home/soft/Cerebellum/Irisa/current/src
-    )
-  #MESSAGE("DBG IRISA_INCLUDE_DIR=${IRISA_INCLUDE_DIR}")  
-  
-  FIND_LIBRARY(IRISA_LIBRARY
-    NAMES irisa
-    PATHS 
-    $ENV{IRISA_HOME}/src
-    /local/soft/Cerebellum/Irisa/current/src
-    /home/soft/Cerebellum/Irisa/current/src
-    )
+if(NOT UNIX)
+  # message("FindIRISA.cmake: only available for Unix.")
+  set(IRISA_FOUND FALSE)
+else()
 
-  #MESSAGE("DBG IRISA_LIBRARY=${IRISA_LIBRARY}")
-  
+  find_path(IRISA_INCLUDE_DIR irisa_Afma6.h
+    $ENV{IRISA_HOME}/src
+    /local/soft/Cerebellum/Irisa/current/src
+    /home/soft/Cerebellum/Irisa/current/src
+    /home/soft/cerebellum/Irisa/src
+  )
+  #message("DBG IRISA_INCLUDE_DIR=${IRISA_INCLUDE_DIR}")
+
+  find_library(IRISA_LIBRARY
+    NAMES irisa
+    PATHS
+      $ENV{IRISA_HOME}/src
+      /local/soft/Cerebellum/Irisa/current/src
+      /home/soft/Cerebellum/Irisa/current/src
+      /home/soft/cerebellum/Irisa/src
+  )
+
+  #message("DBG IRISA_LIBRARY=${IRISA_LIBRARY}")
+
   ## --------------------------------
-  
-  IF(IRISA_LIBRARY)
-    SET(IRISA_LIBRARIES ${IRISA_LIBRARY})
-  ELSE(IRISA_LIBRARY)
-    #MESSAGE(SEND_ERROR "Irisa library not found.")
-  ENDIF(IRISA_LIBRARY)
-  
-  IF(NOT IRISA_INCLUDE_DIR)
-    #MESSAGE(SEND_ERROR "Irisa include dir not found.")
-  ENDIF(NOT IRISA_INCLUDE_DIR)
-  
-  IF(IRISA_LIBRARIES AND IRISA_INCLUDE_DIR)
-    SET(IRISA_INCLUDE_DIRS ${IRISA_INCLUDE_DIR})
-    SET(IRISA_FOUND TRUE)
-  ELSE(IRISA_LIBRARIES AND IRISA_INCLUDE_DIR)
-    SET(IRISA_FOUND FALSE)
-  ENDIF(IRISA_LIBRARIES AND IRISA_INCLUDE_DIR)
-  
-  MARK_AS_ADVANCED(
+
+  if(IRISA_LIBRARY)
+    set(IRISA_LIBRARIES ${IRISA_LIBRARY})
+  else()
+    #message(SEND_ERROR "Irisa library not found.")
+  endif()
+
+  if(NOT IRISA_INCLUDE_DIR)
+    #message(SEND_ERROR "Irisa include dir not found.")
+  endif()
+
+  if(IRISA_LIBRARIES AND IRISA_INCLUDE_DIR)
+    set(IRISA_INCLUDE_DIRS ${IRISA_INCLUDE_DIR})
+    set(IRISA_FOUND TRUE)
+  else()
+    set(IRISA_FOUND FALSE)
+  endif()
+
+  mark_as_advanced(
     IRISA_INCLUDE_DIR
     IRISA_LIBRARIES
     IRISA_LIBRARY
-    )
-ENDIF(NOT UNIX)
+  )
+endif()
