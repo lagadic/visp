@@ -383,10 +383,32 @@ int vpMath::modulo(int a, int n) { return ((a % n) + n) % n; }
 
 /*!
   Compute from a given longitude, latitude and a sphere radius the homogeneous transformation
-  from the NED frame to the ECEF frame.
+  from the NED frame to the ECEF frame:
+
+  \f[
+  \begin{bmatrix}
+    X_{\text{ecef}} \\
+    Y_{\text{ecef}} \\
+    Z_{\text{ecef}}
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+    -\sin \varphi \cos \lambda & -\sin \lambda & -\cos \varphi \cos \lambda \\
+    -\sin \varphi \sin \lambda & \cos \lambda & -\cos \varphi \sin \lambda \\
+    \cos \varphi & 0 & -\sin \varphi
+  \end{bmatrix}
+  +
+  \begin{bmatrix}
+    \text{r} \cos \varphi \cos \lambda \\
+    \text{r} \cos \varphi \sin \lambda \\
+    \text{r} \sin \varphi
+  \end{bmatrix}
+  \f]
+
+  \image html vpMath_ECEF_NED_Longitude_Latitude_relationships.png
 
   See also:
-    - https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates#Local_north,_east,_down_(NED)_coordinates
+    - <https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates#Local_north,_east,_down_(NED)_coordinates>
     - https://gssc.esa.int/navipedia/index.php/Cartesian_and_ellipsoidal_coordinates
 
   \param lonDeg : The longitude in degree.
@@ -410,7 +432,29 @@ vpHomogeneousMatrix vpMath::ned2ecef(double lonDeg, double latDeg, double radius
 
 /*!
   Compute from a given longitude, latitude and a sphere radius the homogeneous transformation
-  from the ENU frame to the ECEF frame.
+  from the ENU frame to the ECEF frame:
+
+  \f[
+    \begin{bmatrix}
+      X_{\text{ecef}} \\
+      Y_{\text{ecef}} \\
+      Z_{\text{ecef}}
+    \end{bmatrix}
+    =
+    \begin{bmatrix}
+      -\sin \lambda & -\sin \varphi \cos \lambda & \cos \varphi \cos \lambda \\
+      \cos \lambda & -\sin \varphi \sin \lambda & \cos \varphi \sin \lambda \\
+      0 & \cos \varphi & \sin \varphi
+    \end{bmatrix}
+    +
+    \begin{bmatrix}
+      \text{r} \cos \varphi \cos \lambda \\
+      \text{r} \cos \varphi \sin \lambda \\
+      \text{r} \sin \varphi
+    \end{bmatrix}
+  \f]
+
+  \image html vpMath_ECEF_ENU_Longitude_Latitude_relationships.png
 
   See also:
     - https://en.wikipedia.org/wiki/Geographic_coordinate_conversion#From_ENU_to_ECEF

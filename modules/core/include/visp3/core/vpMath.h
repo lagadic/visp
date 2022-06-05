@@ -314,7 +314,6 @@ long double vpMath::comb(unsigned int n, unsigned int p)
   \param x : Value to round.
 
   \return Nearest integer of x.
-
 */
 int vpMath::round(double x)
 {
@@ -334,7 +333,6 @@ int vpMath::round(double x)
 
   \param x : Value to test.
   \return -1 if x is negative, +1 if positive and 0 if zero.
-
 */
 int(vpMath::sign)(double x)
 {
@@ -353,7 +351,6 @@ int(vpMath::sign)(double x)
   \param x : Value to test.
   \param s : Tolerance threshold
   \return true if \f$ | x | < s \f$.
-
 */
 bool vpMath::nul(double x, double s) { return (fabs(x) < s); }
 
