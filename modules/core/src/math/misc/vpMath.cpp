@@ -408,14 +408,16 @@ int vpMath::modulo(int a, int n) { return ((a % n) + n) % n; }
   \image html vpMath_ECEF_NED_Longitude_Latitude_relationships.png
 
   See also:
-    - <https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates#Local_north,_east,_down_(NED)_coordinates>
-    - https://gssc.esa.int/navipedia/index.php/Cartesian_and_ellipsoidal_coordinates
+    - [Local north, east, down (NED) coordinates](https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates#Local_north,_east,_down_(NED)_coordinates)
+    - [Cartesian and ellipsoidal coordinates](https://gssc.esa.int/navipedia/index.php/Cartesian_and_ellipsoidal_coordinates)
 
-  \param lonDeg : The longitude in degree.
-  \param latDeg : The latitude in degree.
-  \param radius : The sphere radius in meter.
+  \param lonDeg : The longitude in degree or angle \f$\lambda\f$ in previous equation.
+  \param latDeg : The latitude in degree or angle \f$\varphi\f$ in previous equation.
+  \param radius : The sphere radius \f$r\f$ in meter.
 
   \return The homogeneous transformation from NED to ECEF frame.
+
+  \sa enu2ecef(), getLocalTangentPlaneTransformations()
 */
 vpHomogeneousMatrix vpMath::ned2ecef(double lonDeg, double latDeg, double radius)
 {
@@ -456,16 +458,18 @@ vpHomogeneousMatrix vpMath::ned2ecef(double lonDeg, double latDeg, double radius
 
   \image html vpMath_ECEF_ENU_Longitude_Latitude_relationships.png
 
-  See also:
-    - https://en.wikipedia.org/wiki/Geographic_coordinate_conversion#From_ENU_to_ECEF
-    - https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates
-    - https://gssc.esa.int/navipedia/index.php/Cartesian_and_ellipsoidal_coordinates
+  \sa
+    - [From ENU to ECEF](https://en.wikipedia.org/wiki/Geographic_coordinate_conversion#From_ENU_to_ECEF)
+    - [Transformations between ECEF and ENU coordinates](https://gssc.esa.int/navipedia/index.php/Transformations_between_ECEF_and_ENU_coordinates)
+    - [Cartesian and ellipsoidal coordinates](https://gssc.esa.int/navipedia/index.php/Cartesian_and_ellipsoidal_coordinates)
 
-  \param lonDeg : The longitude in degree.
-  \param latDeg : The latitude in degree.
-  \param radius : The sphere radius in meter.
+  \param lonDeg : The longitude in degree or angle \f$\lambda\f$ in previous equation.
+  \param latDeg : The latitude in degree or angle \f$\varphi\f$ in previous equation.
+  \param radius : The sphere radius \f$r\f$ in meter.
 
   \return The homogeneous transformation from ENU to ECEF frame.
+
+  \sa ned2ecef(), getLocalTangentPlaneTransformations()
 */
 vpHomogeneousMatrix vpMath::enu2ecef(double lonDeg, double latDeg, double radius)
 {
@@ -524,8 +528,8 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
 /*!
   Compute transformations from the local tangent plane (e.g. NED, ECU, ...) to the ECEF frame.
 
-  See also:
-    - https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates
+  \sa
+    - [Local tangent plane coordinates](https://en.wikipedia.org/wiki/Local_tangent_plane_coordinates)
 
   Following image illustrates the camera poses sampled using longitude / latitude coordinates:
 
@@ -537,6 +541,8 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
   and a radius the corresponding transformation from the local frame (e.g. NED or ENU) to the ECEF frame.
 
   \return The vector of ecef_M_local homogeneous transformations.
+
+  \sa enu2ecef(), ned2ecef()
 */
 std::vector<vpHomogeneousMatrix> vpMath::getLocalTangentPlaneTransformations(const std::vector<std::pair<double, double> > &lonlatVec, double radius,
                                                                              vpHomogeneousMatrix (*toECEF)(double lonDeg_, double latDeg_, double radius_))
