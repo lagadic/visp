@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -74,7 +74,11 @@ if(USE_X11)
   vp_set_source_file_compile_flag(src/display/vpDisplayX.cpp -Wno-strict-overflow)
 endif()
 if(USE_OPENCV)
-  vp_set_source_file_compile_flag(src/display/vpDisplayOpenCV.cpp -Wno-strict-overflow)
+  vp_set_source_file_compile_flag(src/display/vpDisplayOpenCV.cpp -Wno-strict-overflow -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/forward-projection/vpProjectionDisplay.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/plot/vpPlot.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/plot/vpPlotCurve.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/plot/vpPlotGraph.cpp -Wno-float-equal)
 endif()
 if(USE_GTK2)
   vp_set_source_file_compile_flag(src/display/vpDisplayGTK.cpp -Wno-deprecated-declarations)

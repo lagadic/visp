@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -190,3 +190,14 @@ vp_add_tests()
 vp_set_source_file_compile_flag(src/tools/vpParseArgv.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/image/vpImageIo.cpp -Wno-missing-field-initializers) # since stb_image_write.h update from v1.13 to v1.16
 vp_set_source_file_compile_flag(src/image/private/vpImageIoStb.cpp -Wno-missing-field-initializers -Wno-strict-overflow)
+
+if(USE_OPENCV)
+  vp_set_source_file_compile_flag(src/image/private/vpImageIoLibjpeg.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/image/private/vpImageIoLibpng.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/image/private/vpImageIoOpenCV.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/image/private/vpImageIoPortable.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/image/vpImageIo.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/video/vpDiskGrabber.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/video/vpVideoReader.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/video/vpVideoWriter.cpp -Wno-float-equal)
+endif()
