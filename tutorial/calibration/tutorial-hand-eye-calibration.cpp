@@ -143,8 +143,12 @@ int main(int argc, const char *argv[])
     std::cout << "** Rotation (quaternion representation) [rad]: " << quaternion.t() << std::endl;
 
     // save eMc
-    std::string name_we = vpIoTools::getNameWE(opt_eMc_file);
-    std::ofstream file_eMc(name_we + ".txt");
+    std::string name_we = vpIoTools::getNameWE(opt_eMc_file) + ".txt";
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    std::ofstream file_eMc(name_we);
+#else
+    std::ofstream file_eMc(name_we.c_str());
+#endif
     eMc.save(file_eMc);
 
     vpPoseVector pose_vec(eMc);
