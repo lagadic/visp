@@ -62,7 +62,7 @@
  */
 template <typename IpContainer> std::vector<vpImagePoint> convexHull(const IpContainer &ips)
 {
-  if (ips.size() == 0) {
+  if (!ips.size()) {
     throw vpException(vpException::badValue,
                       "Convex Hull can not be computed as the input does not contain any image point.");
   }
