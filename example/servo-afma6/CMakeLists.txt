@@ -72,6 +72,8 @@ find_package(VISP REQUIRED visp_core visp_blob visp_vs visp_robot visp_sensor vi
 set(example_cpp
   servoAfma6Ellipse2DCamVelocity.cpp
   servoAfma6FourPoints2DArtVelocity.cpp
+  servoAfma6AprilTagIBVS.cpp
+  servoAfma6AprilTagPBVS.cpp
   servoAfma6Line2DCamVelocity.cpp
   servoAfma6Point2DArtVelocity.cpp
   servoAfma6Point2DCamVelocity.cpp
