@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2021 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -220,3 +220,21 @@ vp_add_tests(CTEST_EXCLUDE_PATH framegrabber force-torque rgb-depth DEPENDS_ON v
 # Add configuration file for IIT FT sensor besides testForceTorqueIitSensor.cpp binary
 configure_file(test/force-torque/configurationSettings.ini configurationSettings.ini COPYONLY)
 
+if(USE_OPENCV)
+  vp_set_source_file_compile_flag(src/framegrabber/1394/vp1394TwoGrabber.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/framegrabber/directshow/vpDirectShowSampleGrabberI.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/rgb-depth/kinect/vpKinect.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/rgb-depth/realsense/vpRealSense.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/framegrabber/test1394TwoResetBus.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/framegrabber/test1394TwoGrabber.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_SR300.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_imu.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_undistort.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_images_odometry_async.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_images_odometry_async.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_images.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense_R200.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_odometry.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_images_odometry.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/rgb-depth/testRealSense2_T265_images_odometry.cpp -Wno-float-equal)
+endif()

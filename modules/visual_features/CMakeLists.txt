@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2020 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -41,3 +41,12 @@ vp_glob_module_sources()
 vp_module_include_directories()
 vp_create_module()
 vp_add_tests()
+
+if(USE_OPENCV)
+  vp_set_source_file_compile_flag(src/feature-builder/vpFeatureBuilderEllipse.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/feature-builder/vpFeatureBuilderLine.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/feature-builder/vpFeatureBuilderPoint.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/feature-builder/vpFeatureBuilderPoint3D.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/feature-builder/vpFeatureBuilderPointPolar.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/feature-builder/vpFeatureBuilderSegment.cpp -Wno-float-equal)
+endif()
