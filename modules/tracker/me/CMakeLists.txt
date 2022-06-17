@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -44,3 +44,7 @@ vp_add_tests(DEPENDS_ON visp_io visp_gui)
 
 vp_set_source_file_compile_flag(src/moving-edges/vpMeSite.cpp -Wno-strict-overflow)
 
+if(USE_OPENCV)
+  vp_set_source_file_compile_flag(src/moving-edges/vpMeNurbs.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/testNurbs.cpp -Wno-float-equal)
+endif()

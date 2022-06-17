@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -57,3 +57,14 @@ vp_set_source_file_compile_flag(src/vpCLAHE.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/vpThreshold.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(src/vpFloodFill.cpp -Wno-strict-overflow)
 vp_set_source_file_compile_flag(test/testContours.cpp -Wno-strict-overflow)
+
+if(USE_OPENCV)
+  vp_set_source_file_compile_flag(src/vpCLAHE.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(src/vpImgproc.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/with-dataset/testAutoThreshold.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/with-dataset/testImgproc.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/with-dataset/testConnectedComponents.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/with-dataset/testFloodFill.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag(test/with-dataset/testContours.cpp -Wno-float-equal)
+  vp_set_source_file_compile_flag( -Wno-float-equal)
+endif()

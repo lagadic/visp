@@ -24,6 +24,6 @@ endforeach()
 
 if(VISP_HAVE_ZBAR)
   # Add specific build flag to turn off warnings coming from zbar 3rd party
-  visp_set_source_file_compile_flag(tutorial-barcode-detector.cpp -Wno-unused-parameter)
-  visp_set_source_file_compile_flag(tutorial-barcode-detector-live.cpp -Wno-unused-parameter)
+  visp_set_source_file_compile_flag(tutorial-barcode-detector.cpp -Wno-unused-parameter -Wno-deprecated-declarations)
+  visp_set_source_file_compile_flag(tutorial-barcode-detector-live.cpp -Wno-unused-parameter -Wno-deprecated-declarations)
 endif()

@@ -46,6 +46,7 @@ find_path(VIPER850_DATA_PATH
   PATHS
     /home/soft/Viper850/Viper850
     /home/soft/Viper850/current
+    /home/soft/viper850/viper850
     /udd/fspindle/robot/Viper850/current
     Z:/robot/Viper850/current
   )

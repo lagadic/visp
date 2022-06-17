@@ -52,7 +52,7 @@ endif()
 
 if(USE_ZBAR)
   # Add specific build flag to turn off warnings coming from zbar 3rd party
-  vp_set_source_file_compile_flag(src/barcode/vpDetectorQRCode.cpp -Wno-unused-parameter)
+  vp_set_source_file_compile_flag(src/barcode/vpDetectorQRCode.cpp -Wno-unused-parameter -Wno-deprecated-declarations)
 endif()
 
 if(WITH_APRILTAG)

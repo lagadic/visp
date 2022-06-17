@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -72,6 +72,8 @@ find_package(VISP REQUIRED visp_core visp_blob visp_vs visp_robot visp_sensor vi
 set(example_cpp
   servoAfma6Ellipse2DCamVelocity.cpp
   servoAfma6FourPoints2DArtVelocity.cpp
+  servoAfma6AprilTagIBVS.cpp
+  servoAfma6AprilTagPBVS.cpp
   servoAfma6Line2DCamVelocity.cpp
   servoAfma6Point2DArtVelocity.cpp
   servoAfma6Point2DCamVelocity.cpp
@@ -95,3 +97,9 @@ foreach(cpp ${example_cpp})
     visp_add_dependency(${cpp} "examples")
   endif()
 endforeach()
+
+if(VISP_HAVE_REALSENSE2)
+  # Add specific build flag to turn off warnings coming from librealsense 3rd party
+  visp_set_source_file_compile_flag(servoAfma6AprilTagIBVS.cpp -Wno-ignored-qualifiers -Wno-sign-compare -Wno-deprecated-copy-with-user-provided-copy)
+  visp_set_source_file_compile_flag(servoAfma6AprilTagPBVS.cpp -Wno-ignored-qualifiers -Wno-sign-compare -Wno-deprecated-copy-with-user-provided-copy)
+endif()
