@@ -345,10 +345,10 @@ At the time this tutorial was written, we downloaded "Gen2 SDK v1.5.1" that come
 - At this step you should have the following
 \verbatim
 C:\> dir C:\temp\kinova-jaco\windows
-17/12/2018  21:48         6 234 383 Kinova-Jaco-Usb-Driver-(usblib)-Installer.exe
+17/12/2018  21:48         6 234 383 Kinova-Jaco-Usb-Driver-(usblib)-Installer.exe
 30/01/2019  00:02               207 ReadMe.txt
-29/01/2019  23:58        64 658 780 SDK_GEN2_1_5_1_x86.exe
-09/08/2017  21:38        13 767 776 vc_redist_x86.exe
+29/01/2019  23:58        64 658 780 SDK_GEN2_1_5_1_x86.exe
+09/08/2017  21:38        13 767 776 vc_redist_x86.exe
 \endverbatim
 - Install the SDK executing `SDK_GEN2_1_5_1_x86.exe`. Keep default installation options.
 - After installation, the SDK is available in `C:\Program Files (x86)\JACO-SDK`
@@ -360,18 +360,92 @@ There is no need to complete installation process as for previous 3rd parties.
 If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you can optionally install
 [qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cpp_sdk) from source to enable vpMocapQualisys usage.
 
+<b>1. Get and build Qualisys Datastream SDK</b>
+
 \verbatim
-C:\> mkdir %VISP_DIR%/3rdparty
-C:\> cd %VISP_DIR%/3rdparty
+C:\> mkdir %VISP_DIR%\3rdparty\qualisys
+C:\> cd %VISP_DIR%\3rdparty\qualisys
 C:\> git clone https://github.com/qualisys/qualisys_cpp_sdk.git
+C:\> cd qualisys_cpp_sdk
 C:\> mkdir build
 C:\> cd build
-C:\> cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" .. -DBUILD_EXAMPLES=ON
 C:\> cmake --build . --config Release --target install
 \endverbatim
 
-After installation the SDK will be detected by ViSP if you run
+After installation the SDK is installed in `C:\Program Files\qualisys_cpp_sdk` and will be detected by ViSP if you run
 a new CMake configuration step over ViSP source code.
+
+<b>2. Complete installation</b>
+
+Now you have to complete Qualisys Datastream SDK installation setting some environment vars:
+- In order that ViSP detects Qualisys you have to set `QUALISYS_DIR` environment variable. Start up a `cmd`
+Command Prompt and enter:
+\verbatim
+C:\> setx QUALISYS_DIR "%VISP_WS%\Program Files\qualisys_cpp_sdk"
+C:\> exit
+\endverbatim
+- You have also to add the location of Qualisys Datastream SDK libraries corresponding in the Path environment variable.
+Open the "Edit environment variable" UI, and modify Path to add a new line with `%VISP_WS%\qualisys_cpp_sdk\lib`.
+
+<b>3. Known issue</b>
+
+If you encounter the following issue:
+\verbatim
+C:\visp-ws\3rdparty\qualisys\qualisys_cpp_sdk\build>cmake --build . --config Release --target install
+Microsoft (R) Build Engine version 16.3.2+e481bbf88 pour .NET Framework
+Copyright (C) Microsoft Corporation. Tous droits réservés.
+
+  Checking Build System
+  Building Custom Rule C:/visp-ws/3rdparty/qualisys/qualisys_cpp_sdk/CMakeLists.txt
+  Markup.cpp
+  Network.cpp
+  RTPacket.cpp
+  RTProtocol.cpp
+  Génération de code en cours...
+  qualisys_cpp_sdk.vcxproj -> C:\visp-ws\3rdparty\qualisys\qualisys_cpp_sdk\build\Release\qualisys_cpp_sdk.lib
+  Building Custom Rule C:/visp-ws/3rdparty/qualisys/qualisys_cpp_sdk/CMakeLists.txt
+  RigidBodyStreaming.cpp
+  RigidBodyStreaming.vcxproj -> C:\visp-ws\3rdparty\qualisys\qualisys_cpp_sdk\build\Release\RigidBodyStreaming.exe
+  Building Custom Rule C:/visp-ws/3rdparty/qualisys/qualisys_cpp_sdk/CMakeLists.txt
+  -- Install configuration: "Release"
+  CMake Error at cmake_install.cmake:48 (file):
+    file cannot create directory: C:/Program
+    Files/qualisys_cpp_sdk/lib/qualisys_cpp_sdk.  Maybe need administrative
+    privileges.
+\endverbatim
+you need to start a `cmd` command prompt as administrator. To this end type `cmd`, right-click the command prompt and then click Run as administrator.
+
+\subsubsection install_win10_msvc17_3rdparty_vicon Vicon Mocap 3rd party
+
+If you have the [Vicon](https://www.vicon.com) Motion Capture System you can optionally install
+[Vicon Datastream SDK](https://www.vicon.com/software/datastream-sdk/) to enable vpMocapVicon usage.
+
+<b>1. Get Vicon Datastream SDK</b>
+
+- Download latest Vicon Datastream SDK from [here](https://www.vicon.com/software/datastream-sdk/?section=downloads).
+At the time this tutorial was written, we donwloaded `ViconDataStreamSDK_1.11.0_128037.zip`.
+- Create the folder `$VISP_WS\3rdparty\vicon`
+\verbatim
+$ mkdir %VISP_WS%\3rdparty\vicon
+\endverbatim
+- Unzip downloaded file in `$VISP_WS\3rdparty\vicon`, in our case `ViconDataStreamSDK_1.11.0_128037.zip`
+- Unzip the Win64 SDK file, in our case `ViconDataStreamSDK_1.11.0_128037h__Win64.zip`
+- It brings `ViconDataStreamSDK_1.*_x64.msi` that you need now to execute to complete installation in `C:\Program Files\Vicon\DataStream SDK`
+
+After installation the SDK is available in `C:\Program Files\Vicon\DataStream SDK`.
+
+<b>2. Complete installation</b>
+
+Now you have to complete Vicon Datastream SDK installation setting some environment vars:
+- In order that ViSP detects Vicon you have to set `VICON_DIR` environment variable. Start up a `cmd`
+Command Prompt and enter:
+\verbatim
+C:\> setx VICON_DIR "%VISP_WS%\Program Files\Vicon\DataStream SDK\Win64\CPP"
+C:\> exit
+\endverbatim
+- You have also to add the location of Vicon Datastream SDK libraries corresponding in the Path environment variable.
+Open the "Edit environment variable" UI, and modify Path to add a new line with `%VISP_WS%\Program Files\Vicon\DataStream SDK\Win64\CPP`.
 
 \subsection install_win10_msvc17_get_source Get ViSP source code
 
