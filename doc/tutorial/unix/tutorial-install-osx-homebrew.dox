@@ -156,6 +156,73 @@ $ make -j$(sysctl -n hw.logicalcpu) Samples
 
 After completion, sample apps may be run from the Apps directory.
 
+\subsubsection install_brew_3rdparty_qualisys Qualisys Mocap 3rd party
+
+If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you can optionally install
+[qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cpp_sdk) from source to enable vpMocapQualisys usage.
+
+\verbatim
+$ mkdir -p $VISP_DIR/3rdparty
+$ cd $VISP_DIR/3rdparty
+$ git clone https://github.com/qualisys/qualisys_cpp_sdk.git
+$ mkdir build
+$ cd build
+$ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
+$ make -j$(sysctl -n hw.logicalcpu)
+$ make install
+\endverbatim
+
+After installation the SDK is available in `/usr/local` and will be detected by ViSP if you run
+a new CMake configuration step over ViSP source code.
+
+\subsubsection install_brew_3rdparty_vicon Vicon Mocap 3rd party
+
+If you have the [Vicon](https://www.vicon.com) Motion Capture System you can optionally install
+[Vicon Datastream SDK](https://www.vicon.com/software/datastream-sdk/) to enable vpMocapVicon usage.
+
+<b>1. Get Vicon Datastream SDK</b>
+
+- Download latest Vicon Datastream SDK from [here](https://www.vicon.com/software/datastream-sdk/?section=downloads).
+At the time this tutorial was written, we donwloaded `ViconDataStreamSDK_1.11.0_128037.zip`.
+- Unzip SDK for macOS
+\verbatim
+$ mkdir -p $VISP_DIR/3rdparty/vicon
+$ mv ~/Download/ViconDataStreamSDK_1.1*.zip
+$ cd $VISP_DIR/3rdparty/vicon
+$ unzip ViconDataStreamSDK_1.*.zip
+$ unzip ViconDataStreamSDK_1.*_Mac64.zip
+\endverbatim
+
+After installation the SDK is available in `$VISP_DIR/3rdparty/vicon/Mac64`.
+
+<b>2. Setup for usage</b>
+
+To help ViSP to detect the location of Vicon Datastream SDK you will need to setup the following environment vars.
+
+\verbatim
+$ export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$VISP_DIR/3rdparty/vicon/Mac64
+$ export LC_LOAD_DYLIB=$LC_LOAD_DYLIB:$VISP_DIR/3rdparty/vicon/Mac64
+\endverbatim
+
+The first line contains the path to the `libViconDataStreamSDK_CPP.dylib` and help ViSP to detect the SDK at runtime.
+The second line is here to help loading boost libraries that are in the same folder.
+
+Without setting these env vars you will get similar errors:
+\verbatim
+$ ./testMocapVicon -h
+dyld[34474]: Library not loaded: @executable_path/libViconDataStreamSDK_CPP.dylib
+  Referenced from: $VISP_DIR/visp-build/modules/sensor/testMocapVicon
+\endverbatim
+
+If you encounter the following error, it means that you have to install Python 2 required by Vicon Datastream SDK:
+\verbatim
+$ ./testMocapVicon -h
+dyld[33644]: Library not loaded: /System/Library/Frameworks/Python.framework/Versions/2.7/Python
+  Referenced from: /Users/fspindle/soft/third-party/vicon/Mac64/libViconDataStreamSDK_CPP.dylib
+\endverbatim
+To overcome this error, download and install the latest Python 2
+for macOS from [offical site](https://www.python.org/downloads/macos/).
+
 \subsection install_brew_get_source Get ViSP source code
 
 There are different ways to get ViSP source code:
