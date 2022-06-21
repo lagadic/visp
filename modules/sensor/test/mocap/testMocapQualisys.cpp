@@ -91,7 +91,7 @@ void usage(const char *argv[], int error)
             << std::endl;
   std::cout << "USAGE" << std::endl
             << "  Example to test Qualisys connection:" << std::endl
-            << "    " << argv[0] << std::endl
+            << "    " << argv[0] << " --server-address 192.168.100.1 --verbose" << std::endl
             << std::endl;
 
   if (error) {
@@ -147,9 +147,9 @@ void display_loop(std::mutex &lock, const std::map<std::string, vpHomogeneousMat
       vpRxyzVector rxyz(it->second.getRotationMatrix());
       std::cout << "Found body: " << it->first << std::endl;
       if (verbose) {
-        std::cout << " Translation [m]: " << it->second.getTranslationVector().t() << std::endl
-                  << " Quaternion: " << vpQuaternionVector(it->second.getRotationMatrix()).t() << std::endl;
-        std::cout << " Roll/pitch/yaw [deg]: ";
+        std::cout << "  Translation [m]: " << it->second.getTranslationVector().t() << std::endl
+                  << "  Quaternion: " << vpQuaternionVector(it->second.getRotationMatrix()).t() << std::endl;
+        std::cout << "  Roll/pitch/yaw [deg]: ";
         for (size_t i = 0; i < 3; i++) {
           std::cout << vpMath::deg(rxyz[i]) << " ";
         }
