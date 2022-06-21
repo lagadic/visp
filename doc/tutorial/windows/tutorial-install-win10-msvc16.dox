@@ -34,7 +34,7 @@ if "Windows 10 SDK" is enabled like in the following image
 
 \subsection install_win10_msvc16_3rd_cmake CMake
 
-CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64 platform 
+CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64 platform
 (at the time this tutorial was written it was the file `cmake-3.19.4-win64-x64.msi`).
 To install just double click on the msi file.
 
@@ -206,7 +206,7 @@ C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.1\build"
 C:\> exit
 \endverbatim
 where `%%VISP_WS%\opencv-4.5.1\build` is where you have installed OpenCV. Inside this folder you should
-have a file named `OpenCVConfig.cmake`. 
+have a file named `OpenCVConfig.cmake`.
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 16 2019 usage in
 the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new
@@ -227,7 +227,7 @@ At the time this tutorial was written, we downloaded `Intel.RealSense.SDK-WIN10-
 
 <b>2. Complete Intel Realsense SDK 2.0 installation</b>
 
-To finalize the installation, add the location of `realsense2.dll` library in the `Path` environment variable. 
+To finalize the installation, add the location of `realsense2.dll` library in the `Path` environment variable.
 Open the "Edit environment variable" UI, and modify `Path` to add a new line with
 `C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64`.
 
@@ -342,7 +342,7 @@ this tutorial was written, we downloaded "Pylon 6.1.1 Camera Software Suite Wind
 We're sorry, but the installation could not be completed.
 The following error has occurred:
 Error code: 0x800700005, Refused Access
-\endverbatim 
+\endverbatim
 it means certainly that there is an application that needs access to Internet that is not closed. Typically,
 we encounter this issue with our Anti-Virus Kaspersky tool. Once Kaspersky was paused, installation succeeded.
 - Double-click on downloaded file and follow the installation instructions.
@@ -401,15 +401,107 @@ At the time this tutorial was written, we downloaded SDK 1.5.1 that comes in `PS
 - At this step you should have the following
 \verbatim
 C:\> dir C:\temp\kinova-jaco\windows
-17/12/2018  21:48         6 234 383 Kinova-Jaco-Usb-Driver-(usblib)-Installer.exe
+17/12/2018  21:48         6 234 383 Kinova-Jaco-Usb-Driver-(usblib)-Installer.exe
 30/01/2019  00:02               207 ReadMe.txt
-29/01/2019  23:58        64 658 780 SDK_GEN2_1_5_1_x86.exe
-09/08/2017  21:38        13 767 776 vc_redist_x86.exe
+29/01/2019  23:58        64 658 780 SDK_GEN2_1_5_1_x86.exe
+09/08/2017  21:38        13 767 776 vc_redist_x86.exe
 \endverbatim
 - Install the SDK executing `SDK_GEN2_1_5_1_x86.exe`. Keep default installation options.
 - After installation, the SDK is available in `C:\Program Files (x86)\JACO-SDK`
 
 There is no need to complete installation process as for previous 3rd parties.
+
+\subsubsection install_win10_msvc16_3rdparty_qualisys Qualisys Mocap 3rd party
+
+If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you can optionally install
+[qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cpp_sdk) from source to enable vpMocapQualisys usage.
+
+<b>1. Get and build Qualisys Datastream SDK</b>
+
+\verbatim
+C:\> mkdir %VISP_DIR%\3rdparty\qualisys
+C:\> cd %VISP_DIR%\3rdparty\qualisys
+C:\> git clone https://github.com/qualisys/qualisys_cpp_sdk.git
+C:\> cd qualisys_cpp_sdk
+C:\> mkdir build
+C:\> cd build
+C:\> cmake -G "Visual Studio 16 2019" -A "x64" .. -DBUILD_EXAMPLES=ON
+C:\> cmake --build . --config Release --target install
+\endverbatim
+
+After installation the SDK is installed in `C:\Program Files\qualisys_cpp_sdk` and will be detected by ViSP if you run
+a new CMake configuration step over ViSP source code.
+
+<b>2. Complete installation</b>
+
+Now you have to complete Qualisys Datastream SDK installation setting some environment vars:
+- In order that ViSP detects Qualisys you have to set `QUALISYS_DIR` environment variable. Start up a `cmd`
+Command Prompt and enter:
+\verbatim
+C:\> setx QUALISYS_DIR "%VISP_WS%\Program Files\qualisys_cpp_sdk"
+C:\> exit
+\endverbatim
+- You have also to add the location of Qualisys Datastream SDK libraries corresponding in the Path environment variable.
+Open the "Edit environment variable" UI, and modify Path to add a new line with `%VISP_WS%\qualisys_cpp_sdk\lib`.
+
+<b>3. Known issue</b>
+
+If you encounter the following issue:
+\verbatim
+C:\visp-ws\3rdparty\qualisys\qualisys_cpp_sdk\build>cmake --build . --config Release --target install
+Microsoft (R) Build Engine version 16.3.2+e481bbf88 pour .NET Framework
+Copyright (C) Microsoft Corporation. Tous droits réservés.
+
+  Checking Build System
+  Building Custom Rule C:/visp-ws/3rdparty/qualisys/qualisys_cpp_sdk/CMakeLists.txt
+  Markup.cpp
+  Network.cpp
+  RTPacket.cpp
+  RTProtocol.cpp
+  Génération de code en cours...
+  qualisys_cpp_sdk.vcxproj -> C:\visp-ws\3rdparty\qualisys\qualisys_cpp_sdk\build\Release\qualisys_cpp_sdk.lib
+  Building Custom Rule C:/visp-ws/3rdparty/qualisys/qualisys_cpp_sdk/CMakeLists.txt
+  RigidBodyStreaming.cpp
+  RigidBodyStreaming.vcxproj -> C:\visp-ws\3rdparty\qualisys\qualisys_cpp_sdk\build\Release\RigidBodyStreaming.exe
+  Building Custom Rule C:/visp-ws/3rdparty/qualisys/qualisys_cpp_sdk/CMakeLists.txt
+  -- Install configuration: "Release"
+  CMake Error at cmake_install.cmake:48 (file):
+    file cannot create directory: C:/Program
+    Files/qualisys_cpp_sdk/lib/qualisys_cpp_sdk.  Maybe need administrative
+    privileges.
+\endverbatim
+you need to start a `cmd` command prompt as administrator. To this end type `cmd`, right-click the command prompt and then click Run as administrator.
+
+\subsubsection install_win10_msvc16_3rdparty_vicon Vicon Mocap 3rd party
+
+If you have the [Vicon](https://www.vicon.com) Motion Capture System you can optionally install
+[Vicon Datastream SDK](https://www.vicon.com/software/datastream-sdk/) to enable vpMocapVicon usage.
+
+<b>1. Get Vicon Datastream SDK</b>
+
+- Download latest Vicon Datastream SDK from [here](https://www.vicon.com/software/datastream-sdk/?section=downloads).
+At the time this tutorial was written, we donwloaded `ViconDataStreamSDK_1.11.0_128037.zip`.
+- Create the folder `$VISP_WS\3rdparty\vicon`
+\verbatim
+$ mkdir %VISP_WS%\3rdparty\vicon
+\endverbatim
+- Unzip downloaded file in `$VISP_WS\3rdparty\vicon`, in our case `ViconDataStreamSDK_1.11.0_128037.zip`
+- Unzip the Win64 SDK file, in our case `ViconDataStreamSDK_1.11.0_128037h__Win64.zip`
+- It brings `ViconDataStreamSDK_1.*_x64.msi` that you need now to execute to complete installation in `C:\Program Files\Vicon\DataStream SDK`
+
+After installation the SDK is available in `C:\Program Files\Vicon\DataStream SDK`.
+
+<b>2. Complete installation</b>
+
+Now you have to complete Vicon Datastream SDK installation setting some environment vars:
+- In order that ViSP detects Vicon you have to set `VICON_DIR` environment variable. Start up a `cmd`
+Command Prompt and enter:
+\verbatim
+C:\> setx VICON_DIR "%VISP_WS%\Program Files\Vicon\DataStream SDK\Win64\CPP"
+C:\> exit
+\endverbatim
+- You have also to add the location of Vicon Datastream SDK libraries corresponding in the Path environment variable.
+Open the "Edit environment variable" UI, and modify Path to add a new line with `%VISP_WS%\Program Files\Vicon\DataStream SDK\Win64\CPP`.
 
 \subsection install_win10_msvc16_get_source Get ViSP source code
 
@@ -430,9 +522,9 @@ C:\> cd %VISP_WS%
 C:\> git clone https://github.com/lagadic/visp.git
 \endverbatim
 
-We suppose now that ViSP source is in `%%VISP_WS%\visp`. 
+We suppose now that ViSP source is in `%%VISP_WS%\visp`.
 
-\subsection install_win10_msvc16_config Configure ViSP from source 
+\subsection install_win10_msvc16_config Configure ViSP from source
 
 The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution file that
 will be located in `%%VISP_WS%/visp-build-vc16`.
@@ -465,7 +557,7 @@ CMake Warning at CMakeLists.txt:1156 (message):
     - delete the cache using menu `File > Delete Cache`
     - and configure again ViSP.
 	.
-    At this point, you should no more see the warning. 
+    At this point, you should no more see the warning.
 
 - Click then on "Configure" button. All the red lines should disappear.
 \image html img-cmake-win10-msvc16-visp-config2.png
@@ -710,15 +802,15 @@ General configuration information for ViSP 3.3.1
 
   Python (for build):            NO
 
-  Java:                          
+  Java:
     ant:                         NO
     JNI:                         NO
 
-  Build options: 
+  Build options:
     Build deprecated:            yes
     Build with moment combine:   no
 
-  Mathematics: 
+  Mathematics:
     Blas/Lapack:                 yes
     \- Use MKL:                  no
     \- Use OpenBLAS:             no
@@ -729,11 +821,11 @@ General configuration information for ViSP 3.3.1
     Use Eigen3:                  yes (ver 3.3.9)
     Use OpenCV:                  yes (ver 4.5.1)
 
-  Simulator: 
-    Ogre simulator: 
+  Simulator:
+    Ogre simulator:
     \- Use Ogre3D:               no
     \- Use OIS:                  no
-    Coin simulator: 
+    Coin simulator:
     \- Use Coin3D:               no
     \- Use SoWin:                no
     \- Use SoXt:                 no
@@ -742,14 +834,14 @@ General configuration information for ViSP 3.3.1
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
-  Media I/O: 
+  Media I/O:
     Use JPEG:                    no
     Use PNG:                     no
     \- Use ZLIB:                 no
     Use OpenCV:                  yes (ver 4.5.1)
     Use stb_image (built-in):    no
 
-  Real robots: 
+  Real robots:
     Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
@@ -766,14 +858,14 @@ General configuration information for ViSP 3.3.1
     Use qbdevice (built-in):     yes (ver 2.6.0)
     Use takktile2 (built-in):    no
 
-  GUI: 
+  GUI:
     Use X11:                     no
     Use GTK:                     no
     Use OpenCV:                  yes (ver 4.5.1)
     Use GDI:                     yes
     Use Direct3D:                no
 
-  Cameras: 
+  Cameras:
     Use DC1394-2.x:              no
     Use CMU 1394:                no
     Use V4L2:                    no
@@ -783,7 +875,7 @@ General configuration information for ViSP 3.3.1
     Use Basler Pylon:            yes (ver 6.1.1)
     Use IDS uEye:                no
 
-  RGB-D sensors: 
+  RGB-D sensors:
     Use Realsense:               no
     Use Realsense2:              yes (ver 2.42.0)
     Use Kinect:                  no
@@ -793,29 +885,29 @@ General configuration information for ViSP 3.3.1
     Use PCL:                     yes (ver 1.11.1)
     \- Use VTK:                  yes (ver 8.2.0)
 
-  F/T sensors: 
+  F/T sensors:
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
 
-  Detection: 
+  Detection:
     Use zbar:                    no
     Use dmtx:                    no
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
 
-  Misc: 
+  Misc:
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
     Use libxml2:                 no
 
-  Optimization: 
+  Optimization:
     Use OpenMP:                  yes
     Use pthread:                 no
     Use pthread (built-in):      yes (ver 3.0.1)
     Use cxx standard:            14
 
-  Documentation: 
+  Documentation:
     Use doxygen:                 yes
 
   Tests and samples:

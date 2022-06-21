@@ -165,6 +165,7 @@ If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you c
 $ mkdir -p $VISP_WS/3rdparty/qualisys
 $ cd $VISP_WS/3rdparty/qualisys
 $ git clone https://github.com/qualisys/qualisys_cpp_sdk.git
+$ cd qualisys_cpp_sdk
 $ mkdir build
 $ cd build
 $ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
