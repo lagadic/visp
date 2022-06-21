@@ -10,9 +10,12 @@ ViSP 3.5.1 (under development)
     . Fabien Spindler
   - New features and improvements
     . Video writer is now able to create the output folder recursively (see vpVideoWriter)
-    . New vpRobotUniversalRobots class that allows to control an UR robot
+    . Introduce Universal Robots support with new vpRobotUniversalRobots class that
+      allows to control an UR robot
+    . Introduce Vicon and Qualisys motion capture system interfaces in vpMocapVicon and
+      vpMocapQualisys respectively
     . Image-based and position-based examples with UR robot
-    . Tutorial for extrinsic calibration improved with UR robot and Panda robot use cases 
+    . Tutorial for extrinsic calibration improved with UR robot and Panda robot use cases
     . Tutorials in tutorial/grabber folder have now a new --no-display command line option
       that allows to grab a video remotely
   - Tutorials
@@ -44,6 +47,8 @@ ViSP 3.5.0 (released February 15, 2022)
       a model where px = py
     . Introduce Bayer demosaicing also called debayering in vpImageConvert
     . UEye grabber now support Bayer 8 color mode
+    . Introduce Occipital Structure Core RGB-D device support in vpOccipitalStructure
+      class
     . Update to use Catch2 2.13.7
     . Improve video reader and writer classes to consider a sequence of non consecutive
       images

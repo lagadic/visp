@@ -378,6 +378,12 @@
 // Defined if IIT force-torque SDK is available.
 #cmakedefine VISP_HAVE_FT_IIT_SDK
 
+// Defined if Qualisys SDK is available for mocap.
+#cmakedefine VISP_HAVE_QUALISYS
+
+// Defined if Vicon SDK is available for mocap.
+#cmakedefine VISP_HAVE_VICON
+
 // Defined if Irisa's Afma4 robot available.
 #cmakedefine VISP_HAVE_AFMA4
 
