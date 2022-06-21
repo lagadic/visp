@@ -13,7 +13,7 @@ These steps have been tested on Windows 10 (64 bit), with CMake 3.22.1 and Visua
 \subsection install_win10_msvc17_3rd_msvc Visual Studio
 
 Visual Studio Community 2022 could be downloaded from https://www.visualstudio.com/downloads/. During
-a fresh installation enable "Desktop development with C++" workload. 
+a fresh installation enable "Desktop development with C++" workload.
 
 If you already have Visual Studio Community 2022, you can check if "Desktop Development with C++"
 workload is activated following instructions given
@@ -31,7 +31,7 @@ if "Windows 10 SDK" is enabled like in the following image
 
 \subsection install_win10_msvc17_3rd_cmake CMake
 
-CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64 platform 
+CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64 platform
 (at the time this tutorial was written it was the file `cmake-3.22.1-windows-x86_64.msi`).
 To install just double click on the `msi` file.
 
@@ -159,7 +159,7 @@ C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.5\build"
 C:\> exit
 \endverbatim
 where `%%VISP_WS%\opencv-4.5.5\build` is where you have installed OpenCV. Inside this folder you should
-have a file named `OpenCVConfig.cmake`. 
+have a file named `OpenCVConfig.cmake`.
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 17 2022 usage in
 the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new
@@ -223,7 +223,7 @@ At the time this tutorial was written, we downloaded `Intel.RealSense.SDK-WIN10-
 
 <b>2. Complete Intel Realsense SDK 2.0 installation</b>
 
-To finalize the installation, add the location of `realsense2.dll` library in the `Path` environment variable. 
+To finalize the installation, add the location of `realsense2.dll` library in the `Path` environment variable.
 Open the "Edit environment variable" UI, and modify `Path` to add a new line with
 `C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64`.
 
@@ -236,9 +236,9 @@ tracking using depth as feature you can skip this section.
 
 <b>1. Install PCL from source</b>
 
-At the time this tutorial was written, in https://github.com/PointCloudLibrary/pcl/releases there was no all-in-one installer for Visual Studio 17 2022. 
+At the time this tutorial was written, in https://github.com/PointCloudLibrary/pcl/releases there was no all-in-one installer for Visual Studio 17 2022.
 
-You need here to install PCL from source. 
+You need here to install PCL from source.
 
 <b>2. Complete PCL installation</b>
 
@@ -286,7 +286,7 @@ this tutorial was written, we downloaded "Pylon 6.3.0 Camera Software Suite Wind
 We're sorry, but the installation could not be completed.
 The following error has occurred:
 Error code: 0x800700005, Refused Access
-\endverbatim 
+\endverbatim
 it means certainly that there is an application that needs access to Internet that is not closed. Typically,
 we encounter this issue with our Anti-Virus Kaspersky tool. Once Kaspersky was paused, installation succeeded.
 - Double-click on downloaded file and follow the installation instructions.
@@ -355,6 +355,24 @@ C:\> dir C:\temp\kinova-jaco\windows
 
 There is no need to complete installation process as for previous 3rd parties.
 
+\subsubsection install_win10_msvc17_3rdparty_qualisys Qualisys Mocap 3rd party
+
+If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you can optionally install
+[qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cpp_sdk) from source to enable vpMocapQualisys usage.
+
+\verbatim
+C:\> mkdir %VISP_DIR%/3rdparty
+C:\> cd %VISP_DIR%/3rdparty
+C:\> git clone https://github.com/qualisys/qualisys_cpp_sdk.git
+C:\> mkdir build
+C:\> cd build
+C:\> cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
+C:\> cmake --build . --config Release --target install
+\endverbatim
+
+After installation the SDK will be detected by ViSP if you run
+a new CMake configuration step over ViSP source code.
+
 \subsection install_win10_msvc17_get_source Get ViSP source code
 
 There are different ways to get ViSP source code.
@@ -374,9 +392,9 @@ C:\> cd %VISP_WS%
 C:\> git clone https://github.com/lagadic/visp.git
 \endverbatim
 
-We suppose now that ViSP source is in `%%VISP_WS%\visp`. 
+We suppose now that ViSP source is in `%%VISP_WS%\visp`.
 
-\subsection install_win10_msvc17_config Configure ViSP from source 
+\subsection install_win10_msvc17_config Configure ViSP from source
 
 The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution file that
 will be located in `%%VISP_WS%/visp-build-vc17`.
@@ -409,7 +427,7 @@ CMake Warning at CMakeLists.txt:1156 (message):
     - delete the cache using menu `File > Delete Cache`
     - and configure again ViSP.
 	.
-    At this point, you should no more see the warning. 
+    At this point, you should no more see the warning.
 
 - Click then on "Configure" button. All the red lines should disappear.
 \image html img-cmake-win10-msvc17-visp-config2.jpg
@@ -654,15 +672,15 @@ General configuration information for ViSP 3.4.1
 
   Python (for build):            NO
 
-  Java:                          
+  Java:
     ant:                         NO
     JNI:                         NO
 
-  Build options: 
+  Build options:
     Build deprecated:            yes
     Build with moment combine:   no
 
-  Mathematics: 
+  Mathematics:
     Blas/Lapack:                 yes
     \- Use MKL:                  no
     \- Use OpenBLAS:             no
@@ -673,11 +691,11 @@ General configuration information for ViSP 3.4.1
     Use Eigen3:                  yes (ver 3.4.0)
     Use OpenCV:                  yes (ver 4.5.5)
 
-  Simulator: 
-    Ogre simulator: 
+  Simulator:
+    Ogre simulator:
     \- Use Ogre3D:               no
     \- Use OIS:                  no
-    Coin simulator: 
+    Coin simulator:
     \- Use Coin3D:               no
     \- Use SoWin:                no
     \- Use SoXt:                 no
@@ -686,14 +704,14 @@ General configuration information for ViSP 3.4.1
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
-  Media I/O: 
+  Media I/O:
     Use JPEG:                    no
     Use PNG:                     no
     \- Use ZLIB:                 no
     Use OpenCV:                  yes (ver 4.5.5)
     Use stb_image (built-in):    no
 
-  Real robots: 
+  Real robots:
     Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
@@ -710,14 +728,14 @@ General configuration information for ViSP 3.4.1
     Use qbdevice (built-in):     yes (ver 2.6.0)
     Use takktile2 (built-in):    no
 
-  GUI: 
+  GUI:
     Use X11:                     no
     Use GTK:                     no
     Use OpenCV:                  yes (ver 4.5.5)
     Use GDI:                     yes
     Use Direct3D:                no
 
-  Cameras: 
+  Cameras:
     Use DC1394-2.x:              no
     Use CMU 1394:                no
     Use V4L2:                    no
@@ -727,7 +745,7 @@ General configuration information for ViSP 3.4.1
     Use Basler Pylon:            no
     Use IDS uEye:                yes (ver 4.95.0)
 
-  RGB-D sensors: 
+  RGB-D sensors:
     Use Realsense:               no
     Use Realsense2:              yes (ver 2.50.0)
     Use Kinect:                  no
@@ -737,33 +755,33 @@ General configuration information for ViSP 3.4.1
     Use PCL:                     no
     \- Use VTK:                  no
 
-  F/T sensors: 
+  F/T sensors:
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
 
-  Detection: 
+  Detection:
     Use zbar:                    no
     Use dmtx:                    no
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
 
-  Misc: 
+  Misc:
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
     Use libxml2:                 no
 
-  Optimization: 
+  Optimization:
     Use OpenMP:                  yes
     Use pthread:                 no
     Use pthread (built-in):      yes (ver 3.0.1)
     Use cxx standard:            11
 
-  DNN: 
+  DNN:
     Use CUDA Toolkit:            no
     Use TensorRT:                no
 
-  Documentation: 
+  Documentation:
     Use doxygen:                 no
 
   Tests and samples:
