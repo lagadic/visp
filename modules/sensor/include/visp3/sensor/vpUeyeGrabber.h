@@ -70,7 +70,8 @@
  * setWhiteBalance()
  *
  * Depending on the settings, you may update image container size, especially if you want to create a window to display
- * the image: \snippet tutorial-grabber-ids-ueye.cpp Update image size
+ * the image:
+ * \snippet tutorial-grabber-ids-ueye.cpp Update image size
  *
  * Now you can create an infinite loop to grab images:
  * \code
