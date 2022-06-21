@@ -1599,7 +1599,7 @@ unsigned int vpMbGenericTracker::getNbPolygon() const
 /*!
   Get the number of polygons (faces) representing the object to track.
 
-  \return Number of polygons for all the cameras.
+  \param[out] mapOfNbPolygons : Map that contains the number of polygons for all the cameras.
 */
 void vpMbGenericTracker::getNbPolygon(std::map<std::string, unsigned int> &mapOfNbPolygons) const
 {
@@ -1695,10 +1695,10 @@ vpMbGenericTracker::getPolygonFaces(bool orderPolygons, bool useVisibility, bool
   \param mapOfPolygons : Map of 2D polygon faces.
   \param mapOfPoints : Map of face 3D points.
   \param orderPolygons : If true, the resulting list is ordered from the
-  nearest polygon faces to the farther. \param useVisibility : If true, only
-  visible faces will be retrieved. \param clipPolygon : If true, the polygons
-  will be clipped according to the clipping flags set in vpMbTracker. \return
-  A pair object containing the list of vpPolygon and the list of face corners.
+  nearest polygon faces to the farther.
+  \param useVisibility : If true, only visible faces will be retrieved.
+  \param clipPolygon : If true, the polygons will be clipped according to the clipping
+  flags set in vpMbTracker.
 
   \note This function will return the 2D polygons faces and 3D face points
   only for all the cameras.

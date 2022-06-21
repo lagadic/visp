@@ -388,17 +388,15 @@ void vpHistogram::display(const vpImage<unsigned char> &I, const vpColor &color,
 
 /*!
 
-  Smoothes the histogram and returns it.
+  Smoothes the histogram.
 
   A simple average scheme is used where each value \f$h(i)\f$ in the
   histogram is replaced by the average of itself and the neighbours.
 
   \f[h(i) = \sum_{j=i-\frac{fsize}{2}}^{i+\frac{fsize}{2}} h(j) \f]
 
-  \param fsize : Filter size. Corresponds to the number of values
+  \param[in] fsize : Filter size. Corresponds to the number of values
   around each point used to compute the mean value.
-
-  \return Smoothed histogram.
 
   \exception vpImageException::notInitializedError : Histogram array
   not initialsed. Means that the histogram was not calculated before.

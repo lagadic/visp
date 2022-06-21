@@ -172,13 +172,6 @@ public:
   */
   inline std::string getName() const { return name; }
 
-  /*!
-   Get the polygon associated to the circle.
-
-   \return poly.
-  */
-  //    inline vpMbtPolygon& getPolygon() {return poly;}
-
   void initInteractionMatrixError();
 
   bool initMovingEdge(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo, bool doNotTrack,

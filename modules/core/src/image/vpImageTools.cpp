@@ -63,7 +63,6 @@
   \param B : Height gray level value of the range to consider.
   \param B_star : New gray level value \f$ B^*\f$ to attribute to pixel
   who's value was B
-  \return The modified image.
 
   \exception vpImageException::incorrectInitializationError If \f$B \leq A\f$.
 

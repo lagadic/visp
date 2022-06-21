@@ -62,7 +62,7 @@ public:
   bool getSpecificBodyPose(const std::string &body_name, vpHomogeneousMatrix &body_pose);
 
 protected:
-  bool getBodyPose(int ibody, std::string &body, vpHomogeneousMatrix &M, CRTPacket *rtPacket);
+  bool getBodyPose(int iBody, std::string &name, vpHomogeneousMatrix &M, CRTPacket *rtPacket);
   bool verifyDataStreamed();
 
 private:
