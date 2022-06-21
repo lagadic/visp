@@ -76,7 +76,7 @@ void usage(const char *argv[], int error)
   std::cout << "DESCRIPTION" << std::endl
             << "  --server-address <address>" << std::endl
             << "    Server address." << std::endl
-            << "    Default: 192.168.34.42." << std::endl
+            << "    Default: 192.168.30.1." << std::endl
             << std::endl
             << "  --only-body <name>" << std::endl
             << "    Name of the specific body you want to be displayed." << std::endl
@@ -93,7 +93,7 @@ void usage(const char *argv[], int error)
             << std::endl;
   std::cout << "USAGE" << std::endl
             << "  Example to test Vicon connection:" << std::endl
-            << "    " << argv[0] << std::endl
+            << "    " << argv[0] << " --server-address 192.168.100.1  --verbose" << std::endl
             << std::endl;
 
   if (error) {
@@ -142,9 +142,9 @@ void display_loop(std::mutex &lock, const std::map<std::string, vpHomogeneousMat
       vpRxyzVector rxyz(it->second.getRotationMatrix());
       std::cout << "Found body: " << it->first << std::endl;
       if (verbose) {
-        std::cout << " Translation [m]: " << it->second.getTranslationVector().t() << std::endl
-                  << " Quaternion: " << vpQuaternionVector(it->second.getRotationMatrix()).t() << std::endl;
-        std::cout << " Roll/pitch/yaw [deg]: ";
+        std::cout << "  Translation [m]: " << it->second.getTranslationVector().t() << std::endl
+                  << "  Quaternion: " << vpQuaternionVector(it->second.getRotationMatrix()).t() << std::endl;
+        std::cout << "  Roll/pitch/yaw [deg]: ";
         for (size_t i = 0; i < 3; i++) {
           std::cout << vpMath::deg(rxyz[i]) << " ";
         }
@@ -159,7 +159,7 @@ void display_loop(std::mutex &lock, const std::map<std::string, vpHomogeneousMat
 int main(int argc, const char *argv[])
 {
   bool opt_verbose = false;
-  std::string opt_serverAddress = "192.168.30.42";
+  std::string opt_serverAddress = "192.168.30.1";
   std::string opt_onlyBody = "";
   bool opt_all_bodies = false;
 

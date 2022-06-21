@@ -72,7 +72,7 @@ void vpMocapVicon::close()
   m_DirectClient.DisableUnlabeledMarkerData();
   m_DirectClient.DisableDeviceData();
   if (m_verbose) {
-    std::cout << " Disconnecting..." << std::endl;
+    std::cout << "Disconnecting..." << std::endl;
   }
   m_DirectClient.Disconnect();
 }
@@ -161,9 +161,6 @@ bool vpMocapVicon::setupDataStreamed()
 bool vpMocapVicon::getBodiesPose(std::map<std::string, vpHomogeneousMatrix> &bodies_pose, bool all_bodies)
 {
   if (m_DirectClient.GetFrame().Result == Result::Success) {
-    if (m_verbose) {
-      std::cout << "Frame : " << m_DirectClient.GetFrameNumber().FrameNumber << std::endl;
-    }
     for (unsigned int iBody = 0; iBody < m_DirectClient.GetSubjectCount().SubjectCount; iBody++) {
       std::string bodyName = m_DirectClient.GetSubjectName(iBody).SubjectName;
       std::string rootSegment = m_DirectClient.GetSubjectRootSegmentName(bodyName).SegmentName;
@@ -212,9 +209,6 @@ bool vpMocapVicon::getSpecificBodyPose(const std::string &body_name, vpHomogeneo
   if (getBodiesPose(bodies_pose, true)) {
     if (bodies_pose.find(body_name) != bodies_pose.end()) {
       body_pose = bodies_pose[body_name];
-      if (m_verbose) {
-        std::cout << "I found bodyName" << body_name << std::endl;
-      }
       return true;
     } else {
       std::cout << "The body " << body_name << " was not found in Vicon. Please check the name you typed." << std::endl;
