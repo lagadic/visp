@@ -724,6 +724,11 @@ scheme, ...</p>
   \defgroup group_sensor_ft Force/Torque sensor
   Force/Torque sensor interfaces.
 */
+/*!
+  \ingroup module_sensor
+  \defgroup group_sensor_mocap Motion capture
+  Motion capture interfaces.
+*/
 /*******************************************
  * Module tt
  *******************************************/

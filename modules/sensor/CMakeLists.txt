@@ -122,6 +122,16 @@ if(USE_PCL)
   list(APPEND opt_libs ${PCL_DEPS_LIBRARIES})
 endif()
 
+if(USE_QUALISYS)
+  list(APPEND opt_incs ${QUALISYS_INCLUDE_DIRS})
+  list(APPEND opt_libs ${QUALISYS_LIBRARIES})
+endif()
+
+if(USE_VICON)
+  list(APPEND opt_incs ${VICON_INCLUDE_DIRS})
+  list(APPEND opt_libs ${VICON_LIBRARIES})
+endif()
+
 if(WITH_ATIDAQ)
   # atidac is private
   include_directories(${ATIDAQ_INCLUDE_DIRS})
@@ -132,7 +142,7 @@ vp_glob_module_sources()
 
 vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
-vp_add_tests(CTEST_EXCLUDE_PATH framegrabber force-torque rgb-depth DEPENDS_ON visp_io visp_gui)
+vp_add_tests(CTEST_EXCLUDE_PATH force-torque framegrabber mocap rgb-depth DEPENDS_ON visp_io visp_gui)
 
 # Add configuration file for IIT FT sensor besides testForceTorqueIitSensor.cpp binary
 configure_file(test/force-torque/configurationSettings.ini configurationSettings.ini COPYONLY)

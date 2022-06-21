@@ -2198,6 +2198,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_PYLON \
                          VISP_HAVE_QBDEVICE \
                          VISP_HAVE_QT \
+                         VISP_HAVE_QUALISYS \
                          VISP_HAVE_REALSENSE \
                          VISP_HAVE_REALSENSE_VERSION=0x020000 \
                          VISP_HAVE_REALSENSE2 \
@@ -2209,6 +2210,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_UEYE \
                          VISP_HAVE_UR_RTDE \
                          VISP_HAVE_V4L2 \
+                         VISP_HAVE_VICON \
                          VISP_HAVE_VIPER650 \
                          VISP_HAVE_VIPER650_DATA \
                          VISP_HAVE_VIPER850 \
