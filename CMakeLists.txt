@@ -549,7 +549,7 @@ VP_OPTION(USE_PTU46       PTU46       ""    "Include ptu-46 support"           "
 VP_OPTION(USE_FLIRPTUSDK  FlirPtuSDK  ""    "Include Flir PTU SDK support"     "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_CMU1394     CMU1394     ""    "Include cmu1494 support"          "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_QUALISYS    Qualisys    ""    "Include Qualisys SDK support"     "" ON IF NOT WINRT AND NOT IOS)
-VP_OPTION(USE_VICON       Vicon       ""    "Include Vicon SDK support"        "" ON IF UNIX)
+VP_OPTION(USE_VICON       Vicon       ""    "Include Vicon SDK support"        "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_GDI         GDI         ""    "Include gdi support"              "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 #VP_OPTION(USE_DIRECT3D    DIRECT3D    ""    "Include d3d support"             "" ON IF WIN32 AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_DIRECTSHOW  DIRECTSHOW  ""    "Include dshow support"            "" ON IF WIN32 AND NOT WINRT AND NOT IOS)

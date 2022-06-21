@@ -40,12 +40,7 @@
 #include <cmath>
 #include <iostream>
 
-#ifdef _WIN32
-#define sleep Sleep
-#else
-#include <unistd.h>
-#endif
-
+#include <visp3/core/vpTime.h>
 #include <visp3/sensor/vpMocapQualisys.h>
 
 /*!
@@ -85,7 +80,7 @@ bool vpMocapQualisys::connect()
                                 m_bigEndian)) {
         std::cout << "Qualisys connection error: " << m_rtProtocol.GetErrorString() << std::endl;
 
-        sleep(1);
+        vpTime::sleepMs(1000);
       }
     } else {
       if (m_verbose) {
@@ -116,7 +111,7 @@ bool vpMocapQualisys::verifyDataStreamed()
           std::cout << "Reading 6DOF settings error: " << m_rtProtocol.GetErrorString() << std::endl;
         }
 
-        sleep(1);
+        vpTime::sleepMs(1000);
       }
     } else {
       if (m_verbose && !readSettingsOK) {
@@ -139,7 +134,7 @@ bool vpMocapQualisys::verifyDataStreamed()
             std::cout << "Streaming frames error: " << m_rtProtocol.GetErrorString() << std::endl;
           }
 
-          sleep(1);
+          vpTime::sleepMs(1000);
         }
         m_streamFrames = true;
       } else {

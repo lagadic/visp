@@ -40,12 +40,7 @@
 #include <cmath>
 #include <iostream>
 
-#ifdef _WIN32
-#define sleep Sleep
-#else
-#include <unistd.h>
-#endif
-
+#include <visp3/core/vpTime.h>
 #include <visp3/sensor/vpMocapVicon.h>
 
 #include <IDataStreamClientBase.h>
@@ -110,7 +105,7 @@ bool vpMocapVicon::connect()
             break;
           }
         }
-        sleep(1);
+        vpTime::sleepMs(1000);
       }
       if (ok) {
         if (m_verbose) {

@@ -93,7 +93,7 @@ void usage(const char *argv[], int error)
             << std::endl;
   std::cout << "USAGE" << std::endl
             << "  Example to test Vicon connection:" << std::endl
-            << "    " << argv[0] << " --server-address 192.168.100.1  --verbose" << std::endl
+            << "    " << argv[0] << " --server-address 127.0.0.1  --verbose" << std::endl
             << std::endl;
 
   if (error) {
@@ -145,7 +145,7 @@ void display_loop(std::mutex &lock, const std::map<std::string, vpHomogeneousMat
         std::cout << "  Translation [m]: " << it->second.getTranslationVector().t() << std::endl
                   << "  Quaternion: " << vpQuaternionVector(it->second.getRotationMatrix()).t() << std::endl;
         std::cout << "  Roll/pitch/yaw [deg]: ";
-        for (size_t i = 0; i < 3; i++) {
+        for (unsigned int i = 0; i < 3; i++) {
           std::cout << vpMath::deg(rxyz[i]) << " ";
         }
         std::cout << std::endl;
