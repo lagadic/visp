@@ -92,13 +92,13 @@ public:
    *
    * \sa connect()
    */
-  inline void setServerAddress(const std::string &serverAddr) { m_serverAddr = serverAddr; }
+  virtual inline void setServerAddress(const std::string &serverAddr) { m_serverAddr = serverAddr; }
 
   /*!
    * Enable or disable verbose mode.
    * \param[in] verbose : When true enable verbose mode, otherwise disable verbose mode.
    */
-  inline void setVerbose(bool verbose) { m_verbose = verbose; }
+  virtual inline void setVerbose(bool verbose) { m_verbose = verbose; }
 
 protected:
   bool m_verbose;

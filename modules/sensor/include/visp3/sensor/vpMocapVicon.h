@@ -41,8 +41,6 @@
 
 #include <visp3/sensor/vpMocap.h>
 
-#include <DataStreamClient.h>
-
 /*!
  *\class vpMocapVicon
  * \ingroup group_sensor_mocap
@@ -59,12 +57,15 @@ public:
 
   bool getBodiesPose(std::map<std::string, vpHomogeneousMatrix> &bodies_pose, bool all_bodies = false);
   bool getSpecificBodyPose(const std::string &body_name, vpHomogeneousMatrix &body_pose);
-
-protected:
-  bool setupDataStreamed();
+  void setServerAddress(const std::string &serverAddr);
+  void setVerbose(bool verbose);
 
 private:
-  ViconDataStreamSDK::CPP::Client m_DirectClient;
+  vpMocapVicon(const vpMocapVicon &);            // noncopyable
+  vpMocapVicon &operator=(const vpMocapVicon &); //
+
+  class vpMocapViconImpl;
+  vpMocapViconImpl *m_impl;
 };
 
 #endif

@@ -60,20 +60,15 @@ public:
 
   bool getBodiesPose(std::map<std::string, vpHomogeneousMatrix> &bodies_pose, bool all_bodies = false);
   bool getSpecificBodyPose(const std::string &body_name, vpHomogeneousMatrix &body_pose);
-
-protected:
-  bool getBodyPose(int iBody, std::string &name, vpHomogeneousMatrix &M, CRTPacket *rtPacket);
-  bool verifyDataStreamed();
+  void setServerAddress(const std::string &serverAddr);
+  void setVerbose(bool verbose);
 
 private:
-  CRTProtocol m_rtProtocol;
-  unsigned short m_basePort;
-  unsigned short m_udpPort;
-  int m_majorVersion;
-  int m_minorVersion;
-  bool m_bigEndian;
-  bool m_dataAvailable;
-  bool m_streamFrames;
+  vpMocapQualisys(const vpMocapQualisys &);            // noncopyable
+  vpMocapQualisys &operator=(const vpMocapQualisys &); //
+
+  class vpMocapQualisysImpl;
+  vpMocapQualisysImpl *m_impl;
 };
 
 #endif
