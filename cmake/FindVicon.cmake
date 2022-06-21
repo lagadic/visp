@@ -66,3 +66,8 @@ if(VICON_LIBRARY AND VICON_INCLUDE_DIR)
 else()
     set(VICON_FOUND FALSE)
 endif()
+
+mark_as_advanced(
+  VICON_INCLUDE_DIR
+  VICON_LIBRARY
+)
