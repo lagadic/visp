@@ -126,10 +126,7 @@ void vpParallelPort::open()
 
   unsigned char data = 5; // 0x00000101 = 5 in decimal
   parport.sendData(data); // D0 and D2 are set to logical level 1
-
   \endcode
-
-  \return true if the device was close, false if an error occurs.
 */
 void vpParallelPort::sendData(unsigned char &data)
 {

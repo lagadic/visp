@@ -337,9 +337,11 @@ bool vpTemplateTrackerZone::inZone(const double &i, const double &j, unsigned in
 
 /*!
   A zone is defined by a set of triangles. This function returns the ith
-  triangle. \param i : Index of the triangle to return. \param T : The
-  triangle corresponding to index i. \return true if the triangle with index i
-  was found, false otherwise.
+  triangle.
+  \param[in] i : Index of the triangle to return.
+  \param[out] T : The triangle corresponding to index i.
+  \exception  pException::badValue When the triangle with index i
+  was not found.
 
   The following sample code shows how to use this function:
   \code

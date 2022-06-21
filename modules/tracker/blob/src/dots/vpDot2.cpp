@@ -1505,10 +1505,10 @@ vpDot2 *vpDot2::getInstance() { return new vpDot2(); }
 
 /*!
 
-  Returns the list of Freeman chain code used to turn around the dot
+  Gets the list of Freeman chain code used to turn around the dot
   counterclockwise.
 
-  \return List of Freeman chain list [0, ..., 7]
+  \param[out] freeman_chain : List of Freeman chain list [0, ..., 7]
   - 0 : right
   - 1 : top right
   - 2 : top
