@@ -162,8 +162,8 @@ If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you c
 [qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cpp_sdk) from source to enable vpMocapQualisys usage.
 
 \verbatim
-$ mkdir -p $VISP_DIR/3rdparty
-$ cd $VISP_DIR/3rdparty
+$ mkdir -p $VISP_WS/3rdparty/qualisys
+$ cd $VISP_WS/3rdparty/qualisys
 $ git clone https://github.com/qualisys/qualisys_cpp_sdk.git
 $ mkdir build
 $ cd build
@@ -184,27 +184,40 @@ If you have the [Vicon](https://www.vicon.com) Motion Capture System you can opt
 
 - Download latest Vicon Datastream SDK from [here](https://www.vicon.com/software/datastream-sdk/?section=downloads).
 At the time this tutorial was written, we donwloaded `ViconDataStreamSDK_1.11.0_128037.zip`.
-- Unzip SDK for macOS
+- Unzip SDK for macOS:
 \verbatim
-$ mkdir -p $VISP_DIR/3rdparty/vicon
-$ mv ~/Download/ViconDataStreamSDK_1.1*.zip
-$ cd $VISP_DIR/3rdparty/vicon
+$ mkdir -p $VISP_WS/3rdparty/vicon
+$ cd $VISP_WS/3rdparty/vicon
+$ mv ~/Downloads/ViconDataStreamSDK_1.1*.zip .
 $ unzip ViconDataStreamSDK_1.*.zip
 $ unzip ViconDataStreamSDK_1.*_Mac64.zip
 \endverbatim
 
-After installation the SDK is available in `$VISP_DIR/3rdparty/vicon/Mac64`.
+After installation the SDK is available in `$VISP_WS/3rdparty/vicon/Mac64`.
 
 <b>2. Setup for usage</b>
 
-To help ViSP to detect the location of Vicon Datastream SDK you will need to setup the following environment vars.
+To help ViSP to detect the location of Vicon Datastream SDK you will need to setup the following environment var:
 
+\verbatim
+$ export VICON_DIR=$VISP_WS/3rdparty/vicon/Mac64
+\endverbatim
+\note This can also be done during ViSP cmake configuration like:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DVICON_DIR=$VISP_WS/3rdparty/vicon/Mac64
+\endverbatim
+
+<b>3. Known issue</b>
+
+To allow any binary linked to this Vicon SDK to find Vicon Datastream SDK library,
+you need also to set the following environment vars:
 \verbatim
 $ export DYLD_LIBRARY_PATH=$DYLD_LIBRARY_PATH:$VISP_DIR/3rdparty/vicon/Mac64
 $ export LC_LOAD_DYLIB=$LC_LOAD_DYLIB:$VISP_DIR/3rdparty/vicon/Mac64
 \endverbatim
 
-The first line contains the path to the `libViconDataStreamSDK_CPP.dylib` and help ViSP to detect the SDK at runtime.
+The first line contains the path to the `libViconDataStreamSDK_CPP.dylib` library and help ViSP to detect the SDK at runtime.
 The second line is here to help loading boost libraries that are in the same folder.
 
 Without setting these env vars you will get similar errors:
