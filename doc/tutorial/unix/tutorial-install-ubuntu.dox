@@ -51,7 +51,7 @@ $ git clone https://github.com/lagadic/visp.git
 $ mkdir -p $VISP_WS/visp-build
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
-$ make -j4
+$ make -j$(nproc)
 \endverbatim
 
 - Set `VISP_DIR` environment variable
@@ -137,7 +137,7 @@ Following the <a href="https://github.com/IntelRealSense/librealsense/blob/maste
         $ mkdir build
         $ cd build
         $ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
-        $ make -j4
+        $ make -j$(nproc)
         $ sudo make install
 
 7. Connect the Realsense SR300 or D400 series camera and check if you are able to acquire images running:
@@ -317,18 +317,79 @@ If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you c
 [qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cpp_sdk) from source to enable vpMocapQualisys usage.
 
 \verbatim
-$ mkdir -p $VISP_DIR/3rdparty
-$ cd $VISP_DIR/3rdparty
+$ mkdir -p $VISP_WS/3rdparty/qualisys
+$ cd $VISP_WS/3rdparty/qualisys
 $ git clone https://github.com/qualisys/qualisys_cpp_sdk.git
+$ cd qualisys_cpp_sdk
 $ mkdir build
 $ cd build
-$ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
-$ make -j$(sysctl -n hw.logicalcpu)
-$ make install
+$ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release -DCMAKE_CXX_FLAGS=-fPIC
+$ make -j$(nproc)
+$ sudo make install
 \endverbatim
 
 After installation the SDK is available in `/usr/local` and will be detected by ViSP if you run
 a new CMake configuration step over ViSP source code.
+
+\subsubsection install_ubuntu_3rdparty_vicon Vicon Mocap 3rd party
+
+If you have the [Vicon](https://www.vicon.com) Motion Capture System you can optionally install
+[Vicon Datastream SDK](https://www.vicon.com/software/datastream-sdk/) to enable vpMocapVicon usage.
+
+<b>1. Get Vicon Datastream SDK</b>
+
+- Download latest Vicon Datastream SDK from [here](https://www.vicon.com/software/datastream-sdk/?section=downloads).
+At the time this tutorial was written, we donwloaded `ViconDataStreamSDK_1.11.0_128037.zip`.
+- Unzip SDK for Linux:
+\verbatim
+$ mkdir -p $VISP_WS/3rdparty/vicon
+$ cd $VISP_WS/3rdparty/vicon
+$ mv ~/Downloads/ViconDataStreamSDK_1.1*.zip .
+$ unzip ViconDataStreamSDK_1.*.zip
+$ unzip ViconDataStreamSDK_1.*_Linux64.zip
+\endverbatim
+
+After installation the SDK is available in `$VISP_WS/3rdparty/vicon/Linux64`.
+
+<b>2. Setup for usage</b>
+
+To help ViSP to detect the location of Vicon Datastream SDK you will need to setup the following environment var:
+
+\verbatim
+$ export VICON_DIR=$VISP_WS/3rdparty/vicon/Linux64
+\endverbatim
+\note This can also be done during ViSP cmake configuration like:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DVICON_DIR=$VISP_WS/3rdparty/vicon/Linux64
+\endverbatim
+
+<b>3. Known issue</b>
+
+If you encounter the following warning during ViSP cmake configuration:
+\verbatim
+$ cmake ../visp
+CMake Warning at cmake/VISPUtils.cmake:790 (add_library):
+  Cannot generate a safe linker search path for target visp_sensor because
+  files in some directories may conflict with libraries in implicit
+  directories:
+
+    link library [libboost_system.so] in /usr/lib/x86_64-linux-gnu may be hidden by files in:
+      $VISP_WS/3rdparty/vicon/Linux64
+\endverbatim
+it means that boost is installed as a system library and that it has a version that differs from the one
+that comes with Vicon Datastream SDK that is in `$VISP_WS/3rdparty/vicon/Linux64`.
+
+The best to fix this is simply force boost usage from system package by removing the version that comes with the SDK:
+\verbatim
+$ cd $VISP_WS/3rdparty/vicon/Linux64
+$ rm libboost_*.so
+\endverbatim
+and then launch a new ViSP cmake configuration:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ cmake ../visp -DVICON_DIR=$VISP_WS/3rdparty/vicon/Linux64
+\endverbatim
 
 \subsubsection install_ubuntu_3rdparty_other Other optional 3rd parties
 
@@ -423,7 +484,7 @@ To generate the makefiles, just press [g] key in the ccmake gui.
 To build ViSP libraries proceed with:
 \verbatim
 $ cd $VISP_WS/visp-build
-$ make -j4
+$ make -j$(nproc)
 \endverbatim
 
 \subsection install_ubuntu_visp_doc Build ViSP documentation
@@ -442,7 +503,7 @@ Then you can proceed with:
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp
-$ make -j4 visp_doc
+$ make -j$(nproc) visp_doc
 \endverbatim
 The generated documentation is then available in `$VISP_WS/visp-build/doc/html/index.html`
 
@@ -452,14 +513,14 @@ The generated documentation is then available in `$VISP_WS/visp-build/doc/html/i
 \verbatim
 $ npm install mathjax
 $ cmake ../visp -DUSE_MATHJAX=ON
-$ make -j4 visp_doc
+$ make -j$(nproc) visp_doc
 \endverbatim
 \note
 - It is also possible to generate a more complete documentation that includes also all the internal classes.
   This could be achieved setting CMake var `ENABLE_FULL_DOC` to `ON` like:
 \verbatim
 $ cmake ../visp -DENABLE_FULL_DOC=ON
-$ make -j4 visp_doc
+$ make -j$(nproc) visp_doc
 \endverbatim
 
 \subsection install_ubuntu_visp_dir Set VISP_DIR environment var
@@ -548,7 +609,7 @@ Here you can check the content of the `ViSP-third-party.txt` file and see if the
 
 Finally, you need to rebuild ViSP with:
 \verbatim
-$ make -j4
+$ make -j$(nproc)
 \endverbatim
 
 \subsection install_ubuntu_tips_install How to install ViSP
@@ -563,7 +624,7 @@ $ sudo make install
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DCMAKE_INSTALL_PREFIX=/usr
-$ make -j4
+$ make -j$(nproc)
 $ sudo make install
 \endverbatim
 
@@ -574,7 +635,7 @@ to `/my/install/folder/lib/cmake/visp` that contains the `VISPConfig.cmake` file
 \verbatim
 $ cd $VISP_WS/visp-build
 $ cmake ../visp -DCMAKE_INSTALL_PREFIX=/my/install/folder
-$ make -j4
+$ make -j$(nproc)
 $ sudo make install
 $ echo "export VISP_DIR=/my/install/folder/lib/cmake/visp" >> ~/.bashrc
 $ source ~/.bashrc
@@ -592,7 +653,7 @@ $ sudo make uninstall
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \verbatim
 $ cd $VISP_WS/visp-build
-$ make -j4 visp_modules
+$ make -j$(nproc) visp_modules
 \endverbatim
 
 \subsection install_ubuntu_tips_module_once How to build a ViSP specific module
@@ -600,13 +661,13 @@ $ make -j4 visp_modules
 If you want to build a given module and all the dependencies:
 \verbatim
 $ cd $VISP_WS/visp-build
-$ make -j4 visp_<module_name>
+$ make -j$(nproc) visp_<module_name>
 \endverbatim
 
 For example to build the model-based tracker module named mbt, run:
 \verbatim
 $ cd $VISP_WS/visp-build
-$ make -j4 visp_mbt
+$ make -j$(nproc) visp_mbt
 \endverbatim
 
 \subsection install_ubuntu_tips_target Which are the targets that could be run with make ?
