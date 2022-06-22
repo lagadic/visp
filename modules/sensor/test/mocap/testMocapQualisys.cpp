@@ -39,9 +39,10 @@
 
 #include <visp3/sensor/vpMocapQualisys.h>
 
+#include <iostream>
+
 #if defined(VISP_HAVE_QUALISYS) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
-#include <iostream>
 #include <mutex>
 #include <signal.h>
 #include <thread>
