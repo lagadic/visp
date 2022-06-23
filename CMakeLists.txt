@@ -778,7 +778,7 @@ if(DOXYGEN_FOUND)
   endif()
 
   configure_file(${VISP_SOURCE_DIR}/doc/mainpage.dox.in
-    ${VISP_DOC_DIR}/mainpage.doc
+    ${VISP_DOC_DIR}/mainpage.dox
     @ONLY )
 else()
   set(VISP_HAVE_DOXYGEN "no")        # for header vpConfig.h

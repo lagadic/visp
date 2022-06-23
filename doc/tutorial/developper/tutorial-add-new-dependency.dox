@@ -352,7 +352,7 @@ Bla Bla...
 */
 \endverbatim
 
-- The next step is to reference this new page called `tutorial-dummy-robot` in ViSP main page documentation modifying `$VISP_WS/visp/doc/mainpage.doc.in`, either adding as bellow a new section (here called "Playing with robots"), either introducing the reference to this new page in an existing section:
+- The next step is to reference this new page called `tutorial-dummy-robot` in ViSP main page documentation modifying `$VISP_WS/visp/doc/mainpage.dox.in`, either adding as bellow a new section (here called "Playing with robots"), either introducing the reference to this new page in an existing section:
 \verbatim
 \subsection tuto_robot Playing with robots
 

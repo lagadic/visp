@@ -290,7 +290,7 @@ I you have a Panda robot from Franka Emika, you may install libfranka in order t
 Installation instructions are provided following \ref franka_prereq_libfranka. There is also the \ref tutorial-franka-pbvs that explains
 how to install a real-time Linux kernel requested to control the robot by \ref franka_prereq_rt_linux.
 
-\subsubsection install_ubuntu_3rdparty__3rdparty_jaco Kinova Jaco 3rd party
+\subsubsection install_ubuntu_3rdparty_jaco Kinova Jaco 3rd party
 
 If you have a
 [Kinova Jaco](https://www.kinovarobotics.com/en/products/assistive-technologies/kinova-jaco-assistive-robotic-arm)
