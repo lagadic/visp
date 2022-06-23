@@ -1,0 +1,191 @@
+/*! \page supported-material Supported Material
+
+Here you will find a list of robots, cameras, motion capture system that you can use for learning visual-servoing or build robotics applications
+on top of them based on ViSP.
+
+- \subpage material_robots
+- \subpage material_haptic
+- \subpage material_ft
+- \subpage material_laser_scanner
+- \subpage material_camera_depth
+- \subpage material_camera
+- \subpage material_mocap
+
+*/
+
+/*! \page material_robots Supported Robots
+
+These are the robots supported by ViSP.
+
+- <b>Universal Robots</b><br>
+All the robots from [Universal Robots](https://www.universal-robots.com) are interfaced in vpUniversalRobotsRobot class
+that is a wrapper over [ur_rtde C++ interface](https://sdurobotics.gitlab.io/ur_rtde/) 3rd party.
+There are 2 tutorials that explain how to use them with ViSP: \ref tutorial-universal-robot-ibvs
+and \ref tutorial-universal-robot-pbvs.
+\image html img-universal-robots.jpg Universal Robots family
+
+- <b>Franka Emika Panda</b><br>
+The Franka Emika Panda robot in its research configuration is interfaced in vpRobotFranka class, a wrapper over
+[Franka Control Interface](https://frankaemika.github.io/docs/libfranka.html) 3rd party.
+There are also 2 tutorials that may be useful to start with this robot in ViSP: \ref tutorial-franka-ibvs
+and \ref tutorial-franka-pbvs. If you want to simulate this robot using ViSP and ROS
+there is also this other tutorial: \ref tutorial-franka-sim.
+\image html img-franka.jpg Panda robot from Franka Emika
+
+- <b>Kinova Jaco</b><br>
+All the [Kinova](https://assistive.kinovarobotics.com/) assistive robotic arms are supported by ViSP using vpRobotKinova,
+an interface over Kinova Jaco SDK that allows to control Gen2 4, 6 and 7 DoF arm.
+Installation instructions are provided for
+<a href="tutorial-install-ubuntu.html#install_ubuntu_3rdparty_jaco">Ubuntu</a>
+and <a href="tutorial-install-win10-msvc17.html#install_win10_msvc17_3rdparty_jaco">Windows</a>.
+\image html img-kinova.jpg Kinova assistive robotic arm
+
+- <b>FLIR Pan-Tilt Unit</b><br>
+All the [FLIR](https://flir.com/) PT units are supported by ViSP using vpRobotFlirPtu,
+an interface over FLIR PTU SDK.
+Installation instructions are provided in \ref tutorial-flir-ptu-vs.
+\image html img-flir-ptu-d47.png FLIR PTU-47
+
+*/
+
+/*! \page material_haptic Supported Haptic Devices
+
+These are the haptic devices supported by ViSP.
+
+- <b>qbRobotics Soft Hand</b><br>
+If you have the Soft Hand from [qbRobotics](https://qbrobotics.com/) you can use vpQbSoftHand class to control the hand.
+\image html img-haptic-qbsofthand.jpg Soft Hand from qbRobotics
+
+- <b>Right Hand Robotics Reflex Takktile2 Hand</b><br>
+If you have the Reflex Takktile2 Hand from [Right Hand Robotics](https://qbrobotics.com/) you can use
+vpReflexTakktile2 class to control the hand.
+\image html img-haptic-takktile2.jpg Reflex Takktile2 Hand
+
+- <b>Haption Virtuose 6D</b><br>
+If you have a Virtuose 6D haptic device from [Haptions](http://www.haption.com) you can use vpVirtuose class to control
+the device.
+\image html img-haptic-virtuose.jpg Virtuose 6D haptic device
+
+*/
+
+/*! \page material_ft Supported Force/Torque Sensor
+
+These are the force/torque sensors supported by ViSP.
+
+- <b>ATI Net F/T device</b><br>
+If you have an [ATI Net F/T](https://www.ati-ia.com/products/ft/ft_NetFT.aspx) sensor you can use vpForceTorqueAtiNetFTSensor
+class to get access to the measurements.
+\image html img-ft-ati-net-ft.png ATI Net F/T device
+
+- <b>ATI FT device connected to a National Instrument DAQmx PCI board</b><br>
+If you have an [ATI F/T](https://www.ati-ia.com/products/ft/ft_ModelListing.aspx) sensor you can use vpForceTorqueAtiSensor
+class to get access to the measurements. This wrapper uses [Comedi](http://www.comedi.org) 3rd party. Installation instructions are provided
+[here](https://visp.inria.fr/3rd_comedi/).
+\image html img-ft-gamma-sensor.jpg ATI Gamma transducer
+*/
+
+/*! \page material_laser_scanner Supported Lidar
+
+These are the lidar supported by ViSP.
+
+- <b>Sick LD-MRS Lidar</b><br>
+If you have a Sick LD-MRS Lidar you can get the measurements thanks to vpSickLDMRS class.
+\image html img-lidar-sick.jpg Sick LD-MRS family
+
+*/
+
+/*! \page material_camera_depth Supported Depth Cameras
+
+These are the depth cameras supported by ViSP.
+
+- <b>Intel Realsense depth cameras</b><br>
+All Intel Realsense devices are supported in ViSP thanks to vpRealSense2 class, a wrapper over
+[librealsense](https://github.com/IntelRealSense/librealsense).
+<center>
+<img src="img-realsense-D435.jpg"/>
+<img src="img-realsense-D405.jpg"/>
+<img src="img-realsense-T265.jpg"/><br>
+<b>Realsense family; D435, D405, T265 and many others</b>
+</center>
+
+- <b>Occipital Structure Core depth cameras</b><br>
+All [Occipital](https://structure.io/) devices are supported in ViSP thanks to vpOccipitalStructure class, a wrapper over
+[Occipital Structure SDK](https://developer.structure.io/sdk/).
+Installation instructions are provided for
+<a href="tutorial-install-ubuntu.html#install_ubuntu_3rdparty_occipital_structure">Ubuntu</a>,
+<a href="tutorial-install-osx-homebrew.html#install_brew_3rdparty_occipital_structure">macOS</a>,
+and <a href="tutorial-install-win10-msvc16.html#install_win10_msvc16_3rdparty_occ_structure">Windows</a>.
+\image html img-occipital-camera.jpg Occipital Structure depth camera
+
+- <b>Microsoft Kinect 1 Xbox 360</b><br>
+If you have a Microsoft Kinect 1, you can use vpKinect class to get data.
+It requires `libfreenect` 3rd party. Installation instructions are provided [here](https://visp.inria.fr/3rd_freenect).
+\image html img-kinect1.jpg Microsoft Kinect 1 depth camera
+
+*/
+
+/*! \page material_camera Supported Cameras
+
+These are the cameras supported by ViSP.
+
+- <b>IDS UEyE Cameras</b><br>
+Industrial cameras from [IDS](https://en.ids-imaging.com) are also supported in ViSP thanks to vpUeyeGrabber class, a wrapper over uEye SDK.
+Installation instructions are provided for
+<a href="tutorial-install-ubuntu.html#install_ubuntu_3rdparty_ueye">Ubuntu</a>,
+<a href="tutorial-install-osx-homebrew.html#install_brew_3rdparty_ueye">macOS</a>,
+and <a href="tutorial-install-win10-msvc17.html#install_win10_msvc17_3rdparty_ueye">Windows</a>.
+\image html img-ids-camera.jpg
+
+- <b>Basler Cameras</b><br>
+Industrial cameras from [Basler](https://en.ids-imaging.com) are also supported in ViSP thanks to vpPylonGrabber class,
+a wrapper over [Pylon SDK](https://www.baslerweb.com/en/downloads/software-downloads/).
+Installation instructions are provided for
+<a href="tutorial-install-ubuntu.html#install_ubuntu_3rdparty_pylon">Ubuntu</a>,
+<a href="tutorial-install-osx-homebrew.html#install_brew_3rdparty_pylon">macOS</a>,
+and <a href="tutorial-install-win10-msvc17.html#install_win10_msvc17_3rdparty_pylon">Windows</a>.
+\image html img-basler-camera.jpg
+
+- <b>FLIR Cameras</b><br>
+Industrial cameras from [FLIR](https://www.flir.com) are supported in ViSP thanks to vpFlyCaptureGrabber class,
+a wrapper over [FlyCapture SDK](https://www.flir.com/support-center/iis/machine-vision/downloads/spinnaker-sdk-flycapture-and-firmware-download/).
+Installation instructions are provided for
+<a href="tutorial-install-ubuntu.html#install_ubuntu_3rdparty_flycapture">Ubuntu</a>
+and <a href="tutorial-install-win10-msvc17.html#install_win10_msvc17_3rdparty_flycapture">Windows</a>.
+\image html img-flir-camera.jpg
+
+- <b>Generic Firewire Cameras</b><br>
+Generic firewire 1394 cameras are supported in ViSP using vp1394TwoGrabber class after installing libdc1394 3rd party.
+Installation instructions are provided in
+<a href="tutorial-install-ubuntu.html#install_ubuntu_quick">Ubuntu Quick Installation</a> tutorial.
+<br><br>
+
+- <b>Generic Video 4 Linux 2 Compatible Cameras</b><br>
+Cameras compatible with Video 4 Linux 2 (webcam, laptop embedded camera) are supported in ViSP using vpV4l2Grabber
+class after installing libv4l 3rd party. Installation instructions are provided in
+<a href="tutorial-install-ubuntu.html#install_ubuntu_quick">Ubuntu Quick Installation</a> tutorial.
+
+*/
+
+/*! \page material_mocap Supported Motion Capture System
+
+These are the motion capture systems supported by ViSP.
+
+- <b>Qualisys Motion Capture System</b><br>
+If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you can stream data using vpMocapQualisys class,
+a wrapper over [qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cpp_sdk).
+Installation instructions are provided for
+<a href="tutorial-install-ubuntu.html#install_ubuntu_3rdparty_qualisys">Ubuntu</a>,
+<a href="tutorial-install-osx-homebrew.html#install_brew_3rdparty_qualisys">macOS</a>,
+and <a href="tutorial-install-win10-msvc17.html#install_win10_msvc17_3rdparty_qualisys">Windows</a>.
+\image html img-qualisys.png
+
+- <b>Vicon Motion Capture System</b><br>
+If you have rather the [Vicon](https://www.vicon.com) Motion Capture System you can stream data using vpMocapVicon class,
+a wrapper over [Vicon Datastream SDK](https://www.vicon.com/software/datastream-sdk/).
+Installation instructions are provided for
+<a href="tutorial-install-ubuntu.html#install_ubuntu_3rdparty_vicon">Ubuntu</a>,
+<a href="tutorial-install-osx-homebrew.html#install_brew_3rdparty_vicon">macOS</a>,
+and <a href="tutorial-install-win10-msvc17.html#install_win10_msvc17_3rdparty_vicon">Windows</a>.
+\image html img-vicon.png
+
+*/

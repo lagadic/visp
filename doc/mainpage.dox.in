@@ -50,6 +50,9 @@ href="https://visp.inria.fr/software-architecture" target="_parent">https://visp
 <p>ViSP full installation procedure using CMake is detailed in the \ref tuto_install_sdk "Installation from prebuild SDK tutorials" and \ref tuto_install_src "Installation from source tutorials". \ref tuto_started "Getting started tutorials" and documents in pdf are also available from <a
 href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr/publications</a>.</p>
 
+Here you will find a list of robots, cameras, motion capture system that you can use for learning visual-servoing or build robotics applications
+on top of them based on ViSP.
+
 \section tutorial Tutorials for ViSP users
 
 <p>Here after you will find a list of tutorials that show the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
@@ -234,7 +237,6 @@ in one thread and display these images in an other thread.
 
 - \ref tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
 
-
 \section Citing_ViSP Citing ViSP
 
 Please cite ViSP in your publications if it helps your research:
@@ -288,14 +290,16 @@ scheme, ...</p>
 
 \section Howto_sec How to help ?
 
-<p>ViSP library is an open source C++ library which is developed at <a href="http://www.inria.fr/en/centre/rennes">Inria</a> by <a href="http://team.inria.fr/lagadic/welcome-eng.html">Lagadic team</a>. If you enjoy using ViSP, you may contribute to the project in different ways. This will motivate us to continue the efforts.
+<p>ViSP library is an open source C++ library which is developed at <a href="http://www.inria.fr/en/centre/rennes">Inria</a>
+by <a href="http://team.inria.fr/rainbow.html">Rainbow team</a>. If you enjoy using ViSP, you may contribute to the project
+in different ways. This will motivate us to continue the efforts.
 
 - You can submit a <a href="https://github.com/lagadic/visp/issues">bug report using the tracker</a>.
 - You can submit patches or new functionalities using GitHub Pull Request mechanism.
 - You can write new tutorials, new documentations or simply improve the existing documentation.
 - If you just want to say you've been happy with the library, you can send us a postcard from your place, to the following address: <em>Inria Rennes Bretagne Atlantique, Lagadic team, Campus de Beaulieu, 35042 Rennes Cedex, FRANCE.</em>
 
-<p>You can also ask for help using either <a href="https://gforge.inria.fr/forum/?group_id=397">the french or the english forum</a>.
+<p>You can also ask for help using <a href="https://github.com/lagadic/visp/discussions">GitHub discussions</a>.
 
 */
 

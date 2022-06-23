@@ -19,6 +19,9 @@ ViSP 3.5.1 (under development)
     . Tutorials in tutorial/grabber folder have now a new --no-display command line option
       that allows to grab a video remotely
   - Tutorials
+    . New tutorial to list all the hardware (robot, camera, depth camera, lidar, mocap,
+      haptic devices, F/T sensor) supported by ViSP
+      https://visp-doc.inria.fr/doxygen/visp-daily/supported-material.html
     . New tutorial: How to manipulate a video or a sequence of images
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-video-manipulation.html
     . New tutorial: Planar object pose estimation using RGB-D data
