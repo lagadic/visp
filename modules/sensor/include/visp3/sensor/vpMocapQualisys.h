@@ -41,9 +41,6 @@
 
 #include <visp3/sensor/vpMocap.h>
 
-#include <qualisys_cpp_sdk/RTPacket.h>
-#include <qualisys_cpp_sdk/RTProtocol.h>
-
 /*!
  * \class vpMocapQualisys
  * \ingroup group_sensor_mocap

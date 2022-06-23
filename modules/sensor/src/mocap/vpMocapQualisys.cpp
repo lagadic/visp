@@ -43,6 +43,9 @@
 #include <visp3/core/vpTime.h>
 #include <visp3/sensor/vpMocapQualisys.h>
 
+#include <qualisys_cpp_sdk/RTPacket.h>
+#include <qualisys_cpp_sdk/RTProtocol.h>
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 class vpMocapQualisys::vpMocapQualisysImpl
 {
