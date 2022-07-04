@@ -26,6 +26,7 @@ $ mkdir ur_rtde/build
 $ cd ur_rtde/build
 $ cmake .. -DCMAKE_BUILD_TYPE=Release
 $ make -j4
+$ sudo make install
 \endverbatim
 
 \subsection ur_prereq_visp Build ViSP with ur_rtde support
@@ -33,7 +34,7 @@ $ make -j4
 Once `ur_rtde` is installed, you need to rebuild ViSP to enable `ur_rtde` support.
 \verbatim
 $ cd $VISP_WS/visp-build
-$ cmake ../visp -Dur_rtde_DIR=$VISP_WS/3rdparty/ur_rtde/build/ur_rtde
+$ cmake ../visp
 \endverbatim
 
 At this point, check if `ur_rtde` is detected by ViSP:
@@ -129,13 +130,20 @@ An example of image-based visual servoing using a robot from Universal Robots eq
 
 Now enter in `example/servo-universal-robots folder` and run `servoUniversalRobotsIBVS` binary using `--eMc` to locate the file containing the \f$^e{\bf M}_c\f$ transformation. Other options are available. Using `--help` show them:
 
-    $ cd example/servo-universal-robots
-    $ ./servoUniversalRobotsIBVS --help
-    ./servoUniversalRobotsIBVS [--ip <default 192.168.0.100>] [--tag_size <marker size in meter; default 0.12>] [--eMc <eMc extrinsic file>] [--quad_decimate <decimation; default 2>] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]
+\verbatim
+$ cd example/servo-universal-robots
+$ ./servoUniversalRobotsIBVS --help
+./servoUniversalRobotsIBVS [--ip <default 192.168.0.100>] [--tag_size <marker size in meter; default 0.12>] \
+                           [--eMc <eMc extrinsic file>] [--quad_decimate <decimation; default 2>]           \
+                           [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold]      \
+                           [--verbose] [--help] [-h]
+\endverbatim
 
 Run the binary activating the plot and using a constant gain:
 
-    $ ./servoUniversalRobotsIBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot
+\verbatim
+$ ./servoUniversalRobotsIBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot
+\endverbatim
 
 Use the left mouse click to enable the robot controller, and the right click to quit the binary.
 
@@ -149,16 +157,21 @@ At this point the behaviour that you should observe is the following:
 
 You can also activate an adaptive gain that will make the convergence faster:
 
-    $ ./servoUniversalRobotsIBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --adaptive_gain
+\verbatim
+$ ./servoUniversalRobotsIBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --adaptive_gain
+\endverbatim
 
 You can also start the robot with a zero velocity at the beginning introducing task sequencing option:
 
-    $ ./servoUniversalRobotsIBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --task_sequencing
+\verbatim
+$ ./servoUniversalRobotsIBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --task_sequencing
+\endverbatim
 
 And finally you can activate the adaptive gain and task sequencing:
 
-    $ ./servoUniversalRobotsIBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --adaptive_gain --task_sequencing
-
+\verbatim
+$ ./servoUniversalRobotsIBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --adaptive_gain --task_sequencing
+\endverbatim
 
 \section ur_ibvs_next Next tutorial
 
