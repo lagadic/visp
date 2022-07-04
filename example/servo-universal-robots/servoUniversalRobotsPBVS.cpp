@@ -149,11 +149,11 @@ int main(int argc, char **argv)
      * Move to a safe position
      */
     vpColVector q(6, 0);
-    q[0] = 0;
-    q[1] = -M_PI_2;
-    q[2] = M_PI_2;
-    q[3] = -M_PI_2;
-    q[4] = -M_PI_2;
+    q[0] = -vpMath::rad(16);
+    q[1] = -vpMath::rad(120);
+    q[2] = vpMath::rad(120);
+    q[3] = -vpMath::rad(90);
+    q[4] = -vpMath::rad(90);
     q[5] = 0;
     std::cout << "Move to joint position: " << q.t() << std::endl;
     robot.setRobotState(vpRobot::STATE_POSITION_CONTROL);
@@ -170,12 +170,12 @@ int main(int argc, char **argv)
     // Get camera extrinsics
     vpPoseVector ePc;
     // Set camera extrinsics default values
-    ePc[0] = 0.0337731;
-    ePc[1] = -0.00535012;
-    ePc[2] = -0.0523339;
-    ePc[3] = -0.247294;
-    ePc[4] = -0.306729;
-    ePc[5] = 1.53055;
+    ePc[0] = -0.0312543;
+    ePc[1] = -0.0584638;
+    ePc[2] = 0.0309834;
+    ePc[3] = -0.00506562;
+    ePc[4] = -0.00293325;
+    ePc[5] = 0.0117901;
 
     // If provided, read camera extrinsics from --eMc <file>
     if (!opt_eMc_filename.empty()) {
