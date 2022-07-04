@@ -15,13 +15,20 @@ An example of position-based visual servoing using a robot from Universal Robots
 
 Now enter in `example/servo-universal-robots folder` and run `servoUniversalRobotsPBVS` binary using `--eMc` to locate the file containing the \f$^e{\bf M}_c\f$ transformation. Other options are available. Using `--help` show them:
 
-    $ cd example/servo-universal-robots
-    $ ./servoUniversalRobotsPBVS --help
-    ./servoUniversalRobotsPBVS [--ip <default 192.168.1.1>] [--tag_size <marker size in meter; default 0.12>] [--eMc <eMc extrinsic file>] [--quad_decimate <decimation; default 2>] [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold] [--verbose] [--help] [-h]
+\verbatim
+$ cd example/servo-universal-robots
+$ ./servoUniversalRobotsPBVS --help
+./servoUniversalRobotsPBVS [--ip <default 192.168.1.1>] [--tag_size <marker size in meter; default 0.12>] \
+                           [--eMc <eMc extrinsic file>] [--quad_decimate <decimation; default 2>]         \
+                           [--adaptive_gain] [--plot] [--task_sequencing] [--no-convergence-threshold]    \
+                           [--verbose] [--help] [-h]
+\endverbatim
 
 Run the binary activating the plot and using a constant gain:
 
-    $ ./servoUniversalRobotsPBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot
+\verbatim
+$ ./servoUniversalRobotsPBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot
+\endverbatim
 
 Use the left mouse click to enable the robot controller, and the right click to quit the binary.
 
@@ -35,15 +42,21 @@ At this point the behaviour that you should observe is the following:
 
 You can also activate an adaptive gain that will make the convergence faster:
 
-    $ ./servoUniversalRobotsPBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --adaptive_gain
+\verbatim
+$ ./servoUniversalRobotsPBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --adaptive_gain
+\endverbatim
 
 You can also start the robot with a zero velocity at the beginning introducing task sequencing option:
 
-    $ ./servoUniversalRobotsPBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --task_sequencing
+\verbatim
+$ ./servoUniversalRobotsPBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --task_sequencing
+\endverbatim
 
 And finally you can activate the adaptive gain and task sequencing:
 
-    $ ./servoUniversalRobotsPBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --adaptive_gain --task_sequencing
+\verbatim
+$ ./servoUniversalRobotsPBVS --eMc ../../tutorial/calibration/ur_eMc.yaml --plot --adaptive_gain --task_sequencing
+\endverbatim
 
 \section ur_pbvs_next Next tutorial
 
