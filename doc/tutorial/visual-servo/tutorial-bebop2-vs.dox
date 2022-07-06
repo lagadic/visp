@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-bebop2-vs Tutorial: Visual-servoing with Parrot Bebop 2 drone 
+\page tutorial-bebop2-vs Tutorial: Visual-servoing with Parrot Bebop 2 drone
 \tableofcontents
 
 \section bebop2_intro Introduction
@@ -13,13 +13,13 @@ This tutorial explains how to do an image-based servoing with a Parrot Bebop 2 d
 
 The following material is necessary :
 - Parrot Bebop 2 drone
-- An AprilTag from 36h11 family that will serve as target for the visual servoing. \ref franka_prereq_target. 
+- An AprilTag from 36h11 family that will serve as target for the visual servoing. \ref franka_prereq_target.
 
 ViSP must be built with OpenCV support if you want to get the video streamed by the drone, which needs to be decoded.
 
 \note Before continuing, we recommend that you succeed to complete \ref tutorial-detection-apriltag.
 
-\section bebop2_arsdk3 Build Parrot ARSDK3 
+\section bebop2_arsdk3 Build Parrot ARSDK3
 In order to use Parrot Bebop 2 drone with ViSP, you first need to build Parrot's SDK <a href="https://developer.parrot.com/docs/SDK3/">ARDroneSDK3</a> (as explained <a href="https://developer.parrot.com/docs/SDK3/#how-to-build-the-sdk">here</a>) :
 
 \subsection bebop2_arsdk3_ubuntu On Ubuntu
@@ -28,48 +28,96 @@ The following steps allow to build ARSDK3 on Ubuntu (tested on 18.04).
 <b>1. Get the SDK source code</b>
 
 Create a workspace.
-\code
+\verbatim
 $ cd ${VISP_WS}
-$ mkdir ARDroneSDK3 && cd ARDroneSDK3
-\endcode
+$ mkdir -p 3rdparty/ARDroneSDK3 && cd 3rdparty/ARDroneSDK3
+\endverbatim
 
 Initialize the repo.
-\code
+\verbatim
 $ sudo apt install repo
 $ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
-\endcode
+\endverbatim
 
 You can then download all the repositories automatically, by executing the following command.
-\code
+\verbatim
 $ repo sync
-\endcode
+\endverbatim
 
 <b>2. Build the SDK</b>
 
 Install required 3rd parties:
-\code
-$ sudo apt-get install git build-essential autoconf libtool libavahi-client-dev libavcodec-dev libavformat-dev libswscale-dev libncurses5-dev mplayer
-\endcode
+\verbatim
+$ sudo apt-get install git build-essential autoconf libtool libavahi-client-dev \
+  libavcodec-dev libavformat-dev libswscale-dev libncurses5-dev mplayer
+\endverbatim
 Build the SDK:
-\code
+\verbatim
 $ ./build.sh -p arsdk-native -t build-sdk -j
+\endverbatim
+The output will be located in `${VISP_WS}/3rdparty/ARDroneSDK3/out/arsdk-native/staging/usr`
+
+\note Known issues with Ubuntu 22.04 and python 3.10.4
+- If you get the following error:
+\verbatim
+/bin/bash: line 1: python: command not found
+make: *** [$VISP_WS/3rdparty/ARDroneSDK3/build/alchemy/main.mk:306: $VISP_WS/3rdparty/ARDroneSDK3/out/arsdk-native/build/libARMavlink/parrot.xml.done] Error 127
+
+MAKE ERROR DETECTED
+[E] Task 'build-sdk' failed (Command failed (returncode=254))
+\endverbatim
+you need to install the following package:
+\verbatim
+$ sudo apt-get install python-is-python3
+\endverbatim
+
+\note
+- If you get the next error:
+\verbatim
+File "$VISP_WS/3rdparty/ARDroneSDK3/out/arsdk-native/staging-host/usr/lib/mavgen/pymavlink/generator/mavcrc.py", line 28, in accumulate_str
+    bytes.fromstring(buf)
+AttributeError: 'array.array' object has no attribute 'fromstring'
+\endverbatim
+you may edit $VISP_WS/3rdparty/ARDroneSDK3/out/arsdk-native/staging-host/usr/lib/mavgen/pymavlink/generator/mavcrc.py
+and modify `accumulate_str()` replacing
+\code
+    def accumulate_str(self, buf):
+        '''add in some more bytes'''
+        accum = self.crc
+        import array
+        bytes = array.array('B')
+        bytes.fromstring(buf)
+        self.accumulate(bytes)
 \endcode
-The output will be located in `${VISP_WS}/ARDroneSDK3/out/arsdk-native/staging/usr`
+by
+\code
+    def accumulate_str(self, buf):
+        '''add in some more bytes'''
+        accum = self.crc
+        import array
+        bytes_array = array.array('B')
+        try:  # if buf is bytes
+            bytes_array.frombytes(buf)
+        except TypeError:  # if buf is str
+            bytes_array.frombytes(buf.encode())
+        except AttributeError:  # Python < 3.2
+            bytes_array.fromstring(buf)
+        self.accumulate(bytes_array)
+\endcode
 
 <b>3. Set `ARSDK_DIR` environment variable</b>
 
 In order for ViSP to find ARDroneSDK3, set `ARSDK_DIR` environment variable:
-\code
-$ export ARSDK_DIR=${VISP_WS}/ARDroneSDK3
-\endcode
+\verbatim
+$ export ARSDK_DIR=${VISP_WS}/3rdparty/ARDroneSDK3
+\endverbatim
 
 <b>4. Modify `LD_LIBRARY_PATH` environment variable to detect ARDroneSDK3 libraries</b>
 
 In order that ViSP binaries are able to find ARDroneSDK3 libraries, set `LD_LIBRARY_PATH` with:
-\code
+\verbatim
 $ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${ARSDK_DIR}/out/arsdk-native/staging/usr/lib
-\endcode
-
+\endverbatim
 
 \subsection bebop2_arsdk3_osx On Mac OSX
 The following steps allow to build ARSDK3 on macOS Mojave 10.14.5.
@@ -77,75 +125,74 @@ The following steps allow to build ARSDK3 on macOS Mojave 10.14.5.
 <b>1. Get the SDK source code</b>
 
 Create a workspace.
-\code
+\verbatim
 $ cd ${VISP_WS}
-$ mkdir ARDroneSDK3 && cd ARDroneSDK3
-\endcode
+$ mkdir -p 3rdparty/ARDroneSDK3 && cd 3rdparty/ARDroneSDK3
+\endverbatim
 
 Initialize the repo.
-\code
+\verbatim
 $ brew install repo
 $ repo init -u https://github.com/Parrot-Developers/arsdk_manifests.git -m release.xml
-\endcode
+\endverbatim
 
 You can then download all the repositories automatically, by executing the following command.
-\code
+\verbatim
 $ repo sync
-\endcode
+\endverbatim
 
 <b>2. Build the SDK</b>
 
 Install required 3rd parties:
-\code
+\verbatim
 $ brew install ffmpeg
-\endcode
+\endverbatim
 Build the SDK:
-\code
+\verbatim
 $ ./build.sh -p arsdk-native -t build-sdk -j
-\endcode
-The output will be located in `${VISP_WS}/ARDroneSDK3/out/arsdk-native/staging/usr`
+\endverbatim
+The output will be located in `${VISP_WS}/3rdparty/ARDroneSDK3/out/arsdk-native/staging/usr`
 
 <b>3. Set `ARSDK_DIR` environment variable</b>
 
 In order for ViSP to find ARDroneSDK3, set `ARSDK_DIR` environment variable:
-\code
-$ export ARSDK_DIR=${VISP_WS}/ARDroneSDK3
-\endcode
+\verbatim
+$ export ARSDK_DIR=${VISP_WS}/3rdparty/ARDroneSDK3
+\endverbatim
 
 <b>4. Modify `DYLD_LIBRARY_PATH` environment variable to detect ARDroneSDK3 libraries</b>
 
 In order that ViSP binaries are able to find ARDroneSDK3 libraries, set `DYLD_LIBRARY_PATH` with:
-\code
+\verbatim
 $ export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${ARSDK_DIR}/out/arsdk-native/staging/usr/lib
-\endcode
+\endverbatim
 
 \section bebop2_visp_build Build ViSP to detect ARSDK3
 
 In order that ViSP takes into account ARSDK3 fresh installation you need to configure and build ViSP again.
 
 - Enter ViSP build folder:
-\code
+\verbatim
 $ cd $VISP_WS/visp-build
-\endcode
+\endverbatim
 
 - Configure ViSP to detect ARSDK3 and ffmpeg used to decode images from Bebop2 camera stream:
-\code
+\verbatim
 $ cmake ../visp
-\endcode
-At this point you should see in `Real robots` section that ARSDK and ffmpeg are enabled 
-\code
-  Real robots: 
+\endverbatim
+At this point you should see in `Real robots` section that ARSDK and ffmpeg are enabled
+\verbatim
+  Real robots:
     ...
     Use Parrot ARSDK:            yes
     \-Use ffmpeg:                yes
     ...
-\endcode
+\endverbatim
 
 - Now build ViSP using:
-\code
+\verbatim
 $ make -j4
-\endcode
-
+\endverbatim
 
 \section bebop2_ibvs Image-based visual-servoing
 
@@ -154,16 +201,16 @@ $ make -j4
 An example of image-based visual servoing is implemented in servoBebop2.cpp.
 
 The corresponding source code and `CMakeLists.txt` file can be downloaded using:
-\code
+\verbatim
 $ svn export https://github.com/lagadic/visp.git/trunk/example/servo-bebop2
-\endcode
+\endverbatim
 
 \subsection bebop2_ibvs_controller Understanding the controller
 First, to get the basics of image-based visual servoing, you can read \ref tutorial-ibvs.
 
 The following image shows the frames attached to the drone:
-\htmlonly <style>div.image img[src="img-bebop2-coord-system.png"]{width:600px;}</style> 
-\endhtmlonly 
+\htmlonly <style>div.image img[src="img-bebop2-coord-system.png"]{width:600px;}</style>
+\endhtmlonly
 @image html img-bebop2-coord-system.png
 - There is the drone control frame, also called end-effector frame, in which we can control the drone in velocity applying \f$\dot{\bf q}_e = (v_x, v_y, v_z, w_z)\f$ corresponding respectively to the 3 translational velocities along \f$X_e, Y_e, Z_e\f$ axis, and the rotational velocity along \f$Z_e\f$ axis. The vpRobotBebop2 class allows to send these velocities. Note that the 6-dim velocity skew vector is named \f${\bf v_e}\f$
 - There is the also the camera frame with \f$X_c, Y_c, Z_c\f$ axis in which we define the velocities skew vector \f${\bf v_c} = (v_x, v_y, v_z, w_x, w_y, w_z)\f$.
@@ -194,26 +241,26 @@ The next step is now to run the image-based visual servoing example implemented 
 
 \note  Before starting the program, the drone should be turned on and the computer connected to the drone WiFi, as shown in the following pictures :\n
 On Ubuntu:\n
-\htmlonly <style>div.image img[src="drone_connexion.png"]{width:400px;}</style> 
+\htmlonly <style>div.image img[src="drone_connexion.png"]{width:400px;}</style>
 \endhtmlonly
 @image html drone_connexion.png
 \n
 On Mac OSX :\n
-\htmlonly <style>div.image img[src="img-bebop2-osx-wifi.jpg"]{width:400px;}</style> 
+\htmlonly <style>div.image img[src="img-bebop2-osx-wifi.jpg"]{width:400px;}</style>
 \endhtmlonly
 @image html img-bebop2-osx-wifi.jpg
 
 \warning CAUTION : It's is strongly recommended to use this program outside or in a large room with non-uniform flooring, as the drone uses a downward-facing camera to estimate its motion from optical flow. If the surface under the drone is uniform, its movements will be inaccurate and dangerous.
 
 If you built ViSP with ffmpeg and Parrot ARSDK3 support, the corresponding binary is available in `${VISP_WS}/visp-build/example/servo-bebop2` folder.
-\code
+\verbatim
 $ cd ${VISP_WS}/visp-build/example/servo-bebop2
 $ ./servoBebop2 --tag_size 0.14
-\endcode
+\endverbatim
 \note Passing the tag size (in meters) as a parameter is required.
 
-On Mac OSX, you may need to allow servoBebop2 to accept incoming network connections : 
-\htmlonly <style>div.image img[src="img-bebop2-osx-accept-connection.jpg"]{width:400px;}</style> 
+On Mac OSX, you may need to allow servoBebop2 to accept incoming network connections :
+\htmlonly <style>div.image img[src="img-bebop2-osx-accept-connection.jpg"]{width:400px;}</style>
 \endhtmlonly
 @image html img-bebop2-osx-accept-connection.jpg
 
@@ -235,17 +282,17 @@ Run `./servoBebop2 --help` to see which are the command line options available.
 
 The program will first connect to the drone, start the video streaming and decoding, and then the drone will take off and hover until it detects one (and one only) 36h11 AprilTag in the image.
 
-\htmlonly <style>div.image img[src="img-drone_tag.jpg"]{width:600px;}</style> 
-\endhtmlonly 
+\htmlonly <style>div.image img[src="img-drone_tag.jpg"]{width:600px;}</style>
+\endhtmlonly
 @image html img-drone_tag.jpg
 
 We then display the drone video stream with the visible features, as well as the error for each feature :
-\htmlonly <style>div.image img[src="drone_view.png"]{width:600px;}</style> 
-\endhtmlonly 
+\htmlonly <style>div.image img[src="drone_view.png"]{width:600px;}</style>
+\endhtmlonly
 @image html drone_view.png
 
-\htmlonly <style>div.image img[src="servoing_task.png"]{width:600px;}</style> 
-\endhtmlonly 
+\htmlonly <style>div.image img[src="servoing_task.png"]{width:600px;}</style>
+\endhtmlonly
 @image html servoing_task.png
 
 In this graph :
@@ -263,27 +310,27 @@ If you need to change the drone IP address, for flying multiple drones for insta
 - Turn on your drone and connect to its WiFi network.
 - Press the drone on/off button 4 times.
 - Connect to the drone file system using telnet (if you haven't changed the drone IP yet, the default IP should be 192.168.42.1):
-\code
+\verbatim
 $ telnet 192.168.42.1
-\endcode
+\endverbatim
 \note If you get the message "Connection refused", you haven't properly pressed the on/off button 4 times.\n
 If you get the message "Connection timed out", you haven't used the right IP. You can try with 192.168.43.1 .
 
 - Once you're connected to the drone file system, you need to get write access to the files. You can do so with :
-\code
-mount –o remount,rw /
-\endcode
+\verbatim
+$ mount –o remount,rw /
+\endverbatim
 \warning You now have permissions to move, edit or delete any file. Proceed at your own discretion, as you could irreversibly make your drone unusable !
 
 - Edit `/sbin/broadcom_setup.sh` :
-\code
-cd sbin
-vi broadcom_setup.sh
-\endcode
+\verbatim
+$ cd sbin
+$ vi broadcom_setup.sh
+\endverbatim
 
-\note If you don't know how to use `VI` text editor : 
-  - move the cursor using arrow keys, 
-  - edit the text using `i` and `escape` to cancel, 
+\note If you don't know how to use `VI` text editor :
+  - move the cursor using arrow keys,
+  - edit the text using `i` and `escape` to cancel,
   - press `:` and enter `wq` to save and quit, or `q!` to quit without saving.
 
 - Edit line `IFACE IP AP=”192.168.42.1”` to `IFACE IP AP=”192.168.x.1”`, where x represents any number that you have not assigned to any other drone yet.
@@ -296,28 +343,27 @@ If you want to control multiple drones using one single computer, you're going t
 
 Once every drone you want to use has a unique IP address, you need to connect your PC to each drone WiFi network. You can use multiple WiFi dongles and you PC WiFi card, if it has one.
 
-For two drones, it should look like this (on Ubuntu) : 
-\htmlonly <style>div.image img[src="img_multiple_drones_connection.png"]{width:300px;}</style> 
-\endhtmlonly 
+For two drones, it should look like this (on Ubuntu) :
+\htmlonly <style>div.image img[src="img_multiple_drones_connection.png"]{width:300px;}</style>
+\endhtmlonly
 @image html img_multiple_drones_connection.png
 
 In ViSP programs that use the drone, you can then use option `--ip` to specify the IP of the drone to which you want to connect :
-\code
+\verbatim
 $ cd ${VISP_WS}/visp-build/example/servo-bebop2
 $ ./keyboardControlBebop2.cpp --ip 192.168.42.1
-\endcode
+\endverbatim
 
 and in another terminal :
-\code
+\verbatim
 $ cd ${VISP_WS}/visp-build/example/servo-bebop2
 $ ./keyboardControlBebop2.cpp --ip 192.168.43.1
-\endcode
+\endverbatim
 
 In your own programs, you can specify the IP in the constructor of vpRobotBebop2 class :
-\code
+\verbatim
 vpRobotBebop2 drone(false, true, "192.168.43.1"); // This creates the drone with low verbose level, settings reset and corresponding IP
-\endcode
-\n\n
+\endverbatim
 
 \section bebop2_next Next tutorial
 
