@@ -3,7 +3,7 @@
   \page tutorial-getting-started Tutorial: How to create and build a project that uses ViSP and CMake on Unix or Windows
   \tableofcontents
 
-\note We assume in this tutorial that you have successfully installed ViSP either with an \ref tuto_install_sdk or with an \ref tuto_install_src.
+\note We assume in this tutorial that you have successfully installed ViSP either with an \ref tutorial_install_pkg or with an \ref tutorial_install_src.
 
 In this tutorial you will learn how to use ViSP either on unix-like operating system (including OSX, Fedora, Ubuntu, Debian, ...) or on Windows.
 
@@ -80,14 +80,14 @@ C:\> setx VISP_WS=C:\visp-ws
 C:\> exit
 \endcode
 
-2. Get the source code in your workspace either using Subversion (`svn`), either copying the source code from `%%VISP_WS%/tutorial/image` folder if you follow one of the \ref tuto_install_src tutorials, or downloading the source from https://github.com/lagadic/visp/tutorial/image:<br>
+2. Get the source code in your workspace either using Subversion (`svn`), either copying the source code from `%%VISP_WS%/tutorial/image` folder if you follow one of the \ref tutorial_install_src tutorials, or downloading the source from https://github.com/lagadic/visp/tutorial/image:<br>
 With Subversion:
 \code
 C:\> svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
 \endcode
 Or by copy from ViSP source code
 \code
-C:\> xcopy /E /I %VISP_WS%\visp\tutorial\image %VISP_WS%\image 
+C:\> xcopy /E /I %VISP_WS%\visp\tutorial\image %VISP_WS%\image
 \endcode
 
 3. Create a build folder
@@ -176,7 +176,7 @@ The code to copy/paste is the following:
 Here is the detailed explanation of the source, line by line:
 \snippet tutorial-viewer.cpp Include display
 
-Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is available. The last one is also cross-platform and requires that OpenCV is available. 
+Include all the headers for image viewers. The two first one are for Windows systems. They require that Direct 3D or the \e Graphical \e Device \e Interface (\e GDI) coming with the installation of Visual Studio are available. The third one needs GTK that is cross-platform. The fourth is for unix-like systems and requires that \e libX11 is available. The last one is also cross-platform and requires that OpenCV is available.
 
 \snippet tutorial-viewer.cpp Include io
 Include the header that allows to read/write PGM, PPM, PNG and JPEG images from the disk using vpImageIo class.
@@ -188,10 +188,10 @@ Create an instance of a color image where each pixel is coded in RGBa.
 The image `I` is initialized by reading an image file from the disk. If the image format is not supported we throw an exception.
 
 \snippet tutorial-viewer.cpp vpDisplay construction
-Create an instance of an image display window for image `I`. The first viewer that is available is used. Here we create the link between the image `I` and the display `d`. Note that an image can only have one display. 
+Create an instance of an image display window for image `I`. The first viewer that is available is used. Here we create the link between the image `I` and the display `d`. Note that an image can only have one display.
 
 \snippet tutorial-viewer.cpp vpDisplay set title
-The title of the display is then set to "My image".  
+The title of the display is then set to "My image".
 
 \snippet tutorial-viewer.cpp vpDisplay display
 First we display the content of the image `I`, then we flush the display to render the image.
@@ -255,12 +255,12 @@ Get `monkey.ppm` image and copy it to `VISP_WS/started` either:
 \code
 svn export https://github.com/lagadic/visp.git/trunk/tutorial/image/monkey.ppm
 \endcode
-- by copy/paste from <a href="https://github.com/lagadic/visp/blob/master/tutorial/image/monkey.ppm">GitHub</a> using the Raw button 
+- by copy/paste from <a href="https://github.com/lagadic/visp/blob/master/tutorial/image/monkey.ppm">GitHub</a> using the Raw button
 
 
 \subsection image_unix On unix-like operating system
 
-In this section we supppose that you have created a folder `$VISP_WS/started` that contains `CMakeLists.txt`, `tutorial-viewer.cpp` and `monkey.ppm` files. 
+In this section we supppose that you have created a folder `$VISP_WS/started` that contains `CMakeLists.txt`, `tutorial-viewer.cpp` and `monkey.ppm` files.
 
 \subsubsection image_unix_build_folder Create a build folder
 
@@ -308,7 +308,7 @@ or run cmake with the additional `VISP_DIR` definition
 \code
 $ ccmake -DVISP_DIR=$VISP_WS/visp-build/lib/cmake/visp .
 \endcode
-- If you rather install ViSP from prebuilt packages following one of the \ref tuto_install_sdk tutorials, set `VISP_DIR` environment variable to the installation folder location and call `cmake` again:
+- If you rather install ViSP from prebuilt packages following one of the \ref tutorial_install_pkg tutorials, set `VISP_DIR` environment variable to the installation folder location and call `cmake` again:
 \code
 $ export VISP_DIR=/usr/lib/<multi-arch-folder>/cmake/visp
 $ cmake ..
@@ -343,7 +343,7 @@ Here is a screen shot of the resulting output window :
 
 \subsection image_win On windows operating system
 
-We suppose from now, that you have created a folder `%%VISP_WS%\started` that contains `CMakeLists.txt`, `tutorial-viewer.cpp` and `monkey.ppm` files. 
+We suppose from now, that you have created a folder `%%VISP_WS%\started` that contains `CMakeLists.txt`, `tutorial-viewer.cpp` and `monkey.ppm` files.
 
 \subsubsection image_win_build_folder Create a build folder
 

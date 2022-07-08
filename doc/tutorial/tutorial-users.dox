@@ -1,5 +1,13 @@
-/*! \page tutorial_mainpage Tutorials for ViSP users
+/*! \page tutorial_users Tutorials for ViSP users
 This page references all the tutorials in user zone.
+
+- \subpage tutorial_install_src
+
+- \subpage tutorial_install_pkg
+
+- \subpage tutorial_install_crosscompiling
+
+- \subpage tutorial_install_docker
 
 - \subpage tutorial_ios
 
@@ -8,14 +16,6 @@ This page references all the tutorials in user zone.
 - \subpage tutorial_android
 
 - \subpage tutorial_unity
-
-- \subpage tutorial_install_pkg
-
-- \subpage tutorial_install_src
-
-- \subpage tutorial_install_crosscompiling
-
-- \subpage tutorial_install_docker
 
 - \subpage tutorial_started
 
@@ -40,15 +40,6 @@ This page references all the tutorials in user zone.
 - \subpage tutorial_bridge
 
 - \subpage tutorial_tools
-
-*/
-
-/*! \page tutorial_mainpage_dev Tutorials for ViSP developers
-This page references all the tutorials in developer zone.
-
-- \subpage tutorial_coding
-
-- \subpage tutorial_contrib
 
 */
 
@@ -277,19 +268,5 @@ in one thread and display these images in an other thread.
 This page introduces the user to the way to assign track points and detected points.
 
 - \subpage tutorial-munkres <br>This tutorial explains how to use Munkres to assign tracked and detected image points.
-
-*/
-
-/*! \page tutorial_coding Contributing to ViSP source code
-This page introduces the way ViSP source code can be modified with new contributions.
-
-- \subpage tutorial-add-new-dependency <br>This tutorial explains how to introduce a new class that relies on a 3rd party SDK. Different use cases are given as example.
-
-*/
-
-/*! \page tutorial_contrib Extanding ViSP with contrib modules
-This page introduces the way ViSP source code can be modified with new contributions.
-
-- \subpage tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
 
 */
