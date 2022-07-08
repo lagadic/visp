@@ -1,9 +1,9 @@
 
 /**
-  \page tutorial-getting-started-makefile Tutorial: How to create and build a project that uses ViSP without CMake 
+  \page tutorial-getting-started-makefile Tutorial: How to create and build a project that uses ViSP without CMake
   \tableofcontents
 
-\note We assume in this tutorial that you have successfully installed ViSP either with an \ref tuto_install_sdk or with an \ref tuto_install_src.
+\note We assume in this tutorial that you have successfully installed ViSP either with an \ref tutorial_install_pkg or with an \ref tutorial_install_src.
 
 In this tutorial you will learn how to use ViSP without using CMake.
 
@@ -24,7 +24,7 @@ $ pkg-config --cflags visp
 $ pkg-config --libs visp
 \endverbatim
 
-\note If `visp.pc` file used by `pkg-config` is not found, you may set `PKG_CONFIG_PATH` 
+\note If `visp.pc` file used by `pkg-config` is not found, you may set `PKG_CONFIG_PATH`
 environment variable with the path to access to `visp.pc` using a command similar to:
 \verbatim
 $ export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:<visp install tree>/lib/pkgconfig

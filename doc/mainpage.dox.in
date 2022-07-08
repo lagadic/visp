@@ -29,6 +29,12 @@ Since ViSP 3.0.0, we design a new modular software architecture where ViSP capab
 
 \image html soft_archi_v6.png "ViSP modules and their optional dependencies"
 
+\section hardware Supported hardware
+
+ViSP is interfaced with various robots, haptic devices, force-torque sensors, laser range finders, depth cameras, RGB cameras,
+and motion capture system that you can use for learning visual-servoing or building robotics applications
+on top of them based on ViSP. See \ref supported-material.
+
 \section download_sec Download
 
 <p>From <a
@@ -40,202 +46,22 @@ development distribution using git.</p>
 
 <p>Because ViSP is a multi platform library that works under Linux, OSX
 and Windows, to install ViSP you need the CMake configuration tool
-available from <a
-href="http://www.cmake.org" target="_parent">http://www.cmake.org</a>. Furthermore,
-depending on your operation system and the capabilities (framegrabber,
-display, simulation, ...) you need, prior to install ViSP you may
-install third party libraries <a
-href="https://visp.inria.fr/software-architecture" target="_parent">https://visp.inria.fr/software-architecture</a>.</p>
+available from <a href="http://www.cmake.org" target="_parent">http://www.cmake.org</a>.
+Furthermore, depending on your operation system and the capabilities (framegrabber,
+display, simulation, ...) you need, prior to install ViSP,
+install third party libraries <a href="https://visp.inria.fr/software-architecture" target="_parent">https://visp.inria.fr/software-architecture</a>.</p>
 
-<p>ViSP full installation procedure using CMake is detailed in the \ref tuto_install_sdk "Installation from prebuild SDK tutorials" and \ref tuto_install_src "Installation from source tutorials". \ref tuto_started "Getting started tutorials" and documents in pdf are also available from <a
+<p>ViSP full installation procedure using CMake is detailed in the \ref tutorial_install_pkg
+and \ref tutorial_install_src. \ref tutorial_started and documents in pdf are also available from <a
 href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr/publications</a>.</p>
 
-Here you will find a list of robots, cameras, motion capture system that you can use for learning visual-servoing or build robotics applications
-on top of them based on ViSP.
+\section tutorial Tutorials
 
-\section tutorial Tutorials for ViSP users
-
-<p>Here after you will find a list of tutorials that show the basic use of <a href="classes.html">ViSP classes</a> with a small first code.
-
-\subsection tuto_ios ViSP iOS
-
-- \ref tutorial-install-ios-package <br>In this tutorial you will learn how to install ViSP prebuilt framework for iOS devices.
-- \ref tutorial-install-iOS <br>In this tutorial you will learn how to install ViSP from source on OSX for iOS project.
-- \ref tutorial-getting-started-iOS <br>This tutorial shows how to build a project that uses ViSP on iOS devices.
-- \ref tutorial-image-ios <br>This tutorial shows how to do simple image processing on iOS devices.
-- \ref tutorial-detection-apriltag-ios <br>This tutorial shows how to do detect an AprilTag marker in an image on iOS devices.
-- \ref tutorial-detection-apriltag-ios-realtime <br>This tutorial shows how to do detect in realtime an AprilTag marker on iOS devices.
-
-\subsection tuto_java ViSP for Java
-
-- \ref tutorial-install-java <br>In this tutorial you will learn how to install ViSP for Java under Linux, macOS or Windows.
-- \ref tutorial-java-started <br>This tutorial explains how to create a Java application that uses some functionalities from ViSP core module.
-- \ref tutorial-java-apriltag <br>This tutorial explains how to create a Java application that allows to detect AprilTags in an image and compute tag poses.
-- \ref tutorial-java-mbt-generic <br>This tutorial explains how to create a Java application that allows to track an object using generic model-based tracker.
-
-\subsection tuto_android ViSP for Android
-
-- \ref tutorial-create-android-sdk <br>In this tutorial you will learn how to build ViSP Android SDK to be used in an Android app.
-- \ref tutorial-android-getting-started <br>This tutorial explains how to create a simple Android application that uses some functionalities from ViSP core module.
-
-\subsection tuto_unity ViSP for Unity
-
-- <a href="https://github.com/lagadic/visp_unity/blob/master/README.md">Github visp_unity project</a><br>This project contains a wrapper between ViSP and Unity engine. Two Unity AR applications that show the usage of the wrapper are also available. This is the link to a project started during GSoC 2018.
-- <a href="https://github.com/lagadic/visp_unity/wiki">ViSP for Unity introduction</a><br>This is an overview that explains the interaction between ViSP and Unity engine.
-- <a href="https://github.com/lagadic/visp_unity/wiki/Generating-ViSP-wrapper-plugin">How to build ViSP wrapper plugin for Unity</a><br>This tutorial explains how to generate ViSPUnity plugin for your Unity project depending on your platform (MacOS, Ubuntu, Windows).
-- <a href="https://github.com/lagadic/visp_unity/wiki/Unity-AR-demo-using-ViSP">How to run Unity AR application based on ViSP</a><br>This page shows how to track an AprilTag for an AR application and how to track a cube using the generic model-based tracker implemented in VISP.
-
-\subsection tuto_install_sdk Installation from prebuild SDK
-
-- \ref tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt SDK from Ubuntu or Debian packages.
-- \ref tutorial-install-archlinux-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK for Arch Linux.
-- \ref tutorial-install-osx-homebrew-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK on OSX with Homebrew.
-
-\subsection tuto_install_src Installation from source
-
-- \ref tutorial-install-ubuntu <br>In this tutorial you will learn how to install ViSP from source on Linux Ubuntu or Debian.
-- \ref tutorial-install-fedora <br>In this other tutorial you will learn how to install ViSP from source on Linux Fedora.
-- \ref tutorial-install-centos <br>In this other tutorial you will learn how to install ViSP from source on Linux CentOS.
-- \ref tutorial-install-opensuse <br>In this other tutorial you will learn how to install ViSP from source on Linux openSUSE.
-- \ref tutorial-install-raspberry <br>In this tutorial you will learn how to install ViSP from source on Raspberry Pi.
-- \ref tutorial-install-jetson <br>In this tutorial you will learn how to install ViSP from source on Jetson equipped with a Connect Tech Orbitty Carrier board.
-- \ref tutorial-install-jetson-quasar <br>In this tutorial you will learn how to install ViSP from source on Jetson equipped with a Connect Tech Quasar Carrier board.
-- \ref tutorial-install-win10-msvc14 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2015 (vc14).
-- \ref tutorial-install-win10-msvc15 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2017 (vc15).
-- \ref tutorial-install-win10-msvc16 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2019 (vc16).
-- \ref tutorial-install-win10-msvc17 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2022 (vc17).
-- \ref tutorial-install-win10-mingw64 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Mingw-w64.
-- \ref tutorial-install-osx-homebrew <br>In this tutorial you will learn how to install ViSP from source on OSX with Homebrew.
-
-\subsection tuto_install_crosscompiling Installation from cross-compiling
-
-- \ref tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to cross-compile ViSP from source on Ubuntu host for Raspberry Pi target.
-- \ref tutorial-install-crosscompiling-naoqi <br>In this tutorial you will learn how to cross-compile ViSP from source on Ubuntu host for NAOqi targets (NAO, Romeo, Pepper).
-- \ref tutorial-install-win10-msvc14-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2015 (vc14).
-- \ref tutorial-install-win10-msvc15-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2017 (vc15).
-- \ref tutorial-install-win10-msvc16-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2019 (vc16).
-- \ref tutorial-install-win10-msvc17-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2022 (vc17).
-
-\subsection tuto_install_docker Installation from Docker images
-
-- \ref tutorial-install-docker <br>In this tutorial you will be able to get a system up and running with Docker that has ViSP already installed. This tutorial is a good solution for people who have struggled with installation issues.
-
-\subsection tuto_started Getting started
-
-- \ref tutorial-getting-started <br>This tutorial shows how to build a project that uses ViSP to read and display an image.
-- \ref tutorial-getting-started-makefile <br>This tutorial shows how to build a project that uses ViSP without CMake using `visp-config` and `pkg-config` script called in a classical Makefile.
-- \ref tutorial-getting-started-naoqi <br>This tutorial shows how to build a project that uses ViSP on NAOqi OS running on NAO, Romeo or Pepper humanoid robots.
-- \ref tutorial-import-visp-into-EclipseIDE <br>This tutorial shows how to import a CMake project that uses ViSP in Eclipse IDE.
-
-\subsection tuto_linear_algebra Linear algebra operations
-
-- \ref tutorial-basic-linear-algebra <br>This tutorial gives some information concerning basic linear algebra operations implementation for vector and matrix multiplication.
-
-\subsection tuto_image Image manipulation
-
-- \ref tutorial-image-display <br>In this tutorial you will learn how to display an image in a window and how to down scale the window size to be able to display images that are larger than the screen resolution.
-- \ref tutorial-image-display-overlay <br>In this tutorial you will learn how to display points, lines, circles, rectangles in overlay in an image display window.
-- \ref tutorial-basic-drawings <br>In this tutorial you will learn how to modify an image to draw points, lines, circles, rectangles.
-- \ref tutorial-grabber <br>This tutorial shows how to acquire images from a camera.
-- \ref tutorial-image-filtering <br>This tutorial shows how to filter an image with ViSP.
-- \ref tutorial-simu-image <br>This tutorial shows how to project the image of a planar scene to a given camera position.
-- \ref tutorial-video-manipulation <br>In this tutorial you will learn how to manipulate a video or a sequence of successives images in order to rename the images, convert images format, or select some images that will constitute a dataset typically for deep learning purpose.
-
-\subsection tuto_imgproc Image processing
-
-- \ref tutorial-imgproc-brightness <br>This tutorial will show you some simple techniques to adjust or improve the brightness / contrast of an image.
-- \ref tutorial-imgproc-contrast-sharpening <br>This tutorial will show you some simple techniques to improve the contrast and the sharpness of an image.
-- \ref tutorial-imgproc-autothreshold <br>This tutorial will show you different methods to automatically threshold, binarize an image.
-- \ref tutorial-imgproc-contour <br>This tutorial will show you how to extract the contours from a binary image.
-- \ref tutorial-imgproc-connected-components <br>This tutorial will show you how to do a connected-components labeling.
-- \ref tutorial-imgproc-flood-fill <br>This tutorial will show you how to use the flood fill algorithm.
-- \ref tutorial-imgproc-count-coins <br>This tutorial will show you how to count the number of coins in an image.
-
-
-\subsection tuto_calib Camera calibration
-
-- \ref tutorial-calibration-intrinsic <br>This tutorial explains how to calibrate intrinsic camera parameters.
-- \ref tutorial-calibration-extrinsic <br>This tutorial explains how to get the camera eye-in-hand extrinsic transformation when the camera is mounted on a robot end-effector.
-
-\subsection tuto_tracking Tracking
-
-- \ref tutorial-tracking-blob <br>This tutorial introduces blob tracking and detection.
-- \ref tutorial-tracking-keypoint <br>This tutorial focuses on keypoint tracking using Kanade-Lucas-Tomasi feature tracker.
-- \ref tutorial-tracking-me <br>This tutorial focuses on line and ellipse tracking using moving-edges.
-- \ref tutorial-tracking-mb-generic <br>This tutorial focuses on model-based trackers using either edges, or keypoints, or a combination of them as visual features on images acquired by a monocular color camera.
-- \ref tutorial-tracking-mb-generic-stereo <br>This tutorial focuses on model-based trackers using either edges, or keypoints, or a combination of them as visual features on images acquired by a stereo color camera.
-- \ref tutorial-tracking-mb-generic-rgbd <br>This tutorial focuses on generic model-based trackers combining moving edges and/or keypoints with depth visual features.
-- \ref tutorial-tracking-mb-generic-apriltag-live <br>This tutorial is a simple use case. Using a webcam or an Intel RGB-D camera it shows how to test the generic model tracker on a cube that has an AprilTag glued on one face. The tag is here used to automate the tracker initialization.
-- \ref tutorial-tracking-mb-deprecated <br>This deprecated tutorial focuses on model-based trackers using either edges, keypoints or and hybrid scheme that uses edges and keypoints.
-- \ref tutorial-tracking-mb-CAO-editor <br>This tutorial presents the project done during the GSoC 2017: two Blender plugins to import/export .cao model file and a Qt-based .cao editor.
-- \ref tutorial-tracking-mb-generic-rgbd-Blender <br>This tutorial shows how to use Blender to generate simulated data to test the model-based tracker.
-- \ref tutorial-tracking-tt <br>This tutorial focuses on template trackers based on image registration approaches.
-
-\subsection tuto_detection Detection
-
-- \ref tutorial-matching <br>This tutorial shows how to detect and match keypoints.
-- \ref tutorial-matching-deprecated <br>This tutorial shows how to detect and match SURF keypoints. It will be deprecated if you use an OpenCV version equal to 2.8.0 or a more recent version.
-- \ref tutorial-detection-barcode <br>This tutorial focuses on bar code (QR code, Data Matrix code) detection.
-- \ref tutorial-detection-face <br>This tutorial focuses on face detection thanks to OpenCV Haar cascade classifier.
-- \ref tutorial-detection-object <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object.
-- \ref tutorial-detection-object-deprecated <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object. We recommend to follow rather \ref tutorial-detection-object that uses vpMbGenericTracker class.
-- \ref tutorial-detection-apriltag <br>This tutorial focuses on AprilTag patterns detection and pose estimation.
-- \ref tutorial-detection-dnn <br>This tutorial shows how to do deep learning object detection.
-- \ref tutorial-detection-tensorrt <br>This tutorial shows how to perform object detection inference using NVIDIA TensorRT inference SDK.
-
-\subsection tuto_computer_vision Computer vision
-
-- <a href="https://visp-doc.inria.fr/doxygen/camera_localization/">Pose estimation for augmented reality</a> <br>This tutorial is a self contented introduction to the most important approaches dedicated to camera localization along with a survey of the extension that have been proposed in the recent years. We also try to link these methodological concepts to the main libraries and SDK available on the market.
-- \ref tutorial-pose-estimation <br>This tutorial focuses on pose estimation from planar or non planar points.
-- \ref tutorial-pose-estimation-qrcode <br>This tutorial focuses on pose estimation of a QRcode using it's four corners location.
-- \ref tutorial-planar-object-pose <br>This tutorial shows how to estimate the pose of a planar object exploiting data (color and depth images) from a RGB-D sensor.
-- \ref tutorial-homography <br>Here we explain how to estimate an homography from couples of matched points.
-- \ref tutorial-homography-deprecated <br>Here we explain how to estimate an homography from couples of matched points. It will be deprecated if you use an OpenCV version equal to 2.8.0 or a more recent version.
-
-\subsection tuto_vs Visual servoing
-
-- \ref tutorial-ibvs <br>This tutorial explains how to simulate an IBVS.
-- \ref tutorial-simu-robot-pioneer <br>This tutorial focuses on visual servoing simulation on a unicycle robot. The study case is a Pioneer P3-DX mobile robot equipped with a camera.
-- \ref tutorial-boost-vs <br>This tutorial explains how to speed up the time to convergence of a visual servo.
-- \ref tutorial-franka-pbvs <br>This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
-- \ref tutorial-franka-ibvs <br>This tutorial explains how to do an image-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
-- \ref tutorial-franka-sim <br>This tutorial explains how to simulate a Panda 7-dof robot from Franka Emika for visual servoing and impedance control applications.
-- \ref tutorial-mbot-vs <br>This tutorial explains how to do a visual-servoing with the mBot Ranger educational robot kit equipped with a Raspberry Pi and a camera.
-- \ref tutorial-bebop2-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Parrot Bebop 2 drone.
-- \ref tutorial-flir-ptu-vs <br> Explains how to implement an image-based visual-servoing (IBVS) with Flir pan-tilt unit and camera.
-- \ref tutorial-universal-robot-ibvs <br> Provides information on controlling robots from Universal Robots using vpRobotUniversalRobots class implemented in ViSP and shows how to implement an image-based visual-servoing with such a robot.
-- \ref tutorial-universal-robot-pbvs <br> Explains how to implement a position-based visual-servoing with a robot from Universal Robots.
-
-\subsection tuto_munkres Assignment algorithm
-
-- \ref tutorial-munkres <br>This tutorial explains how to use Munkres to assign tracked and detected image points.
-
-\subsection tuto_bridge Bridges over other frameworks (OpenCV, MATLAB, ROS-1)
-
-- \ref tutorial-bridge-opencv <br>This tutorial explicit how to convert OpenCV to/from ViSP structures such as camera parameters, images...
-- \ref tutorial-visp-matlab <br>This tutorial shows how to invoke MATLAB functions from ViSP using MATLAB Engine.
-- \ref tutorial-bridge-ros <br>In this tutorial you will learn how to install ViSP prebuilt SDK for ROS and get pointers to existing ROS packages that are using ViSP.
-
-\subsection tuto_tools Other tools
-
-- \ref tutorial-plotter <br>This tutorial explains how to plot curves in real-time during a visual servo.
-- \ref tutorial-trace <br>This tutorial explains how to introduce trace in the code that could be enabled for debugging or disabled.
-- \ref tutorial-multi-threading <br>This tutorial explains how to implement multi-threaded applications to capture images from a camera
-in one thread and display these images in an other thread.
+To learn ViSP, we propose a lot of tutorials that show the basic use of <a href="classes.html">ViSP classes</a>:
+- \ref tutorial_users
+- \ref tutorial_developers
 
 @VISP_MAINPAGE_EXTENSION@
-
-\section tutorial_dev Tutorials for ViSP developers
-
-<p>Here after you will find a list of tutorials that show how to to modify ViSP.
-
-\subsection tuto_coding Contributing to ViSP source code
-
-- \ref tutorial-add-new-dependency <br>This tutorial explains how to introduce a new class that relies on a 3rd party SDK. Different use cases are given as example.
-
-\subsection tuto_contrib Extanding ViSP with contrib modules
-
-- \ref tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
 
 \section Citing_ViSP Citing ViSP
 

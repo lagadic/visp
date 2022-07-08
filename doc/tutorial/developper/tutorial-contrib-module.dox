@@ -15,9 +15,9 @@ The following image illustrates this modular architecture, where for example the
 
 \image html img-contrib-visp-module.jpg ViSP modular architecture
 
-In this tutorial you will learn how to extend ViSP architecture introducing new contrib modules. 
+In this tutorial you will learn how to extend ViSP architecture introducing new contrib modules.
 
-\note We assume here that you are familiar with an \ref tuto_install_src and that you succeed in creating a first project that uses ViSP by following \ref tutorial-getting-started.
+\note We assume here that you are familiar with an \ref tutorial_install_src and that you succeed in creating a first project that uses ViSP by following \ref tutorial-getting-started.
 
 
 \section contrib_model Contribution model
@@ -148,7 +148,7 @@ $ make -j4
 \endcode
 - Run the test:
 \code
-$ ./modules/contrib/test-vpContrib 
+$ ./modules/contrib/test-vpContrib
 I’m in my first contrib module
 \endcode
 
@@ -190,7 +190,7 @@ $ cmake-gui ../visp
 - press "Configure" button. A new module named \c visp_contrib is appearing
 \image html img-contrib-module-6.png
 
-- press "Generate" button. 
+- press "Generate" button.
 
 - This ends the CMake configuration stage. Start now Visual Studio and open the \c C:/ViSP/visp_contrib-build/VISP.sln solution file. As described in \ref tutorial-install-win10-msvc14 you have now to build ViSP from source.
 

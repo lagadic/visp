@@ -1,19 +1,10 @@
 /*! \page supported-material Supported Material
 
-Here you will find a list of robots, cameras, motion capture system that you can use for learning visual-servoing or build robotics applications
+Here you will find a list of robots, haptic devices, force-torque sensors, laser range finders, depth cameras, RGB cameras,
+and motion capture system that you can use for learning visual-servoing or building robotics applications
 on top of them based on ViSP.
 
-- \subpage material_robots
-- \subpage material_haptic
-- \subpage material_ft
-- \subpage material_laser_scanner
-- \subpage material_camera_depth
-- \subpage material_camera
-- \subpage material_mocap
-
-*/
-
-/*! \page material_robots Supported Robots
+\section material_robots Supported Robots
 
 These are the robots supported by ViSP.
 
@@ -46,9 +37,23 @@ an interface over FLIR PTU SDK.
 Installation instructions are provided in \ref tutorial-flir-ptu-vs.
 \image html img-flir-ptu-d47.png FLIR PTU-47
 
-*/
+- <b>Parrot Bebop2 drone</b><br>
+The Parror Bebop2 drone is supported by ViSP using vpRobotBebop2,
+an interface over Parrot [ARDroneSDK3](https://developer.parrot.com/docs/SDK3/).
+Installation instructions are provided in \ref tutorial-bebop2-vs.
+\image html img-bebop2.jpg Parrot Bebop2 drone
 
-/*! \page material_haptic Supported Haptic Devices
+- <b>Pioneer P3DX</b><br>
+The [Pioneer P3DX](https://store.makeblock.com/products/diy-coding-robot-kits-mbot-ranger) is supported by ViSP through
+vpRobotPioneer class, an interface for Pioneer mobile robots based on [Aria](https://github.com/reedhedges/AriaCoda) 3rd party library.
+\image html img-pioneer.jpg Pioneer P3DX mobile robot
+
+- <b>mBot Ranger Educational Kit</b><br>
+The [mBot Ranger](https://store.makeblock.com/products/diy-coding-robot-kits-mbot-ranger) is supported by ViSP.
+Installation instructions are provided in \ref tutorial-mbot-vs.
+\image html img-mbot-ranger.jpg mBot Ranger Educational Kit
+
+\section material_haptic Supported Haptic Devices
 
 These are the haptic devices supported by ViSP.
 
@@ -66,9 +71,7 @@ If you have a Virtuose 6D haptic device from [Haptions](http://www.haption.com) 
 the device.
 \image html img-haptic-virtuose.jpg Virtuose 6D haptic device
 
-*/
-
-/*! \page material_ft Supported Force/Torque Sensor
+\section material_ft Supported Force/Torque Sensor
 
 These are the force/torque sensors supported by ViSP.
 
@@ -82,9 +85,13 @@ If you have an [ATI F/T](https://www.ati-ia.com/products/ft/ft_ModelListing.aspx
 class to get access to the measurements. This wrapper uses [Comedi](http://www.comedi.org) 3rd party. Installation instructions are provided
 [here](https://visp.inria.fr/3rd_comedi/).
 \image html img-ft-gamma-sensor.jpg ATI Gamma transducer
-*/
 
-/*! \page material_laser_scanner Supported Lidar
+- <b>Alberobotics FT device</b><br>
+If you have an [Alberobotics F/T](https://alberobotics.it/) sensor you can use vpForceTorqueIitSensor
+class to get access to the measurements.
+\image html img-ft-sensors-iit.jpg Alberobotics FT sensors family
+
+\section material_laser_scanner Supported Lidar
 
 These are the lidar supported by ViSP.
 
@@ -92,9 +99,7 @@ These are the lidar supported by ViSP.
 If you have a Sick LD-MRS Lidar you can get the measurements thanks to vpSickLDMRS class.
 \image html img-lidar-sick.jpg Sick LD-MRS family
 
-*/
-
-/*! \page material_camera_depth Supported Depth Cameras
+\section material_camera_depth Supported Depth Cameras
 
 These are the depth cameras supported by ViSP.
 
@@ -122,9 +127,7 @@ If you have a Microsoft Kinect 1, you can use vpKinect class to get data.
 It requires `libfreenect` 3rd party. Installation instructions are provided [here](https://visp.inria.fr/3rd_freenect).
 \image html img-kinect1.jpg Microsoft Kinect 1 depth camera
 
-*/
-
-/*! \page material_camera Supported Cameras
+\section material_camera Supported Cameras
 
 These are the cameras supported by ViSP.
 
@@ -164,9 +167,7 @@ Cameras compatible with Video 4 Linux 2 (webcam, laptop embedded camera) are sup
 class after installing libv4l 3rd party. Installation instructions are provided in
 <a href="tutorial-install-ubuntu.html#install_ubuntu_quick">Ubuntu Quick Installation</a> tutorial.
 
-*/
-
-/*! \page material_mocap Supported Motion Capture System
+\section material_mocap Supported Motion Capture System
 
 These are the motion capture systems supported by ViSP.
 
