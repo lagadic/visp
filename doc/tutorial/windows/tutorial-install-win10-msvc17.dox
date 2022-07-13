@@ -119,14 +119,14 @@ parties are optional and should be considered only by expert developers.
 
 First you have to get OpenCV:
 - From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got
-`opencv-4.5.5-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the
+`opencv-4.6.0-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the
 previous OpenCV releases starting from 3.4.0 version.
-- Extract the content of the archive in your workspace `%%VISP_WS%`.
-\image html img-win10-extract-opencv.png
-- The installer extract all the material in `%%VISP_WS%\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\opencv-4.5.5`.
+- Extract the content of the archive in your workspace `%%VISP_WS%/3rdparty`.
+\image html img-win10-extract-opencv-3rdparty.jpg
+- The installer extract all the material in `%%VISP_WS%\3rdparty\opencv`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.6.0`.
 
-\note OpenCV 4.5.5 win pack installer doesn't contain prebuild OpenCV libraries build with
+\note OpenCV 4.6.0 win pack installer doesn't contain prebuild OpenCV libraries build with
 Visual Studio 17 2022. It contains only prebuild libraries build with previous Visual Studio version
 (vc14 and vc15). That's why we need to build OpenCV from source.
 
@@ -134,13 +134,13 @@ Visual Studio 17 2022. It contains only prebuild libraries build with previous V
 
 - Create a build directory
 \verbatim
-C:\> mkdir %VISP_WS%\opencv-4.5.5\build-vc17
-C:\> cd %VISP_WS%\opencv-4.5.5\build-vc17
+C:\> mkdir %VISP_WS%\3rdparty\opencv-4.6.0\build-vc17
+C:\> cd %VISP_WS%\3rdparty\opencv-4.6.0\build-vc17
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 17 2022) and installation dir is set
-to the existing folder `%%VISP_WS%\opencv-4.5.5\build`:
+to the existing folder `%%VISP_WS%\3rdparty\opencv-4.6.0\build`:
 \verbatim
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\opencv-4.5.5\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\opencv-4.5.5\build
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\3rdparty\opencv-4.6.0\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.6.0\build
 \endverbatim
 - Build and install OpenCV using release and debug configuration respectively (installation doesn't need
 administrator privileges)
@@ -155,15 +155,15 @@ Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
 \verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.5\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.6.0\build"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\opencv-4.5.5\build` is where you have installed OpenCV. Inside this folder you should
+where `%%VISP_WS%\3rdparty\opencv-4.6.0\build` is where you have installed OpenCV. Inside this folder you should
 have a file named `OpenCVConfig.cmake`.
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 17 2022 usage in
 the `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new
-line with `%%VISP_WS%\opencv-4.5.5\build\x64\vc17\bin`.
+line with `%%VISP_WS%\3rdparty\opencv-4.6.0\build\x64\vc17\bin`.
 
 \subsubsection install_win10_msvc17_3rdparty_eigen Eigen3 3rd party
 
@@ -173,26 +173,26 @@ Even if Eigen3 is designed as a template we recommend to install the library wit
 
 - Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
 written we downloaded `eigen-3.4.0.zip` archive corresponding to Eigen 3.4.0.
-- Extract the content of the archive in `%%VISP_WS%`.
-- Once unzipped, you should have Eigen in `%%VISP_WS%\eigen-3.4.0`
+- Extract the content of the archive in `%%VISP_WS%\3rdparty`.
+- Once unzipped, you should have Eigen in `%%VISP_WS%\3rdparty\eigen-3.4.0`
 
 <b>2. Build and install Eigen3 from source</b>
 
 - Create a build directory
 \verbatim
-C:\> mkdir %VISP_WS%\eigen-3.4.0\build-vc17
-C:\> cd %VISP_WS%\eigen-3.4.0\build-vc17
+C:\> mkdir %VISP_WS%\3rdparty\eigen-3.4.0\build-vc17
+C:\> cd %VISP_WS%\3rdparty\eigen-3.4.0\build-vc17
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 17 2022 and installation folder is set
- to `%%VISP_WS%\eigen-3.4.0\build-vc17\install` folder):
+ to `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install` folder):
 \verbatim
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\eigen-3.4.0 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.4.0\build-vc17\install
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\3rdparty\eigen-3.4.0 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install
 \endverbatim
 - Build and install Eigen3 (installation doesn't need administrator privileges)
 \verbatim
 C:\> cmake --build . --config Release --target install
 \endverbatim
-- Eigen3 is now installed in `%%VISP_WS%\eigen-3.4.0\build-vc17\install` folder
+- Eigen3 is now installed in `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install` folder
 
 <b>3. Complete Eigen3 installation</b>
 
@@ -200,11 +200,11 @@ Now you have to complete Eigen3 installation setting some environment vars:
 - In order that ViSP detects Eigen3 you have to set `EIGEN_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
 \verbatim
-C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.4.0\build-vc17\install\share\eigen3\cmake"
+C:\> setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install\share\eigen3\cmake"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\eigen-3.4.0\build-vc17\install` is where you have installed Eigen3.
-Inside the folder `%%VISP_WS%\eigen-3.4.0\build-vc17\install\share\eigen3\cmake` you should have a file
+where `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install` is where you have installed Eigen3.
+Inside the folder `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install\share\eigen3\cmake` you should have a file
 named `Eigen3Config.cmake`.
 - There is no need to set `Path` environment var since Eigen3 is a template that has no library.
 
@@ -363,8 +363,8 @@ If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you c
 <b>1. Get and build Qualisys Datastream SDK</b>
 
 \verbatim
-C:\> mkdir %VISP_DIR%\3rdparty\qualisys
-C:\> cd %VISP_DIR%\3rdparty\qualisys
+C:\> mkdir %VISP_WS%\3rdparty\qualisys
+C:\> cd %VISP_WS%\3rdparty\qualisys
 C:\> git clone https://github.com/qualisys/qualisys_cpp_sdk.git
 C:\> cd qualisys_cpp_sdk
 C:\> mkdir build
@@ -549,7 +549,7 @@ by "d" character (`libvisp_core340d.dll`...).
 
 To build ViSP documentation, you have first to install [Doxygen](http://www.doxygen.nl):
 - [Download](http://www.doxygen.nl/download.html) binary distribution for Windows. At the time this tutorial
-was written, we downloaded `doxygen-1.9.2-setup.exe`
+was written, we downloaded `doxygen-1.9.4-setup.exe`
 - Run the installer following default options
 - Open a new `cmd` Command Prompt and enter build directory
 \verbatim
