@@ -1,5 +1,7 @@
 //! \example tutorial-munkres-assignment.cpp
 
+#include <functional>
+
 // Display
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
