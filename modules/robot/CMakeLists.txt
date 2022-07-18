@@ -94,6 +94,12 @@ if(USE_UR_RTDE)
   list(APPEND opt_libs ${UR_RTDE_LIBRARIES})
 endif()
 
+if(USE_MAVSDK)
+  vp_get_external_target(MAVSDK::mavsdk MAVSDK_INCLUDE_DIRS MAVSDK_LIBRARIES)
+  list(APPEND opt_incs ${MAVSDK_INCLUDE_DIRS})
+  list(APPEND opt_libs ${MAVSDK_LIBRARIES})
+endif()
+
 if(USE_BICLOPS)
   list(APPEND opt_incs ${BICLOPS_INCLUDE_DIRS})
   list(APPEND opt_libs ${BICLOPS_LIBRARIES})

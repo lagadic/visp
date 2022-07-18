@@ -1,0 +1,84 @@
+/**
+
+\page tutorial-pixhawk-vs Tutorial: How to perform an image-based visual-servoing on a drone equipped with a Pixhawk
+\tableofcontents
+
+\section pixhawk_intro Introduction
+
+[MAVLink](https://mavlink.io/en/) or Micro Air Vehicle Link is a protocol for communicating with small
+[unmanned vehicle](https://en.wikipedia.org/wiki/Uncrewed_vehicle). It is designed as a header-only message marshaling library.
+
+In this tutorial we show how to control indoor a DJI drone equipped with a Pixhawk.
+
+\image html img-drone-dji-pixhawk.jpg DJI F450 equipped with a Pixhawk connected to a Jetson TX2 through an USB link
+
+\section pixhawk_prereq Prerequisites
+
+\subsection pixhawk_prereq_hardware Hardware
+
+The following material is necessary:
+- A robot equipped with a Pixhawk used to control its motors. In our case we use a DJI F450 drone
+- A [Pixhawk](https://pixhawk.org/) mounted on the robot. In our case we use a Pixhawk 2 Cube
+- A motion capture system (MoCap) like the Qualisys or Vicon ones, that are interfaced through
+  asMocapQualisys and asMocapVicon respectively.
+
+Since in our use case we want to navigate indoor, GPS is supposed to be not available. That's why
+the MoCap is here used to retrieve the robot position using an external computer. This computer could be
+a laptop used as a ground station or embedded onboard using for example a Jetson TX2 or a Raspberry Pi4.
+
+The external computer is used here to stream the pose of the robot from MoCap to the Pixhawk by using Mavlink.
+
+\subsection pixhawk_prereq_software Software
+
+To be able to use Mavlink to communicate between the external computer and the onboard Pixhawk
+you need to install MavSDK. Instructions to install MavSDK and check the installation are provided
+[here](https://mavsdk.mavlink.io/v0.35.0/en/getting_started/installation.html), and you can get the latest .deb on their [github page](https://github.com/mavlink/MAVSDK/releases).
+Once MavSDK is installed, and enabled during ViSP cmake configuration stage, it will enable asRobotMavlink usage.
+
+When using PX4, it is important to install QGroundControl (instructions [here](https://docs.qgroundcontrol.com/master/en/getting_started/download_and_install.html)).
+This software will provide a complete interface with your PX4 flight controller. In the setup window, accessible directly from the QGC icon, you can flash the firmware on the Pixhawk once it is connected through USB.
+We recommend flashing the latest stable version of PX4, but it is possible to go for the developper version.
+
+Once the firmware is installed, the various sensor calibrations must be done.
+After this, the drone must be configured to fly indoors. In Vehicle Setup, go to Parameters and search the parameter EKF2_AID_MASK. This parameter allows you to control the source of the position data used in the Kalman filter. If we want to fly inside, we need to untick the "use GPS" box (default param) and tick the "vision position fusion" and "vision yaw fusion" boxes.
+The parameter EKF2_HGT_MODE determines which sensor should be prioritized for altitude estimation. This parameter should be switched from "barometer" to "Vision".
+
+MavProxy is another useful software, allowing you to easily communicate with the drone by merging mavlink instructions coming through different ports.
+The instruction to install Mavproxy on the ground station or on the onboard computer (Jetson) can be found [here](https://ardupilot.org/mavproxy/docs/getting_started/download_and_installation.html).
+Once Mavproxy is installed on the onboard computer, you can launch it through the terminal from your ground station with ssh.
+Then you can run Mavproxy with different ports open, as is shown in this example (by default, QGroundControl will connect through the udp port 14552):
+\verbatim
+$ cd $MAVPROXY_DIR
+$ mavproxy.py --master=/dev/ttyACM0 --out=udpout:192.168.30.111:14550 \
+    --out=udpout:192.168.30.111:14551 --out=udpout:192.168.30.111:14552
+\endverbatim
+
+\section pixhawk_stream_mocap Stream MoCap to Pixhawk
+
+The code sendMocapToPixhawkDrone.cpp allows you to send the mocap stream comming from a Qualisys or Vicon motion capture system
+to your drone. This code is based on MavSDK and Visp's vpMocap classes.
+In our case we are connecting a laptop running Ubuntu 22.04 to the Pixhawk via a Jetson on Ubuntu 22.04 running Mavproxy.
+
+The code can be launched for Qualisys in this way :
+\verbatim
+$ cd $VISP_WS/visp-build/example/servo-pixhawk
+$ ./mavsdk_mocap_sender -ob DJI-F450 -q -d udp://:14551
+\endverbatim
+
+\section pixhawk_fly Control the drone with a keyboard
+
+In keyboard_test_with_RobotMavlink.cpp you will find the code of an example that allows to control the drone from a ground station.
+In our case we are connecting a laptop running Ubuntu 22.04 to the Pixhawk using MavProxy.
+
+To use this example:
+
+\verbatim
+terminal 1 $ start mavproxy
+terminal 2 $ ./testPixhawkDroneKeyboard.cpp
+\endverbatim
+
+\section pixhawk_next Next tutorial
+
+The next tutorial \ref tutorial-bebop2-vs shows how to embbed a visual-servoing scheme on a Parrot Bebop2 drone.
+
+*/
