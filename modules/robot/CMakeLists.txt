@@ -1,4 +1,4 @@
-#############################################################################
+# ############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
 # Copyright (C) 2005 - 2019 by Inria. All rights reserved.
@@ -34,7 +34,7 @@
 # Authors:
 # Fabien Spindler
 #
-#############################################################################
+# ############################################################################
 
 # Add optional 3rd parties
 set(opt_incs "")
@@ -58,13 +58,15 @@ if(USE_VIRTUOSE)
     list(APPEND opt_libs ${RT_LIBRARIES})
     list(APPEND opt_libs ${DL_LIBRARIES})
   endif()
+
   if(MSVC)
     # Work arround to remove warning LNK4099; PDB vc120.pdb not found with virtuoseDLL.lib
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /ignore:4099")
+
     # Disable Visual C++ C4312 warning occuring on 3rd party VirtuoseAPI.h file
     # VirtuoseAPI.h(280): warning C4312: 'type cast': conversion from 'int' to 'char *' of greater size
     # VirtuoseAPI.h(302): warning C4312: 'type cast': conversion from 'int' to 'VirtContext' of greater size
-  if(BUILD_SHARED_LIBS)
+    if(BUILD_SHARED_LIBS)
       vp_set_source_file_compile_flag(src/haptic-device/virtuose/vpVirtuose.cpp /wd4312)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuose.cpp /wd4312)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuoseAfma6.cpp /wd4312)
@@ -72,9 +74,9 @@ if(USE_VIRTUOSE)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuoseJointLimits.cpp /wd4312)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuosePeriodicFunction.cpp /wd4312)
       vp_set_source_file_compile_flag(test/virtuose/testVirtuoseWithGlove.cpp /wd4312)
-  else()
-    vp_warnings_disable(CMAKE_CXX_FLAGS /wd4312)
-  endif()
+    else()
+      vp_warnings_disable(CMAKE_CXX_FLAGS /wd4312)
+    endif()
   endif()
 endif()
 
@@ -142,6 +144,7 @@ endif()
 if(USE_ARSDK)
   list(APPEND opt_incs ${ARSDK_INCLUDE_DIRS})
   list(APPEND opt_libs ${ARSDK_LIBRARIES})
+
   if(USE_FFMPEG)
     list(APPEND opt_incs ${FFMPEG_INCLUDE_DIRS})
     list(APPEND opt_libs ${FFMPEG_LIBRARIES})
@@ -153,15 +156,19 @@ if(USE_COIN3D)
   if(WIN32)
     add_definitions("-DCOIN_DLL")
   endif()
+
   list(APPEND opt_incs ${COIN3D_INCLUDE_DIRS})
+
   # On OSX cmake 2.8 found OpenGL but OPENGL_INCLUDE_DIR was set to NOT_FOUND
   # We add a test to be sure that the OPENGL vars exist.
   if(OPENGL_INCLUDE_DIR)
     list(APPEND opt_incs ${OPENGL_INCLUDE_DIR})
   endif()
+
   if(OPENGL_LIBRARIES)
     list(APPEND opt_libs ${OPENGL_LIBRARIES})
   endif()
+
   list(APPEND opt_libs ${COIN3D_LIBRARIES})
 endif()
 
@@ -221,7 +228,7 @@ vp_set_source_file_compile_flag(src/wireframe-simulator/vpBound.cpp -Wno-strict-
 vp_set_source_file_compile_flag(src/wireframe-simulator/vpArit.cpp -Wno-strict-overflow)
 
 # copy robot and wireframe simulator data
-vp_glob_module_copy_data("src/robot-simulator/arms/*.bnd"      data/robot-simulator)
+vp_glob_module_copy_data("src/robot-simulator/arms/*.bnd" data/robot-simulator)
 vp_glob_module_copy_data("src/wireframe-simulator/scene/*.bnd" data/wireframe-simulator)
 vp_glob_module_copy_data("src/wireframe-simulator/scene/*.sld" data/wireframe-simulator)
 
@@ -229,8 +236,7 @@ vp_module_include_directories(${opt_incs})
 vp_create_module(${opt_libs})
 vp_add_tests(
   DEPENDS_ON visp_sensor visp_vision visp_blob visp_gui
-  CTEST_EXCLUDE_PATH qbdevice servo-franka virtuose bebop2 servo-universal-robots
-  CTEST_EXCLUDE_FILE servo-afma6/testRobotAfma6Pose.cpp servo-viper/testRobotViper850Pose.cpp servo-flir-ptu/testRobotFlirPtu.cpp)
+  CTEST_EXCLUDE_PATH bebop2 qbdevice servo-afma4 servo-afma6 servo-franka servo-universal-robots servo-viper virtuose servo-pixhawk)
 
 if(USE_VIRTUOSE)
   # Add specific build flag to turn off warnings coming from VirtuoseAPI 3rd party
