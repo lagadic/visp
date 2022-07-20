@@ -43,6 +43,7 @@
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/plugins/action/action.h>
 #include <mavsdk/plugins/calibration/calibration.h>
+#include <mavsdk/plugins/mocap/mocap.h>
 #include <mavsdk/plugins/offboard/offboard.h>
 #include <mavsdk/plugins/telemetry/telemetry.h>
 
@@ -203,6 +204,37 @@ public:
     auto telemetry = mavsdk::Telemetry{m_system};
     mavsdk::Telemetry::Battery battery = telemetry.battery();
     return (int)(battery.remaining_percent * 100);
+  }
+
+  bool sendMocapData(const vpHomogeneousMatrix &M)
+  {
+    auto mocap = mavsdk::Mocap{m_system};
+    mavsdk::Mocap::VisionPositionEstimate pose_estimate;
+
+    vpRxyzVector XYZvec = vpRxyzVector(M.getRotationMatrix());
+    pose_estimate.angle_body.roll_rad = XYZvec[0];
+    pose_estimate.angle_body.pitch_rad = XYZvec[1];
+    pose_estimate.angle_body.yaw_rad = XYZvec[2];
+
+    pose_estimate.position_body.x_m = M.getTranslationVector()[0];
+    pose_estimate.position_body.y_m = M.getTranslationVector()[1];
+    pose_estimate.position_body.z_m = M.getTranslationVector()[2];
+
+    pose_estimate.pose_covariance.covariance_matrix.push_back(NAN);
+    pose_estimate.time_usec = 0; // We are using the back end timestamp
+
+    const mavsdk::Mocap::Result set_position_result = mocap.set_vision_position_estimate(pose_estimate);
+    if (set_position_result != mavsdk::Mocap::Result::Success) {
+      std::cerr << "Set position failed: " << set_position_result << '\n';
+      return false;
+    } else {
+      std::cout << "I managed to send the data" << std::endl;
+      std::cout << "Translation : " << pose_estimate.position_body.x_m << " , " << pose_estimate.position_body.y_m
+                << " , " << pose_estimate.position_body.z_m << std::endl;
+      std::cout << "Roll : " << pose_estimate.angle_body.roll_rad << " , Pitch : " << pose_estimate.angle_body.pitch_rad
+                << " , Yaw : " << pose_estimate.angle_body.yaw_rad << " ." << std::endl;
+      return true;
+    }
   }
 
   void setTakeOffAlt(double altitude)
@@ -705,6 +737,12 @@ void vpRobotMavsdk::connect(const std::string &connection_info) { m_impl->connec
  *  Checks if the robot is running, ie if the robot is connected and ready to receive commands.
  */
 bool vpRobotMavsdk::isRunning() const { return m_impl->isRunning(); }
+
+/*!
+ * Sends mocap position data to the robot.
+ * \param[in] M : Homogeneous matrix containing the pose of the drone for the mocap system.
+ */
+bool vpRobotMavsdk::sendMocapData(const vpHomogeneousMatrix &M) { return m_impl->sendMocapData(M); }
 
 /*!
  * Gives the address given to connect to the robot.

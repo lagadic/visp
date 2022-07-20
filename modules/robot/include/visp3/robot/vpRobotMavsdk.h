@@ -90,6 +90,11 @@ public:
   bool isStreaming() const; // Not implemented yet
   //@}
 
+  //! @name Sending state info
+  //@{
+  bool sendMocapData(const vpHomogeneousMatrix &M);
+  //@}
+
   //! @name Commands and parameters
   //@{
   void cutMotors();
