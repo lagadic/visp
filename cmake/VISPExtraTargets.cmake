@@ -1,4 +1,4 @@
-#############################################################################
+# ############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
 # Copyright (C) 2005 - 2019 by Inria. All rights reserved.
@@ -31,10 +31,10 @@
 # Authors:
 # Fabien Spindler
 #
-#############################################################################
+# ############################################################################
 
 # ----------------------------------------------------------------------------
-#   Uninstall target, for "make uninstall"
+# Uninstall target, for "make uninstall"
 # ----------------------------------------------------------------------------
 configure_file(
   cmake/templates/cmake_uninstall.cmake.in
@@ -49,7 +49,7 @@ if(ENABLE_SOLUTION_FOLDERS)
 endif()
 
 # ----------------------------------------------------------------------------
-#   Doxygen documentation target, for "make visp_doc" and "make html-doc" (to keep compat with previous versions)
+# Doxygen documentation target, for "make visp_doc" and "make html-doc" (to keep compat with previous versions)
 # ----------------------------------------------------------------------------
 if(DOXYGEN_FOUND)
   add_custom_target(html-doc
@@ -60,11 +60,15 @@ if(DOXYGEN_FOUND)
     COMMAND "${DOXYGEN_EXECUTABLE}" "${VISP_DOC_DIR}/config-doxygen"
     DEPENDS "${VISP_DOC_DIR}/config-doxygen"
   )
-  if(UNIX AND NOT ANDROID) # man target available only on unix
+
+  if(CMAKE_GENERATOR MATCHES "Xcode")
+    add_dependencies(visp_doc man) # developer_scripts not available when Xcode
+  elseif(UNIX AND NOT ANDROID) # man target available only on unix
     add_dependencies(visp_doc man developer_scripts)
-  elseif(NOT (MINGW OR IOS))
+  elseif(NOT(MINGW OR IOS))
     add_dependencies(visp_doc developer_scripts)
   endif()
+
   if(ENABLE_SOLUTION_FOLDERS)
     set_target_properties(visp_doc PROPERTIES FOLDER "extra")
     set_target_properties(html-doc PROPERTIES FOLDER "extra")
@@ -72,57 +76,61 @@ if(DOXYGEN_FOUND)
 endif()
 
 # ----------------------------------------------------------------------------
-#   Tests target, for make visp_tests
+# Tests target, for make visp_tests
 # ----------------------------------------------------------------------------
 if(BUILD_TESTS)
   add_custom_target(visp_tests)
+
   if(ENABLE_SOLUTION_FOLDERS)
     set_target_properties(visp_tests PROPERTIES FOLDER "extra")
   endif()
 endif()
 
 # ----------------------------------------------------------------------------
-#   Tests target, for make visp_examples
+# Tests target, for make visp_examples
 # ----------------------------------------------------------------------------
 if(BUILD_EXAMPLES)
   add_custom_target(visp_examples)
+
   if(ENABLE_SOLUTION_FOLDERS)
     set_target_properties(visp_examples PROPERTIES FOLDER "extra")
   endif()
 endif()
 
 # ----------------------------------------------------------------------------
-#   Tests target, for make visp_demos
+# Tests target, for make visp_demos
 # ----------------------------------------------------------------------------
 if(BUILD_DEMOS)
   add_custom_target(visp_demos)
+
   if(ENABLE_SOLUTION_FOLDERS)
     set_target_properties(visp_demos PROPERTIES FOLDER "extra")
   endif()
 endif()
 
 # ----------------------------------------------------------------------------
-#   Tests target, for make visp_tutorials
+# Tests target, for make visp_tutorials
 # ----------------------------------------------------------------------------
 if(BUILD_TUTORIALS)
   add_custom_target(visp_tutorials)
+
   if(ENABLE_SOLUTION_FOLDERS)
     set_target_properties(visp_tutorials PROPERTIES FOLDER "extra")
   endif()
 endif()
 
 # ----------------------------------------------------------------------------
-#   Target building all ViSP modules
+# Target building all ViSP modules
 # ----------------------------------------------------------------------------
 add_custom_target(visp_modules)
+
 if(ENABLE_SOLUTION_FOLDERS)
   set_target_properties(visp_modules PROPERTIES FOLDER "extra")
 endif()
 
 # ----------------------------------------------------------------------------
-#   Coverage
+# Coverage
 # ----------------------------------------------------------------------------
-
 if(BUILD_TESTS AND BUILD_COVERAGE)
   # needed for coverage
   find_program(GCOVR_COMMAND gcovr)
