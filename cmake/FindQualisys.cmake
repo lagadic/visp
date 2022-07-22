@@ -1,4 +1,4 @@
-#############################################################################
+# ############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
 # Copyright (C) 2005 - 2022 by Inria. All rights reserved.
@@ -37,34 +37,34 @@
 # QUALISYS_LIBRARIES
 # QUALISYS_VERSION
 #
-#############################################################################
+# ############################################################################
 
 find_path(QUALISYS_INCLUDE_DIR
   NAMES qualisys_cpp_sdk/RTProtocol.h
   PATHS
-    $ENV{QUALISYS_DIR}/include
-    ${QUALISYS_DIR}/include
-    /usr/include
-    /usr/local/include)
+  $ENV{QUALISYS_DIR}/include
+  ${QUALISYS_DIR}/include
+  /usr/include
+  /usr/local/include)
 
 find_library(QUALISYS_LIBRARY
   NAMES qualisys_cpp_sdk
   PATHS
-    $ENV{QUALISYS_DIR}/lib
-    ${QUALISYS_DIR}/lib
-    /usr/lib
-    /usr/local/lib
-    )
+  $ENV{QUALISYS_DIR}/lib
+  ${QUALISYS_DIR}/lib
+  /usr/lib
+  /usr/local/lib
+)
 
 if(QUALISYS_LIBRARY AND QUALISYS_INCLUDE_DIR)
-    set(QUALISYS_INCLUDE_DIRS ${QUALISYS_INCLUDE_DIR})
-    set(QUALISYS_LIBRARIES ${QUALISYS_LIBRARY})
-    set(QUALISYS_FOUND TRUE)
+  set(QUALISYS_INCLUDE_DIRS ${QUALISYS_INCLUDE_DIR})
+  set(QUALISYS_LIBRARIES ${QUALISYS_LIBRARY})
+  set(QUALISYS_FOUND TRUE)
 else()
-    set(QUALISYS_FOUND FALSE)
+  set(QUALISYS_FOUND FALSE)
 endif()
 
 mark_as_advanced(
   QUALISYS_INCLUDE_DIR
-  QUALISYS_LIB
+  QUALISYS_LIBRARY
 )
