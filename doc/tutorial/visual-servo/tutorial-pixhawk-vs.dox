@@ -62,7 +62,12 @@ In our case we are connecting a laptop running Ubuntu 22.04 to the Pixhawk via a
 The code can be launched for Qualisys in this way :
 \verbatim
 $ cd $VISP_WS/visp-build/example/servo-pixhawk
-$ ./mavsdk_mocap_sender -ob DJI-F450 -q -d udp://:14551
+$ ./mavsdk_mocap_sender -ob DJI-F450 --mocap-system q -d udp://:14551
+\endverbatim
+
+If you want to launch the code with Vicon, you can do it this way :
+\verbatim
+$ ./mavsdk_mocap_sender -ob DJI-F450 --mocap-system v -d udp://:14551
 \endverbatim
 
 \section pixhawk_fly Control the drone with a keyboard
@@ -77,7 +82,19 @@ terminal 1 $ start mavproxy
 terminal 2 $ ./testPixhawkDroneKeyboard.cpp
 \endverbatim
 
-\section pixhawk_next Next tutorial
+\section pixhawk_servo Visual Servoing
+
+In order to do this part, make sure you add a camera to your drone. We added a intel Realsense D405 connected to the Jetson through USB.
+
+The code servoPixhawkDroneIBVS.cpp is an example that allows to do visual servoing with the drone.
+This program estabishes a rigid link between the drone (equiped with a camera) and an Apriltag.
+Depending on where the camera is placed, the matrices expressing the trasformation between the frame of the drone and the
+frame of the camera.
+If you want to launch the code, you can connect to your Jetson through ssh and do :
+\verbatim
+$ ./servoPixhawkDroneIBVS --tag-size <tag size in meters> --co udp://<IP>:<Port> --distance-to-tag <desired dist to tag in meters>
+\endverbatim
+
 
 The next tutorial \ref tutorial-bebop2-vs shows how to embbed a visual-servoing scheme on a Parrot Bebop2 drone.
 

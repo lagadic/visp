@@ -65,7 +65,7 @@
 #include <visp3/vs/vpServoDisplay.h>
 
 // Comment next line to disable sending commands to the robot
-#define CONTROL_UAV
+//#define CONTROL_UAV
 
 bool compareImagePoint(std::pair<size_t, vpImagePoint> p1, std::pair<size_t, vpImagePoint> p2)
 {
@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 
     int acq_fps = 30;
 
-    if (argc >= 3 && std::string(argv[1]) == "--tag_size") {
+    if (argc >= 3 && std::string(argv[1]) == "--tag-size") {
       tagSize = std::atof(argv[2]); // Tag size option is required
       if (tagSize <= 0) {
         std::cout << "Error : invalid tag size." << std::endl << "See " << argv[0] << " --help" << std::endl;
@@ -133,11 +133,11 @@ int main(int argc, char **argv)
     } else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
       std::cout << "\nUsage:\n"
                 << "  " << argv[0]
-                << " [--tag_size <tag size [m]>] [--co <connection information>] [--distance-to-tag <distance>]"
+                << " [--tag-size <tag size [m]>] [--co <connection information>] [--distance-to-tag <distance>]"
                 << " [--display-fps <display fps>] [--verbose] [-v] [--help] [-h]\n"
                 << std::endl
                 << "Description:\n"
-                << "  --tag_size <size>\n"
+                << "  --tag-size <size>\n"
                 << "      The size of the tag to detect in meters, required.\n\n"
                 << "  --co <connection information>\n"
                 << "      - UDP: udp://[host][:port]\n"
@@ -355,6 +355,7 @@ int main(int argc, char **argv)
       bool condition;
       bool runLoop = true;
       bool vec_ip_has_been_sorted = false;
+      bool send_velocities = false;
       std::vector<std::pair<size_t, vpImagePoint> > vec_ip_sorted;
 
       //** Visual servoing loop **//
@@ -365,7 +366,7 @@ int main(int argc, char **argv)
         // drone.getGrayscaleImage(I);
         rs.acquire(I);
 
-        condition = (time_since_last_display - startTime) > 1000. / opt_display_fps ? true : false;
+        condition = (startTime - time_since_last_display) > 1000. / opt_display_fps ? true : false;
         if (condition) {
           vpDisplay::display(I);
           time_since_last_display = vpTime::measureTimeMs();
@@ -446,11 +447,15 @@ int main(int argc, char **argv)
           // Compute the control law. Velocities are computed in the mobile robot reference
           // frame
           vpColVector ve = task.computeControlLaw();
+          if (!send_velocities) {
+            ve = 0;
+          }
 
           // Sending the control law to the drone
           if (opt_verbose) {
             std::cout << "ve: " << ve.t() << std::endl;
           }
+
 #ifdef CONTROL_UAV
           drone.setVelocity(ve, 1.0);
 #endif
@@ -498,14 +503,32 @@ int main(int argc, char **argv)
         }
 
         if (condition) {
-          vpDisplay::displayText(I, 10, 10, "Click to exit", vpColor::red);
+          {
+            std::stringstream ss;
+            ss << "Left click to " << (send_velocities ? "stop the robot" : "servo the robot")
+               << ", right click to quit.";
+            vpDisplay::displayText(I, 20, 20, ss.str(), vpColor::red);
+          }
           vpDisplay::flush(I);
 
           plotter.plot(0, iter, task.getError());
         }
-        if (vpDisplay::getClick(I, false)) {
-          // drone.land();
-          runLoop = false;
+
+        vpMouseButton::vpMouseButtonType button;
+        if (vpDisplay::getClick(I, button, false)) {
+          switch (button) {
+          case vpMouseButton::button1:
+            send_velocities = !send_velocities;
+            break;
+
+          case vpMouseButton::button3:
+            drone.land();
+            runLoop = false;
+            break;
+
+          default:
+            break;
+          }
         }
 
         double totalTime = vpTime::measureTimeMs() - startTime;

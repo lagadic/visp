@@ -186,15 +186,10 @@ void usage(char *argv[], int error)
 {
   std::cout << "SYNOPSIS" << std::endl
             << "  " << argv[0] << " [--only-body <name>] [-ob]"
-            << " [--qualisys] [-q]"
+            << " [--mocap-system <qualisys>/<vicon>] [-ms <q>/<v>]"
             << " [--device <device port>] [-d]"
             << " [--server-address <server address>] [-sa]"
-            << " [--baud <baudrate>] [-b]"
-            << " [--read-thread] [-rt]"
-            << " [--autotakeoff] [-a]"
-            << " [--all-bodies]"
             << " [--verbose] [-v]"
-            << " [--logs]"
             << " [--help] [-h]" << std::endl
             << std::endl;
   std::cout << "DESCRIPTION" << std::endl
@@ -203,9 +198,9 @@ void usage(char *argv[], int error)
             << "    Name of the specific body you want to be displayed." << std::endl
             << std::endl
             << "OPTIONAL PARAMETERS (DEFAULT VALUES)" << std::endl
-            << "  --qualisys, -q" << std::endl
-            << "    When used, sets the qualisys mode." << std::endl
-            << "    Default: false (Vicon mode)." << std::endl
+            << "  --system, -s" << std::endl
+            << "    Specify the name of the mocap system : 'qualisys' / 'q' or 'vicon'/ 'v'." << std::endl
+            << "    Default: Qualisys mode." << std::endl
             << std::endl
             << "  --device <device port>, -d" << std::endl
             << "    String giving us all the informations necessary for connection." << std::endl
@@ -217,18 +212,8 @@ void usage(char *argv[], int error)
             << "    Default for Qualisys: 192.168.34.42 ." << std::endl
             << "    Default for Vicon: 192.168.34.1 ." << std::endl
             << std::endl
-            << "  --baud <baudrate>, -b" << std::endl
-            << "    Set up the desired baudrate for the Mavlink messages." << std::endl
-            << "    Default: 57600 ." << std::endl
-            << std::endl
-            << "  --all-bodies" << std::endl
-            << "    When used, get all bodies pose including non visible bodies." << std::endl
-            << std::endl
             << "  --verbose, -v" << std::endl
             << "    Enable verbose mode." << std::endl
-            << std::endl
-            << "  --logs" << std::endl
-            << "    When active, creates a log of data sent to the drone in /tmp/." << std::endl
             << std::endl
             << "  --help, -h" << std::endl
             << "    Print this helper message." << std::endl
@@ -254,8 +239,16 @@ void parse_commandline(int argc, char **argv, bool &qualisys, std::string &conne
     if (std::string(argv[i]) == "--only-body" || std::string(argv[i]) == "-ob") {
       only_body = std::string(argv[i + 1]);
       i++;
-    } else if (std::string(argv[i]) == "--qualisys" || std::string(argv[i]) == "-q") {
-      qualisys = true;
+    } else if (std::string(argv[i]) == "--mocap-system" || std::string(argv[i]) == "-ms") {
+      std::string mode = std::string(argv[i + 1]);
+      if (mode == "qualisys" || mode == "q") {
+        qualisys = true;
+      } else if (mode == "vicon" || mode == "v") {
+        qualisys = false;
+      } else {
+        std::cout << "ERROR : System not recognized, exiting." << std::endl;
+        throw EXIT_FAILURE;
+      }
     } else if (std::string(argv[i]) == "--device" || std::string(argv[i]) == "-d") {
       connection_info = std::string(argv[i + 1]);
       i++;
@@ -274,9 +267,7 @@ void parse_commandline(int argc, char **argv, bool &qualisys, std::string &conne
       throw EXIT_FAILURE;
     }
   }
-  // end: for each input argument
 
-  // Done!
   return;
 }
 
