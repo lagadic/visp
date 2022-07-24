@@ -95,3 +95,31 @@ To test this script:
 - on Ubuntu/Linux launch Blender from a Terminal and use the default scene,
 - switch to the [Text Editor](https://docs.blender.org/manual/en/dev/editors/text_editor.html) and open the Python script,
 - when running the script, you should see the corresponding camera poses outputed on the terminal.
+
+## PlotCameraTrajectory.py
+
+This Python script allows displaying camera poses along with the object of interest.
+
+Camera poses can be saved in `4x4` homogeneous matrix form or in `1x6` pose vector form (`[tx, ty, tz, tux, tuy, tuz]`), C++ example code using the homogeneous matrix format:
+
+```cpp
+std::ofstream file_pose("poses.txt", std::ios_base::app);
+if (file_pose.is_open()) {
+  for (unsigned int i = 0; i < 4; i++) {
+    for (unsigned int j = 0; j < 4; j++) {
+      file_pose << c1Mo[i][j] << " ";
+    }
+    file_pose << std::endl;
+  }
+}
+```
+
+Script example (use the help option `-h` to display the available parameters):
+
+```console
+python3 PlotCameraTrajectory.py -p poses.txt -m cube_and_cylinder.cao --azim -118 --elev 48 --x-lim -0.384455412421155 0.336083836255455 --y-lim -0.595371140756035 0.12516810792057498 --z-lim -0.12739950848021997 0.59313974019639 --num-cam 4 --save --save-pattern 'image_{:04d}.png' --frame-size 0.1
+```
+
+Following video shows the camera poses outputed by the ViSP model-based tracker when tracking the cube+cylinder object model:
+
+[![Cube+cylinder tracking using ViSP MBT](https://user-images.githubusercontent.com/8035162/180662930-605b2c42-bbb5-4bd6-9fe6-b2a1af3a04e7.png)](https://user-images.githubusercontent.com/8035162/180662750-02fccaff-74bd-411c-8258-06910edc6fde.mp4 "Cube+cylinder tracking using ViSP MBT")
