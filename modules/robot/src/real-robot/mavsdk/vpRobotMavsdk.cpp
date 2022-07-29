@@ -206,6 +206,15 @@ public:
     return (int)(battery.remaining_percent * 100);
   }
 
+  void getPose(vpHomogeneousMatrix &Pose)
+  {
+    auto telemetry = mavsdk::Telemetry{m_system};
+    mavsdk::Telemetry::Odometry odom;
+    vpQuaternionVector q{odom.q.x, odom.q.y, odom.q.z, odom.q.w};
+    vpTranslationVector t{odom.position_body.x_m, odom.position_body.y_m, odom.position_body.z_m};
+    Pose.buildFrom(t, q);
+  }
+
   bool sendMocapData(const vpHomogeneousMatrix &M)
   {
     auto mocap = mavsdk::Mocap{m_system};
@@ -321,7 +330,7 @@ public:
       takeoff.yaw_deg = yaw_init;
       offboard.set_position_ned(takeoff);
       sleep_for(seconds(7));
-      offboard.stop();
+      // offboard.stop();
     }
   }
 
@@ -390,7 +399,7 @@ public:
       position_target.yaw_deg = yaw_current + vpMath::deg(dPsi);
       offboard.set_position_ned(position_target);
       sleep_for(seconds(7));
-      offboard.stop();
+      // offboard.stop();
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
     }
@@ -441,7 +450,42 @@ public:
       offboard.set_velocity_body(velocity_comm);
       sleep_for(milliseconds((int)(delta_t * 1000.0)));
       offboard.set_velocity_body(stay);
-      offboard.stop();
+      // offboard.stop();
+
+    } else {
+      std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
+    }
+  }
+
+  void setVelocity(const vpColVector &vel_cmd)
+  {
+
+    if (vel_cmd.size() != 4) {
+      std::cerr << "ERROR : Can't set velocity, dimension of the velocity vector should be equal to 4." << std::endl;
+      return;
+    }
+
+    auto action = mavsdk::Action{m_system};
+    auto telemetry = mavsdk::Telemetry{m_system};
+
+    if (telemetry.flight_mode() == mavsdk::Telemetry::FlightMode::Offboard) {
+
+      auto offboard = mavsdk::Offboard{m_system};
+      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+      offboard.set_velocity_body(stay);
+
+      mavsdk::Offboard::Result offboard_result = offboard.start();
+      if (offboard_result != mavsdk::Offboard::Result::Success) {
+        std::cerr << "Offboard start failed: " << offboard_result << std::endl;
+        return;
+      }
+
+      mavsdk::Offboard::VelocityBodyYawspeed velocity_comm{};
+      velocity_comm.forward_m_s = vel_cmd[0];
+      velocity_comm.right_m_s = vel_cmd[1];
+      velocity_comm.down_m_s = vel_cmd[2];
+      velocity_comm.yawspeed_deg_s = vpMath::deg(vel_cmd[3]);
+      offboard.set_velocity_body(velocity_comm);
 
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
@@ -504,7 +548,7 @@ public:
           offboard.set_position_ned(hold_position);
 
           sleep_for(milliseconds(100));
-          offboard.stop();
+          // offboard.stop();
         } else {
           std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
         }
@@ -529,8 +573,8 @@ public:
       }
       offboard.set_velocity_body(stay);
 
-      sleep_for(milliseconds(100));
-      offboard.stop();
+      sleep_for(milliseconds(10));
+      // offboard.stop();
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
     }
@@ -559,8 +603,8 @@ public:
       velocity_comm.down_m_s = 0.0;
       velocity_comm.yawspeed_deg_s = vpMath::deg(wz);
       offboard.set_velocity_body(velocity_comm);
-      sleep_for(milliseconds(100));
-      offboard.stop();
+      sleep_for(milliseconds(10));
+      // offboard.stop();
 
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
@@ -590,8 +634,8 @@ public:
       velocity_comm.down_m_s = 0.0;
       velocity_comm.yawspeed_deg_s = 0.0;
       offboard.set_velocity_body(velocity_comm);
-      sleep_for(milliseconds(100));
-      offboard.stop();
+      sleep_for(milliseconds(10));
+      // offboard.stop();
 
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
@@ -621,8 +665,8 @@ public:
       velocity_comm.down_m_s = 0.0;
       velocity_comm.yawspeed_deg_s = 0.0;
       offboard.set_velocity_body(velocity_comm);
-      sleep_for(milliseconds(100));
-      offboard.stop();
+      sleep_for(milliseconds(10));
+      // offboard.stop();
 
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
@@ -652,8 +696,8 @@ public:
       velocity_comm.down_m_s = vz;
       velocity_comm.yawspeed_deg_s = 0.0;
       offboard.set_velocity_body(velocity_comm);
-      sleep_for(milliseconds(100));
-      offboard.stop();
+      sleep_for(milliseconds(10));
+      // offboard.stop();
 
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
@@ -759,6 +803,12 @@ std::string vpRobotMavsdk::getAddress() const { return m_impl->getAddress(); }
 unsigned int vpRobotMavsdk::getBatteryLevel() const { return m_impl->getBatteryLevel(); }
 
 /*!
+ * Gets the current robot pose in its local NED frame.
+ * \param[in] Pose : Homogeneous matrix desribing the position and attitude of the robot.
+ */
+void vpRobotMavsdk::getPose(vpHomogeneousMatrix &Pose) { m_impl->getPose(Pose); }
+
+/*!
  *  Sends a flat trim command to the robot, to calibrate accelerometer and gyro.
  *
  *  \warning Should be executed only if the drone is landed and on a flat surface.
@@ -829,7 +879,7 @@ void vpRobotMavsdk::setPosition(float dX, float dY, float dZ, float dPsi) { m_im
 void vpRobotMavsdk::setPosition(const vpHomogeneousMatrix &M) { m_impl->setPosition(M); }
 
 /*!
- * Sets the robot velocity in its own Front-Right-Down (FRD) frame.
+ * Sets the robot velocity in its own Front-Right-Down (FRD) frame for a duration delta_t. The drone stops afterwards.
  *
  * \param[in] vel_cmd : 4-dim robot velocity commands, vx, vy, vz, wz. Translation velocities (vx, vy, vz) should be
  * expressed in meters and rotation velocity (wz) in radians.
@@ -839,6 +889,17 @@ void vpRobotMavsdk::setPosition(const vpHomogeneousMatrix &M) { m_impl->setPosit
  * \warning The dimension of the velocity vector should be equal to 4, as the robot cannot rotate around X and Y axes.
  */
 void vpRobotMavsdk::setVelocity(const vpColVector &vel_cmd, double delta_t) { m_impl->setVelocity(vel_cmd, delta_t); }
+
+/*!
+ * Sets the robot velocity in its own Front-Right-Down (FRD) frame.
+ *
+ * \param[in] vel_cmd : 4-dim robot velocity commands, vx, vy, vz, wz. Translation velocities (vx, vy, vz) should be
+ * expressed in meters and rotation velocity (wz) in radians.
+ *
+ * \warning The dimension of the velocity vector should be equal to 4, as the robot cannot rotate around X and Y axes.
+ * \warning The robot applies this command until given another one.
+ */
+void vpRobotMavsdk::setVelocity(const vpColVector &vel_cmd) { m_impl->setVelocity(vel_cmd); }
 
 /*!
  * Cuts the motors. Should only be used in emergency cases.

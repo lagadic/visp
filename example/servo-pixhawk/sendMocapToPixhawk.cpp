@@ -198,7 +198,7 @@ void usage(char *argv[], int error)
             << "    Name of the specific body you want to be displayed." << std::endl
             << std::endl
             << "OPTIONAL PARAMETERS (DEFAULT VALUES)" << std::endl
-            << "  --system, -s" << std::endl
+            << "  --mocap-system, -ms" << std::endl
             << "    Specify the name of the mocap system : 'qualisys' / 'q' or 'vicon'/ 'v'." << std::endl
             << "    Default: Qualisys mode." << std::endl
             << std::endl
@@ -249,6 +249,7 @@ void parse_commandline(int argc, char **argv, bool &qualisys, std::string &conne
         std::cout << "ERROR : System not recognized, exiting." << std::endl;
         throw EXIT_FAILURE;
       }
+      i++;
     } else if (std::string(argv[i]) == "--device" || std::string(argv[i]) == "-d") {
       connection_info = std::string(argv[i + 1]);
       i++;

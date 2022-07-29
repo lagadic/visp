@@ -53,79 +53,123 @@
 #include <visp3/io/vpKeyboard.h>
 #include <visp3/robot/vpRobotMavsdk.h>
 
-bool handleKeyboardInput(vpRobotMavsdk &drone, int key)
+bool handleKeyboardInput(vpRobotMavsdk &drone, int key, bool &flying, double &lastCommandTime)
 {
   bool running = true;
+  double currentTime = vpTime::measureTimeMs();
   if (drone.isRunning()) {
     switch (key) {
     case 'q':
       // Quit
+      std::cout << "sending command" << std::endl;
       drone.land();
+      flying = false;
       running = false;
+      lastCommandTime = vpTime::measureTimeMs();
       break;
 
     case 'a':
       // Land
-      drone.land();
+      if (flying == true) {
+        std::cout << "sending command" << std::endl;
+        drone.land();
+        flying = false;
+        lastCommandTime = vpTime::measureTimeMs();
+      }
       break;
 
     case 'e':
       // Emergency
+      std::cout << "sending command" << std::endl;
       drone.cutMotors();
+      flying = false;
       running = false;
+      lastCommandTime = vpTime::measureTimeMs();
       break;
 
     case 't':
       // Takeoff
+      std::cout << "sending command" << std::endl;
       drone.takeOff();
+      flying = true;
+      lastCommandTime = vpTime::measureTimeMs();
+      vpTime::wait(100);
       break;
 
     case ' ':
       // Down
-      drone.setVerticalSpeed(0.2);
+      if (flying == true) {
+        drone.setVerticalSpeed(0.2);
+        lastCommandTime = vpTime::measureTimeMs();
+      }
       break;
 
     case 'u':
       // Up
-      drone.setVerticalSpeed(-0.2);
+      if (flying == true) {
+        drone.setVerticalSpeed(-0.2);
+        lastCommandTime = vpTime::measureTimeMs();
+      }
       break;
 
     case 'd':
       // turn Right
-      drone.setYawSpeed(0.4);
+      if (flying == true) {
+        drone.setYawSpeed(0.4);
+        lastCommandTime = vpTime::measureTimeMs();
+      }
       break;
 
     case 'g':
       // turn Left
-      drone.setYawSpeed(-0.4);
+      if (flying == true) {
+        drone.setYawSpeed(-0.4);
+        lastCommandTime = vpTime::measureTimeMs();
+      }
       break;
 
     case 'i':
       // go Forward
-      drone.setForwardSpeed(0.2);
+      if (flying == true) {
+        drone.setForwardSpeed(0.2);
+        lastCommandTime = vpTime::measureTimeMs();
+      }
       break;
 
     case 'k':
       // go Backwards
-      drone.setForwardSpeed(-0.2);
+      if (flying == true) {
+        drone.setForwardSpeed(-0.2);
+        lastCommandTime = vpTime::measureTimeMs();
+      }
       break;
 
     case 'j':
       // go Left
-      drone.setLateralSpeed(-0.2);
+      if (flying == true) {
+        drone.setLateralSpeed(-0.2);
+        lastCommandTime = vpTime::measureTimeMs();
+      }
       break;
 
     case 'l':
       // go Right
-      drone.setLateralSpeed(0.2);
+      if (flying == true) {
+        drone.setLateralSpeed(0.2);
+        lastCommandTime = vpTime::measureTimeMs();
+      }
       break;
 
     default:
       // No inputs -> drone stops moving
-      drone.stopMoving();
+      if ((flying == true) && (currentTime - lastCommandTime > 1500.)) { // We stop moving after 1.5s without commands.
+        std::cout << "1.5 s without order, sending command : stop moving." << std::endl;
+        drone.stopMoving();
+        lastCommandTime = vpTime::measureTimeMs();
+      }
       break;
     }
-    vpTime::wait(25); // We wait 25ms to give the drone the time to process the command
+    vpTime::wait(40); // We wait 40ms to give the drone the time to process the command
   } else {
     running = false;
   }
@@ -175,6 +219,8 @@ int main(int argc, char **argv)
     if (drone.isRunning()) {
       int k = 0;
       bool running = true;
+      bool flying = false;
+      double lastCommandTime = vpTime::measureTimeMs();
 
       std::cout << "\nConfiguring drone settings ...\n" << std::endl;
 
@@ -193,7 +239,7 @@ int main(int argc, char **argv)
         if (keyboard.kbhit()) {
           k = keyboard.getchar();
         }
-        running = handleKeyboardInput(drone, k);
+        running = handleKeyboardInput(drone, k, flying, lastCommandTime);
       }
       std::cout << "\nQuitting ...\n" << std::endl;
 

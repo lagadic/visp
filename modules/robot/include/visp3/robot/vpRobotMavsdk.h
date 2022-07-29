@@ -78,16 +78,16 @@ public:
   //! @name General robot information
   //@{
   unsigned int getBatteryLevel() const;
+  void getPose(vpHomogeneousMatrix &Pose);
   std::string getAddress() const;
   //@}
 
   //! @name Robot state checking
   //@{
-  bool isFlying() const;   // Not implemented yet
-  bool isHovering() const; // Not implemented yet
-  bool isLanded() const;   // Not implemented yet
+  // bool isFlying() const;   // Not implemented yet
+  // bool isHovering() const; // Not implemented yet
+  // bool isLanded() const;   // Not implemented yet
   bool isRunning() const;
-  bool isStreaming() const; // Not implemented yet
   //@}
 
   //! @name Sending state info
@@ -106,6 +106,7 @@ public:
   void setPosition(float dX, float dY, float dZ, float dPsi);
   void setPosition(const vpHomogeneousMatrix &M);
   void setVelocity(const vpColVector &vel, double delta_t);
+  void setVelocity(const vpColVector &vel);
   void setVerticalSpeed(double vz);
   void setYawSpeed(double wz);
   void stopMoving();

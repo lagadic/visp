@@ -53,6 +53,12 @@ The [mBot Ranger](https://store.makeblock.com/products/diy-coding-robot-kits-mbo
 Installation instructions are provided in \ref tutorial-mbot-vs.
 \image html img-mbot-ranger.jpg mBot Ranger Educational Kit
 
+- <b>Pixhawk and MavLink </b><br>
+The [MAVLink](https://mavlink.io/en/) protocol is supported by ViSP to communicate with drones or small mobile robots
+equipped with a Pixhawk. To this end you need to install [MavSDK](https://mavsdk.mavlink.io/main/en/index.html) 3rd party library.
+Installation instructions are provided in \ref tutorial-pixhawk-vs.
+\image html img-drone-dji-pixhawk.jpg DJI F450 equipped with a Pixhawk 2 Cube connected to a Jetson TX2 through an USB link. width=50%
+
 \section material_haptic Supported Haptic Devices
 
 These are the haptic devices supported by ViSP.
