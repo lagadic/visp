@@ -446,6 +446,27 @@ void vpThetaUVector::buildFrom(double tux, double tuy, double tuz)
   data[2] = tuz;
 }
 
+/*!
+  Perform rotation chaining / rotation multiplication using the theta.u rotation representation.
+  See: <a href="https://math.stackexchange.com/a/1978136">this answer</a> for some details about the maths.
+*/
+vpThetaUVector vpThetaUVector::operator*(const vpThetaUVector &tu_b) const
+{
+  double a_2 = getTheta() / 2;
+  vpColVector a_hat = getU();
+  double b_2 = tu_b.getTheta() / 2;
+  vpColVector b_hat = tu_b.getU();
+
+  vpColVector a_hat_sin_2 = a_hat * std::sin(a_2);
+  vpColVector b_hat_sin_2 = b_hat * std::sin(b_2);
+  double c = 2 * std::acos(std::cos(a_2) * std::cos(b_2) - vpColVector::dotProd(a_hat_sin_2, b_hat_sin_2));
+  vpColVector d = std::sin(a_2) * std::cos(b_2) * a_hat + std::cos(a_2) * std::sin(b_2) * b_hat +
+                  std::sin(a_2) * std::sin(b_2) * vpColVector::crossProd(a_hat, b_hat);
+  d = c * d / std::sin(c / 2);
+
+  return vpThetaUVector(d);
+}
+
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /*!
   Set vector from a list of 3 double angle values in radians.

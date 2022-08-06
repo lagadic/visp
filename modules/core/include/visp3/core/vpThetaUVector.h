@@ -223,6 +223,7 @@ public:
 
   vpThetaUVector &operator=(const vpColVector &tu);
   vpThetaUVector &operator=(double x);
+  vpThetaUVector operator*(const vpThetaUVector &tu_b) const;
 
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   vpThetaUVector &operator=(const std::initializer_list<double> &list);
