@@ -342,8 +342,6 @@ public:
       takeoff.down_m = Z_init - m_takeoffAlt;
       takeoff.yaw_deg = yaw_init;
       offboard.set_position_ned(takeoff);
-      sleep_for(seconds(5));
-      // offboard.stop();
     }
     return true;
   }
@@ -408,8 +406,6 @@ public:
       position_target.down_m = Z_current + dZ;
       position_target.yaw_deg = yaw_current + vpMath::deg(dPsi);
       offboard.set_position_ned(position_target);
-      sleep_for(seconds(3));
-      // offboard.stop();
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
     }
@@ -460,7 +456,6 @@ public:
       offboard.set_velocity_body(velocity_comm);
       sleep_for(milliseconds((int)(delta_t * 1000.0)));
       offboard.set_velocity_body(stay);
-      // offboard.stop();
 
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
@@ -557,9 +552,6 @@ public:
           hold_position.down_m = Z_current;
           hold_position.yaw_deg = yaw_current;
           offboard.set_position_ned(hold_position);
-
-          sleep_for(milliseconds(100));
-          // offboard.stop();
         } else {
           std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
         }
@@ -584,8 +576,6 @@ public:
       }
       offboard.set_velocity_body(stay);
 
-      sleep_for(milliseconds(10));
-      // offboard.stop();
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
     }
@@ -614,8 +604,6 @@ public:
       velocity_comm.down_m_s = 0.0;
       velocity_comm.yawspeed_deg_s = vpMath::deg(wz);
       offboard.set_velocity_body(velocity_comm);
-      sleep_for(milliseconds(10));
-      // offboard.stop();
 
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
@@ -645,8 +633,6 @@ public:
       velocity_comm.down_m_s = 0.0;
       velocity_comm.yawspeed_deg_s = 0.0;
       offboard.set_velocity_body(velocity_comm);
-      sleep_for(milliseconds(10));
-      // offboard.stop();
 
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
@@ -676,8 +662,6 @@ public:
       velocity_comm.down_m_s = 0.0;
       velocity_comm.yawspeed_deg_s = 0.0;
       offboard.set_velocity_body(velocity_comm);
-      sleep_for(milliseconds(10));
-      // offboard.stop();
 
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
@@ -707,8 +691,6 @@ public:
       velocity_comm.down_m_s = vz;
       velocity_comm.yawspeed_deg_s = 0.0;
       offboard.set_velocity_body(velocity_comm);
-      sleep_for(milliseconds(10));
-      // offboard.stop();
 
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
