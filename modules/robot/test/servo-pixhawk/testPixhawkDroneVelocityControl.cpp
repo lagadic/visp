@@ -49,6 +49,7 @@
 
 #if defined(VISP_HAVE_MAVSDK) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 
+#include <thread>
 #include <visp3/robot/vpRobotMavsdk.h>
 
 using std::chrono::seconds;
