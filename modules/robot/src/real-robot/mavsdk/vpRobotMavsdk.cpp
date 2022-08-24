@@ -39,6 +39,7 @@
 
 #include <iostream>
 #include <math.h>
+#include <thread>
 
 #include <mavsdk/mavsdk.h>
 #include <mavsdk/plugins/action/action.h>
