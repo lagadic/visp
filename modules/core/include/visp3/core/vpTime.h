@@ -85,7 +85,7 @@ VISP_EXPORT double measureTimeMicros();
 VISP_EXPORT void sleepMs(double t);
 VISP_EXPORT int wait(double t0, double t);
 VISP_EXPORT void wait(double t);
-}; // namespace vpTime
+} // namespace vpTime
 
 class VISP_EXPORT vpChrono
 {
