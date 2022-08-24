@@ -81,7 +81,7 @@ bool handleKeyboardInput(vpRobotMavsdk &drone, int key, bool &flying, double &la
     case 'e':
       // Emergency
       std::cout << "sending command" << std::endl;
-      drone.cutMotors();
+      drone.kill();
       flying = false;
       running = false;
       lastCommandTime = vpTime::measureTimeMs();

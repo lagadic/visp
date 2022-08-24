@@ -77,7 +77,7 @@ public:
 
   //! @name General robot information
   //@{
-  unsigned int getBatteryLevel() const;
+  float getBatteryLevel() const;
   void getPose(vpHomogeneousMatrix &Pose);
   std::string getAddress() const;
   //@}
@@ -97,10 +97,11 @@ public:
 
   //! @name Commands and parameters
   //@{
-  void cutMotors();
+  bool arm();
   void doFlatTrim();
   void holdPosition();
-  void land();
+  bool kill();
+  bool land();
   void setForwardSpeed(double vx);
   void setLateralSpeed(double vy);
   void setPosition(float dX, float dY, float dZ, float dPsi);
@@ -111,7 +112,7 @@ public:
   void setYawSpeed(double wz);
   void stopMoving();
   void setTakeOffAlt(double altitude);
-  void takeOff();
+  bool takeOff();
   //@}
 
 private:

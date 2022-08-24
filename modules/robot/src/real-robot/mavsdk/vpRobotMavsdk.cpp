@@ -199,11 +199,11 @@ public:
     }
   }
 
-  unsigned int getBatteryLevel() const
+  float getBatteryLevel() const
   {
     auto telemetry = mavsdk::Telemetry{m_system};
     mavsdk::Telemetry::Battery battery = telemetry.battery();
-    return (int)(battery.remaining_percent * 100);
+    return battery.voltage_v;
   }
 
   void getPose(vpHomogeneousMatrix &Pose)
@@ -265,7 +265,21 @@ public:
     calibrate_gyro(calibration);
   }
 
-  void takeOff()
+  bool arm()
+  {
+    auto action = mavsdk::Action{m_system};
+    // Arm vehicle
+    std::cout << "Arming...\n";
+    const mavsdk::Action::Result arm_result = action.arm();
+
+    if (arm_result != mavsdk::Action::Result::Success) {
+      std::cerr << "Arming failed: " << arm_result << std::endl;
+      return false;
+    }
+    return true;
+  }
+
+  bool takeOff()
   {
     auto action = mavsdk::Action{m_system};
     auto telemetry = mavsdk::Telemetry{m_system};
@@ -297,7 +311,6 @@ public:
 
       if (arm_result != mavsdk::Action::Result::Success) {
         std::cerr << "Arming failed: " << arm_result << std::endl;
-        return;
       }
 
       auto offboard = mavsdk::Offboard{m_system};
@@ -307,7 +320,7 @@ public:
       mavsdk::Offboard::Result offboard_result = offboard.start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
-        return;
+        return false;
       }
 
       mavsdk::Telemetry::Odometry odom;
@@ -329,12 +342,13 @@ public:
       takeoff.down_m = Z_init - m_takeoffAlt;
       takeoff.yaw_deg = yaw_init;
       offboard.set_position_ned(takeoff);
-      sleep_for(seconds(7));
+      sleep_for(seconds(5));
       // offboard.stop();
     }
+    return true;
   }
 
-  void land()
+  bool land()
   {
     auto action = mavsdk::Action{m_system};
     auto telemetry = mavsdk::Telemetry{m_system};
@@ -344,7 +358,7 @@ public:
       const mavsdk::Action::Result land_result = action.land();
       if (land_result != mavsdk::Action::Result::Success) {
         std::cerr << "Land failed: " << land_result << std::endl;
-        return;
+        return false;
       }
 
       // Check if vehicle is still in air
@@ -355,10 +369,10 @@ public:
     }
 
     std::cout << "Landed!" << std::endl;
-
     // We are relying on auto-disarming but let's keep watching the telemetry for a bit longer.
     sleep_for(seconds(3));
     std::cout << "Finished..." << std::endl;
+    return true;
   }
 
   void setPosition(float dX, float dY, float dZ, float dPsi)
@@ -383,14 +397,10 @@ public:
       odom = telemetry.odometry();
       angles = telemetry.attitude_euler();
 
-      std::cout << "X_current, Y_current , Z_current = " << odom.position_body.x_m << " , " << odom.position_body.y_m
-                << " , " << odom.position_body.z_m << std::endl;
       double X_current = odom.position_body.x_m;
       double Y_current = odom.position_body.y_m;
       double Z_current = odom.position_body.z_m;
       double yaw_current = angles.yaw_deg;
-
-      std::cout << "Taking off using position NED" << std::endl;
 
       mavsdk::Offboard::PositionNedYaw position_target{};
       position_target.north_m = X_current + dX;
@@ -398,7 +408,7 @@ public:
       position_target.down_m = Z_current + dZ;
       position_target.yaw_deg = yaw_current + vpMath::deg(dPsi);
       offboard.set_position_ned(position_target);
-      sleep_for(seconds(7));
+      sleep_for(seconds(3));
       // offboard.stop();
     } else {
       std::cerr << "ERROR : The current mode is not the offboard mode." << std::endl;
@@ -492,14 +502,15 @@ public:
     }
   }
 
-  void cutMotors()
+  bool kill()
   {
     auto action = mavsdk::Action{m_system};
     const mavsdk::Action::Result kill_result = action.kill();
     if (kill_result != mavsdk::Action::Result::Success) {
       std::cerr << "Kill failed: " << kill_result << std::endl;
-      return;
+      return false;
     }
+    return true;
   }
 
   void holdPosition()
@@ -784,6 +795,7 @@ bool vpRobotMavsdk::isRunning() const { return m_impl->isRunning(); }
 
 /*!
  * Sends mocap position data to the robot.
+ * \return True if the Mocap data was successfully sent to the drone, false otherwise.
  * \param[in] M : Homogeneous matrix containing the pose of the drone for the mocap system.
  */
 bool vpRobotMavsdk::sendMocapData(const vpHomogeneousMatrix &M) { return m_impl->sendMocapData(M); }
@@ -798,9 +810,9 @@ std::string vpRobotMavsdk::getAddress() const { return m_impl->getAddress(); }
 
 /*!
  * Gets current battery level in Volts.
- * \warning When the robot battery gets to 0, it will automatically land if it is a drone and won't process any command.
+ * \warning When the robot battery gets below a certain threshold (around 14.8), you should recherge it.
  */
-unsigned int vpRobotMavsdk::getBatteryLevel() const { return m_impl->getBatteryLevel(); }
+float vpRobotMavsdk::getBatteryLevel() const { return m_impl->getBatteryLevel(); }
 
 /*!
  * Gets the current robot pose in its local NED frame.
@@ -825,12 +837,18 @@ void vpRobotMavsdk::doFlatTrim() {}
 void vpRobotMavsdk::setTakeOffAlt(double altitude) { m_impl->setTakeOffAlt(altitude); }
 
 /*!
+ * Arms the drone.
+ * \return True if arming is successful, False otherwise.
+ */
+bool vpRobotMavsdk::arm() { return m_impl->arm(); }
+
+/*!
  * Sends take off command. To use if your robot is a drone.
- *
+ * \return True if the takeoff is successful, False otherwise
  * \sa setTakeOffAlt(), land()
  * \warning This function is blocking.
  */
-void vpRobotMavsdk::takeOff() { m_impl->takeOff(); }
+bool vpRobotMavsdk::takeOff() { return m_impl->takeOff(); }
 
 /*!
  * Makes the robot hold its position.
@@ -848,9 +866,10 @@ void vpRobotMavsdk::stopMoving() { m_impl->stopMoving(); }; // Resolve hold prob
 
 /*!
  * Sends landing command. To use if your robot is a drone.
+ * \return True if the landing is successful, false otherwise.
  * \sa takeOff()
  */
-void vpRobotMavsdk::land() { m_impl->land(); }
+bool vpRobotMavsdk::land() { return m_impl->land(); }
 
 /*!
  * Moves the robot by the given amounts \e dX, \e dY, \e dZ (meters) and rotate the heading by \e dPsi (radian) in the
@@ -903,9 +922,10 @@ void vpRobotMavsdk::setVelocity(const vpColVector &vel_cmd) { m_impl->setVelocit
 
 /*!
  * Cuts the motors. Should only be used in emergency cases.
+ * \return True if the cut motors commmand was successful, false otherwise.
  * \warning If your robot is a drone, it will fall.
  */
-void vpRobotMavsdk::cutMotors() { m_impl->cutMotors(); }
+bool vpRobotMavsdk::kill() { return m_impl->kill(); }
 
 /*!
  * Sets the yaw speed, expressed as signed rotation speed.

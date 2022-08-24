@@ -154,6 +154,8 @@ This program estabishes a rigid link between the drone (equiped with a camera) a
 Depending on where the camera is placed, the matrices expressing the transformation between the frame of the drone and the
 frame of the camera. Here is a picture of the drone showing where the D405 camera was placed.
 
+\note In the code, the Apriltag is hard-coded to be the AprilTag 36h11 pattern. You can modify it if you wish.
+
 \image html img-dji-frames.jpg Frames of the end effector drone frame (e) and of the D405 camera frame (c). width=70%
 
 If you want to launch the code, you can connect to your Jetson through ssh and do :

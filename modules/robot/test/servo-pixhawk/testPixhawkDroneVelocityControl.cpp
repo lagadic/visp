@@ -104,8 +104,6 @@ int main(int argc, char **argv)
   vel_command[0] = 0.0;
   drone.setVelocity(vel_command, 2.0);*/
 
-  // drone.cutMotors();
-
   drone.land();
 
   return EXIT_SUCCESS;

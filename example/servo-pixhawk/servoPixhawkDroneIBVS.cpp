@@ -65,7 +65,7 @@
 #include <visp3/vs/vpServoDisplay.h>
 
 // Comment next line to disable sending commands to the robot
-//#define CONTROL_UAV
+#define CONTROL_UAV
 
 bool compareImagePoint(std::pair<size_t, vpImagePoint> p1, std::pair<size_t, vpImagePoint> p2)
 {
