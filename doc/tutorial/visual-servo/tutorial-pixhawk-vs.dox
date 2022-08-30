@@ -6,21 +6,30 @@
 \section pixhawk_intro Introduction
 
 In this tutorial we show how to control indoor a DJI F450 drone equipped with a Pixhawk that communicates with an embedded
-Jetson TX2. Communication between Jetson and Pixhawk is achieved thanks to MAVLink.
+Jetson TX2 using the USB link. MAVLink is used to communicate between the controller running on the Pixhawk and the other apps
+running either on the embedded Jetson or the computer that serves as a ground station.
 
 [MAVLink](https://mavlink.io/en/) or Micro Air Vehicle Link is a protocol for communicating with small
 [unmanned vehicle](https://en.wikipedia.org/wiki/Uncrewed_vehicle). It is designed as a header-only message marshaling library.
 In ViSP we don't use directly MAVLink library, but [MavSDK](https://mavsdk.mavlink.io/main/en/index.html) 3rd-party library
 that is an interface to MAVLink. The use of MavSDK is possible in ViSP through the use of the vpRobotMavsdk class.
 
-The Jetson retrieves by wifi the position of the drone from a motion capture system that could be in this tutorial provided
-by Qualisys or Vicon motion capture systems, thanks to vpMocapQualisys or vpMocapVicon.
+In our setup the Jetson retrieves by Wifi the position of the drone from a motion capture system that could be in this tutorial provided
+by Qualisys or Vicon motion capture systems, thanks to vpMocapQualisys or vpMocapVicon classes.
 
 To perform visual-servoing, an Intel Realsense D405 camera is also mounted on board and connected to the Jetson. Images are
 acquired thanks to vpRealSense2 class. The visual-servoing control law is implemented on the Jetson using vpServo class
 and velocities are send to the Pixhawk through MAVLink protocol.
 
 \image html img-drone-dji-pixhawk.jpg DJI F450 equipped with a Pixhawk connected to a Jetson TX2 through an USB link
+
+Hereafter you will find a video that illustrates the visual-servoing.
+
+\htmlonly
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/z4gsrNw7_IE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
+\endhtmlonly
 
 \section pixhawk_prereq Prerequisites
 
@@ -31,36 +40,62 @@ The following material is necessary for \ref pixhawk_part1
 - A [Pixhawk](https://pixhawk.org/) mounted on the robot. In our case we use a
   [Pixhawk 2 Cube](https://docs.px4.io/v1.9.0/en/flight_controller/pixhawk-2.html) with
   [PX4 autopilot](https://docs.px4.io/main/)
+- A Jetson TX2 embedded in the drone and connected through USB to the Pixhawk
 - A motion capture system (MoCap) like the Qualisys or Vicon ones, that are interfaced through
   vpMocapQualisys and vpMocapVicon respectively.
 
 If you wish to continue this tutorial with \ref pixhawk_part2, the following matérial is also necessary:
-- An Intel Realsense camera. In our case we used a D405 camera
+- An Intel Realsense camera. In our case we used a D405 camera connected to the Pixhawk
 - An apriltag that serves as a target to position the drone by visual servoing. See how to \ref apriltag_detection_print.
 
 Since in our use case we want to navigate indoor, GPS is supposed to be not available. That's why
-the MoCap is here used to retrieve the robot position using an external computer. This computer could be
-a laptop used as a ground station or embedded onboard using for example a Jetson TX2 or a Raspberry Pi4.
+the MoCap is here used to stream the robot position by Wifi to the Jetson. A ViSP based app running
+on the Jetson is listening the MoCap data in order to convert them to MAVLink messages send to the Pixhawk.
+This app is implemented in sendMocapToPixhawk.cpp
 
-The external computer (in our case the Jetson) is used here to stream the pose of the robot from MoCap to the Pixhawk
-by using Mavlink.
+\note The Jetson TX2 could be replaced by a Raspberry Pi4.
 
 \subsection pixhawk_prereq_software Software
 
 - <b>MavSDK</b> 3rd party library
 
-  To be able to use MAVLink to communicate between the external computer and the onboard Pixhawk
-you need to install MavSDK. Instructions to install MavSDK and check the installation are provided
+  MAVLink is the protocol used to communicate with the Pixhawk. To use MAVLink you need to install MavSDK.
+Instructions to install MavSDK and check the installation are provided
 [here](https://mavsdk.mavlink.io/v0.35.0/en/getting_started/installation.html). Notice that you can get
 the latest binary packages (.deb, .rpm) on their [github page](https://github.com/mavlink/MAVSDK/releases).
-Once MavSDK is installed (either from binary packages or from source) and enabled during ViSP cmake configuration stage,
+
+  Below, you will also find instructions to install MavSDK from source on Ubuntu:
+  \verbatim
+  $ cd $VISP_WS/3rdparty
+  $ git clone --recursive https://github.com/mavlink/MAVSDK
+  $ mkdir MAVSDK/build
+  $ cd MAVSDK/build
+  $ cmake ../ -DCMAKE_BUILD_TYPE=releases
+  $ make -j$(nproc)
+  $ sudo make install
+  \endverbatim
+
+  Once MavSDK is installed (either from binary packages or from source) and enabled during ViSP cmake configuration stage,
 it will enable vpRobotMavlink usage.
 
 - <b>QGroundControl</b> software, Ground Control Station for the MAVLink protocol
 
   When using PX4, it is important to install [QGroundControl](http://qgroundcontrol.com/) (QGC) following instructions
 [here](https://docs.qgroundcontrol.com/master/en/getting_started/download_and_install.html).
-This software will provide a complete interface with your PX4 flight controller. In the setup window, accessible
+
+  \note When launching `QGroundControl` if you experience the following error (occured with Ubuntu 22.04):
+  \verbatim
+  $ ./QGroundControl.AppImage
+  dlopen(): error loading libfuse.so.2
+
+  AppImages require FUSE to run.
+  \endverbatim
+  you need to install `libfuse2` package:
+  \verbatim
+  $ sudo apt install libfuse2
+  \endverbatim
+
+  This software will provide a complete interface with your PX4 flight controller. In the setup window, accessible
 directly from the QGC icon, you can flash the firmware on the Pixhawk once it is connected through USB.
 We recommend flashing the latest stable version of PX4, but it is possible to go for the developper version.
 
@@ -74,73 +109,125 @@ estimation. This parameter should be switched from "barometer" to "Vision".
 - <b>MavProxy</b> software
 
   [MavProxy](https://ardupilot.org/mavproxy/) is another useful software, allowing you to easily communicate with the
-drone by merging MAVLink instructions coming through different ports. The instruction to install MavProxy on the
-ground station or on the onboard computer (Jetson) can be found
+Pixhawk by merging MAVLink instructions coming through different ports. The instruction to install MavProxy on the onboard computer (Jetson) can be found
 [here](https://ardupilot.org/mavproxy/docs/getting_started/download_and_installation.html).
-Once MavProxy is installed on the onboard computer, you can launch it through the terminal from your ground station with ssh.
-Then you can run MavProxy with different ports open, as it is shown in this example (by default, QGroundControl will
-connect through the udp port 14552) entering your MavProxy directory, generally `$HOME/.local/bin`:
+Once MavProxy is installed on the onboard computer attached to the drone (in our case the Jetson), you can launch it in a terminal.
+Then you can run MavProxy generally installed in `$HOME/.local/bin` folder with different ports opened,
+as it is shown in this example (by default, QGroundControl will connect through the udp port 14550).
+In the next example, our ground station with IP 192.168.30.111 will be used to run QGroundControl.
+The Jetson with local IP address 127.0.0.1
+will be used to stream the MoCap data and run our test or IBVS application.
 \verbatim
-$ cd $MAVPROXY_DIR
-$ mavproxy.py --master=/dev/ttyACM0 --out=udpout:192.168.30.111:14550 \
-    --out=udpout:192.168.30.111:14551 --out=udpout:192.168.30.111:14552
+$ ssh nvidia@jetson
+$ mavproxy.py --master=/dev/ttyACM0 --out=udpout:192.168.30.111:145510 --out=udpout:192.168.30.111:14551 \
+    --out=udpout:127.0.0.1:14552 --out=udpout:127.0.0.1:14553
 \endverbatim
+  In the previous command line,
+  - `/dev/ttyACM0` refers to the USB link between the Jetson and the Pixhawk
+  - `--out=udpout:192.168.30.111:14550` is here to run QGroundControl on the ground station
+  - `--out=udpout:192.168.30.111:14551` is here to run an app on the ground station that communicates with the Pixhawk (typically the one used to \ref pixhawk_fly)
+  - `--out=udpout:127.0.0.1:14552` is here to run on the Jetson the app that \ref pixhawk_stream_mocap
+  - `--out=udpout:127.0.0.1:14553` is here to run on the Jetson the app that does the visual servoing (see \ref pixhawk_part2).
+
+- <b>Qualisys</b> or <b>Vicon</b> Motion Capture System 3rd party SDK
+
+  In this tutorial, we suppose that you have either the Qualisys or the Vicon MoCap System. One of them is required to get the pose
+  of the vehicle that will be send to the Pixhawk through MAVLink (see \ref pixhawk_stream_mocap).
+
+  - To install Qualisys SDK on the Jetson follow \ref install_ubuntu_3rdparty_qualisys installation instructions
+  - Or to install Vicon SDK on the Jetson follow \ref install_ubuntu_3rdparty_vicon installation instructions
+
+- <b>Complete CMake configuration</b> to be able to use MavSDK and one of both MoCap system through ViSP:
+\verbatim
+$ cd $VISP_WS/visp-build
+$ cmake ../visp
+\endverbatim
+  At this point you should see something similar to the following that shows in our case that MavSDK and Qualisys MoCap SDK
+  are detected by ViSP installed on the Jetson:
+\verbatim
+  Real robots:
+    ...
+    Use MAVSDK:                  yes
+    ...
+  Mocap:
+    Use Qualisys:                yes
+    Use Vicon:                   no
+\endverbatim
+  If this is the case, you can now build ViSP:
+\verbatim
+$ make -j$(nproc)
+\endverbatim
+  We recommand also to install the same SDK on the ground station.
 
 \section pixhawk_part1 Part 1: Control the drone indoor
-\subsection pixhawk_stream_mocap Stream MoCap to Pixhawk
 
-The code sendMocapToPixhawk.cpp allows you to send the mocap stream comming from a Qualisys or Vicon motion capture system
-to your drone. This code is based on MavSDK and Visp's vpMocap classes.
-In our case we are connecting a laptop running Ubuntu 22.04 to the Pixhawk via a Jetson on Ubuntu 22.04 running Mavproxy.
+\subsection pixhawk_mavproxy Connect devices using MavProxy
 
-The code can be launched for Qualisys in this way :
+In our case, we use MavProxy to allow multiple apps to dial with the Pixhawk
+(see \ref pixhawk_prereq_software for more details on the next command line):
+
 \verbatim
-$ cd $VISP_WS/visp-build/example/servo-pixhawk
-$ ./sendMocapToPixhawk -ob DJI-F450 --mocap-system q -d udp://:14551
+$ ssh nvidia@jetson
+$ mavproxy.py --master=/dev/ttyACM0 --out=udpout:192.168.30.111:14550 --out=udpout:192.168.30.111:14551 \
+    --out=udpout:127.0.0.1:14552 --out=udpout:127.0.0.1:14553
 \endverbatim
 
-If you want to launch the code with Vicon, you can do it this way :
+\subsection pixhawk_stream_mocap Stream MoCap to Pixhawk
+
+The code sendMocapToPixhawk.cpp allows you to send the MoCap stream comming from a Qualisys or Vicon motion capture system
+to the Pixhawk using MavLink. This code is based on MavSDK and ViSP's vpMocap classes.
+
+In the following command line examples, we suppose that our drone rigid object is identified by the MoCap system with the name `DJI-F450`.
+On the Jetson, streaming the pose obtained by the MoCap system to the vehicle can be achieved with Qualisys in this way:
 \verbatim
-$ ./sendMocapToPixhawk -ob DJI-F450 --mocap-system v -d udp://:14551
+$ ssh nvidia@jetson
+$ cd $VISP_WS/visp-build/example/servo-pixhawk
+$ ./sendMocapToPixhawk -ob DJI-F450 --mocap-system q -d udp://:14552
+\endverbatim
+
+If you want to run the code with Vicon, you can do it this way:
+\verbatim
+$ ./sendMocapToPixhawk -ob DJI-F450 --mocap-system v -d udp://:14552
 \endverbatim
 
 The parameter '-ob' or '--only-body' tells the application which body is to be selected amongst the packets sent by your
-Mocap System.
-If you look at the window of the mocap system manager, you should be able to look at the bodies' names.
+MoCap System.
+If you look at the window of the MoCap system manager, you should be able to look at the bodies' names.
 
 \image html img-dji-qualisys.png Capture of Qualisys Task Manager showing the body 'DJI-F450' corresponding to the drone. width=90%
 
+\subsection pixhawk_qgc Start QGroundControl
+
+To check the drone behavior you can start QGroundControl on the ground station:
+
+\verbatim
+$ ~/Downloads/QGroundControl.AppImage
+\endverbatim
 
 \subsection pixhawk_test Testing the drone
 
-Before launching the keyboard control test or the visual servoing test, we advise you to launch simpler and safer tests beforehand.
+Before launching the keyboard control test on the ground station or the visual servoing test on the Jetson,
+we advise you to launch simpler and safer tests beforehand on the Jetson.
 These tests are, in order :
  - testPixhawkDroneTakeoff.cpp : a simple takeoff followed by a landing.
  - testPixhawkDronePositionControl.cpp : a takeoff followed by a square trajectory with a control on the drone's position.
  - testPixhawkDroneVelocityControl.cpp : a takeoff followed by a simple trajectory testing a few different movements using velocity control.
 
-You can easily launch these tests (here is the example for the Takeoff) by connecting through ssh to your Jetson :
+You can easily launch these tests (here is the example for the takeoff) by connecting through ssh to your Jetson:
 
 \verbatim
-terminal 1 $ cd $MAVPROXY_DIR
-terminal 1 $ mavproxy.py --master=/dev/ttyACM0 --out=udpout:<IP>:14550 \
-    --out=udpout:<IP>:14551 --out=udpout:<IP>:14552
-terminal 2 $ ./testPixhawkDroneTakeoff udp://<IP>:14552
+$ ssh nvidia@jetson
+$ cd $VISP_WS/visp-build/modules/robot
+$ ./testPixhawkDroneTakeoff udp://:14553
 \endverbatim
-
 
 \subsection pixhawk_fly Control the drone with a keyboard
 
-In testPixhawkDroneKeyboard.cpp you will find the code of an example that allows to control the drone from a ground station.
-In our case we are connecting a laptop running Ubuntu 22.04 to the Pixhawk using MavProxy.
-
-To use this example:
+In testPixhawkDroneKeyboard.cpp you will find the code of an example that allows to control the drone from a ground station
+using the keyboard. To use this example on the ground station, you may run:
 
 \verbatim
-terminal 1 $ cd $MAVPROXY_DIR
-terminal 1 $ mavproxy.py --master=/dev/ttyACM0 --out=udpout:<IP>:14550 \
-    --out=udpout:<IP>:14551 --out=udpout:<IP>:14552
-terminal 2 $ ./testPixhawkDroneKeyboard --co udp://<IP>:14552
+$ ./testPixhawkDroneKeyboard --co udp://192.168.30.111:14551
 \endverbatim
 
 \section pixhawk_part2 Part 2: Visual Servoing
@@ -149,10 +236,10 @@ terminal 2 $ ./testPixhawkDroneKeyboard --co udp://<IP>:14552
 In order to do this part, make sure you add a camera to your drone. We added a intel Realsense D405 connected to the
 Jetson through USB.
 
-The code servoPixhawkDroneIBVS.cpp is an example that allows to do visual servoing with the drone.
+The code servoPixhawkDroneIBVS.cpp is an example that needs to be run on the Jetson and that allows to do visual servoing with the drone.
 This program estabishes a rigid link between the drone (equiped with a camera) and an Apriltag.
 Depending on where the camera is placed, the matrices expressing the transformation between the frame of the drone and the
-frame of the camera. Here is a picture of the drone showing where the D405 camera was placed.
+frame of the camera need to be modified. Here is a picture of the drone showing where the D405 camera was attached.
 
 \note In the code, the Apriltag is hard-coded to be the AprilTag 36h11 pattern. You can modify it if you wish.
 
@@ -160,7 +247,8 @@ frame of the camera. Here is a picture of the drone showing where the D405 camer
 
 If you want to launch the code, you can connect to your Jetson through ssh and do :
 \verbatim
-$ ./servoPixhawkDroneIBVS --tag-size <tag size in meters> --co udp://<IP>:<Port> --distance-to-tag <desired dist to tag in meters>
+$ ssh nvidia@jetson
+$ ./servoPixhawkDroneIBVS --tag-size 0.23 --co udp://:14553 --distance-to-tag 1.3
 \endverbatim
 
 \section pixhawk_next Next tutorial

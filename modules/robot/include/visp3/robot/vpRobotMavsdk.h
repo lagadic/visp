@@ -52,7 +52,7 @@
  *
  * \ingroup group_robot_real_drone
  *
- * Interface for [Mavlink](https://mavlink.io/en/) allowing to control drones or rovers using a mavlink compatible
+ * Interface for [Mavlink](https://mavlink.io/en/) allowing to control drones or rovers using a MavLink compatible
  * controller.
  *
  * This class needs cxx17 or more recent standard enabled during ViSP cmake configuration.
@@ -60,8 +60,10 @@
  * This class is enabled when [MavSDK C++](https://github.com/mavlink/MAVSDK) is installed and detected by ViSP during
  * cmake configuration step.
  *
- * \note The body frame associated to the robot controlled through mavlink is supposed to be Front-Right-Down (FRD)
+ * \note The body frame associated to the robot controlled through MavLink is supposed to be Front-Right-Down (FRD)
  * respectively for X-Y-Z.
+ *
+ * \sa \ref tutorial-pixhawk-vs
  */
 class VISP_EXPORT vpRobotMavsdk
 {
@@ -78,7 +80,7 @@ public:
   //! @name General robot information
   //@{
   float getBatteryLevel() const;
-  void getPose(vpHomogeneousMatrix &Pose);
+  void getPose(vpHomogeneousMatrix &pose) const;
   std::string getAddress() const;
   //@}
 
@@ -112,7 +114,7 @@ public:
   void setYawSpeed(double wz);
   void stopMoving();
   void setTakeOffAlt(double altitude);
-  bool takeOff();
+  bool takeOff(bool interactive = true);
   //@}
 
 private:
