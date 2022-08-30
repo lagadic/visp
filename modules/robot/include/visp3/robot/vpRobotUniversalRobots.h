@@ -56,6 +56,9 @@
   \class vpRobotUniversalRobots
 
   \ingroup group_robot_real_arm
+
+  \sa \ref tutorial-universal-robot-ibvs
+  \sa \ref tutorial-universal-robot-pbvs
 */
 class VISP_EXPORT vpRobotUniversalRobots : public vpRobot
 {
