@@ -23,11 +23,18 @@ and velocities are send to the Pixhawk through MAVLink protocol.
 
 \image html img-drone-dji-pixhawk.jpg DJI F450 equipped with a Pixhawk connected to a Jetson TX2 through an USB link
 
-Hereafter you will find a video that illustrates the visual-servoing.
+Hereafter you will find a video that illustrates the visual-servoing:
 
 \htmlonly
 <p align="center">
 <iframe width="560" height="315" src="https://www.youtube.com/embed/z4gsrNw7_IE" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
+\endhtmlonly
+
+and hereafter the corresponding images captured by the camera and processed by the Jetson:
+\htmlonly
+<p align="center">
+<iframe width="560" height="315" src="https://www.youtube.com/embed/pGeeu7gD7FQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </p>
 \endhtmlonly
 
