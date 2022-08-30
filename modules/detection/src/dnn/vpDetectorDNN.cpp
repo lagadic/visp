@@ -419,7 +419,7 @@ void vpDetectorDNN::setScaleFactor(double scaleFactor) { m_scaleFactor = scaleFa
 void vpDetectorDNN::setSwapRB(bool swapRB) { m_swapRB = swapRB; }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpDetectorDNN.cpp.o) has no
+// Work around to avoid warning: libvisp_core.a(vpDetectorDNN.cpp.o) has no
 // symbols
 void dummy_vpDetectorDNN(){};
 #endif

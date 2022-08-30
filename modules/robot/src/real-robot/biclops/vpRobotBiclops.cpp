@@ -1253,7 +1253,7 @@ void vpRobotBiclops::getDisplacement(vpRobot::vpControlFrameType frame, vpColVec
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpRobotBiclops.cpp.o) has no
+// Work around to avoid warning: libvisp_robot.a(vpRobotBiclops.cpp.o) has no
 // symbols
 void dummy_vpRobotBiclops(){};
 #endif

@@ -1322,7 +1322,7 @@ int vpRobotFranka::gripperGrasp(double grasping_width, double force)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpRobotFranka.cpp.o) has
+// Work around to avoid warning: libvisp_robot.a(vpRobotFranka.cpp.o) has
 // no symbols
 void dummy_vpRobotFranka(){};
 #endif

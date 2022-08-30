@@ -285,7 +285,7 @@ void vpOpenCVGrabber::setDeviceType(int type)
 void vpOpenCVGrabber::setFlip(bool flipType) { flip = flipType; }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_sensor.a(vpOpenCVGrabber.cpp.o) has
+// Work around to avoid warning: libvisp_sensor.a(vpOpenCVGrabber.cpp.o) has
 // no symbols
 void dummy_vpOpenCVGrabber(){};
 #endif

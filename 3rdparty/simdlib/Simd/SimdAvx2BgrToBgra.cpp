@@ -160,7 +160,7 @@ namespace Simd
         }
     }
 #else
-    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2BgrToBgra.cpp.o) has no symbols
+    // Work around to avoid warning: libvisp_simdlib.a(SimdAvx2BgrToBgra.cpp.o) has no symbols
     void dummy_SimdAvx2BgrToBgra(){};
 #endif//SIMD_AVX2_ENABLE
 }

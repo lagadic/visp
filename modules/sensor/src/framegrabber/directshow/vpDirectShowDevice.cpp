@@ -116,7 +116,7 @@ VISP_EXPORT std::ostream &operator<<(std::ostream &os, vpDirectShowDevice &dev)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_sensor.a(vpDirectShowDevice.cpp.o)
+// Work around to avoid warning: libvisp_sensor.a(vpDirectShowDevice.cpp.o)
 // has no symbols
 void dummy_vpDirectShowDevice(){};
 #endif

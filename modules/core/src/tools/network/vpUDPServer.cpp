@@ -332,6 +332,6 @@ int vpUDPServer::send(const std::string &msg, const std::string &hostname, int p
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpUDPServer.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_core.a(vpUDPServer.cpp.o) has no symbols
 void dummy_vpUDPServer(){};
 #endif

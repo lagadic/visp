@@ -347,6 +347,6 @@ int vpUDPClient::send(const void *msg, size_t len)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpUDPClient.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_core.a(vpUDPClient.cpp.o) has no symbols
 void dummy_vpUDPClient(){};
 #endif

@@ -76,7 +76,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
       list(APPEND PCL_VTK_LIBRARIES "vtkFiltering") # seems required on Ubuntu 16.04
     endif()
     if(VTK_VERSION VERSION_EQUAL 6.2.0)
-      # Work arround to avoid build issue on ubuntu 16.04 with libvtk6-dev package
+      # Work around to avoid build issue on ubuntu 16.04 with libvtk6-dev package
       # cannot find -lvtkproj4
       # See https://bugs.launchpad.net/ubuntu/+source/vtk6/+bug/1573234
       list(REMOVE_ITEM ${pcl_deps_libraries} "vtkproj4")

@@ -101,7 +101,7 @@ void vpSimulatorPioneer::get_eJe(vpMatrix &_eJe) { _eJe = vpUnicycle::get_eJe();
 
   \param v : Velocity vector \f$(v_x, \omega_z)\f$ to apply to the robot,
   where \f$v_x\f$ is the linear translational velocity in m/s and
-  \f$\omega_z\f$ is the rotational velocity in rad/s arround the vertical
+  \f$\omega_z\f$ is the rotational velocity in rad/s around the vertical
   axis.
 
   Depending on the velocity specified as input, the robot position is updated

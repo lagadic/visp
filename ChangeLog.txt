@@ -441,7 +441,7 @@ ViSP 3.1.0 (released December 22nd, 2017)
     . [#137] Fix bug in extration of vpRotationMatrix from vpPoseVector using
              vpPoseVector::getRotationMatrix()
     . [#149] Bug in vpTime::measureTimeMicros() (OS detection was done wrong)
-    . [#160] Build issue with msvc arround std::min() std::max()
+    . [#160] Build issue with msvc around std::min() std::max()
     . [#162] Redefinition errors in WinSock2.h and winsock.h
     . [#165] Segmentation fault when cout a null row vector
     . [#171] Segfault when using vpMatrix::pseudoInverse()
@@ -849,7 +849,7 @@ ViSP 2.7.0 (released February 11th, 2013)
       mbtKltTracking.cpp
   - Bug fixed
     - [14646] ViSP doesn't build on Windows with MinGW
-    - [14651] Build error arround vpMatrix::pseudoInverse() with OpenCV 2.1.0
+    - [14651] Build error around vpMatrix::pseudoInverse() with OpenCV 2.1.0
     - [14661] Build error when GDI is not detected or turned off
     - [14818] Build error when only GTK display device is available
     - [14862] Lagrange pose estimation cannot handle planar objects with

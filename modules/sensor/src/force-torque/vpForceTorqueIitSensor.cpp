@@ -238,7 +238,7 @@ void vpForceTorqueIitSensor::stopStreaming()
 }
 
 #else
-// Work arround to avoid warning:
+// Work around to avoid warning:
 // libvisp_sensor.a(vpForceTorqueIitSensor.cpp.o) has no symbols
 void dummy_vpForceTorqueIitSensor(){};
 #endif

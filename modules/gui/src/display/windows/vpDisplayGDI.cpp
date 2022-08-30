@@ -194,7 +194,7 @@ vpDisplayGDI::vpDisplayGDI(vpImage<unsigned char> &I, int winx, int winy, const 
 vpDisplayGDI::~vpDisplayGDI() {}
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpDisplayGDI.cpp.o) has no
+// Work around to avoid warning: libvisp_core.a(vpDisplayGDI.cpp.o) has no
 // symbols
 void dummy_vpDisplayGDI(){};
 #endif

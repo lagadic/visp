@@ -145,7 +145,7 @@ namespace Simd
         }
     }
 #else
-    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx2ReduceGray3x3.cpp.o) has no symbols
+    // Work around to avoid warning: libvisp_simdlib.a(SimdAvx2ReduceGray3x3.cpp.o) has no symbols
     void dummy_SimdAvx2ReduceGray3x3(){};
 #endif// SIMD_AVX2_ENABLE
 }

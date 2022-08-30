@@ -874,7 +874,7 @@ void vpRobotKinova::setActiveDevice(int device)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpRobotKinova.cpp.o) has
+// Work around to avoid warning: libvisp_robot.a(vpRobotKinova.cpp.o) has
 // no symbols
 void dummy_vpRobotKinova(){};
 #endif

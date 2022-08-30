@@ -178,6 +178,6 @@ franka::JointPositions vpJointPosTrajGenerator::operator()(const franka::RobotSt
   return output;
 }
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpJointPosTrajGenerator.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_robot.a(vpJointPosTrajGenerator.cpp.o) has no symbols
 void dummy_vpJointPosTrajGenerator(){};
 #endif

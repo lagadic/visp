@@ -712,6 +712,6 @@ void vpPlot::saveData(unsigned int graphNum, const std::string &dataFile, const 
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpPlot.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_core.a(vpPlot.cpp.o) has no symbols
 void dummy_vpPlot(){};
 #endif

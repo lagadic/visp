@@ -790,6 +790,6 @@ int vpNetwork::_receiveRequestOnceFrom(const unsigned int &receptorEmitting)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpNetwork.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_core.a(vpNetwork.cpp.o) has no symbols
 void dummy_vpNetwork(){};
 #endif

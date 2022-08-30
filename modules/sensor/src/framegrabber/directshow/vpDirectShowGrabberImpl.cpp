@@ -1138,7 +1138,7 @@ void vpDirectShowGrabberImpl::MyFreeMediaType(AM_MEDIA_TYPE &mt)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning:
+// Work around to avoid warning:
 // libvisp_sensor.a(vpDirectShowGrabberImpl.cpp.o) has no symbols
 void dummy_vpDirectShowGrabberImpl(){};
 #endif

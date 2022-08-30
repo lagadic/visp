@@ -117,7 +117,7 @@ void vpPlotCurve::plotList(const vpImage<unsigned char> &I, double xorg, double 
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpPlotCurve.cpp.o) has no
+// Work around to avoid warning: libvisp_core.a(vpPlotCurve.cpp.o) has no
 // symbols
 void dummy_vpPlotCurve(){};
 #endif

@@ -329,7 +329,7 @@ int main(int argc, const char **argv)
 
       if (start_secondary_task) {
         // Only 3 dof are required to achieve primary task: vz, wx, wy
-        // It remains 3 free dof (vx, vy, wz) that could be used in a secondary task for example to move arround the
+        // It remains 3 free dof (vx, vy, wz) that could be used in a secondary task for example to move around the
         // sphere
         vpColVector de2dt(6);
         de2dt[0] = 0.50;            // vx = 0.50 m/s should also generate a motion on wy = (I-WpW)de2dt[4]

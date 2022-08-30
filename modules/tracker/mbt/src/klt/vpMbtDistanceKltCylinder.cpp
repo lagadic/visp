@@ -739,7 +739,7 @@ double vpMbtDistanceKltCylinder::computeZ(const double &x, const double &y)
   return cylinder.computeZ(x, y);
 }
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning:
+// Work around to avoid warning:
 // libvisp_mbt.a(vpMbtDistanceKltCylinder.cpp.o) has no symbols
 void dummy_vpMbtDistanceKltCylinder(){};
 #endif

@@ -81,7 +81,7 @@ namespace Simd
         }
     }
 #else
-    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse2BgrToBgra.cpp.o) has no symbols
+    // Work around to avoid warning: libvisp_simdlib.a(SimdSse2BgrToBgra.cpp.o) has no symbols
     void dummy_SimdSse2BgrToBgra(){};
 #endif//SIMD_SSE2_ENABLE
 }

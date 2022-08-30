@@ -284,7 +284,7 @@ std::ostream &operator<<(std::ostream &os, const vpForceTorqueAtiSensor &ati)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning:
+// Work around to avoid warning:
 // libvisp_sensor.a(vpForceTorqueAtiSensor.cpp.o) has no symbols
 void dummy_vpForceTorqueAtiSensor(){};
 #endif

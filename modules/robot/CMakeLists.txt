@@ -60,7 +60,7 @@ if(USE_VIRTUOSE)
   endif()
 
   if(MSVC)
-    # Work arround to remove warning LNK4099; PDB vc120.pdb not found with virtuoseDLL.lib
+    # Work around to remove warning LNK4099; PDB vc120.pdb not found with virtuoseDLL.lib
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /ignore:4099")
 
     # Disable Visual C++ C4312 warning occuring on 3rd party VirtuoseAPI.h file

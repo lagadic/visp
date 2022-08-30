@@ -20,7 +20,7 @@ As in the next image, we recommend to select version 8.1.0 (the last version ava
 was updated), architecture x86_64, posix threads that enables std::thread usage and exception seh
 (for Structured Exception Handling mechanism).
 \image html img-win10-mingw-w64-installer.png
-- Press Next button and keep default installation folder to 
+- Press Next button and keep default installation folder to
 `C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0`
 \image html img-win10-mingw-w64-installer-select-install-folder.png
 - To finish the installation, just add `C:\Program Files\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin`
@@ -125,7 +125,7 @@ just build or jump to \ref install_win10_mingw64_next. You can later come back t
 
 \subsection install_win10_mingw64_3rdparty Install 3rd parties
 
-ViSP is interfaced with several 3rd party libraries. The 
+ViSP is interfaced with several 3rd party libraries. The
 <a href="https://visp.inria.fr/software-architecture">complete list is provided here</a>.
 We recommend to install \ref install_win10_mingw64_3rdparty_eigen and
 \ref install_win10_mingw64_3rdparty_opencv in the workspace.
@@ -192,7 +192,7 @@ from source and install the libraries in `%%VISP_WS%\opencv-4.5.1\build\x64\ming
 
 <b>2. Configure, build and install OpenCV from source</b>
 
-- Open a `cmd` Command Prompt and create a build folder 
+- Open a `cmd` Command Prompt and create a build folder
 \verbatim
 C:\> mkdir %VISP_WS%\opencv-4.5.1\build-mingw
 C:\> cd %VISP_WS%\opencv-4.5.1\build-mingw
@@ -213,7 +213,7 @@ C:\> cmake --build . --config Release --target install -j4
 \ref issue_win10_mingw_opencv_allocator.
 \note With OpenCV 4.1.0 if you don't set `WITH_OPENCL_D3D11_NV=OFF` you will get an
 \ref issue_win10_mingw_opencv_opencl_d3d11.
-\note Using OpenCV older versions you may encounter the following issues, for which we propose work arrounds;
+\note Using OpenCV older versions you may encounter the following issues, for which we propose work arounds;
 \ref issue_win10_mingw_opencv_precompiled_headers, \ref issue_win10_mingw_opencv_cap_dshow,
 \ref issue_win10_mingw_opencv_dtor, \ref issue_win10_mingw_opencv_tiff, or \ref issue_win10_mingw_opencv_ipp.
 
@@ -227,7 +227,7 @@ C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.1\build"
 C:\> exit
 \endverbatim
 where `%%VISP_WS%\opencv-4.5.1\build` is where you have installed OpenCV. Inside this folder you should
-have a file named `OpenCVConfig.cmake`. 
+have a file named `OpenCVConfig.cmake`.
 
 - You have also to add the location of OpenCV libraries corresponding to MinGW usage in the `Path`
 environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with
@@ -254,7 +254,7 @@ C:\> git clone https://github.com/lagadic/visp.git
 
 We suppose now that ViSP source is in `%%VISP_WS%\visp`.
 
-\subsection install_win10_mingw64_config Configure ViSP from source 
+\subsection install_win10_mingw64_config Configure ViSP from source
 
 The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution file that
 will be located in `%%VISP_WS%/visp-build-mingw`.
@@ -267,18 +267,18 @@ will be located in `%%VISP_WS%/visp-build-mingw`.
 - Select then your compiler "MinGW Makefiles" and click on "Finish" button.
 \image html img-cmake-win10-mingw-makefiles.png
 - This will start CMake configuration. As shown in the next image, OpenCV, GDI (Graphical Device Interface)
-and Eigen3 3rd parties are automatically detected. 
+and Eigen3 3rd parties are automatically detected.
 \image html img-cmake-win10-mingw-visp-config.png
 \note If OpenCV is not detected, you may encounter the following issue \ref issue_win10_mingw_opencv_not_detected.
 
 \note Installation folder is set to `%%VISP_WS%/visp-build-mingw/install`. If you want to change the installation
 folder to `C:/Program Files (x86)/ViSP`, make sure that you have administrator privileges to write in that
-folder before modifying `CMAKE_INSTALL_PREFIX`. 
+folder before modifying `CMAKE_INSTALL_PREFIX`.
 
 - Click then on "Configure" button. All the red lines should disappear.
 \note The default configuration lead to the creation of a shared library (with `.dll` extension). This is
 the default configuration that is recommended. If you want to create rather a static library
-(with `.lib` extension) you have to uncheck the `BUILD_SHARED_LIBS` option to disable DLL creation. 
+(with `.lib` extension) you have to uncheck the `BUILD_SHARED_LIBS` option to disable DLL creation.
 
 - To finish the configuration, click on "Generate" button.
 \image html img-cmake-win10-mingw-visp-generate.png
@@ -507,15 +507,15 @@ General configuration information for ViSP 3.3.1
 
   Python (for build):            NO
 
-  Java:                          
+  Java:
     ant:                         NO
     JNI:                         NO
 
-  Build options: 
+  Build options:
     Build deprecated:            yes
     Build with moment combine:   no
 
-  Mathematics: 
+  Mathematics:
     Blas/Lapack:                 yes
     \- Use MKL:                  no
     \- Use OpenBLAS:             no
@@ -526,11 +526,11 @@ General configuration information for ViSP 3.3.1
     Use Eigen3:                  yes (ver 3.3.8)
     Use OpenCV:                  yes (ver 4.5.1)
 
-  Simulator: 
-    Ogre simulator: 
+  Simulator:
+    Ogre simulator:
     \- Use Ogre3D:               no
     \- Use OIS:                  no
-    Coin simulator: 
+    Coin simulator:
     \- Use Coin3D:               no
     \- Use SoWin:                no
     \- Use SoXt:                 no
@@ -539,14 +539,14 @@ General configuration information for ViSP 3.3.1
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
-  Media I/O: 
+  Media I/O:
     Use JPEG:                    no
     Use PNG:                     no
     \- Use ZLIB:                 no
     Use OpenCV:                  yes (ver 4.5.1)
     Use stb_image (built-in):    no
 
-  Real robots: 
+  Real robots:
     Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
@@ -563,14 +563,14 @@ General configuration information for ViSP 3.3.1
     Use qbdevice (built-in):     yes (ver 2.6.0)
     Use takktile2 (built-in):    no
 
-  GUI: 
+  GUI:
     Use X11:                     no
     Use GTK:                     no
     Use OpenCV:                  yes (ver 4.5.1)
     Use GDI:                     no
     Use Direct3D:                no
 
-  Cameras: 
+  Cameras:
     Use DC1394-2.x:              no
     Use CMU 1394:                no
     Use V4L2:                    no
@@ -579,7 +579,7 @@ General configuration information for ViSP 3.3.1
     Use Flycapture:              no
     Use Pylon:                   no
 
-  RGB-D sensors: 
+  RGB-D sensors:
     Use Realsense:               no
     Use Realsense2:              no
     Use Kinect:                  no
@@ -589,29 +589,29 @@ General configuration information for ViSP 3.3.1
     Use PCL:                     no
     \- Use VTK:                  no
 
-  F/T sensors: 
+  F/T sensors:
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
 
-  Detection: 
+  Detection:
     Use zbar:                    no
     Use dmtx:                    no
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
 
-  Misc: 
+  Misc:
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
     Use libxml2:                 no
 
-  Optimization: 
+  Optimization:
     Use OpenMP:                  yes
     Use pthread:                 no
     Use pthread (built-in):      yes (ver 3.0.1)
     Use cxx standard:            11
 
-  Documentation: 
+  Documentation:
     Use doxygen:                 yes
 
   Tests and samples:
@@ -705,13 +705,13 @@ C:\> mingw32-make
 The following image shows the link issue that may appear when building OpenCV with MinGW:
 \image html img-opencv-issue-ipp.jpg
 
-A work arround is to configure OpenCV without ipp support turning WITH_IPP=OFF and then trying to build again.
+A work around is to configure OpenCV without ipp support turning WITH_IPP=OFF and then trying to build again.
 
 \subsection issue_win10_mingw_opencv_dtor OpenCV build error: struct has virtual functions and accessible non-virtual destructor
 
 This error that occurs with OpenCV 3.0.0 during `cap_dshow.cpp` build is known and reported as an issue
 in https://github.com/Itseez/opencv/pull/5282/commits.
-\image html img-win8.1-mingw-opencv-issue-dtor.jpg 
+\image html img-win8.1-mingw-opencv-issue-dtor.jpg
 
 - The fix consists in modifying `modules/videoio/src/cap_dshow.cpp` by adding near line 96:
 \verbatim
@@ -747,20 +747,20 @@ C:\> mingw32-make install
 When running `mingw32-make` if you get the following issue:
 \image html img-win10-mingw-opencv-issue-precompiled-headers.png
 
-the workarround consists in:
+the workaround consists in:
 - opening cmake-gui and turning `ENABLE_PRECOMPILED_HEADERS` cmake var OFF:
 \image html img-cmake-win10-mingw-opencv-issue-precompiled-headers.png
 - in cmake-gui press "Configure" button, then press "Generate" button
 - then in the `cmd` Command Prompt run again `mingw32-make`
 
-\subsection issue_win10_mingw_opencv_cap_dshow Build error in cap_dshow.cpp 
+\subsection issue_win10_mingw_opencv_cap_dshow Build error in cap_dshow.cpp
 
 \note This issue occurs with OpenCV 3.3.0.
 
 When running `mingw32-make` if you get the following issue:
 \image html img-win10-mingw-opencv-issue-cap-dshow.png
 
-the workarround consists in:
+the workaround consists in:
 - editing `%%VISP_WS%/opencv-3.3.0/sources/modules/videoio/src/cap_dshow.cpp` adding
 \code
 #define NO_DSHOW_STRSAFE

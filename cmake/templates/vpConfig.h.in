@@ -81,7 +81,7 @@
 #endif
 
 #if defined(__MINGW__) || defined(__MINGW32__) || defined(__MINGW64__)
-// Work arround to fix build issues that may occur with Mingw:
+// Work around to fix build issues that may occur with Mingw:
 // error: 'DBL_EPSILON' was not declared in this scope
 // error: 'FLT_EPSILON' was not declared in this scope
 

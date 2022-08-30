@@ -444,7 +444,7 @@ namespace Simd
         }
     }
 #else
-    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse2CustomFunctions.cpp.o) has no symbols
+    // Work around to avoid warning: libvisp_simdlib.a(SimdSse2CustomFunctions.cpp.o) has no symbols
     void dummy_SimdSse2CustomFunctions(){};
 #endif// SIMD_SSE2_ENABLE
 }

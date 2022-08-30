@@ -484,7 +484,7 @@ void vpPlanarObjectDetector::getMatchedPoints(const unsigned int _index, vpImage
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning:
+// Work around to avoid warning:
 // libvisp_vision.a(vpPlanarObjectDetector.cpp.o) has no symbols
 void dummy_vpPlanarObjectDetector(){};
 #endif

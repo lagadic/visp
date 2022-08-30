@@ -83,7 +83,7 @@ vpPylonGrabber *vpPylonFactory::createPylonGrabber(DeviceClass dev_class)
 }
 
 #else
-// Work arround to avoid warning:
+// Work around to avoid warning:
 // libvisp_pylon.a(vpPylonFactory.cpp.o) has no symbols
 void dummy_vpPylonFactory(){};
 #endif // #ifdef VISP_HAVE_PYLON

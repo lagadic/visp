@@ -157,7 +157,7 @@ $ cmake ../visp
 \verbatim
 $ make -j$(nproc)
 \endverbatim
-  We recommand also to install the same SDK on the ground station.
+  We recommend also to install the same SDK on the ground station.
 
 \section pixhawk_part1 Part 1: Control the drone indoor
 

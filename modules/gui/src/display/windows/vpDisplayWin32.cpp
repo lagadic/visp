@@ -899,7 +899,7 @@ unsigned int vpDisplayWin32::getScreenHeight()
   return height;
 }
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpDisplayWin32.cpp.o) has no
+// Work around to avoid warning: libvisp_core.a(vpDisplayWin32.cpp.o) has no
 // symbols
 void dummy_vpDisplayWin32(){};
 #endif

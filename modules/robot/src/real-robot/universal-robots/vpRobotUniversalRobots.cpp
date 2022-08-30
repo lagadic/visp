@@ -869,7 +869,7 @@ vpRobot::vpRobotStateType vpRobotUniversalRobots::setRobotState(vpRobot::vpRobot
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpRobotUniversalRobots.cpp.o) has no
+// Work around to avoid warning: libvisp_robot.a(vpRobotUniversalRobots.cpp.o) has no
 // symbols
 void dummy_vpRobotUniversalRobots(){};
 #endif

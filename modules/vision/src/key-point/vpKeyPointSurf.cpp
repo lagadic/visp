@@ -645,7 +645,7 @@ void vpKeyPointSurf::getDescriptorParamReferencePoint(int index, int &size, floa
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_vision.a(vpKeyPointSurf.cpp.o) has
+// Work around to avoid warning: libvisp_vision.a(vpKeyPointSurf.cpp.o) has
 // no symbols
 void dummy_vpKeyPointSurf(){};
 #endif

@@ -265,7 +265,7 @@ void vpMocapVicon::setServerAddress(const std::string &serverAddr) { m_impl->set
 void vpMocapVicon::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
 
 #else
-// Work arround to avoid warning:
+// Work around to avoid warning:
 // libvisp_sensor.a(vpMocapVicon.cpp.o) has no symbols
 void dummy_vpMocapVicon(){};
 #endif

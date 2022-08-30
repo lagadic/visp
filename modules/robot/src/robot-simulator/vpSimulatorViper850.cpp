@@ -2404,7 +2404,7 @@ void vpSimulatorViper850::initialiseObjectRelativeToCamera(const vpHomogeneousMa
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpSimulatorViper850.cpp.o)
+// Work around to avoid warning: libvisp_robot.a(vpSimulatorViper850.cpp.o)
 // has no symbols
 void dummy_vpSimulatorViper850(){};
 #endif

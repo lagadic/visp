@@ -1482,7 +1482,7 @@ vpV4l2Grabber &vpV4l2Grabber::operator>>(vpImage<vpRGBa> &I)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_sensor.a(vpV4l2Grabber.cpp.o) has no
+// Work around to avoid warning: libvisp_sensor.a(vpV4l2Grabber.cpp.o) has no
 // symbols
 void dummy_vpV4l2Grabber(){};
 #endif

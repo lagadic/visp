@@ -184,7 +184,7 @@ void vpPlotGraph::findPose()
     point_[i].set_y(y);
     pose.addPoint(point_[i]);
   }
-  
+
   pose.computePose(vpPose::LAGRANGE, cMo) ;
   pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
@@ -1316,7 +1316,7 @@ vpHomogeneousMatrix vpPlotGraph::navigation(const vpImage<unsigned char> &I, boo
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpPlotGraph.cpp.o) has no
+// Work around to avoid warning: libvisp_core.a(vpPlotGraph.cpp.o) has no
 // symbols
 void dummy_vpPlotGraph(){};
 #endif

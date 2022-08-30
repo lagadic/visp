@@ -1314,7 +1314,7 @@ void vpKltOpencv::display(const vpImage<vpRGBa> &I, const CvPoint2D32f *features
 }
 #else
 
-// Work arround to avoid visp_klt library empty when OpenCV is not installed
+// Work around to avoid visp_klt library empty when OpenCV is not installed
 // or used
 class VISP_EXPORT dummy_vpKltOpencv
 {
@@ -1323,7 +1323,7 @@ public:
 };
 
 #if !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_klt.a(vpKltOpenCV.cpp.o) has no
+// Work around to avoid warning: libvisp_klt.a(vpKltOpenCV.cpp.o) has no
 // symbols
 void dummy_vpKltOpenCV_fct(){};
 #endif

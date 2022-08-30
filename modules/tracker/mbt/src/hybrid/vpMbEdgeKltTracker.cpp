@@ -1481,7 +1481,7 @@ void vpMbEdgeKltTracker::reInitModel(const vpImage<unsigned char> &I, const std:
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_mbt.a(vpMbEdgeKltTracker.cpp.o) has
+// Work around to avoid warning: libvisp_mbt.a(vpMbEdgeKltTracker.cpp.o) has
 // no symbols
 void dummy_vpMbEdgeKltTracker(){};
 #endif // VISP_HAVE_OPENCV

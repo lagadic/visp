@@ -616,6 +616,6 @@ std::array<double, 7> vpJointVelTrajGenerator::limitRate(const std::array<double
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpJointVelTrajGenerator.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_robot.a(vpJointVelTrajGenerator.cpp.o) has no symbols
 void dummy_vpJointVelTrajGenerator(){};
 #endif // VISP_HAVE_FRANKA

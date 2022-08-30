@@ -113,7 +113,7 @@ void vpMatrix::blas_dgemv(char trans, unsigned int M_, unsigned int N_, double a
 }
 #endif
 #else
-// Work arround to avoid warning LNK4221: This object file does not define any
+// Work around to avoid warning LNK4221: This object file does not define any
 // previously undefined public symbols
 void dummy_vpMatrix_blas(){};
 #endif

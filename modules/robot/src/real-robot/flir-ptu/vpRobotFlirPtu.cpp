@@ -949,7 +949,7 @@ double vpRobotFlirPtu::tics2deg(int axis, int tics) { return (tics * m_res[axis]
 double vpRobotFlirPtu::tics2rad(int axis, int tics) { return vpMath::rad(tics2deg(axis, tics)); }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpRobotFlirPtu.cpp.o) has
+// Work around to avoid warning: libvisp_robot.a(vpRobotFlirPtu.cpp.o) has
 // no symbols
 void dummy_vpRobotFlirPtu(){};
 #endif

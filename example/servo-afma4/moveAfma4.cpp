@@ -188,8 +188,8 @@ int main(int argc, const char **argv)
     std::cout << "Velocity control: in articular..." << std::endl;
 
     q = 0 ;
-    q[0] = vpMath::rad(2) ; // rotation arround vertical axis
-    std::cout << "  rotation arround vertical axis: " << q[0] << std::endl;
+    q[0] = vpMath::rad(2) ; // rotation around vertical axis
+    std::cout << "  rotation around vertical axis: " << q[0] << std::endl;
     if (control)
       robot.setVelocity(vpRobot::ARTICULAR_FRAME, q) ;
     sleep(5) ;
@@ -228,7 +228,7 @@ int main(int argc, const char **argv)
     std::cout << "Velocity control: in camera frame..." << std::endl;
     q.resize(6);
     q = 0.0;
-    q[0] = vpMath::rad(2); // rotation arround vertical axis
+    q[0] = vpMath::rad(2); // rotation around vertical axis
     std::cout << "  rx rotation: " << q[0] << std::endl;
     if (control)
       robot.setVelocity(vpRobot::CAMERA_FRAME, q);
@@ -236,7 +236,7 @@ int main(int argc, const char **argv)
 
     q.resize(6);
     q = 0.0;
-    q[1] = vpMath::rad(2); // rotation arround vertical axis
+    q[1] = vpMath::rad(2); // rotation around vertical axis
     std::cout << "  ry rotation: " << q[1] << std::endl;
     if (control)
       robot.setVelocity(vpRobot::CAMERA_FRAME, q);

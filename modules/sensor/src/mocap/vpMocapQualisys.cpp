@@ -304,7 +304,7 @@ void vpMocapQualisys::setServerAddress(const std::string &serverAddr) { m_impl->
 void vpMocapQualisys::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
 
 #else
-// Work arround to avoid warning:
+// Work around to avoid warning:
 // libvisp_sensor.a(vpMocapQualisys.cpp.o) has no symbols
 void dummy_vpMocapQualisys(){};
 #endif
