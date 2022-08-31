@@ -537,7 +537,7 @@ VP_OPTION(USE_FRANKA      Franka      QUIET "Include libfranka SDK support for F
 # Note: libfranka needs c++14 option to build, but to use the library c++11 is enough.
 # That's why, setting USE_CXX_STANDARD=11 (which is the default) allows to use libfranka.
 VP_OPTION(USE_JACOSDK     JacoSDK     ""    "Include Kinova Jaco SDK support"  "" ON IF NOT MINGW AND NOT APPLE AND NOT WINRT AND NOT IOS)
-VP_OPTION(USE_MAVSDK      MAVSDK      ""    "Include mavsdk support"           "" ON IF NOT WINRT AND NOT IOS)
+VP_OPTION(USE_MAVSDK      MAVSDK      QUIET "Include mavsdk support"           "" ON IF NOT WINRT AND NOT IOS)
 VP_OPTION(USE_DC1394      DC1394      ""    "Include dc1394 support"           "" ON IF UNIX AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_V4L2        V4L2        ""    "Include v4l2 support"             "" ON IF UNIX AND NOT WINRT AND NOT IOS)
 VP_OPTION(USE_FLYCAPTURE  FlyCapture  ""    "Include FlyCapture SDK support for FLIR cameras" "" ON IF NOT WINRT AND NOT IOS)
