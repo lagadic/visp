@@ -712,7 +712,7 @@ std::vector<std::vector<double> > vpMbtDistanceKltPoints::getModelForDisplay(con
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_mbt.a(vpMbtDistanceKltPoints.cpp.o)
+// Work around to avoid warning: libvisp_mbt.a(vpMbtDistanceKltPoints.cpp.o)
 // has no symbols
 void dummy_vpMbtDistanceKltPoints(){};
 #endif

@@ -485,7 +485,7 @@ void vpXmlParser::save(const std::string &filename, bool append)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpXmlParser.cpp.o) has no
+// Work around to avoid warning: libvisp_core.a(vpXmlParser.cpp.o) has no
 // symbols
 void dummy_vpXmlParser(){};
 #endif

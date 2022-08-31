@@ -756,7 +756,7 @@ vp1394CMUGrabber &vp1394CMUGrabber::operator>>(vpImage<vpRGBa> &I)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_sensor.a(vp1394CMUGrabber.cpp.o) has
+// Work around to avoid warning: libvisp_sensor.a(vp1394CMUGrabber.cpp.o) has
 // no symbols
 void dummy_vp1394CMUGrabber(){};
 #endif

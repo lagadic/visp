@@ -190,7 +190,7 @@ bool vpDirectShowGrabber::setMediaType(int mediaTypeID) { return grabber->setMed
 int vpDirectShowGrabber::getMediaType() { return grabber->getMediaType(); }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_sensor.a(vpDirectShowGrabber.cpp.o)
+// Work around to avoid warning: libvisp_sensor.a(vpDirectShowGrabber.cpp.o)
 // has no symbols
 void dummy_vpDirectShowGrabber(){};
 #endif

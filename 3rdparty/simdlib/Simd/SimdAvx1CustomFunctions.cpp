@@ -103,7 +103,7 @@ namespace Simd
         }
     }
 #else
-    // Work arround to avoid warning: libvisp_simdlib.a(SimdAvx1CustomFunctions.cpp.o) has no symbols
+    // Work around to avoid warning: libvisp_simdlib.a(SimdAvx1CustomFunctions.cpp.o) has no symbols
     void dummy_SimdAvx1CustomFunctions(){};
 #endif// SIMD_AVX_ENABLE
 }

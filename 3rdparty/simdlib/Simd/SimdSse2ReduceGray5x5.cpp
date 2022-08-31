@@ -176,7 +176,7 @@ namespace Simd
         }
     }
 #else
-    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse2ReduceGray5x5.cpp.o) has no symbols
+    // Work around to avoid warning: libvisp_simdlib.a(SimdSse2ReduceGray5x5.cpp.o) has no symbols
     void dummy_SimdSse2ReduceGray5x5(){};
 #endif// SIMD_SSE2_ENABLE
 }

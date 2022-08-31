@@ -1404,7 +1404,7 @@ vpFlyCaptureGrabber &vpFlyCaptureGrabber::operator>>(vpImage<vpRGBa> &I)
 }
 
 #else
-// Work arround to avoid warning:
+// Work around to avoid warning:
 // libvisp_flycapture.a(vpFlyCaptureGrabber.cpp.o) has no symbols
 void dummy_vpFlyCaptureGrabber(){};
 #endif

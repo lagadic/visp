@@ -120,7 +120,7 @@ public:
 
   // We cannot add here the following destructor without changing the
   // hypothesis that the size of this class is 4. With the destructor it
-  // becomes 16 that does break a lot of things arround image conversions
+  // becomes 16 that does break a lot of things around image conversions
   // virtual ~vpRGBa() {}; // Not to implement
 
   vpRGBa &operator=(const unsigned char &v);

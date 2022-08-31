@@ -144,7 +144,7 @@ bool vpDetectorFace::detect(const cv::Mat &frame_gray)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpDetectorFace.cpp.o) has no
+// Work around to avoid warning: libvisp_core.a(vpDetectorFace.cpp.o) has no
 // symbols
 void dummy_vpDetectorFace(){};
 #endif

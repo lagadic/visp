@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2021 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -81,7 +81,7 @@
 #endif
 
 #if defined(__MINGW__) || defined(__MINGW32__) || defined(__MINGW64__)
-// Work arround to fix build issues that may occur with Mingw:
+// Work around to fix build issues that may occur with Mingw:
 // error: 'DBL_EPSILON' was not declared in this scope
 // error: 'FLT_EPSILON' was not declared in this scope
 
@@ -420,6 +420,9 @@
 
 // Defined if Universal Robot RTDE C++ interface is available
 #cmakedefine VISP_HAVE_UR_RTDE
+
+// Defined if MAVSDK is available
+#cmakedefine VISP_HAVE_MAVSDK
 
 // Defined if libfranka from Franka Emika available to control Panda robot.
 #cmakedefine VISP_HAVE_FRANKA

@@ -218,6 +218,9 @@
     std::array<double, 16> pose = handler->readOnce().O_T_EE;
   \endcode
 
+  \sa \ref tutorial-franka-pbvs
+  \sa \ref tutorial-franka-ibvs
+
 */
 class VISP_EXPORT vpRobotFranka : public vpRobot
 {

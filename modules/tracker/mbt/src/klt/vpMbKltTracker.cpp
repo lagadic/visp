@@ -1523,7 +1523,7 @@ void vpMbKltTracker::setUseKltTracking(const std::string &name, const bool &useK
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_mbt.a(vpMbKltTracker.cpp.o) has no
+// Work around to avoid warning: libvisp_mbt.a(vpMbKltTracker.cpp.o) has no
 // symbols
 void dummy_vpMbKltTracker(){};
 #endif // VISP_HAVE_OPENCV

@@ -2509,7 +2509,7 @@ bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<uns
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpSimulatorAfma6.cpp.o) has
+// Work around to avoid warning: libvisp_robot.a(vpSimulatorAfma6.cpp.o) has
 // no symbols
 void dummy_vpSimulatorAfma6(){};
 #endif

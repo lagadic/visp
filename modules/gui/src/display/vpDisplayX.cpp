@@ -67,7 +67,7 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
-// Work arround to use this class with Eigen3
+// Work around to use this class with Eigen3
 #ifdef Success
 #undef Success // See http://eigen.tuxfamily.org/bz/show_bug.cgi?id=253
 #endif
@@ -965,7 +965,7 @@ public:
           I.bitmap[ij_].R = (((pixel & RMask) << RShift) >> 8);
           I.bitmap[ij_].G = (((pixel & GMask) << GShift) >> 8);
           I.bitmap[ij_].B = (((pixel & BMask) << BShift) >> 8);
-          // On OSX the bottom/right corner (arround the resizing icon) has
+          // On OSX the bottom/right corner (around the resizing icon) has
           // alpha component with different values than 255. That's why we
           // force alpha to vpRGBa::alpha_default
           I.bitmap[ij_].A = vpRGBa::alpha_default;
@@ -976,7 +976,7 @@ public:
       if (XImageByteOrder(display) == 1) {
         // big endian
         for (unsigned int i = 0; i < width * height; i++) {
-          // On OSX the bottom/right corner (arround the resizing icon) has
+          // On OSX the bottom/right corner (around the resizing icon) has
           // alpha component with different values than 255. That's why we
           // force alpha to vpRGBa::alpha_default
           I.bitmap[i].A = vpRGBa::alpha_default; // src_32[i*4] ;
@@ -990,7 +990,7 @@ public:
           I.bitmap[i].B = src_32[i * 4];
           I.bitmap[i].G = src_32[i * 4 + 1];
           I.bitmap[i].R = src_32[i * 4 + 2];
-          // On OSX the bottom/right corner (arround the resizing icon) has
+          // On OSX the bottom/right corner (around the resizing icon) has
           // alpha component with different values than 255. That's why we
           // force alpha to vpRGBa::alpha_default
           I.bitmap[i].A = vpRGBa::alpha_default; // src_32[i*4 + 3];
@@ -2604,7 +2604,7 @@ bool vpDisplayX::getPointerPosition(vpImagePoint &ip)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpDisplayX.cpp.o) has no
+// Work around to avoid warning: libvisp_core.a(vpDisplayX.cpp.o) has no
 // symbols
 void dummy_vpDisplayX(){};
 #endif

@@ -67,6 +67,8 @@ extern "C" {
 
   Interface for Parrot ARSDK3, allowing to control the Bebop 2 drone and get images from the camera (if ViSP was built
   with FFMpeg support).
+
+  \sa \ref tutorial-bebop2-vs
 */
 class VISP_EXPORT vpRobotBebop2
 {
@@ -75,13 +77,13 @@ public:
                 int discoveryPort = 44444);
   virtual ~vpRobotBebop2();
 
-  /** @name Drone networking information  */
+  //! @name Drone networking information
   //@{
   std::string getIpAddress();
   int getDiscoveryPort();
   //@}
 
-  /** @name General drone information  */
+  //! @name General drone information
   //@{
   void doFlatTrim();
   unsigned int getBatteryLevel();
@@ -89,7 +91,7 @@ public:
   void resetAllSettings();
   //@}
 
-  /** @name Drone state checking */
+  //! @name Drone state checking
   //@{
   bool isFlying();
   bool isHovering();
@@ -99,7 +101,7 @@ public:
   //@}
 
   //*** Motion commands ***//
-  /** @name Motion commands and parameters */
+  //! @name Motion commands and parameters
   //@{
   void cutMotors();
   double getMaxTilt();

@@ -87,9 +87,9 @@ ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
   \warning This constructor should be called after the drone is turned on, and after the computer is connected to the
   drone wifi network.
 
-  \warning If the connection to the drone failed, the programm will throw an exception.
+  \warning If the connection to the drone failed, the program will throw an exception.
 
-  After having called this constructor, it is recommanded to check if the drone is running with isRunning() before
+  After having called this constructor, it is recommended to check if the drone is running with isRunning() before
   sending commands to the drone.
 
   \param[in] verbose : turn verbose on or off
@@ -100,7 +100,7 @@ ARCONTROLLER_Device_t *vpRobotBebop2::m_deviceController = NULL;
     If setDefaultSettings is true : the drone is reset to factory settings and the following parameters are set :
       - Resolution of streamed video to 480p (856x480).
       - Max roll and pitch to 10 degrees.
-      - Video stabilisation to 0 (no stabilisation).
+      - Video stabilization to 0 (no stabilization).
       - Video exposure compensation to 0.
       - Video streaming mode to 0 (lowest latency, average reliability).
       - Camera orientation to 0 degrees for tilt and 0 degrees for pan
@@ -1962,7 +1962,7 @@ void vpRobotBebop2::commandReceivedCallback(eARCONTROLLER_DICTIONARY_KEY command
 #undef TAG
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpRobotBebop2.cpp.o) has
+// Work around to avoid warning: libvisp_robot.a(vpRobotBebop2.cpp.o) has
 // no symbols
 void dummy_vpRobotBebop2(){};
 #endif // VISP_HAVE_ARSDK

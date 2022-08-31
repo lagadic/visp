@@ -109,7 +109,7 @@ void vpSimulatorPioneerPan::get_eJe(vpMatrix &_eJe) { _eJe = vpUnicycle::get_eJe
 
   \param v : Velocity vector \f$(v_x, \omega_z, \dot q)\f$ to apply to the
   robot, where \f$v_x\f$ is the linear translational velocity in m/s and
-  \f$\omega_z\f$ is the rotational velocity in rad/s arround the vertical axis
+  \f$\omega_z\f$ is the rotational velocity in rad/s around the vertical axis
   of the mobile base, and, \f$\dot q\f$ is the pan velocity in rad/s of the
   camera.
 

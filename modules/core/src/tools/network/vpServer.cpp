@@ -289,6 +289,6 @@ bool vpServer::checkForConnections()
 void vpServer::print() { vpNetwork::print("Client"); }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpServer.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_core.a(vpServer.cpp.o) has no symbols
 void dummy_vpServer(){};
 #endif

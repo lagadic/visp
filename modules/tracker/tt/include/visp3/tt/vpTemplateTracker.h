@@ -203,7 +203,7 @@ public:
   /*!
     Set the maximum number of iteration of the estimation scheme.
     \param n : Maximum number of iterations to stop the estimation scheme. A
-    typical value is arround 100.
+    typical value is around 100.
    */
   void setIterationMax(const unsigned int &n) { iterationMax = n; }
   /*!

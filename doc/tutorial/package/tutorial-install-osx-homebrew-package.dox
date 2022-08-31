@@ -60,7 +60,7 @@ You can try again using:
 ...
 \endverbatim
 it means maybe that you install other softwares without brew in /usr/local.
-A work arround is to change the owner of the corresponding folder like:
+A work around is to change the owner of the corresponding folder like:
 \verbatim
 $ sudo chown {your-user-name} /usr/local/include
 \endverbatim

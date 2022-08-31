@@ -338,6 +338,6 @@ void vpForceTorqueGenerator::control_thread(franka::Robot *robot, std::atomic_bo
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpForceTorqueGenerator.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_robot.a(vpForceTorqueGenerator.cpp.o) has no symbols
 void dummy_vpForceTorqueGenerator(){};
 #endif // VISP_HAVE_FRANKA

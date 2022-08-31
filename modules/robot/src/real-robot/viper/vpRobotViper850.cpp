@@ -1070,7 +1070,7 @@ double vpRobotViper850::getPositioningVelocity(void) const { return m_positionin
   - In the joint space, positions are the six joint positions.
 
   - In the camera and the reference frame, positions are respectively
-  X,Y,Z translations and 3 rotations arround the X, Y and Z
+  X,Y,Z translations and 3 rotations around the X, Y and Z
   axis. Rotations are represented by a vpRxyzVector.
 
   - Mixt frame is not implemented. By mixt frame we mean, translations
@@ -2620,7 +2620,7 @@ void vpRobotViper850::setMaxRotationVelocityJoint6(double w6_max)
 double vpRobotViper850::getMaxRotationVelocityJoint6() const { return maxRotationVelocity_joint6; }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpRobotViper850.cpp.o) has
+// Work around to avoid warning: libvisp_robot.a(vpRobotViper850.cpp.o) has
 // no symbols
 void dummy_vpRobotViper850(){};
 #endif

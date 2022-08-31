@@ -1019,7 +1019,7 @@ void vpGDIRenderer::getImage(vpImage<vpRGBa> &I)
 }
 #endif
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpGDIRenderer.cpp.o) has no
+// Work around to avoid warning: libvisp_core.a(vpGDIRenderer.cpp.o) has no
 // symbols
 void dummy_vpGDIRenderer(){};
 #endif

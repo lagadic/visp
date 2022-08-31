@@ -20,11 +20,11 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/computer-vision
 \endcode
 
 Let us consider the following source code also available in tutorial-homography-from-points.cpp. To resume, we do the following:
-- define four 3D points \c oP in an object frame, 
+- define four 3D points \c oP in an object frame,
 - define an homogeneous transformation \c aMo from frame \c a to to the object frame \c o,
 - define a similar homogeneous transformation \c bMo from frame \c b to to the object frame \c o,
 - compute the coordinates of the four 3D points in the image plane \c a and \c b. These are the matched coordinates \c (xa,ya) and \c (xb,yb) that are then used to estimate the homography using either vpHomography::DLT() or vpHomography::HLM().
-    
+
 \include tutorial-homography-from-points.cpp
 
 Now we give a line by line explanation of the code:
@@ -45,7 +45,7 @@ We have now matched couples of coordinates of four points that are used to estim
 \snippet tutorial-homography-from-points.cpp Compute homography
 
 \note Note that vpHomography::HLM() allows to consider points that are not coplanar.
-  
+
 Once the homography is estimated, the vpHomography class allows to extract the 3D homogeneous transformation between frames \c a and \c b:
 \snippet tutorial-homography-from-points.cpp Get transformation
 
@@ -55,9 +55,9 @@ Just for fun we print the values to this transformation using:
 This code lead to the following output:
 \code
 Estimated displacement:
- atb: 0.2016519874  -0.1008259937  0.1008259937  
- athetaub: -3 20 5 
- n: 0.2588190451  -1.124100812e-14  0.9659258263  
+ atb: 0.2016519874  -0.1008259937  0.1008259937
+ athetaub: -3 20 5
+ n: 0.2588190451  -1.124100812e-14  0.9659258263
 \endcode
 where we can see that the values for \c atb and \c athetaub are the one specified at the beginning of the source code during \c aMb initialization.
 
@@ -85,7 +85,7 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/matchi
 
 This section follows the \ref tutorial-matching. It explains how to exploit couples of matched points obtained using SURF detector in order to estimate an homography that allows to reject mismatched couples of points. The homography is then used to track a postcard from its initial position in the reference image.
 
-Let us consider the following source code also available in tutorial-matching-keypoint-homography.cpp. 
+Let us consider the following source code also available in tutorial-matching-keypoint-homography.cpp.
 
 \include tutorial-matching-keypoint-homography.cpp
 
@@ -132,7 +132,7 @@ For Ransac we consider that at least 50 percent of the points should be inliers 
 Then using the homography, we project the coordinates of the postcard corners in the current image:
 \snippet tutorial-matching-keypoint-homography.cpp Projection
 
-We use these coordinates to draw blue lines arround the postcard:
+We use these coordinates to draw blue lines around the postcard:
 \snippet tutorial-matching-keypoint-homography.cpp Display contour
 
 Since the homography estimation updates the status of the couples of matched points as inliers or outliers, between the matched points we are able to draw green lines when they are inliers, or red lines when they are outliers.

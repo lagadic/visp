@@ -804,7 +804,7 @@ vpPylonGrabber &vpPylonGrabberGigE::operator>>(vpImage<vpRGBa> &I)
 }
 
 #else
-// Work arround to avoid warning:
+// Work around to avoid warning:
 // libvisp_pylon.a(vpPylonGrabberGigE.cpp.o) has no symbols
 void dummy_vpPylonGrabberGigE(){};
 #endif // #ifdef VISP_HAVE_PYLON

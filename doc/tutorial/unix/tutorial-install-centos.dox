@@ -527,7 +527,7 @@ $ ls -als libpthread*
 \verbatim
 $ ./example/video/videoReader
 \endverbatim
-- A work arround consists in installing a more recent OpenCV version from source.
+- A work around consists in installing a more recent OpenCV version from source.
 
 \section install_centos_next Next tutorial
 

@@ -235,7 +235,7 @@ vpColVector vpRobotPioneer::getVelocity(const vpRobot::vpControlFrameType frame)
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_robot.a(vpRobotPioneer.cpp.o) has no
+// Work around to avoid warning: libvisp_robot.a(vpRobotPioneer.cpp.o) has no
 // symbols
 void dummy_vpRobotPioneer(){};
 #endif

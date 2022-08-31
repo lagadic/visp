@@ -723,7 +723,7 @@ You can try again using:
 ...
 \endverbatim
 it means maybe that you install other softwares without brew in /usr/local.
-A work arround is to change the owner of the corresponding folder like:
+A work around is to change the owner of the corresponding folder like:
 \verbatim
 $ sudo chown <your-user-name> /usr/local/lib/pkgconfig
 \endverbatim
@@ -742,12 +742,12 @@ error: can't create a png read structure!
 error reading png file
 \endverbatim
 It means that apparently there is a conflict between libpng version installed by `brew install opencv3` (1.6.17), and the one used by `X11/XQuartz` (1.5.18).
-A work arround is to turn off libpng usage in ViSP. To configure and build again ViSP without png support:
+A work around is to turn off libpng usage in ViSP. To configure and build again ViSP without png support:
 \verbatim
 $ ccmake -DUSE_PNG=OFF ../ViSP
 $ make -j$(sysctl -n hw.logicalcpu)
 \endverbatim
-An other work arround option is to turn off X11 usage in ViSP. Display capabilities will be then the one from OpenCV. To this end, configure and build again ViSP without X11 support:
+An other work around option is to turn off X11 usage in ViSP. Display capabilities will be then the one from OpenCV. To this end, configure and build again ViSP without X11 support:
 \verbatim
 $ ccmake -DUSE_X11=OFF ../ViSP
 $ make -j$(sysctl -n hw.logicalcpu)

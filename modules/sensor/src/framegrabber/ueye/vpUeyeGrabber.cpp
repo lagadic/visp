@@ -1401,7 +1401,7 @@ void vpUeyeGrabber::setWhiteBalance(bool auto_wb) { m_impl->setWhiteBalance(auto
 void vpUeyeGrabber::setVerbose(bool verbose) { m_impl->setVerbose(verbose); }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_sensor.a(vpUeyeGrabber.cpp.o) has no symbols
+// Work around to avoid warning: libvisp_sensor.a(vpUeyeGrabber.cpp.o) has no symbols
 void dummy_vpUeyeGrabber(){};
 
 #endif

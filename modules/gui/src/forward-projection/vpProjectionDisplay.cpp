@@ -149,7 +149,7 @@ void vpProjectionDisplay::displayCamera(vpImage<unsigned char> &I, const vpHomog
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work arround to avoid warning: libvisp_core.a(vpProjectionDisplay.cpp.o)
+// Work around to avoid warning: libvisp_core.a(vpProjectionDisplay.cpp.o)
 // has no symbols
 void dummy_vpProjectionDisplay(){};
 #endif

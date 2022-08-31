@@ -61,23 +61,23 @@ int main(int argc, char **argv)
       if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
         ip_address = std::string(argv[i + 1]);
         i++;
-      } else if (std::string(argv[i]) == "--hd_resolution") {
+      } else if (std::string(argv[i]) == "--hd-resolution") {
         stream_res = 1;
       } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
         verbose = true;
       } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage:\n"
-                  << "  " << argv[0] << " [--ip <drone ip>] [--hd_resolution] [--verbose] [-v]"
+                  << "  " << argv[0] << " [--ip <drone ip>] [--hd-resolution] [--verbose] [-v]"
                   << " [--help] [-h]\n"
                   << std::endl
                   << "Description:\n"
-                  << " --ip <drone ip>\n"
+                  << "  --ip <drone ip>\n"
                   << "     IP address of the drone to which you want to connect (default : 192.168.42.1).\n\n"
-                  << " --hd_resolution\n"
+                  << "  --hd-resolution\n"
                   << "     Enables HD 720p video instead of default 480p.\n\n"
                   << "  --verbose, -v\n"
                   << "      Enables verbose (drone information messages are then displayed).\n\n"
-                  << "--help, -h\n"
+                  << "  --help, -h\n"
                   << "     Print help message.\n\n"
                   << std::endl;
         return 0;

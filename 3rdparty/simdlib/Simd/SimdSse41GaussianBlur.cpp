@@ -344,7 +344,7 @@ namespace Simd
         }
     }
 #else
-    // Work arround to avoid warning: libvisp_simdlib.a(SimdSse41GaussianBlur.cpp.o) has no symbols
+    // Work around to avoid warning: libvisp_simdlib.a(SimdSse41GaussianBlur.cpp.o) has no symbols
     void dummy_SimdSse41GaussianBlur(){};
 #endif// SIMD_SSE41_ENABLE
 }

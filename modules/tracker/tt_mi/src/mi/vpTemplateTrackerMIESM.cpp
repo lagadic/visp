@@ -317,7 +317,7 @@ void vpTemplateTrackerMIESM::trackNoPyr(const vpImage<unsigned char> &I)
       // std::cout << "file: " __FILE__ << " line: " << __LINE__ << "
       // function: " << __FUNCTION__ << " nthread: " << nthreads << std::endl;
       omp_set_num_threads(nthreads);
-#pragma omp parallel for private(point, i, j, i2, j2) default(shared)
+#pragma omp parallel for private(i, j, i2, j2) default(shared)
 #endif
       for (point = 0; point < static_cast<int>(templateSize); point++) {
         i = ptTemplate[point].y;

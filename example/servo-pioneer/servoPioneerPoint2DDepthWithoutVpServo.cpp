@@ -121,7 +121,7 @@ int main(int argc, char **argv)
 
     // Wait 3 sec to be sure that the low level Aria thread used to control
     // the robot is started. Without this delay we experienced a delay
-    // (arround 2.2 sec) between the velocity send to the robot and the
+    // (around 2.2 sec) between the velocity send to the robot and the
     // velocity that is really applied to the wheels.
     vpTime::sleepMs(3000);
 
