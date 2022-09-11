@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Base class for April Tag detection.
+ * Base class for AprilTag detection.
  *
  *****************************************************************************/
 #include <visp3/core/vpConfig.h>
@@ -377,6 +377,70 @@ public:
     }
 
     return detected;
+  }
+
+  void displayFrames(const vpImage<unsigned char> &I, const std::vector<vpHomogeneousMatrix> &cMo_vec,
+                     const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness) const
+  {
+    for (size_t i = 0; i < cMo_vec.size(); i++) {
+      const vpHomogeneousMatrix &cMo = cMo_vec[i];
+      vpDisplay::displayFrame(I, cMo, cam, size, color, thickness);
+    }
+  }
+
+  void displayFrames(const vpImage<vpRGBa> &I, const std::vector<vpHomogeneousMatrix> &cMo_vec,
+                     const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness) const
+  {
+    for (size_t i = 0; i < cMo_vec.size(); i++) {
+      const vpHomogeneousMatrix &cMo = cMo_vec[i];
+      vpDisplay::displayFrame(I, cMo, cam, size, color, thickness);
+    }
+  }
+
+  void displayTags(const vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
+                   const vpColor &color, unsigned int thickness) const
+  {
+    for (size_t i = 0; i < tagsCorners.size(); i++) {
+      const vpColor Ox = (color == vpColor::none) ? vpColor::red : color;
+      const vpColor Oy = (color == vpColor::none) ? vpColor::green : color;
+      const vpColor Ox2 = (color == vpColor::none) ? vpColor::yellow : color;
+      const vpColor Oy2 = (color == vpColor::none) ? vpColor::blue : color;
+
+      const std::vector<vpImagePoint> &corners = tagsCorners[i];
+      assert(corners.size() == 4);
+
+      vpDisplay::displayLine(I, (int)corners[0].get_i(), (int)corners[0].get_j(), (int)corners[1].get_i(), (int)corners[1].get_j(),
+                             Ox, thickness);
+      vpDisplay::displayLine(I, (int)corners[0].get_i(), (int)corners[0].get_j(), (int)corners[3].get_i(), (int)corners[3].get_j(),
+                             Oy, thickness);
+      vpDisplay::displayLine(I, (int)corners[1].get_i(), (int)corners[1].get_j(), (int)corners[2].get_i(), (int)corners[2].get_j(),
+                             Ox2, thickness);
+      vpDisplay::displayLine(I, (int)corners[2].get_i(), (int)corners[2].get_j(), (int)corners[3].get_i(), (int)corners[3].get_j(),
+                             Oy2, thickness);
+    }
+  }
+
+  void displayTags(const vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
+                   const vpColor &color, unsigned int thickness) const
+  {
+    for (size_t i = 0; i < tagsCorners.size(); i++) {
+      const vpColor Ox = (color == vpColor::none) ? vpColor::red : color;
+      const vpColor Oy = (color == vpColor::none) ? vpColor::green : color;
+      const vpColor Ox2 = (color == vpColor::none) ? vpColor::yellow : color;
+      const vpColor Oy2 = (color == vpColor::none) ? vpColor::blue : color;
+
+      const std::vector<vpImagePoint> &corners = tagsCorners[i];
+      assert(corners.size() == 4);
+
+      vpDisplay::displayLine(I, (int)corners[0].get_i(), (int)corners[0].get_j(), (int)corners[1].get_i(), (int)corners[1].get_j(),
+                             Ox, thickness);
+      vpDisplay::displayLine(I, (int)corners[0].get_i(), (int)corners[0].get_j(), (int)corners[3].get_i(), (int)corners[3].get_j(),
+                             Oy, thickness);
+      vpDisplay::displayLine(I, (int)corners[1].get_i(), (int)corners[1].get_j(), (int)corners[2].get_i(), (int)corners[2].get_j(),
+                             Ox2, thickness);
+      vpDisplay::displayLine(I, (int)corners[2].get_i(), (int)corners[2].get_j(), (int)corners[3].get_i(), (int)corners[3].get_j(),
+                             Oy2, thickness);
+    }
   }
 
   bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
@@ -825,6 +889,66 @@ bool vpDetectorAprilTag::detect(const vpImage<unsigned char> &I, double tagSize,
   m_nb_objects = m_message.size();
 
   return detected;
+}
+
+/*!
+  Display the tag frames on a grayscale image.
+
+  \param[in] I : The image.
+  \param[in] cMo_vec : The vector of computed tag poses.
+  \param[in] cam : Camera intrinsic parameters.
+  \param[out] size : Size of the frame.
+  \param[out] color : The desired color, if none the X-axis is red, the Y-axis green and the Z-axis blue.
+  \param[out] thickness : The thickness of the lines.
+ */
+void vpDetectorAprilTag::displayFrames(const vpImage<unsigned char> &I, const std::vector<vpHomogeneousMatrix> &cMo_vec,
+                                       const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness) const
+{
+  m_impl->displayFrames(I, cMo_vec, cam, size, color, thickness);
+}
+
+/*!
+  Display the tag frames on a vpRGBa image.
+
+  \param[in] I : The image.
+  \param[in] cMo_vec : The vector of computed tag poses.
+  \param[in] cam : Camera intrinsic parameters.
+  \param[out] size : Size of the frame.
+  \param[out] color : The desired color, if none the X-axis is red, the Y-axis green and the Z-axis blue.
+  \param[out] thickness : The thickness of the lines.
+ */
+void vpDetectorAprilTag::displayFrames(const vpImage<vpRGBa> &I, const std::vector<vpHomogeneousMatrix> &cMo_vec,
+                                       const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness) const
+{
+  m_impl->displayFrames(I, cMo_vec, cam, size, color, thickness);
+}
+
+/*!
+  Display the tag contours on a grayscale image.
+
+  \param[in] I : The image.
+  \param[in] tagsCorners : The vector of tag contours.
+  \param[out] color : The desired color, if none RGBY colors are used.
+  \param[out] thickness : The thickness of the lines.
+ */
+void vpDetectorAprilTag::displayTags(const vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
+                                     const vpColor &color, unsigned int thickness) const
+{
+  m_impl->displayTags(I, tagsCorners, color, thickness);
+}
+
+/*!
+  Display the tag contours on a vpRGBa image.
+
+  \param[in] I : The image.
+  \param[in] tagsCorners : The vector of tag contours.
+  \param[out] color : The desired color, if none RGBY colors are used.
+  \param[out] thickness : The thickness of the lines.
+ */
+void vpDetectorAprilTag::displayTags(const vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
+                                     const vpColor &color, unsigned int thickness) const
+{
+  m_impl->displayTags(I, tagsCorners, color, thickness);
 }
 
 /*!
