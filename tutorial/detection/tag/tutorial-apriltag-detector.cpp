@@ -84,15 +84,17 @@ int main(int argc, const char **argv)
   std::cout << "Z aligned: " << z_aligned << std::endl;
 
   try {
+    vpImage<vpRGBa> I_color;
+    vpImageIo::read(I_color, input_filename);
     vpImage<unsigned char> I;
-    vpImageIo::read(I, input_filename);
+    vpImageConvert::convert(I_color, I);
 
 #ifdef VISP_HAVE_X11
-    vpDisplayX d(I);
+    vpDisplayX d(I), d2(I_color, 50, 50);
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I);
+    vpDisplayGDI d(I), d2(I_color, 50, 50);
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV d(I);
+    vpDisplayOpenCV d(I), d2(I_color, 50, 50);
 #endif
 
     //! [Create AprilTag detector]
@@ -163,6 +165,21 @@ int main(int argc, const char **argv)
     vpDisplay::displayText(I, 20, 20, "Click to quit.", vpColor::red);
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
+
+    // To test the displays on a vpRGBa image
+    vpDisplay::display(I_color);
+
+    // Display frames and tags but remove the display of the last element
+    std::vector<std::vector<vpImagePoint> > tagsCorners = detector.getTagsCorners();
+    tagsCorners.pop_back();
+    detector.displayTags(I_color, tagsCorners, vpColor::none, 3);
+
+    cMo_vec.pop_back();
+    detector.displayFrames(I_color, cMo_vec, cam, tagSize / 2, vpColor::none, 3);
+
+    vpDisplay::displayText(I_color, 20, 20, "Click to quit.", vpColor::red);
+    vpDisplay::flush(I_color);
+    vpDisplay::getClick(I_color);
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }
