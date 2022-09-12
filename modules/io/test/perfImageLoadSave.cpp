@@ -63,8 +63,26 @@ static std::vector<vpImageIo::vpImageIoBackendType> backends
 #endif
       vpImageIo::IO_SIMDLIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND
 };
-static std::vector<std::string> backendNamesJpeg{"libjpeg", "OpenCV", "simd", "stb"};
-static std::vector<std::string> backendNamesPng{"libpng", "OpenCV", "simd", "stb"};
+static std::vector<std::string> backendNamesJpeg
+{
+#if defined(VISP_HAVE_JPEG)
+  "libjpeg",
+#endif
+#if defined(VISP_HAVE_OPENCV)
+  "OpenCV",
+#endif
+  "simd", "stb"
+};
+static std::vector<std::string> backendNamesPng
+{
+#if defined(VISP_HAVE_PNG)
+  "libpng",
+#endif
+#if defined(VISP_HAVE_OPENCV)
+  "OpenCV",
+#endif
+  "simd", "stb"
+};
 static int nThreads = 0;
 
 TEST_CASE("Benchmark grayscale JPEG image loading", "[benchmark]")
