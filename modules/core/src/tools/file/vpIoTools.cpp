@@ -667,15 +667,10 @@ std::string getUuid()
 
   \warning This function is not implemented on WINRT.
 
-  \param dirname : Name of the directory to create, or location of an existing directory.
-  If \e dirname corresponds to an existing directory, \e dirname is considered as a parent directory.
-  The temporary directory is then created inside the parent directory.
-  Otherwise, \e dirname needs to end with "XXXXXX", which will be converted into random characters in order to create
-  a unique directory name.
+  \param dirname : Parent directory in which a temporary directory will be created or temporary directory that ends with
+  "XXXXXX", which will be converted into random characters in order to create a unique directory name.
 
   \return String corresponding to the absolute path to the generated directory name.
-
-  \exception vpIoException::invalidDirectoryName : The \e dirname is invalid.
 
   \exception vpIoException::cantCreateDirectory : If the directory cannot be created.
 
@@ -733,22 +728,24 @@ std::string vpIoTools::makeTempDirectory(const std::string &dirname)
   std::string dirname_cpy = std::string(dirname);
   std::string correctEnding = "XXXXXX";
 
-  size_t endingLength = correctEnding.length();
-  size_t dirNameLength = dirname_cpy.length();
-
   // If dirname is an unexisting directory, it should end with XXXXXX in order to create a temp directory
   if (!vpIoTools::checkDirectory(dirname_cpy)) {
-    if (endingLength > dirNameLength) {
-      throw(vpIoException(vpIoException::invalidDirectoryName,
-                          "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname_cpy.c_str()));
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
+    // Check if dirname ends with XXXXXX
+    if (dirname_cpy.rfind(correctEnding) == std::string::npos) {
+      if (dirname_cpy.at(dirname_cpy.length() - 1) != '/') {
+        dirname_cpy = dirname_cpy + "/";
+      }
+      try {
+        vpIoTools::makeDirectory(dirname_cpy);
+      } catch (const vpException &e) {
+        throw e;
+      }
+
+      dirname_cpy = dirname_cpy + "XXXXXX";
     }
 
-    if (dirname.compare(dirNameLength - endingLength, endingLength, correctEnding) != 0) {
-      throw(vpIoException(vpIoException::invalidDirectoryName,
-                          "Unable to create temp directory '%s'. It should end with XXXXXX.", dirname_cpy.c_str()));
-    }
-
-#if defined(_WIN32) && !defined(WINRT)
+#elif defined(_WIN32) && !defined(WINRT)
     // Remove XXXXXX
     dirname_cpy = dirname_cpy.substr(0, dirname_cpy.rfind(correctEnding));
     // Append UUID
@@ -1604,7 +1601,7 @@ long vpIoTools::getIndex(const std::string &filename, const std::string &format)
 
 /*!
    Returns the pathname string of this pathname's parent.
-   
+
    \param[in] pathname : Pathname from which parent name is extracted using vpIoTools::separator.
    When the separator is not found, it returns "." as the current parent folder.
 
@@ -1626,10 +1623,9 @@ std::string vpIoTools::getParent(const std::string &pathname)
     if (index != std::string::npos) {
       return convertedPathname.substr(0, index);
     }
-    
+
     return ".";
-  } 
-  else {
+  } else {
     return "";
   }
 }
