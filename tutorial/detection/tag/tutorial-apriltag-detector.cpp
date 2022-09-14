@@ -90,11 +90,11 @@ int main(int argc, const char **argv)
     vpImageConvert::convert(I_color, I);
 
 #ifdef VISP_HAVE_X11
-    vpDisplayX d(I), d2(I_color, 50, 50);
+    vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(I), d2(I_color, 50, 50);
+    vpDisplayGDI d(I);
 #elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV d(I), d2(I_color, 50, 50);
+    vpDisplayOpenCV d(I);
 #endif
 
     //! [Create AprilTag detector]
@@ -166,6 +166,13 @@ int main(int argc, const char **argv)
     vpDisplay::flush(I);
     vpDisplay::getClick(I);
 
+#ifdef VISP_HAVE_X11
+    vpDisplayX d2(I_color, 50, 50);
+#elif defined(VISP_HAVE_GDI)
+    vpDisplayGDI d2(I_color, 50, 50);
+#elif defined(VISP_HAVE_OPENCV)
+    vpDisplayOpenCV d2(I_color, 50, 50);
+#endif
     // To test the displays on a vpRGBa image
     vpDisplay::display(I_color);
 
