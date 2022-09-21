@@ -505,9 +505,6 @@
 // Defined if std::isinf function is available
 #cmakedefine VISP_HAVE_FUNC_STD_ISINF
 
-// Defined if _finite (Microsoft version) function is available
-#cmakedefine VISP_HAVE_FUNC__FINITE
-
 // Defined if round function is available
 #cmakedefine VISP_HAVE_FUNC_ROUND
 
@@ -528,6 +525,15 @@
 
 // Defined if inet_ntop function is available
 #cmakedefine VISP_HAVE_FUNC_INET_NTOP
+
+// Defined if isfinite macro is available
+#cmakedefine VISP_HAVE_FUNC_ISFINITE
+
+// Defined if std::isfinite function is available
+#cmakedefine VISP_HAVE_FUNC_STD_ISFINITE
+
+// Defined if _finite (Microsoft version) function is available
+#cmakedefine VISP_HAVE_FUNC__FINITE
 
 // Defined if xrandr program available
 #cmakedefine VISP_HAVE_XRANDR

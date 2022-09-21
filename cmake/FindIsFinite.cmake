@@ -29,11 +29,12 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find the round function.
+# Try to find the isfinite macro, the std::isfinite function or the _finite function.
 #
 #############################################################################
 
 include(VISPFindUtils)
 
-check_math_expr("round(5.5)"        "<math.h>"        HAVE_FUNC_ROUND)
-check_math_expr("std::round(5.5)"   "<cmath>"         HAVE_FUNC_STD_ROUND)
+check_math_expr("isfinite(1.0)"         "<math.h>"        HAVE_FUNC_ISFINITE)
+check_math_expr("std::isfinite(1.0))"   "<cmath>"         HAVE_FUNC_STD_ISFINITE)
+check_math_expr("_finite(1.0))"         "<float.h>"       HAVE_FUNC__FINITE)
