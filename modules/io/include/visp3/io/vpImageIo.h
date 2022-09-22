@@ -139,6 +139,7 @@ public:
   static void write(const vpImage<vpRGBa> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
 
   static void readPFM(vpImage<float> &I, const std::string &filename);
+  static void readPFM_HDR(vpImage<float> &I, const std::string &filename);
 
   static void readPGM(vpImage<unsigned char> &I, const std::string &filename);
   static void readPGM(vpImage<vpRGBa> &I, const std::string &filename);

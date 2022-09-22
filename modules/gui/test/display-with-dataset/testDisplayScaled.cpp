@@ -263,6 +263,17 @@ template <typename Type> bool test(const std::string &display, vpImage<Type> &I,
 
 int main(int argc, const char *argv[])
 {
+  // TODO:
+  {
+    vpImage<float> I;
+    vpImageIo::readPFM_HDR(I, "memorial.pfm");
+    std::cout << "I: " << I.getWidth() << "x" << I.getHeight() << std::endl;
+
+    return 0;
+  }
+
+
+
   bool opt_click = true;
   bool opt_display = true;
   std::string opt_ipath;

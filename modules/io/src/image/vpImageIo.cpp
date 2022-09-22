@@ -802,6 +802,9 @@ void vpImageIo::writePGM(const vpImage<vpRGBa> &I, const std::string &filename) 
  */
 void vpImageIo::readPFM(vpImage<float> &I, const std::string &filename) { vp_readPFM(I, filename); }
 
+// TODO:
+void vpImageIo::readPFM_HDR(vpImage<float> &I, const std::string &filename) { vp_readPFM_HDR(I, filename); }
+
 /*!
   Load an image in portable gray map format. If the image is in color, it is converted in gray level.
   \param[out] I : Image read from filename.

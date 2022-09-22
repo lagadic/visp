@@ -42,8 +42,12 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpIoTools.h>
 
-void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
-                        unsigned int &h, unsigned int &maxval);
+// TODO?
+//void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
+//                        unsigned int &h, unsigned int &maxval);
+//
+//void vp_decodeHeaderPFM(const std::string &filename, std::ifstream &fd, std::string &magic, unsigned int &w,
+//                        unsigned int &h);
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
@@ -103,6 +107,67 @@ void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const st
       } else if (cpt_elt == 3) {          // decode maxval
         std::istringstream ss(header[0]);
         ss >> maxval;
+        cpt_elt++;
+        header.erase(header.begin(),
+                     header.begin() + 1); // erase first element that is processed
+      }
+    }
+  }
+}
+
+// TODO:
+void vp_decodeHeaderPFM(const std::string &filename, std::ifstream &fd, std::string &magic, unsigned int &w,
+                        unsigned int &h, bool &littleEndian)
+{
+  std::string line;
+  const unsigned int nb_elt = 4;
+  unsigned int cpt_elt = 0;
+  while (cpt_elt != nb_elt) {
+    // Skip empty lines or lines starting with # (comment)
+    while (std::getline(fd, line) && (line.compare(0, 1, "#") == 0 || line.size() == 0)) {
+    }
+
+    if (fd.eof()) {
+      fd.close();
+      throw(vpImageException(vpImageException::ioError, "Cannot read header of file \"%s\"", filename.c_str()));
+    }
+
+    std::vector<std::string> header = vpIoTools::splitChain(line, std::string(" "));
+
+    if (header.empty()) {
+      fd.close();
+      throw(vpImageException(vpImageException::ioError, "Cannot read header of file \"%s\"", filename.c_str()));
+    }
+
+    if (cpt_elt == 0) { // decode magic
+      magic = header[0];
+      if (magic != "PF" && magic != "Pf") {
+        fd.close();
+        throw(vpImageException(vpImageException::ioError, "\"%s\" is not a PFM file with PF (RGB) or Pf (gray) magic number",
+                               filename.c_str()));
+      }
+      cpt_elt++;
+      header.erase(header.begin(),
+                   header.begin() + 1); // erase first element that is processed
+    }
+    while (header.size()) {
+      if (cpt_elt == 1) { // decode width
+        std::istringstream ss(header[0]);
+        ss >> w;
+        cpt_elt++;
+        header.erase(header.begin(),
+                     header.begin() + 1); // erase first element that is processed
+      } else if (cpt_elt == 2) {          // decode height
+        std::istringstream ss(header[0]);
+        ss >> h;
+        cpt_elt++;
+        header.erase(header.begin(),
+                     header.begin() + 1); // erase first element that is processed
+      } else if (cpt_elt == 3) {          // decode byte order
+        std::istringstream ss(header[0]);
+        double endianness;
+        ss >> endianness;
+        littleEndian = endianness < 0;
         cpt_elt++;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
@@ -290,8 +355,8 @@ void vp_writePGM(const vpImage<vpRGBa> &I, const std::string &filename)
 void vp_readPFM(vpImage<float> &I, const std::string &filename)
 {
   unsigned int w = 0, h = 0, maxval = 0;
-  unsigned int w_max = 100000, h_max = 100000, maxval_max = 255;
-  std::string magic("P8");
+  const unsigned int w_max = 100000, h_max = 100000, maxval_max = 255;
+  const std::string magic("P8");
 
   std::ifstream fd(filename.c_str(), std::ios::binary);
 
@@ -316,6 +381,43 @@ void vp_readPFM(vpImage<float> &I, const std::string &filename)
   }
 
   unsigned int nbyte = I.getHeight() * I.getWidth();
+  fd.read((char *)I.bitmap, sizeof(float) * nbyte);
+  if (!fd) {
+    fd.close();
+    throw(vpImageException(vpImageException::ioError, "Read only %d of %d bytes in file \"%s\"", fd.gcount(), nbyte,
+                           filename.c_str()));
+  }
+
+  fd.close();
+}
+
+// TOOD:
+void vp_readPFM_HDR(vpImage<float> &I, const std::string &filename)
+{
+  std::ifstream fd(filename.c_str(), std::ios::binary);
+
+  // Open the filename
+  if (!fd.is_open()) {
+    throw(vpImageException(vpImageException::ioError, "Cannot open file \"%s\"", filename.c_str()));
+  }
+
+  const unsigned int w_max = 100000, h_max = 100000;
+  const std::string magicRGB("PF"), magicGray("Pf");
+  std::string magic;
+  unsigned int w = 0, h = 0;
+  bool littleEndian = true;
+  vp_decodeHeaderPFM(filename, fd, magic, w, h, littleEndian);
+
+  if (w > w_max || h > h_max) {
+    fd.close();
+    throw(vpException(vpException::badValue, "Bad image size in \"%s\"", filename.c_str()));
+  }
+
+  if (h != I.getHeight() || w != I.getWidth()) {
+    I.resize(h, w);
+  }
+
+  unsigned int nbyte = (magic == magicRGB) ? 1 * I.getHeight() * I.getWidth() : I.getHeight() * I.getWidth();
   fd.read((char *)I.bitmap, sizeof(float) * nbyte);
   if (!fd) {
     fd.close();
