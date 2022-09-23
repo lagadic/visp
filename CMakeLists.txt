@@ -1631,16 +1631,17 @@ list(GET SYS_INFO 7 PROCESSOR_NAME)
 list(GET SYS_INFO 8 IS_64BIT)
 list(GET SYS_INFO 9 HAS_FPU)
 
-# additional CPU info
-if(X86 OR X86_64)
-    set(HAVE_SSE2_FLAG    FALSE)
-    set(HAVE_SSE3_FLAG    FALSE)
-    set(HAVE_SSSE3_FLAG   FALSE)
-    set(HAVE_SSE4_1_FLAG  FALSE)
-    set(HAVE_SSE4_2_FLAG  FALSE)
-    set(HAVE_AVX_FLAG     FALSE)
-    set(HAVE_AVX2_FLAG    FALSE)
+set(HAVE_SSE2_FLAG    FALSE)
+set(HAVE_SSE3_FLAG    FALSE)
+set(HAVE_SSSE3_FLAG   FALSE)
+set(HAVE_SSE4_1_FLAG  FALSE)
+set(HAVE_SSE4_2_FLAG  FALSE)
+set(HAVE_AVX_FLAG     FALSE)
+set(HAVE_AVX2_FLAG    FALSE)
+set(HAVE_NEON_FLAG    FALSE)
 
+# additional CPU info
+if(X86 OR X86_64 OR WINRT)
   if(MSVC)
     if(NOT MSVC64)
       vp_check_compiler_flag(CXX "/arch:SSE2"   HAVE_SSE2_FLAG    "${PROJECT_SOURCE_DIR}/cmake/checks/cpu_sse2.cpp")
@@ -1664,6 +1665,8 @@ if(X86 OR X86_64)
     vp_check_compiler_flag(CXX "-mavx"    HAVE_AVX_FLAG     "${PROJECT_SOURCE_DIR}/cmake/checks/cpu_avx.cpp")
     vp_check_compiler_flag(CXX "-mavx2"   HAVE_AVX2_FLAG    "${PROJECT_SOURCE_DIR}/cmake/checks/cpu_avx2.cpp")
   endif()
+elseif(ARM OR AARCH64)
+  set(HAVE_NEON_FLAG    TRUE)
 endif()
 
 status("")
@@ -1685,6 +1688,7 @@ status("    SSE4.1?"                                       ${HAVE_SSE4_1_FLAG} T
 status("    SSE4.2?"                                       ${HAVE_SSE4_2_FLAG} THEN "yes" ELSE "no")
 status("    AVX?"                                          ${HAVE_AVX_FLAG} THEN "yes" ELSE "no")
 status("    AVX2?"                                         ${HAVE_AVX2_FLAG} THEN "yes" ELSE "no")
+status("    NEON?"                                         ${HAVE_NEON_FLAG} THEN "yes" ELSE "no")
 
 status("==========================================================")
 
