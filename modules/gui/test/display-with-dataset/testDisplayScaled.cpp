@@ -265,9 +265,17 @@ int main(int argc, const char *argv[])
 {
   // TODO:
   {
+    // cv::Mat img = cv::imread("memorial.pfm", cv::IMREAD_UNCHANGED);
+    // std::cout << "img: " << img.cols << "x" << img.rows << " ; channels: " << img.channels()
+    //           << " ; depth: " << img.depth() << " ; CV_32F: " << CV_32F
+    //           << " ; type: " << img.type() << " ; CV_32FC3: " << CV_32FC3 << std::endl;
+
     vpImage<float> I;
     vpImageIo::readPFM_HDR(I, "memorial.pfm");
     std::cout << "I: " << I.getWidth() << "x" << I.getHeight() << std::endl;
+    float minVal, maxVal;
+    I.getMinMaxValue(minVal, maxVal);
+    std::cout << "minVal: " << minVal << " ; maxVal: " << maxVal << std::endl;
 
     return 0;
   }

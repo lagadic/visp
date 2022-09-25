@@ -41,6 +41,7 @@
 #include "vpImageIoBackend.h"
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpEndian.h>
 
 // TODO?
 //void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
@@ -117,7 +118,7 @@ void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const st
 
 // TODO:
 void vp_decodeHeaderPFM(const std::string &filename, std::ifstream &fd, std::string &magic, unsigned int &w,
-                        unsigned int &h, bool &littleEndian)
+                        unsigned int &h, double &scale, bool &littleEndian)
 {
   std::string line;
   const unsigned int nb_elt = 4;
@@ -165,9 +166,8 @@ void vp_decodeHeaderPFM(const std::string &filename, std::ifstream &fd, std::str
                      header.begin() + 1); // erase first element that is processed
       } else if (cpt_elt == 3) {          // decode byte order
         std::istringstream ss(header[0]);
-        double endianness;
-        ss >> endianness;
-        littleEndian = endianness < 0;
+        ss >> scale;
+        littleEndian = scale < 0;
         cpt_elt++;
         header.erase(header.begin(),
                      header.begin() + 1); // erase first element that is processed
@@ -405,27 +405,49 @@ void vp_readPFM_HDR(vpImage<float> &I, const std::string &filename)
   const std::string magicRGB("PF"), magicGray("Pf");
   std::string magic;
   unsigned int w = 0, h = 0;
+  double scale = 1;
   bool littleEndian = true;
-  vp_decodeHeaderPFM(filename, fd, magic, w, h, littleEndian);
+  vp_decodeHeaderPFM(filename, fd, magic, w, h, scale, littleEndian);
 
   if (w > w_max || h > h_max) {
     fd.close();
     throw(vpException(vpException::badValue, "Bad image size in \"%s\"", filename.c_str()));
   }
 
-  if (h != I.getHeight() || w != I.getWidth()) {
-    I.resize(h, w);
+  unsigned int channels = (magic == magicRGB) ? 3 : 1;
+  if (h != I.getHeight() || channels*w != I.getWidth()) {
+    I.resize(h, channels*w);
   }
 
-  unsigned int nbyte = (magic == magicRGB) ? 1 * I.getHeight() * I.getWidth() : I.getHeight() * I.getWidth();
-  fd.read((char *)I.bitmap, sizeof(float) * nbyte);
+#ifdef VISP_LITTLE_ENDIAN
+  bool swapEndianness = !littleEndian;
+#else
+  bool swapEndianness = littleEndian;
+#endif
+  for (int i = I.getHeight()-1; i >= 0; i--) {
+    fd.read((char *)I[i], sizeof(float) * w * channels);
+    if (swapEndianness) {
+      for (unsigned int j = 0; j < w * channels; j++) {
+        static_assert(sizeof(uint32_t) == sizeof(float), "uint32_t and float must have the same size.");
+        I[i][j] = *reinterpret_cast<float*>(vpEndian::swap32bits(*reinterpret_cast<uint32_t*>(&I[i][j])));
+      }
+    }
+  }
+
   if (!fd) {
     fd.close();
-    throw(vpImageException(vpImageException::ioError, "Read only %d of %d bytes in file \"%s\"", fd.gcount(), nbyte,
+    throw(vpImageException(vpImageException::ioError, "Read only %d bytes in file \"%s\"", fd.gcount(),
                            filename.c_str()));
   }
-
   fd.close();
+
+  if (std::fabs(scale) > 0.0f) {
+    for (unsigned int i = 0; i < I.getHeight(); i++) {
+      for (unsigned int j = 0; j < I.getWidth(); j++) {
+        I[i][j] *= 1.0f / static_cast<float>(std::fabs(scale));
+      }
+    }
+  }
 }
 
 /*!
