@@ -1252,6 +1252,12 @@ if(USE_FLIRPTUSDK)
 endif()
 
 # ----------------------------------------------------------------------------
+#  System information
+# ----------------------------------------------------------------------------
+vp_system_information(NUMBER_OF_LOGICAL_CORES NUMBER_OF_PHYSICAL_CORES TOTAL_PHYSICAL_MEMORY OS_NAME OS_RELEASE
+                      OS_VERSION OS_PLATFORM PROCESSOR_NAME IS_64BIT HAS_FPU CPU_OPTIM)
+
+# ----------------------------------------------------------------------------
 #  Autodetect if we are in a GIT repository
 # ----------------------------------------------------------------------------
 find_host_package(Git QUIET)
@@ -1341,9 +1347,6 @@ if(NOT CMAKE_GENERATOR MATCHES "Xcode|Visual Studio")
 endif()
 
 # ========================== system information ==========================
-
-vp_system_information(NUMBER_OF_LOGICAL_CORES NUMBER_OF_PHYSICAL_CORES TOTAL_PHYSICAL_MEMORY OS_NAME OS_RELEASE
-                      OS_VERSION OS_PLATFORM PROCESSOR_NAME IS_64BIT HAS_FPU CPU_OPTIM)
 
 status("")
 status("  System information:")
