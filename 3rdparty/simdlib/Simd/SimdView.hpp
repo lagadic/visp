@@ -699,7 +699,7 @@ namespace Simd
         : width(mat.cols)
         , height(mat.rows)
         , stride(mat.step[0])
-        , format(OcvTo(mat.type()))
+        , format(mat.data ? OcvTo(mat.type()) : None)
         , data(mat.data)
         , _owner(false)
     {
@@ -1112,6 +1112,7 @@ namespace Simd
     {
         switch (format)
         {
+        case None:      return CV_8UC1;
         case Gray8:     return CV_8UC1;
         case Bgr24:     return CV_8UC3;
         case Bgra32:    return CV_8UC4;
