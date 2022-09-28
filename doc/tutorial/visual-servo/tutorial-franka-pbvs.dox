@@ -101,10 +101,10 @@ The limits will be applied after you log out and in again.
 
 \subsection franka_prereq_libfranka Install Franka library
 
-As described <a href="https://frankaemika.github.io/docs/installation.html#building-from-source">here</a>, to install the Franka library, follow the steps:
+As described <a href="https://frankaemika.github.io/docs/installation_linux.html#building-from-source">here</a>, to install the Franka library, follow the steps:
 
     $ sudo apt install build-essential cmake git libpoco-dev libeigen3-dev
-    $ cd ~/visp_ws
+    $ cd ~/visp_ws/3rdparty
     $ git clone --recursive https://github.com/frankaemika/libfranka
     $ cd libfranka
     $ mkdir build
@@ -121,7 +121,7 @@ Following the <a href="https://github.com/IntelRealSense/librealsense/blob/maste
 
 Get `librealsense` from github:
 
-    $ cd ~/visp_ws
+    $ cd ~/visp_ws/3rdparty
     $ git clone https://github.com/IntelRealSense/librealsense.git
     $ cd librealsense
     

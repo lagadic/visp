@@ -121,7 +121,7 @@ Following the <a href="https://github.com/IntelRealSense/librealsense/blob/maste
 
 1. Get `librealsense` from github:
 
-        $ cd $VISP_WS
+        $ cd $VISP_WS/3rdparty
         $ git clone https://github.com/IntelRealSense/librealsense.git
         $ cd librealsense
 
