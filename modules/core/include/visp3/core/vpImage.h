@@ -1598,6 +1598,21 @@ template <class Type> inline double vpImage<Type>::getSum() const
   return res;
 }
 
+/**
+ * Compute the sum (R+G+B) of image intensities for vpRGBa image type.
+ */
+template <> inline double vpImage<vpRGBa>::getSum() const
+{
+  if ((height == 0) || (width == 0))
+    return 0.0;
+
+  double res = 0.0;
+  for (unsigned int i = 0; i < height * width; ++i) {
+    res += static_cast<double>(bitmap[i].R) + static_cast<double>(bitmap[i].G) + static_cast<double>(bitmap[i].B);
+  }
+  return res;
+}
+
 /*!
   Operation C = *this - B.
 

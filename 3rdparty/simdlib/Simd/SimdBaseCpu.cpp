@@ -157,9 +157,21 @@ namespace Simd
         {
             switch (level)
             {
-            case 1: return CorrectIfZero(::sysconf(_SC_LEVEL1_DCACHE_SIZE), 32 * 1024);
-            case 2: return CorrectIfZero(::sysconf(_SC_LEVEL2_CACHE_SIZE), 256 * 1024);
-            case 3: return CorrectIfZero(::sysconf(_SC_LEVEL3_CACHE_SIZE), 2048 * 1024);
+            case 1:
+            {
+                const size_t sz = ::sysconf(_SC_LEVEL1_DCACHE_SIZE) < 0 ? 0 : ::sysconf(_SC_LEVEL1_DCACHE_SIZE);
+                return CorrectIfZero(sz, 32 * 1024);
+            }
+            case 2:
+            {
+                const size_t sz = ::sysconf(_SC_LEVEL2_CACHE_SIZE) < 0 ? 0 : ::sysconf(_SC_LEVEL2_CACHE_SIZE);
+                return CorrectIfZero(sz, 256 * 1024);
+            }
+            case 3:
+            {
+                const size_t sz = ::sysconf(_SC_LEVEL3_CACHE_SIZE) < 0 ? 0 : ::sysconf(_SC_LEVEL3_CACHE_SIZE);
+                return CorrectIfZero(sz, 2048 * 1024);
+            }
             default:
                 return 0;
             }

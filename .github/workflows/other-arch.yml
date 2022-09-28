@@ -12,7 +12,7 @@ jobs:
   build-other-architectures:
     # The host should always be linux
     runs-on: ubuntu-20.04
-    name: Build on ${{ matrix.distro }} ${{ matrix.arch }}
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }} ${{ matrix.endianness }}
 
     # Run steps on a matrix of 3 arch/distro combinations
     strategy:
@@ -28,12 +28,14 @@ jobs:
           - arch: aarch64
             distro: ubuntu20.04 #fedora_latest
             target: ARMV8
+            endianness: (Little Endian)
           # - arch: ppc64le
           #   distro: ubuntu20.04
           #   target: POWER8
           - arch: s390x
             distro: ubuntu20.04
             target: Z13
+            endianness: (Big Endian)
 
     steps:
     # https://github.com/marketplace/actions/cancel-workflow-action
