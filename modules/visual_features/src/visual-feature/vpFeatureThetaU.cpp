@@ -443,6 +443,7 @@ vpMatrix vpFeatureThetaU::interaction(unsigned int select)
 
   vpMatrix Lw(3, 3);
   Lw = vpColVector::skew(u); /* [theta/2  u]_x */
+  Lw = -Lw;
 
   vpMatrix U2(3, 3);
   U2.eye();
