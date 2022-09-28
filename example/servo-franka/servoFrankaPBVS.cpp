@@ -335,7 +335,7 @@ int main(int argc, char **argv)
         vpTranslationVector cd_t_c = cdMc.getTranslationVector();
         vpThetaUVector cd_tu_c = cdMc.getThetaUVector();
         double error_tr = sqrt(cd_t_c.sumSquare());
-        double error_tu = vpMath::deg(sqrt(cd_tu_c.sumSquare()));
+        double error_tu = sqrt(cd_tu_c.sumSquare());
 
         ss.str("");
         ss << "error_t: " << error_tr;
