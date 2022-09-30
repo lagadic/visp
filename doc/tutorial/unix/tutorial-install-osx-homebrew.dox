@@ -100,11 +100,22 @@ If you have an Intel Realsense RGB-D camera (R200, F200, SR300, LR200, RZ300, D4
 $ brew install librealsense pcl pkg-config
 \endverbatim
 
-\warning `pcl 1.12.1` has a dependency to `qt5` that is keg-only, which means it was not symlinked into `/usr/local`. As a consequence, ViSP will be not able to detect `pcl` leading to a build issue (see \ref install_brew_issues_pcl_1_12_1). The solution to build ViSP with `pcl 1.12.1` is here to run the additional commands:
+\warning `pcl 1.12.1` has a dependency to `qt5` that is keg-only, which means it was not symlinked
+into `/usr/local`. As a consequence, ViSP will be not able to detect `pcl` as it should be, leading to
+a build issue (see \ref install_brew_issues_pcl_1_12_1).
+The solution is to set `Qt5_DIR` cmake or environment var with the path where `Qt5Config.cmake` or `qt5-config.cmake` is located.
+In our case, `Qt5_DIR` should be set to `$(brew --prefix qt5)/lib/cmake/Qt5`.
+There are two options:
+1. Passing `Qt5_DIR` as a cmake var during ViSP configuration:
 ```
-$ brew link --force qt5
-$ sudo ln -s $(brew --prefix qt5)/mkspecs /usr/local/mkspecs
-$ sudo ln -s $(brew --prefix qt5)/plugins /usr/local/plugins
+$ cmake ../visp -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5
+$ make -j$(sysctl -n hw.logicalcpu)
+```
+2. Setting `Qt5_DIR` as an environment var:
+```
+$ export Qt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5
+$ cmake ../visp
+$ make -j$(sysctl -n hw.logicalcpu)
 ```
 
 \subsubsection install_brew_3rdparty_pylon Pylon 3rd party
@@ -312,7 +323,9 @@ The generated documentation is then available in `$VISP_WS/visp-build/doc/html/i
 - To speed up generating online doc, particularly around formula rendering, you can use [MatJax](https://www.mathjax.org). To this end, install MathJax and build doc using:
 \verbatim
 $ brew install node
+$ mkdir ~/node; cd ~/node
 $ npm install mathjax
+$ cd $VISP_WS/visp-build
 $ cmake ../visp -DUSE_MATHJAX=ON
 $ make -j$(sysctl -n hw.logicalcpu) visp_doc
 \endverbatim
@@ -664,19 +677,51 @@ General configuration information for ViSP 3.4.1
 
 \subsection install_brew_issues_pcl_1_12_1 Unable to build with pcl 1.12.1
 
-The following issue is reproductible installing pcl with Homebrew that brings pcl 1.12.1 on macOS Big Sur 11.6.2:
+The following issue is reproductible installing pcl with Homebrew that brings pcl 1.12.1 on macOS Big Sur 11.6.2 till macOS Monterey 12.6:
+\verbatim
+$ brew install librealsense pcl pkg-config
+$ cd $VISP_WS/visp-build
+$ cmake ../visp
+$ make -j$(sysctl -n hw.logicalcpu)
+$ make visp_sensor
+In file included from $VISP_WS/visp/modules/sensor/src/rgb-depth/realsense/vpRealSense2.cpp:44:
+$VISP_WS/visp/modules/sensor/include/visp3/sensor/vpRealSense2.h:47:10: fatal error: 'pcl/common/common_headers.h' file not found
+#include <pcl/common/common_headers.h>
+         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+\endverbatim
+
+In fact `pcl 1.12.1` has a dependency to `VTK` that depends on `qt5` that is keg-only. In other terms, it means that if `qt5` is not detected,
+`VTK` will not be detected too leading to a uncomplete `pcl` detection. As a consequence, ViSP will be able to detect `pcl` but not `VTK` leading
+to the previous build issue.
+
+This could also be checked in `ViSP-third-party.txt` file, that contains:
 ```
-$ brew install pcl
+$ cat ViSP-third-party.txt
+    Use PCL:                     yes (ver 1.12.1)
+    \- Use VTK:                  no
 ```
 
-`pcl 1.12.1` has a dependency to `qt5` that is keg-only, which means it was not symlinked into `/usr/local`. As a consequence, ViSP will be not able to detect `pcl` leading to a build issue. The solution to build ViSP with `pcl 1.12.1` is here to run the additional commands:
+The solution to build ViSP with `pcl 1.12.1` is to set `Qt5_DIR` cmake or environment var with the path where `Qt5Config.cmake` or `qt5-config.cmake` is located.
+In our case, `Qt5_DIR` should be set to `$(brew --prefix qt5)/lib/cmake/Qt5`.
 ```
-$ brew link --force qt5
-$ sudo ln -s $(brew --prefix qt5)/mkspecs /usr/local/mkspecs
-$ sudo ln -s $(brew --prefix qt5)/plugins /usr/local/plugins
+$ ls $(brew --prefix qt5)/lib/cmake/Qt5
+Qt5Config.cmake		Qt5ConfigVersion.cmake	Qt5ModuleLocation.cmake
 ```
 
-and then do a ViSP fresh build.
+There are now two options:
+1. Passing `Qt5_DIR` as a cmake var during ViSP configuration:
+```
+$ cmake ../visp -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5
+$ make -j$(sysctl -n hw.logicalcpu)
+```
+2. Setting `Qt5_DIR` as an environment var:
+```
+$ export Qt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5
+$ cmake ../visp
+$ make -j$(sysctl -n hw.logicalcpu)
+```
+Note that this environment var could be added permanently in your `~/.bashrc` file.
 
 \subsection install_brew_issues_pcl CMake Error in /usr/local/share/pcl-1.9/PCLConfig.cmake
 
