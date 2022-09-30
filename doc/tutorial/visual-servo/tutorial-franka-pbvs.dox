@@ -5,7 +5,7 @@
 
 \section franka_intro Introduction
 
-This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense SR300 camera.
+This tutorial explains how to do a position-based visual-servoing with the Panda 7-dof robot from Franka Emika equipped with an Intel Realsense D435 camera.
 
 The following video shows the resulting robot trajectory when the robot is achieving a position-based visual servoing over an Apriltag target.
 
@@ -19,147 +19,193 @@ The following video shows the resulting robot trajectory when the robot is achie
 
 We suppose here that you have:
 - a <a href="https://www.franka.de/cart/">Panda robot</a> in its research version from <a href="https://www.franka.de/">Franka Emika</a> that will be controlled throw vpRobotFranka class.
-- an Intel Realsense <a href="https://software.intel.com/en-us/realsense/sr300">SR300</a> camera attached to the robot end-effector. You could also use a <a href="https://click.intel.com/intelr-realsensetm-depth-camera-d435.html">D345</a> camera instead that is also compatible with the vpRealSense2 grabber used in this tutorial.
+- an Intel Realsense <a href="https://click.intel.com/intelr-realsensetm-depth-camera-d435.html">D345</a> camera attached to the robot end-effector.
+Note that this tutorial should also work with any other Intel Realsense camera.
 
 \subsection franka_prereq_rt_linux Setting up a real-time kernel
 
-In order to control your robot using `libfranka`, the controller program on the workstation PC must run with real-time priority under a `PREEMPT_RT` kernel. This [tutorial](https://frankaemika.github.io/docs/installation.html#setting-up-the-real-time-kernel) shows how to proceed. We recall here the steps:
+In order to control your robot using `libfranka`, the controller program on the workstation PC must run with real-time priority under a `PREEMPT_RT` kernel.
+This [tutorial](https://frankaemika.github.io/docs/installation.html#setting-up-the-real-time-kernel) shows how to proceed to install a real-time kernel.
 
-First, install the necessary dependencies:
+In our case, we are using Ubuntu 20.04.5 LTS with the real-time kernel version `5.15.70-rt50 x86_64`. The following instructions are to install `5.15.70-rt50`.
 
-    $ sudo apt-get install build-essential bc curl ca-certificates fakeroot gnupg2 libssl-dev lsb-release
+<b>Identify your kernel version</b>
 
-Then, you have to decide which kernel version to use. We recommend to choose the same as in the tutorial. At the time it was written, it was `4.14.12` and `4.14.12-rt10`. If you choose a different version, simply substitute the numbers. Having decided on a version, use curl to download the source files:
+- From here we suppose that you were able to install Ubuntu 20/04/5 LTS amd64 that comes with `5.15.0` kernel:
+\verbatim
+$ uname -mrs
+Linux 5.15.0-48-generic x86_64
+\endverbatim
 
-    $ cd ~/visp_ws
-    $ mkdir rt-linux; cd rt-linux
-    $ curl -SLO https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.14.12.tar.xz
-    $ curl -SLO https://www.kernel.org/pub/linux/kernel/projects/rt/4.14/older/patch-4.14.12-rt10.patch.xz
+<b>Choose and download a kernel version and the real-time patch</b>
 
-And decompress them with:
+- You have to decide which kernel version to use. We recommend to choose a version as close as possible from the generic kernel
+corresponding to your Ubuntu version.
+At the time it was written, in https://mirrors.edge.kernel.org/pub/linux/kernel/projects/rt/5.15/ the last 5.15.x-rt kernel is
+in patch-5.15.70-rt50.patch.gz. If you choose a different version, simply substitute the numbers. Having decided on a version,
+use curl to download the source files:
+\verbatim
+$ cd ~/visp_ws/3rdparty
+$ mkdir rt-linux; cd rt-linux
+$ $ curl -SLO https://www.kernel.org/pub/linux/kernel/v5.x/linux-5.15.70.tar.gz
+$ curl -SLO https://www.kernel.org/pub/linux/kernel/projects/rt/5.15/patch-5.15.70-rt50.patch.gz
+\endverbatim
+- Decompress them with:
+\verbatim
+$ tar xvzf linux-5.15.70.tar.gz
+$ gunzip patch-5.15.70-rt50.patch.gz
+\endverbatim
+- Extract the source code and apply the patch:
+\verbatim
+$ cd linux-5.15.70
+$ patch -p1 < ../patch-5.15.70-rt50.patch
+\endverbatim
 
-    $ xz -d linux-4.14.12.tar.xz
-    $ xz -d patch-4.14.12-rt10.patch.xz
+<b>Configure and build the kernel</b>
 
-**Compiling the kernel**
+- First, install the necessary dependencies:
+\verbatim
+$ sudo apt-get install build-essential bc curl ca-certificates fakeroot gnupg2 libssl-dev lsb-release libelf-dev bison flex
+\endverbatim
 
-Once you are sure the files were downloaded properly, you can extract the source code and apply the patch:
-
-    $ tar xf linux-4.14.12.tar
-    $ cd linux-4.14.12
-    $ patch -p1 < ../patch-4.14.12-rt10.patch
-
-The next step is to configure your kernel:
-
-    $ make oldconfig
-    
-This opens a text-based configuration menu. When asked for the Preemption Model, choose the Fully Preemptible Kernel:
-
-````
+- The next step is to configure your kernel:
+\verbatim
+$ make oldconfig
+\endverbatim
+- This opens a text-based configuration menu. When asked for the Preemption Model, choose the Fully Preemptible Kernel:
+\verbatim
 Preemption Model
-    1. No Forced Preemption (Server) (PREEMPT_NONE)
-    2. Voluntary Kernel Preemption (Desktop) (PREEMPT_VOLUNTARY)
-    3. Preemptible Kernel (Low-Latency Desktop) (PREEMPT__LL) (NEW)
-    4. Preemptible Kernel (Basic RT) (PREEMPT_RTB) (NEW)
-    > 5. Fully Preemptible Kernel (RT) (PREEMPT_RT_FULL) (NEW)
-````
+  1. No Forced Preemption (Server) (PREEMPT_NONE)
+  2. Voluntary Kernel Preemption (Desktop) (PREEMPT_VOLUNTARY)
+  3. Preemptible Kernel (Low-Latency Desktop) (PREEMPT)
+> 4. Fully Preemptible Kernel (Real-Time) (PREEMPT_RT) (NEW)
+\endverbatim
+We recommend keeping all options at their default values.
 
-We recommend keeping all options at their default values. Afterwards, you are ready to compile the kernel. As this is a lengthy process, set the multi threading option -j to the number of your CPU cores:
+- Afterwards, you are ready to compile the kernel. As this is a lengthy process,
+set the multi threading option -j to the number of your CPU cores:
+\verbatim
+$ fakeroot make -j4 deb-pkg
+\endverbatim
+\note If you get the following error:
+\verbatim
+make[4]: *** No rule to make target 'debian/canonical-certs.pem', needed by 'certs/x509_certificate_list'.  Stop.
+\endverbatim
+The solution is to modify `.config` replacing the line
+\verbatim
+CONFIG_SYSTEM_TRUSTED_KEYS="debian/canonical-certs.pem"
+CONFIG_SYSTEM_REVOCATION_KEYS="debian/canonical-revoked-certs.pem"
+CONFIG_DEBUG_INFO_BTF=y
+\endverbatim
+with
+\verbatim
+CONFIG_SYSTEM_TRUSTED_KEYS=""
+CONFIG_SYSTEM_REVOCATION_KEYS=""
+CONFIG_DEBUG_INFO_BTF=n
+\endverbatim
+and then try a new build
+\verbatim
+$ fakeroot make -j4 deb-pkg
+\endverbatim
 
-    $ fakeroot make -j4 deb-pkg
+- Finally, you are ready to install the newly created package. The exact names depend on your environment, but you are looking for `headers` and `images` packages without the `dbg` suffix. To install:
+\verbatim
+$ sudo dpkg -i ../linux-headers-5.15.70-rt50*.deb ../linux-image-5.15.70-rt50*.deb
+\endverbatim
 
-Finally, you are ready to install the newly created package. The exact names depend on your environment, but you are looking for `headers` and `images` packages without the `dbg` suffix. To install:
+- Reboot the computer
+\verbatim
+$ sudo reboot
+\endverbatim
 
-    $ sudo dpkg -i ../linux-headers-4.14.12-rt10_*.deb ../linux-image-4.14.12-rt10_*.deb
-    
-Reboot the computer
+- The version of the kernel is now `5.15.70-rt50`
+\verbatim
+$ uname -msr
+Linux 5.15.70-rt50 x86_64
+\endverbatim
 
-    $ sudo reboot
-    
-The version of the kernel is now `4.14.12`
+<b>Allow a user to set real-time permissions for its processes</b>
 
-    $ uname -msr
-    Linux 4.14.12 x86_64
+- After the `PREEMPT_RT` kernel is installed and running, add a group named `realtime` and add the user controlling your robot to this group:
+\verbatim
+$ sudo addgroup realtime
+$ sudo usermod -a -G realtime $(whoami)
+\endverbatim
 
-**Allow a user to set real-time permissions for its processes**
-
-After the `PREEMPT_RT` kernel is installed and running, add a group named `realtime` and add the user controlling your robot to this group:
-
-    $ sudo addgroup realtime
-    $ sudo usermod -a -G realtime $(whoami)
-
-Afterwards, add the following limits to the realtime group in `/etc/security/limits.conf`:
-
-    @realtime soft rtprio 99
-    @realtime soft priority 99
-    @realtime soft memlock 102400
-    @realtime hard rtprio 99
-    @realtime hard priority 99
-    @realtime hard memlock 102400
-
+- Afterwards, add the following limits to the realtime group in `/etc/security/limits.conf`:
+\verbatim
+@realtime soft rtprio 99
+@realtime soft priority 99
+@realtime soft memlock 102400
+@realtime hard rtprio 99
+@realtime hard priority 99
+@realtime hard memlock 102400
+\endverbatim
 The limits will be applied after you log out and in again.
 
 \subsection franka_prereq_libfranka Install Franka library
 
-As described <a href="https://frankaemika.github.io/docs/installation_linux.html#building-from-source">here</a>, to install the Franka library, follow the steps:
+As described <a href="https://frankaemika.github.io/docs/installation_linux.html#building-from-source">here</a>,
+to install the Franka library, follow the steps:
 
-    $ sudo apt install build-essential cmake git libpoco-dev libeigen3-dev
-    $ cd ~/visp_ws/3rdparty
-    $ git clone --recursive https://github.com/frankaemika/libfranka
-    $ cd libfranka
-    $ mkdir build
-    $ cd build
-    $ cmake .. -DCMAKE_BUILD_TYPE=Release
-    $ make -j4
-    $ sudo make install
+\verbatim
+$ sudo apt install build-essential cmake git libpoco-dev libeigen3-dev
+$ cd ~/visp_ws/3rdparty
+$ git clone --recursive https://github.com/frankaemika/libfranka
+$ cd libfranka
+$ mkdir build
+$ cd build
+$ cmake .. -DCMAKE_BUILD_TYPE=Release
+$ make -j4
+$ sudo make install
+\endverbatim
 
 \subsection franka_prereq_librealsense Install Realsense library
 
-Following the <a href="https://github.com/IntelRealSense/librealsense/blob/master/doc/installation.md">tutorial</a>, we recall the main steps here:
+Following the <a href="https://github.com/IntelRealSense/librealsense/blob/master/doc/installation.md">tutorial</a>,
+we recall the main steps here:
 
 \note Since our kernel is 4.12+ streaming Depth/IR/Color is supported and is provided out of the box. This means that the patches are not needed.
 
-Get `librealsense` from github:
+1. Unplug any connected Intel RealSense camera.
 
-    $ cd ~/visp_ws/3rdparty
-    $ git clone https://github.com/IntelRealSense/librealsense.git
-    $ cd librealsense
-    
-Video4Linux backend preparation:
+2. Install the packages required for `librealsense` build:
+\verbatim
+$ sudo apt-get install git libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev cmake-curses-gui
+$ sudo apt-get install libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
+\endverbatim
 
-1/ Ensure no Intel RealSense cameras are plugged in.
+3. Get `librealsense` from github:
+\verbatim
+$ cd ~/visp_ws/3rdparty
+$ git clone https://github.com/IntelRealSense/librealsense.git
+$ cd librealsense
+\endverbatim
 
-2/ Install openssl package required for kernel module build:
+4. Run Intel Realsense permissions script located in `librealsense` root directory:
+\verbatim
+$ ./scripts/setup_udev_rules.sh
+\endverbatim
 
-        $ sudo apt-get install libssl-dev
+5. Build and install librealsense
+\verbatim
+$ mkdir build
+$ cd build
+$ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
+$ make -j4
+$ sudo make install
+\endverbatim
 
-* Install udev rules located in librealsense source directory:
+6. Connect your Realsense camera (we are using a D435) and check if you are able to acquire images running:
+\verbatim
+$ ./examples/capture/rs-capture
+\endverbatim
 
-        $ sudo cp config/99-realsense-libusb.rules /etc/udev/rules.d/
-        $ sudo udevadm control --reload-rules && udevadm trigger
+If you are able to visualize the images, it means that you succeed in `librealsense` installation.
 
-* Install the packages required for librealsense build:
-
-        $ sudo apt-get install libusb-1.0-0-dev pkg-config libgtk-3-dev
-        $ sudo apt-get install libglfw3-dev
-
-Build and install librealsense
-
-    $ mkdir build
-    $ cd build
-    $ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
-    $ make -j4
-    $ sudo make install
-
-Connect your Realsense camera (we are using a SR300) and check if you are able to acquire images running:
-
-    $ ./examples/capture/rs-capture
-
-If you are able to visualize the images, it means that you succeed in librealsense installation.
- 
 \subsection franka_prereq_target Print an Apriltag target
 
-We provide a ready to print `36h11` tag that is 12 by 12 cm square <a href="http://visp-doc.inria.fr/download/apriltag/tag36_11_00000-120x120.pdf">[download]</a> that you may print.  
+We provide a ready to print `36h11` tag that is 12 by 12 cm square <a href="http://visp-doc.inria.fr/download/apriltag/tag36_11_00000-120x120.pdf">[download]</a> that you may print.
 
 If you are interested to get other tags, follow the steps described in \ref apriltag_detection_print.
 
@@ -175,7 +221,7 @@ Now follow the instructions for \ref install_ubuntu_visp_build.
 
 \subsection franka_configure_ethernet Configure Ethernet
 
-Our robot controller has by default IP `192.168.1.1`. Here we show how to configure a laptop that is connected with an Ethernet cable to the robot controller. 
+Our robot controller has by default IP `192.168.1.1`. Here we show how to configure a laptop that is connected with an Ethernet cable to the robot controller.
 
 Edit Ethernet connections:
 
@@ -223,9 +269,14 @@ Run the binary activating the plot and using a constant gain:
 
     $ ./servoFrankaPBVS --eMc ../../tutorial/calibration/eMc.yaml --plot
 
-Use the left mouse click to enable the robot controller, and the right click to quit the binary.
+\note If you encounter the following error message:
+\verbatim
+$ ./servoFrankaPBVS
+Franka network exception: libfranka: Connection to FCI refused. Please install FCI feature or enable FCI mode in Desk.
+\endverbatim
+you need to use your navigator to activate FCI. This new security feature was introduced in Franka system between version 4.0.2 and 4.2.2. See known issue: \ref franka_pbvs_known_issue_activate_FCI.
 
-At this point the behaviour that you should observe is the following:
+Now you should see new window that shows the image from the camera like in the next image. In this window, use the left mouse click to enable the robot controller, and the right click to quit the binary.
 
 \image html img-franka-pbvs-start.png Legend: Example of initial position. The goal is here to bring the RGB frame attached to the tag over the yellow frame corresponding to the desired position of the tag in the camera frame.
 
@@ -247,9 +298,32 @@ And finally you can activate the adaptive gain and task sequencing:
 
 To learn more about adaptive gain and task sequencing see \ref tutorial-boost-vs.
 
+\section franka_pbvs_known_issue Known issues
+\subsection franka_pbvs_known_issue_activate_FCI libfranka: Connection to FCI refused
+
+When executing one of the binaries that use `libfranka` you may encounter the following error like:
+\verbatim
+$ ./servoFrankaIBVS --ip 192.168.100.2
+Franka network exception: libfranka: Connection to FCI refused. Please install FCI feature or enable FCI mode in Desk.
+Check if you are connected to the Franka robot or if you specified the right IP using --ip command line option set by default to 192.168.1.1.
+\endverbatim
+
+This error occured with our robot after upgrading the Franka system from 4.0.2 to 4.2.2 version.
+
+\image html img-franka-system-version.jpg The Dashboard shows that after a synchonization using Franka World, our System version is 4.2.2.
+
+To overcome this error, you need:
+
+- First check if FCI is installed:
+\image html img-franka-system-window.jpg When FCI is installed, in Desk you should see this image.
+
+- Secondly activate FCI. For that, as shown in the next image click on `"Activate FCI"` in the Desk right column (1). It will open the popup (2)
+that should remain present all the time you want to execute any binary that needs to communicate with the robot using `libfranka`.
+\image html img-franka-fci-active.jpg Behavior when FCI (Franka Controller Interface) is activated.
+
 \section franka_pbvs_next Next tutorial
 
-You can continue with the \ref tutorial-franka-ibvs that shows how to implement an image-based visual servoing scheme with the Franka robot or follow \ref tutorial-ibvs that will give some hints on image-based visual servoing in simulation with a free flying camera. 
+You can continue with the \ref tutorial-franka-ibvs that shows how to implement an image-based visual servoing scheme with the Franka robot or follow \ref tutorial-ibvs that will give some hints on image-based visual servoing in simulation with a free flying camera.
 
 If you want to achieve a physical simulation of a Franka robot, with a model that has been accurately identified
 from a real Franka robot, like in the next video, we recommend to make a tour on \ref tutorial-franka-sim that is available in [visp_ros](http://wiki.ros.org/visp_ros). Here you will find a ROS package that allows to implement position, velocity and impedance control of a simulated Franka robot using ROS and [CoppeliaSim](https://www.coppeliarobotics.com/).
