@@ -12,19 +12,20 @@ This tutorial explains also how to implement an image-based visual-servoing with
 \subsection ur_prereq_ur_rtde Install ur_rtde 3rd party
 
 To use vpRobotUniversalRobots class you need first to install [ur_rtde](https://gitlab.com/sdurobotics/ur_rtde.git) on your remote host that will be used to control the robot.
-- You can either install `ur_rtde` from existing Ubuntu package
+- You can either install `ur_rtde` and its dependencies from existing Ubuntu package
 \verbatim
 $ sudo add-apt-repository ppa:sdurobotics/ur-rtde
 $ sudo apt-get update
-$ sudo apt install librtde librtde-dev
+$ sudo apt install librtde librtde-dev libboost-system-dev libboost-thread-dev libboost-program-options-dev
 \endverbatim
 - or build `ur_rtde` from source
 \verbatim
 $ cd $VISP_WS/3rdparty
+$ sudo apt install libboost-system-dev libboost-thread-dev libboost-program-options-dev
 $ git clone https://gitlab.com/sdurobotics/ur_rtde.git
 $ mkdir ur_rtde/build
 $ cd ur_rtde/build
-$ cmake .. -DCMAKE_BUILD_TYPE=Release
+$ cmake .. -DCMAKE_BUILD_TYPE=Release -DPYTHON_BINDINGS=OFF
 $ make -j4
 $ sudo make install
 \endverbatim
