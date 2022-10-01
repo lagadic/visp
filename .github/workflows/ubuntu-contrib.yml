@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04]
+        os: [ubuntu-20.04, ubuntu-22.04]
         compiler: [ {CC: /usr/bin/gcc-10, CXX: /usr/bin/g++-10}, {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
 
     steps:
@@ -35,8 +35,13 @@ jobs:
     - name: Print compiler information
       run: dpkg --list | grep compiler
 
-    - name: Install dependencies
+    - name: Install dependencies for ubuntu 18.04 and 20.04
+      if: matrix.os != 'ubuntu-22.04'
       run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
+
+    - name: Install dependencies for ubuntu 22.04
+      if: matrix.os == 'ubuntu-22.04'
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
 
     - name: Clone visp_contrib
       run: |
