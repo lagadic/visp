@@ -291,7 +291,7 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
           tu_err[i] = pose_est[i + 3] - pose_truth[i + 3];
         }
 
-        const double max_translation_error = 0.005;
+        const double max_translation_error = 0.006;
         const double max_rotation_error = 0.03;
         CHECK(sqrt(t_err.sumSquare()) < max_translation_error);
         CHECK(sqrt(tu_err.sumSquare()) < max_rotation_error);
