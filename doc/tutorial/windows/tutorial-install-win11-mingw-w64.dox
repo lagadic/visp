@@ -1,20 +1,21 @@
 /**
 
-\page tutorial-install-win10-mingw-w64 Tutorial: Installation from source for Windows 10 with MinGW-w64
+\page tutorial-install-win11-mingw-w64 Tutorial: Installation from source for Windows 11 with MinGW-w64
 \tableofcontents
 
-In this tutorial you will learn how to install ViSP from source on Windows 10 with MinGW-W64.
-These steps have been tested with CMake 3.19.0 and MinGW-W64 - GCC for Windows 64 & 32 bits.
+In this tutorial you will learn how to install ViSP from source on Windows 11 with MinGW-W64.
+These steps have been tested with CMake 3.24.2 and MinGW-W64 10.0 (UCRT).
 
 \note Concerning ViSP installation, we provide also other \ref tutorial.
 
-\section install_win10_mingw_required Install prerequisites
+\section install_win11_mingw_required Install prerequisites
 
-\subsection install_win10_mingw_required_mingw MinGW-W64
+\subsection install_win11_mingw_required_mingw MinGW-W64
 
-- MinGW64 can be downloaded from [here](https://winlibs.com/#download-release).
+- MinGW-w64 can be downloaded from [here](https://winlibs.com/#download-release).
 \note At the time this tutorial was created, we downloaded the latest UCRT version for Win64
-`"GCC 12.2.0 + LLVM/Clang/LLD/LLDB 14.0.6 + MinGW-w64 10.0.0 (UCRT) - release 2"` that brings `winlibs-i686-dwarf-gcc-12.2.0-llvm-14.0.6-mingw-w64ucrt-10.0.0-r2` file.
+`"GCC 12.2.0 + LLVM/Clang/LLD/LLDB 14.0.6 + MinGW-w64 10.0.0 (UCRT) - release 2"` that brings
+`winlibs-i686-dwarf-gcc-12.2.0-llvm-14.0.6-mingw-w64ucrt-10.0.0-r2` file.
 - After downloading, you should unzip mingw64 file to a folder. We recommend to unzip in to C drive disk in `C:\mingw32`
 - Then you have to set up path. For that follow these steps:
   - Open settings
@@ -31,18 +32,18 @@ This is free software; see the source for copying conditions.  There is NO
 warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 \endverbatim
 
-\subsection install_win10_mingw_3rd_cmake CMake
+\subsection install_win11_mingw_3rd_cmake CMake
 
 CMake could be download from http://www.cmake.org. Download the latest release for Windows win64-x64
-platform (at the time this tutorial was written it was the file `cmake-3.19.0-win64-x64.msi`).
+platform (at the time this tutorial was written it was the file `cmake-3.24.2-windows-arm64.msi`).
 To install just double click on the msi file.
 
-\subsection install_win10_mingw_3rd_git Git
+\subsection install_win11_mingw_3rd_git Git
 
-Install Git for Windows from https://git-for-windows.github.io/. This installation allows then to use git in a
-`cmd` Command Prompt.
+Install Git for Windows from https://git-for-windows.github.io/. Keep the default settings during installation.
+This installation allows then to use git in a `cmd` Command Prompt.
 
-\section install_win10_mingw_ws Create a workspace
+\section install_win11_mingw_ws Create a workspace
 
 If not already done, create a workspace that will contain all ViSP source, build, data set and optional
 3rd parties. This workspace is here set to `C:\visp-ws` folder, but it could be set to any other location.
@@ -60,10 +61,10 @@ C:\> mkdir %VISP_WS%
 C:\> exit
 \endverbatim
 
-\section install_win10_mingw_quick Quick ViSP installation
+\section install_win11_mingw_quick Quick ViSP installation
 
 In this section, we give minimal instructions to build ViSP from source just to try ViSP without entering
-in \ref install_win10_mingw_advanced.
+in \ref install_win11_mingw_advanced.
 
 - Open a new `cmd` Command Prompt and get ViSP source code in the workspace
 \verbatim
@@ -99,48 +100,48 @@ C:\> setx VISP_DIR "%VISP_WS%\visp-build-mingw\install"
 C:\> exit
 \endverbatim
 
-To have a trial, just jump to \ref install_win10_mingw_dataset before running some binaries that you
-just build or jump to \ref install_win10_mingw_next. You can later come back to the
-\ref install_win10_mingw_advanced.
+To have a trial, just jump to \ref install_win11_mingw_dataset before running some binaries that you
+just build or jump to \ref install_win11_mingw_next. You can later come back to the
+\ref install_win11_mingw_advanced.
 
-\section install_win10_mingw_advanced Advanced ViSP installation
+\section install_win11_mingw_advanced Advanced ViSP installation
 
-\subsection install_win10_mingw_3rdparty Install 3rd parties
+\subsection install_win11_mingw_3rdparty Install 3rd parties
 
 ViSP is interfaced with several 3rd party libraries. The
 <a href="https://visp.inria.fr/software-architecture">complete list is provided here</a>.
-We recommend to install \ref install_win10_mingw_3rdparty_eigen and
-\ref install_win10_mingw_3rdparty_opencv in the workspace.
+We recommend to install \ref install_win11_mingw_3rdparty_eigen and
+\ref install_win11_mingw_3rdparty_opencv in the workspace.
 
-\subsubsection install_win10_mingw_3rdparty_eigen Eigen3 3rd party
+\subsubsection install_win11_mingw_3rdparty_eigen Eigen3 3rd party
 
 Even if Eigen3 is designed as a template we recommend to install the library with MinGW.
 
 <b>1. Get Eigen3</b>
 
 - Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
-written we downloaded `eigen-3.3.9.zip` archive corresponding to Eigen 3.3.9.
+written we downloaded `eigen-3.4.0.zip` archive corresponding to Eigen 3.4.0.
 - Extract the content of the archive in `%%VISP_WS%\3rdparty`.
-- Once unzipped, you should have Eigen in `%%VISP_WS%\3rdparty\eigen-3.3.9`
+- Once unzipped, you should have Eigen in `%%VISP_WS%\3rdparty\eigen-3.4.0`
 
 <b>2. Build and install Eigen3 from source</b>
 
 - Create a build directory
 \verbatim
-C:\> cd %%VISP_WS%\3rdparty\eigen-3.3.9
+C:\> cd %%VISP_WS%\3rdparty\eigen-3.4.0
 C:\> mkdir build-mingw
 C:\> cd build-mingw
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for MinGW and installation folder is set to
-`%%VISP_WS%\3rdparty\eigen-3.3.9\build-mingw\install` folder):
+`%%VISP_WS%\3rdparty\eigen-3.4.0\build-mingw\install` folder):
 \verbatim
-C:\> cmake -G "MinGW Makefiles" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-3.3.9\build-mingw\install
+C:\> cmake -G "MinGW Makefiles" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-3.4.0\build-mingw\install
 \endverbatim
 - Build and install Eigen3 (installation doesn't need administrator privileges)
 \verbatim
 C:\> cmake --build . --config Release --target install -j4
 \endverbatim
-- Eigen3 is now installed in `%%VISP_WS%\3rdparty\eigen-3.4.°\build-mingw\install` folder.
+- Eigen3 is now installed in `%%VISP_WS%\3rdparty\eigen-3.4.0\build-mingw\install` folder.
 
 <b>3. Complete Eigen3 installation</b>
 
@@ -148,57 +149,57 @@ Now you have to complete Eigen3 installation setting some environment vars:
 - In order that ViSP detects eigen you have to set `EIGEN_DIR` environment variable. Start up a `cmd` Command Prompt
 and enter:
 \verbatim
-C:\> setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.3.9\build-mingw\install\share\eigen3\cmake"
+C:\> setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.4.0\build-mingw\install\share\eigen3\cmake"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\3rdparty\eigen-3.3.9\build-mingw\install` is where you have installed Eigen3. Inside the folder
-`%%VISP_WS%\3rdparty\eigen-3.3.9\build-mingw\install\share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
+where `%%VISP_WS%\3rdparty\eigen-3.4.0\build-mingw\install` is where you have installed Eigen3. Inside the folder
+`%%VISP_WS%\3rdparty\eigen-3.4.0\build-mingw\install\share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
 - There is no need to set `Path` environment var since Eigen3 is a template that has no library.
 
-\subsubsection install_win10_mingw_3rdparty_opencv OpenCV 3rd party
+\subsubsection install_win11_mingw_3rdparty_opencv OpenCV 3rd party
 
 <b>1. Get OpenCV</b>
 
 First you have to get OpenCV:
 - From http://opencv.org/releases.html download the latest OpenCV for Windows. In our case we got
-`opencv-4.5.1-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous
+`opencv-4.6.0-vc14_vc15.exe` Win pack installer. The same procedure could be applied with all the previous
 OpenCV releases starting from 3.4.0 version.
-- Extract the content of the archive in your workspace `%%VISP_WS%\3rdparty`.
+- Extract the content of the archive in your workspace `%%VISP_WS%`.
 \image html img-win11-extract-opencv.jpg
-- The installer extract all the material in `%%VISP_WS%\3rdparty\opencv`.
-- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.5.1`.
+- The installer extract all the material in `%%VISP_WS%\opencv`.
+- We strongly recommend to rename this folder to a name that contain OpenCV version like `%%VISP_WS%\3rdparty\opencv-4.6.0`.
 
 \note OpenCV 4.6.0 win pack installer contains prebuild OpenCV libraries build with Visual Studio 14 2015 (vc14)
 and Visual Studio 15 2017 (vc15) but there is no build for MinGW. That's why you need to build yourself OpenCV
-from source and install the libraries in `%%VISP_WS%\3rdparty\opencv-4.5.1\build\x64\mingw`.
+from source and install the libraries in `%%VISP_WS%\3rdparty\opencv-4.6.0\build\x64\mingw`.
 
 <b>2. Configure, build and install OpenCV from source</b>
 
 - Open a `cmd` Command Prompt and create a build folder
 \verbatim
-C:\> cd %VISP_WS%\3rdparty\opencv-4.5.1
+C:\> cd %VISP_WS%\3rdparty\opencv-4.6.0
 C:\> mkdir build-mingw
 C:\> cd build-mingw
 \endverbatim
-- Run CMake in build directory and set the install dir to `%VISP_WS%\3rdparty\opencv-4.5.1\build`. We disable also
+- Run CMake in build directory and set the install dir to `%VISP_WS%\3rdparty\opencv-4.6.0\build`. We disable also
 tests build in order to speed up the build process:
 \verbatim
-C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.5.1\build \
+C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\opencv-4.6.0\build \
      -DBUILD_TESTS=OFF -DBUILD_PERF_TESTS=OFF
 \endverbatim
 - Build and install OpenCV for MinGW (installation doesn't need administrator privileges)
 \verbatim
 C:\> cmake --build . --config Release --target install -j4
 \endverbatim
-- OpenCV is now installed in `%%VISP_WS%\opencv-4.5.1\build` folder
+- OpenCV is now installed in `%%VISP_WS%\3rdparty\opencv-4.6.0\build` folder
 
 \note - With OpenCV 4.5.0 if you don't set `OPENCV_ENABLE_ALLOCATOR_STATS=OFF` you will get an
-\ref issue_win10_mingw_opencv_allocator.
+\ref issue_win11_mingw_opencv_allocator.
 \note - With OpenCV 4.1.0 if you don't set `WITH_OPENCL_D3D11_NV=OFF` you will get an
-\ref issue_win10_mingw_opencv_opencl_d3d11.
+\ref issue_win11_mingw_opencv_opencl_d3d11.
 \note - Using OpenCV older versions you may encounter the following issues, for which we propose work arounds;
-\ref issue_win10_mingw_opencv_precompiled_headers, \ref issue_win10_mingw_opencv_cap_dshow,
-\ref issue_win10_mingw_opencv_dtor, \ref issue_win10_mingw_opencv_tiff, or \ref issue_win10_mingw_opencv_ipp.
+\ref issue_win11_mingw_opencv_precompiled_headers, \ref issue_win11_mingw_opencv_cap_dshow,
+\ref issue_win11_mingw_opencv_dtor, \ref issue_win11_mingw_opencv_tiff, or \ref issue_win11_mingw_opencv_ipp.
 
 <b>3. Complete OpenCV installation</b>
 
@@ -206,7 +207,7 @@ Now you have to complete OpenCV installation setting some environment vars:
 - In order that ViSP detects OpenCV you have to set `OpenCV_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
 \verbatim
-C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.5.1\build"
+C:\> setx OpenCV_DIR "%VISP_WS%\3rdparty\opencv-4.6.0\build"
 C:\> exit
 \endverbatim
 where `%%VISP_WS%\3rdparty\opencv-4.6.0\build` is where you have installed OpenCV. Inside this folder you should
@@ -216,7 +217,7 @@ have a file named `OpenCVConfig.cmake`.
 environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with
 `%%VISP_WS%\3rdparty\opencv-4.6.0\build\x64\mingw\bin`.
 
-\subsection install_win10_mingw_get_source Get ViSP source code
+\subsection install_win11_mingw_get_source Get ViSP source code
 
 There are different ways to get ViSP source code.
 
@@ -237,7 +238,7 @@ C:\> git clone https://github.com/lagadic/visp.git
 
 We suppose now that ViSP source is in `%%VISP_WS%\visp`.
 
-\subsection install_win10_mingw_config Configure ViSP from source
+\subsection install_win11_mingw_config Configure ViSP from source
 
 The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution file that
 will be located in `%%VISP_WS%/visp-build-mingw`.
@@ -249,10 +250,10 @@ will be located in `%%VISP_WS%/visp-build-mingw`.
 - Click on "Yes" to create the `%%VISP_WS%/visp-build-mingw` folder.
 - Select then your compiler "MinGW Makefiles" and click on "Finish" button.
 \image html img-cmake-win10-mingw-makefiles.png
-- This will start CMake configuration. As shown in the next image, OpenCV
-and Eigen3 3rd parties are automatically detected.
-\image html img-cmake-win10-mingw-visp-config.png
-\note - If OpenCV is not detected, you may encounter the following issue \ref issue_win10_mingw_opencv_not_detected.
+- This will start CMake configuration. As shown in the next image, Eigen3, GDI (Graphical Device Interface)
+and OpenCV 3rd parties are automatically detected.
+\image html img-cmake-win11-mingw-visp-config.jpg
+\note - If OpenCV is not detected, you may encounter the following issue \ref issue_win11_mingw_opencv_not_detected.
 
 \note - Installation folder is set to `%%VISP_WS%/visp-build-mingw/install`. If you want to change the installation
 folder to `C:/Program Files (x86)/ViSP`, make sure that you have administrator privileges to write in that
@@ -264,12 +265,12 @@ the default configuration that is recommended. If you want to create rather a st
 (with `.lib` extension) you have to uncheck the `BUILD_SHARED_LIBS` option to disable DLL creation.
 
 - To finish the configuration, click on "Generate" button.
-\image html img-cmake-win10-mingw-visp-generate.png
+\image html img-cmake-win11-mingw-visp-generate.jpg
 
 - Once the generation is done, in `%%VISP_WS%/visp-build-mingw` folder you have the Makefile file that
 will be used by MinGW to build the whole project.
 
-\subsection install_win10_mingw_build Build and install ViSP libraries
+\subsection install_win11_mingw_build Build and install ViSP libraries
 
 - To build ViSP, open a `cmd` Command Prompt, change to `%%VISP_WS%\visp-build-mingw` folder and run
 `mingw32-make`:
@@ -285,11 +286,11 @@ C:\> mingw32-make -j4 install
 
 - At the end, in `%%VISP_WS%/visp-build-mingw/install/x64/mingw/bin` folder you will find ViSP DLL libraries
 corresponding to the build modules.
-\image html img-win10-mingw-visp-explorer-install.png
+\image html img-win11-mingw-visp-explorer-install.jpg
 
 \note When `CMAKE_BUILD_TYPE` is set to Debug, the library names are suffixed by "d".
 
-\subsection install_win10_mingw_build_visp_doc Build ViSP documentation
+\subsection install_win11_mingw_build_visp_doc Build ViSP documentation
 
 To build ViSP documentation, you have first to install [Doxygen](http://www.doxygen.nl):
 - [Download](http://www.doxygen.nl/download.html) binary distribution for Windows. At the time this tutorial
@@ -327,12 +328,12 @@ C:\> cmake -G "MinGW Makefiles" %VISP_WS%\visp -DENABLE_FULL_DOC=ON
 C:\> cmake --build . --config Release --target visp_doc
 \endverbatim
 
-\subsection install_win10_mingw_env_var Set Path environment var
+\subsection install_win11_mingw_env_var Set Path environment var
 
 Modify the `Path` var to add the path to ViSP dll libraries. To this end open the "Edit environment variable"
 UI, and modify `Path` to add a new line with `%%VISP_WS%\visp-build-mingw\install\x64\mingw\bin`.
 
-\subsection install_win10_mingw_visp_dir Set VISP_DIR environment var
+\subsection install_win11_mingw_visp_dir Set VISP_DIR environment var
 
 In order to ease ViSP detection by CMake when ViSP is used as a 3rd party in an external project, like the
 one described in the \ref tutorial-getting-started, you may set `VISP_DIR` environment variable with the
@@ -342,7 +343,7 @@ C:\> setx VISP_DIR "%VISP_WS%\visp-build-mingw\install"
 C:\> exit
 \endverbatim
 
-\section install_win10_mingw_dataset Install ViSP data set
+\section install_win11_mingw_dataset Install ViSP data set
 
 Some ViSP examples and tests require a dataset that contains images, video, models that is not part of ViSP
 source code. This dataset is available in Github (https://github.com/lagadic/visp-images) or as a release
@@ -354,13 +355,13 @@ We give hereafter the two ways to get this data set:
 <b>1. Get data set release</b>
 
 - Download the latest dataset release from https://visp.inria.fr/download and uncompress it in your workspace `%%VISP_WS%`.
-At the time this tutorial was written, the latest release was `visp-images-3.3.0.zip`.
-\image html img-win10-visp-images-3.3.0.png
+At the time this tutorial was written, the latest release was `visp-images-3.5.0.zip`.
+\image html img-win11-visp-images-3.5.0.jpg
 - Once downloaded, you need to set `VISP_INPUT_IMAGE_PATH` environment variable to help ViSP examples
 and tests to detect automatically the location of the requested data. In our case, this variable should
-be set to `%%VISP_WS%\visp-images-3.3.0`. Open a `cmd` Command Prompt and run
+be set to `%%VISP_WS%\visp-images-3.5.0`. Open a `cmd` Command Prompt and run
 \verbatim
-C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.3.0
+C:\> setx VISP_INPUT_IMAGE_PATH %VISP_WS%\visp-images-3.5.0
 C:\> exit
 \endverbatim
 
@@ -383,11 +384,11 @@ C:\> exit
 <b>Test data set usage</b>
 
 From now, you can try to run ViSP examples and tests. For example, if you want to run
-`%%VISP_WS%\visp-build-mingw\example\device\display\displayOpenCV.exe`, open a `cmd` Command Prompt,
+`%%VISP_WS%\visp-build-mingw\example\device\display\displayGDI.exe`, open a `cmd` Command Prompt,
 enter in the right folder and run:
 \verbatim
 C:\> cd %VISP_WS%\visp-build-mingw\example\device\display
-C:\> displayOpenCV.exe
+C:\> displayGDI.exe
 
 A click to close the windows...
 
@@ -398,9 +399,22 @@ A click to exit the program...
 Bye
 \endverbatim
 
-\section install_win10_mingw_tips Tips and tricks
+\note At this point, if it opens a popup saying that `libvisp_io.dll` was not found like in the following
+image it means either that you didn't add the location of ViSP dll libraries in the path environment variable
+(see \ref install_win11_mingw_env_var section), or that the path that you added is wrong.
+\image html img-win11-error-displayGDI-visp-path.jpg
 
-\subsection install_win10_mingw_tips_new_3rdparty How to take into account a newly installed 3rd party
+\note At this point, if it opens a popup saying that `libopencv_core.dll` was not found like in the following
+image it means either that you didn't add the location of OpenCV dll libraries in the path environment variable
+(see \ref install_win11_mingw_3rdparty_opencv section), or that the path that you added is wrong. This could be the case
+if you are running Windows 11 on a MacBook M1 pro for which OpenCV libraries are installed in
+`%%VISP_WS%\3rdparty\opencv-4.6.0\build\x86\mingw\bin` rather than in `%%VISP_WS%\3rdparty\opencv-4.6.0\build\x64\mingw\bin`
+as given in \ref install_win11_mingw_3rdparty_opencv section.
+\image html img-win11-error-displayGDI-opencv-path.jpg
+
+\section install_win11_mingw_tips Tips and tricks
+
+\subsection install_win11_mingw_tips_new_3rdparty How to take into account a newly installed 3rd party
 
 Since all 3rd parties are optional you may have started to install only some of them. Imagine that you
 just installed a new third-party, or that you upgraded the version of this 3rd party. The next step is to
@@ -419,14 +433,14 @@ Finally, you need to rebuild ViSP with:
 $ mingw32-make
 \endverbatim
 
-\subsection install_win10_mingw_tips_uninstall How to uninstall ViSP
+\subsection install_win11_mingw_tips_uninstall How to uninstall ViSP
 After ViSP installation, you can remove installed material using:
 \verbatim
 $ cd $VISP_WS/visp-build-mingw
 $ mingw32-make uninstall
 \endverbatim
 
-\subsection install_win10_mingw_tips_modules How to build only ViSP libraries
+\subsection install_win11_mingw_tips_modules How to build only ViSP libraries
 
 If you want to build only ViSP modules libraries, nor the examples, tutorials and tests:
 \verbatim
@@ -434,7 +448,7 @@ $ cd $VISP_WS%/visp-build-mingw
 $ mingw32-make visp_modules
 \endverbatim
 
-\subsection install_win10_mingw_tips_module_once How to build a ViSP specific module
+\subsection install_win11_mingw_tips_module_once How to build a ViSP specific module
 
 If you want to build a given module and all the dependencies:
 \verbatim
@@ -448,7 +462,7 @@ $ cd $VISP_WS%/visp-build-mingw
 $ mingw32-make visp_mbt
 \endverbatim
 
-\subsection install_win10_mingw_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
+\subsection install_win11_mingw_tips_3rd_party Which are the 3rd party libraries that are used in ViSP ?
 
 To see which are the optional 3rd parties that are found during the configuration stage and that will be
 used by ViSP during the build you can have a look to the text file named `ViSP-third-party.txt` and
@@ -457,28 +471,42 @@ file that contains also build info.
 \verbatim
 $ type %VISP_WS%/visp-build-mingw/ViSP-third-party.txt
 ==========================================================
-General configuration information for ViSP 3.3.1
+General configuration information for ViSP 3.5.1
 
-  Version control:               3.2.0-1289-g02f11a7de-dirty
+  Version control:               v3.5.0-193-g039940ad2-dirty
 
   Platform:
-    Timestamp:                   2020-12-02T15:54:52Z
-    Host:                        Windows 10.0.17763 AMD64
-    CMake:                       3.19.0
+    Timestamp:                   2022-10-01T20:15:29Z
+    Host:                        Windows 10.0.22598 ARM64
+    CMake:                       3.24.2
     CMake generator:             MinGW Makefiles
-    CMake build tool:            C:/PROGRA~1/MINGW-~1/X86_64~1.0-P/mingw64/bin/mingw32-make.exe
+    CMake build tool:            C:/mingw32/bin/mingw32-make.exe
     Configuration:               Release
+
+  System information:
+    Number of CPU logical cores: 8
+    Number of CPU physical cores: 8
+    Total physical memory (in MiB): 10232
+    OS name:                     Windows
+    OS release:                  Professional
+    OS version:                  (Build 22598)
+    OS platform:                 ARM64
+    CPU name:
+    Is the CPU 64-bit?           yes
+    Does the CPU have FPU?       no
+    CPU optimization:            SSE2 SSE3
 
   C/C++:
     Built as dynamic libs?:      yes
-    C++ Compiler:                C:/Program Files/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/g++.exe  (ver 8.1.0)
-    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -O3 -DNDEBUG
-    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -g
-    C Compiler:                  C:/Program Files/mingw-w64/x86_64-8.1.0-posix-seh-rt_v6-rev0/mingw64/bin/gcc.exe
-    C flags (Release):           -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -O3 -DNDEBUG
-    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++11 -fvisibility=hidden -msse2 -msse3 -mssse3 -g
+    C++ Compiler:                C:/mingw32/bin/c++.exe  (ver 12.2.0)
+    C++ flags (Release):         -Wall -Wextra -fopenmp -std=c++17 -fvisibility=hidden -msse2 -msse3 -mno-ssse3 -ffloat-store -O3 -DNDEBUG
+    C++ flags (Debug):           -Wall -Wextra -fopenmp -std=c++17 -fvisibility=hidden -msse2 -msse3 -mno-ssse3 -ffloat-store -g
+    C Compiler:                  C:/mingw32/bin/gcc.exe
+    C flags (Release):           -Wall -Wextra -fopenmp -std=c++17 -fvisibility=hidden -msse2 -msse3 -mno-ssse3 -ffloat-store -O3 -DNDEBUG
+    C flags (Debug):             -Wall -Wextra -fopenmp -std=c++17 -fvisibility=hidden -msse2 -msse3 -mno-ssse3 -ffloat-store -g
     Linker flags (Release):
     Linker flags (Debug):
+    Use cxx standard:            17
 
   ViSP modules:
     To be built:                 core gui imgproc io java_bindings_generator klt me sensor ar blob robot visual_features vs vision detection mbt tt tt_mi
@@ -506,8 +534,8 @@ General configuration information for ViSP 3.3.1
     \- Use Netlib:               no
     \- Use GSL:                  no
     \- Use Lapack (built-in):    yes (ver 3.2.1)
-    Use Eigen3:                  yes (ver 3.3.8)
-    Use OpenCV:                  yes (ver 4.5.1)
+    Use Eigen3:                  yes (ver 3.4.0)
+    Use OpenCV:                  yes (ver 4.6.0)
 
   Simulator:
     Ogre simulator:
@@ -526,8 +554,8 @@ General configuration information for ViSP 3.3.1
     Use JPEG:                    no
     Use PNG:                     no
     \- Use ZLIB:                 no
-    Use OpenCV:                  yes (ver 4.5.1)
-    Use stb_image (built-in):    no
+    Use OpenCV:                  yes (ver 4.6.0)
+    Use stb_image (built-in):    yes (ver 2.27.0)
 
   Real robots:
     Use Afma4:                   no
@@ -535,11 +563,13 @@ General configuration information for ViSP 3.3.1
     Use Franka:                  no
     Use Viper650:                no
     Use Viper850:                no
+    Use ur_rtde:                 no
     Use Kinova Jaco:             no
     Use aria (Pioneer):          no
     Use PTU46:                   no
     Use Biclops PTU:             no
     Use Flir PTU SDK:            no
+    Use MAVSDK:                  no
     Use Parrot ARSDK:            no
     \-Use ffmpeg:                no
     Use Virtuose:                no
@@ -549,8 +579,8 @@ General configuration information for ViSP 3.3.1
   GUI:
     Use X11:                     no
     Use GTK:                     no
-    Use OpenCV:                  yes (ver 4.5.1)
-    Use GDI:                     no
+    Use OpenCV:                  yes (ver 4.6.0)
+    Use GDI:                     yes
     Use Direct3D:                no
 
   Cameras:
@@ -558,13 +588,15 @@ General configuration information for ViSP 3.3.1
     Use CMU 1394:                no
     Use V4L2:                    no
     Use directshow:              no
-    Use OpenCV:                  yes (ver 4.5.1)
-    Use Flycapture:              no
-    Use Pylon:                   no
+    Use OpenCV:                  yes (ver 4.6.0)
+    Use FLIR Flycapture:         no
+    Use Basler Pylon:            no
+    Use IDS uEye:                no
 
   RGB-D sensors:
     Use Realsense:               no
     Use Realsense2:              no
+    Use Occipital Structure:     no
     Use Kinect:                  no
     \- Use libfreenect:          no
     \- Use libusb-1:             no
@@ -576,6 +608,10 @@ General configuration information for ViSP 3.3.1
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
+
+  Mocap:
+    Use Qualisys:                no
+    Use Vicon:                   no
 
   Detection:
     Use zbar:                    no
@@ -592,26 +628,31 @@ General configuration information for ViSP 3.3.1
     Use OpenMP:                  yes
     Use pthread:                 no
     Use pthread (built-in):      yes (ver 3.0.1)
-    Use cxx standard:            11
+    Use Simd:                    yes (ver 4.9.109)
+
+  DNN:
+    Use CUDA Toolkit:            no
+    Use TensorRT:                no
 
   Documentation:
     Use doxygen:                 yes
+    \- Use mathjax:              no
 
   Tests and samples:
-    Use catch2 (built-in):       yes (ver 2.9.2)
+    Use catch2 (built-in):       yes (ver 2.13.7)
     Tests:                       yes
     Demos:                       yes
     Examples:                    yes
     Tutorials:                   yes
 
-  Install path:                  C:/visp-ws/visp-fspindle-build-mingw/install
+  Install path:                  C:/visp-ws/visp-build-mingw/install
 
 ==========================================================
 \endverbatim
 
-\section issue_win10_mingw Known issues
+\section issue_win11_mingw Known issues
 
-\subsection issue_win10_mingw_opencv_allocator gcc: error: long: No such file or directory
+\subsection issue_win11_mingw_opencv_allocator gcc: error: long: No such file or directory
 
 This issue occurs with OpenCV 4.5.0 and is referenced
 [here](https://answers.opencv.org/question/228737/gcc-error-long-no-such-file-or-directory/).
@@ -635,7 +676,7 @@ C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\open
 C:\> cmake --build . --config Release --target install -j4
 \endverbatim
 
-\subsection issue_win10_mingw_opencv_opencl_d3d11 OpenCL D3D11 build failure
+\subsection issue_win11_mingw_opencv_opencl_d3d11 OpenCL D3D11 build failure
 
 This issue occurs with OpenCV 4.1.1 and is referenced [here](https://github.com/opencv/opencv/issues/14286).
 
@@ -649,7 +690,7 @@ C:\> cmake -G "MinGW Makefiles" ..\sources -DCMAKE_INSTALL_PREFIX=%VISP_WS%\open
 C:\> cmake --build . --config Release --target install
 \endverbatim
 
-\subsection issue_win10_mingw_opencv_endianness OpenCV endianness failure during CMake configuration
+\subsection issue_win11_mingw_opencv_endianness OpenCV endianness failure during CMake configuration
 
 \note This issue occurs with OpenCV 2.4.10, 2.3.0-beta and 2.3.0 releases.
 
@@ -666,7 +707,7 @@ by:
 set(WORDS_BIGENDIAN 0)
 \endverbatim
 
-\subsection issue_win10_mingw_opencv_tiff OpenCV build error: cannot build with tiff support
+\subsection issue_win11_mingw_opencv_tiff OpenCV build error: cannot build with tiff support
 
 \note This issue occurs with OpenCV 2.4.10, 2.3.0-beta and 2.3.0 releases.
 
@@ -681,7 +722,7 @@ cd %VISP_WS%\opencv-2.y.z\sources\build-mingw
 C:\> mingw32-make
 \endverbatim
 
-\subsection issue_win10_mingw_opencv_ipp OpenCV link error: cannot find -lRunTmChk
+\subsection issue_win11_mingw_opencv_ipp OpenCV link error: cannot find -lRunTmChk
 
 \note This issue occurs with OpenCV 2.3.0-beta and 2.3.0 releases.
 
@@ -690,7 +731,7 @@ The following image shows the link issue that may appear when building OpenCV wi
 
 A work around is to configure OpenCV without ipp support turning WITH_IPP=OFF and then trying to build again.
 
-\subsection issue_win10_mingw_opencv_dtor OpenCV build error: struct has virtual functions and accessible non-virtual destructor
+\subsection issue_win11_mingw_opencv_dtor OpenCV build error: struct has virtual functions and accessible non-virtual destructor
 
 This error that occurs with OpenCV 3.0.0 during `cap_dshow.cpp` build is known and reported as an issue
 in https://github.com/Itseez/opencv/pull/5282/commits.
@@ -704,7 +745,7 @@ in https://github.com/Itseez/opencv/pull/5282/commits.
 #endif
 \endverbatim
 
-\subsection issue_win10_mingw_opencv_not_detected OpenCV not detected with Mingw build
+\subsection issue_win11_mingw_opencv_not_detected OpenCV not detected with Mingw build
 
 \note This issue occurs with OpenCV 2.4.9, 2.4.10 and 2.3.0-beta.
 
@@ -723,7 +764,7 @@ C:\> cd %VISP_WS%\opencv-2.y.z\sources\build-mingw
 C:\> mingw32-make install
 \endverbatim
 
-\subsection issue_win10_mingw_opencv_precompiled_headers windres.exe invalid option --W
+\subsection issue_win11_mingw_opencv_precompiled_headers windres.exe invalid option --W
 
 \note This issue occurs with OpenCV 3.3.0.
 
@@ -736,7 +777,7 @@ the workaround consists in:
 - in cmake-gui press "Configure" button, then press "Generate" button
 - then in the `cmd` Command Prompt run again `mingw32-make`
 
-\subsection issue_win10_mingw_opencv_cap_dshow Build error in cap_dshow.cpp
+\subsection issue_win11_mingw_opencv_cap_dshow Build error in cap_dshow.cpp
 
 \note This issue occurs with OpenCV 3.3.0.
 
@@ -754,7 +795,7 @@ before the line
 \endcode
 - then in the `cmd` Command Prompt run again `mingw32-make`
 
-\section install_win10_mingw_next Next tutorial
+\section install_win11_mingw_next Next tutorial
 
 You are now ready to see the next \ref tutorial-getting-started that will show you how to use ViSP as a
 3rd party to build your own project.
