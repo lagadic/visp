@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-win10-msvc14 Tutorial: Installation from source for Windows with Visual C++ 2015 (vc14)
+\page tutorial-install-win10-msvc14 Tutorial: Installation from source for Windows 10 with Visual C++ 2015 (vc14)
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++.
@@ -62,12 +62,12 @@ C:\> git clone https://github.com/lagadic/visp.git
 \endverbatim
 - Create a build directory
 \verbatim
-C:\> mkdir %VISP_WS%\visp-build-vc14
-C:\> cd %VISP_WS%\visp-build-vc14
+C:\> mkdir visp-build-vc14
+C:\> cd visp-build-vc14
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 14 2015 and 64 bits hardware):
 \verbatim
-C:\> cmake -G "Visual Studio 14 2015" -A "x64" %VISP_WS%\visp
+C:\> cmake -G "Visual Studio 14 2015" -A "x64" ..\visp
 \endverbatim
 - Build and install ViSP (installation doesn't need administrator privileges)
 \verbatim
@@ -114,13 +114,14 @@ written we downloaded `eigen-3.3.9.zip` archive corresponding to Eigen 3.3.9.
 
 - Create a build directory
 \verbatim
-C:\> mkdir %VISP_WS%\eigen-3.3.9\build-vc14
-C:\> cd %VISP_WS%\eigen-3.3.9\build-vc14
+C:\> cd %VISP_WS%\3rdparty\eigen-3.4.0
+C:\> mkdir build-vc14
+C:\> cd build-vc14
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 14 2016 and 64 bits hardware
 and installation folder is set to `%%VISP_WS%\eigen-3.3.9\build-vc14\install` folder):
 \verbatim
-C:\> cmake -G "Visual Studio 14 2016" -A "x64" %VISP_WS%\eigen-3.3.9 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.9\build-vc14\install
+C:\> cmake -G "Visual Studio 14 2016" -A "x64" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.9\build-vc14\install
 \endverbatim
 - Build and install Eigen3 (installation doesn't need administrator privileges)
 \verbatim
@@ -168,7 +169,7 @@ C:\> setx OpenCV_DIR "%VISP_WS%\opencv-4.5.1\build"
 C:\> exit
 \endverbatim
 where `%%VISP_WS%\opencv-4.5.1\build` is where you have installed OpenCV. Inside this folder you should have a
-file named `OpenCVConfig.cmake`. 
+file named `OpenCVConfig.cmake`.
 
 - You have also to add the location of OpenCV libraries corresponding to Visual Studio 14 2016 usage in the
 `Path` environment variable. Open the "Edit environment variable" UI, and modify `Path` to add a new line with
@@ -189,7 +190,7 @@ Intel Realsense SDK 2.0 contains librealsense. To install this SDK:
 
 <b>2. Complete Intel Realsense SDK 2.0 installation</b>
 
-To finalize the installation, add the location of `realsense2.dll` library in the `Path` environment variable. 
+To finalize the installation, add the location of `realsense2.dll` library in the `Path` environment variable.
 Open the "Edit environment variable" UI, and modify `Path` to add a new line with `C:\Program Files (x86)\Intel RealSense SDK 2.0\bin\x64`.
 
 \subsubsection install_win10_msvc14_3rdparty_pcl PCL 3rd party
@@ -211,7 +212,7 @@ For Visual Studio 14 2015:
 <b>2. Complete PCL installation</b>
 
 To finalize the installation, add the location of `pcl_common_<debug|release>.dll` and `OpenNI2.dll` libraries
-in the `Path` environment variable. 
+in the `Path` environment variable.
 Open the "Edit environment variable" UI, and modify `Path` to add respectively:
 - a new line with `C:\Program Files\PCL 1.8.1\bin`
 - a new line with `C:\Program Files\OpenNI2\Redist`
@@ -330,9 +331,9 @@ C:\> cd %VISP_WS%
 C:\> git clone https://github.com/lagadic/visp.git
 \endverbatim
 
-We suppose now that ViSP source is in `%%VISP_WS%\visp`. 
+We suppose now that ViSP source is in `%%VISP_WS%\visp`.
 
-\subsection install_win10_msvc14_config Configure ViSP from source 
+\subsection install_win10_msvc14_config Configure ViSP from source
 
 The goal of the configuration step is now to use CMake to produce a Visual Studio C++ solution file that will
 be located in `%%VISP_WS%/visp-build-vc14`.
@@ -345,10 +346,10 @@ be located in `%%VISP_WS%/visp-build-vc14`.
 - Select then your compiler "Visual Studio 14 2015", set optional platform to `"x64"` and click on "Finish" button.
 \image html img-cmake-win10-msvc14-msvc-version.png
 - This will start CMake configuration. As shown in the next image, Eigen3, Flycapture, GDI (Graphical Device Interface),
-  OpenCV,  OpenMP, Pylon, Realsense2 and Zbar 3rd parties are automatically detected. 
+  OpenCV,  OpenMP, Pylon, Realsense2 and Zbar 3rd parties are automatically detected.
 \image html img-cmake-win10-msvc14-visp-config.png
 \note Installation folder is set to `%%VISP_WS%/visp-build-vc14/install`. If you want to change the installation folder
-to `C:\Program Files (x86)\ViSP`, make sure that you have administrator privileges to write in that folder before modifying `CMAKE_INSTALL_PREFIX`. 
+to `C:\Program Files (x86)\ViSP`, make sure that you have administrator privileges to write in that folder before modifying `CMAKE_INSTALL_PREFIX`.
 \warning If you forgot to set `Eigen3_DIR` environment var, you will get the following warning in `cmake_gui`:
 \verbatim
 CMake Warning at CMakeLists.txt:1156 (message):
@@ -364,13 +365,13 @@ CMake Warning at CMakeLists.txt:1156 (message):
     - delete the cache using menu `File > Delete Cache`
     - and configure again ViSP.
 	.
-    At this point, you should no more see the warning. 
+    At this point, you should no more see the warning.
 
 - Click then on "Configure" button. All the red lines should disappear.
 \image html img-cmake-win10-msvc14-visp-config2.png
 \note The default configuration lead to the creation of a shared library (with `.dll` extension). This is the default
 configuration that is recommended. If you want to create rather a static library (with `.lib` extension) you have to
-uncheck the `BUILD_SHARED_LIBS` option to disable DLL creation. 
+uncheck the `BUILD_SHARED_LIBS` option to disable DLL creation.
 
 - To finish the configuration, click on "Generate" button.
 \image html img-cmake-win10-msvc14-visp-generate.png
@@ -403,7 +404,7 @@ uncheck the `BUILD_SHARED_LIBS` option to disable DLL creation.
 \image html img-win10-msvc14-visp-explorer-install.png
 
 - Note that you can also build ViSP in `Debug` configuration. In that case, all the library names are suffixed by "d"
-  character (`libvisp_core320d.dll`...). 
+  character (`libvisp_core320d.dll`...).
 
 \subsection install_win10_msvc14_build_visp_doc Build ViSP documentation
 
@@ -618,15 +619,15 @@ General configuration information for ViSP 3.3.1
 
   Python (for build):            C:/Users/fspindle/AppData/Local/Programs/Python/Python37-32/python.exe
 
-  Java:                          
+  Java:
     ant:                         NO
     JNI:                         C:/Program Files/Java/jdk-11.0.4/include C:/Program Files/Java/jdk-11.0.4/include/win32 C:/Program Files/Java/jdk-11.0.4/include
 
-  Build options: 
+  Build options:
     Build deprecated:            yes
     Build with moment combine:   no
 
-  Mathematics: 
+  Mathematics:
     Blas/Lapack:                 yes
     \- Use MKL:                  no
     \- Use OpenBLAS:             no
@@ -637,11 +638,11 @@ General configuration information for ViSP 3.3.1
     Use Eigen3:                  yes (ver 3.3.9)
     Use OpenCV:                  yes (ver 4.5.1)
 
-  Simulator: 
-    Ogre simulator: 
+  Simulator:
+    Ogre simulator:
     \- Use Ogre3D:               no
     \- Use OIS:                  no
-    Coin simulator: 
+    Coin simulator:
     \- Use Coin3D:               no
     \- Use SoWin:                no
     \- Use SoXt:                 no
@@ -650,14 +651,14 @@ General configuration information for ViSP 3.3.1
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
-  Media I/O: 
+  Media I/O:
     Use JPEG:                    no
     Use PNG:                     no
     \- Use ZLIB:                 no
     Use OpenCV:                  yes (ver 4.5.1)
     Use stb_image (built-in):    no
 
-  Real robots: 
+  Real robots:
     Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
@@ -674,14 +675,14 @@ General configuration information for ViSP 3.3.1
     Use qbdevice (built-in):     yes (ver 2.6.0)
     Use takktile2 (built-in):    no
 
-  GUI: 
+  GUI:
     Use X11:                     no
     Use GTK:                     no
     Use OpenCV:                  yes (ver 4.5.1)
     Use GDI:                     yes
     Use Direct3D:                no
 
-  Cameras: 
+  Cameras:
     Use DC1394-2.x:              no
     Use CMU 1394:                no
     Use V4L2:                    no
@@ -691,7 +692,7 @@ General configuration information for ViSP 3.3.1
     Use Basler Pylon:            no
     Use IDS uEye:                yes (ver 4.94.0)
 
-  RGB-D sensors: 
+  RGB-D sensors:
     Use Realsense:               no
     Use Realsense2:              yes (ver 2.32.1)
     Use Kinect:                  no
@@ -701,29 +702,29 @@ General configuration information for ViSP 3.3.1
     Use PCL:                     yes (ver 1.8.1)
     \- Use VTK:                  yes (ver 8.0.0)
 
-  F/T sensors: 
+  F/T sensors:
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
 
-  Detection: 
+  Detection:
     Use zbar:                    yes (ver 0.10.1)
     Use dmtx:                    no
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
 
-  Misc: 
+  Misc:
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
     Use libxml2:                 no
 
-  Optimization: 
+  Optimization:
     Use OpenMP:                  yes
     Use pthread:                 no
     Use pthread (built-in):      yes (ver 3.0.1)
     Use cxx standard:            11
 
-  Documentation: 
+  Documentation:
     Use doxygen:                 yes
 
   Tests and samples:
