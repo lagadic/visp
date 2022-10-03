@@ -488,11 +488,11 @@ General configuration information for ViSP 3.3.1
 
   Windows RT support:            no
 
-  Python (for build):            NO
+  Python (for build):            no
 
   Java:
-    ant:                         NO
-    JNI:                         NO
+    ant:                         no
+    JNI:                         no
 
   Build options:
     Build deprecated:            yes
