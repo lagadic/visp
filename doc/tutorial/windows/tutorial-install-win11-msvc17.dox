@@ -242,8 +242,8 @@ will be located in `%%VISP_WS%/visp-build-vc17`.
 - Click on "Yes" to create the `%%VISP_WS%/visp-build-vc17` folder.
 - Select then your compiler "Visual Studio 17 2022" and click on "Finish" button.
 \image html img-cmake-win10-msvc17-msvc-version.jpg
-- This will start CMake configuration. As shown in the next image, Eigen3, FlyCapture, GDI (Graphical
-Device Interface), Kinova Jaco SDK, OpenCV,  OpenMP, Realsense2 and uEye 3rd parties are automatically detected.
+- This will start CMake configuration. As shown in the next image, Eigen3, GDI (Graphical
+Device Interface), OpenCV and OpenMP 3rd parties are automatically detected.
 \image html img-cmake-win11-msvc17-visp-config.jpg
 \note Installation folder is set to `%%VISP_WS%/visp-build-vc17/install`. If you want to change the
 installation folder to `C:\Program Files (x86)\ViSP`, make sure that you have administrator privileges
@@ -527,11 +527,11 @@ General configuration information for ViSP 3.5.1
 
   Windows RT support:            no
 
-  Python (for build):            NO
+  Python (for build):            no
 
   Java:
-    ant:                         NO
-    JNI:                         NO
+    ant:                         no
+    JNI:                         no
 
   Build options:
     Build deprecated:            yes
