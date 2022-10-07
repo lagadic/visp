@@ -98,6 +98,16 @@ private:
 #endif
 #endif
 
+#if defined _WIN32 && (defined(_M_ARM) || defined(_M_ARM64))
+# define _ARM64_DISTINCT_NEON_TYPES
+# include <Intrin.h>
+# include <arm_neon.h>
+# define VISP_HAVE_NEON 1
+#elif defined(__ARM_NEON__) || (defined (__ARM_NEON) && defined(__aarch64__))
+#  include <arm_neon.h>
+#  define VISP_HAVE_NEON 1
+#endif
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #if HAVE_TRANSFORM
@@ -182,11 +192,12 @@ void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std
   psiTukey(sigma, m_normres, weights);
 }
 
+// TODO: change func name
 template <>
 inline void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<float> &residues,
                                                               std::vector<float> &weights, const float NoiseThreshold)
 {
-#if VISP_HAVE_SSSE3
+#if VISP_HAVE_SSSE3 || VISP_HAVE_NEON
   if (residues.empty()) {
     return;
   }
@@ -197,12 +208,21 @@ inline void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<
   m_normres.resize(residues.size());
 
   size_t i = 0;
+#if VISP_HAVE_SSSE3
   __m128 med_128 = _mm_set_ps1(med);
+#else
+  float32x4_t med_128 = vdupq_n_f64(med);
+#endif
 
   if (m_residues.size() >= 4) {
     for (i = 0; i <= m_residues.size() - 4; i += 4) {
+#if VISP_HAVE_SSSE3
       __m128 residues_128 = _mm_loadu_ps(residues.data() + i);
       _mm_storeu_ps(m_normres.data() + i, abs_ps(_mm_sub_ps(residues_128, med_128)));
+#else
+      float32x4_t residues_128 = vld1q_f32(residues.data() + i);
+      vst1q_f32(m_normres.data() + i, vabsq_f32(vsubq_f32(residues_128, med_128)));
+#endif
     }
   }
 
@@ -238,7 +258,7 @@ inline void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector
                                                                std::vector<double> &weights,
                                                                const double NoiseThreshold)
 {
-#if VISP_HAVE_SSSE3
+#if VISP_HAVE_SSSE3 || VISP_HAVE_NEON
   if (residues.empty()) {
     return;
   }
