@@ -98,7 +98,7 @@ private:
 #endif
 #endif
 
-#if defined _WIN32 && (defined(_M_ARM) || defined(_M_ARM64))
+#if defined _WIN32 && defined(_M_ARM64)
 #   define _ARM64_DISTINCT_NEON_TYPES
 #   include <Intrin.h>
 #   include <arm_neon.h>

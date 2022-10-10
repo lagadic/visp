@@ -912,7 +912,7 @@ SIMD_API void SimdMatMulTwist(const double * mat, size_t rows, const double * tw
         Sse2::SimdMatMulTwist(mat, rows, twist, dst);
     else
 #endif
-#if defined(SIMD_NEON_ENABLE) && defined(__aarch64__ )
+#if defined(SIMD_NEON_ENABLE) && defined(SIMD_ARM64_ENABLE)
     if (Neon::Enable)
         Neon::SimdMatMulTwist(mat, rows, twist, dst);
     else
@@ -984,7 +984,7 @@ SIMD_API void SimdComputeJtR(const double * J, size_t rows, const double * R, do
         Sse2::SimdComputeJtR(J, rows, R, dst);
     else
 #endif
-#if defined(SIMD_NEON_ENABLE) && defined(__aarch64__ )
+#if defined(SIMD_NEON_ENABLE) && defined(SIMD_ARM64_ENABLE)
     if (Neon::Enable)
         Neon::SimdComputeJtR(J, rows, R, dst);
     else

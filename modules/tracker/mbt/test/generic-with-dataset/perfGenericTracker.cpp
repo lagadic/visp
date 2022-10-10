@@ -128,9 +128,10 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
     const std::string configFileCam2 = input_directory + std::string("/Config/chateau_depth.xml");
     REQUIRE(vpIoTools::checkFilename(configFileCam1));
     REQUIRE(vpIoTools::checkFilename(configFileCam2));
-    tracker.loadConfigFile(configFileCam1, configFileCam2);
+    const bool verbose = false;
+    tracker.loadConfigFile(configFileCam1, configFileCam2, verbose);
     REQUIRE(vpIoTools::checkFilename(input_directory + "/Models/chateau.cao"));
-    tracker.loadModel(input_directory + "/Models/chateau.cao", input_directory + "/Models/chateau.cao");
+    tracker.loadModel(input_directory + "/Models/chateau.cao", input_directory + "/Models/chateau.cao", verbose);
 
     vpHomogeneousMatrix T;
     T[0][0] = -1;
@@ -141,7 +142,7 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
     T[2][1] = 1;
     T[2][2] = 0;
     T[2][3] = -0.15;
-    tracker.loadModel(input_directory + "/Models/cube.cao", false, T);
+    tracker.loadModel(input_directory + "/Models/cube.cao", verbose, T);
 
     vpImage<unsigned char> I;
     vpImage<uint16_t> I_depth_raw;
@@ -219,9 +220,10 @@ TEST_CASE("Benchmark generic tracker", "[benchmark]")
         tracker.resetTracker();
         tracker.setTrackerType(mapOfTrackerTypes[idx]);
 
-        tracker.loadConfigFile(configFileCam1, configFileCam2);
-        tracker.loadModel(input_directory + "/Models/chateau.cao", input_directory + "/Models/chateau.cao");
-        tracker.loadModel(input_directory + "/Models/cube.cao", false, T);
+        const bool verbose = false;
+        tracker.loadConfigFile(configFileCam1, configFileCam2, verbose);
+        tracker.loadModel(input_directory + "/Models/chateau.cao", input_directory + "/Models/chateau.cao", verbose);
+        tracker.loadModel(input_directory + "/Models/cube.cao", verbose, T);
         tracker.initFromPose(images.front(), cMo_truth_all.front());
 
         std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;

@@ -29,6 +29,7 @@ namespace Simd
         // https://github.com/DLTcollab/sse2neon/blob/master/sse2neon.h
         void SimdMatMulTwist(const double * mat, size_t rows, const double * twist, double * dst)
         {
+#if defined(SIMD_ARM64_ENABLE)
             // Transpose twist matrix
             double transpose[36];
             for (size_t i = 0; i < 6; i++) {
@@ -49,10 +50,17 @@ namespace Simd
                     dst[i*6 + j] = v_tmp[0] + v_tmp[1];
                 }
             }
+#else
+            (void) mat;
+            (void) rows;
+            (void) twist;
+            (void) dst;
+#endif
         }
 
         void SimdComputeJtR(const double * J, size_t rows, const double * R, double * dst)
         {
+#if defined(SIMD_ARM64_ENABLE)
             float64x2_t v_JTR_0_1 = vdupq_n_f64(0);
             float64x2_t v_JTR_2_3 = vdupq_n_f64(0);
             float64x2_t v_JTR_4_5 = vdupq_n_f64(0);
@@ -73,6 +81,12 @@ namespace Simd
             vst1q_f64(dst, v_JTR_0_1);
             vst1q_f64(dst + 2, v_JTR_2_3);
             vst1q_f64(dst + 4, v_JTR_4_5);
+#else
+            (void) J;
+            (void) rows;
+            (void) R;
+            (void) dst;
+#endif
         }
     }
 #else

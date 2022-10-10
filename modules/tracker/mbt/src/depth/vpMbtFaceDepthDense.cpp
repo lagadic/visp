@@ -50,24 +50,42 @@
   #define __FMA__ 1
 #endif
 
+#if defined _WIN32 && defined(_M_ARM64)
+#define _ARM64_DISTINCT_NEON_TYPES
+#include <Intrin.h>
+#include <arm_neon.h>
+#define VISP_HAVE_NEON 1
+#elif (defined(__ARM_NEON__) || defined (__ARM_NEON)) && defined(__aarch64__)
+#include <arm_neon.h>
+#define VISP_HAVE_NEON 1
+#endif
+
 #define USE_SIMD_CODE 1
+
 #if VISP_HAVE_SSE2 && USE_SIMD_CODE
 #define USE_SSE 1
 #else
 #define USE_SSE 0
 #endif
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x040000 && USE_SIMD_CODE
+#if VISP_HAVE_NEON && USE_SIMD_CODE
+#define USE_NEON 1
+#else
+#define USE_NEON 0
+#endif
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040101 || (VISP_HAVE_OPENCV_VERSION < 0x040000 && VISP_HAVE_OPENCV_VERSION >= 0x030407)) && USE_SIMD_CODE
 #define USE_OPENCV_HAL 1
 #include <opencv2/core/simd_intrinsics.hpp>
 #include <opencv2/core/hal/intrin.hpp>
 #endif
 
-#if !USE_OPENCV_HAL && USE_SSE
+#if !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
 #include <cstdint>
 
 namespace
 {
+#if USE_SSE
 inline void v_load_deinterleave(const uint64_t *ptr, __m128i& a, __m128i& b, __m128i& c)
 {
   __m128i t0 = _mm_loadu_si128((const __m128i*)ptr);       // a0, b0
@@ -76,9 +94,9 @@ inline void v_load_deinterleave(const uint64_t *ptr, __m128i& a, __m128i& b, __m
 
   t1 = _mm_shuffle_epi32(t1, 0x4e); // a1, c0
 
-  a = __m128i(_mm_unpacklo_epi64(t0, t1));
-  b = __m128i(_mm_unpacklo_epi64(_mm_unpackhi_epi64(t0, t0), t2));
-  c = __m128i(_mm_unpackhi_epi64(t1, t2));
+  a = _mm_unpacklo_epi64(t0, t1);
+  b = _mm_unpacklo_epi64(_mm_unpackhi_epi64(t0, t0), t2);
+  c = _mm_unpackhi_epi64(t1, t2);
 }
 
 inline void v_load_deinterleave(const double* ptr, __m128d& a0, __m128d& b0, __m128d& c0)
@@ -110,8 +128,32 @@ inline __m128d v_fma(const __m128d& a, const __m128d& b, const __m128d& c)
     return _mm_add_pd(_mm_mul_pd(a, b), c);
 #endif
 }
+#else
+inline void v_load_deinterleave(const double* ptr, float64x2_t& a0, float64x2_t& b0, float64x2_t& c0)
+{
+  float64x2x3_t v = vld3q_f64(ptr);
+  a0 = v.val[0];
+  b0 = v.val[1];
+  c0 = v.val[2];
 }
-#endif // !USE_OPENCV_HAL && USE_SSE
+
+inline float64x2_t v_combine_low(const float64x2_t& a, const float64x2_t& b)
+{
+  return vcombine_f64(vget_low_f64(a), vget_low_f64(b));
+}
+
+inline float64x2_t v_combine_high(const float64x2_t& a, const float64x2_t& b)
+{
+  return vcombine_f64(vget_high_f64(a), vget_high_f64(b));
+}
+
+inline float64x2_t v_fma(const float64x2_t& a, const float64x2_t& b, const float64x2_t& c)
+{
+    return vfmaq_f64(c, a, b);
+}
+#endif
+}
+#endif // !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
 
 vpMbtFaceDepthDense::vpMbtFaceDepthDense()
   : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(NULL),
@@ -436,16 +478,16 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
   double nz = m_planeCamera.getC();
   double D = m_planeCamera.getD();
 
-  bool useSIMD = vpCPUFeatures::checkSSE2();
+  bool useSIMD = vpCPUFeatures::checkSSE2() || vpCPUFeatures::checkNeon();
 #if USE_OPENCV_HAL
   useSIMD = true;
 #endif
-#if !USE_SSE && !USE_OPENCV_HAL
+#if !USE_SSE && !USE_NEON && !USE_OPENCV_HAL
   useSIMD = false;
 #endif
 
   if (useSIMD) {
-#if USE_SSE || USE_OPENCV_HAL
+#if USE_SSE  || USE_NEON|| USE_OPENCV_HAL
     size_t cpt = 0;
     if (getNbFeatures() >= 2) {
       double *ptr_point_cloud = &m_pointCloudFace[0];
@@ -457,11 +499,16 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
       const cv::v_float64x2 vny = cv::v_setall_f64(ny);
       const cv::v_float64x2 vnz = cv::v_setall_f64(nz);
       const cv::v_float64x2 vd = cv::v_setall_f64(D);
-#else
+#elif USE_SSE
       const __m128d vnx = _mm_set1_pd(nx);
       const __m128d vny = _mm_set1_pd(ny);
       const __m128d vnz = _mm_set1_pd(nz);
       const __m128d vd = _mm_set1_pd(D);
+#else
+      const float64x2_t vnx = vdupq_n_f64(nx);
+      const float64x2_t vny = vdupq_n_f64(ny);
+      const float64x2_t vnz = vdupq_n_f64(nz);
+      const float64x2_t vd = vdupq_n_f64(D);
 #endif
 
       for (; cpt <= m_pointCloudFace.size() - 6; cpt += 6, ptr_point_cloud += 6) {
@@ -496,7 +543,7 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
         cv::v_float64x2 verr = vd + cv::v_muladd(vnx, vx, cv::v_muladd(vny, vy, vnz*vz));
         cv::v_store(ptr_error, verr);
         ptr_error += 2;
-#else
+#elif USE_SSE
         __m128d vx, vy, vz;
         v_load_deinterleave(ptr_point_cloud, vx, vy, vz);
 
@@ -526,6 +573,37 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
 
         const __m128d verror = _mm_add_pd(vd, v_fma(vnx, vx, v_fma(vny, vy, _mm_mul_pd(vnz, vz))));
         _mm_storeu_pd(ptr_error, verror);
+        ptr_error += 2;
+#else
+        float64x2_t vx, vy, vz;
+        v_load_deinterleave(ptr_point_cloud, vx, vy, vz);
+
+        float64x2_t va1 = vsubq_f64(vmulq_f64(vnz, vy), vmulq_f64(vny, vz));
+        float64x2_t va2 = vsubq_f64(vmulq_f64(vnx, vz), vmulq_f64(vnz, vx));
+        float64x2_t va3 = vsubq_f64(vmulq_f64(vny, vx), vmulq_f64(vnx, vy));
+
+        float64x2_t vnxy = v_combine_low(vnx, vny);
+        vst1q_f64(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = v_combine_low(vnz, va1);
+        vst1q_f64(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = v_combine_low(va2, va3);
+        vst1q_f64(ptr_L, vnxy);
+        ptr_L += 2;
+
+        vnxy = v_combine_high(vnx, vny);
+        vst1q_f64(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = v_combine_high(vnz, va1);
+        vst1q_f64(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = v_combine_high(va2, va3);
+        vst1q_f64(ptr_L, vnxy);
+        ptr_L += 2;
+
+        const float64x2_t verror = vaddq_f64(vd, v_fma(vnx, vx, v_fma(vny, vy, vmulq_f64(vnz, vz))));
+        vst1q_f64(ptr_error, verror);
         ptr_error += 2;
 #endif
       }
