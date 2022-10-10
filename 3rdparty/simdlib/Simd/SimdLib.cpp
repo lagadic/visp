@@ -89,6 +89,36 @@ SIMD_API const char * SimdVersion()
 
 using namespace Simd;
 
+SIMD_API size_t SimdCpuInfo(SimdCpuInfoType type)
+{
+    switch (type)
+    {
+    case SimdCpuInfoSockets: return Cpu::SOCKET_NUMBER;
+    case SimdCpuInfoCores: return Cpu::CORE_NUMBER;
+    case SimdCpuInfoThreads: return Cpu::THREAD_NUMBER;
+    case SimdCpuInfoCacheL1: return Cpu::L1_CACHE_SIZE;
+    case SimdCpuInfoCacheL2: return Cpu::L2_CACHE_SIZE;
+    case SimdCpuInfoCacheL3: return Cpu::L3_CACHE_SIZE;
+#ifdef SIMD_SSE2_ENABLE
+    case SimdCpuInfoSse2: return Sse2::Enable ? 1 : 0;
+#endif
+#ifdef SIMD_SSE41_ENABLE
+    case SimdCpuInfoSse41: return Sse41::Enable ? 1 : 0;
+#endif
+#ifdef SIMD_AVX_ENABLE
+    case SimdCpuInfoAvx: return Avx::Enable ? 1 : 0;
+#endif
+#ifdef SIMD_AVX2_ENABLE
+    case SimdCpuInfoAvx2: return Avx2::Enable ? 1 : 0;
+#endif
+#ifdef SIMD_NEON_ENABLE
+    case SimdCpuInfoNeon: return Neon::Enable ? 1 : 0;
+#endif
+    default:
+        return 0;
+    }
+}
+
 SIMD_API const char * SimdPerformanceStatistic()
 {
 #if defined(SIMD_PERFORMANCE_STATISTIC) && defined(NDEBUG)

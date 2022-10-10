@@ -44,13 +44,13 @@
 template <typename T> class vpMbtTukeyEstimator
 {
 public:
-  void MEstimator(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold);
-  void MEstimator(const vpColVector &residues, vpColVector &weights, const double NoiseThreshold);
+  void MEstimator(const std::vector<T> &residues, std::vector<T> &weights, T NoiseThreshold);
+  void MEstimator(const vpColVector &residues, vpColVector &weights, double NoiseThreshold);
 
 private:
   T getMedian(std::vector<T> &vec);
-  void MEstimator_impl(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold);
-  void MEstimator_impl_ssse3(const std::vector<T> &residues, std::vector<T> &weights, const T NoiseThreshold);
+  void MEstimator_impl(const std::vector<T> &residues, std::vector<T> &weights, T NoiseThreshold);
+  void MEstimator_impl_simd(const std::vector<T> &residues, std::vector<T> &weights, T NoiseThreshold);
   void psiTukey(const T sig, std::vector<T> &x, std::vector<T> &weights);
   void psiTukey(const T sig, std::vector<T> &x, vpColVector &weights);
 
@@ -99,11 +99,11 @@ private:
 #endif
 
 #if defined _WIN32 && (defined(_M_ARM) || defined(_M_ARM64))
-# define _ARM64_DISTINCT_NEON_TYPES
-# include <Intrin.h>
-# include <arm_neon.h>
-# define VISP_HAVE_NEON 1
-#elif defined(__ARM_NEON__) || (defined (__ARM_NEON) && defined(__aarch64__))
+#   define _ARM64_DISTINCT_NEON_TYPES
+#   include <Intrin.h>
+#   include <arm_neon.h>
+#   define VISP_HAVE_NEON 1
+#elif (defined(__ARM_NEON__) || defined (__ARM_NEON)) && defined(__aarch64__)
 #  include <arm_neon.h>
 #  define VISP_HAVE_NEON 1
 #endif
@@ -192,10 +192,10 @@ void vpMbtTukeyEstimator<T>::MEstimator_impl(const std::vector<T> &residues, std
   psiTukey(sigma, m_normres, weights);
 }
 
-// TODO: change func name
 template <>
-inline void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<float> &residues,
-                                                              std::vector<float> &weights, const float NoiseThreshold)
+inline void vpMbtTukeyEstimator<float>::MEstimator_impl_simd(const std::vector<float> &residues,
+                                                             std::vector<float> &weights,
+                                                             float NoiseThreshold)
 {
 #if VISP_HAVE_SSSE3 || VISP_HAVE_NEON
   if (residues.empty()) {
@@ -211,7 +211,7 @@ inline void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<
 #if VISP_HAVE_SSSE3
   __m128 med_128 = _mm_set_ps1(med);
 #else
-  float32x4_t med_128 = vdupq_n_f64(med);
+  float32x4_t med_128 = vdupq_n_f32(med);
 #endif
 
   if (m_residues.size() >= 4) {
@@ -254,9 +254,9 @@ inline void vpMbtTukeyEstimator<float>::MEstimator_impl_ssse3(const std::vector<
  * \relates vpMbtTukeyEstimator
  */
 template <>
-inline void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector<double> &residues,
-                                                               std::vector<double> &weights,
-                                                               const double NoiseThreshold)
+inline void vpMbtTukeyEstimator<double>::MEstimator_impl_simd(const std::vector<double> &residues,
+                                                              std::vector<double> &weights,
+                                                              double NoiseThreshold)
 {
 #if VISP_HAVE_SSSE3 || VISP_HAVE_NEON
   if (residues.empty()) {
@@ -306,15 +306,15 @@ inline void vpMbtTukeyEstimator<double>::MEstimator_impl_ssse3(const std::vector
  */
 template <>
 inline void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &residues, std::vector<float> &weights,
-                                                   const float NoiseThreshold)
+                                                   float NoiseThreshold)
 {
-  bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
-#if !VISP_HAVE_SSSE3
-  checkSSSE3 = false;
+  bool checkSimd = vpCPUFeatures::checkSSSE3() || vpCPUFeatures::checkNeon();
+#if !VISP_HAVE_SSSE3 && !VISP_HAVE_NEON
+  checkSimd = false;
 #endif
 
-  if (checkSSSE3)
-    MEstimator_impl_ssse3(residues, weights, NoiseThreshold);
+  if (checkSimd)
+    MEstimator_impl_simd(residues, weights, NoiseThreshold);
   else
     MEstimator_impl(residues, weights, NoiseThreshold);
 }
@@ -324,15 +324,15 @@ inline void vpMbtTukeyEstimator<float>::MEstimator(const std::vector<float> &res
  */
 template <>
 inline void vpMbtTukeyEstimator<double>::MEstimator(const std::vector<double> &residues, std::vector<double> &weights,
-                                                    const double NoiseThreshold)
+                                                    double NoiseThreshold)
 {
-  bool checkSSSE3 = vpCPUFeatures::checkSSSE3();
-#if !VISP_HAVE_SSSE3
-  checkSSSE3 = false;
+  bool checkSimd = vpCPUFeatures::checkSSSE3() || vpCPUFeatures::checkNeon();
+#if !VISP_HAVE_SSSE3 && !VISP_HAVE_NEON
+  checkSimd = false;
 #endif
 
-  if (checkSSSE3)
-    MEstimator_impl_ssse3(residues, weights, NoiseThreshold);
+  if (checkSimd)
+    MEstimator_impl_simd(residues, weights, NoiseThreshold);
   else
     MEstimator_impl(residues, weights, NoiseThreshold);
 }
@@ -364,7 +364,7 @@ template <typename T> void vpMbtTukeyEstimator<T>::psiTukey(const T sig, std::ve
  */
 template <>
 inline void vpMbtTukeyEstimator<double>::MEstimator(const vpColVector &residues, vpColVector &weights,
-                                                    const double NoiseThreshold)
+                                                    double NoiseThreshold)
 {
   if (residues.size() == 0) {
     return;
@@ -401,7 +401,7 @@ inline void vpMbtTukeyEstimator<double>::MEstimator(const vpColVector &residues,
  */
 template <>
 inline void vpMbtTukeyEstimator<float>::MEstimator(const vpColVector &residues, vpColVector &weights,
-                                                   const double NoiseThreshold)
+                                                   double NoiseThreshold)
 {
   if (residues.size() == 0) {
     return;

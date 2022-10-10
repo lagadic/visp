@@ -31,13 +31,7 @@ namespace Simd
 #if defined(SIMD_X86_ENABLE) || defined(SIMD_X64_ENABLE)
     namespace Cpuid
     {
-        // See http://www.sandpile.org/x86/cpuid.htm for additional information.
-        enum Level
-        {
-            Ordinary = 1,
-            Extended = 7,
-        };
-
+        // See https://en.wikipedia.org/wiki/CPUID for additional information.
         enum Register
         {
             Eax = 0,
@@ -48,12 +42,12 @@ namespace Simd
 
         enum Bit
         {
-            // Ordinary:
-            // Edx:
+            // --------------------------- Case of EAX = 1, ECX = 0 -------------------------------
+            // In EDX:
             SSE = 1 << 25,
             SSE2 = 1 << 26,
 
-            // Ecx:
+            // In ECX:
             SSE3 = 1 << 0,
             SSSE3 = 1 << 9,
             FMA = 1 << 12,
@@ -63,47 +57,78 @@ namespace Simd
             AVX = 1 << 28,
             F16C = 1 << 29,
 
-            // Extended:
-            // Ebx:
+            // --------------------------- Case of EAX = 7, ECX = 0 -------------------------------
+            // In EBX:
+            BMI1 = 1 << 3,
             AVX2 = 1 << 5,
-            AVX512F = 1 << 16,
-            AVX512DQ = 1 << 17,
-            AVX512CD = 1 << 28,
-            AVX512BW = 1 << 30,
-            AVX512VL = 1 << 31,
+            BMI2 = 1 << 8,
+            AVX512_F = 1 << 16,
+            AVX512_DQ = 1 << 17,
+            AVX512_CD = 1 << 28,
+            AVX512_BW = 1 << 30,
+            AVX512_VL = 1 << 31,
 
-            // Ecx:
-            AVX512VBMI = 1 << 1,
-            AVX512VNNI = 1 << 11,
+            // In ECX:
+            AVX512_VBMI = 1 << 1,
+            AVX512_VNNI = 1 << 11,
+
+            // In EDX:
+            AMX_BF16 = 1 << 22,
+            AVX512_FP16 = 1 << 23,
+            AMX_TILE = 1 << 24,
+            AMX_INT8 = 1 << 25,
+
+            // --------------------------- Case of EAX = 7, ECX = 1 -------------------------------
+            // in EAX:
+            AVX_VNNI = 1 << 4,
+            AVX512_BF16 = 1 << 5,
         };
     }
 #endif//defined(SIMD_X86_ENABLE) || defined(SIMD_X64_ENABLE)
 
     namespace Cpu
     {
+        extern const size_t SOCKET_NUMBER;
+        extern const size_t CORE_NUMBER;
         extern const size_t THREAD_NUMBER;
         extern const size_t L1_CACHE_SIZE;
+        extern const size_t L2_CACHE_SIZE;
+        extern const size_t L3_CACHE_SIZE;
     }
 
     namespace Base
     {
 #if defined(SIMD_X86_ENABLE) || defined(SIMD_X64_ENABLE)
-        bool CheckBit(Cpuid::Level level, Cpuid::Register index, Cpuid::Bit bit);
+        bool CheckBit(int eax, int ecx, Cpuid::Register index, Cpuid::Bit bit);
 #endif
 
 #if defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE))
         bool CheckBit(int at, int bit);
 #endif
 
-#ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
+        size_t CpuSocketNumber();
+
+        size_t CpuCoreNumber();
+
+#ifdef SIMD_CPP_2011_ENABLE
         size_t CpuThreadNumber();
-#endif // Modified for c++ 98
+#endif
 
         size_t CpuCacheSize(size_t level);
 
         SIMD_INLINE size_t AlgCacheL1()
         {
             return Cpu::L1_CACHE_SIZE;
+        }
+
+        SIMD_INLINE size_t AlgCacheL2()
+        {
+            return Cpu::L3_CACHE_SIZE ? Cpu::L2_CACHE_SIZE : Cpu::L2_CACHE_SIZE * Cpu::SOCKET_NUMBER / Cpu::CORE_NUMBER;
+        }
+
+        SIMD_INLINE size_t AlgCacheL3()
+        {
+            return Cpu::L3_CACHE_SIZE ? Cpu::L3_CACHE_SIZE * Cpu::SOCKET_NUMBER / Cpu::CORE_NUMBER : Cpu::L2_CACHE_SIZE;
         }
     }
 

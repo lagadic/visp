@@ -68,15 +68,15 @@ namespace Simd
     namespace Base
     {
 #if defined(SIMD_X86_ENABLE) || defined(SIMD_X64_ENABLE)
-        bool CheckBit(Cpuid::Level level, Cpuid::Register index, Cpuid::Bit bit)
+        bool CheckBit(int eax, int ecx, Cpuid::Register index, Cpuid::Bit bit)
         {
             unsigned int registers[4] = { 0, 0, 0, 0 };
 #if defined(_MSC_VER)
-            __cpuid((int*)registers, level);
+            __cpuidex((int*)registers, eax, ecx);
 #elif (defined __GNUC__)
-            if (__get_cpuid_max(0, NULL) < level)
+            if (__get_cpuid_max(0, NULL) < eax)
                 return false;
-            __cpuid_count(level, 0,
+            __cpuid_count(eax, ecx,
                 registers[Cpuid::Eax],
                 registers[Cpuid::Ebx],
                 registers[Cpuid::Ecx],
@@ -136,6 +136,28 @@ namespace Simd
             ::GetLogicalProcessorInformation(info.data(), &size);
         }
 
+        size_t CpuSocketNumber()
+        {
+            std::vector<Info> info;
+            GetLogicalProcessorInformation(info);
+            size_t number = 0;
+            for (size_t i = 0; i < info.size(); ++i)
+                if (info[i].Relationship == ::RelationNumaNode)
+                    number++;
+            return number;
+        }
+
+        size_t CpuCoreNumber()
+        {
+            std::vector<Info> info;
+            GetLogicalProcessorInformation(info);
+            size_t number = 0;
+            for (size_t i = 0; i < info.size(); ++i)
+                if (info[i].Relationship == ::RelationProcessorCore)
+                    number++;
+            return number;
+        }
+
         size_t CpuCacheSize(size_t level)
         {
             std::vector<Info> info;
@@ -146,6 +168,33 @@ namespace Simd
             return 0;
         }
 #elif defined(__GNUC__)
+        size_t CpuSocketNumber()
+        {
+            uint32_t number = 0;
+            ::FILE * p = ::popen("lscpu -b -p=Socket 2>/dev/null | grep -v '^#' | sort -u 2>/dev/null | wc -l 2>/dev/null", "r");
+            if (p)
+            {
+                char buffer[PATH_MAX];
+                while (::fgets(buffer, PATH_MAX, p));
+                number = ::atoi(buffer);
+                ::pclose(p);
+            }
+            return number;
+        }
+
+        size_t CpuCoreNumber()
+        {
+            uint32_t number = 0;
+            ::FILE * p = ::popen("lscpu -b -p=Core 2>/dev/null | grep -v '^#' | sort -u 2>/dev/null | wc -l 2>/dev/null", "r");
+            if (p)
+            {
+                char buffer[PATH_MAX];
+                while (::fgets(buffer, PATH_MAX, p));
+                number = ::atoi(buffer);
+                ::pclose(p);
+            }
+            return number;
+        }
 
         SIMD_INLINE size_t CorrectIfZero(size_t value, size_t otherwise)
         {
@@ -197,9 +246,13 @@ namespace Simd
 
     namespace Cpu
     {
-#ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
+        const size_t SOCKET_NUMBER = Base::CpuSocketNumber();
+        const size_t CORE_NUMBER = Base::CpuCoreNumber();
+#ifdef SIMD_CPP_2011_ENABLE
         const size_t THREAD_NUMBER = Base::CpuThreadNumber();
 #endif
         const size_t L1_CACHE_SIZE = Base::CpuCacheSize(1);
+        const size_t L2_CACHE_SIZE = Base::CpuCacheSize(2);
+        const size_t L3_CACHE_SIZE = Base::CpuCacheSize(3);
     }
 }
