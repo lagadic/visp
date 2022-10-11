@@ -1,0 +1,77 @@
+name: Other-architectures-isolated
+
+# https://www.jeffgeerling.com/blog/2020/running-github-actions-workflow-on-schedule-and-other-events
+# https://github.com/uraimo/run-on-arch-action
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 2 * * SUN'
+
+jobs:
+  build-other-architectures:
+    # The host should always be linux
+    runs-on: ubuntu-20.04
+    name: Build on ${{ matrix.distro }} ${{ matrix.arch }} ${{ matrix.endianness }}
+
+    # Run steps on a matrix of different arch/distro combinations
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # - arch: armv6
+          #   distro: bullseye
+          #   target: ARMV6
+          - arch: armv7
+            distro: ubuntu22.04
+            target: ARMV7
+            endianness: (Little Endian)
+          - arch: aarch64
+            distro: ubuntu22.04 #fedora_latest
+            target: ARMV8
+            endianness: (Little Endian)
+          - arch: ppc64le
+            distro: ubuntu22.04
+            target: POWER8
+            endianness: (Little Endian)
+          - arch: s390x
+            distro: ubuntu22.04
+            target: Z13
+            endianness: (Big Endian)
+
+    steps:
+    # https://github.com/marketplace/actions/cancel-workflow-action
+    - name: Cancel Previous Runs
+      uses: styfle/cancel-workflow-action@0.9.1
+      with:
+        access_token: ${{ github.token }}
+
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Run on arch
+      uses: uraimo/run-on-arch-action@v2.2.1
+      with:
+        githubToken: ${{ github.token }}
+        arch: ${{ matrix.arch }}
+        distro: ${{ matrix.distro }}
+
+        run: |
+          lscpu
+
+          apt-get update && apt-get install -y  lsb-release git build-essential cmake libx11-dev
+          lsb_release -a
+          dpkg --list | grep compiler
+
+          git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
+          export VISP_INPUT_IMAGE_PATH=$HOME
+          echo ${VISP_INPUT_IMAGE_PATH}
+
+          pwd
+          mkdir build && cd build
+          cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF -DUSE_CXX_STANDARD=17
+          cat ViSP-third-party.txt
+
+          make -j$(nproc)
+
+          ctest -j$(nproc) --output-on-failure
