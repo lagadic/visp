@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2019 Yermalayeu Ihar,
+* Copyright (c) 2011-2022 Yermalayeu Ihar,
 *               2018-2019 Radchenko Andrey.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -96,8 +96,8 @@ namespace Simd
         }
     }
 
-#ifdef SIMD_SSE2_ENABLE    
-    namespace Sse2
+#ifdef SIMD_SSE41_ENABLE    
+    namespace Sse41
     {
         SIMD_INLINE __m128i NotEqual8u(__m128i a, __m128i b)
         {
@@ -203,7 +203,7 @@ namespace Simd
             return LesserOrEqual16i(a, b);
         }
     }
-#endif// SIMD_SSE2_ENABLE
+#endif// SIMD_SSE41_ENABLE
 
 #ifdef SIMD_AVX2_ENABLE    
     namespace Avx2

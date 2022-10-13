@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2020 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -21,46 +21,40 @@
 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 * SOFTWARE.
 */
-#include "Simd/SimdEnable.h"
-#include "Simd/SimdCpu.h"
+#ifndef __SimdEmpty_h__
+#define __SimdEmpty_h__
 
-#if defined(_MSC_VER)
-#include <windows.h>
-#endif
+#include "Simd/SimdEnable.h"
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
+#ifdef SIMD_SSE41_ENABLE
+    namespace Sse41
     {
-        SIMD_INLINE bool SupportedByCPU()
+        SIMD_INLINE void Empty()
         {
-            return
-                Base::CheckBit(1, 0, Cpuid::Edx, Cpuid::SSE) &&
-                Base::CheckBit(1, 0, Cpuid::Edx, Cpuid::SSE2);
-        }
-
-        SIMD_INLINE bool SupportedByOS()
-        {
-#if defined(_MSC_VER)
-            __try
-            {
-                __m128d value = _mm_set1_pd(1.0);// try to execute of SSE2 instructions;
-                return true;
-            }
-            __except (EXCEPTION_EXECUTE_HANDLER)
-            {
-                return false;
-            }
+#if defined(_MSC_VER) && defined(SIMD_X64_ENABLE)
 #else
-            return true;
+            _mm_empty();
 #endif
         }
 
-        bool GetEnable()
+        struct EmptyCaller
         {
-            return SupportedByCPU() && SupportedByOS();
-        }
+            SIMD_INLINE ~EmptyCaller()
+            {
+                if (Enable)
+                    Empty();
+            }
+        };
     }
 #endif
 }
+
+#if defined(SIMD_SSE41_ENABLE) && !(defined(_MSC_VER) && defined(SIMD_X64_ENABLE))
+#define SIMD_EMPTY() Simd::Sse41::EmptyCaller emptyCaller;
+#else
+#define SIMD_EMPTY() 
+#endif
+
+#endif

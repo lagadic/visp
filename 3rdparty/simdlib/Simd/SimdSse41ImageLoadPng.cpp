@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,6 @@
 #include "Simd/SimdArray.h"
 #include "Simd/SimdCpu.h"
 #include "Simd/SimdBase.h"
-#include "Simd/SimdSse2.h"
 #include "Simd/SimdSse41.h"
 
 namespace Simd
@@ -582,6 +581,8 @@ namespace Simd
 
         static int png__parse_huffman_block(png__zbuf* a)
         {
+            SIMD_PERF_FUNC();
+
             char* zout = a->zout;
             for (;;) {
                 int z = png__zhuffman_decode(a, &a->z_length);
@@ -1777,7 +1778,7 @@ namespace Simd
                     switch (_param.format)
                     {
                     case SimdPixelFormatGray8:
-                        Sse2::RgbaToGray(data, x, y, stride, _image.data, _image.stride);
+                        Sse41::RgbaToGray(data, x, y, stride, _image.data, _image.stride);
                         break;
                     case SimdPixelFormatBgr24:
                         Sse41::BgraToRgb(data, x, y, stride, _image.data, _image.stride);

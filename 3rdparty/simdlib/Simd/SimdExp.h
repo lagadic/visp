@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -41,8 +41,8 @@ namespace Simd
         }
     }
 
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
+#ifdef SIMD_SSE41_ENABLE    
+    namespace Sse41
     {
         class Exp
         {
@@ -192,7 +192,7 @@ namespace Simd
             return _mm_div_ps(_mm_sub_ps(exp, _1), _mm_add_ps(_1, exp));
         }
     }
-#endif //SIMD_SSE2_ENABLE
+#endif //SIMD_SSE41_ENABLE
 
 #ifdef SIMD_AVX2_ENABLE
     namespace Avx2

@@ -1,7 +1,9 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2020 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar,
+*               2022-2022 Souriya Trinh,
+*               2022-2022 Fabien Spindler.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +26,7 @@
 #include "Simd/SimdCpu.h"
 
 #include <vector>
-#ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
+#ifdef SIMD_CPP_2011_ENABLE
 #include <thread>
 #endif
 #include <sstream>
@@ -49,13 +51,11 @@
 
 #if defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)
 #include <fcntl.h>
-#if !defined(__APPLE__) // Line added for Modification for iOS
+#if !defined(__APPLE__)
 #include <sys/auxv.h>
-#if defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)
-#if !defined(__FreeBSD__)
+#if (defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)) && !defined(__FreeBSD__)
 #include <asm/hwcap.h>
 #endif
-#endif // Line added for Modification for iOS
 #endif
 #endif
 
@@ -88,8 +88,7 @@ namespace Simd
         }
 #endif//defined(SIMD_X86_ENABLE) || defined(SIMD_X64_ENABLE)
 
-#if !defined(__APPLE__) // Line added Modified for iOS
-#if defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE))
+#if defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)) && !defined(__APPLE__)
         bool CheckBit(int at, int bit)
         {
             bool result = false;
@@ -115,10 +114,9 @@ namespace Simd
             ::close(file);
             return result;
         }
-#endif//defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE))
-#endif // Line added Modified for iOS
+#endif//defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)) && !defined(__APPLE__)
 
-#ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
+#ifdef SIMD_CPP_2011_ENABLE
         size_t CpuThreadNumber()
         {
             return std::thread::hardware_concurrency();

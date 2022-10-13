@@ -1,7 +1,8 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar,
+*               2022-2022 Souriya Trinh.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +24,6 @@
 */
 #include "Simd/SimdMemory.h"
 #include "Simd/SimdImageSave.h"
-#include "Simd/SimdSse2.h"
 #include "Simd/SimdSse41.h"
 
 #include <memory>
@@ -41,7 +41,7 @@ namespace Simd
                 switch (_param.format)
                 {
                 case SimdPixelFormatBgr24: _convert = Sse41::BgrToGray; break;
-                case SimdPixelFormatBgra32: _convert = Sse2::BgraToGray; break;
+                case SimdPixelFormatBgra32: _convert = Sse41::BgraToGray; break;
                 case SimdPixelFormatRgb24: _convert = Sse41::RgbToGray; break;
                 case SimdPixelFormatRgba32: _convert = Sse41::RgbaToGray; break;
                 default: break;
@@ -59,7 +59,7 @@ namespace Simd
                 switch (_param.format)
                 {
                 case SimdPixelFormatBgr24: _convert = Sse41::BgrToGray; break;
-                case SimdPixelFormatBgra32: _convert = Sse2::BgraToGray; break;
+                case SimdPixelFormatBgra32: _convert = Sse41::BgraToGray; break;
                 case SimdPixelFormatRgb24: _convert = Sse41::RgbToGray; break;
                 case SimdPixelFormatRgba32: _convert = Sse41::RgbaToGray; break;
                 default: break;

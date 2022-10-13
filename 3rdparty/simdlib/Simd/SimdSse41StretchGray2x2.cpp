@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2017 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,8 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
+#ifdef SIMD_SSE41_ENABLE    
+    namespace Sse41
     {
         template<bool align> SIMD_INLINE void StoreUnpacked(__m128i value, uint8_t * dst)
         {
@@ -77,8 +77,5 @@ namespace Simd
                 StretchGray2x2<false>(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride);
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdSse2StretchGray2x2.cpp.o) has no symbols
-    void dummy_SimdSse2StretchGray2x2(){};
-#endif// SIMD_SSE2_ENABLE
+#endif
 }

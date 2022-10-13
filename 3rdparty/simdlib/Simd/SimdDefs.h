@@ -1,7 +1,8 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar,
+*               2022-2022 Souriya Trinh.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -36,10 +37,7 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <cmath>
-
-#if defined(SIMD_SSE2_DISABLE) && !defined(SIMD_SSE41_DISABLE)
-#define SIMD_SSE41_DISABLE
-#endif
+#include <limits>
 
 #if defined(SIMD_SSE41_DISABLE) && !defined(SIMD_AVX_DISABLE)
 #define SIMD_AVX_DISABLE
@@ -67,11 +65,11 @@
 #define SIMD_ARM_ENABLE
 #endif
 
-#if defined(SIMD_X64_ENABLE) || defined(SIMD_X86_ENABLE)
-
-#if !defined(SIMD_SSE2_DISABLE) && _MSC_VER >= 1300
-#define SIMD_SSE2_ENABLE
+#if defined _M_ARM64
+#define SIMD_ARM64_ENABLE
 #endif
+
+#if defined(SIMD_X64_ENABLE) || defined(SIMD_X86_ENABLE)
 
 #if !defined(SIMD_SSE41_DISABLE) && _MSC_VER >= 1500
 #define SIMD_SSE41_ENABLE
@@ -161,11 +159,7 @@
 
 #if defined(SIMD_X86_ENABLE) || defined(SIMD_X64_ENABLE)
 
-#if !defined(SIMD_SSE2_DISABLE) && defined(__SSE__) && defined(__SSE2__)
-#define SIMD_SSE2_ENABLE
-#endif
-
-#if !defined(SIMD_SSE41_DISABLE) && defined(__SSE3__) && defined(__SSSE3__) && defined(__SSE4_1__) && defined(__SSE4_2__)
+#if !defined(SIMD_SSE41_DISABLE) && defined(__SSE__) && defined(__SSE2__) && defined(__SSE3__) && defined(__SSSE3__) && defined(__SSE4_1__) && defined(__SSE4_2__)
 #define SIMD_SSE41_ENABLE
 #endif
 
@@ -219,7 +213,8 @@
 
 #endif
 
-#ifdef SIMD_SSE2_ENABLE
+#ifdef SIMD_X64_ENABLE
+#include <mmintrin.h>
 #include <emmintrin.h>
 #endif
 
@@ -237,7 +232,7 @@
 
 #if defined(SIMD_AVX_ENABLE) || defined(SIMD_AVX2_ENABLE)
 #define SIMD_ALIGN 32
-#elif defined(SIMD_SSE2_ENABLE) || defined(SIMD_SSE41_ENABLE) \
+#elif defined(SIMD_SSE41_ENABLE) \
     || defined(SIMD_NEON_ENABLE)
 #define SIMD_ALIGN 16
 #elif defined (SIMD_X64_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM64_ENABLE)

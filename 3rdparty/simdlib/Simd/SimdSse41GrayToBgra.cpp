@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2017 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,8 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
+#ifdef SIMD_SSE41_ENABLE    
+    namespace Sse41
     {
         template <bool align> SIMD_INLINE void GrayToBgra(uint8_t * bgra, __m128i gray, __m128i alpha)
         {
@@ -75,8 +75,5 @@ namespace Simd
                 GrayToBgra<false>(gray, width, height, grayStride, bgra, bgraStride, alpha);
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdSse2GrayToBgra.cpp.o) has no symbols
-    void dummy_SimdSse2GrayToBgra(){};
-#endif// SIMD_SSE2_ENABLE
+#endif
 }

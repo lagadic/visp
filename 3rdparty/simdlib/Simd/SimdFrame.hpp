@@ -1,9 +1,10 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar,
+* Copyright (c) 2011-2022 Yermalayeu Ihar,
 *               2014-2019 Antonenka Mikhail,
-*               2019-2019 Artur Voronkov.
+*               2019-2019 Artur Voronkov,
+*               2022-2022 Souriya Trinh.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -85,6 +86,15 @@ namespace Simd
         */
         Frame(const Frame & frame);
 
+#ifdef SIMD_CPP_2011_ENABLE
+        /*!
+            Move constructor of Frame structure.
+
+            \param [in] frame - a moved Frame.
+        */
+        Frame(Frame&& frame) noexcept;
+#endif
+
         /*!
             Creates a new one plane Frame structure on the base of the image view.
 
@@ -95,6 +105,17 @@ namespace Simd
             \param [in] timestamp_ - a timestamp of created frame. It is equal to 0 by default.
         */
         Frame(const View<A> & view, bool flipped_ = false, double timestamp_ = 0);
+
+#ifdef SIMD_CPP_2011_ENABLE
+        /*!
+            Creates a new one plane Frame structure on the base of the temporal image view.
+
+            \param [in] view - a temporal image view.
+            \param [in] flipped_ - a flag of vertically flipped image of created frame. It is equal to false by default.
+            \param [in] timestamp_ - a timestamp of created frame. It is equal to 0 by default.
+        */
+        Frame(View<A>&& view, bool flipped_ = false, double timestamp_ = 0);
+#endif
 
         /*!
             Creates a new Frame structure with specified width, height and pixel format.
@@ -148,6 +169,14 @@ namespace Simd
         Frame * Clone() const;
 
         /*!
+            Gets a copy of region of current frame which bounded by the rectangle with specified coordinates.
+
+            \param [in] rect - a rectangle which bound the region.
+            \return - a pointer to the new Frame structure. The user must free this pointer after usage.
+        */
+        Frame * Clone(const Rectangle<ptrdiff_t>& rect) const;
+
+        /*!
             Gets a copy of current frame using buffer as a storage.
 
             \param [in, out] buffer - an external frame as a buffer.
@@ -164,6 +193,16 @@ namespace Simd
             \return a reference to itself.
         */
         Frame & operator = (const Frame & frame);
+
+#ifdef SIMD_CPP_2011_ENABLE
+        /*!
+            Moves Frame structure.
+
+            \param [in] frame - a moved frame.
+            \return a reference to itself.
+        */
+        Frame& operator = (Frame&& frame);
+#endif
 
         /*!
             Creates reference to itself.
@@ -289,6 +328,29 @@ namespace Simd
             \return - a number of planes.
         */
         size_t PlaneCount() const;
+
+        /*!
+            Clears Frame structure (reset all fields).
+         */
+        void Clear();
+
+        /*!
+            Swaps content of two (this and other) Frame  structures.
+
+            \param [in] other - an other frame.
+        */
+        void Swap(Frame& other);
+
+        /*!
+            Gets owner flag: Do its planes own their images?
+            \return - an owner flag.
+        */
+        bool Owner() const;
+
+        /*!
+            Captures image planes (copies to internal buffers) if this Frame is not owner of current image planes.
+        */
+        void Capture();
     };
 
     /*! @ingroup cpp_frame_functions
@@ -365,6 +427,18 @@ namespace Simd
             planes[i] = frame.planes[i];
     }
 
+#ifdef SIMD_CPP_2011_ENABLE
+    template <template<class> class A> SIMD_INLINE Frame<A>::Frame(Frame && frame) noexcept
+        : width(0)
+        , height(0)
+        , format(None)
+        , flipped(false)
+        , timestamp(0)
+    {
+        Swap(frame);
+    }
+#endif
+
     template <template<class> class A> SIMD_INLINE Frame<A>::Frame(const View<A> & view, bool flipped_, double timestamp_)
         : width(view.width)
         , height(view.height)
@@ -384,6 +458,28 @@ namespace Simd
         }
         planes[0] = view;
     }
+
+#ifdef SIMD_CPP_2011_ENABLE
+    template <template<class> class A> SIMD_INLINE Frame<A>::Frame(View<A>&& view, bool flipped_, double timestamp_)
+        : width(view.width)
+        , height(view.height)
+        , format(None)
+        , flipped(flipped_)
+        , timestamp(timestamp_)
+    {
+        switch (view.format)
+        {
+        case View<A>::Gray8: (Format&)format = Gray8; break;
+        case View<A>::Bgr24: (Format&)format = Bgr24; break;
+        case View<A>::Bgra32: (Format&)format = Bgra32; break;
+        case View<A>::Rgb24: (Format&)format = Rgb24; break;
+        case View<A>::Rgba32: (Format&)format = Rgba32; break;
+        default:
+            assert(0);
+        }
+        planes[0] = std::move(view);
+    }
+#endif
 
     template <template<class> class A> SIMD_INLINE Frame<A>::Frame(size_t width_, size_t height_, Format format_, bool flipped_, double timestamp_)
         : width(0)
@@ -448,6 +544,11 @@ namespace Simd
         return clone;
     }
 
+    template <template<class> class A> SIMD_INLINE Frame<A>* Frame<A>::Clone(const Rectangle<ptrdiff_t>& rect) const
+    {
+        return Region(rect).Clone();
+    }
+
     /*! \cond */
     template <template<class> class A> SIMD_INLINE Frame<A> * Frame<A>::Clone(Frame<A> & buffer) const
     {
@@ -464,7 +565,6 @@ namespace Simd
         Copy(*this, *clone);
         return clone;
     }
-    /*! \endcond */
 
     template <template<class> class A> SIMD_INLINE Frame<A> & Frame<A>::operator = (const Frame<A> & frame)
     {
@@ -480,6 +580,19 @@ namespace Simd
         }
         return *this;
     }
+
+#ifdef SIMD_CPP_2011_ENABLE
+    template <template<class> class A> SIMD_INLINE Frame<A>& Frame<A>::operator = (Frame<A>&& frame)
+    {
+        if (this != &frame)
+        {
+            Clear();
+            Swap(frame);
+        }
+        return *this;
+    }
+#endif
+    /*! \endcond */
 
     template <template<class> class A> SIMD_INLINE Frame<A> & Frame<A>::Ref()
     {
@@ -622,6 +735,43 @@ namespace Simd
     template <template<class> class A> SIMD_INLINE size_t Frame<A>::PlaneCount() const
     {
         return PlaneCount(format);
+    }
+
+    template <template<class> class A> SIMD_INLINE void Frame<A>::Clear()
+    {
+        for (size_t i = 0, n = PlaneCount(); i < n; ++i)
+            planes[i].Clear();
+        *(size_t*)&width = 0;
+        *(size_t*)&height = 0;
+        *(Format*)&format = None;
+        flipped = false;
+        timestamp = 0;
+    }
+
+    template <template<class> class A> SIMD_INLINE void Frame<A>::Swap(Frame<A>& other)
+    {
+        for (size_t i = 0; i < PLANE_COUNT_MAX; ++i)
+            planes[i].Swap(other.planes[i]);
+        std::swap((size_t&)width, (size_t&)other.width);
+        std::swap((size_t&)height, (size_t&)other.height);
+        std::swap((Format&)format, (Format&)other.format);
+        std::swap(flipped, other.flipped);
+        std::swap(timestamp, other.timestamp);
+    }
+
+    template <template<class> class A> SIMD_INLINE bool Frame<A>::Owner() const
+    {
+        size_t n = PlaneCount();
+        bool owner = n > 0;
+        for (size_t i = 0; i < n; ++i)
+            owner = owner && planes[i].Owner();
+        return owner;
+    }
+
+    template <template<class> class A> SIMD_INLINE void Frame<A>::Capture()
+    {
+        for (size_t i = 0, n = PlaneCount(); i < n; ++i)
+            planes[i].Capture();
     }
 
     // View utilities implementation:

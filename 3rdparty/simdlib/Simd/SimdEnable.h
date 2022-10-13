@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -64,15 +64,6 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
-    {
-        bool GetEnable();
-
-        const bool Enable = GetEnable();
-    }
-#endif
-
 #ifdef SIMD_SSE41_ENABLE
     namespace Sse41
     {
@@ -112,12 +103,6 @@ namespace Simd
 
 #define SIMD_BASE_FUNC(func) Simd::Base::func
 
-#ifdef SIMD_SSE2_ENABLE
-#define SIMD_SSE2_FUNC(func) Simd::Sse2::Enable ? Simd::Sse2::func : 
-#else
-#define SIMD_SSE2_FUNC(func) 
-#endif
-
 #ifdef SIMD_SSE41_ENABLE
 #define SIMD_SSE41_FUNC(func) Simd::Sse41::Enable ? Simd::Sse41::func : 
 #else
@@ -149,5 +134,8 @@ namespace Simd
 #define SIMD_FUNC4(func, EXT1, EXT2, EXT3, EXT4) EXT1(func) EXT2(func) EXT3(func) EXT4(func) SIMD_BASE_FUNC(func)
 #define SIMD_FUNC5(func, EXT1, EXT2, EXT3, EXT4, EXT5) EXT1(func) EXT2(func) EXT3(func) EXT4(func) EXT5(func) SIMD_BASE_FUNC(func)
 #define SIMD_FUNC6(func, EXT1, EXT2, EXT3, EXT4, EXT5, EXT6) EXT1(func) EXT2(func) EXT3(func) EXT4(func) EXT5(func) EXT6(func) SIMD_BASE_FUNC(func)
+#define SIMD_FUNC7(func, EXT1, EXT2, EXT3, EXT4, EXT5, EXT6, EXT7) EXT1(func) EXT2(func) EXT3(func) EXT4(func) EXT5(func) EXT6(func) EXT7(func) SIMD_BASE_FUNC(func)
+#define SIMD_FUNC8(func, EXT1, EXT2, EXT3, EXT4, EXT5, EXT6, EXT7, EXT8) EXT1(func) EXT2(func) EXT3(func) EXT4(func) EXT5(func) EXT6(func) EXT7(func) EXT8(func) SIMD_BASE_FUNC(func)
+#define SIMD_FUNC9(func, EXT1, EXT2, EXT3, EXT4, EXT5, EXT6, EXT7, EXT8, EXT9) EXT1(func) EXT2(func) EXT3(func) EXT4(func) EXT5(func) EXT6(func) EXT7(func) EXT8(func) EXT9(func) SIMD_BASE_FUNC(func)
 
 #endif//__SimdEnable_h__

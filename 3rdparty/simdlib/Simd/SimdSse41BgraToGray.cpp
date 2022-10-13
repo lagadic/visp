@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -26,8 +26,8 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
+#ifdef SIMD_SSE41_ENABLE    
+    namespace Sse41
     {
         const __m128i K16_BLUE_RED = SIMD_MM_SET2_EPI16(Base::BLUE_TO_GRAY_WEIGHT, Base::RED_TO_GRAY_WEIGHT);
         const __m128i K16_GREEN_0000 = SIMD_MM_SET2_EPI16(Base::GREEN_TO_GRAY_WEIGHT, 0x0000);
@@ -68,12 +68,12 @@ namespace Simd
             {
                 for (size_t col = 0; col < alignedWidth; col += A)
                 {
-                    Load<align>(bgra + 4 * col, a);
+                    Sse41::Load<align>(bgra + 4 * col, a);
                     Store<align>((__m128i*)(gray + col), BgraToGray(a));
                 }
                 if (alignedWidth != width)
                 {
-                    Load<false>(bgra + 4 * (width - A), a);
+                    Sse41::Load<false>(bgra + 4 * (width - A), a);
                     Store<false>((__m128i*)(gray + width - A), BgraToGray(a));
                 }
                 bgra += bgraStride;
@@ -89,7 +89,7 @@ namespace Simd
                 BgraToGray<false>(bgra, width, height, bgraStride, gray, grayStride);
         }
 
-        //---------------------------------------------------------------------
+        //-----------------------------------------------------------------------------------------
 
         const __m128i K16_RED_BLUE = SIMD_MM_SET2_EPI16(Base::RED_TO_GRAY_WEIGHT, Base::BLUE_TO_GRAY_WEIGHT);
 
@@ -141,8 +141,5 @@ namespace Simd
                 RgbaToGray<false>(rgba, width, height, rgbaStride, gray, grayStride);
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdSse2BgraToGray.cpp.o) has no symbols
-    void dummy_SimdSse2BgraToGray(){};
-#endif// SIMD_SSE2_ENABLE
+#endif
 }

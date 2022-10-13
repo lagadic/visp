@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar,
+* Copyright (c) 2011-2022 Yermalayeu Ihar,
 *               2014-2019 Antonenka Mikhail,
 *               2019-2019 Facundo Galan.
 *
@@ -105,11 +105,9 @@ typedef enum
     SimdCpuInfoCacheL1, /*!< A size of level 1 data cache. */
     SimdCpuInfoCacheL2, /*!< A size of level 2 cache. */
     SimdCpuInfoCacheL3, /*!< A size of level 3 cache. */
-    SimdCpuInfoSse2, /*!< Availability of SSE2 (x86). */
     SimdCpuInfoSse41, /*!< Availability of SSE4.1 (x86). */
     SimdCpuInfoAvx, /*!< Availability of AVX (x86). */
     SimdCpuInfoAvx2, /*!< Availability of AVX2 (x86). */
-    SimdCpuInfoAvx512f, /*!< Availability of AVX-512F (x86). */
     SimdCpuInfoAvx512bw, /*!< Availability of AVX-512BW (x86). */
     SimdCpuInfoVmx, /*!< Availability of VMX or Altivec (PowerPC). */
     SimdCpuInfoVsx, /*!< Availability of VSX (PowerPC). */
@@ -174,6 +172,8 @@ typedef enum
     SimdPixelFormatNone = 0,
     /*! A 8-bit gray pixel format. */
     SimdPixelFormatGray8,
+    /*! A 16-bit (2 8-bit channels) pixel format (UV plane of NV12 pixel format). */
+    SimdPixelFormatUv16,
     /*! A 24-bit (3 8-bit channels) BGR (Blue, Green, Red) pixel format. */
     SimdPixelFormatBgr24,
     /*! A 32-bit (4 8-bit channels) BGRA (Blue, Green, Red, Alpha) pixel format. */
@@ -237,7 +237,21 @@ typedef enum
     SimdResizeMethodBicubic,
     /*! Area method. */
     SimdResizeMethodArea,
+    /*! Area method for previously reduced in 2 times image. */
+    SimdResizeMethodAreaFast,
 } SimdResizeMethodType;
+
+/*! @ingroup yuv_conversion
+    Describes YUV format type. It is uses in YUV to BGR forward and backward conversions.
+*/
+typedef enum
+{
+    SimdYuvUnknown = -1, /*!< Unknown YUV standard. */
+    SimdYuvBt601, /*!< Corresponds to BT.601 standard. Uses Kr=0.299, Kb=0.114. Restricts Y to range [16..235], U and V to [16..240]. */
+    SimdYuvBt709, /*!< Corresponds to BT.709 standard. Uses Kr=0.2126, Kb=0.0722. Restricts Y to range [16..235], U and V to [16..240]. */
+    SimdYuvBt2020, /*!< Corresponds to BT.2020 standard. Uses Kr=0.2627, Kb=0.0593. Restricts Y to range [16..235], U and V to [16..240]. */
+    SimdYuvTrect871, /*!< Corresponds to T-REC-T.871 standard. Uses Kr=0.299, Kb=0.114. Y, U and V use full range [0..255]. */
+} SimdYuvType;
 
 // ViSP custom SIMD code
 typedef enum
@@ -276,13 +290,18 @@ extern "C"
     SIMD_API const char * SimdVersion();
 
     /*! @ingroup info
+
         \fn size_t SimdCpuInfo(SimdCpuInfoType type);
+
         \short Gets info about CPU and %Simd Library.
+
         \note See enumeration ::SimdCpuInfoType.
+
         Using example:
         \verbatim
         #include "Simd/SimdLib.h"
         #include <iostream>
+
         int main()
         {
             std::cout << "Sockets : " << SimdCpuInfo(SimdCpuInfoSockets) << std::endl;
@@ -304,6 +323,7 @@ extern "C"
             return 0;
         }
         \endverbatim
+
         \param [in] type - a type of required information.
         \return a value which contains information about CPU and %Simd Library.
     */
