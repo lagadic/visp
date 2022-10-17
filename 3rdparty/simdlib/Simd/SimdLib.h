@@ -172,8 +172,6 @@ typedef enum
     SimdPixelFormatNone = 0,
     /*! A 8-bit gray pixel format. */
     SimdPixelFormatGray8,
-    /*! A 16-bit (2 8-bit channels) pixel format (UV plane of NV12 pixel format). */
-    SimdPixelFormatUv16,
     /*! A 24-bit (3 8-bit channels) BGR (Blue, Green, Red) pixel format. */
     SimdPixelFormatBgr24,
     /*! A 32-bit (4 8-bit channels) BGRA (Blue, Green, Red, Alpha) pixel format. */
