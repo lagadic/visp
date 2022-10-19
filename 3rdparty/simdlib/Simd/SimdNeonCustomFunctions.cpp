@@ -89,8 +89,5 @@ namespace Simd
 #endif
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdNeonCustomFunctions.cpp.o) has no symbols
-    void dummy_SimdNeonCustomFunctions(){};
 #endif// SIMD_NEON_ENABLE
 }

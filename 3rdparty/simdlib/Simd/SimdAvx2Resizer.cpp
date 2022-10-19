@@ -53,9 +53,6 @@ namespace Simd
                 return Avx::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdAvx2Resizer.cpp.o) has no symbols
-    void dummy_SimdAvx2Resizer(){};
 #endif //SIMD_AVX2_ENABLE
 }
 

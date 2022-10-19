@@ -76,8 +76,5 @@ namespace Simd
                 GrayToBgra<false>(gray, width, height, grayStride, bgra, bgraStride, alpha);
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdAvx2GrayToBgra.cpp.o) has no symbols
-    void dummy_SimdAvx2GrayToBgra(){};
 #endif// SIMD_AVX2_ENABLE
 }

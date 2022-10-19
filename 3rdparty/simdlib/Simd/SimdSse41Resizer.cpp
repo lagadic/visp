@@ -49,9 +49,6 @@ namespace Simd
                 return Base::ResizerInit(srcX, srcY, dstX, dstY, channels, type, method);
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdSse41Resizer.cpp.o) has no symbols
-    void dummy_SimdSse41Resizer(){};
 #endif//SIMD_SSE41_ENABLE
 }
 

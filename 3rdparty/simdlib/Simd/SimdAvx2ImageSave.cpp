@@ -134,8 +134,5 @@ namespace Simd
             return NULL;
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdAvx2ImageSave.cpp.o) has no symbols
-    void dummy_SimdAvx2ImageSave(){};
 #endif// SIMD_AVX2_ENABLE
 }

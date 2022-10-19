@@ -102,8 +102,5 @@ namespace Simd
             _mm256_zeroupper();
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdAvx1CustomFunctions.cpp.o) has no symbols
-    void dummy_SimdAvx1CustomFunctions(){};
 #endif// SIMD_AVX_ENABLE
 }
