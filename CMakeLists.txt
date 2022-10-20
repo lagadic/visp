@@ -1142,6 +1142,7 @@ endif()
 # Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
 #----------------------------------------------------------------------
 if(BUILD_TESTS)
+  vp_find_dataset(VISP_DATASET_FOUND VISP_DATASET_LOCATION)
   include(CTest)
 endif()
 
@@ -1481,13 +1482,11 @@ if(BUILD_JAVA OR BUILD_visp_java)
   endif()
 endif()
 
-
 # ============================ Options ===========================
 status("")
 status("  Build options: ")
 status("    Build deprecated:"           BUILD_DEPRECATED_FUNCTIONS      THEN "yes" ELSE "no")
 status("    Build with moment combine:"  ENABLE_MOMENTS_COMBINE_MATRICES THEN "yes" ELSE "no")
-
 
 # ===================== Optional 3rd parties =====================
 status("")
@@ -1612,11 +1611,12 @@ status("    \\- Use mathjax:"        USE_MATHJAX      THEN "yes" ELSE "no")
 # ========================== samples and tests ==========================
 status("")
 status("  Tests and samples:")
-status("    Use catch2 (built-in):"  WITH_CATCH2      THEN "yes (ver ${CATCH2_VERSION})" ELSE "no")
-status("    Tests:"                  BUILD_TESTS      THEN "yes" ELSE "no")
-status("    Demos:"                  BUILD_DEMOS      THEN "yes" ELSE "no")
-status("    Examples:"               BUILD_EXAMPLES   THEN "yes" ELSE "no")
-status("    Tutorials:"              BUILD_TUTORIALS  THEN "yes" ELSE "no")
+status("    Use catch2 (built-in):"  WITH_CATCH2        THEN "yes (ver ${CATCH2_VERSION})" ELSE "no")
+status("    Tests:"                  BUILD_TESTS        THEN "yes" ELSE "no")
+status("    Demos:"                  BUILD_DEMOS        THEN "yes" ELSE "no")
+status("    Examples:"               BUILD_EXAMPLES     THEN "yes" ELSE "no")
+status("    Tutorials:"              BUILD_TUTORIALS    THEN "yes" ELSE "no")
+status("    Dataset found:"          VISP_DATASET_FOUND THEN "yes (in ${VISP_DATASET_LOCATION})" ELSE "no")
 if(APPS_FOUND)
   status("    Apps:"              BUILD_APPS  THEN "yes" ELSE "no")
 endif()
