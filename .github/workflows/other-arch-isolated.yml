@@ -59,13 +59,9 @@ jobs:
         run: |
           lscpu
 
-          apt-get update && apt-get install -y  lsb-release git build-essential cmake libx11-dev
+          apt-get update && apt-get install -y lsb-release git build-essential cmake
           lsb_release -a
           dpkg --list | grep compiler
-
-          git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
-          export VISP_INPUT_IMAGE_PATH=$HOME
-          echo ${VISP_INPUT_IMAGE_PATH}
 
           pwd
           mkdir build && cd build
