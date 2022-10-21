@@ -61,6 +61,11 @@ jobs:
         echo "VTK_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VTK_DIR
 
+    - name: Check flann version
+      run: |
+        echo "pkg-config --modversion flann"
+        pkg-config --modversion flann
+
     - name: Build OpenCV from source
       run: |
         pwd
