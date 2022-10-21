@@ -1945,7 +1945,9 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
   if (!checkDirectory(pathname)) {
     throw(vpIoException(vpException::fatalError, "Directory %s doesn't exist'", pathname.c_str()));
   }
+  std::cout << "DEBUG pathname: " << pathname << std::endl;
   std::string dirName = path(pathname);
+  std::cout << "DEBUG dirName: " << dirName << std::endl;
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
@@ -1953,7 +1955,7 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
   struct dirent **list = NULL;
   int filesCount = scandir(dirName.c_str(), &list, NULL, NULL);
   if (filesCount == -1) {
-    throw(vpIoException(vpException::fatalError, "Cannot read files of directory %s", dirName.c_str()));
+    throw(vpIoException(vpException::fatalError, "Cannot read files of directory \"%s\"", dirName.c_str()));
   }
   for (int i = 0; i < filesCount; i++) {
     std::string fileName = list[i]->d_name;

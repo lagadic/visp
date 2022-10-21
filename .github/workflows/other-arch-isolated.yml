@@ -26,18 +26,18 @@ jobs:
             distro: ubuntu22.04
             target: ARMV7
             endianness: (Little Endian)
-          - arch: aarch64
-            distro: ubuntu22.04 #fedora_latest
-            target: ARMV8
-            endianness: (Little Endian)
-          - arch: ppc64le
-            distro: ubuntu22.04
-            target: POWER8
-            endianness: (Little Endian)
-          - arch: s390x
-            distro: ubuntu22.04
-            target: Z13
-            endianness: (Big Endian)
+          #- arch: aarch64
+          #  distro: ubuntu22.04 #fedora_latest
+          #  target: ARMV8
+          #  endianness: (Little Endian)
+          #- arch: ppc64le
+          #  distro: ubuntu22.04
+          #  target: POWER8
+          #  endianness: (Little Endian)
+          #- arch: s390x
+          #  distro: ubuntu22.04
+          #  target: Z13
+          #  endianness: (Big Endian)
 
     steps:
     # https://github.com/marketplace/actions/cancel-workflow-action
@@ -69,7 +69,7 @@ jobs:
           echo $GITHUB_WORKSPACE
 
           mkdir build && cd build
-          cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TESTS=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_robot=OFF -DBUILD_MODULE_visp_sensor=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_gui=OFF -DBUILD_MODULE_visp_imgproc=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_vs=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF -DUSE_CXX_STANDARD=17 -DCMAKE_INSTALL_PREFIX=/tmp/usr/local
+          cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TESTS=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_tt_mi=OFF -DBUILD_MODULE_visp_robot=OFF -DBUILD_MODULE_visp_sensor=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_gui=OFF -DBUILD_MODULE_visp_imgproc=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_vs=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF -DUSE_CXX_STANDARD=17 -DCMAKE_INSTALL_PREFIX=/tmp/usr/local
           cat ViSP-third-party.txt
           make -j$(nproc) install
 
@@ -92,3 +92,6 @@ jobs:
           ls /tmp/unknown/video
 
           ./test-read-seq
+
+          echo "Run with gdb"
+          gdb ./test-read-seq core -ex "thread apply all bt" -ex "set pagination 0" -batch
