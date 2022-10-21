@@ -91,8 +91,8 @@ jobs:
           echo "ls -als /tmp/unknown/video"
           ls -als /tmp/unknown/video
 
-          echo "Run ./test-scan-dir"
-          ./test-scan-dir
+          echo "Run ./test-scandir"
+          ./test-scandir
 
           echo "Run ./test-read-seq"
           ./test-read-seq
