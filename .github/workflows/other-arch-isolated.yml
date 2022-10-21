@@ -64,10 +64,19 @@ jobs:
           dpkg --list | grep compiler
 
           pwd
+          echo $GITHUB_WORKSPACE
+
+          git clone --depth 1 https://github.com/fspindle/test-armv7.git ${HOME}/test-armv7
+          cd ${HOME}/test-armv7
+
           mkdir build && cd build
-          cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF -DUSE_CXX_STANDARD=17
-          cat ViSP-third-party.txt
+          cmake .. -DCMAKE_BUILD_TYPE=DEBUG
+          make
+          ./test-scandir
 
-          make -j$(nproc)
-
-          ctest -j$(nproc) --output-on-failure
+          mkdir -p /tmp/unknown/video
+          touch /tmp/unknown/video/image0.pgm
+          touch /tmp/unknown/video/image2.pgm
+          touch /tmp/unknown/video/image4.pgm
+          ls /tmp/unknown/video
+          ./test-scandir
