@@ -1585,6 +1585,7 @@ template <> inline vpRGBa vpImage<vpRGBa>::getValue(const vpImagePoint &ip) cons
 
 /**
  * Compute the sum of image intensities.
+ * For vpRGBa image type, compute the sum (R+G+B) of image intensities.
  */
 template <class Type> inline double vpImage<Type>::getSum() const
 {
@@ -1599,7 +1600,7 @@ template <class Type> inline double vpImage<Type>::getSum() const
 }
 
 /**
- * Compute the sum (R+G+B) of image intensities for vpRGBa image type.
+ * \relates vpImage
  */
 template <> inline double vpImage<vpRGBa>::getSum() const
 {
