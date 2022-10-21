@@ -43,14 +43,6 @@ jobs:
         echo "JAVA_HOME=$(/usr/libexec/java_home)" >> $GITHUB_ENV
         echo ${JAVA_HOME}
 
-    # qt@5 is as a requested dependency for vtk and thus for pcl 1.12.1
-    # qt@5 is keg-only, which means it was not symlinked into /usr/local
-    - name: Workaround to detect qt5
-      run: |
-        brew link --force qt5
-        sudo ln -s $(brew --prefix qt5)/mkspecs /usr/local/mkspecs
-        sudo ln -s $(brew --prefix qt5)/plugins /usr/local/plugins
-
     - name: Clone visp-images
       run: |
         git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
@@ -63,13 +55,15 @@ jobs:
 
     # Openblas location is exported explicitly because openblas is keg-only,
     # which means it was not symlinked into /usr/local/.
+    # qt@5 is as a requested dependency for vtk and thus for pcl 1.12.1
+    # qt@5 is keg-only, which means it was not symlinked into /usr/local that's why we need to set Qt5_DIR
     - name: Configure CMake
       run: |
         export LDFLAGS="-L/usr/local/opt/openblas/lib"
         export CPPFLAGS="-I/usr/local/opt/openblas/include"
         mkdir build
         cd build
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON
+        cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5
         cat ViSP-third-party.txt
 
     - name: Compile
