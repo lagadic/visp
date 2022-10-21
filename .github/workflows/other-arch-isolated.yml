@@ -84,14 +84,15 @@ jobs:
           echo "Lanch ./test-create-seq"
           ./test-create-seq
 
-          echo "ls /tmp"
-          ls /tmp
-          echo "ls /tmp/unknown"
-          ls /tmp/unknown
-          echo "ls /tmp/unknown/video"
-          ls /tmp/unknown/video
+          echo "ls -als /tmp"
+          ls -als /tmp
+          echo "ls -als /tmp/unknown"
+          ls -als /tmp/unknown
+          echo "ls -als /tmp/unknown/video"
+          ls -als /tmp/unknown/video
 
+          echo "Run ./test-scan-dir"
+          ./test-scan-dir
+
+          echo "Run ./test-read-seq"
           ./test-read-seq
-
-          echo "Run with gdb"
-          gdb ./test-read-seq core -ex "thread apply all bt" -ex "set pagination 0" -batch
