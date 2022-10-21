@@ -74,6 +74,7 @@ jobs:
           make
           ./test-scandir
 
+
           mkdir -p /tmp/unknown/video
           touch /tmp/unknown/video/image0.pgm
           touch /tmp/unknown/video/image2.pgm
