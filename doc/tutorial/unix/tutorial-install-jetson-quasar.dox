@@ -151,41 +151,41 @@ Installation instructions are given in the <a href="https://github.com/IntelReal
 
 Following the <a href="https://github.com/IntelRealSense/librealsense/blob/master/doc/installation.md">tutorial</a>, we recall the main steps here:
 
-1. Get `librealsense` from github:
+1. Unplug any connected Intel RealSense camera.
 
-        $ cd $VISP_WS
-        $ git clone https://github.com/IntelRealSense/librealsense.git
-        $ cd librealsense
+2. Install the packages required for `librealsense` build:
+\verbatim
+$ sudo apt-get install git libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev cmake-curses-gui
+$ sudo apt-get install libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
+\endverbatim
 
-2. Ensure no Intel RealSense cameras are plugged in.
+3. Get `librealsense` from github:
+\verbatim
+$ cd ~/visp_ws/3rdparty
+$ git clone https://github.com/IntelRealSense/librealsense.git
+$ cd librealsense
+\endverbatim
 
-3. Install udev rules located in librealsense source directory:
+4. Run Intel Realsense permissions script located in `librealsense` root directory:
+\verbatim
+$ ./scripts/setup_udev_rules.sh
+\endverbatim
 
-        $ sudo cp config/99-realsense-libusb.rules /etc/udev/rules.d/
-        $ sudo udevadm control --reload-rules && udevadm trigger
+5. Build and install librealsense
+\verbatim
+$ mkdir build
+$ cd build
+$ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
+$ make -j4
+$ sudo make install
+\endverbatim
 
-4. Install the packages required for librealsense build:
+6. Connect your Realsense camera (we are using a D435) and check if you are able to acquire images running:
+\verbatim
+$ ./examples/capture/rs-capture
+\endverbatim
 
-        $ sudo apt-get install libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev
-
-5. Install distribution-specific packages:
-
-        $ sudo apt-get install libglfw3-dev (Ubuntu 16.04)
-        $ sudo apt-get install libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev (Ubuntu 18.04)
-
-6. Build and install librealsense
-
-        $ mkdir build
-        $ cd build
-        $ cmake .. -DBUILD_EXAMPLES=ON -DCMAKE_BUILD_TYPE=Release
-        $ make -j4
-        $ sudo make install
-
-7. Connect the Realsense SR300 or D400 series camera and check if you are able to acquire images running:
-
-        $ ./examples/capture/rs-capture
-
-If you are able to visualize the images, it means that you succeed in librealsense installation.
+If you are able to visualize the images, it means that you succeed in `librealsense` installation.
 
 \subsubsection install_jetson_quasar_3rdparty_occipital_structure libStructure 3rd party
 

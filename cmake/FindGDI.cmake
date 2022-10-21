@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -35,9 +35,6 @@
 # GDI_FOUND        - system has GDI
 # GDI_LIBRARIES    - libraries you need to link to
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 SET(GDI_FOUND "NO")
@@ -48,8 +45,10 @@ IF(WIN32)
     FIND_LIBRARY(GDI_LIBRARY gdi32
                  "C:/MinGW/lib"
                  "C:/mingw/mingw/lib"
+                 "C:/mingw32/lib"
+                 "C:/mingw32/i686-w64-mingw32/lib"
+                 "${MINGW_DIR}/lib"
                  "$ENV{MINGW_DIR}/lib"
-                 "$ENV{MINGW_DIR}/mingw/lib"
                  DOC "Where can the GDI (Graphics Device Interface) library be found"
                  NO_DEFAULT_PATH
                 )

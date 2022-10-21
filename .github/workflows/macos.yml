@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-10.15, macos-11.0]
+        os: [macos-11, macos-12]
 
     steps:
     # https://github.com/marketplace/actions/cancel-workflow-action
@@ -61,6 +61,7 @@ jobs:
       run: |
         export LDFLAGS="-L/usr/local/opt/openblas/lib"
         export CPPFLAGS="-I/usr/local/opt/openblas/include"
+        export Qt5_DIR="$(brew --prefix qt5)/lib/cmake/Qt5"
         mkdir build
         cd build
         cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/tmp/usr/local -DCMAKE_VERBOSE_MAKEFILE=ON -DQt5_DIR=$(brew --prefix qt5)/lib/cmake/Qt5

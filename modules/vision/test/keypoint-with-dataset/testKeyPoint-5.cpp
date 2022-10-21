@@ -211,9 +211,12 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
 #if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                      \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
 #if (VISP_HAVE_OPENCV_VERSION != 0x040504) && (VISP_HAVE_OPENCV_VERSION != 0x040505) &&                                \
-    (defined(__APPLE__) && defined(__MACH__))
+    (VISP_HAVE_OPENCV_VERSION != 0x040600) && (defined(__APPLE__) && defined(__MACH__))
+  // SIFT is known to be unstable with OpenCV 4.5.4 and 4.5.5 on macOS (see #1048)
+  // Same for OpenCV 4.6.0 (see #1106) where it produces an Illegal Instruction error when OpenCV 4.6.0 is
+  // installed with brew. It seems working when OpenCV is build from source
   detectorNames.push_back("PyramidSIFT");
-  detectorNames.push_back("SIFT"); // SIFT is known unstable with OpenCV 4.5.4 and 4.5.5 on macOS (see #1048)
+  detectorNames.push_back("SIFT");
 #endif
 #endif
 #if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D)
@@ -258,9 +261,13 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   for (int i = 0; i < vpKeyPoint::DETECTOR_TYPE_SIZE; i++) {
 #if defined(VISP_HAVE_OPENCV_NONFREE) || defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                      \
     (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400)
-#if (VISP_HAVE_OPENCV_VERSION == 0x040504 || VISP_HAVE_OPENCV_VERSION == 0x040505) &&                                  \
+#if ((VISP_HAVE_OPENCV_VERSION == 0x040504) || (VISP_HAVE_OPENCV_VERSION == 0x040505) ||                               \
+     (VISP_HAVE_OPENCV_VERSION == 0x040600)) &&                                                                        \
     (defined(__APPLE__) && defined(__MACH__))
-    if (i == vpKeyPoint::DETECTOR_SIFT) { // SIFT is known unstable with OpenCV 4.5.4 and 4.5.5 on macOS (see #1048)
+    // SIFT is known to be unstable with OpenCV 4.5.4 and 4.5.5 on macOS (see #1048)
+    // Same for OpenCV 4.6.0 (see #1106) where it produces an Illegal Instruction error when OpenCV 4.6.0 is
+    // installed with brew. It seems working when OpenCV is build from source
+    if (i == vpKeyPoint::DETECTOR_SIFT) {
       continue;
     }
 #endif
