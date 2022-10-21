@@ -63,20 +63,32 @@ jobs:
           lsb_release -a
           dpkg --list | grep compiler
 
+          echo "pwd: "
           pwd
+          echo "GITHUB_WORKSPACE:"
           echo $GITHUB_WORKSPACE
 
+          mkdir build && cd build
+          cmake .. -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TESTS=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_robot=OFF -DBUILD_MODULE_visp_sensor=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_gui=OFF -DBUILD_MODULE_visp_imgproc=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_vs=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF -DUSE_CXX_STANDARD=17 -DCMAKE_INSTALL_PREFIX=/tmp/usr/local
+          cat ViSP-third-party.txt
+          make -j$(nproc) install
+
+          echo "Clone test-armv7"
           git clone --depth 1 https://github.com/fspindle/test-armv7.git ${HOME}/test-armv7
           cd ${HOME}/test-armv7
 
           mkdir build && cd build
-          cmake .. -DCMAKE_BUILD_TYPE=DEBUG
-          make
-          ./test-scandir
+          cmake .. -DCMAKE_BUILD_TYPE=DEBUG -DVISP_DIR=/tmp/usr/local/lib/cmake/visp
+          make -j$(nproc)
 
-          mkdir -p /tmp/unknown/video
-          touch /tmp/unknown/video/image0.pgm
-          touch /tmp/unknown/video/image2.pgm
-          touch /tmp/unknown/video/image4.pgm
+          echo "Lanch ./test-create-seq"
+          ./test-create-seq
+
+          echo "ls /tmp"
+          ls /tmp
+          echo "ls /tmp/unknown"
+          ls /tmp/unknown
+          echo "ls /tmp/unknown/video"
           ls /tmp/unknown/video
-          ./test-scandir
+
+          ./test-read-seq
