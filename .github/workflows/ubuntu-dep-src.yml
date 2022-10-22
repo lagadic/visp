@@ -68,7 +68,18 @@ jobs:
         echo "VTK_DIR=$(pwd)/install" >> $GITHUB_ENV
         echo $VTK_DIR
 
-    - name: Check flann version
+    - name: Check flann version before setting PKG_CONFIG_PATH
+      run: |
+        echo "pkg-config --modversion flann"
+        pkg-config --modversion flann
+
+    - name: Work around to be able to detect flann on Ubuntu 22.04
+      if: matrix.os == 'ubuntu-22.04'
+      run: |
+        echo "PKG_CONFIG_PATH=/usr/lib/x86_64-linux-gnu/pkgconfig" >> $GITHUB_ENV
+        ls /usr/lib/x86_64-linux-gnu/pkgconfig
+
+    - name: Check flann version after setting PKG_CONFIG_PATH
       run: |
         echo "pkg-config --modversion flann"
         pkg-config --modversion flann
