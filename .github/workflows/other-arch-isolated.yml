@@ -94,5 +94,16 @@ jobs:
           echo "Run ./test-scandir"
           ./test-scandir
 
+          echo "Add manually new files"
+          touch /tmp/unknown/video/manual100.pgm
+          touch /tmp/unknown/video/manual101.pgm
+          touch /tmp/unknown/video/manual102.pgm
+
+          echo "ls -als /tmp/unknown/video"
+          ls -als /tmp/unknown/video
+
+          echo "Run ./test-scandir"
+          ./test-scandir
+
           echo "Run ./test-read-seq"
           ./test-read-seq
