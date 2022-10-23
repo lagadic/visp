@@ -34,15 +34,19 @@ jobs:
     - name: Install dependencies for ubuntu 18.04 and 20.04
       if: matrix.os != 'ubuntu-22.04'
       run: |
-        sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev gfortran liblapack-dev libeigen3-dev
-        sudo apt-get update && sudo apt-get install -y libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
-        sudo apt-get update && sudo apt-get install -y mesa-common-dev mesa-utils freeglut3-dev libflann-dev libboost-all-dev
+        sudo apt-get update && sudo apt-get install -y libdc1394-22-dev
 
     - name: Install dependencies for ubuntu 22.04
       if: matrix.os == 'ubuntu-22.04'
       run: |
-        sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev gfortran liblapack-dev libeigen3-dev
-        sudo apt-get update && sudo apt-get install -y libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
+        sudo apt-get update && sudo apt-get install -y libdc1394-dev
+
+    - name: Install common dependencies for ubuntu
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libx11-dev libv4l-dev gfortran liblapack-dev libeigen3-dev
+        sudo apt-get install -y libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
+        sudo apt-get install -y mesa-common-dev mesa-utils freeglut3-dev libflann-dev libboost-all-dev
 
     - name: Build OpenBLAS from source
       run: |
