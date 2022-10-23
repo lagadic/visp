@@ -74,7 +74,7 @@ jobs:
           make -j$(nproc) install
 
           echo "Clone test-armv7"
-          git clone --depth 1 https://github.com/fspindle/test-armv7.git ${HOME}/test-armv7
+          git clone --depth 1 https://github.com/s-trinh/test-armv7.git ${HOME}/test-armv7
           cd ${HOME}/test-armv7
 
           mkdir build && cd build
