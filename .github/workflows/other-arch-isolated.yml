@@ -91,8 +91,11 @@ jobs:
           echo "ls -als /tmp/unknown/video"
           ls -als /tmp/unknown/video
 
-          echo "Run ./test-scandir"
-          ./test-scandir
+          echo "Run ./test-scandir /tmp/unknown/video"
+          ./test-scandir /tmp/unknown/video
+
+          echo "Run ./test-scandir /tmp/unknown/video/"
+          ./test-scandir /tmp/unknown/video/
 
           echo "Add manually new files"
           touch /tmp/unknown/video/manual100.pgm
@@ -102,8 +105,24 @@ jobs:
           echo "ls -als /tmp/unknown/video"
           ls -als /tmp/unknown/video
 
-          echo "Run ./test-scandir"
-          ./test-scandir
+          echo "Run ./test-scandir /tmp/unknown/video"
+          ./test-scandir /tmp/unknown/video
+
+          echo "Run ./test-scandir /tmp/unknown/video/"
+          ./test-scandir /tmp/unknown/video/
+
+          echo "Create folder and files"
+          mkdir /tmp/test
+          mkdir /tmp/test/scandir
+          touch /tmp/test/scandir/manual100.pgm
+          touch /tmp/test/scandir/manual102.pgm
+          touch /tmp/test/scandir/manual104.pgm
+
+          echo "Run ./test-scandir /tmp/test/scandir"
+          ./test-scandir /tmp/test/scandir
+
+          echo "Run ./test-scandir /tmp/test/scandir/"
+          ./test-scandir /tmp/test/scandir/
 
           echo "Run ./test-read-seq"
           ./test-read-seq
