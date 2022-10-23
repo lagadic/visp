@@ -40,6 +40,9 @@
   \file vpIoTools.cpp
   \brief File and directories basic tools.
 */
+// TODO:
+#define _FILE_OFFSET_BITS 64
+
 #include <algorithm>
 #include <cctype>
 #include <cmath>
