@@ -71,6 +71,8 @@ jobs:
           mkdir build && cd build
           cmake .. -DCMAKE_BUILD_TYPE=Debug -DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_TUTORIALS=OFF -DBUILD_TESTS=OFF -DBUILD_MODULE_visp_tt=OFF -DBUILD_MODULE_visp_tt_mi=OFF -DBUILD_MODULE_visp_robot=OFF -DBUILD_MODULE_visp_sensor=OFF -DBUILD_MODULE_visp_klt=OFF -DBUILD_MODULE_visp_detection=OFF -DBUILD_MODULE_visp_ar=OFF -DBUILD_MODULE_visp_blob=OFF -DBUILD_MODULE_visp_gui=OFF -DBUILD_MODULE_visp_imgproc=OFF -DBUILD_MODULE_visp_me=OFF -DBUILD_MODULE_visp_vision=OFF -DBUILD_MODULE_visp_vs=OFF -DBUILD_MODULE_visp_visual_features=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java=OFF -DBUILD_MODULE_visp_java_binding=OFF -DUSE_CXX_STANDARD=17 -DCMAKE_INSTALL_PREFIX=/tmp/usr/local
           cat ViSP-third-party.txt
+          cat include/visp3/core/vpConfig.h
+          grep VISP_SET_FILE_OFFSET_BITS_64 include/visp3/core/vpConfig.h
           make -j$(nproc) install
 
           echo "Clone test-armv7"

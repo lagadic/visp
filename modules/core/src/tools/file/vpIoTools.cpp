@@ -41,6 +41,13 @@
   \brief File and directories basic tools.
 */
 
+#include <visp3/core/vpConfig.h>
+
+// Introduced to fix scandir() behavior on armv7
+#ifdef VISP_SET_FILE_OFFSET_BITS_64
+#define _FILE_OFFSET_BITS 64
+#endif
+
 #include <algorithm>
 #include <cctype>
 #include <cmath>
@@ -83,11 +90,6 @@
 #else
 #define PATH_MAX 1024
 #endif
-#endif
-
-// Introduced to fix scandir() behavior on armv7
-#ifdef VISP_SET_FILE_OFFSET_BITS_64
-#define _FILE_OFFSET_BITS 64
 #endif
 
 std::string vpIoTools::baseName = "";
@@ -1951,9 +1953,7 @@ std::vector<std::string> vpIoTools::getDirFiles(const std::string &pathname)
   if (!checkDirectory(pathname)) {
     throw(vpIoException(vpException::fatalError, "Directory %s doesn't exist'", pathname.c_str()));
   }
-  std::cout << "DEBUG pathname: " << pathname << std::endl;
   std::string dirName = path(pathname);
-  std::cout << "DEBUG dirName: " << dirName << std::endl;
 
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 
