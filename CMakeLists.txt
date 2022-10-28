@@ -182,7 +182,7 @@ if(ANDROID)
   # Where to build internal 3rdparties
   vp_update(VISP_3P_LIBRARY_OUTPUT_PATH   "${VISP_BINARY_DIR}/3rdparty/lib/${ANDROID_NDK_ABI_NAME}")
 
-  vp_update(VISP_INSTALL_BINARIES_PREFIX "sdk/native/")
+  vp_update(VISP_INSTALL_BINARIES_PREFIX  "sdk/native/")
   # set binary path
   vp_update(VISP_BIN_INSTALL_PATH         "sdk/native/bin/${ANDROID_NDK_ABI_NAME}")
 
@@ -881,6 +881,19 @@ endif()
 #-----------------------------------------------------------------------------
 include(cmake/AddExtraCompilationFlags.cmake) # should be called after FindOpenMP and cxx standard potential changes
 
+#-----------------------------------------------------------------------------
+# Enable large file support
+#-----------------------------------------------------------------------------
+if(UNIX OR MINGW)
+  if(ANDROID AND (ANDROID_NATIVE_API_LEVEL LESS 21) AND (CMAKE_CXX_COMPILER_ID MATCHES "GNU"))
+    # Android NDK build problem: 'mmap' issue with GCC and API<21
+  else()
+    # This might not catch every possibility
+    # For the moment, we define -D_FILE_OFFSET_BITS=64 only where it is required using the following var
+    set(FILE_OFFSET_BITS_64 TRUE)
+  endif()
+endif()
+
 #----------------------------------------------------------------------
 # Modules
 #----------------------------------------------------------------------
@@ -992,6 +1005,8 @@ VP_SET(VISP_HAVE_DC1394_FIND_CAMERAS     TRUE IF (USE_DC1394 AND DC1394_FIND_CAM
 VP_SET(VISP_HAVE_D3D9        TRUE IF USE_DIRECT3D) # for header vpConfig.h
 VP_SET(VISP_HAVE_GTK         TRUE IF USE_GTK2) # for header vpConfig.h
 VP_SET(VISP_HAVE_XRANDR      TRUE IF XRANDR) # for header vpConfig.h
+
+VP_SET(VISP_SET_FILE_OFFSET_BITS_64 TRUE IF FILE_OFFSET_BITS_64)
 
 # Check if libfreenect dependencies (ie libusb-1.0 and libpthread) are available
 if(USE_LIBFREENECT AND USE_LIBUSB_1 AND USE_PTHREAD)

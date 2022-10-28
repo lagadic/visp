@@ -40,8 +40,6 @@
   \file vpIoTools.cpp
   \brief File and directories basic tools.
 */
-// TODO:
-#define _FILE_OFFSET_BITS 64
 
 #include <algorithm>
 #include <cctype>
@@ -85,6 +83,11 @@
 #else
 #define PATH_MAX 1024
 #endif
+#endif
+
+// Introduced to fix scandir() behavior on armv7
+#ifdef VISP_SET_FILE_OFFSET_BITS_64
+#define _FILE_OFFSET_BITS 64
 #endif
 
 std::string vpIoTools::baseName = "";

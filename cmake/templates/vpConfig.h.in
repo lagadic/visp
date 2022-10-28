@@ -535,6 +535,9 @@
 // Defined if TensorRT available
 #cmakedefine VISP_HAVE_TENSORRT
 
+// Defined for usage in vpIoTools.cpp to add -D_FILE_OFFSET_BITS=64 for scandir() on armv7
+#cmakedefine VISP_SET_FILE_OFFSET_BITS_64
+
 // Handle portable symbol export.
 // Defining manually which symbol should be exported is required
 // under Windows whether MinGW or MSVC is used.
