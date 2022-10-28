@@ -41,6 +41,8 @@
   \brief File and directories basic tools.
 */
 
+#define _FILE_OFFSET_BITS 64
+
 #include <visp3/core/vpConfig.h>
 
 // Introduced to fix scandir() behavior on armv7
