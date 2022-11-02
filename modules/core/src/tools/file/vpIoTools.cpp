@@ -40,6 +40,19 @@
   \file vpIoTools.cpp
   \brief File and directories basic tools.
 */
+
+// At this point, to make scandir() working as expected on armv7 virtualized on a x86-64bit architecture
+// (see github/workflow/other-arch-isolated.yml) we need to define _FILE_OFFSET_BITS=64. Otherwise
+// testVideo.cpp will fail.
+// Since adding here something like:
+//   #include <visp3/core/vpConfig.h>
+//   #ifdef VISP_DEFINE_FILE_OFFSET_BITS
+//   # define _FILE_OFFSET_BITS 64
+//   #endif
+// where VISP_DEFINE_FILE_OFFSET_BITS is defined in vpConfig.h doesn't work (my explanation is that the define
+// should be done before any other includes; in vpConfig.h there is cstdlib that is included), the other way
+// that was retained is to add to vpIoTools.cpp COMPILE_DEFINTIONS _FILE_OFFSET_BITS=64 (see CMakeLists.txt)
+
 #include <algorithm>
 #include <cctype>
 #include <cmath>

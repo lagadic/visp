@@ -352,6 +352,19 @@ endif()
 
 vp_add_module(core PRIVATE_OPTIONAL ${LAPACK_LIBRARIES} ${PUGIXML_LIBRARIES} ${SIMDLIB_LIBRARIES} WRAP java)
 
+#-----------------------------------------------------------------------------
+# Enable large file support
+#-----------------------------------------------------------------------------
+if(UNIX OR MINGW)
+  if(ANDROID AND (ANDROID_NATIVE_API_LEVEL LESS 21) AND (CMAKE_CXX_COMPILER_ID MATCHES "GNU"))
+    # Android NDK build problem: 'mmap' issue with GCC and API<21
+  else()
+    # This might not catch every possibility
+    # For the moment, we define _FILE_OFFSET_BITS=64 only where it is required
+    set_source_files_properties(src/tools/file/vpIoTools.cpp PROPERTIES COMPILE_DEFINITIONS "_FILE_OFFSET_BITS=64")
+  endif()
+endif()
+
 vp_source_group("Src" FILES "${VISP_MODULE_visp_core_BINARY_DIR}/version_string.inc")
 
 vp_glob_module_sources(SOURCES "${VISP_MODULE_visp_core_BINARY_DIR}/version_string.inc")
