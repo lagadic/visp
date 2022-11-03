@@ -46,111 +46,114 @@
   images (it define a RGB 32 bits structure, fourth byte is not used)
 */
 
-#include <visp3/core/vpColVector.h>
+// #include <visp3/core/vpColVector.h>
+#include <visp3/core/vpPixel.h>
 
-/*!
-  \class vpRGBa
+using vpRGBa = vpPixel<unsigned char>;
 
-  \ingroup group_core_image
+// /*!
+//   \class vpRGBa
 
-  Class that defines a RGBa 32 bits structure that is used to build color
-  images. RGBa stands for red green blue alpha color space.
+//   \ingroup group_core_image
 
-  The alpha channel is normally used as an opacity channel. If a pixel has a
-  value of 0 in its alpha channel, it is fully transparent, whereas a value of
-  255 in the alpha channel gives a fully opaque pixel.
+//   Class that defines a RGBa 32 bits structure that is used to build color
+//   images. RGBa stands for red green blue alpha color space.
 
-  By default the alpha channel is set to vpRGBa::alpha_default.
-  \sa vpImage
-*/
-class VISP_EXPORT vpRGBa
-{
-public:
-  enum AlphaDefault { alpha_default = 255 };
+//   The alpha channel is normally used as an opacity channel. If a pixel has a
+//   value of 0 in its alpha channel, it is fully transparent, whereas a value of
+//   255 in the alpha channel gives a fully opaque pixel.
 
-  /*!
-    Basic constructor.
+//   By default the alpha channel is set to vpRGBa::alpha_default.
+//   \sa vpImage
+// */
+// class VISP_EXPORT vpRGBa
+// {
+// public:
+//   enum AlphaDefault { alpha_default = 255 };
 
-    Build a black value.
+//   /*!
+//     Basic constructor.
 
-  */
-  inline vpRGBa() : R(0), G(0), B(0), A(vpRGBa::alpha_default) {}
+//     Build a black value.
 
-  /*!
-    Constructor.
+//   */
+//   inline vpRGBa() : R(0), G(0), B(0), A(vpRGBa::alpha_default) {}
 
-    Initialize the color with R, G, B, A values.
+//   /*!
+//     Constructor.
 
-    \param r : Red value.
-    \param g : Green value.
-    \param b : Blue value.
-    \param a : Additional value.
+//     Initialize the color with R, G, B, A values.
 
-  */
-  inline vpRGBa(unsigned char r, unsigned char g, unsigned char b, unsigned char a = vpRGBa::alpha_default)
-    : R(r), G(g), B(b), A(a)
-  {
-  }
+//     \param r : Red value.
+//     \param g : Green value.
+//     \param b : Blue value.
+//     \param a : Additional value.
 
-  /*!
-    Constructor.
+//   */
+//   inline vpRGBa(unsigned char r, unsigned char g, unsigned char b, unsigned char a = vpRGBa::alpha_default)
+//     : R(r), G(g), B(b), A(a)
+//   {
+//   }
 
-    Initialize all the R, G, B, A components to \e v.
+//   /*!
+//     Constructor.
 
-    \param v : Value to set.
+//     Initialize all the R, G, B, A components to \e v.
 
-  */
-  inline vpRGBa(unsigned char v) : R(v), G(v), B(v), A(v) {}
+//     \param v : Value to set.
 
-  /*!
-    Copy constructor.
-  */
-  inline vpRGBa(const vpRGBa &v) : R(v.R), G(v.G), B(v.B), A(v.A) {}
+//   */
+//   inline vpRGBa(unsigned char v) : R(v), G(v), B(v), A(v) {}
 
-  /*!
-    Create a RGBa value from a 4 dimension column vector.
+//   /*!
+//     Copy constructor.
+//   */
+//   inline vpRGBa(const vpRGBa &v) : R(v.R), G(v.G), B(v.B), A(v.A) {}
 
-    R=v[0]
-    G=v[1]
-    B=v[2]
-    A=v[3]
+//   /*!
+//     Create a RGBa value from a 4 dimension column vector.
 
-  */
-  inline vpRGBa(const vpColVector &v) : R(0), G(0), B(0), A(vpRGBa::alpha_default) { *this = v; }
+//     R=v[0]
+//     G=v[1]
+//     B=v[2]
+//     A=v[3]
 
-  // We cannot add here the following destructor without changing the
-  // hypothesis that the size of this class is 4. With the destructor it
-  // becomes 16 that does break a lot of things around image conversions
-  // virtual ~vpRGBa() {}; // Not to implement
+//   */
+//   inline vpRGBa(const vpColVector &v) : R(0), G(0), B(0), A(vpRGBa::alpha_default) { *this = v; }
 
-  vpRGBa &operator=(const unsigned char &v);
-  vpRGBa &operator=(const vpRGBa &v);
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpRGBa &operator=(const vpRGBa &&v);
-#endif
-  vpRGBa &operator=(const vpColVector &v);
-  bool operator==(const vpRGBa &v);
-  bool operator!=(const vpRGBa &v);
+//   // We cannot add here the following destructor without changing the
+//   // hypothesis that the size of this class is 4. With the destructor it
+//   // becomes 16 that does break a lot of things around image conversions
+//   // virtual ~vpRGBa() {}; // Not to implement
 
-  vpColVector operator-(const vpRGBa &v) const;
-  vpRGBa operator+(const vpRGBa &v) const;
-  vpColVector operator-(const vpColVector &v) const;
-  vpColVector operator+(const vpColVector &v) const;
-  vpColVector operator*(const float &v) const;
-  vpColVector operator*(const double &v) const;
+//   vpRGBa &operator=(const unsigned char &v);
+//   vpRGBa &operator=(const vpRGBa &v);
+// #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+//   vpRGBa &operator=(const vpRGBa &&v);
+// #endif
+//   vpRGBa &operator=(const vpColVector &v);
+//   bool operator==(const vpRGBa &v);
+//   bool operator!=(const vpRGBa &v);
 
-  bool operator<(const vpRGBa &v) const;
-  bool operator>(const vpRGBa &v) const;
+//   vpColVector operator-(const vpRGBa &v) const;
+//   vpRGBa operator+(const vpRGBa &v) const;
+//   vpColVector operator-(const vpColVector &v) const;
+//   vpColVector operator+(const vpColVector &v) const;
+//   vpColVector operator*(const float &v) const;
+//   vpColVector operator*(const double &v) const;
 
-  friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBa &rgba);
+//   bool operator<(const vpRGBa &v) const;
+//   bool operator>(const vpRGBa &v) const;
 
-public:
-  unsigned char R; //!< Red component.
-  unsigned char G; //!< Green component.
-  unsigned char B; //!< Blue component.
-  unsigned char A; //!< Additionnal component.
+//   friend VISP_EXPORT std::ostream &operator<<(std::ostream &os, const vpRGBa &rgba);
 
-  friend VISP_EXPORT vpRGBa operator*(const double &x, const vpRGBa &rgb);
-};
+// public:
+//   unsigned char R; //!< Red component.
+//   unsigned char G; //!< Green component.
+//   unsigned char B; //!< Blue component.
+//   unsigned char A; //!< Additionnal component.
+
+//   friend VISP_EXPORT vpRGBa operator*(const double &x, const vpRGBa &rgb);
+// };
 
 #endif
