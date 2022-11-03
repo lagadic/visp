@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar,
+* Copyright (c) 2011-2022 Yermalayeu Ihar,
 *               2014-2019 Antonenka Mikhail,
 *               2019-2019 Facundo Galan.
 *
@@ -105,11 +105,9 @@ typedef enum
     SimdCpuInfoCacheL1, /*!< A size of level 1 data cache. */
     SimdCpuInfoCacheL2, /*!< A size of level 2 cache. */
     SimdCpuInfoCacheL3, /*!< A size of level 3 cache. */
-    SimdCpuInfoSse2, /*!< Availability of SSE2 (x86). */
     SimdCpuInfoSse41, /*!< Availability of SSE4.1 (x86). */
     SimdCpuInfoAvx, /*!< Availability of AVX (x86). */
     SimdCpuInfoAvx2, /*!< Availability of AVX2 (x86). */
-    SimdCpuInfoAvx512f, /*!< Availability of AVX-512F (x86). */
     SimdCpuInfoAvx512bw, /*!< Availability of AVX-512BW (x86). */
     SimdCpuInfoVmx, /*!< Availability of VMX or Altivec (PowerPC). */
     SimdCpuInfoVsx, /*!< Availability of VSX (PowerPC). */
@@ -237,7 +235,21 @@ typedef enum
     SimdResizeMethodBicubic,
     /*! Area method. */
     SimdResizeMethodArea,
+    /*! Area method for previously reduced in 2 times image. */
+    SimdResizeMethodAreaFast,
 } SimdResizeMethodType;
+
+/*! @ingroup yuv_conversion
+    Describes YUV format type. It is uses in YUV to BGR forward and backward conversions.
+*/
+typedef enum
+{
+    SimdYuvUnknown = -1, /*!< Unknown YUV standard. */
+    SimdYuvBt601, /*!< Corresponds to BT.601 standard. Uses Kr=0.299, Kb=0.114. Restricts Y to range [16..235], U and V to [16..240]. */
+    SimdYuvBt709, /*!< Corresponds to BT.709 standard. Uses Kr=0.2126, Kb=0.0722. Restricts Y to range [16..235], U and V to [16..240]. */
+    SimdYuvBt2020, /*!< Corresponds to BT.2020 standard. Uses Kr=0.2627, Kb=0.0593. Restricts Y to range [16..235], U and V to [16..240]. */
+    SimdYuvTrect871, /*!< Corresponds to T-REC-T.871 standard. Uses Kr=0.299, Kb=0.114. Y, U and V use full range [0..255]. */
+} SimdYuvType;
 
 // ViSP custom SIMD code
 typedef enum
@@ -274,6 +286,46 @@ extern "C"
         \return string with version of %Simd Library (major version number, minor version number, release number, number of SVN's commits).
     */
     SIMD_API const char * SimdVersion();
+
+    /*! @ingroup info
+
+        \fn size_t SimdCpuInfo(SimdCpuInfoType type);
+
+        \short Gets info about CPU and %Simd Library.
+
+        \note See enumeration ::SimdCpuInfoType.
+
+        Using example:
+        \verbatim
+        #include "Simd/SimdLib.h"
+        #include <iostream>
+
+        int main()
+        {
+            std::cout << "Sockets : " << SimdCpuInfo(SimdCpuInfoSockets) << std::endl;
+            std::cout << "Cores : " << SimdCpuInfo(SimdCpuInfoCores) << std::endl;
+            std::cout << "Threads : " << SimdCpuInfo(SimdCpuInfoThreads) << std::endl;
+            std::cout << "L1D Cache : " << SimdCpuInfo(SimdCpuInfoCacheL1) / 1024  << " KB" << std::endl;
+            std::cout << "L2 Cache : " << SimdCpuInfo(SimdCpuInfoCacheL2) / 1024  << " KB" << std::endl;
+            std::cout << "L3 Cache : " << SimdCpuInfo(SimdCpuInfoCacheL3) / 1024  << " KB" << std::endl;
+            std::cout << "SSE4.1: " << (SimdCpuInfo(SimdCpuInfoSse41) ? "Yes" : "No") << std::endl;
+            std::cout << "AVX: " << (SimdCpuInfo(SimdCpuInfoAvx) ? "Yes" : "No") << std::endl;
+            std::cout << "AVX2: " << (SimdCpuInfo(SimdCpuInfoAvx2) ? "Yes" : "No") << std::endl;
+            std::cout << "AVX-512BW: " << (SimdCpuInfo(SimdCpuInfoAvx512bw) ? "Yes" : "No") << std::endl;
+            std::cout << "AVX-512VNNI: " << (SimdCpuInfo(SimdCpuInfoAvx512vnni) ? "Yes" : "No") << std::endl;
+            std::cout << "AVX-512BF16: " << (SimdCpuInfo(SimdCpuInfoAvx512bf16) ? "Yes" : "No") << std::endl;
+            std::cout << "AMX: " << (SimdCpuInfo(SimdCpuInfoAmx) ? "Yes" : "No") << std::endl;
+            std::cout << "PowerPC-Altivec: " << (SimdCpuInfo(SimdCpuInfoVmx) ? "Yes" : "No") << std::endl;
+            std::cout << "PowerPC-VSX: " << (SimdCpuInfo(SimdCpuInfoVsx) ? "Yes" : "No") << std::endl;
+            std::cout << "ARM-NEON: " << (SimdCpuInfo(SimdCpuInfoNeon) ? "Yes" : "No") << std::endl;
+            return 0;
+        }
+        \endverbatim
+
+        \param [in] type - a type of required information.
+        \return a value which contains information about CPU and %Simd Library.
+    */
+    SIMD_API size_t SimdCpuInfo(SimdCpuInfoType type);
 
     /*! @ingroup info
 
@@ -520,7 +572,7 @@ extern "C"
 
         All images must have the same width and height.
 
-        \note This function has C++ wrappers: Simd::BgrToRgb(const View<A> & bgr, View<A> & rgb) 
+        \note This function has C++ wrappers: Simd::BgrToRgb(const View<A> & bgr, View<A> & rgb)
             and Simd::RgbToBgr(const View<A>& rgb, View<A>& bgr).
 
         \param [in] bgr - a pointer to pixels data of input 24-bit BGR image (or 24-bit RGB image).
@@ -732,7 +784,7 @@ extern "C"
 
         All images must have the same width and height.
 
-        \note This function has C++ wrappers: Simd::GrayToBgr(const View<A>& gray, View<A>& bgr) 
+        \note This function has C++ wrappers: Simd::GrayToBgr(const View<A>& gray, View<A>& bgr)
             and Simd::GrayToRgb(const View<A>& gray, View<A>& rgb).
 
         \param [in] gray - a pointer to pixels data of input 8-bit gray image.
@@ -752,7 +804,7 @@ extern "C"
 
         All images must have the same width and height.
 
-        \note This function has C++ wrappers: Simd::GrayToBgra(const View<A>& gray, View<A>& bgra, uint8_t alpha) 
+        \note This function has C++ wrappers: Simd::GrayToBgra(const View<A>& gray, View<A>& bgra, uint8_t alpha)
             and Simd::GrayToRgba(const View<A>& gray, View<A>& rgba, uint8_t alpha).
 
         \param [in] gray - a pointer to pixels data of input 8-bit gray image.
@@ -772,16 +824,16 @@ extern "C"
 
         \short Saves an image to memory in given image file format.
 
-        \param [in] src - a pointer to pixels data of input image. 
+        \param [in] src - a pointer to pixels data of input image.
         \param [in] stride - a row size of input image in bytes.
         \param [in] width - a width of input image.
         \param [in] height - a height of input image.
-        \param [in] format - a pixel format of input image. 
+        \param [in] format - a pixel format of input image.
             Supported pixel formats: ::SimdPixelFormatGray8, ::SimdPixelFormatBgr24, ::SimdPixelFormatBgra32, ::SimdPixelFormatRgb24, ::SimdPixelFormatRgba32.
         \param [in] file - a format of output image file. To auto choise format of output file set this parameter to ::SimdImageFileUndefined.
         \param [in] quality - a parameter of compression quality (if file format supports it).
         \param [out] size - a pointer to the size of output image file in bytes.
-        \return a pointer to memory buffer with output image file. 
+        \return a pointer to memory buffer with output image file.
             It has to be deleted after use by function ::SimdFree. On error it returns NULL.
     */
     SIMD_API uint8_t* SimdImageSaveToMemory(const uint8_t* src, size_t stride, size_t width, size_t height, SimdPixelFormatType format, SimdImageFileType file, int quality, size_t * size);
@@ -796,7 +848,7 @@ extern "C"
         \param [in] stride - a row size of input image in bytes.
         \param [in] width - a width of input image.
         \param [in] height - a height of input image.
-        \param [in] format - a pixel format of input image. 
+        \param [in] format - a pixel format of input image.
             Supported pixel formats: ::SimdPixelFormatGray8, ::SimdPixelFormatBgr24, ::SimdPixelFormatBgra32, ::SimdPixelFormatRgb24, ::SimdPixelFormatRgba32.
         \param [in] file - a format of output image file. To auto choise format of output file set this parameter to ::SimdImageFileUndefined.
         \param [in] quality - a parameter of compression quality (if file format supports it).
@@ -816,10 +868,10 @@ extern "C"
         \param [out] stride - a pointer to row size of output image in bytes.
         \param [out] width - a pointer to width of output image.
         \param [out] height - a pointer to height of output image.
-        \param [in, out] format - a pointer to pixel format of output image. 
+        \param [in, out] format - a pointer to pixel format of output image.
             Here you can set desired pixel format (it can be ::SimdPixelFormatGray8, ::SimdPixelFormatBgr24, ::SimdPixelFormatBgra32, ::SimdPixelFormatRgb24, ::SimdPixelFormatRgba32).
             Or set ::SimdPixelFormatNone and use pixel format of input image file.
-        \return a pointer to pixels data of output image. 
+        \return a pointer to pixels data of output image.
             It has to be deleted after use by function ::SimdFree. On error it returns NULL.
     */
     SIMD_API uint8_t* SimdImageLoadFromMemory(const uint8_t* data, size_t size, size_t* stride, size_t* width, size_t* height, SimdPixelFormatType * format);

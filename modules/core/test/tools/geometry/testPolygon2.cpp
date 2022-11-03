@@ -130,7 +130,7 @@ bool testConvexHull()
 
 int main()
 {
-  if (not testConvexHull()) {
+  if (! testConvexHull()) {
     return EXIT_FAILURE;
   }
 

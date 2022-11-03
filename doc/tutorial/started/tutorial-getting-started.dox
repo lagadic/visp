@@ -11,9 +11,9 @@ The easiest way of using ViSP in your project is to use <a href="http://www.cmak
 
 Note also that all the material (source code and images) described in this tutorial is part of ViSP source code and could be downloaded using the following command:
 
-\code
+\verbatim
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
-\endcode
+\endverbatim
 
 \section started_quick Quick getting started
 
@@ -23,99 +23,111 @@ In this section we show how to build an existing project that uses ViSP as third
 
 1. If you did \ref tutorial_install_pkg you have to create a workspace. If you did \ref tutorial_install_src jump to point 2. since your workspace should be already created.<br>
 Check if `VISP_WS` environment var exists:
-\code
+\verbatim
 $ env | grep VISP_WS
-\endcode
+\endverbatim
 If it returns an empty string, create a workspace with:
-\code
+\verbatim
 $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
 $ source ~/.bashrc
 $ mkdir -p $VISP_WS
-\endcode
+\endverbatim
 
 2. Get the source code using Subversion (`svn`):
-\code
+\verbatim
 $ sudo apt-get install subversion
 $ cd $VISP_WS
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
-\endcode
+\endverbatim
 
 3. Create a build folder
-\code
+\verbatim
 $ mkdir -p $VISP_WS/image/build
 $ cd $VISP_WS/image/build
-\endcode
+\endverbatim
 
 4. Run CMake in build directory<br>
 If you did \ref tutorial_install_pkg, run:
-\code
+\verbatim
 $ cmake .. -DCMAKE_BUILD_TYPE=Release
-\endcode
+\endverbatim
 Otherwise if you did \ref tutorial_install_src, indicate where to find ViSP thanks to `VISP_DIR` var:
-\code
+\verbatim
 $ cmake .. -DCMAKE_BUILD_TYPE=Release -DVISP_DIR=$VISP_WS/visp-build
-\endcode
+\endverbatim
 
 5. Build `tutorial-viewer` example
-\code
+\verbatim
 $ make tutorial-viewer
-\endcode
+\endverbatim
 
 6. Run `tutorial-viewer` example
-\code
+\verbatim
 $ ./tutorial-viewer monkey.pgm
-\endcode
+\endverbatim
 
 \subsection started_quick_win On windows operating system
 
 1. If you did \ref tutorial_install_src jump to point 2. since your workspace should be already created.<br>
 Open a `cmd` Command Prompt and check if `VISP_WS` environment var exists:
-\code
+\verbatim
 C:\> set | findstr VISP_WS
-\endcode
+\endverbatim
 If it returns an empty string, create a workspace with:
-\code
+\verbatim
 C:\> mkdir C:\visp-ws
 C:\> setx VISP_WS=C:\visp-ws
 C:\> exit
-\endcode
+\endverbatim
 
 2. Get the source code in your workspace either using Subversion (`svn`), either copying the source code from `%%VISP_WS%/tutorial/image` folder if you follow one of the \ref tutorial_install_src tutorials, or downloading the source from https://github.com/lagadic/visp/tutorial/image:<br>
 With Subversion:
-\code
+\verbatim
 C:\> svn export https://github.com/lagadic/visp.git/trunk/tutorial/image
-\endcode
+\endverbatim
 Or by copy from ViSP source code
-\code
+\verbatim
 C:\> xcopy /E /I %VISP_WS%\visp\tutorial\image %VISP_WS%\image
-\endcode
+\endverbatim
 
 3. Create a build folder
-\code
+\verbatim
 C:\> mkdir %VISP_WS%\image\build
 C:\> cd %VISP_WS%\image\build
-\endcode
+\endverbatim
 
 4. Run CMake in build folder and indicate where to find ViSP thanks to `VISP_DIR` var.<br>
-If your are using Visual Studio 15 2017 and 64 bits hardware, run:
-\code
-C:\> cmake -G "Visual Studio 15 2017 Win64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc15
-\endcode
-If your are rather using Visual Studio 14 2015 and 64 bits hardware, run:
-\code
-C:\> cmake -G "Visual Studio 14 2015 Win64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc14
-\endcode
+  - If your are using Visual Studio 17 2022 and 64 bits hardware, run:
+\verbatim
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc17
+\endverbatim
+  - Or if your are using Visual Studio 16 2019 and 64 bits hardware, run:
+\verbatim
+C:\> cmake -G "Visual Studio 16 2019" -A "x64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc16
+\endverbatim
+  - Or if your are using Visual Studio 15 2017 and 64 bits hardware, run:
+\verbatim
+C:\> cmake -G "Visual Studio 15 2017" -A "x64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc15
+\endverbatim
+  - Or if your are using Visual Studio 14 2015 and 64 bits hardware, run:
+\verbatim
+C:\> cmake -G "Visual Studio 14 2015" -A "x64" .. -DVISP_DIR=%VISP_WS%\visp-build-vc14
+\endverbatim
+  - Or if your are rather using MinGW-w64, run:
+\verbatim
+C:\> cmake -G "MinGW Makefiles" .. -DVISP_DIR=%VISP_WS%\visp-build-mingw
+\endverbatim
 
 5. Build `tutorial-viewer` example
-\code
+\verbatim
 C:\> cmake --build . --config Release --target tutorial-viewer
-\endcode
+\endverbatim
 
 6. Run `tutorial-viewer` example
-\code
+\verbatim
 C:\> cd Release
 C:\> tutorial-viewer.exe monkey.pgm
-\endcode
+\endverbatim
 
 \section started_advanced Advanced getting started
 
@@ -127,41 +139,41 @@ We recall here after the instructions to create a workspace:
 
 - <b>On unix-like operating system</b><br>
 Check if `VISP_WS` environment var exists:
-\code
+\verbatim
 $ env | grep VISP_WS
-\endcode
+\endverbatim
 If it returns an empty string, create a workspace with:
-\code
+\verbatim
 $ echo "export VISP_WS=$HOME/visp-ws" >> ~/.bashrc
 $ source ~/.bashrc
 $ mkdir -p $VISP_WS
-\endcode
+\endverbatim
 
 - <b>On windows operating system</b><br>
 Open a `cmd` Command Prompt and check if `VISP_WS` environment var exists:
-\code
+\verbatim
 C:\> set | findstr VISP_WS
-\endcode
+\endverbatim
 If it returns an empty string, create a workspace with:
-\code
+\verbatim
 C:\> mkdir C:\visp-ws
 C:\> setx VISP_WS=C:\visp-ws
 C:\> exit
-\endcode
+\endverbatim
 
 Enter `VISP_WS` folder and create a new folder let say `started` that will contain your first project that uses ViSP as third-party:
 
 - <b>On unix-like operating system</b><br>
-\code
+\verbatim
 $ cd $VISP_WS
 $ mkdir started
-\endcode
+\endverbatim
 - <b>On windows operating system</b><br>
 Open a `cmd` Command Prompt and run
-\code
+\verbatim
 C:\> cd %VISP_WS%
 C:\> mkdir started
-\endcode
+\endverbatim
 
 \subsection image_code Get tutorial-viewer.cpp file
 
@@ -252,9 +264,9 @@ will include the following lines to your `CMakeFile.txt`
 Get `monkey.ppm` image and copy it to `VISP_WS/started` either:
 - copying it from ViSP source code; the file is in `VISP_WS/tutorial/image/monkey.ppm`
 - using Subversion:
-\code
+\verbatim
 svn export https://github.com/lagadic/visp.git/trunk/tutorial/image/monkey.ppm
-\endcode
+\endverbatim
 - by copy/paste from <a href="https://github.com/lagadic/visp/blob/master/tutorial/image/monkey.ppm">GitHub</a> using the Raw button
 
 
@@ -266,27 +278,27 @@ In this section we supppose that you have created a folder `$VISP_WS/started` th
 
 Proceed now as with any other project using CMake by first creating a build folder:
 
-\code
+\verbatim
 C:\> cd $VISP_WS/started
 C:\> mkdir build
-\endcode
+\endverbatim
 
 \subsubsection image_unix_config Configure your project
 
 Enter the build folder and launch CMake GUI:
 
-\code
+\verbatim
 $ cd build
 $ ccmake .. -DCMAKE_BUILD_TYPE=Release
 Press [c] key to configure
 Then, press [g] to generate Makefiles
 Then, press [q] to quit CMake GUI
-\endcode
+\endverbatim
 
 \image html img-ccmake-started.png
 
 \note By default `ccmake` searches `VISPConfig.cmake` file in system folders like `/usr/share`, `/usr/local/share`... If ViSP is not installed in `/usr` or `/usr/local` as suggested in \ref tutorial_install_src tutorials, it is possible that you get the following error:
-\code
+\verbatim
 CMake Error at CMakeLists.txt:5 (find_package):
   Could not find module FindVISP.cmake or a configuration file for package
   VISP.
@@ -297,45 +309,45 @@ CMake Error at CMakeLists.txt:5 (find_package):
 
     VISPConfig.cmake
     visp-config.cmake
-\endcode
+\endverbatim
 If you get the previous error it means that you forget to set `VISP_DIR` environment variable that helps `cmake` to find `VISPConfig.cmake` file.
 - If you install ViSP from source following one of the \ref tutorial_install_src tutorials, set `VISP_DIR` environment variable to the ViSP build folder location and call `ccmake` again:
-\code
+\verbatim
 $ export VISP_DIR=$VISP_WS/visp-build/lib/cmake/visp
 $ ccmake ..
-\endcode
+\endverbatim
 or run cmake with the additional `VISP_DIR` definition
-\code
+\verbatim
 $ ccmake -DVISP_DIR=$VISP_WS/visp-build/lib/cmake/visp .
-\endcode
+\endverbatim
 - If you rather install ViSP from prebuilt packages following one of the \ref tutorial_install_pkg tutorials, set `VISP_DIR` environment variable to the installation folder location and call `cmake` again:
-\code
+\verbatim
 $ export VISP_DIR=/usr/lib/<multi-arch-folder>/cmake/visp
 $ cmake ..
-\endcode
+\endverbatim
 or run cmake with the additional `VISP_DIR` definition
-\code
+\verbatim
 $ cmake -DVISP_DIR=/usr/lib/<multi-arch-folder>/cmake/visp .
-\endcode
+\endverbatim
 Depending on the platform `<multi-arch-folder>` can be empty (OSX) or for example equal to `x86_64-linux-gnu` on Ubuntu if you install ViSP using
-\code
+\verbatim
 $ sudo apt-get install libvisp-dev.
-\endcode
+\endverbatim
 
 \subsubsection image_unix_build Generate the executable
 
 Just run:
-\code
+\verbatim
 $ make
-\endcode
+\endverbatim
 
 \subsubsection image_unix_output Run the executable
 
 By now you should have an executable called `tutorial-viewer`. You just have to run it giving an image location as an argument:
 
-\code
+\verbatim
 $ ./tutorial-viewer ../monkey.ppm
-\endcode
+\endverbatim
 
 Here is a screen shot of the resulting output window :
 
@@ -349,10 +361,10 @@ We suppose from now, that you have created a folder `%%VISP_WS%\started` that co
 
 Proceed now as with any other project using CMake by first creating a build folder:
 
-\code
+\verbatim
 C:\> cd %%VISP_WS%\started
 C:\> mkdir build
-\endcode
+\endverbatim
 
 \subsubsection image_win_config Configure your project
 
@@ -395,10 +407,10 @@ C:\> mkdir build
 
 - In your "Start" menu click on "Run" and type in `cmd.exe` to run a Command Prompt.
 - Enter in `%%VISP_WS%\started\build\Release` folder, and run `tutorial-viewer.exe` with an image location as argument:
-\code
+\verbatim
 C:\> cd %VISP_WS%\started\build\Release
 C:\> tutorial-viewer ..\..\monkey.ppm
-\endcode
+\endverbatim
 
 - Here is a screen shot of the resulting output window :
 

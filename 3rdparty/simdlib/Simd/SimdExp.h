@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -41,8 +41,8 @@ namespace Simd
         }
     }
 
-#ifdef SIMD_SSE2_ENABLE    
-    namespace Sse2
+#ifdef SIMD_SSE41_ENABLE    
+    namespace Sse41
     {
         class Exp
         {
@@ -80,7 +80,7 @@ namespace Simd
                 _1_0 = _mm_set1_ps(1.0f);
                 _0_5 = _mm_set1_ps(0.5f);
                 _min = _mm_set1_ps(-126.99999f);
-                _max = _mm_set1_ps(129.00000f);
+                _max = _mm_set1_ps(126.99999f);
                 _exp0 = _mm_set1_ps(9.9999994e-1f);
                 _exp1 = _mm_set1_ps(6.9315308e-1f);
                 _exp2 = _mm_set1_ps(2.4015361e-1f);
@@ -131,7 +131,7 @@ namespace Simd
 
             SIMD_INLINE __m128 Exp2(__m128 x)
             {
-                x = _mm_max_ps(_mm_min_ps(x, _mm_set1_ps(129.00000f)), _mm_set1_ps(-126.99999f));
+                x = _mm_max_ps(_mm_min_ps(x, _mm_set1_ps(126.99999f)), _mm_set1_ps(-126.99999f));
                 __m128i ipart = _mm_cvtps_epi32(_mm_sub_ps(x, _mm_set1_ps(0.5f)));
                 __m128 fpart = _mm_sub_ps(x, _mm_cvtepi32_ps(ipart));
                 __m128 expipart = _mm_castsi128_ps(_mm_slli_epi32(_mm_add_epi32(ipart, _mm_set1_epi32(127)), 23));
@@ -155,7 +155,7 @@ namespace Simd
             return Detail::Exp2(_mm_mul_ps(_mm_set1_ps(1.44269504f), value));
         }
 
-        SIMD_INLINE __m128 Elu(__m128 value, __m128 alpha) 
+        SIMD_INLINE __m128 Elu(__m128 value, __m128 alpha)
         {
             __m128 exp = Exponent(value);
             __m128 neg = _mm_mul_ps(alpha, _mm_sub_ps(exp, _mm_set1_ps(1.0f)));
@@ -192,9 +192,9 @@ namespace Simd
             return _mm_div_ps(_mm_sub_ps(exp, _1), _mm_add_ps(_1, exp));
         }
     }
-#endif //SIMD_SSE2_ENABLE   
+#endif //SIMD_SSE41_ENABLE
 
-#ifdef SIMD_AVX2_ENABLE    
+#ifdef SIMD_AVX2_ENABLE
     namespace Avx2
     {
         class Exp
@@ -233,7 +233,7 @@ namespace Simd
                 _1_0 = _mm256_set1_ps(1.0f);
                 _0_5 = _mm256_set1_ps(0.5f);
                 _min = _mm256_set1_ps(-126.99999f);
-                _max = _mm256_set1_ps(129.00000f);
+                _max = _mm256_set1_ps(126.99999f);
                 _exp0 = _mm256_set1_ps(9.9999994e-1f);
                 _exp1 = _mm256_set1_ps(6.9315308e-1f);
                 _exp2 = _mm256_set1_ps(2.4015361e-1f);
@@ -284,7 +284,7 @@ namespace Simd
 
             SIMD_INLINE __m256 Exp2(__m256 x)
             {
-                x = _mm256_max_ps(_mm256_min_ps(x, _mm256_set1_ps(129.00000f)), _mm256_set1_ps(-126.99999f));
+                x = _mm256_max_ps(_mm256_min_ps(x, _mm256_set1_ps(126.99999f)), _mm256_set1_ps(-126.99999f));
                 __m256i ipart = _mm256_cvtps_epi32(_mm256_sub_ps(x, _mm256_set1_ps(0.5f)));
                 __m256 fpart = _mm256_sub_ps(x, _mm256_cvtepi32_ps(ipart));
                 __m256 expipart = _mm256_castsi256_ps(_mm256_slli_epi32(_mm256_add_epi32(ipart, _mm256_set1_epi32(127)), 23));
@@ -347,7 +347,7 @@ namespace Simd
     }
 #endif //SIMD_AVX2_ENABLE
 
-#ifdef SIMD_NEON_ENABLE    
+#ifdef SIMD_NEON_ENABLE
     namespace Neon
     {
         class Exp
@@ -386,7 +386,7 @@ namespace Simd
                 _1_0 = vdupq_n_f32(1.0f);
                 _0_5 = vdupq_n_f32(0.5f);
                 _min = vdupq_n_f32(-126.99999f);
-                _max = vdupq_n_f32(129.00000f);
+                _max = vdupq_n_f32(126.99999f);
                 _exp0 = vdupq_n_f32(9.9999994e-1f);
                 _exp1 = vdupq_n_f32(6.9315308e-1f);
                 _exp2 = vdupq_n_f32(2.4015361e-1f);
@@ -437,7 +437,7 @@ namespace Simd
 
             SIMD_INLINE float32x4_t Exp2(float32x4_t x)
             {
-                x = vmaxq_f32(vminq_f32(x, vdupq_n_f32(129.00000f)), vdupq_n_f32(-126.99999f));
+                x = vmaxq_f32(vminq_f32(x, vdupq_n_f32(126.99999f)), vdupq_n_f32(-126.99999f));
                 int32x4_t ipart = vcvtq_s32_f32(vsubq_f32(x, vdupq_n_f32(0.5f)));
                 float32x4_t fpart = vsubq_f32(x, vcvtq_f32_s32(ipart));
                 float32x4_t expipart = vreinterpretq_f32_s32(vshlq_n_s32(vaddq_s32(ipart, vdupq_n_s32(127)), 23));

@@ -69,7 +69,7 @@ void readSimdlib(vpImage<vpRGBa> &I, const std::string &filename)
 
 void writeJPEGSimdlib(const vpImage<unsigned char> &I, const std::string &filename, int quality)
 {
-  SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth() * 4, I.getWidth(), I.getHeight(), SimdPixelFormatGray8,
+  SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth(), I.getWidth(), I.getHeight(), SimdPixelFormatGray8,
                       SimdImageFileJpeg, quality, filename.c_str());
 }
 
@@ -81,7 +81,7 @@ void writeJPEGSimdlib(const vpImage<vpRGBa> &I, const std::string &filename, int
 
 void writePNGSimdlib(const vpImage<unsigned char> &I, const std::string &filename)
 {
-  SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth() * 4, I.getWidth(), I.getHeight(), SimdPixelFormatGray8,
+  SimdImageSaveToFile((const uint8_t *)I.bitmap, I.getWidth(), I.getWidth(), I.getHeight(), SimdPixelFormatGray8,
                       SimdImageFilePng, 90, filename.c_str());
 }
 

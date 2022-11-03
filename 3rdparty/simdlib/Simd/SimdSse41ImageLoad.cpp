@@ -1,7 +1,8 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar,
+*               2022-2022 Souriya Trinh.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +24,6 @@
 */
 #include "Simd/SimdMemory.h"
 #include "Simd/SimdImageLoad.h"
-#include "Simd/SimdSse2.h"
 #include "Simd/SimdSse41.h"
 
 #include <memory>
@@ -46,7 +46,7 @@ namespace Simd
                 switch (_param.format)
                 {
                 case SimdPixelFormatBgr24: _toAny = Sse41::GrayToBgr; break;
-                case SimdPixelFormatBgra32: _toBgra = Sse2::GrayToBgra; break;
+                case SimdPixelFormatBgra32: _toBgra = Sse41::GrayToBgra; break;
                 case SimdPixelFormatRgb24: _toAny = Sse41::GrayToBgr; break;
                 case SimdPixelFormatRgba32: _toBgra = Sse41::GrayToBgra; break;
                 default: break;
@@ -69,7 +69,7 @@ namespace Simd
                 switch (_param.format)
                 {
                 case SimdPixelFormatBgr24: _toAny = Sse41::GrayToBgr; break;
-                case SimdPixelFormatBgra32: _toBgra = Sse2::GrayToBgra; break;
+                case SimdPixelFormatBgra32: _toBgra = Sse41::GrayToBgra; break;
                 case SimdPixelFormatRgb24: _toAny = Sse41::GrayToBgr; break;
                 case SimdPixelFormatRgba32: _toBgra = Sse41::GrayToBgra; break;
                 default: break;

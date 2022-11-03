@@ -1,6 +1,6 @@
 /**
 
-\page tutorial-install-win10-msvc17 Tutorial: Installation from source for Windows with Visual C++ 2022 (vc17)
+\page tutorial-install-win10-msvc17 Tutorial: Installation from source for Windows 10 with Visual C++ 2022 (vc17)
 \tableofcontents
 
 In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++.
@@ -70,12 +70,12 @@ C:\> git clone https://github.com/lagadic/visp.git
 \endverbatim
 - Create a build directory
 \verbatim
-C:\> mkdir %VISP_WS%\visp-build-vc17
-C:\> cd %VISP_WS%\visp-build-vc17
+C:\> mkdir visp-build-vc17
+C:\> cd visp-build-vc17
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 17 2022):
 \verbatim
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\visp
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" ..\visp
 \endverbatim
 - Build and install ViSP (installation doesn't need administrator privileges)
 \verbatim
@@ -180,13 +180,14 @@ written we downloaded `eigen-3.4.0.zip` archive corresponding to Eigen 3.4.0.
 
 - Create a build directory
 \verbatim
-C:\> mkdir %VISP_WS%\3rdparty\eigen-3.4.0\build-vc17
-C:\> cd %VISP_WS%\3rdparty\eigen-3.4.0\build-vc17
+C:\> cd %VISP_WS%\3rdparty\eigen-3.4.0
+C:\> mkdir build-vc17
+C:\> cd build-vc17
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 17 2022 and installation folder is set
  to `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install` folder):
 \verbatim
-C:\> cmake -G "Visual Studio 17 2022" -A "x64" %VISP_WS%\3rdparty\eigen-3.4.0 -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install
 \endverbatim
 - Build and install Eigen3 (installation doesn't need administrator privileges)
 \verbatim

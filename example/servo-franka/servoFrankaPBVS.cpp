@@ -105,7 +105,8 @@ int main(int argc, char **argv)
   bool opt_plot = false;
   bool opt_adaptive_gain = false;
   bool opt_task_sequencing = false;
-  double convergence_threshold_t = 0.0005, convergence_threshold_tu = vpMath::rad(0.5);
+  double convergence_threshold_t = 0.0005; // Value in [m]
+  double convergence_threshold_tu = 0.5;   // Value in [deg]
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--tag_size" && i + 1 < argc) {

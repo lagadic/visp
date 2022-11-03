@@ -540,7 +540,11 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
   double d_phi = a / d_theta;
 
   std::vector<std::pair<double, double> > lonlat_vec;
+#if (VISP_CXX_STANDARD > VISP_CXX_STANDARD_98)
   lonlat_vec.reserve(static_cast<unsigned int>(std::sqrt(maxPoints)));
+#else
+  lonlat_vec.reserve(static_cast<unsigned int>(std::sqrt(static_cast<double>(maxPoints))));
+#endif
   for (int m = 0; m < m_theta; m++) {
     double theta = M_PI * (m + 0.5) / m_theta;
     int m_phi = static_cast<int>(round(2.0 * M_PI * sin(theta) / d_phi));

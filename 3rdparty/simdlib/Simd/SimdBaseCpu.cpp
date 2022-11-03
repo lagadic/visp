@@ -1,7 +1,9 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2020 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar,
+*               2022-2022 Souriya Trinh,
+*               2022-2022 Fabien Spindler.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -24,7 +26,7 @@
 #include "Simd/SimdCpu.h"
 
 #include <vector>
-#ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
+#ifdef SIMD_CPP_2011_ENABLE
 #include <thread>
 #endif
 #include <sstream>
@@ -49,13 +51,11 @@
 
 #if defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)
 #include <fcntl.h>
-#if !defined(__APPLE__) // Line added for Modification for iOS
+#if !defined(__APPLE__)
 #include <sys/auxv.h>
-#if defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)
-#if !defined(__FreeBSD__)
+#if (defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)) && !defined(__FreeBSD__)
 #include <asm/hwcap.h>
 #endif
-#endif // Line added for Modification for iOS
 #endif
 #endif
 
@@ -68,15 +68,15 @@ namespace Simd
     namespace Base
     {
 #if defined(SIMD_X86_ENABLE) || defined(SIMD_X64_ENABLE)
-        bool CheckBit(Cpuid::Level level, Cpuid::Register index, Cpuid::Bit bit)
+        bool CheckBit(int eax, int ecx, Cpuid::Register index, Cpuid::Bit bit)
         {
             unsigned int registers[4] = { 0, 0, 0, 0 };
 #if defined(_MSC_VER)
-            __cpuid((int*)registers, level);
+            __cpuidex((int*)registers, eax, ecx);
 #elif (defined __GNUC__)
-            if (__get_cpuid_max(0, NULL) < level)
+            if (__get_cpuid_max(0, NULL) < eax)
                 return false;
-            __cpuid_count(level, 0,
+            __cpuid_count(eax, ecx,
                 registers[Cpuid::Eax],
                 registers[Cpuid::Ebx],
                 registers[Cpuid::Ecx],
@@ -88,8 +88,7 @@ namespace Simd
         }
 #endif//defined(SIMD_X86_ENABLE) || defined(SIMD_X64_ENABLE)
 
-#if !defined(__APPLE__) // Line added Modified for iOS
-#if defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE))
+#if defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)) && !defined(__APPLE__)
         bool CheckBit(int at, int bit)
         {
             bool result = false;
@@ -115,10 +114,9 @@ namespace Simd
             ::close(file);
             return result;
         }
-#endif//defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE))
-#endif // Line added Modified for iOS
+#endif//defined(__GNUC__) && (defined(SIMD_PPC_ENABLE) || defined(SIMD_PPC64_ENABLE) || defined(SIMD_ARM_ENABLE) || defined(SIMD_ARM64_ENABLE)) && !defined(__APPLE__)
 
-#ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
+#ifdef SIMD_CPP_2011_ENABLE
         size_t CpuThreadNumber()
         {
             return std::thread::hardware_concurrency();
@@ -136,6 +134,28 @@ namespace Simd
             ::GetLogicalProcessorInformation(info.data(), &size);
         }
 
+        size_t CpuSocketNumber()
+        {
+            std::vector<Info> info;
+            GetLogicalProcessorInformation(info);
+            size_t number = 0;
+            for (size_t i = 0; i < info.size(); ++i)
+                if (info[i].Relationship == ::RelationNumaNode)
+                    number++;
+            return number;
+        }
+
+        size_t CpuCoreNumber()
+        {
+            std::vector<Info> info;
+            GetLogicalProcessorInformation(info);
+            size_t number = 0;
+            for (size_t i = 0; i < info.size(); ++i)
+                if (info[i].Relationship == ::RelationProcessorCore)
+                    number++;
+            return number;
+        }
+
         size_t CpuCacheSize(size_t level)
         {
             std::vector<Info> info;
@@ -146,6 +166,33 @@ namespace Simd
             return 0;
         }
 #elif defined(__GNUC__)
+        size_t CpuSocketNumber()
+        {
+            uint32_t number = 0;
+            ::FILE * p = ::popen("lscpu -b -p=Socket 2>/dev/null | grep -v '^#' | sort -u 2>/dev/null | wc -l 2>/dev/null", "r");
+            if (p)
+            {
+                char buffer[PATH_MAX];
+                while (::fgets(buffer, PATH_MAX, p));
+                number = ::atoi(buffer);
+                ::pclose(p);
+            }
+            return number;
+        }
+
+        size_t CpuCoreNumber()
+        {
+            uint32_t number = 0;
+            ::FILE * p = ::popen("lscpu -b -p=Core 2>/dev/null | grep -v '^#' | sort -u 2>/dev/null | wc -l 2>/dev/null", "r");
+            if (p)
+            {
+                char buffer[PATH_MAX];
+                while (::fgets(buffer, PATH_MAX, p));
+                number = ::atoi(buffer);
+                ::pclose(p);
+            }
+            return number;
+        }
 
         SIMD_INLINE size_t CorrectIfZero(size_t value, size_t otherwise)
         {
@@ -157,9 +204,21 @@ namespace Simd
         {
             switch (level)
             {
-            case 1: return CorrectIfZero(::sysconf(_SC_LEVEL1_DCACHE_SIZE), 32 * 1024);
-            case 2: return CorrectIfZero(::sysconf(_SC_LEVEL2_CACHE_SIZE), 256 * 1024);
-            case 3: return CorrectIfZero(::sysconf(_SC_LEVEL3_CACHE_SIZE), 2048 * 1024);
+            case 1:
+            {
+                const size_t sz = ::sysconf(_SC_LEVEL1_DCACHE_SIZE) < 0 ? 0 : ::sysconf(_SC_LEVEL1_DCACHE_SIZE);
+                return CorrectIfZero(sz, 32 * 1024);
+            }
+            case 2:
+            {
+                const size_t sz = ::sysconf(_SC_LEVEL2_CACHE_SIZE) < 0 ? 0 : ::sysconf(_SC_LEVEL2_CACHE_SIZE);
+                return CorrectIfZero(sz, 256 * 1024);
+            }
+            case 3:
+            {
+                const size_t sz = ::sysconf(_SC_LEVEL3_CACHE_SIZE) < 0 ? 0 : ::sysconf(_SC_LEVEL3_CACHE_SIZE);
+                return CorrectIfZero(sz, 2048 * 1024);
+            }
             default:
                 return 0;
             }
@@ -185,9 +244,13 @@ namespace Simd
 
     namespace Cpu
     {
-#ifdef SIMD_CPP_2011_ENABLE // Modified for c++ 98
+        const size_t SOCKET_NUMBER = Base::CpuSocketNumber();
+        const size_t CORE_NUMBER = Base::CpuCoreNumber();
+#ifdef SIMD_CPP_2011_ENABLE
         const size_t THREAD_NUMBER = Base::CpuThreadNumber();
 #endif
         const size_t L1_CACHE_SIZE = Base::CpuCacheSize(1);
+        const size_t L2_CACHE_SIZE = Base::CpuCacheSize(2);
+        const size_t L3_CACHE_SIZE = Base::CpuCacheSize(3);
     }
 }

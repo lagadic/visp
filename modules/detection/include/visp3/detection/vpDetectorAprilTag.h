@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Base class for April Tag detection.
+ * Base class for AprilTag detection.
  *
  *****************************************************************************/
 #ifndef _vpDetectorAprilTag_h_
@@ -241,7 +241,7 @@ public:
     BEST_RESIDUAL_VIRTUAL_VS,       /*!< Non linear virtual visual servoing approach
                                       initialized by the approach that gives the
                                       lowest residual */
-    HOMOGRAPHY_ORTHOGONAL_ITERATION /*!< Pose from homography followed by a refine by Orthogonal Iteration */
+    HOMOGRAPHY_ORTHOGONAL_ITERATION /*!< Pose from homography followed by a refinement by Orthogonal Iteration */
   };
 
   vpDetectorAprilTag(const vpAprilTagFamily &tagFamily = TAG_36h11,
@@ -254,6 +254,16 @@ public:
   bool detect(const vpImage<unsigned char> &I, double tagSize, const vpCameraParameters &cam,
               std::vector<vpHomogeneousMatrix> &cMo_vec, std::vector<vpHomogeneousMatrix> *cMo_vec2 = NULL,
               std::vector<double> *projErrors = NULL, std::vector<double> *projErrors2 = NULL);
+
+  void displayFrames(const vpImage<unsigned char> &I, const std::vector<vpHomogeneousMatrix> &cMo_vec,
+                     const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness = 1) const;
+  void displayFrames(const vpImage<vpRGBa> &I, const std::vector<vpHomogeneousMatrix> &cMo_vec,
+                     const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness = 1) const;
+
+  void displayTags(const vpImage<unsigned char> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
+                   const vpColor &color = vpColor::none, unsigned int thickness = 1) const;
+  void displayTags(const vpImage<vpRGBa> &I, const std::vector<std::vector<vpImagePoint> > &tagsCorners,
+                   const vpColor &color = vpColor::none, unsigned int thickness = 1) const;
 
   bool getPose(size_t tagIndex, double tagSize, const vpCameraParameters &cam, vpHomogeneousMatrix &cMo,
                vpHomogeneousMatrix *cMo2 = NULL, double *projError = NULL, double *projError2 = NULL);

@@ -1158,6 +1158,7 @@ endif()
 # Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
 #----------------------------------------------------------------------
 if(BUILD_TESTS)
+  vp_find_dataset(VISP_DATASET_FOUND VISP_DATASET_LOCATION)
   include(CTest)
 endif()
 
@@ -1268,6 +1269,12 @@ if(USE_FLIRPTUSDK)
 endif()
 
 # ----------------------------------------------------------------------------
+#  System information
+# ----------------------------------------------------------------------------
+vp_system_information(NUMBER_OF_LOGICAL_CORES NUMBER_OF_PHYSICAL_CORES TOTAL_PHYSICAL_MEMORY OS_NAME OS_RELEASE
+                      OS_VERSION OS_PLATFORM PROCESSOR_NAME IS_64BIT HAS_FPU CPU_OPTIM)
+
+# ----------------------------------------------------------------------------
 #  Autodetect if we are in a GIT repository
 # ----------------------------------------------------------------------------
 find_host_package(Git QUIET)
@@ -1356,6 +1363,22 @@ if(NOT CMAKE_GENERATOR MATCHES "Xcode|Visual Studio")
   status("    Configuration:"  ${CMAKE_BUILD_TYPE})
 endif()
 
+# ========================== system information ==========================
+
+status("")
+status("  System information:")
+status("    Number of CPU logical cores:"                  "${NUMBER_OF_LOGICAL_CORES}")
+status("    Number of CPU physical cores:"                 "${NUMBER_OF_PHYSICAL_CORES}")
+status("    Total physical memory (in MiB):"               "${TOTAL_PHYSICAL_MEMORY}")
+status("    OS name:"                                      "${OS_NAME}")
+status("    OS release:"                                   "${OS_RELEASE}")
+status("    OS version:"                                   "${OS_VERSION}")
+status("    OS platform:"                                  "${OS_PLATFORM}")
+status("    CPU name:"                                     "${PROCESSOR_NAME}")
+status("    Is the CPU 64-bit?"                            ${IS_64BIT} THEN "yes" ELSE "no")
+status("    Does the CPU have FPU?"                        ${HAS_FPU} THEN "yes" ELSE "no")
+status("    CPU optimization:"                             ${CPU_OPTIM})
+
 # ========================== C/C++ options ==========================
 if(CMAKE_CXX_COMPILER_VERSION)
   set(VISP_COMPILER_STR "${CMAKE_CXX_COMPILER} ${CMAKE_CXX_COMPILER_ARG1} (ver ${CMAKE_CXX_COMPILER_VERSION})")
@@ -1384,6 +1407,7 @@ else()
   status("    Linker flags (Release):" ${CMAKE_SHARED_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS_RELEASE})
   status("    Linker flags (Debug):"   ${CMAKE_SHARED_LINKER_FLAGS} ${CMAKE_SHARED_LINKER_FLAGS_DEBUG})
 endif()
+status("    Use cxx standard:"       CMAKE_CXX_STANDARD THEN "${CMAKE_CXX_STANDARD}" ELSE "no")
 
 # ========================== ViSP modules ==========================
 status("")
@@ -1463,24 +1487,22 @@ endif()
 
 # ========================== java ==========================
 status("")
-status("  Python (for build):"  PYTHON_DEFAULT_AVAILABLE THEN "${PYTHON_DEFAULT_EXECUTABLE}" ELSE NO)
+status("  Python (for build):"  PYTHON_DEFAULT_AVAILABLE THEN "${PYTHON_DEFAULT_EXECUTABLE}" ELSE "no")
 
 if(BUILD_JAVA OR BUILD_visp_java)
   status("")
   status("  Java:"            BUILD_FAT_JAVA_LIB  THEN "export all functions"                                      ELSE "")
-  status("    ant:"           ANT_EXECUTABLE      THEN "${ANT_EXECUTABLE} (ver ${ANT_VERSION})"                    ELSE NO)
+  status("    ant:"           ANT_EXECUTABLE      THEN "${ANT_EXECUTABLE} (ver ${ANT_VERSION})"                    ELSE "no")
   if(NOT ANDROID)
-    status("    JNI:"         JNI_INCLUDE_DIRS    THEN "${JNI_INCLUDE_DIRS}"                                       ELSE NO)
+    status("    JNI:"         JNI_INCLUDE_DIRS    THEN "${JNI_INCLUDE_DIRS}"                                       ELSE "no")
   endif()
 endif()
-
 
 # ============================ Options ===========================
 status("")
 status("  Build options: ")
 status("    Build deprecated:"           BUILD_DEPRECATED_FUNCTIONS      THEN "yes" ELSE "no")
 status("    Build with moment combine:"  ENABLE_MOMENTS_COMBINE_MATRICES THEN "yes" ELSE "no")
-
 
 # ===================== Optional 3rd parties =====================
 status("")
@@ -1517,7 +1539,7 @@ status("    Use JPEG:"               USE_JPEG         THEN "yes (ver ${JPEG_LIB_
 status("    Use PNG:"                USE_PNG          THEN "yes (ver ${PNG_VERSION_STRING})" ELSE "no")
 status("    \\- Use ZLIB:"           USE_ZLIB         THEN "yes (ver ${ZLIB_VERSION_STRING})" ELSE "no")
 status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
-status("    Use stb_image (built-in):" WITH_STBIMAGE  THEN "yes (ver ${STBIMAGE_VERSION})" ELSE "no")
+status("    Use stb_image (built-in):"                     "yes (ver ${STBIMAGE_VERSION})")
 status("")
 status("  Real robots: ")
 status("    Use Afma4:"              USE_AFMA4        THEN "yes" ELSE "no")
@@ -1590,7 +1612,7 @@ status("  Optimization: ")
 status("    Use OpenMP:"             USE_OPENMP         THEN "yes" ELSE "no")
 status("    Use pthread:"            USE_PTHREAD        THEN "yes" ELSE "no")
 status("    Use pthread (built-in):" WITH_PTHREAD       THEN "yes (ver ${PTHREADS_VERSION})" ELSE "no")
-status("    Use cxx standard:"       CMAKE_CXX_STANDARD THEN "${CMAKE_CXX_STANDARD}" ELSE "no")
+status("    Use Simd:"                                       "yes (ver ${SIMD_VERSION})")
 status("")
 status("  DNN: ")
 status("    Use CUDA Toolkit:"       USE_TENSORRT AND CUDA_FOUND  THEN "yes (ver ${CUDA_VERSION})" ELSE "no")
@@ -1605,11 +1627,12 @@ status("    \\- Use mathjax:"        USE_MATHJAX      THEN "yes" ELSE "no")
 # ========================== samples and tests ==========================
 status("")
 status("  Tests and samples:")
-status("    Use catch2 (built-in):"  WITH_CATCH2      THEN "yes (ver ${CATCH2_VERSION})" ELSE "no")
-status("    Tests:"                  BUILD_TESTS      THEN "yes" ELSE "no")
-status("    Demos:"                  BUILD_DEMOS      THEN "yes" ELSE "no")
-status("    Examples:"               BUILD_EXAMPLES   THEN "yes" ELSE "no")
-status("    Tutorials:"              BUILD_TUTORIALS  THEN "yes" ELSE "no")
+status("    Use catch2 (built-in):"  WITH_CATCH2        THEN "yes (ver ${CATCH2_VERSION})" ELSE "no")
+status("    Tests:"                  BUILD_TESTS        THEN "yes" ELSE "no")
+status("    Demos:"                  BUILD_DEMOS        THEN "yes" ELSE "no")
+status("    Examples:"               BUILD_EXAMPLES     THEN "yes" ELSE "no")
+status("    Tutorials:"              BUILD_TUTORIALS    THEN "yes" ELSE "no")
+status("    Dataset found:"          VISP_DATASET_FOUND THEN "yes (in ${VISP_DATASET_LOCATION})" ELSE "no")
 if(APPS_FOUND)
   status("    Apps:"              BUILD_APPS  THEN "yes" ELSE "no")
 endif()

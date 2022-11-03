@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04]
+        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-22.04]
 
     steps:
     # https://github.com/marketplace/actions/cancel-workflow-action
@@ -34,8 +34,13 @@ jobs:
     - name: Print compiler information
       run: dpkg --list | grep compiler
 
-    - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev libpcl-dev libxml2-dev libfftw3-dev libarmadillo-dev
+    - name: Install dependencies for ubuntu 18.04 and 20.04
+      if: matrix.os != 'ubuntu-22.04'
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
+
+    - name: Install dependencies for ubuntu 22.04
+      if: matrix.os == 'ubuntu-22.04'
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
 
     - name: Clone visp-images
       run: |
@@ -80,4 +85,3 @@ jobs:
         cd ustk-sample-build
         cmake .. -DVISP_DIR=/tmp/usr/local/lib/cmake/visp
         make -j$(nproc)
-

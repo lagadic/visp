@@ -1,7 +1,8 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar,
+*               2022-2022 Fabien Spindler.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -231,14 +232,29 @@ namespace Simd
         {
             return _bitBuffer;
         }
+
+        SIMD_INLINE const uint64_t& BitBuffer() const
+        {
+            return _bitBuffer;
+        }
 #else
         SIMD_INLINE uint32_t& BitBuffer()
+        {
+            return _bitBuffer;
+        }
+
+        SIMD_INLINE const uint32_t& BitBuffer() const
         {
             return _bitBuffer;
         }
 #endif
 
         SIMD_INLINE size_t& BitCount()
+        {
+            return _bitCount;
+        }
+
+        SIMD_INLINE const size_t& BitCount() const
         {
             return _bitCount;
         }
@@ -287,12 +303,11 @@ namespace Simd
 
     class OutputMemoryStream
     {
-#ifdef SIMD_CPP_2011_ENABLE // Modified to build with c++ 98
-      const size_t CAPACITY_MIN = 64;
+#ifdef SIMD_CPP_2011_ENABLE
+        const size_t CAPACITY_MIN = 64;
 #else
-      const size_t CAPACITY_MIN;
+        const size_t CAPACITY_MIN;
 #endif
-
         uint8_t * _data;
         size_t _pos, _size, _capacity, _bitCount;
 #if defined(SIMD_X64_ENABLE) || defined(SIMD_ARM64_ENABLE)
@@ -315,9 +330,11 @@ namespace Simd
 
     public:
         SIMD_INLINE OutputMemoryStream(size_t capacity = 0)
+            :
 #ifndef SIMD_CPP_2011_ENABLE // Modified to build with c++ 98
-          : CAPACITY_MIN(64)
+             CAPACITY_MIN(64),
 #endif
+             _data(NULL)
         {
             Reset(false);
             if (capacity)

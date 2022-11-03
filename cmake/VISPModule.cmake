@@ -968,7 +968,7 @@ macro(vp_add_tests)
   if(BUILD_TESTS AND EXISTS "${test_path}")
     __vp_parse_test_sources(TEST ${ARGN})
 
-    vp_find_dataset(VISP_DATASET_FOUND)
+    vp_find_dataset(VISP_DATASET_FOUND VISP_DATASET_LOCATION)
 
     set(__exclude_ctest "")
     foreach(__folder ${VISP_TEST_${the_module}_CTEST_EXCLUDE_FOLDER} )

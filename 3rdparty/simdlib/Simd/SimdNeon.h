@@ -97,6 +97,11 @@ namespace Simd
 
         void StretchGray2x2(const uint8_t *src, size_t srcWidth, size_t srcHeight, size_t srcStride,
             uint8_t *dst, size_t dstWidth, size_t dstHeight, size_t dstStride);
+
+        // ViSP custom SIMD code
+        void SimdMatMulTwist(const double * mat, size_t rows, const double * twist, double * dst);
+
+        void SimdComputeJtR(const double * J, size_t rows, const double * R, double * dst);
     }
 #endif// SIMD_NEON_ENABLE
 }
