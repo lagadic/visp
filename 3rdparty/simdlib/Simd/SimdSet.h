@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -29,8 +29,8 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
+#ifdef SIMD_SSE41_ENABLE
+    namespace Sse41
     {
         SIMD_INLINE __m128i SetInt8(char a0, char a1)
         {
@@ -52,7 +52,7 @@ namespace Simd
             return _mm_unpacklo_ps(_mm_set_ps1(a0), _mm_set_ps1(a1));
         }
     }
-#endif// SIMD_SSE2_ENABLE
+#endif// SIMD_SSE41_ENABLE
 
 #ifdef SIMD_AVX_ENABLE
     namespace Avx
@@ -60,6 +60,11 @@ namespace Simd
         SIMD_INLINE __m256 Set(__m128 a0, __m128 a1)
         {
             return _mm256_insertf128_ps(_mm256_castps128_ps256(a0), a1, 1);
+        }
+
+        SIMD_INLINE __m256 Set(__m128 a)
+        {
+            return _mm256_insertf128_ps(_mm256_castps128_ps256(a), a, 1);
         }
     }
 #endif// SIMD_AVX_ENABLE
@@ -85,6 +90,16 @@ namespace Simd
         SIMD_INLINE __m256 SetFloat(float a0, float a1)
         {
             return _mm256_unpacklo_ps(_mm256_set1_ps(a0), _mm256_set1_ps(a1));
+        }
+
+        SIMD_INLINE __m256i Set(__m128i a0, __m128i a1)
+        {
+            return _mm256_inserti128_si256(_mm256_castsi128_si256(a0), a1, 1);
+        }
+
+        SIMD_INLINE __m256i Set(__m128i a)
+        {
+            return _mm256_inserti128_si256(_mm256_castsi128_si256(a), a, 1);
         }
 
         template <class T> SIMD_INLINE __m256i SetMask(T first, size_t position, T second)

@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
+#ifdef SIMD_SSE41_ENABLE
+    namespace Sse41
     {
         template <bool align, size_t step> SIMD_INLINE void LoadNose3(const uint8_t * p, __m128i a[3])
         {
@@ -97,7 +97,7 @@ namespace Simd
             a[2] = LoadAfterLast<1>(_mm_loadu_si128((__m128i*)p));
         }
     }
-#endif//SIMD_SSE2_ENABLE
+#endif//SIMD_SSE41_ENABLE
 
 #ifdef SIMD_AVX2_ENABLE
     namespace Avx2

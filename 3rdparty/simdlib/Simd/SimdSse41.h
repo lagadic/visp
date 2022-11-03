@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -33,9 +33,14 @@ namespace Simd
     {
         void BgraToBgr(const uint8_t* bgra, size_t width, size_t height, size_t bgraStride, uint8_t* bgr, size_t bgrStride);
 
+        void BgraToGray(const uint8_t* bgra, size_t width, size_t height, size_t bgraStride, uint8_t* gray, size_t grayStride);
+
         void BgraToRgb(const uint8_t* bgra, size_t width, size_t height, size_t bgraStride, uint8_t* rgb, size_t rgbStride);
 
         void BgraToRgba(const uint8_t* bgra, size_t width, size_t height, size_t bgraStride, uint8_t* rgba, size_t rgbaStride);
+
+        void Bgr48pToBgra32(const uint8_t* blue, size_t blueStride, size_t width, size_t height,
+            const uint8_t* green, size_t greenStride, const uint8_t* red, size_t redStride, uint8_t* bgra, size_t bgraStride, uint8_t alpha);
 
         void BgrToBgra(const uint8_t* bgr, size_t width, size_t height, size_t bgrStride, uint8_t* bgra, size_t bgraStride, uint8_t alpha);
 
@@ -51,9 +56,16 @@ namespace Simd
 
         void GrayToBgr(const uint8_t* gray, size_t width, size_t height, size_t grayStride, uint8_t* bgr, size_t bgrStride);
 
+        void GrayToBgra(const uint8_t* gray, size_t width, size_t height, size_t grayStride, uint8_t* bgra, size_t bgraStride, uint8_t alpha);
+
         void InterleaveBgr(const uint8_t* b, size_t bStride, const uint8_t* g, size_t gStride, const uint8_t* r, size_t rStride, size_t width, size_t height, uint8_t* bgr, size_t bgrStride);
 
         void InterleaveBgra(const uint8_t* b, size_t bStride, const uint8_t* g, size_t gStride, const uint8_t* r, size_t rStride, const uint8_t* a, size_t aStride, size_t width, size_t height, uint8_t* bgra, size_t bgraStride);
+
+        void OperationBinary8u(const uint8_t* a, size_t aStride, const uint8_t* b, size_t bStride,
+            size_t width, size_t height, size_t channelCount, uint8_t* dst, size_t dstStride, SimdOperationBinary8uType type);
+
+        void RgbaToGray(const uint8_t* rgba, size_t width, size_t height, size_t rgbaStride, uint8_t* gray, size_t grayStride);
 
         void ReduceColor2x2(const uint8_t* src, size_t srcWidth, size_t srcHeight, size_t srcStride,
             uint8_t* dst, size_t dstWidth, size_t dstHeight, size_t dstStride, size_t channelCount);
@@ -61,8 +73,14 @@ namespace Simd
         void ReduceGray2x2(const uint8_t* src, size_t srcWidth, size_t srcHeight, size_t srcStride,
             uint8_t* dst, size_t dstWidth, size_t dstHeight, size_t dstStride);
 
+        void ReduceGray3x3(const uint8_t* src, size_t srcWidth, size_t srcHeight, size_t srcStride,
+            uint8_t* dst, size_t dstWidth, size_t dstHeight, size_t dstStride, int compensation);
+
         void ReduceGray4x4(const uint8_t* src, size_t srcWidth, size_t srcHeight, size_t srcStride,
             uint8_t* dst, size_t dstWidth, size_t dstHeight, size_t dstStride);
+
+        void ReduceGray5x5(const uint8_t* src, size_t srcWidth, size_t srcHeight, size_t srcStride,
+            uint8_t* dst, size_t dstWidth, size_t dstHeight, size_t dstStride, int compensation);
 
         void ResizeBilinear(const uint8_t* src, size_t srcWidth, size_t srcHeight, size_t srcStride,
             uint8_t* dst, size_t dstWidth, size_t dstHeight, size_t dstStride, size_t channelCount);
@@ -71,7 +89,35 @@ namespace Simd
 
         void RgbToGray(const uint8_t* rgb, size_t width, size_t height, size_t rgbStride, uint8_t* gray, size_t grayStride);
 
+        void StretchGray2x2(const uint8_t* src, size_t srcWidth, size_t srcHeight, size_t srcStride,
+            uint8_t* dst, size_t dstWidth, size_t dstHeight, size_t dstStride);
+
         // ViSP custom SIMD code
+        void ImageErosion(uint8_t * img, const uint8_t * buff, size_t width, size_t height, SimdImageConnexityType connexityType);
+
+        void ImageDilatation(uint8_t * img, const uint8_t * buff, size_t width, size_t height, SimdImageConnexityType connexityType);
+
+        double SimdVectorSum(const double * vec, size_t size);
+
+        double SimdVectorSumSquare(const double * vec, size_t size);
+
+        double SimdVectorStdev(const double * vec, size_t size, bool useBesselCorrection);
+
+        void SimdVectorHadamard(const double * src1, const double * src2, size_t size, double * dst);
+
+        void SimdMatMulTwist(const double * mat, size_t rows, const double * twist, double * dst);
+
+        void SimdNormalizedCorrelation(const double * img1, double mean1, const double * img2, double mean2, size_t size,
+                                       double& a2, double& b2, double& ab);
+
+        void SimdNormalizedCorrelation2(const double * img1, size_t width1, const double * img2,
+                                        size_t width2, size_t height2, size_t i0, size_t j0, double& ab);
+
+        void SimdRemap(const unsigned char * src, size_t channels, size_t width, size_t height, size_t offset,
+                       const int * mapU, const int * mapV, const float * mapDu, const float * mapDv, unsigned char * dst);
+
+        void SimdComputeJtR(const double * J, size_t rows, const double * R, double * dst);
+
         void SimdImageDifference(const unsigned char * img1, const unsigned char * img2, size_t size, unsigned char * imgDiff);
     }
 #endif// SIMD_SSE41_ENABLE

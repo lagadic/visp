@@ -45,12 +45,115 @@
 #define VISP_HAVE_SSE2 1
 #endif
 
-#define USE_SSE_CODE 1
-#if VISP_HAVE_SSE2 && USE_SSE_CODE
+// https://stackoverflow.com/a/40765925
+#if !defined(__FMA__) && defined(__AVX2__)
+  #define __FMA__ 1
+#endif
+
+#if defined _WIN32 && defined(_M_ARM64)
+#define _ARM64_DISTINCT_NEON_TYPES
+#include <Intrin.h>
+#include <arm_neon.h>
+#define VISP_HAVE_NEON 1
+#elif (defined(__ARM_NEON__) || defined (__ARM_NEON)) && defined(__aarch64__)
+#include <arm_neon.h>
+#define VISP_HAVE_NEON 1
+#endif
+
+#define USE_SIMD_CODE 1
+
+#if VISP_HAVE_SSE2 && USE_SIMD_CODE
 #define USE_SSE 1
 #else
 #define USE_SSE 0
 #endif
+
+#if VISP_HAVE_NEON && USE_SIMD_CODE
+#define USE_NEON 1
+#else
+#define USE_NEON 0
+#endif
+
+#if (VISP_HAVE_OPENCV_VERSION >= 0x040101 || (VISP_HAVE_OPENCV_VERSION < 0x040000 && VISP_HAVE_OPENCV_VERSION >= 0x030407)) && USE_SIMD_CODE
+#define USE_OPENCV_HAL 1
+#include <opencv2/core/simd_intrinsics.hpp>
+#include <opencv2/core/hal/intrin.hpp>
+#endif
+
+#if !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
+#include <cstdint>
+
+namespace
+{
+#if USE_SSE
+inline void v_load_deinterleave(const uint64_t *ptr, __m128i& a, __m128i& b, __m128i& c)
+{
+  __m128i t0 = _mm_loadu_si128((const __m128i*)ptr);       // a0, b0
+  __m128i t1 = _mm_loadu_si128((const __m128i*)(ptr + 2)); // c0, a1
+  __m128i t2 = _mm_loadu_si128((const __m128i*)(ptr + 4)); // b1, c1
+
+  t1 = _mm_shuffle_epi32(t1, 0x4e); // a1, c0
+
+  a = _mm_unpacklo_epi64(t0, t1);
+  b = _mm_unpacklo_epi64(_mm_unpackhi_epi64(t0, t0), t2);
+  c = _mm_unpackhi_epi64(t1, t2);
+}
+
+inline void v_load_deinterleave(const double* ptr, __m128d& a0, __m128d& b0, __m128d& c0)
+{
+  __m128i a1, b1, c1;
+  v_load_deinterleave((const uint64_t*)ptr, a1, b1, c1);
+  a0 = _mm_castsi128_pd(a1);
+  b0 = _mm_castsi128_pd(b1);
+  c0 = _mm_castsi128_pd(c1);
+}
+
+inline __m128d v_combine_low(const __m128d& a, const __m128d& b)
+{
+  __m128i a1 = _mm_castpd_si128(a), b1 = _mm_castpd_si128(b);
+  return _mm_castsi128_pd(_mm_unpacklo_epi64(a1, b1));
+}
+
+inline __m128d v_combine_high(const __m128d& a, const __m128d& b)
+{
+  __m128i a1 = _mm_castpd_si128(a), b1 = _mm_castpd_si128(b);
+  return _mm_castsi128_pd(_mm_unpackhi_epi64(a1, b1));
+}
+
+inline __m128d v_fma(const __m128d& a, const __m128d& b, const __m128d& c)
+{
+#if __FMA__
+    return _mm_fmadd_pd(a, b, c);
+#else
+    return _mm_add_pd(_mm_mul_pd(a, b), c);
+#endif
+}
+#else
+inline void v_load_deinterleave(const double* ptr, float64x2_t& a0, float64x2_t& b0, float64x2_t& c0)
+{
+  float64x2x3_t v = vld3q_f64(ptr);
+  a0 = v.val[0];
+  b0 = v.val[1];
+  c0 = v.val[2];
+}
+
+inline float64x2_t v_combine_low(const float64x2_t& a, const float64x2_t& b)
+{
+  return vcombine_f64(vget_low_f64(a), vget_low_f64(b));
+}
+
+inline float64x2_t v_combine_high(const float64x2_t& a, const float64x2_t& b)
+{
+  return vcombine_f64(vget_high_f64(a), vget_high_f64(b));
+}
+
+inline float64x2_t v_fma(const float64x2_t& a, const float64x2_t& b, const float64x2_t& c)
+{
+    return vfmaq_f64(c, a, b);
+}
+#endif
+}
+#endif // !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
 
 vpMbtFaceDepthDense::vpMbtFaceDepthDense()
   : m_cam(), m_clippingFlag(vpPolygon3D::NO_CLIPPING), m_distFarClip(100), m_distNearClip(0.001), m_hiddenFace(NULL),
@@ -201,14 +304,6 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
 
   m_pointCloudFace.reserve((size_t)(bb.getWidth() * bb.getHeight()));
 
-  bool checkSSE2 = vpCPUFeatures::checkSSE2();
-#if !USE_SSE
-  checkSSE2 = false;
-#else
-  bool push = false;
-  double prev_x = 0.0, prev_y = 0.0, prev_z = 0.0;
-#endif
-
   int totalTheoreticalPoints = 0, totalPoints = 0;
   for (unsigned int i = top; i < bottom; i += stepY) {
     for (unsigned int j = left; j < right; j += stepX) {
@@ -221,30 +316,9 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
         if (vpMeTracker::inMask(mask, i, j) && pcl::isFinite((*point_cloud)(j, i)) && (*point_cloud)(j, i).z > 0) {
           totalPoints++;
 
-          if (checkSSE2) {
-#if USE_SSE
-            if (!push) {
-              push = true;
-              prev_x = (*point_cloud)(j, i).x;
-              prev_y = (*point_cloud)(j, i).y;
-              prev_z = (*point_cloud)(j, i).z;
-            } else {
-              push = false;
-              m_pointCloudFace.push_back(prev_x);
-              m_pointCloudFace.push_back((*point_cloud)(j, i).x);
-
-              m_pointCloudFace.push_back(prev_y);
-              m_pointCloudFace.push_back((*point_cloud)(j, i).y);
-
-              m_pointCloudFace.push_back(prev_z);
-              m_pointCloudFace.push_back((*point_cloud)(j, i).z);
-            }
-#endif
-          } else {
-            m_pointCloudFace.push_back((*point_cloud)(j, i).x);
-            m_pointCloudFace.push_back((*point_cloud)(j, i).y);
-            m_pointCloudFace.push_back((*point_cloud)(j, i).z);
-          }
+          m_pointCloudFace.push_back((*point_cloud)(j, i).x);
+          m_pointCloudFace.push_back((*point_cloud)(j, i).y);
+          m_pointCloudFace.push_back((*point_cloud)(j, i).z);
 
 #if DEBUG_DISPLAY_DEPTH_DENSE
           debugImage[i][j] = 255;
@@ -253,14 +327,6 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
       }
     }
   }
-
-#if USE_SSE
-  if (checkSSE2 && push) {
-    m_pointCloudFace.push_back(prev_x);
-    m_pointCloudFace.push_back(prev_y);
-    m_pointCloudFace.push_back(prev_z);
-  }
-#endif
 
   if (totalPoints == 0 || ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
                            totalPoints / (double)totalTheoreticalPoints < m_depthDenseFilteringOccupancyRatio)) {
@@ -324,14 +390,6 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
 
   m_pointCloudFace.reserve((size_t)(bb.getWidth() * bb.getHeight()));
 
-  bool checkSSE2 = vpCPUFeatures::checkSSE2();
-#if !USE_SSE
-  checkSSE2 = false;
-#else
-  bool push = false;
-  double prev_x = 0.0, prev_y = 0.0, prev_z = 0.0;
-#endif
-
   int totalTheoreticalPoints = 0, totalPoints = 0;
   for (unsigned int i = top; i < bottom; i += stepY) {
     for (unsigned int j = left; j < right; j += stepX) {
@@ -344,30 +402,9 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
         if (vpMeTracker::inMask(mask, i, j) && point_cloud[i * width + j][2] > 0) {
           totalPoints++;
 
-          if (checkSSE2) {
-#if USE_SSE
-            if (!push) {
-              push = true;
-              prev_x = point_cloud[i * width + j][0];
-              prev_y = point_cloud[i * width + j][1];
-              prev_z = point_cloud[i * width + j][2];
-            } else {
-              push = false;
-              m_pointCloudFace.push_back(prev_x);
-              m_pointCloudFace.push_back(point_cloud[i * width + j][0]);
-
-              m_pointCloudFace.push_back(prev_y);
-              m_pointCloudFace.push_back(point_cloud[i * width + j][1]);
-
-              m_pointCloudFace.push_back(prev_z);
-              m_pointCloudFace.push_back(point_cloud[i * width + j][2]);
-            }
-#endif
-          } else {
-            m_pointCloudFace.push_back(point_cloud[i * width + j][0]);
-            m_pointCloudFace.push_back(point_cloud[i * width + j][1]);
-            m_pointCloudFace.push_back(point_cloud[i * width + j][2]);
-          }
+          m_pointCloudFace.push_back(point_cloud[i * width + j][0]);
+          m_pointCloudFace.push_back(point_cloud[i * width + j][1]);
+          m_pointCloudFace.push_back(point_cloud[i * width + j][2]);
 
 #if DEBUG_DISPLAY_DEPTH_DENSE
           debugImage[i][j] = 255;
@@ -376,14 +413,6 @@ bool vpMbtFaceDepthDense::computeDesiredFeatures(const vpHomogeneousMatrix &cMo,
       }
     }
   }
-
-#if USE_SSE
-  if (checkSSE2 && push) {
-    m_pointCloudFace.push_back(prev_x);
-    m_pointCloudFace.push_back(prev_y);
-    m_pointCloudFace.push_back(prev_z);
-  }
-#endif
 
   if (totalPoints == 0 || ((m_depthDenseFilteringMethod & DEPTH_OCCUPANCY_RATIO_FILTERING) &&
                            totalPoints / (double)totalTheoreticalPoints < m_depthDenseFilteringOccupancyRatio)) {
@@ -449,69 +478,134 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
   double nz = m_planeCamera.getC();
   double D = m_planeCamera.getD();
 
-  bool checkSSE2 = vpCPUFeatures::checkSSE2();
-#if !USE_SSE
-  checkSSE2 = false;
+  bool useSIMD = vpCPUFeatures::checkSSE2() || vpCPUFeatures::checkNeon();
+#if USE_OPENCV_HAL
+  useSIMD = true;
+#endif
+#if !USE_SSE && !USE_NEON && !USE_OPENCV_HAL
+  useSIMD = false;
 #endif
 
-  if (checkSSE2) {
-#if USE_SSE
+  if (useSIMD) {
+#if USE_SSE  || USE_NEON|| USE_OPENCV_HAL
     size_t cpt = 0;
     if (getNbFeatures() >= 2) {
       double *ptr_point_cloud = &m_pointCloudFace[0];
       double *ptr_L = L.data;
       double *ptr_error = error.data;
 
+#if USE_OPENCV_HAL
+      const cv::v_float64x2 vnx = cv::v_setall_f64(nx);
+      const cv::v_float64x2 vny = cv::v_setall_f64(ny);
+      const cv::v_float64x2 vnz = cv::v_setall_f64(nz);
+      const cv::v_float64x2 vd = cv::v_setall_f64(D);
+#elif USE_SSE
       const __m128d vnx = _mm_set1_pd(nx);
       const __m128d vny = _mm_set1_pd(ny);
       const __m128d vnz = _mm_set1_pd(nz);
       const __m128d vd = _mm_set1_pd(D);
-
-      double tmp_a1[2], tmp_a2[2], tmp_a3[2];
+#else
+      const float64x2_t vnx = vdupq_n_f64(nx);
+      const float64x2_t vny = vdupq_n_f64(ny);
+      const float64x2_t vnz = vdupq_n_f64(nz);
+      const float64x2_t vd = vdupq_n_f64(D);
+#endif
 
       for (; cpt <= m_pointCloudFace.size() - 6; cpt += 6, ptr_point_cloud += 6) {
-        const __m128d vx = _mm_loadu_pd(ptr_point_cloud);
-        const __m128d vy = _mm_loadu_pd(ptr_point_cloud + 2);
-        const __m128d vz = _mm_loadu_pd(ptr_point_cloud + 4);
+#if USE_OPENCV_HAL
+        cv::v_float64x2 vx, vy, vz;
+        cv::v_load_deinterleave(ptr_point_cloud, vx, vy, vz);
 
-        const __m128d va1 = _mm_sub_pd(_mm_mul_pd(vnz, vy), _mm_mul_pd(vny, vz));
-        const __m128d va2 = _mm_sub_pd(_mm_mul_pd(vnx, vz), _mm_mul_pd(vnz, vx));
-        const __m128d va3 = _mm_sub_pd(_mm_mul_pd(vny, vx), _mm_mul_pd(vnx, vy));
+        cv::v_float64x2 va1 = vnz*vy - vny*vz;
+        cv::v_float64x2 va2 = vnx*vz - vnz*vx;
+        cv::v_float64x2 va3 = vny*vx - vnx*vy;
 
-        _mm_storeu_pd(tmp_a1, va1);
-        _mm_storeu_pd(tmp_a2, va2);
-        _mm_storeu_pd(tmp_a3, va3);
+        cv::v_float64x2 vnxy = cv::v_combine_low(vnx, vny);
+        cv::v_store(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = cv::v_combine_low(vnz, va1);
+        cv::v_store(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = cv::v_combine_low(va2, va3);
+        cv::v_store(ptr_L, vnxy);
+        ptr_L += 2;
 
-        *ptr_L = nx;
-        ptr_L++;
-        *ptr_L = ny;
-        ptr_L++;
-        *ptr_L = nz;
-        ptr_L++;
-        *ptr_L = tmp_a1[0];
-        ptr_L++;
-        *ptr_L = tmp_a2[0];
-        ptr_L++;
-        *ptr_L = tmp_a3[0];
-        ptr_L++;
+        vnxy = cv::v_combine_high(vnx, vny);
+        cv::v_store(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = cv::v_combine_high(vnz, va1);
+        cv::v_store(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = cv::v_combine_high(va2, va3);
+        cv::v_store(ptr_L, vnxy);
+        ptr_L += 2;
 
-        *ptr_L = nx;
-        ptr_L++;
-        *ptr_L = ny;
-        ptr_L++;
-        *ptr_L = nz;
-        ptr_L++;
-        *ptr_L = tmp_a1[1];
-        ptr_L++;
-        *ptr_L = tmp_a2[1];
-        ptr_L++;
-        *ptr_L = tmp_a3[1];
-        ptr_L++;
+        cv::v_float64x2 verr = vd + cv::v_muladd(vnx, vx, cv::v_muladd(vny, vy, vnz*vz));
+        cv::v_store(ptr_error, verr);
+        ptr_error += 2;
+#elif USE_SSE
+        __m128d vx, vy, vz;
+        v_load_deinterleave(ptr_point_cloud, vx, vy, vz);
 
-        const __m128d verror =
-            _mm_add_pd(_mm_add_pd(vd, _mm_mul_pd(vnx, vx)), _mm_add_pd(_mm_mul_pd(vny, vy), _mm_mul_pd(vnz, vz)));
+        __m128d va1 = _mm_sub_pd(_mm_mul_pd(vnz, vy), _mm_mul_pd(vny, vz));
+        __m128d va2 = _mm_sub_pd(_mm_mul_pd(vnx, vz), _mm_mul_pd(vnz, vx));
+        __m128d va3 = _mm_sub_pd(_mm_mul_pd(vny, vx), _mm_mul_pd(vnx, vy));
+
+        __m128d vnxy = v_combine_low(vnx, vny);
+        _mm_storeu_pd(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = v_combine_low(vnz, va1);
+        _mm_storeu_pd(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = v_combine_low(va2, va3);
+        _mm_storeu_pd(ptr_L, vnxy);
+        ptr_L += 2;
+
+        vnxy = v_combine_high(vnx, vny);
+        _mm_storeu_pd(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = v_combine_high(vnz, va1);
+        _mm_storeu_pd(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = v_combine_high(va2, va3);
+        _mm_storeu_pd(ptr_L, vnxy);
+        ptr_L += 2;
+
+        const __m128d verror = _mm_add_pd(vd, v_fma(vnx, vx, v_fma(vny, vy, _mm_mul_pd(vnz, vz))));
         _mm_storeu_pd(ptr_error, verror);
         ptr_error += 2;
+#else
+        float64x2_t vx, vy, vz;
+        v_load_deinterleave(ptr_point_cloud, vx, vy, vz);
+
+        float64x2_t va1 = vsubq_f64(vmulq_f64(vnz, vy), vmulq_f64(vny, vz));
+        float64x2_t va2 = vsubq_f64(vmulq_f64(vnx, vz), vmulq_f64(vnz, vx));
+        float64x2_t va3 = vsubq_f64(vmulq_f64(vny, vx), vmulq_f64(vnx, vy));
+
+        float64x2_t vnxy = v_combine_low(vnx, vny);
+        vst1q_f64(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = v_combine_low(vnz, va1);
+        vst1q_f64(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = v_combine_low(va2, va3);
+        vst1q_f64(ptr_L, vnxy);
+        ptr_L += 2;
+
+        vnxy = v_combine_high(vnx, vny);
+        vst1q_f64(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = v_combine_high(vnz, va1);
+        vst1q_f64(ptr_L, vnxy);
+        ptr_L += 2;
+        vnxy = v_combine_high(va2, va3);
+        vst1q_f64(ptr_L, vnxy);
+        ptr_L += 2;
+
+        const float64x2_t verror = vaddq_f64(vd, v_fma(vnx, vx, v_fma(vny, vy, vmulq_f64(vnz, vz))));
+        vst1q_f64(ptr_error, verror);
+        ptr_error += 2;
+#endif
       }
     }
 

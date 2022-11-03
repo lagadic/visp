@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -35,8 +35,8 @@ namespace Simd
             _ay.Resize(_param.dstH);
             _iy.Resize(_param.dstH);
             EstimateIndexAlpha(_param.srcH, _param.dstH, 1, _iy.data, _ay.data);
-        }        
-        
+        }
+
         void ResizerByteBilinear::EstimateIndexAlpha(size_t srcSize, size_t dstSize, size_t channels, int32_t * indices, int32_t * alphas)
         {
             float scale = (float)srcSize / dstSize;
@@ -66,7 +66,7 @@ namespace Simd
                     alphas[offset] = (int32_t)(alpha * FRACTION_RANGE + 0.5f);
                 }
             }
-        }        
+        }
 
         void ResizerByteBilinear::Run(const uint8_t * src, size_t srcStride, uint8_t * dst, size_t dstStride)
         {
@@ -136,7 +136,7 @@ namespace Simd
             _ay.Resize(_param.dstH, false, _param.align);
             _iy.Resize(_param.dstH, false, _param.align);
             EstimateIndexAlpha(_param.srcH, _param.dstH, 1, _iy.data, _ay.data);
-            size_t rs = _param.dstW * _param.channels;
+            size_t rs = _param.dstW * _param.channels + SIMD_ALIGN;
             _ax.Resize(rs, false, _param.align);
             _ix.Resize(rs, false, _param.align);
             EstimateIndexAlpha(_param.srcW, _param.dstW, _param.channels, _ix.data, _ax.data);
@@ -290,7 +290,7 @@ namespace Simd
                         alphas[offset] = alpha;
                     }
                 }
-            }            
+            }
             else if (_param.method == SimdResizeMethodBilinearCaffe)
             {
                 float scale = dstSize > 1 ? float(srcSize - 1) / float(dstSize - 1) : 0.0f;
@@ -388,4 +388,3 @@ namespace Simd
         }
     }
 }
-

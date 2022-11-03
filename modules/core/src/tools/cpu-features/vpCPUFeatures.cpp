@@ -34,10 +34,12 @@
  *****************************************************************************/
 
 #include "x86/cpu_x86.h"
+#include <Simd/SimdLib.hpp>
 #include <visp3/core/vpCPUFeatures.h>
 
 namespace vpCPUFeatures
 {
+// TODO: try to refactor to keep only SimdCpuInfo code and remove cpu_x86 code?
 static const FeatureDetector::cpu_x86 cpu_features;
 
 bool checkSSE2() { return cpu_features.HW_SSE2; }
@@ -53,6 +55,14 @@ bool checkSSE42() { return cpu_features.HW_SSE42; }
 bool checkAVX() { return cpu_features.HW_AVX; }
 
 bool checkAVX2() { return cpu_features.HW_AVX2; }
+
+size_t getCPUCacheL1() { return SimdCpuInfo(SimdCpuInfoCacheL1); }
+
+size_t getCPUCacheL2() { return SimdCpuInfo(SimdCpuInfoCacheL2); }
+
+size_t getCPUCacheL3() { return SimdCpuInfo(SimdCpuInfoCacheL3); }
+
+bool checkNeon() { return SimdCpuInfo(SimdCpuInfoNeon) != 0; }
 
 void printCPUInfo() { cpu_features.print(); }
 } // namespace vpCPUFeatures

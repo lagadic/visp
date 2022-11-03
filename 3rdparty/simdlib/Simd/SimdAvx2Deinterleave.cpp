@@ -24,6 +24,7 @@
 #include "Simd/SimdMemory.h"
 #include "Simd/SimdStore.h"
 #include "Simd/SimdConversion.h"
+#include "Simd/SimdDeinterleave.h"
 
 namespace Simd
 {
@@ -152,8 +153,5 @@ namespace Simd
                 DeinterleaveBgra<false>(bgra, bgraStride, width, height, b, bStride, g, gStride, r, rStride, a, aStride);
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdAvx2Deinterleave.cpp.o) has no symbols
-    void dummy_SimdAvx2Deinterleave(){};
 #endif// SIMD_AVX2_ENABLE
 }

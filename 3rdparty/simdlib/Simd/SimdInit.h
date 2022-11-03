@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -115,7 +115,7 @@ namespace Simd
 
 #endif
 
-#if defined(SIMD_SSE2_ENABLE)
+#if defined(SIMD_SSE41_ENABLE)
 
 #if defined(SIMD_INIT_AS_CHAR)
 
@@ -207,7 +207,7 @@ namespace Simd
 
 #endif// defined(_MSC_VER) || defined(__GNUC__)
 
-#endif// SIMD_SSE2_ENABLE
+#endif// SIMD_SSE41_ENABLE
 
 #if defined(SIMD_AVX2_ENABLE)
 

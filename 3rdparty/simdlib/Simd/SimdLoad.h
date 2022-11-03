@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -28,8 +28,8 @@
 
 namespace Simd
 {
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
+#ifdef SIMD_SSE41_ENABLE
+    namespace Sse41
     {
         template <bool align> SIMD_INLINE __m128 Load(const float * p);
 
@@ -106,15 +106,6 @@ namespace Simd
             return _mm_or_si128(_mm_srli_si128(last, count), _mm_and_si128(last, _mm_slli_si128(K_INV_ZERO, A - count)));
         }
     }
-#endif//SIMD_SSE2_ENABLE
-
-#ifdef SIMD_SSE41_ENABLE
-    namespace Sse41
-    {
-#if defined(_MSC_VER) && _MSC_VER >= 1700  && _MSC_VER < 1900 // Visual Studio 2012/2013 compiler bug      
-        using Sse2::Load;
-#endif
-    }
 #endif
 
 #ifdef SIMD_AVX_ENABLE
@@ -134,12 +125,12 @@ namespace Simd
 
         template<bool align> SIMD_INLINE __m256 Load(const float * p0, const float * p1)
         {
-            return _mm256_insertf128_ps(_mm256_castps128_ps256(Sse2::Load<align>(p0)), Sse2::Load<align>(p1), 1);
+            return _mm256_insertf128_ps(_mm256_castps128_ps256(Sse41::Load<align>(p0)), Sse41::Load<align>(p1), 1);
         }
 
         SIMD_INLINE __m256 Load(const float * p0, const float * p1, const float * p2, const float * p3)
         {
-            return _mm256_insertf128_ps(_mm256_castps128_ps256(Sse2::Load(p0, p1)), Sse2::Load(p2, p3), 1);
+            return _mm256_insertf128_ps(_mm256_castps128_ps256(Sse41::Load(p0, p1)), Sse41::Load(p2, p3), 1);
         }
 
         SIMD_INLINE __m256 Load(const float * ptr, __m256i mask)
@@ -168,7 +159,7 @@ namespace Simd
 
         template<bool align> SIMD_INLINE __m256i Load(const __m128i* p0, const __m128i* p1)
         {
-            return _mm256_inserti128_si256(_mm256_castsi128_si256(Sse2::Load<align>(p0)), Sse2::Load<align>(p1), 1);
+            return _mm256_inserti128_si256(_mm256_castsi128_si256(Sse41::Load<align>(p0)), Sse41::Load<align>(p1), 1);
         }
 
         template <bool align> SIMD_INLINE __m128i LoadHalf(const __m128i * p);
@@ -185,12 +176,12 @@ namespace Simd
 
         template <size_t count> SIMD_INLINE __m128i LoadHalfBeforeFirst(__m128i first)
         {
-            return _mm_or_si128(_mm_slli_si128(first, count), _mm_and_si128(first, _mm_srli_si128(Sse2::K_INV_ZERO, HA - count)));
+            return _mm_or_si128(_mm_slli_si128(first, count), _mm_and_si128(first, _mm_srli_si128(Sse41::K_INV_ZERO, HA - count)));
         }
 
         template <size_t count> SIMD_INLINE __m128i LoadHalfAfterLast(__m128i last)
         {
-            return _mm_or_si128(_mm_srli_si128(last, count), _mm_and_si128(last, _mm_slli_si128(Sse2::K_INV_ZERO, HA - count)));
+            return _mm_or_si128(_mm_srli_si128(last, count), _mm_and_si128(last, _mm_slli_si128(Sse41::K_INV_ZERO, HA - count)));
         }
 
         template <bool align> SIMD_INLINE __m256i LoadPermuted(const __m256i * p)
