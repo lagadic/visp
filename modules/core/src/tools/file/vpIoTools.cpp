@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Directory management.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -857,10 +854,12 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
-    char cmd[FILENAME_MAX];
-    int ret;
-    sprintf(cmd, "cp -p %s %s", src.c_str(), dst.c_str());
-    ret = system(cmd);
+    std::stringstream cmd;
+    cmd << "cp -p ";
+    cmd << src;
+    cmd << " ";
+    cmd << dst;
+    int ret = system(cmd.str().c_str());
     if (ret) {
     }; // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
@@ -871,12 +870,12 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
-    char cmd[FILENAME_MAX];
-    int ret;
-    std::string src_ = vpIoTools::path(src);
-    std::string dst_ = vpIoTools::path(dst);
-    sprintf(cmd, "copy %s %s", src_.c_str(), dst_.c_str());
-    ret = system(cmd);
+    std::stringstream cmd;
+    cmd << "copy ";
+    cmd << vpIoTools::path(src);
+    cmd << " ";
+    cmd << vpIoTools::path(dst);
+    int ret = system(cmd.str().c_str());
     if (ret) {
     }; // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
@@ -891,10 +890,12 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
-    char cmd[FILENAME_MAX];
-    int ret;
-    sprintf(cmd, "cp -p -r %s %s", src.c_str(), dst.c_str());
-    ret = system(cmd);
+    std::stringstream cmd;
+    cmd << "cp -p ";
+    cmd << src;
+    cmd << " ";
+    cmd << dst;
+    int ret = system(cmd.str().c_str());
     if (ret) {
     }; // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
@@ -905,12 +906,12 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
-    char cmd[FILENAME_MAX];
-    int ret;
-    std::string src_ = vpIoTools::path(src);
-    std::string dst_ = vpIoTools::path(dst);
-    sprintf(cmd, "copy %s %s", src_.c_str(), dst_.c_str());
-    ret = system(cmd);
+    std::stringstream cmd;
+    cmd << "copy ";
+    cmd << vpIoTools::path(src);
+    cmd << " ";
+    cmd << vpIoTools::path(dst;
+    int ret = system(cmd.str().c_str());
     if (ret) {
     }; // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
@@ -954,9 +955,11 @@ bool vpIoTools::remove(const std::string &file_or_dir)
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
-    char cmd[FILENAME_MAX];
-    sprintf(cmd, "rm -rf \"%s\"", file_or_dir.c_str());
-    int ret = system(cmd);
+    std::stringstream cmd;
+    cmd << "rm -rf \"";
+    cmd << file_or_dir;
+    cmd << "\"";
+    int ret = system(cmd.str().c_str());
     if (ret) {
     }; // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
@@ -967,10 +970,11 @@ bool vpIoTools::remove(const std::string &file_or_dir)
 #endif
 #elif defined(_WIN32)
 #if (!defined(WINRT))
-    char cmd[FILENAME_MAX];
-    std::string file_or_dir_ = vpIoTools::path(file_or_dir);
-    sprintf(cmd, "rmdir /S /Q %s", file_or_dir_.c_str());
-    int ret = system(cmd);
+    std::stringstream cmd;
+    cmd << "rmdir /S /Q ";
+    cmd << vpIoTools::path(file_or_dir);
+    cmd << "\"";
+    int ret = system(cmd.str().c_str());
     if (ret) {
     }; // to avoid a warning
     // std::cout << cmd << " return value: " << ret << std::endl;
@@ -1319,10 +1323,10 @@ void vpIoTools::addNameElement(const std::string &strTrue, const double &val)
 {
   // if(val != 0.)
   if (std::fabs(val) < std::numeric_limits<double>::epsilon()) {
-    char valC[256];
-    sprintf(valC, "%.3f", val);
-    std::string valS(valC);
-    baseName += "_" + strTrue + valS;
+    std::stringstream valS;
+    valS.precision(4);
+    valS << val;
+    baseName += "_" + strTrue + valS.str();
   }
 }
 
@@ -1589,7 +1593,6 @@ long vpIoTools::getIndex(const std::string &filename, const std::string &format)
   size_t indexBegin = format.find_last_of('%');
   size_t indexEnd = format.find_first_of('d', indexBegin);
   size_t suffixLength = format.length() - indexEnd - 1;
-
   // Extracting index
   if (filename.length() <= suffixLength + indexBegin) {
     return -1;
@@ -1605,7 +1608,7 @@ long vpIoTools::getIndex(const std::string &filename, const std::string &format)
 
   // Checking that format with inserted index equals filename
   char nameByFormat[FILENAME_MAX];
-  sprintf(nameByFormat, format.c_str(), index);
+  snprintf(nameByFormat, FILENAME_MAX, format.c_str(), index);
   if (std::string(nameByFormat) != filename) {
     return -1;
   }

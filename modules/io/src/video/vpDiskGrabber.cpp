@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Disk framegrabber.
- *
- * Authors:
- * Eric Marchand
  *
  *****************************************************************************/
 
@@ -148,7 +145,7 @@ void vpDiskGrabber::acquire(vpImage<unsigned char> &I)
 
   if (m_use_generic_name) {
     char filename[FILENAME_MAX];
-    sprintf(filename, m_generic_name.c_str(), m_image_number);
+    snprintf(filename, FILENAME_MAX, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
     ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << m_image_number << "."
@@ -176,7 +173,7 @@ void vpDiskGrabber::acquire(vpImage<vpRGBa> &I)
 
   if (m_use_generic_name) {
     char filename[FILENAME_MAX];
-    sprintf(filename, m_generic_name.c_str(), m_image_number);
+    snprintf(filename, FILENAME_MAX, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
     ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << m_image_number << "."
@@ -203,7 +200,7 @@ void vpDiskGrabber::acquire(vpImage<float> &I)
   std::stringstream ss;
   if (m_use_generic_name) {
     char filename[FILENAME_MAX];
-    sprintf(filename, m_generic_name.c_str(), m_image_number);
+    snprintf(filename, FILENAME_MAX, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
     ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << m_image_number << "."
@@ -231,7 +228,7 @@ void vpDiskGrabber::acquire(vpImage<unsigned char> &I, long img_number)
   std::stringstream ss;
   if (m_use_generic_name) {
     char filename[FILENAME_MAX];
-    sprintf(filename, m_generic_name.c_str(), m_image_number);
+    snprintf(filename, FILENAME_MAX, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
     ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << m_image_number << "."
@@ -259,7 +256,7 @@ void vpDiskGrabber::acquire(vpImage<vpRGBa> &I, long img_number)
   std::stringstream ss;
   if (m_use_generic_name) {
     char filename[FILENAME_MAX];
-    sprintf(filename, m_generic_name.c_str(), m_image_number);
+    snprintf(filename, FILENAME_MAX, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
     ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << m_image_number << "."
@@ -287,7 +284,7 @@ void vpDiskGrabber::acquire(vpImage<float> &I, long img_number)
   std::stringstream ss;
   if (m_use_generic_name) {
     char filename[FILENAME_MAX];
-    sprintf(filename, m_generic_name.c_str(), m_image_number);
+    snprintf(filename, FILENAME_MAX, m_generic_name.c_str(), m_image_number);
     ss << filename;
   } else {
     ss << m_directory << "/" << m_base_name << std::setfill('0') << std::setw(m_number_of_zero) << img_number << "."

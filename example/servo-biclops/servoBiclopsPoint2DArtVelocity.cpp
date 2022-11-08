@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,6 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in articular
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -256,9 +253,9 @@ int main(int argc, const char **argv)
     }
 
     // Create the debug file: debugdir/$user/biclops.txt
-    char filename[FILENAME_MAX];
-    sprintf(filename, "%s/biclops.txt", debugdir.c_str());
-    FILE *fd = fopen(filename, "w");
+    std::string filename;
+    filename = debugdir + "/biclops.txt";
+    FILE *fd = fopen(filename.c_str(), "w");
 
     vpRobotBiclops robot(opt_conf.c_str());
     robot.setDenavitHartenbergModel(vpBiclops::DH2);

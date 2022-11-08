@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,6 @@
  *   tests the control law
  *   eye-in-hand control
  *   velocity computed in the camera frame
- *
- * Authors:
- * Eric Marchand
  *
  *****************************************************************************/
 
@@ -143,12 +140,11 @@ int main()
     std::cout << " Learning 0/1 " << std::endl;
     int learning;
     std::cin >> learning;
-    char name[FILENAME_MAX];
-    sprintf(name, "dat/ellipse.dat");
+    std::string name = "dat/ellipse.dat");
     if (learning == 1) {
       // save the object position
       vpTRACE("Save the location of the object in a file dat/ellipse.dat");
-      std::ofstream f(name);
+      std::ofstream f(name.c_str());
       f << c.get_s().t();
       f.close();
       exit(1);

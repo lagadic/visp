@@ -693,6 +693,7 @@ bool ReflexDriver::check_for_finger_movement(const reflex_hand2::ReflexHandState
 // Captures the current hand state
 void ReflexDriver::populate_motor_state(const reflex_hand2::ReflexHandState * const state) {
   char buffer[10];
+  size_t buffer_size = 10;
   for (size_t i = 0; i < NUM_SERVOS; i++) {
     hand_info.raw_angle[i] = state->dynamixel_angles_[i];
     //hand_info.velocity[i] = (float) state->dynamixel_speeds_[i];
@@ -700,7 +701,7 @@ void ReflexDriver::populate_motor_state(const reflex_hand2::ReflexHandState * co
     hand_info.load[i] = load_raw_to_signed(state->dynamixel_loads_[i], static_cast<int>(i));
     hand_info.voltage[i] = static_cast<float>(state->dynamixel_voltages_[i]);
     hand_info.temperature[i] = state->dynamixel_temperatures_[i];
-    sprintf(buffer, "0x%02x", state->dynamixel_error_states_[i]);
+    snprintf(buffer, buffer_size, "0x%02x", state->dynamixel_error_states_[i]);
     hand_info.error_state[i] = buffer;
   }
 }

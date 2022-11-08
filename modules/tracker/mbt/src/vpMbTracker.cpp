@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,6 @@
  * Description:
  * Generic model based tracker
  *
- * Authors:
- * Romain Tallonneau
- * Aurelien Yol
- * Eric Marchand
- *
  *****************************************************************************/
 
 /*!
@@ -46,6 +41,7 @@
 #include <algorithm>
 #include <iostream>
 #include <limits>
+#include <sstream>
 
 #include <Simd/SimdLib.hpp>
 
@@ -249,7 +245,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
   // Load the last poses from files
   std::fstream finitpos;
   std::ifstream finit;
-  char s[FILENAME_MAX];
+  std::stringstream ss;
   if (poseSavingFilename.empty()) {
     if (pos != std::string::npos)
       str_pose = initFile.substr(0, pos) + ".0.pos";
@@ -257,13 +253,13 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
       str_pose = initFile + ".0.pos";
 
     finitpos.open(str_pose.c_str(), std::ios::in);
-    sprintf(s, "%s", str_pose.c_str());
+    ss << str_pose;
   } else {
     finitpos.open(poseSavingFilename.c_str(), std::ios::in);
-    sprintf(s, "%s", poseSavingFilename.c_str());
+    ss << poseSavingFilename;
   }
   if (finitpos.fail()) {
-    std::cout << "cannot read " << s << std::endl << "cMo set to identity" << std::endl;
+    std::cout << "Cannot read " << ss.str() << std::endl << "cMo set to identity" << std::endl;
     last_cMo.eye();
   } else {
     for (unsigned int i = 0; i < 6; i += 1) {
@@ -295,16 +291,16 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
       vpDisplay::flush(*I);
 
-      while (!vpDisplay::getClick(*I, ip, button))
-        ;
+      while (!vpDisplay::getClick(*I, ip, button)) {
+      }
     } else {
       vpDisplay::displayText(*I_color, 15, 10, "left click to validate, right click to modify initial pose",
                              vpColor::red);
 
       vpDisplay::flush(*I_color);
 
-      while (!vpDisplay::getClick(*I_color, ip, button))
-        ;
+      while (!vpDisplay::getClick(*I_color, ip, button)) {
+      }
     }
   }
 
@@ -329,16 +325,18 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
     // number of points
     // X Y Z
     // X Y Z
-    if (pos != std::string::npos)
-      sprintf(s, "%s", initFile.c_str());
-    else
-      sprintf(s, "%s.init", initFile.c_str());
+    if (pos != std::string::npos) {
+      ss << initFile;
+    } else {
+      ss << initFile;
+      ss << ".init";
+    }
 
-    std::cout << "Load 3D points from: " << s << std::endl;
-    finit.open(s);
+    std::cout << "Load 3D points from: " << ss.str() << std::endl;
+    finit.open(ss.str());
     if (finit.fail()) {
-      std::cout << "cannot read " << s << std::endl;
-      throw vpException(vpException::ioError, "Cannot open model-based tracker init file %s", s);
+      std::cout << "Cannot read " << ss.str() << std::endl;
+      throw vpException(vpException::ioError, "Cannot open model-based tracker init file %s", ss.str().c_str());
     }
 
 #ifdef VISP_HAVE_MODULE_IO
@@ -399,7 +397,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
     finit.ignore(256, '\n'); // skip the rest of the line
     std::cout << "Number of 3D points  " << n3d << std::endl;
     if (n3d > 100000) {
-      throw vpException(vpException::badValue, "In %s file, the number of 3D points exceed the max allowed", s);
+      throw vpException(vpException::badValue, "In %s file, the number of 3D points exceed the max allowed",
+                        ss.str().c_str());
     }
 
     std::vector<vpPoint> P(n3d);
@@ -501,8 +500,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
         vpDisplay::flush(*I);
 
         button = vpMouseButton::button1;
-        while (!vpDisplay::getClick(*I, ip, button))
-          ;
+        while (!vpDisplay::getClick(*I, ip, button)) {
+        }
 
         if (button == vpMouseButton::button1) {
           isWellInit = true;
@@ -519,8 +518,8 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
         vpDisplay::flush(*I_color);
 
         button = vpMouseButton::button1;
-        while (!vpDisplay::getClick(*I_color, ip, button))
-          ;
+        while (!vpDisplay::getClick(*I_color, ip, button)) {
+        }
 
         if (button == vpMouseButton::button1) {
           isWellInit = true;
@@ -839,22 +838,24 @@ void vpMbTracker::initClick(const vpImage<vpRGBa> &I_color, const std::vector<vp
 void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
                                  const std::string &initFile)
 {
-  char s[FILENAME_MAX];
+  std::stringstream ss;
   std::fstream finit;
 
   std::string ext = ".init";
   size_t pos = initFile.rfind(ext);
 
-  if (pos == initFile.size() - ext.size() && pos != 0)
-    sprintf(s, "%s", initFile.c_str());
-  else
-    sprintf(s, "%s.init", initFile.c_str());
+  if (pos == initFile.size() - ext.size() && pos != 0) {
+    ss << initFile;
+  } else {
+    ss << initFile;
+    ss << ".init";
+  }
 
-  std::cout << "Load 2D/3D points from: " << s << std::endl;
-  finit.open(s, std::ios::in);
+  std::cout << "Load 2D/3D points from: " << ss.str() << std::endl;
+  finit.open(ss.str().c_str(), std::ios::in);
   if (finit.fail()) {
-    std::cout << "cannot read " << s << std::endl;
-    throw vpException(vpException::ioError, "Cannot open model-based tracker init file %s", s);
+    std::cout << "cannot read " << ss.str() << std::endl;
+    throw vpException(vpException::ioError, "Cannot open model-based tracker init file %s", ss.str().c_str());
   }
 
   //********
@@ -874,7 +875,8 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
   finit.ignore(256, '\n'); // skip the rest of the line
   std::cout << "Number of 3D points  " << n3d << std::endl;
   if (n3d > 100000) {
-    throw vpException(vpException::badValue, "In %s file, the number of 3D points exceed the max allowed", s);
+    throw vpException(vpException::badValue, "In %s file, the number of 3D points exceed the max allowed",
+                      ss.str().c_str());
   }
 
   vpPoint *P = new vpPoint[n3d];
@@ -913,7 +915,8 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
   std::cout << "Number of 2D points  " << n2d << std::endl;
   if (n2d > 100000) {
     delete[] P;
-    throw vpException(vpException::badValue, "In %s file, the number of 2D points exceed the max allowed", s);
+    throw vpException(vpException::badValue, "In %s file, the number of 2D points exceed the max allowed",
+                      ss.str().c_str());
   }
 
   if (n3d != n2d) {
@@ -921,7 +924,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
     throw vpException(vpException::badValue,
                       "In %s file, number of 2D points %d and number of 3D "
                       "points %d are not equal",
-                      s, n2d, n3d);
+                      ss.str().c_str(), n2d, n3d);
   }
 
   vpPose pose;
@@ -1122,21 +1125,23 @@ void vpMbTracker::initFromPoints(const vpImage<vpRGBa> &I_color, const std::vect
 void vpMbTracker::initFromPose(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
                                const std::string &initFile)
 {
-  char s[FILENAME_MAX];
+  std::stringstream ss;
   std::fstream finit;
   vpPoseVector init_pos;
 
   std::string ext = ".pos";
   size_t pos = initFile.rfind(ext);
 
-  if (pos == initFile.size() - ext.size() && pos != 0)
-    sprintf(s, "%s", initFile.c_str());
-  else
-    sprintf(s, "%s.pos", initFile.c_str());
+  if (pos == initFile.size() - ext.size() && pos != 0) {
+    ss << initFile;
+  } else {
+    ss << initFile;
+    ss << ".pos";
+  }
 
-  finit.open(s, std::ios::in);
+  finit.open(ss.str().c_str(), std::ios::in);
   if (finit.fail()) {
-    std::cout << "cannot read " << s << std::endl;
+    std::cout << "Cannot read " << ss.str() << std::endl;
     throw vpException(vpException::ioError, "cannot read init file");
   }
 
@@ -1259,10 +1264,7 @@ void vpMbTracker::savePose(const std::string &filename) const
 {
   vpPoseVector init_pos;
   std::fstream finitpos;
-  char s[FILENAME_MAX];
-
-  sprintf(s, "%s", filename.c_str());
-  finitpos.open(s, std::ios::out);
+  finitpos.open(filename.c_str(), std::ios::out);
 
   init_pos.buildFrom(m_cMo);
   finitpos << init_pos;

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -93,9 +93,9 @@ TEST_CASE("Nearest Neighbor image resize (ViSP)", "[benchmark]")
     };
 
     const unsigned int nThreads = std::thread::hardware_concurrency();
-    char buffer[256];
-    sprintf(buffer, "Benchmark Nearest Neighbor uchar image resize (ViSP) (%d threads)", nThreads);
-    BENCHMARK(buffer)
+    std::stringstream buffer;
+    buffer << "Benchmark Nearest Neighbor uchar image resize (ViSP) (" << nThreads << "threads)";
+    BENCHMARK(buffer.str().c_str())
     {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_NEAREST, nThreads);
       return Iresize;
@@ -114,9 +114,9 @@ TEST_CASE("Nearest Neighbor image resize (ViSP)", "[benchmark]")
     };
 
     const unsigned int nThreads = std::thread::hardware_concurrency();
-    char buffer[256];
-    sprintf(buffer, "Benchmark Nearest Neighbor RGBa image resize (ViSP) (%d threads)", nThreads);
-    BENCHMARK(buffer)
+    std::stringstream buffer;
+    buffer << "Benchmark Nearest Neighbor RGBa image resize (ViSP) (" << nThreads << " threads)";
+    BENCHMARK(buffer.str().c_str())
     {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_NEAREST, nThreads);
       return Iresize;
@@ -219,9 +219,9 @@ TEST_CASE("Bicubic image resize (ViSP)", "[benchmark]")
     };
 
     const unsigned int nThreads = std::thread::hardware_concurrency();
-    char buffer[256];
-    sprintf(buffer, "Benchmark Bicubic uchar image resize (ViSP) (%d threads)", nThreads);
-    BENCHMARK(buffer)
+    std::stringstream buffer;
+    buffer << "Benchmark Bicubic uchar image resize (ViSP) (" << nThreads << " threads)";
+    BENCHMARK(buffer.str().c_str())
     {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_CUBIC, nThreads);
       return Iresize;
@@ -240,9 +240,9 @@ TEST_CASE("Bicubic image resize (ViSP)", "[benchmark]")
     };
 
     const unsigned int nThreads = std::thread::hardware_concurrency();
-    char buffer[256];
-    sprintf(buffer, "Benchmark Bicubic RGBa image resize (ViSP) (%d threads)", nThreads);
-    BENCHMARK(buffer)
+    std::stringstream buffer;
+    buffer << "Benchmark Bicubic RGBa image resize (ViSP) (" << nThreads << " threads)";
+    BENCHMARK(buffer.str().c_str())
     {
       vpImageTools::resize(I, Iresize, vpImageTools::INTERPOLATION_CUBIC, nThreads);
       return Iresize;

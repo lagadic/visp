@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Firewire cameras video capture.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -579,9 +576,10 @@ int main(int argc, const char **argv)
 #ifdef VISP_HAVE_X11
         if (display) {
           // Initialise the display
-          char title[100];
-          sprintf(title, "Images captured by camera %u", i + offset);
-          d[i].init(Ic[i], (int)(100 + i * 50), (int)(100 + i * 50), title);
+          std::stringstream title;
+          title << "Images captured by camera ";
+          title << i + offset;
+          d[i].init(Ic[i], (int)(100 + i * 50), (int)(100 + i * 50), title.str());
           vpDisplay::display(Ic[i]);
           vpDisplay::flush(Ic[i]);
         }
@@ -594,9 +592,10 @@ int main(int argc, const char **argv)
 #ifdef VISP_HAVE_X11
         if (display) {
           // Initialise the display
-          char title[100];
-          sprintf(title, "Images captured by camera %u", i + offset);
-          d[i].init(Ig[i], (int)(100 + i * 50), (int)(100 + i * 50), title);
+          std::stringstream title;
+          title << "Images captured by camera ";
+          title << i + offset;
+          d[i].init(Ig[i], (int)(100 + i * 50), (int)(100 + i * 50), title.str());
           vpDisplay::display(Ig[i]);
           vpDisplay::flush(Ig[i]);
         }
@@ -637,7 +636,7 @@ int main(int argc, const char **argv)
         }
         if (save) {
           char buf[FILENAME_MAX];
-          sprintf(buf, opath.c_str(), c + offset, i);
+          snprintf(buf, FILENAME_MAX, opath.c_str(), c + offset, i);
           std::string filename(buf);
           std::cout << "Write: " << filename << std::endl;
           if (grab_color[c]) {

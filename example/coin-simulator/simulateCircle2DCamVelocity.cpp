@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,6 @@
  *
  * Description:
  * Simulation of a visual servoing with visualization.
- *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -269,10 +265,10 @@ static void *mainLoop(void *_simu)
 
       if (SAVE == 1) {
         char name[FILENAME_MAX];
-        sprintf(name, "/tmp/image.%04d.external.png", it);
+        snprintf(name, FILENAME_MAX, "/tmp/image.%04d.external.png", it);
         std::cout << "Save " << name << std::endl;
         simu->write(name);
-        sprintf(name, "/tmp/image.%04u.internal.png", iter);
+        snprintf(name, FILENAME_MAX, "/tmp/image.%04u.internal.png", iter);
         std::cout << "Save " << name << std::endl;
         simu->write(name);
         it++;

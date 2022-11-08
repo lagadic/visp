@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,9 +32,6 @@
  *   tests the control law
  *   eye-to-hand control
  *   velocity computed in the camera frame
- *
- * Authors:
- * Eric Marchand
  *
  *****************************************************************************/
 /*!
@@ -177,14 +174,13 @@ int main()
     ------------------------------------------------------------------
     */
     std::cout << " Learning 0/1 " << std::endl;
-    char name[FILENAME_MAX];
-    sprintf(name, "cdMo.dat");
+    std::string name = "cdMo.dat");
     int learning;
     std::cin >> learning;
     if (learning == 1) {
       // save the object position
       vpTRACE("Save the location of the object in a file cdMo.dat");
-      std::ofstream f(name);
+      std::ofstream f(name.c_str());
       cMo.save(f);
       f.close();
       exit(1);
@@ -353,8 +349,14 @@ int main()
       if ((SAVE == 1) && (iter % 3 == 0)) {
 
         vpDisplay::getImage(I, Ic);
-        sprintf(name, "/tmp/marchand/image.%04d.ppm", it++);
-        vpImageIo::write(Ic, name);
+        std::stringstream ss;
+        ss << "/tmp/";
+        ss << vpIoTools::getUserName();
+        ss << "/image.";
+        ss << std::setfill('0') << std::setw(4);
+        ss << it++;
+        ss << ".ppm";
+        vpImageIo::write(Ic, ss.str());
       }
     }
     v = 0;

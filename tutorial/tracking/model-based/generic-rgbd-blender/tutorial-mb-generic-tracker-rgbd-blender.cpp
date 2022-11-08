@@ -21,7 +21,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
   // Read color
   std::stringstream ss;
   ss << input_directory << "/images/%04d.jpg";
-  sprintf(buffer, ss.str().c_str(), cpt);
+  snprintf(buffer, FILENAME_MAX, ss.str().c_str(), cpt);
   std::string filename_img = buffer;
 
   if (!vpIoTools::checkFilename(filename_img)) {
@@ -33,7 +33,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
   // Read depth
   ss.str("");
   ss << input_directory << "/depth/Image%04d.exr";
-  sprintf(buffer, ss.str().c_str(), cpt);
+  snprintf(buffer, FILENAME_MAX, ss.str().c_str(), cpt);
   std::string filename_depth = buffer;
 
   cv::Mat depth_raw = cv::imread(filename_depth, cv::IMREAD_ANYDEPTH | cv::IMREAD_ANYCOLOR);
@@ -65,7 +65,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
   // Read ground truth
   ss.str("");
   ss << input_directory << "/camera_poses/Camera_%03d.txt";
-  sprintf(buffer, ss.str().c_str(), cpt);
+  snprintf(buffer, FILENAME_MAX, ss.str().c_str(), cpt);
   std::string filename_pose = buffer;
 
   std::ifstream f_pose;

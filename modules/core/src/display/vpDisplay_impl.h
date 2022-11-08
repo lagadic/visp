@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Display implementation.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 #include <visp3/core/vpMeterPixelConversion.h>
@@ -577,7 +574,7 @@ template <class Type> bool vp_display_get_keyboard_event(const vpImage<Type> &I,
   if (I.display != NULL) {
     std::string str;
     bool ret = (I.display)->getKeyboardEvent(str, blocking);
-    sprintf(key, "%s", str.c_str());
+    snprintf(key, str.size(), "%s", str.c_str());
     return ret;
   }
   return false;

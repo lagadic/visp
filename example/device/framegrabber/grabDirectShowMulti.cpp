@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +32,6 @@
  * Acquire images using DirectShow (under Windows only) and display it
  * using GTK or GDI.
  *
- * Authors:
- * Bruno Renier
- * Fabien Spindler
- * Anthony Saunier
- *
  *****************************************************************************/
 
 #include <visp3/core/vpConfig.h>
@@ -49,10 +44,9 @@
 
 */
 
-#include <vector>
-
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #if defined(VISP_HAVE_DIRECTSHOW)
 #if (defined(VISP_HAVE_GTK) || defined(VISP_HAVE_GDI))
@@ -400,9 +394,10 @@ int main(int argc, const char **argv)
 
       if (display) {
         // Initialise the display
-        char title[100];
-        sprintf(title, "Images captured by camera %u", c);
-        d[i].init(I[i], 100 + i * 50, 100 + i * 50, title);
+        std::stringstream title;
+        title << "Images captured by camera ";
+        title << c;
+        d[i].init(I[i], 100 + i * 50, 100 + i * 50, title.c_str());
       }
     }
 
@@ -424,7 +419,7 @@ int main(int argc, const char **argv)
         }
         if (save) {
           char buf[FILENAME_MAX];
-          sprintf(buf, opath.c_str(), c, i);
+          snprintf(buf, FILENAME_MAX, opath.c_str(), c, i);
           std::string filename(buf);
           std::cout << "Write: " << filename << std::endl;
           vpImageIo::write(I[c], filename);
