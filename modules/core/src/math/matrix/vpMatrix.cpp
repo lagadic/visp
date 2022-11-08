@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Matrix manipulation.
- *
- * Authors:
- * Eric Marchand
  *
  *****************************************************************************/
 /*!
@@ -323,11 +320,11 @@ int main()
       M[i][j] = val++;
     }
   }
-  M.print (std::cout, 4, "M ");
+  M.print(std::cout, 4, "M ");
 
   vpMatrix N;
   N.init(M, 0, 1, 2, 3);
-  N.print (std::cout, 4, "N ");
+  N.print(std::cout, 4, "N ");
 }
 \endcode
   It produces the following output:
@@ -385,9 +382,9 @@ int main()
       M[i][j] = val++;
     }
   }
-  M.print (std::cout, 4, "M ");
+  M.print(std::cout, 4, "M ");
   vpMatrix N = M.extract(0, 1, 2, 3);
-  N.print (std::cout, 4, "N ");
+  N.print(std::cout, 4, "N ");
 }
   \endcode
   It produces the following output:
@@ -5574,12 +5571,12 @@ void vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix 
   The common widths before and after the decimal point
   are set with respect to the parameter maxlen.
 
-  \param s Stream used for the printing.
+  \param s : Stream used for the printing.
 
-  \param length The suggested width of each matrix element.
+  \param length : The suggested width of each matrix element.
   The actual width grows in order to accomodate the whole integral part,
   and shrinks if the whole extent is not needed for all the numbers.
-  \param intro The introduction which is printed before the matrix.
+  \param intro : The introduction which is printed before the matrix.
   Can be set to zero (or omitted), in which case
   the introduction is not printed.
 
@@ -5634,11 +5631,6 @@ int vpMatrix::print(std::ostream &s, unsigned int length, const std::string &int
   totalLength = vpMath::maximum(totalLength, maxBefore);
   // decrease maxAfter according to totalLength
   maxAfter = (std::min)(maxAfter, totalLength - maxBefore);
-  if (maxAfter == 1)
-    maxAfter = 0;
-
-  // the following line is useful for debugging
-  // std::cerr <<totalLength <<" " <<maxBefore <<" " <<maxAfter <<"\n";
 
   if (!intro.empty())
     s << intro;
@@ -5655,8 +5647,8 @@ int vpMatrix::print(std::ostream &s, unsigned int length, const std::string &int
       if (maxAfter > 0) {
         s.setf(std::ios::left, std::ios::adjustfield);
         if (p != std::string::npos) {
-          s.width((std::streamsize)maxAfter);
-          s << values[i * n + j].substr(p, maxAfter).c_str();
+          s.width((std::streamsize)maxAfter + 1);
+          s << values[i * n + j].substr(p, maxAfter + 1).c_str();
         } else {
           assert(maxAfter > 1);
           s.width((std::streamsize)maxAfter);
