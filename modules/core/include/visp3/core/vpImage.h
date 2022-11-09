@@ -188,13 +188,13 @@ public:
   inline unsigned int getHeight() const { return height; }
 
   // Return the maximum value within the bitmap
-  Type getMaxValue() const;
+  Type getMaxValue(bool onlyFiniteVal=true) const;
   // Return the mean value of the bitmap
   Type getMeanValue() const;
   // Return the minumum value within the bitmap
-  Type getMinValue() const;
+  Type getMinValue(bool onlyFiniteVal=true) const;
   // Look for the minumum and the maximum value within the bitmap
-  void getMinMaxValue(Type &min, Type &max) const;
+  void getMinMaxValue(Type &min, Type &max, bool onlyFiniteVal=true) const;
   // Look for the minumum and the maximum value within the bitmap and get their location
   void getMinMaxLoc(vpImagePoint *minLoc, vpImagePoint *maxLoc, Type *minVal = NULL, Type *maxVal = NULL) const;
 
@@ -886,10 +886,11 @@ vpImage<Type>::vpImage(vpImage<Type> &&I)
 
 /*!
   \brief Return the maximum value within the bitmap
+  \param onlyFiniteVal : This parameter is ignored for non double or non float bitmap.
 
   \sa getMinValue()
 */
-template <class Type> Type vpImage<Type>::getMaxValue() const
+template <class Type> Type vpImage<Type>::getMaxValue(bool onlyFiniteVal) const
 {
   if (npixels == 0)
     throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
@@ -897,6 +898,56 @@ template <class Type> Type vpImage<Type>::getMaxValue() const
   for (unsigned int i = 0; i < npixels; i++) {
     if (bitmap[i] > m)
       m = bitmap[i];
+  }
+  return m;
+}
+
+/*!
+  \brief Return the maximum value within the double bitmap
+  \param onlyFiniteVal : If true, consider only finite values.
+
+  \sa getMinValue()
+*/
+template <> inline double vpImage<double>::getMaxValue(bool onlyFiniteVal) const
+{
+  if (npixels == 0)
+    throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
+  double m = bitmap[0];
+  if (onlyFiniteVal) {
+    for (unsigned int i = 0; i < npixels; i++) {
+      if (bitmap[i] > m && vpMath::isFinite(bitmap[i]))
+        m = bitmap[i];
+    }
+  } else {
+    for (unsigned int i = 0; i < npixels; i++) {
+      if (bitmap[i] > m)
+        m = bitmap[i];
+    }
+  }
+  return m;
+}
+
+/*!
+  \brief Return the maximum value within the float bitmap
+  \param onlyFiniteVal : If true, consider only finite values.
+
+  \sa getMinValue()
+*/
+template <> inline float vpImage<float>::getMaxValue(bool onlyFiniteVal) const
+{
+  if (npixels == 0)
+    throw(vpException(vpException::fatalError, "Cannot compute maximum value of an empty image"));
+  float m = bitmap[0];
+  if (onlyFiniteVal) {
+    for (unsigned int i = 0; i < npixels; i++) {
+      if (bitmap[i] > m && vpMath::isFinite(bitmap[i]))
+        m = bitmap[i];
+    }
+  } else {
+    for (unsigned int i = 0; i < npixels; i++) {
+      if (bitmap[i] > m)
+        m = bitmap[i];
+    }
   }
   return m;
 }
@@ -914,10 +965,11 @@ template <class Type> Type vpImage<Type>::getMeanValue() const
 
 /*!
   \brief Return the minimum value within the bitmap
+  \param onlyFiniteVal : This parameter is ignored for non double or non float bitmap.
 
   \sa getMaxValue()
 */
-template <class Type> Type vpImage<Type>::getMinValue() const
+template <class Type> Type vpImage<Type>::getMinValue(bool onlyFiniteVal) const
 {
   if (npixels == 0)
     throw(vpException(vpException::fatalError, "Cannot compute minimum value of an empty image"));
@@ -929,13 +981,62 @@ template <class Type> Type vpImage<Type>::getMinValue() const
 }
 
 /*!
+  \brief Return the minimum value within the double bitmap
+  \param onlyFiniteVal : If true, consider only finite values.
+
+  \sa getMaxValue()
+*/
+template <> inline double vpImage<double>::getMinValue(bool onlyFiniteVal) const
+{
+  if (npixels == 0)
+    throw(vpException(vpException::fatalError, "Cannot compute minimum value of an empty image"));
+  double m = bitmap[0];
+  if (onlyFiniteVal) {
+    for (unsigned int i = 0; i < npixels; i++)
+      if (bitmap[i] < m && vpMath::isFinite(bitmap[i]))
+        m = bitmap[i];
+  } else {
+    for (unsigned int i = 0; i < npixels; i++)
+      if (bitmap[i] < m)
+        m = bitmap[i];
+  }
+  return m;
+}
+
+/*!
+  \brief Return the minimum value within the float bitmap
+  \param onlyFiniteVal : If true, consider only finite values.
+
+  \sa getMaxValue()
+*/
+template <> inline float vpImage<float>::getMinValue(bool onlyFiniteVal) const
+{
+  if (npixels == 0)
+    throw(vpException(vpException::fatalError, "Cannot compute minimum value of an empty image"));
+  float m = bitmap[0];
+  if (onlyFiniteVal) {
+    for (unsigned int i = 0; i < npixels; i++)
+      if (bitmap[i] < m && vpMath::isFinite(bitmap[i]))
+        m = bitmap[i];
+  } else {
+    for (unsigned int i = 0; i < npixels; i++)
+      if (bitmap[i] < m)
+        m = bitmap[i];
+  }
+  return m;
+}
+
+/*!
   \brief Look for the minimum and the maximum value within the bitmap
+  \param min : The minimal value within the bitmap.
+  \param max : The maximal value within the bitmap.
+  \param onlyFiniteVal : This parameter is ignored for non double or non float bitmap.
 
   \sa getMaxValue()
   \sa getMinValue()
   \sa getMinMaxLoc()
 */
-template <class Type> void vpImage<Type>::getMinMaxValue(Type &min, Type &max) const
+template <class Type> void vpImage<Type>::getMinMaxValue(Type &min, Type &max, bool onlyFiniteVal) const
 {
   if (npixels == 0)
     throw(vpException(vpException::fatalError, "Cannot get minimum/maximum values of an empty image"));
@@ -946,6 +1047,76 @@ template <class Type> void vpImage<Type>::getMinMaxValue(Type &min, Type &max) c
       min = bitmap[i];
     if (bitmap[i] > max)
       max = bitmap[i];
+  }
+}
+
+/*!
+  \brief Look for the minimum and the maximum value within the double bitmap
+  \param min : The minimal value within the bitmap.
+  \param max : The maximal value within the bitmap.
+  \param onlyFiniteVal : If true, consider only finite values.
+
+  \sa getMaxValue()
+  \sa getMinValue()
+  \sa getMinMaxLoc()
+*/
+template <> inline void vpImage<double>::getMinMaxValue(double &min, double &max, bool onlyFiniteVal) const
+{
+  if (npixels == 0)
+    throw(vpException(vpException::fatalError, "Cannot get minimum/maximum values of an empty image"));
+
+  min = max = bitmap[0];
+  if (onlyFiniteVal) {
+    for (unsigned int i = 0; i < npixels; i++) {
+      if (vpMath::isFinite(bitmap[i])) {
+        if (bitmap[i] < min)
+          min = bitmap[i];
+        if (bitmap[i] > max)
+          max = bitmap[i];
+      }
+    }
+  } else {
+    for (unsigned int i = 0; i < npixels; i++) {
+      if (bitmap[i] < min)
+        min = bitmap[i];
+      if (bitmap[i] > max)
+        max = bitmap[i];
+    }
+  }
+}
+
+/*!
+  \brief Look for the minimum and the maximum value within the float bitmap
+  \param min : The minimal value within the bitmap.
+  \param max : The maximal value within the bitmap.
+  \param onlyFiniteVal : If true, consider only finite values.
+
+  \sa getMaxValue()
+  \sa getMinValue()
+  \sa getMinMaxLoc()
+*/
+template <> inline void vpImage<float>::getMinMaxValue(float &min, float &max, bool onlyFiniteVal) const
+{
+  if (npixels == 0)
+    throw(vpException(vpException::fatalError, "Cannot get minimum/maximum values of an empty image"));
+
+  min = max = bitmap[0];
+  if (onlyFiniteVal) {
+    for (unsigned int i = 0; i < npixels; i++) {
+      if (vpMath::isFinite(bitmap[i])) {
+        if (bitmap[i] < min)
+          min = bitmap[i];
+        if (bitmap[i] > max)
+          max = bitmap[i];
+      }
+    }
+  } else {
+    for (unsigned int i = 0; i < npixels; i++) {
+      if (bitmap[i] < min)
+        min = bitmap[i];
+      if (bitmap[i] > max)
+        max = bitmap[i];
+    }
   }
 }
 

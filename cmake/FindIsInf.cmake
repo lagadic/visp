@@ -1,7 +1,7 @@
 #############################################################################
 #
 # ViSP, open source Visual Servoing Platform software.
-# Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+# Copyright (C) 2005 - 2022 by Inria. All rights reserved.
 #
 # This software is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -29,61 +29,11 @@
 # WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 #
 # Description:
-# Try to find isnan macro, std::isnan function or _isnan function.
-#
-# Authors:
-# Souriya Trinh
+# Try to find the isinf macro, the std::isinf function or _isinf function.
 #
 #############################################################################
 
-include(CheckIncludeFile)
-include(CheckIncludeFiles)
-include(CheckCXXSourceCompiles)
+include(VISPFindUtils)
 
-macro(check_math_expr _expr _var)
-    unset(${_var} CACHE)
-    # Since check_cxx_source_compiles() doesn't consider CXX_STANDARD we add the corresponding flag manually
-    if((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11) AND CXX11_CXX_FLAGS)
-      set(CMAKE_REQUIRED_FLAGS ${CXX11_CXX_FLAGS})
-    elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14) AND CXX14_CXX_FLAGS)
-      set(CMAKE_REQUIRED_FLAGS ${CXX14_CXX_FLAGS})
-    elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_17) AND CXX17_CXX_FLAGS)
-      set(CMAKE_REQUIRED_FLAGS ${CXX17_CXX_FLAGS})
-    endif()
-    check_cxx_source_compiles("
-#include <cmath>
-int main(int argc, char ** argv)
-{
-    (void)${_expr};
-    return 0;
-}
-" ${_var})
-endmacro()
-
-check_include_files("float.h"       HAVE_FLOAT_H)
-check_math_expr("isinf(1.0)"        HAVE_FUNC_ISINF)
-check_math_expr("std::isinf(1.0)"   HAVE_FUNC_STD_ISINF)
-
-if(HAVE_FLOAT_H)
-    unset(HAVE_FUNC__FINITE CACHE)
-    # The version that should work with MSVC
-    # Since check_cxx_source_compiles() doesn't consider CXX_STANDARD we add the corresponding flag manually
-    if((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_11) AND CXX11_CXX_FLAGS)
-      set(CMAKE_REQUIRED_FLAGS ${CXX11_CXX_FLAGS})
-    elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_14) AND CXX14_CXX_FLAGS)
-      set(CMAKE_REQUIRED_FLAGS ${CXX14_CXX_FLAGS})
-    elseif((VISP_CXX_STANDARD EQUAL VISP_CXX_STANDARD_17) AND CXX17_CXX_FLAGS)
-      set(CMAKE_REQUIRED_FLAGS ${CXX17_CXX_FLAGS})
-    endif()
-    check_cxx_source_compiles("
-#include <float.h>
-int main(int argc, char ** argv)
-{
-    (void)_finite(1.0);
-    return 0;
-}
-" HAVE_FUNC__FINITE)
-else()
-    set(HAVE_FUNC__FINITE FALSE)
-endif()
-
+check_math_expr("isinf(1.0)"          "<math.h>"        HAVE_FUNC_ISINF)
+check_math_expr("std::isinf(1.0))"    "<cmath>"         HAVE_FUNC_STD_ISINF)
