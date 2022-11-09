@@ -29,7 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Tool to automatise the creation of xml parser based on the libXML2.
+ * Tool to automatize the creation of xml parser based on the libXML2.
  *
  *****************************************************************************/
 
@@ -330,10 +330,10 @@ void vpXmlParser::xmlWriteStringChild(xmlNodePtr node, const char *label, const 
 */
 void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label, int value)
 {
-  std::stringstream ss;
-  ss << value;
+  char str[100];
+  snprintf(str, 100, "%d", value);
   xmlNodePtr tmp;
-  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)ss.str().c_str());
+  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
 }
 
@@ -346,10 +346,10 @@ void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label, int value
 */
 void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, unsigned int value)
 {
-  std::stringstream ss;
-  ss << value;
+  char str[100];
+  snprintf(str, 100, "%u", value);
   xmlNodePtr tmp;
-  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)ss.str().c_str());
+  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
 }
 
@@ -362,10 +362,10 @@ void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, u
 */
 void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label, double value)
 {
-  std::stringstream ss;
-  ss << value;
+  char str[100];
+  snprintf(str, 100, "%lf", value);
   xmlNodePtr tmp;
-  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)ss.str().c_str());
+  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
 }
 
@@ -378,10 +378,10 @@ void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label, double
 */
 void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label, float value)
 {
-  std::stringstream ss;
-  ss << value;
+  char str[100];
+  snprintf(str, 100, "%f", value);
   xmlNodePtr tmp;
-  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)ss.str().c_str());
+  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
 }
 
@@ -394,10 +394,10 @@ void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label, float v
 */
 void vpXmlParser::xmlWriteBoolChild(xmlNodePtr node, const char *label, bool value)
 {
-  std::stringstream ss;
-  ss << value;
+  char str[2];
+  snprintf(str, 2, "%d", (int)value);
   xmlNodePtr tmp;
-  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)ss.str().c_str());
+  tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
 }
 
