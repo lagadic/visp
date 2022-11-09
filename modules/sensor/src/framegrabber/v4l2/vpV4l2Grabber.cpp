@@ -891,7 +891,7 @@ void vpV4l2Grabber::open()
   struct stat st;
 
   if (-1 == stat(device.c_str(), &st)) {
-    fprintf(stderr, "Cannot identify '%s': %d, %s\n", .c_str(), errno, strerror(errno));
+    fprintf(stderr, "Cannot identify '%s': %d, %s\n", device.c_str(), errno, strerror(errno));
     throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Cannot identify video device"));
   }
 

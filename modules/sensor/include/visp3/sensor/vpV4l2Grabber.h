@@ -280,7 +280,7 @@ public:
     \param devname : Device name (like /dev/video0).
 
   */
-  inline void setDevice(const std::string &devname) {device = devname); }
+  inline void setDevice(const std::string &devname) { device = devname; }
   /*!
 
   Set the pixel format for capture.`If the specified pixel format is

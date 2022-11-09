@@ -140,7 +140,7 @@ int main()
     std::cout << " Learning 0/1 " << std::endl;
     int learning;
     std::cin >> learning;
-    std::string name = "dat/ellipse.dat");
+    std::string name = "dat/ellipse.dat";
     if (learning == 1) {
       // save the object position
       vpTRACE("Save the location of the object in a file dat/ellipse.dat");

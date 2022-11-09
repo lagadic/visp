@@ -92,7 +92,7 @@ private:
 
 private:
   int fd; // parallel port descriptor
-  std::string device
+  std::string device;
 };
 
 #endif
