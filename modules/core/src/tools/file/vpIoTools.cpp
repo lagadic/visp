@@ -910,7 +910,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
     cmd << "copy ";
     cmd << vpIoTools::path(src);
     cmd << " ";
-    cmd << vpIoTools::path(dst;
+    cmd << vpIoTools::path(dst);
     int ret = system(cmd.str().c_str());
     if (ret) {
     }; // to avoid a warning
