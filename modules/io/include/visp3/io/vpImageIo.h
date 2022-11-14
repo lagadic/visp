@@ -47,7 +47,6 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImageConvert.h>
-#include <visp3/core/vpRGBa.h>
 
 #include <iostream>
 #include <stdio.h>
@@ -139,6 +138,8 @@ public:
   static void write(const vpImage<vpRGBa> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
 
   static void readPFM(vpImage<float> &I, const std::string &filename);
+  static void readPFM_HDR(vpImage<float> &I, const std::string &filename);
+  static void readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename);
 
   static void readPGM(vpImage<unsigned char> &I, const std::string &filename);
   static void readPGM(vpImage<vpRGBa> &I, const std::string &filename);

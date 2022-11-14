@@ -803,6 +803,20 @@ void vpImageIo::writePGM(const vpImage<vpRGBa> &I, const std::string &filename) 
 void vpImageIo::readPFM(vpImage<float> &I, const std::string &filename) { vp_readPFM(I, filename); }
 
 /*!
+  Load an image in portable float map format and not restricted to the [0, 255] dynamic range.
+  \param[out] I : Image read from filename.
+  \param[in] filename : Image location.
+ */
+void vpImageIo::readPFM_HDR(vpImage<float> &I, const std::string &filename) { vp_readPFM_HDR(I, filename); }
+
+/*!
+  Load an image in portable float map format and not restricted to the [0, 255] dynamic range.
+  \param[out] I : Image read from filename and with three channels.
+  \param[in] filename : Image location.
+ */
+void vpImageIo::readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename) { vp_readPFM_HDR(I, filename); }
+
+/*!
   Load an image in portable gray map format. If the image is in color, it is converted in gray level.
   \param[out] I : Image read from filename.
   \param[in] filename : Image location.

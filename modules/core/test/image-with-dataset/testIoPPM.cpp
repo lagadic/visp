@@ -42,6 +42,8 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/io/vpParseArgv.h>
+#include <visp3/core/vpColormap.h>
+#include <visp3/gui/vpDisplayGDI.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -158,154 +160,170 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
 
 int main(int argc, const char **argv)
 {
-  try {
-    std::string env_ipath;
-    std::string opt_ipath;
-    std::string opt_opath;
-    std::string ipath;
-    std::string opath;
-    std::string filename;
-    std::string username;
+  vpImage<vpRGBf> Iflt;
+  vpImageIo::readPFM_HDR(Iflt, "memorial.pfm");
+  std::cout << "Iflt: " << Iflt.getWidth() << "x" << Iflt.getHeight() << std::endl;
 
-    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
-    // environment variable value
-    env_ipath = vpIoTools::getViSPImagesDataPath();
+  vpColormap colormap;
+  vpImage<vpRGBa> Icolor;
+  colormap.convert(Iflt, Icolor);
 
-    // Set the default input path
-    if (!env_ipath.empty())
-      ipath = env_ipath;
+  vpDisplayGDI d(Icolor);
+  vpDisplay::display(Icolor);
+  vpDisplay::flush(Icolor);
+  vpDisplay::getClick(Icolor);
 
-// Set the default output path
-#if defined(_WIN32)
-    opt_opath = "C:/temp";
-#else
-    opt_opath = "/tmp";
-#endif
+  return 0;
 
-    // Get the user login name
-    vpIoTools::getUserName(username);
 
-    // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_opath, username) == false) {
-      exit(-1);
-    }
-
-    // Get the option values
-    if (!opt_ipath.empty())
-      ipath = opt_ipath;
-    if (!opt_opath.empty())
-      opath = opt_opath;
-
-    // Append to the output path string, the login name of the user
-    opath = vpIoTools::createFilePath(opath, username);
-
-    // Test if the output path exist. If no try to create it
-    if (vpIoTools::checkDirectory(opath) == false) {
-      try {
-        // Create the dirname
-        vpIoTools::makeDirectory(opath);
-      } catch (...) {
-        usage(argv[0], NULL, ipath, opt_opath, username);
-        std::cerr << std::endl << "ERROR:" << std::endl;
-        std::cerr << "  Cannot create " << opath << std::endl;
-        std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
-        exit(-1);
-      }
-    }
-
-    // Compare ipath and env_ipath. If they differ, we take into account
-    // the input path comming from the command line option
-    if (!opt_ipath.empty() && !env_ipath.empty()) {
-      if (ipath != env_ipath) {
-        std::cout << std::endl << "WARNING: " << std::endl;
-        std::cout << "  Since -i <visp image path=" << ipath << "> "
-                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
-                  << "  we skip the environment variable." << std::endl;
-      }
-    }
-
-    // Test if an input path is set
-    if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath, opt_opath, username);
-      std::cerr << std::endl << "ERROR:" << std::endl;
-      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
-                << "  environment variable to specify the location of the " << std::endl
-                << "  image path where test images are located." << std::endl
-                << std::endl;
-      exit(-1);
-    }
-
-    //
-    // Here starts really the test
-    //
-
-    /////////////////////////////////////////////////////////////////////
-    // Create a grey level image
-    vpImage<unsigned char> I;
-
-    // Load a color image from the disk and convert it to a grey level one
-    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
-    std::cout << "Read image: " << filename << std::endl;
-    vpImageIo::read(I, filename);
-    // Write the content of the image on the disk
-    filename = vpIoTools::createFilePath(opath, "Klimt_grey.ppm");
-    std::cout << "Write image: " << filename << std::endl;
-    vpImageIo::write(I, filename);
-
-    // Try to load a non existing image (test for exceptions)
-    try {
-      // Load a non existing grey image
-      filename = vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
-      std::cout << "Read image: " << filename << std::endl;
-      vpImageIo::read(I, filename);
-    } catch (vpImageException &e) {
-      vpERROR_TRACE("at main level");
-      std::cout << e << std::endl;
-    }
-
-    // Try to write an image to a non existing directory
-    try {
-      filename = vpIoTools::createFilePath(opath, "directory-that-does-not-exist/Klimt.ppm");
-      std::cout << "Write image: " << filename << std::endl;
-      vpImageIo::write(I, filename);
-    } catch (const vpException &e) {
-      std::cout << "Catch an exception due to a non existing file: " << e << std::endl;
-    }
-
-    /////////////////////////////////////////////////////////////////////
-    // Create a color image
-    vpImage<vpRGBa> Irgba;
-
-    // Load a color image from the disk
-    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
-    std::cout << "Read image: " << filename << std::endl;
-    vpImageIo::read(Irgba, filename);
-    // Write the content of the color image on the disk
-    filename = vpIoTools::createFilePath(opath, "Klimt_color.ppm");
-    std::cout << "Write image: " << filename << std::endl;
-    vpImageIo::write(Irgba, filename);
-
-    try {
-      // Try to load a non existing image (test for exceptions)
-      // Load a non existing color image
-      filename = vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
-      std::cout << "Read image: " << filename << std::endl;
-      vpImageIo::read(Irgba, filename);
-    } catch (const vpException &e) {
-      std::cout << "Catch an exception due to a non existing file: " << e << std::endl;
-    }
-
-    try {
-      // Try to write a color image to a non existing directory
-      filename = vpIoTools::createFilePath(opath, "directory-that-does-not-exist/Klimt.ppm");
-      std::cout << "Write image: " << filename << std::endl;
-      vpImageIo::write(Irgba, filename);
-    } catch (const vpException &e) {
-      std::cout << "Catch an exception due to a non existing file: " << e << std::endl;
-    }
-    return 0;
-  } catch (const vpException &e) {
-    std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
-  }
+//  try {
+//    std::string env_ipath;
+//    std::string opt_ipath;
+//    std::string opt_opath;
+//    std::string ipath;
+//    std::string opath;
+//    std::string filename;
+//    std::string username;
+//
+//    // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
+//    // environment variable value
+//    env_ipath = vpIoTools::getViSPImagesDataPath();
+//
+//    // Set the default input path
+//    if (!env_ipath.empty())
+//      ipath = env_ipath;
+//
+//// Set the default output path
+//#if defined(_WIN32)
+//    opt_opath = "C:/temp";
+//#else
+//    opt_opath = "/tmp";
+//#endif
+//
+//    // Get the user login name
+//    vpIoTools::getUserName(username);
+//
+//    // Read the command line options
+//    if (getOptions(argc, argv, opt_ipath, opt_opath, username) == false) {
+//      exit(-1);
+//    }
+//
+//    // Get the option values
+//    if (!opt_ipath.empty())
+//      ipath = opt_ipath;
+//    if (!opt_opath.empty())
+//      opath = opt_opath;
+//
+//    // Append to the output path string, the login name of the user
+//    opath = vpIoTools::createFilePath(opath, username);
+//
+//    // Test if the output path exist. If no try to create it
+//    if (vpIoTools::checkDirectory(opath) == false) {
+//      try {
+//        // Create the dirname
+//        vpIoTools::makeDirectory(opath);
+//      } catch (...) {
+//        usage(argv[0], NULL, ipath, opt_opath, username);
+//        std::cerr << std::endl << "ERROR:" << std::endl;
+//        std::cerr << "  Cannot create " << opath << std::endl;
+//        std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
+//        exit(-1);
+//      }
+//    }
+//
+//    // Compare ipath and env_ipath. If they differ, we take into account
+//    // the input path comming from the command line option
+//    if (!opt_ipath.empty() && !env_ipath.empty()) {
+//      if (ipath != env_ipath) {
+//        std::cout << std::endl << "WARNING: " << std::endl;
+//        std::cout << "  Since -i <visp image path=" << ipath << "> "
+//                  << "  is different from VISP_IMAGE_PATH=" << env_ipath << std::endl
+//                  << "  we skip the environment variable." << std::endl;
+//      }
+//    }
+//
+//    // Test if an input path is set
+//    if (opt_ipath.empty() && env_ipath.empty()) {
+//      usage(argv[0], NULL, ipath, opt_opath, username);
+//      std::cerr << std::endl << "ERROR:" << std::endl;
+//      std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
+//                << "  environment variable to specify the location of the " << std::endl
+//                << "  image path where test images are located." << std::endl
+//                << std::endl;
+//      exit(-1);
+//    }
+//
+//    //
+//    // Here starts really the test
+//    //
+//
+//    /////////////////////////////////////////////////////////////////////
+//    // Create a grey level image
+//    vpImage<unsigned char> I;
+//
+//    // Load a color image from the disk and convert it to a grey level one
+//    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
+//    std::cout << "Read image: " << filename << std::endl;
+//    vpImageIo::read(I, filename);
+//    // Write the content of the image on the disk
+//    filename = vpIoTools::createFilePath(opath, "Klimt_grey.ppm");
+//    std::cout << "Write image: " << filename << std::endl;
+//    vpImageIo::write(I, filename);
+//
+//    // Try to load a non existing image (test for exceptions)
+//    try {
+//      // Load a non existing grey image
+//      filename = vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
+//      std::cout << "Read image: " << filename << std::endl;
+//      vpImageIo::read(I, filename);
+//    } catch (vpImageException &e) {
+//      vpERROR_TRACE("at main level");
+//      std::cout << e << std::endl;
+//    }
+//
+//    // Try to write an image to a non existing directory
+//    try {
+//      filename = vpIoTools::createFilePath(opath, "directory-that-does-not-exist/Klimt.ppm");
+//      std::cout << "Write image: " << filename << std::endl;
+//      vpImageIo::write(I, filename);
+//    } catch (const vpException &e) {
+//      std::cout << "Catch an exception due to a non existing file: " << e << std::endl;
+//    }
+//
+//    /////////////////////////////////////////////////////////////////////
+//    // Create a color image
+//    vpImage<vpRGBa> Irgba;
+//
+//    // Load a color image from the disk
+//    filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.ppm");
+//    std::cout << "Read image: " << filename << std::endl;
+//    vpImageIo::read(Irgba, filename);
+//    // Write the content of the color image on the disk
+//    filename = vpIoTools::createFilePath(opath, "Klimt_color.ppm");
+//    std::cout << "Write image: " << filename << std::endl;
+//    vpImageIo::write(Irgba, filename);
+//
+//    try {
+//      // Try to load a non existing image (test for exceptions)
+//      // Load a non existing color image
+//      filename = vpIoTools::createFilePath(ipath, "image-that-does-not-exist.ppm");
+//      std::cout << "Read image: " << filename << std::endl;
+//      vpImageIo::read(Irgba, filename);
+//    } catch (const vpException &e) {
+//      std::cout << "Catch an exception due to a non existing file: " << e << std::endl;
+//    }
+//
+//    try {
+//      // Try to write a color image to a non existing directory
+//      filename = vpIoTools::createFilePath(opath, "directory-that-does-not-exist/Klimt.ppm");
+//      std::cout << "Write image: " << filename << std::endl;
+//      vpImageIo::write(Irgba, filename);
+//    } catch (const vpException &e) {
+//      std::cout << "Catch an exception due to a non existing file: " << e << std::endl;
+//    }
+//    return 0;
+//  } catch (const vpException &e) {
+//    std::cout << "Catch an exception: " << e << std::endl;
+//    return 1;
+//  }
 }

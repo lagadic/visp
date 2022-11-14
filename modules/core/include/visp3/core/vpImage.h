@@ -51,6 +51,7 @@
 #include <visp3/core/vpImageException.h>
 #include <visp3/core/vpImagePoint.h>
 #include <visp3/core/vpRGBa.h>
+#include <visp3/core/vpRGBf.h>
 
 #if defined(VISP_HAVE_PTHREAD) || (defined(_WIN32) && !defined(WINRT_8_0))
 #include <visp3/core/vpThread.h>
@@ -1116,6 +1117,63 @@ template <> inline void vpImage<float>::getMinMaxValue(float &min, float &max, b
         min = bitmap[i];
       if (bitmap[i] > max)
         max = bitmap[i];
+    }
+  }
+}
+
+/*!
+  \brief Look for the minimum and the maximum value within the 3-channels float bitmap
+  \param min : The minimal values within the bitmap.
+  \param max : The maximal values within the bitmap.
+  \param onlyFiniteVal : If true, consider only finite values.
+
+  \sa getMaxValue()
+  \sa getMinValue()
+  \sa getMinMaxLoc()
+*/
+template <> inline void vpImage<vpRGBf>::getMinMaxValue(vpRGBf &min, vpRGBf &max, bool onlyFiniteVal) const
+{
+  if (npixels == 0)
+    throw(vpException(vpException::fatalError, "Cannot get minimum/maximum values of an empty image"));
+
+  min = max = bitmap[0];
+  if (onlyFiniteVal) {
+    for (unsigned int i = 0; i < npixels; i++) {
+      if (vpMath::isFinite(bitmap[i].R)) {
+        if (bitmap[i].R < min.R)
+          min.R = bitmap[i].R;
+        if (bitmap[i].R > max.R)
+          max.R = bitmap[i].R;
+      }
+      if (vpMath::isFinite(bitmap[i].G)) {
+        if (bitmap[i].G < min.G)
+          min.G = bitmap[i].G;
+        if (bitmap[i].G > max.G)
+          max.G = bitmap[i].G;
+      }
+      if (vpMath::isFinite(bitmap[i].B)) {
+        if (bitmap[i].B < min.B)
+          min.B = bitmap[i].B;
+        if (bitmap[i].B > max.B)
+          max.B = bitmap[i].B;
+      }
+    }
+  } else {
+    for (unsigned int i = 0; i < npixels; i++) {
+      if (bitmap[i].R < min.R)
+        min.R = bitmap[i].R;
+      if (bitmap[i].R > max.R)
+        max.R = bitmap[i].R;
+
+      if (bitmap[i].G < min.G)
+        min.G = bitmap[i].G;
+      if (bitmap[i].G > max.G)
+        max.G = bitmap[i].G;
+
+      if (bitmap[i].B < min.B)
+        min.B = bitmap[i].B;
+      if (bitmap[i].B > max.B)
+        max.B = bitmap[i].B;
     }
   }
 }
