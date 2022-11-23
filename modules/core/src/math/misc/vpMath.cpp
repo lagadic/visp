@@ -68,11 +68,17 @@ typedef uint64_t uint64;
 #endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-typedef union Cv64suf {
+typedef union Vp64suf {
   //  int64 i; //Unused variable, should be harmless to comment it
   uint64 u;
   double f;
-} Cv64suf;
+} Vp64suf;
+
+typedef union Vp32suf {
+  // int i; //Unused variable, should be harmless to comment it
+  unsigned u;
+  float f;
+} Vp32suf;
 #endif
 #endif
 
@@ -94,7 +100,7 @@ bool vpMath::isNaN(double value)
   return (_isnan(value) != 0);
 #else
   // Taken from OpenCV source code CvIsNan()
-  Cv64suf ieee754;
+  Vp64suf ieee754;
   ieee754.f = value;
   return (((unsigned)(ieee754.u >> 32) & 0x7fffffff) + ((unsigned)ieee754.u != 0) > 0x7ff00000) != 0;
 #endif
@@ -115,7 +121,7 @@ bool vpMath::isNaN(float value)
   return (_isnan(value) != 0);
 #else
   // Taken from OpenCV source code CvIsNan()
-  Cv32suf ieee754;
+  Vp32suf ieee754;
   ieee754.f = value;
   return ((unsigned)ieee754.u & 0x7fffffff) > 0x7f800000;
 #endif
@@ -136,7 +142,7 @@ bool vpMath::isInf(double value)
   return std::isinf(value);
 #else
   // Taken from OpenCV source code CvIsInf()
-  Cv64suf ieee754;
+  Vp64suf ieee754;
   ieee754.f = value;
   return ((unsigned)(ieee754.u >> 32) & 0x7fffffff) == 0x7ff00000 && (unsigned)ieee754.u == 0;
 #endif
@@ -157,7 +163,7 @@ bool vpMath::isInf(float value)
   return std::isinf(value);
 #else
   // Taken from OpenCV source code CvIsInf()
-  Cv32suf ieee754;
+  Vp32suf ieee754;
   ieee754.f = value;
   return ((unsigned)ieee754.u & 0x7fffffff) == 0x7f800000;
 #endif
