@@ -29,12 +29,13 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Draw text in an image.
+ * Colormap.
  *
  *****************************************************************************/
 
 #include <visp3/core/vpColormap.h>
 
+// TODO: doc
 /*!
   Creates a new font class with given height.
 
@@ -46,8 +47,81 @@
   \param [in] ttfFilename : Path to the TTF file if needed. Can contain multiple paths separated by `;`character. The
   first valid path that is found is used.
 */
-vpColormap::vpColormap()
-{
+vpColormap::vpColormap(const vpColormapType& colormapType) : m_colormapType(colormapType) {
+  for (unsigned int i = 0; i < 256; i++) {
+    for (unsigned int j = 0; j < 3; j++) {
+      switch (m_colormapType) {
+      case COLORMAP_AUTUMN:
+        m_colormapSrgbBytes[i][j] = m_autumnSrgbBytes[i][j];
+        break;
+      case COLORMAP_CIVIDIS:
+        m_colormapSrgbBytes[i][j] = m_cividisSrgbBytes[i][j];
+        break;
+      case COLORMAP_COOL:
+        m_colormapSrgbBytes[i][j] = m_coolSrgbBytes[i][j];
+        break;
+      case COLORMAP_GIST_EARTH:
+        m_colormapSrgbBytes[i][j] = m_gistEarthSrgbBytes[i][j];
+        break;
+      case COLORMAP_GNUPLOT:
+        m_colormapSrgbBytes[i][j] = m_gnuplotSrgbBytes[i][j];
+        break;
+      case COLORMAP_GNUPLOT2:
+        m_colormapSrgbBytes[i][j] = m_gnuplot2SrgbBytes[i][j];
+        break;
+      case COLORMAP_HOT:
+        m_colormapSrgbBytes[i][j] = m_hotSrgbBytes[i][j];
+        break;
+      case COLORMAP_HSV:
+        m_colormapSrgbBytes[i][j] = m_hsvSrgbBytes[i][j];
+        break;
+      case COLORMAP_INFERNO:
+        m_colormapSrgbBytes[i][j] = m_infernoSrgbBytes[i][j];
+        break;
+      case COLORMAP_JET:
+        m_colormapSrgbBytes[i][j] = m_jetSrgbBytes[i][j];
+        break;
+      case COLORMAP_MAGMA:
+        m_colormapSrgbBytes[i][j] = m_magmaSrgbBytes[i][j];
+        break;
+      case COLORMAP_OCEAN:
+        m_colormapSrgbBytes[i][j] = m_oceanSrgbBytes[i][j];
+        break;
+      case COLORMAP_PLASMA:
+        m_colormapSrgbBytes[i][j] = m_plasmaSrgbBytes[i][j];
+        break;
+      case COLORMAP_RAINBOW:
+        m_colormapSrgbBytes[i][j] = m_rainbowSrgbBytes[i][j];
+        break;
+      case COLORMAP_SPRING:
+        m_colormapSrgbBytes[i][j] = m_springSrgbBytes[i][j];
+        break;
+      case COLORMAP_SUMMER:
+        m_colormapSrgbBytes[i][j] = m_summerSrgbBytes[i][j];
+        break;
+      case COLORMAP_TERRAIN:
+        m_colormapSrgbBytes[i][j] = m_terrainSrgbBytes[i][j];
+        break;
+      case COLORMAP_TURBO:
+        m_colormapSrgbBytes[i][j] = m_turboSrgbBytes[i][j];
+        break;
+      case COLORMAP_TWILIGHT:
+        m_colormapSrgbBytes[i][j] = m_twilightSrgbBytes[i][j];
+        break;
+      case COLORMAP_TWILIGHT_SHIFTED:
+        m_colormapSrgbBytes[i][j] = m_twilightShiftedSrgbBytes[i][j];
+        break;
+      case COLORMAP_VIRIDIS:
+        m_colormapSrgbBytes[i][j] = m_viridisSrgbBytes[i][j];
+        break;
+      case COLORMAP_WINTER:
+        m_colormapSrgbBytes[i][j] = m_winterSrgbBytes[i][j];
+        break;
+      default:
+        break;
+      }
+    }
+  }
 }
 
 // TODO: doc
@@ -70,7 +144,8 @@ void vpColormap::convert(const vpImage<float>& I, vpImage<vpRGBa>& Icolor)
   for (unsigned int i = 0; i < Icolor.getHeight(); i++) {
     for (unsigned int j = 0; j < Icolor.getWidth(); j++) {
       unsigned char gray = Inorm[i][j];
-      Icolor[i][j] = vpRGBa(turbo_srgb_bytes[gray][0], turbo_srgb_bytes[gray][1], turbo_srgb_bytes[gray][2]);
+      Icolor[i][j] =
+          vpRGBa(m_colormapSrgbBytes[gray][0], m_colormapSrgbBytes[gray][1], m_colormapSrgbBytes[gray][2]);
     }
   }
 }
@@ -78,33 +153,6 @@ void vpColormap::convert(const vpImage<float>& I, vpImage<vpRGBa>& Icolor)
 // TODO: doc
 void vpColormap::convert(const vpImage<vpRGBf> &I, vpImage<vpRGBa> &Icolor)
 {
-  //vpRGBf minVal = 0, maxVal = 1;
-  //I.getMinMaxValue(minVal, maxVal);
-  //// TODO:
-  //std::cout << "min_R: " << minVal.R << " ; max_R: " << maxVal.R << std::endl;
-  //std::cout << "min_G: " << minVal.G << " ; max_G: " << maxVal.G << std::endl;
-  //std::cout << "min_B: " << minVal.B << " ; max_B: " << maxVal.B << std::endl;
-
-  //// convert to 256 grayscale values
-  //float a_R = 255.0f / (maxVal.R - minVal.R);
-  //float b_R = -255.0f * minVal.R / (maxVal.R - minVal.R);
-  //float a_G = 255.0f / (maxVal.G - minVal.G);
-  //float b_G = -255.0f * minVal.G / (maxVal.G - minVal.G);
-  //float a_B = 255.0f / (maxVal.B - minVal.B);
-  //float b_B = -255.0f * minVal.B / (maxVal.B - minVal.B);
-  //std::cout << "a_R: " << a_R << " ; b_R: " << b_R << std::endl;
-  //std::cout << "a_G: " << a_G << " ; b_G: " << b_G << std::endl;
-  //std::cout << "a_B: " << a_B << " ; b_B: " << b_B << std::endl;
-
-  //Icolor.resize(I.getHeight(), I.getWidth());
-  //for (unsigned int i = 0; i < I.getHeight(); i++) {
-  //  for (unsigned int j = 0; j < I.getWidth(); j++) {
-  //    Icolor[i][j].R = static_cast<unsigned char>(a_R * I[i][j].R + b_R);
-  //    Icolor[i][j].G = static_cast<unsigned char>(a_G * I[i][j].G + b_G);
-  //    Icolor[i][j].B = static_cast<unsigned char>(a_B * I[i][j].B + b_B);
-  //  }
-  //}
-
   vpImage<float> I_float(I.getHeight(), I.getWidth());
    for (unsigned int i = 0; i < I.getHeight(); i++) {
      for (unsigned int j = 0; j < I.getWidth(); j++) {
