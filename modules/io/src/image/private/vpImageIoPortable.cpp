@@ -480,15 +480,15 @@ void vp_readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename)
 #endif
   for (int i = I.getHeight() - 1; i >= 0; i--) {
     fd.read((char *)I[i], sizeof(float) * w * channels);
-    // TODO: fix this?
-    //if (swapEndianness) {
-    //  for (unsigned int j = 0; j < w; j++) {
-    //    static_assert(sizeof(uint32_t) == sizeof(float), "uint32_t and float must have the same size.");
-    //    I[i][j].R = *reinterpret_cast<float *>(vpEndian::swap32bits(*reinterpret_cast<uint32_t *>(&I[i][j * channels + 0])));
-    //    I[i][j].G = *reinterpret_cast<float *>(vpEndian::swap32bits(*reinterpret_cast<uint32_t *>(&I[i][j * channels + 1])));
-    //    I[i][j].B = *reinterpret_cast<float *>(vpEndian::swap32bits(*reinterpret_cast<uint32_t *>(&I[i][j * channels + 2])));
-    //  }
-    //}
+    // TODO: add corresponding tests
+    if (swapEndianness) {
+      for (unsigned int j = 0; j < w; j++) {
+        static_assert(sizeof(uint32_t) == sizeof(float), "uint32_t and float must have the same size.");
+        I[i][j].R = *reinterpret_cast<float *>(vpEndian::swap32bits(*reinterpret_cast<uint32_t *>(&I[i][j * channels + 0])));
+        I[i][j].G = *reinterpret_cast<float *>(vpEndian::swap32bits(*reinterpret_cast<uint32_t *>(&I[i][j * channels + 1])));
+        I[i][j].B = *reinterpret_cast<float *>(vpEndian::swap32bits(*reinterpret_cast<uint32_t *>(&I[i][j * channels + 2])));
+      }
+    }
   }
 
   if (!fd) {
