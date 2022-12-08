@@ -60,8 +60,7 @@ void usage(const char *argv[], int error)
             << "    " << argv[0] << " --seqname folder/I%04d.png --record 1" << std::endl
             << std::endl
             << "  Examples to record single shot 1280x720 images:\n"
-            << "    " << argv[0] << " --seqname I%04d.png --record 1 --width 1280 --height 720\n"
-            << "    " << argv[0] << " --seqname folder/I%04d.png --record 1" << std::endl
+            << "    " << argv[0] << " --seqname I%04d.png --record 1 --width 1280 --height 720" << std::endl
             << std::endl;
 
   if (error) {
