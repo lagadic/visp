@@ -11,6 +11,8 @@ void usage(const char *argv[], int error)
 {
   std::cout << "SYNOPSIS" << std::endl
             << "  " << argv[0] << " [--fps <6|15|30|60>]"
+            << " [--width <image width>]"
+            << " [--height <image height>]"
             << " [--seqname <sequence name>]"
             << " [--record <mode>]"
             << " [--no-display]"
@@ -20,6 +22,12 @@ void usage(const char *argv[], int error)
             << "  --fps <6|15|30|60>" << std::endl
             << "    Frames per second." << std::endl
             << "    Default: 30." << std::endl
+            << std::endl
+            << "  --width <image width>" << std::endl
+            << "    Default: 640." << std::endl
+            << std::endl
+            << "  --height <image height>" << std::endl
+            << "    Default: 480." << std::endl
             << std::endl
             << "  --seqname <sequence name>" << std::endl
             << "    Name of the sequence of image to create (ie: /tmp/image%04d.jpg)." << std::endl
@@ -43,12 +51,16 @@ void usage(const char *argv[], int error)
             << "  Example to visualize images:" << std::endl
             << "    " << argv[0] << std::endl
             << std::endl
-            << "  Examples to record a sequence:" << std::endl
+            << "  Examples to record a sequence of successive images in 640x480 resolution:" << std::endl
             << "    " << argv[0] << " --seqname I%04d.png" << std::endl
             << "    " << argv[0] << " --seqname folder/I%04d.png --record 0" << std::endl
             << std::endl
-            << "  Examples to record single shot images:\n"
+            << "  Examples to record single shot 640x480 images:\n"
             << "    " << argv[0] << " --seqname I%04d.png --record 1\n"
+            << "    " << argv[0] << " --seqname folder/I%04d.png --record 1" << std::endl
+            << std::endl
+            << "  Examples to record single shot 1280x720 images:\n"
+            << "    " << argv[0] << " --seqname I%04d.png --record 1 --width 1280 --height 720\n"
             << "    " << argv[0] << " --seqname folder/I%04d.png --record 1" << std::endl
             << std::endl;
 
@@ -70,6 +82,8 @@ int main(int argc, const char *argv[])
     int opt_record_mode = 0;
     int opt_fps = 30;
     bool opt_display = true;
+    unsigned int opt_width = 640;
+    unsigned int opt_height = 480;
 
     for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--fps") {
@@ -77,6 +91,12 @@ int main(int argc, const char *argv[])
         i++;
       } else if (std::string(argv[i]) == "--seqname") {
         opt_seqname = std::string(argv[i + 1]);
+        i++;
+      } else if (std::string(argv[i]) == "--width") {
+        opt_width = std::atoi(argv[i + 1]);
+        i++;
+      } else if (std::string(argv[i]) == "--height") {
+        opt_height = std::atoi(argv[i + 1]);
         i++;
       } else if (std::string(argv[i]) == "--record") {
         opt_record_mode = std::atoi(argv[i + 1]);
@@ -99,6 +119,7 @@ int main(int argc, const char *argv[])
     if (opt_fps != 6 && opt_fps != 15 && opt_fps != 30 && opt_fps != 60) {
       opt_fps = 30; // Default
     }
+    std::cout << "Resolution : " << opt_width << " x " << opt_height << std::endl;
     std::cout << "Recording  : " << (opt_seqname.empty() ? "disabled" : "enabled") << std::endl;
     std::cout << "Framerate  : " << opt_fps << std::endl;
     std::cout << "Display    : " << (opt_display ? "enabled" : "disabled") << std::endl;
@@ -118,13 +139,12 @@ int main(int argc, const char *argv[])
     rs2::config config;
     config.disable_stream(RS2_STREAM_DEPTH);
     config.disable_stream(RS2_STREAM_INFRARED);
-    config.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_RGBA8, opt_fps);
+    config.enable_stream(RS2_STREAM_COLOR, opt_width, opt_height, RS2_FORMAT_RGBA8, opt_fps);
     g.open(config);
 #else
     std::cout << "SDK        : Realsense 1" << std::endl;
     vpRealSense g;
-    unsigned int width = 640, height = 480;
-    g.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(width, height, rs::format::rgba8, 60));
+    g.setStreamSettings(rs::stream::color, vpRealSense::vpRsStreamParams(opt_width, opt_height, rs::format::rgba8, 60));
     g.open();
 #endif
     g.acquire(I);
