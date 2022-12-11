@@ -216,6 +216,78 @@ void vp_writePFM(const vpImage<float> &I, const std::string &filename)
   fclose(fd);
 }
 
+void vp_writePFM_HDR(const vpImage<float> &I, const std::string &filename)
+{
+  // Test the filename
+  if (filename.empty()) {
+    throw(vpImageException(vpImageException::ioError, "Cannot write PFM image: filename empty"));
+  }
+
+  FILE *fd = fopen(filename.c_str(), "wb");
+  if (fd == NULL) {
+    throw(vpImageException(vpImageException::ioError, "Cannot create PFM file \"%s\"", filename.c_str()));
+  }
+
+  // Write the head
+  fprintf(fd, "Pf\n");                                 // Magic number
+  fprintf(fd, "%u %u\n", I.getWidth(), I.getHeight()); // Image size
+#ifdef VISP_LITTLE_ENDIAN
+  fprintf(fd, "%f\n", -1.0f);                          // Byte order
+#else
+  fprintf(fd, "%f\n", 1.0f);                           // Byte order
+#endif
+
+  // Write the bitmap
+  size_t nbyte = I.getWidth();
+  for (int i = static_cast<int>(I.getHeight()) - 1; i >= 0; i--) {
+    size_t ierr = fwrite(I[i], sizeof(float), nbyte, fd);
+    if (ierr != nbyte) {
+      fclose(fd);
+      throw(vpImageException(vpImageException::ioError, "Cannot save PFM file \"%s\": only %d bytes over %d saved ",
+                             filename.c_str(), ierr, nbyte));
+    }
+  }
+
+  fflush(fd);
+  fclose(fd);
+}
+
+void vp_writePFM_HDR(const vpImage<vpRGBf> &I, const std::string &filename)
+{
+  // Test the filename
+  if (filename.empty()) {
+    throw(vpImageException(vpImageException::ioError, "Cannot write PFM image: filename empty"));
+  }
+
+  FILE *fd = fopen(filename.c_str(), "wb");
+  if (fd == NULL) {
+    throw(vpImageException(vpImageException::ioError, "Cannot create PFM file \"%s\"", filename.c_str()));
+  }
+
+  // Write the head
+  fprintf(fd, "PF\n");                                 // Magic number
+  fprintf(fd, "%u %u\n", I.getWidth(), I.getHeight()); // Image size
+#ifdef VISP_LITTLE_ENDIAN
+  fprintf(fd, "%f\n", -1.0f);                          // Byte order
+#else
+  fprintf(fd, "%f\n", 1.0f);                           // Byte order
+#endif
+
+  // Write the bitmap
+  size_t nbyte = I.getWidth() * 3;
+  for (int i = static_cast<int>(I.getHeight()) - 1; i >= 0; i--) {
+    size_t ierr = fwrite(I[i], sizeof(float), nbyte, fd);
+     if (ierr != nbyte) {
+      fclose(fd);
+      throw(vpImageException(vpImageException::ioError, "Cannot save PFM file \"%s\": only %d bytes over %d saved ",
+                             filename.c_str(), ierr, nbyte));
+    }
+  }
+
+  fflush(fd);
+  fclose(fd);
+}
+
 //--------------------------------------------------------------------------
 // PGM
 //--------------------------------------------------------------------------
@@ -334,7 +406,7 @@ void vp_writePGM(const vpImage<vpRGBa> &I, const std::string &filename)
   Read a PFM P8 file and initialize a float image.
 
   Read the contents of the portable gray pixmap (PFM P8) filename, allocate
-  memory for the corresponding image, and set the bitmap whith the content of
+  memory for the corresponding image, and set the bitmap with the content of
   the file.
 
   If the image has been already initialized, memory allocation is done
@@ -383,7 +455,21 @@ void vp_readPFM(vpImage<float> &I, const std::string &filename)
   fd.close();
 }
 
-// TODO: doc
+/*!
+  Read a PFM Pf file and initialize a float image.
+
+  Read the contents of the portable gray pixmap (PFM Pf) filename, allocate
+  memory for the corresponding image, and set the bitmap with the content of
+  the file.
+  Ranges of the pixels are not restricted to the [0 - 255] range.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+*/
 void vp_readPFM_HDR(vpImage<float> &I, const std::string &filename)
 {
   std::ifstream fd(filename.c_str(), std::ios::binary);
@@ -420,8 +506,7 @@ void vp_readPFM_HDR(vpImage<float> &I, const std::string &filename)
     fd.read((char *)I[i], sizeof(float) * w * channels);
     if (swapEndianness) {
       for (unsigned int j = 0; j < w * channels; j++) {
-        static_assert(sizeof(uint32_t) == sizeof(float), "uint32_t and float must have the same size.");
-        I[i][j] = *reinterpret_cast<float *>(vpEndian::swap32bits(*reinterpret_cast<uint32_t *>(&I[i][j])));
+        I[i][j] = vpEndian::swapFloat(I[i][j]);
       }
     }
   }
@@ -442,7 +527,21 @@ void vp_readPFM_HDR(vpImage<float> &I, const std::string &filename)
   }
 }
 
-// TODO: doc
+/*!
+  Read a PFM PF file and initialize a 3-channels float image.
+
+  Read the contents of the portable color pixmap (PFM PF) filename, allocate
+  memory for the corresponding image, and set the bitmap with the content of
+  the file.
+  Ranges of the pixels are not restricted to the [0 - 255] range.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+*/
 void vp_readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename)
 {
   std::ifstream fd(filename.c_str(), std::ios::binary);
@@ -480,13 +579,11 @@ void vp_readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename)
 #endif
   for (int i = I.getHeight() - 1; i >= 0; i--) {
     fd.read((char *)I[i], sizeof(float) * w * channels);
-    // TODO: add corresponding tests
     if (swapEndianness) {
       for (unsigned int j = 0; j < w; j++) {
-        static_assert(sizeof(uint32_t) == sizeof(float), "uint32_t and float must have the same size.");
-        I[i][j].R = *reinterpret_cast<float *>(vpEndian::swap32bits(*reinterpret_cast<uint32_t *>(&I[i][j * channels + 0])));
-        I[i][j].G = *reinterpret_cast<float *>(vpEndian::swap32bits(*reinterpret_cast<uint32_t *>(&I[i][j * channels + 1])));
-        I[i][j].B = *reinterpret_cast<float *>(vpEndian::swap32bits(*reinterpret_cast<uint32_t *>(&I[i][j * channels + 2])));
+        I[i][j].R = vpEndian::swapFloat(I[i][j].R);
+        I[i][j].G = vpEndian::swapFloat(I[i][j].G);
+        I[i][j].B = vpEndian::swapFloat(I[i][j].B);
       }
     }
   }

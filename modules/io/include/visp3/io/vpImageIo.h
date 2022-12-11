@@ -154,6 +154,8 @@ public:
   static void readPNG(vpImage<vpRGBa> &I, const std::string &filename, int backend = IO_DEFAULT_BACKEND);
 
   static void writePFM(const vpImage<float> &I, const std::string &filename);
+  static void writePFM_HDR(const vpImage<float> &I, const std::string &filename);
+  static void writePFM_HDR(const vpImage<vpRGBf> &I, const std::string &filename);
 
   static void writePGM(const vpImage<unsigned char> &I, const std::string &filename);
   static void writePGM(const vpImage<short> &I, const std::string &filename);
