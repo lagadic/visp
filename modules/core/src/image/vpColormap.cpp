@@ -29,23 +29,21 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Colormap.
+ * Colormap class to recolor an image with different grayscale values into
+ * some corresponding color values, for better visualisation for example.
  *
  *****************************************************************************/
 
 #include <visp3/core/vpColormap.h>
 
-// TODO: doc
 /*!
-  Creates a new font class with given height.
+  Creates a colormap class to be able to recolor an image with different grayscale values
+  into some corresponding color values, for better visualisation for example.
 
-  \note The vpFontFamily::GENERIC_MONOSPACE font supports ASCII characters only. It was generated on the base of the
-  generic monospace font from Gdiplus.
+  \note The different colormap types come from the
+  <a href="https://matplotlib.org/stable/tutorials/colors/colormaps.html">Matplotlib library</a>.
 
-  \param [in] height : Initial font height value in pixels. By default it is equal to 16 pixels.
-  \param [in] fontFamily : Font family in TTF format.
-  \param [in] ttfFilename : Path to the TTF file if needed. Can contain multiple paths separated by `;`character. The
-  first valid path that is found is used.
+  \param [in] colormapType : Colormap family.
 */
 vpColormap::vpColormap(const vpColormapType& colormapType) : m_colormapType(colormapType) {
   for (unsigned int i = 0; i < 256; i++) {
@@ -124,8 +122,87 @@ vpColormap::vpColormap(const vpColormapType& colormapType) : m_colormapType(colo
   }
 }
 
-// TODO: doc
-void vpColormap::convert(const vpImage<float>& I, vpImage<vpRGBa>& Icolor) 
+/*!
+  Apply a colormap to a 8-bit grayscale image:
+    - if normalise is set to true, the min, max values are first extracted from \p I
+    - the different values are remapped into the [0 - 255] range,
+    - the colormap is applied on these unsigned char values,
+    - otherwise, the grayscale values are directly mapped using the colormap.
+
+  \param[in] I : The 8-bit grayscale image on which the colormap will be apply.
+  \param[out] Icolor : Colorised image.
+  \param[in] normalise : If true, normalisation into the [0 - 255] range is applied,
+                         otherwise the grayscale values are directly mapped.
+ */
+void vpColormap::convert(const vpImage<unsigned char>& I, vpImage<vpRGBa>& Icolor, bool normalise)
+{
+  Icolor.resize(I.getHeight(), I.getWidth());
+  if (normalise) {
+    unsigned char minVal = 0, maxVal = 1;
+    I.getMinMaxValue(minVal, maxVal);
+
+    // convert to 256 grayscale values
+    float a = 255.0f / (maxVal - minVal);
+    float b = -255 * minVal / (maxVal - minVal);
+    vpImage<unsigned char> Inorm(I.getHeight(), I.getWidth());
+    for (unsigned int i = 0; i < I.getHeight(); i++) {
+      for (unsigned int j = 0; j < I.getWidth(); j++) {
+        Inorm[i][j] = static_cast<unsigned char>(a * I[i][j] + b);
+      }
+    }
+
+    for (unsigned int i = 0; i < Icolor.getHeight(); i++) {
+      for (unsigned int j = 0; j < Icolor.getWidth(); j++) {
+        const unsigned char gray = Inorm[i][j];
+        Icolor[i][j] =
+            vpRGBa(m_colormapSrgbBytes[gray][0], m_colormapSrgbBytes[gray][1], m_colormapSrgbBytes[gray][2]);
+      }
+    }
+  } else {
+    for (unsigned int i = 0; i < Icolor.getHeight(); i++) {
+      for (unsigned int j = 0; j < Icolor.getWidth(); j++) {
+        const unsigned char gray = I[i][j];
+        Icolor[i][j] =
+            vpRGBa(m_colormapSrgbBytes[gray][0], m_colormapSrgbBytes[gray][1], m_colormapSrgbBytes[gray][2]);
+      }
+    }
+  }
+}
+
+/*!
+  Apply a colormap to a 8-bit RGB image:
+    - the RGB values are first converted to grayscale values,
+    - if normalise is set to true, the min, max values are then extracted from \p I
+    - the different values are remapped into the [0 - 255] range,
+    - the colormap is applied on these unsigned char values,
+    - otherwise, the grayscale values are directly mapped using the colormap.
+
+  \param[in] I : The 8-bit grayscale image on which the colormap will be apply.
+  \param[out] Icolor : Colorised image.
+  \param[in] normalise : If true, normalisation into the [0 - 255] range is applied,
+                         otherwise the grayscale values are directly mapped.
+ */
+void vpColormap::convert(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Icolor, bool normalise)
+{
+  vpImage<unsigned char> I_uchar(I.getHeight(), I.getWidth());
+   for (unsigned int i = 0; i < I.getHeight(); i++) {
+     for (unsigned int j = 0; j < I.getWidth(); j++) {
+       I_uchar[i][j] = static_cast<unsigned char>(0.299f * I[i][j].R + 0.587f * I[i][j].G + 0.114 * I[i][j].B);
+     }
+   }
+   convert(I_uchar, Icolor, normalise);
+}
+
+/*!
+  Apply a colormap to a floating-point image:
+    - the min, max values are first extracted from \p I
+    - the different values are remapped into the [0 - 255] range,
+    - the colormap is applied on these unsigned char values.
+
+  \param[in] I : The float image on which the colormap will be apply.
+  \param[out] Icolor : Colorised image.
+ */
+void vpColormap::convert(const vpImage<float>& I, vpImage<vpRGBa>& Icolor)
 {
   float minVal = 0, maxVal = 1;
   I.getMinMaxValue(minVal, maxVal);
@@ -150,7 +227,16 @@ void vpColormap::convert(const vpImage<float>& I, vpImage<vpRGBa>& Icolor)
   }
 }
 
-// TODO: doc
+/*!
+  Apply a colormap to a 3 channels floating-point image:
+    - the RGB values are converted using the grayscale formula,
+    - the min, max values are first extracted from \p I
+    - the different values are remapped into the [0 - 255] range,
+    - the colormap is applied on these unsigned char values.
+
+  \param[in] I : The float image on which the colormap will be apply.
+  \param[out] Icolor : Colorised image.
+ */
 void vpColormap::convert(const vpImage<vpRGBf> &I, vpImage<vpRGBa> &Icolor)
 {
   vpImage<float> I_float(I.getHeight(), I.getWidth());

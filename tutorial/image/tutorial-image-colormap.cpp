@@ -8,56 +8,9 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/io/vpImageIo.h>
 
-namespace
-{
-vpImage<float> convert(const vpImage<vpRGBf>& Irgbf)
-{
-  vpImage<float> Iflt(Irgbf.getHeight(), Irgbf.getWidth());
-  for (unsigned int i = 0; i < Irgbf.getHeight(); i++) {
-    for (unsigned int j = 0; j < Irgbf.getWidth(); j++) {
-      Iflt[i][j] = 0.2126f * Irgbf[i][j].R + 0.7152f * Irgbf[i][j].G + 0.0722f * Irgbf[i][j].B;
-    }
-  }
-  return Iflt;
-}
-}
-
 int main()
 {
   try {
-    vpImage<vpRGBf> Irgbf;
-    vpImageIo::readPFM_HDR(Irgbf, "memorial.pfm");
-
-    vpRGBf minValRGBf, maxValRGBf;
-    Irgbf.getMinMaxValue(minValRGBf, maxValRGBf);
-    std::cout << "RGB float image: " << Irgbf.getWidth() << "x" << Irgbf.getHeight() 
-              << " ; min val: " << minValRGBf.R << ", " << minValRGBf.G << ", " << minValRGBf.B
-              << " ; max val: " << maxValRGBf.R << ", " << maxValRGBf.G << ", " << maxValRGBf.B 
-              << std::endl;
-
-    // Convert RGB float image to grayscale float image.
-    // Following function shows how to iterate over an image.
-    vpImage<float> Iflt = convert(Irgbf);
-
-    float minVal, maxVal;
-    Iflt.getMinMaxValue(minVal, maxVal);
-    std::cout << "Grayscale float image: " << Iflt.getWidth() << "x" << Iflt.getHeight() 
-              << " ; min val: " << minVal << " ; max val: " << maxVal << std::endl;
-
-    vpImage<vpRGBa> Icolor(Iflt.getHeight(), Iflt.getWidth());
-    vpImage<vpRGBa> Icolor2(Iflt.getHeight() * 2, Iflt.getWidth() * 2);
-
-#if defined(VISP_HAVE_X11)
-    vpDisplayX d(Icolor2, 10, 10, "Memorial");
-#elif defined(VISP_HAVE_GDI)
-    vpDisplayGDI d(Icolor2, 10, 10, "Memorial");
-#elif defined(VISP_HAVE_OPENCV)
-    vpDisplayOpenCV d(Icolor2, 10, 10, "Memorial");
-#else
-    std::cout << "No image viewer is available..." << std::endl;
-    return EXIT_SUCCESS;
-#endif
-
     std::map<vpColormap::vpColormapType, std::string> colormaps_str = {
         {vpColormap::COLORMAP_AUTUMN, "Colormap Autumn"},
         {vpColormap::COLORMAP_CIVIDIS, "Colormap Cividis"},
@@ -97,17 +50,104 @@ int main()
         vpColormap::COLORMAP_VIRIDIS,  vpColormap::COLORMAP_WINTER
     };
 
-    vpFont font(20);
-    for (size_t i = 0; i < colormaps.size(); i++) {
-      vpColormap colormap(colormaps[i]);
-      colormap.convert(Iflt, Icolor);
-      vpImageTools::resize(Icolor, Icolor2, vpImageTools::INTERPOLATION_LINEAR);
+    // Apply a colormap on a 3-channel floating-point image
+    {
+      vpImage<vpRGBf> Irgbf;
+      vpImageIo::readPFM_HDR(Irgbf, "memorial.pfm");
 
-      font.drawText(Icolor2, colormaps_str[colormaps[i]], vpImagePoint(20, 20), vpColor::black, vpColor::white);
+      vpImage<vpRGBa> Icolor(Irgbf.getHeight(), Irgbf.getWidth());
+      vpImage<vpRGBa> Icolor2(Irgbf.getHeight() * 2, Irgbf.getWidth() * 2);
 
-      vpDisplay::display(Icolor2);
-      vpDisplay::flush(Icolor2);
-      vpDisplay::getClick(Icolor2);
+  #if defined(VISP_HAVE_X11)
+      vpDisplayX d(Icolor2, 10, 10, "Memorial");
+  #elif defined(VISP_HAVE_GDI)
+      vpDisplayGDI d(Icolor2, 10, 10, "Memorial");
+  #elif defined(VISP_HAVE_OPENCV)
+      vpDisplayOpenCV d(Icolor2, 10, 10, "Memorial");
+  #else
+      std::cout << "No image viewer is available..." << std::endl;
+      return EXIT_SUCCESS;
+  #endif
+
+      vpFont font(20);
+      for (size_t i = 0; i < colormaps.size(); i++) {
+        vpColormap colormap(colormaps[i]);
+        colormap.convert(Irgbf, Icolor);
+        vpImageTools::resize(Icolor, Icolor2, vpImageTools::INTERPOLATION_LINEAR);
+
+        font.drawText(Icolor2, colormaps_str[colormaps[i]], vpImagePoint(20, 20), vpColor::black, vpColor::white);
+
+        vpDisplay::display(Icolor2);
+        vpDisplay::flush(Icolor2);
+        vpDisplay::getClick(Icolor2);
+      }
+    }
+
+    // Apply a colormap on a 8-bit RGB image
+    {
+      vpImage<vpRGBa> I;
+      vpImageIo::read(I, "monkey.png");
+
+      vpImage<vpRGBa> Icolor(I.getHeight(), I.getWidth());
+      vpImage<vpRGBa> Icolor2(I.getHeight() * 2, I.getWidth() * 2);
+
+  #if defined(VISP_HAVE_X11)
+      vpDisplayX d(Icolor2, 10, 10, "Monkey");
+  #elif defined(VISP_HAVE_GDI)
+      vpDisplayGDI d(Icolor2, 10, 10, "Monkey");
+  #elif defined(VISP_HAVE_OPENCV)
+      vpDisplayOpenCV d(Icolor2, 10, 10, "Monkey");
+  #else
+      std::cout << "No image viewer is available..." << std::endl;
+      return EXIT_SUCCESS;
+  #endif
+
+      vpFont font(20);
+      for (size_t i = 0; i < colormaps.size(); i++) {
+        vpColormap colormap(colormaps[i]);
+        colormap.convert(I, Icolor);
+        vpImageTools::resize(Icolor, Icolor2, vpImageTools::INTERPOLATION_LINEAR);
+
+        font.drawText(Icolor2, colormaps_str[colormaps[i]], vpImagePoint(20, 20), vpColor::black, vpColor::white);
+
+        vpDisplay::display(Icolor2);
+        vpDisplay::flush(Icolor2);
+        vpDisplay::getClick(Icolor2);
+      }
+    }
+
+    // Apply a colormap on a 8-bit RGB image, with normalisation to the [0 - 255] range
+    {
+      vpImage<vpRGBa> I;
+      vpImageIo::read(I, "monkey.png");
+
+      vpImage<vpRGBa> Icolor(I.getHeight(), I.getWidth());
+      vpImage<vpRGBa> Icolor2(I.getHeight() * 2, I.getWidth() * 2);
+
+  #if defined(VISP_HAVE_X11)
+      vpDisplayX d(Icolor2, 10, 10, "Monkey");
+  #elif defined(VISP_HAVE_GDI)
+      vpDisplayGDI d(Icolor2, 10, 10, "Monkey");
+  #elif defined(VISP_HAVE_OPENCV)
+      vpDisplayOpenCV d(Icolor2, 10, 10, "Monkey");
+  #else
+      std::cout << "No image viewer is available..." << std::endl;
+      return EXIT_SUCCESS;
+  #endif
+
+      vpFont font(20);
+      for (size_t i = 0; i < colormaps.size(); i++) {
+        vpColormap colormap(colormaps[i]);
+        const bool normalise = true;
+        colormap.convert(I, Icolor, normalise);
+        vpImageTools::resize(Icolor, Icolor2, vpImageTools::INTERPOLATION_LINEAR);
+
+        font.drawText(Icolor2, colormaps_str[colormaps[i]], vpImagePoint(20, 20), vpColor::black, vpColor::white);
+
+        vpDisplay::display(Icolor2);
+        vpDisplay::flush(Icolor2);
+        vpDisplay::getClick(Icolor2);
+      }
     }
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e << std::endl;

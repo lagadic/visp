@@ -29,7 +29,8 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Colormap class.
+ * Colormap class to recolor an image with different grayscale values into
+ * some corresponding color values, for better visualisation for example.
  *
  *****************************************************************************/
 
@@ -50,7 +51,8 @@
 
   \ingroup group_core_image
 
-  \brief Colormap tool to have a mapping between 256 values and RGB values.
+  \brief Creates a colormap class to be able to recolor an image with different grayscale
+  values into some corresponding color values, for better visualisation for example.
 */
 class VISP_EXPORT vpColormap
 {
@@ -81,6 +83,9 @@ public:
   };
 
   vpColormap(const vpColormapType& colormapType);
+
+  void convert(const vpImage<unsigned char> &I, vpImage<vpRGBa> &Icolor, bool normalise=false);
+  void convert(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Icolor, bool normalise=false);
 
   void convert(const vpImage<float> &I, vpImage<vpRGBa> &Icolor);
   void convert(const vpImage<vpRGBf> &I, vpImage<vpRGBa> &Icolor);
