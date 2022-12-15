@@ -47,10 +47,14 @@
 // Portable Graymap format (PGM)
 // Portable Pixmap format (PPM)
 void vp_writePFM(const vpImage<float> &I, const std::string &filename);
+void vp_writePFM_HDR(const vpImage<float> &I, const std::string &filename);
+void vp_writePFM_HDR(const vpImage<vpRGBf> &I, const std::string &filename);
 void vp_writePGM(const vpImage<unsigned char> &I, const std::string &filename);
 void vp_writePGM(const vpImage<short> &I, const std::string &filename);
 void vp_writePGM(const vpImage<vpRGBa> &I, const std::string &filename);
 void vp_readPFM(vpImage<float> &I, const std::string &filename);
+void vp_readPFM_HDR(vpImage<float> &I, const std::string &filename);
+void vp_readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename);
 void vp_readPGM(vpImage<unsigned char> &I, const std::string &filename);
 void vp_readPGM(vpImage<vpRGBa> &I, const std::string &filename);
 void vp_readPPM(vpImage<unsigned char> &I, const std::string &filename);

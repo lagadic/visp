@@ -1060,32 +1060,48 @@ if(USE_FRANKA)
   set(VISP_HAVE_FRANKA_VERSION "(${Franka_VERSION_MAJOR}<<16 | ${Franka_VERSION_MINOR}<<8 | ${Franka_VERSION_PATCH})") # for vpConfig.h
 endif()
 
-# Find isnan macro (C-style)
+# NaN
+# Find isnan macro (C-style): https://www.cplusplus.com/reference/cmath/isnan/
 VP_SET(VISP_HAVE_FUNC_ISNAN TRUE IF HAVE_FUNC_ISNAN) # for header vpConfig.h
-# Find std::isnan function (cmath)
+# Find std::isnan function (cmath): https://en.cppreference.com/w/cpp/numeric/math/isnan
 VP_SET(VISP_HAVE_FUNC_STD_ISNAN TRUE IF HAVE_FUNC_STD_ISNAN) # for header vpConfig.h
-# Find _isnan function for MSVC
+# Find _isnan function for MSVC: https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/isnan-isnan-isnanf?view=msvc-170
 VP_SET(VISP_HAVE_FUNC__ISNAN TRUE IF HAVE_FUNC__ISNAN) # for header vpConfig.h
-# Find isinf macro (C-style)
+
+# Inf
+# Find isinf macro (C-style): https://www.cplusplus.com/reference/cmath/isinf/
 VP_SET(VISP_HAVE_FUNC_ISINF TRUE IF HAVE_FUNC_ISINF) # for header vpConfig.h
-# Find std::isinf function (cmath)
+# Find std::isinf function (cmath): https://en.cppreference.com/w/cpp/numeric/math/isinf
 VP_SET(VISP_HAVE_FUNC_STD_ISINF TRUE IF HAVE_FUNC_STD_ISINF) # for header vpConfig.h
-# Find _finite function for MSVC
-VP_SET(VISP_HAVE_FUNC__FINITE TRUE IF HAVE_FUNC__FINITE) # for header vpConfig.h
-# Find round function (math.h)
+
+# round
+# Find round function (math.h): https://www.cplusplus.com/reference/cmath/round/
 VP_SET(VISP_HAVE_FUNC_ROUND TRUE IF HAVE_FUNC_ROUND) # for header vpConfig.h
-# Find std::round function (cmath)
+# Find std::round function (cmath): https://en.cppreference.com/w/cpp/numeric/math/round
 VP_SET(VISP_HAVE_FUNC_STD_ROUND TRUE IF HAVE_FUNC_STD_ROUND) # for header vpConfig.h
-# Find erfc function (math.h)
+
+# erfc
+# Find erfc function (math.h): https://www.cplusplus.com/reference/cmath/erfc/
 VP_SET(VISP_HAVE_FUNC_ERFC TRUE IF HAVE_FUNC_ERFC) # for header vpConfig.h
-# Find std::erfc function (cmath)
+# Find std::erfc function (cmath): https://en.cppreference.com/w/cpp/numeric/math/erfc
 VP_SET(VISP_HAVE_FUNC_STD_ERFC TRUE IF HAVE_FUNC_STD_ERFC) # for header vpConfig.h
+
 # Find strtof function (stdlib.h)
 VP_SET(VISP_HAVE_FUNC_STRTOF TRUE IF HAVE_FUNC_STRTOF) # for header vpConfig.h
+
 # Find log1p function (math.h)
 VP_SET(VISP_HAVE_FUNC_LOG1P TRUE IF HAVE_FUNC_LOG1P) # for header vpConfig.h
+
 # Find inet_ntop function
 VP_SET(VISP_HAVE_FUNC_INET_NTOP TRUE IF HAVE_FUNC_INET_NTOP) # for header vpConfig.h
+
+# isfinite
+# Find isfinite macro (C-style): https://www.cplusplus.com/reference/cmath/isfinite/
+VP_SET(VISP_HAVE_FUNC_ISFINITE TRUE IF HAVE_FUNC_ISFINITE) # for header vpConfig.h
+# Find std::isfinite function (cmath): https://en.cppreference.com/w/cpp/numeric/math/isfinite
+VP_SET(VISP_HAVE_FUNC_STD_ISFINITE TRUE IF HAVE_FUNC_STD_ISFINITE) # for header vpConfig.h
+# Find _finite function for MSVC: https://learn.microsoft.com/en-us/cpp/c-runtime-library/reference/finite-finitef?view=msvc-170
+VP_SET(VISP_HAVE_FUNC__FINITE TRUE IF HAVE_FUNC__FINITE) # for header vpConfig.h
 
 VP_SET(VISP_BUILD_DEPRECATED_FUNCTIONS TRUE IF BUILD_DEPRECATED_FUNCTIONS) # for header vpConfig.h
 VP_SET(VISP_MOMENTS_COMBINE_MATRICES TRUE IF ENABLE_MOMENTS_COMBINE_MATRICES) # for header vpConfig.h
@@ -1619,6 +1635,25 @@ status("    Tutorials:"              BUILD_TUTORIALS    THEN "yes" ELSE "no")
 status("    Dataset found:"          VISP_DATASET_FOUND THEN "yes (in ${VISP_DATASET_LOCATION})" ELSE "no")
 if(APPS_FOUND)
   status("    Apps:"              BUILD_APPS  THEN "yes" ELSE "no")
+endif()
+
+# ========================== library dirs ==========================
+status("")
+status("  Library dirs:")
+if(USE_EIGEN3)
+  status("    Eigen3 include dir:" "${Eigen3_DIR}")
+endif()
+if(USE_MKL)
+  status("    MKL include dir:" "${MKL_INCLUDE_DIRS}")
+endif()
+if(USE_OPENBLAS)
+  status("    OpenBLAS dir:" "${OpenBLAS_DIR}")
+endif()
+if(USE_OPENCV)
+  status("    OpenCV dir:" "${OpenCV_DIR}")
+endif()
+if(USE_PCL)
+  status("    PCL dir:" "${PCL_DIR}")
 endif()
 
 # ========================== auxiliary ==========================

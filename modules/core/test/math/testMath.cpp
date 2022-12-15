@@ -145,15 +145,11 @@ int main()
   }
   std::cout << "vpMath::isNaN is Ok !" << std::endl;
 
-// Test isInf
-#if !defined(VISP_HAVE_FUNC__FINITE)
-  // Disable this test if using _finite as (!_finite(NAN)) returns true
-  // whereas isinf(NAN) returns false
+  // Test isInf
   if (vpMath::isInf(NAN)) {
     std::cerr << "Fail: vpMath::isInf(NAN)=" << vpMath::isInf(NAN) << " / should be false" << std::endl;
     return -1;
   }
-#endif
 
   if (!vpMath::isInf(1.0 / a)) {
     std::cerr << "Fail: vpMath::isInf(1.0/0.0)=" << vpMath::isInf(1.0 / a) << " / should be true" << std::endl;
@@ -176,6 +172,40 @@ int main()
     return -1;
   }
   std::cout << "vpMath::isInf is Ok !" << std::endl;
+
+  // Test isfinite
+  if (vpMath::isFinite(NAN)) {
+    std::cerr << "Fail: vpMath::isFinite(NAN)=" << vpMath::isFinite(NAN) << " / should be false" << std::endl;
+    return -1;
+  }
+
+  if (vpMath::isFinite(1.0 / a)) {
+    std::cerr << "Fail: vpMath::isFinite(1.0/0.0)=" << vpMath::isFinite(1.0 / a) << " / should be false" << std::endl;
+    return -1;
+  }
+
+  if (!vpMath::isFinite(0.0)) {
+    std::cerr << "Fail: vpMath::isFinite(0.0)=" << vpMath::isFinite(0.0) << " / should be true" << std::endl;
+    return -1;
+  }
+
+  if (vpMath::isFinite(exp(800.))) {
+    std::cerr << "Fail: vpMath::isFinite(exp(800.))=" << vpMath::isFinite(exp(800.)) << " / should be false" << std::endl;
+    return -1;
+  }
+
+  if (!vpMath::isFinite(DBL_MIN / 2.0)) {
+    std::cerr << "Fail: vpMath::isFinite(DBL_MIN/2.0)=" << vpMath::isFinite(DBL_MIN / 2.0) << " / should be true"
+              << std::endl;
+    return -1;
+  }
+
+  if (!vpMath::isFinite(std::numeric_limits<float>::max())) {
+    std::cerr << "Fail: vpMath::isFinite(DBL_MAX)=" << vpMath::isFinite(std::numeric_limits<float>::max()) << " / should be true"
+              << std::endl;
+    return -1;
+  }
+  std::cout << "vpMath::isFinite is Ok !" << std::endl;
 
   // Test round
   if (vpMath::round(2.3) != 2) {

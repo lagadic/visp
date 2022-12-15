@@ -41,9 +41,7 @@
 #include "vpImageIoBackend.h"
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpIoTools.h>
-
-void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const std::string &magic, unsigned int &w,
-                        unsigned int &h, unsigned int &maxval);
+#include <visp3/core/vpEndian.h>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 /*!
@@ -110,6 +108,65 @@ void vp_decodeHeaderPNM(const std::string &filename, std::ifstream &fd, const st
     }
   }
 }
+
+void vp_decodeHeaderPFM(const std::string &filename, std::ifstream &fd, std::string &magic, unsigned int &w,
+                        unsigned int &h, double &scale, bool &littleEndian)
+{
+  std::string line;
+  const unsigned int nb_elt = 4;
+  unsigned int cpt_elt = 0;
+  while (cpt_elt != nb_elt) {
+    // Skip empty lines or lines starting with # (comment)
+    while (std::getline(fd, line) && (line.compare(0, 1, "#") == 0 || line.size() == 0)) {
+    }
+
+    if (fd.eof()) {
+      fd.close();
+      throw(vpImageException(vpImageException::ioError, "Cannot read header of file \"%s\"", filename.c_str()));
+    }
+
+    std::vector<std::string> header = vpIoTools::splitChain(line, std::string(" "));
+
+    if (header.empty()) {
+      fd.close();
+      throw(vpImageException(vpImageException::ioError, "Cannot read header of file \"%s\"", filename.c_str()));
+    }
+
+    if (cpt_elt == 0) { // decode magic
+      magic = header[0];
+      if (magic != "PF" && magic != "Pf") {
+        fd.close();
+        throw(vpImageException(vpImageException::ioError,
+                               "\"%s\" is not a PFM file with PF (RGB) or Pf (gray) magic number", filename.c_str()));
+      }
+      cpt_elt++;
+      header.erase(header.begin(),
+                   header.begin() + 1); // erase first element that is processed
+    }
+    while (header.size()) {
+      if (cpt_elt == 1) { // decode width
+        std::istringstream ss(header[0]);
+        ss >> w;
+        cpt_elt++;
+        header.erase(header.begin(),
+                     header.begin() + 1); // erase first element that is processed
+      } else if (cpt_elt == 2) {          // decode height
+        std::istringstream ss(header[0]);
+        ss >> h;
+        cpt_elt++;
+        header.erase(header.begin(),
+                     header.begin() + 1); // erase first element that is processed
+      } else if (cpt_elt == 3) {          // decode byte order
+        std::istringstream ss(header[0]);
+        ss >> scale;
+        littleEndian = scale < 0;
+        cpt_elt++;
+        header.erase(header.begin(),
+                     header.begin() + 1); // erase first element that is processed
+      }
+    }
+  }
+}
 #endif
 
 //--------------------------------------------------------------------------
@@ -153,6 +210,78 @@ void vp_writePFM(const vpImage<float> &I, const std::string &filename)
     fclose(fd);
     throw(vpImageException(vpImageException::ioError, "Cannot save PFM file \"%s\": only %d bytes over %d saved ",
                            filename.c_str(), ierr, nbyte));
+  }
+
+  fflush(fd);
+  fclose(fd);
+}
+
+void vp_writePFM_HDR(const vpImage<float> &I, const std::string &filename)
+{
+  // Test the filename
+  if (filename.empty()) {
+    throw(vpImageException(vpImageException::ioError, "Cannot write PFM image: filename empty"));
+  }
+
+  FILE *fd = fopen(filename.c_str(), "wb");
+  if (fd == NULL) {
+    throw(vpImageException(vpImageException::ioError, "Cannot create PFM file \"%s\"", filename.c_str()));
+  }
+
+  // Write the head
+  fprintf(fd, "Pf\n");                                 // Magic number
+  fprintf(fd, "%u %u\n", I.getWidth(), I.getHeight()); // Image size
+#ifdef VISP_LITTLE_ENDIAN
+  fprintf(fd, "%f\n", -1.0f);                          // Byte order
+#else
+  fprintf(fd, "%f\n", 1.0f);                           // Byte order
+#endif
+
+  // Write the bitmap
+  size_t nbyte = I.getWidth();
+  for (int i = static_cast<int>(I.getHeight()) - 1; i >= 0; i--) {
+    size_t ierr = fwrite(I[i], sizeof(float), nbyte, fd);
+    if (ierr != nbyte) {
+      fclose(fd);
+      throw(vpImageException(vpImageException::ioError, "Cannot save PFM file \"%s\": only %d bytes over %d saved ",
+                             filename.c_str(), ierr, nbyte));
+    }
+  }
+
+  fflush(fd);
+  fclose(fd);
+}
+
+void vp_writePFM_HDR(const vpImage<vpRGBf> &I, const std::string &filename)
+{
+  // Test the filename
+  if (filename.empty()) {
+    throw(vpImageException(vpImageException::ioError, "Cannot write PFM image: filename empty"));
+  }
+
+  FILE *fd = fopen(filename.c_str(), "wb");
+  if (fd == NULL) {
+    throw(vpImageException(vpImageException::ioError, "Cannot create PFM file \"%s\"", filename.c_str()));
+  }
+
+  // Write the head
+  fprintf(fd, "PF\n");                                 // Magic number
+  fprintf(fd, "%u %u\n", I.getWidth(), I.getHeight()); // Image size
+#ifdef VISP_LITTLE_ENDIAN
+  fprintf(fd, "%f\n", -1.0f);                          // Byte order
+#else
+  fprintf(fd, "%f\n", 1.0f);                           // Byte order
+#endif
+
+  // Write the bitmap
+  size_t nbyte = I.getWidth() * 3;
+  for (int i = static_cast<int>(I.getHeight()) - 1; i >= 0; i--) {
+    size_t ierr = fwrite(I[i], sizeof(float), nbyte, fd);
+     if (ierr != nbyte) {
+      fclose(fd);
+      throw(vpImageException(vpImageException::ioError, "Cannot save PFM file \"%s\": only %d bytes over %d saved ",
+                             filename.c_str(), ierr, nbyte));
+    }
   }
 
   fflush(fd);
@@ -277,7 +406,7 @@ void vp_writePGM(const vpImage<vpRGBa> &I, const std::string &filename)
   Read a PFM P8 file and initialize a float image.
 
   Read the contents of the portable gray pixmap (PFM P8) filename, allocate
-  memory for the corresponding image, and set the bitmap whith the content of
+  memory for the corresponding image, and set the bitmap with the content of
   the file.
 
   If the image has been already initialized, memory allocation is done
@@ -290,8 +419,8 @@ void vp_writePGM(const vpImage<vpRGBa> &I, const std::string &filename)
 void vp_readPFM(vpImage<float> &I, const std::string &filename)
 {
   unsigned int w = 0, h = 0, maxval = 0;
-  unsigned int w_max = 100000, h_max = 100000, maxval_max = 255;
-  std::string magic("P8");
+  const unsigned int w_max = 100000, h_max = 100000, maxval_max = 255;
+  const std::string magic("P8");
 
   std::ifstream fd(filename.c_str(), std::ios::binary);
 
@@ -324,6 +453,157 @@ void vp_readPFM(vpImage<float> &I, const std::string &filename)
   }
 
   fd.close();
+}
+
+/*!
+  Read a PFM Pf file and initialize a float image.
+
+  Read the contents of the portable gray pixmap (PFM Pf) filename, allocate
+  memory for the corresponding image, and set the bitmap with the content of
+  the file.
+  Ranges of the pixels are not restricted to the [0 - 255] range.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+*/
+void vp_readPFM_HDR(vpImage<float> &I, const std::string &filename)
+{
+  std::ifstream fd(filename.c_str(), std::ios::binary);
+
+  // Open the filename
+  if (!fd.is_open()) {
+    throw(vpImageException(vpImageException::ioError, "Cannot open file \"%s\"", filename.c_str()));
+  }
+
+  const unsigned int w_max = 100000, h_max = 100000;
+  const std::string magicRGB("PF"), magicGray("Pf");
+  std::string magic;
+  unsigned int w = 0, h = 0;
+  double scale = 1;
+  bool littleEndian = true;
+  vp_decodeHeaderPFM(filename, fd, magic, w, h, scale, littleEndian);
+
+  if (w > w_max || h > h_max) {
+    fd.close();
+    throw(vpException(vpException::badValue, "Bad image size in \"%s\"", filename.c_str()));
+  }
+
+  unsigned int channels = (magic == magicRGB) ? 3 : 1;
+  if (h != I.getHeight() || channels * w != I.getWidth()) {
+    I.resize(h, channels * w);
+  }
+
+#ifdef VISP_LITTLE_ENDIAN
+  bool swapEndianness = !littleEndian;
+#else
+  bool swapEndianness = littleEndian;
+#endif
+  for (int i = I.getHeight() - 1; i >= 0; i--) {
+    fd.read((char *)I[i], sizeof(float) * w * channels);
+    if (swapEndianness) {
+      for (unsigned int j = 0; j < w * channels; j++) {
+        I[i][j] = vpEndian::swapFloat(I[i][j]);
+      }
+    }
+  }
+
+  if (!fd) {
+    fd.close();
+    throw(vpImageException(vpImageException::ioError, "Read only %d bytes in file \"%s\"", fd.gcount(),
+                           filename.c_str()));
+  }
+  fd.close();
+
+  if (std::fabs(scale) > 0.0f) {
+    for (unsigned int i = 0; i < I.getHeight(); i++) {
+      for (unsigned int j = 0; j < I.getWidth(); j++) {
+        I[i][j] *= 1.0f / static_cast<float>(std::fabs(scale));
+      }
+    }
+  }
+}
+
+/*!
+  Read a PFM PF file and initialize a 3-channels float image.
+
+  Read the contents of the portable color pixmap (PFM PF) filename, allocate
+  memory for the corresponding image, and set the bitmap with the content of
+  the file.
+  Ranges of the pixels are not restricted to the [0 - 255] range.
+
+  If the image has been already initialized, memory allocation is done
+  only if the new image size is different, else we re-use the same
+  memory space.
+
+  \param I : Image to set with the \e filename content.
+  \param filename : Name of the file containing the image.
+*/
+void vp_readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename)
+{
+  std::ifstream fd(filename.c_str(), std::ios::binary);
+
+  // Open the filename
+  if (!fd.is_open()) {
+    throw(vpImageException(vpImageException::ioError, "Cannot open file \"%s\"", filename.c_str()));
+  }
+
+  const unsigned int w_max = 100000, h_max = 100000;
+  const std::string magicRGB("PF"), magicGray("Pf");
+  std::string magic;
+  unsigned int w = 0, h = 0;
+  double scale = 1;
+  bool littleEndian = true;
+  vp_decodeHeaderPFM(filename, fd, magic, w, h, scale, littleEndian);
+
+  if (w > w_max || h > h_max) {
+    fd.close();
+    throw(vpException(vpException::badValue, "Bad image size in \"%s\"", filename.c_str()));
+  }
+
+  unsigned int channels = (magic == magicRGB) ? 3 : 1;
+  if (magic != magicRGB) {
+    throw(vpImageException(vpImageException::ioError, "Image \"%s\" is not an RGB image!", filename.c_str()));
+  }
+  if (h != I.getHeight() || w != I.getWidth()) {
+    I.resize(h, w);
+  }
+
+#ifdef VISP_LITTLE_ENDIAN
+  bool swapEndianness = !littleEndian;
+#else
+  bool swapEndianness = littleEndian;
+#endif
+  for (int i = I.getHeight() - 1; i >= 0; i--) {
+    fd.read((char *)I[i], sizeof(float) * w * channels);
+    if (swapEndianness) {
+      for (unsigned int j = 0; j < w; j++) {
+        I[i][j].R = vpEndian::swapFloat(I[i][j].R);
+        I[i][j].G = vpEndian::swapFloat(I[i][j].G);
+        I[i][j].B = vpEndian::swapFloat(I[i][j].B);
+      }
+    }
+  }
+
+  if (!fd) {
+    fd.close();
+    throw(vpImageException(vpImageException::ioError, "Read only %d bytes in file \"%s\"", fd.gcount(),
+                           filename.c_str()));
+  }
+  fd.close();
+
+  if (std::fabs(scale) > 0.0f) {
+    for (unsigned int i = 0; i < I.getHeight(); i++) {
+      for (unsigned int j = 0; j < I.getWidth(); j++) {
+        I[i][j].R *= 1.0f / static_cast<float>(std::fabs(scale));
+        I[i][j].G *= 1.0f / static_cast<float>(std::fabs(scale));
+        I[i][j].B *= 1.0f / static_cast<float>(std::fabs(scale));
+      }
+    }
+  }
 }
 
 /*!
