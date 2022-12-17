@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -96,6 +96,11 @@ namespace Simd
         {
             return size * sizeof(T);
         }
+
+        SIMD_INLINE bool Empty() const
+        {
+            return data == NULL;
+        }
     };
 
     typedef Array<int8_t> Array8i;
@@ -114,10 +119,11 @@ namespace Simd
 #pragma GCC diagnostic ignored "-Wignored-attributes"
 #endif
 
-#ifdef SIMD_SSE2_ENABLE
-    namespace Sse2
+#ifdef SIMD_SSE41_ENABLE
+    namespace Sse41
     {
         typedef Array<__m128> Array128f;
+        typedef Array<__m128i> Array128i;
     }
 #endif
 

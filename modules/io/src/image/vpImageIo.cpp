@@ -775,6 +775,22 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
 void vpImageIo::writePFM(const vpImage<float> &I, const std::string &filename) { vp_writePFM(I, filename); }
 
 /*!
+  Save a high-dynamic range (not restricted to the [0-255] intensity range) floating-point image
+  in portable float map format.
+  \param[in] I : Grayscale floating-point image to save.
+  \param[in] filename : Image location.
+ */
+void vpImageIo::writePFM_HDR(const vpImage<float> &I, const std::string &filename) { vp_writePFM_HDR(I, filename); }
+
+/*!
+  Save a RGB high-dynamic range (not restricted to the [0-255] intensity range) floating-point image
+  in portable float map format.
+  \param[in] I : RGB floating-point image to save.
+  \param[in] filename : Image location.
+ */
+void vpImageIo::writePFM_HDR(const vpImage<vpRGBf> &I, const std::string &filename) { vp_writePFM_HDR(I, filename); }
+
+/*!
   Save an image in portable gray map format.
   \param[in] I : Image to save.
   \param[in] filename : Image location.
@@ -801,6 +817,20 @@ void vpImageIo::writePGM(const vpImage<vpRGBa> &I, const std::string &filename) 
   \param[in] filename : Image location.
  */
 void vpImageIo::readPFM(vpImage<float> &I, const std::string &filename) { vp_readPFM(I, filename); }
+
+/*!
+  Load an image in portable float map format and not restricted to the [0, 255] dynamic range.
+  \param[out] I : Image read from filename.
+  \param[in] filename : Image location.
+ */
+void vpImageIo::readPFM_HDR(vpImage<float> &I, const std::string &filename) { vp_readPFM_HDR(I, filename); }
+
+/*!
+  Load an image in portable float map format and not restricted to the [0, 255] dynamic range.
+  \param[out] I : Image read from filename and with three channels.
+  \param[in] filename : Image location.
+ */
+void vpImageIo::readPFM_HDR(vpImage<vpRGBf> &I, const std::string &filename) { vp_readPFM_HDR(I, filename); }
 
 /*!
   Load an image in portable gray map format. If the image is in color, it is converted in gray level.

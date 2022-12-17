@@ -93,8 +93,5 @@ namespace Simd
                 BgrToRgb<false>(bgr, width, height, bgrStride, rgb, rgbStride);
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdAvx2BgrToRgb.cpp.o) has no symbols
-    void dummy_SimdAvx2BgrToRgb(){};
 #endif//SIMD_AVX2_ENABLE
 }

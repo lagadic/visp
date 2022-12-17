@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.0)
 find_package(VISP REQUIRED visp_core visp_io visp_gui)
 
 set(tutorial_cpp
+  tutorial-image-colormap.cpp
   tutorial-image-converter.cpp
   tutorial-image-manipulation.cpp
   tutorial-image-reader.cpp
@@ -24,6 +25,7 @@ set(tutorial_cpp
   tutorial-event-keyboard.cpp
   tutorial-video-manipulation.cpp)
 
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/memorial.pfm" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/monkey.bmp" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/monkey.ppm" )
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/monkey.pgm" )

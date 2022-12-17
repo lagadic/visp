@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2017 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -23,7 +23,8 @@
 */
 #include "Simd/SimdMemory.h"
 #include "Simd/SimdStore.h"
-#include "Simd/SimdConversion.h"
+#include "Simd/SimdInterleave.h"
+#include "Simd/SimdUnpack.h"
 
 namespace Simd
 {
@@ -124,8 +125,5 @@ namespace Simd
                 InterleaveBgra<false>(b, bStride, g, gStride, r, rStride, a, aStride, width, height, bgra, bgraStride);
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdAvx2Interleave.cpp.o) has no symbols
-    void dummy_SimdAvx2Interleave(){};
 #endif// SIMD_AVX2_ENABLE
 }

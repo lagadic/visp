@@ -52,12 +52,13 @@
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMatrix.h>
 
-#if defined(VISP_HAVE_FUNC__ISNAN)
+#if defined(VISP_HAVE_FUNC__FINITE)
 #include <float.h>
 #endif
 
 #if !(defined(VISP_HAVE_FUNC_ISNAN) || defined(VISP_HAVE_FUNC_STD_ISNAN)) ||                                           \
-    !(defined(VISP_HAVE_FUNC_ISINF) || defined(VISP_HAVE_FUNC_STD_ISINF))
+    !(defined(VISP_HAVE_FUNC_ISINF) || defined(VISP_HAVE_FUNC_STD_ISINF)) ||                                           \
+    !(defined(VISP_HAVE_FUNC_ISFINITE) || defined(VISP_HAVE_FUNC_STD_ISFINITE) || defined(VISP_HAVE_FUNC__FINITE))
 #if defined _MSC_VER || defined __BORLANDC__
 typedef __int64 int64;
 typedef unsigned __int64 uint64;
@@ -67,11 +68,17 @@ typedef uint64_t uint64;
 #endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-typedef union Cv64suf {
+typedef union Vp64suf {
   //  int64 i; //Unused variable, should be harmless to comment it
   uint64 u;
   double f;
-} Cv64suf;
+} Vp64suf;
+
+typedef union Vp32suf {
+  // int i; //Unused variable, should be harmless to comment it
+  unsigned u;
+  float f;
+} Vp32suf;
 #endif
 #endif
 
@@ -79,9 +86,9 @@ const double vpMath::ang_min_sinc = 1.0e-8;
 const double vpMath::ang_min_mc = 2.5e-4;
 
 /*!
-   Check whether a double number is not a number (NaN) or not.
-   \param value : Double number to check.
-   \return true if value is Not A Number (as defined by IEEE754 standard) and false otherwise.
+  Check whether a double number is not a number (NaN) or not.
+  \param value : Double number to check.
+  \return true if value is Not A Number (as defined by IEEE754 standard) and false otherwise.
  */
 bool vpMath::isNaN(double value)
 {
@@ -93,16 +100,16 @@ bool vpMath::isNaN(double value)
   return (_isnan(value) != 0);
 #else
   // Taken from OpenCV source code CvIsNan()
-  Cv64suf ieee754;
+  Vp64suf ieee754;
   ieee754.f = value;
   return (((unsigned)(ieee754.u >> 32) & 0x7fffffff) + ((unsigned)ieee754.u != 0) > 0x7ff00000) != 0;
 #endif
 }
 
 /*!
-   Check whether a float number is not a number (NaN) or not.
-   \param value : Float number to check.
-   \return true if value is Not A Number (as defined by IEEE754 standard) and false otherwise.
+  Check whether a float number is not a number (NaN) or not.
+  \param value : Float number to check.
+  \return true if value is Not A Number (as defined by IEEE754 standard) and false otherwise.
  */
 bool vpMath::isNaN(float value)
 {
@@ -114,18 +121,18 @@ bool vpMath::isNaN(float value)
   return (_isnan(value) != 0);
 #else
   // Taken from OpenCV source code CvIsNan()
-  Cv32suf ieee754;
+  Vp32suf ieee754;
   ieee754.f = value;
   return ((unsigned)ieee754.u & 0x7fffffff) > 0x7f800000;
 #endif
 }
 
 /*!
-   Returns whether a double is an infinity value (either positive infinity or
-   negative infinity).
-   \param value : Double number to check.
-   \return true if value is a plus or minus infinity (as defined by IEEE754 standard)
-   and false otherwise.
+  Returns whether a double is an infinity value (either positive infinity or
+  negative infinity).
+  \param value : Double number to check.
+  \return true if value is a plus or minus infinity (as defined by IEEE754 standard)
+  and false otherwise.
  */
 bool vpMath::isInf(double value)
 {
@@ -133,22 +140,20 @@ bool vpMath::isInf(double value)
   return isinf(value);
 #elif defined(VISP_HAVE_FUNC_STD_ISINF)
   return std::isinf(value);
-#elif defined(VISP_HAVE_FUNC__FINITE)
-  return !_finite(value);
 #else
   // Taken from OpenCV source code CvIsInf()
-  Cv64suf ieee754;
+  Vp64suf ieee754;
   ieee754.f = value;
   return ((unsigned)(ieee754.u >> 32) & 0x7fffffff) == 0x7ff00000 && (unsigned)ieee754.u == 0;
 #endif
 }
 
 /*!
-   Returns whether a float is an infinity value (either positive infinity or
-   negative infinity).
-   \param value : Double number to check.
-   \return true if value is a plus or minus infinity (as defined by IEEE754 standard)
-   and false otherwise.
+  Returns whether a float is an infinity value (either positive infinity or
+  negative infinity).
+  \param value : Float number to check.
+  \return true if value is a plus or minus infinity (as defined by IEEE754 standard)
+  and false otherwise.
  */
 bool vpMath::isInf(float value)
 {
@@ -156,13 +161,49 @@ bool vpMath::isInf(float value)
   return isinf(value);
 #elif defined(VISP_HAVE_FUNC_STD_ISINF)
   return std::isinf(value);
-#elif defined(VISP_HAVE_FUNC__FINITE)
-  return !_finite(value);
 #else
   // Taken from OpenCV source code CvIsInf()
-  Cv32suf ieee754;
+  Vp32suf ieee754;
   ieee754.f = value;
   return ((unsigned)ieee754.u & 0x7fffffff) == 0x7f800000;
+#endif
+}
+
+/*!
+  Returns whether a double is a finite value (neither infinite nor NaN).
+  \param value : Double number to check.
+  \return true if value is neither infinite nor NaN (as defined by IEEE754 standard)
+  and false otherwise.
+ */
+bool vpMath::isFinite(double value)
+{
+#if defined(VISP_HAVE_FUNC_ISFINITE)
+  return isfinite(value);
+#elif defined(VISP_HAVE_FUNC_STD_ISFINITE)
+  return std::isfinite(value);
+#elif defined(VISP_HAVE_FUNC__FINITE)
+  return _finite(value);
+#else
+  return !vpMath::isInf(value) && !vpMath::isNaN(value);
+#endif
+}
+
+/*!
+  Returns whether a float is a finite value (neither infinite nor NaN).
+  \param value : Float number to check.
+  \return true if value is neither infinite nor NaN (as defined by IEEE754 standard)
+  and false otherwise.
+ */
+bool vpMath::isFinite(float value)
+{
+#if defined(VISP_HAVE_FUNC_ISFINITE)
+  return isfinite(value);
+#elif defined(VISP_HAVE_FUNC_STD_ISFINITE)
+  return std::isfinite(value);
+#elif defined(VISP_HAVE_FUNC__FINITE)
+  return _finitef(value);
+#else
+  return !vpMath::isInf(value) && !vpMath::isNaN(value);
 #endif
 }
 
@@ -173,7 +214,6 @@ bool vpMath::isInf(float value)
   \param x : Value of x.
 
   \return \f$ (1-cosx)/x^2 \f$
-
 */
 double vpMath::mcosc(double cosx, double x)
 {
@@ -190,7 +230,6 @@ double vpMath::mcosc(double cosx, double x)
   \param x  : Value of x.
 
   \return \f$ (1-sinc(x))/x^2 \f$
-
 */
 double vpMath::msinc(double sinx, double x)
 {
@@ -206,7 +245,6 @@ double vpMath::msinc(double sinx, double x)
   \param x : Value of x.
 
   \return Sinus cardinal.
-
 */
 double vpMath::sinc(double x)
 {
@@ -222,7 +260,6 @@ double vpMath::sinc(double x)
   \param x : Value of x.
 
   \return Sinus cardinal.
-
 */
 double vpMath::sinc(double sinx, double x)
 {

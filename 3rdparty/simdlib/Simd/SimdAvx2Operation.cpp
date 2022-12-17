@@ -142,8 +142,5 @@ namespace Simd
                 OperationBinary8u<false>(a, aStride, b, bStride, width, height, channelCount, dst, dstStride, type);
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdAvx2Operation.cpp.o) has no symbols
-    void dummy_SimdAvx2Operation(){};
 #endif// SIMD_AVX2_ENABLE
 }

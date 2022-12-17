@@ -1,5 +1,10 @@
 Here we give the list of the main changes introduced in Simdlib for ViSP
 
+- 2022.10.19: (see PR #1108)
+
+  - Update Simd lib using https://github.com/ermig1979/Simd
+    revision b39197e00a902cbbc5ad397de92f086be994549b
+
 - 2022.01.18: (see PR #990)
 
   - Fix memory leak in BgraToRGBa conversion
@@ -20,7 +25,7 @@ Here we give the list of the main changes introduced in Simdlib for ViSP
     sh: lscpu: command not found
     sh: lscpu: command not found
     ```
-    One solution is to modify `CpuCoreNumber()` to detect macOS and run 
+    One solution is to modify `CpuCoreNumber()` to detect macOS and run
     `sysctl -a | grep machdep.cpu.thread_count | grep -o -E '[0-9]+'`
     instead of
     `lscpu -b -p=Core | grep -v '^#' | sort -u | wc -l"`.
@@ -31,7 +36,7 @@ Here we give the list of the main changes introduced in Simdlib for ViSP
       3rdparty/simdlib/Simd/SimdBaseCpu.cpp
       3rdparty/simdlib/Simd/SimdCpu.h
     to remove all reference to
-      CpuSocketNumber() 
+      CpuSocketNumber()
       CpuCoreNumber(
       AlgCacheL2()
       AlgCacheL3()
@@ -77,4 +82,3 @@ Here we give the list of the main changes introduced in Simdlib for ViSP
 	3rdparty/simdlib/Simd/SimdLib.h
 	3rdparty/simdlib/Simd/SimdNeon.h
 	3rdparty/simdlib/Simd/SimdSsse3.h
-

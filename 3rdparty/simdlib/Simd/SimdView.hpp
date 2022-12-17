@@ -137,6 +137,15 @@ namespace Simd
         */
         View(const View & view);
 
+#ifdef SIMD_CPP_2011_ENABLE
+        /*!
+            Move constructor of View structure.
+
+            \param [in] view - a moved View.
+        */
+        View(View&& view) noexcept;
+#endif
+
 #ifdef SIMD_OPENCV_ENABLE
         /*!
             Creates a new View structure on the base of OpenCV Mat type.
@@ -201,18 +210,14 @@ namespace Simd
             Creates an Tensorflow Tensor which references this image.
 
             \note You have to define SIMD_TENSORFLOW_ENABLE in order to use this functionality.
-
-            \return an Tensorflow Tensor which references to this image.
         */
         void ToTFTensor(tensorflow::Tensor & tensor, float shift = 0, float scale = 1) const;
-
 
         /*!
            Creates an Tensorflow Tensor which references this image.
 
            \note You have to define SIMD_TENSORFLOW_ENABLE in order to use this functionality.
 
-           \return an Tensorflow Tensor which references to this image.
        */
         void ToTFTensor(tensorflow::Tensor & tensor, int batchIndex, float shift = 0, float scale = 0) const;
 #endif
@@ -223,6 +228,14 @@ namespace Simd
             \return a pointer to the new View structure. The user must free this pointer after usage.
         */
         View * Clone() const;
+
+        /*!
+            Gets a copy of region of current image view which bounded by the rectangle with specified coordinates.
+
+            \param [in] rect - a rectangle which bound the region.
+            \return - a pointer to the new View structure. The user must free this pointer after usage.
+        */
+        View* Clone(const Rectangle<ptrdiff_t>& rect) const;
 
         /*!
             Gets a copy of current image view using buffer as a storage.
@@ -241,6 +254,16 @@ namespace Simd
             \return a reference to itself.
         */
         View & operator = (const View & view);
+
+#ifdef SIMD_CPP_2011_ENABLE
+        /*!
+            Moves View structure.
+
+            \param [in] view - a moved image view.
+            \return a reference to itself.
+        */
+        View& operator = (View&& view);
+#endif
 
 #ifdef SIMD_OPENCV_ENABLE
         /*!
@@ -543,6 +566,17 @@ namespace Simd
         */
         uint8_t* Release(size_t* size = NULL);
 
+        /*!
+            Gets owner flag: is this View owner of the image?
+            \return - an owner flag.
+        */
+        bool Owner() const;
+
+        /*!
+            Captures image (copies to internal buffer) if this View is not owner of current image.
+        */
+        void Capture();
+
     private:
         bool _owner;
     };
@@ -692,6 +726,19 @@ namespace Simd
         , _owner(false)
     {
     }
+
+#ifdef SIMD_CPP_2011_ENABLE
+    template <template<class> class A> SIMD_INLINE View<A>::View(View<A> && view) noexcept
+        : width(0)
+        , height(0)
+        , stride(0)
+        , format(None)
+        , data(NULL)
+        , _owner(false)
+    {
+        Swap(view);
+    }
+#endif
     /*! \endcond */
 
 #ifdef SIMD_OPENCV_ENABLE
@@ -853,6 +900,11 @@ namespace Simd
         return view;
     }
 
+    template <template<class> class A> SIMD_INLINE View<A>* View<A>::Clone(const Rectangle<ptrdiff_t>& rect) const
+    {
+        return Region(rect).Clone();
+    }
+
     template <template<class> class A> SIMD_INLINE View<A> * View<A>::Clone(View & buffer) const
     {
         if (buffer.width < width || buffer.height < height)
@@ -884,6 +936,18 @@ namespace Simd
         }
         return *this;
     }
+
+#ifdef SIMD_CPP_2011_ENABLE
+    template <template<class> class A> SIMD_INLINE View<A>& View<A>::operator = (View<A>&& view)
+    {
+        if (this != &view)
+        {
+            Swap(view);
+            view.Clear();
+        }
+        return *this;
+    }
+#endif
     /*! \endcond */
 
 #ifdef SIMD_OPENCV_ENABLE
@@ -1207,6 +1271,23 @@ namespace Simd
         _owner = false;
         Clear();
         return released;
+    }
+
+    template <template<class> class A> SIMD_INLINE bool View<A>::Owner() const
+    {
+        return _owner;
+    }
+
+    template <template<class> class A> SIMD_INLINE void View<A>::Capture()
+    {
+        if (data && _owner == false)
+        {
+            View<A> copy(width, height, format);
+            size_t size = width * PixelSize();
+            for (size_t row = 0; row < height; ++row)
+                memcpy(copy.data + copy.stride * row, data + stride * row, size);
+            Swap(copy);
+        }
     }
 
     // View utilities implementation:

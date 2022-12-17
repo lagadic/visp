@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -35,9 +35,13 @@ namespace Simd
     {
         SIMD_INLINE bool SupportedByCPU()
         {
-            return 
-                Base::CheckBit(Cpuid::Ordinary, Cpuid::Ecx, Cpuid::SSE41) &&
-                Base::CheckBit(Cpuid::Ordinary, Cpuid::Ecx, Cpuid::SSE42);
+            return
+                Base::CheckBit(1, 0, Cpuid::Edx, Cpuid::SSE) &&
+                Base::CheckBit(1, 0, Cpuid::Edx, Cpuid::SSE2) &&
+                Base::CheckBit(1, 0, Cpuid::Ecx, Cpuid::SSE3) &&
+                Base::CheckBit(1, 0, Cpuid::Ecx, Cpuid::SSSE3) &&
+                Base::CheckBit(1, 0, Cpuid::Ecx, Cpuid::SSE41) &&
+                Base::CheckBit(1, 0, Cpuid::Ecx, Cpuid::SSE42);
         }
 
         SIMD_INLINE bool SupportedByOS()

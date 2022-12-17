@@ -1733,30 +1733,37 @@ macro(vp_filter_libraries_with_imported_location libs)
   set(${libs} ${__libs})
 endmacro()
 
-function(vp_find_dataset found)
+function(vp_find_dataset found location)
   set(file_to_test "mbt/cube.cao")
   set(_found FALSE)
+  set(_location "")
 
   if(DEFINED ENV{VISP_INPUT_IMAGE_PATH})
     if(EXISTS "$ENV{VISP_INPUT_IMAGE_PATH}/${file_to_test}")
+      set(_location "$ENV{VISP_INPUT_IMAGE_PATH}")
       set(_found TRUE)
     elseif(EXISTS "$ENV{VISP_INPUT_IMAGE_PATH}/ViSP-images/${file_to_test}")
+      set(_location "$ENV{VISP_INPUT_IMAGE_PATH}/ViSP-images")
       set(_found TRUE)
     elseif(EXISTS "$ENV{VISP_INPUT_IMAGE_PATH}/visp-images/${file_to_test}")
+      set(_location "$ENV{VISP_INPUT_IMAGE_PATH}/visp-images")
       set(_found TRUE)
     endif()
   endif()
 
   if(NOT _found)
     if(EXISTS "/usr/share/visp-images-data/ViSP-images/${file_to_test}")
+      set(_location "/usr/share/visp-images-data/ViSP-images")
       set(_found TRUE)
     elseif(EXISTS "/usr/share/visp-images-data/visp-images/${file_to_test}")
+      set(_location "/usr/share/visp-images-data/visp-images")
       set(_found TRUE)
     endif()
   endif()
 
   # Export return values
   set(${found} "${_found}" CACHE INTERNAL "")
+  set(${location} "${_location}" CACHE INTERNAL "")
 endfunction(vp_find_dataset)
 
 # Considering an interface like MAVSDK::mavsdk extract the interface include dirs and libraries

@@ -1,7 +1,7 @@
 /*
 * Simd Library (http://ermig1979.github.io/Simd).
 *
-* Copyright (c) 2011-2021 Yermalayeu Ihar.
+* Copyright (c) 2011-2022 Yermalayeu Ihar.
 *
 * Permission is hereby granted, free of charge, to any person obtaining a copy
 * of this software and associated documentation files (the "Software"), to deal
@@ -343,8 +343,5 @@ namespace Simd
             return new GaussianBlurDefault(param);
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdSse41GaussianBlur.cpp.o) has no symbols
-    void dummy_SimdSse41GaussianBlur(){};
 #endif// SIMD_SSE41_ENABLE
 }

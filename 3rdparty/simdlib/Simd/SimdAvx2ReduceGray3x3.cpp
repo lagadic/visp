@@ -144,8 +144,5 @@ namespace Simd
                 ReduceGray3x3<false>(src, srcWidth, srcHeight, srcStride, dst, dstWidth, dstHeight, dstStride, compensation);
         }
     }
-#else
-    // Work around to avoid warning: libvisp_simdlib.a(SimdAvx2ReduceGray3x3.cpp.o) has no symbols
-    void dummy_SimdAvx2ReduceGray3x3(){};
 #endif// SIMD_AVX2_ENABLE
 }
