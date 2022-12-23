@@ -270,8 +270,6 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
                vpImage<uint16_t> &I_depth_raw, std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width,
                unsigned int &pointcloud_height)
 {
-  char buffer[256];
-
   // Read image
   std::stringstream ss;
   ss << input_directory << "/image_";
