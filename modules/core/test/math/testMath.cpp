@@ -635,18 +635,6 @@ int main()
     std::cout << "vpMath::deg() is Ok !" << std::endl;
   }
 
-  {
-    vpRxyzVector rxyz(vpMath::rad(10), vpMath::rad(20), vpMath::rad(-30));
-    vpRotationMatrix R(rxyz);
-    vpQuaternionVector q(R);
-    std::cout << "enu rxyz: " << rxyz.t() << std::endl;
-    std::cout << "enu q: " << q.t() << std::endl;
-    vpColVector rxzy_ned = vpMath::enu2ned(rxyz);
-    std::cout << "ned rxyz: " << (vpMath::deg(rxzy_ned)).t() << std::endl;
-    vpRotationMatrix R_ned(rxzy_ned);
-    vpQuaternionVector q_ned(R_ned);
-    std::cout << "ned q: " << q_ned.t() << std::endl;
-  }
   std::cout << "OK !" << std::endl;
   return EXIT_SUCCESS;
 }
