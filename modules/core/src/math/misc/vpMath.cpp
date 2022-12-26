@@ -31,9 +31,6 @@
  * Description:
  * Simple mathematical function not available in the C math library (math.h).
  *
- * Authors:
- * Eric Marchand
- *
  *****************************************************************************/
 
 /*!
@@ -635,4 +632,67 @@ vpHomogeneousMatrix vpMath::lookAt(const vpColVector &from, const vpColVector &t
   wMc[2][0] = right[2]; wMc[2][1] = up[2]; wMc[2][2] = forward[2]; wMc[2][3] = from[2];
 
   return wMc;
+}
+
+/*!
+ * Convert angles of a rotation vector into degrees.
+ *
+ * \param r : Rotation vector with angles in radians.
+ * \return Corresponding column vector with angles converted in degrees.
+ */
+vpColVector vpMath::deg(const vpRotationVector &r)
+{
+  if (r.size() == 4) {
+    throw(vpException(vpException::fatalError, "Cannot convert angles of a quaternion vector in degrees!"));
+  }
+  vpColVector r_deg(r.size());
+  for (unsigned int i = 0; i < r.size(); i++)  {
+    r_deg[i] = vpMath::deg(r[i]);
+  }
+  return r_deg;
+}
+
+/*!
+ * Convert angles of a column vector from radians to degrees.
+ *
+ * \param r : Column vector with angles in radians.
+ * \return Corresponding column vector with angles converted in degrees.
+ */
+vpColVector vpMath::deg(const vpColVector &r)
+{
+  vpColVector r_deg(r.size());
+  for (unsigned int i = 0; i < r.size(); i++)  {
+    r_deg[i] = vpMath::deg(r[i]);
+  }
+  return r_deg;
+}
+
+/*!
+ * Convert attitude euler angle values (roll, pitch, yaw) from ENU (East-North-Up) to NED (North-East-Down) frame.
+ * \param enu : Vector of angles (roll, pitch, yaw) in [rad] in ENU frame.
+ * \return Converted angles in NED frame.
+ * \sa vpMath::enu2ned(const vpTranslationVector &)
+ */
+vpColVector vpMath::enu2ned(const vpRxyzVector &enu)
+{
+  vpColVector ned(3);
+  ned[0] = enu[0];
+  ned[1] = -enu[1];
+  ned[2] = -enu[2] + M_PI_2;
+  return ned;
+}
+
+/*!
+ * Convert attitude position values (x, y, z) from ENU (East-North-Up) to NED (North-East-Down) frame.
+ * \param enu : Position vector (x, y, z) in [m] in ENU frame.
+ * \return Converted position in NED frame.
+ * \sa vpMath::enu2ned(const vpRxyzVector &)
+ */
+vpColVector vpMath::enu2ned(const vpTranslationVector &enu)
+{
+  vpColVector ned(3);
+  ned[0] = enu[1];
+  ned[1] = enu[0];
+  ned[2] = -enu[2];
+  return ned;
 }
