@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Save data during the task execution.
- *
- * Authors:
- * Eric Marchand
  *
  *****************************************************************************/
 
@@ -93,7 +90,7 @@ public:
   void setMeterRad();
 
   void save(const vpServo &task);
-  void open(const char *baseDirectory);
+  void open(const std::string &directory);
   void close();
 
   void empty();
@@ -102,9 +99,3 @@ public:
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

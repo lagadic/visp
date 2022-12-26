@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Tool to automatise the creation of xml parser based on the libXML2
- *
- * Authors:
- * Romain Tallonneau
+ * Tool to automatize the creation of xml parser based on the libXML2.
  *
  *****************************************************************************/
 
@@ -334,7 +331,7 @@ void vpXmlParser::xmlWriteStringChild(xmlNodePtr node, const char *label, const 
 void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label, int value)
 {
   char str[100];
-  sprintf(str, "%d", value);
+  snprintf(str, 100, "%d", value);
   xmlNodePtr tmp;
   tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
@@ -350,7 +347,7 @@ void vpXmlParser::xmlWriteIntChild(xmlNodePtr node, const char *label, int value
 void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, unsigned int value)
 {
   char str[100];
-  sprintf(str, "%u", value);
+  snprintf(str, 100, "%u", value);
   xmlNodePtr tmp;
   tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
@@ -366,7 +363,7 @@ void vpXmlParser::xmlWriteUnsignedIntChild(xmlNodePtr node, const char *label, u
 void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label, double value)
 {
   char str[100];
-  sprintf(str, "%lf", value);
+  snprintf(str, 100, "%lf", value);
   xmlNodePtr tmp;
   tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
@@ -382,7 +379,7 @@ void vpXmlParser::xmlWriteDoubleChild(xmlNodePtr node, const char *label, double
 void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label, float value)
 {
   char str[100];
-  sprintf(str, "%f", value);
+  snprintf(str, 100, "%f", value);
   xmlNodePtr tmp;
   tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);
@@ -398,7 +395,7 @@ void vpXmlParser::xmlWriteFloatChild(xmlNodePtr node, const char *label, float v
 void vpXmlParser::xmlWriteBoolChild(xmlNodePtr node, const char *label, bool value)
 {
   char str[2];
-  sprintf(str, "%d", (int)value);
+  snprintf(str, 2, "%d", (int)value);
   xmlNodePtr tmp;
   tmp = xmlNewChild(node, NULL, (xmlChar *)label, (xmlChar *)str);
   xmlAddChild(node, tmp);

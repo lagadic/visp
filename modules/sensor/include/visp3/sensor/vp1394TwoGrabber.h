@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Firewire cameras video capture.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -128,6 +125,7 @@ int main()
   - Here an example of multi camera capture.  An other example is available in
 setCamera():
 \code
+#include <sstream>
 #include <visp3/core/vpImage.h>
 #include <visp3/io/vpImageIo.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
@@ -156,8 +154,9 @@ int main()
   for (unsigned int camera=0; camera < ncameras; camera ++) {
     g.setCamera(camera);
     g.acquire(I[camera]);
-    sprintf(filename, "image-cam%d.pgm", camera);
-    vpImageIo::write(I[camera], filename);
+    std::stringstream ss;
+    ss << image-cam << camera << ".pgm";
+    vpImageIo::write(I[camera], ss.str());
   }
   delete [] I;
 #endif

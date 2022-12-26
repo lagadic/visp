@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,6 @@
  * Description:
  * Acquire images using 1394 device with cfox (MAC OSX) and display it
  * using GTK or GTK.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -85,7 +82,7 @@ typedef enum {
 
 */
 void usage(const char *name, const char *badparam, unsigned fps, unsigned input, unsigned scale, long niter,
-           char *device, vpV4l2Grabber::vpV4l2PixelFormatType pixelformat, const vpImage_type &image_type,
+           const std::string &device, vpV4l2Grabber::vpV4l2PixelFormatType pixelformat, const vpImage_type &image_type,
            const std::string &opath)
 {
   fprintf(stdout, "\n\
@@ -146,7 +143,8 @@ OPTIONS:                                                  Default\n\
                     \n\
   -h \n\
      Print the help.\n\n",
-          device, fps, input, pixelformat, vpV4l2Grabber::V4L2_MAX_FORMAT - 1, image_type, scale, niter, opath.c_str());
+          device.c_str(), fps, input, pixelformat, vpV4l2Grabber::V4L2_MAX_FORMAT - 1, image_type, scale, niter,
+          opath.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -174,7 +172,7 @@ OPTIONS:                                                  Default\n\
 
 */
 bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input, unsigned &scale, bool &display,
-                bool &verbose, long &niter, char *device, vpV4l2Grabber::vpV4l2PixelFormatType &pixelformat,
+                bool &verbose, long &niter, std::string &device, vpV4l2Grabber::vpV4l2PixelFormatType &pixelformat,
                 vpImage_type &image_type, bool &save, std::string &opath)
 {
   const char *optarg_;
@@ -208,7 +206,7 @@ bool getOptions(int argc, const char **argv, unsigned &fps, unsigned &input, uns
       image_type = (vpImage_type)atoi(optarg_);
       break;
     case 'v':
-      sprintf(device, "%s", optarg_);
+      device = std::string(optarg_);
       break;
     case 'x':
       verbose = true;
@@ -255,9 +253,8 @@ int main(int argc, const char **argv)
     long opt_iter = 100;
     bool opt_verbose = false;
     bool opt_display = true;
-    char opt_device[20];
+    std::string opt_device = "/dev/video0";
     bool opt_save = false;
-    sprintf(opt_device, "/dev/video0");
     // Default output path for image saving
     std::string opt_opath = "/tmp/I%04d.ppm";
 
@@ -353,7 +350,7 @@ int main(int argc, const char **argv)
 
       if (opt_save) {
         char buf[FILENAME_MAX];
-        sprintf(buf, opt_opath.c_str(), cpt);
+        snprintf(buf, FILENAME_MAX, opt_opath.c_str(), cpt);
         std::string filename(buf);
         std::cout << "Write: " << filename << std::endl;
         if (opt_image_type == grey_image) {

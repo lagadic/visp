@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Video capture example based on CMU 1394 Digital Camera SDK.
- *
- * Author:
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -246,7 +243,7 @@ int main(int argc, const char **argv)
 
       if (save) {
         char buf[FILENAME_MAX];
-        sprintf(buf, opath.c_str(), i);
+        snprintf(buf, FILENAME_MAX, opath.c_str(), i);
         std::string filename(buf);
         std::cout << "Write: " << filename << std::endl;
         vpImageIo::write(I, filename);

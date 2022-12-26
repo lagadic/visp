@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,8 +58,8 @@ bool read_data(int cpt, vpImage<unsigned char> &I)
   const std::string env_ipath = vpIoTools::getViSPImagesDataPath();
   const std::string ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.pgm");
 
-  char buffer[256];
-  sprintf(buffer, ipath.c_str(), cpt);
+  char buffer[FILENAME_MAX];
+  snprintf(buffer, FILENAME_MAX, ipath.c_str(), cpt);
   std::string image_filename = buffer;
 
   if (!vpIoTools::checkFilename(image_filename)) {

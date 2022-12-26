@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -706,13 +706,68 @@ vpMatrix M(R);
   /*!
     Load a matrix from a file. This function overloads vpArray2D::load().
 
-    \param filename : absolute file name.
-    \param M : matrix to be loaded.
-    \param binary :If true the matrix is loaded from a binary file, else from
-    a text file. \param header : Header of the file is loaded in this
-    parameter
+    \param filename : Absolute file name.
+    \param M : Matrix to be loaded.
+    \param binary : If true the matrix data are considered as binary, otherwise as human readable (text) data. Using
+    binary data allows to keep data precision.
+    \param header : Header of the file is loaded in this parameter.
 
-    \return Returns true if no problem appends.
+    \return Returns true if success, false otherwise.
+
+    The following example shows how to use this function:
+    \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  std::string filename("matrix.bin");
+  bool binary_data = true;
+  {
+    vpMatrix M(2, 3);
+    M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
+    M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+
+    std::string header("My header");
+
+    if (vpMatrix::saveMatrix(filename, M, binary_data, header.c_str())) {
+      std::cout << "Matrix saved in " << filename << std::endl;
+      M.print(std::cout, 10, header);
+    } else {
+      std::cout << "Cannot save matrix in " << filename << std::endl;
+    }
+  }
+  {
+    vpMatrix N;
+    char header[FILENAME_MAX];
+    if (vpMatrix::loadMatrix(filename, N, binary_data, header)) {
+      std::cout << "Matrix loaded from " << filename << std::endl;
+      N.print(std::cout, 10, header);
+    } else {
+      std::cout << "Cannot load matrix from " << filename << std::endl;
+    }
+  }
+}
+    \endcode
+
+    The output of this example is the following:
+    \verbatim
+Matrix saved in matrix.bin
+My header[2,3]=
+  -1.0 -2.0 -3.0
+   4.0  5.5  6.0
+Matrix loaded from matrix.bin
+My header[2,3]=
+  -1.0 -2.0 -3.0
+   4.0  5.5  6.0
+    \endverbatim
+
+    And the content of `matrix.bin` file where data are saved as binary data is the following:
+    \verbatim
+% cat matrix.bin
+My header??@@@%
+    \endverbatim
+
+    \sa saveMatrix(), saveMatrixYAML(), loadMatrixYAML()
   */
   static inline bool loadMatrix(const std::string &filename, vpArray2D<double> &M, bool binary = false,
                                 char *header = NULL)
@@ -724,11 +779,70 @@ vpMatrix M(R);
     Load a matrix from a YAML-formatted file. This function overloads
     vpArray2D::loadYAML().
 
-    \param filename : absolute file name.
-    \param M : matrix to be loaded from the file.
+    \param filename : Absolute YAML file name.
+    \param M : Matrix to be loaded from the file.
     \param header : Header of the file is loaded in this parameter.
 
-    \return Returns true if no problem appends.
+    \return Returns true when success, false otherwise.
+
+    The following example shows how to use this function:
+    \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  std::string filename("matrix.yaml");
+  {
+    vpMatrix M(2, 3);
+    M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
+    M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+
+    std::string header("My header");
+
+    if (vpMatrix::saveMatrixYAML(filename, M, header.c_str())) {
+      std::cout << "Matrix saved in " << filename << std::endl;
+      M.print(std::cout, 10, header);
+    } else {
+      std::cout << "Cannot save matrix in " << filename << std::endl;
+    }
+  }
+  {
+    vpMatrix N;
+    char header[FILENAME_MAX];
+    if (vpMatrix::loadMatrixYAML(filename, N, header)) {
+      std::cout << "Matrix loaded from " << filename << std::endl;
+      N.print(std::cout, 10, header);
+    } else {
+      std::cout << "Cannot load matrix from " << filename << std::endl;
+    }
+  }
+}
+    \endcode
+
+    The output of this example is the following:
+    \verbatim
+Matrix saved in matrix.yaml
+My header[2,3]=
+  -1.0 -2.0 -3.0
+   4.0  5.5  6.0
+Matrix loaded from matrix.yaml
+My header[2,3]=
+  -1.0 -2.0 -3.0
+   4.0  5.5  6.0
+    \endverbatim
+
+    And the content of `matrix.yaml` file is the following:
+    \verbatim
+% cat matrix.yaml
+My header
+rows: 2
+cols: 3
+data:
+  - [-1, -2, -3]
+  - [4, 5.5, 6]
+    \endverbatim
+
+    \sa saveMatrixYAML(), saveMatrix(), loadMatrix()
   */
   static inline bool loadMatrixYAML(const std::string &filename, vpArray2D<double> &M, char *header = NULL)
   {
@@ -736,18 +850,72 @@ vpMatrix M(R);
   }
 
   /*!
-    Save a matrix to a file. This function overloads vpArray2D::load().
+    Save a matrix to a file. This function overloads vpArray2D::save().
 
-    \param filename : absolute file name.
-    \param M : matrix to be saved.
-    \param binary : If true the matrix is save in a binary file, else a text
-    file. \param header : optional line that will be saved at the beginning of
-    the file.
+    \param filename : Absolute file name.
+    \param M : Matrix to be saved.
+    \param binary : If true the matrix is save as a binary file, otherwise as a text file.
+    \param header : Optional line that will be saved at the beginning of the file as a header.
 
     \return Returns true if no problem appends.
 
-    Warning : If you save the matrix as in a text file the precision is less
-    than if you save it in a binary file.
+    \warning If you save the matrix as a text file the precision is less
+    than if you save it as a binary file.
+
+    The following example shows how to use this function:
+    \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  std::string filename("matrix.bin");
+  bool binary_data = true;
+  {
+    vpMatrix M(2, 3);
+    M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
+    M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+
+    std::string header("My header");
+
+    if (vpMatrix::saveMatrix(filename, M, binary_data, header.c_str())) {
+      std::cout << "Matrix saved in " << filename << std::endl;
+      M.print(std::cout, 10, header);
+    } else {
+      std::cout << "Cannot save matrix in " << filename << std::endl;
+    }
+  }
+  {
+    vpMatrix N;
+    char header[FILENAME_MAX];
+    if (vpMatrix::loadMatrix(filename, N, binary_data, header)) {
+      std::cout << "Matrix loaded from " << filename << std::endl;
+      N.print(std::cout, 10, header);
+    } else {
+      std::cout << "Cannot load matrix from " << filename << std::endl;
+    }
+  }
+}
+    \endcode
+
+    The output of this example is the following:
+    \verbatim
+Matrix saved in matrix.bin
+My header[2,3]=
+  -1.0 -2.0 -3.0
+   4.0  5.5  6.0
+Matrix loaded from matrix.bin
+My header[2,3]=
+  -1.0 -2.0 -3.0
+   4.0  5.5  6.0
+    \endverbatim
+
+    And the content of `matrix.bin` file where data are saved as binary data is the following:
+    \verbatim
+% cat matrix.bin
+My header??@@@%
+    \endverbatim
+
+    \sa loadMatrix(), saveMatrixYAML(), loadMatrixYAML()
   */
   static inline bool saveMatrix(const std::string &filename, const vpArray2D<double> &M, bool binary = false,
                                 const char *header = "")
@@ -759,13 +927,71 @@ vpMatrix M(R);
     Save a matrix in a YAML-formatted file. This function overloads
     vpArray2D::saveYAML().
 
-    \param filename : absolute file name.
-    \param M : matrix to be saved in the file.
-    \param header : optional lines that will be saved at the beginning of the
-    file. Should be YAML-formatted and will adapt to the indentation if any.
+    \param filename : Absolute file name.
+    \param M : Matrix to be saved in the file.
+    \param header : Optional lines that will be saved at the beginning of the
+    file as a header.
 
     \return Returns true if success.
 
+    The following example shows how to use this function:
+    \code
+#include <visp3/core/vpMatrix.h>
+
+int main()
+{
+  std::string filename("matrix.yaml");
+  {
+    vpMatrix M(2, 3);
+    M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
+    M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+
+    std::string header("My header");
+
+    if (vpMatrix::saveMatrixYAML(filename, M, header.c_str())) {
+      std::cout << "Matrix saved in " << filename << std::endl;
+      M.print(std::cout, 10, header);
+    } else {
+      std::cout << "Cannot save matrix in " << filename << std::endl;
+    }
+  }
+  {
+    vpMatrix N;
+    char header[FILENAME_MAX];
+    if (vpMatrix::loadMatrixYAML(filename, N, header)) {
+      std::cout << "Matrix loaded from " << filename << std::endl;
+      N.print(std::cout, 10, header);
+    } else {
+      std::cout << "Cannot load matrix from " << filename << std::endl;
+    }
+  }
+}
+    \endcode
+
+    The output of this example is the following:
+    \verbatim
+Matrix saved in matrix.yaml
+My header[2,3]=
+  -1.0 -2.0 -3.0
+   4.0  5.5  6.0
+Matrix loaded from matrix.yaml
+My header[2,3]=
+  -1.0 -2.0 -3.0
+   4.0  5.5  6.0
+    \endverbatim
+
+    And the content of `matrix.yaml` file is the following:
+    \verbatim
+% cat matrix.yaml
+My header
+rows: 2
+cols: 3
+data:
+  - [-1, -2, -3]
+  - [4, 5.5, 6]
+    \endverbatim
+
+    \sa saveMatrix(), loadMatrix(), loadMatrixYAML()
   */
   static inline bool saveMatrixYAML(const std::string &filename, const vpArray2D<double> &M, const char *header = "")
   {

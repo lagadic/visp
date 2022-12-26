@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,6 @@
  *
  * Description:
  * Write image sequences.
- *
- * Authors:
- * Nicolas Melchior
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -201,7 +197,7 @@ void vpVideoWriter::saveFrame(vpImage<vpRGBa> &I)
   if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG ||
       m_formatType == FORMAT_PNG) {
     char name[FILENAME_MAX];
-    sprintf(name, m_videoName.c_str(), m_frameCount);
+    snprintf(name, FILENAME_MAX, m_videoName.c_str(), m_frameCount);
     vpImageIo::write(I, name);
     m_frameName = std::string(name);
   } else {
@@ -233,7 +229,7 @@ void vpVideoWriter::saveFrame(vpImage<unsigned char> &I)
   if (m_formatType == FORMAT_PGM || m_formatType == FORMAT_PPM || m_formatType == FORMAT_JPEG ||
       m_formatType == FORMAT_PNG) {
     char name[FILENAME_MAX];
-    sprintf(name, m_videoName.c_str(), m_frameCount);
+    snprintf(name, FILENAME_MAX, m_videoName.c_str(), m_frameCount);
     vpImageIo::write(I, name);
     m_frameName = std::string(name);
   } else {

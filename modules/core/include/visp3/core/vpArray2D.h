@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * This class implements an 2D array as a template class.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 #ifndef _vpArray2D_h_
@@ -580,7 +577,7 @@ public:
       if (header != NULL) {
 #if defined(__MINGW32__) ||                                                                                            \
     !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-        sprintf(header, "%s", h.c_str());
+        snprintf(header, h.size() + 1, "%s", h.c_str());
 #else
         _snprintf_s(header, h.size() + 1, _TRUNCATE, "%s", h.c_str());
 #endif
@@ -614,7 +611,7 @@ public:
       if (header != NULL) {
 #if defined(__MINGW32__) ||                                                                                            \
     !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-        sprintf(header, "%s", h.c_str());
+        snprintf(header, h.size() + 1, "%s", h.c_str());
 #else
         _snprintf_s(header, h.size() + 1, _TRUNCATE, "%s", h.c_str());
 #endif
@@ -707,7 +704,7 @@ public:
       std::string h_ = h.substr(0, h.size() - 1); // Remove last '\n' char
 #if defined(__MINGW32__) ||                                                                                            \
     !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
-      sprintf(header, "%s", h_.c_str());
+      snprintf(header, h_.size() + 1, "%s", h_.c_str());
 #else
       _snprintf_s(header, h_.size() + 1, _TRUNCATE, "%s", h_.c_str());
 #endif

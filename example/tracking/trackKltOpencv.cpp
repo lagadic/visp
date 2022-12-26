@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,6 @@
  *
  * Description:
  * Example of dot tracking.
- *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
  *
  *****************************************************************************/
 /*!
@@ -314,7 +310,7 @@ int main(int argc, const char **argv)
       s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
       filename = vpIoTools::createFilePath(dirname, s.str());
     } else {
-      sprintf(cfilename, opt_ppath.c_str(), iter);
+      snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
       filename = cfilename;
     }
 
@@ -401,7 +397,7 @@ int main(int argc, const char **argv)
         s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
         filename = vpIoTools::createFilePath(dirname, s.str());
       } else {
-        sprintf(cfilename, opt_ppath.c_str(), iter);
+        snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
         filename = cfilename;
       }
       // read the image

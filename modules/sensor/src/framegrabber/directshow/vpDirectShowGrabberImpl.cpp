@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,10 +31,6 @@
  * Description:
  * DirectShow framegrabber implementation.
  *
- * Authors:
- * Bruno Renier
- * Anthony Saunier
- *
  *****************************************************************************/
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
@@ -50,7 +46,7 @@ unsigned int vpDirectShowGrabberImpl::nbDevices;
 /*!
         Converts a HRESULT into the corresponding error message
 */
-void vpDirectShowGrabberImpl::HRtoStr(std::string str)
+void vpDirectShowGrabberImpl::HRtoStr(std::string &str)
 {
   TCHAR szErr[MAX_ERROR_TEXT_LEN];
   DWORD res = AMGetErrorText(hr, szErr, MAX_ERROR_TEXT_LEN);
@@ -59,7 +55,7 @@ void vpDirectShowGrabberImpl::HRtoStr(std::string str)
     str = "Unknown Error: 0x%2x";
 
   char msg[MAX_ERROR_TEXT_LEN];
-  sprintf(msg, "%s", szErr);
+  snprintf(msg, MAX_ERROR_TEXT_LEN, "%s", szErr);
   str = msg;
 }
 

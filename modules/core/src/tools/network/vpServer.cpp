@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,12 +31,11 @@
  * Description:
  * TCP Server
  *
- * Authors:
- * Aurelien Yol
- *
  *****************************************************************************/
 
 #include <visp3/core/vpServer.h>
+
+#include <sstream>
 
 // inet_ntop() not supported on win XP
 #ifdef VISP_HAVE_FUNC_INET_NTOP
@@ -158,13 +157,13 @@ bool vpServer::start()
 
   if (bindResult < 0) {
     std::cout << "Error id : " << bindResult << std::endl;
-    std::string errorMessage("vpServer::vpServer(), cannot bind to port");
-    char posrtNumberString[32];
-    sprintf(posrtNumberString, "%d", port);
-    errorMessage += " ";
-    errorMessage += posrtNumberString;
-    errorMessage += " The port may be already used.";
-    vpERROR_TRACE(errorMessage.c_str());
+    std::stringstream errorMessage;
+    errorMessage << "vpServer::vpServer(), cannot bind to port";
+    errorMessage << " ";
+    errorMessage << port;
+    errorMessage << " The port may be already used.";
+
+    vpERROR_TRACE(errorMessage.str().c_str());
     return false;
   }
 

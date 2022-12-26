@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Interface for the ptu-46 robot.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -69,17 +66,14 @@ const double vpRobotPtu46::defaultPositioningVelocity = 10.0;
   \sa init()
 
 */
-vpRobotPtu46::vpRobotPtu46(const char *device) : vpRobot()
+vpRobotPtu46::vpRobotPtu46(const std::string &device) : vpRobot()
 {
-  this->device = new char[FILENAME_MAX];
-
-  sprintf(this->device, "%s", device);
+  this->device = device;
 
   vpDEBUG_TRACE(12, "Open communication with Ptu-46.");
   try {
     init();
   } catch (...) {
-    delete[] this->device;
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -87,7 +81,6 @@ vpRobotPtu46::vpRobotPtu46(const char *device) : vpRobot()
   try {
     setRobotState(vpRobot::STATE_STOP);
   } catch (...) {
-    delete[] this->device;
     vpERROR_TRACE("Error caught");
     throw;
   }
@@ -116,8 +109,6 @@ vpRobotPtu46::~vpRobotPtu46(void)
 
   vpRobotPtu46::robotAlreadyCreated = false;
 
-  delete[] device;
-
   return;
 }
 
@@ -139,9 +130,8 @@ vpRobotPtu46::~vpRobotPtu46(void)
 */
 void vpRobotPtu46::init()
 {
-
   vpDEBUG_TRACE(12, "Open connection Ptu-46.");
-  if (0 != ptu.init(device)) {
+  if (0 != ptu.init(device.c_str())) {
     vpERROR_TRACE("Cannot open connection with ptu-46.");
     throw vpRobotException(vpRobotException::constructionError, "Cannot open connection with ptu-46");
   }

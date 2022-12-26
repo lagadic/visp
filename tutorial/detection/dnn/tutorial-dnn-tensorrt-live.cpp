@@ -183,8 +183,8 @@ bool parseOnnxModel(const std::string &model_path, TRTUniquePtr<nvinfer1::ICudaE
   char cache_prefix[FILENAME_MAX];
   char cache_path[FILENAME_MAX];
 
-  sprintf(cache_prefix, "%s", model_path.c_str());
-  sprintf(cache_path, "%s.engine", cache_prefix);
+  snprintf(cache_prefix, FILENAME_MAX, "%s", model_path.c_str());
+  snprintf(cache_path, FILENAME_MAX, "%s.engine", cache_prefix);
 
   std::cout << "attempting to open engine cache file " << cache_path << std::endl;
 
