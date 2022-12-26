@@ -100,6 +100,11 @@ endforeach()
 
 if(VISP_HAVE_REALSENSE2)
   # Add specific build flag to turn off warnings coming from librealsense 3rd party
-  visp_set_source_file_compile_flag(servoAfma6AprilTagIBVS.cpp -Wno-ignored-qualifiers -Wno-sign-compare -Wno-deprecated-copy-with-user-provided-copy)
-  visp_set_source_file_compile_flag(servoAfma6AprilTagPBVS.cpp -Wno-ignored-qualifiers -Wno-sign-compare -Wno-deprecated-copy-with-user-provided-copy)
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-copy-with-user-provided-copy")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-declarations")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
+
+  visp_set_source_file_compile_flag(servoAfma6AprilTagIBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+  visp_set_source_file_compile_flag(servoAfma6AprilTagPBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
 endif()

@@ -21,13 +21,21 @@ foreach(cpp ${tutorial_cpp})
 endforeach()
 
 if(VISP_HAVE_REALSENSE2)
-  if(UNIX)
-    visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare -Wno-pessimizing-move -Wno-unused-parameter -Wno-overloaded-virtual -Wno-ignored-qualifiers -Wno-deprecated-copy)
-    visp_set_source_file_compile_flag(tutorial-universal-robots-acquire-calib-data.cpp -Wno-reorder -Wno-unused-function -Wno-sign-compare -Wno-pessimizing-move -Wno-unused-parameter -Wno-overloaded-virtual -Wno-ignored-qualifiers -Wno-deprecated-copy)
-  else()
-    visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp /wd4244 /wd4267)
-    visp_set_source_file_compile_flag(tutorial-universal-robots-acquire-calib-data.cpp /wd4244 /wd4267)
-  endif()
+  # Add specific build flag to turn off warnings coming from librealsense 3rd party and its dependencies
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "/wd4244")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "/wd4267")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-copy")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-declarations")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-pessimizing-move")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-reorder")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-function")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-parameter")
+
+  visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+  visp_set_source_file_compile_flag(tutorial-universal-robots-acquire-calib-data.cpp ${CXX_FLAGS_MUTE_WARNINGS})
 endif()
 
 # Copy the data files to the same location than the target
