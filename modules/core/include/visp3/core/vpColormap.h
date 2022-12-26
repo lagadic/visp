@@ -43,8 +43,11 @@
   \brief Colormap tool to have a mapping between 256 values and RGB values.
 */
 
+#include <visp3/core/vpConfig.h>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpImage.h>
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 /*!
   \class vpColormap
@@ -1065,4 +1068,5 @@ private:
   };
 };
 
+#endif
 #endif

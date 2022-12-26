@@ -36,6 +36,8 @@
 
 #include <visp3/core/vpColormap.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
 /*!
   Creates a colormap class to be able to recolor an image with different grayscale values
   into some corresponding color values, for better visualisation for example.
@@ -45,7 +47,8 @@
 
   \param [in] colormapType : Colormap family.
 */
-vpColormap::vpColormap(const vpColormapType& colormapType) : m_colormapType(colormapType) {
+vpColormap::vpColormap(const vpColormapType &colormapType) : m_colormapType(colormapType)
+{
   for (unsigned int i = 0; i < 256; i++) {
     for (unsigned int j = 0; j < 3; j++) {
       switch (m_colormapType) {
@@ -134,7 +137,7 @@ vpColormap::vpColormap(const vpColormapType& colormapType) : m_colormapType(colo
   \param[in] normalise : If true, normalisation into the [0 - 255] range is applied,
                          otherwise the grayscale values are directly mapped.
  */
-void vpColormap::convert(const vpImage<unsigned char>& I, vpImage<vpRGBa>& Icolor, bool normalise)
+void vpColormap::convert(const vpImage<unsigned char> &I, vpImage<vpRGBa> &Icolor, bool normalise)
 {
   Icolor.resize(I.getHeight(), I.getWidth());
   if (normalise) {
@@ -143,7 +146,7 @@ void vpColormap::convert(const vpImage<unsigned char>& I, vpImage<vpRGBa>& Icolo
 
     // convert to 256 grayscale values
     float a = 255.0f / (maxVal - minVal);
-    float b = -255 * minVal / (maxVal - minVal);
+    float b = -255.0f * minVal / (maxVal - minVal);
     vpImage<unsigned char> Inorm(I.getHeight(), I.getWidth());
     for (unsigned int i = 0; i < I.getHeight(); i++) {
       for (unsigned int j = 0; j < I.getWidth(); j++) {
@@ -154,16 +157,14 @@ void vpColormap::convert(const vpImage<unsigned char>& I, vpImage<vpRGBa>& Icolo
     for (unsigned int i = 0; i < Icolor.getHeight(); i++) {
       for (unsigned int j = 0; j < Icolor.getWidth(); j++) {
         const unsigned char gray = Inorm[i][j];
-        Icolor[i][j] =
-            vpRGBa(m_colormapSrgbBytes[gray][0], m_colormapSrgbBytes[gray][1], m_colormapSrgbBytes[gray][2]);
+        Icolor[i][j] = vpRGBa(m_colormapSrgbBytes[gray][0], m_colormapSrgbBytes[gray][1], m_colormapSrgbBytes[gray][2]);
       }
     }
   } else {
     for (unsigned int i = 0; i < Icolor.getHeight(); i++) {
       for (unsigned int j = 0; j < Icolor.getWidth(); j++) {
         const unsigned char gray = I[i][j];
-        Icolor[i][j] =
-            vpRGBa(m_colormapSrgbBytes[gray][0], m_colormapSrgbBytes[gray][1], m_colormapSrgbBytes[gray][2]);
+        Icolor[i][j] = vpRGBa(m_colormapSrgbBytes[gray][0], m_colormapSrgbBytes[gray][1], m_colormapSrgbBytes[gray][2]);
       }
     }
   }
@@ -185,12 +186,12 @@ void vpColormap::convert(const vpImage<unsigned char>& I, vpImage<vpRGBa>& Icolo
 void vpColormap::convert(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Icolor, bool normalise)
 {
   vpImage<unsigned char> I_uchar(I.getHeight(), I.getWidth());
-   for (unsigned int i = 0; i < I.getHeight(); i++) {
-     for (unsigned int j = 0; j < I.getWidth(); j++) {
-       I_uchar[i][j] = static_cast<unsigned char>(0.299f * I[i][j].R + 0.587f * I[i][j].G + 0.114 * I[i][j].B);
-     }
-   }
-   convert(I_uchar, Icolor, normalise);
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      I_uchar[i][j] = static_cast<unsigned char>(0.299f * I[i][j].R + 0.587f * I[i][j].G + 0.114 * I[i][j].B);
+    }
+  }
+  convert(I_uchar, Icolor, normalise);
 }
 
 /*!
@@ -202,7 +203,7 @@ void vpColormap::convert(const vpImage<vpRGBa> &I, vpImage<vpRGBa> &Icolor, bool
   \param[in] I : The float image on which the colormap will be apply.
   \param[out] Icolor : Colorised image.
  */
-void vpColormap::convert(const vpImage<float>& I, vpImage<vpRGBa>& Icolor)
+void vpColormap::convert(const vpImage<float> &I, vpImage<vpRGBa> &Icolor)
 {
   float minVal = 0, maxVal = 1;
   I.getMinMaxValue(minVal, maxVal);
@@ -221,8 +222,7 @@ void vpColormap::convert(const vpImage<float>& I, vpImage<vpRGBa>& Icolor)
   for (unsigned int i = 0; i < Icolor.getHeight(); i++) {
     for (unsigned int j = 0; j < Icolor.getWidth(); j++) {
       unsigned char gray = Inorm[i][j];
-      Icolor[i][j] =
-          vpRGBa(m_colormapSrgbBytes[gray][0], m_colormapSrgbBytes[gray][1], m_colormapSrgbBytes[gray][2]);
+      Icolor[i][j] = vpRGBa(m_colormapSrgbBytes[gray][0], m_colormapSrgbBytes[gray][1], m_colormapSrgbBytes[gray][2]);
     }
   }
 }
@@ -240,10 +240,12 @@ void vpColormap::convert(const vpImage<float>& I, vpImage<vpRGBa>& Icolor)
 void vpColormap::convert(const vpImage<vpRGBf> &I, vpImage<vpRGBa> &Icolor)
 {
   vpImage<float> I_float(I.getHeight(), I.getWidth());
-   for (unsigned int i = 0; i < I.getHeight(); i++) {
-     for (unsigned int j = 0; j < I.getWidth(); j++) {
-       I_float[i][j] = 0.299f * I[i][j].R + 0.587f * I[i][j].G + 0.114 * I[i][j].B;
-     }
-   }
-   convert(I_float, Icolor);
+  for (unsigned int i = 0; i < I.getHeight(); i++) {
+    for (unsigned int j = 0; j < I.getWidth(); j++) {
+      I_float[i][j] = 0.299f * I[i][j].R + 0.587f * I[i][j].G + 0.114f * I[i][j].B;
+    }
+  }
+  convert(I_float, Icolor);
 }
+
+#endif

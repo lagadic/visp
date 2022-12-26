@@ -10,6 +10,7 @@
 
 int main()
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   try {
     std::map<vpColormap::vpColormapType, std::string> colormaps_str = {
         {vpColormap::COLORMAP_AUTUMN, "Colormap Autumn"},
@@ -152,6 +153,8 @@ int main()
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e << std::endl;
   }
-
+#else
+  std::cout << "This tutorial needs at least cxx11 standard." << std::endl;
+#endif
   return EXIT_SUCCESS;
 }
