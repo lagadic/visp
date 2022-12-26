@@ -48,6 +48,10 @@
 #include <limits>
 
 #include <visp3/core/vpMath.h>
+#include <visp3/core/vpColVector.h>
+#include <visp3/core/vpRxyzVector.h>
+
+#include <visp3/core/vpHomogeneousMatrix.h>
 
 #if defined _MSC_VER && _MSC_VER >= 1200
 #pragma warning(disable : 4723)
@@ -69,178 +73,178 @@ int main()
   // Test isNaN
   if (vpMath::isNaN(0.0)) {
     std::cerr << "Fail: IsNaN(0.0)=" << vpMath::isNaN(0.0) << " / should be false" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   double num = 1.0, den = 0.0;
   if (vpMath::isNaN(num / den)) {
     std::cerr << "Fail: IsNaN(1.0/0.0)=" << vpMath::isNaN(num / den) << " / should be false" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (!vpMath::isNaN(NAN)) {
     std::cerr << "Fail: IsNaN(NAN)=" << vpMath::isNaN(NAN) << " / should be true" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   num = 0.0;
   if (!vpMath::isNaN(num / den)) {
     std::cerr << "Fail: IsNaN(0.0/0.0)=" << vpMath::isNaN(num / den) << " / should be true" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (!vpMath::isNaN(std::numeric_limits<double>::quiet_NaN())) {
     std::cerr << "Fail: IsNaN(quiet_NaN)=" << vpMath::isNaN(std::numeric_limits<double>::quiet_NaN())
               << " / should be true" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (!vpMath::isNaN(std::numeric_limits<float>::quiet_NaN())) {
     std::cerr << "Fail: IsNaN(quiet_NaN)=" << vpMath::isNaN(std::numeric_limits<float>::quiet_NaN())
               << " / should be true" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (!vpMath::isNaN(std::numeric_limits<double>::signaling_NaN())) {
     std::cerr << "Fail: IsNaN(signaling_NaN)=" << vpMath::isNaN(std::numeric_limits<double>::signaling_NaN())
               << " / should be true" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (!vpMath::isNaN(std::numeric_limits<float>::signaling_NaN())) {
     std::cerr << "Fail: IsNaN(signaling_NaN)=" << vpMath::isNaN(std::numeric_limits<float>::signaling_NaN())
               << " / should be true" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (vpMath::isNaN(std::numeric_limits<double>::infinity())) {
     std::cerr << "Fail: IsNaN(infinity)=" << vpMath::isNaN(std::numeric_limits<double>::infinity())
               << " / should be false" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (vpMath::isNaN(std::numeric_limits<float>::infinity())) {
     std::cerr << "Fail: IsNaN(infinity)=" << vpMath::isNaN(std::numeric_limits<float>::infinity())
               << " / should be false" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (vpMath::isNaN(1.0 / std::numeric_limits<double>::epsilon())) {
     std::cerr << "Fail: IsNaN(1.0/epsilon)=" << vpMath::isNaN(1.0 / std::numeric_limits<double>::epsilon())
               << " / should be false" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (!vpMath::isNaN(std::numeric_limits<double>::infinity() - std::numeric_limits<double>::infinity())) {
     std::cerr << "Fail: IsNaN(infinity - infinity)="
               << vpMath::isNaN(std::numeric_limits<double>::infinity() - std::numeric_limits<double>::infinity())
               << " / should be true" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   float a = 0.0f, b = 0.0f;
   if (!vpMath::isNaN(a / b)) {
     std::cerr << "Fail: IsNaN(0.0f/0.0f)=" << vpMath::isNaN(a / b) << " / should be true" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   std::cout << "vpMath::isNaN is Ok !" << std::endl;
 
   // Test isInf
   if (vpMath::isInf(NAN)) {
     std::cerr << "Fail: vpMath::isInf(NAN)=" << vpMath::isInf(NAN) << " / should be false" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (!vpMath::isInf(1.0 / a)) {
     std::cerr << "Fail: vpMath::isInf(1.0/0.0)=" << vpMath::isInf(1.0 / a) << " / should be true" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (vpMath::isInf(0.0)) {
     std::cerr << "Fail: vpMath::isInf(0.0)=" << vpMath::isInf(0.0) << " / should be false" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (!vpMath::isInf(exp(800.))) {
     std::cerr << "Fail: vpMath::isInf(exp(800.))=" << vpMath::isInf(exp(800.)) << " / should be true" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (vpMath::isInf(DBL_MIN / 2.0)) {
     std::cerr << "Fail: vpMath::isInf(DBL_MIN/2.0)=" << vpMath::isInf(DBL_MIN / 2.0) << " / should be false"
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   std::cout << "vpMath::isInf is Ok !" << std::endl;
 
   // Test isfinite
   if (vpMath::isFinite(NAN)) {
     std::cerr << "Fail: vpMath::isFinite(NAN)=" << vpMath::isFinite(NAN) << " / should be false" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (vpMath::isFinite(1.0 / a)) {
     std::cerr << "Fail: vpMath::isFinite(1.0/0.0)=" << vpMath::isFinite(1.0 / a) << " / should be false" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (!vpMath::isFinite(0.0)) {
     std::cerr << "Fail: vpMath::isFinite(0.0)=" << vpMath::isFinite(0.0) << " / should be true" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (vpMath::isFinite(exp(800.))) {
     std::cerr << "Fail: vpMath::isFinite(exp(800.))=" << vpMath::isFinite(exp(800.)) << " / should be false" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (!vpMath::isFinite(DBL_MIN / 2.0)) {
     std::cerr << "Fail: vpMath::isFinite(DBL_MIN/2.0)=" << vpMath::isFinite(DBL_MIN / 2.0) << " / should be true"
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (!vpMath::isFinite(std::numeric_limits<float>::max())) {
     std::cerr << "Fail: vpMath::isFinite(DBL_MAX)=" << vpMath::isFinite(std::numeric_limits<float>::max()) << " / should be true"
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   std::cout << "vpMath::isFinite is Ok !" << std::endl;
 
   // Test round
   if (vpMath::round(2.3) != 2) {
     std::cerr << "Fail: vpMath::round(2.3)=" << vpMath::round(2.3) << " / should be 2" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (vpMath::round(3.8) != 4) {
     std::cerr << "Fail: vpMath::round(3.8)=" << vpMath::round(3.8) << " / should be 4" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (vpMath::round(5.5) != 6) {
     std::cerr << "Fail: vpMath::round(5.5)=" << vpMath::round(5.5) << " / should be 6" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (vpMath::round(-2.3) != -2) {
     std::cerr << "Fail: vpMath::round(-2.3)=" << vpMath::round(-2.3) << " / should be -2" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (vpMath::round(-3.8) != -4) {
     std::cerr << "Fail: vpMath::round(-3.8)=" << vpMath::round(-3.8) << " / should be -4" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (vpMath::round(-5.5) != -6) {
     std::cerr << "Fail: vpMath::round(-5.5)=" << vpMath::round(-5.5) << " / should be -6" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   if (vpMath::round(0.0) != 0) {
     std::cerr << "Fail: vpMath::round(0.0)=" << vpMath::round(0.0) << " / should be 0" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   std::cout << "vpMath::round is Ok !" << std::endl;
 
@@ -250,7 +254,7 @@ int main()
   unsigned char uchar_value = vpMath::saturate<unsigned char>(char_value);
   if (uchar_value != 0) {
     std::cerr << "Fail: vpMath::saturate<unsigned char>(-127)=" << uchar_value << " / should be 0" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   unsigned short ushort_value = 60000;
@@ -258,7 +262,7 @@ int main()
   if (uchar_value != UCHAR_MAX) {
     std::cerr << "Fail: vpMath::saturate<unsigned char>(60000)=" << uchar_value << " / should be " << UCHAR_MAX
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   int int_value = 70000;
@@ -266,14 +270,14 @@ int main()
   if (uchar_value != UCHAR_MAX) {
     std::cerr << "Fail: vpMath::saturate<unsigned char>(70000)=" << uchar_value << " / should be " << UCHAR_MAX
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   int_value = -70000;
   uchar_value = vpMath::saturate<unsigned char>(int_value);
   if (uchar_value != 0) {
     std::cerr << "Fail: vpMath::saturate<unsigned char>(-70000)=" << uchar_value << " / should be 0" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   short short_value = 30000;
@@ -281,14 +285,14 @@ int main()
   if (uchar_value != UCHAR_MAX) {
     std::cerr << "Fail: vpMath::saturate<unsigned char>(30000)=" << uchar_value << " / should be " << UCHAR_MAX
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   short_value = -30000;
   uchar_value = vpMath::saturate<unsigned char>(short_value);
   if (uchar_value != 0) {
     std::cerr << "Fail: vpMath::saturate<unsigned char>(-30000)=" << uchar_value << " / should be 0" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   unsigned int uint_value = 10000;
@@ -296,7 +300,7 @@ int main()
   if (uchar_value != UCHAR_MAX) {
     std::cerr << "Fail: vpMath::saturate<unsigned char>(10000)=" << uchar_value << " / should be " << UCHAR_MAX
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   float float_value = 10000.1f;
@@ -304,14 +308,14 @@ int main()
   if (uchar_value != UCHAR_MAX) {
     std::cerr << "Fail: vpMath::saturate<unsigned char>(10000.1f)=" << uchar_value << " / should be " << UCHAR_MAX
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   float_value = -10000.1f;
   uchar_value = vpMath::saturate<unsigned char>(float_value);
   if (uchar_value != 0) {
     std::cerr << "Fail: vpMath::saturate<unsigned char>(-10000.1f)=" << uchar_value << " / should be 0" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   double double_value = 10000.1;
@@ -319,14 +323,14 @@ int main()
   if (uchar_value != UCHAR_MAX) {
     std::cerr << "Fail: vpMath::saturate<unsigned char>(10000.0)=" << uchar_value << " / should be " << UCHAR_MAX
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   double_value = -10000.1;
   uchar_value = vpMath::saturate<unsigned char>(double_value);
   if (uchar_value != 0) {
     std::cerr << "Fail: vpMath::saturate<unsigned char>(-10000.0)=" << uchar_value << " / should be 0" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   std::cout << "vpMath::saturate<unsigned char>() is Ok !" << std::endl;
 
@@ -335,77 +339,77 @@ int main()
   char_value = vpMath::saturate<char>(uchar_value);
   if (char_value != SCHAR_MAX) {
     std::cerr << "Fail: vpMath::saturate<char>(255)=" << char_value << " / should be " << SCHAR_MAX << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   ushort_value = 60000;
   char_value = vpMath::saturate<char>(ushort_value);
   if (char_value != SCHAR_MAX) {
     std::cerr << "Fail: vpMath::saturate<char>(60000)=" << char_value << " / should be " << SCHAR_MAX << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   int_value = 70000;
   char_value = vpMath::saturate<char>(int_value);
   if (char_value != SCHAR_MAX) {
     std::cerr << "Fail: vpMath::saturate<char>(70000)=" << char_value << " / should be " << SCHAR_MAX << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   int_value = -70000;
   char_value = vpMath::saturate<char>(int_value);
   if (char_value != (char)SCHAR_MIN) {
     std::cerr << "Fail: vpMath::saturate<char>(-70000)=" << char_value << " / should be " << SCHAR_MIN << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   short_value = 30000;
   char_value = vpMath::saturate<char>(short_value);
   if (char_value != SCHAR_MAX) {
     std::cerr << "Fail: vpMath::saturate<char>(30000)=" << char_value << " / should be " << SCHAR_MAX << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   short_value = -30000;
   char_value = vpMath::saturate<char>(short_value);
   if (char_value != (char)SCHAR_MIN) {
     std::cerr << "Fail: vpMath::saturate<char>(-30000)=" << char_value << " / should be " << SCHAR_MIN << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   uint_value = 10000;
   char_value = vpMath::saturate<char>(uint_value);
   if (char_value != SCHAR_MAX) {
     std::cerr << "Fail: vpMath::saturate<char>(10000)=" << char_value << " / should be " << SCHAR_MAX << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   float_value = 10000.1f;
   char_value = vpMath::saturate<char>(float_value);
   if (char_value != SCHAR_MAX) {
     std::cerr << "Fail: vpMath::saturate<char>(10000.1f)=" << char_value << " / should be " << SCHAR_MAX << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   float_value = -10000.1f;
   char_value = vpMath::saturate<char>(float_value);
   if (char_value != (char)SCHAR_MIN) {
     std::cerr << "Fail: vpMath::saturate<char>(-10000.1f)=" << char_value << " / should be " << SCHAR_MIN << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   double_value = 10000.1;
   char_value = vpMath::saturate<char>(double_value);
   if (char_value != SCHAR_MAX) {
     std::cerr << "Fail: vpMath::saturate<char>(10000.1)=" << char_value << " / should be " << SCHAR_MAX << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   double_value = -10000.1;
   char_value = vpMath::saturate<char>(double_value);
   if (char_value != (char)SCHAR_MIN) {
     std::cerr << "Fail: vpMath::saturate<char>(-10000.1)=" << char_value << " / should be " << SCHAR_MIN << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   std::cout << "vpMath::saturate<char>() is Ok !" << std::endl;
 
@@ -414,14 +418,14 @@ int main()
   ushort_value = vpMath::saturate<unsigned short>(char_value);
   if (ushort_value != 0) {
     std::cerr << "Fail: vpMath::saturate<unsigned short>(-127)=" << ushort_value << " / should be 0" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   short_value = -30000;
   ushort_value = vpMath::saturate<unsigned short>(short_value);
   if (ushort_value != 0) {
     std::cerr << "Fail: vpMath::saturate<unsigned short>(-30000)=" << ushort_value << " / should be 0" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   int_value = 70000;
@@ -429,14 +433,14 @@ int main()
   if (ushort_value != USHRT_MAX) {
     std::cerr << "Fail: vpMath::saturate<unsigned short>(70000)=" << ushort_value << " / should be " << USHRT_MAX
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   int_value = -70000;
   ushort_value = vpMath::saturate<unsigned short>(int_value);
   if (ushort_value != 0) {
     std::cerr << "Fail: vpMath::saturate<unsigned short>(-70000)=" << ushort_value << " / should be 0" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   uint_value = 70000;
@@ -444,7 +448,7 @@ int main()
   if (ushort_value != USHRT_MAX) {
     std::cerr << "Fail: vpMath::saturate<unsigned short>(70000)=" << ushort_value << " / should be " << USHRT_MAX
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   float_value = 70000.1f;
@@ -452,14 +456,14 @@ int main()
   if (ushort_value != USHRT_MAX) {
     std::cerr << "Fail: vpMath::saturate<unsigned short>(70000.1f)=" << ushort_value << " / should be " << USHRT_MAX
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   float_value = -10000.1f;
   ushort_value = vpMath::saturate<unsigned short>(float_value);
   if (ushort_value != 0) {
     std::cerr << "Fail: vpMath::saturate<unsigned short>(-10000.1f)=" << ushort_value << " / should be 0" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   double_value = 70000.1;
@@ -467,14 +471,14 @@ int main()
   if (ushort_value != USHRT_MAX) {
     std::cerr << "Fail: vpMath::saturate<unsigned short>(70000.1)=" << ushort_value << " / should be " << USHRT_MAX
               << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   double_value = -10000.1;
   ushort_value = vpMath::saturate<unsigned short>(double_value);
   if (ushort_value != 0) {
     std::cerr << "Fail: vpMath::saturate<unsigned short>(-10000.1)=" << ushort_value << " / should be 0" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   std::cout << "vpMath::saturate<unsigned short>() is Ok !" << std::endl;
 
@@ -483,56 +487,56 @@ int main()
   short_value = vpMath::saturate<short>(ushort_value);
   if (short_value != SHRT_MAX) {
     std::cerr << "Fail: vpMath::saturate<short>(60000)=" << short_value << " / should be " << SHRT_MAX << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   int_value = 70000;
   short_value = vpMath::saturate<short>(int_value);
   if (short_value != SHRT_MAX) {
     std::cerr << "Fail: vpMath::saturate<short>(70000)=" << short_value << " / should be " << SHRT_MAX << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   int_value = -70000;
   short_value = vpMath::saturate<short>(int_value);
   if (short_value != SHRT_MIN) {
     std::cerr << "Fail: vpMath::saturate<short>(-70000)=" << short_value << " / should be " << SHRT_MIN << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   uint_value = 70000;
   short_value = vpMath::saturate<short>(uint_value);
   if (short_value != SHRT_MAX) {
     std::cerr << "Fail: vpMath::saturate<short>(70000)=" << short_value << " / should be " << SHRT_MAX << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   float_value = 70000.1f;
   short_value = vpMath::saturate<short>(float_value);
   if (short_value != SHRT_MAX) {
     std::cerr << "Fail: vpMath::saturate<short>(70000.1f)=" << short_value << " / should be " << SHRT_MAX << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   float_value = -70000.1f;
   short_value = vpMath::saturate<short>(float_value);
   if (short_value != SHRT_MIN) {
     std::cerr << "Fail: vpMath::saturate<short>(-70000.1f)=" << short_value << " / should be " << SHRT_MIN << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   double_value = 70000.1;
   short_value = vpMath::saturate<short>(double_value);
   if (short_value != SHRT_MAX) {
     std::cerr << "Fail: vpMath::saturate<short>(70000.1)=" << short_value << " / should be " << SHRT_MAX << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   double_value = -70000.1;
   short_value = vpMath::saturate<short>(double_value);
   if (short_value != SHRT_MIN) {
     std::cerr << "Fail: vpMath::saturate<short>(70000.1)=" << short_value << " / should be " << SHRT_MIN << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   std::cout << "vpMath::saturate<short>() is Ok !" << std::endl;
 
@@ -553,27 +557,27 @@ int main()
   double res = vpMath::getMean(vectorOfDoubles);
   if (!vpMath::equal(res, 6.2386, 0.001)) {
     std::cerr << "Problem with vpMath::getMean()=" << res << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   std::cout << "vpMath::getMean() is Ok !" << std::endl;
 
   res = vpMath::getStdev(vectorOfDoubles);
   if (!vpMath::equal(res, 3.2810, 0.001)) {
     std::cerr << "Problem with vpMath::getStdev()=" << res << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   res = vpMath::getStdev(vectorOfDoubles, true);
   if (!vpMath::equal(res, 3.4585, 0.001)) {
     std::cerr << "Problem with vpMath::getStdev() with Bessel correction=" << res << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   std::cout << "vpMath::getStdev() is Ok !" << std::endl;
 
   res = vpMath::getMedian(vectorOfDoubles);
   if (!vpMath::equal(res, 7.2354, 0.001)) {
     std::cerr << "Problem with vpMath::getMedian()=" << res << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   // Test median with odd number of elements
@@ -581,7 +585,7 @@ int main()
   res = vpMath::getMedian(vectorOfDoubles);
   if (!vpMath::equal(res, 6.3236, 0.001)) {
     std::cerr << "Problem with vpMath::getMedian()=" << res << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   std::cout << "vpMath::getMedian() is Ok !" << std::endl;
 
@@ -607,11 +611,42 @@ int main()
       const double clamp_val = vpMath::clamp(testing_values.at(i), lower, upper);
       if (!vpMath::equal(clamp_val, expected_values.at(i), 0.001)) {
         std::cerr << "Problem with vpMath::clamp()=" << clamp_val << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
     }
+    std::cout << "vpMath::clamp() is Ok !" << std::endl;
   }
 
+  // Test vpMath::rad()
+  {
+    vpColVector rxyz_deg_truth(3);
+    rxyz_deg_truth[0] = 10;
+    rxyz_deg_truth[1] = 20;
+    rxyz_deg_truth[2] = -30;
+
+    vpRxyzVector rxyz(vpMath::rad(rxyz_deg_truth[0]), vpMath::rad(rxyz_deg_truth[1]), vpMath::rad(rxyz_deg_truth[2]));
+    vpColVector rxyz_deg = vpMath::deg(rxyz);
+    for (size_t i = 0u; i < rxyz_deg_truth.size(); i++) {
+      if (!vpMath::equal(rxyz_deg[i], rxyz_deg_truth[i], 0.001)) {
+        std::cerr << "Problem with vpMath::deg(vpRotationVector) " << i << ": " << rxyz_deg[i] << std::endl;
+        return EXIT_FAILURE;
+      }
+    }
+    std::cout << "vpMath::deg() is Ok !" << std::endl;
+  }
+
+  {
+    vpRxyzVector rxyz(vpMath::rad(10), vpMath::rad(20), vpMath::rad(-30));
+    vpRotationMatrix R(rxyz);
+    vpQuaternionVector q(R);
+    std::cout << "enu rxyz: " << rxyz.t() << std::endl;
+    std::cout << "enu q: " << q.t() << std::endl;
+    vpColVector rxzy_ned = vpMath::enu2ned(rxyz);
+    std::cout << "ned rxyz: " << (vpMath::deg(rxzy_ned)).t() << std::endl;
+    vpRotationMatrix R_ned(rxzy_ned);
+    vpQuaternionVector q_ned(R_ned);
+    std::cout << "ned q: " << q_ned.t() << std::endl;
+  }
   std::cout << "OK !" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
