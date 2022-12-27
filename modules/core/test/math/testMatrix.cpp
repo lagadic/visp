@@ -271,7 +271,7 @@ int main(int argc, char *argv[])
       M[1][1] = 12.345;
       M[1][2] = .12345;
       std::cout << "call std::cout << M;" << std::endl;
-      std::cout << M;
+      std::cout << M << std::endl;
       std::cout << "call M.print (std::cout, 6);" << std::endl;
       M.print(std::cout, 6);
       std::cout << std::endl;
@@ -294,18 +294,31 @@ int main(int argc, char *argv[])
       std::cout << "------------------------" << std::endl;
       M.resize(3, 3);
       M.eye(3);
-      M[0][2] = -0.0000000876;
+      M[0][2] = -0.0000876;
       std::cout << "call std::cout << M;" << std::endl;
       std::cout << M << std::endl;
 
       std::cout << "call M.print (std::cout, 4);" << std::endl;
       M.print(std::cout, 4);
       std::cout << std::endl;
+      std::cout << "call M.print (std::cout, 6, \"M\");" << std::endl;
+      M.print(std::cout, 6, "M");
+      std::cout << std::endl;
       std::cout << "call M.print (std::cout, 10, \"M\");" << std::endl;
       M.print(std::cout, 10, "M");
       std::cout << std::endl;
-      std::cout << "call M.print (std::cout, 20, \"M\");" << std::endl;
-      M.print(std::cout, 20, "M");
+
+      M.resize(2, 3);
+      M[0][0] = -1;
+      M[0][1] = -2;
+      M[0][2] = -3;
+      M[1][0] = 4;
+      M[1][1] = 5.5;
+      M[1][2] = 6.0f;
+      std::cout << "call std::cout << M;" << std::endl;
+      std::cout << M << std::endl;
+      std::cout << "call M.print (std::cout, 5, \"M\");" << std::endl;
+      M.print(std::cout, 5, "M");
       std::cout << std::endl;
 
       std::cout << "------------------------" << std::endl;
