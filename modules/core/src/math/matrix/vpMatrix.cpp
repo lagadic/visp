@@ -5569,18 +5569,18 @@ void vpMatrix::juxtaposeMatrices(const vpMatrix &A, const vpMatrix &B, vpMatrix 
 
   Pretty print a matrix. The data are tabulated.
   The common widths before and after the decimal point
-  are set with respect to the parameter maxlen.
+  are set with respect to the parameter `length`.
 
   \param s : Stream used for the printing.
 
   \param length : The suggested width of each matrix element.
-  The actual width grows in order to accomodate the whole integral part,
-  and shrinks if the whole extent is not needed for all the numbers.
+  If needed, the used `length` grows in order to accomodate the whole integral part,
+  and shrinks the decimal part to print only `length` digits.
   \param intro : The introduction which is printed before the matrix.
   Can be set to zero (or omitted), in which case
   the introduction is not printed.
 
-  \return Returns the common total width for all matrix elements
+  \return Returns the common total width for all matrix elements.
 
   \sa std::ostream &operator<<(std::ostream &s, const vpArray2D<Type> &A)
 */
@@ -5596,7 +5596,6 @@ int vpMatrix::print(std::ostream &s, unsigned int length, const std::string &int
   std::ostringstream ossFixed;
   std::ios_base::fmtflags original_flags = oss.flags();
 
-  // ossFixed <<std::fixed;
   ossFixed.setf(std::ios::fixed, std::ios::floatfield);
 
   size_type maxBefore = 0; // the length of the integral part
@@ -5621,7 +5620,7 @@ int vpMatrix::print(std::ostream &s, unsigned int length, const std::string &int
         // maxAfter remains the same
       } else {
         maxBefore = vpMath::maximum(maxBefore, p);
-        maxAfter = vpMath::maximum(maxAfter, thislen - p - 1);
+        maxAfter = vpMath::maximum(maxAfter, thislen - p);
       }
     }
   }
@@ -5647,10 +5646,9 @@ int vpMatrix::print(std::ostream &s, unsigned int length, const std::string &int
       if (maxAfter > 0) {
         s.setf(std::ios::left, std::ios::adjustfield);
         if (p != std::string::npos) {
-          s.width((std::streamsize)maxAfter + 1);
-          s << values[i * n + j].substr(p, maxAfter + 1).c_str();
+          s.width((std::streamsize)maxAfter);
+          s << values[i * n + j].substr(p, maxAfter).c_str();
         } else {
-          assert(maxAfter > 1);
           s.width((std::streamsize)maxAfter);
           s << ".0";
         }
