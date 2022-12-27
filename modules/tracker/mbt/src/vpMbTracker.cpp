@@ -333,7 +333,11 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
     }
 
     std::cout << "Load 3D points from: " << ss.str() << std::endl;
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     finit.open(ss.str());
+#else
+    finit.open(ss.str().c_str());
+#endif
     if (finit.fail()) {
       std::cout << "Cannot read " << ss.str() << std::endl;
       throw vpException(vpException::ioError, "Cannot open model-based tracker init file %s", ss.str().c_str());
