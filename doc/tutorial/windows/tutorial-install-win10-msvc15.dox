@@ -121,27 +121,27 @@ Even if Eigen3 is designed as a template we recommend to install the library wit
 
 - Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
 written we downloaded `eigen-3.3.9.zip` archive corresponding to Eigen 3.3.9.
-- Extract the content of the archive in `%%VISP_WS%`.
-- Once unzipped, you should have Eigen in `%%VISP_WS%\eigen-3.3.9`
+- Extract the content of the archive in `%%VISP_WS%\3rdparty`.
+- Once unzipped, you should have Eigen in `%%VISP_WS%\3rdparty\eigen-3.3.9`
 
 <b>2. Build and install Eigen3 from source</b>
 
 - Create a build directory
 \verbatim
-C:\> cd %VISP_WS%\3rdparty\eigen-3.4.0
+C:\> cd %VISP_WS%\3rdparty\eigen-3.3.9
 C:\> mkdir build-vc15
 C:\> cd build-vc15
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 15 2017 and 64 bits hardware
-and installation folder is set to `%%VISP_WS%\eigen-3.3.9\build-vc15\install` folder):
+and installation folder is set to `%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc15\install` folder):
 \verbatim
-C:\> cmake -G "Visual Studio 15 2017" -A "x64" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.9\build-vc15\install
+C:\> cmake -G "Visual Studio 15 2017" -A "x64" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-3.3.9\build-vc15\install
 \endverbatim
 - Build and install Eigen3 (installation doesn't need administrator privileges)
 \verbatim
 C:\> cmake --build . --config Release --target install
 \endverbatim
-- eigen is now installed in `%%VISP_WS%\eigen-3.3.9\build-vc15\install` folder
+- eigen is now installed in `%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc15\install` folder
 
 <b>3. Complete Eigen3 installation</b>
 
@@ -149,11 +149,11 @@ Now you have to complete Eigen3 installation setting some environment vars:
 - In order that ViSP detects Eigen3 you have to set `EIGEN_DIR` environment variable. Start up a `cmd` Command Prompt
 and enter:
 \verbatim
-C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.3.9\build-vc15\install\share\eigen3\cmake"
+C:\> setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.3.9\build-vc15\install\share\eigen3\cmake"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\eigen-3.3.9\build-vc15\install` is where you have installed Eigen3. Inside the folder
-`%%VISP_WS%\eigen-3.3.9\build-vc15\install\share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
+where `%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc15\install` is where you have installed Eigen3. Inside the folder
+`%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc15\install\share\eigen3\cmake` you should have a file named `Eigen3Config.cmake`.
 - There is no need to set `Path` environment var since Eigen3 is a template that has no library.
 
 \subsubsection install_win10_msvc15_3rdparty_opencv OpenCV 3rd party
@@ -439,7 +439,7 @@ CMake Warning at CMakeLists.txt:1156 (message):
   USE_EIGEN3 OFF.
 \endverbatim We strongly recommend to fix this warning. To this end:
     - close `cmake-gui`
-    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\eigen-3.3.9\build-vc15\install\share\eigen3\cmake"`
+    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.3.9\build-vc15\install\share\eigen3\cmake"`
     - open again `cmake-gui`
     - delete the cache using menu `File > Delete Cache`
     - and configure again ViSP.

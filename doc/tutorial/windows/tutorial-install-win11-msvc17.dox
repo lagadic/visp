@@ -251,14 +251,14 @@ to write in that folder before modifying `CMAKE_INSTALL_PREFIX`.
 \warning If you forgot to set `Eigen3_DIR` environment var, you will get the following warning in `cmake_gui`:
 \verbatim
 CMake Warning at CMakeLists.txt:1156 (message):
-  Eigen3 config file is detected in C:/visp-ws/eigen-3.4.0/build-vc17.  Using
-  C:/visp-ws/eigen-3.4.0/build-vc17/Eigen3Config.cmake doesn't allow to use a
+  Eigen3 config file is detected in C:/visp-ws/3rdparty/eigen-3.4.0/build-vc17.  Using
+  C:/visp-ws/3rdparty/eigen-3.4.0/build-vc17/Eigen3Config.cmake doesn't allow to use a
   valid Eigen3 include dir: C://include/eigen3.  Modify Eigen3_DIR to point
   to Eigen3Config.cmake file located in Eigen3 installation folder or turn
   USE_EIGEN3 OFF.
 \endverbatim We strongly recommend to fix this warning. To this end:
     - close `cmake-gui`
-    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\eigen-3.4.0\build-vc17\install\share\eigen3\cmake"`
+    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install\share\eigen3\cmake"`
     - open again `cmake-gui`
     - delete the cache using menu `File > Delete Cache`
     - and configure again ViSP.
