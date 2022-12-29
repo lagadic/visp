@@ -321,6 +321,19 @@ int main(int argc, char *argv[])
       M.print(std::cout, 5, "M");
       std::cout << std::endl;
 
+      M.resize(2, 3);
+      M[0][0] = -1;
+      M[0][1] = -2;
+      M[0][2] = -3;
+      M[1][0] = 4;
+      M[1][1] = 5.;
+      M[1][2] = 6;
+      std::cout << "call std::cout << M;" << std::endl;
+      std::cout << M << std::endl;
+      std::cout << "call M.print (std::cout, 5, \"M\");" << std::endl;
+      M.print(std::cout, 5, "M");
+      std::cout << std::endl;
+
       std::cout << "------------------------" << std::endl;
       std::cout << "--- TEST RESIZE --------" << std::endl;
       std::cout << "------------------------" << std::endl;
