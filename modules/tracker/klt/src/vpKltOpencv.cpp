@@ -1271,7 +1271,7 @@ void vpKltOpencv::display(const vpImage<unsigned char> &I, const CvPoint2D32f *f
     vpDisplay::displayCross(I, ip, 10 + thickness, color, thickness);
 
     std::stringstream id;
-    id << featuresid_list[i]);
+    id << featuresid_list[i];
     ip.set_u(vpMath::round(features_list[i].x + 5));
     vpDisplay::displayText(I, ip, id.str(), color);
   }
@@ -1303,7 +1303,7 @@ void vpKltOpencv::display(const vpImage<vpRGBa> &I, const CvPoint2D32f *features
     vpDisplay::displayCross(I, ip, 10, color, thickness);
 
     std::stringstream id;
-    id << featuresid_list[i]);
+    id << featuresid_list[i];
     ip.set_u(vpMath::round(features_list[i].x + 5));
     vpDisplay::displayText(I, ip, id.str(), color);
   }
