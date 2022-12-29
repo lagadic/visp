@@ -125,27 +125,27 @@ Even if Eigen3 is designed as a template we recommend to install the library wit
 
 - Download the latest Eigen3 release from http://eigen.tuxfamily.org. At the time this tutorial was
 written we downloaded `eigen-3.3.9.zip` archive corresponding to Eigen 3.3.9.
-- Extract the content of the archive in `%%VISP_WS%`.
-- Once unzipped, you should have Eigen in `%%VISP_WS%\eigen-3.3.9`
+- Extract the content of the archive in `%%VISP_WS%\3rdparty`.
+- Once unzipped, you should have Eigen in `%%VISP_WS%\3rdparty\eigen-3.3.9`
 
 <b>2. Build and install Eigen3 from source</b>
 
 - Create a build directory
 \verbatim
-C:\> cd %VISP_WS%\3rdparty\eigen-3.4.0
+C:\> cd %VISP_WS%\3rdparty\eigen-3.3.9
 C:\> mkdir build-vc16
 C:\> cd build-vc16
 \endverbatim
 - Run CMake in build directory (here the generator is chosen for Visual Studio 16 2019 and installation folder is set
- to `%%VISP_WS%\eigen-3.3.9\build-vc16\install` folder):
+ to `%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc16\install` folder):
 \verbatim
-C:\> cmake -G "Visual Studio 16 2019" -A "x64" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\eigen-3.3.9\build-vc16\install
+C:\> cmake -G "Visual Studio 16 2019" -A "x64" .. -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\eigen-3.3.9\build-vc16\install
 \endverbatim
 - Build and install Eigen3 (installation doesn't need administrator privileges)
 \verbatim
 C:\> cmake --build . --config Release --target install
 \endverbatim
-- Eigen3 is now installed in `%%VISP_WS%\eigen-3.3.9\build-vc16\install` folder
+- Eigen3 is now installed in `%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc16\install` folder
 
 <b>3. Complete Eigen3 installation</b>
 
@@ -153,11 +153,11 @@ Now you have to complete Eigen3 installation setting some environment vars:
 - In order that ViSP detects Eigen3 you have to set `EIGEN_DIR` environment variable. Start up a `cmd`
 Command Prompt and enter:
 \verbatim
-C:\> setx Eigen3_DIR "%VISP_WS%\eigen-3.3.9\build-vc16\install\share\eigen3\cmake"
+C:\> setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.3.9\build-vc16\install\share\eigen3\cmake"
 C:\> exit
 \endverbatim
-where `%%VISP_WS%\eigen-3.3.9\build-vc16\install` is where you have installed Eigen3.
-Inside the folder `%%VISP_WS%\eigen-3.3.9\build-vc16\install\share\eigen3\cmake` you should have a file
+where `%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc16\install` is where you have installed Eigen3.
+Inside the folder `%%VISP_WS%\3rdparty\eigen-3.3.9\build-vc16\install\share\eigen3\cmake` you should have a file
 named `Eigen3Config.cmake`.
 - There is no need to set `Path` environment var since Eigen3 is a template that has no library.
 
@@ -553,7 +553,7 @@ CMake Warning at CMakeLists.txt:1156 (message):
   USE_EIGEN3 OFF.
 \endverbatim We strongly recommend to fix this warning. To this end:
     - close `cmake-gui`
-    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\eigen-3.3.9\build-vc16\install\share\eigen3\cmake"`
+    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.3.9\build-vc16\install\share\eigen3\cmake"`
     - open again `cmake-gui`
     - delete the cache using menu `File > Delete Cache`
     - and configure again ViSP.
@@ -935,7 +935,7 @@ eigen_assert_exception is not member of Eigen
 This issue is known and reported [here](https://bugs.archlinux.org/task/68118).
 
 A quick fix is to comment the corresponding line 162 in
-`%%VISP_WS%\eigen-3.3.8\build-vc16\install\include\eigen3\Eigen\src\Core\Products\Parallelizer.h` like
+`%%VISP_WS%\3rdparty\eigen-3.3.8\build-vc16\install\include\eigen3\Eigen\src\Core\Products\Parallelizer.h` like
 \verbatim
   //if (errorCount) EIGEN_THROW_X(Eigen::eigen_assert_exception());
 #endif

@@ -497,7 +497,7 @@ CMake Warning at CMakeLists.txt:1156 (message):
   USE_EIGEN3 OFF.
 \endverbatim We strongly recommend to fix this warning. To this end:
     - close `cmake-gui`
-    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\eigen-3.4.0\build-vc17\install\share\eigen3\cmake"`
+    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install\share\eigen3\cmake"`
     - open again `cmake-gui`
     - delete the cache using menu `File > Delete Cache`
     - and configure again ViSP.
@@ -883,7 +883,7 @@ eigen_assert_exception is not member of Eigen
 This issue is known and reported [here](https://bugs.archlinux.org/task/68118).
 
 A quick fix is to comment the corresponding line 162 in
-`%%VISP_WS%\eigen-3.3.8\build-vc16\install\include\eigen3\Eigen\src\Core\Products\Parallelizer.h` like
+`%%VISP_WS%\3rdparty\eigen-3.3.8\build-vc16\install\include\eigen3\Eigen\src\Core\Products\Parallelizer.h` like
 \verbatim
   //if (errorCount) EIGEN_THROW_X(Eigen::eigen_assert_exception());
 #endif
