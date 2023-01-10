@@ -44,6 +44,7 @@
 #include <mutex>
 #include <signal.h>
 #include <string>
+#include <tuple>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 
@@ -81,6 +82,7 @@ public:
   //@{
   float getBatteryLevel() const;
   void getPose(vpHomogeneousMatrix &pose) const;
+  std::tuple<float, float> getHome() const;
   std::string getAddress() const;
   //@}
 
@@ -133,5 +135,5 @@ private:
   vpRobotMavsdkImpl *m_impl;
 };
 
-#endif //#ifdef VISP_HAVE_MAVSDK
-#endif //#ifndef vpRobotMavsdk_h_
+#endif // #ifdef VISP_HAVE_MAVSDK
+#endif // #ifndef vpRobotMavsdk_h_
