@@ -78,14 +78,14 @@ private:
 
     // We wait for new systems to be discovered, once we find one that has an
     // autopilot, we decide to use it.
-    mavsdk.subscribe_on_new_system([&mavsdk, &prom]() {
+    mavsdk::Mavsdk::NewSystemHandle handle = mavsdk.subscribe_on_new_system([&mavsdk, &prom, &handle]() {
       auto system = mavsdk.systems().back();
 
       if (system->has_autopilot()) {
         std::cout << "Discovered autopilot" << std::endl;
 
         // Unsubscribe again as we only want to find one system.
-        mavsdk.subscribe_on_new_system(nullptr);
+        mavsdk.unsubscribe_on_new_system(handle);
         prom.set_value(system);
       }
     });
@@ -168,6 +168,7 @@ public:
     }
 
     m_telemetry = std::make_shared<mavsdk::Telemetry>(m_system);
+    m_offboard = std::make_shared<mavsdk::Offboard>(m_system);
   }
 
   bool isRunning() const
@@ -193,7 +194,6 @@ public:
         }
       }
       return actual_address;
-
     } else {
       std::cout << "ERROR : The address parameter must start with \"serial:\" or \"udp:\" or \"tcp:\"." << std::endl;
       return std::string();
@@ -208,10 +208,17 @@ public:
 
   void getPose(vpHomogeneousMatrix &pose) const
   {
-    mavsdk::Telemetry::Odometry odom = m_telemetry.get()->odometry();
-    vpQuaternionVector q{odom.q.x, odom.q.y, odom.q.z, odom.q.w};
-    vpTranslationVector t{odom.position_body.x_m, odom.position_body.y_m, odom.position_body.z_m};
+    auto quat = m_telemetry.get()->attitude_quaternion();
+    auto posvel = m_telemetry.get()->position_velocity_ned();
+    vpQuaternionVector q{quat.x, quat.y, quat.z, quat.w};
+    vpTranslationVector t{posvel.position.north_m, posvel.position.east_m, posvel.position.down_m};
     pose.buildFrom(t, q);
+  }
+
+  std::tuple<float, float> getHome() const
+  {
+    auto position = m_telemetry.get()->home();
+    return {float(position.latitude_deg), float(position.longitude_deg)};
   }
 
   bool sendMocapData(const vpHomogeneousMatrix &M)
@@ -287,7 +294,6 @@ public:
     if (!interactive) {
       authorize_takeoff = true;
     } else {
-
       if (m_telemetry.get()->flight_mode() == mavsdk::Telemetry::FlightMode::Offboard) {
         authorize_takeoff = true;
       } else {
@@ -306,7 +312,6 @@ public:
     if (m_telemetry.get()->in_air()) {
       std::cerr << "Cannot take off as the robot is already flying." << std::endl;
     } else if (authorize_takeoff) {
-
       // Arm vehicle
       std::cout << "Arming...\n";
       const mavsdk::Action::Result arm_result = action.arm();
@@ -316,27 +321,55 @@ public:
         return false;
       }
 
-      auto offboard = mavsdk::Offboard{m_system};
-      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-      offboard.set_velocity_body(stay);
+      /*const auto takeoff_result = action.takeoff();
+      if (takeoff_result != mavsdk::Action::Result::Success) {
+        std::cerr << "Takeoff failed: " << takeoff_result << '\n';
+        return true;
+      }*/
 
-      mavsdk::Offboard::Result offboard_result = offboard.start();
-      if (offboard_result != mavsdk::Offboard::Result::Success) {
-        std::cerr << "Offboard start failed: " << offboard_result << std::endl;
-        return false;
+      /*auto telemetry = m_telemetry.get();
+      auto in_air_promise = std::promise<void>{};
+      auto in_air_future = in_air_promise.get_future();
+      mavsdk::Telemetry::LandedStateHandle handle =
+          telemetry->subscribe_landed_state(
+              [telemetry, &in_air_promise,
+               &handle](mavsdk::Telemetry::LandedState state) {
+                if (state == mavsdk::Telemetry::LandedState::InAir) {
+                  std::cout << "Taking off has finished\n.";
+                  telemetry->unsubscribe_landed_state(handle);
+                  in_air_promise.set_value();
+                }
+              });
+      in_air_future.wait_for(seconds(10));
+      if (in_air_future.wait_for(seconds(3)) == std::future_status::timeout) {
+        std::cerr << "Takeoff timed out.\n";
+        return 1;
+      }*/
+
+      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+      m_offboard.get()->set_velocity_body(stay);
+
+      if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+        mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
+        if (offboard_result != mavsdk::Offboard::Result::Success) {
+          std::cerr << "Offboard start failed: " << offboard_result << std::endl;
+          return false;
+        }
       }
 
       mavsdk::Telemetry::Odometry odom;
       odom = m_telemetry.get()->odometry();
-      vpQuaternionVector q{odom.q.x, odom.q.y, odom.q.z, odom.q.w};
+      auto quat = m_telemetry.get()->attitude_quaternion();
+      auto posvel = m_telemetry.get()->position_velocity_ned();
+      vpQuaternionVector q{quat.x, quat.y, quat.z, quat.w};
       vpRotationMatrix R(q);
       vpRxyzVector rxyz(R);
 
-      std::cout << "X_init, Y_init , Z_init = " << odom.position_body.x_m << " , " << odom.position_body.y_m << " , "
-                << odom.position_body.z_m << std::endl;
-      double X_init = odom.position_body.x_m;
-      double Y_init = odom.position_body.y_m;
-      double Z_init = odom.position_body.z_m;
+      std::cout << "X_init, Y_init , Z_init = " << posvel.position.north_m << " , " << posvel.position.east_m << " , "
+                << posvel.position.down_m << std::endl;
+      double X_init = posvel.position.north_m;
+      double Y_init = posvel.position.east_m;
+      double Z_init = posvel.position.down_m;
       double yaw_init = vpMath::deg(rxyz[2]);
 
       std::cout << "Taking off using position NED." << std::endl;
@@ -345,9 +378,16 @@ public:
       takeoff.north_m = X_init;
       takeoff.east_m = Y_init;
       takeoff.down_m = Z_init - m_takeoffAlt;
-      takeoff.yaw_deg = yaw_init;
-      offboard.set_position_ned(takeoff);
-      sleep_for(seconds(5));
+      takeoff.yaw_deg = 0.0;
+      m_offboard.get()->set_position_ned(takeoff);
+      sleep_for(seconds(10));
+
+      /*auto offboard_result = m_offboard.get()->stop();
+      if (offboard_result != mavsdk::Offboard::Result::Success) {
+        std::cerr << "Offboard stop failed: " << offboard_result << '\n';
+        return false;
+      }
+      std::cout << "Offboard stopped\n";*/
     }
     return true;
   }
@@ -373,7 +413,7 @@ public:
 
     std::cout << "Landed!" << std::endl;
     // We are relying on auto-disarming but let's keep watching the telemetry for a bit longer.
-    sleep_for(seconds(3));
+    sleep_for(seconds(10));
     std::cout << "Finished..." << std::endl;
     return true;
   }
@@ -382,37 +422,33 @@ public:
   {
     auto action = mavsdk::Action{m_system};
 
-    if (m_telemetry.get()->flight_mode() == mavsdk::Telemetry::FlightMode::Offboard) {
+    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+    m_offboard.get()->set_velocity_body(stay);
 
-      auto offboard = mavsdk::Offboard{m_system};
-      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-      offboard.set_velocity_body(stay);
-
-      mavsdk::Offboard::Result offboard_result = offboard.start();
+    if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
         return;
       }
-
-      mavsdk::Telemetry::Odometry odom;
-      mavsdk::Telemetry::EulerAngle angles;
-      odom = m_telemetry.get()->odometry();
-      angles = m_telemetry.get()->attitude_euler();
-
-      double X_current = odom.position_body.x_m;
-      double Y_current = odom.position_body.y_m;
-      double Z_current = odom.position_body.z_m;
-      double yaw_current = angles.yaw_deg;
-
-      mavsdk::Offboard::PositionNedYaw position_target{};
-      position_target.north_m = X_current + dX;
-      position_target.east_m = Y_current + dY;
-      position_target.down_m = Z_current + dZ;
-      position_target.yaw_deg = yaw_current + vpMath::deg(dPsi);
-      offboard.set_position_ned(position_target);
-    } else {
-      std::cerr << "Warning: not in offboard mode. Command not applied" << std::endl;
     }
+
+    mavsdk::Telemetry::Odometry odom;
+    mavsdk::Telemetry::EulerAngle angles;
+    odom = m_telemetry.get()->odometry();
+    angles = m_telemetry.get()->attitude_euler();
+
+    double X_current = odom.position_body.x_m;
+    double Y_current = odom.position_body.y_m;
+    double Z_current = odom.position_body.z_m;
+    double yaw_current = angles.yaw_deg;
+
+    mavsdk::Offboard::PositionNedYaw position_target{};
+    position_target.north_m = X_current + dX;
+    position_target.east_m = Y_current + dY;
+    position_target.down_m = Z_current + dZ;
+    position_target.yaw_deg = yaw_current + vpMath::deg(dPsi);
+    m_offboard.get()->set_position_ned(position_target);
   }
 
   void setPosition(const vpHomogeneousMatrix &M)
@@ -431,7 +467,6 @@ public:
 
   void setVelocity(const vpColVector &vel_cmd, double delta_t)
   {
-
     if (vel_cmd.size() != 4) {
       std::cerr << "ERROR : Can't set velocity, dimension of the velocity vector should be equal to 4." << std::endl;
       return;
@@ -439,35 +474,29 @@ public:
 
     auto action = mavsdk::Action{m_system};
 
-    if (m_telemetry.get()->flight_mode() == mavsdk::Telemetry::FlightMode::Offboard) {
+    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+    m_offboard.get()->set_velocity_body(stay);
 
-      auto offboard = mavsdk::Offboard{m_system};
-      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-      offboard.set_velocity_body(stay);
-
-      mavsdk::Offboard::Result offboard_result = offboard.start();
+    if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
         return;
       }
-
-      mavsdk::Offboard::VelocityBodyYawspeed velocity_comm{};
-      velocity_comm.forward_m_s = vel_cmd[0];
-      velocity_comm.right_m_s = vel_cmd[1];
-      velocity_comm.down_m_s = vel_cmd[2];
-      velocity_comm.yawspeed_deg_s = vpMath::deg(vel_cmd[3]);
-      offboard.set_velocity_body(velocity_comm);
-      sleep_for(milliseconds((int)(delta_t * 1000.0)));
-      offboard.set_velocity_body(stay);
-
-    } else {
-      std::cerr << "Warning: not in offboard mode. Command not applied" << std::endl;
     }
+
+    mavsdk::Offboard::VelocityBodyYawspeed velocity_comm{};
+    velocity_comm.forward_m_s = vel_cmd[0];
+    velocity_comm.right_m_s = vel_cmd[1];
+    velocity_comm.down_m_s = vel_cmd[2];
+    velocity_comm.yawspeed_deg_s = vpMath::deg(vel_cmd[3]);
+    m_offboard.get()->set_velocity_body(velocity_comm);
+    sleep_for(milliseconds((int)(delta_t * 1000.0)));
+    m_offboard.get()->set_velocity_body(stay);
   }
 
   void setVelocity(const vpColVector &vel_cmd)
   {
-
     if (vel_cmd.size() != 4) {
       std::cerr << "ERROR : Can't set velocity, dimension of the velocity vector should be equal to 4." << std::endl;
       return;
@@ -475,28 +504,22 @@ public:
 
     auto action = mavsdk::Action{m_system};
 
-    if (m_telemetry.get()->flight_mode() == mavsdk::Telemetry::FlightMode::Offboard) {
+    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+    m_offboard.get()->set_velocity_body(stay);
 
-      auto offboard = mavsdk::Offboard{m_system};
-      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-      offboard.set_velocity_body(stay);
-
-      mavsdk::Offboard::Result offboard_result = offboard.start();
+    if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
         return;
       }
-
-      mavsdk::Offboard::VelocityBodyYawspeed velocity_comm{};
-      velocity_comm.forward_m_s = vel_cmd[0];
-      velocity_comm.right_m_s = vel_cmd[1];
-      velocity_comm.down_m_s = vel_cmd[2];
-      velocity_comm.yawspeed_deg_s = vpMath::deg(vel_cmd[3]);
-      offboard.set_velocity_body(velocity_comm);
-
-    } else {
-      std::cerr << "Warning: not in offboard mode. Command not applied" << std::endl;
     }
+    mavsdk::Offboard::VelocityBodyYawspeed velocity_comm{};
+    velocity_comm.forward_m_s = vel_cmd[0];
+    velocity_comm.right_m_s = vel_cmd[1];
+    velocity_comm.down_m_s = vel_cmd[2];
+    velocity_comm.yawspeed_deg_s = vpMath::deg(vel_cmd[3]);
+    m_offboard.get()->set_velocity_body(velocity_comm);
   }
 
   bool kill()
@@ -512,7 +535,6 @@ public:
 
   void holdPosition()
   {
-
     if (m_telemetry.get()->in_air()) {
       if (m_telemetry.get()->gps_info().fix_type != mavsdk::Telemetry::FixType::NoGps) {
         auto action = mavsdk::Action{m_system};
@@ -522,175 +544,154 @@ public:
           return;
         }
       } else {
-        if (m_telemetry.get()->flight_mode() == mavsdk::Telemetry::FlightMode::Offboard) {
+        const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+        m_offboard.get()->set_velocity_body(stay);
 
-          auto offboard = mavsdk::Offboard{m_system};
-          const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-          offboard.set_velocity_body(stay);
-
-          mavsdk::Offboard::Result offboard_result = offboard.start();
+        if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+          mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
           if (offboard_result != mavsdk::Offboard::Result::Success) {
             std::cerr << "Offboard start failed: " << offboard_result << std::endl;
             return;
           }
-          offboard.set_velocity_body(stay);
-
-          mavsdk::Telemetry::Odometry odom;
-          mavsdk::Telemetry::EulerAngle angles;
-          odom = m_telemetry.get()->odometry();
-          angles = m_telemetry.get()->attitude_euler();
-
-          double X_current = odom.position_body.x_m;
-          double Y_current = odom.position_body.y_m;
-          double Z_current = odom.position_body.z_m;
-          double yaw_current = angles.yaw_deg;
-
-          std::cout << "Holding using position NED." << std::endl;
-
-          mavsdk::Offboard::PositionNedYaw hold_position{};
-          hold_position.north_m = X_current;
-          hold_position.east_m = Y_current;
-          hold_position.down_m = Z_current;
-          hold_position.yaw_deg = yaw_current;
-          offboard.set_position_ned(hold_position);
-        } else {
-          std::cerr << "Warning: not in offboard mode. Command not applied" << std::endl;
         }
+        m_offboard.get()->set_velocity_body(stay);
+
+        mavsdk::Telemetry::Odometry odom;
+        mavsdk::Telemetry::EulerAngle angles;
+        odom = m_telemetry.get()->odometry();
+        angles = m_telemetry.get()->attitude_euler();
+
+        double X_current = odom.position_body.x_m;
+        double Y_current = odom.position_body.y_m;
+        double Z_current = odom.position_body.z_m;
+        double yaw_current = angles.yaw_deg;
+
+        std::cout << "Holding using position NED." << std::endl;
+
+        mavsdk::Offboard::PositionNedYaw hold_position{};
+        hold_position.north_m = X_current;
+        hold_position.east_m = Y_current;
+        hold_position.down_m = Z_current;
+        hold_position.yaw_deg = yaw_current;
+        m_offboard.get()->set_position_ned(hold_position);
+
+        auto offboard_result = m_offboard.get()->stop();
+        if (offboard_result != mavsdk::Offboard::Result::Success) {
+          std::cerr << "Offboard stop failed: " << offboard_result << '\n';
+          return;
+        }
+        std::cout << "Offboard stopped\n";
       }
     }
   }
 
   void stopMoving()
   {
+    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+    m_offboard.get()->set_velocity_body(stay);
 
-    if (m_telemetry.get()->flight_mode() == mavsdk::Telemetry::FlightMode::Offboard) {
-
-      auto offboard = mavsdk::Offboard{m_system};
-      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-      offboard.set_velocity_body(stay);
-
-      mavsdk::Offboard::Result offboard_result = offboard.start();
+    if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
         return;
       }
-      offboard.set_velocity_body(stay);
-
-    } else {
-      std::cerr << "Warning: not in offboard mode. Command not applied" << std::endl;
     }
+    m_offboard.get()->set_velocity_body(stay);
+    auto offboard_result = m_offboard.get()->stop();
+    if (offboard_result != mavsdk::Offboard::Result::Success) {
+      std::cerr << "Offboard stop failed: " << offboard_result << '\n';
+      return;
+    }
+    std::cout << "Offboard stopped\n";
   }
 
   void setYawSpeed(double wz)
   {
     auto action = mavsdk::Action{m_system};
 
-    if (m_telemetry.get()->flight_mode() == mavsdk::Telemetry::FlightMode::Offboard) {
+    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+    m_offboard.get()->set_velocity_body(stay);
 
-      auto offboard = mavsdk::Offboard{m_system};
-      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-      offboard.set_velocity_body(stay);
-
-      mavsdk::Offboard::Result offboard_result = offboard.start();
+    if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
         return;
       }
-
-      mavsdk::Offboard::VelocityBodyYawspeed velocity_comm{};
-      velocity_comm.forward_m_s = 0.0;
-      velocity_comm.right_m_s = 0.0;
-      velocity_comm.down_m_s = 0.0;
-      velocity_comm.yawspeed_deg_s = vpMath::deg(wz);
-      offboard.set_velocity_body(velocity_comm);
-
-    } else {
-      std::cerr << "Warning: not in offboard mode. Command not applied" << std::endl;
     }
+    mavsdk::Offboard::VelocityBodyYawspeed velocity_comm{};
+    velocity_comm.forward_m_s = 0.0;
+    velocity_comm.right_m_s = 0.0;
+    velocity_comm.down_m_s = 0.0;
+    velocity_comm.yawspeed_deg_s = vpMath::deg(wz);
+    m_offboard.get()->set_velocity_body(velocity_comm);
   }
 
   void setForwardSpeed(double vx)
   {
     auto action = mavsdk::Action{m_system};
 
-    if (m_telemetry.get()->flight_mode() == mavsdk::Telemetry::FlightMode::Offboard) {
+    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+    m_offboard.get()->set_velocity_body(stay);
 
-      auto offboard = mavsdk::Offboard{m_system};
-      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-      offboard.set_velocity_body(stay);
-
-      mavsdk::Offboard::Result offboard_result = offboard.start();
+    if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
         return;
       }
-
-      mavsdk::Offboard::VelocityBodyYawspeed velocity_comm{};
-      velocity_comm.forward_m_s = vx;
-      velocity_comm.right_m_s = 0.0;
-      velocity_comm.down_m_s = 0.0;
-      velocity_comm.yawspeed_deg_s = 0.0;
-      offboard.set_velocity_body(velocity_comm);
-
-    } else {
-      std::cerr << "Warning: not in offboard mode. Command not applied" << std::endl;
     }
+    mavsdk::Offboard::VelocityBodyYawspeed velocity_comm{};
+    velocity_comm.forward_m_s = vx;
+    velocity_comm.right_m_s = 0.0;
+    velocity_comm.down_m_s = 0.0;
+    velocity_comm.yawspeed_deg_s = 0.0;
+    m_offboard.get()->set_velocity_body(velocity_comm);
   }
 
   void setLateralSpeed(double vy)
   {
     auto action = mavsdk::Action{m_system};
 
-    if (m_telemetry.get()->flight_mode() == mavsdk::Telemetry::FlightMode::Offboard) {
+    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+    m_offboard.get()->set_velocity_body(stay);
 
-      auto offboard = mavsdk::Offboard{m_system};
-      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-      offboard.set_velocity_body(stay);
-
-      mavsdk::Offboard::Result offboard_result = offboard.start();
+    if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
         return;
       }
-
-      mavsdk::Offboard::VelocityBodyYawspeed velocity_comm{};
-      velocity_comm.forward_m_s = 0.0;
-      velocity_comm.right_m_s = vy;
-      velocity_comm.down_m_s = 0.0;
-      velocity_comm.yawspeed_deg_s = 0.0;
-      offboard.set_velocity_body(velocity_comm);
-
-    } else {
-      std::cerr << "Warning: not in offboard mode. Command not applied" << std::endl;
     }
+    mavsdk::Offboard::VelocityBodyYawspeed velocity_comm{};
+    velocity_comm.forward_m_s = 0.0;
+    velocity_comm.right_m_s = vy;
+    velocity_comm.down_m_s = 0.0;
+    velocity_comm.yawspeed_deg_s = 0.0;
+    m_offboard.get()->set_velocity_body(velocity_comm);
   }
 
   void setVerticalSpeed(double vz)
   {
     auto action = mavsdk::Action{m_system};
 
-    if (m_telemetry.get()->flight_mode() == mavsdk::Telemetry::FlightMode::Offboard) {
+    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+    m_offboard.get()->set_velocity_body(stay);
 
-      auto offboard = mavsdk::Offboard{m_system};
-      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-      offboard.set_velocity_body(stay);
-
-      mavsdk::Offboard::Result offboard_result = offboard.start();
+    if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
         return;
       }
-
-      mavsdk::Offboard::VelocityBodyYawspeed velocity_comm{};
-      velocity_comm.forward_m_s = 0.0;
-      velocity_comm.right_m_s = 0.0;
-      velocity_comm.down_m_s = vz;
-      velocity_comm.yawspeed_deg_s = 0.0;
-      offboard.set_velocity_body(velocity_comm);
-
-    } else {
-      std::cerr << "Warning: not in offboard mode. Command not applied" << std::endl;
     }
+    mavsdk::Offboard::VelocityBodyYawspeed velocity_comm{};
+    velocity_comm.forward_m_s = 0.0;
+    velocity_comm.right_m_s = 0.0;
+    velocity_comm.down_m_s = vz;
+    velocity_comm.yawspeed_deg_s = 0.0;
+    m_offboard.get()->set_velocity_body(velocity_comm);
   }
 
 private:
@@ -699,6 +700,7 @@ private:
   mavsdk::Mavsdk m_mavsdk;
   std::shared_ptr<mavsdk::System> m_system;
   std::shared_ptr<mavsdk::Telemetry> m_telemetry;
+  std::shared_ptr<mavsdk::Offboard> m_offboard;
 
   double m_takeoffAlt = 1.0; ///< The altitude to aim for when calling the function takeoff
 
@@ -768,7 +770,7 @@ vpRobotMavsdk::~vpRobotMavsdk() { delete m_impl; }
 void vpRobotMavsdk::connect(const std::string &connection_info) { m_impl->connect(connection_info); }
 
 /*!
- *  Checks if the robot is running, ie if the robot is connected and ready to receive commands.
+ * Checks if the robot is running, ie if the robot is connected and ready to receive commands.
  */
 bool vpRobotMavsdk::isRunning() const { return m_impl->isRunning(); }
 
@@ -800,9 +802,17 @@ float vpRobotMavsdk::getBatteryLevel() const { return m_impl->getBatteryLevel();
 void vpRobotMavsdk::getPose(vpHomogeneousMatrix &Pose) const { m_impl->getPose(Pose); }
 
 /*!
- *  Sends a flat trim command to the robot, to calibrate accelerometer and gyro.
+ * Gets the robot home position in GPS coord.
  *
- *  \warning Should be executed only if the drone is landed and on a flat surface.
+ * \warning Only available if the GPS is initialized, for example
+ * in simulation
+ */
+std::tuple<float, float> vpRobotMavsdk::getHome() const { return m_impl->getHome(); }
+
+/*!
+ * Sends a flat trim command to the robot, to calibrate accelerometer and gyro.
+ *
+ * \warning Should be executed only if the drone is landed and on a flat surface.
  */
 void vpRobotMavsdk::doFlatTrim() {}
 
@@ -825,8 +835,9 @@ bool vpRobotMavsdk::arm() { return m_impl->arm(); }
  * Sends take off command. To use if your robot is a drone.
  * \param[in] interactive : If True asks the user if the offboard mode is to be forced through the terminal. If false
  * Offboard mode is automatically set.
- * \return True if the takeoff is successful, False otherwise \sa setTakeOffAlt(),
- * land() \warning This function is blocking.
+ * \return True if the takeoff is successful, False otherwise.
+ * \warning This function is blocking.
+ * \sa setTakeOffAlt(), land()
  */
 bool vpRobotMavsdk::takeOff(bool interactive) { return m_impl->takeOff(interactive); }
 
@@ -883,8 +894,7 @@ void vpRobotMavsdk::setPosition(const vpHomogeneousMatrix &M) { m_impl->setPosit
  *
  * \param[in] vel_cmd : 4-dim robot velocity commands, vx, vy, vz, wz. Translation velocities (vx, vy, vz) should be
  * expressed in meters and rotation velocity (wz) in radians.
- * \param[in] delta_t : Sampling time (in seconds), time
- * during which the velocity `vel_cmd` is applied.
+ * \param[in] delta_t : Sampling time (in seconds), time during which the velocity `vel_cmd` is applied.
  *
  * \warning The dimension of the velocity vector should be equal to 4, as the robot cannot rotate around X and Y axes.
  */
