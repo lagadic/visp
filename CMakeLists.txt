@@ -1540,6 +1540,7 @@ status("    Use PNG:"                USE_PNG          THEN "yes (ver ${PNG_VERSI
 status("    \\- Use ZLIB:"           USE_ZLIB         THEN "yes (ver ${ZLIB_VERSION_STRING})" ELSE "no")
 status("    Use OpenCV:"             USE_OPENCV       THEN "yes (ver ${OpenCV_VERSION})" ELSE "no")
 status("    Use stb_image (built-in):"                     "yes (ver ${STBIMAGE_VERSION})")
+status("    Use TinyEXR (built-in):"                       "yes (ver ${TINYEXR_VERSION})")
 status("")
 status("  Real robots: ")
 status("    Use Afma4:"              USE_AFMA4        THEN "yes" ELSE "no")

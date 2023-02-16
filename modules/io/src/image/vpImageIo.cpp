@@ -581,6 +581,18 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
   }
 }
 
+// TODO: doc, OpenCV backend
+void vpImageIo::readEXR(vpImage<float> &I, const std::string &filename, int backend)
+{
+  readEXRTiny(I, filename);
+}
+
+// TODO: doc, OpenCV backend
+void vpImageIo::readEXR(vpImage<vpRGBf> &I, const std::string &filename, int backend)
+{
+  readEXRTiny(I, filename);
+}
+
 /*!
   Save an image in jpeg format.
   \param[in] I : Gray level image.
@@ -765,6 +777,18 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
     writePNGLibpng(I, filename);
 #endif
   }
+}
+
+// TODO: doc, OpenCV backend
+void vpImageIo::writeEXR(const vpImage<float> &I, const std::string &filename, int backend)
+{
+  writeEXRTiny(I, filename);
+}
+
+// TODO: doc, OpenCV backend
+void vpImageIo::writeEXR(const vpImage<vpRGBf> &I, const std::string &filename, int backend)
+{
+  writeEXRTiny(I, filename);
 }
 
 /*!

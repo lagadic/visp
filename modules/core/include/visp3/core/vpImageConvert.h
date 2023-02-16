@@ -116,6 +116,7 @@ public:
   static void convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> &dest, unsigned int nThreads = 0);
 
   static void convert(const vpImage<float> &src, vpImage<unsigned char> &dest);
+  static void convert(const vpImage<vpRGBf> &src, vpImage<vpRGBa> &dest);
   static void convert(const vpImage<unsigned char> &src, vpImage<float> &dest);
 
   static void convert(const vpImage<double> &src, vpImage<unsigned char> &dest);

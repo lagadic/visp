@@ -94,7 +94,7 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> 
 }
 
 /*!
-  Convert a vpImage\<float\> to a vpImage\<unsigend char\> by renormalizing
+  Convert a vpImage\<float\> to a vpImage\<unsigned char\> by renormalizing
   between 0 and 255.
   \param[in] src : Source image
   \param[out] dest : Destination image.
@@ -115,6 +115,34 @@ void vpImageConvert::convert(const vpImage<float> &src, vpImage<unsigned char> &
       dest.bitmap[i] = 255;
     else
       dest.bitmap[i] = (unsigned char)val;
+  }
+}
+
+/*!
+  Convert a vpImage\<vpRGBf\> to a vpImage\<unsigned char\> by renormalizing
+  between 0 and 255.
+  \param[in] src : Source image
+  \param[out] dest : Destination image.
+*/
+void vpImageConvert::convert(const vpImage<vpRGBf> &src, vpImage<vpRGBa> &dest)
+{
+  dest.resize(src.getHeight(), src.getWidth());
+  vpRGBf min, max;
+  src.getMinMaxValue(min, max);
+
+  for (unsigned int i = 0; i < src.getHeight(); i++) {
+    for (unsigned int j = 0; j < src.getWidth(); j++) {
+      for (unsigned int c = 0; c < 3; c++) {
+        float val = 255.f * (reinterpret_cast<const float *>(&(src[i][j]))[c] - reinterpret_cast<float *>(&min)[c]) /
+            (reinterpret_cast<float *>(&max)[c] - reinterpret_cast<float *>(&min)[c]);
+        if (val < 0)
+          reinterpret_cast<unsigned char *>(&(dest[i][j]))[c] = 0;
+        else if (val > 255)
+          reinterpret_cast<unsigned char *>(&(dest[i][j]))[c] = 255;
+        else
+          reinterpret_cast<unsigned char *>(&(dest[i][j]))[c] = (unsigned char)val;
+      }
+    }
   }
 }
 
