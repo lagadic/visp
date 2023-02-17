@@ -34,7 +34,7 @@ jobs:
       run: system_profiler SPSoftwareDataType
 
     - name: Install dependencies
-      run: brew install libpng libjpeg libdc1394 opencv pcl librealsense zbar
+      run: brew install libpng libjpeg libdc1394 opencv pcl librealsense zbar pkg-config
 
     - name: Install java dependencies
       run: |
