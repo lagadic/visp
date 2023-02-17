@@ -54,13 +54,12 @@ void readEXRTiny(vpImage<float> &I, const std::string &filename)
 
   int ret = ParseEXRVersionFromFile(&exr_version, filename.c_str());
   if (ret != 0) {
-    fprintf(stderr, "Invalid EXR file: %s\n", filename.c_str());
-    throw vpException::vpException(vpImageException::ioError, "");
+    throw(vpImageException(vpImageException::ioError, "Error: Invalid EXR file %s", filename.c_str()));
   }
 
   if (exr_version.multipart) {
     // must be multipart flag is false.
-    throw vpException::vpException(vpImageException::ioError, "Multipart EXR images are not supported.");
+    throw(vpImageException(vpImageException::ioError, "Error: Multipart EXR images are not supported."));
   }
 
   EXRHeader exr_header;
@@ -69,9 +68,9 @@ void readEXRTiny(vpImage<float> &I, const std::string &filename)
   const char* err = NULL; // or `nullptr` in C++11 or later.
   ret = ParseEXRHeaderFromFile(&exr_header, &exr_version, filename.c_str(), &err);
   if (ret != 0) {
-    fprintf(stderr, "Parse EXR err: %s\n", err);
+    std::string err_msg(err);
     FreeEXRErrorMessage(err); // free's buffer for an error message
-    throw vpException::vpException(vpImageException::ioError, "Error when parsing the EXR header.");
+    throw(vpImageException(vpImageException::ioError, "Error: Unable to parse EXR header from %s : %s", filename.c_str(), err_msg.c_str()));
   }
 
   // Read HALF channel as FLOAT.
@@ -87,10 +86,10 @@ void readEXRTiny(vpImage<float> &I, const std::string &filename)
   ret = LoadEXRImageFromFile(&exr_image, &exr_header, filename.c_str(), &err);
 
   if (ret != 0) {
-    fprintf(stderr, "Load EXR err: %s\n", err);
+    std::string err_msg(err);
     FreeEXRHeader(&exr_header);
     FreeEXRErrorMessage(err); // free's buffer for an error message
-    throw vpException::vpException(vpImageException::ioError, "");
+    throw(vpImageException(vpImageException::ioError, "Error: Unable to load EXR image from %s : %s", filename.c_str(), err_msg.c_str()));
   }
 
   // `exr_image.images` will be filled when EXR is scanline format.
@@ -127,13 +126,12 @@ void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename)
 
   int ret = ParseEXRVersionFromFile(&exr_version, filename.c_str());
   if (ret != 0) {
-    fprintf(stderr, "Invalid EXR file: %s\n", filename.c_str());
-    throw vpException::vpException(vpImageException::ioError, "");
+    throw(vpImageException(vpImageException::ioError, "Error: Invalid EXR file %s", filename.c_str()));
   }
 
   if (exr_version.multipart) {
     // must be multipart flag is false.
-    throw vpException::vpException(vpImageException::ioError, "Error: EXR version must have the multipart flag false");
+    throw(vpImageException(vpImageException::ioError, "Error: Multipart EXR images are not supported."));
   }
 
   EXRHeader exr_header;
@@ -142,9 +140,9 @@ void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename)
   const char* err = NULL; // or `nullptr` in C++11 or later.
   ret = ParseEXRHeaderFromFile(&exr_header, &exr_version, filename.c_str(), &err);
   if (ret != 0) {
-    fprintf(stderr, "Parse EXR err: %s\n", err);
+    std::string err_msg(err);
     FreeEXRErrorMessage(err); // free's buffer for an error message
-    throw vpException::vpException(vpImageException::ioError, "");
+    throw(vpImageException(vpImageException::ioError, "Error: Unable to parse EXR header from %s : %s", filename.c_str(), err_msg.c_str()));
   }
 
   // Read HALF channel as FLOAT.
@@ -160,10 +158,10 @@ void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename)
   ret = LoadEXRImageFromFile(&exr_image, &exr_header, filename.c_str(), &err);
 
   if (ret != 0) {
-    fprintf(stderr, "Load EXR err: %s\n", err);
+    std::string err_msg(err);
     FreeEXRHeader(&exr_header);
     FreeEXRErrorMessage(err); // free's buffer for an error message
-    throw vpException::vpException(vpImageException::ioError, "");
+    throw(vpImageException(vpImageException::ioError, "Error: Unable to load EXR image from %s : %s", filename.c_str(), err_msg.c_str()));
   }
 
   // `exr_image.images` will be filled when EXR is scanline format.
@@ -241,14 +239,15 @@ void writeEXRTiny(const vpImage<float> &I, const std::string &filename)
   const char* err = NULL; // or nullptr in C++11 or later.
   int ret = SaveEXRImageToFile(&image, &header, filename.c_str(), &err);
   if (ret != TINYEXR_SUCCESS) {
-    fprintf(stderr, "Save EXR err: %s\n", err);
+    std::string err_msg(err);
     FreeEXRErrorMessage(err); // free's buffer for an error message
-    return;
+    FreeEXRImage(&image);
+    FreeEXRHeader(&header);
+    throw(vpImageException(vpImageException::ioError, "Error: Unable to save EXR image to %s : %s", filename.c_str(), err_msg.c_str()));
   }
 
-  free(header.channels);
-  free(header.pixel_types);
-  free(header.requested_pixel_types);
+  FreeEXRImage(&image);
+  FreeEXRHeader(&header);
 }
 
 void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
@@ -300,12 +299,13 @@ void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
   const char* err = NULL; // or nullptr in C++11 or later.
   int ret = SaveEXRImageToFile(&image, &header, filename.c_str(), &err);
   if (ret != TINYEXR_SUCCESS) {
-    fprintf(stderr, "Save EXR err: %s\n", err);
+    std::string err_msg(err);
     FreeEXRErrorMessage(err); // free's buffer for an error message
-    return;
+    FreeEXRImage(&image);
+    FreeEXRHeader(&header);
+    throw(vpImageException(vpImageException::ioError, "Error: Unable to save EXR image to %s : %s", filename.c_str(), err_msg.c_str()));
   }
 
-  free(header.channels);
-  free(header.pixel_types);
-  free(header.requested_pixel_types);
+  FreeEXRImage(&image);
+  FreeEXRHeader(&header);
 }
