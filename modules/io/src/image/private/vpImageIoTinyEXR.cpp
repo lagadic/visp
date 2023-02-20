@@ -241,13 +241,15 @@ void writeEXRTiny(const vpImage<float> &I, const std::string &filename)
   if (ret != TINYEXR_SUCCESS) {
     std::string err_msg(err);
     FreeEXRErrorMessage(err); // free's buffer for an error message
-    FreeEXRImage(&image);
-    FreeEXRHeader(&header);
+    free(header.channels);
+    free(header.requested_pixel_types);
+    free(header.pixel_types);
     throw(vpImageException(vpImageException::ioError, "Error: Unable to save EXR image to %s : %s", filename.c_str(), err_msg.c_str()));
   }
 
-  FreeEXRImage(&image);
-  FreeEXRHeader(&header);
+  free(header.channels);
+  free(header.requested_pixel_types);
+  free(header.pixel_types);
 }
 
 void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
@@ -301,11 +303,13 @@ void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
   if (ret != TINYEXR_SUCCESS) {
     std::string err_msg(err);
     FreeEXRErrorMessage(err); // free's buffer for an error message
-    FreeEXRImage(&image);
-    FreeEXRHeader(&header);
+    free(header.channels);
+    free(header.requested_pixel_types);
+    free(header.pixel_types);
     throw(vpImageException(vpImageException::ioError, "Error: Unable to save EXR image to %s : %s", filename.c_str(), err_msg.c_str()));
   }
 
-  FreeEXRImage(&image);
-  FreeEXRHeader(&header);
+  free(header.channels);
+  free(header.requested_pixel_types);
+  free(header.pixel_types);
 }

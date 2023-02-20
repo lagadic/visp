@@ -78,7 +78,7 @@ TEST_CASE("EXR image read", "[exr_image_io]")
   SECTION("Color")
   {
     const std::string imgPathRef =
-        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "memorial/memorial_color.pfm");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "memorial/memorial_color_LSB.pfm");
     REQUIRE(vpIoTools::checkFilename(imgPathRef));
 
     vpImage<vpRGBf> I_ref;
@@ -113,7 +113,7 @@ TEST_CASE("EXR image read", "[exr_image_io]")
   SECTION("Gray")
   {
     const std::string imgPathRef =
-        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "memorial/memorial_gray.pfm");
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "memorial/memorial_gray_LSB.pfm");
     REQUIRE(vpIoTools::checkFilename(imgPathRef));
 
     vpImage<float> I_ref;
