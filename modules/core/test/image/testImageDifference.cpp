@@ -230,7 +230,7 @@ int main()
       return EXIT_FAILURE;
     }
     {
-      vpRGBf rgbf_3(1e-6, 0, 0);
+      vpRGBf rgbf_3(1e-6f, 0.f, 0.f);
       if (rgbf_1 == (rgbf_2 + rgbf_3)) {
         std::cerr << "Rf Error in rgbf operator==" << std::endl;
         return EXIT_FAILURE;
@@ -240,7 +240,7 @@ int main()
       }
     }
     {
-      vpRGBf rgbf_3(0, 1e-6, 0);
+      vpRGBf rgbf_3(0.f, 1e-6f, 0.f);
       if (rgbf_1 == (rgbf_2 + rgbf_3)) {
         std::cerr << "Gf Error in rgbf operator==" << std::endl;
         return EXIT_FAILURE;
@@ -250,7 +250,7 @@ int main()
       }
     }
     {
-      vpRGBf rgbf_3(0, 0, 1e-6);
+      vpRGBf rgbf_3(0.f, 0.f, 1e-6f);
       if (rgbf_1 == (rgbf_2 + rgbf_3)) {
         std::cerr << "Bf Error in rgbf operator==" << std::endl;
         return EXIT_FAILURE;
