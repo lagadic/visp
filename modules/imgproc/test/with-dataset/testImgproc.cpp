@@ -338,11 +338,11 @@ int main(int argc, const char **argv)
     vpImageIo::write(I_color_clahe, filename);
 
     //
-    // Test grayscale function using image0000.pgm
+    // Test grayscale function using image0000.png
     //
 
-    // Read image0000.pgm
-    filename = vpIoTools::createFilePath(ipath, "mbt/cube/image0000.pgm");
+    // Read image0000.png
+    filename = vpIoTools::createFilePath(ipath, "mbt/cube/image0000.png");
     vpImage<unsigned char> Iinput, I;
     std::cout << "\nRead image: " << filename << std::endl;
     vpImageIo::read(Iinput, filename);

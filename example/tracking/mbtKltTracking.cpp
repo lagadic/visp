@@ -80,7 +80,7 @@ OPTIONS:                                               \n\
   -i <input image path>                                \n\
      Set image input path.\n\
      From this path read images \n\
-     \"mbt/cube/image%%04d.ppm\". These \n\
+     \"mbt/cube/image%%04d.png\". These \n\
      images come from ViSP-images-x.y.z.tar.gz available \n\
      on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
@@ -261,9 +261,9 @@ int main(int argc, const char **argv)
 
     // Get the option values
     if (!opt_ipath.empty())
-      ipath = vpIoTools::createFilePath(opt_ipath, "mbt/cube/image%04d.pgm");
+      ipath = vpIoTools::createFilePath(opt_ipath, "mbt/cube/image%04d.png");
     else
-      ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.pgm");
+      ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.png");
 
     if (!opt_configFile.empty())
       configFile = opt_configFile;

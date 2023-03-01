@@ -149,9 +149,9 @@ void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_dis
   std::string dirname = vpIoTools::createFilePath(env_ipath, "mbt/cube");
 
   // Build the name of the image files
-  std::string filenameRef = vpIoTools::createFilePath(dirname, "image0000.pgm");
+  std::string filenameRef = vpIoTools::createFilePath(dirname, "image0000.png");
   vpImageIo::read(Iref, filenameRef);
-  std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d.pgm");
+  std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d.png");
 
   // Init keypoints
   cv::Ptr<cv::FeatureDetector> detector;
