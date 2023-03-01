@@ -56,7 +56,7 @@ namespace
 bool read_data(int cpt, vpImage<unsigned char> &I)
 {
   const std::string env_ipath = vpIoTools::getViSPImagesDataPath();
-  const std::string ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.pgm");
+  const std::string ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.png");
 
   char buffer[FILENAME_MAX];
   snprintf(buffer, FILENAME_MAX, ipath.c_str(), cpt);
