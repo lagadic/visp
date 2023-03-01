@@ -581,16 +581,52 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
   }
 }
 
-// TODO: doc, OpenCV backend
+// TODO: doc
 void vpImageIo::readEXR(vpImage<float> &I, const std::string &filename, int backend)
 {
-  readEXRTiny(I, filename);
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_SIMDLIB_BACKEND || backend == IO_STB_IMAGE_BACKEND) {
+    std::string message =
+        "This backend cannot read file \"" + filename + "\": switch to the default TinyEXR backend";
+    backend = IO_DEFAULT_BACKEND;
+  } else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    std::string message =
+        "OpenCV backend is not available to read file \"" + filename + "\": switch to the default TinyEXR backend";
+    backend = IO_DEFAULT_BACKEND;
+#endif
+  }
+
+  if (backend == IO_OPENCV_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    readOpenCV(I, filename);
+#endif
+  } else if (backend == IO_DEFAULT_BACKEND) {
+    readEXRTiny(I, filename);
+  }
 }
 
-// TODO: doc, OpenCV backend
+// TODO: doc
 void vpImageIo::readEXR(vpImage<vpRGBf> &I, const std::string &filename, int backend)
 {
-  readEXRTiny(I, filename);
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_SIMDLIB_BACKEND || backend == IO_STB_IMAGE_BACKEND) {
+    std::string message =
+        "This backend cannot read file \"" + filename + "\": switch to the default TinyEXR backend";
+    backend = IO_DEFAULT_BACKEND;
+  } else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    std::string message =
+        "OpenCV backend is not available to read file \"" + filename + "\": switch to the default TinyEXR backend";
+    backend = IO_DEFAULT_BACKEND;
+#endif
+  }
+
+  if (backend == IO_OPENCV_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    readOpenCV(I, filename);
+#endif
+  } else if (backend == IO_DEFAULT_BACKEND) {
+    readEXRTiny(I, filename);
+  }
 }
 
 /*!
@@ -779,16 +815,52 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
   }
 }
 
-// TODO: doc, OpenCV backend
+// TODO: doc
 void vpImageIo::writeEXR(const vpImage<float> &I, const std::string &filename, int backend)
 {
-  writeEXRTiny(I, filename);
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_SIMDLIB_BACKEND || backend == IO_STB_IMAGE_BACKEND) {
+    std::string message =
+        "This backend cannot save file \"" + filename + "\": switch to the default TinyEXR backend";
+    backend = IO_DEFAULT_BACKEND;
+  } else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    std::string message =
+        "OpenCV backend is not available to save file \"" + filename + "\": switch to the default TinyEXR backend";
+    backend = IO_DEFAULT_BACKEND;
+#endif
+  }
+
+  if (backend == IO_OPENCV_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    writeOpenCV(I, filename);
+#endif
+  } else if (backend == IO_DEFAULT_BACKEND) {
+    writeEXRTiny(I, filename);
+  }
 }
 
-// TODO: doc, OpenCV backend
+// TODO: doc
 void vpImageIo::writeEXR(const vpImage<vpRGBf> &I, const std::string &filename, int backend)
 {
-  writeEXRTiny(I, filename);
+  if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_SIMDLIB_BACKEND || backend == IO_STB_IMAGE_BACKEND) {
+    std::string message =
+        "This backend cannot save file \"" + filename + "\": switch to the default TinyEXR backend";
+    backend = IO_DEFAULT_BACKEND;
+  } else if (backend == IO_OPENCV_BACKEND) {
+#if !(defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100)
+    std::string message =
+        "OpenCV backend is not available to save file \"" + filename + "\": switch to the default TinyEXR backend";
+    backend = IO_DEFAULT_BACKEND;
+#endif
+  }
+
+  if (backend == IO_OPENCV_BACKEND) {
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+    writeOpenCV(I, filename);
+#endif
+  } else if (backend == IO_DEFAULT_BACKEND) {
+    writeEXRTiny(I, filename);
+  }
 }
 
 /*!
