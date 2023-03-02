@@ -443,8 +443,8 @@ public:
     return enable_vvs ? vpPose::poseVirtualVSWithDepth(Q, cMo).value_or(cMo) : cMo;
   }
 
-  static std::optional<vpHomogeneousMatrix> poseVirtualVSWithDepth(std::vector<vpPoint> points,
-                                                                   vpHomogeneousMatrix cMo);
+  static std::optional<vpHomogeneousMatrix> poseVirtualVSWithDepth(const std::vector<vpPoint> &points,
+                                                                   const vpHomogeneousMatrix &cMo);
 #endif
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
