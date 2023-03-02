@@ -2,12 +2,12 @@
                      Visual Servoing Platform
                      Resume of the change log
 
-     Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+     Copyright (C) 2005 - 2023 by Inria. All rights reserved.
                       https://visp.inria.fr
 
 ViSP 3.5.1 (under development)
   - Contributors:
-    . Fabien Spindler, Souriya Trinh
+    . Fabien Spindler, Souriya Trinh, Samuel Felton
   - New features and improvements
     . Video writer is now able to create the output folder recursively (see vpVideoWriter)
     . Introduce Universal Robots support with new vpRobotUniversalRobots class that
