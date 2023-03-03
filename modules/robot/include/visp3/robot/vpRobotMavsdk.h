@@ -54,7 +54,7 @@
  * \ingroup group_robot_real_drone
  *
  * Interface for [Mavlink](https://mavlink.io/en/) allowing to control drones or rovers using a MavLink compatible
- * controller.
+ * controller such a Pixhawk running PX4 or Ardupilot.
  *
  * This class needs cxx17 or more recent standard enabled during ViSP cmake configuration.
  *
@@ -63,6 +63,23 @@
  *
  * \note The body frame associated to the robot controlled through MavLink is supposed to be Front-Right-Down (FRD)
  * respectively for X-Y-Z.
+ *
+ * 1. This class was tested to control a quadcopter equipped with a Pixhawk running PX4 firmware connected to a Jetson
+ * TX2.
+ *
+ *    We provide a set of tests if you want to have a try on your flying vehicle:
+ *    - testPixhawkDroneTakeoff.cpp
+ *    - testPixhawkDronePositionControl.cpp
+ *    - testPixhawkDroneVelocityControl.cpp
+ *    - testPixhawkDroneKeyboard.cpp
+ *
+ *    We provide also this \ref tutorial-pixhawk-vs.
+ *
+ * 2. This class was also tested to control an AION ROBOTICS rover equipped with a Pixhawk running Ardupilot firmware
+ * directly connected by serial to a laptop running Ubuntu 22.04.
+ *
+ *    If you want to have a try you may see:
+ *    - testPixhawkRoverVelocityControl.cpp
  *
  * \sa \ref tutorial-pixhawk-vs
  */
@@ -81,16 +98,13 @@ public:
   //! @name General robot information
   //@{
   float getBatteryLevel() const;
-  void getPose(vpHomogeneousMatrix &pose) const;
+  void getPose(vpHomogeneousMatrix &ned_M_frd) const;
   std::tuple<float, float> getHome() const;
   std::string getAddress() const;
   //@}
 
   //! @name Robot state checking
   //@{
-  // bool isFlying() const;   // Not implemented yet
-  // bool isHovering() const; // Not implemented yet
-  // bool isLanded() const;   // Not implemented yet
   bool isRunning() const;
   //@}
 
@@ -102,26 +116,27 @@ public:
   //! @name Commands and parameters
   //@{
   bool arm();
+  bool disarm();
   void doFlatTrim();
+  bool hasFlyingCapability();
   void holdPosition();
   bool kill();
   bool land();
-  void setForwardSpeed(double vx);
-  void setLateralSpeed(double vy);
-  void setPosition(float dX, float dY, float dZ, float dPsi);
-  void setPosition(const vpHomogeneousMatrix &M);
-  void setVelocity(const vpColVector &vel, double delta_t);
-  void setVelocity(const vpColVector &vel);
-  void setVerticalSpeed(double vz);
-  void setYawSpeed(double wz);
+  void setForwardSpeed(double body_frd_vx);
+  void setLateralSpeed(double body_frd_vy);
+  bool setGPSGlobalOrigin(double latitude, double longitude, double altitude);
+  void setPosition(float ned_delta_north, float ned_delta_east, float ned_delta_down, float ned_delta_yaw);
+  void setPosition(const vpHomogeneousMatrix &ned_M_delta);
+  void setVelocity(const vpColVector &frd_vel_cmd, double delta_t);
+  void setVelocity(const vpColVector &frd_vel_cmd);
+  void setVerticalSpeed(double body_frd_vz);
+  void setYawSpeed(double body_frd_wz);
   void stopMoving();
   void setTakeOffAlt(double altitude);
   bool takeOff(bool interactive = true);
   //@}
 
 private:
-  [[noreturn]] static void sighandler(int signo);
-
   //*** Setup functions ***//
   void cleanUp();
   void createDroneController();
