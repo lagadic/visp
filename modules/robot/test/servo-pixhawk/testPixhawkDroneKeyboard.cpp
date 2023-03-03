@@ -39,7 +39,7 @@
  * This code shows how to setup keyboard control of a drone equipped with a Pixhawk
  * connected to a Jetson TX2 that runs this test using ViSP. The drone is localized
  * thanks to Qualisys Mocap. Communication between the Jetson and the Pixhawk
- * is based on Mavlink using mavsdk 3rd party.
+ * is based on Mavlink using MAVSDK 3rd party.
  */
 
 #include <iostream>

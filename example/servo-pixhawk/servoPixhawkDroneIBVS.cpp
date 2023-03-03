@@ -79,7 +79,7 @@ bool compareImagePoint(std::pair<size_t, vpImagePoint> p1, std::pair<size_t, vpI
  * equipped with a Pixhawk connected to a Jetson TX2. An Intel Realsense camera
  * is also attached to the drone and connected to the Jetson. The drone is localized
  * thanks to Qualisys Mocap. Communication between the Jetson and the Pixhawk
- * is based on Mavlink using mavsdk 3rd party.
+ * is based on Mavlink using MAVSDK 3rd party.
  *
  * This program makes the drone detect and follow an AprilTag from the 36h11 family.
  *
