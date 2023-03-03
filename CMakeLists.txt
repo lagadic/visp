@@ -1060,6 +1060,11 @@ if(USE_FRANKA)
   set(VISP_HAVE_FRANKA_VERSION "(${Franka_VERSION_MAJOR}<<16 | ${Franka_VERSION_MINOR}<<8 | ${Franka_VERSION_PATCH})") # for vpConfig.h
 endif()
 
+# check MAVSDK and set version
+if(USE_MAVSDK)
+  set(VISP_HAVE_MAVSDK_VERSION "(${MAVSDK_VERSION_MAJOR}<<16 | ${MAVSDK_VERSION_MINOR}<<8 | ${MAVSDK_VERSION_PATCH})") # for vpConfig.h
+endif()
+
 # NaN
 # Find isnan macro (C-style): https://www.cplusplus.com/reference/cmath/isnan/
 VP_SET(VISP_HAVE_FUNC_ISNAN TRUE IF HAVE_FUNC_ISNAN) # for header vpConfig.h
@@ -1554,7 +1559,7 @@ status("    Use aria (Pioneer):"     USE_ARIA         THEN "yes" ELSE "no")
 status("    Use PTU46:"              USE_PTU46        THEN "yes" ELSE "no")
 status("    Use Biclops PTU:"        USE_BICLOPS      THEN "yes" ELSE "no")
 status("    Use Flir PTU SDK:"       USE_FLIRPTUSDK   THEN "yes (ver ${FLIRPTUSDK_VERSION})" ELSE "no")
-status("    Use MAVSDK:"             USE_MAVSDK       THEN "yes" ELSE "no")
+status("    Use MAVSDK:"             USE_MAVSDK       THEN "yes (ver ${MAVSDK_VERSION})" ELSE "no")
 status("    Use Parrot ARSDK:"       USE_ARSDK        THEN "yes" ELSE "no")
 status("    \\-Use ffmpeg:"          USE_FFMPEG       THEN "yes" ELSE "no")
 status("    Use Virtuose:"           USE_VIRTUOSE     THEN "yes" ELSE "no")
