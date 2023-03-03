@@ -386,9 +386,9 @@ void vpDisplay::displayEllipse(const vpImage<unsigned char> &I, const vpImagePoi
 */
 void vpDisplay::displayFrame(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &cMo,
                              const vpCameraParameters &cam, double size, const vpColor &color, unsigned int thickness,
-                             const vpImagePoint &offset)
+                             const vpImagePoint &offset, const std::string& frameName, const vpColor& textColor, const vpImagePoint& textOffset)
 {
-  vp_display_display_frame(I, cMo, cam, size, color, thickness, offset);
+  vp_display_display_frame(I, cMo, cam, size, color, thickness, offset, frameName, textColor, textOffset);
 }
 
 /*!
