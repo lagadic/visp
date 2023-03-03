@@ -289,45 +289,129 @@ void vp_display_display_ellipse(const vpImage<Type> &I, const vpImagePoint &cent
 
 template <class Type>
 void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
-                              double size, const vpColor &color, unsigned int thickness, const vpImagePoint &offset)
+                              double size, const vpColor &color, unsigned int thickness, const vpImagePoint &offset,
+                              const std::string& frameName, const vpColor& textColor, const vpImagePoint& textOffset)
 {
-  // used by display
+  // Projecting the origin of the object frame in the camera plane
   vpPoint o(0.0, 0.0, 0.0);
-  vpPoint x(size, 0.0, 0.0);
-  vpPoint y(0.0, size, 0.0);
-  vpPoint z(0.0, 0.0, size);
-
   o.track(cMo);
-  x.track(cMo);
-  y.track(cMo);
-  z.track(cMo);
 
-  vpImagePoint ipo, ip1;
+  vpColor xAxisColor(vpColor::none), yAxisColor(vpColor::none), zAxisColor(vpColor::none);
+  vpImagePoint ipo, ipx, ipy, ipz;
   vpRect bbox(0, 0, I.getWidth(), I.getHeight());
 
-  if (color == vpColor::none) {
-    vpMeterPixelConversion::convertPoint(cam, o.p[0], o.p[1], ipo);
-    if (bbox.isInside(ipo)) {
-      vpMeterPixelConversion::convertPoint(cam, x.p[0], x.p[1], ip1);
-      vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, vpColor::red, 4 * thickness, 2 * thickness, thickness);
+  // Selecting the color of the axes
+  if (color == vpColor::none)
+  {
+    xAxisColor = vpColor::red;
+    yAxisColor = vpColor::green;
+    zAxisColor = vpColor::blue;
+  }
+  else
+  { 
+    xAxisColor = color;
+    yAxisColor = color;
+    zAxisColor = color;
+  }
 
-      vpMeterPixelConversion::convertPoint(cam, y.p[0], y.p[1], ip1);
-      vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, vpColor::green, 4 * thickness, 2 * thickness, thickness);
+  vpMeterPixelConversion::convertPoint(cam, o.p[0], o.p[1], ipo);
+  if (bbox.isInside(ipo)) {
+    double u_size = cam.get_px() * size / cMo[2][3]; // u_size = size/Z * cam.px
+    double v_size = cam.get_py() * size / cMo[2][3]; // v_size = size/Z * cam.py
 
-      vpMeterPixelConversion::convertPoint(cam, z.p[0], z.p[1], ip1);
-      vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, vpColor::blue, 4 * thickness, 2 * thickness, thickness);
+    // Computing the perspective projection of the X-axis and drawing it
+    vpImagePoint ipx(ipo);
+    ipx.set_u( ipx.get_u() + u_size * cMo[0][0]);
+    ipx.set_v( ipx.get_v() + v_size * cMo[1][0]);
+    vpDisplay::displayArrow(I, ipo + offset, ipx + offset, xAxisColor, 4 * thickness, 2 * thickness, thickness);
+
+    // Computing the perspective projection of the Y-axis and drawing it
+    vpImagePoint ipy(ipo);
+    ipy.set_u( ipy.get_u() + u_size * cMo[0][1]);
+    ipy.set_v( ipy.get_v() + v_size * cMo[1][1]);
+    vpDisplay::displayArrow(I, ipo + offset, ipy + offset, yAxisColor, 4 * thickness, 2 * thickness, thickness);
+
+    // Computing the perspective projection of the Y-axis and drawing it
+    vpImagePoint ipz(ipo);
+    ipz.set_u( ipz.get_u() + u_size * cMo[0][2]);
+    ipz.set_v( ipz.get_v() + v_size * cMo[1][2]);
+    vpDisplay::displayArrow(I, ipo + offset, ipz + offset, zAxisColor, 4 * thickness, 2 * thickness, thickness);
+  }
+  
+  // If frameName != empty, computing the image coordinates (u v) of the text
+  // such as we avoid as much as we can to cross an axis
+  if(!frameName.empty())
+  {
+    // The actual offset that will be applied to the text with regard to the frame origin
+    // The horizontal / vertical offset direction will go in the direction opposed to the
+    // most horizontal and most vertical axis
+    vpImagePoint actualTextOffset;
+
+    // Sign(val) = +1. if val > 0, -1. if val < 0. and 0. if val == 0
+    double (*sign) (double) = [](double val)
+    {
+      double val_abs = std::abs(val);
+      if(val_abs < std::numeric_limits<double>::epsilon())
+      {
+        return 0.;
+      }
+      return val_abs/val;
+    };
+
+    // Looking for the axis of the object frame that has the hugest X and Y value
+    // in the camera frame, in terms of absolute value
+    double abs_u_val = std::abs(cMo[0][0]); // Taking the X-axis of the object frame as first initial guess
+    double u_direction = sign(cMo[0][0]); // Taking the direction of the X-axis of the object frame in the camera frame
+    double abs_v_val = std::abs(cMo[1][0]); // Taking the X-axis of the object frame as first initial guess
+    double v_direction = sign(cMo[1][0]); // Taking the direction of the X-axis of the object frame in the camera frame
+
+    for(int i = 1; i <= 2; i++)
+    {
+      double abs_u_candidate = std::abs(cMo[0][i]);
+      double u_direction_candidate = sign(cMo[0][i]);
+      if(abs_u_candidate - abs_u_val > std::numeric_limits<double>::epsilon())
+      {
+        // The norm of the candidate axis is greater => we take its direction
+        abs_u_val = abs_u_candidate;
+        u_direction = u_direction_candidate;
+      }
+      else if(std::abs(abs_u_candidate - abs_u_val) < std::numeric_limits<double>::epsilon())
+      {
+        if(std::abs(u_direction - u_direction_candidate) > std::numeric_limits<double>::epsilon())
+        {
+          // The norm are equal => we always take the positive direction
+          u_direction = +1.;
+        }
+      }
+
+      double abs_v_candidate = std::abs(cMo[1][i]);
+      double v_direction_candidate = sign(cMo[1][i]);
+      if(abs_v_candidate - abs_v_val > std::numeric_limits<double>::epsilon())
+      {
+        // The norm of the candidate axis is greater => we take its direction
+        abs_v_val = abs_v_candidate;
+        v_direction = v_direction_candidate;
+      }
+      else if(std::abs(abs_v_candidate - abs_v_val) < std::numeric_limits<double>::epsilon())
+      {
+        if(std::abs(v_direction - v_direction_candidate) > std::numeric_limits<double>::epsilon())
+        {
+          // The norm are equal => we always take the positive direction
+          v_direction = +1.;
+        }
+      }
     }
-  } else {
-    vpMeterPixelConversion::convertPoint(cam, o.p[0], o.p[1], ipo);
-    if (bbox.isInside(ipo)) {
-      vpMeterPixelConversion::convertPoint(cam, x.p[0], x.p[1], ip1);
-      vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, color, 4 * thickness, 2 * thickness, thickness);
 
-      vpMeterPixelConversion::convertPoint(cam, y.p[0], y.p[1], ip1);
-      vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, color, 4 * thickness, 2 * thickness, thickness);
+    // The offset of the text is set in the opposite direction of the object frame axes
+    // having the greastest projection in the camera frame in order to limit
+    // the risk of crossing a frame axis in the image
+    actualTextOffset.set_u(-1. * u_direction * textOffset.get_u());
+    actualTextOffset.set_v(-1. * v_direction * textOffset.get_v());
 
-      vpMeterPixelConversion::convertPoint(cam, z.p[0], z.p[1], ip1);
-      vpDisplay::displayArrow(I, ipo + offset, ip1 + offset, color, 4 * thickness, 2 * thickness, thickness);
+    // Check if the text position is located inside the image
+    if (bbox.isInside(ipo + actualTextOffset))
+    {
+      vpDisplay::displayText(I, ipo + actualTextOffset, frameName, textColor);
     }
   }
 }

@@ -21,6 +21,7 @@ set(tutorial_cpp
   tutorial-draw-point.cpp
   tutorial-draw-cross.cpp
   tutorial-draw-text.cpp
+  tutorial-draw-frame.cpp
   tutorial-export-image.cpp
   tutorial-event-keyboard.cpp
   tutorial-video-manipulation.cpp)
