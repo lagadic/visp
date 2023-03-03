@@ -192,7 +192,7 @@ bool read_data(const std::string &input_directory, int cpt, const vpCameraParame
                 "Template function supports only unsigned char and vpRGBa images!");
 #endif
   char buffer[FILENAME_MAX];
-  snprintf(buffer, FILENAME_MAX, std::string(input_directory + "/Images/Image_%04d.pgm").c_str(), cpt);
+  snprintf(buffer, FILENAME_MAX, std::string(input_directory + "/Images/Image_%04d.png").c_str(), cpt);
   std::string image_filename = buffer;
 
   snprintf(buffer, FILENAME_MAX, std::string(input_directory + "/Depth/Depth_%04d.bin").c_str(), cpt);

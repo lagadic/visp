@@ -321,6 +321,9 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
 
     pose.clearPoint();
 
+    // Clear string stream that previously contained the path to the "object.0.pos" file.
+    ss.str(std::string());
+
     // file parser
     // number of points
     // X Y Z

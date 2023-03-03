@@ -20,19 +20,10 @@ of ViSP from source.
 - There are a lot of documentation and tutorial that explain different ways to setup a Raspberry Pi. A good reference is the official
 page http://www.raspberrypi.org/.
 
-- We suggest to start with NOOBS (New Out Of the Box Software). Bellow we resume the different steps that are fully described
-in http://www.raspberrypi.org/help/noobs-setup/:
-  - Format you SD card (at least 4Go are requested) on your computer. To this end you can use "GParted partition editor"  under Ubuntu.
-  - Download Noobs "Offline and network install" zip file from http://www.raspberrypi.org/downloads/.
-  - Unzip all the files on the SD card.
-  - Insert your SD Card into your Raspberry Pi.
-  - Plug in your keyboard, mouse, monitor and Ethernet cables.
-  - Now plug in the USB power cable to your Pi.
-  - Your Raspberry Pi will boot, and a window will appear with a list of different operating systems that you can install.
-    Select the "recommended Raspbian" checkbox and click on "Install" button.
-  - When the install process has completed, the Raspberry Pi configuration menu (raspi-config) will load. Here you are able
-    to set the time and date for your region and enable a Raspberry Pi camera board, or even create users. You can exit this
-    menu by using Tab on your keyboard to move to Finish.
+- To install Raspberry Pi OS on a SD card, go to http://www.raspberrypi.org/downloads/ and download and install
+Raspberry Pi Imager to a computer with an SD card reader. Put the SD card you'll use with your Raspberry Pi into
+the reader and run Raspberry Pi Imager. At the end of the process, plug your SD card in your Raspberry Pi and
+finish the installation by setting your login, password, region and language.
 
 \subsection install_raspberry_login Logging in
 
@@ -128,7 +119,7 @@ In this section, we give minimal instructions to build ViSP from source just to 
 - Install a small number of recommended 3rd parties
 \verbatim
 $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev \
-  libzbar-dev libpthread-stubs0-dev libjpeg-dev libpng12-dev
+  libzbar-dev libpthread-stubs0-dev libjpeg-dev libpng-dev
 \endverbatim
 
 - Get ViSP source code
@@ -191,7 +182,7 @@ We give also the way to install other 3rd party libraries to enable specific cap
 
 - libjpeg and libpng to support jpeg and png images respectively (only useful if OpenCV is not installed)
 \verbatim
-$ sudo apt-get install libjpeg-dev libpng12-dev
+$ sudo apt-get install libjpeg-dev libpng-dev
 \endverbatim
 
 \subsection install_raspberry_visp_get_source Get ViSP source code

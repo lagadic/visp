@@ -626,7 +626,7 @@ int main()
 
     vpRxyzVector rxyz(vpMath::rad(rxyz_deg_truth[0]), vpMath::rad(rxyz_deg_truth[1]), vpMath::rad(rxyz_deg_truth[2]));
     vpColVector rxyz_deg = vpMath::deg(rxyz);
-    for (size_t i = 0u; i < rxyz_deg_truth.size(); i++) {
+    for (unsigned int i = 0u; i < rxyz_deg_truth.size(); i++) {
       if (!vpMath::equal(rxyz_deg[i], rxyz_deg_truth[i], 0.001)) {
         std::cerr << "Problem with vpMath::deg(vpRotationVector) " << i << ": " << rxyz_deg[i] << std::endl;
         return EXIT_FAILURE;

@@ -275,7 +275,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
   ss << input_directory << "/image_";
   ss << std::setfill('0') << std::setw(4);
   ss << cpt;
-  ss << ".pgm";
+  ss << ".png";
   std::string filename_image = ss.str();
   if (!vpIoTools::checkFilename(filename_image)) {
     std::cerr << "Cannot read: " << filename_image << std::endl;

@@ -1,6 +1,8 @@
 name: Ubuntu-sanitizers
 
 on:
+  push:
+  pull_request:
   schedule:
     # https://docs.github.com/en/free-pro-team@latest/actions/reference/events-that-trigger-workflows#scheduled-events
     # * is a special character in YAML so you have to quote this string
@@ -50,6 +52,26 @@ jobs:
     - name: Compile
       working-directory: build
       run: make -j$(nproc)
+
+    - name: Workaround error in SimdLib
+      # ==20865==ERROR: AddressSanitizer: odr-violation (0x7f4ad36c4500):
+      #   [1] size=8 'ALIGNMENT' /home/runner/work/visp/visp/3rdparty/simdlib/Simd/SimdLib.cpp:82:18
+      #   [2] size=8 'ALIGNMENT' /home/runner/work/visp/visp/3rdparty/simdlib/Simd/SimdLib.cpp:82:18
+      # These globals were registered at these points:
+      #   [1]:
+      #     #0 0x7f4ad3702928 in __asan_register_globals ../../../../src/libsanitizer/asan/asan_globals.cpp:341
+      #     #1 0x7f4ad2eea39a in _sub_I_00099_1 (/home/runner/work/visp/visp/build/lib/libvisp_mbt.so.3.5+0x4e839a)
+      #     #2 0x7f4ad40c847d  (/lib64/ld-linux-x86-64.so.2+0x647d)
+      #
+      #   [2]:
+      #     #0 0x7f4ad3702928 in __asan_register_globals ../../../../src/libsanitizer/asan/asan_globals.cpp:341
+      #     #1 0x7f4ad1957db0 in _sub_I_00099_1 (/home/runner/work/visp/visp/build/lib/libvisp_core.so.3.5+0x6aadb0)
+      #     #2 0x7f4ad40c847d  (/lib64/ld-linux-x86-64.so.2+0x647d)
+      #
+      # ==20865==HINT: if you don't care about these errors you may set ASAN_OPTIONS=detect_odr_violation=0
+      # SUMMARY: AddressSanitizer: odr-violation: global 'ALIGNMENT' at /home/runner/work/visp/visp/3rdparty/simdlib/Simd/SimdLib.cpp:82:18
+      if: ${{ matrix.flags=='-fsanitize=address' }}
+      run: echo "ASAN_OPTIONS=detect_odr_violation=0" >> $GITHUB_ENV
 
     - name: Run unit tests with sanitizers
       working-directory: build
