@@ -70,7 +70,7 @@ private:
    * \param[in] mavsdk : the Mavsdk object we will use to subscribe to the system.
    * \returns Returns a shared pointer to the system.
    */
-  std::shared_ptr<mavsdk::System> getSystem(mavsdk::Mavsdk &mavsdk)
+    std::shared_ptr<mavsdk::System> getSystem(mavsdk::Mavsdk &mavsdk)
   {
     std::cout << "Waiting to discover system..." << std::endl;
     auto prom = std::promise<std::shared_ptr<mavsdk::System> >{};
@@ -78,14 +78,22 @@ private:
 
     // We wait for new systems to be discovered, once we find one that has an
     // autopilot, we decide to use it.
+#if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
     mavsdk::Mavsdk::NewSystemHandle handle = mavsdk.subscribe_on_new_system([&mavsdk, &prom, &handle]() {
+#else
+    mavsdk.subscribe_on_new_system([&mavsdk, &prom]() {
+#endif
       auto system = mavsdk.systems().back();
 
       if (system->has_autopilot()) {
         std::cout << "Discovered autopilot" << std::endl;
 
         // Unsubscribe again as we only want to find one system.
+#if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
         mavsdk.unsubscribe_on_new_system(handle);
+#else
+        mavsdk.subscribe_on_new_system(nullptr);
+#endif
         prom.set_value(system);
       }
     });
