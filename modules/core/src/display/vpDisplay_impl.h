@@ -32,6 +32,8 @@
  * Display implementation.
  *
  *****************************************************************************/
+
+#include <visp3/core/vpMath.h>
 #include <visp3/core/vpMeterPixelConversion.h>
 #include <visp3/core/vpPoint.h>
 
@@ -347,28 +349,17 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
     // most horizontal and most vertical axis
     vpImagePoint actualTextOffset;
 
-    // Sign(val) = +1. if val > 0, -1. if val < 0. and 0. if val == 0
-    double (*sign) (double) = [](double val)
-    {
-      double val_abs = std::abs(val);
-      if(val_abs < std::numeric_limits<double>::epsilon())
-      {
-        return 0.;
-      }
-      return val_abs/val;
-    };
-
     // Looking for the axis of the object frame that has the hugest X and Y value
     // in the camera frame, in terms of absolute value
     double abs_u_val = std::abs(cMo[0][0]); // Taking the X-axis of the object frame as first initial guess
-    double u_direction = sign(cMo[0][0]); // Taking the direction of the X-axis of the object frame in the camera frame
+    int u_direction = vpMath::sign(cMo[0][0]); // Taking the direction of the X-axis of the object frame in the camera frame
     double abs_v_val = std::abs(cMo[1][0]); // Taking the X-axis of the object frame as first initial guess
-    double v_direction = sign(cMo[1][0]); // Taking the direction of the X-axis of the object frame in the camera frame
+    int v_direction = vpMath::sign(cMo[1][0]); // Taking the direction of the X-axis of the object frame in the camera frame
 
     for(int i = 1; i <= 2; i++)
     {
       double abs_u_candidate = std::abs(cMo[0][i]);
-      double u_direction_candidate = sign(cMo[0][i]);
+      int u_direction_candidate = vpMath::sign(cMo[0][i]);
       if(abs_u_candidate - abs_u_val > std::numeric_limits<double>::epsilon())
       {
         // The norm of the candidate axis is greater => we take its direction
@@ -377,7 +368,7 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
       }
       else if(std::abs(abs_u_candidate - abs_u_val) < std::numeric_limits<double>::epsilon())
       {
-        if(std::abs(u_direction - u_direction_candidate) > std::numeric_limits<double>::epsilon())
+        if(std::abs(u_direction - u_direction_candidate) > 0)
         {
           // The norm are equal => we always take the positive direction
           u_direction = +1.;
@@ -385,7 +376,7 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
       }
 
       double abs_v_candidate = std::abs(cMo[1][i]);
-      double v_direction_candidate = sign(cMo[1][i]);
+      double v_direction_candidate = vpMath::sign(cMo[1][i]);
       if(abs_v_candidate - abs_v_val > std::numeric_limits<double>::epsilon())
       {
         // The norm of the candidate axis is greater => we take its direction
@@ -394,7 +385,7 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
       }
       else if(std::abs(abs_v_candidate - abs_v_val) < std::numeric_limits<double>::epsilon())
       {
-        if(std::abs(v_direction - v_direction_candidate) > std::numeric_limits<double>::epsilon())
+        if(std::abs(v_direction - v_direction_candidate) > 0)
         {
           // The norm are equal => we always take the positive direction
           v_direction = +1.;

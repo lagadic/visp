@@ -42,10 +42,14 @@ int main()
         r[idAxis] = vpMath::rad(theta);
         vpHomogeneousMatrix cMo;
         cMo.buildFrom(t, vpRotationMatrix(r));
-        std::string name = "cMo_" + std::to_string((int)theta) + "_" + axisName[idAxis];
+        std::stringstream ss_name;
+        ss_name << "cMo_";
+        ss_name << static_cast<int>(theta);
+        ss_name << "_";
+        ss_name << axisName[idAxis];
 
         //! [frame]
-        vpDisplay::displayFrame(I, cMo, cam, 0.1, vpColor::none, 1, vpImagePoint(), name, vpColor::yellow, vpImagePoint(40,40));
+        vpDisplay::displayFrame(I, cMo, cam, 0.1, vpColor::none, 1, vpImagePoint(), ss_name.str(), vpColor::yellow, vpImagePoint(40,40));
         //! [frame]
       }
     }
