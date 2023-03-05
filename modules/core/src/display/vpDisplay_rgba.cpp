@@ -380,8 +380,10 @@ void vpDisplay::displayEllipse(const vpImage<vpRGBa> &I, const vpImagePoint &cen
   \param size : Size of the object frame.
   \param color : Color used to display the frame in the image.
   \param thickness : the thickness of the line.
-  \param offset : Offset in pixels applied to the frame origin location in the
-  image.
+  \param offset : Offset in pixels applied to the frame origin location in the image.
+  \param frameName : Text to display along side the origin of the frame.
+  \param textColor : Color of the text associated to `frameName`.
+  \param textOffset : Offset used to shift the text from the origin of the frame.
 */
 void vpDisplay::displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                              double size, const vpColor &color, unsigned int thickness, const vpImagePoint &offset,
