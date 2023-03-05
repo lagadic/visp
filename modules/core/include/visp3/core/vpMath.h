@@ -155,7 +155,7 @@ public:
   static inline int round(double x);
 
   //   return the sign of x (+-1)
-  static inline int(sign)(double x);
+  static inline int sign(double x);
 
   // test if a number equals 0 (with threshold value)
   static inline bool nul(double x, double s = 0.001);
@@ -342,7 +342,7 @@ int vpMath::round(double x)
   \param x : Value to test.
   \return -1 if x is negative, +1 if positive and 0 if zero.
 */
-int(vpMath::sign)(double x)
+int vpMath::sign(double x)
 {
   if (fabs(x) < std::numeric_limits<double>::epsilon())
     return 0;
