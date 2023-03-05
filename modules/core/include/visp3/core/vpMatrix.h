@@ -716,55 +716,55 @@ vpMatrix M(R);
 
     The following example shows how to use this function:
     \code
-#include <visp3/core/vpMatrix.h>
+    #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  std::string filename("matrix.bin");
-  bool binary_data = true;
-  {
-    vpMatrix M(2, 3);
-    M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
-    M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+    int main()
+    {
+      std::string filename("matrix.bin");
+      bool binary_data = true;
+      {
+        vpMatrix M(2, 3);
+        M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
+        M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
 
-    std::string header("My header");
+        std::string header("My header");
 
-    if (vpMatrix::saveMatrix(filename, M, binary_data, header.c_str())) {
-      std::cout << "Matrix saved in " << filename << std::endl;
-      M.print(std::cout, 10, header);
-    } else {
-      std::cout << "Cannot save matrix in " << filename << std::endl;
+        if (vpMatrix::saveMatrix(filename, M, binary_data, header.c_str())) {
+          std::cout << "Matrix saved in " << filename << std::endl;
+          M.print(std::cout, 10, header);
+        } else {
+          std::cout << "Cannot save matrix in " << filename << std::endl;
+        }
+      }
+      {
+        vpMatrix N;
+        char header[FILENAME_MAX];
+        if (vpMatrix::loadMatrix(filename, N, binary_data, header)) {
+          std::cout << "Matrix loaded from " << filename << std::endl;
+          N.print(std::cout, 10, header);
+        } else {
+          std::cout << "Cannot load matrix from " << filename << std::endl;
+        }
+      }
     }
-  }
-  {
-    vpMatrix N;
-    char header[FILENAME_MAX];
-    if (vpMatrix::loadMatrix(filename, N, binary_data, header)) {
-      std::cout << "Matrix loaded from " << filename << std::endl;
-      N.print(std::cout, 10, header);
-    } else {
-      std::cout << "Cannot load matrix from " << filename << std::endl;
-    }
-  }
-}
     \endcode
 
     The output of this example is the following:
     \verbatim
-Matrix saved in matrix.bin
-My header[2,3]=
-  -1.0 -2.0 -3.0
-   4.0  5.5  6.0
-Matrix loaded from matrix.bin
-My header[2,3]=
-  -1.0 -2.0 -3.0
-   4.0  5.5  6.0
+    Matrix saved in matrix.bin
+    My header[2,3]=
+      -1.0 -2.0 -3.0
+       4.0  5.5  6.0
+    Matrix loaded from matrix.bin
+    My header[2,3]=
+      -1.0 -2.0 -3.0
+       4.0  5.5  6.0
     \endverbatim
 
     And the content of `matrix.bin` file where data are saved as binary data is the following:
     \verbatim
-% cat matrix.bin
-My header??@@@%
+    % cat matrix.bin
+    My header??@@@%
     \endverbatim
 
     \sa saveMatrix(), saveMatrixYAML(), loadMatrixYAML()
@@ -787,59 +787,59 @@ My header??@@@%
 
     The following example shows how to use this function:
     \code
-#include <visp3/core/vpMatrix.h>
+    #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  std::string filename("matrix.yaml");
-  {
-    vpMatrix M(2, 3);
-    M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
-    M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+    int main()
+    {
+      std::string filename("matrix.yaml");
+      {
+        vpMatrix M(2, 3);
+        M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
+        M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
 
-    std::string header("My header");
+        std::string header("My header");
 
-    if (vpMatrix::saveMatrixYAML(filename, M, header.c_str())) {
-      std::cout << "Matrix saved in " << filename << std::endl;
-      M.print(std::cout, 10, header);
-    } else {
-      std::cout << "Cannot save matrix in " << filename << std::endl;
+        if (vpMatrix::saveMatrixYAML(filename, M, header.c_str())) {
+          std::cout << "Matrix saved in " << filename << std::endl;
+          M.print(std::cout, 10, header);
+        } else {
+          std::cout << "Cannot save matrix in " << filename << std::endl;
+        }
+      }
+      {
+        vpMatrix N;
+        char header[FILENAME_MAX];
+        if (vpMatrix::loadMatrixYAML(filename, N, header)) {
+          std::cout << "Matrix loaded from " << filename << std::endl;
+          N.print(std::cout, 10, header);
+        } else {
+          std::cout << "Cannot load matrix from " << filename << std::endl;
+        }
+      }
     }
-  }
-  {
-    vpMatrix N;
-    char header[FILENAME_MAX];
-    if (vpMatrix::loadMatrixYAML(filename, N, header)) {
-      std::cout << "Matrix loaded from " << filename << std::endl;
-      N.print(std::cout, 10, header);
-    } else {
-      std::cout << "Cannot load matrix from " << filename << std::endl;
-    }
-  }
-}
     \endcode
 
     The output of this example is the following:
     \verbatim
-Matrix saved in matrix.yaml
-My header[2,3]=
-  -1.0 -2.0 -3.0
-   4.0  5.5  6.0
-Matrix loaded from matrix.yaml
-My header[2,3]=
-  -1.0 -2.0 -3.0
-   4.0  5.5  6.0
+    Matrix saved in matrix.yaml
+    My header[2,3]=
+      -1.0 -2.0 -3.0
+       4.0  5.5  6.0
+    Matrix loaded from matrix.yaml
+    My header[2,3]=
+      -1.0 -2.0 -3.0
+       4.0  5.5  6.0
     \endverbatim
 
     And the content of `matrix.yaml` file is the following:
     \verbatim
-% cat matrix.yaml
-My header
-rows: 2
-cols: 3
-data:
-  - [-1, -2, -3]
-  - [4, 5.5, 6]
+    % cat matrix.yaml
+    My header
+    rows: 2
+    cols: 3
+    data:
+      - [-1, -2, -3]
+      - [4, 5.5, 6]
     \endverbatim
 
     \sa saveMatrixYAML(), saveMatrix(), loadMatrix()
@@ -864,55 +864,55 @@ data:
 
     The following example shows how to use this function:
     \code
-#include <visp3/core/vpMatrix.h>
+    #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  std::string filename("matrix.bin");
-  bool binary_data = true;
-  {
-    vpMatrix M(2, 3);
-    M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
-    M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+    int main()
+    {
+      std::string filename("matrix.bin");
+      bool binary_data = true;
+      {
+        vpMatrix M(2, 3);
+        M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
+        M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
 
-    std::string header("My header");
+        std::string header("My header");
 
-    if (vpMatrix::saveMatrix(filename, M, binary_data, header.c_str())) {
-      std::cout << "Matrix saved in " << filename << std::endl;
-      M.print(std::cout, 10, header);
-    } else {
-      std::cout << "Cannot save matrix in " << filename << std::endl;
+        if (vpMatrix::saveMatrix(filename, M, binary_data, header.c_str())) {
+          std::cout << "Matrix saved in " << filename << std::endl;
+          M.print(std::cout, 10, header);
+        } else {
+          std::cout << "Cannot save matrix in " << filename << std::endl;
+        }
+      }
+      {
+        vpMatrix N;
+        char header[FILENAME_MAX];
+        if (vpMatrix::loadMatrix(filename, N, binary_data, header)) {
+          std::cout << "Matrix loaded from " << filename << std::endl;
+          N.print(std::cout, 10, header);
+        } else {
+          std::cout << "Cannot load matrix from " << filename << std::endl;
+        }
+      }
     }
-  }
-  {
-    vpMatrix N;
-    char header[FILENAME_MAX];
-    if (vpMatrix::loadMatrix(filename, N, binary_data, header)) {
-      std::cout << "Matrix loaded from " << filename << std::endl;
-      N.print(std::cout, 10, header);
-    } else {
-      std::cout << "Cannot load matrix from " << filename << std::endl;
-    }
-  }
-}
     \endcode
 
     The output of this example is the following:
     \verbatim
-Matrix saved in matrix.bin
-My header[2,3]=
-  -1.0 -2.0 -3.0
-   4.0  5.5  6.0
-Matrix loaded from matrix.bin
-My header[2,3]=
-  -1.0 -2.0 -3.0
-   4.0  5.5  6.0
+    Matrix saved in matrix.bin
+    My header[2,3]=
+      -1.0 -2.0 -3.0
+       4.0  5.5  6.0
+    Matrix loaded from matrix.bin
+    My header[2,3]=
+      -1.0 -2.0 -3.0
+       4.0  5.5  6.0
     \endverbatim
 
     And the content of `matrix.bin` file where data are saved as binary data is the following:
     \verbatim
-% cat matrix.bin
-My header??@@@%
+    % cat matrix.bin
+    My header??@@@%
     \endverbatim
 
     \sa loadMatrix(), saveMatrixYAML(), loadMatrixYAML()
@@ -936,59 +936,59 @@ My header??@@@%
 
     The following example shows how to use this function:
     \code
-#include <visp3/core/vpMatrix.h>
+    #include <visp3/core/vpMatrix.h>
 
-int main()
-{
-  std::string filename("matrix.yaml");
-  {
-    vpMatrix M(2, 3);
-    M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
-    M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
+    int main()
+    {
+      std::string filename("matrix.yaml");
+      {
+        vpMatrix M(2, 3);
+        M[0][0] = -1; M[0][1] =  -2; M[0][2] = -3;
+        M[1][0] =  4; M[1][1] = 5.5; M[1][2] =  6.0f;
 
-    std::string header("My header");
+        std::string header("My header");
 
-    if (vpMatrix::saveMatrixYAML(filename, M, header.c_str())) {
-      std::cout << "Matrix saved in " << filename << std::endl;
-      M.print(std::cout, 10, header);
-    } else {
-      std::cout << "Cannot save matrix in " << filename << std::endl;
+        if (vpMatrix::saveMatrixYAML(filename, M, header.c_str())) {
+          std::cout << "Matrix saved in " << filename << std::endl;
+          M.print(std::cout, 10, header);
+        } else {
+          std::cout << "Cannot save matrix in " << filename << std::endl;
+        }
+      }
+      {
+        vpMatrix N;
+        char header[FILENAME_MAX];
+        if (vpMatrix::loadMatrixYAML(filename, N, header)) {
+          std::cout << "Matrix loaded from " << filename << std::endl;
+          N.print(std::cout, 10, header);
+        } else {
+          std::cout << "Cannot load matrix from " << filename << std::endl;
+        }
+      }
     }
-  }
-  {
-    vpMatrix N;
-    char header[FILENAME_MAX];
-    if (vpMatrix::loadMatrixYAML(filename, N, header)) {
-      std::cout << "Matrix loaded from " << filename << std::endl;
-      N.print(std::cout, 10, header);
-    } else {
-      std::cout << "Cannot load matrix from " << filename << std::endl;
-    }
-  }
-}
     \endcode
 
     The output of this example is the following:
     \verbatim
-Matrix saved in matrix.yaml
-My header[2,3]=
-  -1.0 -2.0 -3.0
-   4.0  5.5  6.0
-Matrix loaded from matrix.yaml
-My header[2,3]=
-  -1.0 -2.0 -3.0
-   4.0  5.5  6.0
+    Matrix saved in matrix.yaml
+    My header[2,3]=
+      -1.0 -2.0 -3.0
+       4.0  5.5  6.0
+    Matrix loaded from matrix.yaml
+    My header[2,3]=
+      -1.0 -2.0 -3.0
+       4.0  5.5  6.0
     \endverbatim
 
     And the content of `matrix.yaml` file is the following:
     \verbatim
-% cat matrix.yaml
-My header
-rows: 2
-cols: 3
-data:
-  - [-1, -2, -3]
-  - [4, 5.5, 6]
+    % cat matrix.yaml
+    My header
+    rows: 2
+    cols: 3
+    data:
+      - [-1, -2, -3]
+      - [4, 5.5, 6]
     \endverbatim
 
     \sa saveMatrix(), loadMatrix(), loadMatrixYAML()
