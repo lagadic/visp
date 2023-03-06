@@ -37,8 +37,10 @@ jobs:
       run: brew install libpng libjpeg libdc1394 opencv pcl librealsense zbar vtk fftw armadillo
 
     - name: Clone visp-images
+      env:
+        BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
       run: |
-        git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
+        git clone --depth 1 --branch ${BRANCH_NAME} https://github.com/lagadic/visp-images ${HOME}/visp-images
         echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
