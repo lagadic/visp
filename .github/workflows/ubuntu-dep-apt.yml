@@ -45,8 +45,15 @@ jobs:
       run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
 
     - name: Clone visp-images
+      env:
+        BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
       run: |
-        git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
+        if [ git ls-remote --heads https://github.com/lagadic/visp-images.git ${BRANCH_NAME} | wc -l -eq 1 ]
+        then
+          git clone --depth 1 --branch ${BRANCH_NAME} https://github.com/lagadic/visp-images ${HOME}/visp-images
+        else
+          git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
+        fi
         echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
