@@ -371,12 +371,12 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
         if(std::abs(u_direction - u_direction_candidate) > 0)
         {
           // The norm are equal => we always take the positive direction
-          u_direction = +1.;
+          u_direction = +1;
         }
       }
 
       double abs_v_candidate = std::abs(cMo[1][i]);
-      double v_direction_candidate = vpMath::sign(cMo[1][i]);
+      int v_direction_candidate = vpMath::sign(cMo[1][i]);
       if(abs_v_candidate - abs_v_val > std::numeric_limits<double>::epsilon())
       {
         // The norm of the candidate axis is greater => we take its direction
@@ -388,7 +388,7 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
         if(std::abs(v_direction - v_direction_candidate) > 0)
         {
           // The norm are equal => we always take the positive direction
-          v_direction = +1.;
+          v_direction = +1;
         }
       }
     }
