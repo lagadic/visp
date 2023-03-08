@@ -297,20 +297,21 @@ public:
     return {float(position.latitude_deg), float(position.longitude_deg)};
   }
 
-  bool sendMocapData(const vpHomogeneousMatrix &M)
+  bool sendMocapData(const vpHomogeneousMatrix &enu_M_frd)
   {
     auto mocap = mavsdk::Mocap{m_system};
     mavsdk::Mocap::VisionPositionEstimate pose_estimate;
 
-    vpColVector rot_ned = vpMath::enu2ned(vpRxyzVector(M.getRotationMatrix()));
-    pose_estimate.angle_body.roll_rad = rot_ned[0];
-    pose_estimate.angle_body.pitch_rad = rot_ned[1];
-    pose_estimate.angle_body.yaw_rad = rot_ned[2];
+    vpHomogeneousMatrix ned_M_frd = vpMath::enu2ned(enu_M_frd);
+    vpRxyzVector ned_rxyz_frd = vpRxyzVector(ned_M_frd.getRotationMatrix());
+    pose_estimate.angle_body.roll_rad = ned_rxyz_frd[0];
+    pose_estimate.angle_body.pitch_rad = ned_rxyz_frd[1];
+    pose_estimate.angle_body.yaw_rad = ned_rxyz_frd[2];
 
-    vpColVector pos_ned = vpMath::enu2ned(M.getTranslationVector());
-    pose_estimate.position_body.x_m = pos_ned[0];
-    pose_estimate.position_body.y_m = pos_ned[1];
-    pose_estimate.position_body.z_m = pos_ned[2];
+    vpTranslationVector ned_t_frd = ned_M_frd.getTranslationVector();
+    pose_estimate.position_body.x_m = ned_t_frd[0];
+    pose_estimate.position_body.y_m = ned_t_frd[1];
+    pose_estimate.position_body.z_m = ned_t_frd[2];
 
     pose_estimate.pose_covariance.covariance_matrix.push_back(NAN);
     pose_estimate.time_usec = 0; // We are using the back end timestamp
@@ -880,18 +881,18 @@ bool vpRobotMavsdk::isRunning() const { return m_impl->isRunning(); }
 /*!
  * Sends MoCap position data to the vehicle.
  *
- * We consider here that the MoCap global reference frame is ENU. The vehicle body frame has X axes aligned
- * with the vehicle front axes and Z axis going upward.
+ * We consider here that the MoCap global reference frame is ENU (East-North-Up).
+ * The vehicle body frame if FRD (Front-Right-Down) where X axis is aligned
+ * with the vehicle front axis and Z axis going downward.
  *
  * \return true if the MoCap data was successfully sent to the vehicle, false otherwise.
- * \param[in] M : Homogeneous matrix containing the pose of the vehicle given by the MoCap system.
- * To be more precise, this matrix gives the pose of the vehicle body frame returned the MoCap (where
- * X axes is aligned with the front vehicle axis and Z axis is going upward) with respect to the
- * MoCap global reference frame defined as ENU.
+ * \param[in] enu_M_frd : Homogeneous matrix containing the pose of the vehicle given by the MoCap system.
+ * To be more precise, this matrix gives the pose of the vehicle FRD body frame returned by the MoCap where
+ * MoCap global reference frame is defined as ENU.
  *
- * Internally we transform this pose in a NED global reference frame.
+ * Internally we transform this FRD pose in a NED global reference frame as expected by Pixhawk convention.
  */
-bool vpRobotMavsdk::sendMocapData(const vpHomogeneousMatrix &M) { return m_impl->sendMocapData(M); }
+bool vpRobotMavsdk::sendMocapData(const vpHomogeneousMatrix &enu_M_frd) { return m_impl->sendMocapData(enu_M_frd); }
 
 /*!
  * Gives the address given to connect to the vehicle.

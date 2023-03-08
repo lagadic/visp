@@ -110,7 +110,7 @@ public:
 
   //! @name Sending state info
   //@{
-  bool sendMocapData(const vpHomogeneousMatrix &M);
+  bool sendMocapData(const vpHomogeneousMatrix &enu_M_frd);
   //@}
 
   //! @name Commands and parameters
