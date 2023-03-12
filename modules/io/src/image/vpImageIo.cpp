@@ -581,7 +581,14 @@ void vpImageIo::readPNG(vpImage<vpRGBa> &I, const std::string &filename, int bac
   }
 }
 
-// TODO: doc
+/*!
+  Load an image in EXR format.
+  \param[out] I : Floating-point single channel image.
+  \param[in] filename : Image location.
+  \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
+  Only OpenCV and the Tiny OpenEXR image libraries can currently read EXR image.
+  The default backend vpImageIo::IO_DEFAULT_BACKEND is the Tiny OpenEXR image library.
+ */
 void vpImageIo::readEXR(vpImage<float> &I, const std::string &filename, int backend)
 {
   if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_SIMDLIB_BACKEND || backend == IO_STB_IMAGE_BACKEND) {
@@ -605,7 +612,14 @@ void vpImageIo::readEXR(vpImage<float> &I, const std::string &filename, int back
   }
 }
 
-// TODO: doc
+/*!
+  Load an image in EXR format.
+  \param[out] I : Floating-point three channels image.
+  \param[in] filename : Image location.
+  \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
+  Only OpenCV and the Tiny OpenEXR image libraries can currently read EXR image.
+  The default backend vpImageIo::IO_DEFAULT_BACKEND is the Tiny OpenEXR image library.
+ */
 void vpImageIo::readEXR(vpImage<vpRGBf> &I, const std::string &filename, int backend)
 {
   if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_SIMDLIB_BACKEND || backend == IO_STB_IMAGE_BACKEND) {
@@ -815,7 +829,14 @@ void vpImageIo::writePNG(const vpImage<vpRGBa> &I, const std::string &filename, 
   }
 }
 
-// TODO: doc
+/*!
+  Save an image in EXR format.
+  \param[in] I : Floating-point single channel image.
+  \param[in] filename : Image location.
+  \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
+  Only OpenCV and the Tiny OpenEXR image libraries can currently save EXR image.
+  The default backend vpImageIo::IO_DEFAULT_BACKEND is the Tiny OpenEXR image library.
+ */
 void vpImageIo::writeEXR(const vpImage<float> &I, const std::string &filename, int backend)
 {
   if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_SIMDLIB_BACKEND || backend == IO_STB_IMAGE_BACKEND) {
@@ -839,7 +860,14 @@ void vpImageIo::writeEXR(const vpImage<float> &I, const std::string &filename, i
   }
 }
 
-// TODO: doc
+/*!
+  Save an image in EXR format.
+  \param[in] I : Floating-point three channels image.
+  \param[in] filename : Image location.
+  \param[in] backend : Supported backends are described in vpImageIo::vpImageIoBackendType.
+  Only OpenCV and the Tiny OpenEXR image libraries can currently save EXR image.
+  The default backend vpImageIo::IO_DEFAULT_BACKEND is the Tiny OpenEXR image library.
+ */
 void vpImageIo::writeEXR(const vpImage<vpRGBf> &I, const std::string &filename, int backend)
 {
   if (backend == IO_SYSTEM_LIB_BACKEND || backend == IO_SIMDLIB_BACKEND || backend == IO_STB_IMAGE_BACKEND) {
