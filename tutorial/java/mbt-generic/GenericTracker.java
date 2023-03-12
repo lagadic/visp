@@ -169,7 +169,7 @@ public class GenericTracker extends JFrame {
                     tracker.loadModel(modelFilename, false, T);
                     tracker.setDisplayFeatures(true);
 
-                    input = new String(rootDir + "Images/Image_%04d.pgm");
+                    input = new String(rootDir + "Images/Image_%04d.png");
                     inputDepth = new String(rootDir + "Depth/Depth_%04d.bin");
                     depthScale = 0.000030518F;
 
