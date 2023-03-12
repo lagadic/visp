@@ -25,6 +25,7 @@
 */
 #include "Simd/SimdCpu.h"
 
+#include <stdio.h>
 #include <vector>
 #ifdef SIMD_CPP_2011_ENABLE
 #include <thread>

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Interface for the ptu-46 robot.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -91,12 +88,12 @@ private:
   static bool robotAlreadyCreated;
   double positioningVelocity;
   int velocityMesureTempo;
-  char *device;
+  std::string device;
 
 public:
   static const double defaultPositioningVelocity;
 
-  explicit vpRobotPtu46(const char *device = "/dev/ttyS0");
+  explicit vpRobotPtu46(const std::string &device = "/dev/ttyS0");
   explicit vpRobotPtu46(vpRobotPtu46 *pub);
   virtual ~vpRobotPtu46(void);
 

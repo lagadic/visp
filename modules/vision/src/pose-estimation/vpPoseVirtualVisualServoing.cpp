@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -30,9 +30,6 @@
  *
  * Description:
  * Pose computation.
- *
- * Authors:
- * Eric Marchand
  *
  *****************************************************************************/
 
@@ -53,7 +50,6 @@
   This approach is described in \cite Marchand02c.
 
 */
-
 void vpPose::poseVirtualVS(vpHomogeneousMatrix &cMo)
 {
   try {
@@ -277,7 +273,7 @@ void vpPose::poseVirtualVSrobust(vpHomogeneousMatrix &cMo)
  * \param[in] points : A vector of points with [x,y,Z] values used as visual features.
  * \return Estimated pose when the minimization converged, of std::nullopt when it failed.
  */
-std::optional<vpHomogeneousMatrix> vpPose::poseVirtualVSWithDepth(std::vector<vpPoint> points, vpHomogeneousMatrix cMo)
+std::optional<vpHomogeneousMatrix> vpPose::poseVirtualVSWithDepth(const std::vector<vpPoint> &points, const vpHomogeneousMatrix &cMo)
 {
   auto residu_1{1e8}, r{1e8 - 1};
   const auto lambda{0.9}, vvsEpsilon{1e-8};
@@ -305,11 +301,13 @@ std::optional<vpHomogeneousMatrix> vpPose::poseVirtualVSWithDepth(std::vector<vp
       // forward projection of the 3D model for a given pose
       // change frame coordinates
       // perspective projection
-      points.at(i).track(cMo);
+      vpColVector cP, p;
+      points.at(i).changeFrame(cMo, cP);
+      points.at(i).projection(cP, p);
 
-      const auto x = s[3 * i] = points.at(i).get_x();
-      const auto y = s[3 * i + 1] = points.at(i).get_y();
-      const auto Z = s[3 * i + 2] = points.at(i).get_Z();
+      const auto x = s[3 * i] = p[0];
+      const auto y = s[3 * i + 1] = p[1];
+      const auto Z = s[3 * i + 2] = cP[2];
       L[3 * i][0] = -1 / Z;
       L[3 * i][1] = 0;
       L[3 * i][2] = x / Z;
@@ -344,14 +342,13 @@ std::optional<vpHomogeneousMatrix> vpPose::poseVirtualVSWithDepth(std::vector<vp
     const auto v = -lambda * Lp * err;
 
     // update the pose
-    cMoPrev = cMo;
-    cMo = vpExponentialMap::direct(v).inverse() * cMo;
+    cMoPrev = vpExponentialMap::direct(v).inverse() * cMoPrev;
 
     if (iter++ > vvsIterMax) {
       return std::nullopt;
     }
   }
-  return cMo;
+  return cMoPrev;
 }
 
 #endif

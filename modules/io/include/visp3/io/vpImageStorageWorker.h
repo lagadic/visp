@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ public:
         m_queue.pop(I, data);
 
         // Save image
-        sprintf(filename, m_seqname.c_str(), m_cpt);
+        snprintf(filename, FILENAME_MAX, m_seqname.c_str(), m_cpt);
 
         if (m_record_mode > 0) { // Single image
           std::cout << "Save image: " << filename << std::endl;

@@ -141,7 +141,7 @@ public class GenericTracker extends JFrame {
                     tracker.loadModel(modelFilename);
                     tracker.setDisplayFeatures(true);
 
-                    input = new String(rootDir + "cube/image%04d.pgm");
+                    input = new String(rootDir + "cube/image%04d.png");
                     cMo_init = new VpHomogeneousMatrix(0.02231950571, 0.1071368004, 0.5071128378,
                             2.100485509, 1.146812236, -0.4560126437);
                 } else {

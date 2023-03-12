@@ -39,6 +39,7 @@
   images (it defines a RGB 32-bit floating point structure)
 */
 
+#include <limits>
 #include <visp3/core/vpColor.h>
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpException.h>
@@ -108,11 +109,11 @@ vpRGBf &vpRGBf::operator=(const vpColVector &v)
 */
 bool vpRGBf::operator==(const vpRGBf &v)
 {
-  if (R != v.R)
+  if (std::fabs(R - v.R) > std::numeric_limits<float>::epsilon())
     return false;
-  if (G != v.G)
+  if (std::fabs(G - v.G) > std::numeric_limits<float>::epsilon())
     return false;
-  if (B != v.B)
+  if (std::fabs(B - v.B) > std::numeric_limits<float>::epsilon())
     return false;
 
   return true;
@@ -122,7 +123,12 @@ bool vpRGBf::operator==(const vpRGBf &v)
 
   \return true if the values are different, false if they are exactly the same.
 */
-bool vpRGBf::operator!=(const vpRGBf &v) { return (R != v.R || G != v.G || B != v.B); }
+bool vpRGBf::operator!=(const vpRGBf &v)
+{
+  return (std::fabs(R - v.R) > std::numeric_limits<float>::epsilon() ||
+          std::fabs(G - v.G) > std::numeric_limits<float>::epsilon() ||
+          std::fabs(B - v.B) > std::numeric_limits<float>::epsilon());
+}
 
 /*!
   subtraction operator : "this" - v.

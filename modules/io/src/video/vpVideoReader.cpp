@@ -735,6 +735,7 @@ void vpVideoReader::findFirstFrameIndex()
         // Checking that file name satisfies image format, specified by
         // imageNameFormat, and extracting imageIndex
         long imageIndex = vpIoTools::getIndex(files[i], imageNameFormat);
+
         if ((imageIndex != -1) && (imageIndex < m_firstFrame || m_firstFrame == -1)) {
           m_firstFrame = imageIndex;
         }

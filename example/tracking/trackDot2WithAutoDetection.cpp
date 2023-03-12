@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Test auto detection of dots.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 /*!
@@ -354,8 +351,7 @@ int main(int argc, const char **argv)
       s << "image." << std::setw(4) << std::setfill('0') << iter << ".png";
       filename = vpIoTools::createFilePath(dirname, s.str());
     } else {
-
-      sprintf(cfilename, opt_ppath.c_str(), iter);
+      snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
       filename = cfilename;
     }
     // Read the PGM image named "filename" on the disk, and put the
@@ -453,7 +449,7 @@ int main(int argc, const char **argv)
         s << "image." << std::setw(4) << std::setfill('0') << iter << ".png";
         filename = vpIoTools::createFilePath(dirname, s.str());
       } else {
-        sprintf(cfilename, opt_ppath.c_str(), iter);
+        snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
         filename = cfilename;
       }
       // read the image

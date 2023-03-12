@@ -95,7 +95,9 @@ SIMD_API size_t SimdCpuInfo(SimdCpuInfoType type)
     {
     case SimdCpuInfoSockets: return Cpu::SOCKET_NUMBER;
     case SimdCpuInfoCores: return Cpu::CORE_NUMBER;
+#ifdef SIMD_CPP_2011_ENABLE
     case SimdCpuInfoThreads: return Cpu::THREAD_NUMBER;
+#endif
     case SimdCpuInfoCacheL1: return Cpu::L1_CACHE_SIZE;
     case SimdCpuInfoCacheL2: return Cpu::L2_CACHE_SIZE;
     case SimdCpuInfoCacheL3: return Cpu::L3_CACHE_SIZE;

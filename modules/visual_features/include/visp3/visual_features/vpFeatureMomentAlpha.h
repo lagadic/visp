@@ -53,13 +53,13 @@ class vpMomentDatabase;
 
   \ingroup group_visual_features
 
-  \brief Functionality computation for in-plane rotation moment feature \f$
-\alpha \f$: computes the interaction matrix associated with vpMomentAlpha.
+  \brief Functionality computation for in-plane rotation moment feature \f$ \alpha \f$:
+  computes the interaction matrix associated with vpMomentAlpha.
 
-The interaction matrix for the feature can be deduced from \cite Tahri05z.
+  The interaction matrix for the feature can be deduced from \cite Tahri05z.
 
   This class computes the interaction matrix associated to \f$ \alpha =
-\frac{1}{2} arctan(\frac{2\mu_{11}}{\mu_{20}-\mu_{02}}) \f$ moment primitive.
+  \frac{1}{2} arctan(\frac{2\mu_{11}}{\mu_{20}-\mu_{02}}) \f$ moment primitive.
 
   The interaction matrix for the feature has the following form:
   \f[{
@@ -90,10 +90,10 @@ DA^2+4{\mu_{1,1}}^2\f$.
 
 
   The interaction matrix computed is single-dimension (no selection possible)
-and can be obtained by calling vpFeatureMomentAlpha::interaction().
+  and can be obtained by calling vpFeatureMomentAlpha::interaction().
 
   This feature is often used in moment-based visual servoing to control the
-planar rotation parameter.
+  planar rotation parameter.
 
   Minimum vpMomentObject order needed to compute this feature: 4.
 
@@ -106,14 +106,13 @@ class VISP_EXPORT vpFeatureMomentAlpha : public vpFeatureMoment
 public:
   /*!
   Initializes the feature with information about the database of moment
-  primitives, the object plane and feature database. \param data_base : Moment
-  database. The database of moment primitives (first parameter) is mandatory.
-  It is used to access different moment values later used to compute the final
-  matrix. \param A_ : Plane coefficient in a \f$ A \times x+B \times y + C =
-  \frac{1}{Z} \f$ plane. \param B_ : Plane coefficient in a \f$ A \times x+B
-  \times y + C = \frac{1}{Z} \f$ plane. \param C_ : Plane coefficient in a \f$
-  A \times x+B \times y + C = \frac{1}{Z} \f$ plane. \param featureMoments :
-  Feature database.
+  primitives, the object plane and feature database.
+  \param data_base : Moment database. The database of moment primitives (first parameter) is mandatory.
+  It is used to access different moment values later used to compute the final matrix.
+  \param A_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
+  \param B_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
+  \param C_ : Plane coefficient in a \f$ A \times x+B \times y + C = \frac{1}{Z} \f$ plane.
+  \param featureMoments : Feature database.
 
   */
   vpFeatureMomentAlpha(vpMomentDatabase &data_base, double A_, double B_, double C_,

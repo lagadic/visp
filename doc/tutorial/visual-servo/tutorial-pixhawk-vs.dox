@@ -73,6 +73,7 @@ the latest binary packages (.deb, .rpm) on their [github page](https://github.co
 
   Below, you will also find instructions to install MavSDK from source on Ubuntu:
   \verbatim
+  $ mkdir -p $VISP_WS/3rdparty
   $ cd $VISP_WS/3rdparty
   $ git clone --recursive https://github.com/mavlink/MAVSDK
   $ mkdir MAVSDK/build

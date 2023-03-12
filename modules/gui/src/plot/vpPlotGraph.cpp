@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,6 @@
  * Description:
  * Define a graph for the vpPlot class.
  *
- * Authors:
- * Nicolas Melchior
- *
  *****************************************************************************/
 #define FLUSH_ON_PLOT
 
@@ -54,7 +51,7 @@
 
 #include <cmath>  // std::fabs
 #include <limits> // numeric_limits
-#include <visp3/core/vpMath.h>
+#include <sstream>
 
 #if defined(VISP_HAVE_DISPLAY)
 
@@ -278,7 +275,6 @@ void vpPlotGraph::displayGrid(vpImage<unsigned char> &I)
   ydelt = (ymax - ymin) / nbDivisiony;
 
   double t;
-  char valeur[20];
   int power;
 
   power = laFonctionSansNom(xdelt);
@@ -296,21 +292,25 @@ void vpPlotGraph::displayGrid(vpImage<unsigned char> &I)
         ttemp = t * pow(10.0, power);
       else
         ttemp = t;
-      sprintf(valeur, "%.2f", ttemp);
+      std::stringstream valeur;
+      valeur.precision(3);
+      valeur << ttemp;
 #if defined VISP_HAVE_X11
-      vpDisplay::displayText(I, vpImagePoint(yorg + 3 * epsi, x), valeur, vpColor::black);
+      vpDisplay::displayText(I, vpImagePoint(yorg + 3 * epsi, x), valeur.str(), vpColor::black);
 #elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-      vpDisplay::displayText(I, vpImagePoint(yorg + epsi, x), valeur, vpColor::black);
+      vpDisplay::displayText(I, vpImagePoint(yorg + epsi, x), valeur.str(), vpColor::black);
 #endif
     }
   }
   if (power != 0) {
-    sprintf(valeur, "x10e%d", -power);
+    std::stringstream ss;
+    ss << "x10e";
+    ss << -power;
 #if defined VISP_HAVE_X11
-    vpDisplay::displayText(I, vpImagePoint(yorg + 4 * epsi, dTopLeft.get_j() + dWidth - 6 * epsj), valeur,
+    vpDisplay::displayText(I, vpImagePoint(yorg + 4 * epsi, dTopLeft.get_j() + dWidth - 6 * epsj), ss.str(),
                            vpColor::black);
 #elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-    vpDisplay::displayText(I, vpImagePoint(yorg + 4 * epsi, dTopLeft.get_j() + dWidth - 10 * epsj), valeur,
+    vpDisplay::displayText(I, vpImagePoint(yorg + 4 * epsi, dTopLeft.get_j() + dWidth - 10 * epsj), ss.str(),
                            vpColor::black);
 #endif
   }
@@ -330,20 +330,24 @@ void vpPlotGraph::displayGrid(vpImage<unsigned char> &I)
     else
       ttemp = t;
 
-    sprintf(valeur, "%.2f", ttemp);
+    std::stringstream valeur;
+    valeur.precision(3);
+    valeur << ttemp;
 #if defined VISP_HAVE_X11
-    vpDisplay::displayText(I, vpImagePoint(y + epsi, topLeft.get_j() + epsj), valeur, vpColor::black);
+    vpDisplay::displayText(I, vpImagePoint(y + epsi, topLeft.get_j() + epsj), valeur.str(), vpColor::black);
 #elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-    vpDisplay::displayText(I, vpImagePoint(y - epsi, topLeft.get_j() + epsj), valeur, vpColor::black);
+    vpDisplay::displayText(I, vpImagePoint(y - epsi, topLeft.get_j() + epsj), valeur.str(), vpColor::black);
 #endif
   }
   if (power != 0) {
-    sprintf(valeur, "x10e%d", -power);
+    std::stringstream ss;
+    ss << "x10e";
+    ss << -power;
 #if defined VISP_HAVE_X11
-    vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i() - 3 * epsi, dTopLeft.get_j() - 6 * epsj), valeur,
+    vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i() - 3 * epsi, dTopLeft.get_j() - 6 * epsj), ss.str(),
                            vpColor::black);
 #elif defined(VISP_HAVE_GDI) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_D3D9) || defined(VISP_HAVE_GTK)
-    vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i() - 3 * epsi, dTopLeft.get_j() - 6 * epsj), valeur,
+    vpDisplay::displayText(I, vpImagePoint(dTopLeft.get_i() - 3 * epsi, dTopLeft.get_j() - 6 * epsj), ss.str(),
                            vpColor::black);
 #endif
   }
@@ -562,12 +566,15 @@ bool vpPlotGraph::getPixelValue(vpImage<unsigned char> &I, vpImagePoint &iP)
     double y = (yorg - iP.get_i()) / zoomy;
 
     vpDisplay::displayROI(I, vpRect(vpImagePoint(topLeft.get_i() + height - 20, topLeft.get_j()), width - 1, 19));
-    char valeur[200];
-    sprintf(valeur, " x: %f", x);
-    vpDisplay::displayText(I, vpImagePoint(topLeft.get_i() + height - 2, topLeft.get_j() + 5 * epsj), valeur,
+    std::stringstream ss_x;
+    ss_x << " x: ";
+    ss_x << x;
+    vpDisplay::displayText(I, vpImagePoint(topLeft.get_i() + height - 2, topLeft.get_j() + 5 * epsj), ss_x.str(),
                            vpColor::black);
-    sprintf(valeur, " y: %f", y);
-    vpDisplay::displayText(I, vpImagePoint(topLeft.get_i() + height - 2, topLeft.get_j() + width / 2.0), valeur,
+    std::stringstream ss_y;
+    ss_y << " y: ";
+    ss_y << y;
+    vpDisplay::displayText(I, vpImagePoint(topLeft.get_i() + height - 2, topLeft.get_j() + width / 2.0), ss_x.str(),
                            vpColor::black);
     //     vpDisplay::flush(I);
     vpDisplay::flushROI(I, vpRect(vpImagePoint(topLeft.get_i() + height - 20, topLeft.get_j()), width - 1, 19));
@@ -873,7 +880,6 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
 
   int power;
   double t;
-  char valeur[20];
   vpPoint ptunit;
   vpImagePoint iPunit;
   double pente;
@@ -911,17 +917,21 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
           ttemp = t * pow(10.0, power);
         else
           ttemp = t;
-        sprintf(valeur, "%.1f", ttemp);
-        vpDisplay::displayText(I, ip3, valeur, vpColor::black);
+        std::stringstream ss;
+        ss.precision(2);
+        ss << ttemp;
+        vpDisplay::displayText(I, ip3, ss.str(), vpColor::black);
       }
     }
     count++;
   }
   if (power != 0) {
     ip4 = iP[1] - vpImagePoint(-15, 10);
-    sprintf(valeur, "x10e%d", -power);
+    std::stringstream ss;
+    ss << "x10e";
+    ss << -power;
     if (check3Dpoint(ip4))
-      vpDisplay::displayText(I, ip4, valeur, vpColor::black);
+      vpDisplay::displayText(I, ip4, ss.str(), vpColor::black);
   }
 
   power = laFonctionSansNom(ydelt);
@@ -952,17 +962,21 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
           ttemp = t * pow(10.0, power);
         else
           ttemp = t;
-        sprintf(valeur, "%.1f", ttemp);
-        vpDisplay::displayText(I, ip3, valeur, vpColor::black);
+        std::stringstream ss;
+        ss.precision(2);
+        ss << ttemp;
+        vpDisplay::displayText(I, ip3, ss.str(), vpColor::black);
       }
     }
     count++;
   }
   if (power != 0) {
     ip4 = iP[2] - vpImagePoint(-15, 10);
-    sprintf(valeur, "x10e%d", -power);
+    std::stringstream ss;
+    ss << "x10e";
+    ss << -power;
     if (check3Dpoint(ip4))
-      vpDisplay::displayText(I, ip4, valeur, vpColor::black);
+      vpDisplay::displayText(I, ip4, ss.str(), vpColor::black);
   }
 
   power = laFonctionSansNom(zdelt);
@@ -993,17 +1007,21 @@ void vpPlotGraph::displayGrid3D(vpImage<unsigned char> &I)
           ttemp = t * pow(10.0, power);
         else
           ttemp = t;
-        sprintf(valeur, "%.1f", ttemp);
-        vpDisplay::displayText(I, ip3, valeur, vpColor::black);
+        std::stringstream ss;
+        ss.precision(2);
+        ss << ttemp;
+        vpDisplay::displayText(I, ip3, ss.str(), vpColor::black);
       }
     }
     count++;
   }
   if (power != 0) {
     ip4 = iP[5] - vpImagePoint(-15, 10);
-    sprintf(valeur, "x10e%d", -power);
+    std::stringstream ss;
+    ss << "x10e";
+    ss << -power;
     if (check3Dpoint(ip4))
-      vpDisplay::displayText(I, ip4, valeur, vpColor::black);
+      vpDisplay::displayText(I, ip4, ss.str(), vpColor::black);
   }
 
   // Ligne horizontal

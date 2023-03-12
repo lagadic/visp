@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,6 @@
  * Description:
  * Save data during the task execution.
  *
- * Authors:
- * Eric Marchand
- *
  *****************************************************************************/
 
 /*!
@@ -48,24 +45,24 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/vs/vpServoData.h>
 
-void vpServoData::open(const char *directory)
+void vpServoData::open(const std::string &directory)
 {
   try {
     if (vpIoTools::checkDirectory(directory) == false)
       vpIoTools::makeDirectory(directory);
 
-    char s[FILENAME_MAX];
+    std::string s;
+    s = directory + "/vel.dat";
+    velocityFile.open(s.c_str());
+    s = directory + "/error.dat";
+    errorFile.open(s.c_str());
 
-    sprintf(s, "%s/vel.dat", directory);
-    velocityFile.open(s);
-    sprintf(s, "%s/error.dat", directory);
-    errorFile.open(s);
-    sprintf(s, "%s/errornorm.dat", directory);
-    errorNormFile.open(s);
-    sprintf(s, "%s/s.dat", directory);
-    sFile.open(s);
-    sprintf(s, "%s/sStar.dat", directory);
-    sStarFile.open(s);
+    s = directory + "/errornorm.dat";
+    errorNormFile.open(s.c_str());
+    s = directory + "/s.dat";
+    sFile.open(s.c_str());
+    s = directory + "/sStar.dat";
+    sStarFile.open(s.c_str());
 
   } catch (...) {
     vpERROR_TRACE("Error caught");

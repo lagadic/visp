@@ -5,9 +5,9 @@
 
 Platform | Build Status |
 -------- | ------------ |
-Ubuntu 18.04 and 20.04 (amd64)| [![ubuntu dep apt workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-apt.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-apt.yml) [![ubuntu dep src workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-src.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-src.yml)
-macOS 10.15 and 11.0 | [![macos workflow](https://github.com/lagadic/visp/actions/workflows/macos.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/macos.yml)
-iOS on macOS 10.15 and 11.0| [![ios workflow](https://github.com/lagadic/visp/actions/workflows/ios.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ios.yml)
+Ubuntu 18.04, 20.04, 22.04 (amd64)| [![ubuntu dep apt workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-apt.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-apt.yml) [![ubuntu dep src workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-src.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ubuntu-dep-src.yml)
+macOS 11 and 12 | [![macos workflow](https://github.com/lagadic/visp/actions/workflows/macos.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/macos.yml)
+iOS on macOS 11.0| [![ios workflow](https://github.com/lagadic/visp/actions/workflows/ios.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ios.yml)
 Windows 10 | [![Build status](https://ci.appveyor.com/api/projects/status/121dscdkryf5dbn0/branch/master?svg=true)](https://ci.appveyor.com/project/fspindle/visp/branch/master)
 ARM | [![Build Status](https://cloud.drone.io/api/badges/lagadic/visp/status.svg)](https://cloud.drone.io/lagadic/visp)
 Other arch Ubuntu 20.04 (aarch64, s390x)| [![other arch workflow](https://github.com/lagadic/visp/actions/workflows/other-arch.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/other-arch.yml)

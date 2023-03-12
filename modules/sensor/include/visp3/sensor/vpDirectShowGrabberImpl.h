@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,10 +30,6 @@
  *
  * Description:
  * DirectShow framegrabber Implementation.
- *
- * Authors:
- * Bruno Renier
- * Anthony Saunier
  *
  *****************************************************************************/
 
@@ -192,7 +188,7 @@ private:
   bool connectSourceToGrabber(CComPtr<IBaseFilter> &pCapSource, CComPtr<IBaseFilter> &pGrabberFilter);
 
   // used to convert HRESULT-associated error message to a string
-  void HRtoStr(std::string str);
+  void HRtoStr(std::string &str);
 
   // create the list of the available devices
   bool createDeviceList(CComPtr<IEnumMoniker> &ppVideoInputEnum);

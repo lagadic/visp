@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,14 +59,14 @@ bool read_data(const std::string &input_directory, int cpt, const vpCameraParame
 {
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
                 "Template function supports only unsigned char and vpRGBa images!");
-  char buffer[256];
-  sprintf(buffer, std::string(input_directory + "/Images/Image_%04d.png").c_str(), cpt);
+  char buffer[FILENAME_MAX];
+  snprintf(buffer, FILENAME_MAX, std::string(input_directory + "/Images/Image_%04d.png").c_str(), cpt);
   std::string image_filename = buffer;
 
-  sprintf(buffer, std::string(input_directory + "/Depth/Depth_%04d.bin").c_str(), cpt);
+  snprintf(buffer, FILENAME_MAX, std::string(input_directory + "/Depth/Depth_%04d.bin").c_str(), cpt);
   std::string depth_filename = buffer;
 
-  sprintf(buffer, std::string(input_directory + "/CameraPose/Camera_%03d.txt").c_str(), cpt);
+  snprintf(buffer, FILENAME_MAX, std::string(input_directory + "/CameraPose/Camera_%03d.txt").c_str(), cpt);
   std::string pose_filename = buffer;
 
   if (!vpIoTools::checkFilename(image_filename) || !vpIoTools::checkFilename(depth_filename) ||

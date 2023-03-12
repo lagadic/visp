@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -65,8 +65,8 @@ TEST_CASE("Test vpGaussianFilter (unsigned char)")
     vpImage<unsigned char> I_blurred_ref;
     const std::string filepath_ref = vpIoTools::createFilePath(
         vpIoTools::getViSPImagesDataPath(), "Gaussian-filter/Klimt_gray_Gaussian_blur_sigma=%.1f.png");
-    char buffer[256];
-    sprintf(buffer, filepath_ref.c_str(), sigma);
+    char buffer[FILENAME_MAX];
+    snprintf(buffer, FILENAME_MAX, filepath_ref.c_str(), sigma);
     const std::string filename = buffer;
     vpImageIo::read(I_blurred_ref, filename);
 
@@ -96,8 +96,8 @@ TEST_CASE("Test vpGaussianFilter (vpRGBa)")
     vpImage<vpRGBa> I_blurred_ref;
     const std::string filepath_ref = vpIoTools::createFilePath(
         vpIoTools::getViSPImagesDataPath(), "Gaussian-filter/Klimt_RGB_Gaussian_blur_sigma=%.1f.png");
-    char buffer[256];
-    sprintf(buffer, filepath_ref.c_str(), sigma);
+    char buffer[FILENAME_MAX];
+    snprintf(buffer, FILENAME_MAX, filepath_ref.c_str(), sigma);
     const std::string filename = buffer;
     vpImageIo::read(I_blurred_ref, filename);
 
@@ -138,8 +138,8 @@ TEST_CASE("Test vpGaussianFilter (vpRGBa + deinterleave)")
     vpImage<vpRGBa> I_blurred_ref;
     const std::string filepath_ref = vpIoTools::createFilePath(
         vpIoTools::getViSPImagesDataPath(), "Gaussian-filter/Klimt_RGB_Gaussian_blur_sigma=%.1f.png");
-    char buffer[256];
-    sprintf(buffer, filepath_ref.c_str(), sigma);
+    char buffer[FILENAME_MAX];
+    snprintf(buffer, FILENAME_MAX, filepath_ref.c_str(), sigma);
     const std::string filename = buffer;
     vpImageIo::read(I_blurred_ref, filename);
 

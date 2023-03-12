@@ -112,7 +112,7 @@ int main(int argc, const char ** argv)
   long   l_val = 123456;
   float  f_val = 0.1f;
   double d_val = M_PI;
-  char   *s_val;
+  std::string s_val;
 
   // Parse the command line to set the variables
   const char *optarg;
@@ -125,7 +125,7 @@ int main(int argc, const char ** argv)
     case 'l': l_val = atol(optarg); break;
     case 'f': f_val = static_cast<float>(atof(optarg)); break;
     case 'd': d_val = atof(optarg); break;
-    case 's': sprintf(s_val, "%s", optarg); break;
+    case 's': s_val = std::string(optarg); break;
     case 'h': printf("Usage: ...\n"); return EXIT_SUCCESS; break;
 
     default:

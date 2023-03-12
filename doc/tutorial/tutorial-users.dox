@@ -1,5 +1,5 @@
-/*! \page tutorial_users Tutorials for ViSP users
-This page references all the tutorials in user zone.
+/*! \page tutorial_users ViSP Tutorials
+This page references all the tutorials to install, use and contribute to ViSP.
 
 - \subpage tutorial_install_src
 
@@ -40,6 +40,10 @@ This page references all the tutorials in user zone.
 - \subpage tutorial_bridge
 
 - \subpage tutorial_tools
+
+- \subpage tutorial_coding
+
+- \subpage tutorial_contrib
 
 */
 
@@ -271,5 +275,19 @@ in one thread and display these images in an other thread.
 This page introduces the user to the way to assign track points and detected points.
 
 - \subpage tutorial-munkres <br>This tutorial explains how to use Munkres to assign tracked and detected image points.
+
+*/
+
+/*! \page tutorial_coding Contributing to ViSP source code
+This page introduces the way ViSP source code can be modified with new contributions.
+
+- \subpage tutorial-add-new-dependency <br>This tutorial explains how to introduce a new class that relies on a 3rd party SDK. Different use cases are given as example.
+
+*/
+
+/*! \page tutorial_contrib Extanding ViSP with contrib modules
+This page introduces the way ViSP source code can be modified with new contributions.
+
+- \subpage tutorial-contrib-module <br>This tutorial explains how to exploit ViSP modular architecture in order to introduce a new contrib module.
 
 */

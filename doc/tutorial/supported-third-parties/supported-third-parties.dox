@@ -1,0 +1,320 @@
+/*! \page supported-third-parties Supported Third-Party Libraries
+
+Here you will find a list of third-parties libraries that could be installed to extend ViSP capabilities.
+
+\section soft_vision Computer Vision
+
+These are the optional computer vision 3rd-parties supported by ViSP.
+
+\subsection soft_vision_opencv OpenCV
+
+We highly recommend to install OpenCV, one of the optional 3rd parties supported by ViSP \ref module_core, \ref module_io,
+\ref module_gui, \ref module_detection, \ref module_klt, \ref module_vision and \ref module_mbt modules.
+
+ViSP uses OpenCV in order to provide vpImage to cv::Mat image converters (see vpImageConvert class), an vpImage renderer
+(see vpDisplayOpenCV class), as well as a  KLT keypoint tracker (see vpKltOpencv class), and keypoint point matching
+classes (vpKeyPoint class).
+
+- <b>Ubuntu or debian installation</b>
+\verbatim
+$ sudo apt-get install libopencv-dev
+\endverbatim
+
+- <b>Fedora, RedHat or CentOS installation</b>
+\verbatim
+$ su -c "yum install opencv-devel"
+\endverbatim
+
+- <b>Mac OSX installation</b>
+\verbatim
+$ brew install opencv
+\endverbatim
+
+- <b>Windows installation with Visual Studio C++</b><br>
+  Depending your Visual Studio version and Windows version, we propose a set of tutorials that you may follow
+  - \ref install_win10_msvc14_3rdparty_opencv when using Visual Studio C++ 2015 (vc14) on Windows 10
+  - \ref install_win10_msvc15_3rdparty_opencv when using Visual Studio C++ 2017 (vc15) on Windows 10
+  - \ref install_win10_msvc16_3rdparty_opencv when using Visual Studio C++ 2019 (vc16) on Windows 10
+  - \ref install_win10_msvc17_3rdparty_opencv when using Visual Studio C++ 2022 (vc17) on Windows 10
+  - \ref install_win11_msvc17_3rdparty_opencv when using Visual Studio C++ 2022 (vc17) on Windows 11
+
+- <b>Windows installation with MinGW</b><br>
+  Depending your Windows version, we propose a set of tutorials that you may follow
+  - \ref install_win10_mingw_3rdparty_opencv when using MinGW on Windows 10
+  - \ref install_win11_mingw_3rdparty_opencv when using MinGW on Windows 11
+
+\section soft_linear_algebra Linear Algebra
+
+These are the optional 3rd-parties supported by ViSP for linear algebra operations.
+
+Note that installing one of the following third-parties dedicated to linear algebra can speed up operations on matrices.
+See \ref linear-algebra-which section to identify section to identify the best 3rd-party for your application.
+
+\subsection soft_linear_algebra_mkl Intel Math Kernel Library (MKL)
+
+Installation instructions are provided in \ref tutorial-basic-linear-algebra.
+
+\subsection soft_linear_algebra_openblas OpenBLAS
+
+Installation instructions are provided in \ref tutorial-basic-linear-algebra.
+
+\subsection soft_linear_algebra_gsl Gnu Scientic Library (GSL)
+
+Installation instructions are provided in \ref tutorial-basic-linear-algebra.
+
+\subsection soft_linear_algebra_netlin Netlib
+
+Installation instructions are provided in \ref tutorial-basic-linear-algebra.
+
+\subsection soft_linear_algebra_atlas Atlas
+
+Installation instructions are provided in \ref tutorial-basic-linear-algebra.
+
+\subsection soft_linear_algebra_eigen3 Eigen3
+
+Eigen3 is used as an alternative to Blas/Lapack for linear algebra operations in ViSP.
+
+- <b>Ubuntu or debian installation</b>
+\verbatim
+$ sudo apt-get install libeigen3-dev
+\endverbatim
+
+- <b>MacOS installation</b>
+\verbatim
+$ brew install eigen
+\endverbatim
+
+- <b>Windows installation</b><br>
+  See \ref install_win10_msvc17_3rdparty_eigen installation instructions
+
+\section soft_image_io Image I/O
+
+These are the optional 3rd-parties supported by ViSP in \ref module_io for image I/O operations.
+
+\subsection soft_image_io_libjpeg libjpeg
+
+- <b>Ubuntu or debian installation</b>
+\verbatim
+$ sudo apt-get install libjpeg-dev
+\endverbatim
+
+- <b>Fedora, RedHat or CentOS installation</b>
+\verbatim
+$ su -c "yum install libjpeg-devel"
+\endverbatim
+
+\subsection soft_image_io_libpng libpng
+
+- <b>Ubuntu or debian installation</b>
+\verbatim
+$ sudo apt-get install libpng-dev
+\endverbatim
+
+- <b>Fedora, RedHat or CentOS installation</b>
+\verbatim
+$ su -c "yum install libpng-devel"
+\endverbatim
+
+\section soft_robot Robot Control
+
+The following optional third-parties are used in \ref module_robot to enable the robot arms usage supported by ViSP.
+
+\subsection soft_robots_ur ur_rtde C++ interface
+
+[ur_rtde C++ interface](https://sdurobotics.gitlab.io/ur_rtde/) is an optional 3rd party that you can install to control
+\ref material_robots_ur thanks to vpRobotUniversalRobots class.
+
+Installation instructions are given in \ref ur_prereq_ur_rtde section.
+
+There are 2 tutorials that explain how to control an Universal Robot with ViSP: \ref tutorial-universal-robot-ibvs
+and \ref tutorial-universal-robot-pbvs.
+
+\subsection soft_robots_libfranka libfranka
+
+[libfranka](https://frankaemika.github.io/docs/libfranka.html) is the SDK that allows to control the Franka Emika Panda
+robot in its research configuration. Installing this third-party allows to control a Panda robot thanks to vpRobotFranka class.
+
+Installation instructions are provided in \ref franka_prereq_libfranka section.
+
+There are also 2 tutorials that may be useful to start with this robot in ViSP: \ref tutorial-franka-ibvs
+and \ref tutorial-franka-pbvs. If you want to simulate this robot using ViSP and ROS
+there is also this other tutorial: \ref tutorial-franka-sim.
+
+\subsection soft_robots_kinova Kinova Jaco Gen2 SDK
+
+All the [Kinova](https://assistive.kinovarobotics.com/) assistive robotic arms are supported by ViSP using vpRobotKinova,
+an interface over Kinova Jaco Gen2 SDK that allows to control Gen2 4, 6 and 7 DoF arm.
+
+Installation instructions are provided for
+<a href="tutorial-install-ubuntu.html#install_ubuntu_3rdparty_jaco">Ubuntu</a>
+and <a href="tutorial-install-win10-msvc17.html#install_win10_msvc17_3rdparty_jaco">Windows</a>.
+
+\subsection soft_robots_flir_ptu FLIR PTU SDK
+
+All the [FLIR](https://flir.com/) Pan Tilt Units are supported by ViSP using vpRobotFlirPtu class,
+an interface over FLIR PTU SDK.
+
+Installation instructions are provided in \ref flir_ptu_prereq_ptu_sdk section.
+
+The \ref tutorial-flir-ptu-vs could be also useful.
+
+\subsection soft_robots_bebop2 ARDroneSDK3
+
+The Parrot Bebop2 drone is supported by ViSP using vpRobotBebop2,
+an interface over Parrot [ARDroneSDK3](https://developer.parrot.com/docs/SDK3/).
+
+Installation instructions are provided \ref bebop2_arsdk3_ubuntu and \ref bebop2_arsdk3_osx.
+
+The \ref tutorial-bebop2-vs could be also useful.
+
+\subsection soft_robots_aria Aria
+
+[Aria](https://github.com/reedhedges/AriaCoda) is the third-party that allows to control a Pioneer P3DX through vpRobotPioneer class.
+
+- <b>Ubuntu or debian installation</b>
+\verbatim
+$ sudo apt-get install libaria-dev
+\endverbatim
+
+- Installation from source instructions are provided [here](https://github.com/reedhedges/AriaCoda).
+
+\subsection soft_robots_mavsdk MavSDK
+
+The [MAVLink](https://mavlink.io/en/) protocol is supported by ViSP to communicate with drones or small mobile robots
+equipped with a Pixhawk. To this end you need to install [MavSDK](https://mavsdk.mavlink.io/main/en/index.html) 3rd party library.
+
+Installation instructions are provided in \ref pixhawk_prereq_software section.
+
+The \ref tutorial-pixhawk-vs could be also useful.
+
+\section soft_ft Force/Torque Interfaces
+
+These are the optional 3rd-parties supported by ViSP in \ref module_sensor to interface F/T devices.
+
+\subsection soft_ft_comedi Comedi
+
+If you have an [ATI F/T](https://www.ati-ia.com/products/ft/ft_ModelListing.aspx) sensor you can use vpForceTorqueAtiSensor
+class to get access to the measurements. This wrapper uses [Comedi](http://www.comedi.org) 3rd party.
+
+- <b>Ubuntu or debian installation</b>
+\verbatim
+$ sudo apt-get install libcomedi-dev
+\endverbatim
+
+- <b>Fedora, RedHat or CentOS installation</b>
+\verbatim
+$ su -c "yum install comedilib-devel"
+\endverbatim
+
+\section soft_camera_depth Depth Camera SDK
+
+These are the optional 3rd-parties supported by ViSP in \ref module_sensor to interface depth cameras.
+
+\subsection soft_camera_depth_librealsense librealsense
+
+All Intel Realsense depth camera devices are supported in ViSP thanks to vpRealSense2 class, a wrapper over
+[librealsense](https://github.com/IntelRealSense/librealsense).
+
+- Ubuntu or debian \ref install_ubuntu_3rdparty_realsense installation instructions
+- MacOS \ref install_brew_3rdparty_realsense installation instructions
+- Windows 10 \ref install_win10_msvc17_3rdparty_realsense installation instructions
+
+\subsection soft_camera_depth_structure Occipital Structure SDK
+
+All [Occipital](https://structure.io/) devices are supported in ViSP thanks to vpOccipitalStructure class, a wrapper over
+[Occipital Structure SDK](https://developer.structure.io/sdk/).
+
+- Ubuntu or debian \ref install_ubuntu_3rdparty_occipital_structure installation instructions
+- MacOS \ref install_brew_3rdparty_occipital_structure installation instructions
+- Windows 10 \ref install_win10_msvc16_3rdparty_occ_structure installation instructions
+
+\subsection soft_camera_depth_libfreenect libfreenect
+
+If you have a Microsoft Kinect 1, you can use vpKinect class to get data. This class requires `libfreenect` 3rd party.
+
+- <b>Ubuntu or debian installation</b>
+\verbatim
+$ sudo apt-get install libfreenect-dev
+$ sudo adduser $USER video
+\endverbatim
+
+- <b>MacOS installation</b>
+\verbatim
+$ brew install libfreenect
+\endverbatim
+
+- See older installation instructions provided [here](https://visp.inria.fr/3rd_freenect).
+
+\section soft_camera Camera SDK
+
+These are the optional 3rd-parties supported by ViSP in \ref module_sensor to interface RGB cameras.
+
+\subsection soft_camera_ueye uEye SDK
+
+Industrial cameras from [IDS](https://en.ids-imaging.com) are also supported in ViSP thanks to vpUeyeGrabber class, a wrapper over uEye SDK.
+
+- Ubuntu or debian \ref install_ubuntu_3rdparty_ueye installation instructions
+- Windows 10 \ref install_win10_msvc17_3rdparty_ueye installation instructions
+
+\subsection soft_camera_pylon Pylon SDK
+
+Industrial cameras from [Basler](https://en.ids-imaging.com) are also supported in ViSP thanks to vpPylonGrabber class,
+a wrapper over [Pylon SDK](https://www.baslerweb.com/en/downloads/software-downloads/).
+
+- Ubuntu or debian \ref install_ubuntu_3rdparty_pylon installation instructions
+- MacOS \ref install_brew_3rdparty_pylon installation instructions
+- Windows 10 \ref install_win10_msvc17_3rdparty_pylon installation instructions
+
+\subsection soft_camera_flycapture Flycapture SDK
+
+Industrial cameras from [FLIR](https://www.flir.com) are supported in ViSP thanks to vpFlyCaptureGrabber class,
+a wrapper over [FlyCapture SDK](https://www.flir.com/support-center/iis/machine-vision/downloads/spinnaker-sdk-flycapture-and-firmware-download/).
+
+- Ubuntu or debian \ref install_ubuntu_3rdparty_flycapture installation instructions
+- Windows 10 \ref install_win10_msvc17_3rdparty_flycapture installation instructions
+
+\subsection soft_camera_libdc1394 libdc1394
+
+Generic firewire 1394 cameras are supported in ViSP using vp1394TwoGrabber class after installing `libdc1394` 3rd party.
+
+- <b>Since Ubuntu 20.04 or Debian 11</b>
+\verbatim
+$ sudo apt-get install libdc1394-dev
+\endverbatim
+
+- <b>On older Ubuntu or Debian distros</b>
+\verbatim
+$ sudo apt-get install libdc1394-22-dev
+\endverbatim
+
+\subsection soft_camera_v4l Video 4 Linux (v4l)
+
+Cameras compatible with Video 4 Linux  (webcam, laptop embedded camera) are supported in ViSP using vpV4l2Grabber
+class after installing libv4l 3rd party
+
+- <b>Ubuntu or debian installation</b>
+\verbatim
+$ sudo apt-get install libv4l-dev
+\endverbatim
+
+\section soft_mocap Motion Capture SDK
+
+\subsection soft_mocap_qualisys Qualisys SDK
+
+If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you can stream data using vpMocapQualisys class,
+a wrapper over [qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cpp_sdk).
+
+- Ubuntu or debian \ref install_ubuntu_3rdparty_qualisys installation instructions
+- MacOS \ref install_brew_3rdparty_qualisys installation instructions
+- Windows 10 \ref install_win10_msvc17_3rdparty_qualisys installation instructions
+
+\subsection soft_mocap_vicon Vicon SDK
+
+If you have rather the [Vicon](https://www.vicon.com) Motion Capture System you can stream data using vpMocapVicon class,
+a wrapper over [Vicon Datastream SDK](https://www.vicon.com/software/datastream-sdk/).
+
+- Ubuntu or debian \ref install_ubuntu_3rdparty_vicon installation instructions
+- MacOS \ref install_brew_3rdparty_vicon installation instructions
+- Windows 10 \ref install_win10_msvc17_3rdparty_vicon installation instructions
+
+*/
