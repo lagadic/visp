@@ -48,10 +48,12 @@
 #include <iostream>
 #include <limits>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/core/vpEndian.h>
 #include <visp3/io/vpImageIo.h>
 
 namespace
 {
+#ifdef VISP_LITTLE_ENDIAN
 void checkColorImages(const vpImage<vpRGBf> &I1, const vpImage<vpRGBf> &I2, float epsilon=std::numeric_limits<float>::epsilon())
 {
   for (unsigned int i = 0; i < I1.getHeight(); i++) {
@@ -71,10 +73,14 @@ void checkGrayImages(const vpImage<float> &I1, const vpImage<float> &I2, float e
     }
   }
 }
+#endif
 } // namespace
 
 TEST_CASE("EXR image read", "[exr_image_io]")
 {
+// Disable the tests if big endian for now.
+// See: https://github.com/syoyo/tinyexr/issues/189#issuecomment-1465174904
+#ifdef VISP_LITTLE_ENDIAN
   SECTION("Color")
   {
     const std::string imgPathRef =
@@ -144,58 +150,61 @@ TEST_CASE("EXR image read", "[exr_image_io]")
       checkGrayImages(I_ref, I, 0.00097656f);
     }
   }
+#endif
 }
 
- TEST_CASE("EXR image write", "[exr_image_io]")
- {
-   std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
-   std::string directory_filename_tmp = tmp_dir + "/testIoEXR_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
-   vpIoTools::makeDirectory(directory_filename_tmp);
-   REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
+TEST_CASE("EXR image write", "[exr_image_io]")
+{
+#ifdef VISP_LITTLE_ENDIAN
+  std::string tmp_dir = vpIoTools::makeTempDirectory(vpIoTools::getTempPath());
+  std::string directory_filename_tmp = tmp_dir + "/testIoEXR_" + vpTime::getDateTime("%Y-%m-%d_%H.%M.%S");
+  vpIoTools::makeDirectory(directory_filename_tmp);
+  REQUIRE(vpIoTools::checkDirectory(directory_filename_tmp));
 
-   SECTION("Color")
-   {
-     const std::string imgPath =
-         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "memorial/memorial_color_32bits.exr");
-     REQUIRE(vpIoTools::checkFilename(imgPath));
+  SECTION("Color")
+  {
+    const std::string imgPath =
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "memorial/memorial_color_32bits.exr");
+    REQUIRE(vpIoTools::checkFilename(imgPath));
 
-     vpImage<vpRGBf> I;
-     vpImageIo::readEXR(I, imgPath);
-     REQUIRE(I.getSize() > 0);
+    vpImage<vpRGBf> I;
+    vpImageIo::readEXR(I, imgPath);
+    REQUIRE(I.getSize() > 0);
 
-     vpImageIo::writeEXR(I, vpIoTools::createFilePath(directory_filename_tmp, "write_color_exr.exr"));
-     vpImage<vpRGBf> I_write;
-     vpImageIo::readEXR(I_write, vpIoTools::createFilePath(directory_filename_tmp, "write_color_exr.exr"));
+    vpImageIo::writeEXR(I, vpIoTools::createFilePath(directory_filename_tmp, "write_color_exr.exr"));
+    vpImage<vpRGBf> I_write;
+    vpImageIo::readEXR(I_write, vpIoTools::createFilePath(directory_filename_tmp, "write_color_exr.exr"));
 
-     REQUIRE(I.getHeight() == I_write.getHeight());
-     REQUIRE(I.getWidth() == I_write.getWidth());
+    REQUIRE(I.getHeight() == I_write.getHeight());
+    REQUIRE(I.getWidth() == I_write.getWidth());
 
-     checkColorImages(I, I_write);
-   }
+    checkColorImages(I, I_write);
+  }
 
-   SECTION("Gray")
-   {
-     const std::string imgPath =
-         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "memorial/memorial_gray_32bits.exr");
-     REQUIRE(vpIoTools::checkFilename(imgPath));
+  SECTION("Gray")
+  {
+    const std::string imgPath =
+        vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "memorial/memorial_gray_32bits.exr");
+    REQUIRE(vpIoTools::checkFilename(imgPath));
 
-     vpImage<float> I;
-     vpImageIo::readEXR(I, imgPath);
-     REQUIRE(I.getSize() > 0);
+    vpImage<float> I;
+    vpImageIo::readEXR(I, imgPath);
+    REQUIRE(I.getSize() > 0);
 
-     vpImageIo::writeEXR(I, vpIoTools::createFilePath(directory_filename_tmp, "write_gray_exr.exr"));
-     vpImage<float> I_write;
-     vpImageIo::readEXR(I_write, vpIoTools::createFilePath(directory_filename_tmp, "write_gray_exr.exr"));
+    vpImageIo::writeEXR(I, vpIoTools::createFilePath(directory_filename_tmp, "write_gray_exr.exr"));
+    vpImage<float> I_write;
+    vpImageIo::readEXR(I_write, vpIoTools::createFilePath(directory_filename_tmp, "write_gray_exr.exr"));
 
-     REQUIRE(I.getHeight() == I_write.getHeight());
-     REQUIRE(I.getWidth() == I_write.getWidth());
+    REQUIRE(I.getHeight() == I_write.getHeight());
+    REQUIRE(I.getWidth() == I_write.getWidth());
 
-     checkGrayImages(I, I_write);
-   }
+    checkGrayImages(I, I_write);
+  }
 
-   CHECK(vpIoTools::remove(directory_filename_tmp));
-   CHECK(vpIoTools::remove(tmp_dir));
- }
+  CHECK(vpIoTools::remove(directory_filename_tmp));
+  CHECK(vpIoTools::remove(tmp_dir));
+#endif
+}
 
 int main(int argc, char *argv[])
 {
