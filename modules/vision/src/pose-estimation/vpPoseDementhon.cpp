@@ -139,7 +139,7 @@ void vpPose::poseDementhonNonPlan(vpHomogeneousMatrix &cMo)
     A[i][2] = c3d[i].get_oZ();
     A[i][3] = 1.0;
   }
-  Ap = A.pseudoInverse();
+  Ap = A.pseudoInverse(dementhonSvThresh);
 
 #if (DEBUG_LEVEL2)
   {
@@ -466,9 +466,9 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   }
   vpColVector sv;
   vpMatrix Ap, imA, imAt, kAt;
-  int irank = A.pseudoInverse(Ap, sv, 1.e-6, imA, imAt, kAt);
+  int irank = A.pseudoInverse(Ap, sv, dementhonSvThresh, imA, imAt, kAt);
   if (irank != 3) {
-    throw(vpException(vpException::fatalError, "In Dementhon planar, rank is not 3"));
+    throw(vpException(vpException::fatalError, "In Dementhon planar, rank (" + std::to_string(irank) +  ") is not 3"));
   }
   // calcul de U
   vpColVector U(4);
