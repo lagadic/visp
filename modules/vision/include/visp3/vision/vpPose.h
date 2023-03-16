@@ -204,6 +204,7 @@ private:
   };
 
 protected:
+  double dementhonSvThresh; //!< SVD threshold use for the pseudo-inverse computation in poseDementhonPlan
   double computeResidualDementhon(const vpHomogeneousMatrix &cMo);
 
   // method used in poseDementhonPlan()
@@ -233,6 +234,7 @@ public:
   void poseVirtualVSrobust(vpHomogeneousMatrix &cMo);
   void poseVirtualVS(vpHomogeneousMatrix &cMo);
   void printPoint();
+  void setDementhonSvThreshold(const double& svThresh);
   void setDistanceToPlaneForCoplanarityTest(double d);
   void setLambda(double a) { lambda = a; }
   void setVvsEpsilon(const double eps)

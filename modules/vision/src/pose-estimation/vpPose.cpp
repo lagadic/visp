@@ -94,7 +94,7 @@ void vpPose::init()
 
 /*! Default constructor. */
 vpPose::vpPose()
-  : npt(0), listP(), residual(0), lambda(0.9), vvsIterMax(200), c3d(), computeCovariance(false), covarianceMatrix(),
+  : npt(0), listP(), residual(0), lambda(0.9), dementhonSvThresh(1e-6), vvsIterMax(200), c3d(), computeCovariance(false), covarianceMatrix(),
     ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
     distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER), listOfPoints(), useParallelRansac(false),
     nbParallelRansacThreads(0), // 0 means that we use C++11 (if available) to get the number of threads
@@ -168,6 +168,14 @@ void vpPose::addPoints(const std::vector<vpPoint> &lP)
 }
 
 void vpPose::setDistanceToPlaneForCoplanarityTest(double d) { distanceToPlaneForCoplanarityTest = d; }
+
+void vpPose::setDementhonSvThreshold(const double& svThresh){
+  if(svThresh < 0)
+  {
+    throw vpException(vpException::badValue, "The svd threshold must be positive");
+  }
+  dementhonSvThresh = svThresh;
+}
 
 /*!
   Test the coplanarity of the set of points
