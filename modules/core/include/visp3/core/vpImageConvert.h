@@ -116,6 +116,7 @@ public:
   static void convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> &dest, unsigned int nThreads = 0);
 
   static void convert(const vpImage<float> &src, vpImage<unsigned char> &dest);
+  static void convert(const vpImage<vpRGBf> &src, vpImage<vpRGBa> &dest);
   static void convert(const vpImage<unsigned char> &src, vpImage<float> &dest);
 
   static void convert(const vpImage<double> &src, vpImage<unsigned char> &dest);
@@ -140,8 +141,12 @@ public:
 #if VISP_HAVE_OPENCV_VERSION >= 0x020100
   static void convert(const cv::Mat &src, vpImage<vpRGBa> &dest, bool flip = false);
   static void convert(const cv::Mat &src, vpImage<unsigned char> &dest, bool flip = false, unsigned int nThreads = 0);
+  static void convert(const cv::Mat &src, vpImage<float> &dest, bool flip = false);
+  static void convert(const cv::Mat &src, vpImage<vpRGBf> &dest, bool flip = false);
   static void convert(const vpImage<vpRGBa> &src, cv::Mat &dest);
   static void convert(const vpImage<unsigned char> &src, cv::Mat &dest, bool copyData = true);
+  static void convert(const vpImage<float> &src, cv::Mat &dest, bool copyData = true);
+  static void convert(const vpImage<vpRGBf> &src, cv::Mat &dest);
 #endif
 #endif
 

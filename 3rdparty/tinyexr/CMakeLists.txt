@@ -1,0 +1,6 @@
+project(${TINYEXR_LIBRARY})
+
+# Version at: https://github.com/syoyo/tinyexr/commit/3c8e0cb7b406adc1bf9abe31510b2d72849ca6d2
+set(TINYEXR_MAJOR_VERSION 1 PARENT_SCOPE)
+set(TINYEXR_MINOR_VERSION 0 PARENT_SCOPE)
+set(TINYEXR_PATCH_VERSION 2 PARENT_SCOPE)

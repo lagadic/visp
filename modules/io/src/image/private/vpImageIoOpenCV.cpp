@@ -145,6 +145,46 @@ void readOpenCV(vpImage<vpRGBa> &I, const std::string &filename)
 #endif
 }
 
+void readOpenCV(vpImage<float> &I, const std::string &filename)
+{
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x030200
+  int flags = cv::IMREAD_COLOR | cv::IMREAD_IGNORE_ORIENTATION;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
+  int flags = cv::IMREAD_COLOR;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+  int flags = CV_LOAD_IMAGE_COLOR;
+#endif
+  cv::Mat Ip = cv::imread(filename.c_str(), flags);
+  if (!Ip.empty())
+    vpImageConvert::convert(Ip, I);
+  else
+    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
+#else
+  throw(vpImageException(vpImageException::ioError, "Can't read the image"));
+#endif
+}
+
+void readOpenCV(vpImage<vpRGBf> &I, const std::string &filename)
+{
+#if defined(VISP_HAVE_OPENCV) && VISP_HAVE_OPENCV_VERSION >= 0x020100
+#if VISP_HAVE_OPENCV_VERSION >= 0x030200
+  int flags = cv::IMREAD_COLOR | cv::IMREAD_IGNORE_ORIENTATION;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x030000
+  int flags = cv::IMREAD_COLOR;
+#elif VISP_HAVE_OPENCV_VERSION >= 0x020100
+  int flags = CV_LOAD_IMAGE_COLOR;
+#endif
+  cv::Mat Ip = cv::imread(filename.c_str(), flags);
+  if (!Ip.empty())
+    vpImageConvert::convert(Ip, I);
+  else
+    throw(vpImageException(vpImageException::ioError, "Can't read the image"));
+#else
+  throw(vpImageException(vpImageException::ioError, "Can't read the image"));
+#endif
+}
+
 /*!
   Write the content of the image bitmap in the file which name is given by \e
   filename. This function writes a JPEG file.
@@ -198,6 +238,30 @@ void writeOpenCV(const vpImage<vpRGBa> &I, const std::string &filename, int qual
 
   cvReleaseImage(&Ip);
   (void)quality;
+#endif
+}
+
+void writeOpenCV(const vpImage<float> &I, const std::string &filename)
+{
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  cv::Mat Ip;
+  vpImageConvert::convert(I, Ip);
+
+  cv::imwrite(filename.c_str(), Ip);
+#else
+  throw(vpImageException(vpImageException::ioError, "Not supported image type with the current OpenCV library version"));
+#endif
+}
+
+void writeOpenCV(const vpImage<vpRGBf> &I, const std::string &filename)
+{
+#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  cv::Mat Ip;
+  vpImageConvert::convert(I, Ip);
+
+  cv::imwrite(filename.c_str(), Ip);
+#else
+  throw(vpImageException(vpImageException::ioError, "Not supported image type with the current OpenCV library version"));
 #endif
 }
 
