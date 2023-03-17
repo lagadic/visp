@@ -69,6 +69,9 @@ endif()
 # Simd lib is private
 include_directories(${SIMDLIB_INCLUDE_DIRS})
 
+# TinyEXR lib is private
+include_directories(${TINYEXR_INCLUDE_DIRS})
+
 # OpenCV
 if(USE_OPENCV)
   # On win32 since OpenCV 2.4.7 and on OSX with OpenCV 2.4.10 we cannot use OpenCV_LIBS to set ViSP 3rd party libraries.

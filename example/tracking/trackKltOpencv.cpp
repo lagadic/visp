@@ -106,7 +106,7 @@ OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
      From this path read images \n\
-     \"mire-2/image.%%04d.pgm\". These \n\
+     \"mire-2/image.%%04d.png\". These \n\
      images come from ViSP-images-x.y.z.tar.gz available \n\
      on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
@@ -307,7 +307,7 @@ int main(int argc, const char **argv)
       // Build the name of the image file
 
       s.setf(std::ios::right, std::ios::adjustfield);
-      s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+      s << "image." << std::setw(4) << std::setfill('0') << iter << ".png";
       filename = vpIoTools::createFilePath(dirname, s.str());
     } else {
       snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);

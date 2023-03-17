@@ -178,10 +178,12 @@ public:
 
   /*!
    * Record helper that display information in the windows associated to the image, pop current image and additional
-   * data in the queue. \param[in] I : Image to record. \param[in] data : Data to record. Set to NULL when no additional
-   * data have to be considered. \param[in] trigger_recording : External trigger to start data saving. \param[in]
-   * disable_left_click : Disable left click usage to trigger data saving. \return true when the used asked to quit
-   * using a right click in the display window.
+   * data in the queue.
+   * \param[in] I : Image to record.
+   * \param[in] data : Data to record. Set to NULL when no additional data have to be considered.
+   * \param[in] trigger_recording : External trigger to start data saving.
+   * \param[in] disable_left_click : Disable left click usage to trigger data saving.
+   * \return true when the used asked to quit using a right click in the display window.
    */
   bool record(const vpImage<Type> &I, std::string *data = NULL, bool trigger_recording = false,
               bool disable_left_click = false)
