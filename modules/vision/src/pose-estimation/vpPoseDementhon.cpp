@@ -469,11 +469,11 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   }
   vpColVector sv;
   vpMatrix Ap, imA, imAt, kAt;
-  bool isRankEqualTo3(false); // Indicates if the rank of A is the expected one
+  bool isRankEqualTo3 = false; // Indicates if the rank of A is the expected one
   double logNofSvdThresh = std::log(dementhonSvThresh)/lnOfSvdFactorUsed; // Get the log_n(dementhonSvThresh), where n is the factor by which we will multiply it if the svd decomposition fails.
   int nbMaxIter = std::max(std::ceil(logNOfSvdThresholdLimit - logNofSvdThresh), 1.); // Ensure that if the user chose a threshold > svdThresholdLimit, at least 1 iteration of svd decomposition is performed
   double svdThreshold = dementhonSvThresh;
-  int irank(0);
+  int irank = 0;
   for(int i = 0; i < nbMaxIter && !isRankEqualTo3; i++)
   {
     irank = A.pseudoInverse(Ap, sv, svdThreshold, imA, imAt, kAt);
@@ -489,14 +489,15 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   }
   
   if (!isRankEqualTo3) {
-    std::string errorMsg("In Dementhon planar, after ");
-    errorMsg += std::to_string(nbMaxIter);
-    errorMsg += std::string(" trials multiplying the svd threshold by ");
-    errorMsg += std::to_string(nbMaxIter);
-    errorMsg += std::string(", rank (");
-    errorMsg += std::to_string(irank);
-    errorMsg += std::string(") is still not 3");
-    throw(vpException(vpException::fatalError, errorMsg));
+    std::stringstream errorMsg;
+    errorMsg << "In Dementhon planar, after ";
+    errorMsg << nbMaxIter;
+    errorMsg << " trials multiplying the svd threshold by ";
+    errorMsg << nbMaxIter;
+    errorMsg << ", rank (";
+    errorMsg << irank;
+    errorMsg << ") is still not 3";
+    throw(vpException(vpException::fatalError, errorMsg.str()));
   }
   // calcul de U
   vpColVector U(4);
