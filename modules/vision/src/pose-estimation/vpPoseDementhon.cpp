@@ -431,7 +431,10 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
 #if (DEBUG_LEVEL1)
   std::cout << "begin CCalculPose::PoseDementhonPlan()" << std::endl;
 #endif
-
+  const double svdFactorUsedWhenFailure = 10.; // Factor by which is multipled dementhonSvThresh each time the svdDecomposition fails
+  const double svdThresholdLimit = 1e-2; // The svd decomposition will be tested with a threshold up to this value. If with this threshold, the rank of A is still !=3, an exception is thrown
+  const double lnOfSvdFactorUsed = std::log(svdFactorUsedWhenFailure);
+  const double logNOfSvdThresholdLimit = std::log(svdThresholdLimit)/lnOfSvdFactorUsed;
   vpPoint P;
   double cdg[3];
   /* compute the cog of the 3D points */
@@ -466,9 +469,34 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
   }
   vpColVector sv;
   vpMatrix Ap, imA, imAt, kAt;
-  int irank = A.pseudoInverse(Ap, sv, dementhonSvThresh, imA, imAt, kAt);
-  if (irank != 3) {
-    throw(vpException(vpException::fatalError, "In Dementhon planar, rank (" + std::to_string(irank) +  ") is not 3"));
+  bool isRankEqualTo3(false); // Indicates if the rank of A is the expected one
+  double logNofSvdThresh = std::log(dementhonSvThresh)/lnOfSvdFactorUsed; // Get the log_n(dementhonSvThresh), where n is the factor by which we will multiply it if the svd decomposition fails.
+  int nbMaxIter = std::max(std::ceil(logNOfSvdThresholdLimit - logNofSvdThresh), 1.); // Ensure that if the user chose a threshold > svdThresholdLimit, at least 1 iteration of svd decomposition is performed
+  double svdThreshold = dementhonSvThresh;
+  int irank(0);
+  for(int i = 0; i < nbMaxIter && !isRankEqualTo3; i++)
+  {
+    irank = A.pseudoInverse(Ap, sv, svdThreshold, imA, imAt, kAt);
+    if(irank == 3)
+    {
+      isRankEqualTo3 = true;
+    }
+    else
+    {
+      isRankEqualTo3 = false;
+      svdThreshold *= svdFactorUsedWhenFailure;
+    }
+  }
+  
+  if (!isRankEqualTo3) {
+    std::string errorMsg("In Dementhon planar, after ");
+    errorMsg += std::to_string(nbMaxIter);
+    errorMsg += std::string(" trials multiplying the svd threshold by ");
+    errorMsg += std::to_string(nbMaxIter);
+    errorMsg += std::string(", rank (");
+    errorMsg += std::to_string(irank);
+    errorMsg += std::string(") is still not 3");
+    throw(vpException(vpException::fatalError, errorMsg));
   }
   // calcul de U
   vpColVector U(4);
