@@ -159,6 +159,7 @@ void vpCircle::projection() { projection(cP, p); }
   */
 void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
 {
+  double det_threshold = 1e-10;
   p_.resize(5, false);
 
   vpColVector K(6);
@@ -189,8 +190,8 @@ void vpCircle::projection(const vpColVector &cP_, vpColVector &p_) const
   }
 
   double det = K[2] * K[2] - K[0] * K[1];
-  if (fabs(det) < 1e-8) {
-    throw(vpException(vpException::divideByZeroError, "division par 0"));
+  if (fabs(det) < det_threshold) {
+    throw(vpException(vpException::divideByZeroError, "Division by 0 in vpCircle::projection."));
   }
 
   double xc = (K[1] * K[3] - K[2] * K[4]) / det;
