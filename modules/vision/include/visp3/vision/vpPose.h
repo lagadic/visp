@@ -105,8 +105,11 @@ public:
                              initialization from Lagrange or Dementhon aproach */
     DEMENTHON_VIRTUAL_VS, /*!< Non linear virtual visual servoing approach
                              initialized by Dementhon approach */
-    LAGRANGE_VIRTUAL_VS   /*!< Non linear virtual visual servoing approach
+    LAGRANGE_VIRTUAL_VS,  /*!< Non linear virtual visual servoing approach
                              initialized by Lagrange approach */
+    DEMENTHON_LAGRANGE_VIRTUAL_VS, /*!< Non linear virtual visual servoing approach
+                             initialized by either Dementhon or Lagrange approach,
+                             depending on which method has the smallest residual. */
   } vpPoseMethodType;
 
   enum RANSAC_FILTER_FLAGS {
@@ -215,6 +218,7 @@ public:
   void clearPoint();
 
   bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);
+  bool computePoseDementhonLagrangeVVS(vpHomogeneousMatrix &cMo);
   double computeResidual(const vpHomogeneousMatrix &cMo) const;
   bool coplanar(int &coplanar_plane_type);
   void displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam, vpColor col = vpColor::none);

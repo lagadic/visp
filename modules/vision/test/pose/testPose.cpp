@@ -213,6 +213,13 @@ int main()
       print_pose(cMo, std::string("Pose estimated by Lagrange then by VVS"));
       fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange then by VVS");
       test_planar_fail |= fail;
+
+      std::cout << "-------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
+
+      print_pose(cMo, std::string("Pose estimated either by Dementhon or Lagrange then by VVS"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose either by Dementhon or Lagrange then by VVS");
+      test_planar_fail |= fail;
     }
 
     {
@@ -306,6 +313,13 @@ int main()
       print_pose(cMo, std::string("Pose estimated by Lagrange then by VVS"));
       fail = compare_pose(pose, cMo_ref, cMo, "pose by Lagrange then by VVS");
       test_non_planar_fail |= fail;
+
+      std::cout << "-------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
+
+      print_pose(cMo, std::string("Pose estimated  either by Dementhon or Lagrange then by VVS"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose either by Dementhon or Lagrange then by VVS");
+      test_non_planar_fail |= fail;
     }
 
     //
@@ -373,6 +387,14 @@ int main()
 
       print_pose(cMo, std::string("Pose estimated by Dementhon then by VVS"));
       fail = compare_pose(pose, cMo_ref, cMo, "pose by Dementhon then by VVS");
+      test_non_planar_fail |= fail;
+
+      std::cout << "-------------------------------------------------" << std::endl;
+
+      pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
+
+      print_pose(cMo, std::string("Pose estimated either by Dementhon or Lagrange then by VVS"));
+      fail = compare_pose(pose, cMo_ref, cMo, "pose either by Dementhon or Lagrange then by VVS");
       test_non_planar_fail |= fail;
 
       std::cout << "-------------------------------------------------" << std::endl;
