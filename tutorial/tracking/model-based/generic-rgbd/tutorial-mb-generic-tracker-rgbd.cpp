@@ -56,7 +56,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
   // Read color
   std::stringstream ss;
   ss << input_directory << "/color_image_%04d.jpg";
-  sprintf(buffer, ss.str().c_str(), cpt);
+  snprintf(buffer, FILENAME_MAX, ss.str().c_str(), cpt);
   std::string filename_color = buffer;
 
   if (!vpIoTools::checkFilename(filename_color)) {
@@ -68,7 +68,7 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<vpR
   // Read raw depth
   ss.str("");
   ss << input_directory << "/depth_image_%04d.bin";
-  sprintf(buffer, ss.str().c_str(), cpt);
+  snprintf(buffer, FILENAME_MAX, ss.str().c_str(), cpt);
   std::string filename_depth = buffer;
 
   std::ifstream file_depth(filename_depth.c_str(), std::ios::in | std::ios::binary);

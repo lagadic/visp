@@ -88,6 +88,9 @@
 class vpPoint;
 class vpHomogeneousMatrix;
 class vpColVector;
+class vpRotationVector;
+class vpRxyzVector;
+class vpTranslationVector;
 
 /*!
   \class vpMath
@@ -95,9 +98,7 @@ class vpColVector;
   \brief Provides simple mathematics computation tools that are not
   available in the C mathematics library (math.h)
 
-  \author Eric Marchand   (Eric.Marchand@irisa.fr) Irisa / Inria Rennes
 */
-
 class VISP_EXPORT vpMath
 {
 public:
@@ -108,6 +109,9 @@ public:
     \return Angle converted in degrees.
   */
   static inline double deg(double rad) { return (rad * 180.0) / M_PI; }
+
+  static vpColVector deg(const vpRotationVector &r);
+  static vpColVector deg(const vpColVector &r);
 
   /*!
     Convert an angle in degrees into radian.
@@ -151,7 +155,7 @@ public:
   static inline int round(double x);
 
   //   return the sign of x (+-1)
-  static inline int(sign)(double x);
+  static inline int sign(double x);
 
   // test if a number equals 0 (with threshold value)
   static inline bool nul(double x, double s = 0.001);
@@ -233,6 +237,8 @@ public:
 
   static vpHomogeneousMatrix ned2ecef(double lonDeg, double latDeg, double radius);
   static vpHomogeneousMatrix enu2ecef(double lonDeg, double latDeg, double radius);
+  static vpColVector enu2ned(const vpRxyzVector &rxyz);
+  static vpColVector enu2ned(const vpTranslationVector &rxyz);
 
   /*!
     Similar to the NumPy linspace function: "Return evenly spaced numbers over a specified interval."
@@ -336,7 +342,7 @@ int vpMath::round(double x)
   \param x : Value to test.
   \return -1 if x is negative, +1 if positive and 0 if zero.
 */
-int(vpMath::sign)(double x)
+int vpMath::sign(double x)
 {
   if (fabs(x) < std::numeric_limits<double>::epsilon())
     return 0;

@@ -91,7 +91,9 @@ namespace Simd
     {
         extern const size_t SOCKET_NUMBER;
         extern const size_t CORE_NUMBER;
+#ifdef SIMD_CPP_2011_ENABLE
         extern const size_t THREAD_NUMBER;
+#endif
         extern const size_t L1_CACHE_SIZE;
         extern const size_t L2_CACHE_SIZE;
         extern const size_t L3_CACHE_SIZE;

@@ -375,9 +375,9 @@ int main(int argc, const char **argv)
 
     // Get the option values
     if (!opt_ipath.empty())
-      ipath = vpIoTools::createFilePath(opt_ipath, "mire-2/image.%04d.pgm");
+      ipath = vpIoTools::createFilePath(opt_ipath, "mire-2/image.%04d.png");
     else
-      ipath = vpIoTools::createFilePath(env_ipath, "mire-2/image.%04d.pgm");
+      ipath = vpIoTools::createFilePath(env_ipath, "mire-2/image.%04d.png");
 
     if (opt_log) {
       ofs.open(logfilename.c_str());

@@ -42,8 +42,8 @@
 
 #ifdef VISP_HAVE_CATCH2
 
-#include <visp3/core/vpMath.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
+#include <visp3/core/vpMath.h>
 
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
@@ -64,7 +64,7 @@ TEST_CASE("Lon-Lat generator", "[math_lonlat]")
   const double radius = 5;
 
   std::vector<std::pair<double, double> > lonlatVec;
-  lonlatVec.reserve(longitudes.size()*latitudes.size());
+  lonlatVec.reserve(longitudes.size() * latitudes.size());
   for (auto lon : longitudes) {
     for (auto lat : latitudes) {
       lonlatVec.emplace_back(lon, lat);
@@ -74,14 +74,14 @@ TEST_CASE("Lon-Lat generator", "[math_lonlat]")
   SECTION("NED")
   {
     std::vector<vpHomogeneousMatrix> ecef_M_ned_vec =
-      vpMath::getLocalTangentPlaneTransformations(lonlatVec, radius, vpMath::ned2ecef);
+        vpMath::getLocalTangentPlaneTransformations(lonlatVec, radius, vpMath::ned2ecef);
     for (const auto &ecef_M_ned : ecef_M_ned_vec) {
 #ifdef VERBOSE
       std::cout << "Lon-Lat ecef_M_ned:\n" << ecef_M_ned << std::endl;
 #endif
       CHECK(ecef_M_ned.isValid());
       CHECK(ecef_M_ned.getRotationMatrix().isARotationMatrix());
-      CHECK(vpMath::equal(ecef_M_ned.getTranslationVector().sumSquare(), radius*radius));
+      CHECK(vpMath::equal(ecef_M_ned.getTranslationVector().sumSquare(), radius * radius));
     }
 
 #ifdef DEBUG
@@ -93,14 +93,12 @@ TEST_CASE("Lon-Lat generator", "[math_lonlat]")
     const std::string folder = "NED/lon-lat/";
     vpIoTools::makeDirectory(folder);
     int i = 0;
-    for (const auto &ecef_M_ned : ecef_M_ned_vec)
-    {
-      char buffer[80];
-      sprintf(buffer, std::string(folder + "ecef_M_cv_%04d.txt").c_str(), i++);
-      std::string filename = buffer;
+    for (const auto &ecef_M_ned : ecef_M_ned_vec) {
+      std::stringstream buffer;
+      buffer << folder << "ecef_M_cv_" << std::setw(4) << std::setfill('0') << i++ << ".txt";
+      std::string filename = buffer.str();
       std::ofstream file(filename);
-      if (file.is_open())
-      {
+      if (file.is_open()) {
         (ecef_M_ned * ned_M_cv).save(file);
       }
     }
@@ -110,33 +108,31 @@ TEST_CASE("Lon-Lat generator", "[math_lonlat]")
   SECTION("ENU")
   {
     std::vector<vpHomogeneousMatrix> ecef_M_enu_vec =
-      vpMath::getLocalTangentPlaneTransformations(lonlatVec, radius, vpMath::enu2ecef);
+        vpMath::getLocalTangentPlaneTransformations(lonlatVec, radius, vpMath::enu2ecef);
     for (const auto &ecef_M_enu : ecef_M_enu_vec) {
 #ifdef VERBOSE
       std::cout << "Lon-Lat ecef_M_enu:\n" << ecef_M_enu << std::endl;
 #endif
       CHECK(ecef_M_enu.isValid());
       CHECK(ecef_M_enu.getRotationMatrix().isARotationMatrix());
-      CHECK(vpMath::equal(ecef_M_enu.getTranslationVector().sumSquare(), radius*radius));
+      CHECK(vpMath::equal(ecef_M_enu.getTranslationVector().sumSquare(), radius * radius));
 
 #ifdef DEBUG
-    vpHomogeneousMatrix enu_M_cv;
-    enu_M_cv[1][1] = -1;
-    enu_M_cv[2][2] = -1;
-    const std::string folder = "ENU/lon-lat/";
-    vpIoTools::makeDirectory(folder);
-    int i = 0;
-    for (const auto &ecef_M_enu : ecef_M_enu_vec)
-    {
-      char buffer[80];
-      sprintf(buffer, std::string(folder + "ecef_M_cv_%04d.txt").c_str(), i++);
-      std::string filename = buffer;
-      std::ofstream file(filename);
-      if (file.is_open())
-      {
-        (ecef_M_enu * enu_M_cv).save(file);
+      vpHomogeneousMatrix enu_M_cv;
+      enu_M_cv[1][1] = -1;
+      enu_M_cv[2][2] = -1;
+      const std::string folder = "ENU/lon-lat/";
+      vpIoTools::makeDirectory(folder);
+      int i = 0;
+      for (const auto &ecef_M_enu : ecef_M_enu_vec) {
+        std::stringstream buffer;
+        buffer << folder << "ecef_M_cv_" << std::setw(4) << std::setfill('0') << i++ << ".txt";
+        std::string filename = buffer.str();
+        std::ofstream file(filename);
+        if (file.is_open()) {
+          (ecef_M_enu * enu_M_cv).save(file);
+        }
       }
-    }
 #endif
     }
   }
@@ -151,7 +147,7 @@ TEST_CASE("Equidistributed sphere point", "[math_equi_sphere_pts]")
   SECTION("NED")
   {
     std::vector<vpHomogeneousMatrix> ecef_M_ned_vec =
-      vpMath::getLocalTangentPlaneTransformations(lonlatVec, radius, vpMath::ned2ecef);
+        vpMath::getLocalTangentPlaneTransformations(lonlatVec, radius, vpMath::ned2ecef);
     CHECK(!ecef_M_ned_vec.empty());
     for (const auto &ecef_M_ned : ecef_M_ned_vec) {
 #ifdef VERBOSE
@@ -159,7 +155,7 @@ TEST_CASE("Equidistributed sphere point", "[math_equi_sphere_pts]")
 #endif
       CHECK(ecef_M_ned.isValid());
       CHECK(ecef_M_ned.getRotationMatrix().isARotationMatrix());
-      CHECK(vpMath::equal(ecef_M_ned.getTranslationVector().sumSquare(), radius*radius));
+      CHECK(vpMath::equal(ecef_M_ned.getTranslationVector().sumSquare(), radius * radius));
     }
 
 #ifdef DEBUG
@@ -171,14 +167,12 @@ TEST_CASE("Equidistributed sphere point", "[math_equi_sphere_pts]")
     const std::string folder = "NED/equi/";
     vpIoTools::makeDirectory(folder);
     int i = 0;
-    for (const auto &ecef_M_ned : ecef_M_ned_vec)
-    {
-      char buffer[80];
-      sprintf(buffer, std::string(folder + "ecef_M_cv_%04d.txt").c_str(), i++);
-      std::string filename = buffer;
+    for (const auto &ecef_M_ned : ecef_M_ned_vec) {
+      std::stringstream buffer;
+      buffer << folder << "ecef_M_cv_" << std::setw(4) << std::setfill('0') << i++ << ".txt";
+      std::string filename = buffer.str();
       std::ofstream file(filename);
-      if (file.is_open())
-      {
+      if (file.is_open()) {
         (ecef_M_ned * ned_M_cv).save(file);
       }
     }
@@ -188,7 +182,7 @@ TEST_CASE("Equidistributed sphere point", "[math_equi_sphere_pts]")
   SECTION("ENU")
   {
     std::vector<vpHomogeneousMatrix> ecef_M_enu_vec =
-      vpMath::getLocalTangentPlaneTransformations(lonlatVec, radius, vpMath::enu2ecef);
+        vpMath::getLocalTangentPlaneTransformations(lonlatVec, radius, vpMath::enu2ecef);
     CHECK(!ecef_M_enu_vec.empty());
     for (const auto &ecef_M_enu : ecef_M_enu_vec) {
 #ifdef VERBOSE
@@ -196,7 +190,7 @@ TEST_CASE("Equidistributed sphere point", "[math_equi_sphere_pts]")
 #endif
       CHECK(ecef_M_enu.isValid());
       CHECK(ecef_M_enu.getRotationMatrix().isARotationMatrix());
-      CHECK(vpMath::equal(ecef_M_enu.getTranslationVector().sumSquare(), radius*radius));
+      CHECK(vpMath::equal(ecef_M_enu.getTranslationVector().sumSquare(), radius * radius));
     }
 
 #ifdef DEBUG
@@ -206,14 +200,12 @@ TEST_CASE("Equidistributed sphere point", "[math_equi_sphere_pts]")
     const std::string folder = "ENU/equi/";
     vpIoTools::makeDirectory(folder);
     int i = 0;
-    for (const auto &ecef_M_enu : ecef_M_enu_vec)
-    {
-      char buffer[80];
-      sprintf(buffer, std::string(folder + "ecef_M_cv_%04d.txt").c_str(), i++);
-      std::string filename = buffer;
+    for (const auto &ecef_M_enu : ecef_M_enu_vec) {
+      std::stringstream buffer;
+      buffer << folder << "ecef_M_cv_" << std::setw(4) << std::setfill('0') << i++ << ".txt";
+      std::string filename = buffer.str();
       std::ofstream file(filename);
-      if (file.is_open())
-      {
+      if (file.is_open()) {
         (ecef_M_enu * enu_M_cv).save(file);
       }
     }
@@ -254,11 +246,10 @@ TEST_CASE("Look-at", "[math_look_at]")
   std::cout << "\nbl_M_cv:\n" << bl_M_cv << std::endl;
 
   // Ground truth using Blender look-at
-  vpHomogeneousMatrix bl_M_cv_gt = {
-  0.13372008502483368, 0.22858507931232452, -0.9642965197563171, 8.867762565612793,
-  0.9910191297531128, -0.030843468382954597, 0.13011434674263, -1.1965436935424805,
-  -5.4016709327697754e-08, -0.9730352163314819, -0.23065657913684845, 2.121140241622925
-  };
+  vpHomogeneousMatrix bl_M_cv_gt = {0.13372008502483368, 0.22858507931232452,  -0.9642965197563171,
+                                    8.867762565612793,   0.9910191297531128,   -0.030843468382954597,
+                                    0.13011434674263,    -1.1965436935424805,  -5.4016709327697754e-08,
+                                    -0.9730352163314819, -0.23065657913684845, 2.121140241622925};
   std::cout << "\nbl_M_cv_gt:\n" << bl_M_cv_gt << std::endl;
 
   const double tolerance = 1e-6;

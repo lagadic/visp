@@ -131,7 +131,7 @@ int main()
     std::cout << "(Idiff_regular == Idiff_sse)" << std::endl;
     std::cout << "t_regular: " << t_regular << " ms ; mean t_regular: " << t_regular / 256 << " ms" << std::endl;
     std::cout << "t_sse: " << t_sse << " ms ; mean t_sse: " << t_sse / 256 << " ms" << std::endl;
-    std::cout << "speed-up: " << t_regular / t_sse << " X" << std::endl;
+    std::cout << "speed-up: " << t_regular / t_sse << " times" << std::endl;
   }
 
   {
@@ -162,8 +162,105 @@ int main()
     std::cout << "(Idiff_regular_color == Idiff_sse_color)" << std::endl;
     std::cout << "t_regular: " << t_regular << " ms ; mean t_regular: " << t_regular / 256 << " ms" << std::endl;
     std::cout << "t_sse: " << t_sse << " ms ; mean t_sse: " << t_sse / 256 << " ms" << std::endl;
-    std::cout << "speed-up: " << t_regular / t_sse << " X" << std::endl;
+    std::cout << "speed-up: " << t_regular / t_sse << " times" << std::endl;
   }
 
+  {
+    std::cout << "Test vpRGBa" << std::endl;
+    vpRGBa rgba_1(10, 20, 30);
+    vpRGBa rgba_2(10, 20, 30);
+
+    if (rgba_1 == rgba_2) {
+      std::cout << "Test ok: same rgba" << std::endl;
+    }
+    else {
+      std::cerr << "Error in rgba operator==" << std::endl;
+      return EXIT_FAILURE;
+    }
+    if (rgba_1 != rgba_2) {
+      std::cerr << "Error in rgba operator!=" << std::endl;
+      return EXIT_FAILURE;
+    }
+    {
+      vpRGBa rgba_3(1, 0, 0);
+      if (rgba_1 == (rgba_2 + rgba_3)) {
+        std::cerr << "Error in rgba operator==" << std::endl;
+        return EXIT_FAILURE;
+      }
+      if (rgba_1 != (rgba_2 + rgba_3)) {
+        std::cerr << "Test ok: R value differ" << std::endl;
+      }
+    }
+    {
+      vpRGBa rgba_3(0, 1, 0);
+      if (rgba_1 == (rgba_2 + rgba_3)) {
+        std::cerr << "Error in rgba operator==" << std::endl;
+        return EXIT_FAILURE;
+      }
+      if (rgba_1 != (rgba_2 + rgba_3)) {
+        std::cerr << "Test ok: G value differ" << std::endl;
+      }
+    }
+    {
+      vpRGBa rgba_3(0, 0, 1);
+      if (rgba_1 == (rgba_2 + rgba_3)) {
+        std::cerr << "Error in rgba operator==" << std::endl;
+        return EXIT_FAILURE;
+      }
+      if (rgba_1 != (rgba_2 + rgba_3)) {
+        std::cerr << "Test ok: B value differ" << std::endl;
+      }
+    }
+  }
+
+    {
+    std::cout << "Test vpRGBf" << std::endl;
+    vpRGBf rgbf_1(10.f, 20.f, 30.f);
+    vpRGBf rgbf_2(10.f, 20.f, 30.f);
+
+    if (rgbf_1 == rgbf_2) {
+      std::cout << "Test ok: same rgbf" << std::endl;
+    }
+    else {
+      std::cerr << "Error in rgbf operator==" << std::endl;
+      return EXIT_FAILURE;
+    }
+    if (rgbf_1 != rgbf_2) {
+      std::cerr << "Error in rgbf operator!=" << std::endl;
+      return EXIT_FAILURE;
+    }
+    {
+      vpRGBf rgbf_3(1e-6f, 0.f, 0.f);
+      if (rgbf_1 == (rgbf_2 + rgbf_3)) {
+        std::cerr << "Rf Error in rgbf operator==" << std::endl;
+        return EXIT_FAILURE;
+      }
+      if (rgbf_1 != (rgbf_2 + rgbf_3)) {
+        std::cerr << "Test ok: Rf value differ" << std::endl;
+      }
+    }
+    {
+      vpRGBf rgbf_3(0.f, 1e-6f, 0.f);
+      if (rgbf_1 == (rgbf_2 + rgbf_3)) {
+        std::cerr << "Gf Error in rgbf operator==" << std::endl;
+        return EXIT_FAILURE;
+      }
+      if (rgbf_1 != (rgbf_2 + rgbf_3)) {
+        std::cerr << "Test ok: Gf value differ" << std::endl;
+      }
+    }
+    {
+      vpRGBf rgbf_3(0.f, 0.f, 1e-6f);
+      if (rgbf_1 == (rgbf_2 + rgbf_3)) {
+        std::cerr << "Bf Error in rgbf operator==" << std::endl;
+        return EXIT_FAILURE;
+      }
+      if (rgbf_1 != (rgbf_2 + rgbf_3)) {
+        std::cerr << "Test ok: Bf value differ" << std::endl;
+      }
+    }
+  }
+
+  std::cout << "Test succeed" << std::endl;
   return EXIT_SUCCESS;
 }

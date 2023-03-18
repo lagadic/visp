@@ -132,7 +132,7 @@ int main(int argc, const char *argv[])
     std::cout << std::endl << "** Hand-eye calibration succeed" << std::endl;
     std::cout << std::endl << "** Hand-eye (eMc) transformation estimated:" << std::endl;
     std::cout << eMc << std::endl;
-    std::cout << "** Corresponding pose vector: " << vpPoseVector(eMc).t() << std::endl;
+    std::cout << "** Corresponding pose vector [tx ty tz tux tuy tuz] in [m] and [rad]: " << vpPoseVector(eMc).t() << std::endl;
 
     vpThetaUVector erc(eMc.getRotationMatrix());
     std::cout << std::endl << "** Translation [m]: " << eMc[0][3] << " " << eMc[1][3] << " " << eMc[2][3] << std::endl;
@@ -141,6 +141,9 @@ int main(int argc, const char *argv[])
               << " " << vpMath::deg(erc[2]) << std::endl;
     vpQuaternionVector quaternion(eMc.getRotationMatrix());
     std::cout << "** Rotation (quaternion representation) [rad]: " << quaternion.t() << std::endl;
+    vpRxyzVector rxyz(eMc.getRotationMatrix());
+    std::cout << "** Rotation (r-x-y-z representation) [rad]: " << rxyz.t() << std::endl;
+    std::cout << "** Rotation (r-x-y-z representation) [deg]: " << vpMath::deg(rxyz).t() << std::endl;
 
     // save eMc
     std::string name_we = vpIoTools::getNameWE(opt_eMc_file) + ".txt";

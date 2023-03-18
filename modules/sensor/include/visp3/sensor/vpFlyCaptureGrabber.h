@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description: Class which enables to project an image in the 3D space
  * and get the view of a virtual camera.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -94,7 +91,7 @@ int main()
   try {
   int nframes = 100;
   vpImage<unsigned char> I;
-  char filename[255];
+  char filename[FILENAME_MAX];
   vpFlyCaptureGrabber g;
   std::cout << "Number of cameras detected: " << g.getNumCameras() << std::endl;
 
@@ -104,7 +101,7 @@ int main()
 
   for(int i=0; i< nframes; i++) {
     g.acquire(I);
-    sprintf(filename, "image%04d.pgm", i);
+    snprintf(filename, FILENAME_MAX, "image%04d.pgm", i);
     vpImageIo::write(I, filename);
   }
 #endif
@@ -126,7 +123,7 @@ int main()
 {
 #if defined(VISP_HAVE_FLYCAPTURE)
   int nframes = 100;
-  char filename[255];
+  char filename[FILENAME_MAX];
   unsigned int numCameras = vpFlyCaptureGrabber::getNumCameras();
 
   std::cout << "Number of cameras detected: " << numCameras << std::endl;
@@ -143,7 +140,7 @@ int main()
   for(int i=0; i< nframes; i++) {
     for(unsigned int cam=0; cam < numCameras; cam++) {
       g[cam].acquire(I[cam]);
-      sprintf(filename, "image-camera%d-%04d.pgm", cam, i);
+      snprintf(filename, FILENAME_MAX, "image-camera%d-%04d.pgm", cam, i);
       vpImageIo::write(I[cam], filename);
     }
   }

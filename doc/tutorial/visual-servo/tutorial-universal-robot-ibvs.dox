@@ -20,6 +20,7 @@ $ sudo apt install librtde librtde-dev libboost-system-dev libboost-thread-dev l
 \endverbatim
 - or build `ur_rtde` from source
 \verbatim
+$ mkdir -p $VISP_WS/3rdparty
 $ cd $VISP_WS/3rdparty
 $ sudo apt install libboost-system-dev libboost-thread-dev libboost-program-options-dev
 $ git clone https://gitlab.com/sdurobotics/ur_rtde.git

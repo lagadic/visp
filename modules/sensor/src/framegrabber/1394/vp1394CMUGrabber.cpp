@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,11 +30,6 @@
  *
  * Description:
  * Firewire cameras video capture based on CMU 1394 Digital Camera SDK.
- *
- * Authors:
- * Lucas Lopes Lemos FEMTO-ST, AS2M departement, Besancon
- * Guillaume Laurent FEMTO-ST, AS2M departement, Besancon
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -511,7 +506,7 @@ void vp1394CMUGrabber::displayCameraModel()
   std::cout << "Vendor: " << vendor << std::endl;
   std::cout << "Model: " << model << std::endl;
 
-  sprintf(buf, "%08X%08X", ID.HighPart, ID.LowPart);
+  snprintf(buf, 256, "%08X%08X", ID.HighPart, ID.LowPart);
   std::cout << "UniqueID: " << buf << std::endl;
 }
 

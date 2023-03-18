@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,6 @@
  * Description:
  * Interface for the Servolens lens attached to the camera fixed on the
  * Afma4 robot.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -196,27 +193,27 @@ void vpServolens::reset() const
     vpERROR_TRACE("Cannot dial with Servolens.");
     throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
-  char commande[10];
+  std::string cmd;
 
   /* suppression de l'echo */
-  sprintf(commande, "SE1");
-  this->write(commande);
+  cmd = "SE1";
+  this->write(cmd.c_str());
 
   /* initialisation de l'objectif, idem qu'a la mise sous tension */
-  sprintf(commande, "SR0");
-  this->write(commande);
+  cmd = "SR0";
+  this->write(cmd.c_str());
 
   vpTime::wait(25000);
 
   this->wait();
 
   /* suppression de l'echo */
-  sprintf(commande, "SE0");
-  this->write(commande);
+  cmd = "SE0";
+  this->write(cmd.c_str());
 
   /* devalide l'incrustation de la fenetre sur l'ecran du moniteur */
-  sprintf(commande, "VW0");
-  this->write(commande);
+  cmd = "VW0";
+  this->write(cmd.c_str());
 }
 /*!
   Initialize the Servolens lens.
@@ -233,15 +230,15 @@ void vpServolens::init() const
     throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
 
-  char commande[10];
+  std::string cmd;
 
   /* suppression de l'echo */
-  sprintf(commande, "SE0");
-  this->write(commande);
+  cmd = "SE0";
+  this->write(cmd.c_str());
 
   /* devalide l'incrustation de la fenetre sur l'ecran du moniteur */
-  sprintf(commande, "VW0");
-  this->write(commande);
+  cmd = "VW0";
+  this->write(cmd.c_str());
 
   /* L'experience montre qu'une petite tempo est utile.		*/
   vpTime::wait(500);
@@ -263,15 +260,15 @@ void vpServolens::enablePrompt(bool active) const
     vpERROR_TRACE("Cannot dial with Servolens.");
     throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
-  char commande[10];
+  std::string cmd;
 
   /* suppression de l'echo */
   if (active == true)
-    sprintf(commande, "SE1");
+    cmd = "SE1";
   else
-    sprintf(commande, "SE0");
+    cmd = "SE0";
 
-  this->write(commande);
+  this->write(cmd.c_str());
 }
 
 /*!
@@ -288,28 +285,28 @@ void vpServolens::setController(vpControllerType controller) const
     vpERROR_TRACE("Cannot dial with Servolens.");
     throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
-  char commande[10];
+  std::string cmd;
 
   switch (controller) {
   case AUTO:
     /* Valide l'incrustation de la fenetre sur l'ecran du moniteur */
-    sprintf(commande, "VW1");
-    this->write(commande);
+    cmd = "VW1";
+    this->write(cmd.c_str());
     break;
   case CONTROLLED:
     /* nettoyage : mot d'etat vide 0000 */
-    sprintf(commande, "SX0842");
-    this->write(commande);
+    cmd = "SX0842";
+    this->write(cmd.c_str());
     /* devalide l'incrustation de la fenetre sur l'ecran du moniteur */
-    sprintf(commande, "VW0");
-    this->write(commande);
+    cmd = "VW0";
+    this->write(cmd.c_str());
     break;
   case RELEASED:
-    sprintf(commande, "SX1084");
-    this->write(commande);
+    cmd = "SX1084";
+    this->write(cmd.c_str());
     /* devalide l'incrustation de la fenetre sur l'ecran du moniteur */
-    sprintf(commande, "VW0");
-    this->write(commande);
+    cmd = "VW0";
+    this->write(cmd.c_str());
     break;
   }
 }
@@ -326,14 +323,14 @@ void vpServolens::setAutoIris(bool enable) const
     vpERROR_TRACE("Cannot dial with Servolens.");
     throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
-  char commande[10];
+  std::string cmd;
 
   if (enable)
-    sprintf(commande, "DA1");
+    cmd = "DA1";
   else
-    sprintf(commande, "DA0");
+    cmd = "DA0";
 
-  this->write(commande);
+  this->write(cmd.c_str());
 }
 
 /*!
@@ -437,7 +434,7 @@ bool vpServolens::getPosition(vpServoType servo, unsigned int &position) const
     vpERROR_TRACE("Cannot dial with Servolens.");
     throw vpRobotException(vpRobotException::communicationError, "Cannot dial with Servolens.");
   }
-  char commande[10];
+  std::string cmd;
   char posit[10], *pt_posit;
   char c;
   short fin_lect_posit;         /* indique si on a lu la position du servo-moteur */
@@ -453,13 +450,13 @@ bool vpServolens::getPosition(vpServoType servo, unsigned int &position) const
   /* envoie des commandes pour obtenir la position des servo-moteurs. */
   switch (servo) {
   case ZOOM:
-    sprintf(commande, "ZD?");
+    cmd = "ZD?";
     break;
   case FOCUS:
-    sprintf(commande, "FD?");
+    cmd = "FD?";
     break;
   case IRIS:
-    sprintf(commande, "DD?");
+    cmd = "DD?";
     break;
   default:
     break;
@@ -467,7 +464,7 @@ bool vpServolens::getPosition(vpServoType servo, unsigned int &position) const
   /* envoie de la commande */
   //    printf("\ncommande: %s", commande);
 
-  this->write(commande);
+  this->write(cmd.c_str());
 
   /* on cherche a lire la position du servo-moteur */
   /* Servolens renvoie une chaine de caractere du type ZD00400 ou FD00234 */
@@ -653,19 +650,19 @@ void vpServolens::wait(vpServoType servo) const
   }
 
   char c;
-  char fin_mvt[3];
+  std::string fin_mvt;
   bool sortie = false;
 
   switch (servo) {
   case ZOOM:
-    sprintf(fin_mvt, "ZF");
+    fin_mvt = "ZF";
     break;
   case FOCUS:
-    sprintf(fin_mvt, "FF");
+    fin_mvt = "FF";
     break;
   case IRIS:
   default:
-    sprintf(fin_mvt, "DF");
+    fin_mvt = "DF";
     break;
   }
 
@@ -678,14 +675,14 @@ void vpServolens::wait(vpServoType servo) const
     c &= 0x7f;
 
     /* tests si fin de mouvement */
-    if (c == fin_mvt[0]) {
+    if (c == fin_mvt.c_str()[0]) {
       /* lecture du caractere suivant */
       if (::read(this->remfd, &c, 1) != 1) {
         throw vpRobotException(vpRobotException::communicationError, "Cannot read on Servolens.");
       }
 
       c &= 0x7f;
-      if (c == fin_mvt[1]) {
+      if (c == fin_mvt.c_str()[1]) {
         sortie = true;
       }
     }

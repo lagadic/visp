@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Sick LD-MRS laser driver.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -159,7 +156,7 @@ void *laser_display_and_save_loop(void *)
 
       if (save) {
         // Set the scan data filename to store the measures
-        sprintf(filename, "%s/scan%04u-layer%d.txt", output_path.c_str(), iter, layer + 1);
+        snprintf(filename, FILENAME_MAX, "%s/scan%04u-layer%d.txt", output_path.c_str(), iter, layer + 1);
         fdscan.open(filename);
 
         // Write the file header
@@ -283,7 +280,7 @@ void *camera_acq_and_display_loop(void *)
       std::cout << "camera timestamp: " << image_timestamp << " s " << std::endl;
       if (save) {
         // Set the image filename
-        sprintf(filename, "%s/image%04u.png", output_path.c_str(), iter);
+        snprintf(filename, FILENAME_MAX, "%s/image%04u.png", output_path.c_str(), iter);
         vpImageIo::write(Q, filename);
         fdimage_ts << filename << " " << image_timestamp << std::endl;
       }

@@ -254,7 +254,7 @@ int main(int argc, const char **argv)
     //
 
     // Load cube sequence
-    filename = vpIoTools::createFilePath(ipath, "mbt/cube/image%04d.pgm");
+    filename = vpIoTools::createFilePath(ipath, "mbt/cube/image%04d.png");
 
     vpVideoReader reader;
     reader.setFileName(filename);

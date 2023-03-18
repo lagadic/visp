@@ -24,13 +24,13 @@ foreach(cpp ${tutorial_cpp})
 
   if(VISP_HAVE_OGRE)
     # Add specific build flag to turn off warnings coming from Ogre3D 3rd party
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-copy")
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-float-equal")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-register")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-parameter")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-but-set-parameter")
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-float-equal")
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-copy")
-    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-register")
   endif()
 
   if(CXX_FLAGS_MUTE_WARNINGS)

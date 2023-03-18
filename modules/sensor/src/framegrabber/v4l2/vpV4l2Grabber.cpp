@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Framegrabber based on Video4Linux2 driver.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 
@@ -893,20 +890,20 @@ void vpV4l2Grabber::open()
   /* Open Video Device */
   struct stat st;
 
-  if (-1 == stat(device, &st)) {
-    fprintf(stderr, "Cannot identify '%s': %d, %s\n", device, errno, strerror(errno));
+  if (-1 == stat(device.c_str(), &st)) {
+    fprintf(stderr, "Cannot identify '%s': %d, %s\n", device.c_str(), errno, strerror(errno));
     throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Cannot identify video device"));
   }
 
   if (!S_ISCHR(st.st_mode)) {
-    fprintf(stderr, "%s is no device\n", device);
+    fprintf(stderr, "%s is no device\n", device.c_str());
     throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "No device"));
   }
-  fd = v4l2_open(device, O_RDWR | O_NONBLOCK, 0);
+  fd = v4l2_open(device.c_str(), O_RDWR | O_NONBLOCK, 0);
   if (fd < 0) {
     close();
 
-    vpERROR_TRACE("No video device \"%s\"\n", device);
+    vpERROR_TRACE("No video device \"%s\"\n", device.c_str());
     throw(vpFrameGrabberException(vpFrameGrabberException::initializationError, "Can't access to video device"));
   }
 
@@ -945,7 +942,7 @@ void vpV4l2Grabber::open()
   /* Querry Video Device Capabilities */
   if (v4l2_ioctl(fd, VIDIOC_QUERYCAP, &cap) == -1) {
     close();
-    fprintf(stderr, "%s is no V4L2 device\n", device);
+    fprintf(stderr, "%s is no V4L2 device\n", device.c_str());
     throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Is not a V4L2 device"));
   }
   if (m_verbose) {
@@ -953,8 +950,8 @@ void vpV4l2Grabber::open()
             "v4l2 info:\n"
             "     device: %s\n"
             "     %s %d.%d.%d / %s @ %s\n",
-            device, cap.driver, (cap.version >> 16) & 0xff, (cap.version >> 8) & 0xff, cap.version & 0xff, cap.card,
-            cap.bus_info);
+            device.c_str(), cap.driver, (cap.version >> 16) & 0xff, (cap.version >> 8) & 0xff, cap.version & 0xff,
+            cap.card, cap.bus_info);
     if (cap.capabilities & V4L2_CAP_VIDEO_OVERLAY)
       fprintf(stdout, "     Support overlay\n");
     else
@@ -1173,7 +1170,7 @@ void vpV4l2Grabber::startStreaming()
       fprintf(stderr,
               "%s does not support "
               "memory mapping\n",
-              device);
+              device.c_str());
       throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Does not support memory mapping"));
     }
     throw(vpFrameGrabberException(vpFrameGrabberException::otherError, "Can't require video buffers"));
@@ -1410,31 +1407,31 @@ void vpV4l2Grabber::queueAll()
 */
 void vpV4l2Grabber::printBufInfo(struct v4l2_buffer buf)
 {
-  char type[40];
+  std::string type;
 
   switch (buf.type) {
   case V4L2_BUF_TYPE_VIDEO_CAPTURE:
-    sprintf(type, "video-cap");
+    type = "video-cap";
     break;
   case V4L2_BUF_TYPE_VIDEO_OVERLAY:
-    sprintf(type, "video-over");
+    type = "video-over";
     break;
   case V4L2_BUF_TYPE_VIDEO_OUTPUT:
-    sprintf(type, "video-out");
+    type = "video-out";
     break;
   case V4L2_BUF_TYPE_VBI_CAPTURE:
-    sprintf(type, "vbi-cap");
+    type = "vbi-cap";
     break;
   case V4L2_BUF_TYPE_VBI_OUTPUT:
-    sprintf(type, "vbi-out");
+    type = "vbi-out";
     break;
   default:
-    sprintf(type, "unknown");
+    type = "unknown";
     break;
   }
 
-  fprintf(stdout, "v4l2: buf %d: %d ad: 0x%lx offset 0x%x+%d (=0x%x),used %d\n", buf.index, buf.type, buf.m.userptr,
-          buf.m.offset, buf.length, buf.length, buf.bytesused);
+  fprintf(stdout, "v4l2: buf %d: type %d (%s) ad: 0x%lx offset 0x%x+%d (=0x%x),used %d\n", buf.index, buf.type,
+          type.c_str(), buf.m.userptr, buf.m.offset, buf.length, buf.length, buf.bytesused);
 }
 
 /*!

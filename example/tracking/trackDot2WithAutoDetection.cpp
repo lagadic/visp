@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,9 +30,6 @@
  *
  * Description:
  * Test auto detection of dots.
- *
- * Authors:
- * Fabien Spindler
  *
  *****************************************************************************/
 /*!
@@ -115,7 +112,7 @@ OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
      From this path read images \n\
-     \"mire-2/image.%%04d.pgm\"\n\
+     \"mire-2/image.%%04d.png\"\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
      this option.\n\
@@ -351,11 +348,10 @@ int main(int argc, const char **argv)
       // Build the name of the image file
 
       s.setf(std::ios::right, std::ios::adjustfield);
-      s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+      s << "image." << std::setw(4) << std::setfill('0') << iter << ".png";
       filename = vpIoTools::createFilePath(dirname, s.str());
     } else {
-
-      sprintf(cfilename, opt_ppath.c_str(), iter);
+      snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
       filename = cfilename;
     }
     // Read the PGM image named "filename" on the disk, and put the
@@ -450,10 +446,10 @@ int main(int argc, const char **argv)
       if (opt_ppath.empty()) {
 
         s.str("");
-        s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+        s << "image." << std::setw(4) << std::setfill('0') << iter << ".png";
         filename = vpIoTools::createFilePath(dirname, s.str());
       } else {
-        sprintf(cfilename, opt_ppath.c_str(), iter);
+        snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
         filename = cfilename;
       }
       // read the image

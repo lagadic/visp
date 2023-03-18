@@ -81,7 +81,9 @@
 #endif
 
 #if !USE_OPENCV_HAL && (USE_SSE || USE_NEON)
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 #include <cstdint>
+#endif
 
 namespace
 {
@@ -149,7 +151,7 @@ inline float64x2_t v_combine_high(const float64x2_t& a, const float64x2_t& b)
 
 inline float64x2_t v_fma(const float64x2_t& a, const float64x2_t& b, const float64x2_t& c)
 {
-    return vfmaq_f64(c, a, b);
+  return vfmaq_f64(c, a, b);
 }
 #endif
 }

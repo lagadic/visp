@@ -250,7 +250,7 @@ int main(int argc, const char **argv)
     vpVideoReader reader;
 
     if (opt_ppath.empty()) {
-      filename = vpIoTools::createFilePath(ipath, "mire-2/image.%04d.pgm");
+      filename = vpIoTools::createFilePath(ipath, "mire-2/image.%04d.png");
     } else {
       filename.assign(opt_ppath);
     }

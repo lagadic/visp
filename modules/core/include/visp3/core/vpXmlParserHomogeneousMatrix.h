@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,10 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * XML parser to load and save Homogeneous Matrix in a XML file
- *
- * Authors:
- * Giovanni Claudio
+ * XML parser to load and save Homogeneous Matrix in a XML file.
  *
  *****************************************************************************/
 
@@ -139,8 +136,7 @@ int main(int argc, char* argv[])
   std::string name_M =  "eMe";
 
   // Define name of the file xml to fill
-  char filename[FILENAME_MAX];
-  sprintf(filename, "%s", "homogeneous_matrixes.xml");
+  std::string filename = "homogeneous_matrixes.xml";
 
   if (p.save(M, filename, name_M) != vpXmlParserHomogeneousMatrix::SEQUENCE_OK) {
     std::cout << "Cannot save the Homogeneous matrix" << std::endl;

@@ -1,3 +1,35 @@
+/****************************************************************************
+ *
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * See http://visp.inria.fr for more information.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at visp@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ *
+ *****************************************************************************/
+
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
@@ -290,7 +322,7 @@ public:
 #endif
       vpImage<unsigned char> infraredImg;
 
-      char buffer[256];
+      char buffer[FILENAME_MAX];
       for (;;) {
         m_queue.pop(colorImg, depthImg, pointCloud, infraredImg);
 
@@ -299,7 +331,7 @@ public:
 
           if (m_save_color) {
             ss << m_directory << "/color_image_%04d.jpg";
-            sprintf(buffer, ss.str().c_str(), m_cpt);
+            snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
 
             std::string filename_color = buffer;
             vpImageIo::write(colorImg, filename_color);
@@ -308,7 +340,7 @@ public:
           if (m_save_depth) {
             ss.str("");
             ss << m_directory << "/depth_image_%04d.bin";
-            sprintf(buffer, ss.str().c_str(), m_cpt);
+            snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
             std::string filename_depth = buffer;
 
             std::ofstream file_depth(filename_depth.c_str(), std::ios::out | std::ios::binary);
@@ -330,7 +362,7 @@ public:
           if (m_save_pointcloud) {
             ss.str("");
             ss << m_directory << "/point_cloud_%04d" << (m_save_pointcloud_binary_format ? ".bin" : ".pcd");
-            sprintf(buffer, ss.str().c_str(), m_cpt);
+            snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
             std::string filename_point_cloud = buffer;
 
             if (m_save_pointcloud_binary_format) {
@@ -389,7 +421,7 @@ public:
           if (m_save_infrared) {
             ss.str("");
             ss << m_directory << "/infrared_image_%04d.jpg";
-            sprintf(buffer, ss.str().c_str(), m_cpt);
+            snprintf(buffer, FILENAME_MAX, ss.str().c_str(), m_cpt);
 
             std::string filename_infrared = buffer;
             vpImageIo::write(infraredImg, filename_infrared);

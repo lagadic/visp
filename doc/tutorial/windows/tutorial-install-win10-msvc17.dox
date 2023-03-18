@@ -334,13 +334,13 @@ IDS uEye Camera Software Suite installation enables vpUeyeGrabber class usage.
 
 If you have a
 [Kinova Jaco](https://www.kinovarobotics.com/en/products/assistive-technologies/kinova-jaco-assistive-robotic-arm)
-assistive robotic arm, it could be useful to install the corresponding SDK to be able to use vpRobotKinova class.
-This class is an interface over Kinova Jaco SDK and allows to control
+assistive robotic arm, it could be useful to install the corresponding Gen2 SDK to be able to use vpRobotKinova class.
+This class is an interface over Kinova Jaco Gen2 SDK and allows to control
 Gen2 4, 6 and 7 DoF [arm](https://www.kinovarobotics.com/en/resources/gen2-technical-resources).
 
 <b>1. Install Kinova Jaco SDK</b>
 
-- [Download](https://www.kinovarobotics.com/en/resources/gen2-technical-resources) the SDK.
+- [Download](https://www.kinovarobotics.com/en/resources/gen2-technical-resources) the Gen2 SDK.
 At the time this tutorial was written, we downloaded "Gen2 SDK v1.5.1" that comes in `PS 0000 0009_1.5.1.zip` (254M).
 - Extract the zip content in a temporary folder like `C:\temp\kinova-jaco`
 - At this step you should have the following
@@ -497,7 +497,7 @@ CMake Warning at CMakeLists.txt:1156 (message):
   USE_EIGEN3 OFF.
 \endverbatim We strongly recommend to fix this warning. To this end:
     - close `cmake-gui`
-    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\eigen-3.4.0\build-vc17\install\share\eigen3\cmake"`
+    - set `Eigen3_DIR` environment var running `setx Eigen3_DIR "%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install\share\eigen3\cmake"`
     - open again `cmake-gui`
     - delete the cache using menu `File > Delete Cache`
     - and configure again ViSP.
@@ -883,7 +883,7 @@ eigen_assert_exception is not member of Eigen
 This issue is known and reported [here](https://bugs.archlinux.org/task/68118).
 
 A quick fix is to comment the corresponding line 162 in
-`%%VISP_WS%\eigen-3.3.8\build-vc16\install\include\eigen3\Eigen\src\Core\Products\Parallelizer.h` like
+`%%VISP_WS%\3rdparty\eigen-3.3.8\build-vc16\install\include\eigen3\Eigen\src\Core\Products\Parallelizer.h` like
 \verbatim
   //if (errorCount) EIGEN_THROW_X(Eigen::eigen_assert_exception());
 #endif

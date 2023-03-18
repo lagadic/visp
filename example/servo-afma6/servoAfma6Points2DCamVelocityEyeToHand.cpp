@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,9 +33,6 @@
  *   eye-to-hand control
  *   velocity computed in the camera frame
  *
- * Authors:
- * Eric Marchand
- *
  *****************************************************************************/
 /*!
   \file servoAfma6Points2DCamVelocityEyeToHand.cpp
@@ -63,14 +60,13 @@
 #include <visp3/core/vpDebug.h> // Debug trace
 #if (defined(VISP_HAVE_AFMA6) && defined(VISP_HAVE_DC1394))
 
-#define SAVE 0
-
 #include <visp3/blob/vpDot.h>
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpImagePoint.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpPoint.h>
 #include <visp3/gui/vpDisplayGTK.h>
@@ -85,12 +81,27 @@
 #include <visp3/vs/vpServo.h>
 #include <visp3/vs/vpServoDisplay.h>
 
+#define SAVE 0
 #define L 0.006
 #define D 0
 
 int main()
 {
   try {
+    std::string username = vpIoTools::getUserName();
+    std::string logdirname = "/tmp/" + username;
+    if (SAVE) {
+      if (vpIoTools::checkDirectory(logdirname) == false) {
+        try {
+          // Create the dirname
+          vpIoTools::makeDirectory(logdirname);
+        } catch (...) {
+          std::cerr << std::endl << "ERROR:" << std::endl;
+          std::cerr << "  Cannot create " << logdirname << std::endl;
+          return EXIT_FAILURE;
+        }
+      }
+    }
     vpServo task;
 
     vpCameraParameters cam;
@@ -177,14 +188,13 @@ int main()
     ------------------------------------------------------------------
     */
     std::cout << " Learning 0/1 " << std::endl;
-    char name[FILENAME_MAX];
-    sprintf(name, "cdMo.dat");
+    std::string name = "cdMo.dat";
     int learning;
     std::cin >> learning;
     if (learning == 1) {
       // save the object position
       vpTRACE("Save the location of the object in a file cdMo.dat");
-      std::ofstream f(name);
+      std::ofstream f(name.c_str());
       cMo.save(f);
       f.close();
       exit(1);
@@ -353,8 +363,13 @@ int main()
       if ((SAVE == 1) && (iter % 3 == 0)) {
 
         vpDisplay::getImage(I, Ic);
-        sprintf(name, "/tmp/marchand/image.%04d.ppm", it++);
-        vpImageIo::write(Ic, name);
+        std::stringstream ss;
+        ss << logdirname;
+        ss << "/image.";
+        ss << std::setfill('0') << std::setw(4);
+        ss << it++;
+        ss << ".ppm";
+        vpImageIo::write(Ic, ss.str());
       }
     }
     v = 0;

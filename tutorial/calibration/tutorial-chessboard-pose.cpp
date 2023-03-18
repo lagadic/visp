@@ -253,7 +253,7 @@ int main(int argc, const char **argv)
       if (found) {
         vpPoseVector pose_vec(cMo);
         char name[FILENAME_MAX];
-        sprintf(name, opt_output_pose_files.c_str(), reader.getFrameIndex());
+        snprintf(name, FILENAME_MAX, opt_output_pose_files.c_str(), reader.getFrameIndex());
         std::string s = name;
         std::cout << "Save " << s << std::endl;
         pose_vec.saveYAML(s, pose_vec);

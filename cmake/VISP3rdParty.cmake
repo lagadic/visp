@@ -76,6 +76,12 @@ add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/stb_image")
 set(STBIMAGE_INCLUDE_DIRS "${VISP_SOURCE_DIR}/3rdparty/stb_image")
 set(STBIMAGE_VERSION ${STBIMAGE_MAJOR_VERSION}.${STBIMAGE_MINOR_VERSION}.${STBIMAGE_PATCH_VERSION})
 
+# tinyexr is always enabled
+set(TINYEXR_LIBRARY visp_tinyexr)
+add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/tinyexr")
+set(TINYEXR_INCLUDE_DIRS "${VISP_SOURCE_DIR}/3rdparty/tinyexr")
+set(TINYEXR_VERSION ${TINYEXR_MAJOR_VERSION}.${TINYEXR_MINOR_VERSION}.${TINYEXR_PATCH_VERSION})
+
 if(WITH_CATCH2)
   set(CATCH2_LIBRARY visp_catch2)
   add_subdirectory("${VISP_SOURCE_DIR}/3rdparty/catch2")

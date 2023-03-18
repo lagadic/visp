@@ -58,12 +58,15 @@ foreach(cpp ${example_cpp})
 endforeach()
 
 if(VISP_HAVE_REALSENSE2)
-  if(UNIX)
-    # Add specific build flag to turn off warnings coming from PCL 3rd party
-    visp_set_source_file_compile_flag(servoFrankaPBVS.cpp -Wno-unused-function -Wno-reorder -Wno-sign-compare -Wno-overloaded-virtual -Wno-ignored-qualifiers -Wno-deprecated-copy)
-    visp_set_source_file_compile_flag(servoFrankaIBVS.cpp -Wno-unused-function -Wno-reorder -Wno-sign-compare -Wno-overloaded-virtual -Wno-ignored-qualifiers -Wno-deprecated-copy)
-  else()
-    visp_set_source_file_compile_flag(servoFrankaIBVS.cpp /wd4244 /wd4267)
-    visp_set_source_file_compile_flag(servoFrankaPBVS.cpp /wd4244 /wd4267)
-  endif()
+  # Add specific build flag to turn off warnings coming from PCL 3rd party
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-copy")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-deprecated-declarations")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-ignored-qualifiers")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-overloaded-virtual")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-reorder")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-function")
+
+  visp_set_source_file_compile_flag(servoFrankaPBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
+  visp_set_source_file_compile_flag(servoFrankaIBVS.cpp ${CXX_FLAGS_MUTE_WARNINGS})
 endif()

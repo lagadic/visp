@@ -34,7 +34,7 @@
  *****************************************************************************/
 
 /*!
-  \example testoPFM.cpp
+  \example testIoPFM.cpp
 
   Test image I/O for PFM file format.
 */
@@ -52,7 +52,7 @@
 
 namespace
 {
-void checkColorImages(const vpImage<vpRGBf> &I1, const vpImage<vpRGBf> &I2) 
+void checkColorImages(const vpImage<vpRGBf> &I1, const vpImage<vpRGBf> &I2)
 {
   for (unsigned int i = 0; i < I1.getHeight(); i++) {
     for (unsigned int j = 0; j < I1.getWidth(); j++) {
@@ -79,7 +79,7 @@ TEST_CASE("HDR PFM image read", "[hdr_pfm_image_io]")
   {
     SECTION("Color")
     {
-      const std::string imgPath = 
+      const std::string imgPath =
           vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "memorial/memorial_color_LSB.pfm");
       REQUIRE(vpIoTools::checkFilename(imgPath));
 
@@ -89,7 +89,7 @@ TEST_CASE("HDR PFM image read", "[hdr_pfm_image_io]")
     }
     SECTION("Gray")
     {
-      const std::string imgPath = 
+      const std::string imgPath =
           vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "memorial/memorial_gray_LSB.pfm");
       REQUIRE(vpIoTools::checkFilename(imgPath));
 
@@ -103,7 +103,7 @@ TEST_CASE("HDR PFM image read", "[hdr_pfm_image_io]")
   {
     SECTION("Color")
     {
-      const std::string imgPath = 
+      const std::string imgPath =
           vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "memorial/memorial_color_MSB.pfm");
       REQUIRE(vpIoTools::checkFilename(imgPath));
 
@@ -113,7 +113,7 @@ TEST_CASE("HDR PFM image read", "[hdr_pfm_image_io]")
     }
     SECTION("Gray")
     {
-      const std::string imgPath = 
+      const std::string imgPath =
           vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "memorial/memorial_gray_MSB.pfm");
       REQUIRE(vpIoTools::checkFilename(imgPath));
 
@@ -181,7 +181,7 @@ TEST_CASE("HDR PFM image write", "[hdr_pfm_image_io]")
 
   SECTION("Color")
   {
-    const std::string imgPath = 
+    const std::string imgPath =
         vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "memorial/memorial_color_LSB.pfm");
     REQUIRE(vpIoTools::checkFilename(imgPath));
 

@@ -94,7 +94,7 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, vpImage<unsigned char> 
 }
 
 /*!
-  Convert a vpImage\<float\> to a vpImage\<unsigend char\> by renormalizing
+  Convert a vpImage\<float\> to a vpImage\<unsigned char\> by renormalizing
   between 0 and 255.
   \param[in] src : Source image
   \param[out] dest : Destination image.
@@ -115,6 +115,34 @@ void vpImageConvert::convert(const vpImage<float> &src, vpImage<unsigned char> &
       dest.bitmap[i] = 255;
     else
       dest.bitmap[i] = (unsigned char)val;
+  }
+}
+
+/*!
+  Convert a vpImage\<vpRGBf\> to a vpImage\<unsigned char\> by renormalizing
+  between 0 and 255.
+  \param[in] src : Source image
+  \param[out] dest : Destination image.
+*/
+void vpImageConvert::convert(const vpImage<vpRGBf> &src, vpImage<vpRGBa> &dest)
+{
+  dest.resize(src.getHeight(), src.getWidth());
+  vpRGBf min, max;
+  src.getMinMaxValue(min, max);
+
+  for (unsigned int i = 0; i < src.getHeight(); i++) {
+    for (unsigned int j = 0; j < src.getWidth(); j++) {
+      for (unsigned int c = 0; c < 3; c++) {
+        float val = 255.f * (reinterpret_cast<const float *>(&(src[i][j]))[c] - reinterpret_cast<float *>(&min)[c]) /
+            (reinterpret_cast<float *>(&max)[c] - reinterpret_cast<float *>(&min)[c]);
+        if (val < 0)
+          reinterpret_cast<unsigned char *>(&(dest[i][j]))[c] = 0;
+        else if (val > 255)
+          reinterpret_cast<unsigned char *>(&(dest[i][j]))[c] = 255;
+        else
+          reinterpret_cast<unsigned char *>(&(dest[i][j]))[c] = (unsigned char)val;
+      }
+    }
   }
 }
 
@@ -796,6 +824,45 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, b
   }
 }
 
+void vpImageConvert::convert(const cv::Mat &src, vpImage<float> &dest, bool flip)
+{
+  dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+
+  if (src.type() == CV_32FC1) {
+    for (unsigned int i = 0; i < dest.getRows(); ++i)
+      for (unsigned int j = 0; j < dest.getCols(); ++j) {
+        if (flip)
+          dest[dest.getRows() - i - 1][j] = src.at<float>((int)i, (int)j);
+        else
+          dest[i][j] = src.at<float>((int)i, (int)j);
+      }
+  } else {
+    throw vpException(vpException::badValue, "cv::Mat type is not supported!");
+  }
+}
+
+void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBf> &dest, bool flip)
+{
+  dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+
+  if (src.type() == CV_32FC3) {
+    vpRGBf rgbVal;
+    for (unsigned int i = 0; i < dest.getRows(); ++i)
+      for (unsigned int j = 0; j < dest.getCols(); ++j) {
+        cv::Vec3f tmp = src.at<cv::Vec3f>((int)i, (int)j);
+        rgbVal.R = tmp[2];
+        rgbVal.G = tmp[1];
+        rgbVal.B = tmp[0];
+        if (flip)
+          dest[dest.getRows() - i - 1][j] = rgbVal;
+        else
+          dest[i][j] = rgbVal;
+      }
+  } else {
+    throw vpException(vpException::badValue, "cv::Mat type is not supported!");
+  }
+}
+
 /*!
   Convert a vpImage\<vpRGBa\> to a cv::Mat color image.
 
@@ -884,6 +951,22 @@ void vpImageConvert::convert(const vpImage<unsigned char> &src, cv::Mat &dest, b
   } else {
     dest = cv::Mat((int)src.getRows(), (int)src.getCols(), CV_8UC1, (void *)src.bitmap);
   }
+}
+
+void vpImageConvert::convert(const vpImage<float> &src, cv::Mat &dest, bool copyData)
+{
+  if (copyData) {
+    cv::Mat tmpMap((int)src.getRows(), (int)src.getCols(), CV_32FC1, (void *)src.bitmap);
+    dest = tmpMap.clone();
+  } else {
+    dest = cv::Mat((int)src.getRows(), (int)src.getCols(), CV_32FC1, (void *)src.bitmap);
+  }
+}
+
+void vpImageConvert::convert(const vpImage<vpRGBf> &src, cv::Mat &dest)
+{
+  cv::Mat vpToMat((int)src.getRows(), (int)src.getCols(), CV_32FC3, (void *)src.bitmap);
+  cv::cvtColor(vpToMat, dest, cv::COLOR_RGB2BGR);
 }
 
 #endif

@@ -5,6 +5,8 @@ from numpy import linspace
 import matplotlib
 from matplotlib import cm
 import matplotlib.pyplot as plt
+# needed to use a 3d projection with matplotlib <= 3.1
+from mpl_toolkits.mplot3d import Axes3D
 import argparse
 import glob
 
@@ -28,7 +30,7 @@ def inverse_homogeneoux_matrix(M):
     T = M[0:3, 3]
     M_inv = np.identity(4)
     M_inv[0:3, 0:3] = R.T
-    M_inv[0:3, 3] = -(R.T).dot(T)
+    M_inv[0:3, 3] = (-R.T @ T).ravel()
 
     return M_inv
 
@@ -298,10 +300,10 @@ def drawCameraModel(cam_model, w_T_cv, ax, color, draw_frame_axis):
         X = np.zeros(cam_model[i].shape)
         for j in range(cam_model[i].shape[1]):
             X[:,j] = w_T_cv @ cam_model[i][:,j]
-            if draw_frame_axis and i >= len(cam_model)-3:
-                ax.plot3D(X[0,:], X[1,:], X[2,:], color=cam_frame_colors[i-6])
-            else:
-                ax.plot3D(X[0,:], X[1,:], X[2,:], color=color)
+        if draw_frame_axis and i >= len(cam_model)-3:
+            ax.plot3D(X[0,:], X[1,:], X[2,:], color=cam_frame_colors[i-6])
+        else:
+            ax.plot3D(X[0,:], X[1,:], X[2,:], color=color)
 
 def axisEqual3D(ax):
     """
@@ -409,13 +411,18 @@ def main():
     ned_T_cv[1,1] = 0
     print("ned_T_cv:\n", ned_T_cv)
 
+    # Inverse homogeneous matrix demo
+    cv_T_ned = inverse_homogeneoux_matrix(ned_T_cv)
+    print(f"ned_T_cv:\n{ned_T_cv}")
+    print(f"cv_T_ned:\n{cv_T_ned}")
+
     folder = args.folder
     if folder:
         cam_poses = readCamPoses(sorted(glob.glob(folder + "/*.txt")))
         print(f"Read camera poses from: {folder} / Num cam poses: {len(cam_poses)}")
 
         fig = plt.figure()
-        ax = fig.gca(projection='3d')
+        ax = fig.add_subplot(projection='3d')
 
         ax.set_xlabel('X', fontsize=24)
         ax.set_ylabel('Y', fontsize=24)
@@ -433,7 +440,6 @@ def main():
         axisEqual3D(ax)
 
         plt.show()
-
     else:
         min_lon = args.min_lon
         max_lon = args.max_lon
@@ -456,7 +462,7 @@ def main():
         colors = [cm.rainbow(x) for x in cm_subsection]
 
         fig1 = plt.figure()
-        ax1 = fig1.gca(projection='3d')
+        ax1 = fig1.add_subplot(projection='3d')
 
         ax1.set_xlabel('X', fontsize=24)
         ax1.set_ylabel('Y', fontsize=24)
@@ -489,7 +495,7 @@ def main():
         axisEqual3D(ax1)
 
         fig2 = plt.figure()
-        ax2 = fig2.gca(projection='3d')
+        ax2 = fig2.add_subplot(projection='3d')
 
         draw_square(ax2, radius)
 
@@ -537,8 +543,10 @@ def main():
         if args.save:
             if use_enu:
                 fig1.savefig('ENU.png', dpi=args.dpi, bbox_inches='tight')
+                fig2.savefig('ENU_Equi.png', dpi=args.dpi, bbox_inches='tight')
             else:
                 fig1.savefig('NED.png', dpi=args.dpi, bbox_inches='tight')
+                fig2.savefig('NED_Equi.png', dpi=args.dpi, bbox_inches='tight')
 
 if __name__ == '__main__':
     main()

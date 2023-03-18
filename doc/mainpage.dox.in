@@ -29,11 +29,16 @@ Since ViSP 3.0.0, we design a new modular software architecture where ViSP capab
 
 \image html soft_archi_v6.png "ViSP modules and their optional dependencies"
 
-\section hardware Supported hardware
+\section hardware Supported Hardware
 
 ViSP is interfaced with various robots, haptic devices, force-torque sensors, laser range finders, depth cameras, RGB cameras,
 and motion capture system that you can use for learning visual-servoing or building robotics applications
-on top of them based on ViSP. See \ref supported-material.
+on top of them based on ViSP. See \ref supported-material section.
+
+\section software Supported Third-Party Libraries
+
+To not reinvent the wheel, ViSP is interfaced with various third parties like OpenCV, MavSDK, libur_rtde...
+See the complete list of \ref supported-third-parties.
 
 \section download_sec Download
 
@@ -47,9 +52,11 @@ development distribution using git.</p>
 <p>Because ViSP is a multi platform library that works under Linux, OSX
 and Windows, to install ViSP you need the CMake configuration tool
 available from <a href="http://www.cmake.org" target="_parent">http://www.cmake.org</a>.
+
 Furthermore, depending on your operation system and the capabilities (framegrabber,
 display, simulation, ...) you need, prior to install ViSP,
-install third party libraries <a href="https://visp.inria.fr/software-architecture" target="_parent">https://visp.inria.fr/software-architecture</a>.</p>
+install \ref supported-third-parties.
+<a href="https://visp.inria.fr/software-architecture" target="_parent">https://visp.inria.fr/software-architecture</a>.</p>
 
 <p>ViSP full installation procedure using CMake is detailed in the \ref tutorial_install_pkg
 and \ref tutorial_install_src. \ref tutorial_started and documents in pdf are also available from <a
@@ -57,9 +64,7 @@ href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr
 
 \section tutorial Tutorials
 
-To learn ViSP, we propose a lot of tutorials that show the basic use of <a href="classes.html">ViSP classes</a>:
-- \ref tutorial_users
-- \ref tutorial_developers
+To learn ViSP, we propose a lot of tutorials that show the basic use of <a href="classes.html">ViSP classes</a> in \ref tutorial_users.
 
 @VISP_MAINPAGE_EXTENSION@
 

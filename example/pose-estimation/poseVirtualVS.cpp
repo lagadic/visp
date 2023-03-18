@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,10 +34,6 @@
  *   Display image using either the X11 or GTK or GDI display
  *   track 4 dots (vpDots) in the image
  *   compute the pose
- *
- * Authors:
- * Eric Marchand
- * Anthony Saunier
  *
  *****************************************************************************/
 /*!
@@ -331,7 +327,7 @@ int main(int argc, const char **argv)
       filename = vpIoTools::createFilePath(dirname, s.str());
     } else {
 
-      sprintf(cfilename, opt_ppath.c_str(), iter);
+      snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
       filename = cfilename;
     }
 
@@ -560,7 +556,7 @@ int main(int argc, const char **argv)
         s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
         filename = vpIoTools::createFilePath(dirname, s.str());
       } else {
-        sprintf(cfilename, opt_ppath.c_str(), iter);
+        snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
         filename = cfilename;
       }
 

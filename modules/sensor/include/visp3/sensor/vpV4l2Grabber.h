@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,9 +31,6 @@
  * Description:
  * Video for linux two framegrabber.
  *
- * Authors:
- * Fabien Spindler
- *
  *****************************************************************************/
 
 /*!
@@ -51,6 +48,7 @@
 
 #include <libv4l2.h>         // Video For Linux Two interface
 #include <linux/videodev2.h> // Video For Linux Two interface
+#include <string>
 
 #include <visp3/core/vpFrameGrabber.h>
 #include <visp3/core/vpImage.h>
@@ -282,7 +280,7 @@ public:
     \param devname : Device name (like /dev/video0).
 
   */
-  inline void setDevice(const std::string &devname) { sprintf(device, "%s", devname.c_str()); }
+  inline void setDevice(const std::string &devname) { device = devname; }
   /*!
 
   Set the pixel format for capture.`If the specified pixel format is
@@ -320,7 +318,7 @@ private:
   void printBufInfo(struct v4l2_buffer buf);
 
   int fd;
-  char device[FILENAME_MAX];
+  std::string device;
   /* device descriptions */
   struct v4l2_capability cap;
   struct v4l2_streamparm streamparm;

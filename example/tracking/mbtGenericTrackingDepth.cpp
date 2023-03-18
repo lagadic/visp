@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,14 +270,13 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
                vpImage<uint16_t> &I_depth_raw, std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width,
                unsigned int &pointcloud_height)
 {
-  char buffer[256];
-
   // Read image
   std::stringstream ss;
-  ss << input_directory << "/image_%04d.pgm";
-  sprintf(buffer, ss.str().c_str(), cpt);
-  std::string filename_image = buffer;
-
+  ss << input_directory << "/image_";
+  ss << std::setfill('0') << std::setw(4);
+  ss << cpt;
+  ss << ".png";
+  std::string filename_image = ss.str();
   if (!vpIoTools::checkFilename(filename_image)) {
     std::cerr << "Cannot read: " << filename_image << std::endl;
     return false;
@@ -286,9 +285,11 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
 
   // Read raw depth
   ss.str("");
-  ss << input_directory << "/depth_image_%04d.bin";
-  sprintf(buffer, ss.str().c_str(), cpt);
-  std::string filename_depth = buffer;
+  ss << input_directory << "/depth_image_";
+  ss << std::setfill('0') << std::setw(4);
+  ss << cpt;
+  ss << ".bin";
+  std::string filename_depth = ss.str();
 
   std::ifstream file_depth(filename_depth.c_str(), std::ios::in | std::ios::binary);
   if (!file_depth.is_open()) {
