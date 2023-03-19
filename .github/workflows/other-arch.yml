@@ -63,13 +63,7 @@ jobs:
           apt-get update && apt-get install -y libx11-dev libdc1394-22-dev libv4l-dev gfortran liblapack-dev libopenblas-dev libeigen3-dev libopencv-dev
           apt-get update && apt-get install -y libssl-dev libusb-1.0-0-dev pkg-config libgtk-3-dev libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
 
-          git ls-remote --exit-code --heads https://github.com/${{ github.actor }}/visp-images.git ${{ github.head_ref || github.ref_name }} >/dev/null 2>&1
-          EXIT_CODE=$?
-          if [[ $EXIT_CODE == '0' ]]; then
-            git clone --depth 1 --branch ${{ github.head_ref || github.ref_name }} https://github.com/${{ github.actor }}/visp-images ${HOME}/visp-images
-          else
-            git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
-          fi
+          git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
           export VISP_INPUT_IMAGE_PATH=$HOME
           echo ${VISP_INPUT_IMAGE_PATH}
 

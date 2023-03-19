@@ -13,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-18.04, ubuntu-20.04, ubuntu-22.04]
+        os: [ubuntu-20.04, ubuntu-22.04]
         compiler: [ {CC: /usr/bin/gcc-9, CXX: /usr/bin/g++-9}, {CC: /usr/bin/gcc-10, CXX: /usr/bin/g++-10}, {CC: /usr/bin/clang, CXX: /usr/bin/clang++} ]
         standard: [ 98, 11, 14, 17 ]
 
@@ -49,13 +49,7 @@ jobs:
         BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
       # https://remarkablemark.org/blog/2022/09/25/check-git-branch-exists-in-remote-repository/
       run: |
-        git ls-remote --exit-code --heads https://github.com/${{ github.actor }}/visp-images.git ${BRANCH_NAME} >/dev/null 2>&1
-        EXIT_CODE=$?
-        if [[ $EXIT_CODE == '0' ]]; then
-          git clone --depth 1 --branch ${BRANCH_NAME} https://github.com/${{ github.actor }}/visp-images ${HOME}/visp-images
-        else
-          git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
-        fi
+        git clone --depth 1 https://github.com/lagadic/visp-images ${HOME}/visp-images
         echo "VISP_INPUT_IMAGE_PATH=$HOME" >> $GITHUB_ENV
         echo ${VISP_INPUT_IMAGE_PATH}
 
