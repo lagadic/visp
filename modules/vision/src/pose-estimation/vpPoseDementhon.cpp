@@ -493,7 +493,7 @@ void vpPose::poseDementhonPlan(vpHomogeneousMatrix &cMo)
     errorMsg << "In Dementhon planar, after ";
     errorMsg << nbMaxIter;
     errorMsg << " trials multiplying the svd threshold by ";
-    errorMsg << nbMaxIter;
+    errorMsg << svdFactorUsedWhenFailure;
     errorMsg << ", rank (";
     errorMsg << irank;
     errorMsg << ") is still not 3";
