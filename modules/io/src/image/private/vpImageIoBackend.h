@@ -92,8 +92,10 @@ void readSimdlib(vpImage<unsigned char> &I, const std::string &filename);
 void readSimdlib(vpImage<vpRGBa> &I, const std::string &filename);
 
 // TinyEXR lib
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 void readEXRTiny(vpImage<float> &I, const std::string &filename);
 void readEXRTiny(vpImage<vpRGBf> &I, const std::string &filename);
+#endif
 
 void writeJPEGSimdlib(const vpImage<unsigned char> &I, const std::string &filename, int quality);
 void writeJPEGSimdlib(const vpImage<vpRGBa> &I, const std::string &filename, int quality);
@@ -112,7 +114,9 @@ void writePNGStb(const vpImage<unsigned char> &I, const std::string &filename);
 void writePNGStb(const vpImage<vpRGBa> &I, const std::string &filename);
 
 // TinyEXR lib
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 void writeEXRTiny(const vpImage<float> &I, const std::string &filename);
 void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename);
+#endif
 
 #endif
