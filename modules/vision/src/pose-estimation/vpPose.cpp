@@ -98,7 +98,7 @@ vpPose::vpPose()
     ransacNbInlierConsensus(4), ransacMaxTrials(1000), ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001),
     distanceToPlaneForCoplanarityTest(0.001), ransacFlag(vpPose::NO_FILTER), listOfPoints(), useParallelRansac(false),
     nbParallelRansacThreads(0), // 0 means that we use C++11 (if available) to get the number of threads
-    vvsEpsilon(1e-8)
+    vvsEpsilon(1e-8), dementhonSvThresh(1e-6)
 {
 }
 
@@ -108,7 +108,7 @@ vpPose::vpPose(const std::vector<vpPoint> &lP)
     ransacInliers(), ransacInlierIndex(), ransacThreshold(0.0001), distanceToPlaneForCoplanarityTest(0.001),
     ransacFlag(vpPose::NO_FILTER), listOfPoints(lP), useParallelRansac(false),
     nbParallelRansacThreads(0), // 0 means that we use C++11 (if available) to get the number of threads
-    vvsEpsilon(1e-8)
+    vvsEpsilon(1e-8), dementhonSvThresh(1e-6)
 {
 }
 
@@ -168,6 +168,14 @@ void vpPose::addPoints(const std::vector<vpPoint> &lP)
 }
 
 void vpPose::setDistanceToPlaneForCoplanarityTest(double d) { distanceToPlaneForCoplanarityTest = d; }
+
+void vpPose::setDementhonSvThreshold(const double& svThresh){
+  if(svThresh < 0)
+  {
+    throw vpException(vpException::badValue, "The svd threshold must be positive");
+  }
+  dementhonSvThresh = svThresh;
+}
 
 /*!
   Test the coplanarity of the set of points
@@ -367,6 +375,9 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
   initialized by Dementhon approach
   - vpPose::LAGRANGE_VIRTUAL_VS: Non linear virtual visual servoing approach
   initialized by Lagrange approach
+  - vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS: Non linear virtual visual servoing approach
+  initialized by either Dementhon or Lagrange approach, depending on which method
+  has the smallest residual.
   - vpPose::RANSAC: Robust Ransac aproach (doesn't need an initialization)
 
 */
@@ -442,6 +453,8 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
   case LOWE:
   case VIRTUAL_VS:
     break;
+  case DEMENTHON_LAGRANGE_VIRTUAL_VS:
+    return computePoseDementhonLagrangeVVS(cMo);
   }
 
   switch (method) {
@@ -463,6 +476,118 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
 
   // If here, there was no exception thrown so return true
   return true;
+}
+
+/**
+ * @brief Method that first computes the pose \b cMo using the linear approaches of Dementhon and Lagrange
+ * and then uses the non-linear Virtual Visual Servoing approach to affine the pose which
+ * had  the lowest residual.
+ * 
+ * @param cMo the pose of the object with regard to the camera.
+ * @return true the pose computation was succesful.
+ * @return false an error occured during the pose computation.
+ */
+bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix& cMo)
+{
+  vpHomogeneousMatrix cMo_dementhon, cMo_lagrange;
+  double r_dementhon = std::numeric_limits<double>::max(), r_lagrange = std::numeric_limits<double>::max();
+  // test if the 3D points are coplanar
+  int coplanar_plane_type = 0;
+  bool plan = coplanar(coplanar_plane_type);
+  bool hasDementhonSucceeded(false), hasLagrangeSucceeded(false);
+  try
+  {
+    if(plan)
+    {
+      poseDementhonPlan(cMo_dementhon);
+    }
+    else
+    {
+      poseDementhonNonPlan(cMo_dementhon);
+    }
+    
+    r_dementhon = computeResidual(cMo_dementhon);
+    hasDementhonSucceeded = true; // We reached this point => no exception was thrown = method succeeded
+  }
+  catch (vpException e)
+  {
+    // An exception was thrown using the original assumption, trying we the other one
+    try
+    {
+      if(plan)
+      {
+        // Already tested poseDementhonPlan, now trying poseDementhonNonPlan
+        poseDementhonNonPlan(cMo_dementhon);
+      }
+      else
+      {
+        // Already tested poseDementhonNonPlan, now trying poseDementhonPlan
+        poseDementhonPlan(cMo_dementhon);
+      }
+      
+      r_dementhon = computeResidual(cMo_dementhon);
+      hasDementhonSucceeded = true; // We reached this point => no exception was thrown = method succeeded
+    }
+    catch(const vpException& e)
+    {
+      // The Dementhon method failed both with the planar and non-planar assumptions.
+      hasDementhonSucceeded = false;
+    }
+  }
+
+  try
+  {
+    if(plan)
+    {
+      poseLagrangePlan(cMo_lagrange);
+    }
+    else
+    {
+      poseLagrangeNonPlan(cMo_lagrange);
+    }
+    
+    r_lagrange = computeResidual(cMo_lagrange);
+    hasLagrangeSucceeded = true; // We reached this point => no exception was thrown = method succeeded
+  }
+  catch (vpException e)
+  {
+    // An exception was thrown using the original assumption, trying we the other one
+    try
+    {
+      if(plan)
+      {
+        // Already tested poseLagrangePlan, now trying poseLagrangeNonPlan
+        poseLagrangeNonPlan(cMo_lagrange);
+      }
+      else
+      {
+        // Already tested poseLagrangeNonPlan, now trying poseLagrangePlan
+        poseLagrangePlan(cMo_lagrange);
+      }
+      
+      r_lagrange = computeResidual(cMo_lagrange);
+      hasLagrangeSucceeded = true; // We reached this point => no exception was thrown = method succeeded
+    }
+    catch(const vpException& e)
+    {
+      // The Lagrange method both failed with the planar and non-planar assumptions.
+      hasLagrangeSucceeded = false;
+    }
+  }
+
+  if ((hasDementhonSucceeded || hasLagrangeSucceeded))
+  {
+    // At least one of the linear methods managed to compute an initial pose.
+    // We initialize cMo with the method that had the lowest residual
+    cMo = (r_dementhon < r_lagrange) ? cMo_dementhon : cMo_lagrange;
+    // We now use the non-linear Virtual Visual Servoing method to improve the estimated cMo
+    return computePose(vpPose::VIRTUAL_VS, cMo);
+  }
+  else
+  {
+    // None of the linear methods manage to compute an initial pose
+    return false;
+  }
 }
 
 void vpPose::printPoint()

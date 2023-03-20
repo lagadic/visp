@@ -105,8 +105,11 @@ public:
                              initialization from Lagrange or Dementhon aproach */
     DEMENTHON_VIRTUAL_VS, /*!< Non linear virtual visual servoing approach
                              initialized by Dementhon approach */
-    LAGRANGE_VIRTUAL_VS   /*!< Non linear virtual visual servoing approach
+    LAGRANGE_VIRTUAL_VS,  /*!< Non linear virtual visual servoing approach
                              initialized by Lagrange approach */
+    DEMENTHON_LAGRANGE_VIRTUAL_VS, /*!< Non linear virtual visual servoing approach
+                             initialized by either Dementhon or Lagrange approach,
+                             depending on which method has the smallest residual. */
   } vpPoseMethodType;
 
   enum RANSAC_FILTER_FLAGS {
@@ -201,6 +204,7 @@ private:
   };
 
 protected:
+  double dementhonSvThresh; //!< SVD threshold use for the pseudo-inverse computation in poseDementhonPlan
   double computeResidualDementhon(const vpHomogeneousMatrix &cMo);
 
   // method used in poseDementhonPlan()
@@ -215,6 +219,7 @@ public:
   void clearPoint();
 
   bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);
+  bool computePoseDementhonLagrangeVVS(vpHomogeneousMatrix &cMo);
   double computeResidual(const vpHomogeneousMatrix &cMo) const;
   bool coplanar(int &coplanar_plane_type);
   void displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
@@ -229,6 +234,7 @@ public:
   void poseVirtualVSrobust(vpHomogeneousMatrix &cMo);
   void poseVirtualVS(vpHomogeneousMatrix &cMo);
   void printPoint();
+  void setDementhonSvThreshold(const double& svThresh);
   void setDistanceToPlaneForCoplanarityTest(double d);
   void setLambda(double a) { lambda = a; }
   void setVvsEpsilon(const double eps)
