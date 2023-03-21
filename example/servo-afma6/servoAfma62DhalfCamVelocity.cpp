@@ -216,8 +216,8 @@ int main()
       pose.addPoint(point[i]); // and added to the pose computation point list
     }
 
-    pose.computePose(vpPose::LAGRANGE, cMo);
-    pose.computePose(vpPose::VIRTUAL_VS, cMo);
+    // Pose by Dementhon or Lagrange provides an initialization of the non linear virtual visual-servoing pose estimation
+    pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
 
     vpTRACE("sets the current position of the visual feature ");
 

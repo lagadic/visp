@@ -530,11 +530,8 @@ int main(int argc, const char **argv)
     // compute the initial pose using Dementhon method followed by a non
     // linear minimisation method
 
-    // Pose by Lagrange it provides an initialization of the pose
-    pose.computePose(vpPose::LAGRANGE, cMo);
-    // the pose is now refined using the virtual visual servoing approach
-    // Warning: cMo needs to be initialized otherwise it may  diverge
-    pose.computePose(vpPose::VIRTUAL_VS, cMo);
+    // Pose by Dementhon or Lagrange provides an initialization of the non linear virtual visual-servoing pose estimation
+    pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
     if (opt_display) {
       // display the compute pose
       pose.display(I, cMo, cam, 0.05, vpColor::red);

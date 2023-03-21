@@ -721,7 +721,7 @@ TEST_CASE("Apriltag getTagsPoints3D test", "[apriltag_get_tags_points3D_test]")
 
     vpPose pose(tagsPoints[i]);
     vpHomogeneousMatrix cMo_manual;
-    pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo_manual);
+    pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo_manual);
 
     const vpHomogeneousMatrix &cMo = cMo_vec[i];
     // Note that using epsilon = std::numeric_limits<double>::epsilon() makes this test

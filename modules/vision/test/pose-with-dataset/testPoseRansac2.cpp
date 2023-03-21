@@ -146,22 +146,10 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   }
 
   vpPose ground_truth_pose, real_pose;
+  vpHomogeneousMatrix cMo_estimated;
   ground_truth_pose.addPoints(bunnyModelPoints);
   real_pose.addPoints(bunnyModelPoints_noisy);
-
-  vpHomogeneousMatrix cMo_dementhon, cMo_lagrange;
-  real_pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
-  real_pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
-  double r_dementhon = real_pose.computeResidual(cMo_dementhon);
-  double r_lagrange = real_pose.computeResidual(cMo_lagrange);
-
-  vpHomogeneousMatrix cMo_estimated;
-  if (r_lagrange < r_dementhon) {
-    cMo_estimated = cMo_lagrange;
-  } else {
-    cMo_estimated = cMo_dementhon;
-  }
-  real_pose.computePose(vpPose::VIRTUAL_VS, cMo_estimated);
+  real_pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo_estimated);
   double r_vvs = ground_truth_pose.computeResidual(cMo_estimated);
 
   std::cout << "\ncMo estimated using VVS on data with small gaussian noise:\n" << cMo_estimated << std::endl;
@@ -319,18 +307,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   double r_RANSAC_estimated_2 = ground_truth_pose.computeResidual(cMo_estimated_RANSAC_2);
   std::cout << "Corresponding residual (" << ransac_iterations << " iterations): " << r_RANSAC_estimated_2 << std::endl;
 
-  pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
-  pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
-  r_dementhon = pose.computeResidual(cMo_dementhon);
-  r_lagrange = pose.computeResidual(cMo_lagrange);
-
-  if (r_lagrange < r_dementhon) {
-    cMo_estimated = cMo_lagrange;
-  } else {
-    cMo_estimated = cMo_dementhon;
-  }
-
-  pose.computePose(vpPose::VIRTUAL_VS, cMo_estimated);
+  pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo_estimated);
   std::cout << "\ncMo estimated with only VVS on noisy data:\n" << cMo_estimated << std::endl;
 
   double r_estimated = ground_truth_pose.computeResidual(cMo_estimated);

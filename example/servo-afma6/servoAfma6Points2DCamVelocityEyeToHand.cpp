@@ -177,7 +177,7 @@ int main()
 
     // compute the initial pose using Dementhon method followed by a non
     // linear minimisation method
-    pose.computePose(vpPose::DEMENTHON_LOWE, cMo);
+    pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
 
     std::cout << cMo << std::endl;
     cMo.print();

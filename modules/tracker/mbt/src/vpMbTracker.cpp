@@ -477,28 +477,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
         vpDisplay::display(*I_color);
       }
 
-      vpHomogeneousMatrix cMo1, cMo2;
-      double d1, d2;
-      d1 = d2 = std::numeric_limits<double>::max();
-      try {
-        pose.computePose(vpPose::LAGRANGE, cMo1);
-        d1 = pose.computeResidual(cMo1);
-      } catch (...) {
-        // Lagrange non-planar cannot work with less than 6 points
-      }
-      try {
-        pose.computePose(vpPose::DEMENTHON, cMo2);
-        d2 = pose.computeResidual(cMo2);
-      } catch (...) {
-        // Should not occur
-      }
-
-      if (d1 < d2) {
-        m_cMo = cMo1;
-      } else {
-        m_cMo = cMo2;
-      }
-      pose.computePose(vpPose::VIRTUAL_VS, m_cMo);
+      pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, m_cMo);
 
       if (I) {
         display(*I, m_cMo, m_cam, vpColor::green, 1, true);
@@ -727,28 +706,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
       vpDisplay::flush(*I_color);
     }
 
-    vpHomogeneousMatrix cMo1, cMo2;
-    double d1, d2;
-    d1 = d2 = std::numeric_limits<double>::max();
-    try {
-      pose.computePose(vpPose::LAGRANGE, cMo1);
-      d1 = pose.computeResidual(cMo1);
-    } catch (...) {
-      // Lagrange non-planar cannot work with less than 6 points
-    }
-    try {
-      pose.computePose(vpPose::DEMENTHON, cMo2);
-      d2 = pose.computeResidual(cMo2);
-    } catch (...) {
-      // Should not occur
-    }
-
-    if (d1 < d2) {
-      m_cMo = cMo1;
-    } else {
-      m_cMo = cMo2;
-    }
-    pose.computePose(vpPose::VIRTUAL_VS, m_cMo);
+    pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, m_cMo);
 
     if (I) {
       display(*I, m_cMo, m_cam, vpColor::green, 1, true);
@@ -958,28 +916,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
 
   finit.close();
 
-  vpHomogeneousMatrix cMo1, cMo2;
-  double d1, d2;
-  d1 = d2 = std::numeric_limits<double>::max();
-  try {
-    pose.computePose(vpPose::LAGRANGE, cMo1);
-    d1 = pose.computeResidual(cMo1);
-  } catch (...) {
-    // Lagrange non-planar cannot work with less than 6 points
-  }
-  try {
-    pose.computePose(vpPose::DEMENTHON, cMo2);
-    d2 = pose.computeResidual(cMo2);
-  } catch (...) {
-    // Should not occur
-  }
-
-  if (d1 < d2)
-    m_cMo = cMo1;
-  else
-    m_cMo = cMo2;
-
-  pose.computePose(vpPose::VIRTUAL_VS, m_cMo);
+  pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, m_cMo);
 
   delete[] P;
 
@@ -1070,28 +1007,7 @@ void vpMbTracker::initFromPoints(const vpImage<unsigned char> *const I, const vp
     pose.addPoint(P[i]);
   }
 
-  vpHomogeneousMatrix cMo1, cMo2;
-  double d1, d2;
-  d1 = d2 = std::numeric_limits<double>::max();
-  try {
-    pose.computePose(vpPose::LAGRANGE, cMo1);
-    d1 = pose.computeResidual(cMo1);
-  } catch (...) {
-    // Lagrange non-planar cannot work with less than 6 points
-  }
-  try {
-    pose.computePose(vpPose::DEMENTHON, cMo2);
-    d2 = pose.computeResidual(cMo2);
-  } catch (...) {
-    // Should not occur
-  }
-
-  if (d1 < d2)
-    m_cMo = cMo1;
-  else
-    m_cMo = cMo2;
-
-  pose.computePose(vpPose::VIRTUAL_VS, m_cMo);
+  pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, m_cMo);
 
   if (I) {
     init(*I);

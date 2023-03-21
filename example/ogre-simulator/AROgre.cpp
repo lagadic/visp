@@ -508,11 +508,8 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
   // compute the initial pose using Dementhon method followed by a non linear
   // minimisation method
 
-  // Pose by Lagrange it provides an initialization of the pose
-  mPose->computePose(vpPose::LAGRANGE, *cMo);
-  // the pose is now refined using the virtual visual servoing approach
-  // Warning: cMo needs to be initialized otherwise it may  diverge
-  mPose->computePose(vpPose::VIRTUAL_VS, *cMo);
+  // Compute initial pose
+  mPose->computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, *cMo);
 
   // Display breifly just to have a glimpse a the ViSP pose
   //	while(cpt<500){

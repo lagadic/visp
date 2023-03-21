@@ -486,7 +486,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
 /**
  * @brief Method that first computes the pose \b cMo using the linear approaches of Dementhon and Lagrange
  * and then uses the non-linear Virtual Visual Servoing approach to affine the pose which
- * had  the lowest residual.
+ * had the lowest residual.
  *
  * @param cMo the pose of the object with regard to the camera.
  * @return true the pose computation was succesful.
