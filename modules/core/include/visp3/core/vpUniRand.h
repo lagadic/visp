@@ -74,6 +74,16 @@ typedef unsigned __int32 uint32_t;
 #include <inttypes.h>
 #endif
 
+#ifdef __cplusplus
+  #if (__cplusplus <= 201103L) 
+    #include <algorithm>    // std::random_shuffle
+  #else
+    #include <random> // std::shuffle
+    #include <numeric> // std::iota
+  #endif
+#endif
+
+#include <vector>
 /*!
   \class vpUniRand
 
@@ -123,6 +133,9 @@ public:
   float uniform(float a, float b);
   double uniform(double a, double b);
   void setSeed(uint64_t initstate, uint64_t initseq);
+
+  template<typename T>
+  static std::vector<T> shuffleVector(const std::vector<T> &inputVector);
 
 private:
   uint32_t boundedRand(uint32_t bound);
