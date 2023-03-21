@@ -209,27 +209,3 @@ void vpUniRand::setSeed(uint64_t initstate, uint64_t initseq)
   m_rng.state += initstate;
   next();
 }
-
-/**
- * @brief Create a new vector that is a shuffled version of the \b inputVector.
- * 
- * @tparam T a class that possesses a copy constructor.
- * @param inputVector The input vector that must be shuffled. It will not be modified.
- * @return std::vector<T> A vector containing the same objects than \b inputVector, but that are shuffled.
- */
-template<typename T>
-std::vector<T> vpUniRand::shuffleVector(const std::vector<T>& inputVector)
-{
-  std::vector<T> shuffled = inputVector;
-  #ifdef __cplusplus
-    #if (__cplusplus <= 201103L) 
-      std::random_shuffle ( shuffled.begin(), shuffled.end() );
-    #else
-      std::shuffle(shuffled.begin(), shuffled.end(), std::mt19937{std::random_device{}()});
-    #  endif
-  #endif
-  return shuffled;
-}
-
-template
-std::vector<vpPoint> vpUniRand::shuffleVector(const std::vector<vpPoint>& inputVector);
