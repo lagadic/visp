@@ -146,7 +146,7 @@ int top(const std::string &connection_info, std::map<std::string, vpHomogeneousM
 {
   std::map<std::string, vpHomogeneousMatrix> body_poses_enu_M_flu;
   bool internal_mocap_failure = false;
-  const double fps = 30;
+  const double fps = 100;
 
   vpRobotMavsdk drone{connection_info};
 

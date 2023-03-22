@@ -98,7 +98,8 @@ public:
   //! \name General robot information
   //@{
   float getBatteryLevel() const;
-  void getPose(vpHomogeneousMatrix &ned_M_frd) const;
+  void getPosition(float &ned_north, float &ned_east, float &ned_down, float &ned_yaw) const;
+  void getPosition(vpHomogeneousMatrix &ned_M_frd) const;
   std::tuple<float, float> getHome() const;
   std::string getAddress() const;
    bool isRunning() const;
@@ -110,24 +111,24 @@ public:
   bool disarm();
   void doFlatTrim();
   bool hasFlyingCapability();
-  void holdPosition();
+  bool holdPosition();
   bool kill();
   bool land();
   bool sendMocapData(const vpHomogeneousMatrix &enu_M_flu);
-  void setForwardSpeed(double body_frd_vx);
-  void setLateralSpeed(double body_frd_vy);
+  bool setForwardSpeed(double body_frd_vx);
+  bool setLateralSpeed(double body_frd_vy);
   bool setGPSGlobalOrigin(double latitude, double longitude, double altitude);
   void setPositioningIncertitude(float position_incertitude, float yaw_incertitude);
   bool setPosition(float ned_north, float ned_east, float ned_down, float ned_yaw, bool blocking = true, int timeout_sec = 10);
   bool setPosition(const vpHomogeneousMatrix &ned_M_frd, bool blocking = true, int timeout_sec = 10);
   bool setPositionRelative(float ned_delta_north, float ned_delta_east, float ned_delta_down, float ned_delta_yaw, bool blocking = true, int timeout_sec = 10);
   bool setPositionRelative(const vpHomogeneousMatrix &delta_frd_M_frd, bool blocking = true, int timeout_sec = 10);
-  void setVelocity(const vpColVector &frd_vel_cmd);
-  void setVerticalSpeed(double body_frd_vz);
-  void setYawSpeed(double body_frd_wz);
+  bool setVelocity(const vpColVector &frd_vel_cmd);
+  bool setVerticalSpeed(double body_frd_vz);
+  bool setYawSpeed(double body_frd_wz);
   void setTakeOffAlt(double altitude);
   void setVerbose(bool verbose);
-  void stopMoving();
+  bool stopMoving();
   bool takeControl();
   bool takeOff(bool interactive = true, int timeout_sec = 10);
   bool takeOff(bool interactive, double takeoff_altitude, int timeout_sec = 10);

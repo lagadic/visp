@@ -68,15 +68,41 @@ int main(int argc, char **argv)
     return 1;
   }
 
+  double takeoff_alt = 1.;
+
   auto drone = vpRobotMavsdk(argv[1]);
+  drone.setTakeOffAlt(takeoff_alt);
+  drone.setVerbose(true);
 
-  drone.takeOff();
+  if (! drone.takeOff() )
+  {
+    std::cout << "Takeoff failed" << std::endl;
+    return EXIT_FAILURE;
+  }
+  
+  drone.takeControl(); // Start PX4 offboard
+  
+  // Get position
+  float ned_north, ned_east, ned_down, ned_yaw;
+  drone.getPosition(ned_north, ned_east, ned_down, ned_yaw);
+  std::cout << "Vehicle position in NED frame: " << ned_north << " " << ned_east << " " << ned_down << " [m] and " << vpMath::deg(ned_yaw) << " [deg]" << std::endl;
 
-  drone.setPosition(0.0, 1.5, 0.0, 0.0);
-  drone.setPosition(1.5, 0.0, 0.0, 0.0);
-  drone.setPosition(0.0, -1.5, 0.0, 0.0);
-  drone.setPosition(-1.5, 0.0, 0.0, 0.0);
+  vpHomogeneousMatrix ned_M_frd;
+  drone.getPosition(ned_M_frd);
+  vpRxyzVector rxyz(ned_M_frd.getRotationMatrix());
+  std::cout << "Vehicle position in NED frame: " 
+            << ned_M_frd.getTranslationVector().t() << " [m] and " 
+            << vpMath::deg(rxyz).t() << " [deg]"<< std::endl;
 
+  // Set position in NED frame
+  drone.setPositioningIncertitude(0.10, vpMath::rad(5.));
+
+  drone.setPosition( 0.0,  1.0, ned_down, 0.0); // East
+  drone.setPosition( 1.0,  0.0, ned_down, 0.0); // North
+  drone.setPosition( 0.0, -1.0, ned_down, 0.0); // West
+  drone.setPosition(-1.0,  0.0, ned_down, 0.0); // South
+
+  // Land drone
   drone.land();
 
   return EXIT_SUCCESS;
