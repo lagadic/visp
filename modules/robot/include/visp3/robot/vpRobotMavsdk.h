@@ -90,30 +90,21 @@ public:
   vpRobotMavsdk(const std::string &connection_info);
   virtual ~vpRobotMavsdk();
 
-  //! @name Robot connection
+  //! \name Robot connection
   //@{
   void connect(const std::string &connection_info);
   //@}
 
-  //! @name General robot information
+  //! \name General robot information
   //@{
   float getBatteryLevel() const;
   void getPose(vpHomogeneousMatrix &ned_M_frd) const;
   std::tuple<float, float> getHome() const;
   std::string getAddress() const;
+   bool isRunning() const;
   //@}
 
-  //! @name Robot state checking
-  //@{
-  bool isRunning() const;
-  //@}
-
-  //! @name Sending state info
-  //@{
-  bool sendMocapData(const vpHomogeneousMatrix &enu_M_frd);
-  //@}
-
-  //! @name Commands and parameters
+  //! \name Robot commands
   //@{
   bool arm();
   bool disarm();
@@ -122,18 +113,24 @@ public:
   void holdPosition();
   bool kill();
   bool land();
+  bool sendMocapData(const vpHomogeneousMatrix &enu_M_flu);
   void setForwardSpeed(double body_frd_vx);
   void setLateralSpeed(double body_frd_vy);
   bool setGPSGlobalOrigin(double latitude, double longitude, double altitude);
-  void setPosition(float ned_delta_north, float ned_delta_east, float ned_delta_down, float ned_delta_yaw);
-  void setPosition(const vpHomogeneousMatrix &ned_M_delta);
-  void setVelocity(const vpColVector &frd_vel_cmd, double delta_t);
+  void setPositioningIncertitude(float position_incertitude, float yaw_incertitude);
+  bool setPosition(float ned_north, float ned_east, float ned_down, float ned_yaw, bool blocking = true, int timeout_sec = 10);
+  bool setPosition(const vpHomogeneousMatrix &ned_M_frd, bool blocking = true, int timeout_sec = 10);
+  bool setPositionRelative(float ned_delta_north, float ned_delta_east, float ned_delta_down, float ned_delta_yaw, bool blocking = true, int timeout_sec = 10);
+  bool setPositionRelative(const vpHomogeneousMatrix &delta_frd_M_frd, bool blocking = true, int timeout_sec = 10);
   void setVelocity(const vpColVector &frd_vel_cmd);
   void setVerticalSpeed(double body_frd_vz);
   void setYawSpeed(double body_frd_wz);
-  void stopMoving();
   void setTakeOffAlt(double altitude);
-  bool takeOff(bool interactive = true);
+  void setVerbose(bool verbose);
+  void stopMoving();
+  bool takeControl();
+  bool takeOff(bool interactive = true, int timeout_sec = 10);
+  bool takeOff(bool interactive, double takeoff_altitude, int timeout_sec = 10);
   //@}
 
 private:

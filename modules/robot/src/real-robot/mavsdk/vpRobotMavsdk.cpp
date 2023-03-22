@@ -128,23 +128,23 @@ private:
     passthrough.subscribe_message_async(MAVLINK_MSG_ID_HEARTBEAT,
                                         [&passthrough, &prom](const mavlink_message_t &message) {
 #endif
-          // Process only Heartbeat coming from the autopilot
-          if (message.compid != MAV_COMP_ID_AUTOPILOT1) {
-            return;
-          }
+      // Process only Heartbeat coming from the autopilot
+      if (message.compid != MAV_COMP_ID_AUTOPILOT1) {
+        return;
+      }
 
-          mavlink_heartbeat_t heartbeat;
-          mavlink_msg_heartbeat_decode(&message, &heartbeat);
+      mavlink_heartbeat_t heartbeat;
+      mavlink_msg_heartbeat_decode(&message, &heartbeat);
 
       // Unsubscribe again as we only want to find one system.
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
-          passthrough.unsubscribe_message(handle);
+      passthrough.unsubscribe_message(handle);
 #else
                                           passthrough.subscribe_message_async(MAVLINK_MSG_ID_HEARTBEAT, nullptr);
 #endif
 
-          prom.set_value(static_cast<MAV_TYPE>(heartbeat.type));
-        });
+      prom.set_value(static_cast<MAV_TYPE>(heartbeat.type));
+    });
 
     // We usually receive heartbeats at 1Hz, therefore we should find a
     // system after around 3 seconds max, surely.
@@ -231,8 +231,11 @@ public:
     std::cout << (m_has_flying_capability ? "Connected to a flying vehicle" : "Connected to a non flying vehicle")
               << std::endl;
 
+    m_action = std::make_shared<mavsdk::Action>(m_system);
     m_telemetry = std::make_shared<mavsdk::Telemetry>(m_system);
     m_offboard = std::make_shared<mavsdk::Offboard>(m_system);
+
+    
   }
 
   bool hasFlyingCapability(MAV_TYPE mav_type)
@@ -297,8 +300,18 @@ public:
     return {float(position.latitude_deg), float(position.longitude_deg)};
   }
 
-  bool sendMocapData(const vpHomogeneousMatrix &enu_M_frd)
+  bool sendMocapData(const vpHomogeneousMatrix &enu_M_flu)
   {
+    static double time_prev = vpTime::measureTimeMs();
+
+    // We suppose here that the body frame which pose is given by the MoCap is FLU (Front Left Up).
+    // Thus we need to transform this frame to FRD (Front Right Down).
+    vpHomogeneousMatrix flu_M_frd;
+    flu_M_frd.eye();
+    flu_M_frd[1][1] = -1;
+    flu_M_frd[2][2] = -1;
+  
+    vpHomogeneousMatrix enu_M_frd = enu_M_flu * flu_M_frd;
     auto mocap = mavsdk::Mocap{m_system};
     mavsdk::Mocap::VisionPositionEstimate pose_estimate;
 
@@ -321,11 +334,14 @@ public:
       std::cerr << "Set position failed: " << set_position_result << '\n';
       return false;
     } else {
-      std::cout << "I managed to send the data" << std::endl;
-      std::cout << "Translation : " << pose_estimate.position_body.x_m << " , " << pose_estimate.position_body.y_m
-                << " , " << pose_estimate.position_body.z_m << std::endl;
-      std::cout << "Roll : " << pose_estimate.angle_body.roll_rad << " , Pitch : " << pose_estimate.angle_body.pitch_rad
-                << " , Yaw : " << pose_estimate.angle_body.yaw_rad << " ." << std::endl;
+      if (vpTime::measureTimeMs() - time_prev > 1000.) {
+        time_prev = vpTime::measureTimeMs();
+        std::cout << "I managed to send ned_M_frd data" << std::endl;
+        std::cout << "Translation [m]: " << pose_estimate.position_body.x_m << " , " << pose_estimate.position_body.y_m
+                  << " , " << pose_estimate.position_body.z_m << std::endl;
+        std::cout << "Roll [rad]: " << pose_estimate.angle_body.roll_rad << " , Pitch [rad]: " << pose_estimate.angle_body.pitch_rad
+                  << " , Yaw [rad]: " << pose_estimate.angle_body.yaw_rad << " ." << std::endl;
+      }
       return true;
     }
   }
@@ -351,10 +367,9 @@ public:
 
   bool arm()
   {
-    auto action = mavsdk::Action{m_system};
     // Arm vehicle
     std::cout << "Arming...\n";
-    const mavsdk::Action::Result arm_result = action.arm();
+    const mavsdk::Action::Result arm_result = m_action.get()->arm();
 
     if (arm_result != mavsdk::Action::Result::Success) {
       std::cerr << "Arming failed: " << arm_result << std::endl;
@@ -362,12 +377,12 @@ public:
     }
     return true;
   }
+
   bool disarm()
   {
-    auto action = mavsdk::Action{m_system};
     // Arm vehicle
     std::cout << "Disarming...\n";
-    const mavsdk::Action::Result arm_result = action.disarm();
+    const mavsdk::Action::Result arm_result = m_action.get()->disarm();
 
     if (arm_result != mavsdk::Action::Result::Success) {
       std::cerr << "Disarming failed: " << arm_result << std::endl;
@@ -395,14 +410,41 @@ public:
     return true;
   }
 
-  bool takeOff(bool interactive)
+  bool takeControl()
+  {
+    if (m_verbose) {
+      std::cout << "Starting offboard mode..." << std::endl;
+    }
+    if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
+      if (offboard_result != mavsdk::Offboard::Result::Success) {
+        std::cerr << "Offboard mode failed: " << offboard_result << std::endl;
+        return false;
+      }
+    }
+    else if (m_verbose) {
+      std::cout << "Already in offboard mode" << std::endl;
+    }
+
+    if (m_verbose) {
+      std::cout << "Offboard mode started" << std::endl;
+    }
+    return true;
+  }
+
+  void setPositioningIncertitude(float position_incertitude, float yaw_incertitude)
+  {
+    m_position_incertitude = position_incertitude;
+    m_yaw_incertitude = yaw_incertitude;
+  }
+
+  bool takeOff(bool interactive, int timeout_sec)
   {
     if (!m_has_flying_capability) {
       std::cerr << "Warning: Cannot takeoff this non flying vehicle" << std::endl;
       return true;
     }
-    auto action = mavsdk::Action{m_system};
-    std::cout << "Telemetry in_air() : " << m_telemetry.get()->in_air() << "\n";
+
     bool authorize_takeoff = false;
 
     if (!interactive) {
@@ -425,83 +467,140 @@ public:
 
     if (m_telemetry.get()->in_air()) {
       std::cerr << "Cannot take off as the robot is already flying." << std::endl;
+      return true;
     } else if (authorize_takeoff) {
       // Arm vehicle
-      std::cout << "Arming...\n";
-      const mavsdk::Action::Result arm_result = action.arm();
-
-      if (arm_result != mavsdk::Action::Result::Success) {
-        std::cerr << "Arming failed: " << arm_result << std::endl;
+      if (! arm()) {
         return false;
       }
 
-      /*const auto takeoff_result = action.takeoff();
-      if (takeoff_result != mavsdk::Action::Result::Success) {
-        std::cerr << "Takeoff failed: " << takeoff_result << '\n';
-        return true;
-      }*/
+      // Takeoff
+      if (m_telemetry.get()->gps_info().fix_type == mavsdk::Telemetry::FixType::NoGps) {
+        // No GPS connected. 
+        // When using odometry from MoCap, Action::takeoff() behavior is to takeoff at 0,0,0,alt
+        // that is weird when the drone is not placed at 0,0,0.
+        // That's why here use set_position_ned() to takeoff
 
-      /*auto telemetry = m_telemetry.get();
-      auto in_air_promise = std::promise<void>{};
-      auto in_air_future = in_air_promise.get_future();
-      mavsdk::Telemetry::LandedStateHandle handle =
-          telemetry->subscribe_landed_state(
-              [telemetry, &in_air_promise,
-               &handle](mavsdk::Telemetry::LandedState state) {
-                if (state == mavsdk::Telemetry::LandedState::InAir) {
-                  std::cout << "Taking off has finished\n.";
-                  telemetry->unsubscribe_landed_state(handle);
-                  in_air_promise.set_value();
-                }
-              });
-      in_air_future.wait_for(seconds(10));
-      if (in_air_future.wait_for(seconds(3)) == std::future_status::timeout) {
-        std::cerr << "Takeoff timed out.\n";
-        return 1;
-      }*/
+        const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+        m_offboard.get()->set_velocity_body(stay);
 
-      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-      m_offboard.get()->set_velocity_body(stay);
+        // Start off-board or guided mode
+        takeControl();
 
-      if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
-        mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
-        if (offboard_result != mavsdk::Offboard::Result::Success) {
-          std::cerr << "Offboard start failed: " << offboard_result << std::endl;
+        auto in_air_promise = std::promise<void>{};
+        auto in_air_future = in_air_promise.get_future();
+
+        mavsdk::Telemetry::Odometry odom;
+        odom = m_telemetry.get()->odometry();
+        vpQuaternionVector q{odom.q.x, odom.q.y, odom.q.z, odom.q.w};
+        vpRotationMatrix R(q);
+        vpRxyzVector rxyz(R);
+
+        double X_init = odom.position_body.x_m;
+        double Y_init = odom.position_body.y_m;
+        double Z_init = odom.position_body.z_m;
+        double yaw_init = vpMath::deg(rxyz[2]);
+
+        std::cout << "Takeoff using position NED." << std::endl;
+
+        mavsdk::Offboard::PositionNedYaw takeoff{};
+        takeoff.north_m = X_init;
+        takeoff.east_m = Y_init;
+        takeoff.down_m = Z_init - m_takeoffAlt;
+        takeoff.yaw_deg = yaw_init;
+        m_offboard.get()->set_position_ned(takeoff);
+        // Possibility is to use set_position_velocity_ned(); to speed up takeoff
+
+  #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
+        Telemetry::LandedStateHandle handle = m_telemetry.get()->subscribe_landed_state(
+        [this, &in_air_promise, &handle](mavsdk::Telemetry::LandedState state) {
+          if (state == mavsdk::Telemetry::LandedState::InAir) {
+            std::cout << "Drone is taking off\n.";
+            m_telemetry.get()->unsubscribe_landed_state(handle);
+            in_air_promise.set_value();
+          }
+        });
+  #else
+        m_telemetry.get()->subscribe_landed_state([this, &in_air_promise](mavsdk::Telemetry::LandedState state) {
+          if (state == mavsdk::Telemetry::LandedState::InAir) {
+            std::cout << "Drone is taking off\n.";
+            m_telemetry.get()->subscribe_landed_state(nullptr);
+            in_air_promise.set_value();
+          }
+          std::cout << "state: " << state << std::endl;
+        });
+  #endif
+        if (in_air_future.wait_for(seconds(timeout_sec)) == std::future_status::timeout) {
+          std::cerr << "Takeoff failed: drone not in air.\n";
+          return false;
+        }
+        // Add check with Altitude
+        auto takeoff_finished_promise = std::promise<void>{};
+        auto takeoff_finished_future = takeoff_finished_promise.get_future();
+
+  #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
+        auto handle_odom = m_telemetry.get()->subscribe_odometry(
+        [this, &takeoff_finished_promise, &handle, &Z_init](mavsdk::Telemetry::Odometry odom) {
+          if (odom.position_body.z_m < 0.90 * (Z_init - m_takeoffAlt) + 0.05) {
+            std::cout << "Takeoff altitude atteigned\n.";
+            m_telemetry.get()->unsubscribe_odometry(handle_odom);
+            takeoff_finished_promise.set_value();
+          }
+        });
+  #else
+        m_telemetry.get()->subscribe_odometry([this, &takeoff_finished_promise, &Z_init](mavsdk::Telemetry::Odometry odom) {
+          if (odom.position_body.z_m < 0.90 * (Z_init - m_takeoffAlt) + 0.05) {
+            std::cout << "Takeoff altitude reached\n.";
+            m_telemetry.get()->subscribe_odometry(nullptr);
+            takeoff_finished_promise.set_value();
+          }
+        });
+  #endif
+        if (takeoff_finished_future.wait_for(seconds(timeout_sec)) == std::future_status::timeout) {
+          std::cerr << "Takeoff failed:  altitude not reached.\n";
           return false;
         }
       }
+      else {
+        // GPS connected, we use Action::takeoff()
+        std::cout << "---- DEBUG: GPS detected: use action::takeoff()" << std::endl;
 
-      mavsdk::Telemetry::Odometry odom;
-      odom = m_telemetry.get()->odometry();
-      auto quat = m_telemetry.get()->attitude_quaternion();
-      auto posvel = m_telemetry.get()->position_velocity_ned();
-      vpQuaternionVector q{quat.x, quat.y, quat.z, quat.w};
-      vpRotationMatrix R(q);
-      vpRxyzVector rxyz(R);
+        m_action.get()->set_takeoff_altitude(m_takeoffAlt);
+        const auto takeoff_result = m_action.get()->takeoff();
+        if (takeoff_result != mavsdk::Action::Result::Success) {
+          std::cerr << "Takeoff failed: " << takeoff_result << '\n';
+          return false;
+        }
 
-      std::cout << "X_init, Y_init , Z_init = " << posvel.position.north_m << " , " << posvel.position.east_m << " , "
-                << posvel.position.down_m << std::endl;
-      double X_init = posvel.position.north_m;
-      double Y_init = posvel.position.east_m;
-      double Z_init = posvel.position.down_m;
-      double yaw_init = vpMath::deg(rxyz[2]);
+        auto in_air_promise = std::promise<void>{};
+        auto in_air_future = in_air_promise.get_future();
+  #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
+        Telemetry::LandedStateHandle handle = m_telemetry.get()->subscribe_landed_state(
+        [this, &in_air_promise, &handle](mavsdk::Telemetry::LandedState state) {
+          if (state == mavsdk::Telemetry::LandedState::InAir) {
+              std::cout << "Taking off has finished\n.";
+              m_telemetry.get()->unsubscribe_landed_state(handle);
+              in_air_promise.set_value();
+          }
+        });
+  #else
+        m_telemetry.get()->subscribe_landed_state([this, &in_air_promise](mavsdk::Telemetry::LandedState state) {
+          if (state == mavsdk::Telemetry::LandedState::InAir) {
+            std::cout << "Taking off has finished\n.";
+            m_telemetry.get()->subscribe_landed_state(nullptr);
+            in_air_promise.set_value();
+          }
+          std::cout << "state: " << state << std::endl;
+        });
+  #endif
+        in_air_future.wait_for(seconds(timeout_sec));
+        if (in_air_future.wait_for(seconds(3)) == std::future_status::timeout) {
 
-      std::cout << "Taking off using position NED." << std::endl;
-
-      mavsdk::Offboard::PositionNedYaw takeoff{};
-      takeoff.north_m = X_init;
-      takeoff.east_m = Y_init;
-      takeoff.down_m = Z_init - m_takeoffAlt;
-      takeoff.yaw_deg = yaw_init;
-      m_offboard.get()->set_position_ned(takeoff);
-      sleep_for(seconds(5));
-
-      /*auto offboard_result = m_offboard.get()->stop();
-      if (offboard_result != mavsdk::Offboard::Result::Success) {
-        std::cerr << "Offboard stop failed: " << offboard_result << '\n';
-        return false;
-      }
-      std::cout << "Offboard stopped\n";*/
+          // Add check with Altitude
+          std::cerr << "Takeoff timed out.\n";
+          return false;
+        }
+      } 
     }
     return true;
   }
@@ -512,11 +611,10 @@ public:
       std::cerr << "Warning: Cannot land this non flying vehicle" << std::endl;
       return true;
     }
-    auto action = mavsdk::Action{m_system};
 
     if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Land) {
       std::cout << "Landing...\n";
-      const mavsdk::Action::Result land_result = action.land();
+      const mavsdk::Action::Result land_result = m_action.get()->land();
       if (land_result != mavsdk::Action::Result::Success) {
         std::cerr << "Land failed: " << land_result << std::endl;
         return false;
@@ -531,66 +629,128 @@ public:
 
     std::cout << "Landed!" << std::endl;
     // We are relying on auto-disarming but let's keep watching the telemetry for a bit longer.
-    sleep_for(seconds(10));
+    sleep_for(seconds(5));
     std::cout << "Finished..." << std::endl;
     return true;
   }
 
-  void setPosition(float ned_delta_north, float ned_delta_east, float ned_delta_down, float ned_delta_yaw)
+  bool setPosition(float ned_north, float ned_east, float ned_down, float ned_yaw, bool blocking, int timeout_sec)
   {
-    auto action = mavsdk::Action{m_system};
+    mavsdk::Offboard::PositionNedYaw position_target{};
 
-    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-    m_offboard.get()->set_velocity_body(stay);
+    position_target.north_m = ned_north;
+    position_target.east_m = ned_east;
+    position_target.down_m = ned_down;
+    position_target.yaw_deg = vpMath::deg(ned_yaw);
+
+    std::cout << "NED Pos to read: " << position_target.north_m << " " << position_target.east_m << " " << position_target.down_m << " " << position_target.yaw_deg << std::endl;
+    m_offboard.get()->set_position_ned(position_target);
 
     if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
-      mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
-      if (offboard_result != mavsdk::Offboard::Result::Success) {
-        std::cerr << "Offboard start failed: " << offboard_result << std::endl;
-        return;
+      if (m_verbose) {
+        std::cout << "Cannnot set vehicle position: offboard mode not started" << std::endl;
+      }
+      return false;
+    }
+
+    if (blocking) {
+      // Add check with Altitude
+      auto position_reached_promise = std::promise<void>{};
+      auto position_reached_future = position_reached_promise.get_future();
+
+  #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
+      auto handle_odom = m_telemetry.get()->subscribe_odometry(
+      [this, &position_reached_promise, &handle, &position_target](mavsdk::Telemetry::Odometry odom) {
+        vpQuaternionVector q{odom.q.x, odom.q.y, odom.q.z, odom.q.w};
+        vpRotationMatrix R(q);
+        vpRxyzVector rxyz(R);
+        double odom_yaw = vpMath::deg(rxyz[2]);
+        double distance_to_target = std::sqrt(vpMath::sqr(odom.position_body.x_m - position_target.north_m)
+             + vpMath::sqr(odom.position_body.y_m - position_target.east_m) 
+             + vpMath::sqr(odom.position_body.z_m - position_target.down_m));
+        if (distance_to_target < m_position_incertitude && std::fabs(odom_yaw - position_target.yaw_deg) < m_yaw_incertitude)
+        {
+          std::cout << "Position reached\n.";
+          m_telemetry.get()->unsubscribe_odometry(handle_odom);
+          position_reached_promise.set_value();
+        }
+      });
+  #else
+      m_telemetry.get()->subscribe_odometry([this, &position_reached_promise, &position_target](mavsdk::Telemetry::Odometry odom) {
+        vpQuaternionVector q{odom.q.x, odom.q.y, odom.q.z, odom.q.w};
+        vpRotationMatrix R(q);
+        vpRxyzVector rxyz(R);
+        double odom_yaw = vpMath::deg(rxyz[2]);
+        double distance_to_target = std::sqrt(vpMath::sqr(odom.position_body.x_m - position_target.north_m)
+             + vpMath::sqr(odom.position_body.y_m - position_target.east_m) 
+             + vpMath::sqr(odom.position_body.z_m - position_target.down_m));
+        if (distance_to_target < m_position_incertitude && std::fabs(odom_yaw - position_target.yaw_deg) < m_yaw_incertitude)
+        {
+          std::cout << "Position reached\n.";
+          m_telemetry.get()->subscribe_odometry(nullptr);
+          position_reached_promise.set_value();
+        }
+      });
+  #endif
+      if (position_reached_future.wait_for(seconds(timeout_sec)) == std::future_status::timeout) {
+        std::cerr << "Positioning failed: position not reached.\n";
+        return false;
       }
     }
 
+std::cout << "---- DEBUG timeout: " << timeout_sec << std::endl;
+    return true;
+  }
+
+  bool setPositionRelative(float ned_delta_north, float ned_delta_east, float ned_delta_down, float ned_delta_yaw, bool blocking, int timeout_sec)
+  {
     mavsdk::Telemetry::Odometry odom;
     mavsdk::Telemetry::EulerAngle angles;
+    mavsdk::Offboard::PositionNedYaw position_target{};
+
+    position_target.north_m = ned_delta_north;
+    position_target.east_m = ned_delta_east;
+    position_target.down_m = ned_delta_down;
+    position_target.yaw_deg = vpMath::deg(ned_delta_yaw);
+
+    // Set a relative position
     odom = m_telemetry.get()->odometry();
     angles = m_telemetry.get()->attitude_euler();
 
-    double ned_X = odom.position_body.x_m;
-    double ned_Y = odom.position_body.y_m;
-    double ned_Z = odom.position_body.z_m;
-    double ned_yaw = angles.yaw_deg;
+    position_target.north_m += odom.position_body.x_m;
+    position_target.east_m += odom.position_body.y_m;
+    position_target.down_m += odom.position_body.z_m ;
+    position_target.yaw_deg += angles.yaw_deg;;
 
-    mavsdk::Offboard::PositionNedYaw position_target{};
-    position_target.north_m = ned_X + ned_delta_north;
-    position_target.east_m = ned_Y + ned_delta_east;
-    position_target.down_m = ned_Z + ned_delta_down;
-    position_target.yaw_deg = ned_yaw + vpMath::deg(ned_delta_yaw);
-    m_offboard.get()->set_position_ned(position_target);
+    return setPosition(position_target.north_m, position_target.east_m, position_target.down_m, position_target.yaw_deg, blocking, timeout_sec);
   }
 
-  void setPosition(const vpHomogeneousMatrix &M)
+  bool setPosition(const vpHomogeneousMatrix &M, bool absolute, int timeout_sec)
   {
     auto XYZvec = vpRxyzVector(M.getRotationMatrix());
     if (XYZvec[0] != 0.0) {
       std::cerr << "ERROR : Can't move, rotation around X axis should be 0." << std::endl;
-      return;
+      return false;
     }
     if (XYZvec[1] != 0.0) {
       std::cerr << "ERROR : Can't move, rotation around Y axis should be 0." << std::endl;
-      return;
+      return false;
     }
-    setPosition(M.getTranslationVector()[0], M.getTranslationVector()[1], M.getTranslationVector()[2], XYZvec[2]);
+    return setPosition(M.getTranslationVector()[0], M.getTranslationVector()[1], M.getTranslationVector()[2], XYZvec[2], absolute, timeout_sec);
   }
 
-  void setVelocity(const vpColVector &frd_vel_cmd, double delta_t)
+  bool setPositionRelative(const vpHomogeneousMatrix &M, bool absolute, int timeout_sec)
   {
-    setVelocity(frd_vel_cmd);
-
-    sleep_for(milliseconds((int)(delta_t * 1000.0)));
-
-    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-    m_offboard.get()->set_velocity_body(stay);
+    auto XYZvec = vpRxyzVector(M.getRotationMatrix());
+    if (XYZvec[0] != 0.0) {
+      std::cerr << "ERROR : Can't move, rotation around X axis should be 0." << std::endl;
+      return false;
+    }
+    if (XYZvec[1] != 0.0) {
+      std::cerr << "ERROR : Can't move, rotation around Y axis should be 0." << std::endl;
+      return false;
+    }
+    return setPositionRelative(M.getTranslationVector()[0], M.getTranslationVector()[1], M.getTranslationVector()[2], XYZvec[2], absolute, timeout_sec);
   }
 
   void setVelocity(const vpColVector &frd_vel_cmd)
@@ -601,12 +761,11 @@ public:
                         frd_vel_cmd.size()));
     }
 
-    auto action = mavsdk::Action{m_system};
-
-    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-    m_offboard.get()->set_velocity_body(stay);
-
     if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      // Send it once before starting offboard, otherwise it will be rejected.
+      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+      m_offboard.get()->set_velocity_body(stay); // OK
+
       mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
@@ -623,8 +782,7 @@ public:
 
   bool kill()
   {
-    auto action = mavsdk::Action{m_system};
-    const mavsdk::Action::Result kill_result = action.kill();
+    const mavsdk::Action::Result kill_result = m_action.get()->kill();
     if (kill_result != mavsdk::Action::Result::Success) {
       std::cerr << "Kill failed: " << kill_result << std::endl;
       return false;
@@ -636,24 +794,23 @@ public:
   {
     if (m_telemetry.get()->in_air()) {
       if (m_telemetry.get()->gps_info().fix_type != mavsdk::Telemetry::FixType::NoGps) {
-        auto action = mavsdk::Action{m_system};
-        const mavsdk::Action::Result hold_result = action.hold();
+        const mavsdk::Action::Result hold_result = m_action.get()->hold();
         if (hold_result != mavsdk::Action::Result::Success) {
           std::cerr << "Hold failed: " << hold_result << std::endl;
           return;
         }
       } else {
-        const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-        m_offboard.get()->set_velocity_body(stay);
-
         if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+          // Send it once before starting offboard, otherwise it will be rejected.
+          const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+          m_offboard.get()->set_velocity_body(stay); // OK
+
           mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
           if (offboard_result != mavsdk::Offboard::Result::Success) {
             std::cerr << "Offboard start failed: " << offboard_result << std::endl;
             return;
           }
         }
-        m_offboard.get()->set_velocity_body(stay);
 
         mavsdk::Telemetry::Odometry odom;
         mavsdk::Telemetry::EulerAngle angles;
@@ -686,17 +843,18 @@ public:
 
   void stopMoving()
   {
-    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-    m_offboard.get()->set_velocity_body(stay);
-
     if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      // Send it once before starting offboard, otherwise it will be rejected.
+      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+      m_offboard.get()->set_velocity_body(stay);
+
       mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
         return;
       }
     }
-    m_offboard.get()->set_velocity_body(stay);
+    
     auto offboard_result = m_offboard.get()->stop();
     if (offboard_result != mavsdk::Offboard::Result::Success) {
       std::cerr << "Offboard stop failed: " << offboard_result << '\n';
@@ -707,12 +865,11 @@ public:
 
   void setYawSpeed(double body_frd_wz)
   {
-    auto action = mavsdk::Action{m_system};
-
-    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-    m_offboard.get()->set_velocity_body(stay);
-
     if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      // Send it once before starting offboard, otherwise it will be rejected.
+      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+      m_offboard.get()->set_velocity_body(stay); // OK
+
       mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
@@ -729,12 +886,11 @@ public:
 
   void setForwardSpeed(double body_frd_vx)
   {
-    auto action = mavsdk::Action{m_system};
-
-    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-    m_offboard.get()->set_velocity_body(stay);
-
     if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      // Send it once before starting offboard, otherwise it will be rejected.
+      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+      m_offboard.get()->set_velocity_body(stay); // OK
+
       mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
@@ -752,12 +908,11 @@ public:
 
   void setLateralSpeed(double body_frd_vy)
   {
-    auto action = mavsdk::Action{m_system};
-
-    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-    m_offboard.get()->set_velocity_body(stay);
-
     if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      // Send it once before starting offboard, otherwise it will be rejected.
+      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+      m_offboard.get()->set_velocity_body(stay); // OK
+
       mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
@@ -774,12 +929,11 @@ public:
 
   void setVerticalSpeed(double body_frd_vz)
   {
-    auto action = mavsdk::Action{m_system};
-
-    const mavsdk::Offboard::VelocityBodyYawspeed stay{};
-    m_offboard.get()->set_velocity_body(stay);
-
     if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
+      // Send it once before starting offboard, otherwise it will be rejected.
+      const mavsdk::Offboard::VelocityBodyYawspeed stay{};
+      m_offboard.get()->set_velocity_body(stay); // OK
+
       mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
       if (offboard_result != mavsdk::Offboard::Result::Success) {
         std::cerr << "Offboard start failed: " << offboard_result << std::endl;
@@ -796,11 +950,29 @@ public:
 
   bool getFlyingCapability() { return m_has_flying_capability; }
 
+  void setVerbose(bool verbose)
+  {
+    m_verbose = verbose;
+  }
+
+  // void waitSystemReady()
+  // {
+  //   if (! m_system_ready) 
+  //   {
+  //     while (!m_telemetry.get()->health_all_ok()) {
+  //       std::cout << "Waiting for system to be ready\n";
+  //       sleep_for(seconds(1));
+  //     }
+  //     std::cout << "System is ready\n";
+  //   }
+  // }
+
 private:
   //*** Attributes ***//
   std::string m_address{}; ///< Ip address of the robot to discover on the network
   mavsdk::Mavsdk m_mavsdk{};
   std::shared_ptr<mavsdk::System> m_system;
+  std::shared_ptr<mavsdk::Action> m_action;
   std::shared_ptr<mavsdk::Telemetry> m_telemetry;
   std::shared_ptr<mavsdk::Offboard> m_offboard;
 
@@ -809,11 +981,10 @@ private:
   MAV_TYPE m_mav_type{}; // Vehicle type
   bool m_has_flying_capability{false};
 
-  // bool m_flatTrimFinished;  ///< Used to know when the robot has finished a flat trim
-  // bool m_relativeMoveEnded; ///< Used to know when the robot has ended a relative move
-  // bool m_settingsReset;     ///< Used to know when the robot a finished the settings reset
-
-  // unsigned int m_batteryLevel; ///< Percentage of battery remaining
+  bool m_system_ready{false};
+  float m_position_incertitude{0.05};
+  float m_yaw_incertitude{0.09}; // 5 deg
+  bool m_verbose{false};
 };
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -831,6 +1002,8 @@ private:
  * After having called this constructor, it is recommended to check if the vehicle is running with isRunning() before
  * sending commands to the vehicle.
  *
+ * Set default positioning incertitude to 0.05 meter in translation, and 5 degrees along yaw orientation.
+ *
  * \param[in] connection_info : Specify connection information. This parameter must be written following these
  * conventions:
  * - for TCP link: tcp://[server_host][:server_port]
@@ -843,14 +1016,22 @@ private:
  *
  * \exception vpException::fatalError : If the program failed to connect to the vehicle.
  */
-vpRobotMavsdk::vpRobotMavsdk(const std::string &connection_info) : m_impl(new vpRobotMavsdkImpl(connection_info)) {}
+vpRobotMavsdk::vpRobotMavsdk(const std::string &connection_info) : m_impl(new vpRobotMavsdkImpl(connection_info))
+{
+  m_impl->setPositioningIncertitude(0.05, vpMath::rad(5));
+}
 
 /*!
  * Default constructor without parameters. You need to use the connect() function afterwards.
  *
- * \sa connect()
+ * Set default positioning incertitude to 0.05 meter in translation, and 5 degrees along yaw orientation.
+ *
+ * \sa connect(), setPositioningIncertitude()
  */
-vpRobotMavsdk::vpRobotMavsdk() : m_impl(new vpRobotMavsdkImpl()) {}
+vpRobotMavsdk::vpRobotMavsdk() : m_impl(new vpRobotMavsdkImpl()) 
+{
+  m_impl->setPositioningIncertitude(0.05, vpMath::rad(5));
+}
 
 /*!
  * Destructor.
@@ -882,17 +1063,17 @@ bool vpRobotMavsdk::isRunning() const { return m_impl->isRunning(); }
  * Sends MoCap position data to the vehicle.
  *
  * We consider here that the MoCap global reference frame is ENU (East-North-Up).
- * The vehicle body frame if FRD (Front-Right-Down) where X axis is aligned
- * with the vehicle front axis and Z axis going downward.
+ * The vehicle body frame if FLU (Front-Left-Up) where X axis is aligned
+ * with the vehicle front axis and Z axis going upward.
  *
  * \return true if the MoCap data was successfully sent to the vehicle, false otherwise.
- * \param[in] enu_M_frd : Homogeneous matrix containing the pose of the vehicle given by the MoCap system.
- * To be more precise, this matrix gives the pose of the vehicle FRD body frame returned by the MoCap where
+ * \param[in] enu_M_flu : Homogeneous matrix containing the pose of the vehicle given by the MoCap system.
+ * To be more precise, this matrix gives the pose of the vehicle FLU body frame returned by the MoCap where
  * MoCap global reference frame is defined as ENU.
  *
  * Internally we transform this FRD pose in a NED global reference frame as expected by Pixhawk convention.
  */
-bool vpRobotMavsdk::sendMocapData(const vpHomogeneousMatrix &enu_M_frd) { return m_impl->sendMocapData(enu_M_frd); }
+bool vpRobotMavsdk::sendMocapData(const vpHomogeneousMatrix &enu_M_flu) { return m_impl->sendMocapData(enu_M_flu); }
 
 /*!
  * Gives the address given to connect to the vehicle.
@@ -955,13 +1136,34 @@ bool vpRobotMavsdk::disarm() { return m_impl->disarm(); }
  * Sends take off command when the vehicle has flying capabilities.
  * \param[in] interactive : If true asks the user if the offboard mode is to be forced through the terminal. If false
  * offboard mode is automatically set.
+ * \param[in] timeout_sec : Time out in seconds to acchieve takeoff.
  * \return
- * - If the vehicle has flying capabilities, returns true if the take off is successful, false otherwise.
+ * - If the vehicle has flying capabilities, returns true if the take off is successful, false otherwise,
+ *   typically when a timeout occurs. If the vehicle has flying capabilities and is already flying, return true.
  * - If the vehicle doesn't have flying capabilities, returns true.
  * \warning This function is blocking.
  * \sa setTakeOffAlt(), land(), hasFlyingCapability()
  */
-bool vpRobotMavsdk::takeOff(bool interactive) { return m_impl->takeOff(interactive); }
+bool vpRobotMavsdk::takeOff(bool interactive, int timeout_sec) { return m_impl->takeOff(interactive, timeout_sec); }
+
+/*!
+ * Sends take off command when the vehicle has flying capabilities.
+ * \param[in] interactive : If true asks the user if the offboard mode is to be forced through the terminal. If false
+ * offboard mode is automatically set.
+ * \param[in] takeoff_altitude : Take off altitude in [m]. Should be a positive value.
+ * \param[in] timeout_sec : Time out in seconds to acchieve takeoff.
+ * \return
+ * - If the vehicle has flying capabilities, returns true if the take off is successful, false otherwise,
+ *   typically when a timeout occurs.
+ * - If the vehicle doesn't have flying capabilities, returns true.
+ * \warning This function is blocking.
+ * \sa setTakeOffAlt(), land(), hasFlyingCapability()
+ */
+bool vpRobotMavsdk::takeOff(bool interactive, double takeoff_altitude, int timeout_sec) 
+{
+  m_impl->setTakeOffAlt(takeoff_altitude);
+  return m_impl->takeOff(interactive, timeout_sec); 
+}
 
 /*!
  * Makes the vehicle hold its position.
@@ -989,48 +1191,81 @@ bool vpRobotMavsdk::land() { return m_impl->land(); }
 /*!
  * Moves the vehicle Front-Right-Down (FRD) body frame with respect to the global reference NED frame.
  *
- * \warning This function is blocking.
+ * \param[in] ned_north : Absolute position to reach along north axis (meters).
+ * \param[in] ned_east : Absolute position to reach along east axis (meters).
+ * \param[in] ned_down : Absolute position to reach along down axis (meters).
+ * \param[in] ned_yaw : Absolute position to reach of the heading (radians).
+ * \param[in] blocking : When true this function is blocking until the position is reached.
+ * \param[in] timeout_sec : Timeout value in seconds applied when `blocking` is set to true.
+ * \return true when positionning succeed, false otherwise, typically when timeout occurs before reaching the position. 
  *
- * \param[in] ned_delta_north : Relative displacement along X-front axis (meters).
- * \param[in] ned_delta_east : Relative displacement along Y-right axis (meters).
- * \param[in] ned_delta_down : Relative displacement along Z-down axis (meters).
- * \param[in] ned_delta_yaw : Relative rotation of the heading (radians).
- *
- * \sa setPosition(const vpHomogeneousMatrix &M)
+ * \sa setPosition(const vpHomogeneousMatrix &, bool, float)
+ * \sa setPositionRelative(float, float, float, float, bool, float)
  */
-void vpRobotMavsdk::setPosition(float ned_delta_north, float ned_delta_east, float ned_delta_down, float ned_delta_yaw)
+bool vpRobotMavsdk::setPosition(float ned_north, float ned_east, float ned_down, float ned_yaw, bool blocking, int timeout_sec)
 {
-  m_impl->setPosition(ned_delta_north, ned_delta_east, ned_delta_down, ned_delta_yaw);
+  return m_impl->setPosition(ned_north, ned_east, ned_down, ned_yaw, blocking, timeout_sec);
 }
 
 /*!
- * Changes the relative position of the vehicle based on a homogeneous transformation matrix expressed in the NED
- * global reference frame.
+ * Moves the vehicle Front-Right-Down (FRD) body frame with respect to the global reference NED frame.
  *
- * \param[in] ned_M_delta : Homogeneous matrix that expressed the relative displacement of the vehicle expressed
+ * \param[in] ned_M_frd : Homogeneous matrix that express the FRD absolute position to reach by the vehicle expressed
  * in the NED global reference frame.
+ * \param[in] blocking : When true this function is blocking until the position is reached.
+ * \param[in] timeout_sec : Timeout value in seconds applied when `blocking` is set to true.
+ * \return true when positionning succeed, false otherwise, typically when timeout occurs before reaching the position. 
  *
- * \warning The rotation around the X and Y axes should be equal to 0, as the vehicle (drone or rover)
+ * \warning The rotation around the FRD X and Y axes should be equal to 0, as the vehicle (drone or rover)
  * cannot rotate around these axes.
  * \warning This function is blocking.
  *
- * \sa setPosition(float ned_delta_north, float ned_delta_east, float ned_delta_down, float ned_delta_yaw)
+ * \sa setPosition(float, float, float, float, bool, float)
+ * \sa setPositionRelative(const vpHomogeneousMatrix &, bool, float)
  */
-void vpRobotMavsdk::setPosition(const vpHomogeneousMatrix &ned_M_delta) { m_impl->setPosition(ned_M_delta); }
+bool vpRobotMavsdk::setPosition(const vpHomogeneousMatrix &ned_M_frd, bool blocking, int timeout_sec) 
+{
+  return m_impl->setPosition(ned_M_frd, blocking, timeout_sec); 
+}
 
 /*!
- * Sets the vehicle velocity in its own Front-Right-Down (FRD) body frame for a duration delta_t [s]. The vehicle stops
- * afterwards.
+ * Moves the vehicle Front-Right-Down (FRD) body frame with respect to the global reference NED frame.
  *
- * \param[in] frd_vel_cmd : 4-dim vehicle FRD velocity commands, vx, vy, vz, wz. Translation velocities (vx, vy, vz)
- * should be expressed in m/s and rotation velocity (wz) in rad/s. \param[in] delta_t : Sampling time (in seconds), time
- * during which the velocity `vel_cmd` is applied. When this time is elapsed, the vehicle stays where it is.
+ * \param[in] ned_delta_north : Relative displacement along north (meters).
+ * \param[in] ned_delta_east : Relative displacement along east (meters).
+ * \param[in] ned_delta_down : Relative displacement along down axis (meters).
+ * \param[in] ned_delta_yaw : Relative rotation of the heading (radians).
+ * \param[in] blocking : When true this function is blocking until the position is reached.
+ * \param[in] timeout_sec : Timeout value in seconds applied when `blocking` is set to true.
+ * \return true when positionning succeed, false otherwise, typically when timeout occurs before reaching the position. 
  *
- * \warning The dimension of the velocity vector should be equal to 4, as the vehicle cannot rotate around X and Y axes.
+ * \sa setPositionRelative(const vpHomogeneousMatrix &, bool, float)
+ * \sa setPosition(float, float, float, float, bool, float)
  */
-void vpRobotMavsdk::setVelocity(const vpColVector &frd_vel_cmd, double delta_t)
+bool vpRobotMavsdk::setPositionRelative(float ned_delta_north, float ned_delta_east, float ned_delta_down, float ned_delta_yaw, bool blocking, int timeout_sec)
 {
-  m_impl->setVelocity(frd_vel_cmd, delta_t);
+  return m_impl->setPositionRelative(ned_delta_north, ned_delta_east, ned_delta_down, ned_delta_yaw, blocking, timeout_sec);
+}
+
+/*!
+ * Moves the vehicle Front-Right-Down (FRD) body frame with respect to the global reference NED frame.
+ *
+ * \param[in] ned_M_frd : Homogeneous matrix that express the FRD absolute position to reach by the vehicle expressed
+ * in the NED global reference frame.
+ * \param[in] blocking : When true this function is blocking until the position is reached.
+ * \param[in] timeout_sec : Timeout value in seconds applied when `blocking` is set to true.
+ * \return true when positionning succeed, false otherwise, typically when timeout occurs before reaching the position. 
+ *
+ * \warning The rotation around the FRD X and Y axes should be equal to 0, as the vehicle (drone or rover)
+ * cannot rotate around these axes.
+ * \warning This function is blocking.
+ *
+ * \sa setPositionRelative(float, float, float, float, bool, float)
+ * \sa setPosition(const vpHomogeneousMatrix &, bool, float)
+ */
+bool vpRobotMavsdk::setPositionRelative(const vpHomogeneousMatrix &delta_frd_M_frd, bool blocking, int timeout_sec)
+{
+  return m_impl->setPositionRelative(delta_frd_M_frd, blocking, timeout_sec); 
 }
 
 /*!
@@ -1098,6 +1333,32 @@ bool vpRobotMavsdk::setGPSGlobalOrigin(double latitude, double longitude, double
 }
 
 /*!
+ * Take control using software running outside of the autopilot:
+ * - When using the PX4 flight stack start the off-board mode,
+ * - When using Ardupilot stack start the guided mode.
+ *
+ * \return true when off-board or guided mode are successfully started, false otherwise.
+ *
+ * This method should be called before using setPosition(), setVelocity()
+ */
+bool vpRobotMavsdk::takeControl()
+{
+  return m_impl->takeControl();
+}
+
+/*!
+ * Incertitude used to decided if a position is reached when using setPosition() and setPositionRelative().
+ * \param[in] position_incertitude : Position incertitude in [m].
+ * \param[in] yaw_incertitude : Yaw angle incertitude in [rad].
+ *
+ * \sa setPosition(), setPositionRelative()
+ */
+void vpRobotMavsdk::setPositioningIncertitude(float position_incertitude, float yaw_incertitude)
+{
+  m_impl->setPositioningIncertitude(position_incertitude, yaw_incertitude);
+}
+
+/*!
  * Sets the vertical speed, expressed in m/s, in the Front-Right-Down body frame.
  *
  * \warning The vehicle will not stop moving in that direction until you send another motion command.
@@ -1107,6 +1368,16 @@ bool vpRobotMavsdk::setGPSGlobalOrigin(double latitude, double longitude, double
  * - Negative values will make the vehicle go up.
  */
 void vpRobotMavsdk::setVerticalSpeed(double body_frd_vz) { m_impl->setVerticalSpeed(body_frd_vz); }
+
+/*!
+ * Enable/disable verbose mode.
+ *
+ * \param[in] verbose : When true enable verbose mode.
+ */
+void vpRobotMavsdk::setVerbose(bool verbose)
+{
+  m_impl->setVerbose(verbose);
+}
 
 /*!
  * Return true if the vehicle has flying capabilities.
