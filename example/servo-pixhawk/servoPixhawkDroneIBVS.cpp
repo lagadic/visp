@@ -457,7 +457,7 @@ int main(int argc, char **argv)
           }
 
 #ifdef CONTROL_UAV
-          drone.setVelocity(ve, 1.0);
+          drone.setVelocity(ve);
 #endif
 
           if (condition) {

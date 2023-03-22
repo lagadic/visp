@@ -88,14 +88,15 @@ int main(int argc, char **argv)
   double delta_yaw   = 0.;
 
   std::cout << "Move 1 meter north" << std::endl;;
-  robot.setPosition(delta_north, delta_east, delta_down, delta_yaw);
+  robot.setPositionRelative(delta_north, delta_east, delta_down, delta_yaw);
 
   vpColVector frd_vel{0.0, 0.0, 0.0, 0.0};
   frd_vel[0]= -0.3;             // forward vel m/s
   //frd_vel[3]= vpMath::rad(10.);
 
   std::cout << "Go at 0.3m/s backward during 3 sec.\n";
-  robot.setVelocity(frd_vel, 3.);
+  robot.setVelocity(frd_vel);
+  vpTime::wait(3000);
 
   std::cout << "Go at 0.3m/s forward and rotate 10 deg/s along yaw during 2 sec.\n";
   frd_vel[0]= 0.3;              // forward vel m/s
