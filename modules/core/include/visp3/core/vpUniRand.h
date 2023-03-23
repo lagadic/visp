@@ -93,41 +93,8 @@ typedef unsigned __int32 uint32_t;
 
   The algorithms and notations used are described in \cite oneill:pcg2014.
 
-  The following example shows how to use this class to generate 10 numbers between 0 and 5.
-  \code
-  #include <iostream>
-  #include <visp3/core/vpUniRand.h>
-
-  int main()
-  {
-    vpUniRand rng;
-    for (int i = 0; i < 10; i++) {
-      std::cout << rng.uniform(0, 6) << std::endl; // produces int values
-      std::cout << rng.uniform(0.0, 6.0) << std::endl; // produces double values
-    }
-
-    std::vector<int> v;
-    for(unsigned int i = 0; i < 10; i++)
-    {
-      v.push_back(i);
-    }
-
-    std::vector<int> shuffled_v = vpUniRand::shuffleVector<int>(v);
-    std::cout << "Original vector = [\t";
-    for(unsigned int i = 0; i < 10; i++)
-    {
-      std::cout << v[i] << "\t";
-    }
-    std::cout << "]" <<  std::endl;
-
-    std::cout << "Shuffled vector = [\t";
-    for(unsigned int i = 0; i < 10; i++)
-    {
-      std::cout << shuffled_v[i] << "\t";
-    }
-    std::cout << "]" <<  std::endl;
-  }
-  \endcode
+  The following example also available in random.cpp shows how to use this class to generate 10 numbers between 0 and 5.
+  \include random.cpp
 
 Once build, this previous code should produces an output similar to the following:
   \code
@@ -151,7 +118,7 @@ Once build, this previous code should produces an output similar to the followin
   4.86741
   2
   5.65826
-  Original vector = [	0	1	2	3	4	5	6	7	8	9	]
+  Original vector = [	0	1	2	3	4	5	6	7	8	9 ]
   Shuffled vector = [	2	4	7	8	5	1	3	6	9	0 ]
   \endcode
 */
