@@ -248,13 +248,14 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 //#undef EPS
 
 /*!
-\brief  Compute the pose of a planar object using Lagrange approach.
+  \brief  Compute the pose of a planar object using Lagrange approach.
 
-\param cMo : Estimated pose. No initialisation is requested to estimate cMo.
-\param p_a : if different from NULL, the a coefficient of the plan formed by the points.
-\param p_b : if different from NULL, the b coefficient of the plan formed by the points.
-\param p_c : if different from NULL, the c coefficient of the plan formed by the points.
-\param p_d : if different from NULL, the d coefficient of the plan formed by the points.
+  \param cMo : Estimated pose. No initialisation is requested to estimate cMo.
+  \param p_isPlan : if different from NULL, indicates if the object is planar or not.
+  \param p_a : if different from NULL, the a coefficient of the plan formed by the points.
+  \param p_b : if different from NULL, the b coefficient of the plan formed by the points.
+  \param p_c : if different from NULL, the c coefficient of the plan formed by the points.
+  \param p_d : if different from NULL, the d coefficient of the plan formed by the points.
 */
 
 void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *p_a, double *p_b, double *p_c, double *p_d)
