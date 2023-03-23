@@ -69,7 +69,8 @@
  *
  *    We provide a set of tests if you want to have a try on your flying vehicle:
  *    - testPixhawkDroneTakeoff.cpp
- *    - testPixhawkDronePositionControl.cpp
+ *    - testPixhawkDronePositionAbsoluteControl.cpp
+ *    - testPixhawkDronePositionRelativeControl.cpp
  *    - testPixhawkDroneVelocityControl.cpp
  *    - testPixhawkDroneKeyboard.cpp
  *
@@ -114,7 +115,9 @@ public:
   bool holdPosition();
   bool kill();
   bool land();
+  bool releaseControl();
   bool sendMocapData(const vpHomogeneousMatrix &enu_M_flu);
+  void setAutoLand(bool auto_land);
   bool setForwardSpeed(double body_frd_vx);
   bool setLateralSpeed(double body_frd_vy);
   bool setGPSGlobalOrigin(double latitude, double longitude, double altitude);
