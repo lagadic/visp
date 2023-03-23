@@ -65,7 +65,7 @@ public:
 
   virtual ~vpRobotMavsdkImpl()
   {
-    if (m_has_flying_capability) {
+    if (m_has_flying_capability && m_auto_land) {
       land();
     }
   }
@@ -901,24 +901,9 @@ std::cout << "---- DEBUG timeout: " << timeout_sec << std::endl;
       return false;
     }
 
-// if (m_telemetry.get()->flight_mode() != mavsdk::Telemetry::FlightMode::Offboard) {
-    //   // Send it once before starting offboard, otherwise it will be rejected.
     const mavsdk::Offboard::VelocityBodyYawspeed stay{};
     m_offboard.get()->set_velocity_body(stay);
 
-    //   mavsdk::Offboard::Result offboard_result = m_offboard.get()->start();
-    //   if (offboard_result != mavsdk::Offboard::Result::Success) {
-    //     std::cerr << "Offboard start failed: " << offboard_result << std::endl;
-    //     return false;
-    //   }
-    // }
-    
-    // auto offboard_result = m_offboard.get()->stop();
-    // if (offboard_result != mavsdk::Offboard::Result::Success) {
-    //   std::cerr << "Offboard stop failed: " << offboard_result << '\n';
-    //   return false;
-    // }
-    // std::cout << "Offboard stopped\n";
     return true;
   }
 
@@ -931,6 +916,11 @@ std::cout << "---- DEBUG timeout: " << timeout_sec << std::endl;
     }
     std::cout << "Offboard stopped\n";
     return true;
+  }
+
+  void setAutoLand(bool auto_land)
+  {
+    m_auto_land = auto_land;
   }
 
   bool setYawSpeed(double body_frd_wz)
@@ -1043,6 +1033,7 @@ private:
   float m_position_incertitude{0.05};
   float m_yaw_incertitude{0.09}; // 5 deg
   bool m_verbose{false};
+  bool m_auto_land{true};
 };
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
@@ -1061,18 +1052,26 @@ private:
  * sending commands to the vehicle.
  *
  * Set default positioning incertitude to 0.05 meter in translation, and 5 degrees along yaw orientation.
+ * These default values are used to determine when a position is reached and could be changed using setPositioningIncertitude().
+ * When the vehicle has flying capabilities, call by default land() in the destructor. This behavior could be changed
+ * using setAutoLand().
+ * 
+ * To control the vehicle using this class, you need to call takeControl() to start the off-board mode with PX4 or the 
+ * guided mode with Ardupilot. After this call you can call setPosition() to move the vehicle to a desired position
+ * and yaw orientation or call setVelocity() to move the vehicle in velocity.
  *
  * \param[in] connection_info : Specify connection information. This parameter must be written following these
  * conventions:
  * - for TCP link: tcp://[server_host][:server_port]
  * - for UDP link: udp://[bind_host][:bind_port]
- * - for Serial link: serial:///path/to/serial/dev[:baudrate]
- *
+ * - for Serial link: serial:///path/to/serial/dev[:baudrate]<br>
  * Examples: udp://192.168.30.111:14550 or serial:///dev/ttyACMO
  *
  * For more information see [here](https://mavsdk.mavlink.io/main/en/cpp/guide/connections.html).
  *
  * \exception vpException::fatalError : If the program failed to connect to the vehicle.
+ * 
+ * \sa setPositioningIncertitude(), setAutoLand(), takeControl(), releaseControl()
  */
 vpRobotMavsdk::vpRobotMavsdk(const std::string &connection_info) : m_impl(new vpRobotMavsdkImpl(connection_info))
 {
@@ -1083,6 +1082,13 @@ vpRobotMavsdk::vpRobotMavsdk(const std::string &connection_info) : m_impl(new vp
  * Default constructor without parameters. You need to use the connect() function afterwards.
  *
  * Set default positioning incertitude to 0.05 meter in translation, and 5 degrees along yaw orientation.
+ * These default values are used to determine when a position is reached and could be changed using setPositioningIncertitude().
+ * When the vehicle has flying capabilities, call by default land() in the destructor. This behavior could be changed
+ * using setAutoLand().
+ * 
+ * To control the vehicle using this class, you need to call takeControl() to start the off-board mode with PX4 or the 
+ * guided mode with Ardupilot. After this call you can call setPosition() to move the vehicle to a desired position
+ * and yaw orientation or call setVelocity() to move the vehicle in velocity.
  *
  * \sa connect(), setPositioningIncertitude()
  */
@@ -1093,7 +1099,10 @@ vpRobotMavsdk::vpRobotMavsdk() : m_impl(new vpRobotMavsdkImpl())
 
 /*!
  * Destructor.
- * When the vehicle has flying capabilities, lands the vehicle if not landed and safely disconnects everything.
+ * When the vehicle has flying capabilities and when auto land mode is enabled, lands the vehicle if not landed
+ * and safely disconnects everything.
+ * 
+ * \sa setAutoLand()
  */
 vpRobotMavsdk::~vpRobotMavsdk() { delete m_impl; }
 
@@ -1102,8 +1111,7 @@ vpRobotMavsdk::~vpRobotMavsdk() { delete m_impl; }
  * \param[in] connection_info : The connection information given to connect to the vehicle. You may use:
  * - for TCP link: tcp://[server_host][:server_port]
  * - for UDP link: udp://[bind_host][:bind_port]
- * - for Serial link: serial:///path/to/serial/dev[:baudrate]
- *
+ * - for Serial link: serial:///path/to/serial/dev[:baudrate]<br>
  * Examples: udp://192.168.30.111:14550 or serial:///dev/ttyACMO
  *
  * For more information see [here](https://mavsdk.mavlink.io/main/en/cpp/guide/connections.html).
@@ -1269,7 +1277,7 @@ bool vpRobotMavsdk::land() { return m_impl->land(); }
  * \param[in] ned_yaw : Absolute position to reach of the heading (radians).
  * \param[in] blocking : When true this function is blocking until the position is reached.
  * \param[in] timeout_sec : Timeout value in seconds applied when `blocking` is set to true.
- * \return true when positionning succeed, false otherwise, typically when timeout occurs before reaching the position. 
+ * \return true when positioning succeed, false otherwise, typically when timeout occurs before reaching the position. 
  *
  * \sa setPosition(const vpHomogeneousMatrix &, bool, float)
  * \sa setPositionRelative(float, float, float, float, bool, float)
@@ -1286,7 +1294,7 @@ bool vpRobotMavsdk::setPosition(float ned_north, float ned_east, float ned_down,
  * in the NED global reference frame.
  * \param[in] blocking : When true this function is blocking until the position is reached.
  * \param[in] timeout_sec : Timeout value in seconds applied when `blocking` is set to true.
- * \return true when positionning succeed, false otherwise, typically when timeout occurs before reaching the position. 
+ * \return true when positioning succeed, false otherwise, typically when timeout occurs before reaching the position. 
  *
  * \warning The rotation around the FRD X and Y axes should be equal to 0, as the vehicle (drone or rover)
  * cannot rotate around these axes.
@@ -1309,7 +1317,7 @@ bool vpRobotMavsdk::setPosition(const vpHomogeneousMatrix &ned_M_frd, bool block
  * \param[in] ned_delta_yaw : Relative rotation of the heading (radians).
  * \param[in] blocking : When true this function is blocking until the position is reached.
  * \param[in] timeout_sec : Timeout value in seconds applied when `blocking` is set to true.
- * \return true when positionning succeed, false otherwise, typically when timeout occurs before reaching the position. 
+ * \return true when positioning succeed, false otherwise, typically when timeout occurs before reaching the position. 
  *
  * \sa setPositionRelative(const vpHomogeneousMatrix &, bool, float)
  * \sa setPosition(float, float, float, float, bool, float)
@@ -1322,11 +1330,11 @@ bool vpRobotMavsdk::setPositionRelative(float ned_delta_north, float ned_delta_e
 /*!
  * Moves the vehicle Front-Right-Down (FRD) body frame with respect to the global reference NED frame.
  *
- * \param[in] ned_M_frd : Homogeneous matrix that express the FRD absolute position to reach by the vehicle expressed
+ * \param[in] delta_frd_M_frd : Homogeneous matrix that express the FRD absolute position to reach by the vehicle expressed
  * in the NED global reference frame.
  * \param[in] blocking : When true this function is blocking until the position is reached.
  * \param[in] timeout_sec : Timeout value in seconds applied when `blocking` is set to true.
- * \return true when positionning succeed, false otherwise, typically when timeout occurs before reaching the position. 
+ * \return true when positioning succeed, false otherwise, typically when timeout occurs before reaching the position. 
  *
  * \warning The rotation around the FRD X and Y axes should be equal to 0, as the vehicle (drone or rover)
  * cannot rotate around these axes.
@@ -1418,10 +1426,38 @@ bool vpRobotMavsdk::setGPSGlobalOrigin(double latitude, double longitude, double
  * \return true when off-board or guided mode are successfully started, false otherwise.
  *
  * This method should be called before using setPosition(), setVelocity()
+ * 
+ * \sa releaseControl()
  */
 bool vpRobotMavsdk::takeControl()
 {
   return m_impl->takeControl();
+}
+
+/*!
+ * Release control allowing running software outside of the autopilot:
+ * - When using the PX4 flight stack stop the off-board mode,
+ * - When using Ardupilot stack stop the guided mode.
+ *
+ * \return true when off-board or guided mode are successfully stopped, false otherwise.
+ *
+ * \sa takeControl()
+ */
+bool vpRobotMavsdk::releaseControl()
+{
+  return m_impl->releaseControl();
+}
+
+/*!
+ * Enable/disable auto land mode in the destructor.
+ * \param[in] auto_land : When true auto land mode is enabled and the destructor calls land() when
+ * the vehicle has flying capabilities. When false the destructor doesn't call land().
+ * 
+ * \sa land()
+ */
+void vpRobotMavsdk::setAutoLand(bool auto_land)
+{
+  m_impl->setAutoLand(auto_land);
 }
 
 /*!
