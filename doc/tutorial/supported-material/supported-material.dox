@@ -87,8 +87,7 @@ equipped with a Pixhawk. To this end you need to install [MavSDK](https://mavsdk
 party library.
 
 See \ref soft_robots_mavsdk section to know how to install the corresponding optional 3rd party.
-\image html img-drone-dji-pixhawk.jpg DJI F450 equipped with a Pixhawk 2 Cube connected to a Jetson TX2 through an USB
-link. width=50%
+\image html img-drone-dji-pixhawk.jpg DJI F450 equipped with a Pixhawk 2 Cube connected to a Jetson TX2 through an USB link.
 
 \section material_haptic Supported Haptic Devices
 
