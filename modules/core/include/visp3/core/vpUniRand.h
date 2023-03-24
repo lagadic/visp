@@ -74,14 +74,12 @@ typedef unsigned __int32 uint32_t;
 #include <inttypes.h>
 #endif
 
-#ifdef __cplusplus
-  #if (__cplusplus <= 201103L) 
-    #include <algorithm>    // std::random_shuffle
-  #else
-    #include <algorithm> // std::shuffle
-    #include <random> // std::mt19937
-    #include <numeric> // std::iota
-  #endif
+#if (VISP_CXX_STANDARD <= VISP_CXX_STANDARD_11)
+  #include <algorithm> // std::random_shuffle
+#else
+  #include <algorithm> // std::shuffle
+  #include <random>    // std::mt19937
+  #include <numeric>   // std::iota
 #endif
 
 #include <vector>
@@ -96,7 +94,7 @@ typedef unsigned __int32 uint32_t;
   The following example also available in random.cpp shows how to use this class to generate 10 numbers between 0 and 5.
   \include random.cpp
 
-Once build, this previous code should produces an output similar to the following:
+  Once build, this previous code should produces an output similar to the following:
   \code
   1
   0.0582619
@@ -152,20 +150,18 @@ public:
   /**
  * @brief Create a new vector that is a shuffled version of the \b inputVector.
  * 
- * @tparam T a class that possesses a copy constructor.
- * @param inputVector The input vector that must be shuffled. It will not be modified.
+ * @tparam T : A class that possesses a copy constructor.
+ * @param inputVector : The input vector that must be shuffled. It will not be modified.
  * @return std::vector<T> A vector containing the same objects than \b inputVector, but that are shuffled.
  */
   template<typename T>
   inline static std::vector<T> shuffleVector(const std::vector<T> &inputVector)
   {
     std::vector<T> shuffled = inputVector;
-    #ifdef __cplusplus
-      #if (__cplusplus <= 201103L) 
-        std::random_shuffle ( shuffled.begin(), shuffled.end() );
-      #else
-        std::shuffle(shuffled.begin(), shuffled.end(), std::mt19937{std::random_device{}()});
-      #  endif
+    #if (VISP_CXX_STANDARD <= VISP_CXX_STANDARD_11)
+      std::random_shuffle ( shuffled.begin(), shuffled.end() );
+    #else
+      std::shuffle(shuffled.begin(), shuffled.end(), std::mt19937{std::random_device{}()});
     #endif
     return shuffled;
   }
