@@ -310,7 +310,7 @@ public:
     return {float(position.latitude_deg), float(position.longitude_deg)};
   }
 
-  bool sendMocapData(const vpHomogeneousMatrix &enu_M_flu)
+  bool sendMocapData(const vpHomogeneousMatrix &enu_M_flu, int display_fps)
   {
     static double time_prev = vpTime::measureTimeMs();
 
@@ -344,13 +344,16 @@ public:
       std::cerr << "Set position failed: " << set_position_result << '\n';
       return false;
     } else {
-      if (vpTime::measureTimeMs() - time_prev > 1000.) {
-        time_prev = vpTime::measureTimeMs();
-        std::cout << "I managed to send ned_M_frd data" << std::endl;
-        std::cout << "Translation [m]: " << pose_estimate.position_body.x_m << " , " << pose_estimate.position_body.y_m
-                  << " , " << pose_estimate.position_body.z_m << std::endl;
-        std::cout << "Roll [rad]: " << pose_estimate.angle_body.roll_rad << " , Pitch [rad]: " << pose_estimate.angle_body.pitch_rad
-                  << " , Yaw [rad]: " << pose_estimate.angle_body.yaw_rad << " ." << std::endl;
+      if (display_fps > 0) {
+        double display_time_ms = 1000./display_fps;
+        if (vpTime::measureTimeMs() - time_prev > display_time_ms) {
+          time_prev = vpTime::measureTimeMs();
+          std::cout << "Send ned_M_frd MoCap data: " << std::endl;
+          std::cout << "Translation [m]: " << pose_estimate.position_body.x_m << " , " << pose_estimate.position_body.y_m
+                    << " , " << pose_estimate.position_body.z_m << std::endl;
+          std::cout << "Roll [rad]: " << pose_estimate.angle_body.roll_rad << " , Pitch [rad]: " << pose_estimate.angle_body.pitch_rad
+                    << " , Yaw [rad]: " << pose_estimate.angle_body.yaw_rad << " ." << std::endl;
+        }
       }
       return true;
     }
@@ -1131,15 +1134,24 @@ bool vpRobotMavsdk::isRunning() const { return m_impl->isRunning(); }
  * We consider here that the MoCap global reference frame is ENU (East-North-Up).
  * The vehicle body frame if FLU (Front-Left-Up) where X axis is aligned
  * with the vehicle front axis and Z axis going upward.
+ * 
+ * Internally, this pose called `enu_M_flu` is transformed to match the requirements of the Pixhawk
+ * into `ned_M_frd` corresponding to the FRD (Front-Right-Down) body frame position in the NED (North-East-Down) 
+ * local reference frame.
  *
  * \return true if the MoCap data was successfully sent to the vehicle, false otherwise.
  * \param[in] enu_M_flu : Homogeneous matrix containing the pose of the vehicle given by the MoCap system.
  * To be more precise, this matrix gives the pose of the vehicle FLU body frame returned by the MoCap where
  * MoCap global reference frame is defined as ENU.
+ * \param[in] display_fps : Display `ned_M_frd` pose internally sent through mavlink at the given framerate. A value of 0 can 
+ * be used to disable this display.
  *
  * Internally we transform this FRD pose in a NED global reference frame as expected by Pixhawk convention.
  */
-bool vpRobotMavsdk::sendMocapData(const vpHomogeneousMatrix &enu_M_flu) { return m_impl->sendMocapData(enu_M_flu); }
+bool vpRobotMavsdk::sendMocapData(const vpHomogeneousMatrix &enu_M_flu, int display_fps)
+{
+  return m_impl->sendMocapData(enu_M_flu, display_fps);
+}
 
 /*!
  * Gives the address given to connect to the vehicle.

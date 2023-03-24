@@ -94,6 +94,7 @@ bool handleKeyboardInput(vpRobotMavsdk &drone, int key, bool &flying, double &la
       flying = true;
       lastCommandTime = vpTime::measureTimeMs();
       vpTime::wait(100);
+      drone.takeControl();
       break;
 
     case ' ':
@@ -224,7 +225,7 @@ int main(int argc, char **argv)
 
       std::cout << "\nConfiguring drone settings ...\n" << std::endl;
 
-      drone.setTakeOffAlt(1.1);
+      drone.setTakeOffAlt(1.0);
 
       vpKeyboard keyboard;
       std::cout << "\n| Control the drone with the keyboard :\n"

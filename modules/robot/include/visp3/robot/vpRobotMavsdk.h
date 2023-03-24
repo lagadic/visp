@@ -116,7 +116,7 @@ public:
   bool kill();
   bool land();
   bool releaseControl();
-  bool sendMocapData(const vpHomogeneousMatrix &enu_M_flu);
+  bool sendMocapData(const vpHomogeneousMatrix &enu_M_flu, int display_fps = 1);
   void setAutoLand(bool auto_land);
   bool setForwardSpeed(double body_frd_vx);
   bool setLateralSpeed(double body_frd_vy);
