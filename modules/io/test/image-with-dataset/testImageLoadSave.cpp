@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_CATCH2
+#if defined(VISP_HAVE_CATCH2) && (VISP_HAVE_DATASET_VERSION >= 0x030500)
 #define CATCH_CONFIG_ENABLE_BENCHMARKING
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
@@ -46,6 +46,7 @@
 
 static const std::string ipath = vpIoTools::getViSPImagesDataPath();
 static const std::string path = ipath + "/Solvay/Solvay_conference_1927_Version2_640x440";
+
 static const double ccThreshPNG = 1.0;
 static const double ccThreshJPG = 0.99;
 

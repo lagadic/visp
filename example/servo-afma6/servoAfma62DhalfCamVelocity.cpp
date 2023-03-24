@@ -193,7 +193,7 @@ int main()
       double x = 0, y = 0;
 
       if (!vpMeLine::intersection(line[i % nbline], line[(i + 1) % nbline], ip)) {
-        exit(-1);
+        return EXIT_FAILURE;
       }
 
       vpPixelMeterConversion::convertPoint(cam, ip, x, y);
@@ -290,7 +290,7 @@ int main()
           double x = 0, y = 0;
 
           if (!vpMeLine::intersection(line[i % nbline], line[(i + 1) % nbline], ip)) {
-            exit(-1);
+            return EXIT_FAILURE;
           }
 
           vpPixelMeterConversion::convertPoint(cam, ip, x, y);

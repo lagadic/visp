@@ -41,7 +41,7 @@
   \brief Test Gaussian filter.
 */
 
-#if defined(VISP_HAVE_CATCH2)
+#if defined(VISP_HAVE_CATCH2) && (VISP_HAVE_DATASET_VERSION >= 0x030400)
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 #include <visp3/core/vpGaussianFilter.h>

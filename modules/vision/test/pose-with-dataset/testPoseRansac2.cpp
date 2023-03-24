@@ -51,7 +51,7 @@
 
 namespace
 {
-
+#if (VISP_HAVE_DATASET_VERSION >= 0x030300)
 bool samePoints(const vpPoint &pt1, const vpPoint &pt2)
 {
   return vpMath::equal(pt1.get_oX(), pt2.get_oX(), std::numeric_limits<double>::epsilon()) &&
@@ -446,6 +446,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
 
   return true;
 }
+#endif
 } // namespace
 
 TEST_CASE("Print RANSAC number of iterations", "[ransac_pose]")
@@ -481,6 +482,7 @@ TEST_CASE("Print RANSAC number of iterations", "[ransac_pose]")
   std::cout << std::endl;
 }
 
+#if (VISP_HAVE_DATASET_VERSION >= 0x030300)
 TEST_CASE("RANSAC pose estimation tests", "[ransac_pose]")
 {
   const std::vector<size_t> model_sizes = {10, 20, 50, 100, 200, 500, 1000, 0, 0};
@@ -507,6 +509,7 @@ TEST_CASE("RANSAC pose estimation tests", "[ransac_pose]")
     CHECK(testRansac(bunnyModelPoints, bunnyModelPoints_noisy_original, model_sizes[i], duplicates[i], degenerates[i]));
   }
 }
+#endif
 
 int main(int argc, char *argv[])
 {

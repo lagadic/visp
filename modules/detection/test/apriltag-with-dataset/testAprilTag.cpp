@@ -40,7 +40,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_CATCH2) && defined(VISP_HAVE_APRILTAG)
+#if defined(VISP_HAVE_CATCH2) && defined(VISP_HAVE_APRILTAG) && (VISP_HAVE_DATASET_VERSION >= 0x030300)
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
@@ -434,7 +434,11 @@ TEST_CASE("Apriltag corners accuracy test", "[apriltag_corners_accuracy_test]")
 #if defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV) || defined(VISP_HAVE_EIGEN3)
 TEST_CASE("Apriltag regression test", "[apriltag_regression_test]")
 {
+#if (VISP_HAVE_DATASET_VERSION >= 0x030600)
+  const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "AprilTag/AprilTag.png");
+#else
   const std::string filename = vpIoTools::createFilePath(vpIoTools::getViSPImagesDataPath(), "AprilTag/AprilTag.pgm");
+#endif
   REQUIRE(vpIoTools::checkFilename(filename));
 
   vpImage<unsigned char> I;

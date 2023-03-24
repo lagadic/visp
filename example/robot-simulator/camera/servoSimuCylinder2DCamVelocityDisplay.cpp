@@ -168,7 +168,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     vpImage<unsigned char> I(512, 512, 255);
@@ -197,7 +197,7 @@ int main(int argc, const char **argv)
         vpDisplay::flush(I);
       } catch (...) {
         vpERROR_TRACE("Error while displaying the image");
-        exit(-1);
+        return EXIT_FAILURE;
       }
     }
 

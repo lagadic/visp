@@ -101,7 +101,7 @@ OPTIONS:                                               Default\n\
   -p <personal video path>                             %s\n\
      Specify a personal folder containing a video \n\
      to process.\n\
-     Example : \"/Temp/ViSP-images/video/video.mpeg\"\n\
+     Example : \"/Temp/visp-images/video/video.mpeg\"\n\
 \n\
   -c\n\
      Disable the mouse click. Useful to automaze the \n\
@@ -202,7 +202,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed, opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -228,7 +228,7 @@ int main(int argc, const char **argv)
                 << "  environment variable to specify the location of the " << std::endl
                 << "  video path where test images are located." << std::endl
                 << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     /////////////////////////////////////////////////////////////////////

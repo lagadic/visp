@@ -1109,6 +1109,11 @@ VP_SET(VISP_USE_MSVC TRUE IF MSVC) # for header vpConfig.h
 
 VP_SET(VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION TRUE IF (USE_BICLOPS AND BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION)) # for header vpConfig.h
 
+if(VISP_DATASET_FOUND)
+  VP_SET(VISP_HAVE_DATASET TRUE)
+  set(VISP_HAVE_DATASET_VERSION "(${VISP_DATASET_VERSION_MAJOR}<<16 | ${VISP_DATASET_VERSION_MINOR}<<8 | ${VISP_DATASET_VERSION_PATCH})") # for vpConfig.h
+endif()
+
 # libraries for Pioneer mobile robots
 if(USE_ARIA AND UNIX)
   if(ARIA_FOUND AND USE_PTHREAD AND RT_FOUND AND DL_FOUND)
@@ -1158,7 +1163,6 @@ endif()
 # Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
 #----------------------------------------------------------------------
 if(BUILD_TESTS)
-  vp_find_dataset(VISP_DATASET_FOUND VISP_DATASET_LOCATION)
   include(CTest)
 endif()
 
@@ -1633,7 +1637,7 @@ status("    Tests:"                  BUILD_TESTS        THEN "yes" ELSE "no")
 status("    Demos:"                  BUILD_DEMOS        THEN "yes" ELSE "no")
 status("    Examples:"               BUILD_EXAMPLES     THEN "yes" ELSE "no")
 status("    Tutorials:"              BUILD_TUTORIALS    THEN "yes" ELSE "no")
-status("    Dataset found:"          VISP_DATASET_FOUND THEN "yes (in ${VISP_DATASET_LOCATION})" ELSE "no")
+status("    Dataset found:"          VISP_DATASET_FOUND THEN "yes (ver ${VISP_DATASET_VERSION} in ${VISP_DATASET_LOCATION})" ELSE "no")
 if(APPS_FOUND)
   status("    Apps:"              BUILD_APPS  THEN "yes" ELSE "no")
 endif()

@@ -71,7 +71,7 @@ int main()
   vpImage<unsigned char> I; // Grey level image
 
   // Read an image in PGM P5 format
-  vpImageIo::read(I, "C:/temp/ViSP-images/Klimt/Klimt.pgm");
+  vpImageIo::read(I, "C:/Temp/visp-images/Klimt/Klimt.pgm");
 
   vpDisplayD3D d;
 

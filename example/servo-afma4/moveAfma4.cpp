@@ -152,7 +152,7 @@ int main(int argc, const char **argv)
     // and velocities to the robot.
     // Read the command line options
     if (getOptions(argc, argv, control) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     vpRobotAfma4 robot;

@@ -541,6 +541,12 @@
 // Defined if TensorRT available
 #cmakedefine VISP_HAVE_TENSORRT
 
+// Defined if ViSP dataset found
+#cmakedefine VISP_HAVE_DATASET
+#ifdef VISP_HAVE_DATASET
+#  define VISP_HAVE_DATASET_VERSION ${VISP_HAVE_DATASET_VERSION}
+#endif
+
 // Handle portable symbol export.
 // Defining manually which symbol should be exported is required
 // under Windows whether MinGW or MSVC is used.

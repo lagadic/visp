@@ -673,12 +673,6 @@ void vpFeatureMomentCInvariant::compute_interaction()
 
   interaction_matrices[13] =
       (I2 / (I3 * I3 * I3)) * La + (a / (I3 * I3 * I3)) * LI2 - (3 * a * I2 / (I3 * I3 * I3 * I3)) * LI3;
-
-  /*
-  std::cout << (*this);
-  vpTRACE("Done.");
-  std::exit(-1);
-  */
 }
 
 /*!

@@ -106,7 +106,7 @@ int main()
     } catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
   }
   std::string logfilename;

@@ -91,6 +91,11 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 */
 void usage(const char *name, const char *badparam, std::string ipath)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
   fprintf(stdout, "\n\
 Tracking of a nurbs using vpMe.\n\
 \n\
@@ -103,7 +108,7 @@ OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
      From this path read images \n\
-     \"ellipse-1/image.%%04d.pgm\"\n\
+     \"ellipse-1/image.%%04d.%s\"\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
      this option.\n\
@@ -117,7 +122,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n",
-          ipath.c_str());
+          ipath.c_str(), ext.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -184,6 +189,12 @@ int main(int argc, const char **argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
+
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -194,7 +205,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -220,7 +231,7 @@ int main(int argc, const char **argv)
                 << "  environment variable to specify the location of the " << std::endl
                 << "  image path where test images are located." << std::endl
                 << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Declare an image, this is a gray level image (unsigned char)
@@ -229,7 +240,7 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> I;
 
     // Set the path location of the image sequence
-    filename = vpIoTools::createFilePath(ipath, "ellipse-1/image.%04d.pgm");
+    filename = vpIoTools::createFilePath(ipath, "ellipse-1/image.%04d." + ext);
 
     // Build the name of the image file
     vpVideoReader reader;
@@ -320,10 +331,10 @@ int main(int argc, const char **argv)
       std::cout << "A click to exit..." << std::endl;
       vpDisplay::getClick(I);
     }
-    return 0;
+    return EXIT_SUCCESS;
   } catch (vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
-    return 0;
+    return EXIT_SUCCESS;
   }
 }
 #else
