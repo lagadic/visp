@@ -188,9 +188,9 @@ vpForceTorqueAtiSensor::~vpForceTorqueAtiSensor() { close(); }
 
 /*!
    Open ATI calibration file that should correspond to your F/T sensor.
-   \param calibfile : ATI calibration file. This file has the following
-   pattern: FT*.cal. \param index : Index of calibration in file (default =
-   1). \sa getCalibrationFile(), close()
+   \param calibfile : ATI calibration file. This file has the following pattern: FT*.cal.
+   \param index : Index of calibration in file (default =1).
+   \sa getCalibrationFile(), close()
  */
 void vpForceTorqueAtiSensor::setCalibrationFile(const std::string &calibfile, unsigned short index)
 {
