@@ -35,9 +35,9 @@
  *****************************************************************************/
 
 /*!
- * \example testPixhawkDronePositionControl.cpp
+ * \example testPixhawkDronePositionRelativeControl.cpp
  *
- * This code shows how to takeoff, fly to the corners of a 1.5 m size square and land
+ * This code shows how to takeoff, fly to the corners of a 1. m size square and land
  * a drone equipped with a Pixhawk connected to a Jetson TX2 that runs this test using ViSP.
  * The drone is localized thanks to Qualisys Mocap. Communication between the Jetson and the Pixhawk
  * is based on Mavlink using MAVSDK 3rd party.
@@ -68,10 +68,9 @@ int main(int argc, char **argv)
     return 1;
   }
 
-  double takeoff_alt = 1.;
-
   auto drone = vpRobotMavsdk(argv[1]);
-  drone.setTakeOffAlt(takeoff_alt);
+  drone.setAutoLand(true);
+  drone.setTakeOffAlt(1.0);
   drone.setVerbose(true);
 
   if (! drone.takeOff() )
@@ -97,14 +96,12 @@ int main(int argc, char **argv)
   // Set position in NED frame
   drone.setPositioningIncertitude(0.10, vpMath::rad(5.));
 
-  drone.setPosition( 0.0,  1.0, ned_down, 0.0); // East
-  drone.setPosition( 1.0,  0.0, ned_down, 0.0); // North
-  drone.setPosition( 0.0, -1.0, ned_down, 0.0); // West
-  drone.setPosition(-1.0,  0.0, ned_down, 0.0); // South
+  drone.setPositionRelative( 0.0,  1.0, 0.0, 0.0); // Right
+  drone.setPositionRelative( 1.0,  0.0, 0.0, 0.0); // Front
+  drone.setPositionRelative( 0.0, -1.0, 0.0, 0.0); // Left
+  drone.setPositionRelative(-1.0,  0.0, 0.0, 0.0); // Rear
 
-  // Land drone
-  drone.land();
-
+  // Land drone during destruction
   return EXIT_SUCCESS;
 }
 
