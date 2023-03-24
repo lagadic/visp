@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -29,18 +29,18 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Simple example to demonstrate how takeoff and land using mavsdk on
+ * Simple example to demonstrate how to control in velocity using mavsdk
  * a drone equipped with a Pixhawk connected to a Jetson TX2.
  *
  *****************************************************************************/
 
 /*!
- * \example testPixhawkDroneTakeoff.cpp
+ * \example testPixhawkRoverVelocityControl.cpp
  *
- * This code shows how to takeoff and land a drone equipped with a Pixhawk
- * connected to a Jetson TX2 that runs this test using ViSP. The drone is localized
- * thanks to Qualisys Mocap. Communication between the Jetson and the Pixhawk
- * is based on Mavlink using MAVSDK 3rd party.
+ * This code shows how to control a rover equipped with a Pixhawk connected to a computer that is
+ * runing this test.
+ * Communication between the computer and the Pixhawk is based on Mavlink
+ * using MAVSDK 3rd party.
  */
 
 #include <iostream>
@@ -49,15 +49,19 @@
 
 #if defined(VISP_HAVE_MAVSDK) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 
+#include <thread>
 #include <visp3/robot/vpRobotMavsdk.h>
+
+using std::chrono::seconds;
+using std::this_thread::sleep_for;
 
 void usage(const std::string &bin_name)
 {
   std::cerr << "Usage : " << bin_name << " <connection information>\n"
-            << "Connection information format should be :\n"
-            << "  - For TCP: tcp://[server_host][:server_port]\n"
-            << "  - For UDP: udp://[bind_host][:bind_port]\n"
-            << "  - For Serial: serial:///path/to/serial/dev[:baudrate]\n"
+            << "Connection URL format should be :\n"
+            << "  - For TCP : tcp://[server_host][:server_port]\n"
+            << "  - For UDP : udp://[bind_host][:bind_port]\n"
+            << "  - For Serial : serial:///path/to/serial/dev[:baudrate]\n"
             << "For example, to connect to the simulator use URL: udp://:14540\n";
 }
 
@@ -68,38 +72,44 @@ int main(int argc, char **argv)
     return EXIT_SUCCESS;
   }
 
-  auto drone = vpRobotMavsdk(argv[1]);
+  auto robot = vpRobotMavsdk(argv[1]);
 
-  drone.setTakeOffAlt(1.);
-  drone.setVerbose(true);
-  drone.takeControl(); // Start off-board or guided mode
-
-  // Drone takeoff
-  if (! drone.takeOff() )
+  if (! robot.setGPSGlobalOrigin(48.117266, -1.6777926, 40.0))
   {
-    std::cout << "Takeoff failed" << std::endl;
     return EXIT_FAILURE;
   }
 
-  // Get position in NED local frame after takeoff
-  float ned_north, ned_east, ned_down, ned_yaw;
-  drone.getPosition(ned_north, ned_east, ned_down, ned_yaw);
-  std::cout << "Vehicle position in NED frame: " << ned_north << " " << ned_east << " " << ned_down << " [m] and " << vpMath::deg(ned_yaw) << " [deg]" << std::endl;
+  std::cout << "Vehicle has flying capability: " << (robot.hasFlyingCapability() ? "yes" : "no") << std::endl;
+  robot.arm();
 
-  vpHomogeneousMatrix ned_M_frd;
-  drone.getPosition(ned_M_frd);
-  vpRxyzVector rxyz(ned_M_frd.getRotationMatrix());
-  std::cout << "Vehicle position in NED frame: " 
-            << ned_M_frd.getTranslationVector().t() << " [m] and " 
-            << vpMath::deg(rxyz).t() << " [deg]"<< std::endl;
+  double delta_north = 1.;
+  double delta_east  = 0.;
+  double delta_down  = 0.;
+  double delta_yaw   = 0.;
 
-  std::cout << "Hold position for 4 sec" << std::endl;
-  drone.holdPosition();
-  vpTime::wait(4000);
+  std::cout << "Move 1 meter north" << std::endl;;
+  robot.setPositionRelative(delta_north, delta_east, delta_down, delta_yaw);
 
-  // Land drone
-  drone.land();
+  vpColVector frd_vel{0.0, 0.0, 0.0, 0.0};
+  frd_vel[0]= -0.3;             // forward vel m/s
+  //frd_vel[3]= vpMath::rad(10.);
 
+  std::cout << "Go at 0.3m/s backward during 3 sec.\n";
+  robot.setVelocity(frd_vel);
+  vpTime::wait(3000);
+
+  std::cout << "Go at 0.3m/s forward and rotate 10 deg/s along yaw during 2 sec.\n";
+  frd_vel[0]= 0.3;              // forward vel m/s
+  frd_vel[3]= vpMath::rad(10.); // yaw vel 10 deg/s converted in rad/s
+
+  double t = vpTime::measureTimeMs();
+  do {
+    vpTime::sleepMs(20);
+    robot.setVelocity(frd_vel);
+  }
+  while(vpTime::measureTimeMs() - t < 2000.); // 
+
+  robot.disarm();
   return EXIT_SUCCESS;
 }
 

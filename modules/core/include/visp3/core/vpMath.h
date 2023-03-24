@@ -237,8 +237,7 @@ public:
 
   static vpHomogeneousMatrix ned2ecef(double lonDeg, double latDeg, double radius);
   static vpHomogeneousMatrix enu2ecef(double lonDeg, double latDeg, double radius);
-  static vpColVector enu2ned(const vpRxyzVector &rxyz);
-  static vpColVector enu2ned(const vpTranslationVector &rxyz);
+  static vpHomogeneousMatrix enu2ned(const vpHomogeneousMatrix &enu_M);
 
   /*!
     Similar to the NumPy linspace function: "Return evenly spaced numbers over a specified interval."

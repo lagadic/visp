@@ -221,13 +221,13 @@ public:
   bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);
   bool computePoseDementhonLagrangeVVS(vpHomogeneousMatrix &cMo);
   double computeResidual(const vpHomogeneousMatrix &cMo) const;
-  bool coplanar(int &coplanar_plane_type);
+  bool coplanar(int &coplanar_plane_type, double *p_a = NULL, double *p_b = NULL, double *p_c = NULL, double *p_d = NULL);
   void displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
   void displayModel(vpImage<vpRGBa> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
 
   void poseDementhonPlan(vpHomogeneousMatrix &cMo);
   void poseDementhonNonPlan(vpHomogeneousMatrix &cMo);
-  void poseLagrangePlan(vpHomogeneousMatrix &cMo);
+  void poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan = NULL, double *p_a = NULL, double *p_b = NULL, double *p_c = NULL, double *p_d = NULL);
   void poseLagrangeNonPlan(vpHomogeneousMatrix &cMo);
   void poseLowe(vpHomogeneousMatrix &cMo);
   bool poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);

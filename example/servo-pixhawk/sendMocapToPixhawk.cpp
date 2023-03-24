@@ -36,7 +36,7 @@
 /*!
  * @example sendMocapToPixhawk.cpp
  *
- * Send motion capture data to a Pixhawk using mavsdk
+ * Send motion capture data to a Pixhawk using MAVSDK.
  *
  */
 
@@ -81,7 +81,7 @@ void quitHandler(int sig)
  */
 bool mocap_sdk_loop(std::mutex &lock, bool qualisys, bool opt_verbose, bool opt_all_bodies,
                     std::string &opt_serverAddress, std::string &opt_onlyBody,
-                    std::map<std::string, vpHomogeneousMatrix> &current_bodies_pose_NED, bool &mocap_failure,
+                    std::map<std::string, vpHomogeneousMatrix> &current_body_poses_enu_M_flu, bool &mocap_failure,
                     bool &mavlink_failure)
 {
   std::shared_ptr<vpMocap> mocap;
@@ -112,39 +112,28 @@ bool mocap_sdk_loop(std::mutex &lock, bool qualisys, bool opt_verbose, bool opt_
     return false;
   }
 
-  vpHomogeneousMatrix W_NED_Mat_W_Qualisys;
-  W_NED_Mat_W_Qualisys.eye();
-  W_NED_Mat_W_Qualisys[1][1] = -1;
-  W_NED_Mat_W_Qualisys[2][2] = -1;
-
   bool internal_mavlink_failure = false;
   while (!g_quit && !internal_mavlink_failure) {
-    std::map<std::string, vpHomogeneousMatrix> bodies_pose;
+    std::map<std::string, vpHomogeneousMatrix> body_poses_enu_M_flu;
 
     if (opt_onlyBody == "") {
-      if (!mocap->getBodiesPose(bodies_pose, opt_all_bodies)) {
+      if (!mocap->getBodiesPose(body_poses_enu_M_flu, opt_all_bodies)) {
         g_quit = true;
       }
     } else {
-      vpHomogeneousMatrix pose;
-      if (!mocap->getSpecificBodyPose(opt_onlyBody, pose)) {
+      vpHomogeneousMatrix enu_M_flu;
+      if (!mocap->getSpecificBodyPose(opt_onlyBody, enu_M_flu)) {
         g_quit = true;
       } else {
-        bodies_pose[opt_onlyBody] = pose;
+        body_poses_enu_M_flu[opt_onlyBody] = enu_M_flu;
       }
-    }
-
-    std::map<std::string, vpHomogeneousMatrix> bodies_pose_NED;
-    for (std::map<std::string, vpHomogeneousMatrix>::iterator it = bodies_pose.begin(); it != bodies_pose.end(); ++it) {
-      bodies_pose_NED[it->first] = W_NED_Mat_W_Qualisys * it->second;
     }
 
     lock.lock();
     internal_mavlink_failure = mavlink_failure;
-    current_bodies_pose_NED = bodies_pose_NED; // Now we send directly the poses in the NED frame.
+    current_body_poses_enu_M_flu =
+        body_poses_enu_M_flu; // Now we send directly the poses in the ENU global reference frame.
     lock.unlock();
-
-    vpTime::sleepMs(5);
   }
   return true;
 }
@@ -152,27 +141,29 @@ bool mocap_sdk_loop(std::mutex &lock, bool qualisys, bool opt_verbose, bool opt_
 // ------------------------------------------------------------------------------
 //   TOP
 // ------------------------------------------------------------------------------
-int top(const std::string &connection_info, std::map<std::string, vpHomogeneousMatrix> &current_bodies_pose_NED,
+int top(const std::string &connection_info, std::map<std::string, vpHomogeneousMatrix> &current_body_poses_enu_M_flu,
         std::mutex &lock, bool &mocap_failure)
 {
-  std::map<std::string, vpHomogeneousMatrix> bodies_pose_NED;
+  std::map<std::string, vpHomogeneousMatrix> body_poses_enu_M_flu;
   bool internal_mocap_failure = false;
+  const double fps = 100;
 
   vpRobotMavsdk drone{connection_info};
 
   while (!g_quit && !internal_mocap_failure) {
+    double t = vpTime::measureTimeMs();
     lock.lock();
-    bodies_pose_NED = current_bodies_pose_NED;
+    body_poses_enu_M_flu = current_body_poses_enu_M_flu;
     internal_mocap_failure = mocap_failure;
     lock.unlock();
 
-    for (std::map<std::string, vpHomogeneousMatrix>::iterator it = bodies_pose_NED.begin(); it != bodies_pose_NED.end();
-         ++it) {
+    for (std::map<std::string, vpHomogeneousMatrix>::iterator it = body_poses_enu_M_flu.begin();
+         it != body_poses_enu_M_flu.end(); ++it) {
       if (!drone.sendMocapData(it->second)) {
         return 1;
       }
     }
-    vpTime::sleepMs(33);
+    vpTime::wait(t, 1000./fps); // Stream MoCap at given framerate
   }
 
   return 0;
@@ -277,7 +268,7 @@ void parse_commandline(int argc, char **argv, bool &qualisys, std::string &conne
 // ------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
-  std::map<std::string, vpHomogeneousMatrix> current_bodies_pose_NED;
+  std::map<std::string, vpHomogeneousMatrix> current_body_poses_enu_M_flu;
 
   // Default input arguments
 #ifdef __APPLE__
@@ -312,9 +303,9 @@ int main(int argc, char **argv)
   bool mocap_failure = false;
   bool mavlink_failure = false;
   std::thread mocap_thread([&lock, &opt_qualisys, &opt_verbose, &opt_all_bodies, &opt_serverAddress, &opt_onlyBody,
-                            &current_bodies_pose_NED, &mocap_failure, &mavlink_failure]() {
+                            &current_body_poses_enu_M_flu, &mocap_failure, &mavlink_failure]() {
     mocap_sdk_loop(lock, opt_qualisys, opt_verbose, opt_all_bodies, opt_serverAddress, opt_onlyBody,
-                   current_bodies_pose_NED, mocap_failure, mavlink_failure);
+                   current_body_poses_enu_M_flu, mocap_failure, mavlink_failure);
   });
   if (mocap_failure) {
     std::cout << "Mocap connexion failure. Check mocap server IP address" << std::endl;
@@ -323,9 +314,9 @@ int main(int argc, char **argv)
 
   // This program uses throw, wrap one big try/catch here
   std::thread mavlink_thread(
-      [&lock, &current_bodies_pose_NED, &opt_connectionInfo, &mocap_failure, &mavlink_failure]() {
+      [&lock, &current_body_poses_enu_M_flu, &opt_connectionInfo, &mocap_failure, &mavlink_failure]() {
         try {
-          int result = top(opt_connectionInfo, current_bodies_pose_NED, lock, mocap_failure);
+          int result = top(opt_connectionInfo, current_body_poses_enu_M_flu, lock, mocap_failure);
           return result;
         } catch (int error) {
           fprintf(stderr, "mavlink_control threw exception %i \n", error);

@@ -29,17 +29,17 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Simple example to demonstrate how takeoff and land using mavsdk on
+ * Simple example to demonstrate how to control in position using mavsdk
  * a drone equipped with a Pixhawk connected to a Jetson TX2.
  *
  *****************************************************************************/
 
 /*!
- * \example testPixhawkDroneTakeoff.cpp
+ * \example testPixhawkDronePositionAbsoluteControl.cpp
  *
- * This code shows how to takeoff and land a drone equipped with a Pixhawk
- * connected to a Jetson TX2 that runs this test using ViSP. The drone is localized
- * thanks to Qualisys Mocap. Communication between the Jetson and the Pixhawk
+ * This code shows how to takeoff, fly to the corners of a 1.5 m size square and land
+ * a drone equipped with a Pixhawk connected to a Jetson TX2 that runs this test using ViSP.
+ * The drone is localized thanks to Qualisys Mocap. Communication between the Jetson and the Pixhawk
  * is based on Mavlink using MAVSDK 3rd party.
  */
 
@@ -54,10 +54,10 @@
 void usage(const std::string &bin_name)
 {
   std::cerr << "Usage : " << bin_name << " <connection information>\n"
-            << "Connection information format should be :\n"
-            << "  - For TCP: tcp://[server_host][:server_port]\n"
-            << "  - For UDP: udp://[bind_host][:bind_port]\n"
-            << "  - For Serial: serial:///path/to/serial/dev[:baudrate]\n"
+            << "Connection URL format should be :\n"
+            << "  - For TCP : tcp://[server_host][:server_port]\n"
+            << "  - For UDP : udp://[bind_host][:bind_port]\n"
+            << "  - For Serial : serial:///path/to/serial/dev[:baudrate]\n"
             << "For example, to connect to the simulator use URL: udp://:14540\n";
 }
 
@@ -65,23 +65,24 @@ int main(int argc, char **argv)
 {
   if (argc != 2) {
     usage(argv[0]);
-    return EXIT_SUCCESS;
+    return 1;
   }
 
+  double takeoff_alt = 1.;
+
   auto drone = vpRobotMavsdk(argv[1]);
-
-  drone.setTakeOffAlt(1.);
+  drone.setTakeOffAlt(takeoff_alt);
   drone.setVerbose(true);
-  drone.takeControl(); // Start off-board or guided mode
 
-  // Drone takeoff
   if (! drone.takeOff() )
   {
     std::cout << "Takeoff failed" << std::endl;
     return EXIT_FAILURE;
   }
-
-  // Get position in NED local frame after takeoff
+  
+  drone.takeControl(); // Start PX4 offboard
+  
+  // Get position
   float ned_north, ned_east, ned_down, ned_yaw;
   drone.getPosition(ned_north, ned_east, ned_down, ned_yaw);
   std::cout << "Vehicle position in NED frame: " << ned_north << " " << ned_east << " " << ned_down << " [m] and " << vpMath::deg(ned_yaw) << " [deg]" << std::endl;
@@ -93,9 +94,13 @@ int main(int argc, char **argv)
             << ned_M_frd.getTranslationVector().t() << " [m] and " 
             << vpMath::deg(rxyz).t() << " [deg]"<< std::endl;
 
-  std::cout << "Hold position for 4 sec" << std::endl;
-  drone.holdPosition();
-  vpTime::wait(4000);
+  // Set position in NED frame
+  drone.setPositioningIncertitude(0.10, vpMath::rad(5.));
+
+  drone.setPosition( 0.0,  1.0, ned_down, 0.0); // East
+  drone.setPosition( 1.0,  0.0, ned_down, 0.0); // North
+  drone.setPosition( 0.0, -1.0, ned_down, 0.0); // West
+  drone.setPosition(-1.0,  0.0, ned_down, 0.0); // South
 
   // Land drone
   drone.land();

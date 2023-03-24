@@ -668,31 +668,19 @@ vpColVector vpMath::deg(const vpColVector &r)
 }
 
 /*!
- * Convert attitude euler angle values (roll, pitch, yaw) from ENU (East-North-Up) to NED (North-East-Down) frame.
- * \param enu : Vector of angles (roll, pitch, yaw) in [rad] in ENU frame.
- * \return Converted angles in NED frame.
- * \sa vpMath::enu2ned(const vpTranslationVector &)
+ * Convert from ENU (East-North-Up) to NED (North-East-Down) frame.
+ * \param enu_M : HomogeneousMatrix expressed in ENU frame.
+ * \return Converted homogeneous matrix in NED frame.
  */
-vpColVector vpMath::enu2ned(const vpRxyzVector &enu)
+vpHomogeneousMatrix vpMath::enu2ned(const vpHomogeneousMatrix &enu_M)
 {
-  vpColVector ned(3);
-  ned[0] = enu[0];
-  ned[1] = -enu[1];
-  ned[2] = -enu[2] + M_PI_2;
-  return ned;
-}
+  vpHomogeneousMatrix ned_M_enu;
+  ned_M_enu[0][0] = 0;
+  ned_M_enu[0][1] = 1;
+  ned_M_enu[1][0] = 1;
+  ned_M_enu[1][1] = 0;
+  ned_M_enu[2][2] = -1;
 
-/*!
- * Convert attitude position values (x, y, z) from ENU (East-North-Up) to NED (North-East-Down) frame.
- * \param enu : Position vector (x, y, z) in [m] in ENU frame.
- * \return Converted position in NED frame.
- * \sa vpMath::enu2ned(const vpRxyzVector &)
- */
-vpColVector vpMath::enu2ned(const vpTranslationVector &enu)
-{
-  vpColVector ned(3);
-  ned[0] = enu[1];
-  ned[1] = enu[0];
-  ned[2] = -enu[2];
-  return ned;
+  vpHomogeneousMatrix ned_M = ned_M_enu * enu_M;
+  return ned_M;
 }

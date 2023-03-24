@@ -40,7 +40,7 @@
  * This code shows how to takeoff, control in velocity and land with a drone
  * equipped with a Pixhawk connected to a Jetson TX2 that runs this test using ViSP.
  * The drone is localized thanks to Qualisys Mocap. Communication between the Jetson
- * and the Pixhawk is based on Mavlink using mavsdk 3rd party.
+ * and the Pixhawk is based on Mavlink using MAVSDK 3rd party.
  */
 
 #include <iostream>
@@ -74,37 +74,27 @@ int main(int argc, char **argv)
 
   auto drone = vpRobotMavsdk(argv[1]);
 
-  drone.takeOff();
+  drone.setTakeOffAlt(.5);
+  if (! drone.takeOff() )
+  {
+    std::cout << "Takeoff failed" << std::endl;
+    return EXIT_FAILURE;
+  }
   vpColVector vel_command{0.0, 0.0, 0.0, 0.0};
 
   drone.setForwardSpeed(0.3);
-  std::cout << "Should stop moving" << std::endl;
+  std::cout << "Set forward speed of 0.3 m/s for 4 sec" << std::endl;
   sleep_for(seconds(4));
 
-  /*std::cout << "Go at 0.3m/s forward during 3 sec.\n";
-  vel_command[0] = 0.3;
-  drone.setVelocity(vel_command, 3.0);
+  drone.setForwardSpeed(-0.3);
+  std::cout << "Set forward speed of -0.3 m/s for 4 sec" << std::endl;
+  sleep_for(seconds(4));
 
-  std::cout << "Go up at 0.1 m/s for 5 sec.\n";
-  vel_command[0] = 0.0;
-  vel_command[2] = -0.1;
-  drone.setVelocity(vel_command, 5.0);
+  drone.stopMoving();
+  std::cout << "Stop moving for 4 sec" << std::endl;
+  sleep_for(seconds(4));
 
-  std::cout << "turn 180° \n";
-  vel_command[2] = 0.0;
-  vel_command[3] = 3.14 / 3;
-  drone.setVelocity(vel_command, 3.0);
-
-  std::cout << "Go at 1.0 m/s forward during 1 sec.\n";
-  vel_command[3] = 0.0;
-  vel_command[0] = 1.0;
-  drone.setVelocity(vel_command, 1.0);
-
-  std::cout << "Standing still for 2 sec.\n";
-  vel_command[3] = 0.0;
-  vel_command[0] = 0.0;
-  drone.setVelocity(vel_command, 2.0);*/
-
+  std::cout << "Land now..." << std::endl;
   drone.land();
 
   return EXIT_SUCCESS;

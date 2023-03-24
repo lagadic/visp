@@ -47,6 +47,7 @@ set(example_cpp
   BSpline.cpp
   quadprog_eq.cpp
   quadprog.cpp
+  random.cpp
 )
 
 foreach(cpp ${example_cpp})

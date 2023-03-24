@@ -155,6 +155,7 @@ void display_loop(std::mutex &lock, const std::map<std::string, vpHomogeneousMat
           std::cout << vpMath::deg(rxyz[i]) << " ";
         }
         std::cout << std::endl;
+        std::cout << " Transformation Matrix wMb:\n" << it->second << std::endl;
       }
     }
 

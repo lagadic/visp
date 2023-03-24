@@ -49,6 +49,7 @@ pour faire du calcul de pose par difference methode
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
 #include <visp3/core/vpMeterPixelConversion.h>
+#include <visp3/core/vpUniRand.h>
 #include <visp3/vision/vpPose.h>
 #include <visp3/vision/vpPoseException.h>
 
@@ -186,9 +187,13 @@ void vpPose::setDementhonSvThreshold(const double& svThresh){
    3: if plane z=cst
    4: if the points are collinear.
    0: any other plane
+  \param p_a: if different from null, it will be set to equal the a coefficient of the potential plan.
+  \param p_b: if different from null, it will be set to equal the b coefficient of the potential plan.
+  \param p_c: if different from null, it will be set to equal the c coefficient of the potential plan.
+  \param p_d: if different from null, it will be set to equal the d coefficient of the potential plan.
   \return true if points are coplanar false otherwise.
 */
-bool vpPose::coplanar(int &coplanar_plane_type)
+bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double *p_c, double *p_d)
 {
   coplanar_plane_type = 0;
   if (npt < 2) {
@@ -199,19 +204,22 @@ bool vpPose::coplanar(int &coplanar_plane_type)
   if (npt == 3)
     return true;
 
+  // Shuffling the points to limit the risk of using points close to each other
+  std::vector<vpPoint> shuffled_listP = vpUniRand::shuffleVector<vpPoint>(listOfPoints);
+
   double x1 = 0, x2 = 0, x3 = 0, y1 = 0, y2 = 0, y3 = 0, z1 = 0, z2 = 0, z3 = 0;
 
-  std::list<vpPoint>::const_iterator it = listP.begin();
+  std::vector<vpPoint>::const_iterator it = shuffled_listP.begin();
 
   vpPoint P1, P2, P3;
 
   // Get three 3D points that are not collinear and that is not at origin
   bool degenerate = true;
   bool not_on_origin = true;
-  std::list<vpPoint>::const_iterator it_tmp;
+  std::vector<vpPoint>::const_iterator it_tmp;
 
-  std::list<vpPoint>::const_iterator it_i, it_j, it_k;
-  for (it_i = listP.begin(); it_i != listP.end(); ++it_i) {
+  std::vector<vpPoint>::const_iterator it_i, it_j, it_k;
+  for (it_i = shuffled_listP.begin(); it_i != shuffled_listP.end(); ++it_i) {
     if (degenerate == false) {
       // std::cout << "Found a non degenerate configuration" << std::endl;
       break;
@@ -228,7 +236,7 @@ bool vpPose::coplanar(int &coplanar_plane_type)
     if (not_on_origin) {
       it_tmp = it_i;
       ++it_tmp; // j = i+1
-      for (it_j = it_tmp; it_j != listP.end(); ++it_j) {
+      for (it_j = it_tmp; it_j != shuffled_listP.end(); ++it_j) {
         if (degenerate == false) {
           // std::cout << "Found a non degenerate configuration" << std::endl;
           break;
@@ -244,7 +252,7 @@ bool vpPose::coplanar(int &coplanar_plane_type)
         if (not_on_origin) {
           it_tmp = it_j;
           ++it_tmp; // k = j+1
-          for (it_k = it_tmp; it_k != listP.end(); ++it_k) {
+          for (it_k = it_tmp; it_k != shuffled_listP.end(); ++it_k) {
             P3 = *it_k;
             if ((std::fabs(P3.get_oX()) <= std::numeric_limits<double>::epsilon()) &&
                 (std::fabs(P3.get_oY()) <= std::numeric_limits<double>::epsilon()) &&
@@ -313,7 +321,7 @@ bool vpPose::coplanar(int &coplanar_plane_type)
 
   double D = sqrt(vpMath::sqr(a) + vpMath::sqr(b) + vpMath::sqr(c));
 
-  for (it = listP.begin(); it != listP.end(); ++it) {
+  for (it = shuffled_listP.begin(); it != shuffled_listP.end(); ++it) {
     P1 = *it;
     double dist = (a * P1.get_oX() + b * P1.get_oY() + c * P1.get_oZ() + d) / D;
     // std::cout << "dist= " << dist << std::endl;
@@ -327,6 +335,28 @@ bool vpPose::coplanar(int &coplanar_plane_type)
 
   vpDEBUG_TRACE(10, " points are  coplanar ");
   //  vpTRACE(" points are  coplanar ") ;
+
+  // If the points are coplanar and the input/output parameters are different from NULL,
+  // getting the values of the plan coefficient and storing in the input/output parameters
+  if(p_a != NULL)
+  {
+    *p_a = a;
+  }
+
+  if(p_b != NULL)
+  {
+    *p_b = b;
+  }
+
+  if(p_c != NULL)
+  {
+    *p_c = c;
+  }
+
+  if(p_d != NULL)
+  {
+    *p_d = d;
+  }
 
   return true;
 }
@@ -399,7 +429,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
                             npt));
     }
 
-    // test si les point 3D sont coplanaires
+    // test if the 3D points are coplanar
     int coplanar_plane_type = 0;
     bool plan = coplanar(coplanar_plane_type);
     if (plan == true) {
@@ -412,9 +442,10 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
   case LAGRANGE:
   case LAGRANGE_VIRTUAL_VS:
   case LAGRANGE_LOWE: {
-    // test si les point 3D sont coplanaires
-    int coplanar_plane_type;
-    bool plan = coplanar(coplanar_plane_type);
+    // test if the 3D points are coplanar
+    double a, b, c, d; // To get the plan coefficients if the points are coplanar
+    int coplanar_plane_type = 0;
+    bool plan = coplanar(coplanar_plane_type, &a, &b, &c, &d);
 
     if (plan == true) {
 
@@ -429,7 +460,7 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
                               "Not enough point (%d) to compute the pose  ",
                               npt));
       }
-      poseLagrangePlan(cMo);
+      poseLagrangePlan(cMo, &plan, &a, &b, &c, &d);
     } else {
       if (npt < 6) {
         throw(vpPoseException(vpPoseException::notEnoughPointError,
@@ -476,8 +507,9 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
   case LAGRANGE_LOWE:
   case DEMENTHON_LOWE: {
     poseLowe(cMo);
+  } break;
+  case DEMENTHON_LAGRANGE_VIRTUAL_VS:
     break;
-  }
   }
 
   return true;
@@ -497,8 +529,9 @@ bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix& cMo)
   vpHomogeneousMatrix cMo_dementhon, cMo_lagrange;
   double r_dementhon = std::numeric_limits<double>::max(), r_lagrange = std::numeric_limits<double>::max();
   // test if the 3D points are coplanar
+  double a, b, c, d; // To get the plan coefficients if the points are coplanar
   int coplanar_plane_type = 0;
-  bool plan = coplanar(coplanar_plane_type);
+  bool plan = coplanar(coplanar_plane_type, &a, &b, &c, &d);
   bool hasDementhonSucceeded(false), hasLagrangeSucceeded(false);
   try
   {
@@ -533,7 +566,7 @@ bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix& cMo)
       r_dementhon = computeResidual(cMo_dementhon);
       hasDementhonSucceeded = true; // We reached this point => no exception was thrown = method succeeded
     }
-    catch(const vpException& e)
+    catch(...)
     {
       // The Dementhon method failed both with the planar and non-planar assumptions.
       hasDementhonSucceeded = false;
@@ -544,7 +577,8 @@ bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix& cMo)
   {
     if(plan)
     {
-      poseLagrangePlan(cMo_lagrange);
+      // If plan is true, then a, b, c, d will have been set when we called coplanar.
+      poseLagrangePlan(cMo_lagrange, &plan, &a, &b, &c, &d);
     }
     else
     {
@@ -554,7 +588,7 @@ bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix& cMo)
     r_lagrange = computeResidual(cMo_lagrange);
     hasLagrangeSucceeded = true; // We reached this point => no exception was thrown = method succeeded
   }
-  catch (vpException e)
+  catch (...)
   {
     // An exception was thrown using the original assumption, trying we the other one
     try
@@ -567,7 +601,11 @@ bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix& cMo)
       else
       {
         // Already tested poseLagrangeNonPlan, now trying poseLagrangePlan
-        poseLagrangePlan(cMo_lagrange);
+        // Because plan is false, then a, b, c, d will not have
+        // been initialized when calling coplanar
+        // We are expecting that the call to poseLagrangePlan will throw an exception
+        // because coplanar return false.
+        poseLagrangePlan(cMo_lagrange, &plan, &a, &b, &c, &d);
       }
 
       r_lagrange = computeResidual(cMo_lagrange);

@@ -35,12 +35,12 @@
  *****************************************************************************/
 
 /*!
- * \example testPixhawkDronePositionControl.cpp
+ * \example testPixhawkDronePositionRelativeControl.cpp
  *
- * This code shows how to takeoff, fly to the corners of a 1.5 m size square and land
+ * This code shows how to takeoff, fly to the corners of a 1. m size square and land
  * a drone equipped with a Pixhawk connected to a Jetson TX2 that runs this test using ViSP.
  * The drone is localized thanks to Qualisys Mocap. Communication between the Jetson and the Pixhawk
- * is based on Mavlink using mavsdk 3rd party.
+ * is based on Mavlink using MAVSDK 3rd party.
  */
 
 #include <iostream>
@@ -69,16 +69,39 @@ int main(int argc, char **argv)
   }
 
   auto drone = vpRobotMavsdk(argv[1]);
+  drone.setAutoLand(true);
+  drone.setTakeOffAlt(1.0);
+  drone.setVerbose(true);
 
-  drone.takeOff();
+  if (! drone.takeOff() )
+  {
+    std::cout << "Takeoff failed" << std::endl;
+    return EXIT_FAILURE;
+  }
+  
+  drone.takeControl(); // Start PX4 offboard
+  
+  // Get position
+  float ned_north, ned_east, ned_down, ned_yaw;
+  drone.getPosition(ned_north, ned_east, ned_down, ned_yaw);
+  std::cout << "Vehicle position in NED frame: " << ned_north << " " << ned_east << " " << ned_down << " [m] and " << vpMath::deg(ned_yaw) << " [deg]" << std::endl;
 
-  drone.setPosition(0.0, 1.5, 0.0, 0.0);
-  drone.setPosition(1.5, 0.0, 0.0, 0.0);
-  drone.setPosition(0.0, -1.5, 0.0, 0.0);
-  drone.setPosition(-1.5, 0.0, 0.0, 0.0);
+  vpHomogeneousMatrix ned_M_frd;
+  drone.getPosition(ned_M_frd);
+  vpRxyzVector rxyz(ned_M_frd.getRotationMatrix());
+  std::cout << "Vehicle position in NED frame: " 
+            << ned_M_frd.getTranslationVector().t() << " [m] and " 
+            << vpMath::deg(rxyz).t() << " [deg]"<< std::endl;
 
-  drone.land();
+  // Set position in NED frame
+  drone.setPositioningIncertitude(0.10, vpMath::rad(5.));
 
+  drone.setPositionRelative( 0.0,  1.0, 0.0, 0.0); // Right
+  drone.setPositionRelative( 1.0,  0.0, 0.0, 0.0); // Front
+  drone.setPositionRelative( 0.0, -1.0, 0.0, 0.0); // Left
+  drone.setPositionRelative(-1.0,  0.0, 0.0, 0.0); // Rear
+
+  // Land drone during destruction
   return EXIT_SUCCESS;
 }
 

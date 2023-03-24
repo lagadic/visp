@@ -74,6 +74,15 @@ typedef unsigned __int32 uint32_t;
 #include <inttypes.h>
 #endif
 
+#if (VISP_CXX_STANDARD <= VISP_CXX_STANDARD_11)
+  #include <algorithm> // std::random_shuffle
+#else
+  #include <algorithm> // std::shuffle
+  #include <random>    // std::mt19937
+  #include <numeric>   // std::iota
+#endif
+
+#include <vector>
 /*!
   \class vpUniRand
 
@@ -82,20 +91,34 @@ typedef unsigned __int32 uint32_t;
 
   The algorithms and notations used are described in \cite oneill:pcg2014.
 
-  The following example shows how to use this class to generate 10 numbers between 0 and 5.
-\code
-#include <iostream>
-#include <visp3/core/vpUniRand.h>
+  The following example also available in random.cpp shows how to use this class to generate 10 numbers between 0 and 5.
+  \include random.cpp
 
-int main()
-{
-  vpUniRand rng;
-  for (int i = 0; i < 10; i++) {
-    std::cout << rng.uniform(0, 6) << std::endl; // produces int values
-    std::cout << rng.uniform(0.0, 6.0) << std::endl; // produces double values
-  }
-}
-\endcode
+  Once build, this previous code should produces an output similar to the following:
+  \code
+  1
+  0.0582619
+  1
+  5.84875
+  1
+  3.86449
+  1
+  0.216396
+  5
+  5.41692
+  1
+  1.65448
+  0
+  3.31304
+  4
+  2.70563
+  0
+  4.86741
+  2
+  5.65826
+  Original vector = [	0	1	2	3	4	5	6	7	8	9 ]
+  Shuffled vector = [	2	4	7	8	5	1	3	6	9	0 ]
+  \endcode
 */
 class VISP_EXPORT vpUniRand
 {
@@ -123,6 +146,25 @@ public:
   float uniform(float a, float b);
   double uniform(double a, double b);
   void setSeed(uint64_t initstate, uint64_t initseq);
+
+  /**
+ * @brief Create a new vector that is a shuffled version of the \b inputVector.
+ * 
+ * @tparam T : A class that possesses a copy constructor.
+ * @param inputVector : The input vector that must be shuffled. It will not be modified.
+ * @return std::vector<T> A vector containing the same objects than \b inputVector, but that are shuffled.
+ */
+  template<typename T>
+  inline static std::vector<T> shuffleVector(const std::vector<T> &inputVector)
+  {
+    std::vector<T> shuffled = inputVector;
+    #if (VISP_CXX_STANDARD <= VISP_CXX_STANDARD_11)
+      std::random_shuffle ( shuffled.begin(), shuffled.end() );
+    #else
+      std::shuffle(shuffled.begin(), shuffled.end(), std::mt19937{std::random_device{}()});
+    #endif
+    return shuffled;
+  }
 
 private:
   uint32_t boundedRand(uint32_t bound);
