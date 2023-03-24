@@ -269,6 +269,7 @@ int main()
     // Initialise the velocity control of the robot
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
+    bool init_pose_from_linear_method = true;
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
     for (;;) {
       // Acquire a new image from the camera
