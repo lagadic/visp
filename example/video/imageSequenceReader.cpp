@@ -78,12 +78,17 @@ Print the program options.
  */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   fprintf(stdout, "\n\
 Read an image sequence on the disk.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input images path>] [-p <personal image sequence path>]\n\
-     [-c][-d][-h]\n						      \
+     [-c][-d][-h]\n\
 ",
           name);
 
@@ -91,7 +96,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input images path>                                %s\n\
      Set ViSP-images input path.\n\
-     From this path read \"cube/image.%%04d.pgm\"\n\
+     From this path read \"cube/image.%%04d.%s\"\n\
      images.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -100,7 +105,7 @@ OPTIONS:                                               Default\n\
   -p <personal image sequence path>                             %s\n\
      Specify a personal folder containing an image sequence \n\
      to process.\n\
-     Example : \"/Temp/ViSP-images/cube/image.%%04d.pgm\"\n\
+     Example : \"/Temp/visp-images/cube/image.%%04d.%s\"\n\
      %%04d is for the image numbering.\n\
 \n\
   -f <index of the first frame>                             \n\
@@ -115,7 +120,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n\n",
-          ipath.c_str(), ppath.c_str());
+          ipath.c_str(), ext.c_str(), ppath.c_str(), ext.c_str());
 
   if (badparam) {
     fprintf(stderr, "ERROR: \n");
@@ -194,6 +199,12 @@ int main(int argc, const char **argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
+
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << "  videoImageSequenceReader.cpp" << std::endl << std::endl;
 
@@ -211,7 +222,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_click_allowed, opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -237,7 +248,7 @@ int main(int argc, const char **argv)
                 << "  environment variable to specify the location of the " << std::endl
                 << "  video path where test images are located." << std::endl
                 << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     /////////////////////////////////////////////////////////////////////
@@ -250,7 +261,7 @@ int main(int argc, const char **argv)
     vpVideoReader reader;
 
     if (opt_ppath.empty()) {
-      filename = vpIoTools::createFilePath(ipath, "mire-2/image.%04d.png");
+      filename = vpIoTools::createFilePath(ipath, "mire-2/image.%04d." + ext);
     } else {
       filename.assign(opt_ppath);
     }

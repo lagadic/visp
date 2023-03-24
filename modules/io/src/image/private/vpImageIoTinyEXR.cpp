@@ -34,11 +34,13 @@
  *****************************************************************************/
 
 /*!
-  \file vpImageTinyEXR.cpp
+  \file vpImageIoTinyEXR.cpp
   \brief TinyEXR backend for EXR image I/O operations.
 */
 
 #include "vpImageIoBackend.h"
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #define TINYEXR_USE_MINIZ 0
 #define TINYEXR_USE_STB_ZLIB 1
@@ -313,3 +315,5 @@ void writeEXRTiny(const vpImage<vpRGBf> &I, const std::string &filename)
   free(header.requested_pixel_types);
   free(header.pixel_types);
 }
+
+#endif

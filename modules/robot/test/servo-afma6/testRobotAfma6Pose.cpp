@@ -164,10 +164,9 @@ int main()
     vpHomogeneousMatrix cMo;
     vpRotationMatrix R;
     vpRxyzVector r;
-    // Compute the pose: initialisation is done by Lagrange method, and the
-    // final pose is computed by the more accurate Virtual Visual Servoing
-    // method.
-    pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS, cMo);
+    // Compute the pose: initialisation is done by Dementhon or Lagrange method, and the
+    // final pose is computed by the more accurate Virtual Visual Servoing method.
+    pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
 
     std::cout << "Pose cMo: " << std::endl << cMo;
     cMo.extract(R);

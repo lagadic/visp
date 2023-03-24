@@ -143,6 +143,12 @@ int main(int argc, const char **argv)
     std::string ipath;
     std::string filename;
 
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
+
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -189,7 +195,7 @@ int main(int argc, const char **argv)
     //
 
     // Load cube sequence
-    filename = vpIoTools::createFilePath(ipath, "mbt/cube/image%04d.png");
+    filename = vpIoTools::createFilePath(ipath, "mbt/cube/image%04d." + ext);
 
     vpVideoReader reader;
     reader.setFileName(filename);

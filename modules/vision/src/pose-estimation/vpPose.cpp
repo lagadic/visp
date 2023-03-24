@@ -206,7 +206,7 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
 
   // Shuffling the points to limit the risk of using points close to each other
   std::vector<vpPoint> shuffled_listP = vpUniRand::shuffleVector<vpPoint>(listOfPoints);
-  
+
   double x1 = 0, x2 = 0, x3 = 0, y1 = 0, y2 = 0, y3 = 0, z1 = 0, z2 = 0, z3 = 0;
 
   std::vector<vpPoint>::const_iterator it = shuffled_listP.begin();
@@ -437,7 +437,8 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
     } else {
       poseDementhonNonPlan(cMo);
     }
-  } break;
+    break;
+  }
   case LAGRANGE:
   case LAGRANGE_VIRTUAL_VS:
   case LAGRANGE_LOWE: {
@@ -470,8 +471,9 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
       }
       poseLagrangeNonPlan(cMo);
     }
-  } break;
-  case RANSAC:
+    break;
+  }
+  case RANSAC: {
     if (npt < 4) {
       throw(vpPoseException(vpPoseException::notEnoughPointError,
                             "Ransac method cannot be used in that case "
@@ -480,42 +482,42 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
                             npt));
     }
     return poseRansac(cMo, func);
-    break;
+  }
   case LOWE:
   case VIRTUAL_VS:
     break;
-  case DEMENTHON_LAGRANGE_VIRTUAL_VS:
+  case DEMENTHON_LAGRANGE_VIRTUAL_VS: {
     return computePoseDementhonLagrangeVVS(cMo);
+  }
   }
 
   switch (method) {
   case LAGRANGE:
   case DEMENTHON:
+  case DEMENTHON_LAGRANGE_VIRTUAL_VS:
   case RANSAC:
     break;
   case VIRTUAL_VS:
   case LAGRANGE_VIRTUAL_VS:
   case DEMENTHON_VIRTUAL_VS: {
     poseVirtualVS(cMo);
-  } break;
+    break;
+  }
   case LOWE:
   case LAGRANGE_LOWE:
   case DEMENTHON_LOWE: {
     poseLowe(cMo);
   } break;
-  case DEMENTHON_LAGRANGE_VIRTUAL_VS:
-    break;
   }
 
-  // If here, there was no exception thrown so return true
   return true;
 }
 
 /**
  * @brief Method that first computes the pose \b cMo using the linear approaches of Dementhon and Lagrange
  * and then uses the non-linear Virtual Visual Servoing approach to affine the pose which
- * had  the lowest residual.
- * 
+ * had the lowest residual.
+ *
  * @param cMo the pose of the object with regard to the camera.
  * @return true the pose computation was succesful.
  * @return false an error occured during the pose computation.
@@ -539,11 +541,11 @@ bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix& cMo)
     {
       poseDementhonNonPlan(cMo_dementhon);
     }
-    
+
     r_dementhon = computeResidual(cMo_dementhon);
     hasDementhonSucceeded = true; // We reached this point => no exception was thrown = method succeeded
   }
-  catch (vpException e)
+  catch (...)
   {
     // An exception was thrown using the original assumption, trying we the other one
     try
@@ -558,7 +560,7 @@ bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix& cMo)
         // Already tested poseDementhonNonPlan, now trying poseDementhonPlan
         poseDementhonPlan(cMo_dementhon);
       }
-      
+
       r_dementhon = computeResidual(cMo_dementhon);
       hasDementhonSucceeded = true; // We reached this point => no exception was thrown = method succeeded
     }
@@ -580,7 +582,7 @@ bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix& cMo)
     {
       poseLagrangeNonPlan(cMo_lagrange);
     }
-    
+
     r_lagrange = computeResidual(cMo_lagrange);
     hasLagrangeSucceeded = true; // We reached this point => no exception was thrown = method succeeded
   }
@@ -603,7 +605,7 @@ bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix& cMo)
         // because coplanar return false.
         poseLagrangePlan(cMo_lagrange, &plan, &a, &b, &c, &d);
       }
-      
+
       r_lagrange = computeResidual(cMo_lagrange);
       hasLagrangeSucceeded = true; // We reached this point => no exception was thrown = method succeeded
     }

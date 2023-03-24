@@ -256,12 +256,18 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
                vpImage<uint16_t> &I_depth_raw, std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width,
                unsigned int &pointcloud_height)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   // Read image
   std::stringstream ss;
   ss << input_directory << "/image_";
   ss << std::setfill('0') << std::setw(4);
   ss << cpt;
-  ss << ".png";
+  ss << ".";
+  ss << ext;
   std::string filename_image = ss.str();
 
   if (!vpIoTools::checkFilename(filename_image)) {

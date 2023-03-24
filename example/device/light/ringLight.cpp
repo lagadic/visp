@@ -179,7 +179,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, on, nsec, nmsec) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     vpRingLight light;

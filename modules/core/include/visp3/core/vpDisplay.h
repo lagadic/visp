@@ -91,7 +91,7 @@ int main()
 
   // Read an image in PGM P5 format
 #ifdef _WIN32
-  vpImageIo::read(I, "C:/temp/ViSP-images/Klimt/Klimt.pgm");
+  vpImageIo::read(I, "C:/Temp/visp-images/Klimt/Klimt.pgm");
 #else
   vpImageIo::read(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
 #endif
@@ -851,7 +851,7 @@ public:
                              bool display_center = false, bool display_arc = false);
   static void displayFrame(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam,
                            double size, const vpColor &color = vpColor::none, unsigned int thickness = 1,
-                           const vpImagePoint &offset = vpImagePoint(0, 0), const std::string& frameName = "", 
+                           const vpImagePoint &offset = vpImagePoint(0, 0), const std::string& frameName = "",
                            const vpColor& textColor = vpColor::black, const vpImagePoint& textOffset = vpImagePoint(15,15) );
   static void displayLine(const vpImage<vpRGBa> &I, const vpImagePoint &ip1, const vpImagePoint &ip2,
                           const vpColor &color, unsigned int thickness = 1, bool segment = true);

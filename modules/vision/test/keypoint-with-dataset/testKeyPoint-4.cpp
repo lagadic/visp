@@ -149,14 +149,19 @@ template <typename Type>
 void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display, vpImage<Type> &I,
               vpImage<Type> &Imatch, vpImage<Type> &Iref)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   // Set the path location of the image sequence
   std::string dirname = vpIoTools::createFilePath(env_ipath, "mbt/cube");
 
   // Build the name of the image files
-  std::string filenameRef = vpIoTools::createFilePath(dirname, "image0000.png");
+  std::string filenameRef = vpIoTools::createFilePath(dirname, "image0000." + ext);
   vpImageIo::read(I, filenameRef);
   Iref = I;
-  std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d.png");
+  std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d." + ext);
 
 #if defined VISP_HAVE_X11
   vpDisplayX display, display2;
@@ -383,7 +388,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH

@@ -222,18 +222,7 @@ int main(int argc, const char **argv)
 
         vpPose pose;
         pose.addPoints(corners_pts);
-        vpHomogeneousMatrix cMo_dementhon, cMo_lagrange;
-        double r_dementhon = std::numeric_limits<double>::max(), r_lagrange = std::numeric_limits<double>::max();
-        bool pose_dementhon = pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
-        if (pose_dementhon)
-          r_dementhon = pose.computeResidual(cMo_dementhon);
-
-        bool pose_lagrange = pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
-        if (pose_lagrange)
-          r_lagrange = pose.computeResidual(cMo_lagrange);
-
-        cMo = (r_dementhon < r_lagrange) ? cMo_dementhon : cMo_lagrange;
-        if (!pose.computePose(vpPose::VIRTUAL_VS, cMo)) {
+        if (!pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo)) {
           std::cerr << "Problem when computing final pose using VVS" << std::endl;
           return EXIT_FAILURE;
         }

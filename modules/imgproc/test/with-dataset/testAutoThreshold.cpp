@@ -65,6 +65,11 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &op
  */
 void usage(const char *name, const char *badparam, std::string ipath, std::string opath, std::string user)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
   fprintf(stdout, "\n\
 Test automatic thresholding.\n\
 \n\
@@ -78,7 +83,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"Klimt/Klimt.pgm\"\n\
+     From this path read \"calibration/grid36-03.%s\"\n\
      image.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -92,7 +97,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n\n",
-          ipath.c_str(), opath.c_str(), user.c_str());
+          ipath.c_str(), ext.c_str(), opath.c_str(), user.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -159,6 +164,12 @@ int main(int argc, const char **argv)
     std::string opath;
     std::string filename;
     std::string username;
+
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -232,7 +243,7 @@ int main(int argc, const char **argv)
     // Here starts really the test
     //
 
-    filename = vpIoTools::createFilePath(ipath, "calibration/grid36-03.pgm");
+    filename = vpIoTools::createFilePath(ipath, "calibration/grid36-03." + ext);
     vpImage<unsigned char> I;
     vpImageIo::read(I, filename);
     std::cout << "Read: " << filename << " (" << I.getWidth() << "x" << I.getHeight() << ")" << std::endl;
@@ -245,7 +256,7 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Huang): " << threshold << " ; t=" << t << " ms" << std::endl;
 
-    filename = vpIoTools::createFilePath(opath, "grid36-03_auto_thresh_huang.pgm");
+    filename = vpIoTools::createFilePath(opath, "grid36-03_auto_thresh_huang.png");
     vpImageIo::write(I_thresh, filename);
     std::cout << "Write: " << filename << std::endl;
 
@@ -256,7 +267,7 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Intermodes): " << threshold << " ; t=" << t << " ms" << std::endl;
 
-    filename = vpIoTools::createFilePath(opath, "grid36-03_auto_thresh_intermodes.pgm");
+    filename = vpIoTools::createFilePath(opath, "grid36-03_auto_thresh_intermodes.png");
     vpImageIo::write(I_thresh, filename);
     std::cout << "Write: " << filename << std::endl;
 
@@ -267,7 +278,7 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (IsoData): " << threshold << " ; t=" << t << " ms" << std::endl;
 
-    filename = vpIoTools::createFilePath(opath, "grid36-03_auto_thresh_isodata.pgm");
+    filename = vpIoTools::createFilePath(opath, "grid36-03_auto_thresh_isodata.png");
     vpImageIo::write(I_thresh, filename);
     std::cout << "Write: " << filename << std::endl;
 
@@ -278,7 +289,7 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Mean): " << threshold << " ; t=" << t << " ms" << std::endl;
 
-    filename = vpIoTools::createFilePath(opath, "grid36-03_auto_thresh_mean.pgm");
+    filename = vpIoTools::createFilePath(opath, "grid36-03_auto_thresh_mean.png");
     vpImageIo::write(I_thresh, filename);
     std::cout << "Write: " << filename << std::endl;
 
@@ -289,7 +300,7 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Otsu): " << threshold << " ; t=" << t << " ms" << std::endl;
 
-    filename = vpIoTools::createFilePath(opath, "grid36-03_auto_thresh_otsu.pgm");
+    filename = vpIoTools::createFilePath(opath, "grid36-03_auto_thresh_otsu.png");
     vpImageIo::write(I_thresh, filename);
     std::cout << "Write: " << filename << std::endl;
 
@@ -300,7 +311,7 @@ int main(int argc, const char **argv)
     t = vpTime::measureTimeMs() - t;
     std::cout << "\nAutomatic thresholding (Triangle): " << threshold << " ; t=" << t << " ms" << std::endl;
 
-    filename = vpIoTools::createFilePath(opath, "grid36-03_auto_thresh_Triangle.pgm");
+    filename = vpIoTools::createFilePath(opath, "grid36-03_auto_thresh_Triangle.png");
     vpImageIo::write(I_thresh, filename);
     std::cout << "Write: " << filename << std::endl;
 

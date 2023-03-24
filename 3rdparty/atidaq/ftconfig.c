@@ -106,7 +106,7 @@ short SetTempComp(Calibration *cal, int TCEnabled) {
 	return 0;
 } // SetTempComp();
 
-Calibration *createCalibration(char *CalFilePath,unsigned short index) {
+Calibration *createCalibration(const char *CalFilePath,unsigned short index) {
 // This function creates and populate a Calibration structure from a file.
 	Calibration *cal;
 	DOM_DocumentLS *doc;            // contains DOM document of calibration file

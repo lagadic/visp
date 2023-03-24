@@ -263,7 +263,7 @@ int main(int argc, const char **argv)
     // Read the command line options
     if (getOptions(argc, argv, opt_fps, opt_input, opt_scale, opt_display, opt_verbose, opt_iter, opt_device,
                    opt_pixelformat, opt_image_type, opt_save, opt_opath) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Declare an image, this is a gray level image (unsigned char) and

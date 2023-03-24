@@ -228,7 +228,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_conf, opt_debugdir, username) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option value
@@ -248,7 +248,7 @@ int main(int argc, const char **argv)
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
         std::cerr << "  Check your -d " << debugdir << " option " << std::endl;
-        exit(-1);
+        return EXIT_FAILURE;
       }
     }
 

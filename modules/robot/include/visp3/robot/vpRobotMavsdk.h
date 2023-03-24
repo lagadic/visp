@@ -61,8 +61,10 @@
  * This class is enabled when [MavSDK C++](https://github.com/mavlink/MAVSDK) is installed and detected by ViSP during
  * cmake configuration step.
  *
- * \note The body frame associated to the robot controlled through MavLink is supposed to be Front-Right-Down (FRD)
+ * \note The body frame associated to the vehicle controlled through MavLink is supposed to be Front-Right-Down (FRD)
  * respectively for X-Y-Z.
+ *
+ * \image html img-pixhawk-frames.jpg
  *
  * 1. This class was tested to control a quadcopter equipped with a Pixhawk running PX4 firmware connected to a Jetson
  * TX2.

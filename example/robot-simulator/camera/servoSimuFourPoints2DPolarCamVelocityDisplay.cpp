@@ -197,7 +197,7 @@ int main(int argc, const char **argv)
       } catch (...) {
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << logdirname << std::endl;
-        exit(-1);
+        return EXIT_FAILURE;
       }
     }
     std::string logfilename;
@@ -211,7 +211,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
 // We open two displays, one for the internal camera view, the other one for

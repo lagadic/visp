@@ -544,7 +544,7 @@ int main(int argc, const char *argv[])
     // Read the command line options
     if (getOptions(argc, argv, nb_matrices, nb_iterations, use_plot_file, plotfile, nb_rows, nb_cols, verbose) ==
         false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     for (unsigned int s = 0; s < nb_test_matrix_size; s++) {

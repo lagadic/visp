@@ -608,7 +608,13 @@ void vpImageIo::readEXR(vpImage<float> &I, const std::string &filename, int back
     readOpenCV(I, filename);
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     readEXRTiny(I, filename);
+#else
+    std::string message =
+        "TinyEXR backend is not available to read file \"" + filename + "\": cxx standard should be greater or equal to cxx11";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
   }
 }
 
@@ -639,7 +645,13 @@ void vpImageIo::readEXR(vpImage<vpRGBf> &I, const std::string &filename, int bac
     readOpenCV(I, filename);
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     readEXRTiny(I, filename);
+#else
+    std::string message =
+        "TinyEXR backend is not available to read file \"" + filename + "\": cxx standard should be greater or equal to cxx11";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
   }
 }
 
@@ -856,7 +868,13 @@ void vpImageIo::writeEXR(const vpImage<float> &I, const std::string &filename, i
     writeOpenCV(I, filename);
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     writeEXRTiny(I, filename);
+#else
+    std::string message =
+        "TinyEXR backend is not available to save file \"" + filename + "\": cxx standard should be greater or equal to cxx11";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
   }
 }
 
@@ -887,7 +905,13 @@ void vpImageIo::writeEXR(const vpImage<vpRGBf> &I, const std::string &filename, 
     writeOpenCV(I, filename);
 #endif
   } else if (backend == IO_DEFAULT_BACKEND) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     writeEXRTiny(I, filename);
+#else
+    std::string message =
+        "TinyEXR backend is not available to save file \"" + filename + "\": cxx standard should be greater or equal to cxx11";
+    throw(vpImageException(vpImageException::ioError, message));
+#endif
   }
 }
 

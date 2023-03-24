@@ -83,7 +83,7 @@ void usage(const char *name, const char *badparam)
   OPTIONS:                                               \n\
     -i <input image path>                                \n\
        Set image input path.\n\
-       These images come from ViSP-images-x.y.z.tar.gz available \n\
+       These images come from visp-images-x.y.z.tar.gz available \n\
        on the ViSP website.\n\
        Setting the VISP_INPUT_IMAGE_PATH environment\n\
        variable produces the same behavior than using\n\
@@ -270,12 +270,18 @@ bool read_data(unsigned int cpt, const std::string &input_directory, vpImage<uns
                vpImage<uint16_t> &I_depth_raw, std::vector<vpColVector> &pointcloud, unsigned int &pointcloud_width,
                unsigned int &pointcloud_height)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   // Read image
   std::stringstream ss;
   ss << input_directory << "/image_";
   ss << std::setfill('0') << std::setw(4);
   ss << cpt;
-  ss << ".png";
+  ss << ".";
+  ss << ext;
   std::string filename_image = ss.str();
   if (!vpIoTools::checkFilename(filename_image)) {
     std::cerr << "Cannot read: " << filename_image << std::endl;

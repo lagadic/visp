@@ -296,7 +296,7 @@ int main(int argc, char **argv)
               } catch (...) {
                 std::cerr << std::endl << "ERROR:" << std::endl;
                 std::cerr << "  Cannot create " << opath << std::endl;
-                exit(-1);
+                return EXIT_FAILURE;
               }
             }
             std::string filename = opath + "/sonar.png";

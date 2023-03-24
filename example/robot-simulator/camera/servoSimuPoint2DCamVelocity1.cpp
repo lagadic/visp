@@ -136,7 +136,7 @@ int main(int argc, const char **argv)
   try {
     // Read the command line options
     if (getOptions(argc, argv) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     vpServo task;

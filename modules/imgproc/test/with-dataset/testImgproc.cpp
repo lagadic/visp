@@ -162,6 +162,12 @@ int main(int argc, const char **argv)
     std::string filename;
     std::string username;
 
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
+
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -342,7 +348,7 @@ int main(int argc, const char **argv)
     //
 
     // Read image0000.png
-    filename = vpIoTools::createFilePath(ipath, "mbt/cube/image0000.png");
+    filename = vpIoTools::createFilePath(ipath, "mbt/cube/image0000." + ext);
     vpImage<unsigned char> Iinput, I;
     std::cout << "\nRead image: " << filename << std::endl;
     vpImageIo::read(Iinput, filename);
@@ -358,7 +364,7 @@ int main(int argc, const char **argv)
     std::cout << "Time to do grayscale adjust: " << t << " ms" << std::endl;
 
     // Save adjust
-    filename = vpIoTools::createFilePath(opath, "image0000_adjust.pgm");
+    filename = vpIoTools::createFilePath(opath, "image0000_adjust.png");
     vpImageIo::write(I_adjust, filename);
 
     // Equalize Histogram
@@ -369,7 +375,7 @@ int main(int argc, const char **argv)
     std::cout << "Time to do grayscale histogram equalization: " << t << " ms" << std::endl;
 
     // Save equalizeHistogram
-    filename = vpIoTools::createFilePath(opath, "image0000_equalize_histogram.pgm");
+    filename = vpIoTools::createFilePath(opath, "image0000_equalize_histogram.png");
     vpImageIo::write(I_equalize_histogram, filename);
 
     // Gamma correction
@@ -381,7 +387,7 @@ int main(int argc, const char **argv)
     std::cout << "Time to do grayscale gamma correction: " << t << " ms" << std::endl;
 
     // Save gammaCorrection
-    filename = vpIoTools::createFilePath(opath, "image0000_gamma_correction.pgm");
+    filename = vpIoTools::createFilePath(opath, "image0000_gamma_correction.png");
     vpImageIo::write(I_gamma_correction, filename);
 
     // Stretch contrast
@@ -392,7 +398,7 @@ int main(int argc, const char **argv)
     std::cout << "Time to do grayscale contrast stretching: " << t << " ms" << std::endl;
 
     // Save stretchContrast
-    filename = vpIoTools::createFilePath(opath, "image0000_stretch_contrast.pgm");
+    filename = vpIoTools::createFilePath(opath, "image0000_stretch_contrast.png");
     vpImageIo::write(I_stretch_contrast, filename);
 
     // Unsharp Mask
@@ -403,7 +409,7 @@ int main(int argc, const char **argv)
     std::cout << "Time to do grayscale unsharp mask: " << t << " ms" << std::endl;
 
     // Save unsharpMask
-    filename = vpIoTools::createFilePath(opath, "image0000_unsharp_mask.pgm");
+    filename = vpIoTools::createFilePath(opath, "image0000_unsharp_mask.png");
     vpImageIo::write(I_unsharp_mask, filename);
 
     // CLAHE
@@ -414,7 +420,7 @@ int main(int argc, const char **argv)
     std::cout << "Time to do grayscale CLAHE: " << t << " ms" << std::endl;
 
     // Save CLAHE
-    filename = vpIoTools::createFilePath(opath, "image0000_CLAHE.pgm");
+    filename = vpIoTools::createFilePath(opath, "image0000_CLAHE.png");
     vpImageIo::write(I_clahe, filename);
 
     return EXIT_SUCCESS;

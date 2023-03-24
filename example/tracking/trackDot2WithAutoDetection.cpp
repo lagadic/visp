@@ -67,14 +67,7 @@
 #include <visp3/io/vpParseArgv.h>
 
 // List of allowed command line options
-#define GETOPTARGS "cdi:p:f:n:s:S:G:E:h"
-
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
-           unsigned nimages, unsigned step, double sizePrecision, double grayLevelPrecision,
-           double ellipsoidShapePrecision);
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &nimages,
-                unsigned &step, double &sizePrecision, double &grayLevelPrecision, double &ellipsoidShapePrecision,
-                bool &click_allowed, bool &display);
+#define GETOPTARGS "cdi:p:f:l:s:S:G:E:h"
 
 /*!
 
@@ -85,7 +78,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
   \param ipath: Input image path.
   \param ppath : Personal image path.
   \param first : First image.
-  \param nimages : Number of images to manipulate.
+  \param last : Last image.
   \param step : Step between two images.
   \param sizePrecision : precision of the size of dots.
   \param grayLevelPrecision : precision of the gray level of dots.
@@ -94,15 +87,20 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 
 */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
-           unsigned nimages, unsigned step, double sizePrecision, double grayLevelPrecision,
+           unsigned last, unsigned step, double sizePrecision, double grayLevelPrecision,
            double ellipsoidShapePrecision)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   fprintf(stdout, "\n\
 Test auto detection of dots using vpDot2.\n\
           \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-p <personal image path>]\n\
-     [-f <first image>] [-n <number of images>] [-s <step>] \n\
+     [-f <first image>] [-l <last image>] [-s <step>] \n\
      [-S <size precision>] [-G <gray level precision>]\n\
      [-E <ellipsoid shape precision>] [-c] [-d] [-h]\n",
           name);
@@ -112,7 +110,7 @@ OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
      From this path read images \n\
-     \"mire-2/image.%%04d.png\"\n\
+     \"mire-2/image.%%04d.%s\"\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
      this option.\n\
@@ -120,18 +118,15 @@ OPTIONS:                                               Default\n\
   -p <personal image path>                             %s\n\
      Specify a personal sequence containing images \n\
      to process.\n\
-     By image sequence, we mean one file per image.\n\
-     The following image file formats PNM (PGM P5, PPM P6)\n\
-     are supported. The format is selected by analysing \n\
-     the filename extension.\n\
-     Example : \"/Temp/ViSP-images/cube/image.%%04d.pgm\"\n\
-       %%04d is for the image numbering.\n\
+     The format is selected by analysing the filename extension.\n\
+     Example : \"/Temp/visp-images/mire-2/image.%%04d.%s\"\n\
+     %%04d is for the image numbering.\n\
             \n\
   -f <first image>                                     %u\n\
      First image number of the sequence.\n\
             \n\
-  -n <number of images>                                %u\n\
-     Number of images to load from the sequence.\n\
+  -l <last image>                                      %u\n\
+     Last image number of the sequence.\n\
             \n\
   -s <step>                                            %u\n\
      Step between two images.\n\
@@ -157,7 +152,7 @@ OPTIONS:                                               Default\n\
      whereas values close to 0 show a very bad precision.\n\
      0 means the shape of dots is not tested \n\
 \n",
-          ipath.c_str(), ppath.c_str(), first, nimages, step, sizePrecision, grayLevelPrecision,
+          ipath.c_str(), ext.c_str(), ppath.c_str(), ext.c_str(), first, last, step, sizePrecision, grayLevelPrecision,
           ellipsoidShapePrecision);
 
   fprintf(stdout, "\
@@ -183,7 +178,7 @@ OPTIONS:                                               Default\n\
   \param ipath : Input image path.
   \param ppath : Personal image path.
   \param first : First image.
-  \param nimages : Number of images to display.
+  \param last : Last image.
   \param step : Step between two images.
   \param sizePrecision : Precision of the size of dots.
   \param grayLevelPrecision : Precision of the gray level of dots.
@@ -194,7 +189,7 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &nimages,
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
                 unsigned &step, double &sizePrecision, double &grayLevelPrecision, double &ellipsoidShapePrecision,
                 bool &click_allowed, bool &display)
 {
@@ -218,8 +213,8 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
     case 'f':
       first = (unsigned)atoi(optarg_);
       break;
-    case 'n':
-      nimages = (unsigned)atoi(optarg_);
+    case 'l':
+      last = (unsigned)atoi(optarg_);
       break;
     case 's':
       step = (unsigned)atoi(optarg_);
@@ -234,13 +229,13 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
       ellipsoidShapePrecision = atof(optarg_);
       break;
     case 'h':
-      usage(argv[0], NULL, ipath, ppath, first, nimages, step, sizePrecision, grayLevelPrecision,
+      usage(argv[0], NULL, ipath, ppath, first, last, step, sizePrecision, grayLevelPrecision,
             ellipsoidShapePrecision);
       return false;
       break;
 
     default:
-      usage(argv[0], optarg_, ipath, ppath, first, nimages, step, sizePrecision, grayLevelPrecision,
+      usage(argv[0], optarg_, ipath, ppath, first, last, step, sizePrecision, grayLevelPrecision,
             ellipsoidShapePrecision);
       return false;
       break;
@@ -249,7 +244,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, ppath, first, nimages, step, sizePrecision, grayLevelPrecision,
+    usage(argv[0], NULL, ipath, ppath, first, last, step, sizePrecision, grayLevelPrecision,
           ellipsoidShapePrecision);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
@@ -269,13 +264,19 @@ int main(int argc, const char **argv)
     std::string dirname;
     std::string filename;
     unsigned opt_first = 1;
-    unsigned opt_nimages = 10;
+    unsigned opt_last = 10;
     unsigned opt_step = 1;
     double opt_sizePrecision = 0.65;
     double opt_grayLevelPrecision = 0.85;
     double opt_ellipsoidShapePrecision = 0.8;
     bool opt_click_allowed = true;
     bool opt_display = true;
+
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -286,9 +287,9 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_nimages, opt_step, opt_sizePrecision,
+    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_last, opt_step, opt_sizePrecision,
                    opt_grayLevelPrecision, opt_ellipsoidShapePrecision, opt_click_allowed, opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -308,7 +309,7 @@ int main(int argc, const char **argv)
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages, opt_step, opt_sizePrecision,
+      usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_last, opt_step, opt_sizePrecision,
             opt_grayLevelPrecision, opt_ellipsoidShapePrecision);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
@@ -317,7 +318,7 @@ int main(int argc, const char **argv)
                 << std::endl
                 << "  Use -p <personal image path> option if you want to " << std::endl
                 << "  use personal images." << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Declare an image, this is a gray level image (unsigned char)
@@ -331,16 +332,12 @@ int main(int argc, const char **argv)
     if (opt_ppath.empty()) {
 
       // Warning :
-      // the image sequence is not provided with the ViSP package
-      // therefore the program will return you an error :
-      //  !!    vpImageIoPnm.cpp: readPGM(#210) :couldn't read file
-      //        ViSP-images/cube/image.0001.pgm
-      //  !!    vpDotExample.cpp: main(#95) :Error while reading the image
-      //  terminate called after throwing an instance of 'vpImageException'
+      // The image sequence is not provided with the ViSP package
+      // therefore the program will return an error :
+      //  !!    couldn't read file visp-images/mire-2/image.0001.png
       //
-      //  The sequence is available on the visp www site
-      //  https://visp.inria.fr/download/
-      //  in the download section. It is named "ViSP-images.tar.gz"
+      // ViSP dataset is available on the visp www site
+      // https://visp.inria.fr/download/.
 
       // Set the path location of the image sequence
       dirname = vpIoTools::createFilePath(ipath, "mire-2");
@@ -348,33 +345,33 @@ int main(int argc, const char **argv)
       // Build the name of the image file
 
       s.setf(std::ios::right, std::ios::adjustfield);
-      s << "image." << std::setw(4) << std::setfill('0') << iter << ".png";
+      s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
       filename = vpIoTools::createFilePath(dirname, s.str());
     } else {
       snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
       filename = cfilename;
     }
-    // Read the PGM image named "filename" on the disk, and put the
-    // bitmap into the image structure I.  I is initialized to the
-    // correct size
+    // Read the image named "filename", and put the bitmap into the image structure I.
+    // I is initialized to the correct size
     //
-    // exception readPGM may throw various exception if, for example,
+    // vpImageIo::read() may throw various exception if, for example,
     // the file does not exist, or if the memory cannot be allocated
     try {
       vpCTRACE << "Load: " << filename << std::endl;
 
       vpImageIo::read(I, filename);
     } catch (...) {
-      // an exception is throwned if an exception from readPGM has been
-      // catched here this will result in the end of the program Note that
-      // another error message has been printed from readPGM to give more
-      // information about the error
+      // If an exception is thrown by vpImageIo::read() it will result in the end of the program.
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
-      std::cerr << "  Check your -i " << ipath << " option " << std::endl
-                << "  or your -p " << opt_ppath << " option " << std::endl
-                << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
-      exit(-1);
+      if (opt_ppath.empty()) {
+        std::cerr << "  Check your -i " << ipath << " option " << std::endl
+                  << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
+      }
+      else {
+        std::cerr << "  Check your -p " << opt_ppath << " option " << std::endl;
+      }
+      return EXIT_FAILURE;
     }
 
 // We open a window using either GTK, X11 or GDI.
@@ -440,13 +437,13 @@ int main(int argc, const char **argv)
       d.setEllipsoidShapePrecision(opt_ellipsoidShapePrecision);
     }
 
-    while (iter < opt_first + opt_nimages * opt_step) {
+    while (iter < opt_last) {
       // set the new image name
 
       if (opt_ppath.empty()) {
 
         s.str("");
-        s << "image." << std::setw(4) << std::setfill('0') << iter << ".png";
+        s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
         filename = vpIoTools::createFilePath(dirname, s.str());
       } else {
         snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
@@ -466,8 +463,9 @@ int main(int argc, const char **argv)
 
       if (list_d.empty()) {
         std::cout << "Dot auto detection did not work." << std::endl;
-        return (-1);
-      } else {
+        return EXIT_FAILURE;
+      }
+      else {
         std::cout << std::endl << list_d.size() << " dots are detected" << std::endl;
 
         if (opt_display) {
