@@ -34,7 +34,7 @@
  *****************************************************************************/
 
 /*!
-  \file vpImageTinyEXR.cpp
+  \file vpImageIoTinyEXR.cpp
   \brief TinyEXR backend for EXR image I/O operations.
 */
 
