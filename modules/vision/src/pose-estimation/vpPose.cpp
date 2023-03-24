@@ -508,8 +508,6 @@ bool vpPose::computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool
   case DEMENTHON_LOWE: {
     poseLowe(cMo);
   } break;
-  case DEMENTHON_LAGRANGE_VIRTUAL_VS:
-    break;
   }
 
   return true;
