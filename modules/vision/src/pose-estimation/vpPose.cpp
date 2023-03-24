@@ -545,7 +545,7 @@ bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix& cMo)
     r_dementhon = computeResidual(cMo_dementhon);
     hasDementhonSucceeded = true; // We reached this point => no exception was thrown = method succeeded
   }
-  catch (vpException e)
+  catch (...)
   {
     // An exception was thrown using the original assumption, trying we the other one
     try
