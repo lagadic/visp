@@ -48,7 +48,7 @@ bool test_matrix_equal(const vpHomogeneousMatrix &M1, const vpHomogeneousMatrix 
 {
   for (unsigned int i = 0; i < 4; i++) {
     for (unsigned int j = 0; j < 4; j++) {
-      if (! vpMath::equal(M1[i][j], M2[i][j], epsilon)) {
+      if (!vpMath::equal(M1[i][j], M2[i][j], epsilon)) {
         return false;
       }
     }
@@ -160,19 +160,13 @@ TEST_CASE("vpRotationMatrix re-orthogonalize rotation matrix", "[vpRotationMatri
 
 TEST_CASE("ENU to NED conversion", "[enu2ned]")
 {
-  vpHomogeneousMatrix enu_M_flu{ 0, -1, 0, 0.2,
-                               1,  0, 0, 1.,
-                               0,  0, 1, 0.3 };
+  vpHomogeneousMatrix enu_M_flu{0, -1, 0, 0.2, 1, 0, 0, 1., 0, 0, 1, 0.3};
   std::cout << "enu_M_flu:\n" << enu_M_flu << std::endl;
 
-  vpHomogeneousMatrix enu_M_ned{ 0,  1,  0, 0,
-                               1,  0,  0, 0,
-                               0,  0, -1, 0 };
+  vpHomogeneousMatrix enu_M_ned{0, 1, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0};
   std::cout << "enu_M_ned:\n" << enu_M_ned << std::endl;
 
-  vpHomogeneousMatrix flu_M_frd{ 1,  0,  0, 0,
-                               0, -1,  0, 0,
-                               0,  0, -1, 0 };
+  vpHomogeneousMatrix flu_M_frd{1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0};
   std::cout << "flu_M_frd:\n" << flu_M_frd << std::endl;
 
   vpHomogeneousMatrix enu_M_frd = enu_M_flu * flu_M_frd;
@@ -222,5 +216,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

@@ -319,7 +319,7 @@ int main(int argc, const char *argv[])
     // Calibrate by a non linear method based on virtual visual servoing
     if (calibrator.empty()) {
       std::cerr << "Unable to calibrate. Image processing failed !" << std::endl;
-      return 0;
+      return EXIT_FAILURE;
     }
 
     // Display calibration pattern occupancy

@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
       save = true;
     } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0] << " [--save] [--help] [-h]\n" << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
   std::cout << "Save: " << save << std::endl;

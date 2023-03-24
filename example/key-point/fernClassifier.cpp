@@ -81,9 +81,9 @@
 void usage(const char *name, const char *badparam)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
-    std::string ext("png");
+  std::string ext("png");
 #else
-    std::string ext("pgm");
+  std::string ext("pgm");
 #endif
   fprintf(stdout, "\n\
 Detection of points of interests and matching using the Ferns classifier. The \
@@ -121,7 +121,8 @@ OPTIONS:                                               \n\
      display points of interest.\n\
 \n\
   -h\n\
-     Print this help.\n", ext.c_str());
+     Print this help.\n",
+          ext.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -411,10 +412,10 @@ int main(int argc, const char **argv)
         nbpts = fern.matchPoint(I);
       } catch (const vpException &e) {
         std::cout << e.getMessage() << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       } catch (...) {
         std::cout << "unknown error line " << __LINE__ << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
       std::cout << "matching " << nbpts << " points : " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
 

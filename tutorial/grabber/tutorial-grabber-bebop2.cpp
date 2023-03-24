@@ -132,7 +132,7 @@ int main(int argc, const char **argv)
       drone.getRGBaImage(I);
     } else {
       std::cout << "Error : failed to setup drone control" << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
 
     std::cout << "Image size : " << I.getWidth() << " " << I.getHeight() << std::endl;

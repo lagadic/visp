@@ -132,5 +132,5 @@ int main()
       return err;
   }
   std::cout << "All tests succeed" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }

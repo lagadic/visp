@@ -31,7 +31,7 @@ int main(int argc, char **argv)
                   << " [--video <video name>] [--model <model name>] "
                      "[--tracker <0=egde|1=keypoint|2=hybrid>] [--help] [-h]\n"
                   << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       }
     }
     std::string parentname = vpIoTools::getParent(opt_modelname);
@@ -82,7 +82,7 @@ int main(int argc, char **argv)
       std::cout << "klt and hybrid model-based tracker are not available "
                    "since visp_klt module is missing"
                 << std::endl;
-      return 0;
+      return EXIT_FAILURE;
     }
 #endif
     //! [Constructor]

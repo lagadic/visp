@@ -140,7 +140,7 @@ int main()
     for (unsigned int j = 0; j < width; j++) {
       if (I_uchar1[i][j] != I_uchar2[i][j]) {
         std::cerr << "Results are different between iterate and LUT methods !" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
     }
   }
@@ -175,5 +175,5 @@ int main()
   std::cout << "LUT: " << chrono.getDurationMs() << " ms for " << nbIterations << " iterations." << std::endl;
 
   std::cout << "\ntestImageBinarise ok !" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }

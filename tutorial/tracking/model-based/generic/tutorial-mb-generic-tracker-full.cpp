@@ -24,33 +24,27 @@ int main(int argc, char **argv)
       if (std::string(argv[i]) == "--video") {
         opt_videoname = std::string(argv[i + 1]);
         i++;
-      }
-      else if (std::string(argv[i]) == "--video-first-frame") {
+      } else if (std::string(argv[i]) == "--video-first-frame") {
         opt_video_first_frame = std::atoi(argv[i + 1]);
         i++;
-      }
-      else if (std::string(argv[i]) == "--model") {
+      } else if (std::string(argv[i]) == "--model") {
         opt_modelname = std::string(argv[i + 1]);
         i++;
-      }
-      else if (std::string(argv[i]) == "--tracker") {
+      } else if (std::string(argv[i]) == "--tracker") {
         opt_tracker = atoi(argv[i + 1]);
         i++;
-      }
-      else if (std::string(argv[i]) == "--downscale-img") {
+      } else if (std::string(argv[i]) == "--downscale-img") {
         opt_downscale_img = std::atoi(argv[i + 1]);
         i++;
-      }
-      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0]
-                  << " [--video <video name> (default: model/teabox/teabox.mp4)]"
+      } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+        std::cout << "\nUsage: " << argv[0] << " [--video <video name> (default: model/teabox/teabox.mp4)]"
                   << " [--video-first-frame <image index> (default: -1)]"
                   << " [--model <model name> (default: model/teabox/teabox.cao)]"
                   << " [--tracker <0=egde|1=keypoint|2=hybrid> (default: 0)]"
                   << " [--downscale-img <scale factor> (default: 1)]"
                   << " [--help] [-h]\n"
                   << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       }
     }
     std::string parentname = vpIoTools::getParent(opt_modelname);
@@ -83,11 +77,9 @@ int main(int argc, char **argv)
     if (opt_downscale_img > 1) {
       g.open(Ivideo);
       Ivideo.subsample(opt_downscale_img, opt_downscale_img, I);
-    }
-    else {
+    } else {
       g.open(I);
     }
-
 
     std::cout << "DEBUG: frame name: " << g.getFrameName() << std::endl;
     std::cout << "DEBUG: frame first: " << g.getFirstFrameIndex() << std::endl;
@@ -119,7 +111,7 @@ int main(int argc, char **argv)
       std::cout << "klt and hybrid model-based tracker are not available since visp_klt module is not available. "
                    "In CMakeGUI turn visp_klt module ON, configure and build ViSP again."
                 << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
 #endif
     //! [Constructor]
@@ -225,8 +217,7 @@ int main(int argc, char **argv)
       if (opt_downscale_img > 1) {
         g.acquire(Ivideo);
         Ivideo.subsample(opt_downscale_img, opt_downscale_img, I);
-      }
-      else {
+      } else {
         g.acquire(I);
       }
 
@@ -261,10 +252,12 @@ int main(int argc, char **argv)
     //! [Cleanup]
   } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return EXIT_FAILURE;
   }
 #ifdef VISP_HAVE_OGRE
   catch (Ogre::Exception &e) {
     std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
+    return EXIT_FAILURE;
   }
 #endif
 #else
@@ -272,4 +265,5 @@ int main(int argc, char **argv)
   (void)argv;
   std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
+  return EXIT_SUCCESS;
 }

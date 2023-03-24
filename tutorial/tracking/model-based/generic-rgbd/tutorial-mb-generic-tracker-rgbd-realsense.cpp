@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
                 << argv[0] << " --model_color model/cube/cube.cao --use_edges 1 --use_klt 1 --use_depth 1 --auto_init"
                 << std::endl;
 
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 
@@ -523,12 +523,12 @@ int main(int argc, char *argv[])
 int main()
 {
   std::cout << "Install OpenCV 3rd party, configure and build ViSP again to use this example" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
 {
   std::cout << "Install librealsense2 3rd party, configure and build ViSP again to use this example" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

@@ -65,7 +65,7 @@ int main(int argc, char **argv)
 {
   if (argc != 2) {
     usage(argv[0]);
-    return 1;
+    return EXIT_SUCCESS;
   }
 
   auto drone = vpRobotMavsdk(argv[1]);
@@ -73,33 +73,32 @@ int main(int argc, char **argv)
   drone.setTakeOffAlt(1.0);
   drone.setVerbose(true);
 
-  if (! drone.takeOff() )
-  {
+  if (!drone.takeOff()) {
     std::cout << "Takeoff failed" << std::endl;
     return EXIT_FAILURE;
   }
-  
+
   drone.takeControl(); // Start PX4 offboard
-  
+
   // Get position
   float ned_north, ned_east, ned_down, ned_yaw;
   drone.getPosition(ned_north, ned_east, ned_down, ned_yaw);
-  std::cout << "Vehicle position in NED frame: " << ned_north << " " << ned_east << " " << ned_down << " [m] and " << vpMath::deg(ned_yaw) << " [deg]" << std::endl;
+  std::cout << "Vehicle position in NED frame: " << ned_north << " " << ned_east << " " << ned_down << " [m] and "
+            << vpMath::deg(ned_yaw) << " [deg]" << std::endl;
 
   vpHomogeneousMatrix ned_M_frd;
   drone.getPosition(ned_M_frd);
   vpRxyzVector rxyz(ned_M_frd.getRotationMatrix());
-  std::cout << "Vehicle position in NED frame: " 
-            << ned_M_frd.getTranslationVector().t() << " [m] and " 
-            << vpMath::deg(rxyz).t() << " [deg]"<< std::endl;
+  std::cout << "Vehicle position in NED frame: " << ned_M_frd.getTranslationVector().t() << " [m] and "
+            << vpMath::deg(rxyz).t() << " [deg]" << std::endl;
 
   // Set position in NED frame
   drone.setPositioningIncertitude(0.10, vpMath::rad(5.));
 
-  drone.setPositionRelative( 0.0,  1.0, 0.0, 0.0); // Right
-  drone.setPositionRelative( 1.0,  0.0, 0.0, 0.0); // Front
-  drone.setPositionRelative( 0.0, -1.0, 0.0, 0.0); // Left
-  drone.setPositionRelative(-1.0,  0.0, 0.0, 0.0); // Rear
+  drone.setPositionRelative(0.0, 1.0, 0.0, 0.0);  // Right
+  drone.setPositionRelative(1.0, 0.0, 0.0, 0.0);  // Front
+  drone.setPositionRelative(0.0, -1.0, 0.0, 0.0); // Left
+  drone.setPositionRelative(-1.0, 0.0, 0.0, 0.0); // Rear
 
   // Land drone during destruction
   return EXIT_SUCCESS;

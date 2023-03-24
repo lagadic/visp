@@ -71,9 +71,9 @@ void usage(const char *name, const char *badparam, const std::string &ipath, con
            const std::string &user)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
-    std::string ext("png");
+  std::string ext("png");
 #else
-    std::string ext("pgm");
+  std::string ext("pgm");
 #endif
   fprintf(stdout, "\n\
 Read an image from the disk, undistort it \n\
@@ -404,7 +404,7 @@ int main(int argc, const char **argv)
     const double remap_error_threshold = 0.5;
     if (remap_mean_error > remap_error_threshold) {
       std::cerr << "Issue with vpImageTools::remap() with vpRGBa image" << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
 
     vpImage<unsigned char> U_diff_gray_abs;
@@ -413,7 +413,7 @@ int main(int argc, const char **argv)
     std::cout << "U_diff_gray_abs mean value: " << remap_mean_error_gray << std::endl;
     if (remap_mean_error_gray > remap_error_threshold) {
       std::cerr << "Issue with vpImageTools::remap() with unsigned char image" << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
 
     // Write the undistorted difference images on the disk
@@ -429,9 +429,9 @@ int main(int argc, const char **argv)
     std::cout << "Write undistorted image: " << filename << std::endl;
     vpImageIo::write(U_diff_gray, filename);
 
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

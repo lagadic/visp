@@ -79,7 +79,7 @@ int main()
     cv::VideoCapture grabber(0); // open the default camera
     if (!grabber.isOpened()) {   // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
     cv::Mat frame;
     grabber >> frame; // get a new frame from camera

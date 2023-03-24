@@ -142,9 +142,10 @@ int main()
     cvReleaseImage(&cvI);
 #endif
 
-    return 0;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+    return EXIT_FAILURE;
   }
 #endif
+  return EXIT_SUCCESS;
 }

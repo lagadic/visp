@@ -80,7 +80,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (vpParseArgv::parse(&argc, argv, argTable, vpParseArgv::ARGV_NO_DEFAULTS)) {
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     cout << "Your parameters: " << endl;

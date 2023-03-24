@@ -100,7 +100,7 @@ int main()
     } catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
-      return (-1);
+      return EXIT_FAILURE;
     }
   }
   std::string logfilename;
@@ -112,7 +112,7 @@ int main()
   try {
 // Define the square CAD model
 // Square dimention
-//#define L 0.075
+// #define L 0.075
 #define L 0.05
 // Distance between the camera and the square at the desired
 // position after visual servoing convergence

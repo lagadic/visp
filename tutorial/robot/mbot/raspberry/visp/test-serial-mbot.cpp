@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
                    "--rpm_r <motor right RPM> --t <duration of the command in second> --help"
                 << std::endl;
       std::cout << "\nExample:\n" << argv[0] << " --vx 0.05 --wz 0 --t 4\n" << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 

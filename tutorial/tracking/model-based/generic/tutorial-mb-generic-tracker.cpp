@@ -29,7 +29,7 @@ int main(int argc, char **argv)
                   << " [--video <video name>] [--model <model name>]"
                      " [--tracker <0=egde|1=keypoint|2=hybrid>] [--help] [-h]\n"
                   << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       }
     }
     std::string parentname = vpIoTools::getParent(opt_modelname);
@@ -78,7 +78,7 @@ int main(int argc, char **argv)
       std::cout << "klt and hybrid model-based tracker are not available since visp_klt module is not available. "
                    "In CMakeGUI turn visp_klt module ON, configure and build ViSP again."
                 << std::endl;
-      return 0;
+      return EXIT_FAILURE;
     }
 #endif
     //! [Constructor]
@@ -153,10 +153,12 @@ int main(int argc, char **argv)
     //! [Cleanup]
   } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return EXIT_FAILURE;
   }
 #else
   (void)argc;
   (void)argv;
   std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
+  return EXIT_SUCCESS;
 }

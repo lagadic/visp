@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
       std::cout << "  --help, -h" << std::endl;
       std::cout << "\tPrint this helper." << std::endl;
 
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 #ifdef VISP_HAVE_TAKKTILE2

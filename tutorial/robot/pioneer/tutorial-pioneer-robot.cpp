@@ -19,7 +19,7 @@ int main()
     vpRobotPioneer robot;
 
     if (!conn.connectRobot(&robot))
-      return -1;
+      return EXIT_FAILURE;
 
     robot.useSonar(false);
     vpTime::wait(2000);

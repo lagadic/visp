@@ -139,7 +139,7 @@ int main(int argc, char **argv)
     g.set(CV_CAP_PROP_FRAME_WIDTH, 640);
     g.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
     if (!g.isOpened()) // check if we succeeded
-      return -1;
+      return EXIT_FAILURE;
     cv::Mat frame;
     g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);

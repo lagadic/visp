@@ -160,9 +160,9 @@ int main()
     vpTRACE("\t selectAll");
     dim = p.getDimension(vpFeaturePoint::selectAll());
     std::cout << "Dimension = " << dim << std::endl;
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

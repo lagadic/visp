@@ -32,7 +32,7 @@ int main(int argc, char **argv)
   cv::VideoCapture g(device); // open the default camera
   if (!g.isOpened()) {        // check if we succeeded
     std::cout << "Failed to open the camera" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   cv::Mat frame;
   g >> frame; // get a new frame from camera

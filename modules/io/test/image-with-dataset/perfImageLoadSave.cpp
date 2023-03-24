@@ -69,9 +69,9 @@ static std::vector<std::string> backendNamesJpeg
   "libjpeg",
 #endif
 #if defined(VISP_HAVE_OPENCV)
-  "OpenCV",
+      "OpenCV",
 #endif
-  "simd", "stb"
+      "simd", "stb"
 };
 static std::vector<std::string> backendNamesPng
 {
@@ -79,9 +79,9 @@ static std::vector<std::string> backendNamesPng
   "libpng",
 #endif
 #if defined(VISP_HAVE_OPENCV)
-  "OpenCV",
+      "OpenCV",
 #endif
-  "simd", "stb"
+      "simd", "stb"
 };
 static int nThreads = 0;
 
@@ -301,5 +301,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

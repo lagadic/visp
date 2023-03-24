@@ -98,13 +98,13 @@ typedef enum {
   \param dtype : Type of video device.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
-           unsigned last, unsigned step, vpDisplayType &dtype)
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first, unsigned last,
+           unsigned step, vpDisplayType &dtype)
 {
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
-    std::string ext("png");
+  std::string ext("png");
 #else
-    std::string ext("pgm");
+  std::string ext("pgm");
 #endif
 
   fprintf(stdout, "\n\
@@ -361,7 +361,7 @@ int main(int argc, const char **argv)
     if (!nbDevices) {
       std::cout << "  No display is available\n";
     }
-    return (0);
+    return EXIT_FAILURE;
   }
 
   if (!opt_display)
@@ -406,7 +406,7 @@ int main(int argc, const char **argv)
   char cfilename[FILENAME_MAX];
 
   if (opt_ppath.empty()) {
-      // Warning : the datset is available on https://visp.inria.fr/download/
+    // Warning : the datset is available on https://visp.inria.fr/download/
     dirname = vpIoTools::createFilePath(ipath, "cube");
 
     // Build the name of the image file
@@ -440,7 +440,7 @@ int main(int argc, const char **argv)
 #else
     std::cout << "  Sorry, X11 video device is not available.\n";
     std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-    return 0;
+    return EXIT_FAILURE;
 #endif
     break;
   case vpGTK:
@@ -450,7 +450,7 @@ int main(int argc, const char **argv)
 #else
     std::cout << "  Sorry, GTK video device is not available.\n";
     std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-    return 0;
+    return EXIT_FAILURE;
 #endif
     break;
   case vpGDI:
@@ -460,7 +460,7 @@ int main(int argc, const char **argv)
 #else
     std::cout << "  Sorry, GDI video device is not available.\n";
     std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-    return 0;
+    return EXIT_FAILURE;
 #endif
     break;
   case vpD3D:
@@ -470,7 +470,7 @@ int main(int argc, const char **argv)
 #else
     std::cout << "  Sorry, D3D video device is not available.\n";
     std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-    return 0;
+    return EXIT_FAILURE;
 #endif
     break;
   }
@@ -538,7 +538,7 @@ int main(int argc, const char **argv)
             case vpMouseButton::button3:
               std::cout << "Right button was pressed. Bye. " << std::endl;
               delete display;
-              return 0;
+              return EXIT_SUCCESS;
               break;
             case vpMouseButton::none:
               break;
@@ -546,8 +546,7 @@ int main(int argc, const char **argv)
           }
         }
         vpTime::wait(tms, 1000);
-      }
-      else {
+      } else {
         // Synchronise the loop to 40 ms
         vpTime::wait(tms, 40);
       }

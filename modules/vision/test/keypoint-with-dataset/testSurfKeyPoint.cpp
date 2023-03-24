@@ -89,7 +89,8 @@ void usage(const char *name, const char *badparam, std::string ipath)
 Test dot tracking.\n\
 \n\
 SYNOPSIS\n\
-  %s [-i <input image path>] [-c] [-d] [-h]\n", name);
+  %s [-i <input image path>] [-c] [-d] [-h]\n",
+          name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
@@ -179,9 +180,9 @@ int main(int argc, const char **argv)
     bool opt_display = true;
 
 #if VISP_HAVE_DATASET_VERSION >= 0x030600
-  std::string ext("png");
+    std::string ext("png");
 #else
-  std::string ext("pgm");
+    std::string ext("pgm");
 #endif
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
@@ -357,11 +358,11 @@ int main(int argc, const char **argv)
         vpDisplay::getClick(Iref);
       }
     }
-    return (0);
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return (1);
+    return EXIT_FAILURE;
   }
+  return EXIT_SUCCESS;
 }
 #else
 int main()
@@ -369,6 +370,7 @@ int main()
   std::cerr << "You do not have 1.1.0 <= OpenCV < 2.3.0 that contains "
                "opencv_nonfree component..."
             << std::endl;
+  return EXIT_SUCCESS;
 }
 
 #endif

@@ -112,9 +112,9 @@ int main()
               << "\trzyz (deg): " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2])
               << std::endl;
 
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

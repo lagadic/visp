@@ -286,13 +286,13 @@ int main(int argc, const char **argv)
 
     if (sum_single_thread != I.getSize() || sum_single_multithread != I.getSize()) {
       std::cerr << "Problem with histogram!" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     nbBins = 101;
     if (!compareHistogram(I, nbBins)) {
       std::cerr << "Histogram are different!" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     // Test histogram computation on empty image
@@ -308,7 +308,7 @@ int main(int argc, const char **argv)
       }
     } else {
       std::cerr << "Bad histogram size!" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     // Test histogram computation on image size < nbThreads
@@ -321,7 +321,7 @@ int main(int argc, const char **argv)
           if (histogram[cpt] != I_test.getSize()) {
             std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
                       << " but should be: " << I_test.getSize() << std::endl;
-            return -1;
+            return EXIT_FAILURE;
           }
         } else {
           if (histogram[cpt] != 0) {
@@ -332,7 +332,7 @@ int main(int argc, const char **argv)
       }
     } else {
       std::cerr << "Bad histogram size!" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     // Test histogram computation on small image size
@@ -345,7 +345,7 @@ int main(int argc, const char **argv)
           if (histogram[cpt] != I_test.getSize()) {
             std::cerr << "Problem with histogram computation: histogram[" << cpt << "]=" << histogram[cpt]
                       << " but should be: " << I_test.getSize() << std::endl;
-            return -1;
+            return EXIT_FAILURE;
           }
         } else {
           if (histogram[cpt] != 0) {
@@ -356,13 +356,13 @@ int main(int argc, const char **argv)
       }
     } else {
       std::cerr << "Bad histogram size!" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     std::cout << "testHistogram is OK!" << std::endl;
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

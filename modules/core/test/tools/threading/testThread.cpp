@@ -109,7 +109,7 @@ int main()
   std::cout << "bar: " << bar.joinable() << std::endl;
   std::cout << "qux: " << qux.joinable() << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 //! [Code]
 
@@ -124,5 +124,6 @@ int main()
 #else
   std::cout << "Multi-threading seems not supported on this platform" << std::endl;
 #endif
+  return EXIT_SUCCESS;
 }
 #endif

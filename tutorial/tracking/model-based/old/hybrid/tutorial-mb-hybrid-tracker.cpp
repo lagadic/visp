@@ -19,7 +19,7 @@ int main(int argc, char **argv)
         videoname = std::string(argv[i + 1]);
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--help] [-h]\n" << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       }
     }
     std::string parentname = vpIoTools::getParent(videoname);

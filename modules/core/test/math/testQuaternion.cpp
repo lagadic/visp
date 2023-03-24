@@ -131,9 +131,9 @@ int main()
     std::cout << "q_copy3=" << q_copy3 << std::endl;
 
     std::cout << "vpQuaternion operations are ok !" << std::endl;
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

@@ -26,7 +26,7 @@ int main(int argc, const char *argv[])
         std::cout << "Usage: " << argv[0]
                   << " [--videoname <video name>] [--subsample <scale factor>] [--init-by-click]"
                   << " [--help] [-h]" << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       }
     }
 
@@ -165,12 +165,13 @@ int main(int argc, const char *argv[])
 #endif
     //! [Release IplImage]
 
-    return 0;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+    return EXIT_FAILURE;
   }
 #else
   (void)argc;
   (void)argv;
 #endif
+  return EXIT_SUCCESS;
 }

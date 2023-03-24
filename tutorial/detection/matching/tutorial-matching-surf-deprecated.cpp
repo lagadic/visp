@@ -69,5 +69,5 @@ int main()
   vpDisplay::getClick(Idisp);
 #endif
 
-  return 0;
+  return EXIT_SUCCESS;
 }

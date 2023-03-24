@@ -20,7 +20,7 @@ int main(int argc, char **argv)
         videoname = std::string(argv[i + 1]);
       else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nUsage: " << argv[0] << " [--name <video name>] [--help] [-h]\n" << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       }
     }
     std::string parentname = vpIoTools::getParent(videoname);
@@ -51,7 +51,7 @@ int main(int argc, char **argv)
     vpDisplayOpenCV display;
 #else
     std::cout << "No image viewer is available..." << std::endl;
-    return 0;
+    return EXIT_FAILURE;
 #endif
 
     display.init(I, 100, 100, "Model-based edge tracker");
@@ -222,5 +222,5 @@ int main(int argc, char **argv)
   std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
 
-  return 0;
+  return EXIT_SUCCESS;
 }

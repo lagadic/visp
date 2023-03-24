@@ -162,12 +162,12 @@ int main(int argc, char **argv)
   std::string calibfile = std::string(VISP_VIPER850_DATA_PATH) + std::string("/ati/FT17824.cal");
   if (!vpIoTools::checkFilename(calibfile)) {
     std::cout << "ATI F/T calib file \"" << calibfile << "\" doesn't exist";
-    return 0;
+    return EXIT_FAILURE;
   }
 #else
   if (argc != 2) {
     std::cout << "Usage: " << argv[0] << " <ATI calibration file FT*.cal]>" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   std::string calibfile(argv[1]);
 #endif
@@ -235,8 +235,13 @@ int main(int argc, char **argv)
   (void)argv;
   std::cout << "You should install comedi and build atidaq to enable this test..." << std::endl;
 #endif
+  return EXIT_SUCCESS;
 }
 
 #else
-int main() { std::cout << "You should build this test with threading capabilities..." << std::endl; }
+int main()
+{
+  std::cout << "You should build this test with threading capabilities..." << std::endl;
+  return EXIT_SUCCESS;
+}
 #endif

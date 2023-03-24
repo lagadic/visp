@@ -230,6 +230,7 @@ int main(int argc, const char **argv)
     }
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
+    return EXIT_FAILURE;
   }
-  return 0;
+  return EXIT_SUCCESS;
 }

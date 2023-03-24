@@ -254,6 +254,6 @@ int main()
 #if !defined(VISP_HAVE_PCL)
   std::cout << "Install PCL to make this test work." << std::endl;
 #endif
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

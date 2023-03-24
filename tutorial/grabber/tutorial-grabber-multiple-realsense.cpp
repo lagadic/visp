@@ -34,7 +34,7 @@ int main(int argc, char **argv)
                 << "\nExample to use 2 T265 and 1 D435 cameras:\n"
                 << "  " << argv[0] << " --T265 11622110511 --T265 11622110433 --D435 752112070408 \n"
                 << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 

@@ -46,7 +46,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-//#define DEBUG_DISPLAY // uncomment to check that the tracking is correct
+// #define DEBUG_DISPLAY // uncomment to check that the tracking is correct
 #ifdef DEBUG_DISPLAY
 #include <visp3/gui/vpDisplayX.h>
 #endif
@@ -251,5 +251,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

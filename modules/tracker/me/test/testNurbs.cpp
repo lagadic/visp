@@ -358,10 +358,10 @@ int main(int argc, const char **argv)
       delete[] N2;
     }
 
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 
@@ -377,6 +377,6 @@ int main()
   std::cout << "This example requires a video device. " << std::endl
             << "You should install X11, GTK, OpenCV, GDI or Direct3D" << std::endl
             << "to be able to execute this example." << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

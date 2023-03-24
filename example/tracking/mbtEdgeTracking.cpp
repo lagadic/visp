@@ -148,7 +148,8 @@ OPTIONS:                                               \n\
      Compute gradient projection error.\n\
 \n\
   -h \n\
-     Print the help.\n\n", ext.c_str());
+     Print the help.\n\n",
+          ext.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -356,7 +357,7 @@ int main(int argc, const char **argv)
       reader.open(I);
     } catch (...) {
       std::cout << "Cannot open sequence: " << ipath << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     if (opt_lastFrame > 1 && opt_lastFrame < reader.getLastFrameIndex())

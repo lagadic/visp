@@ -600,6 +600,6 @@ int main()
 #if !defined(VISP_HAVE_X11) && !defined(VISP_HAVE_GDI)
   std::cout << "X11 or GDI are needed." << std::endl;
 #endif
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

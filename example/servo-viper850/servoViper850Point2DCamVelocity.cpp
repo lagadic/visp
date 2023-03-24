@@ -223,7 +223,7 @@ int main()
         v = 0;
         // Stop robot
         robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-        return 0;
+        return EXIT_FAILURE;
       }
 
       // Save velocities applied to the robot in the log file

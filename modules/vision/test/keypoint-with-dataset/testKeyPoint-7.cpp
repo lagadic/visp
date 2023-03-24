@@ -443,12 +443,12 @@ template <typename Type> void run_test(const std::string &env_ipath, const std::
   }
 
 // Test with floating point descriptor
-#if defined(VISP_HAVE_OPENCV_NONFREE) ||                                                \
-    ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(VISP_HAVE_OPENCV_XFEATURES2D) ||  \
+#if defined(VISP_HAVE_OPENCV_NONFREE) ||                                                                               \
+    ((VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(VISP_HAVE_OPENCV_XFEATURES2D) ||                                \
      (VISP_HAVE_OPENCV_VERSION >= 0x030411 && CV_MAJOR_VERSION < 4) || (VISP_HAVE_OPENCV_VERSION >= 0x040400))
   {
-#if (VISP_HAVE_OPENCV_VERSION != 0x040504) && (VISP_HAVE_OPENCV_VERSION != 0x040505) && \
-    (VISP_HAVE_OPENCV_VERSION != 0x040600) && (VISP_HAVE_OPENCV_VERSION != 0x040700) && \
+#if (VISP_HAVE_OPENCV_VERSION != 0x040504) && (VISP_HAVE_OPENCV_VERSION != 0x040505) &&                                \
+    (VISP_HAVE_OPENCV_VERSION != 0x040600) && (VISP_HAVE_OPENCV_VERSION != 0x040700) &&                                \
     (defined(__APPLE__) && defined(__MACH__))
     // SIFT is known to be unstable with OpenCV 4.5.4 and 4.5.5 on macOS (see #1048)
     // Same for OpenCV 4.6.0 (see #1106) where it produces an Illegal Instruction error when OpenCV 4.6.0 is
@@ -695,19 +695,19 @@ int main(int argc, const char **argv)
 
   } catch (const vpException &e) {
     std::cerr << e.what() << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   std::cout << "Saving / loading learning files are ok !" << std::endl;
   std::cout << "testKeyPoint-7 is ok !" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
 {
   std::cerr << "You need OpenCV library." << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #endif

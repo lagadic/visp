@@ -14,7 +14,7 @@ int main(int argc, char **argv)
 {
   if (argc != 2) {
     printf("Usage: %s <image name.[pgm,ppm,jpeg,png,tiff,bmp,ras,jp2]>\n", argv[0]);
-    return -1;
+    return EXIT_FAILURE;
   }
 
   //! [vpImage construction]
@@ -26,7 +26,7 @@ int main(int argc, char **argv)
     vpImageIo::read(I, argv[1]);
   } catch (...) {
     std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   //! [vpImage reading]
 
