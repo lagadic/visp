@@ -347,5 +347,5 @@ int main(int argc, char *argv[])
   return numFailed;
 }
 #else
-int main() { EXIT_SUCCESS }
+int main() { return EXIT_SUCCESS; }
 #endif
