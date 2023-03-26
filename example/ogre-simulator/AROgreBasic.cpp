@@ -127,7 +127,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n",
-          ipath.c_str(), ext.c_str(), ppath.c_str()), ext.c_str();
+          ipath.c_str(), ext.c_str(), ppath.c_str(), ext.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
