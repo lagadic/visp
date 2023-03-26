@@ -763,19 +763,19 @@ void vpRobotAfma4::setPosition(const vpRobot::vpControlFrameType frame, const vp
 
   switch (frame) {
   case vpRobot::REFERENCE_FRAME:
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error: "
                                                             "Reference frame not implemented.");
     break;
   case vpRobot::CAMERA_FRAME:
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error: "
                                                             "Camera frame not implemented.");
     break;
   case vpRobot::MIXT_FRAME:
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error: "
                                                             "Mixt frame not implemented.");
     break;
   case vpRobot::END_EFFECTOR_FRAME:
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error: "
                                                             "End-effector frame not implemented.");
     break;
 
@@ -784,8 +784,8 @@ void vpRobotAfma4::setPosition(const vpRobot::vpControlFrameType frame, const vp
   }
   }
   if (position.getRows() != this->njoint) {
-    vpERROR_TRACE("Positionning error: bad vector dimension.");
-    throw vpRobotException(vpRobotException::positionOutOfRangeError, "Positionning error: bad vector dimension.");
+    vpERROR_TRACE("Positioning error: bad vector dimension.");
+    throw vpRobotException(vpRobotException::positionOutOfRangeError, "Positioning error: bad vector dimension.");
   }
 
   InitTry;
@@ -802,7 +802,7 @@ void vpRobotAfma4::setPosition(const vpRobot::vpControlFrameType frame, const vp
     std::cout << "Position out of range.\n";
 
   if (TryStt < 0 || error < 0) {
-    vpERROR_TRACE("Positionning error.");
+    vpERROR_TRACE("Positioning error.");
     throw vpRobotException(vpRobotException::positionOutOfRangeError, "Position out of range.");
   }
 

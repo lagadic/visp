@@ -682,8 +682,8 @@ void vpRobotBiclops::get_fJe(vpMatrix &_fJe)
 void vpRobotBiclops::setPositioningVelocity(double velocity)
 {
   if (velocity < 0 || velocity > 100) {
-    vpERROR_TRACE("Bad positionning velocity");
-    throw vpRobotException(vpRobotException::constructionError, "Bad positionning velocity");
+    vpERROR_TRACE("Bad positioning velocity");
+    throw vpRobotException(vpRobotException::constructionError, "Bad positioning velocity");
   }
 
   positioningVelocity = velocity;
@@ -691,8 +691,8 @@ void vpRobotBiclops::setPositioningVelocity(double velocity)
 /*!
   Get the velocity in % used for a position control.
 
-  \return Positionning velocity in [0, 100.0]. The
-  maximum positionning velocity is given vpBiclops::speedLimit.
+  \return Positioning velocity in [0, 100.0]. The
+  maximum positioning velocity is given vpBiclops::speedLimit.
 
 */
 double vpRobotBiclops::getPositioningVelocity(void) { return positioningVelocity; }
@@ -701,7 +701,7 @@ double vpRobotBiclops::getPositioningVelocity(void) { return positioningVelocity
    Move the robot in position control.
 
    \warning This method is blocking. That mean that it waits the end of the
-   positionning.
+   positioning.
 
    \param frame : Control frame. This biclops head can only be controlled in
    articular.
@@ -745,9 +745,9 @@ void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame, const 
   // test if position reachable
   //   if ( (fabs(q[0]) > vpBiclops::panJointLimit) ||
   //        (fabs(q[1]) > vpBiclops::tiltJointLimit) ) {
-  //     vpERROR_TRACE ("Positionning error.");
+  //     vpERROR_TRACE ("Positioning error.");
   //     throw vpRobotException (vpRobotException::wrongStateError,
-  // 			    "Positionning error.");
+  // 			    "Positioning error.");
   //   }
 
   vpDEBUG_TRACE(12, "Lock mutex vpEndThread_mutex");
@@ -762,7 +762,7 @@ void vpRobotBiclops::setPosition(const vpRobot::vpControlFrameType frame, const 
    Move the robot in position control.
 
    \warning This method is blocking. That mean that it wait the end of the
-   positionning.
+   positioning.
 
    \param frame : Control frame. This biclops head can only be controlled in
    articular.
@@ -814,7 +814,7 @@ void vpRobotBiclops::setPosition(const char *filename)
 /*!
 
   Return the position of each axis.
-  - In positionning control mode, call vpRobotBiclopsController::getPosition()
+  - In positioning control mode, call vpRobotBiclopsController::getPosition()
   - In speed control mode, call vpRobotBiclopsController::getActualPosition()
 
   \param frame : Control frame. This biclops head can only be controlled in

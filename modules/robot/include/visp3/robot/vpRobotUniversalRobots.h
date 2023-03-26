@@ -132,7 +132,7 @@ protected:
   std::shared_ptr<ur_rtde::RTDEControlInterface> m_rtde_control;
   std::shared_ptr<ur_rtde::DashboardClient> m_db_client;
   vpHomogeneousMatrix m_eMc;
-  double m_positionningVelocity;
+  double m_positioningVelocity;
   double m_max_joint_speed;
   double m_max_joint_acceleration;
   double m_max_linear_speed;

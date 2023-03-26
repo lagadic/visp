@@ -1014,8 +1014,8 @@ void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, const vp
     position[i + 3] = rxyz[i];
   }
   if (frame == vpRobot::ARTICULAR_FRAME) {
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
-                                                            "Joint frame not implemented for pose positionning.");
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error: "
+                                                            "Joint frame not implemented for pose positioning.");
   }
   setPosition(frame, position);
 }
@@ -1197,11 +1197,11 @@ void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, const vp
     break;
   }
   case vpRobot::MIXT_FRAME: {
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error: "
                                                             "Mixt frame not implemented.");
   }
   case vpRobot::END_EFFECTOR_FRAME: {
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error: "
                                                             "end-effector frame not implemented.");
   }
   }
@@ -1215,7 +1215,7 @@ void vpRobotAfma6::setPosition(const vpRobot::vpControlFrameType frame, const vp
     std::cout << "Position out of range.\n";
 
   if (TryStt < 0 || error < 0) {
-    vpERROR_TRACE("Positionning error.");
+    vpERROR_TRACE("Positioning error.");
     throw vpRobotException(vpRobotException::positionOutOfRangeError, "Position out of range.");
   }
 
