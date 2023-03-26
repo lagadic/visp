@@ -1,0 +1,10 @@
+/*! \page tutorial_unity ViSP for Unity
+
+This page introduces the user to the way to exploit ViSP with Unity.
+
+- <a href="https://github.com/lagadic/visp_unity/blob/master/README.md">Github visp_unity project</a><br>This project contains a wrapper between ViSP and Unity engine. Two Unity AR applications that show the usage of the wrapper are also available. This is the link to a project started during GSoC 2018.
+- <a href="https://github.com/lagadic/visp_unity/wiki">ViSP for Unity introduction</a><br>This is an overview that explains the interaction between ViSP and Unity engine.
+- <a href="https://github.com/lagadic/visp_unity/wiki/Generating-ViSP-wrapper-plugin">How to build ViSP wrapper plugin for Unity</a><br>This tutorial explains how to generate ViSPUnity plugin for your Unity project depending on your platform (MacOS, Ubuntu, Windows).
+- <a href="https://github.com/lagadic/visp_unity/wiki/Unity-AR-demo-using-ViSP">How to run Unity AR application based on ViSP</a><br>This page shows how to track an AprilTag for an AR application and how to track a cube using the generic model-based tracker implemented in VISP.
+
+*/
