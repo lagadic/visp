@@ -68,15 +68,20 @@ The following software is necessary for \ref pixhawk_part1
 - <b>MavSDK</b> 3rd party library
 
   MAVLink is the protocol used to communicate with the Pixhawk. To use MAVLink you need to install MavSDK.
-Instructions to install MavSDK and check the installation are provided
-[here](https://mavsdk.mavlink.io/v0.35.0/en/getting_started/installation.html). Notice that you can get
-the latest binary packages (.deb, .rpm) on their [github page](https://github.com/mavlink/MAVSDK/releases).
+  Instructions to install MavSDK and check the installation are provided
+  [here](https://mavsdk.mavlink.io/v0.35.0/en/getting_started/installation.html). Notice that you can get
+  the latest binary packages (.deb, .rpm) on their [github page](https://github.com/mavlink/MAVSDK/releases).
 
   Below, you will also find instructions to install MavSDK from source on Ubuntu:
   \verbatim
   $ mkdir -p $VISP_WS/3rdparty
   $ cd $VISP_WS/3rdparty
-  $ git clone --recursive https://github.com/mavlink/MAVSDK
+  \endverbatim
+  \note At the time this tutorial was written, the latest release was tagged `v1.4.13`. In the next command you need
+  to adapt the version to the last release.
+
+  \verbatim
+  $ git clone --recursive --branch v1.4.13 https://github.com/mavlink/MAVSDK
   $ mkdir MAVSDK/build
   $ cd MAVSDK/build
   $ cmake ../ -DCMAKE_BUILD_TYPE=releases
