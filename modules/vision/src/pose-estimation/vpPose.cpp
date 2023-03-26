@@ -609,7 +609,7 @@ bool vpPose::computePoseDementhonLagrangeVVS(vpHomogeneousMatrix& cMo)
       r_lagrange = computeResidual(cMo_lagrange);
       hasLagrangeSucceeded = true; // We reached this point => no exception was thrown = method succeeded
     }
-    catch(const vpException& e)
+    catch(...)
     {
       // The Lagrange method both failed with the planar and non-planar assumptions.
       hasLagrangeSucceeded = false;
