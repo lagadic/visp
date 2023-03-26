@@ -79,8 +79,8 @@
   \param nzero : Number of zero for the image number coding.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string basename, std::string ext, int first,
-           unsigned int last, int step, unsigned int nzero)
+void usage(const char *name, const char *badparam, std::string ipath, std::string basename, std::string ext, long first,
+           long last, long step, unsigned int nzero)
 {
   fprintf(stdout, "\n\
 Read an image sequence from the disk. Display it using X11 or GTK.\n\
@@ -114,13 +114,13 @@ OPTIONS:                                               Default\n\
      Not taken into account for the moment. Will be a\n\
      future feature...\n\
 \n\
-  -f <first frame>                                          %d\n\
+  -f <first frame>                                          %ld\n\
      First frame number of the sequence.\n\
 \n\
-  -l <last image      >                                     %u\n\
+  -l <last image      >                                     %ld\n\
      Last frame number of the sequence.\n\
 \n\
-  -s <step>                                                 %d\n\
+  -s <step>                                                 %ld\n\
      Step between two images.\n\
 \n\
   -z <number of zero>                                       %u\n\
@@ -154,8 +154,8 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &basename, std::string &ext, int &first,
-                unsigned int &last, int &step, unsigned int &nzero, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &basename, std::string &ext, long &first,
+                long &last, long &step, unsigned int &nzero, bool &display)
 {
   const char *optarg_;
   int c;
@@ -172,16 +172,16 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
       ext = optarg_;
       break;
     case 'f':
-      first = atoi(optarg_);
+      first = atol(optarg_);
       break;
     case 'i':
       ipath = optarg_;
       break;
     case 'l':
-      last = (unsigned)atoi(optarg_);
+      last = std::atol(optarg_);
       break;
     case 's':
-      step = atoi(optarg_);
+      step = atol(optarg_);
       break;
     case 'z':
       nzero = (unsigned)atoi(optarg_);
@@ -233,9 +233,9 @@ int main(int argc, const char **argv)
 
     bool opt_display = true;
 
-    int opt_first = 5;
-    unsigned int opt_last = 70;
-    int opt_step = 1;
+    long opt_first = 5;
+    long opt_last = 70;
+    long opt_step = 1;
     unsigned int opt_nzero = 4;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
