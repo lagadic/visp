@@ -70,7 +70,7 @@ int main()
     }
 
     {
-      // Call non-blocking positionning functions
+      // Call non-blocking positioning functions
       vpColVector q(1), q_mes, current;
       double max_current = qbsofthand.getCurrentMax();
       int i_max = 0;

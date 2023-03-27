@@ -319,7 +319,7 @@ int main(int argc, const char *argv[])
     // Calibrate by a non linear method based on virtual visual servoing
     if (calibrator.empty()) {
       std::cerr << "Unable to calibrate. Image processing failed !" << std::endl;
-      return 0;
+      return EXIT_FAILURE;
     }
 
     // Display calibration pattern occupancy
@@ -352,10 +352,17 @@ int main(int argc, const char *argv[])
     vpDisplay::displayText(I_color, 15 * vpDisplay::getDownScalingFactor(I_color),
                            15 * vpDisplay::getDownScalingFactor(I_color), "Calibration pattern occupancy in the image",
                            vpColor::red);
-    vpDisplay::displayText(I_color, I_color.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_color),
-                           15 * vpDisplay::getDownScalingFactor(I_color), "Click to continue...", vpColor::red);
-    vpDisplay::flush(I_color);
-    vpDisplay::getClick(I_color);
+
+    if (s.tempo > 10.f) {
+      vpDisplay::displayText(I_color, I_color.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_color),
+                            15 * vpDisplay::getDownScalingFactor(I_color), "Click to continue...", vpColor::red);
+      vpDisplay::flush(I_color);
+      vpDisplay::getClick(I_color);
+    }
+    else {
+      vpDisplay::flush(I_color);
+      vpTime::wait(s.tempo * 1000);
+    }
 
     d.close(I_color);
     d.init(I);
@@ -421,10 +428,16 @@ int main(int argc, const char *argv[])
           vpDisplay::displayCross(I, imPt, 12 * vpDisplay::getDownScalingFactor(I), vpColor::green);
         }
 
-        vpDisplay::displayText(I, I.getHeight() - 20 * vpDisplay::getDownScalingFactor(I),
+        if (s.tempo > 10.f) {
+          vpDisplay::displayText(I, I.getHeight() - 20 * vpDisplay::getDownScalingFactor(I),
                                15 * vpDisplay::getDownScalingFactor(I), "Click to continue...", vpColor::red);
-        vpDisplay::flush(I);
-        vpDisplay::getClick(I);
+          vpDisplay::flush(I);
+          vpDisplay::getClick(I);
+        }
+        else {
+          vpDisplay::flush(I);
+          vpTime::wait(s.tempo * 1000);
+        }
       }
 
       std::cout << "\nGlobal reprojection error: " << error << std::endl;
@@ -485,10 +498,16 @@ int main(int argc, const char *argv[])
           vpDisplay::displayCross(I, imPt, 12 * vpDisplay::getDownScalingFactor(I), vpColor::green);
         }
 
-        vpDisplay::displayText(I, I.getHeight() - 20 * vpDisplay::getDownScalingFactor(I),
+        if (s.tempo > 10.f) {
+          vpDisplay::displayText(I, I.getHeight() - 20 * vpDisplay::getDownScalingFactor(I),
                                15 * vpDisplay::getDownScalingFactor(I), "Click to continue...", vpColor::red);
-        vpDisplay::flush(I);
-        vpDisplay::getClick(I);
+          vpDisplay::flush(I);
+          vpDisplay::getClick(I);
+        }
+        else {
+          vpDisplay::flush(I);
+          vpTime::wait(s.tempo * 1000);
+        }
       }
 
       std::cout << "\nGlobal reprojection error: " << error << std::endl;
@@ -577,11 +596,17 @@ int main(int argc, const char *argv[])
                                  15 * vpDisplay::getDownScalingFactor(I_dist_undist), msg, vpColor::red);
         }
 
-        vpDisplay::displayText(
-            I_dist_undist, I_dist_undist.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_dist_undist),
-            15 * vpDisplay::getDownScalingFactor(I_dist_undist), "Click to continue...", vpColor::red);
-        vpDisplay::flush(I_dist_undist);
-        vpDisplay::getClick(I_dist_undist);
+        if (s.tempo > 10.f) {
+          vpDisplay::displayText(
+              I_dist_undist, I_dist_undist.getHeight() - 20 * vpDisplay::getDownScalingFactor(I_dist_undist),
+              15 * vpDisplay::getDownScalingFactor(I_dist_undist), "Click to continue...", vpColor::red);
+          vpDisplay::flush(I_dist_undist);
+          vpDisplay::getClick(I_dist_undist);
+        }
+        else {
+          vpDisplay::flush(I_dist_undist);
+          vpTime::wait(s.tempo * 1000);
+        }
       }
 
       std::cout << std::endl;
@@ -622,6 +647,7 @@ int main(int argc, const char *argv[])
       return EXIT_FAILURE;
     }
 
+    std::cout << "\nCamera calibration succeeded. Results are savec in " << "\"" << opt_output_file_name << "\"" << std::endl;
     return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;

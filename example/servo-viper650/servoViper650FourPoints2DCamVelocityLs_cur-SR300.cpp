@@ -117,8 +117,7 @@ void compute_pose(std::vector<vpPoint> &point, std::vector<vpDot2> &dot, vpCamer
 
   if (init == true) {
     pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
-  }
-  else {
+  } else {
     pose.computePose(vpPose::VIRTUAL_VS, cMo);
   }
 }
@@ -147,7 +146,7 @@ int main()
     } catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
-      return (-1);
+      return EXIT_FAILURE;
     }
   }
   std::string logfilename;

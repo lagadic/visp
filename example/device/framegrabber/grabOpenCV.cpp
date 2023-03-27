@@ -74,7 +74,7 @@ int main(int argc, char **argv)
     cap.set(CV_CAP_PROP_FRAME_HEIGHT, 480);
 #endif
     if (!cap.isOpened()) // check if we succeeded
-      return -1;
+      return EXIT_FAILURE;
     cv::Mat frame;
     int i = 0;
     while ((i++ < 100) && !cap.read(frame)) {

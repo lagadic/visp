@@ -60,14 +60,14 @@ int main(int argc, char **argv)
       baud = (unsigned long)atol(argv[i + 1]);
     } else if (std::string(argv[i]) == "--help") {
       std::cout << "\nUsage: " << argv[0] << " [--port <serial name>] [--baud <baud rate>] [--help]\n" << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 
   if (port.empty()) {
     std::cout << "\nSerial port not specified." << std::endl;
     std::cout << "\nUsage: " << argv[0] << " [--port <serial name>] [--baud <baud rate>] [--help]\n" << std::endl;
-    return 0;
+    return EXIT_SUCCESS;
   }
 
   std::cout << "Try to connect to port \"" << port << "\" with baud rate " << baud << std::endl;

@@ -144,11 +144,9 @@ int main(int argc, char *argv[])
   vpDisplay::flush(I_close);
   vpDisplay::flush(I_draw_contours);
   vpDisplay::getClick(I_draw_contours);
-
-  return EXIT_SUCCESS;
 #else
   (void)argc;
   (void)argv;
-  return 0;
 #endif
+  return EXIT_SUCCESS;
 }

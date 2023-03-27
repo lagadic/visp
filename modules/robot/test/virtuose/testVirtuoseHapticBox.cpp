@@ -262,7 +262,7 @@ int main(int argc, char **argv)
                 << "\t- 5000 to communicate with the Virtuose." << std::endl
                 << "\t- 53210 to communicate with the Virtuose equipped with the Glove." << std::endl
                 << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 
@@ -290,7 +290,9 @@ int main(int argc, char **argv)
     std::cout << "The end" << std::endl;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
+    return EXIT_FAILURE;
   }
+  return EXIT_SUCCESS;
 }
 
 #else
@@ -299,5 +301,6 @@ int main()
   std::cout << "You should install pthread and/or Virtuose API to use this "
                "binary..."
             << std::endl;
+  return EXIT_SUCCESS;
 }
 #endif

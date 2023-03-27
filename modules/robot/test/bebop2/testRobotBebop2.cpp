@@ -80,11 +80,11 @@ int main(int argc, char **argv)
                   << "  --help, -h\n"
                   << "     Print help message.\n\n"
                   << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       } else {
         std::cout << "Error : unknown parameter " << argv[i] << std::endl
                   << "See " << argv[0] << " --help" << std::endl;
-        return 0;
+        return EXIT_FAILURE;
       }
     }
 

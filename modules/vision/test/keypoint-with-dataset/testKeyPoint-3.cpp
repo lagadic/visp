@@ -289,7 +289,7 @@ int main(int argc, const char **argv)
       std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment "
                    "variable value."
                 << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     {
@@ -308,18 +308,18 @@ int main(int argc, const char **argv)
 
   } catch (const vpException &e) {
     std::cerr << e.what() << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   std::cout << "testKeyPoint-3 is ok !" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
 {
   std::cerr << "You need OpenCV library." << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #endif

@@ -46,7 +46,7 @@
 /*!
  * Default constructor.
  * - set eMc transformation to eye()
- * - set default positionning velocity to 20% of the max joint speed
+ * - set default positioning velocity to 20% of the max joint speed
  * - set max joint speed to 180 deg/s
  * - set max joint acceleration to 800 deg/s^2
  */
@@ -63,7 +63,7 @@ vpRobotUniversalRobots::~vpRobotUniversalRobots() { setRobotState(vpRobot::STATE
 /*!
  * Establishes a connection with the robot and
  * - set eMc transformation to eye()
- * - set default positionning velocity to 20% of the max joint speed
+ * - set default positioning velocity to 20% of the max joint speed
  * - set max joint speed to 180 deg/s
  * - set max linear speed to 0.5 m/s
  * \param[in] ur_address IP/hostname of the robot.
@@ -134,7 +134,7 @@ void vpRobotUniversalRobots::disconnect()
 void vpRobotUniversalRobots::init()
 {
   nDof = 6;
-  m_positionningVelocity = 20.;
+  m_positioningVelocity = 20.;
   m_max_joint_speed = vpMath::rad(180.);        // deg/s
   m_max_joint_acceleration = vpMath::rad(800.); // deg/s^2
   m_max_linear_speed = 0.5;                     // m/s
@@ -419,7 +419,7 @@ int vpRobotUniversalRobots::getRobotMode() const
  *
  * \param[in] velocity : Percentage of the maximal velocity. Values should be in ]0:100].
  */
-void vpRobotUniversalRobots::setPositioningVelocity(double velocity) { m_positionningVelocity = velocity; }
+void vpRobotUniversalRobots::setPositioningVelocity(double velocity) { m_positioningVelocity = velocity; }
 
 /*!
  * Set robot cartesian position. This function is blocking; it returns when the desired position is reached.
@@ -482,16 +482,16 @@ void vpRobotUniversalRobots::setPosition(const vpRobot::vpControlFrameType frame
   }
 
   if (frame == vpRobot::JOINT_STATE) {
-    double speed_factor = m_positionningVelocity / 100.;
+    double speed_factor = m_positioningVelocity / 100.;
     std::vector<double> new_q = position.toStdVector();
     m_rtde_control->moveJ(new_q, m_max_joint_speed * speed_factor);
   } else if (frame == vpRobot::END_EFFECTOR_FRAME) {
-    double speed_factor = m_positionningVelocity / 100.;
+    double speed_factor = m_positioningVelocity / 100.;
     std::vector<double> new_pose = position.toStdVector();
     // Move synchronously to ensure a the blocking behaviour
     m_rtde_control->moveL(new_pose, m_max_linear_speed * speed_factor);
   } else if (frame == vpRobot::CAMERA_FRAME) {
-    double speed_factor = m_positionningVelocity / 100.;
+    double speed_factor = m_positioningVelocity / 100.;
 
     vpTranslationVector f_t_c(position.extract(0, 3));
     vpThetaUVector f_tu_c(position.extract(3, 3));
@@ -503,7 +503,7 @@ void vpRobotUniversalRobots::setPosition(const vpRobot::vpControlFrameType frame
     m_rtde_control->moveL(new_pose, m_max_linear_speed * speed_factor);
   } else {
     throw(vpException(vpRobotException::functionNotImplementedError,
-                      "Cannot move the robot to a cartesian position. Only joint positionning is implemented"));
+                      "Cannot move the robot to a cartesian position. Only joint positioning is implemented"));
   }
 }
 

@@ -20,7 +20,7 @@ int main()
   vpDisplay *d = new vpDisplayOpenCV;
 #else
   std::cout << "Sorry, no video device is available" << std::endl;
-  return -1;
+  return EXIT_FAILURE;
 #endif
   // Initialize the display with the image I. Display and image are
   // now link together.

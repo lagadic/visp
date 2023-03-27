@@ -165,7 +165,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, i_val, f_val, d_val) == false) {
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     cout << "Your parameters: " << endl;

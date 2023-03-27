@@ -147,7 +147,7 @@ int main()
     } catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
-      return (-1);
+      return EXIT_FAILURE;
     }
   }
   std::string logfilename;
@@ -292,11 +292,12 @@ int main()
         flog.close(); // Close the log file
         vpTRACE("Error detected while tracking visual features");
         robot.stopMotion();
-        return (1);
+        return EXIT_FAILURE;
       }
 
       // At first iteration, we initialise non linear pose estimation with a linear approach.
-      // For the other iterations, non linear pose estimation is initialized with the pose estimated at previous iteration of the loop
+      // For the other iterations, non linear pose estimation is initialized with the pose estimated at previous
+      // iteration of the loop
       compute_pose(point, dot, 4, cam, cMo, init_pose_from_linear_method);
       if (init_pose_from_linear_method) {
         init_pose_from_linear_method = false;

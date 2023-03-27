@@ -157,7 +157,7 @@ void vpQbSoftHand::setPosition(const vpColVector &position, const int &id)
  * mouvement. \param stiffness Stiffness parameter in range [\p 0, \p 1] is the scale factor applied to the maximum
  * allowed current in order to limit the current into the motors. When set at zero, you can send any position command to
  * the motors, but he will not move. When set to 1, it means that the maximum current returned by getCurrentMax() could
- * be reached during positionning.
+ * be reached during positioning.
  */
 void vpQbSoftHand::setPosition(const vpColVector &position, double speed_factor, double stiffness, const int &id)
 {

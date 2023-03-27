@@ -374,8 +374,9 @@ int main(int argc, const char **argv)
     std::string opath = "/tmp/I%d-%04d.ppm";
 
     if (read_options(argc, argv, multi, camera, nframes, verbose_info, verbose_settings, videomode_is_set, videomode,
-                 framerate_is_set, framerate, colorcoding_is_set, colorcoding, ringbuffersize_is_set, ringbuffersize,
-                 display, save, opath, roi_left, roi_top, roi_width, roi_height, reset, panControl, panControl_is_set)) {
+                     framerate_is_set, framerate, colorcoding_is_set, colorcoding, ringbuffersize_is_set,
+                     ringbuffersize, display, save, opath, roi_left, roi_top, roi_width, roi_height, reset, panControl,
+                     panControl_is_set)) {
       return EXIT_FAILURE;
     }
 
@@ -403,7 +404,7 @@ int main(int argc, const char **argv)
         std::cout << "Disable -m command line option, or connect an other " << std::endl;
         std::cout << "cameras on the bus." << std::endl;
         g.close();
-        return (0);
+        return EXIT_FAILURE;
       }
     }
     if (camera >= ncameras) {
@@ -412,7 +413,7 @@ int main(int argc, const char **argv)
       std::cout << "It is not possible to select camera " << camera << std::endl;
       std::cout << "Check your -c <camera> command line option." << std::endl;
       g.close();
-      return (0);
+      return EXIT_FAILURE;
     }
 
     if (multi) {
@@ -502,7 +503,7 @@ int main(int argc, const char **argv)
           std::cout << "----------------------------------------------------------" << std::endl;
         }
       }
-      return 0;
+      return EXIT_SUCCESS;
     }
 
     // If requested set the PAN register 0x884 to control single or

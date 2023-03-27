@@ -217,17 +217,17 @@ int main()
     std::cout << "  rotation: " << vpMath::deg(r[0]) << " " << vpMath::deg(r[1]) << " " << vpMath::deg(r[2]) << " deg"
               << std::endl
               << std::endl;
-
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+    return EXIT_FAILURE;
   }
-  return 0;
 }
 #else
 int main()
 {
   std::cout << "Sorry, test not valid. You should have an Viper850 robot..." << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #endif

@@ -179,7 +179,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_display, opt_click, opt_save, opt_opath, opt_icamera) == false) {
-      return 0;
+      return EXIT_SUCCESS;
     }
 
     std::cout << "Use device   : " << opt_icamera << std::endl;

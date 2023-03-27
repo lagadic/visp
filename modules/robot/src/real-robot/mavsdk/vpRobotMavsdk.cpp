@@ -140,7 +140,7 @@ private:
 #if (VISP_HAVE_MAVSDK_VERSION > 0x010412)
       passthrough.unsubscribe_message(handle);
 #else
-                                          passthrough.subscribe_message_async(MAVLINK_MSG_ID_HEARTBEAT, nullptr);
+      passthrough.subscribe_message_async(MAVLINK_MSG_ID_HEARTBEAT, nullptr);
 #endif
 
       prom.set_value(static_cast<MAV_TYPE>(heartbeat.type));
@@ -516,7 +516,7 @@ public:
       }
 
       // Takeoff
-      if (0) {//m_telemetry.get()->gps_info().fix_type == mavsdk::Telemetry::FixType::NoGps) {
+      if (m_telemetry.get()->gps_info().fix_type == mavsdk::Telemetry::FixType::NoGps) {
         // No GPS connected. 
         // When using odometry from MoCap, Action::takeoff() behavior is to takeoff at 0,0,0,alt
         // that is weird when the drone is not placed at 0,0,0.

@@ -378,7 +378,7 @@ int main(int argc, const char **argv)
 
     if (!same) {
       std::cerr << "Color images are different!" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     // Test LUT on grayscale image
@@ -434,7 +434,7 @@ int main(int argc, const char **argv)
 
     if (!same) {
       std::cerr << "Grayscale images are different!" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     // Computation time on color image
@@ -527,9 +527,9 @@ int main(int argc, const char **argv)
     }
     I_test_color.performLut(lut_color, nbThreads);
 
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

@@ -140,7 +140,7 @@ int main(int argc, const char *argv[])
       opt_device = atoi(argv[i + 1]);
     else if (std::string(argv[i]) == "--help") {
       std::cout << "Usage: " << argv[0] << " [--camera_device <camera device (default: 0)>] [--help]" << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 
@@ -156,7 +156,7 @@ int main(int argc, const char *argv[])
   thread_capture.join();
   thread_display.join();
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 //! [capture-multi-threaded mainFunction]
 
@@ -170,6 +170,7 @@ int main()
 #else
   std::cout << "Multi-threading seems not supported on this platform" << std::endl;
 #endif
+  return EXIT_SUCCESS;
 }
 
 #endif

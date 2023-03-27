@@ -140,7 +140,7 @@ int main()
       g.acquire(I);
     } catch (...) {
       vpERROR_TRACE(" Error caught");
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     vpDisplayX display(I, 100, 100, "testDisplayX.cpp ");
@@ -151,7 +151,7 @@ int main()
       vpDisplay::flush(I);
     } catch (...) {
       vpERROR_TRACE(" Error caught");
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     vpServo task;
@@ -169,7 +169,7 @@ int main()
       vpERROR_TRACE("after dot.initTracking(I) ");
     } catch (...) {
       vpERROR_TRACE(" Error caught ");
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     vpCameraParameters cam;

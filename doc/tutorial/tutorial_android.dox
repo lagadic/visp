@@ -1,0 +1,8 @@
+/*! \page tutorial_android ViSP for Android
+
+This page introduces the user to the way to exploit ViSP for Android platform.
+
+- \subpage tutorial-create-android-sdk <br>In this tutorial you will learn how to build ViSP Android SDK to be used in an Android app.
+- \subpage tutorial-android-getting-started <br>This tutorial explains how to create a simple Android application that uses some functionalities from ViSP core module.
+
+*/

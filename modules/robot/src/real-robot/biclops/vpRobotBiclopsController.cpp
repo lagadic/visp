@@ -177,7 +177,7 @@ void vpRobotBiclopsController::init(const std::string &configfile)
   Set the biclops axis position. The motion of the axis is synchronized to end
   on the same time.
 
-  \warning Wait the end of the positionning.
+  \warning Wait the end of the positioning.
 
   \param q : The position to set for each axis.
 

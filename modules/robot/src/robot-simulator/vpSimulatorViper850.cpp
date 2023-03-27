@@ -1316,7 +1316,7 @@ void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame, c
           break;
         }
       } else {
-        vpERROR_TRACE("Positionning error.");
+        vpERROR_TRACE("Positioning error.");
         throw vpRobotException(vpRobotException::positionOutOfRangeError, "Position out of range.");
       }
     } while (errsqr > 1e-8 && nbSol > 0);
@@ -1375,16 +1375,16 @@ void vpSimulatorViper850::setPosition(const vpRobot::vpControlFrameType frame, c
           break;
         }
       } else
-        vpERROR_TRACE("Positionning error. Position unreachable");
+        vpERROR_TRACE("Positioning error. Position unreachable");
     } while (errsqr > 1e-8 && nbSol > 0);
     break;
   }
   case vpRobot::MIXT_FRAME: {
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error: "
                                                             "Mixt frame not implemented.");
   }
   case vpRobot::END_EFFECTOR_FRAME: {
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error: "
                                                             "End-effector frame not implemented.");
   }
   }
@@ -1613,13 +1613,13 @@ void vpSimulatorViper850::getPosition(const vpRobot::vpControlFrameType frame, v
   }
 
   case vpRobot::MIXT_FRAME: {
-    vpERROR_TRACE("Positionning error. Mixt frame not implemented");
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+    vpERROR_TRACE("Positioning error. Mixt frame not implemented");
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error: "
                                                             "Mixt frame not implemented.");
   }
   case vpRobot::END_EFFECTOR_FRAME: {
-    vpERROR_TRACE("Positionning error. Mixt frame not implemented");
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+    vpERROR_TRACE("Positioning error. Mixt frame not implemented");
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error: "
                                                             "End-effector frame not implemented.");
   }
   }
@@ -2366,7 +2366,7 @@ bool vpSimulatorViper850::initialiseCameraRelativeToObject(const vpHomogeneousMa
 
   if (nbSol == 0) {
     status = false;
-    vpERROR_TRACE("Positionning error. Position unreachable");
+    vpERROR_TRACE("Positioning error. Position unreachable");
   }
 
   if (verbose_)

@@ -39,7 +39,7 @@ int main(int argc, const char *argv[])
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0] << " [--device <device number>] [--name <video name>] [--help][-h]\n"
                 << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 
@@ -62,7 +62,7 @@ int main(int argc, const char *argv[])
     cv::VideoCapture g(opt_device);
     if (!g.isOpened()) { // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
     cv::Mat frame;
     g >> frame; // get a new frame from camera
@@ -122,4 +122,5 @@ int main(int argc, const char *argv[])
   (void)argv;
   std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
+  return EXIT_SUCCESS;
 }

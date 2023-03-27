@@ -69,7 +69,7 @@ int main(int argc, char **argv)
                 << "\t- 5000 to communicate with the Virtuose." << std::endl
                 << "\t- 53210 to communicate with the Virtuose equipped with the Glove." << std::endl
                 << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 
@@ -90,10 +90,12 @@ int main(int argc, char **argv)
                 << std::endl;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
+    return EXIT_FAILURE;
   }
 #else
   (void)argc;
   (void)argv;
   std::cout << "You should install Virtuose SDK to use this binary..." << std::endl;
 #endif
+  return EXIT_SUCCESS;
 }

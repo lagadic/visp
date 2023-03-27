@@ -22,7 +22,7 @@ int main(int argc, const char *argv[])
         opt_device = atoi(argv[i + 1]);
       else if (std::string(argv[i]) == "--help") {
         std::cout << "Usage: " << argv[0] << " [--init-by-click] [--device <camera device>] [--help]" << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       }
     }
 
@@ -39,7 +39,7 @@ int main(int argc, const char *argv[])
     cv::VideoCapture g(opt_device);
     if (!g.isOpened()) { // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
     cv::Mat frame;
     g >> frame; // get a new frame from camera
@@ -116,12 +116,13 @@ int main(int argc, const char *argv[])
     cvReleaseImage(&cvI);
 #endif
 
-    return 0;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+    return EXIT_FAILURE;
   }
 #else
   (void)argc;
   (void)argv;
 #endif
+  return EXIT_SUCCESS;
 }

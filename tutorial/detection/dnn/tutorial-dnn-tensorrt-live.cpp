@@ -356,7 +356,7 @@ int main(int argc, char **argv)
     std::cout << "Make sure the model file exists. To see available models, plese visit: "
                  "\n\twww.github.com/lagadic/visp-images/dnn/object_detection/"
               << std::endl;
-    return 0;
+    return EXIT_FAILURE;
   }
   //! [Create GIE]
 
@@ -378,7 +378,7 @@ int main(int argc, char **argv)
 
   if (input_dims.empty() || output_dims.empty()) {
     std::cerr << "Expect at least one input and one output for network" << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
   //! [Get I/O dimensions]
 

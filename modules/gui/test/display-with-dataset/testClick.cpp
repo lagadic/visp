@@ -293,7 +293,7 @@ int main(int argc, const char **argv)
       if (!nbDevices) {
         std::cout << "  No display is available\n";
       }
-      return (0);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -341,7 +341,7 @@ int main(int argc, const char **argv)
 #else
       std::cout << "  Sorry, X11 video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-      return 0;
+      return EXIT_FAILURE;
 #endif
       break;
     case vpGTK:
@@ -351,7 +351,7 @@ int main(int argc, const char **argv)
 #else
       std::cout << "  Sorry, GTK video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-      return 0;
+      return EXIT_FAILURE;
 #endif
       break;
     case vpGDI:
@@ -361,7 +361,7 @@ int main(int argc, const char **argv)
 #else
       std::cout << "  Sorry, GDI video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-      return 0;
+      return EXIT_FAILURE;
 #endif
       break;
     case vpD3D:
@@ -371,7 +371,7 @@ int main(int argc, const char **argv)
 #else
       std::cout << "  Sorry, D3D video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-      return 0;
+      return EXIT_FAILURE;
 #endif
       break;
     case vpCV:
@@ -381,7 +381,7 @@ int main(int argc, const char **argv)
 #else
       std::cout << "  Sorry, OpenCV video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-      return 0;
+      return EXIT_FAILURE;
 #endif
       break;
     }

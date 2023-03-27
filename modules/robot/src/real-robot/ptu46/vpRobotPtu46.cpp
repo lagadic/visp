@@ -270,7 +270,7 @@ void vpRobotPtu46::setPositioningVelocity(double velocity) { positioningVelocity
 /*!
   Get the velocity in % used for a position control.
 
-  \return Positionning velocity in [0, 100]
+  \return Positioning velocity in [0, 100]
 
 */
 double vpRobotPtu46::getPositioningVelocity(void) { return positioningVelocity; }
@@ -279,7 +279,7 @@ double vpRobotPtu46::getPositioningVelocity(void) { return positioningVelocity; 
    Move the robot in position control.
 
    \warning This method is blocking. That mean that it waits the end of the
-   positionning.
+   positioning.
 
    \param frame : Control frame. This head can only be controlled in
    articular.
@@ -328,8 +328,8 @@ void vpRobotPtu46::setPosition(const vpRobot::vpControlFrameType frame, const vp
   artpos[1] = q[1];
 
   if (0 != ptu.move(artpos, positioningVelocity, PTU_ABSOLUTE_MODE)) {
-    vpERROR_TRACE("Positionning error.");
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error.");
+    vpERROR_TRACE("Positioning error.");
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error.");
   }
 
   return;
@@ -339,7 +339,7 @@ void vpRobotPtu46::setPosition(const vpRobot::vpControlFrameType frame, const vp
    Move the robot in position control.
 
    \warning This method is blocking. That mean that it wait the end of the
-   positionning.
+   positioning.
 
    \param frame : Control frame. This head can only be controlled in
    articular.

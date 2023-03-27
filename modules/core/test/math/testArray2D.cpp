@@ -189,5 +189,5 @@ int main()
     std::cout << "\nRes:\n" << C2 << std::endl;
   }
   std::cout << "All tests succeed" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }

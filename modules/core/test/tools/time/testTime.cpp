@@ -47,8 +47,8 @@
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <unistd.h>
 #elif defined(_WIN32)
-//#include <mmsystem.h>
-//#include <winbase.h>
+// #include <mmsystem.h>
+// #include <winbase.h>
 #include <windows.h>
 #endif
 #include <cmath>
@@ -125,10 +125,10 @@ int main()
     std::cout << "t8-t7: wait(2 ms): " << t8 - t7 << std::endl;
     std::cout << "t8-t6: ; chrono: " << chrono.getDurationMs() << std::endl;
 
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 #else
   std::cout << "vpTime is not implemented on Universal Windows Platform" << std::endl;

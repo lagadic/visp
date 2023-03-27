@@ -111,6 +111,6 @@ int main()
 
   std::cout << "After installation of the missing 3rd parties, configure ViSP with cmake"
             << " and build ViSP again." << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

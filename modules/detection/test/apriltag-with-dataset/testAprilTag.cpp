@@ -759,5 +759,5 @@ int main(int argc, const char *argv[])
   return numFailed;
 }
 #else
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

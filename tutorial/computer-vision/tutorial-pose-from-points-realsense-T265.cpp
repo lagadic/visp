@@ -28,7 +28,7 @@ int main(int argc, char **argv)
                   << "\nExample using right camera and square size 0.1:\n"
                   << "  " << argv[0] << "--camera_index 2 --square_width 0.1\n"
                   << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       }
     }
 

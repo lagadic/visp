@@ -287,7 +287,7 @@ int main(int argc, const char *argv[])
       std::cout << "  -c : disable mouse click" << std::endl;
       std::cout << "  -d : disable display" << std::endl;
       std::cout << "  -h, --help : print this help\n" << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 
@@ -325,7 +325,7 @@ int main(int argc, const char *argv[])
 
     if (display.size() == 0) {
       std::cout << "No display available. We stop here." << std::endl;
-      return 0;
+      return EXIT_FAILURE;
     }
     vpImage<unsigned char> I;
     filename = vpIoTools::createFilePath(ipath, "Klimt/Klimt.pgm");
@@ -352,5 +352,5 @@ int main(int argc, const char *argv[])
       std::cout << "Test failed with " << nbfailure << " failures" << std::endl;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }

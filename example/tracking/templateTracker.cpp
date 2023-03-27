@@ -405,7 +405,7 @@ int main(int argc, const char **argv)
       reader.open(I);
     } catch (...) {
       std::cout << "Cannot open sequence: " << ipath << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
     reader.acquire(I);
 
@@ -455,7 +455,7 @@ int main(int argc, const char **argv)
       break;
 #endif
     default:
-      return 0;
+      return EXIT_FAILURE;
     }
 
     vpTemplateTracker *tracker = NULL;
@@ -493,7 +493,7 @@ int main(int argc, const char **argv)
       break;
 #endif
     default:
-      return 0;
+      return EXIT_FAILURE;
     }
 
     tracker->setSampling(2, 2);

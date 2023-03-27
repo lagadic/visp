@@ -91,7 +91,7 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
@@ -99,6 +99,6 @@ int main()
 #if !defined(VISP_HAVE_FRANKA)
   std::cout << "Install libfranka." << std::endl;
 #endif
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

@@ -214,7 +214,7 @@ int main(int argc, const char *argv[])
                 << " [--haar <haarcascade xml filename>] [--device <camera "
                    "device>] [--scale <subsampling factor>] [--help]"
                 << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 
@@ -251,7 +251,7 @@ int main(int argc, const char *argv[])
   thread_display.join();
   thread_detection.join();
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 //! [face-detection-threaded mainFunction]
 
@@ -265,6 +265,7 @@ int main()
 #else
   std::cout << "Multi-threading seems not supported on this platform" << std::endl;
 #endif
+  return EXIT_SUCCESS;
 }
 
 #endif

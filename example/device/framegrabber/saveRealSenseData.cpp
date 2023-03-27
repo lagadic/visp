@@ -702,6 +702,6 @@ int main(int argc, char *argv[])
 int main()
 {
   std::cerr << "Need libRealSense or libRealSense2 and C++11 and displayX or displayGDI!" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

@@ -1213,11 +1213,11 @@ void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, const
     break;
   }
   case vpRobot::MIXT_FRAME: {
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error: "
                                                             "Mixt frame not implemented.");
   }
   case vpRobot::END_EFFECTOR_FRAME: {
-    throw vpRobotException(vpRobotException::lowLevelError, "Positionning error: "
+    throw vpRobotException(vpRobotException::lowLevelError, "Positioning error: "
                                                             "End-effector frame not implemented.");
   }
   }
@@ -1237,7 +1237,7 @@ void vpRobotViper850::setPosition(const vpRobot::vpControlFrameType frame, const
     std::cout << "Position out of range.\n";
 
   if (TryStt < 0 || error < 0) {
-    vpERROR_TRACE("Positionning error.");
+    vpERROR_TRACE("Positioning error.");
     throw vpRobotException(vpRobotException::positionOutOfRangeError, "Position out of range.");
   }
 

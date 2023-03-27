@@ -87,7 +87,7 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
@@ -99,5 +99,6 @@ int main()
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
   std::cout << "Build ViSP with c++11 or higher compiler flag (cmake -DUSE_CXX_STANDARD=11)." << std::endl;
 #endif
+  return EXIT_SUCCESS;
 }
 #endif

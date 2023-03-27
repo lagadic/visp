@@ -250,10 +250,10 @@ int main(int argc, const char **argv)
 #endif
 
     std::cout << "final error=" << (task.getError()).sumSquare() << std::endl;
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 
@@ -267,7 +267,7 @@ int main()
 int main()
 {
   std::cout << "Test empty since visp_robot module is not available.\n" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #endif

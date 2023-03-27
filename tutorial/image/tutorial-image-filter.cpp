@@ -46,7 +46,7 @@ int main(int argc, char **argv)
   try {
     if (argc != 2) {
       printf("Usage: %s <image name.[pgm,ppm,jpeg,png,bmp]>\n", argv[0]);
-      return -1;
+      return EXIT_FAILURE;
     }
     //! [vpImage construction]
     vpImage<unsigned char> I;
@@ -56,7 +56,7 @@ int main(int argc, char **argv)
       vpImageIo::read(I, argv[1]);
     } catch (...) {
       std::cout << "Cannot read image \"" << argv[1] << "\"" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     display(I, "Original image");
@@ -117,9 +117,9 @@ int main(int argc, char **argv)
       display(pyr[i], "Pyramid");
     }
     //! [Gaussian pyramid]
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

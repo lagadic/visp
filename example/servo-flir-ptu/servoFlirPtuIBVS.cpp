@@ -527,6 +527,6 @@ int main()
 #if !defined(VISP_HAVE_FLIR_PTU_SDK)
   std::cout << "Install FLIR PTU SDK." << std::endl;
 #endif
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

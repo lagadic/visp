@@ -266,7 +266,7 @@ int main(int argc, const char **argv)
       vpImageIo::write(crop, filename);
       if (crop != reference[0]) {
         std::cout << "Test 1 failed on uchar" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
 
       vpImageTools::crop(I, roi, crop, 2, 1);
@@ -275,7 +275,7 @@ int main(int argc, const char **argv)
       vpImageIo::write(crop, filename);
       if (crop != reference[1]) {
         std::cout << "Test 2 failed on uchar" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
 
       vpImageTools::crop(I, roi, crop, 2, 2);
@@ -284,7 +284,7 @@ int main(int argc, const char **argv)
       vpImageIo::write(crop, filename);
       if (crop != reference[2]) {
         std::cout << "Test 3 failed on uchar" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
 
       vpImageTools::crop(I.bitmap, I.getWidth(), I.getHeight(), roi, crop);
@@ -293,7 +293,7 @@ int main(int argc, const char **argv)
       vpImageIo::write(crop, filename);
       if (crop != reference[0]) {
         std::cout << "Test 4 failed on uchar" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
 
       vpImageTools::crop(I.bitmap, I.getWidth(), I.getHeight(), roi, crop, 2, 1);
@@ -302,7 +302,7 @@ int main(int argc, const char **argv)
       vpImageIo::write(crop, filename);
       if (crop != reference[1]) {
         std::cout << "Test 5 failed on uchar" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
 
       vpImageTools::crop(I.bitmap, I.getWidth(), I.getHeight(), roi, crop, 2, 2);
@@ -311,7 +311,7 @@ int main(int argc, const char **argv)
       vpImageIo::write(crop, filename);
       if (crop != reference[2]) {
         std::cout << "Test 6 failed on uchar" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
     }
 
@@ -353,7 +353,7 @@ int main(int argc, const char **argv)
       vpImageIo::write(crop, filename);
       if (crop != reference[0]) {
         std::cout << "Test 1 failed on uchar" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
 
       vpImageTools::crop(I, roi, crop, 2, 1);
@@ -362,7 +362,7 @@ int main(int argc, const char **argv)
       vpImageIo::write(crop, filename);
       if (crop != reference[1]) {
         std::cout << "Test 2 failed on uchar" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
 
       vpImageTools::crop(I, roi, crop, 2, 2);
@@ -371,7 +371,7 @@ int main(int argc, const char **argv)
       vpImageIo::write(crop, filename);
       if (crop != reference[2]) {
         std::cout << "Test 3 failed on uchar" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
 
       vpImageTools::crop((unsigned char *)I.bitmap, I.getWidth(), I.getHeight(), roi, crop);
@@ -380,7 +380,7 @@ int main(int argc, const char **argv)
       vpImageIo::write(crop, filename);
       if (crop != reference[0]) {
         std::cout << "Test 4 failed on uchar" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
 
       vpImageTools::crop((unsigned char *)I.bitmap, I.getWidth(), I.getHeight(), roi, crop, 2, 1);
@@ -389,7 +389,7 @@ int main(int argc, const char **argv)
       vpImageIo::write(crop, filename);
       if (crop != reference[1]) {
         std::cout << "Test 5 failed on uchar" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
 
       vpImageTools::crop((unsigned char *)I.bitmap, I.getWidth(), I.getHeight(), roi, crop, 2, 2);
@@ -398,14 +398,14 @@ int main(int argc, const char **argv)
       vpImageIo::write(crop, filename);
       if (crop != reference[2]) {
         std::cout << "Test 6 failed on uchar" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
     }
 
     std::cout << "Test succeed" << std::endl;
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 }

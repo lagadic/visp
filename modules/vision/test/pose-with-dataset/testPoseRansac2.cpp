@@ -537,5 +537,5 @@ int main(int argc, char *argv[])
 #endif
 }
 #else
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

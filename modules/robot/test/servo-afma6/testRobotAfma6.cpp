@@ -90,16 +90,17 @@ int main()
     std::cout << afma6 << std::endl;
     afma6.getCameraParameters(cam, 640, 480);
     std::cout << cam << std::endl;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+    return EXIT_FAILURE;
   }
-  return 0;
 }
 #else
 int main()
 {
   std::cout << "The real Afma6 robot controller is not available." << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #endif

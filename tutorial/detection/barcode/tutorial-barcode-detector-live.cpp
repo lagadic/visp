@@ -26,7 +26,7 @@ int main(int argc, const char **argv)
                 << " [--device <camera number>] [--code-type <0 for QR code | "
                    "1 for DataMatrix code>] [--help] [-h]"
                 << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
   std::cout << "Use device: " << opt_device << std::endl;
@@ -46,7 +46,7 @@ int main(int argc, const char **argv)
     cv::VideoCapture cap(opt_device); // open the default camera
     if (!cap.isOpened()) {            // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
     cv::Mat frame;
     cap >> frame; // get a new frame from camera

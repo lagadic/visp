@@ -66,17 +66,20 @@ TEST_CASE("Quaternion interpolation", "[quaternion]")
   // From:
   // https://github.com/google/mathfu/blob/a75f852f2d76f6f14d5697e0d09ce509a2e3bfc6/unit_tests/quaternion_test/quaternion_test.cpp#L319-L329
   // This will verify that interpolating two quaternions corresponds to interpolating the angle.
-  SECTION("LERP") {
+  SECTION("LERP")
+  {
     vpQuaternionVector qLerp = vpQuaternionVector::lerp(q0, q1, t);
     CHECK(vpThetaUVector(qLerp).getTheta() == Approx(ref_angle_middle).margin(marginLerp));
   }
 
-  SECTION("NLERP") {
+  SECTION("NLERP")
+  {
     vpQuaternionVector qNlerp = vpQuaternionVector::nlerp(q0, q1, t);
     CHECK(vpThetaUVector(qNlerp).getTheta() == Approx(ref_angle_middle).margin(margin));
   }
 
-  SECTION("SERP") {
+  SECTION("SERP")
+  {
     vpQuaternionVector qSlerp = vpQuaternionVector::slerp(q0, q1, t);
     CHECK(vpThetaUVector(qSlerp).getTheta() == Approx(ref_angle_middle).margin(margin));
   }
@@ -99,5 +102,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

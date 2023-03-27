@@ -69,7 +69,7 @@ int main(int argc, char **argv)
                 << " [--ip <Net F/T IP address (default: 192.168.1.1)>] [--port <Ethernet port (default: 49152)>]"
                 << " [--no-display] [-d] [--help] [-h]\n"
                 << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 

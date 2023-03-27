@@ -133,11 +133,9 @@ int main(int argc, const char **argv)
   vpDisplay::displayText(I_color_res, 20, 20, "Retinex. Click to quit.", vpColor::red);
   vpDisplay::flush(I_color_res);
   vpDisplay::getClick(I_color_res);
-
-  return EXIT_SUCCESS;
 #else
   (void)argc;
   (void)argv;
-  return 0;
 #endif
+  return EXIT_SUCCESS;
 }

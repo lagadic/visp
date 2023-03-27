@@ -110,11 +110,9 @@ int main(int argc, const char **argv)
   vpDisplay::flush(I_clahe);
   vpDisplay::flush(I_unsharp);
   vpDisplay::getClick(I_unsharp);
-
-  return EXIT_SUCCESS;
 #else
   (void)argc;
   (void)argv;
-  return 0;
 #endif
+  return EXIT_SUCCESS;
 }

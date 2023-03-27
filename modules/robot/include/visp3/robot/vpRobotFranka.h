@@ -239,7 +239,7 @@ private:
   franka::Robot *m_handler;   //!< Robot handler
   franka::Gripper *m_gripper; //!< Gripper handler
   franka::Model *m_model;
-  double m_positionningVelocity;
+  double m_positioningVelocity;
 
   // Velocity controller
   std::thread m_velControlThread;

@@ -263,9 +263,9 @@ int main(int argc, const char **argv)
     filename = vpIoTools::createFilePath(opath, "Klimt_crop.pgm");
     std::cout << "Write cropped image: " << filename << std::endl;
     vpImageIo::write(C, filename);
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

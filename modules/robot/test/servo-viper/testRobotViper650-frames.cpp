@@ -146,7 +146,7 @@ int main()
       if (!pose_equal(eMt, eMt_, 1e-4)) {
         std::cout << "  Error: Pose eMt differ" << std::endl;
         std::cout << "\nTest failed" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
       std::cout << "  They are the same, we can continue" << std::endl;
 
@@ -159,7 +159,7 @@ int main()
       if (!pose_equal(eMt, cMe.inverse(), 1e-4)) {
         std::cout << "  Error: Pose eMc differ" << std::endl;
         std::cout << "\nTest failed" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
       std::cout << "  They are the same, we can continue" << std::endl;
     }
@@ -182,7 +182,7 @@ int main()
       if (!pose_equal(fMt, fMt_, 1e-4)) {
         std::cout << "  Error: Pose fMt differ" << std::endl;
         std::cout << "\nTest failed" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
       std::cout << "  They are the same, we can continue" << std::endl;
     }
@@ -204,7 +204,7 @@ int main()
       if (!joint_equal(q, q2, 1e-4)) {
         std::cout << "  Error: Joint position differ" << std::endl;
         std::cout << "\nTest failed" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
       std::cout << "  They are the same, we can continue" << std::endl;
     }
@@ -228,7 +228,7 @@ int main()
       if (!joint_equal(q, q3, 1e-4)) {
         std::cout << "  Error: Joint position differ" << std::endl;
         std::cout << "\nTest failed" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
       std::cout << "  They are the same, we can continue" << std::endl;
     }
@@ -259,7 +259,7 @@ int main()
       if (!pose_equal(fMt_, vpHomogeneousMatrix(fpt_), 1e-4)) {
         std::cout << "  Error: Pose fMt_ differ" << std::endl;
         std::cout << "\nTest failed" << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
       std::cout << "  They are the same, we can continue" << std::endl;
     }
@@ -366,8 +366,10 @@ int main()
     }
     std::cout << "The end" << std::endl;
     std::cout << "Test succeed" << std::endl;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Test failed with exception: " << e.getMessage() << std::endl;
+    return EXIT_FAILURE;
   }
 }
 
@@ -375,7 +377,7 @@ int main()
 int main()
 {
   std::cout << "The real Viper650 robot controller is not available." << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #endif

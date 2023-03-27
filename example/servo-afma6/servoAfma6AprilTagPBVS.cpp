@@ -260,7 +260,7 @@ int main(int argc, char **argv)
 
         static bool first_time = true;
         if (first_time) {
-          // Introduce security wrt tag positionning in order to avoid PI rotation
+          // Introduce security wrt tag positioning in order to avoid PI rotation
           std::vector<vpHomogeneousMatrix> v_oMo(2), v_cdMc(2);
           v_oMo[1].buildFrom(0, 0, 0, 0, 0, M_PI);
           for (size_t i = 0; i < 2; i++) {

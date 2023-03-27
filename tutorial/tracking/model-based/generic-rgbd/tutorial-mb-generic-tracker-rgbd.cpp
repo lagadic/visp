@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
           << " --config_color model/cube/cube.xml --config_depth model/cube/cube.xml"
              " --model_color model/cube/cube.cao --model_depth model/cube/cube.cao --init_file model/cube/cube.init\n"
           << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 

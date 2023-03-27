@@ -1,0 +1,10 @@
+/*! \page tutorial_java ViSP for Java
+
+This page introduces the user to the way to exploit ViSP for Java.
+
+- \subpage tutorial-install-java <br>In this tutorial you will learn how to install ViSP for Java under Linux, macOS or Windows.
+- \subpage tutorial-java-started <br>This tutorial explains how to create a Java application that uses some functionalities from ViSP core module.
+- \subpage tutorial-java-apriltag <br>This tutorial explains how to create a Java application that allows to detect AprilTags in an image and compute tag poses.
+- \subpage tutorial-java-mbt-generic <br>This tutorial explains how to create a Java application that allows to track an object using generic model-based tracker.
+
+*/

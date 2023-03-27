@@ -426,6 +426,6 @@ int main(int argc, char *argv[])
 int main()
 {
   std::cerr << "Enable C++11 or higher (cmake -DUSE_CXX_STANDARD=11) and install X11 or GDI!" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif
