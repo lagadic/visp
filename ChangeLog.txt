@@ -7,7 +7,7 @@
 
 ViSP 3.5.1 (under development)
   - Contributors:
-    . Fabien Spindler, Souriya Trinh, Samuel Felton, Antonio Marino
+    . Fabien Spindler, Souriya Trinh, Romain Lagneau, Antonio Marino, Samuel Felton
   - New features and improvements
     . Video writer is now able to create the output folder recursively (see vpVideoWriter)
     . Introduce Universal Robots support with new vpRobotUniversalRobots class that
