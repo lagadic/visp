@@ -144,13 +144,18 @@ template <typename Type>
 void run_test(const std::string &env_ipath, bool opt_click_allowed, bool opt_display, vpImage<Type> &Iref,
               vpImage<Type> &Icur, vpImage<Type> &Imatch)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   // Set the path location of the image sequence
   std::string dirname = vpIoTools::createFilePath(env_ipath, "mbt/cube");
 
   // Build the name of the image files
-  std::string filenameRef = vpIoTools::createFilePath(dirname, "image0000.png");
+  std::string filenameRef = vpIoTools::createFilePath(dirname, "image0000." + ext);
   vpImageIo::read(Iref, filenameRef);
-  std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d.png");
+  std::string filenameCur = vpIoTools::createFilePath(dirname, "image%04d." + ext);
 
   // Init keypoints
   vpKeyPoint keypoints("ORB", "ORB", "BruteForce-Hamming");
@@ -233,7 +238,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
@@ -244,7 +249,7 @@ int main(int argc, const char **argv)
       std::cerr << "Please set the VISP_INPUT_IMAGE_PATH environment "
                    "variable value."
                 << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     {
@@ -263,18 +268,18 @@ int main(int argc, const char **argv)
 
   } catch (const vpException &e) {
     std::cerr << e.what() << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 
   std::cout << "testKeyPoint is ok !" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #else
 int main()
 {
   std::cerr << "You need OpenCV library." << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #endif

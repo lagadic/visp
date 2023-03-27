@@ -1,0 +1,61 @@
+/*! \page tutorial_install Installation
+This page references all the tutorials to install, use and contribute to ViSP.
+
+- \subpage tutorial_install_src
+
+- \subpage tutorial_install_pkg
+
+- \subpage tutorial_install_crosscompiling
+
+- \subpage tutorial_install_docker
+
+*/
+
+/*! \page tutorial_install_pkg Installation from packages
+This page introduces the user to the way to install ViSP from existing prebuild packages.
+
+- \subpage tutorial-install-ubuntu-package <br>In this first tutorial you will learn how to install ViSP prebuilt library SDK from Ubuntu or Debian packages.
+- \subpage tutorial-install-archlinux-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK for Arch Linux.
+- \subpage tutorial-install-osx-homebrew-package <br>In this tutorial you will learn how to install ViSP prebuilt SDK on OSX with Homebrew.
+
+*/
+
+/*! \page tutorial_install_src Installation from source code
+This page introduces the user to the way to install ViSP from source code.
+
+- \subpage tutorial-install-ubuntu <br>In this tutorial you will learn how to install ViSP from source on Linux Ubuntu or Debian.
+- \subpage tutorial-install-fedora <br>In this other tutorial you will learn how to install ViSP from source on Linux Fedora.
+- \subpage tutorial-install-centos <br>In this other tutorial you will learn how to install ViSP from source on Linux CentOS.
+- \subpage tutorial-install-opensuse <br>In this other tutorial you will learn how to install ViSP from source on Linux openSUSE.
+- \subpage tutorial-install-raspberry <br>In this tutorial you will learn how to install ViSP from source on Raspberry Pi.
+- \subpage tutorial-install-jetson <br>In this tutorial you will learn how to install ViSP from source on Jetson equipped with a Connect Tech Orbitty Carrier board.
+- \subpage tutorial-install-jetson-quasar <br>In this tutorial you will learn how to install ViSP from source on Jetson equipped with a Connect Tech Quasar Carrier board.
+- \subpage tutorial-install-win10-msvc14 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2015 (vc14).
+- \subpage tutorial-install-win10-msvc15 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2017 (vc15).
+- \subpage tutorial-install-win10-msvc16 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2019 (vc16).
+- \subpage tutorial-install-win10-msvc17 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Visual C++ 2022 (vc17).
+- \subpage tutorial-install-win10-mingw-w64 <br>In this tutorial you will learn how to install ViSP from source on Windows 10 with Mingw-w64.
+- \subpage tutorial-install-win11-msvc17 <br>In this tutorial you will learn how to install ViSP from source on Windows 11 with Visual C++ 2022 (vc17).
+- \subpage tutorial-install-win11-mingw-w64 <br>In this tutorial you will learn how to install ViSP from source on Windows 11 with Mingw-w64.
+- \subpage tutorial-install-osx-homebrew <br>In this tutorial you will learn how to install ViSP from source on OSX with Homebrew.
+
+*/
+
+/*! \page tutorial_install_crosscompiling Installation from cross-compiling
+This page introduces the user to the way to cross-compile ViSP from source code.
+
+- \subpage tutorial-install-crosscompiling-raspberry <br>In this tutorial you will learn how to cross-compile ViSP from source on Ubuntu host for Raspberry Pi target.
+- \subpage tutorial-install-crosscompiling-naoqi <br>In this tutorial you will learn how to cross-compile ViSP from source on Ubuntu host for NAOqi targets (NAO, Romeo, Pepper).
+- \subpage tutorial-install-win10-msvc14-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2015 (vc14).
+- \subpage tutorial-install-win10-msvc15-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2017 (vc15).
+- \subpage tutorial-install-win10-msvc16-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2019 (vc16).
+- \subpage tutorial-install-win10-msvc17-uwp <br>In this tutorial you will learn how to cross-compile ViSP from source on Windows 10 for Universal Windows Platform apps with Visual C++ 2022 (vc17).
+
+*/
+
+/*! \page tutorial_install_docker Installation from Docker images
+This page introduces the user to the way to install ready to use Docker images.
+
+- \subpage tutorial-install-docker <br>In this tutorial you will be able to get a system up and running with Docker that has ViSP already installed. This tutorial is a good solution for people who have struggled with installation issues.
+
+*/

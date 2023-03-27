@@ -44,7 +44,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-//#define DEBUG_DISPLAY // uncomment to check that the tracking is correct
+// #define DEBUG_DISPLAY // uncomment to check that the tracking is correct
 #ifdef DEBUG_DISPLAY
 #include <visp3/gui/vpDisplayX.h>
 #endif
@@ -57,10 +57,17 @@ template <typename Type>
 bool read_data(const std::string &input_directory, int cpt, const vpCameraParameters &cam_depth, vpImage<Type> &I,
                vpImage<uint16_t> &I_depth, std::vector<vpColVector> &pointcloud, vpHomogeneousMatrix &cMo)
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
   static_assert(std::is_same<Type, unsigned char>::value || std::is_same<Type, vpRGBa>::value,
                 "Template function supports only unsigned char and vpRGBa images!");
+#endif
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   char buffer[FILENAME_MAX];
-  snprintf(buffer, FILENAME_MAX, std::string(input_directory + "/Images/Image_%04d.png").c_str(), cpt);
+  snprintf(buffer, FILENAME_MAX, std::string(input_directory + "/Images/Image_%04d." + ext).c_str(), cpt);
   std::string image_filename = buffer;
 
   snprintf(buffer, FILENAME_MAX, std::string(input_directory + "/Depth/Depth_%04d.bin").c_str(), cpt);
@@ -329,5 +336,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

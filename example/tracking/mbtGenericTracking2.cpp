@@ -70,6 +70,11 @@
 
 void usage(const char *name, const char *badparam)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   fprintf(stdout, "\n\
 Example of tracking based on the 3D model.\n\
 \n\
@@ -85,8 +90,8 @@ OPTIONS:                                               \n\
   -i <input image path>                                \n\
      Set image input path.\n\
      From this path read images \n\
-     \"mbt/cube/image%%04d.png\". These \n\
-     images come from ViSP-images-x.y.z.tar.gz available \n\
+     \"mbt/cube/image%%04d.%s\". These \n\
+     images come from visp-images-x.y.z.tar.gz available \n\
      on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behavior than using\n\
@@ -148,7 +153,7 @@ OPTIONS:                                               \n\
      Set tracker type (<1 (Edge)>, <2 (KLT)>, <3 (EdgeKlt)>).\n\
 \n\
   -h \n\
-     Print the help.\n\n");
+     Print the help.\n\n", ext.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -259,6 +264,12 @@ int main(int argc, const char **argv)
     bool projectionError = false;
     int trackerType = vpMbGenericTracker::EDGE_TRACKER;
 
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+   std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
+
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -288,9 +299,9 @@ int main(int argc, const char **argv)
 
     // Get the option values
     if (!opt_ipath.empty())
-      ipath = vpIoTools::createFilePath(opt_ipath, "mbt/cube/image%04d.png");
+      ipath = vpIoTools::createFilePath(opt_ipath, "mbt/cube/image%04d." + ext);
     else
-      ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.png");
+      ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d." + ext);
 
 #if USE_XML
     std::string configFile;

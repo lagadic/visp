@@ -50,22 +50,24 @@
 
 namespace
 {
-vpThetaUVector generateThetaU(vpUniRand& rng) {
-  return vpThetaUVector(vpMath::rad(rng.uniform(-180.0, 180.0)) *
-                        vpColVector({rng.uniform(-1.0, 1.0), rng.uniform(-1.0, 1.0), rng.uniform(-1.0, 1.0)}
-                       ).normalize());
+vpThetaUVector generateThetaU(vpUniRand &rng)
+{
+  return vpThetaUVector(
+      vpMath::rad(rng.uniform(-180.0, 180.0)) *
+      vpColVector({rng.uniform(-1.0, 1.0), rng.uniform(-1.0, 1.0), rng.uniform(-1.0, 1.0)}).normalize());
 }
 
-vpQuaternionVector generateQuat(vpUniRand& rng) {
-    const double angle = vpMath::rad(rng.uniform(-180.0, 180.0));
-    const double ctheta = std::cos(angle);
-    const double stheta = std::sin(angle);
-    const double ax = rng.uniform(-1.0, 1.0);
-    const double ay = rng.uniform(-1.0, 1.0);
-    const double az = rng.uniform(-1.0, 1.0);
-    return vpQuaternionVector(stheta * ax, stheta * ay, stheta * az, ctheta);
+vpQuaternionVector generateQuat(vpUniRand &rng)
+{
+  const double angle = vpMath::rad(rng.uniform(-180.0, 180.0));
+  const double ctheta = std::cos(angle);
+  const double stheta = std::sin(angle);
+  const double ax = rng.uniform(-1.0, 1.0);
+  const double ay = rng.uniform(-1.0, 1.0);
+  const double az = rng.uniform(-1.0, 1.0);
+  return vpQuaternionVector(stheta * ax, stheta * ay, stheta * az, ctheta);
 }
-}
+} // namespace
 
 TEST_CASE("Theta u multiplication", "[theta.u]")
 {
@@ -137,5 +139,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

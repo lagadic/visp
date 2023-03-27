@@ -1,8 +1,8 @@
 /*! \page supported-material Supported Hardware
 
-Here you will find a list of robots, haptic devices, force-torque sensors, laser range finders, depth cameras, RGB cameras,
-and motion capture system that you can use for learning visual-servoing or building robotics applications
-on top of them based on ViSP.
+Here you will find a list of robots, haptic devices, force-torque sensors, laser range finders, depth cameras, RGB
+cameras, and motion capture system that you can use for learning visual-servoing or building robotics applications on
+top of them based on ViSP.
 
 \section material_robots Supported Robots
 
@@ -33,8 +33,8 @@ there is also this other tutorial: \ref tutorial-franka-sim.
 
 \subsection material_robots_kinova Kinova Jaco
 
-All the [Kinova](https://assistive.kinovarobotics.com/) assistive robotic arms are supported by ViSP using vpRobotKinova,
-an interface over Kinova Jaco SDK that allows to control Gen2 4, 6 and 7 DoF arm.
+All the [Kinova](https://assistive.kinovarobotics.com/) assistive robotic arms are supported by ViSP using
+vpRobotKinova, an interface over Kinova Jaco SDK that allows to control Gen2 4, 6 and 7 DoF arm.
 
 See \ref soft_robots_kinova section to know how to install the corresponding optional 3rd party.
 \image html img-kinova.jpg Kinova assistive robotic arm
@@ -70,13 +70,24 @@ The [mBot Ranger](https://store.makeblock.com/products/diy-coding-robot-kits-mbo
 Installation instructions are provided in \ref tutorial-mbot-vs.
 \image html img-mbot-ranger.jpg mBot Ranger Educational Kit
 
+\subsection material_robots_aion_robotics AION ROBOTICS
+
+The vpRobotMavsdk class which is a wrapper over [MAVSDK](https://mavsdk.mavlink.io/main/en/index.html) 3rd party library
+allows to communicate through [MAVLink](https://mavlink.io/en/) protocol to control in position and velocity AION
+ROBOTICS rover equipped with a Pixhawk.
+
+See \ref soft_robots_mavsdk section to know how to install the corresponding optional 3rd party.
+
+\image html img-aion-robotics.jpg AION ROBOTICS rover supported by ViSP.
+
 \subsection material_robots_pixhawk Pixhawk and MavLink
 
 The [MAVLink](https://mavlink.io/en/) protocol is supported by ViSP to communicate with drones or small mobile robots
-equipped with a Pixhawk. To this end you need to install [MavSDK](https://mavsdk.mavlink.io/main/en/index.html) 3rd party library.
+equipped with a Pixhawk. To this end you need to install [MavSDK](https://mavsdk.mavlink.io/main/en/index.html) 3rd
+party library.
 
 See \ref soft_robots_mavsdk section to know how to install the corresponding optional 3rd party.
-\image html img-drone-dji-pixhawk.jpg DJI F450 equipped with a Pixhawk 2 Cube connected to a Jetson TX2 through an USB link. width=50%
+\image html img-drone-dji-pixhawk.jpg DJI F450 equipped with a Pixhawk 2 Cube connected to a Jetson TX2 through an USB link.
 
 \section material_haptic Supported Haptic Devices
 
@@ -111,16 +122,17 @@ These are the force/torque sensors supported by ViSP.
 
 \subsection material_ft_ati_net ATI Net F/T device
 
-If you have an [ATI Net F/T](https://www.ati-ia.com/products/ft/ft_NetFT.aspx) sensor you can use vpForceTorqueAtiNetFTSensor
-class to get access to the measurements.
+If you have an [ATI Net F/T](https://www.ati-ia.com/products/ft/ft_NetFT.aspx) sensor you can use
+vpForceTorqueAtiNetFTSensor class to get access to the measurements.
 
 There is no need to install a specific SDK to use the device with ViSP.
 \image html img-ft-ati-net-ft.png ATI Net F/T device
 
 \subsection material_ft_ati_daq ATI FT device connected to a National Instrument DAQmx PCI board
 
-If you have an [ATI F/T](https://www.ati-ia.com/products/ft/ft_ModelListing.aspx) sensor you can use vpForceTorqueAtiSensor
-class to get access to the measurements. This wrapper uses [Comedi](http://www.comedi.org) 3rd party.
+If you have an [ATI F/T](https://www.ati-ia.com/products/ft/ft_ModelListing.aspx) sensor you can use
+vpForceTorqueAtiSensor class to get access to the measurements. This wrapper uses [Comedi](http://www.comedi.org) 3rd
+party.
 
 See \ref soft_ft_comedi section to know how to install the corresponding optional 3rd party.
 \image html img-ft-gamma-sensor.jpg ATI Gamma transducer
@@ -164,8 +176,8 @@ See \ref soft_camera_depth_librealsense section to know how to install the corre
 
 \subsection material_camera_depth_structure_core Structure Core Depth Cameras
 
-All [Occipital](https://structure.io/) devices are supported in ViSP thanks to vpOccipitalStructure class, a wrapper over
-[Occipital Structure SDK](https://developer.structure.io/sdk/).
+All [Occipital](https://structure.io/) devices are supported in ViSP thanks to vpOccipitalStructure class, a wrapper
+over [Occipital Structure SDK](https://developer.structure.io/sdk/).
 
 See \ref soft_camera_depth_structure section to know how to install the corresponding optional 3rd party.
 \image html img-occipital-camera.jpg Occipital Structure depth camera
@@ -183,7 +195,8 @@ These are the cameras supported by ViSP.
 
 \subsection material_camera_ids IDS UEyE Cameras
 
-Industrial cameras from [IDS](https://en.ids-imaging.com) are also supported in ViSP thanks to vpUeyeGrabber class, a wrapper over uEye SDK.
+Industrial cameras from [IDS](https://en.ids-imaging.com) are also supported in ViSP thanks to vpUeyeGrabber class, a
+wrapper over uEye SDK.
 
 See \ref soft_camera_ueye section to know how to install the corresponding optional 3rd party.
 \image html img-ids-camera.jpg
@@ -199,7 +212,8 @@ See \ref soft_camera_pylon section to know how to install the corresponding opti
 \subsection material_camera_flir FLIR Cameras
 
 Industrial cameras from [FLIR](https://www.flir.com) are supported in ViSP thanks to vpFlyCaptureGrabber class,
-a wrapper over [FlyCapture SDK](https://www.flir.com/support-center/iis/machine-vision/downloads/spinnaker-sdk-flycapture-and-firmware-download/).
+a wrapper over [FlyCapture
+SDK](https://www.flir.com/support-center/iis/machine-vision/downloads/spinnaker-sdk-flycapture-and-firmware-download/).
 
 See \ref soft_camera_flycapture section to know how to install the corresponding optional 3rd party.
 \image html img-flir-camera.jpg
@@ -225,16 +239,16 @@ These are the motion capture systems supported by ViSP.
 
 \subsection material_mocap_qualisys Qualisys Motion Capture System
 
-If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you can stream data using vpMocapQualisys class,
-a wrapper over [qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cpp_sdk).
+If you have the [Qualisys](https://www.qualisys.com) Motion Capture System you can stream data using vpMocapQualisys
+class, a wrapper over [qualisys_cpp_sdk](https://github.com/qualisys/qualisys_cpp_sdk).
 
 See \ref soft_mocap_qualisys section to know how to install the corresponding optional 3rd party.
 \image html img-qualisys.png
 
 \subsection material_mocap_vicon Vicon Motion Capture System
 
-If you have rather the [Vicon](https://www.vicon.com) Motion Capture System you can stream data using vpMocapVicon class,
-a wrapper over [Vicon Datastream SDK](https://www.vicon.com/software/datastream-sdk/).
+If you have rather the [Vicon](https://www.vicon.com) Motion Capture System you can stream data using vpMocapVicon
+class, a wrapper over [Vicon Datastream SDK](https://www.vicon.com/software/datastream-sdk/).
 
 See \ref soft_mocap_vicon section to know how to install the corresponding optional 3rd party.
 \image html img-vicon.png

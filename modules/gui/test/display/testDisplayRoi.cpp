@@ -158,7 +158,7 @@ int main(int argc, const char **argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_click_allowed, opt_display) == false) {
-    exit(-1);
+    return EXIT_FAILURE;
   }
 
   if (opt_display) {
@@ -211,5 +211,5 @@ int main(int argc, const char **argv)
   (void)argc;
   (void)argv;
 #endif
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -310,7 +310,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_opath, username) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -330,7 +330,7 @@ int main(int argc, const char **argv)
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
         std::cerr << "  Check your -o " << opath << " option " << std::endl;
-        exit(-1);
+        return EXIT_FAILURE;
       }
     }
 
@@ -365,10 +365,10 @@ int main(int argc, const char **argv)
 
     // Clean up memory allocated by the xml library
     vpXmlParser::cleanup();
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 
@@ -377,6 +377,6 @@ int main(int argc, const char **argv)
 int main()
 {
   std::cout << "Xml parser requires libxml2." << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

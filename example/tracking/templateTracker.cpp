@@ -120,6 +120,12 @@ typedef enum {
 void usage(const char *name, const char *badparam, const WarpType &warp_type, TrackerType &tracker_type,
            const long &last_frame, const double &residual_threhold)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
+
   fprintf(stdout, "\n\
 Example of template tracking.\n\
 \n\
@@ -134,7 +140,7 @@ OPTIONS:                                                            Default\n\
   -i <input image path>                                \n\
      Set image input path.\n\
      From this path read images \n\
-     \"cube/image%%04d.pgm\". These \n\
+     \"mire-2/image%%04d.%s\". These \n\
      images come from ViSP-images-x.y.z.tar.gz available \n\
      on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
@@ -151,7 +157,7 @@ OPTIONS:                                                            Default\n\
      Disable the mouse click. Useful to automaze the \n\
      execution of this program without humain intervention.\n\
           \n",
-          last_frame);
+          ext.c_str(), last_frame);
 
 #ifdef VISP_HAVE_MODULE_TT_MI
   fprintf(stdout, "\n\
@@ -339,6 +345,12 @@ int main(int argc, const char **argv)
     std::string opath = "C:\\temp";
 #endif
 
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
+
     // Get the user login name
     std::string username;
     vpIoTools::getUserName(username);
@@ -358,7 +370,7 @@ int main(int argc, const char **argv)
     // Read the command line options
     if (!getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display, opt_pyramidal, opt_warp_type,
                     opt_tracker_type, opt_last_frame, opt_reinit, opt_threshold_residual, opt_log)) {
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     // Test if an input path is set
@@ -370,14 +382,14 @@ int main(int argc, const char **argv)
                 << "  image path where test images are located." << std::endl
                 << std::endl;
 
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
     if (!opt_ipath.empty())
-      ipath = vpIoTools::createFilePath(opt_ipath, "mire-2/image.%04d.png");
+      ipath = vpIoTools::createFilePath(opt_ipath, "mire-2/image.%04d." + ext);
     else
-      ipath = vpIoTools::createFilePath(env_ipath, "mire-2/image.%04d.png");
+      ipath = vpIoTools::createFilePath(env_ipath, "mire-2/image.%04d." + ext);
 
     if (opt_log) {
       ofs.open(logfilename.c_str());
@@ -393,7 +405,7 @@ int main(int argc, const char **argv)
       reader.open(I);
     } catch (...) {
       std::cout << "Cannot open sequence: " << ipath << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
     reader.acquire(I);
 
@@ -443,7 +455,7 @@ int main(int argc, const char **argv)
       break;
 #endif
     default:
-      return 0;
+      return EXIT_FAILURE;
     }
 
     vpTemplateTracker *tracker = NULL;
@@ -481,7 +493,7 @@ int main(int argc, const char **argv)
       break;
 #endif
     default:
-      return 0;
+      return EXIT_FAILURE;
     }
 
     tracker->setSampling(2, 2);

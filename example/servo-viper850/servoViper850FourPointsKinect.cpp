@@ -100,19 +100,12 @@
   \param cMo : Homogeneous matrix in output describing the transformation
   between the camera and object frame.
 
-  \param cto : Translation in ouput extracted from \e cMo.
-
-  \param cro : Rotation in ouput extracted from \e cMo.
-
   \param init : Indicates if the we have to estimate an initial pose with
   Lagrange or Dementhon methods.
 
 */
-void compute_pose(vpPoint point[], vpDot2 dot[], int ndot, vpCameraParameters cam, vpHomogeneousMatrix &cMo,
-                  vpTranslationVector &cto, vpRxyzVector &cro, bool init)
+void compute_pose(vpPoint point[], vpDot2 dot[], int ndot, vpCameraParameters cam, vpHomogeneousMatrix &cMo, bool init)
 {
-  vpHomogeneousMatrix cMo_dementhon; // computed pose with dementhon
-  vpHomogeneousMatrix cMo_lagrange;  // computed pose with dementhon
   vpRotationMatrix cRo;
   vpPose pose;
   vpImagePoint cog;
@@ -128,27 +121,10 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot, vpCameraParameters ca
   }
 
   if (init == true) {
-    pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
-    // Compute and return the residual expressed in meter for the pose matrix
-    // 'cMo'
-    double residual_dementhon = pose.computeResidual(cMo_dementhon);
-    pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
-    double residual_lagrange = pose.computeResidual(cMo_lagrange);
-
-    // Select the best pose to initialize the lowe pose computation
-    if (residual_lagrange < residual_dementhon)
-      cMo = cMo_lagrange;
-    else
-      cMo = cMo_dementhon;
-
-  } else { // init = false; use of the previous pose to initialise LOWE
-    cRo.buildFrom(cro);
-    cMo.buildFrom(cto, cRo);
+    pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
+  } else { // init = false; use of the previous pose to initialise VIRTUAL_VS
+    pose.computePose(vpPose::VIRTUAL_VS, cMo);
   }
-  pose.computePose(vpPose::LOWE, cMo);
-  cMo.extract(cto);
-  cMo.extract(cRo);
-  cro.buildFrom(cRo);
 }
 
 int main()
@@ -175,7 +151,7 @@ int main()
     } catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
-      return (-1);
+      return EXIT_FAILURE;
     }
   }
   std::string logfilename;
@@ -328,14 +304,16 @@ int main()
         vpTRACE("Error detected while tracking visual features");
         robot.stopMotion();
         kinect.stop();
-        return (1);
+        return EXIT_FAILURE;
       }
 
-      // During the servo, we compute the pose using LOWE method. For the
-      // initial pose used in the non linear minimisation we use the pose
-      // computed at the previous iteration.
-      compute_pose(point, dot, 4, cam, cMo, cto, cro, false);
-
+      // At first iteration, we initialise non linear pose estimation with a linear approach.
+      // For the other iterations, non linear pose estimation is initialized with the pose estimated at previous
+      // iteration of the loop
+      compute_pose(point, dot, 4, cam, cMo, init_pose_from_linear_method);
+      if (init_pose_from_linear_method) {
+        init_pose_from_linear_method = false;
+      }
       for (i = 0; i < 4; i++) {
         // Update the point feature from the dot location
         vpFeatureBuilder::create(p[i], cam, dot[i]);

@@ -64,7 +64,8 @@ int main(int argc, char **argv)
     //! [Create image without distorsion]
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+    return EXIT_FAILURE;
   }
 
-  return 0;
+  return EXIT_SUCCESS;
 }

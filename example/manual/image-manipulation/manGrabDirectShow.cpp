@@ -64,7 +64,7 @@ int main()
     if (g.getDeviceNumber() == 0) // test if a camera is connected
     {
       g.close();
-      return -1;
+      return EXIT_FAILURE;
     }
 
     g.open(); // Initialize the grabber

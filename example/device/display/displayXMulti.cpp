@@ -225,7 +225,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_opath, opt_click_allowed, username, opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -247,7 +247,7 @@ int main(int argc, const char **argv)
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << odirname << std::endl;
         std::cerr << "  Check your -o " << opath << " option " << std::endl;
-        exit(-1);
+        return EXIT_FAILURE;
       }
     }
 
@@ -270,7 +270,7 @@ int main(int argc, const char **argv)
                 << "  environment variable to specify the location of the " << std::endl
                 << "  image path where test images are located." << std::endl
                 << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Create two color images
@@ -286,7 +286,7 @@ int main(int argc, const char **argv)
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
                 << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
     try {
       // Load a color image from the disk
@@ -297,7 +297,7 @@ int main(int argc, const char **argv)
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
                 << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // For each image, open a X11 display

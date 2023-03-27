@@ -194,7 +194,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_opath, username, nbIterations) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -216,7 +216,7 @@ int main(int argc, const char **argv)
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
         std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
-        exit(-1);
+        return EXIT_FAILURE;
       }
     }
 
@@ -239,7 +239,7 @@ int main(int argc, const char **argv)
                 << "  environment variable to specify the location of the " << std::endl
                 << "  image path where test images are located." << std::endl
                 << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     //
@@ -299,7 +299,7 @@ int main(int argc, const char **argv)
     std::cout << "   Reading the color image with opencv: " << filename << std::endl;
     if ((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_COLOR)) == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
-      return (-1);
+      return EXIT_FAILURE;
     }
     vpImageConvert::convert(image, Ic);
     filename = vpIoTools::createFilePath(opath, "Klimt_color_cv.ppm");
@@ -316,7 +316,7 @@ int main(int argc, const char **argv)
       cvReleaseImage(&image);
     if ((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE)) == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
-      return (-1);
+      return EXIT_FAILURE;
     }
     vpImageConvert::convert(image, Ic);
     filename = vpIoTools::createFilePath(opath, "Klimt_grey_cv.ppm");
@@ -338,7 +338,7 @@ int main(int argc, const char **argv)
       cvReleaseImage(&image);
     if ((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_COLOR)) == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
-      return (-1);
+      return EXIT_FAILURE;
     }
     vpImageConvert::convert(image, Ig);
     filename = vpIoTools::createFilePath(opath, "Klimt_color_cv.pgm");
@@ -356,7 +356,7 @@ int main(int argc, const char **argv)
       cvReleaseImage(&image);
     if ((image = cvLoadImage(filename.c_str(), CV_LOAD_IMAGE_GRAYSCALE)) == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
-      return (-1);
+      return EXIT_FAILURE;
     }
     vpImageConvert::convert(image, Ig);
     filename = vpIoTools::createFilePath(opath, "Klimt_grey_cv.pgm");
@@ -384,7 +384,7 @@ int main(int argc, const char **argv)
       std::cout << "   Cannot write image: " << filename << std::endl;
       if (image != NULL)
         cvReleaseImage(&image);
-      return (-1);
+      return EXIT_FAILURE;
     }
     std::cout << "   Convert result in " << filename << std::endl;
 
@@ -408,7 +408,7 @@ int main(int argc, const char **argv)
       std::cout << "   Cannot write image: " << std::endl << filename << std::endl;
       if (image != NULL)
         cvReleaseImage(&image);
-      return (-1);
+      return EXIT_FAILURE;
     }
     std::cout << "   Convert result in " << filename << std::endl;
 
@@ -439,7 +439,7 @@ int main(int argc, const char **argv)
     imageMat = cv::imread(filename, flags); // Force to a three channel BGR color image.
     if (imageMat.data == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
     vpImageConvert::convert(imageMat, Ic);
     filename = vpIoTools::createFilePath(opath, "Klimt_color_cvMat.ppm");
@@ -458,7 +458,7 @@ int main(int argc, const char **argv)
     imageMat = cv::imread(filename, flags); // Forced to grayscale.
     if (imageMat.data == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
-      return (-1);
+      return EXIT_FAILURE;
     }
     vpImageConvert::convert(imageMat, Ic);
     filename = vpIoTools::createFilePath(opath, "Klimt_grey_cvMat.ppm");
@@ -482,7 +482,7 @@ int main(int argc, const char **argv)
     imageMat = cv::imread(filename, flags); // Force to a three channel BGR color image.
     if (imageMat.data == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
     vpImageConvert::convert(imageMat, Ig);
     filename = vpIoTools::createFilePath(opath, "Klimt_color_cvMat.pgm");
@@ -502,7 +502,7 @@ int main(int argc, const char **argv)
     imageMat = cv::imread(filename, flags);
     if (imageMat.data == NULL) {
       std::cout << "   Cannot read image: " << filename << std::endl;
-      return (-1);
+      return EXIT_FAILURE;
     }
     vpImageConvert::convert(imageMat, Ig);
     filename = vpIoTools::createFilePath(opath, "Klimt_grey_cvMat.pgm");
@@ -528,7 +528,7 @@ int main(int argc, const char **argv)
     std::cout << "   Resulting image saved in: " << filename << std::endl;
     if (!cv::imwrite(filename, imageMat)) {
       std::cout << "   Cannot write image: " << filename << std::endl;
-      return (-1);
+      return EXIT_FAILURE;
     }
     std::cout << "   Convert result in " << filename << std::endl;
 
@@ -550,7 +550,7 @@ int main(int argc, const char **argv)
     std::cout << "   Resulting image saved in: " << filename << std::endl;
     if (!cv::imwrite(filename, imageMat)) {
       std::cout << "   Cannot write image: " << filename << std::endl;
-      return (-1);
+      return EXIT_FAILURE;
     }
     std::cout << "   Convert result in " << filename << std::endl;
     chrono.stop();

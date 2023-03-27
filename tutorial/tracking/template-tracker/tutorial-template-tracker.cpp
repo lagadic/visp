@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "\nUsage: " << argv[0] << " [--videoname <video name>] [--subsample <scale factor>] [--help] [-h]\n"
                 << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 

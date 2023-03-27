@@ -101,17 +101,17 @@ int main()
               << "\tt: " << t.t() << std::endl
               << "\trzyz (deg): " << vpMath::deg(rzyz[0]) << " " << vpMath::deg(rzyz[1]) << " " << vpMath::deg(rzyz[2])
               << std::endl;
-
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
+    return EXIT_FAILURE;
   }
-  return 0;
 }
 #else
 int main()
 {
   std::cout << "The real Viper850 robot controller is not available." << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #endif

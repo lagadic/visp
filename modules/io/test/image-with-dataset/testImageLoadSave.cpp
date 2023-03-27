@@ -35,7 +35,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#ifdef VISP_HAVE_CATCH2
+#if defined(VISP_HAVE_CATCH2) && (VISP_HAVE_DATASET_VERSION >= 0x030500)
 #define CATCH_CONFIG_ENABLE_BENCHMARKING
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
@@ -46,6 +46,7 @@
 
 static const std::string ipath = vpIoTools::getViSPImagesDataPath();
 static const std::string path = ipath + "/Solvay/Solvay_conference_1927_Version2_640x440";
+
 static const double ccThreshPNG = 1.0;
 static const double ccThreshJPG = 0.99;
 
@@ -55,9 +56,9 @@ static const std::vector<vpImageIo::vpImageIoBackendType> backends
   vpImageIo::IO_SYSTEM_LIB_BACKEND,
 #endif
 #if defined(VISP_HAVE_OPENCV)
-  vpImageIo::IO_OPENCV_BACKEND,
+      vpImageIo::IO_OPENCV_BACKEND,
 #endif
-  vpImageIo::IO_SIMDLIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND
+      vpImageIo::IO_SIMDLIB_BACKEND, vpImageIo::IO_STB_IMAGE_BACKEND
 };
 static const std::vector<std::string> backendNamesJpeg
 {
@@ -65,9 +66,9 @@ static const std::vector<std::string> backendNamesJpeg
   "libjpeg",
 #endif
 #if defined(VISP_HAVE_OPENCV)
-  "OpenCV",
+      "OpenCV",
 #endif
-  "simd", "stb"
+      "simd", "stb"
 };
 static std::vector<std::string> backendNamesPng
 {
@@ -75,9 +76,9 @@ static std::vector<std::string> backendNamesPng
   "libpng",
 #endif
 #if defined(VISP_HAVE_OPENCV)
-  "OpenCV",
+      "OpenCV",
 #endif
-  "simd", "stb"
+      "simd", "stb"
 };
 
 static const unsigned int imgWidth = 640;
@@ -85,7 +86,7 @@ static const unsigned int imgHeight = 440;
 
 namespace
 {
-double computePearsonCC(const vpImage<unsigned char>& I1, const vpImage<unsigned char>& I2)
+double computePearsonCC(const vpImage<unsigned char> &I1, const vpImage<unsigned char> &I2)
 {
   double m1 = I1.getSum() / I1.getSize();
   double m2 = I2.getSum() / I2.getSize();
@@ -104,10 +105,10 @@ double computePearsonCC(const vpImage<unsigned char>& I1, const vpImage<unsigned
   return num / (std::sqrt(den1) * std::sqrt(den2));
 }
 
-double computePearsonCC(const vpImage<vpRGBa>& I1, const vpImage<vpRGBa>& I2)
+double computePearsonCC(const vpImage<vpRGBa> &I1, const vpImage<vpRGBa> &I2)
 {
-  double m1 = I1.getSum() / (3*I1.getSize());
-  double m2 = I2.getSum() / (3*I2.getSize());
+  double m1 = I1.getSum() / (3 * I1.getSize());
+  double m2 = I2.getSum() / (3 * I2.getSize());
 
   double num = 0, den1 = 0, den2 = 0;
   for (unsigned int i = 0; i < I1.getSize(); i++) {
@@ -122,7 +123,7 @@ double computePearsonCC(const vpImage<vpRGBa>& I1, const vpImage<vpRGBa>& I2)
 
   return num / (std::sqrt(den1) * std::sqrt(den2));
 }
-}
+} // namespace
 
 TEST_CASE("Test grayscale JPEG image loading", "[image_I/O]")
 {
@@ -325,5 +326,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

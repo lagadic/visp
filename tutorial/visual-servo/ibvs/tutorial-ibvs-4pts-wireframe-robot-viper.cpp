@@ -105,7 +105,7 @@ int main()
     robot.set_fMo(wMo);
     bool ret = robot.initialiseCameraRelativeToObject(cMo);
     if (ret == false)
-      return 0; // Not able to set the position
+      return EXIT_FAILURE; // Not able to set the position
     robot.setDesiredCameraPosition(cdMo);
     // We modify the default external camera position
     robot.setExternalCameraPosition(

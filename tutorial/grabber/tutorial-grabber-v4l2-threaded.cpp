@@ -129,7 +129,7 @@ int main(int argc, const char *argv[])
       std::cout << "Usage: " << argv[0]
                 << " [--camera_device <camera device (default: 0)>] [--scale <subsampling factor>]"
                 << " [--help] [-h]" << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
   }
 
@@ -148,7 +148,7 @@ int main(int argc, const char *argv[])
   thread_capture.join();
   thread_display.join();
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 //! [capture-multi-threaded mainFunction]
 

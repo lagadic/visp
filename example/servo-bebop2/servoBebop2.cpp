@@ -120,7 +120,7 @@ int main(int argc, char **argv)
       tagSize = std::atof(argv[2]); // Tag size option is required
       if (tagSize <= 0) {
         std::cout << "Error : invalid tag size." << std::endl << "See " << argv[0] << " --help" << std::endl;
-        return 0;
+        return EXIT_FAILURE;
       }
       for (int i = 3; i < argc; i++) {
         if (std::string(argv[i]) == "--ip" && i + 1 < argc) {
@@ -130,7 +130,7 @@ int main(int argc, char **argv)
           opt_distance_to_tag = std::atof(argv[i + 1]);
           if (opt_distance_to_tag <= 0) {
             std::cout << "Error : invalid distance to tag." << std::endl << "See " << argv[0] << " --help" << std::endl;
-            return 0;
+            return EXIT_FAILURE;
           }
           opt_has_distance_to_tag = true;
           i++;
@@ -146,7 +146,7 @@ int main(int argc, char **argv)
         } else {
           std::cout << "Error : unknown parameter " << argv[i] << std::endl
                     << "See " << argv[0] << " --help" << std::endl;
-          return 0;
+          return EXIT_FAILURE;
         }
       }
     } else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
@@ -177,11 +177,10 @@ int main(int argc, char **argv)
                 << "  --help, -h\n"
                 << "      Print help message.\n"
                 << std::endl;
-      return 0;
-
+      return EXIT_SUCCESS;
     } else {
       std::cout << "Error : tag size parameter required." << std::endl << "See " << argv[0] << " --help" << std::endl;
-      return 0;
+      return EXIT_FAILURE;
     }
 
     std::cout

@@ -111,19 +111,12 @@
   \param cMo : Homogeneous matrix in output describing the transformation
   between the camera and object frame.
 
-  \param cto : Translation in ouput extracted from \e cMo.
-
-  \param cro : Rotation in ouput extracted from \e cMo.
-
   \param init : Indicates if the we have to estimate an initial pose with
   Lagrange or Dementhon methods.
 
 */
-void compute_pose(vpPoint point[], vpDot2 dot[], int ndot, vpCameraParameters cam, vpHomogeneousMatrix &cMo,
-                  vpTranslationVector &cto, vpRxyzVector &cro, bool init)
+void compute_pose(vpPoint point[], vpDot2 dot[], int ndot, vpCameraParameters cam, vpHomogeneousMatrix &cMo, bool init)
 {
-  vpHomogeneousMatrix cMo_dementhon; // computed pose with dementhon
-  vpHomogeneousMatrix cMo_lagrange;  // computed pose with dementhon
   vpRotationMatrix cRo;
   vpPose pose;
   vpImagePoint cog;
@@ -143,73 +136,10 @@ void compute_pose(vpPoint point[], vpDot2 dot[], int ndot, vpCameraParameters ca
   }
 
   if (init == true) {
-    pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
-    // compute the pose for a given method
-    //     cMo_dementhon.extract(cto);
-    //     cMo_dementhon.extract(cRo);
-    //     cro.buildFrom(cRo);
-    // Compute and return the residual expressed in meter for the pose matrix
-    // 'cMo'
-    double residual_dementhon = pose.computeResidual(cMo_dementhon);
-
-    //     std::cout << "\nPose Dementhon "
-    // 	      << "(residual: " << residual_dementhon << ")\n "
-    // 	      << "cdto[0] = " << cto[0] << ";\n "
-    // 	      << "cdto[1] = " << cto[1] << ";\n "
-    // 	      << "cdto[2] = " << cto[2] << ";\n "
-    // 	      << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-    // 	      << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-    // 	      << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-    // 	      << std::endl;
-
-    pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
-    //     cMo_lagrange.extract(cto);
-    //     cMo_lagrange.extract(cRo);
-    //     cro.buildFrom(cRo);
-    double residual_lagrange = pose.computeResidual(cMo_lagrange);
-
-    //     std::cout << "\nPose Lagrange "
-    // 	      << "(residual: " << residual_lagrange << ")\n "
-    // 	      << "cdto[0] = " << cto[0] << ";\n "
-    // 	      << "cdto[1] = " << cto[1] << ";\n "
-    // 	      << "cdto[2] = " << cto[2] << ";\n "
-    // 	      << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-    // 	      << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-    // 	      << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-    // 	      << std::endl;
-
-    //   cout << "Lagrange residual term: " << residual_lagrange <<endl ;
-
-    // Select the best pose to initialize the lowe pose computation
-    if (residual_lagrange < residual_dementhon) // on garde le cMo
-      cMo = cMo_lagrange;
-    else
-      cMo = cMo_dementhon;
-
-    //   cout
-    //   <<"------------------------------------------------------------"<<endl
-  } else { // init = false; use of the previous pose to initialise LOWE
-    cRo.buildFrom(cro);
-    cMo.buildFrom(cto, cRo);
+    pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
+  } else { // init = false; use of the previous pose to initialise VIRTUAL_VS
+    pose.computePose(vpPose::VIRTUAL_VS, cMo);
   }
-  pose.computePose(vpPose::LOWE, cMo);
-  cMo.extract(cto);
-  cMo.extract(cRo);
-  cro.buildFrom(cRo);
-  //   double residual_lowe = pose.computeResidual(cMo);
-
-  //   std::cout << "\nPose LOWE "
-  // 	    << "(residual: " << residual_lowe << ")\n "
-  // 	    << "cdto[0] = " << cto[0] << ";\n "
-  // 	    << "cdto[1] = " << cto[1] << ";\n "
-  // 	    << "cdto[2] = " << cto[2] << ";\n "
-  // 	    << "cdro[0] = vpMath::rad(" << vpMath::deg(cro[0]) << ");\n "
-  // 	    << "cdro[1] = vpMath::rad(" << vpMath::deg(cro[1]) << ");\n "
-  // 	    << "cdro[2] = vpMath::rad(" << vpMath::deg(cro[2]) << ");\n"
-  // 	    << std::endl;
-
-  //   vpTRACE( "LOWE pose :" ) ;
-  //   std::cout <<  cMo << std::endl ;
 }
 
 int main()
@@ -238,7 +168,7 @@ int main()
     } catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
   }
   std::string logfilename;
@@ -358,12 +288,9 @@ int main()
     // Initialise the velocity control of the robot
     robot.setRobotState(vpRobot::STATE_VELOCITY_CONTROL);
 
-    // Initialise the pose using Lagrange and Dementhon methods, chose the
-    // best estimated pose (either Lagrange or Dementhon) and than compute the
-    // pose using LOWE method with Lagrange or Dementhon pose as
-    // initialisation. compute_pose(point, dot, 4, cam, cMo, cto, cro, true);
-
     std::cout << "\nHit CTRL-C to stop the loop...\n" << std::flush;
+
+    bool init_pose_from_linear_method = true;
 
     for (;;) {
       // Acquire a new image from the camera
@@ -383,10 +310,12 @@ int main()
         vpDisplay::displayCross(I, cog, 10, vpColor::green);
       }
 
-      // During the servo, we compute the pose using LOWE method. For the
-      // initial pose used in the non linear minimisation we use the pose
-      // computed at the previous iteration.
-      compute_pose(point, dot, 4, cam, cMo, cto, cro, false);
+      // At first iteration, we initialise non linear pose estimation with a linear approach.
+      // For the other iterations, non linear pose estimation is initialized with the pose estimated at previous iteration of the loop
+      compute_pose(point, dot, 4, cam, cMo, init_pose_from_linear_method);
+      if (init_pose_from_linear_method) {
+        init_pose_from_linear_method = false;
+      }
 
       for (i = 0; i < 4; i++) {
         // Update the point feature from the dot location

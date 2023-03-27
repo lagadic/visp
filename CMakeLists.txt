@@ -1060,6 +1060,11 @@ if(USE_FRANKA)
   set(VISP_HAVE_FRANKA_VERSION "(${Franka_VERSION_MAJOR}<<16 | ${Franka_VERSION_MINOR}<<8 | ${Franka_VERSION_PATCH})") # for vpConfig.h
 endif()
 
+# check MAVSDK and set version
+if(USE_MAVSDK)
+  set(VISP_HAVE_MAVSDK_VERSION "(${MAVSDK_VERSION_MAJOR}<<16 | ${MAVSDK_VERSION_MINOR}<<8 | ${MAVSDK_VERSION_PATCH})") # for vpConfig.h
+endif()
+
 # NaN
 # Find isnan macro (C-style): https://www.cplusplus.com/reference/cmath/isnan/
 VP_SET(VISP_HAVE_FUNC_ISNAN TRUE IF HAVE_FUNC_ISNAN) # for header vpConfig.h
@@ -1108,6 +1113,11 @@ VP_SET(VISP_MOMENTS_COMBINE_MATRICES TRUE IF ENABLE_MOMENTS_COMBINE_MATRICES) # 
 VP_SET(VISP_USE_MSVC TRUE IF MSVC) # for header vpConfig.h
 
 VP_SET(VISP_HAVE_BICLOPS_AND_GET_HOMED_STATE_FUNCTION TRUE IF (USE_BICLOPS AND BICLOPS_HAVE_GET_HOMED_STATE_FUNCTION)) # for header vpConfig.h
+
+if(VISP_DATASET_FOUND)
+  VP_SET(VISP_HAVE_DATASET TRUE)
+  set(VISP_HAVE_DATASET_VERSION "(${VISP_DATASET_VERSION_MAJOR}<<16 | ${VISP_DATASET_VERSION_MINOR}<<8 | ${VISP_DATASET_VERSION_PATCH})") # for vpConfig.h
+endif()
 
 # libraries for Pioneer mobile robots
 if(USE_ARIA AND UNIX)
@@ -1158,7 +1168,6 @@ endif()
 # Dashboards are sent to http://cdash.irisa.fr/CDash/index.php?project=ViSP
 #----------------------------------------------------------------------
 if(BUILD_TESTS)
-  vp_find_dataset(VISP_DATASET_FOUND VISP_DATASET_LOCATION)
   include(CTest)
 endif()
 
@@ -1554,7 +1563,7 @@ status("    Use aria (Pioneer):"     USE_ARIA         THEN "yes" ELSE "no")
 status("    Use PTU46:"              USE_PTU46        THEN "yes" ELSE "no")
 status("    Use Biclops PTU:"        USE_BICLOPS      THEN "yes" ELSE "no")
 status("    Use Flir PTU SDK:"       USE_FLIRPTUSDK   THEN "yes (ver ${FLIRPTUSDK_VERSION})" ELSE "no")
-status("    Use MAVSDK:"             USE_MAVSDK       THEN "yes" ELSE "no")
+status("    Use MAVSDK:"             USE_MAVSDK       THEN "yes (ver ${MAVSDK_VERSION})" ELSE "no")
 status("    Use Parrot ARSDK:"       USE_ARSDK        THEN "yes" ELSE "no")
 status("    \\-Use ffmpeg:"          USE_FFMPEG       THEN "yes" ELSE "no")
 status("    Use Virtuose:"           USE_VIRTUOSE     THEN "yes" ELSE "no")
@@ -1633,7 +1642,7 @@ status("    Tests:"                  BUILD_TESTS        THEN "yes" ELSE "no")
 status("    Demos:"                  BUILD_DEMOS        THEN "yes" ELSE "no")
 status("    Examples:"               BUILD_EXAMPLES     THEN "yes" ELSE "no")
 status("    Tutorials:"              BUILD_TUTORIALS    THEN "yes" ELSE "no")
-status("    Dataset found:"          VISP_DATASET_FOUND THEN "yes (in ${VISP_DATASET_LOCATION})" ELSE "no")
+status("    Dataset found:"          VISP_DATASET_FOUND THEN "yes (ver ${VISP_DATASET_VERSION} in ${VISP_DATASET_LOCATION})" ELSE "no")
 if(APPS_FOUND)
   status("    Apps:"              BUILD_APPS  THEN "yes" ELSE "no")
 endif()

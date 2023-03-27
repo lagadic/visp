@@ -17,20 +17,34 @@ int main(int argc, char **argv)
     std::string opt_videoname = "model/teabox/teabox.mp4";
     std::string opt_modelname = "model/teabox/teabox.cao";
     int opt_tracker = 0;
+    int opt_video_first_frame = -1;
+    int opt_downscale_img = 1;
 
     for (int i = 0; i < argc; i++) {
-      if (std::string(argv[i]) == "--video")
+      if (std::string(argv[i]) == "--video") {
         opt_videoname = std::string(argv[i + 1]);
-      else if (std::string(argv[i]) == "--model")
+        i++;
+      } else if (std::string(argv[i]) == "--video-first-frame") {
+        opt_video_first_frame = std::atoi(argv[i + 1]);
+        i++;
+      } else if (std::string(argv[i]) == "--model") {
         opt_modelname = std::string(argv[i + 1]);
-      else if (std::string(argv[i]) == "--tracker")
+        i++;
+      } else if (std::string(argv[i]) == "--tracker") {
         opt_tracker = atoi(argv[i + 1]);
-      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
-        std::cout << "\nUsage: " << argv[0]
-                  << " [--video <video name>] [--model <model name>] "
-                     "[--tracker <0=egde|1=keypoint|2=hybrid>] [--help] [-h]\n"
+        i++;
+      } else if (std::string(argv[i]) == "--downscale-img") {
+        opt_downscale_img = std::atoi(argv[i + 1]);
+        i++;
+      } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+        std::cout << "\nUsage: " << argv[0] << " [--video <video name> (default: model/teabox/teabox.mp4)]"
+                  << " [--video-first-frame <image index> (default: -1)]"
+                  << " [--model <model name> (default: model/teabox/teabox.cao)]"
+                  << " [--tracker <0=egde|1=keypoint|2=hybrid> (default: 0)]"
+                  << " [--downscale-img <scale factor> (default: 1)]"
+                  << " [--help] [-h]\n"
                   << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       }
     }
     std::string parentname = vpIoTools::getParent(opt_modelname);
@@ -44,10 +58,12 @@ int main(int argc, char **argv)
               << "xml,"
               << "cao or wrl]" << std::endl;
     std::cout << "Tracker optional config files: " << objectname << ".[ppm]" << std::endl;
+    if (opt_downscale_img > 1) {
+      std::cout << "Downscale image factor: " << opt_downscale_img << std::endl;
+    }
 
     //! [Image]
-    vpImage<unsigned char> I;
-    vpCameraParameters cam;
+    vpImage<unsigned char> Ivideo, I;
     //! [Image]
     //! [cMo]
     vpHomogeneousMatrix cMo;
@@ -55,7 +71,20 @@ int main(int argc, char **argv)
 
     vpVideoReader g;
     g.setFileName(opt_videoname);
-    g.open(I);
+    if (opt_video_first_frame > 0) {
+      g.setFirstFrameIndex(static_cast<unsigned int>(opt_video_first_frame));
+    }
+    if (opt_downscale_img > 1) {
+      g.open(Ivideo);
+      Ivideo.subsample(opt_downscale_img, opt_downscale_img, I);
+    } else {
+      g.open(I);
+    }
+
+    std::cout << "DEBUG: frame name: " << g.getFrameName() << std::endl;
+    std::cout << "DEBUG: frame first: " << g.getFirstFrameIndex() << std::endl;
+    std::cout << "DEBUG: frame last: " << g.getLastFrameIndex() << std::endl;
+    std::cout << "DEBUG: frame index: " << g.getFrameIndex() << std::endl;
 
     vpDisplay *display = NULL;
 #if defined(VISP_HAVE_X11)
@@ -65,6 +94,7 @@ int main(int argc, char **argv)
 #else
     display = new vpDisplayOpenCV;
 #endif
+    display->setDownScalingFactor(vpDisplay::SCALE_AUTO);
     display->init(I, 100, 100, "Model-based tracker");
 
     //! [Constructor]
@@ -81,7 +111,7 @@ int main(int argc, char **argv)
       std::cout << "klt and hybrid model-based tracker are not available since visp_klt module is not available. "
                    "In CMakeGUI turn visp_klt module ON, configure and build ViSP again."
                 << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
     }
 #endif
     //! [Constructor]
@@ -127,11 +157,6 @@ int main(int argc, char **argv)
       }
 #endif
 
-      //! [Set camera parameters]
-      cam.initPersProjWithoutDistortion(839.21470, 839.44555, 325.66776, 243.69727);
-      tracker.setCameraParameters(cam);
-      //! [Set camera parameters]
-
       //! [Set angles]
       tracker.setAngleAppear(vpMath::rad(70));
       tracker.setAngleDisappear(vpMath::rad(80));
@@ -143,6 +168,12 @@ int main(int argc, char **argv)
       //! [Set clipping fov]
       tracker.setClipping(tracker.getClipping() | vpMbtPolygon::FOV_CLIPPING);
       //! [Set clipping fov]
+
+      //! [Set camera parameters]
+      vpCameraParameters cam;
+      cam.initPersProjWithoutDistortion(839.21470, 839.44555, 325.66776, 243.69727);
+      tracker.setCameraParameters(cam);
+      //! [Set camera parameters]
       //! [Set parameters]
     }
 
@@ -167,12 +198,32 @@ int main(int argc, char **argv)
     //! [Set display]
     tracker.setDisplayFeatures(true);
     //! [Set display]
+
+    tracker.setGoodMovingEdgesRatioThreshold(0.2);
+
+    //! [Get camera parameters]
+    vpCameraParameters cam;
+    tracker.getCameraParameters(cam);
+    std::cout << "Camera parameters: \n" << cam << std::endl;
+    //! [Get camera parameters]
+
+    std::cout << "Initialize tracker on image size: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+
     //! [Init]
     tracker.initClick(I, objectname + ".init", true);
     //! [Init]
 
     while (!g.end()) {
-      g.acquire(I);
+      if (opt_downscale_img > 1) {
+        g.acquire(Ivideo);
+        Ivideo.subsample(opt_downscale_img, opt_downscale_img, I);
+      } else {
+        g.acquire(I);
+      }
+
+      std::cout << "DEBUG: frame name: " << g.getFrameName() << std::endl;
+      std::cout << "DEBUG: frame index: " << g.getFrameIndex() << std::endl;
+
       vpDisplay::display(I);
       //! [Track]
       tracker.track(I);
@@ -181,7 +232,6 @@ int main(int argc, char **argv)
       tracker.getPose(cMo);
       //! [Get pose]
       //! [Display]
-      tracker.getCameraParameters(cam);
       tracker.display(I, cMo, cam, vpColor::red, 2);
       //! [Display]
       vpDisplay::displayFrame(I, cMo, cam, 0.025, vpColor::none, 3);
@@ -202,10 +252,12 @@ int main(int argc, char **argv)
     //! [Cleanup]
   } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
+    return EXIT_FAILURE;
   }
 #ifdef VISP_HAVE_OGRE
   catch (Ogre::Exception &e) {
     std::cout << "Catch an Ogre exception: " << e.getDescription() << std::endl;
+    return EXIT_FAILURE;
   }
 #endif
 #else
@@ -213,4 +265,5 @@ int main(int argc, char **argv)
   (void)argv;
   std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
+  return EXIT_SUCCESS;
 }

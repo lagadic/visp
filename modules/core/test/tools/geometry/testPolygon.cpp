@@ -159,7 +159,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_display, opt_click, method) == false) {
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     std::vector<vpImagePoint> vec1;
@@ -315,9 +315,9 @@ int main(int argc, const char **argv)
       }
     }
 
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

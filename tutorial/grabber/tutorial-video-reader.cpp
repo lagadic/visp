@@ -26,7 +26,7 @@ int main(int argc, char **argv)
         std::cout << "\nUsage: " << argv[0] << " [--name <video name> (default: " << videoname << ")]"
                   << " [--help] [-h]\n"
                   << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       }
     }
 
@@ -86,4 +86,5 @@ int main(int argc, char **argv)
   (void)argv;
   std::cout << "Install OpenCV and rebuild ViSP to use this example." << std::endl;
 #endif
+  return EXIT_SUCCESS;
 }

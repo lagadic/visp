@@ -259,8 +259,7 @@ static double S_relative(point P, point Q, double Xmin, double Ymin, double Xmax
           vpMath::maximum(std::fabs(Q.x), std::fabs(Xmax)) * std::numeric_limits<double>::epsilon())
     return (1 - (Xmax - P.x) * (Ymax - Q.y));
 
-  printf("utils_ecm: ERREUR dans S_relative (%f,%f) (%f,%f) %f %f %f %f\n", P.x, P.y, Q.x, Q.y, Xmin, Ymin, Xmax, Ymax);
-  exit(-1); // DEBUG Stoppe net l'execution
+  throw(vpException(vpException::fatalError, "utils_ecm: error in S_relative (%f,%f) (%f,%f) %f %f %f %f", P.x, P.y, Q.x, Q.y, Xmin, Ymin, Xmax, Ymax));
 }
 
 static void calcul_masques(vpColVector &angle, // definitions des angles theta

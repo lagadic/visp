@@ -41,7 +41,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_CATCH2)
+#if defined(VISP_HAVE_CATCH2) && (VISP_HAVE_DATASET_VERSION >= 0x030300)
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
@@ -726,5 +726,5 @@ int main(int argc, char *argv[])
   return numFailed;
 }
 #else
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

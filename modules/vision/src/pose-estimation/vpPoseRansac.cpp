@@ -156,7 +156,6 @@ bool vpPose::RansacFunctor::poseRansacImpl()
     // degenerate point if the flag is set
     std::vector<vpPoint> cur_inliers;
 
-    vpHomogeneousMatrix cMo_lagrange, cMo_dementhon;
     // Use a temporary variable because if not, the cMo passed in parameters
     // will be modified when
     // we compute the pose for the minimal sample sets but if the pose is not
@@ -206,51 +205,23 @@ bool vpPose::RansacFunctor::poseRansacImpl()
       continue;
     }
 
-    // Flags set if pose computation is OK
-    bool is_valid_lagrange = false;
-    bool is_valid_dementhon = false;
-
-    // Set maximum value for residuals
-    double r_lagrange = DBL_MAX;
-    double r_dementhon = DBL_MAX;
+    bool is_pose_valid = false;
+    double r_min = DBL_MAX;
 
     try {
-      poseMin.computePose(vpPose::LAGRANGE, cMo_lagrange);
-      r_lagrange = poseMin.computeResidual(cMo_lagrange);
-      is_valid_lagrange = true;
-    } catch (...) {
-    }
-
-    try {
-      poseMin.computePose(vpPose::DEMENTHON, cMo_dementhon);
-      r_dementhon = poseMin.computeResidual(cMo_dementhon);
-      is_valid_dementhon = true;
+      is_pose_valid = poseMin.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo_tmp);
+      r_min = poseMin.computeResidual(cMo_tmp);
     } catch (...) {
     }
 
     // If residual returned is not a number (NAN), set valid to false
-    if (vpMath::isNaN(r_lagrange)) {
-      is_valid_lagrange = false;
-      r_lagrange = DBL_MAX;
+    if (vpMath::isNaN(r_min)) {
+      is_pose_valid = false;
     }
 
-    if (vpMath::isNaN(r_dementhon)) {
-      is_valid_dementhon = false;
-      r_dementhon = DBL_MAX;
-    }
-
-    // If at least one pose computation is OK,
-    // we can continue, otherwise pick another random set
-    if (is_valid_lagrange || is_valid_dementhon) {
-      double r;
-      if (r_lagrange < r_dementhon) {
-        r = r_lagrange;
-        cMo_tmp = cMo_lagrange;
-      } else {
-        r = r_dementhon;
-        cMo_tmp = cMo_dementhon;
-      }
-      r = sqrt(r) / (double)nbMinRandom; // FS should be r = sqrt(r / (double)nbMinRandom);
+    // If at pose computation is OK we can continue, otherwise pick another random set
+    if (is_pose_valid) {
+      double r = sqrt(r_min) / (double)nbMinRandom; // FS should be r = sqrt(r_min / (double)nbMinRandom);
       // Filter the pose using some criterion (orientation angles,
       // translations, etc.)
       bool isPoseValid = true;
@@ -516,59 +487,18 @@ bool vpPose::poseRansac(vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneo
         ransacInlierIndex.push_back((unsigned int)mapOfUniquePointIndex[*it_index]);
       }
 
-      // Flags set if pose computation is OK
-      bool is_valid_lagrange = false;
-      bool is_valid_dementhon = false;
+      pose.setCovarianceComputation(computeCovariance);
+      pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
 
-      // Set maximum value for residuals
-      double r_lagrange = DBL_MAX;
-      double r_dementhon = DBL_MAX;
-
-      try {
-        pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
-        r_lagrange = pose.computeResidual(cMo_lagrange);
-        is_valid_lagrange = true;
-      } catch (...) {
+      // In some rare cases, the final pose could not respect the pose
+      // criterion even  if the 4 minimal points picked respect the pose
+      // criterion.
+      if (func != NULL && !func(cMo)) {
+        return false;
       }
 
-      try {
-        pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
-        r_dementhon = pose.computeResidual(cMo_dementhon);
-        is_valid_dementhon = true;
-      } catch (...) {
-      }
-
-      // If residual returned is not a number (NAN), set valid to false
-      if (vpMath::isNaN(r_lagrange)) {
-        is_valid_lagrange = false;
-        r_lagrange = DBL_MAX;
-      }
-
-      if (vpMath::isNaN(r_dementhon)) {
-        is_valid_dementhon = false;
-        r_dementhon = DBL_MAX;
-      }
-
-      if (is_valid_lagrange || is_valid_dementhon) {
-        if (r_lagrange < r_dementhon) {
-          cMo = cMo_lagrange;
-        } else {
-          cMo = cMo_dementhon;
-        }
-
-        pose.setCovarianceComputation(computeCovariance);
-        pose.computePose(vpPose::VIRTUAL_VS, cMo);
-
-        // In some rare cases, the final pose could not respect the pose
-        // criterion even  if the 4 minimal points picked respect the pose
-        // criterion.
-        if (func != NULL && !func(cMo)) {
-          return false;
-        }
-
-        if (computeCovariance) {
-          covarianceMatrix = pose.covarianceMatrix;
-        }
+      if (computeCovariance) {
+        covarianceMatrix = pose.covarianceMatrix;
       }
     } else {
       return false;

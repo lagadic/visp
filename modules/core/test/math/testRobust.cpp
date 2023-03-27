@@ -170,7 +170,7 @@ int main(int argc, const char **argv)
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << ofilename << std::endl;
         std::cerr << "  Check your -o " << ofilename << " option " << std::endl;
-        exit(-1);
+        return EXIT_FAILURE;
       }
     }
 
@@ -179,7 +179,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, ofilename) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     double sig = 1;
@@ -193,7 +193,7 @@ int main(int argc, const char **argv)
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create the file: " << ofilename << std::endl;
       std::cerr << "  Check your -o " << ofilename << " option " << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
     double x = -10;
     while (x < 10) {
@@ -205,9 +205,9 @@ int main(int argc, const char **argv)
       f << x << "  " << w << std::endl;
       x += 0.01;
     }
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

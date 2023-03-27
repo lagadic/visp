@@ -16,12 +16,12 @@
 
 // Comment / uncomment following lines to use the specific 3rd party compatible with your camera
 //! [Undef grabber]
-//#undef VISP_HAVE_V4L2
-//#undef VISP_HAVE_DC1394
-//#undef VISP_HAVE_CMU1394
-//#undef VISP_HAVE_FLYCAPTURE
-//#undef VISP_HAVE_REALSENSE2
-//#undef VISP_HAVE_OPENCV
+// #undef VISP_HAVE_V4L2
+// #undef VISP_HAVE_DC1394
+// #undef VISP_HAVE_CMU1394
+// #undef VISP_HAVE_FLYCAPTURE
+// #undef VISP_HAVE_REALSENSE2
+// #undef VISP_HAVE_OPENCV
 //! [Undef grabber]
 
 int main(int argc, char **argv)
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
                   << "\nExample fully tuned for a 0.1m x 0.1m square:\n"
                   << "  " << argv[0] << " --intrinsic camera.xml --camera_name Camera --square_width 0.1\n"
                   << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       }
     }
 
@@ -114,7 +114,7 @@ int main(int argc, char **argv)
     cv::VideoCapture g(opt_device); // Open the default camera
     if (!g.isOpened()) {            // Check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
     cv::Mat frame;
     g >> frame; // get a new frame from camera

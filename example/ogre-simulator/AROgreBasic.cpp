@@ -90,20 +90,24 @@
 */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   fprintf(stdout, "\n\
 Test augmented reality using the vpAROgre class.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-p <personal image path>]\n\
-     [-c] [-h]\n",
-          name);
+     [-c] [-h]\n", name);
 
   fprintf(stdout, "\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
      From this path read images \n\
-     \"mire-2/image.%%04d.png\". These \n\
+     \"mire-2/image.%%04d.%s\". These \n\
      images come from ViSP-images-x.y.z.tar.gz available \n\
      on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
@@ -114,10 +118,7 @@ OPTIONS:                                               Default\n\
      Specify a personal sequence containing images \n\
      to process.\n\
      By image sequence, we mean one file per image.\n\
-     The following image file formats PNM (PGM P5, PPM P6)\n\
-     are supported. The format is selected by analysing \n\
-     the filename extension.\n\
-     Example : \"/Temp/ViSP-images/cube/image.%%04d.pgm\"\n\
+     Example : \"/Temp/visp-images/cube/image.%%04d.%s\"\n\
      %%04d is for the image numbering.\n\
 \n\
   -c\n\
@@ -126,7 +127,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n",
-          ipath.c_str(), ppath.c_str());
+          ipath.c_str(), ext.c_str(), ppath.c_str(), ext.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -375,11 +376,8 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
   // compute the initial pose using Dementhon method followed by a non linear
   // minimisation method
 
-  // Pose by Lagrange it provides an initialization of the pose
-  mPose->computePose(vpPose::LAGRANGE, *cMo);
-  // the pose is now refined using the virtual visual servoing approach
-  // Warning: cMo needs to be initialized otherwise it may  diverge
-  mPose->computePose(vpPose::VIRTUAL_VS, *cMo);
+  // Compute initial pose
+  mPose->computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, *cMo);
 
   // Display breifly just to have a glimpse a the ViSP pose
   //	while(cpt<500){
@@ -393,6 +391,11 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
 
 int main(int argc, const char **argv)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   try {
     std::string env_ipath;
     std::string opt_ipath;
@@ -412,7 +415,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_click_allowed) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -441,7 +444,7 @@ int main(int argc, const char **argv)
                 << "  use personal images." << std::endl
                 << std::endl;
 
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Declare an image, this is a gray level image (unsigned char)
@@ -460,7 +463,8 @@ int main(int argc, const char **argv)
       // Build the name of the image file
 
       s.setf(std::ios::right, std::ios::adjustfield);
-      s << "image.%04d.png";
+      s << "image.%04d.";
+      s << ext;
       filename = vpIoTools::createFilePath(dirname, s.str());
     } else {
       filename = opt_ppath;
@@ -490,12 +494,6 @@ int main(int argc, const char **argv)
     // Keep u0 and v0 as center of the screen
     vpCameraParameters mcam;
 
-    // Read the PGM image named "filename" on the disk, and put the
-    // bitmap into the image structure I.  I is initialized to the
-    // correct size
-    //
-    // exception readPGM may throw various exception if, for example,
-    // the file does not exist, or if the memory cannot be allocated
     try {
       vpCTRACE << "Load: " << filename << std::endl;
       grabber.open(Idisplay);
@@ -510,15 +508,11 @@ int main(int argc, const char **argv)
       grabber.open(IC);
       mcam.init(mcamTmp);
     } catch (...) {
-      // an exception is thrown if an exception from readPGM has been caught
-      // here this will result in the end of the program
-      // Note that another error message has been printed from readPGM
-      // to give more information about the error
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
                 << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Create a vpRAOgre object with color background

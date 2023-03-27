@@ -88,7 +88,7 @@ struct Calibration {
 };
 
 
-Calibration *createCalibration(char *CalFilePath, unsigned short index);
+Calibration *createCalibration(const char *CalFilePath, unsigned short index);
 // Loads calibration info for a transducer into a new Calibration struct
 // Parameters:
 //   CalFilePath: the name and path of the calibration file

@@ -54,7 +54,7 @@
 
 */
 vpRobotFranka::vpRobotFranka()
-  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positionningVelocity(20.), m_velControlThread(),
+  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positioningVelocity(20.), m_velControlThread(),
     m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
     m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
     m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
@@ -70,7 +70,7 @@ vpRobotFranka::vpRobotFranka()
  * be set when required. Setting realtime_config to kIgnore disables this behavior.
  */
 vpRobotFranka::vpRobotFranka(const std::string &franka_address, franka::RealtimeConfig realtime_config)
-  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positionningVelocity(20.), m_velControlThread(),
+  : vpRobot(), m_handler(NULL), m_gripper(NULL), m_model(NULL), m_positioningVelocity(20.), m_velControlThread(),
     m_velControlThreadIsRunning(false), m_velControlThreadStopAsked(false), m_dq_des(), m_v_cart_des(),
     m_ftControlThread(), m_ftControlThreadIsRunning(false), m_ftControlThreadStopAsked(false), m_tau_J_des(),
     m_ft_cart_des(), m_q_min(), m_q_max(), m_dq_max(), m_ddq_max(), m_robot_state(), m_mutex(), m_eMc(), m_log_folder(),
@@ -623,7 +623,7 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
   }
 
   if (frame == vpRobot::JOINT_STATE) {
-    double speed_factor = m_positionningVelocity / 100.;
+    double speed_factor = m_positioningVelocity / 100.;
 
     std::array<double, 7> q_goal;
     for (size_t i = 0; i < 7; i++) {
@@ -646,7 +646,7 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
     }
   } else {
     throw(vpException(vpRobotException::functionNotImplementedError,
-                      "Cannot move the robot to a cartesian position. Only joint positionning is implemented"));
+                      "Cannot move the robot to a cartesian position. Only joint positioning is implemented"));
   }
 }
 
@@ -658,7 +658,7 @@ void vpRobotFranka::setPosition(const vpRobot::vpControlFrameType frame, const v
   be in ]0:100].
 
 */
-void vpRobotFranka::setPositioningVelocity(double velocity) { m_positionningVelocity = velocity; }
+void vpRobotFranka::setPositioningVelocity(double velocity) { m_positioningVelocity = velocity; }
 
 /*!
 

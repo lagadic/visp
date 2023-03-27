@@ -86,7 +86,7 @@ int main(void)
   delete[] thread;
   delete[] thread_id;
 
-  return 0;
+  return EXIT_SUCCESS;
 }
 
 #else

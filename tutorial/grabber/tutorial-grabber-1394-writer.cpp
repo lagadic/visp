@@ -57,5 +57,5 @@ int main(int argc, char **)
   (void)argc;
 #endif
 
-  return 0;
+  return EXIT_SUCCESS;
 }

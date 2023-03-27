@@ -19,12 +19,12 @@
 //! [Include]
 
 //! [Undef grabber]
-//#undef VISP_HAVE_V4L2
-//#undef VISP_HAVE_DC1394
-//#undef VISP_HAVE_CMU1394
-//#undef VISP_HAVE_FLYCAPTURE
-//#undef VISP_HAVE_REALSENSE2
-//#undef VISP_HAVE_OPENCV
+// #undef VISP_HAVE_V4L2
+// #undef VISP_HAVE_DC1394
+// #undef VISP_HAVE_CMU1394
+// #undef VISP_HAVE_FLYCAPTURE
+// #undef VISP_HAVE_REALSENSE2
+// #undef VISP_HAVE_OPENCV
 //! [Undef grabber]
 
 int main(int argc, char **argv)
@@ -85,7 +85,7 @@ int main(int argc, char **argv)
             << " [--display_proj_error]"
             << " [--help] [-h]\n"
             << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       }
     }
     std::string parentname = vpIoTools::getParent(opt_modelname);
@@ -183,7 +183,7 @@ int main(int argc, char **argv)
     cv::VideoCapture g(opt_device); // Open the default camera
     if (!g.isOpened()) {            // Check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
     cv::Mat frame;
     g >> frame; // get a new frame from camera

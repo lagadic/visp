@@ -256,6 +256,6 @@ int main()
 #if !(VISP_HAVE_OPENCV_VERSION >= 0x030000)
   std::cout << "Install OpenCV version >= 3 to make this test work." << std::endl;
 #endif
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

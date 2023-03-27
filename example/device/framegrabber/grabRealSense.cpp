@@ -107,7 +107,7 @@ vpThread::Return displayPointcloudFunction(vpThread::Args args)
   } while (capture_state_ != capture_stopped);
 
   std::cout << "End of point cloud display thread" << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif
 #endif

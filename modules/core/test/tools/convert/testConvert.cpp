@@ -410,5 +410,5 @@ int main()
   testConvertFromKeyPointToImagePoint();
   testConvertFromPoint3fToPoint();
   testConvertFromPointToPoint3f();
-  return 0;
+  return EXIT_SUCCESS;
 }

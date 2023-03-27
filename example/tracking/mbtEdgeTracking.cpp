@@ -69,6 +69,11 @@
 
 void usage(const char *name, const char *badparam)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   fprintf(stdout, "\n\
 Example of tracking based on the 3D model.\n\
 \n\
@@ -83,8 +88,8 @@ OPTIONS:                                               \n\
   -i <input image path>                                \n\
      Set image input path.\n\
      From this path read images \n\
-     \"mbt/cube/image%%04d.png\". These \n\
-     images come from ViSP-images-x.y.z.tar.gz available \n\
+     \"mbt/cube/image%%04d.%s\". These \n\
+     images come from visp-images-x.y.z.tar.gz available \n\
      on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -143,7 +148,8 @@ OPTIONS:                                               \n\
      Compute gradient projection error.\n\
 \n\
   -h \n\
-     Print the help.\n\n");
+     Print the help.\n\n",
+          ext.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -252,6 +258,12 @@ int main(int argc, const char **argv)
     bool projectionError = false;
     bool quit = false;
 
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
+
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -264,7 +276,7 @@ int main(int argc, const char **argv)
     if (!getOptions(argc, argv, opt_ipath, opt_configFile, opt_modelFile, opt_initFile, opt_lastFrame, displayFeatures,
                     opt_click_allowed, opt_display, cao3DModel, trackCylinder, useOgre, showOgreConfigDialog,
                     useScanline, computeCovariance, projectionError)) {
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     // Test if an input path is set
@@ -276,14 +288,14 @@ int main(int argc, const char **argv)
                 << "  image path where test images are located." << std::endl
                 << std::endl;
 
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
     if (!opt_ipath.empty())
-      ipath = vpIoTools::createFilePath(opt_ipath, "mbt/cube/image%04d.png");
+      ipath = vpIoTools::createFilePath(opt_ipath, "mbt/cube/image%04d." + ext);
     else
-      ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.png");
+      ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d." + ext);
 
     if (!opt_configFile.empty())
       configFile = opt_configFile;
@@ -345,7 +357,7 @@ int main(int argc, const char **argv)
       reader.open(I);
     } catch (...) {
       std::cout << "Cannot open sequence: " << ipath << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     if (opt_lastFrame > 1 && opt_lastFrame < reader.getLastFrameIndex())

@@ -7,7 +7,7 @@
 
 ViSP 3.5.1 (under development)
   - Contributors:
-    . Fabien Spindler, Souriya Trinh, Samuel Felton
+    . Fabien Spindler, Souriya Trinh, Romain Lagneau, Antonio Marino, Samuel Felton
   - New features and improvements
     . Video writer is now able to create the output folder recursively (see vpVideoWriter)
     . Introduce Universal Robots support with new vpRobotUniversalRobots class that
@@ -18,8 +18,8 @@ ViSP 3.5.1 (under development)
     . Tutorial for extrinsic calibration improved with UR robot and Panda robot use cases
     . Tutorials in tutorial/grabber folder have now a new --no-display command line option
       that allows to grab a video remotely
-    . Introduce MAVLink interface using MavSDK 3rd party library interfaced in vpRobotMavsdk
-      class that allows to control a robot equiped with a Pixhawk
+    . Introduce MAVLink interface using MAVSDK 3rd party library interfaced in vpRobotMavsdk
+      class that allows to control a robot equiped with a Pixhawk (drone, rover...)
     . Image-based visual-servoing, position and velocity control examples to control robots
       equipped with Pixhawk (see vpRobotMavsdk doc)
     . Windows 11 support
@@ -1193,7 +1193,7 @@ ViSP 2.4.3 (released April 10th, 2009)
     - [7424] Coin3D version 3 not supported under Windows
     - [7613] vpSimulator::getInternalImage() function yields to an infinite
 	     loop.
-    - [7607] vpDisplayGTK bad window positionning
+    - [7607] vpDisplayGTK bad window positioning
     - [7638] Memory leak in all vpFeature... classes
 
 ----------------------------------------------

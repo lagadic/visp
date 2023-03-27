@@ -40,7 +40,7 @@
  * This code shows how to takeoff and land a drone equipped with a Pixhawk
  * connected to a Jetson TX2 that runs this test using ViSP. The drone is localized
  * thanks to Qualisys Mocap. Communication between the Jetson and the Pixhawk
- * is based on Mavlink using mavsdk 3rd party.
+ * is based on Mavlink using MAVSDK 3rd party.
  */
 
 #include <iostream>
@@ -70,8 +70,34 @@ int main(int argc, char **argv)
 
   auto drone = vpRobotMavsdk(argv[1]);
 
-  drone.takeOff();
+  drone.setTakeOffAlt(1.);
+  drone.setVerbose(true);
+  drone.takeControl(); // Start off-board or guided mode
 
+  // Drone takeoff
+  if (! drone.takeOff() )
+  {
+    std::cout << "Takeoff failed" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  // Get position in NED local frame after takeoff
+  float ned_north, ned_east, ned_down, ned_yaw;
+  drone.getPosition(ned_north, ned_east, ned_down, ned_yaw);
+  std::cout << "Vehicle position in NED frame: " << ned_north << " " << ned_east << " " << ned_down << " [m] and " << vpMath::deg(ned_yaw) << " [deg]" << std::endl;
+
+  vpHomogeneousMatrix ned_M_frd;
+  drone.getPosition(ned_M_frd);
+  vpRxyzVector rxyz(ned_M_frd.getRotationMatrix());
+  std::cout << "Vehicle position in NED frame: " 
+            << ned_M_frd.getTranslationVector().t() << " [m] and " 
+            << vpMath::deg(rxyz).t() << " [deg]"<< std::endl;
+
+  std::cout << "Hold position for 4 sec" << std::endl;
+  drone.holdPosition();
+  vpTime::wait(4000);
+
+  // Land drone
   drone.land();
 
   return EXIT_SUCCESS;

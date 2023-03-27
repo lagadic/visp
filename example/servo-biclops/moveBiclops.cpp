@@ -145,7 +145,7 @@ int main(int argc, const char **argv)
 
   // Read the command line options
   if (getOptions(argc, argv, opt_conf) == false) {
-    exit(-1);
+    return EXIT_FAILURE;
   }
   try {
     vpRobotBiclops robot(opt_conf.c_str());

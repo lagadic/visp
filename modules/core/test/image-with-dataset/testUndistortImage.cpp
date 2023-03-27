@@ -70,6 +70,11 @@
 void usage(const char *name, const char *badparam, const std::string &ipath, const std::string &opath,
            const std::string &user)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   fprintf(stdout, "\n\
 Read an image from the disk, undistort it \n\
 and save the undistorted image on the disk.\n\
@@ -85,7 +90,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"calibration/grid36-01.pgm\"\n\
+     From this path read \"calibration/grid36-01.%s\"\n\
      image.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -105,7 +110,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n\n",
-          ipath.c_str(), opath.c_str(), user.c_str());
+          ext.c_str(), ipath.c_str(), opath.c_str(), user.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -181,6 +186,12 @@ int main(int argc, const char **argv)
     unsigned int nThreads = 2;
     unsigned int scale = 1;
 
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
+
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -201,7 +212,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_opath, username, nThreads, scale) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -223,7 +234,7 @@ int main(int argc, const char **argv)
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
         std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
-        exit(-1);
+        return EXIT_FAILURE;
       }
     }
 
@@ -246,7 +257,7 @@ int main(int argc, const char **argv)
                 << "  environment variable to specify the location of the " << std::endl
                 << "  image path where test images are located." << std::endl
                 << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     //
@@ -262,7 +273,7 @@ int main(int argc, const char **argv)
     vpCameraParameters cam;
     cam.initPersProjWithDistortion(600, 600, 320, 240, -0.17, 0.17);
     // Read the input grey image from the disk
-    filename = vpIoTools::createFilePath(ipath, "calibration/grid36-01.pgm");
+    filename = vpIoTools::createFilePath(ipath, "calibration/grid36-01." + ext);
     std::cout << "Read image: " << filename << std::endl;
     vpImageIo::read(I_, filename);
     if (scale > 1) {
@@ -360,19 +371,19 @@ int main(int argc, const char **argv)
     }
 
     // Write the undistorted images on the disk
-    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted.ppm"));
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_color.png"));
     std::cout << "\nWrite undistorted image: " << filename << std::endl;
     vpImageIo::write(U, filename);
 
-    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted.pgm"));
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_gray.png"));
     std::cout << "Write undistorted image: " << filename << std::endl;
     vpImageIo::write(U_gray, filename);
 
-    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_remap.ppm"));
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_remap_color.png"));
     std::cout << "\nWrite undistorted image with remap: " << filename << std::endl;
     vpImageIo::write(U_remap, filename);
 
-    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_remap.pgm"));
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_remap_gray.png"));
     std::cout << "Write undistorted image with remap: " << filename << std::endl;
     vpImageIo::write(U_remap_gray, filename);
 
@@ -393,7 +404,7 @@ int main(int argc, const char **argv)
     const double remap_error_threshold = 0.5;
     if (remap_mean_error > remap_error_threshold) {
       std::cerr << "Issue with vpImageTools::remap() with vpRGBa image" << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
 
     vpImage<unsigned char> U_diff_gray_abs;
@@ -402,25 +413,25 @@ int main(int argc, const char **argv)
     std::cout << "U_diff_gray_abs mean value: " << remap_mean_error_gray << std::endl;
     if (remap_mean_error_gray > remap_error_threshold) {
       std::cerr << "Issue with vpImageTools::remap() with unsigned char image" << std::endl;
-      return 1;
+      return EXIT_FAILURE;
     }
 
     // Write the undistorted difference images on the disk
     vpImage<vpRGBa> U_diff;
     vpImage<unsigned char> U_diff_gray;
     vpImageTools::imageDifference(U, U_remap, U_diff);
-    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_diff.ppm"));
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_diff_color.png"));
     std::cout << "\nWrite undistorted image: " << filename << std::endl;
     vpImageIo::write(U_diff, filename);
 
     vpImageTools::imageDifference(U_gray, U_remap_gray, U_diff_gray);
-    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_diff.pgm"));
+    filename = vpIoTools::path(vpIoTools::createFilePath(opath, "grid36-01_undistorted_diff_gray.png"));
     std::cout << "Write undistorted image: " << filename << std::endl;
     vpImageIo::write(U_diff_gray, filename);
 
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

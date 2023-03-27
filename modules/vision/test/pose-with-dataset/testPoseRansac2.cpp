@@ -51,7 +51,7 @@
 
 namespace
 {
-
+#if (VISP_HAVE_DATASET_VERSION >= 0x030300)
 bool samePoints(const vpPoint &pt1, const vpPoint &pt2)
 {
   return vpMath::equal(pt1.get_oX(), pt2.get_oX(), std::numeric_limits<double>::epsilon()) &&
@@ -146,22 +146,10 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   }
 
   vpPose ground_truth_pose, real_pose;
+  vpHomogeneousMatrix cMo_estimated;
   ground_truth_pose.addPoints(bunnyModelPoints);
   real_pose.addPoints(bunnyModelPoints_noisy);
-
-  vpHomogeneousMatrix cMo_dementhon, cMo_lagrange;
-  real_pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
-  real_pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
-  double r_dementhon = real_pose.computeResidual(cMo_dementhon);
-  double r_lagrange = real_pose.computeResidual(cMo_lagrange);
-
-  vpHomogeneousMatrix cMo_estimated;
-  if (r_lagrange < r_dementhon) {
-    cMo_estimated = cMo_lagrange;
-  } else {
-    cMo_estimated = cMo_dementhon;
-  }
-  real_pose.computePose(vpPose::VIRTUAL_VS, cMo_estimated);
+  real_pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo_estimated);
   double r_vvs = ground_truth_pose.computeResidual(cMo_estimated);
 
   std::cout << "\ncMo estimated using VVS on data with small gaussian noise:\n" << cMo_estimated << std::endl;
@@ -319,18 +307,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
   double r_RANSAC_estimated_2 = ground_truth_pose.computeResidual(cMo_estimated_RANSAC_2);
   std::cout << "Corresponding residual (" << ransac_iterations << " iterations): " << r_RANSAC_estimated_2 << std::endl;
 
-  pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
-  pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
-  r_dementhon = pose.computeResidual(cMo_dementhon);
-  r_lagrange = pose.computeResidual(cMo_lagrange);
-
-  if (r_lagrange < r_dementhon) {
-    cMo_estimated = cMo_lagrange;
-  } else {
-    cMo_estimated = cMo_dementhon;
-  }
-
-  pose.computePose(vpPose::VIRTUAL_VS, cMo_estimated);
+  pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo_estimated);
   std::cout << "\ncMo estimated with only VVS on noisy data:\n" << cMo_estimated << std::endl;
 
   double r_estimated = ground_truth_pose.computeResidual(cMo_estimated);
@@ -469,6 +446,7 @@ bool testRansac(const std::vector<vpPoint> &bunnyModelPoints_original,
 
   return true;
 }
+#endif
 } // namespace
 
 TEST_CASE("Print RANSAC number of iterations", "[ransac_pose]")
@@ -504,6 +482,7 @@ TEST_CASE("Print RANSAC number of iterations", "[ransac_pose]")
   std::cout << std::endl;
 }
 
+#if (VISP_HAVE_DATASET_VERSION >= 0x030300)
 TEST_CASE("RANSAC pose estimation tests", "[ransac_pose]")
 {
   const std::vector<size_t> model_sizes = {10, 20, 50, 100, 200, 500, 1000, 0, 0};
@@ -530,6 +509,7 @@ TEST_CASE("RANSAC pose estimation tests", "[ransac_pose]")
     CHECK(testRansac(bunnyModelPoints, bunnyModelPoints_noisy_original, model_sizes[i], duplicates[i], degenerates[i]));
   }
 }
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -557,5 +537,5 @@ int main(int argc, char *argv[])
 #endif
 }
 #else
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

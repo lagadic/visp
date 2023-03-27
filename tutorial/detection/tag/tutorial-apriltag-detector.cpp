@@ -191,10 +191,9 @@ int main(int argc, const char **argv)
     std::cerr << "Catch an exception: " << e.getMessage() << std::endl;
   }
 
-  return EXIT_SUCCESS;
 #else
   (void)argc;
   (void)argv;
-  return 0;
 #endif
+  return EXIT_SUCCESS;
 }

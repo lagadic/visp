@@ -62,12 +62,7 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS "b:de:f:i:hn:s:z:"
-
-void usage(const char *name, const char *badparam, std::string ipath, std::string basename, std::string ext, int first,
-           unsigned int nimages, int step, unsigned int nzero);
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &basename, std::string &ext, int &first,
-                unsigned int &nimages, int &step, unsigned int &nzero, bool &display);
+#define GETOPTARGS "b:de:f:hi:l:s:z:"
 
 /*
 
@@ -79,13 +74,13 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
   \param basename : Input image base name.
   \param ext : Input image extension.
   \param first : First image number to read.
-  \param nimages : Number of images to read.
+  \param last : Number of images to read.
   \param step : Step between two successive images to read.
   \param nzero : Number of zero for the image number coding.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string basename, std::string ext, int first,
-           unsigned int nimages, int step, unsigned int nzero)
+void usage(const char *name, const char *badparam, std::string ipath, std::string basename, std::string ext, long first,
+           long last, long step, unsigned int nzero)
 {
   fprintf(stdout, "\n\
 Read an image sequence from the disk. Display it using X11 or GTK.\n\
@@ -94,7 +89,7 @@ to a PGM file.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-b <base name>] [-e <extension>] \n\
-   [-f <first frame>] [-n <number of images> [-s <step>] \n\
+   [-f <first frame>] [-l <last image> [-s <step>] \n\
    [-z <number of zero>] [-d] [-h]\n",
           name);
 
@@ -102,7 +97,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                     %s\n\
      Set image input path.\n\
-     From this path read \"cube/image.%%04d.pgm\"\n\
+     From this path read \"cube/image.%%04d.%s\"\n\
      images.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -112,22 +107,20 @@ OPTIONS:                                               Default\n\
      Specify the base name of the files of the sequence\n\
      containing the images to process. \n\
      By image sequence, we mean one file per image.\n\
-     The following image file formats PNM (PGM P5, PPM P6)\n\
-     are supported. The format is selected by analysing \n\
-     the filename extension.\n\
+     The format is selected by analysing the filename extension.\n\
 \n\
   -e <extension>                                            %s\n\
      Specify the extension of the files.\n\
      Not taken into account for the moment. Will be a\n\
      future feature...\n\
 \n\
-  -f <first frame>                                          %d\n\
-     First frame number of the sequence\n\
+  -f <first frame>                                          %ld\n\
+     First frame number of the sequence.\n\
 \n\
-  -n <number of images>                                     %u\n\
-     Number of images to load from the sequence.\n\
+  -l <last image      >                                     %ld\n\
+     Last frame number of the sequence.\n\
 \n\
-  -s <step>                                                 %d\n\
+  -s <step>                                                 %ld\n\
      Step between two images.\n\
 \n\
   -z <number of zero>                                       %u\n\
@@ -138,7 +131,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h \n\
      Print the help.\n\n",
-          ipath.c_str(), basename.c_str(), ext.c_str(), first, nimages, step, nzero);
+          ipath.c_str(), ext.c_str(), basename.c_str(), ext.c_str(), first, last, step, nzero);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -153,7 +146,7 @@ OPTIONS:                                               Default\n\
   \param basename : Input image base name.
   \param ext : Input image extension.
   \param first : First image number to read.
-  \param nimages : Number of images to read.
+  \param last : Last images to read.
   \param step : Step between two successive images to read.
   \param nzero : Number of zero for the image number coding.
   \param display : Display activation.
@@ -161,8 +154,8 @@ OPTIONS:                                               Default\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &basename, std::string &ext, int &first,
-                unsigned int &nimages, int &step, unsigned int &nzero, bool &display)
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &basename, std::string &ext, long &first,
+                long &last, long &step, unsigned int &nzero, bool &display)
 {
   const char *optarg_;
   int c;
@@ -179,27 +172,27 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
       ext = optarg_;
       break;
     case 'f':
-      first = atoi(optarg_);
+      first = atol(optarg_);
       break;
     case 'i':
       ipath = optarg_;
       break;
-    case 'n':
-      nimages = (unsigned)atoi(optarg_);
+    case 'l':
+      last = std::atol(optarg_);
       break;
     case 's':
-      step = atoi(optarg_);
+      step = atol(optarg_);
       break;
     case 'z':
       nzero = (unsigned)atoi(optarg_);
       break;
     case 'h':
-      usage(argv[0], NULL, ipath, basename, ext, first, nimages, step, nzero);
+      usage(argv[0], NULL, ipath, basename, ext, first, last, step, nzero);
       return false;
       break;
 
     default:
-      usage(argv[0], optarg_, ipath, basename, ext, first, nimages, step, nzero);
+      usage(argv[0], optarg_, ipath, basename, ext, first, last, step, nzero);
       return false;
       break;
     }
@@ -207,7 +200,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ba
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, basename, ext, first, nimages, step, nzero);
+    usage(argv[0], NULL, ipath, basename, ext, first, last, step, nzero);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -232,12 +225,17 @@ int main(int argc, const char **argv)
     std::string opt_ipath;
     std::string ipath;
     std::string opt_basename = "cube/image.";
-    std::string opt_ext = "pgm";
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string opt_ext("png");
+#else
+    std::string opt_ext("pgm");
+#endif
+
     bool opt_display = true;
 
-    int opt_first = 5;
-    unsigned int opt_nimages = 70;
-    int opt_step = 1;
+    long opt_first = 5;
+    long opt_last = 70;
+    long opt_step = 1;
     unsigned int opt_nzero = 4;
 
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
@@ -249,9 +247,9 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_basename, opt_ext, opt_first, opt_nimages, opt_step, opt_nzero,
+    if (getOptions(argc, argv, opt_ipath, opt_basename, opt_ext, opt_first, opt_last, opt_step, opt_nzero,
                    opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -271,13 +269,13 @@ int main(int argc, const char **argv)
 
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty()) {
-      usage(argv[0], NULL, ipath, opt_basename, opt_ext, opt_first, opt_nimages, opt_step, opt_nzero);
+      usage(argv[0], NULL, ipath, opt_basename, opt_ext, opt_first, opt_last, opt_step, opt_nzero);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
                 << "  environment variable to specify the location of the " << std::endl
                 << "  image path where test images are located." << std::endl
                 << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Declare an image, this is a gray level image (unsigned char)
@@ -330,10 +328,8 @@ int main(int argc, const char **argv)
       vpDisplay::flush(I);
     }
 
-    unsigned cpt = 1;
     // this is the loop over the image sequence
-
-    while (cpt++ < opt_nimages) {
+    while (g.getImageNumber() < opt_last) {
       double tms = vpTime::measureTimeMs();
       // read the image and then increment the image counter so that the next
       // call to acquire(I) will get the next image

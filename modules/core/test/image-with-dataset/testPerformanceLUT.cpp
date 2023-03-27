@@ -254,7 +254,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_opath, username, nbThreads) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -276,7 +276,7 @@ int main(int argc, const char **argv)
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << opath << std::endl;
         std::cerr << "  Check your -o " << opt_opath << " option " << std::endl;
-        exit(-1);
+        return EXIT_FAILURE;
       }
     }
 
@@ -299,7 +299,7 @@ int main(int argc, const char **argv)
                 << "  environment variable to specify the location of the " << std::endl
                 << "  image path where test images are located." << std::endl
                 << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     //
@@ -378,7 +378,7 @@ int main(int argc, const char **argv)
 
     if (!same) {
       std::cerr << "Color images are different!" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     // Test LUT on grayscale image
@@ -434,7 +434,7 @@ int main(int argc, const char **argv)
 
     if (!same) {
       std::cerr << "Grayscale images are different!" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
 
     // Computation time on color image
@@ -527,9 +527,9 @@ int main(int argc, const char **argv)
     }
     I_test_color.performLut(lut_color, nbThreads);
 
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cerr << "Catch an exception: " << e.what() << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }

@@ -50,16 +50,15 @@ development distribution using git.</p>
 \section install_sec Installation
 
 <p>Because ViSP is a multi platform library that works under Linux, OSX
-and Windows, to install ViSP you need the CMake configuration tool
+and Windows, to install ViSP from source you need the CMake configuration tool
 available from <a href="http://www.cmake.org" target="_parent">http://www.cmake.org</a>.
-
 Furthermore, depending on your operation system and the capabilities (framegrabber,
 display, simulation, ...) you need, prior to install ViSP,
-install \ref supported-third-parties.
-<a href="https://visp.inria.fr/software-architecture" target="_parent">https://visp.inria.fr/software-architecture</a>.</p>
+install \ref supported-third-parties. There is also this page
+<a href="https://visp.inria.fr/software-architecture" target="_parent">https://visp.inria.fr/software-architecture</a>
+that gives an overview of the third-parties used by each ViSP module.</p>
 
-<p>ViSP full installation procedure using CMake is detailed in the \ref tutorial_install_pkg
-and \ref tutorial_install_src. \ref tutorial_started and documents in pdf are also available from <a
+<p>ViSP full installation procedure explaining how to install CMake and third-parties is detailed in the \ref tutorial_install page. \ref tutorial_started and documents in pdf are also available from <a
 href="https://visp.inria.fr/publications" target="_parent">https://visp.inria.fr/publications</a>.</p>
 
 \section tutorial Tutorials

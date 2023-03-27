@@ -424,6 +424,11 @@
 // Defined if MAVSDK is available
 #cmakedefine VISP_HAVE_MAVSDK
 
+// MAVSDK version in hexadecimal (for example 1.4.12 gives 0x010412).
+#ifdef VISP_HAVE_MAVSDK
+#  define VISP_HAVE_MAVSDK_VERSION ${VISP_HAVE_MAVSDK_VERSION}
+#endif
+
 // Defined if libfranka from Franka Emika available to control Panda robot.
 #cmakedefine VISP_HAVE_FRANKA
 
@@ -540,6 +545,12 @@
 
 // Defined if TensorRT available
 #cmakedefine VISP_HAVE_TENSORRT
+
+// Defined if ViSP dataset found
+#cmakedefine VISP_HAVE_DATASET
+#ifdef VISP_HAVE_DATASET
+#  define VISP_HAVE_DATASET_VERSION ${VISP_HAVE_DATASET_VERSION}
+#endif
 
 // Handle portable symbol export.
 // Defining manually which symbol should be exported is required

@@ -51,7 +51,7 @@ The following material is necessary for \ref pixhawk_part1
 - A motion capture system (MoCap) like the Qualisys or Vicon ones, that are interfaced through
   vpMocapQualisys and vpMocapVicon respectively.
 
-If you wish to continue this tutorial with \ref pixhawk_part2, the following matérial is also necessary:
+If you wish to continue this tutorial with \ref pixhawk_part2, the following material is also necessary:
 - An Intel Realsense camera. In our case we used a D405 camera connected to the Pixhawk
 - An apriltag that serves as a target to position the drone by visual servoing. See how to \ref apriltag_detection_print.
 
@@ -64,18 +64,24 @@ This app is implemented in sendMocapToPixhawk.cpp
 
 \subsection pixhawk_prereq_software Software
 
+The following software is necessary for \ref pixhawk_part1
 - <b>MavSDK</b> 3rd party library
 
   MAVLink is the protocol used to communicate with the Pixhawk. To use MAVLink you need to install MavSDK.
-Instructions to install MavSDK and check the installation are provided
-[here](https://mavsdk.mavlink.io/v0.35.0/en/getting_started/installation.html). Notice that you can get
-the latest binary packages (.deb, .rpm) on their [github page](https://github.com/mavlink/MAVSDK/releases).
+  Instructions to install MavSDK and check the installation are provided
+  [here](https://mavsdk.mavlink.io/v0.35.0/en/getting_started/installation.html). Notice that you can get
+  the latest binary packages (.deb, .rpm) on their [github page](https://github.com/mavlink/MAVSDK/releases).
 
   Below, you will also find instructions to install MavSDK from source on Ubuntu:
   \verbatim
   $ mkdir -p $VISP_WS/3rdparty
   $ cd $VISP_WS/3rdparty
-  $ git clone --recursive https://github.com/mavlink/MAVSDK
+  \endverbatim
+  \note At the time this tutorial was written, the latest release was tagged `v1.4.13`. In the next command you need
+  to adapt the version to the last release.
+
+  \verbatim
+  $ git clone --recursive --branch v1.4.13 https://github.com/mavlink/MAVSDK
   $ mkdir MAVSDK/build
   $ cd MAVSDK/build
   $ cmake ../ -DCMAKE_BUILD_TYPE=releases
@@ -155,7 +161,7 @@ $ cmake ../visp
 \verbatim
   Real robots:
     ...
-    Use MAVSDK:                  yes
+    Use MAVSDK:                  yes (ver 1.4.13)
     ...
   Mocap:
     Use Qualisys:                yes
@@ -167,12 +173,25 @@ $ make -j$(nproc)
 \endverbatim
   We recommend also to install the same SDK on the ground station.
 
+If you wish to continue this tutorial with \ref pixhawk_part2, the following material is also necessary:
+- \ref soft_camera_depth_librealsense to be able to acquire images from the D405 camera mounted on our drone
+
 \section pixhawk_part1 Part 1: Control the drone indoor
 
 \subsection pixhawk_mavproxy Connect devices using MavProxy
 
 In our case, we use MavProxy to allow multiple apps to dial with the Pixhawk
 (see \ref pixhawk_prereq_software for more details on the next command line):
+
+Our assumptions are the following:
+- A computer with IP 192.168.30.42 runs the MoCap application (in our case Qualisys QTM)
+- Our vehicle is connected to a Jetson through serial link using `/dev/ttyACM0` device. Our Jetson has IP 192.168.30.155. Port 14552 is reserved
+  for the binary that is streaming MoCAP data, while port 14553 is reserved for the visual-sevoing app (see \ref pixhawk_part2)
+- The Jetson is able to receive the MoCap data by wifi. This could be ensured using testMocapQualisys.cpp or testMocapVicon.cpp
+  to see if you have access to the MoCap stream. Note also that in the next command lines, we expect that the object pose streamed by MoCap
+  has `DJI-F450` for name.
+- A ground station with IP 192.168.30.111 is sharing the MavLink link to monitor messages using QGroundControl connected on port 14551.
+- There remain port 14550 not used here.
 
 \verbatim
 $ ssh nvidia@jetson
@@ -183,7 +202,11 @@ $ mavproxy.py --master=/dev/ttyACM0 --out=udpout:192.168.30.111:14550 --out=udpo
 \subsection pixhawk_stream_mocap Stream MoCap to Pixhawk
 
 The code sendMocapToPixhawk.cpp allows you to send the MoCap stream comming from a Qualisys or Vicon motion capture system
-to the Pixhawk using MavLink. This code is based on MavSDK and ViSP's vpMocap classes.
+to the Pixhawk using MavLink. This code is based on vpMocapQualisys and vpMocapVicon classes that allows to get the vehicle FLU body
+frame in the MoCAP ENU reference frame. Then we use vpRobotMavsdk class and more precisely vpRobotMavsdk::sendMocapData() that internally send the
+FRD body frame pose with respect to the NED reference frame as a MavLink message to the Pixhawk.
+
+\image html img-pixhawk-frames.jpg
 
 In the following command line examples, we suppose that our drone rigid object is identified by the MoCap system with the name `DJI-F450`.
 On the Jetson, streaming the pose obtained by the MoCap system to the vehicle can be achieved with Qualisys in this way:
@@ -218,16 +241,20 @@ Before launching the keyboard control test on the ground station or the visual s
 we advise you to launch simpler and safer tests beforehand on the Jetson.
 These tests are, in order :
  - testPixhawkDroneTakeoff.cpp : a simple takeoff followed by a landing.
- - testPixhawkDronePositionControl.cpp : a takeoff followed by a square trajectory with a control on the drone's position.
+ - testPixhawkDronePositionAbsoluteControl.cpp : a takeoff followed by a square trajectory with a control on the drone's position.
+ - testPixhawkDronePositionRelativeControl.cpp : a takeoff followed by a square trajectory with a control on the drone's position in relative with respect to the takeoff position.
  - testPixhawkDroneVelocityControl.cpp : a takeoff followed by a simple trajectory testing a few different movements using velocity control.
 
-You can easily launch these tests (here is the example for the takeoff) by connecting through ssh to your Jetson:
+You can easily launch these tests (below is the example for the takeoff) by connecting through ssh to your Jetson:
 
 \verbatim
 $ ssh nvidia@jetson
 $ cd $VISP_WS/visp-build/modules/robot
 $ ./testPixhawkDroneTakeoff udp://:14553
 \endverbatim
+
+\note The vpRobtMavsdk class is not dedicate explicitely to flying vehicles. It can also be used to control a rover. If you are interested in
+you may try the test testPixhawkRoverVelocityControl.cpp
 
 \subsection pixhawk_fly Control the drone with a keyboard
 

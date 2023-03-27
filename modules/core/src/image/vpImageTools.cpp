@@ -79,7 +79,7 @@ int main()
 {
   vpImage<unsigned char> I;
 #ifdef _WIN32
-  std::string filename("C:/temp/ViSP-images/Klimt/Klimt.ppm");
+  std::string filename("C:/Temp/visp-images/Klimt/Klimt.ppm");
 #else
   std::string filename("/local/soft/ViSP/ViSP-images/Klimt/Klimt.ppm");
 #endif

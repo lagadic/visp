@@ -434,14 +434,14 @@ void vpLine::changeFrame(const vpHomogeneousMatrix &cMo, vpColVector &cP_) const
   if ((fabs(d1) > 1e-8) || (fabs(d2) > 1e-8))
     {
       printf("PB in VPline: P1 : 0 = %lf, P2: 0 = %lf\n",d1,d2);
-      exit(-1);
+      return EXIT_FAILURE;
     }
   d1 = A1*x+B1*y+C1*z+D1;
   d2 = A2*x+B2*y+C2*z+D2;
   if ((fabs(d1) > 1e-8) || (fabs(d2) > 1e-8))
     {
       printf("PB in VPline: Pn1 : 0 = %lf, Pn2: 0 = %lf\n",d1,d2);
-      exit(-1);
+      return EXIT_FAILURE;
     }
   */
 }

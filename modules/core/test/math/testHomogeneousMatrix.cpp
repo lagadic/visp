@@ -44,6 +44,18 @@
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+bool test_matrix_equal(const vpHomogeneousMatrix &M1, const vpHomogeneousMatrix &M2, double epsilon = 1e-10)
+{
+  for (unsigned int i = 0; i < 4; i++) {
+    for (unsigned int j = 0; j < 4; j++) {
+      if (!vpMath::equal(M1[i][j], M2[i][j], epsilon)) {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 TEST_CASE("vpHomogeneousMatrix re-orthogonalize rotation matrix", "[vpHomogeneousMatrix]")
 {
   CHECK_NOTHROW([]() {
@@ -146,6 +158,47 @@ TEST_CASE("vpRotationMatrix re-orthogonalize rotation matrix", "[vpRotationMatri
   CHECK_THROWS([]() { vpRotationMatrix R{0.983, -0.058, 0.171, -0.093, -0.973, 0.207, 0.155, -0.219, -0.963}; }());
 }
 
+TEST_CASE("ENU to NED conversion", "[enu2ned]")
+{
+  vpHomogeneousMatrix enu_M_flu{0, -1, 0, 0.2, 1, 0, 0, 1., 0, 0, 1, 0.3};
+  std::cout << "enu_M_flu:\n" << enu_M_flu << std::endl;
+
+  vpHomogeneousMatrix enu_M_ned{0, 1, 0, 0, 1, 0, 0, 0, 0, 0, -1, 0};
+  std::cout << "enu_M_ned:\n" << enu_M_ned << std::endl;
+
+  vpHomogeneousMatrix flu_M_frd{1, 0, 0, 0, 0, -1, 0, 0, 0, 0, -1, 0};
+  std::cout << "flu_M_frd:\n" << flu_M_frd << std::endl;
+
+  vpHomogeneousMatrix enu_M_frd = enu_M_flu * flu_M_frd;
+
+  // Test1
+  {
+    vpHomogeneousMatrix ned_M_frd = enu_M_ned.inverse() * enu_M_flu * flu_M_frd;
+    std::cout << "ned_M_frd:\n" << ned_M_frd << std::endl;
+
+    vpHomogeneousMatrix ned_M_frd_est = vpMath::enu2ned(enu_M_frd);
+    std::cout << "ned_M_frd_est:\n" << ned_M_frd_est << std::endl;
+
+    bool success = test_matrix_equal(ned_M_frd, ned_M_frd_est);
+    std::cout << "Test enu2ned 1 " << (success ? "succeed" : "failed") << std::endl;
+
+    CHECK(success);
+  }
+  // Test2
+  {
+    vpHomogeneousMatrix ned_M_flu = enu_M_ned.inverse() * enu_M_flu;
+    std::cout << "ned_M_flu:\n" << ned_M_flu << std::endl;
+
+    vpHomogeneousMatrix ned_M_flu_est = vpMath::enu2ned(enu_M_flu);
+    std::cout << "ned_M_flu_est:\n" << ned_M_flu_est << std::endl;
+
+    bool success = test_matrix_equal(ned_M_flu, ned_M_flu_est);
+    std::cout << "Test enu2ned 2 " << (success ? "succeed" : "failed") << std::endl;
+
+    CHECK(success);
+  }
+}
+
 int main(int argc, char *argv[])
 {
   Catch::Session session; // There must be exactly one instance
@@ -163,5 +216,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

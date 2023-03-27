@@ -178,9 +178,9 @@ $ sudo apt-get install libaria-dev
 
 - Installation from source instructions are provided [here](https://github.com/reedhedges/AriaCoda).
 
-\subsection soft_robots_mavsdk MavSDK
+\subsection soft_robots_mavsdk MavSDK/MavLink
 
-The [MAVLink](https://mavlink.io/en/) protocol is supported by ViSP to communicate with drones or small mobile robots
+The [MavLink](https://mavlink.io/en/) protocol is supported by ViSP to communicate with drones or small mobile robots
 equipped with a Pixhawk. To this end you need to install [MavSDK](https://mavsdk.mavlink.io/main/en/index.html) 3rd party library.
 
 Installation instructions are provided in \ref pixhawk_prereq_software section.

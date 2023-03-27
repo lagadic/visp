@@ -191,7 +191,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_kalman, doAdaptativeGain, lambda) == false) {
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     // Log file creation in /tmp/$USERNAME/log.dat
@@ -216,7 +216,7 @@ int main(int argc, const char **argv)
       } catch (...) {
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << logdirname << std::endl;
-        exit(-1);
+        return EXIT_FAILURE;
       }
     }
     std::string logfilename;

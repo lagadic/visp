@@ -99,8 +99,6 @@
 void compute_pose(std::vector<vpPoint> &point, std::vector<vpDot2> &dot, vpCameraParameters cam,
                   vpHomogeneousMatrix &cMo, bool init)
 {
-  vpHomogeneousMatrix cMo_dementhon; // computed pose with dementhon method
-  vpHomogeneousMatrix cMo_lagrange;  // computed pose with lagrange method
   vpPose pose;
 
   for (size_t i = 0; i < point.size(); i++) {
@@ -115,20 +113,10 @@ void compute_pose(std::vector<vpPoint> &point, std::vector<vpDot2> &dot, vpCamer
   }
 
   if (init == true) {
-    pose.computePose(vpPose::DEMENTHON, cMo_dementhon);
-    // Compute and return the residual expressed in meter for the pose matrix
-    double residual_dementhon = pose.computeResidual(cMo_dementhon);
-    pose.computePose(vpPose::LAGRANGE, cMo_lagrange);
-    double residual_lagrange = pose.computeResidual(cMo_lagrange);
-
-    // Select the best pose to initialize the lowe pose computation
-    if (residual_lagrange < residual_dementhon)
-      cMo = cMo_lagrange;
-    else
-      cMo = cMo_dementhon;
+    pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
+  } else {
+    pose.computePose(vpPose::VIRTUAL_VS, cMo);
   }
-
-  pose.computePose(vpPose::LOWE, cMo);
 }
 
 int main()
@@ -155,7 +143,7 @@ int main()
     } catch (...) {
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot create " << logdirname << std::endl;
-      return (-1);
+      return EXIT_FAILURE;
     }
   }
   std::string logfilename;

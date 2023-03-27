@@ -70,19 +70,6 @@
 #define GETOPTARGS "b:c:df:g:hH:L:mn:io:p:rsT:v:W:"
 #define DUAL_ACQ
 
-void usage(const char *name, const char *badparam, unsigned int camera, const unsigned int &nframes,
-           const std::string &opath, const unsigned int &roi_left, const unsigned int &roi_top,
-           const unsigned int &roi_width, const unsigned int &roi_height, const unsigned int &ringbuffersize,
-           const unsigned int &panControl);
-void read_options(int argc, const char **argv, bool &multi, unsigned int &camera, unsigned int &nframes,
-                  bool &verbose_info, bool &verbose_settings, bool &videomode_is_set,
-                  vp1394TwoGrabber::vp1394TwoVideoModeType &videomode, bool &framerate_is_set,
-                  vp1394TwoGrabber::vp1394TwoFramerateType &framerate, bool &colorcoding_is_set,
-                  vp1394TwoGrabber::vp1394TwoColorCodingType &colorcoding, bool &ringbuffersize_is_set,
-                  unsigned int &ringbuffersize, bool &display, bool &save, std::string &opath, unsigned int &roi_left,
-                  unsigned int &roi_top, unsigned int &roi_width, unsigned int &roi_height, bool &reset,
-                  unsigned int &panControl, bool &panControl_is_set);
-
 /*!
 
   Print the program options.
@@ -255,7 +242,7 @@ OPTIONS                                                    Default\n\
   has to be set.
 
 */
-void read_options(int argc, const char **argv, bool &multi, unsigned int &camera, unsigned int &nframes,
+bool read_options(int argc, const char **argv, bool &multi, unsigned int &camera, unsigned int &nframes,
                   bool &verbose_info, bool &verbose_settings, bool &videomode_is_set,
                   vp1394TwoGrabber::vp1394TwoVideoModeType &videomode, bool &framerate_is_set,
                   vp1394TwoGrabber::vp1394TwoFramerateType &framerate, bool &colorcoding_is_set,
@@ -343,8 +330,9 @@ void read_options(int argc, const char **argv, bool &multi, unsigned int &camera
     usage(argv[0], NULL, camera, nframes, opath, roi_left, roi_top, roi_width, roi_height, ringbuffersize, panControl);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
-    exit(-1);
+    return false;
   }
+  return true;
 }
 
 /*!
@@ -385,9 +373,12 @@ int main(int argc, const char **argv)
     // Default output path for image saving
     std::string opath = "/tmp/I%d-%04d.ppm";
 
-    read_options(argc, argv, multi, camera, nframes, verbose_info, verbose_settings, videomode_is_set, videomode,
-                 framerate_is_set, framerate, colorcoding_is_set, colorcoding, ringbuffersize_is_set, ringbuffersize,
-                 display, save, opath, roi_left, roi_top, roi_width, roi_height, reset, panControl, panControl_is_set);
+    if (read_options(argc, argv, multi, camera, nframes, verbose_info, verbose_settings, videomode_is_set, videomode,
+                     framerate_is_set, framerate, colorcoding_is_set, colorcoding, ringbuffersize_is_set,
+                     ringbuffersize, display, save, opath, roi_left, roi_top, roi_width, roi_height, reset, panControl,
+                     panControl_is_set)) {
+      return EXIT_FAILURE;
+    }
 
     // Create a grabber
     vp1394TwoGrabber g(reset);
@@ -413,7 +404,7 @@ int main(int argc, const char **argv)
         std::cout << "Disable -m command line option, or connect an other " << std::endl;
         std::cout << "cameras on the bus." << std::endl;
         g.close();
-        return (0);
+        return EXIT_FAILURE;
       }
     }
     if (camera >= ncameras) {
@@ -422,7 +413,7 @@ int main(int argc, const char **argv)
       std::cout << "It is not possible to select camera " << camera << std::endl;
       std::cout << "Check your -c <camera> command line option." << std::endl;
       g.close();
-      return (0);
+      return EXIT_FAILURE;
     }
 
     if (multi) {
@@ -512,7 +503,7 @@ int main(int argc, const char **argv)
           std::cout << "----------------------------------------------------------" << std::endl;
         }
       }
-      return 0;
+      return EXIT_SUCCESS;
     }
 
     // If requested set the PAN register 0x884 to control single or

@@ -224,7 +224,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_dtype, opt_list, opt_click_allowed, opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Print the list of video-devices available
@@ -254,7 +254,7 @@ int main(int argc, const char **argv)
       if (!nbDevices) {
         std::cout << "  No display is available\n";
       }
-      return (0);
+      return EXIT_FAILURE;
     }
 
     // Create 2 images
@@ -275,7 +275,7 @@ int main(int argc, const char **argv)
 #else
       std::cout << "  Sorry, X11 video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-      return 0;
+      return EXIT_FAILURE;
 #endif
       break;
     case vpGTK:
@@ -286,7 +286,7 @@ int main(int argc, const char **argv)
 #else
       std::cout << "  Sorry, GTK video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-      return 0;
+      return EXIT_FAILURE;
 #endif
       break;
     case vpGDI:
@@ -297,7 +297,7 @@ int main(int argc, const char **argv)
 #else
       std::cout << "  Sorry, GDI video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-      return 0;
+      return EXIT_FAILURE;
 #endif
       break;
     case vpD3D:
@@ -308,7 +308,7 @@ int main(int argc, const char **argv)
 #else
       std::cout << "  Sorry, D3D video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-      return 0;
+      return EXIT_FAILURE;
 #endif
       break;
     case vpCV:
@@ -319,7 +319,7 @@ int main(int argc, const char **argv)
 #else
       std::cout << "  Sorry, OpenCV video device is not available.\n";
       std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-      return 0;
+      return EXIT_FAILURE;
 #endif
       break;
     }
@@ -344,9 +344,10 @@ int main(int argc, const char **argv)
 
     delete d1;
     delete d2;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
-    return 1;
+    return EXIT_FAILURE;
   }
 }
 

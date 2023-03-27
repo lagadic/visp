@@ -214,15 +214,15 @@ int main()
 #if (defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_OPENCV))
   try {
     if (test_pose(false))
-      return -1;
+      return EXIT_FAILURE;
 
     if (test_pose(true))
-      return -1;
+      return EXIT_FAILURE;
 
-    return 0;
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getStringMessage() << std::endl;
-    return -1;
+    return EXIT_FAILURE;
   }
 #else
   std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;

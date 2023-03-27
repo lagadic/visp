@@ -912,6 +912,7 @@ void readBinaryFile(const std::string &filename, std::vector<uint16_t> &buffer)
   std::fclose(f);
 }
 
+#if (VISP_HAVE_DATASET_VERSION >= 0x040500)
 TEST_CASE("Bayer conversion", "[image_conversion]")
 {
   // Load original Klimt image
@@ -1192,6 +1193,7 @@ TEST_CASE("Bayer conversion", "[image_conversion]")
     }
   }
 }
+#endif
 
 int main(int argc, char *argv[])
 {
@@ -1208,5 +1210,5 @@ int main(int argc, char *argv[])
   return numFailed;
 }
 #else
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

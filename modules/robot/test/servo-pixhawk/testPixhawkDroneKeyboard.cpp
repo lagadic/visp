@@ -39,7 +39,7 @@
  * This code shows how to setup keyboard control of a drone equipped with a Pixhawk
  * connected to a Jetson TX2 that runs this test using ViSP. The drone is localized
  * thanks to Qualisys Mocap. Communication between the Jetson and the Pixhawk
- * is based on Mavlink using mavsdk 3rd party.
+ * is based on Mavlink using MAVSDK 3rd party.
  */
 
 #include <iostream>
@@ -94,6 +94,7 @@ bool handleKeyboardInput(vpRobotMavsdk &drone, int key, bool &flying, double &la
       flying = true;
       lastCommandTime = vpTime::measureTimeMs();
       vpTime::wait(100);
+      drone.takeControl();
       break;
 
     case ' ':
@@ -224,7 +225,7 @@ int main(int argc, char **argv)
 
       std::cout << "\nConfiguring drone settings ...\n" << std::endl;
 
-      drone.setTakeOffAlt(1.1);
+      drone.setTakeOffAlt(1.0);
 
       vpKeyboard keyboard;
       std::cout << "\n| Control the drone with the keyboard :\n"

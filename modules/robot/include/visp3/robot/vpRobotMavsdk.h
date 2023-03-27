@@ -44,6 +44,7 @@
 #include <mutex>
 #include <signal.h>
 #include <string>
+#include <tuple>
 
 #include <visp3/core/vpHomogeneousMatrix.h>
 
@@ -53,15 +54,35 @@
  * \ingroup group_robot_real_drone
  *
  * Interface for [Mavlink](https://mavlink.io/en/) allowing to control drones or rovers using a MavLink compatible
- * controller.
+ * controller such a Pixhawk running PX4 or Ardupilot.
  *
  * This class needs cxx17 or more recent standard enabled during ViSP cmake configuration.
  *
  * This class is enabled when [MavSDK C++](https://github.com/mavlink/MAVSDK) is installed and detected by ViSP during
  * cmake configuration step.
  *
- * \note The body frame associated to the robot controlled through MavLink is supposed to be Front-Right-Down (FRD)
+ * \note The body frame associated to the vehicle controlled through MavLink is supposed to be Front-Right-Down (FRD)
  * respectively for X-Y-Z.
+ *
+ * \image html img-pixhawk-frames.jpg
+ *
+ * 1. This class was tested to control a quadcopter equipped with a Pixhawk running PX4 firmware connected to a Jetson
+ * TX2.
+ *
+ *    We provide a set of tests if you want to have a try on your flying vehicle:
+ *    - testPixhawkDroneTakeoff.cpp
+ *    - testPixhawkDronePositionAbsoluteControl.cpp
+ *    - testPixhawkDronePositionRelativeControl.cpp
+ *    - testPixhawkDroneVelocityControl.cpp
+ *    - testPixhawkDroneKeyboard.cpp
+ *
+ *    We provide also this \ref tutorial-pixhawk-vs.
+ *
+ * 2. This class was also tested to control an AION ROBOTICS rover equipped with a Pixhawk running Ardupilot firmware
+ * directly connected by serial to a laptop running Ubuntu 22.04.
+ *
+ *    If you want to have a try you may see:
+ *    - testPixhawkRoverVelocityControl.cpp
  *
  * \sa \ref tutorial-pixhawk-vs
  */
@@ -72,54 +93,53 @@ public:
   vpRobotMavsdk(const std::string &connection_info);
   virtual ~vpRobotMavsdk();
 
-  //! @name Robot connection
+  //! \name Robot connection
   //@{
   void connect(const std::string &connection_info);
   //@}
 
-  //! @name General robot information
+  //! \name General robot information
   //@{
   float getBatteryLevel() const;
-  void getPose(vpHomogeneousMatrix &pose) const;
+  void getPosition(float &ned_north, float &ned_east, float &ned_down, float &ned_yaw) const;
+  void getPosition(vpHomogeneousMatrix &ned_M_frd) const;
+  std::tuple<float, float> getHome() const;
   std::string getAddress() const;
+   bool isRunning() const;
   //@}
 
-  //! @name Robot state checking
-  //@{
-  // bool isFlying() const;   // Not implemented yet
-  // bool isHovering() const; // Not implemented yet
-  // bool isLanded() const;   // Not implemented yet
-  bool isRunning() const;
-  //@}
-
-  //! @name Sending state info
-  //@{
-  bool sendMocapData(const vpHomogeneousMatrix &M);
-  //@}
-
-  //! @name Commands and parameters
+  //! \name Robot commands
   //@{
   bool arm();
+  bool disarm();
   void doFlatTrim();
-  void holdPosition();
+  bool hasFlyingCapability();
+  bool holdPosition();
   bool kill();
   bool land();
-  void setForwardSpeed(double vx);
-  void setLateralSpeed(double vy);
-  void setPosition(float dX, float dY, float dZ, float dPsi);
-  void setPosition(const vpHomogeneousMatrix &M);
-  void setVelocity(const vpColVector &vel, double delta_t);
-  void setVelocity(const vpColVector &vel);
-  void setVerticalSpeed(double vz);
-  void setYawSpeed(double wz);
-  void stopMoving();
+  bool releaseControl();
+  bool sendMocapData(const vpHomogeneousMatrix &enu_M_flu, int display_fps = 1);
+  void setAutoLand(bool auto_land);
+  bool setForwardSpeed(double body_frd_vx);
+  bool setLateralSpeed(double body_frd_vy);
+  bool setGPSGlobalOrigin(double latitude, double longitude, double altitude);
+  void setPositioningIncertitude(float position_incertitude, float yaw_incertitude);
+  bool setPosition(float ned_north, float ned_east, float ned_down, float ned_yaw, bool blocking = true, int timeout_sec = 10);
+  bool setPosition(const vpHomogeneousMatrix &ned_M_frd, bool blocking = true, int timeout_sec = 10);
+  bool setPositionRelative(float ned_delta_north, float ned_delta_east, float ned_delta_down, float ned_delta_yaw, bool blocking = true, int timeout_sec = 10);
+  bool setPositionRelative(const vpHomogeneousMatrix &delta_frd_M_frd, bool blocking = true, int timeout_sec = 10);
+  bool setVelocity(const vpColVector &frd_vel_cmd);
+  bool setVerticalSpeed(double body_frd_vz);
+  bool setYawSpeed(double body_frd_wz);
   void setTakeOffAlt(double altitude);
-  bool takeOff(bool interactive = true);
+  void setVerbose(bool verbose);
+  bool stopMoving();
+  bool takeControl();
+  bool takeOff(bool interactive = true, int timeout_sec = 10);
+  bool takeOff(bool interactive, double takeoff_altitude, int timeout_sec = 10);
   //@}
 
 private:
-  [[noreturn]] static void sighandler(int signo);
-
   //*** Setup functions ***//
   void cleanUp();
   void createDroneController();
@@ -133,5 +153,5 @@ private:
   vpRobotMavsdkImpl *m_impl;
 };
 
-#endif //#ifdef VISP_HAVE_MAVSDK
-#endif //#ifndef vpRobotMavsdk_h_
+#endif // #ifdef VISP_HAVE_MAVSDK
+#endif // #ifndef vpRobotMavsdk_h_

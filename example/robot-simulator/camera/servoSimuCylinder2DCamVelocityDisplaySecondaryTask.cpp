@@ -178,7 +178,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_click_allowed, opt_display, opt_new_proj_operator) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     vpImage<unsigned char> Iint(512, 512, 0);

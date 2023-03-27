@@ -76,18 +76,13 @@
 */
 
 // List of allowed command line options
-#define GETOPTARGS "cdi:lp:ht:f:n:s:w"
+#define GETOPTARGS "cdi:Lp:ht:f:l:s:w"
 typedef enum {
   vpX11,
   vpGTK,
   vpGDI,
   vpD3D,
 } vpDisplayType;
-
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
-           unsigned nimages, unsigned step, vpDisplayType &dtype);
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &nimages,
-                unsigned &step, vpDisplayType &dtype, bool &list, bool &display, bool &click, bool &wait);
 
 /*!
 
@@ -98,14 +93,20 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
   \param ipath : Input image path.
   \param ppath : Personal image path.
   \param first : First image.
-  \param nimages : Number of images to manipulate.
+  \param last : Last image.
   \param step : Step between two images.
   \param dtype : Type of video device.
 
  */
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
-           unsigned nimages, unsigned step, vpDisplayType &dtype)
+void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first, unsigned last,
+           unsigned step, vpDisplayType &dtype)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
+
   fprintf(stdout, "\n\
 Read an image sequence from the disk and display it.\n\
 The sequence is made of separate images. Each image corresponds\n\
@@ -113,8 +114,8 @@ to a PGM file.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <test image path>] [-p <personal image path>]\n\
-     [-f <first image>] [-n <number of images>] [-s <step>] \n\
-     [-t <type of video device>] [-l] [-w] [-c] [-d] [-h]\n						      \
+     [-f <first image>] [-l <last image>] [-s <step>] \n\
+     [-t <type of video device>] [-L] [-w] [-c] [-d] [-h]\n						      \
  ",
           name);
 
@@ -138,7 +139,7 @@ SYNOPSIS\n\
  OPTIONS:                                               Default\n\
   -i <test image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"cube/image.%%04d.pgm\"\n\
+     From this path read \"cube/image.%%04d.%s\"\n\
      images. These images come from ViSP-images-x.y.z.tar.gz\n\
      available on the ViSP website.\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
@@ -149,17 +150,15 @@ SYNOPSIS\n\
      Specify a personal sequence containing images \n\
      to process.\n\
      By image sequence, we mean one file per image.\n\
-     The following image file formats PNM (PGM P5, PPM P6)\n\
-     are supported. The format is selected by analysing \n\
-     the filename extension.\n\
-     Example : \"/Temp/ViSP-images/cube/image.%%04d.pgm\"\n\
+     The format is selected by analysing the filename extension.\n\
+     Example : \"/Temp/visp-images/cube/image.%%04d.%s\"\n\
      %%04d is for the image numbering.\n\
  \n\
   -f <first image>                                     %u\n\
      First image number of the sequence.\n\
  \n\
-  -n <number of images>                                %u\n\
-     Number of images to load from the sequence.\n\
+  -l <last image>                                %u\n\
+     Last image number of the sequence.\n\
  \n\
   -s <step>                                            %u\n\
      Step between two images.\n\
@@ -172,7 +171,7 @@ SYNOPSIS\n\
      \"GDI\": only on Windows platform (Graphics Device Interface),\n\
      \"D3D\": only on Windows platform (Direct3D).\n\
 \n\
-  -l\n\
+  -L\n\
      Print the list of video-devices available and exit.\n\
 \n\
   -c\n\
@@ -190,7 +189,7 @@ SYNOPSIS\n\
 \n\
   -h\n\
      Print the help.\n\n",
-          ipath.c_str(), ppath.c_str(), first, nimages, step, display.c_str());
+          ipath.c_str(), ext.c_str(), ppath.c_str(), ext.c_str(), first, last, step, display.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -204,7 +203,7 @@ SYNOPSIS\n\
   \param ipath : Input image path.
   \param ppath : Personal image path.
   \param first : First image.
-  \param nimages : Number of images to display.
+  \param last : Last image.
   \param step : Step between two images.
   \param dtype : Type of video device.
   \param list : Set as true,list the available video-devices.
@@ -219,7 +218,7 @@ SYNOPSIS\n\
   \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &nimages,
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
                 unsigned &step, vpDisplayType &dtype, bool &list, bool &display, bool &click, bool &wait)
 {
   const char *optarg_;
@@ -251,7 +250,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
     case 'i':
       ipath = optarg_;
       break;
-    case 'l':
+    case 'L':
       list = true;
       break;
     case 'p':
@@ -260,8 +259,8 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
     case 'f':
       first = (unsigned)atoi(optarg_);
       break;
-    case 'n':
-      nimages = (unsigned)atoi(optarg_);
+    case 'l':
+      last = (unsigned)atoi(optarg_);
       break;
     case 's':
       step = (unsigned)atoi(optarg_);
@@ -270,12 +269,12 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
       wait = true;
       break;
     case 'h':
-      usage(argv[0], NULL, ipath, ppath, first, nimages, step, dtype);
+      usage(argv[0], NULL, ipath, ppath, first, last, step, dtype);
       return false;
       break;
 
     default:
-      usage(argv[0], optarg_, ipath, ppath, first, nimages, step, dtype);
+      usage(argv[0], optarg_, ipath, ppath, first, last, step, dtype);
       return false;
       break;
     }
@@ -283,7 +282,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, ppath, first, nimages, step, dtype);
+    usage(argv[0], NULL, ipath, ppath, first, last, step, dtype);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -301,13 +300,19 @@ int main(int argc, const char **argv)
   std::string dirname;
   std::string filename;
   unsigned opt_first = 30;
-  unsigned opt_nimages = 10;
+  unsigned opt_last = 40;
   unsigned opt_step = 1;
   vpDisplayType opt_dtype; // Type of display to use
   bool opt_list = false;   // To print the list of video devices
   bool opt_display = true;
   bool opt_click = true;
   bool opt_click_blocking = false;
+
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
 
 // Default display is one available
 #if defined VISP_HAVE_GTK
@@ -329,9 +334,9 @@ int main(int argc, const char **argv)
     ipath = env_ipath;
 
   // Read the command line options
-  if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_nimages, opt_step, opt_dtype, opt_list, opt_display,
+  if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_last, opt_step, opt_dtype, opt_list, opt_display,
                  opt_click, opt_click_blocking) == false) {
-    exit(-1);
+    return EXIT_FAILURE;
   }
   // Print the list of video-devices available
   if (opt_list) {
@@ -356,7 +361,7 @@ int main(int argc, const char **argv)
     if (!nbDevices) {
       std::cout << "  No display is available\n";
     }
-    return (0);
+    return EXIT_FAILURE;
   }
 
   if (!opt_display)
@@ -379,7 +384,7 @@ int main(int argc, const char **argv)
 
   // Test if an input path is set
   if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()) {
-    usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages, opt_step, opt_dtype);
+    usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_last, opt_step, opt_dtype);
     std::cerr << std::endl << "ERROR:" << std::endl;
     std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
               << "  environment variable to specify the location of the " << std::endl
@@ -388,7 +393,7 @@ int main(int argc, const char **argv)
               << "  use personal images." << std::endl
               << std::endl;
 
-    exit(-1);
+    return EXIT_FAILURE;
   }
 
   // Declare an image, this is a gray level image (unsigned char)
@@ -401,51 +406,28 @@ int main(int argc, const char **argv)
   char cfilename[FILENAME_MAX];
 
   if (opt_ppath.empty()) {
-
-    // Warning :
-    // the image sequence is not provided with the ViSP package
-    // therefore the program will return you an error :
-    //  !!    vpImageIoPnm.cpp: readPGM(#210) :couldn't read file
-    //        ViSP-images/cube/image.0001.pgm
-    //  !!    vpDotExample.cpp: main(#95) :Error while reading the image
-    //  terminate called after throwing an instance of 'vpImageException'
-    //
-    //  The sequence is available on the visp www site
-    //  https://visp.inria.fr/download/
-    //  in the download section. It is named "ViSP-images.tar.gz"
-
-    // Set the path location of the image sequence
+    // Warning : the datset is available on https://visp.inria.fr/download/
     dirname = vpIoTools::createFilePath(ipath, "cube");
 
     // Build the name of the image file
-
     s.setf(std::ios::right, std::ios::adjustfield);
-    s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+    s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
     filename = vpIoTools::createFilePath(dirname, s.str());
   } else {
 
     snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
     filename = cfilename;
   }
-  // Read the PGM image named "filename" on the disk, and put the
-  // bitmap into the image structure I.  I is initialized to the
-  // correct size
-  //
-  // exception readPGM may throw various exception if, for example,
-  // the file does not exist, or if the memory cannot be allocated
+  // Read image named "filename" and put the bitmap in I
   try {
     vpImageIo::read(I, filename);
   } catch (...) {
-    // an exception is throwned if an exception from readPGM has been catched
-    // here this will result in the end of the program
-    // Note that another error message has been printed from readPGM
-    // to give more information about the error
     std::cerr << std::endl << "ERROR:" << std::endl;
     std::cerr << "  Cannot read " << filename << std::endl;
     std::cerr << "  Check your -i " << ipath << " option, " << std::endl
               << "  or your -p " << opt_ppath << " option " << std::endl
               << "  or VISP_INPUT_IMAGE_PATH environment variable" << std::endl;
-    exit(-1);
+    return EXIT_FAILURE;
   }
   // Create a display for the image
   vpDisplay *display = NULL;
@@ -458,7 +440,7 @@ int main(int argc, const char **argv)
 #else
     std::cout << "  Sorry, X11 video device is not available.\n";
     std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-    return 0;
+    return EXIT_FAILURE;
 #endif
     break;
   case vpGTK:
@@ -468,7 +450,7 @@ int main(int argc, const char **argv)
 #else
     std::cout << "  Sorry, GTK video device is not available.\n";
     std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-    return 0;
+    return EXIT_FAILURE;
 #endif
     break;
   case vpGDI:
@@ -478,7 +460,7 @@ int main(int argc, const char **argv)
 #else
     std::cout << "  Sorry, GDI video device is not available.\n";
     std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-    return 0;
+    return EXIT_FAILURE;
 #endif
     break;
   case vpD3D:
@@ -488,7 +470,7 @@ int main(int argc, const char **argv)
 #else
     std::cout << "  Sorry, D3D video device is not available.\n";
     std::cout << "Use \"" << argv[0] << " -l\" to print the list of available devices.\n";
-    return 0;
+    return EXIT_FAILURE;
 #endif
     break;
   }
@@ -509,22 +491,19 @@ int main(int argc, const char **argv)
     } catch (...) {
       vpERROR_TRACE("Error while displaying the image");
       delete display;
-      exit(-1);
+      return EXIT_FAILURE;
     }
   }
 
-  //  double tms_1 = vpTime::measureTimeMs() ;
-  unsigned niter = 0;
   // this is the loop over the image sequence
-  while (iter < opt_first + opt_nimages * opt_step) {
+  while (iter < opt_last) {
     try {
       double tms = vpTime::measureTimeMs();
 
       // set the new image name
-
       if (opt_ppath.empty()) {
         s.str("");
-        s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+        s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
         filename = vpIoTools::createFilePath(dirname, s.str());
       } else {
         snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
@@ -559,32 +538,25 @@ int main(int argc, const char **argv)
             case vpMouseButton::button3:
               std::cout << "Right button was pressed. Bye. " << std::endl;
               delete display;
-              return 0;
+              return EXIT_SUCCESS;
               break;
             case vpMouseButton::none:
               break;
             }
           }
         }
-
         vpTime::wait(tms, 1000);
-      }
-
-      else {
+      } else {
         // Synchronise the loop to 40 ms
         vpTime::wait(tms, 40);
       }
-      niter++;
     } catch (...) {
       delete display;
-      exit(-1);
+      return EXIT_FAILURE;
     }
     iter += opt_step;
   }
   delete display;
-  //  double tms_2 = vpTime::measureTimeMs() ;
-  //  double tms_total = tms_2 - tms_1 ;
-  //  std::cout << "Total Time : "<< tms_total<<std::endl;
 }
 #else
 int main() { vpERROR_TRACE("You do not have X11 or GTK display functionalities..."); }

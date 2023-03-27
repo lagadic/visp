@@ -78,11 +78,9 @@ int main(int argc, const char **argv)
   vpDisplay::flush(I);
   vpDisplay::flush(I_conn);
   vpDisplay::getClick(I_conn);
-
-  return EXIT_SUCCESS;
 #else
   (void)argc;
   (void)argv;
-  return 0;
 #endif
+  return EXIT_SUCCESS;
 }

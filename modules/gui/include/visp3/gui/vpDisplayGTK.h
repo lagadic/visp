@@ -74,7 +74,7 @@ int main()
 
   // Read an image in PGM P5 format
 #ifdef _WIN32
-  vpImageIo::read(I, "C:/temp/ViSP-images/Klimt/Klimt.pgm");
+  vpImageIo::read(I, "C:/Temp/visp-images/Klimt/Klimt.pgm");
 #else
   vpImageIo::read(I, "/local/soft/ViSP/ViSP-images/Klimt/Klimt.pgm");
 #endif

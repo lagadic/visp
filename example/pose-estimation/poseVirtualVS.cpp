@@ -81,12 +81,7 @@
 #include <visp3/vision/vpPose.h>
 
 // List of allowed command line options
-#define GETOPTARGS "cdi:p:hf:n:s:"
-
-void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
-           unsigned nimages, unsigned step);
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &nimages,
-                unsigned &step, bool &click_allowed, bool &display);
+#define GETOPTARGS "cdi:p:hf:l:s:"
 
 /*!
 
@@ -97,19 +92,24 @@ Print the program options.
   \param ipath : Input image path.
   \param ppath : Personal image path.
   \param first : First image.
-  \param nimages : Number of images to manipulate.
+  \param last : Last image.
   \param step : Step between two images.
 
  */
 void usage(const char *name, const char *badparam, std::string ipath, std::string ppath, unsigned first,
-           unsigned nimages, unsigned step)
+           unsigned last, unsigned step)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   fprintf(stdout, "\n\
 Test dot tracking.\n\
 \n\
 SYNOPSIS\n\
   %s [-i <input image path>] [-p <personal image path>]\n\
-     [-f <first image>] [-n <number of images>] [-s <step>][-c] [-d] [-h]\n",
+     [-f <first image>] [-l <last image>] [-s <step>][-c] [-d] [-h]\n",
           name);
 
   fprintf(stdout, "\n\
@@ -117,7 +117,7 @@ OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
      From this path read images \n\
-     \"cube/image.%%04d.pgm\"\n\
+     \"cube/image.%%04d.%s\"\n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
      this option.\n\
@@ -126,17 +126,15 @@ OPTIONS:                                               Default\n\
      Specify a personal sequence containing images \n\
      to process.\n\
      By image sequence, we mean one file per image.\n\
-     The following image file formats PNM (PGM P5, PPM P6)\n\
-     are supported. The format is selected by analysing \n\
-     the filename extension.\n\
-     Example : \"/Temp/ViSP-images/cube/image.%%04d.pgm\"\n\
+     The format is selected by analysing the filename extension.\n\
+     Example : \"/Temp/visp-images/cube/image.%%04d.%s\"\n\
      %%04d is for the image numbering.\n\
  \n\
   -f <first image>                                     %u\n\
      First image number of the sequence.\n\
  \n\
-  -n <number of images>                                %u\n\
-     Number of images to load from the sequence.\n\
+  -l <last image>                                %u\n\
+     Last image number of the sequence.\n\
  \n\
   -s <step>                                            %u\n\
      Step between two images.\n\
@@ -150,32 +148,32 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n",
-          ipath.c_str(), ppath.c_str(), first, nimages, step);
+          ipath.c_str(), ext.c_str(), ppath.c_str(), ext.c_str(), first, last, step);
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
 }
 /*!
 
-Set the program options.
+  Set the program options.
 
   \param argc : Command line number of parameters.
   \param argv : Array of command line parameters.
   \param ipath : Input image path.
   \param ppath : Personal image path.
   \param first : First image.
-  \param nimages : Number of images to display.
+  \param last : Last image.
   \param step : Step between two images.
   \param display : Set as true, activates the image display. This is
-the default configuration. When set to false, the display is
-disabled. This can be useful for automatic tests using crontab
-under Unix or using the task manager under Windows.
-\param click_allowed : set to false, disable the mouse click.
+  the default configuration. When set to false, the display is
+  disabled. This can be useful for automatic tests using crontab
+  under Unix or using the task manager under Windows.
+  \param click_allowed : set to false, disable the mouse click.
 
-\return false if the program has to be stopped, true otherwise.
+  \return false if the program has to be stopped, true otherwise.
 
 */
-bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &nimages,
+bool getOptions(int argc, const char **argv, std::string &ipath, std::string &ppath, unsigned &first, unsigned &last,
                 unsigned &step, bool &click_allowed, bool &display)
 {
   const char *optarg_;
@@ -199,18 +197,18 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
       first = (unsigned)atoi(optarg_);
       break;
     case 'n':
-      nimages = (unsigned)atoi(optarg_);
+      last = (unsigned)atoi(optarg_);
       break;
     case 's':
       step = (unsigned)atoi(optarg_);
       break;
     case 'h':
-      usage(argv[0], NULL, ipath, ppath, first, nimages, step);
+      usage(argv[0], NULL, ipath, ppath, first, last, step);
       return false;
       break;
 
     default:
-      usage(argv[0], optarg_, ipath, ppath, first, nimages, step);
+      usage(argv[0], optarg_, ipath, ppath, first, last, step);
       return false;
       break;
     }
@@ -218,7 +216,7 @@ bool getOptions(int argc, const char **argv, std::string &ipath, std::string &pp
 
   if ((c == 1) || (c == -1)) {
     // standalone param or error
-    usage(argv[0], NULL, ipath, ppath, first, nimages, step);
+    usage(argv[0], NULL, ipath, ppath, first, last, step);
     std::cerr << "ERROR: " << std::endl;
     std::cerr << "  Bad argument " << optarg_ << std::endl << std::endl;
     return false;
@@ -237,12 +235,17 @@ int main(int argc, const char **argv)
     std::string dirname;
     std::string filename;
     unsigned opt_first = 0;
-    unsigned opt_nimages = 80;
+    unsigned opt_last = 80;
     unsigned opt_step = 1;
     bool opt_click_allowed = true;
     bool opt_display = true;
-
     int i;
+
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
 
     std::cout << "-------------------------------------------------------" << std::endl;
     std::cout << "  poseVirtualVS.cpp" << std::endl << std::endl;
@@ -262,9 +265,9 @@ int main(int argc, const char **argv)
       ipath = env_ipath;
 
     // Read the command line options
-    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_nimages, opt_step, opt_click_allowed,
+    if (getOptions(argc, argv, opt_ipath, opt_ppath, opt_first, opt_last, opt_step, opt_click_allowed,
                    opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -283,7 +286,7 @@ int main(int argc, const char **argv)
     }
     // Test if an input path is set
     if (opt_ipath.empty() && env_ipath.empty() && opt_ppath.empty()) {
-      usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_nimages, opt_step);
+      usage(argv[0], NULL, ipath, opt_ppath, opt_first, opt_last, opt_step);
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Use -i <visp image path> option or set VISP_INPUT_IMAGE_PATH " << std::endl
                 << "  environment variable to specify the location of the " << std::endl
@@ -291,7 +294,7 @@ int main(int argc, const char **argv)
                 << "  Use -p <personal image path> option if you want to " << std::endl
                 << "  use personal images" << std::endl
                 << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Declare an image, this is a gray level image (unsigned char)
@@ -305,25 +308,13 @@ int main(int argc, const char **argv)
 
     if (opt_ppath.empty()) {
 
-      // Warning :
-      // the image sequence is not provided with the ViSP package
-      // therefore the program will return you an error :
-      //  !!    vpImageIoPnm.cpp: readPGM(#210) :couldn't read file
-      //  /ViSP-images/cube/image.0001.pgm
-      //  !!    poseExample.cpp: main(#95) :Error while reading the image
-      //  terminate called after throwing an instance of 'vpImageException'
-      //
-      //  The sequence is available on the visp www site
-      //  https://visp.inria.fr/download/
-      //  in the download section. It is named "ViSP-images-x.y.z.tar.gz"
-
-      // directory name
+      // Warning : the datset is available on https://visp.inria.fr/download/
       dirname = vpIoTools::createFilePath(ipath, "cube");
 
       // Build the name of the image file
 
       s.setf(std::ios::right, std::ios::adjustfield);
-      s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+      s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
       filename = vpIoTools::createFilePath(dirname, s.str());
     } else {
 
@@ -347,19 +338,10 @@ int main(int argc, const char **argv)
       }
     }
 
-    // Read the PGM image named "s" on the disk, and put the bitmap into the
-    // image structure I.
-    // I is initialized to the correct size
-    //
-    // exception readPGM may throw various exception if, for example,
-    // the file does not exist, or if the memory cannot be allocated
+    // Read image named filename and put the bitmap into in I.
     try {
       vpImageIo::read(I, filename);
     } catch (...) {
-      // an exception is throwned if an exception from readPGM has been
-      // catched here this will result in the end of the program Note that
-      // another error message has been printed from readPGM to give more
-      // information about the error
       if (opt_ppath.empty()) {
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot read " << filename << std::endl;
@@ -370,7 +352,7 @@ int main(int argc, const char **argv)
         std::cerr << "  Cannot read " << filename << std::endl;
         std::cerr << "  or your -p " << opt_ppath << " option " << std::endl << std::endl;
       }
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
 // We open a window using either the X11 or GTK or GDI window manager
@@ -530,11 +512,8 @@ int main(int argc, const char **argv)
     // compute the initial pose using Dementhon method followed by a non
     // linear minimisation method
 
-    // Pose by Lagrange it provides an initialization of the pose
-    pose.computePose(vpPose::LAGRANGE, cMo);
-    // the pose is now refined using the virtual visual servoing approach
-    // Warning: cMo needs to be initialized otherwise it may  diverge
-    pose.computePose(vpPose::VIRTUAL_VS, cMo);
+    // Pose by Dementhon or Lagrange provides an initialization of the non linear virtual visual-servoing pose estimation
+    pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
     if (opt_display) {
       // display the compute pose
       pose.display(I, cMo, cam, 0.05, vpColor::red);
@@ -546,14 +525,13 @@ int main(int argc, const char **argv)
     // pose.setCovarianceComputation(true); //Important if you want
     // tracker.getCovarianceMatrix() to work.
 
-    unsigned niter = 0;
     // this is the loop over the image sequence
-    while (iter < opt_nimages) {
+    while (iter < opt_last) {
       // set the new image name
 
       if (opt_ppath.empty()) {
         s.str("");
-        s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+        s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
         filename = vpIoTools::createFilePath(dirname, s.str());
       } else {
         snprintf(cfilename, FILENAME_MAX, opt_ppath.c_str(), iter);
@@ -608,8 +586,6 @@ int main(int argc, const char **argv)
       // Make sure pose.setCovarianceComputation(true) has been called
       // (uncomment below). std::cout << pose.getCovarianceMatrix() <<
       // std::endl << std::endl;
-
-      niter++;
 
       iter += opt_step;
     }

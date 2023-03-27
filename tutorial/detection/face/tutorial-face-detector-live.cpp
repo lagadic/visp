@@ -29,7 +29,7 @@ int main(int argc, const char *argv[])
                   << " [--haar <haarcascade xml filename>] [--device <camera "
                      "device>] [--scale <subsampling factor>] [--help]"
                   << std::endl;
-        return 0;
+        return EXIT_SUCCESS;
       }
     }
 
@@ -59,7 +59,7 @@ int main(int argc, const char *argv[])
 #endif
     if (!cap.isOpened()) { // check if we succeeded
       std::cout << "Failed to open the camera" << std::endl;
-      return -1;
+      return EXIT_FAILURE;
     }
     cv::Mat frame;
     cap >> frame; // get a new frame from camera

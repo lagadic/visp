@@ -77,7 +77,7 @@
 void usage(const char *name, const char *badparam)
 {
   fprintf(stdout, "\n\
-Example of a positionning control followed by a velocity control \n\
+Example of a positioning control followed by a velocity control \n\
 of the Afma4 robot.\n						   \
 \n\
 SYNOPSIS\n\
@@ -152,7 +152,7 @@ int main(int argc, const char **argv)
     // and velocities to the robot.
     // Read the command line options
     if (getOptions(argc, argv, control) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     vpRobotAfma4 robot;

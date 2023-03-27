@@ -60,7 +60,7 @@
 #include <visp3/sensor/vpDirectShowGrabber.h>
 
 // List of allowed command line options
-//#define GETOPTARGS	"dhn:o:"
+// #define GETOPTARGS	"dhn:o:"
 #define GETOPTARGS "c:df:hmn:io:st:?"
 
 #define GRAB_COLOR
@@ -275,7 +275,7 @@ int main(int argc, const char **argv)
         std::cout << "cameras on the bus." << std::endl;
         g->close();
         delete g;
-        return (0);
+        return EXIT_FAILURE;
       }
     }
     if (camera >= ncameras) {
@@ -285,7 +285,7 @@ int main(int argc, const char **argv)
       std::cout << "Check your -c <camera> command line option." << std::endl;
       g->close();
       delete g;
-      return (0);
+      return EXIT_FAILURE;
     }
     if (multi) {
       camera = 0; // to over write a bad option usage
@@ -376,7 +376,7 @@ int main(int argc, const char **argv)
       if (display)
         delete[] d;
 
-      return 0;
+      return EXIT_SUCCESS;
     }
 
     // Do a first acquisition to initialise the display

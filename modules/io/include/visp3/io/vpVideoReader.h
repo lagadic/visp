@@ -108,7 +108,7 @@ int main()
   // Read the nearest key frame from the 3th frame
   reader.getFrame(I, 2);
 
-  // After positionning the video reader use acquire to read the video frame by frame
+  // After positioning the video reader use acquire to read the video frame by frame
   reader.acquire(I);
 
   return 0;

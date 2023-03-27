@@ -366,7 +366,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_list, opt_click_allowed, opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Print the list of video-devices available
@@ -396,7 +396,7 @@ int main(int argc, const char **argv)
       if (!nbDevices) {
         std::cout << "  No display is available\n";
       }
-      return (0);
+      return EXIT_FAILURE;
     }
 
     // Create a color image for each display.
@@ -405,15 +405,16 @@ int main(int argc, const char **argv)
     // Create a grayscale image for each display.
     runTest<unsigned char>(opt_display, opt_click_allowed);
 
+    return EXIT_SUCCESS;
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.getMessage() << std::endl;
-    return (-1);
+    return EXIT_FAILURE;
   }
 }
 #else
 int main()
 {
   std::cout << "You do not have display functionalities..." << std::endl;
-  return 0;
+  return EXIT_SUCCESS;
 }
 #endif

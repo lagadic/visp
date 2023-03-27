@@ -79,7 +79,7 @@ bool compareImagePoint(std::pair<size_t, vpImagePoint> p1, std::pair<size_t, vpI
  * equipped with a Pixhawk connected to a Jetson TX2. An Intel Realsense camera
  * is also attached to the drone and connected to the Jetson. The drone is localized
  * thanks to Qualisys Mocap. Communication between the Jetson and the Pixhawk
- * is based on Mavlink using mavsdk 3rd party.
+ * is based on Mavlink using MAVSDK 3rd party.
  *
  * This program makes the drone detect and follow an AprilTag from the 36h11 family.
  *
@@ -104,7 +104,7 @@ int main(int argc, char **argv)
       tagSize = std::atof(argv[2]); // Tag size option is required
       if (tagSize <= 0) {
         std::cout << "Error : invalid tag size." << std::endl << "See " << argv[0] << " --help" << std::endl;
-        return 0;
+        return EXIT_FAILURE;
       }
       for (int i = 3; i < argc; i++) {
         if (std::string(argv[i]) == "--co" && i + 1 < argc) {
@@ -114,7 +114,7 @@ int main(int argc, char **argv)
           opt_distance_to_tag = std::atof(argv[i + 1]);
           if (opt_distance_to_tag <= 0) {
             std::cout << "Error : invalid distance to tag." << std::endl << "See " << argv[0] << " --help" << std::endl;
-            return 0;
+            return EXIT_FAILURE;
           }
           opt_has_distance_to_tag = true;
           i++;
@@ -127,7 +127,7 @@ int main(int argc, char **argv)
         } else {
           std::cout << "Error : unknown parameter " << argv[i] << std::endl
                     << "See " << argv[0] << " --help" << std::endl;
-          return 0;
+          return EXIT_FAILURE;
         }
       }
     } else if (argc >= 2 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
@@ -154,11 +154,11 @@ int main(int argc, char **argv)
                 << "  --help, -h\n"
                 << "      Print help message.\n"
                 << std::endl;
-      return 0;
+      return EXIT_SUCCESS;
 
     } else {
       std::cout << "Error : tag size parameter required." << std::endl << "See " << argv[0] << " --help" << std::endl;
-      return 0;
+      return EXIT_FAILURE;
     }
 
     std::cout << std::endl
@@ -457,7 +457,7 @@ int main(int argc, char **argv)
           }
 
 #ifdef CONTROL_UAV
-          drone.setVelocity(ve, 1.0);
+          drone.setVelocity(ve);
 #endif
 
           if (condition) {

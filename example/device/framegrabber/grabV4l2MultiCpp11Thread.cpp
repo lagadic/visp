@@ -438,7 +438,7 @@ int main(int argc, char *argv[])
 
   // Read the command line options
   if (!getOptions(argc, argv, deviceCount, saveVideo)) {
-    return (-1);
+    return EXIT_FAILURE;
   }
 
   std::vector<vpV4l2Grabber *> grabbers;

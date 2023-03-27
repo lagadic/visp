@@ -95,11 +95,9 @@ int main(int argc, const char **argv)
 
   vpDisplay::flush(I_res);
   vpDisplay::getClick(I_res);
-
-  return EXIT_SUCCESS;
 #else
   (void)argc;
   (void)argv;
-  return 0;
 #endif
+  return EXIT_SUCCESS;
 }

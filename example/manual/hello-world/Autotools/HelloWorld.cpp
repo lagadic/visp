@@ -15,5 +15,5 @@ int main()
   std::cout << "ViSP creates \"./myimage.pgm\" B&W image " << std::endl;
   vpImageIo::write(I, "./myimage.pgm");
 
-  return 0;
+  return EXIT_SUCCESS;
 }

@@ -249,6 +249,8 @@ void writeOpenCV(const vpImage<float> &I, const std::string &filename)
 
   cv::imwrite(filename.c_str(), Ip);
 #else
+  (void)I;
+  (void)filename;
   throw(vpImageException(vpImageException::ioError, "Not supported image type with the current OpenCV library version"));
 #endif
 }
@@ -261,6 +263,8 @@ void writeOpenCV(const vpImage<vpRGBf> &I, const std::string &filename)
 
   cv::imwrite(filename.c_str(), Ip);
 #else
+  (void)I;
+  (void)filename;
   throw(vpImageException(vpImageException::ioError, "Not supported image type with the current OpenCV library version"));
 #endif
 }

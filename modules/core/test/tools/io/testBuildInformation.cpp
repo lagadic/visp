@@ -50,5 +50,5 @@ int main()
   std::string info = vpIoTools::getBuildInformation();
   std::cout << info << std::endl;
 
-  return 0;
+  return EXIT_SUCCESS;
 }

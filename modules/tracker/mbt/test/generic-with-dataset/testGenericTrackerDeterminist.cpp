@@ -46,7 +46,7 @@
 #include <visp3/io/vpImageIo.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-//#define DEBUG_DISPLAY // uncomment to check that the tracking is correct
+// #define DEBUG_DISPLAY // uncomment to check that the tracking is correct
 #ifdef DEBUG_DISPLAY
 #include <visp3/gui/vpDisplayX.h>
 #endif
@@ -55,8 +55,13 @@ namespace
 {
 bool read_data(int cpt, vpImage<unsigned char> &I)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   const std::string env_ipath = vpIoTools::getViSPImagesDataPath();
-  const std::string ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d.png");
+  const std::string ipath = vpIoTools::createFilePath(env_ipath, "mbt/cube/image%04d." + ext);
 
   char buffer[FILENAME_MAX];
   snprintf(buffer, FILENAME_MAX, ipath.c_str(), cpt);
@@ -246,5 +251,5 @@ int main(int argc, char *argv[])
 #else
 #include <iostream>
 
-int main() { return 0; }
+int main() { return EXIT_SUCCESS; }
 #endif

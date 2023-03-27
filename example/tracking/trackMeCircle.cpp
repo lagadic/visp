@@ -87,6 +87,11 @@ bool getOptions(int argc, const char **argv, std::string &ipath, bool &click_all
 */
 void usage(const char *name, const char *badparam, std::string ipath)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   fprintf(stdout, "\n\
 Test auto detection of dots using vpDot2.\n\
 \n\
@@ -98,7 +103,7 @@ SYNOPSIS\n\
 OPTIONS:                                               Default\n\
   -i <input image path>                                %s\n\
      Set image input path.\n\
-     From this path read \"circle/circle.pgm\"\n\
+     From this path read \"circle/circle.%s\"\n\
      image. \n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -113,7 +118,7 @@ OPTIONS:                                               Default\n\
 \n\
   -h\n\
      Print the help.\n",
-          ipath.c_str());
+          ipath.c_str(), ext.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -182,6 +187,12 @@ int main(int argc, const char **argv)
     bool opt_click_allowed = true;
     bool opt_display = true;
 
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
+
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -192,7 +203,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_ipath, opt_click_allowed, opt_display) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -218,7 +229,7 @@ int main(int argc, const char **argv)
                 << "  environment variable to specify the location of the " << std::endl
                 << "  image path where test images are located." << std::endl
                 << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Declare an image, this is a gray level image (unsigned char)
@@ -230,28 +241,24 @@ int main(int argc, const char **argv)
     dirname = vpIoTools::createFilePath(ipath, "circle");
 
     // Build the name of the image file
-    filename = vpIoTools::createFilePath(dirname, "circle.pgm");
+    filename = vpIoTools::createFilePath(dirname, "circle." + ext);
 
-    // Read the PGM image named "filename" on the disk, and put the
-    // bitmap into the image structure I.  I is initialized to the
-    // correct size
-    //
-    // exception readPGM may throw various exception if, for example,
+    // Read the image into the image structure I.  I is initialized to the correct size
+    // vpImageIo::read() may throw various exception if, for example,
     // the file does not exist, or if the memory cannot be allocated
     try {
       vpCTRACE << "Load: " << filename << std::endl;
 
       vpImageIo::read(I, filename);
     } catch (...) {
-      // an exception is throwned if an exception from readPGM has been
-      // catched here this will result in the end of the program Note that
-      // another error message has been printed from readPGM to give more
+      // If an exception is throwned it is catched here and will result in the end of the program.
+      // Note that another error message can be printed from vpImageIo::read() to give more
       // information about the error
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
                 << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
 // We open a window using either X11, GTK or GDI.

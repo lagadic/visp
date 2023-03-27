@@ -70,10 +70,6 @@
 
 #define GETOPTARGS "hlcdb:i:p"
 
-void usage(const char *name, const char *badparam);
-bool getOptions(int argc, const char **argv, bool &isLearning, std::string &dataFile, bool &click_allowed,
-                bool &display, bool &displayPoints, std::string &ipath);
-
 /*!
 
   Print the program options.
@@ -84,6 +80,11 @@ bool getOptions(int argc, const char **argv, bool &isLearning, std::string &data
 */
 void usage(const char *name, const char *badparam)
 {
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+  std::string ext("png");
+#else
+  std::string ext("pgm");
+#endif
   fprintf(stdout, "\n\
 Detection of points of interests and matching using the Ferns classifier. The \
 object needs first to be learned (-l option). This learning process will create\
@@ -100,7 +101,7 @@ OPTIONS:                                               \n\
 \n\
   -i <input image path>                                \n\
      Set image input path.\n\
-     From this path read \"line/image.%%04d.pgm\"\n\
+     From this path read \"line/image.%%04d.%s\"\n\
      images. \n\
      Setting the VISP_INPUT_IMAGE_PATH environment\n\
      variable produces the same behaviour than using\n\
@@ -120,7 +121,8 @@ OPTIONS:                                               \n\
      display points of interest.\n\
 \n\
   -h\n\
-     Print this help.\n");
+     Print this help.\n",
+          ext.c_str());
 
   if (badparam)
     fprintf(stdout, "\nERROR: Bad parameter [%s]\n", badparam);
@@ -205,6 +207,12 @@ int main(int argc, const char **argv)
     std::string dirname;
     std::string filename;
 
+#if VISP_HAVE_DATASET_VERSION >= 0x030600
+    std::string ext("png");
+#else
+    std::string ext("pgm");
+#endif
+
     // Get the visp-images-data package path or VISP_INPUT_IMAGE_PATH
     // environment variable value
     env_ipath = vpIoTools::getViSPImagesDataPath();
@@ -217,7 +225,7 @@ int main(int argc, const char **argv)
     // Read the command line options
     if (getOptions(argc, argv, isLearning, dataFile, opt_click_allowed, opt_display, displayPoints, opt_ipath) ==
         false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option values
@@ -244,7 +252,7 @@ int main(int argc, const char **argv)
                 << "  environment variable to specify the location of the " << std::endl
                 << "  image path where test images are located." << std::endl
                 << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Declare two images, these are gray level images (unsigned char)
@@ -258,29 +266,20 @@ int main(int argc, const char **argv)
     unsigned iter = 0; // Image number
     std::ostringstream s;
     s.setf(std::ios::right, std::ios::adjustfield);
-    s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+    s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
     filename = vpIoTools::createFilePath(dirname, s.str());
 
-    // Read the PGM image named "filename" on the disk, and put the
-    // bitmap into the image structure I.  I is initialized to the
-    // correct size
-    //
-    // exception readPGM may throw various exception if, for example,
-    // the file does not exist, or if the memory cannot be allocated
+    // Read image named "filename" and put the bitmap in I
     try {
       std::cout << "Load: " << filename << std::endl;
       vpImageIo::read(Iref, filename);
       I = Iref;
     } catch (...) {
-      // an exception is throwned if an exception from readPGM has been
-      // catched here this will result in the end of the program Note that
-      // another error message has been printed from readPGM to give more
-      // information about the error
       std::cerr << std::endl << "ERROR:" << std::endl;
       std::cerr << "  Cannot read " << filename << std::endl;
       std::cerr << "  Check your -i " << ipath << " option " << std::endl
                 << "  or VISP_INPUT_IMAGE_PATH environment variable." << std::endl;
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
 #if defined VISP_HAVE_X11
@@ -363,7 +362,7 @@ int main(int argc, const char **argv)
       if (!vpIoTools::checkFilename(dataFile)) {
         vpERROR_TRACE("cannot load the database with the specified name. Has "
                       "the object been learned with the -l option? ");
-        exit(-1);
+        return EXIT_FAILURE;
       }
       try {
         // load a previously recorded file
@@ -371,7 +370,7 @@ int main(int argc, const char **argv)
       } catch (...) {
         vpERROR_TRACE("cannot load the database with the specified name. Has "
                       "the object been learned with the -l option? ");
-        exit(-1);
+        return EXIT_FAILURE;
       }
     }
 
@@ -395,7 +394,7 @@ int main(int argc, const char **argv)
         break;
       }
       s.str("");
-      s << "image." << std::setw(4) << std::setfill('0') << iter << ".pgm";
+      s << "image." << std::setw(4) << std::setfill('0') << iter << "." << ext;
       filename = vpIoTools::createFilePath(dirname, s.str());
       // read the image
       vpImageIo::read(I, filename);
@@ -413,10 +412,10 @@ int main(int argc, const char **argv)
         nbpts = fern.matchPoint(I);
       } catch (const vpException &e) {
         std::cout << e.getMessage() << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       } catch (...) {
         std::cout << "unknown error line " << __LINE__ << std::endl;
-        return -1;
+        return EXIT_FAILURE;
       }
       std::cout << "matching " << nbpts << " points : " << vpTime::measureTimeMs() - t0 << " ms" << std::endl;
 

@@ -193,7 +193,7 @@ int main()
       double x = 0, y = 0;
 
       if (!vpMeLine::intersection(line[i % nbline], line[(i + 1) % nbline], ip)) {
-        exit(-1);
+        return EXIT_FAILURE;
       }
 
       vpPixelMeterConversion::convertPoint(cam, ip, x, y);
@@ -216,8 +216,8 @@ int main()
       pose.addPoint(point[i]); // and added to the pose computation point list
     }
 
-    pose.computePose(vpPose::LAGRANGE, cMo);
-    pose.computePose(vpPose::VIRTUAL_VS, cMo);
+    // Pose by Dementhon or Lagrange provides an initialization of the non linear virtual visual-servoing pose estimation
+    pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
 
     vpTRACE("sets the current position of the visual feature ");
 
@@ -290,7 +290,7 @@ int main()
           double x = 0, y = 0;
 
           if (!vpMeLine::intersection(line[i % nbline], line[(i + 1) % nbline], ip)) {
-            exit(-1);
+            return EXIT_FAILURE;
           }
 
           vpPixelMeterConversion::convertPoint(cam, ip, x, y);

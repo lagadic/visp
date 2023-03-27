@@ -228,7 +228,7 @@ int main(int argc, const char **argv)
 
     // Read the command line options
     if (getOptions(argc, argv, opt_conf, opt_debugdir, username) == false) {
-      exit(-1);
+      return EXIT_FAILURE;
     }
 
     // Get the option value
@@ -248,7 +248,7 @@ int main(int argc, const char **argv)
         std::cerr << std::endl << "ERROR:" << std::endl;
         std::cerr << "  Cannot create " << dirname << std::endl;
         std::cerr << "  Check your -d " << debugdir << " option " << std::endl;
-        exit(-1);
+        return EXIT_FAILURE;
       }
     }
 
@@ -281,7 +281,7 @@ int main(int argc, const char **argv)
       g.acquire(I);
     } catch (...) {
       vpERROR_TRACE(" Error caught");
-      return (-1);
+      return EXIT_FAILURE;
     }
 
 // We open a window using either X11 or GTK or GDI.
@@ -299,7 +299,7 @@ int main(int argc, const char **argv)
       vpDisplay::flush(I);
     } catch (...) {
       vpERROR_TRACE(" Error caught");
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     vpServo task;
@@ -314,7 +314,7 @@ int main(int argc, const char **argv)
       vpERROR_TRACE("after dot.initTracking(I) ");
     } catch (...) {
       vpERROR_TRACE(" Error caught");
-      return (-1);
+      return EXIT_FAILURE;
     }
 
     vpCameraParameters cam;

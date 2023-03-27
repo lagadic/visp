@@ -248,109 +248,52 @@ static void lagrange(vpMatrix &a, vpMatrix &b, vpColVector &x1, vpColVector &x2)
 //#undef EPS
 
 /*!
-\brief  Compute the pose of a planar object using Lagrange approach.
+  \brief  Compute the pose of a planar object using Lagrange approach.
 
-\param cMo : Estimated pose. No initialisation is requested to estimate cMo.
+  \param cMo : Estimated pose. No initialisation is requested to estimate cMo.
+  \param p_isPlan : if different from NULL, indicates if the object is planar or not.
+  \param p_a : if different from NULL, the a coefficient of the plan formed by the points.
+  \param p_b : if different from NULL, the b coefficient of the plan formed by the points.
+  \param p_c : if different from NULL, the c coefficient of the plan formed by the points.
+  \param p_d : if different from NULL, the d coefficient of the plan formed by the points.
 */
 
-void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo)
+void vpPose::poseLagrangePlan(vpHomogeneousMatrix &cMo, bool *p_isPlan, double *p_a, double *p_b, double *p_c, double *p_d)
 {
 #if (DEBUG_LEVEL1)
   std::cout << "begin vpPose::PoseLagrangePlan(...) " << std::endl;
 #endif
   // determination of the plane equation a X + b Y + c Z + d = 0
-  // FC : long copy/paste from vpPose::coplanar. To be improved...
-  vpPoint P1, P2, P3;
-  double x1 = 0, x2 = 0, x3 = 0, y1 = 0, y2 = 0, y3 = 0, z1 = 0, z2 = 0, z3 = 0;
-
-  // Get three 3D points that are not collinear and that are not at origin
-  // FC : I think one point could be at origin (to be checked)
-
-  bool degenerate = true;
-  bool not_on_origin = true;
-  std::list<vpPoint>::const_iterator it_tmp;
-
-  std::list<vpPoint>::const_iterator it_i, it_j, it_k;
-  for (it_i = listP.begin(); it_i != listP.end(); ++it_i) {
-    if (degenerate == false) {
-      // std::cout << "Found a non degenerate configuration" << std::endl;
-      break;
+  double a, b, c, d;
+  
+  // Checking if coplanar has already been called and if the plan coefficients have been given
+  if((p_isPlan != NULL) && (p_a != NULL) && (p_b != NULL) && (p_c != NULL) && (p_d != NULL))
+  {
+    if(*p_isPlan)
+    {
+      // All the pointers towards the plan coefficients are different from NULL => using them in the rest of the method
+      a = *p_a;
+      b = *p_b;
+      c = *p_c;
+      d = *p_d;
     }
-    P1 = *it_i;
-    // Test if point is on origin
-    if ((std::fabs(P1.get_oX()) <= std::numeric_limits<double>::epsilon()) &&
-        (std::fabs(P1.get_oY()) <= std::numeric_limits<double>::epsilon()) &&
-        (std::fabs(P1.get_oZ()) <= std::numeric_limits<double>::epsilon())) {
-      not_on_origin = false;
-    } else {
-      not_on_origin = true;
-    }
-    if (not_on_origin) {
-      it_tmp = it_i;
-      ++it_tmp; // j = i+1
-      for (it_j = it_tmp; it_j != listP.end(); ++it_j) {
-        if (degenerate == false) {
-          // std::cout << "Found a non degenerate configuration" << std::endl;
-          break;
-        }
-        P2 = *it_j;
-        if ((std::fabs(P2.get_oX()) <= std::numeric_limits<double>::epsilon()) &&
-            (std::fabs(P2.get_oY()) <= std::numeric_limits<double>::epsilon()) &&
-            (std::fabs(P2.get_oZ()) <= std::numeric_limits<double>::epsilon())) {
-          not_on_origin = false;
-        } else {
-          not_on_origin = true;
-        }
-        if (not_on_origin) {
-          it_tmp = it_j;
-          ++it_tmp; // k = j+1
-          for (it_k = it_tmp; it_k != listP.end(); ++it_k) {
-            P3 = *it_k;
-            if ((std::fabs(P3.get_oX()) <= std::numeric_limits<double>::epsilon()) &&
-                (std::fabs(P3.get_oY()) <= std::numeric_limits<double>::epsilon()) &&
-                (std::fabs(P3.get_oZ()) <= std::numeric_limits<double>::epsilon())) {
-              not_on_origin = false;
-            } else {
-              not_on_origin = true;
-            }
-            if (not_on_origin) {
-              x1 = P1.get_oX();
-              x2 = P2.get_oX();
-              x3 = P3.get_oX();
-
-              y1 = P1.get_oY();
-              y2 = P2.get_oY();
-              y3 = P3.get_oY();
-
-              z1 = P1.get_oZ();
-              z2 = P2.get_oZ();
-              z3 = P3.get_oZ();
-
-              vpColVector a_b(3), b_c(3), cross_prod;
-              a_b[0] = x1 - x2;
-              a_b[1] = y1 - y2;
-              a_b[2] = z1 - z2;
-              b_c[0] = x2 - x3;
-              b_c[1] = y2 - y3;
-              b_c[2] = z2 - z3;
-
-              cross_prod = vpColVector::crossProd(a_b, b_c);
-              if (cross_prod.sumSquare() <= std::numeric_limits<double>::epsilon())
-                degenerate = true; // points are collinear
-              else
-                degenerate = false;
-            }
-            if (degenerate == false)
-              break;
-          }
-        }
-      }
+    else
+    {
+      // The call to coplanar that was performed outside vpPose::poseLagrangePlan indicated that the points are not coplanar.
+      throw vpException(vpException::fatalError, "Called vpPose::poseLagrangePlan but the call to vpPose::coplanar done outside the method indicated that the points are not coplanar");
     }
   }
-  double a = y1 * z2 - y1 * z3 - y2 * z1 + y2 * z3 + y3 * z1 - y3 * z2;
-  double b = -x1 * z2 + x1 * z3 + x2 * z1 - x2 * z3 - x3 * z1 + x3 * z2;
-  double c = x1 * y2 - x1 * y3 - x2 * y1 + x2 * y3 + x3 * y1 - x3 * y2;
-  double d = -x1 * y2 * z3 + x1 * y3 * z2 + x2 * y1 * z3 - x2 * y3 * z1 - x3 * y1 * z2 + x3 * y2 * z1;
+  else
+  {
+    // At least one of the coefficient is a NULL pointer => calling coplanar by ourselves
+    int coplanarType;
+    bool areCoplanar = coplanar(coplanarType, &a, &b, &c, &d);
+    if(!areCoplanar)
+    {
+      throw vpException(vpException::fatalError, "Called vpPose::poseLagrangePlan but call to vpPose::coplanar indicates that the points are not coplanar");
+    }
+  }
+  
 
   if (c < 0.0) { // imposing c >= 0
     a = -a;
