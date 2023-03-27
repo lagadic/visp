@@ -161,7 +161,7 @@ $ cmake ../visp
 \verbatim
   Real robots:
     ...
-    Use MAVSDK:                  yes
+    Use MAVSDK:                  yes (ver 1.4.13)
     ...
   Mocap:
     Use Qualisys:                yes
