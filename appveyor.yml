@@ -2,7 +2,7 @@
 version: "3.5.1-{build}"
 
 image:
-  - Visual Studio 2017
+  - Visual Studio 2019
 
 # to add several platforms to build matrix
 platform:
@@ -15,9 +15,9 @@ environment:
   VISP_OPENCV_MINGW_FILE: opencv-4.1.0-MinGW-build-package.7z
   VISP_OPENCV_MINGW_DIR: opencv-4.1.0-MinGW-build-package
   VISP_OPENCV_MINGW_PKG: https://github.com/lagadic/visp-dependencies/blob/master/opencv-4.1.0-MinGW-x86_64-7.3.0-release-posix-seh-rt_v5-rev0-build-package.7z?raw=true
-  VISP_OPENCV_VS2015_2017_FILE: opencv-4.1.0-vc14_vc15.exe
-  VISP_OPENCV_VS2015_2017_DIR: opencv-4.1.0-vc14_vc15
-  VISP_OPENCV_VS2015_2017_PKG: https://github.com/opencv/opencv/releases/download/4.1.0/opencv-4.1.0-vc14_vc15.exe
+  VISP_OPENCV_VS2019_FILE: opencv-4.7.0-windows.exe
+  VISP_OPENCV_VS2019_DIR: opencv-4.7.0
+  VISP_OPENCV_VS2019_PKG: https://github.com/opencv/opencv/releases/download/4.7.0/opencv-4.7.0-windows.exe
 
   matrix:
     - TARGET: mingw
@@ -47,15 +47,15 @@ install:
 
   # opencv
   - ps: >-
-      if ((${env:TARGET} -imatch "msvc" -or ${env:TARGET} -imatch "visp_sample") -and !(Test-Path ${env:VISP_OPENCV_VS2015_2017_FILE})) {
-        echo "Downloading OpenCV Visual Studio from ${env:VISP_OPENCV_VS2015_2017_PKG} ..."
-        appveyor DownloadFile "${env:VISP_OPENCV_VS2015_2017_PKG}" -FileName ${env:VISP_OPENCV_VS2015_2017_FILE} -Timeout 1200000
+      if ((${env:TARGET} -imatch "msvc" -or ${env:TARGET} -imatch "visp_sample") -and !(Test-Path ${env:VISP_OPENCV_VS2019_FILE})) {
+        echo "Downloading OpenCV Visual Studio from ${env:VISP_OPENCV_VS2019_PKG} ..."
+        appveyor DownloadFile "${env:VISP_OPENCV_VS2019_PKG}" -FileName ${env:VISP_OPENCV_VS2019_FILE} -Timeout 1200000
       }
 
   - ps: >-
       if (${env:TARGET} -imatch "msvc" -or ${env:TARGET} -imatch "visp_sample") {
         echo "Extracting OpenCV Visual Studio to C:\projects\deps ..."
-        7z x ${env:VISP_OPENCV_VS2015_2017_FILE} -y "-o${env:VISP_OPENCV_VS2015_2017_DIR}"
+        7z x ${env:VISP_OPENCV_VS2019_FILE} -y "-o${env:VISP_OPENCV_VS2019_DIR}"
       }
 
   - ps: >-
@@ -96,13 +96,13 @@ before_build:
   - if "%TARGET%"=="visp_sample" set PATH=%VISP_DLL_DIR%;%PATH%
 
   # Setup path for OpenCV
-  - if "%TARGET%"=="msvc" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_VS2015_2017_DIR%\opencv\build
+  - if "%TARGET%"=="msvc" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_VS2019_DIR%\opencv\build
   - if "%TARGET%"=="msvc" set OpenCV_DLL_DIR=%OpenCV_DIR%\%platform%\vc15\bin
   - if "%TARGET%"=="msvc" set PATH=%OPENCV_DLL_DIR%;%PATH%
   - if "%TARGET%"=="mingw" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_MINGW_DIR%\install
   - if "%TARGET%"=="mingw" set OpenCV_DLL_DIR=%OpenCV_DIR%\x64\mingw\bin
   - if "%TARGET%"=="mingw" set PATH=%OPENCV_DLL_DIR%;%PATH%
-  - if "%TARGET%"=="visp_sample" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_VS2015_2017_DIR%\opencv\build
+  - if "%TARGET%"=="visp_sample" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_VS2019_DIR%\opencv\build
   - if "%TARGET%"=="visp_sample" set OpenCV_DLL_DIR=%OpenCV_DIR%\%platform%\vc15\bin
   - if "%TARGET%"=="visp_sample" set PATH=%OPENCV_DLL_DIR%;%PATH%
 
