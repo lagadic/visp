@@ -72,7 +72,7 @@ install:
 
 cache:
   - opencv-4.1.0-MinGW-build-package.7z -> appveyor.yml
-  - opencv-4.1.0-vc14_vc15.exe -> appveyor.yml
+  - opencv-4.7.0-windows.exe -> appveyor.yml
 
 # visp clone directory
 clone_folder: C:\projects\visp\visp
@@ -88,22 +88,22 @@ before_build:
   - if "%TARGET%"=="mingw" mingw32-make --version
 
   # Setup path for ViSP
-  - if "%TARGET%"=="msvc" set VISP_DLL_DIR=C:\projects\visp\build\install\%platform%\vc15\bin
+  - if "%TARGET%"=="msvc" set VISP_DLL_DIR=C:\projects\visp\build\install\%platform%\6\bin
   - if "%TARGET%"=="msvc" set PATH=%VISP_DLL_DIR%;%PATH%
   - if "%TARGET%"=="mingw" set VISP_DLL_DIR=C:\projects\visp\build\install\%platform%\mingw\bin
   - if "%TARGET%"=="mingw" set PATH=%VISP_DLL_DIR%;%PATH%
-  - if "%TARGET%"=="visp_sample" set VISP_DLL_DIR=C:\projects\visp\build\install\%platform%\vc15\bin
+  - if "%TARGET%"=="visp_sample" set VISP_DLL_DIR=C:\projects\visp\build\install\%platform%\vc16\bin
   - if "%TARGET%"=="visp_sample" set PATH=%VISP_DLL_DIR%;%PATH%
 
   # Setup path for OpenCV
   - if "%TARGET%"=="msvc" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_VS2019_DIR%\opencv\build
-  - if "%TARGET%"=="msvc" set OpenCV_DLL_DIR=%OpenCV_DIR%\%platform%\vc15\bin
+  - if "%TARGET%"=="msvc" set OpenCV_DLL_DIR=%OpenCV_DIR%\%platform%\vc16\bin
   - if "%TARGET%"=="msvc" set PATH=%OPENCV_DLL_DIR%;%PATH%
   - if "%TARGET%"=="mingw" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_MINGW_DIR%\install
   - if "%TARGET%"=="mingw" set OpenCV_DLL_DIR=%OpenCV_DIR%\x64\mingw\bin
   - if "%TARGET%"=="mingw" set PATH=%OPENCV_DLL_DIR%;%PATH%
   - if "%TARGET%"=="visp_sample" set OpenCV_DIR=C:\projects\deps\%VISP_OPENCV_VS2019_DIR%\opencv\build
-  - if "%TARGET%"=="visp_sample" set OpenCV_DLL_DIR=%OpenCV_DIR%\%platform%\vc15\bin
+  - if "%TARGET%"=="visp_sample" set OpenCV_DLL_DIR=%OpenCV_DIR%\%platform%\vc16\bin
   - if "%TARGET%"=="visp_sample" set PATH=%OPENCV_DLL_DIR%;%PATH%
 
 build_script:
