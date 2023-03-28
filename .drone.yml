@@ -1,6 +1,7 @@
 ---
-kind: pipeline
 name: arm64_clang_cmake_opencv
+kind: pipeline
+type: docker
 
 platform:
   os: linux
@@ -8,7 +9,7 @@ platform:
 
 steps:
 - name: Build and Test
-  image: ubuntu:18.04
+  image: ubuntu:22.04
   environment:
     CC: clang
     CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF'
@@ -43,8 +44,9 @@ steps:
     - ctest -j$(nproc) --output-on-failure
 
 ---
-kind: pipeline
 name: arm64_gcc_cmake_opencv
+kind: pipeline
+type: docker
 
 platform:
   os: linux
@@ -52,7 +54,7 @@ platform:
 
 steps:
 - name: Build and Test
-  image: ubuntu:18.04
+  image: ubuntu:22.04
   environment:
     CC: gcc
     CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DDART_TESTING_TIMEOUT=2500'
@@ -85,8 +87,9 @@ steps:
     - ctest -j$(nproc) --output-on-failure
 
 ---
-kind: pipeline
 name: arm64_gcc_cmake
+kind: pipeline
+type: docker
 
 platform:
   os: linux
@@ -94,7 +97,7 @@ platform:
 
 steps:
 - name: Build and Test without OpenCV
-  image: ubuntu:18.04
+  image: ubuntu:22.04
   environment:
     CC: gcc
     CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF -DDART_TESTING_TIMEOUT=2500'
@@ -127,8 +130,9 @@ steps:
     - ctest -j$(nproc) --output-on-failure
 
 # ---
-# kind: pipeline
 # name: arm32_gcc_cmake_opencv
+# kind: pipeline
+# type: docker
 
 # platform:
 #   os: linux
@@ -136,7 +140,7 @@ steps:
 
 # steps:
 # - name: Build and Test (32 bits)
-#   image: ubuntu:18.04
+#   image: ubuntu:22.04
 #   environment:
 #     CC: gcc
 #     CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF'
@@ -169,8 +173,9 @@ steps:
 #     - ctest -j$(nproc) --output-on-failure
 
 # ---
-# kind: pipeline
 # name: arm32_gcc_cmake
+# kind: pipeline
+# type: docker
 
 # platform:
 #   os: linux
@@ -178,7 +183,7 @@ steps:
 
 # steps:
 # - name: Build and Test without OpenCV (32 bits)
-#   image: ubuntu:18.04
+#   image: ubuntu:22.04
 #   environment:
 #     CC: gcc
 #     CMAKE_FLAGS: '-DBUILD_DEMOS=OFF -DBUILD_EXAMPLES=OFF -DBUILD_JAVA=OFF -DBUILD_MODULE_visp_java_bindings_generator=OFF -DBUILD_TUTORIALS=OFF'
