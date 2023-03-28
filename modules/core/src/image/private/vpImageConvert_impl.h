@@ -139,9 +139,7 @@ void vp_createDepthHistogram(const vpImage<uint16_t> &src_depth, vpImage<unsigne
   }
 #else
   for (int i = 0; i < static_cast<int>(src_depth.getSize()); ++i) {
-    if (!vpMath::isNaN(src_depth.bitmap[i])) {
-      ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
-    }
+    ++histogram[static_cast<uint32_t>(src_depth.bitmap[i])];
   }
 #endif
 
