@@ -214,7 +214,6 @@ int main()
 
       vpTime::wait(robot.getSamplingTime() * 1000);
     }
-    return EXIT_SUCCESS
   } catch (const vpException &e) {
     std::cout << "Catch a ViSP exception: " << e << std::endl;
     return EXIT_FAILURE
@@ -222,5 +221,6 @@ int main()
     std::cout << "Catch an exception " << std::endl;
     return EXIT_FAILURE;
   }
+  return EXIT_SUCCESS;
 #endif
 }
