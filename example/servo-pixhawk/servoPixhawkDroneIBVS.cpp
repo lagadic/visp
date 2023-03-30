@@ -226,8 +226,10 @@ int main(int argc, char **argv)
                      "Visual servoing tasks");
       unsigned int iter = 0;
 
+      //! [DJI-F450 apriltag family]
       vpDetectorAprilTag::vpAprilTagFamily tagFamily = vpDetectorAprilTag::TAG_36h11;
       vpDetectorAprilTag detector(tagFamily); // The detector used to detect Apritags
+      //! [DJI-F450 apriltag family]
       detector.setAprilTagQuadDecimate(4.0);
       detector.setAprilTagNbThreads(4);
       detector.setDisplayTag(true);
@@ -240,30 +242,32 @@ int main(int argc, char **argv)
       task.setInteractionMatrixType(vpServo::CURRENT);
       task.setLambda(lambda);
 
+      //! [DJI-F450 cMe]
       /*
-       * In the following section, camera 1 refers to camera coordinates system of the drone,
-       * but without taking camera orientation into account. This orientation is taken into
-       * consideration in camera 2. E is the effective coordinate system of the drone, the one
-       * in which we need to convert every velocity command.
+       * In the following section, (c1) is an intermediate frame attached to the camera
+       * that has axis aligned with the FLU body frame. The real camera frame is denoted (c).
+       * The FLU body-frame of the drone denoted (e) is the one in which we need to convert
+       * every velocity command computed by visual servoing.
        *
-       * We can easily compute homogeneous matrix between camera 1 and camera 2, and between
-       * camera 1 and effective coordonate system E of the drone.
+       * We can easily estimate the homogeneous matrix between (c1) and (c) where
+       * in our case we have -10 degrees around X camera axis.
+       * Then for the transformation between (e) and (c1) frames we can consider only translations.
        *
-       * Using those matrices, we can in the end obtain the matrix between c2 and E
+       * Using those matrices, we can in the end obtain the homogeneous matrix between (c) and (e) frames.
+       * This homogeneous matrix is then used to compute the velocity twist matrix cVe.
        */
-      vpRxyzVector c1_rxyz_c2(vpMath::rad(-10.0), vpMath::rad(0), 0);
-      vpRotationMatrix c1Rc2(c1_rxyz_c2); // Rotation between camera 1 and 2
-      vpHomogeneousMatrix c1Mc2(vpTranslationVector(),
-                                c1Rc2); // Homogeneous matrix between c1 and c2
+      vpRxyzVector c1_rxyz_c(vpMath::rad(-10.0), vpMath::rad(0), 0);
+      vpRotationMatrix c1Rc(c1_rxyz_c); // Rotation between (c1) and (c)
+      vpHomogeneousMatrix c1Mc(vpTranslationVector(), c1Rc); // Homogeneous matrix between (c1) and (c)
 
-      vpRotationMatrix c1Re{1, 0, 0, 0, 0, 1, 0, -1, 0}; // Rotation between camera 1 and E
-      vpTranslationVector c1te(0, -0.03, -0.07);         // Translation between camera 1 and E
-      vpHomogeneousMatrix c1Me(c1te, c1Re);              // Homogeneous matrix between c1 and E
+      vpRotationMatrix c1Re{1, 0, 0, 0, 0, 1, 0, -1, 0};     // Rotation between (c1) and (e)
+      vpTranslationVector c1te(0, -0.03, -0.07);             // Translation between (c1) and (e)
+      vpHomogeneousMatrix c1Me(c1te, c1Re);                  // Homogeneous matrix between (c1) and (e)
 
-      vpHomogeneousMatrix c2Me = c1Mc2.inverse() * c1Me; // Homogeneous matrix between c2 and E
+      vpHomogeneousMatrix cMe = c1Mc.inverse() * c1Me;       // Homogeneous matrix between (c) and (e)
 
-      vpVelocityTwistMatrix cVe(c2Me);
-
+      vpVelocityTwistMatrix cVe(cMe);
+      //! [DJI-F450 cMe]
       task.set_cVe(cVe);
 
       vpMatrix eJe(6, 4, 0);

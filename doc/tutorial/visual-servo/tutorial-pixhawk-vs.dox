@@ -225,7 +225,7 @@ The parameter '-ob' or '--only-body' tells the application which body is to be s
 MoCap System.
 If you look at the window of the MoCap system manager, you should be able to look at the bodies' names.
 
-\image html img-dji-qualisys.png Capture of Qualisys Task Manager showing the body 'DJI-F450' corresponding to the drone. width=90%
+\image html img-dji-qualisys.png Capture of Qualisys Task Manager showing the FLU body frame attached to the DJI-F450 corresponding to the drone. The MoCap reference frame is ENU.
 
 \subsection pixhawk_qgc Start QGroundControl
 
@@ -272,15 +272,20 @@ In order to do this part, make sure you add a camera to your drone. We added a i
 Jetson through USB.
 
 The code servoPixhawkDroneIBVS.cpp is an example that needs to be run on the Jetson and that allows to do visual servoing with the drone.
-This program estabishes a rigid link between the drone (equiped with a camera) and an Apriltag.
-Depending on where the camera is placed, the matrices expressing the transformation between the frame of the drone and the
-frame of the camera need to be modified. Here is a picture of the drone showing where the D405 camera was attached.
+This program establishes a rigid link between the drone (equiped with a camera) and an Apriltag.
+Depending on where the camera is placed, the matrices expressing the transformation between the FLU body frame of the drone and the
+camera frame need to be modified. Here is a picture of the drone showing where the D405 camera was attached.
 
-\note In the code, the Apriltag is hard-coded to be the AprilTag 36h11 pattern. You can modify it if you wish.
+\image html img-dji-frames.jpg Frames of the end effector drone frame (e) and of the D405 camera frame.
 
-\image html img-dji-frames.jpg Frames of the end effector drone frame (e) and of the D405 camera frame (c). width=70%
+- In the code, the Apriltag is hard-coded to be the AprilTag 36h11 pattern. You can modify it if you wish (see next lines).
+\snippet servoPixhawkDroneIBVS.cpp DJI-F450 apriltag family
 
-If you want to launch the code, you can connect to your Jetson through ssh and do :
+- More over, in servoPixhawkDroneIBVS.cpp the transformation matrix between the FLU body frame (e) and the camera frame (c) is hard coded,
+and need to be adapted to your configuration (see next lines).
+\snippet servoPixhawkDroneIBVS.cpp DJI-F450 cMe
+
+- Now if you want to launch the code, you can connect to your Jetson through ssh and do :
 \verbatim
 $ ssh nvidia@jetson
 $ ./servoPixhawkDroneIBVS --tag-size 0.23 --co udp://:14553 --distance-to-tag 1.3
