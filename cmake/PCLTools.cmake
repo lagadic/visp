@@ -42,6 +42,7 @@
 # OUT: pcl_deps_libraries
 macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   foreach(lib_ ${${pcl_libraries}})
+    mark_as_advanced(${lib_}_LOCATION)
     if(TARGET ${lib_})
       # This is a PCL or VTK library
       list(APPEND PCL_VTK_LIBRARIES ${lib_})
@@ -105,6 +106,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
       # Filter -lm into find_library(m) to get the full path of the library
       set(PCL_VTK_IMPORTED_LIBS_FILTERED)
       foreach(lib_ ${PCL_VTK_IMPORTED_LIBS})
+        mark_as_advanced(${lib_}_LOCATION)
         string(REGEX REPLACE "\\$<LINK_ONLY:" "" lib_ ${lib_})
         string(REGEX REPLACE ">" "" lib_ ${lib_})
 
