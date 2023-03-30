@@ -274,6 +274,9 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(HDF5_C_LIBRARY_m)           # Requested on macOS with pcl 1.12.1
   mark_as_advanced(HDF5_C_LIBRARY_sz)          # Requested on macOS with pcl 1.12.1
   mark_as_advanced(HDF5_C_LIBRARY_z)           # Requested on macOS with pcl 1.12.1
+  mark_as_advanced(HDF5_C_LIBRARY_crypto)
+  mark_as_advanced(HDF5_C_LIBRARY_curl)
+  mark_as_advanced(HDF5_C_LIBRARY_pthread)
 
   mark_as_advanced(ICU_INCLUDE_DIR)            # Requested on macOS with pcl 1.12.1
 
@@ -314,4 +317,11 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
   mark_as_advanced(libusb_INCLUDE_DIR)                  # Requested on macOS with pcl 1.12.1
   mark_as_advanced(netCDF_DIR)                          # Requested on macOS with pcl 1.12.1
   mark_as_advanced(pugixml_DIR)                         # Requested on macOS with pcl 1.12.1
+
+  mark_as_advanced(OPENGL_GLES2_INCLUDE_DIR)
+  mark_as_advanced(OPENGL_GLES3_INCLUDE_DIR)
+
+  mark_as_advanced(VTK_MPI_NUMPROCS)
+
+  mark_as_advanced(TBB_DIR)
 endmacro()
