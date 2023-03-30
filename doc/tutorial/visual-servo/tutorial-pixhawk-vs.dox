@@ -225,7 +225,7 @@ The parameter '-ob' or '--only-body' tells the application which body is to be s
 MoCap System.
 If you look at the window of the MoCap system manager, you should be able to look at the bodies' names.
 
-\image html img-dji-qualisys.png Capture of Qualisys Task Manager showing the body 'DJI-F450' corresponding to the drone. width=90%
+\image html img-dji-qualisys.png Capture of Qualisys Task Manager showing the FLU body frame attached to the DJI-F450 corresponding to the drone. The MoCap reference frame is ENU.
 
 \subsection pixhawk_qgc Start QGroundControl
 
