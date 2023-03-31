@@ -125,8 +125,8 @@ public:
   vpRGBa &operator=(const vpRGBa &&v);
 #endif
   vpRGBa &operator=(const vpColVector &v);
-  bool operator==(const vpRGBa &v);
-  bool operator!=(const vpRGBa &v);
+  bool operator==(const vpRGBa &v) const;
+  bool operator!=(const vpRGBa &v) const;
 
   vpColVector operator-(const vpRGBa &v) const;
   vpRGBa operator+(const vpRGBa &v) const;
