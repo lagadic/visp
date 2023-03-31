@@ -23,6 +23,8 @@ ViSP 3.5.1 (under development)
     . Image-based visual-servoing, position and velocity control examples to control robots
       equipped with Pixhawk (see vpRobotMavsdk doc)
     . Windows 11 support
+    . Various fixes
+    . Reorganize tutorials
   - Tutorials
     . New tutorial to list all the hardware (robot, camera, depth camera, lidar, mocap,
       haptic devices, F/T sensor) supported by ViSP
