@@ -481,6 +481,9 @@
 // Defined if we want to use openmp
 #cmakedefine VISP_HAVE_OPENMP
 
+// Defined if nlohmann json parser is found
+#cmakedefine VISP_HAVE_NLOHMANN_JSON
+
 // Define c++ standard values also available in __cplusplus when gcc is used
 #define VISP_CXX_STANDARD_98 ${VISP_CXX_STANDARD_98}
 #define VISP_CXX_STANDARD_11 ${VISP_CXX_STANDARD_11}

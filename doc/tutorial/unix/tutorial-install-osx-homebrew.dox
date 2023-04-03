@@ -82,15 +82,16 @@ ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.in
 
 We recommend to install the following 3rd parties:
 
-- OpenCV to get advanced image processing and computer vision features coming with ViSP
-- libX11 to be able to open a window to display images
-- lapack and eigen to benefit from optimized mathematical capabilities
-- libdc1394 to grab images from firewire cameras
-- libzbar to be able to detect QR codes
+- `opencv` to get advanced image processing and computer vision features coming with ViSP
+- `libX11` to be able to open a window to display images
+- `lapack` and `eigen` to benefit from optimized mathematical capabilities
+- `libdc1394` to grab images from firewire cameras
+- `libzbar` to be able to detect QR codes
+- `nlohmann-json` to be able to parse json files
 
 Installation of recommended 3rd parties could be performed running:
 \verbatim
-$ brew install opencv glog lapack eigen libdc1394 zbar
+$ brew install opencv glog lapack eigen libdc1394 zbar nlohmann-json
 \endverbatim
 
 \subsubsection install_brew_3rdparty_realsense librealsense 3rd party

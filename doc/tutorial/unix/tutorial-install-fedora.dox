@@ -31,7 +31,7 @@ In this section, we give minimal instructions to build ViSP from source just to 
 
 - Install a small number of recommended 3rd parties
 \verbatim
-$ sudo dnf install opencv-devel libX11-devel lapack-devel eigen3-devel libdc1394-devel libv4l-devel zbar-devel libxcb-devel libjpeg-devel libpng-devel
+$ sudo dnf install opencv-devel libX11-devel lapack-devel eigen3-devel libdc1394-devel libv4l-devel zbar-devel libxcb-devel libjpeg-devel libpng-devel nlohmann-json-devel
 \endverbatim
 
 - Get ViSP source code
@@ -68,17 +68,17 @@ ViSP is interfaced with several optional 3rd party libraries. The <a href="http:
 
 We recommend to install the following:
 
-- OpenCV
-- libX11 to be able to open a window to display images
-- lapack and eigen to benefit from optimized mathematical capabilities
-- libdc1394 to grab images from firewire cameras
-- libv4l to grab images from usb or analogic cameras
-- libzbar to be able to detect QR codes
-- pthread library
+- `opencv` to get advanced image processing and computer vision features coming with ViSP
+- `libX11` to be able to open a window to display images
+- `lapack` and `eigen` to benefit from optimized mathematical capabilities
+- `libdc1394` to grab images from firewire cameras
+- `libv4l` to grab images from usb or analogic cameras
+- `libzbar` to be able to detect QR codes
+- `nlohmann-json` to be able to parse json files
 
 Installation of recommended 3rd parties could be performed running:
 \verbatim
-$ sudo dnf install opencv-devel libX11-devel lapack-devel eigen3-devel libdc1394-devel libv4l-devel zbar-devel libxcb-devel
+$ sudo dnf install opencv-devel libX11-devel lapack-devel eigen3-devel libdc1394-devel libv4l-devel zbar-devel libxcb-devel nlohmann-json-devel
 \endverbatim
 
 \subsubsection install_fedora_3rdparty_other Other optional 3rd parties
@@ -397,15 +397,15 @@ General configuration information for ViSP 3.4.1
 
   Python (for build):            /usr/bin/python
 
-  Java:                          
+  Java:
     ant:                         NO
     JNI:                         /usr/lib/jvm/java/include /usr/lib/jvm/java/include/linux /usr/lib/jvm/java/include
 
-  Build options: 
+  Build options:
     Build deprecated:            yes
     Build with moment combine:   no
 
-  Mathematics: 
+  Mathematics:
     Blas/Lapack:                 yes
     \- Use MKL:                  no
     \- Use OpenBLAS:             no
@@ -416,11 +416,11 @@ General configuration information for ViSP 3.4.1
     Use Eigen3:                  yes (ver 3.3.9)
     Use OpenCV:                  yes (ver 4.5.3)
 
-  Simulator: 
-    Ogre simulator: 
+  Simulator:
+    Ogre simulator:
     \- Use Ogre3D:               yes (ver 1.9.0)
     \- Use OIS:                  yes (ver 1.3.0)
-    Coin simulator: 
+    Coin simulator:
     \- Use Coin3D:               yes (ver 3.1.3)
     \- Use SoWin:                no
     \- Use SoXt:                 no
@@ -429,14 +429,14 @@ General configuration information for ViSP 3.4.1
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
-  Media I/O: 
+  Media I/O:
     Use JPEG:                    yes (ver 62)
     Use PNG:                     yes (ver 1.6.37)
     \- Use ZLIB:                 yes (ver 1.2.11)
     Use OpenCV:                  yes (ver 4.5.3)
     Use stb_image (built-in):    no
 
-  Real robots: 
+  Real robots:
     Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
@@ -453,14 +453,14 @@ General configuration information for ViSP 3.4.1
     Use qbdevice (built-in):     yes (ver 2.6.0)
     Use takktile2 (built-in):    yes (ver 1.0.0)
 
-  GUI: 
+  GUI:
     Use X11:                     yes
     Use GTK:                     no
     Use OpenCV:                  yes (ver 4.5.3)
     Use GDI:                     no
     Use Direct3D:                no
 
-  Cameras: 
+  Cameras:
     Use DC1394-2.x:              yes (ver 2.2.6)
     Use CMU 1394:                no
     Use V4L2:                    yes (ver 1.22.1)
@@ -470,7 +470,7 @@ General configuration information for ViSP 3.4.1
     Use Basler Pylon:            no
     Use IDS uEye:                no
 
-  RGB-D sensors: 
+  RGB-D sensors:
     Use Realsense:               no
     Use Realsense2:              no
     Use Occipital Structure:     no
@@ -481,33 +481,33 @@ General configuration information for ViSP 3.4.1
     Use PCL:                     yes (ver 1.12.0)
     \- Use VTK:                  yes (ver 9.0.3)
 
-  F/T sensors: 
+  F/T sensors:
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
 
-  Detection: 
+  Detection:
     Use zbar:                    yes (ver 0.23)
     Use dmtx:                    yes (ver 0.7.5)
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
 
-  Misc: 
+  Misc:
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
     Use libxml2:                 yes (ver 2.9.12)
 
-  Optimization: 
+  Optimization:
     Use OpenMP:                  yes
     Use pthread:                 yes
     Use pthread (built-in):      no
     Use cxx standard:            14
 
-  DNN: 
+  DNN:
     Use CUDA Toolkit:            no
     Use TensorRT:                no
 
-  Documentation: 
+  Documentation:
     Use doxygen:                 yes
 
   Tests and samples:
