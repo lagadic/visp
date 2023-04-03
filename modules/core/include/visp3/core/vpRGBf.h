@@ -108,8 +108,8 @@ public:
   vpRGBf &operator=(const vpRGBf &&v);
 #endif
   vpRGBf &operator=(const vpColVector &v);
-  bool operator==(const vpRGBf &v);
-  bool operator!=(const vpRGBf &v);
+  bool operator==(const vpRGBf &v) const;
+  bool operator!=(const vpRGBf &v) const;
 
   vpColVector operator-(const vpRGBf &v) const;
   vpRGBf operator+(const vpRGBf &v) const;
