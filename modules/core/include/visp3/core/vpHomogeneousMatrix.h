@@ -272,4 +272,22 @@ protected:
   unsigned int m_index;
 };
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+inline void to_json(nlohmann::json& j, const vpHomogeneousMatrix& m) {
+    std::vector<double> values;
+    values.reserve(16);
+    for(unsigned i = 0; i < 16; ++i) {
+        values.push_back(m.data[i]);
+    }
+    j = values;
+}
+inline void from_json(const nlohmann::json& j, vpHomogeneousMatrix& m) {
+    std::vector<double> values = j;
+    assert(values.size() == 16);
+    std::copy(values.begin(), values.end(), m.data);
+}
+
+#endif
+
 #endif

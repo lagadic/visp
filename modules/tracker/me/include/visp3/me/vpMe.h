@@ -64,6 +64,8 @@ public:
 #else
 private:
 #endif
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#endif
   double threshold; //! Likelihood ratio threshold
   double mu1;       //! Contrast continuity parameter (left boundary)
   double mu2;       //! Contrast continuity parameter (right boundary)
@@ -298,6 +300,69 @@ public:
     \param t : new threshold.
   */
   void setThreshold(const double &t) { threshold = t; }
+
+  
+
 };
+
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+
+/*
+double threshold; //! Likelihood ratio threshold
+  double mu1;       //! Contrast continuity parameter (left boundary)
+  double mu2;       //! Contrast continuity parameter (right boundary)
+  double min_samplestep;
+  unsigned int anglestep;
+  int mask_sign;
+  unsigned int range; //! Seek range - on both sides of the reference pixel
+  double sample_step; //! Distance between sampled points (in pixels)
+  int ntotal_sample;
+  int points_to_track;
+  unsigned int mask_size;
+  unsigned int n_mask;
+  int strip;*/
+inline void to_json(nlohmann::json& j, const vpMe& me) {
+  j["threshold"] = me.getThreshold();
+  j["mu"] = {me.getMu1(), me.getMu2()};
+  j["minSampleStep"] = me.getMinSampleStep();
+  j["angleStep"] = me.getAngleStep();
+  j["sampleStep"] = me.getSampleStep();
+  
+  j["range"] = me.getRange();
+  j["ntotal_sample"] = me.getNbTotalSample();
+  j["pointsToTrack"] = me.getPointsToTrack();
+  j["maskSize"] = me.getMaskSize();
+  j["nMask"] = me.getMaskNumber();
+  j["maskSign"] = me.getMaskSign();
+  j["strip"] = me.getStrip();
+
+  
+
+}
+
+inline void from_json(const nlohmann::json& j, vpMe& me) {
+  me.setThreshold(j.at("threshold").get<double>());
+  std::vector<double> mus = j.at("mu").get<std::vector<double>>();
+  assert((mus.size() == 2));
+  me.setMu1(mus[0]);
+  me.setMu2(mus[1]);
+  me.setMinSampleStep(j.at("minSampleStep").get<double>());
+  me.setAngleStep(j.at("angleStep").get<unsigned>());
+  me.setSampleStep(j.at("sampleStep").get<double>());
+  me.setRange(j.at("range").get<unsigned>());
+  me.setNbTotalSample(j.at("ntotal_sample").get<int>());
+  me.setPointsToTrack(j.at("pointsToTrack").get<int>());
+  me.setMaskSize(j.at("maskSize").get<unsigned>());
+  me.setMaskNumber(j.at("nMask").get<unsigned>());
+  me.setMaskSign(j.at("maskSign").get<int>());
+  me.setStrip(j.at("strip").get<int>());
+  
+  me.initMask();
+}
+
+
+#endif
 
 #endif

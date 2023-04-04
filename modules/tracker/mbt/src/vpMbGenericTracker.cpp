@@ -40,6 +40,11 @@
 #include <visp3/core/vpTrackingException.h>
 #include <visp3/mbt/vpMbtXmlGenericParser.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+#endif
+
 vpMbGenericTracker::vpMbGenericTracker()
   : m_error(), m_L(), m_mapOfCameraTransformationMatrix(), m_mapOfFeatureFactors(), m_mapOfTrackers(),
     m_percentageGdPt(0.4), m_referenceCameraName("Camera"), m_thresholdOutlier(0.5), m_w(), m_weightedError(),
@@ -177,6 +182,41 @@ vpMbGenericTracker::~vpMbGenericTracker()
     it->second = NULL;
   }
 }
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+void vpMbGenericTracker::loadJSONSettings(const std::string& settingsFile) {
+  std::ifstream jsonFile(settingsFile);
+  if(!jsonFile.good()) {
+    throw vpException(vpException::generalExceptionEnum::ioError, "Could not read from settings file " + settingsFile + " to initialise the vpMbtGenericTracker");
+  }
+  json settings = json::parse(jsonFile);
+  jsonFile.close();
+
+
+  m_referenceCameraName = settings.at("referenceCameraName").get<std::string>();
+  m_thresholdOutlier = settings.at("thresholdOutlier").get<double>();
+  std::map<std::string, vpHomogeneousMatrix> m = settings["mapOfCameraTransformationMatrix"];
+
+}
+void vpMbGenericTracker::saveJSONSettings(const std::string& settingsFile) {
+  json j;
+  j["referenceCameraName"] = m_referenceCameraName;
+  j["thresholdOutlier"] = m_thresholdOutlier;
+
+  for(const auto& kv: m_mapOfTrackers) {
+    j[kv.first] = kv.second->asJson();
+    j[kv.first]["cameraName"] = kv.first;
+  }
+
+  std::ofstream f(settingsFile);
+
+  f << j.dump(4);
+  f.close();
+
+
+}
+
+#endif
 
 /*!
   Compute projection error given an input image and camera pose, parameters.
@@ -6203,6 +6243,74 @@ void vpMbGenericTracker::TrackerWrapper::initMbtTracking(const vpImage<unsigned 
     vpMbEdgeTracker::computeVVSFirstPhaseFactor(*ptr_I, 0);
   }
 }
+#ifdef VISP_HAVE_NLOHMANN_JSON
+json vpMbGenericTracker::TrackerWrapper::asJson() const {
+  json j;
+  j["camera"] = m_cam;
+  j["type"] = m_trackerType;
+  j["lod"] = json{
+    {"useLod", useLodGeneral},
+    {"minLineLengthThresholdGeneral", minLineLengthThresholdGeneral},
+    {"minPolygonAreaThresholdGeneral", minPolygonAreaThresholdGeneral}
+  };
+
+  j["clipping"] = json {
+    {"fov", getClipping()},
+    {"near", getNearClippingDistance()},
+    {"far", getFarClippingDistance()},
+  };
+  j["angleAppear"] = getAngleAppear();
+  j["angleDisappear"] = getAngleDisappear();
+  
+
+  if(m_trackerType & EDGE_TRACKER) {
+    j["edge_tracker"] = me;
+  }
+
+  if(m_trackerType & KLT_TRACKER) {
+    json klt;
+    klt["maxFeatures"] = tracker.getMaxFeatures();
+    klt["windowSize"] = tracker.getWindowSize();
+    klt["quality"] = tracker.getQuality();
+    klt["minDistance"] = tracker.getMinDistance();
+    klt["harris"] = tracker.getHarrisFreeParameter();
+    klt["blockSize"] = tracker.getBlockSize();
+    klt["pyramidLevels"] = tracker.getPyramidLevels();
+    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+    klt["maskBorder"] = maskBorder;
+    #endif
+    j["klt"] = klt;
+  }
+
+  if(m_trackerType & DEPTH_NORMAL_TRACKER) {
+    j["normals"] = json {
+      {"featureEstimationMethod", m_depthNormalFeatureEstimationMethod},
+      {"pcl", {
+        {"method", m_depthNormalPclPlaneEstimationMethod,
+        "ransacMaxIter", m_depthNormalPclPlaneEstimationRansacMaxIter,
+        "ransacThreshold", m_depthNormalPclPlaneEstimationRansacThreshold}
+      }},
+      {"sampling", {
+        {"x", m_depthNormalSamplingStepX},
+        {"y", m_depthNormalSamplingStepY}
+      }}
+    };
+  }
+
+  if(m_trackerType & DEPTH_DENSE_TRACKER) {
+    j["dense"] = {
+      {"sampling", {
+        {"x", m_depthDenseSamplingStepX},
+        {"y", m_depthDenseSamplingStepY}
+      }}
+    };
+  }
+  return j;
+}
+void vpMbGenericTracker::TrackerWrapper::fromJson(const json& j) {
+
+}
+#endif
 
 void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &configFile, bool verbose)
 {

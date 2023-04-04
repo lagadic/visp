@@ -45,6 +45,10 @@
 #include <visp3/mbt/vpMbEdgeTracker.h>
 #include <visp3/mbt/vpMbKltTracker.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json_fwd.hpp>
+#endif
+
 /*!
   \class vpMbGenericTracker
   \ingroup group_mbt_trackers
@@ -95,6 +99,8 @@ public:
   vpMbGenericTracker(const std::vector<std::string> &cameraNames, const std::vector<int> &trackerTypes);
 
   virtual ~vpMbGenericTracker();
+
+  
 
   virtual double computeCurrentProjectionError(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo,
                                                const vpCameraParameters &_cam);
@@ -309,6 +315,10 @@ public:
   loadModel(const std::map<std::string, std::string> &mapOfModelFiles, bool verbose = false,
             const std::map<std::string, vpHomogeneousMatrix> &mapOfT = std::map<std::string, vpHomogeneousMatrix>());
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  void loadJSONSettings(const std::string& settingsFile);
+  void saveJSONSettings(const std::string& settingsFile);
+#endif
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
                            bool verbose = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
   virtual void reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
@@ -539,6 +549,7 @@ private:
 
     virtual ~TrackerWrapper();
 
+
     virtual inline vpColVector getError() const { return m_error; }
 
     virtual inline vpColVector getRobustWeights() const { return m_w; }
@@ -560,6 +571,10 @@ private:
     virtual void init(const vpImage<unsigned char> &I);
 
     virtual void loadConfigFile(const std::string &configFile, bool verbose = true);
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  nlohmann::json asJson() const;
+  void fromJson(const nlohmann::json& j);
+#endif
 
     virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
                              const vpHomogeneousMatrix &cMo, bool verbose = false,
