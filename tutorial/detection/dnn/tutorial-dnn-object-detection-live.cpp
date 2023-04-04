@@ -1,9 +1,11 @@
 //! \example tutorial-dnn-object-detection-live.cpp
 #include <visp3/core/vpConfig.h>
-#include <visp3/detection/vpDetectorDNN.h>
+#include <visp3/detection/vpDetectorDNNOpenCV.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
+
 
 int main(int argc, const char *argv[])
 {
@@ -14,6 +16,7 @@ int main(int argc, const char *argv[])
     //! [OpenCV DNN face detector]
     std::string model = "opencv_face_detector_uint8.pb";
     std::string config = "opencv_face_detector.pbtxt";
+    vpDetectorDNNOpenCV::DNNResultsParsingType type = vpDetectorDNNOpenCV::RESNET_10;
     //! [OpenCV DNN face detector]
     int inputWidth = 300, inputHeight = 300;
     double meanR = 104.0, meanG = 177.0, meanB = 123.0;
@@ -29,6 +32,8 @@ int main(int argc, const char *argv[])
         input = std::string(argv[i + 1]);
       } else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
         model = std::string(argv[i + 1]);
+      }else if (std::string(argv[i]) == "--type" && i + 1 < argc) {
+        type =  vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(std::string(argv[i + 1]));
       } else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
         config = std::string(argv[i + 1]);
       } else if (std::string(argv[i]) == "--width" && i + 1 < argc) {
@@ -53,7 +58,8 @@ int main(int argc, const char *argv[])
         std::cout << argv[0]
                   << " --device <camera device number> --input <path to image or video>"
                      " (camera is used if input is empty) --model <path to net trained weights>"
-                     " --config <path to net config file>"
+                     " --type <type of DNN in " + vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes() + 
+                     "> --config <path to net config file>"
                      " --width <blob width> --height <blob height>"
                      " -- mean <meanR meanG meanB> --scale <scale factor>"
                      " --swapRB --confThresh <confidence threshold>"
@@ -64,6 +70,7 @@ int main(int argc, const char *argv[])
     }
 
     std::cout << "Model: " << model << std::endl;
+    std::cout << "Type: " << vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(type) << std::endl;
     std::cout << "Config: " << config << std::endl;
     std::cout << "Width: " << inputWidth << std::endl;
     std::cout << "Height: " << inputHeight << std::endl;
@@ -74,10 +81,17 @@ int main(int argc, const char *argv[])
     std::cout << "NMS threshold: " << nmsThresh << std::endl;
 
     cv::VideoCapture capture;
+    bool hasCaptureOpeningSucceeded;
     if (input.empty()) {
-      capture.open(opt_device);
+      hasCaptureOpeningSucceeded = capture.open(opt_device);
     } else {
-      capture.open(input);
+      hasCaptureOpeningSucceeded = capture.open(input);
+    }
+
+    if(!hasCaptureOpeningSucceeded)
+    {
+      std::cout << "Capture from camera #" <<  (input.empty() ? std::to_string(opt_device) : input) << " didn't work" << std::endl;
+      return 1;
     }
 
     vpImage<vpRGBa> I;
@@ -89,9 +103,17 @@ int main(int argc, const char *argv[])
     vpDisplayOpenCV d;
 #endif
 
+    if (labelFile.empty()) {
+      throw(vpException(vpException::fatalError, "The path to the file containing the classes labels is empty !"));
+    }
+    else if(!vpIoTools::checkFilename(labelFile))
+    {
+      throw(vpException(vpException::fatalError, "The file containing the classes labels \"" + labelFile + "\" does not exist !"));
+    }
+
     //! [DNN params]
-    vpDetectorDNN dnn;
-    dnn.readNet(model, config);
+    vpDetectorDNNOpenCV dnn(type);
+    dnn.readNet(model, labelFile, config);
     dnn.setInputSize(inputWidth, inputHeight);
     dnn.setMean(meanR, meanG, meanB);
     dnn.setScaleFactor(scaleFactor);
@@ -99,15 +121,6 @@ int main(int argc, const char *argv[])
     dnn.setConfidenceThreshold(confThresh);
     dnn.setNMSThreshold(nmsThresh);
     //! [DNN params]
-
-    std::vector<std::string> labels;
-    if (!labelFile.empty()) {
-      std::ifstream f_label(labelFile);
-      std::string line;
-      while (std::getline(f_label, line)) {
-        labels.push_back(line);
-      }
-    }
 
     cv::Mat frame;
     while (true) {
@@ -125,30 +138,27 @@ int main(int argc, const char *argv[])
 
       double t = vpTime::measureTimeMs();
       //! [DNN object detection]
-      std::vector<vpRect> boundingBoxes;
-      dnn.detect(I, boundingBoxes);
+      std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>> detections;
+      dnn.detect(frame, detections);
       //! [DNN object detection]
       t = vpTime::measureTimeMs() - t;
 
       vpDisplay::display(I);
 
-      //! [DNN class ids and confidences]
-      std::vector<int> classIds = dnn.getDetectionClassIds();
-      std::vector<float> confidences = dnn.getDetectionConfidence();
-      //! [DNN class ids and confidences]
-      for (size_t i = 0; i < boundingBoxes.size(); i++) {
-        vpDisplay::displayRectangle(I, boundingBoxes[i], vpColor::red, false, 2);
-
-        std::ostringstream oss;
-        if (labels.empty())
-          oss << "class: " << classIds[i];
-        else
-          oss << labels[classIds[i]];
-        oss << " - conf: " << confidences[i];
-
-        vpDisplay::displayText(I, (int)boundingBoxes[i].getTop() - 10, (int)boundingBoxes[i].getLeft() + 10, oss.str(),
-                               vpColor::red);
+      for( std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>>::iterator it = detections.begin()
+         ; it != detections.end()
+         ; it++
+         )
+      {
+        for( std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>::iterator it_detect = it->second.begin()
+           ; it_detect != it->second.end()
+           ; it_detect++
+           )
+        {
+          it_detect->display(I);
+        }
       }
+      
       std::ostringstream oss;
       oss << "Detection time: " << t << " ms";
       vpDisplay::displayText(I, 20, 20, oss.str(), vpColor::red);
