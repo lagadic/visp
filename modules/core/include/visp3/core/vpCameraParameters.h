@@ -400,4 +400,65 @@ private:
   vpCameraParametersProjType projModel; //!< used projection model
 };
 
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include<nlohmann/json.hpp>
+
+inline void to_json(nlohmann::json& j, const vpCameraParameters& cam) {
+  j["px"] = cam.get_px();
+  j["py"] = cam.get_py();
+  j["u0"] = cam.get_u0();
+  j["v0"] = cam.get_v0();
+  j["model"] = cam.get_projModel();
+  
+  switch(cam.get_projModel()) {
+    case vpCameraParameters::vpCameraParametersProjType::perspectiveProjWithDistortion:
+    {
+      j["kud"] = cam.get_kud();
+      j["kdu"] = cam.get_kdu();
+      break;
+    }
+    case vpCameraParameters::vpCameraParametersProjType::ProjWithKannalaBrandtDistortion:
+    {
+      j["dist_coeffs"] = cam.getKannalaBrandtDistortionCoefficients();
+      break;
+    }
+    default:
+      break;
+  }
+}
+
+inline void from_json(const nlohmann::json& j, vpCameraParameters& cam) {
+  const double px = j.at("px").get<double>();
+  const double py = j.at("px").get<double>();
+  const double u0 = j.at("u0").get<double>();
+  const double v0 = j.at("v0").get<double>();
+  const vpCameraParameters::vpCameraParametersProjType model = j.at("model").get<vpCameraParameters::vpCameraParametersProjType>();
+  
+  switch(model) {
+
+    case vpCameraParameters::vpCameraParametersProjType::perspectiveProjWithoutDistortion:
+    {
+      cam.initPersProjWithoutDistortion(px, py, u0, v0);
+      break;
+    }
+    case vpCameraParameters::vpCameraParametersProjType::perspectiveProjWithDistortion:
+    {
+      const double kud = j.at("kud").get<double>();
+      const double kdu = j.at("kdu").get<double>();
+      cam.initPersProjWithDistortion(px, py, u0, v0, kud, kdu);
+      break;
+    }
+    case vpCameraParameters::vpCameraParametersProjType::ProjWithKannalaBrandtDistortion:
+    {
+      const std::vector<double> coeffs = j.at("dist_coeffs").get<std::vector<double>>();
+      cam.initProjWithKannalaBrandtDistortion(px, py, u0, v0, coeffs);
+      break;
+    }
+  }
+
+
+}
+#endif
+
 #endif
