@@ -19,7 +19,7 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/dnn
 
 \section dnn_example Face detection
 
-The following example also available in tutorial-dnn-object-detection-live.cpp detects human face.
+The following example is also available in tutorial-dnn-object-detection-live.cpp detects human face.
 
 \include tutorial-dnn-object-detection-live.cpp
 
