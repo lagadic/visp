@@ -38,13 +38,13 @@ In this section, we give minimal instructions to build ViSP from source just to 
   - Since Ubuntu 20.04 or Debian 11
   \verbatim
   $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev \
-    libzbar-dev libpthread-stubs0-dev libdc1394-dev
+    libzbar-dev libpthread-stubs0-dev libdc1394-dev nlohmann-json3-dev
   \endverbatim
 
   - On older Ubuntu or Debian distros
   \verbatim
   $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev \
-    libzbar-dev libpthread-stubs0-dev libdc1394-22-dev
+    libzbar-dev libpthread-stubs0-dev libdc1394-22-dev nlohmann-json3-dev
   \endverbatim
 
 - Get ViSP source code
@@ -100,12 +100,12 @@ Installation of recommended 3rd parties could be performed running:
 - Since Ubuntu 20.04 or Debian 11
 \verbatim
 $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev libzbar-dev \
-  libpthread-stubs0-dev libdc1394-dev
+  libpthread-stubs0-dev libdc1394-dev nlohmann-json3-dev
 \endverbatim
 - On older Ubuntu or Debian distros
 \verbatim
 $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev libzbar-dev \
-  libpthread-stubs0-dev libdc1394-22-dev
+  libpthread-stubs0-dev libdc1394-22-dev nlohmann-json3-dev
 \endverbatim
 
 \subsubsection install_ubuntu_3rdparty_realsense librealsense 2.x 3rd party
