@@ -38,6 +38,7 @@
 #include <visp3/core/vpDisplay.h>
 #include <visp3/core/vpExponentialMap.h>
 #include <visp3/core/vpTrackingException.h>
+#include <visp3/core/vpIoTools.h>
 #include <visp3/mbt/vpMbtXmlGenericParser.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
@@ -184,7 +185,7 @@ vpMbGenericTracker::~vpMbGenericTracker()
 }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-void vpMbGenericTracker::loadJSONSettings(const std::string& settingsFile) {
+void vpMbGenericTracker::loadConfigFileJSON(const std::string& settingsFile) {
   std::ifstream jsonFile(settingsFile);
   if(!jsonFile.good()) {
     throw vpException(vpException::generalExceptionEnum::ioError, "Could not read from settings file " + settingsFile + " to initialise the vpMbtGenericTracker");
@@ -194,21 +195,30 @@ void vpMbGenericTracker::loadJSONSettings(const std::string& settingsFile) {
 
   m_referenceCameraName = settings.at("referenceCameraName").get<std::string>();
   m_thresholdOutlier = settings.at("thresholdOutlier").get<double>();
-  std::map<std::string, vpHomogeneousMatrix> m = settings["mapOfCameraTransformationMatrix"];
-
 }
-void vpMbGenericTracker::saveJSONSettings(const std::string& settingsFile) {
+
+/*!
+  Save the tracker settings to a configuration file.
+  As of now, only saving to a JSON file is supported.
+
+  \param configFile : name of the file in which to save the tracker settings.
+*/
+void vpMbGenericTracker::saveConfigFile(const std::string& settingsFile) const {
   json j;
   j["referenceCameraName"] = m_referenceCameraName;
   j["thresholdOutlier"] = m_thresholdOutlier;
-
+  json trackers;
   for(const auto& kv: m_mapOfTrackers) {
-    j[kv.first] = kv.second->asJson();
-    j[kv.first]["cameraName"] = kv.first;
+    trackers[kv.first] = *(kv.second);
+    trackers[kv.first]["cameraName"] = kv.first;
+    const auto itTransformation = m_mapOfCameraTransformationMatrix.find(kv.first);
+    if(itTransformation != m_mapOfCameraTransformationMatrix.end()) {
+      trackers[kv.first]["camTref"] = itTransformation->second;
+    }
   }
+  j["trackers"] = trackers;
 
   std::ofstream f(settingsFile);
-
   f << j.dump(4); // indent level as parameter
   f.close();
 }
@@ -2820,6 +2830,36 @@ void vpMbGenericTracker::initFromPose(const std::map<std::string, const vpImage<
 }
 
 /*!
+  Load the configuration file. This file can be in XML format(.xml) or in JSON (.json) if ViSP is compiled with the JSON option.
+  From the configuration file initialize the parameters corresponding to the
+  objects: tracking parameters, camera intrinsic parameters.
+
+  \throw vpException::ioError if the file has not been properly parsed (file
+  not found), or if it is of an unknown extension (not .xml or .json).
+
+  \param configFile : full name of the xml or json file.
+  \param verbose : verbose flag. Ignored when parsing JSON
+*/
+void vpMbGenericTracker::loadConfigFile(const std::string &configFile, bool verbose)
+{
+  const std::string extension = vpIoTools::getFileExtension(configFile);
+  if(extension == ".xml") {
+    loadConfigFileXML(configFile, verbose);
+  }
+  #ifdef VISP_HAVE_NLOHMANN_JSON
+  else if(extension == ".json") {
+    if(verbose) {
+      std::cerr << "MBT config parsing does not support verbose option for JSON parsing" << std::endl;
+    }
+    loadConfigFileJSON(configFile);
+  }
+  #endif
+  else {
+    throw vpException(vpException::ioError, "MBT config parsing: File format " + extension + "for file " + configFile + " is not supported.");
+  }
+}
+
+/*!
   Load the xml configuration file.
   From the configuration file initialize the parameters corresponding to the
   objects: tracking parameters, camera intrinsic parameters.
@@ -2830,7 +2870,7 @@ void vpMbGenericTracker::initFromPose(const std::map<std::string, const vpImage<
   \param configFile : full name of the xml file.
   \param verbose : verbose flag.
 */
-void vpMbGenericTracker::loadConfigFile(const std::string &configFile, bool verbose)
+void vpMbGenericTracker::loadConfigFileXML(const std::string &configFile, bool verbose)
 {
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
@@ -6240,72 +6280,6 @@ void vpMbGenericTracker::TrackerWrapper::initMbtTracking(const vpImage<unsigned 
     vpMbEdgeTracker::computeVVSFirstPhaseFactor(*ptr_I, 0);
   }
 }
-#ifdef VISP_HAVE_NLOHMANN_JSON
-json vpMbGenericTracker::TrackerWrapper::asJson() const {
-  json j;
-  j["camera"] = m_cam;
-  j["type"] = m_trackerType;
-  j["lod"] = json{
-    {"useLod", useLodGeneral},
-    {"minLineLengthThresholdGeneral", minLineLengthThresholdGeneral},
-    {"minPolygonAreaThresholdGeneral", minPolygonAreaThresholdGeneral}
-  };
-  j["clipping"] = json {
-    {"fov", getClipping()},
-    {"near", getNearClippingDistance()},
-    {"far", getFarClippingDistance()},
-  };
-  j["angleAppear"] = getAngleAppear();
-  j["angleDisappear"] = getAngleDisappear();
-  
-  if(m_trackerType & EDGE_TRACKER) {
-    j["edge_tracker"] = me;
-  }
-
-  if(m_trackerType & KLT_TRACKER) {
-    json klt;
-    klt["maxFeatures"] = tracker.getMaxFeatures();
-    klt["windowSize"] = tracker.getWindowSize();
-    klt["quality"] = tracker.getQuality();
-    klt["minDistance"] = tracker.getMinDistance();
-    klt["harris"] = tracker.getHarrisFreeParameter();
-    klt["blockSize"] = tracker.getBlockSize();
-    klt["pyramidLevels"] = tracker.getPyramidLevels();
-    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
-    klt["maskBorder"] = maskBorder;
-    #endif
-    j["klt"] = klt;
-  }
-
-  if(m_trackerType & DEPTH_NORMAL_TRACKER) {
-    j["normals"] = json {
-      {"featureEstimationMethod", m_depthNormalFeatureEstimationMethod},
-      {"pcl", {
-        {"method", m_depthNormalPclPlaneEstimationMethod,
-        "ransacMaxIter", m_depthNormalPclPlaneEstimationRansacMaxIter,
-        "ransacThreshold", m_depthNormalPclPlaneEstimationRansacThreshold}
-      }},
-      {"sampling", {
-        {"x", m_depthNormalSamplingStepX},
-        {"y", m_depthNormalSamplingStepY}
-      }}
-    };
-  }
-
-  if(m_trackerType & DEPTH_DENSE_TRACKER) {
-    j["dense"] = {
-      {"sampling", {
-        {"x", m_depthDenseSamplingStepX},
-        {"y", m_depthDenseSamplingStepY}
-      }}
-    };
-  }
-  return j;
-}
-void vpMbGenericTracker::TrackerWrapper::fromJson(const json& j) {
-
-}
-#endif
 
 void vpMbGenericTracker::TrackerWrapper::loadConfigFile(const std::string &configFile, bool verbose)
 {
