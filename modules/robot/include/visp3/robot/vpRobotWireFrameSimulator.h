@@ -59,6 +59,7 @@
 #include <pthread.h>
 #endif
 
+#include <visp3/core/vpMutex.h>
 #include <visp3/gui/vpDisplayD3D.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayGTK.h>
@@ -120,20 +121,21 @@ protected:
 
 #if defined(_WIN32)
   HANDLE hThread;
-  HANDLE mutex_fMi;
-  HANDLE mutex_artVel;
-  HANDLE mutex_artCoord;
-  HANDLE mutex_velocity;
-  HANDLE mutex_display;
 #elif defined(VISP_HAVE_PTHREAD)
   pthread_t thread;
   pthread_attr_t attr;
-  pthread_mutex_t mutex_fMi;
-  pthread_mutex_t mutex_artVel;
-  pthread_mutex_t mutex_artCoord;
-  pthread_mutex_t mutex_velocity;
-  pthread_mutex_t mutex_display;
 #endif
+
+  vpMutex m_mutex_fMi;
+  vpMutex m_mutex_eMc;
+  vpMutex m_mutex_artVel;
+  vpMutex m_mutex_artCoord;
+  vpMutex m_mutex_velocity;
+  vpMutex m_mutex_display;
+  vpMutex m_mutex_robotStop;
+  vpMutex m_mutex_frame;
+  vpMutex m_mutex_setVelocityCalled;
+  vpMutex m_mutex_scene;
 
   bool displayBusy;
 
@@ -175,37 +177,6 @@ protected:
   bool setVelocityCalled;
 
   bool verbose_;
-
-  // private:
-  //#ifndef DOXYGEN_SHOULD_SKIP_THIS
-  //    vpRobotWireFrameSimulator(const vpRobotWireFrameSimulator &)
-  //      : vpWireFrameSimulator(), vpRobotSimulator(),
-  //        I(), tcur(0), tprev(0), robotArms(NULL), size_fMi(8), fMi(NULL),
-  //        artCoord(), artVel(), velocity(),
-  //    #if defined(_WIN32)
-  //    #elif defined(VISP_HAVE_PTHREAD)
-  //        thread(), attr(),
-  //    #endif
-  //        mutex_fMi(), mutex_artVel(), mutex_artCoord(), mutex_velocity(),
-  //        mutex_display(), displayBusy(false), robotStop(false),
-  //        jointLimit(false), jointLimitArt(false),
-  //        singularityManagement(true), cameraParam(),
-  //    #if defined(VISP_HAVE_DISPLAY)
-  //        display(),
-  //    #endif
-  //        displayType(MODEL_3D), displayAllowed(true),
-  //        constantSamplingTimeMode(false), setVelocityCalled(false),
-  //        verbose_(false)
-  //    {
-  //      throw vpException(vpException::functionNotImplementedError, "Not
-  //      implemented!");
-  //    }
-  //    vpRobotWireFrameSimulator &operator=(const vpRobotWireFrameSimulator
-  //    &){
-  //      throw vpException(vpException::functionNotImplementedError, "Not
-  //      implemented!"); return *this;
-  //    }
-  //#endif
 
 public:
   vpRobotWireFrameSimulator();
@@ -401,158 +372,64 @@ protected:
   void initDisplay() { ; }
   virtual void initArms() = 0;
 
-#if defined(_WIN32)
-  vpColVector get_artCoord() const
-  {
-#if defined(WINRT_8_1)
-    WaitForSingleObjectEx(mutex_artCoord, INFINITE, FALSE);
-#else // pure win32
-    WaitForSingleObject(mutex_artCoord, INFINITE);
-#endif
-    vpColVector artCoordTmp(6);
-    artCoordTmp = artCoord;
-    ReleaseMutex(mutex_artCoord);
-    return artCoordTmp;
-  }
-  void set_artCoord(const vpColVector &coord)
-  {
-#if defined(WINRT_8_1)
-    WaitForSingleObjectEx(mutex_artCoord, INFINITE, FALSE);
-#else // pure win32
-    WaitForSingleObject(mutex_artCoord, INFINITE);
-#endif
-    artCoord = coord;
-    ReleaseMutex(mutex_artCoord);
-  }
-
-  vpColVector get_artVel() const
-  {
-#if defined(WINRT_8_1)
-    WaitForSingleObjectEx(mutex_artVel, INFINITE, FALSE);
-#else // pure win32
-    WaitForSingleObject(mutex_artVel, INFINITE);
-#endif
-    vpColVector artVelTmp(artVel);
-    ReleaseMutex(mutex_artVel);
-    return artVelTmp;
-  }
-  void set_artVel(const vpColVector &vel)
-  {
-#if defined(WINRT_8_1)
-    WaitForSingleObjectEx(mutex_artVel, INFINITE, FALSE);
-#else // pure win32
-    WaitForSingleObject(mutex_artVel, INFINITE);
-#endif
-    artVel = vel;
-    ReleaseMutex(mutex_artVel);
-  }
-
-  vpColVector get_velocity()
-  {
-#if defined(WINRT_8_1)
-    WaitForSingleObjectEx(mutex_velocity, INFINITE, FALSE);
-#else // pure win32
-    WaitForSingleObject(mutex_velocity, INFINITE);
-#endif
-    vpColVector velocityTmp = velocity;
-    ReleaseMutex(mutex_velocity);
-    return velocityTmp;
-  }
-  void set_velocity(const vpColVector &vel)
-  {
-#if defined(WINRT_8_1)
-    WaitForSingleObjectEx(mutex_velocity, INFINITE, FALSE);
-#else // pure win32
-    WaitForSingleObject(mutex_velocity, INFINITE);
-#endif
-    velocity = vel;
-    ReleaseMutex(mutex_velocity);
-  }
-
-  void set_displayBusy(const bool &status)
-  {
-#if defined(WINRT_8_1)
-    WaitForSingleObjectEx(mutex_display, INFINITE, FALSE);
-#else // pure win32
-    WaitForSingleObject(mutex_display, INFINITE);
-#endif
-    displayBusy = status;
-    ReleaseMutex(mutex_display);
-  }
-  bool get_displayBusy()
-  {
-#if defined(WINRT_8_1)
-    WaitForSingleObjectEx(mutex_display, INFINITE, FALSE);
-#else // pure win32
-    WaitForSingleObject(mutex_display, INFINITE);
-#endif
-    bool status = displayBusy;
-    if (!displayBusy)
-      displayBusy = true;
-    ReleaseMutex(mutex_display);
-    return status;
-  }
-
-#elif defined(VISP_HAVE_PTHREAD)
   vpColVector get_artCoord()
   {
-    pthread_mutex_lock(&mutex_artCoord);
+    m_mutex_artCoord.lock();
     vpColVector artCoordTmp(6);
     artCoordTmp = artCoord;
-    pthread_mutex_unlock(&mutex_artCoord);
+    m_mutex_artCoord.unlock();
     return artCoordTmp;
   }
   void set_artCoord(const vpColVector &coord)
   {
-    pthread_mutex_lock(&mutex_artCoord);
+    m_mutex_artCoord.lock();
     artCoord = coord;
-    pthread_mutex_unlock(&mutex_artCoord);
+    m_mutex_artCoord.unlock();
   }
 
   vpColVector get_artVel()
   {
-    pthread_mutex_lock(&mutex_artVel);
+    m_mutex_artVel.lock();
     vpColVector artVelTmp(artVel);
-    pthread_mutex_unlock(&mutex_artVel);
+    m_mutex_artVel.unlock();
     return artVelTmp;
   }
   void set_artVel(const vpColVector &vel)
   {
-    pthread_mutex_lock(&mutex_artVel);
+    m_mutex_artVel.lock();
     artVel = vel;
-    pthread_mutex_unlock(&mutex_artVel);
+    m_mutex_artVel.unlock();
   }
 
   vpColVector get_velocity()
   {
-    pthread_mutex_lock(&mutex_velocity);
+    m_mutex_velocity.lock();
     vpColVector velocityTmp = velocity;
-    pthread_mutex_unlock(&mutex_velocity);
+    m_mutex_velocity.unlock();
     return velocityTmp;
   }
   void set_velocity(const vpColVector &vel)
   {
-    pthread_mutex_lock(&mutex_velocity);
+    m_mutex_velocity.lock();
     velocity = vel;
-    pthread_mutex_unlock(&mutex_velocity);
+    m_mutex_velocity.unlock();
   }
 
   void set_displayBusy(const bool &status)
   {
-    pthread_mutex_lock(&mutex_display);
+    m_mutex_display.lock();
     displayBusy = status;
-    pthread_mutex_unlock(&mutex_display);
+    m_mutex_display.unlock();
   }
   bool get_displayBusy()
   {
-    pthread_mutex_lock(&mutex_display);
+    m_mutex_display.lock();
     bool status = displayBusy;
     if (!displayBusy)
       displayBusy = true;
-    pthread_mutex_unlock(&mutex_display);
+    m_mutex_display.unlock();
     return status;
   }
-#endif
 
   /*! Get a table of poses between the reference frame and the frames you used
    * to compute the Denavit-Hartenberg representation */
