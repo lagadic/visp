@@ -142,9 +142,10 @@ vpDetectorDNNOpenCV::vpDetectorDNNOpenCV()
 vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const NetConfig &config, const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &))
   : m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
     m_mean(127.5, 127.5, 127.5), m_net(), m_netConfig(config), m_outNames(), m_dnnRes(),
-    m_scaleFactor(2.0 / 255.0), m_swapRB(true), m_parsingMethodType(typeParsingMethod), m_parsingMethod(parsingMethod)
+    m_scaleFactor(2.0 / 255.0), m_swapRB(true)
 {
   setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
+  setParsingMethod(typeParsingMethod, parsingMethod);
 }
 
 vpDetectorDNNOpenCV::~vpDetectorDNNOpenCV() {}
@@ -404,7 +405,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV7(DetectionCandidates &proposals, std
   for ( n = 0; n < num_proposal; n++ )
   {
     float box_score = pdata[4];
-    if ( box_score > m_netConfig.m_confThreshold )
+    if ( box_score > netConfig.m_confThreshold )
     {
       cv::Mat scores = dnnRes[0].row( row_ind ).colRange( 5, nout );
       cv::Point classIdPoint;
@@ -414,7 +415,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV7(DetectionCandidates &proposals, std
       max_class_score *= box_score;
 
       // The detection is kept only if the confidence is greater than the threshold
-      if ( max_class_score > m_netConfig.m_confThreshold )
+      if ( max_class_score > netConfig.m_confThreshold )
       {
         const int class_idx = classIdPoint.x;
         float cx            = pdata[0] * ratiow; /// cx
@@ -814,7 +815,14 @@ void vpDetectorDNNOpenCV::setPreferableTarget(const int &targetId) { m_net.setPr
 /*!
   Set scale factor to normalize the range of pixel values.
 */
-void vpDetectorDNNOpenCV::setScaleFactor(const double &scaleFactor) { m_scaleFactor = scaleFactor; }
+void vpDetectorDNNOpenCV::setScaleFactor(const double &scaleFactor) 
+{ 
+  m_scaleFactor = scaleFactor; 
+  if((m_parsingMethodType == YOLO_V7 || m_parsingMethodType == YOLO_V8) && m_scaleFactor != 1/255.)
+  {
+    std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] WARNING: scale factor should be 1/255. to normalize pixels value." << std::endl;
+  }
+}
 
 /*!
   If true, swap R and B channel for mean subtraction. For instance
@@ -834,6 +842,11 @@ void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typePars
 {
   m_parsingMethodType = typeParsingMethod;
   m_parsingMethod = parsingMethod;
+  if((m_parsingMethodType == YOLO_V7 || m_parsingMethodType == YOLO_V8) && m_scaleFactor != 1/255.)
+  {
+    m_scaleFactor = 1/255.;
+    std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] NB: scale factor changed to 1/255. to normalize pixels value." << std::endl;
+  }
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
