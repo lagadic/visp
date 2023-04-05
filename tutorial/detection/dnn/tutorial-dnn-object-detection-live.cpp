@@ -16,6 +16,7 @@ int main(int argc, const char *argv[])
     //! [OpenCV DNN face detector]
     std::string model = "opencv_face_detector_uint8.pb";
     std::string config = "opencv_face_detector.pbtxt";
+    std::string framework = "tensorflow";
     vpDetectorDNNOpenCV::DNNResultsParsingType type = vpDetectorDNNOpenCV::RESNET_10;
     //! [OpenCV DNN face detector]
     int inputWidth = 300, inputHeight = 300;
@@ -37,6 +38,8 @@ int main(int argc, const char *argv[])
         type =  vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(std::string(argv[i + 1]));
       } else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
         config = std::string(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--framework" && i + 1 < argc) {
+        framework = std::string(argv[i + 1]);
       } else if (std::string(argv[i]) == "--width" && i + 1 < argc) {
         inputWidth = atoi(argv[i + 1]);
       } else if (std::string(argv[i]) == "--height" && i + 1 < argc) {
@@ -54,7 +57,7 @@ int main(int argc, const char *argv[])
       } else if (std::string(argv[i]) == "--nmsThresh" && i + 1 < argc) {
         nmsThresh = (float)atof(argv[i + 1]);
       } else if (std::string(argv[i]) == "--filterThresh" && i + 1 < argc) {
-        detectionFilter = std::abs(atof(argv[i + 1]));
+        detectionFilter = atof(argv[i + 1]);
       } else if (std::string(argv[i]) == "--labels" && i + 1 < argc) {
         labelFile = std::string(argv[i + 1]);
       } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
@@ -62,7 +65,7 @@ int main(int argc, const char *argv[])
                   << " --device <camera device number> --input <path to image or video>"
                      " (camera is used if input is empty) --model <path to net trained weights>"
                      " --type <type of DNN in " + vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes() + 
-                     "> --config <path to net config file>"
+                     "> --config <path to net config file> --framework <framework name>"
                      " --width <blob width> --height <blob height>"
                      " -- mean <meanR meanG meanB> --scale <scale factor>"
                      " --swapRB --confThresh <confidence threshold>"
@@ -74,7 +77,8 @@ int main(int argc, const char *argv[])
 
     std::cout << "Model: " << model << std::endl;
     std::cout << "Type: " << vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(type) << std::endl;
-    std::cout << "Config: " << config << std::endl;
+    std::cout << "Config: " << (config.empty() ? "None" : config) << std::endl;
+    std::cout << "Framework: " << (framework.empty() ? "None" : framework) << std::endl;
     std::cout << "Width: " << inputWidth << std::endl;
     std::cout << "Height: " << inputHeight << std::endl;
     std::cout << "Mean: " << meanR << ", " << meanG << ", " << meanB << std::endl;
@@ -118,7 +122,7 @@ int main(int argc, const char *argv[])
     //! [DNN params]
     vpDetectorDNNOpenCV::NetConfig netConfig(confThresh, nmsThresh, labelFile, cv::Size(inputWidth, inputHeight), detectionFilter);
     vpDetectorDNNOpenCV dnn(netConfig, type);
-    dnn.readNet(model, labelFile, config);
+    dnn.readNet(model, config, framework);
     dnn.setMean(meanR, meanG, meanB);
     dnn.setScaleFactor(scaleFactor);
     dnn.setSwapRB(swapRB);
