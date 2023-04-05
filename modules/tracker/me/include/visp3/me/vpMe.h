@@ -300,9 +300,6 @@ public:
     \param t : new threshold.
   */
   void setThreshold(const double &t) { threshold = t; }
-
-  
-
 };
 
 
@@ -337,9 +334,6 @@ inline void to_json(nlohmann::json& j, const vpMe& me) {
   j["nMask"] = me.getMaskNumber();
   j["maskSign"] = me.getMaskSign();
   j["strip"] = me.getStrip();
-
-  
-
 }
 
 inline void from_json(const nlohmann::json& j, vpMe& me) {
