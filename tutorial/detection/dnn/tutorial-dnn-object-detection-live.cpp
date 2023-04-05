@@ -9,7 +9,7 @@
 
 int main(int argc, const char *argv[])
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   try {
     int opt_device = 0;
     std::string input = "";
@@ -24,6 +24,7 @@ int main(int argc, const char *argv[])
     bool swapRB = false;
     float confThresh = 0.5f;
     float nmsThresh = 0.4f;
+    double detectionFilter = 0.25;
     std::string labelFile = "";
     for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--device" && i + 1 < argc) {
@@ -52,6 +53,8 @@ int main(int argc, const char *argv[])
         confThresh = (float)atof(argv[i + 1]);
       } else if (std::string(argv[i]) == "--nmsThresh" && i + 1 < argc) {
         nmsThresh = (float)atof(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--filterThresh" && i + 1 < argc) {
+        detectionFilter = std::abs(atof(argv[i + 1]));
       } else if (std::string(argv[i]) == "--labels" && i + 1 < argc) {
         labelFile = std::string(argv[i + 1]);
       } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
@@ -63,7 +66,7 @@ int main(int argc, const char *argv[])
                      " --width <blob width> --height <blob height>"
                      " -- mean <meanR meanG meanB> --scale <scale factor>"
                      " --swapRB --confThresh <confidence threshold>"
-                     " --nmsThresh <NMS threshold> --labels <path to label file>"
+                     " --nmsThresh <NMS threshold> --filterThresh <threshold > 0., 0. to disable> --labels <path to label file>"
                   << std::endl;
         return EXIT_SUCCESS;
       }
@@ -79,6 +82,7 @@ int main(int argc, const char *argv[])
     std::cout << "Swap RB? " << swapRB << std::endl;
     std::cout << "Confidence threshold: " << confThresh << std::endl;
     std::cout << "NMS threshold: " << nmsThresh << std::endl;
+    std::cout << "Filter threshold: " << (detectionFilter > std::numeric_limits<double>::epsilon() ? std::to_string(detectionFilter) : "disabled") << std::endl;
 
     cv::VideoCapture capture;
     bool hasCaptureOpeningSucceeded;
@@ -112,14 +116,12 @@ int main(int argc, const char *argv[])
     }
 
     //! [DNN params]
-    vpDetectorDNNOpenCV dnn(type);
+    vpDetectorDNNOpenCV::NetConfig netConfig(confThresh, nmsThresh, labelFile, cv::Size(inputWidth, inputHeight), detectionFilter);
+    vpDetectorDNNOpenCV dnn(netConfig, type);
     dnn.readNet(model, labelFile, config);
-    dnn.setInputSize(inputWidth, inputHeight);
     dnn.setMean(meanR, meanG, meanB);
     dnn.setScaleFactor(scaleFactor);
     dnn.setSwapRB(swapRB);
-    dnn.setConfidenceThreshold(confThresh);
-    dnn.setNMSThreshold(nmsThresh);
     //! [DNN params]
 
     cv::Mat frame;
@@ -145,17 +147,11 @@ int main(int argc, const char *argv[])
 
       vpDisplay::display(I);
 
-      for( std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>>::iterator it = detections.begin()
-         ; it != detections.end()
-         ; it++
-         )
+      for( auto key_val : detections)
       {
-        for( std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>::iterator it_detect = it->second.begin()
-           ; it_detect != it->second.end()
-           ; it_detect++
-           )
+        for(vpDetectorDNNOpenCV::DetectedFeatures2D detection : key_val.second )
         {
-          it_detect->display(I);
+          detection.display(I);
         }
       }
       
