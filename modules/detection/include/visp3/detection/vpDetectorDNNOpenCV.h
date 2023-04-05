@@ -69,9 +69,10 @@ public:
     SSD_MOBILENET  = 3,
     RESNET_10      = 4,
     OLD_METHOD     = 5,
-    YOLO_V7        = 6,
-    YOLO_V8        = 7,
-    COUNT          = 8
+    YOLO_V3        = 6,
+    YOLO_V7        = 7,
+    YOLO_V8        = 8,
+    COUNT          = 9
   } DNNResultsParsingType;
 
   typedef struct DetectionCandidates
@@ -205,6 +206,8 @@ protected:
   filterDetection(const std::vector<DetectedFeatures2D>& detected_features, const double minRatioOfAreaOk);
 
   void postProcess(std::map< std::string, std::vector<DetectedFeatures2D>> &output);
+
+  void postProcess_YoloV3(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
   void postProcess_YoloV7(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
