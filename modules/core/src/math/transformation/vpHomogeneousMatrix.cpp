@@ -49,9 +49,6 @@
 #include <visp3/core/vpPoint.h>
 #include <visp3/core/vpQuaternionVector.h>
 
-
-
-
 /*!
   Construct an homogeneous matrix from a translation vector and quaternion
   rotation vector.

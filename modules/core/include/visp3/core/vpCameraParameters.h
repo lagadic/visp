@@ -436,7 +436,6 @@ inline void from_json(const nlohmann::json& j, vpCameraParameters& cam) {
   const vpCameraParameters::vpCameraParametersProjType model = j.at("model").get<vpCameraParameters::vpCameraParametersProjType>();
   
   switch(model) {
-
     case vpCameraParameters::vpCameraParametersProjType::perspectiveProjWithoutDistortion:
     {
       cam.initPersProjWithoutDistortion(px, py, u0, v0);

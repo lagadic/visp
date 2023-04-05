@@ -192,7 +192,6 @@ void vpMbGenericTracker::loadJSONSettings(const std::string& settingsFile) {
   json settings = json::parse(jsonFile);
   jsonFile.close();
 
-
   m_referenceCameraName = settings.at("referenceCameraName").get<std::string>();
   m_thresholdOutlier = settings.at("thresholdOutlier").get<double>();
   std::map<std::string, vpHomogeneousMatrix> m = settings["mapOfCameraTransformationMatrix"];
@@ -210,10 +209,8 @@ void vpMbGenericTracker::saveJSONSettings(const std::string& settingsFile) {
 
   std::ofstream f(settingsFile);
 
-  f << j.dump(4);
+  f << j.dump(4); // indent level as parameter
   f.close();
-
-
 }
 
 #endif
@@ -6250,7 +6247,6 @@ json vpMbGenericTracker::TrackerWrapper::asJson() const {
     {"minLineLengthThresholdGeneral", minLineLengthThresholdGeneral},
     {"minPolygonAreaThresholdGeneral", minPolygonAreaThresholdGeneral}
   };
-
   j["clipping"] = json {
     {"fov", getClipping()},
     {"near", getNearClippingDistance()},
@@ -6259,7 +6255,6 @@ json vpMbGenericTracker::TrackerWrapper::asJson() const {
   j["angleAppear"] = getAngleAppear();
   j["angleDisappear"] = getAngleDisappear();
   
-
   if(m_trackerType & EDGE_TRACKER) {
     j["edge_tracker"] = me;
   }

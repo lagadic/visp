@@ -100,8 +100,6 @@ public:
 
   virtual ~vpMbGenericTracker();
 
-  
-
   virtual double computeCurrentProjectionError(const vpImage<unsigned char> &I, const vpHomogeneousMatrix &_cMo,
                                                const vpCameraParameters &_cam);
   virtual double computeCurrentProjectionError(const vpImage<vpRGBa> &I, const vpHomogeneousMatrix &_cMo,
@@ -572,8 +570,8 @@ private:
 
     virtual void loadConfigFile(const std::string &configFile, bool verbose = true);
 #ifdef VISP_HAVE_NLOHMANN_JSON
-  nlohmann::json asJson() const;
-  void fromJson(const nlohmann::json& j);
+    nlohmann::json asJson() const;
+    void fromJson(const nlohmann::json& j);
 #endif
 
     virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
