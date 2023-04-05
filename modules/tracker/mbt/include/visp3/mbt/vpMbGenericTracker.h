@@ -309,14 +309,11 @@ public:
   virtual void loadModel(const std::string &modelFile1, const std::string &modelFile2, bool verbose = false,
                          const vpHomogeneousMatrix &T1 = vpHomogeneousMatrix(),
                          const vpHomogeneousMatrix &T2 = vpHomogeneousMatrix());
+
   virtual void
   loadModel(const std::map<std::string, std::string> &mapOfModelFiles, bool verbose = false,
             const std::map<std::string, vpHomogeneousMatrix> &mapOfT = std::map<std::string, vpHomogeneousMatrix>());
 
-#ifdef VISP_HAVE_NLOHMANN_JSON
-  void loadJSONSettings(const std::string& settingsFile);
-  void saveJSONSettings(const std::string& settingsFile);
-#endif
   virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
                            bool verbose = false, const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
   virtual void reInitModel(const vpImage<vpRGBa> &I_color, const std::string &cad_name, const vpHomogeneousMatrix &cMo,
@@ -345,6 +342,10 @@ public:
               const std::map<std::string, vpHomogeneousMatrix> &mapOfT = std::map<std::string, vpHomogeneousMatrix>());
 
   virtual void resetTracker();
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  virtual void saveConfigFile(const std::string& settingsFile) const;
+#endif
 
   virtual void setAngleAppear(const double &a);
   virtual void setAngleAppear(const double &a1, const double &a2);
@@ -511,6 +512,11 @@ protected:
 
   virtual void initFaceFromLines(vpMbtPolygon &polygon);
 
+  virtual void loadConfigFileXML(const std::string& configFile, bool verbose = true);
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  virtual void loadConfigFileJSON(const std::string& configFile);
+#endif
+
 #ifdef VISP_HAVE_PCL
   virtual void preTracking(std::map<std::string, const vpImage<unsigned char> *> &mapOfImages,
                            std::map<std::string, pcl::PointCloud<pcl::PointXYZ>::ConstPtr> &mapOfPointClouds);
@@ -529,6 +535,10 @@ private:
                          public vpMbDepthDenseTracker
   {
     friend class vpMbGenericTracker;
+#ifdef VISP_HAVE_NLOHMANN_JSON
+    friend void to_json(nlohmann::json& j, const TrackerWrapper& t);
+    friend void from_json(const nlohmann::json& j, TrackerWrapper& t);
+#endif
 
   public:
     //! (s - s*)
@@ -569,10 +579,6 @@ private:
     virtual void init(const vpImage<unsigned char> &I);
 
     virtual void loadConfigFile(const std::string &configFile, bool verbose = true);
-#ifdef VISP_HAVE_NLOHMANN_JSON
-    nlohmann::json asJson() const;
-    void fromJson(const nlohmann::json& j);
-#endif
 
     virtual void reInitModel(const vpImage<unsigned char> &I, const std::string &cad_name,
                              const vpHomogeneousMatrix &cMo, bool verbose = false,
@@ -666,7 +672,10 @@ private:
     virtual void setPose(const vpImage<unsigned char> *const I, const vpImage<vpRGBa> *const I_color,
                          const vpHomogeneousMatrix &cdMo);
   };
-
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  friend void to_json(nlohmann::json& j, const TrackerWrapper& t);
+  friend void from_json(const nlohmann::json& j, TrackerWrapper& t);
+#endif
 protected:
   //! (s - s*)
   vpColVector m_error;
@@ -702,4 +711,77 @@ protected:
   //! Number of depth dense features
   unsigned int m_nb_feat_depthDense;
 };
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper& t) {
+  // Common tracker attributes
+  j = nlohmann::json {
+    {"camera", t.m_cam},
+    {"type", t.m_trackerType},
+    {"angleAppear", vpMath::deg(t.getAngleAppear())},
+    {"angleDisappear", vpMath::deg(t.getAngleDisappear())},
+    {"lod", {
+      {"useLod", t.useLodGeneral},
+      {"minLineLengthThresholdGeneral", t.minLineLengthThresholdGeneral},
+      {"minPolygonAreaThresholdGeneral", t.minPolygonAreaThresholdGeneral}
+    }},
+    {"clipping", {
+      {"fov", t.getClipping()},
+      {"near", t.getNearClippingDistance()},
+      {"far", t.getFarClippingDistance()},
+    }}
+  };
+  //Check tracker type: for each type, add settings to json if the tracker t does use the features
+  //Edge tracker settings
+  if(t.m_trackerType & vpMbGenericTracker::EDGE_TRACKER) {
+    j["edge_tracker"] = t.me;
+  }
+  //KLT tracker settings
+  if(t.m_trackerType & vpMbGenericTracker::KLT_TRACKER) {
+    nlohmann::json klt = nlohmann::json {
+      {"maxFeatures", t.tracker.getMaxFeatures()},
+      {"windowSize", t.tracker.getWindowSize()},
+      {"quality", t.tracker.getQuality()},
+      {"minDistance", t.tracker.getMinDistance()},
+      {"harris", t.tracker.getHarrisFreeParameter()},
+      {"blockSize", t.tracker.getBlockSize()},
+      {"pyramidLevels", t.tracker.getPyramidLevels()}
+    };
+    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+    klt["maskBorder"] = t.maskBorder;
+    #endif
+    j["klt"] = klt;
+  }
+  //Depth normal settings
+  if(t.m_trackerType & vpMbGenericTracker::DEPTH_NORMAL_TRACKER) {
+    j["normals"] = nlohmann::json {
+      {"featureEstimationMethod", t.m_depthNormalFeatureEstimationMethod},
+      {"pcl", {
+        {"method", t.m_depthNormalPclPlaneEstimationMethod,
+        "ransacMaxIter", t.m_depthNormalPclPlaneEstimationRansacMaxIter,
+        "ransacThreshold", t.m_depthNormalPclPlaneEstimationRansacThreshold}
+      }},
+      {"sampling", {
+        {"x", t.m_depthNormalSamplingStepX},
+        {"y", t.m_depthNormalSamplingStepY}
+      }}
+    };
+  }
+
+  if(t.m_trackerType & vpMbGenericTracker::DEPTH_DENSE_TRACKER) {
+    j["dense"] = {
+      {"sampling", {
+        {"x", t.m_depthDenseSamplingStepX},
+        {"y", t.m_depthDenseSamplingStepY}
+      }}
+    };
+  }
+}
+inline void from_json(const nlohmann::json& j, vpMbGenericTracker::TrackerWrapper& t) {
+
+}
+
+#endif
+
+
 #endif
