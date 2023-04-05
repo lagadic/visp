@@ -34,7 +34,7 @@
  *****************************************************************************/
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/detection/vpDetectorDNNOpenCV.h>
 
@@ -131,18 +131,20 @@ std::vector<std::string> vpDetectorDNNOpenCV::parseClassNamesFile(const std::str
 }
 
 vpDetectorDNNOpenCV::vpDetectorDNNOpenCV()
-  : m_blob(), m_classIds(), m_I_color(), m_img(),
+  : m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
     m_mean(127.5, 127.5, 127.5), m_net(), m_netConfig(0.5, 0.4, std::vector<std::string>(), cv::Size(300, 300)), m_outNames(), m_dnnRes(),
     m_scaleFactor(2.0 / 255.0), m_swapRB(true), m_parsingMethodType(USER_SPECIFIED), m_parsingMethod(vpDetectorDNNOpenCV::postProcess_unimplemented)
 {
+  setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
 }
 
 
-vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &))
-  : m_blob(), m_classIds(), m_I_color(), m_img(),
-    m_mean(127.5, 127.5, 127.5), m_net(), m_netConfig(0.5, 0.4, std::vector<std::string>(), cv::Size(300, 300)), m_outNames(), m_dnnRes(),
+vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const NetConfig &config, const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &))
+  : m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
+    m_mean(127.5, 127.5, 127.5), m_net(), m_netConfig(config), m_outNames(), m_dnnRes(),
     m_scaleFactor(2.0 / 255.0), m_swapRB(true), m_parsingMethodType(typeParsingMethod), m_parsingMethod(parsingMethod)
 {
+  setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
 }
 
 vpDetectorDNNOpenCV::~vpDetectorDNNOpenCV() {}
@@ -217,6 +219,7 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<vpRGBa> &I, std::vector< std::pai
 bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::map< std::string, std::vector<DetectedFeatures2D>> &output)
 {
   m_img = I;
+  output.clear();
 
   cv::Size inputSize(m_netConfig.m_inputSize.width  > 0 ? m_netConfig.m_inputSize.width : m_img.cols,
                      m_netConfig.m_inputSize.height > 0 ? m_netConfig.m_inputSize.height : m_img.rows);
@@ -241,10 +244,9 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector< std::pair<std::s
 {
   std::map< std::string, std::vector<DetectedFeatures2D>> map_output;
   bool returnStatus = detect(I, map_output);
-  for(std::map<std::string, std::vector<DetectedFeatures2D>>::iterator it = map_output.begin(); it != map_output.end(); it++)
+  for(auto key_val : map_output)
   {
-    
-    output.push_back(std::pair<std::string, std::vector<DetectedFeatures2D>>(it->first, it->second));
+    output.push_back(key_val);
   }
   return returnStatus;
 }
@@ -309,23 +311,64 @@ void vpDetectorDNNOpenCV::postProcess(std::map< std::string, std::vector<Detecte
   m_indices.clear();
   cv::dnn::NMSBoxes(proposals.m_boxes, proposals.m_confidences, m_netConfig.m_confThreshold, m_netConfig.m_nmsThreshold, m_indices);
   
+  size_t nbClassNames = m_netConfig.m_classNames.size();
   for ( size_t i = 0; i < m_indices.size(); ++i )
   {
     int idx      = m_indices[i];
     cv::Rect box = proposals.m_boxes[idx];
-    std::string classname = m_netConfig.m_classNames[proposals.m_classIds[idx]];
-    #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+    std::string classname;
+    if(nbClassNames > 0)
+    {
+      classname = m_netConfig.m_classNames[proposals.m_classIds[idx]];
+    }
+    else
+    {
+      classname = std::to_string(proposals.m_classIds[idx]);
+    }
     std::optional<std::string> classname_opt = std::optional<std::string>(classname);
-    #endif 
     output[classname].emplace_back( box.x, box.x + box.width, box.y, box.y + box.height
                                   , proposals.m_classIds[idx], proposals.m_confidences[idx]
-                                  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
                                   , classname_opt
-                                  #else
-                                  , classname
-                                  #endif  
                                   );
   }
+
+  if(m_applySizeFilterAfterNMS)
+  {
+    for(auto keyval: output)
+    {
+      output[keyval.first] = filterDetection(output[keyval.first], m_netConfig.m_filterSizeRatio); // removing false detections
+    }
+  }
+}
+
+/*!
+ * \brief Return a new vector of detected features whose area is greater or equal to the mean area x \b minRatioOfAreaOk.
+ *
+ * \param detected_features The original list of detected features.
+ * \param minRatioOfAreaOk The minimum ratio of area a feature bounding box must reach to be kept in the resulting list of features. Value between 0 and 1.0.
+ * \return std::vector<data::Hole2D> The resulting list of features, that only contains the features whose area is greater or equal to the mean area x \b minRatioOfAreaOk.
+ */
+std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>
+vpDetectorDNNOpenCV::filterDetection(const std::vector<DetectedFeatures2D>& detected_features, const double minRatioOfAreaOk)
+{
+  double meanArea(0.);
+  double originalNumberOfObj = detected_features.size();
+  double meanFactor = 1. / originalNumberOfObj;
+  unsigned int nbRemoved(0);
+  for(DetectedFeatures2D feature: detected_features){
+    meanArea += feature.m_bbox.getArea();
+  }
+  meanArea *= meanFactor;
+  std::vector<DetectedFeatures2D> filtered_features;
+  for(DetectedFeatures2D feature: detected_features){
+    if(feature.m_bbox.getArea() >=  minRatioOfAreaOk * meanArea && feature.m_bbox.getArea() < meanArea / minRatioOfAreaOk){
+      filtered_features.push_back(feature);
+    }else{
+      nbRemoved++;
+    }
+  }
+
+  return filtered_features;
 }
 
 /*!
@@ -667,7 +710,6 @@ void vpDetectorDNNOpenCV::postProcess_unimplemented(DetectionCandidates &proposa
     - `*.weights` (Darknet, https://pjreddie.com/darknet/)
     - `*.bin` (DLDT, https://software.intel.com/openvino-toolkit)
     - `*.onnx` (ONNX, https://onnx.ai/)
-  \param classFile: path towards the file containing the list of classes detected by the DNN, in json format.
   \param config Path to a text file of model containing network configuration.
   It could be a file with the following extensions:
     - `*.prototxt` (Caffe, http://caffe.berkeleyvision.org/)
@@ -676,7 +718,7 @@ void vpDetectorDNNOpenCV::postProcess_unimplemented(DetectionCandidates &proposa
     - `*.xml` (DLDT, https://software.intel.com/openvino-toolkit)
   \param framework Optional name of an origin framework of the model. Automatically detected if it is not set.
 */
-void vpDetectorDNNOpenCV::readNet(const std::string &model, const std::string &classFile, const std::string &config, const std::string &framework)
+void vpDetectorDNNOpenCV::readNet(const std::string &model, const std::string &config, const std::string &framework)
 {
   m_net = cv::dnn::readNet(model, config, framework);
 #if (VISP_HAVE_OPENCV_VERSION == 0x030403)
@@ -684,8 +726,17 @@ void vpDetectorDNNOpenCV::readNet(const std::string &model, const std::string &c
 #else
   m_outNames = m_net.getUnconnectedOutLayersNames();
 #endif
+}
 
-  m_netConfig.m_classNames = parseClassNamesFile(classFile);
+/*!
+ * Configure the DNN (thresholds, input size, ...)
+ * 
+ * \param config: the desired configuration of the network
+ */
+void vpDetectorDNNOpenCV::setNetConfig(const NetConfig &config)
+{
+  m_netConfig = config;
+  setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio); 
 }
 
 /*!
@@ -693,7 +744,35 @@ void vpDetectorDNNOpenCV::readNet(const std::string &model, const std::string &c
 
   \param confThreshold Confidence threshold between [0, 1]
 */
-void vpDetectorDNNOpenCV::setConfidenceThreshold(float confThreshold) { m_netConfig.m_confThreshold = confThreshold; }
+void vpDetectorDNNOpenCV::setConfidenceThreshold(const float &confThreshold) { m_netConfig.m_confThreshold = confThreshold; }
+
+/*!
+  Set Non-Maximum Suppression threshold, used to filter multiple detections at approximatively
+  the same location.
+
+  \param nmsThreshold Non-Maximum Suppression threshold between [0, 1]
+*/
+void vpDetectorDNNOpenCV::setNMSThreshold(const float &nmsThreshold) { m_netConfig.m_nmsThreshold = nmsThreshold; }
+
+/*!
+  Set the size ratio used in the \b filterDetection method. If <= 0., \b filterDetection is not used.
+  The detections of class \b c for which the bbox area does not belong to [mean_class_c(Area) * \b sizeRatio ; mean_class_c(Area) / \b sizeRatio ]
+  are removed from the list of detections.
+
+  \param sizeRatio the size ratio used in the \b filterDetection method. If <= 0., \b filterDetection is not used.
+*/
+void vpDetectorDNNOpenCV::setDetectionFilterSizeRatio(const double &sizeRatio) 
+{ 
+  m_netConfig.m_filterSizeRatio = sizeRatio; 
+  if(m_netConfig.m_filterSizeRatio < std::numeric_limits<double>::epsilon())
+  {
+    m_applySizeFilterAfterNMS = true;
+  }
+  else
+  {
+    m_applySizeFilterAfterNMS = false;
+  }
+}
 
 /*!
   Set dimension to resize the image to the input blob.
@@ -701,7 +780,7 @@ void vpDetectorDNNOpenCV::setConfidenceThreshold(float confThreshold) { m_netCon
   \param width If <= 0, blob width is set to image width
   \param height If <= 0, blob height is set to image height
 */
-void vpDetectorDNNOpenCV::setInputSize(int width, int height)
+void vpDetectorDNNOpenCV::setInputSize(const int &width, const int &height)
 {
   m_netConfig.m_inputSize.width = width;
   m_netConfig.m_inputSize.height = height;
@@ -714,15 +793,7 @@ void vpDetectorDNNOpenCV::setInputSize(int width, int height)
   \param meanG Mean value for G-channel
   \param meanB Mean value for R-channel
 */
-void vpDetectorDNNOpenCV::setMean(double meanR, double meanG, double meanB) { m_mean = cv::Scalar(meanR, meanG, meanB); }
-
-/*!
-  Set Non-Maximum Suppression threshold, used to filter multiple detections at approximatively
-  the same location.
-
-  \param nmsThreshold Non-Maximum Suppression threshold between [0, 1]
-*/
-void vpDetectorDNNOpenCV::setNMSThreshold(float nmsThreshold) { m_netConfig.m_nmsThreshold = nmsThreshold; }
+void vpDetectorDNNOpenCV::setMean(const double &meanR, const double &meanG, const double &meanB) { m_mean = cv::Scalar(meanR, meanG, meanB); }
 
 /*!
   Set preferable backend for inference computation.
@@ -730,7 +801,7 @@ void vpDetectorDNNOpenCV::setNMSThreshold(float nmsThreshold) { m_netConfig.m_nm
 
   \param backendId Backend identifier
 */
-void vpDetectorDNNOpenCV::setPreferableBackend(int backendId) { m_net.setPreferableBackend(backendId); }
+void vpDetectorDNNOpenCV::setPreferableBackend(const int &backendId) { m_net.setPreferableBackend(backendId); }
 
 /*!
   Set preferable target for inference computation.
@@ -738,19 +809,19 @@ void vpDetectorDNNOpenCV::setPreferableBackend(int backendId) { m_net.setPrefera
 
   \param targetId Target identifier
 */
-void vpDetectorDNNOpenCV::setPreferableTarget(int targetId) { m_net.setPreferableTarget(targetId); }
+void vpDetectorDNNOpenCV::setPreferableTarget(const int &targetId) { m_net.setPreferableTarget(targetId); }
 
 /*!
   Set scale factor to normalize the range of pixel values.
 */
-void vpDetectorDNNOpenCV::setScaleFactor(double scaleFactor) { m_scaleFactor = scaleFactor; }
+void vpDetectorDNNOpenCV::setScaleFactor(const double &scaleFactor) { m_scaleFactor = scaleFactor; }
 
 /*!
   If true, swap R and B channel for mean subtraction. For instance
   when the network has been trained on RGB image format (OpenCV uses
   BGR convention).
 */
-void vpDetectorDNNOpenCV::setSwapRB(bool swapRB) { m_swapRB = swapRB; }
+void vpDetectorDNNOpenCV::setSwapRB(const bool &swapRB) { m_swapRB = swapRB; }
 
 /*!
   Set the type of parsing method that must be used to interpret the raw results of the DNN detection.

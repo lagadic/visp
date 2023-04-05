@@ -37,7 +37,7 @@
 
 #include <visp3/core/vpConfig.h>
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 #include <map>
 #include <string>
 #include <vector>
@@ -48,9 +48,7 @@
 #include <visp3/core/vpImage.h>
 #include <visp3/core/vpRect.h>
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 #include <optional>
-#endif
 
 /*!
   \class vpDetectorDNNOpenCV
@@ -65,49 +63,40 @@ class VISP_EXPORT vpDetectorDNNOpenCV
 public:
   typedef enum DNNResultsParsingType
   {
-    YOLO_V7 = 0,
-    YOLO_V8 = 1,
-    FASTER_RCNN = 2,
-    R_FCN = 3,
-    SSD_MOBILENET = 4,
-    RESNET_10 = 5,
-    OLD_METHOD = 6,
-    USER_SPECIFIED = 7,
-    COUNT = 8
-  }DNNResultsParsingType;
+    USER_SPECIFIED = 0,
+    FASTER_RCNN    = 1,
+    R_FCN          = 2,
+    SSD_MOBILENET  = 3,
+    RESNET_10      = 4,
+    OLD_METHOD     = 5,
+    YOLO_V7        = 6,
+    YOLO_V8        = 7,
+    COUNT          = 8
+  } DNNResultsParsingType;
 
   typedef struct DetectionCandidates
   {
     std::vector< float > m_confidences;
     std::vector< cv::Rect > m_boxes;
     std::vector< int > m_classIds;
-  }DetectionCandidates;
+  } DetectionCandidates;
 
   typedef struct DetectedFeatures2D
   {
     vpRect m_bbox;
     double m_score;
     unsigned int m_cls;
-    #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
     std::optional<std::string> m_classname;
-    #else
-    std::string m_classname;
-    #endif 
 
     inline explicit DetectedFeatures2D( double u_min, double u_max
                                       , double v_min, double v_max
                                       , unsigned int cls, double score
-                                      #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
                                       , const std::optional<std::string> &classname
-                                      #else
-                                      , const std::string &classname = ""
-                                      #endif 
                                       )
     : m_bbox( vpImagePoint(v_min, u_min), vpImagePoint(v_max, u_max))
     , m_score(score) 
     , m_cls(cls)
     {
-      #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
       if(classname)
       {
         m_classname = classname;
@@ -116,22 +105,12 @@ public:
       {
         m_classname = std::nullopt;
       }
-      #else
-      if(!classname.empty())
-      {
-        m_classname = classname;
-      }
-      else
-      {
-        m_classname = std::to_string(m_cls);
-      }
-      #endif
     };
 
     template < typename Type >
     void display( const vpImage< Type > &img, const vpColor &color = vpColor::blue, unsigned int thickness = 1 ) const;
 
-  }DetectedFeatures2D;
+  } DetectedFeatures2D;
 
   typedef struct NetConfig
   {
@@ -139,6 +118,7 @@ public:
     double m_nmsThreshold;  //! Threshold for Non-Maximum Suppression
     std::vector<std::string> m_classNames; //! Vector containing the names of the different classes the DNN can detect
     cv::Size m_inputSize; //! Size of the images the DNN can manipulate. The input images will be resized to match these dimensions.
+    double m_filterSizeRatio; //! Size ratio used by the \b filterDetection method. If <= 0., the \b filterDetection method is not used.
 
     inline static std::vector<std::string> parseClassNamesFile(const std::string &filename)
     {
@@ -169,29 +149,31 @@ public:
       return classNames;
     }
 
-    inline NetConfig(double confThresh, const double &nmsThresh, const std::vector<std::string> & classNames, const cv::Size &dnnInputSize)
+    inline NetConfig(double confThresh, const double &nmsThresh, const std::vector<std::string> & classNames, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.)
       : m_confThreshold(confThresh)
       , m_nmsThreshold(nmsThresh)
       , m_classNames(classNames)
       , m_inputSize(dnnInputSize)
+      , m_filterSizeRatio(filterSizeRatio)
     {
     }
 
-    inline NetConfig(double confThresh, const double &nmsThresh, const std::string &classNamesFile, const cv::Size &dnnInputSize)
+    inline NetConfig(double confThresh, const double &nmsThresh, const std::string &classNamesFile, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.)
       : m_confThreshold(confThresh)
       , m_nmsThreshold(nmsThresh)
       , m_inputSize(dnnInputSize)
+      , m_filterSizeRatio(filterSizeRatio)
     {
       m_classNames = parseClassNamesFile(classNamesFile);
     }
-  }NetConfig;
+  } NetConfig;
 
   static std::string getAvailableDnnResultsParsingTypes();
   static std::string dnnResultsParsingTypeToString(const DNNResultsParsingType &type);
   static DNNResultsParsingType dnnResultsParsingTypeFromString(const std::string &name);
   static std::vector<std::string> parseClassNamesFile(const std::string &filename);
   vpDetectorDNNOpenCV();
-  vpDetectorDNNOpenCV(const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat>&, const NetConfig &) = postProcess_unimplemented);
+  vpDetectorDNNOpenCV(const NetConfig &config,const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat>&, const NetConfig &) = postProcess_unimplemented);
   virtual ~vpDetectorDNNOpenCV();
 
   virtual bool detect(const vpImage<unsigned char> &I, std::map< std::string, std::vector<DetectedFeatures2D>> &output);
@@ -201,21 +183,27 @@ public:
   virtual bool detect(const cv::Mat &I, std::map< std::string, std::vector<DetectedFeatures2D>> &output);
   virtual bool detect(const cv::Mat &I, std::vector< std::pair<std::string, std::vector<DetectedFeatures2D>>> &output);
 
-  void readNet(const std::string &model, const std::string &classFile, const std::string &config = "", const std::string &framework = "");
-  void setConfidenceThreshold(float confThreshold);
-  void setInputSize(int width, int height);
-  void setMean(double meanR, double meanG, double meanB);
-  void setNMSThreshold(float nmsThreshold);
-  void setPreferableBackend(int backendId);
-  void setPreferableTarget(int targetId);
-  void setScaleFactor(double scaleFactor);
-  void setSwapRB(bool swapRB);
+  void readNet(const std::string &model, const std::string &config = "", const std::string &framework = "");
+
+  void setNetConfig(const NetConfig &config);
+  void setConfidenceThreshold(const float &confThreshold);
+  void setNMSThreshold(const float &nmsThreshold);
+  void setDetectionFilterSizeRatio(const double &sizeRatio);
+  void setInputSize(const int &width, const int &height);
+  void setMean(const double &meanR, const double &meanG, const double &meanB);
+  void setPreferableBackend(const int &backendId);
+  void setPreferableTarget(const int &targetId);
+  void setScaleFactor(const double &scaleFactor);
+  void setSwapRB(const bool &swapRB);
   void setParsingMethod(const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat>&, const NetConfig &) = postProcess_unimplemented);
 
-private:
+protected:
 #if (VISP_HAVE_OPENCV_VERSION == 0x030403)
   std::vector<cv::String> getOutputsNames();
 #endif
+  std::vector<DetectedFeatures2D>
+  filterDetection(const std::vector<DetectedFeatures2D>& detected_features, const double minRatioOfAreaOk);
+
   void postProcess(std::map< std::string, std::vector<DetectedFeatures2D>> &output);
 
   void postProcess_YoloV7(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
@@ -232,10 +220,10 @@ private:
 
   static void postProcess_unimplemented(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
+  //! If true, filter the detections removing the ones for which the bbox does not respect area(bbox) € [mean_class(area) * ratio; mean_class(area) / ratio]
+  bool m_applySizeFilterAfterNMS;
   //! Buffer for the blob in input net
   cv::Mat m_blob;
-  //! Detection class ids
-  std::vector<int> m_classIds;
   //! Buffer for gray to RGBa image conversion
   vpImage<vpRGBa> m_I_color;
   //! Buffer for the input image
@@ -276,7 +264,6 @@ vpDetectorDNNOpenCV::DetectedFeatures2D::display( const vpImage< Type > &img, co
   vpDisplay::displayRectangle( img, m_bbox, color, false, thickness );
 
   std::stringstream ss;
-  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   if(m_classname)
   {
     ss << *m_classname;
@@ -285,9 +272,6 @@ vpDetectorDNNOpenCV::DetectedFeatures2D::display( const vpImage< Type > &img, co
   {
     ss << m_cls;
   }
-  #else
-    ss << m_cls;
-  #endif
   ss << "(" << std::setprecision( 4 ) << m_score * 100. << "%)";
   vpDisplay::displayText( img, m_bbox.getTopRight(), ss.str(), color );
 }
