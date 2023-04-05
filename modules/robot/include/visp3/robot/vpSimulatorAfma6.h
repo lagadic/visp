@@ -59,8 +59,8 @@
   \brief Simulator of Irisa's gantry robot named Afma6.
 
   Implementation of the vpRobotWireFrameSimulator class in order to simulate
-Irisa's Afma6 robot. This robot is a gantry robot with six degrees of freedom
-manufactured in 1992 by the french Afma-Robots company.
+  Irisa's Afma6 robot. This robot is a gantry robot with six degrees of freedom
+  manufactured in 1992 by the french Afma-Robots company.
 
   \warning This class uses threading capabilities. Thus on Unix-like
   platforms, the libpthread third-party library need to be
@@ -249,21 +249,12 @@ protected:
   void getExternalImage(vpImage<vpRGBa> &I);
   inline void get_fMi(vpHomogeneousMatrix *fMit)
   {
-#if defined(_WIN32)
-#if defined(WINRT_8_1)
-    WaitForSingleObjectEx(mutex_fMi, INFINITE, FALSE);
-#else // pure win32
-    WaitForSingleObject(mutex_fMi, INFINITE);
-#endif
-    for (int i = 0; i < 8; i++)
+    m_mutex_fMi.lock();
+    for (int i = 0; i < 8; i++) {
       fMit[i] = fMi[i];
-    ReleaseMutex(mutex_fMi);
-#elif defined(VISP_HAVE_PTHREAD)
-    pthread_mutex_lock(&mutex_fMi);
-    for (int i = 0; i < 8; i++)
-      fMit[i] = fMi[i];
-    pthread_mutex_unlock(&mutex_fMi);
-#endif
+    }
+
+    m_mutex_fMi.unlock();
   }
   void init();
   void initArms();
