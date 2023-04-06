@@ -63,16 +63,16 @@ class VISP_EXPORT vpDetectorDNNOpenCV
 public:
   typedef enum DNNResultsParsingType
   {
-    USER_SPECIFIED = 0,
-    FASTER_RCNN    = 1,
-    R_FCN          = 2,
-    SSD_MOBILENET  = 3,
-    RESNET_10      = 4,
-    OLD_METHOD     = 5,
-    YOLO_V3        = 6,
-    YOLO_V7        = 7,
-    YOLO_V8        = 8,
-    COUNT          = 9
+    USER_SPECIFIED =  0,
+    FASTER_RCNN    =  1,
+    R_FCN          =  2,
+    SSD_MOBILENET  =  3,
+    RESNET_10      =  4,
+    YOLO_V3        =  5,
+    YOLO_V4        =  6,
+    YOLO_V7        =  7,
+    YOLO_V8        =  8,
+    COUNT          =  9
   } DNNResultsParsingType;
 
   typedef struct DetectionCandidates
@@ -207,7 +207,7 @@ protected:
 
   void postProcess(std::map< std::string, std::vector<DetectedFeatures2D>> &output);
 
-  void postProcess_YoloV3(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
+  void postProcess_YoloV3_V4(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
   void postProcess_YoloV7(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 

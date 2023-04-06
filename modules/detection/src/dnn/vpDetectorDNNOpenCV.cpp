@@ -67,6 +67,9 @@ std::string vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(const DNNResultsP
     case YOLO_V3:
       name = "yolov3";
       break;
+    case YOLO_V4:
+      name = "yolov4";
+      break;
     case YOLO_V7:
       name = "yolov7";
       break;
@@ -84,9 +87,6 @@ std::string vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(const DNNResultsP
       break;
     case RESNET_10:
       name = "resnet-10";
-      break;
-    case OLD_METHOD:
-      name = "old-method";
       break;
     case USER_SPECIFIED:
       name = "user-specified";
@@ -287,7 +287,8 @@ void vpDetectorDNNOpenCV::postProcess(std::map< std::string, std::vector<Detecte
   switch(m_parsingMethodType)
   {
     case YOLO_V3:
-      postProcess_YoloV3(proposals, m_dnnRes, m_netConfig);
+    case YOLO_V4:
+      postProcess_YoloV3_V4(proposals, m_dnnRes, m_netConfig);
       break;
     case YOLO_V7:
       postProcess_YoloV7(proposals, m_dnnRes, m_netConfig);
@@ -304,9 +305,6 @@ void vpDetectorDNNOpenCV::postProcess(std::map< std::string, std::vector<Detecte
       break;
     case RESNET_10:
       postProcess_ResNet_10(proposals, m_dnnRes, m_netConfig);
-      break;
-    case OLD_METHOD:
-      postProcess_OldMethod(proposals, m_dnnRes, m_netConfig);
       break;
     case USER_SPECIFIED:
       m_parsingMethod(proposals, m_dnnRes, m_netConfig);
@@ -378,27 +376,25 @@ vpDetectorDNNOpenCV::filterDetection(const std::vector<DetectedFeatures2D>& dete
 }
 
 /*!
-  Post-process the raw results of a YoloV7-type  DNN.
+  Post-process the raw results of a Yolov3-type or YoloV4-type  DNN.
   Extract the data stored as a matrix. They are stored as follow: 
   [batchsize][1:nb_proposals][1:5+nb_classes]
-  Where 25200 is the number of detection proposals and a detection proposal consists of:
+  Where a detection proposal consists of:
   [center_x; center_y; width; height; objectness; score_class_0; ...; score_last_class] 
   where center_x € [0; 1] and center_y € [0; 1] which correspond to the ratio of the position 
-  of the center of the bbox in the normalized pixel coordinates (i.e. c_x(return) = c_x(pixel) / width_inputNet).
+  of the center of the bbox with regard to the total width/height of the image.
 
   \param proposals : input/output that will contains all the detection candidates.
   \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
   \param netConfig: the configuration of the network, to know for instance the DNN input size.
 */
-void vpDetectorDNNOpenCV::postProcess_YoloV3(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
+void vpDetectorDNNOpenCV::postProcess_YoloV3_V4(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
-  // Compute the ratio between the original size of the image and the network size to translate network coordinates into
-  // image coordinates
-  float ratioh = (float)m_img.rows / netConfig.m_inputSize.height, ratiow = (float)m_img.cols / netConfig.m_inputSize.width;
   int nbBatches = dnnRes.size();
 
   for(int i = 0; i < nbBatches; i++)
   {
+    // Slightly modify from here: https://github.com/opencv/opencv/blob/8c25a8eb7b10fb50cda323ee6bec68aa1a9ce43c/samples/dnn/object_detection.cpp#L192-L221
      // Counts the number of proposed detections and the number of data corresponding to 1 detection
     int num_proposal = dnnRes[i].size[0]; // Number of detections
     int nout         = dnnRes[i].size[1]; // Number of data for each detection
@@ -430,10 +426,10 @@ void vpDetectorDNNOpenCV::postProcess_YoloV3(DetectionCandidates &proposals, std
         if ( max_class_score > netConfig.m_confThreshold )
         {
           const int class_idx = classIdPoint.x;
-          float cx            = pdata[0] * ratiow * netConfig.m_inputSize.width ; /// cx
-          float cy            = pdata[1] * ratioh * netConfig.m_inputSize.height; /// cy
-          float w             = pdata[2] * ratiow * netConfig.m_inputSize.width ; /// w
-          float h             = pdata[3] * ratioh * netConfig.m_inputSize.height; /// h
+          float cx            = pdata[0] * m_img.cols ; /// cx
+          float cy            = pdata[1] * m_img.rows; /// cy
+          float w             = pdata[2] * m_img.cols ; /// w
+          float h             = pdata[3] * m_img.rows; /// h
 
           int left = int( cx - 0.5 * w );
           int top  = int( cy - 0.5 * h );
@@ -714,57 +710,6 @@ void vpDetectorDNNOpenCV::postProcess_ResNet_10(DetectionCandidates &proposals, 
       proposals.m_classIds.push_back( classId );
     }
   }
-}
-
-/*!
-  Post-process the raw results of a YoloV7-type  DNN.
-  Extract the data stored as a matrix.
-  The network produces output blob with a shape NxC where N is a number of
-  detected objects and C is a number of classes + 4 where the first 4
-  numbers are [center_x, center_y, width, height]
-
-  \param proposals : input/output that will contains all the detection candidates.
-  \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
-  \param netConfig: the configuration of the network, to know for instance the DNN input size.
-*/
-void vpDetectorDNNOpenCV::postProcess_OldMethod(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
-{
-  // Direct copy from object_detection.cpp OpenCV sample
-  static std::vector<int> outLayers = m_net.getUnconnectedOutLayers();
-  static std::string outLayerType = m_net.getLayer(outLayers[0])->type;
-
-  if (outLayerType == "Region") 
-  {
-    for (size_t i = 0; i < dnnRes.size(); ++i) 
-    {
-      // Network produces output blob with a shape NxC where N is a number of
-      // detected objects and C is a number of classes + 4 where the first 4
-      // numbers are [center_x, center_y, width, height]
-      float *data = (float *)dnnRes[i].data;
-      for (int j = 0; j < dnnRes[i].rows; ++j, data += dnnRes[i].cols) 
-      {
-        cv::Mat scores = dnnRes[i].row(j).colRange(5, dnnRes[i].cols);
-        cv::Point classIdPoint;
-        double confidence;
-        cv::minMaxLoc(scores, 0, &confidence, 0, &classIdPoint);
-        if (confidence > netConfig.m_confThreshold) 
-        {
-          int centerX = (int)(data[0] * m_img.cols);
-          int centerY = (int)(data[1] * m_img.rows);
-          int width = (int)(data[2] * m_img.cols);
-          int height = (int)(data[3] * m_img.rows);
-          int left = centerX - width / 2;
-          int top = centerY - height / 2;
-          int classId = classIdPoint.x;
-          
-          proposals.m_confidences.push_back( (float)confidence );
-          proposals.m_boxes.push_back( cv::Rect( left, top, width, height ) );
-          proposals.m_classIds.push_back( classId );
-        }
-      }
-    }
-  } else
-    CV_Error(cv::Error::StsNotImplemented, "Unknown output layer type: " + outLayerType);
 }
 
 /*!
