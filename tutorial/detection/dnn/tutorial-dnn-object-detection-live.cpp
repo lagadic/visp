@@ -23,6 +23,7 @@ int main(int argc, const char *argv[])
     double meanR = 104.0, meanG = 177.0, meanB = 123.0;
     double scaleFactor = 1.0;
     bool swapRB = false;
+    bool hasToWaitClick = false;
     float confThresh = 0.5f;
     float nmsThresh = 0.4f;
     double detectionFilter = 0.25;
@@ -30,6 +31,8 @@ int main(int argc, const char *argv[])
     for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--device" && i + 1 < argc) {
         opt_device = atoi(argv[i + 1]);
+      } else if (std::string(argv[i]) == "--waitForClick") {
+        hasToWaitClick = true;
       } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
         input = std::string(argv[i + 1]);
       } else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
@@ -62,7 +65,7 @@ int main(int argc, const char *argv[])
         labelFile = std::string(argv[i + 1]);
       } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << argv[0]
-                  << " --device <camera device number> --input <path to image or video>"
+                  << " --device <camera device number> --waitForClick --input <path to image or video>"
                      " (camera is used if input is empty) --model <path to net trained weights>"
                      " --type <type of DNN in " + vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes() + 
                      "> --config <path to net config file> --framework <framework name>"
@@ -161,11 +164,30 @@ int main(int argc, const char *argv[])
       
       std::ostringstream oss;
       oss << "Detection time: " << t << " ms";
-      vpDisplay::displayText(I, 20, 20, oss.str(), vpColor::red);
+      if(hasToWaitClick)
+      {
+        // hasToWaitClick => we are displaying images
+        vpDisplay::displayText(I, 20, 20, "Left click to display next image", vpColor::red);
+      }
+      vpDisplay::displayText(I, 40, 20, "Right click to quit", vpColor::red);
+      vpDisplay::displayText(I, 60, 20, oss.str(), vpColor::red);
 
       vpDisplay::flush(I);
-      if (vpDisplay::getClick(I, false))
-        break;
+      vpMouseButton::vpMouseButtonType button;
+    
+      if (vpDisplay::getClick(I, button, hasToWaitClick))
+      {
+        if (button == vpMouseButton::button1)
+        {
+          // Left click => next image
+          continue;
+        }
+        else if(button == vpMouseButton::button3)
+        {
+          // Right click => stop the program
+          break;
+        }
+      }
     }
 
   } catch (const vpException &e) {
