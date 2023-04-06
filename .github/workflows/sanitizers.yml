@@ -15,8 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # https://stackoverflow.com/a/68940067
-        flags: [ {flag: "-fsanitize=address", ld: "-fsanitize=address"}, {flag: "-fsanitize=leak", ld: "-fsanitize=leak"}, {flag: "-fsanitize=thread -fopenmp", ld: "-fsanitize=thread"}, {flag: "-fsanitize=undefined", ld: "-fsanitize=undefined"} ]
+        flags: ["-fsanitize=address", "-fsanitize=leak", "-fsanitize=thread", "-fsanitize=undefined"]
 
     steps:
     # https://github.com/marketplace/actions/cancel-workflow-action
@@ -35,7 +34,7 @@ jobs:
       run: lsb_release -a
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev clang libomp-dev
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev
 
     - name: Clone visp-images
       env:
@@ -50,7 +49,7 @@ jobs:
       run: |
         mkdir build
         cd build
-        cmake .. -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_C_FLAGS="${{ matrix.flags.flag }}" -DCMAKE_CXX_FLAGS="${{ matrix.flags.flag }}" -DCMAKE_LDFLAGS=${{ matrix.flags.ld }} -DCMAKE_BUILD_TYPE=Debug
+        cmake .. -DCMAKE_C_FLAGS=${{ matrix.flags }} -DCMAKE_CXX_FLAGS=${{ matrix.flags }} -DCMAKE_LDFLAGS=${{ matrix.flags }} -DCMAKE_BUILD_TYPE=RelWithDebInfo -DUSE_OPENMP=OFF
         cat ViSP-third-party.txt
 
     - name: Compile
