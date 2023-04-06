@@ -70,9 +70,10 @@ public:
     RESNET_10      =  4,
     YOLO_V3        =  5,
     YOLO_V4        =  6,
-    YOLO_V7        =  7,
-    YOLO_V8        =  8,
-    COUNT          =  9
+    YOLO_V5        =  7,
+    YOLO_V7        =  8,
+    YOLO_V8        =  9,
+    COUNT          = 10
   } DNNResultsParsingType;
 
   typedef struct DetectionCandidates
@@ -209,7 +210,7 @@ protected:
 
   void postProcess_YoloV3_V4(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
-  void postProcess_YoloV7(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
+  void postProcess_YoloV5_V7(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
   void postProcess_YoloV8(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 

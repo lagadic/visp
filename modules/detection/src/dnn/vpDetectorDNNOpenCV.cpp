@@ -70,6 +70,9 @@ std::string vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(const DNNResultsP
     case YOLO_V4:
       name = "yolov4";
       break;
+    case YOLO_V5:
+      name = "yolov5";
+      break;
     case YOLO_V7:
       name = "yolov7";
       break;
@@ -290,8 +293,9 @@ void vpDetectorDNNOpenCV::postProcess(std::map< std::string, std::vector<Detecte
     case YOLO_V4:
       postProcess_YoloV3_V4(proposals, m_dnnRes, m_netConfig);
       break;
+    case YOLO_V5:
     case YOLO_V7:
-      postProcess_YoloV7(proposals, m_dnnRes, m_netConfig);
+      postProcess_YoloV5_V7(proposals, m_dnnRes, m_netConfig);
       break;
     case YOLO_V8:
       postProcess_YoloV8(proposals, m_dnnRes, m_netConfig);
@@ -456,7 +460,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV3_V4(DetectionCandidates &proposals, 
   \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
   \param netConfig: the configuration of the network, to know for instance the DNN input size.
 */
-void vpDetectorDNNOpenCV::postProcess_YoloV7(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
+void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
   // Compute the ratio between the original size of the image and the network size to translate network coordinates into
   // image coordinates
@@ -482,14 +486,14 @@ void vpDetectorDNNOpenCV::postProcess_YoloV7(DetectionCandidates &proposals, std
     for ( n = 0; n < num_proposal; n++ )
     {
       float box_score = pdata[4];
+
       if ( box_score > netConfig.m_confThreshold )
       {
         cv::Mat scores = dnnRes[i].row( row_ind ).colRange( 5, nout );
         cv::Point classIdPoint;
         double max_class_score;
         // Get the value and location of the maximum score
-        cv::minMaxLoc( scores, 0, &max_class_score, 0, &classIdPoint );
-        
+        cv::minMaxLoc( scores, 0, &max_class_score, 0, &classIdPoint );        
         max_class_score *= box_score;
 
         // The detection is kept only if the confidence is greater than the threshold
