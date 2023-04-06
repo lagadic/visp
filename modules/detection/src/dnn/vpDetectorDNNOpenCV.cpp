@@ -450,10 +450,10 @@ void vpDetectorDNNOpenCV::postProcess_YoloV3_V4(DetectionCandidates &proposals, 
 }
 
 /*!
-  Post-process the raw results of a YoloV7-type  DNN.
+  Post-process the raw results of a YoloV5-type or a YoloV7-type  DNN.
   Extract the data stored as a matrix. They are stored as follow: 
-  [batchsize][1:25200][1:5+nb_classes]
-  Where 25200 is the number of detection proposals and a detection proposal consists of:
+  [batchsize][1:num_proposals][1:5+nb_classes]
+  Where a detection proposal consists of:
   [center_x; center_y; width; height; objectness; score_class_0; ...; score_last_class] 
 
   \param proposals : input/output that will contains all the detection candidates.
@@ -532,45 +532,56 @@ void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, 
 */
 void vpDetectorDNNOpenCV::postProcess_YoloV8(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
-  // Counts the number of proposed detections and the number of data corresponding to 1 detection
-  int num_proposal = dnnRes[0].size[1]; // Number of detections
-  int nout         = dnnRes[0].size[0]; // Number of data for each detection
-  if ( dnnRes[0].dims > 2 )
-  {
-    num_proposal = dnnRes[0].size[2];
-    nout         = dnnRes[0].size[1];
-    dnnRes[0]      = dnnRes[0].reshape( 0, num_proposal );
-  }
-
+  // Code adapted from here: https://github.com/JustasBart/yolov8_CPP_Inference_OpenCV_ONNX/blob/minimalistic/inference.cpp
   // Compute the ratio between the original size of the image and the network size to translate network coordinates into
   // image coordinates
   float ratioh = (float)m_img.rows / netConfig.m_inputSize.height, ratiow = (float)m_img.cols / netConfig.m_inputSize.width;
+  int nbBatches = dnnRes.size();
 
-  // Iterate on the detections to keep only the meaningful ones
-  for (int n = 0; n < num_proposal; n++ )
+  for(int i = 0; i < nbBatches; i++)
   {
-    /// proposal = [cx,cy,w,h,classes_score]^T
-    cv::Mat proposal = dnnRes[0].col( n );
-    cv::Point classIdPoint;
-    double max_class_score;
-    // Get the value and location of the maximum score
-    cv::minMaxLoc( proposal.rowRange( 4, nout ), 0, &max_class_score, 0, &classIdPoint );
-      
-    // The detection is kept only if the confidence is greater than the threshold
-    if ( max_class_score > m_netConfig.m_confThreshold )
+     // Counts the number of proposed detections and the number of data corresponding to 1 detection
+    int num_proposal = dnnRes[i].size[1]; // Number of detections
+    int nout         = dnnRes[i].size[0]; // Number of data for each detection
+    if ( dnnRes[i].dims > 2 )
     {
-      const int class_idx = classIdPoint.x;
-      float cx            = proposal.at<double>(0,0) * ratiow; /// cx
-      float cy            = proposal.at<double>(1,0) * ratioh; /// cy
-      float w             = proposal.at<double>(2,0) * ratiow; /// w
-      float h             = proposal.at<double>(3,0) * ratioh; /// h
+      num_proposal = dnnRes[i].size[2];
+      nout         = dnnRes[i].size[1];
+      dnnRes[i]    = dnnRes[i].reshape( 0, nout );
+    }
+    cv::transpose(dnnRes[i] , dnnRes[i] ); // Organise data as YoloV5 i.e. [batchsize][1:num_proposals][1:4+nb_classes]
 
-      int left = int( cx - 0.5 * w );
-      int top  = int( cy - 0.5 * h );
+    int n = 0, row_ind = 0; /// cx,cy,w,h,box_score,class_score
+    float *pdata = (float *)dnnRes[i].data;
 
-      proposals.m_confidences.push_back( (float)max_class_score );
-      proposals.m_boxes.push_back( cv::Rect( left, top, (int)( w ), (int)( h ) ) );
-      proposals.m_classIds.push_back( class_idx );
+    // Iterate on the detections to keep only the meaningful ones
+    for ( n = 0; n < num_proposal; n++ )
+    {
+      cv::Mat scores = dnnRes[i].row( row_ind ).colRange( 4, nout );
+      cv::Point classIdPoint;
+      double max_class_score;
+      // Get the value and location of the maximum score
+      cv::minMaxLoc( scores, 0, &max_class_score, 0, &classIdPoint );        
+
+      // The detection is kept only if the confidence is greater than the threshold
+      if ( max_class_score > netConfig.m_confThreshold )
+      {
+        const int class_idx = classIdPoint.x;
+        float cx            = pdata[0] * ratiow; /// cx
+        float cy            = pdata[1] * ratioh; /// cy
+        float w             = pdata[2] * ratiow; /// w
+        float h             = pdata[3] * ratioh; /// h
+
+        int left = int( cx - 0.5 * w );
+        int top  = int( cy - 0.5 * h );
+
+        proposals.m_confidences.push_back( (float)max_class_score );
+        proposals.m_boxes.push_back( cv::Rect( left, top, (int)( w ), (int)( h ) ) );
+        proposals.m_classIds.push_back( class_idx );
+      }
+      
+      row_ind++;
+      pdata += nout;
     }
   }
 }
