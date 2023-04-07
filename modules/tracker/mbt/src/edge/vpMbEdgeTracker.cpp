@@ -682,7 +682,7 @@ void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool
 
   // If all the 6 dof should be estimated, we check if the interaction matrix
   // is full rank. If not we remove automatically the dof that cannot be
-  // estimated This is particularly useful when consering circles (rank 5) and
+  // estimated This is particularly useful when considering circles (rank 5) and
   // cylinders (rank 4)
   if (isoJoIdentity_) {
     cVo.buildFrom(m_cMo);

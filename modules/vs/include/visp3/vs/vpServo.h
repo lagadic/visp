@@ -58,17 +58,17 @@
   \class vpServo
 
   \ingroup group_task
-  Class required to compute the visual servoing control law descbribed
+  Class required to compute the visual servoing control law described
   in \cite Chaumette06a and \cite Chaumette07a.
 
-  \warning To avoid potential memory leaks, it is mendatory to call
+  \warning To avoid potential memory leaks, it is mandatory to call
   explicitly the kill() function to destroy the task. Otherwise, the
   destructor ~vpServo() launch an exception
   vpServoException::notKilledProperly.
 
   To learn how to use this class, we suggest first to follow the \ref
-tutorial-ibvs. The \ref tutorial-simu-robot-pioneer and \ref tutorial-boost-vs
-are also useful for advanced usage of this class.
+  tutorial-ibvs. The \ref tutorial-simu-robot-pioneer and \ref tutorial-boost-vs
+  are also useful for advanced usage of this class.
 
   The example below shows how to build a position-based visual servo
   from 3D visual features \f$s=({^{c^*}}t_c,\theta u)\f$. In that

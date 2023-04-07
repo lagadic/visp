@@ -354,7 +354,7 @@ bool vpPose::computePlanarObjectPoseFromRGBD(const vpImage<float> &depthMap,
     }
 
     // If coplanar_points is true, feed all 3d points to single vector
-    // Otherwise, each vector will hold 3d points for seperate planes
+    // Otherwise, each vector will hold 3d points for separate planes
     if (coplanar_points) {
       tag_points_3d.insert(tag_points_3d.end(), points_3d.begin(), points_3d.end());
     } else {

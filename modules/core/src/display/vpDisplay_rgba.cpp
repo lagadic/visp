@@ -746,7 +746,7 @@ int main() {
   unsigned int radius = 100;
   vpDisplay::displayCircle(I, center, radius, vpColor::red);
 
-  vpDisplay::flush(I); // Mendatory to display the requested features.
+  vpDisplay::flush(I); // Mandatory to display the requested features.
 }
   \endcode
 
@@ -759,7 +759,7 @@ void vpDisplay::flush(const vpImage<vpRGBa> &I) { vp_display_flush(I); }
   It's necessary to use this function to see the results of any drawing.
 
   \warning This function is particular and must be called
-  to show the overlay. Because it's time spending, use it parcimoniously.
+  to show the overlay. Because it's time spending, use it parsimoniously.
 
   \sa flush()
 */

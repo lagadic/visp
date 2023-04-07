@@ -431,7 +431,7 @@ void vpRobotKinova::setVelocity(const vpRobot::vpControlFrameType frame, const v
 
 /*
 
-  THESE FUNCTIONS ARE NOT MENDATORY BUT ARE USUALLY USEFUL
+  THESE FUNCTIONS ARE NOT MANDATORY BUT ARE USUALLY USEFUL
 
 */
 
