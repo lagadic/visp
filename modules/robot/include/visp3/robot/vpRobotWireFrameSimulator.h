@@ -166,7 +166,7 @@ protected:
   bool displayAllowed;
   //! Flag used to force the sampling time in the thread computing the robot's
   //! displacement to a constant value (\e samplingTime). It may be useful if
-  //! the main thread (computing the features) is very time consumming. False
+  //! the main thread (computing the features) is very time consuming. False
   //! by default.
   bool constantSamplingTimeMode;
 

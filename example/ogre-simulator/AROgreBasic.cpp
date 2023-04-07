@@ -275,7 +275,7 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
       // by using setGraphics, we request to see the edges of the dot
       // in red on the screen.
       // It uses the overlay image plane.
-      // The default of this setting is that it is time consumming
+      // The default of this setting is that it is time consuming
 
       md[i].setGraphics(true);
       md[i].setGrayLevelPrecision(0.7);

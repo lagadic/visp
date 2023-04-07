@@ -362,7 +362,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
 
         // If all the 6 dof should be estimated, we check if the interaction
         // matrix is full rank. If not we remove automatically the dof that
-        // cannot be estimated This is particularly useful when consering
+        // cannot be estimated This is particularly useful when considering
         // circles (rank 5) and cylinders (rank 4)
         if (isoJoIdentity_) {
           cVo.buildFrom(m_cMo);
@@ -5568,7 +5568,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
 
         // If all the 6 dof should be estimated, we check if the interaction
         // matrix is full rank. If not we remove automatically the dof that
-        // cannot be estimated This is particularly useful when consering
+        // cannot be estimated This is particularly useful when considering
         // circles (rank 5) and cylinders (rank 4)
         if (isoJoIdentity_) {
           cVo.buildFrom(m_cMo);

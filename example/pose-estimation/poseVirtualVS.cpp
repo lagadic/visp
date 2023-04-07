@@ -329,7 +329,7 @@ int main(int argc, const char **argv)
       // by using setGraphics, we request to see the all the pixel of the dot
       // in green on the screen.
       // It uses the overlay image plane.
-      // The default of this setting is that it is time consumming
+      // The default of this setting is that it is time consuming
 
       if (opt_display) {
         d[i].setGraphics(true);
