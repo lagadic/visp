@@ -51,6 +51,7 @@ ViSP 3.5.1 (under development)
     . [#1094] vpIoTools::makeTempDirectory() fails to create a temporary directory inside
       a parent directory on Unix
     . [#1106] SIFT Illegal Instruction error on macOS Intel with OpenCV 4.6.0 installed with brew
+    . [#1155] Wrong representation of the ellipse in model-based tracker
 ----------------------------------------------
 ViSP 3.5.0 (released February 15, 2022)
   - Contributors:
