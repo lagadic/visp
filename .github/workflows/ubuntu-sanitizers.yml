@@ -34,8 +34,13 @@ jobs:
       run: lsb_release -a
 
     - name: Install dependencies
-      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libopenblas-dev libeigen3-dev
+      run: sudo apt-get update && sudo apt-get install -y libx11-dev libdc1394-dev libv4l-dev liblapack-dev libblas-dev libeigen3-dev
 
+    - name: Linear algebra liblapack/libblas alternatives
+      run: |
+        update-alternatives --list liblapack.so.3-x86_64-linux-gnu
+        update-alternatives --list libblas.so.3-x86_64-linux-gnu
+        
     - name: Clone visp-images
       env:
         BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
