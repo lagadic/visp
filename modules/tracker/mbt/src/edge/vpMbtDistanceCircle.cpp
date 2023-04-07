@@ -453,19 +453,19 @@ void vpMbtDistanceCircle::computeInteractionMatrixError(const vpHomogeneousMatri
     for (std::list<vpMeSite>::const_iterator it = meEllipse->getMeList().begin(); it != meEllipse->getMeList().end();
          ++it) {
       vpPixelMeterConversion::convertPoint(cam, it->j, it->i, x, y);
+      // TRO Chaumette 2004 eq 25
       H[0] = 2 * (n11 * (y - yg) + n02 * (xg - x));
       H[1] = 2 * (n20 * (yg - y) + n11 * (x - xg));
-      H[2] = vpMath::sqr(y - yg) - n02;
-      H[3] = 2 * (yg * (x - xg) + y * xg + n11 - x * y);
-      H[4] = vpMath::sqr(x - xg) - n20;
+      H[2] = vpMath::sqr(y - yg) - 4.0 * n02;
+      H[3] = 2 * (yg * (x - xg) + y * xg + 4.0 * n11 - x * y);
+      H[4] = vpMath::sqr(x - xg) - 4.0 * n20;
 
       for (unsigned int k = 0; k < 6; k++)
         L[j][k] = H[0] * H1[0][k] + H[1] * H1[1][k] + H[2] * H1[2][k] + H[3] * H1[3][k] + H[4] * H1[4][k];
 
       error[j] = n02 * vpMath::sqr(x) + n20 * vpMath::sqr(y) - 2 * n11 * x * y + 2 * (n11 * yg - n02 * xg) * x +
                  2 * (n11 * xg - n20 * yg) * y + n02 * vpMath::sqr(xg) + n20 * vpMath::sqr(yg) - 2 * n11 * xg * yg +
-                 vpMath::sqr(n11) - n20 * n02;
-
+                 4.0 * vpMath::sqr(n11) - 4.0 * n20 * n02;
       j++;
     }
   }
