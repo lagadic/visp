@@ -2466,7 +2466,7 @@ bool vpSimulatorAfma6::setPosition(const vpHomogeneousMatrix &cdMo_, vpImage<uns
   vpVelocityTwistMatrix cVe;
 
   unsigned int i, iter = 0;
-  while ((iter++ < 300) & (err.frobeniusNorm() > errMax)) {
+  while ((iter++ < 300) && (err.frobeniusNorm() > errMax)) {
     double t = vpTime::measureTimeMs();
 
     // update image
