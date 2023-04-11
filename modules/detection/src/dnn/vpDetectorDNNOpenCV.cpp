@@ -302,7 +302,7 @@ void vpDetectorDNNOpenCV::postProcess(std::map< std::string, std::vector<Detecte
       break;
     case FASTER_RCNN:
     case R_FCN:
-      postProcess_YoloV8(proposals, m_dnnRes, m_netConfig);
+      postProcess_FasterRCNN_RFCN(proposals, m_dnnRes, m_netConfig);
       break;
     case SSD_MOBILENET:
       postProcess_SSD_MobileNet(proposals, m_dnnRes, m_netConfig);
@@ -612,11 +612,11 @@ void vpDetectorDNNOpenCV::postProcess_FasterRCNN_RFCN(DetectionCandidates &propo
     float confidence = data[i + 2];
     if (confidence > netConfig.m_confThreshold) 
     {
-      int left = (int)data[i + 3];
-      int top = (int)data[i + 4];
-      int right = (int)data[i + 5];
-      int bottom = (int)data[i + 6];
-      int classId = (int)(data[i + 1]) - 1;
+      int left   = (int)(data[i + 3] * m_img.cols);
+      int top    = (int)(data[i + 4] * m_img.rows);
+      int right  = (int)(data[i + 5] * m_img.cols);
+      int bottom = (int)(data[i + 6] * m_img.rows);
+      int classId = (int)(data[i + 1]); 
         
       proposals.m_confidences.push_back( (float)confidence );
       proposals.m_boxes.push_back( cv::Rect( left, top, right - left + 1, bottom - top + 1 ) );
