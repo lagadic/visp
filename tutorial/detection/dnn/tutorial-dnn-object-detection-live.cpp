@@ -41,8 +41,16 @@ int main(int argc, const char *argv[])
         type =  vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(std::string(argv[i + 1]));
       } else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
         config = std::string(argv[i + 1]);
+        if(config.find("none") != std::string::npos)
+        {
+          config = std::string();
+        }
       } else if (std::string(argv[i]) == "--framework" && i + 1 < argc) {
         framework = std::string(argv[i + 1]);
+        if(framework.find("none") != std::string::npos)
+        {
+          framework = std::string();
+        }
       } else if (std::string(argv[i]) == "--width" && i + 1 < argc) {
         inputWidth = atoi(argv[i + 1]);
       } else if (std::string(argv[i]) == "--height" && i + 1 < argc) {
@@ -68,7 +76,7 @@ int main(int argc, const char *argv[])
                   << " --device <camera device number> --waitForClick --input <path to image or video>"
                      " (camera is used if input is empty) --model <path to net trained weights>"
                      " --type <type of DNN in " + vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes() + 
-                     "> --config <path to net config file> --framework <framework name>"
+                     "> --config <path to net config file or \"none\" not to use one> --framework <framework name or \"none\" not to specify one>"
                      " --width <blob width> --height <blob height>"
                      " -- mean <meanR meanG meanB> --scale <scale factor>"
                      " --swapRB --confThresh <confidence threshold>"
@@ -80,8 +88,8 @@ int main(int argc, const char *argv[])
 
     std::cout << "Model: " << model << std::endl;
     std::cout << "Type: " << vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(type) << std::endl;
-    std::cout << "Config: " << (config.empty() ? "None" : config) << std::endl;
-    std::cout << "Framework: " << (framework.empty() ? "None" : framework) << std::endl;
+    std::cout << "Config: " << (config.empty() ? "\"None\"" : config) << std::endl;
+    std::cout << "Framework: " << (framework.empty() ? "\"None\"" : framework) << std::endl;
     std::cout << "Width: " << inputWidth << std::endl;
     std::cout << "Height: " << inputHeight << std::endl;
     std::cout << "Mean: " << meanR << ", " << meanG << ", " << meanB << std::endl;
