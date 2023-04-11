@@ -129,7 +129,8 @@ $ sudo apt-get install libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
 
 3. Get `librealsense` from github:
 \verbatim
-$ cd ~/visp_ws/3rdparty
+$ mkdir -p $VISP_WS/3rdparty
+$ cd $VISP_WS/3rdparty
 $ git clone https://github.com/IntelRealSense/librealsense.git
 $ cd librealsense
 \endverbatim
@@ -763,7 +764,7 @@ General configuration information for ViSP 3.3.1
 
   Java:
     ant:                         /usr/bin/ant (ver 1.10.5)
-    JNI:                         /home/fspindle/visp_ws/java/jdk-11.0.6/include /home/fspindle/visp_ws/java/jdk-11.0.6/include/linux /home/fspindle/visp_ws/java/jdk-11.0.6/include
+    JNI:                         /home/fspindle/visp-ws/java/jdk-11.0.6/include /home/fspindle/visp-ws/java/jdk-11.0.6/include/linux /home/fspindle/visp-ws/java/jdk-11.0.6/include
 
   Build options:
     Build deprecated:            yes

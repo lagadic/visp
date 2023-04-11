@@ -99,7 +99,8 @@ To do so, proceed as follows:
 
 - In `VISP_WS`, clone `opencv` and `opencv_contrib` repos:
 \code
-$ cd $VISP_WS
+$ mkdir -p $VISP_WS/3rdparty
+$ cd $VISP_WS/3rdparty
 $ git clone https://github.com/opencv/opencv
 $ git clone https://github.com/opencv/opencv_contrib
 \endcode
@@ -161,7 +162,7 @@ $ sudo apt-get install libglfw3-dev libgl1-mesa-dev libglu1-mesa-dev
 
 3. Get `librealsense` from github:
 \verbatim
-$ cd ~/visp_ws/3rdparty
+$ cd $VISP_WS/3rdparty
 $ git clone https://github.com/IntelRealSense/librealsense.git
 $ cd librealsense
 \endverbatim
