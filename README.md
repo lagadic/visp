@@ -16,7 +16,7 @@ ROS2 Foxy Ubuntu 20.04 Focal| [![Build Status](https://build.ros2.org/buildStatu
 ROS2 Humble Ubuntu 22.04 Jammy| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Hdev__visp__ubuntu_jammy_amd64)](https://build.ros2.org/job/Hdev__visp__ubuntu_jammy_amd64/)
 ROS2 Rolling Ubuntu 22.04 Jammy| [![Build Status](https://build.ros2.org/buildStatus/icon?job=Rdev__visp__ubuntu_jammy_amd64)](https://build.ros2.org/job/Rdev__visp__ubuntu_jammy_amd64)
 Valgrind | [![valgrind workflow](https://github.com/lagadic/visp/actions/workflows/valgrind.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/valgrind.yml)
-Sanitizer | [![sanitizers workflow](https://github.com/lagadic/visp/actions/workflows/sanitizers.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/sanitizers.yml)
+Sanitizer | [![sanitizers workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-sanitizers.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ubuntu-sanitizers.yml)
 Code coverage | [![Code coverage](https://codecov.io/gh/lagadic/visp/branch/master/graph/badge.svg?token=GQIiKbA3BC)](https://codecov.io/gh/lagadic/visp)
 
 Other projects | Build Status |
@@ -58,13 +58,13 @@ To cite the generic model-based tracker:
 ```
 
 #### Resources
-- Homepage: http://visp.inria.fr
+- Homepage: https://visp.inria.fr
 - Wiki: https://github.com/lagadic/visp/wiki
-- Code documentation: http://visp-doc.inria.fr/doxygen/visp-daily
-- Q&A forum: http://gforge.inria.fr/forum/?group_id=397
+- Code documentation: https://visp-doc.inria.fr/doxygen/visp-daily
+- Q&A forum: https://github.com/lagadic/visp/discussions
 - Issue tracking: https://github.com/lagadic/visp/issues
 - YouTube: https://www.youtube.com/user/VispTeam
 
 #### Contributing
 
-Please read before starting work on a pull request: http://visp.inria.fr/contributing-code/
+Please read before starting work on a pull request: https://visp.inria.fr/contributing-code/
