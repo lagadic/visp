@@ -54,6 +54,10 @@
 #include <visp3/core/vpDebug.h>
 #include <visp3/core/vpMatrix.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include<nlohmann/json.hpp>
+#endif
+
 /*!
   \class vpCameraParameters
 
@@ -398,57 +402,99 @@ private:
   double inv_px, inv_py;
 
   vpCameraParametersProjType projModel; //!< used projection model
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  friend void to_json(nlohmann::json& j, const vpCameraParameters& cam);
+  friend void from_json(const nlohmann::json& j, vpCameraParameters& cam);
+#endif
 };
 
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include<nlohmann/json.hpp>
-
+NLOHMANN_JSON_SERIALIZE_ENUM( vpCameraParameters::vpCameraParametersProjType, {
+    {vpCameraParameters::perspectiveProjWithoutDistortion, "perspectiveWithoutDistortion"},
+    {vpCameraParameters::perspectiveProjWithDistortion, "perspectiveWithDistortion"},
+    {vpCameraParameters::ProjWithKannalaBrandtDistortion, "kannalaBrandtDistortion"},
+});
+/**
+ * \brief Converts camera parameters into a JSON representation.
+ * \sa from_json for more information on the content
+ * \param j the resulting JSON object
+ * \param cam  the camera to serialize
+ * 
+ */
 inline void to_json(nlohmann::json& j, const vpCameraParameters& cam) {
-  j["px"] = cam.get_px();
-  j["py"] = cam.get_py();
-  j["u0"] = cam.get_u0();
-  j["v0"] = cam.get_v0();
-  j["model"] = cam.get_projModel();
+  j["px"] = cam.px;
+  j["py"] = cam.py;
+  j["u0"] = cam.u0;
+  j["v0"] = cam.v0;
+  j["model"] = cam.projModel;
   
-  switch(cam.get_projModel()) {
-    case vpCameraParameters::vpCameraParametersProjType::perspectiveProjWithDistortion:
+  switch(cam.projModel) {
+    case vpCameraParameters::perspectiveProjWithDistortion:
     {
-      j["kud"] = cam.get_kud();
-      j["kdu"] = cam.get_kdu();
+      j["kud"] = cam.kud;
+      j["kdu"] = cam.kdu;
       break;
     }
-    case vpCameraParameters::vpCameraParametersProjType::ProjWithKannalaBrandtDistortion:
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
     {
-      j["dist_coeffs"] = cam.getKannalaBrandtDistortionCoefficients();
+      j["dist_coeffs"] = cam.m_dist_coefs;
       break;
     }
     default:
       break;
   }
 }
+/*! 
+    \brief Deserialize a JSON object into camera parameters.
+    The minimal required properties are:
+      - Pixel size : px, py
+      - Principal point :  u0, v0
 
+    If a projection model (\ref vpCameraParameters::vpCameraParametersProjType) is supplied, then other parameters may be expected:
+    - In the case of perspective projection with distortion, ku, and kud must be supplied.
+    - In the case of Kannala-Brandt distortion, the list of coefficients must be supplied.
+
+    An example of a JSON object representing a camera is:
+    \code{.json}
+        {
+          "px": 300.0,
+          "py": 300.0,
+          "u0": 120.5,
+          "v0": 115.0,
+          "model": "perspectiveWithDistortion", // one of ["perspectiveWithoutDistortion", "perspectiveWithDistortion", "kannalaBrandtDistortion"]. If ommitted, camera is assumed to have no distortion
+          "kud": 0.5, // required since "model" == perspectiveWithDistortion
+          "kdu": 0.5
+        }
+    \endcode
+
+
+    \param j the json object to deserialize
+    \param cam the modified camera.
+
+*/
 inline void from_json(const nlohmann::json& j, vpCameraParameters& cam) {
   const double px = j.at("px").get<double>();
   const double py = j.at("px").get<double>();
   const double u0 = j.at("u0").get<double>();
   const double v0 = j.at("v0").get<double>();
-  const vpCameraParameters::vpCameraParametersProjType model = j.at("model").get<vpCameraParameters::vpCameraParametersProjType>();
-  
+  const vpCameraParameters::vpCameraParametersProjType model = j.value("model", vpCameraParameters::perspectiveProjWithoutDistortion);
+
   switch(model) {
-    case vpCameraParameters::vpCameraParametersProjType::perspectiveProjWithoutDistortion:
+    case vpCameraParameters::perspectiveProjWithoutDistortion:
     {
       cam.initPersProjWithoutDistortion(px, py, u0, v0);
       break;
     }
-    case vpCameraParameters::vpCameraParametersProjType::perspectiveProjWithDistortion:
+    case vpCameraParameters::perspectiveProjWithDistortion:
     {
       const double kud = j.at("kud").get<double>();
       const double kdu = j.at("kdu").get<double>();
       cam.initPersProjWithDistortion(px, py, u0, v0, kud, kdu);
       break;
     }
-    case vpCameraParameters::vpCameraParametersProjType::ProjWithKannalaBrandtDistortion:
+    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
     {
       const std::vector<double> coeffs = j.at("dist_coeffs").get<std::vector<double>>();
       cam.initProjWithKannalaBrandtDistortion(px, py, u0, v0, coeffs);
