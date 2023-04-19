@@ -184,46 +184,7 @@ vpMbGenericTracker::~vpMbGenericTracker()
   }
 }
 
-#ifdef VISP_HAVE_NLOHMANN_JSON
-void vpMbGenericTracker::loadConfigFileJSON(const std::string& settingsFile) {
-  std::ifstream jsonFile(settingsFile);
-  if(!jsonFile.good()) {
-    throw vpException(vpException::generalExceptionEnum::ioError, "Could not read from settings file " + settingsFile + " to initialise the vpMbtGenericTracker");
-  }
-  json settings = json::parse(jsonFile);
-  jsonFile.close();
 
-  m_referenceCameraName = settings.at("referenceCameraName").get<std::string>();
-  m_thresholdOutlier = settings.at("thresholdOutlier").get<double>();
-}
-
-/*!
-  Save the tracker settings to a configuration file.
-  As of now, only saving to a JSON file is supported.
-
-  \param configFile : name of the file in which to save the tracker settings.
-*/
-void vpMbGenericTracker::saveConfigFile(const std::string& settingsFile) const {
-  json j;
-  j["referenceCameraName"] = m_referenceCameraName;
-  j["thresholdOutlier"] = m_thresholdOutlier;
-  json trackers;
-  for(const auto& kv: m_mapOfTrackers) {
-    trackers[kv.first] = *(kv.second);
-    trackers[kv.first]["cameraName"] = kv.first;
-    const auto itTransformation = m_mapOfCameraTransformationMatrix.find(kv.first);
-    if(itTransformation != m_mapOfCameraTransformationMatrix.end()) {
-      trackers[kv.first]["camTref"] = itTransformation->second;
-    }
-  }
-  j["trackers"] = trackers;
-
-  std::ofstream f(settingsFile);
-  f << j.dump(4); // indent level as parameter
-  f.close();
-}
-
-#endif
 
 /*!
   Compute projection error given an input image and camera pose, parameters.
@@ -2846,10 +2807,7 @@ void vpMbGenericTracker::loadConfigFile(const std::string &configFile, bool verb
   }
   #ifdef VISP_HAVE_NLOHMANN_JSON
   else if(extension == ".json") {
-    if(verbose) {
-      std::cerr << "MBT config parsing does not support verbose option for JSON parsing" << std::endl;
-    }
-    loadConfigFileJSON(configFile);
+    loadConfigFileJSON(configFile, verbose);
   }
   #endif
   else {
@@ -2885,6 +2843,123 @@ void vpMbGenericTracker::loadConfigFileXML(const std::string &configFile, bool v
   this->angleDisappears = m_mapOfTrackers[m_referenceCameraName]->getAngleDisappear();
   this->clippingFlag = m_mapOfTrackers[m_referenceCameraName]->getClipping();
 }
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+/*!
+Load tracker settings from a JSON configuration file.
+A single JSON settings file is a more complete description of the tracker than what is provided by XML loading.
+It may contain the full information regarding the different cameras and trackers that are used.
+Additionally, the user may supply path to the 3D model (.cao) to be loaded at the same time as the other tracker settings.
+\throw vpException::ioError if the file cannot be read, or if JSON parsiing fails.
+
+*/
+void vpMbGenericTracker::loadConfigFileJSON(const std::string& settingsFile, bool verbose) {
+  //Read file
+  std::ifstream jsonFile(settingsFile);
+  if(!jsonFile.good()) {
+    throw vpException(vpException::ioError, "Could not read from settings file " + settingsFile + " to initialise the vpMbGenericTracker");
+  }
+  json settings;
+  try {
+    settings = json::parse(jsonFile);
+  } catch(json::parse_error& e) {
+    std::stringstream msg;
+    msg << "Could not parse JSON file : \n";
+
+    msg << e.what() << std::endl;
+    msg << "Byte position of error: " << e.byte;
+    throw vpException(vpException::ioError, msg.str());
+  }
+  jsonFile.close();
+
+  //Load Basic settings
+  settings.at("referenceCameraName").get_to(m_referenceCameraName);
+  // settings.at("thresholdOutlier").get_to(m_thresholdOutlier);
+  json trackersJson;
+  trackersJson = settings.at("trackers");
+  
+  //Foreach camera
+  for(const auto& it: trackersJson.items()) {
+    const std::string cameraName = it.key();
+    const json trackerJson = it.value();
+    //Load transformation between current camera and reference camera, if it exists
+    if(trackerJson.contains("camTref")) {
+      m_mapOfCameraTransformationMatrix[cameraName] = trackerJson["camTref"].get<vpHomogeneousMatrix>();
+    } else if(cameraName != m_referenceCameraName) { // No transformation to reference and its not the reference itself
+      throw vpException(vpException::ioError, "Camera " + cameraName + " has no transformation to the reference camera");
+    }
+    if(verbose) {
+      std::cout << "Loading tracker " << cameraName << std::endl << " with settings: " << std::endl << trackerJson.dump(2);
+    }
+    if(m_mapOfTrackers.count(cameraName)) {
+      if(verbose) {
+        std::cout << "Updating an already existing tracker with JSON configuration." << std::endl;
+      }
+      from_json(trackerJson, *(m_mapOfTrackers[cameraName]));
+    } else {
+      if(verbose) {
+        std::cout << "Creating a new tracker from JSON configuration." << std::endl;
+      }
+      TrackerWrapper* tw = new TrackerWrapper(); //vpMBTracker is responsible for deleting trackers
+      *tw = trackerJson;
+      m_mapOfTrackers[cameraName] = tw;
+    }
+  }
+  const TrackerWrapper* refTracker = m_mapOfTrackers[m_referenceCameraName];
+  refTracker->getCameraParameters(m_cam);
+  this->angleAppears = refTracker->getAngleAppear();
+  this->angleDisappears = refTracker->getAngleDisappear();
+  this->clippingFlag = refTracker->getClipping();
+  // Do this after all the trackers have been initialised so that changes are propagated
+  if(settings.contains("display")) {
+    const json displayJson = settings["display"];
+    setDisplayFeatures(displayJson.value("features", false));
+    setProjectionErrorDisplay(displayJson.value("projectionError", false));
+  }
+  if(settings.contains("visibilityTest")) {
+    const json visJson = settings["visibilityTest"];
+    setOgreVisibilityTest(visJson.value("ogre", false));
+    setScanLineVisibilityTest(visJson.value("scanline", false));
+  }
+  //If a 3D model is defined, load it
+  if(settings.contains("model")) {
+    loadModel(settings.at("model").get<std::string>(), verbose);
+  }
+
+}
+
+/*!
+  Save the current tracker settings to a configuration file.
+  This configuration does not include the model path, only the different tracker and camera parameters.
+  As of now, only saving to a JSON file is supported.
+
+  \param configFile : name of the file in which to save the tracker settings.
+*/
+void vpMbGenericTracker::saveConfigFile(const std::string& settingsFile) const {
+  json j;
+  j["referenceCameraName"] = m_referenceCameraName;
+  // j["thresholdOutlier"] = m_thresholdOutlier;
+  json trackers;
+  for(const auto& kv: m_mapOfTrackers) {
+    trackers[kv.first] = *(kv.second);
+    const auto itTransformation = m_mapOfCameraTransformationMatrix.find(kv.first);
+    if(itTransformation != m_mapOfCameraTransformationMatrix.end()) {
+      trackers[kv.first]["camTref"] = itTransformation->second;
+    }
+  }
+  j["trackers"] = trackers;
+
+  std::ofstream f(settingsFile);
+  if(f.good()) {
+    const unsigned indentLevel = 4;
+    f << j.dump(indentLevel);
+    f.close();
+  } else {
+    throw vpException(vpException::ioError, "Could not save tracker configuration to JSON file: " + settingsFile);
+  }
+}
+
+#endif
 
 /*!
   Load the xml configuration files.
