@@ -47,6 +47,7 @@
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json_fwd.hpp>
+#include <visp3/core/vpJsonParsing.h>
 #endif
 
 /*!
@@ -304,6 +305,10 @@ public:
   virtual void loadConfigFile(const std::string &configFile1, const std::string &configFile2, bool verbose = true);
   virtual void loadConfigFile(const std::map<std::string, std::string> &mapOfConfigFiles, bool verbose = true);
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  virtual void saveConfigFile(const std::string& settingsFile) const;
+#endif
+
   virtual void loadModel(const std::string &modelFile, bool verbose = false,
                          const vpHomogeneousMatrix &T = vpHomogeneousMatrix());
   virtual void loadModel(const std::string &modelFile1, const std::string &modelFile2, bool verbose = false,
@@ -343,9 +348,6 @@ public:
 
   virtual void resetTracker();
 
-#ifdef VISP_HAVE_NLOHMANN_JSON
-  virtual void saveConfigFile(const std::string& settingsFile) const;
-#endif
 
   virtual void setAngleAppear(const double &a);
   virtual void setAngleAppear(const double &a1, const double &a2);
@@ -514,7 +516,7 @@ protected:
 
   virtual void loadConfigFileXML(const std::string& configFile, bool verbose = true);
 #ifdef VISP_HAVE_NLOHMANN_JSON
-  virtual void loadConfigFileJSON(const std::string& configFile);
+  virtual void loadConfigFileJSON(const std::string& configFile, bool verbose = true);
 #endif
 
 #ifdef VISP_HAVE_PCL
@@ -675,6 +677,7 @@ private:
 #ifdef VISP_HAVE_NLOHMANN_JSON
   friend void to_json(nlohmann::json& j, const TrackerWrapper& t);
   friend void from_json(const nlohmann::json& j, TrackerWrapper& t);
+  
 #endif
 protected:
   //! (s - s*)
@@ -713,11 +716,29 @@ protected:
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
+// Serialize tracker type enumeration
+NLOHMANN_JSON_SERIALIZE_ENUM( vpMbGenericTracker::vpTrackerType, {
+    {vpMbGenericTracker::EDGE_TRACKER, "edge"},
+    {vpMbGenericTracker::KLT_TRACKER, "klt"},
+    {vpMbGenericTracker::DEPTH_DENSE_TRACKER, "depthDense"},
+    {vpMbGenericTracker::DEPTH_NORMAL_TRACKER, "depthNormal"},
+});
+
+/**
+ * @brief Serialize a tracker wrapper's settings into a JSON representation.
+ * \sa from_json for more details on what is serialized
+ * @param j the modified json object
+ * @param t  the tracker to serialize
+ */
 inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper& t) {
   // Common tracker attributes
+  const static std::vector<vpMbGenericTracker::vpTrackerType> trackerTypes = {
+    vpMbGenericTracker::EDGE_TRACKER, vpMbGenericTracker::KLT_TRACKER,
+    vpMbGenericTracker::DEPTH_DENSE_TRACKER, vpMbGenericTracker::DEPTH_NORMAL_TRACKER
+  };
   j = nlohmann::json {
     {"camera", t.m_cam},
-    {"type", t.m_trackerType},
+    {"type", flagsToJSON(t.m_trackerType, trackerTypes)},
     {"angleAppear", vpMath::deg(t.getAngleAppear())},
     {"angleDisappear", vpMath::deg(t.getAngleDisappear())},
     {"lod", {
@@ -726,7 +747,7 @@ inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper&
       {"minPolygonAreaThresholdGeneral", t.minPolygonAreaThresholdGeneral}
     }},
     {"clipping", {
-      {"fov", t.getClipping()},
+      {"useFOVClipping", (t.getClipping() == vpPolygon3D::FOV_CLIPPING)},
       {"near", t.getNearClippingDistance()},
       {"far", t.getFarClippingDistance()},
     }}
@@ -777,8 +798,108 @@ inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper&
     };
   }
 }
+/**
+ * @brief Load configuration settings from a JSON object for a tracker wrapper
+ * 
+ * The settings must at the minimum contain the camera parameters #vpCameraParameters::from_json and the type of the tracker
+ * 
+ * The type of the tracker is serialized as a combination of flags of type vpMbGenericTracker::vpTrackerType:
+ * \code{.json}
+ * "type" : ["edge", "klt"] // for a tracker that uses edges and KLT point as features
+ * "type": ["depthDense", "depthNormal"] // for a tracker that operates on the depth map using normal and the dense depth map features
+ * \endcode
+ * 
+ * Then for each used type of feature that is used, the corresponding settings are deserialized.
+ * 
+ * The settings may also contain settings about clipping, LOD or face tracking.
+ * 
+ * \sa to_json
+ * @param j the JSON object containing the settings
+ * @param t the tracker wrapper for which to load settings
+ */
 inline void from_json(const nlohmann::json& j, vpMbGenericTracker::TrackerWrapper& t) {
+  t.setCameraParameters(j.at("camera"));
+  t.setTrackerType(flagsFromJSON<vpMbGenericTracker::vpTrackerType>(j.at("type")));
+  //Load base settings
+  if(j.contains("angleAppear")) {
+    t.setAngleAppear(vpMath::rad(j.at("angleAppear")));
+  }
+  if(j.contains("angleDisappear")) {
+    t.setAngleDisappear(vpMath::rad(j.at("angleDisappear")));
+  }
+  if(j.contains("clipping")) {
+    nlohmann::json clipping = j["clipping"];
+    t.setNearClippingDistance(clipping.value("near", t.getNearClippingDistance()));
+    t.setFarClippingDistance(clipping.value("far", t.getFarClippingDistance()));
+    if(clipping.contains("useFOVClipping")) {
+      const bool useFovClipping = clipping.at("useFOVClipping").get<bool>();
+      if(useFovClipping) {
+        t.setClipping(t.getClipping() | vpPolygon3D::FOV_CLIPPING);
+      } else {
+        t.setClipping(t.getClipping() ^ vpPolygon3D::FOV_CLIPPING);
+      }
+    }
+  }
+  if(j.contains("lod")) {
+    nlohmann::json lod = j["lod"];
+    t.useLodGeneral = lod.value("useLod", t.useLodGeneral);
+    t.minLineLengthThresholdGeneral = lod.value("minLineLengthThresholdGeneral", t.minLineLengthThresholdGeneral);
+    t.minPolygonAreaThresholdGeneral = lod.value("minPolygonAreaThresholdGeneral", t.minPolygonAreaThresholdGeneral);
+    t.applyLodSettingInConfig = false;
+    if (t.getNbPolygon() > 0) {
+      t.applyLodSettingInConfig = true;
+      t.setLod(t.useLodGeneral);
+      t.setMinLineLengthThresh(t.minLineLengthThresholdGeneral);
+      t.setMinPolygonAreaThresh(t.minPolygonAreaThresholdGeneral);
+    }
+  }
 
+  //Check tracker type: for each type, load settings for this specific tracker type
+  //Edge tracker settings
+  if(t.m_trackerType & vpMbGenericTracker::EDGE_TRACKER) {
+    t.me = j.at("edge_tracker");
+  }
+  //KLT tracker settings
+  if(t.m_trackerType & vpMbGenericTracker::KLT_TRACKER) {
+    const nlohmann::json klt = j.at("klt");
+    auto& ktrack = t.tracker;
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+    ktrack.setMaxFeatures(klt.value("maxFeatures", 10000));
+    ktrack.setWindowSize(klt.value("windowSize", 5));
+    ktrack.setQuality(klt.value("quality", 0.01));
+    ktrack.setMinDistance(klt.value("minDistance", 5));
+    ktrack.setHarrisFreeParameter(klt.value("harris", 0.01));
+    ktrack.setBlockSize(klt.value("blockSize", 3));
+    ktrack.setPyramidLevels(klt.value("pyramidLevels", 3));
+    t.setMaskBorder(klt.value("maskBorder", t.maskBorder));
+    t.faces.getMbScanLineRenderer().setMaskBorder(t.maskBorder);
+#else
+    std::cerr << "Trying to load a KLT tracker, but the ViSP dependency requirements are not met. Ignoring."
+#endif
+  }
+  //Depth normal settings
+  if(t.m_trackerType & vpMbGenericTracker::DEPTH_NORMAL_TRACKER) {
+    const nlohmann::json n = j.at("normals");
+    t.setDepthNormalFeatureEstimationMethod(n.at("featureEstimationMethod"));
+    if(n.contains("pcl")) {
+      const nlohmann::json pcl = n["pcl"];
+      t.setDepthNormalPclPlaneEstimationMethod(pcl.at("method"));
+      t.setDepthNormalPclPlaneEstimationRansacMaxIter(pcl.at("ransacMaxIter"));
+      t.setDepthNormalPclPlaneEstimationRansacThreshold(pcl.at("ransacThreshold"));
+    }
+    if(n.contains("sampling")) {
+      const nlohmann::json sampling = n.at("sampling");
+      t.setDepthNormalSamplingStep(sampling.at("x"), sampling.at("y"));
+    }
+  }
+  //Depth Dense settings
+  if(t.m_trackerType & vpMbGenericTracker::DEPTH_DENSE_TRACKER) {
+    const nlohmann::json dense = j.at("dense");
+    if(dense.contains("sampling")) {
+      const nlohmann::json sampling = dense.at("sampling");
+      t.setDepthDenseSamplingStep(sampling.at("x"), sampling.at("y"));
+    }
+  }
 }
 
 #endif
