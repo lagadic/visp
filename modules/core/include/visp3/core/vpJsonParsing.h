@@ -7,11 +7,12 @@
 /*!
 Parse the flag values defined in a JSON object.
 if the flags are defined as an int, then this is int is directly returned.
-If it is defined as a combination of options (defined from an enumeration T) then the logical or of theses enum values is returned.
+If it is defined as a combination of options (defined from an enumeration E) then the logical or of theses enum values is returned.
 Beware that invalid values may be defined in the JSON object: the int value may be invalid, or the parsing of enum values may fail.
 
 \param j: the JSON object to parse
 
+\return an int, corresponding to the combination of boolean flags
 
 */
 template<typename E>
@@ -20,7 +21,7 @@ int flagsFromJSON(const nlohmann::json& j) {
     if(j.is_array()) {
         flags = 0;
         for(const auto& v: j) {
-            E value = v.get<E>();
+            E value = v.get<E>(); // If a value is incorrect, this will default to the first value of the enum
             flags |= value;
         }
     } else if(j.is_number_integer()) {
