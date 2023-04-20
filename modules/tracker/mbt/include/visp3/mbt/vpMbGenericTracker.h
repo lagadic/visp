@@ -746,6 +746,14 @@ inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper&
       {"minLineLengthThresholdGeneral", t.minLineLengthThresholdGeneral},
       {"minPolygonAreaThresholdGeneral", t.minPolygonAreaThresholdGeneral}
     }},
+    {"display", {
+      {"features", t.displayFeatures},
+      {"projectionError", t.m_projectionErrorDisplay}
+    }},
+    {"visibilityTest", {
+      {"ogre", t.useOgre},
+      {"scanline", t.useScanLine}
+    }},
     {"clipping", {
       {"useFOVClipping", (t.getClipping() == vpPolygon3D::FOV_CLIPPING)},
       {"near", t.getNearClippingDistance()},
@@ -788,7 +796,7 @@ inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper&
       }}
     };
   }
-
+  //Depth dense settings
   if(t.m_trackerType & vpMbGenericTracker::DEPTH_DENSE_TRACKER) {
     j["dense"] = {
       {"sampling", {
@@ -852,6 +860,16 @@ inline void from_json(const nlohmann::json& j, vpMbGenericTracker::TrackerWrappe
       t.setMinLineLengthThresh(t.minLineLengthThresholdGeneral);
       t.setMinPolygonAreaThresh(t.minPolygonAreaThresholdGeneral);
     }
+  }
+  if(j.contains("display")) {
+    const nlohmann::json displayJson = j["display"];
+    t.setDisplayFeatures(displayJson.value("features", t.displayFeatures));
+    t.setProjectionErrorDisplay(displayJson.value("projectionError", t.m_projectionErrorDisplay));
+  }
+  if(j.contains("visibilityTest")) {
+    const nlohmann::json visJson = j["visibilityTest"];
+    t.setOgreVisibilityTest(visJson.value("ogre", t.useOgre));
+    t.setScanLineVisibilityTest(visJson.value("scanline", t.useScanLine));
   }
 
   //Check tracker type: for each type, load settings for this specific tracker type

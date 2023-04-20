@@ -1,0 +1,209 @@
+/**
+
+\page tutorial-mb-generic-json Tutorial: Loading a model-based generic tracker from JSON
+\tableofcontents
+
+\section tutorial-mb-generic-json-intro Introduction
+With the inclusion of a 3rd-party JSON serialization library into ViSP, it is now possible to store and load a variety of ViSP datatypes in JSON format.
+
+A case that is of particular interest is the configuration of the generic Model-Based Tracker. As this tracker is complex, providing an easy to use configuration file is essential.
+Loading the configuration for each camera is already possible with XML (already used in \ref tutorial-tracking-mb-generic-rgbd). 
+This however, does not load the full state of the tracker but rather the configuration of each camera.
+
+With JSON serialization, a single file stores the full configuration of the generic tracker, containing the configuration of each camera, their associated name as well as their transformation with respect to the reference camera.
+Moreover, the path to the 3D model can be given in the JSON file and the model will be directly loaded.
+
+
+\section tutorial-mb-generic-json-structure JSON file structure
+Let us first examine the structure of a JSON file used to load a vpMbGenericTracker, given below:
+\code{.json}
+{
+    "referenceCameraName": "Camera1",
+    "trackers": {
+        "Camera1": {
+            "angleAppear": 65.0,
+            "angleDisappear": 75.00000000000001,
+            "camTref": [
+                1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+                0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0
+            ],
+            "camera": {
+                "model": "perspectiveWithoutDistortion",
+                "px": 605.146728515625,
+                "py": 604.79150390625,
+                "u0": 325.53253173828125,
+                "v0": 244.95083618164063
+            },
+            "clipping": {
+                "far": 0.9,
+                "near": 0.1,
+                "useFOVClipping": false
+            },
+            "display": {
+                "features": true,
+                "projectionError": true
+            },
+            "edge_tracker": {
+                "angleStep": 1,
+                "maskSign": 0,
+                "maskSize": 5,
+                "minSampleStep": 4.0,
+                "mu": [
+                    0.5,
+                    0.5
+                ],
+                "nMask": 180,
+                "ntotal_sample": 0,
+                "pointsToTrack": 500,
+                "range": 7,
+                "sampleStep": 4.0,
+                "strip": 2,
+                "threshold": 5000.0
+            },
+            "klt": {
+                "blockSize": 3,
+                "harris": 0.01,
+                "maskBorder": 5,
+                "maxFeatures": 300,
+                "minDistance": 5.0,
+                "pyramidLevels": 3,
+                "quality": 0.01,
+                "windowSize": 5
+            },
+            "lod": {
+                "minLineLengthThresholdGeneral": 50.0,
+                "minPolygonAreaThresholdGeneral": 2500.0,
+                "useLod": false
+            },
+            "type": [
+                "edge",
+                "klt"
+            ],
+            "visibilityTest": {
+                "ogre": false,
+                "scanline": true
+            }
+        },
+        "Camera2": {
+            "angleAppear": 70.0,
+            "angleDisappear": 80.0,
+            "camTref": [
+                0.999972403049469, -0.006713358219712973, -0.003179509425535798, -0.01465611346065998,
+                0.006699616555124521, 0.9999682307243347, -0.004313052631914616, 9.024870814755559e-05,
+                0.003208363428711891, 0.00429163221269846, 0.9999856352806091, -0.0004482123476918787,
+                0.0, 0.0, 0.0, 1.0
+            ],
+            "camera": {
+                "model": "perspectiveWithoutDistortion",
+                "px": 381.7528076171875,
+                "py": 381.7528076171875,
+                "u0": 323.3261413574219,
+                "v0": 236.82505798339844
+            },
+            "clipping": {
+                "far": 2.0,
+                "near": 0.01,
+                "useFOVClipping": false
+            },
+            "dense": {
+                "sampling": {
+                    "x": 1,
+                    "y": 1
+                }
+            },
+            "display": {
+                "features": true,
+                "projectionError": true
+            },
+            "lod": {
+                "minLineLengthThresholdGeneral": 50.0,
+                "minPolygonAreaThresholdGeneral": 2500.0,
+                "useLod": false
+            },
+            "type": [
+                "depthDense"
+            ],
+            "visibilityTest": {
+                "ogre": false,
+                "scanline": true
+            }
+        }
+    }
+}
+\endcode
+
+Many settings are optional: if a setting is not present in the .json file, then the value already set in the tracker is kept.
+This means that the .json can contain a partial configuration, while the rest is of the configuration is done in the code.
+
+As this file is fairly dense, let us examine each part separetely so that you may tweak it for your use case.
+
+\subsection json-global-tracker-settings Global tracker settings
+
+Let us first examine the global settings (located at the root of the JSON structure). Some settings are optional such as:
+
+\code{.json}
+    //...
+    "model": "../models/cube/cube.cao",
+    "display": {
+        "features": true,
+        "projectionError": true
+    },
+    "visibilityTest": {
+        "ogre": false,
+        "scanline": true
+    }
+\endcode
+
+If they are defined globally, they will take precedence over the values defined per tracker.
+
+<table>
+<tr><th colspan="2">Key</th><th>Type</th><th>Description</th><th>Optional</th></tr>
+<tr>
+    <td colspan="2">referenceCameraName</td>
+    <td>String</td>
+    <td>The name of the reference camera, see vpMbGenericTracker::getReferenceCameraName</td>
+    <td>No</td>
+</tr>
+<tr>
+    <td colspan="2">trackers</td>
+    <td>Dictionary</td>
+    <td>The set of camera trackers. Each element of the dictionary associates a camera name to a tracker, that is parsed with vpMbGenericTracker::from_json</td>
+    <td>No</td>
+</tr>
+<tr>
+    <td colspan="2">model</td>
+    <td>String</td>
+    <td>The path to a .cao model file, describing the object to track. See vpMbGenericTracker::loadModel</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td colspan="2">display:features</td>
+    <td>boolean</td>
+    <td>Show features when calling vpMbGenericTracker::display.</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td colspan="2">display:projectionError</td>
+    <td>boolean</td>
+    <td>Whether to display the projection error when calling vpMbGenericTracker::display</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td colspan="2">visibilityTest:scanline</td>
+    <td>boolean</td>
+    <td>Whether to use scanline for visibility testing. see vpMbGenericTracker::setScanLineVisibilityTest</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td colspan="2">visibilityTest:ogre</td>
+    <td>boolean</td>
+    <td>Whether to use ogre for visibility testing. OGRE must be installed, otherwise ignored. See vpMbGenericTracker::setOgreVisibilityTest</td>
+    <td>Yes</td>
+</tr>
+</table>
+
+
+\subsection json-per-tracker-settings Individual camera tracker settings
+
+
+*/

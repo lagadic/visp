@@ -2910,16 +2910,16 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string& settingsFile, boo
   this->angleAppears = refTracker->getAngleAppear();
   this->angleDisappears = refTracker->getAngleDisappear();
   this->clippingFlag = refTracker->getClipping();
-  // Do this after all the trackers have been initialised so that changes are propagated
+  // These settings can be set in each tracker or globally. Global value overrides local ones.
   if(settings.contains("display")) {
     const json displayJson = settings["display"];
-    setDisplayFeatures(displayJson.value("features", false));
-    setProjectionErrorDisplay(displayJson.value("projectionError", false));
+    setDisplayFeatures(displayJson.value("features", displayFeatures));
+    setProjectionErrorDisplay(displayJson.value("projectionError", m_projectionErrorDisplay));
   }
   if(settings.contains("visibilityTest")) {
     const json visJson = settings["visibilityTest"];
-    setOgreVisibilityTest(visJson.value("ogre", false));
-    setScanLineVisibilityTest(visJson.value("scanline", false));
+    setOgreVisibilityTest(visJson.value("ogre", useOgre));
+    setScanLineVisibilityTest(visJson.value("scanline", useScanLine));
   }
   //If a 3D model is defined, load it
   if(settings.contains("model")) {
@@ -2948,7 +2948,6 @@ void vpMbGenericTracker::saveConfigFile(const std::string& settingsFile) const {
     }
   }
   j["trackers"] = trackers;
-
   std::ofstream f(settingsFile);
   if(f.good()) {
     const unsigned indentLevel = 4;
