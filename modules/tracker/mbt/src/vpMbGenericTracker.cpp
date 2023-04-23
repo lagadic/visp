@@ -296,7 +296,9 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
   double mu = m_initialMu;
   vpHomogeneousMatrix cMo_prev;
 
-  bool isoJoIdentity_ = true;
+  bool isoJoIdentity = m_isoJoIdentity; // Backup since it can be modified if L is not full rank
+  if (isoJoIdentity)
+    oJo.eye();
 
   // Covariance
   vpColVector W_true(m_error.getRows());
@@ -348,7 +350,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
 
       if (computeCovariance) {
         L_true = m_L;
-        if (!isoJoIdentity_) {
+        if (!isoJoIdentity) {
           vpVelocityTwistMatrix cVo;
           cVo.buildFrom(m_cMo);
           LVJ_true = (m_L * (cVo * oJo));
@@ -357,14 +359,11 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
 
       vpVelocityTwistMatrix cVo;
       if (iter == 0) {
-        isoJoIdentity_ = true;
-        oJo.eye();
-
         // If all the 6 dof should be estimated, we check if the interaction
         // matrix is full rank. If not we remove automatically the dof that
-        // cannot be estimated This is particularly useful when considering
+        // cannot be estimated. This is particularly useful when considering
         // circles (rank 5) and cylinders (rank 4)
-        if (isoJoIdentity_) {
+        if (isoJoIdentity) {
           cVo.buildFrom(m_cMo);
 
           vpMatrix K; // kernel
@@ -377,8 +376,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
             vpMatrix I; // Identity
             I.eye(6);
             oJo = I - K.AtA();
-
-            isoJoIdentity_ = false;
+            isoJoIdentity = false;
           }
         }
       }
@@ -466,7 +464,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
       normRes_1 = normRes;
       normRes = sqrt(num / den);
 
-      computeVVSPoseEstimation(isoJoIdentity_, iter, m_L, LTL, m_weightedError, m_error, error_prev, LTR, mu, v);
+      computeVVSPoseEstimation(isoJoIdentity, iter, m_L, LTL, m_weightedError, m_error, error_prev, LTR, mu, v);
 
       cMo_prev = m_cMo;
 
@@ -514,7 +512,7 @@ void vpMbGenericTracker::computeVVS(std::map<std::string, const vpImage<unsigned
     }
   }
 
-  computeCovarianceMatrixVVS(isoJoIdentity_, W_true, cMo_prev, L_true, LVJ_true, m_error);
+  computeCovarianceMatrixVVS(isoJoIdentity, W_true, cMo_prev, L_true, LVJ_true, m_error);
 
   for (std::map<std::string, TrackerWrapper *>::const_iterator it = m_mapOfTrackers.begin();
        it != m_mapOfTrackers.end(); ++it) {
@@ -5522,7 +5520,9 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   vpHomogeneousMatrix ctTc0_Prev; // Only for KLT
 #endif
-  bool isoJoIdentity_ = true;
+  bool isoJoIdentity = m_isoJoIdentity; // Backup since it can be modified if L is not full rank
+  if (isoJoIdentity)
+    oJo.eye();
 
   // Covariance
   vpColVector W_true(m_error.getRows());
@@ -5554,7 +5554,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
 
       if (computeCovariance) {
         L_true = m_L;
-        if (!isoJoIdentity_) {
+        if (!isoJoIdentity) {
           vpVelocityTwistMatrix cVo;
           cVo.buildFrom(m_cMo);
           LVJ_true = (m_L * cVo * oJo);
@@ -5563,14 +5563,11 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
 
       vpVelocityTwistMatrix cVo;
       if (iter == 0) {
-        isoJoIdentity_ = true;
-        oJo.eye();
-
         // If all the 6 dof should be estimated, we check if the interaction
         // matrix is full rank. If not we remove automatically the dof that
-        // cannot be estimated This is particularly useful when considering
+        // cannot be estimated. This is particularly useful when considering
         // circles (rank 5) and cylinders (rank 4)
-        if (isoJoIdentity_) {
+        if (isoJoIdentity) {
           cVo.buildFrom(m_cMo);
 
           vpMatrix K; // kernel
@@ -5584,7 +5581,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
             I.eye(6);
             oJo = I - K.AtA();
 
-            isoJoIdentity_ = false;
+            isoJoIdentity = false;
           }
         }
       }
@@ -5664,7 +5661,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
         //        start_index += nb_depth_dense_features;
       }
 
-      computeVVSPoseEstimation(isoJoIdentity_, iter, m_L, LTL, m_weightedError, m_error, error_prev, LTR, mu, v);
+      computeVVSPoseEstimation(isoJoIdentity, iter, m_L, LTL, m_weightedError, m_error, error_prev, LTR, mu, v);
 
       cMo_prev = m_cMo;
 #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
@@ -5688,7 +5685,7 @@ void vpMbGenericTracker::TrackerWrapper::computeVVS(const vpImage<unsigned char>
     iter++;
   }
 
-  computeCovarianceMatrixVVS(isoJoIdentity_, W_true, cMo_prev, L_true, LVJ_true, m_error);
+  computeCovarianceMatrixVVS(isoJoIdentity, W_true, cMo_prev, L_true, LVJ_true, m_error);
 
   if (m_trackerType & EDGE_TRACKER) {
     vpMbEdgeTracker::updateMovingEdgeWeights();

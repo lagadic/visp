@@ -176,8 +176,8 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, unsigned int 
 
   bool reloop = true;
 
-  bool isoJoIdentity_ = isoJoIdentity; // Backup since it can be modified if L is not full rank
-  if (isoJoIdentity_)
+  bool isoJoIdentity = m_isoJoIdentity; // Backup since it can be modified if L is not full rank
+  if (isoJoIdentity)
     oJo.eye();
 
   /*** First phase ***/
@@ -192,7 +192,7 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, unsigned int 
       reloop = false;
     }
 
-    computeVVSFirstPhasePoseEstimation(iter, isoJoIdentity_);
+    computeVVSFirstPhasePoseEstimation(iter, isoJoIdentity);
 
     iter++;
   }
@@ -234,7 +234,7 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, unsigned int 
 
       if (computeCovariance) {
         L_true = m_L_edge;
-        if (!isoJoIdentity_) {
+        if (!isoJoIdentity) {
           cVo.buildFrom(m_cMo);
           LVJ_true = (m_L_edge * cVo * oJo);
         }
@@ -271,7 +271,7 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, unsigned int 
       residu_1 = r;
       r = sqrt(num / den); // Le critere d'arret prend en compte le poids
 
-      computeVVSPoseEstimation(isoJoIdentity_, iter, m_L_edge, LTL, m_weightedError_edge, m_error_edge, m_error_prev,
+      computeVVSPoseEstimation(isoJoIdentity, iter, m_L_edge, LTL, m_weightedError_edge, m_error_edge, m_error_prev,
                                LTR, mu, v, &m_w_edge, &m_w_prev);
 
       cMoPrev = m_cMo;
@@ -282,7 +282,7 @@ void vpMbEdgeTracker::computeVVS(const vpImage<unsigned char> &_I, unsigned int 
     iter++;
   }
 
-  computeCovarianceMatrixVVS(isoJoIdentity_, W_true, cMoPrev, L_true, LVJ_true, m_error_edge);
+  computeCovarianceMatrixVVS(isoJoIdentity, W_true, cMoPrev, L_true, LVJ_true, m_error_edge);
 
   updateMovingEdgeWeights();
 }
@@ -653,7 +653,7 @@ void vpMbEdgeTracker::computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I
   }
 }
 
-void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity_)
+void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity)
 {
   unsigned int nerror = m_weightedError_edge.getRows();
 
@@ -684,7 +684,7 @@ void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool
   // is full rank. If not we remove automatically the dof that cannot be
   // estimated This is particularly useful when considering circles (rank 5) and
   // cylinders (rank 4)
-  if (isoJoIdentity_) {
+  if (isoJoIdentity) {
     cVo.buildFrom(m_cMo);
 
     vpMatrix K; // kernel
@@ -697,7 +697,7 @@ void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool
       I.eye(6);
       oJo = I - K.AtA();
 
-      isoJoIdentity_ = false;
+      isoJoIdentity = false;
     }
   }
 
@@ -705,7 +705,7 @@ void vpMbEdgeTracker::computeVVSFirstPhasePoseEstimation(unsigned int iter, bool
   vpMatrix LTL;
   vpColVector LTR;
 
-  if (isoJoIdentity_) {
+  if (isoJoIdentity) {
     LTL = m_L_edge.AtA();
     computeJTR(m_L_edge, m_weightedError_edge, LTR);
     v = -0.7 * LTL.pseudoInverse(LTL.getRows() * std::numeric_limits<double>::epsilon()) * LTR;
