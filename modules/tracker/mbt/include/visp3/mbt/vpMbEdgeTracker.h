@@ -497,7 +497,7 @@ protected:
   void computeVVS(const vpImage<unsigned char> &_I, unsigned int lvl);
   void computeVVSFirstPhase(const vpImage<unsigned char> &I, unsigned int iter, double &count, unsigned int lvl = 0);
   void computeVVSFirstPhaseFactor(const vpImage<unsigned char> &I, unsigned int lvl = 0);
-  void computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity_);
+  void computeVVSFirstPhasePoseEstimation(unsigned int iter, bool &isoJoIdentity);
   virtual void computeVVSInit();
   virtual void computeVVSInteractionMatrixAndResidu();
   virtual void computeVVSInteractionMatrixAndResidu(const vpImage<unsigned char> &I);

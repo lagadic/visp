@@ -177,7 +177,7 @@ std::istream &safeGetline(std::istream &is, std::string &t)
 
 */
 vpMbTracker::vpMbTracker()
-  : m_cam(), m_cMo(), oJo(6, 6), isoJoIdentity(true), modelFileName(), modelInitialised(false), poseSavingFilename(),
+  : m_cam(), m_cMo(), oJo(6, 6), m_isoJoIdentity(true), modelFileName(), modelInitialised(false), poseSavingFilename(),
     computeCovariance(false), covarianceMatrix(), computeProjError(false), projectionError(90.0),
     displayFeatures(false), m_optimizationMethod(vpMbTracker::GAUSS_NEWTON_OPT), faces(), angleAppears(vpMath::rad(89)),
     angleDisappears(vpMath::rad(89)), distNearClip(0.001), distFarClip(100), clippingFlag(vpPolygon3D::NO_CLIPPING),
@@ -2797,7 +2797,7 @@ void vpMbTracker::setClipping(const unsigned int &flags)
     faces[i]->setClipping(clippingFlag);
 }
 
-void vpMbTracker::computeCovarianceMatrixVVS(const bool isoJoIdentity_, const vpColVector &w_true,
+void vpMbTracker::computeCovarianceMatrixVVS(const bool isoJoIdentity, const vpColVector &w_true,
                                              const vpHomogeneousMatrix &cMoPrev, const vpMatrix &L_true,
                                              const vpMatrix &LVJ_true, const vpColVector &error)
 {
@@ -2807,7 +2807,7 @@ void vpMbTracker::computeCovarianceMatrixVVS(const bool isoJoIdentity_, const vp
 
     // Note that here the covariance is computed on cMoPrev for time
     // computation efficiency
-    if (isoJoIdentity_) {
+    if (isoJoIdentity) {
       covarianceMatrix = vpMatrix::computeCovarianceMatrixVVS(cMoPrev, error, L_true, D);
     } else {
       covarianceMatrix = vpMatrix::computeCovarianceMatrixVVS(cMoPrev, error, LVJ_true, D);
@@ -2816,8 +2816,7 @@ void vpMbTracker::computeCovarianceMatrixVVS(const bool isoJoIdentity_, const vp
 }
 
 /*!
-  Compute \f$ J^T R \f$, with J the interaction matrix and R the vector of
-  residu.
+  Compute \f$ J^T R \f$, with J the interaction matrix and R the vector of residuals.
 
   \throw vpMatrixException::incorrectMatrixSizeError if the sizes of the
   matrices do not allow the computation.
@@ -2861,12 +2860,12 @@ void vpMbTracker::computeVVSCheckLevenbergMarquardt(unsigned int iter, vpColVect
   }
 }
 
-void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity_, unsigned int iter, vpMatrix &L, vpMatrix &LTL,
+void vpMbTracker::computeVVSPoseEstimation(const bool isoJoIdentity, unsigned int iter, vpMatrix &L, vpMatrix &LTL,
                                            vpColVector &R, const vpColVector &error, vpColVector &error_prev,
                                            vpColVector &LTR, double &mu, vpColVector &v, const vpColVector *const w,
                                            vpColVector *const m_w_prev)
 {
-  if (isoJoIdentity_) {
+  if (isoJoIdentity) {
     LTL = L.AtA();
     computeJTR(L, R, LTR);
 
@@ -2967,14 +2966,14 @@ vpColVector vpMbTracker::getEstimatedDoF() const
 void vpMbTracker::setEstimatedDoF(const vpColVector &v)
 {
   if (v.getRows() == 6) {
-    isoJoIdentity = true;
+    m_isoJoIdentity = true;
     for (unsigned int i = 0; i < 6; i++) {
       // if(v[i] != 0){
       if (std::fabs(v[i]) > std::numeric_limits<double>::epsilon()) {
         oJo[i][i] = 1.0;
       } else {
         oJo[i][i] = 0.0;
-        isoJoIdentity = false;
+        m_isoJoIdentity = false;
       }
     }
   }

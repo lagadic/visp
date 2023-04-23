@@ -701,6 +701,10 @@ void vpMbEdgeKltTracker::computeVVS(const vpImage<unsigned char> &I, const unsig
   vpColVector m_error_prev;
   vpColVector m_w_prev;
 
+  bool isoJoIdentity = m_isoJoIdentity; // Backup since it can be modified if L is not full rank
+  if (isoJoIdentity)
+    oJo.eye();
+
   // Init size
   m_error_hybrid.resize(totalNbRows, false);
   m_w_hybrid.resize(totalNbRows, false);
