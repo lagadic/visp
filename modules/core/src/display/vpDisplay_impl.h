@@ -310,7 +310,7 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
     zAxisColor = vpColor::blue;
   }
   else
-  { 
+  {
     xAxisColor = color;
     yAxisColor = color;
     zAxisColor = color;
@@ -339,7 +339,7 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
     ipz.set_v( ipz.get_v() + v_size * cMo[1][2]);
     vpDisplay::displayArrow(I, ipo + offset, ipz + offset, zAxisColor, 4 * thickness, 2 * thickness, thickness);
   }
-  
+
   // If frameName != empty, computing the image coordinates (u v) of the text
   // such as we avoid as much as we can to cross an axis
   if(!frameName.empty())
@@ -394,7 +394,7 @@ void vp_display_display_frame(const vpImage<Type> &I, const vpHomogeneousMatrix 
     }
 
     // The offset of the text is set in the opposite direction of the object frame axes
-    // having the greastest projection in the camera frame in order to limit
+    // having the greatest projection in the camera frame in order to limit
     // the risk of crossing a frame axis in the image
     actualTextOffset.set_u(-1. * u_direction * textOffset.get_u());
     actualTextOffset.set_v(-1. * v_direction * textOffset.get_v());
