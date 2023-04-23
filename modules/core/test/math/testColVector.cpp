@@ -372,6 +372,23 @@ int main()
     if (test("v", v, std_vector) == false)
       return EXIT_FAILURE;
   }
+
+  {
+    std::cout << "** Test operator == and operator !=" << std::endl;
+    vpColVector v(3, 1.);
+    double val = 1.;
+    std::cout << "v: " << v.t() << " != " << val << std::endl;
+    if (v != val)
+      return EXIT_FAILURE;
+    val = 0.;
+    std::cout << "v: " << v.t() << " == " << val << std::endl;
+    if (v == val)
+      return EXIT_FAILURE;
+    v[1] = val;
+    std::cout << "v: " << v.t() << " == " << val << std::endl;
+    if (v == val)
+      return EXIT_FAILURE;
+  }
   std::cout << "\nAll tests succeed" << std::endl;
   return EXIT_SUCCESS;
 }

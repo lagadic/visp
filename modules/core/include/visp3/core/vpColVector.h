@@ -264,7 +264,9 @@ public:
 #endif
   //! Comparison operator.
   bool operator==(const vpColVector &v) const;
+  bool operator==(double v) const;
   bool operator!=(const vpColVector &v) const;
+  bool operator!=(double v) const;
 
   double operator*(const vpColVector &x) const;
   vpMatrix operator*(const vpRowVector &v) const;
