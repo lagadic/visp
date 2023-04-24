@@ -31,9 +31,6 @@
  * Description:
  * This class implements the Non Uniform Rational B-Spline (NURBS)
  *
- * Authors:
- * Nicolas Melchior
- *
  *****************************************************************************/
 
 #include <cmath>  // std::fabs

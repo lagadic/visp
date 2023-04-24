@@ -31,9 +31,6 @@
  * Description:
  * Moving edges.
  *
- * Authors:
- * Eric Marchand
- *
  *****************************************************************************/
 
 #include <visp3/me/vpMeEllipse.h>
@@ -163,7 +160,7 @@ void vpMeEllipse::updateTheta()
 void vpMeEllipse::computePointOnEllipse(const double angle, vpImagePoint &iP)
 {
   // Two versions are available. If you change from one version to the other
-  // one, do not forget to change also the reciprocical function
+  // one, do not forget to change also the reciprocal function
   // computeAngleOnEllipse() just below and, for a correct display of an arc
   // of ellipse, adapt vpMeEllipse::display() below and
   // vp_display_display_ellipse() in modules/core/src/display/vpDisplay_impl.h
@@ -201,11 +198,11 @@ void vpMeEllipse::computePointOnEllipse(const double angle, vpImagePoint &iP)
 double vpMeEllipse::computeAngleOnEllipse(const vpImagePoint &pt) const
 {
   // Two versions are available. If you change from one version to the other
-  // one, do not forget to change also the reciprocical function
+  // one, do not forget to change also the reciprocal function
   // computePointOnEllipse() just above. Adapt also the display; see comment
   // at the beginning of computePointOnEllipse()
 
-  // Regular angle smapling method
+  // Regular angle sampling method
   /*
   double du = pt.get_u() - uc;
   double dv = pt.get_v() - vc;
@@ -239,8 +236,8 @@ double vpMeEllipse::computeAngleOnEllipse(const vpImagePoint &pt) const
 }
 
 /*!
-  Computes the length of the semimajor axis \f$ a \f$, the length of the
-  semiminor axis \f$ b \f$, and \f$ e \f$ that is the angle
+  Computes the length of the semi major axis \f$ a \f$, the length of the
+  semi minor axis \f$ b \f$, and \f$ e \f$ that is the angle
   made by the major axis and the u axis of the image frame \f$ (u,v) \f$.
   They are computed from the normalized moments $ \f$ n_{ij} \f$.
 */
@@ -295,8 +292,8 @@ void vpMeEllipse::computeNijFromAbe()
 
 /*!
   Computes the coordinates of the ellipse center, the normalized
-  moments \f$ n_{ij} \f$, the length of the semimajor axis \f$ a \f$, the
-  length of the semiminor axis \f$ b \f$, and \f$ e \f$ that is the angle
+  moments \f$ n_{ij} \f$, the length of the semi major axis \f$ a \f$, the
+  length of the semi minor axis \f$ b \f$, and \f$ e \f$ that is the angle
   made by the major axis and the u axis of the image frame \f$ (u,v) \f$.
 
   All those computations are made from the parameters \f$ K ={K_0, ..., K_5} \f$
@@ -821,10 +818,11 @@ void vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
 
   \param I : Image in which the ellipse appears.
   \param col : Color of the displayed ellipse.
+  \param thickness : Thickness of the drawing.
  */
-void vpMeEllipse::display(const vpImage<unsigned char> &I, vpColor col)
+void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness)
 {
-  vpMeEllipse::display(I, iPc, a, b, e, alpha1, alpha2, col);
+  vpMeEllipse::display(I, iPc, a, b, e, alpha1, alpha2, col, thickness);
 }
 
 /*!
@@ -1069,7 +1067,7 @@ void vpMeEllipse::computeMoments()
 
 /*!
   \deprecated Initialization of the tracking. The arc of the ellipse is defined thanks to
-  its center, semimajor axis, semiminor axis, orientation and the angle
+  its center, semi major axis, semi minor axis, orientation and the angle
   of its two extremities
 
   \param I : Image in which the ellipse appears.
