@@ -373,7 +373,7 @@ int main(int argc, const char **argv)
       // display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
-      // therefore is is no longuer necessary to make a reference to the
+      // therefore is is no longer necessary to make a reference to the
       // display variable.
       vpDisplay::display(I);
       // Flush the display
@@ -571,7 +571,7 @@ int main(int argc, const char **argv)
       // the pose structure has been updated
 
       // the pose is now updated using the virtual visual servoing approach
-      // Dementhon or lagrange is no longuer necessary, pose at the
+      // Dementhon or lagrange is no longer necessary, pose at the
       // previous iteration is sufficient
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
       if (opt_display) {

@@ -312,7 +312,7 @@ int main(int argc, const char **argv)
       // Display the image
       // The image class has a member that specify a pointer toward
       // the display that has been initialized in the display declaration
-      // therefore is is no longuer necessary to make a reference to the
+      // therefore is is no longer necessary to make a reference to the
       // display variable.
       if (opt_image_type == grey_image) {
         display.init(Ig, 100, 100, "V4L2 grey images framegrabbing");
