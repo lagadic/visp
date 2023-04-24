@@ -1031,7 +1031,6 @@ unsigned int vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char> &I,
         }
       }
 
-      unsigned int indexFeature = 0;
       for (size_t a = 0; a < l->meline.size(); a++) {
         std::list<vpMeSite>::const_iterator itListLine;
         if (l->meline[a] != NULL) {
@@ -1043,7 +1042,6 @@ unsigned int vpMbEdgeKltTracker::trackFirstLoop(const vpImage<unsigned char> &I,
             if (site.getState() != vpMeSite::NO_SUPPRESSION)
               factor[n + i] = 0.2;
             ++itListLine;
-            indexFeature++;
           }
           n += l->nbFeature[a];
         }
