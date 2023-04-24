@@ -38,7 +38,11 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/detection/vpDetectorDNNOpenCV.h>
 
-
+/**
+ * \brief Get the list of the parsing methods / types of DNNs supported by the \b vpDetectorDNNOpenCV class.
+ * 
+ * \return std::string The list of the supported parsing methods / types of DNNs.
+ */
 std::string vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes()
 {
   std::string list = "[";
@@ -123,10 +127,12 @@ vpDetectorDNNOpenCV::DNNResultsParsingType vpDetectorDNNOpenCV::dnnResultsParsin
 }
 
 /*!
- *  
+ * \brief Parse the designated file that contains the list of the classes the network can detect.
+ * The class names must either be indicated in an array of string in YAML format, or one name
+ * by row (without quotes). 
  * 
- * \param filename 
- * \return std::vector<std::string> 
+ * \param filename The path towards the file.
+ * \return std::vector<std::string> The list of class names.
  */
 std::vector<std::string> vpDetectorDNNOpenCV::parseClassNamesFile(const std::string &filename)
 {
@@ -141,7 +147,13 @@ vpDetectorDNNOpenCV::vpDetectorDNNOpenCV()
   setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
 }
 
-
+/**
+ * \brief Construct a new \b vpDetectorDNNOpenCV object.
+ * 
+ * \param config The network configuration.
+ * \param typeParsingMethod The type of parsing method that must be used to parse the raw results of the DNN detection step.
+ * \param parsingMethod If \b typeParsingMethod is set to \b vpDetectorDNNOpenCV::DNNResultsParsingType::USER_SPECIFIED, the parsing method that must be used to parse the raw results of the DNN detection step.
+ */
 vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const NetConfig &config, const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &))
   : m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
     m_mean(127.5, 127.5, 127.5), m_net(), m_netConfig(config), m_outNames(), m_dnnRes(),
@@ -151,6 +163,9 @@ vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const NetConfig &config, const DNNResul
   setParsingMethod(typeParsingMethod, parsingMethod);
 }
 
+/**
+ * \brief Destroy the \b vpDetectorDNNOpenCV object
+ */
 vpDetectorDNNOpenCV::~vpDetectorDNNOpenCV() {}
 
 /*!
@@ -257,6 +272,11 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector< std::pair<std::s
 
 
 #if (VISP_HAVE_OPENCV_VERSION == 0x030403)
+/**
+ * \brief Get the names of the output layers of the DNN.
+ * 
+ * \return std::vector<cv::String> 
+ */
 std::vector<cv::String> vpDetectorDNNOpenCV::getOutputsNames()
 {
   static std::vector<cv::String> names;

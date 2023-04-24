@@ -61,34 +61,55 @@
 class VISP_EXPORT vpDetectorDNNOpenCV
 {
 public:
+  /**
+   * \enum DNNResultsParsingType
+   * \brief Enumeration listing the types of DNN for which the \b vpDetectorDNNOpenCV furnishes the methods
+   * permitting to parse the raw detection data into \b vpDetectorDNNOpenCV::DetectedFeatures2D .
+   */
   typedef enum DNNResultsParsingType
   {
-    USER_SPECIFIED =  0,
-    FASTER_RCNN    =  1,
-    SSD_MOBILENET  =  2,
-    RESNET_10      =  3,
-    YOLO_V3        =  4,
-    YOLO_V4        =  5,
-    YOLO_V5        =  6,
-    YOLO_V7        =  7,
-    YOLO_V8        =  8,
-    COUNT          =  9
+    USER_SPECIFIED =  0, /*!< The user will give a pointer towards the parsing method to use to parse the raw data resulting from the detection step.*/
+    FASTER_RCNN    =  1, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a Faster-RCNN DNN. See \b vpDetectorDNNOpenCV::postProcess_FasterRCNN for more information.*/
+    SSD_MOBILENET  =  2, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a SSD MobileNet DNN. See \b vpDetectorDNNOpenCV::postProcess_SSD_MobileNet for more information.*/
+    RESNET_10      =  3, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a ResNet 10 DNN. See \b vpDetectorDNNOpenCV::postProcess_ResNet_10 for more information.*/
+    YOLO_V3        =  4, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV3 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV3_V4 for more information.*/
+    YOLO_V4        =  5, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV4 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV3_V4 for more information.*/
+    YOLO_V5        =  6, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV5 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV5_V7 for more information.*/
+    YOLO_V7        =  7, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV7 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV5_V7 for more information.*/
+    YOLO_V8        =  8, /*!< The \b vpDetectorDNNOpenCV object will use the parsing method corresponding to a YoloV8 DNN. See \b vpDetectorDNNOpenCV::postProcess_YoloV8 for more information.*/
+    COUNT          =  9 /*!< The number of parsing method that come along with the \b vpDetectorDNNOpenCV class.*/
   } DNNResultsParsingType;
 
   typedef struct DetectionCandidates
   {
-    std::vector< float > m_confidences;
-    std::vector< cv::Rect > m_boxes;
-    std::vector< int > m_classIds;
+    std::vector< float > m_confidences; /*!< Vector containing the detection confidence of each \b vpDetectorDNNOpenCV::DetectionCandidates::m_boxes.*/
+    std::vector< cv::Rect > m_boxes; /*!< The bounding box of each detection candidate.*/
+    std::vector< int > m_classIds; /*!< The class ID of each detection candidate.*/
   } DetectionCandidates;
 
+  /**
+   * \struct DetectedFeatures2D
+   * \brief Structure containing the bounding box, expressed in pixels, confidence and class information
+   * about an object detected in a image.
+   */
   typedef struct DetectedFeatures2D
   {
-    vpRect m_bbox;
-    double m_score;
-    unsigned int m_cls;
-    std::optional<std::string> m_classname;
+    vpRect m_bbox; /*!< The bounding box of the detected object.*/
+    double m_score; /*!< The confidence in the detection.*/
+    unsigned int m_cls; /*!< The class ID.*/
+    std::optional<std::string> m_classname; /*!< The class name, if the class names were given to the \b vpDetectorDNNOpenCV::NetConfig used to configure the \b vpDetectorDNNOpenCV object.*/
 
+    /**
+     * \brief Construct a new Detected Features 2 D object
+     * 
+     * \param u_min The left coordinate of the bounding box, expressed in pixel.
+     * \param u_max The right coordinate of the bounding box, expressed in pixel.
+     * \param v_min The top coordinate of the bounding box, expressed in pixel.
+     * \param v_max The bottom coordinate of the bounding box, expressed in pixel.
+     * \param cls The class ID
+     * \param score The confidence in the detection.
+     * \param classname The class name, if the class names were given to the \b vpDetectorDNNOpenCV::NetConfig used to configure the \b vpDetectorDNNOpenCV object.
+     */
     inline explicit DetectedFeatures2D( double u_min, double u_max
                                       , double v_min, double v_max
                                       , unsigned int cls, double score
@@ -113,14 +134,26 @@ public:
 
   } DetectedFeatures2D;
 
+  /**
+   * \struct NetConfig
+   * \brief Structure containing some information required for the configuration of a \b vpDetectorDNNOpenCV object.
+   */
   typedef struct NetConfig
   {
-    double m_confThreshold; //! Threshold to filter detections by confidence
-    double m_nmsThreshold;  //! Threshold for Non-Maximum Suppression
-    std::vector<std::string> m_classNames; //! Vector containing the names of the different classes the DNN can detect
-    cv::Size m_inputSize; //! Size of the images the DNN can manipulate. The input images will be resized to match these dimensions.
-    double m_filterSizeRatio; //! Size ratio used by the \b filterDetection method. If <= 0., the \b filterDetection method is not used.
+    double m_confThreshold;               /*!< Threshold to filter detections by confidence.*/
+    double m_nmsThreshold;                /*!< Threshold for Non-Maximum Suppression.*/
+    std::vector<std::string> m_classNames;/*!< Vector containing the names of the different classes the DNN can detect.*/
+    cv::Size m_inputSize;                 /*!<  Size of the images the DNN can manipulate. The input images will be resized to match these dimensions.*/
+    double m_filterSizeRatio;             /*!<  Size ratio used by the \b vpDetectorDNNOpenCV::filterDetection method. If <= 0., the \b filterDetection method is not used.*/
 
+    /**
+     * \brief Parse the file containing the list of classes the DNN can detect.
+     * These classes can be written either as a YAML array (i.e. ["classname_0", ... ,"classname_last"])
+     * or with one classname by row (without quotes).
+     * 
+     * \param filename The path towards the file containing the list of classes the DNN can detect.
+     * \return std::vector<std::string> The list of classes the DNN can detect.
+     */
     inline static std::vector<std::string> parseClassNamesFile(const std::string &filename)
     {
       std::vector<std::string> classNames;
@@ -150,6 +183,15 @@ public:
       return classNames;
     }
 
+    /**
+     * \brief Construct a new Net Config object
+     * 
+     * \param confThresh The confidence threshold to keep a detection.
+     * \param nmsThresh The Non-Maximum Suppression threshold to merge overlapping detections.
+     * \param classNames A vector containing the list of classes the DNN can detect.
+     * \param dnnInputSize The size of the input that the DNN is expecting ().
+     * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetection method for more information).
+     */
     inline NetConfig(double confThresh, const double &nmsThresh, const std::vector<std::string> & classNames, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.)
       : m_confThreshold(confThresh)
       , m_nmsThreshold(nmsThresh)
@@ -159,6 +201,15 @@ public:
     {
     }
 
+    /**
+     * \brief Construct a new Net Config object
+     * 
+     * \param confThresh The confidence threshold to keep a detection.
+     * \param nmsThresh The Non-Maximum Suppression threshold to merge overlapping detections.
+     * \param classNamesFile The path towards the file containing the classes names, written as a YAML string array or one class name by line.
+     * \param dnnInputSize The size of the input that the DNN is expecting ().
+     * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetection method for more information).
+     */
     inline NetConfig(double confThresh, const double &nmsThresh, const std::string &classNamesFile, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.)
       : m_confThreshold(confThresh)
       , m_nmsThreshold(nmsThresh)
@@ -218,8 +269,6 @@ protected:
   void postProcess_SSD_MobileNet(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
   void postProcess_ResNet_10(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
-  
-  void postProcess_OldMethod(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
   static void postProcess_unimplemented(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
