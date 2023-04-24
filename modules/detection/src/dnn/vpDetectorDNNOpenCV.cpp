@@ -82,9 +82,6 @@ std::string vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(const DNNResultsP
     case FASTER_RCNN:
       name = "faster-rcnn";
       break;
-    case R_FCN:
-      name = "r-fcn";
-      break;
     case SSD_MOBILENET:
       name = "ssd-mobilenet";
       break;
@@ -301,8 +298,7 @@ void vpDetectorDNNOpenCV::postProcess(std::map< std::string, std::vector<Detecte
       postProcess_YoloV8(proposals, m_dnnRes, m_netConfig);
       break;
     case FASTER_RCNN:
-    case R_FCN:
-      postProcess_FasterRCNN_RFCN(proposals, m_dnnRes, m_netConfig);
+      postProcess_FasterRCNN(proposals, m_dnnRes, m_netConfig);
       break;
     case SSD_MOBILENET:
       postProcess_SSD_MobileNet(proposals, m_dnnRes, m_netConfig);
@@ -587,7 +583,7 @@ void vpDetectorDNNOpenCV::postProcess_YoloV8(DetectionCandidates &proposals, std
 }
 
 /*!
-  Post-process the raw results of a Faster-RCNN-type or a R-FCN-type DNN.
+  Post-process the raw results of a Faster-RCNN-type DNN.
   Extract the data stored as a matrix.
   The network produces output blob with a shape 1x1xNx7 where N is a number of
   detections and an every detection is a vector of values
@@ -597,32 +593,36 @@ void vpDetectorDNNOpenCV::postProcess_YoloV8(DetectionCandidates &proposals, std
   \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
   \param netConfig: the configuration of the network, to know for instance the DNN input size.
 */
-void vpDetectorDNNOpenCV::postProcess_FasterRCNN_RFCN(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
+void vpDetectorDNNOpenCV::postProcess_FasterRCNN(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
   // Direct copy from object_detection.cpp OpenCV sample
-  // Faster-RCNN or R-FCN
+  // Faster-RCNN
   
   // Network produces output blob with a shape 1x1xNx7 where N is a number of
   // detections and an every detection is a vector of values
   // [batchId, classId, confidence, left, top, right, bottom]
-  CV_Assert(dnnRes.size() == 1);
-  float *data = (float *)dnnRes[0].data;
-  for (size_t i = 0; i < dnnRes[0].total(); i += 7) 
+  int nbBatches = dnnRes.size();
+  for(size_t j = 0; j < nbBatches; j++)
   {
-    float confidence = data[i + 2];
-    if (confidence > netConfig.m_confThreshold) 
+    float *data = (float *)dnnRes[j].data;
+    for (size_t i = 0; i < dnnRes[j].total(); i += 7) 
     {
-      int left   = (int)(data[i + 3] * m_img.cols);
-      int top    = (int)(data[i + 4] * m_img.rows);
-      int right  = (int)(data[i + 5] * m_img.cols);
-      int bottom = (int)(data[i + 6] * m_img.rows);
-      int classId = (int)(data[i + 1]); 
-        
-      proposals.m_confidences.push_back( (float)confidence );
-      proposals.m_boxes.push_back( cv::Rect( left, top, right - left + 1, bottom - top + 1 ) );
-      proposals.m_classIds.push_back( classId );
+      float confidence = data[i + 2];
+      if (confidence > netConfig.m_confThreshold) 
+      {
+        int left   = (int)(data[i + 3] * m_img.cols);
+        int top    = (int)(data[i + 4] * m_img.rows);
+        int right  = (int)(data[i + 5] * m_img.cols);
+        int bottom = (int)(data[i + 6] * m_img.rows);
+        int classId = (int)(data[i + 1]); 
+          
+        proposals.m_confidences.push_back( (float)confidence );
+        proposals.m_boxes.push_back( cv::Rect( left, top, right - left + 1, bottom - top + 1 ) );
+        proposals.m_classIds.push_back( classId );
+      }
     }
   }
+  
 }
 
 /*!

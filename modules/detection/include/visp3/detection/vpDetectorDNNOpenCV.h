@@ -65,15 +65,14 @@ public:
   {
     USER_SPECIFIED =  0,
     FASTER_RCNN    =  1,
-    R_FCN          =  2,
-    SSD_MOBILENET  =  3,
-    RESNET_10      =  4,
-    YOLO_V3        =  5,
-    YOLO_V4        =  6,
-    YOLO_V5        =  7,
-    YOLO_V7        =  8,
-    YOLO_V8        =  9,
-    COUNT          = 10
+    SSD_MOBILENET  =  2,
+    RESNET_10      =  3,
+    YOLO_V3        =  4,
+    YOLO_V4        =  5,
+    YOLO_V5        =  6,
+    YOLO_V7        =  7,
+    YOLO_V8        =  8,
+    COUNT          =  9
   } DNNResultsParsingType;
 
   typedef struct DetectionCandidates
@@ -214,7 +213,7 @@ protected:
 
   void postProcess_YoloV8(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
-  void postProcess_FasterRCNN_RFCN(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
+  void postProcess_FasterRCNN(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
   void postProcess_SSD_MobileNet(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
