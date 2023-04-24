@@ -56,7 +56,8 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
 #elif defined(VISP_HAVE_PTHREAD)
     thread(), attr(),
 #endif
-    mutex_fMi(), mutex_artVel(), mutex_artCoord(), mutex_velocity(), mutex_display(), displayBusy(false),
+    m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(), m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(), m_mutex_scene(),
+    displayBusy(false),
     robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true), cameraParam(),
 #if defined(VISP_HAVE_DISPLAY)
     display(),
@@ -71,9 +72,6 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator()
 #if defined(VISP_HAVE_DISPLAY)
   display.init(I, 0, 0, "The External view");
 #endif
-
-  // pid_t pid = getpid();
-  // setpriority (PRIO_PROCESS, pid, 19);
 }
 
 /*!
@@ -87,7 +85,7 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool do_display)
 #elif defined(VISP_HAVE_PTHREAD)
     thread(), attr(),
 #endif
-    /* thread(), attr(), */ mutex_fMi(), mutex_artVel(), mutex_artCoord(), mutex_velocity(), mutex_display(),
+    m_mutex_fMi(), m_mutex_eMc(), m_mutex_artVel(), m_mutex_artCoord(), m_mutex_velocity(), m_mutex_display(), m_mutex_robotStop(), m_mutex_frame(), m_mutex_setVelocityCalled(), m_mutex_scene(),
     displayBusy(false), robotStop(false), jointLimit(false), jointLimitArt(false), singularityManagement(true),
     cameraParam(),
 #if defined(VISP_HAVE_DISPLAY)
@@ -105,15 +103,14 @@ vpRobotWireFrameSimulator::vpRobotWireFrameSimulator(bool do_display)
   if (do_display)
     this->display.init(I, 0, 0, "The External view");
 #endif
-
-  // pid_t pid = getpid();
-  // setpriority (PRIO_PROCESS, pid, 19);
 }
 
 /*!
   Basic destructor
 */
-vpRobotWireFrameSimulator::~vpRobotWireFrameSimulator() {}
+vpRobotWireFrameSimulator::~vpRobotWireFrameSimulator()
+{
+}
 
 /*!
   Initialize the display. It enables to choose the type of scene which will be
@@ -125,12 +122,13 @@ vpRobotWireFrameSimulator::~vpRobotWireFrameSimulator() {}
   corresponding files are stored in the "data" folder which is in the ViSP
   build directory.
 
-  \param obj : Type of scene used to display the object at the current
-  position. \param desired_object : Type of scene used to display the object
-  at the desired pose (in the internal view).
+  \param obj : Type of scene used to display the object at the current position.
+
+  \param desired_object : Type of scene used to display the object at the desired pose (in the internal view).
 */
 void vpRobotWireFrameSimulator::initScene(const vpSceneObject &obj, const vpSceneDesiredObject &desired_object)
 {
+  m_mutex_scene.lock();
   if (displayCamera) {
     free_Bound_scene(&(this->camera));
   }
@@ -139,6 +137,7 @@ void vpRobotWireFrameSimulator::initScene(const vpSceneObject &obj, const vpScen
     free_Bound_scene(&(this->camera));
   }
   displayCamera = false;
+  m_mutex_scene.unlock();
 }
 
 /*!

@@ -115,25 +115,16 @@ vpRGBa &vpRGBa::operator=(const vpColVector &v)
 
   \return true if the values are the same, false otherwise.
 */
-bool vpRGBa::operator==(const vpRGBa &v)
+bool vpRGBa::operator==(const vpRGBa &v) const
 {
-  if (R != v.R)
-    return false;
-  if (G != v.G)
-    return false;
-  if (B != v.B)
-    return false;
-  if (A != v.A)
-    return false;
-
-  return true;
+  return R == v.R && G == v.G && B == v.B && A == v.A;
 }
 /*!
   Compare two color pixels.
 
   \return true if the images are different, false if they are the same.
 */
-bool vpRGBa::operator!=(const vpRGBa &v) { return (R != v.R || G != v.G || B != v.B || A != v.A); }
+bool vpRGBa::operator!=(const vpRGBa &v) const { return (R != v.R || G != v.G || B != v.B || A != v.A); }
 
 /*!
   subtraction operator : "this" - v.

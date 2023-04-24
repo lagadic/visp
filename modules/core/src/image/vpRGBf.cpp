@@ -107,7 +107,7 @@ vpRGBf &vpRGBf::operator=(const vpColVector &v)
 
   \return true if the values are exactly the same, false otherwise.
 */
-bool vpRGBf::operator==(const vpRGBf &v)
+bool vpRGBf::operator==(const vpRGBf &v) const
 {
   if (std::fabs(R - v.R) > std::numeric_limits<float>::epsilon())
     return false;
@@ -123,7 +123,7 @@ bool vpRGBf::operator==(const vpRGBf &v)
 
   \return true if the values are different, false if they are exactly the same.
 */
-bool vpRGBf::operator!=(const vpRGBf &v)
+bool vpRGBf::operator!=(const vpRGBf &v) const
 {
   return (std::fabs(R - v.R) > std::numeric_limits<float>::epsilon() ||
           std::fabs(G - v.G) > std::numeric_limits<float>::epsilon() ||

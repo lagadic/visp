@@ -43,6 +43,7 @@
 #include <pugixml.hpp>
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 class vpMbtXmlGenericParser::Impl
 {
 public:
@@ -71,6 +72,18 @@ public:
       m_projectionErrorMe(), m_projectionErrorKernelSize(2), // 5x5
       m_nodeMap(), m_verbose(true)
   {
+    // std::setlocale() is not thread safe and need to be called once
+    // https://stackoverflow.com/questions/41117179/undefined-behavior-with-setlocale-and-multithreading
+    if (m_call_setlocale) {
+      // https://pugixml.org/docs/manual.html#access.attrdata
+      // https://en.cppreference.com/w/cpp/locale/setlocale
+      // When called from Java binding, the locale seems to be changed to the default system locale
+      // It thus mess with the parsing of numbers with pugixml and comma decimal separator environment
+      if (std::setlocale(LC_ALL, "C") == NULL) {
+        std::cerr << "Cannot set locale to C" << std::endl;
+      }
+      m_call_setlocale = false;
+    }
     init();
   }
 
@@ -1484,18 +1497,17 @@ protected:
     m_nodeMap["sample_step"] = projection_error_sample_step;
     m_nodeMap["kernel_size"] = projection_error_kernel_size;
   }
+
+private:
+  static bool m_call_setlocale;
 };
+
+bool vpMbtXmlGenericParser::Impl::m_call_setlocale = true;
+
 #endif // DOXYGEN_SHOULD_SKIP_THIS
 
 vpMbtXmlGenericParser::vpMbtXmlGenericParser(int type) : m_impl(new Impl(type))
 {
-  // https://pugixml.org/docs/manual.html#access.attrdata
-  // https://en.cppreference.com/w/cpp/locale/setlocale
-  // When called from Java binding, the locale seems to be changed to the default system locale
-  // It thus mess with the parsing of numbers with pugixml and comma decimal separator environment
-  if (std::setlocale(LC_ALL, "C") == NULL) {
-    std::cerr << "Cannot set locale to C" << std::endl;
-  }
 }
 
 vpMbtXmlGenericParser::~vpMbtXmlGenericParser() { delete m_impl; }

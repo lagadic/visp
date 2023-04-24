@@ -81,7 +81,7 @@ To fix this issue, as explained in \ref tutorial-install-java install JDK 11 and
 
 As shown in the next image, if you experience the following exception after entering `"Run > Run"` menu:
 \verbatim
-Exception in thread "main" java.lang.UnsatisfiedLinkError: no visp_java321 in java.library.path: [/home/fspindle/visp_ws/visp-build/lib]
+Exception in thread "main" java.lang.UnsatisfiedLinkError: no visp_java321 in java.library.path: [/home/fspindle/visp-ws/visp-build/lib]
 \endverbatim
 \image html img-tutorial-java-issue-visp-version.jpg
 

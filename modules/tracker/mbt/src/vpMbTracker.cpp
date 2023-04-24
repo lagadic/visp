@@ -90,10 +90,17 @@
 #include <Inventor/nodes/SoSeparator.h>
 #endif
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+#include <mutex>
+#endif
+
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 namespace
 {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  std::mutex g_mutex_cout;
+#endif
 /*!
   Structure to store info about segment in CAO model files.
  */
@@ -1786,6 +1793,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbPoints += caoNbrPoint;
     if (verbose || (parent && !header)) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
       std::cout << "> " << caoNbrPoint << " points" << std::endl;
     }
 
@@ -1832,6 +1842,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
     nbLines += caoNbrLine;
     unsigned int *caoLinePoints = NULL;
     if (verbose || (parent && !header)) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
       std::cout << "> " << caoNbrLine << " lines" << std::endl;
     }
 
@@ -1910,6 +1923,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbPolygonLines += caoNbrPolygonLine;
     if (verbose || (parent && !header)) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
       std::cout << "> " << caoNbrPolygonLine << " polygon lines" << std::endl;
     }
 
@@ -1996,6 +2012,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     nbPolygonPoints += caoNbrPolygonPoint;
     if (verbose || (parent && !header)) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+      std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
       std::cout << "> " << caoNbrPolygonPoint << " polygon points" << std::endl;
     }
 
@@ -2066,6 +2085,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       nbCylinders += caoNbCylinder;
       if (verbose || (parent && !header)) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
         std::cout << "> " << caoNbCylinder << " cylinders" << std::endl;
       }
 
@@ -2144,6 +2166,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
       nbCircles += caoNbCircle;
       if (verbose || (parent && !header)) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
         std::cout << "> " << caoNbCircle << " circles" << std::endl;
       }
 
@@ -2205,6 +2230,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
 
     if (header && parent) {
       if (verbose) {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
         std::cout << "Global information for " << vpIoTools::getName(modelFile) << " :" << std::endl;
         std::cout << "Total nb of points : " << nbPoints << std::endl;
         std::cout << "Total nb of lines : " << nbLines << std::endl;
@@ -2213,6 +2241,9 @@ void vpMbTracker::loadCAOModel(const std::string &modelFile, std::vector<std::st
         std::cout << "Total nb of cylinders : " << nbCylinders << std::endl;
         std::cout << "Total nb of circles : " << nbCircles << std::endl;
       } else {
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+        std::lock_guard<std::mutex> lock(g_mutex_cout);
+#endif
         std::cout << "> " << nbPoints << " points" << std::endl;
         std::cout << "> " << nbLines << " lines" << std::endl;
         std::cout << "> " << nbPolygonLines << " polygon lines" << std::endl;
