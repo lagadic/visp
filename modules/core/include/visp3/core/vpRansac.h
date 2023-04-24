@@ -31,9 +31,6 @@
  * Description:
  * Ransac robust algorithm.
  *
- * Authors:
- * Eric Marchand
- *
  *****************************************************************************/
 
 /*!
@@ -139,11 +136,10 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
   vpUniRand random((const long)time(NULL));
   vpColVector bestinliers;
   unsigned int *ind = new unsigned int[s];
-  int numiter = 0;
   int ninliers = 0;
 
   while ((N > trialcount) && (consensus > bestscore)) {
-    // Select at random s datapoints to form a trial model, M.
+    // Select at random s data points to form a trial model, M.
     // In selecting these points we have to check that they are not in
     // a degenerate configuration.
 
@@ -165,7 +161,7 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
       if (count > maxDataTrials) {
         delete[] ind;
         vpERROR_TRACE("Unable to select a nondegenerate data set");
-        throw(vpException(vpException::fatalError, "Unable to select a nondegenerate data set"));
+        throw(vpException(vpException::fatalError, "Unable to select a non degenerate data set"));
         // return false; //Useless after a throw() function
       }
     }
@@ -217,7 +213,6 @@ bool vpRansac<vpTransformation>::ransac(unsigned int npts, const vpColVector &x,
       vpTRACE("ransac reached the maximum number of %d trials", maxTrials);
       break;
     }
-    numiter++;
   }
 
   if (solutionFind == true) // We got a solution

@@ -31,9 +31,6 @@
  * Description:
  * Homography estimation.
  *
- * Authors:
- * Eric Marchand
- *
  *****************************************************************************/
 
 #include <visp3/core/vpColVector.h>
