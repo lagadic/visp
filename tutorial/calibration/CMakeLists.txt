@@ -33,6 +33,7 @@ if(VISP_HAVE_REALSENSE2)
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-function")
   list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-parameter")
+  list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unqualified-std-cast-call")
 
   visp_set_source_file_compile_flag(tutorial-franka-acquire-calib-data.cpp ${CXX_FLAGS_MUTE_WARNINGS})
   visp_set_source_file_compile_flag(tutorial-universal-robots-acquire-calib-data.cpp ${CXX_FLAGS_MUTE_WARNINGS})
