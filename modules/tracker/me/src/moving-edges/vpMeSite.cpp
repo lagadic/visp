@@ -31,11 +31,6 @@
  * Description:
  * Moving edges.
  *
- * Authors:
- * Eric Marchand
- * Andrew Comport
- * Aurelien Yol
- *
  *****************************************************************************/
 
 /*!

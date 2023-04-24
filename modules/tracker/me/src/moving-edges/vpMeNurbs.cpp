@@ -31,9 +31,6 @@
  * Description:
  * Moving edges.
  *
- * Authors:
- * Nicolas Melchior
- *
  *****************************************************************************/
 
 /*!
@@ -1025,7 +1022,10 @@ void vpMeNurbs::track(const vpImage<unsigned char> &I)
   \param col : Color of the displayed line.
 
  */
-void vpMeNurbs::display(const vpImage<unsigned char> &I, vpColor col) { vpMeNurbs::display(I, nurbs, col); }
+void vpMeNurbs::display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness)
+{
+  vpMeNurbs::display(I, nurbs, col, thickness);
+}
 
 /*!
   Considering a pixel iP compute the next element of the Freeman chain
@@ -1240,14 +1240,16 @@ bool vpMeNurbs::farFromImageEdge(const vpImage<unsigned char> &I, const vpImageP
   \param n : Nurbs to display
 
   \param color : Color used to display the nurbs.
+
+  \param thickness : Drawings thickness.
 */
-void vpMeNurbs::display(const vpImage<unsigned char> &I, vpNurbs &n, vpColor color)
+void vpMeNurbs::display(const vpImage<unsigned char> &I, vpNurbs &n, const vpColor &color, unsigned int thickness)
 {
   double u = 0.0;
   vpImagePoint pt;
   while (u <= 1) {
     pt = n.computeCurvePoint(u);
-    vpDisplay::displayCross(I, pt, 4, color);
+    vpDisplay::displayCross(I, pt, 4, color, thickness);
     u += 0.01;
   }
 }
@@ -1261,14 +1263,16 @@ void vpMeNurbs::display(const vpImage<unsigned char> &I, vpNurbs &n, vpColor col
   \param n : Nurbs to display
 
   \param color : Color used to display the nurbs.
+
+  \param thickness : Drawings thickness.
 */
-void vpMeNurbs::display(const vpImage<vpRGBa> &I, vpNurbs &n, vpColor color)
+void vpMeNurbs::display(const vpImage<vpRGBa> &I, vpNurbs &n, const vpColor &color, unsigned int thickness)
 {
   double u = 0.0;
   vpImagePoint pt;
   while (u <= 1) {
     pt = n.computeCurvePoint(u);
-    vpDisplay::displayCross(I, pt, 4, color);
+    vpDisplay::displayCross(I, pt, 4, color, thickness);
     u += 0.01;
   }
 }

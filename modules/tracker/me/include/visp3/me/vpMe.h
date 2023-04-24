@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,16 +31,11 @@
  * Description:
  * Moving edges.
  *
- * Authors:
- * Eric Marchand
- * Andrew Comport
- * Aurelien Yol
- *
  *****************************************************************************/
 
 /*!
-        \file vpMe.h
-        \brief Moving edges
+  \file vpMe.h
+  \brief Moving edges
 */
 
 #ifndef vpMe_H
@@ -185,10 +180,11 @@ public:
   inline int getStrip() const { return strip; }
 
   /*!
-    Return the likelihood threshold used to determined if the moving edge is
-    valid or not.
+    Return the likelihood threshold used to determine if the moving edge is valid or not.
 
     \return Value of threshold.
+
+    \sa setThreshold()
   */
   inline double getThreshold() const { return threshold; }
 
@@ -292,10 +288,15 @@ public:
   void setStrip(const int &a) { strip = a; }
 
   /*!
-    Set the likelihood threshold used to determined if the moving edge is
-    valid or not.
+    Set the likelihood threshold used to determined if the moving edge is valid or not.
+
+    When the contrast is high between the two sides of the ellipse (for example white/black or black/white)
+    a threshold of 1500 is sufficient. On the other hand, when the contrast is less strong, it is necessary
+    to increase this threshold according to the images until 20000.
 
     \param t : new threshold.
+
+    \sa getThreshold()
   */
   void setThreshold(const double &t) { threshold = t; }
 };
