@@ -86,7 +86,7 @@ void vpKalmanFilter::init(unsigned int size_state_vector, unsigned int size_meas
 /*!
   Construct a default Kalman filter.
 
-  The verbose mode is by default desactivated.
+  The verbose mode is disabled by default
 
 */
 vpKalmanFilter::vpKalmanFilter()
@@ -98,7 +98,7 @@ vpKalmanFilter::vpKalmanFilter()
 /*!
   Construct a default Kalman filter by setting the number of signal to filter.
 
-  The verbose mode is by default desactivated.
+  The verbose mode is disabled by default
 
   \param n_signal : Number of signal to filter.
 */
@@ -111,7 +111,7 @@ vpKalmanFilter::vpKalmanFilter(unsigned int n_signal)
 /*!
   Construct a Kalman filter.
 
-  The verbose mode is by default desactivated.
+  The verbose mode is disabled by default
 
   \param size_state_vector : Size of the state vector \f${\bf x}_{(k)}\f$ for
   one signal.

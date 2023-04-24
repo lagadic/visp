@@ -50,7 +50,7 @@
   The algorithms and notations used are described in \cite Gentle:2004.
 
   The code below shows how to use the random generator to get values that have
-  their mean equal to 10 with a standart deviation equal to 0.5.
+  their mean equal to 10 with a standard deviation equal to 0.5.
 
   \code
 #include <iostream>
@@ -67,7 +67,7 @@ int main()
   \endcode
 
   The previous example produces the following printings:
-\code
+  \verbatim
 noise 0: 10.645
 noise 1: 9.67129
 noise 2: 10.1208
@@ -78,14 +78,14 @@ noise 6: 9.81414
 noise 7: 9.96076
 noise 8: 11.0795
 noise 9: 9.79229
-\endcode
+  \endverbatim
 
   Note that the previous example produces always the same "random" results. To
 produce real random values, you need to initialize the random generator with
 different values using seed(). For example, this could be done using the
 current time. The code becomes:
 
-\code
+  \verbatim
 #include <iostream>
 #include <visp3/core/vpGaussRand.h>
 #include <visp3/core/vpTime.h>
@@ -101,10 +101,10 @@ int main()
   }
   return 0;
 }
-\endcode
+  \endverbatim
 
   Now if you run the previous example you will always get different values:
-  \code
+  \verbatim
 noise 0: 10.5982
 noise 1: 9.19111
 noise 2: 9.82498
@@ -115,7 +115,7 @@ noise 6: 9.75621
 noise 7: 10.3259
 noise 8: 10.4238
 noise 9: 10.2391
-  \endcode
+  \endverbatim
  */
 class VISP_EXPORT vpGaussRand
 {

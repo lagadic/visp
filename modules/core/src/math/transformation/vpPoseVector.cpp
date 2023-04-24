@@ -316,7 +316,7 @@ vpThetaUVector vpPoseVector::getThetaUVector() const
 
 /*!
 
-  Prints to the standart stream the pose vector.
+  Prints to the standard stream the pose vector.
 
   \warning Values concerning the \f$ \theta {\bf u}\f$ rotation are
   converted in degrees.
