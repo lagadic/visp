@@ -30,10 +30,7 @@
  *
  * Description:
  * Median Absolute Deviation (MAD), MPDE, Mean shift kernel density
- *estimation.
- *
- * Authors:
- * Andrew Comport
+ * estimation.
  *
  *****************************************************************************/
 
@@ -171,7 +168,6 @@ double vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
   double density_gradient = 0;
   double sum_delta = 0;
   double delta = 0;
-  int nx = 0;
 
   double inside_kernel = 1;
   unsigned int j = position;
@@ -185,9 +181,9 @@ double vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
       inside_kernel = 1;
       sum_delta += error[j] - error[position];
       j++;
-      nx++;
-    } else
+    } else {
       inside_kernel = 0;
+    }
   }
 
   inside_kernel = 1;
@@ -200,9 +196,9 @@ double vpScale::KernelDensityGradient(vpColVector &error, unsigned int position)
       inside_kernel = 1;
       sum_delta += error[j] - error[position];
       j--;
-      nx++;
-    } else
+    } else {
       inside_kernel = 0;
+    }
   }
 
   density_gradient = KernelDensityGradient_EPANECHNIKOV(sum_delta, n);

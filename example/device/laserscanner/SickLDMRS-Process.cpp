@@ -211,7 +211,6 @@ void *laser_acq_loop(void *)
   laser.setup();
   vpLaserScan laserscan[4];
 
-  unsigned int iter = 0;
   for (;;) {
     double t1 = vpTime::measureTimeMs();
     if (laser.measure(laserscan) == false)
@@ -226,7 +225,6 @@ void *laser_acq_loop(void *)
     pthread_mutex_unlock(&shm_mutex);
 #endif
 
-    iter++;
     std::cout << "laser acq time: " << vpTime::measureTimeMs() - t1 << std::endl;
   }
 

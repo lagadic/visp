@@ -31,10 +31,6 @@
  * Description: Class which enables to project an image in the 3D space
  * and get the view of a virtual camera.
  *
- * Authors:
- * Amaury Dame
- * Nicolas Melchior
- *
  *****************************************************************************/
 
 #include <visp3/core/vpImageConvert.h>
@@ -216,7 +212,6 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
     unsigned char *bitmap = I.bitmap;
     unsigned int width = I.getWidth();
     vpImagePoint ip;
-    int nb_point_dessine = 0;
 
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++) {
       for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++) {
@@ -228,7 +223,6 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
           unsigned char Ipixelplan = 0;
           if (getPixel(ip, Ipixelplan)) {
             *(bitmap + i * width + j) = Ipixelplan;
-            nb_point_dessine++;
           }
         } else if (colorI == COLORED) {
           vpRGBa Ipixelplan;
@@ -236,7 +230,6 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
             unsigned char pixelgrey =
                 (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
             *(bitmap + i * width + j) = pixelgrey;
-            nb_point_dessine++;
           }
         }
       }
@@ -277,7 +270,6 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, vpImage<unsigned char
     unsigned char *bitmap = I.bitmap;
     unsigned int width = I.getWidth();
     vpImagePoint ip;
-    int nb_point_dessine = 0;
 
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++) {
       for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++) {
@@ -288,7 +280,6 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, vpImage<unsigned char
         unsigned char Ipixelplan = 0;
         if (getPixel(Isrc, ip, Ipixelplan)) {
           *(bitmap + i * width + j) = Ipixelplan;
-          nb_point_dessine++;
         }
       }
     }
@@ -338,7 +329,6 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
     unsigned char *bitmap = I.bitmap;
     unsigned int width = I.getWidth();
     vpImagePoint ip;
-    int nb_point_dessine = 0;
 
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++) {
       for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++) {
@@ -351,7 +341,6 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
           if (getPixel(ip, Ipixelplan)) {
             if (Xinter_optim[2] < zBuffer[i][j] || zBuffer[i][j] < 0) {
               *(bitmap + i * width + j) = Ipixelplan;
-              nb_point_dessine++;
               zBuffer[i][j] = Xinter_optim[2];
             }
           }
@@ -362,7 +351,6 @@ void vpImageSimulator::getImage(vpImage<unsigned char> &I, const vpCameraParamet
               unsigned char pixelgrey =
                   (unsigned char)(0.2126 * Ipixelplan.R + 0.7152 * Ipixelplan.G + 0.0722 * Ipixelplan.B);
               *(bitmap + i * width + j) = pixelgrey;
-              nb_point_dessine++;
               zBuffer[i][j] = Xinter_optim[2];
             }
           }
@@ -403,7 +391,6 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &ca
     vpRGBa *bitmap = I.bitmap;
     unsigned int width = I.getWidth();
     vpImagePoint ip;
-    int nb_point_dessine = 0;
 
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++) {
       for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++) {
@@ -419,13 +406,11 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &ca
             pixelcolor.G = Ipixelplan;
             pixelcolor.B = Ipixelplan;
             *(bitmap + i * width + j) = pixelcolor;
-            nb_point_dessine++;
           }
         } else if (colorI == COLORED) {
           vpRGBa Ipixelplan;
           if (getPixel(ip, Ipixelplan)) {
             *(bitmap + i * width + j) = Ipixelplan;
-            nb_point_dessine++;
           }
         }
       }
@@ -466,7 +451,6 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc, const
     vpRGBa *bitmap = I.bitmap;
     unsigned int width = I.getWidth();
     vpImagePoint ip;
-    int nb_point_dessine = 0;
 
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++) {
       for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++) {
@@ -477,7 +461,6 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc, const
         vpRGBa Ipixelplan;
         if (getPixel(Isrc, ip, Ipixelplan)) {
           *(bitmap + i * width + j) = Ipixelplan;
-          nb_point_dessine++;
         }
       }
     }
@@ -485,7 +468,7 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, vpImage<vpRGBa> &Isrc, const
 }
 
 /*!
-  Get the view of the virtual camera. Be carefull, the image I is modified.
+  Get the view of the virtual camera. Be careful, the image I is modified.
   The projected image is not added as an overlay!
 
   To take into account the projection of several images, a matrix \f$ zBuffer
@@ -526,7 +509,6 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &ca
     vpRGBa *bitmap = I.bitmap;
     unsigned int width = I.getWidth();
     vpImagePoint ip;
-    int nb_point_dessine = 0;
 
     for (unsigned int i = (unsigned int)top; i < (unsigned int)bottom; i++) {
       for (unsigned int j = (unsigned int)left; j < (unsigned int)right; j++) {
@@ -543,7 +525,6 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &ca
               pixelcolor.G = Ipixelplan;
               pixelcolor.B = Ipixelplan;
               *(bitmap + i * width + j) = pixelcolor;
-              nb_point_dessine++;
               zBuffer[i][j] = Xinter_optim[2];
             }
           }
@@ -552,7 +533,6 @@ void vpImageSimulator::getImage(vpImage<vpRGBa> &I, const vpCameraParameters &ca
           if (getPixel(ip, Ipixelplan)) {
             if (Xinter_optim[2] < zBuffer[i][j] || zBuffer[i][j] < 0) {
               *(bitmap + i * width + j) = Ipixelplan;
-              nb_point_dessine++;
               zBuffer[i][j] = Xinter_optim[2];
             }
           }
