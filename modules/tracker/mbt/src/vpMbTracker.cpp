@@ -276,7 +276,7 @@ void vpMbTracker::initClick(const vpImage<unsigned char> *const I, const vpImage
     finitpos.close();
     last_cMo.buildFrom(init_pos);
 
-    std::cout << "last_cMo : " << std::endl << last_cMo << std::endl;
+    std::cout << "Tracker initial pose read from " << ss.str() << ": " << std::endl << last_cMo << std::endl;
 
     if (I) {
       vpDisplay::display(*I);
