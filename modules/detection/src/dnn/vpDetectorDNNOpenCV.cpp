@@ -920,6 +920,15 @@ void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typePars
     m_scaleFactor = 1/255.;
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] NB: scale factor changed to 1/255. to normalize pixels value." << std::endl;
   }
+
+  #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  if(m_parsingMethodType == SSD_MOBILENET)
+  {
+    std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] WARNING: The chosen type of network is " << dnnResultsParsingTypeToString(m_parsingMethodType) << " VISP_BUILD_DEPRECATED_FUNCTIONS is set to true." << std::endl;
+    std::cout << "\tThe parsing method that worked with  the networks quoted in the ViSP documentation was postProcess_ResNet_10 instead of postProcess_SSD_MobileNet." << std::endl;
+    std::cout << "\tIf the SSD-MobileNet network does not seem to work, please try to recompile ViSP setting VISP_BUILD_DEPRECATED_FUNCTIONS as false." << std::endl << std::flush;
+  }
+  #endif 
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
