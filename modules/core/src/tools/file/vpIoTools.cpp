@@ -1646,6 +1646,42 @@ std::string vpIoTools::getParent(const std::string &pathname)
   }
 }
 
+/**
+ * @brief Return a lower-case version of the string \b input .
+ * Numbers and special characters stay the same
+ * 
+ * @param input The input string for which we want to ensure that all the characters are in lower case.
+ * @return std::string A lower-case version of the string \b input, where 
+ * numbers and special characters stay the same
+ */
+std::string vpIoTools::toLowerCase(const std::string &input)
+{
+  std::string out;
+  for(std::string::const_iterator it = input.cbegin(); it != input.cend(); it++ )
+  {
+    out += std::tolower(*it);
+  }
+  return out;
+}
+
+/**
+ * @brief Return a upper-case version of the string \b input .
+ * Numbers and special characters stay the same
+ * 
+ * @param input The input string for which we want to ensure that all the characters are in upper case.
+ * @return std::string A upper-case version of the string \b input, where 
+ * numbers and special characters stay the same
+ */
+std::string vpIoTools::toUpperCase(const std::string &input)
+{
+  std::string out;
+  for(std::string::const_iterator it = input.cbegin(); it != input.cend(); it++ )
+  {
+    out += std::toupper(*it);
+  }
+  return out;
+}
+
 /*!
   Returns the absolute path using realpath() on Unix systems or
   GetFullPathName() on Windows systems. \return According to realpath()
