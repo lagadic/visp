@@ -60,9 +60,10 @@
   \section dnn_supported_models Supported detection models
   \subsection dnn_supported_faster_rcnn Faster-RCNN
 
-  You can find the config file [here](https://github.com/opencv/opencv_extra/blob/master/testdata/dnn/faster_rcnn_inception_v2_coco_2018_01_28.pbtxt) and the weights [there](http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz).
+  You can find the config file [here](https://github.com/opencv/opencv_extra/blob/master/testdata/dnn/faster_rcnn_inception_v2_coco_2018_01_28.pbtxt) 
+  and the weights [there](http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz).
 
-  To run the tutorial with the `Faster-RCNN` network, please run the following commands:
+  To run the tutorial with the Faster-RCNN network, please run the following commands:
   ```
   $ DNN_PATH=/path/to/my/dnn/folder \
     MODEL=${DNN_PATH}/Faster-RCNN/weights/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb \
@@ -70,10 +71,10 @@
     CONFIG=${DNN_PATH}/Faster-RCNN/cfg/config.pbtxt \
     TYPE=faster-rcnn \
     FRAMEWORK=none \
-    WIDTH=450 HEIGHT=258 
+    WIDTH=300; HEIGHT=300
   $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
       --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
-      --confThresh 0.35 --filterThresh -0.25 --scale 1 
+      --confThresh 0.35 --filterThresh -0.25 --scale 1
   ```
 
   \subsection dnn_supported_mobilenet_ssd MobileNet SSD
