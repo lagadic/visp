@@ -321,7 +321,13 @@ void vpDetectorDNNOpenCV::postProcess(std::map< std::string, std::vector<Detecte
       postProcess_FasterRCNN(proposals, m_dnnRes, m_netConfig);
       break;
     case SSD_MOBILENET:
-      postProcess_SSD_MobileNet(proposals, m_dnnRes, m_netConfig);
+      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+      void postProcess_SSD_MobileNet(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
+      #else 
+      // NB: the two SSD-MobileNet DNNs that have been tested worked only
+      // using the ResNet-10 parsing method
+      postProcess_ResNet_10(proposals, m_dnnRes, m_netConfig);
+      #endif 
       break;
     case RESNET_10:
       postProcess_ResNet_10(proposals, m_dnnRes, m_netConfig);
@@ -645,6 +651,7 @@ void vpDetectorDNNOpenCV::postProcess_FasterRCNN(DetectionCandidates &proposals,
   
 }
 
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 /*!
   Post-process the raw results of a SSD-MobileNet-type  DNN.
   Extract the data stored as a matrix.
@@ -708,6 +715,7 @@ void vpDetectorDNNOpenCV::postProcess_SSD_MobileNet(DetectionCandidates &proposa
     }
   }
 }
+#endif
 
 /*!
   Post-process the raw results of a ResNet-10-type  DNN.
