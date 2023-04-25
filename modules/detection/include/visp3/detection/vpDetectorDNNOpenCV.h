@@ -64,7 +64,7 @@
 
   To run the tutorial with the `Faster-RCNN` network, please run the following commands:
   ```
-  $ DNN_PATH=${HOME}/react_ws/dnns \
+  $ DNN_PATH=/path/to/my/dnn/folder \
     MODEL=${DNN_PATH}/Faster-RCNN/weights/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb \
     LABELS=${DNN_PATH}/Faster-RCNN/cfg/coco_classes.txt \
     CONFIG=${DNN_PATH}/Faster-RCNN/cfg/config.pbtxt \
@@ -83,7 +83,7 @@
 
   To run the tutorial with the `Mobilenet V1` network, please run the following commands:
   ```
-  $ DNN_PATH=${HOME}/react_ws/dnns \
+  $ DNN_PATH=/path/to/my/dnn/folder \
     MODEL=${DNN_PATH}/MobileNet-SSD/weights/ssd-mobilenet.pb \
     LABELS=${DNN_PATH}/MobileNet-SSD/cfg/coco_classes.txt \
     TYPE=ssd-mobilenet \
@@ -98,7 +98,7 @@
   If you would rather use the v3 of Mobilenet-SSD, please download the config file [here](https://gist.github.com/dkurt/54a8e8b51beb3bd3f770b79e56927bd7) and the weights [there](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v3_large_coco_2020_01_14.tar.gz).
   Then, to run the tutorial with the `Mobilenet V3` network, please run the following commands:
   ```
-  $ DNN_PATH=${HOME}/react_ws/dnns \
+  $ DNN_PATH=/path/to/my/dnn/folder \
     MODEL=${DNN_PATH}/MobileNet-SSD/weights/ssd-mobilenet_v3.pb \
     LABELS=${DNN_PATH}/MobileNet-SSD/cfg/coco_classes.txt \
     TYPE=ssd-mobilenet \ 
@@ -106,8 +106,8 @@
     CONFIG=${DNN_PATH}/MobileNet-SSD/cfg/ssd-mobilenet_v3.pbtxt \
     WIDTH=320 HEIGHT=320  
   $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
-        --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 127.5 127.5 127.5 \
-        --filterThresh -0.25 --scale 0.00784
+        --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0.0019 0.0019 0.0019 \
+        --filterThresh -0.25 --scale 0.00389
   ```
 
   \subsection dnn_supported_yolov3 YoloV3
@@ -117,7 +117,7 @@
 
   To run the tutorial program `tutorial-dnn-object-detection-live`, use the following commands:
   ```
-  $ DNN_PATH= /path/to/my/dnn/folder \
+  $ DNN_PATH=/path/to/my/dnn/folder \
     MODEL=${DNN_PATH}/yolov3/weights/yolov3.weights \
     LABELS=${DNN_PATH}/yolov3/cfg/coco_classes.txt \
     TYPE=yolov3 \
@@ -135,7 +135,7 @@
 
   To run the tutorial program `tutorial-dnn-object-detection-live`, use the following commands:
   ```
-  $ DNN_PATH= /path/to/my/dnn/folder \
+  $ DNN_PATH=/path/to/my/dnn/folder \
     MODEL=${DNN_PATH}/yolov4/weights/yolov4-tiny.weights \
     LABELS=${DNN_PATH}/yolov4/cfg/coco_classes.txt \
     TYPE=yolov4 \
@@ -154,7 +154,7 @@
 
   To run the tutorial program `tutorial-dnn-object-detection-live`, use the following commands:
   ```
-  $ DNN_PATH= /path/to/my/dnn/folder \
+  $ DNN_PATH=/path/to/my/dnn/folder \
     MODEL=${DNN_PATH}/yolov5/weights/yolov5n.onnx \
     LABELS=${DNN_PATH}/yolov5/cfg/coco_classes.txt \
     TYPE=yolov5 \
@@ -177,7 +177,7 @@
 
   Finally, please use the following commands to run the tutorial program:
   ```
-  $ DNN_PATH= /path/to/my/dnn/folder \
+  $ DNN_PATH=/path/to/my/dnn/folder \
     MODEL=${DNN_PATH}/yolov7/weights/yolov7-tiny.onnx \
     LABELS=${DNN_PATH}/yolov7/cfg/coco_classes.txt \
     TYPE=yolov7 \
@@ -197,7 +197,7 @@
 
   Please use the following commands to run the tutorial program:
   ```
-  $ DNN_PATH= /path/to/my/dnn/folder \
+  $ DNN_PATH=/path/to/my/dnn/folder \
     MODEL=${DNN_PATH}/yolov8/weights/yolov8s.onnx \
     LABELS=${DNN_PATH}/yolov8/cfg/coco_classes.txt \
     TYPE=yolov8 \
