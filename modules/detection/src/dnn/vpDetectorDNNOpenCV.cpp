@@ -37,6 +37,7 @@
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/detection/vpDetectorDNNOpenCV.h>
+#include <visp3/core/vpIoTools.h>
 
 /**
  * \brief Get the list of the parsing methods / types of DNNs supported by the \b vpDetectorDNNOpenCV class.
@@ -114,10 +115,11 @@ vpDetectorDNNOpenCV::DNNResultsParsingType vpDetectorDNNOpenCV::dnnResultsParsin
 {
   vpDetectorDNNOpenCV::DNNResultsParsingType res(COUNT);
   bool hasFoundMatch = false;
+  std::string name_lowercase = vpIoTools::toLowerCase(name);
   for(int id = 0; id < COUNT && !hasFoundMatch; id++)
   {
     vpDetectorDNNOpenCV::DNNResultsParsingType temp = (vpDetectorDNNOpenCV::DNNResultsParsingType) id;
-    if(dnnResultsParsingTypeToString(temp) == name)
+    if(dnnResultsParsingTypeToString(temp) == name_lowercase)
     {
       res = temp;
       hasFoundMatch = true;
