@@ -77,6 +77,8 @@
       --confThresh 0.35 --filterThresh -0.25 --scale 1
   ```
 
+  If you want to train your own Faster-RCNN model, please refer to this [tutorial](https://debuggercafe.com/how-to-train-faster-rcnn-resnet50-fpn-v2-on-custom-dataset/).
+
   \subsection dnn_supported_mobilenet_ssd MobileNet SSD
 
   If you want to use `Mobilenet V1`, you can find the config file [here](https://raw.githubusercontent.com/Qengineering/MobileNet_SSD_OpenCV_TensorFlow/master/ssd_mobilenet_v1_coco_2017_11_17.pbtxt) and the weights [there](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2017_11_17.tar.gz) (you need to use the `frozen_inference_graph.pb` file).
@@ -111,6 +113,9 @@
         --filterThresh -0.25 --scale 0.00389
   ```
 
+   If you want to train your own MobileNet SSD model, please refer to this [tutorial](https://www.forecr.io/blogs/ai-algorithms/how-to-train-ssd-mobilenet-model-for-object-detection-using-pytorch) 
+   or the [Keras documentation](https://keras.io/api/applications/mobilenet/) for instance.
+
   \subsection dnn_supported_yolov3 YoloV3
 
   You can find the config file [here](https://github.com/AlexeyAB/darknet/blob/master/cfg/yolov3.cfg) and the
@@ -130,6 +135,8 @@
       --filterThresh -0.25 --scale 0.0039
   ```
 
+  If you want to train your own YoloV3 model, please refer to the [official documentation](https://github.com/ultralytics/yolov3).
+
   \subsection dnn_supported_yolov4 YoloV4
 
   You can find the the config file [here}(https://github.com/AlexeyAB/darknet/blob/master/cfg/yolov4-tiny.cfg) and weights [there](https://github.com/AlexeyAB/darknet/releases/download/yolov4/yolov4-tiny.weights).
@@ -147,6 +154,8 @@
       --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
       --filterThresh -0.25 --scale 0.0039
   ```
+
+  If you want to train your own YoloV4 model, please refer to the [official documentation](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects).
 
   \subsection dnn_supported_yolov5 YoloV5
 
@@ -166,6 +175,8 @@
       --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
       --filterThresh -0.25 --scale 0.0039
   ```
+
+  If you want to train your own YoloV5 model, please refer to the [official documentation](https://docs.ultralytics.com/yolov5/tutorials/train_custom_data/#13-prepare-dataset-for-yolov5).
 
   \subsection dnn_supported_yolov7 YoloV7
 
@@ -192,6 +203,8 @@
 
   <b>NB</b>: You do not need a config file when using a network saved in ONNX format.
 
+  If you want to train your own YoloV7 model, please refer to the [official documentation](https://github.com/WongKinYiu/yolov7#transfer-learning).
+
   \subsection dnn_supported_yolov8 YoloV8
 
   You can find the weights in ONNX format [here](https://github.com/JustasBart/yolov8_CPP_Inference_OpenCV_ONNX/blob/minimalistic/source/models/yolov8s.onnx).
@@ -211,6 +224,8 @@
   ```
 
   <b>NB</b>: You do not need a config file when using a network saved in ONNX format.
+
+  If you want to train your own YoloV8 model, please refer to the [official documentation](https://docs.ultralytics.com/modes/train/).
 
   \subsection dnn_troubleshootings Troubleshootings
 
