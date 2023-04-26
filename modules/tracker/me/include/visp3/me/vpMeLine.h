@@ -177,7 +177,7 @@ public:
   vpMeLine(const vpMeLine &meline);
   virtual ~vpMeLine();
 
-  void display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness = 1);
+  void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1);
 
   void track(const vpImage<unsigned char> &Im);
 

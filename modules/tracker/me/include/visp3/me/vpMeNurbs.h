@@ -207,7 +207,7 @@ public:
   */
   inline vpNurbs getNurbs() const { return nurbs; }
 
-  void display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness = 1);
+  void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1);
 
 private:
   bool computeFreemanChainElement(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int &element);

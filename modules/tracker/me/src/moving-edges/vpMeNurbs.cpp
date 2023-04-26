@@ -1019,12 +1019,13 @@ void vpMeNurbs::track(const vpImage<unsigned char> &I)
   vpDisplay::flush() is needed.
 
   \param I : Image in which the edge appears.
-  \param col : Color of the displayed line.
+  \param color : Color of the displayed line.
+  \param thickness : Drawings thickness.
 
  */
-void vpMeNurbs::display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness)
+void vpMeNurbs::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness)
 {
-  vpMeNurbs::display(I, nurbs, col, thickness);
+  vpMeNurbs::display(I, nurbs, color, thickness);
 }
 
 /*!
