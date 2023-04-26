@@ -31,9 +31,6 @@
 # Description:
 # ViSP configuration file.
 #
-# Authors:
-# Fabien Spindler
-#
 #############################################################################
 
 project(example-servo-viper850)

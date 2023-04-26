@@ -34,8 +34,6 @@
 # Description:
 # ViSP configuration file.
 #
-# Authors:
-# Fabien Spindler
 #############################################################################
 
 project(example-servo-kinova)

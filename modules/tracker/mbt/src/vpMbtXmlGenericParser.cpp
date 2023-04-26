@@ -205,13 +205,13 @@ public:
         }
 
         if (!ecm_node && (m_parserType & EDGE_PARSER)) {
-          std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
-          std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
-          std::cout << "ecm : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
-          std::cout << "ecm : contrast : threshold : " << m_ecm.getThreshold() << " (default)" << std::endl;
-          std::cout << "ecm : contrast : mu1 : " << m_ecm.getMu1() << " (default)" << std::endl;
-          std::cout << "ecm : contrast : mu2 : " << m_ecm.getMu2() << " (default)" << std::endl;
-          std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
+          std::cout << "me : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
+          std::cout << "me : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
+          std::cout << "me : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
+          std::cout << "me : contrast : threshold : " << m_ecm.getThreshold() << " (default)" << std::endl;
+          std::cout << "me : contrast : mu1 : " << m_ecm.getMu1() << " (default)" << std::endl;
+          std::cout << "me : contrast : mu2 : " << m_ecm.getMu2() << " (default)" << std::endl;
+          std::cout << "me : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
         }
 
         if (!klt_node && (m_parserType & KLT_PARSER)) {
@@ -623,22 +623,22 @@ public:
 
     if (m_verbose) {
       if (!mask_node) {
-        std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
-        std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
+        std::cout << "me : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
+        std::cout << "me : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
       }
 
       if (!range_node) {
-        std::cout << "ecm : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
+        std::cout << "me : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
       }
 
       if (!contrast_node) {
-        std::cout << "ecm : contrast : threshold " << m_ecm.getThreshold() << " (default)" << std::endl;
-        std::cout << "ecm : contrast : mu1 " << m_ecm.getMu1() << " (default)" << std::endl;
-        std::cout << "ecm : contrast : mu2 " << m_ecm.getMu2() << " (default)" << std::endl;
+        std::cout << "me : contrast : threshold " << m_ecm.getThreshold() << " (default)" << std::endl;
+        std::cout << "me : contrast : mu1 " << m_ecm.getMu1() << " (default)" << std::endl;
+        std::cout << "me : contrast : mu2 " << m_ecm.getMu2() << " (default)" << std::endl;
       }
 
       if (!sample_node) {
-        std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
+        std::cout << "me : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
       }
     }
   }
@@ -692,19 +692,19 @@ public:
 
     if (m_verbose) {
       if (!edge_threshold_node)
-        std::cout << "ecm : contrast : threshold " << m_ecm.getThreshold() << " (default)" << std::endl;
+        std::cout << "me : contrast : threshold " << m_ecm.getThreshold() << " (default)" << std::endl;
       else
-        std::cout << "ecm : contrast : threshold " << m_ecm.getThreshold() << std::endl;
+        std::cout << "me : contrast : threshold " << m_ecm.getThreshold() << std::endl;
 
       if (!mu1_node)
-        std::cout << "ecm : contrast : mu1 " << m_ecm.getMu1() << " (default)" << std::endl;
+        std::cout << "me : contrast : mu1 " << m_ecm.getMu1() << " (default)" << std::endl;
       else
-        std::cout << "ecm : contrast : mu1 " << m_ecm.getMu1() << std::endl;
+        std::cout << "me : contrast : mu1 " << m_ecm.getMu1() << std::endl;
 
       if (!mu2_node)
-        std::cout << "ecm : contrast : mu2 " << m_ecm.getMu2() << " (default)" << std::endl;
+        std::cout << "me : contrast : mu2 " << m_ecm.getMu2() << " (default)" << std::endl;
       else
-        std::cout << "ecm : contrast : mu2 " << m_ecm.getMu2() << std::endl;
+        std::cout << "me : contrast : mu2 " << m_ecm.getMu2() << std::endl;
     }
   }
 
@@ -755,14 +755,14 @@ public:
 
     if (m_verbose) {
       if (!size_node)
-        std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
+        std::cout << "me : mask : size : " << m_ecm.getMaskSize() << " (default)" << std::endl;
       else
-        std::cout << "ecm : mask : size : " << m_ecm.getMaskSize() << std::endl;
+        std::cout << "me : mask : size : " << m_ecm.getMaskSize() << std::endl;
 
       if (!nb_mask_node)
-        std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
+        std::cout << "me : mask : nb_mask : " << m_ecm.getMaskNumber() << " (default)" << std::endl;
       else
-        std::cout << "ecm : mask : nb_mask : " << m_ecm.getMaskNumber() << std::endl;
+        std::cout << "me : mask : nb_mask : " << m_ecm.getMaskNumber() << std::endl;
     }
   }
 
@@ -799,9 +799,9 @@ public:
 
     if (m_verbose) {
       if (!tracking_node)
-        std::cout << "ecm : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
+        std::cout << "me : range : tracking : " << m_ecm.getRange() << " (default)" << std::endl;
       else
-        std::cout << "ecm : range : tracking : " << m_ecm.getRange() << std::endl;
+        std::cout << "me : range : tracking : " << m_ecm.getRange() << std::endl;
     }
   }
 
@@ -838,9 +838,9 @@ public:
 
     if (m_verbose) {
       if (!step_node)
-        std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
+        std::cout << "me : sample : sample_step : " << m_ecm.getSampleStep() << " (default)" << std::endl;
       else
-        std::cout << "ecm : sample : sample_step : " << m_ecm.getSampleStep() << std::endl;
+        std::cout << "me : sample : sample_step : " << m_ecm.getSampleStep() << std::endl;
     }
   }
 
@@ -1194,7 +1194,7 @@ public:
         std::cout << "[DEPRECATED] sample : sample_step : " << m_ecm.getSampleStep() << std::endl;
 
       std::cout << "  WARNING : This node (sample) is deprecated." << std::endl;
-      std::cout << "  It should be moved in the ecm node (ecm : sample)." << std::endl;
+      std::cout << "  It should be moved in the ecm node (me : sample)." << std::endl;
     }
   }
 
@@ -1793,9 +1793,9 @@ void vpMbtXmlGenericParser::setDepthNormalSamplingStepY(unsigned int stepY)
 /*!
   Set moving edge parameters.
 
-  \param ecm : New moving edge parameters
+  \param moving_edge : New moving edge parameters
 */
-void vpMbtXmlGenericParser::setEdgeMe(const vpMe &ecm) { m_impl->setEdgeMe(ecm); }
+void vpMbtXmlGenericParser::setEdgeMe(const vpMe &moving_edge) { m_impl->setEdgeMe(moving_edge); }
 
 /*!
   Set the far clipping distance.

@@ -52,6 +52,7 @@ ViSP 3.5.1 (under development)
       a parent directory on Unix
     . [#1106] SIFT Illegal Instruction error on macOS Intel with OpenCV 4.6.0 installed with brew
     . [#1155] Wrong representation of the ellipse in model-based tracker
+    . [#1160] MBT does not estimate dof set by the user using vpMbTracker::setEstimatedDoF()
 ----------------------------------------------
 ViSP 3.5.0 (released February 15, 2022)
   - Contributors:
@@ -890,7 +891,7 @@ ViSP 2.6.2 (released July 15, 2012)
      - New vpClient and vpServer classes for a multiclients TCP network.
      - New vpPoseFeatures class for pose computation from any visual features.
        To be able to consider other user defined features the compiler should
-       be compatible with C++ 11 standart.
+       be compatible with C++ 11 standard.
   - Improvements
      - Introduce a new Denavit Hartenberg representation of the Biclops head
        in vpBiclops.

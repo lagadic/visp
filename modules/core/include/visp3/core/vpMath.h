@@ -31,11 +31,6 @@
  * Description:
  * Simple mathematical function not available in the C math library (math.h).
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- * Julien Dufour
- *
  *****************************************************************************/
 
 /*!
@@ -158,13 +153,13 @@ public:
   static inline int sign(double x);
 
   // test if a number equals 0 (with threshold value)
-  static inline bool nul(double x, double s = 0.001);
+  static inline bool nul(double x, double threshold = 0.001);
 
   // test if two numbers are equals (with a user defined threshold)
-  static inline bool equal(double x, double y, double s = 0.001);
+  static inline bool equal(double x, double y, double threshold = 0.001);
 
   // test if a number is greater than another (with a user defined threshold)
-  static inline bool greater(double x, double y, double s = 0.001);
+  static inline bool greater(double x, double y, double threshold = 0.001);
 
   /*!
     Find the maximum between two numbers (or other).
@@ -354,41 +349,41 @@ int vpMath::sign(double x)
 }
 
 /*!
-  Compares  \f$ | x | \f$ to \f$ s \f$.
+  Compares \f$ | x | \f$ to `threshold`.
   \param x : Value to test.
-  \param s : Tolerance threshold
-  \return true if \f$ | x | < s \f$.
+  \param threshold : Tolerance threshold
+  \return true if \f$ | x | <\f$ `threshold`.
 */
-bool vpMath::nul(double x, double s) { return (fabs(x) < s); }
+bool vpMath::nul(double x, double threshold) { return (fabs(x) < threshold); }
 
 /*!
-  Compares  \f$ | x - y | \f$ to \f$ s \f$.
+  Compares \f$ | x - y | \f$ to `threshold`.
   \param x : x value.
   \param y : y value.
-  \param s : Tolerance threshold.
-  \return true if \f$ | x - y | < s \f$.
+  \param threshold : Tolerance threshold.
+  \return true if \f$ | x - y | <\f$ `threshold`.
 */
-bool vpMath::equal(double x, double y, double s) { return (nul(x - y, s)); }
+bool vpMath::equal(double x, double y, double threshold) { return (nul(x - y, threshold)); }
 
 /*!
-  Compares  \f$ x \f$ to \f$ y - s \f$.
+  Compares \f$ x \f$ to \f$ y -\f$ `threshold`.
   \param x : x value.
   \param y : y value.
-  \param s : Tolerance threshold.
-  \return true if \f$ x > y - s \f$.
+  \param threshold : Tolerance threshold.
+  \return true if \f$ x > y -\f$ `threshold`.
 */
-bool vpMath::greater(double x, double y, double s) { return (x > (y - s)); }
+bool vpMath::greater(double x, double y, double threshold) { return (x > (y - threshold)); }
 
 /*!
 
- Sigmoid function between [x0,x1] with \f$ s(x)=0 if x\le x0\f$ and \f$ s(x)=1
-if x \ge x1 \f$
+  Sigmoid function between [x0,x1] with \f$ s(x)=0 if x\le x0\f$ and \f$ s(x)=1
+  if x \ge x1 \f$
   \param x : Value of x.
   \param x0 : Lower bound (default 0).
   \param x1 : Upper bound (default 1).
   \param n : Degree of the exponential (default 12).
 
-\return Sigmoid value \f$1/(1+exp(-n*((x-x0)/(x1-x0)-0.5)))\f$
+  \return Sigmoid value \f$1/(1+exp(-n*((x-x0)/(x1-x0)-0.5)))\f$
  */
 double vpMath::sigmoid(double x, double x0, double x1, double n)
 {

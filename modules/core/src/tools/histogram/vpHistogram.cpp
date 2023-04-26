@@ -31,9 +31,6 @@
  * Description:
  * Gray level histogram manipulation.
  *
- * Author:
- * Fabien Spindler
- *
  *****************************************************************************/
 
 /*!
@@ -89,12 +86,6 @@ vpThread::Return computeHistogramThread(vpThread::Args args)
   unsigned char *ptrStart = (unsigned char *)(I->bitmap) + start_index;
   unsigned char *ptrEnd = (unsigned char *)(I->bitmap) + end_index;
   unsigned char *ptrCurrent = ptrStart;
-
-  //    while(ptrCurrent != ptrEnd) {
-  //      histogram_param->m_histogram[ histogram_param->m_lut[ *ptrCurrent ]
-  //      ] ++;
-  //      ++ptrCurrent;
-  //    }
 
   if (end_index - start_index >= 8) {
     // Unroll loop version
@@ -962,13 +953,11 @@ unsigned vpHistogram::getValey(unsigned char dist, const vpHistogramPeak &peak, 
     }
     // Go to the requested peak in the list
     std::list<vpHistogramPeak>::const_iterator it;
-    unsigned index = 0;
     for (it = peaks.begin(); it != peaks.end(); ++it) {
       if (peak == *it) {
         // we are on the peak.
         break;
       }
-      index++;
     }
 
     bool found = false;

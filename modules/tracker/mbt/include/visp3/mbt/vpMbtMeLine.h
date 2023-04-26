@@ -80,7 +80,7 @@ public:
                               const vpMatrix &SobelX, const vpMatrix &SobelY, bool display, unsigned int length,
                               unsigned int thickness);
 
-  void display(const vpImage<unsigned char> & /*I*/, vpColor /*col*/) { ; }
+  void display(const vpImage<unsigned char> & /* I */, const vpColor &/* col */, unsigned int /* thickness */) { ; }
   using vpMeTracker::display;
 
   /*!

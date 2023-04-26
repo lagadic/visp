@@ -83,7 +83,7 @@
   - The control points \f$ {P_i} \f$ which are defined by the coordinates \f$
   (i,j) \f$ of a point in an image.
 
-  - The weight \f$ {w_i} \f$ associated to each control points.The wheights
+  - The weight \f$ {w_i} \f$ associated to each control points. The weights
   value is upper than 0.
 
   It is possible to compute the coordinates of a point corresponding to the

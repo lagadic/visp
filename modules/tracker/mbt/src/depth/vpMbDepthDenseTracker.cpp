@@ -162,7 +162,10 @@ void vpMbDepthDenseTracker::computeVVS()
   double mu = m_initialMu;
   vpHomogeneousMatrix cMo_prev;
 
-  bool isoJoIdentity_ = true;
+  bool isoJoIdentity = m_isoJoIdentity; // Backup since it can be modified if L is not full rank
+  if (isoJoIdentity)
+    oJo.eye();
+
   vpVelocityTwistMatrix cVo;
   vpMatrix L_true, LVJ_true;
 
@@ -177,7 +180,7 @@ void vpMbDepthDenseTracker::computeVVS()
 
       if (computeCovariance) {
         L_true = m_L_depthDense;
-        if (!isoJoIdentity_) {
+        if (!isoJoIdentity) {
           cVo.buildFrom(m_cMo);
           LVJ_true = (m_L_depthDense * cVo * oJo);
         }
@@ -185,14 +188,11 @@ void vpMbDepthDenseTracker::computeVVS()
 
       // Compute DoF only once
       if (iter == 0) {
-        isoJoIdentity_ = true;
-        oJo.eye();
-
         // If all the 6 dof should be estimated, we check if the interaction
         // matrix is full rank. If not we remove automatically the dof that
-        // cannot be estimated This is particularly useful when considering
+        // cannot be estimated. This is particularly useful when considering
         // circles (rank 5) and cylinders (rank 4)
-        if (isoJoIdentity_) {
+        if (isoJoIdentity) {
           cVo.buildFrom(m_cMo);
 
           vpMatrix K; // kernel
@@ -206,7 +206,7 @@ void vpMbDepthDenseTracker::computeVVS()
             I.eye(6);
             oJo = I - K.AtA();
 
-            isoJoIdentity_ = false;
+            isoJoIdentity = false;
           }
         }
       }
@@ -224,7 +224,7 @@ void vpMbDepthDenseTracker::computeVVS()
         }
       }
 
-      computeVVSPoseEstimation(isoJoIdentity_, iter, m_L_depthDense, LTL, m_weightedError_depthDense,
+      computeVVSPoseEstimation(isoJoIdentity, iter, m_L_depthDense, LTL, m_weightedError_depthDense,
                                m_error_depthDense, error_prev, LTR, mu, v);
 
       cMo_prev = m_cMo;
@@ -237,7 +237,7 @@ void vpMbDepthDenseTracker::computeVVS()
     iter++;
   }
 
-  computeCovarianceMatrixVVS(isoJoIdentity_, m_w_depthDense, cMo_prev, L_true, LVJ_true, m_error_depthDense);
+  computeCovarianceMatrixVVS(isoJoIdentity, m_w_depthDense, cMo_prev, L_true, LVJ_true, m_error_depthDense);
 }
 
 void vpMbDepthDenseTracker::computeVVSInit()

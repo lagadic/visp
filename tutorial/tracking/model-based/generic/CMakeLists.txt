@@ -39,6 +39,7 @@ foreach(cpp ${tutorial_cpp})
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-reorder")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-sign-compare")
     list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unused-function")
+    list(APPEND CXX_FLAGS_MUTE_WARNINGS "-Wno-unqualified-std-cast-call")
   endif()
 
   if(CXX_FLAGS_MUTE_WARNINGS)

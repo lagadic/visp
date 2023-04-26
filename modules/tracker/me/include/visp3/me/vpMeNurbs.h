@@ -31,9 +31,6 @@
  * Description:
  * Moving edges.
  *
- * Authors:
- * Nicolas Melchior
- *
  *****************************************************************************/
 
 /*!
@@ -122,9 +119,10 @@ int main()
   must use the display function of the class vpMeNurbs.
 
   \note In case of an edge which is not smooth, it can be interesting to use
-the canny detection to find the extremities. In this case, use the method
-  setEnableCannyDetection to enable it. Warning : This function requires
-OpenCV.
+  the canny detection to find the extremities. In this case, use the method
+  setEnableCannyDetection to enable it.
+
+  \warning : This function requires OpenCV.
 */
 
 class VISP_EXPORT vpMeNurbs : public vpMeTracker
@@ -209,7 +207,7 @@ public:
   */
   inline vpNurbs getNurbs() const { return nurbs; }
 
-  void display(const vpImage<unsigned char> &I, vpColor col);
+  void display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness = 1);
 
 private:
   bool computeFreemanChainElement(const vpImage<unsigned char> &I, vpImagePoint &iP, unsigned int &element);
@@ -223,8 +221,8 @@ private:
   bool farFromImageEdge(const vpImage<unsigned char> &I, const vpImagePoint &iP);
 
 public:
-  static void display(const vpImage<unsigned char> &I, vpNurbs &n, vpColor color = vpColor::green);
-  static void display(const vpImage<vpRGBa> &I, vpNurbs &n, vpColor color = vpColor::green);
+  static void display(const vpImage<unsigned char> &I, vpNurbs &n, const vpColor &color = vpColor::green, unsigned int thickness = 1);
+  static void display(const vpImage<vpRGBa> &I, vpNurbs &n, const vpColor &color = vpColor::green, unsigned int thickness = 1);
 };
 
 #endif

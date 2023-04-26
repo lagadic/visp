@@ -2221,7 +2221,6 @@ void vpDisplayX::displayLine(const vpImagePoint &ip1, const vpImagePoint &ip2, c
   if (m_displayHasBeenInitialized) {
     if (thickness == 1)
       thickness = 0;
-
     m_impl->displayLine(ip1, ip2, color, thickness, m_scale);
   } else {
     throw(vpDisplayException(vpDisplayException::notInitializedError, "X not initialized"));

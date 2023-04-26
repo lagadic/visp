@@ -31,9 +31,6 @@
  * Description:
  * Moving edges.
  *
- * Authors:
- * Eric Marchand
- *
  *****************************************************************************/
 
 /*!
@@ -221,9 +218,9 @@ void vpMeLine::sample(const vpImage<unsigned char> &I, bool doNotTrack)
   that is considered as an outlier is displayed in green.
 
  */
-void vpMeLine::display(const vpImage<unsigned char> &I, vpColor col)
+void vpMeLine::display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness)
 {
-  vpMeLine::display(I, PExt[0], PExt[1], list, a, b, c, col);
+  vpMeLine::display(I, PExt[0], PExt[1], list, a, b, c, col, thickness);
 }
 
 /*!

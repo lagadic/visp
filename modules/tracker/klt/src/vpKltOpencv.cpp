@@ -104,8 +104,8 @@ vpKltOpencv::~vpKltOpencv() {}
 /*!
   Initialise the tracking by extracting KLT keypoints on the provided image.
 
-  \param I : Grey level image used as input. This image should have only 1
-  channel. \param mask : Image mask used to restrict the keypoint detection
+  \param I : Grey level image used as input. This image should have only 1 channel.
+  \param mask : Image mask used to restrict the keypoint detection
   area. If mask is NULL, all the image will be considered.
 
   \exception vpTrackingException::initializationError : If the image I is not
