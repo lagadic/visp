@@ -2874,9 +2874,11 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string& settingsFile, boo
 
   //Load Basic settings
   settings.at("referenceCameraName").get_to(m_referenceCameraName);
-  // settings.at("thresholdOutlier").get_to(m_thresholdOutlier);
   json trackersJson;
   trackersJson = settings.at("trackers");
+  
+  //Find camera that are already present in the tracker but not in the config file: they will be removed
+  std::vector<std::string> unusedCameraNames = getCameraNames();
   
   //Foreach camera
   for(const auto& it: trackersJson.items()) {
@@ -2904,7 +2906,17 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string& settingsFile, boo
       *tw = trackerJson;
       m_mapOfTrackers[cameraName] = tw;
     }
+    const auto unusedCamIt = std::remove(unusedCameraNames.begin(), unusedCameraNames.end(), cameraName); // Mark this camera name as used
+    unusedCameraNames.erase(unusedCamIt, unusedCameraNames.end());
   }
+  // All camerasthat were defined in the tracker but not in the config file are removed
+  for(const std::string& oldCameraName: unusedCameraNames) {
+    m_mapOfCameraTransformationMatrix.erase(oldCameraName);
+    TrackerWrapper* tw = m_mapOfTrackers[oldCameraName];
+    m_mapOfTrackers.erase(oldCameraName);
+    delete tw;
+  }
+
   const TrackerWrapper* refTracker = m_mapOfTrackers[m_referenceCameraName];
   refTracker->getCameraParameters(m_cam);
   this->angleAppears = refTracker->getAngleAppear();

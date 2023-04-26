@@ -205,5 +205,181 @@ If they are defined globally, they will take precedence over the values defined 
 
 \subsection json-per-tracker-settings Individual camera tracker settings
 
+Each camera has a name (the key in the "trackers" dictionary, e.g., "Camera1", "Camera2") and is associated to a combination of tracker.
+
+First, consider, the tracker for the key "Camera1":
+\code{.json}
+//...
+"Camera1": {
+    "angleAppear": 65.0,
+    "angleDisappear": 75.00000000000001,
+    "camTref": [
+        1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+        0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0
+    ],
+    "camera": {
+        "model": "perspectiveWithoutDistortion",
+        "px": 605.146728515625,
+        "py": 604.79150390625,
+        "u0": 325.53253173828125,
+        "v0": 244.95083618164063
+    },
+    "clipping": {
+        "far": 0.9,
+        "near": 0.1,
+        "useFOVClipping": false
+    },
+    "display": {
+        "features": true,
+        "projectionError": true
+    },
+    "edge_tracker": {
+        "angleStep": 1,
+        "maskSign": 0,
+        "maskSize": 5,
+        "minSampleStep": 4.0,
+        "mu": [
+            0.5,
+            0.5
+        ],
+        "nMask": 180,
+        "ntotal_sample": 0,
+        "pointsToTrack": 500,
+        "range": 7,
+        "sampleStep": 4.0,
+        "strip": 2,
+        "threshold": 5000.0
+    },
+    "klt": {
+        "blockSize": 3,
+        "harris": 0.01,
+        "maskBorder": 5,
+        "maxFeatures": 300,
+        "minDistance": 5.0,
+        "pyramidLevels": 3,
+        "quality": 0.01,
+        "windowSize": 5
+    },
+    "lod": {
+        "minLineLengthThresholdGeneral": 50.0,
+        "minPolygonAreaThresholdGeneral": 2500.0,
+        "useLod": false
+    },
+    "type": [
+        "edge",
+        "klt"
+    ],
+    "visibilityTest": {
+        "ogre": false,
+        "scanline": true
+    }
+} //...
+\endcode
+
+This JSON object contains multiple components which we'll go through one by one.
+
+First each camera-specific tracker definition must contain its type. Here, it is defined as:
+\code{.json}
+"type": [
+    "edge",
+    "klt"
+],
+\endcode
+stating that this tracker uses both edge (see the vpMe class) and KLT (see vpKltOpencv) features. other possible values are "depthDense" and "depthNormal" for depth-related features.
+
+the next important definition is:
+\code{.json}
+"camTref": [
+    1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+    0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0
+],
+\endcode
+Describing the transformation between this camera and the reference camera. 
+If the current camera is the reference, then "camTref" may be ommitted or set as the identity transformation.
+
+Next, we must define the camera intrinsics (see vpCameraParameters):
+\code{.json}
+"camera": {
+    "model": "perspectiveWithoutDistortion",
+    "px": 605.146728515625,
+    "py": 604.79150390625,
+    "u0": 325.53253173828125,
+    "v0": 244.95083618164063
+},
+\endcode
+This JSON object follows the convention defined in vpCameraParameters::from_json.
+
+Other common settings include:
+<table>
+<tr><th>Key</th><th>Type</th><th>Description</th><th>Reference</th><th>Optional</th></tr>
+<tr>
+    <td>angleAppear</td>
+    <td>float</td>
+    <td>Angle at which a face is considered as appearing, defined in degrees.</td>
+    <td>vpMbTracker::setAngleAppear</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td>angleDisappear</td>
+    <td>float</td>
+    <td>Angle at which a face is considered as disappearing, defined in degrees.</td>
+    <td>vpMbTracker::setAngleDisappear</td>
+    <td>Yes</td>
+</tr>
+<tr><th colspan="5">clipping (optional)</th></tr>
+<tr>
+    <td>useFovClipping</td>
+    <td>boolean</td>
+    <td>Whether to use field of view clipping.</td>
+    <td>vpPolygon3D, vpMbTracker::setClipping</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td>near</td>
+    <td>float</td>
+    <td>Near plane clipping distance.</td>
+    <td>vpMbTracker::setNearClippingDistance</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td>far</td>
+    <td>float</td>
+    <td>Far plane clipping distance. </td>
+    <td>vpMbTracker::setFarClippingDistance</td>
+    <td>Yes</td>
+</tr>
+<tr><th colspan="5">lod (optional)</th></tr>
+<tr>
+    <td>useLod</td>
+    <td>boolean</td>
+    <td>Whether to use level of detail.</td>
+    <td>vpMbTracker::setLod</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td>minLineLengthThresholdGeneral</td>
+    <td>float</td>
+    <td>Minimum line length to be considered as visible in LOD.</td>
+    <td>vpMbTracker::setMinLineLengthThresh</td>
+    <td>Yes</td>
+</tr>
+<tr>
+    <td>minPolygonAreaThresholdGeneral</td>
+    <td>float</td>
+    <td>Minimum polygon area to be considered as visible in LOD. </td>
+    <td>vpMbTracker::setMinPolygonAreaThresh</td>
+    <td>Yes</td>
+</tr>
+<tr><th colspan="5">display (optional)</th></tr>
+<tr><td colspan="5">See \ref json-global-tracker-settings</td></tr>
+<tr><th colspan="5">visibilityTest (optional)</th></tr>
+<tr><td colspan="5">See \ref json-global-tracker-settings</td></tr>
+</table>
+
+
+\subsubsection json-feature-settings Tracker Feature settings
+
+Each type of tracked feature can be customized in the JSON file.
+
 
 */
