@@ -1,0 +1,83 @@
+{
+    "referenceCameraName": "Color",
+    "trackers": {
+        "Color": {
+            "angleAppear": 65.0,
+            "angleDisappear": 75.00000000000001,
+            "camTref": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ],
+            "camera": {
+                "model": "perspectiveWithoutDistortion",
+                "px": 605.146728515625,
+                "py": 604.79150390625,
+                "u0": 325.53253173828125,
+                "v0": 244.95083618164063
+            },
+            "clipping": {
+                "far": 0.9,
+                "near": 0.1,
+                "useFOVClipping": false
+            },
+            "display": {
+                "features": true,
+                "projectionError": true
+            },
+            "edge_tracker": {
+                "angleStep": 1,
+                "maskSign": 0,
+                "maskSize": 5,
+                "minSampleStep": 4.0,
+                "mu": [
+                    0.5,
+                    0.5
+                ],
+                "nMask": 180,
+                "ntotal_sample": 0,
+                "pointsToTrack": 500,
+                "range": 7,
+                "sampleStep": 4.0,
+                "strip": 2,
+                "threshold": 5000.0
+            },
+            "klt": {
+                "blockSize": 3,
+                "harris": 0.01,
+                "maskBorder": 5,
+                "maxFeatures": 300,
+                "minDistance": 5.0,
+                "pyramidLevels": 3,
+                "quality": 0.01,
+                "windowSize": 5
+            },
+            "lod": {
+                "minLineLengthThresholdGeneral": 50.0,
+                "minPolygonAreaThresholdGeneral": 2500.0,
+                "useLod": false
+            },
+            "type": [
+                "edge",
+                "klt"
+            ],
+            "visibilityTest": {
+                "ogre": false,
+                "scanline": true
+            }
+        }
+    }
+}
