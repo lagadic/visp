@@ -15,6 +15,8 @@ This page references all the tutorials to use and contribute to ViSP.
 
 - \subpage tutorial_detection
 
+- \subpage tutorial_detection_dnn
+
 - \subpage tutorial_computer_vision
 
 - \subpage tutorial_vs
@@ -108,6 +110,12 @@ This page introduces the user to the way to detect features or objects in images
 - \subpage tutorial-detection-object <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object.
 - \subpage tutorial-detection-object-deprecated <br>This tutorial shows how to learn keypoints detected on a known object and how to use the matched correspondences to detect and estimate the pose of the object. We recommend to follow rather \ref tutorial-detection-object that uses vpMbGenericTracker class.
 - \subpage tutorial-detection-apriltag <br>This tutorial focuses on AprilTag patterns detection and pose estimation.
+
+*/
+
+/*! \page tutorial_detection_dnn DNN detection
+This page introduces the user to the way to detect features or objects in images using Deep Neural Network (DNN).
+
 - \subpage tutorial-detection-dnn <br>This tutorial shows how to do deep learning object detection.
 - \subpage tutorial-detection-tensorrt <br>This tutorial shows how to perform object detection inference using NVIDIA TensorRT inference SDK.
 
