@@ -6,7 +6,6 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
-
 int main(int argc, const char *argv[])
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
@@ -17,6 +16,7 @@ int main(int argc, const char *argv[])
     std::string model = "opencv_face_detector_uint8.pb";
     std::string config = "opencv_face_detector.pbtxt";
     std::string framework = "tensorflow";
+    std::string labelFile = "";
     vpDetectorDNNOpenCV::DNNResultsParsingType type = vpDetectorDNNOpenCV::RESNET_10;
     //! [OpenCV DNN face detector]
     int inputWidth = 300, inputHeight = 300;
@@ -27,58 +27,61 @@ int main(int argc, const char *argv[])
     float confThresh = 0.5f;
     float nmsThresh = 0.4f;
     double detectionFilter = 0.25;
-    std::string labelFile = "";
+    bool verbose = false;
+
     for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--device" && i + 1 < argc) {
-        opt_device = atoi(argv[i + 1]);
+        opt_device = atoi(argv[++i]);
       } else if (std::string(argv[i]) == "--waitForClick") {
         hasToWaitClick = true;
       } else if (std::string(argv[i]) == "--input" && i + 1 < argc) {
-        input = std::string(argv[i + 1]);
+        input = std::string(argv[++i]);
       } else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
-        model = std::string(argv[i + 1]);
-      }else if (std::string(argv[i]) == "--type" && i + 1 < argc) {
-        type =  vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(std::string(argv[i + 1]));
+        model = std::string(argv[++i]);
+      } else if (std::string(argv[i]) == "--type" && i + 1 < argc) {
+        type =  vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(std::string(argv[++i]));
       } else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
-        config = std::string(argv[i + 1]);
+        config = std::string(argv[++i]);
         if(config.find("none") != std::string::npos)
         {
           config = std::string();
         }
       } else if (std::string(argv[i]) == "--framework" && i + 1 < argc) {
-        framework = std::string(argv[i + 1]);
+        framework = std::string(argv[++i]);
         if(framework.find("none") != std::string::npos)
         {
           framework = std::string();
         }
       } else if (std::string(argv[i]) == "--width" && i + 1 < argc) {
-        inputWidth = atoi(argv[i + 1]);
+        inputWidth = atoi(argv[++i]);
       } else if (std::string(argv[i]) == "--height" && i + 1 < argc) {
-        inputHeight = atoi(argv[i + 1]);
+        inputHeight = atoi(argv[++i]);
       } else if (std::string(argv[i]) == "--mean" && i + 3 < argc) {
-        meanR = atof(argv[i + 1]);
-        meanG = atof(argv[i + 2]);
-        meanB = atof(argv[i + 3]);
+        meanR = atof(argv[++i]);
+        meanG = atof(argv[++i]);
+        meanB = atof(argv[++i]);
       } else if (std::string(argv[i]) == "--scale" && i + 1 < argc) {
-        scaleFactor = atof(argv[i + 1]);
+        scaleFactor = atof(argv[++i]);
       } else if (std::string(argv[i]) == "--swapRB") {
         swapRB = true;
       } else if (std::string(argv[i]) == "--confThresh" && i + 1 < argc) {
-        confThresh = (float)atof(argv[i + 1]);
+        confThresh = (float)atof(argv[++i]);
       } else if (std::string(argv[i]) == "--nmsThresh" && i + 1 < argc) {
-        nmsThresh = (float)atof(argv[i + 1]);
+        nmsThresh = (float)atof(argv[++i]);
       } else if (std::string(argv[i]) == "--filterThresh" && i + 1 < argc) {
-        detectionFilter = atof(argv[i + 1]);
+        detectionFilter = atof(argv[++i]);
       } else if (std::string(argv[i]) == "--labels" && i + 1 < argc) {
-        labelFile = std::string(argv[i + 1]);
+        labelFile = std::string(argv[++i]);
+      } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
+        verbose = true;
       } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << argv[0]
                   << " --device <camera device number> --waitForClick --input <path to image or video>"
                      " (camera is used if input is empty) --model <path to net trained weights>"
-                     " --type <type of DNN in " + vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes() + 
+                     " --type <type of DNN in " + vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes() +
                      "> --config <path to net config file or \"none\" not to use one> --framework <framework name or \"none\" not to specify one>"
                      " --width <blob width> --height <blob height>"
-                     " -- mean <meanR meanG meanB> --scale <scale factor>"
+                     " --mean <meanR meanG meanB> --scale <scale factor>"
                      " --swapRB --confThresh <confidence threshold>"
                      " --nmsThresh <NMS threshold> --filterThresh <threshold > 0., 0. to disable> --labels <path to label file>"
                   << std::endl;
@@ -86,18 +89,18 @@ int main(int argc, const char *argv[])
       }
     }
 
-    std::cout << "Model: " << model << std::endl;
-    std::cout << "Type: " << vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(type) << std::endl;
-    std::cout << "Config: " << (config.empty() ? "\"None\"" : config) << std::endl;
-    std::cout << "Framework: " << (framework.empty() ? "\"None\"" : framework) << std::endl;
-    std::cout << "Width: " << inputWidth << std::endl;
-    std::cout << "Height: " << inputHeight << std::endl;
-    std::cout << "Mean: " << meanR << ", " << meanG << ", " << meanB << std::endl;
-    std::cout << "Scale: " << scaleFactor << std::endl;
-    std::cout << "Swap RB? " << swapRB << std::endl;
-    std::cout << "Confidence threshold: " << confThresh << std::endl;
-    std::cout << "NMS threshold: " << nmsThresh << std::endl;
-    std::cout << "Filter threshold: " << (detectionFilter > std::numeric_limits<double>::epsilon() ? std::to_string(detectionFilter) : "disabled") << std::endl;
+    std::cout << "Model                : " << model << std::endl;
+    std::cout << "Type                 : " << vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(type) << std::endl;
+    std::cout << "Config               : " << (config.empty() ? "\"None\"" : config) << std::endl;
+    std::cout << "Framework            : " << (framework.empty() ? "\"None\"" : framework) << std::endl;
+    std::cout << "Label file (optional): " << (labelFile.empty() ? "None" : labelFile)  << std::endl;
+    std::cout << "Width x Height       : " << inputWidth << " x " << inputHeight << std::endl;
+    std::cout << "Mean                 : " << meanR << ", " << meanG << ", " << meanB << std::endl;
+    std::cout << "Scale                : " << scaleFactor << std::endl;
+    std::cout << "Swap RB?             : " << swapRB << std::endl;
+    std::cout << "Confidence threshold : " << confThresh << std::endl;
+    std::cout << "NMS threshold        : " << nmsThresh << std::endl;
+    std::cout << "Filter threshold     : " << (detectionFilter > std::numeric_limits<double>::epsilon() ? std::to_string(detectionFilter) : "disabled") << std::endl;
 
     cv::VideoCapture capture;
     bool hasCaptureOpeningSucceeded;
@@ -121,12 +124,9 @@ int main(int argc, const char *argv[])
 #elif defined(VISP_HAVE_OPENCV)
     vpDisplayOpenCV d;
 #endif
+    d.setDownScalingFactor(vpDisplay::SCALE_AUTO);
 
-    if (labelFile.empty()) {
-      throw(vpException(vpException::fatalError, "The path to the file containing the classes labels is empty !"));
-    }
-    else if(!vpIoTools::checkFilename(labelFile))
-    {
+    if (! labelFile.empty() && !vpIoTools::checkFilename(labelFile)) {
       throw(vpException(vpException::fatalError, "The file containing the classes labels \"" + labelFile + "\" does not exist !"));
     }
 
@@ -149,10 +149,15 @@ int main(int argc, const char *argv[])
         vpImageConvert::convert(frame, I);
         d.init(I);
         vpDisplay::setTitle(I, "DNN object detection");
+        if (verbose) {
+          std::cout << "Process image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
+        }
       } else {
         vpImageConvert::convert(frame, I);
       }
-
+      if (verbose) {
+        std::cout << "Process new image" << std::endl;
+      }
       double t = vpTime::measureTimeMs();
       //! [DNN object detection]
       std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>> detections;
@@ -162,16 +167,31 @@ int main(int argc, const char *argv[])
 
       vpDisplay::display(I);
 
+      //! [DNN class ids and confidences]
       for( auto key_val : detections)
       {
+        if (verbose) {
+          std::cout << "  Class name      : " << key_val.first << std::endl;
+        }
         for(vpDetectorDNNOpenCV::DetectedFeatures2D detection : key_val.second )
         {
+          if (verbose) {
+            std::cout << "  Bounding box    : " << detection.getBoundingBox() << std::endl;
+            std::cout << "  Class Id        : " << detection.getClassId() << std::endl;
+            if (detection.getClassName())
+              std::cout << "  Class name      : " << detection.getClassName().value() << std::endl;
+            std::cout << "  Confidence score: " << detection.getConfidenceScore() << std::endl;
+          }
           detection.display(I);
         }
       }
-      
+      //! [DNN class ids and confidences]
+
       std::ostringstream oss;
       oss << "Detection time: " << t << " ms";
+      if (verbose) {
+        std::cout << "  " << oss.str() << std::endl;
+      }
       if(hasToWaitClick)
       {
         // hasToWaitClick => we are displaying images
@@ -182,7 +202,7 @@ int main(int argc, const char *argv[])
 
       vpDisplay::flush(I);
       vpMouseButton::vpMouseButtonType button;
-    
+
       if (vpDisplay::getClick(I, button, hasToWaitClick))
       {
         if (button == vpMouseButton::button1)

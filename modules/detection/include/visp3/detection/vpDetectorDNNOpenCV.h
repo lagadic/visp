@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,210 +56,17 @@
   This class is a wrapper over the <a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">
   OpenCV DNN module</a> and specialized to handle object detection task.
 
-  //! [vpDetectorDNNOpenCV supported models]
-  \section dnn_supported_models Supported detection models
-  \subsection dnn_supported_faster_rcnn Faster-RCNN
+  This class supports the following detection models:
 
-  You can find the config file [here](https://github.com/opencv/opencv_extra/blob/master/testdata/dnn/faster_rcnn_inception_v2_coco_2018_01_28.pbtxt) 
-  and the weights [there](http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz).
+  - \ref dnn_supported_faster_rcnn
+  - \ref dnn_supported_mobilenet_ssd
+  - \ref dnn_supported_yolov3
+  - \ref dnn_supported_yolov4
+  - \ref dnn_supported_yolov5
+  - \ref dnn_supported_yolov7
+  - \ref dnn_supported_yolov8
 
-  To run the tutorial with the Faster-RCNN network, please run the following commands:
-  ```
-  $ DNN_PATH=/path/to/my/dnn/folder \
-    MODEL=${DNN_PATH}/Faster-RCNN/weights/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb \
-    LABELS=${DNN_PATH}/Faster-RCNN/cfg/coco_classes.txt \
-    CONFIG=${DNN_PATH}/Faster-RCNN/cfg/config.pbtxt \
-    TYPE=faster-rcnn \
-    FRAMEWORK=none \
-    WIDTH=300; HEIGHT=300
-  $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
-      --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
-      --confThresh 0.35 --filterThresh -0.25 --scale 1
-  ```
-
-  If you want to train your own Faster-RCNN model, please refer to this [tutorial](https://debuggercafe.com/how-to-train-faster-rcnn-resnet50-fpn-v2-on-custom-dataset/).
-
-  \subsection dnn_supported_mobilenet_ssd MobileNet SSD
-
-  If you want to use `Mobilenet V1`, you can find the config file [here](https://raw.githubusercontent.com/Qengineering/MobileNet_SSD_OpenCV_TensorFlow/master/ssd_mobilenet_v1_coco_2017_11_17.pbtxt) and the weights [there](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2017_11_17.tar.gz) (you need to use the `frozen_inference_graph.pb` file).
-  The parameters to use with this network were found [there](https://github.com/opencv/opencv/blob/0052d46b8e33c7bfe0e1450e4bff28b88f455570/samples/dnn/models.yml#L68).
-
-  To run the tutorial with the `Mobilenet V1` network, please run the following commands:
-  ```
-  $ DNN_PATH=/path/to/my/dnn/folder \
-    MODEL=${DNN_PATH}/MobileNet-SSD/weights/ssd-mobilenet.pb \
-    LABELS=${DNN_PATH}/MobileNet-SSD/cfg/coco_classes.txt \
-    TYPE=ssd-mobilenet \
-    FRAMEWORK=none \
-    CONFIG=${DNN_PATH}/MobileNet-SSD/cfg/ssd-mobilenet.pbtxt \
-    WIDTH=300 HEIGHT=300
-  $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
-        --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
-        --filterThresh -0.25 --scale 1
-  ```
-
-  If you would rather use the v3 of Mobilenet-SSD, please download the config file [here](https://gist.github.com/dkurt/54a8e8b51beb3bd3f770b79e56927bd7) and the weights [there](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v3_large_coco_2020_01_14.tar.gz).
-  Then, to run the tutorial with the `Mobilenet V3` network, please run the following commands:
-  ```
-  $ DNN_PATH=/path/to/my/dnn/folder \
-    MODEL=${DNN_PATH}/MobileNet-SSD/weights/ssd-mobilenet_v3.pb \
-    LABELS=${DNN_PATH}/MobileNet-SSD/cfg/coco_classes.txt \
-    TYPE=ssd-mobilenet \ 
-    FRAMEWORK=none \ 
-    CONFIG=${DNN_PATH}/MobileNet-SSD/cfg/ssd-mobilenet_v3.pbtxt \
-    WIDTH=320 HEIGHT=320  
-  $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
-        --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0.0019 0.0019 0.0019 \
-        --filterThresh -0.25 --scale 0.00389
-  ```
-
-   If you want to train your own MobileNet SSD model, please refer to this [tutorial](https://www.forecr.io/blogs/ai-algorithms/how-to-train-ssd-mobilenet-model-for-object-detection-using-pytorch) 
-   or the [Keras documentation](https://keras.io/api/applications/mobilenet/) for instance.
-
-  \subsection dnn_supported_yolov3 YoloV3
-
-  You can find the config file [here](https://github.com/AlexeyAB/darknet/blob/master/cfg/yolov3.cfg) and the
-  weights [there](https://pjreddie.com/media/files/yolov3.weights).
-
-  To run the tutorial program `tutorial-dnn-object-detection-live`, use the following commands:
-  ```
-  $ DNN_PATH=/path/to/my/dnn/folder \
-    MODEL=${DNN_PATH}/yolov3/weights/yolov3.weights \
-    LABELS=${DNN_PATH}/yolov3/cfg/coco_classes.txt \
-    TYPE=yolov3 \
-    FRAMEWORK=darknet \
-    CONFIG=${DNN_PATH}/yolov3/cfg/yolov3.cfg \
-    WIDTH=416 HEIGHT=416
-  $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
-      --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
-      --filterThresh -0.25 --scale 0.0039
-  ```
-
-  If you want to train your own YoloV3 model, please refer to the [official documentation](https://github.com/ultralytics/yolov3).
-
-  \subsection dnn_supported_yolov4 YoloV4
-
-  You can find the the config file [here}(https://github.com/AlexeyAB/darknet/blob/master/cfg/yolov4-tiny.cfg) and weights [there](https://github.com/AlexeyAB/darknet/releases/download/yolov4/yolov4-tiny.weights).
-
-  To run the tutorial program `tutorial-dnn-object-detection-live`, use the following commands:
-  ```
-  $ DNN_PATH=/path/to/my/dnn/folder \
-    MODEL=${DNN_PATH}/yolov4/weights/yolov4-tiny.weights \
-    LABELS=${DNN_PATH}/yolov4/cfg/coco_classes.txt \
-    TYPE=yolov4 \
-    FRAMEWORK=darknet \
-    CONFIG=${DNN_PATH}/yolov4/cfg/yolov4-tiny.cfg \
-    WIDTH=416 HEIGHT=416  
-  $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
-      --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
-      --filterThresh -0.25 --scale 0.0039
-  ```
-
-  If you want to train your own YoloV4 model, please refer to the [official documentation](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects).
-
-  \subsection dnn_supported_yolov5 YoloV5
-
-  You can find the weights in ONNX format [here](https://github.com/doleron/yolov5-opencv-cpp-python/blob/main/config_files/yolov5n.onnx).
-  <b>NB</b>: You do not need a config file when using a network saved in ONNX format.
-
-  To run the tutorial program `tutorial-dnn-object-detection-live`, use the following commands:
-  ```
-  $ DNN_PATH=/path/to/my/dnn/folder \
-    MODEL=${DNN_PATH}/yolov5/weights/yolov5n.onnx \
-    LABELS=${DNN_PATH}/yolov5/cfg/coco_classes.txt \
-    TYPE=yolov5 \
-    FRAMEWORK=onnx \
-    CONFIG=none \
-    WIDTH=640 HEIGHT=640
-  $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
-      --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
-      --filterThresh -0.25 --scale 0.0039
-  ```
-
-  If you want to train your own YoloV5 model, please refer to the [official documentation](https://docs.ultralytics.com/yolov5/tutorials/train_custom_data/#13-prepare-dataset-for-yolov5).
-
-  \subsection dnn_supported_yolov7 YoloV7
-
-  To be able to use `YoloV7` with the class `vpDetectorDNNOpenCV`, you must first download the weights in the Pytorch format from [here](https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt).
-
-  Then, convert it in ONNX format using the scripts that you can find on the [YoloV7 repo](https://github.com/WongKinYiu/yolov7) with the following arguments:
-  ```
-  python3 export.py --weights ../weights/yolov7.pt --grid --simplify --topk-all 100 --iou-thres 0.65 --conf-thres 0.35 --img-size 640 640  --max-wh 640
-  ```
-
-  Finally, please use the following commands to run the tutorial program:
-  ```
-  $ DNN_PATH=/path/to/my/dnn/folder \
-    MODEL=${DNN_PATH}/yolov7/weights/yolov7-tiny.onnx \
-    LABELS=${DNN_PATH}/yolov7/cfg/coco_classes.txt \
-    TYPE=yolov7 \
-    FRAMEWORK=onnx \
-    CONFIG=none \
-    WIDTH=640 HEIGHT=640  
-  $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
-      --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
-      --filterThresh -0.25 --scale 0.0039
-  ```
-
-  <b>NB</b>: You do not need a config file when using a network saved in ONNX format.
-
-  If you want to train your own YoloV7 model, please refer to the [official documentation](https://github.com/WongKinYiu/yolov7#transfer-learning).
-
-  \subsection dnn_supported_yolov8 YoloV8
-
-  You can find the weights in ONNX format [here](https://github.com/JustasBart/yolov8_CPP_Inference_OpenCV_ONNX/blob/minimalistic/source/models/yolov8s.onnx).
-
-  Please use the following commands to run the tutorial program:
-  ```
-  $ DNN_PATH=/path/to/my/dnn/folder \
-    MODEL=${DNN_PATH}/yolov8/weights/yolov8s.onnx \
-    LABELS=${DNN_PATH}/yolov8/cfg/coco_classes.txt \
-    TYPE=yolov8 \
-    FRAMEWORK=onnx \
-    CONFIG=none \
-    WIDTH=640 HEIGHT=480  
-  $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
-      --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
-      --filterThresh -0.25 --scale 0.0039
-  ```
-
-  <b>NB</b>: You do not need a config file when using a network saved in ONNX format.
-
-  If you want to train your own YoloV8 model, please refer to the [official documentation](https://docs.ultralytics.com/modes/train/).
-
-  \subsection dnn_troubleshootings Troubleshootings
-
-  When using the `vpDetectorDNNOpenCV` class, you may face the following errors:
-
-  \subsection dnn_error_size Error in the DNN input size 
-
-  <blockquote>
-  [ERROR:0@1.338] global net_impl.cpp:1161 getLayerShapesRecursively OPENCV/DNN: [Reshape]:(onnx_node!Reshape_219): getMemoryShapes() throws exception. inputs=1 outputs=1/1 blobs=0
-  [ERROR:0@1.338] global net_impl.cpp:1167 getLayerShapesRecursively     input[0] = [ 1 64 8400 ]
-  [ERROR:0@1.338] global net_impl.cpp:1171 getLayerShapesRecursively     output[0] = [ ]
-  [ERROR:0@1.338] global net_impl.cpp:1177 getLayerShapesRecursively Exception message: OpenCV(4.7.0) ${HOME}/visp_ws/3rdparty/opencv/modules/dnn/src/layers/reshape_layer.cpp:109: error: (-215:Assertion failed) total(srcShape, srcRange.start, srcRange.end) == maskTotal in function 'computeShapeByReshapeMask'
-
-  terminate called after throwing an instance of 'cv::Exception'
-    what():  OpenCV(4.7.0) ${HOME}/visp_ws/3rdparty/opencv/modules/dnn/src/layers/reshape_layer.cpp:109: error: (-215:Assertion failed) total(srcShape, srcRange.start, srcRange.end) == maskTotal in function 'computeShapeByReshapeMask'
-  </blockquote>
-
-  This error may occur if you mistook the input size of the DNN (i.e. if you are asking to resize the input images to a size
-  that does not match the one expected by the DNN).
-
-  \subsection dnn_error_unimplemented YoloV3: transpose weights is not functionNotImplementedError
-
-  ```
-  terminate called after throwing an instance of 'cv::Exception'
-  what(): OpenCV(4.7.0) error: (-213:The function/feature is not implemented) Transpose the weights (except for convolutional) is not implemented in function 'ReadDarknetFromWeightsStream'
-  ```
-
-  Following the proposition found [here](https://github.com/opencv/opencv/issues/15502#issuecomment-531755462) to download once 
-  again the weights from [here](https://pjreddie.com/media/files/yolov3.weights) permitted to solve this error.
-  //! [vpDetectorDNNOpenCV supported models]
-
-  \section Example
-  
-  Example is provided in tutorial-dnn-object-detection-live.cpp
+  \sa \ref tutorial-detection-dnn
 */
 class VISP_EXPORT vpDetectorDNNOpenCV
 {
@@ -304,7 +111,7 @@ public:
 
     /**
      * \brief Construct a new Detected Features 2 D object
-     * 
+     *
      * \param u_min The left coordinate of the bounding box, expressed in pixel.
      * \param u_max The right coordinate of the bounding box, expressed in pixel.
      * \param v_min The top coordinate of the bounding box, expressed in pixel.
@@ -319,7 +126,7 @@ public:
                                       , const std::optional<std::string> &classname
                                       )
     : m_bbox( vpImagePoint(v_min, u_min), vpImagePoint(v_max, u_max))
-    , m_score(score) 
+    , m_score(score)
     , m_cls(cls)
     {
       if(classname)
@@ -331,6 +138,23 @@ public:
         m_classname = std::nullopt;
       }
     };
+
+    /*!
+     * Return the bounding box of the detected object.
+     */
+    inline vpRect getBoundingBox() const { return m_bbox; }
+    /*!
+     * Return the confidence score of the detected object, a value between 0 and 1.
+     */
+    inline double getConfidenceScore() const { return m_score; }
+    /*!
+     * Return the class ID of the detected object.
+     */
+    inline unsigned int getClassId() const { return m_cls; }
+    /*!
+     * Return the class name of the detected object.
+     */
+    inline std::optional<std::string> getClassName() const { return m_classname; }
 
     template < typename Type >
     void display( const vpImage< Type > &img, const vpColor &color = vpColor::blue, unsigned int thickness = 1 ) const;
@@ -353,7 +177,7 @@ public:
      * \brief Parse the file containing the list of classes the DNN can detect.
      * These classes can be written either as a YAML array (i.e. ["classname_0", ... ,"classname_last"])
      * or with one classname by row (without quotes).
-     * 
+     *
      * \param filename The path towards the file containing the list of classes the DNN can detect.
      * \return std::vector<std::string> The list of classes the DNN can detect.
      */
@@ -388,7 +212,7 @@ public:
 
     /**
      * \brief Construct a new Net Config object
-     * 
+     *
      * \param confThresh The confidence threshold to keep a detection.
      * \param nmsThresh The Non-Maximum Suppression threshold to merge overlapping detections.
      * \param classNames A vector containing the list of classes the DNN can detect.
@@ -406,7 +230,7 @@ public:
 
     /**
      * \brief Construct a new Net Config object
-     * 
+     *
      * \param confThresh The confidence threshold to keep a detection.
      * \param nmsThresh The Non-Maximum Suppression threshold to merge overlapping detections.
      * \param classNamesFile The path towards the file containing the classes names, written as a YAML string array or one class name by line.
@@ -471,7 +295,7 @@ protected:
 
   #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   void postProcess_SSD_MobileNet(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
-  #endif 
+  #endif
 
   void postProcess_ResNet_10(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
@@ -486,7 +310,7 @@ protected:
   //! Buffer for the input image
   cv::Mat m_img;
   //! Indices for NMS
-  std::vector<int> m_indices;  
+  std::vector<int> m_indices;
   //! Values for mean subtraction
   cv::Scalar m_mean;
   //! DNN network
