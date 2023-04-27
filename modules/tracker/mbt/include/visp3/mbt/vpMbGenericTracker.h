@@ -716,6 +716,9 @@ protected:
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
+
+#define MBT_JSON_SETTINGS_VERSION "1.0"
+
 // Serialize tracker type enumeration
 NLOHMANN_JSON_SERIALIZE_ENUM( vpMbGenericTracker::vpTrackerType, {
     {vpMbGenericTracker::EDGE_TRACKER, "edge"},
@@ -763,7 +766,7 @@ inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper&
   //Check tracker type: for each type, add settings to json if the tracker t does use the features
   //Edge tracker settings
   if(t.m_trackerType & vpMbGenericTracker::EDGE_TRACKER) {
-    j["edge_tracker"] = t.me;
+    j["edge"] = t.me;
   }
   //KLT tracker settings
   if(t.m_trackerType & vpMbGenericTracker::KLT_TRACKER) {
@@ -875,7 +878,7 @@ inline void from_json(const nlohmann::json& j, vpMbGenericTracker::TrackerWrappe
   //Check tracker type: for each type, load settings for this specific tracker type
   //Edge tracker settings
   if(t.m_trackerType & vpMbGenericTracker::EDGE_TRACKER) {
-    t.me = j.at("edge_tracker");
+    t.me = j.at("edge");
   }
   //KLT tracker settings
   if(t.m_trackerType & vpMbGenericTracker::KLT_TRACKER) {

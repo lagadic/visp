@@ -301,35 +301,31 @@ public:
     \sa getThreshold()
   */
   void setThreshold(const double &t) { threshold = t; }
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  friend void to_json(nlohmann::json& j, const vpMe& me);
+  friend  void from_json(const nlohmann::json& j, vpMe& me);
+#endif
 };
 
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
 
-/*
-double threshold; //! Likelihood ratio threshold
-  double mu1;       //! Contrast continuity parameter (left boundary)
-  double mu2;       //! Contrast continuity parameter (right boundary)
-  double min_samplestep;
-  unsigned int anglestep;
-  int mask_sign;
-  unsigned int range; //! Seek range - on both sides of the reference pixel
-  double sample_step; //! Distance between sampled points (in pixels)
-  int ntotal_sample;
-  int points_to_track;
-  unsigned int mask_size;
-  unsigned int n_mask;
-  int strip;*/
+/**
+ * @brief Convert a vpMe object to a JSON representation
+ * 
+ * @param j resulting json object
+ * @param me the object to convert
+ */
 inline void to_json(nlohmann::json& j, const vpMe& me) {
   j["threshold"] = me.getThreshold();
   j["mu"] = {me.getMu1(), me.getMu2()};
   j["minSampleStep"] = me.getMinSampleStep();
   j["angleStep"] = me.getAngleStep();
   j["sampleStep"] = me.getSampleStep();
-  
   j["range"] = me.getRange();
-  j["ntotal_sample"] = me.getNbTotalSample();
+  j["ntotalSample"] = me.getNbTotalSample();
   j["pointsToTrack"] = me.getPointsToTrack();
   j["maskSize"] = me.getMaskSize();
   j["nMask"] = me.getMaskNumber();
@@ -337,22 +333,67 @@ inline void to_json(nlohmann::json& j, const vpMe& me) {
   j["strip"] = me.getStrip();
 }
 
+/**
+ * @brief Retrieve a vpMe object from a JSON representation
+ * 
+ * JSON content (key: type):
+ *  - threshold: double, vpMe::setThreshold
+ *  - mu : [double, double], vpMe::setMu1, vpMe::setMu2
+ *  - minSampleStep: double, vpMe::setMinSampleStep
+ *  - angleStep: double, vpMe::setAngleStep
+ *  - sampleStep: double, vpMe::setSampleStep
+ *  - range: int, vpMe::setRange
+ *  - ntotal_sample: int, vpMe::setNbTotalSample
+ *  - pointsToTrack: int, vpMe::setPointsToTrack
+ *  - maskSize: int, vpMe::setMaskSize
+ *  - nMask: int, vpMe::setMaskNumber
+ *  - maskSign: int, vpMe::setMaskSign
+ *  - strip: int, vpMe::setStrip
+ * 
+ * Example:
+ * \code{.json}
+ * {
+ *  "angleStep": 1,
+    "maskSign": 0,
+    "maskSize": 5,
+    "minSampleStep": 4.0,
+    "mu": [
+        0.5,
+        0.5
+    ],
+    "nMask": 180,
+    "ntotal_sample": 0,
+    "pointsToTrack": 500,
+    "range": 7,
+    "sampleStep": 4.0,
+    "strip": 2,
+    "threshold": 5000.0
+  }
+ * \endcode
+ * 
+ * @param j JSON representation to convert
+ * @param me converted object
+ */
 inline void from_json(const nlohmann::json& j, vpMe& me) {
-  me.setThreshold(j.at("threshold").get<double>());
-  std::vector<double> mus = j.at("mu").get<std::vector<double>>();
-  assert((mus.size() == 2));
-  me.setMu1(mus[0]);
-  me.setMu2(mus[1]);
-  me.setMinSampleStep(j.at("minSampleStep").get<double>());
-  me.setAngleStep(j.at("angleStep").get<unsigned>());
-  me.setSampleStep(j.at("sampleStep").get<double>());
-  me.setRange(j.at("range").get<unsigned>());
-  me.setNbTotalSample(j.at("ntotal_sample").get<int>());
-  me.setPointsToTrack(j.at("pointsToTrack").get<int>());
-  me.setMaskSize(j.at("maskSize").get<unsigned>());
-  me.setMaskNumber(j.at("nMask").get<unsigned>());
-  me.setMaskSign(j.at("maskSign").get<int>());
-  me.setStrip(j.at("strip").get<int>());
+
+  me.threshold = j.value("threshold", me.threshold);
+  
+  if(j.contains("mu")) {
+    std::vector<double> mus = j.at("mu").get<std::vector<double>>();
+    assert((mus.size() == 2));
+    me.setMu1(mus[0]);
+    me.setMu2(mus[1]);
+  }
+  me.min_samplestep = j.value("minSampleStep", me.min_samplestep);
+  me.anglestep = j.value("angleStep", me.anglestep);
+  me.range = j.value("range", me.range);
+  me.ntotal_sample = j.value("ntotalSample", me.ntotal_sample);
+  me.points_to_track = j.value("pointsToTrack", me.points_to_track);
+  me.mask_size = j.value("maskSize", me.mask_size);
+  me.n_mask = j.value("nMask", me.n_mask);
+  me.mask_sign = j.value("maskSign", me.mask_sign);
+  me.strip = j.value("strip", me.strip);
+
   
   me.initMask();
 }

@@ -2872,6 +2872,12 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string& settingsFile, boo
   }
   jsonFile.close();
 
+  if(!settings.contains("version")) {
+    throw vpException(vpException::badValue, "JSON configuration does not contain versioning information");
+  } else if(settings["version"].get<std::string>() != MBT_JSON_SETTINGS_VERSION) {
+    throw vpException(vpException::badValue, "Trying to load an old configuration file");
+  }
+
   //Load Basic settings
   settings.at("referenceCameraName").get_to(m_referenceCameraName);
   json trackersJson;
@@ -2950,6 +2956,7 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string& settingsFile, boo
 void vpMbGenericTracker::saveConfigFile(const std::string& settingsFile) const {
   json j;
   j["referenceCameraName"] = m_referenceCameraName;
+  j["version"] = MBT_JSON_SETTINGS_VERSION;
   // j["thresholdOutlier"] = m_thresholdOutlier;
   json trackers;
   for(const auto& kv: m_mapOfTrackers) {
