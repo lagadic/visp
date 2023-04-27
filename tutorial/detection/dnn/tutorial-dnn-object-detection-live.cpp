@@ -6,6 +6,58 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
+typedef enum ChosenDetectionContainer
+{
+  MAP    = 0,
+  VECTOR = 1,
+  BOTH   = 2,
+  COUNT  = 3
+}ChosenDetectionContainer;
+
+std::string chosenDetectionContainerToString(const ChosenDetectionContainer& choice)
+{
+  switch(choice)
+  {
+    case MAP: 
+      return "map";
+    case VECTOR:
+      return "vector";
+    case BOTH:
+      return "both";
+    default:
+      break;
+  }
+  return "unknown";
+}
+
+ChosenDetectionContainer chosenDetectionContainerFromString(const std::string& choiceStr)
+{
+  ChosenDetectionContainer choice(COUNT);
+  bool hasFoundMatch = false;
+  for(unsigned int i = 0; i < ChosenDetectionContainer::COUNT && !hasFoundMatch; i++)
+  {
+    ChosenDetectionContainer candidate = (ChosenDetectionContainer)i;
+    hasFoundMatch = (chosenDetectionContainerToString(candidate) == vpIoTools::toLowerCase(choiceStr));
+    if(hasFoundMatch)
+    {
+      choice = candidate;
+    }
+  }
+  return choice;
+}
+
+std::string getAvailableDetectionContainer()
+{
+  std::string availableContainers("< ");
+  for(unsigned int i = 0; i < ChosenDetectionContainer::COUNT - 1; i++)
+  {
+    std::string name = chosenDetectionContainerToString((ChosenDetectionContainer) i);
+    availableContainers += name + " , ";
+  }
+  availableContainers += chosenDetectionContainerToString((ChosenDetectionContainer) (ChosenDetectionContainer::COUNT - 1)) + " >";
+  return availableContainers;
+}
+
 int main(int argc, const char *argv[])
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
@@ -27,6 +79,7 @@ int main(int argc, const char *argv[])
     float confThresh = 0.5f;
     float nmsThresh = 0.4f;
     double detectionFilter = 0.25;
+    ChosenDetectionContainer containerType = ChosenDetectionContainer::MAP;
     bool verbose = false;
 
     for (int i = 1; i < argc; i++) {
@@ -72,6 +125,8 @@ int main(int argc, const char *argv[])
         detectionFilter = atof(argv[++i]);
       } else if (std::string(argv[i]) == "--labels" && i + 1 < argc) {
         labelFile = std::string(argv[++i]);
+      } else if (std::string(argv[i]) == "--container" && i + 1 < argc) {
+        containerType = chosenDetectionContainerFromString(std::string(argv[++i]));
       } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
         verbose = true;
       } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
@@ -84,6 +139,7 @@ int main(int argc, const char *argv[])
                      " --mean <meanR meanG meanB> --scale <scale factor>"
                      " --swapRB --confThresh <confidence threshold>"
                      " --nmsThresh <NMS threshold> --filterThresh <threshold > 0., 0. to disable> --labels <path to label file>"
+                     " --container " + getAvailableDetectionContainer() + "--verbose --help"
                   << std::endl;
         return EXIT_SUCCESS;
       }
@@ -158,48 +214,90 @@ int main(int argc, const char *argv[])
       if (verbose) {
         std::cout << "Process new image" << std::endl;
       }
-      double t = vpTime::measureTimeMs();
-      //! [DNN object detection]
-      std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>> detections;
-      dnn.detect(frame, detections);
-      //! [DNN object detection]
-      t = vpTime::measureTimeMs() - t;
-
+      
       vpDisplay::display(I);
+      
 
-      //! [DNN class ids and confidences]
-      for( auto key_val : detections)
+      if(containerType == ChosenDetectionContainer::MAP || containerType == ChosenDetectionContainer::BOTH)
       {
-        if (verbose) {
-          std::cout << "  Class name      : " << key_val.first << std::endl;
+        double t = vpTime::measureTimeMs();
+        //! [DNN object detection map mode]
+        std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>> detections;
+        dnn.detect(frame, detections);
+        //! [DNN object detection map mode]
+        t = vpTime::measureTimeMs() - t;
+
+        //! [DNN class ids and confidences map mode]
+        for( auto key_val : detections)
+        {
+          if (verbose) {
+            std::cout << "  Class name      : " << key_val.first << std::endl;
+          }
+          for(vpDetectorDNNOpenCV::DetectedFeatures2D detection : key_val.second )
+          {
+            if (verbose) {
+              std::cout << "  Bounding box    : " << detection.getBoundingBox() << std::endl;
+              std::cout << "  Class Id        : " << detection.getClassId() << std::endl;
+              if (detection.getClassName())
+                std::cout << "  Class name      : " << detection.getClassName().value() << std::endl;
+              std::cout << "  Confidence score: " << detection.getConfidenceScore() << std::endl;
+            }
+            detection.display(I);
+          }
         }
-        for(vpDetectorDNNOpenCV::DetectedFeatures2D detection : key_val.second )
+        //! [DNN class ids and confidences map mode]
+
+        std::ostringstream oss_map;
+        oss_map << "Detection time (map): " << t << " ms";
+        if (verbose) {
+          // Displaying timing result in console
+          std::cout << "  " << oss_map.str() << std::endl;
+        }
+        // Displaying timing result on the image
+        vpDisplay::displayText(I, 60, 20, oss_map.str(), vpColor::red);
+      }
+      
+      if(containerType == ChosenDetectionContainer::VECTOR || containerType == ChosenDetectionContainer::BOTH)
+      {
+        double t_vector = vpTime::measureTimeMs();
+        //! [DNN object detection vector mode]
+        std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D> detections_vec;
+        dnn.detect(frame, detections_vec);
+        //! [DNN object detection vector mode]
+        t_vector = vpTime::measureTimeMs() - t_vector;
+
+        //! [DNN class ids and confidences vector mode]
+        for( auto detection : detections_vec)
         {
           if (verbose) {
             std::cout << "  Bounding box    : " << detection.getBoundingBox() << std::endl;
             std::cout << "  Class Id        : " << detection.getClassId() << std::endl;
-            if (detection.getClassName())
-              std::cout << "  Class name      : " << detection.getClassName().value() << std::endl;
+            std::optional<std::string> classname_opt = detection.getClassName();
+            std::cout << "  Class name      : " << (classname_opt ? *classname_opt : "Not known") << std::endl;
             std::cout << "  Confidence score: " << detection.getConfidenceScore() << std::endl;
           }
           detection.display(I);
         }
-      }
-      //! [DNN class ids and confidences]
+        //! [DNN class ids and confidences vector mode]
 
-      std::ostringstream oss;
-      oss << "Detection time: " << t << " ms";
-      if (verbose) {
-        std::cout << "  " << oss.str() << std::endl;
+        std::ostringstream oss_vec;
+        oss_vec << "Detection time (vector): " << t_vector << " ms";
+        if (verbose) {
+          // Displaying timing result in console
+          std::cout << "  " << oss_vec.str() << std::endl;
+        }
+        // Displaying timing result on the image
+        vpDisplay::displayText(I, 80, 20, oss_vec.str(), vpColor::red);
       }
+      
+      // // UI display
       if(hasToWaitClick)
       {
-        // hasToWaitClick => we are displaying images
+        // hasToWaitClick => we are displaying images one by one
         vpDisplay::displayText(I, 20, 20, "Left click to display next image", vpColor::red);
       }
       vpDisplay::displayText(I, 40, 20, "Right click to quit", vpColor::red);
-      vpDisplay::displayText(I, 60, 20, oss.str(), vpColor::red);
-
+      
       vpDisplay::flush(I);
       vpMouseButton::vpMouseButtonType button;
 

@@ -98,67 +98,69 @@ public:
   } DetectionCandidates;
 
   /**
-   * \struct DetectedFeatures2D
+   * \class DetectedFeatures2D
    * \brief Structure containing the bounding box, expressed in pixels, confidence and class information
    * about an object detected in a image.
    */
-  typedef struct DetectedFeatures2D
+  typedef class DetectedFeatures2D
   {
-    vpRect m_bbox; /*!< The bounding box of the detected object.*/
-    double m_score; /*!< The confidence in the detection.*/
-    unsigned int m_cls; /*!< The class ID.*/
-    std::optional<std::string> m_classname; /*!< The class name, if the class names were given to the \b vpDetectorDNNOpenCV::NetConfig used to configure the \b vpDetectorDNNOpenCV object.*/
-
-    /**
-     * \brief Construct a new Detected Features 2 D object
-     *
-     * \param u_min The left coordinate of the bounding box, expressed in pixel.
-     * \param u_max The right coordinate of the bounding box, expressed in pixel.
-     * \param v_min The top coordinate of the bounding box, expressed in pixel.
-     * \param v_max The bottom coordinate of the bounding box, expressed in pixel.
-     * \param cls The class ID
-     * \param score The confidence in the detection.
-     * \param classname The class name, if the class names were given to the \b vpDetectorDNNOpenCV::NetConfig used to configure the \b vpDetectorDNNOpenCV object.
-     */
-    inline explicit DetectedFeatures2D( double u_min, double u_max
-                                      , double v_min, double v_max
-                                      , unsigned int cls, double score
-                                      , const std::optional<std::string> &classname
-                                      )
-    : m_bbox( vpImagePoint(v_min, u_min), vpImagePoint(v_max, u_max))
-    , m_score(score)
-    , m_cls(cls)
-    {
-      if(classname)
+    protected:
+      vpRect m_bbox; /*!< The bounding box of the detected object.*/
+      double m_score; /*!< The confidence in the detection.*/
+      unsigned int m_cls; /*!< The class ID.*/
+      std::optional<std::string> m_classname; /*!< The class name, if the class names were given to the \b vpDetectorDNNOpenCV::NetConfig used to configure the \b vpDetectorDNNOpenCV object.*/
+    public:
+      /**
+       * \brief Construct a new Detected Features 2 D object
+       *
+       * \param u_min The left coordinate of the bounding box, expressed in pixel.
+       * \param u_max The right coordinate of the bounding box, expressed in pixel.
+       * \param v_min The top coordinate of the bounding box, expressed in pixel.
+       * \param v_max The bottom coordinate of the bounding box, expressed in pixel.
+       * \param cls The class ID
+       * \param score The confidence in the detection.
+       * \param classname The class name, if the class names were given to the \b vpDetectorDNNOpenCV::NetConfig used to configure the \b vpDetectorDNNOpenCV object.
+       */
+      inline explicit DetectedFeatures2D( double u_min, double u_max
+                                        , double v_min, double v_max
+                                        , unsigned int cls, double score
+                                        , const std::optional<std::string> &classname
+                                        )
+      : m_bbox( vpImagePoint(v_min, u_min), vpImagePoint(v_max, u_max))
+      , m_score(score)
+      , m_cls(cls)
       {
-        m_classname = classname;
-      }
-      else
-      {
-        m_classname = std::nullopt;
-      }
-    };
+        if(classname)
+        {
+          m_classname = classname;
+        }
+        else
+        {
+          m_classname = std::nullopt;
+        }
+      };
 
-    /*!
-     * Return the bounding box of the detected object.
-     */
-    inline vpRect getBoundingBox() const { return m_bbox; }
-    /*!
-     * Return the confidence score of the detected object, a value between 0 and 1.
-     */
-    inline double getConfidenceScore() const { return m_score; }
-    /*!
-     * Return the class ID of the detected object.
-     */
-    inline unsigned int getClassId() const { return m_cls; }
-    /*!
-     * Return the class name of the detected object.
-     */
-    inline std::optional<std::string> getClassName() const { return m_classname; }
+      /*!
+      * Return the bounding box of the detected object.
+      */
+      inline vpRect getBoundingBox() const { return m_bbox; }
+      /*!
+      * Return the confidence score of the detected object, a value between 0 and 1.
+      */
+      inline double getConfidenceScore() const { return m_score; }
+      /*!
+      * Return the class ID of the detected object.
+      */
+      inline unsigned int getClassId() const { return m_cls; }
+      /*!
+      * Return the class name of the detected object.
+      */
+      inline std::optional<std::string> getClassName() const { return m_classname; }
 
-    template < typename Type >
-    void display( const vpImage< Type > &img, const vpColor &color = vpColor::blue, unsigned int thickness = 1 ) const;
+      template < typename Type >
+      void display( const vpImage< Type > &img, const vpColor &color = vpColor::blue, unsigned int thickness = 1 ) const;
 
+    friend vpDetectorDNNOpenCV;
   } DetectedFeatures2D;
 
   /**
@@ -171,7 +173,8 @@ public:
     double m_nmsThreshold;                /*!< Threshold for Non-Maximum Suppression.*/
     std::vector<std::string> m_classNames;/*!< Vector containing the names of the different classes the DNN can detect.*/
     cv::Size m_inputSize;                 /*!<  Size of the images the DNN can manipulate. The input images will be resized to match these dimensions.*/
-    double m_filterSizeRatio;             /*!<  Size ratio used by the \b vpDetectorDNNOpenCV::filterDetection method. If <= 0., the \b filterDetection method is not used.*/
+    double m_filterSizeRatio;             /*!<  Size ratio used by the \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods. 
+                                                If <= 0., the \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods are not used.*/
 
     /**
      * \brief Parse the file containing the list of classes the DNN can detect.
@@ -217,7 +220,7 @@ public:
      * \param nmsThresh The Non-Maximum Suppression threshold to merge overlapping detections.
      * \param classNames A vector containing the list of classes the DNN can detect.
      * \param dnnInputSize The size of the input that the DNN is expecting ().
-     * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetection method for more information).
+     * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods for more information).
      */
     inline NetConfig(double confThresh, const double &nmsThresh, const std::vector<std::string> & classNames, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.)
       : m_confThreshold(confThresh)
@@ -235,7 +238,7 @@ public:
      * \param nmsThresh The Non-Maximum Suppression threshold to merge overlapping detections.
      * \param classNamesFile The path towards the file containing the classes names, written as a YAML string array or one class name by line.
      * \param dnnInputSize The size of the input that the DNN is expecting ().
-     * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetection method for more information).
+     * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods for more information).
      */
     inline NetConfig(double confThresh, const double &nmsThresh, const std::string &classNamesFile, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.)
       : m_confThreshold(confThresh)
@@ -255,10 +258,13 @@ public:
   vpDetectorDNNOpenCV(const NetConfig &config,const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat>&, const NetConfig &) = postProcess_unimplemented);
   virtual ~vpDetectorDNNOpenCV();
 
+  virtual bool detect(const vpImage<unsigned char> &I, std::vector<DetectedFeatures2D> &output);
   virtual bool detect(const vpImage<unsigned char> &I, std::map< std::string, std::vector<DetectedFeatures2D>> &output);
   virtual bool detect(const vpImage<unsigned char> &I, std::vector< std::pair<std::string, std::vector<DetectedFeatures2D>>> &output);
+  virtual bool detect(const vpImage<vpRGBa> &I, std::vector<DetectedFeatures2D> &output);
   virtual bool detect(const vpImage<vpRGBa> &I, std::map< std::string, std::vector<DetectedFeatures2D>> &output);
   virtual bool detect(const vpImage<vpRGBa> &I, std::vector< std::pair<std::string, std::vector<DetectedFeatures2D>>> &output);
+  virtual bool detect(const cv::Mat &I, std::vector<DetectedFeatures2D> &output);
   virtual bool detect(const cv::Mat &I, std::map< std::string, std::vector<DetectedFeatures2D>> &output);
   virtual bool detect(const cv::Mat &I, std::vector< std::pair<std::string, std::vector<DetectedFeatures2D>>> &output);
 
@@ -281,9 +287,15 @@ protected:
   std::vector<cv::String> getOutputsNames();
 #endif
   std::vector<DetectedFeatures2D>
-  filterDetection(const std::vector<DetectedFeatures2D>& detected_features, const double minRatioOfAreaOk);
+  filterDetectionSingleClassInput(const std::vector<DetectedFeatures2D>& detected_features, const double minRatioOfAreaOk);
 
-  void postProcess(std::map< std::string, std::vector<DetectedFeatures2D>> &output);
+  std::vector<DetectedFeatures2D>
+  filterDetectionMultiClassInput(const std::vector<DetectedFeatures2D>& detected_features, const double minRatioOfAreaOk);
+
+  std::map<std::string, std::vector<DetectedFeatures2D>>
+  filterDetectionMultiClassInput(const std::map< std::string, std::vector<DetectedFeatures2D>> &detected_features, const double minRatioOfAreaOk);
+
+  void postProcess(DetectionCandidates &proposals);
 
   void postProcess_YoloV3_V4(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
 
