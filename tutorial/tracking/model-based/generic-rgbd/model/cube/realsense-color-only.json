@@ -1,5 +1,6 @@
 {
     "referenceCameraName": "Color",
+    "version": "1.0",
     "trackers": {
         "Color": {
             "angleAppear": 65.0,
@@ -38,7 +39,7 @@
                 "features": true,
                 "projectionError": true
             },
-            "edge_tracker": {
+            "edge": {
                 "angleStep": 1,
                 "maskSign": 0,
                 "maskSize": 5,
@@ -48,7 +49,7 @@
                     0.5
                 ],
                 "nMask": 180,
-                "ntotal_sample": 0,
+                "ntotalSample": 0,
                 "pointsToTrack": 500,
                 "range": 7,
                 "sampleStep": 4.0,

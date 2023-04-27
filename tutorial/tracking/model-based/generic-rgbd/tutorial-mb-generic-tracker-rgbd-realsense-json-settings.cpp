@@ -242,8 +242,6 @@ int main(int argc, char *argv[])
       // Get object pose
       cMo = tracker.getPose();
 
-      std::cout << "aaaa";
-
       // Check tracking errors
       double proj_error = 0;
       if (tracker.getTrackerType() & vpMbGenericTracker::EDGE_TRACKER) {
