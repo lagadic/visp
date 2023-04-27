@@ -77,11 +77,23 @@ You can directly refer to the <a href="https://github.com/opencv/opencv/tree/mas
 
 After setting the correct parameters, you can easily detect object in an image with
 
-\snippet tutorial-dnn-object-detection-live.cpp DNN object detection
+\snippet tutorial-dnn-object-detection-live.cpp DNN object detection map mode
+
+if you want to get the data as a map, where the keys will be the class names (or ID if no label file was given).
+
+Alternatively, you can get the results in a non-sorted vector with 
+
+\snippet tutorial-dnn-object-detection-live.cpp DNN object detection vector mode
 
 Class ids and detection confidence scores can be retrieved with
 
-\snippet tutorial-dnn-object-detection-live.cpp DNN class ids and confidences
+\snippet tutorial-dnn-object-detection-live.cpp DNN class ids and confidences map mode
+
+for a map, and with
+
+\snippet tutorial-dnn-object-detection-live.cpp DNN class ids and confidences vector mode
+
+for a a non-sorted vector.
 
 \section dnn_models Supported detection models
 
