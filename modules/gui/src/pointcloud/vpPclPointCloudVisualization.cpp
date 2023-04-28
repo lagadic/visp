@@ -273,8 +273,16 @@ void vpPclPointCloudVisualization ::display()
   if(!gp_viewer){
     // The viewer was not created => creating a new one
     gp_viewer.reset(new pcl::visualization::PCLVisualizer(_title));
-    gp_viewer->setSize(800,600);
-    gp_viewer->addCoordinateSystem (0.5);
+    gp_viewer->addCoordinateSystem (0.5); // Display a coordinate system whose axis are 0.5m long
+    gp_viewer->initCameraParameters(); // Initialize the viewer with default camera settings
+    gp_viewer->setSize(s_width,s_height); // Setting the size of the viewer window
+    gp_viewer->setPosition(s_px, s_py); // Setting the position of the viewer window on the screen
+
+    for(unsigned int id = 0; id < _vPointClouds.size(); id++)
+    {
+      gp_viewer->addPointCloud(_vPointClouds[id], _vmeshid[id]);
+      gp_viewer->addText(_vlegends[id]._text, _vlegends[id]._posX, _vlegends[id]._posY, _vlegends[id]._rRatio, _vlegends[id]._gRatio, _vlegends[id]._bRatio );
+    }
   }
   gp_viewer->spin();
 }
