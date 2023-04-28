@@ -61,6 +61,7 @@ class VISP_EXPORT vpPclPointCloudVisualization
 public:
   typedef typename pcl::PointXYZRGB pclPoint;
   typedef typename pcl::PointCloud<pclPoint> pclPointCloud;
+  typedef typename pclPointCloud::Ptr pclPointCloudPtr;
 
   typedef struct legendParams{
     std::string _text;
@@ -72,12 +73,14 @@ public:
     double _bRatio;
   }legendParams;
 
-  vpPclPointCloudVisualization(const std::string &title , const int &width = 640, const int &height = 480, const int &px = 720, const int &py = 560, const std::string &outFolder = std::string());
+  vpPclPointCloudVisualization(const std::string &title , const int &width = 640, const int &height = 480, const int &px = 720, const int &py = 560, const std::string &outFolder = std::string(), const double &ignoreThreshold = 0.95);
   ~vpPclPointCloudVisualization();
 
-  void set_nameWindow(std::string nameWindow);
+  void set_nameWindow(const std::string &nameWindow);
 
-  void set_outFolder(std::string outputFolder);
+  void set_outFolder(const std::string &outputFolder);
+
+  void set_ignoreThreshold(const double &thresh);
 
   unsigned int addSurface(const pclPointCloud::Ptr &surface, std::string name = "");
 
@@ -97,7 +100,7 @@ public:
 
   static void runThread(vpPclPointCloudVisualization* p_visualizer);
 
-  static void coyLegendParams(const legendParams& from, legendParams& to);
+  static void copyLegendParams(const legendParams& from, legendParams& to);
 
   void loopThread();
 
@@ -107,6 +110,8 @@ public:
 
   void threadUpdateSurface(const pclPointCloud::Ptr &surface, unsigned int id, const vpColVector& weights);
 
+  void threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, unsigned int id, const vpColVector& weights);
+
 protected:
   std::vector<pclPointCloud::Ptr> _vPointClouds;
   static pcl::visualization::PCLVisualizer::Ptr gp_viewer;
@@ -115,6 +120,7 @@ protected:
   static int s_height;
   static int s_px;
   static int s_py;
+  static double s_ignoreThresh;
   std::vector<std::string> _vmeshid;
   std::vector<legendParams> _vlegends;
   std::vector<std::mutex*> _vpmutex;
