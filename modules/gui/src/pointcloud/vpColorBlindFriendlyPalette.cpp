@@ -76,7 +76,7 @@ bool vpColorBlindFriendlyPalette::set_fromString(const std::string &nameColor)
   bool wasFound(false);
   for(unsigned int i= 0 ; i < to_uint(Palette::COUNT) && !wasFound; i++){
     vpColorBlindFriendlyPalette::Palette candidate = (Palette) i;
-    if(to_string(candidate).find(nameLowerCase) != std::string::npos){
+    if(to_string(candidate) == nameLowerCase){
       _colorID = candidate;
       wasFound = true;
     }
@@ -111,7 +111,7 @@ unsigned int vpColorBlindFriendlyPalette::to_uint(Palette colorID)
   bool wasFound = false;
   for(unsigned int i=0; i < nbAvailableColors && !wasFound; i++){
     Palette candidate = (Palette) i;
-    if(to_string(candidate).find(nameSearchedColor) != std::string::npos){
+    if(to_string(candidate) == nameSearchedColor){
       ID = i;
       wasFound = true;
     }
