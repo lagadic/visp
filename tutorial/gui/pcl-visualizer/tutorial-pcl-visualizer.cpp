@@ -137,7 +137,7 @@ int main (int argc, char *argv[])
 
   if(opt_mode == DisplayMode::BLOCKING || opt_mode == DisplayMode::BOTH)
   {
-    std::cerr << "Blocking mode has not been implemented yet !" << std::endl;
+    demo.blockingMode(opt_addNoise, opt_order);
   }
 
   if(opt_mode == DisplayMode::THREADED || opt_mode == DisplayMode::BOTH)

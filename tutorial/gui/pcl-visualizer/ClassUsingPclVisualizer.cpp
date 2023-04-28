@@ -120,6 +120,18 @@ std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisuali
   return result;
 }
 
+void ClassUsingPclVisualizer::blockingMode(const bool &addNoise, const unsigned int& order)
+{
+  // Create control points
+  std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> grids = generateControlPoints(addNoise, order);
+
+  unsigned int id_ctrlPts = _visualizer.addSurface(grids.first, "Standard");
+  unsigned int id_robust = _visualizer.addSurface(grids.second, "RotatedWithRobust");
+  
+  _visualizer.display();
+
+}
+
 void ClassUsingPclVisualizer::threadedMode(const bool &addNoise, const unsigned int& order)
 {
   // Create control points

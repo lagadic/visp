@@ -46,6 +46,15 @@ public:
   ~ClassUsingPclVisualizer();
 
   /**
+   * @brief Demonstration on how to use a \b vpPclPointCloudVisualization in blocking mode, i.e.
+   * we expect an input from the user after call to \b vpPclPointCloudVisualization::display 
+   * to go forward in the code.
+   * @param addNoise If true, noise will be added to the translated + rotated surface. 
+   * @param order  The order of the polynomial surface that is generated.
+   */
+  void blockingMode(const bool &addNoise, const unsigned int& order);
+
+  /**
    * @brief Demonstration on how to use a \b vpPclPointCloudVisualization in threaded mode.
    * 
    * @param addNoise If true, noise will be added to the translated + rotated surface. 
