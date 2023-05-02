@@ -379,7 +379,51 @@ Other common settings include:
 
 \subsubsection json-feature-settings Tracker Feature settings
 
+
 Each type of tracked feature can be customized in the JSON file.
+
+\section json-settings-usage Example: Initializing a tracker from a JSON file 
+
+Let's now look at an example of how to use JSON to track an object.
+
+This example is similar to tutorial-mb-generic-tracker-rgbd-realsense.cpp, where an XML configuration file is used to configure camera per camera.
+Instead, here, we will use a JSON file to fully configure the tracker.
+
+The full code can be found in tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp
+
+To run the example:
+\code{.sh}
+# If no CAD model is defined in the JSON file
+./tutorial-mb-generic-tracker-rgbd-realsense-json-settings --config model/cube/realsense-color-and-depth.json --model model/cube/cube.cao
+
+# If CAD model is defined in JSON
+./tutorial-mb-generic-tracker-rgbd-realsense-json-settings --config model/cube/realsense-color-and-depth.json 
+\endcode
+
+The main difference with tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp is that specifying which features to use is done in the config file.
+
+First, we initialize the camera (here, a Realsense2 camera) and query the camera intrinsics, as well as declare the vpImage we will use to store the data feed and display it
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Init
+
+To load the json configuration, we simply call:
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Loading
+
+We then query what features are used by the tracker and update its input accordingly
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Init maps
+
+To finish with the configuration, we load the 3D CAD model if none was defined in the JSON file. If none is given by the user, then an exception is thrown.
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Load 3D model
+
+To ensure the best performance, we might still prefer to use the camera intrinsics and transformation between color and depth cameras by provided the Realsense SDK.
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Update params
+
+We then initialize tracking by click:
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Init tracking
+
+Finally, we can start tracking:
+\snippet tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp Tracking
+
+
 
 
 */
