@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
               << std::endl;
     return EXIT_FAILURE;
   }
-
+  //! [Init]
   vpRealSense2 realsense;
   int width = 640, height = 480;
   int fps = 30;
@@ -91,10 +91,12 @@ int main(int argc, char *argv[])
   std::cout << "Sensor internal camera parameters for color camera: " << cam_color << std::endl;
   std::cout << "Sensor internal camera parameters for depth camera: " << cam_depth << std::endl;
 
-  vpImage<vpRGBa> I_color(height, width);
-  vpImage<unsigned char> I_gray(height, width);
-  vpImage<unsigned char> I_depth(height, width);
-  vpImage<uint16_t> I_depth_raw(height, width);
+  vpImage<vpRGBa> I_color(height, width); // acquired by the realsense
+  vpImage<unsigned char> I_gray(height, width); // Fed to the tracker if we use edge or KLT features
+  vpImage<unsigned char> I_depth(height, width); // Depth histogram used for display
+  vpImage<uint16_t> I_depth_raw(height, width); // Raw depth acquired by the realsense
+  std::vector<vpColVector> pointcloud; // fed to the tracker
+  //! [Init]
 
   vpHomogeneousMatrix depth_M_color = realsense.getTransformation(RS2_STREAM_COLOR, RS2_STREAM_DEPTH);
   std::map<std::string, vpHomogeneousMatrix> mapOfCameraTransformations;
@@ -104,13 +106,15 @@ int main(int argc, char *argv[])
   std::map<std::string, unsigned int> mapOfWidths, mapOfHeights;
   std::map<std::string, vpCameraParameters> mapOfCameraIntrinsics;
 
-  std::vector<vpColVector> pointcloud;
-
+  //! [Loading]
   vpMbGenericTracker tracker;
   tracker.loadConfigFile(config_file);
+  //! [Loading]
+  //! [Init maps]
   std::string color_key = "", depth_key = "";
   for(const auto& tracker_type: tracker.getCameraTrackerTypes()) {
-    std::cout << "tracker key == " << tracker_type.first << std::endl;;
+    std::cout << "tracker key == " << tracker_type.first << std::endl;
+    // Initialise for color features
     if(tracker_type.second & vpMbGenericTracker::EDGE_TRACKER || tracker_type.second & vpMbGenericTracker::KLT_TRACKER) {
       color_key = tracker_type.first;
       mapOfImages[color_key] = &I_gray;
@@ -119,6 +123,7 @@ int main(int argc, char *argv[])
       mapOfHeights[color_key] = height;
       mapOfCameraIntrinsics[color_key] = cam_color;
     }
+    // Initialize for depth features
     if(tracker_type.second & vpMbGenericTracker::DEPTH_DENSE_TRACKER || tracker_type.second & vpMbGenericTracker::DEPTH_NORMAL_TRACKER) {
       depth_key = tracker_type.first;
       mapOfImages[depth_key] = &I_depth;
@@ -129,17 +134,25 @@ int main(int argc, char *argv[])
       mapOfPointclouds[depth_key] = &pointcloud;
     }
   }
-  tracker.loadModel(model, model);
-
   const bool use_depth = !depth_key.empty();
   const bool use_color = !color_key.empty();
+  //! [Init maps]
+  //! [Load 3D model]
+  if(tracker.getNbPolygon() == 0) {
+    if(model.empty()) {
+      throw vpException(vpException::badValue, "No CAD model found in JSON file, but none was provided in the program arguments!");
+    }
+    tracker.loadModel(model);
+  }
+  //! [Load 3D model]
 
+  //! [Update params]
   std::cout << "Updating configuration with parameters provided by RealSense SDK..." << std::endl;
   tracker.setCameraParameters(mapOfCameraIntrinsics);
   if(use_color && use_depth) {
     tracker.setCameraTransformationMatrix(mapOfCameraTransformations);
   }
-  std::cout << "Loading provided model" << std::endl;
+  //! [Update params]
   
 
   
@@ -184,16 +197,13 @@ int main(int argc, char *argv[])
     }
   }
 
-
-  
   tracker.setProjectionErrorComputation(true);
+  //! [Init tracking]
   tracker.initClick(mapOfImages, mapOfInitFiles, true);
-
-  
+  //! [Init tracking]
+  //! [Tracking]
   std::vector<double> times_vec;
-
   try {
-    // To be able to display keypoints matching with test-detection-rs2
     bool quit = false;
     double loop_t = 0;
     vpHomogeneousMatrix cMo;
@@ -260,7 +270,7 @@ int main(int argc, char *argv[])
         // Turn display features on
         tracker.setDisplayFeatures(true);
 
-        if ( use_color && use_depth) {
+        if (use_color && use_depth) {
           tracker.display(I_gray, I_depth, cMo, depth_M_color * cMo, cam_color, cam_depth, vpColor::red, 3);
           vpDisplay::displayFrame(I_gray, cMo, cam_color, 0.05, vpColor::none, 3);
           vpDisplay::displayFrame(I_depth, depth_M_color * cMo, cam_depth, 0.05, vpColor::none, 3);
@@ -272,12 +282,12 @@ int main(int argc, char *argv[])
           vpDisplay::displayFrame(I_depth, cMo, cam_depth, 0.05, vpColor::none, 3);
         }
 
-        {
+        { // Display total number of features
           std::stringstream ss;
           ss << "Nb features: " << tracker.getError().size();
           vpDisplay::displayText(I_gray, I_gray.getHeight() - 50, 20, ss.str(), vpColor::red);
         }
-        {
+        { // Display number of feature per type
           std::stringstream ss;
           ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt()
              << ", depth dense " << tracker.getNbFeaturesDepthDense() << ", depth normal" << tracker.getNbFeaturesDepthNormal();
@@ -286,6 +296,8 @@ int main(int argc, char *argv[])
       }
 
       std::stringstream ss;
+      loop_t = vpTime::measureTimeMs() - t;
+      times_vec.push_back(loop_t);
       ss << "Loop time: " << loop_t << " ms";
 
       vpMouseButton::vpMouseButtonType button;
@@ -315,13 +327,13 @@ int main(int argc, char *argv[])
   } catch (const vpException &e) {
     std::cout << "Caught an exception: " << e.what() << std::endl;
   }
-
+  // Show tracking performance
   if (!times_vec.empty()) {
     std::cout << "\nProcessing time, Mean: " << vpMath::getMean(times_vec)
               << " ms ; Median: " << vpMath::getMedian(times_vec) << " ; Std: " << vpMath::getStdev(times_vec) << " ms"
               << std::endl;
   }
-
+  //! [Tracking]
   return EXIT_SUCCESS;
 }
 #elif defined(VISP_HAVE_REALSENSE2) && defined(VISP_HAVE_OPENCV)

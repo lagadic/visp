@@ -789,9 +789,9 @@ inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper&
     j["normals"] = nlohmann::json {
       {"featureEstimationMethod", t.m_depthNormalFeatureEstimationMethod},
       {"pcl", {
-        {"method", t.m_depthNormalPclPlaneEstimationMethod,
-        "ransacMaxIter", t.m_depthNormalPclPlaneEstimationRansacMaxIter,
-        "ransacThreshold", t.m_depthNormalPclPlaneEstimationRansacThreshold}
+        {"method", t.m_depthNormalPclPlaneEstimationMethod},
+        {"ransacMaxIter", t.m_depthNormalPclPlaneEstimationRansacMaxIter},
+        {"ransacThreshold", t.m_depthNormalPclPlaneEstimationRansacThreshold}
       }},
       {"sampling", {
         {"x", t.m_depthNormalSamplingStepX},
