@@ -476,7 +476,7 @@ inline void to_json(nlohmann::json& j, const vpCameraParameters& cam) {
 */
 inline void from_json(const nlohmann::json& j, vpCameraParameters& cam) {
   const double px = j.at("px").get<double>();
-  const double py = j.at("px").get<double>();
+  const double py = j.at("py").get<double>();
   const double u0 = j.at("u0").get<double>();
   const double v0 = j.at("v0").get<double>();
   const vpCameraParameters::vpCameraParametersProjType model = j.value("model", vpCameraParameters::perspectiveProjWithoutDistortion);

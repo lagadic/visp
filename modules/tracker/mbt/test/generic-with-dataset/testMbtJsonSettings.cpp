@@ -42,48 +42,111 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
 
-#if defined(VISP_HAVE_NLOHMANN_JSON)
+#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_CATCH2)
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
-bool test_json(const std::string& dir, const std::string& test_name, const std::function<vpMbGenericTracker()> setup, const std::function<void(json&)> modifyJson, const std::function<bool(const vpMbGenericTracker&, const vpMbGenericTracker&)> compare) {
-  const std::string json_path = dir + "/" + test_name + ".json";
-  vpMbGenericTracker t1 = setup();
-  t1.saveConfigFile(json_path);
 
-  std::ifstream json_file(json_path);
+#define CATCH_CONFIG_RUNNER
+#include <catch.hpp>
+
+vpMbGenericTracker baseTrackerConstructor() {
+  const std::vector<std::string> names = {"C1", "C2"};
+  const std::vector<int> featureTypes = {
+    vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER,
+    vpMbGenericTracker::DEPTH_DENSE_TRACKER | vpMbGenericTracker::DEPTH_NORMAL_TRACKER
+  };
+  vpCameraParameters cam1;
+  cam1.initPersProjWithoutDistortion(300, 300, 200, 200);
+  vpCameraParameters cam2;
+  cam2.initPersProjWithoutDistortion(500, 400, 250, 250);
+  
+  vpMbGenericTracker t = vpMbGenericTracker(names, featureTypes);
+
+  std::map<std::string, vpCameraParameters> cams;
+  cams[names[0]] = cam1;
+  cams[names[1]] = cam2;
+  t.setCameraParameters(cams);
+  return t;
+}
+
+void compareNamesAndTypes(const vpMbGenericTracker& t1, const vpMbGenericTracker& t2) {
+  REQUIRE( t1.getCameraNames() == t2.getCameraNames() );
+  REQUIRE( t1.getCameraTrackerTypes() == t2.getCameraTrackerTypes() );
+}
+
+void compareCameraParameters(const vpMbGenericTracker& t1, const vpMbGenericTracker& t2) {
+  std::map<std::string, vpCameraParameters> c1, c2;
+  vpCameraParameters c;
+  t1.getCameraParameters(c1);
+  t2.getCameraParameters(c2);
+  REQUIRE( c1 == c2 );
+}
+
+json loadJson(const std::string& path) {
+  std::ifstream json_file(path);
   if(!json_file.good()) {
     throw vpException(vpException::ioError, "Could not open JSON settings file");
   }
   json j = json::parse(json_file);
   json_file.close();
-  modifyJson(j);
-  std::ofstream json_modif_file(json_path);
-  if(!json_modif_file.good()) {
-    throw vpException(vpException::ioError, "Could not open JSON settings file for writing modifications");
+  return j;
+}
+
+
+void saveJson(const json& j, const std::string& path) {
+  std::ofstream json_file(path);
+  if(!json_file.good()) {
+    throw vpException(vpException::ioError, "Could not open JSON settings file to write modifications");
   }
-  json_modif_file << j.dump();
+  json_file << j.dump();
+  json_file.close();
+}
+
+void test_json(const std::string& dir, const std::string& test_name, const std::function<vpMbGenericTracker()> setup, const std::function<void(json&)> modifyJson, const std::function<void(const vpMbGenericTracker&, const vpMbGenericTracker&)> compare) {
+  const std::string json_path = dir + "/" + test_name + ".json";
+  vpMbGenericTracker t1 = setup();
+  t1.saveConfigFile(json_path);
+
+  json j = loadJson(json_path);
+  modifyJson(j);
+  saveJson(j, json_path);
+  
 
   vpMbGenericTracker t2;
   t2.loadConfigFile(json_path);
 
-  return compare(t1, t2);
+  compare(t1, t2);
 }
 
-#endif
 
+//   // // Reference camera name not found
+//   // try {
+//   //   test_json(tmp_dir, "reference_cam_not_found", baseTrackerConstructor, [](json& j) -> void { j["referenceCameraName"] = "C3"; }, compareNamesAndTypes);
+//   //   return EXIT_FAILURE;
+//   // } catch(vpException& e) {
+//   //   if(e.getCode() != vpException::badValue) {
+//   //     return EXIT_FAILURE;
+//   //   }
+//   // } catch(...) {
+//   //   std::cerr << "Unexpected exception was caught" << std::endl;
+//   //   return EXIT_FAILURE;
+//   // }
 
-int main()
-{
-#if defined(VISP_HAVE_NLOHMANN_JSON)
+//   // // Camera to ref transformations test
+  
+//   // if(!test_json(tmp_dir, "camTref_removed_for_ref", baseTrackerConstructor, [](json& j) -> void { j["trackers"][j["referenceCameraName"].get<std::string>()].erase("camTref"); }, compareNamesAndTypes)) {
+//   //   std::cerr << "Removing the camera transformations should be allowed for the reference camera" << std::endl;
+//   //   return EXIT_FAILURE;
+//   // }
 
+SCENARIO("MBT JSON Parsing", "[json]") {
+  // setup test dir
+  // Get the user login name
 #if defined(_WIN32)
   std::string tmp_dir = "C:/temp/";
 #else
   std::string tmp_dir = "/tmp/";
 #endif
-
-  // setup test dir
-  // Get the user login name
   std::string username;
   vpIoTools::getUserName(username);
 
@@ -93,64 +156,81 @@ int main()
   vpIoTools::makeDirectory(tmp_dir);
 
 
-  const auto base_constructor = []() -> vpMbGenericTracker {
-    const std::vector<std::string> names = {"C1", "C2"};
-    const std::vector<int> featureTypes = {
-      vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER,
-      vpMbGenericTracker::DEPTH_DENSE_TRACKER | vpMbGenericTracker::DEPTH_NORMAL_TRACKER
-    };
-    vpMbGenericTracker tracker(names, featureTypes);
-    return tracker;
-  };
-  const auto base_compare = [](const vpMbGenericTracker& t1, const vpMbGenericTracker& t2) -> bool {
-    const bool same_cameras = t1.getCameraNames() == t2.getCameraNames();
-    if(!same_cameras) {
-      return false;
-    }
-    const bool same_features = t1.getCameraTrackerTypes() == t2.getCameraTrackerTypes();
-    if(!same_features) {
-      return false;
-    }
-    return true;
 
-  };
-  const auto no_modif = [](json& j) -> void {
+  GIVEN("A generic tracker with two cameras, one with edge and KLT features, the other with depth features") {
+    vpMbGenericTracker t1 = baseTrackerConstructor();
+    WHEN("Saving to a JSON settings file") {
+      const std::string jsonPath = tmp_dir + "/" + "tracker_save.json";
 
-  };
-  //! First test, check that a basic tracker can be saved and loaded
-  if(!test_json(tmp_dir, "basic_test", base_constructor, no_modif, base_compare)) {
-    std::cerr << "Basic JSON parsing test failed: not same camera names or camera features" << std::endl;
-    return EXIT_FAILURE;
+      const auto modifyJson = [&jsonPath](std::function<void(json&)> modify) -> void {
+        json j = loadJson(jsonPath);
+        modify(j);
+        saveJson(j, jsonPath);
+      };
+
+      REQUIRE_NOTHROW(t1.saveConfigFile(jsonPath));
+      THEN("Reloading this tracker has the same basic properties") {
+        vpMbGenericTracker t2;
+        REQUIRE_NOTHROW(t2.loadConfigFile(jsonPath));
+        compareNamesAndTypes(t1, t2);
+        compareCameraParameters(t1, t2);
+      }
+      WHEN("Modifying JSON file") {
+        THEN("Removing version from file generates an error on load") {
+          modifyJson([](json& j) -> void {
+            j.erase("version");
+          });
+          REQUIRE_THROWS(t1.loadConfigFile(jsonPath));
+        }
+
+        THEN("Using an unsupported version generates an error on load") {
+          modifyJson([](json& j) -> void {
+            j["version"] = "0.0.0";
+          });
+          REQUIRE_THROWS(t1.loadConfigFile(jsonPath));
+        }
+
+        THEN("Using an undefined reference camera generates an error") {
+          modifyJson([](json& j) -> void {
+            j["referenceCameraName"] = "C3";
+          });
+          REQUIRE_THROWS(t1.loadConfigFile(jsonPath));
+        }
+
+        THEN("Not defining a transformation matrix for the reference camera is valid") {
+          modifyJson([&t1](json& j) -> void {
+            j["trackers"][t1.getReferenceCameraName()].erase("camTref");
+          });
+          REQUIRE_NOTHROW(t1.loadConfigFile(jsonPath));
+        }
+
+        THEN("Not defining a transformation from a non-reference camera to the reference camera generates an error") {
+          modifyJson([&t1](json& j) -> void {
+            std::string otherCamName = t1.getReferenceCameraName() == "C1" ? "C2" : "C1";
+            j["trackers"][otherCamName].erase("camTref");
+          });
+          REQUIRE_THROWS(t1.loadConfigFile(jsonPath));
+        }
+      }
+    }
   }
 
-  //! Test on version field: should be present and the correct version
-  try {
-    test_json(tmp_dir, "throw_version_inexistant", base_constructor, [](json& j) -> void { j.erase("version"); }, base_compare);
-    return EXIT_FAILURE;
-  } catch(vpException& e) {
-    if(e.getCode() != vpException::badValue) {
-      return EXIT_FAILURE;
-    }
-  } catch(...) {
-    std::cerr << "Unexpected exception was caught" << std::endl;
-    return EXIT_FAILURE;
-  }
+
   
-  try {
-    test_json(tmp_dir, "throw_wrong_version", base_constructor, [](json& j) -> void { j["version"] = "0.1"; }, base_compare);
-    return EXIT_FAILURE;
-  } catch(vpException& e) {
-    if(e.getCode() != vpException::badValue) {
-      return EXIT_FAILURE;
-    }
-  } catch(...) {
-    std::cerr << "Unexpected exception was caught" << std::endl;
-    return EXIT_FAILURE;
-  }
-  
-#else
-  std::cout << "Cannot run this example: install Lapack, Eigen3 or OpenCV" << std::endl;
-#endif
+}
+int main(int argc, char *argv[])
+{
+  Catch::Session session; // There must be exactly one instance
+  session.applyCommandLine(argc, argv);
 
+  int numFailed = session.run();
+  return numFailed;
+}
+
+#else 
+
+int main() {
   return EXIT_SUCCESS;
 }
+
+#endif

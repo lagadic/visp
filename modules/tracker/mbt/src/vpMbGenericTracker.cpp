@@ -2873,7 +2873,7 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string& settingsFile, boo
   jsonFile.close();
 
   if(!settings.contains("version")) {
-    throw vpException(vpException::badValue, "JSON configuration does not contain versioning information");
+    throw vpException(vpException::notInitialized, "JSON configuration does not contain versioning information");
   } else if(settings["version"].get<std::string>() != MBT_JSON_SETTINGS_VERSION) {
     throw vpException(vpException::badValue, "Trying to load an old configuration file");
   }
@@ -2886,15 +2886,18 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string& settingsFile, boo
   //Find camera that are already present in the tracker but not in the config file: they will be removed
   std::vector<std::string> unusedCameraNames = getCameraNames();
   
+  bool refCameraFound = false;
   //Foreach camera
   for(const auto& it: trackersJson.items()) {
     const std::string cameraName = it.key();
     const json trackerJson = it.value();
+    refCameraFound = refCameraFound || cameraName == m_referenceCameraName;
+    
     //Load transformation between current camera and reference camera, if it exists
     if(trackerJson.contains("camTref")) {
       m_mapOfCameraTransformationMatrix[cameraName] = trackerJson["camTref"].get<vpHomogeneousMatrix>();
     } else if(cameraName != m_referenceCameraName) { // No transformation to reference and its not the reference itself
-      throw vpException(vpException::ioError, "Camera " + cameraName + " has no transformation to the reference camera");
+      throw vpException(vpException::notInitialized, "Camera " + cameraName + " has no transformation to the reference camera");
     }
     if(verbose) {
       std::cout << "Loading tracker " << cameraName << std::endl << " with settings: " << std::endl << trackerJson.dump(2);
@@ -2915,6 +2918,10 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string& settingsFile, boo
     const auto unusedCamIt = std::remove(unusedCameraNames.begin(), unusedCameraNames.end(), cameraName); // Mark this camera name as used
     unusedCameraNames.erase(unusedCamIt, unusedCameraNames.end());
   }
+  if(!refCameraFound) {
+    throw vpException(vpException::badValue, "Reference camera not found in trackers");
+  }
+
   // All camerasthat were defined in the tracker but not in the config file are removed
   for(const std::string& oldCameraName: unusedCameraNames) {
     m_mapOfCameraTransformationMatrix.erase(oldCameraName);
