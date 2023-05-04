@@ -175,7 +175,7 @@ vpDetectorDNNOpenCV::~vpDetectorDNNOpenCV() {}
  * \brief Object detection using OpenCV DNN module.
  * \warning Classical object detection network uses as input 3-channels.
  * Grayscale image is converted to color image.
- * 
+ *
  * \param I Input image.
  * \param output Vector of detections, whichever class they belong to.
  * \return false if there is no detection, true otherwise.
@@ -223,7 +223,7 @@ bool vpDetectorDNNOpenCV::detect(const vpImage<unsigned char> &I, std::vector< s
  * \brief Object detection using OpenCV DNN module.
  * \warning OpenCV DNN module uses \b cv::Mat as input.
  * \b vpImage<vpRGBa> is converted to \b cv::Mat.
- * 
+ *
  * \param I : Input image.
  * \param output Vector of detections, whichever class they belong to.
  * \return false if there is no detection, true otherwise.
@@ -305,7 +305,7 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector<DetectedFeatures2
   if(m_applySizeFilterAfterNMS)
   {
     // removing false detections, based on the bbox sizes
-    output = filterDetectionMultiClassInput(output, m_netConfig.m_filterSizeRatio); 
+    output = filterDetectionMultiClassInput(output, m_netConfig.m_filterSizeRatio);
   }
 
   return !output.empty();
@@ -405,7 +405,7 @@ std::vector<cv::String> vpDetectorDNNOpenCV::getOutputsNames()
   extract the data stored as a matrix.
   Then, perform Non-Maximum Suppression to remove overlapping detections.
 
-  \param output : map of pairs <name_of_the_class, vector_of_detections>
+  \param[inout] proposals : Input/output that will contains all the detection candidates.
 */
 void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
 {
@@ -449,14 +449,14 @@ void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
 }
 
 /*!
- * \brief Return a new vector of detected features whose area is greater 
+ * \brief Return a new vector of detected features whose area is greater
  *  or equal to the average area x \b minRatioOfAreaOk. This method assumes that
  * \b detected_features contains detections of a single class.
  *
  * \param detected_features The original list of detected features, belonging to the same class.
- * \param minRatioOfAreaOk The minimum ratio of area a feature bounding box must reach to be kept 
+ * \param minRatioOfAreaOk The minimum ratio of area a feature bounding box must reach to be kept
  * in the resulting list of features. Value between 0 and 1.0.
- * \return std::vector<data::Hole2D> The resulting list of features, that only contains the features 
+ * \return std::vector<data::Hole2D> The resulting list of features, that only contains the features
  * whose area is in the range [average area x \b minRatioOfAreaOk ; average area / \b minRatioOfAreaOk ].
  */
 std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>
@@ -465,7 +465,7 @@ vpDetectorDNNOpenCV::filterDetectionSingleClassInput(const std::vector<DetectedF
   double meanArea(0.);
   double originalNumberOfObj = detected_features.size();
   double meanFactor = 1. / originalNumberOfObj;
-  
+
   // Computing the average area of the class
   for(DetectedFeatures2D feature: detected_features){
     meanArea += feature.m_bbox.getArea();
@@ -485,12 +485,12 @@ vpDetectorDNNOpenCV::filterDetectionSingleClassInput(const std::vector<DetectedF
 
 /*!
  * \brief Return a new vector, ordered by \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_cls ,
- * where the area of each detection belonging to one class is in the range 
+ * where the area of each detection belonging to one class is in the range
  * [average_area(class) x \b minRatioOfAreaOk ; average_area(class) / \b minRatioOfAreaOk ] .
  *
  * \param detected_features The original list of detected features, that can contains several classes.
  * \param minRatioOfAreaOk The minimum ratio of area a feature bounding box must reach to be kept in the resulting list of features. Value between 0 and 1.0.
- * \return std::vector<data::Hole2D> The filtered list of features, ordered by \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_cls in ascending order, where 
+ * \return std::vector<data::Hole2D> The filtered list of features, ordered by \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_cls in ascending order, where
  * only the features respecting the area criterion are kept.
  */
 std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>
@@ -498,18 +498,18 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
 {
   /**
    * \class MeanAreaComputer
-   * \brief Helper to compute the average area of the detections belonging to the same class. 
+   * \brief Helper to compute the average area of the detections belonging to the same class.
    */
   class MeanAreaComputer
   {
     private:
-      std::map<int, std::pair<int, double>> m_map_id_pairOccurencesAreas; /*!< Uses the \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_classIds as keys 
+      std::map<int, std::pair<int, double>> m_map_id_pairOccurencesAreas; /*!< Uses the \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_classIds as keys
                                                                              and pairs <nb_occurences, summed_areas> as values.*/
 
       std::map<int, double> m_mapMeans; /*!< Map <class_id; average_area_class>.*/
       /**
        * \brief Compute the average area of the detections corresponding to \b class_id.
-       * 
+       *
        * \param class_id The numerical ID of the class.
        * \return double The average area of all the detections belonging to \b class_id .
        */
@@ -540,9 +540,9 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
       }
 
       /**
-       * \brief Increment the number of occurences and the 
-       * 
-       * \param feature 
+       * \brief Increment the number of occurences and the
+       *
+       * \param feature
        */
       void operator()(const DetectedFeatures2D &feature)
       {
@@ -569,7 +569,7 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
   std::vector<DetectedFeatures2D> filtered_features;
   for(DetectedFeatures2D feature: detected_features){
     double meanArea = meanComputer.getMean(feature.getClassId());
-    if(  feature.m_bbox.getArea() >=  minRatioOfAreaOk * meanArea 
+    if(  feature.m_bbox.getArea() >=  minRatioOfAreaOk * meanArea
       && feature.m_bbox.getArea() < meanArea / minRatioOfAreaOk)
     {
       filtered_features.push_back(feature);
@@ -586,10 +586,10 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
  * \param detected_features The original detected features, that can contains several classes.
  * \param minRatioOfAreaOk The minimum ratio of area a feature bounding box must reach to be kept in the resulting list of features. Value between 0 and 1.0.
  * \return std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>> A new filtered map where each detection
- * belonging to a class respect the area criterion. 
+ * belonging to a class respect the area criterion.
  */
 std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>>
-vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>> &detected_features, const double minRatioOfAreaOk)
+vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::map< std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>> &detected_features, const double minRatioOfAreaOk)
 {
   std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>> output;
   for(auto keyval: detected_features)

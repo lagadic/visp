@@ -173,7 +173,7 @@ public:
     double m_nmsThreshold;                /*!< Threshold for Non-Maximum Suppression.*/
     std::vector<std::string> m_classNames;/*!< Vector containing the names of the different classes the DNN can detect.*/
     cv::Size m_inputSize;                 /*!<  Size of the images the DNN can manipulate. The input images will be resized to match these dimensions.*/
-    double m_filterSizeRatio;             /*!<  Size ratio used by the \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods. 
+    double m_filterSizeRatio;             /*!<  Size ratio used by the \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods.
                                                 If <= 0., the \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods are not used.*/
 
     /**
@@ -292,8 +292,8 @@ protected:
   std::vector<DetectedFeatures2D>
   filterDetectionMultiClassInput(const std::vector<DetectedFeatures2D>& detected_features, const double minRatioOfAreaOk);
 
-  std::map<std::string, std::vector<DetectedFeatures2D>>
-  filterDetectionMultiClassInput(const std::map< std::string, std::vector<DetectedFeatures2D>> &detected_features, const double minRatioOfAreaOk);
+  std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>>
+  filterDetectionMultiClassInput(const std::map< std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>> &detected_features, const double minRatioOfAreaOk);
 
   void postProcess(DetectionCandidates &proposals);
 
