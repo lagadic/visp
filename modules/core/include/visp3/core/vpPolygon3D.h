@@ -219,4 +219,43 @@ public:
   static bool roiInsideImage(const vpImage<unsigned char> &I, const std::vector<vpImagePoint> &corners);
 };
 
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+#include <visp3/core/vpJsonParsing.h>
+NLOHMANN_JSON_SERIALIZE_ENUM( vpPolygon3D::vpPolygon3DClippingType, {
+    {vpPolygon3D::NO_CLIPPING, "none"},
+    {vpPolygon3D::NEAR_CLIPPING, "near"},
+    {vpPolygon3D::FAR_CLIPPING, "far"},
+    {vpPolygon3D::LEFT_CLIPPING, "left"},
+    {vpPolygon3D::RIGHT_CLIPPING, "right"},
+    {vpPolygon3D::UP_CLIPPING, "up"},
+    {vpPolygon3D::DOWN_CLIPPING, "down"},
+    {vpPolygon3D::FOV_CLIPPING, "fov"},
+    {vpPolygon3D::ALL_CLIPPING, "all"}
+});
+
+inline nlohmann::json clippingFlagsToJSON(const int flags) {
+  constexpr std::array<vpPolygon3D::vpPolygon3DClippingType, 3> specificFlags = {
+    vpPolygon3D::ALL_CLIPPING,
+    vpPolygon3D::FOV_CLIPPING,
+    vpPolygon3D::NO_CLIPPING
+  };
+  for(const auto f: specificFlags) {
+    if(flags == f) {
+      return nlohmann::json::array({ f });
+    }
+  }
+  return flagsToJSON<vpPolygon3D::vpPolygon3DClippingType>(flags, {
+    vpPolygon3D::NEAR_CLIPPING,
+    vpPolygon3D::FAR_CLIPPING,
+    vpPolygon3D::LEFT_CLIPPING,
+    vpPolygon3D::RIGHT_CLIPPING,
+    vpPolygon3D::UP_CLIPPING,
+    vpPolygon3D::DOWN_CLIPPING,
+  });
+}
+
+#endif
+
 #endif

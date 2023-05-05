@@ -758,7 +758,7 @@ inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper&
       {"scanline", t.useScanLine}
     }},
     {"clipping", {
-      {"useFOVClipping", (t.getClipping() == vpPolygon3D::FOV_CLIPPING)},
+      {"flags", clippingFlagsToJSON(t.getClipping())},
       {"near", t.getNearClippingDistance()},
       {"far", t.getFarClippingDistance()},
     }}
@@ -839,20 +839,15 @@ inline void from_json(const nlohmann::json& j, vpMbGenericTracker::TrackerWrappe
     t.setAngleDisappear(vpMath::rad(j.at("angleDisappear")));
   }
   if(j.contains("clipping")) {
-    nlohmann::json clipping = j["clipping"];
+    const nlohmann::json clipping = j["clipping"];
     t.setNearClippingDistance(clipping.value("near", t.getNearClippingDistance()));
     t.setFarClippingDistance(clipping.value("far", t.getFarClippingDistance()));
-    if(clipping.contains("useFOVClipping")) {
-      const bool useFovClipping = clipping.at("useFOVClipping").get<bool>();
-      if(useFovClipping) {
-        t.setClipping(t.getClipping() | vpPolygon3D::FOV_CLIPPING);
-      } else {
-        t.setClipping(t.getClipping() ^ vpPolygon3D::FOV_CLIPPING);
-      }
+    if(clipping.contains("flags")) {
+      t.setClipping(flagsFromJSON<vpPolygon3D::vpPolygon3DClippingType>(clipping.at("flags")));
     }
   }
   if(j.contains("lod")) {
-    nlohmann::json lod = j["lod"];
+    const nlohmann::json lod = j["lod"];
     t.useLodGeneral = lod.value("useLod", t.useLodGeneral);
     t.minLineLengthThresholdGeneral = lod.value("minLineLengthThresholdGeneral", t.minLineLengthThresholdGeneral);
     t.minPolygonAreaThresholdGeneral = lod.value("minPolygonAreaThresholdGeneral", t.minPolygonAreaThresholdGeneral);

@@ -2937,6 +2937,9 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string& settingsFile, boo
   this->angleAppears = refTracker->getAngleAppear();
   this->angleDisappears = refTracker->getAngleDisappear();
   this->clippingFlag = refTracker->getClipping();
+  this->distNearClip = refTracker->getNearClippingDistance();
+  this->distFarClip = refTracker->getFarClippingDistance();
+  
   // These settings can be set in each tracker or globally. Global value overrides local ones.
   if(settings.contains("display")) {
     const json displayJson = settings["display"];

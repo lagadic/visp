@@ -1,8 +1,8 @@
 #ifndef vpJsonParsing_HH
 #define vpJsonParsing_HH
+
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-
 
 /*!
 Parse the flag values defined in a JSON object.
@@ -48,9 +48,6 @@ nlohmann::json flagsToJSON(const int flags, const std::vector<E>& options) {
     }
     return j;
 }
-
-
-
 
 #endif
 #endif
