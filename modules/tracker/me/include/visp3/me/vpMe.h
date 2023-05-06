@@ -59,8 +59,6 @@ public:
 #else
 private:
 #endif
-#ifdef VISP_HAVE_NLOHMANN_JSON
-#endif
   double threshold; //! Likelihood ratio threshold
   double mu1;       //! Contrast continuity parameter (left boundary)
   double mu2;       //! Contrast continuity parameter (right boundary)
@@ -319,18 +317,19 @@ public:
  * @param me the object to convert
  */
 inline void to_json(nlohmann::json& j, const vpMe& me) {
-  j["threshold"] = me.getThreshold();
-  j["mu"] = {me.getMu1(), me.getMu2()};
-  j["minSampleStep"] = me.getMinSampleStep();
-  j["angleStep"] = me.getAngleStep();
-  j["sampleStep"] = me.getSampleStep();
-  j["range"] = me.getRange();
-  j["ntotalSample"] = me.getNbTotalSample();
-  j["pointsToTrack"] = me.getPointsToTrack();
-  j["maskSize"] = me.getMaskSize();
-  j["nMask"] = me.getMaskNumber();
-  j["maskSign"] = me.getMaskSign();
-  j["strip"] = me.getStrip();
+  j = {
+    {"threshold", me.threshold},
+    {"mu", {me.mu1, me.mu2}},
+    {"minSampleStep", me.min_samplestep},
+    {"sampleStep", me.sample_step},
+    {"range", me.range},
+    {"ntotalSample", me.ntotal_sample},
+    {"pointsToTrack", me.points_to_track},
+    {"maskSize", me.mask_size},
+    {"nMask", me.n_mask},
+    {"maskSign", me.mask_sign},
+    {"strip", me.strip}
+  };
 }
 
 /**
@@ -375,7 +374,6 @@ inline void to_json(nlohmann::json& j, const vpMe& me) {
  * @param me converted object
  */
 inline void from_json(const nlohmann::json& j, vpMe& me) {
-
   me.threshold = j.value("threshold", me.threshold);
   
   if(j.contains("mu")) {
@@ -385,16 +383,21 @@ inline void from_json(const nlohmann::json& j, vpMe& me) {
     me.setMu2(mus[1]);
   }
   me.min_samplestep = j.value("minSampleStep", me.min_samplestep);
-  me.anglestep = j.value("angleStep", me.anglestep);
+  
   me.range = j.value("range", me.range);
   me.ntotal_sample = j.value("ntotalSample", me.ntotal_sample);
   me.points_to_track = j.value("pointsToTrack", me.points_to_track);
   me.mask_size = j.value("maskSize", me.mask_size);
-  me.n_mask = j.value("nMask", me.n_mask);
   me.mask_sign = j.value("maskSign", me.mask_sign);
   me.strip = j.value("strip", me.strip);
-
-  
+  if(j.contains("angleStep") && j.contains("nMask")) {
+    std::cerr << "both angle step and number of masks are defined, number of masks will take precedence" << std::endl;
+    me.setMaskNumber(j["nMask"]);
+  } else if(j.contains("angleStep")) {
+    me.setAngleStep(j["angleStep"]);
+  } else if (j.contains("nMask")) {
+    me.setMaskNumber(j["nMask"]);
+  }
   me.initMask();
 }
 

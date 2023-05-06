@@ -29,14 +29,14 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Test vpCameraParameters JSON parse / save.
+ * Test vpMe JSON parse / save.
  *
  *****************************************************************************/
 
 /*!
-  \file testJsonCamera.cpp
+  \file testJsonMe.cpp
 
-  Test test saving and parsing JSON configuration for vpCameraParameters
+  Test test saving and parsing JSON configuration for vpMe
 */
 
 #include <visp3/core/vpIoTools.h>
@@ -52,7 +52,6 @@ using json = nlohmann::json;
 #include <random>
 namespace {
 
-
 // This class shows how to implement a simple generator for Catch tests
 class RandomCamGenerator : public Catch::Generators::IGenerator<vpCameraParameters> {
 private:
@@ -67,7 +66,7 @@ public:
     RandomCamGenerator(double low, double high):
         m_rand(std::random_device{}()),
         m_count_dist(1, 5),
-        m_type_dist(0, 3),
+        m_type_dist(0, 2),
         m_dist(low, high)
     {
         static_cast<void>(next());
@@ -85,71 +84,71 @@ public:
         const int type = m_type_dist(m_rand);
         switch(type) {
         case 0:
+        {
             current.initPersProjWithoutDistortion(px, py, u0, v0);
             break;
+        }
         case 1:
+        {
             current.initPersProjWithDistortion(px, py, u0, v0, m_dist(m_rand), m_dist(m_rand));
             break;
+        }
         case 2:
+        {
             std::vector<double> coeffs;
             const int count = m_count_dist(m_rand);
             for(int i = 0; i < count; ++i) {
                 coeffs.push_back(m_dist(m_rand));
             }
             current.initProjWithKannalaBrandtDistortion(px, py, u0, v0, coeffs);
+            break;
+        }
+        default:
+        {
+            throw vpException(vpException::badValue, "Shouldn't happen");
+        }
         }
         return true;
     }
 };
 
-// Catch::Generators::GeneratorWrapper<vpCameraParameters> random(double low, double high) {
-//     return Catch::Generators::GeneratorWrapper<vpCameraParameters>(
-//         new RandomCamGenerator(low, high)
-//     );
-// }
-
+Catch::Generators::GeneratorWrapper<vpCameraParameters> randomCam(double low, double high) {
+    return Catch::Generators::GeneratorWrapper<vpCameraParameters>(
+        std::unique_ptr<Catch::Generators::IGenerator<vpCameraParameters>>(
+            new RandomCamGenerator(low, high)
+        )
+    );
+}
 }
 
 SCENARIO("Serializing and deserializing a single vpCameraParameters", "[json]") {
-  GIVEN("Some camera intrinsics") {
-
-    RandomCamGenerator g(50.0, 500.0);
-    for(int i = 0; i < 100; ++i) { // Not sure why, but the catch2 generator wrappers dont work
-        g.next();
-        vpCameraParameters cam = g.get();
+    GIVEN("Some camera intrinsics") {
+        vpCameraParameters cam = GENERATE(take(100, randomCam(50.0, 500.0)));
         THEN("Serializing and deserializing does not modify the object") {
             const json j = cam;
             const vpCameraParameters otherCam = j;
-
             REQUIRE( cam == otherCam );
         }
     }
-  }
 }
 
 SCENARIO("Serializing two cameras", "[json]") {
-  GIVEN("Some camera intrinsics") {
+    GIVEN("Some camera intrinsics") {
+    vpCameraParameters cam = GENERATE(take(10, randomCam(50.0, 500.0)));
+    vpCameraParameters cam2 = GENERATE(take(10, randomCam(50.0, 500.0)));
+    if(cam != cam2) {
+        WHEN("serializing and deserializing two different cameras") {
+            THEN("The deserialized cams are still different") {
+                const json j1 = cam;
+                const json j2 = cam2;
 
-    RandomCamGenerator g(50.0, 500.0);
-    for(int i = 0; i < 100; ++i) { // Not sure why, but the catch2 generator wrappers dont work
-        g.next();
-        vpCameraParameters cam = g.get();
-        g.next();
-        vpCameraParameters cam2 = g.get();
-        if(cam != cam2) {
-            WHEN("serializing and deserializing two different cameras") {
-                THEN("The deserialized cams are still different") {
-                    const json j1 = cam;
-                    const json j2 = cam2;
-
-                    const vpCameraParameters resCam = j1;
-                    const vpCameraParameters resCam2 = j2;
-                    REQUIRE( resCam != resCam2 );
-                }
+                const vpCameraParameters resCam = j1;
+                const vpCameraParameters resCam2 = j2;
+                REQUIRE( resCam != resCam2 );
             }
         }
     }
-  }
+    }
 }
 
 int main(int argc, char *argv[])
