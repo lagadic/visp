@@ -419,4 +419,12 @@ VISP_EXPORT
 #endif
 vpColVector operator*(const double &x, const vpColVector &v);
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+inline void to_json(nlohmann::json& j, const vpColVector& v) {
+  const vpArray2D<double>* asArray = (vpArray2D<double>*) &v;
+  to_json(j, *asArray);
+  j["type"] = "vpColVector";
+}
+#endif
+
 #endif

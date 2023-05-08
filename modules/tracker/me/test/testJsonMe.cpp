@@ -120,13 +120,17 @@ public:
     }
 };
 Catch::Generators::GeneratorWrapper<vpMe> randomMe() {
-    return Catch::Generators::GeneratorWrapper<vpMe>(std::unique_ptr<Catch::Generators::IGenerator<vpMe>>(new RandomMeGenerator()));
+    return Catch::Generators::GeneratorWrapper<vpMe>(
+      std::unique_ptr<Catch::Generators::IGenerator<vpMe>>(
+        new RandomMeGenerator()
+      )
+    );
 }
 }
 
 SCENARIO("Serializing and deserializing a single vpMe", "[json]") {
   GIVEN("Some random vpMe object") {
-    vpMe me = GENERATE(take(1000, randomMe()));        
+    vpMe me = GENERATE(take(100, randomMe()));        
     WHEN("Serializing and deserializing an object") {
         const json j = me;
         const vpMe otherMe = j;

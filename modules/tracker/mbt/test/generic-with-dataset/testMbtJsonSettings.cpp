@@ -215,7 +215,7 @@ SCENARIO("MBT JSON Serialization", "[json]") {
         std::map<std::string, unsigned int> oldFlags, newFlags;
         t1.getClipping(oldFlags);
         t2.getClipping(newFlags);
-        for(const auto it: oldFlags) {
+        for(const auto& it: oldFlags) {
           unsigned int o = it.second;
           unsigned int n;
           REQUIRE_NOTHROW( n = newFlags[it.first] );

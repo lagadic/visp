@@ -47,6 +47,10 @@
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpException.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+#endif
+
 /*!
   \class vpArray2D
   \ingroup group_core_matrices
@@ -476,6 +480,10 @@ public:
 
     return *this;
   }
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  vpArray2D<Type> &operator=(const nlohmann::json& j) = delete;  
+#endif
 #endif
 
   //! Set element \f$A_{ij} = x\f$ using A[i][j] = x
@@ -878,6 +886,15 @@ public:
     file.close();
     return true;
   }
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  //template<typename Type>
+  template<class T>
+  friend void from_json(const nlohmann::json& j, vpArray2D<T>& array);
+  //template<typename Type>
+  template<class T>
+  friend void to_json(nlohmann::json& j, const vpArray2D<T>& array);
+#endif
+
   //@}
 };
 
@@ -987,4 +1004,72 @@ template <> inline bool vpArray2D<float>::operator==(const vpArray2D<float> &A) 
 
 template <class Type> bool vpArray2D<Type>::operator!=(const vpArray2D<Type> &A) const { return !(*this == A); }
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+
+
+template <class Type>
+inline void from_json(const nlohmann::json& j, vpArray2D<Type>& array) {
+  if(j.is_array()) {
+    const unsigned nrows = j.size();
+    if(nrows == 0) { // Initialize an empty array, Finished
+      array.resize(0, 0);
+      return;
+    }
+    unsigned ncols = 0;
+    bool first = true;
+    for(const auto& item: j) { // Find number of columns, validate that all rows have same number of cols
+      if(!item.is_array()) {
+        throw vpException(vpException::badValue, "Trying to instantiate a 2D array with a JSON object that is not an array of array");
+      }
+      if(first) {
+        first = false;
+        ncols = item.size();
+      } else if(ncols != item.size()) {
+        throw vpException(vpException::badValue, "Trying to instantiate a 2D array with JSON row arrays that are not of the same size");
+      }
+    }
+    array.resize(nrows, ncols);
+    unsigned i = 0;
+    for(const auto& item: j) {
+      std::vector<Type> row = item;
+      std::copy(row.begin(), row.end(), array.rowPtrs[i]);
+      ++i;
+    }
+  } else if(j.is_object()) {
+    const unsigned ncols = j.at("cols");
+    const unsigned nrows = j.at("rows");
+    array.resize(nrows, ncols);
+    const nlohmann::json jData = j.at("data");
+    if(!jData.is_array() || jData.size() != nrows * ncols) {
+      std::stringstream ss;
+      ss << "JSON \"data\" field must be an array of size " << nrows * ncols;
+      throw vpException(vpException::badValue, ss.str());
+    }
+    unsigned i = 0;
+    for(const auto& jValue: jData) {
+      array.data[i] = jValue;
+      ++i;
+    }
+  } else {    
+    throw vpException(vpException::badValue, "Trying to read a vpArray2D from something that is not an array or object");
+  }
+}
+
+
+template <class Type>
+inline void to_json(nlohmann::json& j, const vpArray2D<Type>& array) {
+  j = {
+    {"cols", array.colNum},
+    {"rows", array.rowNum},
+    {"type", "vpArray2D"}
+  };
+
+  nlohmann::json::array_t data;
+  data.reserve(array.size());
+  for(unsigned i = 0; i < array.size(); ++i) {
+    data.push_back(array.data[i]);
+  }
+  j["data"] = data;
+}
+#endif
 #endif
