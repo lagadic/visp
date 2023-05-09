@@ -48,7 +48,7 @@
  * \brief Class that furnishes a set of colors that color blind people
  * should be able to distinguish one from another.
  */
-class vpColorBlindFriendlyPalette
+class VISP_EXPORT vpColorBlindFriendlyPalette
 {
 public:
   /**
@@ -90,6 +90,13 @@ public:
    * \param nameColor 
    */
   vpColorBlindFriendlyPalette(std::string nameColor);
+
+  /**
+   * @brief Get the \b vpColorBlindFriendlyPalette::Palette the object corresponds to.
+   * 
+   * @return Palette Return \b vpColorBlindFriendlyPalette::_colorID.
+   */
+  Palette get_colorID() const;
 
   /**
    * \brief Cast a \b vpColorBlindFriendlyPalette in a \b vpColor object.

@@ -44,6 +44,11 @@ vpColorBlindFriendlyPalette::vpColorBlindFriendlyPalette(std::string nameColor)
   set_fromString(nameColor);
 }
 
+vpColorBlindFriendlyPalette::Palette vpColorBlindFriendlyPalette::get_colorID() const
+{
+  return _colorID;
+}
+
 vpColor vpColorBlindFriendlyPalette::to_vpColor()
 {
   return g_palette[to_uint(_colorID)];
