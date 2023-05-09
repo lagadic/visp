@@ -1,3 +1,4 @@
+//! \example example-class-using-pcl-visualizer.cpp
 #include "ClassUsingPclVisualizer.h"
 
 #if defined(VISP_HAVE_PCL)
@@ -7,6 +8,7 @@
 // Visp
 #include <visp3/core/vpTime.h>
 #include <visp3/core/vpUniRand.h>
+#include <visp3/gui/vpColorBlindFriendlyPalette.h>
 #include <visp3/io/vpKeyboard.h>
 
 double zFunction(const double &x, const double &y, const unsigned int order)
@@ -27,7 +29,6 @@ double zFunction(const double &x, const double &y, const unsigned int order)
       else
       {
         z += offset;
-        std::cout << offset<< " + ";
       }
 
     }
@@ -38,15 +39,15 @@ double zFunction(const double &x, const double &y, const unsigned int order)
 }
 
 ClassUsingPclVisualizer::ClassUsingPclVisualizer(std::pair<double, double> xlimits, std::pair<double, double> ylimits, std::pair<unsigned int, unsigned int> nbPoints)
-  : _minX(xlimits.first)
+  : _t(0.,0.,0.)
+  , _R(M_PI_4,M_PI_4,M_PI_4)
+  , _rotHunrotated(_t,_R)
+  , _minX(xlimits.first)
   , _maxX(xlimits.second)
   , _n(nbPoints.first)
   , _minY(ylimits.first)
   , _maxY(ylimits.second)
   , _m(nbPoints.second)
-  , _t(0.,0.,0.)
-  , _R(M_PI_4,M_PI_4,M_PI_4)
-  , _rotHunrotated(_t,_R)
   , _visualizer("Grid of points with / without robust")
 {
   _dX = (_maxX - _minX) / (static_cast<double>(_n) - 1.);
@@ -122,14 +123,24 @@ std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisuali
 
 void ClassUsingPclVisualizer::blockingMode(const bool &addNoise, const unsigned int& order)
 {
-  // Create control points
+  //! [Generating point clouds]
   std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> grids = generateControlPoints(addNoise, order);
+  //! [Generating point clouds]
 
-  unsigned int id_ctrlPts = _visualizer.addSurface(grids.first, "Standard");
-  unsigned int id_robust = _visualizer.addSurface(grids.second, "RotatedWithRobust");
-  
+  //! [Adding point clouds color not chosen]
+  // Adding a point cloud for which we don't chose the color 
+  unsigned int id_ctrlPts = _visualizer.addSurface(grids.first, "Standard"); 
+  //! [Adding point clouds color not chosen]
+
+  //! [Adding point clouds color chosen]
+  // Adding a point cloud for which we chose the color
+  vpColorBlindFriendlyPalette color(vpColorBlindFriendlyPalette::Palette::Purple);
+  unsigned int id_robust = _visualizer.addSurface(grids.second, "RotatedWithRobust", color.to_RGB());
+  //! [Adding point clouds color chosen]
+
+  //! [Displaying point clouds blocking mode]
   _visualizer.display();
-
+  //! [Displaying point clouds blocking mode]
 }
 
 void ClassUsingPclVisualizer::threadedMode(const bool &addNoise, const unsigned int& order)
@@ -137,9 +148,16 @@ void ClassUsingPclVisualizer::threadedMode(const bool &addNoise, const unsigned 
   // Create control points
   std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> grids = generateControlPoints(addNoise, order);
 
-  unsigned int id_ctrlPts = _visualizer.addSurface(grids.first, "Standard");
-  unsigned int id_robust = _visualizer.addSurface(grids.second, "RotatedWithRobust");
+  // Adding a point cloud for which we don't chose the color 
+  unsigned int id_ctrlPts = _visualizer.addSurface(grids.first, "Standard"); 
+  
+  // Adding a point cloud for which we chose the color
+  vpColorBlindFriendlyPalette color(vpColorBlindFriendlyPalette::Palette::Purple);
+  unsigned int id_robust = _visualizer.addSurface(grids.second, "RotatedWithRobust", color.to_RGB());
+
+  //! [Starting display thread]
   _visualizer.launchThread();
+  //! [Starting display thread]
   
   _visualizer.threadUpdateSurface(grids.first , id_ctrlPts);
   _visualizer.threadUpdateSurface(grids.second , id_robust);
@@ -152,8 +170,10 @@ void ClassUsingPclVisualizer::threadedMode(const bool &addNoise, const unsigned 
     t = vpTime::measureTimeMs();
     grids = generateControlPoints(addNoise, order);
 
+    //! [Updating point clouds used by display thread]
     _visualizer.threadUpdateSurface(grids.first , id_ctrlPts);
     _visualizer.threadUpdateSurface(grids.second , id_robust);
+    //! [Updating point clouds used by display thread]
 
     if (keyboard.kbhit()) {
       wantToStop = true;

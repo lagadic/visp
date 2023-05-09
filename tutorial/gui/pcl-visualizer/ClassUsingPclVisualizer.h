@@ -1,9 +1,11 @@
 #ifndef TESTCLASSPCLVISUALIZER_H
 #define TESTCLASSPCLVISUALIZER_H
 
+//! \example example-class-using-pcl-visualizer.h
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PCL)
+
 #include<visp3/core/vpColVector.h>
 #include<visp3/gui/vpPclPointCloudVisualization.h>
 
