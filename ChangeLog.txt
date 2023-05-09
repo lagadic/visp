@@ -792,7 +792,7 @@ ViSP 2.8.0 (released July 24th, 2013)
       tracing when faces are concave or not oriented counter clockwise.
     . Still in model-based trackers, add functionalities to use clipping planes.
     . ViSP can now be used with pkg-config
-    . New fonctions in vp1394TwoGrabber to turn auto shutter and auto gain
+    . New functions in vp1394TwoGrabber to turn auto shutter and auto gain
       on. Also new getter for auto shutter and auto gain min/max values.
     . Support Visual Studio 2012 (MSVC11)
     . Introduce C++ visibility support as described here

@@ -662,7 +662,7 @@ public:
             2.0 * (fr[r - 2][c - 2] + fr[r + 2][c - 2] + fr[r - 2][c + 2] + fr[r + 2][c + 2])) /
            159.0;
   }
-  // operation pour pyramide gaussienne
+  // Gaussain pyramid operation
   static void getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI);
   static void getGaussXPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI);
   static void getGaussYPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI);
@@ -670,15 +670,14 @@ public:
   static void getGaussianKernel(double *filter, unsigned int size, double sigma = 0., bool normalize = true);
   static void getGaussianDerivativeKernel(double *filter, unsigned int size, double sigma = 0., bool normalize = true);
 
-  // fonction renvoyant le gradient en X de l'image I pour traitement
-  // pyramidal => dimension /2
+  // Gradient along X
   static void getGradX(const vpImage<unsigned char> &I, vpImage<double> &dIx);
   static void getGradX(const vpImage<unsigned char> &I, vpImage<double> &dIx, const double *filter, unsigned int size);
   static void getGradX(const vpImage<double> &I, vpImage<double> &dIx, const double *filter, unsigned int size);
   static void getGradXGauss2D(const vpImage<unsigned char> &I, vpImage<double> &dIx, const double *gaussianKernel,
                               const double *gaussianDerivativeKernel, unsigned int size);
 
-  // fonction renvoyant le gradient en Y de l'image I
+  // Gradient along Y
   static void getGradY(const vpImage<unsigned char> &I, vpImage<double> &dIy);
   static void getGradY(const vpImage<unsigned char> &I, vpImage<double> &dIy, const double *filter, unsigned int size);
   static void getGradY(const vpImage<double> &I, vpImage<double> &dIy, const double *filter, unsigned int size);

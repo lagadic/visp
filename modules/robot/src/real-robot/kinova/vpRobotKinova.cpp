@@ -491,7 +491,7 @@ void vpRobotKinova::getJointPosition(vpColVector &q)
  * the cartesian position of the end-effector in the robot base frame as a 6-dim vector, with first the 3 translations
  * expressed in meter, and then the 3 Euler rotations Rxyz expressed in radians.
  *
- * The following code shows how to use this fonction and convert the resulting position into an homogeneous matrix
+ * The following code shows how to use this function and convert the resulting position into an homogeneous matrix
  * that gives the transformation between the robot base frame and the end-effector:
  * \code
  * vpColVector position;
