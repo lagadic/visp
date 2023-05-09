@@ -60,7 +60,7 @@
   A sphere has the followings parameters:
   - **in the object frame**: the 3D coordinates oX, oY, oZ of the center and radius R. These
   parameters registered in vpForwardProjection::oP internal 4-dim vector are set using the constructors vpSphere(double
-  oX, double oY, double oZ, double R), vpSphere(const vpColVector &oP) or the fonctions setWorldCoordinates(double oX,
+  oX, double oY, double oZ, double R), vpSphere(const vpColVector &oP) or the functions setWorldCoordinates(double oX,
   double oY, double oZ, double R) and setWorldCoordinates(const vpColVector &oP). To get theses parameters use get_oP().
 
   - **in the camera frame**: the coordinates cX, cY, cZ of the center and radius R. These

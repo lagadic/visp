@@ -143,7 +143,7 @@ public:
 
   /*!
     Read camera parameters from a XML file.
-    \param node_ : XML tree, pointing on a marker equipement.
+    \param node_ : XML tree, pointing on a marker equipment.
     \param cam_name : Name of the camera. Useful if the xml file has multiple
     camera parameters. Set to an empty string "" if the camera name is not ambiguous.
     \param projModel : Projection model type.
@@ -196,7 +196,7 @@ public:
 
   /*!
     Read camera fields from a XML file.
-    \param node_ : XML tree, pointing on a marker equipement.
+    \param node_ : XML tree, pointing on a marker equipment.
     \param cam_name : Name of the camera. Useful if the xml file has multiple
     camera parameters. Set to an empty string "" if the camera name is not ambiguous.
     \param projModel : Projection model type.
@@ -326,7 +326,7 @@ public:
 
   /*!
     Read camera model fields from a XML file.
-    \param node_ : XML tree, pointing on a marker equipement.
+    \param node_ : XML tree, pointing on a marker equipment.
     \param cam_tmp : camera parameters to fill with read data (output).
     \return error code.
    */
@@ -564,7 +564,7 @@ public:
   /*!
     Read camera parameters from a XML file and count the number of available
     sets of camera parameters corresponding with inputs.
-    \param node_ : XML tree, pointing on a marker equipement.
+    \param node_ : XML tree, pointing on a marker equipment.
     \param cam_name : name of the camera : useful if the xml file has multiple
     camera parameters. Set as "" if the camera name is not ambiguous.
     \param projModel : Projection model type.
@@ -606,7 +606,7 @@ public:
   /*!
     Read camera headers from a XML file and return the last available
     node pointeur in the xml tree corresponding with inputs.
-    \param node_ : XML tree, pointing on a marker equipement.
+    \param node_ : XML tree, pointing on a marker equipment.
     \param cam_name : name of the camera : useful if the xml file has multiple
     camera parameters. Set as "" if the camera name is not ambiguous.
     \param im_width : width of image  on which camera calibration was performed.
@@ -642,7 +642,7 @@ public:
 
   /*!
     Read camera header fields from a XML file.
-    \param node_ : XML tree, pointing on a marker equipement.
+    \param node_ : XML tree, pointing on a marker equipment.
     \param cam_name : name of the camera : useful if the xml file has multiple
     camera parameters. Set as "" if the camera name is not ambiguous.
     \param im_width : width of image  on which camera calibration was performed.
@@ -730,7 +730,7 @@ public:
 
   /*!
     Write camera parameters in an XML Tree.
-    \param node : XML tree, pointing on a marker equipement.
+    \param node : XML tree, pointing on a marker equipment.
     \param cam_name : name of the camera : useful if the xml file has multiple
     camera parameters. Set as "" if the camera name is not ambiguous.
     \param im_width : width of image  on which camera calibration was performed.
