@@ -31,11 +31,6 @@
  * Description:
  * Convert image types.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- * Anthony Saunier
- *
  *****************************************************************************/
 
 /*!
@@ -143,6 +138,7 @@ public:
   static void convert(const cv::Mat &src, vpImage<unsigned char> &dest, bool flip = false, unsigned int nThreads = 0);
   static void convert(const cv::Mat &src, vpImage<float> &dest, bool flip = false);
   static void convert(const cv::Mat &src, vpImage<vpRGBf> &dest, bool flip = false);
+  static void convert(const cv::Mat &src, vpImage<uint16_t> &dest, bool flip = false);
   static void convert(const vpImage<vpRGBa> &src, cv::Mat &dest);
   static void convert(const vpImage<unsigned char> &src, cv::Mat &dest, bool copyData = true);
   static void convert(const vpImage<float> &src, cv::Mat &dest, bool copyData = true);
