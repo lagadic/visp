@@ -873,7 +873,7 @@ inline void from_json(const nlohmann::json& j, vpMbGenericTracker::TrackerWrappe
   //Check tracker type: for each type, load settings for this specific tracker type
   //Edge tracker settings
   if(t.m_trackerType & vpMbGenericTracker::EDGE_TRACKER) {
-    t.me = j.at("edge");
+    from_json(j.at("edge"), t.me);
   }
   //KLT tracker settings
   if(t.m_trackerType & vpMbGenericTracker::KLT_TRACKER) {

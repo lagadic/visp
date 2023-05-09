@@ -1,5 +1,6 @@
 {
     "referenceCameraName": "Color",
+    "model": "model/cube/cube.cao",
     "trackers": {
         "Color": {
             "angleAppear": 65.0,
@@ -80,6 +81,82 @@
                 "edge",
                 "klt"
             ],
+            "visibilityTest": {
+                "ogre": false,
+                "scanline": true
+            }
+        },
+        "Depth": {
+            "angleAppear": 70.0,
+            "angleDisappear": 80.0,
+            "camTref": {
+                "cols": 4,
+                "data": [
+                    0.999972403049469,
+                    -0.006713358219712973,
+                    -0.003179509425535798,
+                    -0.01465611346065998,
+                    0.006699616555124521,
+                    0.9999682307243347,
+                    -0.004313052631914616,
+                    9.024870814755559e-05,
+                    0.003208363428711891,
+                    0.00429163221269846,
+                    0.9999856352806091,
+                    -0.0004482123476918787,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "rows": 4,
+                "type": "vpHomogeneousMatrix"
+            },
+            "camera": {
+                "model": "perspectiveWithoutDistortion",
+                "px": 381.7528076171875,
+                "py": 381.7528076171875,
+                "u0": 323.3261413574219,
+                "v0": 236.82505798339844
+            },
+            "clipping": {
+                "far": 2.0,
+                "flags": [
+                    "all"
+                ],
+                "near": 0.01
+            },
+            "dense": {
+                "sampling": {
+                    "x": 1,
+                    "y": 1
+                }
+            },
+            "normals": {
+                "featureEstimationMethod": "robust",
+                "pcl": {
+                    "method": 2,
+                    "ransacMaxIter": 200,
+                    "ransacThreshold": 0.001
+                },
+                "sampling": {
+                    "x": 2,
+                    "y": 2
+                }
+            },
+            "type": [
+                "depthDense",
+                "depthNormal"
+            ],
+            "display": {
+                "features": true,
+                "projectionError": true
+            },
+            "lod": {
+                "minLineLengthThresholdGeneral": 50.0,
+                "minPolygonAreaThresholdGeneral": 2500.0,
+                "useLod": false
+            },
             "visibilityTest": {
                 "ogre": false,
                 "scanline": true

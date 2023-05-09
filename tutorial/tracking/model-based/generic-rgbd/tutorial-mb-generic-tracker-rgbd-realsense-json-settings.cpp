@@ -12,6 +12,10 @@
 #include <visp3/mbt/vpMbGenericTracker.h>
 #include <visp3/sensor/vpRealSense2.h>
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
+
 int main(int argc, char *argv[])
 {
   std::string config_file = "";
@@ -19,7 +23,6 @@ int main(int argc, char *argv[])
   std::string init_file = "";
   
   double proj_error_threshold = 25;
-  bool display_projection_error = false;
 
   for (int i = 1; i < argc; i++) {
     if (std::string(argv[i]) == "--config" && i + 1 < argc) {
@@ -48,10 +51,7 @@ int main(int argc, char *argv[])
     }
   }
 
-  const std::string parentname = vpIoTools::getParent(model);
-  if (init_file.empty()) {
-    init_file = (parentname.empty() ? "" : (parentname + "/")) + vpIoTools::getNameWE(model) + ".init";
-  }
+  
   std::cout << "Config files: " << std::endl;
   std::cout << "  JSON config: "
             << "\"" << config_file << "\"" << std::endl;
@@ -59,12 +59,9 @@ int main(int argc, char *argv[])
             << "\"" << model << "\"" << std::endl;
   std::cout << "  Init file: "
             << "\"" << init_file << "\"" << std::endl;
-  
 
-  if (config_file.empty()  || model.empty() || init_file.empty()) {
-    std::cout << "config_file.empty() || model.empty()  "
-                 "init_file.empty()"
-              << std::endl;
+  if (config_file.empty()) {
+    std::cout << "No JSON configuration was provided!" << std::endl;
     return EXIT_FAILURE;
   }
   //! [Init]
@@ -110,6 +107,22 @@ int main(int argc, char *argv[])
   vpMbGenericTracker tracker;
   tracker.loadConfigFile(config_file);
   //! [Loading]
+  if(model.empty() && init_file.empty()) {
+    std::ifstream config(config_file);
+    const json j = json::parse(config);
+    config.close();
+    if(j.contains("model")) {
+      model = j["model"];
+    } else {
+      std::cerr << "No model was provided in either JSON file or arguments" << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+  if (init_file.empty()) {
+    const std::string parentname = vpIoTools::getParent(model);
+    init_file = (parentname.empty() ? "" : (parentname + "/")) + vpIoTools::getNameWE(model) + ".init";
+  }
+
   //! [Init maps]
   std::string color_key = "", depth_key = "";
   for(const auto& tracker_type: tracker.getCameraTrackerTypes()) {
@@ -138,10 +151,7 @@ int main(int argc, char *argv[])
   const bool use_color = !color_key.empty();
   //! [Init maps]
   //! [Load 3D model]
-  if(tracker.getNbPolygon() == 0) {
-    if(model.empty()) {
-      throw vpException(vpException::badValue, "No CAD model found in JSON file, but none was provided in the program arguments!");
-    }
+  if(tracker.getNbPolygon() == 0) { // Not already loaded by JSON
     tracker.loadModel(model);
   }
   //! [Load 3D model]
@@ -153,10 +163,6 @@ int main(int argc, char *argv[])
     tracker.setCameraTransformationMatrix(mapOfCameraTransformations);
   }
   //! [Update params]
-  
-
-  
-
   unsigned int _posx = 100, _posy = 50;
 
 #ifdef VISP_HAVE_X11

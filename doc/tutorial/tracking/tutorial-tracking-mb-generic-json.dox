@@ -8,132 +8,19 @@ With the inclusion of a 3rd-party JSON serialization library into ViSP, it is no
 
 A case that is of particular interest is the configuration of the generic Model-Based Tracker. As this tracker is complex, providing an easy to use configuration file is essential.
 Loading the configuration for each camera is already possible with XML (already used in \ref tutorial-tracking-mb-generic-rgbd). 
-This however, does not load the full state of the tracker but rather the configuration of each camera.
+This however, does not load the full state of the tracker but rather the configuration of each camera and combining everything is left to the user.
 
 With JSON serialization, a single file stores the full configuration of the generic tracker, containing the configuration of each camera, their associated name as well as their transformation with respect to the reference camera.
 Moreover, the path to the 3D model can be given in the JSON file and the model will be directly loaded.
 
-
 \section tutorial-mb-generic-json-structure JSON file structure
 Let us first examine the structure of a JSON file used to load a vpMbGenericTracker, given below:
-\code{.json}
-{
-    "referenceCameraName": "Camera1",
-    "trackers": {
-        "Camera1": {
-            "angleAppear": 65.0,
-            "angleDisappear": 75.00000000000001,
-            "camTref": [
-                1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
-                0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0
-            ],
-            "camera": {
-                "model": "perspectiveWithoutDistortion",
-                "px": 605.146728515625,
-                "py": 604.79150390625,
-                "u0": 325.53253173828125,
-                "v0": 244.95083618164063
-            },
-            "clipping": {
-                "far": 0.9,
-                "near": 0.1,
-                "useFOVClipping": false
-            },
-            "display": {
-                "features": true,
-                "projectionError": true
-            },
-            "edge_tracker": {
-                "angleStep": 1,
-                "maskSign": 0,
-                "maskSize": 5,
-                "minSampleStep": 4.0,
-                "mu": [
-                    0.5,
-                    0.5
-                ],
-                "nMask": 180,
-                "ntotal_sample": 0,
-                "pointsToTrack": 500,
-                "range": 7,
-                "sampleStep": 4.0,
-                "strip": 2,
-                "threshold": 5000.0
-            },
-            "klt": {
-                "blockSize": 3,
-                "harris": 0.01,
-                "maskBorder": 5,
-                "maxFeatures": 300,
-                "minDistance": 5.0,
-                "pyramidLevels": 3,
-                "quality": 0.01,
-                "windowSize": 5
-            },
-            "lod": {
-                "minLineLengthThresholdGeneral": 50.0,
-                "minPolygonAreaThresholdGeneral": 2500.0,
-                "useLod": false
-            },
-            "type": [
-                "edge",
-                "klt"
-            ],
-            "visibilityTest": {
-                "ogre": false,
-                "scanline": true
-            }
-        },
-        "Camera2": {
-            "angleAppear": 70.0,
-            "angleDisappear": 80.0,
-            "camTref": [
-                0.999972403049469, -0.006713358219712973, -0.003179509425535798, -0.01465611346065998,
-                0.006699616555124521, 0.9999682307243347, -0.004313052631914616, 9.024870814755559e-05,
-                0.003208363428711891, 0.00429163221269846, 0.9999856352806091, -0.0004482123476918787,
-                0.0, 0.0, 0.0, 1.0
-            ],
-            "camera": {
-                "model": "perspectiveWithoutDistortion",
-                "px": 381.7528076171875,
-                "py": 381.7528076171875,
-                "u0": 323.3261413574219,
-                "v0": 236.82505798339844
-            },
-            "clipping": {
-                "far": 2.0,
-                "near": 0.01,
-                "useFOVClipping": false
-            },
-            "dense": {
-                "sampling": {
-                    "x": 1,
-                    "y": 1
-                }
-            },
-            "display": {
-                "features": true,
-                "projectionError": true
-            },
-            "lod": {
-                "minLineLengthThresholdGeneral": 50.0,
-                "minPolygonAreaThresholdGeneral": 2500.0,
-                "useLod": false
-            },
-            "type": [
-                "depthDense"
-            ],
-            "visibilityTest": {
-                "ogre": false,
-                "scanline": true
-            }
-        }
-    }
-}
-\endcode
+\include realsense-color-and-depth.json
+
 
 Many settings are optional: if a setting is not present in the .json file, then the value already set in the tracker is kept.
-This means that the .json can contain a partial configuration, while the rest is of the configuration is done in the code.
+This means that the .json can contain a partial configuration, while the rest of the configuration is done in the code.
+Beware however, that previously defined cameras that are not in the .json file are removed.
 
 As this file is fairly dense, let us examine each part separetely so that you may tweak it for your use case.
 
@@ -158,6 +45,12 @@ If they are defined globally, they will take precedence over the values defined 
 
 <table>
 <tr><th colspan="2">Key</th><th>Type</th><th>Description</th><th>Optional</th></tr>
+<tr>
+    <td colspan="2">version</td>
+    <td>String</td>
+    <td>Version of the JSON parsing for the MBT tracker</td>
+    <td>No</td>
+</tr>
 <tr>
     <td colspan="2">referenceCameraName</td>
     <td>String</td>
@@ -205,108 +98,24 @@ If they are defined globally, they will take precedence over the values defined 
 
 \subsection json-per-tracker-settings Individual camera tracker settings
 
-Each camera has a name (the key in the "trackers" dictionary, e.g., "Camera1", "Camera2") and is associated to a combination of tracker.
+Each camera has a name (the key in the "trackers" dictionary, e.g., "Color", "Depth") and is associated to a combination of tracker.
 
-First, consider, the tracker for the key "Camera1":
-\code{.json}
-//...
-"Camera1": {
-    "angleAppear": 65.0,
-    "angleDisappear": 75.00000000000001,
-    "camTref": [
-        1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
-        0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0
-    ],
-    "camera": {
-        "model": "perspectiveWithoutDistortion",
-        "px": 605.146728515625,
-        "py": 604.79150390625,
-        "u0": 325.53253173828125,
-        "v0": 244.95083618164063
-    },
-    "clipping": {
-        "far": 0.9,
-        "near": 0.1,
-        "useFOVClipping": false
-    },
-    "display": {
-        "features": true,
-        "projectionError": true
-    },
-    "edge_tracker": {
-        "angleStep": 1,
-        "maskSign": 0,
-        "maskSize": 5,
-        "minSampleStep": 4.0,
-        "mu": [
-            0.5,
-            0.5
-        ],
-        "nMask": 180,
-        "ntotal_sample": 0,
-        "pointsToTrack": 500,
-        "range": 7,
-        "sampleStep": 4.0,
-        "strip": 2,
-        "threshold": 5000.0
-    },
-    "klt": {
-        "blockSize": 3,
-        "harris": 0.01,
-        "maskBorder": 5,
-        "maxFeatures": 300,
-        "minDistance": 5.0,
-        "pyramidLevels": 3,
-        "quality": 0.01,
-        "windowSize": 5
-    },
-    "lod": {
-        "minLineLengthThresholdGeneral": 50.0,
-        "minPolygonAreaThresholdGeneral": 2500.0,
-        "useLod": false
-    },
-    "type": [
-        "edge",
-        "klt"
-    ],
-    "visibilityTest": {
-        "ogre": false,
-        "scanline": true
-    }
-} //...
-\endcode
+First, consider, the tracker for the key "Color":
+\snippet realsense-color-and-depth.json.example Color
 
 This JSON object contains multiple components which we'll go through one by one.
 
 First each camera-specific tracker definition must contain its type. Here, it is defined as:
-\code{.json}
-"type": [
-    "edge",
-    "klt"
-],
-\endcode
+\snippet realsense-color-and-depth.json.example Features
 stating that this tracker uses both edge (see the vpMe class) and KLT (see vpKltOpencv) features. other possible values are "depthDense" and "depthNormal" for depth-related features.
 
 the next important definition is:
-\code{.json}
-"camTref": [
-    1.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
-    0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 1.0
-],
-\endcode
-Describing the transformation between this camera and the reference camera. 
+\snippet realsense-color-and-depth.json.example Transformation
+Describing the transformation between this camera and the reference camera. It can also be given as a vpPoseVector JSON representation
 If the current camera is the reference, then "camTref" may be ommitted or set as the identity transformation.
 
 Next, we must define the camera intrinsics (see vpCameraParameters):
-\code{.json}
-"camera": {
-    "model": "perspectiveWithoutDistortion",
-    "px": 605.146728515625,
-    "py": 604.79150390625,
-    "u0": 325.53253173828125,
-    "v0": 244.95083618164063
-},
-\endcode
+\snippet realsense-color-and-depth.json.example Camera
 This JSON object follows the convention defined in vpCameraParameters::from_json.
 
 Other common settings include:
@@ -328,9 +137,11 @@ Other common settings include:
 </tr>
 <tr><th colspan="5">clipping (optional)</th></tr>
 <tr>
-    <td>useFovClipping</td>
-    <td>boolean</td>
-    <td>Whether to use field of view clipping.</td>
+    <td>flags</td>
+    <td>List of vpPolygon3D::vpPolygon3DClippingType</td>
+    <td>The clipping flags used for this tracker. a list that can combine different values in:
+    ["none", "all", "fov", "left", "right", "top", "down", "near", "far"]
+    </td>
     <td>vpPolygon3D, vpMbTracker::setClipping</td>
     <td>Yes</td>
 </tr>
@@ -379,8 +190,33 @@ Other common settings include:
 
 \subsubsection json-feature-settings Tracker Feature settings
 
-
 Each type of tracked feature can be customized in the JSON file.
+
+<h4>Edge</h4>
+Edge feature parameters are defined by the conversion vpMe::from_json
+All parameters are optional: if not filled in the JSON file, then the value that is already set will be used
+
+Example configuration (all parameters):
+\snippet realsense-color-and-depth.json.example Edge
+
+<h4>KLT</h4>
+Each parameter of the KLT tracker (see vpKltOpencv) is optional: if not present it will be set to a fixed default value.
+
+The default configuration is:
+\snippet realsense-color-and-depth.json.example KLT
+<h4>Depth normals</h4>
+The configuration for the depth normal features is the following
+\snippet realsense-color-and-depth.json.example DepthNormal
+
+the "featureEstimationMethod" must be one of "robust", "robustSVD" or "pcl". The latter requires PCL to be installed.
+
+See vpMbDepthNormalTracker for more details.
+
+<h4>Dense depth</h4>
+The configuration for the dense depth features only contain the sampling step, as shown below:
+\snippet realsense-color-and-depth.json.example DepthDense
+
+
 
 \section json-settings-usage Example: Initializing a tracker from a JSON file 
 
