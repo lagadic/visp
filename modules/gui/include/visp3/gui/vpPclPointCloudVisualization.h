@@ -51,7 +51,7 @@
 #include <mutex>
 
 // ViSP
-#include<visp3/core/vpColVector.h>
+#include <visp3/core/vpColVector.h>
 
 // PCL
 #include <pcl/visualization/pcl_visualizer.h>
@@ -82,9 +82,9 @@ public:
 
   void set_ignoreThreshold(const double &thresh);
 
-  unsigned int addSurface(const pclPointCloud::Ptr &surface, std::string name = "");
+  unsigned int addSurface(const pclPointCloud::Ptr &surface, const std::string &name = "", const std::vector<unsigned char> &v_color = std::vector<unsigned char>());
 
-  unsigned int addSurface(const pclPointCloud::Ptr &surface, const vpColVector &weights, std::string name = "");
+  unsigned int addSurface(const pclPointCloud::Ptr &surface, const vpColVector &weights, const std::string &name = "", const std::vector<unsigned char> &v_color = std::vector<unsigned char>());
 
   void updateSurface(const pclPointCloud::Ptr &surface, unsigned int id);
 

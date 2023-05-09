@@ -171,14 +171,14 @@ void vpPclPointCloudVisualization ::updateSurface(const pclPointCloud::Ptr &surf
   }
 }
 
-unsigned int vpPclPointCloudVisualization ::addSurface(const pclPointCloud::Ptr &surface, std::string name)
+unsigned int vpPclPointCloudVisualization ::addSurface(const pclPointCloud::Ptr &surface, const std::string &name, const std::vector<unsigned char> &v_color)
 {
   unsigned int nbPoints = surface->size();
   vpColVector fakeWeigths(nbPoints, 1.); // Fake weights that are all equal to 1, to keep all the points
-  return addSurface(surface, fakeWeigths, name);
+  return addSurface(surface, fakeWeigths, name, v_color);
 }
 
-unsigned int vpPclPointCloudVisualization ::addSurface(const pclPointCloud::Ptr &surface, const vpColVector &weights, std::string name)
+unsigned int vpPclPointCloudVisualization ::addSurface(const pclPointCloud::Ptr &surface, const vpColVector &weights, const std::string &name, const std::vector<unsigned char> &v_color)
 {
   static unsigned int nbSurfaces = 0;
   unsigned int id = _vPointClouds.size();
@@ -191,10 +191,21 @@ unsigned int vpPclPointCloudVisualization ::addSurface(const pclPointCloud::Ptr 
   unsigned int nbPoints = surface->size();
   _vPointClouds[id]->resize(nbPoints);
 
-  // Affecting a default color to the pcl, if the user does not want to use its original color
-  // when displaying it
-  vpColorBlindFriendlyPalette color(gcolor[nbSurfaces]);
-  std::vector<unsigned char> v_RGB = color.to_RGB();
+  // Affecting a color to the point cloud and its legend
+  std::vector<unsigned char> v_RGB;
+  if(v_color.size() < 3)
+  {
+    // Affecting a default color to the pcl and its legend, if the user does not want to use its original color
+    // when displaying it
+    vpColorBlindFriendlyPalette color(gcolor[nbSurfaces]);
+    v_RGB = color.to_RGB();
+  }
+  else
+  {
+    // Keeping the colors decided by the user
+    v_RGB = v_color;
+  }
+  
   std::vector<double> v_RGBdouble = {
     (double)v_RGB[0],
     (double)v_RGB[1],
