@@ -122,7 +122,7 @@ public:
 
   int parse(vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
             const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int im_width,
-            unsigned int im_height)
+            unsigned int im_height, bool verbose)
   {
     pugi::xml_document doc;
     if (!doc.load_file(filename.c_str())) {
@@ -134,7 +134,7 @@ public:
       return SEQUENCE_ERROR;
     }
 
-    int ret = read(node, cam_name, projModel, im_width, im_height);
+    int ret = read(node, cam_name, projModel, im_width, im_height, verbose);
 
     cam = camera;
 
@@ -144,25 +144,25 @@ public:
   /*!
     Read camera parameters from a XML file.
     \param node_ : XML tree, pointing on a marker equipement.
-    \param cam_name : name of the camera : useful if the xml file has multiple
-    camera parameters. Set as "" if the camera name is not ambiguous.
+    \param cam_name : Name of the camera. Useful if the xml file has multiple
+    camera parameters. Set to an empty string "" if the camera name is not ambiguous.
     \param projModel : Projection model type.
     \param im_width : width of image  on which camera calibration was performed.
-      Set as 0 if not ambiguous.
+    Set to 0 if not ambiguous.
     \param im_height : height of the image  on which camera calibration
-      was performed. Set as 0 if not ambiguous.
+    was performed. Set as 0 if not ambiguous.
     \param subsampl_width : subsampling of the image width sent by the camera.
-      Set as 0 if not ambiguous.
+    Set to 0 if not ambiguous.
     \param subsampl_height : subsampling of the image height sent by the camera.
-      Set as 0 if not ambiguous.
+    Set to 0 if not ambiguous.
+    \param verbose true to enable verbose mode, false otherwise.
     \return vpXmlParserCamera::SEQUENCE_OK if success and vpXmlParserCamera::SEQUENCE_ERROR otherwise.
    */
   int read(const pugi::xml_node &node_, const std::string &cam_name,
            const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int im_width,
-           unsigned int im_height, unsigned int subsampl_width = 0, unsigned int subsampl_height = 0)
+           unsigned int im_height, bool verbose, unsigned int subsampl_width = 0, unsigned int subsampl_height = 0)
   {
     vpXmlCodeType prop;
-
     vpXmlCodeSequenceType back = SEQUENCE_OK;
     unsigned int nbCamera = 0;
 
@@ -175,7 +175,7 @@ public:
         back = SEQUENCE_ERROR;
       }
       if (prop == CODE_XML_CAMERA) {
-        if (SEQUENCE_OK == read_camera(node, cam_name, projModel, im_width, im_height, subsampl_width, subsampl_height))
+        if (SEQUENCE_OK == read_camera(node, cam_name, projModel, im_width, im_height, subsampl_width, subsampl_height, verbose))
           nbCamera++;
       } else
         back = SEQUENCE_ERROR;
@@ -197,22 +197,23 @@ public:
   /*!
     Read camera fields from a XML file.
     \param node_ : XML tree, pointing on a marker equipement.
-    \param cam_name : name of the camera : useful if the xml file has multiple
-    camera parameters. Set as "" if the camera name is not ambiguous.
+    \param cam_name : Name of the camera. Useful if the xml file has multiple
+    camera parameters. Set to an empty string "" if the camera name is not ambiguous.
     \param projModel : Projection model type.
     \param im_width : width of image  on which camera calibration was performed.
-      Set as 0 if not ambiguous.
+    Set to 0 if not ambiguous.
     \param im_height : height of the image  on which camera calibration
-      was performed. Set as 0 if not ambiguous.
+    was performed. Set as 0 if not ambiguous.
     \param subsampl_width : scale of the image width sent by the camera.
-      Set as 0 if not ambiguous.
+    Set to 0 if not ambiguous.
     \param subsampl_height : scale of the image height sent by the camera.
-      Set as 0 if not ambiguous.
+    Set to 0 if not ambiguous.
+    \param verbose true to enable verbose mode, false otherwise.
     \return error code.
    */
   int read_camera(const pugi::xml_node &node_, const std::string &cam_name,
                   const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int im_width,
-                  unsigned int im_height, unsigned int subsampl_width, unsigned int subsampl_height)
+                  unsigned int im_height, unsigned int subsampl_width, unsigned int subsampl_height, bool verbose)
   {
     vpXmlCodeType prop;
     /* read value in the XML file. */
@@ -238,7 +239,9 @@ public:
       switch (prop) {
       case CODE_XML_CAMERA_NAME: {
         camera_name_tmp = node.text().as_string();
-        std::cout << "Found camera with name: \"" << camera_name_tmp << "\"" << std::endl;
+        if (verbose) {
+          std::cout << "Found camera with name: \"" << camera_name_tmp << "\"" << std::endl;
+        }
         break;
       }
       case CODE_XML_WIDTH:
@@ -301,11 +304,13 @@ public:
       test_subsampling_height = (abs((int)subsampl_height - (int)subsampling_height_tmp) <
                                  (allowedPixelDiffOnImageSize * (int)(subsampling_height_tmp / subsampling_height)));
     }
-    if (!((projModelFound == true) && (cam_name == camera_name_tmp) &&
+    if (!((projModelFound == true) &&
           (abs((int)im_width - (int)image_width_tmp) < allowedPixelDiffOnImageSize || im_width == 0) &&
           (abs((int)im_height - (int)image_height_tmp) < allowedPixelDiffOnImageSize || im_height == 0) &&
           (test_subsampling_width) && (test_subsampling_height))) {
-      back = SEQUENCE_ERROR;
+      if (! cam_name.empty() && (cam_name == camera_name_tmp)) {
+        back = SEQUENCE_ERROR;
+      }
     } else {
       camera = cam_tmp;
       camera_name = camera_name_tmp;
@@ -489,7 +494,7 @@ public:
   }
 
   int save(const vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
-           unsigned int im_width, unsigned int im_height, const std::string &additionalInfo)
+           unsigned int im_width, unsigned int im_height, const std::string &additionalInfo, bool verbose)
   {
     pugi::xml_document doc;
     pugi::xml_node node;
@@ -513,7 +518,7 @@ public:
 
     camera = cam;
 
-    int nbCamera = count(node, cam_name, cam.get_projModel(), im_width, im_height);
+    int nbCamera = count(node, cam_name, cam.get_projModel(), verbose, im_width, im_height);
     if (nbCamera) {
       return SEQUENCE_ERROR;
     }
@@ -571,11 +576,12 @@ public:
       Set as 0 if not ambiguous.
     \param subsampl_height : subsampling of the image height sent by the camera.
       Set as 0 if not ambiguous.
+    \param verbose true to enable verbose mode, false otherwise.
     \return number of available camera parameters corresponding with inputs.
    */
   int count(const pugi::xml_node &node_, const std::string &cam_name,
             const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int im_width,
-            unsigned int im_height, unsigned int subsampl_width = 0, unsigned int subsampl_height = 0)
+            unsigned int im_height, bool verbose, unsigned int subsampl_width = 0, unsigned int subsampl_height = 0)
   {
     vpXmlCodeType prop;
     int nbCamera = 0;
@@ -589,7 +595,7 @@ public:
       }
 
       if (prop == CODE_XML_CAMERA) {
-        if (SEQUENCE_OK == read_camera(node, cam_name, projModel, im_width, im_height, subsampl_width, subsampl_height))
+        if (SEQUENCE_OK == read_camera(node, cam_name, projModel, im_width, im_height, subsampl_width, subsampl_height, verbose))
           nbCamera++;
       }
     }
@@ -1070,37 +1076,39 @@ vpXmlParserCamera::~vpXmlParserCamera() { delete m_impl; }
 
 /*!
   Parse an xml file to load camera parameters.
-  \param cam : camera parameters to fill.
-  \param filename : name of the xml file to parse
-  \param cam_name : name of the camera : useful if the xml file has multiple
-  camera parameters. Set as "" if the camera name is not ambiguous.
-  \param projModel : camera projection model needed.
-  \param im_width : image width on which camera calibration was performed.
-  Set as 0 if not ambiguous.
-  \param im_height : image height on which camera calibration was performed.
-  Set as 0 if not ambiguous.
+  \param cam : Camera parameters to fill.
+  \param filename : Name of the xml file to parse.
+  \param cam_name : Name of the camera. Useful if the xml file has multiple
+  camera parameters. Set to an empty string "" if the camera name is not ambiguous.
+  \param projModel : Camera projection model needed.
+  \param im_width : Image width on which camera calibration was performed.
+  Set to 0 if not ambiguous.
+  \param im_height : Image height on which camera calibration was performed.
+  Set to 0 if not ambiguous.
+  \param verbose true to enable verbose mode, false otherwise.
 
   \return vpXmlParserCamera::SEQUENCE_OK if success and vpXmlParserCamera::SEQUENCE_ERROR otherwise.
 */
 int vpXmlParserCamera::parse(vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
                              const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int im_width,
-                             unsigned int im_height)
+                             unsigned int im_height, bool verbose)
 {
-  return m_impl->parse(cam, filename, cam_name, projModel, im_width, im_height);
+  return m_impl->parse(cam, filename, cam_name, projModel, im_width, im_height, verbose);
 }
 
 /*!
   Save camera parameters in an xml file.
-  \param cam : camera parameters to save.
-  \param filename : name of the xml file to fill.
-  \param cam_name : name of the camera : useful if the xml file has multiple
-    camera parameters. Set as "" if the camera name is not ambiguous.
-  \param im_width : width of image  on which camera calibration was performed.
-    Set as 0 if not ambiguous.
-  \param im_height : height of the image  on which camera calibration was
-performed. Set as 0 if not ambiguous. \param additionalInfo : Additional
-information added in the saved xml file. The content of this string should be
-in xml format.
+  \param cam : Camera parameters to save.
+  \param filename : Name of the xml file to fill.
+  \param cam_name : Name of the camera: useful if the xml file has multiple
+  camera parameters. Set to "" if the camera name is not ambiguous.
+  \param im_width : Width of image on which camera calibration was performed.
+  Set to 0 if not ambiguous.
+  \param im_height : Height of the image on which camera calibration was
+  performed. Set to 0 if not ambiguous.
+  \param additionalInfo : Additional information added in the saved xml file.
+  The content of this string should be in xml format.
+  \param verbose true to enable verbose mode, false otherwise.
 
   \return error code.
 
@@ -1133,9 +1141,9 @@ int main()
   \endcode
 */
 int vpXmlParserCamera::save(const vpCameraParameters &cam, const std::string &filename, const std::string &cam_name,
-                            unsigned int im_width, unsigned int im_height, const std::string &additionalInfo)
+                            unsigned int im_width, unsigned int im_height, const std::string &additionalInfo, bool verbose)
 {
-  return m_impl->save(cam, filename, cam_name, im_width, im_height, additionalInfo);
+  return m_impl->save(cam, filename, cam_name, im_width, im_height, additionalInfo, verbose);
 }
 
 std::string vpXmlParserCamera::getCameraName() const { return m_impl->getCameraName(); }
