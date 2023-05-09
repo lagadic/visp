@@ -62,6 +62,10 @@ class vpPoint;
 //#include <visp3/core/vpTranslationVector.h>
 #include <visp3/core/vpPoseVector.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+#endif
+
 /*!
   \class vpHomogeneousMatrix
 
@@ -270,24 +274,22 @@ public:
 
 protected:
   unsigned int m_index;
+#ifdef VISP_HAVE_NLOHMANN_JSON
+private:
+  friend void from_json(const nlohmann::json& j, vpHomogeneousMatrix& T);
+  void parse_json(const nlohmann::json& j); // Conversion helper function to avoid circular dependencies
+#endif
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-#include <nlohmann/json.hpp>
-inline void to_json(nlohmann::json& j, const vpHomogeneousMatrix& m) {
-    std::vector<double> values;
-    values.reserve(16);
-    for(unsigned i = 0; i < 16; ++i) {
-        values.push_back(m.data[i]);
-    }
-    j = values;
+inline void to_json(nlohmann::json& j, const vpHomogeneousMatrix& T) {
+  const vpArray2D<double>* asArray = (vpArray2D<double>*) &T;
+  to_json(j, *asArray);
+  j["type"] = "vpHomogeneousMatrix";
 }
-inline void from_json(const nlohmann::json& j, vpHomogeneousMatrix& m) {
-    std::vector<double> values = j;
-    assert(values.size() == 16);
-    std::copy(values.begin(), values.end(), m.data);
+inline void from_json(const nlohmann::json& j, vpHomogeneousMatrix& T) {
+  T.parse_json(j);
 }
-
 #endif
 
 #endif

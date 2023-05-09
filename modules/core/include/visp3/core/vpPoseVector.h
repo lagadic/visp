@@ -60,6 +60,10 @@ class vpRowVector;
 #include <visp3/core/vpMatrix.h>
 #include <visp3/core/vpRotationMatrix.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+#endif
+
 /*!
   \class vpPoseVector
 
@@ -267,6 +271,23 @@ public:
   vp_deprecated void init(){};
 //@}
 #endif
+#ifdef VISP_HAVE_NLOHMANN_JSON
+private:
+  friend void from_json(const nlohmann::json& j, vpPoseVector& r);
+  void parse_json(const nlohmann::json& j);
+#endif
 };
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+inline void to_json(nlohmann::json& j, const vpPoseVector& r) {
+  const vpArray2D<double>* asArray = (vpArray2D<double>*) &r;
+  to_json(j, *asArray);
+  j["type"] = "vpPoseVector";
+}
+inline void from_json(const nlohmann::json& j, vpPoseVector& r) {
+  r.parse_json(j);
+}
+#endif
 
 #endif

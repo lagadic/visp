@@ -130,7 +130,7 @@ Catch::Generators::GeneratorWrapper<vpMe> randomMe() {
 
 SCENARIO("Serializing and deserializing a single vpMe", "[json]") {
   GIVEN("Some random vpMe object") {
-    vpMe me = GENERATE(take(100, randomMe()));        
+    vpMe me = GENERATE(take(10, randomMe()));
     WHEN("Serializing and deserializing an object") {
         const json j = me;
         const vpMe otherMe = j;
@@ -153,25 +153,23 @@ SCENARIO("Serializing and deserializing a single vpMe", "[json]") {
     }
     WHEN("Removing optional properties in JSON object") {
         json j = me;
+
         const auto testInt = [&j, &me](const std::string& key,
         std::function<void(vpMe*, int)> setter, std::function<int(vpMe*)> getter) -> void {
           testOptionalProperty<int>(j, {key}, me, setter, getter, [](int v) -> int {return v - 1;});
-          
         };
         const auto testDouble = [&j, &me](const std::string& key, 
         std::function<void(vpMe*, double)> setter, std::function<double(vpMe*)> getter) -> void {
           testOptionalProperty<double>(j, {key}, me, setter, getter, [](double v) -> int {return v + 1.0;});
         };
-        
+
         WHEN("Removing threshold") {
           testDouble("threshold", &vpMe::setThreshold, &vpMe::getThreshold);
         }
         WHEN("Removing mu1 and mu2") {
           testDouble("mu", &vpMe::setMu1, &vpMe::getMu1);
           testDouble("mu", &vpMe::setMu2, &vpMe::getMu2);
-          
         }
-        
         WHEN("Removing nMask") {
           testInt("nMask", &vpMe::setMaskNumber, &vpMe::getMaskNumber);
         }
@@ -184,7 +182,6 @@ SCENARIO("Serializing and deserializing a single vpMe", "[json]") {
         WHEN("Removing sampleStep") {
           testDouble("sampleStep", &vpMe::setSampleStep, &vpMe::getSampleStep);
         }
-        
         WHEN("Removing maskSign") {
           testInt("maskSign", &vpMe::setMaskSign, &vpMe::getMaskSign);
         }

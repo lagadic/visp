@@ -425,6 +425,15 @@ inline void to_json(nlohmann::json& j, const vpColVector& v) {
   to_json(j, *asArray);
   j["type"] = "vpColVector";
 }
+inline void from_json(const nlohmann::json& j, vpColVector& v) {
+  vpArray2D<double>* asArray = (vpArray2D<double>*) &v;
+  from_json(j, *asArray);
+  if(v.getCols() != 1) {
+    throw vpException(vpException::badValue, "From JSON, tried to read a 2D array into a vpColVector");
+  }
+}
+
+
 #endif
 
 #endif

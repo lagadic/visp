@@ -104,10 +104,47 @@ public:
         return true;
     }
 };
+class RandomColVectorGenerator : public Catch::Generators::IGenerator<vpColVector> {
+private:
+    std::minstd_rand m_rand;
+    std::uniform_real_distribution<> m_val_dist;
+    std::uniform_int_distribution<> m_dim_dist;
+    
+    vpColVector current;
+public:
+
+    RandomColVectorGenerator(double valueRange, int minSize, int maxSize):
+        m_rand(std::random_device{}()),
+        m_val_dist(-valueRange, valueRange),
+        m_dim_dist(minSize, maxSize)
+
+    {
+        static_cast<void>(next());
+    }
+
+    vpColVector const& get() const override {
+        return current;
+    }
+    bool next() override {
+        const unsigned nRows = m_dim_dist(m_rand);
+        current.resize(nRows);
+        for(unsigned i = 0; i < nRows; ++i) {
+            current[i] = m_val_dist(m_rand);
+        }
+        return true;
+    }
+};
 Catch::Generators::GeneratorWrapper<vpArray2D<double>> randomArray(double v, int minSize, int maxSize) {
     return Catch::Generators::GeneratorWrapper<vpArray2D<double>>(
       std::unique_ptr<Catch::Generators::IGenerator<vpArray2D<double>>>(
         new RandomArray2DGenerator(v, minSize, maxSize)
+      )
+    );
+}
+Catch::Generators::GeneratorWrapper<vpColVector> randomColVector(double v, int minSize, int maxSize) {
+    return Catch::Generators::GeneratorWrapper<vpColVector>(
+      std::unique_ptr<Catch::Generators::IGenerator<vpColVector>>(
+        new RandomColVectorGenerator(v, minSize, maxSize)
       )
     );
 }
@@ -227,6 +264,50 @@ SCENARIO("Recovering a vpArray2D from a JSON object as serialized by ViSP", "[js
                 const auto matcher = Catch::Matchers::Contains("must be an array of size");
                 REQUIRE_THROWS_MATCHES(from_json(j, array2), vpException,
                                         matchVpException(vpException::badValue, matcher));
+            }
+        }
+    }
+}
+
+SCENARIO("Serializing and deserializing a vpColVector", "[json]") {
+    GIVEN("A random vpColVector") {
+        const vpColVector v = GENERATE(take(100, randomColVector(100.0, 1, 50)));
+        WHEN("Serializing to JSON") {
+            const json j = v;
+            THEN("There is only one column") {
+                REQUIRE(j.at("cols") == 1);
+            }
+            THEN("The type is vpColVector") {
+                REQUIRE(j.at("type") == "vpColVector");
+            }
+            WHEN("Deserializing back to a vpColVector") {
+                const vpColVector v2 = j;
+                THEN("The 2 vectors are the same") {
+                    REQUIRE(v == v2);
+                }
+            }
+        }
+    }
+    GIVEN("A random 2D array with number of cols > 1") {
+        const vpArray2D<double> array = GENERATE(take(10, randomArray(50.0, 2, 5)));
+        WHEN("Serializing this array to JSON") {
+            const json j = array;
+            THEN("Serializing back to a vpColVector throws an exception") {
+                vpColVector v;
+                const auto matcher = Catch::Matchers::Contains("tried to read a 2D array into a vpColVector");
+                REQUIRE_THROWS_MATCHES(from_json(j, v), vpException,
+                                        matchVpException(vpException::badValue, matcher));
+            }
+        }
+    }
+    GIVEN("A random 2D array with number of cols = 1") {
+        const vpColVector v = GENERATE(take(10, randomColVector(100.0, 1, 50)));
+        const vpArray2D<double> array = (vpArray2D<double>) v;
+        WHEN("Serializing this array to JSON") {
+            const json j = array;
+            THEN("Serializing back to a vpColVector is ok and gives the same vector") {
+                const vpColVector v2 = j;
+                REQUIRE(v == v2);
             }
         }
     }
