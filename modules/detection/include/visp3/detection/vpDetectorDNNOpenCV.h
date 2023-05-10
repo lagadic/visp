@@ -56,15 +56,16 @@
   This class is a wrapper over the <a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">
   OpenCV DNN module</a> and specialized to handle object detection task.
 
-  This class supports the following detection models:
+  This class supports the following networks dedicated to object detection:
 
-  - \ref dnn_supported_faster_rcnn
-  - \ref dnn_supported_mobilenet_ssd
-  - \ref dnn_supported_yolov3
-  - \ref dnn_supported_yolov4
-  - \ref dnn_supported_yolov5
-  - \ref dnn_supported_yolov7
-  - \ref dnn_supported_yolov8
+  - Faster-RCNN, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_faster_rcnn network
+  - SSD MobileNet, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_mobilenet_ssd network
+  - ResNet 10, see usage for \ref dnn_usecase_face_detection
+  - Yolo v3, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov3 network
+  - Yolo v4, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov4 network
+  - Yolo v5, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov5 network
+  - Yolo v7, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov7 network
+  - Yolo v8, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov8 network
 
   \sa \ref tutorial-detection-dnn
 */
@@ -181,6 +182,20 @@ public:
      * These classes can be written either as a YAML array (i.e. ["classname_0", ... ,"classname_last"])
      * or with one classname by row (without quotes).
      *
+     * For example, in the case of a yaml file called `my-classes.yaml`, one content could be:
+     \verbatim
+     $ cat my-classes.yaml
+     [ "person", "bicycle", "car"]
+     \endverbatim
+     *
+     * And in the case of a text file called `my-classes.txt`, similar content could be:
+     \verbatim
+     $ cat my-classes.txt
+     person
+     bicycle
+     car
+     \endverbatim
+     *
      * \param filename The path towards the file containing the list of classes the DNN can detect.
      * \return std::vector<std::string> The list of classes the DNN can detect.
      */
@@ -219,8 +234,9 @@ public:
      * \param confThresh The confidence threshold to keep a detection.
      * \param nmsThresh The Non-Maximum Suppression threshold to merge overlapping detections.
      * \param classNames A vector containing the list of classes the DNN can detect.
-     * \param dnnInputSize The size of the input that the DNN is expecting ().
-     * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods for more information).
+     * \param dnnInputSize The size of the input that the DNN is expecting.
+     * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput
+     * and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods for more information).
      */
     inline NetConfig(double confThresh, const double &nmsThresh, const std::vector<std::string> & classNames, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.)
       : m_confThreshold(confThresh)
@@ -237,8 +253,9 @@ public:
      * \param confThresh The confidence threshold to keep a detection.
      * \param nmsThresh The Non-Maximum Suppression threshold to merge overlapping detections.
      * \param classNamesFile The path towards the file containing the classes names, written as a YAML string array or one class name by line.
-     * \param dnnInputSize The size of the input that the DNN is expecting ().
-     * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods for more information).
+     * \param dnnInputSize The size of the input that the DNN is expecting.
+     * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput
+     * and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods for more information).
      */
     inline NetConfig(double confThresh, const double &nmsThresh, const std::string &classNamesFile, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.)
       : m_confThreshold(confThresh)

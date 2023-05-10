@@ -132,10 +132,12 @@ vpDetectorDNNOpenCV::DNNResultsParsingType vpDetectorDNNOpenCV::dnnResultsParsin
 /*!
  * \brief Parse the designated file that contains the list of the classes the network can detect.
  * The class names must either be indicated in an array of string in YAML format, or one name
- * by row (without quotes).
+ * by row (without quotes) as described in NetConfig::parseClassNamesFile().
  *
  * \param filename The path towards the file.
  * \return std::vector<std::string> The list of class names.
+ *
+ * \sa NetConfig::parseClassNamesFile().
  */
 std::vector<std::string> vpDetectorDNNOpenCV::parseClassNamesFile(const std::string &filename)
 {
@@ -456,7 +458,7 @@ void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
  * \param detected_features The original list of detected features, belonging to the same class.
  * \param minRatioOfAreaOk The minimum ratio of area a feature bounding box must reach to be kept
  * in the resulting list of features. Value between 0 and 1.0.
- * \return std::vector<data::Hole2D> The resulting list of features, that only contains the features
+ * \return std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D> The resulting list of features, that only contains the features
  * whose area is in the range [average area x \b minRatioOfAreaOk ; average area / \b minRatioOfAreaOk ].
  */
 std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>
@@ -490,7 +492,7 @@ vpDetectorDNNOpenCV::filterDetectionSingleClassInput(const std::vector<DetectedF
  *
  * \param detected_features The original list of detected features, that can contains several classes.
  * \param minRatioOfAreaOk The minimum ratio of area a feature bounding box must reach to be kept in the resulting list of features. Value between 0 and 1.0.
- * \return std::vector<data::Hole2D> The filtered list of features, ordered by \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_cls in ascending order, where
+ * \return std::vector<vpDetectorDNNOpenCV::DetectedFeatures2> The filtered list of features, ordered by \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_cls in ascending order, where
  * only the features respecting the area criterion are kept.
  */
 std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>
@@ -503,8 +505,8 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
   class MeanAreaComputer
   {
     private:
-      std::map<int, std::pair<int, double>> m_map_id_pairOccurencesAreas; /*!< Uses the \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_classIds as keys
-                                                                             and pairs <nb_occurences, summed_areas> as values.*/
+      std::map<int, std::pair<int, double>> m_map_id_pairOccurrencesAreas; /*!< Uses the \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_classIds as keys
+                                                                             and pairs <nb_occurrences, summed_areas> as values.*/
 
       std::map<int, double> m_mapMeans; /*!< Map <class_id; average_area_class>.*/
       /**
@@ -515,7 +517,7 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
        */
       double computeMeanArea(const int &class_id)
       {
-        return m_map_id_pairOccurencesAreas[class_id].second / (double) m_map_id_pairOccurencesAreas[class_id].first;
+        return m_map_id_pairOccurrencesAreas[class_id].second / (double) m_map_id_pairOccurrencesAreas[class_id].first;
       }
 
     public:
@@ -524,7 +526,7 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
        */
       void computeMeans()
       {
-        for(auto classID_pair: m_map_id_pairOccurencesAreas)
+        for(auto classID_pair: m_map_id_pairOccurrencesAreas)
         {
           m_mapMeans[classID_pair.first] = computeMeanArea(classID_pair.first);
         }
@@ -532,7 +534,7 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
 
       double getMean(const int &class_id)
       {
-        if(m_map_id_pairOccurencesAreas.find(class_id) == m_map_id_pairOccurencesAreas.end())
+        if(m_map_id_pairOccurrencesAreas.find(class_id) == m_map_id_pairOccurrencesAreas.end())
         {
           throw(vpException(vpException::badValue, "[MeanAreaComputer::getMean] Asking for class_id \"" + std::to_string(class_id) + "\" that is not present in m_mapMeans. Did you call computeMeans ?"));
         }
@@ -540,7 +542,7 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
       }
 
       /**
-       * \brief Increment the number of occurences and the
+       * \brief Increment the number of occurrences and the
        *
        * \param feature
        */
@@ -548,14 +550,14 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
       {
         int class_id = feature.getClassId();
         double area = feature.getBoundingBox().getArea();
-        if(m_map_id_pairOccurencesAreas.find(class_id) == m_map_id_pairOccurencesAreas.end())
+        if(m_map_id_pairOccurrencesAreas.find(class_id) == m_map_id_pairOccurrencesAreas.end())
         {
-          m_map_id_pairOccurencesAreas[class_id] = std::pair<int, double>(1, area);
+          m_map_id_pairOccurrencesAreas[class_id] = std::pair<int, double>(1, area);
         }
         else
         {
-          std::pair<int, double> prev_state = m_map_id_pairOccurencesAreas[class_id];
-          m_map_id_pairOccurencesAreas[class_id] = std::pair<int, double>(prev_state.first + 1, prev_state.second + area);
+          std::pair<int, double> prev_state = m_map_id_pairOccurrencesAreas[class_id];
+          m_map_id_pairOccurrencesAreas[class_id] = std::pair<int, double>(prev_state.first + 1, prev_state.second + area);
         }
       }
   };

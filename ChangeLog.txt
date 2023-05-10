@@ -23,6 +23,8 @@ ViSP 3.5.1 (under development)
     . Image-based visual-servoing, position and velocity control examples to control robots
       equipped with Pixhawk (see vpRobotMavsdk doc)
     . Windows 11 support
+    . Support of Faster-RCNN, SSD-MobileNet, ResNet 10, Yolo v3, Yolo v4, Yolo v5, Yolo v7
+      and Yolo v8 convolutional networks to detect objects using vpDetectorDNNOpenCV class
   - Tutorials
     . New tutorial to list all the hardware (robot, camera, depth camera, lidar, mocap,
       haptic devices, F/T sensor) supported by ViSP
@@ -41,6 +43,8 @@ ViSP 3.5.1 (under development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win11-mingw-w64.html
     . New Tutorial: Installation from source for Windows 11 with Visual C++ 2022 (vc17)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win11-msvc17.html
+    . New Tutorial: Deep learning object detection
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-dnn.html
   - Bug fixed
     . [#1042] testColorConversion.cpp segfault randomly
     . [#1045] CXX standard not propagated when using pkg-config or visp-config
