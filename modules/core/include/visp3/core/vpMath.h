@@ -212,6 +212,7 @@ public:
   static bool isInf(float value);
   static bool isFinite(double value);
   static bool isFinite(float value);
+  static bool isNumber(const std::string &str);
 
   static double lineFitting(const std::vector<vpImagePoint> &imPts, double &a, double &b, double &c);
 
