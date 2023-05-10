@@ -5,14 +5,15 @@
 
 \section dnn_intro Introduction
 
-This tutorial shows how to use the `vpDetectorDNNOpenCV` class (DNN stands for Deep Neural Network), which is a small wrapper
+This tutorial shows how to use the `vpDetectorDNNOpenCV` class (DNN stands for Deep Neural Network), which is a wrapper
 over the <a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">OpenCV DNN module</a>.
 The `vpDetectorDNNOpenCV` class provides convenient ways to perform image classification and to retrieve detection bounding boxes,
-class ids and confidence values of a single or of multiple classe(s).
+class ids and confidence values of a single or of multiple classes.
 For other tasks such as image segmentation or more complicated uses, you should use directly the
 <a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">OpenCV DNN API</a>.
 
-This class provides a support for the `Faster-RCNN`, `SSD-MobileNet`, `YoloV3`, `YoloV4`, `YoloV5`, `YoloV7` and `YoloV8`.
+This class supports `Faster-RCNN`, `SSD-MobileNet`, `ResNet 10`, `Yolo v3`, `Yolo v4`, `Yolo v5`, `Yolo v7` and `Yolo v8` convolutional networks
+that simultaneously predict object boundaries and prediction scores at each position.
 If you want to use another type of network, you can define your own parsing method of the DNN detection results and give it to
 the `vpDetectorDNNOpenCV` object.
 
@@ -26,18 +27,32 @@ downloaded using the following command:
 $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/dnn
 \endcode
 
-\section dnn_example Face detection
+\section dnn_requirements Requirements
 
-The following example is also available in tutorial-dnn-object-detection-live.cpp.
+To enable vpDetectorDNNOpenCV class usage, and thus use this tutorial, you need to have a version of ViSP build with OpenCV.
+
+The installation of OpenCV from source is described in \ref tutorial_install_src tutorials and the installation from binary packages
+in \ref tutorial_install_pkg tutorials.
+
+\section dnn_example Object detection example explained
+
+The following example also available in tutorial-dnn-object-detection-live.cpp allows object detection by making inference
+on DNN models learned from the following networks:
+- Faster-RCNN
+- SSD MobileNet
+- ResNet 10
+- Yolo v3
+- Yolo v4
+- Yolo v5
+- Yolo v7
+- Yolo v8
+
+It uses video capture capability from OpenCV to capture images from a camera and detect objects using a DNN model learned using
+one of the previous networks.
 
 \include tutorial-dnn-object-detection-live.cpp
 
-The default behavior is to detect human face, but you can input another model to detect the objects you want. To see which are the options, run:
-\code
-$ ./tutorial-dnn-object-detection-live --help
-\endcode
-
-Default DNN model and config files perform human face detection.
+Default DNN model and config files perform human faces detection.
 
 \snippet tutorial-dnn-object-detection-live.cpp OpenCV DNN face detector
 
@@ -59,7 +74,7 @@ The following lines permit to create the DNN object detector:
 
 \snippet tutorial-dnn-object-detection-live.cpp DNN params
 
-`netConfig()` contains some configuration parameters of the DNN:
+To construct `netConfig` object some configuration parameters of the DNN are required:
 - `confThresh`, which is the confidence threshold used to filter the detections after inference,
 - `nmsThresh`, which is the Non-Maximum Threshold used to filter multiple detections that can occur approximatively at the same locations,
 - `labelFile`, which is the path towards the file containing the list of classes the DNN can detect,
@@ -67,7 +82,7 @@ The following lines permit to create the DNN object detector:
 - `detectionFilter`, which is a boolean indicating if the user wants to perform an additional filtering on the detection outputs based on the
 size of these detections.
 
-The other parameters are the following:
+Then to construct `dnn` object, the other parameters are the following:
 - `model` is the network trained weights, `config` is the network topology description.
 - `meanR`, `meanG` and `meanB` are the values used for mean subtraction.
 - `scaleFactor` is used to normalize the data range.
@@ -75,36 +90,68 @@ The other parameters are the following:
 
 You can directly refer to the <a href="https://github.com/opencv/opencv/tree/master/samples/dnn">OpenCV model zoo</a> for the parameters values.
 
-After setting the correct parameters, you can easily detect object in an image with
+After setting the correct parameters, if you want to get the data as a map, where the keys will be the class names (or ID if no label file was given),
+you can easily detect object in an image with:
 
 \snippet tutorial-dnn-object-detection-live.cpp DNN object detection map mode
 
-if you want to get the data as a map, where the keys will be the class names (or ID if no label file was given).
-
-Alternatively, you can get the results in a non-sorted vector with 
+Alternatively, you can get the results in a non-sorted vector with
 
 \snippet tutorial-dnn-object-detection-live.cpp DNN object detection vector mode
 
-Class ids and detection confidence scores can be retrieved with
+Class ids and detection confidence scores can be retrieved for a map with:
 
 \snippet tutorial-dnn-object-detection-live.cpp DNN class ids and confidences map mode
 
-for a map, and with
+or for a non-sorted vector with:
 
 \snippet tutorial-dnn-object-detection-live.cpp DNN class ids and confidences vector mode
 
-for a a non-sorted vector.
+\section dnn_usecase Use case
 
-\section dnn_models Supported detection models
+\subsection dnn_usecase_general Generic usage
 
-\subsection dnn_supported_faster_rcnn Faster-RCNN
+The default behavior is to detect human faces, but you can input another model to detect the objects you want. To see which are the options, run:
+```
+$ cd $VISP_WS/visp-build/tutorial/detection/dnn
+$ ./tutorial-dnn-object-detection-live --help
+```
 
-You can find the config file (`config.pbtxt`) [here](https://github.com/opencv/opencv_extra/blob/master/testdata/dnn/faster_rcnn_inception_v2_coco_2018_01_28.pbtxt)
+\subsection dnn_usecase_face_detection Face detection
+
+The default behavior is to detect human faces using a model provided by OpenCV and learned over a ResNet 10 network. If you have a laptop, simply run:
+```
+$ cd $VISP_WS/visp-build/tutorial/detection/dnn
+$ ./tutorial-dnn-object-detection-live
+```
+
+The previous command is similar to the next one:
+```
+$ CONFIG=opencv_face_detector.pbtxt \
+  MODEL=opencv_face_detector_uint8.pb \
+  LABELS=class.txt \
+  TYPE=resnet-10 \
+  FRAMEWORK=none \
+  WIDTH=300; HEIGHT=300
+$ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
+    --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
+    --confThresh 0.35 --filterThresh -0.25 --scale 1
+```
+
+\subsection dnn_models_coco COCO dataset objects detection
+
+[COCO](https://cocodataset.org) is a large-scale object detection, segmentation, and captioning dataset. It contains over 330 000 images, each annotated with 80 object categories.
+In the following sections, we show how to use the DNN models learned with the different networks, to detect objects among the list of 80 objects in the COCO dataset.
+
+\subsubsection dnn_supported_faster_rcnn Faster-RCNN
+
+You can find the config file (`config.pbtxt`) [here](https://github.com/opencv/opencv_extra/blob/master/testdata/dnn/faster_rcnn_inception_v2_coco_2018_01_28.pbtxt),
 the weights (`frozen_inference_graph.pb`) [there](http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz)
 and the labels (`coco_classes.txt`) [here](https://github.com/lagadic/visp/blob/master/tutorial/detection/dnn/coco_classes.txt).
 
 To run the tutorial with the Faster-RCNN network, please run the following commands:
 ```
+$ cd $VISP_WS/visp-build/tutorial/detection/dnn
 $ DNN_PATH=/path/to/my/dnn/folder \
   CONFIG=${DNN_PATH}/Faster-RCNN/cfg/config.pbtxt \
   MODEL=${DNN_PATH}/Faster-RCNN/weights/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb \
@@ -119,7 +166,7 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
 
 If you want to train your own Faster-RCNN model, please refer to this [tutorial](https://debuggercafe.com/how-to-train-faster-rcnn-resnet50-fpn-v2-on-custom-dataset/).
 
-\subsection dnn_supported_mobilenet_ssd MobileNet SSD
+\subsubsection dnn_supported_mobilenet_ssd MobileNet SSD
 
 If you want to use `Mobilenet V1`, you can find the config file (`ssd_mobilenet_v1_coco_2017_11_17.pbtxt`)
 [here](https://raw.githubusercontent.com/Qengineering/MobileNet_SSD_OpenCV_TensorFlow/master/ssd_mobilenet_v1_coco_2017_11_17.pbtxt),
@@ -165,7 +212,7 @@ If you want to train your own MobileNet SSD model, please refer to this
 [tutorial](https://www.forecr.io/blogs/ai-algorithms/how-to-train-ssd-mobilenet-model-for-object-detection-using-pytorch)
 or the [Keras documentation](https://keras.io/api/applications/mobilenet/) for instance.
 
-\subsection dnn_supported_yolov3 YoloV3
+\subsubsection dnn_supported_yolov3 Yolo v3
 
 You can find the config file (`yolov3.cfg`) [here](https://github.com/AlexeyAB/darknet/blob/master/cfg/yolov3.cfg),
 the weights (`yolov3.weights`) [there](https://pjreddie.com/media/files/yolov3.weights)
@@ -187,7 +234,7 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
 
 If you want to train your own YoloV3 model, please refer to the [official documentation](https://github.com/ultralytics/yolov3).
 
-\subsection dnn_supported_yolov4 YoloV4
+\subsubsection dnn_supported_yolov4 Yolo v4
 
 You can find the the config file (`yolov4-tiny.cfg`) [here](https://github.com/AlexeyAB/darknet/blob/master/cfg/yolov4-tiny.cfg),
 the weights (`yolov4-tiny.weights`) [there](https://github.com/AlexeyAB/darknet/releases/download/yolov4/yolov4-tiny.weights)
@@ -209,7 +256,7 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
 
 If you want to train your own YoloV4 model, please refer to the [official documentation](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects).
 
-\subsection dnn_supported_yolov5 YoloV5
+\subsubsection dnn_supported_yolov5 Yolo v5
 
 You can find the weights (`yolov5n.onnx`) in ONNX format [here](https://github.com/doleron/yolov5-opencv-cpp-python/blob/main/config_files/yolov5n.onnx)
 and the labels (`coco_classes.txt`) [here](https://github.com/lagadic/visp/blob/master/tutorial/detection/dnn/coco_classes.txt).
@@ -233,7 +280,7 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
 If you want to train your own YoloV5 model, please refer to the
 [official documentation](https://docs.ultralytics.com/yolov5/tutorials/train_custom_data/#13-prepare-dataset-for-yolov5).
 
-\subsection dnn_supported_yolov7 YoloV7
+\subsubsection dnn_supported_yolov7 Yolo v7
 
 To be able to use `YoloV7` with the class `vpDetectorDNNOpenCV`, you must first download the weights (`yolov7-tiny.pt`) in the Pytorch format from
 [here](https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt).
@@ -261,7 +308,7 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
 
 If you want to train your own YoloV7 model, please refer to the [official documentation](https://github.com/WongKinYiu/yolov7#transfer-learning).
 
-\subsection dnn_supported_yolov8 YoloV8
+\subsubsection dnn_supported_yolov8 Yolo v8
 
 You can find the weights (`yolov8s.onnx`) in ONNX format
 [here](https://github.com/JustasBart/yolov8_CPP_Inference_OpenCV_ONNX/blob/minimalistic/source/models/yolov8s.onnx)
@@ -285,9 +332,10 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
 
 If you want to train your own YoloV8 model, please refer to the [official documentation](https://docs.ultralytics.com/modes/train/).
 
-\section dnn_model_zoo Object detection model zoo
+\section dnn_model_other Other dnn models
+\subsection dnn_model_other_zoo OpenCV model zoo
 
-You can find more models in the <a href="https://github.com/opencv/opencv/tree/master/samples/dnn">OpenCV model zoo</a>.
+You can find more models in the [OpenCV model zoo repository](https://github.com/opencv/opencv/tree/master/samples/dnn).
 
 \section dnn_troubleshootings Troubleshootings
 
