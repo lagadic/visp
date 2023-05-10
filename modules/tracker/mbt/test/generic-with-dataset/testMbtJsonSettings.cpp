@@ -59,7 +59,7 @@ vpMbGenericTracker baseTrackerConstructor() {
   cam1.initPersProjWithoutDistortion(300, 300, 200, 200);
   vpCameraParameters cam2;
   cam2.initPersProjWithoutDistortion(500, 400, 250, 250);
-  
+
   vpMbGenericTracker t = vpMbGenericTracker(names, featureTypes);
 
   std::map<std::string, vpCameraParameters> cams;
@@ -71,7 +71,6 @@ vpMbGenericTracker baseTrackerConstructor() {
 
   t.setAngleAppear(vpMath::rad(60));
   t.setAngleDisappear(vpMath::rad(90));
-  
   return t;
 }
 
