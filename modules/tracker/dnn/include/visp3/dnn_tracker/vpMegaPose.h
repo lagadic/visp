@@ -143,7 +143,7 @@ public:
     */
     void setIntrinsics(const vpCameraParameters& cam, unsigned height, unsigned width);
 
-    vpImage<vpRGBa> viewObjects(const vpImage<vpRGBa>& baseImage, const std::vector<std::string>& objectNames,
+    vpImage<vpRGBa> viewObjects(const std::vector<std::string>& objectNames,
         const std::vector<vpHomogeneousMatrix>& poses, const std::string& viewType);
 
     /*
