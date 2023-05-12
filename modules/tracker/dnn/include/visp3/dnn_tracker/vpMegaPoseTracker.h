@@ -1,10 +1,9 @@
 #ifndef VPMEGAPOSETRACKER_HPP
 #define VPMEGAPOSETRACKER_HPP
 
-#include <visp3/dnn_tracker/vpMegaPose.h>
 #include <future>
 
-
+#include <visp3/dnn_tracker/vpMegaPose.h>
 
 class vpMegaPoseTracker {
 public:

@@ -1,8 +1,6 @@
 #ifndef VP_MEGAPOSE_H
 #define VP_MEGAPOSE_H
 
-#ifdef VISP_HAVE_NLOHMANN_JSON
-
 
 #include <vector>
 #include <string>
@@ -170,5 +168,4 @@ private:
     static vpMegaPose::ServerMessage stringToMessage(const std::string& s);
 };
 
-#endif
 #endif

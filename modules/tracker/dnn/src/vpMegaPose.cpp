@@ -281,11 +281,18 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 {
   uint32_t size;
 
-  read(serverSocket, &size, sizeof(uint32_t));
+  size_t readCount = read(serverSocket, &size, sizeof(uint32_t));
+  if (readCount != sizeof(uint32_t)) {
+    throw vpException(vpException::ioError, "Error while reading data from socket");
+  }
   size = ntohl(size);
 
   unsigned char code[MEGAPOSE_CODE_SIZE];
-  read(serverSocket, code, MEGAPOSE_CODE_SIZE);
+  readCount = read(serverSocket, code, MEGAPOSE_CODE_SIZE);
+  if (readCount != MEGAPOSE_CODE_SIZE) {
+    throw vpException(vpException::ioError, "Error while reading data from socket");
+  }
+
   std::vector<uint8_t> data;
   data.resize(size);
   unsigned read_size = 4096;
@@ -293,7 +300,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
   while (read_total < size) {
     int actually_read = read(serverSocket, &data[read_total], read_size);
     if (actually_read <= 0) {
-      throw std::runtime_error("Error while reading data from socket");
+      throw vpException(vpException::ioError, "Error while reading data from socket");
     }
     read_total += actually_read;
   }
@@ -308,17 +315,17 @@ vpMegaPose::vpMegaPose(const std::string& host, int port, const vpCameraParamete
 {
   struct sockaddr_in serv_addr;
   if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
-    throw std::runtime_error("Could not create socket to connect to MegaPose server");
+    throw vpException(vpException::ioError, "Could not create socket to connect to MegaPose server");
   }
   serv_addr.sin_family = AF_INET;
   serv_addr.sin_port = htons(port);
   // Convert string to a binary address representation
   if (inet_pton(AF_INET, host.c_str(), &serv_addr.sin_addr) <= 0) {
-    throw std::runtime_error("Invalid ip address: " + host);
+    throw vpException(vpException::badValue, "Invalid ip address: " + host);
   }
   //Initiate connection
   if ((fd = connect(serverSocket, (struct sockaddr*)&serv_addr, sizeof(serv_addr))) < 0) {
-    throw std::runtime_error("Could not connect to server at " + host + ":" + std::to_string(port));
+    throw vpException(vpException::ioError, "Could not connect to server at " + host + ":" + std::to_string(port));
   }
   setIntrinsics(cam, height, width);
 }
@@ -329,31 +336,31 @@ vpMegaPose::~vpMegaPose()
 }
 
 std::vector<vpMegaPoseEstimate>
-vpMegaPose::estimatePoses(const vpImage<vpRGBa>& image, const std::vector<std::string>& labels, const vpImage<uint16_t>* const depth, const double depth_to_m,
-  const std::vector<vpRect>* const detections, const std::vector<vpHomogeneousMatrix>* const initial_cTos,
-  int refinerIterations)
+vpMegaPose::estimatePoses(const vpImage<vpRGBa>& image, const std::vector<std::string>& labels,
+                          const vpImage<uint16_t>* const depth, const double depth_to_m,
+                          const std::vector<vpRect>* const detections, const std::vector<vpHomogeneousMatrix>* const initial_cTos,
+                          int refinerIterations)
 {
   const std::lock_guard<std::mutex> lock(mutex);
   std::vector<uint8_t> data;
-  double beforeEncoding = vpTime::measureTimeMs();
   encode(data, image);
   json parametersJson;
   parametersJson["labels"] = labels;
 
   if (detections == nullptr && initial_cTos == nullptr) {
-    throw std::runtime_error("You must either provide detections (bounding boxes) or initial pose estimates for Megapose to work.");
+    throw vpException(vpException::badValue, "You must either provide detections (bounding boxes) or initial pose estimates for Megapose to work.");
   }
 
   if (detections != nullptr) {
     if (detections->size() != labels.size()) {
-      throw std::runtime_error("Same number of bounding boxes and labels must be provided.");
+      throw vpException(vpException::badValue, "Same number of bounding boxes and labels must be provided.");
     }
     parametersJson["detections"] = *detections;
   }
 
   if (initial_cTos != nullptr) {
     if (initial_cTos->size() != labels.size()) {
-      throw std::runtime_error("An initial estimate should be given for each detected object in the image");
+      throw vpException(vpException::badValue, "An initial estimate should be given for each detected object in the image");
     }
     parametersJson["initial_cTos"] = *initial_cTos;
   }
@@ -362,7 +369,7 @@ vpMegaPose::estimatePoses(const vpImage<vpRGBa>& image, const std::vector<std::s
   }
   if (depth != nullptr) {
     if (depth_to_m <= 0.0) {
-      throw std::runtime_error("When using depth, the scale factor should be specified.");
+      throw vpException(vpException::badValue, "When using depth, the scale factor should be specified.");
     }
     parametersJson["use_depth"] = true;
     parametersJson["depth_scale_to_m"] = depth_to_m;
@@ -399,8 +406,7 @@ std::vector<double> vpMegaPose::scorePoses(const vpImage<vpRGBa>& image,
   const std::lock_guard<std::mutex> lock(mutex);
   std::vector<uint8_t> data;
   if (cTos.size() != labels.size()) {
-    vpException e(vpException::generalExceptionEnum::badValue, "The number of poses should be the same as the number of object labels");
-    throw e;
+    throw vpException(vpException::generalExceptionEnum::badValue, "The number of poses should be the same as the number of object labels");
   }
   encode(data, image);
   json parametersJson;
@@ -452,8 +458,8 @@ void vpMegaPose::setIntrinsics(const vpCameraParameters& cam, unsigned height, u
   }
 }
 
-vpImage<vpRGBa> vpMegaPose::viewObjects(const vpImage<vpRGBa>& baseImage,
-  const std::vector<std::string>& objectNames, const std::vector<vpHomogeneousMatrix>& poses, const std::string& viewType)
+vpImage<vpRGBa> vpMegaPose::viewObjects(const std::vector<std::string>& objectNames,
+                                        const std::vector<vpHomogeneousMatrix>& poses, const std::string& viewType)
 {
   const std::lock_guard<std::mutex> lock(mutex);
   std::vector<uint8_t> data;
@@ -471,12 +477,10 @@ vpImage<vpRGBa> vpMegaPose::viewObjects(const vpImage<vpRGBa>& baseImage,
   if (code != ServerMessage::RET_VIZ) {
     handleWrongReturnMessage(code, data_result);
   }
-  else {
-    vpImage<vpRGBa> result;
-    unsigned int index = 0;
-    decode(data_result, index, result);
-    return result;
-  }
+  vpImage<vpRGBa> result;
+  unsigned int index = 0;
+  decode(data_result, index, result);
+  return result;
 }
 
 void vpMegaPose::setCoarseNumSamples(const unsigned num)
