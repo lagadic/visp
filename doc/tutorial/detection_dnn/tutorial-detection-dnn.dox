@@ -29,10 +29,89 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/dnn
 
 \section dnn_requirements Requirements
 
-To enable vpDetectorDNNOpenCV class usage, and thus use this tutorial, you need to have a version of ViSP build with OpenCV.
+To enable vpDetectorDNNOpenCV class usage, and thus use this tutorial, you need to have a version of ViSP build with OpenCV. 
+If you have a GPU, we recommend you to refer to the \ref build_opencv_with_cuda section. Otherwise, you can refer to the 
+\ref install_opencv_from_package section.
 
-The installation of OpenCV from source is described in \ref tutorial_install_src tutorials and the installation from binary packages
-in \ref tutorial_install_pkg tutorials.
+\subsection build_opencv_with_cuda Build OpenCV with GPU acceleration
+
+OpenCV can be built with GPU acceleration thanks to the Cuda and CuDNN libraries.
+
+1. First you need to install the Cuda library following the [official documentation](https://docs.nvidia.com/cuda/#installation-guides).
+
+2. Then, you need to install the CuDNN library following the [official documentation](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html). 
+Please ensure to install a CuDNN version that is compatible with your version of Cuda.
+
+3. Then, you need to determine the Compute capability of your GPU either from the [NVidia website](https://developer.nvidia.com/cuda-gpus)
+or using the [nvidia-smi tool](https://developer.nvidia.com/nvidia-system-management-interface). On a Debian distribution, you would run:
+  ```
+  $ export GPU_CAPABILITIES=$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader)
+  ```
+4. Check if the package already installed on your computer. On a Debian distribution, you would run:
+   ```
+   $ apt list --installed | grep -i opencv
+   ```
+ 
+   If this command does not return an empty line, please run (**if you are sure that it is not required by another software installed on your computer**):
+   ```
+   $ sudo apt remove libopencv-dev
+   ```
+
+5. Install OpenCV dependencies. On a Debian distribution, you would run:
+  ```
+  ## libx11-dev is a recommended ViSP 3rd parties
+  # If you installed another version of CUDA, please install the version of CuDNN which is compatible with your version
+  $ sudo apt update
+  $ sudo apt install libgtk-3-dev \
+    cmake \
+    git \
+    pip \
+    cmake-curses-gui \
+    locate \
+    libx11-dev 
+  ```
+
+6. Get the sources. The \b vpDetectorDNNOpenCV has been tested with **OpenCV 4.7**. First, get the OpenCV_contrib sources, that contain the Cuda DNN module. 
+On a Debian distribution, you would run:
+  ```
+  $ cd ${HOME}/visp_ws/3rdparty/
+  $ git clone --branch 4.7.0 https://github.com/opencv/opencv_contrib
+  $ git clone --branch 4.7.0 https://github.com/opencv/opencv
+  ```
+
+7. Compile OpenCV and install it from source. On a Debian distribution, you would run:
+  ```
+  $ mkdir -p ${HOME}/visp_ws/3rdparty/opencv/build &&\
+  cd ${HOME}/visp_ws/3rdparty/opencv/build 
+  $ cmake .. \
+    -DCMAKE_BUILD_TYPE=RELEASE \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DWITH_CUDA=ON \
+    -DWITH_CUDNN=ON \
+    -DOPENCV_DNN_CUDA=ON \
+    -DENABLE_FAST_MATH=1 \
+    -DCUDA_FAST_MATH=1 \
+    -DCUDA_ARCH_BIN=${GPU_CAPABILITIES} \
+    -DWITH_CUBLAS=1 \
+    -DOPENCV_EXTRA_MODULES_PATH=${HOME}/visp_ws/3rdparty/opencv_contrib/modules \
+    -DBUILD_PERF_TESTS=Off \
+    -DBUILD_TESTS=Off \
+    -DBUILD_EXAMPLES=Off \
+    -DBUILD_opencv_apps=Off \
+    -DBUILD_opencv_java_bindings_generator=Off \
+    -DBUILD_opencv_js=Off
+  ```
+
+8. Compile and install OpenCV. On a Debian distribution, you would run:
+  ```
+  $ make -j$(nproc)
+  $ sudo make install
+  ```
+
+\subsection install_opencv_from_package Install OpenCV from package
+
+Please follow the instuctions described in the installation guidelines for \ref soft_vision_opencv .
 
 \section dnn_example Object detection example explained
 
