@@ -769,6 +769,7 @@ inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper&
     j["edge"] = t.me;
   }
   //KLT tracker settings
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   if(t.m_trackerType & vpMbGenericTracker::KLT_TRACKER) {
     nlohmann::json klt = nlohmann::json {
       {"maxFeatures", t.tracker.getMaxFeatures()},
@@ -779,11 +780,10 @@ inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper&
       {"blockSize", t.tracker.getBlockSize()},
       {"pyramidLevels", t.tracker.getPyramidLevels()}
     };
-    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     klt["maskBorder"] = t.maskBorder;
-    #endif
     j["klt"] = klt;
   }
+#endif
   //Depth normal settings
   if(t.m_trackerType & vpMbGenericTracker::DEPTH_NORMAL_TRACKER) {
     j["normals"] = nlohmann::json {
@@ -876,10 +876,10 @@ inline void from_json(const nlohmann::json& j, vpMbGenericTracker::TrackerWrappe
     from_json(j.at("edge"), t.me);
   }
   //KLT tracker settings
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   if(t.m_trackerType & vpMbGenericTracker::KLT_TRACKER) {
     const nlohmann::json klt = j.at("klt");
     auto& ktrack = t.tracker;
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     ktrack.setMaxFeatures(klt.value("maxFeatures", 10000));
     ktrack.setWindowSize(klt.value("windowSize", 5));
     ktrack.setQuality(klt.value("quality", 0.01));
@@ -890,7 +890,9 @@ inline void from_json(const nlohmann::json& j, vpMbGenericTracker::TrackerWrappe
     t.setMaskBorder(klt.value("maskBorder", t.maskBorder));
     t.faces.getMbScanLineRenderer().setMaskBorder(t.maskBorder);
 #else
+  if(j.contains("klt")) {
     std::cerr << "Trying to load a KLT tracker, but the ViSP dependency requirements are not met. Ignoring."
+  }
 #endif
   }
   //Depth normal settings
