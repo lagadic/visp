@@ -722,7 +722,9 @@ protected:
 // Serialize tracker type enumeration
 NLOHMANN_JSON_SERIALIZE_ENUM( vpMbGenericTracker::vpTrackerType, {
     {vpMbGenericTracker::EDGE_TRACKER, "edge"},
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     {vpMbGenericTracker::KLT_TRACKER, "klt"},
+#endif
     {vpMbGenericTracker::DEPTH_DENSE_TRACKER, "depthDense"},
     {vpMbGenericTracker::DEPTH_NORMAL_TRACKER, "depthNormal"},
 });
