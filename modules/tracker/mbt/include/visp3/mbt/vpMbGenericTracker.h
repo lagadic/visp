@@ -895,12 +895,12 @@ inline void from_json(const nlohmann::json& j, vpMbGenericTracker::TrackerWrappe
     ktrack.setPyramidLevels(klt.value("pyramidLevels", 3));
     t.setMaskBorder(klt.value("maskBorder", t.maskBorder));
     t.faces.getMbScanLineRenderer().setMaskBorder(t.maskBorder);
+  }
 #else
   if(j.contains("klt")) {
-    std::cerr << "Trying to load a KLT tracker, but the ViSP dependency requirements are not met. Ignoring."
+    std::cerr << "Trying to load a KLT tracker, but the ViSP dependency requirements are not met. Ignoring." << std::endl;
   }
 #endif
-  }
   //Depth normal settings
   if(t.m_trackerType & vpMbGenericTracker::DEPTH_NORMAL_TRACKER) {
     const nlohmann::json n = j.at("normals");
