@@ -738,8 +738,12 @@ NLOHMANN_JSON_SERIALIZE_ENUM( vpMbGenericTracker::vpTrackerType, {
 inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper& t) {
   // Common tracker attributes
   const static std::vector<vpMbGenericTracker::vpTrackerType> trackerTypes = {
-    vpMbGenericTracker::EDGE_TRACKER, vpMbGenericTracker::KLT_TRACKER,
-    vpMbGenericTracker::DEPTH_DENSE_TRACKER, vpMbGenericTracker::DEPTH_NORMAL_TRACKER
+    vpMbGenericTracker::EDGE_TRACKER,
+    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+    vpMbGenericTracker::KLT_TRACKER,
+    #endif
+    vpMbGenericTracker::DEPTH_DENSE_TRACKER,
+    vpMbGenericTracker::DEPTH_NORMAL_TRACKER
   };
   j = nlohmann::json {
     {"camera", t.m_cam},
