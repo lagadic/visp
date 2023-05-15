@@ -1205,6 +1205,8 @@ void vpHomogeneousMatrix::parse_json(const nlohmann::json& j) {
     if(j["type"] == "vpPoseVector") {
       vpPoseVector r = j;
       buildFrom(r);
+    } else {
+      from_json(j, *asArray);
     }
   } else { // Generic 2D array conversion
     from_json(j, *asArray);

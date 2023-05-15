@@ -520,12 +520,14 @@ void vpPoseVector::parse_json(const nlohmann::json& j) {
     if(j["type"] == "vpHomogeneousMatrix") {
       vpHomogeneousMatrix T = j;
       buildFrom(T);
+    } else {
+      from_json(j, *asArray);
     }
   } else { // Generic 2D array conversion
     from_json(j, *asArray);
   }
   
-  if(getCols() != 1 && getRows() != 6) {
+  if(getCols() != 6 && getRows() != 1) {
     throw vpException(vpException::badValue, "From JSON, tried to read something that is not a 6D pose vector");
   }
 }

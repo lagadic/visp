@@ -1,0 +1,18 @@
+{
+    "lambda": 0.2,
+    "samplingTime": 0.04,
+    "errorThreshold": 0.0001,
+    "interactionMatrix": "current",
+    "cdMo": {
+        "cols": 6,
+        "rows": 1,
+        "type": "vpPoseVector",
+        "data": [0.0, 0.0, 0.75, 0.0, 0.0, 0.0]
+    },
+    "cMo": {
+        "cols": 6,
+        "rows": 1,
+        "type": "vpPoseVector",
+        "data": [0.3, 0.3, 1.2, 0.349066, 0.349066, 1.5708]
+    }
+}

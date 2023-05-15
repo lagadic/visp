@@ -1,10 +1,12 @@
 /*! \example tutorial-ibvs-4pts-json.cpp */
 #include <iostream>
+#include <visp3/core/vpConfig.h>
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <visp3/robot/vpSimulatorCamera.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/vs/vpServo.h>
+
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
@@ -16,7 +18,7 @@ enum InteractionMatrixTypeSubset {
   DESIRED,
   MEAN
 };
-NLOHMANN_JSON_SERIALIZE_ENUM(InteractionMatrixSubset, {
+NLOHMANN_JSON_SERIALIZE_ENUM(InteractionMatrixTypeSubset, {
   {UNKNOWN, nullptr}, // Default value if the json string is not in "current", "desired" or "mean"
   {CURRENT, "current"},
   {DESIRED, "desired"},
@@ -49,8 +51,8 @@ struct Arguments {
     return vpServo::CURRENT;
   }
   double lambda; // Control law gain
-  vpHomogeneousMatrix cMo; // Initial camera pose
   vpHomogeneousMatrix cdMo; // Target (desired) camera pose
+  vpHomogeneousMatrix cMo; // Initial camera pose
   double samplingTime; // Robot sampling time
   double errorThreshold; // Error threshold. Once error is below, consider servoing as successful
   InteractionMatrixTypeSubset interactionMatrixType;
@@ -76,7 +78,7 @@ void from_json(const json& j, Arguments& a)
     throw vpException(vpException::badValue, "Sampling time should be > 0");
   }
 
-  a.errorThreshold = j.value("cMo", a.errorThreshold);
+  a.errorThreshold = j.value("errorThreshold", a.errorThreshold);
   if (a.errorThreshold <= 0) {
     throw vpException(vpException::badValue, "Error threshold should be > 0");
   }
@@ -89,7 +91,7 @@ void from_json(const json& j, Arguments& a)
 
 void to_json(json& j, const Arguments& a)
 {
-  j = {
+  j = json {
     {"lambda", a.lambda},
     {"cMo", a.cMo},
     {"cdMo", a.cdMo},
@@ -134,6 +136,17 @@ Arguments readArguments(const std::string& path)
 }
 //! [JSON input conversion]
 
+//! [Custom ViSP object conversion]
+void to_json(json& j, const vpFeaturePoint& p) {
+  j = json {
+    {"x", p.get_x()},
+    {"y", p.get_y()},
+    {"z", p.get_Z()}
+  };
+}
+//! [Custom ViSP object conversion]
+
+
 //! [Result structure]
 struct ServoingExperimentData {
   ServoingExperimentData(const Arguments& arguments, const std::vector<vpFeaturePoint>& desiredFeatures) : arguments(arguments), desiredFeatures(desiredFeatures) {}
@@ -160,7 +173,7 @@ struct ServoingExperimentData {
 
 void to_json(json& j, const ServoingExperimentData& res)
 {
-  j = {
+  j = json {
     {"parameters", res.arguments},
     {"trajectory", res.trajectory},
     {"errorNorm", res.errorNorms},
@@ -181,11 +194,6 @@ void saveResults(const ServoingExperimentData& results, const std::string& path)
   file.close();
 }
 //! [write json to file]
-
-
-
-
-
 
 int main(int argc, char* argv[])
 {
@@ -209,6 +217,7 @@ int main(int argc, char* argv[])
   try {
     vpHomogeneousMatrix cdMo = args.cdMo;
     vpHomogeneousMatrix cMo = args.cMo;
+    std::cout << cdMo << std::endl;
 
     vpPoint point[4];
     point[0].setWorldCoordinates(-0.1, -0.1, 0);
@@ -230,7 +239,7 @@ int main(int argc, char* argv[])
       point[i].track(cMo);
       vpFeatureBuilder::create(p[i], point[i]);
       task.addFeature(p[i], pd[i]);
-      features.push_back(pd[i]);
+      features[i] = pd[i];
     }
     ServoingExperimentData results(args, features);
 
@@ -262,6 +271,7 @@ int main(int argc, char* argv[])
       iter++;
     }
     std::cout << "Convergence in " << iter << " iterations" << std::endl;
+    saveResults(results, output_path);
   }
   catch (const vpException& e) {
     std::cout << "Caught an exception: " << e << std::endl;
