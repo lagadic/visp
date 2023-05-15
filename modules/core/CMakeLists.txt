@@ -236,6 +236,10 @@ if(USE_OPENMP)
   list(APPEND opt_incs ${OpenMP_CXX_INCLUDE_DIRS})
   list(APPEND opt_libs ${OpenMP_CXX_LIBRARIES})
 endif()
+if(USE_NLOHMANN_JSON)
+  get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
+  list(APPEND opt_incs ${_inc_dirs})
+endif()
 
 # pugixml is always enabled to provide default XML I/O capabilities
 # pugixml is private

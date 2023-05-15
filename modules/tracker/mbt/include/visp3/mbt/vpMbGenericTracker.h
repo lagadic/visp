@@ -722,7 +722,9 @@ protected:
 // Serialize tracker type enumeration
 NLOHMANN_JSON_SERIALIZE_ENUM( vpMbGenericTracker::vpTrackerType, {
     {vpMbGenericTracker::EDGE_TRACKER, "edge"},
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     {vpMbGenericTracker::KLT_TRACKER, "klt"},
+#endif
     {vpMbGenericTracker::DEPTH_DENSE_TRACKER, "depthDense"},
     {vpMbGenericTracker::DEPTH_NORMAL_TRACKER, "depthNormal"},
 });
@@ -736,8 +738,12 @@ NLOHMANN_JSON_SERIALIZE_ENUM( vpMbGenericTracker::vpTrackerType, {
 inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper& t) {
   // Common tracker attributes
   const static std::vector<vpMbGenericTracker::vpTrackerType> trackerTypes = {
-    vpMbGenericTracker::EDGE_TRACKER, vpMbGenericTracker::KLT_TRACKER,
-    vpMbGenericTracker::DEPTH_DENSE_TRACKER, vpMbGenericTracker::DEPTH_NORMAL_TRACKER
+    vpMbGenericTracker::EDGE_TRACKER,
+    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+    vpMbGenericTracker::KLT_TRACKER,
+    #endif
+    vpMbGenericTracker::DEPTH_DENSE_TRACKER,
+    vpMbGenericTracker::DEPTH_NORMAL_TRACKER
   };
   j = nlohmann::json {
     {"camera", t.m_cam},
@@ -769,6 +775,7 @@ inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper&
     j["edge"] = t.me;
   }
   //KLT tracker settings
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   if(t.m_trackerType & vpMbGenericTracker::KLT_TRACKER) {
     nlohmann::json klt = nlohmann::json {
       {"maxFeatures", t.tracker.getMaxFeatures()},
@@ -779,11 +786,10 @@ inline void to_json(nlohmann::json& j, const vpMbGenericTracker::TrackerWrapper&
       {"blockSize", t.tracker.getBlockSize()},
       {"pyramidLevels", t.tracker.getPyramidLevels()}
     };
-    #if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     klt["maskBorder"] = t.maskBorder;
-    #endif
     j["klt"] = klt;
   }
+#endif
   //Depth normal settings
   if(t.m_trackerType & vpMbGenericTracker::DEPTH_NORMAL_TRACKER) {
     j["normals"] = nlohmann::json {
@@ -876,10 +882,10 @@ inline void from_json(const nlohmann::json& j, vpMbGenericTracker::TrackerWrappe
     from_json(j.at("edge"), t.me);
   }
   //KLT tracker settings
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
   if(t.m_trackerType & vpMbGenericTracker::KLT_TRACKER) {
     const nlohmann::json klt = j.at("klt");
     auto& ktrack = t.tracker;
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     ktrack.setMaxFeatures(klt.value("maxFeatures", 10000));
     ktrack.setWindowSize(klt.value("windowSize", 5));
     ktrack.setQuality(klt.value("quality", 0.01));
@@ -889,10 +895,12 @@ inline void from_json(const nlohmann::json& j, vpMbGenericTracker::TrackerWrappe
     ktrack.setPyramidLevels(klt.value("pyramidLevels", 3));
     t.setMaskBorder(klt.value("maskBorder", t.maskBorder));
     t.faces.getMbScanLineRenderer().setMaskBorder(t.maskBorder);
-#else
-    std::cerr << "Trying to load a KLT tracker, but the ViSP dependency requirements are not met. Ignoring."
-#endif
   }
+#else
+  if(j.contains("klt")) {
+    std::cerr << "Trying to load a KLT tracker, but the ViSP dependency requirements are not met. Ignoring." << std::endl;
+  }
+#endif
   //Depth normal settings
   if(t.m_trackerType & vpMbGenericTracker::DEPTH_NORMAL_TRACKER) {
     const nlohmann::json n = j.at("normals");
