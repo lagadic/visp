@@ -44,6 +44,7 @@
 #include <numeric>
 #include <stdint.h>
 #include <cassert>
+#include <ctype.h>
 
 #include <visp3/core/vpException.h>
 #include <visp3/core/vpMath.h>
@@ -202,6 +203,21 @@ bool vpMath::isFinite(float value)
 #else
   return !vpMath::isInf(value) && !vpMath::isNaN(value);
 #endif
+}
+
+/*!
+  Returns whether a string is a number.
+  \param[in] str : String to check.
+  \return true if string is number and false otherwise.
+ */
+bool vpMath::isNumber(const std::string &str)
+{
+  for (size_t i = 0; i < str.size(); i++) {
+    if (isdigit(str[i]) == false) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /*!

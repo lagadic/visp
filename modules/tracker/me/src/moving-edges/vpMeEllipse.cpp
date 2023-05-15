@@ -817,12 +817,12 @@ void vpMeEllipse::leastSquareRobust(const vpImage<unsigned char> &I)
   vpDisplay::flush() is needed.
 
   \param I : Image in which the ellipse appears.
-  \param col : Color of the displayed ellipse.
+  \param color : Color of the displayed ellipse.
   \param thickness : Thickness of the drawing.
  */
-void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness)
+void vpMeEllipse::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness)
 {
-  vpMeEllipse::display(I, iPc, a, b, e, alpha1, alpha2, col, thickness);
+  vpMeEllipse::display(I, iPc, a, b, e, alpha1, alpha2, color, thickness);
 }
 
 /*!

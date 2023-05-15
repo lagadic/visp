@@ -112,8 +112,8 @@ to \f$ s \f$ is given by \f[ L = [ -I_3 \;\; [^{c}t_{c^*}]_\times] \f]
   -I_3 \;\; [^{c}t_o]_\times] \f]
 
   To initialize the feature \f$(t_x, t_y, t_z)\f$ you may use member
-  fonctions like set_Tx(), set_Ty(), set_Tz(), or also buildFrom()
-  fonctions.
+  functions like set_Tx(), set_Ty(), set_Tz(), or also buildFrom()
+  functions.
 
   The interaction() method allows to compute the interaction matrix
   \f$ L\f$ associated to the translation visual feature, while the

@@ -73,7 +73,7 @@ by: \f[ L = \left[ \begin{array}{rrrrrr}
   Two ways are allowed to initialize the feature.
 
   - The first way by setting the feature values \f$(X,Y,Z)\f$ using
-    vpFeaturePoint3D member fonctions like set_X(), set_Y(), set_Z(),
+    vpFeaturePoint3D member functions like set_X(), set_Y(), set_Z(),
     or also buildFrom().
 
   - The second by using the feature builder functionalities to

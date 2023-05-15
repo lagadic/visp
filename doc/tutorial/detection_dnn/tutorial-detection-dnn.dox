@@ -1,0 +1,452 @@
+/**
+
+\page tutorial-detection-dnn Tutorial: Deep learning object detection
+\tableofcontents
+
+\section dnn_intro Introduction
+
+This tutorial shows how to use the `vpDetectorDNNOpenCV` class (DNN stands for Deep Neural Network), which is a wrapper
+over the <a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">OpenCV DNN module</a>.
+The `vpDetectorDNNOpenCV` class provides convenient ways to perform image classification and to retrieve detection bounding boxes,
+class ids and confidence values of a single or of multiple classes.
+For other tasks such as image segmentation or more complicated uses, you should use directly the
+<a href="https://docs.opencv.org/master/d6/d0f/group__dnn.html">OpenCV DNN API</a>.
+
+This class supports `Faster-RCNN`, `SSD-MobileNet`, `ResNet 10`, `Yolo v3`, `Yolo v4`, `Yolo v5`, `Yolo v7` and `Yolo v8` convolutional networks
+that simultaneously predict object boundaries and prediction scores at each position.
+If you want to use another type of network, you can define your own parsing method of the DNN detection results and give it to
+the `vpDetectorDNNOpenCV` object.
+
+In the next section you will find an example that shows how to perform face detection in a single image or in images acquired from
+a camera connected to your computer.
+
+Note that all the material (source code and network model) described in this tutorial is part of ViSP source code and could be
+downloaded using the following command:
+
+\code
+$ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/dnn
+\endcode
+
+\section dnn_requirements Requirements
+
+To enable vpDetectorDNNOpenCV class usage, and thus use this tutorial, you need to have a version of ViSP build with OpenCV. 
+If you have a GPU, we recommend you to refer to the \ref build_opencv_with_cuda section. Otherwise, you can refer to the 
+\ref install_opencv_from_package section.
+
+\subsection build_opencv_with_cuda Build OpenCV with GPU acceleration
+
+OpenCV can be built with GPU acceleration thanks to the Cuda and CuDNN libraries.
+
+1. First you need to install the Cuda library following the [official documentation](https://docs.nvidia.com/cuda/#installation-guides).
+
+2. Then, you need to install the CuDNN library following the [official documentation](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html). 
+Please ensure to install a CuDNN version that is compatible with your version of Cuda.
+
+3. Then, you need to determine the Compute capability of your GPU either from the [NVidia website](https://developer.nvidia.com/cuda-gpus)
+or using the [nvidia-smi tool](https://developer.nvidia.com/nvidia-system-management-interface). On a Debian distribution, you would run:
+  ```
+  $ export GPU_CAPABILITIES=$(nvidia-smi --query-gpu=compute_cap --format=csv,noheader)
+  ```
+4. Check if the package already installed on your computer. On a Debian distribution, you would run:
+   ```
+   $ apt list --installed | grep -i opencv
+   ```
+ 
+   If this command does not return an empty line, please run (**if you are sure that it is not required by another software installed on your computer**):
+   ```
+   $ sudo apt remove libopencv-dev
+   ```
+
+5. Install OpenCV dependencies. On a Debian distribution, you would run:
+  ```
+  ## libx11-dev is a recommended ViSP 3rd parties
+  # If you installed another version of CUDA, please install the version of CuDNN which is compatible with your version
+  $ sudo apt update
+  $ sudo apt install libgtk-3-dev \
+    cmake \
+    git \
+    pip \
+    cmake-curses-gui \
+    locate \
+    libx11-dev 
+  ```
+
+6. Get the sources. The \b vpDetectorDNNOpenCV has been tested with **OpenCV 4.7**. First, get the OpenCV_contrib sources, that contain the Cuda DNN module. 
+On a Debian distribution, you would run:
+  ```
+  $ cd ${HOME}/visp_ws/3rdparty/
+  $ git clone --branch 4.7.0 https://github.com/opencv/opencv_contrib
+  $ git clone --branch 4.7.0 https://github.com/opencv/opencv
+  ```
+
+7. Compile OpenCV and install it from source. On a Debian distribution, you would run:
+  ```
+  $ mkdir -p ${HOME}/visp_ws/3rdparty/opencv/build &&\
+  cd ${HOME}/visp_ws/3rdparty/opencv/build 
+  $ cmake .. \
+    -DCMAKE_BUILD_TYPE=RELEASE \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DWITH_CUDA=ON \
+    -DWITH_CUDNN=ON \
+    -DOPENCV_DNN_CUDA=ON \
+    -DENABLE_FAST_MATH=1 \
+    -DCUDA_FAST_MATH=1 \
+    -DCUDA_ARCH_BIN=${GPU_CAPABILITIES} \
+    -DWITH_CUBLAS=1 \
+    -DOPENCV_EXTRA_MODULES_PATH=${HOME}/visp_ws/3rdparty/opencv_contrib/modules \
+    -DBUILD_PERF_TESTS=Off \
+    -DBUILD_TESTS=Off \
+    -DBUILD_EXAMPLES=Off \
+    -DBUILD_opencv_apps=Off \
+    -DBUILD_opencv_java_bindings_generator=Off \
+    -DBUILD_opencv_js=Off
+  ```
+
+8. Compile and install OpenCV. On a Debian distribution, you would run:
+  ```
+  $ make -j$(nproc)
+  $ sudo make install
+  ```
+
+\subsection install_opencv_from_package Install OpenCV from package
+
+Please follow the instuctions described in the installation guidelines for \ref soft_vision_opencv .
+
+\section dnn_example Object detection example explained
+
+The following example also available in tutorial-dnn-object-detection-live.cpp allows object detection by making inference
+on DNN models learned from the following networks:
+- Faster-RCNN
+- SSD MobileNet
+- ResNet 10
+- Yolo v3
+- Yolo v4
+- Yolo v5
+- Yolo v7
+- Yolo v8
+
+It uses video capture capability from OpenCV to capture images from a camera and detect objects using a DNN model learned using
+one of the previous networks.
+
+\include tutorial-dnn-object-detection-live.cpp
+
+Default DNN model and config files perform human faces detection.
+
+\snippet tutorial-dnn-object-detection-live.cpp OpenCV DNN face detector
+
+This network is provided by <a href="https://github.com/opencv/opencv/tree/master/samples/dnn/face_detector">OpenCV</a> and has been trained
+with the following characteristics:
+
+<blockquote>
+
+This is a brief description of training process which has been used to get res10_300x300_ssd_iter_140000.caffemodel.
+The model was created with SSD framework using ResNet-10 like architecture as a backbone. Channels count in ResNet-10 convolution layers was
+significantly dropped (2x- or 4x- fewer channels). The model was trained in Caffe framework on some huge and available online dataset.
+
+</blockquote>
+
+More specifically, the model used (`opencv_face_detector_uint8.pb`) has been quantized (with the TensorFlow library) on 8-bit unsigned int to
+reduce the size of the training model (2.7 mo vs 10.7 mo for `res10_300x300_ssd_iter_140000.caffemodel`).
+
+The following lines permit to create the DNN object detector:
+
+\snippet tutorial-dnn-object-detection-live.cpp DNN params
+
+To construct `netConfig` object some configuration parameters of the DNN are required:
+- `confThresh`, which is the confidence threshold used to filter the detections after inference,
+- `nmsThresh`, which is the Non-Maximum Threshold used to filter multiple detections that can occur approximatively at the same locations,
+- `labelFile`, which is the path towards the file containing the list of classes the DNN can detect,
+- `inputWidth` and `inputHeight`, which are the dimensions to resize the input image into the blob that is fed in entry of the network,
+- `detectionFilter`, which is a boolean indicating if the user wants to perform an additional filtering on the detection outputs based on the
+size of these detections.
+
+Then to construct `dnn` object, the other parameters are the following:
+- `model` is the network trained weights, `config` is the network topology description.
+- `meanR`, `meanG` and `meanB` are the values used for mean subtraction.
+- `scaleFactor` is used to normalize the data range.
+- `swapRB` should be set to `true` when the model has been trained on RGB data. Since OpenCV used the BGR convention, R and B channel should be swapped.
+
+You can directly refer to the <a href="https://github.com/opencv/opencv/tree/master/samples/dnn">OpenCV model zoo</a> for the parameters values.
+
+After setting the correct parameters, if you want to get the data as a map, where the keys will be the class names (or ID if no label file was given),
+you can easily detect object in an image with:
+
+\snippet tutorial-dnn-object-detection-live.cpp DNN object detection map mode
+
+Alternatively, you can get the results in a non-sorted vector with
+
+\snippet tutorial-dnn-object-detection-live.cpp DNN object detection vector mode
+
+Class ids and detection confidence scores can be retrieved for a map with:
+
+\snippet tutorial-dnn-object-detection-live.cpp DNN class ids and confidences map mode
+
+or for a non-sorted vector with:
+
+\snippet tutorial-dnn-object-detection-live.cpp DNN class ids and confidences vector mode
+
+\section dnn_usecase Use case
+
+\subsection dnn_usecase_general Generic usage
+
+The default behavior is to detect human faces, but you can input another model to detect the objects you want. To see which are the options, run:
+```
+$ cd $VISP_WS/visp-build/tutorial/detection/dnn
+$ ./tutorial-dnn-object-detection-live --help
+```
+
+\subsection dnn_usecase_face_detection Face detection
+
+The default behavior is to detect human faces using a model provided by OpenCV and learned over a ResNet 10 network. If you have a laptop, simply run:
+```
+$ cd $VISP_WS/visp-build/tutorial/detection/dnn
+$ ./tutorial-dnn-object-detection-live
+```
+
+The previous command is similar to the next one:
+```
+$ CONFIG=opencv_face_detector.pbtxt \
+  MODEL=opencv_face_detector_uint8.pb \
+  LABELS=class.txt \
+  TYPE=resnet-10 \
+  FRAMEWORK=none \
+  WIDTH=300; HEIGHT=300
+$ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
+    --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
+    --confThresh 0.35 --filterThresh -0.25 --scale 1
+```
+
+\subsection dnn_models_coco COCO dataset objects detection
+
+[COCO](https://cocodataset.org) is a large-scale object detection, segmentation, and captioning dataset. It contains over 330 000 images, each annotated with 80 object categories.
+In the following sections, we show how to use the DNN models learned with the different networks, to detect objects among the list of 80 objects in the COCO dataset.
+
+\subsubsection dnn_supported_faster_rcnn Faster-RCNN
+
+You can find the config file (`config.pbtxt`) [here](https://github.com/opencv/opencv_extra/blob/master/testdata/dnn/faster_rcnn_inception_v2_coco_2018_01_28.pbtxt),
+the weights (`frozen_inference_graph.pb`) [there](http://download.tensorflow.org/models/object_detection/faster_rcnn_inception_v2_coco_2018_01_28.tar.gz)
+and the labels (`coco_classes.txt`) [here](https://github.com/lagadic/visp/blob/master/tutorial/detection/dnn/coco_classes.txt).
+
+To run the tutorial with the Faster-RCNN network, please run the following commands:
+```
+$ cd $VISP_WS/visp-build/tutorial/detection/dnn
+$ DNN_PATH=/path/to/my/dnn/folder \
+  CONFIG=${DNN_PATH}/Faster-RCNN/cfg/config.pbtxt \
+  MODEL=${DNN_PATH}/Faster-RCNN/weights/faster_rcnn_inception_v2_coco_2018_01_28/frozen_inference_graph.pb \
+  LABELS=${DNN_PATH}/Faster-RCNN/cfg/coco_classes.txt \
+  TYPE=faster-rcnn \
+  FRAMEWORK=none \
+  WIDTH=300; HEIGHT=300
+$ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
+    --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
+    --confThresh 0.35 --filterThresh -0.25 --scale 1
+```
+
+If you want to train your own Faster-RCNN model, please refer to this [tutorial](https://debuggercafe.com/how-to-train-faster-rcnn-resnet50-fpn-v2-on-custom-dataset/).
+
+\subsubsection dnn_supported_mobilenet_ssd MobileNet SSD
+
+If you want to use `Mobilenet V1`, you can find the config file (`ssd_mobilenet_v1_coco_2017_11_17.pbtxt`)
+[here](https://raw.githubusercontent.com/Qengineering/MobileNet_SSD_OpenCV_TensorFlow/master/ssd_mobilenet_v1_coco_2017_11_17.pbtxt),
+the weights (`frozen_inference_graph.pb`) [there](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v1_coco_2017_11_17.tar.gz)
+and the labels (`coco_classes.txt`) [here](https://github.com/lagadic/visp/blob/master/tutorial/detection/dnn/coco_classes.txt).
+
+The parameters to use with this network were found [there](https://github.com/opencv/opencv/blob/0052d46b8e33c7bfe0e1450e4bff28b88f455570/samples/dnn/models.yml#L68).
+
+To run the tutorial with the `Mobilenet V1` network, please run the following commands:
+```
+$ DNN_PATH=/path/to/my/dnn/folder \
+  CONFIG=${DNN_PATH}/MobileNet-SSD/cfg/ssd_mobilenet_v1_coco_2017_11_17.pbtxt \
+  MODEL=${DNN_PATH}/MobileNet-SSD/weights/frozen_inference_graph.pb \
+  LABELS=${DNN_PATH}/MobileNet-SSD/cfg/coco_classes.txt \
+  TYPE=ssd-mobilenet \
+  FRAMEWORK=none \
+  WIDTH=300 HEIGHT=300
+$ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
+    --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
+    --filterThresh -0.25 --scale 1
+```
+
+If you would rather use the v3 of Mobilenet-SSD, please download the config file (`ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt`)
+[here](https://gist.github.com/dkurt/54a8e8b51beb3bd3f770b79e56927bd7),
+the weights (`frozen_inference_graph.pb`) [there](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v3_large_coco_2020_01_14.tar.gz)
+and the labels (`coco_classes.txt`) [here](https://github.com/lagadic/visp/blob/master/tutorial/detection/dnn/coco_classes.txt).
+
+Then, to run the tutorial with the `Mobilenet V3` network, please run the following commands:
+```
+$ DNN_PATH=/path/to/my/dnn/folder \
+  CONFIG=${DNN_PATH}/MobileNet-SSD/cfg/ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt \
+  MODEL=${DNN_PATH}/MobileNet-SSD/weights/frozen_inference_graph.pb \
+  LABELS=${DNN_PATH}/MobileNet-SSD/cfg/coco_classes.txt \
+  TYPE=ssd-mobilenet \
+  FRAMEWORK=none \
+  WIDTH=320 HEIGHT=320
+$ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
+    --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0.0019 0.0019 0.0019 \
+    --filterThresh -0.25 --scale 0.00389
+```
+
+If you want to train your own MobileNet SSD model, please refer to this
+[tutorial](https://www.forecr.io/blogs/ai-algorithms/how-to-train-ssd-mobilenet-model-for-object-detection-using-pytorch)
+or the [Keras documentation](https://keras.io/api/applications/mobilenet/) for instance.
+
+\subsubsection dnn_supported_yolov3 Yolo v3
+
+You can find the config file (`yolov3.cfg`) [here](https://github.com/AlexeyAB/darknet/blob/master/cfg/yolov3.cfg),
+the weights (`yolov3.weights`) [there](https://pjreddie.com/media/files/yolov3.weights)
+and the labels (`coco_classes.txt`) [here](https://github.com/lagadic/visp/blob/master/tutorial/detection/dnn/coco_classes.txt).
+
+To run the tutorial program `tutorial-dnn-object-detection-live.cpp`, use the following commands:
+```
+$ DNN_PATH=/path/to/my/dnn/folder \
+  CONFIG=${DNN_PATH}/yolov3/cfg/yolov3.cfg \
+  MODEL=${DNN_PATH}/yolov3/weights/yolov3.weights \
+  LABELS=${DNN_PATH}/yolov3/cfg/coco_classes.txt \
+  TYPE=yolov3 \
+  FRAMEWORK=darknet \
+  WIDTH=416 HEIGHT=416
+$ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
+    --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
+    --filterThresh -0.25 --scale 0.0039
+```
+
+If you want to train your own YoloV3 model, please refer to the [official documentation](https://github.com/ultralytics/yolov3).
+
+\subsubsection dnn_supported_yolov4 Yolo v4
+
+You can find the the config file (`yolov4-tiny.cfg`) [here](https://github.com/AlexeyAB/darknet/blob/master/cfg/yolov4-tiny.cfg),
+the weights (`yolov4-tiny.weights`) [there](https://github.com/AlexeyAB/darknet/releases/download/yolov4/yolov4-tiny.weights)
+and the labels (`coco_classes.txt`) [here](https://github.com/lagadic/visp/blob/master/tutorial/detection/dnn/coco_classes.txt).
+
+To run the tutorial program `tutorial-dnn-object-detection-live.cpp`, use the following commands:
+```
+$ DNN_PATH=/path/to/my/dnn/folder \
+  CONFIG=${DNN_PATH}/yolov4/cfg/yolov4-tiny.cfg \
+  MODEL=${DNN_PATH}/yolov4/weights/yolov4-tiny.weights \
+  LABELS=${DNN_PATH}/yolov4/cfg/coco_classes.txt \
+  TYPE=yolov4 \
+  FRAMEWORK=darknet \
+  WIDTH=416 HEIGHT=416
+$ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
+    --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
+    --filterThresh -0.25 --scale 0.0039
+```
+
+If you want to train your own YoloV4 model, please refer to the [official documentation](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects).
+
+\subsubsection dnn_supported_yolov5 Yolo v5
+
+You can find the weights (`yolov5n.onnx`) in ONNX format [here](https://github.com/doleron/yolov5-opencv-cpp-python/blob/main/config_files/yolov5n.onnx)
+and the labels (`coco_classes.txt`) [here](https://github.com/lagadic/visp/blob/master/tutorial/detection/dnn/coco_classes.txt).
+
+\note You do not need a config file when using a network saved in ONNX format.
+
+To run the tutorial program `tutorial-dnn-object-detection-live.cpp`, use the following commands:
+```
+$ DNN_PATH=/path/to/my/dnn/folder \
+  CONFIG=none \
+  MODEL=${DNN_PATH}/yolov5/weights/yolov5n.onnx \
+  LABELS=${DNN_PATH}/yolov5/cfg/coco_classes.txt \
+  TYPE=yolov5 \
+  FRAMEWORK=onnx \
+  WIDTH=640 HEIGHT=640
+$ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
+    --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
+    --filterThresh -0.25 --scale 0.0039
+```
+
+If you want to train your own YoloV5 model, please refer to the
+[official documentation](https://docs.ultralytics.com/yolov5/tutorials/train_custom_data/#13-prepare-dataset-for-yolov5).
+
+\subsubsection dnn_supported_yolov7 Yolo v7
+
+To be able to use `YoloV7` with the class `vpDetectorDNNOpenCV`, you must first download the weights (`yolov7-tiny.pt`) in the Pytorch format from
+[here](https://github.com/WongKinYiu/yolov7/releases/download/v0.1/yolov7-tiny.pt).
+
+Then, convert it in ONNX format using the `export.py` script that you can find on the [YoloV7 repo](https://github.com/WongKinYiu/yolov7) with the following arguments:
+```
+$ python3 export.py --weights ../weights/yolov7-tiny.pt --grid --simplify --topk-all 100 --iou-thres 0.65 --conf-thres 0.35 --img-size 640 640  --max-wh 640
+```
+
+Finally, use the following commands to run the tutorial program:
+```
+$ DNN_PATH=/path/to/my/dnn/folder \
+  CONFIG=none \
+  MODEL=${DNN_PATH}/yolov7/weights/yolov7-tiny.onnx \
+  LABELS=${DNN_PATH}/yolov7/cfg/coco_classes.txt \
+  TYPE=yolov7 \
+  FRAMEWORK=onnx \
+  WIDTH=640 HEIGHT=640
+$ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
+    --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
+    --filterThresh -0.25 --scale 0.0039
+```
+
+\note You do not need a config file when using a network saved in ONNX format.
+
+If you want to train your own YoloV7 model, please refer to the [official documentation](https://github.com/WongKinYiu/yolov7#transfer-learning).
+
+\subsubsection dnn_supported_yolov8 Yolo v8
+
+You can find the weights (`yolov8s.onnx`) in ONNX format
+[here](https://github.com/JustasBart/yolov8_CPP_Inference_OpenCV_ONNX/blob/minimalistic/source/models/yolov8s.onnx)
+and the labels (`coco_classes.txt`) [here](https://github.com/lagadic/visp/blob/master/tutorial/detection/dnn/coco_classes.txt).
+
+Please use the following commands to run the tutorial program:
+```
+$ DNN_PATH=/path/to/my/dnn/folder \
+  CONFIG=none \
+  MODEL=${DNN_PATH}/yolov8/weights/yolov8s.onnx \
+  LABELS=${DNN_PATH}/yolov8/cfg/coco_classes.txt \
+  TYPE=yolov8 \
+  FRAMEWORK=onnx \
+  WIDTH=640 HEIGHT=480
+$ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
+    --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
+    --filterThresh -0.25 --scale 0.0039
+```
+
+\note You do not need a config file when using a network saved in ONNX format.
+
+If you want to train your own YoloV8 model, please refer to the [official documentation](https://docs.ultralytics.com/modes/train/).
+
+\section dnn_model_other Other dnn models
+\subsection dnn_model_other_zoo OpenCV model zoo
+
+You can find more models in the [OpenCV model zoo repository](https://github.com/opencv/opencv/tree/master/samples/dnn).
+
+\section dnn_troubleshootings Troubleshootings
+
+When using the `vpDetectorDNNOpenCV` class, you may face the following errors:
+
+\subsection dnn_error_size Error in the DNN input size
+
+<blockquote>
+[ERROR:0@1.338] global net_impl.cpp:1161 getLayerShapesRecursively OPENCV/DNN: [Reshape]:(onnx_node!Reshape_219): getMemoryShapes() throws exception. inputs=1 outputs=1/1 blobs=0
+[ERROR:0@1.338] global net_impl.cpp:1167 getLayerShapesRecursively     input[0] = [ 1 64 8400 ]
+[ERROR:0@1.338] global net_impl.cpp:1171 getLayerShapesRecursively     output[0] = [ ]
+[ERROR:0@1.338] global net_impl.cpp:1177 getLayerShapesRecursively Exception message: OpenCV(4.7.0) ${HOME}/visp_ws/3rdparty/opencv/modules/dnn/src/layers/reshape_layer.cpp:109: error: (-215:Assertion failed) total(srcShape, srcRange.start, srcRange.end) == maskTotal in function 'computeShapeByReshapeMask'
+
+terminate called after throwing an instance of 'cv::Exception'
+what():  OpenCV(4.7.0) ${HOME}/visp_ws/3rdparty/opencv/modules/dnn/src/layers/reshape_layer.cpp:109: error: (-215:Assertion failed) total(srcShape, srcRange.start, srcRange.end) == maskTotal in function 'computeShapeByReshapeMask'
+</blockquote>
+
+This error may occur if you mistook the input size of the DNN (i.e. if you are asking to resize the input images to a size
+that does not match the one expected by the DNN).
+
+\subsection dnn_error_unimplemented YoloV3: transpose weights is not functionNotImplementedError
+
+```
+terminate called after throwing an instance of 'cv::Exception'
+what(): OpenCV(4.7.0) error: (-213:The function/feature is not implemented) Transpose the weights (except for convolutional) is not
+implemented in function 'ReadDarknetFromWeightsStream'
+```
+
+Following the proposition found [here](https://github.com/opencv/opencv/issues/15502#issuecomment-531755462) to download once
+again the weights from [here](https://pjreddie.com/media/files/yolov3.weights) permitted to solve this error.
+
+\section dnn_next Next tutorial
+
+You may continue following \ref tutorial-detection-tensorrt.
+*/
