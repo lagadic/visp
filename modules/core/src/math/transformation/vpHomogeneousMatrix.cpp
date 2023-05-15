@@ -1209,8 +1209,8 @@ void vpHomogeneousMatrix::parse_json(const nlohmann::json& j) {
   } else { // Generic 2D array conversion
     from_json(j, *asArray);
   }
-  
-  if(getCols() != 1 && getRows() != 4) {
+
+  if (getCols() != 4 && getRows() != 4) {
     throw vpException(vpException::badValue, "From JSON, tried to read something that is not a 4x4 matrix");
   }
   if(!isAnHomogeneousMatrix()) {
