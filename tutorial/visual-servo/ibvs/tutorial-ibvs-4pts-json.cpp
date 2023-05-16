@@ -10,7 +10,7 @@
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
-
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
 //! [Enum]
 enum InteractionMatrixTypeSubset {
   UNKNOWN = -1,
@@ -18,17 +18,20 @@ enum InteractionMatrixTypeSubset {
   DESIRED,
   MEAN
 };
+//! [Enum]
+//! [Enum conversion]
 NLOHMANN_JSON_SERIALIZE_ENUM(InteractionMatrixTypeSubset, {
   {UNKNOWN, nullptr}, // Default value if the json string is not in "current", "desired" or "mean"
   {CURRENT, "current"},
   {DESIRED, "desired"},
   {MEAN, "mean"}}
 );
-//! [Enum]
+//! [Enum conversion]
 
 
 //! [Arguments]
-struct Arguments {
+class Arguments {
+public:
   // Default values
   Arguments() :
     lambda(0.5), cdMo(0, 0, 0.75, 0, 0, 0),
@@ -50,13 +53,13 @@ struct Arguments {
     }
     return vpServo::CURRENT;
   }
+
   double lambda; // Control law gain
   vpHomogeneousMatrix cdMo; // Target (desired) camera pose
   vpHomogeneousMatrix cMo; // Initial camera pose
   double samplingTime; // Robot sampling time
   double errorThreshold; // Error threshold. Once error is below, consider servoing as successful
   InteractionMatrixTypeSubset interactionMatrixType;
-
 };
 //! [Arguments]
 
@@ -91,7 +94,7 @@ void from_json(const json& j, Arguments& a)
 
 void to_json(json& j, const Arguments& a)
 {
-  j = json {
+  j = json{
     {"lambda", a.lambda},
     {"cMo", a.cMo},
     {"cdMo", a.cdMo},
@@ -137,19 +140,26 @@ Arguments readArguments(const std::string& path)
 //! [JSON input conversion]
 
 //! [Custom ViSP object conversion]
-void to_json(json& j, const vpFeaturePoint& p) {
-  j = json {
+void to_json(json& j, const vpFeaturePoint& p)
+{
+  j = json{
     {"x", p.get_x()},
     {"y", p.get_y()},
     {"z", p.get_Z()}
   };
 }
+
 //! [Custom ViSP object conversion]
 
 
+
 //! [Result structure]
-struct ServoingExperimentData {
-  ServoingExperimentData(const Arguments& arguments, const std::vector<vpFeaturePoint>& desiredFeatures) : arguments(arguments), desiredFeatures(desiredFeatures) {}
+class ServoingExperimentData {
+public:
+  ServoingExperimentData(const Arguments& arguments, const std::vector<vpFeaturePoint>& desiredFeatures) :
+    arguments(arguments), desiredFeatures(desiredFeatures)
+  {
+  }
 
   void onIter(const vpHomogeneousMatrix& cMo, const double errorNorm, const std::vector<vpFeaturePoint>& points,
               const vpColVector& velocity, const vpMatrix& interactionMatrix)
@@ -162,6 +172,7 @@ struct ServoingExperimentData {
     interactionMatrices.push_back(interactionMatrix);
   }
 
+private:
   Arguments arguments;
   std::vector<vpFeaturePoint> desiredFeatures;
   std::vector<vpPoseVector> trajectory;
@@ -173,7 +184,7 @@ struct ServoingExperimentData {
 
 void to_json(json& j, const ServoingExperimentData& res)
 {
-  j = json {
+  j = json{
     {"parameters", res.arguments},
     {"trajectory", res.trajectory},
     {"errorNorm", res.errorNorms},
@@ -197,6 +208,7 @@ void saveResults(const ServoingExperimentData& results, const std::string& path)
 
 int main(int argc, char* argv[])
 {
+  //! [Main parsing]
   std::string arguments_path = "";
   std::string output_path = "";
   for (int i = 1; i < argc; ++i) {
@@ -213,6 +225,7 @@ int main(int argc, char* argv[])
     return EXIT_FAILURE;
   }
   const Arguments args = readArguments(arguments_path);
+  //! [Main parsing]
 
   try {
     vpHomogeneousMatrix cdMo = args.cdMo;
@@ -241,7 +254,9 @@ int main(int argc, char* argv[])
       task.addFeature(p[i], pd[i]);
       features[i] = pd[i];
     }
+    //! [Results creation]
     ServoingExperimentData results(args, features);
+    //! [Results creation]
 
     vpHomogeneousMatrix wMc, wMo;
     vpSimulatorCamera robot;
@@ -250,6 +265,7 @@ int main(int argc, char* argv[])
     wMo = wMc * cMo;
 
     unsigned int iter = 0;
+    //! [VS loop]
     while (1) {
       robot.getPosition(wMc);
       cMo = wMc.inverse() * wMo;
@@ -258,20 +274,22 @@ int main(int argc, char* argv[])
         vpFeatureBuilder::create(p[i], point[i]);
         features[i] = p[i];
       }
-      vpColVector v = task.computeControlLaw();
+      const vpColVector v = task.computeControlLaw();
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
-
       const double errorNorm = task.getError().sumSquare();
+
       results.onIter(cMo, errorNorm, features, v, task.getInteractionMatrix());
+
       if (errorNorm < args.errorThreshold)
         break;
-
       vpTime::wait(100);
-
       iter++;
     }
+    //! [VS loop]
     std::cout << "Convergence in " << iter << " iterations" << std::endl;
+    //! [Save call]
     saveResults(results, output_path);
+    //! [Save call]
   }
   catch (const vpException& e) {
     std::cout << "Caught an exception: " << e << std::endl;
@@ -282,4 +300,5 @@ int main()
 {
   std::cerr << "Cannot run tutorial: ViSP is not built with JSON integration. Install the JSON library and recompile ViSP" << std::endl;
 }
+#endif
 #endif
