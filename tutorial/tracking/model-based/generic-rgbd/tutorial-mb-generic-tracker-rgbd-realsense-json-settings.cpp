@@ -1,4 +1,4 @@
-//! \example tutorial-mb-generic-tracker-rgbd-realsense.cpp
+//! \example tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>

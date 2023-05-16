@@ -2961,7 +2961,7 @@ void vpMbGenericTracker::loadConfigFileJSON(const std::string& settingsFile, boo
   This configuration does not include the model path, only the different tracker and camera parameters.
   As of now, only saving to a JSON file is supported.
 
-  \param configFile : name of the file in which to save the tracker settings.
+  \param settingsFile : name of the file in which to save the tracker settings.
 */
 void vpMbGenericTracker::saveConfigFile(const std::string& settingsFile) const {
   json j;
