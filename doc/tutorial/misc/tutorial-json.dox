@@ -146,20 +146,35 @@ To read from the ibvs_settings.json file, we will define the following method:
 Which we will call in the main, to finally obtain our program arguments:
 \snippet tutorial-ibvs-4pts-json.cpp Main parsing
 
-We can now start servoing and acquiring data, that will be saved to another JSON file
+We can now start servoing and acquiring data, that will be saved to another JSON file.
 
 \subsection tuto-json-ibvs-saving Collecting and saving visual servoing data
 
+To save the data to a JSON file, we first define what we'll save
 \snippet tutorial-ibvs-4pts-json.cpp Result structure
 
+This includes:
+  - The arguments used to launch the program
+  - The desired visual features
+  - For each iteration
+    - The visual features
+    - The camera pose
+    - The squared norm of the visual error
+    - The velocity
+    - The interaction matrix
+
+
+Before starting the servoing loop we create a results object:
 \snippet tutorial-ibvs-4pts-json.cpp Results creation
+We then start the visual servoing loop:
 \snippet tutorial-ibvs-4pts-json.cpp VS loop
+where at each iteration, we update our results with
+\snippet tutorial-ibvs-4pts-json.cpp Results update
+
+Finally, to save the results to a file, we define a function to write to a file
 \snippet tutorial-ibvs-4pts-json.cpp write json to file
+and call it at the end of the program
 \snippet tutorial-ibvs-4pts-json.cpp Save call
-
-
-
-
 
 
 

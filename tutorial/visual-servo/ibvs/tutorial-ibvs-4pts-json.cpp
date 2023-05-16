@@ -180,6 +180,7 @@ private:
   std::vector<std::vector<vpFeaturePoint>> points3D;
   std::vector<vpColVector> velocities;
   std::vector<vpMatrix> interactionMatrices;
+  friend void to_json(json& j, const ServoingExperimentData& res);
 };
 
 void to_json(json& j, const ServoingExperimentData& res)
@@ -277,8 +278,10 @@ int main(int argc, char* argv[])
       const vpColVector v = task.computeControlLaw();
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
       const double errorNorm = task.getError().sumSquare();
-
+      
+      //! [Results update]
       results.onIter(cMo, errorNorm, features, v, task.getInteractionMatrix());
+      //! [Results update]
 
       if (errorNorm < args.errorThreshold)
         break;
