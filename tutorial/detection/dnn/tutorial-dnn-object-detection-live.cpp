@@ -1,45 +1,41 @@
 //! \example tutorial-dnn-object-detection-live.cpp
 #include <visp3/core/vpConfig.h>
-#include <visp3/detection/vpDetectorDNNOpenCV.h>
 #include <visp3/core/vpIoTools.h>
+#include <visp3/detection/vpDetectorDNNOpenCV.h>
 #include <visp3/gui/vpDisplayGDI.h>
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
-typedef enum ChosenDetectionContainer
-{
-  MAP    = 0,
-  VECTOR = 1,
-  BOTH   = 2,
-  COUNT  = 3
+typedef enum {
+  DETECTION_CONTAINER_MAP = 0,
+  DETECTION_CONTAINER_VECTOR = 1,
+  DETECTION_CONTAINER_BOTH = 2,
+  DETECTION_CONTAINER_COUNT = 3
 } ChosenDetectionContainer;
 
-std::string chosenDetectionContainerToString(const ChosenDetectionContainer& choice)
+std::string chosenDetectionContainerToString(const ChosenDetectionContainer &choice)
 {
-  switch(choice)
-  {
-    case MAP:
-      return "map";
-    case VECTOR:
-      return "vector";
-    case BOTH:
-      return "both";
-    default:
-      break;
+  switch (choice) {
+  case DETECTION_CONTAINER_MAP:
+    return "map";
+  case DETECTION_CONTAINER_VECTOR:
+    return "vector";
+  case DETECTION_CONTAINER_BOTH:
+    return "both";
+  default:
+    break;
   }
   return "unknown";
 }
 
-ChosenDetectionContainer chosenDetectionContainerFromString(const std::string& choiceStr)
+ChosenDetectionContainer chosenDetectionContainerFromString(const std::string &choiceStr)
 {
-  ChosenDetectionContainer choice(COUNT);
+  ChosenDetectionContainer choice(DETECTION_CONTAINER_COUNT);
   bool hasFoundMatch = false;
-  for(unsigned int i = 0; i < ChosenDetectionContainer::COUNT && !hasFoundMatch; i++)
-  {
+  for (unsigned int i = 0; i < DETECTION_CONTAINER_COUNT && !hasFoundMatch; i++) {
     ChosenDetectionContainer candidate = (ChosenDetectionContainer)i;
     hasFoundMatch = (chosenDetectionContainerToString(candidate) == vpIoTools::toLowerCase(choiceStr));
-    if(hasFoundMatch)
-    {
+    if (hasFoundMatch) {
       choice = candidate;
     }
   }
@@ -49,18 +45,19 @@ ChosenDetectionContainer chosenDetectionContainerFromString(const std::string& c
 std::string getAvailableDetectionContainer()
 {
   std::string availableContainers("< ");
-  for(unsigned int i = 0; i < ChosenDetectionContainer::COUNT - 1; i++)
-  {
-    std::string name = chosenDetectionContainerToString((ChosenDetectionContainer) i);
+  for (unsigned int i = 0; i < DETECTION_CONTAINER_COUNT - 1; i++) {
+    std::string name = chosenDetectionContainerToString((ChosenDetectionContainer)i);
     availableContainers += name + " , ";
   }
-  availableContainers += chosenDetectionContainerToString((ChosenDetectionContainer) (ChosenDetectionContainer::COUNT - 1)) + " >";
+  availableContainers +=
+      chosenDetectionContainerToString((ChosenDetectionContainer)(DETECTION_CONTAINER_COUNT - 1)) + " >";
   return availableContainers;
 }
 
 int main(int argc, const char *argv[])
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN) &&                                         \
+    (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   try {
     std::string opt_device("0");
     //! [OpenCV DNN face detector]
@@ -78,7 +75,7 @@ int main(int argc, const char *argv[])
     float opt_dnn_confThresh = 0.5f;
     float opt_dnn_nmsThresh = 0.4f;
     double opt_dnn_filterThresh = 0.25;
-    ChosenDetectionContainer opt_dnn_containerType = ChosenDetectionContainer::MAP;
+    ChosenDetectionContainer opt_dnn_containerType = DETECTION_CONTAINER_MAP;
     bool opt_verbose = false;
 
     for (int i = 1; i < argc; i++) {
@@ -89,17 +86,15 @@ int main(int argc, const char *argv[])
       } else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
         opt_dnn_model = std::string(argv[++i]);
       } else if (std::string(argv[i]) == "--type" && i + 1 < argc) {
-        opt_dnn_type =  vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(std::string(argv[++i]));
+        opt_dnn_type = vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(std::string(argv[++i]));
       } else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
         opt_dnn_config = std::string(argv[++i]);
-        if(opt_dnn_config.find("none") != std::string::npos)
-        {
+        if (opt_dnn_config.find("none") != std::string::npos) {
           opt_dnn_config = std::string();
         }
       } else if (std::string(argv[i]) == "--framework" && i + 1 < argc) {
         opt_dnn_framework = std::string(argv[++i]);
-        if(opt_dnn_framework.find("none") != std::string::npos)
-        {
+        if (opt_dnn_framework.find("none") != std::string::npos) {
           opt_dnn_framework = std::string();
         }
       } else if (std::string(argv[i]) == "--width" && i + 1 < argc) {
@@ -128,8 +123,7 @@ int main(int argc, const char *argv[])
         opt_verbose = true;
       } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nSYNOPSIS " << std::endl
-                  << argv[0]
-                  << " [--device <video>]"
+                  << argv[0] << " [--device <video>]"
                   << " [--model <dnn weights file>]"
                   << " [--type <dnn type>]"
                   << " [--config <dnn config file]"
@@ -145,8 +139,7 @@ int main(int argc, const char *argv[])
                   << " [--container <type>]"
                   << " [--step-by-step]"
                   << " [--verbose, -v]"
-                  << " [--help, -h]"
-                  << std::endl;
+                  << " [--help, -h]" << std::endl;
         std::cout << "\nOPTIONS " << std::endl
                   << "  --device <video>" << std::endl
                   << "      Camera device number or video name used to stream images." << std::endl
@@ -227,17 +220,22 @@ int main(int argc, const char *argv[])
 
     std::cout << "Video device         : " << opt_device << std::endl;
     std::cout << "Model                : " << opt_dnn_model << std::endl;
-    std::cout << "Type                 : " << vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(opt_dnn_type) << std::endl;
+    std::cout << "Type                 : " << vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(opt_dnn_type)
+              << std::endl;
     std::cout << "Config               : " << (opt_dnn_config.empty() ? "\"None\"" : opt_dnn_config) << std::endl;
     std::cout << "Framework            : " << (opt_dnn_framework.empty() ? "\"None\"" : opt_dnn_framework) << std::endl;
-    std::cout << "Label file (optional): " << (opt_dnn_label_file.empty() ? "None" : opt_dnn_label_file)  << std::endl;
+    std::cout << "Label file (optional): " << (opt_dnn_label_file.empty() ? "None" : opt_dnn_label_file) << std::endl;
     std::cout << "Width x Height       : " << opt_dnn_width << " x " << opt_dnn_height << std::endl;
-    std::cout << "Mean RGB             : " << opt_dnn_meanR << " " << opt_dnn_meanG << " " << opt_dnn_meanB << std::endl;
+    std::cout << "Mean RGB             : " << opt_dnn_meanR << " " << opt_dnn_meanG << " " << opt_dnn_meanB
+              << std::endl;
     std::cout << "Scale                : " << opt_dnn_scale_factor << std::endl;
     std::cout << "Swap RB?             : " << opt_dnn_swapRB << std::endl;
     std::cout << "Confidence threshold : " << opt_dnn_confThresh << std::endl;
     std::cout << "NMS threshold        : " << opt_dnn_nmsThresh << std::endl;
-    std::cout << "Filter threshold     : " << (opt_dnn_filterThresh > std::numeric_limits<double>::epsilon() ? std::to_string(opt_dnn_filterThresh) : "disabled") << std::endl;
+    std::cout << "Filter threshold     : "
+              << (opt_dnn_filterThresh > std::numeric_limits<double>::epsilon() ? std::to_string(opt_dnn_filterThresh)
+                                                                                : "disabled")
+              << std::endl;
 
     cv::VideoCapture capture;
     bool hasCaptureOpeningSucceeded;
@@ -246,9 +244,8 @@ int main(int argc, const char *argv[])
     } else {
       hasCaptureOpeningSucceeded = capture.open(opt_device);
     }
-    if(!hasCaptureOpeningSucceeded)
-    {
-      std::cout << "Capture from camera: " <<  opt_device << " didn't work" << std::endl;
+    if (!hasCaptureOpeningSucceeded) {
+      std::cout << "Capture from camera: " << opt_device << " didn't work" << std::endl;
       return EXIT_FAILURE;
     }
 
@@ -262,12 +259,14 @@ int main(int argc, const char *argv[])
 #endif
     d.setDownScalingFactor(vpDisplay::SCALE_AUTO);
 
-    if (! opt_dnn_label_file.empty() && !vpIoTools::checkFilename(opt_dnn_label_file)) {
-      throw(vpException(vpException::fatalError, "The file containing the classes labels \"" + opt_dnn_label_file + "\" does not exist !"));
+    if (!opt_dnn_label_file.empty() && !vpIoTools::checkFilename(opt_dnn_label_file)) {
+      throw(vpException(vpException::fatalError,
+                        "The file containing the classes labels \"" + opt_dnn_label_file + "\" does not exist !"));
     }
 
     //! [DNN params]
-    vpDetectorDNNOpenCV::NetConfig netConfig(opt_dnn_confThresh, opt_dnn_nmsThresh, opt_dnn_label_file, cv::Size(opt_dnn_width, opt_dnn_height), opt_dnn_filterThresh);
+    vpDetectorDNNOpenCV::NetConfig netConfig(opt_dnn_confThresh, opt_dnn_nmsThresh, opt_dnn_label_file,
+                                             cv::Size(opt_dnn_width, opt_dnn_height), opt_dnn_filterThresh);
     vpDetectorDNNOpenCV dnn(netConfig, opt_dnn_type);
     dnn.readNet(opt_dnn_model, opt_dnn_config, opt_dnn_framework);
     dnn.setMean(opt_dnn_meanR, opt_dnn_meanG, opt_dnn_meanB);
@@ -297,23 +296,20 @@ int main(int argc, const char *argv[])
 
       vpDisplay::display(I);
 
-      if (opt_dnn_containerType == ChosenDetectionContainer::MAP || opt_dnn_containerType == ChosenDetectionContainer::BOTH)
-      {
+      if (opt_dnn_containerType == DETECTION_CONTAINER_MAP || opt_dnn_containerType == DETECTION_CONTAINER_BOTH) {
         double t = vpTime::measureTimeMs();
         //! [DNN object detection map mode]
-        std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>> detections;
+        std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D> > detections;
         dnn.detect(frame, detections);
         //! [DNN object detection map mode]
         t = vpTime::measureTimeMs() - t;
 
         //! [DNN class ids and confidences map mode]
-        for( auto key_val : detections)
-        {
+        for (auto key_val : detections) {
           if (opt_verbose) {
             std::cout << "  Class name      : " << key_val.first << std::endl;
           }
-          for(vpDetectorDNNOpenCV::DetectedFeatures2D detection : key_val.second )
-          {
+          for (vpDetectorDNNOpenCV::DetectedFeatures2D detection : key_val.second) {
             if (opt_verbose) {
               std::cout << "  Bounding box    : " << detection.getBoundingBox() << std::endl;
               std::cout << "  Class Id        : " << detection.getClassId() << std::endl;
@@ -336,8 +332,7 @@ int main(int argc, const char *argv[])
         vpDisplay::displayText(I, 60, 20, oss_map.str(), vpColor::red);
       }
 
-      if (opt_dnn_containerType == ChosenDetectionContainer::VECTOR || opt_dnn_containerType == ChosenDetectionContainer::BOTH)
-      {
+      if (opt_dnn_containerType == DETECTION_CONTAINER_VECTOR || opt_dnn_containerType == DETECTION_CONTAINER_BOTH) {
         double t_vector = vpTime::measureTimeMs();
         //! [DNN object detection vector mode]
         std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D> detections_vec;
@@ -346,7 +341,7 @@ int main(int argc, const char *argv[])
         t_vector = vpTime::measureTimeMs() - t_vector;
 
         //! [DNN class ids and confidences vector mode]
-        for( auto detection : detections_vec) {
+        for (auto detection : detections_vec) {
           if (opt_verbose) {
             std::cout << "  Bounding box    : " << detection.getBoundingBox() << std::endl;
             std::cout << "  Class Id        : " << detection.getClassId() << std::endl;
@@ -381,8 +376,7 @@ int main(int argc, const char *argv[])
         if (button == vpMouseButton::button1) {
           // Left click => next image
           continue;
-        }
-        else if(button == vpMouseButton::button3) {
+        } else if (button == vpMouseButton::button3) {
           // Right click => stop the program
           break;
         }
