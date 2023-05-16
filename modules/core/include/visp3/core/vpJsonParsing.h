@@ -49,5 +49,20 @@ nlohmann::json flagsToJSON(const int flags, const std::vector<E>& options) {
     return j;
 }
 
+template<typename T>
+bool convertFromTypeAndBuildFrom(const nlohmann::json&, T&) {
+    return false;
+}
+template<typename T, typename O, typename... Os>
+bool convertFromTypeAndBuildFrom(const nlohmann::json& j, T& t) {
+    if(j["type"] == O::jsonTypeName) {
+        O other = j;
+        t.buildFrom(other);
+        return true;
+    } else {
+        return convertFromTypeAndBuildFrom<T, Os...>(j, t);
+    }
+}
+
 #endif
 #endif

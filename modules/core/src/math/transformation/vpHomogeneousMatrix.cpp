@@ -1198,14 +1198,13 @@ void vpHomogeneousMatrix::setIdentity() { eye(); }
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-
+const std::string vpHomogeneousMatrix::jsonTypeName = "vpHomogeneousMatrix";
+#include <visp3/core/vpJsonParsing.h>
 void vpHomogeneousMatrix::parse_json(const nlohmann::json& j) {
   vpArray2D<double>* asArray = (vpArray2D<double>*) this;
   if(j.is_object() && j.contains("type")) { // Specific conversions
-    if(j["type"] == "vpPoseVector") {
-      vpPoseVector r = j;
-      buildFrom(r);
-    } else {
+    const bool converted = convertFromTypeAndBuildFrom<vpHomogeneousMatrix, vpPoseVector>(j, *this);
+    if(!converted) {
       from_json(j, *asArray);
     }
   } else { // Generic 2D array conversion

@@ -272,6 +272,8 @@ public:
 //@}
 #endif
 #ifdef VISP_HAVE_NLOHMANN_JSON
+public:
+  static const std::string jsonTypeName;
 private:
   friend void from_json(const nlohmann::json& j, vpPoseVector& r);
   void parse_json(const nlohmann::json& j);
@@ -283,7 +285,7 @@ private:
 inline void to_json(nlohmann::json& j, const vpPoseVector& r) {
   const vpArray2D<double>* asArray = (vpArray2D<double>*) &r;
   to_json(j, *asArray);
-  j["type"] = "vpPoseVector";
+  j["type"] = vpPoseVector::jsonTypeName;
 }
 inline void from_json(const nlohmann::json& j, vpPoseVector& r) {
   r.parse_json(j);
