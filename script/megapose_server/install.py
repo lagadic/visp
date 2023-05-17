@@ -6,7 +6,7 @@ from subprocess import CalledProcessError
 import os
 megapose_url = 'https://github.com/megapose6d/megapose6d.git'
 
-def get_pip_for_conda_env(megapose_env: str):
+def get_megapose_bin_conda_env(megapose_env: str) -> Path:
   env_data = str(subprocess.check_output('conda info --envs', shell=True).decode())
   env_lines = env_data.split('\n')
   megapose_env_line = [line for line in env_lines if line.startswith(megapose_env)]
@@ -14,9 +14,14 @@ def get_pip_for_conda_env(megapose_env: str):
   megapose_env_line = megapose_env_line[0]
   megapose_env_path = Path(megapose_env_line.split()[-1])
   assert(megapose_env_path.exists())
-  megapose_env_pip = megapose_env_path / 'bin' / 'pip'
-  assert(megapose_env_pip.exists(), 'Could not find pip in conda env directory')
-  return megapose_env_pip
+  megapose_env_bin = megapose_env_path / 'bin'
+  return megapose_env_bin
+
+def get_pip_for_conda_env(megapose_env: str):
+  return get_megapose_bin_conda_env(megapose_env) / 'pip'
+def get_rclone_for_conda_env(megapose_env: str):
+  return get_megapose_bin_conda_env(megapose_env) / 'rclone'
+
 
 def clone_megapose(megapose_path: Path):
   print('Cloning megapose git repo...')
@@ -32,7 +37,7 @@ def clone_megapose(megapose_path: Path):
 
 def install_dependencies(megapose_path: Path, megapose_environment: str):
   try:
-    subprocess.run(['conda', 'env', 'create', '--name', megapose_environment, '--file', str(megapose_path / 'conda/environment_full.yaml')], check=True)
+    subprocess.run(['conda', 'env', 'create', '--name', megapose_environment, '--file', 'megapose_environment.yml'], check=True)
     megapose_env_pip = get_pip_for_conda_env(megapose_environment)
     subprocess.run([megapose_env_pip, 'install', '-e',  str(megapose_path)], check=True)
   except CalledProcessError as e:
@@ -40,10 +45,11 @@ def install_dependencies(megapose_path: Path, megapose_environment: str):
     exit(1)
 
 
-def download_models(megapose_path: Path, megapose_data_path: Path):
+def download_models(megapose_env: str, megapose_path: Path, megapose_data_path: Path):
   models_path = megapose_data_path / 'megapose-models'
   conf_path = megapose_path / 'rclone.conf'
-  arguments = ['rclone', 'copyto', 'megapose_public_readonly:/megapose-models',
+  rclone = str(get_rclone_for_conda_env(megapose_env).absolute())
+  arguments = [rclone, 'copyto', 'megapose_public_readonly:/megapose-models',
                    str(models_path), '--exclude', '"**epoch**"', '--config', str(conf_path), '--progress']
   print(' '.join(arguments))
   subprocess.run(arguments, check=True)
@@ -81,7 +87,6 @@ current values:
 Installation requires:
   - git
   - conda
-  - rclone (see: https://rclone.org/install/)
 
 All these programs should be in your path.
 
@@ -95,12 +100,12 @@ The steps followed in the script are the same, but end with the installation of 
 '''
   print(display_message)
   print('Cloning megapose directory...')
-  # clone_megapose(megapose_dir)
-  # print('Creating conda environment and installing megapose...')
-  # install_dependencies(megapose_dir, megapose_environment)
-  # print('Downloading megapose models...')
-  # download_models(megapose_dir, megapose_data_dir)
-  # print('Installing server...')
+  clone_megapose(megapose_dir)
+  print('Creating conda environment and installing megapose...')
+  install_dependencies(megapose_dir, megapose_environment)
+  print('Downloading megapose models...')
+  download_models(megapose_environment, megapose_dir, megapose_data_dir)
+  print('Installing server...')
   install_server(megapose_environment)
 
   print(f'''
