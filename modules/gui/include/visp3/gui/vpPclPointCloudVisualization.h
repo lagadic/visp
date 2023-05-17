@@ -138,8 +138,9 @@ public:
    * 
    * @param surface The updated surface.
    * @param id The ID of the surface that must be updated.
+   * @param hasToKeepColor If true, will be displayed in its original color. Otherwise, will be displayed in its default color.
    */
-  void updateSurface(const pclPointCloud::Ptr &surface, unsigned int id);
+  void updateSurface(const pclPointCloud::Ptr &surface, const unsigned int &id, const bool &hasToKeepColor = false);
 
   /**
    * @brief Update the surface known by \b id by the visualizer.
@@ -147,8 +148,9 @@ public:
    * @param surface The updated surface.
    * @param id The ID of the surface that must be updated.
    * @param weights The confidence weights of each points.
+   * @param hasToKeepColor If true, will be displayed in its original color. Otherwise, will be displayed in its default color.
    */
-  void updateSurface(const pclPointCloud::Ptr &surface, unsigned int id, const vpColVector& weights);
+  void updateSurface(const pclPointCloud::Ptr &surface, const unsigned int &id, const vpColVector& weights, const bool &hasToKeepColor = false);
 
   /**
    * @brief Blocking-mode display of the visualizer.
@@ -173,45 +175,46 @@ public:
    */
   void stopThread();
 
-  /**
-   * @brief Method to update a point cloud known by the visualizer when the drawing thread is running.
-   * The updated surface will be drawn with the default color that was affected to it.
-   * 
-   * @param surface The updated surface.
-   * @param id The ID of the point cloud that must be updated.
-   */
-  void threadUpdateSurface(const pclPointCloud::Ptr &surface, unsigned int id);
-
-  /**
-   * @brief Method to update a point cloud known by the visualizer when the drawing thread is running.
-   * The updated surface will be drawn with the color it contains.
-   * 
-   * @param surface The updated surface.
-   * @param id The ID of the point cloud that must be updated.
-   */
-  void threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, unsigned int id);
-
-  /**
-   * @brief Method to update a point cloud known by the visualizer when the drawing thread is running.
-   * The updated surface will be drawn with the default color that was affected to it.
-   * 
-   * @param surface The updated surface.
-   * @param id The ID of the point cloud that must be updated.
-   * @param weights The confidence weights of each point. Must be between 0 and 1.
-   */
-  void threadUpdateSurface(const pclPointCloud::Ptr &surface, unsigned int id, const vpColVector& weights);
-
-  /**
-   * @brief Method to update a point cloud known by the visualizer when the drawing thread is running.
-   * The updated surface will be drawn with the color it contains.
-   * 
-   * @param surface The updated surface.
-   * @param id The ID of the point cloud that must be updated.
-   * @param weights The confidence weights of each point. Must be between 0 and 1.
-   */
-  void threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, unsigned int id, const vpColVector& weights);
-
 protected:
+  /**
+   * @brief Method to update a point cloud known by the visualizer when the drawing thread is running.
+   * The updated surface will be drawn with the default color that was affected to it.
+   * 
+   * @param surface The updated surface.
+   * @param id The ID of the point cloud that must be updated.
+   */
+  void threadUpdateSurface(const pclPointCloud::Ptr &surface, const unsigned int &id);
+
+  /**
+   * @brief Method to update a point cloud known by the visualizer when the drawing thread is running.
+   * The updated surface will be drawn with the color it contains.
+   * 
+   * @param surface The updated surface.
+   * @param id The ID of the point cloud that must be updated.
+   */
+  void threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, const unsigned int &id);
+
+  /**
+   * @brief Method to update a point cloud known by the visualizer when the drawing thread is running.
+   * The updated surface will be drawn with the default color that was affected to it.
+   * 
+   * @param surface The updated surface.
+   * @param id The ID of the point cloud that must be updated.
+   * @param weights The confidence weights of each point. Must be between 0 and 1.
+   */
+  void threadUpdateSurface(const pclPointCloud::Ptr &surface, const unsigned int &id, const vpColVector& weights);
+
+  /**
+   * @brief Method to update a point cloud known by the visualizer when the drawing thread is running.
+   * The updated surface will be drawn with the color it contains.
+   * 
+   * @param surface The updated surface.
+   * @param id The ID of the point cloud that must be updated.
+   * @param weights The confidence weights of each point. Must be between 0 and 1.
+   */
+  void threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, const unsigned int &id, const vpColVector& weights);
+
+
   /**
    * @brief Internal method that is called by \b vpPclPointCloudVisualization::launchThread to launch the 
    * drawing thread.

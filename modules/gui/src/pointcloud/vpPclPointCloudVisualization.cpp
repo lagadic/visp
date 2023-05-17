@@ -132,45 +132,87 @@ void vpPclPointCloudVisualization::set_ignoreThreshold(const double &ignoreThres
   s_ignoreThresh = ignoreThreshold;
 }
 
-void vpPclPointCloudVisualization ::updateSurface(const pclPointCloud::Ptr &surface, unsigned int id)
+void vpPclPointCloudVisualization ::updateSurface(const pclPointCloud::Ptr &surface, const unsigned int &id, const bool &hasToKeepColor)
 {
-  unsigned int nbPoints = surface->size();
-  vpColVector fakeWeights(nbPoints, 1.); // Fake weights that are all equal to 1, to keep all the points
-  updateSurface(surface, id, fakeWeights);
-}
-
-void vpPclPointCloudVisualization ::updateSurface(const pclPointCloud::Ptr &surface, unsigned int id, const vpColVector &weights)
-{
-  // If the saved pcl corresponding to \b id was not initialized, initialize it
-  if(!_vPointClouds[id]){
-    _vPointClouds[id].reset(new pclPointCloud());
-  }
-
-  // Resize if needed the saved pcl corresponding to \b id
-  unsigned int nbPoints = surface->size();
-  _vPointClouds[id]->resize(nbPoints);
-
-  // Keep only the points that are above \b s_ignoreThresh
-  for(unsigned int index = 0; index < nbPoints; index++){
-    if(weights[index] > s_ignoreThresh){
-      pclPoint pt = surface->at(index);
-      _vPointClouds[id]->at(index).x = pt.x;
-      _vPointClouds[id]->at(index).y = pt.y;
-      _vPointClouds[id]->at(index).z = pt.z;
-
-      _vPointClouds[id]->at(index).r = g_vhandler[id][0];
-      _vPointClouds[id]->at(index).g = g_vhandler[id][1];
-      _vPointClouds[id]->at(index).b = g_vhandler[id][2];
+  if(_hasToRun)
+  {
+    // Threaded mode
+    if(hasToKeepColor)
+    {
+      // The point cloud will be displayed with its original colors
+      threadUpdateSurfaceOriginalColor(surface, id);
+    }
+    else
+    {
+      // The point cloud will be displayed with its default colors
+      threadUpdateSurface(surface, id);
     }
   }
+  else
+  {
+    // Blocking mode
+    unsigned int nbPoints = surface->size();
+    vpColVector fakeWeights; // Fake weights that are all equal to 1, to keep all the points
+    updateSurface(surface, id, fakeWeights, hasToKeepColor);
+  }
+}
 
-  // Try to update the pcl corresponding to the ID
-  // Throw a \b vpException::notInitialized exception if the pcl was not added to the list of known pcl first
-  bool status = gp_viewer->updatePointCloud(_vPointClouds[id], _vmeshid[id]);
-  if(!status){
-    std::stringstream err_msg;
-    err_msg << "[vpPclPointCloudVisualization ::updateSurface] ID " << _vmeshid[id] << " not found !" << std::endl;
-    throw(vpException(vpException::notInitialized, err_msg.str()));
+void vpPclPointCloudVisualization ::updateSurface(const pclPointCloud::Ptr &surface, const unsigned int &id,
+                                                  const vpColVector &weights, const bool &hasToKeepColor)
+{
+  if (_hasToRun) {
+    // Threaded mode
+    if (hasToKeepColor) {
+      // The point cloud will be displayed with its original colors
+      threadUpdateSurfaceOriginalColor(surface, id, weights);
+    } else {
+      // The point cloud will be displayed with its default colors
+      threadUpdateSurface(surface, id, weights);
+    }
+  } else {
+    // Blocking mode
+    // If the saved pcl corresponding to \b id was not initialized, initialize it
+    if (!_vPointClouds[id]) {
+      _vPointClouds[id].reset(new pclPointCloud());
+    }
+
+    // Resize if needed the saved pcl corresponding to \b id
+    unsigned int nbPoints = surface->size();
+    _vPointClouds[id]->resize(nbPoints);
+
+    // Save the new weights and check if they must be used
+    _vweights[id] = weights;
+    bool use_weights = (weights.size() > 0);
+
+    // Keep only the points that are above \b s_ignoreThresh
+    for (unsigned int index = 0; index < nbPoints; index++) {
+      bool addPoint = false;
+      if (use_weights) {
+        addPoint = (weights[index] > s_ignoreThresh);
+      } else {
+        addPoint = true;
+      }
+
+      pclPoint pt = surface->at(index);
+      if (addPoint) {
+        _vPointClouds[id]->at(index).x = pt.x;
+        _vPointClouds[id]->at(index).y = pt.y;
+        _vPointClouds[id]->at(index).z = pt.z;
+
+        _vPointClouds[id]->at(index).r = g_vhandler[id][0];
+        _vPointClouds[id]->at(index).g = g_vhandler[id][1];
+        _vPointClouds[id]->at(index).b = g_vhandler[id][2];
+      }
+    }
+
+    // Try to update the pcl corresponding to the ID
+    // Throw a \b vpException::notInitialized exception if the pcl was not added to the list of known pcl first
+    bool status = gp_viewer->updatePointCloud(_vPointClouds[id], _vmeshid[id]);
+    if (!status) {
+      std::stringstream err_msg;
+      err_msg << "[vpPclPointCloudVisualization ::updateSurface] ID " << _vmeshid[id] << " not found !" << std::endl;
+      throw(vpException(vpException::notInitialized, err_msg.str()));
+    }
   }
 }
 
@@ -407,42 +449,17 @@ void vpPclPointCloudVisualization ::loopThread()
   gp_viewer.reset();
 }
 
-void vpPclPointCloudVisualization ::threadUpdateSurface(const pclPointCloud::Ptr &surface, unsigned int id)
+void vpPclPointCloudVisualization ::threadUpdateSurface(const pclPointCloud::Ptr &surface, const unsigned int &id)
 {
-  _vpmutex[id]->lock();
-  unsigned int nbPoints = surface->size();
-  _vPointClouds[id]->resize(nbPoints);
-  _vweights[id] = vpColVector(); // Removing potential old weights attached to the surface
-
-  // Iterating on each point of the pcl to change the color of the points
-  // for the default value affected to this pcl
-  for(unsigned int index = 0; index < nbPoints; index++){
-      pclPoint pt = surface->at(index);
-      _vPointClouds[id]->at(index).x = pt.x;
-      _vPointClouds[id]->at(index).y = pt.y;
-      _vPointClouds[id]->at(index).z = pt.z;
-
-      _vPointClouds[id]->at(index).r = g_vhandler[id][0];
-      _vPointClouds[id]->at(index).g = g_vhandler[id][1];
-      _vPointClouds[id]->at(index).b = g_vhandler[id][2];
-  }
-  _vpmutex[id]->unlock();
+  threadUpdateSurface(surface, id, vpColVector());
 }
 
-void vpPclPointCloudVisualization ::threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, unsigned int id)
+void vpPclPointCloudVisualization ::threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, const unsigned int &id)
 {
-  _vpmutex[id]->lock();
-  unsigned int nbPoints = surface->size();
-  _vPointClouds[id]->resize(nbPoints);
-  _vweights[id] = vpColVector(); // Removing potential old weights attached to the surface
-
-  // As we keep the color of the original pcl, a plain copy will do the job
-  pcl::copyPointCloud(*surface, *_vPointClouds[id]);
-
-  _vpmutex[id]->unlock();
+  threadUpdateSurfaceOriginalColor(surface, id, vpColVector());
 }
 
-void vpPclPointCloudVisualization ::threadUpdateSurface(const pclPointCloud::Ptr &surface, unsigned int id, const vpColVector &weights)
+void vpPclPointCloudVisualization ::threadUpdateSurface(const pclPointCloud::Ptr &surface,  const unsigned int &id, const vpColVector &weights)
 {
   _vpmutex[id]->lock();
   _vweights[id] = weights; // Saving the weights affected to each point of the pcl
@@ -464,7 +481,7 @@ void vpPclPointCloudVisualization ::threadUpdateSurface(const pclPointCloud::Ptr
   _vpmutex[id]->unlock();
 }
 
-void vpPclPointCloudVisualization ::threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, unsigned int id, const vpColVector &weights)
+void vpPclPointCloudVisualization ::threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, const unsigned int &id, const vpColVector &weights)
 {
   _vpmutex[id]->lock();
   _vweights[id] = weights; // Saving the weights affected to each point of the pcl

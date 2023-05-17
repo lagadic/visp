@@ -166,8 +166,8 @@ void ClassUsingPclVisualizer::threadedMode(const bool &addNoise, const unsigned 
   _visualizer.launchThread();
   //! [Starting display thread]
   
-  _visualizer.threadUpdateSurface(grids.first , id_ctrlPts);
-  _visualizer.threadUpdateSurface(grids.second , id_robust, confWeights);
+  _visualizer.updateSurface(grids.first , id_ctrlPts);
+  _visualizer.updateSurface(grids.second , id_robust, confWeights);
 
   vpKeyboard keyboard;
   bool wantToStop = false;
@@ -178,8 +178,8 @@ void ClassUsingPclVisualizer::threadedMode(const bool &addNoise, const unsigned 
     grids = generateControlPoints(addNoise, order, confWeights);
 
     //! [Updating point clouds used by display thread]
-    _visualizer.threadUpdateSurface(grids.first , id_ctrlPts);
-    _visualizer.threadUpdateSurface(grids.second , id_robust, confWeights);
+    _visualizer.updateSurface(grids.first , id_ctrlPts);
+    _visualizer.updateSurface(grids.second , id_robust, confWeights);
     //! [Updating point clouds used by display thread]
 
     if (keyboard.kbhit()) {
