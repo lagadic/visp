@@ -34,7 +34,7 @@ private:
    * @param order The order of the polynomial surface that is generated.
    * @return std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> 
    */
-  std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> generateControlPoints(const bool &addNoise, const unsigned int &order);
+  std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> generateControlPoints(const bool &addNoise, const unsigned int &order, vpColVector &confidenceWeights);
 public:
   /**
    * @brief Construct a new object.
