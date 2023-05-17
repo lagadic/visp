@@ -43,7 +43,7 @@ DisplayMode displayModeFromString(const std::string &name)
   for(unsigned int i = 0; i < DisplayMode::MODE_COUNT && !wasFound; i++)
   {
     DisplayMode candidate = (DisplayMode) i;
-    if(lowerCaseName == lowerCaseName)
+    if(lowerCaseName == displayModeToString(candidate))
     {
       res = candidate;
       wasFound = true; 
@@ -68,14 +68,14 @@ std::string getAvailableDisplayMode(const std::string &prefix = "< ", const std:
 
 int main (int argc, char *argv[])
 {
-  const bool def_addNoise                              = false;
+  const double def_addedNoise                          = 0.;
   const unsigned int def_order                         = 2;
   const std::pair<double, double> def_xlim             = std::pair<double, double>(-2.5,2.5);
   const std::pair<double, double> def_ylim             = std::pair<double, double>(-2.5,2.5);
   const std::pair<unsigned int, unsigned int> def_reso = std::pair<unsigned int, unsigned int>(50,50);
   const DisplayMode def_mode                           = DisplayMode::THREADED;  
 
-  bool opt_addNoise                              = def_addNoise;
+  double opt_addedNoise                            = def_addedNoise;
   unsigned int opt_order                         = def_order;
   std::pair<double, double> opt_xlim             = def_xlim;
   std::pair<double, double> opt_ylim             = def_ylim;
@@ -84,13 +84,10 @@ int main (int argc, char *argv[])
 
   for(int i = 1; i < argc; i++)
   {
-    if (std::string(argv[i]) == "--no-noise")
+    if (std::string(argv[i]) == "--noise" && i + 1 < argc)
     {
-      opt_addNoise = false;
-    }
-    else if (std::string(argv[i]) == "--add-noise")
-    {
-      opt_addNoise = true;
+      opt_addedNoise = atof(argv[i + 1]);
+      i++;
     }
     else if (std::string(argv[i]) == "--order" && i + 1 < argc)
     {
@@ -127,7 +124,7 @@ int main (int argc, char *argv[])
                 << std::endl;
       std::cout << "SYNOPSIS" << std::endl;
       std::cout << "\t" << argv[0]
-                << "\t[--no-noise] || [--add-noise] (default: " + (def_addNoise ? std::string("true") : std::string("false")) << ")\n"
+                << "\t[--noise <stdev_noise>] (default: " + std::to_string(def_addedNoise)<< ")\n"
                 << "\t[--order <surface-order>](default: " + std::to_string(def_order) << ")\n"
                 << "\t[--x-lim <xmin xmax>](default: [" + std::to_string(def_xlim.first) + ";" + std::to_string(def_xlim.second) << "])\n"
                 << "\t[--y-lim <ymin ymax>](default: [" + std::to_string(def_ylim.first) + ";" + std::to_string(def_ylim.second) << "])\n"
@@ -139,16 +136,25 @@ int main (int argc, char *argv[])
       return EXIT_SUCCESS;
     }
   }
-  ClassUsingPclVisualizer demo(opt_xlim, opt_ylim, opt_reso);
+
+  std::cout << "Parameters:" << std::endl;
+  std::cout << "\tSurface order: " << opt_order << std::endl;
+  std::cout << "\tX-axis limits: [" << opt_xlim.first << " ; " << opt_xlim.first << "]" << std::endl;
+  std::cout << "\tY-axis limits: [" << opt_ylim.first << " ; " << opt_ylim.first << "]" << std::endl;
+  std::cout << "\tGrid resolution: [" << opt_reso.first << " x " << opt_reso.first << "]" << std::endl;
+  std::cout << "\tNoise standard deviation: " << opt_addedNoise << std::endl;
+  std::cout << "\tDisplay mode: " << displayModeToString(opt_mode) << std::endl;
 
   if(opt_mode == DisplayMode::BLOCKING || opt_mode == DisplayMode::BOTH)
   {
-    demo.blockingMode(opt_addNoise, opt_order);
+    ClassUsingPclVisualizer demo(opt_xlim, opt_ylim, opt_reso);
+    demo.blockingMode(opt_addedNoise, opt_order);
   }
 
   if(opt_mode == DisplayMode::THREADED || opt_mode == DisplayMode::BOTH)
   {
-    demo.threadedMode(opt_addNoise, opt_order);
+    ClassUsingPclVisualizer demo(opt_xlim, opt_ylim, opt_reso);
+    demo.threadedMode(opt_addedNoise, opt_order);
   }
   return 0;
 }

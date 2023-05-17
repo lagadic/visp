@@ -1,4 +1,4 @@
-//! \example example-class-using-pcl-visualizer.cpp
+//! \example ClassUsingPclVisualizer.cpp
 #include "ClassUsingPclVisualizer.h"
 
 #if defined(VISP_HAVE_PCL)
@@ -7,7 +7,8 @@
 
 // Visp
 #include <visp3/core/vpTime.h>
-#include <visp3/core/vpUniRand.h>
+#include <visp3/core/vpGaussRand.h>
+#include <visp3/core/vpRobust.h>
 #include <visp3/gui/vpColorBlindFriendlyPalette.h>
 #include <visp3/io/vpKeyboard.h>
 
@@ -38,7 +39,7 @@ double zFunction(const double &x, const double &y, const unsigned int order)
 ClassUsingPclVisualizer::ClassUsingPclVisualizer(std::pair<double, double> xlimits, std::pair<double, double> ylimits, std::pair<unsigned int, unsigned int> nbPoints)
   : _t(0.,0.,0.)
   , _R(M_PI_4,M_PI_4,M_PI_4)
-  , _rotHunrotated(_t,_R)
+  , _cMo(_t,_R)
   , _minX(xlimits.first)
   , _maxX(xlimits.second)
   , _n(nbPoints.first)
@@ -56,7 +57,7 @@ ClassUsingPclVisualizer::~ClassUsingPclVisualizer()
 
 }
 
-std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> ClassUsingPclVisualizer::generateControlPoints(const bool &addNoise, const unsigned int &order, vpColVector &confidenceWeights)
+std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> ClassUsingPclVisualizer::generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights)
 {
   std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> result;
 
@@ -67,54 +68,44 @@ std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisuali
   // Initializing confindence weights
   confidenceWeights.resize(_m * _n);
 
+  // Noise generator for the observed points
+  // We deriberately choose to set the standard deviation to be twice the tolerated value to observe rejected points
+   vpGaussRand r;
+   r.setSigmaMean(addedNoise * 2., 0.);
+   r.seed(vpTime::measureTimeMicros());
+
+  // Residual vector to compute the confidence weights
+  vpColVector residuals(_m * _n);
+
   for(unsigned int j =  0; j< _m; j++){
     for(unsigned int i = 0; i<_n; i++){
-      double x = _minX + (double)i * _dX;
-      double y = _minY + (double)j * _dY;
-      double z = zFunction(x,y, order);
+      // Creating model, expressed in the object frame
+      double oX = _minX + (double)i * _dX;
+      double oY = _minY + (double)j * _dY;
+      double oZ = zFunction(oX, oY, order);
 
-      std::vector<double> point={x, y, z,1.};
-      vpColVector original = vpColVector(point);
-      (*unrotatedControlPoints)(i,j).x = original[0];
-      (*unrotatedControlPoints)(i,j).y = original[1];
-      (*unrotatedControlPoints)(i,j).z = original[2];
+      std::vector<double> point={oX, oY, oZ,1.};
+      vpColVector oCoords = vpColVector(point);
+      (*unrotatedControlPoints)(i,j).x = oCoords[0];
+      (*unrotatedControlPoints)(i,j).y = oCoords[1];
+      (*unrotatedControlPoints)(i,j).z = oCoords[2];
 
-      vpColVector rotated = _rotHunrotated * original;
-      (*rotatedControlPoints)(i,j).x = rotated[0];
-      (*rotatedControlPoints)(i,j).y = rotated[1];
-      (*rotatedControlPoints)(i,j).z = rotated[2];
+      vpColVector cCoords = _cMo * oCoords;
+      (*rotatedControlPoints)(i,j).x = cCoords[0];
+      (*rotatedControlPoints)(i,j).y = cCoords[1];
+      double noise = r();
+      (*rotatedControlPoints)(i,j).z = cCoords[2] + noise; 
 
       confidenceWeights[j * _n + i] = 1.;
+      residuals[j * _n + i] = noise;
     }
   }
 
-  if(addNoise)
+  if(std::abs(addedNoise) > 0.)
   {
-    vpUniRand r;
-    // Draws the indices where to begin the fake failed tracking
-    unsigned  int initXIndex = std::floor(r() *  (double)_n);
-    unsigned  int initYIndex = std::floor(r() *  (double)_m);
-
-    // Draws the size of the zone of the fake failed tracking: between 5*5 and 10*10 zone
-    unsigned int sizeZone = std::floor(r() * 5. + 5.  );
-    for(unsigned int j =  initYIndex; j< _m && j < initYIndex + sizeZone; j++){
-
-      for(unsigned int i = initXIndex; i<_n && i < initXIndex + sizeZone; i++){
-        double oX = _minX + (double)i * _dX;
-        double oY = _minY + (double)j * _dY;
-        double oZ = 0.;
-        vpColVector oPos = std::vector<double>({oX, oY, oZ, 1.});
-
-        vpColVector rotated = _rotHunrotated * oPos;
-        (*rotatedControlPoints)(i,j).x = rotated[0];
-        (*rotatedControlPoints)(i,j).y = rotated[1];
-        (*rotatedControlPoints)(i,j).z = 0.;
-
-        // Setting confidence weight to 0, as would do vpRobust
-        // See [vpRobust documentation](https://visp-doc.inria.fr/doxygen/visp-daily/classvpRobust.html) for information and examples
-        confidenceWeights[j * _n + i] = 0.;
-      }
-    }
+    vpRobust robust;
+    robust.setMinMedianAbsoluteDeviation(addedNoise);
+    robust.MEstimator(vpRobust::TUKEY, residuals, confidenceWeights);
   }
 
   result.first = unrotatedControlPoints;
@@ -122,13 +113,13 @@ std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisuali
   return result;
 }
 
-void ClassUsingPclVisualizer::blockingMode(const bool &addNoise, const unsigned int& order)
+void ClassUsingPclVisualizer::blockingMode(const double &addedNoise, const unsigned int& order)
 {
   // Confidence weights, that would be obtained thanks to vpRobust for instance
   vpColVector confWeights;
 
   //! [Generating point clouds]
-  std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> grids = generateControlPoints(addNoise, order, confWeights);
+  std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> grids = generateControlPoints(addedNoise, order, confWeights);
   //! [Generating point clouds]
 
   //! [Adding point clouds color not chosen]
@@ -147,13 +138,13 @@ void ClassUsingPclVisualizer::blockingMode(const bool &addNoise, const unsigned 
   //! [Displaying point clouds blocking mode]
 }
 
-void ClassUsingPclVisualizer::threadedMode(const bool &addNoise, const unsigned int& order)
+void ClassUsingPclVisualizer::threadedMode(const double &addedNoise, const unsigned int& order)
 {
   // Confidence weights, that would be obtained thanks to vpRobust for instance
   vpColVector confWeights;
 
   // Create control points
-  std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> grids = generateControlPoints(addNoise, order, confWeights);
+  std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> grids = generateControlPoints(addedNoise, order, confWeights);
 
   // Adding a point cloud for which we don't chose the color 
   unsigned int id_ctrlPts = _visualizer.addSurface(grids.first, "Standard"); 
@@ -175,7 +166,7 @@ void ClassUsingPclVisualizer::threadedMode(const bool &addNoise, const unsigned 
   
   while(!wantToStop){
     t = vpTime::measureTimeMs();
-    grids = generateControlPoints(addNoise, order, confWeights);
+    grids = generateControlPoints(addedNoise, order, confWeights);
 
     //! [Updating point clouds used by display thread]
     _visualizer.updateSurface(grids.first , id_ctrlPts);

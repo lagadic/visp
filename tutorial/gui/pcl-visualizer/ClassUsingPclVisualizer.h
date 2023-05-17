@@ -14,7 +14,7 @@ class ClassUsingPclVisualizer
 private:
   vpTranslationVector _t; /*!< The translation between the noise-free point cloud and the possibly noisy, translated + rotated one*/
   vpRotationMatrix _R; /*!< The rotation between the noise-free point cloud and the possibly noisy, translated + rotated one*/
-  vpHomogeneousMatrix _rotHunrotated; /*!< The homogeneous matrix expressing the pose of the noise-free point cloud with regard to the possibly noisy, translated + rotated one.*/
+  vpHomogeneousMatrix _cMo; /*!< The homogeneous matrix expressing the pose of the noise-free point cloud with regard to the possibly noisy, translated + rotated one.*/
 
   double _minX; /*!< The minimum value of the X coordinate, expressed in the noise-free frame.*/
   double _maxX; /*!< The maximum value of the X coordinate, expressed in the noise-free frame.*/
@@ -30,11 +30,11 @@ private:
   /**
    * @brief Generate a noise-free grid of point, and a possibly noisy one, which is translated and rotated with regarded to the noise-free one.
    * 
-   * @param addNoise If true, noise will be added to the translated + rotated point cloud.
+   * @param addedNoise Standard deviation of the noise.
    * @param order The order of the polynomial surface that is generated.
    * @return std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> 
    */
-  std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> generateControlPoints(const bool &addNoise, const unsigned int &order, vpColVector &confidenceWeights);
+  std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights);
 public:
   /**
    * @brief Construct a new object.
@@ -51,18 +51,18 @@ public:
    * @brief Demonstration on how to use a \b vpPclPointCloudVisualization in blocking mode, i.e.
    * we expect an input from the user after call to \b vpPclPointCloudVisualization::display 
    * to go forward in the code.
-   * @param addNoise If true, noise will be added to the translated + rotated surface. 
+   * @param addedNoise Standard deviation of the noise added to the moved surface. 
    * @param order  The order of the polynomial surface that is generated.
    */
-  void blockingMode(const bool &addNoise, const unsigned int& order);
+  void blockingMode(const double &addedNoise, const unsigned int& order);
 
   /**
    * @brief Demonstration on how to use a \b vpPclPointCloudVisualization in threaded mode.
    * 
-   * @param addNoise If true, noise will be added to the translated + rotated surface. 
+   * @param addedNoise Standard deviation of the noise added to the moved surface. 
    * @param order  The order of the polynomial surface that is generated.
    */
-  void threadedMode(const bool &addNoise, const unsigned int& order);
+  void threadedMode(const double &addedNoise, const unsigned int& order);
 };
 #endif
 #endif
