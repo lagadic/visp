@@ -1,8 +1,14 @@
 //! \example tutorial-pcl-visualizer.cpp
-#include <iostream>
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PCL)
+// System include
+#include <iostream>
+
+// ViSP include
+#include <visp3/core/vpIoTools.h>
+
+// Tutorial include
 #include "ClassUsingPclVisualizer.h"
 
 typedef enum DisplayMode
@@ -33,7 +39,7 @@ DisplayMode displayModeFromString(const std::string &name)
 {
   DisplayMode res = DisplayMode::MODE_COUNT;
   bool wasFound = false;
-  std::string lowerCaseName = name; // vpIoTools::toLowerCase(name);
+  std::string lowerCaseName = vpIoTools::toLowerCase(name);
   for(unsigned int i = 0; i < DisplayMode::MODE_COUNT && !wasFound; i++)
   {
     DisplayMode candidate = (DisplayMode) i;
@@ -76,7 +82,7 @@ int main (int argc, char *argv[])
   std::pair<unsigned int, unsigned int> opt_reso = def_reso;
   DisplayMode opt_mode                           = def_mode;
 
-  for(unsigned int i = 1; i < argc; i++)
+  for(int i = 1; i < argc; i++)
   {
     if (std::string(argv[i]) == "--no-noise")
     {
