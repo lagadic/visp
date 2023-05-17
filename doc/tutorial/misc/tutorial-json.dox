@@ -176,9 +176,31 @@ Finally, to save the results to a file, we define a function to write to a file
 and call it at the end of the program
 \snippet tutorial-ibvs-4pts-json.cpp Save call
 
+Our data is now saved in a JSON file, and we can reuse it in other programs, as we demonstrate further below.
 
 
-\section tuto-json-supported-types  JSON-serializable ViSP types
+\subsection tuto-json-ibvs-python Reusing the data in Python to generate plots
+
+We will now reparse the JSON file saved in \ref tuto-json-ibvs-saving to generate high quality plots in Python with Matplotlib.
+The script, `plot-ibvs-control-law.py` can be found in the script folder of the ViSP git repository. It has been tested with Python 3.7.9, matplotlib 3.3.2 and numpy 1.17.3
+
+This script gives a reference on how to plot with JSON data coming from ViSP. You may wish to modify and extend it to fit your use case or control law.
+
+To run the script, replace the json path and where you wish to save the plots in the following command:
+\verbatim
+your/visp/git/repo/script $ python plot-ibvs-control-law.py --data path/to/the/json.json --output where/you/want/to/save/the/plots
+\endverbatim
+
+
+You can then view the generated plots in the folder where you saved them, you should obtain plots similar to those below, but with a higher quality (generated in pdf):
+
+\image html image/tutorial/visual-servo/ibvs-python-plots/cMo.jpg
+\image html image/tutorial/visual-servo/ibvs-python-plots/cMo_3d.jpg
+\image html image/tutorial/visual-servo/ibvs-python-plots/velocity.jpg
+\image html image/tutorial/visual-servo/ibvs-python-plots/error.jpg
+\image html image/tutorial/visual-servo/ibvs-python-plots/trajectories_2d.jpg
+
+
 
 
 */
