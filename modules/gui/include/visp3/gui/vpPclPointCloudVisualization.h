@@ -63,74 +63,186 @@ public:
   typedef typename pcl::PointCloud<pclPoint> pclPointCloud;
   typedef typename pclPointCloud::Ptr pclPointCloudPtr;
 
+  /**
+   * @brief Structure that contains all the required parameters to display a legend on the visualizer.
+   */
   typedef struct legendParams{
-    std::string _text;
-    unsigned int _posX;
-    unsigned int _posY;
-    unsigned int _size;
-    double _rRatio;
-    double _gRatio;
-    double _bRatio;
+    std::string _text; /*!< The text of the legend.*/
+    unsigned int _pos_u; /*!< The position of the legend on the u-axis of the screen.*/
+    unsigned int _pos_v; /*!< The position of the legend on the v-axis of the screen.*/
+    unsigned int _size; /*!< The size of the legend.*/
+    double _rRatio; /*!< The red ratio of the legend.*/
+    double _gRatio; /*!< The green ratio of the legend.*/
+    double _bRatio; /*!< The blue ratio of the legend.*/
   }legendParams;
 
+  /**
+   * @brief Construct a new vpPclPointCloudVisualization object.
+   * 
+   * @param title The title of the window of the visualizer.
+   * @param width The width of the window of the visualizer.
+   * @param height The height of the window of the visualizer.
+   * @param px The position on the horizontal axis of the screen of the window of the visualizer.
+   * @param py The position on the vertical axis of the screen of the window of the visualizer.
+   * @param outFolder If different from the empty string, the point clouds will be saved in this folder.
+   * @param ignoreThreshold A point for which the weight is below this threshold will be displayed in black.
+   */
   vpPclPointCloudVisualization(const std::string &title , const int &width = 640, const int &height = 480, const int &px = 720, const int &py = 560, const std::string &outFolder = std::string(), const double &ignoreThreshold = 0.95);
   ~vpPclPointCloudVisualization();
 
+  /**
+   * @brief Set the name of the PCL visualizer window.
+   * 
+   * @param nameWindow The name of the PCL visualizer window.
+   */
   void set_nameWindow(const std::string &nameWindow);
 
+  /**
+   * @brief Set the path to the output folder.
+   * If different from the empty string, the point clouds will be saved in this folder.
+   * @param outputFolder The path towards to the output folder, or empty if the point clouds must not be saved.
+   */
   void set_outFolder(const std::string &outputFolder);
 
+  /**
+   * @brief Set the threshold below which a point must be displayed in black.
+   * 
+   * @param thresh The threshold below which a point must be displayed in black.
+   */
   void set_ignoreThreshold(const double &thresh);
 
+  /**
+   * @brief Add a surface to the list of point clouds known by the visualizer.
+   * 
+   * @param surface The surface that must be knwon to be displayed by the PCL visualizer.
+   * @param name The name of the surface that will be displayed in the legend. If empty, it will be automatically generated.
+   * @param v_color A vector containing the 3 RGB values.
+   * @return unsigned int The ID by which is known the point cloud by the visualizer.
+   */
   unsigned int addSurface(const pclPointCloud::Ptr &surface, const std::string &name = "", const std::vector<unsigned char> &v_color = std::vector<unsigned char>());
 
+  /**
+   * @brief Add a surface to the list of point clouds known by the visualizer.
+   * The points whose weights are below the \b vpPclPointCloudVisualization::s_ignoreThresh wil be displayed in black.
+   * 
+   * @param surface The surface that must be knwon to be displayed by the PCL visualizer.
+   * @param weights The confidence weights of each points. Must be between 0 and 1.
+   * @param name The name of the surface that will be displayed in the legend. If empty, it will be automatically generated.
+   * @param v_color A vector containing the 3 RGB values.
+   * @return unsigned int The ID by which is known the point cloud by the visualizer.
+   */
   unsigned int addSurface(const pclPointCloud::Ptr &surface, const vpColVector &weights, const std::string &name = "", const std::vector<unsigned char> &v_color = std::vector<unsigned char>());
 
+  /**
+   * @brief Update the surface known by \b id by the visualizer.
+   * 
+   * @param surface The updated surface.
+   * @param id The ID of the surface that must be updated.
+   */
   void updateSurface(const pclPointCloud::Ptr &surface, unsigned int id);
 
+  /**
+   * @brief Update the surface known by \b id by the visualizer.
+   * 
+   * @param surface The updated surface.
+   * @param id The ID of the surface that must be updated.
+   * @param weights The confidence weights of each points.
+   */
   void updateSurface(const pclPointCloud::Ptr &surface, unsigned int id, const vpColVector& weights);
 
+  /**
+   * @brief Blocking-mode display of the visualizer.
+   */
   void display();
 
-  void refresh();
+  /**
+   * @brief Refresh the display.
+   * 
+   * @param timeout Duration allowed for the drawing.
+   * @param waitForDrawing If true, will wait until the drawing is done. Otherwise, might return without doing nothing.
+   */
+  void refresh(const int &timeout = 100, const bool &waitForDrawing = true);
 
+  /**
+   * @brief Start the drawing thread that permits to have a non-blocking display.
+   */
   void launchThread();
 
+  /**
+   * @brief Stop the drawing thread that permits to have a non-blocking display.
+   */
   void stopThread();
 
-  static void runThread(vpPclPointCloudVisualization* p_visualizer);
-
-  static void copyLegendParams(const legendParams& from, legendParams& to);
-
-  void loopThread();
-
+  /**
+   * @brief Method to update a point cloud known by the visualizer when the drawing thread is running.
+   * The updated surface will be drawn with the default color that was affected to it.
+   * 
+   * @param surface The updated surface.
+   * @param id The ID of the point cloud that must be updated.
+   */
   void threadUpdateSurface(const pclPointCloud::Ptr &surface, unsigned int id);
 
+  /**
+   * @brief Method to update a point cloud known by the visualizer when the drawing thread is running.
+   * The updated surface will be drawn with the color it contains.
+   * 
+   * @param surface The updated surface.
+   * @param id The ID of the point cloud that must be updated.
+   */
   void threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, unsigned int id);
 
+  /**
+   * @brief Method to update a point cloud known by the visualizer when the drawing thread is running.
+   * The updated surface will be drawn with the default color that was affected to it.
+   * 
+   * @param surface The updated surface.
+   * @param id The ID of the point cloud that must be updated.
+   * @param weights The confidence weights of each point. Must be between 0 and 1.
+   */
   void threadUpdateSurface(const pclPointCloud::Ptr &surface, unsigned int id, const vpColVector& weights);
 
+  /**
+   * @brief Method to update a point cloud known by the visualizer when the drawing thread is running.
+   * The updated surface will be drawn with the color it contains.
+   * 
+   * @param surface The updated surface.
+   * @param id The ID of the point cloud that must be updated.
+   * @param weights The confidence weights of each point. Must be between 0 and 1.
+   */
   void threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, unsigned int id, const vpColVector& weights);
 
 protected:
-  std::vector<pclPointCloud::Ptr> _vPointClouds;
-  static pcl::visualization::PCLVisualizer::Ptr gp_viewer;
-  static std::vector<std::vector<double>> g_vhandler;
-  static int s_width;
-  static int s_height;
-  static int s_px;
-  static int s_py;
-  static double s_ignoreThresh;
-  std::vector<std::string> _vmeshid;
-  std::vector<legendParams> _vlegends;
-  std::vector<std::mutex*> _vpmutex;
-  vpColVector _weights;
-  std::mutex _mutexWeights;
-  std::thread _threadDisplay;
-  bool _hasToRun;
-  std::string _title;
-  bool _hasToSavePCDs;
-  std::string _outFolder;
+  /**
+   * @brief Internal method that is called by \b vpPclPointCloudVisualization::launchThread to launch the 
+   * drawing thread.
+   * 
+   * @param p_visualizer The pointer of the \b vpPclPointCloudVisualization object that will run the thread (is equal to \b this ). 
+   */
+  static void runThread(vpPclPointCloudVisualization* p_visualizer);
+
+  /**
+   * @brief The internal loop of the non-blocking drawing thread.
+   * 
+   */
+  void loopThread();
+
+  std::vector<pclPointCloud::Ptr> _vPointClouds; /*!< The list of point clouds known by the viewer.*/
+  static pcl::visualization::PCLVisualizer::Ptr gp_viewer; /*!< The PCL viewer permitting the display.*/
+  static std::vector<std::vector<double>> g_vhandler; /*!< The list of color handlers.*/
+  static int s_width; /*!< The width of the window.*/
+  static int s_height; /*!< The height of the window.*/
+  static int s_px; /*!< The position along the horizontal axis of the screen of the window.*/
+  static int s_py; /*!< The position along the vertical axis of the screen of the window.*/
+  static double s_ignoreThresh; /*!< The minimum value of the confidence weight of a point to allow it to be dislayed.*/
+  std::vector<std::string> _vmeshid; /*!< The list of the point cloud names, for the legend.*/
+  std::vector<legendParams> _vlegends; /*!< The list of the legend items.*/
+  std::vector<std::mutex*> _vpmutex; /*!< The list of mutexes protecting the point clouds from data race when using the drawing thread.*/
+  std::vector<vpColVector> _vweights; /*!< The list of confidence weights of each point cloud.*/
+  std::thread _threadDisplay; /*!< The non-blocking drawing thread.*/
+  bool _hasToRun; /*!< If true, the drawing thread is running. Otherwise, it is stopped.*/
+  std::string _title; /*!< The title of the visualizer window.*/
+  bool _hasToSavePCDs; /*!< If true, thhe point clouds will be saved at each iteration of the drawing thread.*/
+  std::string _outFolder; /*!< If non empty, the path to the folders where the point clouds will be saved.*/
 };
 #endif // #if defined(VISP_HAVE_PCL)
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS
