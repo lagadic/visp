@@ -1,7 +1,7 @@
 #ifndef TESTCLASSPCLVISUALIZER_H
 #define TESTCLASSPCLVISUALIZER_H
 
-//! \example example-class-using-pcl-visualizer.h
+//! \example ClassUsingPclVisualizer.h
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PCL)

@@ -12,6 +12,7 @@
 #include <visp3/gui/vpColorBlindFriendlyPalette.h>
 #include <visp3/io/vpKeyboard.h>
 
+//! [Z coordinates computation]
 double zFunction(const double &x, const double &y, const unsigned int order)
 {
   const double offset(0.5);
@@ -35,9 +36,11 @@ double zFunction(const double &x, const double &y, const unsigned int order)
 
   return z;
 }
+//! [Z coordinates computation]
 
+//! [Constructor]
 ClassUsingPclVisualizer::ClassUsingPclVisualizer(std::pair<double, double> xlimits, std::pair<double, double> ylimits, std::pair<unsigned int, unsigned int> nbPoints)
-  : _t(0.,0.,0.)
+  : _t(0.1,0.1,0.1)
   , _R(M_PI_4,M_PI_4,M_PI_4)
   , _cMo(_t,_R)
   , _minX(xlimits.first)
@@ -51,12 +54,14 @@ ClassUsingPclVisualizer::ClassUsingPclVisualizer(std::pair<double, double> xlimi
   _dX = (_maxX - _minX) / (static_cast<double>(_n) - 1.);
   _dY = (_maxY - _minY) / (static_cast<double>(_m) - 1.);
 }
+//! [Constructor]
 
 ClassUsingPclVisualizer::~ClassUsingPclVisualizer()
 {
 
 }
 
+//! [Surface generator]
 std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> ClassUsingPclVisualizer::generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights)
 {
   std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> result;
@@ -84,25 +89,36 @@ std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisuali
       double oY = _minY + (double)j * _dY;
       double oZ = zFunction(oX, oY, order);
 
+      // Setting the point coordinates of the first point cloud in
+      // the object frame
       std::vector<double> point={oX, oY, oZ,1.};
       vpColVector oCoords = vpColVector(point);
       (*unrotatedControlPoints)(i,j).x = oCoords[0];
       (*unrotatedControlPoints)(i,j).y = oCoords[1];
       (*unrotatedControlPoints)(i,j).z = oCoords[2];
 
+      // Moving the point into another coordinate frame
       vpColVector cCoords = _cMo * oCoords;
       (*rotatedControlPoints)(i,j).x = cCoords[0];
       (*rotatedControlPoints)(i,j).y = cCoords[1];
+
+      // Potentially adding some noise if the user asked to
       double noise = r();
       (*rotatedControlPoints)(i,j).z = cCoords[2] + noise; 
 
+      // Filling the confidence weights with default value of 1.
       confidenceWeights[j * _n + i] = 1.;
+
+      // Indicating the residual, here it corresponds to the difference 
+      // between the theoretical position of the point and the actual one
       residuals[j * _n + i] = noise;
     }
   }
 
   if(std::abs(addedNoise) > 0.)
   {
+    // Estimating the confidence weights to remove points suffering too much noise
+    // See vpRobust documentation for more information.
     vpRobust robust;
     robust.setMinMedianAbsoluteDeviation(addedNoise);
     robust.MEstimator(vpRobust::TUKEY, residuals, confidenceWeights);
@@ -112,6 +128,7 @@ std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisuali
   result.second = rotatedControlPoints;
   return result;
 }
+//! [Surface generator]
 
 void ClassUsingPclVisualizer::blockingMode(const double &addedNoise, const unsigned int& order)
 {

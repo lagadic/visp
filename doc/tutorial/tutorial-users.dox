@@ -167,6 +167,7 @@ This page introduces the user to other tools that may be useful.
 - \subpage tutorial-trace <br>This tutorial explains how to introduce trace in the code that could be enabled for debugging or disabled.
 - \subpage tutorial-multi-threading <br>This tutorial explains how to implement multi-threaded applications to capture images from a camera
 in one thread and display these images in an other thread.
+- \subpage tutorial-pcl-visualizer <br>This tutorial explains how to use a threaded PCL-based point cloud visualizer.
 
 */
 

@@ -1,0 +1,106 @@
+/**
+
+\page tutorial-pcl-visualizer Tutorial: Threaded PCL visualizer
+\tableofcontents
+
+\section pcl_visualizer_intro Introduction
+
+This tutorial shows how to use the `vpPclPointCloudVisualization` class.
+
+In the next section you will find an example that shows how to display two point clouds, with one having attached 
+confidence weights, either in blocking-mode or threaded-mode display.
+
+\section pcl_visualizer_requirements Requirements
+
+To enable `vpPclPointCloudVisualization` class usage, and thus use this tutorial, you need to have a version of ViSP build with PCL.
+
+\section pcl_visualizer_example Point clouds visualization example explained
+
+For this tutorial, we use the following main program:
+
+\include tutorial-pcl-visualizer.cpp
+
+It uses the following class, which generates 3D coordinates and relies on the `vpPclPointCloudVisualization` to visualize data.
+
+\include ClassUsingPclVisualizer.h
+
+\include ClassUsingPclVisualizer.cpp
+
+\subsection pcl_visualizer_main Main code explained
+
+Let us first have a look at the main program.
+
+First, we include the class that uses the vpPclPointCloudVisualization object to display different point clouds:
+
+\snippet tutorial-pcl-visualizer.cpp Class include
+
+Then, we define a C++ enum in order to permit to the user to chose between the blocking-mode display, the threaded-mode
+display or running both of them consecutively.
+
+\snippet tutorial-pcl-visualizer.cpp Enum for mode choice
+
+Then, we define the default value of the program arguments.
+
+\snippet tutorial-pcl-visualizer.cpp Default arguments values
+
+Then, we parse the program arguments that permit to the user to change part of the behavior
+of the program.
+
+\snippet tutorial-pcl-visualizer.cpp Arguments parser
+
+Finally, the blocking-mode example is run if the user chose to run it or both modes.
+
+\snippet tutorial-pcl-visualizer.cpp Running blocking mode
+
+Finally, the threaded-mode example is run if the user chose to run it or both modes.
+
+\snippet tutorial-pcl-visualizer.cpp Running threaded mode
+
+\subsection pcl_visualizer_class Code of the example class explained
+
+For this example, we decided to modelize a polynomial 3D surface. The Z coordinate
+is computed from the X and Y coordinates thanks to the following method.
+
+\snippet ClassUsingPclVisualizer.cpp Z coordinates computation
+
+The constructor initializes the minimum and maximum X and Y coordinates of the polynomial 
+surface, along with the number of points in each direction it contains. It also constructs 
+the vpPclPointCloudVisualization object, naming the window that will open.
+
+\snippet ClassUsingPclVisualizer.cpp Constructor
+
+The following method generate two polynomial surface. If the user asked to, noise will be added
+to the displaced surface. The confidence weights are estimated thanks to Tukey M-estimator 
+from the difference between the noise-free position of the point and the actual one. In an actual
+situation, it could for instance correspond to the distance between a model of an object surface and the observed
+points thanks to a depth sensor.
+
+\snippet ClassUsingPclVisualizer.cpp Surface generator
+
+To use the vpPclPointCloudVisualization class, you must first add the surfaces you want to display.
+You can do it by adding a surface for which you do not particularly care of the color and thus 
+decide to use a generated one :
+
+\snippet ClassUsingPclVisualizer.cpp Adding point clouds color not chosen
+
+You could also choose the color to use in order to have an uniformly colored surface:
+
+\snippet ClassUsingPclVisualizer.cpp Adding point clouds color chosen
+
+In this second example, confidence weights are also attached to each points to the surface.
+It permits to display only the points for which the weight is greater than the ignorance threshold.
+
+Finally, you can display in a blocking fashion the different surfaces added to the visualizer:
+
+\snippet ClassUsingPclVisualizer.cpp Displaying point clouds blocking mode
+
+Alternatively, you can start a non-blocking display thread in order to continuously update
+the surfaces.
+
+\snippet ClassUsingPclVisualizer.cpp Starting display thread
+
+To update the surfaces over time, please use the following lines of codes:
+
+\snippet ClassUsingPclVisualizer.cpp Updating point clouds used by display thread
+
+*/

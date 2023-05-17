@@ -8,17 +8,30 @@
 // ViSP include
 #include <visp3/core/vpIoTools.h>
 
+//! [Class include]
 // Tutorial include
 #include "ClassUsingPclVisualizer.h"
+//! [Class include]
 
+//! [Enum for mode choice]
+/**
+ * @brief Enumeration permitting to choose between running the blocking-mode display
+ * example, the threaded-mode or both mode consecutively. 
+ */
 typedef enum DisplayMode
 {
-  BLOCKING   = 0,
-  THREADED   = 1,
-  BOTH       = 2,
+  BLOCKING   = 0, /*!< Only the blocking-mode display example will be run.*/
+  THREADED   = 1, /*!< Only the threaded-mode display example will be run.*/
+  BOTH       = 2, /*!< First the blocking-mode display example will be run and then the threaded-mode one.*/
   MODE_COUNT = 3
 }DisplayMode;
 
+/**
+ * @brief Cast a \b DisplayMode enum value into a \b std::stirng.
+ * 
+ * @param mode The display mode we want to cast into a string.
+ * @return std::string The name of the \b DisplayMode enum value.
+ */
 std::string displayModeToString(const DisplayMode& mode)
 {
   switch(mode)
@@ -35,6 +48,13 @@ std::string displayModeToString(const DisplayMode& mode)
   return "unknown";
 }
 
+/**
+ * @brief Cast a string into a \b DisplayMode enum value.
+ * If \b name is not found, return \b DisplayMode::MODE_COUNT .
+ * 
+ * @param name The name of the display mode.
+ * @return DisplayMode The corresponding \b DisplayMode enum value, or \b DisplayMode::MODE_COUNT if not found.
+ */
 DisplayMode displayModeFromString(const std::string &name)
 {
   DisplayMode res = DisplayMode::MODE_COUNT;
@@ -52,6 +72,14 @@ DisplayMode displayModeFromString(const std::string &name)
   return res;
 }
 
+/**
+ * @brief Create a string that lists the different \b DisplayMode available.
+ * 
+ * @param prefix The string that must prefix the list of modes.
+ * @param sep The separator between the different modes.
+ * @param suffix The string that must suffix the list of modes.
+ * @return std::string The list containing the different modes.
+ */
 std::string getAvailableDisplayMode(const std::string &prefix = "< ", const std::string &sep = " , ", const std::string &suffix = " >" )
 {
   std::string modes(prefix);
@@ -64,18 +92,21 @@ std::string getAvailableDisplayMode(const std::string &prefix = "< ", const std:
   modes += displayModeToString(candidate) + suffix;
   return modes;
 }
-
+//! [Enum for mode choice]
 
 int main (int argc, char *argv[])
 {
-  const double def_addedNoise                          = 0.;
-  const unsigned int def_order                         = 2;
-  const std::pair<double, double> def_xlim             = std::pair<double, double>(-2.5,2.5);
-  const std::pair<double, double> def_ylim             = std::pair<double, double>(-2.5,2.5);
-  const std::pair<unsigned int, unsigned int> def_reso = std::pair<unsigned int, unsigned int>(50,50);
-  const DisplayMode def_mode                           = DisplayMode::THREADED;  
+  //! [Default arguments values]
+  const double def_addedNoise                          = 0.; // Standard deviation of the noise added to the points.
+  const unsigned int def_order                         = 2; // Order of the polynomial surface used for the example.
+  const std::pair<double, double> def_xlim             = std::pair<double, double>(-2.5,2.5); // Min and max X-axis coordinates.
+  const std::pair<double, double> def_ylim             = std::pair<double, double>(-2.5,2.5); // Min and max Y-axis coordinates.
+  const std::pair<unsigned int, unsigned int> def_reso = std::pair<unsigned int, unsigned int>(50,50); // Number of points along the X-axis and Y-axis reciproquely.
+  const DisplayMode def_mode                           = DisplayMode::THREADED; // Display mode that should be used.
+  //! [Default arguments values]
 
-  double opt_addedNoise                            = def_addedNoise;
+  //! [Arguments parser]
+  double opt_addedNoise                          = def_addedNoise;
   unsigned int opt_order                         = def_order;
   std::pair<double, double> opt_xlim             = def_xlim;
   std::pair<double, double> opt_ylim             = def_ylim;
@@ -136,6 +167,7 @@ int main (int argc, char *argv[])
       return EXIT_SUCCESS;
     }
   }
+  //! [Arguments parser]
 
   std::cout << "Parameters:" << std::endl;
   std::cout << "\tSurface order: " << opt_order << std::endl;
@@ -145,17 +177,22 @@ int main (int argc, char *argv[])
   std::cout << "\tNoise standard deviation: " << opt_addedNoise << std::endl;
   std::cout << "\tDisplay mode: " << displayModeToString(opt_mode) << std::endl;
 
+  //! [Running blocking mode]
   if(opt_mode == DisplayMode::BLOCKING || opt_mode == DisplayMode::BOTH)
   {
     ClassUsingPclVisualizer demo(opt_xlim, opt_ylim, opt_reso);
     demo.blockingMode(opt_addedNoise, opt_order);
   }
+  //! [Running blocking mode]
 
+  //! [Running threaded mode]
   if(opt_mode == DisplayMode::THREADED || opt_mode == DisplayMode::BOTH)
   {
     ClassUsingPclVisualizer demo(opt_xlim, opt_ylim, opt_reso);
     demo.threadedMode(opt_addedNoise, opt_order);
   }
+  //! [Running threaded mode]
+
   return 0;
 }
 #else
