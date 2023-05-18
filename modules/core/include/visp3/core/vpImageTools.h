@@ -235,7 +235,7 @@ private:
 /*!
   Crop a region of interest (ROI) in an image.
 
-  \deprecated This fonction is deprecated. You should rather use
+  \deprecated This function is deprecated. You should rather use
   crop(const vpImage<Type> &, unsigned int, unsigned int, unsigned int,
   unsigned int, vpImage<Type> &).
 
@@ -261,7 +261,7 @@ void vpImageTools::createSubImage(const vpImage<Type> &I, unsigned int roi_top, 
 /*!
   Crop an image region of interest.
 
-  \deprecated This fonction is deprecated. You should rather use
+  \deprecated This function is deprecated. You should rather use
   crop(const vpImage<Type> &, const vpRect &, vpImage<Type> &).
 
   \param I : Input image from which a sub image will be extracted.

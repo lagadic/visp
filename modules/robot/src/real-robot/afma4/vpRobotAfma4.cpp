@@ -576,7 +576,7 @@ void vpRobotAfma4::get_cMe(vpHomogeneousMatrix &cMe) const { vpAfma4::get_cMe(cM
 /*!
 
   Get the robot jacobian expressed in the end-effector frame. To have
-  acces to the analytic form of this jacobian see vpAfma4::get_eJe().
+  access to the analytic form of this jacobian see vpAfma4::get_eJe().
 
   To compute eJe, we communicate with the low level controller to get
   the articular joint position of the robot.
@@ -610,7 +610,7 @@ void vpRobotAfma4::get_eJe(vpMatrix &eJe)
 /*!
 
   Get the robot jacobian expressed in the robot reference frame also
-  called fix frame. To have acces to the analytic form of this
+  called fix frame. To have access to the analytic form of this
   jacobian see vpAfma4::get_fJe().
 
   To compute fJe, we communicate with the low level controller to get

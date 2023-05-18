@@ -11,6 +11,7 @@ set(tutorial_cpp
 
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/opencv_face_detector.pbtxt")
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/opencv_face_detector_uint8.pb")
+list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/class.txt")
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})

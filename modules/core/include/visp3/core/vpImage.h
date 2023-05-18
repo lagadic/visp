@@ -93,7 +93,7 @@ class vpDisplay;
   \image html image-data-structure.gif
   \image latex image-data-structure.ps  width=10cm
 
-  Such a structure allows a fast acces to each element of the image.
+  Such a structure allows a fast access to each element of the image.
   if i is the ith rows and j the jth columns the value of this pixel
   is given by I[i][j] (that is equivalent to row[i][j]).
 
@@ -258,7 +258,7 @@ public:
   void insert(const vpImage<Type> &src, const vpImagePoint &topLeft);
 
   //------------------------------------------------------------------
-  //         Acces to the image
+  // Access to the image
 
   //! operator[] allows operation like I[i] = x.
   inline Type *operator[](unsigned int i) { return row[i]; }

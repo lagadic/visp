@@ -39,7 +39,7 @@
 /*!
   \file vpHomographyDLT.cpp
 
-  This file implements the fonctions related with the homography
+  This file implements the functions related with the homography
   estimation using the DLT algorithm
 */
 

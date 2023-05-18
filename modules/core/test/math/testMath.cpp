@@ -29,11 +29,7 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Test some vpColVector functionalities.
- *
- * Authors:
- * Souriya Trinh
- * Julien Dufour
+ * Test some core functionalities.
  *
  *****************************************************************************/
 
@@ -210,6 +206,21 @@ int main()
     return EXIT_FAILURE;
   }
   std::cout << "vpMath::isFinite is Ok !" << std::endl;
+
+  // Test isNumber
+  if (!vpMath::isNumber("123")) {
+    std::cerr << "Fail: vpMath::isNumber(\"123\")=" << vpMath::isNumber("123") << " / should be false" << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (vpMath::isNumber("string")) {
+    std::cerr << "Fail: vpMath::isNumber(\"string\")=" << vpMath::isNumber("string") << " / should be true" << std::endl;
+    return EXIT_FAILURE;
+  }
+  if (vpMath::isNumber("123string")) {
+    std::cerr << "Fail: vpMath::isNumber(\"123string\")=" << vpMath::isNumber("123string") << " / should be true" << std::endl;
+    return EXIT_FAILURE;
+  }
+  std::cout << "vpMath::isNumber is Ok !" << std::endl;
 
   // Test round
   if (vpMath::round(2.3) != 2) {
