@@ -32,11 +32,7 @@
  * Pose object. A pose is a size 6 vector [t, tu]^T where tu is
  * a rotation vector (theta u representation) and t is a translation vector.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpPOSEVECTOR_H
 #define vpPOSEVECTOR_H
@@ -168,7 +164,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpPoseVector(){};
+  virtual ~vpPoseVector() { };
 
   vpPoseVector buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
   // convert an homogeneous matrix in a pose
@@ -268,26 +264,29 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init(){};
-//@}
+  vp_deprecated void init() { };
+  //@}
 #endif
 #ifdef VISP_HAVE_NLOHMANN_JSON
 public:
   static const std::string jsonTypeName;
 private:
-  friend void from_json(const nlohmann::json& j, vpPoseVector& r);
-  void parse_json(const nlohmann::json& j);
+  friend void to_json(nlohmann::json &j, const vpPoseVector &cam);
+  friend void from_json(const nlohmann::json &j, vpPoseVector &cam);
+  void parse_json(const nlohmann::json &j);
 #endif
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-inline void to_json(nlohmann::json& j, const vpPoseVector& r) {
-  const vpArray2D<double>* asArray = (vpArray2D<double>*) &r;
+inline void to_json(nlohmann::json &j, const vpPoseVector &r)
+{
+  const vpArray2D<double> *asArray = (vpArray2D<double>*) & r;
   to_json(j, *asArray);
   j["type"] = vpPoseVector::jsonTypeName;
 }
-inline void from_json(const nlohmann::json& j, vpPoseVector& r) {
+inline void from_json(const nlohmann::json &j, vpPoseVector &r)
+{
   r.parse_json(j);
 }
 #endif

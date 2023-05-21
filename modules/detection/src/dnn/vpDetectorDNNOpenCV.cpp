@@ -545,7 +545,7 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
       }
     }
   };
-#endif DOXYGEN_SHOULD_SKIP_THIS
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
   // Computing the average area of each class
   MeanAreaComputer meanComputer;

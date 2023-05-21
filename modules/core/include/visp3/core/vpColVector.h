@@ -34,7 +34,7 @@
  * Authors:
  * Eric Marchand
  *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef _vpColVector_h_
 #define _vpColVector_h_
@@ -133,16 +133,16 @@ class VISP_EXPORT vpColVector : public vpArray2D<double>
 
 public:
   //! Basic constructor that creates an empty 0-size column vector.
-  vpColVector() : vpArray2D<double>() {}
+  vpColVector() : vpArray2D<double>() { }
   //! Construct a column vector of size n. \warning Elements are not
   //! initialized. If you want to set an initial value use
   //! vpColVector(unsigned int, double).
-  explicit vpColVector(unsigned int n) : vpArray2D<double>(n, 1) {}
+  explicit vpColVector(unsigned int n) : vpArray2D<double>(n, 1) { }
   //! Construct a column vector of size n. Each element is set to \e val.
-  vpColVector(unsigned int n, double val) : vpArray2D<double>(n, 1, val) {}
+  vpColVector(unsigned int n, double val) : vpArray2D<double>(n, 1, val) { }
   //! Copy constructor that allows to construct a column vector from an other
   //! one.
-  vpColVector(const vpColVector &v) : vpArray2D<double>(v) {}
+  vpColVector(const vpColVector &v) : vpArray2D<double>(v) { }
   vpColVector(const vpColVector &v, unsigned int r, unsigned int nrows);
   //! Constructor that initialize a column vector from a 3-dim (Euler or
   //! \f$\theta {\bf u}\f$) or 4-dim (quaternion) rotation vector.
@@ -166,7 +166,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpColVector() {}
+  virtual ~vpColVector() { }
 
   /*!
     Removes all elements from the vector (which are destroyed),
@@ -223,9 +223,9 @@ public:
   {
     if (r >= rowNum || r + colsize > rowNum) {
       throw(vpException(vpException::fatalError,
-                        "Cannot extract a (%dx1) column vector from a (%dx1) "
-                        "column vector starting at index %d",
-                        colsize, rowNum, r));
+        "Cannot extract a (%dx1) column vector from a (%dx1) "
+        "column vector starting at index %d",
+        colsize, rowNum, r));
     }
 
     return vpColVector(*this, r, colsize);
@@ -328,9 +328,9 @@ public:
   {
     if (ncols != 1) {
       throw(vpException(vpException::fatalError,
-                        "Cannot resize a column vector to a (%dx%d) "
-                        "dimension vector that has more than one column",
-                        nrows, ncols));
+        "Cannot resize a column vector to a (%dx%d) "
+        "dimension vector that has more than one column",
+        nrows, ncols));
     }
     vpArray2D<double>::resize(nrows, ncols, flagNullify);
   }
@@ -370,6 +370,11 @@ public:
 
   static double stdev(const vpColVector &v, bool useBesselCorrection = false);
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+  friend void to_json(nlohmann::json &j, const vpColVector &cam);
+  friend void from_json(const nlohmann::json &j, vpColVector &cam);
+#endif
+
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions
@@ -379,7 +384,7 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {}
+  vp_deprecated void init() { }
   /*!
      \deprecated You should rather use extract().
    */
@@ -410,7 +415,7 @@ public:
   }
 
   vp_deprecated void insert(const vpColVector &v, unsigned int r, unsigned int c = 0);
-//@}
+  //@}
 #endif
 };
 
@@ -420,15 +425,17 @@ VISP_EXPORT
 vpColVector operator*(const double &x, const vpColVector &v);
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-inline void to_json(nlohmann::json& j, const vpColVector& v) {
-  const vpArray2D<double>* asArray = (vpArray2D<double>*) &v;
+inline void to_json(nlohmann::json &j, const vpColVector &v)
+{
+  const vpArray2D<double> *asArray = (vpArray2D<double>*) & v;
   to_json(j, *asArray);
   j["type"] = "vpColVector";
 }
-inline void from_json(const nlohmann::json& j, vpColVector& v) {
-  vpArray2D<double>* asArray = (vpArray2D<double>*) &v;
+inline void from_json(const nlohmann::json &j, vpColVector &v)
+{
+  vpArray2D<double> *asArray = (vpArray2D<double>*) & v;
   from_json(j, *asArray);
-  if(v.getCols() != 1) {
+  if (v.getCols() != 1) {
     throw vpException(vpException::badValue, "From JSON, tried to read a 2D array into a vpColVector");
   }
 }

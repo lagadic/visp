@@ -31,10 +31,7 @@
  * Description:
  * Homogeneous matrix.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpHomogeneousMatrix.h
@@ -176,7 +173,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpHomogeneousMatrix() {}
+  virtual ~vpHomogeneousMatrix() { }
 
   void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
   void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
@@ -264,12 +261,12 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {}
+  vp_deprecated void init() { }
   /*!
      \deprecated You should rather use eye().
    */
   vp_deprecated void setIdentity();
-//@}
+  //@}
 #endif
 
 protected:
@@ -278,18 +275,21 @@ protected:
 public:
   static const std::string jsonTypeName;
 private:
-  friend void from_json(const nlohmann::json& j, vpHomogeneousMatrix& T);
-  void parse_json(const nlohmann::json& j); // Conversion helper function to avoid circular dependencies
+  friend void to_json(nlohmann::json &j, const vpHomogeneousMatrix &cam);
+  friend void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T);
+  void parse_json(const nlohmann::json &j); // Conversion helper function to avoid circular dependencies
 #endif
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-inline void to_json(nlohmann::json& j, const vpHomogeneousMatrix& T) {
-  const vpArray2D<double>* asArray = (vpArray2D<double>*) &T;
+inline void to_json(nlohmann::json &j, const vpHomogeneousMatrix &T)
+{
+  const vpArray2D<double> *asArray = (vpArray2D<double>*) & T;
   to_json(j, *asArray);
   j["type"] = vpHomogeneousMatrix::jsonTypeName;
 }
-inline void from_json(const nlohmann::json& j, vpHomogeneousMatrix& T) {
+inline void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T)
+{
   T.parse_json(j);
 }
 #endif
