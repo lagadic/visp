@@ -31,10 +31,10 @@
  * Description:
  * Test vpCameraParameters JSON parse / save.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
-  \file testJsonCamera.cpp
+  \file testJsonMe.cpp
 
   Test test saving and parsing JSON configuration for vpCameraParameters
 */
@@ -64,8 +64,8 @@ void checkProperties(const T &t1, const T &t2, C fn, const std::string &message,
 
 template <typename C>
 void testOptionalProperty(json &j, const std::vector<std::string> &keys, vpMe &me,
-                          std::function<void(vpMe *, C)> setter, std::function<C(vpMe *)> getter,
-                          std::function<C(C)> valueFn)
+  std::function<void(vpMe *, C)> setter, std::function<C(vpMe *)> getter,
+  std::function<C(C)> valueFn)
 {
   THEN("Removing keys does not modify the value")
   {
@@ -117,7 +117,7 @@ public:
 Catch::Generators::GeneratorWrapper<vpMe> randomMe()
 {
   return Catch::Generators::GeneratorWrapper<vpMe>(
-      std::unique_ptr<Catch::Generators::IGenerator<vpMe> >(new RandomMeGenerator()));
+    std::unique_ptr<Catch::Generators::IGenerator<vpMe> >(new RandomMeGenerator()));
 }
 } // namespace
 
@@ -133,13 +133,13 @@ SCENARIO("Serializing and deserializing a single vpMe", "[json]")
       THEN("The object's properties are the same")
       {
         checkProperties(me, otherMe, &vpMe::getThreshold, "Threshold should be equal", &vpMe::getAngleStep,
-                        "Angle step should be equal", &vpMe::getMaskNumber, "Mask number should be equal",
-                        &vpMe::getMaskSign, "Mask sign should be equal", &vpMe::getMinSampleStep,
-                        "Min sample step should be equal", &vpMe::getSampleStep, "Sample step should be equal",
-                        &vpMe::getMu1, "Mu 1 should be equal", &vpMe::getMu2, "Mu 2 should be equal",
-                        &vpMe::getNbTotalSample, "Nb total sample should be equal", &vpMe::getPointsToTrack,
-                        "Number of points to track should be equal", &vpMe::getRange, "Range should be equal",
-                        &vpMe::getStrip, "Strip should be equal");
+          "Angle step should be equal", &vpMe::getMaskNumber, "Mask number should be equal",
+          &vpMe::getMaskSign, "Mask sign should be equal", &vpMe::getMinSampleStep,
+          "Min sample step should be equal", &vpMe::getSampleStep, "Sample step should be equal",
+          &vpMe::getMu1, "Mu 1 should be equal", &vpMe::getMu2, "Mu 2 should be equal",
+          &vpMe::getNbTotalSample, "Nb total sample should be equal", &vpMe::getPointsToTrack,
+          "Number of points to track should be equal", &vpMe::getRange, "Range should be equal",
+          &vpMe::getStrip, "Strip should be equal");
       }
     }
     WHEN("Removing optional properties in JSON object")
@@ -147,12 +147,12 @@ SCENARIO("Serializing and deserializing a single vpMe", "[json]")
       json j = me;
 
       const auto testInt = [&j, &me](const std::string &key, std::function<void(vpMe *, int)> setter,
-                                     std::function<int(vpMe *)> getter) -> void {
-        testOptionalProperty<int>(j, {key}, me, setter, getter, [](int v) -> int { return v - 1; });
+        std::function<int(vpMe *)> getter) -> void {
+          testOptionalProperty<int>(j, { key }, me, setter, getter, [](int v) -> int { return v - 1; });
       };
       const auto testDouble = [&j, &me](const std::string &key, std::function<void(vpMe *, double)> setter,
-                                        std::function<double(vpMe *)> getter) -> void {
-        testOptionalProperty<double>(j, {key}, me, setter, getter, [](double v) -> int { return v + 1.0; });
+        std::function<double(vpMe *)> getter) -> void {
+          testOptionalProperty<double>(j, { key }, me, setter, getter, [](double v) -> int { return v + 1.0; });
       };
 
       WHEN("Removing threshold") { testDouble("threshold", &vpMe::setThreshold, &vpMe::getThreshold); }
@@ -174,7 +174,7 @@ SCENARIO("Serializing and deserializing a single vpMe", "[json]")
   }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv [])
 {
   Catch::Session session; // There must be exactly one instance
   session.applyCommandLine(argc, argv);

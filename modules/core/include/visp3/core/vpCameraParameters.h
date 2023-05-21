@@ -31,16 +31,12 @@
  * Description:
  * Camera intrinsic parameters.
  *
- * Authors:
- * Eric Marchand
- * Anthony Saunier
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
-  \file vpCameraParameters.h
-  \brief Declaration of the vpCameraParameters class.
-  Class vpCameraParameters define the camera intrinsic parameters
+   \file vpCameraParameters.h
+   \brief Declaration of the vpCameraParameters class.
+   Class vpCameraParameters define the camera intrinsic parameters
 
 */
 
@@ -59,219 +55,264 @@
 #endif
 
 /*!
-  \class vpCameraParameters
+   \class vpCameraParameters
 
-  \ingroup group_core_camera
+   \ingroup group_core_camera
 
-  \brief Generic class defining intrinsic camera parameters.
+   \brief Generic class defining intrinsic camera parameters.
 
-  Two camera models are implemented in ViSP.
+   <b>1. Supported camera models</b>
 
-  <b>I. Pinhole camera model</b>
+   Two camera models are implemented in ViSP.
 
-  In this model \cite Marchand16a, a scene view is formed by projecting 3D points
-  into the image plane using a perspective transformation.
+   <b>1.1. Pinhole camera model</b>
 
-  \f[
-  \left[ \begin{array}{c}
-  u \\
-  v \\
-  1
-  \end{array}\right] =
-  \left[ \begin{array}{ccc}
-  p_x & 0   & u_0  \\
-  0   & p_y & v_0 \\
-  0   & 0   & 1
-  \end{array}\right]
-  \left[ \begin{array}{c}
-  x  \\
-  y   \\
-  1
-  \end{array}\right]
-  \f]
+   In this model \cite Marchand16a, a scene view is formed by projecting 3D points
+   into the image plane using a perspective transformation.
 
-  where:
+   \f[
+   \left[ \begin{array}{c}
+   u \\
+   v \\
+   1
+   \end{array}\right] =
+   \left[ \begin{array}{ccc}
+   p_x & 0   & u_0  \\
+   0   & p_y & v_0 \\
+   0   & 0   & 1
+   \end{array}\right]
+   \left[ \begin{array}{c}
+   x  \\
+   y   \\
+   1
+   \end{array}\right]
+   \f]
 
-  - \f$(X_c,Y_c,Z_c)\f$ are the coordinates of a 3D point in the camera frame
-  - \f$(x,y)\f$ are the coordinates of the projection of the 3D point in the image plane
-  - \f$(u,v)\f$ are the coordinates in pixels of the projected 3D point
-  - \f$(u_0,v_0)\f$ are the coordinates of the principal point (the
-  intersection of the optical axes with the image plane) that is usually near
-  the image center
-  - \f$p_x\f$ (resp \f$p_y\f$) is the ratio between the focal length of the
-  lens \f$f\f$ in meters and the size of the pixel \f$l_x\f$ in meters:
-  \f$p_x=f/l_x\f$ (resp, \f$l_y\f$ being the height of a pixel,
-  \f$p_y=f/l_y\f$).
+   where:
 
-  When \f$Z_c \neq 0\f$, the previous equation is equivalent to the following:
-  \f[
-  \begin{array}{lcl}
-  x &=& X_c / Z_c \\
-  y &=& Y_c / Z_c \\
-  u &=& u_0 + x \; p_x \\
-  v &=& v_0 + y \; p_y
-  \end{array}
-  \f]
+   - \f$(X_c,Y_c,Z_c)\f$ are the coordinates of a 3D point in the camera frame
+   - \f$(x,y)\f$ are the coordinates of the projection of the 3D point in the image plane
+   - \f$(u,v)\f$ are the coordinates in pixels of the projected 3D point
+   - \f$(u_0,v_0)\f$ are the coordinates of the principal point (the
+   intersection of the optical axes with the image plane) that is usually near
+   the image center
+   - \f$p_x\f$ (resp \f$p_y\f$) is the ratio between the focal length of the
+   lens \f$f\f$ in meters and the size of the pixel \f$l_x\f$ in meters:
+   \f$p_x=f/l_x\f$ (resp, \f$l_y\f$ being the height of a pixel,
+   \f$p_y=f/l_y\f$).
 
-  Real lenses usually have some radial distortion. So, the above model is
-  extended as:
+   When \f$Z_c \neq 0\f$, the previous equation is equivalent to the following:
+   \f[
+   \begin{array}{lcl}
+   x &=& X_c / Z_c \\
+   y &=& Y_c / Z_c \\
+   u &=& u_0 + x \; p_x \\
+   v &=& v_0 + y \; p_y
+   \end{array}
+   \f]
 
-  \f[
-  \begin{array}{lcl}
-  x &=& X_c / Z_c \\
-  y &=& Y_c / Z_c \\
-  x^{'} &=& x (1 + k_{ud} r^2) \\
-  y^{'} &=& y (1 + k_{ud} r^2) \\
-  r^2 &=& x^2 + y^2 \\
-  u &=& u_0 + x^{'} \; p_x \\
-  v &=& v_0 + y^{'} \; p_y
-  \end{array}
-  \f]
+   Real lenses usually have some radial distortion. So, the above model is
+   extended as:
 
-  where \f$k_{ud}\f$ is the first order radial distorsion. Higher order
-  distorsion coefficients are not considered in ViSP.
+   \f[
+   \begin{array}{lcl}
+   x &=& X_c / Z_c \\
+   y &=& Y_c / Z_c \\
+   x^{'} &=& x (1 + k_{ud} r^2) \\
+   y^{'} &=& y (1 + k_{ud} r^2) \\
+   r^2 &=& x^2 + y^2 \\
+   u &=& u_0 + x^{'} \; p_x \\
+   v &=& v_0 + y^{'} \; p_y
+   \end{array}
+   \f]
 
-  Now in ViSP we consider also the inverse transformation, where from pixel
-  coordinates we want to compute their normalized coordinates in the image
-  plane. Previous equations could be written like:
+   where \f$k_{ud}\f$ is the first order radial distorsion. Higher order
+   distorsion coefficients are not considered in ViSP.
 
-  \f[
-  \begin{array}{lcl}
-  x &=& (u - u_0) / p_x \\
-  y &=& (v - v_0) / p_y
-  \end{array}
-  \f]
+   Now in ViSP we consider also the inverse transformation, where from pixel
+   coordinates we want to compute their normalized coordinates in the image
+   plane. Previous equations could be written like:
 
-  Considering radial distortion, the above model is extended as:
-  \f[
-  \begin{array}{lcl}
-  (u-u_0)^{'} &=& (u-u_0) (1 + k_{du} r^2) \\
-  (v-v_0)^{'} &=& (v-v_0) (1 + k_{du} r^2) \\
-  r^2 &=& ((u-u_0)/p_x)^2 + ((v-v_0)/p_y)^2 \\
-  x &=& (u - u_0)^{'} / p_x \\
-  y &=& (v - v_0)^{'} / p_y
-  \end{array}
-  \f]
+   \f[
+   \begin{array}{lcl}
+   x &=& (u - u_0) / p_x \\
+   y &=& (v - v_0) / p_y
+   \end{array}
+   \f]
 
-  Finally, in ViSP the main intrinsic camera parameters are \f$(p_x, p_y)\f$
-  the ratio between the focal length and the size of a pixel, and \f$(u_0,
-  v_0)\f$ the coordinates of the principal point in pixel. The lens
-  distortion can also be considered by two additional parameters
-  \f$(k_{ud}, k_{du})\f$.
+   Considering radial distortion, the above model is extended as:
+   \f[
+   \begin{array}{lcl}
+   (u-u_0)^{'} &=& (u-u_0) (1 + k_{du} r^2) \\
+   (v-v_0)^{'} &=& (v-v_0) (1 + k_{du} r^2) \\
+   r^2 &=& ((u-u_0)/p_x)^2 + ((v-v_0)/p_y)^2 \\
+   x &=& (u - u_0)^{'} / p_x \\
+   y &=& (v - v_0)^{'} / p_y
+   \end{array}
+   \f]
 
-  \note The \ref tutorial-calibration-intrinsic shows how to calibrate a camera
-  to estimate the parameters corresponding to the model implemented in this
-  class.
+   Finally, in ViSP the main intrinsic camera parameters are \f$(p_x, p_y)\f$
+   the ratio between the focal length and the size of a pixel, and \f$(u_0,
+   v_0)\f$ the coordinates of the principal point in pixel. The lens
+   distortion can also be considered by two additional parameters
+   \f$(k_{ud}, k_{du})\f$.
 
-  \note Note also that \ref tutorial-bridge-opencv gives the correspondance
-  between ViSP and OpenCV camera modelization.
+   \note The \ref tutorial-calibration-intrinsic shows how to calibrate a camera
+   to estimate the parameters corresponding to the model implemented in this
+   class.
 
-  \note The conversion from pixel coordinates \f$(u,v)\f$ in the normalized
-  space \f$(x,y)\f$ is implemented in vpPixelMeterConversion, whereas
-  the conversion from normalized coordinates into pixel is implemented
-  in vpMeterPixelConversion.
+   \note Note also that \ref tutorial-bridge-opencv gives the correspondance
+   between ViSP and OpenCV camera modelization.
 
-  From a practical point of view, two kinds of camera modelisation are
-  implemented in this class:
+   \note The conversion from pixel coordinates \f$(u,v)\f$ in the normalized
+   space \f$(x,y)\f$ is implemented in vpPixelMeterConversion, whereas
+   the conversion from normalized coordinates into pixel is implemented
+   in vpMeterPixelConversion.
 
-  <b>1. Camera parameters for a perspective projection without distortion
-  model</b>
+   From a practical point of view, two kinds of camera modelisation are
+   implemented in this class:
 
-  In this modelisation, only \f$u_0,v_0,p_x,p_y\f$ parameters are considered.
+   <b>1.1.1. Camera parameters for a perspective projection without distortion
+   model</b>
 
-  Initialization of such a model can be done using:
-  - initPersProjWithoutDistortion() that allows to set \f$u_0,v_0,p_x,p_y\f$
-  parameters;
-  - initFromFov() that computes the parameters from an image size and a camera
-  field of view.
+   In this modelisation, only \f$u_0,v_0,p_x,p_y\f$ parameters are considered.
 
-  <b>2. Camera parameters for a perspective projection with distortion
-  model</b>
+   Initialization of such a model can be done using:
+   - initPersProjWithoutDistortion() that allows to set \f$u_0,v_0,p_x,p_y\f$
+   parameters;
+   - initFromFov() that computes the parameters from an image size and a camera
+   field of view.
 
-  In this modelisation, all the parameters \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$
-  are considered. Initialization of such a model can be done using:
-  - initPersProjWithDistortion() that allows to set
-  \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$ parameters;
+   <b>1.1.2. Camera parameters for a perspective projection with distortion
+   model</b>
 
-  The selection of the camera model (without or with distorsion) is done
-  during vpCameraParameters initialisation.
+   In this modelisation, all the parameters \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$
+   are considered. Initialization of such a model can be done using:
+   - initPersProjWithDistortion() that allows to set
+   \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$ parameters;
 
-  Here an example of camera initialisation, for a model without distortion. A
-  complete example is given in initPersProjWithoutDistortion().
+   The selection of the camera model (without or with distorsion) is done
+   during vpCameraParameters initialisation.
 
-\code
-  double px = 600; double py = 600; double u0 = 320; double v0 = 240;
+   Here an example of camera initialisation, for a model without distortion. A
+   complete example is given in initPersProjWithoutDistortion().
 
-  // Create a camera parameter container
-  vpCameraParameters cam;
-  // Camera initialization with a perspective projection without distortion
-  // model
-  cam.initPersProjWithoutDistortion(px,py,u0,v0);
-  // It is also possible to print the current camera parameters
-  std::cout << cam << std::endl;
-\endcode
+ \code
+   double px = 600; double py = 600; double u0 = 320; double v0 = 240;
 
-  Here an example of camera initialisation, for a model with distortion. A
-  complete example is given in initPersProjWithDistortion().
+   // Create a camera parameter container
+   vpCameraParameters cam;
+   // Camera initialization with a perspective projection without distortion
+   // model
+   cam.initPersProjWithoutDistortion(px,py,u0,v0);
+   // It is also possible to print the current camera parameters
+   std::cout << cam << std::endl;
+ \endcode
 
-\code
-  double px = 600; double py = 600;
-  double u0 = 320; double v0 = 240;
-  double kud = -0.19; double kdu = 0.20;
+   Here an example of camera initialisation, for a model with distortion. A
+   complete example is given in initPersProjWithDistortion().
 
-  // Create a camera parameter container
-  vpCameraParameters cam;
+ \code
+   double px = 600; double py = 600;
+   double u0 = 320; double v0 = 240;
+   double kud = -0.19; double kdu = 0.20;
 
-  // Camera initialization with a perspective projection without distortion
-  model cam.initPersProjWithDistortion(px,py,u0,v0,kud,kdu);
-\endcode
+   // Create a camera parameter container
+   vpCameraParameters cam;
 
-  The code below shows how to know the currently used projection model:
-  \code
-  vpCameraParameters cam;
-  ...
-  vpCameraParameters::vpCameraParametersProjType projModel;
-  projModel = cam.get_projModel(); // Get the projection model type
-  \endcode
+   // Camera initialization with a perspective projection without distortion
+   model cam.initPersProjWithDistortion(px,py,u0,v0,kud,kdu);
+   \endcode
 
-  An XML parser for camera parameters is also provided in vpXmlParserCamera.
+   The code below shows how to know the currently used projection model:
+   \code
+   vpCameraParameters cam;
+   ...
+   vpCameraParameters::vpCameraParametersProjType projModel;
+   projModel = cam.get_projModel(); // Get the projection model type
+   \endcode
 
-  <b>II. Kannala-Brandt camera model</b>
+   An XML parser for camera parameters is also provided in vpXmlParserCamera.
 
-  This model \cite KannalaBrandt deals with fish-eye lenses designed to cover
-  the whole hemispherical field in front of the camera and the angle of view
-  is very large. In this case, the inherent distortion of a fish-eye lens should
-  not be considered only as a derivation from the pinhole model.
+   <b>1.2. Kannala-Brandt camera model</b>
 
-  The following projection in the general form is adapted:
+   This model \cite KannalaBrandt deals with fish-eye lenses designed to cover
+   the whole hemispherical field in front of the camera and the angle of view
+   is very large. In this case, the inherent distortion of a fish-eye lens should
+   not be considered only as a derivation from the pinhole model.
 
-  \f[
-  \begin{array}{lcl}
-  r(\theta) &=& k_1 \theta + k_2 \theta^3 + k_3 \theta^5 + k_4 \theta^7 + k_5 \theta^9
-  \end{array}
-  \f]
+   The following projection in the general form is adapted:
 
-  where:
-  - \f$\theta\f$ is the angle in rad between a point in the real world and the
-  optical axis.
-  - \f$r\f$ is the distance between the image point and the principal point.
+   \f[
+   \begin{array}{lcl}
+   r(\theta) &=& k_1 \theta + k_2 \theta^3 + k_3 \theta^5 + k_4 \theta^7 + k_5 \theta^9
+   \end{array}
+   \f]
 
-  In ViSP, we only consider radially symmetric distortions (caused by fisheye lenses).
+   where:
+   - \f$\theta\f$ is the angle in rad between a point in the real world and the
+   optical axis.
+   - \f$r\f$ is the distance between the image point and the principal point.
 
-*/
+   In ViSP, we only consider radially symmetric distortions (caused by fisheye lenses).
+
+ <b>2. JSON serialization</b>
+
+ Since ViSP 3.6.0 we introduce JSON serialization capabilities for vpCameraParameters.
+ The following sample code shows how to save camera parameters in a file named `cam.json`
+ and reload the parameters from this JSON file.
+ \code
+ #include <visp3/core/vpCameraParameters.h>
+
+ int main()
+ {
+ #if defined(VISP_HAVE_NLOHMANN_JSON)
+   std::string filename = "cam.json";
+   {
+     // Save camera parameters in a JSON file
+     vpCameraParameters cam(801, 802, 325, 245);
+     std::ofstream file(filename);
+     const nlohmann::json j = cam;
+     file << j;
+     file.close();
+   }
+   {
+     // Load camera parameters from a JSON file
+     std::ifstream file(filename);
+     const nlohmann::json j = nlohmann::json::parse(file);
+     vpCameraParameters cam;
+     cam = j;
+     file.close();
+     std::cout << "Read camera parameters from " << filename << ":\n" << cam << std::endl;
+   }
+ #endif
+ }
+ \endcode
+ If you build and execute the sample code, it will produce the following output:
+ \verbatim
+ Read camera parameters from cam.json:
+ Camera parameters for perspective projection without distortion:
+   px = 801	 py = 802
+   u0 = 325	 v0 = 245
+ \endverbatim
+
+ The content of the `cam.json` file is the following:
+ \verbatim
+ $ cat cam.json
+ {"model":"perspectiveWithoutDistortion","px":801.0,"py":802.0,"u0":325.0,"v0":245.0}
+ \endverbatim
+ */
 class VISP_EXPORT vpCameraParameters
 {
   friend class vpMeterPixelConversion;
   friend class vpPixelMeterConversion;
 
 public:
-  typedef enum {
-    perspectiveProjWithoutDistortion, //!< Perspective projection without
-                                      //!< distortion model
-    perspectiveProjWithDistortion,    //!< Perspective projection with distortion
-                                      //!< model
-    ProjWithKannalaBrandtDistortion   //!< Projection with Kannala-Brandt distortion
-                                      //!< model
+  typedef enum
+  {
+    perspectiveProjWithoutDistortion, //!< Perspective projection without distortion model
+    perspectiveProjWithDistortion,    //!< Perspective projection with distortion model
+    ProjWithKannalaBrandtDistortion   //!< Projection with Kannala-Brandt distortion model
   } vpCameraParametersProjType;
 
   // generic functions
@@ -293,7 +334,7 @@ public:
   void initPersProjWithoutDistortion(double px, double py, double u0, double v0);
   void initPersProjWithDistortion(double px, double py, double u0, double v0, double kud, double kdu);
   void initProjWithKannalaBrandtDistortion(double px, double py, double u0, double v0,
-                                           const std::vector<double> &distortion_coefficients);
+    const std::vector<double> &distortion_coefficients);
 
   /*!
     Specify if the fov has been computed.
@@ -317,7 +358,7 @@ public:
   {
     if (!isFov) {
       vpTRACE("Warning: The FOV is not computed, getHorizontalFovAngle() "
-              "won't be significant.");
+        "won't be significant.");
     }
     return m_hFovAngle;
   }
@@ -333,7 +374,7 @@ public:
   {
     if (!isFov) {
       vpTRACE("Warning: The FOV is not computed, getVerticalFovAngle() won't "
-              "be significant.");
+        "be significant.");
     }
     return m_vFovAngle;
   }
@@ -354,7 +395,7 @@ public:
   {
     if (!isFov) {
       vpTRACE("Warning: The FOV is not computed, getFovNormals() won't be "
-              "significant.");
+        "significant.");
     }
     return fovNormals;
   }
@@ -403,54 +444,55 @@ private:
 
   vpCameraParametersProjType projModel; //!< used projection model
 #ifdef VISP_HAVE_NLOHMANN_JSON
-  friend void to_json(nlohmann::json& j, const vpCameraParameters& cam);
-  friend void from_json(const nlohmann::json& j, vpCameraParameters& cam);
+  friend void to_json(nlohmann::json &j, const vpCameraParameters &cam);
+  friend void from_json(const nlohmann::json &j, vpCameraParameters &cam);
 #endif
 };
 
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include<nlohmann/json.hpp>
-NLOHMANN_JSON_SERIALIZE_ENUM( vpCameraParameters::vpCameraParametersProjType, {
+NLOHMANN_JSON_SERIALIZE_ENUM(vpCameraParameters::vpCameraParametersProjType, {
     {vpCameraParameters::perspectiveProjWithoutDistortion, "perspectiveWithoutDistortion"},
     {vpCameraParameters::perspectiveProjWithDistortion, "perspectiveWithDistortion"},
     {vpCameraParameters::ProjWithKannalaBrandtDistortion, "kannalaBrandtDistortion"},
-});
+  });
 /**
  * \brief Converts camera parameters into a JSON representation.
  * \sa from_json for more information on the content
  * \param j the resulting JSON object
  * \param cam  the camera to serialize
- * 
+ *
  */
-inline void to_json(nlohmann::json& j, const vpCameraParameters& cam) {
+inline void to_json(nlohmann::json &j, const vpCameraParameters &cam)
+{
   j["px"] = cam.px;
   j["py"] = cam.py;
   j["u0"] = cam.u0;
   j["v0"] = cam.v0;
   j["model"] = cam.projModel;
-  
-  switch(cam.projModel) {
-    case vpCameraParameters::perspectiveProjWithDistortion:
-    {
-      j["kud"] = cam.kud;
-      j["kdu"] = cam.kdu;
-      break;
-    }
-    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
-    {
-      j["dist_coeffs"] = cam.m_dist_coefs;
-      break;
-    }
-    default:
-      break;
+
+  switch (cam.projModel) {
+  case vpCameraParameters::perspectiveProjWithDistortion:
+  {
+    j["kud"] = cam.kud;
+    j["kdu"] = cam.kdu;
+    break;
+  }
+  case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+  {
+    j["dist_coeffs"] = cam.m_dist_coefs;
+    break;
+  }
+  default:
+    break;
   }
 }
-/*! 
+/*!
     \brief Deserialize a JSON object into camera parameters.
     The minimal required properties are:
-      - Pixel size : px, py
-      - Principal point :  u0, v0
+      - Pixel size: px, py
+      - Principal point: u0, v0
 
     If a projection model (\ref vpCameraParameters::vpCameraParametersProjType) is supplied, then other parameters may be expected:
     - In the case of perspective projection with distortion, ku, and kud must be supplied.
@@ -469,40 +511,38 @@ inline void to_json(nlohmann::json& j, const vpCameraParameters& cam) {
         }
     \endcode
 
-
-    \param j the json object to deserialize
-    \param cam the modified camera.
+    \param j The json object to deserialize.
+    \param cam The modified camera.
 
 */
-inline void from_json(const nlohmann::json& j, vpCameraParameters& cam) {
+inline void from_json(const nlohmann::json &j, vpCameraParameters &cam)
+{
   const double px = j.at("px").get<double>();
   const double py = j.at("py").get<double>();
   const double u0 = j.at("u0").get<double>();
   const double v0 = j.at("v0").get<double>();
   const vpCameraParameters::vpCameraParametersProjType model = j.value("model", vpCameraParameters::perspectiveProjWithoutDistortion);
 
-  switch(model) {
-    case vpCameraParameters::perspectiveProjWithoutDistortion:
-    {
-      cam.initPersProjWithoutDistortion(px, py, u0, v0);
-      break;
-    }
-    case vpCameraParameters::perspectiveProjWithDistortion:
-    {
-      const double kud = j.at("kud").get<double>();
-      const double kdu = j.at("kdu").get<double>();
-      cam.initPersProjWithDistortion(px, py, u0, v0, kud, kdu);
-      break;
-    }
-    case vpCameraParameters::ProjWithKannalaBrandtDistortion:
-    {
-      const std::vector<double> coeffs = j.at("dist_coeffs").get<std::vector<double>>();
-      cam.initProjWithKannalaBrandtDistortion(px, py, u0, v0, coeffs);
-      break;
-    }
+  switch (model) {
+  case vpCameraParameters::perspectiveProjWithoutDistortion:
+  {
+    cam.initPersProjWithoutDistortion(px, py, u0, v0);
+    break;
   }
-
-
+  case vpCameraParameters::perspectiveProjWithDistortion:
+  {
+    const double kud = j.at("kud").get<double>();
+    const double kdu = j.at("kdu").get<double>();
+    cam.initPersProjWithDistortion(px, py, u0, v0, kud, kdu);
+    break;
+  }
+  case vpCameraParameters::ProjWithKannalaBrandtDistortion:
+  {
+    const std::vector<double> coeffs = j.at("dist_coeffs").get<std::vector<double>>();
+    cam.initProjWithKannalaBrandtDistortion(px, py, u0, v0, coeffs);
+    break;
+  }
+  }
 }
 #endif
 
