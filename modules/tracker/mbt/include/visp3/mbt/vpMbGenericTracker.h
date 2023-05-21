@@ -719,16 +719,22 @@ protected:
 #define MBT_JSON_SETTINGS_VERSION "1.0"
 
 // Serialize tracker type enumeration
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
 NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
     {vpMbGenericTracker::EDGE_TRACKER, "edge"},
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
     {vpMbGenericTracker::KLT_TRACKER, "klt"},
-#endif
     {vpMbGenericTracker::DEPTH_DENSE_TRACKER, "depthDense"},
-    {vpMbGenericTracker::DEPTH_NORMAL_TRACKER, "depthNormal"},
-  });
+    {vpMbGenericTracker::DEPTH_NORMAL_TRACKER, "depthNormal"}
+});
+#else
+NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
+    {vpMbGenericTracker::EDGE_TRACKER, "edge"},
+    {vpMbGenericTracker::DEPTH_DENSE_TRACKER, "depthDense"},
+    {vpMbGenericTracker::DEPTH_NORMAL_TRACKER, "depthNormal"}
+});
+#endif
 
-/**
+    /**
  * @brief Serialize a tracker wrapper's settings into a JSON representation.
  * \sa from_json for more details on what is serialized
  * @param j The modified json object.
