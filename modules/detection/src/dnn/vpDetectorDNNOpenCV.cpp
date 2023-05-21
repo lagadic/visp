@@ -146,7 +146,7 @@ std::vector<std::string> vpDetectorDNNOpenCV::parseClassNamesFile(const std::str
 
 vpDetectorDNNOpenCV::vpDetectorDNNOpenCV()
   : m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
-    m_mean(127.5, 127.5, 127.5), m_net(), m_netConfig(0.5, 0.4, std::vector<std::string>(), cv::Size(300, 300)), m_outNames(), m_dnnRes(),
+    m_mean(127.5, 127.5, 127.5), m_net(), m_netConfig(0.5f, 0.4f, std::vector<std::string>(), cv::Size(300, 300)), m_outNames(), m_dnnRes(),
     m_scaleFactor(2.0 / 255.0), m_swapRB(true), m_parsingMethodType(USER_SPECIFIED), m_parsingMethod(vpDetectorDNNOpenCV::postProcess_unimplemented)
 {
   setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
@@ -465,7 +465,7 @@ std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>
 vpDetectorDNNOpenCV::filterDetectionSingleClassInput(const std::vector<DetectedFeatures2D>& detected_features, const double minRatioOfAreaOk)
 {
   double meanArea(0.);
-  double originalNumberOfObj = detected_features.size();
+  double originalNumberOfObj = static_cast<double>(detected_features.size());
   double meanFactor = 1. / originalNumberOfObj;
 
   // Computing the average area of the class
@@ -526,7 +526,7 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
        */
       void computeMeans()
       {
-        for(auto classID_pair: m_map_id_pairOccurrencesAreas)
+        for(const auto &classID_pair: m_map_id_pairOccurrencesAreas)
         {
           m_mapMeans[classID_pair.first] = computeMeanArea(classID_pair.first);
         }
@@ -616,9 +616,9 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::map< std::string,
 */
 void vpDetectorDNNOpenCV::postProcess_YoloV3_V4(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
-  int nbBatches = dnnRes.size();
+  size_t nbBatches = dnnRes.size();
 
-  for(int i = 0; i < nbBatches; i++)
+  for(size_t i = 0; i < nbBatches; i++)
   {
     // Slightly modify from here: https://github.com/opencv/opencv/blob/8c25a8eb7b10fb50cda323ee6bec68aa1a9ce43c/samples/dnn/object_detection.cpp#L192-L221
      // Counts the number of proposed detections and the number of data corresponding to 1 detection
@@ -687,9 +687,9 @@ void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, 
   // Compute the ratio between the original size of the image and the network size to translate network coordinates into
   // image coordinates
   float ratioh = (float)m_img.rows / netConfig.m_inputSize.height, ratiow = (float)m_img.cols / netConfig.m_inputSize.width;
-  int nbBatches = dnnRes.size();
+  size_t nbBatches = dnnRes.size();
 
-  for(int i = 0; i < nbBatches; i++)
+  for(size_t i = 0; i < nbBatches; i++)
   {
      // Counts the number of proposed detections and the number of data corresponding to 1 detection
     int num_proposal = dnnRes[i].size[0]; // Number of detections
@@ -758,9 +758,9 @@ void vpDetectorDNNOpenCV::postProcess_YoloV8(DetectionCandidates &proposals, std
   // Compute the ratio between the original size of the image and the network size to translate network coordinates into
   // image coordinates
   float ratioh = (float)m_img.rows / netConfig.m_inputSize.height, ratiow = (float)m_img.cols / netConfig.m_inputSize.width;
-  int nbBatches = dnnRes.size();
+  size_t nbBatches = dnnRes.size();
 
-  for(int i = 0; i < nbBatches; i++)
+  for(size_t i = 0; i < nbBatches; i++)
   {
      // Counts the number of proposed detections and the number of data corresponding to 1 detection
     int num_proposal = dnnRes[i].size[1]; // Number of detections

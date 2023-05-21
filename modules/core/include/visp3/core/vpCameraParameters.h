@@ -455,7 +455,7 @@ private:
 NLOHMANN_JSON_SERIALIZE_ENUM(vpCameraParameters::vpCameraParametersProjType, {
     {vpCameraParameters::perspectiveProjWithoutDistortion, "perspectiveWithoutDistortion"},
     {vpCameraParameters::perspectiveProjWithDistortion, "perspectiveWithDistortion"},
-    {vpCameraParameters::ProjWithKannalaBrandtDistortion, "kannalaBrandtDistortion"},
+    {vpCameraParameters::ProjWithKannalaBrandtDistortion, "kannalaBrandtDistortion"}
   });
 /**
  * \brief Converts camera parameters into a JSON representation.
