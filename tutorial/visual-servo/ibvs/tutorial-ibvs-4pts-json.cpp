@@ -10,7 +10,7 @@
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 //! [Enum]
 enum vpInteractionMatrixTypeSubset
 {
@@ -305,5 +305,4 @@ int main()
 {
   std::cerr << "Cannot run tutorial: ViSP is not built with JSON integration. Install the JSON library and recompile ViSP" << std::endl;
 }
-#endif
 #endif
