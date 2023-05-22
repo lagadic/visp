@@ -252,6 +252,15 @@ public:
 
   static vpHomogeneousMatrix mean(const std::vector<vpHomogeneousMatrix> &vec_M);
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+public:
+  static const std::string jsonTypeName;
+private:
+  friend void to_json(nlohmann::json &j, const vpHomogeneousMatrix &cam);
+  friend void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T);
+  void parse_json(const nlohmann::json &j); // Conversion helper function to avoid circular dependencies
+#endif
+
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions
@@ -271,14 +280,6 @@ public:
 
 protected:
   unsigned int m_index;
-#ifdef VISP_HAVE_NLOHMANN_JSON
-public:
-  static const std::string jsonTypeName;
-private:
-  friend void to_json(nlohmann::json &j, const vpHomogeneousMatrix &cam);
-  friend void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T);
-  void parse_json(const nlohmann::json &j); // Conversion helper function to avoid circular dependencies
-#endif
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON

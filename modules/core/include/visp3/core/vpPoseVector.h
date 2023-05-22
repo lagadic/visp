@@ -255,6 +255,15 @@ public:
 
   std::vector<double> toStdVector() const;
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+public:
+  static const std::string jsonTypeName;
+private:
+  friend void to_json(nlohmann::json &j, const vpPoseVector &cam);
+  friend void from_json(const nlohmann::json &j, vpPoseVector &cam);
+  void parse_json(const nlohmann::json &j);
+#endif
+
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions
@@ -266,14 +275,6 @@ public:
    */
   vp_deprecated void init() { };
   //@}
-#endif
-#ifdef VISP_HAVE_NLOHMANN_JSON
-public:
-  static const std::string jsonTypeName;
-private:
-  friend void to_json(nlohmann::json &j, const vpPoseVector &cam);
-  friend void from_json(const nlohmann::json &j, vpPoseVector &cam);
-  void parse_json(const nlohmann::json &j);
 #endif
 };
 
