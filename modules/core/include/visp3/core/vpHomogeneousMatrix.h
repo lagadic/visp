@@ -302,7 +302,10 @@ public:
 private:
   friend void to_json(nlohmann::json &j, const vpHomogeneousMatrix &cam);
   friend void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T);
-  void parse_json(const nlohmann::json &j); // Conversion helper function to avoid circular dependencies
+  // Conversion helper function to avoid circular dependencies and MSVC errors that are not exported in the DLL
+  void parse_json(const nlohmann::json &j);
+  void convert_to_json(nlohmann::json &j) const;
+
 #endif
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -329,9 +332,7 @@ protected:
 #ifdef VISP_HAVE_NLOHMANN_JSON
 inline void to_json(nlohmann::json &j, const vpHomogeneousMatrix &T)
 {
-  const vpArray2D<double> *asArray = (vpArray2D<double>*) & T;
-  to_json(j, *asArray);
-  j["type"] = vpHomogeneousMatrix::jsonTypeName;
+  T.convert_to_json(j);
 }
 inline void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T)
 {

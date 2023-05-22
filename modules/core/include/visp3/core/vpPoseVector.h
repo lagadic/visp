@@ -303,7 +303,9 @@ public:
 private:
   friend void to_json(nlohmann::json &j, const vpPoseVector &cam);
   friend void from_json(const nlohmann::json &j, vpPoseVector &cam);
+  // Conversion helper function to avoid circular dependencies and MSVC errors that are not exported in the DLL
   void parse_json(const nlohmann::json &j);
+  void convert_to_json(nlohmann::json &j) const;
 #endif
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
@@ -324,9 +326,7 @@ private:
 #include <nlohmann/json.hpp>
 inline void to_json(nlohmann::json &j, const vpPoseVector &r)
 {
-  const vpArray2D<double> *asArray = (vpArray2D<double>*) & r;
-  to_json(j, *asArray);
-  j["type"] = vpPoseVector::jsonTypeName;
+  r.convert_to_json(j);
 }
 inline void from_json(const nlohmann::json &j, vpPoseVector &r)
 {
