@@ -152,7 +152,7 @@ SCENARIO("Serializing and deserializing a single vpMe", "[json]")
       };
       const auto testDouble = [&j, &me](const std::string &key, std::function<void(vpMe *, double)> setter,
         std::function<double(vpMe *)> getter) -> void {
-          testOptionalProperty<double>(j, { key }, me, setter, getter, [](double v) -> int { return v + 1.0; });
+          testOptionalProperty<double>(j, { key }, me, setter, getter, [](double v) -> double { return v + 1.0; });
       };
 
       WHEN("Removing threshold") { testDouble("threshold", &vpMe::setThreshold, &vpMe::getThreshold); }
