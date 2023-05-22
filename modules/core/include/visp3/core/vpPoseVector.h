@@ -90,63 +90,105 @@ class vpRowVector;
 
   The following code shows how to initialize a pose vector:
   \code
-#include <visp3/core/vpPoseVector.h>
+  #include <visp3/core/vpPoseVector.h>
 
-int main()
-{
-  vpPoseVector pose;
+  int main()
+  {
+    vpPoseVector pose;
 
-  pose[0] = 0.1;    // tx
-  pose[1] = 0.2;    // ty
-  pose[2] = 0.3;    // tz
+    pose[0] = 0.1;    // tx
+    pose[1] = 0.2;    // ty
+    pose[2] = 0.3;    // tz
 
-  pose[3] = M_PI;   // tux
-  pose[4] = M_PI_2; // tux
-  pose[5] = M_PI_4; // tuz
+    pose[3] = M_PI;   // tux
+    pose[4] = M_PI_2; // tux
+    pose[5] = M_PI_4; // tuz
 
-  std::cout << "pose vector:\n" << pose << std::endl;
-}
+    std::cout << "pose vector:\n" << pose << std::endl;
+  }
   \endcode
   It produces the following printings:
-  \code
-pose vector:
-0.1
-0.2
-0.3
-3.141592654
-1.570796327
-0.7853981634
-  \endcode
+  \verbatim
+  pose vector:
+  0.1
+  0.2
+  0.3
+  3.141592654
+  1.570796327
+  0.7853981634
+  \endverbatim
   The same initialization could be achieved this way:
   \code
-#include <visp3/core/vpPoseVector.h>
+  #include <visp3/core/vpPoseVector.h>
 
-int main()
-{
-  vpTranslationVector t;
-  vpThetaUVector tu;
+  int main()
+  {
+    vpTranslationVector t;
+    vpThetaUVector tu;
 
-  t << 0.1, 0.2, 0.3;
-  tu << M_PI, M_PI_2, M_PI_4;
-  vpPoseVector pose(t, tu);
-}
+    t << 0.1, 0.2, 0.3;
+    tu << M_PI, M_PI_2, M_PI_4;
+    vpPoseVector pose(t, tu);
+  }
   \endcode
   If ViSP is build with c++11 suport, you could also initialize the vector using:
   \code
-#include <visp3/core/vpPoseVector.h>
+  #include <visp3/core/vpPoseVector.h>
 
-int main()
-{
-  vpTranslationVector t;
-  vpThetaUVector tu;
+  int main()
+  {
+    vpTranslationVector t;
+    vpThetaUVector tu;
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  t = { 0.1, 0.2, 0.3 };
-  tu = { M_PI, M_PI_2, M_PI_4 };
-#endif
-  vpPoseVector pose(t, tu);
-}
+  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    t = { 0.1, 0.2, 0.3 };
+    tu = { M_PI, M_PI_2, M_PI_4 };
+  #endif
+    vpPoseVector pose(t, tu);
+  }
   \endcode
+
+  <b>JSON serialization</b>
+
+  Since ViSP 3.6.0 we introduce JSON serialization capabilities for vpPoseVector.
+  The following sample code shows how to save a pose vector in a file named `pose-vector.json`
+  and reload the values from this JSON file.
+  \code
+  #include <visp3/core/vpPoseVector.h>
+
+  int main()
+  {
+  #if defined(VISP_HAVE_NLOHMANN_JSON)
+    std::string filename = "pose-vector.json";
+    {
+      vpPoseVector pose(0.1, 0.2, 0.3, M_PI, M_PI_2, M_PI_4);
+      std::ofstream file(filename);
+      const nlohmann::json j = pose;
+      file << j;
+      file.close();
+    }
+    {
+      std::ifstream file(filename);
+      const nlohmann::json j = nlohmann::json::parse(file);
+      vpPoseVector pose;
+      pose = j;
+      file.close();
+      std::cout << "Read pose vector from " << filename << ":\n" << pose.t() << std::endl;
+    }
+  #endif
+  }
+  \endcode
+  If you build and execute the sample code, it will produce the following output:
+  \verbatim
+  Read pose vector from pose-vector.json:
+  0.1  0.2  0.3  3.141592654  1.570796327  0.7853981634
+  \endverbatim
+
+  The content of the `pose-vector.json` file is the following:
+  \verbatim
+  $ cat pose-vector.json
+  {"cols":1,"data":[0.1,0.2,0.3,3.141592653589793,1.5707963267948966,0.7853981633974483],"rows":6,"type":"vpPoseVector"}
+  \endverbatim
 */
 class VISP_EXPORT vpPoseVector : public vpArray2D<double>
 {
