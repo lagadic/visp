@@ -55,18 +55,18 @@ Beware that invalid values may be defined in the JSON object: the int value may 
 template<typename E>
 int flagsFromJSON(const nlohmann::json &j)
 {
-    int flags = 0;
-    if (j.is_array()) {
-        flags = 0;
-        for (const auto &v : j) {
-            E value = v.get<E>(); // If a value is incorrect, this will default to the first value of the enum
-            flags |= value;
-        }
+  int flags = 0;
+  if (j.is_array()) {
+    flags = 0;
+    for (const auto &v : j) {
+      E value = v.get<E>(); // If a value is incorrect, this will default to the first value of the enum
+      flags |= value;
     }
-    else if (j.is_number_integer()) {
-        flags = j.get<int>();
-    }
-    return flags;
+  }
+  else if (j.is_number_integer()) {
+    flags = j.get<int>();
+  }
+  return flags;
 }
 
 /*!
@@ -80,32 +80,32 @@ int flagsFromJSON(const nlohmann::json &j)
 template<typename E>
 nlohmann::json flagsToJSON(const int flags, const std::vector<E> &options)
 {
-    nlohmann::json j = nlohmann::json::array();
-    for (const E option : options) {
-        if (flags & option) {
-            j.push_back(option);
-        }
+  nlohmann::json j = nlohmann::json::array();
+  for (const E option : options) {
+    if (flags & option) {
+      j.push_back(option);
     }
-    return j;
+  }
+  return j;
 }
 
 template<typename T>
 bool convertFromTypeAndBuildFrom(const nlohmann::json &, T &)
 {
-    return false;
+  return false;
 }
 
 template<typename T, typename O, typename... Os>
 bool convertFromTypeAndBuildFrom(const nlohmann::json &j, T &t)
 {
-    if (j["type"] == O::jsonTypeName) {
-        O other = j;
-        t.buildFrom(other);
-        return true;
-    }
-    else {
-        return convertFromTypeAndBuildFrom<T, Os...>(j, t);
-    }
+  if (j["type"] == O::jsonTypeName) {
+    O other = j;
+    t.buildFrom(other);
+    return true;
+  }
+  else {
+    return convertFromTypeAndBuildFrom<T, Os...>(j, t);
+  }
 }
 
 #endif
