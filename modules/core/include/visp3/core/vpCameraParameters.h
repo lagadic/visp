@@ -258,7 +258,7 @@
 
   <b>2. JSON serialization</b>
 
-  Since ViSP 3.6.0 we introduce JSON serialization capabilities for vpCameraParameters.
+  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpCameraParameters.
   The following sample code shows how to save camera parameters in a file named `cam.json`
   and reload the parameters from this JSON file.
   \code
@@ -289,18 +289,18 @@
   }
   \endcode
   If you build and execute the sample code, it will produce the following output:
-  \verbatim
+  \code{.unparsed}
   Read camera parameters from cam.json:
   Camera parameters for perspective projection without distortion:
     px = 801	 py = 802
     u0 = 325	 v0 = 245
-  \endverbatim
+  \endcode
 
   The content of the `cam.json` file is the following:
-  \verbatim
+  \code{.unparsed}
   $ cat cam.json
   {"model":"perspectiveWithoutDistortion","px":801.0,"py":802.0,"u0":325.0,"v0":245.0}
-  \endverbatim
+  \endcode
  */
 class VISP_EXPORT vpCameraParameters
 {

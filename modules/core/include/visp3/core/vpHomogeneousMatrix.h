@@ -110,13 +110,13 @@ class vpPoint;
   }
   \endcode
   It produces the following printings:
-  \verbatim
+  \code{.unparsed}
   M:
   0 0 -1 0.1
   0 -1 0 0.2
   -1 0 0 0.3
   0 0 0 1
-  \endverbatim
+  \endcode
   You can also use vpRotationMatrix::operator<< and vpTranslationVector::operator<< like:
   \code
   #include <visp3/core/vpHomogeneousMatrix.h>
@@ -156,7 +156,7 @@ class vpPoint;
 
   <b>JSON serialization</b>
 
-  Since ViSP 3.6.0 we introduce JSON serialization capabilities for vpHomogeneousMatrix.
+  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpHomogeneousMatrix.
   The following sample code shows how to save a homogeneous matrix in a file named `homo-mat.json`
   and reload the values from this JSON file.
   \code
@@ -185,19 +185,19 @@ class vpPoint;
   }
   \endcode
   If you build and execute the sample code, it will produce the following output:
-  \verbatim
+  \code{.unparsed}
   Read homogeneous matrix from homo-mat.json:
   0  0  -1  0.1
   0  -1  0  0.2
   -1  0  0  0.3
   0  0  0  1
-  \endverbatim
+  \endcode
 
   The content of the `homo-mat.json` file is the following:
-  \verbatim
+  \code{.unparsed}
   $ cat homo-mat.json
   {"cols":4,"data":[0.0,0.0,-1.0,0.1,0.0,-1.0,0.0,0.2,-1.0,0.0,0.0,0.3,0.0,0.0,0.0,1.0],"rows":4,"type":"vpHomogeneousMatrix"}
-  \endverbatim
+  \endcode
 */
 class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
 {

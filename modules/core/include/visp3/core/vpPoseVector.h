@@ -108,7 +108,7 @@ class vpRowVector;
   }
   \endcode
   It produces the following printings:
-  \verbatim
+  \code{.unparsed}
   pose vector:
   0.1
   0.2
@@ -116,7 +116,7 @@ class vpRowVector;
   3.141592654
   1.570796327
   0.7853981634
-  \endverbatim
+  \endcode
   The same initialization could be achieved this way:
   \code
   #include <visp3/core/vpPoseVector.h>
@@ -150,7 +150,7 @@ class vpRowVector;
 
   <b>JSON serialization</b>
 
-  Since ViSP 3.6.0 we introduce JSON serialization capabilities for vpPoseVector.
+  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpPoseVector.
   The following sample code shows how to save a pose vector in a file named `pose-vector.json`
   and reload the values from this JSON file.
   \code
@@ -179,16 +179,16 @@ class vpRowVector;
   }
   \endcode
   If you build and execute the sample code, it will produce the following output:
-  \verbatim
+  \code{.unparsed}
   Read pose vector from pose-vector.json:
   0.1  0.2  0.3  3.141592654  1.570796327  0.7853981634
-  \endverbatim
+  \endcode
 
   The content of the `pose-vector.json` file is the following:
-  \verbatim
+  \code{.unparsed}
   $ cat pose-vector.json
   {"cols":1,"data":[0.1,0.2,0.3,3.141592653589793,1.5707963267948966,0.7853981633974483],"rows":6,"type":"vpPoseVector"}
-  \endverbatim
+  \endcode
 */
 class VISP_EXPORT vpPoseVector : public vpArray2D<double>
 {

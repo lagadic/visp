@@ -81,6 +81,120 @@
   There is also \ref tutorial-detection-object that shows how to initialize the tracker from
   an initial pose provided by a detection algorithm.
 
+  <b>JSON serialization</b>
+
+  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpMbGenericTracker.
+  The following sample code shows how to save a model-based tracker settings in a file named `mbt.json`
+  and reload the values from this JSON file.
+  \code
+  #include <visp3/mbt/vpMbGenericTracker.h>
+
+  int main()
+  {
+  #if defined(VISP_HAVE_NLOHMANN_JSON)
+    std::string filename = "mbt-generic.json";
+    {
+      vpMbGenericTracker mbt;
+      mbt.saveConfigFile(filename);
+    }
+    {
+      vpMbGenericTracker mbt;
+      bool verbose = false;
+      std::cout << "Read model-based tracker settings from " << filename << std::endl;
+      mbt.loadConfigFile(filename, verbose);
+    }
+  #endif
+  }
+  \endcode
+  If you build and execute the sample code, it will produce the following output:
+  \code{.unparsed}
+  Read model-based tracker settings from mbt-generic.json
+  \endcode
+
+  The content of the `mbt.json` file is the following:
+  \code{.unparsed}
+  $ cat mbt-generic.json
+  {
+    "referenceCameraName": "Camera",
+    "trackers": {
+        "Camera": {
+            "angleAppear": 89.0,
+            "angleDisappear": 89.0,
+            "camTref": {
+                "cols": 4,
+                "data": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "rows": 4,
+                "type": "vpHomogeneousMatrix"
+            },
+            "camera": {
+                "model": "perspectiveWithoutDistortion",
+                "px": 600.0,
+                "py": 600.0,
+                "u0": 192.0,
+                "v0": 144.0
+            },
+            "clipping": {
+                "far": 100.0,
+                "flags": [
+                    "none"
+                ],
+                "near": 0.001
+            },
+            "display": {
+                "features": false,
+                "projectionError": false
+            },
+            "edge": {
+                "maskSign": 0,
+                "maskSize": 5,
+                "minSampleStep": 4.0,
+                "mu": [
+                    0.5,
+                    0.5
+                ],
+                "nMask": 180,
+                "ntotalSample": 0,
+                "pointsToTrack": 500,
+                "range": 4,
+                "sampleStep": 10.0,
+                "strip": 2,
+                "threshold": 1500.0
+            },
+            "lod": {
+                "minLineLengthThresholdGeneral": 50.0,
+                "minPolygonAreaThresholdGeneral": 2500.0,
+                "useLod": false
+            },
+            "type": [
+                "edge"
+            ],
+            "visibilityTest": {
+                "ogre": false,
+                "scanline": false
+            }
+        }
+    },
+    "version": "1.0"
+  }
+  \endcode
+
 */
 class VISP_EXPORT vpMbGenericTracker : public vpMbTracker
 {
@@ -725,21 +839,21 @@ NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
     {vpMbGenericTracker::KLT_TRACKER, "klt"},
     {vpMbGenericTracker::DEPTH_DENSE_TRACKER, "depthDense"},
     {vpMbGenericTracker::DEPTH_NORMAL_TRACKER, "depthNormal"}
-});
+  });
 #else
 NLOHMANN_JSON_SERIALIZE_ENUM(vpMbGenericTracker::vpTrackerType, {
     {vpMbGenericTracker::EDGE_TRACKER, "edge"},
     {vpMbGenericTracker::DEPTH_DENSE_TRACKER, "depthDense"},
     {vpMbGenericTracker::DEPTH_NORMAL_TRACKER, "depthNormal"}
-});
+  });
 #endif
 
-    /**
- * @brief Serialize a tracker wrapper's settings into a JSON representation.
- * \sa from_json for more details on what is serialized
- * @param j The modified json object.
- * @param t  The tracker to serialize.
- */
+/**
+* @brief Serialize a tracker wrapper's settings into a JSON representation.
+* \sa from_json for more details on what is serialized
+* @param j The modified json object.
+* @param t  The tracker to serialize.
+*/
 inline void to_json(nlohmann::json &j, const vpMbGenericTracker::TrackerWrapper &t)
 {
   // Common tracker attributes

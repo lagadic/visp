@@ -71,61 +71,102 @@ class vpPoseVector;
 
   The code below shows how to create a 3-element column vector of doubles, set the element values and access them:
   \code
-#include <visp3/code/vpColVector.h
+  #include <visp3/code/vpColVector.h
 
-int main()
-{
-  vpColVector v(3);
-  v[0] = -1; v[1] = -2.1; v[2] = -3;
+  int main()
+  {
+    vpColVector v(3);
+    v[0] = -1; v[1] = -2.1; v[2] = -3;
 
-  std::cout << "v:" << std::endl;
-  for (unsigned int i = 0; i < v.size(); i++) {
-    std::cout << v[i] << std::endl;
+    std::cout << "v:" << std::endl;
+    for (unsigned int i = 0; i < v.size(); i++) {
+      std::cout << v[i] << std::endl;
+    }
   }
-}
   \endcode
   Once build, this previous code produces the following output:
-  \code
-v:
--1
--2.1
--3
+  \code{.unparsed}
+  v:
+  -1
+  -2.1
+  -3
   \endcode
   You can also use operator<< to initialize a column vector as previously:
   \code
-#include <visp3/code/vpColVector.h
+  #include <visp3/code/vpColVector.h
 
-int main()
-{
-  vpColVector v;
-  v << -1, -2.1, -3;
-  std::cout << "v:" << v << std::endl;
-}
+  int main()
+  {
+    vpColVector v;
+    v << -1, -2.1, -3;
+    std::cout << "v:" << v << std::endl;
+  }
   \endcode
 
   If ViSP is build with c++11 enabled, you can do the same using:
   \code
-#include <visp3/code/vpColVector.h
+  #include <visp3/code/vpColVector.h
 
-int main()
-{
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpColVector v({-1, -2.1, -3});
-  std::cout << "v:\n" << v << std::endl;
-#endif
-}
+  int main()
+  {
+  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    vpColVector v({-1, -2.1, -3});
+    std::cout << "v:\n" << v << std::endl;
+  #endif
+  }
   \endcode
   The vector could also be initialized using operator=(const std::initializer_list< double > &)
   \code
-int main()
-{
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  vpColVector v;
-  v = {-1, -2.1, -3};
-#endif
-}
+  int main()
+  {
+  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    vpColVector v;
+    v = {-1, -2.1, -3};
+  #endif
+  }
   \endcode
 
+  <b>JSON serialization</b>
+
+  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpColVector.
+  The following sample code shows how to save a pose vector in a file named `col-vector.json`
+  and reload the values from this JSON file.
+  \code
+  #include <visp3/core/vpColVector.h>
+
+  int main()
+  {
+  #if defined(VISP_HAVE_NLOHMANN_JSON)
+    std::string filename = "col-vector.json";
+    {
+      vpColVector v({ 1, 2, 3, 4 });
+      std::ofstream file(filename);
+      const nlohmann::json j = v;
+      file << j;
+      file.close();
+    }
+    {
+      std::ifstream file(filename);
+      const nlohmann::json j = nlohmann::json::parse(file);
+      vpColVector v;
+      v = j.get<vpColVector>();
+      file.close();
+      std::cout << "Read homogeneous matrix from " << filename << ":\n" << v.t() << std::endl;
+    }
+  #endif
+  }
+  \endcode
+  If you build and execute the sample code, it will produce the following output:
+  \code{.unparsed}
+  Read homogeneous matrix from col-vector.json:
+  1  2  3  4
+  \endcode
+
+  The content of the `pose-vector.json` file is the following:
+  \code{.unparsed}
+  $ cat col-vector.json
+  {"cols":1,"data":[1.0,2.0,3.0,4.0],"rows":4,"type":"vpColVector"}
+  \endcode
 */
 class VISP_EXPORT vpColVector : public vpArray2D<double>
 {

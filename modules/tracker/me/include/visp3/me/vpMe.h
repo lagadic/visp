@@ -51,6 +51,69 @@
 
   This class defines predetermined masks for sites and holds moving edges
   tracking parameters.
+
+  <b>JSON serialization</b>
+
+  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpMe.
+  The following sample code shows how to save moving-edges settings in a file named `me.json`
+  and reload the values from this JSON file.
+  \code
+  #include <visp3/me/vpMe.h>
+
+  int main()
+  {
+  #if defined(VISP_HAVE_NLOHMANN_JSON)
+    std::string filename = "me.json";
+    {
+      vpMe me;
+      me.setThreshold(10000);
+      me.setMaskNumber(180);
+      me.setMaskSign(0);
+      me.setMu1(0.5);
+      me.setMu2(0.5);
+      me.setNbTotalSample(0);
+      me.setPointsToTrack(200);
+      me.setRange(5);
+      me.setStrip(2);
+
+      std::ofstream file(filename);
+      const nlohmann::json j = me;
+      file << j;
+      file.close();
+    }
+    {
+      std::ifstream file(filename);
+      const nlohmann::json j = nlohmann::json::parse(file);
+      vpMe me;
+      me = j;
+      file.close();
+      std::cout << "Read moving-edges settings from " << filename << ":" << std::endl;
+      me.print();
+    }
+  #endif
+  }
+  \endcode
+  If you build and execute the sample code, it will produce the following output:
+  \code{.unparsed}
+  Read moving-edges settings from me.json:
+
+  Moving edges settings
+
+   Size of the convolution masks....5x5 pixels
+   Number of masks..................180
+   Query range +/- J................5 pixels
+   Likelihood test ratio............10000
+   Contrast tolerance +/-...........50% and 50%
+   Sample step......................10 pixels
+   Strip............................2 pixels
+   Min_Samplestep...................4 pixels
+  \endcode
+
+  The content of the `me.json` file is the following:
+  \code{.unparsed}
+  $ cat me.json
+  {"maskSign":0,"maskSize":5,"minSampleStep":4.0,"mu":[0.5,0.5],"nMask":180,"ntotalSample":0,"pointsToTrack":200,"range":5,"sampleStep":10.0,"strip":2,"threshold":10000.0}
+  \endcode
  */
 class VISP_EXPORT vpMe
 {
