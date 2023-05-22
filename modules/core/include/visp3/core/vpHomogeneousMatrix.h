@@ -275,6 +275,8 @@ public:
 protected:
   unsigned int m_index;
 #ifdef VISP_HAVE_NLOHMANN_JSON
+public:
+  static const std::string jsonTypeName;
 private:
   friend void from_json(const nlohmann::json& j, vpHomogeneousMatrix& T);
   void parse_json(const nlohmann::json& j); // Conversion helper function to avoid circular dependencies
@@ -285,7 +287,7 @@ private:
 inline void to_json(nlohmann::json& j, const vpHomogeneousMatrix& T) {
   const vpArray2D<double>* asArray = (vpArray2D<double>*) &T;
   to_json(j, *asArray);
-  j["type"] = "vpHomogeneousMatrix";
+  j["type"] = vpHomogeneousMatrix::jsonTypeName;
 }
 inline void from_json(const nlohmann::json& j, vpHomogeneousMatrix& T) {
   T.parse_json(j);

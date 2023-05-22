@@ -514,18 +514,20 @@ std::vector<double> vpPoseVector::toStdVector() const
 }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
+#include <visp3/core/vpJsonParsing.h>
+const std::string vpPoseVector::jsonTypeName = "vpPoseVector";
 void vpPoseVector::parse_json(const nlohmann::json& j) {
   vpArray2D<double>* asArray = (vpArray2D<double>*) this;
   if(j.is_object() && j.contains("type")) { // Specific conversions
-    if(j["type"] == "vpHomogeneousMatrix") {
-      vpHomogeneousMatrix T = j;
-      buildFrom(T);
+    const bool converted = convertFromTypeAndBuildFrom<vpPoseVector, vpHomogeneousMatrix>(j, *this);
+    if(!converted) {
+      from_json(j, *asArray);
     }
   } else { // Generic 2D array conversion
     from_json(j, *asArray);
   }
   
-  if(getCols() != 1 && getRows() != 6) {
+  if(getCols() != 6 && getRows() != 1) {
     throw vpException(vpException::badValue, "From JSON, tried to read something that is not a 6D pose vector");
   }
 }
