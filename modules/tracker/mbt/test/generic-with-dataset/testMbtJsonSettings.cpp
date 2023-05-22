@@ -291,11 +291,11 @@ SCENARIO("MBT JSON Serialization", "[json]")
         THEN("The full clipping config is optional")
         {
           vpMbGenericTracker t2 = baseTrackerConstructor();
-          const double near = 0.21;
-          const double far = 5.2;
+          const double clipping_near = 0.21;
+          const double clipping_far = 5.2;
           const int clipping = vpPolygon3D::LEFT_CLIPPING;
-          t2.setNearClippingDistance(near);
-          t2.setFarClippingDistance(far);
+          t2.setNearClippingDistance(clipping_near);
+          t2.setFarClippingDistance(clipping_far);
           t2.setClipping(clipping);
           modifyJson([&t1](json &j) -> void {
             for (const auto &c : t1.getCameraNames()) {
@@ -304,18 +304,18 @@ SCENARIO("MBT JSON Serialization", "[json]")
             });
           REQUIRE_NOTHROW(t2.loadConfigFile(jsonPath, false));
           REQUIRE(t2.getClipping() == clipping);
-          REQUIRE(t2.getNearClippingDistance() == near);
-          REQUIRE(t2.getFarClippingDistance() == far);
+          REQUIRE(t2.getNearClippingDistance() == clipping_near);
+          REQUIRE(t2.getFarClippingDistance() == clipping_far);
         }
 
         THEN("Each clipping param is optional on its own")
         {
           vpMbGenericTracker t2 = baseTrackerConstructor();
-          const double near = 0.21;
-          const double far = 5.2;
+          const double clipping_near = 0.21;
+          const double clipping_far = 5.2;
           const int clipping = vpPolygon3D::LEFT_CLIPPING;
-          t2.setNearClippingDistance(near);
-          t2.setFarClippingDistance(far);
+          t2.setNearClippingDistance(clipping_near);
+          t2.setFarClippingDistance(clipping_far);
           t2.setClipping(clipping);
           THEN("Near clipping is optional")
           {
@@ -325,7 +325,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
               }
               });
             t2.loadConfigFile(jsonPath);
-            REQUIRE(t2.getNearClippingDistance() == near);
+            REQUIRE(t2.getNearClippingDistance() == clipping_near);
             REQUIRE(t2.getFarClippingDistance() == t1.getFarClippingDistance());
             REQUIRE(t2.getClipping() == t1.getClipping());
           }
@@ -338,7 +338,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
               });
             t2.loadConfigFile(jsonPath);
             REQUIRE(t2.getNearClippingDistance() == t1.getNearClippingDistance());
-            REQUIRE(t2.getFarClippingDistance() == far);
+            REQUIRE(t2.getFarClippingDistance() == clipping_far);
             REQUIRE(t2.getClipping() == t1.getClipping());
           }
           THEN("Clipping flags are optional")
