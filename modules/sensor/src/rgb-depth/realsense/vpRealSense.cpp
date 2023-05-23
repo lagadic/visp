@@ -279,7 +279,7 @@ void vpRealSense::setDeviceBySerialNumber(const std::string &serial_no)
    Return camera parameters corresponding to a specific stream. This function
    has to be called after open(). \param stream : color, depth, infrared or
    infrared2 stream for which camera intrinsic parameters are returned. \param
-   type : Indicate if the model should include distorsion paramater or not.
+   type : Indicate if the model should include distortion paramater or not.
 
    \sa getIntrinsics()
  */

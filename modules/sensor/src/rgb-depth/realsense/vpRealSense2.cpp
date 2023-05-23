@@ -666,7 +666,7 @@ void vpRealSense2::close()
    Return the camera parameters corresponding to a specific stream. This
    function has to be called after open().
    \param stream : Stream for which camera intrinsic parameters are returned.
-   \param type   : Indicates if the model should include distorsion parameters or not.
+   \param type   : Indicates if the model should include distortion parameters or not.
    \param index  : Index of camera in T265 device, 1: Left  2. Right. Otherwise: -1(default)
 
    \sa getIntrinsics()
