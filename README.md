@@ -28,7 +28,7 @@ Other projects | Build Status |
 [visp_started](https://github.com/lagadic/visp_started) | [![ubuntu_3rdparty_workflow](https://github.com/lagadic/visp/actions/workflows/ubuntu-3rdparty.yml/badge.svg)](https://github.com/lagadic/visp/actions/workflows/ubuntu-3rdparty.yml)
 
 
-ViSP is a cross-platform library (Linux, Windows, MacOS, iOS, Android) that allows prototyping and developing applications using visual tracking and visual servoing technics at the heart of the researches done now by Inria <a href="http://team.inria.fr/rainbow">Rainbow team</a> and before 2018 by <a href="http://team.inria.fr/lagadic">Lagadic team</a>. ViSP is able to compute control laws that can be applied to robotic systems. It provides a set of visual features that can be tracked using real time image processing or computer vision algorithms. ViSP provides also simulation capabilities. ViSP can be useful in robotics, computer vision, augmented reality and computer animation. Our <a href="https://www.youtube.com/user/VispTeam">YouTube channel</a> gives an overview of the applications that could be tackled.
+ViSP is a cross-platform library (Linux, Windows, MacOS, iOS, Android) that allows prototyping and developing applications using visual tracking and visual servoing technics at the heart of the researches done now by Inria <a href="http://team.inria.fr/rainbow">Rainbow team</a> and before 2018 by <a href="http://team.inria.fr/lagadic">Lagadic team</a>. ViSP is able to compute control laws that can be applied to robotic systems. It provides a set of visual features that can be tracked using real time image processing or computer vision algorithms. ViSP also provides simulation capabilities. ViSP can be useful in robotics, computer vision, augmented reality and computer animation. Our <a href="https://www.youtube.com/user/VispTeam">YouTube channel</a> gives an overview of the applications that could be tackled.
 
 #### Citing ViSP
 Please cite ViSP in your publications if it helps your research:
@@ -58,12 +58,12 @@ To cite the generic model-based tracker:
 ```
 
 #### Resources
-- Homepage: https://visp.inria.fr
-- Wiki: https://github.com/lagadic/visp/wiki
-- Code documentation: https://visp-doc.inria.fr/doxygen/visp-daily
-- Q&A forum: https://github.com/lagadic/visp/discussions
-- Issue tracking: https://github.com/lagadic/visp/issues
-- YouTube: https://www.youtube.com/user/VispTeam
+- Homepage: https://visp.inria.fr/
+- Wiki: https://github.com/lagadic/visp/wiki/
+- Code documentation: https://visp-doc.inria.fr/doxygen/visp-daily/
+- Q&A forum: https://github.com/lagadic/visp/discussions/
+- Issue tracking: https://github.com/lagadic/visp/issues/
+- YouTube: https://www.youtube.com/user/VispTeam/
 
 #### Contributing
 
