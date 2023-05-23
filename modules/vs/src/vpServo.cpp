@@ -31,12 +31,7 @@
  * Description:
  * Visual servoing control law.
  *
- * Authors:
- * Eric Marchand
- * Nicolas Mansard
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/vs/vpServo.h>
 
@@ -71,12 +66,12 @@
 */
 vpServo::vpServo()
   : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(vpServo::NONE), rankJ1(0),
-    featureList(), desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1),
-    interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false), cVf(), init_cVf(false),
-    fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false), errorComputed(false),
-    interactionMatrixComputed(false), dim_task(0), taskWasKilled(false), forceInteractionMatrixComputation(false),
-    WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial(), iscJcIdentity(true), cJc(6, 6), m_first_iteration(true),
-    m_pseudo_inverse_threshold(1e-6)
+  featureList(), desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1),
+  interactionMatrixType(DESIRED), inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false), cVf(), init_cVf(false),
+  fVe(), init_fVe(false), eJe(), init_eJe(false), fJe(), init_fJe(false), errorComputed(false),
+  interactionMatrixComputed(false), dim_task(0), taskWasKilled(false), forceInteractionMatrixComputation(false),
+  WpW(), I_WpW(), P(), sv(), mu(4.), e1_initial(), iscJcIdentity(true), cJc(6, 6), m_first_iteration(true),
+  m_pseudo_inverse_threshold(1e-6)
 {
   cJc.eye();
 }
@@ -97,11 +92,11 @@ vpServo::vpServo()
  */
 vpServo::vpServo(vpServoType servo_type)
   : L(), error(), J1(), J1p(), s(), sStar(), e1(), e(), q_dot(), v(), servoType(servo_type), rankJ1(0), featureList(),
-    desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1), interactionMatrixType(DESIRED),
-    inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false), cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(),
-    init_eJe(false), fJe(), init_fJe(false), errorComputed(false), interactionMatrixComputed(false), dim_task(0),
-    taskWasKilled(false), forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4), e1_initial(),
-    iscJcIdentity(true), cJc(6, 6), m_first_iteration(true)
+  desiredFeatureList(), featureSelectionList(), lambda(), signInteractionMatrix(1), interactionMatrixType(DESIRED),
+  inversionType(PSEUDO_INVERSE), cVe(), init_cVe(false), cVf(), init_cVf(false), fVe(), init_fVe(false), eJe(),
+  init_eJe(false), fJe(), init_fJe(false), errorComputed(false), interactionMatrixComputed(false), dim_task(0),
+  taskWasKilled(false), forceInteractionMatrixComputation(false), WpW(), I_WpW(), P(), sv(), mu(4), e1_initial(),
+  iscJcIdentity(true), cJc(6, 6), m_first_iteration(true)
 {
   cJc.eye();
 }
@@ -119,14 +114,14 @@ vpServo::~vpServo() { kill(); }
   Initialize the servo with the following settings:
 
   - No control law is specified. The user has to call setServo() to specify
-  the control law.
+    the control law.
   - In the control law, the interaction matrix \f${\widehat {\bf L}}_e \f$ is
-  computed with the desired features \f${\bf s}^*\f$. Using
-  setInteractionMatrixType() you can also compute the interaction matrix with
-  the current visual features, or from the mean \f$\left({\widehat {\bf L}}_s
-  + {\widehat {\bf L}}_{s^*}\right)/2\f$.
+    computed with the desired features \f${\bf s}^*\f$. Using
+    setInteractionMatrixType() you can also compute the interaction matrix with
+    the current visual features, or from the mean \f$\left({\widehat {\bf L}}_s
+    + {\widehat {\bf L}}_{s^*}\right)/2\f$.
   - In the control law the pseudo inverse will be used. The method
-  setInteractionMatrixType() allows to use the transpose instead.
+    setInteractionMatrixType() allows to use the transpose instead.
 
 */
 void vpServo::init()
@@ -283,7 +278,8 @@ void vpServo::setCameraDoF(const vpColVector &dof)
     for (unsigned int i = 0; i < 6; i++) {
       if (std::fabs(dof[i]) > std::numeric_limits<double>::epsilon()) {
         cJc[i][i] = 1.0;
-      } else {
+      }
+      else {
         cJc[i][i] = 0.0;
         iscJcIdentity = false;
       }
@@ -339,14 +335,14 @@ void vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &
     std::list<unsigned int>::const_iterator it_select;
 
     for (it_s = featureList.begin(), it_select = featureSelectionList.begin(); it_s != featureList.end();
-         ++it_s, ++it_select) {
+      ++it_s, ++it_select) {
       os << "";
       (*it_s)->print((*it_select));
     }
 
     os << "List of desired visual features : s*" << std::endl;
     for (it_s_star = desiredFeatureList.begin(), it_select = featureSelectionList.begin();
-         it_s_star != desiredFeatureList.end(); ++it_s_star, ++it_select) {
+      it_s_star != desiredFeatureList.end(); ++it_s_star, ++it_select) {
       os << "";
       (*it_s_star)->print((*it_select));
     }
@@ -354,14 +350,16 @@ void vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &
     os << "Interaction Matrix Ls " << std::endl;
     if (interactionMatrixComputed) {
       os << L << std::endl;
-    } else {
+    }
+    else {
       os << "not yet computed " << std::endl;
     }
 
     os << "Error vector (s-s*) " << std::endl;
     if (errorComputed) {
       os << error.t() << std::endl;
-    } else {
+    }
+    else {
       os << "not yet computed " << std::endl;
     }
 
@@ -407,7 +405,7 @@ void vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &
     std::list<unsigned int>::const_iterator it_select;
 
     for (it_s = featureList.begin(), it_select = featureSelectionList.begin(); it_s != featureList.end();
-         ++it_s, ++it_select) {
+      ++it_s, ++it_select) {
       os << "";
       (*it_s)->print((*it_select));
     }
@@ -420,7 +418,7 @@ void vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &
     std::list<unsigned int>::const_iterator it_select;
 
     for (it_s_star = desiredFeatureList.begin(), it_select = featureSelectionList.begin();
-         it_s_star != desiredFeatureList.end(); ++it_s_star, ++it_select) {
+      it_s_star != desiredFeatureList.end(); ++it_s_star, ++it_select) {
       os << "";
       (*it_s_star)->print((*it_select));
     }
@@ -434,7 +432,8 @@ void vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &
     os << "Interaction Matrix Ls " << std::endl;
     if (interactionMatrixComputed) {
       os << L << std::endl;
-    } else {
+    }
+    else {
       os << "not yet computed " << std::endl;
     }
     break;
@@ -447,7 +446,8 @@ void vpServo::print(const vpServo::vpServoPrintType displayLevel, std::ostream &
     os << "Error vector (s-s*) " << std::endl;
     if (errorComputed) {
       os << error.t() << std::endl;
-    } else {
+    }
+    else {
       os << "not yet computed " << std::endl;
     }
 
@@ -554,7 +554,7 @@ unsigned int vpServo::getDimension() const
   std::list<unsigned int>::const_iterator it_select;
 
   for (it_s = featureList.begin(), it_select = featureSelectionList.begin(); it_s != featureList.end();
-       ++it_s, ++it_select) {
+    ++it_s, ++it_select) {
     dim += (*it_s)->getDimension(*it_select);
   }
 
@@ -562,14 +562,14 @@ unsigned int vpServo::getDimension() const
 }
 
 void vpServo::setInteractionMatrixType(const vpServoIteractionMatrixType &interactionMatrix_type,
-                                       const vpServoInversionType &interactionMatrixInversion)
+  const vpServoInversionType &interactionMatrixInversion)
 {
   this->interactionMatrixType = interactionMatrix_type;
   this->inversionType = interactionMatrixInversion;
 }
 
 static void computeInteractionMatrixFromList(const std::list<vpBasicFeature *> &featureList,
-                                             const std::list<unsigned int> &featureSelectionList, vpMatrix &L)
+  const std::list<unsigned int> &featureSelectionList, vpMatrix &L)
 {
   if (featureList.empty()) {
     vpERROR_TRACE("feature list empty, cannot compute Ls");
@@ -586,8 +586,8 @@ static void computeInteractionMatrixFromList(const std::list<vpBasicFeature *> &
    * numbers and linear in allocation size.
    */
 
-  /* First assumption: matrix dimensions have not changed. If 0, they are
-   * initialized to dim 1.*/
+   /* First assumption: matrix dimensions have not changed. If 0, they are
+    * initialized to dim 1.*/
   unsigned int rowL = L.getRows();
   const unsigned int colL = 6;
   if (0 == rowL) {
@@ -666,7 +666,8 @@ vpMatrix vpServo::computeInteractionMatrix()
           interactionMatrixComputed = true;
         }
 
-      } catch (...) {
+      }
+      catch (...) {
         throw;
       }
     } break;
@@ -675,7 +676,8 @@ vpMatrix vpServo::computeInteractionMatrix()
       try {
         computeInteractionMatrixFromList(this->featureList, this->featureSelectionList, L);
         computeInteractionMatrixFromList(this->desiredFeatureList, this->featureSelectionList, Lstar);
-      } catch (...) {
+      }
+      catch (...) {
         throw;
       }
       L = (L + Lstar) / 2;
@@ -689,7 +691,8 @@ vpMatrix vpServo::computeInteractionMatrix()
       break;
     }
 
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
   return L;
@@ -730,8 +733,8 @@ vpColVector vpServo::computeError()
      * be different.
      */
 
-    /* First assumption: vector dimensions have not changed. If 0, they are
-     * initialized to dim 1.*/
+     /* First assumption: vector dimensions have not changed. If 0, they are
+      * initialized to dim 1.*/
     unsigned int dimError = error.getRows();
     unsigned int dimS = s.getRows();
     unsigned int dimSStar = sStar.getRows();
@@ -765,7 +768,7 @@ vpColVector vpServo::computeError()
     std::list<unsigned int>::const_iterator it_select;
 
     for (it_s = featureList.begin(), it_s_star = desiredFeatureList.begin(), it_select = featureSelectionList.begin();
-         it_s != featureList.end(); ++it_s, ++it_s_star, ++it_select) {
+      it_s != featureList.end(); ++it_s, ++it_s_star, ++it_select) {
       current_s = (*it_s);
       desired_s = (*it_s_star);
       unsigned int select = (*it_select);
@@ -813,7 +816,8 @@ vpColVector vpServo::computeError()
     /* Final modifications. */
     dim_task = error.getRows();
     errorComputed = true;
-  } catch (...) {
+  }
+  catch (...) {
     throw;
   }
   return error;
@@ -932,8 +936,8 @@ vpColVector vpServo::computeControlLaw()
     if (testInitialization() == false) {
       vpERROR_TRACE("All the matrices are not correctly initialized");
       throw(vpServoException(vpServoException::servoError, "Cannot compute control law. "
-                                                           "All the matrices are not correctly"
-                                                           "initialized."));
+        "All the matrices are not correctly"
+        "initialized."));
     }
   }
   if (testUpdated() == false) {
@@ -992,7 +996,8 @@ vpColVector vpServo::computeControlLaw()
     rankJ1 = J1.pseudoInverse(J1p, sv, m_pseudo_inverse_threshold, imJ1, imJ1t);
 
     imageComputed = true;
-  } else
+  }
+  else
     J1p = J1.t();
 
   if (rankJ1 == J1.getCols()) {
@@ -1002,7 +1007,8 @@ vpColVector vpServo::computeControlLaw()
     e1 = J1p * error; // primary task
 
     WpW.eye(J1.getCols(), J1.getCols());
-  } else {
+  }
+  else {
     if (imageComputed != true) {
       vpMatrix Jtmp;
       // image of J1 is computed to allows the computation
@@ -1076,8 +1082,8 @@ vpColVector vpServo::computeControlLaw(double t)
     if (testInitialization() == false) {
       vpERROR_TRACE("All the matrices are not correctly initialized");
       throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
-                                                           "All the matrices are not correctly"
-                                                           "initialized"));
+        "All the matrices are not correctly"
+        "initialized"));
     }
   }
   if (testUpdated() == false) {
@@ -1133,7 +1139,8 @@ vpColVector vpServo::computeControlLaw(double t)
     rankJ1 = J1.pseudoInverse(J1p, sv, m_pseudo_inverse_threshold, imJ1, imJ1t);
 
     imageComputed = true;
-  } else
+  }
+  else
     J1p = J1.t();
 
   if (rankJ1 == J1.getCols()) {
@@ -1143,7 +1150,8 @@ vpColVector vpServo::computeControlLaw(double t)
     e1 = J1p * error; // primary task
 
     WpW.eye(J1.getCols());
-  } else {
+  }
+  else {
     if (imageComputed != true) {
       vpMatrix Jtmp;
       // image of J1 is computed to allows the computation
@@ -1229,8 +1237,8 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
     if (testInitialization() == false) {
       vpERROR_TRACE("All the matrices are not correctly initialized");
       throw(vpServoException(vpServoException::servoError, "Cannot compute control law "
-                                                           "All the matrices are not correctly"
-                                                           "initialized"));
+        "All the matrices are not correctly"
+        "initialized"));
     }
   }
   if (testUpdated() == false) {
@@ -1286,7 +1294,8 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
     rankJ1 = J1.pseudoInverse(J1p, sv, m_pseudo_inverse_threshold, imJ1, imJ1t);
 
     imageComputed = true;
-  } else
+  }
+  else
     J1p = J1.t();
 
   if (rankJ1 == J1.getCols()) {
@@ -1296,7 +1305,8 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
     e1 = J1p * error; // primary task
 
     WpW.eye(J1.getCols());
-  } else {
+  }
+  else {
     if (imageComputed != true) {
       vpMatrix Jtmp;
       // image of J1 is computed to allows the computation
@@ -1339,7 +1349,7 @@ vpColVector vpServo::computeControlLaw(double t, const vpColVector &e_dot_init)
 }
 
 void vpServo::computeProjectionOperators(const vpMatrix &J1_, const vpMatrix &I_, const vpMatrix &I_WpW_,
-                                         const vpColVector &error_, vpMatrix &P_) const
+  const vpColVector &error_, vpMatrix &P_) const
 {
   // Initialization
   unsigned int n = J1_.getCols();
@@ -1449,14 +1459,15 @@ vpColVector vpServo::secondaryTask(const vpColVector &de2dt, const bool &useLarg
     if (rankJ1 == J1.getCols()) {
       vpERROR_TRACE("no degree of freedom is free, cannot use secondary task");
       throw(vpServoException(vpServoException::noDofFree, "no degree of freedom is free, cannot use secondary task"));
-    } else {
+    }
+    else {
 #if 0
       // computed in computeControlLaw()
-      vpMatrix I ;
+      vpMatrix I;
 
-      I.resize(J1.getCols(),J1.getCols()) ;
-      I.setIdentity() ;
-      I_WpW = (I - WpW) ;
+      I.resize(J1.getCols(), J1.getCols());
+      I.setIdentity();
+      I_WpW = (I - WpW);
 #endif
       //    std::cout << "I-WpW" << std::endl << I_WpW <<std::endl ;
       sec = I_WpW * de2dt;
@@ -1548,7 +1559,7 @@ vpColVector vpServo::secondaryTask(const vpColVector &de2dt, const bool &useLarg
   \sa computeControlLaw()
 */
 vpColVector vpServo::secondaryTask(const vpColVector &e2, const vpColVector &de2dt,
-                                   const bool &useLargeProjectionOperator)
+  const bool &useLargeProjectionOperator)
 {
   vpColVector sec;
 
@@ -1556,23 +1567,25 @@ vpColVector vpServo::secondaryTask(const vpColVector &e2, const vpColVector &de2
     if (rankJ1 == J1.getCols()) {
       vpERROR_TRACE("no degree of freedom is free, cannot use secondary task");
       throw(vpServoException(vpServoException::noDofFree, "no degree of freedom is free, cannot use secondary task"));
-    } else {
+    }
+    else {
 
 #if 0
       // computed in computeControlLaw()
-      vpMatrix I ;
+      vpMatrix I;
 
-      I.resize(J1.getCols(),J1.getCols()) ;
-      I.setIdentity() ;
+      I.resize(J1.getCols(), J1.getCols());
+      I.setIdentity();
 
-      I_WpW = (I - WpW) ;
+      I_WpW = (I - WpW);
 #endif
 
       // To be coherent with the primary task the gain must be the same
       // between primary and secondary task.
       sec = -lambda(e1) * I_WpW * e2 + I_WpW * de2dt;
     }
-  } else {
+  }
+  else {
     computeProjectionOperators(J1, I, I_WpW, error, P);
 
     sec = -lambda(e1) * P * e2 + P * de2dt;
@@ -1626,24 +1639,24 @@ vpColVector vpServo::secondaryTask(const vpColVector &e2, const vpColVector &de2
 
  */
 vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq,
-                                                      const vpColVector &qmin, const vpColVector &qmax,
-                                                      const double &rho, const double &rho1, const double &lambda_tune)
+  const vpColVector &qmin, const vpColVector &qmax,
+  const double &rho, const double &rho1, const double &lambda_tune)
 {
   unsigned int const n = J1.getCols();
 
   if (qmin.size() != n || qmax.size() != n) {
     std::stringstream msg;
     msg << "Dimension vector qmin (" << qmin.size()
-        << ") or qmax () does not correspond to the number of jacobian "
-           "columns";
+      << ") or qmax () does not correspond to the number of jacobian "
+      "columns";
     msg << "qmin size: " << qmin.size() << std::endl;
     throw(vpServoException(vpServoException::dimensionError, msg.str()));
   }
   if (q.size() != n || dq.size() != n) {
     vpERROR_TRACE("Dimension vector q or dq does not correspont to the "
-                  "number of jacobian columns");
+      "number of jacobian columns");
     throw(vpServoException(vpServoException::dimensionError, "Dimension vector q or dq does not correspont to "
-                                                             "the number of jacobian columns"));
+      "the number of jacobian columns"));
   }
 
   double lambda_l = 0.0;
@@ -1686,7 +1699,7 @@ vpColVector vpServo::secondaryTaskJointLimitAvoidance(const vpColVector &q, cons
       double b = (vpMath::abs(dq[i])) / (vpMath::abs(Pg_i[i]));
 
       if (b < 1.) // If the ratio b is big we don't activate the joint
-                  // avoidance limit for the joint.
+        // avoidance limit for the joint.
       {
         if (q[i] < q_l1_min[i] || q[i] > q_l1_max[i])
           q2_i = -(1 + lambda_tune) * b * Pg_i;
