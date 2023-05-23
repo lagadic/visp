@@ -164,7 +164,7 @@ void vpServo::init()
   Task destruction. Kill the current and desired visual feature lists.
 
   This function is called in the destructor. Since ViSP > 3.3.0 it is no more
-  mandatory to call explicitely kill().
+  mandatory to call explicitly kill().
 
   \code
   vpServo task ;
