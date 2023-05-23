@@ -592,7 +592,7 @@ public:
   //! Sign of the interaction +/- 1 (1 for eye-in-hand, -1 for
   //! eye-to-hand configuration)
   int signInteractionMatrix;
-  //! Type of the interaction matrox (current, mean, desired, user)
+  //! Type of the interaction matrix (current, mean, desired, user)
   vpServoIteractionMatrixType interactionMatrixType;
   //! Indicates if the transpose or the pseudo inverse of the
   //! interaction matrix should be used to compute the task.
