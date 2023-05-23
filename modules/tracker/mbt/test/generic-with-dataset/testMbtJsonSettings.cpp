@@ -51,10 +51,13 @@ using json = nlohmann::json;
 
 vpMbGenericTracker baseTrackerConstructor() {
   const std::vector<std::string> names = {"C1", "C2"};
-  const std::vector<int> featureTypes = {
-    vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER,
-    vpMbGenericTracker::DEPTH_DENSE_TRACKER | vpMbGenericTracker::DEPTH_NORMAL_TRACKER
-  };
+  std::vector<int> featureTypes;
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+  featureTypes.push_back(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
+#else
+  featureTypes.push_back(vpMbGenericTracker::EDGE_TRACKER);
+#endif
+  featureTypes.push_back(vpMbGenericTracker::DEPTH_DENSE_TRACKER | vpMbGenericTracker::DEPTH_NORMAL_TRACKER);
   vpCameraParameters cam1;
   cam1.initPersProjWithoutDistortion(300, 300, 200, 200);
   vpCameraParameters cam2;
@@ -182,7 +185,8 @@ SCENARIO("MBT JSON Serialization", "[json]") {
           );
         }
       }
-      
+
+#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
       THEN("Reloaded KLT tracker parameters should be the same") {
         std::map<std::string, vpKltOpencv> oldvpKlt, newvpKlt;
         t1.getKltOpencv(oldvpKlt);
@@ -204,6 +208,7 @@ SCENARIO("MBT JSON Serialization", "[json]") {
           );
         }
       }
+#endif
 
       THEN("Clipping properties should be the same") {
         vpMbGenericTracker t2 = baseTrackerConstructor();
