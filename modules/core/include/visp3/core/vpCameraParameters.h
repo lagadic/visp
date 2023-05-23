@@ -169,13 +169,13 @@
   the conversion from normalized coordinates into pixel is implemented
   in vpMeterPixelConversion.
 
-  From a practical point of view, two kinds of camera modelisation are
+  From a practical point of view, two kinds of camera modelization are
   implemented in this class:
 
   <b>1.1.1. Camera parameters for a perspective projection without distortion
   model</b>
 
-  In this modelisation, only \f$u_0,v_0,p_x,p_y\f$ parameters are considered.
+  In this modelization, only \f$u_0,v_0,p_x,p_y\f$ parameters are considered.
 
   Initialization of such a model can be done using:
   - initPersProjWithoutDistortion() that allows to set \f$u_0,v_0,p_x,p_y\f$
@@ -186,7 +186,7 @@
   <b>1.1.2. Camera parameters for a perspective projection with distortion
   model</b>
 
-  In this modelisation, all the parameters \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$
+  In this modelization, all the parameters \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$
   are considered. Initialization of such a model can be done using:
   - initPersProjWithDistortion() that allows to set
   \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$ parameters;
