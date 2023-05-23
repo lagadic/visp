@@ -31,19 +31,14 @@
  * Description:
  * Visual servoing control law.
  *
- * Authors:
- * Eric Marchand
- * Nicolas Mansard
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpServo_H
 #define vpServo_H
 
 /*!
   \file vpServo.h
-  \brief  Class required to compute the visual servoing control law
+  \brief  Class required to compute the visual servoing control law.
 */
 
 #include <list>
@@ -79,66 +74,66 @@
   the current one obtained by pose estimation (see vpPose class).
 
   \code
-#include <visp3/core/vpColVector.h>
-#include <visp3/core/vpHomogeneousMatrix.h>
-#include <visp3/core/vpMatrix.h>
-#include <visp3/visual_features/vpFeatureThetaU.h>
-#include <visp3/visual_features/vpFeatureTranslation.h>
-#include <visp3/vs/vpServo.h>
+  #include <visp3/core/vpColVector.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpMatrix.h>
+  #include <visp3/visual_features/vpFeatureThetaU.h>
+  #include <visp3/visual_features/vpFeatureTranslation.h>
+  #include <visp3/vs/vpServo.h>
 
-int main()
-{
-  // Creation of an homogeneous matrix that represent the displacement
-  // the camera has to achieve to move from the desired camera frame
-  // and the current one
-  vpHomogeneousMatrix cdMc;
+  int main()
+  {
+    // Creation of an homogeneous matrix that represent the displacement
+    // the camera has to achieve to move from the desired camera frame
+    // and the current one
+    vpHomogeneousMatrix cdMc;
 
-  // ... cdMc is here the result of a pose estimation
-
-  // Creation of the current visual feature s = (c*_t_c, ThetaU)
-  vpFeatureTranslation s_t(vpFeatureTranslation::cdMc);
-  vpFeatureThetaU s_tu(vpFeatureThetaU::cdRc);
-  // Set the initial values of the current visual feature s = (c*_t_c, ThetaU)
-  s_t.buildFrom(cdMc);
-  s_tu.buildFrom(cdMc);
-
-  // Build the desired visual feature s* = (0,0)
-  vpFeatureTranslation s_star_t(vpFeatureTranslation::cdMc); // Default initialization to zero
-  vpFeatureThetaU s_star_tu(vpFeatureThetaU::cdRc); // Default initialization to zero
-
-  vpColVector v; // Camera velocity
-  double error;  // Task error
-
-  // Creation of the visual servo task.
-  vpServo task;
-
-  // Visual servo task initialization
-  // - Camera is monted on the robot end-effector and velocities are
-  //   computed in the camera frame
-  task.setServo(vpServo::EYEINHAND_CAMERA);
-  // - Interaction matrix is computed with the current visual features s
-  task.setInteractionMatrixType(vpServo::CURRENT);
-  // - Set the contant gain to 1
-  task.setLambda(1);
-  // - Add current and desired translation feature
-  task.addFeature(s_t, s_star_t);
-  // - Add current and desired ThetaU feature for the rotation
-  task.addFeature(s_tu, s_star_tu);
-
-  // Visual servoing loop. The objective is here to update the visual
-  // features s = (c*_t_c, ThetaU), compute the control law and apply
-  // it to the robot
-  do {
     // ... cdMc is here the result of a pose estimation
 
-    // Update the current visual feature s
-    s_t.buildFrom(cdMc);  // Update translation visual feature
-    s_tu.buildFrom(cdMc); // Update ThetaU visual feature
+    // Creation of the current visual feature s = (c*_t_c, ThetaU)
+    vpFeatureTranslation s_t(vpFeatureTranslation::cdMc);
+    vpFeatureThetaU s_tu(vpFeatureThetaU::cdRc);
+    // Set the initial values of the current visual feature s = (c*_t_c, ThetaU)
+    s_t.buildFrom(cdMc);
+    s_tu.buildFrom(cdMc);
 
-    v = task.computeControlLaw(); // Compute camera velocity skew
-    error =  ( task.getError() ).sumSquare(); // error = s^2 - s_star^2
-  } while (error > 0.0001); // Stop the task when current and desired visual features are close
-}
+    // Build the desired visual feature s* = (0,0)
+    vpFeatureTranslation s_star_t(vpFeatureTranslation::cdMc); // Default initialization to zero
+    vpFeatureThetaU s_star_tu(vpFeatureThetaU::cdRc); // Default initialization to zero
+
+    vpColVector v; // Camera velocity
+    double error;  // Task error
+
+    // Creation of the visual servo task.
+    vpServo task;
+
+    // Visual servo task initialization
+    // - Camera is monted on the robot end-effector and velocities are
+    //   computed in the camera frame
+    task.setServo(vpServo::EYEINHAND_CAMERA);
+    // - Interaction matrix is computed with the current visual features s
+    task.setInteractionMatrixType(vpServo::CURRENT);
+    // - Set the contant gain to 1
+    task.setLambda(1);
+    // - Add current and desired translation feature
+    task.addFeature(s_t, s_star_t);
+    // - Add current and desired ThetaU feature for the rotation
+    task.addFeature(s_tu, s_star_tu);
+
+    // Visual servoing loop. The objective is here to update the visual
+    // features s = (c*_t_c, ThetaU), compute the control law and apply
+    // it to the robot
+    do {
+      // ... cdMc is here the result of a pose estimation
+
+      // Update the current visual feature s
+      s_t.buildFrom(cdMc);  // Update translation visual feature
+      s_tu.buildFrom(cdMc); // Update ThetaU visual feature
+
+      v = task.computeControlLaw(); // Compute camera velocity skew
+      error =  ( task.getError() ).sumSquare(); // error = s^2 - s_star^2
+    } while (error > 0.0001); // Stop the task when current and desired visual features are close
+  }
   \endcode
 
 */
@@ -149,7 +144,8 @@ class VISP_EXPORT vpServo
     Choice of the visual servoing control law
   */
 public:
-  typedef enum {
+  typedef enum
+  {
     NONE,
     /*!< No control law is specified. */
     EYEINHAND_CAMERA,
@@ -178,7 +174,8 @@ public:
       computed. */
   } vpServoType;
 
-  typedef enum {
+  typedef enum
+  {
     CURRENT,
     /*!< In the control law (see vpServo::vpServoType), uses the interaction
        matrix \f${\widehat {\bf L}}_s \f$computed using the current features
@@ -195,15 +192,16 @@ public:
     /*!< In the control law (see vpServo::vpServoType), uses an interaction
        matrix set by the user. */
   } vpServoIteractionMatrixType;
-
-  typedef enum {
+  typedef enum
+  {
     TRANSPOSE,     /*!< In the control law (see vpServo::vpServoType), uses the
                       transpose instead of the pseudo inverse. */
     PSEUDO_INVERSE /*!< In the control law (see vpServo::vpServoType), uses
                       the pseudo inverse. */
   } vpServoInversionType;
 
-  typedef enum {
+  typedef enum
+  {
     ALL,                /*!< Print all the task information. */
     CONTROLLER,         /*!< Print the type of controller law. */
     ERROR_VECTOR,       /*!< Print the error vector \f$\bf e = (s-s^*)\f$. */
@@ -265,31 +263,30 @@ public:
   // Return the task dimension.
   unsigned int getDimension() const;
   /*!
-   Return the error \f$\bf e = (s - s^*)\f$ between the current set of visual
-features \f$\bf s\f$ and the desired set of visual features \f$\bf s^*\f$. The
-error vector is updated after a call of computeError() or computeControlLaw().
-\code
-  vpServo task;
-  ...
-  vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
-  vpColVector e = task.getError(); // Get the error vector
-\endcode
+    Return the error \f$\bf e = (s - s^*)\f$ between the current set of visual
+    features \f$\bf s\f$ and the desired set of visual features \f$\bf s^*\f$. The
+    error vector is updated after a call of computeError() or computeControlLaw().
+    \code
+    vpServo task;
+    ...
+    vpColVector v = task.computeControlLaw(); // Compute the velocity corresponding to the visual servoing
+    vpColVector e = task.getError(); // Get the error vector
+    \endcode
    */
   inline vpColVector getError() const { return error; }
 
-  /*
-     Return the interaction matrix \f$L\f$ used to compute the task jacobian
- \f$J_1\f$. The interaction matrix is updated after a call to
- computeInteractionMatrix() or computeControlLaw().
+  /*!
+    Return the interaction matrix \f$L\f$ used to compute the task jacobian
+    \f$J_1\f$. The interaction matrix is updated after a call to
+    computeInteractionMatrix() or computeControlLaw().
 
- \code
-   vpServo task;
-   ...
-   vpColVector v = task.computeControlLaw();    // Compute the velocity
- corresponding to the visual servoing vpMatrix    L =
- task.getInteractionMatrix(); // Get the interaction matrix used to compute v
- \endcode
-     \sa getTaskJacobian()
+    \code
+    vpServo task;
+    ...
+    vpColVector v = task.computeControlLaw();   // Compute the velocity corresponding to the visual servoing vpMatrix
+    L = task.getInteractionMatrix();            // Get the interaction matrix used to compute v
+    \endcode
+    \sa getTaskJacobian()
    */
   inline vpMatrix getInteractionMatrix() const { return L; }
 
@@ -306,10 +303,10 @@ error vector is updated after a call of computeError() or computeControlLaw().
   unsigned int getTaskRank() const;
 
   /*!
-     Get task singular values.
+    Get task singular values.
 
-     \return Singular values that relies on the task jacobian pseudo inverse.
-     */
+    \return Singular values that relies on the task jacobian pseudo inverse.
+  */
   inline vpColVector getTaskSingularValues() const { return sv; }
 
   vpMatrix getWpW() const;
@@ -352,11 +349,11 @@ error vector is updated after a call of computeError() or computeControlLaw().
   vpColVector secondaryTask(const vpColVector &de2dt, const bool &useLargeProjectionOperator = false);
   // Add a secondary task.
   vpColVector secondaryTask(const vpColVector &e2, const vpColVector &de2dt,
-                            const bool &useLargeProjectionOperator = false);
+    const bool &useLargeProjectionOperator = false);
   // Add a secondary task to avoid the joint limit.
   vpColVector secondaryTaskJointLimitAvoidance(const vpColVector &q, const vpColVector &dq, const vpColVector &jointMin,
-                                               const vpColVector &jointMax, const double &rho = 0.1,
-                                               const double &rho1 = 0.3, const double &lambda_tune = 0.7);
+    const vpColVector &jointMax, const double &rho = 0.1,
+    const double &rho1 = 0.3, const double &lambda_tune = 0.7);
 
   void setCameraDoF(const vpColVector &dof);
 
@@ -383,13 +380,15 @@ error vector is updated after a call of computeError() or computeControlLaw().
 
   /*!
     Set the interaction matrix type (current, desired, mean or user defined)
-    and how its inverse is computed. \param interactionMatrixType : The
-    interaction matrix type. See vpServo::vpServoIteractionMatrixType for more
-    details. \param interactionMatrixInversion : How is the inverse computed.
-    See vpServo::vpServoInversionType for more details.
-    */
+    and how its inverse is computed.
+
+    \param interactionMatrixType : The interaction matrix type. See vpServo::vpServoIteractionMatrixType for more
+    details.
+
+    \param interactionMatrixInversion : How is the inverse computed. See vpServo::vpServoInversionType for more details.
+  */
   void setInteractionMatrixType(const vpServoIteractionMatrixType &interactionMatrixType,
-                                const vpServoInversionType &interactionMatrixInversion = PSEUDO_INVERSE);
+    const vpServoInversionType &interactionMatrixInversion = PSEUDO_INVERSE);
 
   /*!
     Set the gain \f$\lambda\f$ used in the control law (see
@@ -400,7 +399,7 @@ error vector is updated after a call of computeError() or computeControlLaw().
 
     \param c : Constant gain. Values are in general between 0.1 and 1. Higher
     is the gain, higher are the velocities that may be applied to the robot.
-   */
+  */
   void setLambda(double c) { lambda.initFromConstant(c); }
 
   /*!
@@ -412,12 +411,11 @@ error vector is updated after a call of computeError() or computeControlLaw().
     the convergence time.
 
     \param gain_at_zero : the expected gain when \f$x=0\f$: \f$\lambda(0)\f$.
-    \param gain_at_infinity : the expected gain when \f$x=\infty\f$:
-    \f$\lambda(\infty)\f$. \param slope_at_zero : the expected slope of
-    \f$\lambda(x)\f$ when \f$x=0\f$: \f${\dot \lambda}(0)\f$.
+    \param gain_at_infinity : the expected gain when \f$x=\infty\f$: \f$\lambda(\infty)\f$.
+    \param slope_at_zero : the expected slope of \f$\lambda(x)\f$ when \f$x=0\f$: \f${\dot \lambda}(0)\f$.
 
     For more details on these parameters see vpAdaptiveGain class.
-   */
+  */
   void setLambda(double gain_at_zero, double gain_at_infinity, double slope_at_zero)
   {
     lambda.initStandard(gain_at_zero, gain_at_infinity, slope_at_zero);
@@ -428,8 +426,10 @@ error vector is updated after a call of computeError() or computeControlLaw().
     computeControlLaw() depend on the infinity norm of the task Jacobian.
 
     The usage of an adaptive gain rather than a constant gain allows to reduce
-    the convergence time. \sa vpAdaptiveGain
-   */
+    the convergence time.
+
+    \sa vpAdaptiveGain
+  */
   void setLambda(const vpAdaptiveGain &l) { lambda = l; }
   /*!
     Set the value of the parameter \f$\mu\f$ used to ensure the continuity of
@@ -444,7 +444,7 @@ error vector is updated after a call of computeError() or computeControlLaw().
   /*!
     Set the velocity twist matrix used to transform a velocity skew vector
     from end-effector frame into the camera frame.
-   */
+  */
   void set_cVe(const vpVelocityTwistMatrix &cVe_)
   {
     this->cVe = cVe_;
@@ -453,7 +453,7 @@ error vector is updated after a call of computeError() or computeControlLaw().
   /*!
     Set the velocity twist matrix used to transform a velocity skew vector
     from end-effector frame into the camera frame.
-   */
+  */
   void set_cVe(const vpHomogeneousMatrix &cMe)
   {
     cVe.buildFrom(cMe);
@@ -463,7 +463,7 @@ error vector is updated after a call of computeError() or computeControlLaw().
     Set the velocity twist matrix used to transform a velocity skew vector
     from robot fixed frame (also called world or base frame) into the camera
     frame.
-   */
+  */
   void set_cVf(const vpVelocityTwistMatrix &cVf_)
   {
     this->cVf = cVf_;
@@ -473,7 +473,7 @@ error vector is updated after a call of computeError() or computeControlLaw().
     Set the velocity twist matrix used to transform a velocity skew vector
     from robot fixed frame (also called world or base frame) into the camera
     frame.
-   */
+  */
   void set_cVf(const vpHomogeneousMatrix &cMf)
   {
     cVf.buildFrom(cMf);
@@ -483,7 +483,7 @@ error vector is updated after a call of computeError() or computeControlLaw().
     Set the velocity twist matrix used to transform a velocity skew vector
     from robot end-effector frame into the fixed frame (also called world or
     base frame).
-   */
+  */
   void set_fVe(const vpVelocityTwistMatrix &fVe_)
   {
     this->fVe = fVe_;
@@ -493,7 +493,7 @@ error vector is updated after a call of computeError() or computeControlLaw().
     Set the velocity twist matrix used to transform a velocity skew vector
     from robot end-effector frame into the fixed frame (also called world or
     base frame).
-   */
+  */
   void set_fVe(const vpHomogeneousMatrix &fMe)
   {
     fVe.buildFrom(fMe);
@@ -502,7 +502,7 @@ error vector is updated after a call of computeError() or computeControlLaw().
 
   /*!
     Set the robot jacobian expressed in the end-effector frame.
-   */
+  */
   void set_eJe(const vpMatrix &eJe_)
   {
     this->eJe = eJe_;
@@ -511,7 +511,7 @@ error vector is updated after a call of computeError() or computeControlLaw().
   /*!
     Set the robot jacobian expressed in the robot fixed frame (also called
     world or base frame).
-   */
+  */
   void set_fJe(const vpMatrix &fJe_)
   {
     this->fJe = fJe_;
@@ -523,11 +523,11 @@ error vector is updated after a call of computeError() or computeControlLaw().
   /*!
     Test if all the initialization are correct. If true, the control law can
     be computed.
-    */
+  */
   bool testInitialization();
   /*!
     Test if all the update are correct. If true control law can be computed.
-    */
+  */
   bool testUpdated();
 
 protected:
@@ -536,9 +536,9 @@ protected:
 
   /*!
     Compute the classic projetion operator and the large projection operator.
-   */
+  */
   void computeProjectionOperators(const vpMatrix &J1_, const vpMatrix &I_, const vpMatrix &I_WpW_,
-                                  const vpColVector &error_, vpMatrix &P_) const;
+    const vpColVector &error_, vpMatrix &P_) const;
 
 public:
   //! Interaction matrix
