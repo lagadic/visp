@@ -104,8 +104,8 @@ just build or jump to \ref install_win10_msvc17_next. You can later come back to
 
 \subsection install_win10_msvc17_3rdparty Install 3rd parties
 
-ViSP is interfaced with several 3rd party libraries. The
-<a href="https://visp.inria.fr/software-architecture">complete list is provided here</a>.
+ViSP is interfaced with several 3rd party libraries.
+Follow the link to see the complete list of \ref supported-third-parties.
 We recommend first to install \ref install_win10_msvc17_3rdparty_opencv in the workspace.
 Then to use optimized matrix operations you may install \ref install_win10_msvc17_3rdparty_eigen.
 If you have an Intel Realsense depth camera you may also install \ref install_win10_msvc17_3rdparty_realsense.
@@ -447,6 +447,10 @@ C:\> exit
 \endverbatim
 - You have also to add the location of Vicon Datastream SDK libraries corresponding in the Path environment variable.
 Open the "Edit environment variable" UI, and modify Path to add a new line with `%VISP_WS%\Program Files\Vicon\DataStream SDK\Win64\CPP`.
+
+\subsubsection install_win10_msvc17_3rdparty_json JSON 3rd party
+
+To install JSON on windows, follow \ref install_win11_msvc17_3rdparty_json installation instructions.
 
 \subsection install_win10_msvc17_get_source Get ViSP source code
 

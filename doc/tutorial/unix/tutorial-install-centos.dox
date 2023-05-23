@@ -31,7 +31,7 @@ In this section, we give minimal instructions to build ViSP from source just to 
 
 - Install a small number of recommended 3rd parties
 \verbatim
-$ sudo yum install opencv-devel libX11-devel lapack-devel libv4l-devel libjpeg-devel libpng-devel
+$ sudo yum install opencv-devel libX11-devel lapack-devel libv4l-devel libjpeg-devel libpng-devel json-devel
 \endverbatim
 
 - Get ViSP source code
@@ -60,7 +60,7 @@ To have a trial, just jump to \ref install_centos_dataset before running some bi
 
 \subsection install_centos_3rdparty Install 3rd parties
 
-ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
+ViSP is interfaced with several 3rd party libraries. Follow the link to see the complete list of \ref supported-third-parties.
 
 \note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do not want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP. It is therefore possible to skip in a first time this section and start directly to \ref install_centos_quick. Later, if you realize that a third-party library is missing, you can still install it, go back to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build ViSP again as explained in \ref install_centos_tips_new_3rdparty.
 
@@ -68,15 +68,16 @@ ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.in
 
 We recommend to install the following:
 
-- OpenCV
-- libX11 to be able to open a window to display images
-- lapack and eigen to benefit from optimized mathematical capabilities
-- libdc1394 to grab images from firewire cameras
-- libv4l to grab images from usb or analogic cameras
+- `opencv` to get advanced image processing and computer vision features coming with ViSP
+- `libX11` to be able to open a window to display images
+- `lapack` and `eigen` to benefit from optimized mathematical capabilities
+- `libdc1394` to grab images from firewire cameras
+- `libv4l` to grab images from usb or analogic cameras
+- `nlohmann-json` to be able to parse json files
 
 Installation of recommended 3rd parties could be performed running:
 \verbatim
-$ sudo yum install opencv-devel libX11-devel lapack-devel libv4l-devel
+$ sudo yum install opencv-devel libX11-devel lapack-devel eigen3-devel libv4l-devel json-devel
 \endverbatim
 
 \subsubsection install_centos_3rdparty_other Other optional 3rd parties

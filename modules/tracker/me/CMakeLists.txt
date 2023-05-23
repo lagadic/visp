@@ -48,3 +48,8 @@ if(USE_OPENCV)
   vp_set_source_file_compile_flag(src/moving-edges/vpMeNurbs.cpp -Wno-float-equal)
   vp_set_source_file_compile_flag(test/testNurbs.cpp -Wno-float-equal)
 endif()
+
+if(WITH_CATCH2)
+  # catch2 is private
+  include_directories(${CATCH2_INCLUDE_DIRS})
+endif()
