@@ -108,7 +108,7 @@
     vpServo task;
 
     // Visual servo task initialization
-    // - Camera is monted on the robot end-effector and velocities are
+    // - Camera is mounted on the robot end-effector and velocities are
     //   computed in the camera frame
     task.setServo(vpServo::EYEINHAND_CAMERA);
     // - Interaction matrix is computed with the current visual features s
