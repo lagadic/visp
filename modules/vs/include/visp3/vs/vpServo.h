@@ -535,7 +535,7 @@ protected:
   void init();
 
   /*!
-    Compute the classic projetion operator and the large projection operator.
+    Compute the classic projection operator and the large projection operator.
   */
   void computeProjectionOperators(const vpMatrix &J1_, const vpMatrix &I_, const vpMatrix &I_WpW_,
     const vpColVector &error_, vpMatrix &P_) const;
