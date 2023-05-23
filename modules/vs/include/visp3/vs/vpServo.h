@@ -113,7 +113,7 @@
     task.setServo(vpServo::EYEINHAND_CAMERA);
     // - Interaction matrix is computed with the current visual features s
     task.setInteractionMatrixType(vpServo::CURRENT);
-    // - Set the contant gain to 1
+    // - Set the constant gain to 1
     task.setLambda(1);
     // - Add current and desired translation feature
     task.addFeature(s_t, s_star_t);
