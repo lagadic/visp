@@ -284,7 +284,7 @@ VP_OPTION(ENABLE_SSE2  "" "" "Enable SSE2 instructions"  "" ON IF ((MSVC OR CMAK
 VP_OPTION(ENABLE_SSE3  "" "" "Enable SSE3 instructions"  "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86 OR X86_64)) )
 VP_OPTION(ENABLE_SSSE3 "" "" "Enable SSSE3 instructions" "" ON IF ((MSVC OR CMAKE_COMPILER_IS_GNUCXX) AND (X86_64)) ) # X86 disabled since it produces an issue on Debian i386
 if(X86_64)
-  VP_OPTION(ENABLE_AVX   "" "" "Enable AVX instructions"   "" OFF) # should be explicitely enabled, used in matrix transpose code
+  VP_OPTION(ENABLE_AVX   "" "" "Enable AVX instructions"   "" OFF) # should be explicitly enabled, used in matrix transpose code
 endif()
 
 #----------------------------------------------------------------------

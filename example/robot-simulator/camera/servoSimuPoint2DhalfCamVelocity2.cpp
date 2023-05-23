@@ -319,7 +319,7 @@ int main(int argc, const char **argv)
       cdMc = cdMo * cMo.inverse();
       tu.buildFrom(cdMc);
 
-      // there is no feature for logZ, we explicitely build
+      // there is no feature for logZ, we explicitly build
       // the related interaction matrix") ;
       logZ.set_s(log(point.get_Z() / pointd.get_Z()));
       vpMatrix LlogZ(1, 6);

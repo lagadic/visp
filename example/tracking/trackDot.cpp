@@ -374,7 +374,7 @@ int main(int argc, const char **argv)
       std::cout << "Click on a white dot you want to track..." << std::endl;
       d.initTracking(I);
     } else {
-      // dot location can also be specified explicitely in the
+      // dot location can also be specified explicitly in the
       // initTracking method : d.initTracking(I,ip) where ip is the
       // image point from which the dot is searched
       vpImagePoint ip;

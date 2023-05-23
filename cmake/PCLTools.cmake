@@ -223,7 +223,7 @@ macro(vp_find_pcl pcl_libraries pcl_deps_include_dirs pcl_deps_libraries)
     endforeach()
 
     # On win10 + msvc 15 2017 with pcl 1.9.1 opengl32.lib needed by vtkRenderingOpenGL-8.1-gd.lib is not found
-    # Here we explicitely add opengl
+    # Here we explicitly add opengl
     if(OPENGL_LIBRARIES)
       list(APPEND ${pcl_deps_libraries} ${OPENGL_LIBRARIES})
     endif()

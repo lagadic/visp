@@ -253,7 +253,7 @@ $ cd $VISP_WS/visp-build/modules/robot
 $ ./testPixhawkDroneTakeoff udp://:14553
 \endverbatim
 
-\note The vpRobtMavsdk class is not dedicate explicitely to flying vehicles. It can also be used to control a rover. If you are interested in
+\note The vpRobtMavsdk class is not dedicate explicitly to flying vehicles. It can also be used to control a rover. If you are interested in
 you may try the test testPixhawkRoverVelocityControl.cpp
 
 \subsection pixhawk_fly Control the drone with a keyboard
