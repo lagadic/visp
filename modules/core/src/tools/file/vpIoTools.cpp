@@ -112,7 +112,7 @@ void replaceAll(std::string &str, const std::string &search, const std::string &
   while ((start_pos = str.find(search, start_pos)) != std::string::npos) {
     str.replace(start_pos, search.length(), replace);
     start_pos += replace.length(); // Handles case where 'replace' is a
-                                   // substring of 'search'
+    // substring of 'search'
   }
 }
 #endif
@@ -277,7 +277,7 @@ std::string vpIoTools::getFullName() { return baseDir + baseName; }
 */
 void vpIoTools::getUserName(std::string &username)
 {
-// With MinGW, UNIX and _WIN32 are defined
+  // With MinGW, UNIX and _WIN32 are defined
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
   // Get the user name.
   char *_username = ::getenv("LOGNAME");
@@ -850,7 +850,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
 {
   // Check if we have to consider a file or a directory
   if (vpIoTools::checkFilename(src)) {
-// std::cout << "copy file: " << src << " in " << dst << std::endl;
+    // std::cout << "copy file: " << src << " in " << dst << std::endl;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
@@ -886,7 +886,7 @@ bool vpIoTools::copy(const std::string &src, const std::string &dst)
 #endif
 #endif
   } else if (vpIoTools::checkDirectory(src)) {
-// std::cout << "copy directory: " << src << " in " << dst << std::endl;
+    // std::cout << "copy directory: " << src << " in " << dst << std::endl;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
@@ -951,7 +951,7 @@ bool vpIoTools::remove(const std::string &file_or_dir)
     else
       return true;
   } else if (vpIoTools::checkDirectory(file_or_dir)) {
-// std::cout << "remove directory: " << file_or_dir << std::endl;
+    // std::cout << "remove directory: " << file_or_dir << std::endl;
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS since
                        // wordexp() is not available
@@ -1030,7 +1030,7 @@ std::string vpIoTools::path(const std::string &pathname)
     if (path[i] == '\\')
       path[i] = '/';
 #if TARGET_OS_IOS == 0 // The following code is not working on iOS and android since
-                       // wordexp() is not available
+      // wordexp() is not available
 #ifdef __ANDROID__
 // Do nothing
 #else
@@ -1462,13 +1462,13 @@ std::string vpIoTools::getFileExtension(const std::string &pathname, bool checkF
 #endif
 
   // Python 2.7.8 module.
-  //# Split a path in root and extension.
-  //# The extension is everything starting at the last dot in the last
-  //# pathname component; the root is everything before that.
-  //# It is always true that root + ext == p.
+  // # Split a path in root and extension.
+  // # The extension is everything starting at the last dot in the last
+  // # pathname component; the root is everything before that.
+  // # It is always true that root + ext == p.
   //
-  //# Generic implementation of splitext, to be parametrized with
-  //# the separators
+  // # Generic implementation of splitext, to be parametrized with
+  // # the separators
   // def _splitext(p, sep, altsep, extsep):
   //    """Split the extension from a pathname.
   //
@@ -1646,6 +1646,52 @@ std::string vpIoTools::getParent(const std::string &pathname)
   }
 }
 
+/**
+ * @brief Return a lower-case version of the string \b input .
+ * Numbers and special characters stay the same
+ *
+ * @param input The input string for which we want to ensure that all the characters are in lower case.
+ * @return std::string A lower-case version of the string \b input, where
+ * numbers and special characters stay the same
+ */
+std::string vpIoTools::toLowerCase(const std::string &input)
+{
+  std::string out;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  for (size_t i = 0; i < input.size(); i++) {
+    out += std::tolower(input[i]);
+  }
+#else
+  for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
+    out += std::tolower(*it);
+  }
+#endif
+  return out;
+}
+
+/**
+ * @brief Return a upper-case version of the string \b input .
+ * Numbers and special characters stay the same
+ *
+ * @param input The input string for which we want to ensure that all the characters are in upper case.
+ * @return std::string A upper-case version of the string \b input, where
+ * numbers and special characters stay the same
+ */
+std::string vpIoTools::toUpperCase(const std::string &input)
+{
+  std::string out;
+#if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
+  for (size_t i = 0; i < input.size(); i++) {
+    out += std::toupper(input[i]);
+  }
+#else
+  for (std::string::const_iterator it = input.cbegin(); it != input.cend(); it++) {
+    out += std::toupper(*it);
+  }
+#endif
+  return out;
+}
+
 /*!
   Returns the absolute path using realpath() on Unix systems or
   GetFullPathName() on Windows systems. \return According to realpath()
@@ -1739,17 +1785,17 @@ std::string vpIoTools::createFilePath(const std::string &parent, const std::stri
  */
 bool vpIoTools::isAbsolutePathname(const std::string &pathname)
 {
-  //# Inspired by the Python 2.7.8 module.
-  //# Return whether a path is absolute.
-  //# Trivial in Posix, harder on the Mac or MS-DOS.
-  //# For DOS it is absolute if it starts with a slash or backslash (current
-  //# volume), or if a pathname after the volume letter and colon / UNC
-  // resource # starts with a slash or backslash.
+  // # Inspired by the Python 2.7.8 module.
+  // # Return whether a path is absolute.
+  // # Trivial in Posix, harder on the Mac or MS-DOS.
+  // # For DOS it is absolute if it starts with a slash or backslash (current
+  // # volume), or if a pathname after the volume letter and colon / UNC
+  //  resource # starts with a slash or backslash.
   //
-  // def isabs(s):
-  //    """Test whether a path is absolute"""
-  //    s = splitdrive(s)[1]
-  //    return s != '' and s[:1] in '/\\'
+  //  def isabs(s):
+  //     """Test whether a path is absolute"""
+  //     s = splitdrive(s)[1]
+  //     return s != '' and s[:1] in '/\\'
   std::string path = splitDrive(pathname).second;
   return path.size() > 0 && (path.substr(0, 1) == "/" || path.substr(0, 1) == "\\");
 }
@@ -1783,57 +1829,57 @@ bool vpIoTools::isSamePathname(const std::string &pathname1, const std::string &
  */
 std::pair<std::string, std::string> vpIoTools::splitDrive(const std::string &pathname)
 {
-//# Split a path in a drive specification (a drive letter followed by a
-//# colon) and the path specification.
-//# It is always true that drivespec + pathspec == p
-// def splitdrive(p):
-//    """Split a pathname into drive/UNC sharepoint and relative path
-//    specifiers. Returns a 2-tuple (drive_or_unc, path); either part may be
-//    empty.
-//
-//    If you assign
-//        result = splitdrive(p)
-//    It is always true that:
-//        result[0] + result[1] == p
-//
-//    If the path contained a drive letter, drive_or_unc will contain
-//    everything up to and including the colon.  e.g. splitdrive("c:/dir")
-//    returns ("c:", "/dir")
-//
-//    If the path contained a UNC path, the drive_or_unc will contain the host
-//    name and share up to but not including the fourth directory separator
-//    character. e.g. splitdrive("//host/computer/dir") returns
-//    ("//host/computer", "/dir")
-//
-//    Paths cannot contain both a drive letter and a UNC path.
-//
-//    """
-//    if len(p) > 1:
-//        normp = p.replace(altsep, sep)
-//        if (normp[0:2] == sep*2) and (normp[2] != sep):
-//            # is a UNC path:
-//            # vvvvvvvvvvvvvvvvvvvv drive letter or UNC path
-//            # \\machine\mountpoint\directory\etc\...
-//            #           directory ^^^^^^^^^^^^^^^
-//            index = normp.find(sep, 2)
-//            if index == -1:
-//                return '', p
-//            index2 = normp.find(sep, index + 1)
-//            # a UNC path can't have two slashes in a row
-//            # (after the initial two)
-//            if index2 == index + 1:
-//                return '', p
-//            if index2 == -1:
-//                index2 = len(p)
-//            return p[:index2], p[index2:]
-//        if normp[1] == ':':
-//            return p[:2], p[2:]
-//    return '', p
+  // # Split a path in a drive specification (a drive letter followed by a
+  // # colon) and the path specification.
+  // # It is always true that drivespec + pathspec == p
+  //  def splitdrive(p):
+  //     """Split a pathname into drive/UNC sharepoint and relative path
+  //     specifiers. Returns a 2-tuple (drive_or_unc, path); either part may be
+  //     empty.
+  //
+  //     If you assign
+  //         result = splitdrive(p)
+  //     It is always true that:
+  //         result[0] + result[1] == p
+  //
+  //     If the path contained a drive letter, drive_or_unc will contain
+  //     everything up to and including the colon.  e.g. splitdrive("c:/dir")
+  //     returns ("c:", "/dir")
+  //
+  //     If the path contained a UNC path, the drive_or_unc will contain the host
+  //     name and share up to but not including the fourth directory separator
+  //     character. e.g. splitdrive("//host/computer/dir") returns
+  //     ("//host/computer", "/dir")
+  //
+  //     Paths cannot contain both a drive letter and a UNC path.
+  //
+  //     """
+  //     if len(p) > 1:
+  //         normp = p.replace(altsep, sep)
+  //         if (normp[0:2] == sep*2) and (normp[2] != sep):
+  //             # is a UNC path:
+  //             # vvvvvvvvvvvvvvvvvvvv drive letter or UNC path
+  //             # \\machine\mountpoint\directory\etc\...
+  //             #           directory ^^^^^^^^^^^^^^^
+  //             index = normp.find(sep, 2)
+  //             if index == -1:
+  //                 return '', p
+  //             index2 = normp.find(sep, index + 1)
+  //             # a UNC path can't have two slashes in a row
+  //             # (after the initial two)
+  //             if index2 == index + 1:
+  //                 return '', p
+  //             if index2 == -1:
+  //                 index2 = len(p)
+  //             return p[:index2], p[index2:]
+  //         if normp[1] == ':':
+  //             return p[:2], p[2:]
+  //     return '', p
 
-// On Unix, the drive is always empty.
-// On the Mac, the drive is always empty (don't use the volume name -- it
-// doesn't have the same  syntactic and semantic oddities as DOS drive
-// letters, such as there being a separate current directory per drive).
+  // On Unix, the drive is always empty.
+  // On the Mac, the drive is always empty (don't use the volume name -- it
+  // doesn't have the same  syntactic and semantic oddities as DOS drive
+  // letters, such as there being a separate current directory per drive).
 #if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__)))
   return std::pair<std::string, std::string>("", pathname);
 #else
@@ -1856,8 +1902,8 @@ std::pair<std::string, std::string> vpIoTools::splitDrive(const std::string &pat
       }
 
       size_t index2 = normPathname.find(sep, index + 1);
-      //# a UNC path can't have two slashes in a row
-      //# (after the initial two)
+      // # a UNC path can't have two slashes in a row
+      // # (after the initial two)
       if (index2 == index + 1) {
         return std::pair<std::string, std::string>("", pathname);
       }

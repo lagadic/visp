@@ -1200,6 +1200,13 @@ void vpHomogeneousMatrix::setIdentity() { eye(); }
 #ifdef VISP_HAVE_NLOHMANN_JSON
 const std::string vpHomogeneousMatrix::jsonTypeName = "vpHomogeneousMatrix";
 #include <visp3/core/vpJsonParsing.h>
+void vpHomogeneousMatrix::convert_to_json(nlohmann::json &j) const
+{
+  const vpArray2D<double> *asArray = (vpArray2D<double>*) this;
+  to_json(j, *asArray);
+  j["type"] = vpHomogeneousMatrix::jsonTypeName;
+}
+
 void vpHomogeneousMatrix::parse_json(const nlohmann::json& j) {
   vpArray2D<double>* asArray = (vpArray2D<double>*) this;
   if(j.is_object() && j.contains("type")) { // Specific conversions

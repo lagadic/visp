@@ -179,10 +179,11 @@ public:
 
   int parse(vpCameraParameters &cam, const std::string &filename, const std::string &camera_name,
             const vpCameraParameters::vpCameraParametersProjType &projModel, unsigned int image_width = 0,
-            unsigned int image_height = 0);
+            unsigned int image_height = 0, bool verbose = true);
 
   int save(const vpCameraParameters &cam, const std::string &filename, const std::string &camera_name,
-           unsigned int image_width = 0, unsigned int image_height = 0, const std::string &additionalInfo = "");
+           unsigned int image_width = 0, unsigned int image_height = 0, const std::string &additionalInfo = "",
+           bool verbose = true);
 
   void setCameraName(const std::string &name);
   void setHeight(unsigned int height);

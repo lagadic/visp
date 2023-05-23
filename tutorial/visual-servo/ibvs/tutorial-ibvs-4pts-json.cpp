@@ -10,9 +10,10 @@
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
+
 //! [Enum]
-enum InteractionMatrixTypeSubset {
+enum vpInteractionMatrixTypeSubset
+{
   UNKNOWN = -1,
   CURRENT,
   DESIRED,
@@ -20,25 +21,25 @@ enum InteractionMatrixTypeSubset {
 };
 //! [Enum]
 //! [Enum conversion]
-NLOHMANN_JSON_SERIALIZE_ENUM(InteractionMatrixTypeSubset, {
+NLOHMANN_JSON_SERIALIZE_ENUM(vpInteractionMatrixTypeSubset, {
   {UNKNOWN, nullptr}, // Default value if the json string is not in "current", "desired" or "mean"
   {CURRENT, "current"},
   {DESIRED, "desired"},
-  {MEAN, "mean"}}
+  {MEAN, "mean"} }
 );
 //! [Enum conversion]
 
-
 //! [Arguments]
-class Arguments {
+class Arguments
+{
 public:
   // Default values
   Arguments() :
     lambda(0.5), cdMo(0, 0, 0.75, 0, 0, 0),
     cMo(0.15, -0.1, 1., vpMath::rad(10), vpMath::rad(-10), vpMath::rad(50)),
     samplingTime(0.04), errorThreshold(0.0001), interactionMatrixType(CURRENT)
-  {
-  }
+  { }
+
   vpServo::vpServoIteractionMatrixType getInteractionMatrixType() const
   {
     switch (interactionMatrixType) {
@@ -54,19 +55,19 @@ public:
     return vpServo::CURRENT;
   }
 
-  double lambda; // Control law gain
+  double lambda;            // Control law gain
   vpHomogeneousMatrix cdMo; // Target (desired) camera pose
-  vpHomogeneousMatrix cMo; // Initial camera pose
-  double samplingTime; // Robot sampling time
-  double errorThreshold; // Error threshold. Once error is below, consider servoing as successful
-  InteractionMatrixTypeSubset interactionMatrixType;
+  vpHomogeneousMatrix cMo;  // Initial camera pose
+  double samplingTime;      // Robot sampling time
+  double errorThreshold;    // Error threshold. Once error is below, consider servoing as successful
+  vpInteractionMatrixTypeSubset interactionMatrixType;
 };
 //! [Arguments]
 
-//!  [Arguments conversion]
+//! [Arguments conversion]
 // Read script arguments from JSON. All values are optional and if an argument is not present,
 // the default value defined in the constructor is kept
-void from_json(const json& j, Arguments& a)
+void from_json(const json &j, Arguments &a)
 {
   a.lambda = j.value("lambda", a.lambda);
   if (a.lambda <= 0) {
@@ -92,9 +93,9 @@ void from_json(const json& j, Arguments& a)
   }
 }
 
-void to_json(json& j, const Arguments& a)
+void to_json(json &j, const Arguments &a)
 {
-  j = json{
+  j = json {
     {"lambda", a.lambda},
     {"cMo", a.cMo},
     {"cdMo", a.cdMo},
@@ -103,10 +104,10 @@ void to_json(json& j, const Arguments& a)
     {"interactionMatrix", a.interactionMatrixType}
   };
 }
-//!  [Arguments conversion]
+//! [Arguments conversion]
 
 //! [JSON input conversion]
-Arguments readArguments(const std::string& path)
+Arguments readArguments(const std::string &path)
 {
   Arguments a;
 
@@ -121,7 +122,7 @@ Arguments readArguments(const std::string& path)
     try {
       j = json::parse(file);
     }
-    catch (json::parse_error& e) {
+    catch (json::parse_error &e) {
       std::stringstream msg;
       msg << "Could not parse JSON file : \n";
 
@@ -140,9 +141,9 @@ Arguments readArguments(const std::string& path)
 //! [JSON input conversion]
 
 //! [Custom ViSP object conversion]
-void to_json(json& j, const vpFeaturePoint& p)
+void to_json(json &j, const vpFeaturePoint &p)
 {
-  j = json{
+  j = json {
     {"x", p.get_x()},
     {"y", p.get_y()},
     {"z", p.get_Z()}
@@ -151,54 +152,52 @@ void to_json(json& j, const vpFeaturePoint& p)
 
 //! [Custom ViSP object conversion]
 
-
-
 //! [Result structure]
-class ServoingExperimentData {
+class ServoingExperimentData
+{
 public:
-  ServoingExperimentData(const Arguments& arguments, const std::vector<vpFeaturePoint>& desiredFeatures) :
-    arguments(arguments), desiredFeatures(desiredFeatures)
-  {
-  }
+  ServoingExperimentData(const Arguments &arguments, const std::vector<vpFeaturePoint> &desiredFeatures) :
+    m_arguments(arguments), m_desiredFeatures(desiredFeatures)
+  { }
 
-  void onIter(const vpHomogeneousMatrix& cMo, const double errorNorm, const std::vector<vpFeaturePoint>& points,
-              const vpColVector& velocity, const vpMatrix& interactionMatrix)
+  void onIter(const vpHomogeneousMatrix &cMo, const double errorNorm, const std::vector<vpFeaturePoint> &points,
+    const vpColVector &velocity, const vpMatrix &interactionMatrix)
   {
     vpPoseVector r(cMo);
-    trajectory.push_back(r);
-    errorNorms.push_back(errorNorm);
-    points3D.push_back(points);
-    velocities.push_back(velocity);
-    interactionMatrices.push_back(interactionMatrix);
+    m_trajectory.push_back(r);
+    m_errorNorms.push_back(errorNorm);
+    m_points3D.push_back(points);
+    m_velocities.push_back(velocity);
+    m_interactionMatrices.push_back(interactionMatrix);
   }
 
 private:
-  Arguments arguments;
-  std::vector<vpFeaturePoint> desiredFeatures;
-  std::vector<vpPoseVector> trajectory;
-  std::vector<double> errorNorms;
-  std::vector<std::vector<vpFeaturePoint>> points3D;
-  std::vector<vpColVector> velocities;
-  std::vector<vpMatrix> interactionMatrices;
-  friend void to_json(json& j, const ServoingExperimentData& res);
+  Arguments m_arguments;
+  std::vector<vpFeaturePoint> m_desiredFeatures;
+  std::vector<vpPoseVector> m_trajectory;
+  std::vector<double> m_errorNorms;
+  std::vector<std::vector<vpFeaturePoint>> m_points3D;
+  std::vector<vpColVector> m_velocities;
+  std::vector<vpMatrix> m_interactionMatrices;
+  friend void to_json(json &j, const ServoingExperimentData &res);
 };
 
-void to_json(json& j, const ServoingExperimentData& res)
+void to_json(json &j, const ServoingExperimentData &res)
 {
-  j = json{
-    {"parameters", res.arguments},
-    {"trajectory", res.trajectory},
-    {"errorNorm", res.errorNorms},
-    {"features", res.points3D},
-    {"desiredFeatures", res.desiredFeatures},
-    {"velocities", res.velocities},
-    {"interactionMatrices", res.interactionMatrices}
+  j = json {
+    {"parameters", res.m_arguments},
+    {"trajectory", res.m_trajectory},
+    {"errorNorm", res.m_errorNorms},
+    {"features", res.m_points3D},
+    {"desiredFeatures", res.m_desiredFeatures},
+    {"velocities", res.m_velocities},
+    {"interactionMatrices", res.m_interactionMatrices}
   };
 }
 //! [Result structure]
 
 //! [write json to file]
-void saveResults(const ServoingExperimentData& results, const std::string& path)
+void saveResults(const ServoingExperimentData &results, const std::string &path)
 {
   std::ofstream file(path);
   const json j = results;
@@ -207,7 +206,7 @@ void saveResults(const ServoingExperimentData& results, const std::string& path)
 }
 //! [write json to file]
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv [])
 {
   //! [Main parsing]
   std::string arguments_path = "";
@@ -266,8 +265,10 @@ int main(int argc, char* argv[])
     wMo = wMc * cMo;
 
     unsigned int iter = 0;
+    bool end = false;
+    std::cout << "Start visual-servoing loop until convergence..." << std::endl;
     //! [VS loop]
-    while (1) {
+    while (!end) {
       robot.getPosition(wMc);
       cMo = wMc.inverse() * wMo;
       for (unsigned int i = 0; i < 4; i++) {
@@ -278,14 +279,15 @@ int main(int argc, char* argv[])
       const vpColVector v = task.computeControlLaw();
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
       const double errorNorm = task.getError().sumSquare();
-      
+
       //! [Results update]
       results.onIter(cMo, errorNorm, features, v, task.getInteractionMatrix());
       //! [Results update]
 
-      if (errorNorm < args.errorThreshold)
-        break;
-      vpTime::wait(100);
+      if (errorNorm < args.errorThreshold) {
+        end = true;
+      }
+      vpTime::wait(10);
       iter++;
     }
     //! [VS loop]
@@ -294,7 +296,7 @@ int main(int argc, char* argv[])
     saveResults(results, output_path);
     //! [Save call]
   }
-  catch (const vpException& e) {
+  catch (const vpException &e) {
     std::cout << "Caught an exception: " << e << std::endl;
   }
 }
@@ -303,5 +305,4 @@ int main()
 {
   std::cerr << "Cannot run tutorial: ViSP is not built with JSON integration. Install the JSON library and recompile ViSP" << std::endl;
 }
-#endif
 #endif

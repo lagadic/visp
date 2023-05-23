@@ -134,7 +134,7 @@ pointcloud[0] = coordinate;
 pcl::PointCloud<pcl::PointXYZ>::Ptr pointcloud;
 \endcode
 
-If you have only a depth map, a 2D array where each element (u, v) is the distance Z in meter between the depth sensor frame to the object, you will need to compute the 3D coordinates using the depth sensor intrinsic parameters. We recall that u relates to the array columns, while v relates to the array rows. 
+If you have only a depth map, a 2D array where each element (u, v) is the distance Z in meter between the depth sensor frame to the object, you will need to compute the 3D coordinates using the depth sensor intrinsic parameters. We recall that u relates to the array columns, while v relates to the array rows.
 For instance, without taking into account the distortion (see also vpPixelMeterConversion::convertPoint), the conversion is (u and v are the pixel coordinates, u0, v0, px, py are the intrinsic parameters):
 
 \f[
@@ -166,7 +166,7 @@ To deal with multiple cameras, in the virtual visual servoing control law we con
 the reference camera velocity.
 Thus, we have to know the transformation matrix between each camera and the reference camera.
 
-For example, if the reference camera is "Camera1" (\f$ c_1 \f$), we need the following information: 
+For example, if the reference camera is "Camera1" (\f$ c_1 \f$), we need the following information:
 \f$ _{}^{c_2}\textrm{M}_{c_1}, _{}^{c_3}\textrm{M}_{c_1}, \cdots, _{}^{c_n}\textrm{M}_{c_1} \f$.
 
 \subsection mb_rgbd_choose_features Declare a model-based tracker of the desired feature type
@@ -221,8 +221,8 @@ The following table sums up how to call the different methods based on the camer
 <tr><td>Get the pose:                         <td>tracker.getPose(cMo)                  <td>tracker.getPose(c1Mo, c2Mo)                                       <td>tracker.getPose(mapOfPoses)                                       <td>tracker.getPose(cMo) will return the pose for the reference camera in the stereo/multiple cameras configurations.
 <tr><td>Display the model:                    <td>tracker.display(I, cMo, cam, ...)     <td>tracker.display(I1, I2, c1Mo, c2Mo, cam1, cam2, ...)              <td>tracker.display(mapOfImg, mapOfPoses, mapOfCam, ...)              <td>
 </table>
-  
-\note As the trackers are stored in an alphabetic order internally, you have to match the method parameters with the correct 
+
+\note As the trackers are stored in an alphabetic order internally, you have to match the method parameters with the correct
 tracker position in the map in the stereo cameras case.
 
 \section mb_rgbd_example Dataset use case
@@ -253,13 +253,13 @@ The previous source code shows how to use the vpMbGenericTracker class using dep
 - load the transformation matrix (`depth_M_color.txt`) between the depth sensor and the color camera
 - load the `cube.init` file used to initialize the tracker by a user interaction that consists in clicking on 4 cube corners
 - load a 3D model for the color and for the depth camera. In our case they are the same (`cube.cao`)
-- start a while loop to process all the images from the sequence of data 
+- start a while loop to process all the images from the sequence of data
   - track on the current images (color and depth)
   - get the current pose and display the model in the image
 
 Please refer to the tutorial \ref tutorial-tracking-mb-generic in order to have explanations about the configuration parameters (\ref mb_generic_settings) and how to model an object in a ViSP compatible format (\ref mb_generic_advanced_cao).
 
-To use vpMbGenericTracker we include first the corresponding header: 
+To use vpMbGenericTracker we include first the corresponding header:
 
 \snippet tutorial-mb-generic-tracker-rgbd.cpp Include
 
@@ -291,7 +291,7 @@ We can also use the following setting that enables the display of the features u
 
 \snippet tutorial-mb-generic-tracker-rgbd.cpp Set display features
 
-We then set the map of transformations between our two sensors indicating that the color sensor frame is the reference frame. `depth_M_color` matrix is read from the input file `depth_M_color.txt`. 
+We then set the map of transformations between our two sensors indicating that the color sensor frame is the reference frame. `depth_M_color` matrix is read from the input file `depth_M_color.txt`.
 
 \snippet tutorial-mb-generic-tracker-rgbd.cpp Map transformations
 
@@ -559,9 +559,10 @@ $ ./tutorial-mb-generic-tracker-rgbd-structure-core --model_color model/lego-squ
 
 \section mb_rgbd_next Next tutorial
 
-If you have an Intel Realsense device, you are now ready to experiment the generic model-based tracker on a cube that has an AprilTag on one face following \ref tutorial-tracking-mb-generic-apriltag-live.
-
-
-You can also follow \ref tutorial-tracking-mb-CAO-editor.
+- In this tutorial, tracker settings were loaded from an XML file. To learn how to use rather a JSON configuration file,
+  you can follow \ref tutorial-mb-generic-json.
+- If you have an Intel Realsense device, you are also ready to experiment the generic model-based tracker
+  on a cube that has an AprilTag on one face following \ref tutorial-tracking-mb-generic-apriltag-live.
+- You can also follow \ref tutorial-tracking-mb-CAO-editor.
 
 */

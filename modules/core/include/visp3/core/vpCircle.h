@@ -65,7 +65,7 @@
   the 3D sphere center (oX,oY,oZ) and the 3D coordinates oX, oY, oZ of the center and radius R of the 3D sphere. These
   parameters registered in vpForwardProjection::oP internal 7-dim vector are set using the constructors
   vpCircle(double oA, double oB, double oC, double oX, double oY, double oZ, double R),
-  vpCircle(const vpColVector &oP) or the fonctions
+  vpCircle(const vpColVector &oP) or the functions
   setWorldCoordinates(double oA, double oB, double oC, double oX, double oY, double oZ, double R)
   and setWorldCoordinates(const vpColVector &oP). To get theses parameters use get_oP().
 

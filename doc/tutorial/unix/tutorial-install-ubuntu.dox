@@ -74,7 +74,8 @@ To have a trial, just jump to \ref install_ubuntu_dataset before running some bi
 
 \subsection install_ubuntu_3rdparty Install 3rd parties
 
-ViSP is interfaced with several optional 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
+ViSP is interfaced with several optional 3rd party libraries.
+Follow the link to see the complete list of \ref supported-third-parties.
 
 \note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do
 not want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP.
@@ -445,12 +446,12 @@ $ sudo apt-get install libgsl-dev
 \endverbatim
 - JSON for modern C++: if the apt package `nlohmann-json3-dev` is not available for your distribution, you can either install from source or from a package manager
   - To install from source
-  \verbatim
-  $ git clone https://github.com/nlohmann/json.git
-  $ cd json && mkdir build && cd build
-  $ cmake ..
-  $ make && sudo make install
-  \endverbatim
+\verbatim
+$ git clone https://github.com/nlohmann/json.git
+$ cd json && mkdir build && cd build
+$ cmake ..
+$ make -j$(nproc) && sudo make install
+\endverbatim
   - To install from a package manager, e.g., vcpkg, see: <a href="https://json.nlohmann.me/integration/package_managers/#embedded">https://json.nlohmann.me/integration/package_managers/#embedded</a>
 
 \subsection install_ubuntu_visp_get_source Get ViSP source code

@@ -23,6 +23,12 @@ ViSP 3.5.1 (under development)
     . Image-based visual-servoing, position and velocity control examples to control robots
       equipped with Pixhawk (see vpRobotMavsdk doc)
     . Windows 11 support
+    . New vpDetectorDNNOpenCV class a wrapper over the OpenCV DNN module that allows
+      to detect objects using Faster-RCNN, SSD-MobileNet, ResNet 10, Yolo v3, Yolo v4,
+      Yolo v5, Yolo v7 and Yolo v8 convolutional networks
+    . Support of JSON for modern C++ third-party to enable serialization capabilities
+      in vpMbGenericTracker, vpCameraParameters, vpPoseVector, vpHomogeneousMatrix,
+      vpPolygon3D to load/save internal data or settings from/to JSON files
   - Tutorials
     . New tutorial to list all the hardware (robot, camera, depth camera, lidar, mocap,
       haptic devices, F/T sensor) supported by ViSP
@@ -37,10 +43,16 @@ ViSP 3.5.1 (under development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-universal-robot-pbvs.html
     . New tutorial: Image-based visual-servoing on a drone equipped with a Pixhawk
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pixhawk-vs.html
-    . New Tutorial: Installation from source for Windows 11 with MinGW-w64
+    . New tutorial: Installation from source for Windows 11 with MinGW-w64
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win11-mingw-w64.html
-    . New Tutorial: Installation from source for Windows 11 with Visual C++ 2022 (vc17)
+    . New tutorial: Installation from source for Windows 11 with Visual C++ 2022 (vc17)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win11-msvc17.html
+    . New tutorial: Deep learning object detection
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-dnn.html
+    . New tutorial: Using JSON serialization to save your data and read program arguments
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-json.html
+    . New tutorial: Loading a model-based generic tracker from JSON
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-mb-generic-json.html
   - Bug fixed
     . [#1042] testColorConversion.cpp segfault randomly
     . [#1045] CXX standard not propagated when using pkg-config or visp-config
@@ -792,7 +804,7 @@ ViSP 2.8.0 (released July 24th, 2013)
       tracing when faces are concave or not oriented counter clockwise.
     . Still in model-based trackers, add functionalities to use clipping planes.
     . ViSP can now be used with pkg-config
-    . New fonctions in vp1394TwoGrabber to turn auto shutter and auto gain
+    . New functions in vp1394TwoGrabber to turn auto shutter and auto gain
       on. Also new getter for auto shutter and auto gain min/max values.
     . Support Visual Studio 2012 (MSVC11)
     . Introduce C++ visibility support as described here

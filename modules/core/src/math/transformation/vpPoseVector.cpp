@@ -32,11 +32,7 @@
  * Pose object. A pose is a size 6 vector [t, tu]^T where tu is
  * a rotation vector (theta u representation) and t is a translation vector.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpPoseVector.cpp
@@ -63,7 +59,7 @@
   The pose vector is initialized to zero.
 
 */
-vpPoseVector::vpPoseVector() : vpArray2D<double>(6, 1) {}
+vpPoseVector::vpPoseVector() : vpArray2D<double>(6, 1) { }
 
 /*!
 
@@ -360,7 +356,8 @@ void vpPoseVector::save(std::ofstream &f) const
 {
   if (!f.fail()) {
     f << *this;
-  } else {
+  }
+  else {
     throw(vpException(vpException::ioError, "Cannot save the pose vector: ofstream not opened"));
   }
 }
@@ -381,7 +378,8 @@ void vpPoseVector::load(std::ifstream &f)
     for (unsigned int i = 0; i < 6; i++) {
       f >> (*this)[i];
     }
-  } else {
+  }
+  else {
     throw(vpException(vpException::ioError, "Cannot read pose vector: ifstream not opened"));
   }
 }
@@ -450,7 +448,8 @@ int vpPoseVector::print(std::ostream &s, unsigned int length, char const *intro)
     if (p == std::string::npos) {
       maxBefore = vpMath::maximum(maxBefore, thislen);
       // maxAfter remains the same
-    } else {
+    }
+    else {
       maxBefore = vpMath::maximum(maxBefore, p);
       maxAfter = vpMath::maximum(maxAfter, thislen - p - 1);
     }
@@ -483,7 +482,8 @@ int vpPoseVector::print(std::ostream &s, unsigned int length, char const *intro)
       if (p != std::string::npos) {
         s.width((std::streamsize)maxAfter);
         s << values[i].substr(p, maxAfter).c_str();
-      } else {
+      }
+      else {
         assert(maxAfter > 1);
         s.width((std::streamsize)maxAfter);
         s << ".0";
@@ -516,18 +516,26 @@ std::vector<double> vpPoseVector::toStdVector() const
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <visp3/core/vpJsonParsing.h>
 const std::string vpPoseVector::jsonTypeName = "vpPoseVector";
-void vpPoseVector::parse_json(const nlohmann::json& j) {
-  vpArray2D<double>* asArray = (vpArray2D<double>*) this;
-  if(j.is_object() && j.contains("type")) { // Specific conversions
+void vpPoseVector::convert_to_json(nlohmann::json &j) const
+{
+  const vpArray2D<double> *asArray = (vpArray2D<double>*) this;
+  to_json(j, *asArray);
+  j["type"] = vpPoseVector::jsonTypeName;
+}
+void vpPoseVector::parse_json(const nlohmann::json &j)
+{
+  vpArray2D<double> *asArray = (vpArray2D<double>*) this;
+  if (j.is_object() && j.contains("type")) { // Specific conversions
     const bool converted = convertFromTypeAndBuildFrom<vpPoseVector, vpHomogeneousMatrix>(j, *this);
-    if(!converted) {
+    if (!converted) {
       from_json(j, *asArray);
     }
-  } else { // Generic 2D array conversion
+  }
+  else { // Generic 2D array conversion
     from_json(j, *asArray);
   }
-  
-  if(getCols() != 6 && getRows() != 1) {
+
+  if (getCols() != 1 && getRows() != 6) {
     throw vpException(vpException::badValue, "From JSON, tried to read something that is not a 6D pose vector");
   }
 }

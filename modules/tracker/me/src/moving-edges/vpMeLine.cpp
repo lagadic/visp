@@ -214,13 +214,15 @@ void vpMeLine::sample(const vpImage<unsigned char> &I, bool doNotTrack)
 
   \param I : Image in which the line appears.
 
-  \param col : Color of the displayed line. Note that a moving edge
+  \param color : Color of the displayed line. Note that a moving edge
   that is considered as an outlier is displayed in green.
 
+  \param thickness : Drawings thickness.
+
  */
-void vpMeLine::display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness)
+void vpMeLine::display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness)
 {
-  vpMeLine::display(I, PExt[0], PExt[1], list, a, b, c, col, thickness);
+  vpMeLine::display(I, PExt[0], PExt[1], list, a, b, c, color, thickness);
 }
 
 /*!

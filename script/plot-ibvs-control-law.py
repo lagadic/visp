@@ -26,11 +26,9 @@ def basic_plot(data: np.ndarray, title: Optional[str] = None, legend: List[str] 
   if title is not None:
     plt.title(title, fontsize=titlefontsize)
 
-
   if after_fn is not None:
       after_fn(fig, data)
   return fig
-
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description='Plot the data related to a basic control law. Input data should be generated with the tutorial located in tutorials/visual-servo/ibvs/tutorial-ibvs-4pts-json')
@@ -128,6 +126,3 @@ if __name__ == '__main__':
     plt.close()
 
   print(f'Plots were saved to {plot_folder_path}')
-
-
-

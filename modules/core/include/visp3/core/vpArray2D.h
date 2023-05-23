@@ -1010,12 +1010,12 @@ template <class Type> bool vpArray2D<Type>::operator!=(const vpArray2D<Type> &A)
 template <class Type>
 inline void from_json(const nlohmann::json& j, vpArray2D<Type>& array) {
   if(j.is_array()) {
-    const unsigned nrows = j.size();
+    const unsigned int nrows = static_cast<unsigned int>(j.size());
     if(nrows == 0) { // Initialize an empty array, Finished
       array.resize(0, 0);
       return;
     }
-    unsigned ncols = 0;
+    unsigned int ncols = 0;
     bool first = true;
     for(const auto& item: j) { // Find number of columns, validate that all rows have same number of cols
       if(!item.is_array()) {
@@ -1023,7 +1023,7 @@ inline void from_json(const nlohmann::json& j, vpArray2D<Type>& array) {
       }
       if(first) {
         first = false;
-        ncols = item.size();
+        ncols = static_cast<unsigned int>(item.size());
       } else if(ncols != item.size()) {
         throw vpException(vpException::badValue, "Trying to instantiate a 2D array with JSON row arrays that are not of the same size");
       }
