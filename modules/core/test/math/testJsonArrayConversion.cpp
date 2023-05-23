@@ -185,7 +185,7 @@ SCENARIO("Serializing a vpArray2D", "[json]")
   }
 }
 
-SCENARIO("Trying to instanciate a vpArray with a wrong type of object", "[json]")
+SCENARIO("Trying to instantiate a vpArray with a wrong type of object", "[json]")
 {
   GIVEN("A random scalar converted to a JSON representation")
   {
