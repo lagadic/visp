@@ -166,13 +166,13 @@ int main(int argc, const char **argv)
     if (!opt_intrinsic_file.empty() && !opt_camera_name.empty()) {
       if (parser.parse(cam, opt_intrinsic_file, opt_camera_name, vpCameraParameters::perspectiveProjWithDistortion) !=
           vpXmlParserCamera::SEQUENCE_OK) {
-        std::cout << "Unable to parse parameters with distorsion for camera \"" << opt_camera_name << "\" from "
+        std::cout << "Unable to parse parameters with distortion for camera \"" << opt_camera_name << "\" from "
                   << opt_intrinsic_file << " file" << std::endl;
-        std::cout << "Attempt to find parameters without distorsion" << std::endl;
+        std::cout << "Attempt to find parameters without distortion" << std::endl;
 
         if (parser.parse(cam, opt_intrinsic_file, opt_camera_name,
                          vpCameraParameters::perspectiveProjWithoutDistortion) != vpXmlParserCamera::SEQUENCE_OK) {
-          std::cout << "Unable to parse parameters without distorsion for camera \"" << opt_camera_name << "\" from "
+          std::cout << "Unable to parse parameters without distortion for camera \"" << opt_camera_name << "\" from "
                     << opt_intrinsic_file << " file" << std::endl;
           return EXIT_FAILURE;
         }

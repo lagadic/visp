@@ -662,7 +662,7 @@ ViSP 3.0.0 (released December 18th, 2015)
     . [19326] segfault when using vpDisplayX::init(unsigned int, unsigned int, ...)
     . [19368] Invalid rotation parameters in vpSimulatorViper850::getPosition()
     . [#3]  Issue when comparing two vpRGBa
-    . [#5]  Unable to get calibration matrix K when model with distorsion is
+    . [#5]  Unable to get calibration matrix K when model with distortion is
       used
     . [#6]  Issue with vpMath::round()
     . [#18] Issues with vpColVector::median() + with assignment operator of

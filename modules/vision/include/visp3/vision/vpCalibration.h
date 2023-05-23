@@ -90,9 +90,9 @@ public:
                                        estimation of the distortion. */
   } vpCalibrationMethodType;
 
-  vpHomogeneousMatrix cMo; //!< Pose computed using camera parameters without distorsion
+  vpHomogeneousMatrix cMo; //!< Pose computed using camera parameters without distortion
   //!< (as a 3x4 matrix [R T])
-  vpHomogeneousMatrix cMo_dist; //!< Pose computed using camera parameters with distorsion
+  vpHomogeneousMatrix cMo_dist; //!< Pose computed using camera parameters with distortion
   //!< with distortion model
   //!< (as a 3x4 matrix [R T])
   vpCameraParameters cam; //!< Camera intrinsic parameters for perspective
@@ -102,9 +102,9 @@ public:
 
   vpHomogeneousMatrix rMe; //!< Position of the effector in relation to the
   //!< reference coordinates (manipulator base coordinates)
-  vpHomogeneousMatrix eMc; //!< Position of the camera in end-effector frame using camera parameters without distorsion
+  vpHomogeneousMatrix eMc; //!< Position of the camera in end-effector frame using camera parameters without distortion
   vpHomogeneousMatrix
-      eMc_dist; //!< Position of the camera in end-effector frame using camera parameters with distorsion
+      eMc_dist; //!< Position of the camera in end-effector frame using camera parameters with distortion
 
   double m_aspect_ratio; //!< Fix aspect ratio (px/py)
 

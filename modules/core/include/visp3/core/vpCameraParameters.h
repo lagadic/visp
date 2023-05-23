@@ -126,8 +126,8 @@
   \end{array}
   \f]
 
-  where \f$k_{ud}\f$ is the first order radial distorsion. Higher order
-  distorsion coefficients are not considered in ViSP.
+  where \f$k_{ud}\f$ is the first order radial distortion. Higher order
+  distortion coefficients are not considered in ViSP.
 
   Now in ViSP we consider also the inverse transformation, where from pixel
   coordinates we want to compute their normalized coordinates in the image
@@ -191,7 +191,7 @@
   - initPersProjWithDistortion() that allows to set
   \f$u_0,v_0,p_x,p_y,k_{ud},k_{du}\f$ parameters;
 
-  The selection of the camera model (without or with distorsion) is done
+  The selection of the camera model (without or with distortion) is done
   during vpCameraParameters initialisation.
 
   Here an example of camera initialisation, for a model without distortion. A
@@ -431,7 +431,7 @@ private:
   double u0, v0;                    //!< Principal point
   double kud;                       //!< Radial distortion (from undistorted to distorted)
   double kdu;                       //!< Radial distortion (from distorted to undistorted)
-  std::vector<double> m_dist_coefs; //!< Coefficients for Kannala-Brandt distorsion model
+  std::vector<double> m_dist_coefs; //!< Coefficients for Kannala-Brandt distortion model
 
   unsigned int width;                  //!< Width of the image used for the fov computation
   unsigned int height;                 //!< Height of the image used for the fov computation

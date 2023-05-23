@@ -133,12 +133,12 @@ void emergencyStopAfma6(int signo)
 
   To set the extrinsic camera parameters related to the eMc matrix
   obtained with a camera perspective projection model including the
-  distorsion, use the code below:
+  distortion, use the code below:
 
   \code
   vpRobotAfma6 robot;
   // Set the extrinsic camera parameters obtained with a perpective
-  // projection model including a distorsion parameter
+  // projection model including a distortion parameter
   robot.init(vpAfma6::TOOL_CCMOP,
   vpCameraParameters::perspectiveProjWithDistortion); \endcode
 
@@ -149,7 +149,7 @@ void emergencyStopAfma6(int signo)
   vpCameraParameters cam;
   robot.getCameraParameters(cam, I);
   // In cam, you get the intrinsic parameters of the projection model
-  // with distorsion.
+  // with distortion.
   \endcode
 
   \sa vpCameraParameters, init(vpAfma6::vpAfma6CameraRobotType,
@@ -214,10 +214,10 @@ vpRobotAfma6::vpRobotAfma6(bool verbose) : vpAfma6(), vpRobot()
 
   \warning This method sets the camera extrinsic parameters (matrix
   eMc) to the one obtained by calibration with a camera projection
-  model without distorsion by calling
+  model without distortion by calling
   init(vpAfma6::defaultCameraRobot). If you want to set the extrinsic
   camera parameters to those obtained with a camera perspective model
-  including the distorsion you have to call the
+  including the distortion you have to call the
   init(vpAfma6::vpAfma6CameraRobotType,
   vpCameraParameters::vpCameraParametersProjType) method.
 
@@ -323,12 +323,12 @@ void vpRobotAfma6::init(void)
 
   To set the extrinsic camera parameters related to the eMc matrix
   obtained with a camera perspective projection model including the
-  distorsion, use the code below:
+  distortion, use the code below:
 
   \code
   vpRobotAfma6 robot;
   // Set the extrinsic camera parameters obtained with a perpective
-  // projection model including a distorsion parameter
+  // projection model including a distortion parameter
   robot.init(vpAfma6::TOOL_CCMOP,
   vpCameraParameters::perspectiveProjWithDistortion); \endcode
 
@@ -339,7 +339,7 @@ void vpRobotAfma6::init(void)
   vpCameraParameters cam;
   robot.getCameraParameters(cam, I);
   // In cam, you get the intrinsic parameters of the projection model
-  // with distorsion.
+  // with distortion.
   \endcode
 
   \sa vpCameraParameters, init()
