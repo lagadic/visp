@@ -98,7 +98,7 @@ public:
   vpMeEllipse(const vpMeEllipse &me_ellipse);
   virtual ~vpMeEllipse();
 
-  void display(const vpImage<unsigned char> &I, const vpColor &col, unsigned int thickness = 1);
+  void display(const vpImage<unsigned char> &I, const vpColor &color, unsigned int thickness = 1);
 
   /*!
     Gets the second order normalized centered moment \f$ n_{ij} \f$

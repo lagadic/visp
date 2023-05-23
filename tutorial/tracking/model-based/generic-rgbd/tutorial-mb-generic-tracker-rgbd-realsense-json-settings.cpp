@@ -1,4 +1,4 @@
-//! \example tutorial-mb-generic-tracker-rgbd-realsense.cpp
+//! \example tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
@@ -16,12 +16,12 @@
 using json = nlohmann::json;
 
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv [])
 {
   std::string config_file = "";
   std::string model = "";
   std::string init_file = "";
-  
+
   double proj_error_threshold = 25;
 
   for (int i = 1; i < argc; i++) {
@@ -30,35 +30,37 @@ int main(int argc, char *argv[])
     }
     else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
       model = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--init_file" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--init_file" && i + 1 < argc) {
       init_file = std::string(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--proj_error_threshold" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--proj_error_threshold" && i + 1 < argc) {
       proj_error_threshold = std::atof(argv[i + 1]);
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       std::cout << "Usage: \n"
-                << argv[0]
-                << "--config <settings.json>"
-                << " --model <object.cao>"
-                   " --init_file <object.init>"
-                   " [--proj_error_threshold <threshold between 0 and 90> (default: "
-                << proj_error_threshold
-                << ")]"
-                << std::endl;
+        << argv[0]
+        << "--config <settings.json>"
+        << " --model <object.cao>"
+        " --init_file <object.init>"
+        " [--proj_error_threshold <threshold between 0 and 90> (default: "
+        << proj_error_threshold
+        << ")]"
+        << std::endl;
 
       std::cout << "\n** How to track a 4.2 cm width cube with manual initialization:\n"
-                << argv[0] << "--config model/cube/rgbd-tracker.json --model model/cube/cube.cao" << std::endl;
+        << argv[0] << "--config model/cube/rgbd-tracker.json --model model/cube/cube.cao" << std::endl;
       return EXIT_SUCCESS;
     }
   }
 
-  
   std::cout << "Config files: " << std::endl;
   std::cout << "  JSON config: "
-            << "\"" << config_file << "\"" << std::endl;
+    << "\"" << config_file << "\"" << std::endl;
   std::cout << "  Model: "
-            << "\"" << model << "\"" << std::endl;
+    << "\"" << model << "\"" << std::endl;
   std::cout << "  Init file: "
-            << "\"" << init_file << "\"" << std::endl;
+    << "\"" << init_file << "\"" << std::endl;
 
   if (config_file.empty()) {
     std::cout << "No JSON configuration was provided!" << std::endl;
@@ -74,16 +76,17 @@ int main(int argc, char *argv[])
 
   try {
     realsense.open(config);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e.what() << std::endl;
     std::cout << "Check if the Realsense camera is connected..." << std::endl;
     return EXIT_SUCCESS;
   }
 
   vpCameraParameters cam_color =
-      realsense.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
+    realsense.getCameraParameters(RS2_STREAM_COLOR, vpCameraParameters::perspectiveProjWithoutDistortion);
   vpCameraParameters cam_depth =
-      realsense.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithoutDistortion);
+    realsense.getCameraParameters(RS2_STREAM_DEPTH, vpCameraParameters::perspectiveProjWithoutDistortion);
 
   std::cout << "Sensor internal camera parameters for color camera: " << cam_color << std::endl;
   std::cout << "Sensor internal camera parameters for depth camera: " << cam_depth << std::endl;
@@ -107,13 +110,14 @@ int main(int argc, char *argv[])
   vpMbGenericTracker tracker;
   tracker.loadConfigFile(config_file);
   //! [Loading]
-  if(model.empty() && init_file.empty()) {
+  if (model.empty() && init_file.empty()) {
     std::ifstream config(config_file);
     const json j = json::parse(config);
     config.close();
-    if(j.contains("model")) {
+    if (j.contains("model")) {
       model = j["model"];
-    } else {
+    }
+    else {
       std::cerr << "No model was provided in either JSON file or arguments" << std::endl;
       return EXIT_FAILURE;
     }
@@ -125,10 +129,10 @@ int main(int argc, char *argv[])
 
   //! [Init maps]
   std::string color_key = "", depth_key = "";
-  for(const auto& tracker_type: tracker.getCameraTrackerTypes()) {
+  for (const auto &tracker_type : tracker.getCameraTrackerTypes()) {
     std::cout << "tracker key == " << tracker_type.first << std::endl;
     // Initialise for color features
-    if(tracker_type.second & vpMbGenericTracker::EDGE_TRACKER || tracker_type.second & vpMbGenericTracker::KLT_TRACKER) {
+    if (tracker_type.second & vpMbGenericTracker::EDGE_TRACKER || tracker_type.second & vpMbGenericTracker::KLT_TRACKER) {
       color_key = tracker_type.first;
       mapOfImages[color_key] = &I_gray;
       mapOfInitFiles[color_key] = init_file;
@@ -137,7 +141,7 @@ int main(int argc, char *argv[])
       mapOfCameraIntrinsics[color_key] = cam_color;
     }
     // Initialize for depth features
-    if(tracker_type.second & vpMbGenericTracker::DEPTH_DENSE_TRACKER || tracker_type.second & vpMbGenericTracker::DEPTH_NORMAL_TRACKER) {
+    if (tracker_type.second & vpMbGenericTracker::DEPTH_DENSE_TRACKER || tracker_type.second & vpMbGenericTracker::DEPTH_NORMAL_TRACKER) {
       depth_key = tracker_type.first;
       mapOfImages[depth_key] = &I_depth;
       mapOfWidths[depth_key] = width;
@@ -151,7 +155,7 @@ int main(int argc, char *argv[])
   const bool use_color = !color_key.empty();
   //! [Init maps]
   //! [Load 3D model]
-  if(tracker.getNbPolygon() == 0) { // Not already loaded by JSON
+  if (tracker.getNbPolygon() == 0) { // Not already loaded by JSON
     tracker.loadModel(model);
   }
   //! [Load 3D model]
@@ -159,7 +163,7 @@ int main(int argc, char *argv[])
   //! [Update params]
   std::cout << "Updating configuration with parameters provided by RealSense SDK..." << std::endl;
   tracker.setCameraParameters(mapOfCameraIntrinsics);
-  if(use_color && use_depth) {
+  if (use_color && use_depth) {
     tracker.setCameraTransformationMatrix(mapOfCameraTransformations);
   }
   //! [Update params]
@@ -235,9 +239,11 @@ int main(int argc, char *argv[])
         mapOfPointclouds[depth_key] = &pointcloud;
         mapOfWidths[depth_key] = width;
         mapOfHeights[depth_key] = height;
-      } else if (use_color) {
+      }
+      else if (use_color) {
         mapOfImages[color_key] = &I_gray;
-      } else if (use_depth) {
+      }
+      else if (use_depth) {
         mapOfPointclouds[depth_key] = &pointcloud;
       }
 
@@ -245,12 +251,15 @@ int main(int argc, char *argv[])
       try {
         if (use_color && use_depth) {
           tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
-        } else if (use_color) {
+        }
+        else if (use_color) {
           tracker.track(I_gray);
-        } else if (use_depth) {
+        }
+        else if (use_depth) {
           tracker.track(mapOfImages, mapOfPointclouds, mapOfWidths, mapOfHeights);
         }
-      } catch (const vpException &e) {
+      }
+      catch (const vpException &e) {
         std::cout << "Tracker exception: " << e.getStringMessage() << std::endl;
         tracking_failed = true;
       }
@@ -263,7 +272,8 @@ int main(int argc, char *argv[])
       if (tracker.getTrackerType() & vpMbGenericTracker::EDGE_TRACKER) {
         // Check tracking errors
         proj_error = tracker.getProjectionError();
-      } else {
+      }
+      else {
         proj_error = tracker.computeCurrentProjectionError(I_gray, cMo, cam_color);
       }
 
@@ -280,10 +290,12 @@ int main(int argc, char *argv[])
           tracker.display(I_gray, I_depth, cMo, depth_M_color * cMo, cam_color, cam_depth, vpColor::red, 3);
           vpDisplay::displayFrame(I_gray, cMo, cam_color, 0.05, vpColor::none, 3);
           vpDisplay::displayFrame(I_depth, depth_M_color * cMo, cam_depth, 0.05, vpColor::none, 3);
-        } else if (use_color) {
+        }
+        else if (use_color) {
           tracker.display(I_gray, cMo, cam_color, vpColor::red, 3);
           vpDisplay::displayFrame(I_gray, cMo, cam_color, 0.05, vpColor::none, 3);
-        } else if (use_depth) {
+        }
+        else if (use_depth) {
           tracker.display(I_depth, cMo, cam_depth, vpColor::red, 3);
           vpDisplay::displayFrame(I_depth, cMo, cam_depth, 0.05, vpColor::none, 3);
         }
@@ -296,7 +308,7 @@ int main(int argc, char *argv[])
         { // Display number of feature per type
           std::stringstream ss;
           ss << "Features: edges " << tracker.getNbFeaturesEdge() << ", klt " << tracker.getNbFeaturesKlt()
-             << ", depth dense " << tracker.getNbFeaturesDepthDense() << ", depth normal" << tracker.getNbFeaturesDepthNormal();
+            << ", depth dense " << tracker.getNbFeaturesDepthDense() << ", depth normal" << tracker.getNbFeaturesDepthNormal();
           vpDisplay::displayText(I_gray, I_gray.getHeight() - 30, 20, ss.str(), vpColor::red);
         }
       }
@@ -330,14 +342,15 @@ int main(int argc, char *argv[])
       }
 
     }
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Caught an exception: " << e.what() << std::endl;
   }
   // Show tracking performance
   if (!times_vec.empty()) {
     std::cout << "\nProcessing time, Mean: " << vpMath::getMean(times_vec)
-              << " ms ; Median: " << vpMath::getMedian(times_vec) << " ; Std: " << vpMath::getStdev(times_vec) << " ms"
-              << std::endl;
+      << " ms ; Median: " << vpMath::getMedian(times_vec) << " ; Std: " << vpMath::getStdev(times_vec) << " ms"
+      << std::endl;
   }
   //! [Tracking]
   return EXIT_SUCCESS;

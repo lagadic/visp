@@ -60,10 +60,10 @@ class vpHomogeneousMatrix;
   A 3D point has the followings parameters:
   - **in the object frame**: the normalized 3D coordinates oX, oY, oZ, oW of the point. These
   parameters registered in vpForwardProjection::oP internal 4-dim vector are set using the constructors vpPoint(double
- oX, double oY, double oZ), vpPoint(const vpColVector &oP) and vpPoint(const std::vector<double> &oP) or the fonctions
+  oX, double oY, double oZ), vpPoint(const vpColVector &oP) and vpPoint(const std::vector<double> &oP) or the functions
   setWorldCoordinates(double oX, double oY, double oZ),
   setWorldCoordinates(const vpColVector &oP) and setWorldCoordinates(const std::vector<double> &oP).
- To get theses parameters use get_oP().
+  To get theses parameters use get_oP().
 
   - **in the camera frame**: the normalized coordinates cX, cY, cZ, 1 of the point. These
   parameters registered in vpTracker::cP internal 4-dim vector are computed using
@@ -73,9 +73,9 @@ class vpHomogeneousMatrix;
 
   - **in the image plane**: the 2D normalized coordinates (x, y, 1) corresponding
   to the perspective projection of the point. These parameters are registered in vpTracker::p internal 3-dim vector and
- computed using projection() and projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using
- get_x() and get_y(). They correspond to 2D normalized point parameters with values expressed in meters. To get theses
- parameters use get_p().
+  computed using projection() and projection(const vpColVector &cP, vpColVector &p) const. They could be retrieved using
+  get_x() and get_y(). They correspond to 2D normalized point parameters with values expressed in meters. To get theses
+  parameters use get_p().
 
 */
 class VISP_EXPORT vpPoint : public vpForwardProjection

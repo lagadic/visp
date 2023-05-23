@@ -75,7 +75,7 @@ int main()
     vpCameraParameters cam_read;
     {
       vpXmlParserCamera xml;
-      xml.parse(cam_read, filename, "Camera", vpCameraParameters::perspectiveProjWithoutDistortion, 320, 240);
+      xml.parse(cam_read, filename, "Camera", vpCameraParameters::perspectiveProjWithoutDistortion, 320, 240, false);
       std::cout << "Cam write:\n" << cam << std::endl;
       std::cout << "Cam read:\n" << cam_read << std::endl;
       if (cam != cam_read) {

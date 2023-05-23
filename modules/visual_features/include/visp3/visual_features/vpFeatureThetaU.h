@@ -113,8 +113,8 @@
   vpFeatureThetaU::vpFeatureThetaURotationRepresentationType.
 
   To initialize the feature \f$(\theta u_x, \theta u_y, \theta u_z)\f$
-  you may use vpFeatureThetaU member fonctions like set_TUx(),
-  set_TUy(), set_TUz(), or also buildFrom() fonctions.
+  you may use vpFeatureThetaU member functions like set_TUx(),
+  set_TUy(), set_TUz(), or also buildFrom() functions.
 
   Depending on the choice of the visual feature representation, the
   interaction() method allows to compute the interaction matrix \f$

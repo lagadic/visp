@@ -189,7 +189,8 @@ public:
 #else
       '/';
 #endif
-
+  static std::string toUpperCase(const std::string &input);
+  static std::string toLowerCase(const std::string &input);
   static std::string getAbsolutePathname(const std::string &pathname);
   static std::string getFileExtension(const std::string &pathname, bool checkFile = false);
   static long getIndex(const std::string &filename, const std::string &format);

@@ -202,13 +202,13 @@
   What is not implemented is:
   - move to a given cartesian end-effector position
   - gripper controller
-  - force/torque feadback and control
+  - force/torque feedback and control
 
   Known issues:
   - sometimes the joint to joint trajectory generator provided by Franka complains about discontinuities.
 
-  We provide also the getHandler() function that allows to acces to the robot handler and call the native
-  [libfranka API](https://frankaemika.github.io/libfranka/index.html) fonctionalities:
+  We provide also the getHandler() function that allows to access to the robot handler and call the native
+  [libfranka API](https://frankaemika.github.io/libfranka/index.html) functionalities:
   \code
     vpRobotFranka robot("192.168.1.1");
 

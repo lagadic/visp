@@ -44,7 +44,7 @@ In this section, we give minimal instructions to build ViSP from source just to 
   - On older Ubuntu or Debian distros
   \verbatim
   $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev \
-    libzbar-dev libpthread-stubs0-dev libdc1394-22-dev nlohmann-json3-dev
+    libzbar-dev libpthread-stubs0-dev libdc1394-22-dev
   \endverbatim
 
 - Get ViSP source code
@@ -74,7 +74,8 @@ To have a trial, just jump to \ref install_ubuntu_dataset before running some bi
 
 \subsection install_ubuntu_3rdparty Install 3rd parties
 
-ViSP is interfaced with several optional 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
+ViSP is interfaced with several optional 3rd party libraries.
+Follow the link to see the complete list of \ref supported-third-parties.
 
 \note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do
 not want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP.
@@ -94,6 +95,7 @@ We recommend to install the following 3rd parties:
 - libv4l to grab images from usb or analogic cameras
 - libzbar to be able to detect QR codes
 - pthread library
+- <a href="https://json.nlohmann.me/">JSON for modern C++</a> if you wish to save or load JSON representations of ViSP objects
 
 Installation of recommended 3rd parties could be performed running:
 
@@ -105,8 +107,10 @@ $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv
 - On older Ubuntu or Debian distros
 \verbatim
 $ sudo apt-get install libopencv-dev libx11-dev liblapack-dev libeigen3-dev libv4l-dev libzbar-dev \
-  libpthread-stubs0-dev libdc1394-22-dev nlohmann-json3-dev
+  libpthread-stubs0-dev libdc1394-22-dev
 \endverbatim
+
+Note that on older distributions, the apt package for the JSON library is outdated: to install, see \ref install_ubuntu_3rdparty_other.
 
 \subsubsection install_ubuntu_3rdparty_realsense librealsense 2.x 3rd party
 
@@ -440,6 +444,15 @@ $ sudo apt-get install libdmtx-dev
 \verbatim
 $ sudo apt-get install libgsl-dev
 \endverbatim
+- JSON for modern C++: if the apt package `nlohmann-json3-dev` is not available for your distribution, you can either install from source or from a package manager
+  - To install from source
+\verbatim
+$ git clone https://github.com/nlohmann/json.git
+$ cd json && mkdir build && cd build
+$ cmake ..
+$ make -j$(nproc) && sudo make install
+\endverbatim
+  - To install from a package manager, e.g., vcpkg, see: <a href="https://json.nlohmann.me/integration/package_managers/#embedded">https://json.nlohmann.me/integration/package_managers/#embedded</a>
 
 \subsection install_ubuntu_visp_get_source Get ViSP source code
 

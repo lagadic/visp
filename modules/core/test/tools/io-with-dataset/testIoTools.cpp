@@ -777,6 +777,62 @@ int main(int argc, const char **argv)
     }
   }
 
+  // Test vpIoTools::toLowerCase
+  {
+    int nbFail = 0;
+    int nbOk = 0;
+    std::string testString = std::string("Yolo-V3");
+    std::string expectedLower = std::string("yolo-v3");
+    std::string expectedUpper = std::string("YOLO-V3");
+    #if defined(_WIN32)    
+
+    if (strcmp(vpIoTools::toLowerCase(testString).c_str(), expectedLower.c_str()) == 0) {
+      nbOk++;
+    } else {
+      nbFail++;
+      std::cout << "Fail=" <<vpIoTools::toLowerCase(testString).c_str() << " should be=" << expectedLower << std::endl;
+    }
+
+    if (strcmp(vpIoTools::toUpperCase(testString).c_str(), expectedUpper.c_str()) == 0) {
+      nbOk++;
+    } else {
+      nbFail++;
+      std::cout << "Fail=" <<vpIoTools::toUpperCase(testString).c_str() << " should be=" << expectedUpper << std::endl;
+    }
+
+    std::cout << "Test vpIoTools::toLowerCase (WIN32 platform) - passed: " << nbOk << "/" << (nbOk + nbFail)
+              << std::endl;
+
+    if (nbFail) {
+      std::cerr << "Failed test: vpIoTools::toLowerCase (WIN32 platform)" << std::endl;
+      return EXIT_FAILURE;
+    }
+  #else
+    if (strcmp(vpIoTools::toLowerCase(testString).c_str(), expectedLower.c_str()) == 0) {
+      nbOk++;
+    } else {
+      nbFail++;
+      std::cout << "Fail=" <<vpIoTools::toLowerCase(testString).c_str() << " should be=" << expectedLower << std::endl;
+    }
+
+    if (strcmp(vpIoTools::toUpperCase(testString).c_str(), expectedUpper.c_str()) == 0) {
+      nbOk++;
+    } else {
+      nbFail++;
+      std::cout << "Fail=" <<vpIoTools::toUpperCase(testString).c_str() << " should be=" << expectedUpper << std::endl;
+    }
+
+    std::cout << "Test vpIoTools::toLowerCase (Unix-like platform) - passed: " << nbOk << "/" << (nbOk + nbFail)
+              << std::endl;
+
+    if (nbFail) {
+      std::cerr << "Failed test: vpIoTools::toLowerCase (Unix-like platform)" << std::endl;
+      return EXIT_FAILURE;
+    }
+  #endif
+  }
+
+
   std::cout << std::endl << "Test succeed" << std::endl;
   return EXIT_SUCCESS;
 }

@@ -31,11 +31,6 @@
  * Description:
  * Convert image types.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- * Anthony Saunier
- *
  *****************************************************************************/
 
 /*!
@@ -824,6 +819,13 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<unsigned char> &dest, b
   }
 }
 
+/*!
+ * Converts cv::Mat CV_32FC1 format to ViSP vpImage<float>.
+ *
+ * \param[in] src : OpenCV image in CV_32FC1 format.
+ * \param[out] dest : ViSP image in float format.
+ * \param[in] flip : When true during conversion flip image vertically.
+ */
 void vpImageConvert::convert(const cv::Mat &src, vpImage<float> &dest, bool flip)
 {
   dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
@@ -841,6 +843,44 @@ void vpImageConvert::convert(const cv::Mat &src, vpImage<float> &dest, bool flip
   }
 }
 
+/*!
+ * Converts cv::Mat CV_16UC1 format to ViSP vpImage<uint16_t>.
+ *
+ * \param[in] src : OpenCV image in CV_16UC1 format.
+ * \param[out] dest : ViSP image in uint16_t format.
+ * \param[in] flip : When true during conversion flip image vertically.
+ */
+void vpImageConvert::convert(const cv::Mat &src, vpImage<uint16_t> &dest, bool flip)
+{
+  dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
+
+  if (src.type() == CV_16UC1) {
+    if (src.isContinuous()) {
+      memcpy(dest.bitmap, src.data, (size_t)(src.rows * src.cols)*sizeof(uint16_t));
+    } else {
+      if (flip) {
+        for (unsigned int i = 0; i < dest.getRows(); ++i) {
+          memcpy(dest.bitmap + i * dest.getCols(), src.data + (dest.getRows() - i - 1) * src.step1()*sizeof(uint16_t), (size_t)src.step);
+        }
+      } else {
+        for (unsigned int i = 0; i < dest.getRows(); ++i) {
+          memcpy(dest.bitmap + i * dest.getCols(), src.data + i * src.step1()*sizeof(uint16_t), (size_t)src.step);
+        }
+      }
+    }
+  }
+  else {
+    throw(vpException(vpException::fatalError, "cv:Mat format not supported for conversion into vpImage<uint16_t>"));
+  }
+}
+
+/*!
+ * Converts cv::Mat CV_32FC3 format to ViSP vpImage<vpRGBf>.
+ *
+ * \param[in] src : OpenCV image in CV_32FC3 format.
+ * \param[out] dest : ViSP image in vpRGBf format.
+ * \param[in] flip : When true during conversion flip image vertically.
+ */
 void vpImageConvert::convert(const cv::Mat &src, vpImage<vpRGBf> &dest, bool flip)
 {
   dest.resize((unsigned int)src.rows, (unsigned int)src.cols);
@@ -928,12 +968,12 @@ void vpImageConvert::convert(const vpImage<vpRGBa> &src, cv::Mat &dest)
 int main()
 {
 #if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
-  vpImage<unsigned char> Ig; // A greyscale image
+  vpImage<unsigned char> Ig; // A grayscale image
   cv::Mat Ip;
 
   // Read an image on a disk
   vpImageIo::read(Ig, "image.pgm");
-  // Convert the vpImage<unsigned char> in to greyscale cv::Mat
+  // Convert the vpImage<unsigned char> in to grayscale cv::Mat
   vpImageConvert::convert(Ig, Ip);
   // Treatments on cv::Mat Ip
   //...

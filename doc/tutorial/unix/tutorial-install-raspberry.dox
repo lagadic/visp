@@ -149,7 +149,8 @@ jump to \ref install_raspberry_next. You can later come back to the \ref install
 
 \subsection install_raspberry_3rdparty Install 3rd parties
 
-ViSP is interfaced with several optional 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
+ViSP is interfaced with several optional 3rd party libraries.
+Follow the link to see the complete list of \ref supported-third-parties.
 
 \note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do not want
 to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP.
@@ -160,8 +161,9 @@ in \ref install_raspberry_tips_new_3rdparty.
 
 \subsubsection install_raspberry_visp_3rd_party Install recommended 3rd parties
 
-ViSP is interfaced with several optional 3rd party libraries. 
-The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>. We recommend to install the following:
+ViSP is interfaced with several optional 3rd party libraries.
+Follow the link to see the complete list of \ref supported-third-parties.
+We recommend to install the following:
 
 - OpenCV
 - libX11 to be able to open a window to display images
@@ -504,15 +506,15 @@ General configuration information for ViSP 3.3.1
 
   Python (for build):            /usr/bin/python2.7
 
-  Java:                          
+  Java:
     ant:                         /usr/bin/ant (ver 1.10.5)
     JNI:                         NO
 
-  Build options: 
+  Build options:
     Build deprecated:            yes
     Build with moment combine:   no
 
-  Mathematics: 
+  Mathematics:
     Blas/Lapack:                 yes
     \- Use MKL:                  no
     \- Use OpenBLAS:             no
@@ -523,11 +525,11 @@ General configuration information for ViSP 3.3.1
     Use Eigen3:                  yes (ver 3.3.7)
     Use OpenCV:                  yes (ver 3.2.0)
 
-  Simulator: 
-    Ogre simulator: 
+  Simulator:
+    Ogre simulator:
     \- Use Ogre3D:               no
     \- Use OIS:                  no
-    Coin simulator: 
+    Coin simulator:
     \- Use Coin3D:               no
     \- Use SoWin:                no
     \- Use SoXt:                 no
@@ -536,14 +538,14 @@ General configuration information for ViSP 3.3.1
     \- Use Qt4:                  no
     \- Use Qt3:                  no
 
-  Media I/O: 
+  Media I/O:
     Use JPEG:                    yes (ver 62)
     Use PNG:                     yes (ver 1.6.36)
     \- Use ZLIB:                 yes (ver 1.2.11)
     Use OpenCV:                  yes (ver 3.2.0)
     Use stb_image (built-in):    no
 
-  Real robots: 
+  Real robots:
     Use Afma4:                   no
     Use Afma6:                   no
     Use Franka:                  no
@@ -560,14 +562,14 @@ General configuration information for ViSP 3.3.1
     Use qbdevice (built-in):     yes (ver 2.6.0)
     Use takktile2 (built-in):    yes (ver 1.0.0)
 
-  GUI: 
+  GUI:
     Use X11:                     yes
     Use GTK:                     no
     Use OpenCV:                  yes (ver 3.2.0)
     Use GDI:                     no
     Use Direct3D:                no
 
-  Cameras: 
+  Cameras:
     Use DC1394-2.x:              yes (ver 2.2.5)
     Use CMU 1394:                no
     Use V4L2:                    yes (ver 1.16.3)
@@ -576,7 +578,7 @@ General configuration information for ViSP 3.3.1
     Use Flycapture:              no
     Use Pylon:                   no
 
-  RGB-D sensors: 
+  RGB-D sensors:
     Use Realsense:               no
     Use Realsense2:              no
     Use Kinect:                  no
@@ -586,29 +588,29 @@ General configuration information for ViSP 3.3.1
     Use PCL:                     no
     \- Use VTK:                  no
 
-  F/T sensors: 
+  F/T sensors:
     Use atidaq (built-in):       no
     Use comedi:                  no
     Use IIT SDK:                 no
 
-  Detection: 
+  Detection:
     Use zbar:                    yes (ver 0.22)
     Use dmtx:                    no
     Use AprilTag (built-in):     yes (ver 3.1.1)
     \- Use AprilTag big family:  no
 
-  Misc: 
+  Misc:
     Use Clipper (built-in):      yes (ver 6.4.2)
     Use pugixml (built-in):      yes (ver 1.9.0)
     Use libxml2:                 yes (ver 2.9.4)
 
-  Optimization: 
+  Optimization:
     Use OpenMP:                  yes
     Use pthread:                 yes
     Use pthread (built-in):      no
     Use cxx standard:            11
 
-  Documentation: 
+  Documentation:
     Use doxygen:                 no
 
   Tests and samples:

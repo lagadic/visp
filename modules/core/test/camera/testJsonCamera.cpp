@@ -29,14 +29,14 @@
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  *
  * Description:
- * Test vpMe JSON parse / save.
+ * Test vpCameraParameters JSON parse / save.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
-  \file testJsonMe.cpp
+  \file testJsonCamera.cpp
 
-  Test test saving and parsing JSON configuration for vpMe
+  Test saving and parsing JSON configuration for vpCameraParameters.
 */
 
 #include <visp3/core/vpCameraParameters.h>
@@ -52,7 +52,6 @@ using json = nlohmann::json;
 #include <random>
 namespace
 {
-
 // This class shows how to implement a simple generator for Catch tests
 class RandomCamGenerator : public Catch::Generators::IGenerator<vpCameraParameters>
 {
@@ -109,7 +108,7 @@ public:
 Catch::Generators::GeneratorWrapper<vpCameraParameters> randomCam(double low, double high)
 {
   return Catch::Generators::GeneratorWrapper<vpCameraParameters>(
-      std::unique_ptr<Catch::Generators::IGenerator<vpCameraParameters> >(new RandomCamGenerator(low, high)));
+    std::unique_ptr<Catch::Generators::IGenerator<vpCameraParameters> >(new RandomCamGenerator(low, high)));
 }
 } // namespace
 
@@ -150,7 +149,7 @@ SCENARIO("Serializing two cameras", "[json]")
   }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv [])
 {
   Catch::Session session; // There must be exactly one instance
   session.applyCommandLine(argc, argv);

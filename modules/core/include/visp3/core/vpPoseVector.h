@@ -32,11 +32,7 @@
  * Pose object. A pose is a size 6 vector [t, tu]^T where tu is
  * a rotation vector (theta u representation) and t is a translation vector.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpPOSEVECTOR_H
 #define vpPOSEVECTOR_H
@@ -94,62 +90,104 @@ class vpRowVector;
 
   The following code shows how to initialize a pose vector:
   \code
-#include <visp3/core/vpPoseVector.h>
+  #include <visp3/core/vpPoseVector.h>
 
-int main()
-{
-  vpPoseVector pose;
+  int main()
+  {
+    vpPoseVector pose;
 
-  pose[0] = 0.1;    // tx
-  pose[1] = 0.2;    // ty
-  pose[2] = 0.3;    // tz
+    pose[0] = 0.1;    // tx
+    pose[1] = 0.2;    // ty
+    pose[2] = 0.3;    // tz
 
-  pose[3] = M_PI;   // tux
-  pose[4] = M_PI_2; // tux
-  pose[5] = M_PI_4; // tuz
+    pose[3] = M_PI;   // tux
+    pose[4] = M_PI_2; // tux
+    pose[5] = M_PI_4; // tuz
 
-  std::cout << "pose vector:\n" << pose << std::endl;
-}
+    std::cout << "pose vector:\n" << pose << std::endl;
+  }
   \endcode
   It produces the following printings:
-  \code
-pose vector:
-0.1
-0.2
-0.3
-3.141592654
-1.570796327
-0.7853981634
+  \code{.unparsed}
+  pose vector:
+  0.1
+  0.2
+  0.3
+  3.141592654
+  1.570796327
+  0.7853981634
   \endcode
   The same initialization could be achieved this way:
   \code
-#include <visp3/core/vpPoseVector.h>
+  #include <visp3/core/vpPoseVector.h>
 
-int main()
-{
-  vpTranslationVector t;
-  vpThetaUVector tu;
+  int main()
+  {
+    vpTranslationVector t;
+    vpThetaUVector tu;
 
-  t << 0.1, 0.2, 0.3;
-  tu << M_PI, M_PI_2, M_PI_4;
-  vpPoseVector pose(t, tu);
-}
+    t << 0.1, 0.2, 0.3;
+    tu << M_PI, M_PI_2, M_PI_4;
+    vpPoseVector pose(t, tu);
+  }
   \endcode
   If ViSP is build with c++11 suport, you could also initialize the vector using:
   \code
-#include <visp3/core/vpPoseVector.h>
+  #include <visp3/core/vpPoseVector.h>
 
-int main()
-{
-  vpTranslationVector t;
-  vpThetaUVector tu;
+  int main()
+  {
+    vpTranslationVector t;
+    vpThetaUVector tu;
 
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
-  t = { 0.1, 0.2, 0.3 };
-  tu = { M_PI, M_PI_2, M_PI_4 };
-#endif
-  vpPoseVector pose(t, tu);
-}
+  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    t = { 0.1, 0.2, 0.3 };
+    tu = { M_PI, M_PI_2, M_PI_4 };
+  #endif
+    vpPoseVector pose(t, tu);
+  }
+  \endcode
+
+  <b>JSON serialization</b>
+
+  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpPoseVector.
+  The following sample code shows how to save a pose vector in a file named `pose-vector.json`
+  and reload the values from this JSON file.
+  \code
+  #include <visp3/core/vpPoseVector.h>
+
+  int main()
+  {
+  #if defined(VISP_HAVE_NLOHMANN_JSON)
+    std::string filename = "pose-vector.json";
+    {
+      vpPoseVector pose(0.1, 0.2, 0.3, M_PI, M_PI_2, M_PI_4);
+      std::ofstream file(filename);
+      const nlohmann::json j = pose;
+      file << j;
+      file.close();
+    }
+    {
+      std::ifstream file(filename);
+      const nlohmann::json j = nlohmann::json::parse(file);
+      vpPoseVector pose;
+      pose = j;
+      file.close();
+      std::cout << "Read pose vector from " << filename << ":\n" << pose.t() << std::endl;
+    }
+  #endif
+  }
+  \endcode
+  If you build and execute the sample code, it will produce the following output:
+  \code{.unparsed}
+  Read pose vector from pose-vector.json:
+  0.1  0.2  0.3  3.141592654  1.570796327  0.7853981634
+  \endcode
+
+  The content of the `pose-vector.json` file is the following:
+  \code{.unparsed}
+  $ cat pose-vector.json
+  {"cols":1,"data":[0.1,0.2,0.3,3.141592653589793,1.5707963267948966,0.7853981633974483],"rows":6,"type":"vpPoseVector"}
   \endcode
 */
 class VISP_EXPORT vpPoseVector : public vpArray2D<double>
@@ -168,7 +206,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpPoseVector(){};
+  virtual ~vpPoseVector() { };
 
   vpPoseVector buildFrom(double tx, double ty, double tz, double tux, double tuy, double tuz);
   // convert an homogeneous matrix in a pose
@@ -259,6 +297,17 @@ public:
 
   std::vector<double> toStdVector() const;
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+public:
+  static const std::string jsonTypeName;
+private:
+  friend void to_json(nlohmann::json &j, const vpPoseVector &cam);
+  friend void from_json(const nlohmann::json &j, vpPoseVector &cam);
+  // Conversion helper function to avoid circular dependencies and MSVC errors that are not exported in the DLL
+  void parse_json(const nlohmann::json &j);
+  void convert_to_json(nlohmann::json &j) const;
+#endif
+
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions
@@ -268,24 +317,19 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init(){};
-//@}
-#endif
-#ifdef VISP_HAVE_NLOHMANN_JSON
-private:
-  friend void from_json(const nlohmann::json& j, vpPoseVector& r);
-  void parse_json(const nlohmann::json& j);
+  vp_deprecated void init() { };
+  //@}
 #endif
 };
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
 #include <nlohmann/json.hpp>
-inline void to_json(nlohmann::json& j, const vpPoseVector& r) {
-  const vpArray2D<double>* asArray = (vpArray2D<double>*) &r;
-  to_json(j, *asArray);
-  j["type"] = "vpPoseVector";
+inline void to_json(nlohmann::json &j, const vpPoseVector &r)
+{
+  r.convert_to_json(j);
 }
-inline void from_json(const nlohmann::json& j, vpPoseVector& r) {
+inline void from_json(const nlohmann::json &j, vpPoseVector &r)
+{
   r.parse_json(j);
 }
 #endif

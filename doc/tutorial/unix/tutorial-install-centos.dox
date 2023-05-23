@@ -60,7 +60,7 @@ To have a trial, just jump to \ref install_centos_dataset before running some bi
 
 \subsection install_centos_3rdparty Install 3rd parties
 
-ViSP is interfaced with several 3rd party libraries. The <a href="http://visp.inria.fr/software-architecture">complete list is provided here</a>.
+ViSP is interfaced with several 3rd party libraries. Follow the link to see the complete list of \ref supported-third-parties.
 
 \note ViSP can be used without any third-party since all of them are optional. But obviously in this case, as we do not want to reinvent the wheel, some features implemented in third-party libraries will not be exploitable through ViSP. It is therefore possible to skip in a first time this section and start directly to \ref install_centos_quick. Later, if you realize that a third-party library is missing, you can still install it, go back to the build folder, configure ViSP with CMake to detect the newly installed third-party library and build ViSP again as explained in \ref install_centos_tips_new_3rdparty.
 

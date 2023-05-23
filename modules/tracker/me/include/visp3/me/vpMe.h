@@ -31,7 +31,7 @@
  * Description:
  * Moving edges.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMe.h
@@ -51,6 +51,69 @@
 
   This class defines predetermined masks for sites and holds moving edges
   tracking parameters.
+
+  <b>JSON serialization</b>
+
+  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpMe.
+  The following sample code shows how to save moving-edges settings in a file named `me.json`
+  and reload the values from this JSON file.
+  \code
+  #include <visp3/me/vpMe.h>
+
+  int main()
+  {
+  #if defined(VISP_HAVE_NLOHMANN_JSON)
+    std::string filename = "me.json";
+    {
+      vpMe me;
+      me.setThreshold(10000);
+      me.setMaskNumber(180);
+      me.setMaskSign(0);
+      me.setMu1(0.5);
+      me.setMu2(0.5);
+      me.setNbTotalSample(0);
+      me.setPointsToTrack(200);
+      me.setRange(5);
+      me.setStrip(2);
+
+      std::ofstream file(filename);
+      const nlohmann::json j = me;
+      file << j;
+      file.close();
+    }
+    {
+      std::ifstream file(filename);
+      const nlohmann::json j = nlohmann::json::parse(file);
+      vpMe me;
+      me = j;
+      file.close();
+      std::cout << "Read moving-edges settings from " << filename << ":" << std::endl;
+      me.print();
+    }
+  #endif
+  }
+  \endcode
+  If you build and execute the sample code, it will produce the following output:
+  \code{.unparsed}
+  Read moving-edges settings from me.json:
+
+  Moving edges settings
+
+   Size of the convolution masks....5x5 pixels
+   Number of masks..................180
+   Query range +/- J................5 pixels
+   Likelihood test ratio............10000
+   Contrast tolerance +/-...........50% and 50%
+   Sample step......................10 pixels
+   Strip............................2 pixels
+   Min_Samplestep...................4 pixels
+  \endcode
+
+  The content of the `me.json` file is the following:
+  \code{.unparsed}
+  $ cat me.json
+  {"maskSign":0,"maskSize":5,"minSampleStep":4.0,"mu":[0.5,0.5],"nMask":180,"ntotalSample":0,"pointsToTrack":200,"range":5,"sampleStep":10.0,"strip":2,"threshold":10000.0}
+  \endcode
  */
 class VISP_EXPORT vpMe
 {
@@ -84,7 +147,7 @@ private:
   int strip;
   // int graph ;
   vpMatrix *mask; //! Array of matrices defining the different masks (one for
-                  //! every angle step).
+  //! every angle step).
 
 public:
   vpMe();
@@ -301,8 +364,8 @@ public:
   void setThreshold(const double &t) { threshold = t; }
 
 #ifdef VISP_HAVE_NLOHMANN_JSON
-  friend void to_json(nlohmann::json& j, const vpMe& me);
-  friend  void from_json(const nlohmann::json& j, vpMe& me);
+  friend void to_json(nlohmann::json &j, const vpMe &me);
+  friend void from_json(const nlohmann::json &j, vpMe &me);
 #endif
 };
 
@@ -312,11 +375,12 @@ public:
 
 /**
  * @brief Convert a vpMe object to a JSON representation
- * 
+ *
  * @param j resulting json object
  * @param me the object to convert
  */
-inline void to_json(nlohmann::json& j, const vpMe& me) {
+inline void to_json(nlohmann::json &j, const vpMe &me)
+{
   j = {
     {"threshold", me.threshold},
     {"mu", {me.mu1, me.mu2}},
@@ -334,7 +398,7 @@ inline void to_json(nlohmann::json& j, const vpMe& me) {
 
 /**
  * @brief Retrieve a vpMe object from a JSON representation
- * 
+ *
  * JSON content (key: type):
  *  - threshold: double, vpMe::setThreshold
  *  - mu : [double, double], vpMe::setMu1, vpMe::setMu2
@@ -348,7 +412,7 @@ inline void to_json(nlohmann::json& j, const vpMe& me) {
  *  - nMask: int, vpMe::setMaskNumber
  *  - maskSign: int, vpMe::setMaskSign
  *  - strip: int, vpMe::setStrip
- * 
+ *
  * Example:
  * \code{.json}
  * {
@@ -369,33 +433,36 @@ inline void to_json(nlohmann::json& j, const vpMe& me) {
     "threshold": 5000.0
   }
  * \endcode
- * 
+ *
  * @param j JSON representation to convert
  * @param me converted object
  */
-inline void from_json(const nlohmann::json& j, vpMe& me) {
+inline void from_json(const nlohmann::json &j, vpMe &me)
+{
   me.threshold = j.value("threshold", me.threshold);
-  
-  if(j.contains("mu")) {
+
+  if (j.contains("mu")) {
     std::vector<double> mus = j.at("mu").get<std::vector<double>>();
     assert((mus.size() == 2));
     me.setMu1(mus[0]);
     me.setMu2(mus[1]);
   }
   me.min_samplestep = j.value("minSampleStep", me.min_samplestep);
-  
+
   me.range = j.value("range", me.range);
   me.ntotal_sample = j.value("ntotalSample", me.ntotal_sample);
   me.points_to_track = j.value("pointsToTrack", me.points_to_track);
   me.mask_size = j.value("maskSize", me.mask_size);
   me.mask_sign = j.value("maskSign", me.mask_sign);
   me.strip = j.value("strip", me.strip);
-  if(j.contains("angleStep") && j.contains("nMask")) {
+  if (j.contains("angleStep") && j.contains("nMask")) {
     std::cerr << "both angle step and number of masks are defined, number of masks will take precedence" << std::endl;
     me.setMaskNumber(j["nMask"]);
-  } else if(j.contains("angleStep")) {
+  }
+  else if (j.contains("angleStep")) {
     me.setAngleStep(j["angleStep"]);
-  } else if (j.contains("nMask")) {
+  }
+  else if (j.contains("nMask")) {
     me.setMaskNumber(j["nMask"]);
   }
   me.initMask();
