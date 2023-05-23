@@ -55,7 +55,7 @@
 
   \brief Modelisation of Irisa's gantry robot named Afma6.
 
-  In this modelisation, different frames have to be considered.
+  In this modelization, different frames have to be considered.
 
   - \f$ {\cal F}_f \f$: the reference frame, also called world frame
 
