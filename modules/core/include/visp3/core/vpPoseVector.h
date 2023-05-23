@@ -68,7 +68,7 @@ class vpRowVector;
   \brief Implementation of a pose vector and operations on poses.
 
   The vpPose class implements a complete representation of every rigid motion
-  in the euclidian space.
+  in the Euclidean space.
 
   The vpPose class is derived from vpArray2D<double>.
 
