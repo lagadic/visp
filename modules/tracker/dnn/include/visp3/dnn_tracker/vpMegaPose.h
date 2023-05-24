@@ -1,6 +1,8 @@
 #ifndef VP_MEGAPOSE_H
 #define VP_MEGAPOSE_H
 
+#include <visp3/core/vpConfig.h>
+#if defined(VISP_HAVE_NLOHMANN_JSON)
 
 #include <vector>
 #include <string>
@@ -16,7 +18,7 @@
 
 #include <nlohmann/json.hpp>
 
-using json = nlohmann::json;
+
 
 /**
  * Result from a pose estimation performed by megapose
@@ -35,14 +37,14 @@ public:
     vpRect boundingBox;
 };
 
-inline void to_json(json& j, const vpRect& d)
+inline void to_json(nlohmann::json& j, const vpRect& d)
 {
     std::vector<double> values = {
         d.getLeft(), d.getTop(), d.getRight(), d.getBottom()
     };
     j = values;
 }
-inline void from_json(const json& j, vpRect& d)
+inline void from_json(const nlohmann::json& j, vpRect& d)
 {
     std::vector<double> values = j.get<std::vector<double>>();
     assert((values.size() == 4));
@@ -52,7 +54,7 @@ inline void from_json(const json& j, vpRect& d)
     d.setBottom(values[3]);
 }
 
-inline void from_json(const json& j, vpMegaPoseEstimate& m)
+inline void from_json(const nlohmann::json& j, vpMegaPoseEstimate& m)
 {
     m.score = j["score"];
     m.cTo = j["cTo"];
@@ -167,5 +169,7 @@ private:
     static std::string messageToString(const vpMegaPose::ServerMessage messageType);
     static vpMegaPose::ServerMessage stringToMessage(const std::string& s);
 };
+
+#endif // VISP_HAVE_NLOHMANN_JSON
 
 #endif

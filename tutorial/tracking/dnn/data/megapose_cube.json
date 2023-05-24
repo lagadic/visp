@@ -1,0 +1,28 @@
+{
+  "height": 480,
+  "width": 640,
+  "video-device": "0",
+  "detector": {
+    "model-path": "/local/sfelton/cube_detector.onnx",
+    "config": "none",
+    "type": "yolov7",
+    "framework": "onnx",
+    "labels": ["cube"],
+    "mean":{
+      "red": 0,
+      "blue": 0,
+      "green": 0
+    },
+    "confidenceThreshold": 0.5,
+    "nmsThreshold": 0.4,
+    "filterThreshold": 0.25
+  },
+
+  "megapose": {
+    "address": "127.0.0.1",
+    "port": 5555
+  },
+  "detectionLabelsToMegaposeObjects": {
+    "cube": "cube"
+  }
+}
