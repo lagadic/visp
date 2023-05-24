@@ -49,7 +49,7 @@ vpColorBlindFriendlyPalette::Palette vpColorBlindFriendlyPalette::get_colorID() 
   return m_colorID;
 }
 
-vpColor vpColorBlindFriendlyPalette::to_vpColor()
+vpColor vpColorBlindFriendlyPalette::to_vpColor() const
 {
   return s_palette[to_uint(m_colorID)];
 }

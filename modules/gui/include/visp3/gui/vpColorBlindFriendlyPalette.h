@@ -104,7 +104,7 @@ public:
    * 
    * \return vpColor The \b vpColor corresponding to the RGB values of the \b vpColorBlindFriendlyPalette .
    */
-  vpColor to_vpColor();
+  vpColor to_vpColor() const;
 
   /**
    * \brief Cast a \b vpColorBlindFriendlyPalette in a vector {R, G, B}.
