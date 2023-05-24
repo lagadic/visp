@@ -38,8 +38,6 @@
 #ifndef POINTCLOUDVISUALIZATION_H
 #define POINTCLOUDVISUALIZATION_H
 
-#ifndef DOXYGEN_SHOULD_SKIP_THIS
-
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PCL)
