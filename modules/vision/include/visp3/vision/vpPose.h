@@ -48,6 +48,7 @@
 #ifndef _vpPose_h_
 #define _vpPose_h_
 
+#include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpHomogeneousMatrix.h>
 #include <visp3/core/vpPixelMeterConversion.h>
 #include <visp3/core/vpPoint.h>
@@ -221,6 +222,8 @@ public:
   bool computePose(vpPoseMethodType method, vpHomogeneousMatrix &cMo, bool (*func)(const vpHomogeneousMatrix &) = NULL);
   bool computePoseDementhonLagrangeVVS(vpHomogeneousMatrix &cMo);
   double computeResidual(const vpHomogeneousMatrix &cMo) const;
+  double computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraParameters& cam) const;
+  double computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraParameters& cam, vpColVector& squaredResidual) const;
   bool coplanar(int &coplanar_plane_type, double *p_a = NULL, double *p_b = NULL, double *p_c = NULL, double *p_d = NULL);
   void displayModel(vpImage<unsigned char> &I, vpCameraParameters &cam, vpColor col = vpColor::none);
   void displayModel(vpImage<vpRGBa> &I, vpCameraParameters &cam, vpColor col = vpColor::none);

@@ -387,6 +387,59 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 }
 
 /*!
+  \brief Compute and return the sum of squared residuals expressed in pixel^2 for
+  the pose matrix \e cMo.
+
+  \param cMo : Input pose. The matrix that defines the pose to be tested.
+  \param cam : Camera parameters used to observe the points.
+
+  \return The value of the sum of squared residuals in meter^2.
+
+*/
+double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraParameters& cam) const
+{
+  vpColVector residuals;
+  return computeResidual(cMo, cam, residuals);
+}
+
+/*!
+  \brief Compute and return the sum of squared residuals expressed in pixel^2 for
+  the pose matrix \e cMo.
+
+  \param cMo : Input pose. The matrix that defines the pose to be tested.
+  \param cam : Camera parameters used to observe the points.
+  \param residuals: Input/output vector that will be resized and will contain the squared residuals expressed in pixel^2 of each point.
+
+  \return The value of the sum of squared residuals in meter^2.
+
+*/
+double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, vpColVector &residuals) const
+{
+  double squared_error = 0;
+  residuals.resize(listP.size());
+  vpPoint P;
+  unsigned int i = 0;
+  for (std::list<vpPoint>::const_iterator it = listP.begin(); it != listP.end(); ++it) {
+    P = *it;
+    double x = P.get_x(); 
+    double y = P.get_y();
+
+    double u_initial, v_initial;
+    vpMeterPixelConversion::convertPoint(cam, x, y, u_initial,v_initial);
+  
+    P.track(cMo);
+
+    double u_moved, v_moved;
+    vpMeterPixelConversion::convertPoint(cam, P.get_x(), P.get_y(), u_moved,v_moved);
+
+    double squaredResidual = vpMath::sqr(u_moved - u_initial) + vpMath::sqr(v_moved - v_initial);
+    residuals[i++] = squaredResidual;
+    squared_error += squaredResidual;
+  }
+  return (squared_error);
+}
+
+/*!
   Compute the pose according to the desired method which are:
   - vpPose::LAGRANGE: Linear Lagrange approach (test is done to switch between
   planar and non planar algorithm)
