@@ -32,9 +32,9 @@ private:
    * 
    * @param addedNoise Standard deviation of the noise.
    * @param order The order of the polynomial surface that is generated.
-   * @return std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> 
+   * @return std::pair<vpPclVisualizer::pclPointCloudPointXYZRGBPtr, vpPclVisualizer::pclPointCloudPointXYZRGBPtr> 
    */
-  std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights);
+  std::pair<vpPclVisualizer::pclPointCloudPointXYZRGBPtr, vpPclVisualizer::pclPointCloudPointXYZRGBPtr> generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights);
 public:
   /**
    * @brief Construct a new object.

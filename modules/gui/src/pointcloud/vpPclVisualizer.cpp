@@ -132,7 +132,7 @@ void vpPclVisualizer::set_ignoreThreshold(const double &ignoreThreshold)
   s_ignoreThresh = ignoreThreshold;
 }
 
-void vpPclVisualizer ::updateSurface(const pclPointCloud::Ptr &surface, const unsigned int &id, const bool &hasToKeepColor)
+void vpPclVisualizer ::updateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id, const bool &hasToKeepColor)
 {
   if(m_hasToRun)
   {
@@ -156,7 +156,7 @@ void vpPclVisualizer ::updateSurface(const pclPointCloud::Ptr &surface, const un
   }
 }
 
-void vpPclVisualizer ::updateSurface(const pclPointCloud::Ptr &surface, const unsigned int &id,
+void vpPclVisualizer ::updateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id,
                                                   const vpColVector &weights, const bool &hasToKeepColor)
 {
   if (m_hasToRun) {
@@ -172,7 +172,7 @@ void vpPclVisualizer ::updateSurface(const pclPointCloud::Ptr &surface, const un
     // Blocking mode
     // If the saved pcl corresponding to \b id was not initialized, initialize it
     if (!m_vPointClouds[id]) {
-      m_vPointClouds[id].reset(new pclPointCloud());
+      m_vPointClouds[id].reset(new pclPointCloudPointXYZRGB());
     }
 
     // Resize if needed the saved pcl corresponding to \b id
@@ -192,7 +192,7 @@ void vpPclVisualizer ::updateSurface(const pclPointCloud::Ptr &surface, const un
         addPoint = true;
       }
 
-      pclPoint pt = surface->at(index);
+      pclPointXYZRGB pt = surface->at(index);
       if (addPoint) {
         m_vPointClouds[id]->at(index).x = pt.x;
         m_vPointClouds[id]->at(index).y = pt.y;
@@ -215,19 +215,19 @@ void vpPclVisualizer ::updateSurface(const pclPointCloud::Ptr &surface, const un
   }
 }
 
-unsigned int vpPclVisualizer ::addSurface(const pclPointCloud::Ptr &surface, const std::string &name, const std::vector<unsigned char> &v_color)
+unsigned int vpPclVisualizer ::addSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const std::string &name, const std::vector<unsigned char> &v_color)
 {
   vpColVector emptyWeights; // Fake weights that are all equal to 1, to keep all the points
   return addSurface(surface, emptyWeights, name, v_color);
 }
 
-unsigned int vpPclVisualizer ::addSurface(const pclPointCloud::Ptr &surface, const vpColVector &weights, const std::string &name, const std::vector<unsigned char> &v_color)
+unsigned int vpPclVisualizer ::addSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const vpColVector &weights, const std::string &name, const std::vector<unsigned char> &v_color)
 {
   static unsigned int nbSurfaces = 0;
   unsigned int id = m_vPointClouds.size();
 
   // Creating a new pcl and saving it in the container
-  pclPointCloud::Ptr p_pointCloud(new pclPointCloud());
+  pclPointCloudPointXYZRGB::Ptr p_pointCloud(new pclPointCloudPointXYZRGB());
   m_vPointClouds.push_back(p_pointCloud);
 
   // Sizing it accordingly to the input pcl
@@ -277,7 +277,7 @@ unsigned int vpPclVisualizer ::addSurface(const pclPointCloud::Ptr &surface, con
       shouldPointBeVisible = true;
     }
     
-    pclPoint pt = surface->at(index);
+    pclPointXYZRGB pt = surface->at(index);
     m_vPointClouds[id]->at(index).x = pt.x;
     m_vPointClouds[id]->at(index).y = pt.y;
     m_vPointClouds[id]->at(index).z = pt.z;
@@ -448,17 +448,17 @@ void vpPclVisualizer ::loopThread()
   sp_viewer.reset();
 }
 
-void vpPclVisualizer ::threadUpdateSurface(const pclPointCloud::Ptr &surface, const unsigned int &id)
+void vpPclVisualizer ::threadUpdateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id)
 {
   threadUpdateSurface(surface, id, vpColVector());
 }
 
-void vpPclVisualizer ::threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, const unsigned int &id)
+void vpPclVisualizer ::threadUpdateSurfaceOriginalColor(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id)
 {
   threadUpdateSurfaceOriginalColor(surface, id, vpColVector());
 }
 
-void vpPclVisualizer ::threadUpdateSurface(const pclPointCloud::Ptr &surface,  const unsigned int &id, const vpColVector &weights)
+void vpPclVisualizer ::threadUpdateSurface(const pclPointCloudPointXYZRGB::Ptr &surface,  const unsigned int &id, const vpColVector &weights)
 {
   m_vpmutex[id]->lock();
   m_vweights[id] = weights; // Saving the weights affected to each point of the pcl
@@ -468,7 +468,7 @@ void vpPclVisualizer ::threadUpdateSurface(const pclPointCloud::Ptr &surface,  c
   // Iterating on each point of the pcl to change the color of the points
   // for the default value affected to this pcl
   for(unsigned int index = 0; index < nbPoints; index++){
-      pclPoint pt = surface->at(index);
+      pclPointXYZRGB pt = surface->at(index);
       m_vPointClouds[id]->at(index).x = pt.x;
       m_vPointClouds[id]->at(index).y = pt.y;
       m_vPointClouds[id]->at(index).z = pt.z;
@@ -480,7 +480,7 @@ void vpPclVisualizer ::threadUpdateSurface(const pclPointCloud::Ptr &surface,  c
   m_vpmutex[id]->unlock();
 }
 
-void vpPclVisualizer ::threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, const unsigned int &id, const vpColVector &weights)
+void vpPclVisualizer ::threadUpdateSurfaceOriginalColor(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id, const vpColVector &weights)
 {
   m_vpmutex[id]->lock();
   m_vweights[id] = weights; // Saving the weights affected to each point of the pcl
