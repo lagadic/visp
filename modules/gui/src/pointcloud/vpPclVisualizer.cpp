@@ -151,7 +151,6 @@ void vpPclVisualizer ::updateSurface(const pclPointCloud::Ptr &surface, const un
   else
   {
     // Blocking mode
-    unsigned int nbPoints = surface->size();
     vpColVector fakeWeights; // Fake weights that are all equal to 1, to keep all the points
     updateSurface(surface, id, fakeWeights, hasToKeepColor);
   }
