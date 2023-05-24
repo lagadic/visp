@@ -30,7 +30,6 @@ double zFunction(const double &x, const double &y, const unsigned int order)
       {
         z += offset;
       }
-
     }
   }
 
