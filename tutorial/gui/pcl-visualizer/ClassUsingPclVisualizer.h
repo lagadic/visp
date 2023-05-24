@@ -7,7 +7,7 @@
 #if defined(VISP_HAVE_PCL)
 
 #include<visp3/core/vpColVector.h>
-#include<visp3/gui/vpPclPointCloudVisualization.h>
+#include<visp3/gui/vpPclVisualizer.h>
 
 class ClassUsingPclVisualizer
 {
@@ -25,16 +25,16 @@ private:
   unsigned int _m;  /*!< Number of points along the Y-axis.*/
   double _dY; // _dY = (_maxY - _minY)/(_m-1)
 
-  vpPclPointCloudVisualization _visualizer; /*!< The PCL-based visualizer.*/
+  vpPclVisualizer _visualizer; /*!< The PCL-based visualizer.*/
 
   /**
    * @brief Generate a noise-free grid of point, and a possibly noisy one, which is translated and rotated with regarded to the noise-free one.
    * 
    * @param addedNoise Standard deviation of the noise.
    * @param order The order of the polynomial surface that is generated.
-   * @return std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> 
+   * @return std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> 
    */
-  std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights);
+  std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights);
 public:
   /**
    * @brief Construct a new object.
@@ -48,8 +48,8 @@ public:
   ~ClassUsingPclVisualizer();
 
   /**
-   * @brief Demonstration on how to use a \b vpPclPointCloudVisualization in blocking mode, i.e.
-   * we expect an input from the user after call to \b vpPclPointCloudVisualization::display 
+   * @brief Demonstration on how to use a \b vpPclVisualizer in blocking mode, i.e.
+   * we expect an input from the user after call to \b vpPclVisualizer::display 
    * to go forward in the code.
    * @param addedNoise Standard deviation of the noise added to the moved surface. 
    * @param order  The order of the polynomial surface that is generated.
@@ -57,7 +57,7 @@ public:
   void blockingMode(const double &addedNoise, const unsigned int& order);
 
   /**
-   * @brief Demonstration on how to use a \b vpPclPointCloudVisualization in threaded mode.
+   * @brief Demonstration on how to use a \b vpPclVisualizer in threaded mode.
    * 
    * @param addedNoise Standard deviation of the noise added to the moved surface. 
    * @param order  The order of the polynomial surface that is generated.

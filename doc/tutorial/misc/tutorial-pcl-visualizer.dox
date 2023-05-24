@@ -5,14 +5,14 @@
 
 \section pcl_visualizer_intro Introduction
 
-This tutorial shows how to use the `vpPclPointCloudVisualization` class.
+This tutorial shows how to use the `vpPclVisualizer` class.
 
 In the next section you will find an example that shows how to display two point clouds, with one having attached 
 confidence weights, either in blocking-mode or threaded-mode display.
 
 \section pcl_visualizer_requirements Requirements
 
-To enable `vpPclPointCloudVisualization` class usage, and thus use this tutorial, you need to have a version of ViSP build with PCL.
+To enable `vpPclVisualizer` class usage, and thus use this tutorial, you need to have a version of ViSP build with PCL.
 
 \section pcl_visualizer_example Point clouds visualization example explained
 
@@ -20,7 +20,7 @@ For this tutorial, we use the following main program:
 
 \include tutorial-pcl-visualizer.cpp
 
-It uses the following class, which generates 3D coordinates and relies on the `vpPclPointCloudVisualization` to visualize data.
+It uses the following class, which generates 3D coordinates and relies on the `vpPclVisualizer` to visualize data.
 
 \include ClassUsingPclVisualizer.h
 
@@ -30,7 +30,7 @@ It uses the following class, which generates 3D coordinates and relies on the `v
 
 Let us first have a look at the main program.
 
-First, we include the class that uses the vpPclPointCloudVisualization object to display different point clouds:
+First, we include the class that uses the vpPclVisualizer object to display different point clouds:
 
 \snippet tutorial-pcl-visualizer.cpp Class include
 
@@ -65,7 +65,7 @@ is computed from the X and Y coordinates thanks to the following method.
 
 The constructor initializes the minimum and maximum X and Y coordinates of the polynomial 
 surface, along with the number of points in each direction it contains. It also constructs 
-the vpPclPointCloudVisualization object, naming the window that will open.
+the vpPclVisualizer object, naming the window that will open.
 
 \snippet ClassUsingPclVisualizer.cpp Constructor
 
@@ -77,7 +77,7 @@ points thanks to a depth sensor.
 
 \snippet ClassUsingPclVisualizer.cpp Surface generator
 
-To use the vpPclPointCloudVisualization class, you must first add the surfaces you want to display.
+To use the vpPclVisualizer class, you must first add the surfaces you want to display.
 You can do it by adding a surface for which you do not particularly care of the color and thus 
 decide to use a generated one :
 

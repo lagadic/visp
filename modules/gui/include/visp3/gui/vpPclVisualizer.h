@@ -56,7 +56,7 @@
 // PCL
 #include <pcl/visualization/pcl_visualizer.h>
 
-class VISP_EXPORT vpPclPointCloudVisualization
+class VISP_EXPORT vpPclVisualizer
 {
 public:
   typedef typename pcl::PointXYZRGB pclPoint;
@@ -77,7 +77,7 @@ public:
   }legendParams;
 
   /**
-   * @brief Construct a new vpPclPointCloudVisualization object.
+   * @brief Construct a new vpPclVisualizer object.
    * 
    * @param title The title of the window of the visualizer.
    * @param width The width of the window of the visualizer.
@@ -87,8 +87,8 @@ public:
    * @param outFolder If different from the empty string, the point clouds will be saved in this folder.
    * @param ignoreThreshold A point for which the weight is below this threshold will be displayed in black.
    */
-  vpPclPointCloudVisualization(const std::string &title , const int &width = 640, const int &height = 480, const int &px = 720, const int &py = 560, const std::string &outFolder = std::string(), const double &ignoreThreshold = 0.95);
-  ~vpPclPointCloudVisualization();
+  vpPclVisualizer(const std::string &title , const int &width = 640, const int &height = 480, const int &px = 720, const int &py = 560, const std::string &outFolder = std::string(), const double &ignoreThreshold = 0.95);
+  ~vpPclVisualizer();
 
   /**
    * @brief Set the name of the PCL visualizer window.
@@ -123,7 +123,7 @@ public:
 
   /**
    * @brief Add a surface to the list of point clouds known by the visualizer.
-   * The points whose weights are below the \b vpPclPointCloudVisualization::s_ignoreThresh wil be displayed in black.
+   * The points whose weights are below the \b vpPclVisualizer::s_ignoreThresh wil be displayed in black.
    * 
    * @param surface The surface that must be knwon to be displayed by the PCL visualizer.
    * @param weights The confidence weights of each points. Must be between 0 and 1.
@@ -216,12 +216,12 @@ protected:
 
 
   /**
-   * @brief Internal method that is called by \b vpPclPointCloudVisualization::launchThread to launch the 
+   * @brief Internal method that is called by \b vpPclVisualizer::launchThread to launch the 
    * drawing thread.
    * 
-   * @param p_visualizer The pointer of the \b vpPclPointCloudVisualization object that will run the thread (is equal to \b this ). 
+   * @param p_visualizer The pointer of the \b vpPclVisualizer object that will run the thread (is equal to \b this ). 
    */
-  static void runThread(vpPclPointCloudVisualization* p_visualizer);
+  static void runThread(vpPclVisualizer* p_visualizer);
 
   /**
    * @brief The internal loop of the non-blocking drawing thread.

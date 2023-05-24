@@ -62,13 +62,13 @@ ClassUsingPclVisualizer::~ClassUsingPclVisualizer()
 }
 
 //! [Surface generator]
-std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> ClassUsingPclVisualizer::generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights)
+std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> ClassUsingPclVisualizer::generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights)
 {
-  std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> result;
+  std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> result;
 
   // Create control points
-  vpPclPointCloudVisualization::pclPointCloudPtr unrotatedControlPoints(new vpPclPointCloudVisualization::pclPointCloud(_n,_m));
-  vpPclPointCloudVisualization::pclPointCloudPtr   rotatedControlPoints(new vpPclPointCloudVisualization::pclPointCloud(_n,_m));
+  vpPclVisualizer::pclPointCloudPtr unrotatedControlPoints(new vpPclVisualizer::pclPointCloud(_n,_m));
+  vpPclVisualizer::pclPointCloudPtr   rotatedControlPoints(new vpPclVisualizer::pclPointCloud(_n,_m));
 
   // Initializing confindence weights
   confidenceWeights.resize(_m * _n);
@@ -136,7 +136,7 @@ void ClassUsingPclVisualizer::blockingMode(const double &addedNoise, const unsig
   vpColVector confWeights;
 
   //! [Generating point clouds]
-  std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> grids = generateControlPoints(addedNoise, order, confWeights);
+  std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> grids = generateControlPoints(addedNoise, order, confWeights);
   //! [Generating point clouds]
 
   //! [Adding point clouds color not chosen]
@@ -161,7 +161,7 @@ void ClassUsingPclVisualizer::threadedMode(const double &addedNoise, const unsig
   vpColVector confWeights;
 
   // Create control points
-  std::pair<vpPclPointCloudVisualization::pclPointCloudPtr, vpPclPointCloudVisualization::pclPointCloudPtr> grids = generateControlPoints(addedNoise, order, confWeights);
+  std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> grids = generateControlPoints(addedNoise, order, confWeights);
 
   // Adding a point cloud for which we don't chose the color 
   unsigned int id_ctrlPts = _visualizer.addSurface(grids.first, "Standard"); 
