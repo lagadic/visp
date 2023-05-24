@@ -283,14 +283,14 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 
   size_t readCount = read(serverSocket, &size, sizeof(uint32_t));
   if (readCount != sizeof(uint32_t)) {
-    throw vpException(vpException::ioError, "Error while reading data from socket");
+    throw vpException(vpException::ioError, "Megapose: Error while reading data from socket");
   }
   size = ntohl(size);
 
   unsigned char code[MEGAPOSE_CODE_SIZE];
   readCount = read(serverSocket, code, MEGAPOSE_CODE_SIZE);
   if (readCount != MEGAPOSE_CODE_SIZE) {
-    throw vpException(vpException::ioError, "Error while reading data from socket");
+    throw vpException(vpException::ioError, "Megapose: Error while reading data from socket");
   }
 
   std::vector<uint8_t> data;
@@ -300,7 +300,7 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
   while (read_total < size) {
     int actually_read = read(serverSocket, &data[read_total], read_size);
     if (actually_read <= 0) {
-      throw vpException(vpException::ioError, "Error while reading data from socket");
+      throw vpException(vpException::ioError, "Megapose: Error while reading data from socket");
     }
     read_total += actually_read;
   }

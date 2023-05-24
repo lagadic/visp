@@ -2,6 +2,13 @@
   "height": 480,
   "width": 640,
   "video-device": "0",
+  "camera": {
+    "px": 300.0,
+    "py": 300.0,
+    "u0": 320.0,
+    "v0": 240.0,
+    "model": "perspectiveWithoutDistortion"
+  },
   "detector": {
     "model-path": "/local/sfelton/cube_detector.onnx",
     "config": "none",
@@ -20,7 +27,9 @@
 
   "megapose": {
     "address": "127.0.0.1",
-    "port": 5555
+    "port": 5555,
+    "refinerIterations": 1,
+    "initialisationNumSamples": 576
   },
   "detectionLabelsToMegaposeObjects": {
     "cube": "cube"
