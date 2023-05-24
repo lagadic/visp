@@ -53,7 +53,7 @@ int main(int argc, char **argv)
 
     std::cout << cam << std::endl;
 
-    //! [Create image without distorsion]
+    //! [Create image without distortion]
     vpImage<unsigned char> Iud;
     vpImageTools::undistort(I, cam, Iud);
     std::string name_we = vpIoTools::getNameWE(opt_input_image);
@@ -61,7 +61,7 @@ int main(int argc, char **argv)
     std::string output_image = name_we + "-undistort" + ext;
     std::cout << "Save undistorted image in: " << output_image << std::endl;
     vpImageIo::write(Iud, output_image);
-    //! [Create image without distorsion]
+    //! [Create image without distortion]
   } catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;

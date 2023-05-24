@@ -31,10 +31,7 @@
  * Description:
  * Homogeneous matrix.
  *
- * Authors:
- * Eric Marchand
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpHomogeneousMatrix.h
@@ -61,6 +58,10 @@ class vpPoint;
 #include <visp3/core/vpThetaUVector.h>
 //#include <visp3/core/vpTranslationVector.h>
 #include <visp3/core/vpPoseVector.h>
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+#endif
 
 /*!
   \class vpHomogeneousMatrix
@@ -90,69 +91,113 @@ class vpPoint;
 
   There are different ways to initialize an homogeneous matrix. You can set each element of the matrix like:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  vpHomogeneousMatrix M;
-  M[0][0] =  0; M[0][1] =  0; M[0][2] = -1; M[0][3] = 0.1;
-  M[1][0] =  0; M[1][1] = -1; M[1][2] =  0; M[1][3] = 0.2;
-  M[2][0] = -1; M[2][1] =  0; M[2][2] =  0; M[2][3] = 0.3;
+  int main()
+  {
+    vpHomogeneousMatrix M;
+    M[0][0] =  0; M[0][1] =  0; M[0][2] = -1; M[0][3] = 0.1;
+    M[1][0] =  0; M[1][1] = -1; M[1][2] =  0; M[1][3] = 0.2;
+    M[2][0] = -1; M[2][1] =  0; M[2][2] =  0; M[2][3] = 0.3;
 
-  std::cout << "M:" << std::endl;
-  for (unsigned int i = 0; i < M.getRows(); i++) {
-    for (unsigned int j = 0; j < M.getCols(); j++) {
-      std::cout << M[i][j] << " ";
+    std::cout << "M:" << std::endl;
+    for (unsigned int i = 0; i < M.getRows(); i++) {
+      for (unsigned int j = 0; j < M.getCols(); j++) {
+        std::cout << M[i][j] << " ";
+      }
+      std::cout << std::endl;
     }
-    std::cout << std::endl;
   }
-}
   \endcode
   It produces the following printings:
-  \code
-M:
-0 0 -1 0.1
-0 -1 0 0.2
--1 0 0 0.3
-0 0 0 1
+  \code{.unparsed}
+  M:
+  0 0 -1 0.1
+  0 -1 0 0.2
+  -1 0 0 0.3
+  0 0 0 1
   \endcode
   You can also use vpRotationMatrix::operator<< and vpTranslationVector::operator<< like:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-  vpTranslationVector t;
-  vpRotationMatrix R;
-  R << 0, 0, -1,
-       0, -1, 0,
-       -1, 0, 0;
-  t << 0.1, 0.2, 0.3;
-  vpHomogeneousMatrix M(t, R);
-  std::cout << "M:\n" << M << std::endl;
-}
+  int main()
+  {
+    vpTranslationVector t;
+    vpRotationMatrix R;
+    R << 0, 0, -1,
+        0, -1, 0,
+        -1, 0, 0;
+    t << 0.1, 0.2, 0.3;
+    vpHomogeneousMatrix M(t, R);
+    std::cout << "M:\n" << M << std::endl;
+  }
   \endcode
   If ViSP is build with c++11 enabled, you can do the same using:
   \code
-#include <visp3/core/vpHomogeneousMatrix.h>
+  #include <visp3/core/vpHomogeneousMatrix.h>
 
-int main()
-{
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+  int main()
   {
-    vpHomogeneousMatrix M( vpTranslationVector(0.1, 0.2, 0.3), vpRotationMatrix( {0, 0, -1, 0, -1, 0, -1, 0, 0} ) );
-    std::cout << "M:\n" << M << std::endl;
+  #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+    {
+      vpHomogeneousMatrix M( vpTranslationVector(0.1, 0.2, 0.3), vpRotationMatrix( {0, 0, -1, 0, -1, 0, -1, 0, 0} ) );
+      std::cout << "M:\n" << M << std::endl;
+    }
+    {
+      vpHomogeneousMatrix M { 0,  0, -1, 0.1,
+                              0, -1,  0, 0.2,
+                            -1,  0,  0, 0.3 };
+      std::cout << "M:\n" << M << std::endl;
+    }
+  #endif
   }
-  {
-    vpHomogeneousMatrix M { 0,  0, -1, 0.1,
-                            0, -1,  0, 0.2,
-                           -1,  0,  0, 0.3 };
-    std::cout << "M:\n" << M << std::endl;
-  }
-#endif
-}
   \endcode
 
+  <b>JSON serialization</b>
+
+  Since ViSP 3.6.0, if ViSP is build with \ref soft_tool_json 3rd-party we introduce JSON serialization capabilities for vpHomogeneousMatrix.
+  The following sample code shows how to save a homogeneous matrix in a file named `homo-mat.json`
+  and reload the values from this JSON file.
+  \code
+  #include <visp3/core/vpHomogeneousMatrix.h>
+
+  int main()
+  {
+  #if defined(VISP_HAVE_NLOHMANN_JSON)
+    std::string filename = "homo-mat.json";
+    {
+      vpHomogeneousMatrix M(vpTranslationVector(0.1, 0.2, 0.3), vpRotationMatrix({ 0, 0, -1, 0, -1, 0, -1, 0, 0 }));
+      std::ofstream file(filename);
+      const nlohmann::json j = M;
+      file << j;
+      file.close();
+    }
+    {
+      std::ifstream file(filename);
+      const nlohmann::json j = nlohmann::json::parse(file);
+      vpHomogeneousMatrix M;
+      M = j;
+      file.close();
+      std::cout << "Read homogeneous matrix from " << filename << ":\n" << M << std::endl;
+    }
+  #endif
+  }
+  \endcode
+  If you build and execute the sample code, it will produce the following output:
+  \code{.unparsed}
+  Read homogeneous matrix from homo-mat.json:
+  0  0  -1  0.1
+  0  -1  0  0.2
+  -1  0  0  0.3
+  0  0  0  1
+  \endcode
+
+  The content of the `homo-mat.json` file is the following:
+  \code{.unparsed}
+  $ cat homo-mat.json
+  {"cols":4,"data":[0.0,0.0,-1.0,0.1,0.0,-1.0,0.0,0.2,-1.0,0.0,0.0,0.3,0.0,0.0,0.0,1.0],"rows":4,"type":"vpHomogeneousMatrix"}
+  \endcode
 */
 class VISP_EXPORT vpHomogeneousMatrix : public vpArray2D<double>
 {
@@ -172,7 +217,7 @@ public:
   /*!
     Destructor.
   */
-  virtual ~vpHomogeneousMatrix() {}
+  virtual ~vpHomogeneousMatrix() { }
 
   void buildFrom(const vpTranslationVector &t, const vpRotationMatrix &R);
   void buildFrom(const vpTranslationVector &t, const vpThetaUVector &tu);
@@ -251,6 +296,18 @@ public:
 
   static vpHomogeneousMatrix mean(const std::vector<vpHomogeneousMatrix> &vec_M);
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+public:
+  static const std::string jsonTypeName;
+private:
+  friend void to_json(nlohmann::json &j, const vpHomogeneousMatrix &cam);
+  friend void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T);
+  // Conversion helper function to avoid circular dependencies and MSVC errors that are not exported in the DLL
+  void parse_json(const nlohmann::json &j);
+  void convert_to_json(nlohmann::json &j) const;
+
+#endif
+
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
   /*!
     @name Deprecated functions
@@ -260,16 +317,27 @@ public:
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
    */
-  vp_deprecated void init() {}
+  vp_deprecated void init() { }
   /*!
      \deprecated You should rather use eye().
    */
   vp_deprecated void setIdentity();
-//@}
+  //@}
 #endif
 
 protected:
   unsigned int m_index;
 };
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+inline void to_json(nlohmann::json &j, const vpHomogeneousMatrix &T)
+{
+  T.convert_to_json(j);
+}
+inline void from_json(const nlohmann::json &j, vpHomogeneousMatrix &T)
+{
+  T.parse_json(j);
+}
+#endif
 
 #endif

@@ -1,0 +1,167 @@
+{
+    "referenceCameraName": "Color",
+    "model": "model/cube/cube.cao",
+    "trackers": {
+        "Color": {
+            "angleAppear": 65.0,
+            "angleDisappear": 75.00000000000001,
+            "camTref": {
+                "cols": 4,
+                "data": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "rows": 4,
+                "type": "vpHomogeneousMatrix"
+            },
+            "camera": {
+                "model": "perspectiveWithoutDistortion",
+                "px": 605.146728515625,
+                "py": 604.79150390625,
+                "u0": 325.53253173828125,
+                "v0": 244.95083618164063
+            },
+            "clipping": {
+                "far": 0.9,
+                "flags": [
+                    "all"
+                ],
+                "near": 0.1
+            },
+            "display": {
+                "features": true,
+                "projectionError": true
+            },
+            "edge": {
+                "maskSign": 0,
+                "maskSize": 5,
+                "minSampleStep": 4.0,
+                "mu": [
+                    0.5,
+                    0.5
+                ],
+                "nMask": 180,
+                "ntotalSample": 0,
+                "pointsToTrack": 500,
+                "range": 7,
+                "sampleStep": 4.0,
+                "strip": 2,
+                "threshold": 5000.0
+            },
+            "klt": {
+                "blockSize": 3,
+                "harris": 0.01,
+                "maskBorder": 5,
+                "maxFeatures": 300,
+                "minDistance": 5.0,
+                "pyramidLevels": 3,
+                "quality": 0.01,
+                "windowSize": 5
+            },
+            "lod": {
+                "minLineLengthThresholdGeneral": 50.0,
+                "minPolygonAreaThresholdGeneral": 2500.0,
+                "useLod": false
+            },
+            "type": [
+                "edge",
+                "klt"
+            ],
+            "visibilityTest": {
+                "ogre": false,
+                "scanline": true
+            }
+        },
+        "Depth": {
+            "angleAppear": 70.0,
+            "angleDisappear": 80.0,
+            "camTref": {
+                "cols": 4,
+                "data": [
+                    0.999972403049469,
+                    -0.006713358219712973,
+                    -0.003179509425535798,
+                    -0.01465611346065998,
+                    0.006699616555124521,
+                    0.9999682307243347,
+                    -0.004313052631914616,
+                    9.024870814755559e-05,
+                    0.003208363428711891,
+                    0.00429163221269846,
+                    0.9999856352806091,
+                    -0.0004482123476918787,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "rows": 4,
+                "type": "vpHomogeneousMatrix"
+            },
+            "camera": {
+                "model": "perspectiveWithoutDistortion",
+                "px": 381.7528076171875,
+                "py": 381.7528076171875,
+                "u0": 323.3261413574219,
+                "v0": 236.82505798339844
+            },
+            "clipping": {
+                "far": 2.0,
+                "flags": [
+                    "all"
+                ],
+                "near": 0.01
+            },
+            "dense": {
+                "sampling": {
+                    "x": 1,
+                    "y": 1
+                }
+            },
+            "normals": {
+                "featureEstimationMethod": "robust",
+                "pcl": {
+                    "method": 2,
+                    "ransacMaxIter": 200,
+                    "ransacThreshold": 0.001
+                },
+                "sampling": {
+                    "x": 2,
+                    "y": 2
+                }
+            },
+            "type": [
+                "depthDense",
+                "depthNormal"
+            ],
+            "display": {
+                "features": true,
+                "projectionError": true
+            },
+            "lod": {
+                "minLineLengthThresholdGeneral": 50.0,
+                "minPolygonAreaThresholdGeneral": 2500.0,
+                "useLod": false
+            },
+            "visibilityTest": {
+                "ogre": false,
+                "scanline": true
+            }
+        }
+    },
+    "version": "1.0"
+}

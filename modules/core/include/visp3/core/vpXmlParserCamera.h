@@ -138,7 +138,7 @@ int main()
 {
   // Create a camera parameter container. We want to set these parameters
   // for a 320x240 image, and we want to use the perspective projection
-  // modelisation without distortion.
+  // modelization without distortion.
   vpCameraParameters cam;
 
   // Set the principal point coordinates (u0,v0)

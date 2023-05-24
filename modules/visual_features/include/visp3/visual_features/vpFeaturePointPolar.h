@@ -31,10 +31,7 @@
  * Description:
  * 2D point with polar coordinates visual feature.
  *
- * Authors:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpFeaturePointPolar_H
 #define vpFeaturePointPolar_H
@@ -87,10 +84,10 @@
   \left[
   \begin{array}{cccccc}
   \frac{-\cos \theta}{Z} & \frac{-\sin \theta}{Z}  &  \frac{\rho}{Z} &
-(1+\rho^2)\sin\theta  & -(1+\rho^2)\cos\theta &  0 \\
+  (1+\rho^2)\sin\theta  & -(1+\rho^2)\cos\theta &  0 \\
   \;\\									\
    \frac{\sin\theta}{\rho Z} & \frac{-\cos\theta}{\rho Z} &  0 &  \cos\theta
-/\rho &  \sin\theta/\rho & -1 \\ \end{array} \right] \f]
+  /\rho &  \sin\theta/\rho & -1 \\ \end{array} \right] \f]
 
   where \f$Z\f$ is the 3D depth of the considered point in the camera frame.
 
@@ -130,87 +127,87 @@
   \f$s^*\f$ is initialized at the beginning.
 
   \code
-#include <visp3/core/vpPoint.h>
-#include <visp3/visual_features/vpFeatureBuilder.h>
-#include <visp3/visual_features/vpFeaturePointPolar.h>
-#include <visp3/vs/vpServo.h>
+  #include <visp3/core/vpPoint.h>
+  #include <visp3/visual_features/vpFeatureBuilder.h>
+  #include <visp3/visual_features/vpFeaturePointPolar.h>
+  #include <visp3/vs/vpServo.h>
 
-int main()
-{
+  int main()
+  {
 
-  // Create 4 points to specify the object of interest
-  vpPoint point[4];
+    // Create 4 points to specify the object of interest
+    vpPoint point[4];
 
-  // Set the 3D point coordinates in the object frame: oP
-  point[0].setWorldCoordinates(-0.1, -0.1, 0);
-  point[1].setWorldCoordinates( 0.1, -0.1, 0);
-  point[2].setWorldCoordinates( 0.1,  0.1, 0);
-  point[3].setWorldCoordinates(-0.1,  0.1, 0);
+    // Set the 3D point coordinates in the object frame: oP
+    point[0].setWorldCoordinates(-0.1, -0.1, 0);
+    point[1].setWorldCoordinates( 0.1, -0.1, 0);
+    point[2].setWorldCoordinates( 0.1,  0.1, 0);
+    point[3].setWorldCoordinates(-0.1,  0.1, 0);
 
-  // Initialize the desired pose between the camera and the object frame
-  vpHomogeneousMatrix cMod;
-  cMod.buildFrom(0, 0, 1, 0, 0, 0);
+    // Initialize the desired pose between the camera and the object frame
+    vpHomogeneousMatrix cMod;
+    cMod.buildFrom(0, 0, 1, 0, 0, 0);
 
-  // Compute the desired position of the point
-  for (int i = 0 ; i < 4 ; i++) {
-    // Compute the 3D point coordinates in the camera frame cP = cMod * oP
-    point[i].changeFrame(cMod);
-    // Compute the perspective projection to set (x,y)
-    point[i].projection();
-  }
+    // Compute the desired position of the point
+    for (int i = 0 ; i < 4 ; i++) {
+      // Compute the 3D point coordinates in the camera frame cP = cMod * oP
+      point[i].changeFrame(cMod);
+      // Compute the perspective projection to set (x,y)
+      point[i].projection();
+    }
 
-  // Create 4 desired visual features as 2D points with polar coordinates
-  vpFeaturePointPolar pd[4];
-  // Initialize the desired visual feature from the desired point positions
-  for (int i = 0 ; i < 4 ; i++)
-    vpFeatureBuilder::create(pd[i], point[i]);
-
-  // Initialize the current pose between the camera and the object frame
-  vpHomogeneousMatrix cMo;
-  cMo.buildFrom(0, 0, 1.2, 0, 0, M_PI);
-  // ... cMo need here to be computed from a pose estimation
-
-  for (int i = 0 ; i < 4 ; i++) {
-    // Compute the 3D point coordinates in the camera frame cP = cMo * oP
-    point[i].changeFrame(cMo);
-    // Compute the perspective projection to set (x,y)
-    point[i].projection();
-  }
-  // Create 4 current visual features as 2D points with polar coordinates
-  vpFeaturePointPolar p[4];
-  // Initialize the current visual feature from the current point positions
-  for (int i = 0 ; i < 4 ; i++)
-    vpFeatureBuilder::create(p[i], point[i]);
-
-  // Visual servo task initialization
-  vpServo task;
-  // - Camera is monted on the robot end-effector and velocities are
-  //   computed in the camera frame
-  task.setServo(vpServo::EYEINHAND_CAMERA);
-  // - Interaction matrix is computed with the current visual features s
-  task.setInteractionMatrixType(vpServo::CURRENT);
-  // - Set the contant gain to 1
-  task.setLambda(1);
-  // - Add current and desired features
-  for (int i = 0 ; i < 4 ; i++)
-    task.addFeature(p[i], pd[i]);
-
-  // Control loop
-  for ( ; ; ) {
-    // ... cMo need here to be estimated from for example a pose estimation.
-    // Computes the point coordinates in the camera frame and its 2D
-    // coordinates in the image plane
+    // Create 4 desired visual features as 2D points with polar coordinates
+    vpFeaturePointPolar pd[4];
+    // Initialize the desired visual feature from the desired point positions
     for (int i = 0 ; i < 4 ; i++)
-      point[i].track(cMo) ;
+      vpFeatureBuilder::create(pd[i], point[i]);
 
-    // Update the current 2D point visual feature with polar coordinates
+    // Initialize the current pose between the camera and the object frame
+    vpHomogeneousMatrix cMo;
+    cMo.buildFrom(0, 0, 1.2, 0, 0, M_PI);
+    // ... cMo need here to be computed from a pose estimation
+
+    for (int i = 0 ; i < 4 ; i++) {
+      // Compute the 3D point coordinates in the camera frame cP = cMo * oP
+      point[i].changeFrame(cMo);
+      // Compute the perspective projection to set (x,y)
+      point[i].projection();
+    }
+    // Create 4 current visual features as 2D points with polar coordinates
+    vpFeaturePointPolar p[4];
+    // Initialize the current visual feature from the current point positions
     for (int i = 0 ; i < 4 ; i++)
       vpFeatureBuilder::create(p[i], point[i]);
 
-    // compute the control law
-    vpColVector v = task.computeControlLaw(); // camera velocity
+    // Visual servo task initialization
+    vpServo task;
+    // - Camera is mounted on the robot end-effector and velocities are
+    //   computed in the camera frame
+    task.setServo(vpServo::EYEINHAND_CAMERA);
+    // - Interaction matrix is computed with the current visual features s
+    task.setInteractionMatrixType(vpServo::CURRENT);
+    // - Set the constant gain to 1
+    task.setLambda(1);
+    // - Add current and desired features
+    for (int i = 0 ; i < 4 ; i++)
+      task.addFeature(p[i], pd[i]);
+
+    // Control loop
+    for ( ; ; ) {
+      // ... cMo need here to be estimated from for example a pose estimation.
+      // Computes the point coordinates in the camera frame and its 2D
+      // coordinates in the image plane
+      for (int i = 0 ; i < 4 ; i++)
+        point[i].track(cMo) ;
+
+      // Update the current 2D point visual feature with polar coordinates
+      for (int i = 0 ; i < 4 ; i++)
+        vpFeatureBuilder::create(p[i], point[i]);
+
+      // compute the control law
+      vpColVector v = task.computeControlLaw(); // camera velocity
+    }
   }
-}
   \endcode
 
   If you want to deal only with the \f$\rho\f$ subset feature from the 2D
@@ -229,29 +226,29 @@ int main()
   \f$(s-s^*)\f$ and finally build the interaction matrix \f$L_s\f$.
 
   \code
-#include <visp3/core/vpMatrix.h>
-#include <visp3/visual_features/vpFeaturePointPolar.h>
+  #include <visp3/core/vpMatrix.h>
+  #include <visp3/visual_features/vpFeaturePointPolar.h>
 
-int main()
-{
-  // Creation of the current feature s
-  vpFeaturePointPolar s;
-  // Initialize the current feature
-  s.buildFrom(0.1, M_PI, 1); // rho=0.1m, theta=pi, Z=1m
+  int main()
+  {
+    // Creation of the current feature s
+    vpFeaturePointPolar s;
+    // Initialize the current feature
+    s.buildFrom(0.1, M_PI, 1); // rho=0.1m, theta=pi, Z=1m
 
-  // Creation of the desired feature s
-  vpFeaturePointPolar s_star;
-  // Initialize the desired feature
-  s.buildFrom(0.15, 0, 0.8); // rho=0.15m, theta=0, Z=0.8m
+    // Creation of the desired feature s
+    vpFeaturePointPolar s_star;
+    // Initialize the desired feature
+    s.buildFrom(0.15, 0, 0.8); // rho=0.15m, theta=0, Z=0.8m
 
-  // Compute the interaction matrix L_s for the current feature
-  vpMatrix L = s.interaction();
+    // Compute the interaction matrix L_s for the current feature
+    vpMatrix L = s.interaction();
 
-  // Compute the error vector (s-s*) for the point feature with polar coordinates
-  s.error(s_star);
+    // Compute the error vector (s-s*) for the point feature with polar coordinates
+    s.error(s_star);
 
-  return 0;
-}
+    return 0;
+  }
   \endcode
 
 */
@@ -266,14 +263,14 @@ public:
   // basic constructor
   vpFeaturePointPolar();
   //! Destructor. Does nothing.
-  virtual ~vpFeaturePointPolar() {}
+  virtual ~vpFeaturePointPolar() { }
 
   void buildFrom(double rho, double theta, double Z);
 
   void display(const vpCameraParameters &cam, const vpImage<unsigned char> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const;
+    unsigned int thickness = 1) const;
   void display(const vpCameraParameters &cam, const vpImage<vpRGBa> &I, const vpColor &color = vpColor::green,
-               unsigned int thickness = 1) const;
+    unsigned int thickness = 1) const;
 
   // feature duplication
   vpFeaturePointPolar *duplicate() const;
@@ -321,9 +318,3 @@ public:
 };
 
 #endif
-
-/*
- * Local variables:
- * c-basic-offset: 2
- * End:
- */

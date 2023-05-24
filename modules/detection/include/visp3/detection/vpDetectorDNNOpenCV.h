@@ -170,8 +170,8 @@ public:
    */
   typedef struct NetConfig
   {
-    double m_confThreshold;               /*!< Threshold to filter detections by confidence.*/
-    double m_nmsThreshold;                /*!< Threshold for Non-Maximum Suppression.*/
+    float m_confThreshold;               /*!< Threshold to filter detections by confidence.*/
+    float m_nmsThreshold;                /*!< Threshold for Non-Maximum Suppression.*/
     std::vector<std::string> m_classNames;/*!< Vector containing the names of the different classes the DNN can detect.*/
     cv::Size m_inputSize;                 /*!<  Size of the images the DNN can manipulate. The input images will be resized to match these dimensions.*/
     double m_filterSizeRatio;             /*!<  Size ratio used by the \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods.
@@ -238,7 +238,7 @@ public:
      * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput
      * and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods for more information).
      */
-    inline NetConfig(double confThresh, const double &nmsThresh, const std::vector<std::string> & classNames, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.)
+    inline NetConfig(float confThresh, const float &nmsThresh, const std::vector<std::string> & classNames, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.)
       : m_confThreshold(confThresh)
       , m_nmsThreshold(nmsThresh)
       , m_classNames(classNames)
@@ -257,7 +257,7 @@ public:
      * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput
      * and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods for more information).
      */
-    inline NetConfig(double confThresh, const double &nmsThresh, const std::string &classNamesFile, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.)
+    inline NetConfig(float confThresh, const float &nmsThresh, const std::string &classNamesFile, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.)
       : m_confThreshold(confThresh)
       , m_nmsThreshold(nmsThresh)
       , m_inputSize(dnnInputSize)

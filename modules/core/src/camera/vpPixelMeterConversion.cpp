@@ -72,7 +72,7 @@ void vpPixelMeterConversion::convertEllipse(const vpCameraParameters &cam, const
 
 /*!
    Line parameters conversion from pixel \f$(\rho_p,\theta_p)\f$ to normalized coordinates \f$(\rho_m,\theta_m)\f$
-   in meter using ViSP camera parameters. This function doesn't use distorsion coefficients.
+   in meter using ViSP camera parameters. This function doesn't use distortion coefficients.
 
    \param[in] cam : camera parameters.
    \param[in] rho_p, theta_p : Line parameters expressed in pixels.
@@ -96,7 +96,7 @@ void vpPixelMeterConversion::convertLine(const vpCameraParameters &cam, const do
 
 /*!
    Moments conversion from pixel to normalized coordinates in meter using ViSP camera parameters.
-   This function doesn't use distorsion coefficients.
+   This function doesn't use distortion coefficients.
 
    \param[in] cam : camera parameters.
    \param[in] order : Moment order.
@@ -197,7 +197,7 @@ void vpPixelMeterConversion::convertEllipse(const cv::Mat &cameraMatrix, const c
 
 /*!
   Line parameters conversion from pixel \f$(\rho_p,\theta_p)\f$ to normalized coordinates \f$(\rho_m,\theta_m)\f$
-  in meter using OpenCV camera parameters. This function doesn't use distorsion coefficients.
+  in meter using OpenCV camera parameters. This function doesn't use distortion coefficients.
 
   \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 & 1\end{bmatrix}\f$
   \param[in] rho_p, theta_p : Line parameters expressed in pixels.
@@ -226,7 +226,7 @@ void vpPixelMeterConversion::convertLine(const cv::Mat &cameraMatrix, const doub
 
 /*!
    Moments conversion from pixel to normalized coordinates in meter using OpenCV camera parameters.
-   This function doesn't use distorsion coefficients.
+   This function doesn't use distortion coefficients.
 
    \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 &
    1\end{bmatrix}\f$ \param[in] order : Moment order. \param[in] moment_pixel : Moment values in pixels. \param[out]

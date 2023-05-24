@@ -1196,3 +1196,33 @@ vpHomogeneousMatrix vpHomogeneousMatrix::mean(const std::vector<vpHomogeneousMat
 void vpHomogeneousMatrix::setIdentity() { eye(); }
 
 #endif //#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+const std::string vpHomogeneousMatrix::jsonTypeName = "vpHomogeneousMatrix";
+#include <visp3/core/vpJsonParsing.h>
+void vpHomogeneousMatrix::convert_to_json(nlohmann::json &j) const
+{
+  const vpArray2D<double> *asArray = (vpArray2D<double>*) this;
+  to_json(j, *asArray);
+  j["type"] = vpHomogeneousMatrix::jsonTypeName;
+}
+
+void vpHomogeneousMatrix::parse_json(const nlohmann::json& j) {
+  vpArray2D<double>* asArray = (vpArray2D<double>*) this;
+  if(j.is_object() && j.contains("type")) { // Specific conversions
+    const bool converted = convertFromTypeAndBuildFrom<vpHomogeneousMatrix, vpPoseVector>(j, *this);
+    if(!converted) {
+      from_json(j, *asArray);
+    }
+  } else { // Generic 2D array conversion
+    from_json(j, *asArray);
+  }
+
+  if (getCols() != 4 && getRows() != 4) {
+    throw vpException(vpException::badValue, "From JSON, tried to read something that is not a 4x4 matrix");
+  }
+  if(!isAnHomogeneousMatrix()) {
+    throw vpException(vpException::badValue, "From JSON read a non homogeneous matrix into a vpHomogeneousMatrix");
+  }
+}
+#endif

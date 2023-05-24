@@ -43,6 +43,8 @@ set(tutorial_cpp
   tutorial-ibvs-4pts-wireframe-camera.cpp
   tutorial-ibvs-4pts-wireframe-robot-afma6.cpp
   tutorial-ibvs-4pts-wireframe-robot-viper.cpp
+  tutorial-ibvs-4pts-json.cpp
+  
 )
 
 if(NOT DEFINED WINRT_8_1)
@@ -70,3 +72,5 @@ endforeach()
 foreach(data ${tutorial_data})
   visp_copy_data(tutorial-ibvs-4pts-ogre.cpp ${data})
 endforeach()
+
+visp_copy_data(tutorial-ibvs-4pts-json.cpp "${CMAKE_CURRENT_SOURCE_DIR}/ibvs_settings.json")

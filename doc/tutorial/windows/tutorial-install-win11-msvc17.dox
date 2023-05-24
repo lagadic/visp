@@ -104,8 +104,8 @@ just build or jump to \ref install_win11_msvc17_next. You can later come back to
 
 \subsection install_win11_msvc17_3rdparty Install 3rd parties
 
-ViSP is interfaced with several 3rd party libraries. The
-<a href="https://visp.inria.fr/software-architecture">complete list is provided here</a>.
+ViSP is interfaced with several 3rd party libraries.
+Follow the link to see the complete list of \ref supported-third-parties.
 We recommend first to install \ref install_win11_msvc17_3rdparty_opencv in the workspace.
 Then to use optimized matrix operations you may install \ref install_win11_msvc17_3rdparty_eigen.
 Other 3rd parties are optional and should be considered only by expert developers.
@@ -208,6 +208,35 @@ where `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install` is where you have ins
 Inside the folder `%%VISP_WS%\3rdparty\eigen-3.4.0\build-vc17\install\share\eigen3\cmake` you should have a file
 named `Eigen3Config.cmake`.
 - There is no need to set `Path` environment var since Eigen3 is a template that has no library.
+
+\subsubsection install_win11_msvc17_3rdparty_json JSON 3rd party
+
+<a href="https://json.nlohmann.me/">JSON for modern C++</a> installation, can either be done from source
+or from a package manager
+  - To install from source with Visual Studio
+\verbatim
+C:\> cd %VISP_WS%\3rdparty
+C:\> git clone https://github.com/nlohmann/json.git
+C:\> cd json && mkdir build-vc17 && cd build-vc17
+C:\> cmake -G "Visual Studio 17 2022" -A "x64" .. \
+           -DCMAKE_INSTALL_PREFIX=%VISP_WS%\3rdparty\json\build-vc17\install \
+           -DBUILD_TESTING=OFF \
+           -DJSON_BuildTests=OFF
+C:\> cmake --build . --config Release --target install
+\endverbatim
+  JSON is now installed in `%%VISP_WS%\3rdparty\json\build-vc17\install` folder.
+  Now in order that ViSP detects JSON you have to set `nlohmann_json_DIR` environment variable.
+  Start up a `cmd` Command Prompt and enter:
+\verbatim
+C:\> setx nlohmann_json_DIR "%VISP_WS%\3rdparty\json\build-vc17\install\share\cmake\nlohmann_json"
+C:\> exit
+\endverbatim
+where `%%VISP_WS%\3rdparty\json\build-vc17\install` is where you have installed JSON.
+Inside the folder `%%VISP_WS%\3rdparty\json\build-vc17\install\share\cmake\nlohmann_json` you should have a file
+named `nlohmann_jsonConfig.cmake`.
+There is no need to set `Path` environment var since JSON has only a header and no library.
+
+  - To install from a package manager, e.g., vcpkg, see: <a href="https://json.nlohmann.me/integration/package_managers/#embedded">https://json.nlohmann.me/integration/package_managers/#embedded</a>
 
 \subsection install_win11_msvc17_get_source Get ViSP source code
 

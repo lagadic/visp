@@ -34,7 +34,7 @@ jobs:
       run: system_profiler SPSoftwareDataType
 
     - name: Install dependencies
-      run: brew install libpng libjpeg libdc1394 opencv pcl librealsense zbar vtk fftw armadillo
+      run: brew install libpng libjpeg libdc1394 opencv pcl librealsense zbar vtk fftw armadillo nlohmann-json
 
     - name: Clone visp-images
       env:

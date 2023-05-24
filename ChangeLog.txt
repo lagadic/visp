@@ -23,8 +23,12 @@ ViSP 3.5.1 (under development)
     . Image-based visual-servoing, position and velocity control examples to control robots
       equipped with Pixhawk (see vpRobotMavsdk doc)
     . Windows 11 support
-    . Support of Faster-RCNN, SSD-MobileNet, ResNet 10, Yolo v3, Yolo v4, Yolo v5, Yolo v7
-      and Yolo v8 convolutional networks to detect objects using vpDetectorDNNOpenCV class
+    . New vpDetectorDNNOpenCV class a wrapper over the OpenCV DNN module that allows
+      to detect objects using Faster-RCNN, SSD-MobileNet, ResNet 10, Yolo v3, Yolo v4,
+      Yolo v5, Yolo v7 and Yolo v8 convolutional networks
+    . Support of JSON for modern C++ third-party to enable serialization capabilities
+      in vpMbGenericTracker, vpCameraParameters, vpPoseVector, vpHomogeneousMatrix,
+      vpPolygon3D to load/save internal data or settings from/to JSON files
   - Tutorials
     . New tutorial to list all the hardware (robot, camera, depth camera, lidar, mocap,
       haptic devices, F/T sensor) supported by ViSP
@@ -39,12 +43,16 @@ ViSP 3.5.1 (under development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-universal-robot-pbvs.html
     . New tutorial: Image-based visual-servoing on a drone equipped with a Pixhawk
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pixhawk-vs.html
-    . New Tutorial: Installation from source for Windows 11 with MinGW-w64
+    . New tutorial: Installation from source for Windows 11 with MinGW-w64
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win11-mingw-w64.html
-    . New Tutorial: Installation from source for Windows 11 with Visual C++ 2022 (vc17)
+    . New tutorial: Installation from source for Windows 11 with Visual C++ 2022 (vc17)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-install-win11-msvc17.html
-    . New Tutorial: Deep learning object detection
+    . New tutorial: Deep learning object detection
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-dnn.html
+    . New tutorial: Using JSON serialization to save your data and read program arguments
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-json.html
+    . New tutorial: Loading a model-based generic tracker from JSON
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-mb-generic-json.html
   - Bug fixed
     . [#1042] testColorConversion.cpp segfault randomly
     . [#1045] CXX standard not propagated when using pkg-config or visp-config
@@ -165,7 +173,7 @@ ViSP 3.4.0 (released February 26, 2021)
     . [#763] VISP does not support the latest PCL release 1.11.0
     . [#767] Compile from source on Ubuntu Focal raises CMake error with Ogre 1.9 or 2.1
     . [#777] Issue when calling vpMatrix::eigenValues() using lapack built-in
-    . [#780] Projects have to explicitely link against Boost when compiling ViSP with ar module
+    . [#780] Projects have to explicitly link against Boost when compiling ViSP with ar module
     . [#781] Wrong share install path on unix-like system
     . [#785] Static variable in vpServo
     . [#787] Unable to build simdlib 3rd party for iOS
@@ -654,7 +662,7 @@ ViSP 3.0.0 (released December 18th, 2015)
     . [19326] segfault when using vpDisplayX::init(unsigned int, unsigned int, ...)
     . [19368] Invalid rotation parameters in vpSimulatorViper850::getPosition()
     . [#3]  Issue when comparing two vpRGBa
-    . [#5]  Unable to get calibration matrix K when model with distorsion is
+    . [#5]  Unable to get calibration matrix K when model with distortion is
       used
     . [#6]  Issue with vpMath::round()
     . [#18] Issues with vpColVector::median() + with assignment operator of
