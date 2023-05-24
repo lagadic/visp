@@ -1,7 +1,7 @@
 #include <visp3/gui/vpColorBlindFriendlyPalette.h>
 #include <visp3/core/vpIoTools.h>
 
-std::vector<std::string> vpColorBlindFriendlyPalette::g_paletteNames =
+std::vector<std::string> vpColorBlindFriendlyPalette::s_paletteNames =
 {
   "black"     ,
   "orange"    ,
@@ -14,7 +14,7 @@ std::vector<std::string> vpColorBlindFriendlyPalette::g_paletteNames =
   "unknown"
 };
 
-std::vector<vpColor> vpColorBlindFriendlyPalette::g_palette = {
+std::vector<vpColor> vpColorBlindFriendlyPalette::s_palette = {
   vpColor(0,0,0),       // Black = 0,
   vpColor(230,159,0),   // Orange = 1,
   vpColor(86,180,233),  // SkyBlue = 2,
@@ -27,36 +27,36 @@ std::vector<vpColor> vpColorBlindFriendlyPalette::g_palette = {
 };
 
 vpColorBlindFriendlyPalette::vpColorBlindFriendlyPalette()
-  : _colorID(Palette::COUNT)
+  : m_colorID(Palette::COUNT)
 {
 
 }
 
-vpColorBlindFriendlyPalette::vpColorBlindFriendlyPalette(vpColorBlindFriendlyPalette::Palette colorID)
-  : _colorID(colorID)
+vpColorBlindFriendlyPalette::vpColorBlindFriendlyPalette(const vpColorBlindFriendlyPalette::Palette &colorID)
+  : m_colorID(colorID)
 {
 
 }
 
-vpColorBlindFriendlyPalette::vpColorBlindFriendlyPalette(std::string nameColor)
-  : _colorID(Palette::COUNT)
+vpColorBlindFriendlyPalette::vpColorBlindFriendlyPalette(const std::string &nameColor)
+  : m_colorID(Palette::COUNT)
 {
   set_fromString(nameColor);
 }
 
 vpColorBlindFriendlyPalette::Palette vpColorBlindFriendlyPalette::get_colorID() const
 {
-  return _colorID;
+  return m_colorID;
 }
 
 vpColor vpColorBlindFriendlyPalette::to_vpColor()
 {
-  return g_palette[to_uint(_colorID)];
+  return s_palette[to_uint(m_colorID)];
 }
 
 std::vector<unsigned char> vpColorBlindFriendlyPalette::to_RGB() const
 {
-  vpColor color = g_palette[to_uint(_colorID)];
+  vpColor color = s_palette[to_uint(m_colorID)];
   std::vector<unsigned char> v_rgb;
   v_rgb.push_back(color.R);
   v_rgb.push_back(color.G);
@@ -66,7 +66,7 @@ std::vector<unsigned char> vpColorBlindFriendlyPalette::to_RGB() const
 
 std::vector<double> vpColorBlindFriendlyPalette::to_colorRatio() const
 {
-  vpColor color = g_palette[to_uint(_colorID)];
+  vpColor color = s_palette[to_uint(m_colorID)];
   std::vector<double> v_rgb;
   v_rgb.push_back((double)color.R / 255.0);
   v_rgb.push_back((double)color.G / 255.0);
@@ -76,13 +76,13 @@ std::vector<double> vpColorBlindFriendlyPalette::to_colorRatio() const
 
 bool vpColorBlindFriendlyPalette::set_fromString(const std::string &nameColor)
 {
-  _colorID = Palette::COUNT;
+  m_colorID = Palette::COUNT;
   std::string nameLowerCase = nameColor; // vpIoTools::toLowerCase(nameColor);
   bool wasFound(false);
   for(unsigned int i= 0 ; i < to_uint(Palette::COUNT) && !wasFound; i++){
     vpColorBlindFriendlyPalette::Palette candidate = (Palette) i;
     if(to_string(candidate) == nameLowerCase){
-      _colorID = candidate;
+      m_colorID = candidate;
       wasFound = true;
     }
   }
@@ -91,7 +91,7 @@ bool vpColorBlindFriendlyPalette::set_fromString(const std::string &nameColor)
 
 std::string vpColorBlindFriendlyPalette::to_string() const
 {
-  std::string nameColor = to_string(_colorID);
+  std::string nameColor = to_string(m_colorID);
   return nameColor;
 }
 
@@ -101,14 +101,14 @@ std::string vpColorBlindFriendlyPalette::getAvailableColorsNames(const std::stri
   const unsigned int nbAvailableColors = (unsigned int) Palette::COUNT ;
   for(unsigned int i = 0; i < nbAvailableColors - 1; i++)
   {
-    std::string nameCandidateID = g_paletteNames[i];
+    std::string nameCandidateID = s_paletteNames[i];
     list += nameCandidateID + separator;
   }
-  list += g_paletteNames[nbAvailableColors - 1] + suffix;
+  list += s_paletteNames[nbAvailableColors - 1] + suffix;
   return list;
 }
 
-unsigned int vpColorBlindFriendlyPalette::to_uint(Palette colorID)
+unsigned int vpColorBlindFriendlyPalette::to_uint(const Palette &colorID)
 {
   const unsigned int nbAvailableColors = (unsigned int) Palette::COUNT ;
   unsigned int ID = nbAvailableColors;
@@ -124,36 +124,36 @@ unsigned int vpColorBlindFriendlyPalette::to_uint(Palette colorID)
   return ID;
 }
 
-std::string vpColorBlindFriendlyPalette::to_string(vpColorBlindFriendlyPalette::Palette colorID)
+std::string vpColorBlindFriendlyPalette::to_string(const vpColorBlindFriendlyPalette::Palette &colorID)
 {
   std::string nameColor;
   switch(colorID){
   case Palette::Black:
-    nameColor = g_paletteNames[0];
+    nameColor = s_paletteNames[0];
     break;
   case Palette::Orange:
-    nameColor = g_paletteNames[1];
+    nameColor = s_paletteNames[1];
     break;
   case Palette::SkyBlue:
-    nameColor = g_paletteNames[2];
+    nameColor = s_paletteNames[2];
     break;
   case Palette::Green:
-    nameColor = g_paletteNames[3];
+    nameColor = s_paletteNames[3];
     break;
   case Palette::Yellow:
-    nameColor = g_paletteNames[4];
+    nameColor = s_paletteNames[4];
     break;
   case Palette::Blue:
-    nameColor = g_paletteNames[5];
+    nameColor = s_paletteNames[5];
     break;
   case Palette::Vermillon:
-    nameColor = g_paletteNames[6];
+    nameColor = s_paletteNames[6];
     break;
   case Palette::Purple:
-    nameColor = g_paletteNames[7];
+    nameColor = s_paletteNames[7];
     break;
   default:
-    nameColor = g_paletteNames[8];
+    nameColor = s_paletteNames[8];
   }
   return nameColor;
 }

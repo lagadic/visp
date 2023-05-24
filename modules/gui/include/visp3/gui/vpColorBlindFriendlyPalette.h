@@ -81,7 +81,7 @@ public:
    * \param colorID \b vpColorBlindFriendlyPalette::Palette that permits to determine the RGB values
    * that we must affect to it.
    */
-  vpColorBlindFriendlyPalette(Palette colorID);
+  vpColorBlindFriendlyPalette(const Palette &colorID);
 
   /**
    * \brief Construct a new vp Color Blind Friendly Palette object from the name of the color.
@@ -89,7 +89,7 @@ public:
    * 
    * \param nameColor 
    */
-  vpColorBlindFriendlyPalette(std::string nameColor);
+  vpColorBlindFriendlyPalette(const std::string &nameColor);
 
   /**
    * @brief Get the \b vpColorBlindFriendlyPalette::Palette the object corresponds to.
@@ -168,7 +168,7 @@ private:
    * value we are interested in knowing the value, expressed as unsigned int.
    * \return unsigned int that matches the value of \b colorID .
    */
-  static unsigned int to_uint(Palette colorID);
+  static unsigned int to_uint(const Palette &colorID);
 
   /**
    * \brief Get the name that corresponds to \b colorID .
@@ -177,7 +177,7 @@ private:
    * value we are interested in knowing the name.
    * \return std::string The corresponding name.
    */
-  static std::string to_string(Palette colorID);
+  static std::string to_string(const Palette &colorID);
 
   Palette m_colorID; /*!< The ID of the color in the \b vpColorBlindFriendlyPalette::Palette.*/
 };
