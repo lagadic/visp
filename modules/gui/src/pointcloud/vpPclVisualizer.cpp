@@ -71,12 +71,12 @@ vpPclVisualizer ::vpPclVisualizer ( const std::string &title , const int &width,
   , m_hasToSavePCDs(false)
   , m_outFolder(outFolder)
 {
-  set_outFolder(outFolder);
-  set_ignoreThreshold(ignoreThreshold);
+  setOutFolder(outFolder);
+  setIgnoreThreshold(ignoreThreshold);
   s_width  = width ;
   s_height = height;
-  s_posU     = px    ;
-  s_posV     = py    ;
+  s_posU     = posU    ;
+  s_posV     = posV    ;
 }
 
 vpPclVisualizer ::~vpPclVisualizer ()
@@ -102,12 +102,12 @@ vpPclVisualizer ::~vpPclVisualizer ()
   }
 }
 
-void vpPclVisualizer ::set_nameWindow(const std::string &nameWindow)
+void vpPclVisualizer ::setNameWindow(const std::string &nameWindow)
 {
   sp_viewer->setWindowName(nameWindow);
 }
 
-void vpPclVisualizer::set_outFolder(const std::string &outFolder)
+void vpPclVisualizer::setOutFolder(const std::string &outFolder)
 {
   m_outFolder = outFolder;
   if(!m_outFolder.empty()){
@@ -123,11 +123,11 @@ void vpPclVisualizer::set_outFolder(const std::string &outFolder)
   }
 }
 
-void vpPclVisualizer::set_ignoreThreshold(const double &ignoreThreshold)
+void vpPclVisualizer::setIgnoreThreshold(const double &ignoreThreshold)
 {
   if(ignoreThreshold < 0. || ignoreThreshold > 1.)
   {
-    throw(vpException(vpException::badValue, "[vpPclVisualizer::set_ignoreThreshold] Fatal error: threshold must be in range [0. ; 1.]"));
+    throw(vpException(vpException::badValue, "[vpPclVisualizer::setIgnoreThreshold] Fatal error: threshold must be in range [0. ; 1.]"));
   }
   s_ignoreThresh = ignoreThreshold;
 }

@@ -90,21 +90,21 @@ public:
    * 
    * @param nameWindow The name of the PCL visualizer window.
    */
-  void set_nameWindow(const std::string &nameWindow);
+  void setNameWindow(const std::string &nameWindow);
 
   /**
    * @brief Set the path to the output folder.
    * If different from the empty string, the point clouds will be saved in this folder.
    * @param outputFolder The path towards to the output folder, or empty if the point clouds must not be saved.
    */
-  void set_outFolder(const std::string &outputFolder);
+  void setOutFolder(const std::string &outputFolder);
 
   /**
    * @brief Set the threshold below which a point must be displayed in black.
    * 
    * @param thresh The threshold below which a point must be displayed in black.
    */
-  void set_ignoreThreshold(const double &thresh);
+  void setIgnoreThreshold(const double &thresh);
 
   /**
    * @brief Add a surface to the list of point clouds known by the visualizer.
