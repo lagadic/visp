@@ -64,7 +64,7 @@ int vpPclVisualizer::s_posV              =   40;
 double vpPclVisualizer::s_ignoreThresh = 0.95;
 
 vpPclVisualizer ::vpPclVisualizer ( const std::string &title , const int &width, const int &height
-                                                            , const int &px, const int &py
+                                                            , const int &posU, const int &posV
                                                             , const std::string &outFolder, const double &ignoreThreshold)
   : m_hasToRun(false)
   , m_title(title)

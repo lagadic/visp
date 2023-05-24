@@ -77,12 +77,12 @@ public:
    * @param title The title of the window of the visualizer.
    * @param width The width of the window of the visualizer.
    * @param height The height of the window of the visualizer.
-   * @param px The position on the horizontal axis of the screen of the window of the visualizer.
-   * @param py The position on the vertical axis of the screen of the window of the visualizer.
+   * @param posU The position on the horizontal axis of the screen of the window of the visualizer.
+   * @param posV The position on the vertical axis of the screen of the window of the visualizer.
    * @param outFolder If different from the empty string, the point clouds will be saved in this folder.
    * @param ignoreThreshold A point for which the weight is below this threshold will be displayed in black.
    */
-  vpPclVisualizer(const std::string &title , const int &width = 640, const int &height = 480, const int &px = 720, const int &py = 560, const std::string &outFolder = std::string(), const double &ignoreThreshold = 0.95);
+  vpPclVisualizer(const std::string &title , const int &width = 640, const int &height = 480, const int &posU = 720, const int &posV = 560, const std::string &outFolder = std::string(), const double &ignoreThreshold = 0.95);
   ~vpPclVisualizer();
 
   /**
