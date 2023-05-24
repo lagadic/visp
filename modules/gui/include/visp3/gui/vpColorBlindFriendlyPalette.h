@@ -66,7 +66,7 @@ public:
     COUNT = 8      /*!< Number of colors the palette proposes.*/
   }Palette;
 
-  static std::vector<std::string> g_paletteNames; /*!< Vector that lists the names of the different available colors.*/
+  static std::vector<std::string> s_paletteNames; /*!< Vector that lists the names of the different available colors.*/
 
   /**
    * \brief Construct a new vp Color Blind Friendly Palette.
@@ -159,7 +159,7 @@ public:
    */
   static std::string getAvailableColorsNames(const std::string &prefix = "", const std::string &separator = " ", const std::string &suffix = "" );
 private:
-  static std::vector<vpColor> g_palette; /*!< A vector that contains the \b vpColor corresponding to the \b vpColorBlindFriendlyPalette in terms of R, g, B values.*/
+  static std::vector<vpColor> s_palette; /*!< A vector that contains the \b vpColor corresponding to the \b vpColorBlindFriendlyPalette in terms of R, g, B values.*/
 
   /**
    * \brief Cast \b vpColorBlindFriendlyPalette::Palette enum value into an unsigned int.
@@ -179,7 +179,7 @@ private:
    */
   static std::string to_string(Palette colorID);
 
-  Palette _colorID; /*!< The ID of the color in the \b vpColorBlindFriendlyPalette::Palette.*/
+  Palette m_colorID; /*!< The ID of the color in the \b vpColorBlindFriendlyPalette::Palette.*/
 };
 
 /**

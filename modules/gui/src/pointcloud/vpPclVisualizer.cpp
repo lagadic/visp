@@ -53,30 +53,30 @@ const std::vector<vpColorBlindFriendlyPalette::Palette> gcolor= {vpColorBlindFri
 
 const unsigned int gc_nbColorMax = 7;
 
-pcl::visualization::PCLVisualizer::Ptr vpPclVisualizer ::gp_viewer(nullptr);
+pcl::visualization::PCLVisualizer::Ptr vpPclVisualizer ::sp_viewer(nullptr);
 
-std::vector<std::vector<double>> vpPclVisualizer ::g_vhandler;
+std::vector<std::vector<double>> vpPclVisualizer ::s_vhandler;
 
 int vpPclVisualizer::s_width           =  640;
 int vpPclVisualizer::s_height          =  480;
-int vpPclVisualizer::s_px              =   40;
-int vpPclVisualizer::s_py              =   40;
+int vpPclVisualizer::s_posU              =   40;
+int vpPclVisualizer::s_posV              =   40;
 double vpPclVisualizer::s_ignoreThresh = 0.95;
 
 vpPclVisualizer ::vpPclVisualizer ( const std::string &title , const int &width, const int &height
                                                             , const int &px, const int &py
                                                             , const std::string &outFolder, const double &ignoreThreshold)
-  : _hasToRun(false)
-  , _title(title)
-  , _hasToSavePCDs(false)
-  , _outFolder(outFolder)
+  : m_hasToRun(false)
+  , m_title(title)
+  , m_hasToSavePCDs(false)
+  , m_outFolder(outFolder)
 {
   set_outFolder(outFolder);
   set_ignoreThreshold(ignoreThreshold);
   s_width  = width ;
   s_height = height;
-  s_px     = px    ;
-  s_py     = py    ;
+  s_posU     = px    ;
+  s_posV     = py    ;
 }
 
 vpPclVisualizer ::~vpPclVisualizer ()
@@ -85,41 +85,41 @@ vpPclVisualizer ::~vpPclVisualizer ()
   stopThread();
   
   // Deleting point clouds
-  for(unsigned int i = 0; i < _vPointClouds.size(); i++){
-    _vPointClouds[i].reset();
+  for(unsigned int i = 0; i < m_vPointClouds.size(); i++){
+    m_vPointClouds[i].reset();
   }
-  _vPointClouds.clear();
+  m_vPointClouds.clear();
   
   // Deleting mutexes
-  for(unsigned int id =0; id < _vpmutex.size(); id++){
-    delete _vpmutex[id];
+  for(unsigned int id =0; id < m_vpmutex.size(); id++){
+    delete m_vpmutex[id];
   }
-  _vpmutex.clear();
+  m_vpmutex.clear();
   
   // Deleting the viewer
-  if(gp_viewer){
-    gp_viewer.reset();
+  if(sp_viewer){
+    sp_viewer.reset();
   }
 }
 
 void vpPclVisualizer ::set_nameWindow(const std::string &nameWindow)
 {
-  gp_viewer->setWindowName(nameWindow);
+  sp_viewer->setWindowName(nameWindow);
 }
 
 void vpPclVisualizer::set_outFolder(const std::string &outFolder)
 {
-  _outFolder = outFolder;
-  if(!_outFolder.empty()){
+  m_outFolder = outFolder;
+  if(!m_outFolder.empty()){
     // An output folder has been set by the user
-    _hasToSavePCDs = true;
-    if(!vpIoTools::checkDirectory(_outFolder)){
+    m_hasToSavePCDs = true;
+    if(!vpIoTools::checkDirectory(m_outFolder)){
       // The output folder does not exist => creating it
-      vpIoTools::makeDirectory(_outFolder);
+      vpIoTools::makeDirectory(m_outFolder);
     }
   }else{
     // No output folder was assigned to the visualizer
-    _hasToSavePCDs = false;
+    m_hasToSavePCDs = false;
   }
 }
 
@@ -134,7 +134,7 @@ void vpPclVisualizer::set_ignoreThreshold(const double &ignoreThreshold)
 
 void vpPclVisualizer ::updateSurface(const pclPointCloud::Ptr &surface, const unsigned int &id, const bool &hasToKeepColor)
 {
-  if(_hasToRun)
+  if(m_hasToRun)
   {
     // Threaded mode
     if(hasToKeepColor)
@@ -160,7 +160,7 @@ void vpPclVisualizer ::updateSurface(const pclPointCloud::Ptr &surface, const un
 void vpPclVisualizer ::updateSurface(const pclPointCloud::Ptr &surface, const unsigned int &id,
                                                   const vpColVector &weights, const bool &hasToKeepColor)
 {
-  if (_hasToRun) {
+  if (m_hasToRun) {
     // Threaded mode
     if (hasToKeepColor) {
       // The point cloud will be displayed with its original colors
@@ -172,16 +172,16 @@ void vpPclVisualizer ::updateSurface(const pclPointCloud::Ptr &surface, const un
   } else {
     // Blocking mode
     // If the saved pcl corresponding to \b id was not initialized, initialize it
-    if (!_vPointClouds[id]) {
-      _vPointClouds[id].reset(new pclPointCloud());
+    if (!m_vPointClouds[id]) {
+      m_vPointClouds[id].reset(new pclPointCloud());
     }
 
     // Resize if needed the saved pcl corresponding to \b id
     unsigned int nbPoints = surface->size();
-    _vPointClouds[id]->resize(nbPoints);
+    m_vPointClouds[id]->resize(nbPoints);
 
     // Save the new weights and check if they must be used
-    _vweights[id] = weights;
+    m_vweights[id] = weights;
     bool use_weights = (weights.size() > 0);
 
     // Keep only the points that are above \b s_ignoreThresh
@@ -195,22 +195,22 @@ void vpPclVisualizer ::updateSurface(const pclPointCloud::Ptr &surface, const un
 
       pclPoint pt = surface->at(index);
       if (addPoint) {
-        _vPointClouds[id]->at(index).x = pt.x;
-        _vPointClouds[id]->at(index).y = pt.y;
-        _vPointClouds[id]->at(index).z = pt.z;
+        m_vPointClouds[id]->at(index).x = pt.x;
+        m_vPointClouds[id]->at(index).y = pt.y;
+        m_vPointClouds[id]->at(index).z = pt.z;
 
-        _vPointClouds[id]->at(index).r = g_vhandler[id][0];
-        _vPointClouds[id]->at(index).g = g_vhandler[id][1];
-        _vPointClouds[id]->at(index).b = g_vhandler[id][2];
+        m_vPointClouds[id]->at(index).r = s_vhandler[id][0];
+        m_vPointClouds[id]->at(index).g = s_vhandler[id][1];
+        m_vPointClouds[id]->at(index).b = s_vhandler[id][2];
       }
     }
 
     // Try to update the pcl corresponding to the ID
     // Throw a \b vpException::notInitialized exception if the pcl was not added to the list of known pcl first
-    bool status = gp_viewer->updatePointCloud(_vPointClouds[id], _vmeshid[id]);
+    bool status = sp_viewer->updatePointCloud(m_vPointClouds[id], m_vmeshid[id]);
     if (!status) {
       std::stringstream err_msg;
-      err_msg << "[vpPclVisualizer ::updateSurface] ID " << _vmeshid[id] << " not found !" << std::endl;
+      err_msg << "[vpPclVisualizer ::updateSurface] ID " << m_vmeshid[id] << " not found !" << std::endl;
       throw(vpException(vpException::notInitialized, err_msg.str()));
     }
   }
@@ -225,15 +225,15 @@ unsigned int vpPclVisualizer ::addSurface(const pclPointCloud::Ptr &surface, con
 unsigned int vpPclVisualizer ::addSurface(const pclPointCloud::Ptr &surface, const vpColVector &weights, const std::string &name, const std::vector<unsigned char> &v_color)
 {
   static unsigned int nbSurfaces = 0;
-  unsigned int id = _vPointClouds.size();
+  unsigned int id = m_vPointClouds.size();
 
   // Creating a new pcl and saving it in the container
   pclPointCloud::Ptr p_pointCloud(new pclPointCloud());
-  _vPointClouds.push_back(p_pointCloud);
+  m_vPointClouds.push_back(p_pointCloud);
 
   // Sizing it accordingly to the input pcl
   unsigned int nbPoints = surface->size();
-  _vPointClouds[id]->resize(nbPoints);
+  m_vPointClouds[id]->resize(nbPoints);
 
   // Affecting a color to the point cloud and its legend
   std::vector<unsigned char> v_RGB;
@@ -255,10 +255,10 @@ unsigned int vpPclVisualizer ::addSurface(const pclPointCloud::Ptr &surface, con
     (double)v_RGB[1],
     (double)v_RGB[2]
   };
-  g_vhandler.push_back(v_RGBdouble);
+  s_vhandler.push_back(v_RGBdouble);
 
   // Storing the weights attached to the surface
-  _vweights.push_back(weights);
+  m_vweights.push_back(weights);
   bool use_weigths = weights.size() > 0;
 
   // Copying the coordinates of each point of the original pcl,
@@ -279,65 +279,65 @@ unsigned int vpPclVisualizer ::addSurface(const pclPointCloud::Ptr &surface, con
     }
     
     pclPoint pt = surface->at(index);
-    _vPointClouds[id]->at(index).x = pt.x;
-    _vPointClouds[id]->at(index).y = pt.y;
-    _vPointClouds[id]->at(index).z = pt.z;
+    m_vPointClouds[id]->at(index).x = pt.x;
+    m_vPointClouds[id]->at(index).y = pt.y;
+    m_vPointClouds[id]->at(index).z = pt.z;
 
     if(shouldPointBeVisible){
-      _vPointClouds[id]->at(index).r = g_vhandler[id][0];
-      _vPointClouds[id]->at(index).g = g_vhandler[id][1];
-      _vPointClouds[id]->at(index).b = g_vhandler[id][2];
+      m_vPointClouds[id]->at(index).r = s_vhandler[id][0];
+      m_vPointClouds[id]->at(index).g = s_vhandler[id][1];
+      m_vPointClouds[id]->at(index).b = s_vhandler[id][2];
     }
     else
     {
-      _vPointClouds[id]->at(index).r = 0.;
-      _vPointClouds[id]->at(index).g = 0.;
-      _vPointClouds[id]->at(index).b = 0.;
+      m_vPointClouds[id]->at(index).r = 0.;
+      m_vPointClouds[id]->at(index).g = 0.;
+      m_vPointClouds[id]->at(index).b = 0.;
     }
 
   }
 
-  //  std::cout << "Point cloud: width=" << _vPointClouds[id]->width << ", height= " << _vPointClouds[id]->height << std::endl;
+  //  std::cout << "Point cloud: width=" << m_vPointClouds[id]->width << ", height= " << m_vPointClouds[id]->height << std::endl;
 
   // Checking if the user specified a name for the pcl
   if(!name.empty()){
     // Yes => we save it (will be used for the legend, and for 
     // the viewer to know which pcl we are changing when updating pcls)
-    _vmeshid.push_back(name);
+    m_vmeshid.push_back(name);
   }else{
     // No => we create one, for the very same reasons
-    _vmeshid.push_back("point_cloud" + std::to_string(id));
+    m_vmeshid.push_back("point_cloud" + std::to_string(id));
   }
-//  std::cout << "[vpPclVisualizer ::addSurface] Added ID " << _vmeshid[id] << " to the list of known point clouds" << std::endl;
-  if(gp_viewer){
+//  std::cout << "[vpPclVisualizer ::addSurface] Added ID " << m_vmeshid[id] << " to the list of known point clouds" << std::endl;
+  if(sp_viewer){
     // The viewer is already on, we can add the pcl to its known list
-    gp_viewer->addPointCloud(_vPointClouds[id], _vmeshid[id]);
+    sp_viewer->addPointCloud(m_vPointClouds[id], m_vmeshid[id]);
   }
 
   // Updating the number of known pcls 
   nbSurfaces = (nbSurfaces + 1) % gc_nbColorMax;
 
   // Adding a mutex to protect the new pcl when using \b threadUpdateSurface
-  _vpmutex.push_back(new std::mutex());
+  m_vpmutex.push_back(new std::mutex());
 
   // Adding a legend for this pcl
   legendParams legend;
-  _vlegends.push_back(legend);
-  legendParams& newLegend = _vlegends[id];
-  newLegend._text = _vmeshid[id];
-  newLegend._pos_u = 10;
-  newLegend._pos_v = 10;
-  newLegend._size = 16;
+  m_vlegends.push_back(legend);
+  legendParams& newLegend = m_vlegends[id];
+  newLegend.m_text = m_vmeshid[id];
+  newLegend.m_posU = 10;
+  newLegend.m_posV = 10;
+  newLegend.m_size = 16;
   if(id > 0){
-    newLegend._pos_v = _vlegends[id - 1]._pos_v + newLegend._size;
+    newLegend.m_posV = m_vlegends[id - 1].m_posV + newLegend.m_size;
   }
-  newLegend._rRatio = g_vhandler[id][0] / 255.0;
-  newLegend._gRatio = g_vhandler[id][1] / 255.0;
-  newLegend._bRatio = g_vhandler[id][2] / 255.0;
+  newLegend.m_rRatio = s_vhandler[id][0] / 255.0;
+  newLegend.m_gRatio = s_vhandler[id][1] / 255.0;
+  newLegend.m_bRatio = s_vhandler[id][2] / 255.0;
 
-  if(gp_viewer){
+  if(sp_viewer){
     // The viewer is on => we add the legend on the screen
-    gp_viewer->addText(newLegend._text, newLegend._pos_u, newLegend._pos_v, newLegend._rRatio, newLegend._gRatio, newLegend._bRatio );
+    sp_viewer->addText(newLegend.m_text, newLegend.m_posU, newLegend.m_posV, newLegend.m_rRatio, newLegend.m_gRatio, newLegend.m_bRatio );
   }
 
   return id;
@@ -348,45 +348,45 @@ unsigned int vpPclVisualizer ::addSurface(const pclPointCloud::Ptr &surface, con
 void vpPclVisualizer ::display()
 {
   stopThread(); // We have to stop the thread to manipulate the viewer with a blocking waiting
-  if(!gp_viewer){
+  if(!sp_viewer){
     // The viewer was not created => creating a new one
-    gp_viewer.reset(new pcl::visualization::PCLVisualizer(_title));
-    gp_viewer->addCoordinateSystem (0.5); // Display a coordinate system whose axis are 0.5m long
-    gp_viewer->initCameraParameters(); // Initialize the viewer with default camera settings
-    gp_viewer->setSize(s_width,s_height); // Setting the size of the viewer window
-    gp_viewer->setPosition(s_px, s_py); // Setting the position of the viewer window on the screen
+    sp_viewer.reset(new pcl::visualization::PCLVisualizer(m_title));
+    sp_viewer->addCoordinateSystem (0.5); // Display a coordinate system whose axis are 0.5m long
+    sp_viewer->initCameraParameters(); // Initialize the viewer with default camera settings
+    sp_viewer->setSize(s_width,s_height); // Setting the size of the viewer window
+    sp_viewer->setPosition(s_posU, s_posV); // Setting the position of the viewer window on the screen
 
-    for(unsigned int id = 0; id < _vPointClouds.size(); id++)
+    for(unsigned int id = 0; id < m_vPointClouds.size(); id++)
     {
-      gp_viewer->addPointCloud(_vPointClouds[id], _vmeshid[id]);
-      gp_viewer->addText(_vlegends[id]._text, _vlegends[id]._pos_u, _vlegends[id]._pos_v, _vlegends[id]._rRatio, _vlegends[id]._gRatio, _vlegends[id]._bRatio );
+      sp_viewer->addPointCloud(m_vPointClouds[id], m_vmeshid[id]);
+      sp_viewer->addText(m_vlegends[id].m_text, m_vlegends[id].m_posU, m_vlegends[id].m_posV, m_vlegends[id].m_rRatio, m_vlegends[id].m_gRatio, m_vlegends[id].m_bRatio );
     }
   }
-  gp_viewer->spin();
+  sp_viewer->spin();
 }
 
 void vpPclVisualizer ::refresh(const int &timeout, const bool &waitForDrawing)
 {
-  gp_viewer->spinOnce(timeout,waitForDrawing);
+  sp_viewer->spinOnce(timeout,waitForDrawing);
 }
 
 void vpPclVisualizer ::launchThread()
 {
   // Check if the visualization thread is already started
-  if(!_hasToRun){
+  if(!m_hasToRun){
     // Thread not started => starting it now
-    _hasToRun = true;
-    _threadDisplay = std::thread(vpPclVisualizer ::runThread, this);
+    m_hasToRun = true;
+    m_threadDisplay = std::thread(vpPclVisualizer ::runThread, this);
   }
 }
 
 void vpPclVisualizer ::stopThread()
 {
   // Check if the visualization thread is running
-  if(_hasToRun){
+  if(m_hasToRun){
     // Thread is running, asking it to stop
-    _hasToRun = false;
-    _threadDisplay.join();
+    m_hasToRun = false;
+    m_threadDisplay.join();
   }
 }
 
@@ -398,55 +398,55 @@ void vpPclVisualizer ::runThread(vpPclVisualizer  *p_visualizer)
 void vpPclVisualizer ::loopThread()
 {
   bool useWeights; /*!< Will be used to know if the points of the pcl have weights. If so, will display only the ones whose weight exceed a threshold.*/
-  gp_viewer.reset(new pcl::visualization::PCLVisualizer(_title)); // Allocating a new viewer or resetting the old one.
-  gp_viewer->addCoordinateSystem (0.5); // Display a coordinate system whose axis are 0.5m long
-  gp_viewer->initCameraParameters(); // Initialize the viewer with default camera settings
-  gp_viewer->setSize(s_width,s_height); // Setting the size of the viewer window
-  gp_viewer->setPosition(s_px, s_py); // Setting the position of the viewer window on the screen
+  sp_viewer.reset(new pcl::visualization::PCLVisualizer(m_title)); // Allocating a new viewer or resetting the old one.
+  sp_viewer->addCoordinateSystem (0.5); // Display a coordinate system whose axis are 0.5m long
+  sp_viewer->initCameraParameters(); // Initialize the viewer with default camera settings
+  sp_viewer->setSize(s_width,s_height); // Setting the size of the viewer window
+  sp_viewer->setPosition(s_posU, s_posV); // Setting the position of the viewer window on the screen
   unsigned int iter = 0;
 
   // Running the main loop of the thread
-  while(_hasToRun){
-    for(unsigned int id=0; id< _vmeshid.size(); id++){
-      _vpmutex[id]->lock();
-      unsigned int nbPoints = _vPointClouds[id]->size();
+  while(m_hasToRun){
+    for(unsigned int id=0; id< m_vmeshid.size(); id++){
+      m_vpmutex[id]->lock();
+      unsigned int nbPoints = m_vPointClouds[id]->size();
       // Checking if the pcl[id] has weights attached to its points
-      unsigned int nbWeights = _vweights[id].size(); 
+      unsigned int nbWeights = m_vweights[id].size(); 
       useWeights = (nbWeights > 0);
       if(useWeights){
         // Setting points for which the weights are lower than \b s_ignoreThresh to be of color \b s_colorRejectedPoints
         for(unsigned int index = 0; index < nbPoints; index++){
-            if(_vweights[id][index] < s_ignoreThresh){
-              _vPointClouds[id]->at(index).r = 0.0;
-              _vPointClouds[id]->at(index).g = 0.0;
-              _vPointClouds[id]->at(index).b = 0.0;
+            if(m_vweights[id][index] < s_ignoreThresh){
+              m_vPointClouds[id]->at(index).r = 0.0;
+              m_vPointClouds[id]->at(index).g = 0.0;
+              m_vPointClouds[id]->at(index).b = 0.0;
             }
 
         }
       }
 
       // If updatePointCloud fails, it means that the pcl was not previously known by the viewer
-      if(!gp_viewer->updatePointCloud(_vPointClouds[id], _vmeshid[id])){
+      if(!sp_viewer->updatePointCloud(m_vPointClouds[id], m_vmeshid[id])){
         // Add the pcl to the list of pcl known by the viewer + the according legend
-        gp_viewer->addPointCloud(_vPointClouds[id], _vmeshid[id]);
-        gp_viewer->addText(_vlegends[id]._text, _vlegends[id]._pos_u, _vlegends[id]._pos_v, _vlegends[id]._rRatio, _vlegends[id]._gRatio, _vlegends[id]._bRatio );
+        sp_viewer->addPointCloud(m_vPointClouds[id], m_vmeshid[id]);
+        sp_viewer->addText(m_vlegends[id].m_text, m_vlegends[id].m_posU, m_vlegends[id].m_posV, m_vlegends[id].m_rRatio, m_vlegends[id].m_gRatio, m_vlegends[id].m_bRatio );
       }
 
       // If the pcl is not empty and the \b vpPclVisualizer is asked to save the pcls,
       // create a new file name and save the pcl
-      if(_vPointClouds[id]->size() > 0 && _hasToSavePCDs){
-        std::string filename = vpIoTools::createFilePath(_outFolder, _vmeshid[id] + std::to_string(iter) + ".pcd" );
-        pcl::io::savePCDFile(filename, *_vPointClouds[id]);
+      if(m_vPointClouds[id]->size() > 0 && m_hasToSavePCDs){
+        std::string filename = vpIoTools::createFilePath(m_outFolder, m_vmeshid[id] + std::to_string(iter) + ".pcd" );
+        pcl::io::savePCDFile(filename, *m_vPointClouds[id]);
       }
 
-      _vpmutex[id]->unlock();
+      m_vpmutex[id]->unlock();
     }
-    gp_viewer->spinOnce(100,true);
+    sp_viewer->spinOnce(100,true);
 
     iter++;
   }
   // When leaving the thread, resetting the viewer
-  gp_viewer.reset();
+  sp_viewer.reset();
 }
 
 void vpPclVisualizer ::threadUpdateSurface(const pclPointCloud::Ptr &surface, const unsigned int &id)
@@ -461,37 +461,37 @@ void vpPclVisualizer ::threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr
 
 void vpPclVisualizer ::threadUpdateSurface(const pclPointCloud::Ptr &surface,  const unsigned int &id, const vpColVector &weights)
 {
-  _vpmutex[id]->lock();
-  _vweights[id] = weights; // Saving the weights affected to each point of the pcl
+  m_vpmutex[id]->lock();
+  m_vweights[id] = weights; // Saving the weights affected to each point of the pcl
   unsigned int nbPoints = surface->size();
-  _vPointClouds[id]->resize(nbPoints); // Resizing internal point cloud to the size of the input surface
+  m_vPointClouds[id]->resize(nbPoints); // Resizing internal point cloud to the size of the input surface
 
   // Iterating on each point of the pcl to change the color of the points
   // for the default value affected to this pcl
   for(unsigned int index = 0; index < nbPoints; index++){
       pclPoint pt = surface->at(index);
-      _vPointClouds[id]->at(index).x = pt.x;
-      _vPointClouds[id]->at(index).y = pt.y;
-      _vPointClouds[id]->at(index).z = pt.z;
+      m_vPointClouds[id]->at(index).x = pt.x;
+      m_vPointClouds[id]->at(index).y = pt.y;
+      m_vPointClouds[id]->at(index).z = pt.z;
 
-      _vPointClouds[id]->at(index).r = g_vhandler[id][0];
-      _vPointClouds[id]->at(index).g = g_vhandler[id][1];
-      _vPointClouds[id]->at(index).b = g_vhandler[id][2];
+      m_vPointClouds[id]->at(index).r = s_vhandler[id][0];
+      m_vPointClouds[id]->at(index).g = s_vhandler[id][1];
+      m_vPointClouds[id]->at(index).b = s_vhandler[id][2];
   }
-  _vpmutex[id]->unlock();
+  m_vpmutex[id]->unlock();
 }
 
 void vpPclVisualizer ::threadUpdateSurfaceOriginalColor(const pclPointCloud::Ptr &surface, const unsigned int &id, const vpColVector &weights)
 {
-  _vpmutex[id]->lock();
-  _vweights[id] = weights; // Saving the weights affected to each point of the pcl
+  m_vpmutex[id]->lock();
+  m_vweights[id] = weights; // Saving the weights affected to each point of the pcl
   unsigned int nbPoints = surface->size();
-  _vPointClouds[id]->resize(nbPoints); // Resizing internal point cloud to the size of the input surface
+  m_vPointClouds[id]->resize(nbPoints); // Resizing internal point cloud to the size of the input surface
 
   // As we keep the color of the original pcl, a plain copy will do the job
-  pcl::copyPointCloud(*surface, *_vPointClouds[id]);
+  pcl::copyPointCloud(*surface, *m_vPointClouds[id]);
 
-  _vpmutex[id]->unlock();
+  m_vpmutex[id]->unlock();
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

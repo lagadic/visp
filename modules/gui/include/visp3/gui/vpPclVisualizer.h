@@ -67,13 +67,13 @@ public:
    * @brief Structure that contains all the required parameters to display a legend on the visualizer.
    */
   typedef struct legendParams{
-    std::string _text; /*!< The text of the legend.*/
-    unsigned int _pos_u; /*!< The position of the legend on the u-axis of the screen.*/
-    unsigned int _pos_v; /*!< The position of the legend on the v-axis of the screen.*/
-    unsigned int _size; /*!< The size of the legend.*/
-    double _rRatio; /*!< The red ratio of the legend.*/
-    double _gRatio; /*!< The green ratio of the legend.*/
-    double _bRatio; /*!< The blue ratio of the legend.*/
+    std::string m_text; /*!< The text of the legend.*/
+    unsigned int m_posU; /*!< The position of the legend on the u-axis of the screen.*/
+    unsigned int m_posV; /*!< The position of the legend on the v-axis of the screen.*/
+    unsigned int m_size; /*!< The size of the legend.*/
+    double m_rRatio; /*!< The red ratio of the legend.*/
+    double m_gRatio; /*!< The green ratio of the legend.*/
+    double m_bRatio; /*!< The blue ratio of the legend.*/
   }legendParams;
 
   /**
@@ -229,23 +229,23 @@ protected:
    */
   void loopThread();
 
-  std::vector<pclPointCloud::Ptr> _vPointClouds; /*!< The list of point clouds known by the viewer.*/
-  static pcl::visualization::PCLVisualizer::Ptr gp_viewer; /*!< The PCL viewer permitting the display.*/
-  static std::vector<std::vector<double>> g_vhandler; /*!< The list of color handlers.*/
+  std::vector<pclPointCloud::Ptr> m_vPointClouds; /*!< The list of point clouds known by the viewer.*/
+  static pcl::visualization::PCLVisualizer::Ptr sp_viewer; /*!< The PCL viewer permitting the display.*/
+  static std::vector<std::vector<double>> s_vhandler; /*!< The list of color handlers.*/
   static int s_width; /*!< The width of the window.*/
   static int s_height; /*!< The height of the window.*/
-  static int s_px; /*!< The position along the horizontal axis of the screen of the window.*/
-  static int s_py; /*!< The position along the vertical axis of the screen of the window.*/
+  static int s_posU; /*!< The position along the horizontal axis of the screen of the window.*/
+  static int s_posV; /*!< The position along the vertical axis of the screen of the window.*/
   static double s_ignoreThresh; /*!< The minimum value of the confidence weight of a point to allow it to be dislayed.*/
-  std::vector<std::string> _vmeshid; /*!< The list of the point cloud names, for the legend.*/
-  std::vector<legendParams> _vlegends; /*!< The list of the legend items.*/
-  std::vector<std::mutex*> _vpmutex; /*!< The list of mutexes protecting the point clouds from data race when using the drawing thread.*/
-  std::vector<vpColVector> _vweights; /*!< The list of confidence weights of each point cloud.*/
-  std::thread _threadDisplay; /*!< The non-blocking drawing thread.*/
-  bool _hasToRun; /*!< If true, the drawing thread is running. Otherwise, it is stopped.*/
-  std::string _title; /*!< The title of the visualizer window.*/
-  bool _hasToSavePCDs; /*!< If true, thhe point clouds will be saved at each iteration of the drawing thread.*/
-  std::string _outFolder; /*!< If non empty, the path to the folders where the point clouds will be saved.*/
+  std::vector<std::string> m_vmeshid; /*!< The list of the point cloud names, for the legend.*/
+  std::vector<legendParams> m_vlegends; /*!< The list of the legend items.*/
+  std::vector<std::mutex*> m_vpmutex; /*!< The list of mutexes protecting the point clouds from data race when using the drawing thread.*/
+  std::vector<vpColVector> m_vweights; /*!< The list of confidence weights of each point cloud.*/
+  std::thread m_threadDisplay; /*!< The non-blocking drawing thread.*/
+  bool m_hasToRun; /*!< If true, the drawing thread is running. Otherwise, it is stopped.*/
+  std::string m_title; /*!< The title of the visualizer window.*/
+  bool m_hasToSavePCDs; /*!< If true, thhe point clouds will be saved at each iteration of the drawing thread.*/
+  std::string m_outFolder; /*!< If non empty, the path to the folders where the point clouds will be saved.*/
 };
 #endif // #if defined(VISP_HAVE_PCL)
 #endif // #ifndef DOXYGEN_SHOULD_SKIP_THIS

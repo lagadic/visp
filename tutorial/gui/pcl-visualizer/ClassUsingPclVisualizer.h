@@ -12,20 +12,20 @@
 class ClassUsingPclVisualizer
 {
 private:
-  vpTranslationVector _t; /*!< The translation between the noise-free point cloud and the possibly noisy, translated + rotated one*/
-  vpRotationMatrix _R; /*!< The rotation between the noise-free point cloud and the possibly noisy, translated + rotated one*/
-  vpHomogeneousMatrix _cMo; /*!< The homogeneous matrix expressing the pose of the noise-free point cloud with regard to the possibly noisy, translated + rotated one.*/
+  vpTranslationVector m_t; /*!< The translation between the noise-free point cloud and the possibly noisy, translated + rotated one*/
+  vpRotationMatrix m_R; /*!< The rotation between the noise-free point cloud and the possibly noisy, translated + rotated one*/
+  vpHomogeneousMatrix m_cMo; /*!< The homogeneous matrix expressing the pose of the noise-free point cloud with regard to the possibly noisy, translated + rotated one.*/
 
-  double _minX; /*!< The minimum value of the X coordinate, expressed in the noise-free frame.*/
-  double _maxX; /*!< The maximum value of the X coordinate, expressed in the noise-free frame.*/
-  unsigned int _n; /*!< Number of points along the X-axis.*/
-  double _dX; // _dX = (_maxX - _minX)/(_n-1)
-  double _minY; /*!< The minimum value of the Y coordinate, expressed in the noise-free frame.*/
-  double _maxY; /*!< The maximum value of the Y coordinate, expressed in the noise-free frame.*/
-  unsigned int _m;  /*!< Number of points along the Y-axis.*/
-  double _dY; // _dY = (_maxY - _minY)/(_m-1)
+  double m_minX; /*!< The minimum value of the X coordinate, expressed in the noise-free frame.*/
+  double m_maxX; /*!< The maximum value of the X coordinate, expressed in the noise-free frame.*/
+  unsigned int m_n; /*!< Number of points along the X-axis.*/
+  double m_dX; // m_dX = (m_maxX - m_minX)/(m_n-1)
+  double m_minY; /*!< The minimum value of the Y coordinate, expressed in the noise-free frame.*/
+  double m_maxY; /*!< The maximum value of the Y coordinate, expressed in the noise-free frame.*/
+  unsigned int m_m;  /*!< Number of points along the Y-axis.*/
+  double m_dY; // m_dY = (m_maxY - m_minY)/(m_m-1)
 
-  vpPclVisualizer _visualizer; /*!< The PCL-based visualizer.*/
+  vpPclVisualizer m_visualizer; /*!< The PCL-based visualizer.*/
 
   /**
    * @brief Generate a noise-free grid of point, and a possibly noisy one, which is translated and rotated with regarded to the noise-free one.

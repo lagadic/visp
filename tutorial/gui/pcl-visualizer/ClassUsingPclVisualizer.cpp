@@ -40,19 +40,19 @@ double zFunction(const double &x, const double &y, const unsigned int order)
 
 //! [Constructor]
 ClassUsingPclVisualizer::ClassUsingPclVisualizer(std::pair<double, double> xlimits, std::pair<double, double> ylimits, std::pair<unsigned int, unsigned int> nbPoints)
-  : _t(0.1,0.1,0.1)
-  , _R(M_PI_4,M_PI_4,M_PI_4)
-  , _cMo(_t,_R)
-  , _minX(xlimits.first)
-  , _maxX(xlimits.second)
-  , _n(nbPoints.first)
-  , _minY(ylimits.first)
-  , _maxY(ylimits.second)
-  , _m(nbPoints.second)
-  , _visualizer("Grid of points with / without robust")
+  : m_t(0.1,0.1,0.1)
+  , m_R(M_PI_4,M_PI_4,M_PI_4)
+  , m_cMo(m_t,m_R)
+  , m_minX(xlimits.first)
+  , m_maxX(xlimits.second)
+  , m_n(nbPoints.first)
+  , m_minY(ylimits.first)
+  , m_maxY(ylimits.second)
+  , m_m(nbPoints.second)
+  , m_visualizer("Grid of points with / without robust")
 {
-  _dX = (_maxX - _minX) / (static_cast<double>(_n) - 1.);
-  _dY = (_maxY - _minY) / (static_cast<double>(_m) - 1.);
+  m_dX = (m_maxX - m_minX) / (static_cast<double>(m_n) - 1.);
+  m_dY = (m_maxY - m_minY) / (static_cast<double>(m_m) - 1.);
 }
 //! [Constructor]
 
@@ -67,11 +67,11 @@ std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> 
   std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> result;
 
   // Create control points
-  vpPclVisualizer::pclPointCloudPtr unrotatedControlPoints(new vpPclVisualizer::pclPointCloud(_n,_m));
-  vpPclVisualizer::pclPointCloudPtr   rotatedControlPoints(new vpPclVisualizer::pclPointCloud(_n,_m));
+  vpPclVisualizer::pclPointCloudPtr unrotatedControlPoints(new vpPclVisualizer::pclPointCloud(m_n,m_m));
+  vpPclVisualizer::pclPointCloudPtr   rotatedControlPoints(new vpPclVisualizer::pclPointCloud(m_n,m_m));
 
   // Initializing confindence weights
-  confidenceWeights.resize(_m * _n);
+  confidenceWeights.resize(m_m * m_n);
 
   // Noise generator for the observed points
   // We deriberately choose to set the standard deviation to be twice the tolerated value to observe rejected points
@@ -80,13 +80,13 @@ std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> 
    r.seed(vpTime::measureTimeMicros());
 
   // Residual vector to compute the confidence weights
-  vpColVector residuals(_m * _n);
+  vpColVector residuals(m_m * m_n);
 
-  for(unsigned int j =  0; j< _m; j++){
-    for(unsigned int i = 0; i<_n; i++){
+  for(unsigned int j =  0; j< m_m; j++){
+    for(unsigned int i = 0; i<m_n; i++){
       // Creating model, expressed in the object frame
-      double oX = _minX + (double)i * _dX;
-      double oY = _minY + (double)j * _dY;
+      double oX = m_minX + (double)i * m_dX;
+      double oY = m_minY + (double)j * m_dY;
       double oZ = zFunction(oX, oY, order);
 
       // Setting the point coordinates of the first point cloud in
@@ -98,7 +98,7 @@ std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> 
       (*unrotatedControlPoints)(i,j).z = oCoords[2];
 
       // Moving the point into another coordinate frame
-      vpColVector cCoords = _cMo * oCoords;
+      vpColVector cCoords = m_cMo * oCoords;
       (*rotatedControlPoints)(i,j).x = cCoords[0];
       (*rotatedControlPoints)(i,j).y = cCoords[1];
 
@@ -107,11 +107,11 @@ std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> 
       (*rotatedControlPoints)(i,j).z = cCoords[2] + noise; 
 
       // Filling the confidence weights with default value of 1.
-      confidenceWeights[j * _n + i] = 1.;
+      confidenceWeights[j * m_n + i] = 1.;
 
       // Indicating the residual, here it corresponds to the difference 
       // between the theoretical position of the point and the actual one
-      residuals[j * _n + i] = noise;
+      residuals[j * m_n + i] = noise;
     }
   }
 
@@ -141,17 +141,17 @@ void ClassUsingPclVisualizer::blockingMode(const double &addedNoise, const unsig
 
   //! [Adding point clouds color not chosen]
   // Adding a point cloud for which we don't chose the color 
-  unsigned int id_ctrlPts = _visualizer.addSurface(grids.first, "Standard"); 
+  unsigned int id_ctrlPts = m_visualizer.addSurface(grids.first, "Standard"); 
   //! [Adding point clouds color not chosen]
 
   //! [Adding point clouds color chosen]
   // Adding a point cloud for which we chose the color
   vpColorBlindFriendlyPalette color(vpColorBlindFriendlyPalette::Palette::Purple);
-  unsigned int id_robust = _visualizer.addSurface(grids.second, confWeights, "RotatedWithRobust", color.to_RGB());
+  unsigned int id_robust = m_visualizer.addSurface(grids.second, confWeights, "RotatedWithRobust", color.to_RGB());
   //! [Adding point clouds color chosen]
 
   //! [Displaying point clouds blocking mode]
-  _visualizer.display();
+  m_visualizer.display();
   //! [Displaying point clouds blocking mode]
 }
 
@@ -164,18 +164,18 @@ void ClassUsingPclVisualizer::threadedMode(const double &addedNoise, const unsig
   std::pair<vpPclVisualizer::pclPointCloudPtr, vpPclVisualizer::pclPointCloudPtr> grids = generateControlPoints(addedNoise, order, confWeights);
 
   // Adding a point cloud for which we don't chose the color 
-  unsigned int id_ctrlPts = _visualizer.addSurface(grids.first, "Standard"); 
+  unsigned int id_ctrlPts = m_visualizer.addSurface(grids.first, "Standard"); 
   
   // Adding a point cloud for which we chose the color
   vpColorBlindFriendlyPalette color(vpColorBlindFriendlyPalette::Palette::Purple);
-  unsigned int id_robust = _visualizer.addSurface(grids.second, confWeights, "RotatedWithRobust", color.to_RGB());
+  unsigned int id_robust = m_visualizer.addSurface(grids.second, confWeights, "RotatedWithRobust", color.to_RGB());
 
   //! [Starting display thread]
-  _visualizer.launchThread();
+  m_visualizer.launchThread();
   //! [Starting display thread]
   
-  _visualizer.updateSurface(grids.first , id_ctrlPts);
-  _visualizer.updateSurface(grids.second , id_robust, confWeights);
+  m_visualizer.updateSurface(grids.first , id_ctrlPts);
+  m_visualizer.updateSurface(grids.second , id_robust, confWeights);
 
   vpKeyboard keyboard;
   bool wantToStop = false;
@@ -186,8 +186,8 @@ void ClassUsingPclVisualizer::threadedMode(const double &addedNoise, const unsig
     grids = generateControlPoints(addedNoise, order, confWeights);
 
     //! [Updating point clouds used by display thread]
-    _visualizer.updateSurface(grids.first , id_ctrlPts);
-    _visualizer.updateSurface(grids.second , id_robust, confWeights);
+    m_visualizer.updateSurface(grids.first , id_ctrlPts);
+    m_visualizer.updateSurface(grids.second , id_robust, confWeights);
     //! [Updating point clouds used by display thread]
 
     if (keyboard.kbhit()) {
