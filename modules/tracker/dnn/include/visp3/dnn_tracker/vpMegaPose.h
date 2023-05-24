@@ -37,14 +37,33 @@ public:
     vpRect boundingBox;
 };
 
-inline void to_json(nlohmann::json& j, const vpRect& d)
+// Don't use the default ViSP JSON conversion to avoid potential regressions (that wouldn't be detected)
+// and very specific parsing on the server side
+inline void from_megapose_json(const nlohmann::json &j, vpHomogeneousMatrix &T)
+{
+    std::vector<double> values = j;
+    assert(values.size() == 16);
+    std::copy(values.begin(), values.end(), T.data);
+}
+
+inline void to_megapose_json(nlohmann::json &j, const vpHomogeneousMatrix &T)
+{
+    std::vector<double> values;
+    values.reserve(16);
+    for (unsigned i = 0; i < 16; ++i) {
+        values.push_back(T.data[i]);
+    }
+    j = values;
+}
+
+inline void to_megapose_json(nlohmann::json &j, const vpRect &d)
 {
     std::vector<double> values = {
         d.getLeft(), d.getTop(), d.getRight(), d.getBottom()
     };
     j = values;
 }
-inline void from_json(const nlohmann::json& j, vpRect& d)
+inline void from_megapose_json(const nlohmann::json &j, vpRect &d)
 {
     std::vector<double> values = j.get<std::vector<double>>();
     assert((values.size() == 4));
@@ -57,8 +76,8 @@ inline void from_json(const nlohmann::json& j, vpRect& d)
 inline void from_json(const nlohmann::json& j, vpMegaPoseEstimate& m)
 {
     m.score = j["score"];
-    m.cTo = j["cTo"];
-    m.boundingBox = j["boundingBox"];
+    from_megapose_json(j.at("cTo"), m.cTo);
+    from_megapose_json(j.at("boundingBox"), m.boundingBox);
 }
 
 /**

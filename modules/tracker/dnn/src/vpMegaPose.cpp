@@ -16,7 +16,7 @@ using json = nlohmann::json;
 /*Encode elements to a buffer of bytes*/
 
 /*End of template recursion*/
-void encode(std::vector<uint8_t>& buffer)
+void encode(std::vector<uint8_t> &)
 {
 
 }
@@ -126,7 +126,7 @@ void encode(std::vector<uint8_t>& buffer, const vpHomogeneousMatrix& object)
 
 /*Decode elements (passed as references), given a buffer of bytes and an index (modified)*/
 
-void decode(const std::vector<uint8_t>& buffer, unsigned int& index)
+void decode(const std::vector<uint8_t> &, unsigned int &)
 {
 }
 
@@ -355,14 +355,26 @@ vpMegaPose::estimatePoses(const vpImage<vpRGBa>& image, const std::vector<std::s
     if (detections->size() != labels.size()) {
       throw vpException(vpException::badValue, "Same number of bounding boxes and labels must be provided.");
     }
-    parametersJson["detections"] = *detections;
+    json detectionsJson = json::array();
+    for (const vpRect &bb : *detections) {
+      json j;
+      to_megapose_json(j, bb);
+      detectionsJson.push_back(j);
+    }
+    parametersJson["detections"] = detectionsJson;
   }
 
   if (initial_cTos != nullptr) {
     if (initial_cTos->size() != labels.size()) {
       throw vpException(vpException::badValue, "An initial estimate should be given for each detected object in the image");
     }
-    parametersJson["initial_cTos"] = *initial_cTos;
+    json cToJson = json::array();
+    for (const vpHomogeneousMatrix &cTo : *initial_cTos) {
+      json j;
+      to_megapose_json(j, cTo);
+      cToJson.push_back(j);
+    }
+    parametersJson["initial_cTos"] = cToJson;
   }
   if (refinerIterations >= 0) {
     parametersJson["refiner_iterations"] = refinerIterations;
@@ -410,7 +422,13 @@ std::vector<double> vpMegaPose::scorePoses(const vpImage<vpRGBa>& image,
   }
   encode(data, image);
   json parametersJson;
-  parametersJson["cTos"] = cTos;
+  json cToJson = json::array();
+  for (const vpHomogeneousMatrix &cTo : cTos) {
+    json j;
+    to_megapose_json(j, cTo);
+    cToJson.push_back(j);
+  }
+  parametersJson["cTos"] = cToJson;
   parametersJson["labels"] = labels;
 
   encode(data, parametersJson.dump());
