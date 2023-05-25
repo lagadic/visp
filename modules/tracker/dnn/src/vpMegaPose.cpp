@@ -1,6 +1,6 @@
 #include <visp3/dnn_tracker/vpMegaPose.h>
-
-#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <visp3/core/vpConfig.h>
+//#ifdef VISP_HAVE_NLOHMANN_JSON
 
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -9,7 +9,6 @@
 #include <mutex>
 #include <thread>
 using json = nlohmann::json;
-
 
 //// Network message utils
 
@@ -64,8 +63,6 @@ void encode(std::vector<uint8_t>& buffer, const std::vector<T>& object)
     encode(buffer, value);
   }
 }
-
-
 
 /*Multiple arguments are processed one by one*/
 template<typename T, typename ...Rest>
@@ -188,7 +185,6 @@ void decode(const std::vector<uint8_t>& buffer, unsigned int& index, vpHomogeneo
     value.data[i] = values[i];
   }
 }
-
 
 /*
 Decode multiple objects from a byte array.
@@ -517,4 +513,4 @@ void vpMegaPose::setCoarseNumSamples(const unsigned num)
     handleWrongReturnMessage(code, data_result);
   }
 }
-#endif
+//#endif

@@ -24,12 +24,46 @@ public:
     if (jsonFileArgumentName.empty()) {
       throw vpException(vpException::badValue, "The JSON file argument must not be empty!");
     }
+
+    helpers[jsonFileArgumentName] = []() -> std::string {
+      return "Path to the JSON configuration file. Values in this files are loaded, and can be overriden by command line arguments.\nOptional";
+    };
   }
+
 
   std::string help() const
   {
     std::stringstream ss;
-    ss << description << std::endl;
+
+    ss << "Program description: " << description << std::endl;
+    ss << "Arguments: " << std::endl;
+    unsigned spacesBetweenArgAndDescription = 0;
+    for(const auto& helper: helpers) {
+      if(helper.first.size() > spacesBetweenArgAndDescription) {
+        spacesBetweenArgAndDescription = helper.first.size();
+      }
+    }
+    spacesBetweenArgAndDescription += 4;
+    
+    for(const auto& helper: helpers) {
+      std::stringstream argss(helper.second());
+      std::string line;
+      bool first = true;
+      while (getline(argss, line, '\n')) {
+        const unsigned lineSpace = first ? spacesBetweenArgAndDescription - helper.first.size() : spacesBetweenArgAndDescription;
+        const std::string spaceBetweenArgAndDescription(lineSpace, ' ');
+        if(first) {
+          ss << "\t" << helper.first << spaceBetweenArgAndDescription << line << std::endl;
+        } else {
+          ss << "\t" << spaceBetweenArgAndDescription << line << std::endl;
+        }
+        first = false;
+
+      }
+      ss << std::endl;
+    }
+    ss << "Example JSON configuration file: " << std::endl << std::endl;
+    ss << exampleJson.dump(2) << std::endl;
     return ss.str();
   }
 
@@ -80,6 +114,21 @@ public:
       json *field = getter(j, true);
       *field = convertCommandLineArgument(parameter, s);
     };
+    helpers[name] = [help, parameter, required]() -> std::string {
+      std::stringstream ss;
+      json repr = parameter;
+      ss << help << std::endl << "Default: " << repr;
+      if(required) {
+        ss << std::endl << "Required";
+      } else {
+        ss << std::endl << "Optional";
+      }
+      return ss.str();
+    };
+    
+    json* exampleField = getter(exampleJson, true);
+    *exampleField = parameter;
+
     return *this;
   }
 
@@ -100,9 +149,13 @@ public:
   {
     json j;
     const std::vector<std::string> arguments(argv + 1, argv + argc);
+    std::vector<unsigned> ignoredArguments;
     const auto jsonFileArgumentPos = std::find(arguments.begin(), arguments.end(), jsonFileArgumentName);
     // Load JSON file if present
     if (jsonFileArgumentPos != arguments.end()) {
+      ignoredArguments.push_back(jsonFileArgumentPos - arguments.begin() + 1);
+      ignoredArguments.push_back(jsonFileArgumentPos - arguments.begin() + 2);
+      
       if (jsonFileArgumentPos == arguments.end() - 1) {
         throw vpException(vpException::ioError, "No JSON file was provided");
       }
@@ -116,10 +169,17 @@ public:
       j = json::parse(jsonFile);
       jsonFile.close();
     }
-    std::cout << j << std::endl;
     // Parse command line arguments
     for (int i = 1; i < argc; ++i) {
       const std::string arg = argv[i];
+      if(std::find(ignoredArguments.begin(), ignoredArguments.end(), i) != ignoredArguments.end()) {
+        continue;
+      }
+      if(arg == "-h" || "--help") {
+        std::cout << help() << std::endl;
+        exit(1);
+      }
+
       if (parsers.find(arg) != parsers.end()) {
         if (i < argc - 1) {
           std::cout << argv[i + 1] << std::endl;
@@ -137,7 +197,6 @@ public:
       }
     }
     for (const auto &parser : parsers) {
-      std::cout << "Key = " << parser.first << std::endl;
       parser.second(j);
     }
   }
@@ -149,33 +208,50 @@ private:
   std::string nestSeparator;
   std::map<std::string, std::function<void(json &)>> parsers;
   std::map<std::string, std::function<void(json &, const std::string &)>> updaters;
+  std::map<std::string, std::function<std::string()>> helpers;
+  json exampleJson;
+  
 };
 
 
-
+/**
+ * Add the megapose rendering on top of the actual image I.
+ * Require I and overlay to be of the same size
+*/
+void overlayRender(vpImage<vpRGBa>& I, const vpImage<vpRGBa>& overlay) {
+  const vpRGBa black = vpRGBa(0,0,0);
+  for(unsigned int i = 0; i < I.getHeight(); ++i) {
+    for(unsigned int j = 0; j < I.getWidth(); ++j) {
+      if(overlay[i][j] != black) {
+        I[i][j] = overlay[i][j];
+      }
+    }
+  }
+}
 
 int main(int argc, const char *argv [])
 {
   unsigned width = 640, height = 480;
   vpCameraParameters cam;
-  std::string detectorModelPath = "";
+  std::string detectorModelPath = "path/to/model.onnx";
   std::string detectorFramework = "onnx";
   std::string detectorConfig = "none";
-  std::vector<std::string> labels;
+  std::vector<std::string> labels = {"cube"};
   double detectorMeanR = 104.f, detectorMeanG = 177.f, detectorMeanB = 123.f;
   double detectorConfidenceThreshold = 0.5, detectorNmsThreshold = 0.4, detectorFilterThreshold = 0.25;
   std::string detectorTypeString = "yolov7";
   std::string videoDevice = "0";
-  std::string megaposeAddress;
-  unsigned megaposePort;
+  std::string megaposeAddress = "127.0.0.1";
+  unsigned megaposePort = 5555;
   int refinerIterations = 1;
   int coarseNumSamples = 576;
   try {
     vpJsonArgumentParser parser("Single object tracking with Megapose", "--config", "/");
     parser.addArgument("width", width, true, "The image width")
       .addArgument("height", height, true, "The image height")
-      .addArgument("camera", cam, true, "The camera intrinsic parameters")
+      .addArgument("camera", cam, true, "The camera intrinsic parameters. Should correspond to a perspective projection model without distortion.")
       .addArgument("video-device", videoDevice, true, "Video device")
+      
       .addArgument("detector/model-path", detectorModelPath, true, "Path to the model")
       .addArgument("detector/config", detectorConfig, true, "Path to the model configuration. Set to none if config is not required.")
       .addArgument("detector/framework", detectorFramework, true, "Detector framework")
@@ -184,22 +260,25 @@ int main(int argc, const char *argv [])
       .addArgument("detector/mean/red", detectorMeanR, true, "Detector mean red component. Used to normalize image")
       .addArgument("detector/mean/green", detectorMeanG, true, "Detector mean green component. Used to normalize image")
       .addArgument("detector/mean/blue", detectorMeanB, true, "Detector mean red component. Used to normalize image")
-      .addArgument("detector/confidenceThreshold", detectorConfidenceThreshold, true, "Detector confidence threshold. When a detection with a confidence below this threshold, it is ignored")
-      .addArgument("detector/nmsThreshold", detectorNmsThreshold, true, "Detector confidence threshold. When a detection with a confidence below this threshold, it is ignored")
-      .addArgument("detector/filterThreshold", detectorFilterThreshold, true)
+      .addArgument("detector/confidenceThreshold", detectorConfidenceThreshold, false, "Detector confidence threshold. When a detection with a confidence below this threshold, it is ignored")
+      .addArgument("detector/nmsThreshold", detectorNmsThreshold, false, "Detector confidence threshold. When a detection with a confidence below this threshold, it is ignored")
+      .addArgument("detector/filterThreshold", detectorFilterThreshold, false)
 
       .addArgument("megapose/address", megaposeAddress, true, "IP address of the megapose server.")
       .addArgument("megapose/port", megaposePort, true, "Port on which the megapose server listens for connections.")
-      .addArgument("megapose/refinerIterations", refinerIterations, true, "Number of megapose refiner model iterations. A higher count may lead to better accuracy, at the cost of more processing time")
-      .addArgument("megapose/initialisationNumSamples", coarseNumSamples, true, "Number of megapose renderings used for the initial pose estimation.")
-      ;
+      .addArgument("megapose/refinerIterations", refinerIterations, false, "Number of megapose refiner model iterations. A higher count may lead to better accuracy, at the cost of more processing time")
+      .addArgument("megapose/initialisationNumSamples", coarseNumSamples, false, "Number of megapose renderings used for the initial pose estimation.");
 
     parser.parse(argc, argv);
     std::cout << "Finished parsing" << std::endl;
     std::cout << width << " " << height << std::endl;
 
 
-    vpDetectorDNNOpenCV::DNNResultsParsingType opt_dnn_type = vpDetectorDNNOpenCV::YOLO_V7;
+    if(cam.get_projModel() != vpCameraParameters::perspectiveProjWithoutDistortion) {
+      throw vpException(vpException::badValue, "The camera projection model should be without distortion, as other models are ignored by Megapose");
+    }
+
+    vpDetectorDNNOpenCV::DNNResultsParsingType detectorType = vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(detectorTypeString);
     double opt_dnn_scale_factor = 1.0;
     bool opt_dnn_swapRB = false;
     bool opt_step_by_step = false;
@@ -231,12 +310,14 @@ int main(int argc, const char *argv [])
     //! [DNN params]
     vpDetectorDNNOpenCV::NetConfig netConfig(detectorConfidenceThreshold, detectorNmsThreshold, labels,
                                              cv::Size(width, height), detectorFilterThreshold);
-    vpDetectorDNNOpenCV dnn(netConfig, opt_dnn_type);
+    vpDetectorDNNOpenCV dnn(netConfig, detectorType);
     dnn.readNet(detectorModelPath, detectorConfig, detectorFramework);
     dnn.setMean(detectorMeanR, detectorMeanG, detectorMeanB);
     dnn.setScaleFactor(opt_dnn_scale_factor);
     dnn.setSwapRB(opt_dnn_swapRB);
     //! [DNN params]
+
+    //vpMegaPose megapose(megaposeAddress, megaposePort, cam, height, width);
 
     cv::Mat frame;
     while (true) {
@@ -267,19 +348,20 @@ int main(int argc, const char *argv [])
       //! [DNN object detection vector mode]
       t_vector = vpTime::measureTimeMs() - t_vector;
 
-      vpMegaPose megapose(megaposeAddress, megaposePort, cam, height, width);
+      
 
-        //! [DNN class ids and confidences vector mode]
-        for (auto detection : detections_vec) {
-          if (opt_verbose) {
-            std::cout << "  Bounding box    : " << detection.getBoundingBox() << std::endl;
-            std::cout << "  Class Id        : " << detection.getClassId() << std::endl;
-            std::optional<std::string> classname_opt = detection.getClassName();
-            std::cout << "  Class name      : " << (classname_opt ? *classname_opt : "Not known") << std::endl;
-            std::cout << "  Confidence score: " << detection.getConfidenceScore() << std::endl;
-          }
-          detection.display(I);
+
+      //! [DNN class ids and confidences vector mode]
+      for (auto detection : detections_vec) {
+        if (opt_verbose) {
+          std::cout << "  Bounding box    : " << detection.getBoundingBox() << std::endl;
+          std::cout << "  Class Id        : " << detection.getClassId() << std::endl;
+          std::optional<std::string> classname_opt = detection.getClassName();
+          std::cout << "  Class name      : " << (classname_opt ? *classname_opt : "Not known") << std::endl;
+          std::cout << "  Confidence score: " << detection.getConfidenceScore() << std::endl;
         }
+        detection.display(I);
+      }
         //! [DNN class ids and confidences vector mode]
 
         std::ostringstream oss_vec;
