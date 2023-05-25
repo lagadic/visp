@@ -29,9 +29,10 @@
  * (whether the Megapose refiner can converge to the true pose). As such, it should be used to detect divergence.
  * - The bounding box of the object in image space.
 */
-class vpMegaPoseEstimate {
+class vpMegaPoseEstimate
+{
 public:
-    vpMegaPoseEstimate() {}
+    vpMegaPoseEstimate() { }
     vpHomogeneousMatrix cTo;
     double score;
     vpRect boundingBox;
@@ -73,7 +74,7 @@ inline void from_megapose_json(const nlohmann::json &j, vpRect &d)
     d.setBottom(values[3]);
 }
 
-inline void from_json(const nlohmann::json& j, vpMegaPoseEstimate& m)
+inline void from_json(const nlohmann::json &j, vpMegaPoseEstimate &m)
 {
     m.score = j["score"];
     from_megapose_json(j.at("cTo"), m.cTo);
@@ -91,13 +92,15 @@ Behind the scene, there are two main models:
     - The refiner model: Given an initial pose estimate, this model predicts a pose displacement to best align render and true image. It is called iteratively, for a fixed number of iterations.
 
 */
-class vpMegaPose {
+class VISP_EXPORT vpMegaPose
+{
 public:
     /**
     * Enum to communicate with python server.
     * Used to map to a string, which the client and server check to see what message they are getting/expecting.
     */
-    enum ServerMessage {
+    enum ServerMessage
+    {
         UNKNOWN = 0,
         ERR = 1, // An error occurred server side
         OK = 2, // All good, no return
@@ -119,7 +122,7 @@ public:
     * \param height Height of the images sent to the server
     * \param width Width of the images sent to the server
     */
-    vpMegaPose(const std::string& host, int port, const vpCameraParameters& cam, unsigned height, unsigned width);
+    vpMegaPose(const std::string &host, int port, const vpCameraParameters &cam, unsigned height, unsigned width);
 
 
     /**
@@ -137,11 +140,11 @@ public:
     *
     * \return a list of vpMegaPoseEstimate, one for each input detection, (same length as objectNames)
     */
-    std::vector<vpMegaPoseEstimate> estimatePoses(const vpImage<vpRGBa>& image, const std::vector<std::string>& objectNames,
-        const vpImage<uint16_t>* const depth = nullptr, const double depth_to_m = 0.f,
-        const std::vector<vpRect>* const boundingBoxes = nullptr,
-        const std::vector<vpHomogeneousMatrix>* const initial_cTos = nullptr,
-        int refinerIterations = -1);
+    std::vector<vpMegaPoseEstimate> estimatePoses(const vpImage<vpRGBa> &image, const std::vector<std::string> &objectNames,
+                                                  const vpImage<uint16_t> *const depth = nullptr, const double depth_to_m = 0.f,
+                                                  const std::vector<vpRect> *const boundingBoxes = nullptr,
+                                                  const std::vector<vpHomogeneousMatrix> *const initial_cTos = nullptr,
+                                                  int refinerIterations = -1);
     /**
     * Score the input poses with Megapose. The score, between 0 and 1, indicates whether the refiner model can converge to the correct pose.
     * As such, it should mainly be used to detect divergence, and not the quality of the pose estimate.
@@ -152,8 +155,8 @@ public:
     *
     * \return a list of scores, each between 0 and 1. Returns one score per object (the result has the same length as objectNames)
     */
-    std::vector<double> scorePoses(const vpImage<vpRGBa>& image, const std::vector<std::string>& objectNames,
-        const std::vector<vpHomogeneousMatrix>& cTos);
+    std::vector<double> scorePoses(const vpImage<vpRGBa> &image, const std::vector<std::string> &objectNames,
+                                   const std::vector<vpHomogeneousMatrix> &cTos);
 
     /**
     * Set the camera parameters for the megapose server
@@ -162,10 +165,10 @@ public:
     * \param width the incoming images' width
     * Note that the height and width should be equal to the width of the images used in estimatePoses or scorePoses. Otherwise an exception will be thrown.
     */
-    void setIntrinsics(const vpCameraParameters& cam, unsigned height, unsigned width);
+    void setIntrinsics(const vpCameraParameters &cam, unsigned height, unsigned width);
 
-    vpImage<vpRGBa> viewObjects(const std::vector<std::string>& objectNames,
-        const std::vector<vpHomogeneousMatrix>& poses, const std::string& viewType);
+    vpImage<vpRGBa> viewObjects(const std::vector<std::string> &objectNames,
+                                const std::vector<vpHomogeneousMatrix> &poses, const std::string &viewType);
 
     /*
     * Set the number of renders used for coarse pose estimation by megapose.
@@ -181,12 +184,12 @@ private:
 
     std::mutex mutex; // Since client-server communications are synchronous, avoid multiple parallel communications
 
-    void makeMessage(const vpMegaPose::ServerMessage messageType, std::vector<uint8_t>& data) const;
+    void makeMessage(const vpMegaPose::ServerMessage messageType, std::vector<uint8_t> &data) const;
     std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> readMessage() const;
 
     const static std::unordered_map<vpMegaPose::ServerMessage, std::string> codeMap;
     static std::string messageToString(const vpMegaPose::ServerMessage messageType);
-    static vpMegaPose::ServerMessage stringToMessage(const std::string& s);
+    static vpMegaPose::ServerMessage stringToMessage(const std::string &s);
 };
 
 #endif // VISP_HAVE_NLOHMANN_JSON

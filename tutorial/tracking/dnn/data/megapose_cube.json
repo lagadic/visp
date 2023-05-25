@@ -2,27 +2,32 @@
   "height": 480,
   "width": 640,
   "video-device": "0",
+  "object": "cube_real",
   "camera": {
-    "px": 300.0,
-    "py": 300.0,
-    "u0": 320.0,
-    "v0": 240.0,
-    "model": "perspectiveWithoutDistortion"
+    "model": "perspectiveWithoutDistortion",
+    "px": 605.146728515625,
+    "py": 604.79150390625,
+    "u0": 325.53253173828125,
+    "v0": 244.95083618164063
   },
   "detector": {
     "model-path": "/local/sfelton/cube_detector.onnx",
     "config": "none",
     "type": "yolov7",
     "framework": "onnx",
-    "labels": ["cube"],
+    "labels": [
+      "cube_real"
+    ],
     "mean":{
       "red": 0,
       "blue": 0,
       "green": 0
     },
-    "confidenceThreshold": 0.5,
-    "nmsThreshold": 0.4,
-    "filterThreshold": 0.25
+    "confidenceThreshold": 0.65,
+    "nmsThreshold": 0.5,
+    "filterThreshold": -0.25,
+    "scaleFactor": 0.0039,
+    "swapRedAndBlue": false
   },
 
   "megapose": {

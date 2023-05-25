@@ -8,14 +8,14 @@
 #include<memory>
 #include <visp3/dnn_tracker/vpMegaPose.h>
 
-class vpMegaPoseTracker {
+class VISP_EXPORT vpMegaPoseTracker
+{
 public:
-  vpMegaPoseTracker(std::shared_ptr<vpMegaPose> megapose, const std::string& objectLabel, const int refinerIterations) :
+  vpMegaPoseTracker(std::shared_ptr<vpMegaPose> megapose, const std::string &objectLabel, const int refinerIterations) :
     megapose(megapose), objectLabel(objectLabel), refinerIterations(refinerIterations)
-  {
-  }
-  std::future<vpMegaPoseEstimate> init(const vpImage<vpRGBa>& I, const vpRect& bb);
-  std::future<vpMegaPoseEstimate> track(const vpImage<vpRGBa>& I);
+  { }
+  std::future<vpMegaPoseEstimate> init(const vpImage<vpRGBa> &I, const vpRect & bb);
+  std::future<vpMegaPoseEstimate> track(const vpImage<vpRGBa> &I);
 
 private:
   std::shared_ptr<vpMegaPose> megapose;
