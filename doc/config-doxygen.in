@@ -2180,6 +2180,7 @@ PREDEFINED             = @DOXYGEN_SHOULD_SKIP_THIS@ \
                          VISP_HAVE_LIBFREENECT_AND_DEPENDENCIES \
                          VISP_HAVE_LIBUSB_1 \
                          VISP_HAVE_MAVSDK \
+                         VISP_HAVE_NLOHMANN_JSON \
                          VISP_HAVE_OCCIPITAL_STRUCTURE \
                          VISP_HAVE_OGRE \
                          VISP_HAVE_OGRE_PLUGINS_PATH \

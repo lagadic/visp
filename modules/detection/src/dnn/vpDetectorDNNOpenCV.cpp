@@ -40,19 +40,18 @@
 #include <visp3/core/vpIoTools.h>
 
 #include<algorithm>
-/**
- * \brief Get the list of the parsing methods / types of DNNs supported by the \b vpDetectorDNNOpenCV class.
- *
- * \return std::string The list of the supported parsing methods / types of DNNs.
- */
+ /**
+  * \brief Get the list of the parsing methods / types of DNNs supported by the \b vpDetectorDNNOpenCV class.
+  *
+  * \return std::string The list of the supported parsing methods / types of DNNs.
+  */
 std::string vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes()
 {
   std::string list = "[";
-  for(unsigned int i = 0; i < vpDetectorDNNOpenCV::COUNT - 1; i++)
-  {
-    list += "\"" + dnnResultsParsingTypeToString((vpDetectorDNNOpenCV::DNNResultsParsingType) i) + "\", ";
+  for (unsigned int i = 0; i < vpDetectorDNNOpenCV::COUNT - 1; i++) {
+    list += "\"" + dnnResultsParsingTypeToString((vpDetectorDNNOpenCV::DNNResultsParsingType)i) + "\", ";
   }
-  list += "\"" + dnnResultsParsingTypeToString((vpDetectorDNNOpenCV::DNNResultsParsingType) (vpDetectorDNNOpenCV::COUNT - 1)) + "\"]";
+  list += "\"" + dnnResultsParsingTypeToString((vpDetectorDNNOpenCV::DNNResultsParsingType)(vpDetectorDNNOpenCV::COUNT - 1)) + "\"]";
   return list;
 }
 
@@ -68,38 +67,37 @@ std::string vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes()
 std::string vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(const DNNResultsParsingType &type)
 {
   std::string name;
-  switch(type)
-  {
-    case YOLO_V3:
-      name = "yolov3";
-      break;
-    case YOLO_V4:
-      name = "yolov4";
-      break;
-    case YOLO_V5:
-      name = "yolov5";
-      break;
-    case YOLO_V7:
-      name = "yolov7";
-      break;
-    case YOLO_V8:
-      name = "yolov8";
-      break;
-    case FASTER_RCNN:
-      name = "faster-rcnn";
-      break;
-    case SSD_MOBILENET:
-      name = "ssd-mobilenet";
-      break;
-    case RESNET_10:
-      name = "resnet-10";
-      break;
-    case USER_SPECIFIED:
-      name = "user-specified";
-      break;
-    case COUNT:
-      name = "unknown";
-      break;
+  switch (type) {
+  case YOLO_V3:
+    name = "yolov3";
+    break;
+  case YOLO_V4:
+    name = "yolov4";
+    break;
+  case YOLO_V5:
+    name = "yolov5";
+    break;
+  case YOLO_V7:
+    name = "yolov7";
+    break;
+  case YOLO_V8:
+    name = "yolov8";
+    break;
+  case FASTER_RCNN:
+    name = "faster-rcnn";
+    break;
+  case SSD_MOBILENET:
+    name = "ssd-mobilenet";
+    break;
+  case RESNET_10:
+    name = "resnet-10";
+    break;
+  case USER_SPECIFIED:
+    name = "user-specified";
+    break;
+  case COUNT:
+    name = "unknown";
+    break;
   }
   return name;
 }
@@ -117,11 +115,9 @@ vpDetectorDNNOpenCV::DNNResultsParsingType vpDetectorDNNOpenCV::dnnResultsParsin
   vpDetectorDNNOpenCV::DNNResultsParsingType res(COUNT);
   bool hasFoundMatch = false;
   std::string name_lowercase = vpIoTools::toLowerCase(name);
-  for(int id = 0; id < COUNT && !hasFoundMatch; id++)
-  {
-    vpDetectorDNNOpenCV::DNNResultsParsingType temp = (vpDetectorDNNOpenCV::DNNResultsParsingType) id;
-    if(dnnResultsParsingTypeToString(temp) == name_lowercase)
-    {
+  for (int id = 0; id < COUNT && !hasFoundMatch; id++) {
+    vpDetectorDNNOpenCV::DNNResultsParsingType temp = (vpDetectorDNNOpenCV::DNNResultsParsingType)id;
+    if (dnnResultsParsingTypeToString(temp) == name_lowercase) {
       res = temp;
       hasFoundMatch = true;
     }
@@ -146,8 +142,8 @@ std::vector<std::string> vpDetectorDNNOpenCV::parseClassNamesFile(const std::str
 
 vpDetectorDNNOpenCV::vpDetectorDNNOpenCV()
   : m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
-    m_mean(127.5, 127.5, 127.5), m_net(), m_netConfig(0.5, 0.4, std::vector<std::string>(), cv::Size(300, 300)), m_outNames(), m_dnnRes(),
-    m_scaleFactor(2.0 / 255.0), m_swapRB(true), m_parsingMethodType(USER_SPECIFIED), m_parsingMethod(vpDetectorDNNOpenCV::postProcess_unimplemented)
+  m_mean(127.5, 127.5, 127.5), m_net(), m_netConfig(0.5f, 0.4f, std::vector<std::string>(), cv::Size(300, 300)), m_outNames(), m_dnnRes(),
+  m_scaleFactor(2.0 / 255.0), m_swapRB(true), m_parsingMethodType(USER_SPECIFIED), m_parsingMethod(vpDetectorDNNOpenCV::postProcess_unimplemented)
 {
   setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
 }
@@ -161,8 +157,8 @@ vpDetectorDNNOpenCV::vpDetectorDNNOpenCV()
  */
 vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const NetConfig &config, const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &))
   : m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
-    m_mean(127.5, 127.5, 127.5), m_net(), m_netConfig(config), m_outNames(), m_dnnRes(),
-    m_scaleFactor(2.0 / 255.0), m_swapRB(true)
+  m_mean(127.5, 127.5, 127.5), m_net(), m_netConfig(config), m_outNames(), m_dnnRes(),
+  m_scaleFactor(2.0 / 255.0), m_swapRB(true)
 {
   setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
   setParsingMethod(typeParsingMethod, parsingMethod);
@@ -171,7 +167,7 @@ vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const NetConfig &config, const DNNResul
 /**
  * \brief Destroy the \b vpDetectorDNNOpenCV object
  */
-vpDetectorDNNOpenCV::~vpDetectorDNNOpenCV() {}
+vpDetectorDNNOpenCV::~vpDetectorDNNOpenCV() { }
 
 /**
  * \brief Object detection using OpenCV DNN module.
@@ -279,8 +275,8 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector<DetectedFeatures2
   m_img = I;
   output.clear();
 
-  cv::Size inputSize(m_netConfig.m_inputSize.width  > 0 ? m_netConfig.m_inputSize.width : m_img.cols,
-                     m_netConfig.m_inputSize.height > 0 ? m_netConfig.m_inputSize.height : m_img.rows);
+  cv::Size inputSize(m_netConfig.m_inputSize.width > 0 ? m_netConfig.m_inputSize.width : m_img.cols,
+    m_netConfig.m_inputSize.height > 0 ? m_netConfig.m_inputSize.height : m_img.rows);
   cv::dnn::blobFromImage(m_img, m_blob, m_scaleFactor, inputSize, m_mean, m_swapRB, false);
 
   m_net.setInput(m_blob);
@@ -289,23 +285,20 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector<DetectedFeatures2
   DetectionCandidates proposals;
   postProcess(proposals);
   size_t nbClassNames = m_netConfig.m_classNames.size();
-  for ( size_t i = 0; i < m_indices.size(); ++i )
-  {
-    int idx      = m_indices[i];
+  for (size_t i = 0; i < m_indices.size(); ++i) {
+    int idx = m_indices[i];
     cv::Rect box = proposals.m_boxes[idx];
     std::optional<std::string> classname_opt;
-    if(nbClassNames > 0)
-    {
+    if (nbClassNames > 0) {
       classname_opt = m_netConfig.m_classNames[proposals.m_classIds[idx]];
     }
-    output.emplace_back( box.x, box.x + box.width, box.y, box.y + box.height
-                                  , proposals.m_classIds[idx], proposals.m_confidences[idx]
-                                  , classname_opt
-                                  );
+    output.emplace_back(box.x, box.x + box.width, box.y, box.y + box.height
+      , proposals.m_classIds[idx], proposals.m_confidences[idx]
+      , classname_opt
+    );
   }
 
-  if(m_applySizeFilterAfterNMS)
-  {
+  if (m_applySizeFilterAfterNMS) {
     // removing false detections, based on the bbox sizes
     output = filterDetectionMultiClassInput(output, m_netConfig.m_filterSizeRatio);
   }
@@ -325,8 +318,8 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::map< std::string, std::v
   m_img = I;
   output.clear();
 
-  cv::Size inputSize(m_netConfig.m_inputSize.width  > 0 ? m_netConfig.m_inputSize.width : m_img.cols,
-                     m_netConfig.m_inputSize.height > 0 ? m_netConfig.m_inputSize.height : m_img.rows);
+  cv::Size inputSize(m_netConfig.m_inputSize.width > 0 ? m_netConfig.m_inputSize.width : m_img.cols,
+    m_netConfig.m_inputSize.height > 0 ? m_netConfig.m_inputSize.height : m_img.rows);
   cv::dnn::blobFromImage(m_img, m_blob, m_scaleFactor, inputSize, m_mean, m_swapRB, false);
 
   m_net.setInput(m_blob);
@@ -335,28 +328,24 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::map< std::string, std::v
   DetectionCandidates proposals;
   postProcess(proposals);
   size_t nbClassNames = m_netConfig.m_classNames.size();
-  for ( size_t i = 0; i < m_indices.size(); ++i )
-  {
-    int idx      = m_indices[i];
+  for (size_t i = 0; i < m_indices.size(); ++i) {
+    int idx = m_indices[i];
     cv::Rect box = proposals.m_boxes[idx];
     std::string classname;
-    if(nbClassNames > 0)
-    {
+    if (nbClassNames > 0) {
       classname = m_netConfig.m_classNames[proposals.m_classIds[idx]];
     }
-    else
-    {
+    else {
       classname = std::to_string(proposals.m_classIds[idx]);
     }
     std::optional<std::string> classname_opt = std::optional<std::string>(classname);
-    output[classname].emplace_back( box.x, box.x + box.width, box.y, box.y + box.height
-                                  , proposals.m_classIds[idx], proposals.m_confidences[idx]
-                                  , classname_opt
-                                  );
+    output[classname].emplace_back(box.x, box.x + box.width, box.y, box.y + box.height
+      , proposals.m_classIds[idx], proposals.m_confidences[idx]
+      , classname_opt
+    );
   }
 
-  if(m_applySizeFilterAfterNMS)
-  {
+  if (m_applySizeFilterAfterNMS) {
     output = filterDetectionMultiClassInput(output, m_netConfig.m_filterSizeRatio);
   }
 
@@ -374,8 +363,7 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector< std::pair<std::s
 {
   std::map< std::string, std::vector<DetectedFeatures2D>> map_output;
   bool returnStatus = detect(I, map_output);
-  for(auto key_val : map_output)
-  {
+  for (auto key_val : map_output) {
     output.push_back(key_val);
   }
   return returnStatus;
@@ -411,39 +399,38 @@ std::vector<cv::String> vpDetectorDNNOpenCV::getOutputsNames()
 */
 void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
 {
-  switch(m_parsingMethodType)
-  {
-    case YOLO_V3:
-    case YOLO_V4:
-      postProcess_YoloV3_V4(proposals, m_dnnRes, m_netConfig);
-      break;
-    case YOLO_V5:
-    case YOLO_V7:
-      postProcess_YoloV5_V7(proposals, m_dnnRes, m_netConfig);
-      break;
-    case YOLO_V8:
-      postProcess_YoloV8(proposals, m_dnnRes, m_netConfig);
-      break;
-    case FASTER_RCNN:
-      postProcess_FasterRCNN(proposals, m_dnnRes, m_netConfig);
-      break;
-    case SSD_MOBILENET:
-      #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-      void postProcess_SSD_MobileNet(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig);
-      #else
-      // NB: the two SSD-MobileNet DNNs that have been tested worked only
-      // using the ResNet-10 parsing method
-      postProcess_ResNet_10(proposals, m_dnnRes, m_netConfig);
-      #endif
-      break;
-    case RESNET_10:
-      postProcess_ResNet_10(proposals, m_dnnRes, m_netConfig);
-      break;
-    case USER_SPECIFIED:
-      m_parsingMethod(proposals, m_dnnRes, m_netConfig);
-      break;
-    default:
-      throw(vpException(vpException::badValue, "Type of DNN post-processing method not handled."));
+  switch (m_parsingMethodType) {
+  case YOLO_V3:
+  case YOLO_V4:
+    postProcess_YoloV3_V4(proposals, m_dnnRes, m_netConfig);
+    break;
+  case YOLO_V5:
+  case YOLO_V7:
+    postProcess_YoloV5_V7(proposals, m_dnnRes, m_netConfig);
+    break;
+  case YOLO_V8:
+    postProcess_YoloV8(proposals, m_dnnRes, m_netConfig);
+    break;
+  case FASTER_RCNN:
+    postProcess_FasterRCNN(proposals, m_dnnRes, m_netConfig);
+    break;
+  case SSD_MOBILENET:
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+    void postProcess_SSD_MobileNet(DetectionCandidates & proposals, std::vector<cv::Mat> &dnnRes, const NetConfig & netConfig);
+#else
+    // NB: the two SSD-MobileNet DNNs that have been tested worked only
+    // using the ResNet-10 parsing method
+    postProcess_ResNet_10(proposals, m_dnnRes, m_netConfig);
+#endif
+    break;
+  case RESNET_10:
+    postProcess_ResNet_10(proposals, m_dnnRes, m_netConfig);
+    break;
+  case USER_SPECIFIED:
+    m_parsingMethod(proposals, m_dnnRes, m_netConfig);
+    break;
+  default:
+    throw(vpException(vpException::badValue, "Type of DNN post-processing method not handled."));
   }
 
   m_indices.clear();
@@ -462,22 +449,22 @@ void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
  * whose area is in the range [average area x \b minRatioOfAreaOk ; average area / \b minRatioOfAreaOk ].
  */
 std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>
-vpDetectorDNNOpenCV::filterDetectionSingleClassInput(const std::vector<DetectedFeatures2D>& detected_features, const double minRatioOfAreaOk)
+vpDetectorDNNOpenCV::filterDetectionSingleClassInput(const std::vector<DetectedFeatures2D> &detected_features, const double minRatioOfAreaOk)
 {
   double meanArea(0.);
-  double originalNumberOfObj = detected_features.size();
+  double originalNumberOfObj = static_cast<double>(detected_features.size());
   double meanFactor = 1. / originalNumberOfObj;
 
   // Computing the average area of the class
-  for(DetectedFeatures2D feature: detected_features){
+  for (DetectedFeatures2D feature : detected_features) {
     meanArea += feature.m_bbox.getArea();
   }
   meanArea *= meanFactor;
 
   // Keeping only the detections that respect the area criterion
   std::vector<DetectedFeatures2D> filtered_features;
-  for(DetectedFeatures2D feature: detected_features){
-    if(feature.m_bbox.getArea() >=  minRatioOfAreaOk * meanArea && feature.m_bbox.getArea() < meanArea / minRatioOfAreaOk){
+  for (DetectedFeatures2D feature : detected_features) {
+    if (feature.m_bbox.getArea() >= minRatioOfAreaOk * meanArea && feature.m_bbox.getArea() < meanArea / minRatioOfAreaOk) {
       filtered_features.push_back(feature);
     }
   }
@@ -496,71 +483,69 @@ vpDetectorDNNOpenCV::filterDetectionSingleClassInput(const std::vector<DetectedF
  * only the features respecting the area criterion are kept.
  */
 std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>
-vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFeatures2D>& detected_features, const double minRatioOfAreaOk)
+vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFeatures2D> &detected_features, const double minRatioOfAreaOk)
 {
+#ifndef DOXYGEN_SHOULD_SKIP_THIS
   /**
    * \class MeanAreaComputer
    * \brief Helper to compute the average area of the detections belonging to the same class.
    */
   class MeanAreaComputer
   {
-    private:
-      std::map<int, std::pair<int, double>> m_map_id_pairOccurrencesAreas; /*!< Uses the \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_classIds as keys
-                                                                             and pairs <nb_occurrences, summed_areas> as values.*/
+  private:
+    std::map<int, std::pair<int, double>> m_map_id_pairOccurrencesAreas; /*!< Uses the \b vpDetectorDNNOpenCV::DetectedFeatures2D::m_classIds as keys
+                                                                           and pairs <nb_occurrences, summed_areas> as values.*/
 
-      std::map<int, double> m_mapMeans; /*!< Map <class_id; average_area_class>.*/
-      /**
-       * \brief Compute the average area of the detections corresponding to \b class_id.
-       *
-       * \param class_id The numerical ID of the class.
-       * \return double The average area of all the detections belonging to \b class_id .
-       */
-      double computeMeanArea(const int &class_id)
-      {
-        return m_map_id_pairOccurrencesAreas[class_id].second / (double) m_map_id_pairOccurrencesAreas[class_id].first;
-      }
+    std::map<int, double> m_mapMeans; /*!< Map <class_id; average_area_class>.*/
+    /**
+     * \brief Compute the average area of the detections corresponding to \b class_id.
+     *
+     * \param class_id The numerical ID of the class.
+     * \return double The average area of all the detections belonging to \b class_id .
+     */
+    double computeMeanArea(const int &class_id)
+    {
+      return m_map_id_pairOccurrencesAreas[class_id].second / (double)m_map_id_pairOccurrencesAreas[class_id].first;
+    }
 
-    public:
-      /**
-       * \brief Compute the average area of each class that were encountered.
-       */
-      void computeMeans()
-      {
-        for(auto classID_pair: m_map_id_pairOccurrencesAreas)
-        {
-          m_mapMeans[classID_pair.first] = computeMeanArea(classID_pair.first);
-        }
+  public:
+    /**
+     * \brief Compute the average area of each class that were encountered.
+     */
+    void computeMeans()
+    {
+      for (const auto &classID_pair : m_map_id_pairOccurrencesAreas) {
+        m_mapMeans[classID_pair.first] = computeMeanArea(classID_pair.first);
       }
+    }
 
-      double getMean(const int &class_id)
-      {
-        if(m_map_id_pairOccurrencesAreas.find(class_id) == m_map_id_pairOccurrencesAreas.end())
-        {
-          throw(vpException(vpException::badValue, "[MeanAreaComputer::getMean] Asking for class_id \"" + std::to_string(class_id) + "\" that is not present in m_mapMeans. Did you call computeMeans ?"));
-        }
-        return m_mapMeans[class_id];
+    double getMean(const int &class_id)
+    {
+      if (m_map_id_pairOccurrencesAreas.find(class_id) == m_map_id_pairOccurrencesAreas.end()) {
+        throw(vpException(vpException::badValue, "[MeanAreaComputer::getMean] Asking for class_id \"" + std::to_string(class_id) + "\" that is not present in m_mapMeans. Did you call computeMeans ?"));
       }
+      return m_mapMeans[class_id];
+    }
 
-      /**
-       * \brief Increment the number of occurrences and the
-       *
-       * \param feature
-       */
-      void operator()(const DetectedFeatures2D &feature)
-      {
-        int class_id = feature.getClassId();
-        double area = feature.getBoundingBox().getArea();
-        if(m_map_id_pairOccurrencesAreas.find(class_id) == m_map_id_pairOccurrencesAreas.end())
-        {
-          m_map_id_pairOccurrencesAreas[class_id] = std::pair<int, double>(1, area);
-        }
-        else
-        {
-          std::pair<int, double> prev_state = m_map_id_pairOccurrencesAreas[class_id];
-          m_map_id_pairOccurrencesAreas[class_id] = std::pair<int, double>(prev_state.first + 1, prev_state.second + area);
-        }
+    /**
+     * \brief Increment the number of occurrences and the
+     *
+     * \param feature
+     */
+    void operator()(const DetectedFeatures2D &feature)
+    {
+      int class_id = feature.getClassId();
+      double area = feature.getBoundingBox().getArea();
+      if (m_map_id_pairOccurrencesAreas.find(class_id) == m_map_id_pairOccurrencesAreas.end()) {
+        m_map_id_pairOccurrencesAreas[class_id] = std::pair<int, double>(1, area);
       }
+      else {
+        std::pair<int, double> prev_state = m_map_id_pairOccurrencesAreas[class_id];
+        m_map_id_pairOccurrencesAreas[class_id] = std::pair<int, double>(prev_state.first + 1, prev_state.second + area);
+      }
+    }
   };
+#endif // DOXYGEN_SHOULD_SKIP_THIS
 
   // Computing the average area of each class
   MeanAreaComputer meanComputer;
@@ -569,11 +554,10 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::vector<DetectedFe
 
   // Keeping only the detections that respect the area criterion
   std::vector<DetectedFeatures2D> filtered_features;
-  for(DetectedFeatures2D feature: detected_features){
+  for (DetectedFeatures2D feature : detected_features) {
     double meanArea = meanComputer.getMean(feature.getClassId());
-    if(  feature.m_bbox.getArea() >=  minRatioOfAreaOk * meanArea
-      && feature.m_bbox.getArea() < meanArea / minRatioOfAreaOk)
-    {
+    if (feature.m_bbox.getArea() >= minRatioOfAreaOk * meanArea
+      && feature.m_bbox.getArea() < meanArea / minRatioOfAreaOk) {
       filtered_features.push_back(feature);
     }
   }
@@ -594,8 +578,7 @@ std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>>
 vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::map< std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>> &detected_features, const double minRatioOfAreaOk)
 {
   std::map<std::string, std::vector<vpDetectorDNNOpenCV::DetectedFeatures2D>> output;
-  for(auto keyval: detected_features)
-  {
+  for (auto keyval : detected_features) {
     output[keyval.first] = filterDetectionSingleClassInput(detected_features.at(keyval.first), minRatioOfAreaOk); // removing false detections
   }
   return output;
@@ -616,53 +599,48 @@ vpDetectorDNNOpenCV::filterDetectionMultiClassInput(const std::map< std::string,
 */
 void vpDetectorDNNOpenCV::postProcess_YoloV3_V4(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
-  int nbBatches = dnnRes.size();
+  size_t nbBatches = dnnRes.size();
 
-  for(int i = 0; i < nbBatches; i++)
-  {
+  for (size_t i = 0; i < nbBatches; i++) {
     // Slightly modify from here: https://github.com/opencv/opencv/blob/8c25a8eb7b10fb50cda323ee6bec68aa1a9ce43c/samples/dnn/object_detection.cpp#L192-L221
      // Counts the number of proposed detections and the number of data corresponding to 1 detection
     int num_proposal = dnnRes[i].size[0]; // Number of detections
-    int nout         = dnnRes[i].size[1]; // Number of data for each detection
-    if ( dnnRes[i].dims > 2 )
-    {
+    int nout = dnnRes[i].size[1]; // Number of data for each detection
+    if (dnnRes[i].dims > 2) {
       num_proposal = dnnRes[i].size[1];
-      nout         = dnnRes[i].size[2];
-      dnnRes[i]    = dnnRes[i].reshape( 0, num_proposal );
+      nout = dnnRes[i].size[2];
+      dnnRes[i] = dnnRes[i].reshape(0, num_proposal);
     }
 
     int n = 0, row_ind = 0; /// cx,cy,w,h,box_score,class_score
     float *pdata = (float *)dnnRes[i].data;
 
     // Iterate on the detections to keep only the meaningful ones
-    for ( n = 0; n < num_proposal; n++ )
-    {
+    for (n = 0; n < num_proposal; n++) {
       float box_score = pdata[4];
-      if ( box_score > netConfig.m_confThreshold )
-      {
-        cv::Mat scores = dnnRes[i].row( row_ind ).colRange( 5, nout );
+      if (box_score > netConfig.m_confThreshold) {
+        cv::Mat scores = dnnRes[i].row(row_ind).colRange(5, nout);
         cv::Point classIdPoint;
         double max_class_score;
         // Get the value and location of the maximum score
-        cv::minMaxLoc( scores, 0, &max_class_score, 0, &classIdPoint );
+        cv::minMaxLoc(scores, 0, &max_class_score, 0, &classIdPoint);
 
         max_class_score *= box_score;
 
         // The detection is kept only if the confidence is greater than the threshold
-        if ( max_class_score > netConfig.m_confThreshold )
-        {
+        if (max_class_score > netConfig.m_confThreshold) {
           const int class_idx = classIdPoint.x;
-          float cx            = pdata[0] * m_img.cols ; /// cx
-          float cy            = pdata[1] * m_img.rows; /// cy
-          float w             = pdata[2] * m_img.cols ; /// w
-          float h             = pdata[3] * m_img.rows; /// h
+          float cx = pdata[0] * m_img.cols; /// cx
+          float cy = pdata[1] * m_img.rows; /// cy
+          float w = pdata[2] * m_img.cols; /// w
+          float h = pdata[3] * m_img.rows; /// h
 
-          int left = int( cx - 0.5 * w );
-          int top  = int( cy - 0.5 * h );
+          int left = int(cx - 0.5 * w);
+          int top = int(cy - 0.5 * h);
 
-          proposals.m_confidences.push_back( (float)max_class_score );
-          proposals.m_boxes.push_back( cv::Rect( left, top, (int)( w ), (int)( h ) ) );
-          proposals.m_classIds.push_back( class_idx );
+          proposals.m_confidences.push_back((float)max_class_score);
+          proposals.m_boxes.push_back(cv::Rect(left, top, (int)(w), (int)(h)));
+          proposals.m_classIds.push_back(class_idx);
         }
       }
       row_ind++;
@@ -687,52 +665,47 @@ void vpDetectorDNNOpenCV::postProcess_YoloV5_V7(DetectionCandidates &proposals, 
   // Compute the ratio between the original size of the image and the network size to translate network coordinates into
   // image coordinates
   float ratioh = (float)m_img.rows / netConfig.m_inputSize.height, ratiow = (float)m_img.cols / netConfig.m_inputSize.width;
-  int nbBatches = dnnRes.size();
+  size_t nbBatches = dnnRes.size();
 
-  for(int i = 0; i < nbBatches; i++)
-  {
-     // Counts the number of proposed detections and the number of data corresponding to 1 detection
+  for (size_t i = 0; i < nbBatches; i++) {
+    // Counts the number of proposed detections and the number of data corresponding to 1 detection
     int num_proposal = dnnRes[i].size[0]; // Number of detections
-    int nout         = dnnRes[i].size[1]; // Number of data for each detection
-    if ( dnnRes[i].dims > 2 )
-    {
+    int nout = dnnRes[i].size[1]; // Number of data for each detection
+    if (dnnRes[i].dims > 2) {
       num_proposal = dnnRes[i].size[1];
-      nout         = dnnRes[i].size[2];
-      dnnRes[i]    = dnnRes[i].reshape( 0, num_proposal );
+      nout = dnnRes[i].size[2];
+      dnnRes[i] = dnnRes[i].reshape(0, num_proposal);
     }
 
     int n = 0, row_ind = 0; /// cx,cy,w,h,box_score,class_score
     float *pdata = (float *)dnnRes[i].data;
 
     // Iterate on the detections to keep only the meaningful ones
-    for ( n = 0; n < num_proposal; n++ )
-    {
+    for (n = 0; n < num_proposal; n++) {
       float box_score = pdata[4];
 
-      if ( box_score > netConfig.m_confThreshold )
-      {
-        cv::Mat scores = dnnRes[i].row( row_ind ).colRange( 5, nout );
+      if (box_score > netConfig.m_confThreshold) {
+        cv::Mat scores = dnnRes[i].row(row_ind).colRange(5, nout);
         cv::Point classIdPoint;
         double max_class_score;
         // Get the value and location of the maximum score
-        cv::minMaxLoc( scores, 0, &max_class_score, 0, &classIdPoint );
+        cv::minMaxLoc(scores, 0, &max_class_score, 0, &classIdPoint);
         max_class_score *= box_score;
 
         // The detection is kept only if the confidence is greater than the threshold
-        if ( max_class_score > netConfig.m_confThreshold )
-        {
+        if (max_class_score > netConfig.m_confThreshold) {
           const int class_idx = classIdPoint.x;
-          float cx            = pdata[0] * ratiow; /// cx
-          float cy            = pdata[1] * ratioh; /// cy
-          float w             = pdata[2] * ratiow; /// w
-          float h             = pdata[3] * ratioh; /// h
+          float cx = pdata[0] * ratiow; /// cx
+          float cy = pdata[1] * ratioh; /// cy
+          float w = pdata[2] * ratiow; /// w
+          float h = pdata[3] * ratioh; /// h
 
-          int left = int( cx - 0.5 * w );
-          int top  = int( cy - 0.5 * h );
+          int left = int(cx - 0.5 * w);
+          int top = int(cy - 0.5 * h);
 
-          proposals.m_confidences.push_back( (float)max_class_score );
-          proposals.m_boxes.push_back( cv::Rect( left, top, (int)( w ), (int)( h ) ) );
-          proposals.m_classIds.push_back( class_idx );
+          proposals.m_confidences.push_back((float)max_class_score);
+          proposals.m_boxes.push_back(cv::Rect(left, top, (int)(w), (int)(h)));
+          proposals.m_classIds.push_back(class_idx);
         }
       }
       row_ind++;
@@ -758,48 +731,44 @@ void vpDetectorDNNOpenCV::postProcess_YoloV8(DetectionCandidates &proposals, std
   // Compute the ratio between the original size of the image and the network size to translate network coordinates into
   // image coordinates
   float ratioh = (float)m_img.rows / netConfig.m_inputSize.height, ratiow = (float)m_img.cols / netConfig.m_inputSize.width;
-  int nbBatches = dnnRes.size();
+  size_t nbBatches = dnnRes.size();
 
-  for(int i = 0; i < nbBatches; i++)
-  {
-     // Counts the number of proposed detections and the number of data corresponding to 1 detection
+  for (size_t i = 0; i < nbBatches; i++) {
+    // Counts the number of proposed detections and the number of data corresponding to 1 detection
     int num_proposal = dnnRes[i].size[1]; // Number of detections
-    int nout         = dnnRes[i].size[0]; // Number of data for each detection
-    if ( dnnRes[i].dims > 2 )
-    {
+    int nout = dnnRes[i].size[0]; // Number of data for each detection
+    if (dnnRes[i].dims > 2) {
       num_proposal = dnnRes[i].size[2];
-      nout         = dnnRes[i].size[1];
-      dnnRes[i]    = dnnRes[i].reshape( 0, nout );
+      nout = dnnRes[i].size[1];
+      dnnRes[i] = dnnRes[i].reshape(0, nout);
     }
-    cv::transpose(dnnRes[i] , dnnRes[i] ); // Organise data as YoloV5 i.e. [batchsize][1:num_proposals][1:4+nb_classes]
+    cv::transpose(dnnRes[i], dnnRes[i]); // Organise data as YoloV5 i.e. [batchsize][1:num_proposals][1:4+nb_classes]
 
     int n = 0, row_ind = 0; /// cx,cy,w,h,box_score,class_score
     float *pdata = (float *)dnnRes[i].data;
 
     // Iterate on the detections to keep only the meaningful ones
-    for ( n = 0; n < num_proposal; n++ )
-    {
-      cv::Mat scores = dnnRes[i].row( row_ind ).colRange( 4, nout );
+    for (n = 0; n < num_proposal; n++) {
+      cv::Mat scores = dnnRes[i].row(row_ind).colRange(4, nout);
       cv::Point classIdPoint;
       double max_class_score;
       // Get the value and location of the maximum score
-      cv::minMaxLoc( scores, 0, &max_class_score, 0, &classIdPoint );
+      cv::minMaxLoc(scores, 0, &max_class_score, 0, &classIdPoint);
 
       // The detection is kept only if the confidence is greater than the threshold
-      if ( max_class_score > netConfig.m_confThreshold )
-      {
+      if (max_class_score > netConfig.m_confThreshold) {
         const int class_idx = classIdPoint.x;
-        float cx            = pdata[0] * ratiow; /// cx
-        float cy            = pdata[1] * ratioh; /// cy
-        float w             = pdata[2] * ratiow; /// w
-        float h             = pdata[3] * ratioh; /// h
+        float cx = pdata[0] * ratiow; /// cx
+        float cy = pdata[1] * ratioh; /// cy
+        float w = pdata[2] * ratiow; /// w
+        float h = pdata[3] * ratioh; /// h
 
-        int left = int( cx - 0.5 * w );
-        int top  = int( cy - 0.5 * h );
+        int left = int(cx - 0.5 * w);
+        int top = int(cy - 0.5 * h);
 
-        proposals.m_confidences.push_back( (float)max_class_score );
-        proposals.m_boxes.push_back( cv::Rect( left, top, (int)( w ), (int)( h ) ) );
-        proposals.m_classIds.push_back( class_idx );
+        proposals.m_confidences.push_back((float)max_class_score);
+        proposals.m_boxes.push_back(cv::Rect(left, top, (int)(w), (int)(h)));
+        proposals.m_classIds.push_back(class_idx);
       }
 
       row_ind++;
@@ -828,23 +797,20 @@ void vpDetectorDNNOpenCV::postProcess_FasterRCNN(DetectionCandidates &proposals,
   // detections and an every detection is a vector of values
   // [batchId, classId, confidence, left, top, right, bottom]
   size_t nbBatches = dnnRes.size();
-  for(size_t j = 0; j < nbBatches; j++)
-  {
+  for (size_t j = 0; j < nbBatches; j++) {
     float *data = (float *)dnnRes[j].data;
-    for (size_t i = 0; i < dnnRes[j].total(); i += 7)
-    {
+    for (size_t i = 0; i < dnnRes[j].total(); i += 7) {
       float confidence = data[i + 2];
-      if (confidence > netConfig.m_confThreshold)
-      {
-        int left   = (int)(data[i + 3] * m_img.cols);
-        int top    = (int)(data[i + 4] * m_img.rows);
-        int right  = (int)(data[i + 5] * m_img.cols);
+      if (confidence > netConfig.m_confThreshold) {
+        int left = (int)(data[i + 3] * m_img.cols);
+        int top = (int)(data[i + 4] * m_img.rows);
+        int right = (int)(data[i + 5] * m_img.cols);
         int bottom = (int)(data[i + 6] * m_img.rows);
         int classId = (int)(data[i + 1]);
 
-        proposals.m_confidences.push_back( (float)confidence );
-        proposals.m_boxes.push_back( cv::Rect( left, top, right - left + 1, bottom - top + 1 ) );
-        proposals.m_classIds.push_back( classId );
+        proposals.m_confidences.push_back((float)confidence);
+        proposals.m_boxes.push_back(cv::Rect(left, top, right - left + 1, bottom - top + 1));
+        proposals.m_classIds.push_back(classId);
       }
     }
   }
@@ -880,8 +846,7 @@ void vpDetectorDNNOpenCV::postProcess_SSD_MobileNet(DetectionCandidates &proposa
   float *bbox = (float *)dnnRes[boxes_index].data;
 
   // Loop over all guesses on the output of the network.
-  for (int i = 0; i < N; i++)
-  {
+  for (int i = 0; i < N; i++) {
     uint32_t maxClass = 0;
     float maxScore = -1000.0f;
 
@@ -892,15 +857,13 @@ void vpDetectorDNNOpenCV::postProcess_SSD_MobileNet(DetectionCandidates &proposa
       if (score < netConfig.m_confThreshold)
         continue;
 
-      if (score > maxScore)
-      {
+      if (score > maxScore) {
         maxScore = score;
         maxClass = j;
       }
     }
 
-    if (maxScore > netConfig.m_confThreshold)
-    {
+    if (maxScore > netConfig.m_confThreshold) {
       int left = (int)(bbox[4 * i] * m_img.cols);
       int top = (int)(bbox[4 * i + 1] * m_img.rows);
       int right = (int)(bbox[4 * i + 2] * m_img.cols);
@@ -909,9 +872,9 @@ void vpDetectorDNNOpenCV::postProcess_SSD_MobileNet(DetectionCandidates &proposa
       int height = bottom - top + 1;
 
       int classId = maxClass;
-      proposals.m_confidences.push_back( maxScore );
-      proposals.m_boxes.push_back( cv::Rect( left, top, width, height ) );
-      proposals.m_classIds.push_back( classId );
+      proposals.m_confidences.push_back(maxScore);
+      proposals.m_boxes.push_back(cv::Rect(left, top, width, height));
+      proposals.m_classIds.push_back(classId);
     }
   }
 }
@@ -937,20 +900,18 @@ void vpDetectorDNNOpenCV::postProcess_ResNet_10(DetectionCandidates &proposals, 
   // [batchId, classId, confidence, left, top, right, bottom]
   CV_Assert(dnnRes.size() == 1);
   float *data = (float *)dnnRes[0].data;
-  for (size_t i = 0; i < dnnRes[0].total(); i += 7)
-  {
+  for (size_t i = 0; i < dnnRes[0].total(); i += 7) {
     float confidence = data[i + 2];
-    if (confidence > netConfig.m_confThreshold)
-    {
+    if (confidence > netConfig.m_confThreshold) {
       int left = (int)(data[i + 3] * m_img.cols);
       int top = (int)(data[i + 4] * m_img.rows);
       int right = (int)(data[i + 5] * m_img.cols);
       int bottom = (int)(data[i + 6] * m_img.rows);
       int classId = (int)(data[i + 1]) - 1;
 
-      proposals.m_confidences.push_back( (float)confidence );
-      proposals.m_boxes.push_back( cv::Rect( left, top, right - left + 1, bottom - top + 1 ) );
-      proposals.m_classIds.push_back( classId );
+      proposals.m_confidences.push_back((float)confidence);
+      proposals.m_boxes.push_back(cv::Rect(left, top, right - left + 1, bottom - top + 1));
+      proposals.m_classIds.push_back(classId);
     }
   }
 }
@@ -965,9 +926,9 @@ void vpDetectorDNNOpenCV::postProcess_ResNet_10(DetectionCandidates &proposals, 
 */
 void vpDetectorDNNOpenCV::postProcess_unimplemented(DetectionCandidates &proposals, std::vector<cv::Mat> &dnnRes, const NetConfig &netConfig)
 {
-  (void) proposals;
-  (void) dnnRes;
-  (void) netConfig;
+  (void)proposals;
+  (void)dnnRes;
+  (void)netConfig;
   throw(vpException(vpException::functionNotImplementedError, "vpDetectorDNNOpenCV::postProcess was called with a USER_SPECIFIED DNN but not post processing method was given."));
 }
 
@@ -1036,12 +997,10 @@ void vpDetectorDNNOpenCV::setNMSThreshold(const float &nmsThreshold) { m_netConf
 void vpDetectorDNNOpenCV::setDetectionFilterSizeRatio(const double &sizeRatio)
 {
   m_netConfig.m_filterSizeRatio = sizeRatio;
-  if(m_netConfig.m_filterSizeRatio > std::numeric_limits<double>::epsilon())
-  {
+  if (m_netConfig.m_filterSizeRatio > std::numeric_limits<double>::epsilon()) {
     m_applySizeFilterAfterNMS = true;
   }
-  else
-  {
+  else {
     m_applySizeFilterAfterNMS = false;
   }
 }
@@ -1089,8 +1048,7 @@ void vpDetectorDNNOpenCV::setPreferableTarget(const int &targetId) { m_net.setPr
 void vpDetectorDNNOpenCV::setScaleFactor(const double &scaleFactor)
 {
   m_scaleFactor = scaleFactor;
-  if((m_parsingMethodType == YOLO_V7 || m_parsingMethodType == YOLO_V8) && m_scaleFactor != 1/255.)
-  {
+  if ((m_parsingMethodType == YOLO_V7 || m_parsingMethodType == YOLO_V8) && m_scaleFactor != 1 / 255.) {
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] WARNING: scale factor should be 1/255. to normalize pixels value." << std::endl;
   }
 }
@@ -1109,28 +1067,26 @@ void vpDetectorDNNOpenCV::setSwapRB(const bool &swapRB) { m_swapRB = swapRB; }
   \param parsingMethod: if \b typeParsingMethod is equal to \b vpDetectorDNNOpenCV::USER_DEFINED , a function permitting to interpret the \b cv::Mat
   resulting from the DNN inference.
 */
-void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat>&, const NetConfig &))
+void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &))
 {
   m_parsingMethodType = typeParsingMethod;
   m_parsingMethod = parsingMethod;
-  if((m_parsingMethodType == YOLO_V7 || m_parsingMethodType == YOLO_V8) && m_scaleFactor != 1/255.)
-  {
-    m_scaleFactor = 1/255.;
+  if ((m_parsingMethodType == YOLO_V7 || m_parsingMethodType == YOLO_V8) && m_scaleFactor != 1 / 255.) {
+    m_scaleFactor = 1 / 255.;
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] NB: scale factor changed to 1/255. to normalize pixels value." << std::endl;
   }
 
-  #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-  if(m_parsingMethodType == SSD_MOBILENET)
-  {
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+  if (m_parsingMethodType == SSD_MOBILENET) {
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] WARNING: The chosen type of network is " << dnnResultsParsingTypeToString(m_parsingMethodType) << " VISP_BUILD_DEPRECATED_FUNCTIONS is set to true." << std::endl;
     std::cout << "\tThe parsing method that worked with  the networks quoted in the ViSP documentation was postProcess_ResNet_10 instead of postProcess_SSD_MobileNet." << std::endl;
     std::cout << "\tIf the SSD-MobileNet network does not seem to work, please try to recompile ViSP setting VISP_BUILD_DEPRECATED_FUNCTIONS as false." << std::endl << std::flush;
   }
-  #endif
+#endif
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
-// Work around to avoid warning: libvisp_core.a(vpDetectorDNNOpenCV.cpp.o) has no
-// symbols
-void dummy_vpDetectorDNN(){};
+ // Work around to avoid warning: libvisp_core.a(vpDetectorDNNOpenCV.cpp.o) has no
+ // symbols
+void dummy_vpDetectorDNN() { };
 #endif

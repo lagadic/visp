@@ -104,8 +104,8 @@ or jump to \ref install_win10_msvc15_next. You can later come back to the \ref i
 
 \subsection install_win10_msvc15_3rdparty Install 3rd parties
 
-ViSP is interfaced with several 3rd party libraries. The
-<a href="https://visp.inria.fr/software-architecture">complete list is provided here</a>.
+ViSP is interfaced with several 3rd party libraries.
+Follow the link to see the complete list of \ref supported-third-parties.
 To use optimized matrix operations you may install \ref install_win10_msvc15_3rdparty_eigen.
 We recommend also to install \ref install_win10_msvc15_3rdparty_opencv in the workspace. If you have an Intel Realsense
 depth camera you may also install \ref install_win10_msvc15_3rdparty_realsense. If your camera is a PointGrey you

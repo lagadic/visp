@@ -50,7 +50,7 @@
 
 /*!
    Line parameters conversion from normalized coordinates \f$(\rho_m,\theta_m)\f$ expressed in the image plane
-   to pixel coordinates \f$(\rho_p,\theta_p)\f$ using ViSP camera parameters. This function doesn't use distorsion
+   to pixel coordinates \f$(\rho_p,\theta_p)\f$ using ViSP camera parameters. This function doesn't use distortion
    coefficients.
 
    \param[in] cam : camera parameters.
@@ -189,7 +189,7 @@ void vpMeterPixelConversion::convertEllipse(const vpCameraParameters &cam, doubl
 #if VISP_HAVE_OPENCV_VERSION >= 0x020300
 /*!
    Line parameters conversion from normalized coordinates \f$(\rho_m,\theta_m)\f$ expressed in the image plane
-   to pixel coordinates \f$(\rho_p,\theta_p)\f$ using OpenCV camera parameters. This function doesn't use distorsion
+   to pixel coordinates \f$(\rho_p,\theta_p)\f$ using OpenCV camera parameters. This function doesn't use distortion
    coefficients.
 
    \param[in] cameraMatrix : Camera Matrix \f$\begin{bmatrix} f_x & 0 & c_x \\ 0 & f_y & c_y \\ 0 & 0 &

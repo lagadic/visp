@@ -67,7 +67,7 @@ To get the corresponding \f$^f{\bf M}_e\f$ poses, you need to use one of our rob
 \endcode
 
 To complete this step, you need also to get or calibrate your camera in order to obtain its intrinsic parameters. Camera intrinsic parameters need to be saved in an xml file. If you have an Intel RealSense device you can directly get the parameters using vpRealSense2::getCameraParameters() and then save the parameters in an xml file using vpXmlParserCamera::save(). An example is given in tutorial-franka-acquire-calib-data.cpp or in tutorial-universal-robots-acquire-calib-data.cpp
-\note With vpRealSense2::getCameraParameters() you can only get the parameters without distorsion coefficients. If you want the parameters with distorsion, you need to achieve a calibration as described in \ref tutorial-calibration-intrinsic.
+\note With vpRealSense2::getCameraParameters() you can only get the parameters without distortion coefficients. If you want the parameters with distortion, you need to achieve a calibration as described in \ref tutorial-calibration-intrinsic.
 
 As an example, in ViSP source code you will find a dataset corresponding to data acquired with a real robot:
 \verbatim

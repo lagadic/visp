@@ -131,6 +131,11 @@ if(USE_PCL)
   list(APPEND opt_libs ${PCL_DEPS_LIBRARIES})
 endif()
 
+if(USE_NLOHMANN_JSON)
+  get_target_property(_inc_dirs "nlohmann_json::nlohmann_json" INTERFACE_INCLUDE_DIRECTORIES)
+  list(APPEND opt_incs ${_inc_dirs})
+endif()
+
 if(WITH_CLIPPER)
   # clipper is private
   include_directories(${CLIPPER_INCLUDE_DIRS})

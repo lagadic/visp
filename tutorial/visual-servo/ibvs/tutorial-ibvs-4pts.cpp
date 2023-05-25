@@ -35,6 +35,7 @@ int main()
     robot.getPosition(wMc);
     wMo = wMc * cMo;
 
+    std::cout << "Start visual-servoing loop..." << std::endl;
     for (unsigned int iter = 0; iter < 150; iter++) {
       robot.getPosition(wMc);
       cMo = wMc.inverse() * wMo;
@@ -45,7 +46,10 @@ int main()
       vpColVector v = task.computeControlLaw();
       robot.setVelocity(vpRobot::CAMERA_FRAME, v);
     }
-  } catch (const vpException &e) {
+
+    std::cout << "Stop visual-servoing loop" << std::endl;
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
   }
 }

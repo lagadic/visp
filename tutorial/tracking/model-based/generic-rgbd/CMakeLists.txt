@@ -8,7 +8,8 @@ find_package(VISP REQUIRED visp_core visp_mbt visp_io visp_gui visp_sensor)
 set(tutorial_cpp
   tutorial-mb-generic-tracker-rgbd.cpp
   tutorial-mb-generic-tracker-rgbd-realsense.cpp
-  tutorial-mb-generic-tracker-rgbd-structure-core.cpp)
+  tutorial-mb-generic-tracker-rgbd-structure-core.cpp
+  tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp)
 
 foreach(cpp ${tutorial_cpp})
   visp_add_target(${cpp})
@@ -62,3 +63,4 @@ endforeach()
 visp_copy_dir(tutorial-mb-generic-tracker-rgbd.cpp "${CMAKE_CURRENT_SOURCE_DIR}" data model)
 visp_copy_dir(tutorial-mb-generic-tracker-rgbd-realsense.cpp "${CMAKE_CURRENT_SOURCE_DIR}" model)
 visp_copy_dir(tutorial-mb-generic-tracker-rgbd-structure-core.cpp "${CMAKE_CURRENT_SOURCE_DIR}" model)
+visp_copy_dir(tutorial-mb-generic-tracker-rgbd-realsense-json-settings.cpp "${CMAKE_CURRENT_SOURCE_DIR}" model)
