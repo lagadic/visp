@@ -31,10 +31,7 @@
  * Description:
  * Defines a rectangle in the plane.
  *
- * Author:
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #ifndef vpRect_h
 #define vpRect_h
@@ -53,8 +50,9 @@
   bottom-right corner are the same, the height and the width of the
   rectangle will both be 1.
 
-  Generally, width = right - left + 1 and height = bottom - top +
-  1. We designed it this way to make it correspond to rectangular
+  Generally, width = right - left + 1 and height = bottom - top + 1.
+
+  We designed it this way to make it correspond to rectangular
   spaces used by drawing functions in which the width and height
   denote a number of pixels. For example, drawing a rectangle with
   width and height 1 draws a single pixel.
@@ -237,8 +235,8 @@ public:
 
   /*!
     Intersection operator.
-    \param r : Rectangle to insert.
-    \return Intersection rectangle or null rectangle if the two rectangles do not
+    \param r : Rectangle with which the intersection should be calculated.
+    \return Intersected rectangle or null rectangle if the two rectangles do not
     intersect.
    */
   inline vpRect &operator&=(const vpRect &r)
