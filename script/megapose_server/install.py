@@ -57,7 +57,7 @@ def download_models(megapose_env: str, megapose_path: Path, megapose_data_path: 
 
 def install_server(megapose_env: str):
   megapose_env_pip = get_pip_for_conda_env(megapose_env)
-  subprocess.run([megapose_env_pip, 'install', '-e',  '.'], check=True)
+  subprocess.run([megapose_env_pip, 'install', '.'], check=True)
 
 
 
