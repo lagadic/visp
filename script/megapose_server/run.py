@@ -1,9 +1,22 @@
+# Set megapose environment variables
+import os
+import json
+print('Before server import')
+import megapose_server
+megapose_server_install_dir = os.path.dirname(megapose_server.__file__)
+variables_file = os.path.join(megapose_server_install_dir, 'megapose_variables.json')
+print(megapose_server, variables_file)
+with open(variables_file, 'r') as f:
+    json_vars = json.load(f)
+    print(json_vars)
+    os.environ['MEGAPOSE_DIR'] = json_vars['megapose_dir']
+    os.environ['MEGAPOSE_DATA_DIR'] = json_vars['megapose_data_dir']
+
 
 # Third Party
 import numpy as np
 import argparse
 import json
-import os
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Union
 
@@ -236,7 +249,7 @@ class MegaposeServer():
         output, extra_data = self.model.run_inference_pipeline(
             observation, detections=detections, **inference_params, coarse_estimates=coarse_estimates
         )
-        print(f'Inference took {int((time.time() - t) * 1000.0)}ms')
+        #print(f'Inference took {int((time.time() - t) * 1000.0)}ms')
         # print(extra_data)
 
         def make_result(buffer):
