@@ -6,7 +6,8 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
-typedef enum {
+typedef enum
+{
   DETECTION_CONTAINER_MAP = 0,
   DETECTION_CONTAINER_VECTOR = 1,
   DETECTION_CONTAINER_BOTH = 2,
@@ -50,11 +51,11 @@ std::string getAvailableDetectionContainer()
     availableContainers += name + " , ";
   }
   availableContainers +=
-      chosenDetectionContainerToString((ChosenDetectionContainer)(DETECTION_CONTAINER_COUNT - 1)) + " >";
+    chosenDetectionContainerToString((ChosenDetectionContainer)(DETECTION_CONTAINER_COUNT - 1)) + " >";
   return availableContainers;
 }
 
-int main(int argc, const char *argv[])
+int main(int argc, const char *argv [])
 {
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN) &&                                         \
     (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
@@ -81,139 +82,156 @@ int main(int argc, const char *argv[])
     for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--device" && i + 1 < argc) {
         opt_device = std::string(argv[++i]);
-      } else if (std::string(argv[i]) == "--step-by-step") {
+      }
+      else if (std::string(argv[i]) == "--step-by-step") {
         opt_step_by_step = true;
-      } else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--model" && i + 1 < argc) {
         opt_dnn_model = std::string(argv[++i]);
-      } else if (std::string(argv[i]) == "--type" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--type" && i + 1 < argc) {
         opt_dnn_type = vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(std::string(argv[++i]));
-      } else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--config" && i + 1 < argc) {
         opt_dnn_config = std::string(argv[++i]);
         if (opt_dnn_config.find("none") != std::string::npos) {
           opt_dnn_config = std::string();
         }
-      } else if (std::string(argv[i]) == "--framework" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--framework" && i + 1 < argc) {
         opt_dnn_framework = std::string(argv[++i]);
         if (opt_dnn_framework.find("none") != std::string::npos) {
           opt_dnn_framework = std::string();
         }
-      } else if (std::string(argv[i]) == "--width" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--width" && i + 1 < argc) {
         opt_dnn_width = atoi(argv[++i]);
-      } else if (std::string(argv[i]) == "--height" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--height" && i + 1 < argc) {
         opt_dnn_height = atoi(argv[++i]);
-      } else if (std::string(argv[i]) == "--mean" && i + 3 < argc) {
+      }
+      else if (std::string(argv[i]) == "--mean" && i + 3 < argc) {
         opt_dnn_meanR = atof(argv[++i]);
         opt_dnn_meanG = atof(argv[++i]);
         opt_dnn_meanB = atof(argv[++i]);
-      } else if (std::string(argv[i]) == "--scale" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--scale" && i + 1 < argc) {
         opt_dnn_scale_factor = atof(argv[++i]);
-      } else if (std::string(argv[i]) == "--swapRB") {
+      }
+      else if (std::string(argv[i]) == "--swapRB") {
         opt_dnn_swapRB = true;
-      } else if (std::string(argv[i]) == "--confThresh" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--confThresh" && i + 1 < argc) {
         opt_dnn_confThresh = (float)atof(argv[++i]);
-      } else if (std::string(argv[i]) == "--nmsThresh" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--nmsThresh" && i + 1 < argc) {
         opt_dnn_nmsThresh = (float)atof(argv[++i]);
-      } else if (std::string(argv[i]) == "--filterThresh" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--filterThresh" && i + 1 < argc) {
         opt_dnn_filterThresh = atof(argv[++i]);
-      } else if (std::string(argv[i]) == "--labels" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--labels" && i + 1 < argc) {
         opt_dnn_label_file = std::string(argv[++i]);
-      } else if (std::string(argv[i]) == "--container" && i + 1 < argc) {
+      }
+      else if (std::string(argv[i]) == "--container" && i + 1 < argc) {
         opt_dnn_containerType = chosenDetectionContainerFromString(std::string(argv[++i]));
-      } else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
+      }
+      else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
         opt_verbose = true;
-      } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+      }
+      else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
         std::cout << "\nSYNOPSIS " << std::endl
-                  << argv[0] << " [--device <video>]"
-                  << " [--model <dnn weights file>]"
-                  << " [--type <dnn type>]"
-                  << " [--config <dnn config file]"
-                  << " [--framework <name>]"
-                  << " [--width <blob width>] [--height <blob height>]"
-                  << " [--mean <meanR meanG meanB>]"
-                  << " [--scale <scale factor>]"
-                  << " [--swapRB]"
-                  << " [--confThresh <threshold>]"
-                  << " [--nmsThresh <threshold>]"
-                  << " [--filterThresh <threshold>]"
-                  << " [--labels <file>]"
-                  << " [--container <type>]"
-                  << " [--step-by-step]"
-                  << " [--verbose, -v]"
-                  << " [--help, -h]" << std::endl;
+          << argv[0] << " [--device <video>]"
+          << " [--model <dnn weights file>]"
+          << " [--type <dnn type>]"
+          << " [--config <dnn config file]"
+          << " [--framework <name>]"
+          << " [--width <blob width>] [--height <blob height>]"
+          << " [--mean <meanR meanG meanB>]"
+          << " [--scale <scale factor>]"
+          << " [--swapRB]"
+          << " [--confThresh <threshold>]"
+          << " [--nmsThresh <threshold>]"
+          << " [--filterThresh <threshold>]"
+          << " [--labels <file>]"
+          << " [--container <type>]"
+          << " [--step-by-step]"
+          << " [--verbose, -v]"
+          << " [--help, -h]" << std::endl;
         std::cout << "\nOPTIONS " << std::endl
-                  << "  --device <video>" << std::endl
-                  << "      Camera device number or video name used to stream images." << std::endl
-                  << "      To use the first camera found on the bus set 0. On Ubuntu setting 0" << std::endl
-                  << "      will use /dev/video0 device. To use a video simply put the name of" << std::endl
-                  << "      the video, like \"path/my-video.mp4\" or \"path/image-\%04d.png\"" << std::endl
-                  << "      if your video is a sequence of images." << std::endl
-                  << "      Default: " << opt_device << std::endl
-                  << std::endl
-                  << "  --model <dnn weights file>" << std::endl
-                  << "      Path to dnn network trained weights." << std::endl
-                  << "      Default: " << opt_dnn_model << std::endl
-                  << std::endl
-                  << "  --type <dnn type>" << std::endl
-                  << "      Type of dnn network. Admissible values are in " << std::endl
-                  << "      " << vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes() << std::endl
-                  << "      Default: " << opt_dnn_type << std::endl
-                  << std::endl
-                  << "  --config <dnn config file>" << std::endl
-                  << "      Path to dnn network config file or \"none\" not to use one. " << std::endl
-                  << "      Default: " << opt_dnn_config << std::endl
-                  << std::endl
-                  << "  --framework <name>" << std::endl
-                  << "      Framework name or \"none\" not to specify one. " << std::endl
-                  << "      Default: " << opt_dnn_framework << std::endl
-                  << std::endl
-                  << "  --width <blob width>" << std::endl
-                  << "      Input images will be resized to this width. " << std::endl
-                  << "      Default: " << opt_dnn_width << std::endl
-                  << std::endl
-                  << "  --height <blob height>" << std::endl
-                  << "      Input images will be resized to this height. " << std::endl
-                  << "      Default: " << opt_dnn_height << std::endl
-                  << std::endl
-                  << "  --mean <meanR meanG meanB>" << std::endl
-                  << "      Mean RGB subtraction values. " << std::endl
-                  << "      Default: " << opt_dnn_meanR << " " << opt_dnn_meanG << " " << opt_dnn_meanB << std::endl
-                  << std::endl
-                  << "  --scale <scale factor>" << std::endl
-                  << "      Scale factor used to normalize the range of pixel values. " << std::endl
-                  << "      Default: " << opt_dnn_scale_factor << std::endl
-                  << std::endl
-                  << "  --swapRB" << std::endl
-                  << "      When used this option allows to swap Red and Blue channels. " << std::endl
-                  << std::endl
-                  << "  --confThresh <threshold>" << std::endl
-                  << "      Confidence threshold. " << std::endl
-                  << "      Default: " << opt_dnn_confThresh << std::endl
-                  << std::endl
-                  << "  --nmsThresh <threshold>" << std::endl
-                  << "      Non maximum suppression threshold. " << std::endl
-                  << "      Default: " << opt_dnn_nmsThresh << std::endl
-                  << std::endl
-                  << "  --filterThresh <threshold >" << std::endl
-                  << "      Filter threshold. Set 0. to disable." << std::endl
-                  << "      Default: " << opt_dnn_filterThresh << std::endl
-                  << std::endl
-                  << "  --labels <file>" << std::endl
-                  << "      Path to label file either in txt or yaml format. Keep empty if unknown." << std::endl
-                  << "      Default: \"" << opt_dnn_label_file << "\"" << std::endl
-                  << std::endl
-                  << "  --container <type>" << std::endl
-                  << "      Container type in " << getAvailableDetectionContainer() << std::endl
-                  << "      Default: " << chosenDetectionContainerToString(opt_dnn_containerType) << std::endl
-                  << std::endl
-                  << "  --step-by-step" << std::endl
-                  << "      Enable step by step mode, waiting for a user click to process next image." << std::endl
-                  << std::endl
-                  << "  --verbose, -v" << std::endl
-                  << "      Enable verbose mode." << std::endl
-                  << std::endl
-                  << "  --help, -h" << std::endl
-                  << "      Display this helper message." << std::endl
-                  << std::endl;
+          << "  --device <video>" << std::endl
+          << "      Camera device number or video name used to stream images." << std::endl
+          << "      To use the first camera found on the bus set 0. On Ubuntu setting 0" << std::endl
+          << "      will use /dev/video0 device. To use a video simply put the name of" << std::endl
+          << "      the video, like \"path/my-video.mp4\" or \"path/image-%04d.png\"" << std::endl
+          << "      if your video is a sequence of images." << std::endl
+          << "      Default: " << opt_device << std::endl
+          << std::endl
+          << "  --model <dnn weights file>" << std::endl
+          << "      Path to dnn network trained weights." << std::endl
+          << "      Default: " << opt_dnn_model << std::endl
+          << std::endl
+          << "  --type <dnn type>" << std::endl
+          << "      Type of dnn network. Admissible values are in " << std::endl
+          << "      " << vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes() << std::endl
+          << "      Default: " << opt_dnn_type << std::endl
+          << std::endl
+          << "  --config <dnn config file>" << std::endl
+          << "      Path to dnn network config file or \"none\" not to use one. " << std::endl
+          << "      Default: " << opt_dnn_config << std::endl
+          << std::endl
+          << "  --framework <name>" << std::endl
+          << "      Framework name or \"none\" not to specify one. " << std::endl
+          << "      Default: " << opt_dnn_framework << std::endl
+          << std::endl
+          << "  --width <blob width>" << std::endl
+          << "      Input images will be resized to this width. " << std::endl
+          << "      Default: " << opt_dnn_width << std::endl
+          << std::endl
+          << "  --height <blob height>" << std::endl
+          << "      Input images will be resized to this height. " << std::endl
+          << "      Default: " << opt_dnn_height << std::endl
+          << std::endl
+          << "  --mean <meanR meanG meanB>" << std::endl
+          << "      Mean RGB subtraction values. " << std::endl
+          << "      Default: " << opt_dnn_meanR << " " << opt_dnn_meanG << " " << opt_dnn_meanB << std::endl
+          << std::endl
+          << "  --scale <scale factor>" << std::endl
+          << "      Scale factor used to normalize the range of pixel values. " << std::endl
+          << "      Default: " << opt_dnn_scale_factor << std::endl
+          << std::endl
+          << "  --swapRB" << std::endl
+          << "      When used this option allows to swap Red and Blue channels. " << std::endl
+          << std::endl
+          << "  --confThresh <threshold>" << std::endl
+          << "      Confidence threshold. " << std::endl
+          << "      Default: " << opt_dnn_confThresh << std::endl
+          << std::endl
+          << "  --nmsThresh <threshold>" << std::endl
+          << "      Non maximum suppression threshold. " << std::endl
+          << "      Default: " << opt_dnn_nmsThresh << std::endl
+          << std::endl
+          << "  --filterThresh <threshold >" << std::endl
+          << "      Filter threshold. Set 0. to disable." << std::endl
+          << "      Default: " << opt_dnn_filterThresh << std::endl
+          << std::endl
+          << "  --labels <file>" << std::endl
+          << "      Path to label file either in txt or yaml format. Keep empty if unknown." << std::endl
+          << "      Default: \"" << opt_dnn_label_file << "\"" << std::endl
+          << std::endl
+          << "  --container <type>" << std::endl
+          << "      Container type in " << getAvailableDetectionContainer() << std::endl
+          << "      Default: " << chosenDetectionContainerToString(opt_dnn_containerType) << std::endl
+          << std::endl
+          << "  --step-by-step" << std::endl
+          << "      Enable step by step mode, waiting for a user click to process next image." << std::endl
+          << std::endl
+          << "  --verbose, -v" << std::endl
+          << "      Enable verbose mode." << std::endl
+          << std::endl
+          << "  --help, -h" << std::endl
+          << "      Display this helper message." << std::endl
+          << std::endl;
         return EXIT_SUCCESS;
       }
     }
@@ -221,27 +239,28 @@ int main(int argc, const char *argv[])
     std::cout << "Video device         : " << opt_device << std::endl;
     std::cout << "Model                : " << opt_dnn_model << std::endl;
     std::cout << "Type                 : " << vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(opt_dnn_type)
-              << std::endl;
+      << std::endl;
     std::cout << "Config               : " << (opt_dnn_config.empty() ? "\"None\"" : opt_dnn_config) << std::endl;
     std::cout << "Framework            : " << (opt_dnn_framework.empty() ? "\"None\"" : opt_dnn_framework) << std::endl;
     std::cout << "Label file (optional): " << (opt_dnn_label_file.empty() ? "None" : opt_dnn_label_file) << std::endl;
     std::cout << "Width x Height       : " << opt_dnn_width << " x " << opt_dnn_height << std::endl;
     std::cout << "Mean RGB             : " << opt_dnn_meanR << " " << opt_dnn_meanG << " " << opt_dnn_meanB
-              << std::endl;
+      << std::endl;
     std::cout << "Scale                : " << opt_dnn_scale_factor << std::endl;
     std::cout << "Swap RB?             : " << opt_dnn_swapRB << std::endl;
     std::cout << "Confidence threshold : " << opt_dnn_confThresh << std::endl;
     std::cout << "NMS threshold        : " << opt_dnn_nmsThresh << std::endl;
     std::cout << "Filter threshold     : "
-              << (opt_dnn_filterThresh > std::numeric_limits<double>::epsilon() ? std::to_string(opt_dnn_filterThresh)
-                                                                                : "disabled")
-              << std::endl;
+      << (opt_dnn_filterThresh > std::numeric_limits<double>::epsilon() ? std::to_string(opt_dnn_filterThresh)
+        : "disabled")
+      << std::endl;
 
     cv::VideoCapture capture;
     bool hasCaptureOpeningSucceeded;
     if (vpMath::isNumber(opt_device)) {
       hasCaptureOpeningSucceeded = capture.open(std::atoi(opt_device.c_str()));
-    } else {
+    }
+    else {
       hasCaptureOpeningSucceeded = capture.open(opt_device);
     }
     if (!hasCaptureOpeningSucceeded) {
@@ -261,12 +280,12 @@ int main(int argc, const char *argv[])
 
     if (!opt_dnn_label_file.empty() && !vpIoTools::checkFilename(opt_dnn_label_file)) {
       throw(vpException(vpException::fatalError,
-                        "The file containing the classes labels \"" + opt_dnn_label_file + "\" does not exist !"));
+        "The file containing the classes labels \"" + opt_dnn_label_file + "\" does not exist !"));
     }
 
     //! [DNN params]
     vpDetectorDNNOpenCV::NetConfig netConfig(opt_dnn_confThresh, opt_dnn_nmsThresh, opt_dnn_label_file,
-                                             cv::Size(opt_dnn_width, opt_dnn_height), opt_dnn_filterThresh);
+      cv::Size(opt_dnn_width, opt_dnn_height), opt_dnn_filterThresh);
     vpDetectorDNNOpenCV dnn(netConfig, opt_dnn_type);
     dnn.readNet(opt_dnn_model, opt_dnn_config, opt_dnn_framework);
     dnn.setMean(opt_dnn_meanR, opt_dnn_meanG, opt_dnn_meanB);
@@ -287,7 +306,8 @@ int main(int argc, const char *argv[])
         if (opt_verbose) {
           std::cout << "Process image: " << I.getWidth() << " x " << I.getHeight() << std::endl;
         }
-      } else {
+      }
+      else {
         vpImageConvert::convert(frame, I);
       }
       if (opt_verbose) {
@@ -376,14 +396,16 @@ int main(int argc, const char *argv[])
         if (button == vpMouseButton::button1) {
           // Left click => next image
           continue;
-        } else if (button == vpMouseButton::button3) {
+        }
+        else if (button == vpMouseButton::button3) {
           // Right click => stop the program
           break;
         }
       }
     }
 
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << e.what() << std::endl;
   }
 #else
