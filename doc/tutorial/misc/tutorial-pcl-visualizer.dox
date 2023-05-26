@@ -73,6 +73,8 @@ Finally, the threaded-mode example is run if the user chose to run it or both mo
 
 \subsection pcl_visualizer_class Code of the example class explained
 
+\subsubsection pcl_visualizer_class_generation Generation of the polynomial surfaces used in this example
+
 For this example, we decided to modelize a polynomial 3D surface. The Z coordinate
 is computed from the X and Y coordinates thanks to the following method.
 
@@ -91,6 +93,8 @@ situation, it could for instance correspond to the distance between a model of a
 points thanks to a depth sensor.
 
 \snippet ClassUsingPclVisualizer.cpp Surface generator
+
+\subsubsection pcl_visualizer_class_usage How to use the vpPclViewer class to display the point clouds
 
 To use the vpPclVisualizer class, you must first add the surfaces you want to display.
 You can do it by adding a surface for which you do not particularly care of the color and thus 
