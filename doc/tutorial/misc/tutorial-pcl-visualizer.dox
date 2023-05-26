@@ -10,6 +10,12 @@ This tutorial shows how to use the `vpPclVisualizer` class.
 In the next section you will find an example that shows how to display two point clouds, with one having attached 
 confidence weights, either in blocking-mode or threaded-mode display.
 
+The program first generate a polynomial surface, whose coordinates are expressed in the object frame. 
+Then, a second surface is generated. It corresponds to the first surface, moved in another coordinates frame. 
+Some noise is added to this second surface, to simulate sensor innacuracy. Then, M-estimation based
+on Tukey M-estimator is performed using the `vpRobust` class in order not to display the noisy points
+in the viewer. Finally, the point clouds are displayed using the `vpPclVisualizer`.
+
 \section pcl_visualizer_requirements Requirements
 
 To enable `vpPclVisualizer` class usage, and thus use this tutorial, you need to have a version of ViSP build with PCL. To see how to install PCL library,
@@ -17,15 +23,11 @@ please refer to the \ref soft_tool_pcl section.
 
 \section pcl_visualizer_example Point clouds visualization example explained
 
-For this tutorial, we use the following main program:
-
-\include tutorial-pcl-visualizer.cpp
+For this tutorial, we use the main program tutorial-pcl-visualizer.cpp. 
 
 It uses the following class, which generates 3D coordinates and relies on the `vpPclVisualizer` to visualize data.
 
 \include ClassUsingPclVisualizer.h
-
-\include ClassUsingPclVisualizer.cpp
 
 \subsection pcl_visualizer_main Main code explained
 
@@ -44,12 +46,24 @@ Then, we define the default value of the program arguments.
 
 \snippet tutorial-pcl-visualizer.cpp Default arguments values
 
+The following program arguments are available:
+
+\snippet tutorial-pcl-visualizer.cpp Arguments of the program
+
+Let us look with more details into these arguments:
+
+- `noise` represents the intensity of noise along the Z-axis, expressed in the object frame, has to be added to the original surface.
+- `order` represents the order of the polynomial surface the user wants to use running the demo.
+- `x-lim` and `y-lim` represents reciproquely the X-axis and Y-axis minimum and maximum values of the polynomial surface, expressed in the object frame.
+- `reso` represents the number of points along the X-axis and Y-axis, expressed in the object frame, are used to generate the first surface.
+- `display-mode` represents which mode of display the user wants to use: blocking-mode only, threaded-mode only or both modes successively. 
+
 Then, we parse the program arguments that permit to the user to change part of the behavior
 of the program.
 
 \snippet tutorial-pcl-visualizer.cpp Arguments parser
 
-Finally, the blocking-mode example is run if the user chose to run it or both modes.
+Then, the blocking-mode example is run if the user chose to run it or both modes.
 
 \snippet tutorial-pcl-visualizer.cpp Running blocking mode
 

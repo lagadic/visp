@@ -150,6 +150,7 @@ int main (int argc, char *argv[])
     }
     else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h")
     {
+      //! [Arguments of the program]
       std::cout << "NAME" << std::endl;
       std::cout << "\t" << argv[0] << "  Test programm for the PCL-based point-cloud visualizer." << std::endl
                 << std::endl;
@@ -163,7 +164,7 @@ int main (int argc, char *argv[])
                 << "\t[--display-mode " << getAvailableDisplayMode() <<"](default: " << displayModeToString(def_mode) << ")\n"
                 << "\t[--help] [-h]" << std::endl
                 << std::endl;
-
+      //! [Arguments of the program]
       return EXIT_SUCCESS;
     }
   }
