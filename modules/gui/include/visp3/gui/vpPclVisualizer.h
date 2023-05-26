@@ -51,6 +51,26 @@
 // PCL
 #include <pcl/visualization/pcl_visualizer.h>
 
+/*!
+  \class vpPclVisualizer
+  \ingroup group_gui_plotter
+  This class enables real time plotting of 3D point clouds. It relies on the PCL library. To see how to install PCL library,
+  please refer to the \ref soft_tool_pcl section.
+  You can either plots in a non-blocking threaded manner or in a blocking manner.
+  The point clouds can be displayed using their original colors, or using uniform colors to match
+  a legend.
+  Additionnally, it is possible to use confidence weights to hide points that are not trusted. These 
+  weights can result from a robust estimation using for instance the vpRobust class.
+
+  \warning On MacOS, you can face the following error:
+  \code
+  tutorial-pcl-visualizer *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow drag regions should only be invalidated on the Main Thread!'
+  libc++abi: terminating due to uncaught exception of type NSException
+  \endcode
+  This problem seems to be due to VTK library that does not like to be run in a non-main thread on MacOS.
+
+  \sa \ref tutorial-pcl-visualizer
+*/
 class VISP_EXPORT vpPclVisualizer
 {
 public:

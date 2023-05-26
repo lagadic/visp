@@ -12,7 +12,8 @@ confidence weights, either in blocking-mode or threaded-mode display.
 
 \section pcl_visualizer_requirements Requirements
 
-To enable `vpPclVisualizer` class usage, and thus use this tutorial, you need to have a version of ViSP build with PCL.
+To enable `vpPclVisualizer` class usage, and thus use this tutorial, you need to have a version of ViSP build with PCL. To see how to install PCL library,
+please refer to the \ref soft_tool_pcl section.
 
 \section pcl_visualizer_example Point clouds visualization example explained
 
