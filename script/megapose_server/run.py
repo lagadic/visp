@@ -1,14 +1,12 @@
 # Set megapose environment variables
 import os
 import json
-print('Before server import')
 import megapose_server
 megapose_server_install_dir = os.path.dirname(megapose_server.__file__)
 variables_file = os.path.join(megapose_server_install_dir, 'megapose_variables.json')
-print(megapose_server, variables_file)
 with open(variables_file, 'r') as f:
     json_vars = json.load(f)
-    print(json_vars)
+    print('Loaded megapose variables', json_vars)
     os.environ['MEGAPOSE_DIR'] = json_vars['megapose_dir']
     os.environ['MEGAPOSE_DATA_DIR'] = json_vars['megapose_data_dir']
 

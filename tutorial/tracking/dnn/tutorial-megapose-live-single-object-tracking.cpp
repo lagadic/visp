@@ -8,212 +8,53 @@
 #include <visp3/dnn_tracker/vpMegaPose.h>
 #include <visp3/dnn_tracker/vpMegaPoseTracker.h>
 
-
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN) && \
     (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && defined(VISP_HAVE_NLOHMANN_JSON)
+#include <visp3/io/vpJsonArgumentParser.h>
 
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
-class vpJsonArgumentParser
+
+
+/**
+ * @brief Interpolate two vpColors. Linear interpolation between each components (R, G, B)
+ *
+ * @param low starting color
+ * @param high ending color
+ * @param f interpolation factor, between 0 and 1
+ * @return vpColor The interpolated color
+ */
+vpColor interpolate(const vpColor &low, const vpColor &high, const double f)
 {
-public:
-  vpJsonArgumentParser(const std::string &description, const std::string &jsonFileArgumentName, const std::string &nestSeparator) : description(description), jsonFileArgumentName(jsonFileArgumentName),
-    nestSeparator(nestSeparator)
-  {
-    if (jsonFileArgumentName.empty()) {
-      throw vpException(vpException::badValue, "The JSON file argument must not be empty!");
-    }
+  const float r = ((float)high.R - (float)low.R) * f;
+  const float g = ((float)high.G - (float)low.G) * f;
+  const float b = ((float)high.B - (float)low.B) * f;
+  return vpColor((unsigned char)r, (unsigned char)g, (unsigned char)b);
+}
+/**
+ * @brief Display the megapose confidence score as a rectangle in the image.
+ * This rectangle becomes green when megapose is "confident" about its prediction
+ * The confidence score measures whether megapose can, from its pose estimation, recover the true pose in future pose refinement iterations
+ *
+ * @param I The image in which to display the confidence
+ * @param score The confidence score of megapose, between 0 and 1
+ */
+void displayScore(const vpImage<vpRGBa> &I, double score)
+{
+  const unsigned top = I.getHeight() * 0.85;
+  const unsigned height = I.getHeight() * 0.1;
+  const unsigned left = I.getWidth() * 0.05;
+  const unsigned width = I.getWidth() * 0.5;
+  vpRect full(left, top, width, height);
+  vpRect scoreRect(left, top, width * score, height);
+  const vpColor low = vpColor::red;
+  const vpColor high = vpColor::green;
+  const vpColor c = interpolate(low, high, score);
 
-    helpers[jsonFileArgumentName] = []() -> std::string {
-      return "Path to the JSON configuration file. Values in this files are loaded, and can be overriden by command line arguments.\nOptional";
-    };
-  }
-
-
-  std::string help() const
-  {
-    std::stringstream ss;
-
-    ss << "Program description: " << description << std::endl;
-    ss << "Arguments: " << std::endl;
-    unsigned spacesBetweenArgAndDescription = 0;
-    for(const auto& helper: helpers) {
-      if(helper.first.size() > spacesBetweenArgAndDescription) {
-        spacesBetweenArgAndDescription = helper.first.size();
-      }
-    }
-    spacesBetweenArgAndDescription += 4;
-
-    for(const auto& helper: helpers) {
-      std::stringstream argss(helper.second());
-      std::string line;
-      bool first = true;
-      while (getline(argss, line, '\n')) {
-        const unsigned lineSpace = first ? spacesBetweenArgAndDescription - helper.first.size() : spacesBetweenArgAndDescription;
-        const std::string spaceBetweenArgAndDescription(lineSpace, ' ');
-        if(first) {
-          ss << "\t" << helper.first << spaceBetweenArgAndDescription << line << std::endl;
-        } else {
-          ss << "\t" << spaceBetweenArgAndDescription << line << std::endl;
-        }
-        first = false;
-
-      }
-      ss << std::endl;
-    }
-    ss << "Example JSON configuration file: " << std::endl << std::endl;
-    ss << exampleJson.dump(2) << std::endl;
-    return ss.str();
-  }
-
-  template<typename T>
-  vpJsonArgumentParser &addArgument(const std::string &name, T &parameter, const bool required = true, const std::string &help = "No description")
-  {
-    const auto getter = [name, this](json &j, bool create) -> json * {
-      size_t pos = 0;
-      json *f = &j;
-      std::string token;
-      std::string name_copy = name;
-
-      while ((pos = name_copy.find(nestSeparator)) != std::string::npos) {
-        token = name_copy.substr(0, pos);
-        name_copy.erase(0, pos + nestSeparator.length());
-        if (create && !f->contains(token)) {
-          (*f)[token] = {};
-        }
-        else if (!f->contains(token)) {
-          return nullptr;
-        }
-        f = &(f->at(token));
-      }
-      if (create && !f->contains(name_copy)) {
-        (*f)[name_copy] = {};
-      }
-      else if (!f->contains(name_copy)) {
-        return nullptr;
-      }
-      f = &(f->at(name_copy));
-      return f;
-    };
-    parsers[name] = [&parameter, required, getter, name](json &j) {
-      const json *field = getter(j, false);
-      if (field != nullptr) {
-        if (field->empty()) {
-          std::stringstream ss;
-          ss << "Argument " << name << "is required, but no value was provided" << std::endl;
-          throw vpException(vpException::ioError, ss.str());
-        }
-        field->get_to(parameter);
-      }
-      else {
-        std::stringstream ss;
-        ss << "Argument " << name << "is required, but no value was provided" << std::endl;
-        throw vpException(vpException::ioError, ss.str());
-      }
-    };
-    updaters[name] = [getter, &parameter, this](json &j, const std::string &s) {
-      json *field = getter(j, true);
-      *field = convertCommandLineArgument(parameter, s);
-    };
-    helpers[name] = [help, parameter, required]() -> std::string {
-      std::stringstream ss;
-      json repr = parameter;
-      ss << help << std::endl << "Default: " << repr;
-      if(required) {
-        ss << std::endl << "Required";
-      } else {
-        ss << std::endl << "Optional";
-      }
-      return ss.str();
-    };
-
-    json* exampleField = getter(exampleJson, true);
-    *exampleField = parameter;
-
-    return *this;
-  }
-
-  template<typename T>
-  json convertCommandLineArgument(const T &, const std::string &arg)
-  {
-    json j = json::parse(arg);
-    return j;
-  }
-
-  json convertCommandLineArgument(const std::string &, const std::string &arg)
-  {
-    json j = arg;
-    return j;
-  }
-
-  void parse(int argc, const char *argv [])
-  {
-    json j;
-    const std::vector<std::string> arguments(argv + 1, argv + argc);
-    std::vector<unsigned> ignoredArguments;
-    const auto jsonFileArgumentPos = std::find(arguments.begin(), arguments.end(), jsonFileArgumentName);
-    // Load JSON file if present
-    if (jsonFileArgumentPos != arguments.end()) {
-      ignoredArguments.push_back(jsonFileArgumentPos - arguments.begin() + 1);
-      ignoredArguments.push_back(jsonFileArgumentPos - arguments.begin() + 2);
-
-      if (jsonFileArgumentPos == arguments.end() - 1) {
-        throw vpException(vpException::ioError, "No JSON file was provided");
-      }
-      const std::string jsonFileName = *(jsonFileArgumentPos + 1);
-      std::ifstream jsonFile(jsonFileName);
-      if (!jsonFile.good()) {
-        std::stringstream ss;
-        ss << "Could not open JSON file " << jsonFileName << "! Make sure it exists and is readable" << std::endl;
-        throw vpException(vpException::ioError, ss.str());
-      }
-      j = json::parse(jsonFile);
-      jsonFile.close();
-    }
-    // Parse command line arguments
-    for (int i = 1; i < argc; ++i) {
-      const std::string arg = argv[i];
-      if(std::find(ignoredArguments.begin(), ignoredArguments.end(), i) != ignoredArguments.end()) {
-        continue;
-      }
-      if (arg == "-h" || arg == "--help") {
-        std::cout << help() << std::endl;
-        exit(1);
-      }
-
-      if (parsers.find(arg) != parsers.end()) {
-        if (i < argc - 1) {
-          updaters[arg](j, std::string(argv[i + 1]));
-          ++i;
-        }
-        else {
-          std::stringstream ss;
-          ss << "Argument " << arg << " was passed but no value was provided" << std::endl;
-          throw vpException(vpException::ioError, ss.str());
-        }
-      }
-      else {
-        std::cerr << "Unknown parameter when parsing: " << arg << std::endl;
-      }
-    }
-    for (const auto &parser : parsers) { // Get the values from json document and store them in the arguments passed by ref in addArgument
-      parser.second(j);
-    }
-  }
-
-
-private:
-  std::string description;
-  std::string jsonFileArgumentName;
-  std::string nestSeparator;
-  std::map<std::string, std::function<void(json &)>> parsers;
-  std::map<std::string, std::function<void(json &, const std::string &)>> updaters;
-  std::map<std::string, std::function<std::string()>> helpers;
-  json exampleJson;
-
-};
-
+  vpDisplay::displayRectangle(I, full, c, false, 5);
+  vpDisplay::displayRectangle(I, scoreRect, c, true, 1);
+}
 
 /**
  * Add the megapose rendering on top of the actual image I.
@@ -437,6 +278,7 @@ int main(int argc, const char *argv [])
       if (initialized && !requiresReinit) {
         vpDisplay::displayFrame(I, megaposeEstimate.cTo, cam, 0.05, vpColor::none, 3);
         vpDisplay::displayRectangle(I, lastDnnDetection, vpColor::red);
+        displayScore(I, megaposeEstimate.score);
 
       }
       double t_vector = vpTime::measureTimeMs();
