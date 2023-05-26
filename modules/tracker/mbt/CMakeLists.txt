@@ -203,6 +203,7 @@ if(BUILD_TESTS)
     vp_set_source_file_compile_flag(test/generic-with-dataset/testGenericTrackerDepth.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
     vp_set_source_file_compile_flag(test/generic-with-dataset/testGenericTrackerDeterminist.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
     vp_set_source_file_compile_flag(test/generic-with-dataset/testMbtXmlGenericParser.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
+    vp_set_source_file_compile_flag(test/generic-with-dataset/testMbtJsonSettings.cpp -Wno-unused-parameter -Wno-unused-but-set-parameter -Wno-overloaded-virtual -Wno-float-equal -Wno-deprecated-copy -Wno-register)
   endif()
 endif()
 
