@@ -604,7 +604,7 @@ void vpMeSite::display(const vpImage<vpRGBa> &I) { vpMeSite::display(I, ifloat, 
 
     - If green : The vpMeSite is a good point.
     - If blue : The point is removed because of the vpMeSite tracking phase
-   (constrast problem).
+   (contrast problem).
     - If purple : The point is removed because of the vpMeSite tracking phase
    (threshold problem).
     - If red : The point is removed because of the robust method in the
@@ -650,7 +650,7 @@ void vpMeSite::display(const vpImage<unsigned char> &I, const double &i, const d
 
     - If green : The vpMeSite is a good point.
     - If blue : The point is removed because of the vpMeSite tracking phase
-   (constrast problem).
+   (contrast problem).
     - If purple : The point is removed because of the vpMeSite tracking phase
    (threshold problem).
     - If red : The point is removed because of the robust method in the
