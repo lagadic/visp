@@ -573,7 +573,7 @@ void vpMeSite::track(const vpImage<unsigned char> &I, const vpMe *me, bool test_
     normGradient = 0;
     // if(contrast != 0)
     if (std::fabs(contrast) > std::numeric_limits<double>::epsilon())
-      state = CONSTRAST; // contrast suppression
+      state = CONTRAST; // contrast suppression
     else
       state = THRESHOLD; // threshold suppression
 
@@ -625,7 +625,7 @@ void vpMeSite::display(const vpImage<unsigned char> &I, const double &i, const d
     vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::green, 1);
     break;
 
-  case CONSTRAST:
+  case CONTRAST:
     vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::blue, 1);
     break;
 
@@ -671,7 +671,7 @@ void vpMeSite::display(const vpImage<vpRGBa> &I, const double &i, const double &
     vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::green, 1);
     break;
 
-  case CONSTRAST:
+  case CONTRAST:
     vpDisplay::displayCross(I, vpImagePoint(i, j), 3, vpColor::blue, 1);
     break;
 
