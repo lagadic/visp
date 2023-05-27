@@ -52,7 +52,7 @@
 
   \brief Performs search in a given direction(normal) for a given
    distance(pixels) for a given 'site'. Gives the most likely site
-   given the probablility from an ME mask
+   given the probability from an ME mask
 
   - Bug fix: rewrote application of masks to use the temporal
     information instead of applying both temporal masks to the same
