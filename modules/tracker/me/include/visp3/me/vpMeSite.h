@@ -72,7 +72,10 @@ public:
   typedef enum
   {
     NO_SUPPRESSION = 0, ///< Point used by the tracker.
-    CONSTRAST = 1,      ///< Point removed due to a contrast problem.
+    CONTRAST = 1,       ///< Point removed due to a contrast problem.
+#if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
+    CONSTRAST = CONTRAST, ///< Point removed due to a contrast problem (kept for compatibility with previous releases).
+#endif
     THRESHOLD = 2,      ///< Point removed due to a threshold problem.
     M_ESTIMATOR = 3,    ///< Point removed during virtual visual-servoing because considered as an outlier.
     TOO_NEAR = 4,       ///< Point removed because too near image borders.

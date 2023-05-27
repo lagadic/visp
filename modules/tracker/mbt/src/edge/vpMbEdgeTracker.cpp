@@ -1452,7 +1452,7 @@ void vpMbEdgeTracker::displayFeaturesOnImage(const vpImage<unsigned char> &I)
         vpDisplay::displayCross(I, ip, 3, vpColor::green, 1);
         break;
 
-      case vpMeSite::CONSTRAST:
+      case vpMeSite::CONTRAST:
         vpDisplay::displayCross(I, ip, 3, vpColor::blue, 1);
         break;
 
@@ -1487,7 +1487,7 @@ void vpMbEdgeTracker::displayFeaturesOnImage(const vpImage<vpRGBa> &I)
         vpDisplay::displayCross(I, ip, 3, vpColor::green, 1);
         break;
 
-      case vpMeSite::CONSTRAST:
+      case vpMeSite::CONTRAST:
         vpDisplay::displayCross(I, ip, 3, vpColor::blue, 1);
         break;
 
