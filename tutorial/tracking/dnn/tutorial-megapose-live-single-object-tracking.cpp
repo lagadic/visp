@@ -134,8 +134,8 @@ int main(int argc, const char *argv [])
   std::string detectorConfig = "none";
   std::string objectName = "cube";
   std::vector<std::string> labels = {"cube"};
-  double detectorMeanR = 104.f, detectorMeanG = 177.f, detectorMeanB = 123.f;
-  double detectorConfidenceThreshold = 0.5, detectorNmsThreshold = 0.4, detectorFilterThreshold = 0.25;
+  double detectorMeanR = 0.f, detectorMeanG = 0.f, detectorMeanB = 0.f;
+  double detectorConfidenceThreshold = 0.65, detectorNmsThreshold = 0.5, detectorFilterThreshold = -0.25;
   double detectorScaleFactor = 0.0039;
   bool  detectorSwapRB = false;
 
@@ -153,15 +153,14 @@ int main(int argc, const char *argv [])
       .addArgument("video-device", videoDevice, true, "Video device")
       .addArgument("object", objectName, true, "Name of the object to track with megapose.")
 
-
       .addArgument("detector/model-path", detectorModelPath, true, "Path to the model")
       .addArgument("detector/config", detectorConfig, true, "Path to the model configuration. Set to none if config is not required.")
       .addArgument("detector/framework", detectorFramework, true, "Detector framework")
       .addArgument("detector/type", detectorTypeString, true, "Detector type")
       .addArgument("detector/labels", labels, true, "Detection class labels")
-      .addArgument("detector/mean/red", detectorMeanR, true, "Detector mean red component. Used to normalize image")
-      .addArgument("detector/mean/green", detectorMeanG, true, "Detector mean green component. Used to normalize image")
-      .addArgument("detector/mean/blue", detectorMeanB, true, "Detector mean red component. Used to normalize image")
+      .addArgument("detector/mean/red", detectorMeanR, false, "Detector mean red component. Used to normalize image")
+      .addArgument("detector/mean/green", detectorMeanG, false, "Detector mean green component. Used to normalize image")
+      .addArgument("detector/mean/blue", detectorMeanB, false, "Detector mean red component. Used to normalize image")
       .addArgument("detector/confidenceThreshold", detectorConfidenceThreshold, false, "Detector confidence threshold. When a detection with a confidence below this threshold, it is ignored")
       .addArgument("detector/nmsThreshold", detectorNmsThreshold, false, "Detector confidence threshold. When a detection with a confidence below this threshold, it is ignored")
       .addArgument("detector/filterThreshold", detectorFilterThreshold, false)
@@ -234,6 +233,7 @@ int main(int argc, const char *argv [])
     std::future<vpMegaPoseEstimate> trackerFuture;
     const auto waitTime = std::chrono::milliseconds(0);
     bool callMegapose = true;
+    
 
     while (true) {
       capture >> frame;
