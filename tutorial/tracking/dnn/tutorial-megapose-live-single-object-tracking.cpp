@@ -71,6 +71,7 @@ void overlayRender(vpImage<vpRGBa>& I, const vpImage<vpRGBa>& overlay) {
   }
 }
 
+//! [Detect]
 std::optional<vpRect> detectObjectForInitMegapose(vpDetectorDNNOpenCV &detector, const cv::Mat &I,
                                                   const std::string &detectionLabel,
                                                   std::optional<vpMegaPoseEstimate> previousEstimate)
@@ -93,7 +94,8 @@ std::optional<vpRect> detectObjectForInitMegapose(vpDetectorDNNOpenCV &detector,
     return matchingDetections[0].getBoundingBox();
   }
   else {
-    if (previousEstimate) { // Get detection that is closest to previous object bounding box estimated by megapose
+    // Get detection that is closest to previous object bounding box estimated by megapose
+    if (previousEstimate) {
       vpRect best;
       double bestDist = 10000.f;
       const vpImagePoint previousCenter = (*previousEstimate).boundingBox.getCenter();
@@ -124,6 +126,7 @@ std::optional<vpRect> detectObjectForInitMegapose(vpDetectorDNNOpenCV &detector,
   }
   return std::nullopt;
 }
+//! [Detect]
 
 int main(int argc, const char *argv [])
 {
@@ -173,9 +176,6 @@ int main(int argc, const char *argv [])
       .addArgument("megapose/initialisationNumSamples", coarseNumSamples, false, "Number of megapose renderings used for the initial pose estimation.");
 
     parser.parse(argc, argv);
-    std::cout << "Finished parsing" << std::endl;
-    std::cout << width << " " << height << std::endl;
-
 
     if(cam.get_projModel() != vpCameraParameters::perspectiveProjWithoutDistortion) {
       throw vpException(vpException::badValue, "The camera projection model should be without distortion, as other models are ignored by Megapose");
@@ -233,7 +233,7 @@ int main(int argc, const char *argv [])
     std::future<vpMegaPoseEstimate> trackerFuture;
     const auto waitTime = std::chrono::milliseconds(0);
     bool callMegapose = true;
-    
+
 
     while (true) {
       capture >> frame;

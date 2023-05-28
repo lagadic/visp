@@ -40,7 +40,7 @@
  */
 
 #include <visp3/core/vpIoTools.h>
-#include <visp3/mbt/vpMbGenericTracker.h>
+#include <visp3/io/vpJsonArgumentParser.h>
 
 #if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_CATCH2)
 #include <nlohmann/json.hpp>
@@ -83,6 +83,120 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
     modify(j);
     saveJson(j, jsonPath);
   };
+
+  GIVEN("Some JSON parameters saved in a file, and some C++ variables")
+  {
+    json j = json {
+      {"a", 2},
+      {"b", 2.0},
+      {"c", "a string"},
+      {"d", true},
+    };
+    saveJson(j, jsonPath);
+
+    int a = 1;
+    double b = 1.0;
+    std::string c = "";
+    bool d = false;
+    WHEN("Declaring a parser with all parameters required")
+    {
+      vpJsonArgumentParser parser("A program", "--config", "/");
+      parser.addArgument("a", a, true)
+        .addArgument("b", b, true)
+        .addArgument("c", c, true)
+        .addArgument("d", d, true);
+
+      THEN("Calling the parser without any argument fails")
+      {
+        const int argc = 1;
+        const char *argv [] = {
+          "program"
+        };
+
+        REQUIRE_THROWS(parser.parse(argc, argv));
+      }
+
+      THEN("Calling the parser with only the JSON file works")
+      {
+        const int argc = 3;
+        const char *argv [] = {
+          "program",
+          "--config",
+          jsonPath.c_str()
+        };
+        REQUIRE_NOTHROW(parser.parse(argc, argv));
+        REQUIRE(a == j["a"]);
+        REQUIRE(b == j["b"]);
+        REQUIRE(c == j["c"]);
+        REQUIRE(d == j["d"]);
+      }
+      THEN("Calling the parser by specifying the json argument but leaving the file path empty")
+      {
+        const int argc = 2;
+        const char *argv [] = {
+          "program",
+          "--config",
+        };
+        REQUIRE_THROWS(parser.parse(argc, argv));
+      }
+      THEN("Calling the parser with an invalid json file path")
+      {
+        const int argc = 3;
+        const char *argv [] = {
+          "program",
+          "--config",
+          "some_invalid_json/file/path.json"
+        };
+        REQUIRE_THROWS(parser.parse(argc, argv));
+      }
+      THEN("Calling the parser with only the command line arguments works")
+      {
+        const int newa = a + 1;
+        const double newb = b + 2.0;
+        const std::string newc = c + "hello";
+        const bool newd = !d;
+
+        const char *argv [] = {
+          "program",
+          "a", std::to_string(newa).c_str(),
+          "b", std::to_string(newb).c_str(),
+          "c", newc.c_str(),
+          "d", newd ? "true" : "false",
+        };
+        const int argc = 9;
+        REQUIRE_NOTHROW(parser.parse(argc, argv));
+        REQUIRE(a == newa);
+        REQUIRE(b == newb);
+        REQUIRE(c == newc);
+        REQUIRE(d == newd);
+      }
+      THEN("Calling the parser with JSON and command line argument works")
+      {
+        const int newa = a + 1;
+        const double newb = b + 2.0;
+
+        const char *argv [] = {
+          "program",
+          "--config", jsonPath.c_str(),
+          "a", std::to_string(newa).c_str(),
+          "b", std::to_string(newb).c_str()
+        };
+        const int argc = 7;
+        REQUIRE_NOTHROW(parser.parse(argc, argv));
+        REQUIRE(a == newa);
+        REQUIRE(b == newb);
+        REQUIRE(c == j["c"]);
+        REQUIRE(d == j["d"]);
+      }
+
+
+
+
+    }
+
+
+
+  }
 
 }
 int main(int argc, char *argv [])
