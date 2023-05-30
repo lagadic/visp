@@ -17,6 +17,9 @@ that simultaneously predict object boundaries and prediction scores at each posi
 If you want to use another type of network, you can define your own parsing method of the DNN detection results and give it to
 the `vpDetectorDNNOpenCV` object.
 
+This class can be initialized from a JSON file if ViSP has been compiled with NLOHMANN JSON (see \ref soft_tool_json to see how to do it).
+Examples of such JSON files can be found in the tutorial folder.
+
 In the next section you will find an example that shows how to perform face detection in a single image or in images acquired from
 a camera connected to your computer.
 
