@@ -280,7 +280,19 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector<DetectedFeatures2
   cv::dnn::blobFromImage(m_img, m_blob, m_scaleFactor, inputSize, m_mean, m_swapRB, false);
 
   m_net.setInput(m_blob);
-  m_net.forward(m_dnnRes, m_outNames);
+  try
+  {
+    m_net.forward(m_dnnRes, m_outNames);
+  }
+  catch(const cv::Exception& e)
+  {
+    std::cerr << "Caught an exception trying to run inference:" << std::endl << "\t"
+              << e.what()
+              <<"\nCuda and/or GPU driver might not be correctly installed. Setting preferable backend to CPU and trying again." << std::endl;
+    m_net.setPreferableBackend(cv::dnn::DNN_BACKEND_DEFAULT);
+    m_net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
+    m_net.forward(m_dnnRes, m_outNames);
+  }
 
   DetectionCandidates proposals;
   postProcess(proposals);
