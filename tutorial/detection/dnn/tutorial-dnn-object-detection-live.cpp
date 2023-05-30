@@ -6,6 +6,11 @@
 #include <visp3/gui/vpDisplayOpenCV.h>
 #include <visp3/gui/vpDisplayX.h>
 
+#ifdef VISP_HAVE_NLOHMANN_JSON
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+#endif
+
 typedef enum
 {
   DETECTION_CONTAINER_MAP = 0,
@@ -78,6 +83,8 @@ int main(int argc, const char *argv [])
     double opt_dnn_filterThresh = 0.25;
     ChosenDetectionContainer opt_dnn_containerType = DETECTION_CONTAINER_MAP;
     bool opt_verbose = false;
+    std::string opt_input_json = "";
+    std::string opt_output_json = "";
 
     for (int i = 1; i < argc; i++) {
       if (std::string(argv[i]) == "--device" && i + 1 < argc) {
@@ -136,6 +143,12 @@ int main(int argc, const char *argv [])
       else if (std::string(argv[i]) == "--container" && i + 1 < argc) {
         opt_dnn_containerType = chosenDetectionContainerFromString(std::string(argv[++i]));
       }
+      else if (std::string(argv[i]) == "--input-json" && i + 1 < argc) {
+        opt_input_json = std::string(std::string(argv[++i]));
+      }
+      else if (std::string(argv[i]) == "--output-json" && i + 1 < argc) {
+        opt_output_json = std::string(std::string(argv[++i]));
+      }
       else if (std::string(argv[i]) == "--verbose" || std::string(argv[i]) == "-v") {
         opt_verbose = true;
       }
@@ -155,6 +168,8 @@ int main(int argc, const char *argv [])
           << " [--filterThresh <threshold>]"
           << " [--labels <file>]"
           << " [--container <type>]"
+          << " [--input-json <path_to_input_json>]"
+          << " [--output-json <path_to_output_json>]"
           << " [--step-by-step]"
           << " [--verbose, -v]"
           << " [--help, -h]" << std::endl;
@@ -223,6 +238,14 @@ int main(int argc, const char *argv [])
           << "      Container type in " << getAvailableDetectionContainer() << std::endl
           << "      Default: " << chosenDetectionContainerToString(opt_dnn_containerType) << std::endl
           << std::endl
+          << "  --input-json <path_to_input_json>" << std::endl
+          << "      Input JSON file used to configure the DNN. If set, the other arguments will be used to override the values set in the json file." << std::endl
+          << "      Default: empty" << std::endl
+          << std::endl
+          << "  --output-json <type>" << std::endl
+          << "      Output JSON file where will be saved the DNN configuration. If empty, does not save the configuration." << std::endl
+          << "      Default: empty" << std::endl
+          << std::endl
           << "  --step-by-step" << std::endl
           << "      Enable step by step mode, waiting for a user click to process next image." << std::endl
           << std::endl
@@ -237,23 +260,7 @@ int main(int argc, const char *argv [])
     }
 
     std::cout << "Video device         : " << opt_device << std::endl;
-    std::cout << "Model                : " << opt_dnn_model << std::endl;
-    std::cout << "Type                 : " << vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(opt_dnn_type)
-      << std::endl;
-    std::cout << "Config               : " << (opt_dnn_config.empty() ? "\"None\"" : opt_dnn_config) << std::endl;
-    std::cout << "Framework            : " << (opt_dnn_framework.empty() ? "\"None\"" : opt_dnn_framework) << std::endl;
     std::cout << "Label file (optional): " << (opt_dnn_label_file.empty() ? "None" : opt_dnn_label_file) << std::endl;
-    std::cout << "Width x Height       : " << opt_dnn_width << " x " << opt_dnn_height << std::endl;
-    std::cout << "Mean RGB             : " << opt_dnn_meanR << " " << opt_dnn_meanG << " " << opt_dnn_meanB
-      << std::endl;
-    std::cout << "Scale                : " << opt_dnn_scale_factor << std::endl;
-    std::cout << "Swap RB?             : " << opt_dnn_swapRB << std::endl;
-    std::cout << "Confidence threshold : " << opt_dnn_confThresh << std::endl;
-    std::cout << "NMS threshold        : " << opt_dnn_nmsThresh << std::endl;
-    std::cout << "Filter threshold     : "
-      << (opt_dnn_filterThresh > std::numeric_limits<double>::epsilon() ? std::to_string(opt_dnn_filterThresh)
-        : "disabled")
-      << std::endl;
 
     cv::VideoCapture capture;
     bool hasCaptureOpeningSucceeded;
@@ -283,15 +290,46 @@ int main(int argc, const char *argv [])
         "The file containing the classes labels \"" + opt_dnn_label_file + "\" does not exist !"));
     }
 
-    //! [DNN params]
-    vpDetectorDNNOpenCV::NetConfig netConfig(opt_dnn_confThresh, opt_dnn_nmsThresh, opt_dnn_label_file,
-      cv::Size(opt_dnn_width, opt_dnn_height), opt_dnn_filterThresh);
-    vpDetectorDNNOpenCV dnn(netConfig, opt_dnn_type);
-    dnn.readNet(opt_dnn_model, opt_dnn_config, opt_dnn_framework);
-    dnn.setMean(opt_dnn_meanR, opt_dnn_meanG, opt_dnn_meanB);
-    dnn.setScaleFactor(opt_dnn_scale_factor);
-    dnn.setSwapRB(opt_dnn_swapRB);
-    //! [DNN params]
+    vpDetectorDNNOpenCV dnn;
+    #ifdef VISP_HAVE_NLOHMANN_JSON
+    if(!opt_input_json.empty())
+    {
+      //! [DNN json]
+      dnn.initFromJSON(opt_input_json); 
+      //! [DNN json]
+    }
+    #else
+    if(!opt_input_json.empty())
+    {
+      std::cerr << "Error: NLOHMANN JSON library is not installed, please install it following ViSP documentation to configure the vpDetectorDNNOpenCV from a JSON file." << std::endl;
+      return EXIT_FAILURE;
+    }
+    #endif
+    else
+    {
+      //! [DNN params]
+      vpDetectorDNNOpenCV::NetConfig netConfig(opt_dnn_confThresh, opt_dnn_nmsThresh, opt_dnn_label_file
+        , cv::Size(opt_dnn_width, opt_dnn_height), opt_dnn_filterThresh, cv::Scalar(opt_dnn_meanR, opt_dnn_meanG, opt_dnn_meanB)
+        , opt_dnn_scale_factor, opt_dnn_swapRB, opt_dnn_type
+        , opt_dnn_model, opt_dnn_config, opt_dnn_framework
+        );
+      dnn.setNetConfig(netConfig);
+      //! [DNN params]
+    }
+
+    std::cout << dnn.getNetConfig() << std::endl;
+
+    #ifdef VISP_HAVE_NLOHMANN_JSON
+    if(!opt_output_json.empty())
+    {
+      dnn.saveConfigurationInJSON(opt_output_json);
+    }
+    #else
+    if(!opt_output_json.empty())
+    {
+      std::cerr << "Error: NLOHMANN JSON library is not installed, please install it following ViSP documentation to save the configuration in a JSON file." << std::endl;
+    }
+    #endif
 
     cv::Mat frame;
     while (true) {

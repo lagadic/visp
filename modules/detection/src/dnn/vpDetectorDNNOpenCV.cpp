@@ -142,14 +142,14 @@ std::vector<std::string> vpDetectorDNNOpenCV::parseClassNamesFile(const std::str
 
 vpDetectorDNNOpenCV::vpDetectorDNNOpenCV()
   : m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
-  m_mean(127.5, 127.5, 127.5), m_net(), m_netConfig(0.5f, 0.4f, std::vector<std::string>(), cv::Size(300, 300)), m_outNames(), m_dnnRes(),
-  m_scaleFactor(2.0 / 255.0), m_swapRB(true), m_parsingMethodType(USER_SPECIFIED), m_parsingMethod(vpDetectorDNNOpenCV::postProcess_unimplemented)
+    m_net(), m_netConfig(), m_outNames(), m_dnnRes(),
+    m_parsingMethod(vpDetectorDNNOpenCV::postProcess_unimplemented)
 {
   setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
 }
 
 /**
- * \brief Construct a new \b vpDetectorDNNOpenCV object.
+ * \brief Construct a new \b vpDetectorDNNOpenCV object and, if the model file has been given to the \b config object, read the net by calling \b vpDetectorDNNOpenCV::readNet
  *
  * \param config The network configuration.
  * \param typeParsingMethod The type of parsing method that must be used to parse the raw results of the DNN detection step.
@@ -157,12 +157,75 @@ vpDetectorDNNOpenCV::vpDetectorDNNOpenCV()
  */
 vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const NetConfig &config, const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &))
   : m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
-  m_mean(127.5, 127.5, 127.5), m_net(), m_netConfig(config), m_outNames(), m_dnnRes(),
-  m_scaleFactor(2.0 / 255.0), m_swapRB(true)
+    m_net(), m_netConfig(config), m_outNames(), m_dnnRes()
 {
   setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
   setParsingMethod(typeParsingMethod, parsingMethod);
+  if(!m_netConfig.m_modelFilename.empty())
+  {
+    readNet(m_netConfig.m_modelFilename, m_netConfig.m_modelConfigFilename, m_netConfig.m_framework);
+  }
 }
+
+#ifdef VISP_HAVE_NLOHMANN_JSON
+/**
+ * \brief Construct a new vpDetectorDNNOpenCV object from a JSON file and a potential parsing method.
+ * 
+ * \param jsonPath The JSON file permitting to initialize the detector.
+ * \param parsingMethod If the user chose to use a user-specified parsing method, the parsing method that must be used to parse the raw results of the DNN detection step.
+ */
+vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const std::string &jsonPath,  void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat>&, const NetConfig &))
+: m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
+  m_net(), m_netConfig(), m_outNames(), m_dnnRes()
+{
+  initFromJSON(jsonPath);
+  setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
+  setParsingMethod(m_netConfig.m_parsingMethodType, parsingMethod);
+}
+
+/**
+ * \brief 
+ * 
+ * \param jsonPath 
+ */
+void vpDetectorDNNOpenCV::initFromJSON(const std::string &jsonPath)
+{
+  std::ifstream file(jsonPath);
+  if (!file.good()) {
+    std::stringstream ss;
+    ss << "Problem opening file " << jsonPath << ". Make sure it exists and is readable" << std::endl;
+    throw vpException(vpException::ioError, ss.str());
+  }
+  json j;
+  try {
+    j = json::parse(file);
+  }
+  catch (json::parse_error &e) {
+    std::stringstream msg;
+    msg << "Could not parse JSON file : \n";
+
+    msg << e.what() << std::endl;
+    msg << "Byte position of error: " << e.byte;
+    throw vpException(vpException::ioError, msg.str());
+  }
+  *this = j; // Call from_json(const json& j, vpDetectorDNN& *this) to read json
+  file.close();
+  readNet(m_netConfig.m_modelFilename, m_netConfig.m_modelConfigFilename, m_netConfig.m_framework);
+}
+
+/**
+ * \brief Save the network configuration in a JSON file.
+ * 
+ * \param jsonPath Path towards the output JSON file .
+ */
+void vpDetectorDNNOpenCV::saveConfigurationInJSON(const std::string &jsonPath) const
+{
+  std::ofstream file(jsonPath);
+  const json j = *this;
+  file << j.dump(4);
+  file.close();
+}
+#endif
 
 /**
  * \brief Destroy the \b vpDetectorDNNOpenCV object
@@ -277,7 +340,7 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector<DetectedFeatures2
 
   cv::Size inputSize(m_netConfig.m_inputSize.width > 0 ? m_netConfig.m_inputSize.width : m_img.cols,
     m_netConfig.m_inputSize.height > 0 ? m_netConfig.m_inputSize.height : m_img.rows);
-  cv::dnn::blobFromImage(m_img, m_blob, m_scaleFactor, inputSize, m_mean, m_swapRB, false);
+  cv::dnn::blobFromImage(m_img, m_blob, m_netConfig.m_scaleFactor, inputSize, m_netConfig.m_mean, m_netConfig.m_swapRB, false);
 
   m_net.setInput(m_blob);
   try
@@ -332,7 +395,7 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::map< std::string, std::v
 
   cv::Size inputSize(m_netConfig.m_inputSize.width > 0 ? m_netConfig.m_inputSize.width : m_img.cols,
     m_netConfig.m_inputSize.height > 0 ? m_netConfig.m_inputSize.height : m_img.rows);
-  cv::dnn::blobFromImage(m_img, m_blob, m_scaleFactor, inputSize, m_mean, m_swapRB, false);
+  cv::dnn::blobFromImage(m_img, m_blob, m_netConfig.m_scaleFactor, inputSize, m_netConfig.m_mean, m_netConfig.m_swapRB, false);
 
   m_net.setInput(m_blob);
   m_net.forward(m_dnnRes, m_outNames);
@@ -411,7 +474,7 @@ std::vector<cv::String> vpDetectorDNNOpenCV::getOutputsNames()
 */
 void vpDetectorDNNOpenCV::postProcess(DetectionCandidates &proposals)
 {
-  switch (m_parsingMethodType) {
+  switch (m_netConfig.m_parsingMethodType) {
   case YOLO_V3:
   case YOLO_V4:
     postProcess_YoloV3_V4(proposals, m_dnnRes, m_netConfig);
@@ -930,7 +993,7 @@ void vpDetectorDNNOpenCV::postProcess_ResNet_10(DetectionCandidates &proposals, 
 
 /*!
   Method throwing a \b vpException::functionNotImplementedError . It is called if the user set the
-  \b m_parsingMethodType to \b USER_DEFINED but didn't set the parsing method.
+  \b vpDetectorDNNOpenCV::NetConfig::m_parsingMethodType to \b USER_DEFINED but didn't set the parsing method.
 
   \param proposals : input/output that will contains all the detection candidates.
   \param dnnRes: raw results of the \b vpDetectorDNNOpenCV::detect step.
@@ -965,6 +1028,9 @@ void vpDetectorDNNOpenCV::postProcess_unimplemented(DetectionCandidates &proposa
 */
 void vpDetectorDNNOpenCV::readNet(const std::string &model, const std::string &config, const std::string &framework)
 {
+  m_netConfig.m_modelFilename = model;
+  m_netConfig.m_modelConfigFilename = config;
+  m_netConfig.m_framework = framework;
   m_net = cv::dnn::readNet(model, config, framework);
 #if (VISP_HAVE_OPENCV_VERSION == 0x030403)
   m_outNames = getOutputsNames();
@@ -982,6 +1048,11 @@ void vpDetectorDNNOpenCV::setNetConfig(const NetConfig &config)
 {
   m_netConfig = config;
   setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
+  setParsingMethod(m_netConfig.m_parsingMethodType);
+  if(!m_netConfig.m_modelFilename.empty())
+  {
+    readNet(m_netConfig.m_modelFilename, m_netConfig.m_modelConfigFilename, m_netConfig.m_framework);
+  }
 }
 
 /*!
@@ -1036,7 +1107,7 @@ void vpDetectorDNNOpenCV::setInputSize(const int &width, const int &height)
   \param meanG Mean value for G-channel
   \param meanB Mean value for R-channel
 */
-void vpDetectorDNNOpenCV::setMean(const double &meanR, const double &meanG, const double &meanB) { m_mean = cv::Scalar(meanR, meanG, meanB); }
+void vpDetectorDNNOpenCV::setMean(const double &meanR, const double &meanG, const double &meanB) { m_netConfig.m_mean = cv::Scalar(meanR, meanG, meanB); }
 
 /*!
   Set preferable backend for inference computation.
@@ -1059,8 +1130,8 @@ void vpDetectorDNNOpenCV::setPreferableTarget(const int &targetId) { m_net.setPr
 */
 void vpDetectorDNNOpenCV::setScaleFactor(const double &scaleFactor)
 {
-  m_scaleFactor = scaleFactor;
-  if ((m_parsingMethodType == YOLO_V7 || m_parsingMethodType == YOLO_V8) && m_scaleFactor != 1 / 255.) {
+  m_netConfig.m_scaleFactor = scaleFactor;
+  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8) && m_netConfig.m_scaleFactor != 1 / 255.) {
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] WARNING: scale factor should be 1/255. to normalize pixels value." << std::endl;
   }
 }
@@ -1070,7 +1141,7 @@ void vpDetectorDNNOpenCV::setScaleFactor(const double &scaleFactor)
   when the network has been trained on RGB image format (OpenCV uses
   BGR convention).
 */
-void vpDetectorDNNOpenCV::setSwapRB(const bool &swapRB) { m_swapRB = swapRB; }
+void vpDetectorDNNOpenCV::setSwapRB(const bool &swapRB) { m_netConfig.m_swapRB = swapRB; }
 
 /*!
   Set the type of parsing method that must be used to interpret the raw results of the DNN detection.
@@ -1081,16 +1152,16 @@ void vpDetectorDNNOpenCV::setSwapRB(const bool &swapRB) { m_swapRB = swapRB; }
 */
 void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &))
 {
-  m_parsingMethodType = typeParsingMethod;
+  m_netConfig.m_parsingMethodType = typeParsingMethod;
   m_parsingMethod = parsingMethod;
-  if ((m_parsingMethodType == YOLO_V7 || m_parsingMethodType == YOLO_V8) && m_scaleFactor != 1 / 255.) {
-    m_scaleFactor = 1 / 255.;
+  if ((m_netConfig.m_parsingMethodType == YOLO_V7 || m_netConfig.m_parsingMethodType == YOLO_V8) && m_netConfig.m_scaleFactor != 1 / 255.) {
+    m_netConfig.m_scaleFactor = 1 / 255.;
     std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] NB: scale factor changed to 1/255. to normalize pixels value." << std::endl;
   }
 
 #if defined(VISP_BUILD_DEPRECATED_FUNCTIONS)
-  if (m_parsingMethodType == SSD_MOBILENET) {
-    std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] WARNING: The chosen type of network is " << dnnResultsParsingTypeToString(m_parsingMethodType) << " VISP_BUILD_DEPRECATED_FUNCTIONS is set to true." << std::endl;
+  if (m_netConfig.m_parsingMethodType == SSD_MOBILENET) {
+    std::cout << "[vpDetectorDNNOpenCV::setParsingMethod] WARNING: The chosen type of network is " << dnnResultsParsingTypeToString(m_netConfig.m_parsingMethodType) << " VISP_BUILD_DEPRECATED_FUNCTIONS is set to true." << std::endl;
     std::cout << "\tThe parsing method that worked with  the networks quoted in the ViSP documentation was postProcess_ResNet_10 instead of postProcess_SSD_MobileNet." << std::endl;
     std::cout << "\tIf the SSD-MobileNet network does not seem to work, please try to recompile ViSP setting VISP_BUILD_DEPRECATED_FUNCTIONS as false." << std::endl << std::flush;
   }
