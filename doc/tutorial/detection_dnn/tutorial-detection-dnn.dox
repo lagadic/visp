@@ -179,14 +179,16 @@ To construct `netConfig` object some configuration parameters of the DNN are req
 - `nmsThresh`, which is the Non-Maximum Threshold used to filter multiple detections that can occur approximatively at the same locations,
 - `labelFile`, which is the path towards the file containing the list of classes the DNN can detect,
 - `inputWidth` and `inputHeight`, which are the dimensions to resize the input image into the blob that is fed in entry of the network,
-- `detectionFilter`, which is a boolean indicating if the user wants to perform an additional filtering on the detection outputs based on the
+- `filterThresh`, which is a double that, if greater than 0., indicates that the user wants to perform an additional filtering on the detection outputs based on the
 size of these detections.
-
-Then to construct `dnn` object, the other parameters are the following:
-- `model` is the network trained weights, `config` is the network topology description.
-- `meanR`, `meanG` and `meanB` are the values used for mean subtraction.
 - `scaleFactor` is used to normalize the data range.
 - `swapRB` should be set to `true` when the model has been trained on RGB data. Since OpenCV used the BGR convention, R and B channel should be swapped.
+- `meanR`, `meanG` and `meanB` are the values used for mean subtraction.
+- `model` is the network trained weights, `config` is the network topology description and `framework` is the weights framework.
+
+Alternatively, if ViSP has been compiled with the NLOHMANN JSON library, one can initialize the `vpDetectorDNNOpenCV` object using the following method:
+
+\snippet tutorial-dnn-object-detection-live.cpp DNN json
 
 You can directly refer to the <a href="https://github.com/opencv/opencv/tree/master/samples/dnn">OpenCV model zoo</a> for the parameters values.
 
@@ -264,6 +266,12 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
     --confThresh 0.35 --filterThresh -0.25 --scale 1
 ```
 
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+you can use the following command line:
+```
+$ ./tutorial-dnn-object-detection-live --input-json ./default_faster-rcnn.json
+```
+
 If you want to train your own Faster-RCNN model, please refer to this [tutorial](https://debuggercafe.com/how-to-train-faster-rcnn-resnet50-fpn-v2-on-custom-dataset/).
 
 \subsubsection dnn_supported_mobilenet_ssd MobileNet SSD
@@ -289,6 +297,12 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
     --filterThresh -0.25 --scale 1
 ```
 
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+you can use the following command line:
+```
+$ ./tutorial-dnn-object-detection-live --input-json ./default_ssd-mobilenet_v1.json
+```
+
 If you would rather use the v3 of Mobilenet-SSD, please download the config file (`ssd_mobilenet_v3_large_coco_2020_01_14.pbtxt`)
 [here](https://gist.github.com/dkurt/54a8e8b51beb3bd3f770b79e56927bd7),
 the weights (`frozen_inference_graph.pb`) [there](http://download.tensorflow.org/models/object_detection/ssd_mobilenet_v3_large_coco_2020_01_14.tar.gz)
@@ -306,6 +320,12 @@ $ DNN_PATH=/path/to/my/dnn/folder \
 $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
     --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0.0019 0.0019 0.0019 \
     --filterThresh -0.25 --scale 0.00389
+```
+
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+you can use the following command line:
+```
+$ ./tutorial-dnn-object-detection-live --input-json ./default_ssd-mobilenet_v3.json
 ```
 
 If you want to train your own MobileNet SSD model, please refer to this
@@ -332,6 +352,12 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
     --filterThresh -0.25 --scale 0.0039
 ```
 
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+you can use the following command line:
+```
+$ ./tutorial-dnn-object-detection-live --input-json ./default_yolov3.json
+```
+
 If you want to train your own YoloV3 model, please refer to the [official documentation](https://github.com/ultralytics/yolov3).
 
 \subsubsection dnn_supported_yolov4 Yolo v4
@@ -352,6 +378,12 @@ $ DNN_PATH=/path/to/my/dnn/folder \
 $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
     --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
     --filterThresh -0.25 --scale 0.0039
+```
+
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+you can use the following command line:
+```
+$ ./tutorial-dnn-object-detection-live --input-json ./default_yolov4.json
 ```
 
 If you want to train your own YoloV4 model, please refer to the [official documentation](https://github.com/AlexeyAB/darknet#how-to-train-to-detect-your-custom-objects).
@@ -375,6 +407,12 @@ $ DNN_PATH=/path/to/my/dnn/folder \
 $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
     --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
     --filterThresh -0.25 --scale 0.0039
+```
+
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+you can use the following command line:
+```
+$ ./tutorial-dnn-object-detection-live --input-json ./default_yolov5.json
 ```
 
 If you want to train your own YoloV5 model, please refer to the
@@ -406,7 +444,15 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
 
 \note You do not need a config file when using a network saved in ONNX format.
 
-If you want to train your own YoloV7 model, please refer to the [official documentation](https://github.com/WongKinYiu/yolov7#transfer-learning).
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+you can use the following command line:
+```
+$ ./tutorial-dnn-object-detection-live --input-json ./default_yolov7.json
+```
+
+If you want to train your own YoloV7 model, please refer to the [official documentation](https://github.com/WongKinYiu/yolov7#transfer-learning). 
+If your dataset is rather small (only hundreds of pictures), you may want to consider to base your training on
+`yolov7-tiny` network, as it tends to get better results.
 
 \subsubsection dnn_supported_yolov8 Yolo v8
 
@@ -426,6 +472,12 @@ $ DNN_PATH=/path/to/my/dnn/folder \
 $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config $CONFIG --type $TYPE \
     --framework $FRAMEWORK --width $WIDTH --height $HEIGHT --nmsThresh 0.5 --mean 0 0 0 \
     --filterThresh -0.25 --scale 0.0039
+```
+
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+you can use the following command line:
+```
+$ ./tutorial-dnn-object-detection-live --input-json ./default_yolov8.json
 ```
 
 \note You do not need a config file when using a network saved in ONNX format.
@@ -466,6 +518,19 @@ implemented in function 'ReadDarknetFromWeightsStream'
 
 Following the proposition found [here](https://github.com/opencv/opencv/issues/15502#issuecomment-531755462) to download once
 again the weights from [here](https://pjreddie.com/media/files/yolov3.weights) permitted to solve this error.
+
+\subsection dnn_error_nonmaxsuppr YoloV7: can't create NonMaxSuppression layer
+
+When using a YoloV7 model exported in `onnx` format, one can face the following error:
+```
+[ERROR:0@0.335] global onnx_importer.cpp:1054 handleNode DNN/ONNX: ERROR during processing node with 5 inputs and 1 outputs: [NonMaxSuppression]onnx_node!/end2end/NonMaxSuppression) from domain='ai.onnx' 
+terminate called after throwing an instance of 'cv::Exception'
+what():  OpenCV(4.7.0) opencv/modules/dnn/src/onnx/onnx_importer.cpp:1073: error: (-2:Unspecified error) in function 'handleNode'
+Node [NonMaxSuppression@ai.onnx]onnx_node!/end2end/NonMaxSuppression) parse error: OpenCV(4.7.0) opencv/modules/dnn/src/net_impl.hpp:108: error: (-2:Unspecified error) Can't create layer "onnx_node!/end2end/NonMaxSuppression" of type "NonMaxSuppression" in function 'getLayerInstance'
+Aborted (core dumped)
+```
+
+You may have been missing the onnxsim library or forgotten to remove the `--end2end` during the export of the network.
 
 \section dnn_next Next tutorial
 
