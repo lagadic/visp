@@ -1040,7 +1040,8 @@ void vpDetectorDNNOpenCV::readNet(const std::string &model, const std::string &c
 }
 
 /*!
- * Configure the DNN (thresholds, input size, ...)
+ * Configure the DNN (thresholds, input size, ...).
+ * If the DNN weights file is known, initialize the \b m_net by reading the weights.
  *
  * \param config: the desired configuration of the network
  */
