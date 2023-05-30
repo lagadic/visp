@@ -424,12 +424,12 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraPar
     double x = P.get_x(); 
     double y = P.get_y();
 
-    double u_initial, v_initial;
+    double u_initial = 0., v_initial = 0.;
     vpMeterPixelConversion::convertPoint(cam, x, y, u_initial,v_initial);
   
     P.track(cMo);
 
-    double u_moved, v_moved;
+    double u_moved = 0., v_moved = 0.;
     vpMeterPixelConversion::convertPoint(cam, P.get_x(), P.get_y(), u_moved,v_moved);
 
     double squaredResidual = vpMath::sqr(u_moved - u_initial) + vpMath::sqr(v_moved - v_initial);
