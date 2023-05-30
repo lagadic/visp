@@ -97,7 +97,10 @@ int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const v
   // Test done on the 3D pose
   for (unsigned int i = 0; i < 6; i++) {
     if (std::fabs(pose_ref[i] - pose_est[i]) > 0.001)
+    {
       fail_3d = 1;
+      std::cout << "ref[" << i << "] - est[" << i << "] = " << pose_ref[i] - pose_est[i] << " > 0.001 " << std::endl;
+    }
   }
 
   std::cout << "Based on 3D parameters " << legend << " is " << (fail_3d ? "badly" : "well") << " estimated" << std::endl;
@@ -418,10 +421,10 @@ int main()
     //
     // Test computeResidual with results expressed in pixel
     //
-    {
-      std::cout << "Start test considering planar case with 4 points, based on pixels..." << std::endl;
-      std::cout << "===================================================" << std::endl;
 
+    std::cout << "Start test considering planar case with 4 points and noise on the projection..." << std::endl;
+    std::cout << "===================================================" << std::endl;
+    {
       vpPoseVector cpo_ref = vpPoseVector(-0.01, -0.02, 0.3, vpMath::rad(20), vpMath::rad(-20), vpMath::rad(10));
       vpHomogeneousMatrix cMo_ref(cpo_ref);
 
@@ -435,12 +438,15 @@ int main()
       P[3].setWorldCoordinates(-L, L, Z);
 
       vpPose pose;
-      vpGaussRand random(0.33, 0., 42); // Gaussian noise of mean = 0. and sigma = 1.
+      vpGaussRand random(0.08, 0., 42); // Gaussian noise of mean = 0. and sigma = 1.
 
       for (int i = 0; i < npt; i++) {
+        // Projecting point in camera frame
+        P[i].project(cMo_ref);
+
         // Computing theoretical u and v based on the 2D coordinates
-        double x_theo = P[i].get_oX() / P[i].get_oZ();
-        double y_theo =P[i].get_oY() / P[i].get_oZ();
+        double x_theo = P[i].get_X() / P[i].get_Z();
+        double y_theo =P[i].get_Y() / P[i].get_Z();
         double u_theo = 0., v_theo = 0.;
         vpMeterPixelConversion::convertPoint(cam, x_theo, y_theo, u_theo, v_theo); 
 
@@ -533,6 +539,129 @@ int main()
     }
 
     //
+    // Test non-planar case with 6 points (at least 6 points for Lagrange non planar)
+    //
+
+    std::cout << "\nStart test considering non-planar case with 6 points and noise on the projection..." << std::endl;
+    std::cout << "=======================================================" << std::endl;
+
+    {
+      vpPoseVector cpo_ref = vpPoseVector(0.01, 0.02, 0.25, vpMath::rad(5), 0, vpMath::rad(10));
+      vpHomogeneousMatrix cMo_ref(cpo_ref);
+
+      int npt = 6;
+      std::vector<vpPoint> P(npt);         //  Point to be tracked
+      P[0].setWorldCoordinates(-L, -L, 0); // Lagrange not accurate...
+      P[0].setWorldCoordinates(-L, -L, -0.02);
+      P[1].setWorldCoordinates(L, -L, 0);
+      P[2].setWorldCoordinates(L, L, 0);
+      P[3].setWorldCoordinates(-2 * L, 3 * L, 0);
+      P[4].setWorldCoordinates(-L, L, 0.01);
+      P[5].setWorldCoordinates(L, L / 2., 0.03);
+
+      vpPose pose;
+      vpGaussRand random(0.08, 0., 42); // Gaussian noise of mean = 0. and sigma = 1.
+
+      for (int i = 0; i < npt; i++) {
+        // Projecting point in camera frame
+        P[i].project(cMo_ref);
+
+        // Computing theoretical u and v based on the 2D coordinates
+        double x_theo = P[i].get_X() / P[i].get_Z();
+        double y_theo =P[i].get_Y() / P[i].get_Z();
+        double u_theo = 0., v_theo = 0.;
+        vpMeterPixelConversion::convertPoint(cam, x_theo, y_theo, u_theo, v_theo); 
+
+        // Adding noise to u, v 
+        double u_noisy = u_theo + random();
+        double v_noisy = v_theo + random();
+
+        // Computing corresponding x, y
+        double x_noisy = 0., y_noisy = 0.;
+        vpPixelMeterConversion::convertPoint(cam, u_noisy, v_noisy, x_noisy, y_noisy);
+        
+        P[i].set_x(x_noisy);
+        P[i].set_y(y_noisy);
+        
+        pose.addPoint(P[i]); // and added to the pose computation class
+        std::cout << "P[" << i << "]:\n\tu_theo = " << u_theo << "\tu_noisy = " << u_noisy << std::endl;
+        std::cout <<                  "\tv_theo = " << v_theo << "\tv_noisy = " << v_noisy << std::endl;
+        std::cout <<                  "\tx_theo = " << x_theo << "\ty_noisy = " << x_noisy << std::endl;
+        std::cout <<                  "\ty_theo = " << y_theo << "\tx_noisy = " << y_noisy << std::endl;
+      }
+
+      // Let's go ...
+      print_pose(cMo_ref, std::string("Reference pose"));
+
+      std::cout << "-------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::LAGRANGE, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Lagrange"));
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Lagrange");
+      test_non_planar_fail |= fail;
+
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::DEMENTHON, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Dementhon"));
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Dementhon");
+      test_non_planar_fail |= fail;
+
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.setRansacNbInliersToReachConsensus(4);
+      pose.setRansacThreshold(0.01);
+      pose.computePose(vpPose::RANSAC, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Ransac"));
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Ransac");
+      test_non_planar_fail |= fail;
+
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::LAGRANGE_LOWE, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Lagrange then Lowe"));
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Lagrange then Lowe");
+      test_non_planar_fail |= fail;
+
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::DEMENTHON_LOWE, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Dementhon then Lowe"));
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Dementhon then Lowe");
+      test_non_planar_fail |= fail;
+
+      // Now Virtual Visual servoing
+
+      std::cout << "--------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::VIRTUAL_VS, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by VVS"));
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by VVS");
+      test_non_planar_fail |= fail;
+
+      std::cout << "-------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Dementhon then by VVS"));
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Dementhon then by VVS");
+      test_non_planar_fail |= fail;
+
+      std::cout << "-------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS, cMo);
+
+      print_pose(cMo, std::string("Pose estimated by Lagrange then by VVS"));
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Lagrange then by VVS");
+      test_non_planar_fail |= fail;
+
+      std::cout << "-------------------------------------------------" << std::endl;
+      pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
+
+      print_pose(cMo, std::string("Pose estimated  either by Dementhon or Lagrange then by VVS"));
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose either by Dementhon or Lagrange then by VVS");
+      test_non_planar_fail |= fail;
+    }
+
+    //
     // Test non-planar case with 4 points (Lagrange can not be used)
     //
 
@@ -552,12 +681,15 @@ int main()
       vpPoseVector cpo_ref = vpPoseVector(-0.1, -0.2, 0.8, vpMath::rad(10), vpMath::rad(-10), vpMath::rad(25));
       vpHomogeneousMatrix cMo_ref(cpo_ref);
 
-      vpGaussRand random(0.33, 0., 42); // Gaussian noise of mean = 0. and sigma = 1.
+      vpGaussRand random(0.08, 0., 42); // Gaussian noise of mean = 0. and sigma = 1.
 
       for (int i = 0; i < npt; i++) {
+        // Projecting point in camera frame
+        P[i].project(cMo_ref);
+
         // Computing theoretical u and v based on the 2D coordinates
-        double x_theo = P[i].get_oX() / P[i].get_oZ();
-        double y_theo =P[i].get_oY() / P[i].get_oZ();
+        double x_theo = P[i].get_X() / P[i].get_Z();
+        double y_theo =P[i].get_Y() / P[i].get_Z();
         double u_theo = 0., v_theo = 0.;
         vpMeterPixelConversion::convertPoint(cam, x_theo, y_theo, u_theo, v_theo); 
 
