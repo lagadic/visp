@@ -109,6 +109,27 @@ On a Debian distribution, you would run:
   $ sudo make install
   ```
 
+9. When using the `vpDetectorDNNOpenCV` class, please first call the  
+methods `vpDetectorDNNOpenCV::setPreferableBackend` and `vpDetectorDNNOpenCV::setPreferableTarget` 
+before running the inference if you want to benefit from GPU acceleration:
+  ```
+  vpDetectorDNNOpenCV::NetConfig my_config;
+  // Set my_config to match your needs
+
+  vpDetectorDNNOpenCV::DNNResultsParsingType parsingType = USER_SPECIFIED;
+  // Either define your parsing method or  change the parsing type for one that is supported
+  void (*dummyParsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &) = 
+    [](DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &)
+    {
+      std::cout << "Hello world" << std::endl;
+    }; 
+
+  vpDetectorDNNOpenCV network(my_config, dummyParsingMethod);
+  
+  // Here are the important calls to use GPU acceleration
+  network.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
+  network.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
+  ```
 \subsection install_opencv_from_package Install OpenCV from package
 
 Please follow the instuctions described in the installation guidelines for \ref soft_vision_opencv .
