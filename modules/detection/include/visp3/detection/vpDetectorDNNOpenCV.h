@@ -71,6 +71,9 @@ using json = nlohmann::json;
   - Yolo v7, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov7 network
   - Yolo v8, see usage to detect objects belonging to the COCO dataset using \ref dnn_supported_yolov8 network
 
+  This class can be initialized from a JSON file if ViSP has been compiled with NLOHMANN JSON (see \ref soft_tool_json to see how to do it).
+  Examples of such JSON files can be found in the tutorial folder.
+
   \sa \ref tutorial-detection-dnn
 */
 class VISP_EXPORT vpDetectorDNNOpenCV
