@@ -261,6 +261,23 @@ public:
 
     }
 
+    inline NetConfig(const NetConfig &config)
+      : m_confThreshold(config.m_confThreshold)
+      , m_nmsThreshold(config.m_nmsThreshold)
+      , m_classNames(config.m_classNames)
+      , m_inputSize(config.m_inputSize.width, config.m_inputSize.height)
+      , m_filterSizeRatio(config.m_filterSizeRatio)
+      , m_mean(cv::Scalar(config.m_mean[0], config.m_mean[1], config.m_mean[2]))
+      , m_scaleFactor(config.m_scaleFactor)
+      , m_swapRB(config.m_swapRB)
+      , m_parsingMethodType(config.m_parsingMethodType)
+      , m_modelFilename(config.m_modelFilename)
+      , m_modelConfigFilename(config.m_modelConfigFilename)
+      , m_framework(config.m_framework)
+    {
+
+    }
+
     /**
      * \brief Construct a new Net Config object
      *
@@ -494,6 +511,12 @@ public:
       };
     }
     #endif
+
+  inline friend std::ostream& operator<<(std::ostream& os, const vpDetectorDNNOpenCV &network)
+  {
+    os << network.m_netConfig;
+    return os;
+  }
 
 protected:
 #if (VISP_HAVE_OPENCV_VERSION == 0x030403)
