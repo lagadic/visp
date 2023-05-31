@@ -184,9 +184,9 @@ To construct `netConfig` object some configuration parameters of the DNN are req
 - `inputWidth` and `inputHeight`, which are the dimensions to resize the input image into the blob that is fed in entry of the network,
 - `filterThresh`, which is a double that, if greater than 0., indicates that the user wants to perform an additional filtering on the detection outputs based on the
 size of these detections.
+- `meanR`, `meanG` and `meanB` are the values used for mean subtraction.
 - `scaleFactor` is used to normalize the data range.
 - `swapRB` should be set to `true` when the model has been trained on RGB data. Since OpenCV used the BGR convention, R and B channel should be swapped.
-- `meanR`, `meanG` and `meanB` are the values used for mean subtraction.
 - `model` is the network trained weights, `config` is the network topology description and `framework` is the weights framework.
 
 Alternatively, if ViSP has been compiled with the NLOHMANN JSON library, one can initialize the `vpDetectorDNNOpenCV` object using the following method:
