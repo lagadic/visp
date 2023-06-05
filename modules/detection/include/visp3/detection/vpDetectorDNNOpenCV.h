@@ -175,273 +175,295 @@ public:
    * \struct NetConfig
    * \brief Structure containing some information required for the configuration of a \b vpDetectorDNNOpenCV object.
    */
-  typedef struct NetConfig
+  typedef class NetConfig
   {
-    float m_confThreshold;               /*!< Threshold to filter detections by confidence.*/
-    float m_nmsThreshold;                /*!< Threshold for Non-Maximum Suppression.*/
-    std::vector<std::string> m_classNames;/*!< Vector containing the names of the different classes the DNN can detect.*/
-    cv::Size m_inputSize;                 /*!<  Size of the images the DNN can manipulate. The input images will be resized to match these dimensions.*/
-    double m_filterSizeRatio;             /*!<  Size ratio used by the \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods.
-                                                If <= 0., the \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods are not used.*/
-    cv::Scalar m_mean; /*!< Values for mean subtraction.*/
-    double m_scaleFactor; /*!< Scale factor to normalize pixel values.*/
-    bool m_swapRB; /*<! If true, swap R and B for mean subtraction, e.g. when a model has been trained on BGR image format.*/
-    DNNResultsParsingType m_parsingMethodType; /*!< Parsing method that should be used to parse the cv::Mat returned by the cv::dnn::Net::forward method.*/
-    std::string m_modelFilename; /*!< Path towards the model file.*/
-    std::string m_modelConfigFilename; /*<! Path towards the model additional configuration file, e.g. pbtxt file.*/
-    std::string m_framework; /*!< Model framework.*/
-    /**
-     * \brief Parse the file containing the list of classes the DNN can detect.
-     * These classes can be written either as a YAML array (i.e. ["classname_0", ... ,"classname_last"])
-     * or with one classname by row (without quotes).
-     *
-     * For example, in the case of a yaml file called `my-classes.yaml`, one content could be:
-     \verbatim
-     $ cat my-classes.yaml
-     [ "person", "bicycle", "car"]
-     \endverbatim
-     *
-     * And in the case of a text file called `my-classes.txt`, similar content could be:
-     \verbatim
-     $ cat my-classes.txt
-     person
-     bicycle
-     car
-     \endverbatim
-     *
-     * \param filename The path towards the file containing the list of classes the DNN can detect.
-     * \return std::vector<std::string> The list of classes the DNN can detect.
-     */
-    inline static std::vector<std::string> parseClassNamesFile(const std::string &filename)
-    {
-      std::vector<std::string> classNames;
-      std::ifstream ifs(filename);
-      std::string line;
-      while (getline(ifs, line)) {
-        if (line.find("[") == std::string::npos) {
-          classNames.push_back(line);
-        } else {
-          std::string lineWithoutBracket;
-          if (line.find("[") != std::string::npos) {
-            lineWithoutBracket = line.substr(line.find("[") + 1, line.size() - 2); // Remove opening and closing brackets
-          }
+    private:
+      float m_confThreshold;               /*!< Threshold to filter detections by confidence.*/
+      float m_nmsThreshold;                /*!< Threshold for Non-Maximum Suppression.*/
+      std::vector<std::string> m_classNames;/*!< Vector containing the names of the different classes the DNN can detect.*/
+      cv::Size m_inputSize;                 /*!<  Size of the images the DNN can manipulate. The input images will be resized to match these dimensions.*/
+      double m_filterSizeRatio;             /*!<  Size ratio used by the \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods.
+                                                  If <= 0., the \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods are not used.*/
+      cv::Scalar m_mean; /*!< Values for mean subtraction.*/
+      double m_scaleFactor; /*!< Scale factor to normalize pixel values.*/
+      bool m_swapRB; /*<! If true, swap R and B for mean subtraction, e.g. when a model has been trained on BGR image format.*/
+      DNNResultsParsingType m_parsingMethodType; /*!< Parsing method that should be used to parse the cv::Mat returned by the cv::dnn::Net::forward method.*/
+      std::string m_modelFilename; /*!< Path towards the model file.*/
+      std::string m_modelConfigFilename; /*<! Path towards the model additional configuration file, e.g. pbtxt file.*/
+      std::string m_framework; /*!< Model framework.*/
+    
+      #ifdef VISP_HAVE_NLOHMANN_JSON
+      /**
+       * \brief Read the network configuration from JSON. All values are optional and if an argument is not present,
+       * the default value defined in the constructor is kept
+       * 
+       * \param j The JSON object, resulting from the parsing of a JSON file.
+       * \param config The configuration of the network, that will be initialized from the JSON data.
+       */
+      inline friend void from_json(const json &j, NetConfig &config)
+      {
+        config.m_confThreshold = j.value("confidenceThreshold", config.m_confThreshold);
+        if (config.m_confThreshold <= 0) {
+          throw vpException(vpException::badValue, "Confidence threshold should be > 0");
+        }
 
-          while (!lineWithoutBracket.empty()) {
-            std::string className;
-            auto start_pos = lineWithoutBracket.find("\"");
-            auto end_pos = lineWithoutBracket.find("\"", start_pos + 1);
-            className = lineWithoutBracket.substr(start_pos + 1, end_pos - (start_pos + 1));
-            if (!className.empty()) {
-              classNames.push_back(className);
-              lineWithoutBracket = lineWithoutBracket.substr(end_pos + 1);
+        config.m_nmsThreshold = j.value("nmsThreshold", config.m_nmsThreshold);
+        if (config.m_nmsThreshold <= 0) {
+          throw vpException(vpException::badValue, "Confidence threshold should be > 0");
+        }
+
+        config.m_filterSizeRatio = j.value("filterSizeRatio", config.m_filterSizeRatio);
+        
+        config.m_classNames = j.value("classNames", config.m_classNames);
+
+        std::pair<unsigned int, unsigned int> resolution = j.value("resolution", std::pair<unsigned int, unsigned int>(config.m_inputSize.width, config.m_inputSize.height) );
+        config.m_inputSize.width  = resolution.first;
+        config.m_inputSize.height = resolution.second;
+
+        std::vector<double> v_mean  = j.value("mean", std::vector<double>({config.m_mean[0], config.m_mean[1], config.m_mean[2]}));
+        if(v_mean.size() != 3)
+        {
+          throw(vpException(vpException::dimensionError, "Mean should have size = 3"));
+        }
+        config.m_mean              = cv::Scalar(v_mean[0], v_mean[1], v_mean[2]);
+
+        config.m_scaleFactor       = j.value("scale", config.m_scaleFactor);
+        config.m_swapRB            = j.value("swapRB", config.m_swapRB);
+        config.m_parsingMethodType   = dnnResultsParsingTypeFromString(j.value("parsingType", dnnResultsParsingTypeToString(config.m_parsingMethodType)));
+        config.m_modelFilename       = j.value("modelFile", config.m_modelFilename);
+        config.m_modelConfigFilename = j.value("configurationFile", config.m_modelConfigFilename);
+        config.m_framework           = j.value("framework", config.m_framework);
+      }
+
+      /**
+       * \brief Parse a vpDetectorDNNOpenCV::NetConfig into JSON format.
+       * 
+       * \param j A JSON parser object.
+       * \param config The vpDetectorDNNOpenCV::NetConfig that must be parsed into JSON format.
+       */
+      inline friend void to_json(json &j, const NetConfig &config)
+      {
+        std::pair<unsigned int, unsigned int> resolution = {config.m_inputSize.width, config.m_inputSize.height};
+        std::vector<double> v_mean = {config.m_mean[0], config.m_mean[1], config.m_mean[2]};
+        j = json {
+          {"confidenceThreshold", config.m_confThreshold  } ,
+          {"nmsThreshold"       , config.m_nmsThreshold   } ,
+          {"filterSizeRatio"    , config.m_filterSizeRatio} ,
+          {"classNames"         , config.m_classNames     } ,
+          {"resolution"         , resolution              } ,
+          {"mean"           , v_mean                      } ,
+          {"scale"          , config.m_scaleFactor        } ,
+          {"swapRB"         , config.m_swapRB             } ,
+          {"parsingType"    , dnnResultsParsingTypeToString(config.m_parsingMethodType) },
+          {"modelFile"          , config.m_modelFilename           } ,
+          {"configurationFile"  , config.m_modelConfigFilename     } ,
+          {"framework"          , config.m_framework               } 
+        };
+      }
+      #endif
+
+    public:
+      /**
+       * \brief Parse the file containing the list of classes the DNN can detect.
+       * These classes can be written either as a YAML array (i.e. ["classname_0", ... ,"classname_last"])
+       * or with one classname by row (without quotes).
+       *
+       * For example, in the case of a yaml file called `my-classes.yaml`, one content could be:
+       \verbatim
+      $ cat my-classes.yaml
+      [ "person", "bicycle", "car"]
+      \endverbatim
+      *
+      * And in the case of a text file called `my-classes.txt`, similar content could be:
+      \verbatim
+      $ cat my-classes.txt
+      person
+      bicycle
+      car
+      \endverbatim
+      *
+      * \param filename The path towards the file containing the list of classes the DNN can detect.
+      * \return std::vector<std::string> The list of classes the DNN can detect.
+      */
+      inline static std::vector<std::string> parseClassNamesFile(const std::string &filename)
+      {
+        std::vector<std::string> classNames;
+        std::ifstream ifs(filename);
+        std::string line;
+        while (getline(ifs, line)) {
+          if (line.find("[") == std::string::npos) {
+            classNames.push_back(line);
+          } else {
+            std::string lineWithoutBracket;
+            if (line.find("[") != std::string::npos) {
+              lineWithoutBracket = line.substr(line.find("[") + 1, line.size() - 2); // Remove opening and closing brackets
+            }
+
+            while (!lineWithoutBracket.empty()) {
+              std::string className;
+              auto start_pos = lineWithoutBracket.find("\"");
+              auto end_pos = lineWithoutBracket.find("\"", start_pos + 1);
+              className = lineWithoutBracket.substr(start_pos + 1, end_pos - (start_pos + 1));
+              if (!className.empty()) {
+                classNames.push_back(className);
+                lineWithoutBracket = lineWithoutBracket.substr(end_pos + 1);
+              }
             }
           }
         }
-      }
-      return classNames;
-    }
-
-    /**
-     * \brief Default constructor of the structure \b vpDetectorDNNOpenCV::NetConfig , required for JSON serialization/deserialization.
-     */
-    inline NetConfig()
-      : m_confThreshold(0.5f)
-      , m_nmsThreshold(0.4f)
-      , m_classNames()
-      , m_inputSize(300, 300)
-      , m_filterSizeRatio(0.)
-      , m_mean(127.5, 127.5, 127.5)
-      , m_scaleFactor(2.0 / 255.0)
-      , m_swapRB(true)
-      , m_parsingMethodType(vpDetectorDNNOpenCV::USER_SPECIFIED)
-      , m_modelFilename()
-      , m_modelConfigFilename()
-      , m_framework()
-    {
-
-    }
-
-    inline NetConfig(const NetConfig &config)
-      : m_confThreshold(config.m_confThreshold)
-      , m_nmsThreshold(config.m_nmsThreshold)
-      , m_classNames(config.m_classNames)
-      , m_inputSize(config.m_inputSize.width, config.m_inputSize.height)
-      , m_filterSizeRatio(config.m_filterSizeRatio)
-      , m_mean(cv::Scalar(config.m_mean[0], config.m_mean[1], config.m_mean[2]))
-      , m_scaleFactor(config.m_scaleFactor)
-      , m_swapRB(config.m_swapRB)
-      , m_parsingMethodType(config.m_parsingMethodType)
-      , m_modelFilename(config.m_modelFilename)
-      , m_modelConfigFilename(config.m_modelConfigFilename)
-      , m_framework(config.m_framework)
-    {
-
-    }
-
-    /**
-     * \brief Construct a new Net Config object
-     *
-     * \param confThresh The confidence threshold to keep a detection.
-     * \param nmsThresh The Non-Maximum Suppression threshold to merge overlapping detections.
-     * \param classNames A vector containing the list of classes the DNN can detect.
-     * \param dnnInputSize The size of the input that the DNN is expecting.
-     * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput
-     * and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods for more information).
-     * \param mean The mean value we must deduce to each color channel of the image.
-     * \param scaleFactor The scale factor that will be multiplied to each color channel of the image.
-     * \param swapRB If true, will swap the red and blue channel of the input image.
-     * \param parsingType The type of parsing method to use to interpret the DNN raw results.
-     * \param modelFilename The path towards the DNN weights.
-     * \param configFilename The path towards the additional DNN configuration file potentially needed.
-     * \param framework The type of framework used to store the weights of the DNN.
-     */
-    inline NetConfig( float confThresh, const float &nmsThresh, const std::vector<std::string> & classNames, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.
-                    , const cv::Scalar &mean = cv::Scalar(127.5, 127.5, 127.5), const double &scaleFactor = 2./255., const bool &swapRB = true
-                    , const DNNResultsParsingType &parsingType = vpDetectorDNNOpenCV::USER_SPECIFIED, const std::string &modelFilename = "", const std::string &configFilename = "", const std::string &framework = "")
-      : m_confThreshold(confThresh)
-      , m_nmsThreshold(nmsThresh)
-      , m_classNames(classNames)
-      , m_inputSize(dnnInputSize)
-      , m_filterSizeRatio(filterSizeRatio)
-      , m_mean(mean)
-      , m_scaleFactor(scaleFactor)
-      , m_swapRB(swapRB)
-      , m_parsingMethodType(parsingType)
-      , m_modelFilename(modelFilename)
-      , m_modelConfigFilename(configFilename)
-      , m_framework(framework)
-    {
-    }
-
-    /**
-     * \brief Construct a new Net Config object
-     *
-     * \param confThresh The confidence threshold to keep a detection.
-     * \param nmsThresh The Non-Maximum Suppression threshold to merge overlapping detections.
-     * \param classNamesFile The path towards the file containing the classes names, written as a YAML string array or one class name by line.
-     * \param dnnInputSize The size of the input that the DNN is expecting.
-     * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput
-     * and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods for more information).
-     * \param mean The mean value we must deduce to each color channel of the image.
-     * \param scaleFactor The scale factor that will be multiplied to each color channel of the image.
-     * \param swapRB If true, will swap the red and blue channel of the input image.
-     * \param parsingType The type of parsing method to use to interpret the DNN raw results.
-     * \param modelFilename The path towards the DNN weights.
-     * \param configFilename The path towards the additional DNN configuration file potentially needed.
-     * \param framework The type of framework used to store the weights of the DNN.
-     */
-    inline NetConfig( const float &confThresh, const float &nmsThresh, const std::string &classNamesFile, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.
-                    , const cv::Scalar &mean = cv::Scalar(127.5, 127.5, 127.5), const double &scaleFactor = 2./255., const bool &swapRB = true 
-                    , const DNNResultsParsingType &parsingType = vpDetectorDNNOpenCV::USER_SPECIFIED, const std::string &modelFilename = "", const std::string &configFilename = "", const std::string &framework = "")
-      : m_confThreshold(confThresh)
-      , m_nmsThreshold(nmsThresh)
-      , m_inputSize(dnnInputSize)
-      , m_filterSizeRatio(filterSizeRatio)
-      , m_mean(mean)
-      , m_scaleFactor(scaleFactor)
-      , m_swapRB(swapRB)
-      , m_parsingMethodType(parsingType)
-      , m_modelFilename(modelFilename)
-      , m_modelConfigFilename(configFilename)
-      , m_framework(framework)
-    {
-      m_classNames = parseClassNamesFile(classNamesFile);
-    }
-
-    #ifdef VISP_HAVE_NLOHMANN_JSON
-    /**
-     * \brief Read the network configuration from JSON. All values are optional and if an argument is not present,
-     * the default value defined in the constructor is kept
-     * 
-     * \param j The JSON object, resulting from the parsing of a JSON file.
-     * \param config The configuration of the network, that will be initialized from the JSON data.
-     */
-    inline friend void from_json(const json &j, NetConfig &config)
-    {
-      config.m_confThreshold = j.value("confidenceThreshold", config.m_confThreshold);
-      if (config.m_confThreshold <= 0) {
-        throw vpException(vpException::badValue, "Confidence threshold should be > 0");
+        return classNames;
       }
 
-      config.m_nmsThreshold = j.value("nmsThreshold", config.m_nmsThreshold);
-      if (config.m_nmsThreshold <= 0) {
-        throw vpException(vpException::badValue, "Confidence threshold should be > 0");
-      }
-
-      config.m_filterSizeRatio = j.value("filterSizeRatio", config.m_filterSizeRatio);
-      
-      config.m_classNames = j.value("classNames", config.m_classNames);
-
-      std::pair<unsigned int, unsigned int> resolution = j.value("resolution", std::pair<unsigned int, unsigned int>(config.m_inputSize.width, config.m_inputSize.height) );
-      config.m_inputSize.width  = resolution.first;
-      config.m_inputSize.height = resolution.second;
-
-      std::vector<double> v_mean  = j.value("mean", std::vector<double>({config.m_mean[0], config.m_mean[1], config.m_mean[2]}));
-      if(v_mean.size() != 3)
+      /**
+       * \brief Default constructor of the structure \b vpDetectorDNNOpenCV::NetConfig , required for JSON serialization/deserialization.
+       */
+      inline NetConfig()
+        : m_confThreshold(0.5f)
+        , m_nmsThreshold(0.4f)
+        , m_classNames()
+        , m_inputSize(300, 300)
+        , m_filterSizeRatio(0.)
+        , m_mean(127.5, 127.5, 127.5)
+        , m_scaleFactor(2.0 / 255.0)
+        , m_swapRB(true)
+        , m_parsingMethodType(vpDetectorDNNOpenCV::USER_SPECIFIED)
+        , m_modelFilename()
+        , m_modelConfigFilename()
+        , m_framework()
       {
-        throw(vpException(vpException::dimensionError, "Mean should have size = 3"));
+
       }
-      config.m_mean              = cv::Scalar(v_mean[0], v_mean[1], v_mean[2]);
 
-      config.m_scaleFactor       = j.value("scale", config.m_scaleFactor);
-      config.m_swapRB            = j.value("swapRB", config.m_swapRB);
-      config.m_parsingMethodType   = dnnResultsParsingTypeFromString(j.value("parsingType", dnnResultsParsingTypeToString(config.m_parsingMethodType)));
-      config.m_modelFilename       = j.value("modelFile", config.m_modelFilename);
-      config.m_modelConfigFilename = j.value("configurationFile", config.m_modelConfigFilename);
-      config.m_framework           = j.value("framework", config.m_framework);
-    }
+      inline NetConfig(const NetConfig &config)
+        : m_confThreshold(config.m_confThreshold)
+        , m_nmsThreshold(config.m_nmsThreshold)
+        , m_classNames(config.m_classNames)
+        , m_inputSize(config.m_inputSize.width, config.m_inputSize.height)
+        , m_filterSizeRatio(config.m_filterSizeRatio)
+        , m_mean(cv::Scalar(config.m_mean[0], config.m_mean[1], config.m_mean[2]))
+        , m_scaleFactor(config.m_scaleFactor)
+        , m_swapRB(config.m_swapRB)
+        , m_parsingMethodType(config.m_parsingMethodType)
+        , m_modelFilename(config.m_modelFilename)
+        , m_modelConfigFilename(config.m_modelConfigFilename)
+        , m_framework(config.m_framework)
+      {
 
-    /**
-     * \brief Parse a vpDetectorDNNOpenCV::NetConfig into JSON format.
-     * 
-     * \param j A JSON parser object.
-     * \param config The vpDetectorDNNOpenCV::NetConfig that must be parsed into JSON format.
-     */
-    inline friend void to_json(json &j, const NetConfig &config)
-    {
-      std::pair<unsigned int, unsigned int> resolution = {config.m_inputSize.width, config.m_inputSize.height};
-      std::vector<double> v_mean = {config.m_mean[0], config.m_mean[1], config.m_mean[2]};
-      j = json {
-        {"confidenceThreshold", config.m_confThreshold  } ,
-        {"nmsThreshold"       , config.m_nmsThreshold   } ,
-        {"filterSizeRatio"    , config.m_filterSizeRatio} ,
-        {"classNames"         , config.m_classNames     } ,
-        {"resolution"         , resolution              } ,
-        {"mean"           , v_mean                      } ,
-        {"scale"          , config.m_scaleFactor        } ,
-        {"swapRB"         , config.m_swapRB             } ,
-        {"parsingType"    , dnnResultsParsingTypeToString(config.m_parsingMethodType) },
-        {"modelFile"          , config.m_modelFilename           } ,
-        {"configurationFile"  , config.m_modelConfigFilename     } ,
-        {"framework"          , config.m_framework               } 
-      };
-    }
-    #endif
+      }
 
-    inline std::string toString() const
-    {
-      std::string text;
-      text += "Model                : " + m_modelFilename + "\n";
-      text += "Type                 : " + vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(m_parsingMethodType) + "\n";
-      text += "Config     (optional): " + (m_modelConfigFilename.empty() ? "\"None\"" : m_modelConfigFilename) + "\n";
-      text += "Framework  (optional): " + (m_framework.empty() ? "\"None\"" : m_framework) + "\n";
-      text += "Width x Height       : " + std::to_string(m_inputSize.width) + " x " + std::to_string(m_inputSize.height) + "\n";
-      text += "Mean RGB             : " + std::to_string(m_mean[0]) + " " + std::to_string(m_mean[1]) + " " + std::to_string(m_mean[2]) + "\n";
-      text += "Scale                : " + std::to_string(m_scaleFactor)   + "\n";
-      text += "Swap RB?             : " + (m_swapRB ? std::string("true") : std::string("false"))   + "\n";
-      text += "Confidence threshold : " + std::to_string(m_confThreshold) + "\n";
-      text += "NMS threshold        : " + std::to_string(m_nmsThreshold)  + "\n";
-      text += "Filter threshold     : " +
-         (m_filterSizeRatio > std::numeric_limits<double>::epsilon() ? std::to_string(m_filterSizeRatio)
-          : "disabled") + "\n";
-      return text;
-    }
+      /**
+       * \brief Construct a new Net Config object
+       *
+       * \param confThresh The confidence threshold to keep a detection.
+       * \param nmsThresh The Non-Maximum Suppression threshold to merge overlapping detections.
+       * \param classNames A vector containing the list of classes the DNN can detect.
+       * \param dnnInputSize The size of the input that the DNN is expecting.
+       * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput
+       * and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods for more information).
+       * \param mean The mean value we must deduce to each color channel of the image.
+       * \param scaleFactor The scale factor that will be multiplied to each color channel of the image.
+       * \param swapRB If true, will swap the red and blue channel of the input image.
+       * \param parsingType The type of parsing method to use to interpret the DNN raw results.
+       * \param modelFilename The path towards the DNN weights.
+       * \param configFilename The path towards the additional DNN configuration file potentially needed.
+       * \param framework The type of framework used to store the weights of the DNN.
+       */
+      inline NetConfig( float confThresh, const float &nmsThresh, const std::vector<std::string> & classNames, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.
+                      , const cv::Scalar &mean = cv::Scalar(127.5, 127.5, 127.5), const double &scaleFactor = 2./255., const bool &swapRB = true
+                      , const DNNResultsParsingType &parsingType = vpDetectorDNNOpenCV::USER_SPECIFIED, const std::string &modelFilename = "", const std::string &configFilename = "", const std::string &framework = "")
+        : m_confThreshold(confThresh)
+        , m_nmsThreshold(nmsThresh)
+        , m_classNames(classNames)
+        , m_inputSize(dnnInputSize)
+        , m_filterSizeRatio(filterSizeRatio)
+        , m_mean(mean)
+        , m_scaleFactor(scaleFactor)
+        , m_swapRB(swapRB)
+        , m_parsingMethodType(parsingType)
+        , m_modelFilename(modelFilename)
+        , m_modelConfigFilename(configFilename)
+        , m_framework(framework)
+      {
+      }
 
-    inline friend std::ostream& operator<<(std::ostream& os, const NetConfig &config)
-    {
-      os << config.toString();
-      return os;
-    }
+      /**
+       * \brief Construct a new Net Config object
+       *
+       * \param confThresh The confidence threshold to keep a detection.
+       * \param nmsThresh The Non-Maximum Suppression threshold to merge overlapping detections.
+       * \param classNamesFile The path towards the file containing the classes names, written as a YAML string array or one class name by line.
+       * \param dnnInputSize The size of the input that the DNN is expecting.
+       * \param filterSizeRatio The threshold for the size filter that the user can chose to activate or not (see \b vpDetectorDNNOpenCV::filterDetectionSingleClassInput
+       * and \b vpDetectorDNNOpenCV::filterDetectionMultiClassInput methods for more information).
+       * \param mean The mean value we must deduce to each color channel of the image.
+       * \param scaleFactor The scale factor that will be multiplied to each color channel of the image.
+       * \param swapRB If true, will swap the red and blue channel of the input image.
+       * \param parsingType The type of parsing method to use to interpret the DNN raw results.
+       * \param modelFilename The path towards the DNN weights.
+       * \param configFilename The path towards the additional DNN configuration file potentially needed.
+       * \param framework The type of framework used to store the weights of the DNN.
+       */
+      inline NetConfig( const float &confThresh, const float &nmsThresh, const std::string &classNamesFile, const cv::Size &dnnInputSize, const double &filterSizeRatio = 0.
+                      , const cv::Scalar &mean = cv::Scalar(127.5, 127.5, 127.5), const double &scaleFactor = 2./255., const bool &swapRB = true 
+                      , const DNNResultsParsingType &parsingType = vpDetectorDNNOpenCV::USER_SPECIFIED, const std::string &modelFilename = "", const std::string &configFilename = "", const std::string &framework = "")
+        : m_confThreshold(confThresh)
+        , m_nmsThreshold(nmsThresh)
+        , m_inputSize(dnnInputSize)
+        , m_filterSizeRatio(filterSizeRatio)
+        , m_mean(mean)
+        , m_scaleFactor(scaleFactor)
+        , m_swapRB(swapRB)
+        , m_parsingMethodType(parsingType)
+        , m_modelFilename(modelFilename)
+        , m_modelConfigFilename(configFilename)
+        , m_framework(framework)
+      {
+        m_classNames = parseClassNamesFile(classNamesFile);
+      }
+
+      inline std::string toString() const
+      {
+        std::string text;
+        text += "Model                : " + m_modelFilename + "\n";
+        text += "Type                 : " + vpDetectorDNNOpenCV::dnnResultsParsingTypeToString(m_parsingMethodType) + "\n";
+        text += "Config     (optional): " + (m_modelConfigFilename.empty() ? "\"None\"" : m_modelConfigFilename) + "\n";
+        text += "Framework  (optional): " + (m_framework.empty() ? "\"None\"" : m_framework) + "\n";
+        text += "Width x Height       : " + std::to_string(m_inputSize.width) + " x " + std::to_string(m_inputSize.height) + "\n";
+        text += "Mean RGB             : " + std::to_string(m_mean[0]) + " " + std::to_string(m_mean[1]) + " " + std::to_string(m_mean[2]) + "\n";
+        text += "Scale                : " + std::to_string(m_scaleFactor)   + "\n";
+        text += "Swap RB?             : " + (m_swapRB ? std::string("true") : std::string("false"))   + "\n";
+        text += "Confidence threshold : " + std::to_string(m_confThreshold) + "\n";
+        text += "NMS threshold        : " + std::to_string(m_nmsThreshold)  + "\n";
+        text += "Filter threshold     : " +
+          (m_filterSizeRatio > std::numeric_limits<double>::epsilon() ? std::to_string(m_filterSizeRatio)
+            : "disabled") + "\n";
+        return text;
+      }
+
+      inline friend std::ostream& operator<<(std::ostream& os, const NetConfig &config)
+      {
+        os << config.toString();
+        return os;
+      }
+
+      NetConfig& operator=(const NetConfig& config)
+      {
+        m_confThreshold       = config.m_confThreshold;
+        m_nmsThreshold        = config.m_nmsThreshold;
+        m_classNames          = config.m_classNames;
+        m_inputSize           = cv::Size(config.m_inputSize.width, config.m_inputSize.height);
+        m_filterSizeRatio     = config.m_filterSizeRatio;
+        m_mean                = cv::Scalar(config.m_mean[0], config.m_mean[1], config.m_mean[2]);
+        m_scaleFactor         = config.m_scaleFactor;
+        m_swapRB              = config.m_swapRB;
+        m_parsingMethodType   = config.m_parsingMethodType;
+        m_modelFilename       = config.m_modelFilename;
+        m_modelConfigFilename = config.m_modelConfigFilename;
+        m_framework           = config.m_framework;
+        return *this;
+      }
+
+      friend vpDetectorDNNOpenCV;
   } NetConfig;
 
   static std::string getAvailableDnnResultsParsingTypes();
