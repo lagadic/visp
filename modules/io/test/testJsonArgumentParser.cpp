@@ -49,6 +49,8 @@ using json = nlohmann::json;
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
+
+
 json loadJson(const std::string &path)
 {
   std::ifstream json_file(path);
@@ -156,12 +158,13 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         const std::string newc = c + "hello";
         const bool newd = !d;
 
+        const std::string newdstr(newd ? "true" : "false");
         const char *argv [] = {
           "program",
           "a", std::to_string(newa).c_str(),
           "b", std::to_string(newb).c_str(),
           "c", newc.c_str(),
-          "d", newd ? "true" : "false",
+          "d", newdstr.c_str(),
         };
         const int argc = 9;
         REQUIRE_NOTHROW(parser.parse(argc, argv));

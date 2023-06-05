@@ -3,6 +3,8 @@
   "width": 640,
   "video-device": "0",
   "object": "cube_real",
+  "detectionMethod": "click",
+  "reinitThreshold": 0.5,
   "camera": {
     "model": "perspectiveWithoutDistortion",
     "px": 605.146728515625,
