@@ -130,7 +130,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         REQUIRE(c == j["c"]);
         REQUIRE(d == j["d"]);
       }
-      THEN("Calling the parser by specifying the json argument but leaving the file path empty")
+      THEN("Calling the parser by specifying the json argument but leaving the file path empty throws an error")
       {
         const int argc = 2;
         const char *argv [] = {
@@ -139,7 +139,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         };
         REQUIRE_THROWS(parser.parse(argc, argv));
       }
-      THEN("Calling the parser with an invalid json file path")
+      THEN("Calling the parser with an invalid json file path throws an error")
       {
         const int argc = 3;
         const char *argv [] = {
@@ -188,14 +188,7 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         REQUIRE(c == j["c"]);
         REQUIRE(d == j["d"]);
       }
-
-
-
-
     }
-
-
-
   }
 
 }

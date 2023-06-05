@@ -5,8 +5,44 @@
 
 \section megapose_tracking_intro Introduction
 
-\section megapose_install Installation
+In this tutorial, we will explore how to use Megapose (REF), a deep learning method for object pose estimation.
+
+Given:
+- An RGB or RGB-D image for which the intrinsics of the camera \f$c\f$ are known
+- A coarse detection of the image region in which lies the object
+- A 3D model of the object \f$o\f$
+Megapose can estimate the pose of the object relative to the camera frame \f$^{c}\mathbf{T}_{o}\f$.
+
+The method has several advantages:
+ - Robust estimation in the presence of occlusions and lighting artifacts
+ - Can work with a coarse model of the object
+ - Does not require retraining for novel objects
+
+It has however, several drawbacks:
+ - Running megapose requires a GPU
+ - It may be too slow for your setup
+  - With the default parameters, on a 640 x 480 image, Initial pose estimation takes around 2 seconds on an Nvidia Quadro RTX 6000
+  - On the same setup, a pose update (refinement) iteration takes around 60-70 milliseconds
+ - To perform the initial pose estimation, megapose requires an estimate of the image region containing the image (i.e., a bounding box detection).
+   You may thus require a way to detect the object, such as an object detection neural network (available in ViSP with the class vpDetectorDNNOpenCV, see \ref tutorial-detection-dnn)
+
+
+
+
+
+This tutorial will explain how to install and run megapose and
+then demonstrate its usage with a simple object tracking application.
+
+
+
 
 \subsection megapose_requirements Requirements
+
+
+\section megapose_install Installation
+
+
+-
+
 
 */
