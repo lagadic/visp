@@ -349,7 +349,7 @@ int main(int argc, const char *argv [])
     //! [Call megapose]
     vpDisplay::display(I);
     if (initialized && !requiresReinit) {
-      vpDisplay::displayText(I, 100, 10, "Right click to quit"  vpColor::red);
+      vpDisplay::displayText(I, 100, 10, "Right click to quit", vpColor::red);
       vpDisplay::displayFrame(I, megaposeEstimate.cTo, cam, 0.05, vpColor::none, 3);
       vpDisplay::displayRectangle(I, lastDetection, vpColor::red);
       displayScore(I, megaposeEstimate.score);
