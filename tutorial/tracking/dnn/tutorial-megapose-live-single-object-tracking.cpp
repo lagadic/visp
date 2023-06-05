@@ -1,5 +1,7 @@
 //! \example tutorial-dnn-object-detection-live.cpp
 #include <visp3/core/vpConfig.h>
+
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && defined(VISP_HAVE_NLOHMANN_JSON) && (VISP_HAVE_OPENCV_VERSION >= 0x030403)
 #include <visp3/core/vpIoTools.h>
 #include <visp3/detection/vpDetectorDNNOpenCV.h>
 #include <visp3/gui/vpDisplayGDI.h>
@@ -7,11 +9,11 @@
 #include <visp3/gui/vpDisplayX.h>
 #include <visp3/dnn_tracker/vpMegaPose.h>
 #include <visp3/dnn_tracker/vpMegaPoseTracker.h>
-
-#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && defined(VISP_HAVE_NLOHMANN_JSON)
+#include <optional>
 #include <visp3/io/vpJsonArgumentParser.h>
 
 #include <nlohmann/json.hpp>
+
 using json = nlohmann::json;
 
 /*
@@ -68,7 +70,7 @@ void overlayRender(vpImage<vpRGBa>& I, const vpImage<vpRGBa>& overlay) {
   }
 }
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN)
+#if defined(VISP_HAVE_OPENCV_DNN)
 //! [Detect]
 /*
  * Run the detection network on an image in order to find a specific object.
@@ -257,7 +259,7 @@ int main(int argc, const char *argv [])
   vpDisplayOpenCV d;
 #endif
   d.setDownScalingFactor(vpDisplay::SCALE_AUTO);
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN)
+#if defined(VISP_HAVE_OPENCV_DNN)
   vpDetectorDNNOpenCV::DNNResultsParsingType detectorType = vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(detectorTypeString);
   vpDetectorDNNOpenCV::NetConfig netConfig(detectorConfidenceThreshold, detectorNmsThreshold, labels,
     cv::Size(width, height), detectorFilterThreshold);
@@ -322,7 +324,7 @@ int main(int argc, const char *argv [])
     if (callMegapose) {
       if (!initialized || requiresReinit) {
         std::optional<vpRect> detection = std::nullopt;
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN)
+#if defined(VISP_HAVE_OPENCV_DNN)
         if (detectionMethod == DetectionMethod::DNN) {
           detection = detectObjectForInitMegaposeDnn(
             dnn, frame, objectName, initialized ? std::optional(megaposeEstimate) : std::nullopt);
