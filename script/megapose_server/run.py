@@ -382,9 +382,40 @@ class MegaposeServer():
         '''
         Set the SO(3) grid size. This dictates the number of images generated to find a coarse pose estimate.
         '''
+        def random_quaternion(rand: Optional[Union[List[float], np.ndarray]] = None) -> np.ndarray:
+            """ Return uniform random unit quaternion.
+            Adapted from:
+            https://github.com/thodan/bop_toolkit/blob/master/bop_toolkit_lib/transform.py
+
+            :param rand: Three independent random variables that are uniformly distributed between 0 and 1.
+            :return: Unit quaternion.
+            """
+            if rand is None:
+                rand = np.random.rand(3)
+            else:
+                assert len(rand) == 3
+
+            r1 = np.sqrt(1.0 - rand[0])
+            r2 = np.sqrt(rand[0])
+            pi2 = np.pi * 2.0
+            t1 = pi2 * rand[1]
+            t2 = pi2 * rand[2]
+
+            return np.array([np.sin(t1) * r1, np.cos(t1) * r1, np.sin(t2) * r2, np.cos(t2) * r2])
         json_object = json.loads(read_string(buffer))
         value = json_object['so3_grid_size']
-        self.model.load_SO3_grid(value)
+        print(value)
+        if value in [72, 512, 576, 4608]:
+            self.model.load_SO3_grid(value)
+        else:
+            import roma
+            rng = 17
+            rand_gen = np.random.default_rng(seed=rng)
+            rands = rand_gen.uniform(0.0, 1.0, size=(3, value))
+            quats = torch.tensor(random_quaternion(rands))
+            Rs = roma.random_rotmat(value)
+            #Rs = roma.unitquat_to_rotmat(quats)
+            self.model._SO3_grid = Rs.cuda()
         msg = create_message(ServerMessage.OK, lambda x: None)
         s.sendall(msg)
 

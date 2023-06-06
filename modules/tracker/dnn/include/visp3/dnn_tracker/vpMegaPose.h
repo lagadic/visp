@@ -82,15 +82,22 @@ inline void from_json(const nlohmann::json &j, vpMegaPoseEstimate &m)
 }
 
 /**
+* \class vpMegaPose
+* \ingroup module_dnn_tracker
 * Class to communicate with a Megapose server.
-Megapose is a deep learning-based method to estimate the 6D pose of novel objects, meaning that it does not require training for a specific object.
-Megapose is a multistage method and can be used either as a full pose estimation algorithm or as a tracker.
-Megapose works by render and compare: a synthetized view of an object is compared with a real-world image to see if the poses match.
-
-Behind the scene, there are two main models:
-    - The coarse model: given an image, multiple synthetic view are compared with the "true" object image and a model outputs the probability of a render corresponding to the same object as the true image. This model requires the object to be detected (bounding box) in the image.
-    - The refiner model: Given an initial pose estimate, this model predicts a pose displacement to best align render and true image. It is called iteratively, for a fixed number of iterations.
-
+* Megapose is a deep learning-based method to estimate the 6D pose of novel objects, meaning that it does not require training for a specific object.
+* Megapose is a multistage method and can be used either as a full pose estimation algorithm or as a tracker.
+* Megapose works by render and compare: a synthetized view of an object is compared with a real-world image to see if the poses match.
+* Behind the scene, there are two main models:
+* - The coarse model: given an image, multiple synthetic view are compared with the "true" object image and a model outputs the probability of a render corresponding to the same object as the true image. This model requires the object to be detected (bounding box) in the image.
+* - The refiner model: Given an initial pose estimate, this model predicts a pose displacement to best align render and true image. It is called iteratively, for a fixed number of iterations.
+*
+* This can be best visualized in the figure below (taken from \cite Labbe2022Megapose):
+* \image html megapose_architecture.jpg
+*
+* For more information on how the model works, see <a href="https://megapose6d.github.io/">The Megapose Github page</a> or the paper \cite Labbe2022Megapose
+*
+* For instructions on how to install the Python server and an example usage, see \ref tutorial-tracking-megapose
 */
 class VISP_EXPORT vpMegaPose
 {
@@ -102,16 +109,16 @@ public:
     enum ServerMessage
     {
         UNKNOWN = 0,
-        ERR = 1, // An error occurred server side
-        OK = 2, // All good, no return
-        GET_POSE = 3,
-        RET_POSE = 4,
-        GET_VIZ = 5,
-        RET_VIZ = 6,
-        SET_INTR = 7,
-        GET_SCORE = 8,
-        RET_SCORE = 9,
-        SET_SO3_GRID_SIZE = 10,
+        ERR = 1, //! An error occurred server side
+        OK = 2, //! Server has successfully completed operation, no return value expected
+        GET_POSE = 3, //! Ask the server to estimate poses
+        RET_POSE = 4, //! Code sent when server returns pose estimates
+        GET_VIZ = 5, //! Ask the server for a rendering of the object
+        RET_VIZ = 6, //! Code sent when server returns the rendering of an object
+        SET_INTR = 7, //! Set the intrinsics for the megapose server
+        GET_SCORE = 8, //! Ask the server to score a pose estimate
+        RET_SCORE = 9, //! Code sent when server returns a pose score
+        SET_SO3_GRID_SIZE = 10, //! Ask the server to set the number of samples for coarse estimation
     };
     /**
     * Instanciates a connection to a megapose server.
@@ -170,8 +177,9 @@ public:
     vpImage<vpRGBa> viewObjects(const std::vector<std::string> &objectNames,
                                 const std::vector<vpHomogeneousMatrix> &poses, const std::string &viewType);
 
-    /*
+    /**
     * Set the number of renders used for coarse pose estimation by megapose.
+    * \param num The number of renders for full pose estimation by megapose. This number should be equal to 72, 512, 576 or 4608
     */
     void setCoarseNumSamples(const unsigned num);
 

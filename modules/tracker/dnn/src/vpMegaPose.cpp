@@ -479,7 +479,13 @@ vpImage<vpRGBa> vpMegaPose::viewObjects(const std::vector<std::string>& objectNa
   std::vector<uint8_t> data;
   json j;
   j["labels"] = objectNames;
-  j["poses"] = poses;
+  json cToJson = json::array();
+  for (const vpHomogeneousMatrix &cTo : poses) {
+    json j;
+    to_megapose_json(j, cTo);
+    cToJson.push_back(j);
+  }
+  j["poses"] = cToJson;
   j["type"] = viewType;
   encode(data, j.dump());
   makeMessage(ServerMessage::GET_VIZ, data);

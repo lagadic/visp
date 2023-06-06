@@ -141,13 +141,14 @@ std::optional<vpRect> detectObjectForInitMegaposeClick(const vpImage<vpRGBa> &I)
 {
   const bool startLabelling = vpDisplay::getClick(I, false);
 
-  const vpImagePoint textPosition(10.0, 50.0);
+  const vpImagePoint textPosition(10.0, 20.0);
 
   if (startLabelling) {
     vpImagePoint topLeft, bottomRight;
     vpDisplay::displayText(I, textPosition, "Click the upper left corner of the bounding box", vpColor::red);
     vpDisplay::flush(I);
     vpDisplay::getClick(I, topLeft, true);
+    vpDisplay::display(I);
     vpDisplay::displayCross(I, topLeft, 5, vpColor::red, 2);
     vpDisplay::displayText(I, textPosition, "Click the bottom right corner of the bounding box", vpColor::red);
     vpDisplay::flush(I);
@@ -156,7 +157,9 @@ std::optional<vpRect> detectObjectForInitMegaposeClick(const vpImage<vpRGBa> &I)
     return bb;
   }
   else {
+    vpDisplay::display(I);
     vpDisplay::displayText(I, textPosition, "Click when the object is visible and static to start reinitializing megapose.", vpColor::red);
+    vpDisplay::flush(I);
     return std::nullopt;
   }
 }
@@ -184,7 +187,7 @@ int main(int argc, const char *argv [])
   std::string megaposeAddress = "127.0.0.1";
   unsigned megaposePort = 5555;
   int refinerIterations = 1, coarseNumSamples = 576;
-  double reinitThreshold = 0.5;
+  double reinitThreshold = 0.2;
 
   DetectionMethod detectionMethod = DetectionMethod::UNKNOWN;
 
@@ -283,6 +286,12 @@ int main(int argc, const char *argv [])
   bool callMegapose = true;
   bool initialized = false;
   bool requiresReinit = false;
+  bool tracking = false;
+
+  bool overlayModel = true;
+  vpImage<vpRGBa> overlayImage(height, width);
+  std::string overlayMode = "full";
+
 
   std::future<vpMegaPoseEstimate> trackerFuture;
   const auto waitTime = std::chrono::milliseconds(0);
@@ -306,6 +315,7 @@ int main(int argc, const char *argv [])
     else {
       vpImageConvert::convert(frame, I);
     }
+    vpDisplay::display(I);
     //Check whether megapose is still running
     //! [Check megapose]
     if (!callMegapose && trackerFuture.wait_for(waitTime) == std::future_status::ready) {
@@ -313,6 +323,11 @@ int main(int argc, const char *argv [])
       iterMegaposeResults.push_back(std::make_pair(iter, megaposeEstimate));
       megaposeRunTimes.push_back(std::make_pair(iter, vpTime::measureTimeMs() - megaposeTime));
       callMegapose = true;
+      tracking = true;
+
+      if (overlayModel) {
+        overlayImage = megapose->viewObjects({objectName}, {megaposeEstimate.cTo}, overlayMode);
+      }
 
       if (megaposeEstimate.score < reinitThreshold) { // If confidence is low, require a reinitialisation with 2D detection
         requiresReinit = true;
@@ -323,6 +338,7 @@ int main(int argc, const char *argv [])
     //! [Call megapose]
     if (callMegapose) {
       if (!initialized || requiresReinit) {
+        tracking = false;
         std::optional<vpRect> detection = std::nullopt;
 #if defined(VISP_HAVE_OPENCV_DNN)
         if (detectionMethod == DetectionMethod::DNN) {
@@ -348,10 +364,25 @@ int main(int argc, const char *argv [])
         callMegapose = false;
       }
     }
+    std::string keyboardEvent;
+    const bool keyPressed = vpDisplay::getKeyboardEvent(I, keyboardEvent, false);
+    if (keyPressed) {
+      if (keyboardEvent == "t") {
+        overlayModel = !overlayModel;
+      }
+      else if (keyboardEvent == "w") {
+        overlayMode = overlayMode == "full" ? "wireframe" : "full";
+      }
+    }
     //! [Call megapose]
-    vpDisplay::display(I);
-    if (initialized && !requiresReinit) {
-      vpDisplay::displayText(I, 100, 10, "Right click to quit", vpColor::red);
+    if (tracking) {
+      if (overlayModel) {
+        overlayRender(I, overlayImage);
+        vpDisplay::display(I);
+      }
+      vpDisplay::displayText(I, 20, 20, "Right click to quit", vpColor::red);
+      vpDisplay::displayText(I, 30, 20, "Press T: Toggle overlay", vpColor::red);
+      vpDisplay::displayText(I, 40, 20, "Press W: Toggle wireframe", vpColor::red);
       vpDisplay::displayFrame(I, megaposeEstimate.cTo, cam, 0.05, vpColor::none, 3);
       vpDisplay::displayRectangle(I, lastDetection, vpColor::red);
       displayScore(I, megaposeEstimate.score);
