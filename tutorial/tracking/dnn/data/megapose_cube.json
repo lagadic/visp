@@ -2,7 +2,7 @@
   "height": 480,
   "width": 640,
   "video-device": "0",
-  "object": "cube_real",
+  "object": "cube",
   "detectionMethod": "click",
   "reinitThreshold": 0.5,
   "camera": {
@@ -18,7 +18,7 @@
     "type": "yolov7",
     "framework": "onnx",
     "labels": [
-      "cube_real"
+      "cube"
     ],
     "mean":{
       "red": 0,

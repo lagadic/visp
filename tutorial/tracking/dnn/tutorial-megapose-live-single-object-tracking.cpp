@@ -1,6 +1,7 @@
 //! \example tutorial-dnn-object-detection-live.cpp
-#include <visp3/core/vpConfig.h>
+#include <iostream>
 
+#include <visp3/core/vpConfig.h>
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17) && defined(VISP_HAVE_NLOHMANN_JSON) && (VISP_HAVE_OPENCV_VERSION >= 0x030403)
 #include <visp3/core/vpIoTools.h>
 #include <visp3/detection/vpDetectorDNNOpenCV.h>
@@ -241,12 +242,18 @@ int main(int argc, const char *argv [])
   }
 
   cv::VideoCapture capture;
+  bool isLiveCapture;
   bool hasCaptureOpeningSucceeded;
+  double videoFrametime = 0; // Only for prerecorded videos
   if (vpMath::isNumber(videoDevice)) {
     hasCaptureOpeningSucceeded = capture.open(std::atoi(videoDevice.c_str()));
+    isLiveCapture = true;
   }
   else {
     hasCaptureOpeningSucceeded = capture.open(videoDevice);
+    isLiveCapture = false;
+    int fps = capture.get(cv::CAP_PROP_FPS);
+    videoFrametime = (1.0 / double(fps)) * 1000.0;
   }
   if (!hasCaptureOpeningSucceeded) {
     std::cout << "Capture from camera: " << videoDevice << " didn't work" << std::endl;
@@ -292,7 +299,6 @@ int main(int argc, const char *argv [])
   vpImage<vpRGBa> overlayImage(height, width);
   std::string overlayMode = "full";
 
-
   std::future<vpMegaPoseEstimate> trackerFuture;
   const auto waitTime = std::chrono::milliseconds(0);
 
@@ -304,6 +310,7 @@ int main(int argc, const char *argv [])
 
   while (true) {
     capture >> frame;
+    const double frameStart = vpTime::measureTimeMs();
     if (frame.empty())
       break;
 
@@ -397,6 +404,11 @@ int main(int argc, const char *argv [])
         break; // Right click to stop
       }
     }
+    const double frameEnd = vpTime::measureTimeMs();
+    if (!isLiveCapture) {
+      vpTime::wait(std::max(0.0, videoFrametime - (frameEnd - frameStart)));
+    }
+
   }
 }
 #else
