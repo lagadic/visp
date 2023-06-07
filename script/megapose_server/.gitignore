@@ -1,2 +1,3 @@
 __pycache__
 megapose_server.egg-info
+*.tmp

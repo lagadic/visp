@@ -85,7 +85,7 @@ class MegaposeServer():
     '''
     A TCP-based server that can be interrogated to estimate the pose of an object  with MegaPose
     '''
-    def __init__(self, host: str, port: int, model_name: str, mesh_dir: Path, camera_data: Dict, optimize: bool):
+    def __init__(self, host: str, port: int, model_name: str, mesh_dir: Path, camera_data: Dict, optimize: bool, num_workers: int):
         """Create a TCP server that listens for an incoming connection
         and can be used to answer client queries about an object pose with respect to the camera frame
 
@@ -113,7 +113,7 @@ class MegaposeServer():
         self.object_dataset = make_object_dataset(mesh_dir)
         model_tuple = self._load_model(model_name)
         self.model_info = model_tuple[0]
-        self.model: PoseEstimatesType = model_tuple[1]
+        self.model = model_tuple[1]
         self.model.eval()
         self.camera_data = self._make_camera_data(camera_data)
         self.operations = {
@@ -128,6 +128,7 @@ class MegaposeServer():
         torch.backends.cudnn.benchmark = True
         torch.backends.cudnn.deterministic = False
         self.optimize = optimize
+        self.num_workers = num_workers
         if self.optimize:
             class Optimized(nn.Module):
                 def delete_weights(self):
@@ -194,7 +195,7 @@ class MegaposeServer():
         #torch.set_float32_matmul_precision('medium')
 
     def _load_model(self, model_name):
-        return NAMED_MODELS[model_name], load_named_model(model_name, self.object_dataset).cuda()
+        return NAMED_MODELS[model_name], load_named_model(model_name, self.object_dataset, n_workers=self.num_workers).cuda()
 
     def _estimate_pose(self, s: socket.socket, buffer: io.BytesIO):
         '''
@@ -477,18 +478,19 @@ if __name__ == '__main__':
         'RGBD-multi-hypothesis': ('megapose-1.0-RGB-multi-hypothesis-icp', True),
     }
     parser = argparse.ArgumentParser()
-    parser.add_argument('--host', type=str, default='127.0.0.1', help='IP or hostname to bind the server to')
+    parser.add_argument('--host', type=str, default='127.0.0.1', help='IP or hostname to bind the server to. Set to 0.0.0.0 if you wish to listen for incoming connections from any source (dangerous)')
     parser.add_argument('--port', type=int, default=5555, help='The port on which to listen for new connections')
     parser.add_argument('--model', type=str, choices=megapose_models.keys(), default='RGB-multi-hypothesis', help='''
                         Which MegaPose model to use. Some models require the depth map.
-                        Some models generate multiple hypotheses when estimating the pose, at the cost of more computation.''')
-    parser.add_argument('--meshes-directory', type=str, default='./meshes')
-    parser.add_argument('--optimize', action='store_true')
-
+                        Some models generate multiple hypotheses when estimating the pose, at the cost of more computation.
+                        Options: RGB, RGBD, RGB-multi-hypothesis, RGBD-multi-hypothesis''')
+    parser.add_argument('--meshes-directory', type=str, default='./meshes', help='Directory containing the 3D models. each 3D model must be in its own subfolder')
+    parser.add_argument('--optimize', action='store_true', help='Experimental: Optimize network for inference speed. This may incur a loss of accuracy.')
+    parser.add_argument('--num_workers', type=int, default=4, help='Number of workers for rendering')
 
 
     args = parser.parse_args()
-    mesh_dir = Path(args.meshes_directory)
+    mesh_dir = Path(args.meshes_directory).absolute()
     assert mesh_dir.exists(), 'Mesh directory does not exist, cannot start server'
     # Default camera data
     camera_data = {

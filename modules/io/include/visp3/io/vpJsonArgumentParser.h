@@ -190,6 +190,7 @@ public:
 
       while ((pos = name_copy.find(nestSeparator)) != std::string::npos) {
         token = name_copy.substr(0, pos);
+
         name_copy.erase(0, pos + nestSeparator.length());
         if (create && !f->contains(token)) {
           (*f)[token] = {};
