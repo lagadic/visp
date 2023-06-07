@@ -74,13 +74,65 @@ nlohmann::json convertCommandLineArgument<std::string>(const std::string &arg)
 /*!
   \class vpJsonArgumentParser
   \ingroup module_io_cmd_parser
-  \brief Command line argument parsing with support for JSON files. If a JSON file is supplied, it is parsed and command line arguments take precedence over values given in the file.
+  \brief Command line argument parsing with support for JSON files.
+  If a JSON file is supplied, it is parsed and command line arguments take precedence over values given in the file.
 
-  To be used, this class requires the 3rd party JSON library to be installed and enabled when installing ViSP.
+  \warning To be used, this class requires the 3rd party JSON library to be installed and enabled when installing ViSP.
 
   This argument parser can take any number and type of arguments, as long they can be serialized to and from JSON.
 
+  A very basic program that uses both a JSON file and command line arguments can be found below:
+  \code{.cpp}
+    #include <visp3/io/vpJsonArgumentParser.h>
+    #include <iostream>
+    int main(int argc, char* argv[])
+    {
+      double d = 1.0;
+      std::string s = "Default";
 
+      vpJsonArgumentParser parser("Example program for arguments with vpJsonArgumentParser", "config", "/");
+
+      parser.add_argument("scalar", d, true, "An important value: must be defined by the user")
+            .add_argument("string", s, false, "An optional value: if left unspecified, will default to its initialized value (\"Default\")")
+            .parse(argc, argv);
+
+      std::cout << "Scalar = " << d << std::endl;
+      std::cout << "String = " << s << std::endl;
+    }
+  \endcode
+  Compiling this sample and calling the program with the arguments from the command line would yield:
+  \code{.sh}
+    $ ./program scalar 2.0 string "A new value"
+    Scalar = 2.0
+    String = a new value
+    $ ./program scalar 2.0
+    Scalar = 2.0
+    String = default
+  \endcode
+  Here the arguments are specified from the command line. Since the "string" argument is optional, it does not have to be specified.
+
+  For programs with more arguments it is helpful to use a JSON file that contains a base configuration. For the program above, a JSON file could look like:
+  \code{.json}
+    {
+      "scalar": 3.0,
+      "string": "Some base value"
+    }
+  \endcode
+  we could then call the program with:
+  \code{.sh}
+    $ ./program config my_settings.json
+    Scalar = 3.0
+    String = Some base value
+  \endcode
+
+  The values contained in the JSON file can be overridden with command line arguments
+  \code{.sh}
+    $ ./program config my_settings.json scalar 5
+    Scalar = 5.0
+    String = Some base value
+  \endcode
+
+  The program can also be called with the "-h" or "--help" argument to display the help associated to the arguments, as well as an example json configuration file
 */
 class VISP_EXPORT vpJsonArgumentParser
 {
@@ -103,10 +155,30 @@ public:
    */
   vpJsonArgumentParser(const std::string &description, const std::string &jsonFileArgumentName, const std::string &nestSeparator);
 
+  /**
+   * @brief Generate a help message, containing the description of the arguments, their default value and whether they are required or not.
+   * This message also contains an example json file, generated from the default values of the arguments.
+   * This method is called when running the program with the "-h" or "--help" arguments.
+   *
+   * @return The help message
+   */
   std::string help() const;
 
 
-
+  /**
+   * @brief Add an argument that can be provided by the user, either via command line or through the json file.
+   *
+   * @tparam T Type of the argument to pass.
+   * The methods from_json(const nlohmann::json&, T&) and to_json(nlohmann::json&, const T&) must be defined.
+   * This is the case for most basic types or stl containers. For your own types, you should define the method.
+   * @param name Name of the parameter that will be used to look up the argument values when parsing command line arguments or the json file.
+   * This name may contain the nestSeparator, in which case the look up in the JSON file will seek a nested object to parse.
+   * @param parameter Reference where the parsed value will be stored. It is modified when calling parse.
+   * @param required Whether this argument is required. If it is, it should be specified either through command line or through the json file.
+   * If not, then you should take special care to initialize \p parameter with a sensible value.
+   * @param help The description of the argument.
+   * @return vpJsonArgumentParser& returns self, allowing argument definition chaining
+   */
   template<typename T>
   vpJsonArgumentParser &addArgument(const std::string &name, T &parameter, const bool required = true, const std::string &help = "No description")
   {
@@ -175,6 +247,12 @@ public:
     return *this;
   }
 
+  /**
+   * @brief Parse the arguments.
+   *
+   * @param argc Number of arguments (including program name)
+   * @param argv Arguments
+   */
   void parse(int argc, const char *argv []);
 
 

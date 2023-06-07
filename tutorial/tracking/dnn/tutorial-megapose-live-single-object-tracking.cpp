@@ -408,7 +408,6 @@ int main(int argc, const char *argv [])
     if (!isLiveCapture) {
       vpTime::wait(std::max(0.0, videoFrametime - (frameEnd - frameStart)));
     }
-
   }
 }
 #else

@@ -49,7 +49,16 @@ using json = nlohmann::json;
 #define CATCH_CONFIG_RUNNER
 #include <catch.hpp>
 
-
+std::pair<int, std::vector<char *>> convertToArgcAndArgv(const std::vector<std::string> &args)
+{
+  std::vector<char *> argvs;
+  argvs.reserve(args.size());
+  int argc = args.size();
+  for (unsigned i = 0; i < args.size(); ++i) {
+    argvs.push_back(const_cast<char *>(args[i].c_str()));
+  }
+  return std::make_pair(argc, argvs);
+}
 
 json loadJson(const std::string &path)
 {
@@ -159,15 +168,17 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
         const bool newd = !d;
 
         const std::string newdstr(newd ? "true" : "false");
-        const char *argv [] = {
+        std::vector<std::string> args = {
           "program",
-          "a", std::to_string(newa).c_str(),
-          "b", std::to_string(newb).c_str(),
-          "c", newc.c_str(),
-          "d", newdstr.c_str(),
+          "a", std::to_string(newa),
+          "b", std::to_string(newb),
+          "c", newc,
+          "d", newdstr,
         };
-        const int argc = 9;
-        REQUIRE_NOTHROW(parser.parse(argc, argv));
+        int argc;
+        std::vector<char *> argv;
+        std::tie(argc, argv) = convertToArgcAndArgv(args);
+        REQUIRE_NOTHROW(parser.parse(argc, (const char **)(&argv[0])));
         REQUIRE(a == newa);
         REQUIRE(b == newb);
         REQUIRE(c == newc);
@@ -177,15 +188,16 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       {
         const int newa = a + 1;
         const double newb = b + 2.0;
-
-        const char *argv [] = {
+        std::vector<std::string> args = {
           "program",
-          "--config", jsonPath.c_str(),
-          "a", std::to_string(newa).c_str(),
-          "b", std::to_string(newb).c_str()
+          "--config", jsonPath,
+          "a", std::to_string(newa),
+          "b", std::to_string(newb)
         };
-        const int argc = 7;
-        REQUIRE_NOTHROW(parser.parse(argc, argv));
+        int argc;
+        std::vector<char *> argv;
+        std::tie(argc, argv) = convertToArgcAndArgv(args);
+        REQUIRE_NOTHROW(parser.parse(argc, (const char **)(&argv[0])));
         REQUIRE(a == newa);
         REQUIRE(b == newb);
         REQUIRE(c == j["c"]);
@@ -193,7 +205,6 @@ SCENARIO("Parsing arguments from JSON file", "[json]")
       }
     }
   }
-
 }
 int main(int argc, char *argv [])
 {
