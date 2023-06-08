@@ -22,22 +22,34 @@ def get_pip_for_conda_env(megapose_env: str):
 def get_rclone_for_conda_env(megapose_env: str):
   return get_megapose_bin_conda_env(megapose_env) / 'rclone'
 
+def megapose_already_cloned(megapose_path: Path) -> bool:
+  return megapose_path.exists() and (megapose_path / 'rclone.conf').exists() and ((megapose_path / 'src') / 'megapose').exists()
+
+def conda_env_already_exists(megapose_env: str) -> bool:
+  return get_megapose_bin_conda_env(megapose_env).exists()
 
 def clone_megapose(megapose_path: Path):
   print('Cloning megapose git repo...')
-  try:
-    subprocess.run(['git', 'clone', megapose_url, str(megapose_path)], check=True, text=True)
-    current_dir = os.getcwd()
-    os.chdir(megapose_path)
-    subprocess.run(['git', 'submodule', 'update', '--init'], check=True, text=True)
-    os.chdir(current_dir)
-  except CalledProcessError as e:
-    print('Could not clone megapose directory')
-    exit(1)
+  if not megapose_already_cloned(megapose_path):
+    try:
+      subprocess.run(['git', 'clone', megapose_url, str(megapose_path)], check=True, text=True)
+      current_dir = os.getcwd()
+      os.chdir(megapose_path)
+      subprocess.run(['git', 'submodule', 'update', '--init'], check=True, text=True)
+      os.chdir(current_dir)
+    except CalledProcessError as e:
+      print('Could not clone megapose directory')
+      exit(1)
+  else:
+    print('Megapose git repo already exists, skipping...')
 
 def install_dependencies(megapose_path: Path, megapose_environment: str):
   try:
-    subprocess.run(['conda', 'env', 'create', '--name', megapose_environment, '--file', 'megapose_environment.yml'], check=True)
+    if not conda_env_already_exists(megapose_environment):
+      subprocess.run(['conda', 'env', 'create', '--name', megapose_environment, '--file', 'megapose_environment.yml'], check=True)
+    else:
+      print(f'Conda environment {megapose_environment} already exists, updating dependencies')
+      subprocess.run(['conda', 'env', 'update', '--name', megapose_environment, '--file', 'megapose_environment.yml'], check=True)
     megapose_env_pip = get_pip_for_conda_env(megapose_environment)
     subprocess.run([megapose_env_pip, 'install', '-e',  str(megapose_path)], check=True)
   except CalledProcessError as e:
@@ -49,7 +61,7 @@ def download_models(megapose_env: str, megapose_path: Path, megapose_data_path: 
   models_path = megapose_data_path / 'megapose-models'
   conf_path = megapose_path / 'rclone.conf'
   rclone = str(get_rclone_for_conda_env(megapose_env).absolute())
-  arguments = [rclone, 'copyto', 'megapose_public_readonly:/megapose-models',
+  arguments = [rclone, 'copyto', 'inria_data:/megapose-models',
                    str(models_path), '--exclude', '"**epoch**"', '--config', str(conf_path), '--progress']
   print(' '.join(arguments))
   subprocess.run(arguments, check=True)
