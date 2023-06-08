@@ -378,11 +378,11 @@ int main(int argc, const char *argv [])
       }
     }
 
+    if (initialized && overlayModel) {
+      overlayRender(I, overlayImage);
+      vpDisplay::display(I);
+    }
     if (tracking) {
-      if (overlayModel) {
-        overlayRender(I, overlayImage);
-        vpDisplay::display(I);
-      }
       vpDisplay::displayText(I, 20, 20, "Right click to quit", vpColor::red);
       vpDisplay::displayText(I, 30, 20, "Press T: Toggle overlay", vpColor::red);
       vpDisplay::displayText(I, 40, 20, "Press W: Toggle wireframe", vpColor::red);

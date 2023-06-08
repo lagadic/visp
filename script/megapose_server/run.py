@@ -63,7 +63,7 @@ def make_object_dataset(meshes_dir: Path) -> RigidObjectDataset:
             if fn.suffix in {".obj", ".ply", ".glb", ".gltf"}:
                 assert not mesh_path, f"there are multiple meshes in the {label} directory"
                 mesh_path = fn
-        assert mesh_path, f"couldnt find a obj or ply mesh for {label}"
+        assert mesh_path, f"couldnt find the mesh for {label}"
         rigid_objects.append(RigidObject(label=label, mesh_path=mesh_path, mesh_units=mesh_units))
     rigid_object_dataset = RigidObjectDataset(rigid_objects)
     return rigid_object_dataset
@@ -110,12 +110,7 @@ class MegaposeServer():
         """
         self.host = host
         self.port = port
-        self.object_dataset = make_object_dataset(mesh_dir)
-        model_tuple = self._load_model(model_name)
-        self.model_info = model_tuple[0]
-        self.model = model_tuple[1]
-        self.model.eval()
-        self.camera_data = self._make_camera_data(camera_data)
+        self.num_workers = num_workers
         self.operations = {
             ServerMessage.GET_POSE.value: self._estimate_pose,
             ServerMessage.GET_VIZ.value: self._raw_viz,
@@ -123,12 +118,17 @@ class MegaposeServer():
             ServerMessage.GET_SCORE.value: self._score,
             ServerMessage.SET_SO3_GRID_SIZE.value: self._set_SO3_grid_size,
         }
-        print(self.operations.keys())
+
+        self.object_dataset = make_object_dataset(mesh_dir)
+        model_tuple = self._load_model(model_name)
+        self.model_info = model_tuple[0]
+        self.model = model_tuple[1]
+        self.model.eval()
+        self.camera_data = self._make_camera_data(camera_data)
         self.renderer = Panda3dSceneRenderer(self.object_dataset)
         torch.backends.cudnn.benchmark = True
         torch.backends.cudnn.deterministic = False
         self.optimize = optimize
-        self.num_workers = num_workers
         if self.optimize:
             class Optimized(nn.Module):
                 def delete_weights(self):

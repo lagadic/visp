@@ -28,7 +28,7 @@
     "confidenceThreshold": 0.65,
     "nmsThreshold": 0.5,
     "filterThreshold": -0.25,
-    "scaleFactor": 0.0039,
+    "scaleFactor": 0.003921569,
     "swapRedAndBlue": false
   },
 
