@@ -486,7 +486,7 @@ if __name__ == '__main__':
                         Options: RGB, RGBD, RGB-multi-hypothesis, RGBD-multi-hypothesis''')
     parser.add_argument('--meshes-directory', type=str, default='./meshes', help='Directory containing the 3D models. each 3D model must be in its own subfolder')
     parser.add_argument('--optimize', action='store_true', help='Experimental: Optimize network for inference speed. This may incur a loss of accuracy.')
-    parser.add_argument('--num_workers', type=int, default=4, help='Number of workers for rendering')
+    parser.add_argument('--num-workers', type=int, default=4, help='Number of workers for rendering')
 
 
     args = parser.parse_args()
@@ -503,7 +503,7 @@ if __name__ == '__main__':
         'w': 640
     }
 
-    server = MegaposeServer(args.host, args.port, megapose_models[args.model][0], mesh_dir, camera_data, optimize=args.optimize)
+    server = MegaposeServer(args.host, args.port, megapose_models[args.model][0], mesh_dir, camera_data, optimize=args.optimize, num_workers=args.num_workers)
 
     server.run()
 
