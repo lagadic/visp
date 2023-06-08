@@ -39,11 +39,14 @@
   Test test saving and parsing JSON configuration for vpCameraParameters
 */
 
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_CATCH2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
+
 #include <random>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/me/vpMe.h>
 
-#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_CATCH2)
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 

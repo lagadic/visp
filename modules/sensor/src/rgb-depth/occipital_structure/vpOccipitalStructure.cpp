@@ -911,7 +911,7 @@ void vpOccipitalStructure::saveDepthImageAsPointCloudMesh(std::string &filename)
 /*!
   Get intrinsic parameters of input stream type.
   \param stream_type : Type of stream (visible, depth).
-  \param proj_type : Perspective projection model type; with or without distorsion.
+  \param proj_type : Perspective projection model type; with or without distortion.
  */
 vpCameraParameters vpOccipitalStructure::getCameraParameters(const vpOccipitalStructureStream stream_type,
                                                              vpCameraParameters::vpCameraParametersProjType proj_type)

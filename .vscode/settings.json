@@ -15,7 +15,8 @@
     "C_Cpp.vcFormat.space.beforeOpenSquareBracket": false,
     "files.associations": {
         "bitset": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "*.in": "cpp"
     },
     "C_Cpp.vcFormat.indent.namespaceContents": false
 }

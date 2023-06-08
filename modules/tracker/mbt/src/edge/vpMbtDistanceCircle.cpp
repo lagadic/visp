@@ -382,7 +382,7 @@ std::vector<double> vpMbtDistanceCircle::getModelForDisplay(const vpHomogeneousM
    to their state.
 
    - If green : The vpMeSite is a good point.
-   - If blue : The point is removed because of the vpMeSite tracking phase (constrast problem).
+   - If blue : The point is removed because of the vpMeSite tracking phase (contrast problem).
    - If purple : The point is removed because of the vpMeSite tracking phase (threshold problem).
    - If blue : The point is removed because of the robust method in the virtual visual servoing.
 

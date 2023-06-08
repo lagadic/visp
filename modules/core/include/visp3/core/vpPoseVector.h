@@ -68,12 +68,12 @@ class vpRowVector;
   \brief Implementation of a pose vector and operations on poses.
 
   The vpPose class implements a complete representation of every rigid motion
-  in the euclidian space.
+  in the Euclidean space.
 
   The vpPose class is derived from vpArray2D<double>.
 
   The pose is composed of a translation and a rotation
-  minimaly represented by a 6 dimension pose vector as: \f[ ^{a}{\bf
+  minimally represented by a 6 dimension pose vector as: \f[ ^{a}{\bf
   r}_b = [^{a}{\bf t}_{b},\theta {\bf u}]^\top \in R^6\f]
 
   where \f$ ^{a}{\bf r}_b \f$ is the pose from frame \f$ a \f$ to
@@ -131,7 +131,7 @@ class vpRowVector;
     vpPoseVector pose(t, tu);
   }
   \endcode
-  If ViSP is build with c++11 suport, you could also initialize the vector using:
+  If ViSP is build with c++11 support, you could also initialize the vector using:
   \code
   #include <visp3/core/vpPoseVector.h>
 
@@ -281,7 +281,7 @@ public:
     This function is not applicable to a pose vector that is always a
     6-by-1 column vector.
     \exception vpException::fatalError When this function is called.
-    */
+  */
   void resize(unsigned int nrows, unsigned int ncols, bool flagNullify = true)
   {
     (void)nrows;
@@ -316,7 +316,7 @@ private:
   /*!
      \deprecated Provided only for compat with previous releases.
      This function does nothing.
-   */
+  */
   vp_deprecated void init() { };
   //@}
 #endif

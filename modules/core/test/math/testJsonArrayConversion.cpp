@@ -31,19 +31,22 @@
  * Description:
  * Test vpArray2D and children JSON parse / save.
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file testJsonArrayConversion.cpp
 
-  Test test saving and parsing JSON configuration for vpArray2D and children classes
+  Test test saving and parsing JSON configuration for vpArray2D and children classes.
 */
+
+#include <visp3/core/vpConfig.h>
+
+#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_CATCH2) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 #include <random>
 #include <visp3/core/vpArray2D.h>
 #include <visp3/core/vpIoTools.h>
 
-#if defined(VISP_HAVE_NLOHMANN_JSON) && defined(VISP_HAVE_CATCH2)
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
@@ -61,8 +64,7 @@ class vpExceptionMatcher : public Catch::Matchers::Impl::MatcherBase<vpException
 public:
   vpExceptionMatcher(vpException::generalExceptionEnum type, const StringMatcherBase &messageMatcher)
     : m_type(type), m_messageMatcher(messageMatcher)
-  {
-  }
+  { }
 
   bool match(vpException const &in) const override
   {
@@ -139,13 +141,13 @@ public:
 Catch::Generators::GeneratorWrapper<vpArray2D<double> > randomArray(double v, int minSize, int maxSize)
 {
   return Catch::Generators::GeneratorWrapper<vpArray2D<double> >(
-      std::unique_ptr<Catch::Generators::IGenerator<vpArray2D<double> > >(
-          new RandomArray2DGenerator(v, minSize, maxSize)));
+    std::unique_ptr<Catch::Generators::IGenerator<vpArray2D<double> > >(
+      new RandomArray2DGenerator(v, minSize, maxSize)));
 }
 Catch::Generators::GeneratorWrapper<vpColVector> randomColVector(double v, int minSize, int maxSize)
 {
   return Catch::Generators::GeneratorWrapper<vpColVector>(
-      std::unique_ptr<Catch::Generators::IGenerator<vpColVector> >(new RandomColVectorGenerator(v, minSize, maxSize)));
+    std::unique_ptr<Catch::Generators::IGenerator<vpColVector> >(new RandomColVectorGenerator(v, minSize, maxSize)));
 }
 vpExceptionMatcher matchVpException(vpException::generalExceptionEnum type, const StringMatcherBase &matcher)
 {
@@ -185,7 +187,7 @@ SCENARIO("Serializing a vpArray2D", "[json]")
   }
 }
 
-SCENARIO("Trying to instanciate a vpArray with a wrong type of object", "[json]")
+SCENARIO("Trying to instantiate a vpArray with a wrong type of object", "[json]")
 {
   GIVEN("A random scalar converted to a JSON representation")
   {
@@ -214,7 +216,7 @@ SCENARIO("Recovering a vpArray2D from a JSON array", "[json]")
   }
   GIVEN("A 1D array")
   {
-    const json j = {10.0, 20.0, 30.0};
+    const json j = { 10.0, 20.0, 30.0 };
     WHEN("Converting to a vpArray2D")
     {
       THEN("An exception is thrown, since this is an ambiguous array")
@@ -324,7 +326,7 @@ SCENARIO("Serializing and deserializing a vpColVector", "[json]")
   }
 }
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv [])
 {
   Catch::Session session; // There must be exactly one instance
   session.applyCommandLine(argc, argv);

@@ -695,7 +695,7 @@ std::vector<std::vector<double> > vpMbtDistanceCylinder::getModelForDisplay(unsi
 
     - If green : The vpMeSite is a good point.
     - If blue : The point is removed because of the vpMeSite tracking phase
-   (constrast problem).
+   (contrast problem).
     - If purple : The point is removed because of the vpMeSite tracking phase
    (threshold problem).
     - If blue : The point is removed because of the robust method in the

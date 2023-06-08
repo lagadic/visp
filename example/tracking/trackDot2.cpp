@@ -379,7 +379,7 @@ int main(int argc, const char **argv)
 
     // tracking is initalized if no other parameters are given to the
     // iniTracking(..) method a right mouse click on the dot is expected
-    // dot location can also be specified explicitely in the
+    // dot location can also be specified explicitly in the
     // initTracking method : d.initTracking(I,ip) where ip is the image
     // point from which the dot is searched
 

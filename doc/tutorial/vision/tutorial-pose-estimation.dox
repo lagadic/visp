@@ -54,7 +54,7 @@ If we come back in tutorial-pose-from-points-image.cpp in the `main()` function,
 After the instantiation of a window able to display the image and at the end the result of the estimated pose as a pose frame, we setup the camera parameters. We consider here the following camera model \f${\bf a}=(p_x,p_y, u_0,v_0)\f$ where \f$p_x = p_y = 800 \f$ are the ratio between the focal length and the size of a pixel, and where the principal point \f$(u_0, v_0)\f$ is located at the image center position.
 \snippet tutorial-pose-from-points-image.cpp Camera parameters
 
-Each blob is then tracked using a vector of four vpDot2 trackers. To avoid human interaction, we initialize the tracker with a pixel position inside each blob. Here we also instanciate a vector of vpImagePoint `ip` that will be updated in the while loop with the 2D coordinates in pixels of the blob center of gravity.
+Each blob is then tracked using a vector of four vpDot2 trackers. To avoid human interaction, we initialize the tracker with a pixel position inside each blob. Here we also instantiate a vector of vpImagePoint `ip` that will be updated in the while loop with the 2D coordinates in pixels of the blob center of gravity.
 \snippet tutorial-pose-from-points-image.cpp Blob tracking
 
 We also define the 3D model of our 12cm by 12cm square by setting the 3D coordinates of the corners in an object frame located in this example in the middle of the square. We consider here that the points are located in the plane \f$z=0\f$.

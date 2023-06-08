@@ -173,7 +173,7 @@ ViSP 3.4.0 (released February 26, 2021)
     . [#763] VISP does not support the latest PCL release 1.11.0
     . [#767] Compile from source on Ubuntu Focal raises CMake error with Ogre 1.9 or 2.1
     . [#777] Issue when calling vpMatrix::eigenValues() using lapack built-in
-    . [#780] Projects have to explicitely link against Boost when compiling ViSP with ar module
+    . [#780] Projects have to explicitly link against Boost when compiling ViSP with ar module
     . [#781] Wrong share install path on unix-like system
     . [#785] Static variable in vpServo
     . [#787] Unable to build simdlib 3rd party for iOS
@@ -662,7 +662,7 @@ ViSP 3.0.0 (released December 18th, 2015)
     . [19326] segfault when using vpDisplayX::init(unsigned int, unsigned int, ...)
     . [19368] Invalid rotation parameters in vpSimulatorViper850::getPosition()
     . [#3]  Issue when comparing two vpRGBa
-    . [#5]  Unable to get calibration matrix K when model with distorsion is
+    . [#5]  Unable to get calibration matrix K when model with distortion is
       used
     . [#6]  Issue with vpMath::round()
     . [#18] Issues with vpColVector::median() + with assignment operator of

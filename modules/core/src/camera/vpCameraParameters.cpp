@@ -130,7 +130,7 @@ vpCameraParameters::vpCameraParameters(double cam_px, double cam_py, double cam_
 
   \param cam_px,cam_py : pixel size
   \param cam_u0,cam_v0 : principal points
-  \param coefficients  : distorsion model coefficients
+  \param coefficients  : distortion model coefficients
 
  */
 vpCameraParameters::vpCameraParameters(double cam_px, double cam_py, double cam_u0, double cam_v0,
@@ -298,7 +298,7 @@ void vpCameraParameters::initProjWithKannalaBrandtDistortion(double cam_px, doub
   this->py = cam_py;
   this->u0 = cam_u0;
   this->v0 = cam_v0;
-  
+
   this->kud = 0.0;
   this->kdu = 0.0;
 
@@ -352,7 +352,7 @@ void vpCameraParameters::initFromCalibrationMatrix(const vpMatrix &_K)
 }
 
 /*!
-   Initialize the camera model without distorsion from the image dimension and
+   Initialize the camera model without distortion from the image dimension and
 the camera field of view. \param w : Image width. \param h : Image height.
    \param hfov : Camera horizontal field of view angle expressed in radians.
    \param vfov : Camera vertical field of view angle expressed in radians.
@@ -443,7 +443,7 @@ bool vpCameraParameters::operator==(const vpCameraParameters &c) const
       !vpMath::equal(inv_px, c.inv_px, std::numeric_limits<double>::epsilon()) ||
       !vpMath::equal(inv_py, c.inv_py, std::numeric_limits<double>::epsilon()))
     return false;
-  
+
   if(m_dist_coefs.size() != c.m_dist_coefs.size())
     return false;
 
