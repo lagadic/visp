@@ -136,20 +136,23 @@ public:
     * Estimate the poses of objects (in the frame of the camera c) with Megapose.
     * The object origins used to estimate the poses are those used by the megapose server.
     * \param image the image, acquired by camera c, used to estimate the pose of the objects.
+    * \param objectNames names of the objects for which to estimate the pose. The name of the object should be known by the megapose server.
+    * An object name can appear multiple times if multiple instances of the object are in the image and their pose should estimated.
     * \param depth an optional depth image, that must be aligned with the RGB image. If provided, the megapose server should be configure to use the depth.
-    *               Note that the using depth may lead to a noisy estimation and should not always be preferred.
-    * \param depth_to_m a scale factor that is used to convert the depth map into meters. If depth is null, the value is ignored.
-    * \param detections the objects detected in the image. Used only for the coarse model, which uses the size of the bounding box to generate initial guesses.
-    *                   The label associated to an object should match the name of an object known by the megapose server.
+    * Note that the using depth may lead to a noisy estimation and should not always be preferred.
+    * \param depthToM a scale factor that is used to convert the depth map into meters. If depth is null, the value is ignored.
+    * \param detections the bounding boxes of the objects \e objectNames. Used only for the coarse model, which uses the size of the bounding box to generate initial guesses.
+    * If specified, should be the same size as \e objectNames. The bounding box at index i will be for the object i.
     * \param initial_cTos An optional initial pose estimate for each object present in the image. If not null, then the megapose server only runs the refiner model,
-    *                    which is faster but only allows for smaller corrections (depending on the number of refiner iterations)
-    * \param refiner_iterations Number of megapose refiner iterations to be performed.
+    * which is faster but only allows for smaller corrections (depending on the number of refiner iterations).
+    * If specified, should be the same size as \e objectNames. The initial pose estimate at index i will be for the object at index i.
+    * \param refinerIterations Number of megapose refiner iterations to be performed.
     *
-    * \return a list of vpMegaPoseEstimate, one for each input detection, (same length as objectNames)
+    * \return a list of vpMegaPoseEstimate, one for each input object, (same length as \e objectNames)
     */
     std::vector<vpMegaPoseEstimate> estimatePoses(const vpImage<vpRGBa> &image, const std::vector<std::string> &objectNames,
-                                                  const vpImage<uint16_t> *const depth = nullptr, const double depth_to_m = 0.f,
-                                                  const std::vector<vpRect> *const boundingBoxes = nullptr,
+                                                  const vpImage<uint16_t> *const depth = nullptr, const double depthToM = 0.f,
+                                                  const std::vector<vpRect> *const detections = nullptr,
                                                   const std::vector<vpHomogeneousMatrix> *const initial_cTos = nullptr,
                                                   int refinerIterations = -1);
     /**

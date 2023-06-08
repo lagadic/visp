@@ -65,7 +65,7 @@ To install the Megapose server, there are two dependencies:
   - Git is also required in order to fetch the Megapose sources.
   If you built ViSP from sources, then it should already be installed.
 
-The server sources are located in the `script/megapose_server` folder of your ViSP <br>source</br> directory
+The server sources are located in the `script/megapose_server` folder of your ViSP <b>source</b> directory
 
 In this folder, you can find multiple files:
 - `run.py`: the code for the server

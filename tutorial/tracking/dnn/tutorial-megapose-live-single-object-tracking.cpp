@@ -1,4 +1,4 @@
-//! \example tutorial-dnn-object-detection-live.cpp
+//! \example tutorial-megapose-live-single-object-tracking.cpp
 #include <iostream>
 
 #include <visp3/core/vpConfig.h>
