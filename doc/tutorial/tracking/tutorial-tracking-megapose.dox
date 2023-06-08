@@ -100,10 +100,10 @@ With Megapose installed, you are now ready to run a basic, single object trackin
 
 In this tutorial, we will track an object from a live camera feed. For megapose to work, we will need:
 - The 3D model of the object
-- A way to detect the object in the 
+- A way to detect the object in the
 - A machine with a GPU, that hosts the server. If your machine has a GPU, then you can run the server and this client in parallel
 
-To get you started, we provide the full data to run tracking on a short video. 
+To get you started, we provide the full data to run tracking on a short video.
 To go further, you should check \ref megapose_adaptation that will explain what you need to use your own objects and camera.
 
 \subsection megapose_start_server Starting the server
@@ -139,14 +139,14 @@ optional arguments:
   --meshes-directory MESHES_DIRECTORY
                         Directory containing the 3D models. each 3D model must be
                         in its own subfolder
-  --optimize            Experimental: Optimize network for inference speed. 
+  --optimize            Experimental: Optimize network for inference speed.
                         This may incur a loss of accuracy.
-  --num_workers NUM_WORKERS
+  --num-workers NUM_WORKERS
                         Number of workers for rendering
 \endcode
 
 From the multiple arguments described, the required ones are:
-- `--host`: the IP address on which the server will listen. If you plan to run the tracking example and the megapose server on the same machine, use `127.0.0.1`. 
+- `--host`: the IP address on which the server will listen. If you plan to run the tracking example and the megapose server on the same machine, use `127.0.0.1`.
 If running on separate machines, you can find out the IP address of the server with:
   - On Linux (with the `net-tools` package)
   \code{.sh}
@@ -161,13 +161,13 @@ If running on separate machines, you can find out the IP address of the server w
 - `--model`: The model that is used to estimate the pose. The available options are:
   - `RGB`: This model expects an RGB image as an input. From the coarse model estimates, the best pose hypothesis is given to the refiner, which performs 5 iterations by default.
   - `RGBD`: Same as above, except that an RGBD image is expected in input. Using RGBD is not recommended for tracking applications, as the model is sensitive to depth noise.
-  - `RGB-multi-hypothesis`: Same as `RGB`, except that the coarse model selects the top-K hypotheses (Here, K = 5) which are all forwarded to the refiner model. 
+  - `RGB-multi-hypothesis`: Same as `RGB`, except that the coarse model selects the top-K hypotheses (Here, K = 5) which are all forwarded to the refiner model.
   This model will take far more time, and is thus not recommended for tracking, but may be useful for single shot pose estimation if you have no speed requirements.
   - `RGBD-multi-hypothesis`: Is similar to `RGB-multi-hypothesis`, except that ICP after the refiner model has run on RGB images. This model thus requires an RGBD image.
 - `--meshes-directory`:  The directory containing the 3D models. The supported format are `.obj`, `.gltf` and `.glb`. If your model is in another format, e.g., `.stl`, it can be converted through <a href="https://www.blender.org/">Blender</a>
 The directory containing the models should be structured as follow:
 \code
-model
+models
 |--cube
    |--cube.obj
    |--cube.mtl
@@ -179,7 +179,7 @@ model
 To run the basic version of the tutorial below, we provide the model of the cube that is to be tracked in the video. The 3D models directory is `data/model`, located in the tutorial folder
 To start the server, you should enter in your terminal:
 \code{.sh}
-(visp_megapose_server) visp_build/tutorial/tracking/dnn $ python -m megapose_server.run --host 127.0.0.1 --port 5555 --model RGB --meshes_directory data/model
+(visp_megapose_server) visp_build/tutorial/tracking/dnn $ python -m megapose_server.run --host 127.0.0.1 --port 5555 --model RGB --meshes-directory data/models
 \endcode
 Note that this assumes that your current directory is the tutorial folder.
 
@@ -215,7 +215,7 @@ To launch the tracking program, enter:
 visp_build/tutorial/tracking/dnn $ ./tutorial-megapose-live-single-object-tracking.cpp --config data/megapose_cube.json megapose/address 127.0.0.1 megapose/port 5555 video-device data/cube_video.mp4
 \endcode
 
-If the megapose server is running on another machine or uses another port, replace the arguments with your values. 
+If the megapose server is running on another machine or uses another port, replace the arguments with your values.
 
 
 \subsection megapose_code Understanding the program

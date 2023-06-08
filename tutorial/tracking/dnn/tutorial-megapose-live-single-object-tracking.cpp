@@ -378,16 +378,16 @@ int main(int argc, const char *argv [])
       }
     }
 
-    if (initialized && overlayModel) {
-      overlayRender(I, overlayImage);
-      vpDisplay::display(I);
-    }
     if (tracking) {
+      if (overlayModel) {
+        overlayRender(I, overlayImage);
+        vpDisplay::display(I);
+      }
       vpDisplay::displayText(I, 20, 20, "Right click to quit", vpColor::red);
       vpDisplay::displayText(I, 30, 20, "Press T: Toggle overlay", vpColor::red);
       vpDisplay::displayText(I, 40, 20, "Press W: Toggle wireframe", vpColor::red);
       vpDisplay::displayFrame(I, megaposeEstimate.cTo, cam, 0.05, vpColor::none, 3);
-      vpDisplay::displayRectangle(I, lastDetection, vpColor::red);
+      //vpDisplay::displayRectangle(I, lastDetection, vpColor::red);
       displayScore(I, megaposeEstimate.score);
     }
     //! [Display]
