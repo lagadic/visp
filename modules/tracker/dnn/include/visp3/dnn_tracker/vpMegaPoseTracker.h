@@ -7,7 +7,14 @@
 #include <future>
 #include<memory>
 #include <visp3/dnn_tracker/vpMegaPose.h>
-
+/**
+ * \class vpMegaPoseTracker
+ * \ingroup module_dnn_tracker
+ *
+ * @brief A simplified interface to track a single object with megapose.
+ * This tracker works asynchronously: A call to init or track will not stop the current thread. Rather, an std::future object is returned, and its result should be acquired when it is ready.
+ *
+ */
 class VISP_EXPORT vpMegaPoseTracker
 {
 public:

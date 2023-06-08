@@ -62,7 +62,7 @@ def download_models(megapose_env: str, megapose_path: Path, megapose_data_path: 
   conf_path = megapose_path / 'rclone.conf'
   rclone = str(get_rclone_for_conda_env(megapose_env).absolute())
   arguments = [rclone, 'copyto', 'inria_data:megapose-models/',
-                   str(models_path), '--exclude', '"**epoch**"', '--config', str(conf_path), '--progress']
+                   str(models_path), '--exclude="**epoch**"', '--config', str(conf_path), '--progress']
   print(' '.join(arguments))
   subprocess.run(arguments, check=True)
 
