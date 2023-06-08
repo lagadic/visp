@@ -625,6 +625,14 @@ in different ways. This will motivate us to continue the efforts.
   Kanade Lucas tracker module.
 */
 /*******************************************
+ * Module blob
+ *******************************************/
+ /*!
+  \ingroup module_tracker
+  \defgroup module_dnn_tracker dnn_tracker: Deep learning tracker module
+  Deep learning tracker module.
+*/
+/*******************************************
  * Module vision
  *******************************************/
  /*!
