@@ -200,6 +200,7 @@ int main(int argc, const char *argv [])
   double detectorConfidenceThreshold = 0.65, detectorNmsThreshold = 0.5, detectorFilterThreshold = -0.25;
   double detectorScaleFactor = 0.0039;
   bool  detectorSwapRB = false;
+  //! [Arguments]
   vpJsonArgumentParser parser("Single object tracking with Megapose", "--config", "/");
   parser.addArgument("width", width, true, "The image width")
     .addArgument("height", height, true, "The image height")
@@ -232,6 +233,7 @@ int main(int argc, const char *argv [])
     .addArgument("detector/swapRedAndBlue", detectorSwapRB, false, "Whether to swap red and blue channels before feeding the image to the detector.");
 
   parser.parse(argc, argv);
+  //! [Arguments]
 
   if (cam.get_projModel() != vpCameraParameters::perspectiveProjWithoutDistortion) {
     throw vpException(vpException::badValue, "The camera projection model should be without distortion, as other models are ignored by Megapose");
@@ -288,11 +290,10 @@ int main(int argc, const char *argv [])
   //! [Instantiate megapose]
 
   cv::Mat frame;
-  vpMegaPoseEstimate megaposeEstimate;
-  vpRect lastDetection;
-  bool callMegapose = true;
-  bool initialized = false;
-  bool requiresReinit = false;
+  vpMegaPoseEstimate megaposeEstimate; // last megapose estimation
+  vpRect lastDetection; // Last detection (initialization)
+  bool callMegapose = true; // Whether we should call megapose this iteration
+  bool initialized = false; // Whether tracking should be initialized or reinitialized
   bool tracking = false;
 
   bool overlayModel = true;
@@ -302,10 +303,7 @@ int main(int argc, const char *argv [])
   std::future<vpMegaPoseEstimate> trackerFuture;
   const auto waitTime = std::chrono::milliseconds(0);
 
-  double megaposeTime = 0.0;
-  std::vector<std::pair<unsigned, double>> megaposeRunTimes;
-  std::vector<std::pair<unsigned, vpMegaPoseEstimate>> iterMegaposeResults;
-  std::vector<bool> iterRequiresInit;
+
   unsigned iter = 0;
 
   while (true) {
@@ -327,8 +325,6 @@ int main(int argc, const char *argv [])
     //! [Check megapose]
     if (!callMegapose && trackerFuture.wait_for(waitTime) == std::future_status::ready) {
       megaposeEstimate = trackerFuture.get();
-      iterMegaposeResults.push_back(std::make_pair(iter, megaposeEstimate));
-      megaposeRunTimes.push_back(std::make_pair(iter, vpTime::measureTimeMs() - megaposeTime));
       callMegapose = true;
       tracking = true;
 
@@ -337,14 +333,13 @@ int main(int argc, const char *argv [])
       }
 
       if (megaposeEstimate.score < reinitThreshold) { // If confidence is low, require a reinitialisation with 2D detection
-        requiresReinit = true;
+        initialized = false;
       }
     }
     //! [Check megapose]
-    iterRequiresInit.push_back(requiresReinit || !initialized);
     //! [Call megapose]
     if (callMegapose) {
-      if (!initialized || requiresReinit) {
+      if (!initialized) {
         tracking = false;
         std::optional<vpRect> detection = std::nullopt;
 #if defined(VISP_HAVE_OPENCV_DNN)
@@ -359,11 +354,9 @@ int main(int argc, const char *argv [])
 
         if (detection) {
           initialized = true;
-          requiresReinit = false;
           lastDetection = *detection;
           trackerFuture = megaposeTracker.init(I, lastDetection);
           callMegapose = false;
-          megaposeTime = vpTime::measureTimeMs();
         }
       }
       else {
@@ -371,6 +364,9 @@ int main(int argc, const char *argv [])
         callMegapose = false;
       }
     }
+    //! [Call megapose]
+
+    //! [Display]
     std::string keyboardEvent;
     const bool keyPressed = vpDisplay::getKeyboardEvent(I, keyboardEvent, false);
     if (keyPressed) {
@@ -381,7 +377,7 @@ int main(int argc, const char *argv [])
         overlayMode = overlayMode == "full" ? "wireframe" : "full";
       }
     }
-    //! [Call megapose]
+
     if (tracking) {
       if (overlayModel) {
         overlayRender(I, overlayImage);
@@ -394,6 +390,7 @@ int main(int argc, const char *argv [])
       vpDisplay::displayRectangle(I, lastDetection, vpColor::red);
       displayScore(I, megaposeEstimate.score);
     }
+    //! [Display]
 
     vpDisplay::flush(I);
     ++iter;

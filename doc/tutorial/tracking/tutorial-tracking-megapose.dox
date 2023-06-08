@@ -50,6 +50,7 @@ The megapose client, written in C++, is included directly in ViSP. To be install
   \endcode
   If "dnn_tracker" is in the list, then the client can be compiled and used.
 
+\subsection megapose_server_install Installing the server
 
 To install the Megapose server, there are two dependencies:
   - Conda: Megapose will be installed in a new virtual environment in order to avoid potential conflicts with python and other packages you have already installed
@@ -57,10 +58,10 @@ To install the Megapose server, there are two dependencies:
     - Once installed, make sure that conda is in your environment path variable. The conda installation procedure should do this by default.
     - To check, simply enter `conda --version` in your terminal.
     - You should obtain an output similar to:
-      \verbatim
+      \code
       ~/visp_build$ conda --version
       conda 23.3.1
-      \endverbatim
+      \endcode
   - Git is also required in order to fetch the Megapose sources.
   If you built ViSP from sources, then it should already be installed.
 
@@ -99,15 +100,127 @@ With Megapose installed, you are now ready to run a basic, single object trackin
 
 In this tutorial, we will track an object from a live camera feed. For megapose to work, we will need:
 - The 3D model of the object
-- A way to detect the object in the image
+- A way to detect the object in the 
+- A machine with a GPU, that hosts the server. If your machine has a GPU, then you can run the server and this client in parallel
+
+To get you started, we provide the full data to run tracking on a short video. 
+To go further, you should check \ref megapose_adaptation that will explain what you need to use your own objects and camera.
 
 \subsection megapose_start_server Starting the server
 
+To use Megapose, we first need to start the inference server. As we have installed the server in \ref megapose_server_install, we can now use it from anywhere.
+First, activate your conda environment:
+\code{.sh}
+$ conda activate visp_megapose_server
+\endcode
+where `visp_megapose_server` is the name of the conda environment that you have defined in `megapose_variables.json` when installing the server.
+
+We can now start the server, and examine its arguments with:
+\code{.sh}
+(visp_megapose_server) $ python -m megapose_server.run -h
+...
+usage: run.py [-h] [--host HOST] [--port PORT]
+              [--model {RGB,RGBD,RGB-multi-hypothesis,RGBD-multi-hypothesis}]
+              [--meshes-directory MESHES_DIRECTORY] [--optimize]
+              [--num_workers NUM_WORKERS]
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --host HOST           IP or hostname to bind the server to. Set to 0.0.0.0 if
+                        you wish to listen for incoming connections from any
+                        source (dangerous)
+  --port PORT           The port on which to listen for new connections
+  --model {RGB,RGBD,RGB-multi-hypothesis,RGBD-multi-hypothesis}
+                        Which MegaPose model to use. Some models require the depth
+                        map. Some models generate multiple hypotheses when
+                        estimating the pose, at the cost of more computation.
+                        Options: RGB, RGBD, RGB-multi-hypothesis, RGBD-multi-
+                        hypothesis
+  --meshes-directory MESHES_DIRECTORY
+                        Directory containing the 3D models. each 3D model must be
+                        in its own subfolder
+  --optimize            Experimental: Optimize network for inference speed. 
+                        This may incur a loss of accuracy.
+  --num_workers NUM_WORKERS
+                        Number of workers for rendering
+\endcode
+
+From the multiple arguments described, the required ones are:
+- `--host`: the IP address on which the server will listen. If you plan to run the tracking example and the megapose server on the same machine, use `127.0.0.1`. 
+If running on separate machines, you can find out the IP address of the server with:
+  - On Linux (with the `net-tools` package)
+  \code{.sh}
+    $ ifconfig
+  \endcode
+  and look for the `inet` field of the network interface that can be reached by the client.
+  - On Windows
+  \code{.sh}
+    > ipconfig /all
+  \endcode
+- `--port`: The port on which the server will listen for incoming connections. This port should not already be in use by another program
+- `--model`: The model that is used to estimate the pose. The available options are:
+  - `RGB`: This model expects an RGB image as an input. From the coarse model estimates, the best pose hypothesis is given to the refiner, which performs 5 iterations by default.
+  - `RGBD`: Same as above, except that an RGBD image is expected in input. Using RGBD is not recommended for tracking applications, as the model is sensitive to depth noise.
+  - `RGB-multi-hypothesis`: Same as `RGB`, except that the coarse model selects the top-K hypotheses (Here, K = 5) which are all forwarded to the refiner model. 
+  This model will take far more time, and is thus not recommended for tracking, but may be useful for single shot pose estimation if you have no speed requirements.
+  - `RGBD-multi-hypothesis`: Is similar to `RGB-multi-hypothesis`, except that ICP after the refiner model has run on RGB images. This model thus requires an RGBD image.
+- `--meshes-directory`:  The directory containing the 3D models. The supported format are `.obj`, `.gltf` and `.glb`. If your model is in another format, e.g., `.stl`, it can be converted through <a href="https://www.blender.org/">Blender</a>
+The directory containing the models should be structured as follow:
+\code
+model
+|--cube
+   |--cube.obj
+   |--cube.mtl
+   |--texture.jpg
+|--my_obj
+   |--object.glb
+\endcode
+
+To run the basic version of the tutorial below, we provide the model of the cube that is to be tracked in the video. The 3D models directory is `data/model`, located in the tutorial folder
+To start the server, you should enter in your terminal:
+\code{.sh}
+(visp_megapose_server) visp_build/tutorial/tracking/dnn $ python -m megapose_server.run --host 127.0.0.1 --port 5555 --model RGB --meshes_directory data/model
+\endcode
+Note that this assumes that your current directory is the tutorial folder.
+
+Your server should now be started and waiting for incoming connections. You can now launch the tracking tutorial.
+
 \subsection megapose_run_command Running the tracking example
+Let us now run the tracker on a video, with the default provided cube model.
+the video can be found in the data folder of the tutorial.
+
+The program accepts many arguments, defined here through a vpJsonArgumentParser:
+\snippet tutorial-megapose-live-single-object-tracking.cpp Arguments
+
+Since there are many arguments, we provide a default configuration to run on the video of the cube. This configuration is found in the file `data/megapose_cube.json`:
 \include megapose_cube.json
+
+Among the argument, the most interesting ones are:
+- width, height: the dimensions of the image
+- video-device: The source of the images. Input 0,1,2,... etc for a realtime camera feed, or the name of a video file.
+- camera: The intrinsics of the camera. Here, the video is captured on an Intel Realsense D435, and the intrinsics are obtained from the realsense SDK. The video is captured by using the tutorial \ref grabber-camera-realsense
+- reinitThreshold: a threshold between 0 and 1. If the megapose's score  is below this threshold, it should be reinitialised (requiring a 2D bounding box).
+- detectionMethod: How to acquire a bounding box of the object in the image.
+- object: name of the object to track. Should match an object that is in the mesh directory of the megapose server
+- megapose/address: The IP of the megapose server
+- megapose/refinerIterations: Number of iterations performed by the refiner model. This impacts both (re)initialization and tracking. Values above 1 may be too slow for tracking.
+- megapsose/initialisationNumSamples: Number of renders (random poses) used for the initialisation.
+
+For the parameters of the detector (used if `detectionMethod == dnn`), see \ref tutorial-detection-dnn. Here, the parameters correspond to a YoloV7-tiny, trained only to detect the cube.
+Note that to train this detector, we acquired ~400 images with \ref grabber-camera-realsense, then annotated them with <a href="https://github.com/heartexlabs/labelImg">labelImg</a>. A more recent alternative seems to be <a href="https://github.com/heartexlabs/label-studio">LabelStudio</a>
+The detector should be trained (and exported) with images of the same size as provided to megapose.
+
+To launch the tracking program, enter:
+\code{.sh}
+visp_build/tutorial/tracking/dnn $ ./tutorial-megapose-live-single-object-tracking.cpp --config data/megapose_cube.json megapose/address 127.0.0.1 megapose/port 5555 video-device data/cube_video.mp4
+\endcode
+
+If the megapose server is running on another machine or uses another port, replace the arguments with your values. 
 
 
 \subsection megapose_code Understanding the program
+
+The full code can be found in tutorial-megapose-live-single-object-tracking.cpp
 
 \snippet tutorial-megapose-live-single-object-tracking.cpp Instantiate megapose
 
@@ -117,14 +230,13 @@ In this tutorial, we will track an object from a live camera feed. For megapose 
 
 \snippet tutorial-megapose-live-single-object-tracking.cpp Detect
 
+\snippet tutorial-megapose-live-single-object-tracking.cpp Display
 
 
-The full code can be found at the end of the tutorial, or at tutorial-megapose-live-single-object-tracking.cpp
+
 
 
 \subsection megapose_adaptation Adapting this tutorial for your use case
-
-
 
 \include tutorial-megapose-live-single-object-tracking.cpp
 
