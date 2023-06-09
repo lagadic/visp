@@ -1,10 +1,16 @@
 #include <visp3/dnn_tracker/vpMegaPose.h>
 #include <visp3/core/vpConfig.h>
 //#ifdef VISP_HAVE_NLOHMANN_JSON
-
+#if !defined(_WIN32) && (defined(__unix__) || defined(__unix) || (defined(__APPLE__) && defined(__MACH__))) // UNIX
 #include <arpa/inet.h>
+#include <netdb.h>
+#include <netinet/in.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#else
+#include <io.h>
+#include <winsock2.h>
+#endif
 #include <stdexcept>
 #include <mutex>
 #include <thread>
@@ -223,7 +229,7 @@ void decode(const std::vector<uint8_t>& buffer, unsigned int& index, vpImage<vpR
 void handleWrongReturnMessage(const vpMegaPose::ServerMessage code, std::vector<uint8_t>& buffer)
 {
   if (code != vpMegaPose::ServerMessage::ERR) {
-    throw vpException(vpException::fatalError, "Megapose: got an unexpected message from the server");
+    throw vpException(vpException::fatalError, "Megapose: got an unexpected message from the server: " + std::to_string(code));
   }
   std::string message;
   unsigned index = 0;
@@ -243,6 +249,10 @@ const std::unordered_map<vpMegaPose::ServerMessage, std::string> vpMegaPose::cod
     {ServerMessage::GET_SCORE, "GSCO"},
     {ServerMessage::RET_SCORE, "RSCO"},
     {ServerMessage::SET_SO3_GRID_SIZE, "SO3G"},
+    {ServerMessage::GET_LIST_OBJECTS, "GLSO"},
+    {ServerMessage::RET_LIST_OBJECTS, "RLSO"},
+
+
 };
 
 std::string vpMegaPose::messageToString(const vpMegaPose::ServerMessage messageType)
@@ -309,6 +319,12 @@ std::pair<vpMegaPose::ServerMessage, std::vector<uint8_t>> vpMegaPose::readMessa
 
 vpMegaPose::vpMegaPose(const std::string& host, int port, const vpCameraParameters& cam, unsigned height, unsigned width)
 {
+#if defined(_WIN32)
+  WSADATA WSAData;
+  if (WSAStartup(MAKEWORD(2, 0), &WSAData) != 0) {
+    throw vpException(vpException::ioError, "Could not perform WSAStartup");
+  }
+#endif
   struct sockaddr_in serv_addr;
   if ((serverSocket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
     throw vpException(vpException::ioError, "Could not create socket to connect to MegaPose server");
@@ -328,7 +344,11 @@ vpMegaPose::vpMegaPose(const std::string& host, int port, const vpCameraParamete
 
 vpMegaPose::~vpMegaPose()
 {
+#if defined(_WIN32)
+  WSACleanup();
+#else
   close(fd);
+#endif
 }
 
 std::vector<vpMegaPoseEstimate>
@@ -518,5 +538,25 @@ void vpMegaPose::setCoarseNumSamples(const unsigned num)
   if (code != ServerMessage::OK) {
     handleWrongReturnMessage(code, data_result);
   }
+}
+
+std::vector<std::string> vpMegaPose::getObjectNames()
+{
+  const std::lock_guard<std::mutex> lock(mutex);
+  std::vector<uint8_t> data;
+  makeMessage(ServerMessage::GET_LIST_OBJECTS, data);
+  send(serverSocket, &data[0], data.size(), 0);
+  ServerMessage code;
+  std::vector<uint8_t> data_result;
+  std::tie(code, data_result) = readMessage();
+  if (code != ServerMessage::RET_LIST_OBJECTS) {
+    handleWrongReturnMessage(code, data_result);
+  }
+  unsigned int index = 0;
+  std::string jsonStr;
+  decode(data_result, index, jsonStr);
+  json jsonValue = json::parse(jsonStr);
+  std::vector<std::string> result = jsonValue;
+  return result;
 }
 //#endif

@@ -119,6 +119,8 @@ public:
         GET_SCORE = 8, //! Ask the server to score a pose estimate
         RET_SCORE = 9, //! Code sent when server returns a pose score
         SET_SO3_GRID_SIZE = 10, //! Ask the server to set the number of samples for coarse estimation
+        GET_LIST_OBJECTS = 11,
+        RET_LIST_OBJECTS = 12
     };
     /**
     * Instanciates a connection to a megapose server.
@@ -185,6 +187,12 @@ public:
     * \param num The number of renders for full pose estimation by megapose. This number should be equal to 72, 512, 576 or 4608
     */
     void setCoarseNumSamples(const unsigned num);
+
+    /**
+     * @brief Query the server to find the name of all of the objects it knows     *
+     * @return the names of the objects known by the server
+     */
+    std::vector<std::string> getObjectNames();
 
     ~vpMegaPose();
 

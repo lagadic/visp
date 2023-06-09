@@ -218,6 +218,11 @@ visp_build/tutorial/tracking/dnn $ ./tutorial-megapose-live-single-object-tracki
 If the megapose server is running on another machine or uses another port, replace the arguments with your values.
 
 
+\htmlonly
+<p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/wq2vnzf1vv8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
+\endhtmlonly
+
+
 \subsection megapose_code Understanding the program
 
 The full code can be found in tutorial-megapose-live-single-object-tracking.cpp

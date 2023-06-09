@@ -117,9 +117,10 @@ class MegaposeServer():
             ServerMessage.SET_INTR.value: self._set_intrinsics,
             ServerMessage.GET_SCORE.value: self._score,
             ServerMessage.SET_SO3_GRID_SIZE.value: self._set_SO3_grid_size,
+            ServerMessage.GET_LIST_OBJECTS.value: self._list_objects,
         }
 
-        self.object_dataset = make_object_dataset(mesh_dir)
+        self.object_dataset: RigidObjectDataset = make_object_dataset(mesh_dir)
         model_tuple = self._load_model(model_name)
         self.model_info = model_tuple[0]
         self.model = model_tuple[1]
@@ -149,42 +150,12 @@ class MegaposeServer():
                     super().__init__()
                     self.m = m.eval()
                     self.m = fuse(self.m, inplace=False)
-                    # def count_parameters(model): return sum(p.numel() for p in model.parameters())
-                    # print(f'Original model has {count_parameters(self.m)} parameters')
-                    # self.delete_weights()
-                    # print(f'Pruned model has {count_parameters(self.m)} parameters')
-
-                    # self.m = self.m.half().to(memory_format=torch.channels_last)
                     self.m = torch.jit.trace(self.m, torch.rand(inp).cuda())
-                    self.m = torch.jit.optimize_for_inference(self.m)
-
-
-                def forward(self, x):
-                    # x = x.to(memory_format=torch.channels_last, dtype=torch.float16)
-                    return self.m(x).float()
-
-            class OptimizedTRT(nn.Module):
-                def __init__(self, m: nn.Module, inp):
-                    super().__init__()
-                    import torch_tensorrt
-                    inputs = torch_tensorrt.Input(
-                        min_shape=inp,
-                        opt_shape=inp,
-                        max_shape=inp,
-                        dtype=torch.half,
-                    )
-                    enabled_precisions = {torch.float, torch.half}
-
-                    self.m = m.eval()
-                    # self.m = self.m.half()
-                    self.m = torch_tensorrt.compile(
-                        self.m, inputs=inputs, enabled_precisions=enabled_precisions
-                    )
+                    self.m = torch.jit.freeze(self.m)
 
                 def forward(self, x):
-                    x = x.half()
                     return self.m(x).float()
-            #fuse_resnet(self.model.coarse_model.backbone)
+
             h, w = self.camera_data.resolution
             self.model.coarse_model.backbone = Optimized(self.model.coarse_model.backbone, (1, 9, h, w))
             self.model.refiner_model.backbone = Optimized(self.model.refiner_model.backbone, (1, 27, h, w))
@@ -245,10 +216,11 @@ class MegaposeServer():
             inference_params['n_refiner_iterations'] = json_object['refiner_iterations']
         t = time.time()
 
+
         output, extra_data = self.model.run_inference_pipeline(
             observation, detections=detections, **inference_params, coarse_estimates=coarse_estimates
         )
-        #print(f'Inference took {int((time.time() - t) * 1000.0)}ms')
+        # print(f'Inference took {int((time.time() - t) * 1000.0)}ms')
         # print(extra_data)
 
         def make_result(buffer):
@@ -341,6 +313,14 @@ class MegaposeServer():
         msg = create_message(ServerMessage.RET_SCORE, make_result)
         s.sendall(msg)
 
+    def _list_objects(self, s: socket.socket, _buffer: io.BytesIO):
+        objects = list(self.object_dataset.label_to_objects.keys())
+        def make_result(buffer):
+            j = json.dumps(objects)
+            pack_string(j, buffer)
+        msg = create_message(ServerMessage.RET_LIST_OBJECTS, make_result)
+        s.sendall(msg)
+
     def _make_detections(self, labels, detections):
         result = []
         for label, detection in zip(labels, detections):
@@ -405,10 +385,10 @@ class MegaposeServer():
             return np.array([np.sin(t1) * r1, np.cos(t1) * r1, np.sin(t2) * r2, np.cos(t2) * r2])
         json_object = json.loads(read_string(buffer))
         value = json_object['so3_grid_size']
-        print(value)
         if value in [72, 512, 576, 4608]:
             self.model.load_SO3_grid(value)
         else:
+            print('Number of SO(3) grid samples is not standard, generating random orientations.')
             import roma
             rng = 17
             rand_gen = np.random.default_rng(seed=rng)

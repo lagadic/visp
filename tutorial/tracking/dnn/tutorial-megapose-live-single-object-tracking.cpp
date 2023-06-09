@@ -270,7 +270,7 @@ int main(int argc, const char *argv [])
 #elif defined(VISP_HAVE_OPENCV)
   vpDisplayOpenCV d;
 #endif
-  d.setDownScalingFactor(vpDisplay::SCALE_AUTO);
+  //d.setDownScalingFactor(vpDisplay::SCALE_AUTO);
 #if defined(VISP_HAVE_OPENCV_DNN)
   vpDetectorDNNOpenCV::DNNResultsParsingType detectorType = vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(detectorTypeString);
   vpDetectorDNNOpenCV::NetConfig netConfig(detectorConfidenceThreshold, detectorNmsThreshold, labels,
@@ -286,6 +286,11 @@ int main(int argc, const char *argv [])
   //! [Instantiate megapose]
   std::shared_ptr<vpMegaPose> megapose = std::make_shared<vpMegaPose>(megaposeAddress, megaposePort, cam, height, width);
   megapose->setCoarseNumSamples(coarseNumSamples);
+
+  const std::vector<std::string> allObjects = megapose->getObjectNames();
+  if (std::find(allObjects.begin(), allObjects.end(), objectName) == allObjects.end()) {
+    throw vpException(vpException::badValue, "Object " + objectName + " is not known by the megapose server!");
+  }
   vpMegaPoseTracker megaposeTracker(megapose, objectName, refinerIterations);
   //! [Instantiate megapose]
 
@@ -302,13 +307,16 @@ int main(int argc, const char *argv [])
 
   std::future<vpMegaPoseEstimate> trackerFuture;
   const auto waitTime = std::chrono::milliseconds(0);
+  std::vector<double> megaposeTimes;
+  std::vector<double> frameTimes;
 
+  double megaposeStartTime = 0.0;
 
   unsigned iter = 0;
 
   while (true) {
-    capture >> frame;
     const double frameStart = vpTime::measureTimeMs();
+    capture >> frame;
     if (frame.empty())
       break;
 
@@ -325,6 +333,9 @@ int main(int argc, const char *argv [])
     //! [Check megapose]
     if (!callMegapose && trackerFuture.wait_for(waitTime) == std::future_status::ready) {
       megaposeEstimate = trackerFuture.get();
+      if (tracking) {
+        megaposeTimes.push_back(vpTime::measureTimeMs() - megaposeStartTime);
+      }
       callMegapose = true;
       tracking = true;
 
@@ -357,11 +368,13 @@ int main(int argc, const char *argv [])
           lastDetection = *detection;
           trackerFuture = megaposeTracker.init(I, lastDetection);
           callMegapose = false;
+
         }
       }
       else {
         trackerFuture = megaposeTracker.track(I);
         callMegapose = false;
+        megaposeStartTime = vpTime::measureTimeMs();
       }
     }
     //! [Call megapose]
@@ -405,8 +418,12 @@ int main(int argc, const char *argv [])
     if (!isLiveCapture) {
       vpTime::wait(std::max(0.0, videoFrametime - (frameEnd - frameStart)));
     }
+    frameTimes.push_back(vpTime::measureTimeMs() - frameStart);
   }
+  std::cout << "Average frame time: " << vpMath::getMean(frameTimes) << std::endl;
+  std::cout << "Average time between megapose calls: " << vpMath::getMean(megaposeTimes) << std::endl;
 }
+
 #else
 int main()
 {
