@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -32,11 +32,7 @@
  * Compute the pose of a 3D object using the Dementhon, Lagrange and
  * Non-Linear approach.
  *
- * Authors:
- * Eric Marchand
- * Fabien Spindler
- *
- *****************************************************************************/
+*****************************************************************************/
 
 #include <visp3/core/vpCameraParameters.h>
 #include <visp3/core/vpMeterPixelConversion.h>
@@ -66,14 +62,14 @@
 */
 
 void print_pose(const vpHomogeneousMatrix &cMo, const std::string &legend);
-int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const vpHomogeneousMatrix &cMo_est, const vpCameraParameters& cam,
-                 const std::string &legend, const double &translation3DThresh, const double &rotationRadian3DThresh, const double &pose2DThresh, const double &posePixThresh);
+int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &cam,
+  const std::string &legend, const double &translation3DThresh, const double &rotationRadian3DThresh, const double &pose2DThresh, const double &posePixThresh);
 
-int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const vpHomogeneousMatrix &cMo_est, const vpCameraParameters& cam,
-                 const std::string &legend)
+int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &cam,
+  const std::string &legend)
 {
   return compare_pose(pose, cMo_ref, cMo_est, cam,
-                 legend, 0.001, 0.001 ,0.001, 1.);
+    legend, 0.001, 0.001, 0.001, 1.);
 }
 
 // print the resulting estimated pose
@@ -82,19 +78,19 @@ void print_pose(const vpHomogeneousMatrix &cMo, const std::string &legend)
   vpPoseVector cpo = vpPoseVector(cMo);
 
   std::cout << std::endl
-            << legend << "\n "
-            << "tx  = " << cpo[0] << "\n "
-            << "ty  = " << cpo[1] << "\n "
-            << "tz  = " << cpo[2] << "\n "
-            << "tux = vpMath::rad(" << vpMath::deg(cpo[3]) << ")\n "
-            << "tuy = vpMath::rad(" << vpMath::deg(cpo[4]) << ")\n "
-            << "tuz = vpMath::rad(" << vpMath::deg(cpo[5]) << ")\n"
-            << std::endl;
+    << legend << "\n "
+    << "tx  = " << cpo[0] << "\n "
+    << "ty  = " << cpo[1] << "\n "
+    << "tz  = " << cpo[2] << "\n "
+    << "tux = vpMath::rad(" << vpMath::deg(cpo[3]) << ")\n "
+    << "tuy = vpMath::rad(" << vpMath::deg(cpo[4]) << ")\n "
+    << "tuz = vpMath::rad(" << vpMath::deg(cpo[5]) << ")\n"
+    << std::endl;
 }
 
 // test if pose is well estimated
-int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const vpHomogeneousMatrix &cMo_est, const vpCameraParameters& cam,
-                 const std::string &legend, const double &translation3DThresh, const double &rotation3DThresh, const double &pose2DThresh, const double &posePixThresh)
+int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const vpHomogeneousMatrix &cMo_est, const vpCameraParameters &cam,
+  const std::string &legend, const double &translation3DThresh, const double &rotation3DThresh, const double &pose2DThresh, const double &posePixThresh)
 {
   vpPoseVector pose_ref = vpPoseVector(cMo_ref);
   vpPoseVector pose_est = vpPoseVector(cMo_est);
@@ -104,16 +100,13 @@ int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const v
   // Test done on the 3D pose
   for (unsigned int i = 0; i < 6; i++) {
     double pose3DThresh = 0.;
-    if(i < 3)
-    {
+    if (i < 3) {
       pose3DThresh = translation3DThresh;
     }
-    else
-    {
+    else {
       pose3DThresh = rotation3DThresh;
     }
-    if (std::fabs(pose_ref[i] - pose_est[i]) > pose3DThresh)
-    {
+    if (std::fabs(pose_ref[i] - pose_est[i]) > pose3DThresh) {
       fail_3d = 1;
       std::cout << "ref[" << i << "] - est[" << i << "] = " << pose_ref[i] - pose_est[i] << " > " << pose3DThresh << std::endl;
     }
@@ -122,7 +115,7 @@ int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const v
   std::cout << "Based on 3D parameters " << legend << " is " << (fail_3d ? "badly" : "well") << " estimated" << std::endl;
 
   // // Test done on the residual
-  
+
   // Residual expressed in meters
   double r = pose.computeResidual(cMo_est);
   if (pose.listP.size() < 4) {
@@ -134,15 +127,15 @@ int compare_pose(const vpPose &pose, const vpHomogeneousMatrix &cMo_ref, const v
   // std::cout << "Residual on each point (meter): " << r << std::endl;
   int fail_2d = (r > pose2DThresh) ? 1 : 0;
   std::cout << "Based on 2D residual (" << r << ") " << legend << " is " << (fail_2d ? "badly" : "well") << " estimated"
-            << std::endl;
+    << std::endl;
 
   // Residual expressed in pixels
   double r_pix = pose.computeResidual(cMo_est, cam);
   r_pix = sqrt(r_pix / pose.listP.size());
   // std::cout << "Residual on each point (pixel): " << r << std::endl;
-  int fail_pix = (r_pix> posePixThresh) ? 1 : 0;
+  int fail_pix = (r_pix > posePixThresh) ? 1 : 0;
   std::cout << "Based on pixel residual (" << r_pix << ") " << legend << " is " << (fail_pix ? "badly" : "well") << " estimated"
-            << std::endl;
+    << std::endl;
   return fail_3d + fail_2d + fail_pix;
 }
 
@@ -466,26 +459,26 @@ int main()
 
         // Computing theoretical u and v based on the 2D coordinates
         double x_theo = P[i].get_X() / P[i].get_Z();
-        double y_theo =P[i].get_Y() / P[i].get_Z();
+        double y_theo = P[i].get_Y() / P[i].get_Z();
         double u_theo = 0., v_theo = 0.;
-        vpMeterPixelConversion::convertPoint(cam, x_theo, y_theo, u_theo, v_theo); 
+        vpMeterPixelConversion::convertPoint(cam, x_theo, y_theo, u_theo, v_theo);
 
-        // Adding noise to u, v 
+        // Adding noise to u, v
         double u_noisy = u_theo + random();
         double v_noisy = v_theo + random();
 
         // Computing corresponding x, y
         double x_noisy = 0., y_noisy = 0.;
         vpPixelMeterConversion::convertPoint(cam, u_noisy, v_noisy, x_noisy, y_noisy);
-        
+
         P[i].set_x(x_noisy);
         P[i].set_y(y_noisy);
-        
+
         pose.addPoint(P[i]); // and added to the pose computation class
         std::cout << "P[" << i << "]:\n\tu_theo = " << u_theo << "\tu_noisy = " << u_noisy << std::endl;
-        std::cout <<                  "\tv_theo = " << v_theo << "\tv_noisy = " << v_noisy << std::endl;
-        std::cout <<                  "\tx_theo = " << x_theo << "\ty_noisy = " << x_noisy << std::endl;
-        std::cout <<                  "\ty_theo = " << y_theo << "\tx_noisy = " << y_noisy << std::endl;
+        std::cout << "\tv_theo = " << v_theo << "\tv_noisy = " << v_noisy << std::endl;
+        std::cout << "\tx_theo = " << x_theo << "\ty_noisy = " << x_noisy << std::endl;
+        std::cout << "\ty_theo = " << y_theo << "\tx_noisy = " << y_noisy << std::endl;
       }
 
       print_pose(cMo_ref, std::string("Reference pose"));
@@ -494,16 +487,16 @@ int main()
       pose.computePose(vpPose::LAGRANGE, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Lagrange"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Lagrange"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Lagrange"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_planar_fail |= fail;
 
       std::cout << "--------------------------------------------------" << std::endl;
       pose.computePose(vpPose::DEMENTHON, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Dementhon"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Dementhon"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Dementhon"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_planar_fail |= fail;
 
       std::cout << "--------------------------------------------------" << std::endl;
@@ -513,24 +506,24 @@ int main()
       pose.computePose(vpPose::RANSAC, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Ransac"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Ransac"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Ransac"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_planar_fail |= fail;
 
       std::cout << "--------------------------------------------------" << std::endl;
       pose.computePose(vpPose::LAGRANGE_LOWE, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Lagrange then Lowe"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Lagrange then Lowe"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Lagrange then Lowe"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_planar_fail |= fail;
 
       std::cout << "--------------------------------------------------" << std::endl;
       pose.computePose(vpPose::DEMENTHON_LOWE, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Dementhon then Lowe"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Dementhon then Lowe"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Dementhon then Lowe"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_planar_fail |= fail;
 
       // Now Virtual Visual servoing
@@ -538,32 +531,32 @@ int main()
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
       print_pose(cMo, std::string("Pose estimated by VVS"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by VVS"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by VVS"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_planar_fail |= fail;
 
       std::cout << "-------------------------------------------------" << std::endl;
       pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Dementhon then by VVS"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Dementhon then by VVS"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Dementhon then by VVS"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_planar_fail |= fail;
 
       std::cout << "-------------------------------------------------" << std::endl;
       pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Lagrange then by VVS"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Lagrange then by VVS"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Lagrange then by VVS"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_planar_fail |= fail;
 
       std::cout << "-------------------------------------------------" << std::endl;
       pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
 
       print_pose(cMo, std::string("Pose estimated either by Dementhon or Lagrange then by VVS"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose either by Dementhon or Lagrange then by VVS"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose either by Dementhon or Lagrange then by VVS"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_planar_fail |= fail;
     }
 
@@ -597,26 +590,26 @@ int main()
 
         // Computing theoretical u and v based on the 2D coordinates
         double x_theo = P[i].get_X() / P[i].get_Z();
-        double y_theo =P[i].get_Y() / P[i].get_Z();
+        double y_theo = P[i].get_Y() / P[i].get_Z();
         double u_theo = 0., v_theo = 0.;
-        vpMeterPixelConversion::convertPoint(cam, x_theo, y_theo, u_theo, v_theo); 
+        vpMeterPixelConversion::convertPoint(cam, x_theo, y_theo, u_theo, v_theo);
 
-        // Adding noise to u, v 
+        // Adding noise to u, v
         double u_noisy = u_theo + random();
         double v_noisy = v_theo + random();
 
         // Computing corresponding x, y
         double x_noisy = 0., y_noisy = 0.;
         vpPixelMeterConversion::convertPoint(cam, u_noisy, v_noisy, x_noisy, y_noisy);
-        
+
         P[i].set_x(x_noisy);
         P[i].set_y(y_noisy);
-        
+
         pose.addPoint(P[i]); // and added to the pose computation class
         std::cout << "P[" << i << "]:\n\tu_theo = " << u_theo << "\tu_noisy = " << u_noisy << std::endl;
-        std::cout <<                  "\tv_theo = " << v_theo << "\tv_noisy = " << v_noisy << std::endl;
-        std::cout <<                  "\tx_theo = " << x_theo << "\ty_noisy = " << x_noisy << std::endl;
-        std::cout <<                  "\ty_theo = " << y_theo << "\tx_noisy = " << y_noisy << std::endl;
+        std::cout << "\tv_theo = " << v_theo << "\tv_noisy = " << v_noisy << std::endl;
+        std::cout << "\tx_theo = " << x_theo << "\ty_noisy = " << x_noisy << std::endl;
+        std::cout << "\ty_theo = " << y_theo << "\tx_noisy = " << y_noisy << std::endl;
       }
 
       // Let's go ...
@@ -626,16 +619,16 @@ int main()
       pose.computePose(vpPose::LAGRANGE, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Lagrange"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Lagrange"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Lagrange"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       std::cout << "--------------------------------------------------" << std::endl;
       pose.computePose(vpPose::DEMENTHON, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Dementhon"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Dementhon"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Dementhon"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       std::cout << "--------------------------------------------------" << std::endl;
@@ -644,24 +637,24 @@ int main()
       pose.computePose(vpPose::RANSAC, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Ransac"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Ransac"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Ransac"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       std::cout << "--------------------------------------------------" << std::endl;
       pose.computePose(vpPose::LAGRANGE_LOWE, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Lagrange then Lowe"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Lagrange then Lowe"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Lagrange then Lowe"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       std::cout << "--------------------------------------------------" << std::endl;
       pose.computePose(vpPose::DEMENTHON_LOWE, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Dementhon then Lowe"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Dementhon then Lowe"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Dementhon then Lowe"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       // Now Virtual Visual servoing
@@ -670,32 +663,32 @@ int main()
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
       print_pose(cMo, std::string("Pose estimated by VVS"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by VVS"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by VVS"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       std::cout << "-------------------------------------------------" << std::endl;
       pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Dementhon then by VVS"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Dementhon then by VVS"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Dementhon then by VVS"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       std::cout << "-------------------------------------------------" << std::endl;
       pose.computePose(vpPose::LAGRANGE_VIRTUAL_VS, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Lagrange then by VVS"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Lagrange then by VVS"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Lagrange then by VVS"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       std::cout << "-------------------------------------------------" << std::endl;
       pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
 
       print_pose(cMo, std::string("Pose estimated  either by Dementhon or Lagrange then by VVS"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose either by Dementhon or Lagrange then by VVS"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose either by Dementhon or Lagrange then by VVS"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
     }
 
@@ -727,26 +720,26 @@ int main()
 
         // Computing theoretical u and v based on the 2D coordinates
         double x_theo = P[i].get_X() / P[i].get_Z();
-        double y_theo =P[i].get_Y() / P[i].get_Z();
+        double y_theo = P[i].get_Y() / P[i].get_Z();
         double u_theo = 0., v_theo = 0.;
-        vpMeterPixelConversion::convertPoint(cam, x_theo, y_theo, u_theo, v_theo); 
+        vpMeterPixelConversion::convertPoint(cam, x_theo, y_theo, u_theo, v_theo);
 
-        // Adding noise to u, v 
+        // Adding noise to u, v
         double u_noisy = u_theo + random();
         double v_noisy = v_theo + random();
 
         // Computing corresponding x, y
         double x_noisy = 0., y_noisy = 0.;
         vpPixelMeterConversion::convertPoint(cam, u_noisy, v_noisy, x_noisy, y_noisy);
-        
+
         P[i].set_x(x_noisy);
         P[i].set_y(y_noisy);
-        
+
         pose.addPoint(P[i]); // and added to the pose computation class
         std::cout << "P[" << i << "]:\n\tu_theo = " << u_theo << "\tu_noisy = " << u_noisy << std::endl;
-        std::cout <<                  "\tv_theo = " << v_theo << "\tv_noisy = " << v_noisy << std::endl;
-        std::cout <<                  "\tx_theo = " << x_theo << "\ty_noisy = " << x_noisy << std::endl;
-        std::cout <<                  "\ty_theo = " << y_theo << "\tx_noisy = " << y_noisy << std::endl;
+        std::cout << "\tv_theo = " << v_theo << "\tv_noisy = " << v_noisy << std::endl;
+        std::cout << "\tx_theo = " << x_theo << "\ty_noisy = " << x_noisy << std::endl;
+        std::cout << "\ty_theo = " << y_theo << "\tx_noisy = " << y_noisy << std::endl;
       }
 
       // Let's go ...
@@ -756,8 +749,8 @@ int main()
       pose.computePose(vpPose::DEMENTHON, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Dementhon"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Dementhon"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Dementhon"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       std::cout << "--------------------------------------------------" << std::endl;
@@ -767,15 +760,15 @@ int main()
 
       print_pose(cMo, std::string("Pose estimated by Ransac"));
       fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Ransac"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       std::cout << "--------------------------------------------------" << std::endl;
       pose.computePose(vpPose::DEMENTHON_LOWE, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Dementhon then Lowe"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Dementhon then Lowe"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Dementhon then Lowe"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       // Now Virtual Visual servoing
@@ -783,16 +776,16 @@ int main()
       pose.computePose(vpPose::VIRTUAL_VS, cMo);
 
       print_pose(cMo, std::string("Pose estimated by VVS"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by VVS"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by VVS"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       std::cout << "-------------------------------------------------" << std::endl;
       pose.computePose(vpPose::DEMENTHON_VIRTUAL_VS, cMo);
 
       print_pose(cMo, std::string("Pose estimated by Dementhon then by VVS"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose by Dementhon then by VVS"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose by Dementhon then by VVS"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       std::cout << "-------------------------------------------------" << std::endl;
@@ -800,8 +793,8 @@ int main()
       pose.computePose(vpPose::DEMENTHON_LAGRANGE_VIRTUAL_VS, cMo);
 
       print_pose(cMo, std::string("Pose estimated either by Dementhon or Lagrange then by VVS"));
-      fail = compare_pose( pose, cMo_ref, cMo, cam, "pose either by Dementhon or Lagrange then by VVS"
-                         , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
+      fail = compare_pose(pose, cMo_ref, cMo, cam, "pose either by Dementhon or Lagrange then by VVS"
+        , translation3DthreshWhenNoise, rotation3DthreshWhenNoise, residual2DWhenNoise, residualPixelWhenNoise);
       test_non_planar_fail |= fail;
 
       std::cout << "-------------------------------------------------" << std::endl;
@@ -810,12 +803,13 @@ int main()
     std::cout << "=======================================================" << std::endl;
     std::cout << "Pose estimation test from planar points: " << (test_planar_fail ? "fail" : "is ok") << std::endl;
     std::cout << "Pose estimation test from non-planar points: " << (test_non_planar_fail ? "fail" : "is ok")
-              << std::endl;
+      << std::endl;
     std::cout << "Global pose estimation test: " << ((test_planar_fail | test_non_planar_fail) ? "fail" : "is ok")
-              << std::endl;
+      << std::endl;
 
     return ((test_planar_fail | test_non_planar_fail) ? EXIT_FAILURE : EXIT_SUCCESS);
-  } catch (const vpException &e) {
+  }
+  catch (const vpException &e) {
     std::cout << "Catch an exception: " << e << std::endl;
     return EXIT_FAILURE;
   }
