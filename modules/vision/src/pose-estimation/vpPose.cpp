@@ -363,6 +363,11 @@ bool vpPose::coplanar(int &coplanar_plane_type, double *p_a, double *p_b, double
 
   \return The value of the sum of squared residuals in meter^2.
 
+  \note There is also the possibility to compute the residual expressed in pixel^2
+  using one of the following methods:
+  - vpPose::computeResidual(const vpHomogeneousMatrix &, const vpCameraParameters &)
+  - vpPose::computeResidual(const vpHomogeneousMatrix &, const vpCameraParameters &am, vpColVector &)
+
 */
 double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
 {
@@ -387,7 +392,10 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo) const
   \param cMo : Input pose. The matrix that defines the pose to be tested.
   \param cam : Camera parameters used to observe the points.
 
-  \return The value of the sum of squared residuals in meter^2.
+  \return The value of the sum of squared residuals in pixel^2.
+
+  \note There is also the possibility to compute the residual expressed in meter^2 using
+  vpPose::computeResidual(const vpHomogeneousMatrix &)
 
 */
 double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam) const
@@ -404,7 +412,10 @@ double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraPar
   \param cam : Camera parameters used to observe the points.
   \param residuals: Input/output vector that will be resized and will contain the squared residuals expressed in pixel^2 of each point.
 
-  \return The value of the sum of squared residuals in meter^2.
+  \return The value of the sum of squared residuals in pixel^2.
+
+  \note There is also the possibility to compute the residual expressed in meter^2 using
+  vpPose::computeResidual(const vpHomogeneousMatrix &)
 
 */
 double vpPose::computeResidual(const vpHomogeneousMatrix &cMo, const vpCameraParameters &cam, vpColVector &residuals) const
