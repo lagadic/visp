@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Simple mathematical function not available in the C math library (math.h).
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMath.cpp
@@ -66,13 +66,15 @@ typedef uint64_t uint64;
 #endif
 
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
-typedef union Vp64suf {
+typedef union Vp64suf
+{
   //  int64 i; //Unused variable, should be harmless to comment it
   uint64 u;
   double f;
 } Vp64suf;
 
-typedef union Vp32suf {
+typedef union Vp32suf
+{
   // int i; //Unused variable, should be harmless to comment it
   unsigned u;
   float f;
@@ -324,7 +326,8 @@ double vpMath::getMedian(const std::vector<double> &v)
 
   if (size % 2 == 1) {
     return val_n;
-  } else {
+  }
+  else {
     std::nth_element(v_copy.begin(), v_copy.begin() + n - 1, v_copy.end());
     return 0.5 * (val_n + v_copy[n - 1]);
   }
@@ -475,9 +478,9 @@ vpHomogeneousMatrix vpMath::ned2ecef(double lonDeg, double latDeg, double radius
   double lat = vpMath::rad(latDeg);
 
   vpHomogeneousMatrix ecef_M_ned;
-  ecef_M_ned[0][0] = -sin(lat)*cos(lon); ecef_M_ned[0][1] = -sin(lon); ecef_M_ned[0][2] = -cos(lat)*cos(lon); ecef_M_ned[0][3] = radius*cos(lon)*cos(lat);
-  ecef_M_ned[1][0] = -sin(lat)*sin(lon); ecef_M_ned[1][1] =  cos(lon); ecef_M_ned[1][2] = -cos(lat)*sin(lon); ecef_M_ned[1][3] = radius*sin(lon)*cos(lat);
-  ecef_M_ned[2][0] =  cos(lat);          ecef_M_ned[2][1] = 0;         ecef_M_ned[2][2] = -sin(lat);          ecef_M_ned[2][3] = radius*sin(lat);
+  ecef_M_ned[0][0] = -sin(lat) * cos(lon); ecef_M_ned[0][1] = -sin(lon); ecef_M_ned[0][2] = -cos(lat) * cos(lon); ecef_M_ned[0][3] = radius * cos(lon) * cos(lat);
+  ecef_M_ned[1][0] = -sin(lat) * sin(lon); ecef_M_ned[1][1] = cos(lon); ecef_M_ned[1][2] = -cos(lat) * sin(lon); ecef_M_ned[1][3] = radius * sin(lon) * cos(lat);
+  ecef_M_ned[2][0] = cos(lat);          ecef_M_ned[2][1] = 0;         ecef_M_ned[2][2] = -sin(lat);          ecef_M_ned[2][3] = radius * sin(lat);
 
   return ecef_M_ned;
 }
@@ -527,9 +530,9 @@ vpHomogeneousMatrix vpMath::enu2ecef(double lonDeg, double latDeg, double radius
   double lat = vpMath::rad(latDeg);
 
   vpHomogeneousMatrix ecef_M_enu;
-  ecef_M_enu[0][0] = -sin(lon); ecef_M_enu[0][1] = -sin(lat)*cos(lon); ecef_M_enu[0][2] = cos(lat)*cos(lon); ecef_M_enu[0][3] = radius*cos(lon)*cos(lat);
-  ecef_M_enu[1][0] =  cos(lon); ecef_M_enu[1][1] = -sin(lat)*sin(lon); ecef_M_enu[1][2] = cos(lat)*sin(lon); ecef_M_enu[1][3] = radius*sin(lon)*cos(lat);
-  ecef_M_enu[2][0] =  0;        ecef_M_enu[2][1] =  cos(lat);          ecef_M_enu[2][2] = sin(lat);          ecef_M_enu[2][3] = radius*sin(lat);
+  ecef_M_enu[0][0] = -sin(lon); ecef_M_enu[0][1] = -sin(lat) * cos(lon); ecef_M_enu[0][2] = cos(lat) * cos(lon); ecef_M_enu[0][3] = radius * cos(lon) * cos(lat);
+  ecef_M_enu[1][0] = cos(lon); ecef_M_enu[1][1] = -sin(lat) * sin(lon); ecef_M_enu[1][2] = cos(lat) * sin(lon); ecef_M_enu[1][3] = radius * sin(lon) * cos(lat);
+  ecef_M_enu[2][0] = 0;        ecef_M_enu[2][1] = cos(lat);          ecef_M_enu[2][2] = sin(lat);          ecef_M_enu[2][3] = radius * sin(lat);
 
   return ecef_M_enu;
 }
@@ -599,7 +602,7 @@ std::vector<std::pair<double, double> > vpMath::computeRegularPointsOnSphere(uns
   \sa enu2ecef(), ned2ecef()
 */
 std::vector<vpHomogeneousMatrix> vpMath::getLocalTangentPlaneTransformations(const std::vector<std::pair<double, double> > &lonlatVec, double radius,
-                                                                             vpHomogeneousMatrix (*toECEF)(double lonDeg_, double latDeg_, double radius_))
+  vpHomogeneousMatrix(*toECEF)(double lonDeg_, double latDeg_, double radius_))
 {
   std::vector<vpHomogeneousMatrix> ecef_M_local_vec;
   ecef_M_local_vec.reserve(lonlatVec.size());
@@ -662,7 +665,7 @@ vpColVector vpMath::deg(const vpRotationVector &r)
     throw(vpException(vpException::fatalError, "Cannot convert angles of a quaternion vector in degrees!"));
   }
   vpColVector r_deg(r.size());
-  for (unsigned int i = 0; i < r.size(); i++)  {
+  for (unsigned int i = 0; i < r.size(); i++) {
     r_deg[i] = vpMath::deg(r[i]);
   }
   return r_deg;
@@ -677,10 +680,25 @@ vpColVector vpMath::deg(const vpRotationVector &r)
 vpColVector vpMath::deg(const vpColVector &r)
 {
   vpColVector r_deg(r.size());
-  for (unsigned int i = 0; i < r.size(); i++)  {
+  for (unsigned int i = 0; i < r.size(); i++) {
     r_deg[i] = vpMath::deg(r[i]);
   }
   return r_deg;
+}
+
+/*!
+ * Convert angles of a column vector from degrees to radians.
+ *
+ * \param r : Column vector with angles in degrees.
+ * \return Corresponding column vector with angles converted in radians.
+ */
+vpColVector vpMath::rad(const vpColVector &r)
+{
+  vpColVector r_rad(r.size());
+  for (unsigned int i = 0; i < r.size(); i++) {
+    r_rad[i] = vpMath::rad(r[i]);
+  }
+  return r_rad;
 }
 
 /*!

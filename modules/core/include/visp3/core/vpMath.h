@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,7 +31,7 @@
  * Description:
  * Simple mathematical function not available in the C math library (math.h).
  *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
   \file vpMath.h
@@ -111,9 +111,11 @@ public:
   /*!
     Convert an angle in degrees into radian.
     \param deg : Angle in degrees.
-    \return Angle converted in radian.
+    \return Angle converted in radians.
   */
   static inline double rad(double deg) { return (deg * M_PI) / 180.0; }
+
+  static vpColVector rad(const vpColVector &r);
 
   /*!
     Compute x square value.
@@ -267,14 +269,14 @@ public:
       linspaced.push_back(start + delta * i);
     }
     linspaced.push_back(end); // I want to ensure that start and end
-                              // are exactly the same as the input
+    // are exactly the same as the input
     return linspaced;
   }
 
   static std::vector<std::pair<double, double> > computeRegularPointsOnSphere(unsigned int maxPoints);
   static std::vector<vpHomogeneousMatrix>
-  getLocalTangentPlaneTransformations(const std::vector<std::pair<double, double> > &lonlatVec, double radius,
-                                      vpHomogeneousMatrix (*toECEF)(double lonDeg, double latDeg, double radius));
+    getLocalTangentPlaneTransformations(const std::vector<std::pair<double, double> > &lonlatVec, double radius,
+      vpHomogeneousMatrix(*toECEF)(double lonDeg, double latDeg, double radius));
 
   static vpHomogeneousMatrix lookAt(const vpColVector &from, const vpColVector &to, vpColVector tmp);
 
