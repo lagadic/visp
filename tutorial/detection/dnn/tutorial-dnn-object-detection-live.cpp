@@ -291,45 +291,40 @@ int main(int argc, const char *argv [])
     }
 
     vpDetectorDNNOpenCV dnn;
-    #ifdef VISP_HAVE_NLOHMANN_JSON
-    if(!opt_input_json.empty())
-    {
+#ifdef VISP_HAVE_NLOHMANN_JSON
+    if (!opt_input_json.empty()) {
       //! [DNN json]
-      dnn.initFromJSON(opt_input_json); 
+      dnn.initFromJSON(opt_input_json);
       //! [DNN json]
     }
-    #else
-    if(!opt_input_json.empty())
-    {
+#else
+    if (!opt_input_json.empty()) {
       std::cerr << "Error: NLOHMANN JSON library is not installed, please install it following ViSP documentation to configure the vpDetectorDNNOpenCV from a JSON file." << std::endl;
       return EXIT_FAILURE;
     }
-    #endif
-    else
-    {
+#endif
+    else {
       //! [DNN params]
       vpDetectorDNNOpenCV::NetConfig netConfig(opt_dnn_confThresh, opt_dnn_nmsThresh, opt_dnn_label_file
         , cv::Size(opt_dnn_width, opt_dnn_height), opt_dnn_filterThresh, cv::Scalar(opt_dnn_meanR, opt_dnn_meanG, opt_dnn_meanB)
         , opt_dnn_scale_factor, opt_dnn_swapRB, opt_dnn_type
         , opt_dnn_model, opt_dnn_config, opt_dnn_framework
-        );
+      );
       dnn.setNetConfig(netConfig);
       //! [DNN params]
     }
 
     std::cout << dnn.getNetConfig() << std::endl;
 
-    #ifdef VISP_HAVE_NLOHMANN_JSON
-    if(!opt_output_json.empty())
-    {
+#ifdef VISP_HAVE_NLOHMANN_JSON
+    if (!opt_output_json.empty()) {
       dnn.saveConfigurationInJSON(opt_output_json);
     }
-    #else
-    if(!opt_output_json.empty())
-    {
+#else
+    if (!opt_output_json.empty()) {
       std::cerr << "Error: NLOHMANN JSON library is not installed, please install it following ViSP documentation to save the configuration in a JSON file." << std::endl;
     }
-    #endif
+#endif
 
     cv::Mat frame;
     while (true) {
