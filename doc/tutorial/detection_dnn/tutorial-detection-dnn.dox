@@ -32,8 +32,8 @@ $ svn export https://github.com/lagadic/visp.git/trunk/tutorial/detection/dnn
 
 \section dnn_requirements Requirements
 
-To enable vpDetectorDNNOpenCV class usage, and thus use this tutorial, you need to have a version of ViSP build with OpenCV. 
-If you have a GPU, we recommend you to refer to the \ref build_opencv_with_cuda section. Otherwise, you can refer to the 
+To enable vpDetectorDNNOpenCV class usage, and thus use this tutorial, you need to have a version of ViSP build with OpenCV.
+If you have a GPU, we recommend you to refer to the \ref build_opencv_with_cuda section. Otherwise, you can refer to the
 \ref install_opencv_from_package section.
 
 \subsection build_opencv_with_cuda Build OpenCV with GPU acceleration
@@ -42,7 +42,7 @@ OpenCV can be built with GPU acceleration thanks to the Cuda and CuDNN libraries
 
 1. First you need to install the Cuda library following the [official documentation](https://docs.nvidia.com/cuda/#installation-guides).
 
-2. Then, you need to install the CuDNN library following the [official documentation](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html). 
+2. Then, you need to install the CuDNN library following the [official documentation](https://docs.nvidia.com/deeplearning/cudnn/install-guide/index.html).
 Please ensure to install a CuDNN version that is compatible with your version of Cuda.
 
 3. Then, you need to determine the Compute capability of your GPU either from the [NVidia website](https://developer.nvidia.com/cuda-gpus)
@@ -54,7 +54,7 @@ or using the [nvidia-smi tool](https://developer.nvidia.com/nvidia-system-manage
    ```
    $ apt list --installed | grep -i opencv
    ```
- 
+
    If this command does not return an empty line, please run (**if you are sure that it is not required by another software installed on your computer**):
    ```
    $ sudo apt remove libopencv-dev
@@ -71,10 +71,10 @@ or using the [nvidia-smi tool](https://developer.nvidia.com/nvidia-system-manage
     pip \
     cmake-curses-gui \
     locate \
-    libx11-dev 
+    libx11-dev
   ```
 
-6. Get the sources. The \b vpDetectorDNNOpenCV has been tested with **OpenCV 4.7**. First, get the OpenCV_contrib sources, that contain the Cuda DNN module. 
+6. Get the sources. The \b vpDetectorDNNOpenCV has been tested with **OpenCV 4.7**. First, get the OpenCV_contrib sources, that contain the Cuda DNN module.
 On a Debian distribution, you would run:
   ```
   $ cd ${HOME}/visp_ws/3rdparty/
@@ -85,7 +85,7 @@ On a Debian distribution, you would run:
 7. Compile OpenCV and install it from source. On a Debian distribution, you would run:
   ```
   $ mkdir -p ${HOME}/visp_ws/3rdparty/opencv/build &&\
-  cd ${HOME}/visp_ws/3rdparty/opencv/build 
+  cd ${HOME}/visp_ws/3rdparty/opencv/build
   $ cmake .. \
     -DCMAKE_BUILD_TYPE=RELEASE \
     -DCMAKE_INSTALL_PREFIX=/usr \
@@ -112,23 +112,23 @@ On a Debian distribution, you would run:
   $ sudo make install
   ```
 
-9. When using the `vpDetectorDNNOpenCV` class, please first call the  
-methods `vpDetectorDNNOpenCV::setPreferableBackend` and `vpDetectorDNNOpenCV::setPreferableTarget` 
-before running the inference if you want to benefit from GPU acceleration:
+9. When using the `vpDetectorDNNOpenCV` class, please first call the
+  methods `vpDetectorDNNOpenCV::setPreferableBackend()` and `vpDetectorDNNOpenCV::setPreferableTarget()`
+  before running the inference if you want to benefit from GPU acceleration:
   ```
   vpDetectorDNNOpenCV::NetConfig my_config;
   // Set my_config to match your needs
 
   vpDetectorDNNOpenCV::DNNResultsParsingType parsingType = USER_SPECIFIED;
-  // Either define your parsing method or  change the parsing type for one that is supported
-  void (*dummyParsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &) = 
+  // Either define your parsing method or change the parsing type for one that is supported
+  void (*dummyParsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &) =
     [](DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &)
     {
       std::cout << "Hello world" << std::endl;
-    }; 
+    };
 
   vpDetectorDNNOpenCV network(my_config, dummyParsingMethod);
-  
+
   // Here are the important calls to use GPU acceleration
   network.setPreferableBackend(cv::dnn::DNN_BACKEND_CUDA);
   network.setPreferableTarget(cv::dnn::DNN_TARGET_CUDA);
@@ -178,17 +178,17 @@ The following lines permit to create the DNN object detector:
 \snippet tutorial-dnn-object-detection-live.cpp DNN params
 
 To construct `netConfig` object some configuration parameters of the DNN are required:
-- `confThresh`, which is the confidence threshold used to filter the detections after inference,
-- `nmsThresh`, which is the Non-Maximum Threshold used to filter multiple detections that can occur approximatively at the same locations,
-- `labelFile`, which is the path towards the file containing the list of classes the DNN can detect,
-- `inputWidth` and `inputHeight`, which are the dimensions to resize the input image into the blob that is fed in entry of the network,
+- `confThresh`, which is the confidence threshold used to filter the detections after inference
+- `nmsThresh`, which is the Non-Maximum Threshold used to filter multiple detections that can occur approximatively at the same locations
+- `labelFile`, which is the path towards the file containing the list of classes the DNN can detect
+- `inputWidth` and `inputHeight`, which are the dimensions to resize the input image into the blob that is fed in entry of the network
 - `filterThresh`, which is a double that, if greater than 0., indicates that the user wants to perform an additional filtering on the detection outputs based on the
-size of these detections.
-- `meanR`, `meanG` and `meanB` are the values used for mean subtraction.
-- `scaleFactor` is used to normalize the data range.
-- `swapRB` should be set to `true` when the model has been trained on RGB data. Since OpenCV used the BGR convention, R and B channel should be swapped.
+  size of these detections
+- `meanR`, `meanG` and `meanB` are the values used for mean subtraction
+- `scaleFactor` is used to normalize the data range
+- `swapRB` should be set to `true` when the model has been trained on RGB data. Since OpenCV used the BGR convention, R and B channel should be swapped
 - `dnn_type` is the type of parsing method to use to parse the DNN raw results. See vpDetectorDNNOpenCV::DNNResultsParsingType to determine
-which parsing methods are available.
+  which parsing methods are available
 - `model` is the network trained weights, `config` is the network topology description and `framework` is the weights framework.
 
 Alternatively, if ViSP has been compiled with the NLOHMANN JSON library, one can initialize the `vpDetectorDNNOpenCV` object using the following method:
@@ -271,7 +271,7 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
     --confThresh 0.35 --filterThresh -0.25 --scale 1
 ```
 
-Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above,
 you can use the following command line:
 ```
 $ ./tutorial-dnn-object-detection-live --input-json ./default_faster-rcnn.json
@@ -302,7 +302,7 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
     --filterThresh -0.25 --scale 1
 ```
 
-Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above,
 you can use the following command line:
 ```
 $ ./tutorial-dnn-object-detection-live --input-json ./default_ssd-mobilenet_v1.json
@@ -327,7 +327,7 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
     --filterThresh -0.25 --scale 0.00389
 ```
 
-Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above,
 you can use the following command line:
 ```
 $ ./tutorial-dnn-object-detection-live --input-json ./default_ssd-mobilenet_v3.json
@@ -357,7 +357,7 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
     --filterThresh -0.25 --scale 0.0039
 ```
 
-Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above,
 you can use the following command line:
 ```
 $ ./tutorial-dnn-object-detection-live --input-json ./default_yolov3.json
@@ -385,7 +385,7 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
     --filterThresh -0.25 --scale 0.0039
 ```
 
-Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above,
 you can use the following command line:
 ```
 $ ./tutorial-dnn-object-detection-live --input-json ./default_yolov4.json
@@ -414,7 +414,7 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
     --filterThresh -0.25 --scale 0.0039
 ```
 
-Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above,
 you can use the following command line:
 ```
 $ ./tutorial-dnn-object-detection-live --input-json ./default_yolov5.json
@@ -449,13 +449,13 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
 
 \note You do not need a config file when using a network saved in ONNX format.
 
-Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above,
 you can use the following command line:
 ```
 $ ./tutorial-dnn-object-detection-live --input-json ./default_yolov7.json
 ```
 
-If you want to train your own YoloV7 model, please refer to the [official documentation](https://github.com/WongKinYiu/yolov7#transfer-learning). 
+If you want to train your own YoloV7 model, please refer to the [official documentation](https://github.com/WongKinYiu/yolov7#transfer-learning).
 If your dataset is rather small (only hundreds of pictures), you may want to consider to base your training on
 `yolov7-tiny` network, as it tends to get better results.
 
@@ -479,7 +479,7 @@ $ ./tutorial-dnn-object-detection-live --model $MODEL --labels $LABELS --config 
     --filterThresh -0.25 --scale 0.0039
 ```
 
-Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above, 
+Alternatively, if you have installed the NLOHMANN JSON library and you are using the weights quoted above,
 you can use the following command line:
 ```
 $ ./tutorial-dnn-object-detection-live --input-json ./default_yolov8.json
@@ -528,14 +528,14 @@ again the weights from [here](https://pjreddie.com/media/files/yolov3.weights) p
 
 When using a YoloV7 model exported in `onnx` format, one can face the following error:
 ```
-[ERROR:0@0.335] global onnx_importer.cpp:1054 handleNode DNN/ONNX: ERROR during processing node with 5 inputs and 1 outputs: [NonMaxSuppression]onnx_node!/end2end/NonMaxSuppression) from domain='ai.onnx' 
+[ERROR:0@0.335] global onnx_importer.cpp:1054 handleNode DNN/ONNX: ERROR during processing node with 5 inputs and 1 outputs: [NonMaxSuppression]onnx_node!/end2end/NonMaxSuppression) from domain='ai.onnx'
 terminate called after throwing an instance of 'cv::Exception'
 what():  OpenCV(4.7.0) opencv/modules/dnn/src/onnx/onnx_importer.cpp:1073: error: (-2:Unspecified error) in function 'handleNode'
 Node [NonMaxSuppression@ai.onnx]onnx_node!/end2end/NonMaxSuppression) parse error: OpenCV(4.7.0) opencv/modules/dnn/src/net_impl.hpp:108: error: (-2:Unspecified error) Can't create layer "onnx_node!/end2end/NonMaxSuppression" of type "NonMaxSuppression" in function 'getLayerInstance'
 Aborted (core dumped)
 ```
 
-You may have been missing the onnxsim library or forgotten to remove the `--end2end` during the export of the network.
+You may have been missing the onnxsim library or forgotten to remove the `--end2end` option during the export of the network.
 
 \section dnn_next Next tutorial
 
