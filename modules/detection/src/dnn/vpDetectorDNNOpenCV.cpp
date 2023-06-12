@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -23,7 +23,7 @@
  * France
  *
  * If you have questions regarding the use of this file, please contact
- * Inria at visp\inria.fr
+ * Inria at visp@inria.fr
  *
  * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
  * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
@@ -31,7 +31,7 @@
  * Description:
  * DNN object detection using OpenCV DNN module.
  *
- *****************************************************************************/
+*****************************************************************************/
 #include <visp3/core/vpConfig.h>
 
 #if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
@@ -40,11 +40,11 @@
 #include <visp3/core/vpIoTools.h>
 
 #include<algorithm>
- /**
-  * \brief Get the list of the parsing methods / types of DNNs supported by the \b vpDetectorDNNOpenCV class.
-  *
-  * \return std::string The list of the supported parsing methods / types of DNNs.
-  */
+/**
+ * \brief Get the list of the parsing methods / types of DNNs supported by the \b vpDetectorDNNOpenCV class.
+ *
+ * \return std::string The list of the supported parsing methods / types of DNNs.
+ */
 std::string vpDetectorDNNOpenCV::getAvailableDnnResultsParsingTypes()
 {
   std::string list = "[";
@@ -142,8 +142,8 @@ std::vector<std::string> vpDetectorDNNOpenCV::parseClassNamesFile(const std::str
 
 vpDetectorDNNOpenCV::vpDetectorDNNOpenCV()
   : m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
-    m_net(), m_netConfig(), m_outNames(), m_dnnRes(),
-    m_parsingMethod(vpDetectorDNNOpenCV::postProcess_unimplemented)
+  m_net(), m_netConfig(), m_outNames(), m_dnnRes(),
+  m_parsingMethod(vpDetectorDNNOpenCV::postProcess_unimplemented)
 {
   setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
 }
@@ -157,12 +157,11 @@ vpDetectorDNNOpenCV::vpDetectorDNNOpenCV()
  */
 vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const NetConfig &config, const DNNResultsParsingType &typeParsingMethod, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &))
   : m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
-    m_net(), m_netConfig(config), m_outNames(), m_dnnRes()
+  m_net(), m_netConfig(config), m_outNames(), m_dnnRes()
 {
   setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
   setParsingMethod(typeParsingMethod, parsingMethod);
-  if(!m_netConfig.m_modelFilename.empty())
-  {
+  if (!m_netConfig.m_modelFilename.empty()) {
     readNet(m_netConfig.m_modelFilename, m_netConfig.m_modelConfigFilename, m_netConfig.m_framework);
   }
 }
@@ -170,12 +169,12 @@ vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const NetConfig &config, const DNNResul
 #ifdef VISP_HAVE_NLOHMANN_JSON
 /**
  * \brief Construct a new vpDetectorDNNOpenCV object from a JSON file and a potential parsing method.
- * 
+ *
  * \param jsonPath The JSON file permitting to initialize the detector.
  * \param parsingMethod If the user chose to use a user-specified parsing method, the parsing method that must be used to parse the raw results of the DNN detection step.
  */
-vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const std::string &jsonPath,  void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat>&, const NetConfig &))
-: m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
+vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const std::string &jsonPath, void (*parsingMethod)(DetectionCandidates &, std::vector<cv::Mat> &, const NetConfig &))
+  : m_applySizeFilterAfterNMS(false), m_blob(), m_I_color(), m_img(),
   m_net(), m_netConfig(), m_outNames(), m_dnnRes()
 {
   initFromJSON(jsonPath);
@@ -184,9 +183,9 @@ vpDetectorDNNOpenCV::vpDetectorDNNOpenCV(const std::string &jsonPath,  void (*pa
 }
 
 /**
- * \brief 
- * 
- * \param jsonPath 
+ * \brief
+ *
+ * \param jsonPath
  */
 void vpDetectorDNNOpenCV::initFromJSON(const std::string &jsonPath)
 {
@@ -215,7 +214,7 @@ void vpDetectorDNNOpenCV::initFromJSON(const std::string &jsonPath)
 
 /**
  * \brief Save the network configuration in a JSON file.
- * 
+ *
  * \param jsonPath Path towards the output JSON file .
  */
 void vpDetectorDNNOpenCV::saveConfigurationInJSON(const std::string &jsonPath) const
@@ -343,15 +342,13 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::vector<DetectedFeatures2
   cv::dnn::blobFromImage(m_img, m_blob, m_netConfig.m_scaleFactor, inputSize, m_netConfig.m_mean, m_netConfig.m_swapRB, false);
 
   m_net.setInput(m_blob);
-  try
-  {
+  try {
     m_net.forward(m_dnnRes, m_outNames);
   }
-  catch(const cv::Exception& e)
-  {
+  catch (const cv::Exception &e) {
     std::cerr << "Caught an exception trying to run inference:" << std::endl << "\t"
-              << e.what()
-              <<"\nCuda and/or GPU driver might not be correctly installed. Setting preferable backend to CPU and trying again." << std::endl;
+      << e.what()
+      << "\nCuda and/or GPU driver might not be correctly installed. Setting preferable backend to CPU and trying again." << std::endl;
     m_net.setPreferableBackend(cv::dnn::DNN_BACKEND_DEFAULT);
     m_net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
     m_net.forward(m_dnnRes, m_outNames);
@@ -398,15 +395,13 @@ bool vpDetectorDNNOpenCV::detect(const cv::Mat &I, std::map< std::string, std::v
   cv::dnn::blobFromImage(m_img, m_blob, m_netConfig.m_scaleFactor, inputSize, m_netConfig.m_mean, m_netConfig.m_swapRB, false);
 
   m_net.setInput(m_blob);
-  try
-  {
+  try {
     m_net.forward(m_dnnRes, m_outNames);
   }
-  catch(const cv::Exception& e)
-  {
+  catch (const cv::Exception &e) {
     std::cerr << "Caught an exception trying to run inference:" << std::endl << "\t"
-              << e.what()
-              <<"\nCuda and/or GPU driver might not be correctly installed. Setting preferable backend to CPU and trying again." << std::endl;
+      << e.what()
+      << "\nCuda and/or GPU driver might not be correctly installed. Setting preferable backend to CPU and trying again." << std::endl;
     m_net.setPreferableBackend(cv::dnn::DNN_BACKEND_DEFAULT);
     m_net.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
     m_net.forward(m_dnnRes, m_outNames);
@@ -1062,8 +1057,7 @@ void vpDetectorDNNOpenCV::setNetConfig(const NetConfig &config)
   m_netConfig = config;
   setDetectionFilterSizeRatio(m_netConfig.m_filterSizeRatio);
   setParsingMethod(m_netConfig.m_parsingMethodType);
-  if(!m_netConfig.m_modelFilename.empty())
-  {
+  if (!m_netConfig.m_modelFilename.empty()) {
     readNet(m_netConfig.m_modelFilename, m_netConfig.m_modelConfigFilename, m_netConfig.m_framework);
   }
 }
@@ -1182,7 +1176,7 @@ void vpDetectorDNNOpenCV::setParsingMethod(const DNNResultsParsingType &typePars
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)
- // Work around to avoid warning: libvisp_core.a(vpDetectorDNNOpenCV.cpp.o) has no
- // symbols
+// Work around to avoid warning: libvisp_core.a(vpDetectorDNNOpenCV.cpp.o) has no
+// symbols
 void dummy_vpDetectorDNN() { };
 #endif
