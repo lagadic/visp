@@ -13,7 +13,6 @@ list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/opencv_face_detector.pbtx
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/opencv_face_detector_uint8.pb")
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/class.txt")
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/coco_classes.txt")
-list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/coco_classes.txt")
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/default_faster-rcnn.json")
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/default_ssd.json")
 list(APPEND tutorial_data "${CMAKE_CURRENT_SOURCE_DIR}/default_ssd-mobilenet_v1.json")
