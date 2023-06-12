@@ -212,20 +212,20 @@ void vpMbtMeLine::suppressPoints(const vpImage<unsigned char> &I)
     if (fabs(sin(theta)) > 0.9) // Vertical line management
     {
       if ((s.i < imin) || (s.i > imax)) {
-        s.setState(vpMeSite::CONSTRAST);
+        s.setState(vpMeSite::CONTRAST);
       }
     }
 
     else if (fabs(cos(theta)) > 0.9) // Horizontal line management
     {
       if ((s.j < jmin) || (s.j > jmax)) {
-        s.setState(vpMeSite::CONSTRAST);
+        s.setState(vpMeSite::CONTRAST);
       }
     }
 
     else {
       if ((s.i < imin) || (s.i > imax) || (s.j < jmin) || (s.j > jmax)) {
-        s.setState(vpMeSite::CONSTRAST);
+        s.setState(vpMeSite::CONTRAST);
       }
     }
 
