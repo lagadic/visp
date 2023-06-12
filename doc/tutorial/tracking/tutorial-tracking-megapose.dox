@@ -25,7 +25,7 @@ It has however, several drawbacks:
     - On the same setup, a pose update (refinement) iteration takes around 60-70 milliseconds
   - To perform the initial pose estimation, megapose requires an estimate of the image region containing the image (i.e., a bounding box detection).
     You may thus require a way to detect the object, such as an object detection neural network (available in ViSP with the class vpDetectorDNNOpenCV, see \ref tutorial-detection-dnn).
-    For initial test, the bounding box can also be provided by the user via click.
+    For initial tests, the bounding box can also be provided by the user via click.
 
 
 The megapose integration in ViSP is based on a client-server model:
@@ -175,6 +175,7 @@ models
 |--my_obj
    |--object.glb
 \endcode
+In the example above, if we start the server with the `meshes-directory` set to `models`, two objects should be recognized: `cube` and `my_obj`. The name of an object is dictated by its folder name.
 
 To run the basic version of the tutorial below, we provide the model of the cube that is to be tracked in the video. The 3D models directory is `data/model`, located in the tutorial folder
 To start the server, you should enter in your terminal:
@@ -217,33 +218,74 @@ visp_build/tutorial/tracking/dnn $ ./tutorial-megapose-live-single-object-tracki
 
 If the megapose server is running on another machine or uses another port, replace the arguments with your values.
 
-
+If everything goes well, you should obtain results similar to those displayed below:
 \htmlonly
 <p align="center"><iframe width="560" height="315" src="https://www.youtube.com/embed/wq2vnzf1vv8" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></p>
 \endhtmlonly
 
+In this visualization, you can see the 3D model being displayed, as well as the object frame expressed in the camera.
+The model display can be toggled by pressing T. Displaying can be helpful in two ways:
+- Visually ensuring that tracking produces coherent results
+- Verifying that the model is correctly interpreted by megapose
+
+The bar at the bottom displays the score coming from megapose. 
+This score reflects whether the tracking has diverged and a reinitialization is required.
+
 
 \subsection megapose_code Understanding the program
 
+We will now go through the code to understand how megapose can be called.
 The full code can be found in tutorial-megapose-live-single-object-tracking.cpp
 
+After parsing the parameters given by the user (see above), we create a connection to the megapose server:
 \snippet tutorial-megapose-live-single-object-tracking.cpp Instantiate megapose
+We first create the raw vpMegaPose object, passing as parameters the IP adress and the port, as well as the camera calibration and image resolution.
+This class can directly be used to perform pose estimation, but we will here prefer the vpMegaPoseTracker class,
+which provides a simpler interface in the case of tracking. In addition, it allows to call megapose asynchronously and we can then use the main thread to perform other operations, such as acquiring and displaying the latest frame.
 
+To the tracker, we provide the name of the object we wish to track, as well as the number of iterations that megapose should perform. Run time will scale linearly in the number of iterations.
+
+Once our tracker is initialized, we set the number of sample for coarse pose estimation (when we provided a bounding box detection, but no previous pose estimate).
+
+We also check that the object's name is known to megapose. If it is not, then tracking will not be possible.
+
+Finally, we initialize a reference to a <a href="https://en.cppreference.com/w/cpp/thread/future">future</a> object, which will store the latest pose estimation result.
+
+We can now enter a loop which will start by acquiring the latest image from the camera:
+\snippet tutorial-megapose-live-single-object-tracking.cpp Acquisition
+
+Once we have acquired an image, we continue by checking megapose has returned a result. Of course, this will not be the case for the first iteration.
+If there is indeed a new result, we can check the confidence score to decide if require a reinitialization and request the rendering from megapose to display it afterwards.
+In addition, we also request a new pose estimation, by setting the `callMegapose` boolean to true.
 \snippet tutorial-megapose-live-single-object-tracking.cpp Check megapose
+
+When requesting a pose estimate, there are two states to handle:
+- We are not already tracking, or tracking has failed. In this case, we require the 2D bounding box of the object to (re)initialize tracking. To perform detection, we provide two methods
+ - The first, where a trained detection neural network (`detectionMethod` == "dnn") performs the bounding box regression.
+ - The second, ideal for initial tests, where the user provides the detection
+ Note that in both cases, the methods (described after) return an optional value: the object may not always be visible in the image.
+- In the second case, we are already tracking: We can simply feed the latest image to megapose as we already have an estimate of the object pose.
 
 \snippet tutorial-megapose-live-single-object-tracking.cpp Call megapose
 
+To provide a bounding box to megapose, the code of the two methods can be found below and is fairly straightforward
 \snippet tutorial-megapose-live-single-object-tracking.cpp Detect
 
+
+Once megapose has been called, we can display the results in the image. We plot:
+- The object pose, expressed in the camera frame
+- The 3D render as seen by megapose, overlayed on the actual image
+- The confidence score of megapose
 \snippet tutorial-megapose-live-single-object-tracking.cpp Display
 
-
-
-
+We have walked through the code of a single object tracking with megapose. 
+You may wish to save the results. You can do so by serializing to JSON, as explained in \ref tutorial-json
 
 \subsection megapose_adaptation Adapting this tutorial for your use case
 
-\include tutorial-megapose-live-single-object-tracking.cpp
-
+This program can run with new 3D models, as megapose does require retraining. To adapt this script to your problem, you will require multiple things:
+- The intrinsic parameters of your camera. To calibrate your camera, see \ref tutorial-calibration-intrinsic
+- The 3D model of your object. See \ref tutorial-megapose-model
+- Optionally (but recommended), an automated way to detect the object. You can for instance train a deep neural network and use it in ViSP, as explained in \ref tutorial-detection-dnn
 
 */

@@ -58,7 +58,8 @@ void displayScore(const vpImage<vpRGBa> &I, double score)
 
 /*
  * Add the megapose rendering on top of the actual image I.
- * Require I and overlay to be of the same size
+ * Require I and overlay to be of the same size.
+ * Note that a fully black object will not render
 */
 void overlayRender(vpImage<vpRGBa>& I, const vpImage<vpRGBa>& overlay) {
   const vpRGBa black = vpRGBa(0,0,0);
@@ -285,13 +286,13 @@ int main(int argc, const char *argv [])
 #endif
   //! [Instantiate megapose]
   std::shared_ptr<vpMegaPose> megapose = std::make_shared<vpMegaPose>(megaposeAddress, megaposePort, cam, height, width);
+  vpMegaPoseTracker megaposeTracker(megapose, objectName, refinerIterations);
   megapose->setCoarseNumSamples(coarseNumSamples);
-
   const std::vector<std::string> allObjects = megapose->getObjectNames();
   if (std::find(allObjects.begin(), allObjects.end(), objectName) == allObjects.end()) {
     throw vpException(vpException::badValue, "Object " + objectName + " is not known by the megapose server!");
   }
-  vpMegaPoseTracker megaposeTracker(megapose, objectName, refinerIterations);
+  std::future<vpMegaPoseEstimate> trackerFuture;
   //! [Instantiate megapose]
 
   cv::Mat frame;
@@ -305,15 +306,13 @@ int main(int argc, const char *argv [])
   vpImage<vpRGBa> overlayImage(height, width);
   std::string overlayMode = "full";
 
-  std::future<vpMegaPoseEstimate> trackerFuture;
-  const auto waitTime = std::chrono::milliseconds(0);
   std::vector<double> megaposeTimes;
   std::vector<double> frameTimes;
 
   double megaposeStartTime = 0.0;
 
   unsigned iter = 0;
-
+  //! [Acquisition]
   while (true) {
     const double frameStart = vpTime::measureTimeMs();
     capture >> frame;
@@ -329,9 +328,10 @@ int main(int argc, const char *argv [])
       vpImageConvert::convert(frame, I);
     }
     vpDisplay::display(I);
+    //! [Acquisition]
     //Check whether megapose is still running
     //! [Check megapose]
-    if (!callMegapose && trackerFuture.wait_for(waitTime) == std::future_status::ready) {
+    if (!callMegapose && trackerFuture.wait_for(std::chrono::milliseconds(0)) == std::future_status::ready) {
       megaposeEstimate = trackerFuture.get();
       if (tracking) {
         megaposeTimes.push_back(vpTime::measureTimeMs() - megaposeStartTime);
