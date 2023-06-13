@@ -273,9 +273,10 @@ int main(int argc, const char *argv [])
 #endif
   //d.setDownScalingFactor(vpDisplay::SCALE_AUTO);
 #if defined(VISP_HAVE_OPENCV_DNN)
-  vpDetectorDNNOpenCV::DNNResultsParsingType detectorType = vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(detectorTypeString);
+  vpDetectorDNNOpenCV::DNNResultsParsingType detectorType =
+    vpDetectorDNNOpenCV::dnnResultsParsingTypeFromString(detectorTypeString);
   vpDetectorDNNOpenCV::NetConfig netConfig(detectorConfidenceThreshold, detectorNmsThreshold, labels,
-    cv::Size(width, height), detectorFilterThreshold);
+                                           cv::Size(width, height), detectorFilterThreshold);
   vpDetectorDNNOpenCV dnn(netConfig, detectorType);
   if (detectionMethod == DetectionMethod::DNN) {
     dnn.readNet(detectorModelPath, detectorConfig, detectorFramework);
@@ -285,7 +286,14 @@ int main(int argc, const char *argv [])
   }
 #endif
   //! [Instantiate megapose]
-  std::shared_ptr<vpMegaPose> megapose = std::make_shared<vpMegaPose>(megaposeAddress, megaposePort, cam, height, width);
+  std::shared_ptr<vpMegaPose> megapose;
+  try {
+    megapose = std::make_shared<vpMegaPose>(megaposeAddress, megaposePort, cam, height, width);
+  }
+  catch (vpException &e) {
+    throw vpException(vpException::ioError, "Could not connect to megapose server at " + megaposeAddress + " on port " + std::to_string(megaposePort));
+  }
+
   vpMegaPoseTracker megaposeTracker(megapose, objectName, refinerIterations);
   megapose->setCoarseNumSamples(coarseNumSamples);
   const std::vector<std::string> allObjects = megapose->getObjectNames();

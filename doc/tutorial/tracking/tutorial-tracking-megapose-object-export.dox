@@ -1,7 +1,129 @@
 /**
 
-\page tutorial-megapose-model Tutorial: Exporting an object for megapose
+\page tutorial-megapose-model Tutorial: Exporting a 3D model to megapose
 \tableofcontents
+
+This tutorial details how to export your 3D model for usage with MegaPose.
+We will use Blender to inspect our model, correct it and export it to a format readable by Megapose.
+Blender is free and open source software. It is available for Linux, Windows and Mac and is available <a href="https://www.blender.org/">here</a>
+
+This tutorial does not focus on creating the 3D model by hand, but rather on the export specifics for the model to best work with megapose.
+We also provide a step by step guide on how to create a 3D model from images of the object with Neural Radiance Fields (NeRFs).
+
+Megapose supports multiple file formats: .ply, .obj (with .mtl and textures), .gltf, .glb, .egg, .bam
+
+\section megapose_model_prep 3D Model preparation
+
+Let us now see how to prepare the 3D model and view it in Blender.
+If you do not have a 3D model of your object and wish to scan it look at the next section.
+If you already have your model, you can directly go to \ref megapose_model_import.
+
+\subsection megapose_model_reconstruction_nerf 3D model reconstruction with Neural Radiance Fields
+
+Neural Radiance Fields are a way to implicitly represent a 3D scene.
+At their core, NeRFs learn a function (parametrized by a neural network) that maps a 3D ray to an RGB color (radiance) and a density (space occupancy).
+Framing the problem of rendering in this way allows to take into account factors such as lighting variations (speculars, reflections).
+While NeRFs are able to generate high quality renderings, we will focus on their ability to capture a dense representation of the scene geometry, as well as texture object texture.
+
+In this tutorial, we will use <a href="https://docs.nerf.studio/en/latest/index.html">nerfstudio</a> to train a NeRF and recover the geometry.
+
+Note that while NeRF may not be entirely accurate (both in geometry and texture), we found in our tests that the generated 3D mesh often works well to get an estimate of an object's pose with Megapose.
+
+\subsubsection megapose_reconstruction_requirements Requirements and installation
+Since NeRFs are based on deep learning, they require a GPU to be trainable.
+To install nerfstudio you have two options:
+- In a virtual environment, with conda
+- In a container, with docker
+
+If you choose to install with conda, you should create a new environment in order to avoid potential dependency clashes with your other work.
+
+To set up nerfstudio, please follow the installation procedure described here: <a href="https://docs.nerf.studio/en/latest/quickstart/installation.html">https://docs.nerf.studio/en/latest/quickstart/installation.html</a>
+
+
+\subsubsection megapose_reconstruction_acquisition Data acquisition
+
+To train a NeRF and obtain a 3D mesh, we require images of the object.
+
+Nerfstudio supports multiple data acquisition pipelines. You can for instance acquire images on your phone with an application such as KIRI Engine, and feed its results to nerfstudio.
+For more information, see the <a href="https://docs.nerf.studio/en/latest/quickstart/custom_dataset.html> available custom data formats</a>
+
+In this tutorial, we will focus on using a basic image sequence, a folder containing a set of `.png` images.
+To capture those images, you can use a program such as the ViSP grabber tutorial for your camera: \ref tutorial-grabber
+
+For example, to capture images with a Realsense:
+\code
+IMAGES_DIR=castle_data
+tutorial/grabber/tutorial-grabber-realsense --record 1 --seqname ${IMAGES_DIR}/I%05d.png --width 1920 --height 1080
+\endcode
+
+The --record 1, will record only the images when you click: you should avoid providing blurry or irrelevant images.
+It is recommended to have at least 50 images of your object, acquired at various viewpoints for a NeRF to be trainable.
+
+\warning When capturing images, do not move the object. Rather, move around the object to acquire the different viewpoints. Moreover, Try to have uniform lighting and avoid shadows to get the best results.
+
+Once you have acquired your images, you need to estimate the camera pose associated to each image. NerfStudio provides some utils to do this.
+This data processing script is backed by either <a href="https://colmap.github.io/">colmap</a> or <a href="https://github.com/cvg/Hierarchical-Localization">hloc</a>
+As such, either one of those needs to be installed. For colmap installation instruction, see <a href="https://docs.nerf.studio/en/latest/quickstart/custom_dataset.html#installing-colmap">The nerfstudio documentation</a>
+Note that colmap can also provide dense reconstructions, but also requires a GPU.
+
+To process the data, to give it as an input to the NeRF model, run:
+\code
+(nerfstudio) $ NERF_DATA_DIR=castle_data_processed
+(nerfstudio) $ ns-process-data images --data $IMAGES_DIR --output-dir $NERF_DATA_DIR --feature-type superpoint
+\endcode
+
+Here, we use superpoint as the keypoint extraction method. This method requires hloc to be installed.
+
+
+\subsubsection megapose_reconstruction_training Training a NeRF
+
+\code
+(nerfstudio) $ NERF_DIR=castle_nerf
+(nerfstudio) $ ns-train nerfacto --pipeline.model.predict-normals True --data $NERF_DATA_DIR --output-dir $NERF_DIR
+\endcode
+\subsubsection megapose_reconstruction_conversion Converting NeRF representation to .obj
+
+\code
+ns-export poisson --load-config castle_nerf/castle_data_processed/nerfacto/2023-06-13_171130/config.yml --output-dir castle_model
+\endcode
+
+
+
+
+\subsection megapose_model_import Importing the model in blender
+
+Once you have your model, you should import it into Blender to verify/fix several things.
+
+To import your model:
+- Open Blender
+- Create a new "General" scene, delete the default cube, camera and light
+- In the top left of the blender window, go to "File > Import" and select the format of your mesh (for example, .obj)
+- Navigate to your model file and double click: it should now be visible in your viewport
+
+\image html tutorial/tracking/megapose/blender_import.png
+
+If you have a textured object, make sure that the texture was imported and is visible in blender.
+To do so, switch the viewport rendering to shaded mode.
+
+\image html tutorial/tracking/megapose/viewport_mode.png
+
+
+
+
+
+\section megapose_model_ready Exporting to megapose
+
+
+
+
+\section megapose_model_common_errors Common issues
+
+Wrong scale
+
+No texture
+
+Model looks different than in blender
+
 
 
 */
