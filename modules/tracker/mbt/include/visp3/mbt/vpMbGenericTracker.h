@@ -961,10 +961,10 @@ inline void from_json(const nlohmann::json &j, vpMbGenericTracker::TrackerWrappe
   t.setTrackerType(flagsFromJSON<vpMbGenericTracker::vpTrackerType>(j.at("type")));
   //Load base settings
   if (j.contains("angleAppear")) {
-    t.setAngleAppear(vpMath::rad(j.at("angleAppear")));
+    t.setAngleAppear(vpMath::rad(static_cast<double>(j.at("angleAppear"))));
   }
   if (j.contains("angleDisappear")) {
-    t.setAngleDisappear(vpMath::rad(j.at("angleDisappear")));
+    t.setAngleDisappear(vpMath::rad(static_cast<double>(j.at("angleDisappear"))));
   }
   if (j.contains("clipping")) {
     const nlohmann::json clipping = j["clipping"];
