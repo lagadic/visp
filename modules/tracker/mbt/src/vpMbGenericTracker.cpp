@@ -1011,7 +1011,7 @@ std::list<vpMbtDistanceKltPoints *> &vpMbGenericTracker::getFeaturesKlt()
   pt.j()` are the coordinates of the moving-edge point feature, and `state` with values in range [0,4] indicates the
   state of the ME
     - 0 for vpMeSite::NO_SUPPRESSION
-    - 1 for vpMeSite::CONSTRAST
+    - 1 for vpMeSite::CONTRAST
     - 2 for vpMeSite::THRESHOLD
     - 3 for vpMeSite::M_ESTIMATOR
     - 4 for vpMeSite::TOO_NEAR
@@ -1051,7 +1051,7 @@ std::vector<std::vector<double> > vpMbGenericTracker::getFeaturesForDisplay()
   pt.j()` are the coordinates of the moving-edge point feature, and `state` with values in range [0,4] indicates the
   state of the ME
     - 0 for vpMeSite::NO_SUPPRESSION
-    - 1 for vpMeSite::CONSTRAST
+    - 1 for vpMeSite::CONTRAST
     - 2 for vpMeSite::THRESHOLD
     - 3 for vpMeSite::M_ESTIMATOR
     - 4 for vpMeSite::TOO_NEAR
@@ -6173,7 +6173,7 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<unsigned char> &I
           vpDisplay::displayCross(I, ip, 3, vpColor::green, 1);
           break;
 
-        case vpMeSite::CONSTRAST:
+        case vpMeSite::CONTRAST:
           vpDisplay::displayCross(I, ip, 3, vpColor::blue, 1);
           break;
 
@@ -6257,7 +6257,7 @@ void vpMbGenericTracker::TrackerWrapper::display(const vpImage<vpRGBa> &I, const
           vpDisplay::displayCross(I, ip, 3, vpColor::green, 1);
           break;
 
-        case vpMeSite::CONSTRAST:
+        case vpMeSite::CONTRAST:
           vpDisplay::displayCross(I, ip, 3, vpColor::blue, 1);
           break;
 

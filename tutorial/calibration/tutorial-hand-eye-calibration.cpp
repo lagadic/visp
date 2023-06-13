@@ -4,42 +4,42 @@
 #include <visp3/core/vpIoTools.h>
 #include <visp3/vision/vpHandEyeCalibration.h>
 
-void usage(const char *argv[], int error)
+void usage(const char *argv [], int error)
 {
   std::cout << "Synopsis" << std::endl
-            << "  " << argv[0] << " [--data-path <path>] [--help] [-h]" << std::endl
-            << std::endl;
+    << "  " << argv[0] << " [--data-path <path>] [--help] [-h]" << std::endl
+    << std::endl;
   std::cout << "Description" << std::endl
-            << "  --data-path <path>  Path to the folder containing" << std::endl
-            << "    pose_fPe_%d.yaml and pose_cPo_%d.yaml data files." << std::endl
-            << "    Default: \"./\"" << std::endl
-            << std::endl
-            << "  --fPe <generic name>  Generic name of the yaml files" << std::endl
-            << "    containing the pose of the end-effector expressed in the robot base" << std::endl
-            << "    frame and located in the data path folder." << std::endl
-            << "    Default: pose_fPe_%d.yaml" << std::endl
-            << std::endl
-            << "  --cPo <generic name>  Generic name of the yaml files" << std::endl
-            << "    containing the pose of the calibration grid expressed in the camera" << std::endl
-            << "    frame and located in the data path folder." << std::endl
-            << "    Default: pose_cPo_%d.yaml" << std::endl
-            << std::endl
-            << "  --output <filename>  File in yaml format containing the pose of the camera" << std::endl
-            << "    in the end-effector frame. Data are saved as a pose vector" << std::endl
-            << "    with first the 3 translations along X,Y,Z in [m]" << std::endl
-            << "    and then the 3 rotations in axis-angle representation (thetaU) in [rad]." << std::endl
-            << "    Default: eMc.yaml" << std::endl
-            << std::endl
-            << "  --help, -h  Print this helper message." << std::endl
-            << std::endl;
+    << "  --data-path <path>  Path to the folder containing" << std::endl
+    << "    pose_fPe_%d.yaml and pose_cPo_%d.yaml data files." << std::endl
+    << "    Default: \"./\"" << std::endl
+    << std::endl
+    << "  --fPe <generic name>  Generic name of the yaml files" << std::endl
+    << "    containing the pose of the end-effector expressed in the robot base" << std::endl
+    << "    frame and located in the data path folder." << std::endl
+    << "    Default: pose_fPe_%d.yaml" << std::endl
+    << std::endl
+    << "  --cPo <generic name>  Generic name of the yaml files" << std::endl
+    << "    containing the pose of the calibration grid expressed in the camera" << std::endl
+    << "    frame and located in the data path folder." << std::endl
+    << "    Default: pose_cPo_%d.yaml" << std::endl
+    << std::endl
+    << "  --output <filename>  File in yaml format containing the pose of the camera" << std::endl
+    << "    in the end-effector frame. Data are saved as a pose vector" << std::endl
+    << "    with first the 3 translations along X,Y,Z in [m]" << std::endl
+    << "    and then the 3 rotations in axis-angle representation (thetaU) in [rad]." << std::endl
+    << "    Default: eMc.yaml" << std::endl
+    << std::endl
+    << "  --help, -h  Print this helper message." << std::endl
+    << std::endl;
   if (error) {
     std::cout << "Error" << std::endl
-              << "  "
-              << "Unsupported parameter " << argv[error] << std::endl;
+      << "  "
+      << "Unsupported parameter " << argv[error] << std::endl;
   }
 }
 
-int main(int argc, const char *argv[])
+int main(int argc, const char *argv [])
 {
   std::string opt_data_path = "./";
   std::string opt_fPe_files = "pose_fPe_%d.yaml";
@@ -50,19 +50,24 @@ int main(int argc, const char *argv[])
     if (std::string(argv[i]) == "--data-path" && i + 1 < argc) {
       opt_data_path = std::string(argv[i + 1]);
       i++;
-    } else if (std::string(argv[i]) == "--fPe" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--fPe" && i + 1 < argc) {
       opt_fPe_files = std::string(argv[i + 1]);
       i++;
-    } else if (std::string(argv[i]) == "--cPo" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--cPo" && i + 1 < argc) {
       opt_cPo_files = std::string(argv[i + 1]);
       i++;
-    } else if (std::string(argv[i]) == "--output" && i + 1 < argc) {
+    }
+    else if (std::string(argv[i]) == "--output" && i + 1 < argc) {
       opt_eMc_file = std::string(argv[i + 1]);
       i++;
-    } else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
+    }
+    else if (std::string(argv[i]) == "--help" || std::string(argv[i]) == "-h") {
       usage(argv, 0);
       return EXIT_SUCCESS;
-    } else {
+    }
+    else {
       usage(argv, i);
       return EXIT_FAILURE;
     }
@@ -88,34 +93,33 @@ int main(int argc, const char *argv[])
 
   if (map_fPe_files.size() == 0) {
     std::cout << "No " << opt_fPe_files
-              << " files found. Use --data-path <path> or --fPe <generic name> be able to read your data." << std::endl;
+      << " files found. Use --data-path <path> or --fPe <generic name> be able to read your data." << std::endl;
     return EXIT_FAILURE;
   }
   if (map_cPo_files.size() == 0) {
     std::cout << "No " << opt_cPo_files
-              << " files found. Use --data-path <path> or --cPo <generic name> be able to read your data." << std::endl;
+      << " files found. Use --data-path <path> or --cPo <generic name> be able to read your data." << std::endl;
     return EXIT_FAILURE;
   }
 
   for (std::map<long, std::string>::const_iterator it_fPe = map_fPe_files.begin(); it_fPe != map_fPe_files.end();
-       ++it_fPe) {
-    std::string file_fPe = it_fPe->second;
+    ++it_fPe) {
+    std::string file_fPe = vpIoTools::createFilePath(opt_data_path, it_fPe->second);
     std::map<long, std::string>::const_iterator it_cPo = map_cPo_files.find(it_fPe->first);
     if (it_cPo != map_cPo_files.end()) {
-      std::string file_cPo = it_cPo->second;
       vpPoseVector wPe;
       if (wPe.loadYAML(file_fPe, wPe) == false) {
-        std::cout << "Unable to read data from " << opt_data_path << "/" << file_fPe << ". Skip data" << std::endl;
+        std::cout << "Unable to read data from " << file_fPe << ". Skip data" << std::endl;
         continue;
       }
 
       vpPoseVector cPo;
+      std::string file_cPo = vpIoTools::createFilePath(opt_data_path, it_cPo->second);
       if (cPo.loadYAML(file_cPo, cPo) == false) {
-        std::cout << "Unable to read data from " << opt_data_path << "/" << file_cPo << ". Skip data" << std::endl;
+        std::cout << "Unable to read data from " << file_cPo << ". Skip data" << std::endl;
         continue;
       }
-      std::cout << "Use data from " << opt_data_path << "/" << file_fPe << " and from " << opt_data_path << "/"
-                << file_cPo << std::endl;
+      std::cout << "Use data from " << opt_data_path << "/" << file_fPe << " and from " << file_cPo << std::endl;
       wMe.push_back(vpHomogeneousMatrix(wPe));
       cMo.push_back(vpHomogeneousMatrix(cPo));
     }
@@ -138,7 +142,7 @@ int main(int argc, const char *argv[])
     std::cout << std::endl << "** Translation [m]: " << eMc[0][3] << " " << eMc[1][3] << " " << eMc[2][3] << std::endl;
     std::cout << "** Rotation (theta-u representation) [rad]: " << erc.t() << std::endl;
     std::cout << "** Rotation (theta-u representation) [deg]: " << vpMath::deg(erc[0]) << " " << vpMath::deg(erc[1])
-              << " " << vpMath::deg(erc[2]) << std::endl;
+      << " " << vpMath::deg(erc[2]) << std::endl;
     vpQuaternionVector quaternion(eMc.getRotationMatrix());
     std::cout << "** Rotation (quaternion representation) [rad]: " << quaternion.t() << std::endl;
     vpRxyzVector rxyz(eMc.getRotationMatrix());
@@ -146,7 +150,8 @@ int main(int argc, const char *argv[])
     std::cout << "** Rotation (r-x-y-z representation) [deg]: " << vpMath::deg(rxyz).t() << std::endl;
 
     // save eMc
-    std::string name_we = vpIoTools::getNameWE(opt_eMc_file) + ".txt";
+    std::string name_we = vpIoTools::createFilePath(vpIoTools::getParent(opt_eMc_file), vpIoTools::getNameWE(opt_eMc_file)) + ".txt";
+    std::cout << std::endl << "Save transformation matrix eMc as an homogeneous matrix in: " << name_we << std::endl;
 #if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
     std::ofstream file_eMc(name_we);
 #else
@@ -155,15 +160,14 @@ int main(int argc, const char *argv[])
     eMc.save(file_eMc);
 
     vpPoseVector pose_vec(eMc);
-    std::string output_filename(opt_eMc_file);
-    std::cout << std::endl << "Save transformation matrix eMc as a vpPoseVector in " << opt_eMc_file << std::endl;
-    pose_vec.saveYAML(opt_eMc_file, pose_vec);
-  } else {
+    std::string output_filename = vpIoTools::createFilePath(vpIoTools::getParent(opt_eMc_file), vpIoTools::getName(opt_eMc_file));
+    std::cout << "Save transformation matrix eMc as a vpPoseVector in       : " << output_filename << std::endl;
+    pose_vec.saveYAML(output_filename, pose_vec);
+  }
+  else {
     std::cout << std::endl << "** Hand-eye calibration failed" << std::endl;
-    std::cout << std::endl
-              << "Check your input data and ensure they are covering the half sphere over the chessboard." << std::endl;
-    std::cout << std::endl
-              << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html" << std::endl;
+    std::cout << std::endl << "Check your input data and ensure they are covering the half sphere over the chessboard." << std::endl;
+    std::cout << std::endl << "See https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-calibration-extrinsic.html" << std::endl;
   }
 
   return EXIT_SUCCESS;
