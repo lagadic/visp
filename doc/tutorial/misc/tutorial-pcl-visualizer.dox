@@ -7,11 +7,11 @@
 
 This tutorial shows how to use the `vpPclVisualizer` class.
 
-In the next section you will find an example that shows how to display two point clouds, with one having attached 
+In the next section you will find an example that shows how to display two point clouds, with one having attached
 confidence weights, either in blocking-mode or threaded-mode display.
 
-The program first generate a polynomial surface, whose coordinates are expressed in the object frame. 
-Then, a second surface is generated. It corresponds to the first surface, moved in another coordinates frame. 
+The program first generate a polynomial surface, whose coordinates are expressed in the object frame.
+Then, a second surface is generated. It corresponds to the first surface, moved in another coordinates frame.
 Some noise is added to this second surface, to simulate sensor innacuracy. Then, M-estimation based
 on Tukey M-estimator is performed using the `vpRobust` class in order not to display the noisy points
 in the viewer. Finally, the point clouds are displayed using the `vpPclVisualizer`.
@@ -23,7 +23,7 @@ please refer to the \ref soft_tool_pcl section.
 
 \section pcl_visualizer_example Point clouds visualization example explained
 
-For this tutorial, we use the main program tutorial-pcl-visualizer.cpp. 
+For this tutorial, we use the main program tutorial-pcl-visualizer.cpp.
 
 It uses the following class, which generates 3D coordinates and relies on the `vpPclVisualizer` to visualize data.
 
@@ -37,7 +37,7 @@ First, we include the class that uses the vpPclVisualizer object to display diff
 
 \snippet tutorial-pcl-visualizer.cpp Class include
 
-Then, we define a C++ enum in order to permit to the user to chose between the blocking-mode display, the threaded-mode
+Then, we define a C++ enum in order to allow the user to chose between the blocking-mode display, the threaded-mode
 display or running both of them consecutively.
 
 \snippet tutorial-pcl-visualizer.cpp Enum for mode choice
@@ -52,13 +52,13 @@ The following program arguments are available:
 
 Let us look with more details into these arguments:
 
-- `noise` represents the intensity of noise along the Z-axis, expressed in the object frame, has to be added to the original surface.
-- `order` represents the order of the polynomial surface the user wants to use running the demo.
-- `x-lim` and `y-lim` represents reciproquely the X-axis and Y-axis minimum and maximum values of the polynomial surface, expressed in the object frame.
-- `reso` represents the number of points along the X-axis and Y-axis, expressed in the object frame, are used to generate the first surface.
-- `display-mode` represents which mode of display the user wants to use: blocking-mode only, threaded-mode only or both modes successively. 
+- `noise` represents the intensity of noise along the Z-axis, expressed in the object frame, that has to be added to the original surface
+- `order` represents the order of the polynomial surface the user wants to use running the demo
+- `x-lim` and `y-lim` represent reciproquely the X-axis and Y-axis minimum and maximum values of the polynomial surface, expressed in the object frame
+- `reso` represents the number of points along the X-axis and Y-axis, expressed in the object frame, that are used to generate the first surface
+- `display-mode` represents which mode of display the user wants to use: blocking-mode only, threaded-mode only or both modes successively.
 
-Then, we parse the program arguments that permit to the user to change part of the behavior
+Then, we parse the program arguments that allow the user to change part of the behavior
 of the program.
 
 \snippet tutorial-pcl-visualizer.cpp Arguments parser
@@ -80,14 +80,14 @@ is computed from the X and Y coordinates thanks to the following method.
 
 \snippet ClassUsingPclVisualizer.cpp Z coordinates computation
 
-The constructor initializes the minimum and maximum X and Y coordinates of the polynomial 
-surface, along with the number of points in each direction it contains. It also constructs 
+The constructor initializes the minimum and maximum X and Y coordinates of the polynomial
+surface, along with the number of points in each direction it contains. It also constructs
 the vpPclVisualizer object, naming the window that will open.
 
 \snippet ClassUsingPclVisualizer.cpp Constructor
 
-The following method generate two polynomial surface. If the user asked to, noise will be added
-to the displaced surface. The confidence weights are estimated thanks to Tukey M-estimator 
+The following method generates two polynomial surfaces. If requested by the user, noise will be added
+to the displaced surface. The confidence weights are estimated thanks to Tukey M-estimator
 from the difference between the noise-free position of the point and the actual one. In an actual
 situation, it could for instance correspond to the distance between a model of an object surface and the observed
 points thanks to a depth sensor.
@@ -97,7 +97,7 @@ points thanks to a depth sensor.
 \subsubsection pcl_visualizer_class_usage How to use the vpPclViewer class to display the point clouds
 
 To use the vpPclVisualizer class, you must first add the surfaces you want to display.
-You can do it by adding a surface for which you do not particularly care of the color and thus 
+You can do it by adding a surface for which you do not particularly care of the color and thus
 decide to use a generated one :
 
 \snippet ClassUsingPclVisualizer.cpp Adding point clouds color not chosen
@@ -106,8 +106,8 @@ You could also choose the color to use in order to have an uniformly colored sur
 
 \snippet ClassUsingPclVisualizer.cpp Adding point clouds color chosen
 
-In this second example, confidence weights are also attached to each points to the surface.
-It permits to display only the points for which the weight is greater than the ignorance threshold.
+In this second example, confidence weights are also attached to each surface point.
+This allows only those points to be displayed for which the weight is greater than the ignorance threshold.
 
 Finally, you can display in a blocking fashion the different surfaces added to the visualizer:
 
