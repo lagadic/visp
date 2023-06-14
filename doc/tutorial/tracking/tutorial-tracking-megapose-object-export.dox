@@ -6,6 +6,8 @@
 This tutorial details how to export your 3D model for usage with MegaPose.
 We will use Blender to inspect our model, correct it and export it to a format readable by Megapose.
 Blender is free and open source software. It is available for Linux, Windows and Mac and is available <a href="https://www.blender.org/">here</a>
+The steps followed and the displayed images are those for Blender 3.4.1.
+
 
 This tutorial does not focus on creating the 3D model by hand, but rather on the export specifics for the model to best work with megapose.
 We also provide a step by step guide on how to create a 3D model from images of the object with Neural Radiance Fields (NeRFs).
@@ -84,8 +86,12 @@ Here, we use superpoint as the keypoint extraction method. This method requires 
 \subsubsection megapose_reconstruction_conversion Converting NeRF representation to .obj
 
 \code
-ns-export poisson --load-config castle_nerf/castle_data_processed/nerfacto/2023-06-13_171130/config.yml --output-dir castle_model
+NERF_MODEL_DIR=castle_nerf
+ns-export poisson --load-config ${NERF_DIR}/${NERF_DATA_DIR}/nerfacto/2023-06-13_171130/config.yml --output-dir $NERF_MODEL_DIR
 \endcode
+
+Where the full path to the config.yml will change, depending on the date at which you train your model. other export methods are available, see <a href="https://docs.nerf.studio/en/latest/quickstart/export_geometry.html"> the documentation on ns-export</a>
+
 
 
 
@@ -102,7 +108,7 @@ To import your model:
 
 \image html tutorial/tracking/megapose/blender_import.png
 
-If you have a textured object, make sure that the texture was imported and is visible in blender.
+If you have a textured object, make sure that the texture was imported and is visible in Blender.
 To do so, switch the viewport rendering to shaded mode.
 
 \image html tutorial/tracking/megapose/viewport_mode.png
@@ -110,9 +116,57 @@ To do so, switch the viewport rendering to shaded mode.
 
 
 
-
 \section megapose_model_ready Exporting to megapose
 
+
+\subsection megapose_model_cleanup Step 1: Cleaning up the model
+
+If you generated your model with a NeRF, it may contain extraneous geometry, corresponding to the environment in which you performed your scan.
+You should remove this geometry, leaving only the object of interest in the mesh.
+
+Your imported mesh may look something like this:
+\image html tutorial/tracking/megapose/model_after_import.png
+
+To start, you should realign your mesh with the world frame. This makes it easier to move around and manipulate the mesh.
+To manipulate your mesh cleanly, you should be in *object mode*, you can check that it is the case in the top left of the viewport.
+To rotate your mesh, press *R*. To restrict the rotation to a single axis, you can press *X*, *Y* or *Z* after pressing *R*.
+To move your mesh, press *G*. The axis restriction principle is the same as for rotation.
+
+To clean your mesh, select it (left click) and go into edit mode (Tab). You should see the vertices that compose the mesh.
+Next, press *W* to have the "paint selection" tool enabled. You can now select the different vertices by dragging your mouse across the mesh.
+Select all the useless geometry, then press *X* and select the appropriate option (by default, use delete vertices).
+
+To make the process easier and less error prone, delete the geometry in multiple steps. If, by mistake, you clear your selection, you can recover by using *CTRL+Z*
+
+If you go into wireframe view, the selection tool will pick up all vertices, whether they are occluded by some other faces. This makes it faster to delete large portions of geometry.
+
+\image html tutorial/tracking/megapose/deleting_wireframe.png
+
+
+Once you have your cleaned up your model, you should have something similar to this:
+\image html tutorial/tracking/megapose/model_cleaned.png
+
+
+\subsection megapose_model_scale  Step 2: Ensuring correct scale
+
+If your model was built from a nerf or was created with another software, you should ensure that the dimensions of the object are correct.
+The Megapose server expects a mesh with units in meters. Some formats and software use millimeters by default.
+
+If you used a NeRF to generate your model and you used only RGB images as inputs, then the scale information
+
+\image html tutorial/tracking/megapose/wrong_dimensions.png
+
+\image html tutorial/tracking/megapose/ruler_tool.png
+
+\image html tutorial/tracking/megapose/snapping.png
+
+\image html tutorial/tracking/megapose/megapose-measuring.png
+
+
+
+\subsection megapose_model_texture Optional step: baking textures
+
+\warning This step should only be performed if your object is textureless: it has a uniform color (e.g. it is red or green).
 
 
 

@@ -1,5 +1,5 @@
 {
-  "megapose_dir": "/local/sfelton/megapose6d",
-  "megapose_data_dir": "/local/sfelton/megapose6d/data",
+  "megapose_dir": "./megapose6d",
+  "megapose_data_dir": "./megapose6d/data",
   "environment": "megapose"
 }

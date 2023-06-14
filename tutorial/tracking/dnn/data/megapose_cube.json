@@ -13,7 +13,7 @@
     "v0": 244.95083618164063
   },
   "detector": {
-    "model-path": "/local/sfelton/cube_detector.onnx",
+    "model-path": "/path/to/cube/cube_detector.onnx",
     "config": "none",
     "type": "yolov7",
     "framework": "onnx",
