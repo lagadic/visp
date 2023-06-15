@@ -90,11 +90,10 @@ NERF_MODEL_DIR=castle_nerf
 ns-export poisson --load-config ${NERF_DIR}/${NERF_DATA_DIR}/nerfacto/2023-06-13_171130/config.yml --output-dir $NERF_MODEL_DIR
 \endcode
 
-Where the full path to the config.yml will change, depending on the date at which you train your model. other export methods are available, see <a href="https://docs.nerf.studio/en/latest/quickstart/export_geometry.html"> the documentation on ns-export</a>
+Where the full path to the config.yml will change, depending on the date at which you train your model. 
+Other export methods are available, see <a href="https://docs.nerf.studio/en/latest/quickstart/export_geometry.html"> the documentation on ns-export</a>
 
-
-
-
+Excluding image acquisition and installation, this process takes around 40 minutes with a Quadro RTX 6000.
 
 \subsection megapose_model_import Importing the model in blender
 
@@ -113,11 +112,7 @@ To do so, switch the viewport rendering to shaded mode.
 
 \image html tutorial/tracking/megapose/viewport_mode.png
 
-
-
-
 \section megapose_model_ready Exporting to megapose
-
 
 \subsection megapose_model_cleanup Step 1: Cleaning up the model
 
@@ -128,46 +123,83 @@ Your imported mesh may look something like this:
 \image html tutorial/tracking/megapose/model_after_import.png
 
 To start, you should realign your mesh with the world frame. This makes it easier to move around and manipulate the mesh.
-To manipulate your mesh cleanly, you should be in *object mode*, you can check that it is the case in the top left of the viewport.
-To rotate your mesh, press *R*. To restrict the rotation to a single axis, you can press *X*, *Y* or *Z* after pressing *R*.
-To move your mesh, press *G*. The axis restriction principle is the same as for rotation.
+To manipulate your mesh cleanly, you should be in **object mode**, you can check that it is the case in the top left of the viewport.
+To rotate your mesh, press **R**. To restrict the rotation to a single axis, you can press**X**, **Y** or **Z** after pressing **R**.
+To move your mesh, press **G**. The axis restriction principle is the same as for rotation.
+For a more accurate placement and orientation, use the front, top and side orthographic views. 
+You can do so by using the the numbers of the NumPad, or by using the gimbal in the top right of the viewport.
 
-To clean your mesh, select it (left click) and go into edit mode (Tab). You should see the vertices that compose the mesh.
-Next, press *W* to have the "paint selection" tool enabled. You can now select the different vertices by dragging your mouse across the mesh.
-Select all the useless geometry, then press *X* and select the appropriate option (by default, use delete vertices).
+To clean your mesh, select it (left click) and go into edit mode by pressing **Tab**. You should see the vertices that compose the mesh.
+Next, press **W** to have the "paint selection" tool enabled. You can now select the different vertices by dragging your mouse across the mesh.
+Select all the unwanted geometry, then press **X** and select the appropriate option (by default, use delete vertices).
 
-To make the process easier and less error prone, delete the geometry in multiple steps. If, by mistake, you clear your selection, you can recover by using *CTRL+Z*
+To make the process easier and less error prone, delete the geometry in multiple steps. If, by mistake, you clear your selection, you can recover by using **CTRL+Z**
 
-If you go into wireframe view, the selection tool will pick up all vertices, whether they are occluded by some other faces. This makes it faster to delete large portions of geometry.
+If you go into wireframe view, the selection tool will pick up all vertices, whether they are occluded by other faces or not. This makes it faster to delete large portions of geometry.
 
 \image html tutorial/tracking/megapose/deleting_wireframe.png
 
-
-Once you have your cleaned up your model, you should have something similar to this:
+Once you have cleaned up your model, you should have something similar to this:
 \image html tutorial/tracking/megapose/model_cleaned.png
-
 
 \subsection megapose_model_scale  Step 2: Ensuring correct scale
 
 If your model was built from a nerf or was created with another software, you should ensure that the dimensions of the object are correct.
 The Megapose server expects a mesh with units in meters. Some formats and software use millimeters by default.
 
-If you used a NeRF to generate your model and you used only RGB images as inputs, then the scale information
+If you used a NeRF to generate your model and you only used RGB images as inputs, then the scale information will probably be wrong.
 
+To check the scale of your object, you can view the item scale in the "Item panel" in the top right corner of the viewport. To open this panel, press **N**.
 \image html tutorial/tracking/megapose/wrong_dimensions.png
 
+At the bottom of this panel, you can see the dimensions of your model. In the example above, our model is not 77cm wide, so we need to correct it.
+The easiest way to find the scale of your object is to take measurements. In Blender, you ca do so by selecting the ruler tool
 \image html tutorial/tracking/megapose/ruler_tool.png
-
+It is also advisable to use vertex snapping to make measuring easier. Snapping can be enabled at the top of the viewport:
 \image html tutorial/tracking/megapose/snapping.png
+Note that you can select on what to snap: vertices, edges or faces.
 
+To measure, click on the starting point and drag until you reach the endpoint of your measurement. 
+Rotate around the model to ensure that the ruler is well placed.
+
+On our model, this is what it looks like:
 \image html tutorial/tracking/megapose/megapose-measuring.png
 
+Next, compare the measurements with the real ones to compute a rescaling factor (divid the true measurements by the ones in blender).
+
+To scale, the model, first ensure that it is selected by left clicking on it.
+Then, you can either:
+- Press **S**, then type "*your_scale" (for example, "*0.45") and left click to confirm.
+- Adjust the dimensions in the "Item panel". The input fields support mathematical expressions, so you can multiple each dimension by the scale factor.
+
+
+\subsection megapose_model_origin Selecting the origin of your model
+
+When exporting to a format such as `.obj` or `.ply`, the object origin defined in Blender (the orange dot visible when you select your model) is lost.
+What matters then is to place your object relative to Blender's world frame (where the axes cross, at (0,0,0)).
+
+To set the origin of the object, move it around with **G**, or use the "Location" field in the "Item" panel.
+
+\warning Using the same model but with different origins will impact the results of Megapose. We observed better results when placing the geometric center at the world's origin.
+
+Here is an example of a model that is not well placed: it is too far from the world origin. The results may be impacted and the returned poses will not be useful.
+\image html tutorial/tracking/megapose/megapose-bad-origin-model.png
+
+Placing the model correctly, here is what we obtain:
+\image html tutorial/tracking/megapose/megapose-good-origin-model.png
 
 
 \subsection megapose_model_texture Optional step: baking textures
 
 \warning This step should only be performed if your object is textureless: it has a uniform color (e.g. it is red or green).
+If you have a model and wish to bake the textures onto the model itself. You can do so by following these steps.
 
+\image html tutorial/tracking/megapose/megapose-cycles.png
+\image html tutorial/tracking/megapose/megapose-color-attr.png
+\image html tutorial/tracking/megapose/megapose-bake-color-attr.png
+
+
+\warning When exporting a baked model, remember to check the "Color" export option. This is not yet required, but will be in the last step of the tutorial.
 
 
 \section megapose_model_common_errors Common issues
