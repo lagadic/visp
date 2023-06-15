@@ -194,22 +194,67 @@ Placing the model correctly, here is what we obtain:
 \warning This step should only be performed if your object is textureless: it has a uniform color (e.g. it is red or green).
 If you have a model and wish to bake the textures onto the model itself. You can do so by following these steps.
 
+First, switch the rendering engine to Cycles in the editor panel (by default, on the right side of the Blender window):
 \image html tutorial/tracking/megapose/megapose-cycles.png
-\image html tutorial/tracking/megapose/megapose-color-attr.png
-\image html tutorial/tracking/megapose/megapose-bake-color-attr.png
 
+Then, **Select your object** and open the "Vertex attributes" panel to add a color attribute. When pressing plus, click OK and leave the default options untouched.
+\image html tutorial/tracking/megapose/megapose-color-attr.png
+
+Finally, to bake the material in the object data: follow these steps:
+- Go to the rendering panel and into the "Bake" menu
+- Set the bake type to diffuse
+- Uncheck "Direct" and "Indirect"
+- Set the output to "Active Color attribute"
+\image html tutorial/tracking/megapose/megapose-bake-color-attr.png
 
 \warning When exporting a baked model, remember to check the "Color" export option. This is not yet required, but will be in the last step of the tutorial.
 
 
+\subsection megapose_final_model_export Final step: exporting to a Megapose-readable format
+
+We are now ready to export the model. Here, we will focus on exporting to the .obj format which is widely supported and works well with Megapose.
+
+Before exporting, save your blender file, and select your model.
+
+Then, go to **File > export > Wavefront (.obj)**
+
+A new dialog window should open. Select the folder where you wish to store the 3D model, and give it a name.
+
+Before confirming the export, there are a few options on right side of the window that are important:
+- Limit to selected only: Check this if you have other objects in your scene
+- Forward and up axes: modify the orientation of your object.
+- Path mode: How to reference the texture files. We recommend "copy" in order to keep your export and .blend file separate. This will store the texture in the same folder as your exported object.
+If you move your object, you should also move the .mtl file and the texture
+- Geometry > Export > Colors: Check this if you have baked the texture onto the object.
+
+\image html tutorial/tracking/megapose/megapose-obj-export.png
+
 \section megapose_model_common_errors Common issues
 
-Wrong scale
+When using with megapose, you may encounter multiple issues:
 
-No texture
+- The server crashes with an assertion error about `meshes.sample_points` not having enough points:
+ - To fix this error, the total number of vertices of all your objects that are watched by the Megapose server should be more than 2000.
+ - To artificially add vertices without modifying, you can perform subdivision on your mesh: go into edit mode (**Tab**), select all your geometry (**A**), then right click and select subdivide.
 
-Model looks different than in blender
+- The exported model has no texture
+ - If you have no image texture, follow the steps in \ref megapose_model_texture and ensure that you select "Color" when exporting to .obj.
+ - Note that exporting colors to .ply seems not to be working
+ - If you have an image texture
+  - Watch the output of the Megapose server, a warning may be raised if the texture cannot be loaded.
+  - If this is the case, open the `.mtl` file linked to your model. Make sure that the path to the image texture is correct.
+  - If the issue is still present after fixing the .mtl file, open the .obj and look for a line containing something like
+  \code
+  mtllib path_to.mtl
+  \endcode
 
+- The model looks different/darker when exporting to `.gltf` or `.glb`
+ - Megapose relies on Panda3D to perform 3D rendering. using gltf (or their binary version, glb) files requires a different rendering pipeline which is not the default choice for megapose
+ - Prefer an export to .obj
+
+\section megapose_model_testing Testing your model
+
+To test whether your model is correct and can be used for pose estimation or tracking, you should follow \ref tutorial-tracking-megapose and run the sample program.
 
 
 */
