@@ -1,5 +1,5 @@
-//! \example ClassUsingPclVisualizer.cpp
-#include "ClassUsingPclVisualizer.h"
+//! \example ClassUsingPclViewer.cpp
+#include "ClassUsingPclViewer.h"
 
 #if defined(VISP_HAVE_PCL)
 // PCL
@@ -38,7 +38,7 @@ double zFunction(const double &x, const double &y, const unsigned int order)
 //! [Z coordinates computation]
 
 //! [Constructor]
-ClassUsingPclVisualizer::ClassUsingPclVisualizer(std::pair<double, double> xlimits, std::pair<double, double> ylimits, std::pair<unsigned int, unsigned int> nbPoints)
+ClassUsingPclViewer::ClassUsingPclViewer(std::pair<double, double> xlimits, std::pair<double, double> ylimits, std::pair<unsigned int, unsigned int> nbPoints)
   : m_t(0.1,0.1,0.1)
   , m_R(M_PI_4,M_PI_4,M_PI_4)
   , m_cMo(m_t,m_R)
@@ -55,19 +55,19 @@ ClassUsingPclVisualizer::ClassUsingPclVisualizer(std::pair<double, double> xlimi
 }
 //! [Constructor]
 
-ClassUsingPclVisualizer::~ClassUsingPclVisualizer()
+ClassUsingPclViewer::~ClassUsingPclViewer()
 {
 
 }
 
 //! [Surface generator]
-std::pair<vpPclVisualizer::pclPointCloudPointXYZRGBPtr, vpPclVisualizer::pclPointCloudPointXYZRGBPtr> ClassUsingPclVisualizer::generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights)
+std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPointXYZRGBPtr> ClassUsingPclViewer::generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights)
 {
-  std::pair<vpPclVisualizer::pclPointCloudPointXYZRGBPtr, vpPclVisualizer::pclPointCloudPointXYZRGBPtr> result;
+  std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPointXYZRGBPtr> result;
 
   // Create control points
-  vpPclVisualizer::pclPointCloudPointXYZRGBPtr unrotatedControlPoints(new vpPclVisualizer::pclPointCloudPointXYZRGB(m_n,m_m));
-  vpPclVisualizer::pclPointCloudPointXYZRGBPtr   rotatedControlPoints(new vpPclVisualizer::pclPointCloudPointXYZRGB(m_n,m_m));
+  vpPclViewer::pclPointCloudPointXYZRGBPtr unrotatedControlPoints(new vpPclViewer::pclPointCloudPointXYZRGB(m_n,m_m));
+  vpPclViewer::pclPointCloudPointXYZRGBPtr   rotatedControlPoints(new vpPclViewer::pclPointCloudPointXYZRGB(m_n,m_m));
 
   // Initializing confindence weights
   confidenceWeights.resize(m_m * m_n);
@@ -129,13 +129,13 @@ std::pair<vpPclVisualizer::pclPointCloudPointXYZRGBPtr, vpPclVisualizer::pclPoin
 }
 //! [Surface generator]
 
-void ClassUsingPclVisualizer::blockingMode(const double &addedNoise, const unsigned int& order)
+void ClassUsingPclViewer::blockingMode(const double &addedNoise, const unsigned int& order)
 {
   // Confidence weights, that would be obtained thanks to vpRobust for instance
   vpColVector confWeights;
 
   //! [Generating point clouds]
-  std::pair<vpPclVisualizer::pclPointCloudPointXYZRGBPtr, vpPclVisualizer::pclPointCloudPointXYZRGBPtr> grids = generateControlPoints(addedNoise, order, confWeights);
+  std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPointXYZRGBPtr> grids = generateControlPoints(addedNoise, order, confWeights);
   //! [Generating point clouds]
 
   //! [Adding point clouds color not chosen]
@@ -149,18 +149,19 @@ void ClassUsingPclVisualizer::blockingMode(const double &addedNoise, const unsig
   unsigned int id_robust = m_visualizer.addSurface(grids.second, confWeights, "RotatedWithRobust", color.to_RGB());
   //! [Adding point clouds color chosen]
 
+  std::cout << "Press \"q\" while selecting the viewer window to stop the program." << std::endl;
   //! [Displaying point clouds blocking mode]
   m_visualizer.display();
   //! [Displaying point clouds blocking mode]
 }
 
-void ClassUsingPclVisualizer::threadedMode(const double &addedNoise, const unsigned int& order)
+void ClassUsingPclViewer::threadedMode(const double &addedNoise, const unsigned int& order)
 {
   // Confidence weights, that would be obtained thanks to vpRobust for instance
   vpColVector confWeights;
 
   // Create control points
-  std::pair<vpPclVisualizer::pclPointCloudPointXYZRGBPtr, vpPclVisualizer::pclPointCloudPointXYZRGBPtr> grids = generateControlPoints(addedNoise, order, confWeights);
+  std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPointXYZRGBPtr> grids = generateControlPoints(addedNoise, order, confWeights);
 
   // Adding a point cloud for which we don't chose the color 
   unsigned int id_ctrlPts = m_visualizer.addSurface(grids.first, "Standard"); 
@@ -180,6 +181,7 @@ void ClassUsingPclVisualizer::threadedMode(const double &addedNoise, const unsig
   bool wantToStop = false;
   double t;
   
+  std::cout << "Press any key in the console to stop the program." << std::endl;
   while(!wantToStop){
     t = vpTime::measureTimeMs();
     grids = generateControlPoints(addedNoise, order, confWeights);

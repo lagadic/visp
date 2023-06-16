@@ -10,7 +10,7 @@
 
 //! [Class include]
 // Tutorial include
-#include "ClassUsingPclVisualizer.h"
+#include "ClassUsingPclViewer.h"
 //! [Class include]
 
 //! [Enum for mode choice]
@@ -181,7 +181,7 @@ int main (int argc, char *argv[])
   //! [Running blocking mode]
   if(opt_mode == DisplayMode::BLOCKING || opt_mode == DisplayMode::BOTH)
   {
-    ClassUsingPclVisualizer demo(opt_xlim, opt_ylim, opt_reso);
+    ClassUsingPclViewer demo(opt_xlim, opt_ylim, opt_reso);
     demo.blockingMode(opt_addedNoise, opt_order);
   }
   //! [Running blocking mode]
@@ -189,7 +189,7 @@ int main (int argc, char *argv[])
   //! [Running threaded mode]
   if(opt_mode == DisplayMode::THREADED || opt_mode == DisplayMode::BOTH)
   {
-    ClassUsingPclVisualizer demo(opt_xlim, opt_ylim, opt_reso);
+    ClassUsingPclViewer demo(opt_xlim, opt_ylim, opt_reso);
     demo.threadedMode(opt_addedNoise, opt_order);
   }
   //! [Running threaded mode]

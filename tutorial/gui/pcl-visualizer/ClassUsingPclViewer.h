@@ -1,15 +1,15 @@
-#ifndef TESTCLASSPCLVISUALIZER_H
-#define TESTCLASSPCLVISUALIZER_H
+#ifndef vpClassUsingPclViewer_HH
+#define vpClassUsingPclViewer_HH
 
-//! \example ClassUsingPclVisualizer.h
+//! \example ClassUsingPclViewer.h
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PCL)
 
 #include<visp3/core/vpColVector.h>
-#include<visp3/gui/vpPclVisualizer.h>
+#include<visp3/gui/vpPclViewer.h>
 
-class ClassUsingPclVisualizer
+class ClassUsingPclViewer
 {
 private:
   vpTranslationVector m_t; /*!< The translation between the noise-free point cloud and the possibly noisy, translated + rotated one*/
@@ -25,16 +25,16 @@ private:
   unsigned int m_m;  /*!< Number of points along the Y-axis.*/
   double m_dY; // m_dY = (m_maxY - m_minY)/(m_m-1)
 
-  vpPclVisualizer m_visualizer; /*!< The PCL-based visualizer.*/
+  vpPclViewer m_visualizer; /*!< The PCL-based visualizer.*/
 
   /**
    * @brief Generate a noise-free grid of point, and a possibly noisy one, which is translated and rotated with regarded to the noise-free one.
    * 
    * @param addedNoise Standard deviation of the noise.
    * @param order The order of the polynomial surface that is generated.
-   * @return std::pair<vpPclVisualizer::pclPointCloudPointXYZRGBPtr, vpPclVisualizer::pclPointCloudPointXYZRGBPtr> 
+   * @return std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPointXYZRGBPtr> 
    */
-  std::pair<vpPclVisualizer::pclPointCloudPointXYZRGBPtr, vpPclVisualizer::pclPointCloudPointXYZRGBPtr> generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights);
+  std::pair<vpPclViewer::pclPointCloudPointXYZRGBPtr, vpPclViewer::pclPointCloudPointXYZRGBPtr> generateControlPoints(const double &addedNoise, const unsigned int &order, vpColVector &confidenceWeights);
 public:
   /**
    * @brief Construct a new object.
@@ -43,13 +43,13 @@ public:
    * @param ylimits A pair defining the <min, max> values of Y-coordinates of the generated surface.
    * @param nbPoints The number of points along the <X-axis, Y-axis> that will be generated.
    */
-  ClassUsingPclVisualizer(std::pair<double, double> xlimits = {-2.5,2.5}, std::pair<double, double> ylimits = {-2.5,2.5}, std::pair<unsigned int, unsigned int> nbPoints = {50,50});
+  ClassUsingPclViewer(std::pair<double, double> xlimits = {-2.5,2.5}, std::pair<double, double> ylimits = {-2.5,2.5}, std::pair<unsigned int, unsigned int> nbPoints = {50,50});
 
-  ~ClassUsingPclVisualizer();
+  ~ClassUsingPclViewer();
 
   /**
-   * @brief Demonstration on how to use a \b vpPclVisualizer in blocking mode, i.e.
-   * we expect an input from the user after call to \b vpPclVisualizer::display 
+   * @brief Demonstration on how to use a \b vpPclViewer in blocking mode, i.e.
+   * we expect an input from the user after call to \b vpPclViewer::display 
    * to go forward in the code.
    * @param addedNoise Standard deviation of the noise added to the moved surface. 
    * @param order  The order of the polynomial surface that is generated.
@@ -57,7 +57,7 @@ public:
   void blockingMode(const double &addedNoise, const unsigned int& order);
 
   /**
-   * @brief Demonstration on how to use a \b vpPclVisualizer in threaded mode.
+   * @brief Demonstration on how to use a \b vpPclViewer in threaded mode.
    * 
    * @param addedNoise Standard deviation of the noise added to the moved surface. 
    * @param order  The order of the polynomial surface that is generated.
