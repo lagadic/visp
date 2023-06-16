@@ -122,4 +122,33 @@ To update the surfaces over time, please use the following lines of codes:
 
 \snippet ClassUsingPclViewer.cpp Updating point clouds used by display thread
 
+\section pcl_viewer_known_issues Known issues
+
+\subsection pcl_viewer_issues_MacOs Known issue on MacOS
+
+On MacOS, you can face the following error:
+\code
+tutorial-pcl-viewer *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow drag regions should only be invalidated on the Main Thread!'
+libc++abi: terminating due to uncaught exception of type NSException
+\endcode
+This problem seems to be due to VTK library that does not like to be run in a non-main thread on MacOS.
+You can use the vpPclViewer class in blocking mode using the method vpPclViewer::display. See the 
+[PCL issue](https://github.com/PointCloudLibrary/pcl/issues/253#issuecomment-29716100) for more details.
+
+\subsection pcl_viewer_issues_ubuntu Known issue on Ubuntu 22.04
+
+On Ubuntu 22.04, you can face the following error:
+\code
+Thread 2 "tutorial-pcl-vi" received signal SIGSEGV, Segmentation fault.
+0x00007ffff7304b10 in _XEventsQueued () from /lib/x86_64-linux-gnu/libX11.so.6
+0x00007ffff7304b10 in _XEventsQueued () at /lib/x86_64-linux-gnu/libX11.so.6
+0x00007ffff72f11a1 in XPending () at /lib/x86_64-linux-gnu/libX11.so.6
+0x00007fffecf65b8f in vtkXRenderWindowInteractor::StartEventLoop() () at /lib/x86_64-linux-gnu/libvtkRenderingUI-9.1.so.1
+0x00007ffff6ee3f8c in pcl::visualization::PCLVisualizer::spinOnce(int, bool) () at /lib/x86_64-linux-gnu/libpcl_visualization.so.1.12
+0x00007ffff7fa5c49 in vpPclVisualizer::loopThread() (this=0x7fffffffd720) at /usr/include/c++/11/bits/shared_ptr_base.h:1295
+\endcode
+This is a [known compatibility issue](https://github.com/PointCloudLibrary/pcl/issues/5237) between PCL library and VTK library.
+
+The vpPclViewer can be used in blocking mode, or you may try to install PCL from source and then recompile
+ViSP.
 */

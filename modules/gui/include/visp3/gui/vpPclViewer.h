@@ -62,12 +62,8 @@
   Additionnally, it is possible to use confidence weights to hide points that are not trusted. These 
   weights can result from a robust estimation using for instance the vpRobust class.
 
-  \warning On MacOS, you can face the following error:
-  \code
-  tutorial-pcl-viewer *** Terminating app due to uncaught exception 'NSInternalInconsistencyException', reason: 'NSWindow drag regions should only be invalidated on the Main Thread!'
-  libc++abi: terminating due to uncaught exception of type NSException
-  \endcode
-  This problem seems to be due to VTK library that does not like to be run in a non-main thread on MacOS.
+  \warning If you face some runtime errors with the following class, please refer to the \ref pcl_viewer_known_issues
+  section to see if it is a known problem.
 
   \sa \ref tutorial-pcl-viewer
 */
