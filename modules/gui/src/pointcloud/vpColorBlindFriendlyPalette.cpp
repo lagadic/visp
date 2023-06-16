@@ -1,3 +1,37 @@
+/****************************************************************************
+ *
+ * ViSP, open source Visual Servoing Platform software.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
+ *
+ * This software is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * See the file LICENSE.txt at the root directory of this source
+ * distribution for additional information about the GNU GPL.
+ *
+ * For using ViSP with software that can not be combined with the GNU
+ * GPL, please contact Inria about acquiring a ViSP Professional
+ * Edition License.
+ *
+ * See https://visp.inria.fr for more information.
+ *
+ * This software was developed at:
+ * Inria Rennes - Bretagne Atlantique
+ * Campus Universitaire de Beaulieu
+ * 35042 Rennes Cedex
+ * France
+ *
+ * If you have questions regarding the use of this file, please contact
+ * Inria at visp@inria.fr
+ *
+ * This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+ * WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+ * Description:
+ * Real-time 3D point clouds plotter based on the PCL library.
+ *
+*****************************************************************************/
+
 #include <visp3/gui/vpColorBlindFriendlyPalette.h>
 #include <visp3/core/vpIoTools.h>
 
@@ -79,9 +113,9 @@ bool vpColorBlindFriendlyPalette::set_fromString(const std::string &nameColor)
   m_colorID = Palette::COUNT;
   std::string nameLowerCase = nameColor; // vpIoTools::toLowerCase(nameColor);
   bool wasFound(false);
-  for(unsigned int i= 0 ; i < to_uint(Palette::COUNT) && !wasFound; i++){
-    vpColorBlindFriendlyPalette::Palette candidate = (Palette) i;
-    if(to_string(candidate) == nameLowerCase){
+  for (unsigned int i = 0; i < to_uint(Palette::COUNT) && !wasFound; i++) {
+    vpColorBlindFriendlyPalette::Palette candidate = (Palette)i;
+    if (to_string(candidate) == nameLowerCase) {
       m_colorID = candidate;
       wasFound = true;
     }
@@ -98,9 +132,8 @@ std::string vpColorBlindFriendlyPalette::to_string() const
 std::string vpColorBlindFriendlyPalette::getAvailableColorsNames(const std::string &prefix, const std::string &separator, const std::string &suffix)
 {
   std::string list(prefix);
-  const unsigned int nbAvailableColors = (unsigned int) Palette::COUNT ;
-  for(unsigned int i = 0; i < nbAvailableColors - 1; i++)
-  {
+  const unsigned int nbAvailableColors = (unsigned int)Palette::COUNT;
+  for (unsigned int i = 0; i < nbAvailableColors - 1; i++) {
     std::string nameCandidateID = s_paletteNames[i];
     list += nameCandidateID + separator;
   }
@@ -110,13 +143,13 @@ std::string vpColorBlindFriendlyPalette::getAvailableColorsNames(const std::stri
 
 unsigned int vpColorBlindFriendlyPalette::to_uint(const Palette &colorID)
 {
-  const unsigned int nbAvailableColors = (unsigned int) Palette::COUNT ;
+  const unsigned int nbAvailableColors = (unsigned int)Palette::COUNT;
   unsigned int ID = nbAvailableColors;
   std::string nameSearchedColor = to_string(colorID);
   bool wasFound = false;
-  for(unsigned int i=0; i < nbAvailableColors && !wasFound; i++){
-    Palette candidate = (Palette) i;
-    if(to_string(candidate) == nameSearchedColor){
+  for (unsigned int i = 0; i < nbAvailableColors && !wasFound; i++) {
+    Palette candidate = (Palette)i;
+    if (to_string(candidate) == nameSearchedColor) {
       ID = i;
       wasFound = true;
     }
@@ -127,7 +160,7 @@ unsigned int vpColorBlindFriendlyPalette::to_uint(const Palette &colorID)
 std::string vpColorBlindFriendlyPalette::to_string(const vpColorBlindFriendlyPalette::Palette &colorID)
 {
   std::string nameColor;
-  switch(colorID){
+  switch (colorID) {
   case Palette::Black:
     nameColor = s_paletteNames[0];
     break;
