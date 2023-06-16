@@ -102,7 +102,7 @@ int main (int argc, char *argv[])
   const std::pair<double, double> def_xlim             = std::pair<double, double>(-2.5,2.5); // Min and max X-axis coordinates.
   const std::pair<double, double> def_ylim             = std::pair<double, double>(-2.5,2.5); // Min and max Y-axis coordinates.
   const std::pair<unsigned int, unsigned int> def_reso = std::pair<unsigned int, unsigned int>(50,50); // Number of points along the X-axis and Y-axis reciproquely.
-  const DisplayMode def_mode                           = DisplayMode::THREADED; // Display mode that should be used.
+  const DisplayMode def_mode                           = DisplayMode::BLOCKING; // Display mode that should be used.
   //! [Default arguments values]
 
   //! [Arguments parser]
