@@ -90,8 +90,15 @@ NERF_MODEL_DIR=castle_nerf
 ns-export poisson --load-config ${NERF_DIR}/${NERF_DATA_DIR}/nerfacto/2023-06-13_171130/config.yml --output-dir $NERF_MODEL_DIR
 \endcode
 
-Where the full path to the config.yml will change, depending on the date at which you train your model. 
+Where the full path to the config.yml will change, depending on the date at which you train your model.
 Other export methods are available, see <a href="https://docs.nerf.studio/en/latest/quickstart/export_geometry.html"> the documentation on ns-export</a>
+
+You can specify many parameters that will directly impact the quality of the model:
+- Number of generated points
+- Target number of faces for your mesh
+- 3D bounding box for which to generate the mesh
+- Texture resolution
+
 
 Excluding image acquisition and installation, this process takes around 40 minutes with a Quadro RTX 6000.
 
@@ -126,7 +133,7 @@ To start, you should realign your mesh with the world frame. This makes it easie
 To manipulate your mesh cleanly, you should be in **object mode**, you can check that it is the case in the top left of the viewport.
 To rotate your mesh, press **R**. To restrict the rotation to a single axis, you can press**X**, **Y** or **Z** after pressing **R**.
 To move your mesh, press **G**. The axis restriction principle is the same as for rotation.
-For a more accurate placement and orientation, use the front, top and side orthographic views. 
+For a more accurate placement and orientation, use the front, top and side orthographic views.
 You can do so by using the the numbers of the NumPad, or by using the gimbal in the top right of the viewport.
 
 To clean your mesh, select it (left click) and go into edit mode by pressing **Tab**. You should see the vertices that compose the mesh.
@@ -159,7 +166,7 @@ It is also advisable to use vertex snapping to make measuring easier. Snapping c
 \image html tutorial/tracking/megapose/snapping.png
 Note that you can select on what to snap: vertices, edges or faces.
 
-To measure, click on the starting point and drag until you reach the endpoint of your measurement. 
+To measure, click on the starting point and drag until you reach the endpoint of your measurement.
 Rotate around the model to ensure that the ruler is well placed.
 
 On our model, this is what it looks like:
@@ -167,13 +174,15 @@ On our model, this is what it looks like:
 
 Next, compare the measurements with the real ones to compute a rescaling factor (divid the true measurements by the ones in blender).
 
+\warning Before starting the rescaling steps, you should apply the transformations (so that scaling is performed on the correct axes and does not distort the model). To do so, press **CTRL+A** and click on "All transforms".
+
 To scale, the model, first ensure that it is selected by left clicking on it.
 Then, you can either:
 - Press **S**, then type "*your_scale" (for example, "*0.45") and left click to confirm.
-- Adjust the dimensions in the "Item panel". The input fields support mathematical expressions, so you can multiple each dimension by the scale factor.
+- Adjust the dimensions or scale in the "Item panel". The input fields support mathematical expressions, so you can multiple each dimension by the scale factor.
 
 
-\subsection megapose_model_origin Selecting the origin of your model
+\subsection megapose_model_origin Step 3: Selecting the origin of your model
 
 When exporting to a format such as `.obj` or `.ply`, the object origin defined in Blender (the orange dot visible when you select your model) is lost.
 What matters then is to place your object relative to Blender's world frame (where the axes cross, at (0,0,0)).
