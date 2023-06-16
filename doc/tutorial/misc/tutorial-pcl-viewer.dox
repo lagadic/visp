@@ -21,6 +21,34 @@ in the viewer. Finally, the point clouds are displayed using the `vpPclViewer`.
 To enable `vpPclViewer` class usage, and thus use this tutorial, you need to have a version of ViSP build with PCL. To see how to install PCL library,
 please refer to the \ref soft_tool_pcl section.
 
+\section pcl_viewer_howtorun How to run the tutorial 
+
+To see the different options of the tutorial, please run the following commands:
+```
+cd $VISP_WS/visp-build/tutorial/gui/pcl-visualizer/
+$ ./tutorial-pcl-visualizer -h
+```
+
+To run the tutorial in a blocking mode, i.e. the display pauses the program,
+please run the following command:
+```
+$ ./tutorial-pcl-visualizer --display-mode blocking
+```
+
+You should see a new windows that shows something similar to. It shows
+our two point clouds.
+
+\image html img-tutorial-pcl-viewer.png 
+
+To stop the program, please click in the viewer window and press the `q` key.
+
+It is also possible to run the viewer in a separate thread. To do so, please run
+the following command:
+```
+$ ./tutorial-pcl-visualizer --display-mode threaded
+```
+To stop the program, please click in the console and press the `q` key.
+
 \section pcl_viewer_example Point clouds visualization example explained
 
 For this tutorial, we use the main program tutorial-pcl-viewer.cpp. 
