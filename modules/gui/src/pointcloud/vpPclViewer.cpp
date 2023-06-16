@@ -354,6 +354,7 @@ void vpPclViewer ::display()
     sp_viewer->initCameraParameters(); // Initialize the viewer with default camera settings
     sp_viewer->setSize(s_width,s_height); // Setting the size of the viewer window
     sp_viewer->setPosition(s_posU, s_posV); // Setting the position of the viewer window on the screen
+    sp_viewer->resetCamera ();
 
     for(unsigned int id = 0; id < m_vPointClouds.size(); id++)
     {
@@ -402,6 +403,7 @@ void vpPclViewer ::loopThread()
   sp_viewer->initCameraParameters(); // Initialize the viewer with default camera settings
   sp_viewer->setSize(s_width,s_height); // Setting the size of the viewer window
   sp_viewer->setPosition(s_posU, s_posV); // Setting the position of the viewer window on the screen
+  sp_viewer->resetCamera ();
   unsigned int iter = 0;
 
   // Running the main loop of the thread
