@@ -1,4 +1,4 @@
-//! \example tutorial-pcl-visualizer.cpp
+//! \example tutorial-pcl-viewer.cpp
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_PCL)
