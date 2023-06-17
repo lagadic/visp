@@ -53,13 +53,9 @@
 #include <visp3/me/vpMeNurbs.h>
 #include <visp3/me/vpMeSite.h>
 #include <visp3/me/vpMeTracker.h>
-#ifdef VISP_HAVE_OPENCV
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101) // Require opencv >= 2.1.1
-//#    include <opencv2/imgproc/imgproc.hpp>
+#if defined(HAVE_OPENCV_IMGPROC)
+#include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/imgproc_c.h>
-#else
-#include <cv.h>
-#endif
 #endif
 
 double computeDelta(double deltai, double deltaj);
@@ -87,7 +83,7 @@ double computeDelta(double deltai, double deltaj)
 }
 
 // Check if the image point is in the image and not to close to
-// its edge to enable the computation of a convolution whith a mask.
+// its edge to enable the computation of a convolution with a mask.
 static bool outOfImage(const vpImagePoint &iP, int half, int rows, int cols)
 {
   return ((iP.get_i() < half + 1) || (iP.get_i() > (rows - half - 3)) || (iP.get_j() < half + 1) ||
@@ -543,17 +539,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
     if (u > 0)
       lastPtInSubIm = nurbs.computeCurvePoint(u);
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     vpImageFilter::canny(Isub, Isub, 3, cannyTh1, 3);
-#else
-    IplImage *Ip = NULL;
-    vpImageConvert::convert(Isub, Ip);
-
-    IplImage *dst = cvCreateImage(cvSize((int)Isub.getWidth(), (int)Isub.getHeight()), 8, 1);
-    cvCanny(Ip, dst, cannyTh1, cannyTh2, 3);
-
-    vpImageConvert::convert(dst, Isub);
-#endif
 
     vpImagePoint firstBorder(-1, -1);
 
@@ -679,17 +665,7 @@ void vpMeNurbs::seekExtremitiesCanny(const vpImage<unsigned char> & /* I */)
     if (u < 1.0)
       lastPtInSubIm = nurbs.computeCurvePoint(u);
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
     vpImageFilter::canny(Isub, Isub, 3, cannyTh1, 3);
-#else
-    IplImage *Ip = NULL;
-    vpImageConvert::convert(Isub, Ip);
-
-    IplImage *dst = cvCreateImage(cvSize((int)Isub.getWidth(), (int)Isub.getHeight()), 8, 1);
-    cvCanny(Ip, dst, cannyTh1, cannyTh2, 3);
-
-    vpImageConvert::convert(dst, Isub);
-#endif
 
     vpImagePoint firstBorder(-1, -1);
 

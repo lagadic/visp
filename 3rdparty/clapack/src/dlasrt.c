@@ -85,7 +85,7 @@
 /*     .. */
 /*     .. Executable Statements .. */
 
-/*     Test the input paramters. */
+/*     Test the input parameters. */
 
     /* Parameter adjustments */
     --d__;

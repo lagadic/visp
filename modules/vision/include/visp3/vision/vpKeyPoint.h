@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Key point functionalities.
  *
- * Authors:
- * Souriya Trinh
- *
- *****************************************************************************/
+*****************************************************************************/
 #ifndef _vpKeyPoint_h_
 #define _vpKeyPoint_h_
 
@@ -66,16 +63,10 @@
 #include <visp3/vision/vpXmlConfigParserKeyPoint.h>
 
 // Require at least OpenCV >= 2.1.1
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-
-#include <opencv2/calib3d/calib3d.hpp>
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
 #include <opencv2/features2d/features2d.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
-
-#if (VISP_HAVE_OPENCV_VERSION >= 0x040000) // Require opencv >= 4.0.0
-#include <opencv2/imgproc.hpp>
 #include <opencv2/imgproc/imgproc_c.h>
-#endif
 
 #if defined(VISP_HAVE_OPENCV_XFEATURES2D) // OpenCV >= 3.0.0
 #include <opencv2/xfeatures2d.hpp>
@@ -915,7 +906,7 @@ public:
 
   /*!
    * Set maximum number of keypoints to extract.
-   * \warning This functionality is only available for ORB and SIFT extactors.
+   * \warning This functionality is only available for ORB and SIFT extractors.
    * \param maxFeatures : Maximum number of keypoints to extract. Set -1 to use default values.
    */
   void setMaxFeatures(int maxFeatures) { m_maxFeatures = maxFeatures; }

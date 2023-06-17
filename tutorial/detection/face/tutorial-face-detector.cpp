@@ -10,7 +10,7 @@
 int main(int argc, const char *argv[])
 {
 //! [Macro defined]
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020200) && defined(VISP_HAVE_OPENCV_OBJDETECT)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_OBJDETECT)
   //! [Macro defined]
   try {
     //! [Default settings]
@@ -40,7 +40,7 @@ int main(int argc, const char *argv[])
     vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d(I);
 #endif
     vpDisplay::setTitle(I, "ViSP viewer");

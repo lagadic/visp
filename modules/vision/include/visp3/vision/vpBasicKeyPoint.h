@@ -149,24 +149,24 @@ public:
 
   /*!
     Get the nth matched reference point index in the complete list of
-   reference point.
+    reference point.
 
     In the code below referencePoint1 and referencePoint2 correspond to the
-   same matched reference point.
+    same matched reference point.
 
    \code
-   vpKeyPointSurf surf;
+   vpKeyPoint keypoint;
 
    //Here the code to compute the reference points and the current points.
 
    vpImagePoint referencePoint1;
    vpImagePoint currentPoint;
-   surf.getMatchedPoints(1, referencePoint1, currentPoint);  //Get the first matched points
+   keypoint.getMatchedPoints(1, referencePoint1, currentPoint);  //Get the first matched points
 
    vpImagePoint referencePoint2;
-   const vpImagePoint* referencePointsList = surf.getAllPointsInReferenceImage();
+   const vpImagePoint* referencePointsList = keypoint.getAllPointsInReferenceImage();
    // Get the first matched reference point index in the complete reference point list
-   int index = surf.getIndexInAllReferencePointList(1);
+   int index = keypoint.getIndexInAllReferencePointList(1);
    // Get the first matched reference point
    referencePoint2 = referencePointsList[index];
    \endcode

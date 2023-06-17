@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,13 +31,10 @@
  * Description:
  * Planar surface detection tool.
  *
- * Authors:
- * Romain Tallonneau
- *
- *****************************************************************************/
+*****************************************************************************/
 
-#ifndef VPPLANAROBJECTDETECTOR_H_
-#define VPPLANAROBJECTDETECTOR_H_
+#ifndef _vpPlanarObjectDetector_h_
+#define _vpPlanarObjectDetector_h_
 
 #include <visp3/core/vpConfig.h>
 
@@ -75,7 +72,7 @@
 
   It uses the class vpFernClassifier to extract points of interest in a
   reference image. These points are recorded and a classifier is trained to
-  recognises them.
+  recognise them.
 
   In this class the points detected are assumed to belong to a planar surface.
   Therefore an homography can be computed between the reference image and the

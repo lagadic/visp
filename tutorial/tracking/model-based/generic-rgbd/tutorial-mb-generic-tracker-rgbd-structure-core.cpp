@@ -169,7 +169,7 @@ int main(int argc, char *argv[])
   vpDisplayX d1, d2;
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d1, d2;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV d1, d2;
 #endif
   if (use_edges || use_klt)

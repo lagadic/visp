@@ -503,34 +503,7 @@ void vpFernClassifier::record(const std::string &_objectName, const std::string 
 */
 void vpFernClassifier::setImage(const vpImage<unsigned char> &I)
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
   vpImageConvert::convert(I, curImg);
-#else
-  if (curImg != NULL) {
-    cvResetImageROI(curImg);
-    if ((curImg->width % 8) == 0) {
-      curImg->imageData = NULL;
-      cvReleaseImageHeader(&curImg);
-    } else {
-      cvReleaseImage(&curImg);
-    }
-    curImg = NULL;
-  }
-  if ((I.getWidth() % 8) == 0) {
-    curImg = cvCreateImageHeader(cvSize((int)I.getWidth(), (int)I.getHeight()), IPL_DEPTH_8U, 1);
-    if (curImg != NULL) {
-      curImg->imageData = (char *)I.bitmap;
-    } else {
-      throw vpException(vpException::memoryAllocationError, "Could not create the image in the OpenCV format.");
-    }
-  } else {
-    vpImageConvert::convert(I, curImg);
-  }
-  if (curImg == NULL) {
-    std::cout << "!> conversion failed" << std::endl;
-    throw vpException(vpException::notInitialized, "conversion failed");
-  }
-#endif
 }
 
 #elif !defined(VISP_BUILD_SHARED_LIBS)

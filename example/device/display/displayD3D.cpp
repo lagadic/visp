@@ -40,7 +40,7 @@
   \file displayD3D.cpp
 
   \brief Read an image on the disk, display it using vpDisplayD3D class,
-  display some features (line, circle, caracters) in overlay and finaly write
+  display some features (line, circle, characters) in overlay and finally write
   the image and the overlayed features in an image on the disk.
 
 */
@@ -62,7 +62,7 @@
   \example displayD3D.cpp
 
   Read an image on the disk, display it using vpDisplayGDI class, display some
-  features (line, circle, caracters) in overlay and finaly write the image and
+  features (line, circle, characters) in overlay and finally write the image and
   the overlayed features in an image on the disk.
 
 */
@@ -87,7 +87,7 @@ void usage(const char *name, const char *badparam, std::string ipath, std::strin
 {
   fprintf(stdout, "\n\
 Read an image on the disk, display it using D3D, display some\n\
-features (line, circle, caracters) in overlay and finaly write \n\
+features (line, circle, characters) in overlay and finally write \n\
 the image and the overlayed features in an image on the disk\n\
 \n\
 SYNOPSIS\n\
@@ -114,7 +114,7 @@ OPTIONS:                                               Default\n\
 \n\
   -c\n\
      Disable the mouse click. Useful to automate the \n\
-     execution of this program without humain intervention.\n\
+     execution of this program without human intervention.\n\
 \n\
   -d                                             \n\
      Disable the image display. This can be useful \n\

@@ -12,7 +12,7 @@
 
 int main(int argc, char **argv)
 {
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV)
   std::string opt_videoname = "model/teabox/teabox.mp4";
   std::string opt_modelname = "model/teabox/teabox.cao";
   int opt_tracker = 0;
@@ -200,7 +200,7 @@ int main(int argc, char **argv)
     display = new vpDisplayX;
 #elif defined(VISP_HAVE_GDI)
     display = new vpDisplayGDI;
-#else
+#elif defined(HAVE_OPENCV_HIGHGUI)
     display = new vpDisplayOpenCV;
 #endif
     if (opt_display_scale_auto) {
@@ -227,7 +227,7 @@ int main(int argc, char **argv)
     vpMbGenericTracker tracker;
     if (opt_tracker == 0)
       tracker.setTrackerType(vpMbGenericTracker::EDGE_TRACKER);
-#ifdef VISP_HAVE_MODULE_KLT
+#if defined(VISP_HAVE_MODULE_KLT) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
     else if (opt_tracker == 1)
       tracker.setTrackerType(vpMbGenericTracker::KLT_TRACKER);
     else
@@ -267,7 +267,7 @@ int main(int argc, char **argv)
         //! [Set moving-edges parameters]
       }
 
-#ifdef VISP_HAVE_MODULE_KLT
+#if defined(VISP_HAVE_MODULE_KLT) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
       if (opt_tracker == 1 || opt_tracker == 2) {
         //! [Set klt parameters]
         vpKltOpencv klt_settings;
@@ -376,9 +376,11 @@ int main(int argc, char **argv)
         if (tracker.getTrackerType() & vpMbGenericTracker::EDGE_TRACKER) {
           ss << " edge: " << tracker.getNbFeaturesEdge();
         }
+#if defined(VISP_HAVE_MODULE_KLT) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
         if (tracker.getTrackerType() & vpMbGenericTracker::KLT_TRACKER) {
           ss << " klt: " << tracker.getNbFeaturesKlt();
         }
+#endif
         vpDisplay::displayText(I, 60*display->getDownScalingFactor(), 10*display->getDownScalingFactor(), ss.str(), vpColor::red);
         if(opt_verbose) {
           std::cout << ss.str() << std::endl;

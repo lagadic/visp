@@ -169,15 +169,15 @@ int main(int argc, const char **argv)
 /*
 Create a display for each different cameras.
 */
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display[3];
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV display[3];
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     vpDisplayGDI display[3];
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
     vpDisplayD3D display[3];
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display[3];
 #endif
 

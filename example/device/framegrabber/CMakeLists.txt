@@ -48,7 +48,6 @@ set(example_cpp
   grabDirectShow.cpp
   grabDirectShowMulti.cpp
   grabFlyCapture.cpp
-  grabOpenCV.cpp
   grabRealSense.cpp
   grabRealSense2.cpp
   grabRealSense2_T265.cpp

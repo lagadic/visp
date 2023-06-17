@@ -164,9 +164,13 @@ int main(int argc, char *argv[])
   }
 
   std::cout << "Tracked features: " << std::endl;
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV)
   std::cout << "  Use edges   : 1" << std::endl;
+#if defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   std::cout << "  Use klt     : 1" << std::endl;
+#else
+  std::cout << "  Use klt     : 0" << std::endl;
+#endif
   std::cout << "  Use depth   : " << !disable_depth << std::endl;
 #else
   std::cout << "  Use edges   : 1" << std::endl;
@@ -220,7 +224,7 @@ int main(int argc, char *argv[])
 
   //! [Constructor]
   std::vector<int> trackerTypes;
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
 #else
   trackerTypes.push_back(vpMbGenericTracker::EDGE_TRACKER);

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,14 +31,7 @@
  * Description:
  * Defines a generic 2D polygon.
  *
- * Author:
- * Amaury Dame
- * Nicolas Melchior
- * Romain Tallonneau
- * Fabien Spindler
- * Julien Dufour
- *
- *****************************************************************************/
+*****************************************************************************/
 
 // System
 #include <limits>
@@ -52,7 +45,8 @@
 #include <visp3/core/vpUniRand.h>
 
 // Local helper
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
+
 #include <opencv2/imgproc/imgproc.hpp>
 
 /*!
@@ -198,10 +192,10 @@ vpPolygon &vpPolygon::operator=(const vpPolygon &poly)
 void vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners, const bool create_convex_hull)
 {
   if (create_convex_hull) {
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
     init(convexHull(corners));
 #else
-    vpException(vpException::notImplementedError, "Cannot build a convex hull without OPENCV");
+    vpException(vpException::notImplementedError, "Cannot build a convex hull without OpenCV imgproc module");
 #endif
   } else {
     init(corners);
@@ -220,10 +214,10 @@ void vpPolygon::buildFrom(const std::vector<vpImagePoint> &corners, const bool c
 void vpPolygon::buildFrom(const std::list<vpImagePoint> &corners, const bool create_convex_hull)
 {
   if (create_convex_hull) {
-#ifdef VISP_HAVE_OPENCV
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
     init(convexHull(corners));
 #else
-    vpException(vpException::notImplementedError, "Cannot build a convex hull without OPENCV");
+    vpException(vpException::notImplementedError, "Cannot build a convex hull without OpenCV imgproc module");
 #endif
   } else {
     init(corners);
@@ -312,7 +306,7 @@ void vpPolygon::initClick(const vpImage<vpRGBa> &I, unsigned int size, const vpC
 }
 
 /*!
-  Intialises the polygon using the collection of image points. This method
+  Initialises the polygon using the collection of image points. This method
   computes some internal variables such as center, area, ...
 
   \warning the corners must be ordered (either clockwise or counter
@@ -332,7 +326,7 @@ void vpPolygon::init(const std::vector<vpImagePoint> &corners)
 }
 
 /*!
-  Intialises the polygon using the collection of image points. This method
+  Initialises the polygon using the collection of image points. This method
   computes some internal variables such as center, area, ...
 
   \warning the corners must be ordered (either clockwise or counter
@@ -407,12 +401,12 @@ bool vpPolygon::isInside(const vpImagePoint &ip, const PointInPolygonMethod &met
   bool test = false;
   switch (method) {
   case PnPolySegmentIntersection: {
-    vpImagePoint infPoint(100000, 100000); // take a point at 'inifinity'
+    vpImagePoint infPoint(100000, 100000); // take a point at 'infinity'
     vpUniRand generator;
     infPoint.set_i(infPoint.get_i() + 1000 * generator());
     infPoint.set_j(infPoint.get_j() + 1000 * generator()); // we add random since it appears that
                                                            // sometimes infPoint may cause a
-                                                           // degenerated case (so realucnch and
+                                                           // degenerated case (so relaunch and
                                                            // hope that result will be
                                                            // different).
 

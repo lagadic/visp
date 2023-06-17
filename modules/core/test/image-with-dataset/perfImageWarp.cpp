@@ -94,7 +94,7 @@ TEST_CASE("Benchmark affine warp on grayscale image", "[benchmark]")
     return I_affine;
   };
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGPROC)
   cv::Mat img, img_affine;
   vpImageConvert::convert(I, img);
   vpImageConvert::convert(I, img_affine);
@@ -165,7 +165,7 @@ TEST_CASE("Benchmark affine warp on color image", "[benchmark]")
     return I_affine;
   };
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGPROC)
   cv::Mat img, img_affine;
   vpImageConvert::convert(I, img);
   vpImageConvert::convert(I, img_affine);
@@ -236,7 +236,7 @@ TEST_CASE("Benchmark perspective warp on grayscale image", "[benchmark]")
     return I_perspective;
   };
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGPROC)
   cv::Mat img, img_perspective;
   vpImageConvert::convert(I, img);
   vpImageConvert::convert(I, img_perspective);
@@ -307,7 +307,7 @@ TEST_CASE("Benchmark perspective warp on color image", "[benchmark]")
     return I_perspective;
   };
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000) && defined(HAVE_OPENCV_IMGPROC)
   cv::Mat img, img_perspective;
   vpImageConvert::convert(I, img);
   vpImageConvert::convert(I, img_perspective);

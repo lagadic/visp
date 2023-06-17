@@ -244,7 +244,7 @@ void test_det_lapack(bool verbose, const std::vector<vpMatrix> &bench, double &t
 }
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
 void test_det_opencv(bool verbose, const std::vector<vpMatrix> &bench, double &time, std::vector<double> &result)
 {
   if (verbose)
@@ -274,7 +274,7 @@ void save_time(const std::string &method, bool verbose, bool use_plot_file, std:
 int main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV)
     unsigned int nb_matrices = 1000;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 6;
@@ -306,7 +306,7 @@ int main(int argc, const char *argv[])
       of << "\"Determinant Eigen3\""
          << "\t";
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
       of << "\"Determinant OpenCV\""
          << "\t";
 #endif
@@ -339,7 +339,7 @@ int main(int argc, const char *argv[])
       save_time("Determinant by Eigen3: ", verbose, use_plot_file, of, time);
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
       std::vector<double> result_opencv;
       test_det_opencv(verbose, bench, time, result_opencv);
       save_time("Determinant by OpenCV: ", verbose, use_plot_file, of, time);
@@ -348,7 +348,7 @@ int main(int argc, const char *argv[])
       if (use_plot_file)
         of << std::endl;
 
-#if defined(VISP_HAVE_LAPACK) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_LAPACK) && defined(VISP_HAVE_OPENCV)
       // Compare results
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_lapack[i] - result_opencv[i]) > 1e-6) {
@@ -358,7 +358,7 @@ int main(int argc, const char *argv[])
         }
       }
 #endif
-#if defined(VISP_HAVE_EIGEN3) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_EIGEN3) && defined(VISP_HAVE_OPENCV)
       // Compare results
       for (unsigned int i = 0; i < bench.size(); i++) {
         if (std::fabs(result_eigen3[i] - result_opencv[i]) > 1e-6) {

@@ -50,15 +50,13 @@
 #include <visp3/robot/vpRobotPioneer.h> // Include first to avoid build issues with Status, None, isfinite
 #include <visp3/sensor/vp1394CMUGrabber.h>
 #include <visp3/sensor/vp1394TwoGrabber.h>
-#include <visp3/sensor/vpOpenCVGrabber.h>
 #include <visp3/sensor/vpV4l2Grabber.h>
 #include <visp3/visual_features/vpFeatureBuilder.h>
 #include <visp3/visual_features/vpFeatureDepth.h>
 #include <visp3/visual_features/vpFeaturePoint.h>
 #include <visp3/vs/vpServo.h>
 
-#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) ||                              \
-    (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_DC1394) || defined(VISP_HAVE_V4L2) || defined(VISP_HAVE_CMU1394) || defined(HAVE_OPENCV_VIDEOIO)
 #if defined(VISP_HAVE_X11) || defined(VISP_HAVE_GDI)
 #if defined(VISP_HAVE_PIONEER)
 #define TEST_COULD_BE_ACHIEVED
@@ -75,9 +73,9 @@
   Example that shows how to control the Pioneer mobile robot by IBVS visual
   servoing with respect to a blob. The current visual features that are used
   are s = (x, log(Z/Z*)). The desired one are s* = (x*, 0), with:
-  - x the abscisse of the point corresponding to the blob center of gravity
+  - x the abscise of the point corresponding to the blob center of gravity
   measured at each iteration,
-  - x* the desired abscisse position of the point (x* = 0)
+  - x* the desired abscise position of the point (x* = 0)
   - Z the depth of the point measured at each iteration
   - Z* the desired depth of the point equal to the initial one.
 
@@ -90,7 +88,7 @@
   The value of Z is estimated from the surface of the blob that is
   proportional to the depth Z.
 
-  */
+ */
 #ifdef TEST_COULD_BE_ACHIEVED
 int main(int argc, char **argv)
 {
@@ -134,7 +132,7 @@ int main(int argc, char **argv)
     vpCameraParameters cam;
 
 // Create the camera framegrabber
-#if defined(VISP_HAVE_OPENCV)
+#if defined(HAVE_OPENCV_VIDEOIO)
     int device = 1;
     std::cout << "Use device: " << device << std::endl;
     cv::VideoCapture g(device); // open the default camera
@@ -178,7 +176,7 @@ int main(int argc, char **argv)
 #endif
 
 // Acquire an image from the grabber
-#if defined(VISP_HAVE_OPENCV)
+#if defined(HAVE_OPENCV_VIDEOIO)
     g >> frame; // get a new frame from camera
     vpImageConvert::convert(frame, I);
 #else
@@ -259,7 +257,7 @@ int main(int argc, char **argv)
 
     while (1) {
 // Acquire a new image
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(HAVE_OPENCV_VIDEOIO)
       g >> frame; // get a new frame from camera
       vpImageConvert::convert(frame, I);
 #else
@@ -274,7 +272,7 @@ int main(int argc, char **argv)
       vpFeatureBuilder::create(s_x, cam, dot);
 
       // Update log(Z/Z*) feature. Since the depth Z change, we need to update
-      // the intection matrix
+      // the interaction matrix
       surface = 1. / sqrt(dot.m00 / (cam.get_px() * cam.get_py()));
       Z = coef * surface;
       s_Z.buildFrom(s_x.get_x(), s_x.get_y(), Z, log(Z / Zd));
@@ -289,7 +287,7 @@ int main(int argc, char **argv)
       // reference frame
       v = task.computeControlLaw();
 
-      std::cout << "Send velocity to the pionner: " << v[0] << " m/s " << vpMath::deg(v[1]) << " deg/s" << std::endl;
+      std::cout << "Send velocity to the pioneer: " << v[0] << " m/s " << vpMath::deg(v[1]) << " deg/s" << std::endl;
 
       // Send the velocity to the robot
       robot.setVelocity(vpRobot::REFERENCE_FRAME, v);

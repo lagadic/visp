@@ -9,7 +9,7 @@
 int main()
 {
 //! [Define]
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(HAVE_OPENCV_HIGHGUI) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_FEATURES2D)
   //! [Define]
   vpImage<unsigned char> I;
 

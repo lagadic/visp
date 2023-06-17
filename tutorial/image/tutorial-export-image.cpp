@@ -21,7 +21,7 @@ int main()
   vpDisplay *d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
   vpDisplay *d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplay *d = new vpDisplayOpenCV;
 #endif
   // Initialize the display with the image I. Display and image are

@@ -88,7 +88,7 @@ int main(int argc, const char **argv)
   vpDisplayX d, d2;
 #elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d, d2;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV d, d2;
 #endif
   d.init(I_bin, 0, 0, "After binarisation");

@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,10 +31,7 @@
  * Description:
  * Test functions in vpIoTools.
  *
- * Authors:
- * Souriya Trinh
- *
- *****************************************************************************/
+*****************************************************************************/
 
 /*!
 
@@ -53,7 +50,7 @@ bool areSame(double a, double b) { return fabs(a - b) < std::numeric_limits<doub
 
 void testConvertFromImagePointToPoint2f()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_FEATURES2D)
   vpImagePoint imPt1(12.5f, .85f);
   vpImagePoint imPt2(-44.26f, 125.11f);
   vpImagePoint imPt3(0.0f, -1.756e-10f);
@@ -102,7 +99,7 @@ void testConvertFromImagePointToPoint2f()
 
 void testConvertFromPoint2fToImagePoint()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_FEATURES2D)
   vpImagePoint imPt1, imPt2, imPt3;
 
   cv::Point2f pt1(12.5f, .85f), pt2(-44.26f, 125.11f), pt3(0.0f, -1.756e-10f);
@@ -150,7 +147,7 @@ void testConvertFromPoint2fToImagePoint()
 
 void testConvertFromImagePointToPoint2d()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_FEATURES2D)
   vpImagePoint imPt1(12.5, .85);
   vpImagePoint imPt2(-44.26, 125.11);
   vpImagePoint imPt3(0, -1.756e-10);
@@ -199,7 +196,7 @@ void testConvertFromImagePointToPoint2d()
 
 void testConvertFromPoint2dToImagePoint()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_FEATURES2D)
   vpImagePoint imPt1, imPt2, imPt3;
 
   cv::Point2d pt1(12.5, .85), pt2(-44.26, 125.11), pt3(0, -1.756e-10);
@@ -247,7 +244,7 @@ void testConvertFromPoint2dToImagePoint()
 
 void testConvertFromKeyPointToImagePoint()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_FEATURES2D)
   cv::KeyPoint kp1(12.5f, .85f, 0), kp2(-44.26f, 125.11f, 0), kp3(0.0f, -1.756e-10f, 0);
   vpImagePoint imPt1, imPt2, imPt3;
 
@@ -295,7 +292,7 @@ void testConvertFromKeyPointToImagePoint()
 
 void testConvertFromPoint3fToPoint()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_FEATURES2D)
   cv::Point3f pt1(12.5f, .85f, 110.0f), pt2(-44.26f, 125.11f, -98e2f), pt3(0.0f, -1.756e-10f, 0.00015f);
   vpPoint point1, point2, point3;
 
@@ -343,7 +340,7 @@ void testConvertFromPoint3fToPoint()
 
 void testConvertFromPointToPoint3f()
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_FEATURES2D)
   cv::Point3f pt1, pt2, pt3;
   vpPoint point1, point2, point3;
   point1.set_oX(12.5f);

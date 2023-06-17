@@ -16,9 +16,9 @@
 #include <visp3/core/vpConfig.h>
 
 #if defined(VISP_HAVE_TENSORRT) && defined(VISP_HAVE_OPENCV)
-#include <opencv2/opencv_modules.hpp>
-#if defined(HAVE_OPENCV_CUDEV) && defined(HAVE_OPENCV_CUDAWARPING) && defined(HAVE_OPENCV_CUDAARITHM) &&               \
-    defined(VISP_HAVE_OPENCV_DNN)
+
+#if defined(HAVE_OPENCV_CUDEV) && defined(HAVE_OPENCV_CUDAWARPING) && defined(HAVE_OPENCV_CUDAARITHM) && \
+    defined(HAVE_OPENCV_DNN) && defined(HAVE_OPENCV_VIDEOIO)
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpIoTools.h>
 #include <visp3/gui/vpDisplayX.h>

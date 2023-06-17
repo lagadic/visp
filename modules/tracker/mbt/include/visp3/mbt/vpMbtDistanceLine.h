@@ -149,7 +149,7 @@ public:
   void displayMovingEdges(const vpImage<vpRGBa> &I);
 
   /*!
-   Get the camera paramters.
+   Get the camera parameters.
 
    \param camera : The vpCameraParameters used to store the camera parameters.
   */
@@ -214,7 +214,7 @@ public:
                         const vpImage<bool> *mask = NULL);
 
   /*!
-   Set the camera paramters.
+   Set the camera parameters.
    \param camera : The camera parameters.
   */
   inline void setCameraParameters(const vpCameraParameters &camera) { this->cam = camera; }

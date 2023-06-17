@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,13 +31,13 @@
  * Description:
  * Test vpMbGenericTracker JSON parse / save.
  *
- *****************************************************************************/
+*****************************************************************************/
 
- /*!
-   \file testMbtJsonSettings.cpp
+/*!
+  \file testMbtJsonSettings.cpp
 
-   Test test saving and parsing JSON configuration for vpMbGenericTracker
- */
+  Test test saving and parsing JSON configuration for vpMbGenericTracker
+*/
 
 #include <visp3/core/vpIoTools.h>
 #include <visp3/mbt/vpMbGenericTracker.h>
@@ -53,7 +53,7 @@ vpMbGenericTracker baseTrackerConstructor()
 {
   const std::vector<std::string> names = { "C1", "C2" };
   std::vector<int> featureTypes;
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC) && defined(HAVE_OPENCV_VIDEO)
   featureTypes.push_back(vpMbGenericTracker::EDGE_TRACKER | vpMbGenericTracker::KLT_TRACKER);
 #else
   featureTypes.push_back(vpMbGenericTracker::EDGE_TRACKER);
@@ -195,7 +195,7 @@ SCENARIO("MBT JSON Serialization", "[json]")
         }
       }
 
-#if defined(VISP_HAVE_MODULE_KLT) && (defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100))
+#if defined(VISP_HAVE_MODULE_KLT) && defined(VISP_HAVE_OPENCV)
       THEN("Reloaded KLT tracker parameters should be the same")
       {
         std::map<std::string, vpKltOpencv> oldvpKlt, newvpKlt;

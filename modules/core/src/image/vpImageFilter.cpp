@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2019 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -31,21 +31,11 @@
  * Description:
  * Various image tools, convolution, ...
  *
- * Authors:
- * Eric Marchand
- *
  *****************************************************************************/
 
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageFilter.h>
 #include <visp3/core/vpRGBa.h>
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
-#include <opencv2/imgproc/imgproc.hpp>
-#elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020101)
-#include <opencv2/imgproc/imgproc_c.h>
-#elif defined(VISP_HAVE_OPENCV)
-#include <cv.h>
-#endif
 
 /*!
   Apply a filter to an image.
@@ -254,7 +244,7 @@ void vpImageFilter::sepFilter(const vpImage<unsigned char> &I, vpImage<double> &
   }
 }
 
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
 /*!
   Apply the Canny edge operator on the image \e Isrc and return the resulting
   image \e Ires.
@@ -268,7 +258,7 @@ void vpImageFilter::sepFilter(const vpImage<unsigned char> &I, vpImage<double> &
 
 int main()
 {
-#if VISP_HAVE_OPENCV_VERSION >= 0x020100 // Canny uses OpenCV >=2.1.0
+#ifdef VISP_HAVE_OPENCV
   // Constants for the Canny operator.
   const unsigned int gaussianFilterSize = 5;
   const double thresholdCanny = 15;
@@ -298,25 +288,11 @@ int main()
 void vpImageFilter::canny(const vpImage<unsigned char> &Isrc, vpImage<unsigned char> &Ires,
                           unsigned int gaussianFilterSize, double thresholdCanny, unsigned int apertureSobel)
 {
-#if (VISP_HAVE_OPENCV_VERSION < 0x020408)
-  IplImage *img_ipl = NULL;
-  vpImageConvert::convert(Isrc, img_ipl);
-  IplImage *edges_ipl;
-  edges_ipl = cvCreateImage(cvSize(img_ipl->width, img_ipl->height), img_ipl->depth, img_ipl->nChannels);
-
-  cvSmooth(img_ipl, img_ipl, CV_GAUSSIAN, (int)gaussianFilterSize, (int)gaussianFilterSize, 0, 0);
-  cvCanny(img_ipl, edges_ipl, thresholdCanny, thresholdCanny, (int)apertureSobel);
-
-  vpImageConvert::convert(edges_ipl, Ires);
-  cvReleaseImage(&img_ipl);
-  cvReleaseImage(&edges_ipl);
-#else
   cv::Mat img_cvmat, edges_cvmat;
   vpImageConvert::convert(Isrc, img_cvmat);
   cv::GaussianBlur(img_cvmat, img_cvmat, cv::Size((int)gaussianFilterSize, (int)gaussianFilterSize), 0, 0);
   cv::Canny(img_cvmat, edges_cvmat, thresholdCanny, thresholdCanny, (int)apertureSobel);
   vpImageConvert::convert(edges_cvmat, Ires);
-#endif
 }
 #endif
 
@@ -774,29 +750,18 @@ void vpImageFilter::getGradYGauss2D(const vpImage<unsigned char> &I, vpImage<dou
 void vpImageFilter::getGaussPyramidal(const vpImage<unsigned char> &I, vpImage<unsigned char> &GI)
 {
   vpImage<unsigned char> GIx;
-#if defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x030000)
+#if defined(VISP_HAVE_OPENCV) && defined(HAVE_OPENCV_IMGPROC)
+#if (VISP_HAVE_OPENCV_VERSION >= 0x030000)
   cv::Mat imgsrc, imgdest;
   vpImageConvert::convert(I, imgsrc);
   cv::pyrDown(imgsrc, imgdest, cv::Size((int)I.getWidth() / 2, (int)I.getHeight() / 2));
   vpImageConvert::convert(imgdest, GI);
-#elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+#else
   cv::Mat imgsrc, imgdest;
   vpImageConvert::convert(I, imgsrc);
   cv::pyrDown(imgsrc, imgdest, cvSize((int)I.getWidth() / 2, (int)I.getHeight() / 2));
   vpImageConvert::convert(imgdest, GI);
-#elif defined(VISP_HAVE_OPENCV) && (VISP_HAVE_OPENCV_VERSION >= 0x020100)
-  IplImage *imgsrc = NULL;  // cvCreateImage(cvGetSize(imgign), IPL_DEPTH_8U, 1);
-  IplImage *imgdest = NULL; // cvCreateImage(cvGetSize(imgign), IPL_DEPTH_8U, 1);
-  imgsrc = cvCreateImage(cvSize((int)I.getWidth(), (int)I.getHeight()), IPL_DEPTH_8U, 1);
-  imgdest = cvCreateImage(cvSize((int)I.getWidth() / 2, (int)I.getHeight() / 2), IPL_DEPTH_8U, 1);
-  vpImageConvert::convert(I, imgsrc);
-  cvPyrDown(imgsrc, imgdest);
-  vpImageConvert::convert(imgdest, GI);
-
-  cvReleaseImage(&imgsrc);
-  cvReleaseImage(&imgdest);
-  // vpImage<unsigned char> sGI;sGI=GI;
-
+#endif
 #else
   vpImageFilter::getGaussXPyramidal(I, GIx);
   vpImageFilter::getGaussYPyramidal(GIx, GI);

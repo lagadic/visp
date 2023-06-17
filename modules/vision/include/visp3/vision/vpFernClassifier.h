@@ -219,12 +219,8 @@ protected:
   //! (must be at least four)
   unsigned int nbMinPoint;
 
-//! The current image in the OpenCV format.
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020408)
+  //! The current image in the OpenCV format.
   cv::Mat curImg;
-#else
-  IplImage *curImg;
-#endif
 
   //! keypoints detected in the reference image.
   std::vector<cv::KeyPoint> objKeypoints;

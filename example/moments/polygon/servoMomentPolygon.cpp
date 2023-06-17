@@ -159,15 +159,15 @@ public:
 
 #ifdef VISP_HAVE_DISPLAY
     // init the right display
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     m_displayInt = new vpDisplayX;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
     m_displayInt = new vpDisplayOpenCV;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
     m_displayInt = new vpDisplayGDI;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
     m_displayInt = new vpDisplayD3D;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     m_displayInt = new vpDisplayGTK;
 #endif
     m_displayInt->init(m_Iint, 50, 50, "Visual servoing with moments");

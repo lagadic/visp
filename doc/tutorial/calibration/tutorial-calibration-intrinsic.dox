@@ -574,7 +574,7 @@ Global reprojection error: 0.7628504889
 Camera parameters without distortion successfully saved in "camera.xml"
 \endverbatim
 
-\section calibration_undistort Distorsion removal
+\section calibration_undistort Distortion removal
 
 Once the camera is calibrated, you can remove distortion in an image to generate an undistorted image.
 

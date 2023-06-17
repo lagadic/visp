@@ -190,7 +190,7 @@ int main(int argc, const char *argv[])
     vpDisplayX d(I, vpDisplay::SCALE_AUTO);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I, vpDisplay::SCALE_AUTO);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d(I, vpDisplay::SCALE_AUTO);
 #elif defined(VISP_HAVE_GTK)
     vpDisplayGTK d(I, vpDisplay::SCALE_AUTO);

@@ -62,8 +62,7 @@ std::string getAvailableDetectionContainer()
 
 int main(int argc, const char *argv [])
 {
-#if (VISP_HAVE_OPENCV_VERSION >= 0x030403) && defined(VISP_HAVE_OPENCV_DNN) &&                                         \
-    (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
+#if defined(HAVE_OPENCV_DNN) && defined(HAVE_OPENCV_VIDEOIO) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_17)
   try {
     std::string opt_device("0");
     //! [OpenCV DNN face detector]
@@ -280,7 +279,7 @@ int main(int argc, const char *argv [])
     vpDisplayX d;
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d;
 #endif
     d.setDownScalingFactor(vpDisplay::SCALE_AUTO);

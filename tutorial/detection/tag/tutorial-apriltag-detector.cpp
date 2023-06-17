@@ -93,7 +93,7 @@ int main(int argc, const char **argv)
     vpDisplayX d(I);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d(I);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d(I);
 #endif
 
@@ -170,7 +170,7 @@ int main(int argc, const char **argv)
     vpDisplayX d2(I_color, 50, 50);
 #elif defined(VISP_HAVE_GDI)
     vpDisplayGDI d2(I_color, 50, 50);
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
     vpDisplayOpenCV d2(I_color, 50, 50);
 #endif
     // To test the displays on a vpRGBa image

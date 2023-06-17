@@ -448,7 +448,7 @@ int test_pseudo_inverse_lapack(bool verbose, const std::vector<vpMatrix> &bench,
 }
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
 int test_pseudo_inverse_opencv(bool verbose, const std::vector<vpMatrix> &bench, std::vector<double> &time)
 {
   if (verbose)
@@ -526,7 +526,7 @@ void save_time(const std::string &method, unsigned int nrows, unsigned int ncols
 int main(int argc, const char *argv[])
 {
   try {
-#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_EIGEN3) || defined(VISP_HAVE_LAPACK) || defined(VISP_HAVE_OPENCV)
     unsigned int nb_matrices = 10;
     unsigned int nb_iterations = 10;
     unsigned int nb_rows = 12;
@@ -581,7 +581,7 @@ int main(int argc, const char *argv[])
           of << "\"Eigen3 " << nrows[s] << "x" << ncols[s] << " test " << i << "\""
              << "\t";
 #endif
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
         for (unsigned int i = 0; i < nb_svd_functions; i++)
           of << "\"OpenCV " << nrows[s] << "x" << ncols[s] << " test " << i << "\""
              << "\t";
@@ -613,7 +613,7 @@ int main(int argc, const char *argv[])
         save_time("Eigen3 -", nrows[s], ncols[s], verbose, use_plot_file, of, time);
 #endif
 
-#if (VISP_HAVE_OPENCV_VERSION >= 0x020101)
+#if defined(VISP_HAVE_OPENCV)
         ret += test_pseudo_inverse_opencv(verbose, bench_random_matrices, time);
         save_time("OpenCV -", nrows[s], ncols[s], verbose, use_plot_file, of, time);
 #endif

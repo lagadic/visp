@@ -253,9 +253,10 @@ int main(int argc, const char **argv)
     vpImage<unsigned char> *I;
     std::string opath = "C:/temp/I%d-%04d.pgm";
 #endif
-#if defined VISP_HAVE_GDI
+#if defined(VISP_HAVE_GDI)
+
     vpDisplayGDI *d;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK *d;
 #endif
     read_options(argc, argv, multi, camera, nframes, verbose_info, verbose_settings, mediatype_is_set, mediatypeID,

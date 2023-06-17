@@ -286,9 +286,9 @@ int main(int argc, const char **argv)
 
 // We open a window using either X11 or GTK or GDI.
 // Its size is automatically defined by the image (I) size
-#if defined VISP_HAVE_X11
+#if defined(VISP_HAVE_X11)
     vpDisplayX display(I, 100, 100, "Display X...");
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
     vpDisplayGTK display(I, 100, 100, "Display GTK...");
 #elif defined(_WIN32)
     vpDisplayGDI display(I, 100, 100, "Display GDI...");

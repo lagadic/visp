@@ -1,7 +1,7 @@
 /****************************************************************************
  *
  * ViSP, open source Visual Servoing Platform software.
- * Copyright (C) 2005 - 2022 by Inria. All rights reserved.
+ * Copyright (C) 2005 - 2023 by Inria. All rights reserved.
  *
  * This software is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,7 +14,7 @@
  * GPL, please contact Inria about acquiring a ViSP Professional
  * Edition License.
  *
- * See http://visp.inria.fr for more information.
+ * See https://visp.inria.fr for more information.
  *
  * This software was developed at:
  * Inria Rennes - Bretagne Atlantique
@@ -168,17 +168,10 @@ int main(int argc, char *argv[])
   // Let Catch (using Clara) parse the command line
   session.applyCommandLine(argc, argv);
 
-#if 0 // Prepare next version using temp folder
-  tmp = vpIoTools::makeTempDirectory("./");
-#endif
+  std::string tmp = vpIoTools::makeTempDirectory("./");
+
   std::string username = vpIoTools::getUserName();
 
-  // Create a temp folder to save velocities...
-#if defined(_WIN32)
-  std::string tmp = "C:/temp/" + username + "/video";
-#else
-  std::string tmp = "/tmp/" + username + "/video";
-#endif
   // Test if the output path exist. If no try to create it
   if (vpIoTools::checkDirectory(tmp) == false) {
     try {

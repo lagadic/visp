@@ -40,12 +40,8 @@
 #include <visp3/core/vpImageConvert.h>
 #include <visp3/core/vpImageMorphology.h>
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020101
-#if VISP_HAVE_OPENCV_VERSION >= 0x030000
-#include <opencv2/core.hpp>
-#else
+#if defined(VISP_HAVE_OPENCV)
 #include <opencv2/core/core.hpp>
-#endif
 #endif
 
 namespace common_tools
@@ -618,7 +614,7 @@ void BGRaToRGBaRef(unsigned char *bgra, unsigned char *rgba, unsigned int width,
   }
 }
 
-#if VISP_HAVE_OPENCV_VERSION >= 0x020101
+#if defined(VISP_HAVE_OPENCV)
 void fill(cv::Mat &img)
 {
   for (int i = 0; i < img.rows; i++) {

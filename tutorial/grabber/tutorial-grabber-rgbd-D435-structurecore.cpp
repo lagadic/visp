@@ -81,7 +81,7 @@ int main(int argc, char **argv)
   std::cout << "Install librealsense, configure and build ViSP again to use this example" << std::endl;
 #endif
 #if (VISP_CXX_STANDARD < VISP_CXX_STANDARD_11)
-  std::cout << "This turorial should be built with c++11 support" << std::endl;
+  std::cout << "This tutorial should be built with c++11 support" << std::endl;
 #endif
 #endif
 }

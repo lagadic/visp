@@ -122,8 +122,8 @@ OPTIONS:                                               Default\n\
      %%04d is for the image numbering.\n\
 \n\
   -c\n\
-     Disable the mouse click. Useful to automaze the \n\
-     execution of this program without humain intervention.\n\
+     Disable the mouse click. Useful to automate the \n\
+     execution of this program without human intervention.\n\
 \n\
   -h\n\
      Print the help.\n",
@@ -205,13 +205,13 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
   // declaration as ‘typedef XID Cursor’. That's why it should not be
   // used on APPLE platforms
   vpDisplayX display;
-#elif defined VISP_HAVE_GTK
+#elif defined(VISP_HAVE_GTK)
   vpDisplayGTK display;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI display;
-#elif defined VISP_HAVE_OPENCV
+#elif defined(HAVE_OPENCV_HIGHGUI)
   vpDisplayOpenCV display;
-#elif defined VISP_HAVE_D3D9
+#elif defined(VISP_HAVE_D3D9)
   vpDisplayD3D display;
 #endif
 
@@ -297,7 +297,7 @@ void computeInitialPose(vpCameraParameters *mcam, vpImage<unsigned char> &I, vpP
       }
 
       mcog[i] = md[i].getCog();
-      // an expcetion is thrown by the track method if
+      // an exception is thrown by the track method if
       //  - dot is lost
       //  - the number of pixel is too small
       //  - too many pixels are detected (this is usual when a "big"

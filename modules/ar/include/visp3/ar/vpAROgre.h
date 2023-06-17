@@ -125,7 +125,7 @@ public:
   */
   inline void addResource(const std::string &resourceLocation)
   {
-    mOptionnalResourceLocation.push_back(resourceLocation);
+    mOptionalResourceLocation.push_back(resourceLocation);
   }
 
   void addRotation(const std::string &sceneName, const vpRotationMatrix &wRo);
@@ -388,7 +388,7 @@ protected:
   bool mshowConfigDialog; /** if true, shows the dialog window (used to set
                              the display options) */
 
-  std::list<std::string> mOptionnalResourceLocation; /** Optional resource location (used to
+  std::list<std::string> mOptionalResourceLocation; /** Optional resource location (used to
                                                         load mesh and material) */
 };
 

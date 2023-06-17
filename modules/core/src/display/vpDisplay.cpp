@@ -106,7 +106,7 @@ int main()
   d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
   d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   d = new vpDisplayOpenCV;
 #endif
 
@@ -179,7 +179,7 @@ int main()
   d = new vpDisplayGDI;
 #elif defined(VISP_HAVE_D3D9)
   d = new vpDisplayD3D;
-#elif defined(VISP_HAVE_OPENCV)
+#elif defined(HAVE_OPENCV_HIGHGUI)
   d = new vpDisplayOpenCV;
 #endif
 
@@ -309,7 +309,7 @@ int main()
   vpImage<unsigned char> I(480, 640); // Black 640 by 480 image
 #ifdef VISP_HAVE_X11
   vpDisplayX d;
-#elif defined VISP_HAVE_GDI
+#elif defined(VISP_HAVE_GDI)
   vpDisplayGDI d;
 #endif
   // Display in a 160 by 120 windows size
