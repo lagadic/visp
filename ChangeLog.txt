@@ -29,6 +29,8 @@ ViSP 3.5.1 (under development)
     . Support of JSON for modern C++ third-party to enable serialization capabilities
       in vpMbGenericTracker, vpCameraParameters, vpPoseVector, vpHomogeneousMatrix,
       vpPolygon3D to load/save internal data or settings from/to JSON files
+    . New vpPclViewer class that enables real time plotting of 3D point clouds based on
+      PCL library
   - Tutorials
     . New tutorial to list all the hardware (robot, camera, depth camera, lidar, mocap,
       haptic devices, F/T sensor) supported by ViSP
@@ -53,6 +55,8 @@ ViSP 3.5.1 (under development)
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-json.html
     . New tutorial: Loading a model-based generic tracker from JSON
       https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-mb-generic-json.html
+    . New tutorial: Threaded PCL viewer
+      https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-pcl-viewer.html
   - Bug fixed
     . [#1042] testColorConversion.cpp segfault randomly
     . [#1045] CXX standard not propagated when using pkg-config or visp-config
