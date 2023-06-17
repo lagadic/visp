@@ -47,7 +47,7 @@ the following command:
 ```
 $ ./tutorial-pcl-visualizer --display-mode threaded
 ```
-To stop the program, please click in the console and press the `q` key.
+Here again to stop the program, please click in the console and press the `q` key.
 
 \section pcl_viewer_example Point clouds visualization example explained
 
