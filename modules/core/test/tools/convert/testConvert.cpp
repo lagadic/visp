@@ -43,6 +43,8 @@
 
 #include <iostream> // std::cout
 #include <limits>   // std::numeric_limits
+#include <math.h>   // fabs
+
 #include <visp3/core/vpConfig.h>
 #include <visp3/core/vpConvert.h>
 
@@ -89,7 +91,8 @@ void testConvertFromImagePointToPoint2f()
       else
         nbNOk++;
     }
-  } else {
+  }
+  else {
     nbNOk += 3;
   }
 
@@ -137,7 +140,8 @@ void testConvertFromPoint2fToImagePoint()
       else
         nbNOk++;
     }
-  } else {
+  }
+  else {
     nbNOk += 3;
   }
 
@@ -186,7 +190,8 @@ void testConvertFromImagePointToPoint2d()
       else
         nbNOk++;
     }
-  } else {
+  }
+  else {
     nbNOk += 3;
   }
 
@@ -234,7 +239,8 @@ void testConvertFromPoint2dToImagePoint()
       else
         nbNOk++;
     }
-  } else {
+  }
+  else {
     nbNOk += 3;
   }
 
@@ -277,12 +283,13 @@ void testConvertFromKeyPointToImagePoint()
   if (listOfImPts.size() == listOfKeyPoints.size()) {
     for (size_t i = 0; i < 3; i++) {
       if (areSame(listOfImPts[i].get_u(), listOfKeyPoints[i].pt.x) &&
-          areSame(listOfImPts[i].get_v(), listOfKeyPoints[i].pt.y))
+        areSame(listOfImPts[i].get_v(), listOfKeyPoints[i].pt.y))
         nbOk++;
       else
         nbNOk++;
     }
-  } else {
+  }
+  else {
     nbNOk += 3;
   }
 
@@ -325,12 +332,13 @@ void testConvertFromPoint3fToPoint()
   if (listOfPoints3f.size() == listOfPts.size()) {
     for (size_t i = 0; i < 3; i++) {
       if (areSame(listOfPts[i].get_oX(), listOfPoints3f[i].x) && areSame(listOfPts[i].get_oY(), listOfPoints3f[i].y) &&
-          areSame(listOfPts[i].get_oZ(), listOfPoints3f[i].z))
+        areSame(listOfPts[i].get_oZ(), listOfPoints3f[i].z))
         nbOk++;
       else
         nbNOk++;
     }
-  } else {
+  }
+  else {
     nbNOk += 3;
   }
 
@@ -384,12 +392,13 @@ void testConvertFromPointToPoint3f()
   if (listOfPoints3f.size() == listOfPts.size()) {
     for (size_t i = 0; i < 3; i++) {
       if (areSame(listOfPts[i].get_oX(), listOfPoints3f[i].x) && areSame(listOfPts[i].get_oY(), listOfPoints3f[i].y) &&
-          areSame(listOfPts[i].get_oZ(), listOfPoints3f[i].z))
+        areSame(listOfPts[i].get_oZ(), listOfPoints3f[i].z))
         nbOk++;
       else
         nbNOk++;
     }
-  } else {
+  }
+  else {
     nbNOk += 3;
   }
 
