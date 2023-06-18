@@ -37,8 +37,10 @@
 #ifndef _vpColorBlindFliendlyPalette_h_
 #define _vpColorBlindFliendlyPalette_h_
 
+#include<visp3/core/vpConfig.h>
 #include<visp3/core/vpColor.h>
 
+#if (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 /**
  * \brief Class that furnishes a set of colors that color blind people
  * should be able to distinguish one from another.
@@ -57,7 +59,7 @@ public:
     Green = 3,     /*!< Color that looks like green for non-colorblind people.*/
     Yellow = 4,    /*!< Color that looks like yellow for non-colorblind people.*/
     Blue = 5,      /*!< Color that looks like blue for non-colorblind people.*/
-    Vermillon = 6, /*!< Color that looks like vermillon for non-colorblind people.*/
+    Vermillon = 6, /*!< Color that looks like vermilion for non-colorblind people.*/
     Purple = 7,    /*!< Color that looks like purple for non-colorblind people.*/
     COUNT = 8      /*!< Number of colors the palette proposes.*/
   }Palette;
@@ -196,4 +198,6 @@ std::ostream &operator<<(std::ostream &os, const vpColorBlindFriendlyPalette &co
  * \return std::istream& The \b is input, from which we have read the name of \b color.
  */
 std::istream &operator>>(std::istream &is, vpColorBlindFriendlyPalette &color);
+
+#endif
 #endif // _vpColorBlindFliendlyPalette_h_

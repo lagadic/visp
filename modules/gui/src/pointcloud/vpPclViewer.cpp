@@ -35,7 +35,7 @@
 #ifndef DOXYGEN_SHOULD_SKIP_THIS
 
 #include <visp3/core/vpConfig.h>
-#if (defined(VISP_HAVE_PCL))
+#if defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 // PCL
 #include<pcl/io/pcd_io.h>
 
@@ -50,19 +50,19 @@ const std::vector<vpColorBlindFriendlyPalette::Palette> gcolor = { vpColorBlindF
 
 const unsigned int gc_nbColorMax = 7;
 
-pcl::visualization::PCLVisualizer::Ptr vpPclViewer ::sp_viewer(nullptr);
+pcl::visualization::PCLVisualizer::Ptr vpPclViewer::sp_viewer(nullptr);
 
-std::vector<std::vector<double>> vpPclViewer ::s_vhandler;
+std::vector<std::vector<double>> vpPclViewer::s_vhandler;
 
-int vpPclViewer::s_width           =  640;
-int vpPclViewer::s_height          =  480;
-int vpPclViewer::s_posU              =   40;
-int vpPclViewer::s_posV              =   40;
+int vpPclViewer::s_width = 640;
+int vpPclViewer::s_height = 480;
+int vpPclViewer::s_posU = 40;
+int vpPclViewer::s_posV = 40;
 double vpPclViewer::s_ignoreThresh = 0.95;
 
-vpPclViewer ::vpPclViewer ( const std::string &title , const int &width, const int &height
-                                                            , const int &posU, const int &posV
-                                                            , const std::string &outFolder, const double &ignoreThreshold)
+vpPclViewer::vpPclViewer(const std::string &title, const int &width, const int &height
+  , const int &posU, const int &posV
+  , const std::string &outFolder, const double &ignoreThreshold)
   : m_hasToRun(false)
   , m_title(title)
   , m_hasToSavePCDs(false)
@@ -76,7 +76,7 @@ vpPclViewer ::vpPclViewer ( const std::string &title , const int &width, const i
   s_posV = posV;
 }
 
-vpPclViewer ::~vpPclViewer ()
+vpPclViewer ::~vpPclViewer()
 {
   // Asking to stop thread
   stopThread();
@@ -99,7 +99,7 @@ vpPclViewer ::~vpPclViewer ()
   }
 }
 
-void vpPclViewer ::setNameWindow(const std::string &nameWindow)
+void vpPclViewer::setNameWindow(const std::string &nameWindow)
 {
   sp_viewer->setWindowName(nameWindow);
 }
@@ -123,14 +123,13 @@ void vpPclViewer::setOutFolder(const std::string &outFolder)
 
 void vpPclViewer::setIgnoreThreshold(const double &ignoreThreshold)
 {
-  if(ignoreThreshold < 0. || ignoreThreshold > 1.)
-  {
+  if (ignoreThreshold < 0. || ignoreThreshold > 1.) {
     throw(vpException(vpException::badValue, "[vpPclViewer::setIgnoreThreshold] Fatal error: threshold must be in range [0. ; 1.]"));
   }
   s_ignoreThresh = ignoreThreshold;
 }
 
-void vpPclViewer ::updateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id, const bool &hasToKeepColor)
+void vpPclViewer::updateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id, const bool &hasToKeepColor)
 {
   if (m_hasToRun) {
     // Threaded mode
@@ -150,8 +149,8 @@ void vpPclViewer ::updateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, c
   }
 }
 
-void vpPclViewer ::updateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id,
-                                                  const vpColVector &weights, const bool &hasToKeepColor)
+void vpPclViewer::updateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id,
+  const vpColVector &weights, const bool &hasToKeepColor)
 {
   if (m_hasToRun) {
     // Threaded mode
@@ -212,13 +211,13 @@ void vpPclViewer ::updateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, c
   }
 }
 
-unsigned int vpPclViewer ::addSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const std::string &name, const std::vector<unsigned char> &v_color)
+unsigned int vpPclViewer::addSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const std::string &name, const std::vector<unsigned char> &v_color)
 {
   vpColVector emptyWeights; // Fake weights that are all equal to 1, to keep all the points
   return addSurface(surface, emptyWeights, name, v_color);
 }
 
-unsigned int vpPclViewer ::addSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const vpColVector &weights, const std::string &name, const std::vector<unsigned char> &v_color)
+unsigned int vpPclViewer::addSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const vpColVector &weights, const std::string &name, const std::vector<unsigned char> &v_color)
 {
   static unsigned int nbSurfaces = 0;
   unsigned int id = m_vPointClouds.size();
@@ -300,8 +299,8 @@ unsigned int vpPclViewer ::addSurface(const pclPointCloudPointXYZRGB::Ptr &surfa
     // No => we create one, for the very same reasons
     m_vmeshid.push_back("point_cloud" + std::to_string(id));
   }
-//  std::cout << "[vpPclViewer ::addSurface] Added ID " << m_vmeshid[id] << " to the list of known point clouds" << std::endl;
-  if(sp_viewer){
+  //  std::cout << "[vpPclViewer ::addSurface] Added ID " << m_vmeshid[id] << " to the list of known point clouds" << std::endl;
+  if (sp_viewer) {
     // The viewer is already on, we can add the pcl to its known list
     sp_viewer->addPointCloud(m_vPointClouds[id], m_vmeshid[id]);
   }
@@ -337,7 +336,7 @@ unsigned int vpPclViewer ::addSurface(const pclPointCloudPointXYZRGB::Ptr &surfa
 
 
 
-void vpPclViewer ::display()
+void vpPclViewer::display()
 {
   stopThread(); // We have to stop the thread to manipulate the viewer with a blocking waiting
   if (!sp_viewer) {
@@ -347,7 +346,7 @@ void vpPclViewer ::display()
     sp_viewer->initCameraParameters(); // Initialize the viewer with default camera settings
     sp_viewer->setSize(s_width, s_height); // Setting the size of the viewer window
     sp_viewer->setPosition(s_posU, s_posV); // Setting the position of the viewer window on the screen
-    sp_viewer->resetCamera ();
+    sp_viewer->resetCamera();
 
     for (unsigned int id = 0; id < m_vPointClouds.size(); id++) {
       sp_viewer->addPointCloud(m_vPointClouds[id], m_vmeshid[id]);
@@ -357,22 +356,22 @@ void vpPclViewer ::display()
   sp_viewer->spin();
 }
 
-void vpPclViewer ::refresh(const int &timeout, const bool &waitForDrawing)
+void vpPclViewer::refresh(const int &timeout, const bool &waitForDrawing)
 {
   sp_viewer->spinOnce(timeout, waitForDrawing);
 }
 
-void vpPclViewer ::launchThread()
+void vpPclViewer::launchThread()
 {
   // Check if the visualization thread is already started
   if (!m_hasToRun) {
     // Thread not started => starting it now
     m_hasToRun = true;
-    m_threadDisplay = std::thread(vpPclViewer ::runThread, this);
+    m_threadDisplay = std::thread(vpPclViewer::runThread, this);
   }
 }
 
-void vpPclViewer ::stopThread()
+void vpPclViewer::stopThread()
 {
   // Check if the visualization thread is running
   if (m_hasToRun) {
@@ -382,12 +381,12 @@ void vpPclViewer ::stopThread()
   }
 }
 
-void vpPclViewer ::runThread(vpPclViewer  *p_visualizer)
+void vpPclViewer::runThread(vpPclViewer *p_visualizer)
 {
   p_visualizer->loopThread();
 }
 
-void vpPclViewer ::loopThread()
+void vpPclViewer::loopThread()
 {
   bool useWeights; /*!< Will be used to know if the points of the pcl have weights. If so, will display only the ones whose weight exceed a threshold.*/
   sp_viewer.reset(new pcl::visualization::PCLVisualizer(m_title)); // Allocating a new viewer or resetting the old one.
@@ -395,7 +394,7 @@ void vpPclViewer ::loopThread()
   sp_viewer->initCameraParameters(); // Initialize the viewer with default camera settings
   sp_viewer->setSize(s_width, s_height); // Setting the size of the viewer window
   sp_viewer->setPosition(s_posU, s_posV); // Setting the position of the viewer window on the screen
-  sp_viewer->resetCamera ();
+  sp_viewer->resetCamera();
   unsigned int iter = 0;
 
   // Running the main loop of the thread
@@ -442,17 +441,17 @@ void vpPclViewer ::loopThread()
   sp_viewer.reset();
 }
 
-void vpPclViewer ::threadUpdateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id)
+void vpPclViewer::threadUpdateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id)
 {
   threadUpdateSurface(surface, id, vpColVector());
 }
 
-void vpPclViewer ::threadUpdateSurfaceOriginalColor(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id)
+void vpPclViewer::threadUpdateSurfaceOriginalColor(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id)
 {
   threadUpdateSurfaceOriginalColor(surface, id, vpColVector());
 }
 
-void vpPclViewer ::threadUpdateSurface(const pclPointCloudPointXYZRGB::Ptr &surface,  const unsigned int &id, const vpColVector &weights)
+void vpPclViewer::threadUpdateSurface(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id, const vpColVector &weights)
 {
   m_vpmutex[id]->lock();
   m_vweights[id] = weights; // Saving the weights affected to each point of the pcl
@@ -474,7 +473,7 @@ void vpPclViewer ::threadUpdateSurface(const pclPointCloudPointXYZRGB::Ptr &surf
   m_vpmutex[id]->unlock();
 }
 
-void vpPclViewer ::threadUpdateSurfaceOriginalColor(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id, const vpColVector &weights)
+void vpPclViewer::threadUpdateSurfaceOriginalColor(const pclPointCloudPointXYZRGB::Ptr &surface, const unsigned int &id, const vpColVector &weights)
 {
   m_vpmutex[id]->lock();
   m_vweights[id] = weights; // Saving the weights affected to each point of the pcl

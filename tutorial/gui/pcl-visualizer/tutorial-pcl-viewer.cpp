@@ -1,9 +1,10 @@
 //! \example tutorial-pcl-viewer.cpp
 #include <visp3/core/vpConfig.h>
 
-#if defined(VISP_HAVE_PCL)
 // System include
 #include <iostream>
+
+#if defined(VISP_HAVE_PCL) && (VISP_CXX_STANDARD >= VISP_CXX_STANDARD_11)
 
 // ViSP include
 #include <visp3/core/vpIoTools.h>
@@ -167,16 +168,14 @@ int main(int argc, char *argv [])
   std::cout << "\tDisplay mode: " << displayModeToString(opt_mode) << std::endl;
 
   //! [Running blocking mode]
-  if(opt_mode == DisplayMode::BLOCKING || opt_mode == DisplayMode::BOTH)
-  {
+  if (opt_mode == DisplayMode::BLOCKING || opt_mode == DisplayMode::BOTH) {
     ClassUsingPclViewer demo(opt_xlim, opt_ylim, opt_reso);
     demo.blockingMode(opt_addedNoise, opt_order);
   }
   //! [Running blocking mode]
 
   //! [Running threaded mode]
-  if(opt_mode == DisplayMode::THREADED || opt_mode == DisplayMode::BOTH)
-  {
+  if (opt_mode == DisplayMode::THREADED || opt_mode == DisplayMode::BOTH) {
     ClassUsingPclViewer demo(opt_xlim, opt_ylim, opt_reso);
     demo.threadedMode(opt_addedNoise, opt_order);
   }
@@ -186,9 +185,10 @@ int main(int argc, char *argv [])
 }
 #else
 
-int main(int argc, char *argv [])
+int main()
 {
-  std::cerr << "ERROR: ViSP seems to have been compiled without PCL library" << std::endl;
-  std::cerr << "\tPlease install PCL library and recompile ViSP." << std::endl;
+  std::cout << "ViSP seems to have been compiled without PCL library." << std::endl;
+  std::cout << "Please install PCL library and recompile ViSP." << std::endl;
+  return EXIT_SUCCESS;
 }
 #endif
