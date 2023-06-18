@@ -25,7 +25,7 @@ typedef enum DisplayMode
   THREADED = 1, /*!< Only the threaded-mode display example will be run.*/
   BOTH = 2, /*!< First the blocking-mode display example will be run and then the threaded-mode one.*/
   MODE_COUNT = 3
-}DisplayMode;
+} DisplayMode;
 
 /**
  * @brief Cast a \b DisplayMode enum value into a \b std::stirng.
